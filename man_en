@@ -1,0 +1,271 @@
+'\" t -*- coding: UTF-8 -*-
+.\" manual page for autofax
+.\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
+.pc
+.TH man 1 "14.2.2016" "Version 0.4" "\fBautofax\fR man page"
+.SH NAME
+\fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging in a database
+.br
+manpage-Hilfe in deutsch verfügbar: 'man autofax' oder 'man -Lde autofax'.
+.SH SYNOPSIS
+.SY autofax [-<option>]
+.OP \-lg|--language <d|e>
+.OP \-v|--verbose
+.OP \-l|--log
+.OP \-lvz|--logvz <pfad>
+.OP \-ld|--logdname <string>
+.OP \-ldn|--logdateineu
+.OP \-kd|--konfdat <string>
+.OP \-zvz|--zufaxenvz <pfad>
+.OP \-wvz|--wartevz <pfad>
+.OP \-evz|--empfvz <pfad>
+.OP \-cm|--cronminut <zahl>
+.OP \-kc|--keincapi
+.OP \-kh|--keinhyla
+.OP \-cz|--capizuerst
+.OP \-hz|--hylazuerst
+.OP \-mod|--modem <string>
+.OP \-mc|--maxcapinr <zahl>
+.OP \-mh|--maxhylanr <zahl>
+.OP \-ckzl|--capiklingelzahl <zahl>
+.OP \-cuser|--cuser <string>
+.OP \-hkzl|--hylaklingelzahl <zahl>
+.OP \-gz|--gleichziel
+.OP \-afs|--anfaxstring <string>
+.OP \-acfs|--ancfaxstring <string>
+.OP \-ahfs|--anhfaxstring <string>
+.OP \-as|--anstring <string>
+.OP \-us|--undstring <string>
+.OP \-host|--host <string>
+.OP \-muser|--muser <string>
+.OP \-mpwd|--mpwd <string>
+.OP \-db|--db <string>
+.OP \-sqlv|--sqlv
+.OP \-rf|--rueckfragen
+.OP \-loef|--loeschefax
+.OP \-loew|--loeschewaise
+.OP \-loea|--loescheallew
+.OP \-loee|--loescheempf
+.OP \-kez|--korrerfolgszeichen
+.OP \-bwv|--bereinigewv
+.OP \-lista|--listarchiv
+.OP \-listf|--listfailed
+.OP \-listi|--listinca
+.OP \-n|--dszahl <zahl>
+.OP \-h|-help|-?|-hilfe
+.SH SHORT DESCRIPTION 
+autofax is a command line programme to remit files of a certain directory automatically to \fBhylafax\fR (in case a linux-compatible modem is installed) and/or \fBcapisuite\fR (in case a fritzcard 2.0 or 2.1 is installed), if the fax number is integrated in the file name correctly.
+Furthermore, autofax holds the posted faxes in a mariadb database.
+.br
+Additionally, received faxes from \fBhylafax\fR/\fBcapisuite\fR can be named with the sender's name according to his telephone number and stored.
+.SH INSTALLATION
+Please as root copy the files autofax.cpp, autofax.h, vorgaben.cpp, DB.cpp, DB.h, konsole.h, makefile, viautofax.sh, man_de, man_en and maybe autofax into a directory (subsequently here called: /root/bin/autofax).
+.br
+cd /root/bin/autofax
+.br
+make 
+.br
+autofax
+.br
+(anwer some questions)
+.SH USAGE
+Ideally, the program should have installed itsself after a single call (see above) in a self-running way (especially on openSUSE-Leap 42.1 or Ubuntu 14.04, possibly on others; systemctl (systemd) should run).
+.br
+Then a directory e.g. '\fBzufaxen\fR' exists, in which e.g. users in a network (e.g. via a samba share) can deposit files to be faxed, e.g. 
+.br
+"\fBMedical report on Frank Ill to Dr. Healthy and Frank Ill to fax 099 987654321 and 088 887654321.doc\fR" (it could also be e.g. an *.xls, a *.jpg, a *.tif, a *.txt, a *pdf file).
+.br
+When \fBautofax\fR is called for the next time (per default 2 minutes), the above mentioned example file will initially be copied and renamed into 
+.br
+"\fBMedical report on Frank Ill to Dr. Healthy to fax 099 987654321.doc\fR" and 
+.br
+"\fBMedical report on Frank Ill to Frank Ill to fax 088 887654321.doc\fR" and converted into the pdf-files 
+.br
+"\fBMedical report on Frank Ill to Dr. Healthy to fax 099 987654321.pdf\fR" and 
+.br
+"\fBMedical report on Frank Ill to Frank Ill to fax 088 887654321.pdf\fR".
+.br
+Those are subsequently being relayed to \fBhylafax\fR or \fBCapisuite\fR and from there sent.
+.br
+Simultaneously they are being moved from '\fBzufaxen\fR' to the waiting directory, e.g. '\fBwarteauffax\fR' and recorded in the spool table \fBspooltab\fR.
+.br
+At each call, autofax checks the status of \fBhylafax\fR and/or \fBCapisuite\fR. The Finishing of a fax process there causes autofax to move the source files (here the above mentioned .doc- and .pdf-files) from the waiting directory to one or several archive directories or a directory for failed faxes and to move their databas record from  '\fBspooltab\fR' to the archive table '\fBouta\fR'.
+.br
+Further on, incoming faxes via \fBhylafax\fR or \fBCapisuite\fR are being transmitted to an incoming directory and if applicable named including the sender's name. To this purpose, customizeable sql commands are being used, if specified.
+.br
+Depending on operating system, accessability and preferences the users thus could look up the status of their faxes in the above mentioned directories, in the database tables or by calling '\fBautofax\fB', '\fBautofax -lista\fR', '\fBautofax -listf\fR' or '\fBautofax -listi\fR'. 
+.br
+autofax shall be executed as root.
+.SH OPTIONS 
+With '\fBautofax -?\fR', all command line options can be seen. Some options (e.g. the sql commands) cannot bei set via the command line, but only via the configuration file, which can be edited directly or interactively by '\fBautofax -rf\fR'.
+.br
+.br
+\fB-lg, --language <string>\fR: language/Sprache/Lingue/Lingua [deutsch,english] 'e'
+.br
+\fB-v, --verbose\fR: screen output more verbose
+.br
+\fB-l, --log\fR: put detailed logs in file '/var/log/autofax.log' (otherwise shorter)
+.br
+\fB-lvz, --logvz <path>\fR: choses <path> as log directory, currently '/var/log'
+.br
+\fB-ld, --logdname <string>\fR: log file <string> (in path '/var/log') will be used instead of 'autofax.log'
+.br
+\fB-ldn, --logdateineu\fR: delete log file afore
+.br
+\fB-kd, --konfdat <string>\fR: uses configuration file <string> instead of '/usr/local/sbin/autofax.conf'
+.br
+\fB-zvz, --zufaxenvz <path>\fR: faxes the files from <path> instead of '...'
+.br
+\fB-wvz, --wartevz <path>\fR: files are waiting in <path> instead of '...'
+.br
+\fB-evz, --empfvz <path>\fR: directory for recieved faxes '...'
+.br
+\fB-cm, --cronminut <zahl>\fR: every how many minutes shall autofax be called in crontab (0=not at all) '2'
+.br
+\fB-kc, --keincapi\fR: do not use capisuite
+.br
+\fB-kh, --keinhyla\fR: do not use hylafax
+.br
+\fB-cz, --capizuerst\fR: try to send faxes primarily via capisuite
+.br
+\fB-hz, --hylazuerst\fR: try to send faxes primarily via hylafax
+.br
+\fB-mod, --modem <string>\fR: Modem used for hylafax ''
+.br
+\fB-mc, --maxcapinr <zahl>\fR: try Hylafax after <no> tries of Capisuite instead of '3'
+.br
+\fB-mh, --maxhylanr <zahl>\fR: try Capisuite after <no> tries of Hylafax instead of '3'
+.br
+\fB-ckzl, --capiklingelzahl <zahl>\fR: No. of bell rings until Capisuite accepts the call, instead of '1'
+.br
+\fB-cuser, --cuser <string>\fR: takes the linux user <string> for Capisuite instead of 'schade'
+.br
+\fB-hkzl, --hylaklingelzahl <zahl>\fR: No. of bell rings until hylafaxs accepts the call, instead of '2'
+.br
+\fB-gz, --gleichziel\fR: copy faxes into target directory irrespective of faxing success
+.br
+\fB-afs, --anfaxstring <string>\fR: the fax number will be expected after <string> instead of 'an Fax'
+.br
+\fB-acfs, --ancfaxstring <string>\fR: fax no.for fax with preference to capisuite is expected after <string> instead of 'an cFax'
+.br
+\fB-ahfs, --anhfaxstring <string>\fR: fax no.for fax with preference to hylafax is expected after <string> instead of 'an hFax'
+.br
+\fB-as, --anstring <string>\fR: name of addressee is expected after <string> instead of ' an '
+.br
+\fB-us, --undstring <string>\fR: separating string <string> for multiple addressees/tel'numbers, instead of 'und'
+.br
+\fB-host, --host <string>\fR: takes the database on host <string> instead of 'localhost'
+.br
+\fB-muser, --muser <string>\fR: takes the user <string> for MySQL/MariaDB instead of 'praxis'
+.br
+\fB-mpwd, --mpwd <string>\fR: takes the password <string> for MySQL/MariaDB instead of '...'
+.br
+\fB-db, --db <string>\fR: uses the database <string> instead of '...'
+.br
+\fB-sqlv, --sql-verbose\fR: screen output with SQL commands
+.br
+\fB-rf, --rueckfragen\fR: all parameters will be prompted (some of them not shown here)
+.br
+\fB-loef, --loeschefax\fR: delete a fax with query
+.br
+\fB-loew, --loeschewaise\fR: delete entries from `spool` without detection of file in waiting directory or capisuite fax or hyla-fax
+.br
+\fB-loea, --loescheallew\fR: delete all waiting faxes and associated entries from `spool`
+.br
+\fB-loee, --loescheempf\fR: delete received files that could not be processed
+.br
+\fB-kez, --korrerfolgszeichen\fR: in the database table `outa` the success flag is being corrected
+.br
+\fB-bwv, --bereinigewv\fR: Examine files in waiting directory against the tables `outa` and clean them up
+.br
+\fB-lista, --listarchiv\fR: lists entries from `outa` with success flag
+.br
+\fB-listf, --listfailed\fR: lists entries from `outa` without success flag
+.br
+\fB-listi, --listinlet\fR: lists entries from `inca`
+.br
+\fB-n, --dszahl <zahl>\fR: No. of listed entries = <zahl> instead of '30'
+.br
+.SH FUNCTIONALITY
+.HP 3 
+1) The current hardware is being checked.
+.br
+a) with the command '\fBlspci | grep -i isdn\fR' for a fritz card. 
+.br
+b) with the command '\fBstty -F\fR' for a fax modem.
+.LP
+2) The fax configuration file \fBfax.conf\fR of capisuite is read, if it exists 
+.HP 3 
+3) Further defaults from the program code are assigned which can be overloaded by the autofax configuration file (see 4), command line arguments or anwers to questions (see 5).   
+.LP
+.HP 3 
+4) Defaults are loaded from the configuration file, if it exists (per default \fBautofax.conf\fR in the same directory as \fBautofax\fR, per default \fB/usr/local/sbin/autofax\fR)) 
+.LP
+.HP 3 
+5) Questions are asked, if values are missing from the configuration file (see 4) or if a command line option demands interacitivity. 
+.LP
+.HP 3 
+6) The directory of \fBhylafax\fR is beeing determined (\fB/var/spool/hylafax\fR or \fB/var/spool/fax\fR), if hylafax is installed.
+.LP
+.HP 3 
+7) Directories used by the users for fax files to be sent, for waiting faxes, for fax files already sent, for failed faxes and for received faxes are being checked and created if needed. Thereby user defined file name patterns can be respected to store successfully sent faxes in different directories. 
+.LP
+.HP 3 
+8) The program inserts itsself if wanted and necessary in \fBcrontab\fR in order to be called in adjustable intervals. To avoid this, either '\fBcronminut\fR' can be set to \fB0\fR, or the already generated autofax entry can be commented out with a leading '\fB#\fR'.
+.LP
+.HP 3 
+9) The program checks if all user-relevant directories (see 7) are being included in samba shares in \fB/etc/samba/smb.conf\fR; such are being added if needed.
+.LP
+.HP 3 
+10) Working of MariaDB is being checked, if necessary it is being (installed and) started, the database tables \fBspooltab\fR (for faxes just in spool), \fBouta\fR (for sent and failed faxes) and \fBinca\fR (for received faxes) are being checked and if necessary created or amended.
+.LP
+.HP 3 
+11) In case of the respective command line options corrections in the contents of the waiting directory or of the database tables are being commited or their contents is being listed and then the program is being finished. 
+.LP
+.HP 3 
+12) Otherwise, file in the outgoing directory are being analysed. Each file with some identifiable fax number(s) within its file name which is or can be converted in/into pdf format will be moved to to waiting directory and recorded in \fBspooltab\fR.
+.br
+If a file contains more than one recepients and/or a conversion to pdf is necessary, additional files are generated and the original file may be renamed.
+If necessary, additional numbers near the end of the file name(s) may be added in order not to conflict with any other file name in one of the directories mentioned in 7).
+.br
+If more files have been generated, the successive movements and recordings are being carried out with all of them. 
+.\" DateienHerricht(), WVZinDatenbank()
+.LP
+.HP 3 
+13) Depending on the configuration the functionaliy of \fBhylafax\fR and/or \fBcapisuite\fR is being checked and if necessary and possible restored (including by installation of those programs)
+.LP
+.HP 3 
+14) In case of respective command line options faxes are being deleted and the program is finished.
+.LP
+.HP 3 
+15) Otherwise the files which have been recorded under 12) in \fBspooltab\fR are being forwarded to \fBhylafax\fR or \fBcapisuite\fR and this is being protocolled in \fBspooltab\fR.
+.\" faxealle()
+.LP
+.HP 3 
+16) All faxes which are recorded in \fBspooltab\fR as waiting are being checked in \fBhylafax\fR/\fBcapisuite\fR as to their status which is being updated in \fBspooltab\fR (number of tries hitherto).
+.br
+If hylafax and capisuite are working simultaneously and a prespecified number of send tries has been reached without success in the programs of the first preference of those two, the fax is additionally forwarded to the second of the two programs.
+.br
+If the fax transmission is finished (with/without success), the file is being moved from the waiting directory to the respective directory for sent faxes or for failed faxes and the database entry is being transferred from \fBspooltab\fR to \fBouta\fR.
+.br
+The status of the mentioned faxes is being displayed.
+.\" untersuchespool()
+.LP
+.HP 3 
+17) If additional faxes in the spool of hylafax/capisuite are detected which are not created via autofax, they are displayed.
+.LP
+.HP 3 
+18) With \fBhylafax\fR/\fBcapisuite\fR received faxes are copied to a receiving directory and there named with the name of the sender, if possible, by means of their telephone number which is being looked up using a predefineable number of predefineable sql commands, which are applied one after another until the telephone number is found.
+.LP
+.HP 3 
+19) The configuration file is being written, if necessary.
+.LP
+
+.SH ERRORS
+Please report any errors
+.SH LIABILITY
+The program has been written with the best aim and has been tested extensively by the author.
+.br
+Nevertheless the author cannot be liable for any damage by the program.
+.SH AUTHOR
+Gerald Schade (geraldschade@gmx.de)
