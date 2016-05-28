@@ -96,7 +96,6 @@ class TxB // Text-Basisklasse
   }
 };
 
-
 string meinpfad();
 
 enum Tkonsole_ {
@@ -216,15 +215,13 @@ inline void rtrim(char* str,size_t size) {
   }
 }
 
-void replaceAll(string *str, const string& from, const string& to);
-void replaceAll(string *str, const char* from, const char* to);
 string fersetze(const string& u, const char* alt, const char* neu);
 string caseersetze(const string& u, const char* alt, const char* neu); 
 string *loeschealleaus(string *u, const char* alt);
 
 string ersetze(const char *const u, const char* const alt, const char* neu);
 string *sersetze(string *src, string const& target, string const& repl);
-wstring ersetze(const wstring& u, const wchar_t* alt, const wchar_t* neu); 
+// wstring ersetze(const wstring& u, const wchar_t* alt, const wchar_t* neu); 
 
 string ersetzeAllezu(string& quelle, const string& alt, const string& neu);
 void ersetzeAlle(string& quelle, const string& alt, const string& neu);
@@ -447,4 +444,3 @@ class linstcl
     uchar douninst(const string& prog,int obverb=0,int oblog=0);
     uchar obfehlt(const string& prog,int obverb=0,int oblog=0);
 };
-

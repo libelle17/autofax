@@ -259,7 +259,7 @@ Der Status der genannten Faxe wird angezeigt.
 18) Über \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe werden ggf. mit Hilfe der Telefonnummer anhand voreingestellter SQL-Befehle nach dem Namen des Absenders benannt und in ein Empfangsverzeichnis gestellt.
 .LP
 .HP 3 
-19) Die Konfigurationsdatei wird ggf. geschrieben.
+19) Die Konfigurationsdatei \fBautofax.conf\fR wird ggf. geschrieben.
 .LP
 
 .SH FEHLER

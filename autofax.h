@@ -1,10 +1,9 @@
 #include <regex.h> // regex_t, regex, regcomp, regexec
 
-
 enum FaxTyp:uchar {capi=1,hyla};
 enum FxStat:uchar {init,wartend,gesandt,gescheitert,fehlend,woasined};
 
-class zielmustercl;
+class zielmustercl; // fuer die Verteilung der erfolgreich gefaxten Dateien auf verschiedene Dateien
 class fxfcl; // Faxfile
 class fsfcl; // Faxsendfile
 class paramcl; // Programmparameter
@@ -24,11 +23,11 @@ pid_t PIDausName(const char* PName, uchar klgr, uchar exakt, int obverb, int obl
 void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,int obverb=0,int oblog=0);
 int tuloeschen(const string& zuloe,int obverb, int oblog);
 
-
+// Service aus SystemD
 class servc {
   public:
     uchar servicelaeuft=0, serviceda=0;
-    string sname,ename;
+    string sname,ename; // ausgefuehrte Datei
     servc(string vsname,string vename): sname((vsname.empty()?vename:vsname)),ename(vename) {}
     uchar spruef(const string& sbez,uchar obfork,const string& sexec, const string& CondPath, const string& After, const string& wennnicht0,
         int obverb=0,int oblog=0);

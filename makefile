@@ -1,77 +1,79 @@
-ich := $(firstword $(MAKEFILE_LIST))
-ERG=autofax
-CC=g++
-CINST="gcc-c++"
-#CFLAGS=-c -Wall -lvmime -lgnutls -lgsasl
+ICH := $(firstword $(MAKEFILE_LIST))
+SRCS = $(wildcard *.cpp)
+objs = $(SRCS:.cpp=.o)
 CFLAGS=-c -Wall `mysql_config --cflags` -std=gnu++11
 LDFLAGS=`mysql_config --libs` -ltiff
-PFAD=${PWD}
+ERG=$(shell basename $(CURDIR))
 EXPFAD=/usr/local/sbin
-FILES=autofax.cpp vorgaben.cpp konsole.cpp DB.cpp
-SRC= $(FILES:%.cpp=$(PWD)/%.cpp)
-#OBJ=$(FILES:.cpp=.o)
-OBJ=$(SRC:.cpp=.o) 
 EXEC=$(EXPFAD)/$(ERG)
-DEPFILE= ${PWD}/$(ERG).d
+CINST="gcc-c++"
+
+DEPDIR := .d
+$(shell mkdir -p $(DEPDIR) >/dev/null)
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
+
+CC = g++
+POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d 2>/dev/null
+
 MANP=/usr/share/man
 MANPD=${MANP}/de/man1/${ERG}.1.gz
 MANPE=${MANP}/man1/${ERG}.1.gz
 MANPDH=${PWD}/man_de.html
 MANPEH=${PWD}/man_en.html
 
-all: compiler anzeig dep $(OBJ) $(EXEC) man
-#	$(EXEC)
-	@echo "Fertig mit $(ich)!" 
-#	@if test -s fehler.txt; then vi +0/error fehler.txt; exit; fi;
 
-man: ${MANPD} ${MANPE} ${MANPDH} ${MANPEH}
+alles: anzeig compiler $(EXEC) man fertig
 
-${MANPD}: ${PWD}/man_de 
-	gzip -c ${PWD}/man_de >${MANPD}
-${MANPE}: ${PWD}/man_en
-	gzip -c ${PWD}/man_en >${MANPE}
+anzeig:
+	@echo -e GNU Make, Zieldatei: "\033[1;31m" $(EXEC)"\033[0;30m" , vorher:
+	@echo -e "\033[0;34m" $(shell ls -l $(EXEC)) "\033[0;30m" 
+	@echo -e Quelldateien: "\033[1;31m" $(SRCS) "\033[0;30m" 
+	-@$(shell rm fehler.txt 2>/dev/null)
 
-${MANPDH}: ${PWD}/man_de 
-	sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_de | groff -mandoc -Thtml | sed 's/&amp;/\&/g' > man_de.html
+$(EXEC): $(objs)
+	@echo -n "verlinke $(OBJ) zu $@ ..."
+	-$(CC) $(LDFLAGS) $^ -o $@
 
-${MANPEH}: ${PWD}/man_en 
-	sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_en | groff -mandoc -Thtml | sed 's/&amp;/\&/g' > man_en.html
+%.o : %.cpp
+%.o : %.cpp $(DEPDIR)/%.d
+	@echo -n "kompiliere $< ..."
+	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< 2>> fehler.txt
+	-@if test -s fehler.txt; then vi +0/error fehler.txt; exit; else rm fehler.txt; fi;
+	-@$(shell $(POSTCOMPILE))
+
+$(DEPDIR)/%.d: ;
+.PRECIOUS: $(DEPDIR)/%.d
 
 compiler:
+	@echo -n "Untersuche Compiler ..."
+	@echo -e -n "\r" 
 	-@which g++ >/dev/null 2>&1 || { which zypper && zypper -n in $(CINST) || { which apt-get && apt-get --assume-yes install build-essential; } }
 	-@/sbin/ldconfig; /sbin/ldconfig -p | grep -q "libmysqlclient.so " || { which zypper && zypper -n in libmysqlclient-devel || { which apt-get && apt-get --assume-yes install libmysqlclient-dev; }; /sbin/ldconfig; }
 	-@test -f /usr/include/tiff.h || { which zypper && zypper -n in libtiff-devel || { which apt-get && apt-get --assume-yes install libtiff-dev; } }
 
-anzeig:
-	@echo "Zeige an:"
-	@echo "SRC: $(SRC)"
-	@echo "OBJ: $(OBJ)"
-	@echo "CFLAGS: $(CFLAGS)"
-	@echo "LDFLAGS: $(LDFLAGS)"
-	@echo "DEPFILE: $(DEPFILE)"
-	@echo "EXEC: $(EXEC)"
+man: ${MANPD} ${MANPE} ${MANPDH} ${MANPEH}
 
-dep: $(SRC)
-	-@rm fehler.txt
-	@echo "erstelle $(DEPFILE)"
-	-$(CC) -MM $(SRC) > $(DEPFILE) 2>> fehler.txt
-#	@if test -s fehler.txt; then vi +0/error fehler.txt; exit; fi;
+${MANPD}: ${PWD}/man_de 
+	-gzip -c ${PWD}/man_de >${MANPD}
+${MANPE}: ${PWD}/man_en
+	-gzip -c ${PWD}/man_en >${MANPE}
 
-#.cpp.o:
-%.o: %.cpp
-#%.o: $(PFAD)/%.cpp
-	@echo "kompiliere $<"
-	-$(CC) $(CFLAGS) -o $@ $< 2>> fehler.txt
-	@if test -s fehler.txt; then vi +0/error fehler.txt; exit; fi;
+${MANPDH}: ${PWD}/man_de 
+	-sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_de | groff -mandoc -Thtml | sed 's/&amp;/\&/g;s/<h1 align="center">man/<h1 align="center">Autofax/g' > man_de.html
 
-$(EXEC): $(OBJ) 
-	@echo "verlinke $(OBJ) zu $@"
-	-$(CC) $(OBJ) -o $@ $(LDFLAGS) 2>> fehler.txt
-	@if test -s fehler.txt; then vi +0/error fehler.txt; exit; fi;
+${MANPEH}: ${PWD}/man_en 
+	-sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_en | groff -mandoc -Thtml | sed 's/&amp;/\&/g;s/<h1 align="center">man/<h1 align="center">Autofax/g' > man_en.html
 
--include $(DEPFILE)
+fertig:
+	@echo -e "Fertig mit $(ICH), nachher:                                "  
+	@echo -e "\033[0;34m" $(shell ls -l $(EXEC)) "\033[0;30m" 
 
 .PHONY: clean
 
 clean: 
-	rm $(EXEC) $(OBJ)
+	@echo -n "Bereinige ..."
+	@echo -e -n "\r" 
+	-@$(shell rm $(EXEC) $(OBJ) 2>/dev/null)
+	@echo -e "Fertig mit Bereinigen!"  
+
+-include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
