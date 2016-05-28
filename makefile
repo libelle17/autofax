@@ -16,19 +16,26 @@ DEPFILE= ${PWD}/$(ERG).d
 MANP=/usr/share/man
 MANPD=${MANP}/de/man1/${ERG}.1.gz
 MANPE=${MANP}/man1/${ERG}.1.gz
+MANPDH=${PWD}/man_de.html
+MANPEH=${PWD}/man_en.html
 
 all: compiler anzeig dep $(OBJ) $(EXEC) man
 #	$(EXEC)
 	@echo "Fertig mit $(ich)!" 
 #	@if test -s fehler.txt; then vi +0/error fehler.txt; exit; fi;
 
-man: ${MANPD} ${MANPE}
+man: ${MANPD} ${MANPE} ${MANPDH} ${MANPEH}
 
-${MANPD}: ${PWD}/man_de
+${MANPD}: ${PWD}/man_de 
 	gzip -c ${PWD}/man_de >${MANPD}
-
 ${MANPE}: ${PWD}/man_en
 	gzip -c ${PWD}/man_en >${MANPE}
+
+${MANPDH}: ${PWD}/man_de 
+	sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_de | groff -mandoc -Thtml | sed 's/&amp;/\&/g' > man_de.html
+
+${MANPEH}: ${PWD}/man_en 
+	sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_en | groff -mandoc -Thtml | sed 's/&amp;/\&/g' > man_en.html
 
 compiler:
 	-@which g++ >/dev/null 2>&1 || { which zypper && zypper -n in $(CINST) || { which apt-get && apt-get --assume-yes install build-essential; } }
