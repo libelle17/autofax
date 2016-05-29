@@ -1,4 +1,3 @@
-<body>
 
 <h1 align="center">Autofax</h1>
 

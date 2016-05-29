@@ -64,6 +64,7 @@ ${MANPDH}: ${PWD}/man_de
 
 ${MANPEH}: ${PWD}/man_en 
 	-sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_en | groff -mandoc -Thtml | sed 's/&amp;/\&/g;s/<h1 align="center">man/<h1 align="center">Autofax/g' > man_en.html
+	-sed -n '20,$$p' man_en.html > README.md 
 
 fertig:
 	@echo -e "Fertig mit $(ICH), nachher:                                "  
