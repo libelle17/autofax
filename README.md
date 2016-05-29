@@ -21,12 +21,19 @@ cron, soffice, convert, hylafax+, hylafax+-client, kernel-source, fcpci-3.10.0, 
 
 INSTALLATION
 wget https://github.com/libelle17/autofax/archive/master.tar.gz -O autofax.tar.gz && tar xpvf autofax.tar.gz && rm autofax.tar.gz
+
 mv autofax-master autofax
+
 cd autofax
+
 make
+
 (connect modem and/or insert fritzcard)
+
 autofax
+
 (anwer some questions of the program)
+
 The first execution may take some time.
 
 USAGE
