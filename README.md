@@ -1,6 +1,8 @@
 <b>autofax</b> − fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging in a database
 manpage-Hilfe in deutsch verfügbar: ’man autofax’ oder ’man -Lde autofax’.
 
+
+
 SYNOPSIS
 
 autofax [−lg|--language <d|e>] [−v|--verbose] [−l|--log] [−lvz|--logvz <pfad>] [−ld|--logdname <string>] [−ldn|--logdateineu] [−kd|--konfdat <string>] [−zvz|--zufaxenvz <pfad>] [−wvz|--wartevz <pfad>] [−evz|--empfvz <pfad>] [−cm|--cronminut <zahl>] [−kc|--keincapi] [−kh|--keinhyla] [−cz|--capizuerst] [−hz|--hylazuerst] [−mod|--modem <string>] [−mc|--maxcapinr <zahl>] [−mh|--maxhylanr <zahl>] [−ckzl|--capiklingelzahl <zahl>] [−cuser|--cuser <string>] [−hkzl|--hylaklingelzahl <zahl>] [−gz|--gleichziel] [−afs|--anfaxstring <string>] [−acfs|--ancfaxstring <string>] [−ahfs|--anhfaxstring <string>] [−as|--anstring <string>] [−us|--undstring <string>] [−host|--host <string>] [−muser|--muser <string>] [−mpwd|--mpwd <string>] [−db|--db <string>] [−sqlv|--sqlv] [−rf|--rueckfragen] [−loef|--loeschefax] [−loew|--loeschewaise] [−loea|--loescheallew] [−loee|--loescheempf] [−kez|--korrerfolgszeichen] [−bwv|--bereinigewv] [−lista|--listarchiv] [−listf|--listfailed] [−listi|--listinca] [−n|--dszahl <zahl>] [−h|-help|-?|-hilfe]
@@ -10,19 +12,28 @@ SHORT DESCRIPTION
 autofax is a command line programme to remit files of a certain directory automatically to hylafax (in case a linux-compatible modem is installed) and/or capisuite (in case a fritzcard 2.0 or 2.1 is installed), if the fax number is integrated in the file name correctly. Furthermore, autofax holds the posted faxes in a mariadb database.
 Additionally, received faxes from hylafax/capisuite can be named with the sender’s name according to his telephone number and stored.
 
-INSTALLATION
+PRECONDITIONS
+The program was adjusted to an installation of opensuse 41.2 or Ubuntu 14.04 with standard options. Further needed programs will be installed by the makefile or by autofax itsself via zypper or apt-get, if possible. Those are:
+makefile:
+g++, libmysqlclient-dev(el), libtiff-dev(el)
+autofax:
+cron, soffice, convert, hylafax+, hylafax+-client, kernel-source, fcpci-3.10.0, kkeil Factory repository, capisuite, capi4linux, i4l-isdnlog, mariadb.
 
-Please as root copy the files autofax.cpp, autofax.h, vorgaben.cpp, DB.cpp, DB.h, konsole.h, makefile, viautofax.sh, man_de, man_en and maybe autofax into a directory (subsequently here called: /root/bin/autofax).
-cd /root/bin/autofax
+INSTALLATION
+wget https://github.com/libelle17/autofax/archive/master.tar.gz -O autofax.tar.gz && tar xpvf autofax.tar.gz && rm autofax.tar.gz
+mv autofax-master autofax
+cd autofax
 make
+(connect modem and/or insert fritzcard)
 autofax
-(anwer some questions)
+(anwer some questions of the program)
+The first execution may take some time.
 
 USAGE
 
 Ideally, the program should have installed itsself after a single call (see above) in a self-running way (especially on openSUSE-Leap 42.1 or Ubuntu 14.04, possibly on others; systemctl (systemd) should run).
 Then a directory e.g. ’zufaxen’ exists, in which e.g. users in a network (e.g. via a samba share) can deposit files to be faxed, e.g.
-"Medical report on Frank Ill to Dr. Healthy and Frank Ill to fax 099 987654321 and 088 887654321.doc" (it could also be e.g. an *.xls, a *.jpg, a *.tif, a *.txt, a *pdf file).
+"Medical report on Frank Ill to Dr. Healthy and Frank Ill to fax 099 987654321 and 088 887654321.doc" (it could also be e.g. an *.xls, a *.jpg, a *.tif, a *.txt, a *pdf file; the section ' to Dr. Healthy and Frank Ill' is optional for the later allocation of the fax number(s) in the database, it may also be obmitted).
 When autofax is called for the next time (per default 2 minutes), the above mentioned example file will initially be copied and renamed into
 "Medical report on Frank Ill to Dr. Healthy to fax 099 987654321.doc" and
 "Medical report on Frank Ill to Frank Ill to fax 088 887654321.doc" and converted into the pdf-files
@@ -125,7 +136,7 @@ If a file contains more than one recepients and/or a conversion to pdf is necess
 If more files have been generated, the successive movements and recordings are being carried out with all of them.
 	
 
-13) Depending on the configuration the functionaliy of hylafax and/or capisuite is being checked and if necessary and possible restored (including by installation of those programs)
+13) Depending on the configuration the functionaliy of hylafax and/or capisuite is being checked and if necessary and possible restored (including by installation of those programs; in case of a fritzcard 2.0 or a fax modem USR5637 an additional automatic configuration can be done)
 	
 
 14) In case of respective command line options faxes are being deleted and the program is finished.
@@ -151,7 +162,7 @@ The status of the mentioned faxes is being displayed.
 
 ERRORS
 
-Please report any errors
+Please report any errors. Please report as well, if different hard- or software yield a requirement for a program modification.
 
 LIABILITY
 
@@ -160,4 +171,4 @@ Nevertheless the author cannot be liable for any damage by the program.
 
 AUTHOR
 
-Gerald Schade (geraldschade@gmx.de)
+Gerald Schade (geraldschade@gmx.de; www.diabdachau.de)
