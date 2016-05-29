@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sat May 28 12:51:06 2016 -->
+<!-- CreationDate: Sun May 29 02:38:34 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -27,6 +27,7 @@
 <a href="#GEBRAUCH">GEBRAUCH</a><br>
 <a href="#OPTIONEN">OPTIONEN</a><br>
 <a href="#FUNKTIONSWEISE">FUNKTIONSWEISE</a><br>
+<a href="#VORAUSSETZUNGEN">VORAUSSETZUNGEN</a><br>
 <a href="#FEHLER">FEHLER</a><br>
 <a href="#HAFTUNG">HAFTUNG</a><br>
 <a href="#AUTOR">AUTOR</a><br>
@@ -138,7 +139,9 @@ Beispiel: /root/bin/autofax) kopieren. <br>
 cd /root/bin/autofax <br>
 make <br>
 autofax <br>
-(Rueckfragen beantworten)</p>
+(Rueckfragen beantworten) <br>
+Voraussetzungen und Liste der von autofax potentiell
+ausgef&uuml;hrten Betriebssystembefehle s.u.</p>
 
 <h2>GEBRAUCH
 <a name="GEBRAUCH"></a>
@@ -158,7 +161,10 @@ Dateien stellen k&ouml;nnen wie z.B. <br>
 &quot;<b>Arztbericht zu Franz Krank an Dr. Gesund und Franz
 Krank an Fax 099 987654321 und 088 887654321.doc</b>&quot;
 (es k&ouml;nnte auch z.B. eine *.xls, eine *.jpg, eine
-*.tif, eine *.txt oder eine *.pdf-Datei sein). <br>
+*.tif, eine *.txt oder eine *.pdf-Datei sein; die Passage
+&rsquo;an Dr. Gesund und Franz Krank &rsquo; ist optional
+f&uuml;r die sp&auml;tere Zordnung der Faxnummer(n)
+in der Datenbank, sie darf auch fehlen). <br>
 Wenn <b>autofax</b> beim n&auml;chsten Mal automatisch
 aufgerufen wird (standardm&auml;&szlig;ig alle 2
 Minuten), wird die o.g. Beispieldatei zun&auml;chst
@@ -484,7 +490,10 @@ durchgef&uuml;hrt.</p>
 die Funktionsf&auml;higkeit von <b>hylafax</b> und/oder
 <b>capisuite</b> &uuml;berpr&uuml;ft und ggf.
 versucht herzustellen (falls n&ouml;tig und
-m&ouml;glich auch mit Installation dieser Programme)</p></td></tr>
+m&ouml;glich auch mit Installation dieser Programme;
+f&uuml;r eine Fritzcard 2.0 sowie f&uuml;r ein
+Faxmodem USR5637 kann auch eine automatische Konfiguration
+erfolgen).</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -555,13 +564,33 @@ Empfangsverzeichnis gestellt.</p></td></tr>
 <b>autofax.conf</b> wird ggf. geschrieben.</p></td></tr>
 </table>
 
+<h2>VORAUSSETZUNGEN
+<a name="VORAUSSETZUNGEN"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Das Programm
+wurde auf eine Installation von Opensuse 41.2 oder Ubuntu
+14.04 mit den Standardoptionen abgestimmt. Weitere
+ben&ouml;tigte Programm werden falls m&ouml;glich
+vom makefile oder von autofax selbst nachstalliert. Diese
+sind: <b><br>
+makefile:</b> <br>
+g++, libmysqlclient-dev(el), libtiff-dev(el) <b><br>
+autofax:</b> <br>
+cron, soffice, convert, hylafax+, hylafax+-client,
+kernel-source, fcpci-3.10.0, kkeil Factory repository,
+capisuite, capi4linux, i4l-isdnlog, mariadb</p>
+
 <h2>FEHLER
 <a name="FEHLER"></a>
 </h2>
 
 
 <p style="margin-left:11%; margin-top: 1em">Fehler bitte
-melden.</p>
+melden. Bitte auch melden, wenn sich
+&Auml;nderungsbedarf durch andere Hard- bzw. Software
+ergeben.</p>
 
 <h2>HAFTUNG
 <a name="HAFTUNG"></a>
@@ -570,7 +599,7 @@ melden.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Das Programm
 wurde mit bester Absicht entwickelt und durch den Autor
-intensiv getestet. <br>
+getestet. <br>
 Trotzdem kann der Autor f&uuml;r keine Sch&auml;den
 haften, die durch das Programm entstehen
 k&ouml;nnten</p>
@@ -581,7 +610,7 @@ k&ouml;nnten</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">Gerald Schade
-(geraldschade@gmx.de)</p>
+(geraldschade@gmx.de; www.diabdachau.de)</p>
 <hr>
 </body>
 </html>
