@@ -71,7 +71,7 @@ autofax
 .br
 (einige Rueckfragen des Programms beantworten)
 .br
-Voraussetzungen und Liste der von autofax potentiell ausgeführten Betriebssystembefehle s.u.
+Voraussetzungen s.u.
 .br
 .SH GEBRAUCH
 Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft (insbesondere auf openSUSE-Leap 42.1 oder Ubuntu 14.04, evtl. auch andere; es sollte systemctl (systemd) laufen).

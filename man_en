@@ -73,7 +73,7 @@ autofax
 .br
 The first execution may take some time.
 .br
-Preconditions and list of all potential operating system commands by autofax see below
+Preconditions see below
 .SH USAGE
 Ideally, the program should have installed itsself after a single call (see above) in a self-running way (especially on openSUSE-Leap 42.1 or Ubuntu 14.04, possibly on others; systemctl (systemd) should run).
 .br
