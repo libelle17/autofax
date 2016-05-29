@@ -75,7 +75,7 @@ The first execution may take some time.
 .br
 Preconditions see below
 .SH USAGE
-Ideally, the program should have installed itsself after a single call (see above) in a self-running way (especially on openSUSE-Leap 42.1 or Ubuntu 14.04, possibly on others; systemctl (systemd) should run).
+Ideally, the program should have installed itsself after a single call (see above) in a self-running way (especially on openSUSE-Leap 42.1 or Ubuntu 15.10, possibly on others; systemctl (systemd) should run).
 .br
 Then a directory e.g. '\fBzufaxen\fR' exists, in which e.g. users in a network (e.g. via a samba share) can deposit files to be faxed, e.g. 
 .br
@@ -267,7 +267,7 @@ The status of the mentioned faxes is being displayed.
 19) The configuration file is being written, if necessary.
 .LP
 .SH PRECONDITIONS
-The program was adjusted to an installation of opensuse 41.2 or Ubuntu 14.04 with standard options. Further needed programs will be installed by the makefile or by autofax itsself via zypper or apt-get, if possible. Those are:
+The program was adjusted to an installation of opensuse 41.2 or Ubuntu 15.10 with standard options. Further needed programs will be installed by the makefile or by autofax itsself via zypper or apt-get, if possible. Those are:
 .br
 \fBmakefile:\fR
 .br

@@ -74,7 +74,7 @@ autofax
 Voraussetzungen s.u.
 .br
 .SH GEBRAUCH
-Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft (insbesondere auf openSUSE-Leap 42.1 oder Ubuntu 14.04, evtl. auch andere; es sollte systemctl (systemd) laufen).
+Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft (insbesondere auf openSUSE-Leap 42.1 oder Ubuntu 15.10, evtl. auch andere; es sollte systemctl (systemd) laufen).
 .br
 Es existiert dann ein Verzeichnis z.B. '\fBzufaxen\fR', in das z.B. Benutzer im Netzwerk (z.B. über eine Samba-Freigabe) zu faxende Dateien stellen können wie z.B. 
 .br
@@ -267,7 +267,7 @@ Der Status der genannten Faxe wird angezeigt.
 .LP
 
 .SH VORAUSSETZUNGEN
-Das Programm wurde auf eine Installation von Opensuse 41.2 oder Ubuntu 14.04 mit den Standardoptionen abgestimmt. Weitere benötigte Programm werden falls möglich vom makefile oder von autofax selbst nachstalliert. Diese sind:
+Das Programm wurde auf eine Installation von Opensuse 41.2 oder Ubuntu 15.10 mit den Standardoptionen abgestimmt. Weitere benötigte Programm werden falls möglich vom makefile oder von autofax selbst nachstalliert. Diese sind:
 .br
 \fBmakefile:\fR
 .br

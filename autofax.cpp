@@ -3028,8 +3028,8 @@ void paramcl::tu_listi()
 {
   Log(violetts+Tx[T_tu_listi]+schwarz,obverb,oblog);
   char ***cerg;
-  RS listi(My,string("SELECT date_format(transe,'%d.%m.%y %H:%i:%s') p0,right(concat(space(85),left(titel,85)),85) p1,"
-        "fsize p2,tsid p3,id p4 FROM `")+tinca+"` i order by transe desc limit "+dszahl,ZDB);
+  RS listi(My,string("SELECT * from (SELECT date_format(transe,'%d.%m.%y %H:%i:%s') p0,right(concat(space(85),left(titel,85)),85) p1,"
+        "fsize p2,tsid p3,id p4 FROM `")+tinca+"` i order by transe desc limit "+dszahl+") i order by p0",ZDB);
   while (cerg=listi.HolZeile(),cerg?*cerg:0) {
     cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(85)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(17)<<*(*cerg+2)<<"|"
       <<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
@@ -4410,18 +4410,18 @@ int paramcl::pruefhyla()
   //          systemrueck(cmd,1,1,0,wahr,wahr,"berechtige mich"); 
   //          cmd=string("chmod 666 ")+this->hmodem;
   //          systemrueck(cmd,1,1,0,wahr,wahr,"berechtige mich"); 
-  if (this->hylazukonf && !frischkonfiguriert) {
+  if (this->hylazukonf || frischkonfiguriert) {
     //    hconfig(this,obverb,oblog); // countrycode, citycode/areacode, longdistancepraefix, internationalprefix
-    hconfigtty(this,obverb,oblog);
+    if (!frischkonfiguriert) hconfigtty(this,obverb,oblog);
     if (!systemrueck(string("systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) {
       systemrueck("systemctl stop hylafax",obverb,oblog);
       systemrueck("systemctl disable hylafax",obverb,oblog);
       systemrueck(string("killall ")+this->sfaxgetty->ename+" "+this->shfaxd->ename+" "+this->sfaxq->ename,obverb,oblog);
-      if (!systemrueck(string("systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) {
-        systemrueck(string("systemctl enable ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog);
-        this->hylazukonf=0;
-      } // if (!systemrueck(string("systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
     } // if (!systemrueck(string("systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
+    if (!systemrueck(string("systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) {
+      systemrueck(string("systemctl enable ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog);
+      this->hylazukonf=0;
+    } // if (!systemrueck(string("systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
   } // if (this->hylazukonf && !frischkonfiguriert) 
   // systemrueck("grep -rl 'faxcron\\|faxqclean' /etc/cron* | /usr/bin/xargs ls -l;",obverb,oblog); 
   // // in hylafax: /etc/cron.daily/suse.de-faxcron, 

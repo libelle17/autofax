@@ -131,7 +131,7 @@ Preconditions see below</p>
 <p style="margin-left:11%; margin-top: 1em">Ideally, the
 program should have installed itsself after a single call
 (see above) in a self-running way (especially on
-openSUSE-Leap 42.1 or Ubuntu 14.04, possibly on others;
+openSUSE-Leap 42.1 or Ubuntu 15.10, possibly on others;
 systemctl (systemd) should run). <br>
 Then a directory e.g. &rsquo;<b>zufaxen</b>&rsquo; exists,
 in which e.g. users in a network (e.g. via a samba share)
@@ -525,7 +525,7 @@ being written, if necessary.</p></td></tr>
 
 
 <p style="margin-left:11%; margin-top: 1em">The program was
-adjusted to an installation of opensuse 41.2 or Ubuntu 14.04
+adjusted to an installation of opensuse 41.2 or Ubuntu 15.10
 with standard options. Further needed programs will be
 installed by the makefile or by autofax itsself via zypper
 or apt-get, if possible. Those are: <b><br>
