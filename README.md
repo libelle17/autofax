@@ -1,7 +1,3 @@
-<!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sun May 29 18:53:47 2016 -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
