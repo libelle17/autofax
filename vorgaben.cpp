@@ -3,7 +3,7 @@
 #include "autofax.h"
 
 enum Txvg_ {
-  T_vorgaben,
+  T_VorgbSpeziell,
   T_vgMAX,
 };
 
@@ -15,36 +15,22 @@ class Txvgcl: public TxB
 };
 
 const char *Txvgcl::TextC[T_vgMAX+1][Smax]={
-      // T_vorgaben
-      {"vorgaben()","preferences()"},
+      // T_VorgbSpeziell
+      {"VorgbSpeziell()","specificprefs()"},
       {"",""}
 };
 
 
 class Txvgcl Txv;
 
-void paramcl::vorgaben()
+void paramcl::VorgbSpeziell()
 {
-  Log(violetts+Txv[T_vorgaben]+schwarz,obverb,oblog);
+  Log(violetts+Txv[T_VorgbSpeziell]+schwarz,obverb,oblog);
   //  langu="d"; lgnzuw();
-  hylazuerst=0;
-  // hmodemstr="ACM";
-  maxcapinr="3";
-  maxhylanr="3";
-  gleichziel=1;
   dbq="faxeinp";
-  anfaxstr="an Fax";
-  ancfaxstr="an cFax";
-  anhfaxstr="an hFax";
-  anstr=" an ";
-  undstr="und";
   muser="praxis";
-  mpwd="";
-  countrycode="49";
   citycode="8131";
   msn="616381";
-  LongDistancePrefix="0";
-  InternationalPrefix="00";
   LocalIdentifier="DiabDachau";
   cFaxUeberschrift="Diabetologie Dachau";
 
@@ -122,15 +108,7 @@ void paramcl::vorgaben()
       }
     }
   }
-#ifdef _WIN32
-  // char lpszUsername[255]; DWORD dUsername = sizeof(lpszUsername); GetUserName(lpszUsername, &dUsername);
-  dcpt = sizeof(cpt);
-  GetComputerName(cpt,&dcpt);
-#elif linux
-  // uid_t userId = getuid(); passwd* pw = getpwuid(userId); pw->pw_name<<endl;
-  cptlen = MAXHOSTNAMELEN;
-  gethostname(cpt, cptlen);
-#endif
+  // cpt in VorgbAllg festgelegt
   if (strstr(cpt,"linux")){
     host = "localhost";
     if (!strcmp(cpt,"linux2")) {
@@ -144,7 +122,6 @@ void paramcl::vorgaben()
       gvz="/DATA/Patientendokumente/nichtgefaxt";
       empfvz="/DATA/Patientendokumente";
     }
-    cronminut="2";
   } else {
     // if (!strcmp(cpt,"ANMELDL") || !strcmp(cpt,"SZSNEU"))
     //			host = "linux1";
@@ -153,16 +130,16 @@ void paramcl::vorgaben()
   }
   if (strstr(cpt,"linux")){
     if (!strcmp(cpt,"linux2")) {
-      static zielmustercl zmi[]={zielmustercl("/vista/P","[Aa]rztbrief"),zielmustercl("/vista/P/gefaxt","")};
+      static zielmustercl zmi[]={zielmustercl("[Aa]rztbrief","/vista/P"),zielmustercl("","/vista/P/gefaxt")};
       zmvp=zmi;
       zmvzn=sizeof zmi/sizeof *zmi;
     } else { // linux1
-      static zielmustercl zmi[]={zielmustercl("/DATA/Patientendokumente","[Aa]rztbrief"),zielmustercl("/DATA/Patientendokumente/gefaxt","")};
+      static zielmustercl zmi[]={zielmustercl("[Aa]rztbrief","/DATA/Patientendokumente"),zielmustercl("","/DATA/Patientendokumente/gefaxt")};
       zmvp=zmi;
       zmvzn=sizeof zmi/sizeof *zmi;
     }
     zmvz=ltoan(zmvzn);
   } else {
   }
-} // void paramcl::vorgaben()
+} // void paramcl::VorgbSpeziell()
 
