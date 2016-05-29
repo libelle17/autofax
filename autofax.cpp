@@ -1,3 +1,4 @@
+// Namenskonvention: erste Praeferenz wurde darauf gelegt, dass mit der Editor-Suchfunktion moeglichst alle gleichen Bezeichner gefunden werden koennen, zweite Praeferenz darauf, dass deutsche und englische Namenbestandteile moeglichst gut gemischt werden
 #ifdef linux
 // #include <pgsql/libpq-fe.h> // PGconn
 #include <utime.h> // utime(
@@ -1209,8 +1210,8 @@ const DBSTyp myDBS=MySQL;
 
 #include "autofax.h"
 constexpr const char *paramcl::moeglhvz[2];
-
-zielmustercl::zielmustercl(const char * const vziel,const char * const vmuster):ziel(string(vziel)),muster(string(vmuster))
+// wird nur in VorgbSpeziell gebraucht:
+zielmustercl::zielmustercl(const char * const vmuster,const char * const vziel):muster(vmuster),ziel(vziel)
 {
  kompilier();
 };  // zielmustercl
@@ -1225,6 +1226,19 @@ int zielmustercl::kompilier() {
   }
   return 0;
 } // zielmustercl::zielmustercl
+
+int zielmustercl::setzemuster(const string& vmuster)
+{
+ muster=vmuster;
+ return kompilier();
+}
+int zielmustercl::obmusterleer() {
+ return muster.empty();
+}
+
+const string& zielmustercl::holmuster() {
+ return muster;
+}
 
 // wird aufgerufen in: loeschefax, untersuchespool, capiwausgeb, setzhylastat, hylaausgeb
 inline const char* FxStatS(FxStat *i) 
@@ -1470,13 +1484,13 @@ string paramcl::getzielvz(const string& qdatei)
   for(zielmustercl *zmakt=zmp;1;zmakt++){
     if (!regexec(&(zmakt->regex),qdatei.c_str(),0,NULL,0))
       return zmakt->ziel;
-    if (zmakt->muster.empty()) break;
+    if (zmakt->obmusterleer()) break;
   }
   return "";
 } // getzielvz
 
 // wird aufgerufen in: getcommandline
-int paramcl::gcpZuweis(const string& name, string *wert)
+int paramcl::setzegcp(const string& name, string *wert)
 {
   for(size_t ind=0;ind<gcs;ind++) {
     if (cgconfp[ind].name==name) {
@@ -1485,7 +1499,7 @@ int paramcl::gcpZuweis(const string& name, string *wert)
     }
   }
   return 1;
-} // int paramcl::gcpZuweis(const string& name, string *wert)
+} // int paramcl::setzegcp(const string& name, string *wert)
 
 // passt einen Dateinamen gemaess der vorhandenen Dateien in allen moegenlichen Zielverzeichnissen so an
 // dass er beim Umwandeln in PDF und Verschieben als erfolgreiches oder nicht erfolgreiches Fax sich nicht ueberschneidet
@@ -1560,7 +1574,7 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
   }
 } // WVZinDatenbank
 
-// in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
+// in lieskonfein, getcommandl0, getcommandline, rueckfragen
 void paramcl::lgnzuw()
 {
   if (langu=="d" || langu=="D" || langu=="deutsch" || langu=="Deutsch") {
@@ -1736,7 +1750,8 @@ int paramcl::setzhylavz()
 } // int paramcl::setzhylavz()
 
 // wird aufgerufen in: main
-void paramcl::capivorgallg()
+// allgemeine Vorgaben, fuer Deutschland
+void paramcl::VorgbAllg()
 {
   static cppSchluess capiconf[]={{"spool_dir"},{"fax_user_dir"},{"send_tries"},{"send_delays"},{"outgoing_MSN"},
                      {"dial_prefix"},{"fax_stationID"},{"fax_headline"},{"fax_email_from"},{"outgoing_timeout"}};
@@ -1754,6 +1769,31 @@ void paramcl::capivorgallg()
   cdonevz = mitvtz(spoolcapivz)+"done";
   cfailedvz = mitvtz(spoolcapivz)+"failed";
 
+  hylazuerst=0;
+  // hmodemstr="ACM";
+  maxcapinr="3";
+  maxhylanr="3";
+  gleichziel=1;
+  anfaxstr="an Fax";
+  ancfaxstr="an cFax";
+  anhfaxstr="an hFax";
+  anstr=" an ";
+  undstr="und";
+  countrycode="49";
+  LongDistancePrefix="0";
+  InternationalPrefix="00";
+   // um z.B. spezielle Vorgaben (s. VorgbSpeziell) vom Server abhaengig machen zu koennen
+#ifdef _WIN32
+  // char lpszUsername[255]; DWORD dUsername = sizeof(lpszUsername); GetUserName(lpszUsername, &dUsername);
+  dcpt = sizeof(cpt);
+  GetComputerName(cpt,&dcpt);
+#elif linux
+  // uid_t userId = getuid(); passwd* pw = getpwuid(userId); pw->pw_name<<endl;
+  cptlen = MAXHOSTNAMELEN;
+  gethostname(cpt, cptlen);
+#endif
+  cronminut="2";
+
   cuser="";
   for(size_t i=cfaxconf.zn.size();i>0;) {
     int erg;
@@ -1766,9 +1806,9 @@ void paramcl::capivorgallg()
   }
   if (cuser.empty()) hylazuerst=1;
   pruefcvz();
-} // void paramcl::capivorgallg()
+} // void paramcl::VorgbAllg()
 
-// wird aufgerufen in: konfcapi, capivorgallg
+// wird aufgerufen in: konfcapi, VorgbAllg
 void paramcl::pruefcvz()
 {
   kuerzevtz(&cfaxuservz);
@@ -1797,50 +1837,50 @@ void paramcl::lieskonfein()
     rzf=0;
     unsigned lfd=0;
     if (langu.empty()) {
-      if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&langu); else rzf=1; // Sprache aus der Commandline geht vor Konfiguration
+      if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&langu); else rzf=1; // Sprache aus der Commandline geht vor Konfiguration
       lgnzuw();
     } 
     lfd++;
   // <<"lieskonfein vor  obcapi: "<<(int)obcapi<<endl;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&obcapi); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&obcapi); else rzf=1; lfd++;
   // <<"lieskonfein nach obcapi: "<<(int)obcapi<<endl;
     konfobcapi=obcapi;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&obhyla); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&obhyla); else rzf=1; lfd++;
     konfobhyla=obhyla;
-    if (obcapi) if (obhyla) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&hylazuerst); else rzf=1;} lfd++;
-    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&maxcapinr); else rzf=1;} lfd++;
-    if (obcapi) if (obhyla) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&maxhylanr); else rzf=1;} lfd++;
-    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&cuser); else rzf=1;} lfd++;
-    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&countrycode); else rzf=1;} lfd++;
-    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&citycode); else rzf=1;} lfd++;
-    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&msn); else rzf=1;} lfd++;
-    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&LongDistancePrefix); else rzf=1;} lfd++;
-    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&InternationalPrefix); else rzf=1;} lfd++;
-    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&LocalIdentifier); else rzf=1;} lfd++;
-    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&cFaxUeberschrift); else rzf=1;} lfd++;
-    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&cklingelzahl); else rzf=1;} lfd++;
-    if (obhyla) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&hmodem); else rzf=1;} lfd++;
-    if (obhyla) {if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&hklingelzahl); else rzf=1;} lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&gleichziel); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&zufaxenvz); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&wvz); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&gvz); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&empfvz); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&cronminut); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&anfaxstr); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&ancfaxstr); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&anhfaxstr); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&anstr); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&undstr); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&host); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&muser); else rzf=1; lfd++;
+    if (obcapi) if (obhyla) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&hylazuerst); else rzf=1;} lfd++;
+    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&maxcapinr); else rzf=1;} lfd++;
+    if (obcapi) if (obhyla) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&maxhylanr); else rzf=1;} lfd++;
+    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&cuser); else rzf=1;} lfd++;
+    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&countrycode); else rzf=1;} lfd++;
+    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&citycode); else rzf=1;} lfd++;
+    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&msn); else rzf=1;} lfd++;
+    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&LongDistancePrefix); else rzf=1;} lfd++;
+    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&InternationalPrefix); else rzf=1;} lfd++;
+    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&LocalIdentifier); else rzf=1;} lfd++;
+    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&cFaxUeberschrift); else rzf=1;} lfd++;
+    if (obcapi) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&cklingelzahl); else rzf=1;} lfd++;
+    if (obhyla) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&hmodem); else rzf=1;} lfd++;
+    if (obhyla) {if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&hklingelzahl); else rzf=1;} lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&gleichziel); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&zufaxenvz); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&wvz); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&gvz); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&empfvz); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&cronminut); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&anfaxstr); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&ancfaxstr); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&anhfaxstr); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&anstr); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&undstr); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&host); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&muser); else rzf=1; lfd++;
     if (!gconf[lfd].wert.empty()) mpwd=XOR(string(gconf[lfd].wert),pk); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&dbq); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&logvz); else rzf=1; lfd++;
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&logdname); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&dbq); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&logvz); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&logdname); else rzf=1; lfd++;
     loggespfad = logvz+vtz+logdname;
     logdt = &loggespfad.front();
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&sqlz); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&sqlz); else rzf=1; lfd++;
     sqlzn=atol(sqlz.c_str());
     // Vorgaben uebernehmen
     if (sqlzn) {
@@ -1854,7 +1894,7 @@ void paramcl::lieskonfein()
     // jetzt erst stehen die Variablen fuer alle SQL-Befehle zur Verfuegung
     afconf.auswert(sqlconfp,sqlzn,obverb);
 
-    if (!gconf[lfd].wert.empty()) gconf[lfd].zuweis(&zmz); else rzf=1; lfd++;
+    if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&zmz); else rzf=1; lfd++;
     uchar zmda=0; // 1= Zielmuster in der Konfigurationsdatei schon festgelegt
     for(int iru=0;;iru++) {
       zmzn=atol(zmz.c_str());
@@ -1868,21 +1908,21 @@ void paramcl::lieskonfein()
     zmp=new zielmustercl[zmzn];
     // Vorgaben uebernehmen
     for(size_t i=0;i<(zmzn<zmvzn?zmzn:zmvzn);i++) {
-     zmp[i].muster=zmvp[i].muster;
+     zmp[i].setzemuster(zmvp[i].holmuster());
      zmp[i].ziel=zmvp[i].ziel;
     }
     for (size_t i=0;i<zmzn;i++) {
      zmconfp[2*i].name=string("ZMMuster_")+ltoan(i+1);
-     zmconfp[2*i].beleg(&zmp[i].muster);
+     zmconfp[2*i].setze(&zmp[i].holmuster());
      zmconfp[2*i+1].name=string("ZMZiel_")+ltoan(i+1);
-     zmconfp[2*i+1].beleg(&zmp[i].ziel);
+     zmconfp[2*i+1].setze(&zmp[i].ziel);
     }
     if (zmda) {
     // jetzt stehen die Variablen fuer die Zielverzeichnisse zur Verfuegung
       afconf.auswert(zmconfp,zmzn+zmzn,obverb);
       for(size_t i=0;i<zmzn;i++) {
         if (i==zmzn-1) zmconfp[2*i].wert=""; // das letzte Muster muss "" sein, damit jedes Fax beruecksichtigt wird
-        zmp[i].muster=zmconfp[2*i].wert;
+        zmp[i].setzemuster(zmconfp[2*i].wert);
         zmp[i].ziel=zmconfp[2*i+1].wert;
       }
     }
@@ -1964,11 +2004,11 @@ int paramcl::getcommandline()
   }
   if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
   if (altckzl!=cklingelzahl || rzf) {
-    gcpZuweis("cklingelzahl",&cklingelzahl); // zum Schreiben in die /usr/local/sbin/autofax.conf in autokonfschreib
+    setzegcp("cklingelzahl",&cklingelzahl); // zum Schreiben in die /usr/local/sbin/autofax.conf in autokonfschreib
     capizukonf=1;
   }
   if (altcuser!=cuser || rzf) {
-    gcpZuweis("cuser",&cuser);
+    setzegcp("cuser",&cuser);
     capizukonf=1;
   }
   if (altlogdname!=logdname || altlogvz!=logvz) {
@@ -1978,7 +2018,7 @@ int paramcl::getcommandline()
     }
   }
   if (althkzl!=hklingelzahl || rzf) {
-    gcpZuweis("hklingelzahl",&hklingelzahl);
+    setzegcp("hklingelzahl",&hklingelzahl);
     hylazukonf=1;
   }
 
@@ -2012,7 +2052,7 @@ void paramcl::rueckfragen()
     if (cgconfp[++lfd].wert.empty() || rzf) {
       langu=holstrings("Language/Sprache/Lingue/Lingua",&sprachen, &langu);
       lgnzuw();
-      cgconfp[lfd].beleg(&langu);
+      cgconfp[lfd].setze(&langu);
     }
   // <<"rueckfragen 1 vor  obcapi: "<<(int)obcapi<<endl;
     if (cgconfp[++lfd].wert.empty() || rzf) {
@@ -2022,7 +2062,7 @@ void paramcl::rueckfragen()
       } else {
         obcapi=0;
       }
-      cgconfp[lfd].beleg(&obcapi);
+      cgconfp[lfd].setze(&obcapi);
     }
   // <<"rueckfragen 1 nach obcapi: "<<(int)obcapi<<endl;
     if (cgconfp[++lfd].wert.empty() || rzf) {
@@ -2032,7 +2072,7 @@ void paramcl::rueckfragen()
       } else {
         obhyla=0;
       }
-      cgconfp[lfd].beleg(&obhyla);
+      cgconfp[lfd].setze(&obhyla);
     }
     if (obcapi) {
       if (obhyla) {
@@ -2040,15 +2080,15 @@ void paramcl::rueckfragen()
           const char *ferkl[]={"hylafax","capisuite"};
           erg=holbuchst(Tx[T_Soll_vorrangig_hylafax_gewaehlt_werden],string(Tx[T_j_af])+"n",ferkl,"jJyYoOsSnN",hylazuerst?Tx[T_j_af]:"n");
           hylazuerst= strchr("jyJYoOsS",(int)erg)?1:0;
-          cgconfp[lfd].beleg(&hylazuerst);
+          cgconfp[lfd].setze(&hylazuerst);
         }
         if (cgconfp[++lfd].wert.empty() || rzf) {
           maxcapinr=holzahl(Tx[T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird],maxcapinr.c_str());
-          cgconfp[lfd].beleg(&maxcapinr);
+          cgconfp[lfd].setze(&maxcapinr);
         }
         if (cgconfp[++lfd].wert.empty() || rzf) {
           maxhylanr=holzahl(Tx[T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird],maxhylanr.c_str());
-          cgconfp[lfd].beleg(&maxhylanr);
+          cgconfp[lfd].setze(&maxhylanr);
         }
         // also: obcapi, aber nicht obhyla
       } else {
@@ -2074,15 +2114,15 @@ void paramcl::rueckfragen()
            cuser=tmpcuser;
          */
         cuser=holstrings(Tx[T_Linux_Benutzer_fuer_Capisuite],&benutzer,&cuser);
-        cgconfp[lfd].beleg(&cuser);
+        cgconfp[lfd].setze(&cuser);
       }
       if (cgconfp[++lfd].wert.empty() || rzf) {
         countrycode=holstring(Tx[T_Hylafax_eigene_Landesvorwahl_ohne_plus_oder_00],&countrycode);
-        cgconfp[lfd].beleg(&countrycode);
+        cgconfp[lfd].setze(&countrycode);
       }
       if (cgconfp[++lfd].wert.empty() || rzf) {
         citycode=holstring(Tx[T_Hylafax_eigene_Ortsvorwahl_ohne_0],&citycode);
-        cgconfp[lfd].beleg(&citycode);
+        cgconfp[lfd].setze(&citycode);
       }
     } else {
       lfd+=6; // nicht obcapi, aber obhyla kaeme hier
@@ -2092,7 +2132,7 @@ void paramcl::rueckfragen()
     if (obcapi || obhyla) {
       if (cgconfp[++lfd].wert.empty() || rzf) {
         msn=holstring(Tx[T_Hylafax_und_Capisuite_eigene_MSN_Faxnummer_ohne_Vorwahl],&msn);
-        cgconfp[lfd].beleg(&msn);
+        cgconfp[lfd].setze(&msn);
       }
     } else {
       lfd++; 
@@ -2101,23 +2141,23 @@ void paramcl::rueckfragen()
     if (obcapi) {
       if (cgconfp[++lfd].wert.empty() || rzf) {
         LongDistancePrefix=holstring(Tx[T_Hylafax_Praefix_fuer_ausserorts_zB_0],&LongDistancePrefix);
-        cgconfp[lfd].beleg(&LongDistancePrefix);
+        cgconfp[lfd].setze(&LongDistancePrefix);
       }
       if (cgconfp[++lfd].wert.empty() || rzf) {
         InternationalPrefix=holstring(Tx[T_Hylafax_Praefix_fuer_das_Ausland_zB_00],&InternationalPrefix);
-        cgconfp[lfd].beleg(&InternationalPrefix);
+        cgconfp[lfd].setze(&InternationalPrefix);
       }
       if (cgconfp[++lfd].wert.empty() || rzf) {
         LocalIdentifier=holstring(Tx[T_Hylafax_bis_10_Buchstabe_fuer_eigenen_Namen],&LocalIdentifier);
-        cgconfp[lfd].beleg(&LocalIdentifier);
+        cgconfp[lfd].setze(&LocalIdentifier);
       }
       if (cgconfp[++lfd].wert.empty() || rzf) {
         cFaxUeberschrift=holstring(Tx[T_Capisuite_bis_20_Buchstaben_fuer_eigenen_Namen],&cFaxUeberschrift);
-        cgconfp[lfd].beleg(&cFaxUeberschrift);
+        cgconfp[lfd].setze(&cFaxUeberschrift);
       }
       if (cgconfp[++lfd].wert.empty() || rzf) {
         cklingelzahl=holzahl(Tx[T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt],cklingelzahl.c_str());
-        cgconfp[lfd].beleg(&cklingelzahl);
+        cgconfp[lfd].setze(&cklingelzahl);
       }
     } else {
       lfd+=5; // nicht obcapi, aber obhyla kaeme hier
@@ -2126,11 +2166,11 @@ void paramcl::rueckfragen()
     if (obhyla) {
       if (cgconfp[++lfd].wert.empty() || rzf) {
         hmodem=holstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,hmodem.empty()?&modems[0]:&hmodem);
-        cgconfp[lfd].beleg(&hmodem);
+        cgconfp[lfd].setze(&hmodem);
       }
       if (cgconfp[++lfd].wert.empty() || rzf) {
         hklingelzahl=holzahl(Tx[T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt],hklingelzahl.c_str());
-        cgconfp[lfd].beleg(&hklingelzahl);
+        cgconfp[lfd].setze(&hklingelzahl);
       }
     } else {
       lfd+=2;
@@ -2140,56 +2180,56 @@ void paramcl::rueckfragen()
       erg=holbuchst(Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden],
           string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",gleichziel?Tx[T_j_af]:"n");
       gleichziel= strchr("jyJYoOsS",(int)erg)?1:0;
-      cgconfp[lfd].beleg(&gleichziel);
+      cgconfp[lfd].setze(&gleichziel);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       zufaxenvz=holverz(Tx[T_Verzeichnis_mit_zu_faxenden_Dateien],&zufaxenvz);
-      cgconfp[lfd].beleg(&zufaxenvz);
+      cgconfp[lfd].setze(&zufaxenvz);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       wvz=holverz(Tx[T_Verzeichnis_mit_wartenden_Dateien],&wvz);
-      cgconfp[lfd].beleg(&wvz);
+      cgconfp[lfd].setze(&wvz);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       gvz=holverz(Tx[T_Verzeichnis_mit_gescheiterten_Dateien],&gvz);
-      cgconfp[lfd].beleg(&gvz);
+      cgconfp[lfd].setze(&gvz);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       empfvz=holverz(Tx[T_Verzeichnis_fuer_empfangene_Faxe],&empfvz);
-      cgconfp[lfd].beleg(&empfvz);
+      cgconfp[lfd].setze(&empfvz);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       cronminut=holzahl(Tx[T_Alle_wieviel_Minuten_soll_Autofax_aufgerufen_werden_0_ist_gar_nicht],&cronminut);
-      cgconfp[lfd].beleg(&cronminut);
+      cgconfp[lfd].setze(&cronminut);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       anfaxstr=holstring(Tx[T_Buchstabenfolge_vor_erster_Faxnummer],&anfaxstr);
-      cgconfp[lfd].beleg(&anfaxstr);
+      cgconfp[lfd].setze(&anfaxstr);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       ancfaxstr=holstring(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Capisuite],&ancfaxstr);
-      cgconfp[lfd].beleg(&ancfaxstr);
+      cgconfp[lfd].setze(&ancfaxstr);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       anhfaxstr=holstring(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax],&anhfaxstr);
-      cgconfp[lfd].beleg(&anhfaxstr);
+      cgconfp[lfd].setze(&anhfaxstr);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       anstr=holstring(Tx[T_Buchstabenfolge_vor_erstem_Adressaten],&anstr);
-      cgconfp[lfd].beleg(&anstr);
+      cgconfp[lfd].setze(&anstr);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       undstr=holstring(Tx[T_Buchstabenfolge_vor_weiterem_Adressaten_sowie_weiterer_Faxnummer],&undstr);
-      cgconfp[lfd].beleg(&undstr);
+      cgconfp[lfd].setze(&undstr);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       host=holstring(Tx[T_Host_fuer_MySQL_MariaDB_Datenbank],&host);
-      cgconfp[lfd].beleg(&host);
+      cgconfp[lfd].setze(&host);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       string Frage=Tx[T_Benutzer_fuer_MySQL_MariaDB];
       muser=holstring(Frage.c_str(),&muser);
-      cgconfp[lfd].beleg(&muser);
+      cgconfp[lfd].setze(&muser);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       string Frage=string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Tx[T_fuer_Benutzer]+drot+muser+schwarz+"'";
@@ -2198,25 +2238,25 @@ void paramcl::rueckfragen()
       }
       while (mpwd.empty());
       string pwdstr=XOR(mpwd,pk);
-      cgconfp[lfd].beleg(&pwdstr);
+      cgconfp[lfd].setze(&pwdstr);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       dbq=holstring(string(Tx[T_Datenbankname_fuer_MySQL_MariaDB_auf])+host+"'",&dbq);
-      cgconfp[lfd].beleg(&dbq);
+      cgconfp[lfd].setze(&dbq);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       logvz=holverz(Tx[T_Logverzeichnis],&logvz);
-      cgconfp[lfd].beleg(&logvz);
+      cgconfp[lfd].setze(&logvz);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
       logdname=holstring(Tx[T_Logdateiname],&logdname);
-      cgconfp[lfd].beleg(&logdname);
+      cgconfp[lfd].setze(&logdname);
     }
     loggespfad = string(logvz)+vtz+logdname;
     logdt = &loggespfad.front();
     if (cgconfp[++lfd].wert.empty() || rzf) {
       string  nsqlz=holzahl(Tx[T_Zahl_der_SQL_Befehle_fuer_Namenszuordnung],&sqlz);
-      cgconfp[lfd].beleg(&nsqlz);
+      cgconfp[lfd].setze(&nsqlz);
       size_t nsqlzn=atol(nsqlz.c_str());
       static cppSchluess *nsqlconfp= new cppSchluess[nsqlzn];
       // bisherige Einstellung
@@ -2232,7 +2272,7 @@ void paramcl::rueckfragen()
       for(size_t akt=0;akt<nsqlzn;akt++) {
         string zwi=holstring(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt+1),&nsqlconfp[akt].wert);
         nsqlconfp[akt].name=string("SQL_")+ltoan(akt+1);
-        nsqlconfp[akt].beleg(&zwi);
+        nsqlconfp[akt].setze(&zwi);
       }
       sqlzn=nsqlzn;
       sqlconfp=nsqlconfp;
@@ -2245,11 +2285,11 @@ void paramcl::rueckfragen()
         if (nzmzn>0) break;
         nzmz="1";
       }
-      cgconfp[lfd].beleg(&nzmz);
+      cgconfp[lfd].setze(&nzmz);
       static cppSchluess *nzmconfp= new cppSchluess[nzmzn+nzmzn];
       for(size_t akt=0;akt<(nzmzn<zmzn?nzmzn:zmzn);akt++) {
        if (nzmconfp[2*akt].wert.empty())
-        nzmconfp[2*akt].wert=zmp[akt].muster;
+        nzmconfp[2*akt].wert=zmp[akt].holmuster();
        if (nzmconfp[2*akt+1].wert.empty())
         nzmconfp[2*akt+1].wert=zmp[akt].ziel;
       }
@@ -2259,14 +2299,14 @@ void paramcl::rueckfragen()
           string zwi=holstring(string("Zielmuster Nr. ")+ltoan(akt+1),&nzmconfp[2*akt].wert);
           nzmconfp[2*akt].name=string("ZMMuster_")+ltoan(akt+1);
           if (akt==nzmzn-1) zwi.clear(); // das letzte Muster muss leer sein, damit jede Datei irgendwo hinkommt
-          nzmconfp[2*akt].beleg(&zwi);
+          nzmconfp[2*akt].setze(&zwi);
           zwi=holstring(string("Zielverzeichnis Nr. ")+ltoan(akt+1),&nzmconfp[2*akt+1].wert);
           nzmconfp[2*akt+1].name=string("ZMZiel_")+ltoan(akt+1);
-          nzmconfp[2*akt+1].beleg(&zwi);
+          nzmconfp[2*akt+1].setze(&zwi);
         }
         zmp=new zielmustercl[nzmzn];
         for(uint imu=0;imu<nzmzn;imu++) {
-          zmp[imu].muster=nzmconfp[2*imu].wert;
+          zmp[imu].setzemuster(nzmconfp[2*imu].wert);
           fehler+=zmp[imu].kompilier();
           zmp[imu].ziel=nzmconfp[2*imu+1].wert;
         }
@@ -2288,19 +2328,20 @@ void paramcl::rueckfragen()
   kuerzevtz(&empfvz);
   for(zielmustercl *zmakt=zmp;1;zmakt++){
     kuerzevtz(&zmakt->ziel);
-    if (zmakt->muster.empty()) break;
+    if (zmakt->obmusterleer()) break;
   }
 } // void paramcl::rueckfragen()
 
 // wird aufgerufen in: main
 void paramcl::autofkonfschreib()
 {
+//  <<"obverb in autokonfschreib: "<<(int)obverb<<endl;
   Log(violetts+Tx[T_autokonfschreib]+schwarz+", "+Tx[T_zu_schreiben]+((rzf || capizukonf || hylazukonf || zmzukonf)?Tx[T_ja]:Tx[T_nein]),obverb,oblog);
   if (rzf || capizukonf || hylazukonf || zmzukonf) {
     Log(violetts+Tx[T_schreibe_Konfigurkation]+schwarz,obverb,oblog);
     for (size_t i=0;i<gcs;i++) {
-     if (cgconfp[i].name=="obhyla") cgconfp[i].beleg(&obhyla);
-     else if (cgconfp[i].name=="obcapi") cgconfp[i].beleg(&obcapi);
+     if (cgconfp[i].name=="obhyla") cgconfp[i].setze(&obhyla);
+     else if (cgconfp[i].name=="obcapi") cgconfp[i].setze(&obcapi);
     }
     cppSchluess *schlp[3]={cgconfp,sqlconfp,zmconfp};
     size_t groe[sizeof schlp/sizeof *schlp]={gcs,sqlzn,zmzn+zmzn};
@@ -2543,11 +2584,11 @@ void paramcl::verzeichnisse()
   systemrueck(string("mkdir -p ")+empfvz,obverb,oblog);
   for(zielmustercl *zmakt=zmp;1;zmakt++){
     systemrueck(string("mkdir -p ")+zmakt->ziel,obverb,oblog);
-    if (zmakt->muster.empty()) break;
+    if (zmakt->obmusterleer()) break;
   }
   for(uint imu=0;imu<this->zmzn;imu++) {
     char *imus = ltoan(imu);
-    Log(string(Tx[T_Muster])+imus+": '"+rot+this->zmp[imu].muster+schwarz+"'",this->obverb>1,this->oblog);
+    Log(string(Tx[T_Muster])+imus+": '"+rot+this->zmp[imu].holmuster()+schwarz+"'",this->obverb>1,this->oblog);
     Log(string(Tx[T_Ziel])+imus+":   '"+rot+this->zmp[imu].ziel+schwarz+"'",this->obverb>1,this->oblog);
   }
 } // paramcl:: verzeichnisse()
@@ -2621,7 +2662,7 @@ void paramcl::pruefsamba()
   vzn.push_back(&empfvz);
   for(zielmustercl *zmakt=zmp;1;zmakt++){
     vzn.push_back(&zmakt->ziel);
-    if (zmakt->muster.empty()) break;
+    if (zmakt->obmusterleer()) break;
   }
   uchar gef[vzn.size()];
   for(unsigned k=0;k<vzn.size();k++) {
@@ -2956,7 +2997,7 @@ int paramcl::loescheallewartende(int obverb, int oblog)
     erg+=alled.size();
     for(size_t i=0;i<alled.size();i++) {
       string transalle=alled[i];
-      ersetzeAlle(&transalle,"q","");  
+      ersetzAlle(&transalle,"q","");  
       cmd=string("faxrm ")+transalle;
       if (systemrueck(cmd,obverb,oblog)) {
         RS loe(My,string("delete from `")+spooltab+"` where hylanr="+transalle);
@@ -3862,11 +3903,11 @@ string zielname(const string& qdatei, zielmustercl *zmp, uchar wieweiterzaehl=0,
   for(zielmustercl *zmakt=zmp;1;zmakt++){
     int reti=regexec(&(zmakt->regex),qdatei.c_str(),0,NULL,0);
     Log(string(Tx[T_Datei])+rot+qdatei+schwarz+Tx[T_entspricht]+(reti?Tx[T_entsprichtnicht]:Tx[T_entsprichtdoch])+
-        Tx[T_Muster_Doppelpunkt]+rot+zmakt->muster+schwarz+"'",obverb,oblog);
+        Tx[T_Muster_Doppelpunkt]+rot+zmakt->holmuster()+schwarz+"'",obverb,oblog);
     if (!reti){
       return zielname(qdatei,zmakt->ziel,wieweiterzaehl,zieldatei,obverb,oblog);
     }
-    if (zmakt->muster.empty()) break;
+    if (zmakt->obmusterleer()) break;
   }
   return "";
 } // zielname
@@ -4816,7 +4857,7 @@ void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnam
   for(unsigned snr=0;snr<pmp->sqlzn;snr++) {
     Log(string(rot)+"snr: "+schwarz+ltoan(snr),obverb,oblog);
     Log(string(rot)+"sql: "+schwarz+pmp->sqlconfp[snr].wert,obverb,oblog);
-    RS rhae(pmp->My,ersetzeAllezu(pmp->sqlconfp[snr].wert,"&&faxnr&&",trimfaxnr.c_str())); // (const char*)trimfaxnr));
+    RS rhae(pmp->My,ersetzAllezu(pmp->sqlconfp[snr].wert,"&&faxnr&&",trimfaxnr.c_str())); // (const char*)trimfaxnr));
     if (!rhae.obfehl) {
       Log(string("obfehl: ")+ltoan((int)rhae.obfehl),obverb,oblog);
       char ***cerg;
@@ -5099,8 +5140,7 @@ int paramcl::xferlog(const string& jobid, string *erg, int obverb, int oblog)
   // vorwaerts braucht er fuer diese Datei ca. 9000 clock()-Einheiten
   // #define profiler
 #ifdef profiler
-  double tstart, tende;
-  tstart=clock();
+  perfcl prf("xferlog");
 #endif
   int gefunden=0;
   const char sep = 9; // geht auch: "[[:blank:]]"
@@ -5108,7 +5148,7 @@ int paramcl::xferlog(const string& jobid, string *erg, int obverb, int oblog)
 #define mitgrep
 #ifdef mitgrep
   svec grueck;
-  systemrueck(string("grep \"")+sep+jobid+sep+"\" \""+datei+"\"",obverb,oblog,&grueck);
+  systemrueck(string("tac \"")+datei+"\" | grep -m 1 \""+sep+jobid+sep+"\"",obverb,oblog,&grueck);
   if (grueck.size()) {
     vector<string> tok;
     aufSplit(&tok,&grueck[grueck.size()-1],sep);
@@ -5156,8 +5196,7 @@ int paramcl::xferlog(const string& jobid, string *erg, int obverb, int oblog)
     } // if (ch==10)
   } // if f.is_open()
 #ifdef profiler
-  tende=clock();
-  cout<<"Dauer: "<<(tende-tstart)<<endl;
+  prf.ausgeb();
 #endif
   return gefunden;
 } // void xferlog(string varsphylavz, string jobid, string *erg)
@@ -5239,6 +5278,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     }
   }
   Log(violetts+"hylastat: "+blau+FxStatS(&fsf->hylastat)+schwarz,obverb,oblog);
+
 } // setzhylastat
 
 // wird aufgerufen in untersuchespool und zeigweitere
@@ -5304,8 +5344,8 @@ int main(int argc, char** argv)
   pm.logvorgaben();
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
   pm.pruefhardware();
-  pm.capivorgallg();
-  pm.vorgaben();
+  pm.VorgbAllg();
+  pm.VorgbSpeziell();
   pm.lieskonfein();
   
   if (!pm.getcommandline()) 

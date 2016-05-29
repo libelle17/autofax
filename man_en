@@ -68,14 +68,12 @@ make
 autofax
 .br
 (anwer some questions)
-.br
-Preconditions and list of all potential operating system commands by autofax see below
 .SH USAGE
 Ideally, the program should have installed itsself after a single call (see above) in a self-running way (especially on openSUSE-Leap 42.1 or Ubuntu 14.04, possibly on others; systemctl (systemd) should run).
 .br
 Then a directory e.g. '\fBzufaxen\fR' exists, in which e.g. users in a network (e.g. via a samba share) can deposit files to be faxed, e.g. 
 .br
-"\fBMedical report on Frank Ill to Dr. Healthy and Frank Ill to fax 099 987654321 and 088 887654321.doc\fR" (it could also be e.g. an *.xls, a *.jpg, a *.tif, a *.txt, a *pdf file; the section ' to Dr. Healthy and Frank Ill' is optional for the later allocation of the fax number(s) in the database, it may also be obmitted).
+"\fBMedical report on Frank Ill to Dr. Healthy and Frank Ill to fax 099 987654321 and 088 887654321.doc\fR" (it could also be e.g. an *.xls, a *.jpg, a *.tif, a *.txt, a *pdf file).
 .br
 When \fBautofax\fR is called for the next time (per default 2 minutes), the above mentioned example file will initially be copied and renamed into 
 .br
@@ -234,7 +232,7 @@ If more files have been generated, the successive movements and recordings are b
 .\" DateienHerricht(), WVZinDatenbank()
 .LP
 .HP 3 
-13) Depending on the configuration the functionaliy of \fBhylafax\fR and/or \fBcapisuite\fR is being checked and if necessary and possible restored (including by installation of those programs; in case of a fritzcard 2.0 or a fax modem USR5637 an additional automatic configuration can be done).
+13) Depending on the configuration the functionaliy of \fBhylafax\fR and/or \fBcapisuite\fR is being checked and if necessary and possible restored (including by installation of those programs)
 .LP
 .HP 3 
 14) In case of respective command line options faxes are being deleted and the program is finished.
@@ -262,21 +260,12 @@ The status of the mentioned faxes is being displayed.
 .HP 3 
 19) The configuration file is being written, if necessary.
 .LP
-.SH PRECONDITIONS
-The program was adjusted to an installation of opensuse 41.2 or Ubuntu 14.04 with standard options. Further needed programs will be installed by the makefile or by autofax itsself via zypper or apt-get, if possible. Those are:
-.br
-\fBmakefile:\fR
-.br
-g++, libmysqlclient-dev(el), libtiff-dev(el)
-.br
-\fBautofax:\fR
-.br
-cron, soffice, convert, hylafax+, hylafax+-client, kernel-source, fcpci-3.10.0, kkeil Factory repository, capisuite, capi4linux, i4l-isdnlog, mariadb.
+
 .SH ERRORS
-Please report any errors. Please report as well, if different hard- or software yield a requirement for a program modification.
+Please report any errors
 .SH LIABILITY
-The program has been written with the best aim and has been tested by the author.
+The program has been written with the best aim and has been tested extensively by the author.
 .br
 Nevertheless the author cannot be liable for any damage by the program.
 .SH AUTHOR
-Gerald Schade (geraldschade@gmx.de; www.diabdachau.de)
+Gerald Schade (geraldschade@gmx.de)

@@ -9,6 +9,7 @@ const char *dir = "ls -l ";
 #endif
 
 #ifdef linux
+#include <iomanip> // setprecision
 // const char *rot="\033[1;31m", *weinrot="\033[31m", *schwarz="\033[0m", *blau="\033[34m", *gelb="\033[33m"; // muss spaeter kompilerunabhaengig 
 const char *schwarz="\33[1;30m", *dgrau="\33[1;30m", *drot="\33[0;31m", *rot="\33[1;31m", *gruen="\33[0;32m", *hgruen="\33[0;32m",
       *braun="\33[0;33m", *gelb="\33[1;33m", *blau="\33[0;34m", *hblau="\33[1;34m", *violett="\33[0;35m", *hviolett="\33[1;35m",
@@ -127,12 +128,35 @@ argcl::argcl(int i,char** argv)
 
 const string drots=drot, rots=rot, schwarzs=schwarz, blaus=blau, gelbs=gelb, tuerkiss=tuerkis, violetts=violett;
 
+perfcl::perfcl(const string& vvonwo): vonwo(vvonwo)
+{
+  zp0=clock(); 
+}
+
+void perfcl::ausgeb(const string& stelle)
+{
+ zp1=clock();
+ cout<<gruen<<vonwo<<" "<<stelle<<" "<<++nr<<" Dauer: "<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" = "
+     <<fixed<<((zp1-zp0)/CLOCKS_PER_SEC)<<schwarz<<setprecision(0)<<" s"<<endl;
+}
+
+void perfcl::ausgab1000(const string& stelle)
+{
+ zp1=clock();
+ nr++;
+ if (zp1-zp0>10000) {
+ cout<<gruen<<vonwo<<" "<<stelle<<" "<<nr<<" Dauer: "<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" = "
+     <<fixed<<((zp1-zp0)/CLOCKS_PER_SEC)<<schwarz<<setprecision(0)<<" s"<<endl;
+     exit(0);
+     }
+}
+
 string ersetzefuerdatei(const string& u) 
 {
   static string ziel;
   ziel =u;
-  ersetzeAlle(&ziel,"*","");
-  ersetzeAlle(&ziel,":",".");
+  ersetzAlle(&ziel,"*","");
+  ersetzAlle(&ziel,":",".");
   return ziel;
 } // string ersetzefuerdatei(const string& u) 
 
@@ -214,7 +238,7 @@ string *loeschealleaus(string *u, const char* alt) {
   return u;
 } // loeschealleaus(char *u, const char* alt, const char* neu)
 
-string ersetzeAllezu(string& quelle, const string& alt, const string& neu) 
+string ersetzAllezu(string& quelle, const string& alt, const string& neu) 
 {
   if(!alt.empty()) {
     string zwi;
@@ -232,7 +256,7 @@ string ersetzeAllezu(string& quelle, const string& alt, const string& neu)
   return quelle;
 }
 
-void ersetzeAlle(string& quelle, const string& alt, const string& neu) 
+void ersetzAlle(string& quelle, const string& alt, const string& neu) 
 {
   if(!alt.empty()) {
     string zwi;
@@ -249,7 +273,7 @@ void ersetzeAlle(string& quelle, const string& alt, const string& neu)
   }
 }
 
-string ersetzeAllezu(string *quelle, const char* alt, const char* neu) 
+string ersetzAllezu(string *quelle, const char* alt, const char* neu) 
 {
   if(*alt) {
     string zwi;
@@ -268,7 +292,7 @@ string ersetzeAllezu(string *quelle, const char* alt, const char* neu)
   return *quelle;
 }
 
-string ersetzeAllezu(const char *quelle, const char* alt, const char* neu) 
+string ersetzAllezu(const char *quelle, const char* alt, const char* neu) 
 {
   string erg="";
   if (alt[0]==0 || !strcmp(alt,neu)) {
@@ -288,7 +312,7 @@ string ersetzeAllezu(const char *quelle, const char* alt, const char* neu)
   return erg;
 }
 
-void ersetzeAlle(string *quelle, const char* alt, const char* neu) 
+void ersetzAlle(string *quelle, const char* alt, const char* neu) 
 {
   if(*alt) {
     string zwi;
@@ -306,7 +330,7 @@ void ersetzeAlle(string *quelle, const char* alt, const char* neu)
   }
 }
 
-void ersetzeAlle(string *quelle, const string& alt, const string& neu) 
+void ersetzAlle(string *quelle, const string& alt, const string& neu) 
 {
   if(!alt.empty()) {
     string zwi;
@@ -1054,8 +1078,15 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
   }
   Log(aktues+": "+blau+cmd.substr(0,getcols()-7-aktues.length())+schwarz+" ...",obverb>0?-1:0,oblog);
   if (!rueck) if (obergebnisanzeig) {neurueck=1;rueck=new vector<string>;}
+// #define systemrueckprofiler
+#ifdef systemrueckprofiler
+  perfcl prf("systemrueck");
+#endif
   if (rueck) {
     if (FILE* pipe = popen(cmd.c_str(), "r")) {
+#ifdef systemrueckprofiler
+  prf.ausgeb();
+#endif
       //    setvbuf ( pipe, NULL, _IOFBF, 2048);
       /*
          int fd = fileno(pipe);
@@ -1067,6 +1098,9 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
        */
       //      unsigned int zeile=0;
       while(1) {
+#ifdef systemrueckprofiler
+  prf.ausgab1000("in while");
+#endif
         if (feof(pipe)) break;
         //        zeile++;
         char buffer[1280];
@@ -1078,11 +1112,26 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
         } // if(fgets(buffer, sizeof buffer, pipe) != NULL)
         if (feof(pipe)) break;
       } // while(!feof(pipe)) 
-      /* if (obverb>1 || oblog) */ if (rueck->size()) {
-        for(unsigned i=0;i<rueck->size();i++)
+#ifdef systemrueckprofiler
+  prf.ausgab1000("nach while");
+#endif
+      if (obverb>1 || oblog || obergebnisanzeig) if (rueck->size()) {
+        for(unsigned i=0;i<rueck->size();i++) {
+#ifdef systemrueckprofiler
+          cout<<gruen<<rueck->at(i)<<endl<<schwarz;
+#endif
           meld=meld+"\n"+tuerkis+rueck->at(i)+schwarz;
+          }
       }
+#ifdef systemrueckprofiler
+cout<<"Rueck.size: "<<rueck->size()<<", obergebnisanzeig: "<<obergebnisanzeig<<endl;
+cout<<cmd<<endl;
+  prf.ausgab1000("vor pclose");
+#endif
       erg = pclose(pipe)/256;
+#ifdef systemrueckprofiler
+  prf.ausgab1000("nach pclose");
+#endif
     } else {
       perror((string("popen() ")+Txk[T_fehlgeschlagen_bei]+cmd).c_str());
       erg=1;
@@ -1090,6 +1139,9 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
   } else {
     erg= system(cmd.c_str());
   }
+#ifdef systemrueckprofiler
+  prf.ausgab1000("vor weiter");
+#endif
   if (weiter) aktues=Txk[T_Fuehrte_aus];
   string ergebnis;
   if (ob0heissterfolg) {
@@ -1103,6 +1155,9 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
   } else {
     ergebnis=ltoan(erg);
   }
+#ifdef systemrueckprofiler
+  prf.ausgab1000("vor log");
+#endif
   Log(aktues+": "+blau+cmd+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz,obverb>0?obverb:0,oblog);
   if (obergebnisanzeig) if (rueck->size()) 
     Log(meld,obverb>1,oblog);

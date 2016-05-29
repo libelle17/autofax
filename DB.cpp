@@ -279,7 +279,7 @@ void DB::setzrpw()
       rootpw2=holstring(Txd[T_Bitte_geben_Sie_das_MySQL_Passwort_fuer_Benutzer_root_erneut_ein],&rootpw2);
       if (rootpw2==rootpwd && !rootpwd.empty()) {
         cmd=string("mysql -uroot -h'")+host+"' -e \"grant all on *.* to 'root'@'"+myloghost+
-          "' identified by '"+ersetzeAllezu(rootpwd,"\"","\\\"")+"' with grant option\"";
+          "' identified by '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' with grant option\"";
         Log(string(Txd[T_Fuehre_aus_db])+blau+cmd+schwarz,1,1);
         system(cmd.c_str());
         break;
@@ -409,7 +409,7 @@ int DB::prueftab(Tabelle *ptab,bool verbose)
             }
           fstr.resize(fstr.size()+1);
           istr.resize(istr.size()+1);
-          ersetzeAlle(ptab->felder[i].comment,"'","\\'");
+          ersetzAlle(ptab->felder[i].comment,"'","\\'");
           //<<"ptab->felder[i].comment: "<<ptab->felder[i].comment<<endl;
           fstr[i]= "`" + ptab->felder[i].name + "` "+
             ptab->felder[i].typ+
@@ -599,13 +599,13 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,uchar 
           if (*(*cerg+1) && *(*cerg+2)) {
             korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<*(*cerg+1)/*data_type*/<<"("<<wlength<<") "<<
               (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(*(*cerg+3)?string("DEFAULT '")+*(*cerg+3)+"'":"")<<
-              " COMMENT '"<<ersetzeAllezu(*(*cerg+4),"'","\\'")<<"'";
+              " COMMENT '"<<ersetzAllezu(*(*cerg+4),"'","\\'")<<"'";
             RS spaltaend(this,korr.str(),obstumm);
             if (spaltaend.fnr==1074) {
               korr.str(std::string()); korr.clear();
               korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<"MEDIUMTEXT"/*data_type*/<<" "<<
                 (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(*(*cerg+3)?string("DEFAULT '")+*(*cerg+3)+"'":"")<<
-                " COMMENT '"<<ersetzeAllezu(*(*cerg+4),"'","\\'")<<"'";
+                " COMMENT '"<<ersetzAllezu(*(*cerg+4),"'","\\'")<<"'";
               RS spaltaend2(this,korr.str(),obstumm);
             } // if (fnr==1074) 
           }

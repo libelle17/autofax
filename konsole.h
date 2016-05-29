@@ -157,6 +157,16 @@ class argcl
  argcl(int i,char** argv);
 };
 
+class perfcl
+{
+ public:
+ string vonwo;
+ clock_t zp0, zp1;
+ unsigned long nr=0;
+ perfcl(const string& vvonwo);
+ void ausgeb(const string& stelle="");
+ void ausgab1000(const string& stelle="");
+};
 
 inline string zustr(int _Val) {
   char _Buf[2 * sizeof(long long)];
@@ -223,12 +233,12 @@ string ersetze(const char *const u, const char* const alt, const char* neu);
 string *sersetze(string *src, string const& target, string const& repl);
 // wstring ersetze(const wstring& u, const wchar_t* alt, const wchar_t* neu); 
 
-string ersetzeAllezu(string& quelle, const string& alt, const string& neu);
-void ersetzeAlle(string& quelle, const string& alt, const string& neu);
-string ersetzeAllezu(string *quelle, const char* alt, const char* neu);
-string ersetzeAllezu(const char *quelle, const char* alt, const char* neu);
-void ersetzeAlle(string *quelle, const char* alt, const char* neu);
-void ersetzeAlle(string *quelle, const string& alt, const string& neu);
+string ersetzAllezu(string& quelle, const string& alt, const string& neu);
+void ersetzAlle(string& quelle, const string& alt, const string& neu);
+string ersetzAllezu(string *quelle, const char* alt, const char* neu);
+string ersetzAllezu(const char *quelle, const char* alt, const char* neu);
+void ersetzAlle(string *quelle, const char* alt, const char* neu);
+void ersetzAlle(string *quelle, const string& alt, const string& neu);
 
 char* charersetze(char *u, char alt, char neu);
 void chersetze(const string& u, string *z, const string& alt, const char neu);
@@ -243,31 +253,32 @@ class Schluessel {
   public:
     char key[90];
     char val[100];
-    template <typename T> void zuweis(T *var) { *var=atol(val); }
-    template <typename T> void beleg(T *var) { strncpy(val,ltoan(*var),sizeof val-1);val[sizeof val-1]=0; }
+    template <typename T> void hole(T *var) { *var=atol(val); }
+    template <typename T> void setze(T *var) { strncpy(val,ltoan(*var),sizeof val-1);val[sizeof val-1]=0; }
 };
-template <> inline void Schluessel::zuweis < char* > (char** var) { *var = val; }
-template <> inline void Schluessel::zuweis < const char* > (const char** var) { *var = val; }
-template <> inline void Schluessel::zuweis < string > (string *var) { *var = val; }
-template <> inline void Schluessel::zuweis < binaer > (binaer *var) { *var = (binaer)atoi(val); }
-template <> inline void Schluessel::beleg < char* > (char** var) { strncpy(val,*var,sizeof val-1);val[sizeof val-1]=0; }
-template <> inline void Schluessel::beleg < const char* > (const char** var) { strncpy(val,*var,sizeof val-1);val[sizeof val-1]=0; }
-template <> inline void Schluessel::beleg < string > (string *var) { strncpy(val,var->c_str(),sizeof val-1);val[sizeof val-1]=0;}
+template <> inline void Schluessel::hole < char* > (char** var) { *var = val; }
+template <> inline void Schluessel::hole < const char* > (const char** var) { *var = val; }
+template <> inline void Schluessel::hole < string > (string *var) { *var = val; }
+template <> inline void Schluessel::hole < binaer > (binaer *var) { *var = (binaer)atoi(val); }
+template <> inline void Schluessel::setze < char* > (char** var) { strncpy(val,*var,sizeof val-1);val[sizeof val-1]=0; }
+template <> inline void Schluessel::setze < const char* > (const char** var) { strncpy(val,*var,sizeof val-1);val[sizeof val-1]=0; }
+template <> inline void Schluessel::setze < string > (string *var) { strncpy(val,var->c_str(),sizeof val-1);val[sizeof val-1]=0;}
 
 class cppSchluess {
   public:
     string name;
     string wert;
-    template <typename T> void zuweis(T *var) { *var=atol(wert.c_str()); }
-    template <typename T> void beleg(T *var) { wert=ltoan(*var); }
+    template <typename T> void hole(T *var) { *var=atol(wert.c_str()); }
+    template <typename T> void setze(T *var) { wert=ltoan(*var); }
 };
-template <> inline void cppSchluess::zuweis < char* > (char** var) {*var = (char*)wert.c_str(); }
-template <> inline void cppSchluess::zuweis < const char* > (const char** var) {*var = wert.c_str(); }
-template <> inline void cppSchluess::zuweis < string > (string *var) {*var = wert; }
-template <> inline void cppSchluess::zuweis < binaer > (binaer *var) { *var = (binaer)atoi(wert.c_str()); }
-template <> inline void cppSchluess::beleg < char* > (char** var) {wert=*var; }
-template <> inline void cppSchluess::beleg < const char* > (const char** var) {wert=*var;}
-template <> inline void cppSchluess::beleg < string > (string *var) {wert=*var;}
+template <> inline void cppSchluess::hole < char* > (char** var) {*var = (char*)wert.c_str(); }
+template <> inline void cppSchluess::hole < const char* > (const char** var) {*var = wert.c_str(); }
+template <> inline void cppSchluess::hole < string > (string *var) {*var = wert; }
+template <> inline void cppSchluess::hole < binaer > (binaer *var) { *var = (binaer)atoi(wert.c_str()); }
+template <> inline void cppSchluess::setze < char* > (char** var) {wert=*var; }
+template <> inline void cppSchluess::setze < const char* > (const char** var) {wert=*var;}
+template <> inline void cppSchluess::setze < string > (string *var) {wert=*var;}
+template <> inline void cppSchluess::setze < const string > (const string *var) {wert=*var;}
 
 class abSchl {
  public:

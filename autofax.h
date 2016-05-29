@@ -40,14 +40,18 @@ class servc {
 class zielmustercl 
 {
   // beim letzten Element muss ziel leer sein!
+  private:
+    string muster;
   public:
     string ziel;
-    string muster;
     regex_t regex;
-    //    zielmustercl(string *ziel,string *muster):ziel(*ziel),muster(*muster){};
-    zielmustercl(const char * const ziel,const char * const muster);
+    // wird nur in Vorgaben gebraucht:
+    zielmustercl(const char * const muster,const char * const ziel);
     zielmustercl();
     int kompilier();
+    int setzemuster(const string& vmuster);
+    const string& holmuster();
+    int obmusterleer();
 }; // class zielmustercl
 
 class fxfcl // Faxfile
@@ -115,7 +119,7 @@ class paramcl // Programmparameter
     uchar obmodem=1;    // ob Modem angeschlossen
     string spooltab = "spool";
     int obverb=0; // verbose
-    int oblog=0;  // more logging
+    int oblog=0;  // mehr Protokollieren
     uchar loef=0;   // loesche eine Fax-Datei
     uchar loew=0;  // loeschewaise in der Datenbank, aber nicht mehr real nachweisbare Dateien in der Datenbank loeschen
     uchar loea=0; // loesche alle wartenden Faxe und zugehoerige Dateieintraege
@@ -229,7 +233,7 @@ class paramcl // Programmparameter
     string neuerdateiname(const string& qpfad); // in DateienHerricht
     void WVZinDatenbank(vector<fxfcl> *fxvp); // in DateienHerricht
     string getzielvz(const string& datei); // in bereinigewv
-    int gcpZuweis(const string& name, string *wert);
+    int setzegcp(const string& name, string *wert);
     void pruefcvz();
     void setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, int *obsfehltp, uchar startvznr,
                       int obverb=0, int oblog=0, string *hylastatep=0, string *hyladialsp=0, string *hylastatusp=0, string *hylastatuscodep=0);
@@ -243,8 +247,8 @@ class paramcl // Programmparameter
     void logvorgaben();
     void getcommandl0();
     void pruefhardware();
-    void capivorgallg(); // allgemeine Vorgaben
-    void vorgaben();
+    void VorgbAllg(); // allgemeine Vorgaben
+    void VorgbSpeziell(); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vorgaben.cpp)
     void lieskonfein();
     int  getcommandline();
     void rueckfragen();

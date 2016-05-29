@@ -38,8 +38,9 @@ $(EXEC): $(objs)
 %.o : %.cpp $(DEPDIR)/%.d
 	@echo -n "kompiliere $< ..."
 	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< 2>> fehler.txt
-	-@if test -s fehler.txt; then vi +0/error fehler.txt; exit; else rm fehler.txt; fi;
+	-@if test -s fehler.txt; then vi +0/error fehler.txt; else rm fehler.txt; fi;
 	-@$(shell $(POSTCOMPILE))
+	@if test -s fehler.txt; then false; fi;
 
 $(DEPDIR)/%.d: ;
 .PRECIOUS: $(DEPDIR)/%.d
