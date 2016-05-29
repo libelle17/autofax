@@ -119,7 +119,8 @@ mv autofax-master autofax <br>
 cd autofax <br>
 make <br>
 autofax <br>
-(anwer some questions) <br>
+(answer some questions of the program) <br>
+The first execution may take some time. <br>
 Preconditions and list of all potential operating system
 commands by autofax see below</p>
 

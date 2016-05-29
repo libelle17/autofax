@@ -69,7 +69,9 @@ make
 .br
 autofax
 .br
-(anwer some questions)
+(answer some questions of the program)
+.br
+The first execution may take some time.
 .br
 Preconditions and list of all potential operating system commands by autofax see below
 .SH USAGE
