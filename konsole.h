@@ -418,8 +418,6 @@ void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool 
 void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtdoppelt=1);
 void getstammext(string *ganz, string *stamm, string *exten);
 // int cpplies(string fname,cppSchluess *conf,size_t csize,vector<string> *rest=0,char tz='=',short obverb=0);
-// int liesalt(const char *fname,Schluessel *conf,size_t csize,vector<string> *rest=0,char tz='=',short obverb=0);
-// int liesalt(string fname,Schluessel *conf,size_t csize,vector<string> *rest=0,char tz='=',short obverb=0);
 string XOR(const string& value, const string& key);
 int schreib(const char *fname, Schluessel *conf, size_t csize);
 int cppschreib(const string& fname, cppSchluess *conf, size_t csize);
@@ -429,10 +427,7 @@ std::string dir_name(std::string const & path);
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
                 binaer ob0heissterfolg=wahr, binaer obergebnisanzeig=wahr, const string& ueberschr="");
 string aktprogverz();
-// char holbuchst(const string& frage, const char* moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
 char holbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
-// char holbuchst(const char *frage, const char* moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
-// char holbuchst(const char *frage, string moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
 string holstrings(const char *frage, char* moegl[], char *vorgabe=0); // das letzte Element von moegl muss 0 sein
 string holstrings(const char *frage, vector<string> *moegl, string *vorgabe=0); 
 string holzahl(const char *frage, const char *vorgabe=0);

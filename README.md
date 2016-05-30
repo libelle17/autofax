@@ -118,6 +118,7 @@ https://github.com/libelle17/autofax/archive/master.tar.gz
 mv autofax-master autofax <br>
 cd autofax <br>
 make <br>
+sudo make install <br>
 autofax <br>
 (answer some questions of the program) <br>
 The first execution may take some time. <br>
@@ -180,7 +181,7 @@ the above mentioned directories, in the database tables or
 by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
 -lista</b>&rsquo;, &rsquo;<b>autofax -listf</b>&rsquo; or
 &rsquo;<b>autofax -listi</b>&rsquo;. <br>
-autofax shall be executed as root.</p>
+autofax can be executed as root.</p>
 
 <h2>OPTIONS
 <a name="OPTIONS"></a>

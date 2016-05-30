@@ -4620,7 +4620,7 @@ int paramcl::pruefcapi()
           return 1;
         }
         systemrueck("zypper lr | grep 'kkeil factory development project' || "
-            "zypper ar -f http://download.opensuse.org/repositories/home:/kkeil:/Factory/openSUSE_Factory/home:kkeil:Factory.repo",
+            "sudo zypper ar -f http://download.opensuse.org/repositories/home:/kkeil:/Factory/openSUSE_Factory/home:kkeil:Factory.repo",
             1,1);
         // i4l-isdnlog scheint nicht wirklich noetig zu sein
         //        capischonerfolgreichinstalliert=!systemrueck("zypper -n --gpg-auto-import-keys in capisuite capi4linux i4l-isdnlog", 1+obverb,oblog); 
@@ -5148,14 +5148,22 @@ int paramcl::xferlog(const string& jobid, string *erg, int obverb, int oblog)
 #define mitgrep
 #ifdef mitgrep
   svec grueck;
-  systemrueck(string("tac \"")+datei+"\" | grep -m 1 \""+sep+jobid+sep+"\"",obverb,oblog,&grueck);
+#define direkt
+#ifdef direkt
+  systemrueck(string("tac \"")+datei+"\" | grep -m 1 \""+this->hmodem+sep+jobid+sep+"\" | cut -f 14",obverb,oblog,&grueck); // ggf. broken pipe error
   if (grueck.size()) {
-    vector<string> tok;
+    gefunden=1;
+    *erg=grueck[0];
+#else
+    systemrueck(string("tac \"")+datei+"\" | grep -m 1 \""+this->hmodem+sep+jobid+sep+"\"",obverb,oblog,&grueck); // ggf. broken pipe error
+    if (grueck.size()) KLA
+      vector<string> tok;
     aufSplit(&tok,&grueck[grueck.size()-1],sep);
-#else // mitgrep
-#define rueckwaerts
+#endif // direkt else
+#else // mitgrep else
     ifstream f(datei.c_str(),ios::binary); 
     string zeile;
+#define rueckwaerts
 #ifdef rueckwaerts
     char ch;
     string rzeile;
@@ -5173,28 +5181,30 @@ int paramcl::xferlog(const string& jobid, string *erg, int obverb, int oblog)
         vector<string> tok;
     aufSplit(&tok,&zeile,sep);
 #endif // mitgrep else
-    if (tok.size()>15) {
-      if (tok[4]==jobid) {
+#ifndef direkt
+    if (tok.size()>15) KLA
+      if (tok[4]==jobid) KLA
         gefunden=1;
-        *erg=tok[13];
-        if ((*erg)=="\"\"") erg->clear();
-        //            if (erg->length()>1) if ((*erg)[0]=='"' && (*erg)[erg->length()-1]=='"') *erg=erg->substr(1,erg->length()-2);
-        if (obverb) {
-          Log(blaus+"tok[13]: "+schwarz+*erg,obverb,oblog);
-        }
+    *erg=tok[13];
+    if ((*erg)=="\"\"") erg->clear();
+    //            if (erg->length()>1) if ((*erg)[0]=='"' && (*erg)[erg->length()-1]=='"') *erg=erg->substr(1,erg->length()-2);
+    if (obverb) KLA
+      Log(blaus+"tok[13]: "+schwarz+*erg,obverb,oblog);
+    KLZ
 #ifndef mitgrep
 #ifdef rueckwaerts
-        break;
-        KLZ // if (tok[4]==jobid) KLA
-          KLZ // if (tok.size()>15)
-          rzeile.clear();
-        KLZ else KLA
-          rzeile+=ch;
+      break;
+    KLZ // if (tok[4]==jobid) KLA
+      KLZ // if (tok.size()>15)
+      rzeile.clear();
+    KLZ else KLA
+      rzeile+=ch;
 #endif // rueckwaerts
-#endif // mitgrep
-      } // 
-    } // if (ch==10)
-  } // if f.is_open()
+#endif // not mitgrep
+    KLZ // 
+      KLZ // if (ch==10)
+#endif  // not direkt
+  } // if f.is_open() oder (grueck.size()
 #ifdef profiler
   prf.ausgeb();
 #endif

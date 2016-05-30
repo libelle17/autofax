@@ -67,6 +67,8 @@ cd autofax
 .br
 make 
 .br
+sudo make install
+.br
 autofax
 .br
 (answer some questions of the program)
@@ -101,7 +103,7 @@ Further on, incoming faxes via \fBhylafax\fR or \fBCapisuite\fR are being transm
 .br
 Depending on operating system, accessability and preferences the users thus could look up the status of their faxes in the above mentioned directories, in the database tables or by calling '\fBautofax\fB', '\fBautofax -lista\fR', '\fBautofax -listf\fR' or '\fBautofax -listi\fR'. 
 .br
-autofax shall be executed as root.
+autofax can be executed as root.
 .SH OPTIONS 
 With '\fBautofax -?\fR', all command line options can be seen. Some options (e.g. the sql commands) cannot bei set via the command line, but only via the configuration file, which can be edited directly or interactively by '\fBautofax -rf\fR'.
 .br

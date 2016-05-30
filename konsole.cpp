@@ -1118,15 +1118,14 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
       if (obverb>1 || oblog || obergebnisanzeig) if (rueck->size()) {
         for(unsigned i=0;i<rueck->size();i++) {
 #ifdef systemrueckprofiler
-          cout<<gruen<<rueck->at(i)<<endl<<schwarz;
 #endif
           meld=meld+"\n"+tuerkis+rueck->at(i)+schwarz;
           }
       }
 #ifdef systemrueckprofiler
-cout<<"Rueck.size: "<<rueck->size()<<", obergebnisanzeig: "<<obergebnisanzeig<<endl;
-cout<<cmd<<endl;
-  prf.ausgab1000("vor pclose");
+      Log(rots+"Rueck.size: "+ltoan(rueck->size())+", obergebnisanzeig: "+(obergebnisanzeig?"ja":"nein"),1,oblog);
+      Log(cmd,1,oblog)
+      prf.ausgab1000("vor pclose");
 #endif
       erg = pclose(pipe)/256;
 #ifdef systemrueckprofiler
@@ -1517,9 +1516,9 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog)
     case zyp:
       if (obnmr) {
         obnmr=0;
-        systemrueck("zypper mr -k -all",obverb,oblog);
+        systemrueck("sudo zypper mr -k -all",obverb,oblog);
       }
-      return systemrueck(string("zypper -n --gpg-auto-import-keys in ")+prog,obverb+1,oblog);
+      return systemrueck(string("sudo zypper -n --gpg-auto-import-keys in ")+prog,obverb+1,oblog);
       break;
     case apt:
       return systemrueck(string("apt-get --assume-yes install ")+ersetzeprog(prog),obverb+1,oblog);
@@ -1535,7 +1534,7 @@ uchar linstcl::douninst(const string& prog,int obverb,int oblog)
   checkinst(obverb,oblog);
   switch (inst) {
     case zyp:
-      return systemrueck(string("zypper -n rm ")+prog,obverb+1,oblog);
+      return systemrueck(string("sudo zypper -n rm ")+prog,obverb+1,oblog);
       break;
     case apt:
       return systemrueck(string("apt-get --assume-yes remove ")+ersetzeprog(prog),obverb+1,oblog);

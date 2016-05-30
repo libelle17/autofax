@@ -67,6 +67,8 @@ cd autofax
 .br
 make 
 .br
+sudo make install
+.br
 autofax
 .br
 (einige Rueckfragen des Programms beantworten)
