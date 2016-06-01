@@ -23,7 +23,19 @@ MANPDH=$(CURDIR)/man_de.html
 MANPEH=$(CURDIR)/man_en.html
 
 
-alles: anzeig compiler $(EXEC) man fertig
+alles: anzeig weiter
+opt: CFLAGS += -O
+opt: neu
+
+opt2: CFLAGS+= -O2
+opt2: neu
+
+opt3: CFLAGS+= -O3
+opt3: neu
+
+neu: anzeig clean weiter
+
+weiter: compiler $(EXEC) man fertig
 
 anzeig:
 	@echo -e " GNU Make, Zieldatei:""\033[1;31m" $(EXEC)"\033[0;30m", vorher:
