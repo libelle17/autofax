@@ -2309,8 +2309,9 @@ void paramcl::rueckfragen()
            vorgabe);
        if (zwi=="-") zwi.clear();
        if (zwi.empty()) {
-        if (akt>sqlzn && akt > sqlvzn) akt--;
+        if (akt>=sqlzn && akt >=sqlvzn) akt--;
        } else {
+
          cppSchluess* neuS=new cppSchluess;
          neuS->name=string("SQL_")+ltoan(++aktsp);
          neuS->wert=zwi;
