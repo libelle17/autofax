@@ -1,0 +1,3 @@
+#!/bin/zsh
+vi autofax.cpp autofax.h vorgaben.cpp DB.cpp DB.h konsole.cpp konsole.h -p
+
