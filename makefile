@@ -33,6 +33,15 @@ opt2: neu
 opt3: CFLAGS+= -O3
 opt3: neu
 
+optfast: CFLAGS+= -Ofast
+optfast: neu
+
+opts: CFLAGS+= -Os
+opts: neu
+
+optg: CFLAGS+= -Og
+optg: neu
+
 neu: anzeig clean weiter
 
 weiter: compiler $(EXEC) man fertig
