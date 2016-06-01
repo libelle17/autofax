@@ -248,7 +248,11 @@ class paramcl // Programmparameter
     void getcommandl0();
     void pruefhardware();
     void VorgbAllg(); // allgemeine Vorgaben
+    #ifdef autofaxcpp
+    void VorgbSpeziell() __attribute__((weak)); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vorgaben.cpp)
+    #else
     void VorgbSpeziell(); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vorgaben.cpp)
+    #endif
     void lieskonfein();
     int  getcommandline();
     void rueckfragen();

@@ -432,9 +432,9 @@ string holstrings(const char *frage, char* moegl[], char *vorgabe=0); // das let
 string holstrings(const char *frage, vector<string> *moegl, string *vorgabe=0); 
 string holzahl(const char *frage, const char *vorgabe=0);
 string holzahl(const char *frage, string *vorgabe);
-string holstring(const char *frage, string *vorgabe=0);
+string holstring(const char *frage, const string *vorgabe=0);
 char* holcstring(const char *frage, char* buf, unsigned long buflen, const char* vorgabe="");
-string holstring(const string& frage, string *vorgabe=0);
+string holstring(const string& frage, const string *vorgabe=0);
 string holverz(const char *frage,string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
 

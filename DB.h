@@ -68,6 +68,7 @@ class Txdbcl: public TxB
     Txdbcl();
 };
 
+svec holdbaussql(string sql);
 
 //
 enum DBSTyp {MySQL, Postgres};

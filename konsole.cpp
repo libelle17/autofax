@@ -857,10 +857,10 @@ void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool 
   char* usep = new char[len];
   strcpy(usep,sep);
   for (char *p=usep ; *p; ++p) *p = toupper(*p);
-  string ltext;
-  transform(text->begin(),text->end(),std::back_inserter(ltext),::toupper);
+  string utext;
+  transform(text->begin(),text->end(),std::back_inserter(utext),::toupper);
   tokens->clear();
-  while ((end = ltext.find(usep, start)) != (int)string::npos) {
+  while ((end = utext.find(usep, start)) != (int)string::npos) {
     if (nichtdoppelt || end!=start) {
       tokens->push_back(text->substr(start, end - start));
     }
@@ -1317,12 +1317,12 @@ char* holcstring(const char *frage, char* buf, unsigned long buflen, const char*
   return buf;
 } // holcstring
 
-string holstring(const char *frage, string *vorgabe) 
+string holstring(const char *frage, const string *vorgabe) 
 {
   return holstring(string(frage), vorgabe);
 } // holstring
 
-string holstring(const string& frage, string *vorgabe) 
+string holstring(const string& frage, const string *vorgabe) 
 {
   string input;
   while(1) {
@@ -1364,7 +1364,7 @@ string holverz(const char *frage,string *vorgabe)
         if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
         if (inpi=="") {inpi=vg2;break;}
         if (strchr("jyJY",inpi[0])) {
-          system((string("mkdir -p ")+input).c_str());
+          system((string("sudo mkdir -p ")+input).c_str());
         } else {
           break;
         }

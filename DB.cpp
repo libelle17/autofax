@@ -62,6 +62,38 @@ class Txdbcl Txd;
 
 class linstcl linst;
 
+svec holdbaussql(string sql) {
+ svec erg;
+ string db;
+ size_t runde=0;
+ while (1) {
+   runde++;
+   string SQL;
+   transform(sql.begin(),sql.end(),std::back_inserter(SQL),::toupper);
+   size_t pfrom=SQL.find("FROM ");
+   size_t pjoin=SQL.find("JOIN ");
+   size_t ab=pfrom<pjoin?pfrom:pjoin;
+   if (ab!=string::npos) {
+     ab+=5;
+     size_t bis=string::npos;
+     if (sql[ab]=='`' || sql[ab]=='[' || sql[ab]=='\"') ab++;
+       bis=SQL.find_first_of(" .,;()'\"`]",ab);
+     if (bis!=string::npos) {
+       db=sql.substr(ab,bis-ab);
+       if (!db.empty()) {
+        uchar alt=0;
+        for(size_t j=0;j<erg.size();j++) {
+         if (erg[j]==db) {alt=1;break;}
+        }
+        if (!alt) erg<<db;
+       }
+       sql=sql.substr(bis);
+     } else break;
+   } else break;
+ }
+ return erg;
+}
+
 Feld::Feld(const string& name, string typ, const string& lenge, const string& prec, 
            const string& comment, bool obind, bool obauto, bool nnull, string vdefa):
   name(name),
