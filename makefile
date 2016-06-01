@@ -46,6 +46,11 @@ neu: anzeig clean weiter
 
 weiter: compiler $(EXEC) man fertig
 
+git:
+	git add -u
+	git commit -m "Commit durch make"
+	git push
+
 anzeig:
 	@echo -e " GNU Make, Zieldatei:""\033[1;31m" $(EXEC)"\033[0;30m", vorher:
 	@echo -e "\033[0;34m" $(shell ls -l $(EXEC)) "\033[0;30m" 
