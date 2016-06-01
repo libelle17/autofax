@@ -46,6 +46,9 @@ neu: anzeig clean weiter
 
 weiter: compiler $(EXEC) man fertig
 
+# davor: xclip -sel clip < ~/.ssh/id_rsa.pub
+#      : auf http://github.com -> view profile and more -> settings -> SSH and GPG keys -> New SSH key <Titel> <key> einfuegen
+#      : git clone ssh://git@github.com/<user>/<reponame>.git
 git:
 	git add -u
 	git commit -m "Commit durch make"
