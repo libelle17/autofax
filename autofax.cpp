@@ -423,6 +423,10 @@ enum T_
   T_Verzeichnis,
   T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt,
   T_zufaxenvz,
+  VorgbSpeziell_Basis,
+  T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben,
+  T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung,
+  T_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung,
   T_MAX
 };
 
@@ -1175,6 +1179,16 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"' nicht als Sambafreigabe gefunden, wird ergaenzt.","' not found as or under a samba share, amending it."},
   // T_zufaxenvz
   {"zufaxenvz: '","outgoing dir: '"},
+  // VorgbSpeziell_Basis
+  {"VorgbSpeziell_Basis()","specificprefs_base()"},
+  // "Wollen Sie noch einen SQL-Befehl eingeben?"
+  {"Wollen Sie noch einen SQL-Befehl eingeben?","Do You want to enter another sql command?"},
+  // T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung
+  {" ('-'=SQL-Befehl loeschen,'&&faxnr&&' wird ersetzt mit der Faxnr, 'vollnr('&&faxnr&&')' mit deren Zusammenziehung)",
+   " ('-'=delete this sql command,'&&faxnr&&' will be replaces with the fax-no., 'vollnr('&&faxnr&&')' with its concatenation)"},
+  // T_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung
+  {" ('&&faxnr&&' wird ersetzt mit der Faxnr, 'vollnr('&&faxnr&&')' mit deren Zusammenziehung)",
+   " ('&&faxnr&&' will be replaces with the fax-no., 'vollnr('&&faxnr&&')' with its concatenation)"},
   {"",""}
 };
 
@@ -1208,6 +1222,7 @@ extern class linstcl linst;
 using namespace std;
 const DBSTyp myDBS=MySQL;
 
+#define autofaxcpp
 #include "autofax.h"
 constexpr const char *paramcl::moeglhvz[2];
 // wird nur in VorgbSpeziell gebraucht:
@@ -1216,7 +1231,8 @@ zielmustercl::zielmustercl(const char * const vmuster,const char * const vziel):
  kompilier();
 };  // zielmustercl
 
-zielmustercl::zielmustercl() {}
+zielmustercl::zielmustercl() {
+}
 
 int zielmustercl::kompilier() {
   int reti=regcomp(&regex, muster.c_str(),REG_EXTENDED); 
@@ -1749,6 +1765,20 @@ int paramcl::setzhylavz()
   return 0;
 } // int paramcl::setzhylavz()
 
+// Musterfunktion, die von einer Funktion in gesonderter Datei vorgaben.cpp ueberschrieben werden kann
+void paramcl::VorgbSpeziell() 
+{
+  Log(violetts+Tx[VorgbSpeziell_Basis]+schwarz,obverb,oblog);
+  dbq="autofax";
+  muser="user";
+  citycode="8131";
+  msn="999999";
+  LocalIdentifier="MeiLocId";
+  cFaxUeberschrift="Mei FaxUeberschrift";
+  sqlz=sqlvz="2";
+}
+
+
 // wird aufgerufen in: main
 // allgemeine Vorgaben, fuer Deutschland
 void paramcl::VorgbAllg()
@@ -1814,8 +1844,8 @@ void paramcl::pruefcvz()
   kuerzevtz(&cfaxuservz);
   cfaxusersqvz=cfaxuservz+vtz+cuser+"/sendq"; //  "/var/spool/capisuite/users/<user>/sendq";
   cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
-  systemrueck(string("mkdir -p ")+cfaxusersqvz,obverb,oblog);
-  systemrueck(string("mkdir -p ")+cfaxuserrcvz,obverb,oblog);
+  systemrueck(string("sudo mkdir -p ")+cfaxusersqvz,obverb,oblog);
+  systemrueck(string("sudo mkdir -p ")+cfaxuserrcvz,obverb,oblog);
 } // paramcl::pruefcvz
 
 // wird aufgerufen in: main
@@ -1895,6 +1925,12 @@ void paramcl::lieskonfein()
     afconf.auswert(sqlconfp,sqlzn,obverb);
 
     if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&zmz); else rzf=1; lfd++;
+    if (!zmvzn || !zmvp) {
+     zmvp= new zielmustercl{"","/var/autofax/ziel"};
+     zmvzn=1;
+    }
+    zmvz=ltoan(zmvzn); // aus VorgbSpeziell
+
     uchar zmda=0; // 1= Zielmuster in der Konfigurationsdatei schon festgelegt
     for(int iru=0;;iru++) {
       zmzn=atol(zmz.c_str());
@@ -1904,6 +1940,7 @@ void paramcl::lieskonfein()
       zmz=zmvz;
       zmzukonf=1;
     }
+    
     zmconfp = new cppSchluess[zmzn+zmzn];
     zmp=new zielmustercl[zmzn];
     // Vorgaben uebernehmen
@@ -2255,26 +2292,44 @@ void paramcl::rueckfragen()
     loggespfad = string(logvz)+vtz+logdname;
     logdt = &loggespfad.front();
     if (cgconfp[++lfd].wert.empty() || rzf) {
-      string  nsqlz=holzahl(Tx[T_Zahl_der_SQL_Befehle_fuer_Namenszuordnung],&sqlz);
+      size_t nsqlzn=0;
+      vector<cppSchluess*> sqlv; 
+      size_t aktsp=0;
+      for(size_t akt=0;;akt++) {
+       const string& nix="";
+       const string *vorgabe=
+           akt<sqlzn?
+           (sqlconfp[akt].wert.empty()?&sqlconfvp[akt].wert:&sqlconfp[akt].wert): // wird in auswert zurueckgesetzt
+           akt<sqlvzn?
+           &sqlconfvp[akt].wert:
+           &nix;
+       string zwi=holstring(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt+1)+(vorgabe->empty()?
+       Tx[T_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung]:
+       Tx[T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung]),
+           vorgabe);
+       if (zwi=="-") zwi.clear();
+       if (zwi.empty()) {
+        if (akt>sqlzn && akt > sqlvzn) akt--;
+       } else {
+         cppSchluess* neuS=new cppSchluess;
+         neuS->name=string("SQL_")+ltoan(++aktsp);
+         neuS->wert=zwi;
+         sqlv.push_back(neuS);
+         nsqlzn++;
+       }
+       if (akt>=sqlzn && akt >= sqlvzn) {
+          erg=holbuchst(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",Tx[T_j_af]);
+          if (!strchr("jyJYoOsS",(int)erg)) break;
+       }
+      }
+      string nsqlz=ltoan(nsqlzn);
       cgconfp[lfd].setze(&nsqlz);
-      size_t nsqlzn=atol(nsqlz.c_str());
-      static cppSchluess *nsqlconfp= new cppSchluess[nsqlzn];
-      // bisherige Einstellung
-      for(size_t akt=0;akt<(nsqlzn<sqlzn?nsqlzn:sqlzn);akt++) {
-        nsqlconfp[akt].wert=sqlconfp[akt].wert;
-        //         _out<<"sqlconfp["<<akt<<"].wert: "<<sqlconfp[akt].wert<<endl;
-      }
-      // default
-      for(size_t akt=0;akt<(nsqlzn<sqlvzn?nsqlzn:sqlvzn);akt++) {
-        if(nsqlconfp[akt].wert.empty()) 
-          nsqlconfp[akt].wert=sqlconfvp[akt].wert;
-      }
-      for(size_t akt=0;akt<nsqlzn;akt++) {
-        string zwi=holstring(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt+1),&nsqlconfp[akt].wert);
-        nsqlconfp[akt].name=string("SQL_")+ltoan(akt+1);
-        nsqlconfp[akt].setze(&zwi);
-      }
       sqlzn=nsqlzn;
+      // Vektor in Array umwandeln
+      static cppSchluess *nsqlconfp = new cppSchluess[sqlv.size()];
+      for(size_t sqli=0;sqli<sqlv.size();sqli++) {
+       nsqlconfp[sqli]=*sqlv[sqli];
+      }
       sqlconfp=nsqlconfp;
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
@@ -2578,12 +2633,12 @@ void paramcl::konfcapi()
 void paramcl::verzeichnisse()
 {
   Log(violetts+Tx[T_verzeichnisse],obverb,oblog);
-  systemrueck(string("mkdir -p ")+zufaxenvz,obverb,oblog);
-  systemrueck(string("mkdir -p ")+wvz,obverb,oblog);
-  systemrueck(string("mkdir -p ")+gvz,obverb,oblog);
-  systemrueck(string("mkdir -p ")+empfvz,obverb,oblog);
+  systemrueck(string("sudo mkdir -p ")+zufaxenvz,obverb,oblog);
+  systemrueck(string("sudo mkdir -p ")+wvz,obverb,oblog);
+  systemrueck(string("sudo mkdir -p ")+gvz,obverb,oblog);
+  systemrueck(string("sudo mkdir -p ")+empfvz,obverb,oblog);
   for(zielmustercl *zmakt=zmp;1;zmakt++){
-    systemrueck(string("mkdir -p ")+zmakt->ziel,obverb,oblog);
+    systemrueck(string("sudo mkdir -p ")+zmakt->ziel,obverb,oblog);
     if (zmakt->obmusterleer()) break;
   }
   for(uint imu=0;imu<this->zmzn;imu++) {
@@ -3548,7 +3603,7 @@ void paramcl::zeigweitere()
           } else {
             // 31.1.16: ... und wenn diese sich nicht in outa findet ...
             string waisen = cfaxusersqvz+"/waisen";
-            systemrueck(string("mkdir -p ")+waisen);
+            systemrueck(string("sudo mkdir -p ")+waisen);
             uint vfehler=0;
             verschiebe(rueck[i],waisen,&vfehler,1,obverb,oblog);
           } // if (inouta.num_rows) else 
@@ -3616,7 +3671,7 @@ void paramcl::empfarch()
   char tbuf[255];
   for(size_t i=0;i<rueck.size();i++) {
     if (!i) {
-      cmd=string("mkdir -p ")+hempfavz;
+      cmd=string("sudo mkdir -p ")+hempfavz;
       systemrueck(cmd,obverb,oblog);
     }
     // ..., Informationen darueber einsammeln, ...
@@ -3733,7 +3788,7 @@ void paramcl::empfarch()
     systemrueck(cmd,obverb,oblog, &rueck);
     for(size_t i=0;i<rueck.size();i++) {
       if (!i) {
-        cmd=string("mkdir -p ")+cempfavz;
+        cmd=string("sudo mkdir -p ")+cempfavz;
         systemrueck(cmd,obverb,oblog);
       }
       ankzahl++;
@@ -3802,7 +3857,7 @@ void paramcl::empfarch()
       }
       if (verschieb) {
         string falsche = cfaxuserrcvz+"/falsche";
-        systemrueck(string("mkdir -p ")+falsche);
+        systemrueck(string("sudo mkdir -p ")+falsche);
         uint vfehler=0;
         verschiebe(rueck.at(i),falsche,&vfehler,1,obverb,oblog);
         if (verschieb==2) {
@@ -4579,7 +4634,7 @@ int paramcl::pruefcapi()
               const string qvz="/usr/src";
               const string versi="fcpci-3.10.0";
               const string srcf=string("fritz-")+versi+".tar.bz2";
-              systemrueck(string("mkdir -p ")+qvz);
+              systemrueck(string("sudo mkdir -p ")+qvz);
               struct stat entrysrc;
               if (lstat((qvz+vtz+srcf).c_str(),&entrysrc)) {
                 systemrueck(string("cd ")+qvz+";wget https://belug.de/~lutz/pub/fcpci/"+srcf+" --no-check-certificate",1+obverb,oblog);
