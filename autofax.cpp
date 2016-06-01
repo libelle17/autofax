@@ -2309,9 +2309,14 @@ void paramcl::rueckfragen()
            vorgabe);
        if (zwi=="-") zwi.clear();
        if (zwi.empty()) {
-        if (akt>=sqlzn && akt >=sqlvzn) akt--;
+        if (akt>sqlzn && akt >sqlvzn) akt--;
        } else {
-
+         // hier Sql-Dateien pruefen
+         svec dben=holdbaussql(zwi);
+         for(size_t i=0;i<dben.size();i++) {
+          cout<<"i: "<<blau<<i<<rot<<": "<<dben[i]<<schwarz<<endl;
+          cout<<"pruefDB: "<<pruefDB(dben[i])<<endl;
+         }
          cppSchluess* neuS=new cppSchluess;
          neuS->name=string("SQL_")+ltoan(++aktsp);
          neuS->wert=zwi;
@@ -2789,6 +2794,13 @@ int paramcl::initDB()
   }
   return 0;
 } // initDB
+
+int paramcl::pruefDB(const string& db)
+{
+  Log(violetts+"pruefDB("+db+")"+schwarz,obverb,oblog);
+  My = new DB(myDBS,host,muser,mpwd,db,0,0,0,obverb,oblog);
+  return (My->fehnr); 
+}
 
 // Parameter -kez
 // wird aufgerufen in: main

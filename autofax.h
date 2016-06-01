@@ -261,6 +261,7 @@ class paramcl // Programmparameter
     void pruefcron();
     void pruefsamba();
     int  initDB();
+    int  pruefDB(const string& db);
 
     void korrerfolgszeichen();
     void bereinigewv();
