@@ -3678,7 +3678,7 @@ void paramcl::empfarch()
     // ..., Informationen darueber einsammeln, ...
     string zeit;
     string absdr,tsid,callerid,devname;
-    ulong seiten; 
+    ulong seiten=0;
     string stamm,exten,ganz=rueck[i];
     getstammext(&ganz,&stamm,&exten);
     string base=base_name(stamm);
