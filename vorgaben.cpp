@@ -3,7 +3,7 @@
 #include "autofax.h"
 
 enum Txvg_ {
-  T_VorgbSpeziell,
+  T_VorgbSpeziell_Ueberlad,
   T_vgMAX,
 };
 
@@ -15,17 +15,16 @@ class Txvgcl: public TxB
 };
 
 const char *Txvgcl::TextC[T_vgMAX+1][Smax]={
-      // T_VorgbSpeziell
-      {"VorgbSpeziell()","specificprefs()"},
+      // T_VorgbSpeziell_Ueberlad
+      {"VorgbSpeziell_Ueberlad()","specificprefs_overload()"},
       {"",""}
 };
-
 
 class Txvgcl Txv;
 
 void paramcl::VorgbSpeziell()
 {
-  Log(violetts+Txv[T_VorgbSpeziell]+schwarz,obverb,oblog);
+  Log(violetts+Txv[T_VorgbSpeziell_Ueberlad]+schwarz,obverb,oblog);
   //  langu="d"; lgnzuw();
   dbq="faxeinp";
   muser="praxis";
@@ -138,7 +137,6 @@ void paramcl::VorgbSpeziell()
       zmvp=zmi;
       zmvzn=sizeof zmi/sizeof *zmi;
     }
-    zmvz=ltoan(zmvzn);
   } else {
   }
 } // void paramcl::VorgbSpeziell()
