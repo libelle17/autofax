@@ -427,6 +427,8 @@ enum T_
   T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben,
   T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung,
   T_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung,
+  T_Datenbank,
+  T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
   T_MAX
 };
 
@@ -1189,6 +1191,10 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung
   {" ('&&faxnr&&' wird ersetzt mit der Faxnr, 'vollnr('&&faxnr&&')' mit deren Zusammenziehung)",
    " ('&&faxnr&&' will be replaces with the fax-no., 'vollnr('&&faxnr&&')' with its concatenation)"},
+  // T_Datenbank
+  {"Datenbank '","Database '"},
+  // T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben
+  {"' nicht ermittelbar. Wollen Sie den SQL-Befehl neu eingeben?","' not found. Do You want to reenter the sql command?"},
   {"",""}
 };
 
@@ -2313,19 +2319,28 @@ void paramcl::rueckfragen()
        } else {
          // hier Sql-Dateien pruefen
          svec dben=holdbaussql(zwi);
+         uchar nochmal=0;
          for(size_t i=0;i<dben.size();i++) {
           cout<<"i: "<<blau<<i<<rot<<": "<<dben[i]<<schwarz<<endl;
           cout<<"pruefDB: "<<pruefDB(dben[i])<<endl;
+          if (pruefDB(dben[i])) {
+          erg=holbuchst(string(Tx[T_Datenbank])+rot+dben[i]+schwarz+Tx[T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben],string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",Tx[T_j_af]);
+          if (!strchr("jyJYoOsS",(int)erg)) {nochmal=1;break;}
+          }
          }
-         cppSchluess* neuS=new cppSchluess;
-         neuS->name=string("SQL_")+ltoan(++aktsp);
-         neuS->wert=zwi;
-         sqlv.push_back(neuS);
-         nsqlzn++;
+         if (nochmal) {
+          akt--;
+         } else {
+           cppSchluess* neuS=new cppSchluess;
+           neuS->name=string("SQL_")+ltoan(++aktsp);
+           neuS->wert=zwi;
+           sqlv.push_back(neuS);
+           nsqlzn++;
+         }
        }
        if (akt>=sqlzn && akt >= sqlvzn) {
-          erg=holbuchst(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",Tx[T_j_af]);
-          if (!strchr("jyJYoOsS",(int)erg)) break;
+         erg=holbuchst(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",Tx[T_j_af]);
+         if (!strchr("jyJYoOsS",(int)erg)) break;
        }
       }
       string nsqlz=ltoan(nsqlzn);
