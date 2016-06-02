@@ -429,6 +429,8 @@ enum T_
   T_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung,
   T_Datenbank,
   T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
+  T_In,
+  T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
   T_MAX
 };
 
@@ -1195,6 +1197,11 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Datenbank '","Database '"},
   // T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben
   {"' nicht ermittelbar. Wollen Sie den SQL-Befehl neu eingeben?","' not found. Do You want to reenter the sql command?"},
+  // T_In
+  {"In '","In '"},
+  // T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben
+  {"' keine Datenbank gefunden. Wollen Sie den SQL-Befehl neu eingeben?",
+   "' no database found. Do You want to reenter the sql command?"},
   {"",""}
 };
 
@@ -1923,12 +1930,19 @@ void paramcl::lieskonfein()
       sqlconfp= new cppSchluess[sqlzn];
       for(size_t i=0;i<sqlzn;i++) {
         sqlconfp[i].name=string("SQL_")+ltoan(i+1);
-        if (i<sqlvzn)
+        if (i<sqlvzn) {
           sqlconfp[i].wert=sqlconfvp[i].wert;
-      }
-    }
+       // <<"i: "<<hviolett<<i<<schwarz<<", sqlconfp["<<i<<"]: "<<blau<<sqlconfp[i].name<<schwarz<<endl;
+       // <<"i: "<<blau<<i<<schwarz<<", sqlconfp["<<i<<"]: "<<rot<<sqlconfp[i].wert<<schwarz<<endl;
+          } // if (i<sqlvzn) 
+      } // for(size_t i=0;i<sqlzn;i++) 
+    } // if (sqlzn) 
     // jetzt erst stehen die Variablen fuer alle SQL-Befehle zur Verfuegung
     afconf.auswert(sqlconfp,sqlzn,obverb);
+//       for(size_t akt=0;akt<sqlzn;akt++) KLA
+//        <<"akt: "<<hviolett<<akt<<schwarz<<", sqlconfp["<<akt<<"]: "<<blau<<sqlconfp[akt].name<<schwarz<<endl;
+//       <<"akt: "<<violett<<akt<<schwarz<<", sqlconfp["<<akt<<"]: "<<hblau<<sqlconfp[akt].wert<<schwarz<<endl;
+//      KLZ
 
     if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&zmz); else rzf=1; lfd++;
     if (!zmvzn || !zmvp) {
@@ -2297,6 +2311,10 @@ void paramcl::rueckfragen()
     }
     loggespfad = string(logvz)+vtz+logdname;
     logdt = &loggespfad.front();
+//      for(size_t zkt=0;zkt<sqlzn;zkt++) KLA
+//        <<"zkt: "<<blau<<zkt<<schwarz<<", sqlconfp["<<zkt<<"]: "<<rot<<sqlconfp[zkt].wert<<schwarz<<endl;
+//        <<gruen<<(sqlconfp[zkt].wert.empty()?sqlconfvp[zkt].wert:sqlconfp[zkt].wert)<<schwarz<<endl;
+//       KLZ
     if (cgconfp[++lfd].wert.empty() || rzf) {
       size_t nsqlzn=0;
       vector<cppSchluess*> sqlv; 
@@ -2309,40 +2327,53 @@ void paramcl::rueckfragen()
            akt<sqlvzn?
            &sqlconfvp[akt].wert:
            &nix;
-       string zwi=holstring(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt+1)+(vorgabe->empty()?
-       Tx[T_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung]:
-       Tx[T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung]),
-           vorgabe);
-       if (zwi=="-") zwi.clear();
+       string zwi;
+       while (1) {
+         zwi=holstring(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt+1)+(vorgabe->empty()?
+               Tx[T_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung]:
+               Tx[T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung]),
+             vorgabe);
+         if (zwi=="-") zwi.clear();
+         if (zwi.empty()) {
+           break;
+         } else {
+           svec dben=holdbaussql(zwi);
+           // <<"dben.size(): "<<(int)dben.size()<<endl;
+           if (!dben.size()) {
+             erg=holbuchst(string(Tx[T_In])+rot+zwi+schwarz+Tx[T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben],
+                 string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",Tx[T_j_af]);
+             if (strchr("jyJYoOsS",(int)erg)) continue;
+           }
+           uchar nochmal=0;
+           for(size_t i=0;i<dben.size();i++) {
+             // <<"i: "<<blau<<i<<rot<<": "<<dben[i]<<schwarz<<endl;
+             if (pruefDB(dben[i])) {
+               erg=holbuchst(string(Tx[T_Datenbank])+rot+dben[i]+schwarz+Tx[T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben],
+                   string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",Tx[T_j_af]);
+               if (strchr("jyJYoOsS",(int)erg)) {
+                nochmal=1;
+                break;
+              }
+             }
+           } // for(size_t i=0;i<dben.size();i++) 
+           if (!nochmal) break;     
+         } // if (zwi.empty()) else
+       } // while (1)
        if (zwi.empty()) {
-        if (akt>sqlzn && akt >sqlvzn) akt--;
+         if (akt>sqlzn && akt >sqlvzn) akt--;
        } else {
          // hier Sql-Dateien pruefen
-         svec dben=holdbaussql(zwi);
-         uchar nochmal=0;
-         for(size_t i=0;i<dben.size();i++) {
-          cout<<"i: "<<blau<<i<<rot<<": "<<dben[i]<<schwarz<<endl;
-          cout<<"pruefDB: "<<pruefDB(dben[i])<<endl;
-          if (pruefDB(dben[i])) {
-          erg=holbuchst(string(Tx[T_Datenbank])+rot+dben[i]+schwarz+Tx[T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben],string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",Tx[T_j_af]);
-          if (!strchr("jyJYoOsS",(int)erg)) {nochmal=1;break;}
-          }
-         }
-         if (nochmal) {
-          akt--;
-         } else {
-           cppSchluess* neuS=new cppSchluess;
-           neuS->name=string("SQL_")+ltoan(++aktsp);
-           neuS->wert=zwi;
-           sqlv.push_back(neuS);
-           nsqlzn++;
-         }
-       }
-       if (akt>=sqlzn && akt >= sqlvzn) {
+         cppSchluess* neuS=new cppSchluess;
+         neuS->name=string("SQL_")+ltoan(++aktsp);
+         neuS->wert=zwi;
+         sqlv.push_back(neuS);
+         nsqlzn++;
+       } // if (zwi.empty()) else
+       if (akt>=sqlzn && akt>=sqlvzn) {
          erg=holbuchst(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",Tx[T_j_af]);
          if (!strchr("jyJYoOsS",(int)erg)) break;
        }
-      }
+      } // for(size_t akt=0;;akt++) 
       string nsqlz=ltoan(nsqlzn);
       cgconfp[lfd].setze(&nsqlz);
       sqlzn=nsqlzn;
@@ -2352,7 +2383,7 @@ void paramcl::rueckfragen()
        nsqlconfp[sqli]=*sqlv[sqli];
       }
       sqlconfp=nsqlconfp;
-    }
+    } // if (cgconfp[++lfd].wert.empty() || rzf) 
     if (cgconfp[++lfd].wert.empty() || rzf) {
       string  nzmz=holzahl(Tx[T_Zahl_der_Verzeichnisse_fuer_erfolgreich_verschickte_Faxe],&zmz);
       size_t nzmzn;
@@ -2391,7 +2422,7 @@ void paramcl::rueckfragen()
       zmconfp=nzmconfp;
       zmz=nzmz;
       zmzn=nzmzn;
-    }
+    } // if (cgconfp[++lfd].wert.empty() || rzf) 
   } // if (rzf)
   // die Verzeichnisnamen standardisieren
   kuerzevtz(&spoolcapivz);
@@ -2813,9 +2844,9 @@ int paramcl::initDB()
 int paramcl::pruefDB(const string& db)
 {
   Log(violetts+"pruefDB("+db+")"+schwarz,obverb,oblog);
-  My = new DB(myDBS,host,muser,mpwd,db,0,0,0,obverb,oblog);
+  My = new DB(myDBS,host,muser,mpwd,db,0,0,0,obverb,oblog,3,0);
   return (My->fehnr); 
-}
+} // pruefDB
 
 // Parameter -kez
 // wird aufgerufen in: main
@@ -5378,7 +5409,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
 void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obverb, uchar obzaehl, int oblog)
 {
   Log(violetts+Tx[T_hylaausgeb]+schwarz+"  hylastat: "+blau+FxStatS(&hylastat)+schwarz,obverb,oblog);
-  *ausgp<<blau<<"\n";
+  *ausgp<<blau<<endl;
   if (obzaehl) *ausgp<<++pmp->faxord<<")";
   else *ausgp<<"  ";
   *ausgp<<"Hyla: "<<schwarz;

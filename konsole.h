@@ -98,7 +98,8 @@ class TxB // Text-Basisklasse
 
 string meinpfad();
 
-enum Tkonsole_ {
+enum Tkonsole_ 
+{
   T_pfad,
   T_kuerze_logdatei,
   T_Logdatei,

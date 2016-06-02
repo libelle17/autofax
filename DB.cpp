@@ -62,40 +62,44 @@ class Txdbcl Txd;
 
 class linstcl linst;
 
-svec holdbaussql(string sql) {
- svec erg;
- string db;
- size_t runde=0;
- while (1) {
-   runde++;
-   string SQL;
-   transform(sql.begin(),sql.end(),std::back_inserter(SQL),::toupper);
-   size_t pfrom=SQL.find("FROM ");
-   size_t pjoin=SQL.find("JOIN ");
-   size_t ab=pfrom<pjoin?pfrom:pjoin;
-   if (ab!=string::npos) {
-     ab+=5;
-     size_t bis=string::npos;
-     if (sql[ab]=='`' || sql[ab]=='[' || sql[ab]=='\"') ab++;
-       bis=SQL.find_first_of(" .,;()'\"`]",ab);
-     if (bis!=string::npos) {
-       db=sql.substr(ab,bis-ab);
-       if (!db.empty()) {
+// Datenbanknamen aus sql-String extrahieren
+svec holdbaussql(string sql) 
+{
+  svec erg;
+  string db;
+  size_t runde=0;
+  while (1) {
+    runde++;
+    string SQL;
+    transform(sql.begin(),sql.end(),std::back_inserter(SQL),::toupper);
+    size_t pfrom=SQL.find("FROM ");
+    size_t pjoin=SQL.find("JOIN ");
+    size_t ab=pfrom<pjoin?pfrom:pjoin;
+    if (ab!=string::npos) {
+      ab+=5;
+      size_t bis=string::npos;
+      if (sql[ab]=='`' || sql[ab]=='[' || sql[ab]=='\"') ab++;
+      bis=SQL.find_first_of((string(" .,;()'\"`]:{}")+(char)9+(char)10+(char)13).c_str(),ab);
+      if (bis!=string::npos) 
+        db=sql.substr(ab,bis-ab);
+      else
+        db=sql.substr(ab);
+      if (!db.empty()) {
         uchar alt=0;
         for(size_t j=0;j<erg.size();j++) {
-         if (erg[j]==db) {alt=1;break;}
+          if (erg[j]==db) {alt=1;break;}
         }
         if (!alt) erg<<db;
-       }
-       sql=sql.substr(bis);
-     } else break;
-   } else break;
- }
- return erg;
-}
+      } // if (!db.empty()) 
+      if (bis==string::npos) break;
+      sql=sql.substr(bis);
+    } else break; // if (ab!=string::npos) 
+  } // while (1)
+  return erg;
+} // holdbaussql
 
 Feld::Feld(const string& name, string typ, const string& lenge, const string& prec, 
-           const string& comment, bool obind, bool obauto, bool nnull, string vdefa):
+    const string& comment, bool obind, bool obauto, bool nnull, string vdefa):
   name(name),
   typ(typ),
   lenge(lenge),
@@ -143,25 +147,28 @@ DB::DB()
 
 DB::DB(DBSTyp nDBS, const string& phost, const string& puser, const string& ppasswd, const string& uedb, unsigned int port, 
        const char *const unix_socket, unsigned long client_flag,
-    int obverb,int oblog,int versuchzahl)
+    int obverb,int oblog,int versuchzahl, uchar ggferstellen)
 {
-  init(nDBS,phost.c_str(),puser.c_str(),ppasswd.c_str(),uedb.c_str(),port,unix_socket,client_flag,obverb,oblog,versuchzahl);
+  init(nDBS,phost.c_str(),puser.c_str(),ppasswd.c_str(),uedb.c_str(),port,unix_socket,client_flag,obverb,oblog,versuchzahl,
+  ggferstellen);
 }
 
-DB::DB(DBSTyp nDBS, const char* const phost, const char* const puser,const char* const ppasswd, const char* const prootpwd, 
-       const char* const uedb, unsigned int port, const char *const unix_socket, unsigned long client_flag,int obverb,int oblog,int versuchzahl): rootpwd(prootpwd)
+DB::DB(DBSTyp nDBS, const char* const phost, const char* const puser,const char* const ppasswd, const char* const prootpwd,
+       const char* const uedb, unsigned int port, const char *const unix_socket, unsigned long client_flag,int obverb,int oblog,
+       int versuchzahl, uchar ggferstellen): rootpwd(prootpwd)
 {
-  init(nDBS,phost,puser,ppasswd,uedb,port,unix_socket,client_flag,obverb,oblog,versuchzahl);
+  init(nDBS,phost,puser,ppasswd,uedb,port,unix_socket,client_flag,obverb,oblog,versuchzahl,ggferstellen);
 }
 
 DB::DB(DBSTyp nDBS, const char* const phost, const char* const puser,const char* const ppasswd, const char* const uedb, 
-       unsigned int port, const char *const unix_socket, unsigned long client_flag,int obverb,int oblog,int versuchzahl)
+       unsigned int port, const char *const unix_socket, unsigned long client_flag,int obverb,int oblog,int versuchzahl,uchar ggferstellen)
 {
-  init(nDBS,phost,puser,ppasswd,uedb,port,unix_socket,client_flag,obverb,oblog,versuchzahl);
+  init(nDBS,phost,puser,ppasswd,uedb,port,unix_socket,client_flag,obverb,oblog,versuchzahl,ggferstellen);
 }
 
 void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,const char* const ppasswd, const char* const uedb, 
-              unsigned int port, const char *const unix_socket, unsigned long client_flag,int obverb,int oblog,unsigned versuchzahl)
+              unsigned int port, const char *const unix_socket, unsigned long client_flag,int obverb,int oblog,unsigned versuchzahl,
+              uchar ggferstellen)
 {
   DBS = nDBS;
   fehnr=0;
@@ -198,8 +205,8 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
               case 1698: // dasselbe auf Ubuntu
                 while (1) {
                   for(unsigned iru=0;iru<2;iru++) {
-                    cmd=string("mysql -uroot -h'")+host+"' "+(rootpwd.empty()?"":string("-p")+rootpwd)+" -e \"grant all on "+uedb+".* to '"+
-                      user+"'@'"+myloghost+"' identified by '"+ersetze(passwd.c_str(),"\"","\\\"")+"' with grant option\" 2>&1";
+                    cmd=string("mysql -uroot -h'")+host+"' "+(rootpwd.empty()?"":string("-p")+rootpwd)+" -e \"GRANT ALL ON "+uedb+".* TO '"+
+                      user+"'@'"+myloghost+"' IDENTIFIED BY '"+ersetze(passwd.c_str(),"\"","\\\"")+"' WITH GRANT OPTION\" 2>&1";
                     if (iru) break;
                     pruefrpw(cmd, versuchzahl);
                   }
@@ -225,16 +232,27 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                 }
                 break;
               case 1049:
+                if (ggferstellen) {
                 Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_Datenbank]+drot+uedb+schwarz+Txd[T_zu_erstellen],1,1);
                 mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), 0, port, unix_socket, client_flag);
                 fehnr=mysql_errno(conn);
                 if (!fehnr) {
-                  rs=new RS(this,string("create database if not exists `")+uedb+"`");
-                  rs->Abfrage(string("use `")+uedb+"`");
-                  delete(rs);
+                  rs=new RS(this,string("CREATE DATABASE IF NOT EXISTS `")+uedb+"`");
+                  fehnr=mysql_errno(conn);
+                  if (!fehnr) {
+                    rs->Abfrage(string("USE `")+uedb+"`");
+                    fehnr=mysql_errno(conn);
+                    if (!fehnr) {
+                      delete(rs);
+                    }
+                  }
                 } else {
                   Log(string(Txd[T_Fehler_beim_Verbinden])+ltoan(fehnr),1,1);
                 }
+                // if (ggferstellen)
+                } else {
+                  Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz,obverb,oblog);
+                } // if (ggferstellen)
                 break;
               case 0:
                 break;
@@ -261,7 +279,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
       break;
     case Postgres:
       break;
-  }
+  } // switch (DBS) 
 } // DB::DB(DBSTyp nDBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag,const char** erg)
 
 int DB::usedb(const string& db)
@@ -1006,6 +1024,8 @@ int RS::doAbfrage(uchar obstumm)
         obfehl=1;
         Log(string(Txd[T_Fehler_db])+drot+ltoan(fnr)+schwarz+" (\""+fehler+"\") in doAbfrage, sql: "+
             tuerkis+sql+schwarz,(fnr!=1406 && obstumm!=2) || (fnr==1406 && obstumm==255),1);
+            if (!fehler.find("Disk full"))
+              exit(0);
       } else {
 erfolg:
         obfehl=0;

@@ -32,7 +32,8 @@ using namespace std;
 //#pragma comment(lib, "libmysql.lib")
 #endif
 
-enum Txdb_ {
+enum Txdb_ 
+{
   T_DB_wird_initialisiert,
   T_Fehler_db,
   T_beim_Initialisieren_von_MySQL,
@@ -73,7 +74,8 @@ svec holdbaussql(string sql);
 //
 enum DBSTyp {MySQL, Postgres};
 
-class sqlft: public string {
+class sqlft: public string 
+{
   private:
     //	char dbuf[21];
     string *ersetze(const char* alt, const char* neu);
@@ -96,11 +98,13 @@ class sqlft: public string {
     sqlft(DBSTyp eDBS, long long int i);
 };
 
-template<typename T, size_t N> T * end(T (&ra)[N]) {
+template<typename T, size_t N> T * end(T (&ra)[N]) 
+{
   return ra + N;
 }
 
-class instyp {
+class instyp 
+{
   private:
     //	char dbuf[21];
     inline string ersetze(const char *u, const char* alt, const char* neu);
@@ -142,7 +146,8 @@ class instyp {
     }
 };
 // delimiter value begin
-inline char dvb(DBSTyp DBS) {
+inline char dvb(DBSTyp DBS) 
+{
   switch(DBS) {
     case MySQL: return '\'';
     case Postgres: return '\"';
@@ -150,7 +155,8 @@ inline char dvb(DBSTyp DBS) {
   }
 }
 // delimiter value end
-inline char dve(DBSTyp DBS) {
+inline char dve(DBSTyp DBS) 
+{
   switch(DBS) {
     case MySQL: return '\'';
     case Postgres: return '\"';
@@ -159,7 +165,8 @@ inline char dve(DBSTyp DBS) {
 }
 
 // delimiter name begin
-inline char dnb(DBSTyp DBS) {
+inline char dnb(DBSTyp DBS) 
+{
   switch(DBS) {
     case MySQL: return '`';
     case Postgres: return '\"';
@@ -167,7 +174,8 @@ inline char dnb(DBSTyp DBS) {
   }
 }
 // delimiter name end
-inline char dne(DBSTyp DBS) {
+inline char dne(DBSTyp DBS) 
+{
   switch(DBS) {
     case MySQL: return '`';
     case Postgres: return '\"';
@@ -175,7 +183,8 @@ inline char dne(DBSTyp DBS) {
   }
 }
 
-class Feld {
+class Feld 
+{
   public:
     const string name;
     const string typ;
@@ -190,7 +199,8 @@ class Feld {
          const string& comment="", bool obind=0, bool obauto=0, bool nnull=0, string defa="");
 };
 
-class Index {
+class Index 
+{
   public:
     const string name;
     int feldzahl;
@@ -198,7 +208,8 @@ class Index {
     Index(const string& vname, Feld *vfelder, int vfeldzahl);
 };
 
-class Tabelle {
+class Tabelle 
+{
   public:
     const string name;
     string comment;
@@ -216,7 +227,8 @@ class Tabelle {
 
 class RS;
 
-class DB {
+class DB 
+{
   public:
     MYSQL *conn;
     //	MYSQL_RES *result;
@@ -254,14 +266,16 @@ class DB {
     //	DB(DBSTyp DBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag);
     DB();
     DB(DBSTyp nDBS, const char* const phost, const char* const user,const char* const ppasswd, const char* const uedb="", unsigned int port=0, 
-       const char *const unix_socket=NULL, unsigned long client_flag=0,int obverb=0,int oblog=0,int versuchzahl=10);
+       const char *const unix_socket=NULL, unsigned long client_flag=0,int obverb=0,int oblog=0,int versuchzahl=10,uchar ggferstellen=1);
     DB(DBSTyp nDBS, const char* const phost, const char* const user, const char* const ppasswd, const char* const prootpwd, const char* const uedb="", 
-       unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=0,int obverb=0,int oblog=0,int versuchzahl=10);
+       unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=0,int obverb=0,int oblog=0,int versuchzahl=10,
+       uchar ggferstellen=1);
     DB(DBSTyp nDBS, const string& phost, const string& puser, const string& ppasswd, const string& uedb, unsigned int port, const char* 
        const unix_socket, unsigned long client_flag,
-       int obverb,int oblog,int versuchzahl=10);
+       int obverb,int oblog,int versuchzahl=10,uchar ggferstellen=1);
     void init(DBSTyp nDBS, const char* const phost, const char* const user,const char* const ppasswd, const char* const uedb="", unsigned int port=0, 
-              const char *const unix_socket=NULL, unsigned long client_flag=0,int obverb=0,int oblog=0,unsigned versuchzahl=10);
+              const char *const unix_socket=NULL, unsigned long client_flag=0,int obverb=0,int oblog=0,unsigned versuchzahl=10,
+              uchar ggferstellen=1);
     ~DB(void);
     /*
        int Abfrage(const char* sql,const char** erg=(const char**)&"", uchar obstumm=0);
@@ -281,7 +295,8 @@ class DB {
 };
 
 
-class RS {
+class RS 
+{
   public:
     DB* db;
     string sql;

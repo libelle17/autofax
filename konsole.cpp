@@ -960,14 +960,14 @@ void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
       size_t pos=zeile->find('#');
       if (pos!=string::npos) zeile->erase(pos);
       if (!zeile->empty()) {
-        if (obverb>1)
-          Log(string(Txk[T_stern_zeile])+*zeile,obverb);
+        if (obverb>1) Log(string(Txk[T_stern_zeile])+*zeile,obverb);
         pos=zeile->find(tz);
         if (pos!=string::npos && pos>0) { 
           size_t ii=csize;
             while( ii-- ) {
               size_t gef=zeile->find(conf[ii].name);
               if (gef!=string::npos && gef<pos) {
+               if (strchr((string(" ")+(char)9+tz).c_str(),zeile->at(gef+conf[ii].name.length()))) {
                 ++richtige;
                 conf[ii].wert=zeile->substr(pos+1);
                 gtrim(&conf[ii].wert); // Leerzeichen entfernen
@@ -976,6 +976,7 @@ void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
                   conf[ii].wert.erase(conf[ii].wert.length()-1);
                   conf[ii].wert.erase(0,1);
                 }
+               } // if (strchr((string(" ")+(char)9+tz).c_str(),gef+conf[ii].name.length())) 
               } // if( !strcmp(conf[i].name.c_str(),zeile->c_str()) ) 
             }
         } // if (pos!=string::npos && 1==sscanf(zeile->c_str(),scs.c_str(),zeile->c_str())) 
