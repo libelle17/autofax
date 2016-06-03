@@ -59,8 +59,11 @@ enum Txdb_
   T_Fehler_beim_Pruefen_auf_Vorhandensein_des_Datensatzes,
   T_Programmfehler,
   T_nicht_anfangen_bei_isql_empty_Aufruf_von_RS_insert_beim_ersten_Mal_ohn_anfangen_bei,
+  T_Datenbank_nicht_zu_oeffnen,
   T_dbMAX,
 };
+
+extern class Txdbcl Txd;
 
 class Txdbcl: public TxB
 {

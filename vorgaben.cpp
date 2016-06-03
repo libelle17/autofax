@@ -66,43 +66,43 @@ void paramcl::VorgbSpeziell()
             "left join `"+hatab+"`.fachrichtung fr on ahf.fachrichtung_id = fr.idfachrichtung "
             "left join `"+hatab+"`.ort on bs.ort_id = ort.idort "
             "left join `"+hatab+"`.titel t on a.titel_id = t.idtitel where concat(if(mid(faxzahl,1,1)='0','','08131'),"
-            "replace(replace(replace(replace(faxzahl,' ',''),'-',''),'/',''),'\\'','')) = "+officetab+".vollnr('&&faxnr&&') "
+            "replace(replace(replace(replace(faxzahl,' ',''),'-',''),'/',''),'\\'','')) = '&&faxnr&&' "
             "group by faxzahl, nachname, vorname) i) i group by FaxZahl";
           break;
         case 1:
           sqlconfvp[i].wert = string("")+"select concat(titel,if(titel='','',' '),vorname,' ',nvorsatz,if(nvorsatz='','',' '),nachname,', g.',"
             "date_format(gebdat,'%d.%m.%y'),', ',ort) name,concat('Pid ',pat_id) bsname from "+quelltab+".namen n where "
             "concat(if(mid(privatfax,1,1)='0','','08131'),replace(replace(replace(replace(privatfax,' ',''),'-',''),'/',''),"
-            "'\\'','')) = "+officetab+".vollnr('&&faxnr&&')";;
+            "'\\'','')) = '&&faxnr&&'";;
           break;
         case 2:
           sqlconfvp[i].wert = string("")+"select concat(haname,', ',ort,', ',kvnu) name, zulg,fax1k from "+kvaetab+".hae where "
-            "concat(if(mid(fax1k,1,1)='0','','08131'),replace(replace(replace(replace(fax1k,' ',''),'-',''),'/',''),'\\'','')) = "+
-            officetab+".vollnr('&&faxnr&&')";
+            "concat(if(mid(fax1k,1,1)='0','','08131'),replace(replace(replace(replace(fax1k,' ',''),'-',''),'/',''),'\\'','')) = " 
+            "'&&faxnr&&'";
           break;
         case 3:
           sqlconfvp[i].wert = string("")+"select concat(titel,if(titel='','',' '),vorname,' ',name,', ',ort) name, zusatzfeld5 from "+
             officetab+".adresse where concat(if(mid(faxk,1,1)='0','','08131'),replace(replace(replace(replace(faxk,' ',''),'-',''),'/',''),'\\'',''))"
-            " = "+officetab+".vollnr('&&faxnr&&') order by zusatzfeld5 desc";
+            " = '&&faxnr&&' order by zusatzfeld5 desc";
           break;
         case 4:
           sqlconfvp[i].wert = string("")+"SELECT concat(if(isnull(name),'',concat(titel,if(titel='','',' '),vorname,' ',name,', ',ort, ', ')),"
             "if(isnull(i.firma),'',i.firma)) name, i.abteilung FROM "+officetab+".telefon t left join "+officetab+".kontakte k "
             "on t.knr  = k.knr left join "+officetab+".pers p on k.knr = p.knr left join "+officetab+".inst i on k.knr = i.knr left join "+
             officetab+".anschr a on a.knr = p.knr where concat(if(mid(num,1,1)='0','','08131'),"
-            "replace(replace(replace(replace(num,' ',''),'-',''),'/',''),'\\'',''))  = "+officetab+".vollnr('&&faxnr&&') and (not isnull(name) "
+            "replace(replace(replace(replace(num,' ',''),'-',''),'/',''),'\\'',''))  = '&&faxnr&&' and (not isnull(name) "
             "or not isnull(firma) or not isnull(vorname)) order by name desc, vorname desc, firma desc";
           break;
         case 5:
           sqlconfvp[i].wert = string("")+"select concat(titel,if(titel='','',' '),vorname,' ',nvorsatz,if(nvorsatz='','',' '),"
             "nachname,', g.',date_format(gebdat,'%d.%m.%y'),', ',ort) name,concat('Pid ',pat_id) bsname from "+quelltab+".namen n where "
-            "concat(if(mid(privattel,1,1)='0','','08131'),replace(replace(replace(replace(privattel,' ',''),'-',''),'/',''),'\\'','')) = "+
-            officetab+".vollnr('&&faxnr&&')";
+            "concat(if(mid(privattel,1,1)='0','','08131'),replace(replace(replace(replace(privattel,' ',''),'-',''),'/',''),'\\'','')) = "
+            "'&&faxnr&&'";
           break;
         case 6:
           sqlconfvp[i].wert = string("")+"select concat(titel,if(titel='','',' '),vorname,' ',name) name,fachgruppe from "+quelltab+
             ".listenausgabeuew where concat(if(mid(fax,1,1)='0','','08131'),replace(replace(replace(replace(fax,' ',''),'-',''),'/',''),'\\'','')) "
-            "= "+officetab+".vollnr('&&faxnr&&')";
+            "= '&&faxnr&&'";
           break;
       }
     }

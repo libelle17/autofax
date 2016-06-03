@@ -138,8 +138,11 @@ enum Tkonsole_
   T_Weder_zypper_noch_apt_get_als_Installationspgrogramm_gefunden,
   T_Logdateidpp,
   T_Lese_Konfiguration_aus,
+  T_j_k,
   T_konsoleMAX,
 };
+
+extern class Txkonsolecl Txk;
 
 class Txkonsolecl : public TxB
 {
@@ -429,6 +432,8 @@ int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *r
                 binaer ob0heissterfolg=wahr, binaer obergebnisanzeig=wahr, const string& ueberschr="");
 string aktprogverz();
 char holbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
+// vorgabe fur vorgabe = T_j_k; alternativ='n'
+uchar holob(const string& frage,const char *vorgabe=Txk[T_j_k]);
 string holstrings(const char *frage, char* moegl[], char *vorgabe=0); // das letzte Element von moegl muss 0 sein
 string holstrings(const char *frage, vector<string> *moegl, string *vorgabe=0); 
 string holzahl(const char *frage, const char *vorgabe=0);

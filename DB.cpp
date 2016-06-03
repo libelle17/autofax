@@ -53,6 +53,8 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
   // T_nicht_anfangen_bei_isql_empty_Aufruf_von_RS_insert_beim_ersten_Mal_ohn_anfangen_bei
   {" !anfangen bei isql.empty() (Aufruf von RS::insert beim ersten Mal ohne anfangen)! bei: ",
     " !anfangen at isql.empty() (call of RS::insert the first timee without anfangen)! at: "},
+  // T_Datenbank_nicht_zu_oeffnen
+  {"Datenbank nicht zu oeffnen","could not open database"},
   {"",""}
 };
 
@@ -320,23 +322,21 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
 
 void DB::setzrpw()
 {
-  char erg;
   string rootpw2, cmd;
   while (1) {
-    erg=holbuchst(Txd[T_Das_MySQL_Passwort_ist_leer_Wollen_Sie_eines_festlegen],string(Txd[T_j])+"n",0,"jJyYoOsSnN","j");
-    if (strchr("jJyYoOsSnN",erg)) {
+    if (holob(Txd[T_Das_MySQL_Passwort_ist_leer_Wollen_Sie_eines_festlegen])) {
       rootpwd=holstring(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
       rootpw2=holstring(Txd[T_Bitte_geben_Sie_das_MySQL_Passwort_fuer_Benutzer_root_erneut_ein],&rootpw2);
       if (rootpw2==rootpwd && !rootpwd.empty()) {
-        cmd=string("mysql -uroot -h'")+host+"' -e \"grant all on *.* to 'root'@'"+myloghost+
-          "' identified by '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' with grant option\"";
+        cmd=string("mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
+          "' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
         Log(string(Txd[T_Fuehre_aus_db])+blau+cmd+schwarz,1,1);
         system(cmd.c_str());
         break;
       } // if (rootpw2==rootpwd ...
     } else {
       break;
-    } // if (strchr("jYJY",erg))
+    } // if (holob(Txd[T_Das_MySQL_Passwort_ist_leer_Wollen_Sie_eines_festlegen])) 
   } // while (1)
 } // setzrpw
 
@@ -1002,41 +1002,45 @@ int RS::doAbfrage(uchar obstumm)
       num_rows=0;
       num_fields=0;
       //      if (sql=="select column_name from information_schema.columns where table_schema='emails' and table_name = 'lmailbody' and extra = 'auto_increment'") {mysql_commit(db->conn);} // sql="select 'ID'";
-      //      <<"sql.c_str(): "<<sql.c_str()<<endl;
+      // <<"sql.c_str(): "<<sql.c_str()<<endl;
       if (obstumm==255)
         Log(string("SQL: ")+drot+sql+schwarz,1,1);
-      if (!db->conn) exit(0);
-      if (mysql_query(db->conn,sql.c_str())) {
-        fnr=mysql_errno(db->conn);
-        fehler=mysql_error(db->conn);
-        if (fnr==1138) { // Invalid use of NULL value; bei Spaltenverschiebungen kann oft NOT NULL nicht mehr geaendert werden
-          string lsql;
-          transform(sql.begin(),sql.end(),std::back_inserter(lsql),::toupper);
-          if ((!lsql.find("ALTER TABLE") || !lsql.find("CREATE TABLE")) && lsql.find("NOT NULL")!=string::npos) {
-            lsql=caseersetze(sql,"NOT NULL","");
-            if (!mysql_query(db->conn,lsql.c_str())) goto erfolg;
-            else {
-              fnr=mysql_errno(db->conn);
-              fehler=mysql_error(db->conn);
-            }
-          }
-        }
-        obfehl=1;
-        Log(string(Txd[T_Fehler_db])+drot+ltoan(fnr)+schwarz+" (\""+fehler+"\") in doAbfrage, sql: "+
-            tuerkis+sql+schwarz,(fnr!=1406 && obstumm!=2) || (fnr==1406 && obstumm==255),1);
-            if (!fehler.find("Disk full"))
-              exit(0);
+      if (!db->conn) {
+       fnr=9999;
+       fehler=Txd[T_Datenbank_nicht_zu_oeffnen];
       } else {
-erfolg:
-        obfehl=0;
-        result = mysql_store_result(db->conn);
-        if (result) {
-          num_fields = mysql_num_fields(result);
-          num_rows = mysql_num_rows(result);
+        if (mysql_query(db->conn,sql.c_str())) {
+          fnr=mysql_errno(db->conn);
+          fehler=mysql_error(db->conn);
+          if (fnr==1138) { // Invalid use of NULL value; bei Spaltenverschiebungen kann oft NOT NULL nicht mehr geaendert werden
+            string lsql;
+            transform(sql.begin(),sql.end(),std::back_inserter(lsql),::toupper);
+            if ((!lsql.find("ALTER TABLE") || !lsql.find("CREATE TABLE")) && lsql.find("NOT NULL")!=string::npos) {
+              lsql=caseersetze(sql,"NOT NULL","");
+              if (!mysql_query(db->conn,lsql.c_str())) goto erfolg;
+              else {
+                fnr=mysql_errno(db->conn);
+                fehler=mysql_error(db->conn);
+              }
+            } // if ((!lsql.find("ALTER TABLE") || !lsql.find("CREATE TABLE")) && lsql.find("NOT NULL")!=string::npos) 
+          } // if (fnr==1138)
+          obfehl=1;
+          Log(string(Txd[T_Fehler_db])+drot+ltoan(fnr)+schwarz+" (\""+fehler+"\") in doAbfrage, sql: "+
+              tuerkis+sql+schwarz,(fnr!=1406 && obstumm!=2) || (fnr==1406 && obstumm==255),1);
+          if (!fehler.find("Disk full"))
+          exit(0);
         } else {
-        }
-        //			row = mysql_fetch_row(result);
-      }
+erfolg:
+          obfehl=0;
+          result = mysql_store_result(db->conn);
+          if (result) {
+            num_fields = mysql_num_fields(result);
+            num_rows = mysql_num_rows(result);
+          } else {
+          }
+          //			row = mysql_fetch_row(result);
+        } // if (mysql_query(db->conn,sql.c_str())) else  
+      } // if (!db->conn) else
       break;
     case Postgres:
       break;

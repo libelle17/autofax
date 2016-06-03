@@ -63,7 +63,7 @@ enum T_
   T_verarbeitete_PDF_Dateien,
   T_Soll_die_Capisuite_verwendet_werden,
   T_Soll_Hylafax_verwendet_werden,
-  T_Soll_vorrangig_hylafax_gewaehlt_werden,
+  T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden,
   T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird,
   T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird,
   T_Linux_Benutzer_fuer_Capisuite,
@@ -425,12 +425,14 @@ enum T_
   T_zufaxenvz,
   VorgbSpeziell_Basis,
   T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben,
-  T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung,
-  T_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung,
+  T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr,
+  T_faxnr_wird_ersetzt_mit_der_Faxnr,
   T_Datenbank,
   T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
   T_In,
   T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
+  T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
+  T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
   T_MAX
 };
 
@@ -451,8 +453,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Soll die Capisuite verwendet werden","Shall Capisuite be used"},
   // T_Soll_Hylafax_verwendet_werden
   {"Soll hylafax verwendet werden","Shall hylafax be uses"},
-  // T_Soll_vorrangig_hylafax_gewaehlt_werden
-  {"Soll vorrangig hylafax gewaehlt werden","Shall hylafax bei chosen preferentially"},
+  // T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden
+  {"Soll vorrangig die Capisuite statt hylafax gewaehlt werden","Shall capisuite instead of hylafax bei chosen preferentially"},
   // T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird
   {"Zahl der Versuche in Capisuite, bis hylafax eingeschaltet wird","Number of tries in Capisuite, until hylafax is started"},
   // T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird
@@ -1187,12 +1189,12 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"VorgbSpeziell_Basis()","specificprefs_base()"},
   // "Wollen Sie noch einen SQL-Befehl eingeben?"
   {"Wollen Sie noch einen SQL-Befehl eingeben?","Do You want to enter another sql command?"},
-  // T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung
-  {" ('-'=SQL-Befehl loeschen,'&&faxnr&&' wird ersetzt mit der Faxnr, 'vollnr('&&faxnr&&')' mit deren Zusammenziehung)",
-   " ('-'=delete this sql command,'&&faxnr&&' will be replaces with the fax-no., 'vollnr('&&faxnr&&')' with its concatenation)"},
-  // T_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung
-  {" ('&&faxnr&&' wird ersetzt mit der Faxnr, 'vollnr('&&faxnr&&')' mit deren Zusammenziehung)",
-   " ('&&faxnr&&' will be replaces with the fax-no., 'vollnr('&&faxnr&&')' with its concatenation)"},
+  // T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr
+  {" ('-'=SQL-Befehl loeschen,'&&faxnr&&' wird ersetzt mit der Faxnr)",
+   " ('-'=delete this sql command,'&&faxnr&&' will be replaces with the fax-no.)"},
+  // T_faxnr_wird_ersetzt_mit_der_Faxnr
+  {" ('&&faxnr&&' wird ersetzt mit der Faxnr)",
+   " ('&&faxnr&&' will be replaces with the fax-no.)"},
   // T_Datenbank
   {"Datenbank '","Database '"},
   // T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben
@@ -1202,12 +1204,15 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben
   {"' keine Datenbank gefunden. Wollen Sie den SQL-Befehl neu eingeben?",
    "' no database found. Do You want to reenter the sql command?"},
+  // T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben
+  {"' koennte ein SQL-Fehler sein. Wollen Sie den SQL-Befehl neu eingeben?",
+   "' could be an sql error. Do You want to reenter the sql command?"},
+  // T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben
+  {"' keinmal '&&faxnr&&' gefunden. Wollen Sie den SQL-Befehl neu eingeben?",
+   "' no occurance of '&&faxnr&&' found. Do You want to reenter the sql command?"},
   {"",""}
 };
 
-
-extern class Txkonsolecl Txk;
-extern class Txdbcl Txd;
 
 string pk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax";
 string ccapiconfdat="/etc/capisuite/capisuite.conf";
@@ -1414,6 +1419,7 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     Log(string("original (docname): ")+blau+original+schwarz,obverb,oblog);
     einf.push_back(instyp(My->DBS,"transe",&jetzt));
     if (!telnr.empty()) einf.push_back(instyp(My->DBS,"rcfax",&telnr));
+    if (!adressat.empty()) einf.push_back(instyp(My->DBS,"adressat",&adressat));
 
     einf.push_back(instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
     rins.insert(pmp->touta,einf, 1,0,ZDB?ZDB:!runde); 
@@ -1573,6 +1579,18 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
       vector<instyp> einf; // fuer alle Datenbankeinfuegungen
       string odatei = base_name(fxvp->at(nachrnr).spdf);
       einf.push_back(instyp(My->DBS,"original",&odatei));
+      // den Adressaten ermitteln
+      size_t pn, pt, ptc, pth;
+      pn=odatei.find(anstr);
+      pt=odatei.find(anfaxstr);
+      ptc=odatei.find(ancfaxstr);
+      pth=odatei.find(anhfaxstr);
+      if (ptc<pt) pt=ptc;
+      if (pth<pt) pt=pth;
+      if (pt!=string::npos && pn<pt) {
+       string subst=odatei.substr(pn+anstr.length(),pt-pn-anstr.length());
+       einf.push_back(instyp(My->DBS,"adressat",&subst));
+      }
       if (nachrnr<fxvp->size()) {
         string oudatei = base_name(fxvp->at(nachrnr).npdf);
         einf.push_back(instyp(My->DBS,"origvu",&oudatei));
@@ -1597,6 +1615,7 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
         My->tuerweitern(spooltab,"telnr",atol(*(*cerg+0)),!obverb);
       break;
     }
+    // hier wird die Telefonnummer aus dem Namen extrahiert
     RS tel(My,string("update `")+spooltab+"` "
         "set telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
         "where isnull(telnr) or telnr=''",ZDB);
@@ -1932,22 +1951,22 @@ void paramcl::lieskonfein()
         sqlconfp[i].name=string("SQL_")+ltoan(i+1);
         if (i<sqlvzn) {
           sqlconfp[i].wert=sqlconfvp[i].wert;
-       // <<"i: "<<hviolett<<i<<schwarz<<", sqlconfp["<<i<<"]: "<<blau<<sqlconfp[i].name<<schwarz<<endl;
-       // <<"i: "<<blau<<i<<schwarz<<", sqlconfp["<<i<<"]: "<<rot<<sqlconfp[i].wert<<schwarz<<endl;
-          } // if (i<sqlvzn) 
+          // <<"i: "<<hviolett<<i<<schwarz<<", sqlconfp["<<i<<"]: "<<blau<<sqlconfp[i].name<<schwarz<<endl;
+          // <<"i: "<<blau<<i<<schwarz<<", sqlconfp["<<i<<"]: "<<rot<<sqlconfp[i].wert<<schwarz<<endl;
+        } // if (i<sqlvzn) 
       } // for(size_t i=0;i<sqlzn;i++) 
     } // if (sqlzn) 
     // jetzt erst stehen die Variablen fuer alle SQL-Befehle zur Verfuegung
     afconf.auswert(sqlconfp,sqlzn,obverb);
-//       for(size_t akt=0;akt<sqlzn;akt++) KLA
-//        <<"akt: "<<hviolett<<akt<<schwarz<<", sqlconfp["<<akt<<"]: "<<blau<<sqlconfp[akt].name<<schwarz<<endl;
-//       <<"akt: "<<violett<<akt<<schwarz<<", sqlconfp["<<akt<<"]: "<<hblau<<sqlconfp[akt].wert<<schwarz<<endl;
-//      KLZ
+    //       for(size_t akt=0;akt<sqlzn;akt++) KLA
+    //        <<"akt: "<<hviolett<<akt<<schwarz<<", sqlconfp["<<akt<<"]: "<<blau<<sqlconfp[akt].name<<schwarz<<endl;
+    //       <<"akt: "<<violett<<akt<<schwarz<<", sqlconfp["<<akt<<"]: "<<hblau<<sqlconfp[akt].wert<<schwarz<<endl;
+    //      KLZ
 
     if (!gconf[lfd].wert.empty()) gconf[lfd].hole(&zmz); else rzf=1; lfd++;
     if (!zmvzn || !zmvp) {
-     zmvp= new zielmustercl{"","/var/autofax/ziel"};
-     zmvzn=1;
+      zmvp= new zielmustercl{"","/var/autofax/ziel"};
+      zmvzn=1;
     }
     zmvz=ltoan(zmvzn); // aus VorgbSpeziell
 
@@ -1956,7 +1975,7 @@ void paramcl::lieskonfein()
       zmzn=atol(zmz.c_str());
       if (!iru) if (zmzn>0) zmda=1;
       if (zmzn) break;
-    // Vorgaben uebernehmen
+      // Vorgaben uebernehmen
       zmz=zmvz;
       zmzukonf=1;
     }
@@ -2100,7 +2119,6 @@ void paramcl::rueckfragen()
   Log(violetts+Tx[T_rueckfragen]+schwarz,obverb,oblog);
   //  static Schluessel gconf[]=KLA KLA"hylazuerst"KLZ,KLA"maxcapinr"KLZ,KLA"maxhylanr"KLZ,
   //                                KLA"gleichziel"KLZ,KLA"zufaxenvz"KLZ,KLA"wartevz"KLZ KLZ;
-  char erg;
   if (rzf) {
     int lfd=-1;
     char *locale = setlocale(LC_CTYPE,"");
@@ -2114,8 +2132,7 @@ void paramcl::rueckfragen()
   // <<"rueckfragen 1 vor  obcapi: "<<(int)obcapi<<endl;
     if (cgconfp[++lfd].wert.empty() || rzf) {
       if (obfcard) {
-        erg=holbuchst(Tx[T_Soll_die_Capisuite_verwendet_werden],string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",obcapi?Tx[T_j_af]:"n");
-        obcapi= strchr("jyJYoOsS",(int)erg)?1:0;
+        obcapi=holob(Tx[T_Soll_die_Capisuite_verwendet_werden],obcapi?Tx[T_j_af]:"n");
       } else {
         obcapi=0;
       }
@@ -2124,8 +2141,7 @@ void paramcl::rueckfragen()
   // <<"rueckfragen 1 nach obcapi: "<<(int)obcapi<<endl;
     if (cgconfp[++lfd].wert.empty() || rzf) {
       if (obmodem) {
-        erg=holbuchst(Tx[T_Soll_Hylafax_verwendet_werden],string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",obhyla?Tx[T_j_af]:"n");
-        obhyla= strchr("jyJYoOsS",(int)erg)?1:0;
+        obhyla=holob(Tx[T_Soll_Hylafax_verwendet_werden],obhyla?Tx[T_j_af]:"n");
       } else {
         obhyla=0;
       }
@@ -2134,9 +2150,7 @@ void paramcl::rueckfragen()
     if (obcapi) {
       if (obhyla) {
         if (cgconfp[++lfd].wert.empty() || rzf) {
-          const char *ferkl[]={"hylafax","capisuite"};
-          erg=holbuchst(Tx[T_Soll_vorrangig_hylafax_gewaehlt_werden],string(Tx[T_j_af])+"n",ferkl,"jJyYoOsSnN",hylazuerst?Tx[T_j_af]:"n");
-          hylazuerst= strchr("jyJYoOsS",(int)erg)?1:0;
+          hylazuerst=!holob(Tx[T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden],hylazuerst?"n":Tx[T_j_af]);
           cgconfp[lfd].setze(&hylazuerst);
         }
         if (cgconfp[++lfd].wert.empty() || rzf) {
@@ -2234,9 +2248,7 @@ void paramcl::rueckfragen()
       hylazuerst=0;
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
-      erg=holbuchst(Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden],
-          string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",gleichziel?Tx[T_j_af]:"n");
-      gleichziel= strchr("jyJYoOsS",(int)erg)?1:0;
+      gleichziel=holob(Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden],gleichziel?Tx[T_j_af]:"n");
       cgconfp[lfd].setze(&gleichziel);
     }
     if (cgconfp[++lfd].wert.empty() || rzf) {
@@ -2330,8 +2342,8 @@ void paramcl::rueckfragen()
        string zwi;
        while (1) {
          zwi=holstring(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt+1)+(vorgabe->empty()?
-               Tx[T_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung]:
-               Tx[T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr_vollnr_faxnr_mit_deren_Zusammenziehlung]),
+               Tx[T_faxnr_wird_ersetzt_mit_der_Faxnr]:
+               Tx[T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr]),
              vorgabe);
          if (zwi=="-") zwi.clear();
          if (zwi.empty()) {
@@ -2339,25 +2351,36 @@ void paramcl::rueckfragen()
          } else {
            svec dben=holdbaussql(zwi);
            // <<"dben.size(): "<<(int)dben.size()<<endl;
+           uchar dbda=1;
            if (!dben.size()) {
-             erg=holbuchst(string(Tx[T_In])+rot+zwi+schwarz+Tx[T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben],
-                 string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",Tx[T_j_af]);
-             if (strchr("jyJYoOsS",(int)erg)) continue;
-           }
-           uchar nochmal=0;
-           for(size_t i=0;i<dben.size();i++) {
-             // <<"i: "<<blau<<i<<rot<<": "<<dben[i]<<schwarz<<endl;
-             if (pruefDB(dben[i])) {
-               erg=holbuchst(string(Tx[T_Datenbank])+rot+dben[i]+schwarz+Tx[T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben],
-                   string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",Tx[T_j_af]);
-               if (strchr("jyJYoOsS",(int)erg)) {
-                nochmal=1;
-                break;
-              }
-             }
-           } // for(size_t i=0;i<dben.size();i++) 
-           if (!nochmal) break;     
+             if (holob(string(Tx[T_In])+rot+zwi+blau+Tx[T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
+             dbda=0;
+           } else { // if (!dben.size()) 
+             uchar nochmal=0;
+             for(size_t i=0;i<dben.size();i++) {
+               // <<"i: "<<blau<<i<<rot<<": "<<dben[i]<<schwarz<<endl;
+               if (pruefDB(dben[i])) {
+                 dbda=0;
+                 if (holob(string(Tx[T_Datenbank])+rot+dben[i]+blau+Tx[T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) {
+                   nochmal=1;
+                   break;
+                 } // if (strchr("jyJYoOsS",(int)erg)) 
+               } // if (pruefDB(dben[i])) 
+             } // for(size_t i=0;i<dben.size();i++) 
+             if (nochmal) continue;     
+           } // if (!dben.size()) 
+           if (dbda) {
+             if (zwi.find("&&faxnr&&")==string::npos) {
+               if (holob(string(Tx[T_In])+rot+zwi+blau+Tx[T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
+             } else {
+               RS rtest(this->My,ersetzAllezu(zwi,"&&faxnr&&","9999")); // (const char*)trimfaxnr));
+               if (rtest.obfehl) {
+                 if (holob(string(Tx[T_In])+rot+zwi+blau+Tx[T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
+               } // if (rtest.obfehl)
+             } // if (zwi.find("&&faxnr&&")==string::npos) 
+           } // if (dbda)
          } // if (zwi.empty()) else
+         break;
        } // while (1)
        if (zwi.empty()) {
          if (akt>sqlzn && akt >sqlvzn) akt--;
@@ -2370,8 +2393,7 @@ void paramcl::rueckfragen()
          nsqlzn++;
        } // if (zwi.empty()) else
        if (akt>=sqlzn && akt>=sqlvzn) {
-         erg=holbuchst(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],string(Tx[T_j_af])+"n",0,"jJyYoOsSnN",Tx[T_j_af]);
-         if (!strchr("jyJYoOsS",(int)erg)) break;
+         if (!holob(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],Tx[T_j_af])) break;
        }
       } // for(size_t akt=0;;akt++) 
       string nsqlz=ltoan(nsqlzn);
@@ -3007,7 +3029,6 @@ int paramcl::loeschefax(int obverb, int oblog)
   vector<fsfcl> fsfv;
   size_t nr=0;
   string ergnr,erg;
-  char buchst;
   char*** cerg;
   RS zul(My,string("select concat_ws(' ',left(concat(if(isnull(original),'NULL',original),space(50)),50),"
         "right(concat(space(15),if(isnull(capispooldatei),'NULL',capispooldatei)),15),")+
@@ -3027,9 +3048,7 @@ int paramcl::loeschefax(int obverb, int oblog)
   if (fsfv.size()) {
     ergnr=holzahl(Tx[T_Welches_Fax_soll_geloescht_werden]);
     if (ergnr=="0") return 0;
-    buchst=holbuchst(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+violett+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],
-        string(Tx[T_j_af])+"n",0,"jJyYoOsSnN","n");
-    if (strchr("jyJYoOsS",buchst)) {
+    if (holob(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+violett+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],"n")) {
       nr=atol(ergnr.c_str())-1;
       if (nr>=0 && nr<fsfv.size()) {
         int zdng=0; // Zahl der nicht geloeschten
@@ -3053,8 +3072,8 @@ int paramcl::loeschefax(int obverb, int oblog)
         if (!zdng || (fsfv[nr].capistat==fehlend && fsfv[nr].hylastat==fehlend)) {
           RS loe(My,string("delete from `")+spooltab+"` where id="+fsfv[nr].id,-obverb);
         }
-      }
-    }
+      } // if (nr>=0 && nr<fsfv.size()) 
+    } // if (holob(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+violett+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],"n")) 
   } else {
     Log(Tx[T_Kein_Fax_zum_Loeschen_vorhanden],1,oblog);
   }
@@ -3408,7 +3427,8 @@ void paramcl::faxealle()
         "((isnull(capispooldatei)or capispooldatei='') and (isnull(hyladials) or hyladials>")+maxhylanr+" or hyladials=-1 or "
       "    (isnull(prio) or prio=1 or (prio=0 and not "+hzstr+")))) p9, "
       "((isnull(hylanr)or hylanr='') and (isnull(capidials) or capidials>" +maxcapinr+" or capidials=-1 or "
-      "      (isnull(prio) or prio=2 or (prio=0 and     "+hzstr+")))) p10 "
+      "      (isnull(prio) or prio=2 or (prio=0 and     "+hzstr+")))) p10, "
+      "adressat p11 "
       "from `"+spooltab+"` "
       "where original>''",ZDB);
   if (r0.obfehl) {
@@ -3422,7 +3442,7 @@ void paramcl::faxealle()
           *(*cerg+6) && *(*cerg+7) && *(*cerg+8) && *(*cerg+9) && *(*cerg+10)) {
         // obcapi = *(*cerg+9), obhyla=*(*cerg+10)
         fsfv.push_back(fsfcl(*(*cerg+0), *(*cerg+1), *(*cerg+2), *(*cerg+3), atoi(*(*cerg+4)), *(*cerg+5),
-              atoi(*(*cerg+6)), *(*cerg+7), atoi(*(*cerg+8)), (binaer)atoi(*(*cerg+9)), (binaer)atoi(*(*cerg+10))));
+              atoi(*(*cerg+6)), *(*cerg+7), atoi(*(*cerg+8)), (binaer)atoi(*(*cerg+9)), (binaer)atoi(*(*cerg+10)), *(*cerg+11)));
       }
     }
     Log(string(Tx[T_ZahldDSmwegzuschickendenFaxenin])+spooltab+"`: "+ltoan(fsfv.size()),obverb,oblog);
@@ -3476,7 +3496,7 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
   Log(violetts+Tx[T_untersuchespool]+schwarz,obverb,oblog);
   char ***cerg;
   RS rs(My,string("select id p0,capispooldatei p1,capispoolpfad p2,original p3,cdateidatum p4,"
-        " telnr p5,origvu p6,hylanr p7,capidials p8,hyladials p9,hdateidatum p10 "
+        " telnr p5,origvu p6,hylanr p7,capidials p8,hyladials p9,hdateidatum p10, adressat p11 "
         "from `")+spooltab+"`",ZDB);
   if (!rs.obfehl) {
     faxord=0;
@@ -3495,6 +3515,7 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
         if (*(*cerg+8)) fsf.cdials =*(*cerg+8); // capidials
         if (*(*cerg+9)) fsf.hdials =*(*cerg+9); // hyladials
         if (*(*cerg+10)) fsf.hdd   =*(*cerg+10); // hdateidatum
+        if (*(*cerg+11)) fsf.adressat =*(*cerg+11); // adressat
         Log(string("id: ")+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
         ausg<<blau<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; // ab hier Neue-Zeile-Zeichen immer am Anfang der naechsten Zeile
         // a) ueber capisuite
@@ -3792,7 +3813,7 @@ void paramcl::empfarch()
       }
 
       TIFFClose(tif);
-    }
+    } // if (TIFF* tif = TIFFOpen(rueck[i].c_str(), "r")) 
 
     strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
     if (absdr.length()>187) absdr.erase(187);
@@ -4878,7 +4899,7 @@ void faxemitC(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obv
 } // faxemitC
 
 // wird aufgerufen in faxemitH
-void inDBh(DB *My, const string& spooltab, paramcl *pmp, const string& hylaid, fsfcl *fsfp,string *tel,int obverb, int oblog)
+void inDBh(DB *My, const string& spooltab, paramcl *pmp, const string& hylaid, fsfcl *fsfp,string *tel, int obverb, int oblog)
 {
   Log(violetts+Tx[T_inDBh]+schwarz,obverb?obverb-1:0,oblog);
   string spoolfil=string("q")+hylaid;
@@ -4964,14 +4985,25 @@ void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnam
 {
   Log(violetts+"getSender()"+schwarz,obverb,oblog);
   pmp->My->usedb(pmp->My->db);
-  string trimfaxnr=faxnr;
-  ltrim(&trimfaxnr);
-  //  char* trimfaxnr=(char*)faxnrc; 
-  //  while(*trimfaxnr==32) trimfaxnr++;
-  for(unsigned snr=0;snr<pmp->sqlzn;snr++) {
+  string trimfaxnr;
+  for (string::const_iterator it=faxnr.begin(); it!=faxnr.end(); ++it) {
+   if (strchr("0123456789",*it)) trimfaxnr+=*it;
+  }
+  if (trimfaxnr[0]!='0') {
+    trimfaxnr=string("0")+pmp->citycode+trimfaxnr;
+  }
+  // vor den angegebenen SQL-Befehlen nachschauen, wie die gesandten Faxe benannt wurden
+  string **locsqlp=new string*[pmp->sqlzn+1];
+  string sql0=string("select adressat, titel from `")+pmp->touta+
+      "` where if(left(trim(rcfax),1)<>'0',concat('"+pmp->citycode+"',trim(rcfax)),trim(rcfax))='&&faxnr&&' order by submt desc";
+  locsqlp[0]=&sql0;
+  for(size_t snr=0;snr<pmp->sqlzn;snr++) {
+   locsqlp[snr+1]=&pmp->sqlconfp[snr].wert;
+  }
+  for(size_t snr=0;snr<pmp->sqlzn;snr++) {
     Log(string(rot)+"snr: "+schwarz+ltoan(snr),obverb,oblog);
-    Log(string(rot)+"sql: "+schwarz+pmp->sqlconfp[snr].wert,obverb,oblog);
-    RS rhae(pmp->My,ersetzAllezu(pmp->sqlconfp[snr].wert,"&&faxnr&&",trimfaxnr.c_str())); // (const char*)trimfaxnr));
+    Log(string(rot)+"sql: "+schwarz+*locsqlp[snr],obverb,oblog);
+    RS rhae(pmp->My,ersetzAllezu(*locsqlp[snr],"&&faxnr&&",trimfaxnr.c_str())); // (const char*)trimfaxnr));
     if (!rhae.obfehl) {
       Log(string("obfehl: ")+ltoan((int)rhae.obfehl),obverb,oblog);
       char ***cerg;
@@ -4986,11 +5018,11 @@ void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnam
           if (*bsnamep=="") if (*(*cerg+1)) *bsnamep = *(*cerg+1);
         }
         break;
-      }
-    }
+      } // while (cerg=rhae.HolZeile(),cerg?*cerg:0) 
+    } // if (!rhae.obfehl) 
     if (!obverb) if (*getnamep!="") break;
     //    if (!obverb) if (*getnamep!="" && bsname !="") break;
-  }
+  } // for(size_t snr=0;snr<pmp->sqlzn;snr++) 
 } // void getSender(paramcl *pmp,const char* faxnrc, string *getnamep, string *bsnamep,int obverb=0,int oblog=0) 
 
 // wird aufgerufen in: main
@@ -5003,6 +5035,7 @@ const string& pruefspool(DB *My,const string& spooltab, int obverb, int oblog, u
       Feld("original","varchar","1","",Tx[T_Originalname_der_Datei],1,0,1),
       Feld("origvu","varchar","1","",Tx[T_Originalname_der_Datei_vor_Umwandlung_in_PDF],0,0,1),
       Feld("telnr","varchar","1","",Tx[T_zu_senden_an],0,0,1),
+      Feld("adressat","varchar","1","",Tx[T_zu_senden_an],0,0,1),
       Feld("prio","int","1","",Tx[T_Prioritaet_aus_Dateinamen],0,0,1),
       Feld("capidials","int","10","",Tx[T_Zahl_der_bisherigen_Versuche_in_Capisuite],0,0,1),
       Feld("hyladials","int","10","",Tx[T_Zahl_der_bisherigen_Versuche_in_Hylafax],0,0,1),
@@ -5050,6 +5083,7 @@ void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direk
       Feld("pages","int","10","",Tx[T_Seitenzahl],0,0,1),
       Feld("retries","int","10","",Tx[T_Zahl_der_Anwahlen],0,0,1),
       Feld("rcfax","varchar","1","",Tx[T_FAxnummer_des_Adressaten],0,0,1),
+      Feld("adressat","varchar","1","",Tx[T_Name_des_Adressaten],0,0,1),
       Feld("titel","varchar","1","",Tx[T_Titel_des_Adressaten],0,0,1),
       Feld("pid","int","10","",Tx[T_PID_falls_aus_Dateinamen_ermittelt],0,0,1),
       Feld("tsid","varchar","1","",Tx[T_Kurzbezeichnung_der_eigenen_Faxstelle],0,0,1),
@@ -5192,7 +5226,7 @@ void pruefprocgettel3(DB *Myp, const string& usr, const string& pwd, const strin
     } else 
       break; // runde
   }
-} // void pruefprocgettel3(DB *Myp, string usr, string pwd, string host, int obverb, int oblog)
+} // void pruefprocgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
 
 
 // ermittelt die letzten Sendedaten zu sendqgespfad mit fsf.capistat, schreibt die Zahl der Versuche in ctries zurueck und ergaenzt den 

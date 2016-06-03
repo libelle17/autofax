@@ -69,13 +69,14 @@ class fsfcl : public fxfcl // Faxsendfile
 {
   public:
     string id;
-    string telnr;
+    string telnr;    // Telnr. des Adressaten
     string capisd; // capispooldatei
     int capids;  //capidials
     string hylanr; // hylanr
     int hylads; // hyladials
     uchar fobcapi; // ob es jetzt mit Capi weggefaxt werden muss
     uchar fobhyla; // ob es jetzt mit Hyla weggefaxt werden muss
+    string adressat; // Name des Adressaten aus Faxdatei
     string original; // base_name(spdf)
     string origvu;   // base_name(npdf)
     string cspf;     // capispoolpfad
@@ -92,9 +93,9 @@ class fsfcl : public fxfcl // Faxsendfile
     int loeschecapi(int obverb, int oblog);
     int loeschehyla(paramcl *pmp,int obverb, int oblog);
     fsfcl(string id, string npdf, string spdf, string telnr, unsigned prio, string capisd, int capids, string hylanr, int hylads, 
-        uchar obcapi, uchar obhyla):
+        uchar obcapi, uchar obhyla, string adressat):
       fxfcl(npdf,spdf,prio), 
-            id(id), telnr(telnr), capisd(capisd), capids(capids), hylanr(hylanr), hylads(hylads), fobcapi(obcapi), fobhyla(obhyla) {}
+            id(id), telnr(telnr), capisd(capisd), capids(capids), hylanr(hylanr), hylads(hylads), fobcapi(obcapi), fobhyla(obhyla), adressat(adressat) {}
     fsfcl(string id,string original): id(id), original(original) {}
     fsfcl(string id, string capisd, string hylanr, string cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
     fsfcl(string hylanr): hylanr(hylanr) {}

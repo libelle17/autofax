@@ -33,7 +33,8 @@ printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTe
 #endif
 
 
-const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]={
+const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
+{
   //TCtp Txkonsolecl::TextC=KLA
   // T_pfad,
   {"pfad","path"},
@@ -111,6 +112,8 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]={
   {"Logdatei:","Log file:"},
   // T_Lese_Konfiguration_aus
   {"Lese Konfiguration aus: ","Reading configuration from: "},
+  // T_j_k,
+  {"j","y"},
   {"",""}
 };
 
@@ -254,7 +257,7 @@ string ersetzAllezu(string& quelle, const string& alt, const string& neu)
     return zwi;
   }
   return quelle;
-}
+} // ersetzAllezu
 
 void ersetzAlle(string& quelle, const string& alt, const string& neu) 
 {
@@ -271,7 +274,7 @@ void ersetzAlle(string& quelle, const string& alt, const string& neu)
     zwi += quelle.substr(p0);
     quelle.swap(zwi); 
   }
-}
+} // ersetzAllezu
 
 string ersetzAllezu(string *quelle, const char* alt, const char* neu) 
 {
@@ -290,7 +293,7 @@ string ersetzAllezu(string *quelle, const char* alt, const char* neu)
     return zwi;
   }
   return *quelle;
-}
+} // ersetzAllezu
 
 string ersetzAllezu(const char *quelle, const char* alt, const char* neu) 
 {
@@ -310,7 +313,7 @@ string ersetzAllezu(const char *quelle, const char* alt, const char* neu)
     }
   }
   return erg;
-}
+} // ersetzAllezu
 
 void ersetzAlle(string *quelle, const char* alt, const char* neu) 
 {
@@ -328,7 +331,7 @@ void ersetzAlle(string *quelle, const char* alt, const char* neu)
     zwi += quelle->substr(p0);
     quelle->swap(zwi); 
   }
-}
+} // ersetzAlle
 
 void ersetzAlle(string *quelle, const string& alt, const string& neu) 
 {
@@ -1180,13 +1183,6 @@ string aktprogverz()
   return string(pBuf);
 } // string aktprogverz()
 
-/*
-   char holbuchst(const string& frage, const char* moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
-   {
-   return holbuchst(frage.c_str(), moegl,berkl, erlaubt, vorgabe);
-   }
- */
-
 char holbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
 {
   string input;
@@ -1207,35 +1203,15 @@ char holbuchst(const string& frage, const string& moegl,const char *berkl[], con
   }
   return input[0];
   //  return holbuchst(frage.c_str(), moegl.c_str(), berkl, erlaubt, vorgabe);
-}
+} // char holbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
 
-/*
-   char holbuchst(const char *frage, const string& moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
-   {
-   return holbuchst(frage, moegl.c_str(), berkl, erlaubt, vorgabe);
-   }
 
-   char holbuchst(const char *frage, const char* moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
-   {
-   string input;
-   if (!erlaubt) erlaubt=moegl;
-   while(1) {
-   cout<<blau<<frage<<schwarz<<" (";
-   for(unsigned i=0;i<strlen(moegl);i++) {
-   cout<<"'"<<drot<<moegl[i]<<schwarz<<"'";
-   if (berkl) cout<<" = "<<blau<<berkl[i]<<schwarz;
-   if (i<strlen(moegl)-1) cout<<", ";
-   }
-   cout<<")"<<(!vorgabe?"":string("['")+tuerkis+vorgabe+schwarz+"']")<<"?: ";
-   input="";
-   getline(cin,input);
-   if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
-   if (input=="" && vorgabe) {input=vorgabe;break;}
-   if (input[0]) if (strchr(erlaubt,(int)input[0])) break;
-   }
-   return input[0];
-   } // holbuchst
- */
+// vorgabe fur vorgabe = T_j_k; alternativ='n'
+uchar holob(const string& frage,const char *vorgabe) 
+{
+  char erg=holbuchst(frage, string(Txk[T_j_k])+"n",0,"jJyYoOsSnN",vorgabe);
+  return (!!strchr("jyJYoOsS",(int)erg));
+} // uchar holob(const string& frage,const char *vorgabe) 
 
 // bisher nicht verwendet, 15.12.15
 string holstrings(const char *frage, char* moegl[], char *vorgabe)
@@ -1492,7 +1468,8 @@ linsten linstcl::checkinst(int obverb, int oblog)
     }
   }
   return inst;
-}
+} // linsten linstcl::checkinst(int obverb, int oblog) 
+
 
 string linstcl::ersetzeprog(const string& prog) 
 {
