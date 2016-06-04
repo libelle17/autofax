@@ -226,8 +226,8 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                 if (!strcasecmp(host.c_str(),"localhost")) {
                   Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_mysql_zu_starten],1,1);
 #ifdef linux
-                  if (!systemrueck("systemctl start mysql",1,1)) {
-                    systemrueck("systemctl enable mysql",1,1); 
+                  if (!systemrueck("sudo systemctl start mysql",1,1)) {
+                    systemrueck("sudo systemctl enable mysql",1,1); 
                     Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
                   }
 #endif

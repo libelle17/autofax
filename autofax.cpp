@@ -1305,7 +1305,8 @@ uchar servc::spruef(const string& sbez,uchar obfork,const string& sexec, const s
     for(uchar iru=0;iru<2;iru++) {
       if (!obslaeuft(obverb,oblog)) {
         if (serviceda) {
-          servicelaeuft=!systemrueck(("killall ")+ename+" >/dev/null 2>&1; systemctl restart "+sname,obverb-1,oblog); // bei restart return value da 
+          servicelaeuft=!systemrueck(("sudo killall ")+ename+" >/dev/null 2>&1; sudo systemctl restart "+sname,obverb-1,oblog); 
+                  // bei restart return value da 
           //          <<hblau<<"serviceda: "<<schwarz<<sname<<", servicelaeuft: "<<(int)servicelaeuft<<endl;
         } else {
           //          <<hblau<<"serviceda else: "<<schwarz<<sname<<endl;
@@ -1370,7 +1371,7 @@ int servc::obslaeuft(int obverb,int oblog)
 
 int servc::restart(int obverb,int oblog)
 {
-  return systemrueck(string("systemctl restart ")+sname,1,oblog);
+  return systemrueck(string("sudo systemctl restart ")+sname,1,oblog);
 }
 
 int servc::enableggf(int obverb,int oblog)
@@ -1470,7 +1471,7 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
     }
     for(uchar iru=0;iru<vmax;iru++) {
       if (iru) {
-        systemrueck(string("systemctl restart ")+pmp->sfaxgetty->sname+" "+pmp->shfaxd->sname+" "+pmp->sfaxq->sname,obverb-1,oblog);
+        systemrueck(string("sudo systemctl restart ")+pmp->sfaxgetty->sname+" "+pmp->shfaxd->sname+" "+pmp->sfaxq->sname,obverb-1,oblog);
       }
       systemrueck(string("faxrm ")+hylanr+" 2>&1",obverb,oblog,&rmerg);
       if (rmerg.size()) {
@@ -2836,7 +2837,7 @@ void paramcl::pruefsamba()
     }
   } // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
   if (smbrestart) {
-    systemrueck(string("systemctl restart smb nmb"),obverb-1,oblog);
+    systemrueck(string("sudo systemctl restart smb nmb"),obverb-1,oblog);
   } else {
     servc smbsvc("smb","");
     if (!smbsvc.obslaeuft(obverb,oblog)) {
@@ -4172,9 +4173,9 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
           znr++;
         } // while(getline(alt,zeile)) 
         neu.close();
-        systemrueck(string("chmod 770 '")+afaxsu+"'",0,1);
-        systemrueck(string("systemctl stop ")+pmp->sfaxgetty->sname+" "+pmp->shfaxd->sname+" "+pmp->sfaxq->sname,obverb,oblog);
-        systemrueck(string("killall ")+pmp->sfaxgetty->ename+" "+pmp->shfaxd->ename+" "+pmp->sfaxq->ename,obverb,oblog);
+        systemrueck(string("sudo chmod 770 '")+afaxsu+"'",0,1);
+        systemrueck(string("sudo systemctl stop ")+pmp->sfaxgetty->sname+" "+pmp->shfaxd->sname+" "+pmp->sfaxq->sname,obverb,oblog);
+        systemrueck(string("sudo killall ")+pmp->sfaxgetty->ename+" "+pmp->shfaxd->ename+" "+pmp->sfaxq->ename,obverb,oblog);
         Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+afaxsu+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
         system((string("/usr/bin/sh ")+afaxsu+(obverb?" -verbose":"")).c_str()); 
         //        systemrueck(string("source ")+afaxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
@@ -4184,15 +4185,15 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
       }
     }
 #else
-    systemrueck(string("systemctl stop ")+pmp->sfaxgetty->sname+" "+pmp->shfaxd->sname+" "+pmp->sfaxq->sname,obverb,oblog);
-    systemrueck(string("killall ")+pmp->sfaxgetty->ename+" "+pmp->shfaxd->ename+" "+pmp->sfaxq->ename,obverb,oblog);
+    systemrueck(string("sudo systemctl stop ")+pmp->sfaxgetty->sname+" "+pmp->shfaxd->sname+" "+pmp->sfaxq->sname,obverb,oblog);
+    systemrueck(string("sudo killall ")+pmp->sfaxgetty->ename+" "+pmp->shfaxd->ename+" "+pmp->sfaxq->ename,obverb,oblog);
     Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
     int erg __attribute__((unused));
     erg=system((string("/usr/bin/sh ")+faxsu+" -nointeractive"+(obverb?" -verbose":"")).c_str()); 
     // systemrueck(string("source ")+faxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht 
     // mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
     Log(blaus+Tx[T_Fertig_mit]+schwarz+faxsu,1,oblog);
-    systemrueck(string("systemctl daemon-reload"),0,1);
+    systemrueck(string("sudo systemctl daemon-reload"),0,1);
 
 #endif
   } //   if (!lstat(faxsu, &entrybuf)) KLA
@@ -4549,15 +4550,15 @@ int paramcl::pruefhyla()
   if (this->hylazukonf || frischkonfiguriert) {
     //    hconfig(this,obverb,oblog); // countrycode, citycode/areacode, longdistancepraefix, internationalprefix
     if (!frischkonfiguriert) hconfigtty(this,obverb,oblog);
-    if (!systemrueck(string("systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) {
-      systemrueck("systemctl stop hylafax",obverb,oblog);
-      systemrueck("systemctl disable hylafax",obverb,oblog);
-      systemrueck(string("killall ")+this->sfaxgetty->ename+" "+this->shfaxd->ename+" "+this->sfaxq->ename,obverb,oblog);
-    } // if (!systemrueck(string("systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
-    if (!systemrueck(string("systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) {
-      systemrueck(string("systemctl enable ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog);
+    if (!systemrueck(string("sudo systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) {
+      systemrueck("sudo systemctl stop hylafax",obverb,oblog);
+      systemrueck("sudo systemctl disable hylafax",obverb,oblog);
+      systemrueck(string("sudo killall ")+this->sfaxgetty->ename+" "+this->shfaxd->ename+" "+this->sfaxq->ename,obverb,oblog);
+    } // if (!systemrueck(string("sudo systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
+    if (!systemrueck(string("sudo systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) {
+      systemrueck(string("sudo systemctl enable ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog);
       this->hylazukonf=0;
-    } // if (!systemrueck(string("systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
+    } // if (!systemrueck(string("sudo systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
   } // if (this->hylazukonf && !frischkonfiguriert) 
   // systemrueck("grep -rl 'faxcron\\|faxqclean' /etc/cron* | /usr/bin/xargs ls -l;",obverb,oblog); 
   // // in hylafax: /etc/cron.daily/suse.de-faxcron, 
@@ -4568,7 +4569,7 @@ int paramcl::pruefhyla()
     return 1;
   }
   // Archivierung ggf. aktivieren
-  systemrueck("! grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax",
+  systemrueck("! sudo grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax",
       obverb,oblog);
   return 0;
 } // int paramcl::pruefhyla()
@@ -4787,12 +4788,12 @@ int paramcl::pruefcapi()
     if (capilaeuft) {
       break;
     } else {
-      systemrueck("systemctl daemon-reload");
-      systemrueck("systemctl stop isdn 2>/dev/null",obverb>0?obverb:-1,oblog);
-      //      systemrueck("systemctl start isdn",obverb,oblog);
+      systemrueck("sudo systemctl daemon-reload");
+      systemrueck("sudo systemctl stop isdn 2>/dev/null",obverb>0?obverb:-1,oblog);
+      //      systemrueck("sudo systemctl start isdn",obverb,oblog);
       Log(string(Tx[T_StarteCapisuite]),-1,oblog);
-      systemrueck("systemctl stop capisuite 2>/dev/null",-1,oblog);
-      if (!systemrueck("systemctl start capisuite 2>/dev/null",-1,oblog)) {
+      systemrueck("sudo systemctl stop capisuite 2>/dev/null",-1,oblog);
+      if (!systemrueck("sudo systemctl start capisuite 2>/dev/null",-1,oblog)) {
         if (!systemrueck("systemctl enable capisuite 2>/dev/null",-1,oblog)) {
         }
         Log(Tx[T_Capisuite_gestartet],1,oblog);
