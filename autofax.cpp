@@ -3548,7 +3548,7 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
           string protdakt;
           uchar hyla_uverz_nr; // kleine Runde
           int obsfehlt=-1;
-          string hylastate, hyladials, hylastatus, hylastatuscode;
+          string hylastate, hyladials, hylastatus, hylastatuscode, number;
           /*fsf.*/
           setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, &obsfehlt, 0, obverb, oblog, &hylastate, &hyladials, &hylastatus, &hylastatuscode);
           fsf.hylaausgeb(&ausg, this, obsfehlt, obverb, 0, oblog);
@@ -5367,6 +5367,8 @@ void paramcl::setzhconfp(string *protdaktp,int obverb)
   static string *alt_protdaktp=0;
   if (alt_protdaktp!=protdaktp) {
     confdat hylconf(*protdaktp,hconf,cs,obverb,':');
+    for(size_t i=0;i<cs;i++) {
+    }
     alt_protdaktp=protdaktp;
   }
   hconfp= hconf;
@@ -5407,6 +5409,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     } else {
       fsf->hylastat=fehlend;
     }
+  //   if (*obsfehltp)
   } else {
     this->setzhconfp(protdaktp,obverb);
     //  if (cpplies(*protdaktp,hconf,cs,0,':')) KLA
@@ -5424,7 +5427,8 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
     if (*hyla_uverz_nrp) {
       fsf->hylastat=wartend;
-    }  else { // !hyla_uverz_nrp
+    // if (*obsfehltp) 
+    }  else { 
       if (this->hconfp[0].wert=="8") {  
         fsf->hylastat=gescheitert;
         // 7, status erfolgreich
@@ -5433,10 +5437,9 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
       } else {
         fsf->hylastat=woasined;
       }
-    }
-  }
+    } // if (*hyla_uverz_nrp) 
+  } // if (*obsfehltp) else
   Log(violetts+"hylastat: "+blau+FxStatS(&fsf->hylastat)+schwarz,obverb,oblog);
-
 } // setzhylastat
 
 // wird aufgerufen in untersuchespool und zeigweitere

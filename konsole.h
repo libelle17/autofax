@@ -139,6 +139,8 @@ enum Tkonsole_
   T_Logdateidpp,
   T_Lese_Konfiguration_aus,
   T_j_k,
+  T_Fehler_bei_auswert,
+  T_nicht_gefunden,
   T_konsoleMAX,
 };
 

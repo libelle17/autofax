@@ -114,6 +114,10 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {"Lese Konfiguration aus: ","Reading configuration from: "},
   // T_j_k,
   {"j","y"},
+  // T_Fehler_bei_auswert
+  {"Fehler bei auwert(): ","Error at evaluate(): "},
+  // T_nicht_gefunden
+  {" nicht gefunden"," not found"},
   {"",""}
 };
 
@@ -962,15 +966,16 @@ void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
       string *zeile=&zn[i];
       size_t pos=zeile->find('#');
       if (pos!=string::npos) zeile->erase(pos);
+      ltrim(zeile);
       if (!zeile->empty()) {
         if (obverb>1) Log(string(Txk[T_stern_zeile])+*zeile,obverb);
         pos=zeile->find(tz);
         if (pos!=string::npos && pos>0) { 
-          size_t ii=csize;
-            while( ii-- ) {
-              size_t gef=zeile->find(conf[ii].name);
-              if (gef!=string::npos && gef<pos) {
-               if (strchr((string(" ")+(char)9+tz).c_str(),zeile->at(gef+conf[ii].name.length()))) {
+          size_t ii=csize,gef;
+          while( ii-- ) {
+            gef=zeile->find(conf[ii].name);
+            if (!gef) { // muss am Zeilenanfang anfangen, sonst Fehler z.B.: number, faxnumber
+              if (strchr((string(" ")+(char)9+tz).c_str(),zeile->at(gef+conf[ii].name.length()))) {
                 ++richtige;
                 conf[ii].wert=zeile->substr(pos+1);
                 gtrim(&conf[ii].wert); // Leerzeichen entfernen
@@ -979,9 +984,12 @@ void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
                   conf[ii].wert.erase(conf[ii].wert.length()-1);
                   conf[ii].wert.erase(0,1);
                 }
-               } // if (strchr((string(" ")+(char)9+tz).c_str(),gef+conf[ii].name.length())) 
-              } // if( !strcmp(conf[i].name.c_str(),zeile->c_str()) ) 
-            }
+              } // if (strchr((string(" ")+(char)9+tz).c_str(),gef+conf[ii].name.length())) 
+              break;
+            } // if( !strcmp(conf[i].name.c_str(),zeile->c_str()) ) 
+            if (!gef)
+              Log(rots+Txk[T_Fehler_bei_auswert]+schwarz+conf[ii].name+rot+Txk[T_nicht_gefunden],obverb+1);
+          } // while( ii-- ) 
         } // if (pos!=string::npos && 1==sscanf(zeile->c_str(),scs.c_str(),zeile->c_str())) 
       } // if (!zeile->empty()) 
     } // for(size_t i=0;i<zn.size();i++) 
