@@ -31,6 +31,7 @@ printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTe
   }
 //char logdatei[PATH_MAX+1]="v:\\log_termine.txt";
 #endif
+// #define obfstream
 
 
 const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
@@ -440,9 +441,66 @@ int getcols()
 } // int getcols() 
 #endif
 
+char* curruser() 
+{
+ static struct passwd *passwd = getpwuid(getuid());
+ return passwd->pw_name;
+} // curruser()
+
+#ifdef obfstream
+fstream*
+#else
+FILE*
+#endif
+ oeffne(const string& datei, uchar art, uchar* erfolg)
+{
+#ifdef obfstream	
+  ios_base::openmode mode;
+  switch (art) {
+    case 0: mode=ios_base::in; break;
+    case 1: mode=ios_base::out; break;
+    case 2: mode=ios_base::out | ios_base::app; break;
+    case 3: mode=ios_base::out; break; // text mode, default
+  }
+  fstream *sdat;
+  for(int iru=0;iru<2;iru++) {
+    sdat = new fstream(datei,mode);
+    if (sdat) if (sdat->is_open()) {
+      *erfolg=1;
+      return sdat;
+      break;
+    }
+    int erg __attribute__((unused));
+    erg=system((string("sudo touch '")+datei+"' || sudo setfacl -m 'u:"+curruser()+":"+(art?"6":"4")+" '"+datei+"'").c_str());
+  }
+  *erfolg=0;
+  return 0;
+#else
+  const char *mode;
+  switch (art) {
+    case 0: mode="r"; break;
+    case 1: mode="w"; break;
+    case 2: mode="a"; break;
+    case 3: mode="wt"; break; // text mode, default
+  }
+  FILE *sdat;
+  for(int iru=0;iru<2;iru++) {
+    if ((sdat= fopen(datei.c_str(),mode))) {
+      *erfolg=1;
+      return sdat;
+      break;
+    } 
+    int erg __attribute__((unused));
+    erg=system((string("sudo touch '")+datei+"' || sudo setfacl -m 'u:"+curruser()+":"+(art?"6":"4")+" '"+datei+"'").c_str());
+  }
+  *erfolg=0;
+  return 0;
+#endif
+} // oeffne
 
 int kuerzelogdatei(const char* logdatei,int obverb)
 {
+  uchar erfolg=0;
   // zutun: nicht erst in Vektor einlesen, sondern gleich in die tmp-Datei schreiben 10.6.12
 
   //	vector<string> Zeilen;   //Der Vektor Zeilen enthält String-Elemente
@@ -467,26 +525,26 @@ int kuerzelogdatei(const char* logdatei,int obverb)
   string ofil=string(logdatei)+"tmp";
   int abhier=0;
 #ifdef obfstream	
-  fstream outfile(ofil.c_str(),ios::out);
-  if (!outfile) {
+  fstream *outfile=oeffne(ofil,2,&erfolg);
+  if (!erfolg) {
     perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_als_fstream_zum_Schreiben_oeffnen]).c_str());
     return 1;
   }
-  fstream logf (logdatei, ios::in);  //Die Zeilen dieser Datei sollen in einen Vektor geschrieben werden.
-  if (!logf) {
+  fstream *logf=oeffne(logdatei,0,&erfolg); //Die Zeilen dieser Datei sollen in einen Vektor geschrieben werden.
+  if (!erfolg) {
     perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_als_fstream_zum_Lesen_oeffnen]).c_str());
     return 1;
   }
-  while (logf.getline (Zeile, sizeof(Zeile))) {
+  while (logf->getline (Zeile, sizeof(Zeile))) {
     //		Zeilen.push_back(Zeile); //hängt einfach den Inhalt der Zeile als Vektorelement an das Ende des Vektors
 #else	
-    FILE *outfile = fopen(ofil.c_str(),"a");
-    if (!outfile) {
+    FILE *outfile=oeffne(ofil,2,&erfolg);
+    if (!erfolg) {
       perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_mit_fopen_zum_Schreiben_oeffnen]).c_str());
       return 1;
     }
-    FILE *logf;
-    if (!(logf=fopen(logdatei,"r"))) {
+    FILE *logf=oeffne(logdatei,0,&erfolg);
+    if (!erfolg) {
       Log(string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_mit_fopen_zum_Lesen_oeffnen],1,0);
       return 1;
     }
@@ -545,11 +603,11 @@ int kuerzelogdatei(const char* logdatei,int obverb)
       } // (!abhier)
       if (abhier) {
 #ifdef obfstream
-        outfile<<Zeile<<endl;
+        *outfile<<Zeile<<endl;
       }
       }
-      logf.close();
-      outfile.close();
+      logf->close();
+      outfile->close();
 #else
       fputs(Zeile,outfile);
       //          fputs("\n",outfile);
@@ -629,6 +687,7 @@ int Log(const string& text, short screen, short file, bool oberr, short klobverb
   static unsigned int cols=0;
   static bool letztesmaloZ;
   const bool naechstezeile=0;
+  uchar erfolg=0;
   // screen=0 = schreibt nicht auf den Bildschirm, 1 = schreibt, -1 = schreibt ohne Zeilenwechsel, -2 = schreibt bleibend ohne Zeilenwechsel
   // <<"Log: "<<text<<", screen: "<<screen<<", file: "<<file<<endl;
   if (file || screen) {
@@ -667,30 +726,24 @@ int Log(const string& text, short screen, short file, bool oberr, short klobverb
         char tbuf[20];
         time_t jetzt=time(0);
         strftime(tbuf,19,"%d.%m.%y %X ",localtime(&jetzt));
-#ifdef obfstream
-        fstream logf;	
-        if (erstaufruf) {
-          kuerzelogdatei(logdt,klobverb);  // screen
-          //          Log("nach kuerzelogdatei",screen,0);
-          //      logf.open(logdt,ios::out);
-          erstaufruf=0;
-        } // else
-        logf.open(logdt,ios::out|ios::app);
-        if (!logf) {
-          perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
-          return 1;
-        } else {
-          logf<<zwi<<endl; 
-          logf.close();
-        }
-#else	
-        FILE *logf;
+
         if (erstaufruf) {
           kuerzelogdatei(logdt,klobverb); // screen
           //          Log("nach kuerzelogdatei",screen,0);
           erstaufruf=0;
         }	  
-        if (!(logf=fopen(logdt,"a"))) {
+#ifdef obfstream
+        fstream *logf=oeffne(logdt,2,&erfolg);
+        if (!erfolg) {
+          perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
+          return 1;
+        } else {
+          *logf<<zwi<<endl; 
+          logf->close();
+        }
+#else	
+        FILE *logf=oeffne(logdt,2,&erfolg);
+        if (!erfolg) {
           //perror((string("\nLog: Kann Datei '")+logdt+"' nicht mit fopen zum Anhaengen oeffnen.").c_str()); // ergebnisgleich wie:
           cerr<<"\nLog: "<<Txk[T_Kann_Datei]<<logdt<<Txk[T_nicht_mit_fopen_zum_Anhaengen_oeffnen]<<strerror(errno)<<endl;
           return 1;
@@ -698,7 +751,7 @@ int Log(const string& text, short screen, short file, bool oberr, short klobverb
           fputs(string(string(tbuf)+zwi).c_str(),logf);
           fputs("\n",logf);
           fclose(logf);
-        }
+        } // if (!erolg) else
 #endif
 
       } // if (!logdt || !*logdt) _gKLA_ _gKLZ_ else _gKLA_
@@ -1028,7 +1081,6 @@ int cppschreib(const string& fname, cppSchluess *conf, size_t csize)
     for (size_t i = 0;i<csize;i++) {
       f<<conf[i].name<<" = \""<<conf[i].wert<<"\""<<endl;
     }
-
     return 0;
   }
   return 1;
@@ -1051,12 +1103,21 @@ int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, siz
 
 int schreib(const char *fname, Schluessel *conf, size_t csize)
 {
-  FILE *f=fopen(fname,"wt");
-  if (!f) return 1;
+  uchar erfolg=0;
+#ifdef obfstream 
+  fstream *f=oeffne(fname,3,&erfolg);
+  if (!erfolg) return 1;
+  for(size_t i=0;i<cszie;i++) {
+   *f<<conf[i].key<<" = \""<<conf[i].val<<"\""<<endl;
+  }
+#else
+  FILE *f=oeffne(fname,3,&erfolg);
+  if (!erfolg) return 1;
   for (size_t i = 0;i<csize;i++) {
     fprintf(f,"%s = \"%s\"\n",conf[i].key,conf[i].val);
   }
   fclose(f);
+#endif
   return 0;
 } // int schreib(const char *fname, Schluessel *conf, size_t csize)
 
