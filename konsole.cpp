@@ -461,7 +461,8 @@ int kuerzelogdatei(const char* logdatei,int obverb)
   }
   if (obverb>1) {
     cout<<rot<<Txk[T_Logdateidpp]<<endl<<schwarz; 
-    system((string(dir) + "\"" + logdatei + "\"").c_str());
+    int erg __attribute__((unused));
+    erg=system((string(dir) + "\"" + logdatei + "\"").c_str());
   }
   string ofil=string(logdatei)+"tmp";
   int abhier=0;
@@ -1349,7 +1350,8 @@ string holverz(const char *frage,string *vorgabe)
         if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
         if (inpi=="") {inpi=vg2;break;}
         if (strchr("jyJY",inpi[0])) {
-          system((string("sudo mkdir -p ")+input).c_str());
+          int erg __attribute__((unused));
+          erg=system((string("sudo mkdir -p ")+input).c_str());
         } else {
           break;
         }
