@@ -331,7 +331,8 @@ void DB::setzrpw()
         cmd=string("mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
           "' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
         Log(string(Txd[T_Fuehre_aus_db])+blau+cmd+schwarz,1,1);
-        system(cmd.c_str());
+         int erg __attribute__((unused));
+         erg=system(cmd.c_str());
         break;
       } // if (rootpw2==rootpwd ...
     } else {
