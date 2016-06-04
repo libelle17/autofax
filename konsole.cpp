@@ -471,7 +471,7 @@ FILE*
       break;
     }
     int erg __attribute__((unused));
-    erg=system((string("sudo touch '")+datei+"' || sudo setfacl -m 'u:"+curruser()+":"+(art?"6":"4")+" '"+datei+"'").c_str());
+    erg=system((string("sudo touch '")+datei+"' || sudo setfacl -m 'u:"+curruser()+":"+(art?"6":"4")+"' '"+datei+"'").c_str());
   }
   *erfolg=0;
   return 0;
@@ -491,7 +491,7 @@ FILE*
       break;
     } 
     int erg __attribute__((unused));
-    erg=system((string("sudo touch '")+datei+"' || sudo setfacl -m 'u:"+curruser()+":"+(art?"6":"4")+" '"+datei+"'").c_str());
+    erg=system((string("sudo touch '")+datei+"' || sudo setfacl -m 'u:"+curruser()+":"+(art?"6":"4")+"' '"+datei+"'").c_str());
   }
   *erfolg=0;
   return 0;
