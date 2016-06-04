@@ -4187,7 +4187,8 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
     systemrueck(string("systemctl stop ")+pmp->sfaxgetty->sname+" "+pmp->shfaxd->sname+" "+pmp->sfaxq->sname,obverb,oblog);
     systemrueck(string("killall ")+pmp->sfaxgetty->ename+" "+pmp->shfaxd->ename+" "+pmp->sfaxq->ename,obverb,oblog);
     Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
-    system((string("/usr/bin/sh ")+faxsu+" -nointeractive"+(obverb?" -verbose":"")).c_str()); 
+    int erg __attribute__((unused));
+    erg=system((string("/usr/bin/sh ")+faxsu+" -nointeractive"+(obverb?" -verbose":"")).c_str()); 
     // systemrueck(string("source ")+faxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht 
     // mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
     Log(blaus+Tx[T_Fertig_mit]+schwarz+faxsu,1,oblog);
