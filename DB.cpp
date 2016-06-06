@@ -179,16 +179,33 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
   host=phost;
   user=puser;
   passwd=ppasswd;
-  uchar zuinst=0;
-  uchar postinst=0;
+  uchar installiert=0;
+  uchar datadirda=0;
   switch (DBS) {
     case MySQL:
 #ifdef linux
-      zuinst=systemrueck("which mysqld",obverb-1,oblog);
-      if (!zuinst) {
+     if (!oisok) {
+     // schauen, ob die Exe-Datei da ist 
+      for (int iru=0;iru<2;iru++) {
+       installiert=1;
+       // wenn nicht gefunden ...
+       if (systemrueck("which mysqld",obverb-1,oblog)) {
+        svec frueck;
+        // .. und auch hier nicht gefunden ...
+        systemrueck("find /usr/sbin /usr/bin -executable -size +1M -name mysqld",obverb,oblog, &frueck);
+        if (!frueck.size()) 
+         // .. dann wohl nicht installiert
+         installiert=0;
+       }
+       if (installiert) break;
+//        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get --assume-yes install mariadb-server; }",1,1);
+       linst.doinst("mariadb",obverb,oblog);
+      }
+      // Datenverzeichnis suchen und pruefen
+      if (installiert) {
         svec zrueck;
         if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null "
-                         "| grep datadir | cut -d'=' -f2",obverb-1,oblog,&zrueck)) {
+              "| grep datadir | cut -d'=' -f2",obverb-1,oblog,&zrueck)) {
           if (zrueck.size()) {
             datadir=zrueck[zrueck.size()-1];  
           } else {
@@ -209,29 +226,23 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
         } // if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null " ...
         gtrim(&datadir);
         if (datadir.empty()) {
-//          <<rot<<"datadir empty!"<<schwarz<<endl;
-          zuinst=1;
-        } else {
-          struct stat st;
-          if (lstat(datadir.c_str(), &st)) {
-            postinst=1;
+          datadir="/var/lib/mysql";
+        }
+        struct stat datadst;
+        if (!lstat(datadir.c_str(), &datadst)) {
+          if(S_ISDIR(datadst.st_mode)) {
+            datadirda=1;
           } else {
-            if(!S_ISDIR(st.st_mode)) {
-              systemrueck(string("rm -f '")+datadir+"'",1,1);
-              postinst=1;
-            } // if(S_ISDIR(st.st_mode)) 
-          } // if (lstat(input.c_str(), &st)) 
-          if (postinst) {
-           systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db`",1,1);
-           systemrueck("sudo systemctl start mysql");
+            systemrueck(string("sudo rm -f '")+datadir+"'",1,1);
           }
-//          <<"datadir: "<<violett<<datadir<<schwarz<<endl;
-        } // if (!datadir.empty()) else
-      } // if (!zuinst) 
-      if (zuinst) {
-//        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get --assume-yes install mariadb-server; }",1,1);
-        linst.doinst("mariadb",1,1);
-      }
+        }
+        if (!datadirda) {
+          systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db`",1,1);
+          systemrueck("sudo systemctl start mysql");
+        }
+        oisok=1;
+      } // if (installiert)
+    } // if (!oisok)
 
 #endif
       conn = mysql_init(NULL);

@@ -5554,6 +5554,9 @@ int tuloeschen(const string& zuloe,int obverb, int oblog)
   return 0;
 } // int tuloeschen(string zuloe,int obverb, int oblog)
 
+// statische Variable, 1= mariadb=geprueft
+uchar DB::oisok=0;
+
 int main(int argc, char** argv) 
 {
   paramcl pm(argc,argv); // Programmparameter

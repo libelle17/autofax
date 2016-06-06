@@ -1664,10 +1664,10 @@ uchar linstcl::douninst(const string& prog,int obverb,int oblog)
   checkinst(obverb,oblog);
   switch (inst) {
     case zyp:
-      return systemrueck(string("sudo zypper -n rm ")+prog,obverb+1,oblog);
+      return systemrueck(string("sudo zypper -n rm ")+prog,obverb,oblog);
       break;
     case apt:
-      return systemrueck(string("sudo apt-get --assume-yes remove ")+ersetzeprog(prog),obverb+1,oblog);
+      return systemrueck(string("sudo apt-get --assume-yes remove ")+ersetzeprog(prog),obverb,oblog);
       break; 
     default: break;
   }

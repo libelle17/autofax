@@ -233,6 +233,7 @@ class RS;
 class DB 
 {
   public:
+    static uchar oisok; // soll initial 0 sein
     MYSQL *conn;
     //	MYSQL_RES *result;
     //	MYSQL_ROW row;
