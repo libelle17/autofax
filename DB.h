@@ -257,6 +257,7 @@ class DB
     uchar miterror;
     vector<string> myr;
     string cmd;
+    string datadir;
     RS *spalt=nullptr;
     char **spnamen=nullptr,**splenge=nullptr;
     int usedb(const string& db);

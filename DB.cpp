@@ -179,10 +179,56 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
   host=phost;
   user=puser;
   passwd=ppasswd;
+  uchar zuinst=0;
+  uchar postinst=0;
   switch (DBS) {
     case MySQL:
 #ifdef linux
-      if (systemrueck("which mysqld",obverb-1,oblog)) {
+      zuinst=systemrueck("which mysqld",obverb-1,oblog);
+      if (!zuinst) {
+        svec zrueck;
+        if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null "
+                         "| grep datadir | cut -d'=' -f2",obverb-1,oblog,&zrueck)) {
+          if (zrueck.size()) {
+            datadir=zrueck[zrueck.size()-1];  
+          } else {
+            svec zzruck;
+            if (!systemrueck("cat /etc/mysql/my.cnf | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-",
+                  obverb-1,oblog,&zzruck)) {
+              for(size_t i=0;i<zzruck.size();i++) {
+                svec zrueck;
+                if (!systemrueck(("sed 's/#.*$//g' `find '")+zzruck[i]+"' -type f` | grep datadir | cut -d'=' -f2",obverb-1,oblog,&zrueck)) {
+                  if (zrueck.size()) {
+                    datadir=zrueck[zrueck.size()-1];  
+                    break;
+                  } // if (zrueck.size()) 
+                } // if (!systemrueck(("cat ")+zzruck[i]+" | sed 's/#.*$//g' | grep datadir | cut -d'=' -f2",obverb-1,oblog,&zrueck)) 
+              } // for(size_t i=0;i<zzruck.size();i++) 
+            } // if (!systemrueck("cat /etc/mysql/my.cnf | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", ...
+          } // if (zrueck.size()) else
+        } // if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null " ...
+        gtrim(&datadir);
+        if (datadir.empty()) {
+//          <<rot<<"datadir empty!"<<schwarz<<endl;
+          zuinst=1;
+        } else {
+          struct stat st;
+          if (lstat(datadir.c_str(), &st)) {
+            postinst=1;
+          } else {
+            if(!S_ISDIR(st.st_mode)) {
+              systemrueck(string("rm -f '")+datadir+"'",1,1);
+              postinst=1;
+            } // if(S_ISDIR(st.st_mode)) 
+          } // if (lstat(input.c_str(), &st)) 
+          if (postinst) {
+           systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db`",1,1);
+           systemrueck("sudo systemctl start mysql");
+          }
+//          <<"datadir: "<<violett<<datadir<<schwarz<<endl;
+        } // if (!datadir.empty()) else
+      } // if (!zuinst) 
+      if (zuinst) {
 //        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get --assume-yes install mariadb-server; }",1,1);
         linst.doinst("mariadb",1,1);
       }
@@ -203,11 +249,12 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
             break;
           } else {
             switch ((fehnr=mysql_errno(conn))) {
+              case 1044: // Access denied for user '<user>'@'<host>' to database '...' (Ubuntu)
               case 1045: // Access denied for user '<user>'@'<host>' (using password: YES)
               case 1698: // dasselbe auf Ubuntu
                 while (1) {
                   for(unsigned iru=0;iru<2;iru++) {
-                    cmd=string("mysql -uroot -h'")+host+"' "+(rootpwd.empty()?"":string("-p")+rootpwd)+" -e \"GRANT ALL ON "+uedb+".* TO '"+
+                    cmd=string("sudo mysql -uroot -h'")+host+"' "+(rootpwd.empty()?"":string("-p")+rootpwd)+" -e \"GRANT ALL ON "+uedb+".* TO '"+
                       user+"'@'"+myloghost+"' IDENTIFIED BY '"+ersetze(passwd.c_str(),"\"","\\\"")+"' WITH GRANT OPTION\" 2>&1";
                     if (iru) break;
                     pruefrpw(cmd, versuchzahl);
@@ -242,7 +289,8 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                   rs=new RS(this,string("CREATE DATABASE IF NOT EXISTS `")+uedb+"`");
                   fehnr=mysql_errno(conn);
                   if (!fehnr) {
-                    rs->Abfrage(string("USE `")+uedb+"`");
+//                    rs->Abfrage(string("USE `")+uedb+"`");
+                    usedb(uedb);
                     fehnr=mysql_errno(conn);
                     if (!fehnr) {
                       delete(rs);
@@ -301,7 +349,7 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
 {
   myloghost=!strcasecmp(host.c_str(),"localhost")||!strcmp(host.c_str(),"127.0.0.1")||!strcmp(host.c_str(),"::1")?"localhost":"%";
   for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
-    cmd=string("mysql -uroot -h'")+host+"' "+(rootpwd.empty()?"":string("-p")+rootpwd)+" -e \"show variables like 'gibts wirklich nicht'\" 2>&1";
+    cmd=string("sudo mysql -uroot -h'")+host+"' "+(rootpwd.empty()?"":string("-p")+rootpwd)+" -e \"show variables like 'gibts wirklich nicht'\" 2>&1";
     myr.clear();
     systemrueck(cmd,-1,0,&myr);
     miterror=1;
@@ -328,7 +376,7 @@ void DB::setzrpw()
       rootpwd=holstring(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
       rootpw2=holstring(Txd[T_Bitte_geben_Sie_das_MySQL_Passwort_fuer_Benutzer_root_erneut_ein],&rootpw2);
       if (rootpw2==rootpwd && !rootpwd.empty()) {
-        cmd=string("mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
+        cmd=string("sudo mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
           "' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
         Log(string(Txd[T_Fuehre_aus_db])+blau+cmd+schwarz,1,1);
          int erg __attribute__((unused));

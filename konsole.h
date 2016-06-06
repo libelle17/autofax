@@ -141,6 +141,9 @@ enum Tkonsole_
   T_j_k,
   T_Fehler_bei_auswert,
   T_nicht_gefunden,
+  T_Muss_Datei,
+  T_fuer,
+  T_zugreifbar_machen,
   T_konsoleMAX,
 };
 
@@ -172,6 +175,15 @@ class perfcl
  perfcl(const string& vvonwo);
  void ausgeb(const string& stelle="");
  void ausgab1000(const string& stelle="");
+};
+
+char* curruser();
+
+class mdatei: public fstream
+{
+  public:
+  int oboffen=0;
+  mdatei (const string& filename, ios_base::openmode mode = ios_base::in | ios_base::out);
 };
 
 inline string zustr(int _Val) {
@@ -360,7 +372,6 @@ class absch {
 
 class confdat {
   public:
-    ifstream *f;
     uchar obgelesen=0;
     svec zn;
     vector<absch> abschv;
@@ -455,6 +466,7 @@ class linstcl
     linsten checkinst(int obverb=0, int oblog=0);
     string ersetzeprog(const string& prog);
     uchar doinst(const string& prog,int obverb=0,int oblog=0);
+    uchar doinst(const char* prog,int obverb=0,int oblog=0);
     uchar douninst(const string& prog,int obverb=0,int oblog=0);
     uchar obfehlt(const string& prog,int obverb=0,int oblog=0);
 };

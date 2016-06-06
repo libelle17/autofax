@@ -12,8 +12,8 @@ const char *dir = "ls -l ";
 #include <iomanip> // setprecision
 // const char *rot="\033[1;31m", *weinrot="\033[31m", *schwarz="\033[0m", *blau="\033[34m", *gelb="\033[33m"; // muss spaeter kompilerunabhaengig 
 const char *schwarz="\33[1;30m", *dgrau="\33[1;30m",    *drot="\33[0;31m",  *rot="\33[1;31m",   *gruen="\33[0;32m",   *hgruen="\33[0;32m",
-           *braun="\33[0;33m",   *gelb="\33[1;33m",     *blau="\33[0;34m",  *hblau="\33[1;34m", *violett="\33[0;35m", *hviolett="\33[1;35m",
-           *tuerkis="\33[0;36m", *htuerkis="\33[1;36m", *hgrau="\33[0;37m", *weiss="\33[1;37m";
+      *braun="\33[0;33m",   *gelb="\33[1;33m",     *blau="\33[0;34m",  *hblau="\33[1;34m", *violett="\33[0;35m", *hviolett="\33[1;35m",
+      *tuerkis="\33[0;36m", *htuerkis="\33[1;36m", *hgrau="\33[0;37m", *weiss="\33[1;37m";
 const char *_drot=drot, *_rot=rot, *_schwarz=schwarz, *_blau=blau, *_gelb=gelb, *_tuerkis=tuerkis, *_hgrau=hgrau;
 // char logdatei[PATH_MAX+1]="/DATA/down/log_termine.txt";
 #define _access access
@@ -31,7 +31,7 @@ printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTe
   }
 //char logdatei[PATH_MAX+1]="v:\\log_termine.txt";
 #endif
-// #define obfstream
+#define obfstream
 
 
 const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
@@ -119,19 +119,26 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {"Fehler bei auwert(): ","Error at evaluate(): "},
   // T_nicht_gefunden
   {" nicht gefunden"," not found"},
+  // T_Muss_Datei
+  {"Muss Datei '","File '"},
+  // T_fuer
+  {"' fuer '","' must be made accessible for '"},
+  // T_zugreifbar_machen
+  {"' zugreifbar machen.","'"},
   {"",""}
-};
+}; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
+
 
 Txkonsolecl::Txkonsolecl() 
 {
- TCp=(const char* const * const * const *)&TextC;
+  TCp=(const char* const * const * const *)&TextC;
 }
 
 class Txkonsolecl Txk;
 
 argcl::argcl(int i,char** argv) 
 {
- argcs=argv[i];
+  argcs=argv[i];
 }
 
 const string drots=drot, rots=rot, schwarzs=schwarz, blaus=blau, gelbs=gelb, tuerkiss=tuerkis, violetts=violett;
@@ -143,21 +150,23 @@ perfcl::perfcl(const string& vvonwo): vonwo(vvonwo)
 
 void perfcl::ausgeb(const string& stelle)
 {
- zp1=clock();
- cout<<gruen<<vonwo<<" "<<stelle<<" "<<++nr<<" Dauer: "<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" = "
-     <<fixed<<((zp1-zp0)/CLOCKS_PER_SEC)<<schwarz<<setprecision(0)<<" s"<<endl;
-}
+  zp1=clock();
+  cout<<gruen<<vonwo<<" "<<stelle<<" "<<++nr<<" Dauer: "<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" = "
+    <<fixed<<((zp1-zp0)/CLOCKS_PER_SEC)<<schwarz<<setprecision(0)<<" s"<<endl;
+} // void perfcl::ausgeb(const string& stelle)
+
 
 void perfcl::ausgab1000(const string& stelle)
 {
- zp1=clock();
- nr++;
- if (zp1-zp0>10000) {
- cout<<gruen<<vonwo<<" "<<stelle<<" "<<nr<<" Dauer: "<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" = "
-     <<fixed<<((zp1-zp0)/CLOCKS_PER_SEC)<<schwarz<<setprecision(0)<<" s"<<endl;
-     exit(0);
-     }
-}
+  zp1=clock();
+  nr++;
+  if (zp1-zp0>10000) {
+    cout<<gruen<<vonwo<<" "<<stelle<<" "<<nr<<" Dauer: "<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" = "
+      <<fixed<<((zp1-zp0)/CLOCKS_PER_SEC)<<schwarz<<setprecision(0)<<" s"<<endl;
+    exit(0);
+  }
+} // void perfcl::ausgab1000(const string& stelle)
+
 
 string ersetzefuerdatei(const string& u) 
 {
@@ -180,43 +189,43 @@ char* charersetze(char *u, char alt, char neu)
 // macht Speicherfehler
 wstring ersetze(const wstring& u, const wchar_t* alt, const wchar_t* neu) 
 {
-  wstring erg=L"";
-  if (alt[0]==0 || !wcscmp(alt,neu)) {
-    erg=u;
-  } else {
-    for(wchar_t* p=(wchar_t*)u.c_str();*p;p++)  {
-      wchar_t *pi = (wchar_t*)alt;
-      int i=0,gleich=1;
-      for(;*(pi+i);i++)
-        if (*(pi+i)!=*(p+i))
-        {gleich=0;break;}
-      if (gleich) {erg+=neu;p+=i-1;} else erg+=(*p);
-    }
-  }
-  return erg;
+wstring erg=L"";
+if (alt[0]==0 || !wcscmp(alt,neu)) {
+erg=u;
+} else {
+for(wchar_t* p=(wchar_t*)u.c_str();*p;p++)  {
+wchar_t *pi = (wchar_t*)alt;
+int i=0,gleich=1;
+for(;*(pi+i);i++)
+if (*(pi+i)!=*(p+i))
+{gleich=0;break;}
+if (gleich) {erg+=neu;p+=i-1;} else erg+=(*p);
+}
+}
+return erg;
 } // ersetze(char *u, const char* alt, const char* neu)
 
 string fersetze(const string& u, const char* alt, const char* neu) 
 {
-  string erg="";
-  if (alt[0]==0 || !strcmp(alt,neu)) {
-    erg=u;
-  } else {
-    for(char* p=(char*)u.c_str();p<(char*)u.c_str()+u.length();p++)  {
-      if (logdatei[0]=='1') exit(0);
-      char *pi = (char*)alt;
-      int i=0,gleich=1;
-      for(;*(pi+i);i++)
-        if (*(pi+i)!=*(p+i))
-        {gleich=0;break;}
-      if (gleich) {erg+=neu;p+=i-1;} else {
-      erg+=(*p);
-      }
-    }
-  }
-  return erg;
+string erg="";
+if (alt[0]==0 || !strcmp(alt,neu)) {
+erg=u;
+} else {
+for(char* p=(char*)u.c_str();p<(char*)u.c_str()+u.length();p++)  {
+if (logdatei[0]=='1') exit(0);
+char *pi = (char*)alt;
+int i=0,gleich=1;
+for(;*(pi+i);i++)
+if (*(pi+i)!=*(p+i))
+{gleich=0;break;}
+if (gleich) {erg+=neu;p+=i-1;} else {
+erg+=(*p);
+}
+}
+}
+return erg;
 } // ersetze(char *u, const char* alt, const char* neu)
-*/
+ */
 
 string caseersetze(const string& u, const char* alt, const char* neu) 
 {
@@ -237,7 +246,8 @@ string caseersetze(const string& u, const char* alt, const char* neu)
   return erg;
 } // ersetze(char *u, const char* alt, const char* neu)
 
-string *loeschealleaus(string *u, const char* alt) {
+string *loeschealleaus(string *u, const char* alt) 
+{
   size_t len=strlen(alt);
   size_t pos;
   while ((pos=u->find(alt))!=string::npos) {
@@ -262,7 +272,8 @@ string ersetzAllezu(string& quelle, const string& alt, const string& neu)
     return zwi;
   }
   return quelle;
-} // ersetzAllezu
+} // string ersetzAllezu(string& quelle, const string& alt, const string& neu) 
+
 
 void ersetzAlle(string& quelle, const string& alt, const string& neu) 
 {
@@ -279,7 +290,8 @@ void ersetzAlle(string& quelle, const string& alt, const string& neu)
     zwi += quelle.substr(p0);
     quelle.swap(zwi); 
   }
-} // ersetzAllezu
+} // void ersetzAlle(string& quelle, const string& alt, const string& neu) 
+
 
 string ersetzAllezu(string *quelle, const char* alt, const char* neu) 
 {
@@ -298,7 +310,8 @@ string ersetzAllezu(string *quelle, const char* alt, const char* neu)
     return zwi;
   }
   return *quelle;
-} // ersetzAllezu
+} // string ersetzAllezu(string *quelle, const char* alt, const char* neu) 
+
 
 string ersetzAllezu(const char *quelle, const char* alt, const char* neu) 
 {
@@ -313,12 +326,13 @@ string ersetzAllezu(const char *quelle, const char* alt, const char* neu)
         if (*(pi+i)!=*(p+i))
         {gleich=0;break;}
       if (gleich) {erg+=neu;p+=i-1;} else {
-      erg+=(*p);
+        erg+=(*p);
       }
     }
   }
   return erg;
-} // ersetzAllezu
+} // string ersetzAllezu(const char *quelle, const char* alt, const char* neu) 
+
 
 void ersetzAlle(string *quelle, const char* alt, const char* neu) 
 {
@@ -336,7 +350,8 @@ void ersetzAlle(string *quelle, const char* alt, const char* neu)
     zwi += quelle->substr(p0);
     quelle->swap(zwi); 
   }
-} // ersetzAlle
+} // void ersetzAlle(string *quelle, const char* alt, const char* neu) 
+
 
 void ersetzAlle(string *quelle, const string& alt, const string& neu) 
 {
@@ -353,7 +368,8 @@ void ersetzAlle(string *quelle, const string& alt, const string& neu)
     zwi += quelle->substr(p0);
     quelle->swap(zwi); 
   }
-}
+} // void ersetzAlle(string *quelle, const string& alt, const string& neu) 
+
 
 // ergibt die Zahl der Vorkommen von *was in *str
 size_t zahlin(string *str, const char* was) 
@@ -365,7 +381,8 @@ size_t zahlin(string *str, const char* was)
     }
   }
   return erg;
-}
+} // size_t zahlin(string *str, const char* was) 
+
 
 void chersetze(string str, string *wsRet, const string& from, const char to) 
 {
@@ -379,7 +396,8 @@ void chersetze(string str, string *wsRet, const string& from, const char to)
     start_pos = pos;
   }
   *wsRet += str.substr(start_pos);
-}
+} // void chersetze(string str, string *wsRet, const string& from, const char to) 
+
 
 string ersetze(const char *u, const char* alt, const char* neu) 
 {
@@ -399,7 +417,8 @@ string ersetze(const char *u, const char* alt, const char* neu)
   return erg;
 } // ersetze(char *u, const char* alt, const char* neu)
 
-string *sersetze(string* src, string const& target, string const& repl) {
+string *sersetze(string* src, string const& target, string const& repl) 
+{
   if (target.length()) {
     if (src->length()) {
       size_t idx = 0;
@@ -414,7 +433,8 @@ string *sersetze(string* src, string const& target, string const& repl) {
   return src;
 } // sersetze( string src, string const& target, string const& repl)
 
-void getstammext(string *ganz, string *stamm, string *exten) {
+void getstammext(string *ganz, string *stamm, string *exten) 
+{
   size_t posp = ganz->rfind('.');
   if (posp!=std::string::npos) {
     *exten=ganz->substr(posp+1);
@@ -423,7 +443,7 @@ void getstammext(string *ganz, string *stamm, string *exten) {
     *exten="";
     *stamm=string(*ganz);
   }
-} // getstammext(
+} // void getstammext(string *ganz, string *stamm, string *exten) 
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
 int getcols() 
@@ -443,16 +463,33 @@ int getcols()
 
 char* curruser() 
 {
- static struct passwd *passwd = getpwuid(getuid());
- return passwd->pw_name;
+  static struct passwd *passwd = getpwuid(getuid());
+  return passwd->pw_name;
 } // curruser()
 
+mdatei::mdatei (const string& name, ios_base::openmode modus)
+{
+  for(int iru=0;iru<3;iru++) {
+    open(name,modus);
+    if (is_open()) {
+      oboffen=1;
+      break;
+    }
+    int erg __attribute__((unused));
+    char* benutzer=curruser();
+    cout<<drot<<Txk[T_Muss_Datei]<<blau<<name<<drot<<Txk[T_fuer]<<blau<<benutzer<<drot<<Txk[T_zugreifbar_machen]<<schwarz<<endl;
+    erg=system((string("sudo touch '")+name+"' && sudo setfacl -m 'u:"+benutzer+":"+((modus & ios::out)?"6":"4")+"' '"+name+"'").c_str());
+  }
+} // mdatei::mdatei (const string& name, ios_base::openmode modus)
+
+
+#ifdef false
 #ifdef obfstream
 fstream*
 #else
 FILE*
 #endif
- oeffne(const string& datei, uchar art, uchar* erfolg)
+oeffne(const string& datei, uchar art, uchar* erfolg)
 {
 #ifdef obfstream	
   ios_base::openmode mode;
@@ -466,41 +503,36 @@ FILE*
   for(int iru=0;iru<2;iru++) {
     sdat = new fstream(datei,mode);
     if (sdat) if (sdat->is_open()) {
-      *erfolg=1;
-      return sdat;
-      break;
-    }
-    int erg __attribute__((unused));
-    erg=system((string("sudo touch '")+datei+"' || sudo setfacl -m 'u:"+curruser()+":"+(art?"6":"4")+"' '"+datei+"'").c_str());
-  }
-  *erfolg=0;
-  return 0;
 #else
-  const char *mode;
-  switch (art) {
-    case 0: mode="r"; break;
-    case 1: mode="w"; break;
-    case 2: mode="a"; break;
-    case 3: mode="wt"; break; // text mode, default
-  }
-  FILE *sdat;
-  for(int iru=0;iru<2;iru++) {
-    if ((sdat= fopen(datei.c_str(),mode))) {
-      *erfolg=1;
-      return sdat;
-      break;
-    } 
-    int erg __attribute__((unused));
-    erg=system((string("sudo touch '")+datei+"' || sudo setfacl -m 'u:"+curruser()+":"+(art?"6":"4")+"' '"+datei+"'").c_str());
-  }
-  *erfolg=0;
-  return 0;
+      const char *mode;
+      switch (art) {
+        case 0: mode="r"; break;
+        case 1: mode="w"; break;
+        case 2: mode="a"; break;
+        case 3: mode="wt"; break; // text mode, default
+      }
+      FILE *sdat;
+      for(int iru=0;iru<2;iru++) {
+        if ((sdat= fopen(datei.c_str(),mode))) {
 #endif
-} // oeffne
+          *erfolg=1;
+          return sdat;
+          break;
+        } 
+        int erg __attribute__((unused));
+        erg=system((string("sudo touch '")+datei+"' && sudo setfacl -m 'u:"+curruser()+":"+(art?"6":"4")+"' '"+datei+"'").c_str());
+      }
+      *erfolg=0;
+      return 0;
+    } // oeffne
+}
+#endif	
 
 int kuerzelogdatei(const char* logdatei,int obverb)
 {
+#ifdef false
   uchar erfolg=0;
+#endif
   // zutun: nicht erst in Vektor einlesen, sondern gleich in die tmp-Datei schreiben 10.6.12
 
   //	vector<string> Zeilen;   //Der Vektor Zeilen enthält String-Elemente
@@ -524,123 +556,142 @@ int kuerzelogdatei(const char* logdatei,int obverb)
   }
   string ofil=string(logdatei)+"tmp";
   int abhier=0;
-#ifdef obfstream	
-  fstream *outfile=oeffne(ofil,2,&erfolg);
-  if (!erfolg) {
+  mdatei outfile(ofil,ios::out);
+  if (!outfile.is_open()) {
     perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_als_fstream_zum_Schreiben_oeffnen]).c_str());
     return 1;
   }
-  fstream *logf=oeffne(logdatei,0,&erfolg); //Die Zeilen dieser Datei sollen in einen Vektor geschrieben werden.
-  if (!erfolg) {
+  mdatei logf(logdatei,ios::in);
+  if (!logf.is_open()) {
     perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_als_fstream_zum_Lesen_oeffnen]).c_str());
     return 1;
   }
-  while (logf->getline (Zeile, sizeof(Zeile))) {
-    //		Zeilen.push_back(Zeile); //hängt einfach den Inhalt der Zeile als Vektorelement an das Ende des Vektors
+  while (logf.getline (Zeile, sizeof(Zeile))) {
+#ifdef false
+#ifdef obfstream	
+    fstream *outfile=oeffne(ofil,2,&erfolg);
+    if (!erfolg) {
+      perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_als_fstream_zum_Schreiben_oeffnen]).c_str());
+      return 1;
+    }
+    fstream *logf=oeffne(logdatei,0,&erfolg); //Die Zeilen dieser Datei sollen in einen Vektor geschrieben werden.
+    if (!erfolg) {
+      perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_als_fstream_zum_Lesen_oeffnen]).c_str());
+      return 1;
+    }
+    while (logf->getline (Zeile, sizeof(Zeile))) {
+      //		Zeilen.push_back(Zeile); //hängt einfach den Inhalt der Zeile als Vektorelement an das Ende des Vektors
 #else	
-    FILE *outfile=oeffne(ofil,2,&erfolg);
-    if (!erfolg) {
-      perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_mit_fopen_zum_Schreiben_oeffnen]).c_str());
-      return 1;
-    }
-    FILE *logf=oeffne(logdatei,0,&erfolg);
-    if (!erfolg) {
-      Log(string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_mit_fopen_zum_Lesen_oeffnen],1,0);
-      return 1;
-    }
-    while (fgets(Zeile, sizeof Zeile, logf)) {
-      //	 Zeilen.push_back(Zeile);
+      FILE *outfile=oeffne(ofil,2,&erfolg);
+      if (!erfolg) {
+        perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_mit_fopen_zum_Schreiben_oeffnen]).c_str());
+        return 1;
+      }
+      FILE *logf=oeffne(logdatei,0,&erfolg);
+      if (!erfolg) {
+        Log(string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_mit_fopen_zum_Lesen_oeffnen],1,0);
+        return 1;
+      }
+      while (fgets(Zeile, sizeof Zeile, logf)) {
+        //	 Zeilen.push_back(Zeile);
 #endif	
-      if (!abhier) {
-        tm *atm = new tm; time_t gesz; long sekunden; // int aktz;
-        //	for(aktz=Zeilen.size()-1;aktz>=0;aktz--) {
-        //         Log(string("aktz=") + ltoa_(aktz,buffer,10),obverb,0);
-        int verwertbar=0, index;
-        for(unsigned j=0;j<2;j++) {
+#endif	
+        if (!abhier) {
+          tm *atm = new tm; time_t gesz; long sekunden; // int aktz;
+          //	for(aktz=Zeilen.size()-1;aktz>=0;aktz--) {
+          //         Log(string("aktz=") + ltoa_(aktz,buffer,10),obverb,0);
+          int verwertbar=0, index;
+          for(unsigned j=0;j<2;j++) {
+            if (verwertbar) {
+              index = verwertbar-1;
+              j=2;
+            } else {
+              index = j;
+            }
+            switch (index) {
+              case 0: 
+                if (sscanf(Zeile,"%2d.%2d.%2d %2d:%2d:%2d%*s",&atm->tm_mday,&atm->tm_mon,&atm->tm_year,&atm->tm_hour,&atm->tm_min,&atm->tm_sec)==6) {
+                  if (!verwertbar) {
+                    verwertbar=1;
+                    j=2;
+                  }
+                  atm->tm_mon--;
+                  atm->tm_year+=100; // 2000-1900
+                  //	  <<atm->tm_mday<<"."<<atm->tm_mon+1<<"."<<atm->tm_year<<"."<<atm->tm_hour<<"."<<atm->tm_min<<"."<<atm->tm_sec<<endl;
+                  atm->tm_isdst=-1; // sonst wird zufällig ab und zu eine Stunde abgezogen
+                } else if (verwertbar) verwertbar=0;
+                break;
+              case 1:
+                if (strptime(Zeile,"%a %b %d %T %Y", atm)) {
+                  if (!verwertbar) {
+                    verwertbar=2;
+                    j=2;
+                  } 
+                } else if (verwertbar) verwertbar=0;
+            }
+          }
           if (verwertbar) {
-            index = verwertbar-1;
-            j=2;
-          } else {
-            index = j;
-          }
-          switch (index) {
-            case 0: 
-              if (sscanf(Zeile,"%2d.%2d.%2d %2d:%2d:%2d%*s",&atm->tm_mday,&atm->tm_mon,&atm->tm_year,&atm->tm_hour,&atm->tm_min,&atm->tm_sec)==6) {
-                if (!verwertbar) {
-                  verwertbar=1;
-                  j=2;
-                }
-                atm->tm_mon--;
-                atm->tm_year+=100; // 2000-1900
-                //	  <<atm->tm_mday<<"."<<atm->tm_mon+1<<"."<<atm->tm_year<<"."<<atm->tm_hour<<"."<<atm->tm_min<<"."<<atm->tm_sec<<endl;
-                atm->tm_isdst=-1; // sonst wird zufällig ab und zu eine Stunde abgezogen
-              } else if (verwertbar) verwertbar=0;
-              break;
-            case 1:
-              if (strptime(Zeile,"%a %b %d %T %Y", atm)) {
-                if (!verwertbar) {
-                  verwertbar=2;
-                  j=2;
-                } 
-              } else if (verwertbar) verwertbar=0;
-          }
+            gesz=mktime(atm);
+            //          	  char tbuf[20];
+            //              strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
+            //              <<"Datum: "<<tbuf<<endl;
+            //              exit(0);
+            time_t jetzt;
+            jetzt=time(0);
+            sekunden=(long)(jetzt-gesz);
+            if (sekunden<1209600) {// jünger als zwei Wochen => behalten
+              abhier=1;
+            }
+            //	  <<jetzt<<"- "<<gesz<<"="<<sekunden<<endl;
+          } // if (sscanf(Zeile
+          delete[] atm;
+        } // (!abhier)
+        if (abhier) {
+          outfile<<Zeile<<endl;
         }
-        if (verwertbar) {
-          gesz=mktime(atm);
-          //          	  char tbuf[20];
-          //              strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
-          //              <<"Datum: "<<tbuf<<endl;
-          //              exit(0);
-          time_t jetzt;
-          jetzt=time(0);
-          sekunden=(long)(jetzt-gesz);
-          if (sekunden<1209600) {// jünger als zwei Wochen => behalten
-            abhier=1;
-          }
-          //	  <<jetzt<<"- "<<gesz<<"="<<sekunden<<endl;
-        } // if (sscanf(Zeile
-        delete[] atm;
-      } // (!abhier)
-      if (abhier) {
+        }
+        outfile.close();
+#ifdef false
 #ifdef obfstream
         *outfile<<Zeile<<endl;
       }
-      }
-      logf->close();
-      outfile->close();
+    }
+    logf->close();
+    outfile->close();
 #else
-      fputs(Zeile,outfile);
-      //          fputs("\n",outfile);
-    } // (abhier)
-  } // while (fgets(Zeile
-  fclose(logf);
-  fclose(outfile);
+    fputs(Zeile,outfile);
+    //          fputs("\n",outfile);
+  } // (abhier)
+} // while (fgets(Zeile
+fclose(logf);
+fclose(outfile);
 #endif
-  /*	
-      Log(string("kuerzelogdatei, nach Einlesen"),obverb,0);	
-      tm *atm = new tm; time_t gesz; long sekunden; int aktz;
-      for(aktz=Zeilen.size()-1;aktz>=0;aktz--) {
-  //         Log(string("aktz=") + ltoa_(aktz,buffer,10),obverb,0);
-  if (sscanf(Zeilen[aktz].c_str(),"%2d.%2d.%2d %2d:%2d:%2d%*s", &atm->tm_mday,&atm->tm_mon,&atm->tm_year,&atm->tm_hour,&atm->tm_min,&atm->tm_sec)==6)
-  {
-  atm->tm_mon-=1;
-  atm->tm_year+=100; // 2000-1900
-  //	  <<atm->tm_mday<<"."<<atm->tm_mon+1<<"."<<atm->tm_year<<"."<<atm->tm_hour<<"."<<atm->tm_min<<"."<<atm->tm_sec<<endl;
-  gesz=mktime(atm);
-  //	  char tbuf[20];
-  //      strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
-  //      <<tbuf<<endl;
-  time_t jetzt;
-  jetzt=time(0);
-  sekunden=(long)(jetzt-gesz);
-  if (sekunden>1209600) {// älter als zwei Wochen => abschneiden
-  break;
-  }
-  //	  <<jetzt<<"- "<<gesz<<"="<<sekunden<<endl;
-  }
-  }
-  Log(string("kuerzelogdatei, nach Datumspruefung"),obverb,0);	
-  string ofil=string(logdatei)+"tmp";
+#endif
+/*	
+    Log(string("kuerzelogdatei, nach Einlesen"),obverb,0);	
+    tm *atm = new tm; time_t gesz; long sekunden; int aktz;
+    for(aktz=Zeilen.size()-1;aktz>=0;aktz--) {
+//         Log(string("aktz=") + ltoa_(aktz,buffer,10),obverb,0);
+if (sscanf(Zeilen[aktz].c_str(),"%2d.%2d.%2d %2d:%2d:%2d%*s", &atm->tm_mday,&atm->tm_mon,&atm->tm_year,&atm->tm_hour,&atm->tm_min,&atm->tm_sec)==6)
+{
+atm->tm_mon-=1;
+atm->tm_year+=100; // 2000-1900
+//	  <<atm->tm_mday<<"."<<atm->tm_mon+1<<"."<<atm->tm_year<<"."<<atm->tm_hour<<"."<<atm->tm_min<<"."<<atm->tm_sec<<endl;
+gesz=mktime(atm);
+//	  char tbuf[20];
+//      strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
+//      <<tbuf<<endl;
+time_t jetzt;
+jetzt=time(0);
+sekunden=(long)(jetzt-gesz);
+if (sekunden>1209600) {// älter als zwei Wochen => abschneiden
+break;
+}
+//	  <<jetzt<<"- "<<gesz<<"="<<sekunden<<endl;
+}
+}
+Log(string("kuerzelogdatei, nach Datumspruefung"),obverb,0);	
+string ofil=string(logdatei)+"tmp";
 #ifdef obfstream
 fstream outfile(ofil.c_str(),ios::out);
 if (!outfile) {
@@ -664,13 +715,13 @@ fputs("\n",logf);
 fclose(logf);
 }
 #endif
-   */	
-  if (abhier) {
-    remove(logdatei);
-    rename(ofil.c_str(),logdatei);
-  }else{
-    remove(ofil.c_str());
-  }
+ */	
+if (abhier) {
+  remove(logdatei);
+  rename(ofil.c_str(),logdatei);
+}else{
+  remove(ofil.c_str());
+}
 return 0;
 //  << "Alle Zeilen:" << endl;
 // unsigned int ii; //unsigned, weil ansonsten Vergleich von signed- und unsigned-Werten. signed=vorzeichenbehaftet
@@ -679,7 +730,8 @@ return 0;
 // }
 //  << endl;
 //************************************
-}	
+}	 // int kuerzelogdatei(const char* logdatei,int obverb)
+
 
 
 int Log(const string& text, short screen, short file, bool oberr, short klobverb)
@@ -687,7 +739,9 @@ int Log(const string& text, short screen, short file, bool oberr, short klobverb
   static unsigned int cols=0;
   static bool letztesmaloZ;
   const bool naechstezeile=0;
+#ifdef false
   uchar erfolg=0;
+#endif  
   // screen=0 = schreibt nicht auf den Bildschirm, 1 = schreibt, -1 = schreibt ohne Zeilenwechsel, -2 = schreibt bleibend ohne Zeilenwechsel
   // <<"Log: "<<text<<", screen: "<<screen<<", file: "<<file<<endl;
   if (file || screen) {
@@ -732,6 +786,15 @@ int Log(const string& text, short screen, short file, bool oberr, short klobverb
           //          Log("nach kuerzelogdatei",screen,0);
           erstaufruf=0;
         }	  
+        mdatei logf(logdt,ios::out|ios::app);
+        if (!logf.is_open()) {
+          perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
+          return 1;
+        } else {
+          logf<<zwi<<endl; 
+          logf.close();
+        }
+#ifdef false        
 #ifdef obfstream
         fstream *logf=oeffne(logdt,2,&erfolg);
         if (!erfolg) {
@@ -752,6 +815,7 @@ int Log(const string& text, short screen, short file, bool oberr, short klobverb
           fputs("\n",logf);
           fclose(logf);
         } // if (!erolg) else
+#endif
 #endif
 
       } // if (!logdt || !*logdt) _gKLA_ _gKLZ_ else _gKLA_
@@ -816,7 +880,8 @@ perf2= static_cast<double> (perfEnd.tv_sec * 1000000 + perfEnd.tv_usec- perfStar
   return !j?i:-1;
   //    return (i == len_feld-len_search)?0:feld;  
 
-}   
+}    // long cmpmem( char* feld, const char* search, int len_feld) // , int len_search
+
 
 char* ltoan(long value, int base, uchar obtz, uchar minstel) 
 {
@@ -946,24 +1011,24 @@ void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtdo
 
 const string& absch::suche(const char* const sname)
 {
- static string nix="";
- for (size_t i=0;i<av.size();i++) {
-  if (av[i].name==sname) {
-   return av[i].wert;
+  static string nix="";
+  for (size_t i=0;i<av.size();i++) {
+    if (av[i].name==sname) {
+      return av[i].wert;
+    }
   }
- }
- return nix;
+  return nix;
 }
 const string& absch::suche(const string& sname)
 {
- return suche(sname.c_str());
+  return suche(sname.c_str());
 }
 
 
 int confdat::lies(const string& fname, int obverb)
 {
   string zeile;
-  ifstream f(fname.c_str());
+  mdatei f(fname,ios::in);
   if (f.is_open()) {
     if (obverb>0) cout<<"confdat::lies(fname...), fname: "<<fname<<endl;
     while (getline(f,zeile)) {
@@ -1103,12 +1168,20 @@ int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, siz
 
 int schreib(const char *fname, Schluessel *conf, size_t csize)
 {
+#ifdef false
   uchar erfolg=0;
+#endif
+  mdatei f(fname,ios::out);
+  if (!f.is_open()) { return 1; }
+  for(size_t i=0;i<csize;i++) {
+    f<<conf[i].key<<" = \""<<conf[i].val<<"\""<<endl;
+  }
+#ifdef false
 #ifdef obfstream 
   fstream *f=oeffne(fname,3,&erfolg);
   if (!erfolg) return 1;
-  for(size_t i=0;i<cszie;i++) {
-   *f<<conf[i].key<<" = \""<<conf[i].val<<"\""<<endl;
+  for(size_t i=0;i<csize;i++) {
+    *f<<conf[i].key<<" = \""<<conf[i].val<<"\""<<endl;
   }
 #else
   FILE *f=oeffne(fname,3,&erfolg);
@@ -1118,6 +1191,7 @@ int schreib(const char *fname, Schluessel *conf, size_t csize)
   }
   fclose(f);
 #endif
+#endif	
   return 0;
 } // int schreib(const char *fname, Schluessel *conf, size_t csize)
 
@@ -1125,12 +1199,13 @@ int schreib(const char *fname, Schluessel *conf, size_t csize)
 std::string base_name(std::string const & path)
 {
   return path.substr(path.find_last_of("/\\") + 1);
-}
+} // std::string base_name(std::string const & path)
 
 std::string dir_name(std::string const & path)
 {
   return path.substr(0,path.find_last_of("/\\"));
-}
+} // std::string dir_name(std::string const & path)
+
 
 int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck, 
     binaer ob0heissterfolg, binaer obergebnisanzeig, const string& ueberschr)
@@ -1152,14 +1227,14 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
   }
   Log(aktues+": "+blau+cmd.substr(0,getcols()-7-aktues.length())+schwarz+" ...",obverb>0?-1:0,oblog);
   if (!rueck) if (obergebnisanzeig) {neurueck=1;rueck=new vector<string>;}
-// #define systemrueckprofiler
+  // #define systemrueckprofiler
 #ifdef systemrueckprofiler
   perfcl prf("systemrueck");
 #endif
   if (rueck) {
     if (FILE* pipe = popen(cmd.c_str(), "r")) {
 #ifdef systemrueckprofiler
-  prf.ausgeb();
+      prf.ausgeb();
 #endif
       //    setvbuf ( pipe, NULL, _IOFBF, 2048);
       /*
@@ -1173,7 +1248,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
       //      unsigned int zeile=0;
       while(1) {
 #ifdef systemrueckprofiler
-  prf.ausgab1000("in while");
+        prf.ausgab1000("in while");
 #endif
         if (feof(pipe)) break;
         //        zeile++;
@@ -1187,23 +1262,23 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
         if (feof(pipe)) break;
       } // while(!feof(pipe)) 
 #ifdef systemrueckprofiler
-  prf.ausgab1000("nach while");
+      prf.ausgab1000("nach while");
 #endif
       if (obverb>1 || oblog || obergebnisanzeig) if (rueck->size()) {
         for(unsigned i=0;i<rueck->size();i++) {
 #ifdef systemrueckprofiler
 #endif
           meld=meld+"\n"+tuerkis+rueck->at(i)+schwarz;
-          }
+        }
       }
 #ifdef systemrueckprofiler
       Log(rots+"Rueck.size: "+ltoan(rueck->size())+", obergebnisanzeig: "+(obergebnisanzeig?"ja":"nein"),1,oblog);
       Log(cmd,1,oblog)
-      prf.ausgab1000("vor pclose");
+        prf.ausgab1000("vor pclose");
 #endif
       erg = pclose(pipe)/256;
 #ifdef systemrueckprofiler
-  prf.ausgab1000("nach pclose");
+      prf.ausgab1000("nach pclose");
 #endif
     } else {
       perror((string("popen() ")+Txk[T_fehlgeschlagen_bei]+cmd).c_str());
@@ -1236,7 +1311,8 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
     Log(meld,obverb>1,oblog);
   if (neurueck) delete rueck;
   return erg; 
-} // systemrueck
+} // int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck, binaer ...
+
 
 string aktprogverz()
 {
@@ -1570,13 +1646,18 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog)
       return systemrueck(string("sudo zypper -n --gpg-auto-import-keys in ")+prog,obverb+1,oblog);
       break;
     case apt:
-      return systemrueck(string("apt-get --assume-yes install ")+ersetzeprog(prog),obverb+1,oblog);
+      return systemrueck(string("sudo apt-get --assume-yes install ")+ersetzeprog(prog),obverb+1,oblog);
       break; 
     default: break;
   }
   return 2;
 } // uchar linstcl::doinst(const string& prog,int obverb,int oblog) 
 
+uchar linstcl::doinst(const char* prog,int obverb,int oblog)
+{
+  const string& progs=prog;
+  return doinst(progs,obverb,oblog);
+}
 
 uchar linstcl::douninst(const string& prog,int obverb,int oblog) 
 {
@@ -1586,7 +1667,7 @@ uchar linstcl::douninst(const string& prog,int obverb,int oblog)
       return systemrueck(string("sudo zypper -n rm ")+prog,obverb+1,oblog);
       break;
     case apt:
-      return systemrueck(string("apt-get --assume-yes remove ")+ersetzeprog(prog),obverb+1,oblog);
+      return systemrueck(string("sudo apt-get --assume-yes remove ")+ersetzeprog(prog),obverb+1,oblog);
       break; 
     default: break;
   }
