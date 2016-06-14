@@ -1,19 +1,26 @@
 ICH := $(firstword $(MAKEFILE_LIST))
 SRCS = $(wildcard *.cpp)
 OBJ = $(SRCS:.cpp=.o)
-CFLAGS=-c -Wall `mysql_config --cflags` -std=gnu++11
+CFLAGS=-c -Wall `mysql_config --cflags` 
 LDFLAGS=`mysql_config --libs` -ltiff
 ERG=$(shell basename $(CURDIR))
 EXPFAD=/usr/local/sbin
 EXEC=$(ERG)
 INSTEXEC=$(EXPFAD)/$(EXEC)
-CINST="gcc-c++"
+CINST=gcc6-c++
+ifneq ($(shell g++-6 --version >/dev/null 2>&1),0)
+ CCName=g++
+ CC=sudo $(CCName)
+ $(eval CFLAGS=$(CFLAGS) -std=gnu++11)
+else
+ CCName=g++-6
+ CC=sudo $(CCName)
+endif
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
-CC = sudo g++
 POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d 2>/dev/null
 
 MANP=/usr/share/man
@@ -24,6 +31,9 @@ MANPEH=$(CURDIR)/man_en.html
 
 
 alles: anzeig weiter
+
+glei: anzeig $(EXEC) man fertig
+
 opt: CFLAGS += -O
 opt: neu
 
@@ -42,6 +52,11 @@ opts: neu
 optg: CFLAGS+= -Og
 optg: neu
 
+altc: CFLAGS+= -std=gnu++11
+altc: CINST=gcc-c++
+altc: CCname=g++
+altc: opts
+
 neu: anzeig clean weiter
 
 weiter: compiler $(EXEC) man fertig
@@ -56,8 +71,9 @@ git:
 
 anzeig:
 	@echo -e " GNU Make, Zieldatei:""\033[1;31m" $(EXEC)"\033[0;30m", vorher:
-	@echo -e "\033[0;34m" $(shell ls -l $(EXEC)) "\033[0;30m" 
+	@echo -e "\033[0;34m" $(shell ls -l $(EXEC) 2>/dev/null) "\033[0;30m" 
 	@echo -e " Quelldateien:""\033[1;31m" $(SRCS)"\033[0;30m" 
+	@echo -e " Verwende Compiler: ""\033[1;31m" $(CCName) "\033[0;30m"
 	-@$(shell rm fehler.txt 2>/dev/null)
 
 $(EXEC): $(OBJ)
@@ -78,7 +94,7 @@ $(DEPDIR)/%.d: ;
 compiler:
 	@echo -n "Untersuche Compiler ..."
 	@echo -e -n "\r" 
-	-@which g++ >/dev/null 2>&1 || { which zypper && sudo zypper -n in $(CINST) || { which apt-get && sudo apt-get --assume-yes install build-essential; } }
+	-@which $(CCname) >/dev/null 2>&1 || { which zypper && sudo zypper -n in $(CINST) || { which apt-get && sudo apt-get --assume-yes install build-essential; } }
 	-@sudo /sbin/ldconfig; sudo /sbin/ldconfig -p | grep -q "libmysqlclient.so " || { which zypper && sudo zypper -n in libmysqlclient-devel || { which apt-get && sudo apt-get --assume-yes install libmysqlclient-dev; }; sudo /sbin/ldconfig; }
 	-@test -f /usr/include/tiff.h || { which zypper && sudo zypper -n in libtiff-devel || { which apt-get && sudo apt-get --assume-yes install libtiff-dev; } }
 

@@ -951,8 +951,8 @@ char* ltoa_(long value, char* result, int base=10)
 
 void kopiere(string *quelle, string *ziel)
 {
-  ifstream fileIn(quelle->c_str(),ios::binary);
-  ofstream fileOut(ziel->c_str(),ios::trunc | ios::binary);
+  mdatei fileIn(quelle->c_str(),ios::in|ios::binary);
+  mdatei fileOut(ziel->c_str(),ios::out | ios::trunc | ios::binary);
   fileOut<<fileIn.rdbuf();
 } // void kopiere(string *quelle, string *ziel)
 
@@ -1009,6 +1009,36 @@ void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtdo
   tokens->push_back(text->substr(start));
 } // void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtdoppelt) 
 
+betrsys pruefos()
+{
+ static betrsys aktbs=keins;
+ if (aktbs==keins) {
+  svec rueck;
+  systemrueck("lsb_release -i",0,0,&rueck);
+  if (rueck.size()) {
+   if (rueck[0].find("SUSE LINUX")!=string::npos) aktbs=suse;
+   else if (rueck[0].find("Ubuntu")!=string::npos) aktbs=ubuntu;
+  }
+ }
+ return aktbs;
+} // betrsys pruefos()
+
+instprog pruefipr(int obverb,int oblog)
+{
+ static instprog aktipr=keinp;
+ if (aktipr==keinp) {
+   if (!systemrueck("which zypper 2>/dev/null",obverb,oblog))
+      // heruntergeladene Dateien behalten
+     aktipr=zypper;
+   else if (!systemrueck("which apt-get 2>/dev/null",obverb,oblog))
+      // hier werden die Dateien vorgabemaessig behalten
+     aktipr=apt;
+   else
+     cerr<<Txk[T_Weder_zypper_noch_apt_get_als_Installationspgrogramm_gefunden]<<endl;
+ }
+ return aktipr;
+} // instprog pruefipr(int obverb,int oblog)
+
 const string& absch::suche(const char* const sname)
 {
   static string nix="";
@@ -1018,11 +1048,12 @@ const string& absch::suche(const char* const sname)
     }
   }
   return nix;
-}
+} // const string& absch::suche(const char* const sname)
+
 const string& absch::suche(const string& sname)
 {
   return suche(sname.c_str());
-}
+} // const string& absch::suche(const string& sname)
 
 
 int confdat::lies(const string& fname, int obverb)
@@ -1079,7 +1110,10 @@ void confdat::Abschn_auswert(int obverb, char tz)
 void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
 {
   richtige=0;
-  for(size_t i=0;i<csize;i++) conf[i].wert.clear();
+  for(size_t i=0;i<csize;i++) {
+    conf[i].wert.clear();
+    conf[i].gelesen=0;
+  }
   if (obgelesen) {
     for(size_t i=0;i<zn.size();i++) {
       string *zeile=&zn[i];
@@ -1093,7 +1127,8 @@ void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
           size_t ii=csize,gef;
           while( ii-- ) {
             gef=zeile->find(conf[ii].name);
-            if (!gef) { // muss am Zeilenanfang anfangen, sonst Fehler z.B.: number, faxnumber
+            if (!gef) { // conf[ii].name muss am Zeilenanfang anfangen, sonst Fehler z.B.: number, faxnumber
+              conf[ii].gelesen=1;
               if (strchr((string(" ")+(char)9+tz).c_str(),zeile->at(gef+conf[ii].name.length()))) {
                 ++richtige;
                 conf[ii].wert=zeile->substr(pos+1);
@@ -1141,7 +1176,7 @@ string XOR(const string& value, const string& key)
 
 int cppschreib(const string& fname, cppSchluess *conf, size_t csize)
 {
-  ofstream f(fname.c_str());
+  mdatei f(fname,ios::out);
   if (f.is_open()) {
     for (size_t i = 0;i<csize;i++) {
       f<<conf[i].name<<" = \""<<conf[i].wert<<"\""<<endl;
@@ -1154,7 +1189,7 @@ int cppschreib(const string& fname, cppSchluess *conf, size_t csize)
 
 int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, size_t cszahl)
 {
-  ofstream f(fname.c_str());
+  mdatei f(fname,ios::out);
   if (f.is_open()) {
     for (size_t j=0;j<cszahl;j++) {
       for (size_t i = 0;i<csizes[j];i++) {
@@ -1599,7 +1634,7 @@ void optioncl::hilfezeile(Sprache lg)
   } // if (TxBp)
 } // hilfezeile
 
-
+/*
 linsten linstcl::checkinst(int obverb, int oblog) 
 {
   if (inst==uinst) {
@@ -1616,11 +1651,12 @@ linsten linstcl::checkinst(int obverb, int oblog)
   }
   return inst;
 } // linsten linstcl::checkinst(int obverb, int oblog) 
+*/
 
 
 string linstcl::ersetzeprog(const string& prog) 
 {
-  switch(inst) {
+  switch(pruefipr()) {
     case apt:
       if (prog=="mariadb") return "mariadb-server";
       if (prog=="hylafax") return "hylafax-server";
@@ -1628,6 +1664,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="hylafax hylafax-client") return "hylafax-server hylafax-client";
       if (prog=="hylafax+ hylafax+-client") return "hylafax+-server hylafax+-client";
       if (prog=="kernel-source") return "linux-source";
+      if (prog=="tiff") return "libtiff-tools";
     default: break;
   }
   return prog;
@@ -1636,9 +1673,8 @@ string linstcl::ersetzeprog(const string& prog)
 
 uchar linstcl::doinst(const string& prog,int obverb,int oblog) 
 {
-  checkinst(obverb,oblog);
-  switch (inst) {
-    case zyp:
+  switch (pruefipr()) {
+    case zypper:
       if (obnmr) {
         obnmr=0;
         systemrueck("sudo zypper mr -k -all",obverb,oblog);
@@ -1661,9 +1697,8 @@ uchar linstcl::doinst(const char* prog,int obverb,int oblog)
 
 uchar linstcl::douninst(const string& prog,int obverb,int oblog) 
 {
-  checkinst(obverb,oblog);
-  switch (inst) {
-    case zyp:
+  switch (pruefipr()) {
+    case zypper:
       return systemrueck(string("sudo zypper -n rm ")+prog,obverb,oblog);
       break;
     case apt:
@@ -1677,9 +1712,8 @@ uchar linstcl::douninst(const string& prog,int obverb,int oblog)
 
 uchar linstcl::obfehlt(const string& prog,int obverb,int oblog)
 {
-  checkinst(obverb,oblog);
-  switch (inst) {
-    case zyp:
+  switch (pruefipr()) {
+    case zypper:
       return systemrueck(string("rpm -q ")+prog,obverb-1,oblog);
     case apt:
       return systemrueck(string("dpkg -s ")+ersetzeprog(prog),obverb-1,oblog);

@@ -233,7 +233,8 @@ class RS;
 class DB 
 {
   public:
-    static uchar oisok; // soll initial 0 sein
+    // muss außerhalb der Klasse und einer Funktion noch mal definiert werden
+    static uchar oisok; // 1=Installation von MariaDB wurde ueberprueft
     MYSQL *conn;
     //	MYSQL_RES *result;
     //	MYSQL_ROW row;

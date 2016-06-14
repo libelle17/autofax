@@ -14,6 +14,7 @@ string verschiebe(const string& qdatei, const string& zielvz, uint *vfehler, uch
 void verschiebe(const string& qdatei, zielmustercl *zmp, uint *vfehler, uchar wieweiterzaehl, int obverb, int oblog);
 string kopiere(const string& qdatei, const string& zieldp, uint *kfehler, uchar wieweiterzaehl, int obverb=0,int oblog=0);
 void kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
+void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog);
 void pruefprocgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog);
 void faxemitC(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog);
 void faxemitH(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog);
@@ -26,7 +27,7 @@ int tuloeschen(const string& zuloe,int obverb, int oblog);
 // Service aus SystemD
 class servc {
   public:
-    uchar servicelaeuft=0, serviceda=0;
+    int servicelaeuft=0, serviceda=0;
     string sname,ename; // ausgefuehrte Datei
     servc(string vsname,string vename): sname((vsname.empty()?vename:vsname)),ename(vename) {}
     servc(string vsname,string vename,int obverb, int oblog);
@@ -35,7 +36,7 @@ class servc {
     int obslaeuft(int obverb, int oblog);
     int restart(int obverb, int oblog);
     int enableggf(int obverb,int oblog);
-    void machfit(int obverb, int oblog);
+    int machfit(int obverb, int oblog);
 };
 
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster
@@ -229,7 +230,7 @@ class paramcl // Programmparameter
     string cmd; // string fuer command fuer Betriebssystembefehle
     vector<optioncl> opts;
     vector<argcl> argcmv; // class member vector
-    servc *sfaxq=0, *shfaxd=0, *sfaxgetty=0, *scapisuite=0;
+    servc *sfaxq=0, *shfaxd=0, *shylafaxd=0, *sfaxgetty=0, *scapisuite=0;
 
   private:
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
@@ -247,6 +248,7 @@ class paramcl // Programmparameter
   public:
     paramcl(int argc,char** argv);
     ~paramcl();
+    string stdfaxnr(const string& faxnr);
     void logvorgaben();
     void getcommandl0();
     void pruefhardware();

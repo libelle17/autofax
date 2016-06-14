@@ -285,6 +285,7 @@ template <> inline void Schluessel::setze < string > (string *var) { strncpy(val
 class cppSchluess {
   public:
     string name;
+    uchar gelesen;
     string wert;
     template <typename T> void hole(T *var) { *var=atol(wert.c_str()); }
     template <typename T> void setze(T *var) { wert=ltoan(*var); }
@@ -304,6 +305,11 @@ class abSchl {
    string wert;
    abSchl(string& vname, string& vwert):name(vname),wert(vwert) {}
 };
+
+enum betrsys {keins,suse,ubuntu};
+betrsys pruefos();
+enum instprog {keinp,zypper,apt};
+instprog pruefipr(int obverb=0, int oblog=0);
 
 #ifdef _MSC_VER
 extern inline void wait();
@@ -457,13 +463,12 @@ string holstring(const string& frage, const string *vorgabe=0);
 string holverz(const char *frage,string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
 
-enum linsten:uchar {uinst,zyp,apt,unent};
+// enum linsten:uchar {uinst,zyp,apt,unent};
 class linstcl
 {
   public:
-    linsten inst;
+//    linsten inst;
     uchar obnmr=1;
-    linsten checkinst(int obverb=0, int oblog=0);
     string ersetzeprog(const string& prog);
     uchar doinst(const string& prog,int obverb=0,int oblog=0);
     uchar doinst(const char* prog,int obverb=0,int oblog=0);
