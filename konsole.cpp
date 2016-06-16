@@ -1665,6 +1665,8 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="hylafax+ hylafax+-client") return "hylafax+-server hylafax+-client";
       if (prog=="kernel-source") return "linux-source";
       if (prog=="tiff") return "libtiff-tools";
+      if (prog=="imagemagick") return "imagemagick imagemagick-doc";
+      if (prog=="libreoffice-base") return "libreoffice-common libreoffice-base";
     default: break;
   }
   return prog;
@@ -1677,7 +1679,7 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog)
     case zypper:
       if (obnmr) {
         obnmr=0;
-        systemrueck("sudo zypper mr -k -all",obverb,oblog);
+        systemrueck("sudo zypper mr -k -all",obverb-1,oblog);
       }
       return systemrueck(string("sudo zypper -n --gpg-auto-import-keys in ")+prog,obverb+1,oblog);
       break;

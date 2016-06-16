@@ -200,8 +200,8 @@ class paramcl // Programmparameter
     string gvz; // Gescheitertenverzeichnis
     string empfvz; // Empfangsverzeichnis
     string cronminut; // Minuten fuer crontab; 0 = kein Crontab-Eintrag
-    string maxcapinr; // maximale Versuchnr in Capi, bis Hyla versucht wird
-    string maxhylanr; // maixmale Versuchsnr in Hylafax, bis Capi versucht wird
+    string maxcapiv; // maximale Versuchnr in Capi, bis Hyla versucht wird
+    string maxhylav; // maixmale Versuchsnr in Hylafax, bis Capi versucht wird
     string langu; // Sprache (Anfangsbuchstabe)
 
     cppSchluess *cgconfp; // Gesamtkonfiguration
