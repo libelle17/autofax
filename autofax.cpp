@@ -1634,7 +1634,7 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
       pth=odatei.find(anhfaxstr);
       if (ptc<pt) pt=ptc;
       if (pth<pt) pt=pth;
-      if (pt!=string::npos && pn<pt) {
+      if (pt!=string::npos && pn<pt-anstr.length()-1) { // mind. 1 Buchstaben sollte der Absender haben
        string subst=odatei.substr(pn+anstr.length(),pt-pn-anstr.length());
        einf.push_back(instyp(My->DBS,"adressat",&subst));
       }
@@ -3937,7 +3937,7 @@ void paramcl::empfarch()
     } // if (TIFF* tif = TIFFOpen(rueck[i].c_str(), "r")) 
     if (absdr.empty()) {
       string bsname;
-      getSender(this,callerid,&absdr,&bsname);
+      getSender(this,callerid,&absdr,&bsname,obverb,oblog);
       if (!bsname.empty()) {
         absdr+=", ";
         absdr+=bsname;
@@ -4026,7 +4026,7 @@ void paramcl::empfarch()
       tm.tm_isdst=-1; // sonst wird zufaellig ab und zu eine Stunde abgezogen
       time_t modz=mktime(&tm);
       string getname,bsname;
-      getSender(this,umst[1].wert,&getname,&bsname);
+      getSender(this,umst[1].wert,&getname,&bsname,obverb,oblog);
       getname+=", ";
       getname+=bsname;
       if (getname.length()>187) getname.erase(187);
