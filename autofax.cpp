@@ -435,6 +435,11 @@ enum T_
   T_beim_letzten_nichts_eingeben,
   T_Muss_Hylafax_installieren,
   T_pruefstdfaxnr,
+  T_Letzte,
+  T_empfangene_Faxe,
+  T_erfolgreich,
+  T_erfolglos,
+  T_versandten_Faxe,
   T_MAX
 };
 
@@ -1218,6 +1223,16 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Muss Hylafax installieren","Have to install hylafax"},
   // T_pruefstdfaxnr
   {"pruefstdfaxnr()","checkstdfaxnr()"},
+  // T_Letzte
+  {"Letzte ","Last "},
+  // T_empfangene_Faxe
+  {" empfangene Faxe:"," received faxes:"},
+  // T_erfolgreich
+  {" erfolgreich"," successfully"},
+  // T_erfolglos
+  {" erfolglos"," unsuccessfully"},
+  // T_versandten_Faxe
+  {" versandten Faxe:"," sent faxes:"},
   {"",""}
 };
 
@@ -1313,7 +1328,7 @@ int servc::machfit(int obverb,int oblog)
       }
     }
     return servicelaeuft;
-}
+} // int servc::machfit(int obverb,int oblog)
 
 // wird aufgerufen in: hservice_faxq_hfaxd, hservice_faxgetty
 uchar servc::spruef(const string& sbez,uchar obfork,const string& sexec, const string& CondPath, const string& After, const string& wennnicht0,
@@ -1517,9 +1532,9 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
           return 0;
         }
         Log(rots+Tx[T_Fehlermeldung_beim_Loeschversuch_eines_Hyla_Faxes_mit_faxrm]+hylanr+"`:\n    "+schwarz+rmerg[0],1,1);
-      }
-    }
-  }
+      } // if (rmerg.size()) 
+    } // for(uchar iru=0;iru<vmax;iru++) 
+  } // if (hylanr!="0" && !hylanr.empty()) 
   return 1;
 } // int fsfcl::loeschehyla(int obverb, int oblog)
 
@@ -1848,6 +1863,7 @@ int paramcl::setzhylavz()
   kuerzevtz(&varsphylavz);
   hsendqvz=varsphylavz+"/sendq";
   kuerzevtz(&hsendqvz);
+  pruefverz(hsendqvz,obverb,oblog);
   return 0;
 } // int paramcl::setzhylavz()
 
@@ -2766,19 +2782,6 @@ void paramcl::konfcapi()
   capizukonf=0;
 } // void paramcl::konfcapi()
 
-void pruefverz(const string& verz,int obverb,int oblog)
-{
-  static string cuser=curruser(); 
-  static int obsetfacl=!systemrueck("which setfacl",obverb-1,0); 
-  systemrueck(string("sudo mkdir -p '")+verz+"'",obverb,oblog);
-  if (obsetfacl) {
-    if (cuser!="root") {
-      systemrueck(string("sudo setfacl -m 'u:")+cuser+":7' '"+verz+"'",1,0);
-    }
-  } //   if (obsetfacl)
-} // void pruefverz(const string& verz,int obverb,int oblog)
-
-
 // wird aufgerufen in: main
 void paramcl::verzeichnisse()
 {
@@ -3253,6 +3256,8 @@ void paramcl::tu_lista(const string& oberfolg)
       "right(concat(space(30),left(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe from `"+
       touta+"` where Erfolg = "+oberfolg+" order by eind desc limit "+dszahl+
       ") i order by transe",ZDB);
+
+  cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandten_Faxe]<<endl;
   while (cerg=lista.HolZeile(),cerg?*cerg:0) {
     cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(14)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(65)<<*(*cerg+2)<<"|"
       <<schwarz<<setw(30)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
@@ -3266,6 +3271,7 @@ void paramcl::tu_listi()
   char ***cerg;
   RS listi(My,string("SELECT * from (SELECT date_format(transe,'%d.%m.%y %H:%i:%s') p0,right(concat(space(85),left(titel,85)),85) p1,"
         "fsize p2,tsid p3,id p4 FROM `")+tinca+"` i order by transe desc limit "+dszahl+") i order by p0",ZDB);
+  cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<Tx[T_empfangene_Faxe]<<endl;
   while (cerg=listi.HolZeile(),cerg?*cerg:0) {
     cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(85)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(17)<<*(*cerg+2)<<"|"
       <<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
@@ -4494,7 +4500,6 @@ int hservice_faxq_hfaxd(paramcl *pmp,int obverb=0, int oblog=0)
 // wird aufgerufen in: pruefhyla (1x)
 int hservice_faxgetty(paramcl *pmp,int obverb=0, int oblog=0)
 {
-  obverb=1;
   Log(violetts+"hservice_faxgetty()"+schwarz,obverb,oblog);
   return !pmp->sfaxgetty->spruef(("HylaFAX faxgetty for ")+pmp->hmodem,0,
       pmp->faxgtpfad+" "+pmp->hmodem,"","","",pmp->obverb,pmp->oblog);
@@ -4714,7 +4719,6 @@ int paramcl::pruefhyla()
       } // if (0)
       */
     } // if (hylafehlt)
-    obverb=1;
     if (1) {
       for (uchar iru=0;iru<3;iru++) {
         int fglaeuftnicht=!this->sfaxgetty->obslaeuft(obverb,oblog);
@@ -4766,8 +4770,11 @@ int paramcl::pruefhyla()
     } // if (hylalaeuftnicht || modemlaeuftnicht) 
   } // for(unsigned versuch=0;versuch<2;versuch++)
   // Archivierung ggf. aktivieren
-  systemrueck("! sudo grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax",
-      obverb,oblog);
+  struct stat hfstat;
+  if (!lstat("/etc/cron.hourly/hylafax",&hfstat)) {
+    systemrueck("! sudo grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax",
+        obverb,oblog);
+  }
   return 0;
 } // int paramcl::pruefhyla()
 

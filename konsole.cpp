@@ -1349,6 +1349,19 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
 } // int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck, binaer ...
 
 
+void pruefverz(const string& verz,int obverb,int oblog)
+{
+  static string cuser=curruser(); 
+  static int obsetfacl=!systemrueck("which setfacl",obverb-1,0); 
+  systemrueck(string("sudo mkdir -p '")+verz+"'",obverb,oblog);
+  if (obsetfacl) {
+    if (cuser!="root") {
+      systemrueck(string("sudo setfacl -m 'u:")+cuser+":7' '"+verz+"'",obverb,oblog);
+    }
+  } //   if (obsetfacl)
+} // void pruefverz(const string& verz,int obverb,int oblog)
+
+
 string aktprogverz()
 {
   char pBuf[300];
