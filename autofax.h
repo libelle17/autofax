@@ -274,6 +274,8 @@ class paramcl // Programmparameter
     void tu_listi();
     void DateienHerricht();
     int pruefcapi();
+    int hservice_faxq_hfaxd();
+    int hservice_faxgetty();
     int pruefhyla();
     int  loeschefax(int obverb, int oblog);
     int  loeschewaise(int obverb, int oblog);

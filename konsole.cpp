@@ -1686,8 +1686,9 @@ string linstcl::ersetzeprog(const string& prog)
 } // string linstcl::ersetzeprog(const string& prog) 
 
 
-uchar linstcl::doinst(const string& prog,int obverb,int oblog) 
+uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsnichtda) 
 {
+  if (!fallsnichtda.empty()) if (!systemrueck("which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) return 0;
   switch (pruefipr()) {
     case zypper:
       if (obnmr) {
@@ -1704,10 +1705,10 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog)
   return 2;
 } // uchar linstcl::doinst(const string& prog,int obverb,int oblog) 
 
-uchar linstcl::doinst(const char* prog,int obverb,int oblog)
+uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
 {
   const string& progs=prog;
-  return doinst(progs,obverb,oblog);
+  return doinst(progs,obverb,oblog,fallsnichtda);
 }
 
 uchar linstcl::douninst(const string& prog,int obverb,int oblog) 

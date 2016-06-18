@@ -192,7 +192,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
        if (systemrueck("which mysqld",obverb-1,oblog)) {
         svec frueck;
         // .. und auch hier nicht gefunden ...
-        systemrueck("find /usr/sbin /usr/bin -executable -size +1M -name mysqld",obverb,oblog, &frueck);
+        systemrueck("find /usr/sbin /usr/bin -executable -size +1M -name mysqld 2>/dev/null",obverb,oblog, &frueck);
         if (!frueck.size()) 
          // .. dann wohl nicht installiert
          installiert=0;
@@ -214,7 +214,8 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                   obverb-1,oblog,&zzruck)) {
               for(size_t i=0;i<zzruck.size();i++) {
                 svec zrueck;
-                if (!systemrueck(("sed 's/#.*$//g' `find '")+zzruck[i]+"' -type f` | grep datadir | cut -d'=' -f2",obverb-1,oblog,&zrueck)) {
+                if (!systemrueck(("sed 's/#.*$//g' `find '")+zzruck[i]+"' -type f 2>/dev/null` | grep datadir | cut -d'=' -f2",
+                    obverb-1,oblog,&zrueck)) {
                   if (zrueck.size()) {
                     datadir=zrueck[zrueck.size()-1];  
                     break;
@@ -237,7 +238,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
           }
         }
         if (!datadirda) {
-          systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db`",1,1);
+          systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db 2>/dev/null`",1,1);
           systemrueck("sudo systemctl start mysql");
         }
         oisok=1;
