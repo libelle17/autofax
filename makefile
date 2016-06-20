@@ -92,7 +92,7 @@ $(DEPDIR)/%.d: ;
 .PRECIOUS: $(DEPDIR)/%.d
 
 compiler:
-	@echo -n "Untersuche Compiler ..."
+	@echo -e "Untersuche Compiler ..."
 	@echo -e -n "\r" 
 	-@which $(CCname) >/dev/null 2>&1 || { which zypper && sudo zypper -n in $(CINST) || { which apt-get && sudo apt-get --assume-yes install build-essential; } }
 	-@sudo /sbin/ldconfig; sudo /sbin/ldconfig -p | grep -q "libmysqlclient.so " || { which zypper && sudo zypper -n in libmysqlclient-devel || { which apt-get && sudo apt-get --assume-yes install libmysqlclient-dev; }; sudo /sbin/ldconfig; }

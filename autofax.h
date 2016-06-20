@@ -182,6 +182,7 @@ class paramcl // Programmparameter
     uchar hylazukonf=0; // hyla zu konfigurieren
     uchar zmzukonf=0; // Zielmuster zu konfigurieren
     string varsphylavz; // Verzeichnis der Hyla-Spool-Dateien /var/spool/fax
+    string xferfaxlog; // varsphylavz + "/etc/xferfaxlog"; 
     string faxgtpfad;   // /usr/lib/fax/faxgetty
     string hsendqvz; // /var/spool/fax/sendq
 #ifdef _WIN32

@@ -1231,12 +1231,12 @@ int schreib(const char *fname, Schluessel *conf, size_t csize)
 } // int schreib(const char *fname, Schluessel *conf, size_t csize)
 
 
-std::string base_name(std::string const & path)
+std::string base_name(const std::string& path)
 {
   return path.substr(path.find_last_of("/\\") + 1);
 } // std::string base_name(std::string const & path)
 
-std::string dir_name(std::string const & path)
+std::string dir_name(const std::string& path)
 {
   return path.substr(0,path.find_last_of("/\\"));
 } // std::string dir_name(std::string const & path)

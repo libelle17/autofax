@@ -202,13 +202,13 @@ inline std::string mitvtz(std::string const& vz) {
     return vz+vtz;
   }
 }
-inline int istelnr(std::string str) {
+inline int istelnr(const std::string& str) {
   if	(str.find_first_not_of("+ 0123456789.,")==string::npos && str.find_first_not_of(" ")!=string::npos) 
     return 1;
   return 0;
 }
 
-inline int isnumeric(std::string str)
+inline int isnumeric(const std::string& str)
 {
   if	(str.find_first_not_of(" 0123456789.,")==string::npos && str.find_first_not_of(" ")!=string::npos) 
     return 1;
@@ -445,8 +445,8 @@ string XOR(const string& value, const string& key);
 int schreib(const char *fname, Schluessel *conf, size_t csize);
 int cppschreib(const string& fname, cppSchluess *conf, size_t csize);
 int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, size_t cszahl);
-std::string base_name(std::string const & path);
-std::string dir_name(std::string const & path);
+std::string base_name(const std::string& path);
+std::string dir_name(const std::string& path);
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
                 binaer ob0heissterfolg=wahr, binaer obergebnisanzeig=wahr, const string& ueberschr="");
 void pruefverz(const string& verz,int obverb,int oblog);
