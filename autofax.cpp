@@ -2879,7 +2879,7 @@ void paramcl::pruefcron()
   if (cronda) {
     int nochkeincron = systemrueck("sudo crontab -l > /dev/null 2>&1",obverb-1,0);
     const string tmpc="meincrontab";
-    string cb0 = " /usr/bin/sudo /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 ps -A | grep -q autofax || "+meinpfad();// "date >/home/schade/zeit";
+    string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 ps -A | grep -q autofax || "+meinpfad();// "date >/home/schade/zeit";
     string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
     string cbeesc=string("\\*/")+cronminut+" \\* \\* \\* \\*"+cb0; // hier vorne \\- gestrichen
 #ifdef uebersichtlich
