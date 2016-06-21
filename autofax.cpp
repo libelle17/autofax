@@ -2600,9 +2600,15 @@ void paramcl::rueckfragen()
 // wird aufgerufen in: main
 void paramcl::autofkonfschreib()
 {
-  Log(violetts+Tx[T_autokonfschreib]+schwarz+", "+Tx[T_zu_schreiben]+((rzf || capizukonf || hylazukonf || zmzukonf)?Tx[T_ja]:Tx[T_nein]),obverb,oblog);
+  Log(violetts+Tx[T_autokonfschreib]+schwarz+", "+Tx[T_zu_schreiben]+((rzf || zmzukonf)?Tx[T_ja]:Tx[T_nein]),obverb,oblog);
+  /*
+  capizukonf und hylazukonf hier immer 0
+  char buf[200];
+  sprintf(buf,"rzf: %d, capizukonf: %d, hylazukonf: %d, zmzukonf: %d",(int)rzf, (int)capizukonf, (int)hylazukonf, (int)zmzukonf);
+  Log(blaus+buf+schwarz,obverb,oblog);
+  */
 
-  if (rzf || capizukonf || hylazukonf || zmzukonf) {
+  if (rzf || zmzukonf) {
     Log(violetts+Tx[T_schreibe_Konfigurkation]+schwarz,obverb,oblog);
     for (size_t i=0;i<gcs;i++) {
      if (cgconfp[i].name=="obhyla") cgconfp[i].setze(&obhyla);
@@ -2622,219 +2628,215 @@ void paramcl::konfcapi()
 {
   Log(violetts+Tx[T_konfcapi]+schwarz,obverb,oblog);
   // Zahl der Klingeltoene in capisuite einstellen
-  if (obcapi) {
-    cppSchluess cconf[]={{"incoming_script"}};
-    size_t cs=sizeof cconf/sizeof*cconf;
-    confdat ccapic(ccapiconfdat,cconf,cs,obverb);
-    if (1) {
-      //    if (cpplies(ccapiconfdat,cconf,cs)) KLA
-      mdatei f(cconf[0].wert,ios::in); // /usr/lib64/capisuite/incoming.py
-      if (f.is_open()) {
-        string zeile;
-        const char* suchstr="faxInfo=capisuite.connect_faxG3(call,stationID,headline,";
-        while(getline(f,zeile)) {
-          size_t nk=zeile.find(suchstr);
-          if (nk!=string::npos) {
-            nk+=strlen(suchstr);
-            size_t klap=zeile.find(')',nk);
-            if (klap!=string::npos) {
-              string nkz=zeile.substr(nk,klap-nk);
-              if (nkz!=cklingelzahl) {
-                string neuzeile=zeile.substr(0,nk)+cklingelzahl+zeile.substr(nk+nkz.length());
-                string neudatei=string(cconf[0].wert)+"_neu";
-                f.close();
-                mdatei fneu(neudatei,ios::out);
-                mdatei falt(cconf[0].wert,ios::in);
-                if (falt.is_open()) if (fneu.is_open()) {
-                  while(getline(falt,zeile)) {
-                    nk=zeile.find(suchstr);
-                    if (nk!=string::npos) {
-                      fneu<<neuzeile<<endl;
-                    } else {
-                      fneu<<zeile<<endl;
-                    } 
-
-                  } // while(getline(falt,zeile)) 
-                  struct stat entryorig;
-                  string origdatei=string(cconf[0].wert)+"_orig";
-                  if (lstat(origdatei.c_str(),&entryorig)) {
-                    rename(cconf[0].wert.c_str(),origdatei.c_str());
+  cppSchluess cconf[]={{"incoming_script"}};
+  size_t cs=sizeof cconf/sizeof*cconf;
+  confdat ccapic(ccapiconfdat,cconf,cs,obverb);
+  if (1) {
+    //    if (cpplies(ccapiconfdat,cconf,cs)) KLA
+    mdatei f(cconf[0].wert,ios::in); // /usr/lib64/capisuite/incoming.py
+    if (f.is_open()) {
+      string zeile;
+      const char* suchstr="faxInfo=capisuite.connect_faxG3(call,stationID,headline,";
+      while(getline(f,zeile)) {
+        size_t nk=zeile.find(suchstr);
+        if (nk!=string::npos) {
+          nk+=strlen(suchstr);
+          size_t klap=zeile.find(')',nk);
+          if (klap!=string::npos) {
+            string nkz=zeile.substr(nk,klap-nk);
+            if (nkz!=cklingelzahl) {
+              string neuzeile=zeile.substr(0,nk)+cklingelzahl+zeile.substr(nk+nkz.length());
+              string neudatei=string(cconf[0].wert)+"_neu";
+              f.close();
+              mdatei fneu(neudatei,ios::out);
+              mdatei falt(cconf[0].wert,ios::in);
+              if (falt.is_open()) if (fneu.is_open()) {
+                while(getline(falt,zeile)) {
+                  nk=zeile.find(suchstr);
+                  if (nk!=string::npos) {
+                    fneu<<neuzeile<<endl;
                   } else {
-                    remove(cconf[0].wert.c_str());
-                  }            
-                  rename(neudatei.c_str(),cconf[0].wert.c_str()); 
-                }  // if (falt.is_open()) if (fneu.is_open()) 
-                break;
-              } // if (nkz!=cklingelzahl) 
-            } // if (klap!=string::npos) 
-          } // if ((nkz=strstr(zeile,suchstr))) 
-        } // while(getline(f,zeile)) 
-      } // if (f.is_open()) 
-    } // if (cpplies(ccapiconfdat,cconf,cs)) 
-    //  static cppSchluess capiconf[]=KLA KLA"spool_dir"KLZ,KLA"fax_user_dir"KLZ,KLA"send_tries"KLZ,KLA"send_delays"KLZ,
-    //         KLA"outgoing_MSN"KLZ,KLA"dial_prefix"KLZ,KLA"fax_stationID"KLZ,KLA"fax_headline"KLZ,KLA"fax_email_from"KLZ KLZ;
+                    fneu<<zeile<<endl;
+                  } 
+
+                } // while(getline(falt,zeile)) 
+                struct stat entryorig;
+                string origdatei=string(cconf[0].wert)+"_orig";
+                if (lstat(origdatei.c_str(),&entryorig)) {
+                  rename(cconf[0].wert.c_str(),origdatei.c_str());
+                } else {
+                  remove(cconf[0].wert.c_str());
+                }            
+                rename(neudatei.c_str(),cconf[0].wert.c_str()); 
+              }  // if (falt.is_open()) if (fneu.is_open()) 
+              break;
+            } // if (nkz!=cklingelzahl) 
+          } // if (klap!=string::npos) 
+        } // if ((nkz=strstr(zeile,suchstr))) 
+      } // while(getline(f,zeile)) 
+    } // if (f.is_open()) 
+  } // if (cpplies(ccapiconfdat,cconf,cs)) 
+  //  static cppSchluess capiconf[]=KLA KLA"spool_dir"KLZ,KLA"fax_user_dir"KLZ,KLA"send_tries"KLZ,KLA"send_delays"KLZ,
+  //         KLA"outgoing_MSN"KLZ,KLA"dial_prefix"KLZ,KLA"fax_stationID"KLZ,KLA"fax_headline"KLZ,KLA"fax_email_from"KLZ KLZ;
+  // fax_stationID
+  uchar capicffehlt=0;
+  if (capiconfp[6].wert.find("000 0000")!=string::npos || capiconfp[6].wert.empty()) {
+    //    if (cfax_stationID.find("000 0000")!=string::npos) 
+    //    Log(string("Capisuite ist offenbar noch nicht konfiguriert(")+blau+"fax_stationID"+schwarz+" enthaelt '000 0000').\n"
+    //        "Die Einstellung koennen spaeter in "+blau+cfaxconfdat+schwarz+" geaendert werden.",1,0);
+    Log(string(Tx[T_Capisuite_ist_offenbar_noch_nicht_richtig_konfiguriert])+blau+"'fax_stationID'"+schwarz+Tx[T_ist_Apostroph]+blau+
+        capiconfp[6].wert+schwarz+"')."+ Tx[T_Die_Einstellungen_koennen_spaeter_in]+blau+cfaxconfdat+schwarz+Tx[T_geaendert_werden],1,1);
     // fax_stationID
-    uchar capicffehlt=0;
-    if (capiconfp[6].wert.find("000 0000")!=string::npos || capiconfp[6].wert.empty()) {
-      //    if (cfax_stationID.find("000 0000")!=string::npos) 
-      //    Log(string("Capisuite ist offenbar noch nicht konfiguriert(")+blau+"fax_stationID"+schwarz+" enthaelt '000 0000').\n"
-      //        "Die Einstellung koennen spaeter in "+blau+cfaxconfdat+schwarz+" geaendert werden.",1,0);
-      Log(string(Tx[T_Capisuite_ist_offenbar_noch_nicht_richtig_konfiguriert])+blau+"'fax_stationID'"+schwarz+Tx[T_ist_Apostroph]+blau+
-          capiconfp[6].wert+schwarz+"')."+ Tx[T_Die_Einstellungen_koennen_spaeter_in]+blau+cfaxconfdat+schwarz+Tx[T_geaendert_werden],1,1);
-      // fax_stationID
-      capicffehlt=1;
+    capicffehlt=1;
+  }
+  if (rzf || capicffehlt) {
+    while (capiconfp[6].wert.find("000 0000")!=string::npos || !istelnr(capiconfp[6].wert)) {
+      capiconfp[6].wert=string("+")+countrycode+" "+citycode+" "+msn;
+      capiconfp[6].wert=holstring(string("fax_stationID: ")+Tx[T_Faxnr_die_zum_Adressaten_gesandt_wird_bis_20_Zeichen_nur_plus_und_Ziffern],
+          &capiconfp[6].wert);
     }
-    if (rzf || capicffehlt) {
-      while (capiconfp[6].wert.find("000 0000")!=string::npos || !istelnr(capiconfp[6].wert)) {
-        capiconfp[6].wert=string("+")+countrycode+" "+citycode+" "+msn;
-        capiconfp[6].wert=holstring(string("fax_stationID: ")+Tx[T_Faxnr_die_zum_Adressaten_gesandt_wird_bis_20_Zeichen_nur_plus_und_Ziffern],
-            &capiconfp[6].wert);
+    vector<string> tok;
+    aufSplit(&tok,&capiconfp[6].wert,' ');
+    // outgoing_MSN
+    if (capiconfp[4].wert.empty()) capiconfp[4].wert=tok[tok.size()-1].c_str();
+    capiconfp[4].wert=msn;
+    while (capiconfp[4].wert.empty() || !isnumeric(capiconfp[4].wert)) {
+      capiconfp[4].wert=holstring(string("outgoing_MSN: ")+
+          Tx[T_ausgehende_Multiple_Subscriber_Number_Faxnummer_ohne_Vorwahl],&capiconfp[4].wert);
+    } 
+    // dial_prefix
+    capiconfp[5].wert=holstring(string("dial_prefix: ")+Tx[T_Amtsholung_ueblicherweise_kk_oder_0],&capiconfp[5].wert);
+    // fax_headline
+    capiconfp[7].wert=cFaxUeberschrift;
+    capiconfp[7].wert=holstring(string("fax_headline: ")+Tx[T_Faxueberschrift],&capiconfp[7].wert);
+    // fax_email_from
+    capiconfp[8].wert=holstring(string("fax_email_from: ")+
+        Tx[T_Adressat_empfangener_Faxe_die_ueber_Email_verteilt_werden],&capiconfp[8].wert);
+    // send_tries
+    capiconfp[2].wert="15";
+    do {
+      capiconfp[2].wert=holstring(string("send_tries: ")+Tx[T_Zahl_der_Sendeversuche],&capiconfp[2].wert);
+    } while (capiconfp[2].wert.empty() || !isnumeric(capiconfp[2].wert));
+    // send_delays
+    capiconfp[3].wert="60,60,60,300,300,300,300,300,3600,3600,3600,3600,18000,36000";
+    do {
+      capiconfp[3].wert=holstring(string("send_delays: ")+Tx[T_kommagetrennte_Liste_mit_Sekundenabstaenden_zwischen_Sendeversuchen],
+          &capiconfp[3].wert);
+    } while (capiconfp[3].wert.empty() || !isnumeric(capiconfp[3].wert));
+    // outgoing_timeout
+    capiconfp[9].wert="60";
+    capiconfp[9].wert=holstring(string("outgoing_timeout: ")+Tx[T_Geduld_bis_zum_Verbindungsaufbau_in_s],&capiconfp[9].wert);
+    if (obverb>0) {
+      for(unsigned snr=0;snr<ccs;snr++) {
+        Log(string("snr: ")+blau+ltoan(snr)+schwarz+" "+capiconfp[snr].wert+", "+capiconfp[snr].wert,obverb,oblog);
       }
-      vector<string> tok;
-      aufSplit(&tok,&capiconfp[6].wert,' ');
-      // outgoing_MSN
-      if (capiconfp[4].wert.empty()) capiconfp[4].wert=tok[tok.size()-1].c_str();
-      capiconfp[4].wert=msn;
-      while (capiconfp[4].wert.empty() || !isnumeric(capiconfp[4].wert)) {
-        capiconfp[4].wert=holstring(string("outgoing_MSN: ")+
-            Tx[T_ausgehende_Multiple_Subscriber_Number_Faxnummer_ohne_Vorwahl],&capiconfp[4].wert);
-      } 
-      // dial_prefix
-      capiconfp[5].wert=holstring(string("dial_prefix: ")+Tx[T_Amtsholung_ueblicherweise_kk_oder_0],&capiconfp[5].wert);
-      // fax_headline
-      capiconfp[7].wert=cFaxUeberschrift;
-      capiconfp[7].wert=holstring(string("fax_headline: ")+Tx[T_Faxueberschrift],&capiconfp[7].wert);
-      // fax_email_from
-      capiconfp[8].wert=holstring(string("fax_email_from: ")+
-          Tx[T_Adressat_empfangener_Faxe_die_ueber_Email_verteilt_werden],&capiconfp[8].wert);
-      // send_tries
-      capiconfp[2].wert="15";
-      do {
-        capiconfp[2].wert=holstring(string("send_tries: ")+Tx[T_Zahl_der_Sendeversuche],&capiconfp[2].wert);
-      } while (capiconfp[2].wert.empty() || !isnumeric(capiconfp[2].wert));
-      // send_delays
-      capiconfp[3].wert="60,60,60,300,300,300,300,300,3600,3600,3600,3600,18000,36000";
-      do {
-        capiconfp[3].wert=holstring(string("send_delays: ")+Tx[T_kommagetrennte_Liste_mit_Sekundenabstaenden_zwischen_Sendeversuchen],
-            &capiconfp[3].wert);
-      } while (capiconfp[3].wert.empty() || !isnumeric(capiconfp[3].wert));
-      // outgoing_timeout
-      capiconfp[9].wert="60";
-      capiconfp[9].wert=holstring(string("outgoing_timeout: ")+Tx[T_Geduld_bis_zum_Verbindungsaufbau_in_s],&capiconfp[9].wert);
-      if (obverb>0) {
-        for(unsigned snr=0;snr<ccs;snr++) {
-          Log(string("snr: ")+blau+ltoan(snr)+schwarz+" "+capiconfp[snr].wert+", "+capiconfp[snr].wert,obverb,oblog);
-        }
+    }
+  } // if (cfax_stationID.find("000 0000")!=string::npos) 
+  string suchcuser=string("[")+cuser+"]";
+  // es gibt zwei moegliche Gruende zum Neuschreiben der Datei: 1) Parameter diffierieren, 2) noch kein User angelegt
+  uchar cuserda=0, paramdiff=0, neuschreiben=0;
+  string zeile, neudatei;
+  uchar geschrieben;
+  size_t kommpos;
+  // iru=0 => pruefen, ob Datei geaendert werden muss; iru=1 => aendern
+  for(uchar iru=0;iru<2;iru++) {
+    mdatei *fneu=0;
+    mdatei f(cfaxconfdat,ios::in); // /etc/capisuite/fax.conf
+    if (f.is_open()) {
+      if (iru) {
+        neudatei=cfaxconfdat+"_neu";
+        fneu=new mdatei(neudatei,ios::out);
+        if (!fneu->is_open()) break;
       }
-    } // if (cfax_stationID.find("000 0000")!=string::npos) 
-    string suchcuser=string("[")+cuser+"]";
-    // es gibt zwei moegliche Gruende zum Neuschreiben der Datei: 1) Parameter diffierieren, 2) noch kein User angelegt
-    uchar cuserda=0, paramdiff=0, neuschreiben=0;
-    string zeile, neudatei;
-    uchar geschrieben;
-    size_t kommpos;
-    // iru=0 => pruefen, ob Datei geaendert werden muss; iru=1 => aendern
-    for(uchar iru=0;iru<2;iru++) {
-      mdatei *fneu=0;
-      mdatei f(cfaxconfdat,ios::in); // /etc/capisuite/fax.conf
-      if (f.is_open()) {
-        if (iru) {
-          neudatei=cfaxconfdat+"_neu";
-          fneu=new mdatei(neudatei,ios::out);
-          if (!fneu->is_open()) break;
-        }
-        while(f.is_open() && getline(f,zeile)) {
-          kommpos=zeile.find('#');
-          geschrieben=0;
-          //          if (kommpos!=string::npos) zeile.erase(kommpos);
-          //          if (!zeile.length()) continue;
-          if (!cuserda) 
-            if (zeile.find(suchcuser)!=string::npos) 
-              cuserda=1;
-          if (iru || !paramdiff) {
-            size_t nkz=zeile.find('=');
-            string lzeile,rzeile;
-            if (nkz!=string::npos && nkz<kommpos) {
-              lzeile=zeile.substr(0,nkz); 
-              rzeile=zeile.substr(nkz+1);
-              for(unsigned snr=0;snr<ccs;snr++) {
-                if (lzeile.find(capiconfp[snr].name)!=string::npos) {
-                  // _out<<"snr: "<<snr<<", lzeile: "<<tuerkis<<lzeile<<schwarz<<", rzeile: "<<blau<<rzeile<<schwarz<<endl;
-                  string altwert=rzeile;
-                  gtrim(&altwert);
-                  // Anfuehrungszeichen entfernen
-                  anfzweg(altwert);
-                  if (snr==0 || snr==1) capiconfp[snr].wert=altwert; // spool_dir und fax_user_dir hier nicht konfigurierbar
-                  Log(string("capiconfp[")+ltoan(snr)+"].name: "+tuerkis+capiconfp[snr].name+schwarz+Tx[T_komma_wert]+
-                      (capiconfp[snr].wert==altwert?blau:rot)+capiconfp[snr].wert+schwarz+Tx[T_komma_Altwert]+
-                      blau+altwert+schwarz,obverb+iru,oblog+iru);
-                  if (capiconfp[snr].wert!=altwert) {
-                    if (!iru) {
-                      neuschreiben=1;
-                      paramdiff=1;
-                    } else {
-                      *fneu<<capiconfp[snr].name<<" = \""<<capiconfp[snr].wert<<"\""<<endl;
-                      geschrieben=1;
-                    }
+      while(f.is_open() && getline(f,zeile)) {
+        kommpos=zeile.find('#');
+        geschrieben=0;
+        //          if (kommpos!=string::npos) zeile.erase(kommpos);
+        //          if (!zeile.length()) continue;
+        if (!cuserda) 
+          if (zeile.find(suchcuser)!=string::npos) 
+            cuserda=1;
+        if (iru || !paramdiff) {
+          size_t nkz=zeile.find('=');
+          string lzeile,rzeile;
+          if (nkz!=string::npos && nkz<kommpos) {
+            lzeile=zeile.substr(0,nkz); 
+            rzeile=zeile.substr(nkz+1);
+            for(unsigned snr=0;snr<ccs;snr++) {
+              if (lzeile.find(capiconfp[snr].name)!=string::npos) {
+                // _out<<"snr: "<<snr<<", lzeile: "<<tuerkis<<lzeile<<schwarz<<", rzeile: "<<blau<<rzeile<<schwarz<<endl;
+                string altwert=rzeile;
+                gtrim(&altwert);
+                // Anfuehrungszeichen entfernen
+                anfzweg(altwert);
+                if (snr==0 || snr==1) capiconfp[snr].wert=altwert; // spool_dir und fax_user_dir hier nicht konfigurierbar
+                Log(string("capiconfp[")+ltoan(snr)+"].name: "+tuerkis+capiconfp[snr].name+schwarz+Tx[T_komma_wert]+
+                    (capiconfp[snr].wert==altwert?blau:rot)+capiconfp[snr].wert+schwarz+Tx[T_komma_Altwert]+
+                    blau+altwert+schwarz,obverb+iru,oblog+iru);
+                if (capiconfp[snr].wert!=altwert) {
+                  if (!iru) {
+                    neuschreiben=1;
+                    paramdiff=1;
+                  } else {
+                    *fneu<<capiconfp[snr].name<<" = \""<<capiconfp[snr].wert<<"\""<<endl;
+                    geschrieben=1;
                   }
-                  break; // wenn richtige Zeile gefunden, nicht mehr weitersuchen, unabhaengig vom Ergebnis
-                } // if ((nkz=strstr(zeile,capiconfp[snr].name))) 
-              } // if ((nkz=zeile.find(capiconfp[snr].wert))!=string::npos) 
-            } // for(unsigned snr=0;snr<ccs;snr++) 
-          } // if (!paramdiff) 
-          if (iru)
-            if (!geschrieben) 
-              *fneu<<zeile<<endl;
-        } // while( fgets(p=zeile,sizeof zeile,f) ) 
-        if (!iru) {
-          if (!cuserda) neuschreiben=1;
-          if (!neuschreiben) break; // dann fertig
-        } else { // if (iru)
-          if (!cuserda)  {
-            *fneu<<suchcuser<<endl;
-            *fneu<<"fax_numbers=\""<<capiconfp[4].wert<<"\""<<endl;
-            *fneu<<"fax_stationID=\""<<capiconfp[6].wert<<"\""<<endl;
-            *fneu<<"fax_headline=\""<<capiconfp[7].wert<<"\""<<endl;
-            *fneu<<"fax_email_from=\""<<capiconfp[8].wert<<"\""<<endl;
-            *fneu<<"fax_action=\"MailAndSave\""<<endl;
-          } // if (!cuserda)
-          if (fneu) delete fneu;
-          string origdatei=cfaxconfdat+"_orig";
-          struct stat entryorig;
-          if (lstat(origdatei.c_str(),&entryorig)) {
-            rename(cfaxconfdat.c_str(),origdatei.c_str());
-          } else {
-            remove(cfaxconfdat.c_str());
-          }            
-          rename(neudatei.c_str(),cfaxconfdat.c_str());
-        } // if (iru)
-        cfaxuservz=capiconfp[1].wert;
-  // <<violett<<"cfaxuservz 1: "<<cfaxuservz<<schwarz<<endl;
-      } // if (f.is_open())
-    } // for(uchar iru=0;iru<2;iru++) 
-    pruefcvz();
+                }
+                break; // wenn richtige Zeile gefunden, nicht mehr weitersuchen, unabhaengig vom Ergebnis
+              } // if ((nkz=strstr(zeile,capiconfp[snr].name))) 
+            } // if ((nkz=zeile.find(capiconfp[snr].wert))!=string::npos) 
+          } // for(unsigned snr=0;snr<ccs;snr++) 
+        } // if (!paramdiff) 
+        if (iru)
+          if (!geschrieben) 
+            *fneu<<zeile<<endl;
+      } // while( fgets(p=zeile,sizeof zeile,f) ) 
+      if (!iru) {
+        if (!cuserda) neuschreiben=1;
+        if (!neuschreiben) break; // dann fertig
+      } else { // if (iru)
+        if (!cuserda)  {
+          *fneu<<suchcuser<<endl;
+          *fneu<<"fax_numbers=\""<<capiconfp[4].wert<<"\""<<endl;
+          *fneu<<"fax_stationID=\""<<capiconfp[6].wert<<"\""<<endl;
+          *fneu<<"fax_headline=\""<<capiconfp[7].wert<<"\""<<endl;
+          *fneu<<"fax_email_from=\""<<capiconfp[8].wert<<"\""<<endl;
+          *fneu<<"fax_action=\"MailAndSave\""<<endl;
+        } // if (!cuserda)
+        if (fneu) delete fneu;
+        string origdatei=cfaxconfdat+"_orig";
+        struct stat entryorig;
+        if (lstat(origdatei.c_str(),&entryorig)) {
+          rename(cfaxconfdat.c_str(),origdatei.c_str());
+        } else {
+          remove(cfaxconfdat.c_str());
+        }            
+        rename(neudatei.c_str(),cfaxconfdat.c_str());
+      } // if (iru)
+      cfaxuservz=capiconfp[1].wert;
+      // <<violett<<"cfaxuservz 1: "<<cfaxuservz<<schwarz<<endl;
+    } // if (f.is_open())
+  } // for(uchar iru=0;iru<2;iru++) 
+  pruefcvz();
 
-    // dieser Abschnitt war zuvor richtcapiher
-    unsigned long nextnr=0;
-    struct stat entrynextnr;
-    string ndatei=cfaxusersqvz+"/fax-nextnr";
-    if (!lstat(cfaxusersqvz.c_str(),&entrynextnr)) {
-      mdatei nextstr(ndatei,ios::in);
-      if (nextstr.is_open()) {
-        string zeile;
-        if (getline(nextstr,zeile)) {
-          nextnr=atol(zeile.c_str());
-        }
+  // dieser Abschnitt war zuvor richtcapiher
+  unsigned long nextnr=0;
+  struct stat entrynextnr;
+  string ndatei=cfaxusersqvz+"/fax-nextnr";
+  if (!lstat(cfaxusersqvz.c_str(),&entrynextnr)) {
+    mdatei nextstr(ndatei,ios::in);
+    if (nextstr.is_open()) {
+      string zeile;
+      if (getline(nextstr,zeile)) {
+        nextnr=atol(zeile.c_str());
       }
     }
-    if (!nextnr) {
-      cmd=string(" echo $(( `find ")+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
-        "| cut -d '-' -f3 | cut -d '.' -f1 | sort -rn | head -n1` + 1 )) > '"+ndatei+"'";
-      systemrueck(cmd,obverb,oblog);
-    }
-
-  } // obcapi
-  capizukonf=0;
+  }
+  if (!nextnr) {
+    cmd=string(" echo $(( `find ")+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
+      "| cut -d '-' -f3 | cut -d '.' -f1 | sort -rn | head -n1` + 1 )) > '"+ndatei+"'";
+    systemrueck(cmd,obverb,oblog);
+  }
 } // void paramcl::konfcapi()
 
 // wird aufgerufen in: main
@@ -3970,17 +3972,17 @@ void paramcl::empfarch()
         aufSplit(&tok,rdesc,'\n');
         if (tok.size()) {
           if (tok.size()>1) {
-          cout<<gruen<<"tok[0]: "<<schwarz<<tok[0]<<endl;
+          // <<gruen<<"tok[0]: "<<schwarz<<tok[0]<<endl;
             callerid=tok[0];
-          cout<<gruen<<"tok[1]: "<<schwarz<<tok[1]<<endl;
+          // <<gruen<<"tok[1]: "<<schwarz<<tok[1]<<endl;
             tsid=tok[1];
             if (tok.size()>2) absdr=tok[2];
           } else {
             if (istelnr(tok[0])) {
-          cout<<gruen<<"tok[0] b: "<<schwarz<<tok[0]<<endl;
+          // <<gruen<<"tok[0] b: "<<schwarz<<tok[0]<<endl;
              callerid=tok[0]; 
             } else { 
-          cout<<gruen<<"tok[0] c: "<<schwarz<<tok[0]<<endl;
+          // <<gruen<<"tok[0] c: "<<schwarz<<tok[0]<<endl;
                absdr=tok[0];
             }
           }
@@ -3992,7 +3994,7 @@ void paramcl::empfarch()
       if (callerid.empty()) {
         if (TIFFGetField(tif, TIFFTAG_MAKE, &rdesc)) {
           //          printf("Beschreibung: %s\n",beschreib);
-          cout<<gruen<<"rdesc: "<<schwarz<<rdesc<<endl;
+          // <<gruen<<"rdesc: "<<schwarz<<rdesc<<endl;
           if (rdesc) {
             devname+=", ";
             devname+=rdesc;
@@ -4010,22 +4012,22 @@ void paramcl::empfarch()
         tok.clear();
         aufSplit(&tok,&trueck[0],'\t');
         if (tok.size()) {
-          cout<<gruen<<"tok[0] d: "<<schwarz<<tok[0]<<endl; // Tel'nr z.B. 49.8131.1234567
+          // <<gruen<<"tok[0] d: "<<schwarz<<tok[0]<<endl; // Tel'nr z.B. 49.8131.1234567
           callerid=tok[0];
           if (tok.size()>1) {
-          cout<<gruen<<"tok[1] d: "<<schwarz<<tok[1]<<endl; // Namen z.B. G.Schade
+          // <<gruen<<"tok[1] d: "<<schwarz<<tok[1]<<endl; // Namen z.B. G.Schade
             tabsdr=tok[1];
             anfzweg(tabsdr);
           }
         } // if (tok.size()) 
       } // if (trueck.size()) 
     } // if (callerid.empty()) 
-    cout<<gruen<<"tsid: "<<schwarz<<tsid<<endl;
+    // <<gruen<<"tsid: "<<schwarz<<tsid<<endl;
     tsid=stdfaxnr(tsid.empty()?callerid:tsid);
     if (absdr.empty()) {
       string bsname;
       getSender(this,tsid,&absdr,&bsname,obverb,oblog);
-          cout<<gruen<<"absdr("<<tsid<<"): "<<schwarz<<absdr<<" bsname: "<<bsname<<endl;
+          // <<gruen<<"absdr("<<tsid<<"): "<<schwarz<<absdr<<" bsname: "<<bsname<<endl;
       if (!bsname.empty()) {
         absdr+=", ";
         absdr+=bsname;
@@ -4881,7 +4883,10 @@ int paramcl::pruefhyla()
       //          systemrueck(cmd,1,1,0,wahr,wahr,"berechtige mich"); 
       if (this->hylazukonf && !frischkonfiguriert) {
         //    hconfig(this,obverb,oblog); // countrycode, citycode/areacode, longdistancepraefix, internationalprefix
-        if (!frischkonfiguriert) hconfigtty(this,obverb,oblog);
+        if (!frischkonfiguriert) {
+        // dieser Aufruf geschieht z.B. nach Parameter -hkzl 7
+        hconfigtty(this,obverb,oblog);
+        }
         if (!systemrueck(string("sudo systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname+" 2>/dev/null",
              obverb,oblog)) {
           systemrueck("sudo systemctl stop hylafax 2>/dev/null",obverb-1,oblog);
@@ -5117,8 +5122,10 @@ int paramcl::pruefcapi()
       }
       systemrueck("sudo systemctl daemon-reload",obverb,oblog);
     }
-    if (versuch>0 || this->capizukonf) {
+    if (obcapi && (versuch>0 || this->capizukonf)) {
       this->konfcapi();
+      scapisuite->restart(obverb-1,oblog);
+      capizukonf=0;
     } //     if (versuch>0) KLA
     // das folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
     //    capilaeuft = !systemrueck("systemctl status capisuite | grep ' active (running)' >/dev/null 2>&1",0,obverb,oblog);
@@ -5847,6 +5854,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     this->hconfp=0;
     // wenn also die Datenbankdatei weder im Spool noch bei den Erledigten nachweisbar ist
     if (this->xferlog(fsf->hylanr, &fsf->hgerg,obverb,oblog)) {
+      anfzweg(fsf->hgerg);
       if (fsf->hgerg.empty()) {
         fsf->hylastat=gesandt;
       } else {
