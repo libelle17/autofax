@@ -224,6 +224,8 @@ inline int isnumeric(char* str)
   return 1;
 }
 
+string* anfzweg(string& quel);
+
 inline std::string *gtrim(std::string *str) {
   str->erase(0, str->find_first_not_of("\t "));       //prefixing spaces
   str->erase(str->find_last_not_of("\t ")+1);         //surfixing spaces

@@ -2763,10 +2763,7 @@ void paramcl::konfcapi()
                   string altwert=rzeile;
                   gtrim(&altwert);
                   // Anfuehrungszeichen entfernen
-                  if (altwert[0]==altwert[altwert.length()-1] && strchr("\"'",altwert[0])) {
-                    if (altwert.length()) altwert.erase(altwert.length()-1);
-                    if (altwert.length()) altwert.erase(0,1);
-                  }
+                  anfzweg(altwert);
                   if (snr==0 || snr==1) capiconfp[snr].wert=altwert; // spool_dir und fax_user_dir hier nicht konfigurierbar
                   Log(string("capiconfp[")+ltoan(snr)+"].name: "+tuerkis+capiconfp[snr].name+schwarz+Tx[T_komma_wert]+
                       (capiconfp[snr].wert==altwert?blau:rot)+capiconfp[snr].wert+schwarz+Tx[T_komma_Altwert]+
@@ -3932,7 +3929,7 @@ void paramcl::empfarch()
     }
     // ..., Informationen darueber einsammeln, ...
     string zeit;
-    string absdr,tsid,callerid,devname;
+    string absdr,tsid,callerid,devname=hmodem;
     ulong seiten=0;
     string stamm,exten,ganz=rueck[i];
     getstammext(&ganz,&stamm,&exten);
@@ -3940,21 +3937,21 @@ void paramcl::empfarch()
     string fnr=base.substr(3);
     fnr=fnr.substr(fnr.find_first_not_of("0"));
     vector<string> tok; // fuer imagedescription
+    char buf[255];
+    char *rdesc=buf;
     struct tm tm;
     memset(&tm, 0, sizeof(struct tm));
     struct stat entrylog;
     memset(&entrylog,0,sizeof entrylog);
     if (!lstat(rueck[i].c_str(),&entrylog))  {
-      /*
+        systemrueck("sudo chmod 777 "+rueck[i],obverb,oblog);
          memcpy(&tm, localtime(&entrylog.st_mtime),sizeof(tm));
-         char buf[255];
          strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", &tm);
-         <<"Buf: "<<buf<<endl;
-       */
+         cout<<"Buf: "<<buf<<endl;
     }
     if (TIFF* tif = TIFFOpen(rueck[i].c_str(), "r")) {
       ankzahl++;
-      char *rdesc=0;
+      rdesc=0;
       if (TIFFGetField(tif, TIFFTAG_DATETIME, &rdesc)) {
         // <<"Datetime: \n"<<rdesc<<endl;
         strptime(rdesc,"%Y:%m:%d %H:%M:%S",&tm);
@@ -3973,11 +3970,19 @@ void paramcl::empfarch()
         aufSplit(&tok,rdesc,'\n');
         if (tok.size()) {
           if (tok.size()>1) {
+          cout<<gruen<<"tok[0]: "<<schwarz<<tok[0]<<endl;
             callerid=tok[0];
+          cout<<gruen<<"tok[1]: "<<schwarz<<tok[1]<<endl;
             tsid=tok[1];
             if (tok.size()>2) absdr=tok[2];
           } else {
-            if (istelnr(tok[0])) callerid=tok[0]; else absdr=tok[0];
+            if (istelnr(tok[0])) {
+          cout<<gruen<<"tok[0] b: "<<schwarz<<tok[0]<<endl;
+             callerid=tok[0]; 
+            } else { 
+          cout<<gruen<<"tok[0] c: "<<schwarz<<tok[0]<<endl;
+               absdr=tok[0];
+            }
           }
         }
       }
@@ -3987,7 +3992,11 @@ void paramcl::empfarch()
       if (callerid.empty()) {
         if (TIFFGetField(tif, TIFFTAG_MAKE, &rdesc)) {
           //          printf("Beschreibung: %s\n",beschreib);
-          callerid=rdesc;
+          cout<<gruen<<"rdesc: "<<schwarz<<rdesc<<endl;
+          if (rdesc) {
+            devname+=", ";
+            devname+=rdesc;
+          }
         }
       }
 
@@ -4001,21 +4010,27 @@ void paramcl::empfarch()
         tok.clear();
         aufSplit(&tok,&trueck[0],'\t');
         if (tok.size()) {
+          cout<<gruen<<"tok[0] d: "<<schwarz<<tok[0]<<endl; // Tel'nr z.B. 49.8131.1234567
           callerid=tok[0];
           if (tok.size()>1) {
+          cout<<gruen<<"tok[1] d: "<<schwarz<<tok[1]<<endl; // Namen z.B. G.Schade
             tabsdr=tok[1];
+            anfzweg(tabsdr);
           }
         } // if (tok.size()) 
       } // if (trueck.size()) 
     } // if (callerid.empty()) 
+    cout<<gruen<<"tsid: "<<schwarz<<tsid<<endl;
+    tsid=stdfaxnr(tsid.empty()?callerid:tsid);
     if (absdr.empty()) {
       string bsname;
-      getSender(this,callerid,&absdr,&bsname,obverb,oblog);
+      getSender(this,tsid,&absdr,&bsname,obverb,oblog);
+          cout<<gruen<<"absdr("<<tsid<<"): "<<schwarz<<absdr<<" bsname: "<<bsname<<endl;
       if (!bsname.empty()) {
         absdr+=", ";
         absdr+=bsname;
       }
-      if (absdr.empty()) {
+      if (absdr.empty() || istelnr(absdr)) { // wenn Nr. nicht gefunden, kommt sie in absdr wieder zurueck
        absdr=tabsdr;
       }
     }
@@ -4024,7 +4039,7 @@ void paramcl::empfarch()
     strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
     if (absdr.length()>187) absdr.erase(187);
     if (absdr.length()>70) absdr.erase(70);
-    string hdatei = "Fax h"+fnr+","+Tx[T_von]+absdr+", T."+stdfaxnr(tsid.empty()?callerid:tsid)+", "+Tx[T_vom]+tbuf+".tif";
+    string hdatei = "Fax h"+fnr+","+Tx[T_von]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf+".tif";
     string hpfad=empfvz+vtz+hdatei;
     Log(blaus+base+schwarz+" => "+hblau+hdatei+schwarz,1,1);
     // ..., die empfangene Datei in hpfad kopieren ...
@@ -4047,8 +4062,8 @@ void paramcl::empfarch()
         einf.push_back(instyp(My->DBS,"pages",seiten));
         einf.push_back(instyp(My->DBS,"titel",&absdr));
         einf.push_back(instyp(My->DBS,"tsid",&tsid));
-        einf.push_back(instyp(My->DBS,"callerid",&callerid));
-        einf.push_back(instyp(My->DBS,"devname",&hmodem));
+//        einf.push_back(instyp(My->DBS,"callerid",&callerid));
+        einf.push_back(instyp(My->DBS,"devname",&devname));
         einf.push_back(instyp(My->DBS,"id",&base));
         einf.push_back(instyp(My->DBS,"transe",&tm));
         rins.insert(tinca,einf, 1,0,ZDB?ZDB:!runde); 

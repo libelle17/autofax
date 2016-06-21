@@ -1009,6 +1009,14 @@ void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtdo
   tokens->push_back(text->substr(start));
 } // void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtdoppelt) 
 
+string* anfzweg(string& quel) {
+  if (quel.length()>1) {if (quel[0]==quel[quel.length()-1] && strchr("\"'",quel[0])) {
+    quel.erase(quel.length()-1,1);
+    quel.erase(0,1);
+  }}
+  return &quel;
+} // string* anfzweg(
+
 betrsys pruefos()
 {
  static betrsys aktbs=keins;
@@ -1094,10 +1102,7 @@ void confdat::Abschn_auswert(int obverb, char tz)
           gtrim(&name);
           wert=zeile->substr(pos+1);
           gtrim(&wert);
-          if (wert.length()) if (wert[0]==wert[wert.length()-1]) if (strchr("\"'",wert[0])) {
-            wert.erase(wert.length()-1);
-            wert.erase(0,1);
-          }
+          anfzweg(wert);
           abp->av.push_back(abSchl(name,wert));
         }
       }
@@ -1134,10 +1139,7 @@ void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
                 conf[ii].wert=zeile->substr(pos+1);
                 gtrim(&conf[ii].wert); // Leerzeichen entfernen
                 // Anfuerhungszeichen entfernen
-                if (conf[ii].wert.length()) if (conf[ii].wert[0]==conf[ii].wert[conf[ii].wert.length()-1] && strchr("\"'",conf[ii].wert[0])) {
-                  conf[ii].wert.erase(conf[ii].wert.length()-1);
-                  conf[ii].wert.erase(0,1);
-                }
+                anfzweg(conf[ii].wert);
               } // if (strchr((string(" ")+(char)9+tz).c_str(),gef+conf[ii].name.length())) 
               break;
             } // if( !strcmp(conf[i].name.c_str(),zeile->c_str()) ) 
