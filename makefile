@@ -3,9 +3,9 @@ SRCS = $(wildcard *.cpp)
 OBJ = $(SRCS:.cpp=.o)
 CFLAGS=-c -Wall `mysql_config --cflags` 
 LDFLAGS=`mysql_config --libs` -ltiff
-ERG=$(shell basename $(CURDIR))
+PROGRAM=$(shell basename $(CURDIR))
 EXPFAD=/usr/local/sbin
-EXEC=$(ERG)
+EXEC=$(PROGRAM)
 INSTEXEC=$(EXPFAD)/$(EXEC)
 CINST=gcc6-c++
 ifneq ($(shell g++-6 --version >/dev/null 2>&1),0)
@@ -24,8 +24,8 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d 2>/dev/null
 
 MANP=/usr/share/man
-MANPD=${MANP}/de/man1/${ERG}.1.gz
-MANPE=${MANP}/man1/${ERG}.1.gz
+MANPD=${MANP}/de/man1/${PROGRAM}.1.gz
+MANPE=${MANP}/man1/${PROGRAM}.1.gz
 MANPDH=$(CURDIR)/man_de.html
 MANPEH=$(CURDIR)/man_en.html
 
@@ -77,7 +77,11 @@ anzeig:
 	-@$(shell rm fehler.txt 2>/dev/null)
 
 $(EXEC): $(OBJ)
-	@echo -n " verlinke $(OBJ) zu $@ ..."
+	-@echo $$(if ! test -f version; then echo 0.1>version;fi;awk "BEGIN {print `cat version`+0.00001}")>version
+	-@echo -n " verlinke $(OBJ) zu $@ ..."
+	-$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/" man_en)
+	-$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/" man_de)
+	-@echo " (Version:" $$(cat version)")"
 	-$(CC) $^ -o $@ $(LDFLAGS)
 
 %.o : %.cpp
@@ -98,16 +102,16 @@ compiler:
 	-@sudo /sbin/ldconfig; sudo /sbin/ldconfig -p | grep -q "libmysqlclient.so " || { which zypper && sudo zypper -n in libmysqlclient-devel || { which apt-get && sudo apt-get --assume-yes install libmysqlclient-dev; }; sudo /sbin/ldconfig; }
 	-@test -f /usr/include/tiff.h || { which zypper && sudo zypper -n in libtiff-devel || { which apt-get && sudo apt-get --assume-yes install libtiff-dev; } }
 
-man: ${MANPD} ${MANPE} ${MANPDH} ${MANPEH}
+man: ${MANPDH} ${MANPEH}
 
 ${MANPD}: ${CURDIR}/man_de 
 	-sudo mkdir -p $(MANP)/de/man1
-	-sudo gzip -c $(CURDIR)/man_de >${ERG}.1.gz
-	-sudo mv ${ERG}.1.gz ${MANPD}
+	-sudo gzip -c $(CURDIR)/man_de >${PROGRAM}.1.gz
+	-sudo mv ${PROGRAM}.1.gz ${MANPD}
 ${MANPE}: ${CURDIR}/man_en
 	-sudo mkdir -p $(MANP)/man1
-	-sudo gzip -c $(CURDIR)/man_en >${ERG}.1.gz
-	-sudo mv ${ERG}.1.gz ${MANPE}
+	-sudo gzip -c $(CURDIR)/man_en >${PROGRAM}.1.gz
+	-sudo mv ${PROGRAM}.1.gz ${MANPE}
 
 ${MANPDH}: $(CURDIR)/man_de 
 	-@rm -f man_de.html
@@ -133,7 +137,8 @@ clean:
 	@$(shell rm -f $(EXEC) $(OBJ) 2>/dev/null)
 	@$(shell sudo rm -f $(INSTEXEC) 2>/dev/null)
 	@echo -e " Fertig mit Bereinigen!"  
-install:
-	sudo cp "$(EXEC)" "$(INSTEXEC)"
+
+install: ${MANPD} ${MANPE} 
+	sudo cp -p "$(EXEC)" "$(INSTEXEC)"
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
