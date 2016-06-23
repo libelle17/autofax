@@ -116,12 +116,12 @@ ${MANPE}: ${CURDIR}/man_en
 
 ${MANPDH}: $(CURDIR)/man_de 
 	-@rm -f man_de.html
-	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS)/g" > man_de.html
+	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_de.html
 	@echo -e "\033[0;34m"   man_de.html"\033[0;30m" neu aus"\033[0;34m" man_de"\033[0;30m" erstellt
 
 ${MANPEH}: $(CURDIR)/man_en 
 	-@rm -f man_en.html
-	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS)/g" > man_en.html
+	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_en.html
 	-@rm -f README.md
 	-@sed -n '20,$$p' man_en.html > README.md 
 	@echo -e "\033[0;34m"   man_en.html"\033[0;30m" und"\033[0;34m" README.md"\033[0;30m" neu aus"\033[0;34m" man_de"\033[0;30m" erstellt
