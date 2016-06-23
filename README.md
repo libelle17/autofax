@@ -1,5 +1,5 @@
 
-<h1 align="center">AUTOFAX <div><ul>(Version 0.40122)</ul></div></h1>
+<h1 align="center">AUTOFAX <div style="font-size:small">(Version 0.40122)</div></h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
