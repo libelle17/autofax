@@ -67,7 +67,7 @@ weiter: compiler $(EXEC) man fertig
 #      : git clone ssh://git@github.com/<user>/<reponame>.git
 git:
 	git add -u
-	git commit -m "Commit durch make"
+	git commit -m "Version $$(cat version)"
 	git push
 
 anzeig:
