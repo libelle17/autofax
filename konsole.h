@@ -451,7 +451,7 @@ std::string base_name(const std::string& path);
 std::string dir_name(const std::string& path);
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
                 binaer ob0heissterfolg=wahr, binaer obergebnisanzeig=wahr, const string& ueberschr="");
-void pruefverz(const string& verz,int obverb,int oblog);
+int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl=1);
 string aktprogverz();
 char holbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
 // vorgabe fur vorgabe = T_j_k; alternativ='n'

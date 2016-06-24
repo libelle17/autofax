@@ -449,6 +449,7 @@ enum T_
   T_ermittelt,
   T_hylafax_Verzeichnis,
   T_Bezeichnung_des_Anrufers,
+  T_Password_fuer_samba_fuer_Benutzer,
   T_MAX
 };
 
@@ -1108,7 +1109,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_RueckmlgZeile
   {"Rueckmldg.Zeile: ","Response line: "},
   // T_Hylafax_laeuft
-  {"Hylafax laeuft!","Hylfax is running!"},
+  {"Hylafax laeuft!","Hylafax is running!"},
   // T_Pruefe_ob_Hylafax_gestartet
   {"Pruefe, ob Hylafax gestartet ...","Checking if hylafax is running ..."},
   // T_1_ist_erfolgreiche_Uebertragung_0_ist_fehlgeschlagen
@@ -1260,6 +1261,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"hylafax-Verzeichnis: ","hylafax-directory: "},
   // T_Bezeichnung_des_Anrufers
   {"Bezeichnung des Anrufers","Labelling of the caller"},
+  // T_Password_fuer_samba_fuer_Benutzer
+  {"Password fuer samba fuer Benutzer ","Password for samba for user "},
   {"",""}
 };
 
@@ -1948,7 +1951,7 @@ void paramcl::VorgbAllg()
   ccs=sizeof capiconf/sizeof*capiconf;
   capiconfp= capiconf;
   string capiconfvz= dir_name(cfaxconfdat);
-  systemrueck(string("sudo mkdir -p ")+capiconfvz,obverb,oblog);
+  pruefverz(capiconfvz,obverb,oblog,0);
   confdat cfaxconf(cfaxconfdat,capiconf,ccs,obverb);
   if (capiconfp[0].wert.empty()) {
     spoolcapivz="/var/spool/capisuite";
@@ -2012,8 +2015,8 @@ void paramcl::pruefcvz()
   cfaxusersqvz=cfaxuservz+vtz+cuser+"/sendq"; //  "/var/spool/capisuite/users/<user>/sendq";
   cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
   // <<violett<<"cfaxuserrcvz: "<<cfaxuserrcvz<<schwarz<<endl;
-  systemrueck(string("sudo mkdir -p ")+cfaxusersqvz,obverb,oblog);
-  systemrueck(string("sudo mkdir -p ")+cfaxuserrcvz,obverb,oblog);
+  pruefverz(cfaxusersqvz,obverb,oblog,0);
+  pruefverz(cfaxuserrcvz,obverb,oblog,0);
 } // paramcl::pruefcvz
 
 // wird aufgerufen in: main
@@ -2918,6 +2921,49 @@ void paramcl::pruefsamba()
 {
   Log(violetts+Tx[T_pruefsamba],obverb,oblog);
   const char* const smbdatei="/etc/samba/smb.conf";
+  struct stat sstat;
+  int gestartet=0;
+  uchar conffehlt;
+  const string quelle="/usr/share/samba/smb.conf";
+  for(uchar iru=0;iru<2;iru++) {
+    if (!(conffehlt=lstat(smbdatei,&sstat))) break;
+    if (iru) break;
+    pruefverz("/etc/samba",obverb,oblog,0);
+    systemrueck("test -f "+quelle+" && sudo cp -a "+quelle+" "+smbdatei,obverb,oblog);
+  }
+  int dienstzahl=2;
+  servc smb("smb","smbd");
+  servc smbd("smbd","smbd");
+  servc nmb("nmb","nmbd");
+  servc nmbd("nmbd","nmbd");
+  if (!smb.obslaeuft(obverb,oblog)) if (!smbd.obslaeuft(obverb,oblog)) dienstzahl--;
+  if (!nmb.obslaeuft(obverb,oblog)) if (!nmbd.obslaeuft(obverb,oblog)) dienstzahl--;
+//  <<rot<<"dienstzahl: "<<dienstzahl<<endl;
+  if (dienstzahl<2 || conffehlt) {
+    for(int aru=0;aru<2;aru++) {
+      if (aru) { 
+        linst.doinst("samba",obverb,oblog);
+//        smbrestart=0;
+      }
+      if (smb.serviceda) {
+        smb.machfit(obverb,oblog);
+        gestartet=1;
+      } else if (smbd.serviceda) {
+        smbd.machfit(obverb,oblog);
+        gestartet=1;
+      }
+      if (nmb.serviceda) {
+        nmb.machfit(obverb,oblog);
+        if (gestartet==1) gestartet=2;
+      } else if (nmbd.serviceda) {
+        nmbd.machfit(obverb,oblog);
+        if (gestartet==1) gestartet=2;
+      }
+      if (smb.serviceda) if (smb.obslaeuft(obverb,oblog)) if (nmb.serviceda) if (nmb.obslaeuft(obverb,oblog)) break;
+      if (smbd.serviceda) if (smbd.obslaeuft(obverb,oblog)) if (nmbd.serviceda) if (nmbd.obslaeuft(obverb,oblog)) break;
+    }
+//    if (gestartet==2) smbrestart=0;
+  }
   confdat smbcf(smbdatei,obverb);
   smbcf.Abschn_auswert(obverb);
   vector<string*> vzn;
@@ -2973,39 +3019,15 @@ void paramcl::pruefsamba()
       }
     }
   } // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
-  servc smb("smb","smbd");
-  servc smbd("smbd","smbd");
-  servc nmb("nmb","nmbd");
-  servc nmbd("nmbd","nmbd");
-  int dienstzahl=2;
-  if (!smb.obslaeuft(obverb,oblog)) if (!smbd.obslaeuft(obverb,oblog)) dienstzahl--;
-  if (!nmb.obslaeuft(obverb,oblog)) if (!nmbd.obslaeuft(obverb,oblog)) dienstzahl--;
-//  <<rot<<"dienstzahl: "<<dienstzahl<<endl;
-  if (dienstzahl<2) {
-    int gestartet=0;
-    for(int aru=0;aru<2;aru++) {
-      if (aru) { 
-        linst.doinst("samba",obverb,oblog);
-        smbrestart=0;
-      }
-      if (smb.serviceda) {
-        smb.machfit(obverb,oblog);
-        gestartet=1;
-      } else if (smbd.serviceda) {
-        smbd.machfit(obverb,oblog);
-        gestartet=1;
-      }
-      if (nmb.serviceda) {
-        nmb.machfit(obverb,oblog);
-        if (gestartet==1) gestartet=2;
-      } else if (nmbd.serviceda) {
-        nmbd.machfit(obverb,oblog);
-        if (gestartet==1) gestartet=2;
-      }
-      if (smb.serviceda) if (smb.obslaeuft(obverb,oblog)) if (nmb.serviceda) if (nmb.obslaeuft(obverb,oblog)) break;
-      if (smbd.serviceda) if (smbd.obslaeuft(obverb,oblog)) if (nmbd.serviceda) if (nmbd.obslaeuft(obverb,oblog)) break;
+  if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
+    string pw1, pw2;
+    while (1) {
+      pw1=holstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" (1)",&pw1);
+      pw2=holstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" (2)",&pw2);
+      if (pw1==pw2) break;
     }
-    if (gestartet==2) smbrestart=0;
+    systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
+    systemrueck("(echo "+pw1+"; echo "+pw2+") | sudo smbpasswd -s "+cuser,obverb,oblog);
   }
   if (smbrestart) {
     if (smb.serviceda) smb.restart(obverb-1,oblog);
@@ -4724,7 +4746,7 @@ int paramcl::pruefhyla()
               " && echo $? = Ergebnis nach sed"
               " && sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
               " && sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
-              " && sudo mv -f /etc/init.d/hylafax /etc/init.d/hylfax.ausrangiert"
+              " && sudo mv -f /etc/init.d/hylafax /root/hylafax.ausrangiert"
               " && killall hfaxd faxq 2>/dev/null && sudo faxsetup -nointeractive && echo $? = Ergebnis nach faxsetup -nointeractive"
               " && sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload"
               "'"
@@ -5059,7 +5081,7 @@ int paramcl::pruefcapi()
               const string qvz="/usr/src";
               const string versi="fcpci-3.10.0";
               const string srcf=string("fritz-")+versi+".tar.bz2";
-              systemrueck(string("sudo mkdir -p ")+qvz);
+              pruefverz(qvz,obverb,oblog,0);
               struct stat entrysrc;
               if (lstat((qvz+vtz+srcf).c_str(),&entrysrc)) {
                 systemrueck(string("cd ")+qvz+";sudo wget https://belug.de/~lutz/pub/fcpci/"+srcf+" --no-check-certificate",1+obverb,oblog);

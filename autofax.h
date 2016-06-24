@@ -156,7 +156,7 @@ class paramcl // Programmparameter
     uchar hylazuerst;  // ob ein Fax zuerst ueber Hylafax versucht werden soll zu faxen
     uchar rzf=0; // rueckzufragen
     string dbq; // Datenbank
-    string cuser; // Linux-Benutzer fuer Capisuite
+    string cuser; // Linux-Benutzer fuer Capisuite, Samba
     string muser; // Benutzer fuer Mysql/MariaDB
     string mpwd;  // Passwort fuer Mysql/MariaDB
     DB* My=0;
