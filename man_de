@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "14.2.2016" "Version 0.40024" "Manual-Seite für autofax"
+.TH man 1 "24.06.16" "Version 0.40041" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung in einer Datenbank 
 .br
@@ -76,7 +76,7 @@ autofax
 Voraussetzungen s.u.
 .br
 .SH GEBRAUCH
-Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft (insbesondere auf openSUSE-Leap 42.1 oder Ubuntu 15.10, evtl. auch andere; es sollte systemctl (systemd) laufen).
+Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft (insbesondere auf openSUSE-Leap 42.1 oder Ubuntu 16.04, evtl. auch andere; es sollte systemctl (systemd) laufen).
 .br
 Es existiert dann ein Verzeichnis z.B. '\fBzufaxen\fR', in das z.B. Benutzer im Netzwerk (z.B. über eine Samba-Freigabe) zu faxende Dateien stellen können wie z.B. 
 .br
@@ -269,7 +269,7 @@ Der Status der genannten Faxe wird angezeigt.
 .LP
 
 .SH VORAUSSETZUNGEN
-Das Programm wurde auf eine Installation von Opensuse 41.2 oder Ubuntu 15.10 mit den Standardoptionen abgestimmt. Weitere benötigte Programm werden falls möglich vom makefile oder von autofax selbst nachstalliert. Diese sind:
+Das Programm wurde auf eine Installation von Opensuse 41.2 oder Ubuntu 16.04 mit den Standardoptionen abgestimmt. Weitere benötigte Programm werden falls möglich vom makefile oder von autofax selbst nachstalliert. Diese sind:
 .br
 \fBmakefile:\fR
 .br

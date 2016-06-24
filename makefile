@@ -80,8 +80,12 @@ anzeig:
 $(EXEC): $(OBJ)
 	-@echo $$(if ! test -f version; then echo 0.1>version;fi;awk "BEGIN {print `cat version`+0.00001}")>version
 	-@echo -n " verlinke $(OBJ) zu $@ ..."
-	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/g" man_en)
-	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/" man_de)
+ifneq ("$(wildcard $(CURDIR)/man_en)","")
+	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_en)
+endif
+ifneq ("$(wildcard $(CURDIR)/man_de)","")
+	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_de)
+endif
 	-@echo " (Version:" $$(cat version)")"
 	-$(CC) $^ -o $@ $(LDFLAGS)
 
@@ -103,28 +107,51 @@ compiler:
 	-@sudo /sbin/ldconfig; sudo /sbin/ldconfig -p | grep -q "libmysqlclient.so " || { which zypper && sudo zypper -n in libmysqlclient-devel || { which apt-get && sudo apt-get --assume-yes install libmysqlclient-dev; }; sudo /sbin/ldconfig; }
 	-@test -f /usr/include/tiff.h || { which zypper && sudo zypper -n in libtiff-devel || { which apt-get && sudo apt-get --assume-yes install libtiff-dev; } }
 
-man: ${MANPDH} ${MANPEH}
+ifneq ("$(wildcard $(CURDIR)/man_de)","")
+ifneq ("$(wildcard $(CURDIR)/man_en)","")
+man: haupt ${MANPDH} ${MANPEH}
+install: ${MANPD} ${MANPE} 
+else
+man: haupt ${MANPDH}
+install: ${MANPD}
+endif
+else
+ifneq ("$(wildcard $(CURDIR)/man_en)","")
+man: haupt ${MANPEH}
+install: ${MANPE} 
+else
+man: 
+install: haupt
+endif
+endif
 
+haupt:
+	@echo -e "Kopiere Programmdatei: ""\033[0;34m"$(EXEC)"\033[0;30m" "->" "\033[0;34m"$(INSTEXEC)"\033[0;30m"
+	sudo cp -p "$(EXEC)" "$(INSTEXEC)"
+
+ifneq ("$(wildcard $(CURDIR)/man_de)","")
 ${MANPD}: ${CURDIR}/man_de 
 	-sudo mkdir -p $(MANP)/de/man1
 	-sudo gzip -c $(CURDIR)/man_de >${PROGRAM}.1.gz
 	-sudo mv ${PROGRAM}.1.gz ${MANPD}
-${MANPE}: ${CURDIR}/man_en
-	-sudo mkdir -p $(MANP)/man1
-	-sudo gzip -c $(CURDIR)/man_en >${PROGRAM}.1.gz
-	-sudo mv ${PROGRAM}.1.gz ${MANPE}
-
 ${MANPDH}: $(CURDIR)/man_de 
 	-@rm -f man_de.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_de.html
 	@echo -e "\033[0;34m"   man_de.html"\033[0;30m" neu aus"\033[0;34m" man_de"\033[0;30m" erstellt
+endif
 
+ifneq ("$(wildcard $(CURDIR)/man_en)","")
+${MANPE}: ${CURDIR}/man_en
+	-sudo mkdir -p $(MANP)/man1
+	-sudo gzip -c $(CURDIR)/man_en >${PROGRAM}.1.gz
+	-sudo mv ${PROGRAM}.1.gz ${MANPE}
 ${MANPEH}: $(CURDIR)/man_en 
 	-@rm -f man_en.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_en.html
 	-@rm -f README.md
 	-@sed -n '20,$$p' man_en.html > README.md 
 	@echo -e "\033[0;34m"   man_en.html"\033[0;30m" und"\033[0;34m" README.md"\033[0;30m" neu aus"\033[0;34m" man_de"\033[0;30m" erstellt
+endif
 
 fertig:
 	@echo -e " Fertig mit $(ICH), nachher:                                "  
@@ -138,8 +165,5 @@ clean:
 	@$(shell rm -f $(EXEC) $(OBJ) 2>/dev/null)
 	@$(shell sudo rm -f $(INSTEXEC) 2>/dev/null)
 	@echo -e " Fertig mit Bereinigen!"  
-
-install: ${MANPD} ${MANPE} 
-	sudo cp -p "$(EXEC)" "$(INSTEXEC)"
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
