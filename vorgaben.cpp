@@ -42,12 +42,13 @@ void paramcl::VorgbSpeziell()
 
   sqlzn=sqlvzn=atol(sqlvz.c_str());
   if (sqlvzn) {
-    sqlconfvp= new cppSchluess[sqlvzn];
+//    sqlconfvp= new cppSchluess[sqlvzn];
+    sqlconfv.neu(sqlvzn);
     for(size_t i=0;i<sqlvzn;i++) {
-      sqlconfvp[i].name=string("SQL_")+ltoan(i);
+      sqlconfv[i].name=string("SQL_")+ltoan(i);
       switch (i) {
         case 0:
-          sqlconfvp[i].wert = string("")+"select if(isnull(arzt),bsname,arzt) getName,bsname from (select bsname, FaxZahl, "
+          sqlconfv[i].wert = string("")+"select if(isnull(arzt),bsname,arzt) getName,bsname from (select bsname, FaxZahl, "
             "concat(group_concat(distinct Arzt separator ', '), ', ',ort,';') Arzt "
             "from (SELECT bs.name bsname, f.faxzahl, concat(if(instr(Titel,'.')<>0,concat(left(titel,instr(titel,'.')),' '),Titel), "
             "left(a.Vorname,1), '.', a.Nachname, if(count(a.nachname)>6,'',concat(' (',group_concat(distinct "
@@ -70,23 +71,23 @@ void paramcl::VorgbSpeziell()
             "group by faxzahl, nachname, vorname) i) i group by FaxZahl";
           break;
         case 1:
-          sqlconfvp[i].wert = string("")+"select concat(titel,if(titel='','',' '),vorname,' ',nvorsatz,if(nvorsatz='','',' '),nachname,', g.',"
+          sqlconfv[i].wert = string("")+"select concat(titel,if(titel='','',' '),vorname,' ',nvorsatz,if(nvorsatz='','',' '),nachname,', g.',"
             "date_format(gebdat,'%d.%m.%y'),', ',ort) name,concat('Pid ',pat_id) bsname from "+quelltab+".namen n where "
             "concat(if(mid(privatfax,1,1)='0','','08131'),replace(replace(replace(replace(privatfax,' ',''),'-',''),'/',''),"
             "'\\'','')) = '&&faxnr&&'";;
           break;
         case 2:
-          sqlconfvp[i].wert = string("")+"select concat(haname,', ',ort,', ',kvnu) name, zulg,fax1k from "+kvaetab+".hae where "
+          sqlconfv[i].wert = string("")+"select concat(haname,', ',ort,', ',kvnu) name, zulg,fax1k from "+kvaetab+".hae where "
             "concat(if(mid(fax1k,1,1)='0','','08131'),replace(replace(replace(replace(fax1k,' ',''),'-',''),'/',''),'\\'','')) = " 
             "'&&faxnr&&'";
           break;
         case 3:
-          sqlconfvp[i].wert = string("")+"select concat(titel,if(titel='','',' '),vorname,' ',name,', ',ort) name, zusatzfeld5 from "+
+          sqlconfv[i].wert = string("")+"select concat(titel,if(titel='','',' '),vorname,' ',name,', ',ort) name, zusatzfeld5 from "+
             officetab+".adresse where concat(if(mid(faxk,1,1)='0','','08131'),replace(replace(replace(replace(faxk,' ',''),'-',''),'/',''),'\\'',''))"
             " = '&&faxnr&&' order by zusatzfeld5 desc";
           break;
         case 4:
-          sqlconfvp[i].wert = string("")+"SELECT concat(if(isnull(name),'',concat(titel,if(titel='','',' '),vorname,' ',name,', ',ort, ', ')),"
+          sqlconfv[i].wert = string("")+"SELECT concat(if(isnull(name),'',concat(titel,if(titel='','',' '),vorname,' ',name,', ',ort, ', ')),"
             "if(isnull(i.firma),'',i.firma)) name, i.abteilung FROM "+officetab+".telefon t left join "+officetab+".kontakte k "
             "on t.knr  = k.knr left join "+officetab+".pers p on k.knr = p.knr left join "+officetab+".inst i on k.knr = i.knr left join "+
             officetab+".anschr a on a.knr = p.knr where concat(if(mid(num,1,1)='0','','08131'),"
@@ -94,13 +95,13 @@ void paramcl::VorgbSpeziell()
             "or not isnull(firma) or not isnull(vorname)) order by name desc, vorname desc, firma desc";
           break;
         case 5:
-          sqlconfvp[i].wert = string("")+"select concat(titel,if(titel='','',' '),vorname,' ',nvorsatz,if(nvorsatz='','',' '),"
+          sqlconfv[i].wert = string("")+"select concat(titel,if(titel='','',' '),vorname,' ',nvorsatz,if(nvorsatz='','',' '),"
             "nachname,', g.',date_format(gebdat,'%d.%m.%y'),', ',ort) name,concat('Pid ',pat_id) bsname from "+quelltab+".namen n where "
             "concat(if(mid(privattel,1,1)='0','','08131'),replace(replace(replace(replace(privattel,' ',''),'-',''),'/',''),'\\'','')) = "
             "'&&faxnr&&'";
           break;
         case 6:
-          sqlconfvp[i].wert = string("")+"select concat(titel,if(titel='','',' '),vorname,' ',name) name,fachgruppe from "+quelltab+
+          sqlconfv[i].wert = string("")+"select concat(titel,if(titel='','',' '),vorname,' ',name) name,fachgruppe from "+quelltab+
             ".listenausgabeuew where concat(if(mid(fax,1,1)='0','','08131'),replace(replace(replace(replace(fax,' ',''),'-',''),'/',''),'\\'','')) "
             "= '&&faxnr&&'";
           break;

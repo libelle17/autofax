@@ -117,7 +117,9 @@ class paramcl // Programmparameter
     size_t optslsz=0; // last opts.size()
     char *ich; // argv[0]
   public:
-    cppSchluess *hconfp=0;
+//    cppSchluess *hconfp=0;
+    schlArr hylconf;
+    uchar hgelesen=0; // Protokolldatei war auslesbar
     static constexpr const char *moeglhvz[2]={"/var/spool/fax","var/spool/hylafax"};
     uchar obfcard=1;    // ob Fritzcard eingesteckt
     uchar obmodem=1;    // ob Modem angeschlossen
@@ -205,25 +207,30 @@ class paramcl // Programmparameter
     string maxhylav; // maixmale Versuchsnr in Hylafax, bis Capi versucht wird
     string langu; // Sprache (Anfangsbuchstabe)
 
-    cppSchluess *cgconfp; // Gesamtkonfiguration
-    size_t gcs; // dessen Groesse
+//    cppSchluess *cgconfp; // Gesamtkonfiguration
+    schlArr cgconf; // Gesamtkonfiguration
+//    size_t gcs; // dessen Groesse
     string sqlvz;  // Zahl der SQL-Befehle aus Vorgaben
     size_t sqlvzn; // Zahl der SQL-Befehle aus Vorgaben numerisch
-    cppSchluess *sqlconfvp; // SQL-Pointer aus Vorgaben
+//    cppSchluess *sqlconfvp=0; // SQL-Pointer aus Vorgaben
+    schlArr sqlconfv;
     string sqlz;  // Zahl der SQL-Befehle
     size_t sqlzn; // Zahl der SQL-Befehle numerisch
-    cppSchluess *sqlconfp; // SQL-Pointer
+//    cppSchluess *sqlconfp; // SQL-Pointer
+    schlArr sqlconf; // SQL-Array
 
     zielmustercl *zmp; // Zielmusterzeiger
-    cppSchluess *zmconfp; // dessen Serialisierung
+//    cppSchluess *zmconfp; // dessen Serialisierung
+    schlArr zmconf; // dessen Serialisierung
     string zmz; // Zielmusterzahl
     size_t zmzn; // Zielmusterzahl numerisch
     zielmustercl *zmvp; // Zielmusterzeiger aus Vorgaben
     string zmvz; // Zielmusterzahl aus Vorgaben
     size_t zmvzn; // Zielmusterzahl numerisch aus Vorgaben
 
-    cppSchluess *capiconfp; // Capi-Konfiguration (fax.conf)
-    size_t ccs; // capiconf-confsize
+//    cppSchluess *capiconfp; // Capi-Konfiguration (fax.conf)
+    schlArr capiconf; // Capi-Konfiguration (fax.conf)
+//    size_t ccs; // capiconf-confsize
     string konfdatname; // name der Konfigurationsdatei
     string anfaxstr, ancfaxstr, anhfaxstr; // 'an Fax', "an cFax", "an hFax"
     string anstr; // ' an '
@@ -232,6 +239,7 @@ class paramcl // Programmparameter
     vector<optioncl> opts;
     vector<argcl> argcmv; // class member vector
     servc *sfaxq=0, *shfaxd=0, *shylafaxd=0, *sfaxgetty=0, *scapisuite=0;
+  string modconfdat; // hylafax-Konfigurationsdatei
 
   private:
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
@@ -245,7 +253,8 @@ class paramcl // Programmparameter
     void konfcapi();
     int  xferlog(const string& jobid, string *erg,int obverb=0, int oblog=0);
     void richtcapiher();
-    void setzhconfp(string *protdaktp,int obverb);
+    uchar setzhconfp(string *protdaktp,int obverb);
+    void setzmodconfd();
   public:
     paramcl(int argc,char** argv);
     ~paramcl();
@@ -275,6 +284,8 @@ class paramcl // Programmparameter
     void tu_listi();
     void DateienHerricht();
     int pruefcapi();
+    void hliesconf();
+    void hconfigtty();
     int hservice_faxq_hfaxd();
     int hservice_faxgetty();
     int pruefhyla();

@@ -1,6 +1,7 @@
 #include "konsole.h"
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdarg.h>
 
 #ifdef _WIN32
 const char *dir = "dir ";
@@ -1112,6 +1113,45 @@ void confdat::Abschn_auswert(int obverb, char tz)
   // for(size_t i=0;i<abschv.size();i++) KLA for(size_t j=0;j<abschv[i].av.size();j++) KLA <<j<<": "<<abschv[i].av[j].name<<": "<<abschv[i].av[j].wert<<endl; KLZ KLZ
 }
 
+
+void confdat::auswert(schlArr *sA, int obverb, char tz)
+{
+  richtige=0;
+  sA->reset();
+  if (obgelesen) {
+    for(size_t i=0;i<zn.size();i++) {
+      string *zeile=&zn[i];
+      size_t pos=zeile->find('#');
+      if (pos!=string::npos) zeile->erase(pos);
+      ltrim(zeile);
+      if (!zeile->empty()) {
+        if (obverb>1) Log(string(Txk[T_stern_zeile])+*zeile,obverb);
+        pos=zeile->find(tz);
+        if (pos!=string::npos && pos>0) { 
+          size_t ii=sA->zahl,gef;
+          while( ii-- ) {
+            gef=zeile->find((*sA)[ii].name);
+            if (!gef) { // conf[ii].name muss am Zeilenanfang anfangen, sonst Fehler z.B.: number, faxnumber
+              (*sA)[ii].gelesen=1;
+              if (strchr((string(" ")+(char)9+tz).c_str(),zeile->at(gef+(*sA)[ii].name.length()))) {
+                ++richtige;
+                (*sA)[ii].wert=zeile->substr(pos+1);
+                gtrim(&(*sA)[ii].wert); // Leerzeichen entfernen
+                // Anfuerhungszeichen entfernen
+                anfzweg((*sA)[ii].wert);
+              } // if (strchr((string(" ")+(char)9+tz).c_str(),gef+(*sA)[ii].name.length())) 
+              break;
+            } // if( !strcmp(sA[i].name.c_str(),zeile->c_str()) ) 
+            if (!gef)
+              Log(rots+Txk[T_Fehler_bei_auswert]+schwarz+(*sA)[ii].name+rot+Txk[T_nicht_gefunden],obverb+1);
+          } // while( ii-- ) 
+        } // if (pos!=string::npos && 1==sscanf(zeile->c_str(),scs.c_str(),zeile->c_str())) 
+      } // if (!zeile->empty()) 
+    } // for(size_t i=0;i<zn.size();i++) 
+  } // if (obgelesen) 
+} // void sAdat::auswert(cppSchluess *sA, size_t csize, int obverb, char tz)
+
+/*
 void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
 {
   richtige=0;
@@ -1151,17 +1191,141 @@ void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
     } // for(size_t i=0;i<zn.size();i++) 
   } // if (obgelesen) 
 } // void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
+*/
 
 confdat::confdat(const string& fname,int obverb)
 {
   lies(fname,obverb);
 }
 
+confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz)
+{
+  if (obverb>0) cout<<violett<<Txk[T_Lese_Konfiguration_aus]<<blau<<fname<<schwarz<<endl;
+  lies(fname,obverb);
+  auswert(sA,obverb,tz);
+}
+
+/*
 confdat::confdat(const string& fname, cppSchluess *conf, size_t csize, int obverb, char tz)
 {
   if (obverb>0) cout<<violett<<Txk[T_Lese_Konfiguration_aus]<<blau<<fname<<schwarz<<endl;
   lies(fname,obverb);
   auswert(conf,csize,obverb,tz);
+}
+*/
+void schlArr::ausgeb()
+{
+  for(size_t i=0;i<zahl;i++) {
+   cout<<"i: "<<gruen<<i<<schwarz<<" Name: "<<blau<<schl[i].name<<schwarz<<" Wert: "<<blau<<schl[i].wert<<schwarz<<endl;
+  }
+}
+
+void schlArr::reset()
+{
+  for(size_t i=0;i<zahl;i++) {
+    schl[i].wert.clear();
+    schl[i].gelesen=0;
+  }
+}
+
+schlArr::schlArr()
+{
+ schl=0;
+ zahl=0;
+}
+
+void schlArr::neu(size_t vzahl)
+{
+ if (schl) delete[] schl;
+ zahl=vzahl;
+ schl=new cppSchluess[zahl];
+}
+
+/*// wird vielleicht nicht gebraucht
+schlArr::schlArr(size_t zahl): zahl(zahl)
+{
+ schl = new cppSchluess[zahl];
+}
+*/
+
+void schlArr::init(vector<cppSchluess*> *sqlvp)
+{
+  if (schl) delete[] schl;
+  zahl=sqlvp->size();
+  schl = new cppSchluess[zahl];
+  for(size_t sqli=0;sqli<zahl;sqli++) {
+    schl[sqli].name=sqlvp->at(sqli)->name;
+    schl[sqli].wert=sqlvp->at(sqli)->wert;
+  }
+}
+
+void schlArr::init(size_t vzahl, ...)
+{
+ va_list list;
+ va_start(list,vzahl);
+ zahl=vzahl;
+ if (schl) delete[] schl;
+ schl = new cppSchluess[zahl];
+ for(size_t i=0;i<zahl;i++) {
+  schl[i].name=va_arg(list,const char*);
+ }
+ va_end(list);
+}
+
+int schlArr::setze(const string& name, const string& wert)
+{
+  for(size_t ind=0;ind<zahl;ind++) {
+    if (schl[ind].name==name) {
+      schl[ind].wert=wert;
+      return 0;
+    }
+  }
+  return 1;
+}
+ 
+const string* schlArr::hole(const string& name)
+{
+  static const string nix="";
+  for(size_t ind=0;ind<zahl;ind++) {
+    if (schl[ind].name==name) {
+      return &schl[ind].wert;
+    }
+  }
+  return &nix;
+}
+
+void schlArr::schreib(mdatei *f)
+{
+  for (size_t i = 0;i<zahl;i++) {
+    *f<<schl[i].name<<" = \""<<schl[i].wert<<"\""<<endl;
+  }
+}
+
+int schlArr::schreib(const string& fname)
+{
+  mdatei f(fname,ios::out);
+  if (f.is_open()) {
+    schreib(&f);
+    return 0;
+  }
+  return 1;
+}
+
+schlArr::~schlArr()
+{
+  if (schl) delete[] schl;
+}
+
+int multischlschreib(const string& fname, schlArr **confs, size_t cszahl)
+{
+  mdatei f(fname,ios::out);
+  if (f.is_open()) {
+    for (size_t j=0;j<cszahl;j++) {
+     confs[j]->schreib(&f);
+    }
+    return 0;
+  }
+  return 1;
 }
 
 string XOR(const string& value, const string& key)
@@ -1188,7 +1352,7 @@ int cppschreib(const string& fname, cppSchluess *conf, size_t csize)
   return 1;
 } // int cppschreib(const string& fname, cppSchluess *conf, size_t csize)
 
-
+/*
 int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, size_t cszahl)
 {
   mdatei f(fname,ios::out);
@@ -1202,6 +1366,7 @@ int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, siz
   }
   return 1;
 } // int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, size_t cszahl)
+*/
 
 int schreib(const char *fname, Schluessel *conf, size_t csize)
 {
@@ -1356,21 +1521,25 @@ int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl)
   struct stat sverz;
   int erg=0;
   uchar fertig=0;
-  if (!lstat(verz.c_str(), &sverz)) {
-    if(S_ISDIR(sverz.st_mode)) {
-      fertig=1;
-    }
-  }
-  if (!fertig) erg=systemrueck(string("sudo mkdir -p '")+verz+"'",obverb,oblog);
-  if (obmitfacl) {
-    static string cuser=curruser(); 
-    static int obsetfacl=!systemrueck("which setfacl",obverb-1,0); 
-    if (obsetfacl) {
-      if (cuser!="root") {
-        systemrueck(string("sudo setfacl -m 'u:")+cuser+":7' '"+verz+"'",obverb,oblog);
+  if (!verz.empty()) {
+    if (!lstat(verz.c_str(), &sverz)) {
+      if(S_ISDIR(sverz.st_mode)) {
+        fertig=1;
       }
-    } //   if (obsetfacl)
-  } // obmitfacl
+    }
+    if (!fertig) erg=systemrueck(string("sudo mkdir -p '")+verz+"'",obverb,oblog);
+    static string cuser=curruser(); 
+    if (obmitfacl && cuser!="root") {
+      static int obsetfacl=!systemrueck("which setfacl",obverb-1,0); 
+      if (obsetfacl) {
+        svec gstat;
+        systemrueck("getfacl -e -t "+verz+" 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*rwx' || true",obverb,oblog,&gstat);
+        if (!gstat.size() && cuser!="root") {
+          systemrueck(string("sudo setfacl -m 'u:")+cuser+":7' '"+verz+"'",obverb,oblog);
+        }
+      } //   if (obsetfacl)
+    } // obmitfacl
+  }
   return erg;
 } // void pruefverz(const string& verz,int obverb,int oblog)
 
