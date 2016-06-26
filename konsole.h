@@ -289,6 +289,7 @@ class cppSchluess {
     string name;
     uchar gelesen;
     string wert;
+//    inline cppSchluess& operator=(cppSchluess zuzuw){name=zuzuw.name;wert=zuzuw.wert; return *this;} // wird nicht benoetigt
     template <typename T> void hole(T *var) { *var=atol(wert.c_str()); }
     template <typename T> void setze(T *var) { wert=ltoan(*var); }
 };
@@ -300,6 +301,24 @@ template <> inline void cppSchluess::setze < char* > (char** var) {wert=*var; }
 template <> inline void cppSchluess::setze < const char* > (const char** var) {wert=*var;}
 template <> inline void cppSchluess::setze < string > (string *var) {wert=*var;}
 template <> inline void cppSchluess::setze < const string > (const string *var) {wert=*var;}
+
+class schlArr {
+ public:
+ cppSchluess *schl=0; 
+ size_t zahl;
+ schlArr();
+ void neu(size_t vzahl=0);
+ void init(size_t vzahl, ...);
+ void init(vector<cppSchluess*> *sqlvp);
+ inline /*const*/ cppSchluess& operator[](size_t const& nr) const { return schl[nr]; }
+ int setze(const string& name, const string& wert);
+ const string* hole(const string& name);
+ void schreib(mdatei *f);
+ int schreib(const string& fname);
+ void ausgeb();
+ void reset();
+ ~schlArr();
+};
 
 class abSchl {
  public:
@@ -385,9 +404,11 @@ class confdat {
     vector<absch> abschv;
     size_t richtige;
     confdat(const string& fname, int obverb);
-    confdat(const string& fname,cppSchluess *conf, size_t csize, int obverb=0, char tz='=');
+    confdat(const string& fname, schlArr *sA, int obverb=0, char tz='=');
+//    confdat(const string& fname,cppSchluess *conf, size_t csize, int obverb=0, char tz='=');
     int lies(const string& fname,int obverb);
-    void auswert(cppSchluess *conf, size_t csize, int obverb=0, char tz='=');
+    void auswert(schlArr *sA, int obverb=0, char tz='=');
+//    void auswert(cppSchluess *conf, size_t csize, int obverb=0, char tz='=');
     void Abschn_auswert(int obverb=0, char tz='=');
 };
 
@@ -446,7 +467,8 @@ void getstammext(string *ganz, string *stamm, string *exten);
 string XOR(const string& value, const string& key);
 int schreib(const char *fname, Schluessel *conf, size_t csize);
 int cppschreib(const string& fname, cppSchluess *conf, size_t csize);
-int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, size_t cszahl);
+// int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, size_t cszahl);
+int multischlschreib(const string& fname, schlArr **confs, size_t cszahl);
 std::string base_name(const std::string& path);
 std::string dir_name(const std::string& path);
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
