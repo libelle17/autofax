@@ -1,5 +1,5 @@
 
-<h1 align="center">AUTOFAX (Version )man</h1>
+<h1 align="center">AUTOFAX (Version 2e-05)man</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>

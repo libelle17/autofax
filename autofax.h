@@ -283,6 +283,7 @@ class paramcl // Programmparameter
     void tu_lista(const string& oberfolg);
     void tu_listi();
     void DateienHerricht();
+    void cliesconf();
     int pruefcapi();
     void hliesconf();
     void hconfigtty();

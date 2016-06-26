@@ -3,9 +3,9 @@
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
 <<<<<<< HEAD
-.TH man 1 "26.06.16" "Version " "\fBautofax\fR man page"
+.TH man 1 "26.06.16" "Version 2e-05" "\fBautofax\fR man page"
 =======
-.TH man 1 "26.06.16" "Version " "\fBautofax\fR man page"
+.TH man 1 "26.06.16" "Version 2e-05" "\fBautofax\fR man page"
 >>>>>>> c5621bfbe4d09374b3ec5b5f29c693f29713602a
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging in a database

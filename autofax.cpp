@@ -2653,6 +2653,28 @@ void paramcl::autofkonfschreib()
 } // void paramcl::autofkonfschreib()
 
 
+void paramcl::cliesconf()
+{
+ if (capiconf[6].wert!="+"+countrycode+" "+citycode+" "+msn  
+     || capiconf[4].wert!=msn  
+     || capiconf[7].wert!=cFaxUeberschrift  
+ ) {
+   capizukonf=1;
+ }
+ // oder wenn [")+cuser+"]" nicht in der Datei gefunden wird, oder dort anders ist:
+ /*
+          *fneu<<"fax_numbers=\""<<capiconf[4].wert<<"\""<<endl;
+          *fneu<<"fax_stationID=\""<<capiconf[6].wert<<"\""<<endl;
+          *fneu<<"fax_headline=\""<<capiconf[7].wert<<"\""<<endl;
+          *fneu<<"fax_email_from=\""<<capiconf[8].wert<<"\""<<endl;
+          *fneu<<"fax_action=\"MailAndSave\""<<endl;
+ */
+ // oder in ccapiconfdat im incoming_scipt das falsche in 
+      // const char* suchstr="faxInfo=capisuite.connect_faxG3(call,stationID,headline,";
+      // steht
+// cfaxconfdat
+}
+
 // wird  aufgerufen in: pruefcapi
 void paramcl::konfcapi()
 {
@@ -2724,7 +2746,7 @@ void paramcl::konfcapi()
   }
   if (rzf || capicffehlt) {
     while (capiconf[6].wert.find("000 0000")!=string::npos || !istelnr(capiconf[6].wert)) {
-      capiconf[6].wert=string("+")+countrycode+" "+citycode+" "+msn;
+      capiconf[6].wert="+"+countrycode+" "+citycode+" "+msn;
       capiconf[6].wert=holstring(string("fax_stationID: ")+Tx[T_Faxnr_die_zum_Adressaten_gesandt_wird_bis_20_Zeichen_nur_plus_und_Ziffern],
           &capiconf[6].wert);
     }
