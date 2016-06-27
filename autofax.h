@@ -239,7 +239,8 @@ class paramcl // Programmparameter
     vector<optioncl> opts;
     vector<argcl> argcmv; // class member vector
     servc *sfaxq=0, *shfaxd=0, *shylafaxd=0, *sfaxgetty=0, *scapisuite=0;
-  string modconfdat; // hylafax-Konfigurationsdatei
+    string modconfdat; // hylafax-Konfigurationsdatei
+    confdat *cfaxcp=0; // Zeiger auf ausgelesene /etc/capisuite/fax.conf
 
   private:
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen

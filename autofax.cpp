@@ -1957,10 +1957,12 @@ void paramcl::VorgbAllg()
   */
   capiconf.init(10,"spool_dir","fax_user_dir","send_tries","send_delays","outgoing_MSN",
       "dial_prefix","fax_stationID","fax_headline","fax_email_from","outgoing_timeout");
-  string capiconfvz= dir_name(cfaxconfdat);
+  static string capiconfvz= dir_name(cfaxconfdat);
   pruefverz(capiconfvz,obverb,oblog,0);
 //  confdat cfaxconf(cfaxconfdat,capiconf,ccs,obverb);
-  confdat cfaxconf(cfaxconfdat,&capiconf,obverb);
+  static confdat cfaxconf(cfaxconfdat,&capiconf,obverb);
+  cfaxcp=&cfaxconf;
+   cfaxcp->Abschn_auswert(obverb);
   if (capiconf[0].wert.empty()) {
     spoolcapivz="/var/spool/capisuite";
     cfaxuservz=spoolcapivz+"/users";
@@ -2661,19 +2663,30 @@ void paramcl::cliesconf()
  ) {
    capizukonf=1;
  }
- // oder wenn [")+cuser+"]" nicht in der Datei gefunden wird, oder dort anders ist:
- /*
-          *fneu<<"fax_numbers=\""<<capiconf[4].wert<<"\""<<endl;
-          *fneu<<"fax_stationID=\""<<capiconf[6].wert<<"\""<<endl;
-          *fneu<<"fax_headline=\""<<capiconf[7].wert<<"\""<<endl;
-          *fneu<<"fax_email_from=\""<<capiconf[8].wert<<"\""<<endl;
-          *fneu<<"fax_action=\"MailAndSave\""<<endl;
- */
- // oder in ccapiconfdat im incoming_scipt das falsche in 
-      // const char* suchstr="faxInfo=capisuite.connect_faxG3(call,stationID,headline,";
-      // steht
-// cfaxconfdat
-}
+ int richtige=0;
+ if (cfaxcp) {
+   cfaxcp->Abschn_auswert(obverb);
+   for(size_t i=0;i<cfaxcp->abschv.size();i++) {
+     if (cfaxcp->abschv[i].aname==cuser) {
+       for(size_t j=0;j<cfaxcp->abschv[i].av.size();j++) {
+        if (cfaxcp->abschv[i].av[j].name=="fax_numbers") {if (cfaxcp->abschv[i].av[j].wert==capiconf[4].wert) richtige++;}
+        else if (cfaxcp->abschv[i].av[j].name=="fax_stationID") {if (cfaxcp->abschv[i].av[j].wert==capiconf[6].wert) richtige++;}
+        else if (cfaxcp->abschv[i].av[j].name=="fax_headline") {if (cfaxcp->abschv[i].av[j].wert==capiconf[7].wert) richtige++;}
+        else if (cfaxcp->abschv[i].av[j].name=="fax_email_from") {if (cfaxcp->abschv[i].av[j].wert==capiconf[8].wert) richtige++;}
+       }
+     }
+   }
+   if (richtige!=4) capizukonf=1;
+ }
+ svec ckzlrueck;
+ systemrueck("grep faxInfo=capisuite.connect `grep incoming_script= "+ccapiconfdat+" 2>/dev/null|cut -d'\"' -f2 2>/dev/null`"
+             "|cut -d',' -f4 2>/dev/null|cut -d')' -f1 2>/dev/null",obverb,oblog,&ckzlrueck);
+ if (ckzlrueck.size()) {
+  if (cklingelzahl!=ckzlrueck[0]) capizukonf=1;
+ } else {
+  capizukonf=1;
+ }
+} // void paramcl::cliesconf()
 
 // wird  aufgerufen in: pruefcapi
 void paramcl::konfcapi()
@@ -2685,7 +2698,7 @@ void paramcl::konfcapi()
   size_t cs=sizeof cconf/sizeof*cconf;
 */
   schlArr cconf; cconf.init(1,"incoming_script");
-  confdat ccapic(ccapiconfdat,&cconf,obverb);
+  static confdat ccapic(ccapiconfdat,&cconf,obverb);
   if (1) {
     //    if (cpplies(ccapiconfdat,cconf,cs)) KLA
     mdatei f(cconf[0].wert,ios::in); // /usr/lib64/capisuite/incoming.py
@@ -4578,7 +4591,6 @@ void paramcl::hliesconf()
 {
  schlArr hyalt; hyalt.init(7,"CountryCode","AreaCode","FAXNumber","LongDistancePrefix","InternationalPrefix","RingsBeforeAnswer","LocalIdentifier");
  setzmodconfd();
- cout<<modconfdat<<endl;
  confdat haltconf(modconfdat,&hyalt,obverb,':');
  if (hyalt.schl[0].wert!=countrycode || hyalt.schl[1].wert!=citycode || hyalt.schl[2].wert!=countrycode+"."+citycode+"."+msn 
      || hyalt.schl[3].wert!=LongDistancePrefix || hyalt.schl[4].wert!=InternationalPrefix 
@@ -5225,6 +5237,7 @@ int paramcl::pruefcapi()
       }
       systemrueck("sudo systemctl daemon-reload",obverb,oblog);
     }
+    if (!capizukonf) cliesconf();
     if (obcapi && (versuch>0 || this->capizukonf)) {
       this->konfcapi();
       scapisuite->restart(obverb-1,oblog);

@@ -395,12 +395,14 @@ class absch {
  vector<abSchl> av;
  const string& suche(const char* const sname);
  const string& suche(const string& sname);
+ void clear();
 };
 
 class confdat {
   public:
     uchar obgelesen=0;
     svec zn;
+    string name;
     vector<absch> abschv;
     size_t richtige;
     confdat(const string& fname, int obverb);

@@ -1080,9 +1080,15 @@ int confdat::lies(const string& fname, int obverb)
   return 1;
 } // lies(const string& fname, int obverb)
 
+void absch::clear()
+{
+ aname.clear();
+ av.clear();
+}
+
 void confdat::Abschn_auswert(int obverb, char tz)
 {
-  absch *abp=0;
+  absch abp;
   for(size_t i=0;i<zn.size();i++) {
     string *zeile=&zn[i];
     size_t pos=zeile->find('#');
@@ -1092,24 +1098,28 @@ void confdat::Abschn_auswert(int obverb, char tz)
       if (zeile->at(0)=='[' && zeile->at(zeile->length()-1)==']') {
         zeile->erase(zeile->length()-1);
         zeile->erase(0,1);
-        if (abp) abschv.push_back(*abp);
-        abp=new absch;
-        abp->aname=*zeile;
+        if (!abp.aname.empty() && abp.av.size()) {
+           abschv.push_back(abp);
+           abp.clear();
+        }
+        abp.aname=*zeile;
       } else {
         pos=zeile->find(tz);
         if (pos!=string::npos && pos>0) { 
           string name,wert;
-          name=zeile->substr(0,pos-1);
+          name=zeile->substr(0,pos);
           gtrim(&name);
           wert=zeile->substr(pos+1);
           gtrim(&wert);
           anfzweg(wert);
-          abp->av.push_back(abSchl(name,wert));
+          abp.av.push_back(abSchl(name,wert));
         }
       }
     }
   }
-  if (abp) abschv.push_back(*abp);
+  if (!abp.aname.empty() && abp.av.size()) {
+    abschv.push_back(abp);
+  }
   // for(size_t i=0;i<abschv.size();i++) KLA for(size_t j=0;j<abschv[i].av.size();j++) KLA <<j<<": "<<abschv[i].av[j].name<<": "<<abschv[i].av[j].wert<<endl; KLZ KLZ
 }
 
@@ -1193,12 +1203,12 @@ void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
 } // void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
 */
 
-confdat::confdat(const string& fname,int obverb)
+confdat::confdat(const string& fname,int obverb):name(fname)
 {
   lies(fname,obverb);
 }
 
-confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz)
+confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fname)
 {
   if (obverb>0) cout<<violett<<Txk[T_Lese_Konfiguration_aus]<<blau<<fname<<schwarz<<endl;
   lies(fname,obverb);
