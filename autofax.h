@@ -227,7 +227,7 @@ class paramcl // Programmparameter
     size_t zmzn; // Zielmusterzahl numerisch
     zielmustercl *zmvp; // Zielmusterzeiger aus Vorgaben
     string zmvz; // Zielmusterzahl aus Vorgaben
-    size_t zmvzn; // Zielmusterzahl numerisch aus Vorgaben
+    size_t zmvzn=0; // Zielmusterzahl numerisch aus Vorgaben
 
 //    cppSchluess *capiconfp; // Capi-Konfiguration (fax.conf)
     schlArr capiconf; // Capi-Konfiguration (fax.conf)

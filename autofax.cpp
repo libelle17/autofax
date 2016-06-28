@@ -2129,7 +2129,7 @@ void paramcl::lieskonfein()
       sqlconf.neu(sqlzn);
       for(size_t i=0;i<sqlzn;i++) {
         sqlconf[i].name=string("SQL_")+ltoan(i+1);
-        if (i<sqlvzn) {
+        if (i<sqlvzn && i<sqlconfv.zahl) {
           sqlconf[i].wert=sqlconfv[i].wert;
           // <<"i: "<<hviolett<<i<<schwarz<<", sqlconf["<<i<<"]: "<<blau<<sqlconf[i].name<<schwarz<<endl;
           // <<"i: "<<blau<<i<<schwarz<<", sqlconf["<<i<<"]: "<<rot<<sqlconf[i].wert<<schwarz<<endl;
