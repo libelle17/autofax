@@ -93,6 +93,7 @@ endif
 %.o : %.cpp $(DEPDIR)/%.d
 	@echo -n " kompiliere $< ..."
 	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< 2>> fehler.txt
+	-@sudo sed -i 's/version //g' $(DEPDIR)/*.Td
 	-@if test -s fehler.txt; then vi +0/error fehler.txt; else rm fehler.txt; fi;
 	-@$(shell $(POSTCOMPILE))
 	@if test -s fehler.txt; then false; fi;
@@ -109,23 +110,23 @@ compiler:
 
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
-man: haupt ${MANPDH} ${MANPEH}
-install: ${MANPD} ${MANPE} 
+man: ${MANPDH} ${MANPEH}
+install: $(INSTEXEC) ${MANPD} ${MANPE} 
 else
-man: haupt ${MANPDH}
-install: ${MANPD}
+man: ${MANPDH}
+install: $(INSTEXEC) ${MANPD}
 endif
 else
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
-man: haupt ${MANPEH}
-install: ${MANPE} 
+man: ${MANPEH}
+install: $(INSTEXEC) ${MANPE} 
 else
 man: 
-install: haupt
+install: $(INSTEXEC)
 endif
 endif
 
-haupt:
+$(INSTEXEC): $(EXEC)
 	@echo -e "Kopiere Programmdatei: ""\033[0;34m"$(EXEC)"\033[0;30m" "->" "\033[0;34m"$(INSTEXEC)"\033[0;30m"
 	sudo cp -p "$(EXEC)" "$(INSTEXEC)"
 

@@ -138,6 +138,7 @@ class paramcl // Programmparameter
     string dszahl="30"; // Datensatzzahl fuer Tabellenausgaben
     uchar logdateineu=0; // logdt vorher loeschen
     uchar hilfe=0;      // Hilfe anzeigen
+    uchar zeigversion=0;  // Version anzeigen
     unsigned long faxord; // Ordinalzahl des Faxes unter allen anstehenden Faxen
     unsigned long geszahl=0;
     unsigned long ankzahl=0; // Zahl der angekommenen Faxe

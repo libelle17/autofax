@@ -32,7 +32,9 @@
 #include <sys/utsname.h> // utsname
 #endif
 #include <set>
-
+const double& version=
+#include "version"
+;
 
 // Bestandteile der Ueberpruefung auf Funktionsfaehigkeit von hylafax: 
 // faxmodem
@@ -450,6 +452,11 @@ enum T_
   T_hylafax_Verzeichnis,
   T_Bezeichnung_des_Anrufers,
   T_Password_fuer_samba_fuer_Benutzer,
+  T_Zeigt_die_Programmversion_an,
+  T_Freie_Software,
+  T_Verfasser,
+  T_Letzte_Programmaenderung,
+  T_Kompiliert,
   T_MAX
 };
 
@@ -1228,7 +1235,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"' keinmal '&&faxnr&&' gefunden. Wollen Sie den SQL-Befehl neu eingeben?",
    "' no occurance of '&&faxnr&&' found. Do You want to reenter the sql command?"},
   // T_beim_letzten_nichts_eingeben
-  {" (beim letzten nichts eingeben)"," (for the last one enter nothing)"},
+  {" (beim letzten '-' eingeben)"," (for the last one enter '-')"},
   // T_Muss_Hylafax_installieren
   {"Muss Hylafax installieren","Have to install hylafax"},
   // T_pruefstdfaxnr
@@ -1263,6 +1270,16 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Bezeichnung des Anrufers","Labelling of the caller"},
   // T_Password_fuer_samba_fuer_Benutzer
   {"Password fuer samba fuer Benutzer ","Password for samba for user "},
+  // T_Zeigt_die_Programmversion_an
+  {"Zeigt die Programmversion an","Shows the program version"},
+  // T_Freie_Software,
+  {"Freie Software","Free Software"},
+  // T_Verfasser
+  {", Verfasser: ",", author: "},
+  // T_Letzte_Programmaenderung
+  {"Letzte Programmaenderung: ","Last modification: "},
+  // T_Kompiliert
+  {"Kompiliert: ","Compiled: "},
   {"",""}
 };
 
@@ -2217,6 +2234,7 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("n","dszahl", &Tx, T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,pzahl, &dszahl));
   opts.push_back(optioncl("h","hilfe", &Tx, T_Zeigt_diesen_Bildschirm_an, &hilfe,1));
   opts.push_back(optioncl("?","help", &Tx, -1, &hilfe,1));
+  opts.push_back(optioncl("vs","version", &Tx, T_Zeigt_die_Programmversion_an, &zeigversion,1));
 
   string altlogdname(logdname);
   string altlogvz(logvz);
@@ -2275,6 +2293,7 @@ int paramcl::getcommandline()
 void paramcl::rueckfragen()
 {
   Log(violetts+Tx[T_rueckfragen]+schwarz,obverb,oblog);
+  const string& nix="";
   //  static Schluessel gconf[]=KLA KLA"hylazuerst"KLZ,KLA"maxcapiv"KLZ,KLA"maxhylav"KLZ,
   //                                KLA"gleichziel"KLZ,KLA"zufaxenvz"KLZ,KLA"wartevz"KLZ KLZ;
   if (rzf) {
@@ -2490,7 +2509,6 @@ void paramcl::rueckfragen()
       vector<cppSchluess*> sqlv; 
       size_t aktsp=0;
       for(size_t akt=0;;akt++) {
-       const string& nix="";
        const string *vorgabe=
            akt<sqlzn?
            (sqlconf[akt].wert.empty()?&sqlconfv[akt].wert:&sqlconf[akt].wert): // wird in auswert zurueckgesetzt
@@ -2569,6 +2587,27 @@ void paramcl::rueckfragen()
       */
       sqlconf.init(&sqlv);
     } // if (cgconf[++lfd].wert.empty() || rzf) 
+    vector<cppSchluess*> zmv; 
+    size_t akt=0;
+    for(;;akt++) {
+      cppSchluess* neuS=new cppSchluess;
+      neuS->name=string("ZMMuster_")+ltoan(akt+1);
+      neuS->wert=holstring(string("Zielmuster Nr. ")+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],(akt<zmzn)?&zmp[akt].holmuster():&nix);
+      if (neuS->wert=="-") neuS->wert.clear();
+      uchar obabbrech=(neuS->wert.empty()); // das letzte Muster muss leer sein, damit jede Datei irgendwo hinkommt
+      zmv.push_back(neuS);
+      neuS=new cppSchluess;
+      neuS->name=string("ZMZiel_")+ltoan(akt+1);
+      neuS->wert=holstring(string("Zielverzeichnis Nr. ")+ltoan(akt+1),(akt<zmzn)?&zmp[akt].ziel:&nix);
+      zmv.push_back(neuS);
+      if (obabbrech) break;
+    }
+    zmconf.init(&zmv);
+    string nzmz=ltoan(akt+1);
+    // <<rot<<"lfd: "<<lfd<<" nzmz: "<<nzmz<<schwarz<<endl;
+    cgconf[++lfd].setze(&nzmz);
+
+    /*
     if (cgconf[++lfd].wert.empty() || rzf) {
       string  nzmz=holzahl(Tx[T_Zahl_der_Verzeichnisse_fuer_erfolgreich_verschickte_Faxe],&zmz);
       size_t nzmzn;
@@ -2578,10 +2617,8 @@ void paramcl::rueckfragen()
         nzmz="1";
       }
       cgconf[lfd].setze(&nzmz);
-      /*
-      zmconfp=nzmconfp;
-      static cppSchluess *nzmconfp= new cppSchluess[nzmzn+nzmzn];
-      */
+      // zmconfp=nzmconfp;
+      // static cppSchluess *nzmconfp= new cppSchluess[nzmzn+nzmzn];
       zmconf.neu(nzmzn+nzmzn);
       for(size_t akt=0;akt<(nzmzn<zmzn?nzmzn:zmzn);akt++) {
        if (zmconf[2*akt].wert.empty())
@@ -2611,6 +2648,7 @@ void paramcl::rueckfragen()
       zmz=nzmz;
       zmzn=nzmzn;
     } // if (cgconf[++lfd].wert.empty() || rzf) 
+    */
   } // if (rzf)
   // die Verzeichnisnamen standardisieren
   kuerzevtz(&spoolcapivz);
@@ -6082,6 +6120,24 @@ int tuloeschen(const string& zuloe,int obverb, int oblog)
 // statische Variable, 1= mariadb=geprueft
 uchar DB::oisok=0;
 
+void zeigversion(const char* const prog)
+{
+  struct tm tm;
+  char buf[255];
+  cout<<endl<<Tx[T_Programm]<<violett<<meinpfad()<<schwarz<<endl;
+  cout<<"Copyright: "<<blau<<Tx[T_Freie_Software]<<schwarz<<Tx[T_Verfasser]<<blau<<"Gerald Schade"<<schwarz<<endl;
+  cout<<"Version: "<<blau<<version<<schwarz<<endl;
+  memset(&tm, 0, sizeof(struct tm));
+  strptime(__TIMESTAMP__,"%a %b %d %H:%M:%S %Y", &tm);
+  //<<tm.tm_sec<<" "<<tm.tm_min<<" "<<tm.tm_hour<<" "<<tm.tm_mday<<" "<<tm.tm_mon<<" "<<tm.tm_year<<" "<<tm.tm_wday<<" "<<tm.tm_yday<<" "<<tm.tm_isdst<<endl;
+  strftime(buf, sizeof(buf), "%d.%m.%Y %H:%M:%S", &tm);
+  cout<<Tx[T_Letzte_Programmaenderung]<<blau<<buf<<schwarz<<endl;
+  memset(&tm, 0, sizeof(struct tm));
+  strptime((string(__DATE__)+" "+__TIME__).c_str(),"%b %d %Y %H:%M:%S", &tm);
+  strftime(buf, sizeof(buf), "%d.%m.%Y %H:%M:%S", &tm);
+  cout<<"              "<<Tx[T_Kompiliert]<<blau<<buf<<schwarz<<endl;
+} // void zeigversion(const char* const prog)
+
 int main(int argc, char** argv) 
 {
   paramcl pm(argc,argv); // Programmparameter
@@ -6091,9 +6147,13 @@ int main(int argc, char** argv)
   pm.VorgbAllg();
   pm.VorgbSpeziell();
   pm.lieskonfein();
-  
+
   if (!pm.getcommandline()) 
     exit(1);
+  if (pm.zeigversion) {
+   zeigversion(*argv);
+   exit(0);
+  }
   pm.rueckfragen();
   pm.setzhylavz();
   pm.verzeichnisse();

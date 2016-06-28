@@ -1693,7 +1693,10 @@ string holstring(const string& frage, const string *vorgabe)
     input="";
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
-    if (input=="" && vorgabe) {input=*vorgabe;break;}
+    if (input=="" && vorgabe) {
+     input=*vorgabe;
+     break;
+    }
     break;
   }
   return input;
@@ -1939,5 +1942,5 @@ string meinpfad() {
     buff[len] = '\0';
   }
   return string(buff);
-}
+} // meinpfad
 
