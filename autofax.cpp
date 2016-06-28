@@ -457,6 +457,8 @@ enum T_
   T_Verfasser,
   T_Letzte_Programmaenderung,
   T_Kompiliert,
+  T_Quelle,
+  T_Hilfe,
   T_MAX
 };
 
@@ -1280,6 +1282,10 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Letzte Programmaenderung: ","Last modification: "},
   // T_Kompiliert
   {"Kompiliert: ","Compiled: "},
+  // T_Quelle
+  {"Quelle: ","Source: "},
+  // T_Hilfe
+  {"Hilfe: ","Help: "},
   {"",""}
 };
 
@@ -6124,7 +6130,8 @@ void zeigversion(const char* const prog)
 {
   struct tm tm;
   char buf[255];
-  cout<<endl<<Tx[T_Programm]<<violett<<meinpfad()<<schwarz<<endl;
+  string mpfad=meinpfad();
+  cout<<endl<<Tx[T_Programm]<<violett<<mpfad<<schwarz<<endl;
   cout<<"Copyright: "<<blau<<Tx[T_Freie_Software]<<schwarz<<Tx[T_Verfasser]<<blau<<"Gerald Schade"<<schwarz<<endl;
   cout<<"Version: "<<blau<<version<<schwarz<<endl;
   memset(&tm, 0, sizeof(struct tm));
@@ -6136,6 +6143,8 @@ void zeigversion(const char* const prog)
   strptime((string(__DATE__)+" "+__TIME__).c_str(),"%b %d %Y %H:%M:%S", &tm);
   strftime(buf, sizeof(buf), "%d.%m.%Y %H:%M:%S", &tm);
   cout<<"              "<<Tx[T_Kompiliert]<<blau<<buf<<schwarz<<endl;
+  cout<<Tx[T_Quelle]<<blau<<"https://github.com/libelle17/autofax"<<schwarz<<endl;
+  cout<<Tx[T_Hilfe]<<blau<<"Hilfe: '"<<braun<<"man "<<base_name(mpfad)<<blau<<"' oder '"<<braun<<"man -Lde "<<base_name(mpfad)<<schwarz<<"'"<<endl;
 } // void zeigversion(const char* const prog)
 
 int main(int argc, char** argv) 
