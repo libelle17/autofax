@@ -2038,7 +2038,7 @@ void paramcl::VorgbAllg()
   cuser=curruser();
   hylazuerst=1;
   }
-  pruefcvz();
+//  pruefcvz(); // 1.7.16 zu frueh
 } // void paramcl::VorgbAllg
 
 // wird aufgerufen in: konfcapi, VorgbAllg
@@ -2955,6 +2955,7 @@ void paramcl::konfcapi()
 void paramcl::verzeichnisse()
 {
   Log(violetts+Tx[T_verzeichnisse],obverb,oblog);
+  pruefcvz(); 
   pruefverz(zufaxenvz,obverb,oblog);
   pruefverz(wvz,obverb,oblog);
   pruefverz(gvz,obverb,oblog);
@@ -3726,6 +3727,8 @@ void paramcl::faxealle()
   char ***cerg;
   unsigned long dbszahl=0; // Zahl der Datenbanksaetze
   string hzstr=ltoan(hylazuerst);
+  if (!isnumeric(maxhylav)) maxhylav="3";
+  if (!isnumeric(maxcapiv)) maxcapiv="3";
   RS r0(My,string("select id p0, origvu p1, original p2, telnr p3, prio p4, "
         "if(isnull(capispooldatei),'',capispooldatei) p5, if(isnull(capidials),'',capidials) p6, "
         "if(isnull(hylanr),'',hylanr) p7, if(isnull(hyladials),'',hyladials) p8, "
@@ -4219,6 +4222,7 @@ void paramcl::empfarch()
   */
   schlArr umst; umst.init(5,"filename","call_from","call_to","time","cause");
   struct stat entryvz;
+//  cfaxuserrcvz="/var/spool/capisuite/users/schade/received";
   if (!lstat(cfaxuserrcvz.c_str(),&entryvz)) /* /var/spool/capisuite/users/~/received */ {
     // Faxe in der Empfangswarteschlange auflisten, ...
     cmd=string("sudo find \"")+cfaxuserrcvz+"\" -maxdepth 1 -type f -iname \"*.txt\" 2>/dev/null";
@@ -5198,7 +5202,7 @@ int paramcl::pruefcapi()
       }
       if (!fcpcida || !capida || !capidrvda) {
         Log("Lade Capi-Module ...",-1,0);
-        systemrueck("sudo modprobe -r avmfritz mISDNipac",obverb,oblog);
+        systemrueck("sudo modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog);
         for(uchar ivers=0;ivers<2;ivers++) {
           if (systemrueck("sudo modprobe -v fcpci",obverb-1,oblog)) {
             if (ivers) {
@@ -5273,6 +5277,11 @@ int paramcl::pruefcapi()
         //        // scp linux2:/usr/include/capiutils.h /usr/include
         //        // scp linux2:/usr/include/capicmd.h /usr/include
         // zypper in libcapi20-3 python-devel capi4linux capi4linux-devel
+        // in ubuntu: sfftobmp, (libcapi20-3)?, libcapi20-dev, python-dev
+        //            in ./configure: nach Zeile:
+        // python_configdir="${python_libdir}/config"
+        //   Zeile einfuegen:
+        // python_configdir="${python_libdir}/config"
         // ln -s /usr/lib64/libcapi20.so.3.0.6 libcapi20.so
         // in ./src/application/pythonscript.cpp Zeile 104: (Py_ssize_t*)&length statt &length
         // in /usr/include/capiutils.h eine dritte Zeile einfuegen: #define CAPI_LIBRARY_V2
