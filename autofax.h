@@ -50,6 +50,7 @@ class zielmustercl
     regex_t regex;
     // wird nur in Vorgaben gebraucht:
     zielmustercl(const char * const muster,const char * const ziel);
+    zielmustercl(const char * const muster,const string& ziel);
     zielmustercl();
     int kompilier();
     int setzemuster(const string& vmuster);
@@ -117,6 +118,8 @@ class paramcl // Programmparameter
     size_t optslsz=0; // last opts.size()
     char *ich; // argv[0]
   public:
+    string prog; // 'autofax'
+    string instverz; // $HOME/autofax
 //    cppSchluess *hconfp=0;
     schlArr hylconf;
     uchar hgelesen=0; // Protokolldatei war auslesbar
@@ -261,7 +264,7 @@ class paramcl // Programmparameter
     paramcl(int argc,char** argv);
     ~paramcl();
     string stdfaxnr(const string& faxnr);
-    void logvorgaben();
+    void logvorgaben(const string& vprog);
     void getcommandl0();
     void pruefhardware();
     void VorgbAllg(); // allgemeine Vorgaben
@@ -289,6 +292,7 @@ class paramcl // Programmparameter
     int pruefcapi();
     void hliesconf();
     void hconfigtty();
+    int cservice();
     int hservice_faxq_hfaxd();
     int hservice_faxgetty();
     int pruefhyla();

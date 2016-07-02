@@ -114,7 +114,7 @@ enum T_
   T_ErstelledurchKopieren,
   T_FehlerbeimUmbenennen,
   T_ErstelledurchBenennen,
-  T_autofaxabgebrochen,
+  T_abgebrochen,
   T_FehlerbeimUmbenennenbei,
   T_aus,
   T_nichtbeschreibbar,
@@ -326,7 +326,8 @@ enum T_
   T_an,
   T_vom,
   T_fuer_Benutzer,
-  T_Alle_wieviel_Minuten_soll_Autofax_aufgerufen_werden_0_ist_gar_nicht,
+  T_Alle_wieviel_Minuten_soll,
+  T_aufgerufen_werden_0_ist_gar_nicht,
   T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht,
   T_wird_verwendet,
   T_mit_Baudrate,
@@ -459,6 +460,9 @@ enum T_
   T_Kompiliert,
   T_Quelle,
   T_Hilfe,
+  T_Capisuite_verwenden,
+  T_hylafax_verwenden,
+  T_pruefcvz,
   T_MAX
 };
 
@@ -580,8 +584,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Fehler beim Umbenennen!","Error while renaming!"},
   // T_ErstelledurchBenennen
   {"Erstelle durch Benennen: ","Providing by naming: "},
-  // T_autofaxabgebrochen
-  {"autofax abgebrochen! ","autofax aborted! "},
+  // T_abgebrochen
+  {"abgebrochen! ","aborted! "},
   // T_FehlerbeimUmbenennenbei
   {" Fehler beim Umbenennen bei:"," Error while renaming:"},
   // T_aus
@@ -1013,9 +1017,10 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {" vom "," at "},
   // T_fuer_Benutzer
   {" fuer Benutzer '"," for user '"},
-  // T_Alle_wieviel_Minuten_soll_Autofax_aufgerufen_werden_0_ist_gar_nicht
-  {"alle wieviel Minuten soll autofax ueber crontab aufgerufen werden (0=gar nicht)",
-    "every how many minutes shall autofax be called in crontab (0=not at all)"},
+  // T_Alle_wieviel_Minuten_soll
+  {"alle wieviel Minuten soll ","every how many minutes shall "},
+  // T_aufgerufen_werden_0_ist_gar_nicht]
+  {" ueber crontab aufgerufen werden (0=gar nicht)", " be called in crontab (0=not at all)"},
   // T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht
   {"Kann Capisuite nicht installieren, verwende Capi nicht","Can't install capisuite, not using capi"},
   // T_wird_verwendet
@@ -1286,6 +1291,12 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Quelle: ","Source: "},
   // T_Hilfe
   {"Hilfe: ","Help: "},
+  // T_Capisuite_verwenden 
+  {"Capisuite verwenden","use capisuite"},
+  // T_hylafax_verwenden
+  {"Hylafax verwenden","use hylafax"},
+  // T_pruefcvz
+  {"pruefcvz()","checkcdirs()"},
   {"",""}
 };
 
@@ -1304,8 +1315,8 @@ class lsyscl
     lsysen getsys(int obverb=0,int oblog=0)
     {
       if (sys==usys) {
-        if (!systemrueck("cat /proc/version | grep SUSE",obverb,oblog)) return sus;
-        if (!systemrueck("cat /proc/version | grep Ubuntu",obverb,oblog)) return deb;
+        if (!systemrueck("cat /proc/version | grep SUSE",obverb-1,oblog)) return sus;
+        if (!systemrueck("cat /proc/version | grep Ubuntu",obverb-1,oblog)) return deb;
       }
       return usys;
     }
@@ -1324,6 +1335,12 @@ zielmustercl::zielmustercl(const char * const vmuster,const char * const vziel):
 {
  kompilier();
 };  // zielmustercl
+
+zielmustercl::zielmustercl(const char * const vmuster,const string& vziel):muster(vmuster),ziel(vziel)
+{
+ kompilier();
+};  // zielmustercl
+
 
 zielmustercl::zielmustercl() {
 }
@@ -1478,7 +1495,7 @@ int servc::restart(int obverb,int oblog)
     systemrueck(string("sudo systemctl restart '")+sname+"' >/dev/null 2>&1",obverb,oblog);
     if (obslaeuft(obverb,oblog)) break;
     if (i) break;
-    systemrueck(("sudo killall ")+ename+" >/dev/null 2>&1",obverb,oblog);
+    systemrueck(("sudo killall ")+ename+" >/dev/null 2>&1",obverb-1,oblog);
   }
   return servicelaeuft;
 } // int servc::restart(int obverb,int oblog)
@@ -1740,14 +1757,16 @@ void paramcl::lgnzuw()
 
 
 // wird aufgerufen in: main
-void paramcl::logvorgaben()
+void paramcl::logvorgaben(const string& vprog)
 {
 #ifdef _WIN32
   logvz = "C:\\Dokumente und Einstellungen\\All Users\\Anwendungsdaten";
 #elif linux
   logvz = "/var/log";
 #endif
-  logdname = "autofax.log";
+  prog=base_name(vprog); // autofax
+  instverz=string(getenv("HOME"))+'/'+prog;
+  logdname = prog+".log";
   loggespfad = logvz+vtz+logdname;
   logdt=&loggespfad.front();
 } // void paramcl::logvorgaben
@@ -1762,20 +1781,20 @@ void paramcl::getcommandl0()
   for(unsigned iru=0;iru<3;iru++) {
     switch (iru) {
       case 0:
-        opts.push_back(optioncl("lg","language", &Tx,T_sprachstr,psons,&langu));
-        opts.push_back(optioncl("langu","sprache", &Tx,-1,psons,&langu));
-        opts.push_back(optioncl("lang","lingue", &Tx,-1,psons,&langu));
+        opts.push_back(optioncl("lg","language", &Tx,T_sprachstr,&langu,psons));
+        opts.push_back(optioncl("langu","sprache", &Tx,-1,&langu,psons));
+        opts.push_back(optioncl("lang","lingue", &Tx,-1,&langu,psons));
         break;
       case 1:
         opts.push_back(optioncl("v","verbose", &Tx, T_Bildschirmausgabe_gespraechiger,&plusverb,1));
         loggespfad = logvz+vtz+logdname;
         opts.push_back(optioncl("l","log",&Tx, T_protokolliert_ausfuehrlich_in_Datei, &loggespfad, T_sonst_knapper, &oblog,1));
-        opts.push_back(optioncl("lvz","logvz", &Tx, T_waehlt_als_Logverzeichnis_pfad_derzeit, pverz,&logvz));
+        opts.push_back(optioncl("lvz","logvz", &Tx, T_waehlt_als_Logverzeichnis_pfad_derzeit,&logvz, pverz));
         opts.push_back(optioncl("ld","logdname", &Tx, T_logdatei_string_im_Pfad, &logvz, T_wird_verwendet_anstatt, &logdname, psons));
         opts.push_back(optioncl("ldn","logdateineu", &Tx, T_logdatei_vorher_loeschen, &logdateineu, 1));
         break;
       case 2:
-        opts.push_back(optioncl("kd","konfdat", &Tx, T_verwendet_Kofigurationsdatei_string_anstatt,pfile,&konfdatname));
+        opts.push_back(optioncl("kd","konfdat", &Tx, T_verwendet_Kofigurationsdatei_string_anstatt,&konfdatname,pfile));
         break;
     }
     for(;optslsz<opts.size();optslsz++) {
@@ -1988,14 +2007,14 @@ void paramcl::VorgbAllg()
    cfaxcp->Abschn_auswert(obverb);
   if (capiconf[0].wert.empty()) {
     spoolcapivz="/var/spool/capisuite";
-    cfaxuservz=spoolcapivz+"/users";
-  // <<violett<<"cfaxuservz 2: "<<cfaxuservz<<schwarz<<endl;
   }  else {           
   //  if (cpplies(cfaxconfdat,capiconf,ccs,&rest)) KLA
     spoolcapivz=capiconf[0].wert;
     cfaxuservz=capiconf[1].wert;
-  // <<violett<<"cfaxuservz 3: "<<cfaxuservz<<schwarz<<endl;
   }
+  if (cfaxuservz.empty()) 
+    cfaxuservz=spoolcapivz+"/users";
+  // <<rot<<"cfaxuservz in Vorgallg: "<<cfaxuservz<<schwarz<<endl;
   cdonevz = mitvtz(spoolcapivz)+"done";
   cfailedvz = mitvtz(spoolcapivz)+"failed";
 
@@ -2044,12 +2063,14 @@ void paramcl::VorgbAllg()
 // wird aufgerufen in: konfcapi, VorgbAllg
 void paramcl::pruefcvz()
 {
+  // <<rot<<"cfaxuservz in pruefcvz: "<<cfaxuservz<<schwarz<<endl;
+  Log(violetts+Tx[T_pruefcvz]+schwarz+"ccfaxuservz: "+violett+cfaxuservz+schwarz,obverb,oblog);
   kuerzevtz(&cfaxuservz);
   cfaxusersqvz=cfaxuservz+vtz+cuser+"/sendq"; //  "/var/spool/capisuite/users/<user>/sendq";
+  pruefverz(cfaxusersqvz,obverb,oblog,1);
   cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
   // <<violett<<"cfaxuserrcvz: "<<cfaxuserrcvz<<schwarz<<endl;
-  pruefverz(cfaxusersqvz,obverb,oblog,0);
-  pruefverz(cfaxuserrcvz,obverb,oblog,0);
+  pruefverz(cfaxuserrcvz,obverb,oblog,1);
 } // paramcl::pruefcvz
 
 // wird aufgerufen in: main
@@ -2145,7 +2166,7 @@ void paramcl::lieskonfein()
 
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&zmz); else rzf=1; lfd++;
     if (!zmvzn || !zmvp) {
-      zmvp= new zielmustercl{"","/var/autofax/ziel"};
+      zmvp= new zielmustercl{"","/var/"+prog+"/ziel"};
       zmvzn=1;
     }
     zmvz=ltoan(zmvzn); // aus VorgbSpeziell
@@ -2193,33 +2214,35 @@ int paramcl::getcommandline()
 {
   Log(violetts+"getcommandline()"+schwarz,obverb,oblog);
   //  uchar plusverb=0;
-  opts.push_back(optioncl("zvz","zufaxenvz", &Tx, T_faxt_die_Dateien_aus_pfad_anstatt,pverz,&zufaxenvz));
-  opts.push_back(optioncl("wvz","wartevz", &Tx, T_Dateien_warten_in_pfad_anstatt,pverz,&wvz));
-  opts.push_back(optioncl("evz","empfvz", &Tx, T_Empfangsverzeichnis_fuer_Faxempfang,pverz,&empfvz));
-  opts.push_back(optioncl("cm","cronminut", &Tx, T_Alle_wieviel_Minuten_soll_Autofax_aufgerufen_werden_0_ist_gar_nicht, pzahl, &cronminut));
+  opts.push_back(optioncl("zvz","zufaxenvz", &Tx, T_faxt_die_Dateien_aus_pfad_anstatt,&zufaxenvz,pverz));
+  opts.push_back(optioncl("wvz","wartevz", &Tx, T_Dateien_warten_in_pfad_anstatt,&wvz,pverz));
+  opts.push_back(optioncl("evz","empfvz", &Tx, T_Empfangsverzeichnis_fuer_Faxempfang,&empfvz,pverz));
+  opts.push_back(optioncl("cm","cronminut", &Tx,T_Alle_wieviel_Minuten_soll,&prog,T_aufgerufen_werden_0_ist_gar_nicht, &cronminut, pzahl));
   // <<"getcommandline 1 vor  obcapi: "<<(int)obcapi<<endl;
+  opts.push_back(optioncl("capi","capisuite", &Tx, T_Capisuite_verwenden ,&obcapi,1));
   opts.push_back(optioncl("kc","keincapi", &Tx, T_Capisuite_nicht_verwenden,&obcapi,0));
   // <<"getcommandline 1 nach obcapi: "<<(int)obcapi<<endl;
+  opts.push_back(optioncl("hyla","hylafax", &Tx, T_hylafax_verwenden,&obhyla,1));
   opts.push_back(optioncl("kh","keinhyla", &Tx, T_hylafax_nicht_verwenden,&obhyla,0));
   opts.push_back(optioncl("cz","capizuerst", &Tx, T_versuche_faxe_zuerst_ueber_Capisuite_wegzuschicken,&hylazuerst,0));
   opts.push_back(optioncl("hz","hylazuerst", &Tx, T_versuche_faxe_zuerst_ueber_hylafax_wegzuschicken,&hylazuerst,1));
   //  opts.push_back(optioncl("hms","hylamodemstring",&Tx, T_sucht_nach_dev_tty_string_als_Modem_mit_string_anstatt,&hmodemstr,psons));
-  opts.push_back(optioncl("mod","modem",&Tx, T_Fuer_Hylafax_verwendetes_Modem,psons,&hmodem));
-  opts.push_back(optioncl("mc","maxcapiv",&Tx, T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht,pzahl,&maxcapiv));
-  opts.push_back(optioncl("mh","maxhylav",&Tx, T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet,pzahl,&maxhylav));
-  opts.push_back(optioncl("ckzl","capiklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,pzahl,&cklingelzahl));
-  opts.push_back(optioncl("cuser","cuser",&Tx, T_verwendet_fuer_Capisuite_den_Linux_Benutzer_string_anstatt,psons,&cuser));
-  opts.push_back(optioncl("hkzl","hylaklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,pzahl,&hklingelzahl));
+  opts.push_back(optioncl("mod","modem",&Tx, T_Fuer_Hylafax_verwendetes_Modem,&hmodem,psons));
+  opts.push_back(optioncl("mc","maxcapiv",&Tx, T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht,&maxcapiv,pzahl));
+  opts.push_back(optioncl("mh","maxhylav",&Tx, T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet,&maxhylav,pzahl));
+  opts.push_back(optioncl("ckzl","capiklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,&cklingelzahl,pzahl));
+  opts.push_back(optioncl("cuser","cuser",&Tx, T_verwendet_fuer_Capisuite_den_Linux_Benutzer_string_anstatt,&cuser,psons));
+  opts.push_back(optioncl("hkzl","hylaklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,&hklingelzahl,pzahl));
   opts.push_back(optioncl("gz","gleichziel", &Tx, T_FAxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,&gleichziel,1));
-  opts.push_back(optioncl("afs","anfaxstring",&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,psons,&anfaxstr));
-  opts.push_back(optioncl("acfs","ancfaxstring",&Tx, T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,psons,&ancfaxstr));
-  opts.push_back(optioncl("ahfs","anhfaxstring",&Tx, T_faxnr_fuer_primaer_hylafax_wird_hinter_string_erwartet_statt_hinter,psons,&anhfaxstr));
-  opts.push_back(optioncl("as","anstring",&Tx, T_Adressatenname_wird_hinter_string_erwartet_statt_hinter,psons,&anstr));
-  opts.push_back(optioncl("us","undstring",&Tx, T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt,psons,&undstr));
-  opts.push_back(optioncl("host","host",&Tx, T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf,psons,&host));
-  opts.push_back(optioncl("muser","muser",&Tx, T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt,psons,&muser));
-  opts.push_back(optioncl("mpwd","mpwd",&Tx, T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string_anstatt,psons,&mpwd));
-  opts.push_back(optioncl("db","db",&Tx, T_verwendet_die_Datenbank_string_anstatt,psons,&dbq));
+  opts.push_back(optioncl("afs","anfaxstring",&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,&anfaxstr,psons));
+  opts.push_back(optioncl("acfs","ancfaxstring",&Tx, T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,&ancfaxstr,psons));
+  opts.push_back(optioncl("ahfs","anhfaxstring",&Tx, T_faxnr_fuer_primaer_hylafax_wird_hinter_string_erwartet_statt_hinter,&anhfaxstr,psons));
+  opts.push_back(optioncl("as","anstring",&Tx, T_Adressatenname_wird_hinter_string_erwartet_statt_hinter,&anstr,psons));
+  opts.push_back(optioncl("us","undstring",&Tx, T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt,&undstr,psons));
+  opts.push_back(optioncl("host","host",&Tx, T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf,&host,psons));
+  opts.push_back(optioncl("muser","muser",&Tx, T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt,&muser,psons));
+  opts.push_back(optioncl("mpwd","mpwd",&Tx, T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string_anstatt,&mpwd,psons));
+  opts.push_back(optioncl("db","db",&Tx, T_verwendet_die_Datenbank_string_anstatt,&dbq,psons));
   //  opts.push_back(optioncl("l","log", &Tx, T_protokolliert_ausfuehrlich_in_Datei+drot+loggespfad+schwarz+Tx[T_sonst_knapper],&oblog,1));
   //  opts.push_back(optioncl("lvz","logvz",&Tx, T_waehlt_als_Logverzeichnis_pfad_anstatt,&logvz,pverz));
   //  opts.push_back(optioncl("ld","logdname",&Tx, T_logdatei_string_im_Pfad+drot+logvz+schwarz+Tx[T_wird_verwendet_anstatt],&logdname,psons));
@@ -2237,16 +2260,18 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("lista","listarchiv", &Tx, T_listet_Datensaetze_aus, &touta, T_mit_Erfolgskennzeichen_auf, &lista,1));
   opts.push_back(optioncl("listf","listfailed", &Tx, T_listet_Datensaetze_aus, &touta, T_ohne_Erfolgskennzeichen_auf, &listf,1));
   opts.push_back(optioncl("listi","listinca", &Tx, T_listet_Datensaetze_aus, &tinca, T__auf, &listi,1));
-  opts.push_back(optioncl("n","dszahl", &Tx, T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,pzahl, &dszahl));
+  opts.push_back(optioncl("n","dszahl", &Tx, T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt, &dszahl,pzahl));
   opts.push_back(optioncl("h","hilfe", &Tx, T_Zeigt_diesen_Bildschirm_an, &hilfe,1));
   opts.push_back(optioncl("?","help", &Tx, -1, &hilfe,1));
-  opts.push_back(optioncl("vs","version", &Tx, T_Zeigt_die_Programmversion_an, &zeigversion,1));
+  opts.push_back(optioncl("info","version", &Tx, T_Zeigt_die_Programmversion_an, &zeigversion,1));
 
   string altlogdname(logdname);
   string altlogvz(logvz);
   string altckzl(cklingelzahl);
   string altcuser(cuser);
   string althkzl(hklingelzahl);
+  uchar altobcapi(obcapi);
+  uchar altobhyla(obhyla);
   for(;optslsz<opts.size();optslsz++) {
     for(size_t i=0;i<argcmv.size();i++) {
       if (opts[optslsz].pruefp(&argcmv,&i,&hilfe)) {
@@ -2264,10 +2289,12 @@ int paramcl::getcommandline()
   if (altckzl!=cklingelzahl || rzf) {
     setzegcp("cklingelzahl",&cklingelzahl); // zum Schreiben in die /usr/local/sbin/autofax.conf in autokonfschreib
     capizukonf=1;
+    zmzukonf=1;
   }
   if (altcuser!=cuser || rzf) {
     setzegcp("cuser",&cuser);
     capizukonf=1;
+    zmzukonf=1;
   }
   if (altlogdname!=logdname || altlogvz!=logvz) {
     if (!logdname.empty()) {
@@ -2278,6 +2305,10 @@ int paramcl::getcommandline()
   if (althkzl!=hklingelzahl || rzf) {
     setzegcp("hklingelzahl",&hklingelzahl);
     hylazukonf=1;
+    zmzukonf=1;
+  }
+  if (altobcapi!=obcapi || altobhyla!=obhyla) {
+   zmzukonf=1;
   }
 
   lgnzuw();
@@ -2451,7 +2482,7 @@ void paramcl::rueckfragen()
       cgconf[lfd].setze(&empfvz);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      cronminut=holzahl(Tx[T_Alle_wieviel_Minuten_soll_Autofax_aufgerufen_werden_0_ist_gar_nicht],&cronminut);
+      cronminut=holzahl(Tx[T_Alle_wieviel_Minuten_soll]+prog+Tx[T_aufgerufen_werden_0_ist_gar_nicht],&cronminut);
       cgconf[lfd].setze(&cronminut);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
@@ -2735,13 +2766,14 @@ void paramcl::cliesconf()
 // wird  aufgerufen in: pruefcapi
 void paramcl::konfcapi()
 {
-  Log(violetts+Tx[T_konfcapi]+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_konfcapi]+schwarz+"ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
   // Zahl der Klingeltoene in capisuite einstellen
 /*
   cppSchluess cconf[]={{"incoming_script"}};
   size_t cs=sizeof cconf/sizeof*cconf;
 */
-  schlArr cconf; cconf.init(1,"incoming_script");
+  static uchar obschonmal=0;
+  static schlArr cconf; if (!obschonmal) cconf.init(1,"incoming_script");
   static confdat ccapic(ccapiconfdat,&cconf,obverb);
   if (1) {
     //    if (cpplies(ccapiconfdat,cconf,cs)) KLA
@@ -2925,8 +2957,8 @@ void paramcl::konfcapi()
         }            
         rename(neudatei.c_str(),cfaxconfdat.c_str());
       } // if (iru)
-      cfaxuservz=capiconf[1].wert;
-      // <<violett<<"cfaxuservz 1: "<<cfaxuservz<<schwarz<<endl;
+      if (!capiconf[1].wert.empty()) cfaxuservz=capiconf[1].wert;
+      // <<rot<<"cfaxuservz konfcapi: "<<cfaxuservz<<schwarz<<endl;
     } // if (f.is_open())
   } // for(uchar iru=0;iru<2;iru++) 
   pruefcvz();
@@ -2934,6 +2966,7 @@ void paramcl::konfcapi()
   // dieser Abschnitt war zuvor richtcapiher
   unsigned long nextnr=0;
   struct stat entrynextnr;
+  // <<"cfaxusersqvz: "<<cfaxusersqvz<<endl;
   string ndatei=cfaxusersqvz+"/fax-nextnr";
   if (!lstat(cfaxusersqvz.c_str(),&entrynextnr)) {
     mdatei nextstr(ndatei,ios::in);
@@ -2949,6 +2982,8 @@ void paramcl::konfcapi()
       "| cut -d '-' -f3 | cut -d '.' -f1 | sort -rn | head -n1` + 1 )) > '"+ndatei+"'";
     systemrueck(cmd,obverb,oblog);
   }
+  obschonmal=1;
+  Log(violetts+"Ende "+Tx[T_konfcapi]+schwarz+"ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
 } // void paramcl::konfcapi()
 
 // wird aufgerufen in: main
@@ -2991,7 +3026,7 @@ void paramcl::pruefcron()
   if (cronda) {
     int nochkeincron = systemrueck("sudo crontab -l > /dev/null 2>&1",obverb-1,0);
     const string tmpc="meincrontab";
-    string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 ps -A | grep -q autofax || "+meinpfad();// "date >/home/schade/zeit";
+    string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 ps -A | grep -q "+instverz+" || "+meinpfad();// "date >/home/schade/zeit";
     string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
     string cbeesc=string("\\*/")+cronminut+" \\* \\* \\* \\*"+cb0; // hier vorne \\- gestrichen
 #ifdef uebersichtlich
@@ -2999,13 +3034,13 @@ void paramcl::pruefcron()
     if (!cronzuplanen) {
       if (nochkeincron) {
       } else {
-        befehl=("bash -c 'grep \"autofax\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/autofax/d'>\"")+tmpc+"\"; sudo crontab \""+tmpc+"\")";
+        befehl=("bash -c 'grep \""+prog+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+prog+"/d'>\"")+tmpc+"\"; sudo crontab \""+tmpc+"\")";
       }
     } else {
       if (nochkeincron) {
         befehl=("sudo rm -f ")+tmpc+";";
       } else {
-        befehl = ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/autofax/d'>\""+tmpc+"\";";
+        befehl = ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+prog+"/d'>\""+tmpc+"\";";
       }
       befehl+=("echo \"")+cbef+"\">>\""+tmpc+"\"; sudo crontab \""+tmpc+"\"";
       if (!nochkeincron)
@@ -3014,10 +3049,10 @@ void paramcl::pruefcron()
 #else
     string befehl=cronzuplanen?
       (nochkeincron?("sudo rm -f ")+tmpc+";":
-       ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/autofax/d'>\""+tmpc+"\"; ")+
+       ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+prog+"/d'>\""+tmpc+"\"; ")+
       "echo \""+cbef+"\">>\""+tmpc+"\"; sudo crontab \""+tmpc+"\""+(nochkeincron?"":")")
       :
-      (nochkeincron?"":("bash -c 'grep \"autofax\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/autofax/d'>\"")+tmpc+"\";"
+      (nochkeincron?"":("bash -c 'grep \""+prog+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+prog+"/d'>\"")+tmpc+"\";"
        "sudo crontab \""+tmpc+"\")")
       ;
 #endif      
@@ -3114,10 +3149,10 @@ void paramcl::pruefsamba()
       if (sapp.is_open()) {
        if (k<4) {
          sapp<<"["<<VSambaName[k]<<"]"<<endl;
-         sapp<<"  comment = autofax "<<VSambaName[k]<<endl;
+         sapp<<"  comment = "+prog+" "<<VSambaName[k]<<endl;
        } else {
          sapp<<"["<<Tx[T_Gefaxt]<<"_"<<(k-4)<<"]"<<endl;
-         sapp<<"  comment = autofax "<<Tx[T_Gefaxt]<<"_"<<(k-4)<<endl;
+         sapp<<"  comment = "+prog+" "<<Tx[T_Gefaxt]<<"_"<<(k-4)<<endl;
        }
        sapp<<"  path = "<<*vzn[k]<<endl;
        sapp<<"  directory mask = 0660"<<endl;
@@ -3569,7 +3604,7 @@ void paramcl::DateienHerricht()
           if (ndname!=npdfd.at(i)) {
             dorename(npdfd.at(i),ndname,&vfehler,obverb,oblog);
             if (vfehler) {
-              cerr<<rot<<Tx[T_autofaxabgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
+              cerr<<rot<<prog<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
                 blau<<npdfd.at(i)<<schwarz<<" ->\n"<<
                 blau<<ndname<<schwarz<<endl;
               exit(1);
@@ -3586,7 +3621,7 @@ void paramcl::DateienHerricht()
             //          prios.push_back(iprio);
             fxv.push_back(fxfcl(wartedatei,zupdf,iprio));
           } else {
-            cerr<<rot<<Tx[T_autofaxabgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
+            cerr<<rot<<prog<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
               blau<<npdfd.at(i)<<schwarz<<" ->\n"<<
               blau<<wvz<<schwarz<<endl;
             exit(1);
@@ -3676,7 +3711,7 @@ void paramcl::DateienHerricht()
           if (ndname!=spdfd.at(i)) {
             dorename(spdfd.at(i),ndname,&vfehler,obverb,oblog);
             if (vfehler) {
-              cerr<<rot<<Tx[T_autofaxabgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
+              cerr<<rot<<prog<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
                 blau<<spdfd.at(i)<<schwarz<<" ->\n"<<
                 blau<<ndname<<schwarz<<endl;
               exit(1);
@@ -3698,7 +3733,7 @@ void paramcl::DateienHerricht()
               }
             } // if (!vorhanden)
           } else {
-            cerr<<rot<<Tx[T_autofaxabgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
+            cerr<<rot<<prog<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
               blau<<spdfd.at(i)<<schwarz<<" ->\n"<<
               blau<<wvz<<schwarz<<endl;
             exit(1);
@@ -4661,7 +4696,7 @@ void paramcl::hconfigtty()
     struct tm *tm=localtime(&tim);
     char buf[80];
     strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", tm);
-    hci<<"# Konfiguration von hylafax durch autofax vom "<<buf<<endl;
+    hci<<"# Konfiguration von hylafax durch "+prog+" vom "<<buf<<endl;
     hci<<"CountryCode:    "<<this->countrycode<<endl;
     hci<<"AreaCode:   "<<this->citycode<<endl;
     hci<<"FAXNumber:    \""<<this->countrycode<<"."<<this->citycode<<"."<<this->msn<<"\""<<endl;
@@ -4738,6 +4773,21 @@ void paramcl::hconfigtty()
   }
 } // void hconfigtty(paramcl *pmp,int obverb=0, int oblog=0)
 
+int paramcl::cservice()
+{
+  Log(violetts+"cservice()"+schwarz,this->obverb,this->oblog);
+  int csfehler=0;
+  string cspfad;
+  svec rueck;
+  systemrueck("which capisuite",obverb,oblog,&rueck);
+  if (rueck.size()) cspfad=rueck[0];
+  struct tm tm;
+  memset(&tm, 0, sizeof(struct tm));
+  char buf[80];
+  strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", &tm);
+  csfehler+=!scapisuite->spruef("Capisuite-Dienst, eingerichtet von "+prog+" am "+buf,0,cspfad+" -d","","","",obverb,oblog);
+  return csfehler;
+}
 
 // wird aufgerufen in: pruefhyla
 // Dienste erstellen
@@ -5048,9 +5098,9 @@ int paramcl::pruefhyla()
         }
         if (!systemrueck(string("sudo systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname+" 2>/dev/null",
              obverb,oblog)) {
-          systemrueck("sudo systemctl stop hylafax 2>/dev/null",obverb-1,oblog);
-          systemrueck("sudo systemctl disable hylafax 2>/dev/null",obverb-1,oblog);
-          systemrueck(string("sudo killall ")+sfaxgetty->ename+" "+shfaxd->ename+" "+sfaxq->ename+" 2>/dev/null",obverb-1,oblog);
+          systemrueck("sudo systemctl stop hylafax 2>/dev/null",obverb-2,oblog);
+          systemrueck("sudo systemctl disable hylafax 2>/dev/null",obverb-2,oblog);
+          systemrueck(string("sudo killall ")+sfaxgetty->ename+" "+shfaxd->ename+" "+sfaxq->ename+" 2>/dev/null",obverb-2,oblog);
         } // if (!systemrueck(string("sudo systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
         if (!systemrueck(string("sudo systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) {
           systemrueck(string("sudo systemctl enable ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog);
@@ -5250,38 +5300,85 @@ int paramcl::pruefcapi()
         }
         systemrueck("sudo modprobe capi",obverb,oblog);
         systemrueck("sudo modprobe capidrv",obverb,oblog);
-      }
+      } // if (!fcpcida || !capida || !capidrvda) 
       pruefrules(obverb,oblog);
       pruefblack(obverb,oblog);
       capischonerfolgreichinstalliert=!linst.obfehlt("capisuite capi4linux i4l-isdnlog");
+      // <<rot<<"capischonerfolgreichinstalliert: "<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
       if (!capischonerfolgreichinstalliert) {
         Log(string(Tx[T_Konnte])+blau+"capisuite"+schwarz+Tx[T_nichtstarten],1,oblog);
         // if (systemrueck("which zypper",-1,-1)) KLA
-//        if (linst.checkinst(-1,-1)!=zyp) KLA
-         if (pruefipr()!=zypper) {
-          Log(rots+Tx[T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht],1,1);
-          this->obcapi=0;
-          return 1;
-        }
-        systemrueck("zypper lr | grep 'kkeil factory development project' || "
-            "sudo zypper ar -f http://download.opensuse.org/repositories/home:/kkeil:/Factory/openSUSE_Factory/home:kkeil:Factory.repo",
-            1,1);
-        // i4l-isdnlog scheint nicht wirklich noetig zu sein
-        //        capischonerfolgreichinstalliert=!systemrueck("zypper -n --gpg-auto-import-keys in capisuite capi4linux i4l-isdnlog", 1+obverb,oblog); 
-        // i4l-base geloescht
-        capischonerfolgreichinstalliert=!linst.doinst("capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
+        //        if (linst.checkinst(-1,-1)!=zyp) KLA
+        /*
+           if (pruefipr()!=zypper) {
+           Log(rots+Tx[T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht],1,1);
+           this->obcapi=0;
+           return 1;
+           }
+         */
+        linst.doggfinst("capiutils",obverb+1,oblog);
+        linst.doggfinst("sfftobmp",obverb+1,oblog);
+        linst.doggfinst("libcapi20-2",obverb+1,oblog);
+        linst.doggfinst("libcapi20-3",obverb+1,oblog);
+        linst.doggfinst("python-devel",obverb+1,oblog);
+        linst.doggfinst("xsltproc",obverb+1,oblog);
+        if (lsys.getsys(obverb,oblog)==sus) {
+          linst.doggfinst("capi4linux i4l-isdnlog",obverb+1,oblog);
+          systemrueck("zypper lr | grep 'kkeil factory development project' || "
+              "sudo zypper ar -f http://download.opensuse.org/repositories/home:/kkeil:/Factory/openSUSE_Factory/home:kkeil:Factory.repo",
+              1,1);
+          // i4l-isdnlog scheint nicht wirklich noetig zu sein
+          //        capischonerfolgreichinstalliert=!systemrueck("zypper -n --gpg-auto-import-keys in capisuite capi4linux i4l-isdnlog", 1+obverb,oblog); 
+          // i4l-base geloescht
+          capischonerfolgreichinstalliert=!linst.doinst("capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
+        } // if (lsys.getsys(obverb,oblog)==sus) 
+        if (!capischonerfolgreichinstalliert) {
+          pruefverz(instverz,obverb,oblog);
+          svec csrueck;
+          systemrueck("find "+instverz+" -mtime -1 -name capisuite.tar.gz",obverb,oblog,&csrueck);
+          if (!csrueck.size()) {
+            systemrueck("sh -c 'cd "+instverz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
+                        obverb,oblog);
+          }
+          csrueck.clear();
+          systemrueck("find /usr/lib/python* -type f -name Makefile -printf '%h\\n'",obverb,oblog,&csrueck);
+          if (csrueck.size()) {
+            systemrueck("sh -c 'cd "+instverz+"; tar xpvf capisuite.tar.gz && rm -rf capisuite && mv capisuite-master capisuite && cd capisuite"
+                " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
+                " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc"
+                " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
+                " && make"
+                " && sudo make install"
+                "'",obverb,oblog);
+            pruefverz("/etc/capisuite",obverb,oblog,wahr);
+            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
+            systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instverz+"/capisuite/scripts/fax.conf /etc/capisuite");
+            pruefverz("/usr/local/var/log",obverb,oblog,wahr);
+            //         pruefverz("/usr/local/var/log");
+            cservice();
+            capischonerfolgreichinstalliert=1;
+          }
+          // aktuelles Verzeichnis
+        } // if (!capischonerfolgreichinstalliert) 
         // capisuite unter Kernel 4: 
-        // git clone https://github.com/larsimmisch/capisuite.git
-        // cd capisuite
         // zypper in sfftobmp libcapi20-2
         //        // scp linux2:/usr/include/capiutils.h /usr/include
         //        // scp linux2:/usr/include/capicmd.h /usr/include
         // zypper in libcapi20-3 python-devel capi4linux capi4linux-devel
-        // in ubuntu: sfftobmp, (libcapi20-3)?, libcapi20-dev, python-dev
-        //            in ./configure: nach Zeile:
-        // python_configdir="${python_libdir}/config"
-        //   Zeile einfuegen:
-        // python_configdir="${python_libdir}/config"
+        // in ubuntu: sfftobmp, (libcapi20-3)?, libcapi20-dev, python-dev, xsltproc
+
+        // git clone https://github.com/larsimmisch/capisuite.git
+        // wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz
+        // tar xpvf capisuite.tar.gz
+        // mv capisuite-master capisuite
+        // cd capisuite
+        // sed -i.bak 's/python_configdir=.*/python_configdir=`find \/usr\/lib\/python* -type f -name Makefile -printf "%h\\\\n"`/' configure
+        // in ubuntu: ./configure HAVE_NEW_CAPI4LINUX 0
+        //            make
+        //            sudo make install
+        // sudo cp -ai /home/schade/autofax/capisuite/src/capisuite.conf /etc/capisuite/
+        // sudo cp -ai /home/schade/autofax/capisuite/scripts/fax.conf /etc/capisuite/
+        // sudo chmod 777 /usr/local/var/log
         // ln -s /usr/lib64/libcapi20.so.3.0.6 libcapi20.so
         // in ./src/application/pythonscript.cpp Zeile 104: (Py_ssize_t*)&length statt &length
         // in /usr/include/capiutils.h eine dritte Zeile einfuegen: #define CAPI_LIBRARY_V2
@@ -5289,7 +5386,7 @@ int paramcl::pruefcapi()
 
       }
       systemrueck("sudo systemctl daemon-reload",obverb,oblog);
-    }
+    } // if (!capischonerfolgreichinstalliert) 
     if (!capizukonf) cliesconf();
     if (obcapi && (versuch>0 || this->capizukonf)) {
       this->konfcapi();
@@ -5390,7 +5487,8 @@ void faxemitC(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obv
     } else if (!entryff.st_size) {
       Log(rots+Tx[T_faxemitCFehler]+schwarz+Tx[T_Faxdatei]+blau+ff+rot+ Tx[T_hat0Bytes]+schwarz,1,1);
     } else {
-      string cmd=string("capisuitefax -n -u ")+pmp->cuser+" -d "+fsfp->telnr+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
+      // capisuitefax mit Userangabe nur fuer root erlaubt
+      string cmd=string("capisuitefax -n ")+(strcmp("root",curruser())?"":"-u"+pmp->cuser)+" -d "+fsfp->telnr+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
       vector<string> faxerg;
       systemrueck(cmd,obverb,oblog,&faxerg,wahr,wahr,Tx[T_Faxbefehl]);
       if (faxerg.size()) {
@@ -6159,7 +6257,7 @@ void zeigversion(const char* const prog)
 int main(int argc, char** argv) 
 {
   paramcl pm(argc,argv); // Programmparameter
-  pm.logvorgaben();
+  pm.logvorgaben(*argv);
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
   pm.pruefhardware();
   pm.VorgbAllg();

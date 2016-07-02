@@ -1036,10 +1036,10 @@ instprog pruefipr(int obverb,int oblog)
 {
  static instprog aktipr=keinp;
  if (aktipr==keinp) {
-   if (!systemrueck("which zypper 2>/dev/null",obverb,oblog))
+   if (!systemrueck("which zypper 2>/dev/null",obverb-1,oblog))
       // heruntergeladene Dateien behalten
      aktipr=zypper;
-   else if (!systemrueck("which apt-get 2>/dev/null",obverb,oblog))
+   else if (!systemrueck("which apt-get 2>/dev/null",obverb-1,oblog))
       // hier werden die Dateien vorgabemaessig behalten
      aktipr=apt;
    else
@@ -1545,7 +1545,7 @@ int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl)
         svec gstat;
         systemrueck("getfacl -e -t "+verz+" 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*rwx' || true",obverb,oblog,&gstat);
         if (!gstat.size() && cuser!="root") {
-          systemrueck(string("sudo setfacl -m 'u:")+cuser+":7' '"+verz+"'",obverb,oblog);
+          systemrueck(string("sudo setfacl -Rm 'u:")+cuser+":7' '"+verz+"'",obverb,oblog);
         }
       } //   if (obsetfacl)
     } // obmitfacl
@@ -1670,6 +1670,10 @@ string holzahl(const char *frage, const char *vorgabe)
 string holzahl(const char *frage, string *vorgabe) 
 {
   return holzahl(frage,(vorgabe?vorgabe->c_str():0)); 
+}
+string holzahl(const string& frage, string *vorgabe)
+{
+ return holzahl(frage.c_str(),(vorgabe?vorgabe->c_str():0));
 }
 
 char* holcstring(const char *frage, char* buf, unsigned long buflen, const char* vorgabe) 
@@ -1875,6 +1879,8 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="tiff") return "libtiff-tools";
       if (prog=="imagemagick") return "imagemagick imagemagick-doc";
       if (prog=="libreoffice-base") return "libreoffice-common libreoffice-base";
+      if (prog=="libcapi20-2") return "libcapi20-dev";
+      if (prog=="python-devel") return "python-dev";
     default: break;
   }
   return prog;
@@ -1899,6 +1905,15 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fall
   }
   return 2;
 } // uchar linstcl::doinst(const string& prog,int obverb,int oblog) 
+
+uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
+{
+ if (obfehlt(prog,obverb,oblog))
+ {
+  return doinst(prog,obverb,oblog);
+ }
+ return 0;
+}
 
 uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
 {
@@ -1925,9 +1940,9 @@ uchar linstcl::obfehlt(const string& prog,int obverb,int oblog)
 {
   switch (pruefipr()) {
     case zypper:
-      return systemrueck(string("rpm -q ")+prog,obverb-1,oblog);
+      return systemrueck(string("rpm -q ")+prog+" 2>/dev/null",obverb-1,oblog);
     case apt:
-      return systemrueck(string("dpkg -s ")+ersetzeprog(prog),obverb-1,oblog);
+      return systemrueck(string("dpkg -s ")+ersetzeprog(prog)+" 2>/dev/null",obverb-1,oblog);
     default: break;
   }
   return 2;

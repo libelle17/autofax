@@ -128,6 +128,8 @@ endif
 
 $(INSTEXEC): $(EXEC)
 	@echo -e "Kopiere Programmdatei: ""\033[0;34m"$(EXEC)"\033[0;30m" "->" "\033[0;34m"$(INSTEXEC)"\033[0;30m"
+	-@sudo killall $(EXEC) 2>/dev/null
+	-@sudo killall -9 $(EXEC) 2>/dev/null
 	sudo cp -p "$(EXEC)" "$(INSTEXEC)"
 
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
