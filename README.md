@@ -132,8 +132,9 @@ Preconditions see below</p>
 <p style="margin-left:11%; margin-top: 1em">Ideally, the
 program should have installed itsself after a single call
 (see above) in a self-running way (especially on
-openSUSE-Leap 42.1 or Ubuntu 16.040, possibly on others;
-systemctl (systemd) should run). <br>
+openSUSE-Leap 42.1 or Ubuntu 16.040 (only with a modem via
+hylafax), possibly on others; systemctl (systemd) should
+run). <br>
 Then a directory e.g. &rsquo;<b>zufaxen</b>&rsquo; exists,
 in which e.g. users in a network (e.g. via a samba share)
 can deposit files to be faxed, e.g. <br>

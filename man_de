@@ -76,7 +76,7 @@ autofax
 Voraussetzungen s.u.
 .br
 .SH GEBRAUCH
-Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft (insbesondere auf openSUSE-Leap 42.1 oder Ubuntu 16.04, evtl. auch andere; es sollte systemctl (systemd) laufen).
+Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft (insbesondere auf openSUSE-Leap 42.1 oder Ubuntu 16.04 (nur mit Modem über hylafax), evtl. auch andere; es sollte systemctl (systemd) laufen).
 .br
 Es existiert dann ein Verzeichnis z.B. '\fBzufaxen\fR', in das z.B. Benutzer im Netzwerk (z.B. über eine Samba-Freigabe) zu faxende Dateien stellen können wie z.B. 
 .br
