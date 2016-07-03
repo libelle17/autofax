@@ -1302,8 +1302,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 
 
 const string& pk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax";
-const string& ccapiconfdat="/etc/capisuite/capisuite.conf";
-const string& cfaxconfdat="/etc/capisuite/fax.conf";
+// const string& ccapiconfdat="/etc/capisuite/capisuite.conf";
+// const string& cfaxconfdat="/etc/capisuite/fax.conf";
 
 // Linux-System-Enum
 enum lsysen:uchar {usys,sus,deb};
@@ -1315,8 +1315,8 @@ class lsyscl
     lsysen getsys(int obverb=0,int oblog=0)
     {
       if (sys==usys) {
-        if (!systemrueck("cat /proc/version | grep SUSE",obverb-1,oblog)) return sus;
-        if (!systemrueck("cat /proc/version | grep Ubuntu",obverb-1,oblog)) return deb;
+        if (!systemrueck("cat /proc/version | grep SUSE",obverb-2,oblog)) return sus;
+        if (!systemrueck("cat /proc/version | grep Ubuntu",obverb-2,oblog)) return deb;
       }
       return usys;
     }
@@ -1985,10 +1985,7 @@ void paramcl::VorgbSpeziell()
   sqlz=sqlvz="2";
 } // void paramcl::VorgbSpeziell() 
 
-
-// wird aufgerufen in: main
-// allgemeine Vorgaben, fuer Deutschland
-void paramcl::VorgbAllg()
+void paramcl::liescapiconf()
 {
   /*
   static cppSchluess capiconf[]={{"spool_dir"},{"fax_user_dir"},{"send_tries"},{"send_delays"},{"outgoing_MSN"},
@@ -1999,16 +1996,38 @@ void paramcl::VorgbAllg()
   */
   capiconf.init(10,"spool_dir","fax_user_dir","send_tries","send_delays","outgoing_MSN",
       "dial_prefix","fax_stationID","fax_headline","fax_email_from","outgoing_timeout");
-  static string capiconfvz= dir_name(cfaxconfdat);
-  pruefverz(capiconfvz,obverb,oblog,0);
-//  confdat cfaxconf(cfaxconfdat,capiconf,ccs,obverb);
-  static confdat cfaxconf(cfaxconfdat,&capiconf,obverb);
-  cfaxcp=&cfaxconf;
-   cfaxcp->Abschn_auswert(obverb);
+  svec rueck;
+  systemrueck("find /etc/capisuite /usr/local/etc/capisuite -type f -name capisuite.conf 2>/dev/null",obverb-2,oblog,&rueck);
+  if (rueck.size()) ccapiconfdat=rueck[0];
+  rueck.clear();
+  systemrueck("find /etc/capisuite /usr/local/etc/capisuite -type f -name fax.conf 2>/dev/null",obverb-2,oblog,&rueck);
+  if (rueck.size()) cfaxconfdat=rueck[0];
+  if (!cfaxconfdat.empty()) {
+    static string capiconfvz= dir_name(cfaxconfdat);
+    pruefverz(capiconfvz,obverb,oblog,0);
+    //  confdat cfaxconf(cfaxconfdat,capiconf,ccs,obverb);
+    static confdat cfaxconf(cfaxconfdat,&capiconf,obverb);
+    cfaxcp=&cfaxconf;
+    cfaxcp->Abschn_auswert(obverb);
+    cuser="";
+    for(size_t i=cfaxconf.zn.size();i>0;) {
+      int erg;
+      char buf[250];
+      if ((erg=sscanf(cfaxconf.zn[--i].c_str(),"[%[^]]]",buf))>0) 
+        if (strcasecmp(buf,"global")) {
+          cuser=buf; // nehme den letzten besten user
+          break;
+        }
+    }
+    if (cuser.empty()) {
+      cuser=curruser();
+      hylazuerst=1;
+    }
+  }
   if (capiconf[0].wert.empty()) {
     spoolcapivz="/var/spool/capisuite";
   }  else {           
-  //  if (cpplies(cfaxconfdat,capiconf,ccs,&rest)) KLA
+    //  if (cpplies(cfaxconfdat,capiconf,ccs,&rest)) KLA
     spoolcapivz=capiconf[0].wert;
     cfaxuservz=capiconf[1].wert;
   }
@@ -2017,7 +2036,14 @@ void paramcl::VorgbAllg()
   // <<rot<<"cfaxuservz in Vorgallg: "<<cfaxuservz<<schwarz<<endl;
   cdonevz = mitvtz(spoolcapivz)+"done";
   cfailedvz = mitvtz(spoolcapivz)+"failed";
+}
 
+
+// wird aufgerufen in: main
+// allgemeine Vorgaben, fuer Deutschland
+void paramcl::VorgbAllg()
+{
+  liescapiconf();
   hylazuerst=0;
   // hmodemstr="ACM";
   maxcapiv="3";
@@ -2043,20 +2069,6 @@ void paramcl::VorgbAllg()
 #endif
   cronminut="2";
 
-  cuser="";
-  for(size_t i=cfaxconf.zn.size();i>0;) {
-    int erg;
-    char buf[250];
-    if ((erg=sscanf(cfaxconf.zn[--i].c_str(),"[%[^]]]",buf))>0) 
-      if (strcasecmp(buf,"global")) {
-        cuser=buf; // nehme den letzten besten user
-        break;
-      }
-  }
-  if (cuser.empty()) {
-  cuser=curruser();
-  hylazuerst=1;
-  }
 //  pruefcvz(); // 1.7.16 zu frueh
 } // void paramcl::VorgbAllg
 
@@ -2066,11 +2078,16 @@ void paramcl::pruefcvz()
   // <<rot<<"cfaxuservz in pruefcvz: "<<cfaxuservz<<schwarz<<endl;
   Log(violetts+Tx[T_pruefcvz]+schwarz+"ccfaxuservz: "+violett+cfaxuservz+schwarz,obverb,oblog);
   kuerzevtz(&cfaxuservz);
+  pruefverz(cfaxuservz,obverb,oblog,1);
   cfaxusersqvz=cfaxuservz+vtz+cuser+"/sendq"; //  "/var/spool/capisuite/users/<user>/sendq";
   pruefverz(cfaxusersqvz,obverb,oblog,1);
   cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
   // <<violett<<"cfaxuserrcvz: "<<cfaxuserrcvz<<schwarz<<endl;
   pruefverz(cfaxuserrcvz,obverb,oblog,1);
+  pruefverz(cfaxuservz+vtz+"/autofaxarch",obverb,oblog,1);
+  pruefverz(cfaxuservz+vtz+"/failed",obverb,oblog,1);
+  pruefverz(cfaxuservz+vtz+"/sendq",obverb,oblog,1);
+
 } // paramcl::pruefcvz
 
 // wird aufgerufen in: main
@@ -2772,15 +2789,40 @@ void paramcl::konfcapi()
   cppSchluess cconf[]={{"incoming_script"}};
   size_t cs=sizeof cconf/sizeof*cconf;
 */
-  static uchar obschonmal=0;
-  static schlArr cconf; if (!obschonmal) cconf.init(1,"incoming_script");
-  static confdat ccapic(ccapiconfdat,&cconf,obverb);
+  uchar obschonmal=0;
+  struct stat cstat;
+  static time_t lgelzeit=0; // Aenderungszeitpunkt der evtl. zuletzt eingelesenen ccapiconfdat
+  time_t aktgelzeit;
+  if (!lstat(ccapiconfdat.c_str(),&cstat)) {
+    cout<<rot<<ccapiconfdat<<" existiert!"<<schwarz<<endl;
+    aktgelzeit=cstat.st_mtime;
+    cout<<"aktgelzeit: "<<aktgelzeit<<endl;
+    cout<<"  lgelzeit: "<<lgelzeit<<endl;
+    if (aktgelzeit>lgelzeit) {
+      lgelzeit=aktgelzeit;
+    } else {
+      obschonmal=1;
+    }
+  }
+  cout<<rot<<"obschonmal: "<<(int)obschonmal<<schwarz<<endl;
+  static schlArr cconf; 
+  cout<<"cconf: "<<endl;
+  cconf.ausgeb(); 
+  if (!obschonmal || !cconf.zahl) {
+    if (!cconf.zahl) {
+      cconf.init(1,"incoming_script");
+    } else {
+      cconf.reset();
+    }
+    confdat ccapic(ccapiconfdat,&cconf,obverb);
+  }
   if (1) {
     //    if (cpplies(ccapiconfdat,cconf,cs)) KLA
     mdatei f(cconf[0].wert,ios::in); // /usr/lib64/capisuite/incoming.py
     if (f.is_open()) {
       string zeile;
       const char* suchstr="faxInfo=capisuite.connect_faxG3(call,stationID,headline,";
+      cout<<rot<<"Lese: "<<cconf[0].wert<<schwarz<<endl;
       while(getline(f,zeile)) {
         size_t nk=zeile.find(suchstr);
         if (nk!=string::npos) {
@@ -2824,6 +2866,7 @@ void paramcl::konfcapi()
   //         KLA"outgoing_MSN"KLZ,KLA"dial_prefix"KLZ,KLA"fax_stationID"KLZ,KLA"fax_headline"KLZ,KLA"fax_email_from"KLZ KLZ;
   // fax_stationID
   uchar capicffehlt=0;
+  cout<<rot<<"capiconf[6].wert: '"<<capiconf[6].wert<<"'"<<schwarz<<endl;
   if (capiconf[6].wert.find("000 0000")!=string::npos || capiconf[6].wert.empty()) {
     //    if (cfax_stationID.find("000 0000")!=string::npos) 
     //    Log(string("Capisuite ist offenbar noch nicht konfiguriert(")+blau+"fax_stationID"+schwarz+" enthaelt '000 0000').\n"
@@ -2900,6 +2943,7 @@ void paramcl::konfcapi()
         if (!cuserda) 
           if (zeile.find(suchcuser)!=string::npos) 
             cuserda=1;
+            // <rot<<"iru: "<<(int)iru<<", paramdiff: "<<(int)paramdiff<<schwarz<<endl;
         if (iru || !paramdiff) {
           size_t nkz=zeile.find('=');
           string lzeile,rzeile;
@@ -2968,6 +3012,7 @@ void paramcl::konfcapi()
   struct stat entrynextnr;
   // <<"cfaxusersqvz: "<<cfaxusersqvz<<endl;
   string ndatei=cfaxusersqvz+"/fax-nextnr";
+  cout<<ndatei<<endl;
   if (!lstat(cfaxusersqvz.c_str(),&entrynextnr)) {
     mdatei nextstr(ndatei,ios::in);
     if (nextstr.is_open()) {
@@ -2978,6 +3023,7 @@ void paramcl::konfcapi()
     }
   }
   if (!nextnr) {
+    pruefverz(cfaxuservz,obverb,oblog,2);
     cmd=string(" echo $(( `find ")+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
       "| cut -d '-' -f3 | cut -d '.' -f1 | sort -rn | head -n1` + 1 )) > '"+ndatei+"'";
     systemrueck(cmd,obverb,oblog);
@@ -4026,7 +4072,7 @@ void paramcl::zeigweitere()
           } else {
             // 31.1.16: ... und wenn diese sich nicht in outa findet ...
             string waisen = cfaxusersqvz+"/waisen";
-            pruefverz(waisen,obverb,oblog);
+            pruefverz(waisen,obverb,oblog,1);
             uint vfehler=0;
             verschiebe(rueck[i],waisen,&vfehler,1,obverb,oblog);
           } // if (inouta.num_rows) else 
@@ -4780,13 +4826,16 @@ int paramcl::cservice()
   string cspfad;
   svec rueck;
   systemrueck("which capisuite",obverb,oblog,&rueck);
-  if (rueck.size()) cspfad=rueck[0];
-  struct tm tm;
-  memset(&tm, 0, sizeof(struct tm));
-  char buf[80];
-  strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", &tm);
-  csfehler+=!scapisuite->spruef("Capisuite-Dienst, eingerichtet von "+prog+" am "+buf,0,cspfad+" -d","","","",obverb,oblog);
-  return csfehler;
+  if (rueck.size()) {
+    cspfad=rueck[0];
+    struct tm tm;
+    memset(&tm, 0, sizeof(struct tm));
+    char buf[80];
+    strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", &tm);
+    csfehler+=!scapisuite->spruef("Capisuite-Dienst, eingerichtet von "+prog+" am "+buf,0,cspfad+" -d","","","",obverb,oblog);
+    return csfehler;
+  }
+  return 1;
 }
 
 // wird aufgerufen in: pruefhyla
@@ -5331,6 +5380,7 @@ int paramcl::pruefcapi()
           //        capischonerfolgreichinstalliert=!systemrueck("zypper -n --gpg-auto-import-keys in capisuite capi4linux i4l-isdnlog", 1+obverb,oblog); 
           // i4l-base geloescht
           capischonerfolgreichinstalliert=!linst.doinst("capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
+          liescapiconf();
         } // if (lsys.getsys(obverb,oblog)==sus) 
         if (!capischonerfolgreichinstalliert) {
           pruefverz(instverz,obverb,oblog);
@@ -5343,20 +5393,23 @@ int paramcl::pruefcapi()
           csrueck.clear();
           systemrueck("find /usr/lib/python* -type f -name Makefile -printf '%h\\n'",obverb,oblog,&csrueck);
           if (csrueck.size()) {
-            systemrueck("sh -c 'cd "+instverz+"; tar xpvf capisuite.tar.gz && rm -rf capisuite && mv capisuite-master capisuite && cd capisuite"
-                " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
-                " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc"
-                " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
-                " && make"
-                " && sudo make install"
-                "'",obverb,oblog);
-            pruefverz("/etc/capisuite",obverb,oblog,wahr);
-            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
-            systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instverz+"/capisuite/scripts/fax.conf /etc/capisuite");
-            pruefverz("/usr/local/var/log",obverb,oblog,wahr);
-            //         pruefverz("/usr/local/var/log");
-            cservice();
-            capischonerfolgreichinstalliert=1;
+            if (!systemrueck("sh -c 'cd "+instverz+" && cd capisuite && { test -f Makefile && make clean;}; cd .."
+                  " ;  tar xpvf capisuite.tar.gz && rm -rf capisuite && mv capisuite-master capisuite && cd capisuite"
+                  " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
+                  " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var"
+                  " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
+                  " && make"
+                  " && sudo make install"
+                  "'",obverb,oblog)) {
+              liescapiconf();
+              //            pruefverz("/etc/capisuite",obverb,oblog,wahr);
+              //            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
+              //            systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instverz+"/capisuite/scripts/fax.conf /etc/capisuite");
+              pruefverz("/usr/local/var/log",obverb,oblog,wahr);
+              //         pruefverz("/usr/local/var/log");
+              cservice();
+              capischonerfolgreichinstalliert=1;
+            }
           }
           // aktuelles Verzeichnis
         } // if (!capischonerfolgreichinstalliert) 
@@ -5437,7 +5490,9 @@ void inDbc(DB *My, const string& spooltab, const string& spoolg, fsfcl *fsfp, ch
   Log(string(Tx[T_SpoolPfad])+rot+spooldir+schwarz+"'",obverb,oblog);
   RS zs(My);
   struct stat entryspool;
+  cout<<"in inDBc, spoolg: "<<spoolg<<endl;
   if (!lstat((spoolg.c_str()), &entryspool)) {
+  cout<<"gibts"<<endl;
     for(int runde=0;runde<2;runde++) {
       if (runde==0) { zs.Abfrage("SET NAMES 'utf8'");
       } else if (runde==1) zs.Abfrage("SET NAMES 'latin1'");
@@ -5450,6 +5505,7 @@ void inDbc(DB *My, const string& spooltab, const string& spoolg, fsfcl *fsfp, ch
       einf.push_back(instyp(My->DBS,"cdateizeit",entryspool.st_mtime));
       einf.push_back(instyp(My->DBS,"telnr",telnr));
       string bedingung=string("id=")+fsfp->id;
+      cout<<"vor update"<<endl;
       rupd.update(spooltab,einf,ZDB,bedingung);
 
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
@@ -5492,12 +5548,22 @@ void faxemitC(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obv
       vector<string> faxerg;
       systemrueck(cmd,obverb,oblog,&faxerg,wahr,wahr,Tx[T_Faxbefehl]);
       if (faxerg.size()) {
-        const char* tz1=" successful enqueued as ", // muss sprachlich so falsch bleiben wie im python-Script
+      cout<<rot<<"faxerg.size!"<<schwarz<<endl;
+      cout<<faxerg.at(0)<<endl;
+        const char* tz1="uccessful enqueued as ", // muss sprachlich so falsch bleiben wie im python-Script
               *tz2=" for ";
         if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1)) {
+        cout<<"string 1 gefunden"<<endl;
           if (char *z2=strstr(z1,tz2)) {
+        cout<<"string 2 gefunden"<<endl;
             string spoolg(z1+strlen(tz1),z2-z1-strlen(tz1));
             //            inDatenbankc(My, &spoolg, idsp, npdfp, spdfp, nachrnr, z2+strlen(tz2), obverb, oblog);
+            if (!spoolg.find("job ")) {
+             string nr=spoolg.substr(4); 
+             char buf[20];
+             sprintf(buf,"%.3lu",atol(nr.c_str()));
+             spoolg=pmp->cfaxusersqvz+vtz+"fax-"+buf+".sff";
+            }
             inDbc(My, spooltab, spoolg, fsfp, z2+strlen(tz2), obverb, oblog);
           }   // if (char *z2=strstr(z1,tz2)) 
           // if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
@@ -6251,7 +6317,7 @@ void zeigversion(const char* const prog)
   strftime(buf, sizeof(buf), "%d.%m.%Y %H:%M:%S", &tm);
   cout<<"              "<<Tx[T_Kompiliert]<<blau<<buf<<schwarz<<endl;
   cout<<Tx[T_Quelle]<<blau<<"https://github.com/libelle17/autofax"<<schwarz<<endl;
-  cout<<Tx[T_Hilfe]<<blau<<"Hilfe: '"<<braun<<"man "<<base_name(mpfad)<<blau<<"' oder '"<<braun<<"man -Lde "<<base_name(mpfad)<<schwarz<<"'"<<endl;
+  cout<<Tx[T_Hilfe]<<braun<<"man "<<base_name(mpfad)<<schwarz<<"' oder '"<<braun<<"man -Lde "<<base_name(mpfad)<<schwarz<<"'"<<endl;
 } // void zeigversion(const char* const prog)
 
 int main(int argc, char** argv) 

@@ -168,6 +168,8 @@ class paramcl // Programmparameter
     DB* My=0;
     const string touta="outa"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tinca="inca"; // MariaDB-Tabelle fuer empfangene Faxe
+    string cfaxconfdat; // /etc/capisuite/fax.conf oder /usr/local/etc/capisuite/fax.conf laut Handbuch
+    string ccapiconfdat; // /etc/capisuite/capisuite.conf oder /usr/local/etc/capisuite/capisuite.conf laut Handbuch
     // Parameter aus /etc/capisuite/fax.conf:
     string spoolcapivz; // Verzeichnis der Capi-Spool-Dateien /var/spool/capisuite/
     string cfaxuservz;    // /var/spool/capisuite/users/
@@ -267,6 +269,7 @@ class paramcl // Programmparameter
     void logvorgaben(const string& vprog);
     void getcommandl0();
     void pruefhardware();
+    void liescapiconf();
     void VorgbAllg(); // allgemeine Vorgaben
     #ifdef autofaxcpp
     void VorgbSpeziell() __attribute__((weak)); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vorgaben.cpp)

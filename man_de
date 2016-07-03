@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "02.07.16" "Version 0.40207" "Manual-Seite für autofax"
+.TH man 1 "03.07.16" "Version 0.40213" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung in einer Datenbank 
 .br

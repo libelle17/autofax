@@ -1525,7 +1525,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
   return erg; 
 } // int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck, binaer ...
 
-
+// obmitfacl: 1= setzen, falls noetig, 2= immer setzen
 int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl)
 {
   struct stat sverz;
@@ -1543,8 +1543,9 @@ int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl)
       static int obsetfacl=!systemrueck("which setfacl",obverb-1,0); 
       if (obsetfacl) {
         svec gstat;
+        if (obmitfacl==1)
         systemrueck("getfacl -e -t "+verz+" 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*rwx' || true",obverb,oblog,&gstat);
-        if (!gstat.size() && cuser!="root") {
+        if (obmitfacl>1 || !gstat.size()) {
           systemrueck(string("sudo setfacl -Rm 'u:")+cuser+":7' '"+verz+"'",obverb,oblog);
         }
       } //   if (obsetfacl)
