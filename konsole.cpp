@@ -1210,7 +1210,8 @@ confdat::confdat(const string& fname,int obverb):name(fname)
 
 confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fname)
 {
-  if (obverb>0) cout<<violett<<Txk[T_Lese_Konfiguration_aus]<<blau<<fname<<schwarz<<endl;
+  if (obverb>0) 
+    cout<<violett<<Txk[T_Lese_Konfiguration_aus]<<blau<<fname<<schwarz<<endl;
   lies(fname,obverb);
   auswert(sA,obverb,tz);
 }

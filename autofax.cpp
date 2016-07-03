@@ -2794,19 +2794,19 @@ void paramcl::konfcapi()
   static time_t lgelzeit=0; // Aenderungszeitpunkt der evtl. zuletzt eingelesenen ccapiconfdat
   time_t aktgelzeit;
   if (!lstat(ccapiconfdat.c_str(),&cstat)) {
-    cout<<rot<<ccapiconfdat<<" existiert!"<<schwarz<<endl;
+    // <<rot<<ccapiconfdat<<" existiert!"<<schwarz<<endl;
     aktgelzeit=cstat.st_mtime;
-    cout<<"aktgelzeit: "<<aktgelzeit<<endl;
-    cout<<"  lgelzeit: "<<lgelzeit<<endl;
+    // <<"aktgelzeit: "<<aktgelzeit<<endl;
+    // <<"  lgelzeit: "<<lgelzeit<<endl;
     if (aktgelzeit>lgelzeit) {
       lgelzeit=aktgelzeit;
     } else {
       obschonmal=1;
     }
   }
-  cout<<rot<<"obschonmal: "<<(int)obschonmal<<schwarz<<endl;
+  // <<rot<<"obschonmal: "<<(int)obschonmal<<schwarz<<endl;
   static schlArr cconf; 
-  cout<<"cconf: "<<endl;
+  // <<"cconf: "<<endl;
   cconf.ausgeb(); 
   if (!obschonmal || !cconf.zahl) {
     if (!cconf.zahl) {
@@ -2822,7 +2822,7 @@ void paramcl::konfcapi()
     if (f.is_open()) {
       string zeile;
       const char* suchstr="faxInfo=capisuite.connect_faxG3(call,stationID,headline,";
-      cout<<rot<<"Lese: "<<cconf[0].wert<<schwarz<<endl;
+      // <<rot<<"Lese: "<<cconf[0].wert<<schwarz<<endl;
       while(getline(f,zeile)) {
         size_t nk=zeile.find(suchstr);
         if (nk!=string::npos) {
@@ -3012,7 +3012,7 @@ void paramcl::konfcapi()
   struct stat entrynextnr;
   // <<"cfaxusersqvz: "<<cfaxusersqvz<<endl;
   string ndatei=cfaxusersqvz+"/fax-nextnr";
-  cout<<ndatei<<endl;
+  // <<ndatei<<endl;
   if (!lstat(cfaxusersqvz.c_str(),&entrynextnr)) {
     mdatei nextstr(ndatei,ios::in);
     if (nextstr.is_open()) {
@@ -5393,8 +5393,8 @@ int paramcl::pruefcapi()
           csrueck.clear();
           systemrueck("find /usr/lib/python* -type f -name Makefile -printf '%h\\n'",obverb,oblog,&csrueck);
           if (csrueck.size()) {
-            if (!systemrueck("sh -c 'cd "+instverz+" && cd capisuite && { test -f Makefile && make clean;}; cd .."
-                  " ;  tar xpvf capisuite.tar.gz && rm -rf capisuite && mv capisuite-master capisuite && cd capisuite"
+            if (!systemrueck("sh -c 'cd "+instverz+" && { cd capisuite ; test -f Makefile && make clean; cd .. ; } "
+                  " ;  tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && cd capisuite"
                   " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
                   " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var"
                   " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
@@ -5490,9 +5490,7 @@ void inDbc(DB *My, const string& spooltab, const string& spoolg, fsfcl *fsfp, ch
   Log(string(Tx[T_SpoolPfad])+rot+spooldir+schwarz+"'",obverb,oblog);
   RS zs(My);
   struct stat entryspool;
-  cout<<"in inDBc, spoolg: "<<spoolg<<endl;
   if (!lstat((spoolg.c_str()), &entryspool)) {
-  cout<<"gibts"<<endl;
     for(int runde=0;runde<2;runde++) {
       if (runde==0) { zs.Abfrage("SET NAMES 'utf8'");
       } else if (runde==1) zs.Abfrage("SET NAMES 'latin1'");
@@ -5505,7 +5503,6 @@ void inDbc(DB *My, const string& spooltab, const string& spoolg, fsfcl *fsfp, ch
       einf.push_back(instyp(My->DBS,"cdateizeit",entryspool.st_mtime));
       einf.push_back(instyp(My->DBS,"telnr",telnr));
       string bedingung=string("id=")+fsfp->id;
-      cout<<"vor update"<<endl;
       rupd.update(spooltab,einf,ZDB,bedingung);
 
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
@@ -5548,14 +5545,10 @@ void faxemitC(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obv
       vector<string> faxerg;
       systemrueck(cmd,obverb,oblog,&faxerg,wahr,wahr,Tx[T_Faxbefehl]);
       if (faxerg.size()) {
-      cout<<rot<<"faxerg.size!"<<schwarz<<endl;
-      cout<<faxerg.at(0)<<endl;
         const char* tz1="uccessful enqueued as ", // muss sprachlich so falsch bleiben wie im python-Script
               *tz2=" for ";
         if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1)) {
-        cout<<"string 1 gefunden"<<endl;
           if (char *z2=strstr(z1,tz2)) {
-        cout<<"string 2 gefunden"<<endl;
             string spoolg(z1+strlen(tz1),z2-z1-strlen(tz1));
             //            inDatenbankc(My, &spoolg, idsp, npdfp, spdfp, nachrnr, z2+strlen(tz2), obverb, oblog);
             if (!spoolg.find("job ")) {
