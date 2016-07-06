@@ -1291,7 +1291,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_Password_fuer_samba_fuer_Benutzer
   {"Password fuer samba fuer Benutzer ","Password for samba for user "},
   // T_Zeigt_die_Programmversion_an
-  {"Zeigt die Programmversion an","Shows the program version"},
+  {"Zeigt die Programmversion an","shows the program version"},
   // T_Freie_Software,
   {"Freie Software","Free Software"},
   // T_Verfasser
