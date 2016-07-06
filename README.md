@@ -1,5 +1,5 @@
 
-<h1 align="center">AUTOFAX (Version 0.40231)</h1>
+<h1 align="center">AUTOFAX (Version 0.40232)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -86,6 +86,7 @@ autofax&rsquo; oder &rsquo;man -LDe autofax&rsquo;.</p>
 [<b>&minus;listf|--listfailed</b>]
 [<b>&minus;listi|--listinca</b>]
 [<b>&minus;n|--dszahl&nbsp;</b><i>&lt;zahl&gt;</i>]
+[<b>&minus;info|--version</b>] [<b>&minus;vi|--vi</b>]
 [<b>&minus;h|-help|-?|-hilfe</b>]</p> </td></tr>
 </table>
 
@@ -295,7 +296,10 @@ against the tables &lsquo;outa&lsquo; and clean them up
 -listi, --listinlet</b>: lists entries from
 &lsquo;inca&lsquo; <b><br>
 -n, --dszahl &lt;zahl&gt;</b>: No. of listed entries =
-&lt;zahl&gt; instead of &rsquo;30&rsquo;</p>
+&lt;zahl&gt; instead of &rsquo;30&rsquo; <b><br>
+-info, --version</b> : shows the program version <b><br>
+-vi, --vi</b> : edit the configuration file <b><br>
+-h, --help</b> : shows help</p>
 
 <h2>FUNCTIONALITY
 <a name="FUNCTIONALITY"></a>

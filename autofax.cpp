@@ -2401,7 +2401,7 @@ void paramcl::rueckfragen()
   if (rzf) {
     int lfd=-1;
     char *locale = setlocale(LC_CTYPE,"");
-    if (locale) if (strchr("defi",locale[0])) langu=locale[0];
+    if (langu.empty()) if (locale) if (strchr("defi",locale[0])) langu=locale[0];
     vector<string> sprachen={"e","d","f","i"};
     if (cgconf[++lfd].wert.empty() || rzf) {
       langu=holstrings("Language/Sprache/Lingue/Lingua",&sprachen, &langu);
@@ -3076,7 +3076,7 @@ void paramcl::konfcapi()
     systemrueck(cmd,obverb,oblog);
   }
   obschonmal=1;
-  Log(violetts+"Ende "+Tx[T_konfcapi]+schwarz+"ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_Ende]+Tx[T_konfcapi]+schwarz+"ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
 } // void paramcl::konfcapi()
 
 // wird aufgerufen in: main

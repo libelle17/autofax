@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "06.07.16" "Version 0.40231" "Manual-Seite für autofax"
+.TH man 1 "06.07.16" "Version 0.40232" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung in einer Datenbank 
 .br
@@ -52,6 +52,8 @@ manpage available in english: 'man autofax' or 'man -Len autofax'.
 .OP \-listf|--listfailed
 .OP \-listi|--listinlet
 .OP \-n|--dszahl <zahl>
+.OP \-info|--version
+.OP \-vi|--vi 
 .OP \-h|-help|-?|-hilfe
 .SH KURZBESCHREIBUNG
 autofax ist ein Befehlszeilenprogramm, mit dem Dateien in einem bestimmten Verzeichnis automatisch an \fBhylafax\fR (falls ein linux-kompatibles Fax-Modem angeschlossen ist) und/oder \fBcapisuite\fR (falls eine Fritzcard 2.0 oder 2.1 angeschlossen ist) weiterleitet werden, wenn die Faxnummer im Dateinamen richtig eingetragen ist,
@@ -191,6 +193,10 @@ Mit '\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Option
 \fB-listi, --listinca\fR: listet Datensaetze aus `inca` auf
 .br
 \fB-n, --dszahl <zahl>\fR: Zahl der aufzulistenden Datensaetze = <zahl> statt '30'
+.br
+\fB-info, --version \fR: Zeigt die Programmversion an
+.br
+\fB-vi, --vi \fR: Konfigurationsdatei editieren
 .br
 \fB-h, --hilfe\fR: Zeigt Hilfe an
 .SH FUNKTIONSWEISE

@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "06.07.16" "Version 0.40231" "\fBautofax\fR man page"
+.TH man 1 "06.07.16" "Version 0.40232" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging in a database
 .br
@@ -52,6 +52,8 @@ manpage-Hilfe in deutsch verfügbar: 'man autofax' oder 'man -LDe autofax'.
 .OP \-listf|--listfailed
 .OP \-listi|--listinca
 .OP \-n|--dszahl <zahl>
+.OP \-info|--version
+.OP \-vi|--vi 
 .OP \-h|-help|-?|-hilfe
 .SH SHORT DESCRIPTION 
 autofax is a command line programme to remit files of a certain directory automatically to \fBhylafax\fR (in case a linux-compatible modem is installed) and/or \fBcapisuite\fR (in case a fritzcard 2.0 or 2.1 is installed), if the fax number is integrated in the file name correctly.
@@ -194,6 +196,11 @@ With '\fBautofax -?\fR', all command line options can be seen. Some options (e.g
 .br
 \fB-n, --dszahl <zahl>\fR: No. of listed entries = <zahl> instead of '30'
 .br
+\fB-info, --version \fR: shows the program version
+.br
+\fB-vi, --vi \fR: edit the configuration file
+.br
+\fB-h, --help \fR: shows help 
 .SH FUNCTIONALITY
 .HP 3 
 1) The current hardware is being checked.
