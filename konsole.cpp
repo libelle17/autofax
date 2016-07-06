@@ -13,7 +13,7 @@ const char *dir = "ls -l ";
 #include <iomanip> // setprecision
 // const char *rot="\e[1;31m", *weinrot="\e[31m", *schwarz="\e[0m", *blau="\e[34m", *gelb="\e[33m"; // muss spaeter kompilerunabhaengig 
 const char *schwarz="\e[0m", *dgrau="\e[1;30m", *drot="\e[0;31m", *rot="\e[1;31m", *gruen="\e[0;32m", *hgruen="\e[1;32m",
-      *braun="\e[0;33m",   *gelb="\e[1;33m",     *blau="\e[0;34m",  *hblau="\e[1;34m", *violett="\e[0;35m", *hviolett="\e[1;35m",
+      *braun="\e[0;33m",   *gelb="\e[1;33m",     *dblau="\e[0;34;1;47m",  *blau="\e[1;34m", *violett="\e[0;35m", *hviolett="\e[1;35m",
       *tuerkis="\e[0;36m", *htuerkis="\e[1;36m", *hgrau="\e[0;37m", *weiss="\e[1;37m";
 const char *_drot=drot, *_rot=rot, *_schwarz=schwarz, *_blau=blau, *_gelb=gelb, *_tuerkis=tuerkis, *_hgrau=hgrau;
 // char logdatei[PATH_MAX+1]="/DATA/down/log_termine.txt";
@@ -769,7 +769,7 @@ int Log(const string& text, short screen, short file, bool oberr, short klobverb
         loeschealleaus(&zwi,braun); 
         loeschealleaus(&zwi,gelb); 
         loeschealleaus(&zwi,blau); 
-        loeschealleaus(&zwi,hblau); 
+        loeschealleaus(&zwi,dblau); 
         loeschealleaus(&zwi,violett); 
         loeschealleaus(&zwi,hviolett); 
         loeschealleaus(&zwi,tuerkis); 

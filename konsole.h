@@ -73,7 +73,7 @@ enum Sprache {deutsch,englisch,Smax};
 extern const char *dir;
 //extern const string datei;
 // extern const char *rot, *weinrot, *schwarz, *blau, *gelb; // muss spaeter kompilerunabhaengig
-extern const char *schwarz, *dgrau, *drot, *rot, *gruen, *hgruen, *braun, *gelb, *blau, *hblau, *violett, *hviolett,
+extern const char *schwarz, *dgrau, *drot, *rot, *gruen, *hgruen, *braun, *gelb, *blau, *dblau, *violett, *hviolett,
        *tuerkis, *htuerkis, *hgrau, *weiss;
 extern const string drots, rots, schwarzs, blaus, gelbs, tuerkiss, hgraus,violetts;
 #ifdef linux

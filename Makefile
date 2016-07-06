@@ -29,7 +29,10 @@ MANPD=${MANP}/de/man1/${PROGRAM}.1.gz
 MANPE=${MANP}/man1/${PROGRAM}.1.gz
 MANPDH=$(CURDIR)/man_de.html
 MANPEH=$(CURDIR)/man_en.html
-
+blau="\e[0;34;1;47m"
+blau="\e[1;34m"
+rot="\e[1;31m"
+reset="\e[0m"
 
 alles: anzeig weiter
 
@@ -71,10 +74,10 @@ git:
 	git push
 
 anzeig:
-	@echo -e " GNU Make, Zieldatei:""\e[1;31m" $(EXEC)"\e[0m", vorher:
-	@echo -e "\e[0;34;47m" $(shell ls -l $(EXEC) 2>/dev/null) "\e[0m" 
-	@echo -e " Quelldateien:""\e[1;31m" $(SRCS)"\e[0m" 
-	@echo -e " Verwende Compiler: ""\e[1;31m" $(CCName) "\e[0m"
+	@echo -e " GNU Make, Zieldatei:"$(rot) $(EXEC)$(reset), vorher:
+	@echo -e $(blau) $(shell ls -l $(EXEC) 2>/dev/null) $(reset) 
+	@echo -e " Quelldateien:"$(rot) $(SRCS)$(reset) 
+	@echo -e " Verwende Compiler: "$(rot) $(CCName) $(reset)
 	-@$(shell rm fehler.txt 2>/dev/null)
 
 $(EXEC): $(OBJ)
@@ -127,7 +130,7 @@ endif
 endif
 
 $(INSTEXEC): $(EXEC)
-	@echo -e "Kopiere Programmdatei: ""\e[0;34;47m"$(EXEC)"\e[0m" "->" "\e[0;34;47m"$(INSTEXEC)"\e[0m"
+	@echo -e "Kopiere Programmdatei: "$(blau)$(EXEC)$(reset) "->" $(blau)$(INSTEXEC)$(reset)
 	-@sudo killall $(EXEC) 2>/dev/null; sudo killall -9 $(EXEC) 2>/dev/null; sudo cp -p "$(EXEC)" "$(INSTEXEC)"
 
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
@@ -139,7 +142,7 @@ ${MANPDH}: $(CURDIR)/man_de
 	-@{ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} || sudo zypper -n --gpg-auto-import-keys in groff || { which apt-get && sudo apt-get --assume-yes install groff groff-base;}
 	-@rm -f man_de.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_de.html
-	@echo -e "\e[0;34;47m"   man_de.html"\e[0m" neu aus"\e[0;34;47m" man_de"\e[0m" erstellt
+	@echo -e $(blau)   man_de.html$(reset) neu aus$(blau) man_de$(reset) erstellt
 endif
 
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
@@ -153,12 +156,12 @@ ${MANPEH}: $(CURDIR)/man_en
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_en.html
 	-@rm -f README.md
 	-@sed -n '20,$$p' man_en.html > README.md 
-	@echo -e "\e[0;34;47m"   man_en.html"\e[0m" und"\e[0;34;47m" README.md"\e[0m" neu aus"\e[0;34;47m" man_de"\e[0m" erstellt
+	@echo -e $(blau)   man_en.html$(reset) und$(blau) README.md$(reset) neu aus$(blau) man_de$(reset) erstellt
 endif
 
 fertig:
 	@echo -e " Fertig mit $(ICH), nachher:                                "  
-	@echo -e "\e[0;34;47m" $(shell ls -l $(EXEC)) "\e[0m" 
+	@echo -e $(blau) $(shell ls -l $(EXEC)) $(reset) 
 
 .PHONY: clean
 

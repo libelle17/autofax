@@ -1466,9 +1466,9 @@ uchar servc::spruef(const string& sbez,uchar obfork,const string& sexec, const s
              servicelaeuft=!systemrueck(("sudo killall ")+ename+" >/dev/null 2>&1; sudo systemctl restart "+sname,obverb-1,oblog); 
            */
           // bei restart return value da 
-          //          <<hblau<<"serviceda: "<<schwarz<<sname<<", servicelaeuft: "<<(int)servicelaeuft<<endl;
+          //          <<dblau<<"serviceda: "<<schwarz<<sname<<", servicelaeuft: "<<(int)servicelaeuft<<endl;
         } else {
-          //          <<hblau<<"serviceda else: "<<schwarz<<sname<<endl;
+          //          <<dblau<<"serviceda else: "<<schwarz<<sname<<endl;
           //  if (systemrueck("systemctl list-units faxq.service --no-legend | grep 'active running'",obverb-1,oblog)) KLA
           // string systemd="/usr/lib/systemd/system/"+sname+".service"; // außerhalb Opensuse: /lib/systemd/system/ ...
           Log(blaus+systemd+Tx[T_nicht_gefunden_versuche_ihn_einzurichten]+schwarz,1,0);
@@ -2225,7 +2225,7 @@ void paramcl::lieskonfein()
     afconf.auswert(&sqlconf,obverb);
     //       for(size_t akt=0;akt<sqlzn;akt++) KLA
     //        <<"akt: "<<hviolett<<akt<<schwarz<<", sqlconf["<<akt<<"]: "<<blau<<sqlconf[akt].name<<schwarz<<endl;
-    //       <<"akt: "<<violett<<akt<<schwarz<<", sqlconf["<<akt<<"]: "<<hblau<<sqlconf[akt].wert<<schwarz<<endl;
+    //       <<"akt: "<<violett<<akt<<schwarz<<", sqlconf["<<akt<<"]: "<<dblau<<sqlconf[akt].wert<<schwarz<<endl;
     //      KLZ
 
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&zmz); else rzf=1; lfd++;
@@ -3429,8 +3429,8 @@ void paramcl::bereinigewv()
                       } else {// if (runde) 
                         fdn.erase(fit); // die in der Spool-Tabelle genannten Dateien stehen lassen
                       }
-                      //                      Log(string(ltoan(entryfit.st_size))+" "+(runde==2?hblau:runde==1?blau:rot)+*fit+schwarz,1,1);
-                      Log(string(ltoan(entryfit.st_size))+" "+(runde?(**(*cerg+2)=='1'?blau:hblau):rot)+*fit+schwarz,1,1);
+                      //                      Log(string(ltoan(entryfit.st_size))+" "+(runde==2?dblau:runde==1?blau:rot)+*fit+schwarz,1,1);
+                      Log(string(ltoan(entryfit.st_size))+" "+(runde?(**(*cerg+2)=='1'?blau:dblau):rot)+*fit+schwarz,1,1);
                     } else {
                       Log(string(Tx[T_0Bytes])+violett+wvz+vtz+*fit+schwarz+"'",1,1);
                     } // if (!lstat(quel.c_str(),&entryfit)) else
@@ -4305,7 +4305,7 @@ void paramcl::empfarch()
     if (absdr.length()>70) absdr.erase(70);
     string hdatei = "Fax h"+fnr+","+Tx[T_von]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf+".tif";
     string hpfad=empfvz+vtz+hdatei;
-    Log(blaus+base+schwarz+" => "+hblau+hdatei+schwarz,1,1);
+    Log(blaus+base+schwarz+" => "+dblau+hdatei+schwarz,1,1);
     // ..., die empfangene Datei in hpfad kopieren ...
     cmd=string("sudo cp -ai \"")+rueck[i]+"\" \""+hpfad+"\"";
     systemrueck(cmd,obverb,oblog);
@@ -4392,7 +4392,7 @@ void paramcl::empfarch()
       if (getname.length()>70) getname.erase(70);
       string cdatei = "Fax c"+fnr+","+Tx[T_von]+getname+", T."+stdfaxnr(umst[1].wert)+","+Tx[T_vom]+tbuf+".tif";
       string cpfad= empfvz + vtz+cdatei; // Tx[T_Fax_von]+umst[1].wert+Tx[T_an]+umst[2].wert+Tx[T_vom]+tbuf+".tif";
-      Log(blaus+stamm+schwarz+" => "+hblau+cdatei+schwarz,1,1);
+      Log(blaus+stamm+schwarz+" => "+dblau+cdatei+schwarz,1,1);
       // ..., die empfangene Datei in hpfad kopieren ...
       if (!lstat(sffname.c_str(),&entrysff)) {
         if (entrysff.st_size) {
