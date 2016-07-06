@@ -425,7 +425,7 @@ enum T_
   T_Verzeichnis,
   T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt,
   T_zufaxenvz,
-  VorgbSpeziell_Basis,
+  T_VorgbSpeziell,
   T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben,
   T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr,
   T_faxnr_wird_ersetzt_mit_der_Faxnr,
@@ -463,6 +463,19 @@ enum T_
   T_Capisuite_verwenden,
   T_hylafax_verwenden,
   T_pruefcvz,
+  T_Konfigurationsdatei_editieren,
+  T_zufaxen,
+  T_warteauffax,
+  T_nichtgefaxt,
+  T_empfvz,
+  T_MeiEinrichtung,
+  T_Mei_FaxUeberschrift,
+  T_Capisuite_Dienst_eingerichtet_von,
+  T_am,
+  T_an_Fax,
+  T_an_cFax,
+  T_an_hFax,
+  T_und,
   T_MAX
 };
 
@@ -1216,8 +1229,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"' nicht als Sambafreigabe gefunden, wird ergaenzt.","' not found as or under a samba share, amending it."},
   // T_zufaxenvz
   {"zufaxenvz: '","outgoing dir: '"},
-  // VorgbSpeziell_Basis
-  {"VorgbSpeziell_Basis()","specificprefs_base()"},
+  // T_VorgbSpeziell
+  {"VorgbSpeziell()","specificprefs()"},
   // "Wollen Sie noch einen SQL-Befehl eingeben?"
   {"Wollen Sie noch einen SQL-Befehl eingeben?","Do You want to enter another sql command?"},
   // T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr
@@ -1297,6 +1310,32 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Hylafax verwenden","use hylafax"},
   // T_pruefcvz
   {"pruefcvz()","checkcdirs()"},
+  // T_Konfigurationsdatei_editieren
+  {"Konfigurationsdatei editieren","edit configuration file"},
+  // T_zufaxen
+  {"zufaxen","tofax"},
+  // T_warteauffax,
+  {"warteauffax","waitingfax"},
+  // T_nichtgefaxt,
+  {"nichtgefaxt","notfaxed"},
+  // T_empfvz
+  {"empfvz","recvdir"},
+  // T_MeiEinrichtung
+  {"MeiEinrichtung","MyInstitution"},
+  // T_Mei_FaxUeberschrift
+  {"Mei FaxUeberschrift","My fax headline"},
+  // T_Capisuite_Dienst_eingerichtet_von
+  {"Capisuite-Dienst, eingerichtet von ","Capisuite service, installed by "},
+  // T_am
+  {" am "," on "},
+  // T_an_Fax
+  {"an Fax","to fax"},
+  // T_an_cFax,
+  {"an cFax","to cfax"},
+  // T_an_hFax
+  {"an hFax","to hfax"},
+  // T_und
+  {"und","and"},
   {"",""}
 };
 
@@ -1972,17 +2011,25 @@ int paramcl::setzhylavz()
   return 0;
 } // int paramcl::setzhylavz()
 
-// Musterfunktion, die von einer Funktion in gesonderter Datei vorgaben.cpp ueberschrieben werden kann
+// Musterfunktion, die von einer Funktion in gesonderter,fakultativer Datei 'vorgaben.cpp' ueberschrieben werden kann
 void paramcl::VorgbSpeziell() 
 {
-  Log(violetts+Tx[VorgbSpeziell_Basis]+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_VorgbSpeziell]+schwarz,obverb,oblog);
   dbq="autofax";
   muser="user";
   citycode="8131";
   msn="999999";
-  LocalIdentifier="MeiLocId";
-  cFaxUeberschrift="Mei FaxUeberschrift";
-  sqlz=sqlvz="2";
+  LocalIdentifier=Tx[T_MeiEinrichtung];
+  cFaxUeberschrift=Tx[T_Mei_FaxUeberschrift];
+  sqlz=sqlvz="0";
+//  host="localhost"; // 'localhost' schon Vorgabe bei Definition
+  zufaxenvz="/var/"+prog+vtz+Tx[T_zufaxen];
+  wvz="/var/"+prog+vtz+Tx[T_warteauffax];
+  gvz="/var/"+prog+vtz+Tx[T_nichtgefaxt];
+  empfvz="/var/"+prog+vtz+Tx[T_empfvz];
+  static zielmustercl zmi[]={zielmustercl("[Ss]pamfax","/var/autofax/spam"),zielmustercl("","/var/autofax")}; // nur als Beispiel
+  zmvp=zmi;
+  zmvzn=sizeof zmi/sizeof *zmi;
 } // void paramcl::VorgbSpeziell() 
 
 void paramcl::liescapiconf()
@@ -2049,11 +2096,11 @@ void paramcl::VorgbAllg()
   maxcapiv="3";
   maxhylav="3";
   gleichziel=1;
-  anfaxstr="an Fax";
-  ancfaxstr="an cFax";
-  anhfaxstr="an hFax";
-  anstr=" an ";
-  undstr="und";
+  anfaxstr=Tx[T_an_Fax];
+  ancfaxstr=Tx[T_an_cFax];
+  anhfaxstr=Tx[T_an_hFax];
+  anstr=Tx[T_an];
+  undstr=Tx[T_und];
   countrycode="49";
   LongDistancePrefix="0";
   InternationalPrefix="00";
@@ -2278,9 +2325,10 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("listf","listfailed", &Tx, T_listet_Datensaetze_aus, &touta, T_ohne_Erfolgskennzeichen_auf, &listf,1));
   opts.push_back(optioncl("listi","listinca", &Tx, T_listet_Datensaetze_aus, &tinca, T__auf, &listi,1));
   opts.push_back(optioncl("n","dszahl", &Tx, T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt, &dszahl,pzahl));
+  opts.push_back(optioncl("info","version", &Tx, T_Zeigt_die_Programmversion_an, &zeigversion,1));
+  opts.push_back(optioncl("vi","vi", &Tx, T_Konfigurationsdatei_editieren, &obvi,1));
   opts.push_back(optioncl("h","hilfe", &Tx, T_Zeigt_diesen_Bildschirm_an, &hilfe,1));
   opts.push_back(optioncl("?","help", &Tx, -1, &hilfe,1));
-  opts.push_back(optioncl("info","version", &Tx, T_Zeigt_die_Programmversion_an, &zeigversion,1));
 
   string altlogdname(logdname);
   string altlogvz(logvz);
@@ -2807,7 +2855,7 @@ void paramcl::konfcapi()
   // <<rot<<"obschonmal: "<<(int)obschonmal<<schwarz<<endl;
   static schlArr cconf; 
   // <<"cconf: "<<endl;
-  cconf.ausgeb(); 
+  //  cconf.ausgeb(); 
   if (!obschonmal || !cconf.zahl) {
     if (!cconf.zahl) {
       cconf.init(1,"incoming_script");
@@ -2866,7 +2914,7 @@ void paramcl::konfcapi()
   //         KLA"outgoing_MSN"KLZ,KLA"dial_prefix"KLZ,KLA"fax_stationID"KLZ,KLA"fax_headline"KLZ,KLA"fax_email_from"KLZ KLZ;
   // fax_stationID
   uchar capicffehlt=0;
-  cout<<rot<<"capiconf[6].wert: '"<<capiconf[6].wert<<"'"<<schwarz<<endl;
+  // <<rot<<"capiconf[6].wert: '"<<capiconf[6].wert<<"'"<<schwarz<<endl;
   if (capiconf[6].wert.find("000 0000")!=string::npos || capiconf[6].wert.empty()) {
     //    if (cfax_stationID.find("000 0000")!=string::npos) 
     //    Log(string("Capisuite ist offenbar noch nicht konfiguriert(")+blau+"fax_stationID"+schwarz+" enthaelt '000 0000').\n"
@@ -2947,7 +2995,7 @@ void paramcl::konfcapi()
         if (iru || !paramdiff) {
           size_t nkz=zeile.find('=');
           string lzeile,rzeile;
-          if (nkz!=string::npos && nkz<kommpos) {
+          if (nkz<kommpos) {
             lzeile=zeile.substr(0,nkz); 
             rzeile=zeile.substr(nkz+1);
             for(unsigned snr=0;snr<capiconf.zahl;snr++) {
@@ -2955,8 +3003,7 @@ void paramcl::konfcapi()
                 // _out<<"snr: "<<snr<<", lzeile: "<<tuerkis<<lzeile<<schwarz<<", rzeile: "<<blau<<rzeile<<schwarz<<endl;
                 string altwert=rzeile;
                 gtrim(&altwert);
-                // Anfuehrungszeichen entfernen
-                anfzweg(altwert);
+                anfzweg(altwert);// Anfuehrungszeichen entfernen
                 if (snr==0 || snr==1) capiconf[snr].wert=altwert; // spool_dir und fax_user_dir hier nicht konfigurierbar
                 Log(string("capiconf[")+ltoan(snr)+"].name: "+tuerkis+capiconf[snr].name+schwarz+Tx[T_komma_wert]+
                     (capiconf[snr].wert==altwert?blau:rot)+capiconf[snr].wert+schwarz+Tx[T_komma_Altwert]+
@@ -3542,7 +3589,7 @@ void paramcl::tu_listi()
   char ***cerg;
   RS listi(My,string("SELECT * from (SELECT date_format(transe,'%d.%m.%y %H:%i:%s') p0,right(concat(space(85),left(titel,85)),85) p1,"
         "fsize p2,tsid p3,id p4 FROM `")+tinca+"` i order by transe desc limit "+dszahl+") i order by p0",ZDB);
-  cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<Tx[T_empfangene_Faxe]<<endl;
+  cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<Tx[T_empfangene_Faxe]<<schwarz<<endl;
   while (cerg=listi.HolZeile(),cerg?*cerg:0) {
     cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(85)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(17)<<*(*cerg+2)<<"|"
       <<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
@@ -3874,8 +3921,8 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
 
 // hylafax: bei zu faxenden Dateien stehen die Steuerdateien in /var/spool/fax/sendq/q105, benannt nach /var/spool/fax/etc/xferfaxlog, dort steht in der 6. Spalte die hyla-Index-Nummer z.B. 105, die als Rueckmeldung von sendfax erscheint ("request id is 105 (group id 105) for host localhost (1 file)")
 // in der 4. Spalte steht dazu die Dokumentnummer 00000133, mit der das Dokument im Spool in /var/spool/fax/docq/doc133.pdf wartet
-// hylafax-Befehl: sendfax -n -A -d  08141305952 "/DATA/Patientendokumente/warteauffax/... .pdf"
-// sendfax -n -A -d   764881 "/DATA/Patientendokumente/warteauffax/... .pdf""  ( (mit utf8)
+// hylafax-Befehl: sendfax -n -A -d  0814198765432 "/DATA/Patientendokumente/warteauffax/... .pdf"
+// sendfax -n -A -d   98765432 "/DATA/Patientendokumente/warteauffax/... .pdf""  ( (mit utf8)
 
 // Dateien in Spool-Tabelle nach inzwischen verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
 // wird aufgerufen in: main
@@ -4828,11 +4875,11 @@ int paramcl::cservice()
   systemrueck("which capisuite",obverb,oblog,&rueck);
   if (rueck.size()) {
     cspfad=rueck[0];
-    struct tm tm;
-    memset(&tm, 0, sizeof(struct tm));
     char buf[80];
-    strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", &tm);
-    csfehler+=!scapisuite->spruef("Capisuite-Dienst, eingerichtet von "+prog+" am "+buf,0,cspfad+" -d","","","",obverb,oblog);
+    time_t jetzt = time(0);
+    struct tm *tmp = localtime(&jetzt);
+    strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", tmp);
+    csfehler+=!scapisuite->spruef(Tx[T_Capisuite_Dienst_eingerichtet_von]+prog+Tx[T_am]+buf,0,cspfad+" -d","","","",obverb,oblog);
     return csfehler;
   }
   return 1;
@@ -6325,6 +6372,9 @@ int main(int argc, char** argv)
 
   if (!pm.getcommandline()) 
     exit(1);
+  if (pm.obvi) {
+   exit (systemrueck("vi "+pm.konfdatname+" >/dev/tty"));
+  }
   if (pm.zeigversion) {
    zeigversion(*argv);
    exit(0);

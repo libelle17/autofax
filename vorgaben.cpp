@@ -110,7 +110,7 @@ void paramcl::VorgbSpeziell()
   }
   // cpt in VorgbAllg festgelegt
   if (strstr(cpt,"linux")){
-    host = "localhost";
+//  host="localhost"; // 'localhost' schon Vorgabe bei Definition
     if (!strcmp(cpt,"linux2")) {
       zufaxenvz="/vista/P/zufaxen"; 
       wvz="/vista/P/warteauffax";

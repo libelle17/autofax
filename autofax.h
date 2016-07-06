@@ -129,6 +129,7 @@ class paramcl // Programmparameter
     string spooltab = "spool";
     int obverb=0; // verbose
     int oblog=0;  // mehr Protokollieren
+    uchar obvi=0;   // ob Konfigurationsdatei editiert werden soll
     uchar loef=0;   // loesche eine Fax-Datei
     uchar loew=0;  // loeschewaise in der Datenbank, aber nicht mehr real nachweisbare Dateien in der Datenbank loeschen
     uchar loea=0; // loesche alle wartenden Faxe und zugehoerige Dateieintraege
@@ -200,7 +201,7 @@ class paramcl // Programmparameter
     char cpt[MAXHOSTNAMELEN]; 
     size_t cptlen;
 #endif
-    string host;  // fuer MySQL/MariaDB
+    string host="localhost";  // fuer MySQL/MariaDB
     string logdname; // Logdatei-Name ohne Pfad
     string logvz; // nur das Verzeichnis
     string loggespfad; // Gesamtpfad, auf den dann die in konsole.h verwiesene und oben definierte Variable logdt zeigt
@@ -217,11 +218,11 @@ class paramcl // Programmparameter
     schlArr cgconf; // Gesamtkonfiguration
 //    size_t gcs; // dessen Groesse
     string sqlvz;  // Zahl der SQL-Befehle aus Vorgaben
-    size_t sqlvzn; // Zahl der SQL-Befehle aus Vorgaben numerisch
+    size_t sqlvzn=0; // Zahl der SQL-Befehle aus Vorgaben numerisch
 //    cppSchluess *sqlconfvp=0; // SQL-Pointer aus Vorgaben
     schlArr sqlconfv;
     string sqlz;  // Zahl der SQL-Befehle
-    size_t sqlzn; // Zahl der SQL-Befehle numerisch
+    size_t sqlzn=0; // Zahl der SQL-Befehle numerisch
 //    cppSchluess *sqlconfp; // SQL-Pointer
     schlArr sqlconf; // SQL-Array
 
