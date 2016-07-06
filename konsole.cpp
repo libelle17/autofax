@@ -12,7 +12,7 @@ const char *dir = "ls -l ";
 #ifdef linux
 #include <iomanip> // setprecision
 // const char *rot="\033[1;31m", *weinrot="\033[31m", *schwarz="\033[0m", *blau="\033[34m", *gelb="\033[33m"; // muss spaeter kompilerunabhaengig 
-const char *schwarz="\33[1;30m", *dgrau="\33[1;30m",    *drot="\33[0;31m",  *rot="\33[1;31m",   *gruen="\33[0;32m",   *hgruen="\33[0;32m",
+const char *schwarz="\33[1;30m"/*"\33[0;49m"*/, *dgrau="\33[1;30m", *drot="\33[0;31m", *rot="\33[1;31m", *gruen="\33[0;32m", *hgruen="\33[0;32m",
       *braun="\33[0;33m",   *gelb="\33[1;33m",     *blau="\33[0;34m",  *hblau="\33[1;34m", *violett="\33[0;35m", *hviolett="\33[1;35m",
       *tuerkis="\33[0;36m", *htuerkis="\33[1;36m", *hgrau="\33[0;37m", *weiss="\33[1;37m";
 const char *_drot=drot, *_rot=rot, *_schwarz=schwarz, *_blau=blau, *_gelb=gelb, *_tuerkis=tuerkis, *_hgrau=hgrau;
