@@ -11,10 +11,10 @@ const char *dir = "ls -l ";
 
 #ifdef linux
 #include <iomanip> // setprecision
-// const char *rot="\033[1;31m", *weinrot="\033[31m", *schwarz="\033[0m", *blau="\033[34m", *gelb="\033[33m"; // muss spaeter kompilerunabhaengig 
-const char *schwarz="\33[1;30m"/*"\33[0;49m"*/, *dgrau="\33[1;30m", *drot="\33[0;31m", *rot="\33[1;31m", *gruen="\33[0;32m", *hgruen="\33[0;32m",
-      *braun="\33[0;33m",   *gelb="\33[1;33m",     *blau="\33[0;34m",  *hblau="\33[1;34m", *violett="\33[0;35m", *hviolett="\33[1;35m",
-      *tuerkis="\33[0;36m", *htuerkis="\33[1;36m", *hgrau="\33[0;37m", *weiss="\33[1;37m";
+// const char *rot="\e[1;31m", *weinrot="\e[31m", *schwarz="\e[0m", *blau="\e[34m", *gelb="\e[33m"; // muss spaeter kompilerunabhaengig 
+const char *schwarz="\e[0m", *dgrau="\e[1;30m", *drot="\e[0;31m", *rot="\e[1;31m", *gruen="\e[0;32m", *hgruen="\e[1;32m",
+      *braun="\e[0;33m",   *gelb="\e[1;33m",     *blau="\e[0;34m",  *hblau="\e[1;34m", *violett="\e[0;35m", *hviolett="\e[1;35m",
+      *tuerkis="\e[0;36m", *htuerkis="\e[1;36m", *hgrau="\e[0;37m", *weiss="\e[1;37m";
 const char *_drot=drot, *_rot=rot, *_schwarz=schwarz, *_blau=blau, *_gelb=gelb, *_tuerkis=tuerkis, *_hgrau=hgrau;
 // char logdatei[PATH_MAX+1]="/DATA/down/log_termine.txt";
 #define _access access

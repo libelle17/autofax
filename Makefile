@@ -71,10 +71,10 @@ git:
 	git push
 
 anzeig:
-	@echo -e " GNU Make, Zieldatei:""\033[1;31m" $(EXEC)"\033[0;49m", vorher:
-	@echo -e "\033[0;34m" $(shell ls -l $(EXEC) 2>/dev/null) "\033[0;49m" 
-	@echo -e " Quelldateien:""\033[1;31m" $(SRCS)"\033[0;49m" 
-	@echo -e " Verwende Compiler: ""\033[1;31m" $(CCName) "\033[0;49m"
+	@echo -e " GNU Make, Zieldatei:""\e[1;31m" $(EXEC)"\e[0m", vorher:
+	@echo -e "\e[0;34;47m" $(shell ls -l $(EXEC) 2>/dev/null) "\e[0m" 
+	@echo -e " Quelldateien:""\e[1;31m" $(SRCS)"\e[0m" 
+	@echo -e " Verwende Compiler: ""\e[1;31m" $(CCName) "\e[0m"
 	-@$(shell rm fehler.txt 2>/dev/null)
 
 $(EXEC): $(OBJ)
@@ -127,7 +127,7 @@ endif
 endif
 
 $(INSTEXEC): $(EXEC)
-	@echo -e "Kopiere Programmdatei: ""\033[0;34m"$(EXEC)"\033[0;49m" "->" "\033[0;34m"$(INSTEXEC)"\033[0;49m"
+	@echo -e "Kopiere Programmdatei: ""\e[0;34;47m"$(EXEC)"\e[0m" "->" "\e[0;34;47m"$(INSTEXEC)"\e[0m"
 	-@sudo killall $(EXEC) 2>/dev/null; sudo killall -9 $(EXEC) 2>/dev/null; sudo cp -p "$(EXEC)" "$(INSTEXEC)"
 
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
@@ -139,7 +139,7 @@ ${MANPDH}: $(CURDIR)/man_de
 	-@{ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} || sudo zypper -n --gpg-auto-import-keys in groff || { which apt-get && sudo apt-get --assume-yes install groff groff-base;}
 	-@rm -f man_de.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_de.html
-	@echo -e "\033[0;34m"   man_de.html"\033[0;49m" neu aus"\033[0;34m" man_de"\033[0;49m" erstellt
+	@echo -e "\e[0;34;47m"   man_de.html"\e[0m" neu aus"\e[0;34;47m" man_de"\e[0m" erstellt
 endif
 
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
@@ -153,12 +153,12 @@ ${MANPEH}: $(CURDIR)/man_en
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_en.html
 	-@rm -f README.md
 	-@sed -n '20,$$p' man_en.html > README.md 
-	@echo -e "\033[0;34m"   man_en.html"\033[0;49m" und"\033[0;34m" README.md"\033[0;49m" neu aus"\033[0;34m" man_de"\033[0;49m" erstellt
+	@echo -e "\e[0;34;47m"   man_en.html"\e[0m" und"\e[0;34;47m" README.md"\e[0m" neu aus"\e[0;34;47m" man_de"\e[0m" erstellt
 endif
 
 fertig:
 	@echo -e " Fertig mit $(ICH), nachher:                                "  
-	@echo -e "\033[0;34m" $(shell ls -l $(EXEC)) "\033[0;49m" 
+	@echo -e "\e[0;34;47m" $(shell ls -l $(EXEC)) "\e[0m" 
 
 .PHONY: clean
 
