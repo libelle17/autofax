@@ -29,10 +29,10 @@ MANPD=${MANP}/de/man1/${PROGRAM}.1.gz
 MANPE=${MANP}/man1/${PROGRAM}.1.gz
 MANPDH=$(CURDIR)/man_de.html
 MANPEH=$(CURDIR)/man_en.html
-blau="\e[0;34;1;47m"
-blau="\e[1;34m"
-rot="\e[1;31m"
-reset="\e[0m"
+blau="\033[0;34;1;47m"
+blau="\033[1;34m"
+rot="\033[1;31m"
+reset="\033[0m"
 
 alles: anzeig weiter
 

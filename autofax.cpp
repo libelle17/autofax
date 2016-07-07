@@ -476,6 +476,7 @@ enum T_
   T_an_cFax,
   T_an_hFax,
   T_und,
+  T_Eingabe,
   T_MAX
 };
 
@@ -1336,6 +1337,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"an hFax","to hfax"},
   // T_und
   {"und","and"},
+  // T_Eingabe
+  {"Eingabe","Input"},
   {"",""}
 };
 
@@ -2053,6 +2056,7 @@ void paramcl::liescapiconf()
     static string capiconfvz= dir_name(cfaxconfdat);
     pruefverz(capiconfvz,obverb,oblog,0);
     //  confdat cfaxconf(cfaxconfdat,capiconf,ccs,obverb);
+    cout<<rot<<"Stelle 9"<<schwarz<<endl;
     static confdat cfaxconf(cfaxconfdat,&capiconf,obverb);
     cfaxcp=&cfaxconf;
     cfaxcp->Abschn_auswert(obverb);
@@ -2156,6 +2160,7 @@ void paramcl::lieskonfein()
     "cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl",
     "gleichziel","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","cronminut","anfaxstr","ancfaxstr","anhfaxstr",
     "anstr","undstr","host","muser","mpwd","datenbank","logvz","logdname","sqlz","musterzahl");
+    cout<<rot<<"Stelle 10"<<schwarz<<endl;
   confdat afconf(konfdatname,&cgconf,obverb); // hier werden die Daten aus der Datei eingelesen
   if (1) {
     //  if (cpplies(konfdatname,gconf,gcs)) KLA
@@ -2450,10 +2455,11 @@ void paramcl::rueckfragen()
         vector<string> benutzer;
         cmd="cat /etc/passwd | grep /home/ | cut -d':' -f 1";
         systemrueck(cmd,obverb,oblog,&benutzer);
+        if (benutzer.size()>1) for(size_t i=0;i<benutzer.size();i++) if (benutzer[i]=="syslog") {benutzer.erase(benutzer.begin()+i);break;}
         for(size_t i=0;i<benutzer.size();i++) {
           //          bliste+=benutzer[i];
           //          if (i<benutzer.size()-1) bliste+=",";
-          if (!i) if (cuser.empty()) cuser=benutzer[i]; // Vorgabe
+          if (cuser.empty()) cuser=benutzer[i]; // Vorgabe
         }
         /*
            string Frage=string("Linux-Benutzer fuer Capisuite (")+bliste+"):";
@@ -2862,9 +2868,11 @@ void paramcl::konfcapi()
     } else {
       cconf.reset();
     }
+    cout<<rot<<"Stelle 1"<<schwarz<<endl;
     confdat ccapic(ccapiconfdat,&cconf,obverb);
+    cout<<rot<<"Stelle 1a"<<schwarz<<endl;
   }
-  if (1) {
+  if (!cconf[0].wert.empty()) {
     //    if (cpplies(ccapiconfdat,cconf,cs)) KLA
     mdatei f(cconf[0].wert,ios::in); // /usr/lib64/capisuite/incoming.py
     if (f.is_open()) {
@@ -3202,6 +3210,7 @@ void paramcl::pruefsamba()
     }
 //    if (gestartet==2) smbrestart=0;
   }
+    cout<<rot<<"Stelle 2"<<schwarz<<endl;
   confdat smbcf(smbdatei,obverb);
   smbcf.Abschn_auswert(obverb);
   vector<string*> vzn;
@@ -3260,8 +3269,8 @@ void paramcl::pruefsamba()
   if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
     string pw1, pw2;
     while (1) {
-      pw1=holstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" (1)",&pw1);
-      pw2=holstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" (2)",&pw2);
+      pw1=holstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" (1."+Tx[T_Eingabe]+")",&pw1);
+      pw2=holstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" (2."+Tx[T_Eingabe]+")",&pw2);
       if (pw1==pw2) break;
     }
     systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
@@ -4368,6 +4377,7 @@ void paramcl::empfarch()
       string sffname=stamm+".sff";
       struct stat entrysff;
       uchar verschieb=0;
+    cout<<rot<<"Stelle 3"<<schwarz<<endl;
       confdat empfconf(rueck.at(i),&umst,obverb);
       //    if (cpplies(rueck.at(i),umst,cs)) KLA
       struct tm tm;
@@ -4767,6 +4777,7 @@ void paramcl::hliesconf()
 {
  schlArr hyalt; hyalt.init(7,"CountryCode","AreaCode","FAXNumber","LongDistancePrefix","InternationalPrefix","RingsBeforeAnswer","LocalIdentifier");
  setzmodconfd();
+    cout<<rot<<"Stelle 4"<<schwarz<<endl;
  confdat haltconf(modconfdat,&hyalt,obverb,':');
  if (hyalt.schl[0].wert!=countrycode || hyalt.schl[1].wert!=citycode || hyalt.schl[2].wert!=countrycode+"."+citycode+"."+msn 
      || hyalt.schl[3].wert!=LongDistancePrefix || hyalt.schl[4].wert!=InternationalPrefix 
@@ -4874,12 +4885,17 @@ int paramcl::cservice()
   svec rueck;
   systemrueck("which capisuite",obverb,oblog,&rueck);
   if (rueck.size()) {
+    systemrueck("sudo sh -c 'systemctl stop capisuite; killall capisuite; killall -9 capisuite; "
+              "cd /etc/init.d"
+              " && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
+              " && { mkdir -p /etc/ausrangiert && mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true'",obverb,oblog);
     cspfad=rueck[0];
     char buf[80];
     time_t jetzt = time(0);
     struct tm *tmp = localtime(&jetzt);
     strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", tmp);
     csfehler+=!scapisuite->spruef(Tx[T_Capisuite_Dienst_eingerichtet_von]+prog+Tx[T_am]+buf,0,cspfad+" -d","","","",obverb,oblog);
+    cout<<rot<<"csfehler: "<<gruen<<csfehler<<schwarz<<endl;
     return csfehler;
   }
   return 1;
@@ -5025,7 +5041,7 @@ int paramcl::pruefhyla()
               " && echo $? = Ergebnis nach sed"
               " && sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
               " && sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
-              " && sudo mv -f /etc/init.d/hylafax /root/hylafax.ausrangiert"
+              " && test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
               " && killall hfaxd faxq 2>/dev/null && sudo faxsetup -nointeractive && echo $? = Ergebnis nach faxsetup -nointeractive"
               " && sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload"
               "'"
@@ -5048,7 +5064,9 @@ int paramcl::pruefhyla()
           if (falscheshyla) {
             cout<<rot<<"Muss falsches hylafax loeschen!!!"<<schwarz<<endl;
             if (0) {
-              systemrueck("sudo sh -c 'cd /etc/init.d; rm -f *faxq* *hfaxd* hylafax*;'",-2,oblog);
+              systemrueck("sudo sh -c 'cd /etc/init.d"
+              " && [ $(find . -maxdepth 1 -name \"*faxq*\" -or -name \"*hfaxd*\" -or -name \"hylafax*\" 2>/dev/null | wc -l) -ne 0 ]"
+              " && { mkdir -p /etc/ausrangiert && mv -f *faxq* *hfaxd* hylafax* /etc/ausrangiert; } || true'",-2,oblog);
               systemrueck("sudo sh -c 'cd $(dirname $(dirname $(which systemctl)))/lib/systemd/system && "
                   "rm -f faxq.service hfaxd.service faxgetty*.service hylafax*.service;'",-2,oblog);
               systemrueck("sudo sh -c 'cd /etc/systemd/system && rm -f faxq.service hfaxd.service faxgetty*.service;'",-2,oblog);
@@ -5326,7 +5344,7 @@ int paramcl::pruefcapi()
   static uchar capischonerfolgreichinstalliert=0;
   int capilaeuft=0;
   unsigned versuch=0;
-  for(;versuch<5;versuch++) {
+  for(;versuch<2;versuch++) {
     // capi4linux muss zum Laufen der Capisuite installiert sein
     // fuer fcpci muss in driver.c eingefuegt werden:
     // #if !defined(IRQF_DISABLED)
@@ -5399,6 +5417,7 @@ int paramcl::pruefcapi()
       } // if (!fcpcida || !capida || !capidrvda) 
       pruefrules(obverb,oblog);
       pruefblack(obverb,oblog);
+      cout<<"capischonerfolgreichinstalliert 1: "<<(int)capischonerfolgreichinstalliert<<endl;
       capischonerfolgreichinstalliert=!linst.obfehlt("capisuite capi4linux i4l-isdnlog");
       // <<rot<<"capischonerfolgreichinstalliert: "<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
       if (!capischonerfolgreichinstalliert) {
@@ -5429,6 +5448,8 @@ int paramcl::pruefcapi()
           capischonerfolgreichinstalliert=!linst.doinst("capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
           liescapiconf();
         } // if (lsys.getsys(obverb,oblog)==sus) 
+        cout<<"capischonerfolgreichinstalliert: "<<(int)capischonerfolgreichinstalliert<<endl;
+
         if (!capischonerfolgreichinstalliert) {
           pruefverz(instverz,obverb,oblog);
           svec csrueck;
@@ -5440,7 +5461,7 @@ int paramcl::pruefcapi()
           csrueck.clear();
           systemrueck("find /usr/lib/python* -type f -name Makefile -printf '%h\\n'",obverb,oblog,&csrueck);
           if (csrueck.size()) {
-            if (!systemrueck("sh -c 'cd "+instverz+" && { cd capisuite ; test -f Makefile && make clean; cd .. ; } "
+            if (!systemrueck("sh -c 'cd "+instverz+" && { cd capisuite && { test -f Makefile && make clean; } && cd .. ; } "
                   " ;  tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && cd capisuite"
                   " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
                   " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var"
@@ -5454,8 +5475,9 @@ int paramcl::pruefcapi()
               //            systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instverz+"/capisuite/scripts/fax.conf /etc/capisuite");
               pruefverz("/usr/local/var/log",obverb,oblog,wahr);
               //         pruefverz("/usr/local/var/log");
-              cservice();
-              capischonerfolgreichinstalliert=1;
+        cout<<"capischonerfolgreichinstalliert 2: "<<(int)capischonerfolgreichinstalliert<<endl;
+              capischonerfolgreichinstalliert=!cservice();
+        cout<<"capischonerfolgreichinstalliert 3: "<<(int)capischonerfolgreichinstalliert<<endl;
             }
           }
           // aktuelles Verzeichnis
@@ -5487,30 +5509,32 @@ int paramcl::pruefcapi()
       }
       systemrueck("sudo systemctl daemon-reload",obverb,oblog);
     } // if (!capischonerfolgreichinstalliert) 
-    if (!capizukonf) cliesconf();
-    if (obcapi && (versuch>0 || this->capizukonf)) {
-      this->konfcapi();
-      scapisuite->restart(obverb-1,oblog);
-      capizukonf=0;
-    } //     if (versuch>0) KLA
-    // das folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
-    //    capilaeuft = !systemrueck("systemctl status capisuite | grep ' active (running)' >/dev/null 2>&1",0,obverb,oblog);
-    //     capilaeuft  = !systemrueck("systemctl is-active capisuite",0,obverb,oblog);
-    capilaeuft = this->scapisuite->obslaeuft(obverb-1,oblog);
-    if (capilaeuft) {
-      break;
-    } else {
-      systemrueck("sudo systemctl daemon-reload");
-      systemrueck("sudo systemctl stop isdn 2>/dev/null",obverb>0?obverb:-1,oblog);
-      //      systemrueck("sudo systemctl start isdn",obverb,oblog);
-      Log(string(Tx[T_StarteCapisuite]),-1,oblog);
-      systemrueck("sudo systemctl stop capisuite 2>/dev/null",-1,oblog);
-      if (!systemrueck("sudo systemctl start capisuite 2>/dev/null",-1,oblog)) {
-        if (!systemrueck("sudo systemctl enable capisuite 2>/dev/null",-1,oblog)) {
-        }
-        Log(Tx[T_Capisuite_gestartet],1,oblog);
+    if (capischonerfolgreichinstalliert) {
+      if (!capizukonf) cliesconf();
+      if (obcapi && (versuch>0 || this->capizukonf)) {
+        this->konfcapi();
+        scapisuite->restart(obverb-1,oblog);
+        capizukonf=0;
+      } //     if (versuch>0) KLA
+      // das folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
+      //    capilaeuft = !systemrueck("systemctl status capisuite | grep ' active (running)' >/dev/null 2>&1",0,obverb,oblog);
+      //     capilaeuft  = !systemrueck("systemctl is-active capisuite",0,obverb,oblog);
+      capilaeuft = this->scapisuite->obslaeuft(obverb-1,oblog);
+      if (capilaeuft) {
+        break;
       } else {
-        //       Log("Capisuite konnte nicht gestartet werden.",1,1);
+        systemrueck("sudo systemctl daemon-reload");
+        systemrueck("sudo systemctl stop isdn 2>/dev/null",obverb>0?obverb:-1,oblog);
+        //      systemrueck("sudo systemctl start isdn",obverb,oblog);
+        Log(string(Tx[T_StarteCapisuite]),-1,oblog);
+        systemrueck("sudo systemctl stop capisuite 2>/dev/null",-1,oblog);
+        if (!systemrueck("sudo systemctl start capisuite 2>/dev/null",-1,oblog)) {
+          if (!systemrueck("sudo systemctl enable capisuite 2>/dev/null",-1,oblog)) {
+          }
+          Log(Tx[T_Capisuite_gestartet],1,oblog);
+        } else {
+          //       Log("Capisuite konnte nicht gestartet werden.",1,1);
+        }
       }
     }
   } //  for(unsigned versuch=0;1;versuch++) (3.)
@@ -6084,6 +6108,7 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, strin
       size_t cs=sizeof cconf/sizeof*cconf;
       */
       schlArr cconf; cconf.init(3,"tries","starttime","dialstring");
+    cout<<rot<<"Stelle 5"<<schwarz<<endl;
       confdat cpconf(suchtxt,&cconf,obverb);
       if (1) {
         //    if (cpplies(suchtxt,cconf,cs)) KLA
@@ -6202,6 +6227,7 @@ uchar paramcl::setzhconfp(string *protdaktp,int obverb)
   }
 //  static string *alt_protdaktp=0;
 //  if (alt_protdaktp!=protdaktp) KLA
+    cout<<rot<<"Stelle 6"<<schwarz<<endl;
     confdat hylc(*protdaktp,&hylconf,obverb,':');
     return hylc.obgelesen;
 //    alt_protdaktp=protdaktp;

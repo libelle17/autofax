@@ -113,7 +113,7 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   // T_Logdateidpp
   {"Logdatei:","Log file:"},
   // T_Lese_Konfiguration_aus
-  {"Lese Konfiguration aus: ","Reading configuration from: "},
+  {"Lese Konfiguration aus '","Reading configuration from '"},
   // T_j_k,
   {"j","y"},
   // T_Fehler_bei_auswert
@@ -1068,6 +1068,8 @@ const string& absch::suche(const string& sname)
 int confdat::lies(const string& fname, int obverb)
 {
   string zeile;
+  if (fname.empty()) 
+    return 2;
   mdatei f(fname,ios::in);
   if (f.is_open()) {
     if (obverb>0) cout<<"confdat::lies(fname...), fname: "<<fname<<endl;
@@ -1205,15 +1207,18 @@ void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
 
 confdat::confdat(const string& fname,int obverb):name(fname)
 {
+  if (!fname.empty())
   lies(fname,obverb);
 }
 
 confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fname)
 {
   if (obverb>0) 
-    cout<<violett<<Txk[T_Lese_Konfiguration_aus]<<blau<<fname<<schwarz<<endl;
-  lies(fname,obverb);
-  auswert(sA,obverb,tz);
+    cout<<violett<<Txk[T_Lese_Konfiguration_aus]<<blau<<fname<<violett<<"':"<<schwarz<<endl;
+  if (!fname.empty()) {
+    lies(fname,obverb);
+    auswert(sA,obverb,tz);
+  }
 }
 
 /*
