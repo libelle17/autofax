@@ -203,7 +203,9 @@ Mit '\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Option
 .HP 3 
 1) Die aktuelle Hardware wird überprüft:
 .LP
+.LP
 a) mit dem Befehl '\fBlspci | grep -i isdn\fR' bezüglich einer ISDN-Karte
+.LP
 .LP
 b) mit dem Befehl '\fBstty -F\fR' bezüglich eines Fax-Modems.
 .LP
