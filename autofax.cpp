@@ -5333,11 +5333,11 @@ void pruefblack(int obverb, int oblog)
             Log(string(Tx[T_haengean])+blau+blackd+schwarz+Tx[T_an_mdpp]+violetts+vgl[i]+schwarz,obverb,oblog);
             blacka<<vgl[i]<<endl;
           }
-        }
-      }
-    }
+        } // for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++) 
+      } // if (blacka.is_open()) 
+    } // obeinsfehlt
   } else {
-  }
+  } // if (blacki.is_open())  else
 } // void pruefblack(int obverb, int oblog) 
 
 // wird aufgerufen in: pruefcapi

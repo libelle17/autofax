@@ -1,5 +1,5 @@
 
-<h1 align="center">AUTOFAX (Version 0.4027)</h1>
+<h1 align="center">AUTOFAX (Version 0.40271)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -556,8 +556,7 @@ capisuite, capi4linux, i4l-isdnlog, mariadb</p>
 
 <p style="margin-left:11%; margin-top: 1em">Das Programm
 muss zum ordentlichen Funktionieren folgende
-Ma&szlig;nahmen ergreifen: 1) Installieren von Hylafax+,
-falls ein Modem angeschlossen ist</p>
+Ma&szlig;nahmen ergreifen:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -566,8 +565,28 @@ falls ein Modem angeschlossen ist</p>
 <td width="89%">
 
 
+<p style="margin-top: 1em">1) Installieren von Hylafax+,
+falls ein Modem angeschlossen ist und Hylafax+ nicht
+installiert ist. Ggf. Konfiguration von Hylafax+ durch
+Aufruf von &rsquo;faxsetup -nointeracitve&rsquo;, durch
+Editieren der Konfigurationsdateien config und config.* im
+hylafax-Konfigurationsverzeichnis (Vorgabe z.B.:
+/var/spool/hylafax/etc/)</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
 <p style="margin-top: 1em">2) Installieren von capisuite,
-falls eine Fritzkarte eingebaut ist.</p></td></tr>
+falls eine Fritzkarte eingebaut ist und capisuite nicht
+installiert ist. Ggf. Bearbeitung der Konfigurationsdateien
+/etc/capisuite/capisuite.conf und /etc/capisuite/fax.conf
+Ggf. Bearbeitung des Python-Scripts f&uuml;r ankommende
+Faxe (Vorgabe z.B.: /usr/lib64/capisuite/incoming.py) zur
+Bestimmung der Zahl der Klingelt&ouml;ne bis zur
+Faxannahme, Erstellung bzw. Bearbeitung der Dateien
+&rsquo;/etc/udev/rules.d/46-FKN_isdn_capi.rules&rsquo;,
+&rsquo;/etc/modprobe.d/50-blacklist.conf&rsquo;,</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -627,12 +646,23 @@ Verzeichnisse in /etc/samba/smb.conf.</p></td></tr>
 <p style="margin-top: 1em">9) ggf. Einf&uuml;gen einer
 Datenbank f&uuml;r die Faxe in mariadb unter einem
 bestimmbaren Namen, Anlage und Ver&auml;nderung mehrerer
-Tabellen und einer Prozedur in dieser Datenbank,</p></td></tr>
-</table>
+Tabellen und einer Prozedur in dieser Datenbank, ggf.
+Einf&uuml;gen eines Benutzers mit bestimmbarem Namen in
+mariadb zur Datenpflege in diesen Tabellen</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
 
-<p style="margin-left:15%;">ggf. Einf&uuml;gen eines
-Benutzers mit bestimmbarem Namen zur Datenpflege in diesen
-Tabellen</p>
+
+<p style="margin-top: 1em">10) durch entsprechende
+Befehlszeilenoptionen von autofax k&ouml;nnen innerhalb
+von hylafax und capisuite Faxe gel&ouml;scht werden,
+insbesondere: a) in hylafax: durch Aufruf von
+&rsquo;faxrm&rsquo; b) in capisuite: durch L&ouml;schen
+der Dateien wie
+/var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und
+~/*.sff</p> </td></tr>
+</table>
 
 <h2>FEHLER
 <a name="FEHLER"></a>
