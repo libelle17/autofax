@@ -1,5 +1,5 @@
 
-<h1 align="center">AUTOFAX (Version 0.40268)</h1>
+<h1 align="center">AUTOFAX (Version 0.40269)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -317,14 +317,13 @@ against the tables &lsquo;outa&lsquo; and clean them up
 checked. a) with the command &rsquo;<b>lspci | grep -i
 isdn</b>&rsquo; for a fritz card. b) with the command
 &rsquo;<b>stty -F</b>&rsquo; for a fax modem.</p></td></tr>
-</table>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
 
-<p style="margin-left:11%; margin-top: 1em">2) The fax
-configuration file <b>fax.conf</b> of capisuite is read, if
-it exists</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+<p style="margin-top: 1em">2) The fax configuration file
+<b>fax.conf</b> of capisuite is read, if it exists</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

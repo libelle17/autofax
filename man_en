@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "09.07.16" "Version 0.40268" "\fBautofax\fR man page"
+.TH man 1 "09.07.16" "Version 0.40269" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging in a database
 .br
@@ -209,6 +209,7 @@ a) with the command '\fBlspci | grep -i isdn\fR' for a fritz card.
 .br
 b) with the command '\fBstty -F\fR' for a fax modem.
 .LP
+.HP 3 
 2) The fax configuration file \fBfax.conf\fR of capisuite is read, if it exists 
 .HP 3 
 3) Further defaults from the program code are assigned which can be overloaded by the autofax configuration file (see 4), command line arguments or anwers to questions (see 5).   
