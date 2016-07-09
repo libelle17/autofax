@@ -556,16 +556,8 @@ capisuite, capi4linux, i4l-isdnlog, mariadb</p>
 
 <p style="margin-left:11%; margin-top: 1em">Das Programm
 muss zum ordentlichen Funktionieren folgende
-Ma&szlig;nahmen ergreifen: 1) Einrichten von Diensten a)
-in systemd (im Verzeichnis /usr/lib/systemd/system oder
-/lib/systemd/system), insbesondere: <br>
-hylafax-faxq.service, hylafax-hfaxd.service,
-hylafax-faxgetty-....service, <br>
-capisuite.service, <br>
-b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d
-in ein neu eingerichtes Verzeichnis /etc/ausrangiert: <br>
-hylafax <br>
-capisuite</p>
+Ma&szlig;nahmen ergreifen: 1) Installieren von Hylafax+,
+falls ein Modem angeschlossen ist</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -574,14 +566,33 @@ capisuite</p>
 <td width="89%">
 
 
-<p style="margin-top: 1em">2) Erstellen einer
+<p style="margin-top: 1em">2) Installieren von capisuite,
+falls eine Fritzkarte eingebaut ist.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">3) Einrichten von Diensten a) in
+systemd (im Verzeichnis /usr/lib/systemd/system oder
+/lib/systemd/system), insbesondere: hylafax-faxq.service,
+hylafax-hfaxd.service, hylafax-faxgetty-....service,
+capisuite.service, b) Verschieben von Diensten aus dem
+Verzeichnis /etc/init.d in ein neu eingerichtes Verzeichnis
+/etc/ausrangiert: hylafax capisuite</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">4) Erstellen einer
 Protokolldatei /var/log/autofax.log</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-<p style="margin-top: 1em">3) ggf. Erstellen und
+<p style="margin-top: 1em">5) ggf. Erstellen und
 Zugreifbarmachen der Verzeichnisse f&uuml;r zu sendende,
 wartende, abgearbeitete und empfangene Faxe</p></td></tr>
 <tr valign="top" align="left">
@@ -589,7 +600,7 @@ wartende, abgearbeitete und empfangene Faxe</p></td></tr>
 <td width="89%">
 
 
-<p style="margin-top: 1em">4) ggf. Erstellen und
+<p style="margin-top: 1em">6) ggf. Erstellen und
 Ver&auml;ndern der Konfigurationsdatei autofax.conf in
 dem Verzeichnis, in dem auch es selbst steht (Vorgabe:
 /usr/local/sbin/autofax)</p> </td></tr>
@@ -598,14 +609,14 @@ dem Verzeichnis, in dem auch es selbst steht (Vorgabe:
 <td width="89%">
 
 
-<p style="margin-top: 1em">5) ggf. Einf&uuml;gen einer
+<p style="margin-top: 1em">7) ggf. Einf&uuml;gen einer
 Zeile zum Aufruf des Programms in das crontab (von root)</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-<p style="margin-top: 1em">6) ggf. Einf&uuml;gen von
+<p style="margin-top: 1em">8) ggf. Einf&uuml;gen von
 Abschnitten f&uuml;r die unter 3) genannten
 Verzeichnisse in /etc/samba/smb.conf.</p></td></tr>
 <tr valign="top" align="left">
@@ -613,7 +624,7 @@ Verzeichnisse in /etc/samba/smb.conf.</p></td></tr>
 <td width="89%">
 
 
-<p style="margin-top: 1em">7) ggf. Einf&uuml;gen einer
+<p style="margin-top: 1em">9) ggf. Einf&uuml;gen einer
 Datenbank f&uuml;r die Faxe in mariadb unter einem
 bestimmbaren Namen, Anlage und Ver&auml;nderung mehrerer
 Tabellen und einer Prozedur in dieser Datenbank,</p></td></tr>
