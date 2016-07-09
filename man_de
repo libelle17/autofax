@@ -286,6 +286,30 @@ g++, libmysqlclient-dev(el), libtiff-dev(el)
 \fBautofax:\fR
 .br
 cron, soffice, convert, hylafax+, hylafax+-client, kernel-source, fcpci-3.10.0, kkeil Factory repository, capisuite, capi4linux, i4l-isdnlog, mariadb
+
+.SH AUSWIRKUNGEN
+Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:
+1) Einrichten von Diensten a) in systemd (im Verzeichnis /usr/lib/systemd/system oder /lib/systemd/system), insbesondere:
+.br
+hylafax-faxq.service, hylafax-hfaxd.service, hylafax-faxgetty-....service,
+.br
+capisuite.service,
+.br
+b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neu eingerichtes Verzeichnis /etc/ausrangiert:
+.br
+hylafax
+.br
+capisuite
+.LP
+.HP 3
+2) Erstellen einer Protokolldatei /var/log/autofax.log
+.LP
+.HP 3
+3) ggf. Erstellen und Zugreifbarmachen der Verzeichnisse für zu sendende, wartende, abgearbeitete und empfangene Faxe
+.LP
+.HP 3
+4) ggf. Erstellen und Verändern der Konfigurationsdatei autofax.conf in dem Verzeichnis, in dem auch 
+
 .SH FEHLER
 Fehler bitte melden. Bitte auch melden, wenn sich Änderungsbedarf durch andere Hard- bzw. Software ergeben.
 
