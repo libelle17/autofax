@@ -207,7 +207,9 @@ a) mit dem Befehl '\fBlspci | grep -i isdn\fR' bezüglich einer ISDN-Karte
 .br
 b) mit dem Befehl '\fBstty -F\fR' bezüglich eines Fax-Modems.
 .LP
+.HP 3 
 2) Die Fax-Konfigurationsdatei \fBfax.conf\fR der Capisuite wird eingelesen, falls es sie gibt
+.LP
 .HP 3 
 3) Weitere Vorgaben aus dem Programmcode werden zugewiesen, die durch die autofax-Konfigurationsdatei (siehe 4), Kommandozeilenargumente oder Antworten auf Rückfragen (siehe 5) überdeckt werden können.
 .LP

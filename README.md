@@ -326,14 +326,14 @@ Datensaetze = &lt;zahl&gt; statt &rsquo;30&rsquo; <b><br>
 &rsquo;<b>lspci | grep -i isdn</b>&rsquo; bez&uuml;glich
 einer ISDN-Karte b) mit dem Befehl &rsquo;<b>stty
 -F</b>&rsquo; bez&uuml;glich eines Fax-Modems.</p></td></tr>
-</table>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
 
-<p style="margin-left:11%; margin-top: 1em">2) Die
-Fax-Konfigurationsdatei <b>fax.conf</b> der Capisuite wird
-eingelesen, falls es sie gibt</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+<p style="margin-top: 1em">2) Die Fax-Konfigurationsdatei
+<b>fax.conf</b> der Capisuite wird eingelesen, falls es sie
+gibt</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
