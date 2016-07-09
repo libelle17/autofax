@@ -9,9 +9,9 @@ class fsfcl; // Faxsendfile
 class paramcl; // Programmparameter
 string zielname(const string& qdatei, const string& zielverz,uchar wieweiterzaehl, string* zieldatei, int obverb, int oblog);
 string zielname(const string& qdatei, zielmustercl *zmp,uchar wieweiterzaehl, string* zieldatei, int obverb, int oblog);
-void dorename(const string& quelle, const string& ziel, uint *vfehler, int obverb, int oblog);
-string verschiebe(const string& qdatei, const string& zielvz, uint *vfehler, uchar wieweiterzaehl, int obverb,int oblog);
-void verschiebe(const string& qdatei, zielmustercl *zmp, uint *vfehler, uchar wieweiterzaehl, int obverb, int oblog);
+void dorename(const string& quelle, const string& ziel, const string& cuser="", uint *vfehler=0, int obverb=0, int oblog=0);
+string verschiebe(const string& qdatei, const string& zielvz, const string& cuser="",uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0,int oblog=0);
+void verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser="", uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0, int oblog=0);
 string kopiere(const string& qdatei, const string& zieldp, uint *kfehler, uchar wieweiterzaehl, int obverb=0,int oblog=0);
 void kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog);
@@ -22,7 +22,7 @@ int pruefcapi(paramcl *pmp, int obverb, int oblog);
 void kuerzevtz(string *vzp);
 pid_t PIDausName(const char* PName, uchar klgr, uchar exakt, int obverb, int oblog);
 void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,int obverb=0,int oblog=0);
-int tuloeschen(const string& zuloe,int obverb, int oblog);
+int tuloeschen(const string& zuloe,const string& cuser="",int obverb=0, int oblog=0);
 
 // Service aus SystemD
 class servc {
@@ -216,7 +216,7 @@ class paramcl // Programmparameter
 
 //    cppSchluess *cgconfp; // Gesamtkonfiguration
     schlArr cgconf; // Gesamtkonfiguration
-//    size_t gcs; // dessen Groesse
+    //    size_t gcs; // dessen Groesse
     string sqlvz;  // Zahl der SQL-Befehle aus Vorgaben
     size_t sqlvzn=0; // Zahl der SQL-Befehle aus Vorgaben numerisch
 //    cppSchluess *sqlconfvp=0; // SQL-Pointer aus Vorgaben
@@ -236,6 +236,7 @@ class paramcl // Programmparameter
     size_t zmvzn=0; // Zielmusterzahl numerisch aus Vorgaben
 
 //    cppSchluess *capiconfp; // Capi-Konfiguration (fax.conf)
+    schlArr cconf;  // capisuite.conf
     schlArr capiconf; // Capi-Konfiguration (fax.conf)
 //    size_t ccs; // capiconf-confsize
     string konfdatname; // name der Konfigurationsdatei

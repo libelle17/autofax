@@ -74,8 +74,8 @@ extern const char *dir;
 //extern const string datei;
 // extern const char *rot, *weinrot, *schwarz, *blau, *gelb; // muss spaeter kompilerunabhaengig
 extern const char *schwarz, *dgrau, *drot, *rot, *gruen, *hgruen, *braun, *gelb, *blau, *dblau, *violett, *hviolett,
-       *tuerkis, *htuerkis, *hgrau, *weiss;
-extern const string drots, rots, schwarzs, blaus, gelbs, tuerkiss, hgraus,violetts;
+       *tuerkis, *htuerkis, *hgrau, *weiss, *umgek;
+extern const string drots,rots,schwarzs,blaus,gelbs,tuerkiss,hgraus,violetts,gruens;
 #ifdef linux
 extern const char *_rot, *_hrot, *_schwarz, *_blau, *_gelb, *_tuerkis, *_hgrau;
 #endif
@@ -475,7 +475,7 @@ std::string base_name(const std::string& path);
 std::string dir_name(const std::string& path);
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
                 binaer ob0heissterfolg=wahr, binaer obergebnisanzeig=wahr, const string& ueberschr="");
-int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl=1);
+int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=1);
 string aktprogverz();
 char holbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
 // vorgabe fur vorgabe = T_j_k; alternativ='n'

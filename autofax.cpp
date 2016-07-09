@@ -477,6 +477,9 @@ enum T_
   T_an_hFax,
   T_und,
   T_Eingabe,
+  T_liescapiconf,
+  T_Fehler_beim_Loeschen,
+  T_VorgbAllg,
   T_MAX
 };
 
@@ -1339,6 +1342,12 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"und","and"},
   // T_Eingabe
   {"Eingabe","Input"},
+  // T_liescapiconf
+  {"liescapiconf()","readcapiconf()"},
+  // T_Fehler_beim_Loeschen
+  {"Fehler beim Loeschen","error deleting"},
+  // T_VorgbAllg
+  {"VorgbAllg()","generalprefs()"},
   {"",""}
 };
 
@@ -1616,7 +1625,7 @@ int fsfcl::loeschecapi(int obverb, int oblog)
   if (!stamm.empty()) {
     for(uchar ru=0;ru<2;ru++) {
       string zuloe=cspf+vtz+stamm+(ru?".txt":".sff");
-      zdng+=tuloeschen(zuloe,obverb,oblog);
+      zdng+=tuloeschen(zuloe,"",obverb,oblog);
     }
   } else {
     zdng=1;
@@ -2037,26 +2046,17 @@ void paramcl::VorgbSpeziell()
 
 void paramcl::liescapiconf()
 {
-  /*
-  static cppSchluess capiconf[]={{"spool_dir"},{"fax_user_dir"},{"send_tries"},{"send_delays"},{"outgoing_MSN"},
-                     {"dial_prefix"},{"fax_stationID"},{"fax_headline"},{"fax_email_from"},{"outgoing_timeout"}};
-
-  ccs=sizeof capiconf/sizeof*capiconf;
-  capiconfp= capiconf;
-  */
-  capiconf.init(10,"spool_dir","fax_user_dir","send_tries","send_delays","outgoing_MSN",
-      "dial_prefix","fax_stationID","fax_headline","fax_email_from","outgoing_timeout");
+  Log(violetts+Tx[T_liescapiconf]+schwarz,obverb,oblog);
   svec rueck;
-  systemrueck("find /etc/capisuite /usr/local/etc/capisuite -type f -name capisuite.conf 2>/dev/null",obverb-2,oblog,&rueck);
-  if (rueck.size()) ccapiconfdat=rueck[0];
-  rueck.clear();
   systemrueck("find /etc/capisuite /usr/local/etc/capisuite -type f -name fax.conf 2>/dev/null",obverb-2,oblog,&rueck);
   if (rueck.size()) cfaxconfdat=rueck[0];
+
+  capiconf.init(10,"spool_dir","fax_user_dir","send_tries","send_delays","outgoing_MSN",
+      "dial_prefix","fax_stationID","fax_headline","fax_email_from","outgoing_timeout");
   if (!cfaxconfdat.empty()) {
-    static string capiconfvz= dir_name(cfaxconfdat);
+    static string capiconfvz=dir_name(cfaxconfdat);
     pruefverz(capiconfvz,obverb,oblog,0);
     //  confdat cfaxconf(cfaxconfdat,capiconf,ccs,obverb);
-    cout<<rot<<"Stelle 9"<<schwarz<<endl;
     static confdat cfaxconf(cfaxconfdat,&capiconf,obverb);
     cfaxcp=&cfaxconf;
     cfaxcp->Abschn_auswert(obverb);
@@ -2085,15 +2085,53 @@ void paramcl::liescapiconf()
   if (cfaxuservz.empty()) 
     cfaxuservz=spoolcapivz+"/users";
   // <<rot<<"cfaxuservz in Vorgallg: "<<cfaxuservz<<schwarz<<endl;
-  cdonevz = mitvtz(spoolcapivz)+"done";
-  cfailedvz = mitvtz(spoolcapivz)+"failed";
-}
+
+  rueck.clear();
+  systemrueck("find /etc/capisuite /usr/local/etc/capisuite -type f -name capisuite.conf 2>/dev/null",obverb-2,oblog,&rueck);
+  if (rueck.size()) ccapiconfdat=rueck[0];
+  if (!ccapiconfdat.empty()) {
+    uchar obneuer=0;
+    struct stat cstat;
+    static time_t lgelzeit=0; // Aenderungszeitpunkt der evtl. zuletzt eingelesenen ccapiconfdat
+    time_t aktgelzeit;
+    if (!lstat(ccapiconfdat.c_str(),&cstat)) { // <<rot<<ccapiconfdat<<" existiert!"<<schwarz<<endl;
+      aktgelzeit=cstat.st_mtime;
+      if (aktgelzeit>lgelzeit) {
+        lgelzeit=aktgelzeit;
+        obneuer=1;
+      }
+    }
+    if (obneuer || !cconf.zahl) {
+      if (!cconf.zahl) {
+        cconf.init(3,"incoming_script","log_file","log_error");
+      } else {
+        cconf.reset();
+      }
+      confdat ccapic(ccapiconfdat,&cconf,obverb);
+      if (!cuser.empty()) {
+        for(size_t j=1;j<3;j++) {
+          if (!cconf[j].wert.empty()) {
+            struct stat statdat;
+            if (!lstat(cconf[j].wert.c_str(),&statdat))
+            systemrueck("sudo setfacl -m 'u:"+cuser+":6' '"+cconf[j].wert+"'",obverb,oblog);
+          }
+        } // for(size_t j=1;j<3;j++) 
+      } // if (!cuser.empty()) 
+    } // if (obneuer || !cconf.zahl) 
+  } // if (!ccapiconfdat.empty())
+
+  if (!spoolcapivz.empty()) {
+    cdonevz = mitvtz(spoolcapivz)+"done";
+    cfailedvz = mitvtz(spoolcapivz)+"failed";
+  }
+} // void paramcl::liescapiconf()
 
 
 // wird aufgerufen in: main
 // allgemeine Vorgaben, fuer Deutschland
 void paramcl::VorgbAllg()
 {
+  Log(violetts+Tx[T_VorgbAllg]+schwarz,obverb,oblog);
   liescapiconf();
   hylazuerst=0;
   // hmodemstr="ACM";
@@ -2119,7 +2157,6 @@ void paramcl::VorgbAllg()
   gethostname(cpt, cptlen);
 #endif
   cronminut="2";
-
 //  pruefcvz(); // 1.7.16 zu frueh
 } // void paramcl::VorgbAllg
 
@@ -2160,7 +2197,6 @@ void paramcl::lieskonfein()
     "cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl",
     "gleichziel","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","cronminut","anfaxstr","ancfaxstr","anhfaxstr",
     "anstr","undstr","host","muser","mpwd","datenbank","logvz","logdname","sqlz","musterzahl");
-    cout<<rot<<"Stelle 10"<<schwarz<<endl;
   confdat afconf(konfdatname,&cgconf,obverb); // hier werden die Daten aus der Datei eingelesen
   if (1) {
     //  if (cpplies(konfdatname,gconf,gcs)) KLA
@@ -2834,44 +2870,16 @@ void paramcl::cliesconf()
  }
 } // void paramcl::cliesconf()
 
+
 // wird  aufgerufen in: pruefcapi
 void paramcl::konfcapi()
 {
-  Log(violetts+Tx[T_konfcapi]+schwarz+"ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_konfcapi]+schwarz+", ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
   // Zahl der Klingeltoene in capisuite einstellen
 /*
   cppSchluess cconf[]={{"incoming_script"}};
   size_t cs=sizeof cconf/sizeof*cconf;
 */
-  uchar obschonmal=0;
-  struct stat cstat;
-  static time_t lgelzeit=0; // Aenderungszeitpunkt der evtl. zuletzt eingelesenen ccapiconfdat
-  time_t aktgelzeit;
-  if (!lstat(ccapiconfdat.c_str(),&cstat)) {
-    // <<rot<<ccapiconfdat<<" existiert!"<<schwarz<<endl;
-    aktgelzeit=cstat.st_mtime;
-    // <<"aktgelzeit: "<<aktgelzeit<<endl;
-    // <<"  lgelzeit: "<<lgelzeit<<endl;
-    if (aktgelzeit>lgelzeit) {
-      lgelzeit=aktgelzeit;
-    } else {
-      obschonmal=1;
-    }
-  }
-  // <<rot<<"obschonmal: "<<(int)obschonmal<<schwarz<<endl;
-  static schlArr cconf; 
-  // <<"cconf: "<<endl;
-  //  cconf.ausgeb(); 
-  if (!obschonmal || !cconf.zahl) {
-    if (!cconf.zahl) {
-      cconf.init(1,"incoming_script");
-    } else {
-      cconf.reset();
-    }
-    cout<<rot<<"Stelle 1"<<schwarz<<endl;
-    confdat ccapic(ccapiconfdat,&cconf,obverb);
-    cout<<rot<<"Stelle 1a"<<schwarz<<endl;
-  }
   if (!cconf[0].wert.empty()) {
     //    if (cpplies(ccapiconfdat,cconf,cs)) KLA
     mdatei f(cconf[0].wert,ios::in); // /usr/lib64/capisuite/incoming.py
@@ -2905,11 +2913,11 @@ void paramcl::konfcapi()
                 struct stat entryorig;
                 string origdatei=string(cconf[0].wert)+"_orig";
                 if (lstat(origdatei.c_str(),&entryorig)) {
-                  rename(cconf[0].wert.c_str(),origdatei.c_str());
+                  dorename(cconf[0].wert,origdatei,cuser,0,obverb,oblog);
                 } else {
-                  remove(cconf[0].wert.c_str());
+                  tuloeschen(cconf[0].wert,cuser,obverb,oblog);
                 }            
-                rename(neudatei.c_str(),cconf[0].wert.c_str()); 
+                dorename(neudatei,cconf[0].wert,cuser,0,obverb,oblog); 
               }  // if (falt.is_open()) if (fneu.is_open()) 
               break;
             } // if (nkz!=cklingelzahl) 
@@ -3047,14 +3055,15 @@ void paramcl::konfcapi()
           *fneu<<"fax_action=\"MailAndSave\""<<endl;
         } // if (!cuserda)
         if (fneu) delete fneu;
+        systemrueck("sudo setfacl -m 'u:"+cuser+":6' '"+cfaxconfdat+"'",obverb,oblog);
         string origdatei=cfaxconfdat+"_orig";
         struct stat entryorig;
         if (lstat(origdatei.c_str(),&entryorig)) {
-          rename(cfaxconfdat.c_str(),origdatei.c_str());
+          dorename(cfaxconfdat,origdatei,cuser,0,obverb,oblog);
         } else {
-          remove(cfaxconfdat.c_str());
-        }            
-        rename(neudatei.c_str(),cfaxconfdat.c_str());
+          tuloeschen(cfaxconfdat,cuser,obverb,oblog);
+        }
+        dorename(neudatei,cfaxconfdat,cuser,0,obverb,oblog);
       } // if (iru)
       if (!capiconf[1].wert.empty()) cfaxuservz=capiconf[1].wert;
       // <<rot<<"cfaxuservz konfcapi: "<<cfaxuservz<<schwarz<<endl;
@@ -3075,15 +3084,14 @@ void paramcl::konfcapi()
       if (getline(nextstr,zeile)) {
         nextnr=atol(zeile.c_str());
       }
-    }
-  }
+    } // if (nextstr.is_open()) 
+  } // if (!lstat(cfaxusersqvz.c_str(),&entrynextnr))
   if (!nextnr) {
     pruefverz(cfaxuservz,obverb,oblog,2);
     cmd=string(" echo $(( `find ")+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
       "| cut -d '-' -f3 | cut -d '.' -f1 | sort -rn | head -n1` + 1 )) > '"+ndatei+"'";
     systemrueck(cmd,obverb,oblog);
   }
-  obschonmal=1;
   Log(violetts+Tx[T_Ende]+Tx[T_konfcapi]+schwarz+"ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
 } // void paramcl::konfcapi()
 
@@ -3210,7 +3218,6 @@ void paramcl::pruefsamba()
     }
 //    if (gestartet==2) smbrestart=0;
   }
-    cout<<rot<<"Stelle 2"<<schwarz<<endl;
   confdat smbcf(smbdatei,obverb);
   smbcf.Abschn_auswert(obverb);
   vector<string*> vzn;
@@ -3427,7 +3434,7 @@ void paramcl::bereinigewv()
                         unsigned vfehler=0;
                         if (!zlvz.empty()) {
                           string zdt=zlvz+vtz+*fit;
-                          dorename(quel,zdt,&vfehler,1,1);
+                          dorename(quel,zdt,cuser,&vfehler,1,1);
                           if (vfehler) {
                             Log(rots+Tx[T_Fehler_beim_Verschieben_Ausrufezeichen]+": "+ltoan(vfehler)+schwarz,1,1);
                             exit(2);
@@ -3439,7 +3446,7 @@ void paramcl::bereinigewv()
                         fdn.erase(fit); // die in der Spool-Tabelle genannten Dateien stehen lassen
                       }
                       //                      Log(string(ltoan(entryfit.st_size))+" "+(runde==2?dblau:runde==1?blau:rot)+*fit+schwarz,1,1);
-                      Log(string(ltoan(entryfit.st_size))+" "+(runde?(**(*cerg+2)=='1'?blau:dblau):rot)+*fit+schwarz,1,1);
+                      Log(string(ltoan(entryfit.st_size))+" "+(runde?(**(*cerg+2)=='1'?blau:violett):rot)+*fit+schwarz,1,1);
                     } else {
                       Log(string(Tx[T_0Bytes])+violett+wvz+vtz+*fit+schwarz+"'",1,1);
                     } // if (!lstat(quel.c_str(),&entryfit)) else
@@ -3548,7 +3555,7 @@ int paramcl::loescheallewartende(int obverb, int oblog)
     systemrueck(cmd,obverb,oblog,&allec);
     erg+=allec.size();
     for(size_t i=0;i<allec.size();i++) {
-      remove(allec[i].c_str());
+      tuloeschen(allec[i],cuser,obverb,oblog);
       if (allec[i].find(".sff")!=string::npos) {
         string fname=base_name(allec[i]);
         RS loe(My,string("delete from `")+spooltab+"` where capispooldatei='"+fname+"'");
@@ -3674,9 +3681,10 @@ void paramcl::DateienHerricht()
             Log(string(Tx[T_ErstelledurchKopieren])+rot+tmp+schwarz,1,oblog);
           } else {
             if (iprid.at(i)!=tmp) {
-              int result=rename((iprid.at(i)).c_str(),tmp.c_str());
-              if ( result != 0 )
-                Log(rots+Tx[T_FehlerbeimUmbenennen]+schwarz,1,1);
+              uint vfehler=0;
+              dorename((iprid.at(i)),tmp,cuser,&vfehler,obverb,oblog);
+              if (vfehler)
+                Log(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz,1,1);
               Log(string(Tx[T_ErstelledurchBenennen])+rot+tmp+schwarz,1,oblog);
             }
           }
@@ -3704,7 +3712,7 @@ void paramcl::DateienHerricht()
           uint vfehler=0;
           string ndname=zufaxenvz+vtz+neuerdateiname(npdfd.at(i));
           if (ndname!=npdfd.at(i)) {
-            dorename(npdfd.at(i),ndname,&vfehler,obverb,oblog);
+            dorename(npdfd.at(i),ndname,cuser,&vfehler,obverb,oblog);
             if (vfehler) {
               cerr<<rot<<prog<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
                 blau<<npdfd.at(i)<<schwarz<<" ->\n"<<
@@ -3713,7 +3721,7 @@ void paramcl::DateienHerricht()
             }
             npdfd.at(i)=ndname;
           }
-          string wartedatei=verschiebe(npdfd.at(i),wvz,&vfehler,1,obverb,oblog);
+          string wartedatei=verschiebe(npdfd.at(i),wvz,cuser,&vfehler,1,obverb,oblog);
           if (!vfehler) {
             string stamm,exten;
             //          npdfp->push_back(wartedatei);
@@ -3791,10 +3799,10 @@ void paramcl::DateienHerricht()
      // <<violett<<"fxv["<<(int)nachrnr<<"].spdf: "<<fxv[nachrnr].spdf<<schwarz<<endl;
       struct stat npdfstat;
       if (!lstat(fxv[nachrnr].npdf.c_str(), &npdfstat))
-        verschiebe(fxv[nachrnr].npdf,zufaxenvz,&wfehler,1,obverb,oblog);
+        verschiebe(fxv[nachrnr].npdf,zufaxenvz,cuser,&wfehler,1,obverb,oblog);
       struct stat spdfstat;
       if (!lstat(fxv[nachrnr].spdf.c_str(), &spdfstat))
-        verschiebe(fxv[nachrnr].spdf,zufaxenvz,&wfehler,1,obverb,oblog);
+        verschiebe(fxv[nachrnr].spdf,zufaxenvz,cuser,&wfehler,1,obverb,oblog);
       fxv.erase(fxv.begin()+nachrnr);
     } // if (!erg) else
   } // for (int nachrnr=npdfp->size()-1; nachrnr>=0; --nachrnr)  // 2.
@@ -3808,10 +3816,10 @@ void paramcl::DateienHerricht()
         vector<string> spdfd;
         systemrueck(cmd,obverb, oblog, &spdfd);
         for(size_t i=0;i<spdfd.size();i++) {
-          uint vfehler=0;
           string ndname=zufaxenvz+vtz+neuerdateiname(spdfd.at(i));
+          uint vfehler=0;
           if (ndname!=spdfd.at(i)) {
-            dorename(spdfd.at(i),ndname,&vfehler,obverb,oblog);
+            dorename(spdfd.at(i),ndname,cuser,&vfehler,obverb,oblog);
             if (vfehler) {
               cerr<<rot<<prog<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
                 blau<<spdfd.at(i)<<schwarz<<" ->\n"<<
@@ -3820,7 +3828,7 @@ void paramcl::DateienHerricht()
             }
             spdfd.at(i)=ndname;
           }
-          string wartedatei=verschiebe(spdfd.at(i),wvz,&vfehler,1,obverb,oblog);
+          string wartedatei=verschiebe(spdfd.at(i),wvz,cuser,&vfehler,1,obverb,oblog);
           if (!vfehler) {
             int vorhanden=0; // 1= Datei schon zuvor als nicht-PDF-Datei eingetragen
             for(unsigned i=0;i<fxv.size();i++) {
@@ -4030,10 +4038,10 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
               if (!datei->empty()) {
                 string zuloe = wvz+ vtz + *datei;
                 if (gleichziel) { 
-                  tuloeschen(zuloe,obverb,oblog);
+                  tuloeschen(zuloe,cuser,obverb,oblog);
                 } else {
                   uint vfehler=0;
-                  verschiebe(zuloe, zmp, &vfehler, 1, obverb, oblog);
+                  verschiebe(zuloe, zmp, cuser,&vfehler, 1, obverb, oblog);
                 }
               }
             }
@@ -4077,7 +4085,7 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
             for(unsigned iru=0;iru<2;iru++) {
               uint vfehler=0;
               if (ogibts[iru])
-                verschiebe(odatei[iru],gvz,&vfehler, 1, obverb,oblog);
+                verschiebe(odatei[iru],gvz,cuser,&vfehler, 1, obverb,oblog);
             }
           } // if (allegesch || (nimmer && !ogibts[0]))
         } // if (obcapi || obhyla)
@@ -4106,7 +4114,7 @@ void paramcl::zeigweitere()
         getstammext(&rueck[i],&stamm,&exten);
         string zugeh=stamm+".sff";
         if (lstat(zugeh.c_str(),&entryvz)) {
-          remove(rueck[i].c_str());
+          tuloeschen(rueck[i],cuser,obverb,oblog);
         }
       }
       rueck.clear();
@@ -4123,14 +4131,14 @@ void paramcl::zeigweitere()
           if (inouta.num_rows) {
             Log(blaus+Tx[T_Verwaiste_Datei]+violett+rueck[i]+schwarz+Tx[T_geloescht_Fax_schon_in]+violett+touta+schwarz+
                 Tx[T_archiviert_Ausrufezeichen],1,1);
-            remove(rueck[i].c_str());
+            tuloeschen(rueck[i],cuser,obverb,oblog);
             break;
           } else {
             // 31.1.16: ... und wenn diese sich nicht in outa findet ...
             string waisen = cfaxusersqvz+"/waisen";
             pruefverz(waisen,obverb,oblog,1);
             uint vfehler=0;
-            verschiebe(rueck[i],waisen,&vfehler,1,obverb,oblog);
+            verschiebe(rueck[i],waisen,cuser,&vfehler,1,obverb,oblog);
           } // if (inouta.num_rows) else 
         } // if (lstat(zugeh.c_str(),&entryvz)) 
       } // for(size_t i=0;i<rueck.size();i++) 
@@ -4314,7 +4322,7 @@ void paramcl::empfarch()
     if (absdr.length()>70) absdr.erase(70);
     string hdatei = "Fax h"+fnr+","+Tx[T_von]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf+".tif";
     string hpfad=empfvz+vtz+hdatei;
-    Log(blaus+base+schwarz+" => "+dblau+hdatei+schwarz,1,1);
+    Log(blaus+base+schwarz+" => "+violett+hdatei+schwarz,1,1);
     // ..., die empfangene Datei in hpfad kopieren ...
     cmd=string("sudo cp -ai \"")+rueck[i]+"\" \""+hpfad+"\"";
     systemrueck(cmd,obverb,oblog);
@@ -4377,7 +4385,6 @@ void paramcl::empfarch()
       string sffname=stamm+".sff";
       struct stat entrysff;
       uchar verschieb=0;
-    cout<<rot<<"Stelle 3"<<schwarz<<endl;
       confdat empfconf(rueck.at(i),&umst,obverb);
       //    if (cpplies(rueck.at(i),umst,cs)) KLA
       struct tm tm;
@@ -4402,7 +4409,7 @@ void paramcl::empfarch()
       if (getname.length()>70) getname.erase(70);
       string cdatei = "Fax c"+fnr+","+Tx[T_von]+getname+", T."+stdfaxnr(umst[1].wert)+","+Tx[T_vom]+tbuf+".tif";
       string cpfad= empfvz + vtz+cdatei; // Tx[T_Fax_von]+umst[1].wert+Tx[T_an]+umst[2].wert+Tx[T_vom]+tbuf+".tif";
-      Log(blaus+stamm+schwarz+" => "+dblau+cdatei+schwarz,1,1);
+      Log(blaus+stamm+schwarz+" => "+violett+cdatei+schwarz,1,1);
       // ..., die empfangene Datei in hpfad kopieren ...
       if (!lstat(sffname.c_str(),&entrysff)) {
         if (entrysff.st_size) {
@@ -4437,9 +4444,9 @@ void paramcl::empfarch()
         string falsche = cfaxuserrcvz+"/falsche";
         pruefverz(falsche,obverb,oblog);
         uint vfehler=0;
-        verschiebe(rueck.at(i),falsche,&vfehler,1,obverb,oblog);
+        verschiebe(rueck.at(i),falsche,cuser,&vfehler,1,obverb,oblog);
         if (verschieb==2) {
-          verschiebe(sffname,falsche,&vfehler,1,obverb,oblog);
+          verschiebe(sffname,falsche,cuser,&vfehler,1,obverb,oblog);
         }
       } // if (verschieb) 
       RS zs(My);
@@ -4547,32 +4554,41 @@ string zielname(const string& qdatei, zielmustercl *zmp, uchar wieweiterzaehl=0,
 
 
 // wird aufgerufen in: verschiebe (Version 1), verschiebe (Version 2), DateienHerricht
-void dorename(const string& quelle, const string& ziel, uint *vfehler, int obverb, int oblog)
+void dorename(const string& quelle, const string& ziel, const string& cuser, uint *vfehler, int obverb, int oblog)
 {
   Log(string(Tx[T_Verschiebe])+rot+quelle+schwarz+"'\n         -> '"+rot+ziel+schwarz+"'",obverb,oblog);
-  if (rename(quelle.c_str(),ziel.c_str())) {
-    perror(Tx[T_Fehler_beim_Verschieben]);
-    string cmd=string("sudo mv \"")+quelle+"\" \""+ziel+"\"";
-    if (vfehler) *vfehler+=systemrueck(cmd,obverb,1);
-  }
+  for(uchar iru=1;iru<3;iru++) {
+    if (rename(quelle.c_str(),ziel.c_str())) {
+      if(cuser.empty()) iru++;
+      if(iru==1) {
+        systemrueck("sudo setfacl -Rm 'u:"+cuser+":7' '"+dir_name(quelle)+"'",obverb,oblog);
+      } else {
+        perror(Tx[T_Fehler_beim_Verschieben]);
+        string cmd=string("sudo mv \"")+quelle+"\" \""+ziel+"\"";
+        int erg=systemrueck(cmd,obverb,1);
+        if (vfehler) *vfehler+=erg;
+      } // if(iru) else
+    } // if (rename(quelle.c_str(),ziel.c_str())) 
+    else break;
+  } // for(uchar iru=1;iru>-1;iru--)
 } // dorename
 
 
 // wird aufgerufen von Dateienherricht und untersuchespool; Vorsicht, wenn qdateip ein Verzeichnisname ist!
-string verschiebe(const string& qdatei, const string& zielvz, uint *vfehler, uchar wieweiterzaehl, int obverb=0,int oblog=0)
+string verschiebe(const string& qdatei, const string& zielvz, const string& cuser, uint *vfehler, uchar wieweiterzaehl, int obverb,int oblog)
 {
   // wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
   string ziel=zielname(qdatei,zielvz,wieweiterzaehl,0,obverb,oblog);
-  if (!ziel.empty()) dorename(qdatei,ziel,vfehler,obverb,oblog);
+  if (!ziel.empty()) dorename(qdatei,ziel,cuser,vfehler,obverb,oblog);
   return ziel;
 } // string verschiebe
 
 // wird aufgerufen von untersuchespool; Vorsicht, wenn qdateip ein Verzeichnisname ist!
-void verschiebe(const string& qdatei, zielmustercl *zmp, uint *vfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0) 
+void verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser, uint *vfehler, uchar wieweiterzaehl, int obverb, int oblog) 
 {
   // wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
   string ziel=zielname(qdatei,zmp,wieweiterzaehl,0,obverb,oblog);
-  if (!ziel.empty()) dorename(qdatei,ziel,vfehler,obverb,oblog);
+  if (!ziel.empty()) dorename(qdatei,ziel,cuser,vfehler,obverb,oblog);
 } // verschiebe
 
 // wird aufgerufen in Dateienherricht
@@ -4777,7 +4793,6 @@ void paramcl::hliesconf()
 {
  schlArr hyalt; hyalt.init(7,"CountryCode","AreaCode","FAXNumber","LongDistancePrefix","InternationalPrefix","RingsBeforeAnswer","LocalIdentifier");
  setzmodconfd();
-    cout<<rot<<"Stelle 4"<<schwarz<<endl;
  confdat haltconf(modconfdat,&hyalt,obverb,':');
  if (hyalt.schl[0].wert!=countrycode || hyalt.schl[1].wert!=citycode || hyalt.schl[2].wert!=countrycode+"."+citycode+"."+msn 
      || hyalt.schl[3].wert!=LongDistancePrefix || hyalt.schl[4].wert!=InternationalPrefix 
@@ -4794,8 +4809,10 @@ void paramcl::hconfigtty()
 {
   Log(violetts+"hconfigtty()"+schwarz,obverb,oblog);
   setzmodconfd();
+  cout<<rot<<modconfdat<<schwarz<<endl;
   mdatei hci(modconfdat,ios::out);
   if (hci.is_open()) {
+  cout<<rot<<" ist offen"<<schwarz<<endl;
     time_t tim=time(0);
     struct tm *tm=localtime(&tim);
     char buf[80];
@@ -4873,19 +4890,22 @@ void paramcl::hconfigtty()
     hci<<"# FaxRcvdCmd: ./schreibe.sh"<<endl;
   } else {
     cerr<<Tx[T_Datei]<<modconfdat<<Tx[T_nichtbeschreibbar]<<endl;
+  cout<<rot<<" nicht offen"<<schwarz<<endl;
     exit(0);
   }
 } // void hconfigtty(paramcl *pmp,int obverb=0, int oblog=0)
 
+// lieftert 0, wenn die Dienstdatei gespeichert werden konnte (erg), nicht wenn der Dienst laeuft (csfehler)
 int paramcl::cservice()
 {
   Log(violetts+"cservice()"+schwarz,this->obverb,this->oblog);
   int csfehler=0;
+  int erg;
   string cspfad;
   svec rueck;
-  systemrueck("which capisuite",obverb,oblog,&rueck);
+  erg=systemrueck("which capisuite",obverb,oblog,&rueck);
   if (rueck.size()) {
-    systemrueck("sudo sh -c 'systemctl stop capisuite; killall capisuite; killall -9 capisuite; "
+    erg=systemrueck("sudo sh -c 'systemctl stop capisuite; killall capisuite >/dev/null 2>&1; killall -9 capisuite >/dev/null 2>&1; "
               "cd /etc/init.d"
               " && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
               " && { mkdir -p /etc/ausrangiert && mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true'",obverb,oblog);
@@ -4895,11 +4915,12 @@ int paramcl::cservice()
     struct tm *tmp = localtime(&jetzt);
     strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", tmp);
     csfehler+=!scapisuite->spruef(Tx[T_Capisuite_Dienst_eingerichtet_von]+prog+Tx[T_am]+buf,0,cspfad+" -d","","","",obverb,oblog);
-    cout<<rot<<"csfehler: "<<gruen<<csfehler<<schwarz<<endl;
-    return csfehler;
+    if (obverb) Log("csfehler: "+gruens+ltoan(csfehler)+schwarz,obverb,oblog);
+//    return csfehler;
   }
-  return 1;
-}
+  return erg;
+} // int paramcl::cservice()
+
 
 // wird aufgerufen in: pruefhyla
 // Dienste erstellen
@@ -5042,7 +5063,7 @@ int paramcl::pruefhyla()
               " && sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
               " && sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
               " && test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
-              " && killall hfaxd faxq 2>/dev/null && sudo faxsetup -nointeractive && echo $? = Ergebnis nach faxsetup -nointeractive"
+              " && killall hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive && echo $? = Ergebnis nach faxsetup -nointeractive"
               " && sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload"
               "'"
               ,2,oblog);
@@ -5062,7 +5083,7 @@ int paramcl::pruefhyla()
         // b1) falsches Hylafax loeschen
         if (hylafehlt) {
           if (falscheshyla) {
-            cout<<rot<<"Muss falsches hylafax loeschen!!!"<<schwarz<<endl;
+            Log(rots+"Muss falsches hylafax loeschen!!!"+schwarz,1,1);
             if (0) {
               systemrueck("sudo sh -c 'cd /etc/init.d"
               " && [ $(find . -maxdepth 1 -name \"*faxq*\" -or -name \"*hfaxd*\" -or -name \"hylafax*\" 2>/dev/null | wc -l) -ne 0 ]"
@@ -5214,7 +5235,7 @@ int paramcl::pruefhyla()
              obverb,oblog)) {
           systemrueck("sudo systemctl stop hylafax 2>/dev/null",obverb-2,oblog);
           systemrueck("sudo systemctl disable hylafax 2>/dev/null",obverb-2,oblog);
-          systemrueck(string("sudo killall ")+sfaxgetty->ename+" "+shfaxd->ename+" "+sfaxq->ename+" 2>/dev/null",obverb-2,oblog);
+          systemrueck(string("sudo killall ")+sfaxgetty->ename+" "+shfaxd->ename+" "+sfaxq->ename+" >/dev/null 2>&1",obverb-2,oblog);
         } // if (!systemrueck(string("sudo systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
         if (!systemrueck(string("sudo systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) {
           systemrueck(string("sudo systemctl enable ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog);
@@ -5341,6 +5362,7 @@ void pruefmodcron(int obverb, int oblog)
 int paramcl::pruefcapi()
 {
   Log(violetts+Tx[T_pruefcapi]+schwarz,obverb?obverb:obverb,oblog);
+  static uchar capiloggekuerzt=0;
   static uchar capischonerfolgreichinstalliert=0;
   int capilaeuft=0;
   unsigned versuch=0;
@@ -5353,7 +5375,9 @@ int paramcl::pruefcapi()
     //    capilaeuft=(PIDausName("capisuite")>=0);
     capilaeuft = this->scapisuite->obslaeuft(obverb-1,oblog);
     Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz,obverb,oblog);
-    if (!capilaeuft) {
+    if (capilaeuft) {
+     capischonerfolgreichinstalliert=1;
+    } else {
       //      pid_t pid = GetPIDbyName("capisuite") ; // If -1 = not found, if -2 = proc fs access error
       uchar fcpcida=0, capida=0, capidrvda=0;
       vector<string> rueck;
@@ -5417,9 +5441,8 @@ int paramcl::pruefcapi()
       } // if (!fcpcida || !capida || !capidrvda) 
       pruefrules(obverb,oblog);
       pruefblack(obverb,oblog);
-      cout<<"capischonerfolgreichinstalliert 1: "<<(int)capischonerfolgreichinstalliert<<endl;
       capischonerfolgreichinstalliert=!linst.obfehlt("capisuite capi4linux i4l-isdnlog");
-      // <<rot<<"capischonerfolgreichinstalliert: "<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
+      // <<rot<<"capischonerfolgreichinstalliert 0: "<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
       if (!capischonerfolgreichinstalliert) {
         Log(string(Tx[T_Konnte])+blau+"capisuite"+schwarz+Tx[T_nichtstarten],1,oblog);
         // if (systemrueck("which zypper",-1,-1)) KLA
@@ -5437,18 +5460,17 @@ int paramcl::pruefcapi()
         linst.doggfinst("libcapi20-3",obverb+1,oblog);
         linst.doggfinst("python-devel",obverb+1,oblog);
         linst.doggfinst("xsltproc",obverb+1,oblog);
+        uchar mitcservice=0;
         if (lsys.getsys(obverb,oblog)==sus) {
           linst.doggfinst("capi4linux i4l-isdnlog",obverb+1,oblog);
           systemrueck("zypper lr | grep 'kkeil factory development project' || "
               "sudo zypper ar -f http://download.opensuse.org/repositories/home:/kkeil:/Factory/openSUSE_Factory/home:kkeil:Factory.repo",
               1,1);
           // i4l-isdnlog scheint nicht wirklich noetig zu sein
-          //        capischonerfolgreichinstalliert=!systemrueck("zypper -n --gpg-auto-import-keys in capisuite capi4linux i4l-isdnlog", 1+obverb,oblog); 
+          //   capischonerfolgreichinstalliert=!systemrueck("zypper -n --gpg-auto-import-keys in capisuite capi4linux i4l-isdnlog", 1+obverb,oblog); 
           // i4l-base geloescht
           capischonerfolgreichinstalliert=!linst.doinst("capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
-          liescapiconf();
         } // if (lsys.getsys(obverb,oblog)==sus) 
-        cout<<"capischonerfolgreichinstalliert: "<<(int)capischonerfolgreichinstalliert<<endl;
 
         if (!capischonerfolgreichinstalliert) {
           pruefverz(instverz,obverb,oblog);
@@ -5469,19 +5491,20 @@ int paramcl::pruefcapi()
                   " && make"
                   " && sudo make install"
                   "'",obverb,oblog)) {
-              liescapiconf();
               //            pruefverz("/etc/capisuite",obverb,oblog,wahr);
               //            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
               //            systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instverz+"/capisuite/scripts/fax.conf /etc/capisuite");
-              pruefverz("/usr/local/var/log",obverb,oblog,wahr);
+//              pruefverz("/usr/local/var/log",obverb,oblog,wahr);
               //         pruefverz("/usr/local/var/log");
-        cout<<"capischonerfolgreichinstalliert 2: "<<(int)capischonerfolgreichinstalliert<<endl;
-              capischonerfolgreichinstalliert=!cservice();
-        cout<<"capischonerfolgreichinstalliert 3: "<<(int)capischonerfolgreichinstalliert<<endl;
-            }
-          }
+              mitcservice=1;
+            } // if (!systemrueck(sh -c ...
+          } // if (csrueck.size()) 
           // aktuelles Verzeichnis
         } // if (!capischonerfolgreichinstalliert) 
+        liescapiconf();
+        if (mitcservice) {
+          capischonerfolgreichinstalliert=!cservice();
+        }
         // capisuite unter Kernel 4: 
         // zypper in sfftobmp libcapi20-2
         //        // scp linux2:/usr/include/capiutils.h /usr/include
@@ -5505,10 +5528,12 @@ int paramcl::pruefcapi()
         // in ./src/application/pythonscript.cpp Zeile 104: (Py_ssize_t*)&length statt &length
         // in /usr/include/capiutils.h eine dritte Zeile einfuegen: #define CAPI_LIBRARY_V2
         // in src/backend/connection.cpp eine Zeile 26 einfuegen: #include <cstring>
-
-      }
+      } // if (!capischonerfolgreichinstalliert)
       systemrueck("sudo systemctl daemon-reload",obverb,oblog);
     } // if (!capischonerfolgreichinstalliert) 
+    // <<rot<<"capischonerfolgreichinstalliert: "<<schwarz<<(int)capischonerfolgreichinstalliert<<endl;
+    // <<rot<<"capizukonf: "<<schwarz<<(int)capizukonf<<endl;
+    // <<rot<<"versuch: "<<schwarz<<versuch<<endl;
     if (capischonerfolgreichinstalliert) {
       if (!capizukonf) cliesconf();
       if (obcapi && (versuch>0 || this->capizukonf)) {
@@ -5535,10 +5560,14 @@ int paramcl::pruefcapi()
         } else {
           //       Log("Capisuite konnte nicht gestartet werden.",1,1);
         }
-      }
-    }
+      } //       if (capilaeuft) else
+    } // if (capischonerfolgreichinstalliert) 
   } //  for(unsigned versuch=0;1;versuch++) (3.)
   if (capilaeuft) {
+    if (!capiloggekuerzt) {
+      kuerzelogdatei("/var/log/capisuite.log",obverb); // screen
+      capiloggekuerzt=1;
+    }
     if (this->obcapi) pruefmodcron(obverb,oblog);
   } else {
     Log(rots+Tx[T_konntecapisuiteservice]+violett+ltoan(versuch)+rot+Tx[T_malnichtstartenverwN]+schwarz,1,1);
@@ -5598,7 +5627,6 @@ void faxemitC(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obv
   Log(violetts+Tx[T_faxemitC]+schwarz,obverb,oblog);
   // 5. wegfaxen und wenn erfolgreich im spool, dann in Datenbank eintragen
   if (fsfp->telnr.empty()) {
-    obverb=oblog=1; 
     Log(string(Tx[T_DieFaxnrausTabelle])+tuerkis+spooltab+schwarz+"`, id `"+tuerkis+fsfp->id+schwarz+"` "+
         drot+fsfp->spdf+schwarz+Tx[T_istleerfaxeesdahernicht],1,1);
   } else {
@@ -6108,7 +6136,6 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, strin
       size_t cs=sizeof cconf/sizeof*cconf;
       */
       schlArr cconf; cconf.init(3,"tries","starttime","dialstring");
-    cout<<rot<<"Stelle 5"<<schwarz<<endl;
       confdat cpconf(suchtxt,&cconf,obverb);
       if (1) {
         //    if (cpplies(suchtxt,cconf,cs)) KLA
@@ -6117,7 +6144,9 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, strin
         char buf[255];
         int versuzahl=atol(cconf[0].wert.c_str());
         snprintf(buf,4,"%3d",versuzahl);
-        *ausgp<<", "<<blau<<buf<<"/"<<*maxtries<<schwarz<<Tx[T_Anwahlen];
+        struct stat statlock;
+        int objetzt=!lstat((sendqgespfad.substr(0,p1)+".lock").c_str(),&statlock);
+        *ausgp<<", "<<blau<<buf<<"/"<<*maxtries<<schwarz<<(objetzt?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
         //                      if (versuzahl>12) ausg<<"zu spaet, ";
         struct tm tm;
         memset(&tm, 0, sizeof(struct tm));
@@ -6227,7 +6256,6 @@ uchar paramcl::setzhconfp(string *protdaktp,int obverb)
   }
 //  static string *alt_protdaktp=0;
 //  if (alt_protdaktp!=protdaktp) KLA
-    cout<<rot<<"Stelle 6"<<schwarz<<endl;
     confdat hylc(*protdaktp,&hylconf,obverb,':');
     return hylc.obgelesen;
 //    alt_protdaktp=protdaktp;
@@ -6350,14 +6378,30 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obve
 
 // Rueckgabe: Zahl der nicht Geloeschten
 // wird aufgerufen in: loeschecapi, untersuchespool
-int tuloeschen(const string& zuloe,int obverb, int oblog)
+int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
 {
   Log(violetts+Tx[T_tuloeschen]+schwarz,obverb,oblog);
   struct stat entryzuloe;
   if (!lstat(zuloe.c_str(),&entryzuloe)) {
     Log(string(Tx[T_Loesche_Ausrufezeichen])+rot+zuloe+schwarz,obverb,oblog);
-    return remove(zuloe.c_str());
-  } 
+    int erg;
+    for(uchar iru=1;iru<3;iru++) {
+      if ((erg=remove(zuloe.c_str()))) {
+        if(cuser.empty()) iru++;
+        if(iru==1) {
+          systemrueck("sudo setfacl -m 'u:"+cuser+":6' '"+zuloe+"'",obverb,oblog);
+        } else {
+          perror(Tx[T_Fehler_beim_Loeschen]);
+          string cmd=string("sudo rm -rf \"")+zuloe+"\"";
+          erg=systemrueck(cmd,obverb+1,1);
+        } // if(iru) else
+      } else {
+        erg=0;
+        break;
+      }
+    } // for(uchar iru=1;iru>-1;iru--)
+    return erg;
+  } // if (!lstat(zuloe.c_str(),&entryzuloe)) 
   Log(rot+zuloe+schwarz+Tx[T_nicht_geloescht_war_eh_nicht_mehr_da],obverb,oblog);
   return 0;
 } // int tuloeschen(string zuloe,int obverb, int oblog)
@@ -6411,8 +6455,7 @@ int main(int argc, char** argv)
   pm.pruefcron();
   pm.pruefsamba();
 
-  if (pm.logdateineu) remove(logdt);
-  kuerzelogdatei("/var/log/capisuite.log",pm.obverb); // screen
+  if (pm.logdateineu) tuloeschen(logdt,"",pm.obverb,pm.oblog);
   Log(string(Tx[T_zufaxenvz])+drot+pm.zufaxenvz+schwarz+"'",pm.obverb,pm.oblog);
   Log(string(Tx[T_Logpfad])+drot+pm.loggespfad+schwarz+Tx[T_oblog]+drot+ltoan((int)pm.oblog)+schwarz+")",pm.obverb,pm.oblog);
   if (pm.initDB())

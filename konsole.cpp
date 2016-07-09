@@ -14,7 +14,7 @@ const char *dir = "ls -l ";
 // const char *rot="\e[1;31m", *weinrot="\e[31m", *schwarz="\e[0m", *blau="\e[34m", *gelb="\e[33m"; // muss spaeter kompilerunabhaengig 
 const char *schwarz="\e[0m", *dgrau="\e[1;30m", *drot="\e[0;31m", *rot="\e[1;31m", *gruen="\e[0;32m", *hgruen="\e[1;32m",
       *braun="\e[0;33m",   *gelb="\e[1;33m",     *dblau="\e[0;34;1;47m",  *blau="\e[1;34m", *violett="\e[0;35m", *hviolett="\e[1;35m",
-      *tuerkis="\e[0;36m", *htuerkis="\e[1;36m", *hgrau="\e[0;37m", *weiss="\e[1;37m";
+      *tuerkis="\e[0;36m", *htuerkis="\e[1;36m", *hgrau="\e[0;37m", *weiss="\e[1;37m", *umgek="\e[7m";
 const char *_drot=drot, *_rot=rot, *_schwarz=schwarz, *_blau=blau, *_gelb=gelb, *_tuerkis=tuerkis, *_hgrau=hgrau;
 // char logdatei[PATH_MAX+1]="/DATA/down/log_termine.txt";
 #define _access access
@@ -142,7 +142,7 @@ argcl::argcl(int i,char** argv)
   argcs=argv[i];
 }
 
-const string drots=drot, rots=rot, schwarzs=schwarz, blaus=blau, gelbs=gelb, tuerkiss=tuerkis, violetts=violett;
+const string drots=drot, rots=rot, schwarzs=schwarz, blaus=blau, gelbs=gelb, tuerkiss=tuerkis, violetts=violett, gruens=gruen;
 
 perfcl::perfcl(const string& vvonwo): vonwo(vvonwo)
 {
@@ -478,8 +478,9 @@ mdatei::mdatei (const string& name, ios_base::openmode modus)
     }
     int erg __attribute__((unused));
     char* benutzer=curruser();
+    pruefverz(dir_name(name),0,0,0);
     cout<<drot<<Txk[T_Muss_Datei]<<blau<<name<<drot<<Txk[T_fuer]<<blau<<benutzer<<drot<<Txk[T_zugreifbar_machen]<<schwarz<<endl;
-    erg=system((string("sudo touch '")+name+"' && sudo setfacl -m 'u:"+benutzer+":"+((modus & ios::out)?"6":"4")+"' '"+name+"'").c_str());
+    erg=systemrueck((string("{ sudo test -f '")+name+"' || sudo touch '"+name+"'; } && sudo setfacl -m 'u:"+benutzer+":"+((modus & ios::out)?"6":"4")+"' '"+name+"'").c_str(),1,0);
   }
 } // mdatei::mdatei (const string& name, ios_base::openmode modus)
 
@@ -1424,17 +1425,20 @@ std::string dir_name(const std::string& path)
   return path.substr(0,path.find_last_of("/\\"));
 } // std::string dir_name(std::string const & path)
 
-
+// soll fuer den Fall eines uebergebenen 'rueck'-Zeigers den Rueckgabewert der aufgerufenen Funktion zuruckliefern,
+// ausser bei 'find', da die Zahl der Funde
+// bei rueck==0 liefert es das Ergebnis der system(..)-Funktion zurueck
 int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck, 
     binaer ob0heissterfolg, binaer obergebnisanzeig, const string& ueberschr)
 {
   uchar neurueck=0;
   uchar weiter=0;
   int erg;
+  uchar obfind=(cmd.substr(0,5)=="find");
   string meld(Txk[T_Rueckmeldung]);
   string aktues;
   if (ueberschr.empty()) { 
-    if (cmd.substr(0,5)=="find ") {
+    if (obfind) {
       aktues=Txk[T_Suchbefehl];
     } else {
       aktues=Txk[T_Fuehre_aus];
@@ -1494,7 +1498,10 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
       Log(cmd,1,oblog)
         prf.ausgab1000("vor pclose");
 #endif
-      erg = pclose(pipe)/256;
+      if (obfind)
+        erg=rueck->size();
+      else
+        erg = pclose(pipe)/256;
 #ifdef systemrueckprofiler
       prf.ausgab1000("nach pclose");
 #endif
@@ -1504,27 +1511,29 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
     }
   } else {
     erg= system(cmd.c_str());
-  }
+  } // if (rueck) else
 #ifdef systemrueckprofiler
   prf.ausgab1000("vor weiter");
 #endif
   if (weiter) aktues=Txk[T_Fuehrte_aus];
-  string ergebnis;
-  if (ob0heissterfolg) {
-    if (erg) {
-      ergebnis=rots+string(Txk[T_Fehler])+ltoan(erg)+schwarz;
-      if (obverb>=0) obergebnisanzeig=wahr;
-      obverb++;
+  if (obverb>0 || oblog) {
+    string ergebnis;
+    if (ob0heissterfolg) {
+      if (erg) {
+        ergebnis=rots+string(Txk[T_Fehler])+ltoan(erg)+schwarz;
+        if (obverb>=0) obergebnisanzeig=wahr;
+        obverb++;
+      } else {
+        ergebnis=Txk[T_Erfolg];
+      }
     } else {
-      ergebnis=Txk[T_Erfolg];
+      ergebnis=ltoan(erg);
     }
-  } else {
-    ergebnis=ltoan(erg);
-  }
 #ifdef systemrueckprofiler
-  prf.ausgab1000("vor log");
+    prf.ausgab1000("vor log");
 #endif
-  Log(aktues+": "+blau+cmd+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz,obverb>0?obverb:0,oblog);
+    Log(aktues+": "+blau+cmd+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz,obverb>0?obverb:0,oblog);
+  } // if (obverb>0 || oblog)
   if (obergebnisanzeig) if (rueck->size()) 
     Log(meld,obverb>1,oblog);
   if (neurueck) delete rueck;
