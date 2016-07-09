@@ -308,7 +308,18 @@ capisuite
 3) ggf. Erstellen und Zugreifbarmachen der Verzeichnisse für zu sendende, wartende, abgearbeitete und empfangene Faxe
 .LP
 .HP 3
-4) ggf. Erstellen und Verändern der Konfigurationsdatei autofax.conf in dem Verzeichnis, in dem auch 
+4) ggf. Erstellen und Verändern der Konfigurationsdatei autofax.conf in dem Verzeichnis, in dem auch es selbst steht (Vorgabe: /usr/local/sbin/autofax)
+.LP
+.HP 3
+5) ggf. Einfügen einer Zeile zum Aufruf des Programms in das crontab (von root)
+.LP
+.HP 3
+6) ggf. Einfügen von Abschnitten für die unter 3) genannten Verzeichnisse in /etc/samba/smb.conf.
+.LP
+.HP 3
+7) ggf. Einfügen einer Datenbank für die Faxe in mariadb unter einem bestimmbaren Namen, Anlage und Veränderung mehrerer Tabellen und einer Prozedur in dieser Datenbank,
+ ggf. Einfügen eines Benutzers mit bestimmbarem Namen zur Datenpflege in diesen Tabellen 
+
 
 .SH FEHLER
 Fehler bitte melden. Bitte auch melden, wenn sich Änderungsbedarf durch andere Hard- bzw. Software ergeben.

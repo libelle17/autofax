@@ -9,6 +9,7 @@
 <a href="#OPTIONEN">OPTIONEN</a><br>
 <a href="#FUNKTIONSWEISE">FUNKTIONSWEISE</a><br>
 <a href="#VORAUSSETZUNGEN">VORAUSSETZUNGEN</a><br>
+<a href="#AUSWIRKUNGEN">AUSWIRKUNGEN</a><br>
 <a href="#FEHLER">FEHLER</a><br>
 <a href="#HAFTUNG">HAFTUNG</a><br>
 <a href="#AUTOR">AUTOR</a><br>
@@ -547,6 +548,80 @@ autofax:</b> <br>
 cron, soffice, convert, hylafax+, hylafax+-client,
 kernel-source, fcpci-3.10.0, kkeil Factory repository,
 capisuite, capi4linux, i4l-isdnlog, mariadb</p>
+
+<h2>AUSWIRKUNGEN
+<a name="AUSWIRKUNGEN"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Das Programm
+muss zum ordentlichen Funktionieren folgende
+Ma&szlig;nahmen ergreifen: 1) Einrichten von Diensten a)
+in systemd (im Verzeichnis /usr/lib/systemd/system oder
+/lib/systemd/system), insbesondere: <br>
+hylafax-faxq.service, hylafax-hfaxd.service,
+hylafax-faxgetty-....service, <br>
+capisuite.service, <br>
+b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d
+in ein neu eingerichtes Verzeichnis /etc/ausrangiert: <br>
+hylafax <br>
+capisuite</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">2) Erstellen einer
+Protokolldatei /var/log/autofax.log</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">3) ggf. Erstellen und
+Zugreifbarmachen der Verzeichnisse f&uuml;r zu sendende,
+wartende, abgearbeitete und empfangene Faxe</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">4) ggf. Erstellen und
+Ver&auml;ndern der Konfigurationsdatei autofax.conf in
+dem Verzeichnis, in dem auch es selbst steht (Vorgabe:
+/usr/local/sbin/autofax)</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">5) ggf. Einf&uuml;gen einer
+Zeile zum Aufruf des Programms in das crontab (von root)</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">6) ggf. Einf&uuml;gen von
+Abschnitten f&uuml;r die unter 3) genannten
+Verzeichnisse in /etc/samba/smb.conf.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">7) ggf. Einf&uuml;gen einer
+Datenbank f&uuml;r die Faxe in mariadb unter einem
+bestimmbaren Namen, Anlage und Ver&auml;nderung mehrerer
+Tabellen und einer Prozedur in dieser Datenbank,</p></td></tr>
+</table>
+
+<p style="margin-left:15%;">ggf. Einf&uuml;gen eines
+Benutzers mit bestimmbarem Namen zur Datenpflege in diesen
+Tabellen</p>
 
 <h2>FEHLER
 <a name="FEHLER"></a>
