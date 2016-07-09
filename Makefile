@@ -141,7 +141,9 @@ ${MANPD}: ${CURDIR}/man_de
 ${MANPDH}: $(CURDIR)/man_de 
 	-@{ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} || sudo zypper -n --gpg-auto-import-keys in groff || { which apt-get && sudo apt-get --assume-yes install groff groff-base;}
 	-@rm -f man_de.html
-	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_de.html
+	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {/\.br/d}' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_de.html
+	-@rm -f README.md
+	-@sed -n '20,$$p' man_de.html > README.md 
 	@echo -e $(blau)   man_de.html$(reset) neu aus$(blau) man_de$(reset) erstellt
 endif
 
@@ -154,8 +156,8 @@ ${MANPEH}: $(CURDIR)/man_en
 	-@{ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} || sudo zypper -n --gpg-auto-import-keys in groff || { which apt-get && sudo apt-get --assume-yes install groff groff-base;}
 	-@rm -f man_en.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {/\.br/d}' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_en.html
-	-@rm -f README.md
-	-@sed -n '20,$$p' man_en.html > README.md 
+#	-@rm -f README.md
+#	-@sed -n '20,$$p' man_en.html > README.md 
 	@echo -e $(blau)   man_en.html$(reset) und$(blau) README.md$(reset) neu aus$(blau) man_en$(reset) erstellt
 endif
 
