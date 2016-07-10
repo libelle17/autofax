@@ -637,7 +637,9 @@ Zeile zum Aufruf des Programms in das crontab (von root)</p></td></tr>
 
 <p style="margin-top: 1em">8) ggf. Einf&uuml;gen von
 Abschnitten f&uuml;r die unter 3) genannten
-Verzeichnisse in /etc/samba/smb.conf.</p></td></tr>
+Verzeichnisse in /etc/samba/smb.conf, ggf.
+Einf&uuml;gen/Passwortzuteilen des f&uuml;r
+Benutzers als Samba-Bentzer.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -661,7 +663,9 @@ insbesondere: a) in hylafax: durch Aufruf von
 &rsquo;faxrm&rsquo; b) in capisuite: durch L&ouml;schen
 der Dateien wie
 /var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und
-~/*.sff</p> </td></tr>
+~/*.sff. In capisuite kann auch eine verwaiste Lock-Datei
+(/var/spool/capisuite/users/&lt;user&gt;/sendq/*.lock)
+gel&ouml;scht werden.</p></td></tr>
 </table>
 
 <h2>FEHLER

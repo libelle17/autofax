@@ -8,7 +8,7 @@ PROGGROSS=`echo $(PROGRAM) | tr a-z A-Z`
 EXPFAD=/usr/local/sbin
 EXEC=$(PROGRAM)
 INSTEXEC=$(EXPFAD)/$(EXEC)
-CINST=gcc6-c++
+CCInst=gcc6-c++ 
 ifneq ($(shell g++-6 --version >/dev/null 2>&1),0)
  CCName=g++
  CC=sudo $(CCName)
@@ -57,8 +57,8 @@ optg: CFLAGS+= -Og
 optg: neu
 
 altc: CFLAGS+= -std=gnu++11
-altc: CINST=gcc-c++
-altc: CCname=g++
+altc: CCInst=gcc-c++
+altc: CCName=g++
 altc: opts
 
 neu: anzeig clean weiter
@@ -107,9 +107,11 @@ $(DEPDIR)/%.d: ;
 compiler:
 	@echo -e "Untersuche Compiler ..."
 	@echo -e -n "\r" 
-	-@which $(CCname) >/dev/null 2>&1 || { which zypper && sudo zypper -n in $(CINST) || { which apt-get && sudo apt-get --assume-yes install build-essential; } }
-	-@sudo /sbin/ldconfig; sudo /sbin/ldconfig -p | grep -q "libmysqlclient.so " || { which zypper && sudo zypper -n in libmysqlclient-devel || { which apt-get && sudo apt-get --assume-yes install libmysqlclient-dev; }; sudo /sbin/ldconfig; }
-	-@test -f /usr/include/tiff.h || { which zypper && sudo zypper -n in libtiff-devel || { which apt-get && sudo apt-get --assume-yes install libtiff-dev; } }
+	@echo -e "CCName: " ${CCName}
+	@echo -e "CCInst: " $(CCInst)
+	-@which $(CCName) >/dev/null 2>&1 || { which zypper && { sudo zypper lr | grep 'g++\|devel_gcc' || sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release | grep ^NAME= | cut -d'"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'"' -f2`/devel:gcc.repo; sudo zypper -n --gpg-auto-import-keys si $(CCInst); } || { which apt-get && sudo apt-get --assume-yes install build-essential; } }
+	-@sudo /sbin/ldconfig; sudo /sbin/ldconfig -p | grep -q "libmysqlclient.so " || { which zypper && sudo zypper -n--gpg-auto-import-keys in libmysqlclient-devel || { which apt-get && sudo apt-get --assume-yes install libmysqlclient-dev; }; sudo /sbin/ldconfig; }
+	-@test -f /usr/include/tiff.h || { which zypper && sudo zypper -n --gpg-auto-import-keys in libtiff-devel || { which apt-get && sudo apt-get --assume-yes install libtiff-dev; } }
 
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
 ifneq ("$(wildcard $(CURDIR)/man_en)","")

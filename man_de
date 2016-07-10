@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "09.07.16" "Version 0.40271" "Manual-Seite für autofax"
+.TH man 1 "09.07.16" "Version 0.4027" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung in einer Datenbank 
 .br
@@ -324,7 +324,7 @@ capisuite
 7) ggf. Einfügen einer Zeile zum Aufruf des Programms in das crontab (von root)
 .LP
 .HP 3
-8) ggf. Einfügen von Abschnitten für die unter 3) genannten Verzeichnisse in /etc/samba/smb.conf.
+8) ggf. Einfügen von Abschnitten für die unter 3) genannten Verzeichnisse in /etc/samba/smb.conf, ggf. Einfügen/Passwortzuteilen des für Benutzers als Samba-Bentzer.
 .LP
 .HP 3
 9) ggf. Einfügen einer Datenbank für die Faxe in mariadb unter einem bestimmbaren Namen, Anlage und Veränderung mehrerer Tabellen und einer Prozedur in dieser Datenbank, ggf. Einfügen eines Benutzers mit bestimmbarem Namen in mariadb zur Datenpflege in diesen Tabellen 
@@ -334,7 +334,8 @@ capisuite
 .br
 a) in hylafax: durch Aufruf von 'faxrm'
 .br
-b) in capisuite: durch Löschen der Dateien wie /var/spool/capisuite/users/<user>/sendq/*.txt und ~/*.sff
+b) in capisuite: durch Löschen der Dateien wie /var/spool/capisuite/users/<user>/sendq/*.txt und ~/*.sff.
+In capisuite kann auch eine verwaiste Lock-Datei (/var/spool/capisuite/users/<user>/sendq/*.lock) gelöscht werden.
 
 
 .SH FEHLER
