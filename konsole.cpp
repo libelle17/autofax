@@ -126,6 +126,12 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {"' fuer '","' must be made accessible for '"},
   // T_zugreifbar_machen
   {"' zugreifbar machen.","'"},
+  // T_spruef_sname
+  {"spruef(), sname: ","sprove(), sname: "},
+  // T_lief_schon
+  {" lief schon."," ran already."},
+  // T_nicht_gefunden_versuche_ihn_einzurichten
+  {" nicht gefunden, versuche ihn einzurichten"," not found, trying to install it"},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -1974,4 +1980,149 @@ string meinpfad() {
   }
   return string(buff);
 } // meinpfad
+
+servc::servc(string vsname,string vename,int obverb, int oblog): sname((vsname.empty()?vename:vsname)),ename(vename) 
+{
+  machfit(obverb,oblog);
+}
+
+int servc::machfit(int obverb,int oblog)
+{
+    if (!obslaeuft(obverb,oblog)) {
+      restart(obverb,oblog);
+    }
+    //  if (servicelaeuft)
+    enableggf(obverb,oblog);
+    return servicelaeuft;
+} // int servc::machfit(int obverb,int oblog)
+
+// wird aufgerufen in: hservice_faxq_hfaxd, hservice_faxgetty
+uchar servc::spruef(const string& sbez,uchar obfork,const string& sexec, const string& CondPath, const string& After, const string& wennnicht0,
+                    int obverb,int oblog)
+{
+  Log(violetts+Txk[T_spruef_sname]+schwarz+sname,obverb,oblog);
+  string systemd;
+  int svgibts=0; // 1 = Datei systemd existiert
+  if (!wennnicht0.empty()) {
+    servicelaeuft=!systemrueck(wennnicht0,obverb-1,oblog);
+  }
+  if (servicelaeuft && svgibts) {
+    Log(("Service ")+blaus+sname+schwarz+Txk[T_lief_schon],obverb,oblog);
+  } else {
+    for(uchar iru=0;iru<2;iru++) {
+      char pBuf[300];
+      int bytes = MIN(readlink("/bin/systemd", pBuf, sizeof pBuf), sizeof pBuf - 1);
+      if(bytes >= 1) pBuf[bytes-1] = 0; // ../system statt /systemd
+      systemd=string(pBuf)+"/"+sname+".service";
+      struct stat svstat;
+      svgibts=!lstat(systemd.c_str(),&svstat);
+      if (!svgibts || !obslaeuft(obverb,oblog)) {
+        if (svgibts && serviceda) {
+          restart(obverb,oblog); // hier wird auch serviceslaeuft gesetzt
+          /*
+             servicelaeuft=!systemrueck(("sudo killall ")+ename+" >/dev/null 2>&1; sudo systemctl restart "+sname,obverb-1,oblog); 
+           */
+          // bei restart return value da 
+          //          <<dblau<<"serviceda: "<<schwarz<<sname<<", servicelaeuft: "<<(int)servicelaeuft<<endl;
+        } else {
+          //          <<dblau<<"serviceda else: "<<schwarz<<sname<<endl;
+          //  if (systemrueck("systemctl list-units faxq.service --no-legend | grep 'active running'",obverb-1,oblog)) KLA
+          // string systemd="/usr/lib/systemd/system/"+sname+".service"; // außerhalb Opensuse: /lib/systemd/system/ ...
+          Log(blaus+systemd+Txk[T_nicht_gefunden_versuche_ihn_einzurichten]+schwarz,1,0);
+          mdatei syst(systemd,ios::out);
+          if (syst.is_open()) {
+            syst<<"[Unit]"<<endl;
+            syst<<"Description="<<sbez<<" Service"<<endl;
+            if (!CondPath.empty()) 
+              syst<<"ConditionPathExists="<<CondPath<<endl;
+            if (!After.empty())
+              syst<<"After="<<After<<endl;
+            syst<<endl;
+            syst<<"[Service]"<<endl;
+            if (obfork) 
+              syst<<"Type=forking"<<endl;
+            syst<<"User=root"<<endl;
+            syst<<"Group=root"<<endl;
+            syst<<"Restart=always"<<endl;
+            syst<<"RestartSec=30"<<endl;
+            // if (!spre.empty()) syst<<"ExecStartPre=source "<<spre<<endl;
+            syst<<"ExecStart="<<sexec<<endl;
+            syst<<endl;
+            syst<<"[Install]"<<endl;
+            syst<<"WantedBy=multi-user.target "<<endl;
+            syst.close();
+            systemrueck("sudo systemctl daemon-reload",obverb-1,oblog);
+          } // if (syst.is_open()) 
+        } // if (svgibts && serviceda) else
+      } // if (!svgibts || !obslaeuft(obverb,oblog)) 
+      if (servicelaeuft) { 
+        if (systemrueck("systemctl is-enabled "+sname,obverb-1,oblog)) {
+          systemrueck("sudo systemctl enable "+sname,obverb,oblog);
+        }
+        break;
+      }
+    } //  for(uchar iru=0;iru<2;iru++) 
+  } // if (servicelaeuft) else
+  return servicelaeuft;
+} // void servc::spruef() 
+
+// wird aufgerufen in: pruefhyla, pruefcapi, spruef
+int servc::obslaeuft(int obverb,int oblog)
+{
+  svec sysrueck;
+  servicelaeuft=0;
+  serviceda=0;
+  systemrueck(("systemctl list-units '")+sname+".service' --all --no-legend",obverb,oblog,&sysrueck);  // bei list-units return value immer 0
+  if (!sysrueck.empty()) {
+    Log(blau+sysrueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
+    if (sysrueck[0].find("active running")!=string::npos) {
+      servicelaeuft=1; 
+      serviceda=1;
+    } else if (sysrueck[0].find("loaded")!=string::npos) {
+      serviceda=1;
+    }
+  }
+  if (!serviceda) {
+    serviceda=!systemrueck("systemctl status '"+sname+"'| grep ' loaded '",obverb,oblog);
+  }
+  return servicelaeuft;
+} // int servc::obslaeuft(int obverb,int oblog)
+
+int servc::restart(int obverb,int oblog)
+{
+  for(int i=0;i<2;i++) {
+    systemrueck(string("sudo systemctl restart '")+sname+"' >/dev/null 2>&1",obverb,oblog);
+    if (obslaeuft(obverb,oblog)) break;
+    if (i) break;
+    systemrueck(("sudo killall '")+ename+"' >/dev/null 2>&1",obverb-1,oblog);
+  }
+  return servicelaeuft;
+} // int servc::restart(int obverb,int oblog)
+
+void servc::start(int obverb,int oblog)
+{
+  systemrueck(string("sudo systemctl start '")+sname+"' >/dev/null 2>&1",obverb,oblog);
+} // int servc::start(int obverb,int oblog)
+
+int servc::startundenable(int obverb,int oblog)
+{
+  start(obverb,oblog);
+  enableggf(obverb,oblog);
+  return obslaeuft(obverb,oblog);
+} // int servc::start(int obverb,int oblog)
+
+void servc::stop(int obverb,int oblog)
+{
+  systemrueck(string("sudo systemctl stop '")+sname+"' >/dev/null 2>&1",obverb,oblog);
+} // int servc::stop(int obverb,int oblog)
+
+int servc::enableggf(int obverb,int oblog)
+{
+ return systemrueck(string("systemctl is-enabled '")+sname+"' >/dev/null || sudo systemctl enable '"+sname+"' >/dev/null"+sname,obverb,oblog);
+}
+
+void servc::daemon_reload(int obverb, int oblog)
+{
+ systemrueck("sudo systemctl daemon-reload",obverb,oblog);
+}
 

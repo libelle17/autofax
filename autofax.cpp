@@ -402,8 +402,6 @@ enum T_
   T_empfangene_Dateien_loeschen_die_nicht_verarbeitet_werden_koennen,
   T_hylafehlt,
   T_capilaeuft,
-  T_spruef_sname,
-  T_nicht_gefunden_versuche_ihn_einzurichten,
   T_gefunden,
   T_Kein_Modem_gefunden,
   T_kein_Faxprogramm_verfuegbar,
@@ -419,7 +417,6 @@ enum T_
   T_Nichtgefaxt,
   T_Faxempfang,
   T_Gefaxt,
-  T_lief_schon,
   T_zu_schreiben,
   T_Zahl_der_Verzeichnisse_fuer_erfolgreich_verschickte_Faxe,
   T_Verzeichnis,
@@ -1187,10 +1184,6 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"hylafehlt: ","hylamissing: "},
   // T_capilaeuft
   {"capilaeuft: ","capirunning: "},
-  // T_spruef_sname
-  {"spruef(), sname: ","sprove(), sname: "},
-  // T_nicht_gefunden_versuche_ihn_einzurichten
-  {" nicht gefunden, versuche ihn einzurichten"," not found, trying to install it"},
   // T_gefunden
   {" gefunden."," found."},
   // T_Kein_Modem_gefunden
@@ -1221,8 +1214,6 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Faxempfang","FaxArrival"},
   // T_Gefaxt
   {"Gefaxt","Faxed"},
-  // T_lief_schon
-  {" lief schon."," ran already."},
   // T_zu_schreiben
   {"zu schreiben: ","must write: "},
   // T_Zahl_der_Verzeichnisse_fuer_erfolgreich_verschickte_Faxe
@@ -1435,127 +1426,6 @@ inline const char* FxStatS(FxStat *i)
   return Tx[T_woasined];
 } // FxStatS
 
-servc::servc(string vsname,string vename,int obverb, int oblog): sname((vsname.empty()?vename:vsname)),ename(vename) 
-{
-  machfit(obverb,oblog);
-}
-
-int servc::machfit(int obverb,int oblog)
-{
-    if (!obslaeuft(obverb,oblog)) {
-      restart(obverb,oblog);
-      if (servicelaeuft) {
-       enableggf(obverb,oblog);
-      }
-    }
-    return servicelaeuft;
-} // int servc::machfit(int obverb,int oblog)
-
-// wird aufgerufen in: hservice_faxq_hfaxd, hservice_faxgetty
-uchar servc::spruef(const string& sbez,uchar obfork,const string& sexec, const string& CondPath, const string& After, const string& wennnicht0,
-                    int obverb,int oblog)
-{
-  Log(violetts+Tx[T_spruef_sname]+schwarz+sname,obverb,oblog);
-  string systemd;
-  int svgibts=0; // 1 = Datei systemd existiert
-  if (!wennnicht0.empty()) {
-    servicelaeuft=!systemrueck(wennnicht0,obverb-1,oblog);
-  }
-  if (servicelaeuft && svgibts) {
-    Log(("Service ")+blaus+sname+schwarz+Tx[T_lief_schon],obverb,oblog);
-  } else {
-    for(uchar iru=0;iru<2;iru++) {
-      char pBuf[300];
-      int bytes = MIN(readlink("/bin/systemd", pBuf, sizeof pBuf), sizeof pBuf - 1);
-      if(bytes >= 1) pBuf[bytes-1] = 0; // ../system statt /systemd
-      systemd=string(pBuf)+"/"+sname+".service";
-      struct stat svstat;
-      svgibts=!lstat(systemd.c_str(),&svstat);
-      if (!svgibts || !obslaeuft(obverb,oblog)) {
-        if (svgibts && serviceda) {
-          restart(obverb,oblog); // hier wird auch serviceslaeuft gesetzt
-          /*
-             servicelaeuft=!systemrueck(("sudo killall ")+ename+" >/dev/null 2>&1; sudo systemctl restart "+sname,obverb-1,oblog); 
-           */
-          // bei restart return value da 
-          //          <<dblau<<"serviceda: "<<schwarz<<sname<<", servicelaeuft: "<<(int)servicelaeuft<<endl;
-        } else {
-          //          <<dblau<<"serviceda else: "<<schwarz<<sname<<endl;
-          //  if (systemrueck("systemctl list-units faxq.service --no-legend | grep 'active running'",obverb-1,oblog)) KLA
-          // string systemd="/usr/lib/systemd/system/"+sname+".service"; // außerhalb Opensuse: /lib/systemd/system/ ...
-          Log(blaus+systemd+Tx[T_nicht_gefunden_versuche_ihn_einzurichten]+schwarz,1,0);
-          mdatei syst(systemd,ios::out);
-          if (syst.is_open()) {
-            syst<<"[Unit]"<<endl;
-            syst<<"Description="<<sbez<<" Service"<<endl;
-            if (!CondPath.empty()) 
-              syst<<"ConditionPathExists="<<CondPath<<endl;
-            if (!After.empty())
-              syst<<"After="<<After<<endl;
-            syst<<endl;
-            syst<<"[Service]"<<endl;
-            if (obfork) 
-              syst<<"Type=forking"<<endl;
-            syst<<"User=root"<<endl;
-            syst<<"Group=root"<<endl;
-            syst<<"Restart=always"<<endl;
-            syst<<"RestartSec=30"<<endl;
-            // if (!spre.empty()) syst<<"ExecStartPre=source "<<spre<<endl;
-            syst<<"ExecStart="<<sexec<<endl;
-            syst<<endl;
-            syst<<"[Install]"<<endl;
-            syst<<"WantedBy=multi-user.target "<<endl;
-            syst.close();
-            systemrueck("sudo systemctl daemon-reload",obverb-1,oblog);
-          } // if (syst.is_open()) 
-        } // if (svgibts && serviceda) else
-      } // if (!svgibts || !obslaeuft(obverb,oblog)) 
-      if (servicelaeuft) { 
-        if (systemrueck("systemctl is-enabled "+sname,obverb-1,oblog)) {
-          systemrueck("sudo systemctl enable "+sname,obverb,oblog);
-        }
-        break;
-      }
-    } //  for(uchar iru=0;iru<2;iru++) 
-  } // if (servicelaeuft) else
-  return servicelaeuft;
-} // void servc::spruef() 
-
-// wird aufgerufen in: pruefhyla, pruefcapi, spruef
-int servc::obslaeuft(int obverb,int oblog)
-{
-  svec sysrueck;
-  servicelaeuft=0;
-  serviceda=0;
-  systemrueck(("systemctl list-units ")+sname+".service --all --no-legend",obverb,oblog,&sysrueck);  // bei list-units return value immer 0
-  if (!sysrueck.empty()) {
-    Log(blau+sysrueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
-    if (sysrueck[0].find("active running")!=string::npos) {
-      servicelaeuft=1; 
-      serviceda=1;
-    } else if (sysrueck[0].find("loaded")!=string::npos) {
-      serviceda=1;
-    }
-  }
-  return servicelaeuft;
-} // int servc::obslaeuft(int obverb,int oblog)
-
-int servc::restart(int obverb,int oblog)
-{
-  for(int i=0;i<2;i++) {
-    systemrueck(string("sudo systemctl restart '")+sname+"' >/dev/null 2>&1",obverb,oblog);
-    if (obslaeuft(obverb,oblog)) break;
-    if (i) break;
-    systemrueck(("sudo killall ")+ename+" >/dev/null 2>&1",obverb-1,oblog);
-  }
-  return servicelaeuft;
-} // int servc::restart(int obverb,int oblog)
-
-int servc::enableggf(int obverb,int oblog)
-{
- return systemrueck(string("systemctl is-enabled ")+sname+" >/dev/null || sudo systemctl enable >/dev/null"+sname,obverb,oblog);
-}
-
 //archiviert den Datensatz
 // wird aufgerufen in: untersuchespool
 void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgescheitert, FaxTyp ftyp, uchar *geloeschtp, int obverb, int oblog)
@@ -1649,7 +1519,7 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
     }
     for(uchar iru=0;iru<vmax;iru++) {
       if (iru) {
-        systemrueck(string("sudo systemctl restart ")+pmp->sfaxgetty->sname+" "+pmp->shfaxd->sname+" "+pmp->sfaxq->sname,obverb-1,oblog);
+        systemrueck(string("sudo systemctl restart '")+pmp->sfaxgetty->sname+"' '"+pmp->shfaxd->sname+"' '"+pmp->sfaxq->sname+"'",obverb-1,oblog);
       }
       systemrueck(string("sudo faxrm ")+hylanr+" 2>&1",obverb,oblog,&rmerg);
       if (rmerg.size()) {
@@ -4703,7 +4573,7 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
         system((string("/usr/bin/sh ")+afaxsu+(obverb?" -verbose":"")).c_str()); 
         //        systemrueck(string("source ")+afaxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
         Log(blaus+Tx[T_Fertig_mit]+schwarz+afaxsu,1,oblog);
-        systemrueck(string("sudo systemctl daemon-reload"),0,1);
+        servc::daemon_reload();
         //        systemrueck(string("rm ")+afaxsu,1,1);
       }
     }
@@ -4779,9 +4649,10 @@ void hconfig(paramcl *pmp,int obverb=0, int oblog=0)
     }
     conf<<"Use2D:      \"no\""<<endl;
   } else {
-    cerr<<Tx[T_Datei]<<confd<<Tx[T_nichtbeschreibbar]<<endl;
+    cerr<<"hconfig(): "<<Tx[T_Datei]<<confd<<Tx[T_nichtbeschreibbar]<<endl;
     exit(0);
   }
+  Log(violetts+Tx[T_Ende]+"hconfig()"+schwarz,obverb,oblog);
 } // void hconfig(paramcl *pmp,int obverb=0, int oblog=0)
 
 void paramcl::setzmodconfd()
@@ -4809,10 +4680,10 @@ void paramcl::hconfigtty()
 {
   Log(violetts+"hconfigtty()"+schwarz,obverb,oblog);
   setzmodconfd();
-  cout<<rot<<modconfdat<<schwarz<<endl;
+  // <<rot<<modconfdat<<schwarz<<endl;
   mdatei hci(modconfdat,ios::out);
   if (hci.is_open()) {
-  cout<<rot<<" ist offen"<<schwarz<<endl;
+  // <<rot<<" ist offen"<<schwarz<<endl;
     time_t tim=time(0);
     struct tm *tm=localtime(&tim);
     char buf[80];
@@ -4890,9 +4761,10 @@ void paramcl::hconfigtty()
     hci<<"# FaxRcvdCmd: ./schreibe.sh"<<endl;
   } else {
     cerr<<Tx[T_Datei]<<modconfdat<<Tx[T_nichtbeschreibbar]<<endl;
-  cout<<rot<<" nicht offen"<<schwarz<<endl;
+  // <<rot<<" nicht offen"<<schwarz<<endl;
     exit(0);
   }
+  Log(violetts+Tx[T_Ende]+"hconfigtty()"+schwarz,obverb,oblog);
 } // void hconfigtty(paramcl *pmp,int obverb=0, int oblog=0)
 
 // lieftert 0, wenn die Dienstdatei gespeichert werden konnte (erg), nicht wenn der Dienst laeuft (csfehler)
@@ -5231,14 +5103,14 @@ int paramcl::pruefhyla()
         // dieser Aufruf geschieht z.B. nach Parameter -hkzl 7
         hconfigtty();
         }
-        if (!systemrueck(string("sudo systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname+" 2>/dev/null",
+        if (!systemrueck(string("sudo systemctl stop '")+this->sfaxgetty->sname+"' '"+this->shfaxd->sname+"' '"+this->sfaxq->sname+"' 2>/dev/null",
              obverb,oblog)) {
           systemrueck("sudo systemctl stop hylafax 2>/dev/null",obverb-2,oblog);
           systemrueck("sudo systemctl disable hylafax 2>/dev/null",obverb-2,oblog);
           systemrueck(string("sudo killall ")+sfaxgetty->ename+" "+shfaxd->ename+" "+sfaxq->ename+" >/dev/null 2>&1",obverb-2,oblog);
         } // if (!systemrueck(string("sudo systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
-        if (!systemrueck(string("sudo systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) {
-          systemrueck(string("sudo systemctl enable ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog);
+        if (!systemrueck(string("sudo systemctl start '")+this->sfaxgetty->sname+"' '"+this->shfaxd->sname+"' '"+this->sfaxq->sname+"'",obverb,oblog)) {
+          systemrueck(string("sudo systemctl enable '")+this->sfaxgetty->sname+"' '"+this->shfaxd->sname+"' '"+this->sfaxq->sname+"'",obverb,oblog);
           this->hylazukonf=0;
         } // if (!systemrueck(string("sudo systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
       } // if (this->hylazukonf && !frischkonfiguriert) 
@@ -5262,6 +5134,7 @@ int paramcl::pruefhyla()
     systemrueck("! sudo grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax",
         obverb,oblog);
   }
+  Log(violetts+Tx[T_Ende]+" "+Tx[T_pruefhyla]+schwarz,obverb?obverb:obverb,oblog);
   return 0;
 } // int paramcl::pruefhyla()
 
@@ -5529,7 +5402,7 @@ int paramcl::pruefcapi()
         // in /usr/include/capiutils.h eine dritte Zeile einfuegen: #define CAPI_LIBRARY_V2
         // in src/backend/connection.cpp eine Zeile 26 einfuegen: #include <cstring>
       } // if (!capischonerfolgreichinstalliert)
-      systemrueck("sudo systemctl daemon-reload",obverb,oblog);
+      servc::daemon_reload();
     } // if (!capischonerfolgreichinstalliert) 
     // <<rot<<"capischonerfolgreichinstalliert: "<<schwarz<<(int)capischonerfolgreichinstalliert<<endl;
     // <<rot<<"capizukonf: "<<schwarz<<(int)capizukonf<<endl;
@@ -5548,14 +5421,13 @@ int paramcl::pruefcapi()
       if (capilaeuft) {
         break;
       } else {
-        systemrueck("sudo systemctl daemon-reload");
+        servc::daemon_reload();
         systemrueck("sudo systemctl stop isdn 2>/dev/null",obverb>0?obverb:-1,oblog);
         //      systemrueck("sudo systemctl start isdn",obverb,oblog);
         Log(string(Tx[T_StarteCapisuite]),-1,oblog);
-        systemrueck("sudo systemctl stop capisuite 2>/dev/null",-1,oblog);
-        if (!systemrueck("sudo systemctl start capisuite 2>/dev/null",-1,oblog)) {
-          if (!systemrueck("sudo systemctl enable capisuite 2>/dev/null",-1,oblog)) {
-          }
+        scapisuite->stop(-1,oblog);
+        capilaeuft=scapisuite->startundenable(-1,oblog);
+        if (capilaeuft) {
           Log(Tx[T_Capisuite_gestartet],1,oblog);
         } else {
           //       Log("Capisuite konnte nicht gestartet werden.",1,1);

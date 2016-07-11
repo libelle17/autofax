@@ -144,6 +144,9 @@ enum Tkonsole_
   T_Muss_Datei,
   T_fuer,
   T_zugreifbar_machen,
+  T_spruef_sname,
+  T_lief_schon,
+  T_nicht_gefunden_versuche_ihn_einzurichten,
   T_konsoleMAX,
 };
 
@@ -504,3 +507,23 @@ class linstcl
     uchar douninst(const string& prog,int obverb=0,int oblog=0);
     uchar obfehlt(const string& prog,int obverb=0,int oblog=0);
 };
+
+// Service aus SystemD
+class servc {
+  public:
+    int servicelaeuft=0, serviceda=0;
+    string sname,ename; // ausgefuehrte Datei
+    servc(string vsname,string vename): sname((vsname.empty()?vename:vsname)),ename(vename) {}
+    servc(string vsname,string vename,int obverb, int oblog);
+    uchar spruef(const string& sbez,uchar obfork,const string& sexec, const string& CondPath, const string& After, const string& wennnicht0,
+        int obverb=0,int oblog=0);
+    int obslaeuft(int obverb, int oblog);
+    int restart(int obverb, int oblog);
+    void start(int obverb, int oblog);
+    int startundenable(int obverb, int oblog);
+    void stop(int obverb, int oblog);
+    int enableggf(int obverb,int oblog);
+    int machfit(int obverb, int oblog);
+    static void daemon_reload(int obverb=0, int oblog=0);
+};
+

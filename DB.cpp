@@ -209,20 +209,33 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
           if (zrueck.size()) {
             datadir=zrueck[zrueck.size()-1];  
           } else {
-            svec zzruck;
-            if (!systemrueck("cat /etc/mysql/my.cnf | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-",
-                  obverb-1,oblog,&zzruck)) {
+            svec zzruck, zincldir;
+            systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\n' -quit",obverb,oblog,&zzruck);
+            if (!zzruck.size())
+              systemrueck("find ${HOME} -name .my.cnf -printf '%p\n' -quit",obverb,oblog,&zzruck);
+            if (zzruck.size()) {
+              systemrueck("cat "+zzruck[0]+" | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", 
+                  obverb-1,oblog,&zincldir); 
+              for(size_t i=0;i<zincldir.size();i++) {
+                svec zzruck2;
+                systemrueck("find "+zincldir[i],obverb,oblog,&zzruck2);
+                for(size_t i=0;i<zzruck2.size();i++) {
+                  zzruck<<zzruck2[i];
+                }
+              }
+            }
+            if(zzruck.size()) {
               for(size_t i=0;i<zzruck.size();i++) {
                 svec zrueck;
                 if (!systemrueck(("sed 's/#.*$//g' `find '")+zzruck[i]+"' -type f 2>/dev/null` | grep datadir | cut -d'=' -f2",
-                    obverb-1,oblog,&zrueck)) {
+                      obverb-1,oblog,&zrueck)) {
                   if (zrueck.size()) {
                     datadir=zrueck[zrueck.size()-1];  
                     break;
                   } // if (zrueck.size()) 
                 } // if (!systemrueck(("cat ")+zzruck[i]+" | sed 's/#.*$//g' | grep datadir | cut -d'=' -f2",obverb-1,oblog,&zrueck)) 
               } // for(size_t i=0;i<zzruck.size();i++) 
-            } // if (!systemrueck("cat /etc/mysql/my.cnf | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", ...
+            } // if(zzruck.size()) 
           } // if (zrueck.size()) else
         } // if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null " ...
         gtrim(&datadir);
@@ -239,7 +252,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
         }
         if (!datadirda) {
           systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db 2>/dev/null`",1,1);
-          systemrueck("sudo systemctl start mysql");
+          systemrueck("sudo systemctl start mysql",obverb,oblog);
         }
         oisok=1;
       } // if (installiert)
@@ -285,8 +298,8 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                 if (!strcasecmp(host.c_str(),"localhost")) {
                   Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_mysql_zu_starten],1,1);
 #ifdef linux
+                  systemrueck("sudo systemctl enable mysql",1,1); 
                   if (!systemrueck("sudo systemctl start mysql",1,1)) {
-                    systemrueck("sudo systemctl enable mysql",1,1); 
                     Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
                   }
 #endif

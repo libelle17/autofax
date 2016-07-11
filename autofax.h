@@ -24,21 +24,6 @@ pid_t PIDausName(const char* PName, uchar klgr, uchar exakt, int obverb, int obl
 void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,int obverb=0,int oblog=0);
 int tuloeschen(const string& zuloe,const string& cuser="",int obverb=0, int oblog=0);
 
-// Service aus SystemD
-class servc {
-  public:
-    int servicelaeuft=0, serviceda=0;
-    string sname,ename; // ausgefuehrte Datei
-    servc(string vsname,string vename): sname((vsname.empty()?vename:vsname)),ename(vename) {}
-    servc(string vsname,string vename,int obverb, int oblog);
-    uchar spruef(const string& sbez,uchar obfork,const string& sexec, const string& CondPath, const string& After, const string& wennnicht0,
-        int obverb=0,int oblog=0);
-    int obslaeuft(int obverb, int oblog);
-    int restart(int obverb, int oblog);
-    int enableggf(int obverb,int oblog);
-    int machfit(int obverb, int oblog);
-};
-
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster
 class zielmustercl 
 {
