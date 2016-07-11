@@ -1,5 +1,5 @@
 
-<h1 align="center">AUTOFAX (Version 0.40277)</h1>
+<h1 align="center">AUTOFAX (Version 0.40278)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -635,41 +635,28 @@ Faxannahme, Erstellung bzw. Bearbeitung der Dateien
 
 
 <p style="margin-top: 1em">3) Einrichten von Diensten</p></td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
+</table>
+
+<p style="margin-left:17%; margin-top: 1em">a) in systemd
+(im Verzeichnis /usr/lib/systemd/system oder
+/lib/systemd/system), insbesondere:</p>
 
 
-<p style="margin-top: 1em">a) in systemd (im Verzeichnis
-/usr/lib/systemd/system oder /lib/systemd/system),
-insbesondere:</p> </td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
+<p style="margin-left:17%; margin-top: 1em">hylafax-faxq.service,
+hylafax-hfaxd.service, hylafax-faxgetty-....service,</p></table>
 
 
-<p style="margin-top: 1em">hylafax-faxq.service,
-hylafax-hfaxd.service, hylafax-faxgetty-....service,</p></td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
+<p style="margin-left:17%; margin-top: 1em">capisuite.service,</p> </table>
 
+<p style="margin-left:17%; margin-top: 1em">b) Verschieben
+von Diensten aus dem Verzeichnis /etc/init.d in ein neu
+eingerichtes Verzeichnis /etc/ausrangiert:</p></table>
 
-<p style="margin-top: 1em">capisuite.service,</p></td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
+<p style="margin-left:17%; margin-top: 1em">hylafax,
+capisuite</p>
 
-
-<p style="margin-top: 1em">b) Verschieben von Diensten aus
-dem Verzeichnis /etc/init.d in ein neu eingerichtes
-Verzeichnis /etc/ausrangiert:</p></td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
-
-
-<p style="margin-top: 1em">hylafax, capisuite</p></td></tr>
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
