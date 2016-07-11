@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Mon Jul 11 21:19:58 2016 -->
+<!-- CreationDate: Mon Jul 11 23:06:34 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<h1 align="center">AUTOFAX (Version 0.40273)</h1>
+<h1 align="center">AUTOFAX (Version 0.40274)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -342,9 +342,21 @@ Datensaetze = &lt;zahl&gt; statt &rsquo;30&rsquo; <b><br>
 
 
 <p style="margin-top: 1em">1) Die aktuelle Hardware wird
-&uuml;berpr&uuml;ft: a) mit dem Befehl
+&uuml;berpr&uuml;ft:</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">a) mit dem Befehl
 &rsquo;<b>lspci | grep -i isdn</b>&rsquo; bez&uuml;glich
-einer ISDN-Karte b) mit dem Befehl &rsquo;<b>stty
+einer ISDN-Karte</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">b) mit dem Befehl &rsquo;<b>stty
 -F</b>&rsquo; bez&uuml;glich eines Fax-Modems.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
@@ -463,14 +475,26 @@ im <b>Zufaxenverzeichnis</b> analysiert. Jede Datei, deren
 im Dateinamen enthaltene Faxnummer(n) ermittelbar ist/sind
 und die in eine PDF-Datei umwandelbar ist (oder schon so
 vorliegt), wird ins Warteverzeichnis verschoben und in
-<b>spooltab</b> eingetragen. Falls eine Datei mehrere
+<b>spooltab</b> eingetragen.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">Falls eine Datei mehrere
 Faxnummern enth&auml;lt und/oder eine PDF-Umwandlung
 n&ouml;tig ist, werden zus&auml;tzliche Dateien
 erstellt und die urspr&uuml;ngliche Datei ggf.
 umbenannt. Falls n&ouml;tig, k&ouml;nnen die Dateien
 zus&auml;tzliche Zifferm nahe ihrem Namensende bekommen,
 so dass die Namen mit keinem anderen der unter 7) genannten
-Verzeichnisse in Konflikt steht. Falls neue Dateien erstellt
+Verzeichnisse in Konflikt steht.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">Falls neue Dateien erstellt
 wurden, werden die nachfolgenden Verschiebungen und
 Protokollierungen mit allen durchgef&uuml;hrt.</p></td></tr>
 <tr valign="top" align="left">
@@ -512,17 +536,35 @@ in <b>spooltab</b> protokolliert.</p></td></tr>
 wartend stehenden Faxe werden in
 <b>hylafax</b>/<b>capisuite</b> auf ihren Status
 &uuml;berpr&uuml;ft, dieser wird in <b>spooltab</b>
-aktualisiert (Zahl der bisherigen Faxversuche). Falls sowohl
-hylafax als auch capisuite aktiv sind und eine
-voreingestellte Zahl an Anwahlversuchen im Programm der
-ersten Pr&auml;ferenz dieser beiden erfolglos erreicht
-ist, wird das Fax auch noch an das jeweils andere Programm
-weitergeleiet. Falls der Faxvorgang (erfolgreich oder
-erfolglos) beendet ist, wird die Datei aus dem
-Warteverzeichnis in die Verzeichnisse f&uuml;r fertige
-bzw. gescheiterte Faxe verschoben und der Datenbankeintrag
-aus <b>spooltab</b> in die Tabelle <b>outa</b> verschoben.
-Der Status der genannten Faxe wird angezeigt.</p></td></tr>
+aktualisiert (Zahl der bisherigen Faxversuche).</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">Falls sowohl hylafax als auch
+capisuite aktiv sind und eine voreingestellte Zahl an
+Anwahlversuchen im Programm der ersten Pr&auml;ferenz
+dieser beiden erfolglos erreicht ist, wird das Fax auch noch
+an das jeweils andere Programm weitergeleiet.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">Falls der Faxvorgang
+(erfolgreich oder erfolglos) beendet ist, wird die Datei aus
+dem Warteverzeichnis in die Verzeichnisse f&uuml;r
+fertige bzw. gescheiterte Faxe verschoben und der
+Datenbankeintrag aus <b>spooltab</b> in die Tabelle
+<b>outa</b> verschoben.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">Der Status der genannten Faxe
+wird angezeigt.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
