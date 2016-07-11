@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "11.07.16" "Version 0.40275" "Manual-Seite für autofax"
+.TH man 1 "11.07.16" "Version 0.40276" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung in einer Datenbank 
 .br
@@ -299,7 +299,9 @@ Ggf. Bearbeitung der Konfigurationsdateien /etc/capisuite/capisuite.conf und /et
 Ggf. Bearbeitung des Python-Scripts für ankommende Faxe (Vorgabe z.B.: /usr/lib64/capisuite/incoming.py) zur Bestimmung der Zahl der Klingeltöne bis zur Faxannahme, Erstellung bzw. Bearbeitung der Dateien '/etc/udev/rules.d/46-FKN_isdn_capi.rules', '/etc/modprobe.d/50-blacklist.conf',
 .LP
 .HP 3
-3) Einrichten von Diensten a) in systemd (im Verzeichnis /usr/lib/systemd/system oder /lib/systemd/system), insbesondere:
+3) Einrichten von Diensten 
+.br
+a) in systemd (im Verzeichnis /usr/lib/systemd/system oder /lib/systemd/system), insbesondere:
 .br
 hylafax-faxq.service, hylafax-hfaxd.service, hylafax-faxgetty-....service,
 .br
@@ -307,9 +309,7 @@ capisuite.service,
 .br
 b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neu eingerichtes Verzeichnis /etc/ausrangiert:
 .br
-hylafax
-.br
-capisuite
+hylafax, capisuite
 .LP
 .HP 3
 4) Erstellen einer Protokolldatei /var/log/autofax.log
