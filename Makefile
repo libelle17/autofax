@@ -159,7 +159,7 @@ ${MANPDH}: $(CURDIR)/man_de
 	-@rm -f man_de.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_de.html
 #	-@rm -f README.md
-	-@sed -n '20,$$p' man_de.html >> README.md 
+#	-@sed -n '20,$$p' man_de.html > README.md 
 	@echo -e $(blau)   man_de.html$(reset) neu aus$(blau) man_de$(reset) erstellt
 endif
 
