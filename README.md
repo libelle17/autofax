@@ -1,5 +1,5 @@
 
-<h1 align="center">AUTOFAX (Version 0.40274)</h1>
+<h1 align="center">AUTOFAX (Version 0.40275)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -636,11 +636,40 @@ Faxannahme, Erstellung bzw. Bearbeitung der Dateien
 
 <p style="margin-top: 1em">3) Einrichten von Diensten a) in
 systemd (im Verzeichnis /usr/lib/systemd/system oder
-/lib/systemd/system), insbesondere: hylafax-faxq.service,
-hylafax-hfaxd.service, hylafax-faxgetty-....service,
-capisuite.service, b) Verschieben von Diensten aus dem
-Verzeichnis /etc/init.d in ein neu eingerichtes Verzeichnis
-/etc/ausrangiert: hylafax capisuite</p></td></tr>
+/lib/systemd/system), insbesondere:</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">hylafax-faxq.service,
+hylafax-hfaxd.service, hylafax-faxgetty-....service,</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">capisuite.service,</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">b) Verschieben von Diensten aus
+dem Verzeichnis /etc/init.d in ein neu eingerichtes
+Verzeichnis /etc/ausrangiert:</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">hylafax</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">capisuite</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -701,9 +730,21 @@ mariadb zur Datenpflege in diesen Tabellen</p></td></tr>
 <p style="margin-top: 1em">10) durch entsprechende
 Befehlszeilenoptionen von autofax k&ouml;nnen innerhalb
 von hylafax und capisuite Faxe gel&ouml;scht werden,
-insbesondere: a) in hylafax: durch Aufruf von
-&rsquo;faxrm&rsquo; b) in capisuite: durch L&ouml;schen
-der Dateien wie
+insbesondere:</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">a) in hylafax: durch Aufruf von
+&rsquo;faxrm&rsquo;</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">b) in capisuite: durch
+L&ouml;schen der Dateien wie
 /var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und
 ~/*.sff. In capisuite kann auch eine verwaiste Lock-Datei
 (/var/spool/capisuite/users/&lt;user&gt;/sendq/*.lock)
