@@ -27,7 +27,7 @@
 transmission of files, naming of received faxes and logging
 in a database <br>
 manpage-Hilfe in deutsch verf&uuml;gbar: &rsquo;man
-autofax&rsquo; oder &rsquo;man -LDe autofax&rsquo;.</p>
+autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;.</p>
 
 <h2>SYNOPSIS
 <a name="SYNOPSIS"></a>

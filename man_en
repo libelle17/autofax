@@ -6,7 +6,7 @@
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging in a database
 .br
-manpage-Hilfe in deutsch verfügbar: 'man autofax' oder 'man -LDe autofax'.
+manpage-Hilfe in deutsch verfügbar: 'man autofax' oder 'man -Lde autofax'.
 .SH SYNOPSIS
 .SY autofax [-<option>]
 .OP \-lg|--language <d|e>
