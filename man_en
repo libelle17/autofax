@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "11.07.16" "Version 0.40281" "\fBautofax\fR man page"
+.TH man 1 "12.07.16" "Version 0.40282" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging in a database
 .br
@@ -277,7 +277,7 @@ The status of the mentioned faxes is being displayed.
 19) The configuration file is being written, if necessary.
 .LP
 .SH PRECONDITIONS
-The program was adjusted to an installation of opensuse 41.2 or Ubuntu 16.04 with standard options. Further needed programs will be installed by the makefile or by autofax itsself via zypper or apt-get, if possible. Those are:
+The program was adjusted to an installation of opensuse 41.2 or Ubuntu 16.04 with standard options. GNU make has to be installed (which shall be accomplished if necessary by calling install.sh). Further needed programs will be installed by the makefile or by autofax itsself via zypper or apt-get, if possible. Those are:
 .br
 \fBmakefile:\fR
 .br
@@ -286,6 +286,54 @@ g++, libmysqlclient-dev(el), libtiff-dev(el)
 \fBautofax:\fR
 .br
 cron, soffice, convert, hylafax+, hylafax+-client, kernel-source, fcpci-3.10.0, kkeil Factory repository, capisuite, capi4linux, i4l-isdnlog, mariadb.
+
+.SH IMPACT
+The program has to take the following measures for its neat function:
+.LP
+.HP 3
+1) Installation of hylafax+, in case a modem is connected and hylafax+ is not installed. If necessary configuration of hylafax+ by calling 'faxsetup -nointeracitve', by editing the configuration files config and config.* in the hylafax configuration directory (default e.g. /var/spool/hylafax/etc)   
+.LP
+.HP 3
+2) Installation of capisuite, in case a fritzcard is inserted and capisuite is not installed. If necessary configuration of /etc/capisuite/capisuite.conf and /etc/capisuite/fax.conf. If necessary edition of the python-script for received faxes (default e.g. /usr/lib64/capisuite/incoming.py) in order to determine the rings before answer, creation and edition of the files '/etc/udev/rules.d/46-FKN_isdn_capi.rules', '/etc/modprobe.d/50-blacklist.conf'.
+.LP
+.HP 3
+3) Installation of services 
+.br
+a) in systemd (in the directory /usr/lib/systemd/system or /lib/systemd/system), especially:
+.br
+hylafax-faxq.service, hylafax-hfaxd.service, hylafax-faxgetty-....service,
+.br
+capisuite.service,
+.br
+b) Moving of existing service files from the directory /etc/init.d to a newly created directory /etc/ausrangiert:
+.br
+hylafax, capisuite
+.LP
+.HP 3
+4) Creation of a logfile /var/log/autofax.log
+.LP
+.HP 3
+5) if necessary creation and making accessible of the configurable directories for faxes to be sent, waiting, finished and failed.   
+.LP
+.HP 3
+6) if necessary creation and making accessible of the configuration file autofax.conf in the same directory where the program is located by itsself (default: /usr/local/sbin/autofax).
+.LP
+.HP 3
+7) Insertion of a line for the program in crontab (of root)
+.LP
+.HP 3
+8) if necessary insertion of sections for the directories mentioned unter 3) in /etc/samba/smb.conf, if necessary insertion of the program user or (if root) the user chosen for the capisuite as samba user.
+.LP
+.HP 3
+9) if necessary insertion of a database in mariadb with a configurable name, creation and modification of several tables and a procedure in this database, if necessary insertion of a user with a configurable name in mariadb for the data management within those tables.
+.LP
+.HP 3
+10) With specific command line options for autofax, faxes can be deleted, especially:
+.br
+a) in hylafax by callinng 'faxrm'
+.br
+b) in capisuite: by deleting files like /var/spool/capisuite/users/<user>/sendq/*.txt und ~/*.sff. In capisuite, an orphaned lock file (/var/spool/capisuite/users/<user>/sendq/*.lock) can be deleted, too.
+
 .SH ERRORS
 Please report any errors. Please report as well, if different hard- or software yield a requirement for a program modification.
 .SH LIABILITY

@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Mon Jul 11 23:22:06 2016 -->
+<!-- CreationDate: Tue Jul 12 00:50:11 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<h1 align="center">AUTOFAX (Version 0.40281)</h1>
+<h1 align="center">AUTOFAX (Version 0.40282)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -28,6 +28,7 @@
 <a href="#OPTIONS">OPTIONS</a><br>
 <a href="#FUNCTIONALITY">FUNCTIONALITY</a><br>
 <a href="#PRECONDITIONS">PRECONDITIONS</a><br>
+<a href="#IMPACT">IMPACT</a><br>
 <a href="#ERRORS">ERRORS</a><br>
 <a href="#LIABILITY">LIABILITY</a><br>
 <a href="#AUTHOR">AUTHOR</a><br>
@@ -333,8 +334,21 @@ against the tables &lsquo;outa&lsquo; and clean them up
 
 
 <p style="margin-top: 1em">1) The current hardware is being
-checked. a) with the command &rsquo;<b>lspci | grep -i
-isdn</b>&rsquo; for a fritz card. b) with the command
+checked.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">a) with the command
+&rsquo;<b>lspci | grep -i isdn</b>&rsquo; for a fritz
+card.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">b) with the command
 &rsquo;<b>stty -F</b>&rsquo; for a fax modem.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
@@ -439,13 +453,25 @@ program is being finished.</p></td></tr>
 outgoing directory are being analysed. Each file with some
 identifiable fax number(s) within its file name which is or
 can be converted in/into pdf format will be moved to to
-waiting directory and recorded in <b>spooltab</b>. If a file
-contains more than one recepients and/or a conversion to pdf
-is necessary, additional files are generated and the
-original file may be renamed. If necessary, additional
-numbers near the end of the file name(s) may be added in
-order not to conflict with any other file name in one of the
-directories mentioned in 7). If more files have been
+waiting directory and recorded in <b>spooltab</b>.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">If a file contains more than one
+recepients and/or a conversion to pdf is necessary,
+additional files are generated and the original file may be
+renamed. If necessary, additional numbers near the end of
+the file name(s) may be added in order not to conflict with
+any other file name in one of the directories mentioned in
+7).</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">If more files have been
 generated, the successive movements and recordings are being
 carried out with all of them.</p></td></tr>
 <tr valign="top" align="left">
@@ -484,17 +510,35 @@ being protocolled in <b>spooltab</b>.</p></td></tr>
 <p style="margin-top: 1em">16) All faxes which are recorded
 in <b>spooltab</b> as waiting are being checked in
 <b>hylafax</b>/<b>capisuite</b> as to their status which is
-being updated in <b>spooltab</b> (number of tries hitherto).
-If hylafax and capisuite are working simultaneously and a
-prespecified number of send tries has been reached without
-success in the programs of the first preference of those
-two, the fax is additionally forwarded to the second of the
-two programs. If the fax transmission is finished
-(with/without success), the file is being moved from the
-waiting directory to the respective directory for sent faxes
-or for failed faxes and the database entry is being
-transferred from <b>spooltab</b> to <b>outa</b>. The status
-of the mentioned faxes is being displayed.</p></td></tr>
+being updated in <b>spooltab</b> (number of tries
+hitherto).</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">If hylafax and capisuite are
+working simultaneously and a prespecified number of send
+tries has been reached without success in the programs of
+the first preference of those two, the fax is additionally
+forwarded to the second of the two programs.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">If the fax transmission is
+finished (with/without success), the file is being moved
+from the waiting directory to the respective directory for
+sent faxes or for failed faxes and the database entry is
+being transferred from <b>spooltab</b> to <b>outa</b>.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">The status of the mentioned
+faxes is being displayed.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -531,15 +575,173 @@ being written, if necessary.</p></td></tr>
 
 <p style="margin-left:11%; margin-top: 1em">The program was
 adjusted to an installation of opensuse 41.2 or Ubuntu 16.04
-with standard options. Further needed programs will be
-installed by the makefile or by autofax itsself via zypper
-or apt-get, if possible. Those are: <b><br>
+with standard options. GNU make has to be installed (which
+shall be accomplished if necessary by calling install.sh).
+Further needed programs will be installed by the makefile or
+by autofax itsself via zypper or apt-get, if possible. Those
+are: <b><br>
 makefile:</b> <br>
 g++, libmysqlclient-dev(el), libtiff-dev(el) <b><br>
 autofax:</b> <br>
 cron, soffice, convert, hylafax+, hylafax+-client,
 kernel-source, fcpci-3.10.0, kkeil Factory repository,
 capisuite, capi4linux, i4l-isdnlog, mariadb.</p>
+
+<h2>IMPACT
+<a name="IMPACT"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">The program has
+to take the following measures for its neat function:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">1) Installation of hylafax+, in
+case a modem is connected and hylafax+ is not installed. If
+necessary configuration of hylafax+ by calling
+&rsquo;faxsetup -nointeracitve&rsquo;, by editing the
+configuration files config and config.* in the hylafax
+configuration directory (default e.g.
+/var/spool/hylafax/etc)</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">2) Installation of capisuite, in
+case a fritzcard is inserted and capisuite is not installed.
+If necessary configuration of /etc/capisuite/capisuite.conf
+and /etc/capisuite/fax.conf. If necessary edition of the
+python-script for received faxes (default e.g.
+/usr/lib64/capisuite/incoming.py) in order to determine the
+rings before answer, creation and edition of the files
+&rsquo;/etc/udev/rules.d/46-FKN_isdn_capi.rules&rsquo;,
+&rsquo;/etc/modprobe.d/50-blacklist.conf&rsquo;.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">3) Installation of services</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">a) in systemd (in the directory
+/usr/lib/systemd/system or /lib/systemd/system),
+especially:</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">hylafax-faxq.service,
+hylafax-hfaxd.service, hylafax-faxgetty-....service,</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">capisuite.service,</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">b) Moving of existing service
+files from the directory /etc/init.d to a newly created
+directory /etc/ausrangiert:</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">hylafax, capisuite</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">4) Creation of a logfile
+/var/log/autofax.log</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">5) if necessary creation and
+making accessible of the configurable directories for faxes
+to be sent, waiting, finished and failed.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">6) if necessary creation and
+making accessible of the configuration file autofax.conf in
+the same directory where the program is located by itsself
+(default: /usr/local/sbin/autofax).</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">7) Insertion of a line for the
+program in crontab (of root)</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">8) if necessary insertion of
+sections for the directories mentioned unter 3) in
+/etc/samba/smb.conf, if necessary insertion of the program
+user or (if root) the user chosen for the capisuite as samba
+user.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">9) if necessary insertion of a
+database in mariadb with a configurable name, creation and
+modification of several tables and a procedure in this
+database, if necessary insertion of a user with a
+configurable name in mariadb for the data management within
+those tables.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">10) With specific command line
+options for autofax, faxes can be deleted, especially:</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">a) in hylafax by callinng
+&rsquo;faxrm&rsquo;</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">b) in capisuite: by deleting
+files like
+/var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und
+~/*.sff. In capisuite, an orphaned lock file
+(/var/spool/capisuite/users/&lt;user&gt;/sendq/*.lock) can
+be deleted, too.</p></td></tr>
+</table>
 
 <h2>ERRORS
 <a name="ERRORS"></a>

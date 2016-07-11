@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "11.07.16" "Version 0.40281" "Manual-Seite für autofax"
+.TH man 1 "12.07.16" "Version 0.40282" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung in einer Datenbank 
 .br
@@ -277,7 +277,7 @@ Der Status der genannten Faxe wird angezeigt.
 .LP
 
 .SH VORAUSSETZUNGEN
-Das Programm wurde auf eine Installation von Opensuse 41.2 oder Ubuntu 16.04 mit den Standardoptionen abgestimmt. Weitere benötigte Programm werden falls möglich vom makefile oder von autofax selbst nachstalliert. Diese sind:
+Das Programm wurde auf eine Installation von Opensuse 41.2 oder Ubuntu 16.04 mit den Standardoptionen abgestimmt. GNU make wird benötigt, was durch Aufruf von install.sh ggf. installiert werden kann. Weitere benötigte Programm werden falls möglich vom makefile oder von autofax selbst nachstalliert. Diese sind:
 .br
 \fBmakefile:\fR
 .br
@@ -295,8 +295,8 @@ Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:
 .LP
 .HP 3
 2) Installieren von capisuite, falls eine Fritzkarte eingebaut ist und capisuite nicht installiert ist.
-Ggf. Bearbeitung der Konfigurationsdateien /etc/capisuite/capisuite.conf und /etc/capisuite/fax.conf
-Ggf. Bearbeitung des Python-Scripts für ankommende Faxe (Vorgabe z.B.: /usr/lib64/capisuite/incoming.py) zur Bestimmung der Zahl der Klingeltöne bis zur Faxannahme, Erstellung bzw. Bearbeitung der Dateien '/etc/udev/rules.d/46-FKN_isdn_capi.rules', '/etc/modprobe.d/50-blacklist.conf',
+Ggf. Bearbeitung der Konfigurationsdateien /etc/capisuite/capisuite.conf und /etc/capisuite/fax.conf.
+Ggf. Bearbeitung des Python-Scripts für ankommende Faxe (Vorgabe z.B.: /usr/lib64/capisuite/incoming.py) zur Bestimmung der Zahl der Klingeltöne bis zur Faxannahme, Erstellung bzw. Bearbeitung der Dateien '/etc/udev/rules.d/46-FKN_isdn_capi.rules', '/etc/modprobe.d/50-blacklist.conf'.
 .LP
 .HP 3
 3) Einrichten von Diensten 
@@ -312,19 +312,19 @@ b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neu eingerich
 hylafax, capisuite
 .LP
 .HP 3
-4) Erstellen einer Protokolldatei /var/log/autofax.log
+4) Erstellen einer Protokolldatei /var/log/autofax.log.
 .LP
 .HP 3
-5) ggf. Erstellen und Zugreifbarmachen der Verzeichnisse für zu sendende, wartende, abgearbeitete und empfangene Faxe
+5) ggf. Erstellen und Zugreifbarmachen der bestimmbaren Verzeichnisse für zu sendende, wartende, abgearbeitete und empfangene Faxe.
 .LP
 .HP 3
-6) ggf. Erstellen und Verändern der Konfigurationsdatei autofax.conf in dem Verzeichnis, in dem auch es selbst steht (Vorgabe: /usr/local/sbin/autofax)
+6) ggf. Erstellen und Verändern der Konfigurationsdatei autofax.conf in dem Verzeichnis, in dem auch es selbst steht (Vorgabe: /usr/local/sbin/autofax).
 .LP
 .HP 3
 7) ggf. Einfügen einer Zeile zum Aufruf des Programms in das crontab (von root)
 .LP
 .HP 3
-8) ggf. Einfügen von Abschnitten für die unter 3) genannten Verzeichnisse in /etc/samba/smb.conf, ggf. Einfügen/Passwortzuteilen des für Benutzers als Samba-Bentzer.
+8) ggf. Einfügen von Abschnitten für die unter 3) genannten Verzeichnisse in /etc/samba/smb.conf, ggf. Einfügen/Passwortzuteilen des Programmbenutzers bzw. (falls root) des für die Capisuite gewählten Benutzers als Samba-Bentzer.
 .LP
 .HP 3
 9) ggf. Einfügen einer Datenbank für die Faxe in mariadb unter einem bestimmbaren Namen, Anlage und Veränderung mehrerer Tabellen und einer Prozedur in dieser Datenbank, ggf. Einfügen eines Benutzers mit bestimmbarem Namen in mariadb zur Datenpflege in diesen Tabellen 

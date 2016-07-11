@@ -299,6 +299,11 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                   Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_mysql_zu_starten],1,1);
 #ifdef linux
                   systemrueck("sudo systemctl enable mysql",1,1); 
+                  svec gstat;
+                  systemrueck("getfacl -e -t "+datadir+" 2>/dev/null | grep 'user[ \t]*"+"mysql"+"[ \t]*rwx' || true",obverb,oblog,&gstat);
+                  if (!gstat.size()) {
+                    systemrueck("sudo setfacl -Rm 'u:mysql:7' '"+datadir+"'",obverb,oblog);
+                  }
                   if (!systemrueck("sudo systemctl start mysql",1,1)) {
                     Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
                   }

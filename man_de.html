@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Mon Jul 11 23:22:06 2016 -->
+<!-- CreationDate: Tue Jul 12 00:50:11 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<h1 align="center">AUTOFAX (Version 0.40281)</h1>
+<h1 align="center">AUTOFAX (Version 0.40282)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -29,13 +29,6 @@
 <a href="#FUNKTIONSWEISE">FUNKTIONSWEISE</a><br>
 <a href="#VORAUSSETZUNGEN">VORAUSSETZUNGEN</a><br>
 <a href="#AUSWIRKUNGEN">AUSWIRKUNGEN</a><br>
-<a href="#a) in systemd (im Verzeichnis /usr/lib/systemd/system oder/lib/systemd/system), insbesondere:">a) in systemd (im Verzeichnis /usr/lib/systemd/system oder/lib/systemd/system), insbesondere:</a><br>
-<a href="#hylafax-faxq.service, hylafax-hfaxd.service,hylafax-faxgetty-....service,">hylafax-faxq.service, hylafax-hfaxd.service,hylafax-faxgetty-....service,</a><br>
-<a href="#capisuite.service,">capisuite.service,</a><br>
-<a href="#b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neueingerichtes Verzeichnis /etc/ausrangiert:">b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neueingerichtes Verzeichnis /etc/ausrangiert:</a><br>
-<a href="#hylafax, capisuite">hylafax, capisuite</a><br>
-<a href="#a) in hylafax: durch Aufruf von &rsquo;faxrm&rsquo;">a) in hylafax: durch Aufruf von &rsquo;faxrm&rsquo;</a><br>
-<a href="#b) in capisuite: durch L&ouml;schen der Dateien wie/var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und ~/*.sff.">b) in capisuite: durch L&ouml;schen der Dateien wie/var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und ~/*.sff.</a><br>
 <a href="#FEHLER">FEHLER</a><br>
 <a href="#HAFTUNG">HAFTUNG</a><br>
 <a href="#AUTOR">AUTOR</a><br>
@@ -606,10 +599,11 @@ Empfangsverzeichnis gestellt.</p></td></tr>
 
 <p style="margin-left:11%; margin-top: 1em">Das Programm
 wurde auf eine Installation von Opensuse 41.2 oder Ubuntu
-16.04 mit den Standardoptionen abgestimmt. Weitere
-ben&ouml;tigte Programm werden falls m&ouml;glich
-vom makefile oder von autofax selbst nachstalliert. Diese
-sind: <b><br>
+16.04 mit den Standardoptionen abgestimmt. GNU make wird
+ben&ouml;tigt, was durch Aufruf von install.sh ggf.
+installiert werden kann. Weitere ben&ouml;tigte Programm
+werden falls m&ouml;glich vom makefile oder von autofax
+selbst nachstalliert. Diese sind: <b><br>
 makefile:</b> <br>
 g++, libmysqlclient-dev(el), libtiff-dev(el) <b><br>
 autofax:</b> <br>
@@ -648,59 +642,70 @@ hylafax-Konfigurationsverzeichnis (Vorgabe z.B.:
 <p style="margin-top: 1em">2) Installieren von capisuite,
 falls eine Fritzkarte eingebaut ist und capisuite nicht
 installiert ist. Ggf. Bearbeitung der Konfigurationsdateien
-/etc/capisuite/capisuite.conf und /etc/capisuite/fax.conf
+/etc/capisuite/capisuite.conf und /etc/capisuite/fax.conf.
 Ggf. Bearbeitung des Python-Scripts f&uuml;r ankommende
 Faxe (Vorgabe z.B.: /usr/lib64/capisuite/incoming.py) zur
 Bestimmung der Zahl der Klingelt&ouml;ne bis zur
 Faxannahme, Erstellung bzw. Bearbeitung der Dateien
 &rsquo;/etc/udev/rules.d/46-FKN_isdn_capi.rules&rsquo;,
-&rsquo;/etc/modprobe.d/50-blacklist.conf&rsquo;,</p> </td></tr>
+&rsquo;/etc/modprobe.d/50-blacklist.conf&rsquo;.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-<p style="margin-top: 1em">3) Einrichten von Diensten</p>
-
-<h2>a) in systemd (im Verzeichnis /usr/lib/systemd/system oder/lib/systemd/system), insbesondere:
-<a name="a) in systemd (im Verzeichnis /usr/lib/systemd/system oder/lib/systemd/system), insbesondere:"></a>
-</h2>
-
-
-<h2>hylafax-faxq.service, hylafax-hfaxd.service,hylafax-faxgetty-....service,
-<a name="hylafax-faxq.service, hylafax-hfaxd.service,hylafax-faxgetty-....service,"></a>
-</h2>
+<p style="margin-top: 1em">3) Einrichten von Diensten</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
 
 
-<h2>capisuite.service,
-<a name="capisuite.service,"></a>
-</h2>
+<p style="margin-top: 1em">a) in systemd (im Verzeichnis
+/usr/lib/systemd/system oder /lib/systemd/system),
+insbesondere:</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
 
 
-<h2>b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neueingerichtes Verzeichnis /etc/ausrangiert:
-<a name="b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neueingerichtes Verzeichnis /etc/ausrangiert:"></a>
-</h2>
+<p style="margin-top: 1em">hylafax-faxq.service,
+hylafax-hfaxd.service, hylafax-faxgetty-....service,</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
 
 
-<h2>hylafax, capisuite
-<a name="hylafax, capisuite"></a>
-</h2>
-</td></tr>
+<p style="margin-top: 1em">capisuite.service,</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">b) Verschieben von Diensten aus
+dem Verzeichnis /etc/init.d in ein neu eingerichtes
+Verzeichnis /etc/ausrangiert:</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">hylafax, capisuite</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
 <p style="margin-top: 1em">4) Erstellen einer
-Protokolldatei /var/log/autofax.log</p></td></tr>
+Protokolldatei /var/log/autofax.log.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
 <p style="margin-top: 1em">5) ggf. Erstellen und
-Zugreifbarmachen der Verzeichnisse f&uuml;r zu sendende,
-wartende, abgearbeitete und empfangene Faxe</p></td></tr>
+Zugreifbarmachen der bestimmbaren Verzeichnisse f&uuml;r
+zu sendende, wartende, abgearbeitete und empfangene
+Faxe.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -709,7 +714,7 @@ wartende, abgearbeitete und empfangene Faxe</p></td></tr>
 <p style="margin-top: 1em">6) ggf. Erstellen und
 Ver&auml;ndern der Konfigurationsdatei autofax.conf in
 dem Verzeichnis, in dem auch es selbst steht (Vorgabe:
-/usr/local/sbin/autofax)</p> </td></tr>
+/usr/local/sbin/autofax).</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -725,8 +730,9 @@ Zeile zum Aufruf des Programms in das crontab (von root)</p></td></tr>
 <p style="margin-top: 1em">8) ggf. Einf&uuml;gen von
 Abschnitten f&uuml;r die unter 3) genannten
 Verzeichnisse in /etc/samba/smb.conf, ggf.
-Einf&uuml;gen/Passwortzuteilen des f&uuml;r
-Benutzers als Samba-Bentzer.</p></td></tr>
+Einf&uuml;gen/Passwortzuteilen des Programmbenutzers
+bzw. (falls root) des f&uuml;r die Capisuite
+gew&auml;hlten Benutzers als Samba-Bentzer.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -746,22 +752,26 @@ mariadb zur Datenpflege in diesen Tabellen</p></td></tr>
 <p style="margin-top: 1em">10) durch entsprechende
 Befehlszeilenoptionen von autofax k&ouml;nnen innerhalb
 von hylafax und capisuite Faxe gel&ouml;scht werden,
-insbesondere:</p>
-
-<h2>a) in hylafax: durch Aufruf von &rsquo;faxrm&rsquo;
-<a name="a) in hylafax: durch Aufruf von &rsquo;faxrm&rsquo;"></a>
-</h2>
-
-
-<h2>b) in capisuite: durch L&ouml;schen der Dateien wie/var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und ~/*.sff.
-<a name="b) in capisuite: durch L&ouml;schen der Dateien wie/var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und ~/*.sff."></a>
-</h2>
+insbesondere:</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
 
 
-<p style="margin-left:11%; margin-top: 1em">In capisuite
-kann auch eine verwaiste Lock-Datei
+<p style="margin-top: 1em">a) in hylafax: durch Aufruf von
+&rsquo;faxrm&rsquo;</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">b) in capisuite: durch
+L&ouml;schen der Dateien wie
+/var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und
+~/*.sff. In capisuite kann auch eine verwaiste Lock-Datei
 (/var/spool/capisuite/users/&lt;user&gt;/sendq/*.lock)
-gel&ouml;scht werden.</p>
+gel&ouml;scht werden.</p></td></tr>
+</table>
 
 <h2>FEHLER
 <a name="FEHLER"></a>
