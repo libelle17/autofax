@@ -26,7 +26,7 @@ DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
-POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d 2>/dev/null
+# POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d 2>/dev/null
 
 MANP=/usr/share/man
 MANPD=${MANP}/de/man1/${PROGRAM}.1.gz
@@ -96,6 +96,8 @@ ifneq ("$(wildcard $(CURDIR)/man_de)","")
 endif
 	-@echo " (Version:" $$(cat version)")"
 	-$(CC) $^ -o $@ $(LDFLAGS)
+	$(shell for datei in .d/*.Td; do mv -f $${datei} $${datei%.Td}.d; done)
+	$(shell touch *.o $${EXEC})
 
 %.o : %.cpp
 %.o : %.cpp $(DEPDIR)/%.d
@@ -103,7 +105,7 @@ endif
 	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< 2>> fehler.txt
 	-@sudo sed -i 's/version //g' $(DEPDIR)/*.Td
 	-@if test -s fehler.txt; then vi +0/error fehler.txt; else rm fehler.txt; fi;
-	-@$(shell $(POSTCOMPILE))
+#	-@$(shell $(POSTCOMPILE))
 	@if test -s fehler.txt; then false; fi;
 
 $(DEPDIR)/%.d: ;
