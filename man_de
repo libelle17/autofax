@@ -61,11 +61,15 @@ weiterhin die versandten Faxe in einer MariaDB-Datenbank abspeichert.
 .br
 Außerdem können von \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe nach dem Sender anhand dessen Telefonnummer benannt und abgespeichert werden.
 .SH INSTALLATION
-wget https://github.com/libelle17/autofax/archive/master.tar.gz -O autofax.tar.gz && tar xpvf autofax.tar.gz && rm autofax.tar.gz
+Wenn das Programm 'git' zur Verfuegung steht, können Sie beginnen mit:
 .br
-mv autofax-master autofax
+git clone http://github.com/libelle17/autofax && cd autofax
 .br
-cd autofax
+ansonsten mit:
+.br
+wget https://github.com/libelle17/autofax/archive/master.tar.gz -O autofax.tar.gz && tar xpvf autofax.tar.gz && rm autofax.tar.gz && mv autofax-master autofax && cd autofax
+.br
+Wenn das Programm 'make' nicht zur Verfügung steht, können Sie dort 'install.sh' aufrufen, damit sollte es installiert werden; anderenfalls können Sie auch aufrufen:
 .br
 make 
 .br
@@ -103,8 +107,6 @@ Bei jedem Aufruf überprüft autofax den Status von \fBhylafax\fR und/oder \fBCa
 Weiterhin werden über \fBhylafax\fR oder \fBCapisuite\fR angekommene Faxe in ein Empfangsverzeichnis kopiert und ggf. nach dem Sender benannt. Hierzu werden, falls angegeben, konfigurierbare SQL-Befehle verwendet, die in frei festlegbarer Zahl der Reihe nach so lange aufgerufen werden, bis einer einen Datensatz zu der Telefonnummer findet.
 .br
 Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präferenz in den genannten Verzeichnissen, in den Datenbanktabellen oder durch Aufruf von z.B. '\fBautofax\fB', '\fBautofax -lista\fR', '\fBautofax -listf\fR' oder '\fBautofax -listi\fR' den Stand des Faxens überprüfen. 
-.br
-autofax soll als root ausgefuehrt werden.
 .SH OPTIONEN 
 Mit '\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Optionen (z.B. SQL-Befehle) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum direkt editiert oder auch über '\fBautofax -rf\fR' interaktiv gepflegt werden kann.
 .br

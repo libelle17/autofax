@@ -61,11 +61,14 @@ Furthermore, autofax holds the posted faxes in a mariadb database.
 .br
 Additionally, received faxes from \fBhylafax\fR/\fBcapisuite\fR can be named with the sender's name according to his telephone number and stored.
 .SH INSTALLATION
-wget https://github.com/libelle17/autofax/archive/master.tar.gz -O autofax.tar.gz && tar xpvf autofax.tar.gz && rm autofax.tar.gz
+If the program 'git' is available, You can start with:
 .br
-mv autofax-master autofax
+git clone http://github.com/libelle17/autofax && cd autofax
 .br
-cd autofax
+otherwise with:
+wget https://github.com/libelle17/autofax/archive/master.tar.gz -O autofax.tar.gz && tar xpvf autofax.tar.gz && rm autofax.tar.gz && mv autofax-master autofax && cd autofax
+.br
+there, if the program 'make' is not available, You can call 'install.sh', this should install it; otherwise, You also can call:
 .br
 make 
 .br
@@ -104,8 +107,6 @@ At each call, autofax checks the status of \fBhylafax\fR and/or \fBCapisuite\fR.
 Further on, incoming faxes via \fBhylafax\fR or \fBCapisuite\fR are being transmitted to an incoming directory and if applicable named including the sender's name. To this purpose, customizeable sql commands are being used, if specified.
 .br
 Depending on operating system, accessability and preferences the users thus could look up the status of their faxes in the above mentioned directories, in the database tables or by calling '\fBautofax\fB', '\fBautofax -lista\fR', '\fBautofax -listf\fR' or '\fBautofax -listi\fR'. 
-.br
-autofax can be executed as root.
 .SH OPTIONS 
 With '\fBautofax -?\fR', all command line options can be seen. Some options (e.g. the sql commands) cannot bei set via the command line, but only via the configuration file, which can be edited directly or interactively by '\fBautofax -rf\fR'.
 .br

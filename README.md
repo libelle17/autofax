@@ -113,12 +113,18 @@ stored.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">wget
+<p style="margin-left:11%; margin-top: 1em">If the program
+&rsquo;git&rsquo; is available, You can start with: <br>
+git clone http://github.com/libelle17/autofax && cd
+autofax <br>
+otherwise with: wget
 https://github.com/libelle17/autofax/archive/master.tar.gz
 -O autofax.tar.gz && tar xpvf autofax.tar.gz
-&& rm autofax.tar.gz <br>
-mv autofax-master autofax <br>
-cd autofax <br>
+&& rm autofax.tar.gz && mv autofax-master
+autofax && cd autofax <br>
+there, if the program &rsquo;make&rsquo; is not available,
+You can call &rsquo;install.sh&rsquo;, this should install
+it; otherwise, You also can call: <br>
 make <br>
 sudo make install <br>
 autofax <br>
@@ -183,8 +189,7 @@ the users thus could look up the status of their faxes in
 the above mentioned directories, in the database tables or
 by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
 -lista</b>&rsquo;, &rsquo;<b>autofax -listf</b>&rsquo; or
-&rsquo;<b>autofax -listi</b>&rsquo;. <br>
-autofax can be executed as root.</p>
+&rsquo;<b>autofax -listi</b>&rsquo;.</p>
 
 <h2>OPTIONS
 <a name="OPTIONS"></a>
