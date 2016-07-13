@@ -5,7 +5,9 @@ CFLAGS=-c -Wall `mysql_config --cflags`
 LDFLAGS=`mysql_config --libs` -ltiff
 PROGRAM=$(shell basename $(CURDIR))
 PROGGROSS=`echo $(PROGRAM) | tr a-z A-Z`
-EXPFAD=/usr/local/sbin
+#EXPFAD=/usr/local/sbin
+EXPFAD := $(shell echo ${PATH} | tr -s ':' '\n' | grep /usr/ | head -n 1)
+EXPFAD := $(shell echo ${PATH} | tr -s ':' '\n' | grep /usr/ | awk '{ print length, $$0 }' | sort -n -s | cut -d" " -f2- | head -n1)
 EXEC=$(PROGRAM)
 INSTEXEC=$(EXPFAD)/$(EXEC)
 CCInst=gcc6-c++ 
@@ -78,6 +80,7 @@ anzeig:
 	@echo -e $(blau) $(shell ls -l $(EXEC) 2>/dev/null) $(reset) 
 	@echo -e " Quelldateien:"$(rot) $(SRCS)$(reset) 
 	@echo -e " Verwende Compiler: "$(rot) $(CCName) $(reset)
+	@echo -e " Pfad für ausführbare Datei: "${EXPFAD}
 	-@$(shell rm fehler.txt 2>/dev/null)
 
 $(EXEC): $(OBJ)
@@ -113,6 +116,7 @@ compiler:
 	-@sudo /sbin/ldconfig; sudo /sbin/ldconfig -p | grep -q "libmysqlclient.so " || { which zypper && sudo zypper -n--gpg-auto-import-keys in libmysqlclient-devel || { which apt-get && sudo apt-get --assume-yes install libmysqlclient-dev; }; sudo /sbin/ldconfig; }
 	-@test -f /usr/include/tiff.h || { which zypper && sudo zypper -n --gpg-auto-import-keys in libtiff-devel || { which apt-get && sudo apt-get --assume-yes install libtiff-dev; } }
 
+.PHONY: install
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
 man: ${MANPDH} ${MANPEH}
@@ -168,7 +172,6 @@ fertig:
 	@echo -e $(blau) $(shell ls -l $(EXEC)) $(reset) 
 
 .PHONY: clean
-
 clean: 
 	@echo -n " Bereinige ..."
 	@echo -e -n "\r" 
