@@ -13,11 +13,13 @@ INSTEXEC=$(EXPFAD)/$(EXEC)
 CCInst=gcc6-c++ 
 ifneq ($(shell g++-6 --version >/dev/null 2>&1),0)
  CCName=g++
- CC=sudo $(CCName)
+# CC=sudo $(CCName)
+ CC=$(CCName)
  $(eval CFLAGS=$(CFLAGS) -std=gnu++11)
 else
  CCName=g++-6
- CC=sudo $(CCName)
+# CC=sudo $(CCName)
+ CC=$(CCName)
 endif
 
 DEPDIR := .d
