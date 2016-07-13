@@ -118,10 +118,10 @@ stored.</p>
 git clone http://github.com/libelle17/autofax && cd
 autofax <br>
 otherwise with: <br>
-$P=autofax wget
-https://github.com/libelle17/$P/archive/master.tar.gz -O
-$P.tar.gz && tar xpvf $P.tar.gz && rm
-$P.tar.gz && mv $P-master $P && cd $P <br>
+P=autofax; T=$P.tar.gz; wget
+https://github.com/libelle17/$P/archive/master.tar.gz -O $T
+&& tar xpvf $T && rm $T && mv
+$P-master $P && cd $P <br>
 there, if the program &rsquo;make&rsquo; is not available,
 You can call &rsquo;install.sh&rsquo;, this should install
 it; otherwise, You also can call: <br>

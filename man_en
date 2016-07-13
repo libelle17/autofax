@@ -67,7 +67,7 @@ If the program 'git' is available, You can start with:
 .br
 otherwise with:
 .br
- $P=autofax wget https://github.com/libelle17/$P/archive/master.tar.gz -O $P.tar.gz && tar xpvf $P.tar.gz && rm $P.tar.gz && mv $P-master $P && cd $P
+ P=autofax; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm $T && mv $P-master $P && cd $P
 .br
 there, if the program 'make' is not available, You can call 'install.sh', this should install it; otherwise, You also can call:
 .br
