@@ -1747,7 +1747,7 @@ void paramcl::pruefhardware()
 {
   Log(violetts+Tx[T_pruefhardware]+schwarz,obverb,oblog);
   svec rueck;
-  cmd="lspci | grep -i 'isdn'";
+  cmd="lspci 2>/dev/null || sudo lspci 2>/dev/null | grep -i 'isdn'";
   logdt=&loggespfad.front();
   systemrueck(cmd, obverb,oblog,&rueck);
   // <<"pruefhardware 1 vor  obcapi: "<<(int)obcapi<<endl;
