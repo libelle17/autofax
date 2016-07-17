@@ -35,7 +35,6 @@
 const double& version=
 #include "version"
 ;
-
 // Bestandteile der Ueberpruefung auf Funktionsfaehigkeit von hylafax: 
 // faxmodem
 

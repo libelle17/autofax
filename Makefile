@@ -179,7 +179,7 @@ fertig:
 clean: 
 	@echo -n " Bereinige ..."
 	@echo -e -n "\r" 
-	@$(shell rm -f $(EXEC) $(OBJ) 2>/dev/null)
+	@$(shell rm -f $(EXEC) $(OBJ) .d/* 2>/dev/null)
 	@$(shell sudo rm -f $(INSTEXEC) 2>/dev/null)
 	@echo -e " Fertig mit Bereinigen!"  
 
