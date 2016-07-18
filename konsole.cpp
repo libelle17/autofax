@@ -1935,13 +1935,13 @@ uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
   return doinst(prog,obverb,oblog);
  }
  return 0;
-}
+} // uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
 
 uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
 {
   const string& progs=prog;
   return doinst(progs,obverb,oblog,fallsnichtda);
-}
+} // uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
 
 uchar linstcl::douninst(const string& prog,int obverb,int oblog) 
 {
