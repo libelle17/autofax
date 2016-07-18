@@ -210,12 +210,12 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
             datadir=zrueck[zrueck.size()-1];  
           } else {
             svec zzruck, zincldir;
-            systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\n' -quit",obverb,oblog,&zzruck);
+            systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit 2>/dev/null",obverb,oblog,&zzruck);
             if (!zzruck.size())
-              systemrueck("find ${HOME} -name .my.cnf -printf '%p\n' -quit",obverb,oblog,&zzruck);
+              systemrueck("find ${HOME} -name .my.cnf -printf '%p\\n' -quit 2>/dev/null",obverb,oblog,&zzruck);
             if (zzruck.size()) {
-              systemrueck("cat "+zzruck[0]+" | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", 
-                  obverb-1,oblog,&zincldir); 
+              systemrueck("sudo cat "+zzruck[0]+" | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", 
+                  obverb,oblog,&zincldir); 
               for(size_t i=0;i<zincldir.size();i++) {
                 svec zzruck2;
                 systemrueck("find "+zincldir[i],obverb,oblog,&zzruck2);
