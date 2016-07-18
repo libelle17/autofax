@@ -205,7 +205,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
       if (installiert) {
         svec zrueck;
         if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null "
-              "| grep datadir | cut -d'=' -f2",obverb-1,oblog,&zrueck)) {
+              "| grep datadir | cut -d'=' -f2",obverb,oblog,&zrueck)) {
           if (zrueck.size()) {
             datadir=zrueck[zrueck.size()-1];  
           } else {
