@@ -991,7 +991,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"' geaendert werden.","'"},
   // T_Faxnr_die_zum_Adressaten_gesandt_wird_bis_20_Zeichen_nur_plus_und_Ziffern,
   {"Faxnr., die zum Adressaten gesandt wird (bis 20 Zeichen, nur '+' und Ziffern)",
-    "Fax number which ist sent to the addressee (up to 20 characters, only '+' and numerals)"},
+    "Fax number which is sent to the addressee (up to 20 characters, only '+' and numerals)"},
   // T_ausgehende_Multiple_Subscriber_Number_Faxnummer_ohne_Vorwahl,
   {"hinausgehende 'Multiple Subscriber Number' (Faxnummer ohne Vorwahl)","outgoing 'multiple subscriber number' (fax number without prefix)"},
   // T_Amtsholung_ueblicherweise_kk_oder_0,
@@ -4498,7 +4498,8 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
   struct stat entrybuf;
   string faxsu;
   svec rueck;
-  systemrueck("which faxsetup",obverb,oblog,&rueck);
+//  systemrueck("sudo sh -c 'which faxsetup'",obverb,oblog,&rueck);
+  systemrueck("sudo which faxsetup",obverb,oblog,&rueck);
   if (rueck.size()) faxsu=rueck[0];
 //  const char *faxsu="/usr/sbin/faxsetup";
   if (!lstat(faxsu.c_str(), &entrybuf)) {
@@ -4586,7 +4587,7 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
     */
     Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
     int erg __attribute__((unused));
-    erg=system((string("sudo $(which sh) $(which faxsetup) -nointeractive")+(obverb?" -verbose":"")+" && sudo systemctl daemon-reload").c_str()); 
+    erg=system((string("sudo $(which sh) $(sudo which faxsetup) -nointeractive")+(obverb?" -verbose":"")+" && sudo systemctl daemon-reload").c_str()); 
     // systemrueck(string("source ")+faxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht 
     // mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
     Log(blaus+Tx[T_Fertig_mit]+schwarz+faxsu,1,oblog);
@@ -4600,7 +4601,7 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
   pmp->faxgtpfad.clear();
   //  pmp->faxgtpfad="/usr/lib/fax/faxgetty";
   //    pmp->faxgtpfad="/usr/sbin/faxgetty";
-  if (!systemrueck("which faxgetty",obverb-1,oblog,&rueckf)) {
+  if (!systemrueck("sudo which faxgetty",obverb-1,oblog,&rueckf)) {
     if (rueckf.size()) {
       pmp->faxgtpfad=rueckf[0];
     }
@@ -4774,7 +4775,7 @@ int paramcl::cservice()
   int erg;
   string cspfad;
   svec rueck;
-  erg=systemrueck("which capisuite",obverb,oblog,&rueck);
+  erg=systemrueck("sudo which capisuite",obverb,oblog,&rueck);
   if (rueck.size()) {
     erg=systemrueck("sudo sh -c 'systemctl stop capisuite; killall capisuite >/dev/null 2>&1; killall -9 capisuite >/dev/null 2>&1; "
               "cd /etc/init.d"
@@ -4801,13 +4802,13 @@ int paramcl::hservice_faxq_hfaxd()
   Log(violetts+"hservice_faxq_hfaxd()"+schwarz,this->obverb,this->oblog);
   string faxqpfad,hfaxdpfad;
   svec rueck;
-  systemrueck("which hfaxd",obverb,oblog,&rueck);
+  systemrueck("sudo which hfaxd",obverb,oblog,&rueck);
   if (rueck.size()) hfaxdpfad=rueck[0]; 
   hylafehler+=!this->shfaxd->spruef("HFaxd",0/*1*/,hfaxdpfad+" -d -i hylafax -s 444",
       this->varsphylavz+"/etc/setup.cache", "", "", this->obverb,this->oblog);
   this->shfaxd->machfit(obverb,oblog);
   rueck.clear();
-  systemrueck("which faxq",obverb,oblog,&rueck);
+  systemrueck("sudo which faxq",obverb,oblog,&rueck);
   if (rueck.size()) faxqpfad=rueck[0]; 
   hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,faxqpfad+" -D",
       this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname, "",this->obverb,this->oblog);
@@ -4924,7 +4925,7 @@ int paramcl::pruefhyla()
           // 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
           linst.doinst("ghostscript",obverb+1,oblog,"gs");
           linst.doinst("tiff",obverb+1,oblog,"tiff2ps");
-          linst.doinst("sendmail",obverb+1,oblog,"sendmail");
+          linst.doinst("sendmail",obverb+1,oblog,"sendmail", wahr);
           systemrueck("sudo sh -c 'cd $(sudo tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
                 "./configure --nointeractive && echo $? = Ergebnis nach configure && "
                 "sed -i.bak \"s.PAGESIZE='\\''North American Letter'\\''.PAGESIZE='\\''ISO A4'\\''.g;"
@@ -4948,9 +4949,10 @@ int paramcl::pruefhyla()
           linst.douninst(string(hff)+" "+hfcf,obverb,oblog);
           falscheshyla=1;
         }
+        // <<"hfr: "<<violett<<hfr<<schwarz<<" hfcr: "<<violett<<hfcr<<schwarz<<" obverb: "<<(int)obverb<<endl;
         hylafehlt=linst.obfehlt(hfr,obverb,oblog) || linst.obfehlt(hfcr,obverb,oblog);
         string vstring=ltoan(versuch);
-        Log(violetts+Tx[T_hylafehlt]+schwarz+ltoan(hylafehlt)+Tx[T_Versuch]+vstring,obverb,oblog);
+        Log(violetts+Tx[T_hylafehlt]+schwarz+ltoan(hylafehlt)+violett+Tx[T_Versuch]+schwarz+vstring,obverb,oblog);
         // b1) falsches Hylafax loeschen
         if (hylafehlt) {
           if (falscheshyla) {
@@ -4989,7 +4991,7 @@ int paramcl::pruefhyla()
       } // if (hyinstart==hysrc)  else
 
       // wenn sich faxsend findet ...
-      if (!systemrueck("which faxsend",obverb,oblog)) {
+      if (!systemrueck("sudo which faxsend",obverb,oblog)) {
         // und ein hylafax-Verzeichnis da ist ...
         if (this->setzhylavz()) {
           this->obhyla=0;
@@ -5130,8 +5132,8 @@ int paramcl::pruefhyla()
   // Archivierung ggf. aktivieren
   struct stat hfstat;
   if (!lstat("/etc/cron.hourly/hylafax",&hfstat)) {
-    systemrueck("! sudo grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax",
-        obverb,oblog);
+    systemrueck("! sudo grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || "
+                  "sudo sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax", obverb,oblog);
   }
   Log(violetts+Tx[T_Ende]+" "+Tx[T_pruefhyla]+schwarz,obverb?obverb:obverb,oblog);
   return 0;
@@ -5294,6 +5296,9 @@ int paramcl::pruefcapi()
                 // fuer Kernel 4.3.3-3-default und gcc muss jetzt noch 1) , __DATE__ und __TIME__ aus main.c Zeile 365 entfernt werden,
                 // 2) in driver.c Zeile 373 IRQF_DISABLED durch 0x00 ersetzt werden, dann kompilier- und installierbar
               }
+              systemrueck("ls -l /lib/modules/$(uname -r)/build 2>/dev/null || "
+              "{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
+              "sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU && sudo cp -a $NEU /lib/modules/$(uname -r)/build; }",obverb,oblog);
               systemrueck(string("cd ")+srcvz+";sudo test -f driver.c.bak || sed -i.bak '/request_irq/i#if !defined(IRQF_DISABLED)\\n"
                   "# define IRQF_DISABLED 0x00\\n#endif' driver.c;"
                   "sudo sed -e '/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>' "
@@ -5347,13 +5352,13 @@ int paramcl::pruefcapi()
         if (!capischonerfolgreichinstalliert) {
           pruefverz(instverz,obverb,oblog);
           svec csrueck;
-          systemrueck("find "+instverz+" -mtime -1 -name capisuite.tar.gz",obverb,oblog,&csrueck);
+          systemrueck("find "+instverz+" -mtime -1 -name capisuite.tar.gz 2>/dev/null",obverb,oblog,&csrueck);
           if (!csrueck.size()) {
             systemrueck("sh -c 'cd "+instverz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
                         obverb,oblog);
           }
           csrueck.clear();
-          systemrueck("find /usr/lib/python* -type f -name Makefile -printf '%h\\n'",obverb,oblog,&csrueck);
+          systemrueck("find /usr/lib/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null",obverb,oblog,&csrueck);
           if (csrueck.size()) {
             if (!systemrueck("sh -c 'cd "+instverz+" && { cd capisuite && { test -f Makefile && make clean; } && cd .. ; } "
                   " ;  tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && cd capisuite"

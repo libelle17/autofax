@@ -501,8 +501,8 @@ class linstcl
 //    linsten inst;
     uchar obnmr=1;
     string ersetzeprog(const string& prog);
-    uchar doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda="");
-    uchar doinst(const char* prog,int obverb=0,int oblog=0,const string& fallsnichtda="");
+    uchar doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda="", binaer alsroot=falsch);
+    uchar doinst(const char* prog,int obverb=0,int oblog=0,const string& fallsnichtda="", binaer alsroot=falsch);
     uchar doggfinst(const string& prog,int obverb=0,int oblog=0);
     uchar douninst(const string& prog,int obverb=0,int oblog=0);
     uchar obfehlt(const string& prog,int obverb=0,int oblog=0);

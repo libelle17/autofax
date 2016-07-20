@@ -1909,14 +1909,15 @@ string linstcl::ersetzeprog(const string& prog)
 } // string linstcl::ersetzeprog(const string& prog) 
 
 
-uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsnichtda) 
+uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsnichtda, binaer alsroot) 
 {
-  if (!fallsnichtda.empty()) if (!systemrueck("which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) return 0;
+  // <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
+  if (!fallsnichtda.empty()) if (!systemrueck(alsroot?string("root "):string("")+"which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) return 0;
   switch (pruefipr()) {
     case zypper:
       if (obnmr) {
         obnmr=0;
-        systemrueck("sudo zypper mr -k -all",obverb-1,oblog);
+        systemrueck("sudo zypper mr -k -all",obverb,oblog);
       }
       return systemrueck(string("sudo zypper -n --gpg-auto-import-keys in ")+prog,obverb+1,oblog);
       break;
@@ -1937,10 +1938,11 @@ uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
  return 0;
 } // uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
 
-uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
+uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda,binaer alsroot)
 {
   const string& progs=prog;
-  return doinst(progs,obverb,oblog,fallsnichtda);
+  // <<rot<<"doinst 2: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
+  return doinst(progs,obverb,oblog,fallsnichtda,alsroot);
 } // uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
 
 uchar linstcl::douninst(const string& prog,int obverb,int oblog) 
@@ -1960,11 +1962,12 @@ uchar linstcl::douninst(const string& prog,int obverb,int oblog)
 
 uchar linstcl::obfehlt(const string& prog,int obverb,int oblog)
 {
+ // <<violett<<"linst::obfehlt: "<<schwarz<<prog<<endl;
   switch (pruefipr()) {
     case zypper:
-      return systemrueck(string("rpm -q ")+prog+" 2>/dev/null",obverb-1,oblog);
+      return systemrueck(string("rpm -q ")+prog+" 2>/dev/null",obverb,oblog);
     case apt:
-      return systemrueck(string("dpkg -s ")+ersetzeprog(prog)+" 2>/dev/null",obverb-1,oblog);
+      return systemrueck(string("dpkg -s ")+ersetzeprog(prog)+" 2>/dev/null",obverb,oblog);
     default: break;
   }
   return 2;
@@ -2118,7 +2121,7 @@ void servc::stop(int obverb,int oblog)
 
 int servc::enableggf(int obverb,int oblog)
 {
- return systemrueck(string("systemctl is-enabled '")+sname+"' >/dev/null || sudo systemctl enable '"+sname+"' >/dev/null"+sname,obverb,oblog);
+ return systemrueck(string("systemctl is-enabled '")+sname+"' >/dev/null || sudo systemctl enable '"+sname+"' >/dev/null",obverb,oblog);
 }
 
 void servc::daemon_reload(int obverb, int oblog)
