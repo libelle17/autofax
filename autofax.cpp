@@ -1957,7 +1957,9 @@ void paramcl::liescapiconf()
 
   rueck.clear();
   systemrueck("find /etc/capisuite /usr/local/etc/capisuite -type f -name capisuite.conf 2>/dev/null",obverb-2,oblog,&rueck);
-  if (rueck.size()) ccapiconfdat=rueck[0];
+  if (rueck.size()) {
+    ccapiconfdat=rueck[0];
+  }
   if (!ccapiconfdat.empty()) {
     uchar obneuer=0;
     struct stat cstat;
@@ -2706,6 +2708,7 @@ void paramcl::autofkonfschreib()
 } // void paramcl::autofkonfschreib()
 
 
+// in pruefcapi
 void paramcl::cliesconf()
 {
  if (capiconf[6].wert!="+"+countrycode+" "+citycode+" "+msn  
@@ -5319,6 +5322,11 @@ int paramcl::pruefcapi()
       pruefrules(obverb,oblog);
       pruefblack(obverb,oblog);
       capischonerfolgreichinstalliert=!linst.obfehlt("capisuite capi4linux i4l-isdnlog");
+      if (capischonerfolgreichinstalliert) {
+       struct stat d1, d2;
+       if (lstat("/etc/capisuite",&d1) && lstat("/usr/local/etc/capisuite",&d2))
+         capischonerfolgreichinstalliert=0;
+      }
       // <<rot<<"capischonerfolgreichinstalliert 0: "<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
       if (!capischonerfolgreichinstalliert) {
         Log(string(Tx[T_Konnte])+blau+"capisuite"+schwarz+Tx[T_nichtstarten],1,oblog);
@@ -5331,12 +5339,13 @@ int paramcl::pruefcapi()
            return 1;
            }
          */
-        linst.doggfinst("capiutils",obverb+1,oblog);
+        if (lsys.getsys(obverb,oblog)!=sus)
+          linst.doggfinst("capiutils",obverb+1,oblog);
         linst.doggfinst("sfftobmp",obverb+1,oblog);
         linst.doggfinst("libcapi20-2",obverb+1,oblog);
         linst.doggfinst("libcapi20-3",obverb+1,oblog);
         linst.doggfinst("python-devel",obverb+1,oblog);
-        linst.doggfinst("xsltproc",obverb+1,oblog);
+        linst.doinst("libxslt-tools",obverb+1,oblog,"xsltproc");
         uchar mitcservice=0;
         if (lsys.getsys(obverb,oblog)==sus) {
           linst.doggfinst("capi4linux i4l-isdnlog",obverb+1,oblog);
@@ -5346,7 +5355,7 @@ int paramcl::pruefcapi()
           // i4l-isdnlog scheint nicht wirklich noetig zu sein
           //   capischonerfolgreichinstalliert=!systemrueck("zypper -n --gpg-auto-import-keys in capisuite capi4linux i4l-isdnlog", 1+obverb,oblog); 
           // i4l-base geloescht
-          capischonerfolgreichinstalliert=!linst.doinst("capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
+          capischonerfolgreichinstalliert=!linst.doinst("-f capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
         } // if (lsys.getsys(obverb,oblog)==sus) 
 
         if (!capischonerfolgreichinstalliert) {
@@ -5412,7 +5421,9 @@ int paramcl::pruefcapi()
     // <<rot<<"capizukonf: "<<schwarz<<(int)capizukonf<<endl;
     // <<rot<<"versuch: "<<schwarz<<versuch<<endl;
     if (capischonerfolgreichinstalliert) {
-      if (!capizukonf) cliesconf();
+      if (!capizukonf) {
+        cliesconf();
+      }
       if (obcapi && (versuch>0 || this->capizukonf)) {
         this->konfcapi();
         scapisuite->restart(obverb-1,oblog);
