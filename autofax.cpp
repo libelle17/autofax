@@ -335,7 +335,7 @@ enum T_
   T_loeschecapi,
   T_loeschehyla,
   T_WVZinDatenbank,
-  T_pruefhardware,
+  T_pruefmodem,
   T_setzhylavz,
   T_lieskonfein,
   T_rueckfragen,
@@ -472,10 +472,11 @@ enum T_
   T_an_cFax,
   T_an_hFax,
   T_und,
-  T_Eingabe,
+  T_erneute_Eingabe,
   T_liescapiconf,
   T_Fehler_beim_Loeschen,
   T_VorgbAllg,
+  T_pruefisdn,
   T_MAX
 };
 
@@ -1050,8 +1051,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"loeschehyla()","deletehyla()"},
   // T_WVZinDatenbank
   {"WVZinDatenbank()","WDirinDatabase()"},
-  // T_pruefhardware
-  {"pruefhardware()","checkhardware()"},
+  // T_pruefmodem
+  {"pruefmodem()","checkmodem()"},
   // T_setzhylavz
   {"setzhylavz()","sethyladir()"},
   // T_lieskonfein
@@ -1330,14 +1331,16 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"an hFax","to hfax"},
   // T_und
   {"und","and"},
-  // T_Eingabe
-  {"Eingabe","Input"},
+  // T_erneute_Eingabe
+  {"erneute Eingabe","once more"},
   // T_liescapiconf
   {"liescapiconf()","readcapiconf()"},
   // T_Fehler_beim_Loeschen
   {"Fehler beim Loeschen","error deleting"},
   // T_VorgbAllg
   {"VorgbAllg()","generalprefs()"},
+  // T_pruefisdn
+  {"T_pruefisdn()","checkisdn()"},
   {"",""}
 };
 
@@ -1742,23 +1745,12 @@ void paramcl::getcommandl0()
 } // void paramcl::getcommandl0(int argc, char** argv)
 
 // wird aufgerufen in: main
-void paramcl::pruefhardware()
+void paramcl::pruefmodem()
 {
-  Log(violetts+Tx[T_pruefhardware]+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_pruefmodem]+schwarz,obverb,oblog);
   svec rueck;
-  cmd="lspci 2>/dev/null || sudo lspci 2>/dev/null | grep -i 'isdn'";
-  logdt=&loggespfad.front();
-  systemrueck(cmd, obverb,oblog,&rueck);
-  // <<"pruefhardware 1 vor  obcapi: "<<(int)obcapi<<endl;
-  if (rueck.size()) {
-    obcapi=obfcard=1;
-  } else {
-    Log(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_auf]+schwarz+"0.",1,oblog);
-    obcapi=obfcard=0;
-  }
-  // <<"pruefhardware 1 nach obcapi: "<<(int)obcapi<<endl;
-  obhyla=obmodem=0;
-  rueck.clear();
+  // <<"pruefmodem 1 nach obcapi: "<<(int)obcapi<<endl;
+  obmodem=0;
   cmd="find /sys/class/tty 2>/dev/null";
   systemrueck(cmd, obverb,oblog,&rueck);
   for(size_t i=0;i<rueck.size();i++) {
@@ -1768,21 +1760,38 @@ void paramcl::pruefhardware()
       // ttyS0 erscheint auf Opensuse und Ubuntu konfiguriert, auch wenn kein Modem da ist
       if (tty!="ttyS0") {
         svec rue2;
-        if (!systemrueck(("sudo stty -F /dev/")+tty+" >/dev/null 2>&1",-1,oblog,&rue2)) {
-          obhyla=obmodem=1;
+        if (!systemrueck("sudo stty -F /dev/"+tty+" >/dev/null 2>&1",obverb,oblog,&rue2)) {
+          obmodem=1;
           modems<<tty;
           Log(string("Modem: ")+blau+Tx[T_gefunden],obverb,oblog);
-        }
-      }
-    }
+        } // if (!systemrueck("sudo stty -F /dev/"+tty+" >/dev/null 2>&1",obverb,oblog,&rue2)) 
+      } // if (tty!="ttyS0") 
+    } // if (!lstat(((rueck[i])+"/device/driver").c_str(),&entrydriv)) 
+  } // for(size_t i=0;i<rueck.size();i++) 
+  obmdgeprueft=1;
+  if (!obmodem) {
+    obhyla=0;
+    Log(rots+Tx[T_Kein_Modem_gefunden]+schwarz,obverb,oblog);
   }
-  if (!obmodem) Log(rots+Tx[T_Kein_Modem_gefunden]+schwarz,obverb,oblog);
-    if (obverb) {
-      string obmodems=ltoan(obmodem); 
-      Log(blaus+"obfcard: "+schwarz+ltoan(obfcard)+blau+", obmodem: "+schwarz+obmodems,obverb,oblog);
-    }
   // wvdialconf oder schneller: setserial -a /dev/tty*, mit baud_base: <!=0>  als Kriterium
-} // void paramcl::pruefhardware()
+} // void paramcl::pruefmodem()
+
+void paramcl::pruefisdn()
+{
+  Log(violetts+Tx[T_pruefisdn]+schwarz,obverb,oblog);
+  svec rueck;
+  cmd="lspci 2>/dev/null || sudo lspci 2>/dev/null | grep -i 'isdn'";
+  logdt=&loggespfad.front();
+  systemrueck(cmd, obverb,oblog,&rueck);
+  // <<"pruefmodem 1 vor  obcapi: "<<(int)obcapi<<endl;
+  if (rueck.size()) {
+    obfcard=1;
+  } else {
+    Log(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_auf]+schwarz+"0.",1,oblog);
+    obcapi=obfcard=0;
+  }
+  obfcgeprueft=1;
+} // void paramcl::pruefisdn()
 
 // wird aufgerufen in: main, pruefhyla
 // koennte auch im Fall eines entfernten Modems oder hylafax-Programms benoetigt werden
@@ -1913,6 +1922,7 @@ void paramcl::VorgbSpeziell()
   zmvzn=sizeof zmi/sizeof *zmi;
 } // void paramcl::VorgbSpeziell() 
 
+// in VorgbAllg, pruefcapi
 void paramcl::liescapiconf()
 {
   Log(violetts+Tx[T_liescapiconf]+schwarz,obverb,oblog);
@@ -1983,8 +1993,9 @@ void paramcl::liescapiconf()
         for(size_t j=1;j<3;j++) {
           if (!cconf[j].wert.empty()) {
             struct stat statdat;
-            if (!lstat(cconf[j].wert.c_str(),&statdat))
-            systemrueck("sudo setfacl -m 'u:"+cuser+":6' '"+cconf[j].wert+"'",obverb,oblog);
+            if (!lstat(cconf[j].wert.c_str(),&statdat)) {
+              setfaclggf(cconf[j].wert, falsch, 6, falsch,obverb,oblog);
+            }
           }
         } // for(size_t j=1;j<3;j++) 
       } // if (!cuser.empty()) 
@@ -2322,6 +2333,7 @@ void paramcl::rueckfragen()
     }
   // <<"rueckfragen 1 vor  obcapi: "<<(int)obcapi<<endl;
     if (cgconf[++lfd].wert.empty() || rzf) {
+      if (!obfcgeprueft) pruefisdn();
       if (obfcard) {
         obcapi=holob(Tx[T_Soll_die_Capisuite_verwendet_werden],obcapi?Tx[T_j_af]:"n");
       } else {
@@ -2331,6 +2343,7 @@ void paramcl::rueckfragen()
     }
   // <<"rueckfragen 1 nach obcapi: "<<(int)obcapi<<endl;
     if (cgconf[++lfd].wert.empty() || rzf) {
+      if (!obmdgeprueft) pruefmodem();
       if (obmodem) {
         obhyla=holob(Tx[T_Soll_Hylafax_verwendet_werden],obhyla?Tx[T_j_af]:"n");
       } else {
@@ -2428,7 +2441,8 @@ void paramcl::rueckfragen()
 
     if (obhyla) {
       if (cgconf[++lfd].wert.empty() || rzf) {
-        hmodem=holstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,hmodem.empty()?&modems[0]:&hmodem);
+//        hmodem=holstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,hmodem.empty()?&modems[0]:&hmodem);
+        hmodem=holstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,&hmodem);
         cgconf[lfd].setze(&hmodem);
       }
       if (cgconf[++lfd].wert.empty() || rzf) {
@@ -2665,6 +2679,11 @@ void paramcl::rueckfragen()
     } // if (cgconf[++lfd].wert.empty() || rzf) 
     */
   } // if (rzf)
+  // hier wurde falls noetig ermittelt, ob Fritzcard/Modem vorhanden
+  if (obverb) {
+    string obmodems=ltoan(obmodem); 
+    Log(blaus+"obfcard: "+schwarz+ltoan(obfcard)+blau+", obmodem: "+schwarz+obmodems,obverb,oblog);
+  }
   // die Verzeichnisnamen standardisieren
   kuerzevtz(&spoolcapivz);
   kuerzevtz(&cdonevz);
@@ -2927,7 +2946,7 @@ void paramcl::konfcapi()
           *fneu<<"fax_action=\"MailAndSave\""<<endl;
         } // if (!cuserda)
         if (fneu) delete fneu;
-        systemrueck("sudo setfacl -m 'u:"+cuser+":6' '"+cfaxconfdat+"'",obverb,oblog);
+        setfaclggf(cfaxconfdat, falsch, 6, falsch,obverb,oblog);
         string origdatei=cfaxconfdat+"_orig";
         struct stat entryorig;
         if (lstat(origdatei.c_str(),&entryorig)) {
@@ -3148,8 +3167,8 @@ void paramcl::pruefsamba()
   if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
     string pw1, pw2;
     while (1) {
-      pw1=holstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" (1."+Tx[T_Eingabe]+")",&pw1);
-      pw2=holstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" (2."+Tx[T_Eingabe]+")",&pw2);
+      pw1=holstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz,&pw1);
+      pw2=holstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" ("+Tx[T_erneute_Eingabe]+")",&pw2);
       if (pw1==pw2) break;
     }
     systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
@@ -4433,7 +4452,7 @@ void dorename(const string& quelle, const string& ziel, const string& cuser, uin
     if (rename(quelle.c_str(),ziel.c_str())) {
       if(cuser.empty()) iru++;
       if(iru==1) {
-        systemrueck("sudo setfacl -Rm 'u:"+cuser+":7' '"+dir_name(quelle)+"'",obverb,oblog);
+        setfaclggf(dir_name(quelle), wahr, 7, wahr,obverb,oblog);
       } else {
         perror(Tx[T_Fehler_beim_Verschieben]);
         string cmd=string("sudo mv \"")+quelle+"\" \""+ziel+"\"";
@@ -6276,7 +6295,7 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
       if ((erg=remove(zuloe.c_str()))) {
         if(cuser.empty()) iru++;
         if(iru==1) {
-          systemrueck("sudo setfacl -m 'u:"+cuser+":6' '"+zuloe+"'",obverb,oblog);
+          setfaclggf(zuloe, falsch, 6, falsch,obverb,oblog);
         } else {
           perror(Tx[T_Fehler_beim_Loeschen]);
           string cmd=string("sudo rm -rf \"")+zuloe+"\"";
@@ -6322,7 +6341,6 @@ int main(int argc, char** argv)
   paramcl pm(argc,argv); // Programmparameter
   pm.logvorgaben(*argv);
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
-  pm.pruefhardware();
   pm.VorgbAllg();
   pm.VorgbSpeziell();
   pm.lieskonfein();
@@ -6336,6 +6354,8 @@ int main(int argc, char** argv)
    zeigversion(*argv);
    exit(0);
   }
+  if (pm.obhyla) pm.pruefmodem();
+  if (pm.obcapi) pm.pruefisdn();
   pm.rueckfragen();
   pm.setzhylavz();
   pm.verzeichnisse();

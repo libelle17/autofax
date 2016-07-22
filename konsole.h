@@ -186,7 +186,7 @@ class mdatei: public fstream
 {
   public:
   int oboffen=0;
-  mdatei (const string& filename, ios_base::openmode mode = ios_base::in | ios_base::out);
+  mdatei (const string& filename, ios_base::openmode mode = ios_base::in | ios_base::out, int obverb=0, int oblog=0);
 };
 
 inline string zustr(int _Val) {
@@ -478,6 +478,7 @@ std::string base_name(const std::string& path);
 std::string dir_name(const std::string& path);
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
                 binaer ob0heissterfolg=wahr, binaer obergebnisanzeig=wahr, const string& ueberschr="");
+int setfaclggf(const string& datei, const binaer obunter=falsch, const int mod=4, binaer obimmer=falsch,int obverb=0,int oblog=0);
 int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=1);
 string aktprogverz();
 char holbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);

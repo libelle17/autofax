@@ -110,7 +110,9 @@ class paramcl // Programmparameter
     uchar hgelesen=0; // Protokolldatei war auslesbar
     static constexpr const char *moeglhvz[2]={"/var/spool/fax","var/spool/hylafax"};
     uchar obfcard=1;    // ob Fritzcard eingesteckt
+    uchar obfcgeprueft=0; // ob schon geprueft, ob Fritzcard eingesteckt
     uchar obmodem=1;    // ob Modem angeschlossen
+    uchar obmdgeprueft=0; // ob schon geprueft, ob Modem verfuegbar
     string spooltab = "spool";
     int obverb=0; // verbose
     int oblog=0;  // mehr Protokollieren
@@ -255,7 +257,8 @@ class paramcl // Programmparameter
     string stdfaxnr(const string& faxnr);
     void logvorgaben(const string& vprog);
     void getcommandl0();
-    void pruefhardware();
+    void pruefmodem();
+    void pruefisdn();
     void liescapiconf();
     void VorgbAllg(); // allgemeine Vorgaben
     #ifdef autofaxcpp
