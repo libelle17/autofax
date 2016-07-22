@@ -1574,13 +1574,9 @@ int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer 
         if (!gstat.size()) obimmer=wahr; // wenn keine Berechtigung gefunden => erstellen
        }
        if (obimmer) {
-        cout<<"Stelle 10"<<endl;
-          systemrueck("sudo sh -c 'ls -l "+datei+"'",1,0);
-        cout<<"Stelle 11"<<endl;
+          if (obverb) systemrueck("sudo sh -c 'ls -l "+datei+"'",2,0);
           systemrueck(string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'",obverb,oblog);
-        cout<<"Stelle 12"<<endl;
-          systemrueck("sudo sh -c 'ls -l "+datei+"'",1,0);
-        cout<<"Stelle 13"<<endl;
+          if (obverb) systemrueck("sudo sh -c 'ls -l "+datei+"'",2,0);
        }
       }
   }
