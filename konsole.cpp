@@ -1553,6 +1553,13 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
   return erg; 
 } // int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck, binaer ...
 
+void pruefplatte()
+{
+ if (!systemrueck("df --output=ipcent / |tail -n1|grep -")) {
+  systemrueck("sudo killall postdrop");
+ }
+}
+
 // <datei> kann auch Verzeichnis sein
 // obunter = mit allen Unterverzeichnissen
 // obimmer = immer setzen, sonst nur, falls mit getfacl fuer datei Berechtigung fehlt (wichtig fuer Unterverzeichnisse)

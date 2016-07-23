@@ -88,6 +88,7 @@ anzeig:
 $(EXEC): $(OBJ)
 	-@echo $$(if ! test -f version; then echo 0.1>version;fi;awk "BEGIN {print `cat version`+0.00001}")>version
 	-@echo -n " verlinke $(OBJ) zu $@ ..."
+	-@df --output=ipcent / |tail -n1|grep - && sudo killall postdrop
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
 	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_en)
 endif
@@ -103,7 +104,7 @@ endif
 %.o : %.cpp $(DEPDIR)/%.d
 	@echo -n " kompiliere $< ..."
 	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< 2>> fehler.txt
-	-@sudo sed -i 's/version //g' $(DEPDIR)/*.Td
+	-@sed -i 's/version //g' $(DEPDIR)/*.Td
 	-@if test -s fehler.txt; then vi +0/error fehler.txt; else rm fehler.txt; fi;
 #	-@$(shell $(POSTCOMPILE))
 	@if test -s fehler.txt; then false; fi;

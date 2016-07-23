@@ -6338,6 +6338,7 @@ void zeigversion(const char* const prog)
 
 int main(int argc, char** argv) 
 {
+  pruefplatte();
   paramcl pm(argc,argv); // Programmparameter
   pm.logvorgaben(*argv);
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
