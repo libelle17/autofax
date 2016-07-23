@@ -69,12 +69,16 @@ otherwise with:
 .br
  P=autofax; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm $T && mv $P-master $P && cd $P
 .br
-there, if the program 'make' is not available, You can call 'install.sh', this should install it; otherwise, You also can call:
+there, if the program 'make' is not available, You can call 'install.sh', this should install 'make'; otherwise, You also can call:
 .br
-if You want to have ensured the currentness of gcc6 before compilation:
+- if You want to have ensured the currentness of 'gcc6' before compilation:
+.br
  make 
+.br
 otherwise:
+.br
  make glei
+.br
 furtheron:
 .br
  sudo make install

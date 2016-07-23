@@ -124,11 +124,13 @@ https://github.com/libelle17/$P/archive/master.tar.gz -O $T
 $P-master $P && cd $P <br>
 there, if the program &rsquo;make&rsquo; is not available,
 You can call &rsquo;install.sh&rsquo;, this should install
-it; otherwise, You also can call: <br>
-if You want to have ensured the currentness of gcc6 before
-compilation: <br>
-make otherwise: <br>
-make glei furtheron: <br>
+&rsquo;make&rsquo;; otherwise, You also can call: <br>
+- if You want to have ensured the currentness of
+&rsquo;gcc6&rsquo; before compilation: <br>
+make <br>
+otherwise: <br>
+make glei <br>
+furtheron: <br>
 sudo make install <br>
 autofax <br>
 (answer some questions of the program) <br>
