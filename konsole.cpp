@@ -1555,7 +1555,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
 
 void pruefplatte()
 {
- if (!systemrueck("df --output=ipcent / |tail -n1|grep -")) {
+ if (!systemrueck("df --output=pcent / |tail -n1|grep 0%")) {
   systemrueck("sudo killall postdrop");
  }
 }
