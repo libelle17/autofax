@@ -113,11 +113,12 @@ stored.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">If the program
-&rsquo;git&rsquo; is available, You can start with: <br>
+<p style="margin-left:11%; margin-top: 1em">- If the
+program &rsquo;git&rsquo; is available, You can start with:
+<br>
 git clone http://github.com/libelle17/autofax && cd
 autofax <br>
-otherwise with: <br>
+- otherwise with: <br>
 P=autofax; T=$P.tar.gz; wget
 https://github.com/libelle17/$P/archive/master.tar.gz -O $T
 && tar xpvf $T && rm $T && mv
@@ -128,7 +129,7 @@ You can call &rsquo;install.sh&rsquo;, this should install
 - if You want to have ensured the currentness of
 &rsquo;gcc6&rsquo; before compilation: <br>
 make <br>
-otherwise: <br>
+- otherwise: <br>
 make glei <br>
 furtheron: <br>
 sudo make install <br>

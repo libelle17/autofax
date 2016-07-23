@@ -61,11 +61,11 @@ Furthermore, autofax holds the posted faxes in a mariadb database.
 .br
 Additionally, received faxes from \fBhylafax\fR/\fBcapisuite\fR can be named with the sender's name according to his telephone number and stored.
 .SH INSTALLATION
-If the program 'git' is available, You can start with:
+- If the program 'git' is available, You can start with:
 .br
  git clone http://github.com/libelle17/autofax && cd autofax
 .br
-otherwise with:
+- otherwise with:
 .br
  P=autofax; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm $T && mv $P-master $P && cd $P
 .br
@@ -75,7 +75,7 @@ there, if the program 'make' is not available, You can call 'install.sh', this s
 .br
  make 
 .br
-otherwise:
+- otherwise:
 .br
  make glei
 .br
