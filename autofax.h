@@ -162,6 +162,7 @@ class paramcl // Programmparameter
     string spoolcapivz; // Verzeichnis der Capi-Spool-Dateien /var/spool/capisuite/
     string cfaxuservz;    // /var/spool/capisuite/users/
     string cfaxusersqvz;    // /var/spool/capisuite/users/<user>/sendq
+    string nextdatei;  // /var/spool/capisuite/users/<user>/sendq/fax-nextnr
     string cfaxuserrcvz;    // /var/spool/capisuite/users/<user>/received
     string cdonevz; // Capisuite-Archiv: /var/spool/capisuite/done
     string cfailedvz; // Capisuite-Archiv der gescheiterten /var/spool/capisuite/failed

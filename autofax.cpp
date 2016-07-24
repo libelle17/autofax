@@ -2966,10 +2966,10 @@ void paramcl::konfcapi()
   unsigned long nextnr=0;
   struct stat entrynextnr;
   // <<"cfaxusersqvz: "<<cfaxusersqvz<<endl;
-  string ndatei=cfaxusersqvz+"/fax-nextnr";
+  nextdatei=cfaxusersqvz+"/fax-nextnr";
   // <<ndatei<<endl;
   if (!lstat(cfaxusersqvz.c_str(),&entrynextnr)) {
-    mdatei nextstr(ndatei,ios::in);
+    mdatei nextstr(nextdatei,ios::in);
     if (nextstr.is_open()) {
       string zeile;
       if (getline(nextstr,zeile)) {
@@ -2980,7 +2980,7 @@ void paramcl::konfcapi()
   if (!nextnr) {
     pruefverz(cfaxuservz,obverb,oblog,2);
     cmd=string(" echo $(( `find ")+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
-      "| cut -d '-' -f3 | cut -d '.' -f1 | sort -rn | head -n1` + 1 )) > '"+ndatei+"'";
+      "| cut -d '-' -f3 | cut -d '.' -f1 | sort -rn | head -n1` + 1 )) > '"+nextdatei+"'";
     systemrueck(cmd,obverb,oblog);
   }
   Log(violetts+Tx[T_Ende]+Tx[T_konfcapi]+schwarz+"ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
@@ -5546,6 +5546,7 @@ void faxemitC(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obv
       Log(rots+Tx[T_faxemitCFehler]+schwarz+Tx[T_Faxdatei]+blau+ff+rot+ Tx[T_hat0Bytes]+schwarz,1,1);
     } else {
       // capisuitefax mit Userangabe nur fuer root erlaubt
+      setfaclggf(pmp->nextdatei,falsch,6,falsch,obverb,oblog);
       string cmd=string("capisuitefax -n ")+(strcmp("root",curruser())?"":"-u"+pmp->cuser)+" -d "+fsfp->telnr+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
       vector<string> faxerg;
       systemrueck(cmd,obverb,oblog,&faxerg,wahr,wahr,Tx[T_Faxbefehl]);
