@@ -2442,6 +2442,7 @@ void paramcl::rueckfragen()
     if (obhyla) {
       if (cgconf[++lfd].wert.empty() || rzf) {
 //        hmodem=holstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,hmodem.empty()?&modems[0]:&hmodem);
+        if (hmodem.empty()) hmodem=modems[0];
         hmodem=holstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,&hmodem);
         cgconf[lfd].setze(&hmodem);
       }
@@ -2961,7 +2962,13 @@ void paramcl::konfcapi()
     } // if (f.is_open())
   } // for(uchar iru=0;iru<2;iru++) 
   pruefcvz();
+  nextnum();
+  Log(violetts+Tx[T_Ende]+Tx[T_konfcapi]+schwarz+"ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
+} // void paramcl::konfcapi()
 
+// in konfcapi und faxemitC (da konfacpi aus pruefcapi nicht unbedingt aufgerufen wird)
+void paramcl::nextnum()
+{
   // dieser Abschnitt war zuvor richtcapiher
   unsigned long nextnr=0;
   struct stat entrynextnr;
@@ -2983,8 +2990,8 @@ void paramcl::konfcapi()
       "| cut -d '-' -f3 | cut -d '.' -f1 | sort -rn | head -n1` + 1 )) > '"+nextdatei+"'";
     systemrueck(cmd,obverb,oblog);
   }
-  Log(violetts+Tx[T_Ende]+Tx[T_konfcapi]+schwarz+"ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
-} // void paramcl::konfcapi()
+  setfaclggf(nextdatei,falsch,6,falsch,obverb,oblog);
+}
 
 // wird aufgerufen in: main
 void paramcl::verzeichnisse()
@@ -4609,7 +4616,9 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
     */
     Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
     int erg __attribute__((unused));
+    pruefplatte();
     erg=system((string("sudo $(which sh) $(sudo which faxsetup) -nointeractive")+(obverb?" -verbose":"")+" && sudo systemctl daemon-reload").c_str()); 
+    pruefplatte();
     // systemrueck(string("source ")+faxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht 
     // mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
     Log(blaus+Tx[T_Fertig_mit]+schwarz+faxsu,1,oblog);
@@ -5546,7 +5555,7 @@ void faxemitC(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obv
       Log(rots+Tx[T_faxemitCFehler]+schwarz+Tx[T_Faxdatei]+blau+ff+rot+ Tx[T_hat0Bytes]+schwarz,1,1);
     } else {
       // capisuitefax mit Userangabe nur fuer root erlaubt
-      setfaclggf(pmp->nextdatei,falsch,6,falsch,obverb,oblog);
+      pmp->nextnum();
       string cmd=string("capisuitefax -n ")+(strcmp("root",curruser())?"":"-u"+pmp->cuser)+" -d "+fsfp->telnr+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
       vector<string> faxerg;
       systemrueck(cmd,obverb,oblog,&faxerg,wahr,wahr,Tx[T_Faxbefehl]);
@@ -6341,17 +6350,11 @@ int main(int argc, char** argv)
 {
   pruefplatte();
   paramcl pm(argc,argv); // Programmparameter
-  cout<<rot<<"obhyla 2: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.logvorgaben(*argv);
-  cout<<rot<<"obhyla 3: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
-  cout<<rot<<"obhyla 4: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.VorgbAllg();
-  cout<<rot<<"obhyla 5: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.VorgbSpeziell();
-  cout<<rot<<"obhyla 6: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.lieskonfein();
-  cout<<rot<<"obhyla 7: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
 
   if (!pm.getcommandline()) 
     exit(1);
@@ -6362,37 +6365,23 @@ int main(int argc, char** argv)
    zeigversion(*argv);
    exit(0);
   }
-  cout<<rot<<"obhyla 8: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   if (pm.obhyla) pm.pruefmodem();
-  cout<<rot<<"obhyla 9: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   if (pm.obcapi) pm.pruefisdn();
-  cout<<rot<<"obhyla 10: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.rueckfragen();
-  cout<<rot<<"obhyla 11: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.setzhylavz();
-  cout<<rot<<"obhyla 12: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.verzeichnisse();
-  cout<<rot<<"obhyla 13: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.pruefcron();
-  cout<<rot<<"obhyla 14: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.pruefsamba();
-  cout<<rot<<"obhyla 15: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
 
   if (pm.logdateineu) tuloeschen(logdt,"",pm.obverb,pm.oblog);
-  cout<<rot<<"obhyla 16: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   Log(string(Tx[T_zufaxenvz])+drot+pm.zufaxenvz+schwarz+"'",pm.obverb,pm.oblog);
-  cout<<rot<<"obhyla 17: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   Log(string(Tx[T_Logpfad])+drot+pm.loggespfad+schwarz+Tx[T_oblog]+drot+ltoan((int)pm.oblog)+schwarz+")",pm.obverb,pm.oblog);
-  cout<<rot<<"obhyla 18: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   if (pm.initDB())
     return 10;
   // pruefe Tabelle <spooltab> und stelle sie ggf. her
   pruefspool(pm.My,pm.spooltab, pm.obverb,pm.oblog);
-  cout<<rot<<"obhyla 19: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pruefouttab(pm.My,pm.touta, pm.obverb,pm.oblog);
-  cout<<rot<<"obhyla 20: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pruefinctab(pm.My,pm.tinca, pm.obverb,pm.oblog);
-  cout<<rot<<"obhyla 21: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   if (pm.kez) {
     pm.korrerfolgszeichen();
   } else if (pm.bwv) {
@@ -6404,16 +6393,12 @@ int main(int argc, char** argv)
   } else if (pm.listi) {
     pm.tu_listi();
   } else {
-  cout<<rot<<"obhyla 22: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     pruefstdfaxnr(pm.My,pm.muser,pm.mpwd,pm.host,pm.obverb,pm.oblog);
-  cout<<rot<<"obhyla 23: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     pruefprocgettel3(pm.My,pm.muser,pm.mpwd,pm.host,pm.obverb,pm.oblog);
-  cout<<rot<<"obhyla 24: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     //  int qerg = mysql_query(My.conn,proc.c_str());
     // 1) nicht-pdf-Dateien in pdf umwandeln, 2) pdf-Dateien wegfaxen, 3) alle in warte-Verzeichnis kopieren, 4) in Spool-Tabelle eintragen
     //  vector<string> npdf, spdf;
     pm.DateienHerricht();  
-  cout<<rot<<"obhyla 25: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     if (pm.obfcard) if (pm.obcapi) pm.obcapi= !pm.pruefcapi();
   cout<<rot<<"obhyla 26: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     if (pm.obmodem) if (pm.obhyla) pm.obhyla= !pm.pruefhyla();

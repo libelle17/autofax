@@ -255,6 +255,7 @@ class paramcl // Programmparameter
   public:
     paramcl(int argc,char** argv);
     ~paramcl();
+    void nextnum();
     string stdfaxnr(const string& faxnr);
     void logvorgaben(const string& vprog);
     void getcommandl0();

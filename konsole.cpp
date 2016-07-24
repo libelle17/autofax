@@ -1677,6 +1677,7 @@ string holstrings(const char *frage, char* moegl[], char *vorgabe)
     input="";
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
+    // <<rot<<"input: '"<<input<<"', vorgabe: '"<<vorgabe<<"'"<<endl<<schwarz;
     if (input=="" && vorgabe) {input=vorgabe;break;}
     if (input[0]) {
       for(unsigned i=0;moegl[i];i++) {
@@ -1703,6 +1704,7 @@ string holstrings(const char *frage, vector<string> *moegl, string *vorgabe)
     input="";
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
+    // <<rot<<"input: '"<<input<<"', vorgabe: '"<<*vorgabe<<"'"<<endl<<schwarz;
     if (input.empty() && !vorgabe->empty()) {input=*vorgabe;break;}
     if (input[0]) {
       for(unsigned i=0;i<moegl->size();i++) {

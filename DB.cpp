@@ -26,8 +26,9 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
   {"Erfolg beim Initialisieren der Verbindung zu MySQL!","Success initializing the connection to MySQL!"},
   // T_Benoetige_MySQL_Passwort_fuer_Benutzer_root_fuer_Befehl
   {"MySQL-Passwort fuer Benutzer 'root' (wird benoetigt fuer Befehl: ","MySQL password for user 'root' (is needed for command: "},
-  // T_Das_MySQL_Passwort_ist_leer_Wollen_Sie_eines_festlegen
-  {"Das MySQL-Passwort ist leer. Wollen Sie eines festlegen?","The MySQL password is empty. Do You want to give one?"},
+  // T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen
+  {"Das MySQL-Passwort fuer Benutzer 'root' ist leer. Wollen Sie eines festlegen?",
+   "The MySQL password for the user 'root' is empty. Do You want to give one?"},
   // T_j
   {"j","y"},
   // T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein
@@ -405,7 +406,7 @@ void DB::setzrpw()
 {
   string rootpw2, cmd;
   while (1) {
-    if (holob(Txd[T_Das_MySQL_Passwort_ist_leer_Wollen_Sie_eines_festlegen])) {
+    if (holob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) {
       rootpwd=holstring(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
       rootpw2=holstring(Txd[T_Bitte_geben_Sie_das_MySQL_Passwort_fuer_Benutzer_root_erneut_ein],&rootpw2);
       if (rootpw2==rootpwd && !rootpwd.empty()) {
@@ -418,7 +419,7 @@ void DB::setzrpw()
       } // if (rootpw2==rootpwd ...
     } else {
       break;
-    } // if (holob(Txd[T_Das_MySQL_Passwort_ist_leer_Wollen_Sie_eines_festlegen])) 
+    } // if (holob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) 
   } // while (1)
 } // setzrpw
 
