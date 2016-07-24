@@ -222,7 +222,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                   obverb,oblog,&zincldir); 
               for(size_t i=0;i<zincldir.size();i++) {
                 svec zzruck2;
-                systemrueck("sudo find "+zincldir[i],obverb,oblog,&zzruck2);
+                systemrueck("sudo find "+zincldir[i]+" -not -type d",obverb,oblog,&zzruck2); // auch links
                 for(size_t i=0;i<zzruck2.size();i++) {
                   zzruck<<zzruck2[i];
                 }
@@ -231,7 +231,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
             if(zzruck.size()) {
               for(size_t i=0;i<zzruck.size();i++) {
                 svec zrueck;
-                if (!systemrueck(("sudo sed 's/#.*$//g' `sudo find '")+zzruck[i]+"' -type f 2>/dev/null` | grep datadir | cut -d'=' -f2",
+                if (!systemrueck(("sudo sed 's/#.*$//g' '")+zzruck[i]+"' | grep datadir | cut -d'=' -f2",
                       obverb,oblog,&zrueck)) {
                   if (zrueck.size()) {
                     datadir=zrueck[zrueck.size()-1];  
@@ -246,6 +246,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
         if (datadir.empty()) {
           datadir="/var/lib/mysql";
         }
+        if (obverb) Log("datadir: "+blaus+datadir+schwarz,obverb,oblog);
         struct stat datadst;
         if (!lstat(datadir.c_str(), &datadst)) {
           if(S_ISDIR(datadst.st_mode)) {

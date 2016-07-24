@@ -5465,7 +5465,7 @@ int paramcl::pruefcapi()
         break;
       } else {
         servc::daemon_reload();
-        systemrueck("sudo systemctl stop isdn 2>/dev/null",obverb>0?obverb:-1,oblog);
+        systemrueck("sudo systemctl stop isdn 2>/dev/null; true",obverb>0?obverb:-1,oblog);
         //      systemrueck("sudo systemctl start isdn",obverb,oblog);
         Log(string(Tx[T_StarteCapisuite]),-1,oblog);
         scapisuite->stop(-1,oblog);
@@ -6348,6 +6348,7 @@ void zeigversion(const char* const prog)
 
 int main(int argc, char** argv) 
 {
+  pruefdoppelt(*argv);
   pruefplatte();
   paramcl pm(argc,argv); // Programmparameter
   pm.logvorgaben(*argv);
@@ -6370,7 +6371,6 @@ int main(int argc, char** argv)
   pm.rueckfragen();
   pm.setzhylavz();
   pm.verzeichnisse();
-  pm.pruefcron();
   pm.pruefsamba();
 
   if (pm.logdateineu) tuloeschen(logdt,"",pm.obverb,pm.oblog);
@@ -6428,6 +6428,7 @@ int main(int argc, char** argv)
   cout<<rot<<"obhyla 34: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     } // if (pm.loef || pm.loew || pm.loea) else
   } // if (pm.kez) else else else
+  pm.pruefcron();
   pm.autofkonfschreib();
   return 0;
 } // int main(int argc, char** argv) 

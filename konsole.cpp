@@ -1565,6 +1565,16 @@ void pruefplatte()
   }
 } // pruefplatte
 
+void pruefdoppelt(char* ich)
+{
+ svec rueck;
+ systemrueck(string("ps -a | grep '")+ich+"'",0,0,&rueck);
+ if (rueck.size()>1) {
+  cout<<"Programm '"<<blau<<ich<<schwarz<<"' laeuft schon einmal. Breche ab."<<endl;
+  exit(0);
+ }
+}
+
 // <datei> kann auch Verzeichnis sein
 // obunter = mit allen Unterverzeichnissen
 // obimmer = immer setzen, sonst nur, falls mit getfacl fuer datei Berechtigung fehlt (wichtig fuer Unterverzeichnisse)
@@ -1941,6 +1951,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="hylafax+ hylafax+-client") return "hylafax+-server hylafax+-client";
       if (prog=="kernel-source") return "linux-source";
       if (prog=="tiff") return "libtiff-tools";
+      if (prog=="libxslt-tools") return "xsltproc";
       if (prog=="imagemagick") return "imagemagick imagemagick-doc";
       if (prog=="libreoffice-base") return "libreoffice-common libreoffice-base";
       if (prog=="libcapi20-2") return "libcapi20-dev";
