@@ -6341,11 +6341,17 @@ int main(int argc, char** argv)
 {
   pruefplatte();
   paramcl pm(argc,argv); // Programmparameter
+  cout<<rot<<"obhyla 2: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.logvorgaben(*argv);
+  cout<<rot<<"obhyla 3: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
+  cout<<rot<<"obhyla 4: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.VorgbAllg();
+  cout<<rot<<"obhyla 5: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.VorgbSpeziell();
+  cout<<rot<<"obhyla 6: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.lieskonfein();
+  cout<<rot<<"obhyla 7: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
 
   if (!pm.getcommandline()) 
     exit(1);
@@ -6356,23 +6362,37 @@ int main(int argc, char** argv)
    zeigversion(*argv);
    exit(0);
   }
+  cout<<rot<<"obhyla 8: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   if (pm.obhyla) pm.pruefmodem();
+  cout<<rot<<"obhyla 9: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   if (pm.obcapi) pm.pruefisdn();
+  cout<<rot<<"obhyla 10: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.rueckfragen();
+  cout<<rot<<"obhyla 11: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.setzhylavz();
+  cout<<rot<<"obhyla 12: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.verzeichnisse();
+  cout<<rot<<"obhyla 13: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.pruefcron();
+  cout<<rot<<"obhyla 14: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pm.pruefsamba();
+  cout<<rot<<"obhyla 15: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
 
   if (pm.logdateineu) tuloeschen(logdt,"",pm.obverb,pm.oblog);
+  cout<<rot<<"obhyla 16: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   Log(string(Tx[T_zufaxenvz])+drot+pm.zufaxenvz+schwarz+"'",pm.obverb,pm.oblog);
+  cout<<rot<<"obhyla 17: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   Log(string(Tx[T_Logpfad])+drot+pm.loggespfad+schwarz+Tx[T_oblog]+drot+ltoan((int)pm.oblog)+schwarz+")",pm.obverb,pm.oblog);
+  cout<<rot<<"obhyla 18: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   if (pm.initDB())
     return 10;
   // pruefe Tabelle <spooltab> und stelle sie ggf. her
   pruefspool(pm.My,pm.spooltab, pm.obverb,pm.oblog);
+  cout<<rot<<"obhyla 19: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pruefouttab(pm.My,pm.touta, pm.obverb,pm.oblog);
+  cout<<rot<<"obhyla 20: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   pruefinctab(pm.My,pm.tinca, pm.obverb,pm.oblog);
+  cout<<rot<<"obhyla 21: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
   if (pm.kez) {
     pm.korrerfolgszeichen();
   } else if (pm.bwv) {
@@ -6384,14 +6404,20 @@ int main(int argc, char** argv)
   } else if (pm.listi) {
     pm.tu_listi();
   } else {
+  cout<<rot<<"obhyla 22: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     pruefstdfaxnr(pm.My,pm.muser,pm.mpwd,pm.host,pm.obverb,pm.oblog);
+  cout<<rot<<"obhyla 23: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     pruefprocgettel3(pm.My,pm.muser,pm.mpwd,pm.host,pm.obverb,pm.oblog);
+  cout<<rot<<"obhyla 24: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     //  int qerg = mysql_query(My.conn,proc.c_str());
     // 1) nicht-pdf-Dateien in pdf umwandeln, 2) pdf-Dateien wegfaxen, 3) alle in warte-Verzeichnis kopieren, 4) in Spool-Tabelle eintragen
     //  vector<string> npdf, spdf;
     pm.DateienHerricht();  
+  cout<<rot<<"obhyla 25: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     if (pm.obfcard) if (pm.obcapi) pm.obcapi= !pm.pruefcapi();
+  cout<<rot<<"obhyla 26: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     if (pm.obmodem) if (pm.obhyla) pm.obhyla= !pm.pruefhyla();
+  cout<<rot<<"obhyla 27: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     Log(Tx[T_Verwende]+blaus+(pm.obcapi?"Capisuite":"")+schwarz+(pm.obcapi&&pm.obhyla?", ":"")+blau+(pm.obhyla?"Hylafax":"")+schwarz+
         (!pm.obcapi&&!pm.obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):""),1,pm.oblog);
     if (pm.loef || pm.loew || pm.loea) {
@@ -6401,13 +6427,20 @@ int main(int argc, char** argv)
     } else {
 
       // hier stehen obcapi und obhyla fest
+  cout<<rot<<"obhyla 28: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
       pm.faxealle();
+  cout<<rot<<"obhyla 29: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
       // Dateien in Spool-Tabelle nach inzwischen verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
       pm.untersuchespool();
+  cout<<rot<<"obhyla 30: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
       pm.zeigweitere();
+  cout<<rot<<"obhyla 31: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
       pm.empfarch();
+  cout<<rot<<"obhyla 32: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
       Log(blaus+Tx[T_Ende]+schwarz,pm.obverb,pm.oblog);
+  cout<<rot<<"obhyla 33: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
       pm.schlussanzeige(argv[0]);
+  cout<<rot<<"obhyla 34: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     } // if (pm.loef || pm.loew || pm.loea) else
   } // if (pm.kez) else else else
   pm.autofkonfschreib();

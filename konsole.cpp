@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdarg.h>
+#include <sys/statvfs.h> // fuer statfs
+
 
 #ifdef _WIN32
 const char *dir = "dir ";
@@ -1555,10 +1557,13 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
 
 void pruefplatte()
 {
- if (!systemrueck("df --output=pcent / |tail -n1|grep 0%")) {
-  systemrueck("sudo killall postdrop");
- }
-}
+  struct statvfs fp;
+  string platte="/";
+  statvfs(platte.c_str(),&fp);   
+  if (fp.f_bsize * fp.f_bfree < 100000) { // wenn weniger als 100 MB frei sind ...
+    systemrueck("sudo killall postdrop");
+  }
+} // pruefplatte
 
 // <datei> kann auch Verzeichnis sein
 // obunter = mit allen Unterverzeichnissen
