@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Mon Jul 25 19:33:50 2016 -->
+<!-- CreationDate: Mon Jul 25 19:46:49 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -141,11 +141,12 @@ autofax <br>
 - ansonsten mit: <br>
 P=autofax; T=$P.tar.gz; wget
 https://github.com/libelle17/$P/archive/master.tar.gz -O $T
-&& tar xpvf $T && rm $T && { for i
-in $(ls -d ${P}_* | cut -d&rsquo;_&rsquo; -f2 | sort -nr);
-do j=$((i+1)); case $i in &rsquo;&rsquo;|*[!0-9]*);; *) mv
-${P}_$i ${P}_$j; esac; done; test -d $P && mv $P
-${P}_1; } && mv $P-master $P && cd $P <br>
+&& tar xpvf $T && rm $T && { test -e
+${P}_* && for i in $(ls -d ${P}_* | cut
+-d&rsquo;_&rsquo; -f2 | sort -nr); do j=$((i+1)); case $i in
+&rsquo;&rsquo;|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac;
+done; test -e $P && mv $P ${P}_1; } && mv
+$P-master $P && cd $P <br>
 Wenn das Programm &rsquo;make&rsquo; nicht zur
 Verf&uuml;gung steht, k&ouml;nnen Sie dort
 &rsquo;install.sh&rsquo; aufrufen, damit sollte
