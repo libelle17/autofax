@@ -123,10 +123,10 @@ P=autofax; T=$P.tar.gz; wget
 https://github.com/libelle17/$P/archive/master.tar.gz -O $T
 && tar xpvf $T && rm $T && { test -e
 ${P}_* && for i in $(ls -d ${P}_* | cut
--d&rsquo;_&rsquo; -f2 | sort -nr); do j=$((i+1)); case $i in
-&rsquo;&rsquo;|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac;
-done; test -e $P && mv $P ${P}_1; } && mv
-$P-master $P && cd $P <br>
+-d&quot;_&quot; -f2 | sort -nr); do j=$((i+1)); case $i in
+&quot;&quot;|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done;
+test -e $P && mv $P ${P}_1; mv $P-master $P
+&& cd $P; } <br>
 there, if the program &rsquo;make&rsquo; is not available,
 You can call &rsquo;install.sh&rsquo;, this should install
 &rsquo;make&rsquo;; otherwise, You also can call: <br>
