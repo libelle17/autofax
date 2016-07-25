@@ -1950,7 +1950,9 @@ void paramcl::liescapiconf()
         }
     }
     if (cuser.empty()) {
-      cuser=curruser();
+      string benutzer=curruser();
+      if (benutzer!="root")
+       cuser=benutzer;
       hylazuerst=1;
     }
   }
@@ -2939,6 +2941,7 @@ void paramcl::konfcapi()
         if (!neuschreiben) break; // dann fertig
       } else { // if (iru)
         if (!cuserda)  {
+          // schreibe Konfiguration fuer Benutzer in fax.conf
           *fneu<<suchcuser<<endl;
           *fneu<<"fax_numbers=\""<<capiconf[4].wert<<"\""<<endl;
           *fneu<<"fax_stationID=\""<<capiconf[6].wert<<"\""<<endl;
@@ -4817,7 +4820,8 @@ int paramcl::cservice()
     time_t jetzt = time(0);
     struct tm *tmp = localtime(&jetzt);
     strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", tmp);
-    csfehler+=!scapisuite->spruef(Tx[T_Capisuite_Dienst_eingerichtet_von]+prog+Tx[T_am]+buf,0,cspfad+" -d","","","",obverb,oblog);
+    // entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
+    csfehler+=!scapisuite->spruef(Tx[T_Capisuite_Dienst_eingerichtet_von]+prog+Tx[T_am]+buf,0,cspfad/*+" -d"*/,"","","",obverb,oblog);
     if (obverb) Log("csfehler: "+gruens+ltoan(csfehler)+schwarz,obverb,oblog);
 //    return csfehler;
   }
@@ -4842,7 +4846,7 @@ int paramcl::hservice_faxq_hfaxd()
   systemrueck("sudo which faxq",obverb,oblog,&rueck);
   if (rueck.size()) faxqpfad=rueck[0]; 
   hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,faxqpfad+" -D",
-      this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname, "",this->obverb,this->oblog);
+      this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname+".service", "",this->obverb,this->oblog);
   return hylafehler;
 } // void hservice_faxq_hfaxd()
 
