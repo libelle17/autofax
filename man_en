@@ -67,7 +67,7 @@ Additionally, received faxes from \fBhylafax\fR/\fBcapisuite\fR can be named wit
 .br
 - otherwise with:
 .br
- P=autofax; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm $T && { test -e ${P}_* && for i in $(ls -d ${P}_* | cut -d"_" -f2 | sort -nr); do j=$((i+1)); case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done; test -e $P && mv $P ${P}_1; mv $P-master $P && cd $P; }
+ P=autofax; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm $T && { for i in $(ls -d ${P}_* | cut -d"_" -f2 | sort -nr); do j=$((i+1)); case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done; test -e $P && mv $P ${P}_1; mv $P-master $P && cd $P; }
 .br
 there, if the program 'make' is not available, You can call 'install.sh', this should install 'make'; otherwise, You also can call:
 .br
