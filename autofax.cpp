@@ -2733,7 +2733,8 @@ void paramcl::autofkonfschreib()
 // in pruefcapi
 void paramcl::cliesconf()
 {
- if (capiconf[6].wert!="+"+countrycode+" "+citycode+" "+msn  
+  Log(violetts+Tx[T_konfcapi]+schwarz+", ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
+  if (capiconf[6].wert!="+"+countrycode+" "+citycode+" "+msn  
      || capiconf[4].wert!=msn  
      || capiconf[7].wert!=cFaxUeberschrift  
  ) {
@@ -5401,8 +5402,8 @@ int paramcl::pruefcapi()
           csrueck.clear();
           systemrueck("find /usr/lib/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null",obverb,oblog,&csrueck);
           if (csrueck.size()) {
-            if (!systemrueck("sh -c 'cd "+instverz+" && { cd capisuite && { test -f Makefile && make clean; } && cd .. ; } "
-                  " ;  tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && cd capisuite"
+            if (!systemrueck("sh -c 'cd "+instverz+" && { pwd; cd capisuite && { test -f Makefile && make clean; } && cd .. ; } "
+                  " ;  tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && pwd; cd capisuite"
                   " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
                   " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var"
                   " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
@@ -5421,7 +5422,7 @@ int paramcl::pruefcapi()
         } // if (!capischonerfolgreichinstalliert) 
         liescapiconf();
         if (mitcservice) {
-          capischonerfolgreichinstalliert=!cservice();
+          capischonerfolgreichinstalliert=!cservice() && !ccapiconfdat.empty() && !cfaxconfdat.empty();
         }
         // capisuite unter Kernel 4: 
         // zypper in sfftobmp libcapi20-2
