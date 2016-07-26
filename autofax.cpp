@@ -2980,9 +2980,7 @@ void paramcl::nextnum()
   nextdatei=cfaxusersqvz+"/fax-nextnr";
   // <<ndatei<<endl;
   if (!lstat(cfaxusersqvz.c_str(),&entrynextnr)) {
-    cout<<rot<<"vor mdatei"<<schwarz<<endl;
     mdatei nextstr(nextdatei,ios::in);
-    cout<<rot<<"nach mdatei"<<schwarz<<endl;
     if (nextstr.is_open()) {
       string zeile;
       if (getline(nextstr,zeile)) {
@@ -2993,7 +2991,8 @@ void paramcl::nextnum()
   if (!nextnr) {
     pruefverz(cfaxuservz,obverb,oblog,2);
     cout<<rot<<"vor mach2"<<schwarz<<endl;
-    cmd=string(" echo $(( `find ")+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
+    setfaclggf(spoolcapivz,wahr,7,wahr,obverb,oblog);
+    cmd=string(" sudo echo $(( `find ")+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
       "| cut -d '-' -f3 | cut -d '.' -f1 | sort -rn | head -n1` + 1 )) > '"+nextdatei+"'";
     systemrueck(cmd,obverb,oblog);
     cout<<rot<<"nach mach2"<<schwarz<<endl;
