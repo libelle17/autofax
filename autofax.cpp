@@ -5413,7 +5413,7 @@ int paramcl::pruefcapi()
                   " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
                   " && make"
                   " && sudo make install"
-                  " && sudo systemctl daemin-reload"
+                  " && sudo systemctl daemon-reload"
                   "'",obverb,oblog)) {
               //            pruefverz("/etc/capisuite",obverb,oblog,wahr);
               //            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
