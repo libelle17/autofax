@@ -65,9 +65,9 @@ Außerdem können von \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe nach dem Sen
 .br
  git clone http://github.com/libelle17/autofax && cd autofax
 .br
-- ansonsten mit:
+- ansonsten z.B. mit:
 .br
- P=autofax; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm $T && { for i in $(ls -d ${P}_* | cut -d"_" -f2 | sort -nr); do j=$((i+1)); case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done; test -e $P && mv $P ${P}_1; mv $P-master $P && cd $P; }
+ P=autofax; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm $T && { for i in $(ls -d ${P}_* 2>/dev/null | cut -d"_" -f2 | sort -nr); do j=$((i+1)); case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done; test -e $P && mv $P ${P}_1; mv $P-master $P && cd $P; }
 .br
 Wenn das Programm 'make' nicht zur Verfügung steht, können Sie dort 'install.sh' aufrufen, damit sollte 'make' installiert werden; anderenfalls können Sie auch aufrufen:
 .br

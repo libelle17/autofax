@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Tue Jul 26 01:23:27 2016 -->
+<!-- CreationDate: Tue Jul 26 15:56:25 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -138,14 +138,15 @@ Programm &rsquo;git&rsquo; zur Verfuegung steht,
 k&ouml;nnen Sie beginnen mit: <br>
 git clone http://github.com/libelle17/autofax && cd
 autofax <br>
-- ansonsten mit: <br>
+- ansonsten z.B. mit: <br>
 P=autofax; T=$P.tar.gz; wget
 https://github.com/libelle17/$P/archive/master.tar.gz -O $T
 && tar xpvf $T && rm $T && { for i
-in $(ls -d ${P}_* | cut -d&quot;_&quot; -f2 | sort -nr); do
-j=$((i+1)); case $i in &quot;&quot;|*[!0-9]*);; *) mv
-${P}_$i ${P}_$j; esac; done; test -e $P && mv $P
-${P}_1; mv $P-master $P && cd $P; } <br>
+in $(ls -d ${P}_* 2&gt;/dev/null | cut -d&quot;_&quot; -f2 |
+sort -nr); do j=$((i+1)); case $i in
+&quot;&quot;|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done;
+test -e $P && mv $P ${P}_1; mv $P-master $P
+&& cd $P; } <br>
 Wenn das Programm &rsquo;make&rsquo; nicht zur
 Verf&uuml;gung steht, k&ouml;nnen Sie dort
 &rsquo;install.sh&rsquo; aufrufen, damit sollte
