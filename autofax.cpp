@@ -5402,17 +5402,14 @@ int paramcl::pruefcapi()
           csrueck.clear();
           systemrueck("find /usr/lib/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null",obverb,oblog,&csrueck);
           if (csrueck.size()) {
-            cout<<rot<<"Achtung!!!!!!!!!!!!!"<<schwarz<<endl;
-            obverb=1;
-            if (!systemrueck("sh -c 'cd "+instverz+" && { pwd; cd capisuite && { test -f Makefile && make clean; } && cd .. ; } "
-                  " ;  tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && pwd; cd capisuite"
+            if (!systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; } && cd .. ; } "
+                  " ;  tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && cd capisuite"
                   " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
                   " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var"
                   " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
                   " && make"
                   " && sudo make install"
                   "'",obverb,oblog)) {
-                  obverb=0;
               //            pruefverz("/etc/capisuite",obverb,oblog,wahr);
               //            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
               //            systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instverz+"/capisuite/scripts/fax.conf /etc/capisuite");
