@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "26.07.16" "Version 0.40391" "\fBautofax\fR man page"
+.TH man 1 "26.07.16" "Version 0.40392" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging in a database
 .br
@@ -65,7 +65,7 @@ Additionally, received faxes from \fBhylafax\fR/\fBcapisuite\fR can be named wit
 .br
  git clone http://github.com/libelle17/autofax && cd autofax
 .br
-- otherwise with:
+- otherwise e.g. with:
 .br
  P=autofax; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm $T && { for i in $(ls -d ${P}_* 2>/dev/null | cut -d"_" -f2 | sort -nr); do j=$((i+1)); case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done; test -e $P && mv $P ${P}_1; mv $P-master $P && cd $P; }
 .br

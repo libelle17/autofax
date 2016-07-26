@@ -5402,6 +5402,8 @@ int paramcl::pruefcapi()
           csrueck.clear();
           systemrueck("find /usr/lib/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null",obverb,oblog,&csrueck);
           if (csrueck.size()) {
+            cout<<rot<<"Achtung!!!!!!!!!!!!!"<<schwarz<<endl;
+            obverb=1;
             if (!systemrueck("sh -c 'cd "+instverz+" && { pwd; cd capisuite && { test -f Makefile && make clean; } && cd .. ; } "
                   " ;  tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && pwd; cd capisuite"
                   " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
@@ -5410,6 +5412,7 @@ int paramcl::pruefcapi()
                   " && make"
                   " && sudo make install"
                   "'",obverb,oblog)) {
+                  obverb=0;
               //            pruefverz("/etc/capisuite",obverb,oblog,wahr);
               //            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
               //            systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instverz+"/capisuite/scripts/fax.conf /etc/capisuite");
