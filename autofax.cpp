@@ -2980,7 +2980,9 @@ void paramcl::nextnum()
   nextdatei=cfaxusersqvz+"/fax-nextnr";
   // <<ndatei<<endl;
   if (!lstat(cfaxusersqvz.c_str(),&entrynextnr)) {
+    cout<<rot<<"vor mdatei"<<schwarz<<endl;
     mdatei nextstr(nextdatei,ios::in);
+    cout<<rot<<"nach mdatei"<<schwarz<<endl;
     if (nextstr.is_open()) {
       string zeile;
       if (getline(nextstr,zeile)) {
@@ -2990,9 +2992,11 @@ void paramcl::nextnum()
   } // if (!lstat(cfaxusersqvz.c_str(),&entrynextnr))
   if (!nextnr) {
     pruefverz(cfaxuservz,obverb,oblog,2);
+    cout<<rot<<"vor mach2"<<schwarz<<endl;
     cmd=string(" echo $(( `find ")+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
       "| cut -d '-' -f3 | cut -d '.' -f1 | sort -rn | head -n1` + 1 )) > '"+nextdatei+"'";
     systemrueck(cmd,obverb,oblog);
+    cout<<rot<<"nach mach2"<<schwarz<<endl;
   }
   setfaclggf(nextdatei,falsch,6,falsch,obverb,oblog);
 }
@@ -5411,7 +5415,6 @@ int paramcl::pruefcapi()
                   " && sudo make install"
                   " && sudo systemctl daemin-reload"
                   "'",obverb,oblog)) {
-                  cout<<rot<<"Stelle 1"<<schwarz<<endl;
               //            pruefverz("/etc/capisuite",obverb,oblog,wahr);
               //            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
               //            systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instverz+"/capisuite/scripts/fax.conf /etc/capisuite");
@@ -5424,9 +5427,7 @@ int paramcl::pruefcapi()
         } // if (!capischonerfolgreichinstalliert) 
         liescapiconf();
         if (mitcservice) {
-                  cout<<rot<<"Stelle 2"<<schwarz<<endl;
           capischonerfolgreichinstalliert=!cservice() && !ccapiconfdat.empty() && !cfaxconfdat.empty();
-                  cout<<rot<<"Stelle 3"<<schwarz<<endl;
         }
         // capisuite unter Kernel 4: 
         // zypper in sfftobmp libcapi20-2
@@ -5453,23 +5454,19 @@ int paramcl::pruefcapi()
         // in src/backend/connection.cpp eine Zeile 26 einfuegen: #include <cstring>
       } // if (!capischonerfolgreichinstalliert)
       servc::daemon_reload();
-                  cout<<rot<<"Stelle 4"<<schwarz<<endl;
     } // if (!capischonerfolgreichinstalliert) 
     // <<rot<<"capischonerfolgreichinstalliert: "<<schwarz<<(int)capischonerfolgreichinstalliert<<endl;
     // <<rot<<"capizukonf: "<<schwarz<<(int)capizukonf<<endl;
     // <<rot<<"versuch: "<<schwarz<<versuch<<endl;
     if (capischonerfolgreichinstalliert) {
       if (!capizukonf) {
-                  cout<<rot<<"Stelle 5"<<schwarz<<endl;
         cliesconf();
-                  cout<<rot<<"Stelle 6"<<schwarz<<endl;
       }
       if (obcapi && (versuch>0 || this->capizukonf)) {
                   cout<<rot<<"Stelle 7"<<schwarz<<endl;
         this->konfcapi();
                   cout<<rot<<"Stelle 8"<<schwarz<<endl;
         scapisuite->restart(obverb-1,oblog);
-                  cout<<rot<<"Stelle 9"<<schwarz<<endl;
         capizukonf=0;
       } //     if (versuch>0) KLA
       // das folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
@@ -6322,6 +6319,7 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
         if(iru==1) {
           setfaclggf(zuloe, falsch, 6, falsch,obverb,oblog);
         } else {
+          cout<<"errno: "<<rot<<errno<<schwarz<<endl;
           perror(Tx[T_Fehler_beim_Loeschen]);
           string cmd=string("sudo rm -rf \"")+zuloe+"\"";
           erg=systemrueck(cmd,obverb+1,1);
