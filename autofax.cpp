@@ -2990,12 +2990,10 @@ void paramcl::nextnum()
   } // if (!lstat(cfaxusersqvz.c_str(),&entrynextnr))
   if (!nextnr) {
     pruefverz(cfaxuservz,obverb,oblog,2);
-    cout<<rot<<"vor mach2"<<schwarz<<endl;
     setfaclggf(spoolcapivz,wahr,7,wahr,obverb,oblog);
     cmd=string(" sudo echo $(( `find ")+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
       "| cut -d '-' -f3 | cut -d '.' -f1 | sort -rn | head -n1` + 1 )) > '"+nextdatei+"'";
     systemrueck(cmd,obverb,oblog);
-    cout<<rot<<"nach mach2"<<schwarz<<endl;
   }
   setfaclggf(nextdatei,falsch,6,falsch,obverb,oblog);
 }
@@ -5462,9 +5460,7 @@ int paramcl::pruefcapi()
         cliesconf();
       }
       if (obcapi && (versuch>0 || this->capizukonf)) {
-                  cout<<rot<<"Stelle 7"<<schwarz<<endl;
         this->konfcapi();
-                  cout<<rot<<"Stelle 8"<<schwarz<<endl;
         scapisuite->restart(obverb-1,oblog);
         capizukonf=0;
       } //     if (versuch>0) KLA
@@ -6318,8 +6314,7 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
         if(iru==1) {
           setfaclggf(zuloe, falsch, 6, falsch,obverb,oblog);
         } else {
-          cout<<"errno: "<<rot<<errno<<schwarz<<endl;
-          perror(Tx[T_Fehler_beim_Loeschen]);
+          if (errno) if (errno!=13) perror((string(Tx[T_Fehler_beim_Loeschen])+" "+ltoan(errno)).c_str()); // Permission denied
           string cmd=string("sudo rm -rf \"")+zuloe+"\"";
           erg=systemrueck(cmd,obverb+1,1);
         } // if(iru) else
