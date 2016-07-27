@@ -2844,12 +2844,12 @@ void paramcl::konfcapi()
     vector<string> tok;
     aufSplit(&tok,&capiconf[6].wert,' ');
     // outgoing_MSN
-    if (capiconf[4].wert.empty()) capiconf[4].wert=tok[tok.size()-1].c_str();
     capiconf[4].wert=msn;
-    while (capiconf[4].wert.empty() || !isnumeric(capiconf[4].wert)) {
+    if (capiconf[4].wert.empty() || isneun(capiconf[4].wert)) capiconf[4].wert=tok[tok.size()-1].c_str();
+    do {
       capiconf[4].wert=holstring(string("outgoing_MSN: ")+
           Tx[T_ausgehende_Multiple_Subscriber_Number_Faxnummer_ohne_Vorwahl],&capiconf[4].wert);
-    } 
+    } while (capiconf[4].wert.empty() || !isnumeric(capiconf[4].wert) || isneun(capiconf[4].wert));
     // dial_prefix
     capiconf[5].wert=holstring(string("dial_prefix: ")+Tx[T_Amtsholung_ueblicherweise_kk_oder_0],&capiconf[5].wert);
     // fax_headline

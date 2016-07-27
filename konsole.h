@@ -218,6 +218,13 @@ inline int isnumeric(const std::string& str)
   return 0;
 }
 
+inline int isneun(const std::string& str)
+{
+  if	(str.find_first_not_of(" 9")==string::npos && str.find_first_not_of(" ")!=string::npos) 
+    return 1;
+  return 0;
+}
+
 inline int isnumeric(char* str)
 {
   while (*str) {
