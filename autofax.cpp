@@ -2908,7 +2908,9 @@ void paramcl::konfcapi()
       }
     }
   } // if (cfax_stationID.find("000 0000")!=string::npos) 
+    cout<<rot<<"cuser 30: "<<gruen<<cuser<<schwarz<<endl;
   string suchcuser=string("[")+cuser+"]";
+    cout<<rot<<"cuser 31: "<<gruen<<cuser<<schwarz<<endl;
   // es gibt zwei moegliche Gruende zum Neuschreiben der Datei: 1) Parameter diffierieren, 2) noch kein User angelegt
   uchar cuserda=0, paramdiff=0, neuschreiben=0;
   string zeile, neudatei;
