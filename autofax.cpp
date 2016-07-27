@@ -1939,6 +1939,7 @@ void paramcl::liescapiconf()
     static confdat cfaxconf(cfaxconfdat,&capiconf,obverb);
     cfaxcp=&cfaxconf;
     cfaxcp->Abschn_auswert(obverb);
+    cout<<rot<<"cuser 1: "<<gruen<<cuser<<schwarz<<endl;
     cuser="";
     for(size_t i=cfaxconf.zn.size();i>0;) {
       int erg;
@@ -1949,12 +1950,14 @@ void paramcl::liescapiconf()
           break;
         }
     }
+    cout<<rot<<"cuser 2: "<<gruen<<cuser<<schwarz<<endl;
     if (cuser.empty()) {
       string benutzer=curruser();
       if (benutzer!="root")
        cuser=benutzer;
       hylazuerst=1;
     }
+    cout<<rot<<"cuser 3: "<<gruen<<cuser<<schwarz<<endl;
   }
   if (capiconf[0].wert.empty()) {
     spoolcapivz="/var/spool/capisuite";
@@ -2051,6 +2054,7 @@ void paramcl::pruefcvz()
   Log(violetts+Tx[T_pruefcvz]+schwarz+"ccfaxuservz: "+violett+cfaxuservz+schwarz,obverb,oblog);
   kuerzevtz(&cfaxuservz);
   pruefverz(cfaxuservz,obverb,oblog,1);
+    cout<<rot<<"cuser 4: "<<gruen<<cuser<<schwarz<<endl;
   cfaxusersqvz=cfaxuservz+vtz+cuser+"/sendq"; //  "/var/spool/capisuite/users/<user>/sendq";
   pruefverz(cfaxusersqvz,obverb,oblog,1);
   cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
@@ -2082,6 +2086,7 @@ void paramcl::lieskonfein()
     "gleichziel","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","cronminut","anfaxstr","ancfaxstr","anhfaxstr",
     "anstr","undstr","host","muser","mpwd","datenbank","logvz","logdname","sqlz","musterzahl");
   confdat afconf(konfdatname,&cgconf,obverb); // hier werden die Daten aus der Datei eingelesen
+    cout<<rot<<"cgconf[6]: "<<gruen<<cgconf[6].wert<<schwarz<<endl;
   if (1) {
     //  if (cpplies(konfdatname,gconf,gcs)) KLA
     // sodann werden die Daten aus gconf den einzelenen Klassenmitgliedsvariablen zugewiesen 
@@ -2101,7 +2106,9 @@ void paramcl::lieskonfein()
     if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hylazuerst); else rzf=1;} lfd++;
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxcapiv); else rzf=1;} lfd++;
     if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxhylav); else rzf=1;} lfd++;
+    cout<<rot<<"cuser 5: "<<gruen<<cuser<<schwarz<<endl;
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cuser); else rzf=1;} lfd++;
+    cout<<rot<<"cuser 6: "<<gruen<<cuser<<schwarz<<endl;
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&countrycode); else rzf=1;} lfd++;
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&citycode); else rzf=1;} lfd++;
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&msn); else rzf=1;} lfd++;
@@ -2220,7 +2227,9 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("mc","maxcapiv",&Tx, T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht,&maxcapiv,pzahl));
   opts.push_back(optioncl("mh","maxhylav",&Tx, T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet,&maxhylav,pzahl));
   opts.push_back(optioncl("ckzl","capiklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,&cklingelzahl,pzahl));
+    cout<<rot<<"cuser 7: "<<gruen<<cuser<<schwarz<<endl;
   opts.push_back(optioncl("cuser","cuser",&Tx, T_verwendet_fuer_Capisuite_den_Linux_Benutzer_string_anstatt,&cuser,psons));
+    cout<<rot<<"cuser 8: "<<gruen<<cuser<<schwarz<<endl;
   opts.push_back(optioncl("hkzl","hylaklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,&hklingelzahl,pzahl));
   opts.push_back(optioncl("gz","gleichziel", &Tx, T_FAxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,&gleichziel,1));
   opts.push_back(optioncl("afs","anfaxstring",&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,&anfaxstr,psons));
@@ -2282,7 +2291,9 @@ int paramcl::getcommandline()
     zmzukonf=1;
   }
   if (altcuser!=cuser || rzf) {
+    cout<<rot<<"cuser 8: "<<gruen<<cuser<<schwarz<<endl;
     setzegcp("cuser",&cuser);
+    cout<<rot<<"cuser 9: "<<gruen<<cuser<<schwarz<<endl;
     capizukonf=1;
     zmzukonf=1;
   }
@@ -2381,7 +2392,9 @@ void paramcl::rueckfragen()
         for(size_t i=0;i<benutzer.size();i++) {
           //          bliste+=benutzer[i];
           //          if (i<benutzer.size()-1) bliste+=",";
+    cout<<rot<<"cuser 10: "<<gruen<<cuser<<schwarz<<endl;
           if (cuser.empty()) cuser=benutzer[i]; // Vorgabe
+    cout<<rot<<"cuser 11: "<<gruen<<cuser<<schwarz<<endl;
         }
         /*
            string Frage=string("Linux-Benutzer fuer Capisuite (")+bliste+"):";
@@ -2391,8 +2404,11 @@ void paramcl::rueckfragen()
            tmpcuser.find(',')==string::npos); // nur vorhandene User akzeptieren
            cuser=tmpcuser;
          */
+    cout<<rot<<"cuser 12: "<<gruen<<cuser<<schwarz<<endl;
         cuser=holstrings(Tx[T_Linux_Benutzer_fuer_Capisuite],&benutzer,&cuser);
+    cout<<rot<<"cuser 13: "<<gruen<<cuser<<schwarz<<endl;
         cgconf[lfd].setze(&cuser);
+    cout<<rot<<"cuser 14: "<<gruen<<cuser<<schwarz<<endl;
       }
       if (cgconf[++lfd].wert.empty() || rzf) {
         countrycode=holstring(Tx[T_Hylafax_eigene_Landesvorwahl_ohne_plus_oder_00],&countrycode);
@@ -2744,7 +2760,9 @@ void paramcl::cliesconf()
  if (cfaxcp) {
    cfaxcp->Abschn_auswert(obverb);
    for(size_t i=0;i<cfaxcp->abschv.size();i++) {
+    cout<<rot<<"cuser 15: "<<gruen<<cuser<<schwarz<<endl;
      if (cfaxcp->abschv[i].aname==cuser) {
+    cout<<rot<<"cuser 16: "<<gruen<<cuser<<schwarz<<endl;
        for(size_t j=0;j<cfaxcp->abschv[i].av.size();j++) {
         if (cfaxcp->abschv[i].av[j].name=="fax_numbers") {if (cfaxcp->abschv[i].av[j].wert==capiconf[4].wert) richtige++;}
         else if (cfaxcp->abschv[i].av[j].name=="fax_stationID") {if (cfaxcp->abschv[i].av[j].wert==capiconf[6].wert) richtige++;}
@@ -2943,6 +2961,7 @@ void paramcl::konfcapi()
       } else { // if (iru)
         if (!cuserda)  {
           // schreibe Konfiguration fuer Benutzer in fax.conf
+    cout<<rot<<"suchcuser: "<<gruen<<suchcuser<<schwarz<<endl;
           *fneu<<suchcuser<<endl;
           *fneu<<"fax_numbers=\""<<capiconf[4].wert<<"\""<<endl;
           *fneu<<"fax_stationID=\""<<capiconf[6].wert<<"\""<<endl;
