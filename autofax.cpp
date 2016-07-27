@@ -1940,16 +1940,28 @@ void paramcl::liescapiconf()
     cfaxcp=&cfaxconf;
     cfaxcp->Abschn_auswert(obverb);
     cout<<rot<<"cuser 1: "<<gruen<<cuser<<schwarz<<endl;
-    cuser="";
+    // wenn sich cuser in cfaxconf findet, dann so lassen
+    // wenn nicht, dann:
+    //   wenn cuser leer, dann den ersten besten user nehmen
+    //   sonst cuser setzen
+//    cuser="";
+    string ncuser;
     for(size_t i=cfaxconf.zn.size();i>0;) {
       int erg;
       char buf[250];
       if ((erg=sscanf(cfaxconf.zn[--i].c_str(),"[%[^]]]",buf))>0) 
         if (strcasecmp(buf,"global")) {
-          cuser=buf; // nehme den letzten besten user
-          break;
+          if (!cuser.empty()) {
+           if (cuser==buf) {
+            ncuser.clear();
+            break;
+           }
+          }
+          if (ncuser.empty()) ncuser=buf; // nehme den letzten besten user
         }
     }
+    if (cuser.empty()) 
+      cuser=ncuser;
     cout<<rot<<"cuser 2: "<<gruen<<cuser<<schwarz<<endl;
     if (cuser.empty()) {
       string benutzer=curruser();
