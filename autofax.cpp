@@ -4949,7 +4949,7 @@ int paramcl::pruefhyla()
     Log(string("Modem '")+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+violett+brs+schwarz+Tx[T_wird_verwendet],obverb,oblog);
   }
   if (!this->sfaxgetty) this->sfaxgetty=new servc("hylafax-faxgetty-"+this->hmodem,"faxgetty");
-  for(unsigned versuch=0;versuch<2;versuch++) {
+  for(unsigned versuch=0;versuch<3;versuch++) {
     // 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
     // pruefen, ob hylafax.service laeuft
     Log(Tx[T_Pruefe_ob_Hylafax_gestartet],-1,oblog);
@@ -5201,10 +5201,13 @@ int paramcl::pruefhyla()
       // // in hylafax: /etc/cron.daily/suse.de-faxcron, 
     } // if (1)
     if (hylalaeuftnicht || modemlaeuftnicht) {
+      // hier Fehler: nach einem Versuch darf 
       if (versuch) {
+        if (this->konfobhyla) this->hylazukonf=1;
+      }
+      if (versuch>1) {
         Log(string(Tx[T_hylafaxspringtnichtan]),1,1);
         this->obhyla=0;
-        if (this->konfobhyla) this->hylazukonf=1;
         return 1;
       }
     } else {
@@ -6500,3 +6503,4 @@ int main(int argc, char** argv)
 // evtl. manuell umbenannte Dateien in der Datenbank registrieren
 // bei hyla aktiven Sendevorgang markieren
 // evtl. die Ausgaben verschiedener capisuitefax -Parameter beruecksichtigen
+// Aenderung der Klingelzahl korrigieren
