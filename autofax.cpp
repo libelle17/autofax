@@ -3225,6 +3225,17 @@ void paramcl::pruefsamba()
     if (nmb.serviceda) nmb.restart(obverb-1,oblog);
     else if (nmbd.serviceda) nmbd.restart(obverb-1,oblog);
   }
+  // Suse-Firewall
+  struct stat fstat;
+  const char *susefw="/etc/sysconfig/SuSEfirewall2";
+  if (!lstat(susefw,&fstat)) {
+    obverb=1;
+    systemrueck(string("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-server' /etc/sysconfig/SuSEfirewall2 >/dev/null ")+
+    "|| sed -i.bak_"+ich+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-server\\2/g' /etc/sysconfig/SuSEfirewall2",obverb,oblog); 
+    systemrueck(string("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-client' /etc/sysconfig/SuSEfirewall2 >/dev/null ")+
+    "|| sed -i.bak_"+ich+"2 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-client\\2/g' /etc/sysconfig/SuSEfirewall2", obverb,oblog); 
+    obverb=0;
+  }
 } // pruefsamba
 
 // wird aufgerufen in: main
@@ -5293,8 +5304,8 @@ void pruefmodcron(int obverb, int oblog)
   const string tmpc="meincrontab";
   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++) {
     svec rueck;
-    systemrueck(string("bash -c 'grep \"")+mps[ru]+"\" -q <(sudo crontab -l)' || "
-        "(sudo crontab -l>\""+tmpc+"\"; echo \""+mps[ru]+"\">>\""+tmpc+"\"; sudo crontab \""+tmpc+"\")",obverb,oblog,&rueck);
+    systemrueck(string("bash -c 'grep \"")+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)' || "
+        "(sudo crontab -l 2>/dev/null >\""+tmpc+"\"; echo \""+mps[ru]+"\">>\""+tmpc+"\"; sudo crontab \""+tmpc+"\")",obverb,oblog,&rueck);
     for(size_t znr=0;znr<rueck.size();znr++) {
       Log(rueck[znr],1+obverb,oblog);
     }
