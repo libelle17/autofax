@@ -3229,7 +3229,6 @@ void paramcl::pruefsamba()
   struct stat fstat;
   const char *susefw="/etc/sysconfig/SuSEfirewall2";
   if (!lstat(susefw,&fstat)) {
-    obverb=1;
     string prog="server";
     for(int i=1;i<3;i++) {
       systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+prog+"' /etc/sysconfig/SuSEfirewall2 >/dev/null "
@@ -3237,7 +3236,6 @@ void paramcl::pruefsamba()
           "&& systemctl restart SuSEfirewall2 smb nmb; }",obverb,oblog); 
       prog="client";
     }
-    obverb=0;
   }
 } // pruefsamba
 
@@ -6488,14 +6486,17 @@ int main(int argc, char** argv)
 } // int main(int argc, char** argv) 
 
 // Log-Datei ueberpruefen
-// Netzwerk-Freigabe
 // Hylafax mit Fritzcard
-// convert installieren, falls weder convert noch soffice da
-// Empfang pruefen
-
 
 // ausgabestring fuer hylafax befuellen
 // fuer update eine Unterfunktion mit Felderweiterung schreiben
 // im Fall erfolgreich erledigter Hylafaxe DAtenbankeintrag fuer capi korrigieren, im Fall gescheiterer klaeren, wie erneut reingestellt
 // update auch fuer datenbankeinterne Felder ermoeglichen
 // bei hyla die dateigroesse der pdf-Datei nehmen
+
+// vor Samba-Ueberpruefung rueckfragen
+// Firwallkorrektur in man einbauen
+// Urspruenglichen Dateinamen speichern
+// evtl. manuell umbenannte Dateien in der Datenbank registrieren
+// bei hyla aktiven Sendevorgang markieren
+// evtl. die Ausgaben verschiedener capisuitefax -Parameter beruecksichtigen
