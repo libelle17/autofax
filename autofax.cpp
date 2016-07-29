@@ -4910,6 +4910,7 @@ int paramcl::hservice_faxgetty()
 // wird aufgerufen in main
 int paramcl::pruefhyla()
 {
+  obverb=1;
   Log(violetts+Tx[T_pruefhyla]+schwarz,obverb?obverb:obverb,oblog);
   long br=0; // baud rate
   string brs; // Baud-Rate-String
