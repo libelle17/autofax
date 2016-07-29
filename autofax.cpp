@@ -3231,9 +3231,11 @@ void paramcl::pruefsamba()
   if (!lstat(susefw,&fstat)) {
     obverb=1;
     systemrueck(string("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-server' /etc/sysconfig/SuSEfirewall2 >/dev/null ")+
-    "|| sed -i.bak_"+ich+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-server\\2/g' /etc/sysconfig/SuSEfirewall2",obverb,oblog); 
+    "|| { sed -i.bak_"+ich+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-server\\2/g' /etc/sysconfig/SuSEfirewall2 "
+    "&& systemctl restart SuSEfirewall2 smb nmb; }",obverb,oblog); 
     systemrueck(string("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-client' /etc/sysconfig/SuSEfirewall2 >/dev/null ")+
-    "|| sed -i.bak_"+ich+"2 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-client\\2/g' /etc/sysconfig/SuSEfirewall2", obverb,oblog); 
+    "|| sed -i.bak_"+ich+"2 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-client\\2/g' /etc/sysconfig/SuSEfirewall2 "
+    "&& systemctl restart SuSEfirewall2 smb nmb; }",obverb,oblog); 
     obverb=0;
   }
 } // pruefsamba
