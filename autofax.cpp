@@ -3931,6 +3931,7 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
           string hylastate, hyladials, hylastatus, hylastatuscode, number;
           /*fsf.*/
           setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, &obsfehlt, 0, obverb, oblog, &hylastate, &hyladials, &hylastatus, &hylastatuscode);
+          cout<<rot<<"hylastate: "<<schwarz<<hylastate<<" hylastatus: "<<hylastatus<<" hylastatucode: "<<hylastatuscode<<endl;
           fsf.hylaausgeb(&ausg, this, obsfehlt, obverb, 0, oblog);
           if (!obsfehlt) { // Protokolldatei vorhanden
             RS rupd(My); 
@@ -4893,7 +4894,6 @@ int paramcl::hservice_faxgetty()
 // wird aufgerufen in main
 int paramcl::pruefhyla()
 {
-  obverb=1;
   Log(violetts+Tx[T_pruefhyla]+schwarz,obverb?obverb:obverb,oblog);
   long br=0; // baud rate
   string brs; // Baud-Rate-String
@@ -6319,6 +6319,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obve
   }
   // wenn eine Protokolldatei auslesbar war
 //  if (pmp->hconfp) {
+        // modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
   if (pmp->hgelesen) {
     *ausgp<<", ";
     char buf[100];
