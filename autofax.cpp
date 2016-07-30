@@ -1917,7 +1917,7 @@ void paramcl::VorgbSpeziell()
   wvz="/var/"+prog+vtz+Tx[T_warteauffax];
   gvz="/var/"+prog+vtz+Tx[T_nichtgefaxt];
   empfvz="/var/"+prog+vtz+Tx[T_empfvz];
-  static zielmustercl zmi[]={zielmustercl("[Ss]pamfax","/var/autofax/spam"),zielmustercl("","/var/autofax")}; // nur als Beispiel
+  static zielmustercl zmi[]={zielmustercl("[Ss]pamfax","/var/autofax/spam"),zielmustercl("","/var/autofax/gesandt")}; // nur als Beispiel
   zmvp=zmi;
   zmvzn=sizeof zmi/sizeof *zmi;
 } // void paramcl::VorgbSpeziell() 
@@ -3931,7 +3931,6 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
           string hylastate, hyladials, hylastatus, hylastatuscode, number;
           /*fsf.*/
           setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, &obsfehlt, 0, obverb, oblog, &hylastate, &hyladials, &hylastatus, &hylastatuscode);
-          cout<<rot<<"hylastate: "<<schwarz<<hylastate<<" hylastatus: "<<hylastatus<<" hylastatucode: "<<hylastatuscode<<endl;
           fsf.hylaausgeb(&ausg, this, obsfehlt, hylastate, obverb, 0, oblog);
           if (!obsfehlt) { // Protokolldatei vorhanden
             RS rupd(My); 
