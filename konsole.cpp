@@ -2172,7 +2172,9 @@ int servc::obslaeuft(int obverb,int oblog)
       } else {
         break;
       }
-    } // if (!sysrueck.empty()) 
+    } else { // if (!sysrueck.empty()) 
+     break;
+    }
   } // while (1)
   if (!serviceda) {
     serviceda=!systemrueck("systemctl status '"+sname+"'| grep ' loaded '",obverb,oblog);
