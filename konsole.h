@@ -339,6 +339,7 @@ class abSchl {
 
 enum betrsys {keins,suse,ubuntu};
 betrsys pruefos();
+string obprogda(string prog,int obverb, int oblog);
 enum instprog {keinp,zypper,apt};
 instprog pruefipr(int obverb=0, int oblog=0);
 

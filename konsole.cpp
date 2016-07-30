@@ -1048,16 +1048,37 @@ betrsys pruefos()
  return aktbs;
 } // betrsys pruefos()
 
+string obprogda(string prog,int obverb, int oblog)
+{
+  svec rueck;
+  if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck))
+    return rueck[0];
+  for(int iru=0;iru<3;iru++) {
+    struct stat fstat;
+    string verz;
+    switch (iru) {
+      case 0: verz="/sbin/"; break;
+      case 1: verz="/usr/sbin/"; break;
+      case 2: verz="/usr/local/sbin/"; break;
+      default: break;
+    }
+    verz+=prog;
+    if (!lstat(verz.c_str(),&fstat))
+      return verz;
+  }
+  return ""; 
+} // string obprogda(string prog,int obverb, int oblog)
+
 instprog pruefipr(int obverb,int oblog)
 {
- static instprog aktipr=keinp;
- if (aktipr==keinp) {
-   if (!systemrueck("which zypper 2>/dev/null",obverb-1,oblog))
+  static instprog aktipr=keinp;
+  if (aktipr==keinp) {
+    if (!systemrueck("which zypper 2>/dev/null",obverb-1,oblog))
       // heruntergeladene Dateien behalten
-     aktipr=zypper;
-   else if (!systemrueck("which apt-get 2>/dev/null",obverb-1,oblog))
+      aktipr=zypper;
+    else if (!systemrueck("which apt-get 2>/dev/null",obverb-1,oblog))
       // hier werden die Dateien vorgabemaessig behalten
-     aktipr=apt;
+      aktipr=apt;
    else
      cerr<<Txk[T_Weder_zypper_noch_apt_get_als_Installationspgrogramm_gefunden]<<endl;
  }
