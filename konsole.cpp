@@ -2169,6 +2169,8 @@ int servc::obslaeuft(int obverb,int oblog)
       } else if (sysrueck[0].find("loaded")!=string::npos) {
         serviceda=1;
         break;
+      } else {
+        break;
       }
     } // if (!sysrueck.empty()) 
   } // while (1)
