@@ -4667,6 +4667,8 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
     Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
     int erg __attribute__((unused));
     pruefplatte();
+    systemrueck("sudo systemctl stop hylafax-faxq hylafax-hfaxd",obverb,oblog);
+    systemrueck("sudo killall hfaxd faxq >/dev/null 2>&1",obverb,oblog);
     erg=system((string("sudo $(which sh) $(sudo which faxsetup) -nointeractive")+(obverb?" -verbose":"")+" && sudo systemctl daemon-reload").c_str()); 
     pruefplatte();
     // systemrueck(string("source ")+faxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht 
