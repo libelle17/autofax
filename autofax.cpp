@@ -477,6 +477,7 @@ enum T_
   T_Fehler_beim_Loeschen,
   T_VorgbAllg,
   T_pruefisdn,
+  T_keine_Rueckfragen_zB_aus_Cron,
   T_MAX
 };
 
@@ -1341,6 +1342,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"VorgbAllg()","generalprefs()"},
   // T_pruefisdn
   {"T_pruefisdn()","checkisdn()"},
+  // T_keine_Rueckfragen_zB_aus_Cron
+  {"keine Rueckfragen, z.B. aus cron","no questions, e.g. for cron"},
   {"",""}
 };
 
@@ -2208,6 +2211,7 @@ void paramcl::lieskonfein()
   } else {
     rzf=1;
   } // (1) else
+  if (nrzf) rzf=0;
 } // void paramcl::lieskonfein()
 
 // wird aufgerufen in: main
@@ -2251,6 +2255,7 @@ int paramcl::getcommandline()
   //  opts.push_back(optioncl("v","verbose", &Tx, T_Bildschirmausgabe_gespraechiger,&plusverb,1));
   opts.push_back(optioncl("sqlv","sql-verbose", &Tx, T_Bildschirmausgabe_mit_SQL_Befehlen,&ZDB,255));
   opts.push_back(optioncl("rf","rueckfragen", &Tx, T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigte,&rzf,1));
+  opts.push_back(optioncl("norf","keinerueckfragen", &Tx, T_keine_Rueckfragen_zB_aus_Cron,&nrzf,1));
   opts.push_back(optioncl("loef","loeschefax", &Tx, T_ein_Fax_nach_Rueckfrage_loeschen,&loef,1));
   opts.push_back(optioncl("loew","loeschewaise", &Tx, T_Eintraege_aus, &spooltab, 
         T_loeschen_zu_denen_kein_Datei_im_Wartevz_und_kein_Capi_oder_Hylafax_nachweisbar_ist, &loew,1));
@@ -2281,6 +2286,7 @@ int paramcl::getcommandline()
       }
     }
   }
+  if (nrzf) rzf=0;
   for(size_t i=0;i<argcmv.size();i++) {
     if (!argcmv[i].agef) {
       Log(rots+"Parameter: "+violett+argcmv[i].argcs+rot+Tx[T_nicht_erkannt]+schwarz,1,1);
