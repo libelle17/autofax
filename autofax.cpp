@@ -4971,12 +4971,14 @@ int paramcl::pruefhyla()
     if (hyinstart==hysrc || hyinstart==hyppk) {
       // #define obhp // ob hylafax+ (statt hylafax)
       //#ifdef obhp      
+      cout<<rot<<"hyinstart: "<<hysrc<<endl;
       hfr=(char*)c_hfps; hfcr=(char*)c_hfpc; hff=(char*)c_hfs; hfcf=(char*)c_hfc;
       hfftext=Tx[T_Hylafax_ohne_plus_entdeckt_muss_ich_loeschen];
       sfaxq=new servc("hylafax-faxq","faxq");
       shfaxd=new servc("hylafax-hfaxd","hfaxd");
       // => hyinstart==hypak
     } else {
+      cout<<rot<<"hyinstart: "<<hysrc<<endl;
       //#else
       hfr=(char*)c_hfs; hfcr=(char*)c_hfc; hff=(char*)c_hfps; hfcf=(char*)c_hfpc;
       hfftext=Tx[T_Hylafaxplus_entdeckt_muss_ich_loeschen];
@@ -4987,16 +4989,20 @@ int paramcl::pruefhyla()
     // 2) deren Existenz, Betrieb und ggf. Startbarkeit pruefen
     shylafaxd=new servc("hylafax","faxq hfaxd");
     // wenn die richtigen Dienste laufen, dann nichts weiter ueberpruefen ..
+    cout<<"sfaxq-obslaeft: "<<(int)sfaxq->obslaeuft(1,0)<<endl;
+    cout<<"shfaxd-obslaeft: "<<(int)shfaxd->obslaeuft(1,0)<<endl;
     if ((this->sfaxq->obslaeuft(obverb-1,oblog) && this->shfaxd->obslaeuft(obverb-1,oblog)) /*|| this->shylafaxd->obslaeuft(obverb-1,oblog)*/) {
       Log(Tx[T_Hylafax_laeuft],obverb,oblog);
       hylalaeuftnicht=0;
       hylafehlt=0;
+    } else {
+      exit(0);
     } 
     if (hylafehlt) {
       // falls nein, dann schauen, ob startbar
       if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog)) hylafehlt=0;
     }
-    cout<<violett <<"hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
+    cout<<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
     if (hylafehlt) {
       // 3) ggf. neu installieren
       Log(rots+Tx[T_Muss_Hylafax_installieren]+schwarz,1,1);
