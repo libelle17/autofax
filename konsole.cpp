@@ -1993,7 +1993,7 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fall
         obnmr=0;
         systemrueck("sudo zypper mr -k -all",obverb,oblog);
       }
-      return systemrueck(string("sudo zypper -n --gpg-auto-import-keys in ")+prog,obverb+1,oblog);
+      return systemrueck(string("sudo zypper -n --gpg-auto-import-keys in -f ")+prog,obverb+1,oblog);
       break;
     case apt:
       return systemrueck(string("sudo apt-get --assume-yes install ")+ersetzeprog(prog),obverb+1,oblog);
