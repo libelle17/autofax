@@ -134,6 +134,8 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {" lief schon."," ran already."},
   // T_nicht_gefunden_versuche_ihn_einzurichten
   {" nicht gefunden, versuche ihn einzurichten"," not found, trying to install it"},
+  // T_Aktiviere_Dienst
+  {"Aktiviere Dienst: ","Activating service: "},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -155,13 +157,18 @@ const string drots=drot, rots=rot, schwarzs=schwarz, blaus=blau, gelbs=gelb, tue
 perfcl::perfcl(const string& vvonwo): vonwo(vvonwo)
 {
   zp0=clock(); 
+  t0=time(NULL);
 }
 
 void perfcl::ausgeb(const string& stelle)
 {
   zp1=clock();
-  cout<<gruen<<vonwo<<" "<<stelle<<" "<<++nr<<" Dauer: "<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" = "
-    <<fixed<<((zp1-zp0)/CLOCKS_PER_SEC)<<schwarz<<setprecision(0)<<" s"<<endl;
+  t1=time(NULL);
+  cout<<gruen;
+  if (!stelle.empty())
+   cout<<vonwo<<" "<<stelle<<" "<<++nr;
+  cout<<" Dauer: "<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" clocks = "
+    <<fixed<<(t1-t0)<<schwarz<<setprecision(0)<<" s"<<endl;
 } // void perfcl::ausgeb(const string& stelle)
 
 
@@ -2152,7 +2159,7 @@ uchar servc::spruef(const string& sbez,uchar obfork, const string& sexec, const 
 // wird aufgerufen in: pruefhyla, pruefcapi, spruef
 int servc::obslaeuft(int obverb,int oblog)
 {
-  perfcl prf("obslaeuft");
+  perfcl prf(Txk[T_Aktiviere_Dienst]+sname);
   while (1) {
     svec sysrueck;
     servicelaeuft=0;

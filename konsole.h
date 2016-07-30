@@ -147,6 +147,7 @@ enum Tkonsole_
   T_spruef_sname,
   T_lief_schon,
   T_nicht_gefunden_versuche_ihn_einzurichten,
+  T_Aktiviere_Dienst,
   T_konsoleMAX,
 };
 
@@ -174,6 +175,7 @@ class perfcl
  public:
  string vonwo;
  clock_t zp0, zp1;
+ time_t t0, t1;
  unsigned long nr=0;
  perfcl(const string& vvonwo);
  void ausgeb(const string& stelle="");
