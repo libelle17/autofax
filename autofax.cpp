@@ -6326,7 +6326,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, string& 
     char buf[100];
     int hversuzahl=atol(pmp->hylconf[1].wert.c_str()); // totdials
     snprintf(buf,4,"%3d",hversuzahl);
-    *ausgp<<blau<<buf<<schwarz<<"/"<<pmp->hylconf[7].wert<<Tx[T_Anwahlen];
+    *ausgp<<blau<<buf<<schwarz<<"/"<<pmp->hylconf[7].wert<<(hylastate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
     // hier muss noch JobReqBusy, JobReqNoAnswer, JobReqNoCarrier, JobReqNoFCon, JobReqOther, JobReqProto dazu gerechnet werden
     time_t spoolbeg=(time_t)atol(pmp->hylconf[5].wert.c_str());
     strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", localtime(&spoolbeg));
