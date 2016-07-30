@@ -178,6 +178,7 @@ class perfcl
  perfcl(const string& vvonwo);
  void ausgeb(const string& stelle="");
  void ausgab1000(const string& stelle="");
+ int oberreicht(unsigned long sek);
 };
 
 char* curruser();

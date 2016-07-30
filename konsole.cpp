@@ -176,6 +176,12 @@ void perfcl::ausgab1000(const string& stelle)
   }
 } // void perfcl::ausgab1000(const string& stelle)
 
+int perfcl::oberreicht(unsigned long sek)
+{
+ zp1=clock();
+ return ((zp1-zp0)>sek*CLOCKS_PER_SEC);
+}
+
 
 string ersetzefuerdatei(const string& u) 
 {
@@ -2146,19 +2152,26 @@ uchar servc::spruef(const string& sbez,uchar obfork, const string& sexec, const 
 // wird aufgerufen in: pruefhyla, pruefcapi, spruef
 int servc::obslaeuft(int obverb,int oblog)
 {
-  svec sysrueck;
-  servicelaeuft=0;
-  serviceda=0;
-  systemrueck(("systemctl list-units '")+sname+".service' --all --no-legend",obverb,oblog,&sysrueck);  // bei list-units return value immer 0
-  if (!sysrueck.empty()) {
-    Log(blau+sysrueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
-    if (sysrueck[0].find("active running")!=string::npos) {
-      servicelaeuft=1; 
-      serviceda=1;
-    } else if (sysrueck[0].find("loaded")!=string::npos) {
-      serviceda=1;
-    }
-  }
+  perfcl prf("obslaeuft");
+  while (1) {
+    svec sysrueck;
+    servicelaeuft=0;
+    serviceda=0;
+    systemrueck(("systemctl list-units '")+sname+".service' --all --no-legend",obverb,oblog,&sysrueck);  // bei list-units return value immer 0
+    if (!sysrueck.empty()) {
+      Log(blau+sysrueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
+      if (sysrueck[0].find("active running")!=string::npos) {
+        servicelaeuft=1; 
+        serviceda=1;
+        break;
+      } else if (sysrueck[0].find("activating")!=string::npos) {
+        if (prf.oberreicht(10)) break;
+      } else if (sysrueck[0].find("loaded")!=string::npos) {
+        serviceda=1;
+        break;
+      }
+    } // if (!sysrueck.empty()) 
+  } // while (1)
   if (!serviceda) {
     serviceda=!systemrueck("systemctl status '"+sname+"'| grep ' loaded '",obverb,oblog);
   }
