@@ -1986,7 +1986,7 @@ string linstcl::ersetzeprog(const string& prog)
 uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsnichtda, binaer alsroot) 
 {
   // <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
-  if (!fallsnichtda.empty()) if (!systemrueck(alsroot?string("root "):string("")+"which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) return 0;
+  if (!fallsnichtda.empty()) if (!systemrueck((alsroot?string("root "):string(""))+"which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) return 0;
   switch (pruefipr()) {
     case zypper:
       if (obnmr) {

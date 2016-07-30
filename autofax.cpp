@@ -5003,6 +5003,7 @@ int paramcl::pruefhyla()
       // a) von der source
       linst.doinst("ghostscript",obverb+1,oblog,"gs");
       linst.doinst("tiff",obverb+1,oblog,"tiff2ps");
+      linst.doinst("tiff",obverb+1,oblog,"fax2ps");
       linst.doinst("sendmail",obverb+1,oblog,"sendmail", wahr);
       if (hyinstart==hysrc) {
         if (1) {
