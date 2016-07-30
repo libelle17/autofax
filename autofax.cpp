@@ -4990,6 +4990,7 @@ int paramcl::pruefhyla()
     shylafaxd=new servc("hylafax","faxq hfaxd");
     // wenn die richtigen Dienste laufen, dann nichts weiter ueberpruefen ..
     cout<<"sfaxq-obslaeft: "<<(int)sfaxq->obslaeuft(2,0)<<endl;
+      servc::daemon_reload();
     cout<<"sfaxq-obslaeft: "<<(int)sfaxq->obslaeuft(2,0)<<endl;
     cout<<"sfaxq-obslaeft: "<<(int)sfaxq->obslaeuft(2,0)<<endl;
     cout<<"sfaxq-obslaeft: "<<(int)sfaxq->obslaeuft(2,0)<<endl;
