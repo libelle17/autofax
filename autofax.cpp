@@ -4670,6 +4670,7 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
     systemrueck("sudo systemctl stop hylafax-faxq hylafax-hfaxd",obverb,oblog);
     systemrueck("sudo killall hfaxd faxq >/dev/null 2>&1",obverb,oblog);
     erg=system((string("sudo $(which sh) $(sudo which faxsetup) -nointeractive")+(obverb?" -verbose":"")+" && sudo systemctl daemon-reload").c_str()); 
+    systemrueck("sudo systemctl start hylafax-faxq hylafax-hfaxd",obverb,oblog);
     pruefplatte();
     // systemrueck(string("source ")+faxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht 
     // mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
