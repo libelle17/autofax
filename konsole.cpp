@@ -2165,7 +2165,7 @@ int servc::obslaeuft(int obverb,int oblog)
         serviceda=1;
         break;
       } else if (sysrueck[0].find("activating")!=string::npos) {
-        prf.ausgab1000("");
+        prf.ausgeb("");
         if (prf.oberreicht(120)) break;
       } else if (sysrueck[0].find("loaded")!=string::npos) {
         serviceda=1;
