@@ -3932,7 +3932,7 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
           /*fsf.*/
           setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, &obsfehlt, 0, obverb, oblog, &hylastate, &hyladials, &hylastatus, &hylastatuscode);
           cout<<rot<<"hylastate: "<<schwarz<<hylastate<<" hylastatus: "<<hylastatus<<" hylastatucode: "<<hylastatuscode<<endl;
-          fsf.hylaausgeb(&ausg, this, obsfehlt, obverb, 0, oblog);
+          fsf.hylaausgeb(&ausg, this, obsfehlt, hylastate, obverb, 0, oblog);
           if (!obsfehlt) { // Protokolldatei vorhanden
             RS rupd(My); 
             vector<instyp> einf; // fuer alle Datenbankeinfuegungen
@@ -4109,10 +4109,11 @@ void paramcl::zeigweitere()
           fsfcl fsf(hylanr); // fsf(rueck[i]);
           string protdakt=hsendqvz+vtz+hylanr; // rueck[i];
           uchar hyla_uverz_nr=1;
-          int obsfehlt=0;
+          int obsfehlt=-1;
           /*fsf.*/
-          setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, &obsfehlt, 2, obverb, oblog);
-          fsf.hylaausgeb(&ausg, this, 0, obverb, 0, oblog);
+          string hylastate;
+          setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, &obsfehlt, 2, obverb, oblog, &hylastate);
+          fsf.hylaausgeb(&ausg, this, 0, hylastate, obverb, 0, oblog);
         } // if (!indb)
       } // for(size_t i=0;i<rueck.size();i++) 
     } // if (!lstat(hsendqvz.c_str(),&entryvz))
@@ -6292,7 +6293,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
 } // setzhylastat
 
 // wird aufgerufen in untersuchespool und zeigweitere
-void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obverb, uchar obzaehl, int oblog)
+void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, string& hylastate, int obverb, uchar obzaehl, int oblog)
 {
   Log(violetts+Tx[T_hylaausgeb]+schwarz+"  hylastat: "+blau+FxStatS(&hylastat)+schwarz,obverb,oblog);
   *ausgp<<blau<<endl;
