@@ -393,9 +393,11 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
       //      Log(string(Txd[T_Fehler_dp])+rot+myr[0]+schwarz+Txd[T_bei_Befehl]+blau+cmd+schwarz,1,1);
     }
     if (miterror) {
-      rootpwd=holstring(string(Txd[T_Benoetige_MySQL_Passwort_fuer_Benutzer_root_fuer_Befehl])+"\n"+tuerkis+wofuer+schwarz+")",0);
-      //                    if (rootpwd.empty()) return; // while (1)
-      if (user=="root") passwd=rootpwd;
+      if (!nrzf) {
+        rootpwd=Tippstring(string(Txd[T_Benoetige_MySQL_Passwort_fuer_Benutzer_root_fuer_Befehl])+"\n"+tuerkis+wofuer+schwarz+")",0);
+        //                    if (rootpwd.empty()) return; // while (1)
+        if (user=="root") passwd=rootpwd;
+      }
     } else {
       break; // naechster Versuch
     } // if (miterror) KLA KLZ else KLA
@@ -406,22 +408,24 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
 void DB::setzrpw()
 {
   string rootpw2, cmd;
-  while (1) {
-    if (holob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) {
-      rootpwd=holstring(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
-      rootpw2=holstring(Txd[T_Bitte_geben_Sie_das_MySQL_Passwort_fuer_Benutzer_root_erneut_ein],&rootpw2);
-      if (rootpw2==rootpwd && !rootpwd.empty()) {
-        cmd=string("sudo mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
-          "' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
-        Log(string(Txd[T_Fuehre_aus_db])+blau+cmd+schwarz,1,1);
-         int erg __attribute__((unused));
-         erg=system(cmd.c_str());
+  if (!nrzf) {
+    while (1) {
+      if (Tippob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) {
+        rootpwd=Tippstring(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
+        rootpw2=Tippstring(Txd[T_Bitte_geben_Sie_das_MySQL_Passwort_fuer_Benutzer_root_erneut_ein],&rootpw2);
+        if (rootpw2==rootpwd && !rootpwd.empty()) {
+          cmd=string("sudo mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
+            "' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
+          Log(string(Txd[T_Fuehre_aus_db])+blau+cmd+schwarz,1,1);
+          int erg __attribute__((unused));
+          erg=system(cmd.c_str());
+          break;
+        } // if (rootpw2==rootpwd ...
+      } else {
         break;
-      } // if (rootpw2==rootpwd ...
-    } else {
-      break;
-    } // if (holob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) 
-  } // while (1)
+      } // if (Tippob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) 
+    } // while (1)
+  } // if (!nrzf)
 } // setzrpw
 
 DB::~DB(void)

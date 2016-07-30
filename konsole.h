@@ -164,6 +164,9 @@ class Txkonsolecl : public TxB
 //    inline const char* operator[](Tkonsole_ const& nr) const { return TextC[nr][lgn]; }
 };
 
+extern uchar nrzf; // nicht rueckzufragen, fuer Aufruf aus Cron
+
+
 // arg-Class
 class argcl
 {
@@ -497,18 +500,18 @@ void pruefdoppelt(char* ich);
 int setfaclggf(const string& datei, const binaer obunter=falsch, const int mod=4, binaer obimmer=falsch,int obverb=0,int oblog=0);
 int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=1);
 string aktprogverz();
-char holbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
+char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
 // vorgabe fur vorgabe = T_j_k; alternativ='n'
-uchar holob(const string& frage,const char *vorgabe=Txk[T_j_k]);
-string holstrings(const char *frage, char* moegl[], char *vorgabe=0); // das letzte Element von moegl muss 0 sein
-string holstrings(const char *frage, vector<string> *moegl, string *vorgabe=0); 
-string holzahl(const char *frage, const char *vorgabe=0);
-string holzahl(const char *frage, string *vorgabe);
-string holzahl(const string& frage, string *vorgabe);
-string holstring(const char *frage, const string *vorgabe=0);
-char* holcstring(const char *frage, char* buf, unsigned long buflen, const char* vorgabe="");
-string holstring(const string& frage, const string *vorgabe=0);
-string holverz(const char *frage,string *vorgabe=0);
+uchar Tippob(const string& frage,const char *vorgabe=Txk[T_j_k]);
+string Tippstrings(const char *frage, char* moegl[], char *vorgabe=0); // das letzte Element von moegl muss 0 sein
+string Tippstrings(const char *frage, vector<string> *moegl, string *vorgabe=0); 
+string Tippzahl(const char *frage, const char *vorgabe=0);
+string Tippzahl(const char *frage, string *vorgabe);
+string Tippzahl(const string& frage, string *vorgabe);
+string Tippstring(const char *frage, const string *vorgabe=0);
+char* Tippcstring(const char *frage, char* buf, unsigned long buflen, const char* vorgabe="");
+string Tippstring(const string& frage, const string *vorgabe=0);
+string Tippverz(const char *frage,string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
 
 // enum linsten:uchar {uinst,zyp,apt,unent};

@@ -101,7 +101,7 @@ class paramcl // Programmparameter
     double tstart, tende;
     svec modems;       // gefundene Modems
     size_t optslsz=0; // last opts.size()
-    char *ich; // argv[0]
+    string ich; // argv[0]
   public:
     string prog; // 'autofax'
     string instverz; // $HOME/autofax
@@ -149,7 +149,6 @@ class paramcl // Programmparameter
     //    string hmodname;  // ttyACM0
     uchar hylazuerst;  // ob ein Fax zuerst ueber Hylafax versucht werden soll zu faxen
     uchar rzf=0; // rueckzufragen
-    uchar nrzf=0; // nicht rueckzufragen
     string dbq; // Datenbank
     string cuser; // Linux-Benutzer fuer Capisuite, Samba
     string muser; // Benutzer fuer Mysql/MariaDB

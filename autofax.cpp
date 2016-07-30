@@ -405,7 +405,7 @@ enum T_
   T_Kein_Modem_gefunden,
   T_kein_Faxprogramm_verfuegbar,
   T_Capisuite_gestartet,
-  T_schreibe_Konfigurkation,
+  T_schreibe_Konfiguration,
   T_Dateien,
   T_nicht_verarbeitbar_Verschiebe_sie_nach,
   T_Fuehre_aus_Dp,
@@ -478,6 +478,9 @@ enum T_
   T_VorgbAllg,
   T_pruefisdn,
   T_keine_Rueckfragen_zB_aus_Cron,
+  T_Samba_muesste_installiert_werden_soll_ich,
+  T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden,
+  T_Soll_die_SuSEfirewall_bearbeitet_werden,
   T_MAX
 };
 
@@ -1193,7 +1196,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"(kein Faxprogramm verfuegbar)","(no fax program available)"},
   // T_Capisuite_gestartet
   {"Capisuite gestartet.","capisuite started."},
-  // T_schreibe_Konfigurkation
+  // T_schreibe_Konfiguration
   {"schreibe Konfiguration!","writing configuration!"},
   // T_Dateien
   {"Dateien ","Files "},
@@ -1344,6 +1347,13 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"T_pruefisdn()","checkisdn()"},
   // T_keine_Rueckfragen_zB_aus_Cron
   {"keine Rueckfragen, z.B. aus cron","no questions, e.g. for cron"},
+  // T_Samba_muesste_installiert_werden_soll_ich
+  {"Samba muesste installiert werden, soll ich?","samba needs to be installed, shall I?"},
+  // T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden
+  {"Sollen fehlende Sambafreigaben fuer die angegebenen Verzeichnisse ergaenzt werden?",
+    "Shall missing samba shares for the specified directories be added?"},
+  // T_Soll_die_SuSEfirewall_bearbeitet_werden
+  {"Soll die SuSEfirewall2 bearbeitet werden?","Shall the SuSEfirewall2 be edited?"},
   {"",""}
 };
 
@@ -2289,7 +2299,7 @@ int paramcl::getcommandline()
   if (nrzf) rzf=0;
   for(size_t i=0;i<argcmv.size();i++) {
     if (!argcmv[i].agef) {
-      Log(rots+"Parameter: "+violett+argcmv[i].argcs+rot+Tx[T_nicht_erkannt]+schwarz,1,1);
+      Log(rots+"Parameter: "+gruen+argcmv[i].argcs+rot+Tx[T_nicht_erkannt]+schwarz,1,1);
       hilfe=1;
     }
   }
@@ -2347,7 +2357,7 @@ void paramcl::rueckfragen()
     if (langu.empty()) if (locale) if (strchr("defi",locale[0])) langu=locale[0];
     vector<string> sprachen={"e","d","f","i"};
     if (cgconf[++lfd].wert.empty() || rzf) {
-      langu=holstrings("Language/Sprache/Lingue/Lingua",&sprachen, &langu);
+      langu=Tippstrings("Language/Sprache/Lingue/Lingua",&sprachen, &langu);
       lgnzuw();
       cgconf[lfd].setze(&langu);
     }
@@ -2355,7 +2365,7 @@ void paramcl::rueckfragen()
     if (cgconf[++lfd].wert.empty() || rzf) {
       if (!obfcgeprueft) pruefisdn();
       if (obfcard) {
-        obcapi=holob(Tx[T_Soll_die_Capisuite_verwendet_werden],obcapi?Tx[T_j_af]:"n");
+        obcapi=Tippob(Tx[T_Soll_die_Capisuite_verwendet_werden],obcapi?Tx[T_j_af]:"n");
       } else {
         obcapi=0;
       }
@@ -2365,7 +2375,7 @@ void paramcl::rueckfragen()
     if (cgconf[++lfd].wert.empty() || rzf) {
       if (!obmdgeprueft) pruefmodem();
       if (obmodem) {
-        obhyla=holob(Tx[T_Soll_Hylafax_verwendet_werden],obhyla?Tx[T_j_af]:"n");
+        obhyla=Tippob(Tx[T_Soll_Hylafax_verwendet_werden],obhyla?Tx[T_j_af]:"n");
       } else {
         obhyla=0;
       }
@@ -2374,15 +2384,15 @@ void paramcl::rueckfragen()
     if (obcapi) {
       if (obhyla) {
         if (cgconf[++lfd].wert.empty() || rzf) {
-          hylazuerst=!holob(Tx[T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden],hylazuerst?"n":Tx[T_j_af]);
+          hylazuerst=!Tippob(Tx[T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden],hylazuerst?"n":Tx[T_j_af]);
           cgconf[lfd].setze(&hylazuerst);
         }
         if (cgconf[++lfd].wert.empty() || rzf) {
-          maxcapiv=holzahl(Tx[T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird],maxcapiv.c_str());
+          maxcapiv=Tippzahl(Tx[T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird],maxcapiv.c_str());
           cgconf[lfd].setze(&maxcapiv);
         }
         if (cgconf[++lfd].wert.empty() || rzf) {
-          maxhylav=holzahl(Tx[T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird],maxhylav.c_str());
+          maxhylav=Tippzahl(Tx[T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird],maxhylav.c_str());
           cgconf[lfd].setze(&maxhylav);
         }
         // also: obcapi, aber nicht obhyla
@@ -2404,20 +2414,20 @@ void paramcl::rueckfragen()
         /*
            string Frage=string("Linux-Benutzer fuer Capisuite (")+bliste+"):";
            do KLA
-           tmpcuser=holstring(Frage.c_str(),&cuser);
+           tmpcuser=Tippstring(Frage.c_str(),&cuser);
            KLZ while (benutzer.size() && bliste.find(tmpcuser)==string::npos && 
            tmpcuser.find(',')==string::npos); // nur vorhandene User akzeptieren
            cuser=tmpcuser;
          */
-        cuser=holstrings(Tx[T_Linux_Benutzer_fuer_Capisuite],&benutzer,&cuser);
+        cuser=Tippstrings(Tx[T_Linux_Benutzer_fuer_Capisuite],&benutzer,&cuser);
         cgconf[lfd].setze(&cuser);
       }
       if (cgconf[++lfd].wert.empty() || rzf) {
-        countrycode=holstring(Tx[T_Hylafax_eigene_Landesvorwahl_ohne_plus_oder_00],&countrycode);
+        countrycode=Tippstring(Tx[T_Hylafax_eigene_Landesvorwahl_ohne_plus_oder_00],&countrycode);
         cgconf[lfd].setze(&countrycode);
       }
       if (cgconf[++lfd].wert.empty() || rzf) {
-        citycode=holstring(Tx[T_Hylafax_eigene_Ortsvorwahl_ohne_0],&citycode);
+        citycode=Tippstring(Tx[T_Hylafax_eigene_Ortsvorwahl_ohne_0],&citycode);
         cgconf[lfd].setze(&citycode);
       }
     } else {
@@ -2427,7 +2437,7 @@ void paramcl::rueckfragen()
 
     if (obcapi || obhyla) {
       if (cgconf[++lfd].wert.empty() || rzf) {
-        msn=holstring(Tx[T_Hylafax_und_Capisuite_eigene_MSN_Faxnummer_ohne_Vorwahl],&msn);
+        msn=Tippstring(Tx[T_Hylafax_und_Capisuite_eigene_MSN_Faxnummer_ohne_Vorwahl],&msn);
         cgconf[lfd].setze(&msn);
       }
     } else {
@@ -2436,23 +2446,23 @@ void paramcl::rueckfragen()
 
     if (obcapi) {
       if (cgconf[++lfd].wert.empty() || rzf) {
-        LongDistancePrefix=holstring(Tx[T_Hylafax_Praefix_fuer_ausserorts_zB_0],&LongDistancePrefix);
+        LongDistancePrefix=Tippstring(Tx[T_Hylafax_Praefix_fuer_ausserorts_zB_0],&LongDistancePrefix);
         cgconf[lfd].setze(&LongDistancePrefix);
       }
       if (cgconf[++lfd].wert.empty() || rzf) {
-        InternationalPrefix=holstring(Tx[T_Hylafax_Praefix_fuer_das_Ausland_zB_00],&InternationalPrefix);
+        InternationalPrefix=Tippstring(Tx[T_Hylafax_Praefix_fuer_das_Ausland_zB_00],&InternationalPrefix);
         cgconf[lfd].setze(&InternationalPrefix);
       }
       if (cgconf[++lfd].wert.empty() || rzf) {
-        LocalIdentifier=holstring(Tx[T_Hylafax_bis_10_Buchstabe_fuer_eigenen_Namen],&LocalIdentifier);
+        LocalIdentifier=Tippstring(Tx[T_Hylafax_bis_10_Buchstabe_fuer_eigenen_Namen],&LocalIdentifier);
         cgconf[lfd].setze(&LocalIdentifier);
       }
       if (cgconf[++lfd].wert.empty() || rzf) {
-        cFaxUeberschrift=holstring(Tx[T_Capisuite_bis_20_Buchstaben_fuer_eigenen_Namen],&cFaxUeberschrift);
+        cFaxUeberschrift=Tippstring(Tx[T_Capisuite_bis_20_Buchstaben_fuer_eigenen_Namen],&cFaxUeberschrift);
         cgconf[lfd].setze(&cFaxUeberschrift);
       }
       if (cgconf[++lfd].wert.empty() || rzf) {
-        cklingelzahl=holzahl(Tx[T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt],cklingelzahl.c_str());
+        cklingelzahl=Tippzahl(Tx[T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt],cklingelzahl.c_str());
         cgconf[lfd].setze(&cklingelzahl);
       }
     } else {
@@ -2461,13 +2471,13 @@ void paramcl::rueckfragen()
 
     if (obhyla) {
       if (cgconf[++lfd].wert.empty() || rzf) {
-//        hmodem=holstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,hmodem.empty()?&modems[0]:&hmodem);
+//        hmodem=Tippstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,hmodem.empty()?&modems[0]:&hmodem);
         if (hmodem.empty()) hmodem=modems[0];
-        hmodem=holstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,&hmodem);
+        hmodem=Tippstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,&hmodem);
         cgconf[lfd].setze(&hmodem);
       }
       if (cgconf[++lfd].wert.empty() || rzf) {
-        hklingelzahl=holzahl(Tx[T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt],hklingelzahl.c_str());
+        hklingelzahl=Tippzahl(Tx[T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt],hklingelzahl.c_str());
         cgconf[lfd].setze(&hklingelzahl);
       }
     } else {
@@ -2475,77 +2485,77 @@ void paramcl::rueckfragen()
       hylazuerst=0;
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      gleichziel=holob(Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden],gleichziel?Tx[T_j_af]:"n");
+      gleichziel=Tippob(Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden],gleichziel?Tx[T_j_af]:"n");
       cgconf[lfd].setze(&gleichziel);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      zufaxenvz=holverz(Tx[T_Verzeichnis_mit_zu_faxenden_Dateien],&zufaxenvz);
+      zufaxenvz=Tippverz(Tx[T_Verzeichnis_mit_zu_faxenden_Dateien],&zufaxenvz);
       cgconf[lfd].setze(&zufaxenvz);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      wvz=holverz(Tx[T_Verzeichnis_mit_wartenden_Dateien],&wvz);
+      wvz=Tippverz(Tx[T_Verzeichnis_mit_wartenden_Dateien],&wvz);
       cgconf[lfd].setze(&wvz);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      gvz=holverz(Tx[T_Verzeichnis_mit_gescheiterten_Dateien],&gvz);
+      gvz=Tippverz(Tx[T_Verzeichnis_mit_gescheiterten_Dateien],&gvz);
       cgconf[lfd].setze(&gvz);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      empfvz=holverz(Tx[T_Verzeichnis_fuer_empfangene_Faxe],&empfvz);
+      empfvz=Tippverz(Tx[T_Verzeichnis_fuer_empfangene_Faxe],&empfvz);
       cgconf[lfd].setze(&empfvz);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      cronminut=holzahl(Tx[T_Alle_wieviel_Minuten_soll]+prog+Tx[T_aufgerufen_werden_0_ist_gar_nicht],&cronminut);
+      cronminut=Tippzahl(Tx[T_Alle_wieviel_Minuten_soll]+prog+Tx[T_aufgerufen_werden_0_ist_gar_nicht],&cronminut);
       cgconf[lfd].setze(&cronminut);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      anfaxstr=holstring(Tx[T_Buchstabenfolge_vor_erster_Faxnummer],&anfaxstr);
+      anfaxstr=Tippstring(Tx[T_Buchstabenfolge_vor_erster_Faxnummer],&anfaxstr);
       cgconf[lfd].setze(&anfaxstr);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      ancfaxstr=holstring(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Capisuite],&ancfaxstr);
+      ancfaxstr=Tippstring(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Capisuite],&ancfaxstr);
       cgconf[lfd].setze(&ancfaxstr);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      anhfaxstr=holstring(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax],&anhfaxstr);
+      anhfaxstr=Tippstring(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax],&anhfaxstr);
       cgconf[lfd].setze(&anhfaxstr);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      anstr=holstring(Tx[T_Buchstabenfolge_vor_erstem_Adressaten],&anstr);
+      anstr=Tippstring(Tx[T_Buchstabenfolge_vor_erstem_Adressaten],&anstr);
       cgconf[lfd].setze(&anstr);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      undstr=holstring(Tx[T_Buchstabenfolge_vor_weiterem_Adressaten_sowie_weiterer_Faxnummer],&undstr);
+      undstr=Tippstring(Tx[T_Buchstabenfolge_vor_weiterem_Adressaten_sowie_weiterer_Faxnummer],&undstr);
       cgconf[lfd].setze(&undstr);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      host=holstring(Tx[T_Host_fuer_MySQL_MariaDB_Datenbank],&host);
+      host=Tippstring(Tx[T_Host_fuer_MySQL_MariaDB_Datenbank],&host);
       cgconf[lfd].setze(&host);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
       string Frage=Tx[T_Benutzer_fuer_MySQL_MariaDB];
-      muser=holstring(Frage.c_str(),&muser);
+      muser=Tippstring(Frage.c_str(),&muser);
       cgconf[lfd].setze(&muser);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
       string Frage=string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Tx[T_fuer_Benutzer]+drot+muser+schwarz+"'";
       do {
-        mpwd=holstring(Frage.c_str(),&mpwd);
+        mpwd=Tippstring(Frage.c_str(),&mpwd);
       }
       while (mpwd.empty());
       string pwdstr=XOR(mpwd,pk);
       cgconf[lfd].setze(&pwdstr);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      dbq=holstring(string(Tx[T_Datenbankname_fuer_MySQL_MariaDB_auf])+host+"'",&dbq);
+      dbq=Tippstring(string(Tx[T_Datenbankname_fuer_MySQL_MariaDB_auf])+host+"'",&dbq);
       cgconf[lfd].setze(&dbq);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      logvz=holverz(Tx[T_Logverzeichnis],&logvz);
+      logvz=Tippverz(Tx[T_Logverzeichnis],&logvz);
       cgconf[lfd].setze(&logvz);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      logdname=holstring(Tx[T_Logdateiname],&logdname);
+      logdname=Tippstring(Tx[T_Logdateiname],&logdname);
       cgconf[lfd].setze(&logdname);
     }
     loggespfad = string(logvz)+vtz+logdname;
@@ -2567,7 +2577,7 @@ void paramcl::rueckfragen()
            &nix;
        string zwi;
        while (1) {
-         zwi=holstring(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt+1)+(vorgabe->empty()?
+         zwi=Tippstring(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt+1)+(vorgabe->empty()?
                Tx[T_faxnr_wird_ersetzt_mit_der_Faxnr]:
                Tx[T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr]),
              vorgabe);
@@ -2579,7 +2589,7 @@ void paramcl::rueckfragen()
            // <<"dben.size(): "<<(int)dben.size()<<endl;
            uchar dbda=1;
            if (!dben.size()) {
-             if (holob(string(Tx[T_In])+rot+zwi+blau+Tx[T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
+             if (Tippob(string(Tx[T_In])+rot+zwi+blau+Tx[T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
              dbda=0;
            } else { // if (!dben.size()) 
              uchar nochmal=0;
@@ -2587,7 +2597,7 @@ void paramcl::rueckfragen()
                // <<"i: "<<blau<<i<<rot<<": "<<dben[i]<<schwarz<<endl;
                if (pruefDB(dben[i])) {
                  dbda=0;
-                 if (holob(string(Tx[T_Datenbank])+rot+dben[i]+blau+Tx[T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) {
+                 if (Tippob(string(Tx[T_Datenbank])+rot+dben[i]+blau+Tx[T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) {
                    nochmal=1;
                    break;
                  } // if (strchr("jyJYoOsS",(int)erg)) 
@@ -2597,11 +2607,11 @@ void paramcl::rueckfragen()
            } // if (!dben.size()) 
            if (dbda) {
              if (zwi.find("&&faxnr&&")==string::npos) {
-               if (holob(string(Tx[T_In])+rot+zwi+blau+Tx[T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
+               if (Tippob(string(Tx[T_In])+rot+zwi+blau+Tx[T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
              } else {
                RS rtest(this->My,ersetzAllezu(zwi,"&&faxnr&&","9999")); // (const char*)trimfaxnr));
                if (rtest.obfehl) {
-                 if (holob(string(Tx[T_In])+rot+zwi+blau+Tx[T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
+                 if (Tippob(string(Tx[T_In])+rot+zwi+blau+Tx[T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
                } // if (rtest.obfehl)
              } // if (zwi.find("&&faxnr&&")==string::npos) 
            } // if (dbda)
@@ -2619,7 +2629,7 @@ void paramcl::rueckfragen()
          nsqlzn++;
        } // if (zwi.empty()) else
        if (akt>=sqlzn && akt>=sqlvzn) {
-         if (!holob(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],Tx[T_j_af])) break;
+         if (!Tippob(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],Tx[T_j_af])) break;
        }
       } // for(size_t akt=0;;akt++) 
       string nsqlz=ltoan(nsqlzn);
@@ -2642,13 +2652,13 @@ void paramcl::rueckfragen()
     for(;;akt++) {
       cppSchluess* neuS=new cppSchluess;
       neuS->name=string("ZMMuster_")+ltoan(akt+1);
-      neuS->wert=holstring(string("Zielmuster Nr. ")+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],(akt<zmzn)?&zmp[akt].holmuster():&nix);
+      neuS->wert=Tippstring(string("Zielmuster Nr. ")+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],(akt<zmzn)?&zmp[akt].holmuster():&nix);
       if (neuS->wert=="-") neuS->wert.clear();
       uchar obabbrech=(neuS->wert.empty()); // das letzte Muster muss leer sein, damit jede Datei irgendwo hinkommt
       zmv.push_back(neuS);
       neuS=new cppSchluess;
       neuS->name=string("ZMZiel_")+ltoan(akt+1);
-      neuS->wert=holstring(string("Zielverzeichnis Nr. ")+ltoan(akt+1),(akt<zmzn)?&zmp[akt].ziel:&nix);
+      neuS->wert=Tippstring(string("Zielverzeichnis Nr. ")+ltoan(akt+1),(akt<zmzn)?&zmp[akt].ziel:&nix);
       zmv.push_back(neuS);
       if (obabbrech) break;
     }
@@ -2659,7 +2669,7 @@ void paramcl::rueckfragen()
 
     /*
     if (cgconf[++lfd].wert.empty() || rzf) {
-      string  nzmz=holzahl(Tx[T_Zahl_der_Verzeichnisse_fuer_erfolgreich_verschickte_Faxe],&zmz);
+      string  nzmz=Tippzahl(Tx[T_Zahl_der_Verzeichnisse_fuer_erfolgreich_verschickte_Faxe],&zmz);
       size_t nzmzn;
       while (1) {
         nzmzn=atol(nzmz.c_str());
@@ -2679,11 +2689,11 @@ void paramcl::rueckfragen()
       while (1) {
         int fehler=0;
         for(size_t akt=0;akt<nzmzn;akt++) {
-          string zwi=holstring(string("Zielmuster Nr. ")+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],&zmconf[2*akt].wert);
+          string zwi=Tippstring(string("Zielmuster Nr. ")+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],&zmconf[2*akt].wert);
           zmconf[2*akt].name=string("ZMMuster_")+ltoan(akt+1);
           if (akt==nzmzn-1) zwi.clear(); // das letzte Muster muss leer sein, damit jede Datei irgendwo hinkommt
           zmconf[2*akt].setze(&zwi);
-          zwi=holstring(string("Zielverzeichnis Nr. ")+ltoan(akt+1),&zmconf[2*akt+1].wert);
+          zwi=Tippstring(string("Zielverzeichnis Nr. ")+ltoan(akt+1),&zmconf[2*akt+1].wert);
           zmconf[2*akt+1].name=string("ZMZiel_")+ltoan(akt+1);
           zmconf[2*akt+1].setze(&zwi);
         }
@@ -2732,7 +2742,7 @@ void paramcl::autofkonfschreib()
   */
 
   if (rzf || zmzukonf) {
-    Log(violetts+Tx[T_schreibe_Konfigurkation]+schwarz,obverb,oblog);
+    Log(gruens+Tx[T_schreibe_Konfiguration]+schwarz,obverb,oblog);
     for (size_t i=0;i<cgconf.zahl;i++) {
      if (cgconf[i].name=="obhyla") cgconf[i].setze(&obhyla);
      else if (cgconf[i].name=="obcapi") cgconf[i].setze(&obcapi);
@@ -2853,10 +2863,10 @@ void paramcl::konfcapi()
     // fax_stationID
     capicffehlt=1;
   }
-  if (rzf || capicffehlt) {
+  if (rzf || (capicffehlt && !nrzf)) {
     while (capiconf[6].wert.find("000 0000")!=string::npos || !istelnr(capiconf[6].wert)) {
       capiconf[6].wert="+"+countrycode+" "+citycode+" "+msn;
-      capiconf[6].wert=holstring(string("fax_stationID: ")+Tx[T_Faxnr_die_zum_Adressaten_gesandt_wird_bis_20_Zeichen_nur_plus_und_Ziffern],
+      capiconf[6].wert=Tippstring(string("fax_stationID: ")+Tx[T_Faxnr_die_zum_Adressaten_gesandt_wird_bis_20_Zeichen_nur_plus_und_Ziffern],
           &capiconf[6].wert);
     }
     vector<string> tok;
@@ -2865,37 +2875,37 @@ void paramcl::konfcapi()
     capiconf[4].wert=msn;
     if (capiconf[4].wert.empty() || isneun(capiconf[4].wert)) capiconf[4].wert=tok[tok.size()-1].c_str();
     do {
-      capiconf[4].wert=holstring(string("outgoing_MSN: ")+
+      capiconf[4].wert=Tippstring(string("outgoing_MSN: ")+
           Tx[T_ausgehende_Multiple_Subscriber_Number_Faxnummer_ohne_Vorwahl],&capiconf[4].wert);
     } while (capiconf[4].wert.empty() || !isnumeric(capiconf[4].wert) || isneun(capiconf[4].wert));
     // dial_prefix
-    capiconf[5].wert=holstring(string("dial_prefix: ")+Tx[T_Amtsholung_ueblicherweise_kk_oder_0],&capiconf[5].wert);
+    capiconf[5].wert=Tippstring(string("dial_prefix: ")+Tx[T_Amtsholung_ueblicherweise_kk_oder_0],&capiconf[5].wert);
     // fax_headline
     capiconf[7].wert=cFaxUeberschrift;
-    capiconf[7].wert=holstring(string("fax_headline: ")+Tx[T_Faxueberschrift],&capiconf[7].wert);
+    capiconf[7].wert=Tippstring(string("fax_headline: ")+Tx[T_Faxueberschrift],&capiconf[7].wert);
     // fax_email_from
-    capiconf[8].wert=holstring(string("fax_email_from: ")+
+    capiconf[8].wert=Tippstring(string("fax_email_from: ")+
         Tx[T_Adressat_empfangener_Faxe_die_ueber_Email_verteilt_werden],&capiconf[8].wert);
     // send_tries
     capiconf[2].wert="15";
     do {
-      capiconf[2].wert=holstring(string("send_tries: ")+Tx[T_Zahl_der_Sendeversuche],&capiconf[2].wert);
+      capiconf[2].wert=Tippstring(string("send_tries: ")+Tx[T_Zahl_der_Sendeversuche],&capiconf[2].wert);
     } while (capiconf[2].wert.empty() || !isnumeric(capiconf[2].wert));
     // send_delays
     capiconf[3].wert="60,60,60,300,300,300,300,300,3600,3600,3600,3600,18000,36000";
     do {
-      capiconf[3].wert=holstring(string("send_delays: ")+Tx[T_kommagetrennte_Liste_mit_Sekundenabstaenden_zwischen_Sendeversuchen],
+      capiconf[3].wert=Tippstring(string("send_delays: ")+Tx[T_kommagetrennte_Liste_mit_Sekundenabstaenden_zwischen_Sendeversuchen],
           &capiconf[3].wert);
     } while (capiconf[3].wert.empty() || !isnumeric(capiconf[3].wert));
     // outgoing_timeout
     capiconf[9].wert="60";
-    capiconf[9].wert=holstring(string("outgoing_timeout: ")+Tx[T_Geduld_bis_zum_Verbindungsaufbau_in_s],&capiconf[9].wert);
+    capiconf[9].wert=Tippstring(string("outgoing_timeout: ")+Tx[T_Geduld_bis_zum_Verbindungsaufbau_in_s],&capiconf[9].wert);
     if (obverb>0) {
       for(unsigned snr=0;snr<capiconf.zahl;snr++) {
         Log(string("snr: ")+blau+ltoan(snr)+schwarz+" "+capiconf[snr].wert+", "+capiconf[snr].wert,obverb,oblog);
       }
     }
-  } // if (cfax_stationID.find("000 0000")!=string::npos) 
+  } // if (rzf || (capicffehlt && !nrzf))
   string suchcuser=string("[")+cuser+"]";
   // es gibt zwei moegliche Gruende zum Neuschreiben der Datei: 1) Parameter diffierieren, 2) noch kein User angelegt
   uchar cuserda=0, paramdiff=0, neuschreiben=0;
@@ -3100,6 +3110,8 @@ void paramcl::pruefsamba()
   int gestartet=0;
   uchar conffehlt;
   const string quelle="/usr/share/samba/smb.conf";
+  uchar obinst=0; // ob Samba installiert werden soll bzw. die smb.conf bearbeitet
+  uchar obfw=0; // ob SuSEfirewall bearbeitet werden soll
   for(uchar iru=0;iru<2;iru++) {
     if (!(conffehlt=lstat(smbdatei,&sstat))) break;
     if (iru) break;
@@ -3117,8 +3129,12 @@ void paramcl::pruefsamba()
   if (dienstzahl<2 || conffehlt) {
     for(int aru=0;aru<2;aru++) {
       if (aru) { 
-        linst.doinst("samba",obverb,oblog);
-//        smbrestart=0;
+        if (!nrzf) {
+          obinst=Tippob(Tx[T_Samba_muesste_installiert_werden_soll_ich],Tx[T_j_af]);
+          if (obinst)
+            linst.doinst("samba",obverb,oblog);
+          //        smbrestart=0;
+        }
       }
       if (smb.serviceda) {
         smb.machfit(obverb,oblog);
@@ -3174,8 +3190,12 @@ void paramcl::pruefsamba()
   for(unsigned k=0;k<vzn.size();k++) {
     if (!gef[k]) {
       smbrestart=1;
-      mdatei sapp(smbdatei,ios::out|ios::app);
+      if (!obinst) {
+       obinst=Tippob(Tx[T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden],Tx[T_j_af]);
+       if (!obinst) break;
+      }
       Log(rots+Tx[T_Verzeichnis]+blau+*vzn[k]+rot+Tx[T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt]+schwarz,1,oblog);
+      mdatei sapp(smbdatei,ios::out|ios::app);
       if (sapp.is_open()) {
        if (k<4) {
          sapp<<"["<<VSambaName[k]<<"]"<<endl;
@@ -3194,16 +3214,18 @@ void paramcl::pruefsamba()
       }
     }
   } // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
-  if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
-    string pw1, pw2;
-    while (1) {
-      pw1=holstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz,&pw1);
-      pw2=holstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" ("+Tx[T_erneute_Eingabe]+")",&pw2);
-      if (pw1==pw2) break;
+  if (!nrzf) {
+    if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
+      string pw1, pw2;
+      while (1) {
+        pw1=Tippstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz,&pw1);
+        pw2=Tippstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" ("+Tx[T_erneute_Eingabe]+")",&pw2);
+        if (pw1==pw2) break;
+      }
+      systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
+      systemrueck("(echo "+pw1+"; echo "+pw2+") | sudo smbpasswd -s "+cuser,obverb,oblog);
     }
-    systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
-    systemrueck("(echo "+pw1+"; echo "+pw2+") | sudo smbpasswd -s "+cuser,obverb,oblog);
-  }
+  } // if (!nrzf)
   if (smbrestart) {
     if (smb.serviceda) smb.restart(obverb-1,oblog);
     else if (smbd.serviceda) smbd.restart(obverb-1,oblog);
@@ -3216,12 +3238,18 @@ void paramcl::pruefsamba()
   if (!lstat(susefw,&fstat)) {
     string prog="server";
     for(int i=1;i<3;i++) {
-      systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+prog+"' /etc/sysconfig/SuSEfirewall2 >/dev/null "
-          "|| { sed -i.bak_"+ich+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+prog+"\\2/g' /etc/sysconfig/SuSEfirewall2 "
-          "&& systemctl restart SuSEfirewall2 smb nmb; }",obverb,oblog); 
+      int nichtfrei=systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+prog+"' "+susefw+" >/dev/null",obverb,oblog);
+      if (nichtfrei && !nrzf && !obfw) {
+       obfw=Tippob(Tx[T_Soll_die_SuSEfirewall_bearbeitet_werden],Tx[T_j_af]);
+       if (!obfw) break;
+      }
+      if (nichtfrei && obfw) {
+      systemrueck("sed -i.bak_"+ich+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+prog+"\\2/g' "+susefw+
+          " && systemctl restart SuSEfirewall2 smb nmb",obverb,oblog); 
+      }
       prog="client";
-    }
-  }
+    } // for(int i=1;i<3;i++) 
+  } // if (!lstat(susefw,&fstat)) 
 } // pruefsamba
 
 // wird aufgerufen in: main
@@ -3379,9 +3407,9 @@ void paramcl::bereinigewv()
                         fdn.erase(fit); // die in der Spool-Tabelle genannten Dateien stehen lassen
                       }
                       //                      Log(string(ltoan(entryfit.st_size))+" "+(runde==2?dblau:runde==1?blau:rot)+*fit+schwarz,1,1);
-                      Log(string(ltoan(entryfit.st_size))+" "+(runde?(**(*cerg+2)=='1'?blau:violett):rot)+*fit+schwarz,1,1);
+                      Log(string(ltoan(entryfit.st_size))+" "+(runde?(**(*cerg+2)=='1'?blau:gruen):rot)+*fit+schwarz,1,1);
                     } else {
-                      Log(string(Tx[T_0Bytes])+violett+wvz+vtz+*fit+schwarz+"'",1,1);
+                      Log(string(Tx[T_0Bytes])+gruen+wvz+vtz+*fit+schwarz+"'",1,1);
                     } // if (!lstat(quel.c_str(),&entryfit)) else
                   } // if (!lstat(quel.c_str(),&entryfit)) 
                 } // if ((fit=fdn.find(dbdocname))!=fdn.end()) 
@@ -3398,7 +3426,7 @@ void paramcl::bereinigewv()
 // wird aufgerufen in: main
 int paramcl::loeschefax(int obverb, int oblog)
 {
-  Log(blaus+Tx[T_loeschefax]+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_loeschefax]+schwarz,obverb,oblog);
   vector<fsfcl> fsfv;
   size_t nr=0;
   string ergnr,erg;
@@ -3418,38 +3446,40 @@ int paramcl::loeschefax(int obverb, int oblog)
       fsfv.push_back(fsfcl(*(*cerg+1),*(*cerg+2),*(*cerg+4),*(*cerg+3)));
     }
   }
-  if (fsfv.size()) {
-    ergnr=holzahl(Tx[T_Welches_Fax_soll_geloescht_werden]);
-    if (ergnr=="0") return 0;
-    if (holob(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+violett+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],"n")) {
-      nr=atol(ergnr.c_str())-1;
-      if (nr>=0 && nr<fsfv.size()) {
-        int zdng=0; // Zahl der nicht geloeschten
-        if (fsfv[nr].capisd!="NULL" && !fsfv[nr].capisd.empty()) {
-          zdng+=fsfv[nr].loeschecapi(obverb,oblog);
-          Log(blaus+"capi: "+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng)+blau+Tx[T_Capispooldatei]+
-              schwarz+fsfv[nr].capisd,obverb,oblog);
-        }
-        if (fsfv[nr].hylanr!="NULL" && !fsfv[nr].hylanr.empty()) {
-          zdng+=fsfv[nr].loeschehyla(this,obverb,oblog);
-          Log(blaus+"hyla: "+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng)+blau+Tx[T_hylanr]+schwarz+fsfv[nr].capisd,obverb,oblog);
-        }
-        Log(blaus+Tx[T_Gesamt]+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng),obverb,oblog);
-        struct stat entrysend;
-        fsfv[nr].setzcapistat(this,&entrysend);
-        string protdakt;
-        uchar hyla_uverz_nr=1;
-        int obsfehlt=0;
-        /*fsfv[nr].*/setzhylastat(&fsfv[nr], &protdakt, &hyla_uverz_nr, &obsfehlt, 0, obverb, oblog); // hyla_uverz_nr, obsfehlt
-        Log(violetts+"capistat: "+schwarz+FxStatS(&fsfv[nr].capistat)+violett+", hylastat: "+schwarz+FxStatS(&fsfv[nr].hylastat),obverb,oblog);
-        if (!zdng || (fsfv[nr].capistat==fehlend && fsfv[nr].hylastat==fehlend)) {
-          RS loe(My,string("delete from `")+spooltab+"` where id="+fsfv[nr].id,-obverb);
-        }
-      } // if (nr>=0 && nr<fsfv.size()) 
-    } // if (holob(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+violett+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],"n")) 
-  } else {
-    Log(Tx[T_Kein_Fax_zum_Loeschen_vorhanden],1,oblog);
-  }
+  if (!nrzf) {
+    if (fsfv.size()) {
+      ergnr=Tippzahl(Tx[T_Welches_Fax_soll_geloescht_werden]);
+      if (ergnr=="0") return 0;
+      if (Tippob(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+gruen+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],"n")) {
+        nr=atol(ergnr.c_str())-1;
+        if (nr>=0 && nr<fsfv.size()) {
+          int zdng=0; // Zahl der nicht geloeschten
+          if (fsfv[nr].capisd!="NULL" && !fsfv[nr].capisd.empty()) {
+            zdng+=fsfv[nr].loeschecapi(obverb,oblog);
+            Log(blaus+"capi: "+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng)+blau+Tx[T_Capispooldatei]+
+                schwarz+fsfv[nr].capisd,obverb,oblog);
+          }
+          if (fsfv[nr].hylanr!="NULL" && !fsfv[nr].hylanr.empty()) {
+            zdng+=fsfv[nr].loeschehyla(this,obverb,oblog);
+            Log(blaus+"hyla: "+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng)+blau+Tx[T_hylanr]+schwarz+fsfv[nr].capisd,obverb,oblog);
+          }
+          Log(blaus+Tx[T_Gesamt]+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng),obverb,oblog);
+          struct stat entrysend;
+          fsfv[nr].setzcapistat(this,&entrysend);
+          string protdakt;
+          uchar hyla_uverz_nr=1;
+          int obsfehlt=0;
+          /*fsfv[nr].*/setzhylastat(&fsfv[nr], &protdakt, &hyla_uverz_nr, &obsfehlt, 0, obverb, oblog); // hyla_uverz_nr, obsfehlt
+          Log(violetts+"capistat: "+schwarz+FxStatS(&fsfv[nr].capistat)+violett+", hylastat: "+schwarz+FxStatS(&fsfv[nr].hylastat),obverb,oblog);
+          if (!zdng || (fsfv[nr].capistat==fehlend && fsfv[nr].hylastat==fehlend)) {
+            RS loe(My,string("delete from `")+spooltab+"` where id="+fsfv[nr].id,-obverb);
+          }
+        } // if (nr>=0 && nr<fsfv.size()) 
+      } // if (Tippob(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+violett+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],"n")) 
+    } else {
+      Log(Tx[T_Kein_Fax_zum_Loeschen_vorhanden],1,oblog);
+    }
+  } // !nrzf
   return 1;
 } // int paramcl::loeschefax(int obverb, int oblog)
 
@@ -4062,7 +4092,7 @@ void paramcl::zeigweitere()
           string base=base_name(zugeh);
           RS inouta(My,string("select submid from `")+touta+"` where submid = '"+base+"'",ZDB);
           if (inouta.num_rows) {
-            Log(blaus+Tx[T_Verwaiste_Datei]+violett+rueck[i]+schwarz+Tx[T_geloescht_Fax_schon_in]+violett+touta+schwarz+
+            Log(blaus+Tx[T_Verwaiste_Datei]+gruen+rueck[i]+schwarz+Tx[T_geloescht_Fax_schon_in]+gruen+touta+schwarz+
                 Tx[T_archiviert_Ausrufezeichen],1,1);
             tuloeschen(rueck[i],cuser,obverb,oblog);
             break;
@@ -4256,7 +4286,7 @@ void paramcl::empfarch()
     if (absdr.length()>70) absdr.erase(70);
     string hdatei = "Fax h"+fnr+","+Tx[T_von]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf+".tif";
     string hpfad=empfvz+vtz+hdatei;
-    Log(blaus+base+schwarz+" => "+violett+hdatei+schwarz,1,1);
+    Log(blaus+base+schwarz+" => "+gruen+hdatei+schwarz,1,1);
     // ..., die empfangene Datei in hpfad kopieren ...
     cmd=string("sudo cp -ai \"")+rueck[i]+"\" \""+hpfad+"\"";
     systemrueck(cmd,obverb,oblog);
@@ -4343,7 +4373,7 @@ void paramcl::empfarch()
       if (getname.length()>70) getname.erase(70);
       string cdatei = "Fax c"+fnr+","+Tx[T_von]+getname+", T."+stdfaxnr(umst[1].wert)+","+Tx[T_vom]+tbuf+".tif";
       string cpfad= empfvz + vtz+cdatei; // Tx[T_Fax_von]+umst[1].wert+Tx[T_an]+umst[2].wert+Tx[T_vom]+tbuf+".tif";
-      Log(blaus+stamm+schwarz+" => "+violett+cdatei+schwarz,1,1);
+      Log(blaus+stamm+schwarz+" => "+gruen+cdatei+schwarz,1,1);
       // ..., die empfangene Datei in hpfad kopieren ...
       if (!lstat(sffname.c_str(),&entrysff)) {
         if (entrysff.st_size) {
@@ -4936,7 +4966,7 @@ int paramcl::pruefhyla()
     Log(string(Tx[T_Baudratevon])+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_af]+rot+brs+schwarz+Tx[T_zugeringVerwendeHylafaxnicht],1,1);
     //    return 1;
   } else {
-    Log(string("Modem '")+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+violett+brs+schwarz+Tx[T_wird_verwendet],obverb,oblog);
+    Log(string("Modem '")+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+gruen+brs+schwarz+Tx[T_wird_verwendet],obverb,oblog);
   }
   if (!this->sfaxgetty) this->sfaxgetty=new servc("hylafax-faxgetty-"+this->hmodem,"faxgetty");
   for(unsigned versuch=0;versuch<3;versuch++) {
@@ -5028,7 +5058,7 @@ int paramcl::pruefhyla()
         hylafehlt=linst.obfehlt(hfr,obverb,oblog) || linst.obfehlt(hfcr,obverb,oblog) || 
           obprogda("faxq",obverb,oblog).empty() || obprogda("hfaxd",obverb,oblog).empty() || obprogda("faxgetty",obverb,oblog).empty();
         string vstring=ltoan(versuch);
-        Log(violetts+Tx[T_hylafehlt]+schwarz+ltoan(hylafehlt)+violett+Tx[T_Versuch]+schwarz+vstring,obverb,oblog);
+        Log(gruens+Tx[T_hylafehlt]+schwarz+ltoan(hylafehlt)+gruen+Tx[T_Versuch]+schwarz+vstring,obverb,oblog);
         // b1) falsches Hylafax loeschen
         if (hylafehlt) {
           if (falscheshyla) {
@@ -5283,7 +5313,7 @@ void pruefblack(int obverb, int oblog)
       if (blacka.is_open()) {
         for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++) {
           if (!obda[i]) {
-            Log(string(Tx[T_haengean])+blau+blackd+schwarz+Tx[T_an_mdpp]+violetts+vgl[i]+schwarz,obverb,oblog);
+            Log(string(Tx[T_haengean])+blau+blackd+schwarz+Tx[T_an_mdpp]+gruen+vgl[i]+schwarz,obverb,oblog);
             blacka<<vgl[i]<<endl;
           }
         } // for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++) 
@@ -5534,7 +5564,7 @@ int paramcl::pruefcapi()
     }
     if (this->obcapi) pruefmodcron(obverb,oblog);
   } else {
-    Log(rots+Tx[T_konntecapisuiteservice]+violett+ltoan(versuch)+rot+Tx[T_malnichtstartenverwN]+schwarz,1,1);
+    Log(rots+Tx[T_konntecapisuiteservice]+gruen+ltoan(versuch)+rot+Tx[T_malnichtstartenverwN]+schwarz,1,1);
     return 1;
   }
   return 0;
@@ -6232,6 +6262,7 @@ uchar paramcl::setzhconfp(string *protdaktp,int obverb)
 void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, int *obsfehltp, uchar startvznr,
     int obverb, int oblog, string *hylastatep, string *hyladialsp, string *hylastatusp, string *hylastatuscodep) 
 {
+  Log(violetts+Tx[T_setzhylastat]+schwarz,obverb,oblog);
   string startvznrs = ltoan(startvznr);
   Log(violetts+"hylanr: "+schwarz+fsf->hylanr+violetts+" "+Tx[T_setzhylastat]+schwarz+
       " hyla_uverz_nrp: "+blau+ltoan(*hyla_uverz_nrp)+schwarz+" startvznr: "+blau+startvznrs+schwarz,
@@ -6294,7 +6325,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
       }
     } // if (*hyla_uverz_nrp) 
   } // if (*obsfehltp) else
-  Log(violetts+"hylastat: "+blau+FxStatS(&fsf->hylastat)+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_Ende]+" "+Tx[T_setzhylastat]+", hylastat: "+blau+FxStatS(&fsf->hylastat)+schwarz,obverb,oblog);
 } // setzhylastat
 
 // wird aufgerufen in untersuchespool und zeigweitere

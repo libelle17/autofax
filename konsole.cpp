@@ -153,6 +153,8 @@ Txkonsolecl::Txkonsolecl()
 
 class Txkonsolecl Txk;
 
+uchar nrzf=0; // nicht rueckzufragen, fuer Aufruf aus Cron
+
 argcl::argcl(int i,char** argv) 
 {
   argcs=argv[i];
@@ -1681,7 +1683,7 @@ string aktprogverz()
   return string(pBuf);
 } // string aktprogverz()
 
-char holbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
+char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
 {
   string input;
   if (!erlaubt) erlaubt=moegl.c_str();
@@ -1700,19 +1702,19 @@ char holbuchst(const string& frage, const string& moegl,const char *berkl[], con
     if (input[0]) if (strchr(erlaubt,(int)input[0])) break;
   }
   return input[0];
-  //  return holbuchst(frage.c_str(), moegl.c_str(), berkl, erlaubt, vorgabe);
-} // char holbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
+  //  return Tippbuchst(frage.c_str(), moegl.c_str(), berkl, erlaubt, vorgabe);
+} // char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
 
 
 // vorgabe fur vorgabe = T_j_k; alternativ='n'
-uchar holob(const string& frage,const char *vorgabe) 
+uchar Tippob(const string& frage,const char *vorgabe) 
 {
-  char erg=holbuchst(frage, string(Txk[T_j_k])+"n",0,"jJyYoOsSnN",vorgabe);
+  char erg=Tippbuchst(frage, string(Txk[T_j_k])+"n",0,"jJyYoOsSnN",vorgabe);
   return (!!strchr("jyJYoOsS",(int)erg));
-} // uchar holob(const string& frage,const char *vorgabe) 
+} // uchar Tippob(const string& frage,const char *vorgabe) 
 
 // bisher nicht verwendet, 15.12.15
-string holstrings(const char *frage, char* moegl[], char *vorgabe)
+string Tippstrings(const char *frage, char* moegl[], char *vorgabe)
   // das letzte Element von moegl muss 0 sein
 {
   string input;
@@ -1737,9 +1739,9 @@ string holstrings(const char *frage, char* moegl[], char *vorgabe)
     if (passt) break; 
   }
   return input;
-} // holstrings
+} // Tippstrings
 
-string holstrings(const char *frage, vector<string> *moegl, string *vorgabe)
+string Tippstrings(const char *frage, vector<string> *moegl, string *vorgabe)
 {
   string input;
   while(1) {
@@ -1764,10 +1766,10 @@ string holstrings(const char *frage, vector<string> *moegl, string *vorgabe)
     if (passt) break; 
   }
   return input;
-} // holstrings
+} // Tippstrings
 
 
-string holzahl(const char *frage, const char *vorgabe) 
+string Tippzahl(const char *frage, const char *vorgabe) 
 {
   string input;
   while(1) {
@@ -1779,31 +1781,31 @@ string holzahl(const char *frage, const char *vorgabe)
     if (isnumeric(input)) break;
   }
   return input;
-} // holzahl
+} // Tippzahl
 
-string holzahl(const char *frage, string *vorgabe) 
+string Tippzahl(const char *frage, string *vorgabe) 
 {
-  return holzahl(frage,(vorgabe?vorgabe->c_str():0)); 
+  return Tippzahl(frage,(vorgabe?vorgabe->c_str():0)); 
 }
-string holzahl(const string& frage, string *vorgabe)
+string Tippzahl(const string& frage, string *vorgabe)
 {
- return holzahl(frage.c_str(),(vorgabe?vorgabe->c_str():0));
+ return Tippzahl(frage.c_str(),(vorgabe?vorgabe->c_str():0));
 }
 
-char* holcstring(const char *frage, char* buf, unsigned long buflen, const char* vorgabe) 
+char* Tippcstring(const char *frage, char* buf, unsigned long buflen, const char* vorgabe) 
 {
   string vstr=string(vorgabe);
-  strncpy(buf,holstring(string(frage),&vstr).c_str(),buflen-1);
+  strncpy(buf,Tippstring(string(frage),&vstr).c_str(),buflen-1);
   buf[buflen-1]=0;
   return buf;
-} // holcstring
+} // Tippcstring
 
-string holstring(const char *frage, const string *vorgabe) 
+string Tippstring(const char *frage, const string *vorgabe) 
 {
-  return holstring(string(frage), vorgabe);
-} // holstring
+  return Tippstring(string(frage), vorgabe);
+} // Tippstring
 
-string holstring(const string& frage, const string *vorgabe) 
+string Tippstring(const string& frage, const string *vorgabe) 
 {
   string input;
   while(1) {
@@ -1818,9 +1820,9 @@ string holstring(const string& frage, const string *vorgabe)
     break;
   }
   return input;
-} // holstring
+} // Tippstring
 
-string holverz(const char *frage,string *vorgabe) 
+string Tippverz(const char *frage,string *vorgabe) 
 {
   string input, vg2="n"; uchar fertig=0;
   while(1) {
@@ -1858,7 +1860,7 @@ string holverz(const char *frage,string *vorgabe)
     if (fertig) break;
   }
   return input;
-} // holverz
+} // Tippverz
 
 uchar VerzeichnisGibts(const char* vname)
 {
