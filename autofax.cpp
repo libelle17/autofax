@@ -5001,14 +5001,14 @@ int paramcl::pruefhyla()
       // 3) ggf. neu installieren
       Log(rots+Tx[T_Muss_Hylafax_installieren]+schwarz,1,1);
       // a) von der source
+      linst.doinst("ghostscript",obverb+1,oblog,"gs");
+      linst.doinst("tiff",obverb+1,oblog,"tiff2ps");
+      linst.doinst("sendmail",obverb+1,oblog,"sendmail", wahr);
       if (hyinstart==hysrc) {
         if (1) {
           systemrueck("sudo wget -O hylafax+ https://sourceforge.net/projects/hylafax/files/latest",obverb,oblog);
           systemrueck("sudo tar xvf hylafax+",obverb,oblog);
           // 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
-          linst.doinst("ghostscript",obverb+1,oblog,"gs");
-          linst.doinst("tiff",obverb+1,oblog,"tiff2ps");
-          linst.doinst("sendmail",obverb+1,oblog,"sendmail", wahr);
           systemrueck("sudo sh -c 'cd $(sudo tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
                 "./configure --nointeractive && echo $? = Ergebnis nach configure && "
                 "sed -i.bak \"s.PAGESIZE='\\''North American Letter'\\''.PAGESIZE='\\''ISO A4'\\''.g;"
