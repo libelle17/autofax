@@ -1939,7 +1939,6 @@ void paramcl::liescapiconf()
     static confdat cfaxconf(cfaxconfdat,&capiconf,obverb);
     cfaxcp=&cfaxconf;
     cfaxcp->Abschn_auswert(obverb);
-    cout<<rot<<"cuser 1: "<<gruen<<cuser<<schwarz<<endl;
     // wenn sich cuser in cfaxconf findet, dann so lassen
     // wenn nicht, dann:
     //   wenn cuser leer, dann den ersten besten user nehmen
@@ -1962,14 +1961,12 @@ void paramcl::liescapiconf()
     }
     if (cuser.empty()) 
       cuser=ncuser;
-    cout<<rot<<"cuser 2: "<<gruen<<cuser<<schwarz<<endl;
     if (cuser.empty()) {
       string benutzer=curruser();
       if (benutzer!="root")
        cuser=benutzer;
       hylazuerst=1;
     }
-    cout<<rot<<"cuser 3: "<<gruen<<cuser<<schwarz<<endl;
   }
   if (capiconf[0].wert.empty()) {
     spoolcapivz="/var/spool/capisuite";
@@ -2066,7 +2063,6 @@ void paramcl::pruefcvz()
   Log(violetts+Tx[T_pruefcvz]+schwarz+"ccfaxuservz: "+violett+cfaxuservz+schwarz,obverb,oblog);
   kuerzevtz(&cfaxuservz);
   pruefverz(cfaxuservz,obverb,oblog,1);
-    cout<<rot<<"cuser 4: "<<gruen<<cuser<<schwarz<<endl;
   cfaxusersqvz=cfaxuservz+vtz+cuser+"/sendq"; //  "/var/spool/capisuite/users/<user>/sendq";
   pruefverz(cfaxusersqvz,obverb,oblog,1);
   cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
@@ -2098,7 +2094,6 @@ void paramcl::lieskonfein()
     "gleichziel","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","cronminut","anfaxstr","ancfaxstr","anhfaxstr",
     "anstr","undstr","host","muser","mpwd","datenbank","logvz","logdname","sqlz","musterzahl");
   confdat afconf(konfdatname,&cgconf,obverb); // hier werden die Daten aus der Datei eingelesen
-    cout<<rot<<"cgconf[6]: "<<gruen<<cgconf[6].wert<<schwarz<<endl;
   if (1) {
     //  if (cpplies(konfdatname,gconf,gcs)) KLA
     // sodann werden die Daten aus gconf den einzelenen Klassenmitgliedsvariablen zugewiesen 
@@ -2118,9 +2113,7 @@ void paramcl::lieskonfein()
     if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hylazuerst); else rzf=1;} lfd++;
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxcapiv); else rzf=1;} lfd++;
     if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxhylav); else rzf=1;} lfd++;
-    cout<<rot<<"cuser 5: "<<gruen<<cuser<<schwarz<<endl;
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cuser); else rzf=1;} lfd++;
-    cout<<rot<<"cuser 6: "<<gruen<<cuser<<schwarz<<endl;
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&countrycode); else rzf=1;} lfd++;
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&citycode); else rzf=1;} lfd++;
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&msn); else rzf=1;} lfd++;
@@ -2239,9 +2232,7 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("mc","maxcapiv",&Tx, T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht,&maxcapiv,pzahl));
   opts.push_back(optioncl("mh","maxhylav",&Tx, T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet,&maxhylav,pzahl));
   opts.push_back(optioncl("ckzl","capiklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,&cklingelzahl,pzahl));
-    cout<<rot<<"cuser 7: "<<gruen<<cuser<<schwarz<<endl;
   opts.push_back(optioncl("cuser","cuser",&Tx, T_verwendet_fuer_Capisuite_den_Linux_Benutzer_string_anstatt,&cuser,psons));
-    cout<<rot<<"cuser 8: "<<gruen<<cuser<<schwarz<<endl;
   opts.push_back(optioncl("hkzl","hylaklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,&hklingelzahl,pzahl));
   opts.push_back(optioncl("gz","gleichziel", &Tx, T_FAxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,&gleichziel,1));
   opts.push_back(optioncl("afs","anfaxstring",&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,&anfaxstr,psons));
@@ -2303,9 +2294,7 @@ int paramcl::getcommandline()
     zmzukonf=1;
   }
   if (altcuser!=cuser || rzf) {
-    cout<<rot<<"cuser 8: "<<gruen<<cuser<<schwarz<<endl;
     setzegcp("cuser",&cuser);
-    cout<<rot<<"cuser 9: "<<gruen<<cuser<<schwarz<<endl;
     capizukonf=1;
     zmzukonf=1;
   }
@@ -2404,9 +2393,7 @@ void paramcl::rueckfragen()
         for(size_t i=0;i<benutzer.size();i++) {
           //          bliste+=benutzer[i];
           //          if (i<benutzer.size()-1) bliste+=",";
-    cout<<rot<<"cuser 10: "<<gruen<<cuser<<schwarz<<endl;
           if (cuser.empty()) cuser=benutzer[i]; // Vorgabe
-    cout<<rot<<"cuser 11: "<<gruen<<cuser<<schwarz<<endl;
         }
         /*
            string Frage=string("Linux-Benutzer fuer Capisuite (")+bliste+"):";
@@ -2416,11 +2403,8 @@ void paramcl::rueckfragen()
            tmpcuser.find(',')==string::npos); // nur vorhandene User akzeptieren
            cuser=tmpcuser;
          */
-    cout<<rot<<"cuser 12: "<<gruen<<cuser<<schwarz<<endl;
         cuser=holstrings(Tx[T_Linux_Benutzer_fuer_Capisuite],&benutzer,&cuser);
-    cout<<rot<<"cuser 13: "<<gruen<<cuser<<schwarz<<endl;
         cgconf[lfd].setze(&cuser);
-    cout<<rot<<"cuser 14: "<<gruen<<cuser<<schwarz<<endl;
       }
       if (cgconf[++lfd].wert.empty() || rzf) {
         countrycode=holstring(Tx[T_Hylafax_eigene_Landesvorwahl_ohne_plus_oder_00],&countrycode);
@@ -2772,9 +2756,7 @@ void paramcl::cliesconf()
  if (cfaxcp) {
    cfaxcp->Abschn_auswert(obverb);
    for(size_t i=0;i<cfaxcp->abschv.size();i++) {
-    cout<<rot<<"cuser 15: "<<gruen<<cuser<<schwarz<<endl;
      if (cfaxcp->abschv[i].aname==cuser) {
-    cout<<rot<<"cuser 16: "<<gruen<<cuser<<schwarz<<endl;
        for(size_t j=0;j<cfaxcp->abschv[i].av.size();j++) {
         if (cfaxcp->abschv[i].av[j].name=="fax_numbers") {if (cfaxcp->abschv[i].av[j].wert==capiconf[4].wert) richtige++;}
         else if (cfaxcp->abschv[i].av[j].name=="fax_stationID") {if (cfaxcp->abschv[i].av[j].wert==capiconf[6].wert) richtige++;}
@@ -2908,9 +2890,7 @@ void paramcl::konfcapi()
       }
     }
   } // if (cfax_stationID.find("000 0000")!=string::npos) 
-    cout<<rot<<"cuser 30: "<<gruen<<cuser<<schwarz<<endl;
   string suchcuser=string("[")+cuser+"]";
-    cout<<rot<<"cuser 31: "<<gruen<<cuser<<schwarz<<endl;
   // es gibt zwei moegliche Gruende zum Neuschreiben der Datei: 1) Parameter diffierieren, 2) noch kein User angelegt
   uchar cuserda=0, paramdiff=0, neuschreiben=0;
   string zeile, neudatei;
@@ -2975,7 +2955,6 @@ void paramcl::konfcapi()
       } else { // if (iru)
         if (!cuserda)  {
           // schreibe Konfiguration fuer Benutzer in fax.conf
-    cout<<rot<<"suchcuser: "<<gruen<<suchcuser<<schwarz<<endl;
           *fneu<<suchcuser<<endl;
           *fneu<<"fax_numbers=\""<<capiconf[4].wert<<"\""<<endl;
           *fneu<<"fax_stationID=\""<<capiconf[6].wert<<"\""<<endl;
@@ -4657,9 +4636,9 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
       }
     }
 #else
-    pmp->sfaxgetty->restart(obverb,oblog);
-    pmp->shfaxd->restart(obverb,oblog);
-    pmp->sfaxq->restart(obverb,oblog);
+    pmp->sfaxgetty->stop(obverb,oblog);
+    pmp->shfaxd->stop(obverb,oblog);
+    pmp->sfaxq->stop(obverb,oblog);
     /*
     systemrueck(string("sudo systemctl stop ")+pmp->sfaxgetty->sname+" "+pmp->shfaxd->sname+" "+pmp->sfaxq->sname,obverb,oblog);
     systemrueck(string("sudo killall ")+pmp->sfaxgetty->ename+" "+pmp->shfaxd->ename+" "+pmp->sfaxq->ename,obverb,oblog);
@@ -4667,10 +4646,11 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
     Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
     int erg __attribute__((unused));
     pruefplatte();
-    systemrueck("sudo systemctl stop hylafax-faxq hylafax-hfaxd",obverb,oblog);
     systemrueck("sudo killall hfaxd faxq >/dev/null 2>&1",obverb,oblog);
     erg=system((string("sudo $(which sh) $(sudo which faxsetup) -nointeractive")+(obverb?" -verbose":"")+" && sudo systemctl daemon-reload").c_str()); 
-    systemrueck("sudo systemctl start hylafax-faxq hylafax-hfaxd",obverb,oblog);
+    pmp->sfaxgetty->start(obverb,oblog);
+    pmp->shfaxd->start(obverb,oblog);
+    pmp->sfaxq->start(obverb,oblog);
     pruefplatte();
     // systemrueck(string("source ")+faxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht 
     // mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
@@ -4974,14 +4954,12 @@ int paramcl::pruefhyla()
     if (hyinstart==hysrc || hyinstart==hyppk) {
       // #define obhp // ob hylafax+ (statt hylafax)
       //#ifdef obhp      
-      cout<<rot<<"hyinstart: "<<hysrc<<endl;
       hfr=(char*)c_hfps; hfcr=(char*)c_hfpc; hff=(char*)c_hfs; hfcf=(char*)c_hfc;
       hfftext=Tx[T_Hylafax_ohne_plus_entdeckt_muss_ich_loeschen];
       sfaxq=new servc("hylafax-faxq","faxq");
       shfaxd=new servc("hylafax-hfaxd","hfaxd");
       // => hyinstart==hypak
     } else {
-      cout<<rot<<"hyinstart: "<<hysrc<<endl;
       //#else
       hfr=(char*)c_hfs; hfcr=(char*)c_hfc; hff=(char*)c_hfps; hfcf=(char*)c_hfpc;
       hfftext=Tx[T_Hylafaxplus_entdeckt_muss_ich_loeschen];
@@ -4992,8 +4970,6 @@ int paramcl::pruefhyla()
     // 2) deren Existenz, Betrieb und ggf. Startbarkeit pruefen
     shylafaxd=new servc("hylafax","faxq hfaxd");
     // wenn die richtigen Dienste laufen, dann nichts weiter ueberpruefen ..
-    cout<<"sfaxq-obslaeft: "<<(int)sfaxq->obslaeuft(2,0)<<endl;
-    cout<<"shfaxd-obslaeft: "<<(int)shfaxd->obslaeuft(2,0)<<endl;
     if ((this->sfaxq->obslaeuft(obverb-1,oblog) && this->shfaxd->obslaeuft(obverb-1,oblog)) /*|| this->shylafaxd->obslaeuft(obverb-1,oblog)*/) {
       Log(Tx[T_Hylafax_laeuft],obverb,oblog);
       hylalaeuftnicht=0;
@@ -5005,7 +4981,7 @@ int paramcl::pruefhyla()
       // falls nein, dann schauen, ob startbar
       if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog)) hylafehlt=0;
     }
-    cout<<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
+    // <<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
     if (hylafehlt) {
       // 3) ggf. neu installieren
       Log(rots+Tx[T_Muss_Hylafax_installieren]+schwarz,1,1);
@@ -6467,9 +6443,7 @@ int main(int argc, char** argv)
     //  vector<string> npdf, spdf;
     pm.DateienHerricht();  
     if (pm.obfcard) if (pm.obcapi) pm.obcapi= !pm.pruefcapi();
-  cout<<rot<<"obhyla 26: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     if (pm.obmodem) if (pm.obhyla) pm.obhyla= !pm.pruefhyla();
-  cout<<rot<<"obhyla 27: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     Log(Tx[T_Verwende]+blaus+(pm.obcapi?"Capisuite":"")+schwarz+(pm.obcapi&&pm.obhyla?", ":"")+blau+(pm.obhyla?"Hylafax":"")+schwarz+
         (!pm.obcapi&&!pm.obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):""),1,pm.oblog);
     if (pm.loef || pm.loew || pm.loea) {
@@ -6479,20 +6453,13 @@ int main(int argc, char** argv)
     } else {
 
       // hier stehen obcapi und obhyla fest
-  cout<<rot<<"obhyla 28: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
       pm.faxealle();
-  cout<<rot<<"obhyla 29: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
       // Dateien in Spool-Tabelle nach inzwischen verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
       pm.untersuchespool();
-  cout<<rot<<"obhyla 30: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
       pm.zeigweitere();
-  cout<<rot<<"obhyla 31: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
       pm.empfarch();
-  cout<<rot<<"obhyla 32: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
       Log(blaus+Tx[T_Ende]+schwarz,pm.obverb,pm.oblog);
-  cout<<rot<<"obhyla 33: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
       pm.schlussanzeige(argv[0]);
-  cout<<rot<<"obhyla 34: "<<violett<<(int)pm.obhyla<<schwarz<<endl;
     } // if (pm.loef || pm.loew || pm.loea) else
   } // if (pm.kez) else else else
   pm.pruefcron();

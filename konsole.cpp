@@ -136,6 +136,12 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {" nicht gefunden, versuche ihn einzurichten"," not found, trying to install it"},
   // T_Aktiviere_Dienst
   {"Aktiviere Dienst: ","Activating service: "},
+  // T_Program
+  {"Programm '","Program '"},
+  // T_laeuft_schon_einmal_Breche_ab
+  {"' laeuft schon einmal. Breche ab.","' runs already once. Aborting."},
+  // T_Wert
+  {" Wert: "," Value: "},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -1282,7 +1288,7 @@ confdat::confdat(const string& fname, cppSchluess *conf, size_t csize, int obver
 void schlArr::ausgeb()
 {
   for(size_t i=0;i<zahl;i++) {
-   cout<<"i: "<<gruen<<i<<schwarz<<" Name: "<<blau<<schl[i].name<<schwarz<<" Wert: "<<blau<<schl[i].wert<<schwarz<<endl;
+   cout<<"i: "<<gruen<<i<<schwarz<<" Name: "<<blau<<schl[i].name<<schwarz<<Txk[T_Wert]<<blau<<schl[i].wert<<schwarz<<endl;
   }
 }
 
@@ -1604,7 +1610,7 @@ void pruefdoppelt(char* ich)
  svec rueck;
  systemrueck(string("ps -a | grep '")+ich+"'",0,0,&rueck);
  if (rueck.size()>1) {
-  cout<<"Programm '"<<blau<<ich<<schwarz<<"' laeuft schon einmal. Breche ab."<<endl;
+  cout<<Txk[T_Program]<<blau<<ich<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
   exit(0);
  }
 }

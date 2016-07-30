@@ -148,6 +148,9 @@ enum Tkonsole_
   T_lief_schon,
   T_nicht_gefunden_versuche_ihn_einzurichten,
   T_Aktiviere_Dienst,
+  T_Program,
+  T_laeuft_schon_einmal_Breche_ab,
+  T_Wert,
   T_konsoleMAX,
 };
 
