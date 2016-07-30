@@ -4995,7 +4995,7 @@ int paramcl::pruefhyla()
       Log(Tx[T_Hylafax_laeuft],obverb,oblog);
       hylalaeuftnicht=0;
       hylafehlt=0;
-    } else {
+    } else if (versuch) {
       exit(0);
     } 
     if (hylafehlt) {
