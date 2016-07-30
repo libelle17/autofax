@@ -4989,10 +4989,7 @@ int paramcl::pruefhyla()
     // 2) deren Existenz, Betrieb und ggf. Startbarkeit pruefen
     shylafaxd=new servc("hylafax","faxq hfaxd");
     // wenn die richtigen Dienste laufen, dann nichts weiter ueberpruefen ..
-    cout<<"shfaxd-obslaeft: "<<(int)shfaxd->obslaeuft(1,0)<<endl;
-    for(int j=0;j<(versuch?1000:1);j++) {
-      cout<<"sfaxq-obslaeft: "<<(int)sfaxq->obslaeuft(2,0)<<endl;
-    }
+    cout<<"shfaxd-obslaeft: "<<(int)shfaxd->obslaeuft(2,0)<<endl;
     cout<<"sfaxq-obslaeft: "<<(int)sfaxq->obslaeuft(2,0)<<endl;
     if ((this->sfaxq->obslaeuft(obverb-1,oblog) && this->shfaxd->obslaeuft(obverb-1,oblog)) /*|| this->shylafaxd->obslaeuft(obverb-1,oblog)*/) {
       Log(Tx[T_Hylafax_laeuft],obverb,oblog);
