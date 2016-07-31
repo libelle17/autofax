@@ -2151,14 +2151,10 @@ void paramcl::lieskonfein()
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&muser); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) mpwd=XOR(string(cgconf[lfd].wert),pk); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&dbq); else rzf=1; lfd++;
-    if (!logvneu) {
-      if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logvz); else rzf=1; 
-    }
-    lfd++;
-    if (!logdneu) {
-      if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logdname); else rzf=1; 
-    }
-    lfd++;
+    if (logvneu) cgconf[lfd].setze(&logvz);
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logvz); else rzf=1; lfd++;
+    if (logdneu) cgconf[lfd].setze(&logdname);
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logdname); else rzf=1; lfd++;
     loggespfad=logvz+vtz+logdname;
     logdt=&loggespfad.front();
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&sqlz); else rzf=1; lfd++;
@@ -6458,6 +6454,7 @@ int main(int argc, char** argv)
   pm.VorgbAllg();
   pm.VorgbSpeziell();
         cout<<violett<<"2 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
+        cout<<"logdneu: "<<(int)pm.logdneu<<endl;
   pm.lieskonfein();
         cout<<violett<<"3 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
 
