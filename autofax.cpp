@@ -2220,10 +2220,11 @@ int paramcl::getcommandline()
 {
   Log(violetts+"getcommandline()"+schwarz,obverb,oblog);
   //  uchar plusverb=0;
-  opts.push_back(optioncl("zvz","zufaxenvz", &Tx, T_faxt_die_Dateien_aus_pfad_anstatt,&zufaxenvz,pverz));
-  opts.push_back(optioncl("wvz","wartevz", &Tx, T_Dateien_warten_in_pfad_anstatt,&wvz,pverz));
+  opts.push_back(optioncl("zvz","zufaxenvz", &Tx, T_faxt_die_Dateien_aus_pfad_anstatt,&zufaxenvz,pverz,&cgconf,"zufaxenvz",&obkschreib));
+  opts.push_back(optioncl("wvz","wartevz", &Tx, T_Dateien_warten_in_pfad_anstatt,&wvz,pverz,&cgconf,"wartevz",&obkschreib));
   opts.push_back(optioncl("evz","empfvz", &Tx, T_Empfangsverzeichnis_fuer_Faxempfang,&empfvz,pverz,&cgconf,"empfvz",&obkschreib));
-  opts.push_back(optioncl("cm","cronminut", &Tx,T_Alle_wieviel_Minuten_soll,&prog,T_aufgerufen_werden_0_ist_gar_nicht, &cronminut, pzahl));
+  opts.push_back(optioncl("cm","cronminut", &Tx,T_Alle_wieviel_Minuten_soll,&prog,T_aufgerufen_werden_0_ist_gar_nicht, &cronminut, pzahl, 
+                          &cgconf,"cronminut",&obkschreib));
   // <<"getcommandline 1 vor  obcapi: "<<(int)obcapi<<endl;
   opts.push_back(optioncl("capi","capisuite", &Tx, T_Capisuite_verwenden ,&obcapi,1));
   opts.push_back(optioncl("nocapi","keincapi", &Tx, T_Capisuite_nicht_verwenden,&obcapi,0));
@@ -2280,10 +2281,6 @@ int paramcl::getcommandline()
   string altcuser(cuser);
   uchar altobcapi(obcapi);
   uchar altobhyla(obhyla);
-  string altzvz(zufaxenvz);
-  string altwvz(wvz);
-  string altcronminut(cronminut);
-//  string altempfvz(empfvz);
 
   // hier wird die Befehlszeile ueberprueft:
   for(;optslsz<opts.size();optslsz++) {
@@ -2325,12 +2322,7 @@ int paramcl::getcommandline()
     capizukonf=1;
     obkschreib=1;
   }
-  /*
-  if (altempfvz!=empfvz) {
-   cgconf.setze("empfvz",empfvz);
-   obkschreib=1;
-  }
-  */
+
   if (altobcapi!=obcapi || altobhyla!=obhyla ) {
    obkschreib=1;
   }
