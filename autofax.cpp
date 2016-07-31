@@ -1725,6 +1725,7 @@ void paramcl::getcommandl0()
         opts.push_back(optioncl("kd","konfdat", &Tx, T_verwendet_Kofigurationsdatei_string_anstatt,&konfdatname,pfile));
         break;
     }
+    cout<<rot<<"1 logneu: "<<(int)logneu<<schwarz<<endl;
     // hier wird die Befehlszeile ueberprueft:
     for(;optslsz<opts.size();optslsz++) {
       for(size_t i=0;i<argcmv.size();i++) {
@@ -1737,6 +1738,7 @@ void paramcl::getcommandl0()
         }
       }
     }
+    cout<<rot<<"2 logneu: "<<(int)logneu<<schwarz<<endl;
     if (logneu) {
       if (!logdname.empty()) {
         loggespfad=logvz+vtz+logdname;
