@@ -1144,7 +1144,8 @@ void absch::clear()
 {
  aname.clear();
  av.clear();
-}
+} // void absch::clear()
+
 
 void confdat::Abschn_auswert(int obverb, char tz)
 {
@@ -1181,7 +1182,8 @@ void confdat::Abschn_auswert(int obverb, char tz)
     abschv.push_back(abp);
   }
   // for(size_t i=0;i<abschv.size();i++) KLA for(size_t j=0;j<abschv[i].av.size();j++) KLA <<j<<": "<<abschv[i].av[j].name<<": "<<abschv[i].av[j].wert<<endl; KLZ KLZ
-}
+} // void confdat::Abschn_auswert(int obverb, char tz)
+
 
 
 void confdat::auswert(schlArr *sA, int obverb, char tz)
@@ -1267,7 +1269,8 @@ confdat::confdat(const string& fname,int obverb):name(fname)
 {
   if (!fname.empty())
   lies(fname,obverb);
-}
+} // confdat::confdat(const string& fname,int obverb):name(fname)
+
 
 confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fname)
 {
@@ -1277,7 +1280,8 @@ confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fna
     lies(fname,obverb);
     auswert(sA,obverb,tz);
   }
-}
+} // confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fname)
+
 
 /*
 confdat::confdat(const string& fname, cppSchluess *conf, size_t csize, int obverb, char tz)
@@ -1292,7 +1296,8 @@ void schlArr::ausgeb()
   for(size_t i=0;i<zahl;i++) {
    cout<<"i: "<<gruen<<i<<schwarz<<" Name: "<<blau<<schl[i].name<<schwarz<<Txk[T_Wert]<<blau<<schl[i].wert<<schwarz<<endl;
   }
-}
+} // void schlArr::ausgeb()
+
 
 void schlArr::reset()
 {
@@ -1300,20 +1305,22 @@ void schlArr::reset()
     schl[i].wert.clear();
     schl[i].gelesen=0;
   }
-}
+} // void schlArr::reset()
+
 
 schlArr::schlArr()
 {
  schl=0;
  zahl=0;
-}
+} // schlArr::schlArr()
+
 
 void schlArr::neu(size_t vzahl)
 {
  if (schl) delete[] schl;
  zahl=vzahl;
  schl=new cppSchluess[zahl];
-}
+} // void schlArr::neu(size_t vzahl)
 
 /*// wird vielleicht nicht gebraucht
 schlArr::schlArr(size_t zahl): zahl(zahl)
@@ -1331,7 +1338,8 @@ void schlArr::init(vector<cppSchluess*> *sqlvp)
     schl[sqli].name=sqlvp->at(sqli)->name;
     schl[sqli].wert=sqlvp->at(sqli)->wert;
   }
-}
+} // void schlArr::init(vector<cppSchluess*> *sqlvp)
+
 
 void schlArr::init(size_t vzahl, ...)
 {
@@ -1344,7 +1352,7 @@ void schlArr::init(size_t vzahl, ...)
   schl[i].name=va_arg(list,const char*);
  }
  va_end(list);
-}
+} // void schlArr::init(size_t vzahl, ...)
 
 int schlArr::setze(const string& name, const string& wert)
 {
@@ -1355,7 +1363,7 @@ int schlArr::setze(const string& name, const string& wert)
     }
   }
   return 1;
-}
+} // int schlArr::setze(const string& name, const string& wert)
  
 const string* schlArr::hole(const string& name)
 {
@@ -1366,14 +1374,14 @@ const string* schlArr::hole(const string& name)
     }
   }
   return &nix;
-}
+} // const string* schlArr::hole(const string& name)
 
 void schlArr::schreib(mdatei *f)
 {
   for (size_t i = 0;i<zahl;i++) {
     *f<<schl[i].name<<" = \""<<schl[i].wert<<"\""<<endl;
   }
-}
+} // void schlArr::schreib(mdatei *f)
 
 int schlArr::schreib(const string& fname)
 {
@@ -1383,7 +1391,7 @@ int schlArr::schreib(const string& fname)
     return 0;
   }
   return 1;
-}
+} // int schlArr::schreib(const string& fname)
 
 schlArr::~schlArr()
 {
@@ -1400,7 +1408,8 @@ int multischlschreib(const string& fname, schlArr **confs, size_t cszahl)
     return 0;
   }
   return 1;
-}
+} // int multischlschreib(const string& fname, schlArr **confs, size_t cszahl)
+
 
 string XOR(const string& value, const string& key)
 {
@@ -1889,7 +1898,13 @@ int optioncl::pruefp(vector<argcl> *argcvm , size_t *akt, uchar *hilfe) // 1 = d
     }
     if (argcvm->at(*akt).agef) {
       if (pptr) {
-        *pptr=wert;
+        if (*pptr!=wert) {
+          *pptr=wert;
+          if (obschreibp) *obschreibp=1;
+          if (cp && pname) {
+            cp->setze(pname,ltoan(wert));
+          }
+        }
       } else {
         char *pstr=0;
         uchar falsch=0;
@@ -1919,7 +1934,13 @@ int optioncl::pruefp(vector<argcl> *argcvm , size_t *akt, uchar *hilfe) // 1 = d
           }
         }
         if (pstr) {
-          *zptr=pstr; 
+          if (*zptr!=pstr) {
+            *zptr=pstr; 
+            if (obschreibp) *obschreibp=1;
+            if (cp && pname) {
+             cp->setze(pname,pstr);
+            }
+          }
           argcvm->at(++(*akt)).agef=1;
         } else {
           switch (art) {

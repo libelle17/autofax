@@ -1584,18 +1584,6 @@ string paramcl::getzielvz(const string& qdatei)
   return "";
 } // getzielvz
 
-// wird aufgerufen in: getcommandline
-int paramcl::setzegcp(const string& name, string *wert)
-{
-  for(size_t ind=0;ind<cgconf.zahl;ind++) {
-    if (cgconf[ind].name==name) {
-      cgconf[ind].wert=*wert;
-      return 0;
-    }
-  }
-  return 1;
-} // int paramcl::setzegcp(const string& name, string *wert)
-
 // passt einen Dateinamen gemaess der vorhandenen Dateien in allen moegenlichen Zielverzeichnissen so an
 // dass er beim Umwandeln in PDF und Verschieben als erfolgreiches oder nicht erfolgreiches Fax sich nicht ueberschneidet
 // wird aufgerufen in: DateienHerricht
@@ -2234,7 +2222,7 @@ int paramcl::getcommandline()
   //  uchar plusverb=0;
   opts.push_back(optioncl("zvz","zufaxenvz", &Tx, T_faxt_die_Dateien_aus_pfad_anstatt,&zufaxenvz,pverz));
   opts.push_back(optioncl("wvz","wartevz", &Tx, T_Dateien_warten_in_pfad_anstatt,&wvz,pverz));
-  opts.push_back(optioncl("evz","empfvz", &Tx, T_Empfangsverzeichnis_fuer_Faxempfang,&empfvz,pverz));
+  opts.push_back(optioncl("evz","empfvz", &Tx, T_Empfangsverzeichnis_fuer_Faxempfang,&empfvz,pverz,&cgconf,"empfvz",&obkschreib));
   opts.push_back(optioncl("cm","cronminut", &Tx,T_Alle_wieviel_Minuten_soll,&prog,T_aufgerufen_werden_0_ist_gar_nicht, &cronminut, pzahl));
   // <<"getcommandline 1 vor  obcapi: "<<(int)obcapi<<endl;
   opts.push_back(optioncl("capi","capisuite", &Tx, T_Capisuite_verwenden ,&obcapi,1));
@@ -2288,12 +2276,16 @@ int paramcl::getcommandline()
   string altlogdname(logdname);
   string altlogvz(logvz);
   string altckzl(cklingelzahl);
-  string altcuser(cuser);
   string althkzl(hklingelzahl);
+  string altcuser(cuser);
   uchar altobcapi(obcapi);
   uchar altobhyla(obhyla);
-  string altempfvz(empfvz);
+  string altzvz(zufaxenvz);
+  string altwvz(wvz);
+  string altcronminut(cronminut);
+//  string altempfvz(empfvz);
 
+  // hier wird die Befehlszeile ueberprueft:
   for(;optslsz<opts.size();optslsz++) {
     for(size_t i=0;i<argcmv.size();i++) {
       if (opts[optslsz].pruefp(&argcmv,&i,&hilfe)) {
@@ -2309,32 +2301,36 @@ int paramcl::getcommandline()
     }
   }
   if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
-  if (altckzl!=cklingelzahl || rzf) {
-    setzegcp("cklingelzahl",&cklingelzahl); // zum Schreiben in die /usr/local/sbin/autofax.conf in autokonfschreib
-    capizukonf=1;
-    obkschreib=1;
-  }
-  if (altcuser!=cuser || rzf) {
-    setzegcp("cuser",&cuser);
-    capizukonf=1;
-    obkschreib=1;
-  }
   if (altlogdname!=logdname || altlogvz!=logvz) {
     if (!logdname.empty()) {
       loggespfad = logvz+vtz+logdname;
       logdt = &loggespfad.front();
+      cgconf.setze("logdname",logdname);
+      cgconf.setze("logvz",logvz);
       obkschreib=1;
     }
   }
+  if (altckzl!=cklingelzahl || rzf) {
+    cgconf.setze("cklingelzahl",cklingelzahl); // zum Schreiben in die /usr/local/sbin/autofax.conf in autokonfschreib
+    capizukonf=1;
+    obkschreib=1;
+  }
   if (althkzl!=hklingelzahl || rzf) {
-    setzegcp("hklingelzahl",&hklingelzahl);
+    cgconf.setze("hklingelzahl",hklingelzahl);
     hylazukonf=1;
     obkschreib=1;
   }
+  if (altcuser!=cuser || rzf) {
+    cgconf.setze("cuser",cuser);
+    capizukonf=1;
+    obkschreib=1;
+  }
+  /*
   if (altempfvz!=empfvz) {
    cgconf.setze("empfvz",empfvz);
    obkschreib=1;
   }
+  */
   if (altobcapi!=obcapi || altobhyla!=obhyla ) {
    obkschreib=1;
   }

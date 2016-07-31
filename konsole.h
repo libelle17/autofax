@@ -437,6 +437,7 @@ class confdat {
 // fuer Commandline-Optionen
 enum par_t:uchar {psons,pverz,pfile,pzahl}; // Parameterart: Sonstiges, Verzeichnis, Zahl
 
+
 class optioncl
 {
   public:
@@ -450,12 +451,15 @@ class optioncl
     uchar *pptr=0; // Zeiger auf Parameter, der hier eingestellt werden kann
     int wert; // Wert, der pptr zugewiesen wird, falls dieser Parameter gewaehlt wird
     string *zptr=0; // zusatzzeiger auf Parameter, der hier eingegeben werden kann
-    par_t art;
+    par_t art; // Parameterart
+    schlArr *cp=0; // Konfigurationsarray, das ggf. geschrieben werden muss
+    const char *pname; // Name des Konfigurationsparameters
+    uchar *obschreibp=0; // ob Konfiguration geschrieben werden muss
 //    uchar ogefunden=0; // braucht man nicht, ist in argcl
     optioncl(string kurz, string lang, TxB *TxBp, long Txi) : 
                kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi) {}
-    optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *zptr, par_t art) : 
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), zptr(zptr), art(art) {}
+    optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *zptr, par_t art,schlArr *cp=0, const char *pname=0,uchar* obschreibp=0) : 
+               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), zptr(zptr), art(art),cp(cp),pname(pname),obschreibp(obschreibp) {}
     optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *rottxt, long Txi2, string *zptr, par_t art) : 
                kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), zptr(zptr), art(art) {}
     optioncl(string kurz, string lang, TxB *TxBp, long Txi, uchar *pptr, int wert) : 
