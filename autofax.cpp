@@ -2225,12 +2225,10 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("evz","empfvz", &Tx, T_Empfangsverzeichnis_fuer_Faxempfang,&empfvz,pverz,&cgconf,"empfvz",&obkschreib));
   opts.push_back(optioncl("cm","cronminut", &Tx,T_Alle_wieviel_Minuten_soll,&prog,T_aufgerufen_werden_0_ist_gar_nicht, &cronminut, pzahl, 
                           &cgconf,"cronminut",&obkschreib));
-  // <<"getcommandline 1 vor  obcapi: "<<(int)obcapi<<endl;
-  opts.push_back(optioncl("capi","capisuite", &Tx, T_Capisuite_verwenden ,&obcapi,1));
-  opts.push_back(optioncl("nocapi","keincapi", &Tx, T_Capisuite_nicht_verwenden,&obcapi,0));
-  // <<"getcommandline 1 nach obcapi: "<<(int)obcapi<<endl;
-  opts.push_back(optioncl("hyla","hylafax", &Tx, T_hylafax_verwenden,&obhyla,1));
-  opts.push_back(optioncl("nohyla","keinhyla", &Tx, T_hylafax_nicht_verwenden,&obhyla,0));
+  opts.push_back(optioncl("capi","capisuite", &Tx, T_Capisuite_verwenden ,&obcapi,1,&cgconf,"obcapi",&obkschreib));
+  opts.push_back(optioncl("nocapi","keincapi", &Tx, T_Capisuite_nicht_verwenden,&obcapi,0,&cgconf,"obcapi",&obkschreib));
+  opts.push_back(optioncl("hyla","hylafax", &Tx, T_hylafax_verwenden,&obhyla,1,&cgconf,"obhyla",&obkschreib));
+  opts.push_back(optioncl("nohyla","keinhyla", &Tx, T_hylafax_nicht_verwenden,&obhyla,0,&cgconf,"obhyla",&obkschreib));
   opts.push_back(optioncl("cz","capizuerst", &Tx, T_versuche_faxe_zuerst_ueber_Capisuite_wegzuschicken,&hylazuerst,0));
   opts.push_back(optioncl("hz","hylazuerst", &Tx, T_versuche_faxe_zuerst_ueber_hylafax_wegzuschicken,&hylazuerst,1));
   //  opts.push_back(optioncl("hms","hylamodemstring",&Tx, T_sucht_nach_dev_tty_string_als_Modem_mit_string_anstatt,&hmodemstr,psons));
@@ -2238,7 +2236,7 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("mc","maxcapiv",&Tx, T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht,&maxcapiv,pzahl));
   opts.push_back(optioncl("mh","maxhylav",&Tx, T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet,&maxhylav,pzahl));
   opts.push_back(optioncl("ckzl","capiklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,&cklingelzahl,pzahl));
-  opts.push_back(optioncl("cuser","cuser",&Tx, T_verwendet_fuer_Capisuite_den_Linux_Benutzer_string_anstatt,&cuser,psons));
+  opts.push_back(optioncl("cuser","cuser",&Tx, T_verwendet_fuer_Capisuite_den_Linux_Benutzer_string_anstatt,&cuser,psons,&cgconf,"cuser",&capizukonf));
   opts.push_back(optioncl("hkzl","hylaklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,&hklingelzahl,pzahl));
   opts.push_back(optioncl("gz","gleichziel", &Tx, T_FAxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,&gleichziel,1));
   opts.push_back(optioncl("afs","anfaxstring",&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,&anfaxstr,psons));
@@ -2279,8 +2277,6 @@ int paramcl::getcommandline()
   string altckzl(cklingelzahl);
   string althkzl(hklingelzahl);
   string altcuser(cuser);
-  uchar altobcapi(obcapi);
-  uchar altobhyla(obhyla);
 
   // hier wird die Befehlszeile ueberprueft:
   for(;optslsz<opts.size();optslsz++) {
@@ -2322,10 +2318,8 @@ int paramcl::getcommandline()
     capizukonf=1;
     obkschreib=1;
   }
-
-  if (altobcapi!=obcapi || altobhyla!=obhyla ) {
-   obkschreib=1;
-  }
+  if (capizukonf)
+    obkschreib=1;
 
   lgnzuw();
   Log(string(Tx[T_Fertig_mit_Parsen_der_Befehlszeile]),obverb>1,oblog);

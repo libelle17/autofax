@@ -464,8 +464,8 @@ class optioncl
              const char *pname=0,uchar* obschreibp=0) : 
                kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), zptr(zptr), art(art),
                cp(cp),pname(pname),obschreibp(obschreibp)  {}
-    optioncl(string kurz, string lang, TxB *TxBp, long Txi, uchar *pptr, int wert) : 
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert) {}
+    optioncl(string kurz, string lang, TxB *TxBp, long Txi, uchar *pptr, int wert,schlArr *cp=0, const char *pname=0,uchar* obschreibp=0) : 
+               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert),cp(cp),pname(pname),obschreibp(obschreibp) {}
     optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *rottxt, long Txi2, uchar *pptr, int wert) : 
                kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), pptr(pptr), wert(wert) {}
     optioncl(string kurz, string lang, TxB *TxBp, long Txi, const string *rottxt, long Txi2, uchar *pptr, int wert) : 
