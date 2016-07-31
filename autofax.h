@@ -198,7 +198,7 @@ class paramcl // Programmparameter
 
     string zufaxenvz;
     string wvz; // Warteverzeichnis
-    string gvz; // Gescheitertenverzeichnis
+    string nvz; // Gescheitertenverzeichnis
     string empfvz; // Empfangsverzeichnis
     string cronminut; // Minuten fuer crontab; 0 = kein Crontab-Eintrag
     string maxcapiv; // maximale Versuchnr in Capi, bis Hyla versucht wird

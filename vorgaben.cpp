@@ -114,12 +114,12 @@ void paramcl::VorgbSpeziell()
     if (!strcmp(cpt,"linux2")) {
       zufaxenvz="/vista/P/zufaxen"; 
       wvz="/vista/P/warteauffax";
-      gvz="/vista/P/nichtgefaxt";
+      nvz="/vista/P/nichtgefaxt";
       empfvz="/vista/P";
     } else {
       zufaxenvz="/DATA/Patientendokumente/zufaxen";
       wvz="/DATA/Patientendokumente/warteauffax";
-      gvz="/DATA/Patientendokumente/nichtgefaxt";
+      nvz="/DATA/Patientendokumente/nichtgefaxt";
       empfvz="/DATA/Patientendokumente";
     }
   } else {

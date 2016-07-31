@@ -482,6 +482,7 @@ enum T_
   T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden,
   T_Soll_die_SuSEfirewall_bearbeitet_werden,
   T_aktuelle_Einstellungen_aus,
+  T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,
   T_MAX
 };
 
@@ -1357,6 +1358,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Soll die SuSEfirewall2 bearbeitet werden?","Shall the SuSEfirewall2 be edited?"},
   // T_aktuelle_Einstellungen_aus
   {"Aktuelle Einstellungen aus '","Current settings from '"},
+  // T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in
+  {"Gescheiterte Faxe werden hier gesammelt anstatt in","Failed Faxes are collected here and not in"}, 
   {"",""}
 };
 
@@ -1598,7 +1601,7 @@ string paramcl::neuerdateiname(const string& qpfad)
       if (dateiname==altdname) break;
       altdname = dateiname;
       dateiname=zielname(dateiname,wvz,1,(string*)0,obverb,oblog);
-      dateiname=zielname(dateiname,gvz,1,(string*)0,obverb,oblog);
+      dateiname=zielname(dateiname,nvz,1,(string*)0,obverb,oblog);
       dateiname=zielname(dateiname,zmp,1,(string*)0,obverb,oblog);
     }
     getstammext(&dateiname,&stamm,&exten);
@@ -1693,9 +1696,7 @@ void paramcl::logvorgaben(const string& vprog)
 #endif
   prog=base_name(vprog); // autofax
   instverz=string(getenv("HOME"))+'/'+prog;
-        cout<<rot<<"4 logdname: "<<logdname<<endl;
   logdname = prog+".log";
-        cout<<rot<<"5 logdname: "<<logdname<<endl;
   loggespfad=logvz+vtz+logdname;
   logdt=&loggespfad.front();
 } // void paramcl::logvorgaben
@@ -1747,17 +1748,16 @@ void paramcl::getcommandl0()
     optslsz=opts.size();
     if (!iru) lgnzuw();
   } // for(unsigned iru=0;iru<3;iru++)
-    if (logvneu ||logdneu) {
-      if (!logdname.empty()) {
-        loggespfad=logvz+vtz+logdname;
-        logdt=&loggespfad.front();
-        cout <<rot<<"1 logdname: "<<logdname<<endl;
-        cout <<rot<<"logdt: "<<logdt<<endl;
-        cout <<rot<<"loggespfad: "<<loggespfad<<endl;
-        cout<<violett<<"logdname: "<<*cgconf.hole("logdname")<<schwarz<<endl;
-      }
-      obkschreib=1;
+  if (logvneu ||logdneu) {
+    if (!logdname.empty()) {
+      loggespfad=logvz+vtz+logdname;
+      logdt=&loggespfad.front();
+      // <<rot<<"logdt: "<<logdt<<endl;
+      // <<rot<<"loggespfad: "<<loggespfad<<endl;
+      //<<violett<<"logdname: "<<*cgconf.hole("logdname")<<schwarz<<endl;
     }
+    obkschreib=1;
+  } // if (logvneu ||logdneu) 
 } // void paramcl::getcommandl0(int argc, char** argv)
 
 // wird aufgerufen in: main
@@ -1931,7 +1931,7 @@ void paramcl::VorgbSpeziell()
 //  host="localhost"; // 'localhost' schon Vorgabe bei Definition
   zufaxenvz="/var/"+prog+vtz+Tx[T_zufaxen];
   wvz="/var/"+prog+vtz+Tx[T_warteauffax];
-  gvz="/var/"+prog+vtz+Tx[T_nichtgefaxt];
+  nvz="/var/"+prog+vtz+Tx[T_nichtgefaxt];
   empfvz="/var/"+prog+vtz+Tx[T_empfvz];
   static zielmustercl zmi[]={zielmustercl("[Ss]pamfax","/var/autofax/spam"),zielmustercl("","/var/autofax/gesandt")}; // nur als Beispiel
   zmvp=zmi;
@@ -2139,7 +2139,7 @@ void paramcl::lieskonfein()
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&gleichziel); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&zufaxenvz); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&wvz); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&gvz); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&nvz); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&empfvz); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cronminut); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&anfaxstr); else rzf=1; lfd++;
@@ -2232,6 +2232,8 @@ int paramcl::getcommandline()
   //  uchar plusverb=0;
   opts.push_back(optioncl("zvz","zufaxenvz", &Tx, T_faxt_die_Dateien_aus_pfad_anstatt,&zufaxenvz,pverz,&cgconf,"zufaxenvz",&obkschreib));
   opts.push_back(optioncl("wvz","wartevz", &Tx, T_Dateien_warten_in_pfad_anstatt,&wvz,pverz,&cgconf,"wartevz",&obkschreib));
+  opts.push_back(optioncl("nvz","nichtgefaxtvz", &Tx, T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,&nvz,pverz,
+          &cgconf,"nichtgefaxtvz",&obkschreib));
   opts.push_back(optioncl("evz","empfvz", &Tx, T_Empfangsverzeichnis_fuer_Faxempfang,&empfvz,pverz,&cgconf,"empfvz",&obkschreib));
   opts.push_back(optioncl("cm","cronminut", &Tx,T_Alle_wieviel_Minuten_soll,&prog,T_aufgerufen_werden_0_ist_gar_nicht, &cronminut, pzahl, 
                           &cgconf,"cronminut",&obkschreib));
@@ -2242,28 +2244,28 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("cz","capizuerst", &Tx, T_versuche_faxe_zuerst_ueber_Capisuite_wegzuschicken,&hylazuerst,0,&cgconf,"hylazuerst",&obkschreib));
   opts.push_back(optioncl("hz","hylazuerst", &Tx, T_versuche_faxe_zuerst_ueber_hylafax_wegzuschicken,&hylazuerst,1,&cgconf,"hylazuerst",&obkschreib));
   //  opts.push_back(optioncl("hms","hylamodemstring",&Tx, T_sucht_nach_dev_tty_string_als_Modem_mit_string_anstatt,&hmodemstr,psons));
-  opts.push_back(optioncl("mod","modem",&Tx, T_Fuer_Hylafax_verwendetes_Modem,&hmodem,psons,&cgconf,"hmodem",&hylazukonf));
+  opts.push_back(optioncl("mod","hmodem",&Tx, T_Fuer_Hylafax_verwendetes_Modem,&hmodem,psons,&cgconf,"hmodem",&hylazukonf));
   opts.push_back(optioncl("mc","maxcapiv",&Tx, T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht,&maxcapiv,pzahl,&cgconf,"maxcapiv",&obkschreib));
   opts.push_back(optioncl("mh","maxhylav",&Tx, T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet,&maxhylav,pzahl,&cgconf,"maxhylav",&obkschreib));
   opts.push_back(optioncl("cuser","cuser",&Tx, T_verwendet_fuer_Capisuite_den_Linux_Benutzer_string_anstatt,&cuser,psons,&cgconf,"cuser",&capizukonf));
-  opts.push_back(optioncl("ckzl","capiklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,&cklingelzahl,pzahl,
+  opts.push_back(optioncl("ckzl","cklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,&cklingelzahl,pzahl,
                                                         &cgconf,"cklingelzahl",&capizukonf));
-  opts.push_back(optioncl("hkzl","hylaklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,&hklingelzahl,pzahl,
+  opts.push_back(optioncl("hkzl","hklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,&hklingelzahl,pzahl,
                                                         &cgconf,"hklingelzahl",&hylazukonf));
   opts.push_back(optioncl("gz","gleichziel", &Tx, T_FAxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,&gleichziel,1,
                                                   &cgconf,"gleichziel",&obkschreib));
-  opts.push_back(optioncl("afs","anfaxstring",&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,&anfaxstr,psons,&cgconf,"anfaxstr",&obkschreib));
-  opts.push_back(optioncl("acfs","ancfaxstring",&Tx, T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,&ancfaxstr,psons,
+  opts.push_back(optioncl("afs","anfaxstr",&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,&anfaxstr,psons,&cgconf,"anfaxstr",&obkschreib));
+  opts.push_back(optioncl("acfs","ancfaxstr",&Tx, T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,&ancfaxstr,psons,
                                                       &cgconf,"ancfaxstr",&obkschreib));
-  opts.push_back(optioncl("ahfs","anhfaxstring",&Tx, T_faxnr_fuer_primaer_hylafax_wird_hinter_string_erwartet_statt_hinter,&anhfaxstr,psons,
+  opts.push_back(optioncl("ahfs","anhfaxstr",&Tx, T_faxnr_fuer_primaer_hylafax_wird_hinter_string_erwartet_statt_hinter,&anhfaxstr,psons,
                                                      &cgconf,"anhfaxstr",&obkschreib));
-  opts.push_back(optioncl("as","anstring",&Tx, T_Adressatenname_wird_hinter_string_erwartet_statt_hinter,&anstr,psons,&cgconf,"anstr",&obkschreib));
-  opts.push_back(optioncl("us","undstring",&Tx, T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt,&undstr,psons,
+  opts.push_back(optioncl("as","anstr",&Tx, T_Adressatenname_wird_hinter_string_erwartet_statt_hinter,&anstr,psons,&cgconf,"anstr",&obkschreib));
+  opts.push_back(optioncl("us","undstr",&Tx, T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt,&undstr,psons,
                                                 &cgconf,"undstr",&obkschreib));
   opts.push_back(optioncl("host","host",&Tx, T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf,&host,psons,&cgconf,"host",&obkschreib));
   opts.push_back(optioncl("muser","muser",&Tx, T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt,&muser,psons,&cgconf,"muser",&obkschreib));
   opts.push_back(optioncl("mpwd","mpwd",&Tx, T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string_anstatt,&mpwd,psons,&cgconf,"mpwd",&obkschreib));
-  opts.push_back(optioncl("db","db",&Tx, T_verwendet_die_Datenbank_string_anstatt,&dbq,psons,&cgconf,"datenbank",&obkschreib));
+  opts.push_back(optioncl("db","datenbank",&Tx, T_verwendet_die_Datenbank_string_anstatt,&dbq,psons,&cgconf,"datenbank",&obkschreib));
   //  opts.push_back(optioncl("l","log", &Tx, T_protokolliert_ausfuehrlich_in_Datei+drot+loggespfad+schwarz+Tx[T_sonst_knapper],&oblog,1));
   //  opts.push_back(optioncl("lvz","logvz",&Tx, T_waehlt_als_Logverzeichnis_pfad_anstatt,&logvz,pverz));
   //  opts.push_back(optioncl("ld","logdname",&Tx, T_logdatei_string_im_Pfad+drot+logvz+schwarz+Tx[T_wird_verwendet_anstatt],&logdname,psons));
@@ -2289,9 +2291,8 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("?","help", &Tx, -1, &hilfe,1));
 
 //   string altlogdname(logdname);
-  string altlogvz(logvz);
-  string altckzl(cklingelzahl);
-  string althkzl(hklingelzahl);
+//  string altckzl(cklingelzahl);
+//  string althkzl(hklingelzahl);
 
   // hier wird die Befehlszeile ueberprueft:
   for(;optslsz<opts.size();optslsz++) {
@@ -2320,6 +2321,7 @@ int paramcl::getcommandline()
     }
   }
   */
+  /*
   if (altckzl!=cklingelzahl || rzf) {
     cgconf.setze("cklingelzahl",cklingelzahl); // zum Schreiben in die /usr/local/sbin/autofax.conf in autokonfschreib
     capizukonf=1;
@@ -2330,6 +2332,7 @@ int paramcl::getcommandline()
     hylazukonf=1;
     obkschreib=1;
   }
+  */
   
   if (capizukonf || hylazukonf)
     obkschreib=1;
@@ -2502,8 +2505,8 @@ void paramcl::rueckfragen()
       cgconf[lfd].setze(&wvz);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      gvz=Tippverz(Tx[T_Verzeichnis_mit_gescheiterten_Dateien],&gvz);
-      cgconf[lfd].setze(&gvz);
+      nvz=Tippverz(Tx[T_Verzeichnis_mit_gescheiterten_Dateien],&nvz);
+      cgconf[lfd].setze(&nvz);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
       empfvz=Tippverz(Tx[T_Verzeichnis_fuer_empfangene_Faxe],&empfvz);
@@ -2560,11 +2563,8 @@ void paramcl::rueckfragen()
       cgconf[lfd].setze(&logvz);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-        cout<<rot<<"7 logdname: "<<logdname<<endl;
       logdname=Tippstring(Tx[T_Logdateiname],&logdname);
-        cout<<rot<<"8 logdname: "<<logdname<<endl;
       cgconf[lfd].setze(&logdname);
-        cout<<rot<<"9 logdname: "<<logdname<<endl;
     }
     loggespfad=string(logvz)+vtz+logdname;
     logdt=&loggespfad.front();
@@ -2730,7 +2730,7 @@ void paramcl::rueckfragen()
   kuerzevtz(&logvz);
   kuerzevtz(&zufaxenvz);
   kuerzevtz(&wvz);
-  kuerzevtz(&gvz);
+  kuerzevtz(&nvz);
   kuerzevtz(&empfvz);
   for(zielmustercl *zmakt=zmp;1;zmakt++){
     kuerzevtz(&zmakt->ziel);
@@ -3041,8 +3041,7 @@ void paramcl::verzeichnisse()
   pruefcvz(); 
   pruefverz(zufaxenvz,obverb,oblog);
   pruefverz(wvz,obverb,oblog);
-  pruefverz(gvz,obverb,oblog);
-  pruefverz(gvz,obverb,oblog);
+  pruefverz(nvz,obverb,oblog);
   pruefverz(empfvz,obverb,oblog);
   for(zielmustercl *zmakt=zmp;1;zmakt++){
     pruefverz(zmakt->ziel,obverb,oblog);
@@ -3167,10 +3166,10 @@ void paramcl::pruefsamba()
   smbcf.Abschn_auswert(obverb);
   vector<string*> vzn;
   const char* const VSambaName[4]={Tx[T_Zufaxen],Tx[T_Warteauffax],Tx[T_Nichtgefaxt],Tx[T_Faxempfang]};
-  //={&zufaxenvz,&wvz,&gvz,&empfvz};
+  //={&zufaxenvz,&wvz,&nvz,&empfvz};
   vzn.push_back(&zufaxenvz);
   vzn.push_back(&wvz);
-  vzn.push_back(&gvz);
+  vzn.push_back(&nvz);
   vzn.push_back(&empfvz);
   for(zielmustercl *zmakt=zmp;1;zmakt++){
     vzn.push_back(&zmakt->ziel);
@@ -3396,9 +3395,9 @@ void paramcl::bereinigewv()
                     if (entryfit.st_size) { // keine 0-Bytes-Dateien kopieren
                       if (runde) { // wenn nicht in der Spool-Tabelle
                         string zlvz;
-                        //                        if (runde==1) zlvz=getzielvz(quel); else if (runde==2) zlvz=gvz;
+                        //                        if (runde==1) zlvz=getzielvz(quel); else if (runde==2) zlvz=nvz;
                         if (runde==1) {
-                          if (**(*cerg+2)=='1') zlvz=getzielvz(quel); else if (**(*cerg+2)=='0') zlvz=gvz;
+                          if (**(*cerg+2)=='1') zlvz=getzielvz(quel); else if (**(*cerg+2)=='0') zlvz=nvz;
                         }
                         unsigned vfehler=0;
                         if (!zlvz.empty()) {
@@ -4056,7 +4055,7 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
             for(unsigned iru=0;iru<2;iru++) {
               uint vfehler=0;
               if (ogibts[iru])
-                verschiebe(odatei[iru],gvz,cuser,&vfehler, 1, obverb,oblog);
+                verschiebe(odatei[iru],nvz,cuser,&vfehler, 1, obverb,oblog);
             }
           } // if (allegesch || (nimmer && !ogibts[0]))
         } // if (obcapi || obhyla)
@@ -6462,14 +6461,10 @@ int main(int argc, char** argv)
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
       pm.VorgbAllg();
   pm.VorgbSpeziell();
-        cout<<violett<<"2 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
-        cout<<"logdneu: "<<(int)pm.logdneu<<endl;
   pm.lieskonfein();
-        cout<<violett<<"3 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
 
   if (!pm.getcommandline()) 
     exit(1);
-        cout<<violett<<"4 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
   if (pm.obvi) {
    exit (systemrueck("vi "+pm.konfdatname+" >/dev/tty"));
   }
@@ -6478,16 +6473,12 @@ int main(int argc, char** argv)
    pm.zeigkonf();
    exit(0);
   }
-        cout<<violett<<"5 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
   if (pm.obhyla) pm.pruefmodem();
   if (pm.obcapi) pm.pruefisdn();
-        cout<<violett<<"6 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
   pm.rueckfragen();
-        cout<<violett<<"7 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
   pm.setzhylavz();
   pm.verzeichnisse();
   pm.pruefsamba();
-        cout<<violett<<"8 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
 
   if (pm.logdateineu) tuloeschen(logdt,"",pm.obverb,pm.oblog);
   Log(string(Tx[T_zufaxenvz])+drot+pm.zufaxenvz+schwarz+"'",pm.obverb,pm.oblog);
@@ -6536,7 +6527,6 @@ int main(int argc, char** argv)
     } // if (pm.loef || pm.loew || pm.loea) else
   } // if (pm.kez) else else else
   pm.pruefcron();
-        cout<<violett<<"9 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
   pm.autofkonfschreib();
   return 0;
 } // int main(int argc, char** argv) 
