@@ -1705,6 +1705,11 @@ void paramcl::logvorgaben(const string& vprog)
 void paramcl::getcommandl0()
 {
   Log(violetts+"getcommandl0()"+schwarz,obverb,oblog);
+  cgconf.init(36, "langu","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
+    "countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
+    "cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl",
+    "gleichziel","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","cronminut","anfaxstr","ancfaxstr","anhfaxstr",
+    "anstr","undstr","host","muser","mpwd","datenbank","logvz","logdname","sqlz","musterzahl");
   uchar plusverb=0;
   //  for(int i=argc-1;i>0;i--) KLA if (argv[i][0]==0) argc--; KLZ // damit fuer das Compilermakro auch im bash-script argc stimmt
   for(unsigned iru=0;iru<3;iru++) {
@@ -2099,11 +2104,7 @@ void paramcl::lieskonfein()
   cgconfp=gconf;
   gcs=sizeof gconf/sizeof*gconf;
   */
-  cgconf.init(36, "langu","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
-    "countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
-    "cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl",
-    "gleichziel","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","cronminut","anfaxstr","ancfaxstr","anhfaxstr",
-    "anstr","undstr","host","muser","mpwd","datenbank","logvz","logdname","sqlz","musterzahl");
+    // cgconf.init muss schon vor getcommandl0 kommen
   confdat afconf(konfdatname,&cgconf,obverb); // hier werden die Daten aus der Datei eingelesen
   if (1) {
     //  if (cpplies(konfdatname,gconf,gcs)) KLA
