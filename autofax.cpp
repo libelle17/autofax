@@ -1751,7 +1751,7 @@ void paramcl::getcommandl0()
         cout <<rot<<"1 logdname: "<<logdname<<endl;
         cout <<rot<<"logdt: "<<logdt<<endl;
         cout <<rot<<"loggespfad: "<<loggespfad<<endl;
-        cout<<violett<<*cgconf.hole("logdname")<<schwarz<<endl;
+        cout<<violett<<"logdname: "<<*cgconf.hole("logdname")<<schwarz<<endl;
       }
       obkschreib=1;
     }
@@ -6457,10 +6457,13 @@ int main(int argc, char** argv)
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
   pm.VorgbAllg();
   pm.VorgbSpeziell();
+        cout<<violett<<"2 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
   pm.lieskonfein();
+        cout<<violett<<"3 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
 
   if (!pm.getcommandline()) 
     exit(1);
+        cout<<violett<<"4 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
   if (pm.obvi) {
    exit (systemrueck("vi "+pm.konfdatname+" >/dev/tty"));
   }
@@ -6469,12 +6472,16 @@ int main(int argc, char** argv)
    pm.zeigkonf();
    exit(0);
   }
+        cout<<violett<<"5 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
   if (pm.obhyla) pm.pruefmodem();
   if (pm.obcapi) pm.pruefisdn();
+        cout<<violett<<"6 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
   pm.rueckfragen();
+        cout<<violett<<"7 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
   pm.setzhylavz();
   pm.verzeichnisse();
   pm.pruefsamba();
+        cout<<violett<<"8 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
 
   if (pm.logdateineu) tuloeschen(logdt,"",pm.obverb,pm.oblog);
   Log(string(Tx[T_zufaxenvz])+drot+pm.zufaxenvz+schwarz+"'",pm.obverb,pm.oblog);
@@ -6523,6 +6530,7 @@ int main(int argc, char** argv)
     } // if (pm.loef || pm.loew || pm.loea) else
   } // if (pm.kez) else else else
   pm.pruefcron();
+        cout<<violett<<"9 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
   pm.autofkonfschreib();
   return 0;
 } // int main(int argc, char** argv) 
