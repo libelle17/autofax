@@ -1693,7 +1693,9 @@ void paramcl::logvorgaben(const string& vprog)
 #endif
   prog=base_name(vprog); // autofax
   instverz=string(getenv("HOME"))+'/'+prog;
+        cout<<rot<<"3 logdname: "<<logdname<<endl;
   logdname = prog+".log";
+        cout<<rot<<"4 logdname: "<<logdname<<endl;
   loggespfad=logvz+vtz+logdname;
   logdt=&loggespfad.front();
 } // void paramcl::logvorgaben
@@ -1741,11 +1743,11 @@ void paramcl::getcommandl0()
     cout<<rot<<"2 logneu: "<<(int)logneu<<schwarz<<endl;
     if (logneu) {
       if (!logdname.empty()) {
-        cout<<rot<<"logdname: "<<logdname<<endl;
-        cout<<rot<<"logdt: "<<logdt<<endl;
-        cout<<rot<<"loggespfad: "<<loggespfad<<endl;
         loggespfad=logvz+vtz+logdname;
         logdt=&loggespfad.front();
+        cout<<rot<<"1 logdname: "<<logdname<<endl;
+        cout<<rot<<"logdt: "<<logdt<<endl;
+        cout<<rot<<"loggespfad: "<<loggespfad<<endl;
       }
       logneu=0;
       obkschreib=1;
@@ -2151,7 +2153,9 @@ void paramcl::lieskonfein()
     if (cgconf[lfd].gelesen) mpwd=XOR(string(cgconf[lfd].wert),pk); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&dbq); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logvz); else rzf=1; lfd++;
+        cout<<rot<<"2 logdname: "<<logdname<<endl;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logdname); else rzf=1; lfd++;
+        cout<<rot<<"3 logdname: "<<logdname<<endl;
     loggespfad=logvz+vtz+logdname;
     logdt=&loggespfad.front();
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&sqlz); else rzf=1; lfd++;
@@ -2285,7 +2289,7 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("h","hilfe", &Tx, T_Zeigt_diesen_Bildschirm_an, &hilfe,1));
   opts.push_back(optioncl("?","help", &Tx, -1, &hilfe,1));
 
-  string altlogdname(logdname);
+//   string altlogdname(logdname);
   string altlogvz(logvz);
   string altckzl(cklingelzahl);
   string althkzl(hklingelzahl);
@@ -2306,6 +2310,7 @@ int paramcl::getcommandline()
     }
   }
   if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
+  /*
   if (altlogdname!=logdname || altlogvz!=logvz) {
     if (!logdname.empty()) {
       loggespfad=logvz+vtz+logdname;
@@ -2315,6 +2320,7 @@ int paramcl::getcommandline()
       obkschreib=1;
     }
   }
+  */
   if (altckzl!=cklingelzahl || rzf) {
     cgconf.setze("cklingelzahl",cklingelzahl); // zum Schreiben in die /usr/local/sbin/autofax.conf in autokonfschreib
     capizukonf=1;
