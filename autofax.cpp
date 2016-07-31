@@ -1743,9 +1743,9 @@ void paramcl::getcommandl0()
       if (!logdname.empty()) {
         loggespfad=logvz+vtz+logdname;
         logdt=&loggespfad.front();
-        // <<rot<<"1 logdname: "<<logdname<<endl;
-        // <<rot<<"logdt: "<<logdt<<endl;
-        // <<rot<<"loggespfad: "<<loggespfad<<endl;
+        cout <<rot<<"1 logdname: "<<logdname<<endl;
+        cout <<rot<<"logdt: "<<logdt<<endl;
+        cout <<rot<<"loggespfad: "<<loggespfad<<endl;
       }
       obkschreib=1;
     }
