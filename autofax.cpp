@@ -1746,6 +1746,7 @@ void paramcl::getcommandl0()
         cout <<rot<<"1 logdname: "<<logdname<<endl;
         cout <<rot<<"logdt: "<<logdt<<endl;
         cout <<rot<<"loggespfad: "<<loggespfad<<endl;
+        cout<<violett<<*cgconf.hole("logdname")<<schwarz<<endl;
       }
       obkschreib=1;
     }
