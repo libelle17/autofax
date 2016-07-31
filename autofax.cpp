@@ -1705,7 +1705,7 @@ void paramcl::logvorgaben(const string& vprog)
 void paramcl::getcommandl0()
 {
   Log(violetts+"getcommandl0()"+schwarz,obverb,oblog);
-  cgconf.init(36, "langu","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
+  cgconf.init(36, "language","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
     "countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
     "cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl",
     "gleichziel","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","cronminut","anfaxstr","ancfaxstr","anhfaxstr",
