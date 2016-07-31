@@ -1744,7 +1744,10 @@ void paramcl::getcommandl0()
         }
       }
     }
-    if (iru==1 && (logvneu ||logdneu)) {
+    optslsz=opts.size();
+    if (!iru) lgnzuw();
+  } // for(unsigned iru=0;iru<3;iru++)
+    if (logvneu ||logdneu) {
       if (!logdname.empty()) {
         loggespfad=logvz+vtz+logdname;
         logdt=&loggespfad.front();
@@ -1755,9 +1758,6 @@ void paramcl::getcommandl0()
       }
       obkschreib=1;
     }
-    optslsz=opts.size();
-    if (!iru) lgnzuw();
-  } // for(unsigned iru=0;iru<3;iru++)
 } // void paramcl::getcommandl0(int argc, char** argv)
 
 // wird aufgerufen in: main
@@ -6438,11 +6438,20 @@ void zeigversion(const char* const prog)
 
 void paramcl::zeigkonf()
 {
-  cout<<Tx[T_aktuelle_Einstellungen_aus]<<blau<<konfdatname<<schwarz<<"':"<<endl;
-  for(unsigned i=0;i<cgconf.zahl;i++) {
-   cout<<blau<<setw(20)<<cgconf[i].name<<schwarz<<": "<<cgconf[i].wert<<endl;
+  struct stat kstat;
+  char buf[255];
+  if (!lstat(konfdatname.c_str(),&kstat)) {
+    struct tm tm;
+    memset(&tm, 0, sizeof(struct tm));
+    memcpy(&tm, localtime(&kstat.st_mtime),sizeof(tm));
+    strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", &tm);
   }
-}
+  cout<<Tx[T_aktuelle_Einstellungen_aus]<<blau<<konfdatname<<schwarz<<"' ("<<buf<<"):"<<endl;
+  for(unsigned i=0;i<cgconf.zahl;i++) {
+    cout<<blau<<setw(20)<<cgconf[i].name<<schwarz<<": "<<cgconf[i].wert<<endl;
+  }
+} // void paramcl::zeigkonf()
+
 
 int main(int argc, char** argv) 
 {
@@ -6451,7 +6460,7 @@ int main(int argc, char** argv)
   paramcl pm(argc,argv); // Programmparameter
   pm.logvorgaben(*argv);
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
-  pm.VorgbAllg();
+      pm.VorgbAllg();
   pm.VorgbSpeziell();
         cout<<violett<<"2 logdname: "<<*pm.cgconf.hole("logdname")<<schwarz<<endl;
         cout<<"logdneu: "<<(int)pm.logdneu<<endl;
