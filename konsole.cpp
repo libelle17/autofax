@@ -1898,6 +1898,7 @@ int optioncl::pruefp(vector<argcl> *argcvm , size_t *akt, uchar *hilfe) // 1 = d
     }
     if (argcvm->at(*akt).agef) {
       if (pptr) {
+        cout<<gruen<<acstr<<schwarz<<": "<<wert<<endl;
         if (*pptr!=wert) {
           *pptr=wert;
           if (obschreibp) *obschreibp=1;
