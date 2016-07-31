@@ -2150,11 +2150,13 @@ void paramcl::lieskonfein()
     if (cgconf[lfd].gelesen) mpwd=XOR(string(cgconf[lfd].wert),pk); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&dbq); else rzf=1; lfd++;
     if (!logvneu) {
-      if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logvz); else rzf=1; lfd++;
+      if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logvz); else rzf=1; 
     }
+    lfd++;
     if (!logdneu) {
-      if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logdname); else rzf=1; lfd++;
+      if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logdname); else rzf=1; 
     }
+    lfd++;
     loggespfad=logvz+vtz+logdname;
     logdt=&loggespfad.front();
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&sqlz); else rzf=1; lfd++;
