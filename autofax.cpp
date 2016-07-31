@@ -1717,9 +1717,9 @@ void paramcl::getcommandl0()
       case 1:
         opts.push_back(optioncl("v","verbose", &Tx, T_Bildschirmausgabe_gespraechiger,&plusverb,1));
         loggespfad=logvz+vtz+logdname;
-        opts.push_back(optioncl("lvz","logvz", &Tx, T_waehlt_als_Logverzeichnis_pfad_derzeit,&logvz, pverz,&cgconf,"logvz",&logneu));
+        opts.push_back(optioncl("lvz","logvz", &Tx, T_waehlt_als_Logverzeichnis_pfad_derzeit,&logvz, pverz,&cgconf,"logvz",&logvneu));
         opts.push_back(optioncl("ld","logdname", &Tx, T_logdatei_string_im_Pfad, &logvz, T_wird_verwendet_anstatt, &logdname, psons,
-           &cgconf,"logdname",&logneu));
+           &cgconf,"logdname",&logdneu));
         opts.push_back(optioncl("l","log",&Tx, T_protokolliert_ausfuehrlich_in_Datei, &loggespfad, T_sonst_knapper, &oblog,1));
         opts.push_back(optioncl("ldn","logdateineu", &Tx, T_logdatei_vorher_loeschen, &logdateineu, 1));
         break;
@@ -1727,7 +1727,6 @@ void paramcl::getcommandl0()
         opts.push_back(optioncl("kd","konfdat", &Tx, T_verwendet_Kofigurationsdatei_string_anstatt,&konfdatname,pfile));
         break;
     }
-    cout<<rot<<"1 logneu: "<<(int)logneu<<schwarz<<endl;
     // hier wird die Befehlszeile ueberprueft:
     for(;optslsz<opts.size();optslsz++) {
       for(size_t i=0;i<argcmv.size();i++) {
@@ -1740,16 +1739,14 @@ void paramcl::getcommandl0()
         }
       }
     }
-    cout<<rot<<"2 logneu: "<<(int)logneu<<schwarz<<endl;
-    if (logneu) {
+    if (iru==1 && (logvneu ||logdneu)) {
       if (!logdname.empty()) {
         loggespfad=logvz+vtz+logdname;
         logdt=&loggespfad.front();
-        cout<<rot<<"1 logdname: "<<logdname<<endl;
-        cout<<rot<<"logdt: "<<logdt<<endl;
-        cout<<rot<<"loggespfad: "<<loggespfad<<endl;
+        // <<rot<<"1 logdname: "<<logdname<<endl;
+        // <<rot<<"logdt: "<<logdt<<endl;
+        // <<rot<<"loggespfad: "<<loggespfad<<endl;
       }
-      logneu=0;
       obkschreib=1;
     }
     optslsz=opts.size();
@@ -2152,10 +2149,12 @@ void paramcl::lieskonfein()
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&muser); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) mpwd=XOR(string(cgconf[lfd].wert),pk); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&dbq); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logvz); else rzf=1; lfd++;
-        cout<<rot<<"2 logdname: "<<logdname<<endl;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logdname); else rzf=1; lfd++;
-        cout<<rot<<"3 logdname: "<<logdname<<endl;
+    if (!logvneu) {
+      if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logvz); else rzf=1; lfd++;
+    }
+    if (!logdneu) {
+      if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logdname); else rzf=1; lfd++;
+    }
     loggespfad=logvz+vtz+logdname;
     logdt=&loggespfad.front();
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&sqlz); else rzf=1; lfd++;

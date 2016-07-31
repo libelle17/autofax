@@ -178,7 +178,8 @@ class paramcl // Programmparameter
     uchar capizukonf=0; // capi zu konfigurieren
     uchar hylazukonf=0; // hyla zu konfigurieren
     uchar obkschreib=0; // Konfigurationsdatei schreiben
-    uchar logneu=0;    // Logdatei oder -pfad geaendert
+    uchar logdneu=0;    // Logdatei geaendert
+    uchar logvneu=0;    // Logverzeichnis geaendert
     string varsphylavz; // Verzeichnis der Hyla-Spool-Dateien /var/spool/fax
     string xferfaxlog; // varsphylavz + "/etc/xferfaxlog"; 
     string faxgtpfad;   // /usr/lib/fax/faxgetty
