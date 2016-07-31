@@ -1,5 +1,5 @@
 
-<h1 align="center">AUTOFAX (Version 0.40457)</h1>
+<h1 align="center">AUTOFAX (Version 0.40462)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -119,7 +119,7 @@ program &rsquo;git&rsquo; is available, You can start with:
 git clone http://github.com/libelle17/autofax && cd
 autofax <br>
 - otherwise e.g. with: <br>
-P=autofax; T=$P.tar.gz; wget
+P=autofax; T=$P.tar.gz; cd ~; wget
 https://github.com/libelle17/$P/archive/master.tar.gz -O $T
 && tar xpvf $T && rm $T && { for i
 in $(ls -d ${P}_* 2&gt;/dev/null | cut -d&quot;_&quot; -f2 |

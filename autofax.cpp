@@ -481,6 +481,7 @@ enum T_
   T_Samba_muesste_installiert_werden_soll_ich,
   T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden,
   T_Soll_die_SuSEfirewall_bearbeitet_werden,
+  T_aktuelle_Einstellungen_aus,
   T_MAX
 };
 
@@ -1354,6 +1355,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
     "Shall missing samba shares for the specified directories be added?"},
   // T_Soll_die_SuSEfirewall_bearbeitet_werden
   {"Soll die SuSEfirewall2 bearbeitet werden?","Shall the SuSEfirewall2 be edited?"},
+  // T_aktuelle_Einstellungen_aus
+  {"Aktuelle Einstellungen aus '","Current settings from '"},
   {"",""}
 };
 
@@ -2235,10 +2238,10 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("cm","cronminut", &Tx,T_Alle_wieviel_Minuten_soll,&prog,T_aufgerufen_werden_0_ist_gar_nicht, &cronminut, pzahl));
   // <<"getcommandline 1 vor  obcapi: "<<(int)obcapi<<endl;
   opts.push_back(optioncl("capi","capisuite", &Tx, T_Capisuite_verwenden ,&obcapi,1));
-  opts.push_back(optioncl("kc","keincapi", &Tx, T_Capisuite_nicht_verwenden,&obcapi,0));
+  opts.push_back(optioncl("nocapi","keincapi", &Tx, T_Capisuite_nicht_verwenden,&obcapi,0));
   // <<"getcommandline 1 nach obcapi: "<<(int)obcapi<<endl;
   opts.push_back(optioncl("hyla","hylafax", &Tx, T_hylafax_verwenden,&obhyla,1));
-  opts.push_back(optioncl("kh","keinhyla", &Tx, T_hylafax_nicht_verwenden,&obhyla,0));
+  opts.push_back(optioncl("nohyla","keinhyla", &Tx, T_hylafax_nicht_verwenden,&obhyla,0));
   opts.push_back(optioncl("cz","capizuerst", &Tx, T_versuche_faxe_zuerst_ueber_Capisuite_wegzuschicken,&hylazuerst,0));
   opts.push_back(optioncl("hz","hylazuerst", &Tx, T_versuche_faxe_zuerst_ueber_hylafax_wegzuschicken,&hylazuerst,1));
   //  opts.push_back(optioncl("hms","hylamodemstring",&Tx, T_sucht_nach_dev_tty_string_als_Modem_mit_string_anstatt,&hmodemstr,psons));
@@ -4782,6 +4785,7 @@ void paramcl::hconfigtty()
   Log(violetts+"hconfigtty()"+schwarz,obverb,oblog);
   setzmodconfd();
   // <<rot<<modconfdat<<schwarz<<endl;
+  // z.B. /var/spool/hylafax/etc/config.ttyACM0
   mdatei hci(modconfdat,ios::out);
   if (hci.is_open()) {
   // <<rot<<" ist offen"<<schwarz<<endl;
@@ -6423,9 +6427,17 @@ void zeigversion(const char* const prog)
   strptime((string(__DATE__)+" "+__TIME__).c_str(),"%b %d %Y %H:%M:%S", &tm);
   strftime(buf, sizeof(buf), "%d.%m.%Y %H:%M:%S", &tm);
   cout<<"              "<<Tx[T_Kompiliert]<<blau<<buf<<schwarz<<endl;
-  cout<<Tx[T_Quelle]<<blau<<"https://github.com/libelle17/autofax"<<schwarz<<endl;
+  cout<<Tx[T_Quelle]<<blau<<"https://github.com/libelle17/"<<prog<<schwarz<<endl;
   cout<<Tx[T_Hilfe]<<braun<<"man "<<base_name(mpfad)<<schwarz<<"' oder '"<<braun<<"man -Lde "<<base_name(mpfad)<<schwarz<<"'"<<endl;
 } // void zeigversion(const char* const prog)
+
+void paramcl::zeigkonf()
+{
+  cout<<Tx[T_aktuelle_Einstellungen_aus]<<blau<<konfdatname<<schwarz<<"':"<<endl;
+  for(unsigned i=0;i<cgconf.zahl;i++) {
+   cout<<blau<<setw(20)<<cgconf[i].name<<schwarz<<": "<<cgconf[i].wert<<endl;
+  }
+}
 
 int main(int argc, char** argv) 
 {
@@ -6445,6 +6457,7 @@ int main(int argc, char** argv)
   }
   if (pm.zeigversion) {
    zeigversion(*argv);
+   pm.zeigkonf();
    exit(0);
   }
   if (pm.obhyla) pm.pruefmodem();

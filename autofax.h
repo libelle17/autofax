@@ -300,4 +300,5 @@ class paramcl // Programmparameter
     void empfarch();
     void schlussanzeige(const char* const progname);
     void autofkonfschreib();
+    void zeigkonf();
 }; // class paramcl
