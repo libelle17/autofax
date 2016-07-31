@@ -1741,6 +1741,9 @@ void paramcl::getcommandl0()
     cout<<rot<<"2 logneu: "<<(int)logneu<<schwarz<<endl;
     if (logneu) {
       if (!logdname.empty()) {
+        cout<<rot<<"logdname: "<<logdname<<endl;
+        cout<<rot<<"logdt: "<<logdt<<endl;
+        cout<<rot<<"loggespfad: "<<loggespfad<<endl;
         loggespfad=logvz+vtz+logdname;
         logdt=&loggespfad.front();
       }
