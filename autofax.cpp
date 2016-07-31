@@ -1693,9 +1693,9 @@ void paramcl::logvorgaben(const string& vprog)
 #endif
   prog=base_name(vprog); // autofax
   instverz=string(getenv("HOME"))+'/'+prog;
-        cout<<rot<<"3 logdname: "<<logdname<<endl;
-  logdname = prog+".log";
         cout<<rot<<"4 logdname: "<<logdname<<endl;
+  logdname = prog+".log";
+        cout<<rot<<"5 logdname: "<<logdname<<endl;
   loggespfad=logvz+vtz+logdname;
   logdt=&loggespfad.front();
 } // void paramcl::logvorgaben
@@ -2561,8 +2561,11 @@ void paramcl::rueckfragen()
       cgconf[lfd].setze(&logvz);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
+        cout<<rot<<"7 logdname: "<<logdname<<endl;
       logdname=Tippstring(Tx[T_Logdateiname],&logdname);
+        cout<<rot<<"8 logdname: "<<logdname<<endl;
       cgconf[lfd].setze(&logdname);
+        cout<<rot<<"9 logdname: "<<logdname<<endl;
     }
     loggespfad=string(logvz)+vtz+logdname;
     logdt=&loggespfad.front();
