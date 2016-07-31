@@ -2195,7 +2195,7 @@ void paramcl::lieskonfein()
       if (zmzn) break;
       // Vorgaben uebernehmen
       zmz=zmvz;
-      zmzukonf=1;
+      obkschreib=1;
     }
     
 //    zmconfp = new cppSchluess[zmzn+zmzn];
@@ -2292,6 +2292,8 @@ int paramcl::getcommandline()
   string althkzl(hklingelzahl);
   uchar altobcapi(obcapi);
   uchar altobhyla(obhyla);
+  string altempfvz(empfvz);
+
   for(;optslsz<opts.size();optslsz++) {
     for(size_t i=0;i<argcmv.size();i++) {
       if (opts[optslsz].pruefp(&argcmv,&i,&hilfe)) {
@@ -2310,26 +2312,27 @@ int paramcl::getcommandline()
   if (altckzl!=cklingelzahl || rzf) {
     setzegcp("cklingelzahl",&cklingelzahl); // zum Schreiben in die /usr/local/sbin/autofax.conf in autokonfschreib
     capizukonf=1;
-    zmzukonf=1;
+    obkschreib=1;
   }
   if (altcuser!=cuser || rzf) {
     setzegcp("cuser",&cuser);
     capizukonf=1;
-    zmzukonf=1;
+    obkschreib=1;
   }
   if (altlogdname!=logdname || altlogvz!=logvz) {
     if (!logdname.empty()) {
       loggespfad = logvz+vtz+logdname;
       logdt = &loggespfad.front();
+      obkschreib=1;
     }
   }
   if (althkzl!=hklingelzahl || rzf) {
     setzegcp("hklingelzahl",&hklingelzahl);
     hylazukonf=1;
-    zmzukonf=1;
+    obkschreib=1;
   }
-  if (altobcapi!=obcapi || altobhyla!=obhyla) {
-   zmzukonf=1;
+  if (altobcapi!=obcapi || altobhyla!=obhyla || altempfvz!=empfvz) {
+   obkschreib=1;
   }
 
   lgnzuw();
@@ -2736,15 +2739,15 @@ void paramcl::rueckfragen()
 // wird aufgerufen in: main
 void paramcl::autofkonfschreib()
 {
-  Log(violetts+Tx[T_autokonfschreib]+schwarz+", "+Tx[T_zu_schreiben]+((rzf || zmzukonf)?Tx[T_ja]:Tx[T_nein]),obverb,oblog);
+  Log(violetts+Tx[T_autokonfschreib]+schwarz+", "+Tx[T_zu_schreiben]+((rzf || obkschreib)?Tx[T_ja]:Tx[T_nein]),obverb,oblog);
   /*
   capizukonf und hylazukonf hier immer 0
   char buf[200];
-  sprintf(buf,"rzf: %d, capizukonf: %d, hylazukonf: %d, zmzukonf: %d",(int)rzf, (int)capizukonf, (int)hylazukonf, (int)zmzukonf);
+  sprintf(buf,"rzf: %d, capizukonf: %d, hylazukonf: %d, obkschreib: %d",(int)rzf, (int)capizukonf, (int)hylazukonf, (int)obkschreib);
   Log(blaus+buf+schwarz,obverb,oblog);
   */
 
-  if (rzf || zmzukonf) {
+  if (rzf || obkschreib) {
     Log(gruens+Tx[T_schreibe_Konfiguration]+schwarz,obverb,oblog);
     for (size_t i=0;i<cgconf.zahl;i++) {
      if (cgconf[i].name=="obhyla") cgconf[i].setze(&obhyla);
@@ -4955,7 +4958,7 @@ int paramcl::pruefhyla()
       break;
      }
     }
-    hconfigtty();zmzukonf=1;
+    hconfigtty();obkschreib=1;
   }
   
   vector<string> ruecki;

@@ -177,7 +177,7 @@ class paramcl // Programmparameter
     string hklingelzahl; // Zahl der Klingeltoene, bis Hylafax einen Anruf annnimmt
     uchar capizukonf=0; // capi zu konfigurieren
     uchar hylazukonf=0; // hyla zu konfigurieren
-    uchar zmzukonf=0; // Zielmuster zu konfigurieren
+    uchar obkschreib=0; // Konfigurationsdatei schreiben
     string varsphylavz; // Verzeichnis der Hyla-Spool-Dateien /var/spool/fax
     string xferfaxlog; // varsphylavz + "/etc/xferfaxlog"; 
     string faxgtpfad;   // /usr/lib/fax/faxgetty
