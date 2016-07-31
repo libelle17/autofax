@@ -2331,7 +2331,11 @@ int paramcl::getcommandline()
     hylazukonf=1;
     obkschreib=1;
   }
-  if (altobcapi!=obcapi || altobhyla!=obhyla || altempfvz!=empfvz) {
+  if (altempfvz!=empfvz) {
+   cgconf.setze("empfvz",empfvz);
+   obkschreib=1;
+  }
+  if (altobcapi!=obcapi || altobhyla!=obhyla ) {
    obkschreib=1;
   }
 
