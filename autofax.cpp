@@ -1694,7 +1694,7 @@ void paramcl::logvorgaben(const string& vprog)
   prog=base_name(vprog); // autofax
   instverz=string(getenv("HOME"))+'/'+prog;
   logdname = prog+".log";
-  loggespfad = logvz+vtz+logdname;
+  loggespfad=logvz+vtz+logdname;
   logdt=&loggespfad.front();
 } // void paramcl::logvorgaben
 
@@ -1714,34 +1714,36 @@ void paramcl::getcommandl0()
         break;
       case 1:
         opts.push_back(optioncl("v","verbose", &Tx, T_Bildschirmausgabe_gespraechiger,&plusverb,1));
-        loggespfad = logvz+vtz+logdname;
+        loggespfad=logvz+vtz+logdname;
         opts.push_back(optioncl("l","log",&Tx, T_protokolliert_ausfuehrlich_in_Datei, &loggespfad, T_sonst_knapper, &oblog,1));
         opts.push_back(optioncl("lvz","logvz", &Tx, T_waehlt_als_Logverzeichnis_pfad_derzeit,&logvz, pverz));
-        opts.push_back(optioncl("ld","logdname", &Tx, T_logdatei_string_im_Pfad, &logvz, T_wird_verwendet_anstatt, &logdname, psons));
-        opts.push_back(optioncl("ldn","logdateineu", &Tx, T_logdatei_vorher_loeschen, &logdateineu, 1));
+        opts.push_back(optioncl("ld","logdname", &Tx, T_logdatei_string_im_Pfad, &logvz, T_wird_verwendet_anstatt, &logdname, psons,
+           &cgconf,"logdname",&logneu));
+        opts.push_back(optioncl("ldn","logdateineu", &Tx, T_logdatei_vorher_loeschen, &logdateineu, 1,&cgconf,"logvz",&logneu));
         break;
       case 2:
         opts.push_back(optioncl("kd","konfdat", &Tx, T_verwendet_Kofigurationsdatei_string_anstatt,&konfdatname,pfile));
         break;
     }
+    // hier wird die Befehlszeile ueberprueft:
     for(;optslsz<opts.size();optslsz++) {
       for(size_t i=0;i<argcmv.size();i++) {
-        string altlogdname(logdname);
-        string altlogvz(logvz);
         if (opts[optslsz].pruefp(&argcmv,&i,&hilfe)) {
           if (iru==1) {
             if (plusverb) {obverb++;plusverb=0;}
             if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
-            if (altlogdname!=logdname || altlogvz!=logvz) {
-              if (!logdname.empty()) {
-                loggespfad = logvz+vtz+logdname;
-                logdt = &loggespfad.front();
-              }
-            }
           }
           if (opts[optslsz].kurz!="v") break;
         }
       }
+    }
+    if (logneu) {
+      if (!logdname.empty()) {
+        loggespfad=logvz+vtz+logdname;
+        logdt=&loggespfad.front();
+      }
+      logneu=0;
+      obkschreib=1;
     }
     optslsz=opts.size();
     if (!iru) lgnzuw();
@@ -2145,8 +2147,8 @@ void paramcl::lieskonfein()
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&dbq); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logvz); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logdname); else rzf=1; lfd++;
-    loggespfad = logvz+vtz+logdname;
-    logdt = &loggespfad.front();
+    loggespfad=logvz+vtz+logdname;
+    logdt=&loggespfad.front();
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&sqlz); else rzf=1; lfd++;
     sqlzn=atol(sqlz.c_str());
     // Vorgaben uebernehmen
@@ -2233,23 +2235,27 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("hz","hylazuerst", &Tx, T_versuche_faxe_zuerst_ueber_hylafax_wegzuschicken,&hylazuerst,1,&cgconf,"hylazuerst",&obkschreib));
   //  opts.push_back(optioncl("hms","hylamodemstring",&Tx, T_sucht_nach_dev_tty_string_als_Modem_mit_string_anstatt,&hmodemstr,psons));
   opts.push_back(optioncl("mod","modem",&Tx, T_Fuer_Hylafax_verwendetes_Modem,&hmodem,psons,&cgconf,"hmodem",&hylazukonf));
-  opts.push_back(optioncl("mc","maxcapiv",&Tx, T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht,&maxcapiv,pzahl,&cgconf,"maxcapiv",&hylazukonf));
+  opts.push_back(optioncl("mc","maxcapiv",&Tx, T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht,&maxcapiv,pzahl,&cgconf,"maxcapiv",&obkschreib));
   opts.push_back(optioncl("mh","maxhylav",&Tx, T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet,&maxhylav,pzahl,&cgconf,"maxhylav",&obkschreib));
-  opts.push_back(optioncl("ckzl","capiklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,&cklingelzahl,pzahl,
-                          &cgconf,"cklingelzahl",&capizukonf));
   opts.push_back(optioncl("cuser","cuser",&Tx, T_verwendet_fuer_Capisuite_den_Linux_Benutzer_string_anstatt,&cuser,psons,&cgconf,"cuser",&capizukonf));
+  opts.push_back(optioncl("ckzl","capiklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,&cklingelzahl,pzahl,
+                                                        &cgconf,"cklingelzahl",&capizukonf));
   opts.push_back(optioncl("hkzl","hylaklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,&hklingelzahl,pzahl,
-                          &cgconf,"hklingelzahl",&hylazukonf));
-  opts.push_back(optioncl("gz","gleichziel", &Tx, T_FAxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,&gleichziel,1));
-  opts.push_back(optioncl("afs","anfaxstring",&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,&anfaxstr,psons));
-  opts.push_back(optioncl("acfs","ancfaxstring",&Tx, T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,&ancfaxstr,psons));
-  opts.push_back(optioncl("ahfs","anhfaxstring",&Tx, T_faxnr_fuer_primaer_hylafax_wird_hinter_string_erwartet_statt_hinter,&anhfaxstr,psons));
-  opts.push_back(optioncl("as","anstring",&Tx, T_Adressatenname_wird_hinter_string_erwartet_statt_hinter,&anstr,psons));
-  opts.push_back(optioncl("us","undstring",&Tx, T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt,&undstr,psons));
-  opts.push_back(optioncl("host","host",&Tx, T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf,&host,psons));
-  opts.push_back(optioncl("muser","muser",&Tx, T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt,&muser,psons));
-  opts.push_back(optioncl("mpwd","mpwd",&Tx, T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string_anstatt,&mpwd,psons));
-  opts.push_back(optioncl("db","db",&Tx, T_verwendet_die_Datenbank_string_anstatt,&dbq,psons));
+                                                        &cgconf,"hklingelzahl",&hylazukonf));
+  opts.push_back(optioncl("gz","gleichziel", &Tx, T_FAxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,&gleichziel,1,
+                                                  &cgconf,"gleichziel",&obkschreib));
+  opts.push_back(optioncl("afs","anfaxstring",&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,&anfaxstr,psons,&cgconf,"anfaxstr",&obkschreib));
+  opts.push_back(optioncl("acfs","ancfaxstring",&Tx, T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,&ancfaxstr,psons,
+                                                      &cgconf,"ancfaxstr",&obkschreib));
+  opts.push_back(optioncl("ahfs","anhfaxstring",&Tx, T_faxnr_fuer_primaer_hylafax_wird_hinter_string_erwartet_statt_hinter,&anhfaxstr,psons,
+                                                     &cgconf,"anhfaxstr",&obkschreib));
+  opts.push_back(optioncl("as","anstring",&Tx, T_Adressatenname_wird_hinter_string_erwartet_statt_hinter,&anstr,psons,&cgconf,"anstr",&obkschreib));
+  opts.push_back(optioncl("us","undstring",&Tx, T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt,&undstr,psons,
+                                                &cgconf,"undstr",&obkschreib));
+  opts.push_back(optioncl("host","host",&Tx, T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf,&host,psons,&cgconf,"host",&obkschreib));
+  opts.push_back(optioncl("muser","muser",&Tx, T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt,&muser,psons,&cgconf,"muser",&obkschreib));
+  opts.push_back(optioncl("mpwd","mpwd",&Tx, T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string_anstatt,&mpwd,psons,&cgconf,"mpwd",&obkschreib));
+  opts.push_back(optioncl("db","db",&Tx, T_verwendet_die_Datenbank_string_anstatt,&dbq,psons,&cgconf,"datenbank",&obkschreib));
   //  opts.push_back(optioncl("l","log", &Tx, T_protokolliert_ausfuehrlich_in_Datei+drot+loggespfad+schwarz+Tx[T_sonst_knapper],&oblog,1));
   //  opts.push_back(optioncl("lvz","logvz",&Tx, T_waehlt_als_Logverzeichnis_pfad_anstatt,&logvz,pverz));
   //  opts.push_back(optioncl("ld","logdname",&Tx, T_logdatei_string_im_Pfad+drot+logvz+schwarz+Tx[T_wird_verwendet_anstatt],&logdname,psons));
@@ -2297,8 +2303,8 @@ int paramcl::getcommandline()
   if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
   if (altlogdname!=logdname || altlogvz!=logvz) {
     if (!logdname.empty()) {
-      loggespfad = logvz+vtz+logdname;
-      logdt = &loggespfad.front();
+      loggespfad=logvz+vtz+logdname;
+      logdt=&loggespfad.front();
       cgconf.setze("logdname",logdname);
       cgconf.setze("logvz",logvz);
       obkschreib=1;
@@ -2315,7 +2321,7 @@ int paramcl::getcommandline()
     obkschreib=1;
   }
   
-  if (capizukonf && hylazukonf)
+  if (capizukonf || hylazukonf)
     obkschreib=1;
 
   lgnzuw();
@@ -2547,8 +2553,8 @@ void paramcl::rueckfragen()
       logdname=Tippstring(Tx[T_Logdateiname],&logdname);
       cgconf[lfd].setze(&logdname);
     }
-    loggespfad = string(logvz)+vtz+logdname;
-    logdt = &loggespfad.front();
+    loggespfad=string(logvz)+vtz+logdname;
+    logdt=&loggespfad.front();
 //      for(size_t zkt=0;zkt<sqlzn;zkt++) KLA
 //        <<"zkt: "<<blau<<zkt<<schwarz<<", sqlconf["<<zkt<<"]: "<<rot<<sqlconf[zkt].wert<<schwarz<<endl;
 //        <<gruen<<(sqlconf[zkt].wert.empty()?sqlconfvp[zkt].wert:sqlconf[zkt].wert)<<schwarz<<endl;
