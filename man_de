@@ -335,6 +335,8 @@ hylafax, capisuite
 .LP
 .HP 3
 8) ggf. Einfügen von Abschnitten für die unter 3) genannten Verzeichnisse in /etc/samba/smb.conf, ggf. Einfügen/Passwortzuteilen des Programmbenutzers bzw. (falls root) des für die Capisuite gewählten Benutzers als Samba-Bentzer.
+.br
+Falls Suse-Firewall vorhanden, samba-Server fuer "externe Zone" eintragen.
 .LP
 .HP 3
 9) ggf. Einfügen einer Datenbank für die Faxe in mariadb unter einem bestimmbaren Namen, Anlage und Veränderung mehrerer Tabellen und einer Prozedur in dieser Datenbank, ggf. Einfügen eines Benutzers mit bestimmbarem Namen in mariadb zur Datenpflege in diesen Tabellen 

@@ -415,6 +415,14 @@ with a leading &rsquo;<b>#</b>&rsquo;.</p></td></tr>
 <td width="89%">
 
 
+<p style="margin-top: 1em">In case a Suse firewall is
+present, allow samba-server for &quot;external
+zone&quot;.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
 <p style="margin-top: 1em">9) The program checks if all
 user-relevant directories (see 7) are being included in
 samba shares in <b>/etc/samba/smb.conf</b>; such are being
