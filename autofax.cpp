@@ -5450,8 +5450,8 @@ int paramcl::pruefcapi()
                       " && { grep '/usr/local/lib' /etc/ld.so.conf || { echo '/usr/local/lib' >> /etc/ld.so.conf; ldconfig; } } && cd .. "
                       " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
                       " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp "
-                      " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/\\1 -lboost_system/g' src/Makefile "
-                      " && ./configure && make && make install; } "
+                      " && ./configure && sed -i.bak -e 's/\\(-lboost_filesystem\\)/\\1 -lboost_system/g' src/Makefile "
+                      " && make && make install; } "
                       ,obverb,oblog);
         } else {
           linst.doggfinst("sfftobmp",obverb+1,oblog);
