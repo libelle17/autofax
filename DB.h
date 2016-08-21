@@ -235,6 +235,7 @@ class DB
   public:
     // muss außerhalb der Klasse und einer Funktion noch mal definiert werden
     static uchar oisok; // 1=Installation von MariaDB wurde ueberprueft
+    string db_systemctl_name; // mysql, mariadb je nach System
     MYSQL *conn;
     //	MYSQL_RES *result;
     //	MYSQL_ROW row;

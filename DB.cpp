@@ -185,83 +185,92 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
   switch (DBS) {
     case MySQL:
 #ifdef linux
-     if (!oisok) {
-     // schauen, ob die Exe-Datei da ist 
-      for (int iru=0;iru<2;iru++) {
-       installiert=1;
-       // wenn nicht gefunden ...
-       if (systemrueck("sudo which mysqld",obverb-1,oblog)) {
-        svec frueck;
-        // .. und auch hier nicht gefunden ...
-        systemrueck("find /usr/sbin /usr/bin -executable -size +1M -name mysqld 2>/dev/null",obverb,oblog, &frueck);
-        if (!frueck.size()) 
-         // .. dann wohl nicht installiert
-         installiert=0;
-       }
-       if (installiert) 
-         if (systemrueck("which mysql",obverb-1,oblog)) 
-           installiert=0;
-       if (installiert) break;
-//        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get --assume-yes install mariadb-server; }",1,1);
-       linst.doinst("mariadb",obverb,oblog);
+      switch (pruefipr()) {
+        case zypper: case apt:
+          db_systemctl_name="mysql";
+          break;
+        case dnf: case yum:
+          db_systemctl_name="mariadb";
+          break;
+        default: break;
       }
-      // Datenverzeichnis suchen und pruefen
-      if (installiert) {
-        svec zrueck;
-        if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null "
-              "| grep datadir | cut -d'=' -f2",obverb,oblog,&zrueck)) {
-          if (zrueck.size()) {
-            datadir=zrueck[zrueck.size()-1];  
-          } else {
-            svec zzruck, zincldir;
-            systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit 2>/dev/null; true",obverb,oblog,&zzruck);
-            if (!zzruck.size())
-              systemrueck("find ${HOME} -name .my.cnf -printf '%p\\n' -quit 2>/dev/null",obverb,oblog,&zzruck);
-            if (zzruck.size()) {
-              systemrueck("sudo cat "+zzruck[0]+" | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", 
-                  obverb,oblog,&zincldir); 
-              for(size_t i=0;i<zincldir.size();i++) {
-                svec zzruck2;
-                systemrueck("sudo find "+zincldir[i]+" -not -type d",obverb,oblog,&zzruck2); // auch links
-                for(size_t i=0;i<zzruck2.size();i++) {
-                  zzruck<<zzruck2[i];
+      if (!oisok) {
+        // schauen, ob die Exe-Datei da ist 
+        for (int iru=0;iru<2;iru++) {
+          installiert=1;
+          // wenn nicht gefunden ...
+          if (systemrueck("sudo which mysqld",obverb-1,oblog)) {
+            svec frueck;
+            // .. und auch hier nicht gefunden ...
+            systemrueck("find /usr/sbin /usr/bin /usr/libexec -executable -size +1M -name mysqld 2>/dev/null",obverb,oblog, &frueck);
+            if (!frueck.size()) 
+              // .. dann wohl nicht installiert
+              installiert=0;
+          }
+          if (installiert) 
+            if (systemrueck("which mysql",obverb-1,oblog)) 
+              installiert=0;
+          if (installiert) break;
+          //        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get --assume-yes install mariadb-server; }",1,1);
+          linst.doinst("mariadb",obverb,oblog);
+        }
+        // Datenverzeichnis suchen und pruefen
+        if (installiert) {
+          svec zrueck;
+          if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null "
+                "| grep datadir | cut -d'=' -f2",obverb,oblog,&zrueck)) {
+            if (zrueck.size()) {
+              datadir=zrueck[zrueck.size()-1];  
+            } else {
+              svec zzruck, zincldir;
+              systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit 2>/dev/null; true",obverb,oblog,&zzruck);
+              if (!zzruck.size())
+                systemrueck("find ${HOME} -name .my.cnf -printf '%p\\n' -quit 2>/dev/null",obverb,oblog,&zzruck);
+              if (zzruck.size()) {
+                systemrueck("sudo cat "+zzruck[0]+" | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", 
+                    obverb,oblog,&zincldir); 
+                for(size_t i=0;i<zincldir.size();i++) {
+                  svec zzruck2;
+                  systemrueck("sudo find "+zincldir[i]+" -not -type d",obverb,oblog,&zzruck2); // auch links
+                  for(size_t i=0;i<zzruck2.size();i++) {
+                    zzruck<<zzruck2[i];
+                  }
                 }
               }
-            }
-            if(zzruck.size()) {
-              for(size_t i=0;i<zzruck.size();i++) {
-                svec zrueck;
-                if (!systemrueck(("sudo sed 's/#.*$//g' '")+zzruck[i]+"' | grep datadir | cut -d'=' -f2",
-                      obverb,oblog,&zrueck)) {
-                  if (zrueck.size()) {
-                    datadir=zrueck[zrueck.size()-1];  
-                    break;
-                  } // if (zrueck.size()) 
-                } // if (!systemrueck(("cat ")+zzruck[i]+" | sed 's/#.*$//g' | grep datadir | cut -d'=' -f2",obverb-1,oblog,&zrueck)) 
-              } // for(size_t i=0;i<zzruck.size();i++) 
-            } // if(zzruck.size()) 
-          } // if (zrueck.size()) else
-        } // if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null " ...
-        gtrim(&datadir);
-        if (datadir.empty()) {
-          datadir="/var/lib/mysql";
-        }
-        if (obverb) Log("datadir: "+blaus+datadir+schwarz,obverb,oblog);
-        struct stat datadst;
-        if (!lstat(datadir.c_str(), &datadst)) {
-          if(S_ISDIR(datadst.st_mode)) {
-            datadirda=1;
-          } else {
-            systemrueck(string("sudo rm -f '")+datadir+"'",1,1);
+              if(zzruck.size()) {
+                for(size_t i=0;i<zzruck.size();i++) {
+                  svec zrueck;
+                  if (!systemrueck(("sudo sed 's/#.*$//g' '")+zzruck[i]+"' | grep datadir | cut -d'=' -f2",
+                        obverb,oblog,&zrueck)) {
+                    if (zrueck.size()) {
+                      datadir=zrueck[zrueck.size()-1];  
+                      break;
+                    } // if (zrueck.size()) 
+                  } // if (!systemrueck(("cat ")+zzruck[i]+" | sed 's/#.*$//g' | grep datadir | cut -d'=' -f2",obverb-1,oblog,&zrueck)) 
+                } // for(size_t i=0;i<zzruck.size();i++) 
+              } // if(zzruck.size()) 
+            } // if (zrueck.size()) else
+          } // if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null " ...
+          gtrim(&datadir);
+          if (datadir.empty()) {
+            datadir="/var/lib/mysql";
           }
-        }
-        if (!datadirda) {
-          systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db 2>/dev/null`",1,1);
-          systemrueck("sudo systemctl start mysql",obverb,oblog);
-        }
-        oisok=1;
-      } // if (installiert)
-    } // if (!oisok)
+          if (obverb) Log("datadir: "+blaus+datadir+schwarz,obverb,oblog);
+          struct stat datadst;
+          if (!lstat(datadir.c_str(), &datadst)) {
+            if(S_ISDIR(datadst.st_mode)) {
+              datadirda=1;
+            } else {
+              systemrueck(string("sudo rm -f '")+datadir+"'",1,1);
+            }
+          }
+          if (!datadirda) {
+            systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db 2>/dev/null`",1,1);
+            systemrueck("sudo systemctl start "+db_systemctl_name,obverb,oblog);
+          }
+          oisok=1;
+        } // if (installiert)
+      } // if (!oisok)
 
 #endif
       conn = mysql_init(NULL);
@@ -303,13 +312,13 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                 if (!strcasecmp(host.c_str(),"localhost")) {
                   Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_mysql_zu_starten],1,1);
 #ifdef linux
-                  systemrueck("sudo systemctl enable mysql",1,1); 
+                  systemrueck("sudo systemctl enable "+db_systemctl_name,1,1); 
                   svec gstat;
                   systemrueck("getfacl -e -t "+datadir+" 2>/dev/null | grep 'user[ \t]*"+"mysql"+"[ \t]*rwx' || true",obverb,oblog,&gstat);
                   if (!gstat.size()) {
                     systemrueck("sudo setfacl -Rm 'u:mysql:7' '"+datadir+"'",obverb,oblog);
                   }
-                  if (!systemrueck("sudo systemctl start mysql",1,1)) {
+                  if (!systemrueck("sudo systemctl start "+db_systemctl_name,1,1)) {
                     Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
                   }
 #endif
@@ -317,24 +326,24 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                 break;
               case 1049:
                 if (ggferstellen) {
-                Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_Datenbank]+drot+uedb+schwarz+Txd[T_zu_erstellen],1,1);
-                mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), 0, port, unix_socket, client_flag);
-                fehnr=mysql_errno(conn);
-                if (!fehnr) {
-                  rs=new RS(this,string("CREATE DATABASE IF NOT EXISTS `")+uedb+"`");
+                  Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_Datenbank]+drot+uedb+schwarz+Txd[T_zu_erstellen],1,1);
+                  mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), 0, port, unix_socket, client_flag);
                   fehnr=mysql_errno(conn);
                   if (!fehnr) {
-//                    rs->Abfrage(string("USE `")+uedb+"`");
-                    usedb(uedb);
+                    rs=new RS(this,string("CREATE DATABASE IF NOT EXISTS `")+uedb+"`");
                     fehnr=mysql_errno(conn);
                     if (!fehnr) {
-                      delete(rs);
+                      //                    rs->Abfrage(string("USE `")+uedb+"`");
+                      usedb(uedb);
+                      fehnr=mysql_errno(conn);
+                      if (!fehnr) {
+                        delete(rs);
+                      }
                     }
+                  } else {
+                    Log(string(Txd[T_Fehler_beim_Verbinden])+ltoan(fehnr),1,1);
                   }
-                } else {
-                  Log(string(Txd[T_Fehler_beim_Verbinden])+ltoan(fehnr),1,1);
-                }
-                // if (ggferstellen)
+                  // if (ggferstellen)
                 } else {
                   Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz,obverb,oblog);
                 } // if (ggferstellen)

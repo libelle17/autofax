@@ -1058,19 +1058,35 @@ string* anfzweg(string& quel) {
   return &quel;
 } // string* anfzweg(
 
+
+lsysen lsyscl::getsys(int obverb,int oblog)
+{
+      if (sys==usys) {
+        if (!systemrueck("cat /proc/version | grep SUSE",obverb-2,oblog)) return sus;
+        if (!systemrueck("cat /proc/version | grep 'Ubuntu\\|ebian'",obverb-2,oblog)) return deb;
+        if (!systemrueck("cat /proc/version | grep edora",obverb-2,oblog)) return fed;
+      }
+      return usys;
+}
+
+class lsyscl lsys;
+
+/*
 betrsys pruefos()
 {
  static betrsys aktbs=keins;
  if (aktbs==keins) {
   svec rueck;
-  systemrueck("lsb_release -i",0,0,&rueck);
+  systemrueck("which lsb_release >/dev/null 2>&1 && lsb_release -i || { test -f /etc/fedora-release && cat /etc/fedora-release;}",0,0,&rueck);
   if (rueck.size()) {
    if (rueck[0].find("SUSE LINUX")!=string::npos) aktbs=suse;
    else if (rueck[0].find("Ubuntu")!=string::npos) aktbs=ubuntu;
+   else if (rueck[0].find("Fedora")!=string::npos) aktbs=fedora;
   }
  }
  return aktbs;
 } // betrsys pruefos()
+*/
 
 string obprogda(string prog,int obverb, int oblog)
 {

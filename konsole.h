@@ -352,8 +352,17 @@ class abSchl {
    abSchl(string& vname, string& vwert):name(vname),wert(vwert) {}
 };
 
-enum betrsys {keins,suse,ubuntu};
-betrsys pruefos();
+// Linux-System-Enum
+enum lsysen:uchar {usys,sus,deb,fed};
+class lsyscl
+{
+  public:
+    lsysen sys; 
+    lsysen getsys(int obverb=0,int oblog=0);
+};
+
+// enum betrsys {keins,suse,ubuntu,fedora};
+// betrsys pruefos();
 string obprogda(string prog,int obverb, int oblog);
 enum instprog {keinp,zypper,apt,dnf,yum};
 instprog pruefipr(int obverb=0, int oblog=0);

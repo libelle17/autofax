@@ -1368,23 +1368,8 @@ const string& pk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax";
 // const string& ccapiconfdat="/etc/capisuite/capisuite.conf";
 // const string& cfaxconfdat="/etc/capisuite/fax.conf";
 
-// Linux-System-Enum
-enum lsysen:uchar {usys,sus,deb};
 
-class lsyscl
-{
-  public:
-    lsysen sys; 
-    lsysen getsys(int obverb=0,int oblog=0)
-    {
-      if (sys==usys) {
-        if (!systemrueck("cat /proc/version | grep SUSE",obverb-2,oblog)) return sus;
-        if (!systemrueck("cat /proc/version | grep Ubuntu",obverb-2,oblog)) return deb;
-      }
-      return usys;
-    }
-} lsys;
-
+extern class lsyscl lsys;
 extern class linstcl linst;
 
 using namespace std;
@@ -4990,7 +4975,7 @@ int paramcl::pruefhyla()
     string hfftext;
     hylalaeuftnicht=1;
     hylafehlt=1;
-    if (pruefos()==ubuntu) {
+    if (lsys.getsys(obverb,oblog)==deb) {
       hyinstart=hysrc;
     } else {
       hyinstart=hyppk;
