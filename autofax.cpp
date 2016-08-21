@@ -5451,14 +5451,13 @@ int paramcl::pruefcapi()
                       " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
                       " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
                       " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp "
-                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
-                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
+//                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
+//                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
                       " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
-//                      " && ./configure && make && make install "
+                      " && ./configure && make && make install "
                       ";} ";
 //                      <<gruen<<befehl<<schwarz<<endl;
                       systemrueck(befehl,obverb,oblog);
-                      exit(0);
         } else {
           linst.doggfinst("sfftobmp",obverb+1,oblog);
         }
@@ -5505,6 +5504,7 @@ int paramcl::pruefcapi()
               //         pruefverz("/usr/local/var/log");
               mitcservice=1;
             } // if (!systemrueck(sh -c ...
+            exit(0);
           } // if (csrueck.size()) 
           // aktuelles Verzeichnis
         } // if (!capischonerfolgreichinstalliert) 
