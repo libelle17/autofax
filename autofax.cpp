@@ -5478,7 +5478,7 @@ int paramcl::pruefcapi()
                         obverb,oblog);
           }
           csrueck.clear();
-          systemrueck("find /usr/lib/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null",obverb,oblog,&csrueck);
+          systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null | sort -r",obverb,oblog,&csrueck);
           if (csrueck.size()) {
             if (!systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; } && cd .. ; } "
                   " ;  tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && cd capisuite"
