@@ -5445,8 +5445,8 @@ int paramcl::pruefcapi()
         // P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
           string befehl = "which sfftobmp || { cd "+instverz+
                       " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
-                      " && tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure >/dev/null 2>&1 && make && make install "
-                      " && yum -y install boost "
+                      " && tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure >/dev/null 2>&1 && make >/dev/null 2>&1 && make install >/dev/null 2>&1 "
+                      " && yum -y install boost >/dev/null 2>&1 "
                       " && { grep '/usr/local/lib' /etc/ld.so.conf || { echo '/usr/local/lib' >> /etc/ld.so.conf; ldconfig; } } && cd .. "
                       " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
                       " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
