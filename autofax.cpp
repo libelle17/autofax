@@ -5454,8 +5454,8 @@ int paramcl::pruefcapi()
                       " && ./configure && sed -i.bak -e 's/\\(-lboost_filesystem\\)/\\1 -lboost_system/g' src/Makefile "
                       " && make && make install; } ";
                       cout<<gruen<<befehl<<schwarz<<endl;
-                      exit(0);
                       systemrueck(befehl,obverb,oblog);
+                      exit(0);
         } else {
           linst.doggfinst("sfftobmp",obverb+1,oblog);
         }
