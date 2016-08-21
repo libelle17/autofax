@@ -2046,7 +2046,8 @@ string linstcl::ersetzeprog(const string& prog)
     case dnf: case yum:
       if (prog=="mariadb") return "mariadb-server";
       if (prog=="kernel-source") return "kernel-devel-$(uname -r)";
-      if (prog=="libcapi20-2") return "libcapi20-devel";
+      if (prog=="libcapi20-2") return "isdn4k-utils";
+      if (prog=="libcapi20-3") return "";
       break;
     default: break;
   }
@@ -2057,6 +2058,7 @@ string linstcl::ersetzeprog(const string& prog)
 uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsnichtda, binaer alsroot) 
 {
   // <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
+  string eprog;
   if (!fallsnichtda.empty()) if (!systemrueck((alsroot?string("root "):string(""))+"which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) return 0;
   switch (pruefipr()) {
     case zypper:
@@ -2070,7 +2072,9 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fall
       return systemrueck(string("sudo apt-get --assume-yes install ")+ersetzeprog(prog),obverb+1,oblog);
       break; 
     case dnf:
-      return systemrueck(string("sudo dnf -y install ")+ersetzeprog(prog),obverb+1,oblog);
+      if (!(eprog=ersetzeprog(prog)).empty())
+      return systemrueck(string("sudo dnf -y install ")+eprog,obverb+1,oblog);
+      else return 0;
       break;
     case yum:
       return systemrueck(string("sudo yum -y install ")+ersetzeprog(prog),obverb+1,oblog);
