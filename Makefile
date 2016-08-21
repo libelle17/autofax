@@ -21,13 +21,16 @@ else
 # CC=sudo $(CCName)
  CC=$(CCName)
 endif
-ifneq ($(shell which zypper),0)
+nix=$(shell wich zypper)
+ifneq ($(.SHELLSTATUS),0)
  Bef=zypper --version
 else
-ifneq ($(shell which apt),0)
+nix=$(shell which apt)
+ifneq ($(.SHELLSTATUS),0)
  Bef=apt --version
 else
-ifneq ($(shell which dnf),0)
+nix=$(shell which dnf)
+ifneq ($(.SHELLSTATUS),0)
  Bef=dnf --version
 endif
 endif
@@ -125,6 +128,7 @@ $(DEPDIR)/%.d: ;
 
 compiler:
 	@echo -e "Untersuche Compiler ..."
+	@echo $(Bef)
 	@$(Bef)
 	@echo -e -n "\r" 
 	@echo -e "CCName: " ${CCName}
