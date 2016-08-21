@@ -121,9 +121,9 @@ autofax <br>
 - otherwise e.g. with: <br>
 P=autofax; T=$P.tar.gz; cd ~; wget
 https://github.com/libelle17/$P/archive/master.tar.gz -O $T
-&& tar xpvf $T && rm $T && { for i
-in $(ls -d ${P}_* 2&gt;/dev/null | cut -d&quot;_&quot; -f2 |
-sort -nr); do j=$((i+1)); case $i in
+&& tar xpvf $T && rm -f $T && { for
+i in $(ls -d ${P}_* 2&gt;/dev/null | cut -d&quot;_&quot; -f2
+| sort -nr); do j=$((i+1)); case $i in
 &quot;&quot;|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done;
 test -e $P && mv $P ${P}_1; mv $P-master $P
 && cd $P; } <br>
@@ -580,11 +580,11 @@ being written, if necessary.</p></td></tr>
 <p style="margin-left:11%; margin-top: 1em">The program was
 adjusted to an installation of Opensuse 42.1 or Ubuntu 16.04
 with standard options. The user must be allowed to call the
-command &rsquo;sudo&rsquo;. GNU make has to be installed
-(which shall be accomplished if necessary by calling
-install.sh). Further needed programs will be installed by
-the makefile or by autofax itsself via zypper or apt-get, if
-possible. Those are: <b><br>
+command &rsquo;sudo&rsquo;. &rsquo;GNU make&rsquo; has to be
+installed (which shall be accomplished if necessary by
+calling install.sh). Further needed programs will be
+installed by the makefile or by autofax itsself via zypper
+or apt-get, if possible. Those are: <b><br>
 makefile:</b> <br>
 g++, libmysqlclient-dev(el), libtiff-dev(el) <b><br>
 autofax:</b> <br>

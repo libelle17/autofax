@@ -67,7 +67,7 @@ Additionally, received faxes from \fBhylafax\fR/\fBcapisuite\fR can be named wit
 .br
 - otherwise e.g. with:
 .br
- P=autofax; T=$P.tar.gz; cd ~; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm $T && { for i in $(ls -d ${P}_* 2>/dev/null | cut -d"_" -f2 | sort -nr); do j=$((i+1)); case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done; test -e $P && mv $P ${P}_1; mv $P-master $P && cd $P; }
+ P=autofax; T=$P.tar.gz; cd ~; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && { for i in $(ls -d ${P}_* 2>/dev/null | cut -d"_" -f2 | sort -nr); do j=$((i+1)); case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done; test -e $P && mv $P ${P}_1; mv $P-master $P && cd $P; }
 .br
 there, if the program 'make' is not available, You can call 'install.sh', this should install 'make'; otherwise, You also can call:
 .br
@@ -289,7 +289,7 @@ The status of the mentioned faxes is being displayed.
 19) The configuration file is being written, if necessary.
 .LP
 .SH PRECONDITIONS
-The program was adjusted to an installation of Opensuse 42.1 or Ubuntu 16.04 with standard options. The user must be allowed to call the command 'sudo'. GNU make has to be installed (which shall be accomplished if necessary by calling install.sh). Further needed programs will be installed by the makefile or by autofax itsself via zypper or apt-get, if possible. Those are:
+The program was adjusted to an installation of Opensuse 42.1 or Ubuntu 16.04 with standard options. The user must be allowed to call the command 'sudo'. 'GNU make' has to be installed (which shall be accomplished if necessary by calling install.sh). Further needed programs will be installed by the makefile or by autofax itsself via zypper or apt-get, if possible. Those are:
 .br
 \fBmakefile:\fR
 .br
