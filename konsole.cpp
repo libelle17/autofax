@@ -2046,6 +2046,7 @@ string linstcl::ersetzeprog(const string& prog)
     case dnf: case yum:
       if (prog=="mariadb") return "mariadb-server";
       if (prog=="kernel-source") return "kernel-devel-$(uname -r)";
+      if (prog=="libcapi20-2") return "libcapi20-devel";
       break;
     default: break;
   }
