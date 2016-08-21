@@ -5410,7 +5410,7 @@ int paramcl::pruefcapi()
                   "sudo make clean",1+obverb,oblog);
               svec rueck;
               systemrueck(string("sudo rm -f /root/bin/xargs"),1+obverb,oblog);
-              systemrueck(string("cd ")+srcvz+";sudo make all",1+obverb,oblog);
+              systemrueck(string("cd ")+srcvz+";sudo make all || { sudo dnf clean all; sudo dnf update; sudo make all; }",1+obverb,oblog);
               systemrueck(string("cd ")+srcvz+";sudo make install",1+obverb,oblog);
             }
           }
