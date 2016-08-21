@@ -4,7 +4,7 @@
 .pc
 .TH man 1 "01.08.16" "Version 0.40494" "Manual-Seite für autofax"
 .SH NAME
-\fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung in einer Datenbank 
+\fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
 manpage available in english: 'man autofax' or 'man -Len autofax'.
 .SH SYNOPSIS
