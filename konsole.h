@@ -27,6 +27,11 @@
 #define vtzs "\\" // Verzeichnistrennzeichen
 #endif
 
+#ifndef vector_incl
+#include <vector>
+#define vector_incl
+#endif
+
 using namespace std;
 int Log(const string& text,short screen=1,short file=1,bool oberr=0,short klobverb=0);
 
@@ -135,7 +140,7 @@ enum Tkonsole_
   T_Parameter_nr_zu,
   T_Fehler,
   T_Erfolg,
-  T_Weder_zypper_noch_apt_get_als_Installationspgrogramm_gefunden,
+  T_Weder_zypper_noch_apt_get_noch_dnf_noch_yum_als_Installationspgrogramm_gefunden,
   T_Logdateidpp,
   T_Lese_Konfiguration_aus,
   T_j_k,
@@ -151,6 +156,7 @@ enum Tkonsole_
   T_Program,
   T_laeuft_schon_einmal_Breche_ab,
   T_Wert,
+  T_Dauer,
   T_konsoleMAX,
 };
 
@@ -349,7 +355,7 @@ class abSchl {
 enum betrsys {keins,suse,ubuntu};
 betrsys pruefos();
 string obprogda(string prog,int obverb, int oblog);
-enum instprog {keinp,zypper,apt};
+enum instprog {keinp,zypper,apt,dnf,yum};
 instprog pruefipr(int obverb=0, int oblog=0);
 
 #ifdef _MSC_VER
@@ -389,7 +395,6 @@ struct color {
 };
 
 #endif
-#include <vector>
 class svec: public vector<std::string> {
   public:
     inline svec& operator<<(const std::string& str) {
@@ -520,7 +525,6 @@ string Tippstring(const string& frage, const string *vorgabe=0);
 string Tippverz(const char *frage,string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
 
-// enum linsten:uchar {uinst,zyp,apt,unent};
 class linstcl
 {
   public:

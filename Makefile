@@ -21,7 +21,7 @@ else
 # CC=sudo $(CCName)
  CC=$(CCName)
 endif
-GROFFCHECK={ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} || sudo zypper -n --gpg-auto-import-keys in groff || { which apt-get && { sudo apt-get --assume-yes install groff groff-base; } || { which dnf && { dnf install -y groff groff-base; } || { which yum && yum install -y groff groff-base; } } }
+GROFFCHECK={ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} || sudo zypper -n --gpg-auto-import-keys in groff || { which apt-get && { sudo apt-get --assume-yes install groff groff-base; } || { which dnf && { dnf -y install groff groff-base; } || { which yum && yum -y install groff groff-base; } } }
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
@@ -118,9 +118,9 @@ compiler:
 	@echo -e -n "\r" 
 	@echo -e "CCName: " ${CCName}
 	@echo -e "CCInst: " $(CCInst)
-	-@which $(CCName) >/dev/null 2>&1 || { which zypper && { sudo zypper lr | grep 'g++\|devel_gcc' || sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release | grep ^NAME= | cut -d'"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'"' -f2`/devel:gcc.repo; sudo zypper -n --gpg-auto-import-keys si $(CCInst); } || { which apt-get && sudo apt-get --assume-yes install build-essential || { which dnf && { dnf install -y make automake gcc-c++ kernel-devel; } || { which yum && yum install -y make automake gcc-c++ kernel-devel; } } } }
-	-@sudo /sbin/ldconfig; sudo /sbin/ldconfig -p | grep -q "libmysqlclient.so " || { which zypper && sudo zypper -n --gpg-auto-import-keys in libmysqlclient-devel || { which apt-get && { sudo apt-get --assume-yes install libmysqlclient-dev; } || { which dnf && { sudo dnf install -y mysql-devel; } || { which yum && sudo yum install -y mysql-devel; } } }; sudo /sbin/ldconfig; }
-	-@test -f /usr/include/tiff.h || { which zypper && sudo zypper -n --gpg-auto-import-keys in libtiff-devel || { which apt-get && { sudo apt-get --assume-yes install libtiff-dev; } || { which dnf && { sudo dnf install -y libtiff-devel; } || { which yum && sudo yum install -y libtiff-devel; } } } }
+	-@which $(CCName) >/dev/null 2>&1 || { which zypper && { sudo zypper lr | grep 'g++\|devel_gcc' || sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release | grep ^NAME= | cut -d'"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'"' -f2`/devel:gcc.repo; sudo zypper -n --gpg-auto-import-keys si $(CCInst); } || { which apt-get && sudo apt-get --assume-yes install build-essential || { which dnf && { dnf -y install make automake gcc-c++ kernel-devel; } || { which yum && yum install -y make automake gcc-c++ kernel-devel; } } } }
+	-@sudo /sbin/ldconfig; sudo /sbin/ldconfig -p | grep -q "libmysqlclient.so " || { which zypper && sudo zypper -n --gpg-auto-import-keys in libmysqlclient-devel || { which apt-get && { sudo apt-get --assume-yes install libmysqlclient-dev; } || { which dnf && { sudo dnf -y install mysql-devel; } || { which yum && sudo yum install -y mysql-devel; } } }; sudo /sbin/ldconfig; }
+	-@test -f /usr/include/tiff.h || { which zypper && sudo zypper -n --gpg-auto-import-keys in libtiff-devel || { which apt-get && { sudo apt-get --assume-yes install libtiff-dev; } || { which dnf && { sudo dnf -y install libtiff-devel; } || { which yum && sudo yum install -y libtiff-devel; } } } }
 
 .PHONY: install
 ifneq ("$(wildcard $(CURDIR)/man_de)","")

@@ -110,8 +110,9 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {"Fehler ","Error "},
   // T_Erfolg
   {"Erfolg","Success"},
-  // T_Weder_zypper_noch_apt_get_als_Installationspgrogramm_gefunden
-  {"Weder zypper noch apt-get als Installationspgramm gefunden!","Neither zypper nor apt-get found as installation programme!"},
+  // T_Weder_zypper_noch_apt_get_noch_dnf_noch_yum_als_Installationspgrogramm_gefunden
+  {"Weder zypper noch apt-get noch dnf noch yum als Installationspgramm gefunden!",
+   "Neither zypper nor apt-get nor dnf nor yum found as installation programme!"},
   // T_Logdateidpp
   {"Logdatei:","Log file:"},
   // T_Lese_Konfiguration_aus
@@ -142,6 +143,8 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {"' laeuft schon einmal. Breche ab.","' runs already once. Aborting."},
   // T_Wert
   {" Wert: "," Value: "},
+  // T_Dauer
+  {" Dauer: "," Duration: "},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -185,7 +188,7 @@ void perfcl::ausgab1000(const string& stelle)
   zp1=clock();
   nr++;
   if (zp1-zp0>10000) {
-    cout<<gruen<<vonwo<<" "<<stelle<<" "<<nr<<" Dauer: "<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" = "
+    cout<<gruen<<vonwo<<" "<<stelle<<" "<<nr<<Txk[T_Dauer]<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" = "
       <<fixed<<((zp1-zp0)/CLOCKS_PER_SEC)<<schwarz<<setprecision(0)<<" s"<<endl;
     exit(0);
   }
@@ -194,7 +197,7 @@ void perfcl::ausgab1000(const string& stelle)
 int perfcl::oberreicht(unsigned long sek)
 {
  zp1=clock();
- return ((zp1-zp0)>sek*CLOCKS_PER_SEC);
+ return ((zp1-zp0)>(long)sek*CLOCKS_PER_SEC);
 }
 
 
@@ -1100,8 +1103,12 @@ instprog pruefipr(int obverb,int oblog)
     else if (!systemrueck("which apt-get 2>/dev/null",obverb-1,oblog))
       // hier werden die Dateien vorgabemaessig behalten
       aktipr=apt;
+    else if (!systemrueck("which dnf 2>/dev/null",obverb-1,oblog))
+      aktipr=dnf;
+    else if (!systemrueck("which yum 2>/dev/null",obverb-1,oblog))
+      aktipr=yum;
    else
-     cerr<<Txk[T_Weder_zypper_noch_apt_get_als_Installationspgrogramm_gefunden]<<endl;
+     cerr<<Txk[T_Weder_zypper_noch_apt_get_noch_dnf_noch_yum_als_Installationspgrogramm_gefunden]<<endl;
  }
  return aktipr;
 } // instprog pruefipr(int obverb,int oblog)
@@ -1995,7 +2002,7 @@ linsten linstcl::checkinst(int obverb, int oblog)
       inst=apt;
     } else {
       inst=unent;
-      cerr<<Txk[T_Weder_zypper_noch_apt_get_als_Installationspgrogramm_gefunden]<<endl;
+      cerr<<Txk[T_Weder_zypper_noch_apt_get_noch_dnf_noch_yum_als_Installationspgrogramm_gefunden]<<endl;
     }
   }
   return inst;
@@ -2019,6 +2026,9 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="libreoffice-base") return "libreoffice-common libreoffice-base";
       if (prog=="libcapi20-2") return "libcapi20-dev";
       if (prog=="python-devel") return "python-dev";
+      break;
+    case dnf: case yum:
+      break;
     default: break;
   }
   return prog;
@@ -2040,6 +2050,12 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fall
     case apt:
       return systemrueck(string("sudo apt-get --assume-yes install ")+ersetzeprog(prog),obverb+1,oblog);
       break; 
+    case dnf:
+      return systemrueck(string("sudo dnf -y install ")+ersetzeprog(prog),obverb+1,oblog);
+      break;
+    case yum:
+      return systemrueck(string("sudo yum -y install ")+ersetzeprog(prog),obverb+1,oblog);
+      break;
     default: break;
   }
   return 2;
@@ -2070,6 +2086,12 @@ uchar linstcl::douninst(const string& prog,int obverb,int oblog)
     case apt:
       return systemrueck(string("sudo apt-get --assume-yes remove ")+ersetzeprog(prog),obverb,oblog);
       break; 
+    case dnf:
+      return systemrueck(string("sudo dnf -y remove ")+ersetzeprog(prog),obverb,oblog);
+      break; 
+    case yum:
+      return systemrueck(string("sudo yum -y remove ")+ersetzeprog(prog),obverb,oblog);
+      break; 
     default: break;
   }
   return 2;
@@ -2080,7 +2102,7 @@ uchar linstcl::obfehlt(const string& prog,int obverb,int oblog)
 {
  // <<violett<<"linst::obfehlt: "<<schwarz<<prog<<endl;
   switch (pruefipr()) {
-    case zypper:
+    case zypper: case dnf: case yum: 
       return systemrueck(string("rpm -q ")+prog+" 2>/dev/null",obverb,oblog);
     case apt:
       return systemrueck(string("dpkg -s ")+ersetzeprog(prog)+" 2>/dev/null",obverb,oblog);
