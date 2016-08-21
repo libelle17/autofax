@@ -2048,6 +2048,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="kernel-source") return "kernel-devel-$(uname -r)";
       if (prog=="libcapi20-2") return "isdn4k-utils";
       if (prog=="libcapi20-3") return "";
+      if (prog=="capiutils") return "";
       break;
     default: break;
   }
@@ -2088,10 +2089,10 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fall
 
 uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
 {
-  eprog=ersetzeprog(prog);
-  if (obfehlt(eprog,obverb,oblog))
-  {
-    return doinst(prog,obverb,oblog);
+  if (!(eprog=ersetzeprog(prog)).empty()) {
+    if (obfehlt(eprog,obverb,oblog)) {
+      return doinst(prog,obverb,oblog);
+    }
   }
   return 0;
 } // uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
