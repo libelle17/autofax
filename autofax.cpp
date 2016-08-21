@@ -5448,9 +5448,10 @@ int paramcl::pruefcapi()
                       " && tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make && make install "
                       " && yum -y install boost "
                       " && { grep '/usr/local/lib' /etc/ld.so.conf || { echo '/usr/local/lib' >> /etc/ld.so.conf; ldconfig; } } && cd .. "
+                      " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
                       " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
                       " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp "
-//                      " && ./configure && sed -i.bak -e 's/\\(-lboost_filesystem\\)/\\1 -lboost_system/g' src/Makefile "
+                      " && ./configure && sed -i.bak -e 's/\\(-lboost_filesystem\\)/\\1 -lboost_system/g' src/Makefile "
                       " && make && make install; } "
                       ,obverb,oblog);
         } else {
