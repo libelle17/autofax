@@ -117,7 +117,7 @@ compiler:
 	@echo -e -n "\r" 
 	@echo -e "CCName: " ${CCName}
 	@echo -e "CCInst: " $(CCInst)
-	-@which $(CCName) >/dev/null 2>&1 || { which zypper && { sudo zypper lr | grep 'g++\|devel_gcc' || sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release | grep ^NAME= | cut -d'"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'"' -f2`/devel:gcc.repo; sudo zypper -n --gpg-auto-import-keys si $(CCInst); } || { which apt-get && sudo apt-get --assume-yes install build-essential || { which dnf && dnf install -y make automake gcc-c++ kernel-devel; || { which yum && yum install -y make automake gcc-c++ kernel-devel; } } } }
+	-@which $(CCName) >/dev/null 2>&1 || { which zypper && { sudo zypper lr | grep 'g++\|devel_gcc' || sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release | grep ^NAME= | cut -d'"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'"' -f2`/devel:gcc.repo; sudo zypper -n --gpg-auto-import-keys si $(CCInst); } || { which apt-get && sudo apt-get --assume-yes install build-essential || { which dnf && { dnf install -y make automake gcc-c++ kernel-devel; } || { which yum && yum install -y make automake gcc-c++ kernel-devel; } } } }
 	-@sudo /sbin/ldconfig; sudo /sbin/ldconfig -p | grep -q "libmysqlclient.so " || { which zypper && sudo zypper -n--gpg-auto-import-keys in libmysqlclient-devel || { which apt-get && sudo apt-get --assume-yes install libmysqlclient-dev; }; sudo /sbin/ldconfig; }
 	-@test -f /usr/include/tiff.h || { which zypper && sudo zypper -n --gpg-auto-import-keys in libtiff-devel || { which apt-get && sudo apt-get --assume-yes install libtiff-dev; } }
 
