@@ -2045,6 +2045,7 @@ string linstcl::ersetzeprog(const string& prog)
       break;
     case dnf: case yum:
       if (prog=="mariadb") return "mariadb-server";
+      if (prog=="kernel-source") return "kernel-devel-$(uname -r)";
       break;
     default: break;
   }
