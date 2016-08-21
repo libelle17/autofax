@@ -5366,7 +5366,7 @@ int paramcl::pruefcapi()
       }
       if (!fcpcida || !capida || !capidrvda) {
         Log("Lade Capi-Module ...",-1,0);
-        systemrueck("sudo modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog);
+        systemrueck("sudo modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax 2>/dev/null",obverb,oblog);
         for(uchar ivers=0;ivers<2;ivers++) {
           if (systemrueck("sudo modprobe -v fcpci",obverb-1,oblog)) {
             if (ivers) {
@@ -5442,13 +5442,13 @@ int paramcl::pruefcapi()
         if (system!=sus)
           linst.doggfinst("capiutils",obverb+1,oblog);
         if (system==fed) {
-          systemrueck("which sfftobmp || tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make && make install "
+          systemrueck("which sfftobmp || { tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make && make install "
                       " && yum -y install boost "
                       " && { grep '/usr/local/lib' /etc/ld.so.conf || { echo '/usr/local/lib' >> /etc/ld.so.conf; ldconfig; } } && cd .. "
                       " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
                       " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp "
                       " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/\\1 -lboost_system/g' src/Makefile "
-                      " && ./configure && make && make install "
+                      " && ./configure && make && make install; } "
                       ,obverb,oblog);
         } else {
           linst.doggfinst("sfftobmp",obverb+1,oblog);
