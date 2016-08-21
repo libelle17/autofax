@@ -25,7 +25,7 @@
 <p style="margin-left:11%; margin-top: 1em"><b>autofax</b>
 &minus; fax server functionality: induces automatic fax
 transmission of files, naming of received faxes and logging
-in a database <br>
+of all of them in a database <br>
 manpage-Hilfe in deutsch verf&uuml;gbar: &rsquo;man
 autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;.</p>
 
