@@ -5452,8 +5452,8 @@ int paramcl::pruefcapi()
                       " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
                       " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp "
                       " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
-//                      " && ./configure && make && make install; "
-                      "} ";
+//                      " && ./configure && make && make install "
+                      ";} ";
 //                      <<gruen<<befehl<<schwarz<<endl;
                       systemrueck(befehl,obverb,oblog);
                       exit(0);
