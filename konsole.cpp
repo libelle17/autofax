@@ -2058,39 +2058,42 @@ string linstcl::ersetzeprog(const string& prog)
 uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsnichtda, binaer alsroot) 
 {
   // <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
-  string eprog;
+  uchar ret=2;
+  if (eprog.empty()) eprog=ersetzeprog(prog);
   if (!fallsnichtda.empty()) if (!systemrueck((alsroot?string("root "):string(""))+"which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) return 0;
-  switch (pruefipr()) {
-    case zypper:
-      if (obnmr) {
-        obnmr=0;
-        systemrueck("sudo zypper mr -k -all",obverb,oblog);
-      }
-      return systemrueck(string("sudo zypper -n --gpg-auto-import-keys in -f ")+prog,obverb+1,oblog);
-      break;
-    case apt:
-      return systemrueck(string("sudo apt-get --assume-yes install ")+ersetzeprog(prog),obverb+1,oblog);
-      break; 
-    case dnf:
-      if (!(eprog=ersetzeprog(prog)).empty())
-      return systemrueck(string("sudo dnf -y install ")+eprog,obverb+1,oblog);
-      else return 0;
-      break;
-    case yum:
-      return systemrueck(string("sudo yum -y install ")+ersetzeprog(prog),obverb+1,oblog);
-      break;
-    default: break;
+  if (!eprog.empty()) {
+    switch (pruefipr()) {
+      case zypper:
+        if (obnmr) {
+          obnmr=0;
+          systemrueck("sudo zypper mr -k -all",obverb,oblog);
+        }
+        ret=systemrueck(string("sudo zypper -n --gpg-auto-import-keys in -f ")+eprog,obverb+1,oblog);
+        break;
+      case apt:
+        ret=systemrueck(string("sudo apt-get --assume-yes install ")+eprog,obverb+1,oblog);
+        break; 
+      case dnf:
+        ret=systemrueck(string("sudo dnf -y install ")+eprog,obverb+1,oblog);
+        break;
+      case yum:
+        ret=systemrueck(string("sudo yum -y install ")+eprog,obverb+1,oblog);
+        break;
+      default: break;
+    }
+    eprog.clear();
   }
-  return 2;
+  return ret;
 } // uchar linstcl::doinst(const string& prog,int obverb,int oblog) 
 
 uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
 {
- if (obfehlt(prog,obverb,oblog))
- {
-  return doinst(prog,obverb,oblog);
- }
- return 0;
+  eprog=ersetzeprog(prog);
+  if (obfehlt(eprog,obverb,oblog))
+  {
+    return doinst(prog,obverb,oblog);
+  }
+  return 0;
 } // uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
 
 uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda,binaer alsroot)

@@ -539,6 +539,7 @@ class linstcl
   public:
 //    linsten inst;
     uchar obnmr=1;
+    string eprog; // ersetztes Programm
     string ersetzeprog(const string& prog);
     uchar doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda="", binaer alsroot=falsch);
     uchar doinst(const char* prog,int obverb=0,int oblog=0,const string& fallsnichtda="", binaer alsroot=falsch);
