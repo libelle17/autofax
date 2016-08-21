@@ -2028,7 +2028,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="python-devel") return "python-dev";
       break;
     case dnf: case yum:
-      if (prog="mariadb") return "mariadb-server";
+      if (prog=="mariadb") return "mariadb-server";
       break;
     default: break;
   }
