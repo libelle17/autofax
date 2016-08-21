@@ -21,6 +21,7 @@ else
 # CC=sudo $(CCName)
  CC=$(CCName)
 endif
+GROFFCHECK={ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} || sudo zypper -n --gpg-auto-import-keys in groff || { which apt-get && { sudo apt-get --assume-yes install groff groff-base; } || { which dnf && { dnf install -y groff groff-base; } || { which yum && yum install -y groff groff-base; } } }
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
@@ -150,7 +151,7 @@ ${MANPE}: ${CURDIR}/man_en
 	-sudo gzip -c $(CURDIR)/man_en >${PROGRAM}.1.gz
 	-sudo mv ${PROGRAM}.1.gz ${MANPE}
 ${MANPEH}: $(CURDIR)/man_en 
-	-@{ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} || sudo zypper -n --gpg-auto-import-keys in groff || { which apt-get && { sudo apt-get --assume-yes install groff groff-base; } || { which dnf && { dnf install -y groff groff-base; } || { which yum && yum install -y groff groff-base; } } }
+	-@$(GROFFCHECK)
 	-@rm -f man_en.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPACT/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_en.html
 	-@rm -f README.md
@@ -164,7 +165,8 @@ ${MANPD}: ${CURDIR}/man_de
 	-sudo gzip -c $(CURDIR)/man_de >${PROGRAM}.1.gz
 	-sudo mv ${PROGRAM}.1.gz ${MANPD}
 ${MANPDH}: $(CURDIR)/man_de 
-	-@{ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} || sudo zypper -n --gpg-auto-import-keys in groff || { which apt-get && sudo apt-get --assume-yes install groff groff-base;}
+	-@$(GROFFCHECK)
+#	-@{ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} || sudo zypper -n --gpg-auto-import-keys in groff || { which apt-get && { sudo apt-get --assume-yes install groff groff-base; } || { which dnf && { dnf install -y groff groff-base; } || { which yum && yum install -y groff groff-base; } } }
 	-@rm -f man_de.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_de.html
 #	-@rm -f README.md
