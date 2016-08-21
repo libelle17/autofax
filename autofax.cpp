@@ -5438,15 +5438,27 @@ int paramcl::pruefcapi()
            return 1;
            }
          */
-        if (lsys.getsys(obverb,oblog)!=sus)
+        lsysen system=lsys.getsys(obverb,oblog);
+        if (system!=sus)
           linst.doggfinst("capiutils",obverb+1,oblog);
-        linst.doggfinst("sfftobmp",obverb+1,oblog);
+        if (system==fed) {
+          systemrueck("tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make && make install "
+                      " && yum -y install boost "
+                      " && { grep '/usr/local/lib' /etc/ld.so.conf || { echo '/usr/local/lib' >> /etc/ld.so.conf; ldconfig; } } && cd .. "
+                      " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
+                      " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp "
+                      " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/\\1 -lboost_system/g' src/Makefile "
+                      " && ./configure && make && make install "
+                      ,obverb,oblog);
+        } else {
+          linst.doggfinst("sfftobmp",obverb+1,oblog);
+        }
         linst.doggfinst("libcapi20-2",obverb+1,oblog);
         linst.doggfinst("libcapi20-3",obverb+1,oblog);
         linst.doggfinst("python-devel",obverb+1,oblog);
         linst.doinst("libxslt-tools",obverb+1,oblog,"xsltproc");
         uchar mitcservice=0;
-        if (lsys.getsys(obverb,oblog)==sus) {
+        if (system==sus) {
           linst.doggfinst("capi4linux i4l-isdnlog",obverb+1,oblog);
           systemrueck("zypper lr | grep 'kkeil factory development project' || "
               "sudo zypper ar -f http://download.opensuse.org/repositories/home:/kkeil:/Factory/openSUSE_Factory/home:kkeil:Factory.repo",
