@@ -5488,11 +5488,18 @@ int paramcl::pruefcapi()
           csrueck.clear();
           systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null | sort -r",obverb,oblog,&csrueck);
           if (csrueck.size()) {
+            systemrueck("P=capi20_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; ",obverb,oblog);
+            svec rueck;
+            systemrueck("find /usr -name capi20.h 2>/dev/null",obverb,oblog,&rueck); 
             if (!systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; } && cd .. ; } "
                   " ;  tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && cd capisuite"
                   " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
+                  " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
+                        "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so} "
                   " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var"
                   " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
+                  " && sed -i.bak 's/<capi20.h>/\\\""+*sersetze(&rueck[0],"/","\\\"\\/")+"/' src/backend/capi.h"
+                  " && sed -i.bak 's/<capi20.h>/\\\""+*sersetze(&rueck[0],"/","\\\"\\/")+"/' src/backend/connection.h"
                   " && make"
                   " && sudo make install"
                   " && sudo systemctl daemon-reload"
