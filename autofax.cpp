@@ -5511,7 +5511,6 @@ int paramcl::pruefcapi()
               //         pruefverz("/usr/local/var/log");
               mitcservice=1;
             } // if (!systemrueck(sh -c ...
-            exit(0);
           } // if (csrueck.size()) 
           // aktuelles Verzeichnis
         } // if (!capischonerfolgreichinstalliert) 
