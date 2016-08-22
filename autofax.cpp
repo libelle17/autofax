@@ -5445,7 +5445,7 @@ int paramcl::pruefcapi()
         // P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
           string befehl = "which sfftobmp || { cd "+instverz+
                       " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
-                      " && tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make >/dev/null 2>&1 && make install "
+                      " && tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make >/dev/null 2>&1 && sudo make install "
                       " && yum -y install boost "
                       " && { grep '/usr/local/lib' /etc/ld.so.conf || { echo '/usr/local/lib' >> /etc/ld.so.conf; ldconfig; } } && cd .. "
                       " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
@@ -5454,7 +5454,7 @@ int paramcl::pruefcapi()
 //                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
 //                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
                       " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
-                      " && ./configure && make && make install "
+                      " && ./configure && make && sudo make install "
                       ";} ";
 //                      <<gruen<<befehl<<schwarz<<endl;
                       systemrueck(befehl,obverb,oblog);
