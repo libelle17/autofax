@@ -5491,8 +5491,9 @@ int paramcl::pruefcapi()
             systemrueck("P=capi20_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master && tar xvf capi20.tar.bz2 && cd capi20 && ./configure && make && sudo make install ",obverb,oblog);
 //            svec rueck;
 //            systemrueck("find /usr -name capi20.h 2>/dev/null",obverb,oblog,&rueck); 
-            if (!systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; } && cd .. ; } "
-                  " ;  tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && cd capisuite"
+            systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; }; }",obverb,oblog);
+            if (!systemrueck("sh -c 'cd "+instverz+""
+                  " && tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && cd capisuite"
                   " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
                   " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
                         "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; } "
