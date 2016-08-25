@@ -5482,7 +5482,8 @@ int paramcl::pruefcapi()
           svec csrueck;
           systemrueck("find "+instverz+" -mtime -1 -name capisuite.tar.gz 2>/dev/null",obverb,oblog,&csrueck);
           if (!csrueck.size()) {
-            systemrueck("sh -c 'cd "+instverz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
+//            systemrueck("sh -c 'cd "+instverz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
+            systemrueck("sh -c 'cd "+instverz+"; P=capisuite.tar.gz wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T'",
                         obverb,oblog);
           }
           csrueck.clear();
@@ -5496,7 +5497,7 @@ int paramcl::pruefcapi()
                   " && tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && cd capisuite"
                   " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
                   " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
-                        "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; } "
+                        "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; } "
                   " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var"
                   " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
 //                  " && sed -i.bak 's/<capi20.h>/\\\""+*sersetze(&rueck[0],"/","\\\"\\/")+"/' src/backend/capi.h"
@@ -5505,8 +5506,6 @@ int paramcl::pruefcapi()
                   " && sudo make install"
                   " && sudo systemctl daemon-reload; "
                   "'";
-            cout<<blau<<befehl<<schwarz<<endl;
-            exit(0);
             if (!systemrueck(befehl,obverb,oblog)) {
               //            pruefverz("/etc/capisuite",obverb,oblog,wahr);
               //            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
