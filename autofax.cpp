@@ -2787,7 +2787,7 @@ void paramcl::cliesconf()
  }
  svec ckzlrueck;
  systemrueck("grep connect_faxG3 `grep incoming_script= "+ccapiconfdat+" 2>/dev/null|cut -d'\"' -f2 2>/dev/null`"
-             "|cut -d',' -f4 2>/dev/null|cut -d')' -f1 2>/dev/null",obverb,oblog,&ckzlrueck);
+             "|sed 's/.*headline//;s/^,//;s/).*//' 2>/dev/null",obverb,oblog,&ckzlrueck);
  if (ckzlrueck.size()) {
   if (cklingelzahl!=ckzlrueck[0]) {
     cout<<rot<<"Stelle 3"<<schwarz<<", ckzlrueck[0]: '"<<ckzlrueck[0]<<"', cklingelzahl: '"<<cklingelzahl<<"'"<<endl;
