@@ -5340,7 +5340,6 @@ void paramcl::holvongithub(string datei)
   if (!csrueck.size()) {
   //systemrueck("sh -c 'cd "+instverz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
     systemrueck("sh -c 'cd "+instverz+"; T="+datei+".tar.gz; wget https://github.com/libelle17/"+datei+"/archive/master.tar.gz -O $T'", obverb,oblog);
-    exit(0);
   }
 } // void paramcl::holvongithub(string datei)
 
