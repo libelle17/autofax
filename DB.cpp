@@ -199,7 +199,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
         for (int iru=0;iru<2;iru++) {
           installiert=1;
           // wenn nicht gefunden ...
-          if (systemrueck("sudo env \"PATH=$PATH\" which mysqld",obverb-2,oblog)) {
+          if (systemrueck("sudo env \"PATH=$PATH\" which mysqld",obverb-3,oblog)) {
             svec frueck;
             // .. und auch hier nicht gefunden ...
             systemrueck("find /usr/sbin /usr/bin /usr/libexec -executable -size +1M -name mysqld 2>/dev/null",obverb,oblog, &frueck);
