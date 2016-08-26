@@ -2824,8 +2824,8 @@ void paramcl::konfcapi()
       // <<rot<<"Lese: "<<cconf[0].wert<<schwarz<<endl;
       while(getline(f,zeile)) {
         size_t nk=zeile.find(suchstr);
-              cout<<"0 zeile: "<<violett<<zeile<<schwarz<<endl;
         if (nk!=string::npos) {
+              cout<<"0 zeile: "<<violett<<zeile<<schwarz<<endl;
           nk+=strlen(suchstr);
               cout<<violett<<"Stelle 15, nk: "<<nk<<schwarz<<endl;
           const char* headline="headline";
@@ -2839,7 +2839,7 @@ void paramcl::konfcapi()
               string nkz=zeile.substr(nkh+1,klap-nkh); // das , nach headline
               cout<<"Stelle 18, nkz: '"<<nkz<<"'"<<endl;
               if (nkz!=cklingelzahl) {
-                string neuzeile=zeile.substr(0,nkh)+","+cklingelzahl+zeile.substr(nkh+1+nkz.length());
+                string neuzeile=zeile.substr(0,nkh)+","+cklingelzahl+zeile.substr(klap);
                 string neudatei=string(cconf[0].wert)+"_neu";
                 f.close();
                 mdatei fneu(neudatei,ios::out);
