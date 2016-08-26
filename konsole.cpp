@@ -1204,9 +1204,11 @@ void confdat::Abschn_auswert(int obverb, char tz)
   if (!abp.aname.empty() && abp.av.size()) {
     abschv.push_back(abp);
   }
-  for(size_t i=0;i<abschv.size();i++) 
+  for(size_t i=0;i<abschv.size();i++) {
+   cout<<violett<<"aname: '"<<abschv[i].aname<<"'"<<endl;
    for(size_t j=0;j<abschv[i].av.size();j++) 
     cout<<j<<": "<<abschv[i].av[j].name<<": "<<abschv[i].av[j].wert<<endl;
+  }
 } // void confdat::Abschn_auswert(int obverb, char tz)
 
 
