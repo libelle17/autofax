@@ -5496,7 +5496,6 @@ int paramcl::pruefcapi()
         if (!capischonerfolgreichinstalliert) {
           pruefverz(instverz,obverb,oblog);
           holvongithub("capisuite_copy");
-          exit(0);
           svec csrueck;
           systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null | sort -r",obverb,oblog,&csrueck);
           if (csrueck.size()) {
@@ -5520,6 +5519,7 @@ int paramcl::pruefcapi()
                            "sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp")) {
               mitcservice=1;
             }
+          exit(0);
 //            string befehl="sh -c 'P=capisuite; T=$P.tar.gz; M=$P-master; cd "+instverz+""
 //                  " && tar xpvf $T && rm -rf $P ; mv $M $P && cd $P"
 //                  " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
