@@ -199,7 +199,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
         for (int iru=0;iru<2;iru++) {
           installiert=1;
           // wenn nicht gefunden ...
-          if (systemrueck("sudo env \"PATH=$PATH\" which mysqld",obverb-3,oblog)) {
+          if (systemrueck("sudo env \"PATH=$PATH\" which mysqld 2>/dev/null",obverb,oblog)) {
             svec frueck;
             // .. und auch hier nicht gefunden ...
             systemrueck("find /usr/sbin /usr/bin /usr/libexec -executable -size +1M -name mysqld 2>/dev/null",obverb,oblog, &frueck);
@@ -208,7 +208,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
               installiert=0;
           }
           if (installiert) 
-            if (systemrueck("which mysql",obverb-2,oblog)) 
+            if (systemrueck("which mysql 2>/dev/null",obverb,oblog)) 
               installiert=0;
           if (installiert) break;
           //        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get --assume-yes install mariadb-server; }",1,1);
@@ -253,7 +253,6 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
           } // if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null " ...
           gtrim(&datadir);
           cout<<rot<<datadir<<schwarz<<endl;
-          exit(0);
           if (datadir.empty()) {
             datadir="/var/lib/mysql";
           }
