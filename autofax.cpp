@@ -2820,45 +2820,49 @@ void paramcl::konfcapi()
     mdatei f(cconf[0].wert,ios::in); // /usr/lib64/capisuite/incoming.py
     if (f.is_open()) {
       string zeile;
-      const char* suchstr="connect_faxG3(call,stationID,headline";
+      const char* suchstr="connect_faxG3(";
       // <<rot<<"Lese: "<<cconf[0].wert<<schwarz<<endl;
       while(getline(f,zeile)) {
         size_t nk=zeile.find(suchstr);
         if (nk!=string::npos) {
           nk+=strlen(suchstr);
-          cout<<"Stelle 17, nk: "<<nk<<endl;
-          size_t klap=zeile.find(')',nk);
-          if (klap!=string::npos) {
-            string nkz=zeile.substr(nk+1,klap-nk); // das , nach headline
-          cout<<"Stelle 18, nkz: "<<nkz<<endl;
-            if (nkz!=cklingelzahl) {
-              string neuzeile=zeile.substr(0,nk)+","+cklingelzahl+zeile.substr(nk+1+nkz.length());
-              string neudatei=string(cconf[0].wert)+"_neu";
-              f.close();
-              mdatei fneu(neudatei,ios::out);
-              mdatei falt(cconf[0].wert,ios::in);
-              if (falt.is_open()) if (fneu.is_open()) {
-                while(getline(falt,zeile)) {
-                  nk=zeile.find(suchstr);
-                  if (nk!=string::npos) {
-                    fneu<<neuzeile<<endl;
-                  } else {
-                    fneu<<zeile<<endl;
-                  } 
+          const char* headline="headline";
+          size_t nkh=zeile.find(headline,nk);
+          if (nkh!=string::npos) {
+            nkh+=strlen(headline);
+            size_t klap=zeile.find(')',nkh);
+            if (klap!=string::npos) {
+              string nkz=zeile.substr(nkh+1,klap-nkh); // das , nach headline
+              cout<<"Stelle 18, nkz: "<<nkz<<endl;
+              if (nkz!=cklingelzahl) {
+                string neuzeile=zeile.substr(0,nkh)+","+cklingelzahl+zeile.substr(nkh+1+nkz.length());
+                string neudatei=string(cconf[0].wert)+"_neu";
+                f.close();
+                mdatei fneu(neudatei,ios::out);
+                mdatei falt(cconf[0].wert,ios::in);
+                if (falt.is_open()) if (fneu.is_open()) {
+                  while(getline(falt,zeile)) {
+                    nk=zeile.find(suchstr);
+                    if (nk!=string::npos) {
+                      fneu<<neuzeile<<endl;
+                    } else {
+                      fneu<<zeile<<endl;
+                    } 
 
-                } // while(getline(falt,zeile)) 
-                struct stat entryorig;
-                string origdatei=string(cconf[0].wert)+"_orig";
-                if (lstat(origdatei.c_str(),&entryorig)) {
-                  dorename(cconf[0].wert,origdatei,cuser,0,obverb,oblog);
-                } else {
-                  tuloeschen(cconf[0].wert,cuser,obverb,oblog);
-                }            
-                dorename(neudatei,cconf[0].wert,cuser,0,obverb,oblog); 
-              }  // if (falt.is_open()) if (fneu.is_open()) 
-              break;
-            } // if (nkz!=cklingelzahl) 
-          } // if (klap!=string::npos) 
+                  } // while(getline(falt,zeile)) 
+                  struct stat entryorig;
+                  string origdatei=string(cconf[0].wert)+"_orig";
+                  if (lstat(origdatei.c_str(),&entryorig)) {
+                    dorename(cconf[0].wert,origdatei,cuser,0,obverb,oblog);
+                  } else {
+                    tuloeschen(cconf[0].wert,cuser,obverb,oblog);
+                  }            
+                  dorename(neudatei,cconf[0].wert,cuser,0,obverb,oblog); 
+                }  // if (falt.is_open()) if (fneu.is_open()) 
+                break;
+              } // if (nkz!=cklingelzahl) 
+            } // if (klap!=string::npos) 
+          } //           if (nkh!=string::npos) {
         } // if ((nkz=strstr(zeile,suchstr))) 
       } // while(getline(f,zeile)) 
     } // if (f.is_open()) 
