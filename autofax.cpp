@@ -2778,7 +2778,7 @@ void paramcl::cliesconf()
       break;
      }
    }
-   cout<<violett<<"richtige: "<<richtige<<schwarz<<endl;
+   cout<<violett<<"Richtige: "<<richtige<<schwarz<<endl;
    if (richtige!=4) {
         cout<<rot<<"Stelle 2"<<schwarz<<endl;
      capizukonf=1;
