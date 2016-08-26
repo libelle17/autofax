@@ -2791,12 +2791,16 @@ void paramcl::cliesconf()
 void paramcl::konfcapi()
 {
   obverb=1;
+  static int durchlauf=0;
+  durchlauf++;
+  cout<<"Durchlauf: "<<durchlauf<<endl;
   Log(violetts+Tx[T_konfcapi]+schwarz+", ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
   // Zahl der Klingeltoene in capisuite einstellen
 /*
   cppSchluess cconf[]={{"incoming_script"}};
   size_t cs=sizeof cconf/sizeof*cconf;
 */
+  cout<<"cconf[0].wert: "<<cconf[0].wert<<endl;
   if (!cconf[0].wert.empty()) {
     //    if (cpplies(ccapiconfdat,cconf,cs)) KLA
     mdatei f(cconf[0].wert,ios::in); // /usr/lib64/capisuite/incoming.py
