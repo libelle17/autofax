@@ -2786,7 +2786,7 @@ void paramcl::cliesconf()
    }
  }
  svec ckzlrueck;
- systemrueck("grep faxInfo=capisuite.connect `grep incoming_script= "+ccapiconfdat+" 2>/dev/null|cut -d'\"' -f2 2>/dev/null`"
+ systemrueck("grep connect_faxG3 `grep incoming_script= "+ccapiconfdat+" 2>/dev/null|cut -d'\"' -f2 2>/dev/null`"
              "|cut -d',' -f4 2>/dev/null|cut -d')' -f1 2>/dev/null",obverb,oblog,&ckzlrueck);
  if (ckzlrueck.size()) {
   if (cklingelzahl!=ckzlrueck[0]) {
@@ -2820,7 +2820,7 @@ void paramcl::konfcapi()
     mdatei f(cconf[0].wert,ios::in); // /usr/lib64/capisuite/incoming.py
     if (f.is_open()) {
       string zeile;
-      const char* suchstr="faxInfo=capisuite.connect_faxG3(call,stationID,headline,";
+      const char* suchstr="connect_faxG3(call,stationID,headline";
       // <<rot<<"Lese: "<<cconf[0].wert<<schwarz<<endl;
       while(getline(f,zeile)) {
         size_t nk=zeile.find(suchstr);
@@ -2828,9 +2828,9 @@ void paramcl::konfcapi()
           nk+=strlen(suchstr);
           size_t klap=zeile.find(')',nk);
           if (klap!=string::npos) {
-            string nkz=zeile.substr(nk,klap-nk);
+            string nkz=zeile.substr(nk+1,klap-nk); // das , nach headline
             if (nkz!=cklingelzahl) {
-              string neuzeile=zeile.substr(0,nk)+cklingelzahl+zeile.substr(nk+nkz.length());
+              string neuzeile=zeile.substr(0,nk)+","+cklingelzahl+zeile.substr(nk+1+nkz.length());
               string neudatei=string(cconf[0].wert)+"_neu";
               f.close();
               mdatei fneu(neudatei,ios::out);
