@@ -2832,6 +2832,7 @@ void paramcl::konfcapi()
           if (nkh!=string::npos) {
             nkh+=strlen(headline);
               cout<<violett<<"Stelle 16, nkh: "<<nkh<<schwarz<<endl;
+              cout<<"zeile: "<<violett<<zeile<<schwarz<<endl;
             size_t klap=zeile.find(')',nkh-1);
             if (klap!=string::npos) {
               string nkz=zeile.substr(nkh+1,klap-nkh); // das , nach headline
