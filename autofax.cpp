@@ -5343,11 +5343,11 @@ void paramcl::holvongithub(string datei)
   }
 } // void paramcl::holvongithub(string datei)
 
-int paramcl::kompiliere(string prog,string endg, int obverb, int oblog,string vorcfg,string cfgmit,string nachcfg)
+int paramcl::kompiliere(string prog,string endg, string vorcfg,string cfgmit,string nachcfg)
 {
   return systemrueck("sh -c 'P="+prog+";T=$P.tar."+endg+";M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
       " && "+vorcfg+" && ./configure "+cfgmit+" && "+nachcfg+" && make && sudo make install '",obverb,oblog);
-} // int paramcl::kompiliere(string prog,string endg, int obverb, int oblog,string vorcfg,string cfgmit,string nachcfg)
+} // int paramcl::kompiliere(string prog,string endg,string nachtar, string vorcfg,string cfgmit,string nachcfg)
 
 
 // wird aufgerufen in: untersuchespool, main
@@ -5496,17 +5496,18 @@ int paramcl::pruefcapi()
         if (!capischonerfolgreichinstalliert) {
           pruefverz(instverz,obverb,oblog);
           holvongithub("capisuite");
+          exit(0);
           svec csrueck;
           systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null | sort -r",obverb,oblog,&csrueck);
           if (csrueck.size()) {
             holvongithub("capi20_copy");
-            kompiliere("capi20_copy","gz",obverb,oblog);
-            systemrueck("sh -c 'P=capi20_copy;T=$P.tar.bz2;M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
-                        " && ./configure && make && sudo make install '",obverb,oblog);
+            kompiliere("capi20_copy","gz");
+//            systemrueck("sh -c 'P=capi20_copy;T=$P.tar.bz2;M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
+//                        " && ./configure && make && sudo make install '",obverb,oblog);
 //            svec rueck;
 //            systemrueck("find /usr -name capi20.h 2>/dev/null",obverb,oblog,&rueck); 
             systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; }; }'",obverb,oblog);
-            if (kompiliere("capisuite","gz",obverb,oblog,
+            if (kompiliere("capisuite","gz",
                            "sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
                            " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
                            "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }",
