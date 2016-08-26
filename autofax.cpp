@@ -5496,6 +5496,7 @@ int paramcl::pruefcapi()
         if (!capischonerfolgreichinstalliert) {
           pruefverz(instverz,obverb,oblog);
           holvongithub("capisuite_copy");
+          exit(0);
           svec csrueck;
           systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null | sort -r",obverb,oblog,&csrueck);
           if (csrueck.size()) {
