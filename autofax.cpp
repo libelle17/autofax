@@ -5505,7 +5505,7 @@ int paramcl::pruefcapi()
 //                        " && ./configure && make && sudo make install '",obverb,oblog);
 //            svec rueck;
 //            systemrueck("find /usr -name capi20.h 2>/dev/null",obverb,oblog,&rueck); 
-            systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; }; }'",obverb,oblog);
+            systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; }; }'",obverb-1,oblog);
             if (kompiliere("capisuite_copy","gz",
                            "sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
                            " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
@@ -5514,7 +5514,6 @@ int paramcl::pruefcapi()
                            "sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp")) {
               mitcservice=1;
             }
-            exit(0);
 //            string befehl="sh -c 'P=capisuite; T=$P.tar.gz; M=$P-master; cd "+instverz+""
 //                  " && tar xpvf $T && rm -rf $P ; mv $M $P && cd $P"
 //                  " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
