@@ -4586,7 +4586,7 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
   string faxsu;
   svec rueck;
 //  systemrueck("sudo sh -c 'which faxsetup'",obverb,oblog,&rueck);
-  systemrueck("sudo which faxsetup",obverb,oblog,&rueck);
+  systemrueck("sudo env \"PATH=$PATH\" which faxsetup",obverb,oblog,&rueck);
   if (rueck.size()) faxsu=rueck[0];
 //  const char *faxsu="/usr/sbin/faxsetup";
   if (!lstat(faxsu.c_str(), &entrybuf)) {
@@ -4676,7 +4676,8 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
     int erg __attribute__((unused));
     pruefplatte();
     systemrueck("sudo killall hfaxd faxq >/dev/null 2>&1",obverb,oblog);
-    erg=system((string("sudo $(which sh) $(sudo which faxsetup) -nointeractive")+(obverb?" -verbose":"")+" && sudo systemctl daemon-reload").c_str()); 
+    erg=system((string("sudo $(which sh) $(sudo env \"PATH=$PATH\" which faxsetup) -nointeractive")+(obverb?" -verbose":"")+
+               " && sudo systemctl daemon-reload").c_str()); 
     pmp->sfaxgetty->start(obverb,oblog);
     pmp->shfaxd->start(obverb,oblog);
     pmp->sfaxq->start(obverb,oblog);
@@ -4694,7 +4695,7 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
   pmp->faxgtpfad.clear();
   //  pmp->faxgtpfad="/usr/lib/fax/faxgetty";
   //    pmp->faxgtpfad="/usr/sbin/faxgetty";
-  if (!systemrueck("sudo which faxgetty",obverb-1,oblog,&rueckf)) {
+  if (!systemrueck("sudo env \"PATH=$PATH\" which faxgetty",obverb-1,oblog,&rueckf)) {
     if (rueckf.size()) {
       pmp->faxgtpfad=rueckf[0];
     }
@@ -4869,8 +4870,7 @@ int paramcl::cservice()
   int erg;
   string cspfad;
   svec rueck;
-  erg=systemrueck("sudo which capisuite",obverb,oblog,&rueck);
-  exit(0);
+  erg=systemrueck("sudo env \"PATH=$PATH\" which capisuite",obverb,oblog,&rueck);
   if (rueck.size()) {
     erg=systemrueck("sudo sh -c 'systemctl stop capisuite; killall capisuite >/dev/null 2>&1; killall -9 capisuite >/dev/null 2>&1; "
               "cd /etc/init.d"
@@ -4898,13 +4898,13 @@ int paramcl::hservice_faxq_hfaxd()
   Log(violetts+"hservice_faxq_hfaxd()"+schwarz,this->obverb,this->oblog);
   string faxqpfad,hfaxdpfad;
   svec rueck;
-  systemrueck("sudo which hfaxd",obverb,oblog,&rueck);
+  systemrueck("sudo env \"PATH=$PATH\" which hfaxd",obverb,oblog,&rueck);
   if (rueck.size()) hfaxdpfad=rueck[0]; 
   hylafehler+=!this->shfaxd->spruef("HFaxd",0/*1*/,hfaxdpfad+" -d -i hylafax -s 444",
       this->varsphylavz+"/etc/setup.cache", "", "", this->obverb,this->oblog);
   this->shfaxd->machfit(obverb,oblog);
   rueck.clear();
-  systemrueck("sudo which faxq",obverb,oblog,&rueck);
+  systemrueck("sudo env \"PATH=$PATH\" which faxq",obverb,oblog,&rueck);
   if (rueck.size()) faxqpfad=rueck[0]; 
   hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,faxqpfad+" -D",
       this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname+".service", "",this->obverb,this->oblog);
@@ -5091,7 +5091,7 @@ int paramcl::pruefhyla()
       } // if (hyinstart==hysrc)  else
 
       // wenn sich faxsend findet ...
-      if (!systemrueck("sudo which faxsend",obverb,oblog)) {
+      if (!systemrueck("sudo env \"PATH=$PATH\" which faxsend",obverb,oblog)) {
         // und ein hylafax-Verzeichnis da ist ...
         if (this->setzhylavz()) {
           this->obhyla=0;
