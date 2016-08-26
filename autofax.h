@@ -288,6 +288,8 @@ class paramcl // Programmparameter
     void DateienHerricht();
     void cliesconf();
     int pruefcapi();
+    void holvongithub(string datei);
+    int kompiliere(string prog,string endg,int obverb=0,int oblog=0,string vorcfg="true",string cfgmit="",string nachcfg="true");
     void hliesconf();
     void hconfigtty();
     int cservice();

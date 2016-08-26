@@ -5333,6 +5333,22 @@ void pruefmodcron(int obverb, int oblog)
   }
 } // void pruefmodcron(int obverb, int oblog)
 
+void paramcl::holvongithub(string datei)
+{
+  svec csrueck;
+  systemrueck("find "+instverz+" -mtime -1 -name "+datei+".tar.gz 2>/dev/null",obverb,oblog,&csrueck);
+  if (!csrueck.size()) {
+  //systemrueck("sh -c 'cd "+instverz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
+    systemrueck("sh -c 'cd "+instverz+"; P="+datei+".tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T'", obverb,oblog);
+  }
+} // void paramcl::holvongithub(string datei)
+
+int paramcl::kompiliere(string prog,string endg, int obverb, int oblog,string vorcfg,string cfgmit,string nachcfg)
+{
+  return systemrueck("sh -c 'P="+prog+";T=$P.tar."+endg+";M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
+      " && "+vorcfg+" && ./configure "+cfgmit+" && "+nachcfg+" && make && sudo make install '",obverb,oblog);
+} // int paramcl::kompiliere(string prog,string endg, int obverb, int oblog,string vorcfg,string cfgmit,string nachcfg)
+
 
 // wird aufgerufen in: untersuchespool, main
 int paramcl::pruefcapi()
@@ -5479,41 +5495,46 @@ int paramcl::pruefcapi()
 
         if (!capischonerfolgreichinstalliert) {
           pruefverz(instverz,obverb,oblog);
+          holvongithub("capisuite");
           svec csrueck;
-          systemrueck("find "+instverz+" -mtime -1 -name capisuite.tar.gz 2>/dev/null",obverb,oblog,&csrueck);
-          if (!csrueck.size()) {
-//            systemrueck("sh -c 'cd "+instverz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
-            systemrueck("sh -c 'cd "+instverz+"; P=capisuite.tar.gz wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T'",
-                        obverb,oblog);
-          }
-          csrueck.clear();
           systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null | sort -r",obverb,oblog,&csrueck);
           if (csrueck.size()) {
-            systemrueck("P=capi20_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master && tar xvf capi20.tar.bz2 && cd capi20 && ./configure && make && sudo make install ",obverb,oblog);
+            holvongithub("capi20_copy");
+            kompiliere("capi20_copy","bz2",obverb,oblog);
+            systemrueck("sh -c 'P=capi20_copy;T=$P.tar.bz2;M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
+                        " && ./configure && make && sudo make install '",obverb,oblog);
 //            svec rueck;
 //            systemrueck("find /usr -name capi20.h 2>/dev/null",obverb,oblog,&rueck); 
             systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; }; }'",obverb,oblog);
-            string befehl="sh -c 'cd "+instverz+""
-                  " && tar xpvf capisuite.tar.gz && rm -rf capisuite ; mv capisuite-master capisuite && cd capisuite"
-                  " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
-                  " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
-                        "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; } "
-                  " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var"
-                  " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
-//                  " && sed -i.bak 's/<capi20.h>/\\\""+*sersetze(&rueck[0],"/","\\\"\\/")+"/' src/backend/capi.h"
-//                  " && sed -i.bak 's/<capi20.h>/\\\""+*sersetze(&rueck[0],"/","\\\"\\/")+"/' src/backend/connection.h"
-                  " && make"
-                  " && sudo make install"
-                  " && sudo systemctl daemon-reload; "
-                  "'";
-            if (!systemrueck(befehl,obverb,oblog)) {
-              //            pruefverz("/etc/capisuite",obverb,oblog,wahr);
-              //            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
-              //            systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instverz+"/capisuite/scripts/fax.conf /etc/capisuite");
-//              pruefverz("/usr/local/var/log",obverb,oblog,wahr);
-              //         pruefverz("/usr/local/var/log");
+            if (kompiliere("capisuite","gz",obverb,oblog,
+                           "sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
+                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
+                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }",
+                           "HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var",
+                           "sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp")) {
               mitcservice=1;
-            } // if (!systemrueck(sh -c ...
+            }
+//            string befehl="sh -c 'P=capisuite; T=$P.tar.gz; M=$P-master; cd "+instverz+""
+//                  " && tar xpvf $T && rm -rf $P ; mv $M $P && cd $P"
+//                  " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
+//                  " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
+//                        "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; } "
+//                  " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var"
+//                  " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
+////                  " && sed -i.bak 's/<capi20.h>/\\\""+*sersetze(&rueck[0],"/","\\\"\\/")+"/' src/backend/capi.h"
+////                  " && sed -i.bak 's/<capi20.h>/\\\""+*sersetze(&rueck[0],"/","\\\"\\/")+"/' src/backend/connection.h"
+//                  " && make"
+//                  " && sudo make install"
+//                  " && sudo systemctl daemon-reload; "
+//                  "'";
+//            if (!systemrueck(befehl,obverb,oblog)) {
+//              //            pruefverz("/etc/capisuite",obverb,oblog,wahr);
+//              //            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
+//              //            systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instverz+"/capisuite/scripts/fax.conf /etc/capisuite");
+////              pruefverz("/usr/local/var/log",obverb,oblog,wahr);
+//              //         pruefverz("/usr/local/var/log");
+//              mitcservice=1;
+//            } // if (!systemrueck(sh -c ...
           } // if (csrueck.size()) 
           // aktuelles Verzeichnis
         } // if (!capischonerfolgreichinstalliert) 
