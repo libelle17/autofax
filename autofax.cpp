@@ -5519,7 +5519,6 @@ int paramcl::pruefcapi()
                            "sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp")) {
               mitcservice=1;
             }
-          exit(0);
 //            string befehl="sh -c 'P=capisuite; T=$P.tar.gz; M=$P-master; cd "+instverz+""
 //                  " && tar xpvf $T && rm -rf $P ; mv $M $P && cd $P"
 //                  " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
@@ -5544,10 +5543,14 @@ int paramcl::pruefcapi()
           } // if (csrueck.size()) 
           // aktuelles Verzeichnis
         } // if (!capischonerfolgreichinstalliert) 
+        cout<<rot<<"Stelle 1"<<schwarz<<endl;
         liescapiconf();
+        cout<<rot<<"Stelle 2"<<schwarz<<endl;
         if (mitcservice) {
           capischonerfolgreichinstalliert=!cservice() && !ccapiconfdat.empty() && !cfaxconfdat.empty();
         }
+        cout<<rot<<"Stelle 3"<<schwarz<<endl;
+        exit(0);
         // capisuite unter Kernel 4: 
         // zypper in sfftobmp libcapi20-2
         //        // scp linux2:/usr/include/capiutils.h /usr/include
