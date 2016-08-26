@@ -1182,7 +1182,7 @@ void confdat::Abschn_auswert(int obverb, char tz)
       if (zeile->at(0)=='[' && zeile->at(zeile->length()-1)==']') {
         zeile->erase(zeile->length()-1);
         zeile->erase(0,1);
-        if (!abp.aname.empty() && abp.av.size()) {
+        if (/*!abp.aname.empty() && */abp.av.size()) {
            abschv.push_back(abp);
            abp.clear();
         }
