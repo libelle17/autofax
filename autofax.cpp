@@ -2763,17 +2763,19 @@ void paramcl::cliesconf()
         cout<<rot<<"Stelle 1"<<schwarz<<endl;
    capizukonf=1;
  }
- int richtige=0;
+ int richtige;
  if (cfaxcp) {
    cfaxcp->Abschn_auswert(obverb);
    for(size_t i=0;i<cfaxcp->abschv.size();i++) {
      if (cfaxcp->abschv[i].aname==cuser) {
+       richtige=0;
        for(size_t j=0;j<cfaxcp->abschv[i].av.size();j++) {
         if (cfaxcp->abschv[i].av[j].name=="fax_numbers") {if (cfaxcp->abschv[i].av[j].wert==capiconf[4].wert) richtige++;}
         else if (cfaxcp->abschv[i].av[j].name=="fax_stationID") {if (cfaxcp->abschv[i].av[j].wert==capiconf[6].wert) richtige++;}
         else if (cfaxcp->abschv[i].av[j].name=="fax_headline") {if (cfaxcp->abschv[i].av[j].wert==capiconf[7].wert) richtige++;}
         else if (cfaxcp->abschv[i].av[j].name=="fax_email_from") {if (cfaxcp->abschv[i].av[j].wert==capiconf[8].wert) richtige++;}
        }
+      break;
      }
    }
    cout<<violett<<"richtige: "<<richtige<<schwarz<<endl;
