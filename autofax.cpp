@@ -2790,6 +2790,7 @@ void paramcl::cliesconf()
 // wird  aufgerufen in: pruefcapi
 void paramcl::konfcapi()
 {
+  obverb=1;
   Log(violetts+Tx[T_konfcapi]+schwarz+", ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
   // Zahl der Klingeltoene in capisuite einstellen
 /*
@@ -2989,6 +2990,7 @@ void paramcl::konfcapi()
   pruefcvz();
   nextnum();
   Log(violetts+Tx[T_Ende]+Tx[T_konfcapi]+schwarz+"ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
+  obverb=0;
 } // void paramcl::konfcapi()
 
 // in konfcapi und faxemitC (da konfacpi aus pruefcapi nicht unbedingt aufgerufen wird)
