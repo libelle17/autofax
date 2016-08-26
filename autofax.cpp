@@ -2936,7 +2936,7 @@ void paramcl::konfcapi()
         if (!cuserda) 
           if (zeile.find(suchcuser)!=string::npos) 
             cuserda=1;
-        cout<<rot<<"iru: "<<(int)iru<<", paramdiff: "<<(int)paramdiff<<schwarz<<endl;
+        // <<rot<<"iru: "<<(int)iru<<", paramdiff: "<<(int)paramdiff<<schwarz<<endl;
         if (iru || !paramdiff) {
           size_t nkz=zeile.find('=');
           string lzeile,rzeile;
