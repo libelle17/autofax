@@ -2759,6 +2759,7 @@ void paramcl::cliesconf()
      || capiconf[4].wert!=msn  
      || capiconf[7].wert!=cFaxUeberschrift  
  ) {
+        cout<<rot<<"Stelle 1"<<schwarz<<endl;
    capizukonf=1;
  }
  int richtige=0;
@@ -2774,14 +2775,21 @@ void paramcl::cliesconf()
        }
      }
    }
-   if (richtige!=4) capizukonf=1;
+   if (richtige!=4) {
+        cout<<rot<<"Stelle 2"<<schwarz<<endl;
+     capizukonf=1;
+   }
  }
  svec ckzlrueck;
  systemrueck("grep faxInfo=capisuite.connect `grep incoming_script= "+ccapiconfdat+" 2>/dev/null|cut -d'\"' -f2 2>/dev/null`"
              "|cut -d',' -f4 2>/dev/null|cut -d')' -f1 2>/dev/null",obverb,oblog,&ckzlrueck);
  if (ckzlrueck.size()) {
-  if (cklingelzahl!=ckzlrueck[0]) capizukonf=1;
+  if (cklingelzahl!=ckzlrueck[0]) {
+    cout<<rot<<"Stelle 3"<<schwarz<<endl;
+    capizukonf=1;
+  }
  } else {
+    cout<<rot<<"Stelle 4"<<schwarz<<endl;
   capizukonf=1;
  }
 } // void paramcl::cliesconf()
@@ -5550,15 +5558,10 @@ int paramcl::pruefcapi()
           } // if (csrueck.size()) 
           // aktuelles Verzeichnis
         } // if (!capischonerfolgreichinstalliert) 
-        cout<<rot<<"Stelle 1"<<schwarz<<endl;
         liescapiconf();
-        cout<<rot<<"Stelle 2"<<schwarz<<endl;
         if (mitcservice) {
-          cout<<rot<<"Stelle 3"<<schwarz<<endl;
           capischonerfolgreichinstalliert=!cservice() && !ccapiconfdat.empty() && !cfaxconfdat.empty();
         }
-        cout<<rot<<"Stelle 4"<<schwarz<<endl;
-        exit(0);
         // capisuite unter Kernel 4: 
         // zypper in sfftobmp libcapi20-2
         //        // scp linux2:/usr/include/capiutils.h /usr/include
@@ -5595,6 +5598,7 @@ int paramcl::pruefcapi()
       if (obcapi && (versuch>0 || this->capizukonf)) {
         this->konfcapi();
         scapisuite->restart(obverb-1,oblog);
+    cout<<rot<<"Stelle 5"<<schwarz<<endl;
         capizukonf=0;
       } //     if (versuch>0) KLA
       // das folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
