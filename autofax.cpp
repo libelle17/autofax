@@ -5500,7 +5500,7 @@ int paramcl::pruefcapi()
           systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null | sort -r",obverb,oblog,&csrueck);
           if (csrueck.size()) {
             holvongithub("capi20_copy");
-            kompiliere("capi20_copy","bz2",obverb,oblog);
+            kompiliere("capi20_copy","gz",obverb,oblog);
             systemrueck("sh -c 'P=capi20_copy;T=$P.tar.bz2;M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
                         " && ./configure && make && sudo make install '",obverb,oblog);
 //            svec rueck;
