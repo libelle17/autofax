@@ -2832,10 +2832,10 @@ void paramcl::konfcapi()
           if (nkh!=string::npos) {
             nkh+=strlen(headline);
               cout<<violett<<"Stelle 16, nkh: "<<nkh<<schwarz<<endl;
-            size_t klap=zeile.find(')',nkh);
+            size_t klap=zeile.find(')',nkh-1);
             if (klap!=string::npos) {
               string nkz=zeile.substr(nkh+1,klap-nkh); // das , nach headline
-              cout<<"Stelle 18, nkz: "<<nkz<<endl;
+              cout<<"Stelle 18, nkz: '"<<nkz<<"'"<<endl;
               if (nkz!=cklingelzahl) {
                 string neuzeile=zeile.substr(0,nkh)+","+cklingelzahl+zeile.substr(nkh+1+nkz.length());
                 string neudatei=string(cconf[0].wert)+"_neu";
