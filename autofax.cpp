@@ -2790,7 +2790,7 @@ void paramcl::cliesconf()
              "|cut -d',' -f4 2>/dev/null|cut -d')' -f1 2>/dev/null",obverb,oblog,&ckzlrueck);
  if (ckzlrueck.size()) {
   if (cklingelzahl!=ckzlrueck[0]) {
-    cout<<rot<<"Stelle 3"<<schwarz<<endl;
+    cout<<rot<<"Stelle 3"<<schwarz<<", ckzlrueck[0]: '"<<ckzlrueck[0]<<"', cklingelzahl: '"<<cklingelzahl<<"'"<<endl;
     capizukonf=1;
   }
  } else {
@@ -2826,9 +2826,11 @@ void paramcl::konfcapi()
         size_t nk=zeile.find(suchstr);
         if (nk!=string::npos) {
           nk+=strlen(suchstr);
+          cout<<"Stelle 17, nk: "<<nk<<endl;
           size_t klap=zeile.find(')',nk);
           if (klap!=string::npos) {
             string nkz=zeile.substr(nk+1,klap-nk); // das , nach headline
+          cout<<"Stelle 18, nkz: "<<nkz<<endl;
             if (nkz!=cklingelzahl) {
               string neuzeile=zeile.substr(0,nk)+","+cklingelzahl+zeile.substr(nk+1+nkz.length());
               string neudatei=string(cconf[0].wert)+"_neu";
