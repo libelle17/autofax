@@ -2178,10 +2178,13 @@ uchar servc::spruef(const string& sbez,uchar obfork, const string& sexec, const 
     Log(("Service ")+blaus+sname+schwarz+Txk[T_lief_schon],obverb,oblog);
   } else {
     for(uchar iru=0;iru<2;iru++) {
+    /*
       char pBuf[300];
       int bytes = MIN(readlink("/bin/systemd", pBuf, sizeof pBuf), sizeof pBuf - 1);
       if(bytes >= 1) pBuf[bytes-1] = 0; // ../system statt /systemd
       systemd=string(pBuf)+"/"+sname+".service";
+    */
+      systemd="/etc/systemd/system/"+sname+".service";
       struct stat svstat;
       svgibts=!lstat(systemd.c_str(),&svstat);
       if (!svgibts || !obslaeuft(obverb,oblog)) {
