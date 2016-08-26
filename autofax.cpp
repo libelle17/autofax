@@ -2754,6 +2754,7 @@ void paramcl::autofkonfschreib()
 // in pruefcapi
 void paramcl::cliesconf()
 {
+ obverb=1;
   Log(violetts+Tx[T_konfcapi]+schwarz+", ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
   if (capiconf[6].wert!="+"+countrycode+" "+citycode+" "+msn  
      || capiconf[4].wert!=msn  
@@ -2775,6 +2776,7 @@ void paramcl::cliesconf()
        }
      }
    }
+   cout<<violett<<"richtige: "<<richtige<<schwarz<<endl;
    if (richtige!=4) {
         cout<<rot<<"Stelle 2"<<schwarz<<endl;
      capizukonf=1;
@@ -2792,6 +2794,7 @@ void paramcl::cliesconf()
     cout<<rot<<"Stelle 4"<<schwarz<<endl;
   capizukonf=1;
  }
+ obverb=0;
 } // void paramcl::cliesconf()
 
 
