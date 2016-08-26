@@ -5339,7 +5339,7 @@ void paramcl::holvongithub(string datei)
   systemrueck("find "+instverz+" -mtime -1 -name "+datei+".tar.gz 2>/dev/null",obverb,oblog,&csrueck);
   if (!csrueck.size()) {
   //systemrueck("sh -c 'cd "+instverz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
-    systemrueck("sh -c 'cd "+instverz+"; P="+datei+".tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T'", obverb,oblog);
+    systemrueck("sh -c 'cd "+instverz+"; T="+datei+".tar.gz; wget https://github.com/libelle17/"+datei+"/archive/master.tar.gz -O $T'", obverb,oblog);
   }
 } // void paramcl::holvongithub(string datei)
 
