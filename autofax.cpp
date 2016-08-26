@@ -2824,6 +2824,7 @@ void paramcl::konfcapi()
       // <<rot<<"Lese: "<<cconf[0].wert<<schwarz<<endl;
       while(getline(f,zeile)) {
         size_t nk=zeile.find(suchstr);
+              cout<<"0 zeile: "<<violett<<zeile<<schwarz<<endl;
         if (nk!=string::npos) {
           nk+=strlen(suchstr);
               cout<<violett<<"Stelle 15, nk: "<<nk<<schwarz<<endl;
@@ -2832,7 +2833,7 @@ void paramcl::konfcapi()
           if (nkh!=string::npos) {
             nkh+=strlen(headline);
               cout<<violett<<"Stelle 16, nkh: "<<nkh<<schwarz<<endl;
-              cout<<"zeile: "<<violett<<zeile<<schwarz<<endl;
+              cout<<"1 zeile: "<<violett<<zeile<<schwarz<<endl;
             size_t klap=zeile.find(')',nkh-1);
             if (klap!=string::npos) {
               string nkz=zeile.substr(nkh+1,klap-nkh); // das , nach headline
