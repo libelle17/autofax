@@ -5499,8 +5499,13 @@ int paramcl::pruefcapi()
           svec csrueck;
           systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null | sort -r",obverb,oblog,&csrueck);
           if (csrueck.size()) {
-            holvongithub("capi20_copy");
-            kompiliere("capi20_copy","gz");
+            struct stat c20stat;
+            if (lstat("/usr/lib64/libcapi20.so",&c20stat)) {
+              holvongithub("capi20_copy");
+              kompiliere("capi20_copy","gz");
+              systemrueck("sh -c 'cd "+instverz+" && L=/usr/lib64/libcapi20.so && L3=${L}.3 /test -f $L3 && ! test -f $L && "
+                          "ln -s $L3 $L;'",obverb,oblog);
+            }
 //            systemrueck("sh -c 'P=capi20_copy;T=$P.tar.bz2;M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
 //                        " && ./configure && make && sudo make install '",obverb,oblog);
 //            svec rueck;
@@ -5508,9 +5513,9 @@ int paramcl::pruefcapi()
             systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; }; }'",obverb-1,oblog);
             if (kompiliere("capisuite_copy","gz",
                            "sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
-                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
-                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }",
-                           "HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var",
+//                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
+//                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }"
+                           ,"HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var",
                            "sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp")) {
               mitcservice=1;
             }
