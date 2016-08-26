@@ -5547,9 +5547,10 @@ int paramcl::pruefcapi()
         liescapiconf();
         cout<<rot<<"Stelle 2"<<schwarz<<endl;
         if (mitcservice) {
+          cout<<rot<<"Stelle 3"<<schwarz<<endl;
           capischonerfolgreichinstalliert=!cservice() && !ccapiconfdat.empty() && !cfaxconfdat.empty();
         }
-        cout<<rot<<"Stelle 3"<<schwarz<<endl;
+        cout<<rot<<"Stelle 4"<<schwarz<<endl;
         exit(0);
         // capisuite unter Kernel 4: 
         // zypper in sfftobmp libcapi20-2
