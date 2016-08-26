@@ -4870,6 +4870,7 @@ int paramcl::cservice()
   string cspfad;
   svec rueck;
   erg=systemrueck("sudo which capisuite",obverb,oblog,&rueck);
+  exit(0);
   if (rueck.size()) {
     erg=systemrueck("sudo sh -c 'systemctl stop capisuite; killall capisuite >/dev/null 2>&1; killall -9 capisuite >/dev/null 2>&1; "
               "cd /etc/init.d"
