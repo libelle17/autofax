@@ -208,7 +208,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
               installiert=0;
           }
           if (installiert) 
-            if (systemrueck("which mysql",obverb-1,oblog)) 
+            if (systemrueck("which mysql",obverb-2,oblog)) 
               installiert=0;
           if (installiert) break;
           //        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get --assume-yes install mariadb-server; }",1,1);
