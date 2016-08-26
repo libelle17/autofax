@@ -5504,7 +5504,7 @@ int paramcl::pruefcapi()
               holvongithub("capi20_copy");
               kompiliere("capi20_copy","gz");
               systemrueck("sh -c 'cd "+instverz+" && L=/usr/lib64/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "
-                          "ln -s $L3 $L;'",obverb,oblog);
+                          "ln -s $L3 $L; test -f $L;'",obverb,oblog);
             }
 //            systemrueck("sh -c 'P=capi20_copy;T=$P.tar.bz2;M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
 //                        " && ./configure && make && sudo make install '",obverb,oblog);
