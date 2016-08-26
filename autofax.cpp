@@ -2826,10 +2826,12 @@ void paramcl::konfcapi()
         size_t nk=zeile.find(suchstr);
         if (nk!=string::npos) {
           nk+=strlen(suchstr);
+              cout<<violett<<"Stelle 15, nk: "<<nk<<schwarz<<endl;
           const char* headline="headline";
           size_t nkh=zeile.find(headline,nk);
           if (nkh!=string::npos) {
             nkh+=strlen(headline);
+              cout<<violett<<"Stelle 16, nkh: "<<nkh<<schwarz<<endl;
             size_t klap=zeile.find(')',nkh);
             if (klap!=string::npos) {
               string nkz=zeile.substr(nkh+1,klap-nkh); // das , nach headline
