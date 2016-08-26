@@ -2763,7 +2763,7 @@ void paramcl::cliesconf()
         cout<<rot<<"Stelle 1"<<schwarz<<endl;
    capizukonf=1;
  }
- int richtige;
+ int richtige=0;
  if (cfaxcp) {
    cfaxcp->Abschn_auswert(obverb);
    for(size_t i=0;i<cfaxcp->abschv.size();i++) {
