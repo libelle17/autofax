@@ -197,7 +197,7 @@ void perfcl::ausgab1000(const string& stelle)
 int perfcl::oberreicht(unsigned long sek)
 {
  zp1=clock();
- cout<<"zp1-zp0: "<<(zp1-zp0)<<", sek: "<<sek<<endl;
+ cout<<"zp1-zp0: "<<(zp1-zp0)<<", sek: "<<(long)(sek*CLOCKS_PER_SEC)<<endl;
  return ((zp1-zp0)>(long)sek*CLOCKS_PER_SEC);
 }
 
