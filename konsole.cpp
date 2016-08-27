@@ -2053,6 +2053,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="libcapi20-2") return "isdn4k-utils";
       if (prog=="libcapi20-3") return "";
       if (prog=="capiutils") return "";
+      if (prog=="imagemagick") return "ImageMagick ImageMagick-doc";
       break;
     default: break;
   }

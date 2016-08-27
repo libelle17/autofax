@@ -1374,6 +1374,7 @@ extern class linstcl linst;
 
 using namespace std;
 const DBSTyp myDBS=MySQL;
+string tmpc; // fuer crontab
 
 #define autofaxcpp
 #include "autofax.h"
@@ -3058,6 +3059,18 @@ void paramcl::verzeichnisse()
   }
 } // paramcl:: verzeichnisse()
 
+void setztmpc()
+{
+  if (tmpc.empty()) {
+    svec hrueck;
+    // Einbau von '~' ergaebe bei Aufruf mit und ohne sudo unterschiedliche Erweiterungen
+    systemrueck("echo $HOME");
+    if (hrueck.size()) tmpc=hrueck[0]; 
+    tmpc+="/rootscrontab";
+  }
+} // void setztmpc()
+
+
 // wird aufgerufen in: main
 void paramcl::pruefcron()
 {
@@ -3076,7 +3089,7 @@ void paramcl::pruefcron()
   }
   if (cronda) {
     int nochkeincron = systemrueck("sudo crontab -l > /dev/null 2>&1",obverb-1,0);
-    const string tmpc="meincrontab";
+    setztmpc();
     string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 ps -A | grep -q "+instverz+" || "+meinpfad()+" -norf";// "date >/home/schade/zeit";
     string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
     string cbeesc=string("\\*/")+cronminut+" \\* \\* \\* \\*"+cb0; // hier vorne \\- gestrichen
@@ -3085,26 +3098,26 @@ void paramcl::pruefcron()
     if (!cronzuplanen) {
       if (nochkeincron) {
       } else {
-        befehl=("bash -c 'grep \""+prog+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+prog+"/d'>\"")+tmpc+"\"; sudo crontab \""+tmpc+"\")";
+        befehl=("bash -c 'grep \""+prog+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+prog+"/d'>")+tmpc+"; sudo crontab "+tmpc+")";
       }
     } else {
       if (nochkeincron) {
-        befehl=("sudo rm -f ")+tmpc+";";
+        befehl=("rm -f ")+tmpc+";";
       } else {
-        befehl = ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+prog+"/d'>\""+tmpc+"\";";
+        befehl = ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+prog+"/d'>"+tmpc+";";
       }
-      befehl+=("echo \"")+cbef+"\">>\""+tmpc+"\"; sudo crontab \""+tmpc+"\"";
+      befehl+=("echo \"")+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+"";
       if (!nochkeincron)
         befehl+=")";
     }
 #else
     string befehl=cronzuplanen?
-      (nochkeincron?("sudo rm -f ")+tmpc+";":
-       ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+prog+"/d'>\""+tmpc+"\"; ")+
-      "echo \""+cbef+"\">>\""+tmpc+"\"; sudo crontab \""+tmpc+"\""+(nochkeincron?"":")")
+      (nochkeincron?("rm -f ")+tmpc+";":
+       ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+prog+"/d'>"+tmpc+"; ")+
+      "echo \""+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+(nochkeincron?"":")")
       :
-      (nochkeincron?"":("bash -c 'grep \""+prog+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+prog+"/d'>\"")+tmpc+"\";"
-       "sudo crontab \""+tmpc+"\")")
+      (nochkeincron?"":("bash -c 'grep \""+prog+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+prog+"/d'>")+tmpc+";"
+       "sudo crontab "+tmpc+")")
       ;
 #endif      
     systemrueck(befehl,obverb,oblog);
@@ -5336,17 +5349,18 @@ void pruefblack(int obverb, int oblog)
   } // if (blacki.is_open())  else
 } // void pruefblack(int obverb, int oblog) 
 
+
 // wird aufgerufen in: pruefcapi
 void pruefmodcron(int obverb, int oblog)
 {
   Log(violetts+Tx[T_pruefmodcron]+schwarz,obverb?obverb-1:0,oblog);
   const string mp="@reboot /sbin/modprobe ";
   const string mps[]={mp+"capi",mp+"fcpci"};
-  const string tmpc="meincrontab";
+  setztmpc();
   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++) {
     svec rueck;
     systemrueck(string("bash -c 'grep \"")+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)' || "
-        "(sudo crontab -l 2>/dev/null >\""+tmpc+"\"; echo \""+mps[ru]+"\">>\""+tmpc+"\"; sudo crontab \""+tmpc+"\")",obverb,oblog,&rueck);
+        "(sudo crontab -l 2>/dev/null >"+tmpc+"; echo \""+mps[ru]+"\">>"+tmpc+"; sudo crontab "+tmpc+")",obverb,oblog,&rueck);
     for(size_t znr=0;znr<rueck.size();znr++) {
       Log(rueck[znr],1+obverb,oblog);
     }
@@ -5451,8 +5465,11 @@ int paramcl::pruefcapi()
             }
           }
         }
+        cout<<violett<<"Stelle 1"<<schwarz<<endl;
         systemrueck("sudo modprobe capi",obverb,oblog);
+        cout<<violett<<"Stelle 2"<<schwarz<<endl;
         systemrueck("sudo modprobe capidrv",obverb,oblog);
+        cout<<violett<<"Stelle 3"<<schwarz<<endl;
       } // if (!fcpcida || !capida || !capidrvda) 
       pruefrules(obverb,oblog);
       pruefblack(obverb,oblog);
@@ -5579,7 +5596,11 @@ int paramcl::pruefcapi()
         // tar xpvf capisuite.tar.gz
         // mv capisuite-master capisuite
         // cd capisuite
-        // sed -i.bak 's/python_configdir=.*/python_configdir=`find \/usr\/lib\/python* -type f -name Makefile -printf "%h\\\\n"`/' configure
+        // bei mehreren Installationen wird hier unsortiert die erste Zeile genommen:
+        // sed -i.bak 's/python_configdir=.*/python_configdir=`find \/usr\/lib*\/python* -type f -name Makefile -printf "%h\\\\n"`/' configure
+        // bei mehreren Installationen koennte hier die richtigen genommen werden:
+      // sed -i.bak 's/python_configdir=.*/python_configdir=`cat $(which python-config) | head -n 1| sed "s\/#\\!\\(.*\\)\/\\1\\\/config\/"`/' configure
+      // auf Fedora funzt aber nur die Original-configure
         // in ubuntu: ./configure HAVE_NEW_CAPI4LINUX 0
         //            make
         //            sudo make install
