@@ -197,6 +197,7 @@ void perfcl::ausgab1000(const string& stelle)
 int perfcl::oberreicht(unsigned long sek)
 {
  zp1=clock();
+ cout<<"zp1-zp0: "<<(zp1-zp0)<<", sek: "<<sek<<endl;
  return ((zp1-zp0)>(long)sek*CLOCKS_PER_SEC);
 }
 
@@ -2258,7 +2259,7 @@ int servc::obslaeuft(int obverb,int oblog)
         serviceda=1;
         break;
       } else if (sysrueck[0].find("activating")!=string::npos) {
-        prf.ausgeb(Txk[T_Aktiviere_Dienst]+sname);
+        prf.ausgeb(sname);
         if (prf.oberreicht(120)) break;
       } else if (sysrueck[0].find("loaded")!=string::npos) {
         serviceda=1;
