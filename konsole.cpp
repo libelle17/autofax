@@ -179,7 +179,7 @@ void perfcl::ausgeb(const string& stelle)
   if (!stelle.empty())
    cout<<vonwo<<" "<<stelle<<" "<<++nr;
   cout<<Txk[T_Dauer]<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" clocks = "
-    <<fixed<<(t1-t0)<<schwarz<<setprecision(0)<<" s"<<endl;
+    <<fixed<<(t1-t0)<<schwarz<<setprecision(0)<<" s\r"<<endl;
 } // void perfcl::ausgeb(const string& stelle)
 
 
@@ -197,8 +197,8 @@ void perfcl::ausgab1000(const string& stelle)
 int perfcl::oberreicht(unsigned long sek)
 {
  zp1=clock();
- cout<<"zp1-zp0: "<<(zp1-zp0)<<", sek: "<<(long)(sek*CLOCKS_PER_SEC)<<endl;
- return ((zp1-zp0)>(long)sek*CLOCKS_PER_SEC);
+// <<"zp1-zp0: "<<(zp1-zp0)<<", sek: "<<(long)(sek*CLOCKS_PER_SEC)*0.1<<endl;
+ return ((zp1-zp0)>(long)sek*CLOCKS_PER_SEC*0.1);
 }
 
 
