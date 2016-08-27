@@ -2754,7 +2754,6 @@ void paramcl::autofkonfschreib()
 // in pruefcapi
 void paramcl::cliesconf()
 {
- obverb=1;
   Log(violetts+Tx[T_konfcapi]+schwarz+", ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
   if (capiconf[6].wert!="+"+countrycode+" "+citycode+" "+msn  
      || capiconf[4].wert!=msn  
@@ -2793,7 +2792,6 @@ void paramcl::cliesconf()
  } else {
   capizukonf=1;
  }
- obverb=0;
 } // void paramcl::cliesconf()
 
 
