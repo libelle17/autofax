@@ -3059,12 +3059,12 @@ void paramcl::verzeichnisse()
   }
 } // paramcl:: verzeichnisse()
 
-void setztmpc()
+void setztmpc(int obverb, int oblog)
 {
   if (tmpc.empty()) {
     svec hrueck;
     // Einbau von '~' ergaebe bei Aufruf mit und ohne sudo unterschiedliche Erweiterungen
-    systemrueck("echo $HOME");
+    systemrueck("echo $HOME",obverb,oblog,&hrueck);
     if (hrueck.size()) tmpc=hrueck[0]; 
     tmpc+="/rootscrontab";
   }
@@ -3089,7 +3089,7 @@ void paramcl::pruefcron()
   }
   if (cronda) {
     int nochkeincron = systemrueck("sudo crontab -l > /dev/null 2>&1",obverb-1,0);
-    setztmpc();
+    setztmpc(obverb, oblog);
     string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 ps -A | grep -q "+instverz+" || "+meinpfad()+" -norf";// "date >/home/schade/zeit";
     string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
     string cbeesc=string("\\*/")+cronminut+" \\* \\* \\* \\*"+cb0; // hier vorne \\- gestrichen
@@ -5356,7 +5356,7 @@ void pruefmodcron(int obverb, int oblog)
   Log(violetts+Tx[T_pruefmodcron]+schwarz,obverb?obverb-1:0,oblog);
   const string mp="@reboot /sbin/modprobe ";
   const string mps[]={mp+"capi",mp+"fcpci"};
-  setztmpc();
+  setztmpc(obverb, oblog);
   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++) {
     svec rueck;
     systemrueck(string("bash -c 'grep \"")+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)' || "
