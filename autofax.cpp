@@ -2760,7 +2760,6 @@ void paramcl::cliesconf()
      || capiconf[4].wert!=msn  
      || capiconf[7].wert!=cFaxUeberschrift  
  ) {
-        cout<<rot<<"Stelle 1"<<schwarz<<endl;
    capizukonf=1;
  }
  int richtige=0;
@@ -2769,7 +2768,7 @@ void paramcl::cliesconf()
    for(size_t i=0;i<cfaxcp->abschv.size();i++) {
      if (cfaxcp->abschv[i].aname==cuser) {
        richtige=0;
-       cout<<"abschv["<<i<<"].av.size() "<<cfaxcp->abschv[i].av.size()<<endl;
+       // <<"abschv["<<i<<"].av.size() "<<cfaxcp->abschv[i].av.size()<<endl;
        for(size_t j=0;j<cfaxcp->abschv[i].av.size();j++) {
         if (cfaxcp->abschv[i].av[j].name=="fax_numbers") {if (cfaxcp->abschv[i].av[j].wert==capiconf[4].wert) richtige++;}
         else if (cfaxcp->abschv[i].av[j].name=="fax_stationID") {if (cfaxcp->abschv[i].av[j].wert==capiconf[6].wert) richtige++;}
@@ -2779,9 +2778,7 @@ void paramcl::cliesconf()
       break;
      }
    }
-   cout<<violett<<"Richtige: "<<richtige<<schwarz<<endl;
    if (richtige!=4) {
-        cout<<rot<<"Stelle 2"<<schwarz<<endl;
      capizukonf=1;
    }
  }
@@ -2790,11 +2787,10 @@ void paramcl::cliesconf()
              "|sed 's/.*headline//;s/^,//;s/).*//' 2>/dev/null",obverb,oblog,&ckzlrueck);
  if (ckzlrueck.size()) {
   if (cklingelzahl!=ckzlrueck[0]) {
-    cout<<rot<<"Stelle 3"<<schwarz<<", ckzlrueck[0]: '"<<ckzlrueck[0]<<"', cklingelzahl: '"<<cklingelzahl<<"'"<<endl;
+    // <<rot<<"Stelle 3"<<schwarz<<", ckzlrueck[0]: '"<<ckzlrueck[0]<<"', cklingelzahl: '"<<cklingelzahl<<"'"<<endl;
     capizukonf=1;
   }
  } else {
-    cout<<rot<<"Stelle 4"<<schwarz<<endl;
   capizukonf=1;
  }
  obverb=0;
@@ -2804,17 +2800,13 @@ void paramcl::cliesconf()
 // wird  aufgerufen in: pruefcapi
 void paramcl::konfcapi()
 {
-  obverb=1;
-  static int durchlauf=0;
-  durchlauf++;
-  cout<<"Durchlauf: "<<durchlauf<<endl;
   Log(violetts+Tx[T_konfcapi]+schwarz+", ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
   // Zahl der Klingeltoene in capisuite einstellen
 /*
   cppSchluess cconf[]={{"incoming_script"}};
   size_t cs=sizeof cconf/sizeof*cconf;
 */
-  cout<<"cconf[0].wert: "<<cconf[0].wert<<endl;
+  // <<"cconf[0].wert: "<<cconf[0].wert<<endl;
   if (!cconf[0].wert.empty()) {
     systemrueck("sed -i$(test -f "+cconf[0].wert+".orig||echo '.orig') "
                 "'s/\\(^.*connect_faxG3.*headline\\).*\\().*$\\)/\\1,"+cklingelzahl+"\\2/' "+cconf[0].wert,obverb,oblog);
@@ -2829,19 +2821,14 @@ void paramcl::konfcapi()
       while(getline(f,zeile)) {
         size_t nk=zeile.find(suchstr);
         if (nk!=string::npos) {
-              cout<<"0 zeile: "<<violett<<zeile<<schwarz<<endl;
           nk+=strlen(suchstr);
-              cout<<violett<<"Stelle 15, nk: "<<nk<<schwarz<<endl;
           const char* headline="headline";
           size_t nkh=zeile.find(headline,nk);
           if (nkh!=string::npos) {
             nkh+=strlen(headline);
-              cout<<violett<<"Stelle 16, nkh: "<<nkh<<schwarz<<endl;
-              cout<<"1 zeile: "<<violett<<zeile<<schwarz<<endl;
             size_t klap=zeile.find(')',nkh-1);
             if (klap!=string::npos) {
               string nkz=zeile.substr(nkh+1,klap-nkh); // das , nach headline
-              cout<<"Stelle 18, nkz: '"<<nkz<<"'"<<endl;
               if (nkz!=cklingelzahl) {
                 string neuzeile=zeile.substr(0,nkh)+","+cklingelzahl+zeile.substr(klap);
                 string neudatei=string(cconf[0].wert)+"_neu";
@@ -3023,7 +3010,6 @@ void paramcl::konfcapi()
   pruefcvz();
   nextnum();
   Log(violetts+Tx[T_Ende]+Tx[T_konfcapi]+schwarz+"ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
-  obverb=0;
 } // void paramcl::konfcapi()
 
 // in konfcapi und faxemitC (da konfacpi aus pruefcapi nicht unbedingt aufgerufen wird)
@@ -5619,7 +5605,6 @@ int paramcl::pruefcapi()
       if (obcapi && (versuch>0 || this->capizukonf)) {
         this->konfcapi();
         scapisuite->restart(obverb-1,oblog);
-    cout<<rot<<"Stelle 5"<<schwarz<<endl;
         capizukonf=0;
       } //     if (versuch>0) KLA
       // das folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
