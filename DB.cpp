@@ -252,7 +252,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
             } // if (zrueck.size()) else
           } // if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null " ...
           gtrim(&datadir);
-          cout<<rot<<datadir<<schwarz<<endl;
+          // <<rot<<datadir<<schwarz<<endl;
           if (datadir.empty()) {
             datadir="/var/lib/mysql";
           }
