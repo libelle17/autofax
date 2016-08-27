@@ -2816,7 +2816,11 @@ void paramcl::konfcapi()
 */
   cout<<"cconf[0].wert: "<<cconf[0].wert<<endl;
   if (!cconf[0].wert.empty()) {
+    systemrueck("sed -i$(test -f "+cconf[0].wert+".orig||echo '.orig') "
+                "'s/\\(^.*connect_faxG3.*headline\\).*\\().*$\\)/\\1,"+cklingelzahl+"\\2/' "+cconf[0].wert,obverb,oblog);
+  }
     //    if (cpplies(ccapiconfdat,cconf,cs)) KLA
+    /*
     mdatei f(cconf[0].wert,ios::in); // /usr/lib64/capisuite/incoming.py
     if (f.is_open()) {
       string zeile;
@@ -2871,6 +2875,7 @@ void paramcl::konfcapi()
       } // while(getline(f,zeile)) 
     } // if (f.is_open()) 
   } // if (cpplies(ccapiconfdat,cconf,cs)) 
+  */
   //  static cppSchluess capiconf[]=KLA KLA"spool_dir"KLZ,KLA"fax_user_dir"KLZ,KLA"send_tries"KLZ,KLA"send_delays"KLZ,
   //         KLA"outgoing_MSN"KLZ,KLA"dial_prefix"KLZ,KLA"fax_stationID"KLZ,KLA"fax_headline"KLZ,KLA"fax_email_from"KLZ KLZ;
   // fax_stationID
