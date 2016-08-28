@@ -5495,9 +5495,9 @@ int paramcl::pruefcapi()
           holvongithub(prog);
           kompiliere(prog,"gz","sudo test -f driver.c.bak || sed -i.bak \"/request_irq/i#if !defined(IRQF_DISABLED)\\n"
                   "# define IRQF_DISABLED 0x00\\n#endif\" driver.c;"
-                  "sudo sed -e \"/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>\" "
-                  "-e \"/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
-                  "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);\" "
+                  "sudo sed -e '\\''/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>'\\'' "
+                  "-e '\\''/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
+                  "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);'\\'' "
                   "main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
                   "sudo make clean"," 2>/dev/null; sudo ");
           exit(0);
