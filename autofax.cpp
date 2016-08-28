@@ -5023,8 +5023,6 @@ int paramcl::pruefhyla()
   } else {
     Log(string("Modem '")+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+gruen+brs+schwarz+Tx[T_wird_verwendet],obverb,oblog);
   } //   if (br<=0) else
-  obverb=1;
-  cout<<violett<<"Stelle 1"<<schwarz<<endl;
   if (1) {
   if (!this->sfaxgetty) this->sfaxgetty=new servc("hylafax-faxgetty-"+this->hmodem,"faxgetty");
   for(unsigned versuch=0;versuch<3;versuch++) {
@@ -5072,6 +5070,7 @@ int paramcl::pruefhyla()
       exit(0);
     } 
   cout<<violett<<"Stelle 7"<<schwarz<<endl;
+  obverb=3;
     if (hylafehlt) {
       // falls nein, dann schauen, ob startbar
       if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog)) hylafehlt=0;
