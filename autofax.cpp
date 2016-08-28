@@ -5071,6 +5071,8 @@ int paramcl::pruefhyla()
     } else if (versuch) {
       exit(0);
     } 
+    cout<<violett<<"Stelle 2"<<schwarz<<endl;
+    break; // zu Testzwecken
     if (hylafehlt) {
       // falls nein, dann schauen, ob startbar
       if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog)) hylafehlt=0;
