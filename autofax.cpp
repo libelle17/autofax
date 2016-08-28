@@ -5489,8 +5489,6 @@ int paramcl::pruefcapi()
               */
           string prog="fcpci_copy";
           string srcvz=instverz+vtz+prog+".tar.gz";
-          cout<<srcvz<<endl;
-          exit(0);
           holvongithub(prog);
               systemrueck("ls -l /lib/modules/$(uname -r)/build 2>/dev/null || "
               "{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
