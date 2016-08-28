@@ -5487,9 +5487,11 @@ int paramcl::pruefcapi()
                 // 2) in driver.c Zeile 373 IRQF_DISABLED durch 0x00 ersetzt werden, dann kompilier- und installierbar
               KLZ
               */
-          holvongithub("fcpci_copy");
+          string prog="fcpci_copy";
+          string srcvz=instverz+vtz+prog+".tar.gz";
+          cout<<srcvz<<endl;
           exit(0);
-              string srcvz=instverz+"fcpci_copy";
+          holvongithub(prog);
               systemrueck("ls -l /lib/modules/$(uname -r)/build 2>/dev/null || "
               "{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
               "sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU && sudo cp -a $NEU /lib/modules/$(uname -r)/build; }",obverb,oblog);
@@ -5500,6 +5502,7 @@ int paramcl::pruefcapi()
                   "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);' "
                   "main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
                   "sudo make clean",1+obverb,oblog);
+          exit(0);
               svec rueck;
               systemrueck("sudo rm -f /root/bin/xargs",1+obverb,oblog);
               systemrueck("cd "+srcvz+";sudo make all ",1+obverb,oblog); // || { sudo dnf clean all; sudo dnf update; sudo make all; }
