@@ -467,8 +467,6 @@ enum T_
   T_empfvz,
   T_MeiEinrichtung,
   T_Mei_FaxUeberschrift,
-  T_Capisuite_Dienst_eingerichtet_von,
-  T_am,
   T_an_Fax,
   T_an_cFax,
   T_an_hFax,
@@ -1329,10 +1327,6 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"MeiEinrichtung","MyInstitution"},
   // T_Mei_FaxUeberschrift
   {"Mei FaxUeberschrift","My fax headline"},
-  // T_Capisuite_Dienst_eingerichtet_von
-  {"Capisuite-Dienst, eingerichtet von ","Capisuite service, installed by "},
-  // T_am
-  {" am "," on "},
   // T_an_Fax
   {"an Fax","to fax"},
   // T_an_cFax,
@@ -3293,18 +3287,18 @@ void paramcl::pruefsamba()
   struct stat fstat;
   const char *susefw="/etc/sysconfig/SuSEfirewall2";
   if (!lstat(susefw,&fstat)) {
-    string prog="server";
+    string part="server";
     for(int i=1;i<3;i++) {
-      int nichtfrei=systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+prog+"' "+susefw+" >/dev/null",obverb,oblog);
+      int nichtfrei=systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+part+"' "+susefw+" >/dev/null",obverb,oblog);
       if (nichtfrei && !nrzf && !obfw) {
        obfw=Tippob(Tx[T_Soll_die_SuSEfirewall_bearbeitet_werden],Tx[T_j_af]);
        if (!obfw) break;
       }
       if (nichtfrei && obfw) {
-      systemrueck("sed -i.bak_"+ich+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+prog+"\\2/g' "+susefw+
+      systemrueck("sed -i.bak_"+ich+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
           " && systemctl restart SuSEfirewall2 smb nmb",obverb,oblog); 
       }
-      prog="client";
+      part="client";
     } // for(int i=1;i<3;i++) 
   } // if (!lstat(susefw,&fstat)) 
 } // pruefsamba
@@ -4943,12 +4937,8 @@ int paramcl::cservice()
               " && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
               " && { mkdir -p /etc/ausrangiert && mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true'",obverb,oblog);
     cspfad=rueck[0];
-    char buf[80];
-    time_t jetzt = time(0);
-    struct tm *tmp = localtime(&jetzt);
-    strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", tmp);
     // entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
-    csfehler+=!scapisuite->spruef(Tx[T_Capisuite_Dienst_eingerichtet_von]+prog+Tx[T_am]+buf,0,cspfad/*+" -d"*/,"","","",obverb,oblog);
+    csfehler+=!scapisuite->spruef("Capisuite",0,prog,cspfad/*+" -d"*/,"","","",obverb,oblog);
     if (obverb) Log("csfehler: "+gruens+ltoan(csfehler)+schwarz,obverb,oblog);
 //    return csfehler;
   }
@@ -4966,13 +4956,13 @@ int paramcl::hservice_faxq_hfaxd()
   svec rueck;
   systemrueck("sudo env \"PATH=$PATH\" which hfaxd",obverb,oblog,&rueck);
   if (rueck.size()) hfaxdpfad=rueck[0]; 
-  hylafehler+=!this->shfaxd->spruef("HFaxd",0/*1*/,hfaxdpfad+" -d -i hylafax -s 444",
+  hylafehler+=!this->shfaxd->spruef("HFaxd",0/*1*/,prog,hfaxdpfad+" -d -i hylafax"/* -s 444*/,
       this->varsphylavz+"/etc/setup.cache", "", "", this->obverb,this->oblog);
   this->shfaxd->machfit(obverb,oblog);
   rueck.clear();
   systemrueck("sudo env \"PATH=$PATH\" which faxq",obverb,oblog,&rueck);
   if (rueck.size()) faxqpfad=rueck[0]; 
-  hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,faxqpfad+" -D",
+  hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,prog,faxqpfad+" -D",
       this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname+".service", "",this->obverb,this->oblog);
   return hylafehler;
 } // void hservice_faxq_hfaxd()
@@ -4981,7 +4971,7 @@ int paramcl::hservice_faxq_hfaxd()
 int paramcl::hservice_faxgetty()
 {
   Log(violetts+"hservice_faxgetty()"+schwarz,obverb,oblog);
-  return !this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0, this->faxgtpfad+" "+this->hmodem,"","","",this->obverb,this->oblog);
+  return !this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0, prog,this->faxgtpfad+" "+this->hmodem,"","","",this->obverb,this->oblog);
   // /etc/inittab werde von systemd nicht gelesen
   /*,"cat /etc/inittab 2>/dev/null | grep -E '^[^#].*respawn.*faxgetty' >/dev/null 2>&1"*/ 
 
@@ -5412,11 +5402,11 @@ void paramcl::holvongithub(string datei)
   }
 } // void paramcl::holvongithub(string datei)
 
-int paramcl::kompiliere(string prog,string endg, string vorcfg,string cfgbismake)
+int paramcl::kompiliere(string was,string endg, string vorcfg,string cfgbismake)
 {
-  return systemrueck("sh -c 'P="+prog+";T=$P.tar."+endg+";M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
+  return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
       " && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install '",obverb,oblog);
-} // int paramcl::kompiliere(string prog,string endg,string nachtar, string vorcfg,string cfgbismake)
+} // int paramcl::kompiliere(string was,string endg,string nachtar, string vorcfg,string cfgbismake)
 
 
 // wird aufgerufen in: untersuchespool, main
@@ -5497,12 +5487,12 @@ int paramcl::pruefcapi()
               systemrueck("cd "+srcvz+";sudo make install",1+obverb,oblog);
               */
               systemrueck("ls -l /lib/modules/$(uname -r)/build 2>/dev/null || "
-              "{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
-              "sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU && sudo cp -a $NEU /lib/modules/$(uname -r)/build; }",obverb,oblog);
-          string prog="fcpci_copy";
-          string srcvz=instverz+vtz+prog+".tar.gz";
-          holvongithub(prog);
-          kompiliere(prog,"gz","sudo test -f driver.c.bak || sed -i.bak \"/request_irq/i#if !defined(IRQF_DISABLED)\\n"
+                  "{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
+                  "sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU && sudo cp -a $NEU /lib/modules/$(uname -r)/build; }",obverb,oblog);
+              string proj="fcpci_copy";
+              string srcvz=instverz+vtz+proj+".tar.gz";
+              holvongithub(proj);
+              kompiliere(proj,"gz","sudo test -f driver.c.bak || sed -i.bak \"/request_irq/i#if !defined(IRQF_DISABLED)\\n"
                   "# define IRQF_DISABLED 0x00\\n#endif\" driver.c;"
                   "sudo sed -e '\\''/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>'\\'' "
                   "-e '\\''/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"

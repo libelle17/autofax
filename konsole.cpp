@@ -151,6 +151,10 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {" geladen"," loaded"},
   // T_nicht_geladen
   {" nicht geladen"," not loaded"},
+  // T_am
+  {"' am ","' on "},
+  // T_als_Dienst_eingerichtet_von
+  {", als Dienst eingerichtet von '",", installed as service by '"},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -2194,8 +2198,8 @@ int servc::machfit(int obverb,int oblog)
 } // int servc::machfit(int obverb,int oblog)
 
 // wird aufgerufen in: hservice_faxq_hfaxd, hservice_faxgetty
-uchar servc::spruef(const string& sbez,uchar obfork, const string& sexec, const string& CondPath, const string& After, const string& wennnicht0,
-                    int obverb,int oblog)
+uchar servc::spruef(const string& sbez,uchar obfork, const string& parent, const string& sexec, const string& CondPath, const string& After, 
+                    const string& wennnicht0, int obverb,int oblog)
 {
   Log(violetts+Txk[T_spruef_sname]+schwarz+sname,obverb,oblog);
   string systemd;
@@ -2232,7 +2236,11 @@ uchar servc::spruef(const string& sbez,uchar obfork, const string& sexec, const 
           mdatei syst(systemd,ios::out);
           if (syst.is_open()) {
             syst<<"[Unit]"<<endl;
-            syst<<"Description="<<sbez<<" Service"<<endl;
+    char buf[80];
+    time_t jetzt = time(0);
+    struct tm *tmp = localtime(&jetzt);
+    strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", tmp);
+            syst<<"Description="<<sbez<<Txk[T_als_Dienst_eingerichtet_von]<<parent<<Txk[T_am]<<buf<<endl;
             if (!CondPath.empty()) 
               syst<<"ConditionPathExists="<<CondPath<<endl;
             if (!After.empty())
