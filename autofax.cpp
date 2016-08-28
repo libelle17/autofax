@@ -5487,12 +5487,20 @@ int paramcl::pruefcapi()
                 // 2) in driver.c Zeile 373 IRQF_DISABLED durch 0x00 ersetzt werden, dann kompilier- und installierbar
               KLZ
               */
-          string prog="fcpci_copy";
-          string srcvz=instverz+vtz+prog+".tar.gz";
-          holvongithub(prog);
               systemrueck("ls -l /lib/modules/$(uname -r)/build 2>/dev/null || "
               "{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
               "sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU && sudo cp -a $NEU /lib/modules/$(uname -r)/build; }",obverb,oblog);
+          string prog="fcpci_copy";
+          string srcvz=instverz+vtz+prog+".tar.gz";
+          holvongithub(prog);
+          kompiliere(prog,"gz","sudo test -f driver.c.bak || sed -i.bak '/request_irq/i#if !defined(IRQF_DISABLED)\\n"
+                  "# define IRQF_DISABLED 0x00\\n#endif' driver.c;"
+                  "sudo sed -e '/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>' "
+                  "-e '/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
+                  "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);' "
+                  "main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
+                  "sudo make clean"," 2>/dev/null; true","true");
+          exit(0);
               systemrueck("cd "+srcvz+";sudo test -f driver.c.bak || sed -i.bak '/request_irq/i#if !defined(IRQF_DISABLED)\\n"
                   "# define IRQF_DISABLED 0x00\\n#endif' driver.c;"
                   "sudo sed -e '/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>' "
@@ -5500,7 +5508,6 @@ int paramcl::pruefcapi()
                   "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);' "
                   "main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
                   "sudo make clean",1+obverb,oblog);
-          exit(0);
               svec rueck;
               systemrueck("sudo rm -f /root/bin/xargs",1+obverb,oblog);
               systemrueck("cd "+srcvz+";sudo make all ",1+obverb,oblog); // || { sudo dnf clean all; sudo dnf update; sudo make all; }
