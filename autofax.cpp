@@ -5096,8 +5096,8 @@ int paramcl::pruefhyla()
               " && sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
               " && sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
               " && test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
-              " && killall hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive && echo $? = Ergebnis nach faxsetup -nointeractive"
-              " && killall hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
+              " && sudo killall hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive && echo $? = Ergebnis nach faxsetup -nointeractive"
+              " && sudo killall hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
               " && sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload"
               "'"
               ,2,oblog);
