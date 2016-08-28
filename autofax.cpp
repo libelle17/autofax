@@ -5024,7 +5024,8 @@ int paramcl::pruefhyla()
     Log(string("Modem '")+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+gruen+brs+schwarz+Tx[T_wird_verwendet],obverb,oblog);
   } //   if (br<=0) else
   cout<<violett<<"Stelle 1"<<schwarz<<endl;
-  if (0) {
+  obverb=1;
+  if (1) {
   if (!this->sfaxgetty) this->sfaxgetty=new servc("hylafax-faxgetty-"+this->hmodem,"faxgetty");
   for(unsigned versuch=0;versuch<3;versuch++) {
     // 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
@@ -5221,6 +5222,7 @@ int paramcl::pruefhyla()
         // falls ja, dann starten (falls erst installiert werden muss, dann bei versuch==1
       } // if (0)
       */
+    break; // zu Testzwecken
     } // if (hylafehlt)
     int fglaeuftnicht=0;
     if (1) {
@@ -5306,6 +5308,7 @@ int paramcl::pruefhyla()
                   "sudo sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax", obverb,oblog);
   }
   } // if (0)
+  obverb=0;
   Log(violetts+Tx[T_Ende]+" "+Tx[T_pruefhyla]+schwarz,obverb?obverb:obverb,oblog);
   return 0;
 } // int paramcl::pruefhyla()
@@ -5423,7 +5426,6 @@ int paramcl::kompiliere(string prog,string endg, string vorcfg,string cfgbismake
 // wird aufgerufen in: untersuchespool, main
 int paramcl::pruefcapi()
 {
-  obverb=1;
   Log(violetts+Tx[T_pruefcapi]+schwarz,obverb?obverb:obverb,oblog);
   static uchar capiloggekuerzt=0;
   static uchar capischonerfolgreichinstalliert=0;
@@ -5704,7 +5706,6 @@ int paramcl::pruefcapi()
     Log(rots+Tx[T_konntecapisuiteservice]+gruen+ltoan(versuch)+rot+Tx[T_malnichtstartenverwN]+schwarz,1,1);
     return 1;
   }
-  obverb=0;
   return 0;
 } // pruefcapi()
 
