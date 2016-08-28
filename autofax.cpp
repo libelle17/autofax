@@ -6635,7 +6635,6 @@ int main(int argc, char** argv)
     } else {
 
       // hier stehen obcapi und obhyla fest
-      // exit(0);
       pm.faxealle();
       // Dateien in Spool-Tabelle nach inzwischen verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
       pm.untersuchespool();
