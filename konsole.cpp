@@ -1537,7 +1537,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
   string const * czg=&cmd;
   string hcmd;
   uchar obfind=(cmd.substr(0,5)=="find" || cmd.substr(0,9)=="sudo find");
-  if (obfind && !obverb) {
+  if (obfind && (obverb<1 || strcmp(curruser(),"root"))) {
    hcmd=cmd+" 2>/dev/null";
    czg=&hcmd;
   }
