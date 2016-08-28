@@ -286,7 +286,7 @@ class paramcl // Programmparameter
     void tu_lista(const string& oberfolg);
     void tu_listi();
     void DateienHerricht();
-    void cliesconf();
+    void clieskonf();
     int pruefcapi();
     void holvongithub(string datei);
     int kompiliere(string prog,string endg, string vorcfg="true",string cfgmit="",string nachcfg="true");

@@ -341,6 +341,7 @@ enum T_
   T_rueckfragen,
   T_autokonfschreib,
   T_konfcapi,
+  T_clieskonf,
   T_verzeichnisse,
   T_pruefcron,
   T_korrerfolgszeichen,
@@ -1069,6 +1070,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"autokonfschreib()","autoconfwrite()"},
   // T_konfcapi
   {"konfcapi()","confcapi()"},
+  // T_clieskonf
+  {"clieskonf()","creadconf()"},
   // T_verzeichnisse
   {"verzeichnisse()","directories()"},
   // T_pruefcron
@@ -2753,9 +2756,9 @@ void paramcl::autofkonfschreib()
 
 
 // in pruefcapi
-void paramcl::cliesconf()
+void paramcl::clieskonf()
 {
-  Log(violetts+Tx[T_konfcapi]+schwarz+", ccapiconfdat: "+violett+ccapiconfdat+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_clieskonf]+schwarz+", cfaxcp->name: "+violett+cfaxcp->name+schwarz,obverb,oblog);
   if (capiconf[6].wert!="+"+countrycode+" "+citycode+" "+msn  
      || capiconf[4].wert!=msn  
      || capiconf[7].wert!=cFaxUeberschrift  
@@ -2793,7 +2796,7 @@ void paramcl::cliesconf()
  } else {
   capizukonf=1;
  }
-} // void paramcl::cliesconf()
+} // void paramcl::clieskonf()
 
 
 // wird  aufgerufen in: pruefcapi
@@ -2807,7 +2810,7 @@ void paramcl::konfcapi()
 */
   // <<"cconf[0].wert: "<<cconf[0].wert<<endl;
   if (!cconf[0].wert.empty()) {
-    systemrueck("sed -i$(test -f "+cconf[0].wert+".orig||echo '.orig') "
+    systemrueck("sudo sed -i$(test -f "+cconf[0].wert+".orig||echo '.orig') "
                 "'s/\\(^.*connect_faxG3.*headline\\).*\\().*$\\)/\\1,"+cklingelzahl+"\\2/' "+cconf[0].wert,obverb,oblog);
   }
     //    if (cpplies(ccapiconfdat,cconf,cs)) KLA
@@ -4995,7 +4998,8 @@ int paramcl::pruefhyla()
   } else {
     Log(string("Modem '")+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+gruen+brs+schwarz+Tx[T_wird_verwendet],obverb,oblog);
   } //   if (br<=0) else
-  exit(0);
+  cout<<violett<<"Stelle 1"<<schwarz<<endl;
+  if (0) {
   if (!this->sfaxgetty) this->sfaxgetty=new servc("hylafax-faxgetty-"+this->hmodem,"faxgetty");
   for(unsigned versuch=0;versuch<3;versuch++) {
     // 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
@@ -5205,7 +5209,8 @@ int paramcl::pruefhyla()
 //        if (!modemlaeuftnicht) break;
       // <<rot<<"Stelle 2, hyinstart: "<<(int)hyinstart<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
         if (hyinstart==hypak || hyinstart==hysrc)
-          exit(0);
+          cout<<violett<<"Stelle 2"<<schwarz<<endl;
+          if (0)
           hylalaeuftnicht=hservice_faxq_hfaxd()+fglaeuftnicht;
       // <<rot<<"Stelle 3, hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
         if (!hylalaeuftnicht && !modemlaeuftnicht) break;
@@ -5217,7 +5222,8 @@ int paramcl::pruefhyla()
         }
         if (!iru) {
           hfaxsetup(this,obverb,oblog);
-          exit(0);
+          cout<<violett<<"Stelle 3"<<schwarz<<endl;
+          if (0)
           hservice_faxgetty();
         }
       } // for (uchar iru=0;iru<3;iru++)
@@ -5274,6 +5280,7 @@ int paramcl::pruefhyla()
     systemrueck("! sudo grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || "
                   "sudo sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax", obverb,oblog);
   }
+  } // if (0)
   Log(violetts+Tx[T_Ende]+" "+Tx[T_pruefhyla]+schwarz,obverb?obverb:obverb,oblog);
   return 0;
 } // int paramcl::pruefhyla()
@@ -5623,7 +5630,7 @@ int paramcl::pruefcapi()
     // <<rot<<"versuch: "<<schwarz<<versuch<<endl;
     if (capischonerfolgreichinstalliert) {
       if (!capizukonf) {
-        cliesconf();
+        clieskonf();
       }
       if (obcapi && (versuch>0 || this->capizukonf)) {
         this->konfcapi();
