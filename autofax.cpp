@@ -5413,11 +5413,11 @@ void paramcl::holvongithub(string datei)
   }
 } // void paramcl::holvongithub(string datei)
 
-int paramcl::kompiliere(string prog,string endg, string vorcfg,string cfgmit,string nachcfg)
+int paramcl::kompiliere(string prog,string endg, string vorcfg,string cfgbismake)
 {
   return systemrueck("sh -c 'P="+prog+";T=$P.tar."+endg+";M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
-      " && "+vorcfg+" && ./configure "+cfgmit+" && "+nachcfg+" && make && sudo make install '",obverb,oblog);
-} // int paramcl::kompiliere(string prog,string endg,string nachtar, string vorcfg,string cfgmit,string nachcfg)
+      " && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install '",obverb,oblog);
+} // int paramcl::kompiliere(string prog,string endg,string nachtar, string vorcfg,string cfgbismake)
 
 
 // wird aufgerufen in: untersuchespool, main
@@ -5493,13 +5493,13 @@ int paramcl::pruefcapi()
           string prog="fcpci_copy";
           string srcvz=instverz+vtz+prog+".tar.gz";
           holvongithub(prog);
-          kompiliere(prog,"gz","sudo test -f driver.c.bak || sed -i.bak '/request_irq/i#if !defined(IRQF_DISABLED)\\n"
-                  "# define IRQF_DISABLED 0x00\\n#endif' driver.c;"
-                  "sudo sed -e '/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>' "
-                  "-e '/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
-                  "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);' "
+          kompiliere(prog,"gz","sudo test -f driver.c.bak || sed -i.bak \"/request_irq/i#if !defined(IRQF_DISABLED)\\n"
+                  "# define IRQF_DISABLED 0x00\\n#endif\" driver.c;"
+                  "sudo sed -e \"/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>\" "
+                  "-e \"/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
+                  "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);\" "
                   "main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
-                  "sudo make clean"," 2>/dev/null; true","true");
+                  "sudo make clean"," 2>/dev/null; sudo ");
           exit(0);
               systemrueck("cd "+srcvz+";sudo test -f driver.c.bak || sed -i.bak '/request_irq/i#if !defined(IRQF_DISABLED)\\n"
                   "# define IRQF_DISABLED 0x00\\n#endif' driver.c;"
@@ -5508,6 +5508,7 @@ int paramcl::pruefcapi()
                   "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);' "
                   "main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
                   "sudo make clean",1+obverb,oblog);
+          exit(0);
               svec rueck;
               systemrueck("sudo rm -f /root/bin/xargs",1+obverb,oblog);
               systemrueck("cd "+srcvz+";sudo make all ",1+obverb,oblog); // || { sudo dnf clean all; sudo dnf update; sudo make all; }
@@ -5603,8 +5604,8 @@ int paramcl::pruefcapi()
                            "sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
 //                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
 //                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }"
-                           ,"HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var",
-                           "sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp")) {
+                           ,"HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var && "
+                           "sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp && ")) {
               mitcservice=1;
             }
 //            string befehl="sh -c 'P=capisuite; T=$P.tar.gz; M=$P-master; cd "+instverz+""

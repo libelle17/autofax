@@ -291,7 +291,7 @@ class paramcl // Programmparameter
     void clieskonf();
     int pruefcapi();
     void holvongithub(string datei);
-    int kompiliere(string prog,string endg, string vorcfg="true",string cfgmit="",string nachcfg="true");
+    int kompiliere(string prog,string endg, string vorcfg="true",string cfgbismake=" && ");
     void hliesconf();
     void hconfigtty();
     int cservice();
