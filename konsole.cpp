@@ -1534,7 +1534,13 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
   uchar neurueck=0;
   uchar weiter=0;
   int erg;
-  uchar obfind=(cmd.substr(0,5)=="find");
+  string const * czg=&cmd;
+  string hcmd;
+  uchar obfind=(cmd.substr(0,5)=="find" || cmd.substr(0,9)=="sudo find");
+  if (obfind && !obverb) {
+   hcmd=cmd+" 2>/dev/null";
+   czg=&hcmd;
+  }
   string meld(Txk[T_Rueckmeldung]);
   string aktues;
   if (ueberschr.empty()) { 
@@ -1547,14 +1553,14 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
   } else {
     aktues=ueberschr;
   }
-  Log(aktues+": "+blau+cmd.substr(0,getcols()-7-aktues.length())+schwarz+" ...",obverb>0?-1:0,oblog);
+  Log(aktues+": "+blau+czg->substr(0,getcols()-7-aktues.length())+schwarz+" ...",obverb>0?-1:0,oblog);
   if (!rueck) if (obergebnisanzeig) {neurueck=1;rueck=new vector<string>;}
   // #define systemrueckprofiler
 #ifdef systemrueckprofiler
   perfcl prf("systemrueck");
 #endif
   if (rueck) {
-    if (FILE* pipe = popen(cmd.c_str(), "r")) {
+    if (FILE* pipe = popen(czg->c_str(), "r")) {
 #ifdef systemrueckprofiler
       prf.ausgeb();
 #endif
@@ -1595,7 +1601,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
       }
 #ifdef systemrueckprofiler
       Log(rots+"Rueck.size: "+ltoan(rueck->size())+", obergebnisanzeig: "+(obergebnisanzeig?"ja":"nein"),1,oblog);
-      Log(cmd,1,oblog)
+      Log(*czg,1,oblog)
         prf.ausgab1000("vor pclose");
 #endif
       if (obfind)
@@ -1606,11 +1612,11 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
       prf.ausgab1000("nach pclose");
 #endif
     } else {
-      perror((string("popen() ")+Txk[T_fehlgeschlagen_bei]+cmd).c_str());
+      perror((string("popen() ")+Txk[T_fehlgeschlagen_bei]+*czg).c_str());
       erg=1;
     }
   } else {
-    erg= system(cmd.c_str());
+    erg= system(czg->c_str());
   } // if (rueck) else
 #ifdef systemrueckprofiler
   prf.ausgab1000("vor weiter");
@@ -1642,7 +1648,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
 #ifdef systemrueckprofiler
     prf.ausgab1000("vor log");
 #endif
-    Log(aktues+": "+blau+cmd+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz,obverb>0?obverb:0,oblog);
+    Log(aktues+": "+blau+*czg+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz,obverb>0?obverb:0,oblog);
   } // if (obverb>0 || oblog)
   if (obergebnisanzeig) if (rueck->size()) 
     Log(meld,obverb>1,oblog);
@@ -1713,7 +1719,7 @@ int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl)
         fertig=1;
       }
     }
-    if (!fertig) erg=systemrueck(string("sudo mkdir -p '")+verz+"'",obverb,oblog);
+    if (!fertig) erg=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
     if (obmitfacl)
      setfaclggf(verz, wahr, 7, falsch,obverb,oblog);
   }
@@ -2091,16 +2097,16 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fall
           obnmr=0;
           systemrueck("sudo zypper mr -k -all",obverb,oblog);
         }
-        ret=systemrueck(string("sudo zypper -n --gpg-auto-import-keys in -f ")+eprog,obverb+1,oblog);
+        ret=systemrueck("sudo zypper -n --gpg-auto-import-keys in -f "+eprog,obverb+1,oblog);
         break;
       case apt:
-        ret=systemrueck(string("sudo apt-get --assume-yes install ")+eprog,obverb+1,oblog);
+        ret=systemrueck("sudo apt -y install "+eprog,obverb+1,oblog);
         break; 
       case dnf:
-        ret=systemrueck(string("sudo dnf -y install ")+eprog,obverb+1,oblog);
+        ret=systemrueck("sudo dnf -y install "+eprog,obverb+1,oblog);
         break;
       case yum:
-        ret=systemrueck(string("sudo yum -y install ")+eprog,obverb+1,oblog);
+        ret=systemrueck("sudo yum -y install "+eprog,obverb+1,oblog);
         break;
       default: break;
     }
@@ -2130,16 +2136,16 @@ uchar linstcl::douninst(const string& prog,int obverb,int oblog)
 {
   switch (pruefipr()) {
     case zypper:
-      return systemrueck(string("sudo zypper -n rm ")+prog,obverb,oblog);
+      return systemrueck("sudo zypper -n rm "+prog,obverb,oblog);
       break;
     case apt:
-      return systemrueck(string("sudo apt-get --assume-yes remove ")+ersetzeprog(prog),obverb,oblog);
+      return systemrueck("sudo apt -y remove "+ersetzeprog(prog),obverb,oblog);
       break; 
     case dnf:
-      return systemrueck(string("sudo dnf -y remove ")+ersetzeprog(prog),obverb,oblog);
+      return systemrueck("sudo dnf -y remove "+ersetzeprog(prog),obverb,oblog);
       break; 
     case yum:
-      return systemrueck(string("sudo yum -y remove ")+ersetzeprog(prog),obverb,oblog);
+      return systemrueck("sudo yum -y remove "+ersetzeprog(prog),obverb,oblog);
       break; 
     default: break;
   }
@@ -2152,9 +2158,9 @@ uchar linstcl::obfehlt(const string& prog,int obverb,int oblog)
  // <<violett<<"linst::obfehlt: "<<schwarz<<prog<<endl;
   switch (pruefipr()) {
     case zypper: case dnf: case yum: 
-      return systemrueck(string("rpm -q ")+prog+" 2>/dev/null",obverb,oblog);
+      return systemrueck("rpm -q "+prog+" 2>/dev/null",obverb,oblog);
     case apt:
-      return systemrueck(string("dpkg -s ")+ersetzeprog(prog)+" 2>/dev/null",obverb,oblog);
+      return systemrueck("dpkg -s "+ersetzeprog(prog)+" 2>/dev/null",obverb,oblog);
     default: break;
   }
   return 2;

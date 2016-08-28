@@ -484,6 +484,7 @@ enum T_
   T_Soll_die_SuSEfirewall_bearbeitet_werden,
   T_aktuelle_Einstellungen_aus,
   T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,
+  T_Muss_falsches_hylafax_loeschen,
   T_MAX
 };
 
@@ -1363,6 +1364,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Aktuelle Einstellungen aus '","Current settings from '"},
   // T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in
   {"Gescheiterte Faxe werden hier gesammelt anstatt in","Failed Faxes are collected here and not in"}, 
+  // T_Muss_falsches_hylafax_loeschen
+  {"Muss falsches hylafax loeschen!!!","Have to delete the wrong hylafax!!!"},
   {"",""}
 };
 
@@ -1523,7 +1526,7 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
     uchar vmax=5;
     svec findrueck;
     // wenn Datei nicht mehr in sendq, sondern in doneq, sei es gelungen oder gescheitert, dann ist loeschen sinnlos
-    systemrueck(("sudo find '")+pmp->hsendqvz+"' -name q"+hylanr+" 2>/dev/null",obverb,oblog,&findrueck);
+    systemrueck(("sudo find '")+pmp->hsendqvz+"' -name q"+hylanr,obverb,oblog,&findrueck);
     if (!findrueck.size()) {
       return 0;
     }
@@ -1758,7 +1761,7 @@ void paramcl::pruefmodem()
   svec rueck;
   // <<"pruefmodem 1 nach obcapi: "<<(int)obcapi<<endl;
   obmodem=0;
-  cmd="find /sys/class/tty 2>/dev/null";
+  cmd="find /sys/class/tty";
   systemrueck(cmd, obverb,oblog,&rueck);
   for(size_t i=0;i<rueck.size();i++) {
     struct stat entrydriv;
@@ -1939,7 +1942,7 @@ void paramcl::liescapiconf()
 {
   Log(violetts+Tx[T_liescapiconf]+schwarz,obverb,oblog);
   svec rueck;
-  systemrueck("find /etc/capisuite /usr/local/etc/capisuite -type f -name fax.conf 2>/dev/null",obverb-2,oblog,&rueck);
+  systemrueck("find /etc/capisuite /usr/local/etc/capisuite -type f -name fax.conf",obverb-2,oblog,&rueck);
   if (rueck.size()) cfaxconfdat=rueck[0];
 
   capiconf.init(10,"spool_dir","fax_user_dir","send_tries","send_delays","outgoing_MSN",
@@ -1992,7 +1995,7 @@ void paramcl::liescapiconf()
   // <<rot<<"cfaxuservz in Vorgallg: "<<cfaxuservz<<schwarz<<endl;
 
   rueck.clear();
-  systemrueck("find /etc/capisuite /usr/local/etc/capisuite -type f -name capisuite.conf 2>/dev/null",obverb-2,oblog,&rueck);
+  systemrueck("find /etc/capisuite /usr/local/etc/capisuite -type f -name capisuite.conf",obverb-2,oblog,&rueck);
   if (rueck.size()) {
     ccapiconfdat=rueck[0];
   }
@@ -3339,7 +3342,7 @@ void paramcl::korrerfolgszeichen()
       size_t ruecki;
       switch (runde) {
         case 0: // capi
-          cmd=string("sudo find '")+cdonevz+"' -maxdepth 1 -type f -iname '*-fax-*.sff' 2>/dev/null"; //  -printf '%f\\n'"; // cfailedvz weniger wichtig
+          cmd=string("sudo find '")+cdonevz+"' -maxdepth 1 -type f -iname '*-fax-*.sff'"; //  -printf '%f\\n'"; // cfailedvz weniger wichtig
           systemrueck(cmd,obverb,oblog,&rueck);
           // sortieren
           for(ruecki=0;ruecki<rueck.size();ruecki++) {
@@ -3348,7 +3351,7 @@ void paramcl::korrerfolgszeichen()
           break;
         default: // hyla
           //        fdn.clear();
-          cmd=string("sudo find ")+varsphylavz+" -name 'q*' -print0 2>/dev/null | /usr/bin/xargs -0 grep -l ^state:7 ";
+          cmd=string("sudo find ")+varsphylavz+" -name 'q*' -print0 "+(obverb?"":"2>/dev/null")+"| /usr/bin/xargs -0 grep -l ^state:7 ";
           rueck.clear();
           systemrueck(cmd,obverb,oblog,&rueck);
           for(ruecki=0;ruecki<rueck.size();ruecki++) {
@@ -3396,7 +3399,7 @@ void paramcl::bereinigewv()
   set<string> fdn; // Fax-Dateien
   set<string>::iterator fit; // Iterator dafuer
   //  cmd=string("find \"")+wvz+"\" -maxdepth 1 -type f -iname \"*.pdf\" -printf '%f\n'";
-  cmd=string("sudo find \"")+wvz+"\" -maxdepth 1 -type f -printf '%f\n' 2>/dev/null";
+  cmd=string("sudo find \"")+wvz+"\" -maxdepth 1 -type f -printf '%f\n'";
   vector<string> rueck;
   systemrueck(cmd,obverb,oblog,&rueck);
   for(size_t i=0;i<rueck.size();i++) {
@@ -3568,7 +3571,7 @@ int paramcl::loescheallewartende(int obverb, int oblog)
   vector<string> allec;
   struct stat entryvz;
   if (!lstat(cfaxusersqvz.c_str(),&entryvz)) {
-    cmd=string("sudo find '")+cfaxusersqvz+"/' -maxdepth 1 -type f -iname 'fax-*.*' 2>/dev/null";
+    cmd=string("sudo find '")+cfaxusersqvz+"/' -maxdepth 1 -type f -iname 'fax-*.*'";
     systemrueck(cmd,obverb,oblog,&allec);
     erg+=allec.size();
     for(size_t i=0;i<allec.size();i++) {
@@ -3581,7 +3584,7 @@ int paramcl::loescheallewartende(int obverb, int oblog)
   }
   //  cmd=string("rm ")+cfaxuservz+vtz+cuser+vtz+"sendq"+vtz+"fax-*.*"; //  "/var/spool/capisuite/users/<user>/sendq";
   if (!lstat(hsendqvz.c_str(),&entryvz)) {
-    cmd=string("sudo find '")+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n' 2>/dev/null";
+    cmd=string("sudo find '")+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";
     vector<string> alled;
     systemrueck(cmd,obverb,oblog, &alled);
     erg+=alled.size();
@@ -3648,7 +3651,7 @@ void paramcl::DateienHerricht()
   if (!anhfaxstr.empty()) anfxstrvec.push_back(anhfaxstr);
   for(uchar iprio=0;iprio<anfxstrvec.size();iprio++) {
     // 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
-    cmd=string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\" 2>/dev/null";
+    cmd=string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\"";
     vector<string> iprid;
     systemrueck(cmd,obverb,oblog, &iprid);
     for(size_t i=0;i<iprid.size();i++) {
@@ -3722,7 +3725,7 @@ void paramcl::DateienHerricht()
     for(unsigned iprio=0;iprio<anfxstrvec.size();iprio++) {
       if (!anfxstrvec.at(iprio).empty()) {
         cmd= string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\""
-          " -not -iname \"*.pdf\" 2>/dev/null";
+          " -not -iname \"*.pdf\"";
         vector<string> npdfd;
         systemrueck(cmd, obverb,oblog, &npdfd);
         for(size_t i=0;i<npdfd.size();i++) {
@@ -3829,7 +3832,7 @@ void paramcl::DateienHerricht()
     for(unsigned iprio=0;iprio<anfxstrvec.size();iprio++) {
       if (!anfxstrvec.at(iprio).empty()) {
         cmd=string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\""
-          " -iname \"*.pdf\" 2>/dev/null";
+          " -iname \"*.pdf\"";
         vector<string> spdfd;
         systemrueck(cmd,obverb, oblog, &spdfd);
         for(size_t i=0;i<spdfd.size();i++) {
@@ -4124,7 +4127,7 @@ void paramcl::zeigweitere()
   if (obcapi) {
     if (!lstat(cfaxusersqvz.c_str(),&entryvz)) {
       // 7.2.16: alte *.lock-Dateien loeschen
-      cmd=string("sudo find '")+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.lock' 2>/dev/null"; //  -printf '%f\\n'";
+      cmd=string("sudo find '")+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.lock'"; //  -printf '%f\\n'";
       systemrueck(cmd,obverb,oblog,&rueck);
       for(size_t i=0;i<rueck.size();i++) {
         string stamm,exten;
@@ -4136,7 +4139,7 @@ void paramcl::zeigweitere()
       }
       rueck.clear();
       // 20.1.16: wenn dort eine .txt-steht ohne zugehoerige .sff-Datei, dann haelt sie den ganzen Betrieb auf
-      cmd=string("sudo find '")+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.txt' 2>/dev/null"; //  -printf '%f\\n'";
+      cmd=string("sudo find '")+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.txt'"; //  -printf '%f\\n'";
       systemrueck(cmd,obverb,oblog,&rueck);
       for(size_t i=0;i<rueck.size();i++) {
         string stamm,exten;
@@ -4159,7 +4162,7 @@ void paramcl::zeigweitere()
           } // if (inouta.num_rows) else 
         } // if (lstat(zugeh.c_str(),&entryvz)) 
       } // for(size_t i=0;i<rueck.size();i++) 
-      cmd=string("sudo find '")+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.sff' 2>/dev/null"; //  -printf '%f\\n'";
+      cmd=string("sudo find '")+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.sff'"; //  -printf '%f\\n'";
       rueck.clear();
       systemrueck(cmd,obverb,oblog,&rueck);
       for(size_t i=0;i<rueck.size();i++) {
@@ -4181,7 +4184,7 @@ void paramcl::zeigweitere()
   }
   if (obhyla) {
     if (!lstat(hsendqvz.c_str(),&entryvz)) {
-      cmd=string("sudo find '")+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n' 2>/dev/null";
+      cmd=string("sudo find '")+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";
       rueck.clear();
       systemrueck(cmd,obverb,oblog,&rueck);
       for(size_t i=0;i<rueck.size();i++) {
@@ -4220,7 +4223,6 @@ void paramcl::empfarch()
   string hempfavz=varsphylavz+"/autofaxarch"; // /var/spool/capisuite/empfarch/
   // Faxe in der Empfangswarteschlange auflisten, ...
   cmd=string("sudo find \"")+varsphylavz+"/recvq\" -name \"fax*.tif\"";
-  if (!obverb) cmd+=" 2>/dev/null";
   vector<string> rueck;
   systemrueck(cmd,obverb,oblog, &rueck);
   for(size_t i=0;i<rueck.size();i++) {
@@ -4390,7 +4392,6 @@ void paramcl::empfarch()
   if (!lstat(cfaxuserrcvz.c_str(),&entryvz)) /* /var/spool/capisuite/users/~/received */ {
     // Faxe in der Empfangswarteschlange auflisten, ...
     cmd=string("sudo find \"")+cfaxuserrcvz+"\" -maxdepth 1 -type f -iname \"*.txt\"";
-  if (!obverb) cmd+=" 2>/dev/null";
     vector<string> rueck;
     systemrueck(cmd,obverb,oblog, &rueck);
     for(size_t i=0;i<rueck.size();i++) {
@@ -4767,7 +4768,7 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
   if (pmp->faxgtpfad.empty() || lstat(pmp->faxgtpfad.c_str(),&entryfaxgt)) {
     rueckf.clear();
     pmp->faxgtpfad.clear();
-    systemrueck("sudo find /usr/lib/fax /usr/sbin /usr/bin /root/bin /sbin -perm /111 -name faxgetty 2>/dev/null",obverb-1,oblog,&rueckf);
+    systemrueck("sudo find /usr/lib/fax /usr/sbin /usr/bin /root/bin /sbin -perm /111 -name faxgetty",obverb-1,oblog,&rueckf);
     if (rueckf.size()) 
       pmp->faxgtpfad=rueckf[0];
   }
@@ -4797,7 +4798,7 @@ void hconfig(paramcl *pmp,int obverb=0, int oblog=0)
         faxsdpfad="/usr/sbin/faxsend";
         if (lstat(faxsdpfad.c_str(),&entryfaxsd)) {
           faxsdpfad.clear();
-          systemrueck("sudo find /usr /root/bin /sbin -perm /111 -name faxsend 2>/dev/null",obverb-1,oblog,&rueckf);
+          systemrueck("sudo find /usr /root/bin /sbin -perm /111 -name faxsend",obverb-1,oblog,&rueckf);
           if (rueckf.size()) 
             faxsdpfad=rueckf[0];
         }
@@ -5118,7 +5119,7 @@ int paramcl::pruefhyla()
         // b1) falsches Hylafax loeschen
         if (hylafehlt) {
           if (falscheshyla) {
-            Log(rots+"Muss falsches hylafax loeschen!!!"+schwarz,1,1);
+            Log(rots+Tx[T_Muss_falsches_hylafax_loeschen]+schwarz,1,1);
             if (0) {
               systemrueck("sudo sh -c 'cd /etc/init.d"
               " && [ $(find . -maxdepth 1 -name \"*faxq*\" -or -name \"*hfaxd*\" -or -name \"hylafax*\" 2>/dev/null | wc -l) -ne 0 ]"
@@ -5129,21 +5130,21 @@ int paramcl::pruefhyla()
               for(int iru=0;iru<2;iru++) {
                 string local;
                 if (iru) local="local/"; else local.clear();
-                systemrueck(string("sudo sh -c 'cd /usr/")+local+"bin 2>/dev/null && "
+                systemrueck("sudo sh -c 'cd /usr/"+local+"bin 2>/dev/null && "
                     "rm -f faxalter faxcover faxmail faxrm faxstat sendfax sendpage;'",-2,oblog);
-                systemrueck(string("sudo sh -c 'cd /usr/")+local+"sbin 2>/dev/null && "
+                systemrueck("sudo sh -c 'cd /usr/"+local+"sbin 2>/dev/null && "
                     "rm -f choptest cqtest dialtest edit-faxcover faxabort faxaddmodem "
                     "faxadduser faxanswer faxconfig faxcron faxdeluser faxinfo faxlock faxmodem faxmsg faxq faxqclean faxquit faxsetup "
                     "faxsetup.linux faxstate faxwatch probemodem rchylafax* recvstats tagtest tiffcheck tsitest  typetest xferfaxstats "
                     "faxsetup.bsdi faxsetup.iri faxgetty faxsend hfaxd hylafax lockname ondelay pagesend textfmt;'",-2,oblog);
-                systemrueck(string("sudo sh -c 'rm -rf /usr/")+local+"/lib/fax 2>/dev/null",-2,oblog);
-                systemrueck(string("sudo sh -c 'rm -rf /usr/")+local+"/share/hylafax 2>/dev/null",-2,oblog);
-                systemrueck(string("sudo sh -c 'rm -rf /usr/")+local+"/lib/fax 2>/dev/null",-2,oblog);
-                systemrueck(string("sudo sh -c 'rm -rf /usr/")+local+"/lib/hylafax 2>/dev/null",-2,oblog);
-                systemrueck(string("sudo sh -c 'rm -rf /usr/")+local+"/lib/libfax* 2>/dev/null",-2,oblog);
-                systemrueck(string("sudo sh -c 'rm -rf /usr/")+local+"/lib/libhylafax* 2>/dev/null",-2,oblog);
+                systemrueck("sudo sh -c 'rm -rf /usr/"+local+"/lib/fax 2>/dev/null",-2,oblog);
+                systemrueck("sudo sh -c 'rm -rf /usr/"+local+"/share/hylafax 2>/dev/null",-2,oblog);
+                systemrueck("sudo sh -c 'rm -rf /usr/"+local+"/lib/fax 2>/dev/null",-2,oblog);
+                systemrueck("sudo sh -c 'rm -rf /usr/"+local+"/lib/hylafax 2>/dev/null",-2,oblog);
+                systemrueck("sudo sh -c 'rm -rf /usr/"+local+"/lib/libfax* 2>/dev/null",-2,oblog);
+                systemrueck("sudo sh -c 'rm -rf /usr/"+local+"/lib/libhylafax* 2>/dev/null",-2,oblog);
               }
-              systemrueck(string("sudo sh -c 'rm -rf /etc/hylafax 2>/dev/null"),-2,oblog);
+              systemrueck("sudo sh -c 'rm -rf /etc/hylafax 2>/dev/null",-2,oblog);
               // es bleiben noch /var/log/hylafax und /var/spool/fax oder /var/spool/hylafax
             } // if (0)
           } // if falscheshyla
@@ -5200,9 +5201,9 @@ int paramcl::pruefhyla()
         // bei hysrc ist das folgende wohl eigentlich nicht noetig
         // Berechtigungen korrigieren
         if (hyinstart==hyppk || hyinstart==hysrc)
-          systemrueck(string("sudo chown uucp:uucp -R ")+this->varsphylavz,obverb,oblog);
+          systemrueck("sudo chown uucp:uucp -R "+this->varsphylavz,obverb,oblog);
         else
-          systemrueck(string("sudo chown fax:uucp -R ")+this->varsphylavz,obverb,oblog);
+          systemrueck("sudo chown fax:uucp -R "+this->varsphylavz,obverb,oblog);
       } // if (!systemrueck("which faxsend",obverb,oblog)) 
       /*
       Log(string(Tx[T_StarteHylafax]),1,oblog);
@@ -5270,7 +5271,7 @@ int paramcl::pruefhyla()
         // dieser Aufruf geschieht z.B. nach Parameter -hkzl 7
         hconfigtty();
         }
-        if (!systemrueck(string("sudo systemctl stop '")+this->sfaxgetty->sname+"' '"+this->shfaxd->sname+"' '"+this->sfaxq->sname+"' 2>/dev/null",
+        if (!systemrueck("sudo systemctl stop '"+this->sfaxgetty->sname+"' '"+this->shfaxd->sname+"' '"+this->sfaxq->sname+"' 2>/dev/null",
              obverb,oblog)) {
           systemrueck("sudo systemctl stop hylafax 2>/dev/null",obverb-2,oblog);
           systemrueck("sudo systemctl disable hylafax 2>/dev/null",obverb-2,oblog);
@@ -5394,7 +5395,7 @@ void pruefmodcron(int obverb, int oblog)
   setztmpc(obverb, oblog);
   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++) {
     svec rueck;
-    systemrueck(string("bash -c 'grep \"")+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)' || "
+    systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)' || "
         "(sudo crontab -l 2>/dev/null >"+tmpc+"; echo \""+mps[ru]+"\">>"+tmpc+"; sudo crontab "+tmpc+")",obverb,oblog,&rueck);
     for(size_t znr=0;znr<rueck.size();znr++) {
       Log(rueck[znr],1+obverb,oblog);
@@ -5405,7 +5406,7 @@ void pruefmodcron(int obverb, int oblog)
 void paramcl::holvongithub(string datei)
 {
   svec csrueck;
-  systemrueck("find "+instverz+" -mtime -1 -name "+datei+".tar.gz 2>/dev/null",obverb,oblog,&csrueck);
+  systemrueck("find "+instverz+" -mtime -1 -name "+datei+".tar.gz",obverb,oblog,&csrueck);
   if (!csrueck.size()) {
   //systemrueck("sh -c 'cd "+instverz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
     systemrueck("sh -c 'cd "+instverz+"; T="+datei+".tar.gz; wget https://github.com/libelle17/"+datei+"/archive/master.tar.gz -O $T'", obverb,oblog);
@@ -5468,25 +5469,30 @@ int paramcl::pruefcapi()
               //              systemrueck("which zypper 2>/dev/null && zypper -n in kernel-source || "
               //                  "{ which apt-get 2>/dev/null && apt-get --assume-yes install linux-source; }", 1+obverb,oblog);
               linst.doinst("kernel-source",1+obverb,oblog);
+/*              
               const string qvz="/usr/src";
               const string versi="fcpci-3.10.0";
               const string srcf=string("fritz-")+versi+".tar.bz2";
               pruefverz(qvz,obverb,oblog,0);
               struct stat entrysrc;
-              if (lstat((qvz+vtz+srcf).c_str(),&entrysrc)) {
+              if (lstat((qvz+vtz+srcf).c_str(),&entrysrc)) KLA
                 systemrueck(string("cd ")+qvz+";sudo wget https://belug.de/~lutz/pub/fcpci/"+srcf+" --no-check-certificate",1+obverb,oblog);
-              }
+              KLZ
               string srcvz=qvz+vtz+versi+"/src";
-              if (lstat(srcvz.c_str(),&entrysrc)) {
+              if (lstat(srcvz.c_str(),&entrysrc)) KLA
                 systemrueck(string("cd ")+qvz+";sudo tar xjf "+srcf,obverb,oblog);
                 //                sed -e '/#include <linux\/isdn\/capilli.h>/ a\#include <linux\/utsname.h>' -e '/NOTE("(%s built on %s at %s)\\n", TARGET, __DATE__, __TIME__);/ c    NOTE("(%s built on release %s, version %s)\\n", TARGET, utsname()->release, utsname()->version);' main.c >main_neu.c
                 // fuer Kernel 4.3.3-3-default und gcc muss jetzt noch 1) , __DATE__ und __TIME__ aus main.c Zeile 365 entfernt werden,
                 // 2) in driver.c Zeile 373 IRQF_DISABLED durch 0x00 ersetzt werden, dann kompilier- und installierbar
-              }
+              KLZ
+              */
+          holvongithub("fcpci_copy");
+          exit(0);
+              string srcvz=instverz+"fcpci_copy";
               systemrueck("ls -l /lib/modules/$(uname -r)/build 2>/dev/null || "
               "{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
               "sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU && sudo cp -a $NEU /lib/modules/$(uname -r)/build; }",obverb,oblog);
-              systemrueck(string("cd ")+srcvz+";sudo test -f driver.c.bak || sed -i.bak '/request_irq/i#if !defined(IRQF_DISABLED)\\n"
+              systemrueck("cd "+srcvz+";sudo test -f driver.c.bak || sed -i.bak '/request_irq/i#if !defined(IRQF_DISABLED)\\n"
                   "# define IRQF_DISABLED 0x00\\n#endif' driver.c;"
                   "sudo sed -e '/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>' "
                   "-e '/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
@@ -5494,9 +5500,9 @@ int paramcl::pruefcapi()
                   "main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
                   "sudo make clean",1+obverb,oblog);
               svec rueck;
-              systemrueck(string("sudo rm -f /root/bin/xargs"),1+obverb,oblog);
-              systemrueck(string("cd ")+srcvz+";sudo make all ",1+obverb,oblog); // || { sudo dnf clean all; sudo dnf update; sudo make all; }
-              systemrueck(string("cd ")+srcvz+";sudo make install",1+obverb,oblog);
+              systemrueck("sudo rm -f /root/bin/xargs",1+obverb,oblog);
+              systemrueck("cd "+srcvz+";sudo make all ",1+obverb,oblog); // || { sudo dnf clean all; sudo dnf update; sudo make all; }
+              systemrueck("cd "+srcvz+";sudo make install",1+obverb,oblog);
             }
           }
         }
@@ -5569,7 +5575,8 @@ int paramcl::pruefcapi()
           pruefverz(instverz,obverb,oblog);
           holvongithub("capisuite_copy");
           svec csrueck;
-          systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' 2>/dev/null | sort -r",obverb,oblog,&csrueck);
+          systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' "+string(obverb?"":"2>/dev/null")+"| sort -r",
+                      obverb,oblog,&csrueck);
           if (csrueck.size()) {
             struct stat c20stat;
             if (lstat("/usr/lib64/libcapi20.so",&c20stat)) {
@@ -5853,7 +5860,7 @@ void faxemitH(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obv
   } else {
     Log(string(Tx[T_DieFaxnrvon])+drot+fsfp->spdf+schwarz+Tx[T_ist]+blau+tel+schwarz,obverb,oblog);
     // 27.3.16: Uebernacht wurden die Berechtigungen so eingeschraenkt, dass Faxsenden nicht mehr ging, evtl. durch faxqclean
-    systemrueck("sudo find "+pmp->varsphylavz+" -name seqf -exec chmod 660 {} \\;"" -exec chown fax:uucp {} \\; 2>/dev/null",obverb,oblog);
+    systemrueck("sudo find "+pmp->varsphylavz+" -name seqf -exec chmod 660 {} \\;"" -exec chown fax:uucp {} \\;",obverb,oblog);
     const char* tz1="request id is ", *tz2=" (";
     string cmd=string("sendfax -n -A -d ")+tel+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
     svec faxerg;
@@ -6396,7 +6403,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
   // Rueckgabe: 0 = in doneq oder archive gefunden
   struct stat entryprot;
   string cmd=string("sudo find ")+this->varsphylavz+"/sendq "+(*hyla_uverz_nrp?" ":this->varsphylavz+"/doneq "+this->varsphylavz+"/archive ")
-    +" -name 'q"+fsf->hylanr+"' 2>/dev/null";
+    +" -name 'q"+fsf->hylanr+"'";
   svec rueck;
   systemrueck(cmd,obverb,oblog,&rueck);
   if (rueck.size()) {

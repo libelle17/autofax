@@ -202,7 +202,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
           if (systemrueck("sudo env \"PATH=$PATH\" which mysqld 2>/dev/null",obverb,oblog)) {
             svec frueck;
             // .. und auch hier nicht gefunden ...
-            systemrueck("find /usr/sbin /usr/bin /usr/libexec -executable -size +1M -name mysqld 2>/dev/null",obverb,oblog, &frueck);
+            systemrueck("find /usr/sbin /usr/bin /usr/libexec -executable -size +1M -name mysqld",obverb,oblog, &frueck);
             if (!frueck.size()) 
               // .. dann wohl nicht installiert
               installiert=0;
@@ -223,9 +223,10 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
               datadir=zrueck[zrueck.size()-1];  
             } else {
               svec zzruck, zincldir;
-              systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit 2>/dev/null; true",obverb,oblog,&zzruck);
+              systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit"+string(obverb?"":" 2>/dev/null")+"; true",
+                          obverb,oblog,&zzruck);
               if (!zzruck.size())
-                systemrueck("find ${HOME} -name .my.cnf -printf '%p\\n' -quit 2>/dev/null",obverb,oblog,&zzruck);
+                systemrueck("find ${HOME} -name .my.cnf -printf '%p\\n' -quit",obverb,oblog,&zzruck);
               if (zzruck.size()) {
                 systemrueck("sudo cat "+zzruck[0]+" | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", 
                     obverb,oblog,&zincldir); 
@@ -262,11 +263,11 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
             if(S_ISDIR(datadst.st_mode)) {
               datadirda=1;
             } else {
-              systemrueck(string("sudo rm -f '")+datadir+"'",1,1);
+              systemrueck("sudo rm -f '"+datadir+"'",1,1);
             }
           }
           if (!datadirda) {
-            systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db 2>/dev/null`",1,1);
+            systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db"+string(obverb?"":" 2>/dev/null")+"`",1,1);
             systemrueck("sudo systemctl start "+db_systemctl_name,obverb,oblog);
           }
           oisok=1;
