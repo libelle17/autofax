@@ -2820,7 +2820,7 @@ void paramcl::clieskonf()
              "|sed 's/.*headline//;s/^,//;s/).*//' 2>/dev/null",obverb,oblog,&ckzlrueck);
  if (ckzlrueck.size()) {
   if (cklingelzahl!=ckzlrueck[0]) {
-    // <<rot<<"Stelle 3"<<schwarz<<", ckzlrueck[0]: '"<<ckzlrueck[0]<<"', cklingelzahl: '"<<cklingelzahl<<"'"<<endl;
+    // <<", ckzlrueck[0]: '"<<ckzlrueck[0]<<"', cklingelzahl: '"<<cklingelzahl<<"'"<<endl;
     capizukonf=1;
   }
  } else {
@@ -5069,17 +5069,12 @@ int paramcl::pruefhyla()
     } else if (versuch) {
       exit(0);
     } 
-  cout<<violett<<"Stelle 7"<<schwarz<<endl;
-  obverb=3;
     if (hylafehlt) {
       // falls nein, dann schauen, ob startbar
       if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog)) hylafehlt=0;
     }
-  obverb=0;
-    cout<<violett<<"Stelle 8"<<schwarz<<endl;
     // <<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
     if (hylafehlt) {
-    cout<<violett<<"Stelle 9"<<schwarz<<endl;
       // 3) ggf. neu installieren
       Log(rots+Tx[T_Muss_Hylafax_installieren]+schwarz,1,1);
       // a) von der source
@@ -5102,6 +5097,7 @@ int paramcl::pruefhyla()
               " && sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
               " && test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
               " && killall hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive && echo $? = Ergebnis nach faxsetup -nointeractive"
+              " && killall hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
               " && sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload"
               "'"
               ,2,oblog);
@@ -5115,7 +5111,7 @@ int paramcl::pruefhyla()
           linst.douninst(string(hff)+" "+hfcf,obverb,oblog);
           falscheshyla=1;
         }
-        cout<<"hfr: "<<violett<<hfr<<schwarz<<" hfcr: "<<violett<<hfcr<<schwarz<<" obverb: "<<(int)obverb<<endl;
+        // <<"hfr: "<<violett<<hfr<<schwarz<<" hfcr: "<<violett<<hfcr<<schwarz<<" obverb: "<<(int)obverb<<endl;
         hylafehlt=linst.obfehlt(hfr,obverb,oblog) || linst.obfehlt(hfcr,obverb,oblog) || 
           obprogda("faxq",obverb,oblog).empty() || obprogda("hfaxd",obverb,oblog).empty() || obprogda("faxgetty",obverb,oblog).empty();
         string vstring=ltoan(versuch);
@@ -5233,15 +5229,14 @@ int paramcl::pruefhyla()
           // falls nein, dann schauen, ob startbar
           if (sfaxgetty->machfit(obverb-1,oblog)) fglaeuftnicht=0;
         }
-      //<<rot<<"Stelle 1, fglaueftnicht: "<<fglaeuftnicht<<", hmodem: "<<hmodem<<schwarz<<endl;
+      //<<rot<<" fglaueftnicht: "<<fglaeuftnicht<<", hmodem: "<<hmodem<<schwarz<<endl;
         modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
 //        if (!modemlaeuftnicht) break;
-      // <<rot<<"Stelle 2, hyinstart: "<<(int)hyinstart<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
+      // <<rot<<" hyinstart: "<<(int)hyinstart<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
         if (hyinstart==hypak || hyinstart==hysrc)
-          cout<<violett<<"Stelle 20"<<schwarz<<endl;
-          if (0)
+          // if (0)
           hylalaeuftnicht=hservice_faxq_hfaxd()+fglaeuftnicht;
-      // <<rot<<"Stelle 3, hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
+      // <<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
         if (!hylalaeuftnicht && !modemlaeuftnicht) break;
         if (iru>1) {
           systemrueck(("sudo chmod 660 ")+this->varsphylavz+"/FIFO*",obverb,oblog);
@@ -5251,8 +5246,7 @@ int paramcl::pruefhyla()
         }
         if (!iru) {
           hfaxsetup(this,obverb,oblog);
-          cout<<violett<<"Stelle 30"<<schwarz<<endl;
-          if (0)
+          // if (0)
           hservice_faxgetty();
         }
       } // for (uchar iru=0;iru<3;iru++)
@@ -5289,7 +5283,7 @@ int paramcl::pruefhyla()
       // systemrueck("grep -rl 'faxcron\\|faxqclean' /etc/cron* | /usr/bin/xargs ls -l;",obverb,oblog); 
       // // in hylafax: /etc/cron.daily/suse.de-faxcron, 
     } // if (1)
-    break; // zu Testzwecken
+//     break; // zu Testzwecken
     if (hylalaeuftnicht || modemlaeuftnicht) {
       // hier Fehler: nach einem Versuch darf 
       if (versuch) {
