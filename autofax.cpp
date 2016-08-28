@@ -4735,7 +4735,8 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
     int erg __attribute__((unused));
     pruefplatte();
     systemrueck("sudo killall hfaxd faxq >/dev/null 2>&1",obverb,oblog);
-    erg=system((string("sudo $(which sh) $(sudo env \"PATH=$PATH\" which faxsetup) -nointeractive")+(obverb?" -verbose":"")+
+    erg=system(("sudo $(which sh) $(sudo env \"PATH=$PATH\" which faxsetup) -nointeractive"+string(obverb?" -verbose":"")+
+               " && sudo killall hfaxd faxq >/dev/null 2>&1"
                " && sudo systemctl daemon-reload").c_str()); 
     pmp->sfaxgetty->start(obverb,oblog);
     pmp->shfaxd->start(obverb,oblog);
