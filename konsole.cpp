@@ -2336,7 +2336,7 @@ void servc::stop(int obverb,int oblog)
 
 int servc::enableggf(int obverb,int oblog)
 {
- return systemrueck(string("systemctl is-enabled '")+sname+"' >/dev/null || sudo systemctl enable '"+sname+"' >/dev/null",obverb,oblog);
+ return systemrueck(string("systemctl is-enabled '")+sname+"' >/dev/null 2>&1 || sudo systemctl enable '"+sname+"' >/dev/null 2>&1",obverb,oblog);
 }
 
 void servc::daemon_reload(int obverb, int oblog)

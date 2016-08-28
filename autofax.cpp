@@ -5077,9 +5077,9 @@ int paramcl::pruefhyla()
     }
   obverb=0;
     cout<<violett<<"Stelle 8"<<schwarz<<endl;
-    break; // zu Testzwecken
     // <<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
     if (hylafehlt) {
+    cout<<violett<<"Stelle 9"<<schwarz<<endl;
       // 3) ggf. neu installieren
       Log(rots+Tx[T_Muss_Hylafax_installieren]+schwarz,1,1);
       // a) von der source
@@ -5289,6 +5289,7 @@ int paramcl::pruefhyla()
       // systemrueck("grep -rl 'faxcron\\|faxqclean' /etc/cron* | /usr/bin/xargs ls -l;",obverb,oblog); 
       // // in hylafax: /etc/cron.daily/suse.de-faxcron, 
     } // if (1)
+    break; // zu Testzwecken
     if (hylalaeuftnicht || modemlaeuftnicht) {
       // hier Fehler: nach einem Versuch darf 
       if (versuch) {
