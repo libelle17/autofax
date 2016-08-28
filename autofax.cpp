@@ -5023,8 +5023,8 @@ int paramcl::pruefhyla()
   } else {
     Log(string("Modem '")+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+gruen+brs+schwarz+Tx[T_wird_verwendet],obverb,oblog);
   } //   if (br<=0) else
-  cout<<violett<<"Stelle 1"<<schwarz<<endl;
   obverb=1;
+  cout<<violett<<"Stelle 1"<<schwarz<<endl;
   if (1) {
   if (!this->sfaxgetty) this->sfaxgetty=new servc("hylafax-faxgetty-"+this->hmodem,"faxgetty");
   for(unsigned versuch=0;versuch<3;versuch++) {
@@ -5075,6 +5075,7 @@ int paramcl::pruefhyla()
       // falls nein, dann schauen, ob startbar
       if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog)) hylafehlt=0;
     }
+  obverb=0;
     cout<<violett<<"Stelle 2"<<schwarz<<endl;
     break; // zu Testzwecken
     // <<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
@@ -5309,7 +5310,6 @@ int paramcl::pruefhyla()
                   "sudo sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax", obverb,oblog);
   }
   } // if (0)
-  obverb=0;
   Log(violetts+Tx[T_Ende]+" "+Tx[T_pruefhyla]+schwarz,obverb?obverb:obverb,oblog);
   return 0;
 } // int paramcl::pruefhyla()
