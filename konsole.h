@@ -567,7 +567,7 @@ class servc {
     servc(string vsname,string vename,int obverb, int oblog);
     uchar spruef(const string& sbez,uchar obfork,const string& sexec, const string& CondPath, const string& After, const string& wennnicht0,
         int obverb=0,int oblog=0);
-    int obslaeuft(int obverb, int oblog);
+    int obslaeuft(int obverb, int oblog, binaer nureinmal=falsch);
     int restart(int obverb, int oblog);
     void start(int obverb, int oblog);
     int startundenable(int obverb, int oblog);

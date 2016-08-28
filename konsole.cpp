@@ -2267,7 +2267,7 @@ uchar servc::spruef(const string& sbez,uchar obfork, const string& sexec, const 
 } // void servc::spruef() 
 
 // wird aufgerufen in: pruefhyla, pruefcapi, spruef
-int servc::obslaeuft(int obverb,int oblog)
+int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
 {
   perfcl prf(Txk[T_Aktiviere_Dienst]+sname);
   while (1) {
@@ -2283,7 +2283,7 @@ int servc::obslaeuft(int obverb,int oblog)
         break;
       } else if (sysrueck[0].find("activating")!=string::npos) {
         prf.ausgeb(sname);
-        if (prf.oberreicht(120)) break;
+        if (nureinmal || prf.oberreicht(120)) break;
       } else if (sysrueck[0].find("loaded")!=string::npos) {
         serviceda=1;
         break;

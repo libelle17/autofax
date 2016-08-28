@@ -5436,7 +5436,7 @@ int paramcl::pruefcapi()
     // #  define IRQF_DISABLED 0x00
     // #endif
     //    capilaeuft=(PIDausName("capisuite")>=0);
-    capilaeuft = this->scapisuite->obslaeuft(obverb-1,oblog);
+    capilaeuft = this->scapisuite->obslaeuft(obverb-1,oblog,wahr);
     Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz,obverb,oblog);
     if (capilaeuft) {
      capischonerfolgreichinstalliert=1;
