@@ -5423,6 +5423,7 @@ int paramcl::kompiliere(string prog,string endg, string vorcfg,string cfgmit,str
 // wird aufgerufen in: untersuchespool, main
 int paramcl::pruefcapi()
 {
+  obverb=1;
   Log(violetts+Tx[T_pruefcapi]+schwarz,obverb?obverb:obverb,oblog);
   static uchar capiloggekuerzt=0;
   static uchar capischonerfolgreichinstalliert=0;
@@ -5699,6 +5700,7 @@ int paramcl::pruefcapi()
     Log(rots+Tx[T_konntecapisuiteservice]+gruen+ltoan(versuch)+rot+Tx[T_malnichtstartenverwN]+schwarz,1,1);
     return 1;
   }
+  obverb=0;
   return 0;
 } // pruefcapi()
 
