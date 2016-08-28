@@ -1541,6 +1541,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
    hcmd=cmd+" 2>/dev/null";
    czg=&hcmd;
   }
+  cout<<violett<<*czg<<schwarz<<endl;
   string meld(Txk[T_Rueckmeldung]);
   string aktues;
   if (ueberschr.empty()) { 
