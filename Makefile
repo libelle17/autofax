@@ -89,7 +89,7 @@ anzeig:
 $(EXEC): $(OBJ)
 	-@echo $$(if ! test -f version; then echo 0.1>version;fi;awk "BEGIN {print `cat version`+0.00001}")>version
 	-@echo -n " verlinke $(OBJ) zu $@ ..."
-	-@df --output=ipcent / |tail -n1|grep - && sudo killall postdrop
+	-@df --output=ipcent / |tail -n1|grep - && sudo killall postdrop || true
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
 	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_en)
 endif
