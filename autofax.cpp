@@ -1695,11 +1695,13 @@ void paramcl::logvorgaben(const string& vprog)
 void paramcl::getcommandl0()
 {
   Log(violetts+"getcommandl0()"+schwarz,obverb,oblog);
-  cgconf.init(36, "language","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
+  // Reihenfolge muss koordiniert werden mit lieskonfein und rueckfragen
+  cgconf.init(36, "language","host","muser","mpwd","datenbank","logvz","logdname","sqlz","musterzahl",
+    "obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
     "countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
     "cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl",
-    "gleichziel","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","cronminut","anfaxstr","ancfaxstr","anhfaxstr",
-    "anstr","undstr","host","muser","mpwd","datenbank","logvz","logdname","sqlz","musterzahl");
+    "gleichziel","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
+    "anstr","undstr","cronminut");
   uchar plusverb=0;
   //  for(int i=argc-1;i>0;i--) KLA if (argv[i][0]==0) argc--; KLZ // damit fuer das Compilermakro auch im bash-script argc stimmt
   for(unsigned iru=0;iru<3;iru++) {
@@ -2027,7 +2029,6 @@ void paramcl::liescapiconf()
   }
 } // void paramcl::liescapiconf()
 
-
 // wird aufgerufen in: main
 // allgemeine Vorgaben, fuer Deutschland
 void paramcl::VorgbAllg()
@@ -2079,96 +2080,9 @@ void paramcl::pruefcvz()
 
 } // paramcl::pruefcvz
 
-// wird aufgerufen in: main
-void paramcl::lieskonfein()
+// wird aufgerufen in lieskonfein
+void paramcl::setzzielmuster(confdat& afconf)
 {
-  Log(violetts+Tx[T_lieskonfein]+schwarz,obverb,oblog);
-  if (konfdatname.empty()) konfdatname = aktprogverz()+".conf";
-  /*
-  static cppSchluess gconf[]={{"langu"},{"obcapi"},{"obhyla"},{"hylazuerst"},{"maxcapiv"},{"maxhylav"},{"cuser"},
-    {"countrycode"},{"citycode"},{"msn"},{"LongDistancePrefix"},{"InternationalPrefix"},{"LocalIdentifier"},
-    {"cFaxUeberschrift"},{"cklingelzahl"},{"hmodem"},{"hklingelzahl"},
-    {"gleichziel"},{"zufaxenvz"},{"wartevz"},{"nichtgefaxtvz"},{"empfvz"},{"cronminut"},{"anfaxstr"},{"ancfaxstr"},{"anhfaxstr"},
-    {"anstr"},{"undstr"},{"host"},{"muser"},{"mpwd"},{"datenbank"},{"logvz"},{"logdname"},{"sqlz"},{"musterzahl"}};
-  cgconfp=gconf;
-  gcs=sizeof gconf/sizeof*gconf;
-  */
-    // cgconf.init muss schon vor getcommandl0 kommen
-  confdat afconf(konfdatname,&cgconf,obverb); // hier werden die Daten aus der Datei eingelesen
-  if (1) {
-    //  if (cpplies(konfdatname,gconf,gcs)) KLA
-    // sodann werden die Daten aus gconf den einzelenen Klassenmitgliedsvariablen zugewiesen 
-    rzf=0;
-    unsigned lfd=0;
-    if (langu.empty()) {
-      if (cgconf[lfd].gelesen) cgconf[lfd].hole(&langu); else rzf=1; // Sprache aus der Commandline geht vor Konfiguration
-      lgnzuw();
-    } 
-    lfd++;
-  // <<"lieskonfein vor  obcapi: "<<(int)obcapi<<endl;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obcapi); else rzf=1; lfd++;
-  // <<"lieskonfein nach obcapi: "<<(int)obcapi<<endl;
-    konfobcapi=obcapi;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obhyla); else rzf=1; lfd++;
-    konfobhyla=obhyla;
-    if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hylazuerst); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxcapiv); else rzf=1;} lfd++;
-    if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxhylav); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cuser); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&countrycode); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&citycode); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&msn); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&LongDistancePrefix); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&InternationalPrefix); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&LocalIdentifier); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cFaxUeberschrift); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cklingelzahl); else rzf=1;} lfd++;
-    if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hmodem); else rzf=1;} lfd++;
-    if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hklingelzahl); else rzf=1;} lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&gleichziel); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&zufaxenvz); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&wvz); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&nvz); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&empfvz); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cronminut); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&anfaxstr); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&ancfaxstr); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&anhfaxstr); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&anstr); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&undstr); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&host); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&muser); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) mpwd=XOR(string(cgconf[lfd].wert),pk); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&dbq); else rzf=1; lfd++;
-    if (logvneu) cgconf[lfd].setze(&logvz);
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logvz); else rzf=1; lfd++;
-    if (logdneu) cgconf[lfd].setze(&logdname);
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logdname); else rzf=1; lfd++;
-    loggespfad=logvz+vtz+logdname;
-    logdt=&loggespfad.front();
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&sqlz); else rzf=1; lfd++;
-    sqlzn=atol(sqlz.c_str());
-    // Vorgaben uebernehmen
-    if (sqlzn) {
-//      sqlconfp= new cppSchluess[sqlzn];
-      sqlconf.neu(sqlzn);
-      for(size_t i=0;i<sqlzn;i++) {
-        sqlconf[i].name=string("SQL_")+ltoan(i+1);
-        if (i<sqlvzn && i<sqlconfv.zahl) {
-          sqlconf[i].wert=sqlconfv[i].wert;
-          // <<"i: "<<hviolett<<i<<schwarz<<", sqlconf["<<i<<"]: "<<blau<<sqlconf[i].name<<schwarz<<endl;
-          // <<"i: "<<blau<<i<<schwarz<<", sqlconf["<<i<<"]: "<<rot<<sqlconf[i].wert<<schwarz<<endl;
-        } // if (i<sqlvzn) 
-      } // for(size_t i=0;i<sqlzn;i++) 
-    } // if (sqlzn) 
-    // jetzt erst stehen die Variablen fuer alle SQL-Befehle zur Verfuegung
-    afconf.auswert(&sqlconf,obverb);
-    //       for(size_t akt=0;akt<sqlzn;akt++) KLA
-    //        <<"akt: "<<hviolett<<akt<<schwarz<<", sqlconf["<<akt<<"]: "<<blau<<sqlconf[akt].name<<schwarz<<endl;
-    //       <<"akt: "<<violett<<akt<<schwarz<<", sqlconf["<<akt<<"]: "<<dblau<<sqlconf[akt].wert<<schwarz<<endl;
-    //      KLZ
-
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&zmz); else rzf=1; lfd++;
     if (!zmvzn || !zmvp) {
       zmvp= new zielmustercl{"","/var/"+prog+"/ziel"};
       zmvzn=1;
@@ -2208,6 +2122,106 @@ void paramcl::lieskonfein()
         zmp[i].ziel=zmconf[2*i+1].wert;
       }
     }
+} // void paramcl::setzzielmuster()
+
+// wird aufgerufen in lieskonfein
+void paramcl::setzsql(confdat& afconf)
+{
+  sqlzn=atol(sqlz.c_str());
+  // Vorgaben uebernehmen
+  if (sqlzn) {
+    //      sqlconfp= new cppSchluess[sqlzn];
+    sqlconf.neu(sqlzn);
+    for(size_t i=0;i<sqlzn;i++) {
+      sqlconf[i].name=string("SQL_")+ltoan(i+1);
+      if (i<sqlvzn && i<sqlconfv.zahl) {
+        sqlconf[i].wert=sqlconfv[i].wert;
+        // <<"i: "<<hviolett<<i<<schwarz<<", sqlconf["<<i<<"]: "<<blau<<sqlconf[i].name<<schwarz<<endl;
+        // <<"i: "<<blau<<i<<schwarz<<", sqlconf["<<i<<"]: "<<rot<<sqlconf[i].wert<<schwarz<<endl;
+      } // if (i<sqlvzn) 
+    } // for(size_t i=0;i<sqlzn;i++) 
+  } // if (sqlzn) 
+  // jetzt erst stehen die Variablen fuer alle SQL-Befehle zur Verfuegung
+  afconf.auswert(&sqlconf,obverb);
+  //       for(size_t akt=0;akt<sqlzn;akt++) KLA
+  //        <<"akt: "<<hviolett<<akt<<schwarz<<", sqlconf["<<akt<<"]: "<<blau<<sqlconf[akt].name<<schwarz<<endl;
+  //       <<"akt: "<<violett<<akt<<schwarz<<", sqlconf["<<akt<<"]: "<<dblau<<sqlconf[akt].wert<<schwarz<<endl;
+  //      KLZ
+}
+
+
+// wird aufgerufen in: main
+void paramcl::lieskonfein()
+{
+  Log(violetts+Tx[T_lieskonfein]+schwarz,obverb,oblog);
+  if (konfdatname.empty()) konfdatname = aktprogverz()+".conf";
+  /*
+  static cppSchluess gconf[]={{"langu"},{"obcapi"},{"obhyla"},{"hylazuerst"},{"maxcapiv"},{"maxhylav"},{"cuser"},
+    {"countrycode"},{"citycode"},{"msn"},{"LongDistancePrefix"},{"InternationalPrefix"},{"LocalIdentifier"},
+    {"cFaxUeberschrift"},{"cklingelzahl"},{"hmodem"},{"hklingelzahl"},
+    {"gleichziel"},{"zufaxenvz"},{"wartevz"},{"nichtgefaxtvz"},{"empfvz"},{"cronminut"},{"anfaxstr"},{"ancfaxstr"},{"anhfaxstr"},
+    {"anstr"},{"undstr"},{"host"},{"muser"},{"mpwd"},{"datenbank"},{"logvz"},{"logdname"},{"sqlz"},{"musterzahl"}};
+  cgconfp=gconf;
+  gcs=sizeof gconf/sizeof*gconf;
+  */
+    // cgconf.init muss spaetetens am Anfang von getcommandl0 kommen
+  confdat afconf(konfdatname,&cgconf,obverb); // hier werden die Daten aus der Datei eingelesen
+  if (1) {
+    //  if (cpplies(konfdatname,gconf,gcs)) KLA
+    // sodann werden die Daten aus gconf den einzelenen Klassenmitgliedsvariablen zugewiesen 
+    // die Reihenfolge muss der in cgconf.init (in getcommandl0) sowie der in rueckfragen entsprechen
+    rzf=0;
+    unsigned lfd=0;
+    if (langu.empty()) {
+      if (cgconf[lfd].gelesen) cgconf[lfd].hole(&langu); else rzf=1; // Sprache aus der Commandline geht vor Konfiguration
+      lgnzuw();
+    } 
+    lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&host); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&muser); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) mpwd=XOR(string(cgconf[lfd].wert),pk); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&dbq); else rzf=1; lfd++;
+    if (logvneu) cgconf[lfd].setze(&logvz);
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logvz); else rzf=1; lfd++;
+    if (logdneu) cgconf[lfd].setze(&logdname);
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logdname); else rzf=1; lfd++;
+    loggespfad=logvz+vtz+logdname;
+    logdt=&loggespfad.front();
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&sqlz); else rzf=1; lfd++;
+    setzsql(afconf);
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&zmz); else rzf=1; lfd++;
+    setzzielmuster(afconf);
+  // <<"lieskonfein vor  obcapi: "<<(int)obcapi<<endl;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obcapi); else rzf=1; lfd++;
+  // <<"lieskonfein nach obcapi: "<<(int)obcapi<<endl;
+    konfobcapi=obcapi;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obhyla); else rzf=1; lfd++;
+    konfobhyla=obhyla;
+    if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hylazuerst); else rzf=1;} lfd++;
+    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxcapiv); else rzf=1;} lfd++;
+    if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxhylav); else rzf=1;} lfd++;
+    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cuser); else rzf=1;} lfd++;
+    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&countrycode); else rzf=1;} lfd++;
+    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&citycode); else rzf=1;} lfd++;
+    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&msn); else rzf=1;} lfd++;
+    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&LongDistancePrefix); else rzf=1;} lfd++;
+    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&InternationalPrefix); else rzf=1;} lfd++;
+    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&LocalIdentifier); else rzf=1;} lfd++;
+    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cFaxUeberschrift); else rzf=1;} lfd++;
+    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cklingelzahl); else rzf=1;} lfd++;
+    if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hmodem); else rzf=1;} lfd++;
+    if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hklingelzahl); else rzf=1;} lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&gleichziel); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&zufaxenvz); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&wvz); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&nvz); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&empfvz); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&anfaxstr); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&ancfaxstr); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&anhfaxstr); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&anstr); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&undstr); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cronminut); else rzf=1; lfd++;
   } else {
     rzf=1;
   } // (1) else
@@ -2358,173 +2372,6 @@ void paramcl::rueckfragen()
       lgnzuw();
       cgconf[lfd].setze(&langu);
     }
-  // <<"rueckfragen 1 vor  obcapi: "<<(int)obcapi<<endl;
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      if (!obfcgeprueft) pruefisdn();
-      if (obfcard) {
-        obcapi=Tippob(Tx[T_Soll_die_Capisuite_verwendet_werden],obcapi?Tx[T_j_af]:"n");
-      } else {
-        obcapi=0;
-      }
-      cgconf[lfd].setze(&obcapi);
-    }
-  // <<"rueckfragen 1 nach obcapi: "<<(int)obcapi<<endl;
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      if (!obmdgeprueft) pruefmodem();
-      if (obmodem) {
-        obhyla=Tippob(Tx[T_Soll_Hylafax_verwendet_werden],obhyla?Tx[T_j_af]:"n");
-      } else {
-        obhyla=0;
-      }
-      cgconf[lfd].setze(&obhyla);
-    }
-    if (obcapi) {
-      if (obhyla) {
-        if (cgconf[++lfd].wert.empty() || rzf) {
-          hylazuerst=!Tippob(Tx[T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden],hylazuerst?"n":Tx[T_j_af]);
-          cgconf[lfd].setze(&hylazuerst);
-        }
-        if (cgconf[++lfd].wert.empty() || rzf) {
-          maxcapiv=Tippzahl(Tx[T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird],maxcapiv.c_str());
-          cgconf[lfd].setze(&maxcapiv);
-        }
-        if (cgconf[++lfd].wert.empty() || rzf) {
-          maxhylav=Tippzahl(Tx[T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird],maxhylav.c_str());
-          cgconf[lfd].setze(&maxhylav);
-        }
-        // also: obcapi, aber nicht obhyla
-      } else {
-        lfd+=3;
-        hylazuerst=0;
-      }
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        //        string bliste, tmpcuser;
-        vector<string> benutzer;
-        cmd="cat /etc/passwd | grep /home/ | cut -d':' -f 1";
-        systemrueck(cmd,obverb,oblog,&benutzer);
-        if (benutzer.size()>1) for(size_t i=0;i<benutzer.size();i++) if (benutzer[i]=="syslog") {benutzer.erase(benutzer.begin()+i);break;}
-        for(size_t i=0;i<benutzer.size();i++) {
-          //          bliste+=benutzer[i];
-          //          if (i<benutzer.size()-1) bliste+=",";
-          if (cuser.empty()) cuser=benutzer[i]; // Vorgabe
-        }
-        /*
-           string Frage=string("Linux-Benutzer fuer Capisuite (")+bliste+"):";
-           do KLA
-           tmpcuser=Tippstring(Frage.c_str(),&cuser);
-           KLZ while (benutzer.size() && bliste.find(tmpcuser)==string::npos && 
-           tmpcuser.find(',')==string::npos); // nur vorhandene User akzeptieren
-           cuser=tmpcuser;
-         */
-        cuser=Tippstrings(Tx[T_Linux_Benutzer_fuer_Capisuite],&benutzer,&cuser);
-        cgconf[lfd].setze(&cuser);
-      }
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        countrycode=Tippstring(Tx[T_Hylafax_eigene_Landesvorwahl_ohne_plus_oder_00],&countrycode);
-        cgconf[lfd].setze(&countrycode);
-      }
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        citycode=Tippstring(Tx[T_Hylafax_eigene_Ortsvorwahl_ohne_0],&citycode);
-        cgconf[lfd].setze(&citycode);
-      }
-    } else {
-      lfd+=6; // nicht obcapi, aber obhyla kaeme hier
-      hylazuerst=1;
-    }
-
-    if (obcapi || obhyla) {
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        msn=Tippstring(Tx[T_Hylafax_und_Capisuite_eigene_MSN_Faxnummer_ohne_Vorwahl],&msn);
-        cgconf[lfd].setze(&msn);
-      }
-    } else {
-      lfd++; 
-    }
-
-    if (obcapi) {
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        LongDistancePrefix=Tippstring(Tx[T_Hylafax_Praefix_fuer_ausserorts_zB_0],&LongDistancePrefix);
-        cgconf[lfd].setze(&LongDistancePrefix);
-      }
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        InternationalPrefix=Tippstring(Tx[T_Hylafax_Praefix_fuer_das_Ausland_zB_00],&InternationalPrefix);
-        cgconf[lfd].setze(&InternationalPrefix);
-      }
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        LocalIdentifier=Tippstring(Tx[T_Hylafax_bis_10_Buchstabe_fuer_eigenen_Namen],&LocalIdentifier);
-        cgconf[lfd].setze(&LocalIdentifier);
-      }
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        cFaxUeberschrift=Tippstring(Tx[T_Capisuite_bis_20_Buchstaben_fuer_eigenen_Namen],&cFaxUeberschrift);
-        cgconf[lfd].setze(&cFaxUeberschrift);
-      }
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        cklingelzahl=Tippzahl(Tx[T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt],cklingelzahl.c_str());
-        cgconf[lfd].setze(&cklingelzahl);
-      }
-    } else {
-      lfd+=5; // nicht obcapi, aber obhyla kaeme hier
-    }
-
-    if (obhyla) {
-      if (cgconf[++lfd].wert.empty() || rzf) {
-//        hmodem=Tippstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,hmodem.empty()?&modems[0]:&hmodem);
-        if (hmodem.empty()) hmodem=modems[0];
-        hmodem=Tippstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,&hmodem);
-        cgconf[lfd].setze(&hmodem);
-      }
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        hklingelzahl=Tippzahl(Tx[T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt],hklingelzahl.c_str());
-        cgconf[lfd].setze(&hklingelzahl);
-      }
-    } else {
-      lfd+=2;
-      hylazuerst=0;
-    }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      gleichziel=Tippob(Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden],gleichziel?Tx[T_j_af]:"n");
-      cgconf[lfd].setze(&gleichziel);
-    }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      zufaxenvz=Tippverz(Tx[T_Verzeichnis_mit_zu_faxenden_Dateien],&zufaxenvz);
-      cgconf[lfd].setze(&zufaxenvz);
-    }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      wvz=Tippverz(Tx[T_Verzeichnis_mit_wartenden_Dateien],&wvz);
-      cgconf[lfd].setze(&wvz);
-    }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      nvz=Tippverz(Tx[T_Verzeichnis_mit_gescheiterten_Dateien],&nvz);
-      cgconf[lfd].setze(&nvz);
-    }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      empfvz=Tippverz(Tx[T_Verzeichnis_fuer_empfangene_Faxe],&empfvz);
-      cgconf[lfd].setze(&empfvz);
-    }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      cronminut=Tippzahl(Tx[T_Alle_wieviel_Minuten_soll]+prog+Tx[T_aufgerufen_werden_0_ist_gar_nicht],&cronminut);
-      cgconf[lfd].setze(&cronminut);
-    }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      anfaxstr=Tippstring(Tx[T_Buchstabenfolge_vor_erster_Faxnummer],&anfaxstr);
-      cgconf[lfd].setze(&anfaxstr);
-    }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      ancfaxstr=Tippstring(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Capisuite],&ancfaxstr);
-      cgconf[lfd].setze(&ancfaxstr);
-    }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      anhfaxstr=Tippstring(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax],&anhfaxstr);
-      cgconf[lfd].setze(&anhfaxstr);
-    }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      anstr=Tippstring(Tx[T_Buchstabenfolge_vor_erstem_Adressaten],&anstr);
-      cgconf[lfd].setze(&anstr);
-    }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      undstr=Tippstring(Tx[T_Buchstabenfolge_vor_weiterem_Adressaten_sowie_weiterer_Faxnummer],&undstr);
-      cgconf[lfd].setze(&undstr);
-    }
     if (cgconf[++lfd].wert.empty() || rzf) {
       host=Tippstring(Tx[T_Host_fuer_MySQL_MariaDB_Datenbank],&host);
       cgconf[lfd].setze(&host);
@@ -2635,9 +2482,9 @@ void paramcl::rueckfragen()
       /*
       // Vektor in Array umwandeln
       static cppSchluess *nsqlconfp = new cppSchluess[sqlv.size()];
-      for(size_t sqli=0;sqli<sqlv.size();sqli++) {
+      for(size_t sqli=0;sqli<sqlv.size();sqli++) KLA
        nsqlconfp[sqli]=*sqlv[sqli];
-      }
+      KLZ
       sqlconfp=nsqlconfp;
       static schlArr *nsqlconfp = new schlArr(&sqlv);
       sqlconfp=nsqlconfp;
@@ -2665,27 +2512,27 @@ void paramcl::rueckfragen()
     cgconf[++lfd].setze(&nzmz);
 
     /*
-    if (cgconf[++lfd].wert.empty() || rzf) {
+    if (cgconf[++lfd].wert.empty() || rzf) KLA
       string  nzmz=Tippzahl(Tx[T_Zahl_der_Verzeichnisse_fuer_erfolgreich_verschickte_Faxe],&zmz);
       size_t nzmzn;
-      while (1) {
+      while (1) KLA
         nzmzn=atol(nzmz.c_str());
         if (nzmzn>0) break;
         nzmz="1";
-      }
+      KLZ
       cgconf[lfd].setze(&nzmz);
       // zmconfp=nzmconfp;
       // static cppSchluess *nzmconfp= new cppSchluess[nzmzn+nzmzn];
       zmconf.neu(nzmzn+nzmzn);
-      for(size_t akt=0;akt<(nzmzn<zmzn?nzmzn:zmzn);akt++) {
+      for(size_t akt=0;akt<(nzmzn<zmzn?nzmzn:zmzn);akt++) KLA
        if (zmconf[2*akt].wert.empty())
         zmconf[2*akt].wert=zmp[akt].holmuster();
        if (zmconf[2*akt+1].wert.empty())
         zmconf[2*akt+1].wert=zmp[akt].ziel;
-      }
-      while (1) {
+      KLZ
+      while (1) KLA
         int fehler=0;
-        for(size_t akt=0;akt<nzmzn;akt++) {
+        for(size_t akt=0;akt<nzmzn;akt++) KLA
           string zwi=Tippstring(string("Zielmuster Nr. ")+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],&zmconf[2*akt].wert);
           zmconf[2*akt].name=string("ZMMuster_")+ltoan(akt+1);
           if (akt==nzmzn-1) zwi.clear(); // das letzte Muster muss leer sein, damit jede Datei irgendwo hinkommt
@@ -2693,20 +2540,195 @@ void paramcl::rueckfragen()
           zwi=Tippstring(string("Zielverzeichnis Nr. ")+ltoan(akt+1),&zmconf[2*akt+1].wert);
           zmconf[2*akt+1].name=string("ZMZiel_")+ltoan(akt+1);
           zmconf[2*akt+1].setze(&zwi);
-        }
+        KLZ
         zmp=new zielmustercl[nzmzn];
-        for(uint imu=0;imu<nzmzn;imu++) {
+        for(uint imu=0;imu<nzmzn;imu++) KLA
           zmp[imu].setzemuster(zmconf[2*imu].wert);
           fehler+=zmp[imu].kompilier();
           zmp[imu].ziel=zmconf[2*imu+1].wert;
-        }
+        KLZ
        if (!fehler) break;
-      }
+      KLZ
       zmz=nzmz;
       zmzn=nzmzn;
-    } // if (cgconf[++lfd].wert.empty() || rzf) 
+    KLZ // if (cgconf[++lfd].wert.empty() || rzf) 
     */
+  // <<"rueckfragen 1 vor  obcapi: "<<(int)obcapi<<endl;
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      if (!obfcgeprueft) pruefisdn();
+      if (obfcard) {
+        obcapi=Tippob(Tx[T_Soll_die_Capisuite_verwendet_werden],obcapi?Tx[T_j_af]:"n");
+      } else {
+        obcapi=0;
+      }
+      cgconf[lfd].setze(&obcapi);
+    }
+  // <<"rueckfragen 1 nach obcapi: "<<(int)obcapi<<endl;
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      if (!obmdgeprueft) pruefmodem();
+      if (obmodem) {
+        obhyla=Tippob(Tx[T_Soll_Hylafax_verwendet_werden],obhyla?Tx[T_j_af]:"n");
+      } else {
+        obhyla=0;
+      }
+      cgconf[lfd].setze(&obhyla);
+    }
+    if (obcapi) {
+      if (obhyla) {
+        if (cgconf[++lfd].wert.empty() || rzf) {
+          hylazuerst=!Tippob(Tx[T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden],hylazuerst?"n":Tx[T_j_af]);
+          cgconf[lfd].setze(&hylazuerst);
+        }
+        if (cgconf[++lfd].wert.empty() || rzf) {
+          maxcapiv=Tippzahl(Tx[T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird],maxcapiv.c_str());
+          cgconf[lfd].setze(&maxcapiv);
+        }
+        if (cgconf[++lfd].wert.empty() || rzf) {
+          maxhylav=Tippzahl(Tx[T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird],maxhylav.c_str());
+          cgconf[lfd].setze(&maxhylav);
+        }
+        // also: obcapi, aber nicht obhyla
+      } else {
+        lfd+=3;
+        hylazuerst=0;
+      }
+      if (cgconf[++lfd].wert.empty() || rzf) {
+        //        string bliste, tmpcuser;
+        vector<string> benutzer;
+        cmd="cat /etc/passwd | grep /home/ | cut -d':' -f 1";
+        systemrueck(cmd,obverb,oblog,&benutzer);
+        if (benutzer.size()>1) for(size_t i=0;i<benutzer.size();i++) if (benutzer[i]=="syslog") {benutzer.erase(benutzer.begin()+i);break;}
+        for(size_t i=0;i<benutzer.size();i++) {
+          //          bliste+=benutzer[i];
+          //          if (i<benutzer.size()-1) bliste+=",";
+          if (cuser.empty()) cuser=benutzer[i]; // Vorgabe
+        }
+        /*
+           string Frage=string("Linux-Benutzer fuer Capisuite (")+bliste+"):";
+           do KLA
+           tmpcuser=Tippstring(Frage.c_str(),&cuser);
+           KLZ while (benutzer.size() && bliste.find(tmpcuser)==string::npos && 
+           tmpcuser.find(',')==string::npos); // nur vorhandene User akzeptieren
+           cuser=tmpcuser;
+         */
+        cuser=Tippstrings(Tx[T_Linux_Benutzer_fuer_Capisuite],&benutzer,&cuser);
+        cgconf[lfd].setze(&cuser);
+      }
+      if (cgconf[++lfd].wert.empty() || rzf) {
+        countrycode=Tippstring(Tx[T_Hylafax_eigene_Landesvorwahl_ohne_plus_oder_00],&countrycode);
+        cgconf[lfd].setze(&countrycode);
+      }
+      if (cgconf[++lfd].wert.empty() || rzf) {
+        citycode=Tippstring(Tx[T_Hylafax_eigene_Ortsvorwahl_ohne_0],&citycode);
+        cgconf[lfd].setze(&citycode);
+      }
+    } else {
+      lfd+=6; // nicht obcapi, aber obhyla kaeme hier
+      hylazuerst=1;
+    } // if (obcapi) else
+
+    if (obcapi || obhyla) {
+      if (cgconf[++lfd].wert.empty() || rzf) {
+        msn=Tippstring(Tx[T_Hylafax_und_Capisuite_eigene_MSN_Faxnummer_ohne_Vorwahl],&msn);
+        cgconf[lfd].setze(&msn);
+      }
+    } else {
+      lfd++; 
+    } //     if (obcapi || obhyla)
+
+    if (obcapi) {
+      if (cgconf[++lfd].wert.empty() || rzf) {
+        LongDistancePrefix=Tippstring(Tx[T_Hylafax_Praefix_fuer_ausserorts_zB_0],&LongDistancePrefix);
+        cgconf[lfd].setze(&LongDistancePrefix);
+      }
+      if (cgconf[++lfd].wert.empty() || rzf) {
+        InternationalPrefix=Tippstring(Tx[T_Hylafax_Praefix_fuer_das_Ausland_zB_00],&InternationalPrefix);
+        cgconf[lfd].setze(&InternationalPrefix);
+      }
+      if (cgconf[++lfd].wert.empty() || rzf) {
+        LocalIdentifier=Tippstring(Tx[T_Hylafax_bis_10_Buchstabe_fuer_eigenen_Namen],&LocalIdentifier);
+        cgconf[lfd].setze(&LocalIdentifier);
+      }
+      if (cgconf[++lfd].wert.empty() || rzf) {
+        cFaxUeberschrift=Tippstring(Tx[T_Capisuite_bis_20_Buchstaben_fuer_eigenen_Namen],&cFaxUeberschrift);
+        cgconf[lfd].setze(&cFaxUeberschrift);
+      }
+      if (cgconf[++lfd].wert.empty() || rzf) {
+        cklingelzahl=Tippzahl(Tx[T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt],cklingelzahl.c_str());
+        cgconf[lfd].setze(&cklingelzahl);
+      }
+    } else {
+      lfd+=5; // nicht obcapi, aber obhyla kaeme hier
+    } //     if (obcapi) else
+
+    if (obhyla) {
+      if (cgconf[++lfd].wert.empty() || rzf) {
+//        hmodem=Tippstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,hmodem.empty()?&modems[0]:&hmodem);
+        if (hmodem.empty()) hmodem=modems[0];
+        hmodem=Tippstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,&hmodem);
+        cgconf[lfd].setze(&hmodem);
+      }
+      if (cgconf[++lfd].wert.empty() || rzf) {
+        hklingelzahl=Tippzahl(Tx[T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt],hklingelzahl.c_str());
+        cgconf[lfd].setze(&hklingelzahl);
+      }
+    } else {
+      lfd+=2;
+      hylazuerst=0;
+    } //     if (obhyla) else
+
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      gleichziel=Tippob(Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden],gleichziel?Tx[T_j_af]:"n");
+      cgconf[lfd].setze(&gleichziel);
+    }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      zufaxenvz=Tippverz(Tx[T_Verzeichnis_mit_zu_faxenden_Dateien],&zufaxenvz);
+      cgconf[lfd].setze(&zufaxenvz);
+    }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      wvz=Tippverz(Tx[T_Verzeichnis_mit_wartenden_Dateien],&wvz);
+      cgconf[lfd].setze(&wvz);
+    }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      nvz=Tippverz(Tx[T_Verzeichnis_mit_gescheiterten_Dateien],&nvz);
+      cgconf[lfd].setze(&nvz);
+    }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      empfvz=Tippverz(Tx[T_Verzeichnis_fuer_empfangene_Faxe],&empfvz);
+      cgconf[lfd].setze(&empfvz);
+    }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      anfaxstr=Tippstring(Tx[T_Buchstabenfolge_vor_erster_Faxnummer],&anfaxstr);
+      cgconf[lfd].setze(&anfaxstr);
+    }
+
+    if (obcapi || obhyla) {
+      if (cgconf[++lfd].wert.empty() || rzf) {
+        ancfaxstr=Tippstring(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Capisuite],&ancfaxstr);
+        cgconf[lfd].setze(&ancfaxstr);
+      }
+      if (cgconf[++lfd].wert.empty() || rzf) {
+        anhfaxstr=Tippstring(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax],&anhfaxstr);
+        cgconf[lfd].setze(&anhfaxstr);
+      }
+    } else {
+      lfd+=2; 
+    } //     if (obcapi || obhyla)
+
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      anstr=Tippstring(Tx[T_Buchstabenfolge_vor_erstem_Adressaten],&anstr);
+      cgconf[lfd].setze(&anstr);
+    }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      undstr=Tippstring(Tx[T_Buchstabenfolge_vor_weiterem_Adressaten_sowie_weiterer_Faxnummer],&undstr);
+      cgconf[lfd].setze(&undstr);
+    }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      cronminut=Tippzahl(Tx[T_Alle_wieviel_Minuten_soll]+prog+Tx[T_aufgerufen_werden_0_ist_gar_nicht],&cronminut);
+      cgconf[lfd].setze(&cronminut);
+    }
   } // if (rzf)
+
   // hier wurde falls noetig ermittelt, ob Fritzcard/Modem vorhanden
   if (obverb) {
     string obmodems=ltoan(obmodem); 
@@ -4975,12 +4997,7 @@ int paramcl::pruefhyla()
       Log(string("hmodem:    ")+rot+hmodem+schwarz,obverb,oblog);
     }
     hmodem=modems[0];/*modemsumgesteckt=1;*/ 
-    for(size_t j=0;j<cgconf.zahl;j++) {
-     if (cgconf[j].name=="hmodem") {
-      cgconf[j].wert=hmodem;
-      break;
-     }
-    }
+    cgconf.setze("hmodem",hmodem);
     hconfigtty();obkschreib=1;
   } //   if (modems.size()) if (!modems[0].empty()) if (modems[0]!=hmodem) 
   

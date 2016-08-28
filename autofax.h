@@ -255,6 +255,8 @@ class paramcl // Programmparameter
     void richtcapiher();
     uchar setzhconfp(string *protdaktp,int obverb);
     void setzmodconfd();
+    void setzzielmuster(confdat& afconf);
+    void setzsql(confdat& afconf);
   public:
     paramcl(int argc,char** argv);
     ~paramcl();
