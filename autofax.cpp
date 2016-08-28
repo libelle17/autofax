@@ -4979,7 +4979,7 @@ int paramcl::pruefhyla()
      }
     }
     hconfigtty();obkschreib=1;
-  }
+  } //   if (modems.size()) if (!modems[0].empty()) if (modems[0]!=hmodem) 
   
   vector<string> ruecki;
   // Baud rate ermitteln ...
@@ -4994,7 +4994,8 @@ int paramcl::pruefhyla()
     //    return 1;
   } else {
     Log(string("Modem '")+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+gruen+brs+schwarz+Tx[T_wird_verwendet],obverb,oblog);
-  }
+  } //   if (br<=0) else
+  exit(0);
   if (!this->sfaxgetty) this->sfaxgetty=new servc("hylafax-faxgetty-"+this->hmodem,"faxgetty");
   for(unsigned versuch=0;versuch<3;versuch++) {
     // 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
@@ -5204,6 +5205,7 @@ int paramcl::pruefhyla()
 //        if (!modemlaeuftnicht) break;
       // <<rot<<"Stelle 2, hyinstart: "<<(int)hyinstart<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
         if (hyinstart==hypak || hyinstart==hysrc)
+          exit(0);
           hylalaeuftnicht=hservice_faxq_hfaxd()+fglaeuftnicht;
       // <<rot<<"Stelle 3, hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
         if (!hylalaeuftnicht && !modemlaeuftnicht) break;
@@ -5215,6 +5217,7 @@ int paramcl::pruefhyla()
         }
         if (!iru) {
           hfaxsetup(this,obverb,oblog);
+          exit(0);
           hservice_faxgetty();
         }
       } // for (uchar iru=0;iru<3;iru++)
