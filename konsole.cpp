@@ -2283,7 +2283,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         serviceda=1;
         break;
       } else if (sysrueck[0].find("activating")!=string::npos) {
-        prf.ausgeb(sname);
+        prf.ausgeb();
         if (nureinmal) break;
         if (prf.oberreicht(120)) break;
       } else if (sysrueck[0].find("loaded")!=string::npos) {
