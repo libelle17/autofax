@@ -1615,7 +1615,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
     if (errm) {
       for(size_t i=0;i<errm->size();i++) {
         if (erg==errm->at(i).errnr) {
-          ergebnis=errm->at(i).msg;
+          ergebnis=(erg?rots:schwarzs)+ltoan(erg)+": "+errm->at(i).msg;
           break;
         }
       }
