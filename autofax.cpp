@@ -3915,7 +3915,7 @@ void paramcl::faxealle()
               atoi(*(*cerg+6)), *(*cerg+7), atoi(*(*cerg+8)), (binaer)atoi(*(*cerg+9)), (binaer)atoi(*(*cerg+10)), *(*cerg+11)));
       }
     }
-    Log(string(Tx[T_ZahldDSmwegzuschickendenFaxenin])+spooltab+"`: "+ltoan(fsfv.size()),obverb,oblog);
+    Log(string(Tx[T_ZahldDSmwegzuschickendenFaxenin])+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz,obverb,oblog);
     for(unsigned i=0;i<fsfv.size();i++) {
       Log(string(" i: ")+blau+ltoan(i)+schwarz+Tx[T_PDFDatei]+blau+fsfv[i].spdf+schwarz+
           " ."+Tx[T_obcapimitDoppelpunkt]+blau+(fsfv[i].fobcapi?Tx[T_ja]:Tx[T_nein])+schwarz+
@@ -4219,7 +4219,8 @@ void paramcl::empfarch()
   // 1) hyla
   string hempfavz=varsphylavz+"/autofaxarch"; // /var/spool/capisuite/empfarch/
   // Faxe in der Empfangswarteschlange auflisten, ...
-  cmd=string("sudo find \"")+varsphylavz+"/recvq\" -name \"fax*.tif\" 2>/dev/null";
+  cmd=string("sudo find \"")+varsphylavz+"/recvq\" -name \"fax*.tif\"";
+  if (!obverb) cmd+=" 2>/dev/null";
   vector<string> rueck;
   systemrueck(cmd,obverb,oblog, &rueck);
   for(size_t i=0;i<rueck.size();i++) {
@@ -4388,7 +4389,8 @@ void paramcl::empfarch()
 //  cfaxuserrcvz="/var/spool/capisuite/users/schade/received";
   if (!lstat(cfaxuserrcvz.c_str(),&entryvz)) /* /var/spool/capisuite/users/~/received */ {
     // Faxe in der Empfangswarteschlange auflisten, ...
-    cmd=string("sudo find \"")+cfaxuserrcvz+"\" -maxdepth 1 -type f -iname \"*.txt\" 2>/dev/null";
+    cmd=string("sudo find \"")+cfaxuserrcvz+"\" -maxdepth 1 -type f -iname \"*.txt\"";
+  if (!obverb) cmd+=" 2>/dev/null";
     vector<string> rueck;
     systemrueck(cmd,obverb,oblog, &rueck);
     for(size_t i=0;i<rueck.size();i++) {
