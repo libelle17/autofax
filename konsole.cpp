@@ -184,6 +184,7 @@ void perfcl::ausgeb(const string& stelle)
   cout<<gruen;
   if (!stelle.empty())
    cout<<vonwo<<" "<<stelle<<" "<<++nr;
+   cout<<endl;
   cout<<Txk[T_Dauer]<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" clocks = "
     <<fixed<<(t1-t0)<<schwarz<<setprecision(0)<<" s\r";cout.flush();
 } // void perfcl::ausgeb(const string& stelle)
