@@ -5486,6 +5486,17 @@ int paramcl::pruefcapi()
                 // fuer Kernel 4.3.3-3-default und gcc muss jetzt noch 1) , __DATE__ und __TIME__ aus main.c Zeile 365 entfernt werden,
                 // 2) in driver.c Zeile 373 IRQF_DISABLED durch 0x00 ersetzt werden, dann kompilier- und installierbar
               KLZ
+              systemrueck("cd "+srcvz+";sudo test -f driver.c.bak || sed -i.bak '/request_irq/i#if !defined(IRQF_DISABLED)\\n"
+                  "# define IRQF_DISABLED 0x00\\n#endif' driver.c;"
+                  "sudo sed -e '/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>' "
+                  "-e '/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
+                  "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);' "
+                  "main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
+                  "sudo make clean",1+obverb,oblog);
+              svec rueck;
+              systemrueck("sudo rm -f /root/bin/xargs",1+obverb,oblog);
+              systemrueck("cd "+srcvz+";sudo make all ",1+obverb,oblog); // || { sudo dnf clean all; sudo dnf update; sudo make all; }
+              systemrueck("cd "+srcvz+";sudo make install",1+obverb,oblog);
               */
               systemrueck("ls -l /lib/modules/$(uname -r)/build 2>/dev/null || "
               "{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
@@ -5500,27 +5511,11 @@ int paramcl::pruefcapi()
                   "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);'\\'' "
                   "main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
                   "sudo make clean"," 2>/dev/null; sudo ");
-          exit(0);
-              systemrueck("cd "+srcvz+";sudo test -f driver.c.bak || sed -i.bak '/request_irq/i#if !defined(IRQF_DISABLED)\\n"
-                  "# define IRQF_DISABLED 0x00\\n#endif' driver.c;"
-                  "sudo sed -e '/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>' "
-                  "-e '/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
-                  "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);' "
-                  "main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
-                  "sudo make clean",1+obverb,oblog);
-          exit(0);
-              svec rueck;
-              systemrueck("sudo rm -f /root/bin/xargs",1+obverb,oblog);
-              systemrueck("cd "+srcvz+";sudo make all ",1+obverb,oblog); // || { sudo dnf clean all; sudo dnf update; sudo make all; }
-              systemrueck("cd "+srcvz+";sudo make install",1+obverb,oblog);
             }
           }
         }
-        cout<<violett<<"Stelle 1"<<schwarz<<endl;
         systemrueck("sudo modprobe capi",obverb,oblog);
-        cout<<violett<<"Stelle 2"<<schwarz<<endl;
         systemrueck("sudo modprobe capidrv",obverb,oblog);
-        cout<<violett<<"Stelle 3"<<schwarz<<endl;
       } // if (!fcpcida || !capida || !capidrvda) 
       pruefrules(obverb,oblog);
       pruefblack(obverb,oblog);
@@ -5548,13 +5543,13 @@ int paramcl::pruefcapi()
         if (system==fed) {
         // P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
           string befehl = "which sfftobmp || { cd "+instverz+
-                      " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
-                      " && tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make >/dev/null 2>&1 && sudo make install "
-                      " && yum -y install boost "
-                      " && { grep '/usr/local/lib' /etc/ld.so.conf || { echo '/usr/local/lib' >> /etc/ld.so.conf; ldconfig; } } && cd .. "
-                      " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
-                      " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
-                      " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp "
+           " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
+           " && tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make >/dev/null 2>&1 && sudo make install "
+           " && yum -y install boost "
+           " && { grep '/usr/local/lib' /etc/ld.so.conf || { echo '/usr/local/lib' >> /etc/ld.so.conf; ldconfig; } } && cd .. "
+           " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
+           " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
+           " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp "
 //                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
 //                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
                       " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
