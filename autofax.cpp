@@ -1768,10 +1768,10 @@ void paramcl::pruefmodem()
       if (tty!="ttyS0") {
         svec rue2;
         vector<errmsgcl> errv;
-        string f0="Modem "+blaus+hmodem+schwarz+"gibts";
+        string f0=schwarzs+"Modem "+blau+hmodem+schwarz+"gibts";
         string f1=f0+" nicht";
         errv.push_back(errmsgcl(0,f0));
-        errv.push_back(errmsgcl(0,f1));
+        errv.push_back(errmsgcl(1,f1));
         if (!systemrueck("sudo stty -F /dev/"+tty+" >/dev/null 2>&1",obverb,oblog,&rue2,wahr,wahr,"",&errv)) {
           obmodem=1;
           modems<<tty;
