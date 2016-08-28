@@ -5002,8 +5002,13 @@ int paramcl::pruefhyla()
   } //   if (modems.size()) if (!modems[0].empty()) if (modems[0]!=hmodem) 
   
   vector<string> ruecki;
+  vector<errmsgcl> errv;
+  string f0="Modem "+blaus+hmodem+schwarz+"gibts";
+  string f1=f0+" nicht";
+  errv.push_back(errmsgcl(0,f0));
+  errv.push_back(errmsgcl(0,f1));
   // Baud rate ermitteln ...
-  systemrueck(("sudo stty -F /dev/")+this->hmodem+"| head -n 1 | cut -f2 -d' '",obverb,oblog,&ruecki);
+  systemrueck(("sudo stty -F /dev/")+this->hmodem+"| head -n 1 | cut -f2 -d' '",obverb,oblog,&ruecki,wahr,wahr,"",&errv);
   if (ruecki.size()>0) {
     brs=ruecki[0];
     br=atol(brs.c_str());

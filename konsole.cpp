@@ -1523,7 +1523,7 @@ std::string dir_name(const std::string& path)
 // ausser bei 'find', da die Zahl der Funde
 // bei rueck==0 liefert es das Ergebnis der system(..)-Funktion zurueck
 int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck, 
-    binaer ob0heissterfolg, binaer obergebnisanzeig, const string& ueberschr)
+    binaer ob0heissterfolg, binaer obergebnisanzeig, const string& ueberschr,vector<errmsgcl> *errm)
 {
   uchar neurueck=0;
   uchar weiter=0;
@@ -1619,6 +1619,13 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
         obverb++;
       } else {
         ergebnis=Txk[T_Erfolg];
+      } // ob0heissterfolg else
+      if (errm) {
+       for(size_t i=0;i<errm->size();i++) {
+        if (erg==errm->at(i).errnr) {
+         ergebnis+=" ("+errm->at(i).msg+")";
+        }
+       }
       }
     } else {
       ergebnis=ltoan(erg);

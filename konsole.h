@@ -172,6 +172,13 @@ class Txkonsolecl : public TxB
 
 extern uchar nrzf; // nicht rueckzufragen, fuer Aufruf aus Cron
 
+class errmsgcl
+{
+public:
+ int errnr;
+ string msg;
+ errmsgcl(int errnr,string& msg):errnr(errnr),msg(msg){}
+};
 
 // arg-Class
 class argcl
@@ -514,7 +521,7 @@ int multischlschreib(const string& fname, schlArr **confs, size_t cszahl);
 std::string base_name(const std::string& path);
 std::string dir_name(const std::string& path);
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
-                binaer ob0heissterfolg=wahr, binaer obergebnisanzeig=wahr, const string& ueberschr="");
+                binaer ob0heissterfolg=wahr, binaer obergebnisanzeig=wahr, const string& ueberschr="",vector<errmsgcl> *errm=0);
 void pruefplatte();
 void pruefdoppelt(char* ich);
 int setfaclggf(const string& datei, const binaer obunter=falsch, const int mod=4, binaer obimmer=falsch,int obverb=0,int oblog=0);
