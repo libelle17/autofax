@@ -5071,12 +5071,12 @@ int paramcl::pruefhyla()
     } else if (versuch) {
       exit(0);
     } 
-    cout<<violett<<"Stelle 2"<<schwarz<<endl;
-    break; // zu Testzwecken
     if (hylafehlt) {
       // falls nein, dann schauen, ob startbar
       if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog)) hylafehlt=0;
     }
+    cout<<violett<<"Stelle 2"<<schwarz<<endl;
+    break; // zu Testzwecken
     // <<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
     if (hylafehlt) {
       // 3) ggf. neu installieren
@@ -5224,7 +5224,6 @@ int paramcl::pruefhyla()
         // falls ja, dann starten (falls erst installiert werden muss, dann bei versuch==1
       } // if (0)
       */
-    break; // zu Testzwecken
     } // if (hylafehlt)
     int fglaeuftnicht=0;
     if (1) {
