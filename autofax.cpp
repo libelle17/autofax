@@ -1768,7 +1768,7 @@ void paramcl::pruefmodem()
       if (tty!="ttyS0") {
         svec rue2;
         vector<errmsgcl> errv;
-        string f0=schwarzs+"Modem "+blau+hmodem+schwarz+"gibts";
+        string f0=schwarzs+"Modem "+blau+tty+schwarz+"gibts";
         string f1=f0+" nicht";
         errv.push_back(errmsgcl(0,f0));
         errv.push_back(errmsgcl(1,f1));

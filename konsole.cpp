@@ -1612,24 +1612,27 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
   if (weiter) aktues=Txk[T_Fuehrte_aus];
   if (obverb>0 || oblog) {
     string ergebnis;
-    if (ob0heissterfolg) {
-      if (erg) {
-        ergebnis=rots+string(Txk[T_Fehler])+ltoan(erg)+schwarz;
-        if (obverb>=0) obergebnisanzeig=wahr;
-        obverb++;
-      } else {
-        ergebnis=Txk[T_Erfolg];
-      } // ob0heissterfolg else
-      if (errm) {
-       for(size_t i=0;i<errm->size();i++) {
+    if (errm) {
+      for(size_t i=0;i<errm->size();i++) {
         if (erg==errm->at(i).errnr) {
-         ergebnis+=" ("+errm->at(i).msg+")";
+          ergebnis=errm->at(i).msg;
+          break;
         }
-       }
       }
-    } else {
-      ergebnis=ltoan(erg);
-    }
+    }  // if (errm)
+    if (ergebnis.empty()) {
+      if (ob0heissterfolg) {
+        if (erg) {
+          ergebnis=rots+string(Txk[T_Fehler])+ltoan(erg)+schwarz;
+          if (obverb>=0) obergebnisanzeig=wahr;
+          obverb++;
+        } else {
+          ergebnis=Txk[T_Erfolg];
+        } // ob0heissterfolg else
+      } else {
+        ergebnis=ltoan(erg);
+      }
+    } //     if (ergebnis.empty() {
 #ifdef systemrueckprofiler
     prf.ausgab1000("vor log");
 #endif
