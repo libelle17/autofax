@@ -2101,7 +2101,7 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fall
         ret=systemrueck("sudo zypper -n --gpg-auto-import-keys in -f "+eprog,obverb+1,oblog);
         break;
       case apt:
-        ret=systemrueck("sudo apt -y install "+eprog,obverb+1,oblog);
+        ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog);
         break; 
       case dnf:
         ret=systemrueck("sudo dnf -y install "+eprog,obverb+1,oblog);
@@ -2140,7 +2140,7 @@ uchar linstcl::douninst(const string& prog,int obverb,int oblog)
       return systemrueck("sudo zypper -n rm "+prog,obverb,oblog);
       break;
     case apt:
-      return systemrueck("sudo apt -y remove "+ersetzeprog(prog),obverb,oblog);
+      return systemrueck("sudo apt-get -y remove "+ersetzeprog(prog),obverb,oblog);
       break; 
     case dnf:
       return systemrueck("sudo dnf -y remove "+ersetzeprog(prog),obverb,oblog);
@@ -2283,7 +2283,8 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         break;
       } else if (sysrueck[0].find("activating")!=string::npos) {
         prf.ausgeb(sname);
-        if (nureinmal || prf.oberreicht(120)) break;
+        if (nureinmal) break;
+        if (prf.oberreicht(120)) break;
       } else if (sysrueck[0].find("loaded")!=string::npos) {
         serviceda=1;
         break;
