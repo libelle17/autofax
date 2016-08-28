@@ -157,6 +157,9 @@ enum Tkonsole_
   T_laeuft_schon_einmal_Breche_ab,
   T_Wert,
   T_Dauer,
+  T_Dienst,
+  T_geladen,
+  T_nicht_geladen,
   T_konsoleMAX,
 };
 

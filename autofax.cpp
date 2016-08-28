@@ -1696,12 +1696,12 @@ void paramcl::getcommandl0()
 {
   Log(violetts+"getcommandl0()"+schwarz,obverb,oblog);
   // Reihenfolge muss koordiniert werden mit lieskonfein und rueckfragen
-  cgconf.init(36, "language","host","muser","mpwd","datenbank","logvz","logdname","sqlz","musterzahl",
+  cgconf.init(36, "language","host","muser","mpwd","datenbank","sqlz","musterzahl",
     "obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
     "countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
     "cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl",
     "gleichziel","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
-    "anstr","undstr","cronminut");
+    "anstr","undstr","cronminut","logvz","logdname");
   uchar plusverb=0;
   //  for(int i=argc-1;i>0;i--) KLA if (argv[i][0]==0) argc--; KLZ // damit fuer das Compilermakro auch im bash-script argc stimmt
   for(unsigned iru=0;iru<3;iru++) {
@@ -1768,7 +1768,7 @@ void paramcl::pruefmodem()
       if (tty!="ttyS0") {
         svec rue2;
         vector<errmsgcl> errv;
-        string f0=schwarzs+"Modem "+blau+tty+schwarz+"gibts";
+        string f0=schwarzs+"Modem "+blau+tty+schwarz+" gibts";
         string f1=f0+" nicht";
         errv.push_back(errmsgcl(0,f0));
         errv.push_back(errmsgcl(1,f1));
@@ -2186,12 +2186,6 @@ void paramcl::lieskonfein()
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&muser); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) mpwd=XOR(string(cgconf[lfd].wert),pk); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&dbq); else rzf=1; lfd++;
-    if (logvneu) cgconf[lfd].setze(&logvz);
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logvz); else rzf=1; lfd++;
-    if (logdneu) cgconf[lfd].setze(&logdname);
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logdname); else rzf=1; lfd++;
-    loggespfad=logvz+vtz+logdname;
-    logdt=&loggespfad.front();
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&sqlz); else rzf=1; lfd++;
     setzsql(afconf);
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&zmz); else rzf=1; lfd++;
@@ -2227,6 +2221,12 @@ void paramcl::lieskonfein()
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&anstr); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&undstr); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cronminut); else rzf=1; lfd++;
+    if (logvneu) cgconf[lfd].setze(&logvz);
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logvz); else rzf=1; lfd++;
+    if (logdneu) cgconf[lfd].setze(&logdname);
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logdname); else rzf=1; lfd++;
+    loggespfad=logvz+vtz+logdname;
+    logdt=&loggespfad.front();
   } else {
     rzf=1;
   } // (1) else
@@ -2399,16 +2399,6 @@ void paramcl::rueckfragen()
       dbq=Tippstring(string(Tx[T_Datenbankname_fuer_MySQL_MariaDB_auf])+host+"'",&dbq);
       cgconf[lfd].setze(&dbq);
     }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      logvz=Tippverz(Tx[T_Logverzeichnis],&logvz);
-      cgconf[lfd].setze(&logvz);
-    }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      logdname=Tippstring(Tx[T_Logdateiname],&logdname);
-      cgconf[lfd].setze(&logdname);
-    }
-    loggespfad=string(logvz)+vtz+logdname;
-    logdt=&loggespfad.front();
 //      for(size_t zkt=0;zkt<sqlzn;zkt++) KLA
 //        <<"zkt: "<<blau<<zkt<<schwarz<<", sqlconf["<<zkt<<"]: "<<rot<<sqlconf[zkt].wert<<schwarz<<endl;
 //        <<gruen<<(sqlconf[zkt].wert.empty()?sqlconfvp[zkt].wert:sqlconf[zkt].wert)<<schwarz<<endl;
@@ -2732,6 +2722,16 @@ void paramcl::rueckfragen()
       cronminut=Tippzahl(Tx[T_Alle_wieviel_Minuten_soll]+prog+Tx[T_aufgerufen_werden_0_ist_gar_nicht],&cronminut);
       cgconf[lfd].setze(&cronminut);
     }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      logvz=Tippverz(Tx[T_Logverzeichnis],&logvz);
+      cgconf[lfd].setze(&logvz);
+    }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      logdname=Tippstring(Tx[T_Logdateiname],&logdname);
+      cgconf[lfd].setze(&logdname);
+    }
+    loggespfad=string(logvz)+vtz+logdname;
+    logdt=&loggespfad.front();
   } // if (rzf)
 
   // hier wurde falls noetig ermittelt, ob Fritzcard/Modem vorhanden

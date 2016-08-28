@@ -145,6 +145,12 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {" Wert: "," Value: "},
   // T_Dauer
   {" Dauer: "," Duration: "},
+  // T_Dienst
+  {"Dienst ","Service "},
+  // T_geladen
+  {" geladen"," loaded"},
+  // T_nicht_geladen
+  {" nicht geladen"," not loaded"},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -2282,7 +2288,13 @@ int servc::obslaeuft(int obverb,int oblog)
     }
   } // while (1)
   if (!serviceda) {
-    serviceda=!systemrueck("systemctl status '"+sname+"'| grep ' loaded '",obverb,oblog);
+    vector<errmsgcl> errv;
+    string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
+    string f0=froh+Txk[T_geladen];
+    string f1=froh+Txk[T_nicht_geladen];
+    errv.push_back(errmsgcl(0,f0));
+    errv.push_back(errmsgcl(1,f1));
+    serviceda=!systemrueck("systemctl status '"+sname+"'| grep ' loaded '",obverb,oblog,0,wahr,wahr,"",&errv);
   }
   return servicelaeuft;
 } // int servc::obslaeuft(int obverb,int oblog)
