@@ -5071,12 +5071,13 @@ int paramcl::pruefhyla()
     } else if (versuch) {
       exit(0);
     } 
+  cout<<violett<<"Stelle 7"<<schwarz<<endl;
     if (hylafehlt) {
       // falls nein, dann schauen, ob startbar
       if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog)) hylafehlt=0;
     }
   obverb=0;
-    cout<<violett<<"Stelle 2"<<schwarz<<endl;
+    cout<<violett<<"Stelle 8"<<schwarz<<endl;
     break; // zu Testzwecken
     // <<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
     if (hylafehlt) {
@@ -5238,7 +5239,7 @@ int paramcl::pruefhyla()
 //        if (!modemlaeuftnicht) break;
       // <<rot<<"Stelle 2, hyinstart: "<<(int)hyinstart<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
         if (hyinstart==hypak || hyinstart==hysrc)
-          cout<<violett<<"Stelle 2"<<schwarz<<endl;
+          cout<<violett<<"Stelle 20"<<schwarz<<endl;
           if (0)
           hylalaeuftnicht=hservice_faxq_hfaxd()+fglaeuftnicht;
       // <<rot<<"Stelle 3, hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
@@ -5251,7 +5252,7 @@ int paramcl::pruefhyla()
         }
         if (!iru) {
           hfaxsetup(this,obverb,oblog);
-          cout<<violett<<"Stelle 3"<<schwarz<<endl;
+          cout<<violett<<"Stelle 30"<<schwarz<<endl;
           if (0)
           hservice_faxgetty();
         }
