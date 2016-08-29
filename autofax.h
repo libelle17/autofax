@@ -123,6 +123,7 @@ class paramcl // Programmparameter
     uchar loee=0; // empfangene Dateien loeschen, die nicht verarbeitet werden koennen
     uchar kez=0;    // korrigiere Erfolgskennzeichen
     uchar bwv=0;    // bereinige Warteverzeichnis
+    uchar anhl=0;    // autofax anhalten
     uchar lista=0;   // liste Archiv auf
     uchar listf=0;   // liste gescheiterte auf
     uchar listi=0;   // liste Eingegangene auf
@@ -285,6 +286,7 @@ class paramcl // Programmparameter
 
     void korrerfolgszeichen();
     void bereinigewv();
+    void anhalten();
     void tu_lista(const string& oberfolg);
     void tu_listi();
     void DateienHerricht();

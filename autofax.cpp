@@ -346,6 +346,7 @@ enum T_
   T_pruefcron,
   T_korrerfolgszeichen,
   T_bereinigewv,
+  T_anhalten,
   T_loeschefax,
   T_loeschewaise,
   T_loescheallewartenden,
@@ -483,6 +484,7 @@ enum T_
   T_aktuelle_Einstellungen_aus,
   T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,
   T_Muss_falsches_hylafax_loeschen,
+  T_autofax_anhalten,
   T_MAX
 };
 
@@ -1079,6 +1081,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"korrerfolgszeichen()","correctwrongsuccessflag()"},
   // T_bereinigewv
   {"bereinigewv()","purgewaitingdirectory()"},
+  // T_anhalten
+  {"anhalten()","stop()"},
   // T_loeschefax
   {"loeschefax()","deletefax()"},
   // T_loeschewaise,
@@ -1360,6 +1364,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Gescheiterte Faxe werden hier gesammelt anstatt in","Failed Faxes are collected here and not in"}, 
   // T_Muss_falsches_hylafax_loeschen
   {"Muss falsches hylafax loeschen!!!","Have to delete the wrong hylafax!!!"},
+  // T_autofax_anhalten
+  {"autofax anhalten","stop autofax"},
   {"",""}
 };
 
@@ -2286,6 +2292,7 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("loee","loescheempf", &Tx, T_empfangene_Dateien_loeschen_die_nicht_verarbeitet_werden_koennen,&loee,1));
   opts.push_back(optioncl("kez","korrerfolgszeichen", &Tx, T_in_der_Datenbanktabelle, &touta, T_wird_das_Erfolgszeichen_korrigiert, &kez,1));
   opts.push_back(optioncl("bwv","bereinigewv", &Tx, T_Dateien_aus_Warteverzeichnis_gegen, &touta, T_pruefen_und_verschieben, &bwv,1));
+  opts.push_back(optioncl("st","stop", &Tx, T_autofax_anhalten,&anhl,1));
   opts.push_back(optioncl("lista","listarchiv", &Tx, T_listet_Datensaetze_aus, &touta, T_mit_Erfolgskennzeichen_auf, &lista,1));
   opts.push_back(optioncl("listf","listfailed", &Tx, T_listet_Datensaetze_aus, &touta, T_ohne_Erfolgskennzeichen_auf, &listf,1));
   opts.push_back(optioncl("listi","listinca", &Tx, T_listet_Datensaetze_aus, &tinca, T__auf, &listi,1));
@@ -3473,6 +3480,13 @@ void paramcl::bereinigewv()
     } // while (cerg=rsp.HolZeile(),cerg?*cerg:0) 
   } // for(unsigned runde=0;runde<3;runde++) 
 } // bereinigewv
+
+// Parameter -anhl
+// wird aufgerufen in: main
+void paramcl::anhalten()
+{
+  Log(violetts+Tx[T_anhalten]+schwarz,obverb,oblog);
+}
 
 // wird aufgerufen in: main
 int paramcl::loeschefax(int obverb, int oblog)
@@ -6611,6 +6625,8 @@ int main(int argc, char** argv)
     pm.korrerfolgszeichen();
   } else if (pm.bwv) {
     pm.bereinigewv();
+  } else if (pm.anhl) {
+    pm.anhalten();
   } else if (pm.lista) {
     pm.tu_lista("1");
   } else if (pm.listf) {
@@ -6665,3 +6681,4 @@ int main(int argc, char** argv)
 // bei hyla aktiven Sendevorgang markieren
 // evtl. die Ausgaben verschiedener capisuitefax -Parameter beruecksichtigen
 // Aenderung der Klingelzahl korrigieren
+// Dienste und cron stoppen: -st --stop
