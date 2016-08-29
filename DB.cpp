@@ -293,13 +293,13 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
               case 1044: // Access denied for user '<user>'@'<host>' to database '...' (Ubuntu)
               case 1045: // Access denied for user '<user>'@'<host>' (using password: YES)
               case 1698: // dasselbe auf Ubuntu
-                while (1) {
+                for(unsigned aru=0;aru<1;aru++) {
                   for(unsigned iru=0;iru<2;iru++) {
                     cmd=string("sudo mysql -uroot -h'")+host+"' "+(rootpwd.empty()?"":string("-p")+rootpwd)+" -e \"GRANT ALL ON "+uedb+".* TO '"+
                       user+"'@'"+myloghost+"' IDENTIFIED BY '"+ersetze(passwd.c_str(),"\"","\\\"")+"' WITH GRANT OPTION\" 2>&1";
                     if (iru) break;
                     pruefrpw(cmd, versuchzahl);
-                  }
+                  } //                   for(unsigned iru=0;iru<2;iru++) {
                   myr.clear();
                   systemrueck(cmd,1,1,&myr);
                   miterror=1;
@@ -324,7 +324,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                     Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
                   }
 #endif
-                }
+                } //                 if (!strcasecmp(host.c_str(),"localhost")) {
                 break;
               case 1049:
                 if (ggferstellen) {
@@ -344,7 +344,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                     }
                   } else {
                     Log(string(Txd[T_Fehler_beim_Verbinden])+ltoan(fehnr),1,1);
-                  }
+                  } //                   if (!fehnr) {
                   // if (ggferstellen)
                 } else {
                   Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz,obverb,oblog);
@@ -354,10 +354,10 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                 break;
               default:
                 Log(string(Txd[T_Fehler_db])+drot+ltoan(mysql_errno(conn))+schwarz+" "+blau+mysql_error(conn)+schwarz,1,1);
-            }
+            } //             switch ((fehnr=mysql_errno(conn))) {
             if (!fehnr) break;
-          }
-        }
+          } //           if (mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), uedb, port, unix_socket, client_flag))  else 
+        } //         for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
         if (!fehnr && conn) {
           Log(string(Txd[T_Erfolg_beim_Initialisieren_der_Verbindung_zu_mysql]),obverb>1,oblog);
           this->ConnError=NULL;
