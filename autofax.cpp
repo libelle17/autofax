@@ -1,4 +1,4 @@
-// Aenderung in linux17
+//  Aenderung in linux17
 // Namenskonvention: erste Praeferenz wurde darauf gelegt, dass mit der Editor-Suchfunktion moeglichst alle gleichen Bezeichner gefunden werden koennen, zweite Praeferenz darauf, dass deutsche und englische Namenbestandteile moeglichst gut gemischt werden
 #ifdef linux
 // #include <pgsql/libpq-fe.h> // PGconn
