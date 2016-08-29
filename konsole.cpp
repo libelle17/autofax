@@ -1674,7 +1674,7 @@ void pruefplatte()
 void pruefmehrfach(char* ich)
 {
   svec rueck;
-  systemrueck(string("ps -eo command | grep '")+ich+"'",0,0,&rueck);
+  systemrueck(string("ps -eo command | grep '^")+ich+"'",0,0,&rueck);
   if (rueck.size()>1) {
     cout<<Txk[T_Program]<<blau<<ich<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
     exit(0);
