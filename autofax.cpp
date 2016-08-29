@@ -486,7 +486,6 @@ enum T_
   T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,
   T_Muss_falsches_hylafax_loeschen,
   T_autofax_anhalten,
-  T_laeuft_schon_darf_nicht_mehrfach_aufgerufen_werden_breche_daher_ab,
   T_MAX
 };
 
@@ -1368,8 +1367,6 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Muss falsches hylafax loeschen!!!","Have to delete the wrong hylafax!!!"},
   // T_autofax_anhalten
   {"autofax anhalten","stop autofax"},
-  // T_laeuft_schon_darf_nicht_mehrfach_aufgerufen_werden_breche_daher_ab
-  {" laeuft schon, darf nicht mehrfach aufgerufen werden, breche daher ab ..."," runs already, must not be called twice, therefore aborting ..."},
   {"",""}
 };
 
