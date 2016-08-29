@@ -3486,6 +3486,9 @@ void paramcl::bereinigewv()
 void paramcl::anhalten()
 {
   Log(violetts+Tx[T_anhalten]+schwarz,obverb,oblog);
+  // crontab
+  // services
+  systemrueck("sudo systemctl stop capisuite hylafax-hfaxd hylfax-faxq",obverb,oblog);
 }
 
 // wird aufgerufen in: main
