@@ -1701,10 +1701,12 @@ void paramcl::logvorgaben(const string& vprog)
   {
    svec rueck;
    systemrueck("ps -eco command | grep '"+prog+"'",0,0,&rueck);
-   if (rueck.size()>2) { // den eigenen Aufruf auch bedenken
+   if (rueck.size()>1) { // den eigenen Aufruf auch bedenken
     Log(Tx[T_Programm]+blaus+prog+schwarz+Tx[T_laeuft_schon_darf_nicht_doppelt_aufgerufen_werden_breche_daher_ab],1,1);
     exit(0);
    }
+   cout<<"rueck.size: "<<rot<<rueck.size()<<schwarz<<endl;
+   if (rueck.size()) cout<<rueck[0]<<endl;
   } //   void paramcl::nichtdoppelt()
 
 // wird aufgerufen in: main
