@@ -1369,7 +1369,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_autofax_anhalten
   {"autofax anhalten","stop autofax"},
   // T_laeuft_schon_darf_nicht_doppelt_aufgerufen_werden_breche_daher_ab
-  {"laeuft schon, darf nicht doppelt aufgerufen werden, breche daher ab ...","runs already, must not be called twice, therefore aborting ..."},
+  {" laeuft schon, darf nicht doppelt aufgerufen werden, breche daher ab ..."," runs already, must not be called twice, therefore aborting ..."},
   {"",""}
 };
 
@@ -1702,7 +1702,7 @@ void paramcl::logvorgaben(const string& vprog)
    svec rueck;
    systemrueck("ps -eco command | grep '"+prog+"'",0,0,&rueck);
    if (rueck.size()) {
-    Log(Tx[T_Programm]+prog+Tx[T_laeuft_schon_darf_nicht_doppelt_aufgerufen_werden_breche_daher_ab],1,1);
+    Log(Tx[T_Programm]+blaus+prog+schwarz+Tx[T_laeuft_schon_darf_nicht_doppelt_aufgerufen_werden_breche_daher_ab],1,1);
     exit(0);
    }
   } //   void paramcl::nichtdoppelt()
