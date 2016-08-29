@@ -1009,26 +1009,26 @@ void kopiere(string *quelle, string *ziel)
 } // void kopiere(string *quelle, string *ziel)
 
 
-void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtdoppelt)
+void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach)
 {
   string texts=text;
-  aufSplit(tokens,&texts,sep,nichtdoppelt);
-} // void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtdoppelt)
+  aufSplit(tokens,&texts,sep,nichtmehrfach);
+} // void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach)
 
 
-void aufSplit(vector<string> *tokens, const string *text, char sep,bool nichtdoppelt) 
+void aufSplit(vector<string> *tokens, const string *text, char sep,bool nichtmehrfach) 
 {
   int start = 0, end = 0;
   tokens->clear();
   while ((end = text->find(sep, start)) != (int)string::npos) {
-    if (nichtdoppelt || end!=start) tokens->push_back(text->substr(start, end - start));
+    if (nichtmehrfach || end!=start) tokens->push_back(text->substr(start, end - start));
     start = end + 1;
   }
   tokens->push_back(text->substr(start));
-} // void aufSplit(vector<string> *tokens, const string *text, char sep,bool nichtdoppelt) 
+} // void aufSplit(vector<string> *tokens, const string *text, char sep,bool nichtmehrfach) 
 
 
-void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtdoppelt) 
+void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach) 
 {
   int start = 0, end = 0;
   size_t len = strlen(sep);
@@ -1039,27 +1039,27 @@ void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool 
   transform(text->begin(),text->end(),std::back_inserter(utext),::toupper);
   tokens->clear();
   while ((end = utext.find(usep, start)) != (int)string::npos) {
-    if (nichtdoppelt || end!=start) {
+    if (nichtmehrfach || end!=start) {
       tokens->push_back(text->substr(start, end - start));
     }
     start = end + len;
   }
   tokens->push_back(text->substr(start));
   delete usep;
-} // void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtdoppelt) 
+} // void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach) 
 
 
-void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtdoppelt) 
+void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtmehrfach) 
 {
   int start = 0, end = 0;
   int len = strlen(sep);
   tokens->clear();
   while ((end = text->find(sep, start)) != (int)string::npos) {
-    if (nichtdoppelt || end!=start) tokens->push_back(text->substr(start, end - start));
+    if (nichtmehrfach || end!=start) tokens->push_back(text->substr(start, end - start));
     start = end + len;
   }
   tokens->push_back(text->substr(start));
-} // void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtdoppelt) 
+} // void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtmehrfach) 
 
 string* anfzweg(string& quel) {
   if (quel.length()>1) {if (quel[0]==quel[quel.length()-1] && strchr("\"'",quel[0])) {
@@ -1671,14 +1671,14 @@ void pruefplatte()
   }
 } // pruefplatte
 
-void pruefdoppelt(char* ich)
+void pruefmehrfach(char* ich)
 {
- svec rueck;
- systemrueck(string("ps -a | grep '")+ich+"'",0,0,&rueck);
- if (rueck.size()>1) {
-  cout<<Txk[T_Program]<<blau<<ich<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
-  exit(0);
- }
+  svec rueck;
+  systemrueck(string("ps -eo command | grep '")+ich+"'",0,0,&rueck);
+  if (rueck.size()>1) {
+    cout<<Txk[T_Program]<<blau<<ich<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
+    exit(0);
+  }
 }
 
 // <datei> kann auch Verzeichnis sein

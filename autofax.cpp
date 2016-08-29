@@ -486,7 +486,7 @@ enum T_
   T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,
   T_Muss_falsches_hylafax_loeschen,
   T_autofax_anhalten,
-  T_laeuft_schon_darf_nicht_doppelt_aufgerufen_werden_breche_daher_ab,
+  T_laeuft_schon_darf_nicht_mehrfach_aufgerufen_werden_breche_daher_ab,
   T_MAX
 };
 
@@ -1368,8 +1368,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Muss falsches hylafax loeschen!!!","Have to delete the wrong hylafax!!!"},
   // T_autofax_anhalten
   {"autofax anhalten","stop autofax"},
-  // T_laeuft_schon_darf_nicht_doppelt_aufgerufen_werden_breche_daher_ab
-  {" laeuft schon, darf nicht doppelt aufgerufen werden, breche daher ab ..."," runs already, must not be called twice, therefore aborting ..."},
+  // T_laeuft_schon_darf_nicht_mehrfach_aufgerufen_werden_breche_daher_ab
+  {" laeuft schon, darf nicht mehrfach aufgerufen werden, breche daher ab ..."," runs already, must not be called twice, therefore aborting ..."},
   {"",""}
 };
 
@@ -1696,18 +1696,6 @@ void paramcl::logvorgaben(const string& vprog)
   loggespfad=logvz+vtz+logdname;
   logdt=&loggespfad.front();
 } // void paramcl::logvorgaben
-
-  void paramcl::nichtdoppelt()
-  {
-   svec rueck;
-   systemrueck("ps -eco command | grep '"+prog+"'",0,0,&rueck);
-   if (rueck.size()>1) { // den eigenen Aufruf auch bedenken
-    Log(Tx[T_Programm]+blaus+prog+schwarz+Tx[T_laeuft_schon_darf_nicht_doppelt_aufgerufen_werden_breche_daher_ab],1,1);
-    exit(0);
-   }
-   cout<<"rueck.size: "<<rot<<rueck.size()<<schwarz<<endl;
-   if (rueck.size()) cout<<rueck[0]<<endl;
-  } //   void paramcl::nichtdoppelt()
 
 // wird aufgerufen in: main
 void paramcl::getcommandl0()
@@ -6608,11 +6596,10 @@ void paramcl::zeigkonf()
 
 int main(int argc, char** argv) 
 {
-  pruefdoppelt(*argv);
+  pruefmehrfach(*argv);
   pruefplatte();
   paramcl pm(argc,argv); // Programmparameter
   pm.logvorgaben(*argv);
-  pm.nichtdoppelt();
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
       pm.VorgbAllg();
   pm.VorgbSpeziell();

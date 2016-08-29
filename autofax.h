@@ -264,7 +264,6 @@ class paramcl // Programmparameter
     void nextnum();
     string stdfaxnr(const string& faxnr);
     void logvorgaben(const string& vprog);
-    void nichtdoppelt();
     void getcommandl0();
     void pruefmodem();
     void pruefisdn();

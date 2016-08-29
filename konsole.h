@@ -512,10 +512,10 @@ extern const char *logdt;
 
 int kuerzelogdatei(const char* logdatei,int obverb);
 void kopiere(string *quelle, string *ziel);
-void aufSplit(vector<string> *tokens, const string *text, char sep, bool nichtdoppelt=1);
-void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtdoppelt=1);
-void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtdoppelt=1);
-void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtdoppelt=1);
+void aufSplit(vector<string> *tokens, const string *text, char sep, bool nichtmehrfach=1);
+void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach=1);
+void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach=1);
+void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtmehrfach=1);
 void getstammext(string *ganz, string *stamm, string *exten);
 // int cpplies(string fname,cppSchluess *conf,size_t csize,vector<string> *rest=0,char tz='=',short obverb=0);
 string XOR(const string& value, const string& key);
@@ -528,7 +528,7 @@ std::string dir_name(const std::string& path);
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
                 binaer ob0heissterfolg=wahr, binaer obergebnisanzeig=wahr, const string& ueberschr="",vector<errmsgcl> *errm=0);
 void pruefplatte();
-void pruefdoppelt(char* ich);
+void pruefmehrfach(char* ich);
 int setfaclggf(const string& datei, const binaer obunter=falsch, const int mod=4, binaer obimmer=falsch,int obverb=0,int oblog=0);
 int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=1);
 string aktprogverz();
