@@ -3488,7 +3488,11 @@ void paramcl::anhalten()
   Log(violetts+Tx[T_anhalten]+schwarz,obverb,oblog);
   // crontab
   // services
-  systemrueck("sudo systemctl stop capisuite hylafax-hfaxd hylfax-faxq",obverb,oblog);
+  if (sfaxgetty) sfaxgetty->stopdis(obverb,oblog);
+  if (shfaxd) shfaxd->stopdis(obverb,oblog);
+  if (sfaxq) sfaxq->stopdis(obverb,oblog);
+  if (shylafaxd) shylafaxd->stopdis(obverb,oblog);
+  if (scapisuite) scapisuite->stopdis(obverb,oblog);
 }
 
 // wird aufgerufen in: main

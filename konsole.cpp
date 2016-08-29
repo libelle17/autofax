@@ -2342,6 +2342,12 @@ void servc::stop(int obverb,int oblog)
   systemrueck(string("sudo systemctl stop '")+sname+"' >/dev/null 2>&1",obverb,oblog);
 } // int servc::stop(int obverb,int oblog)
 
+void servc::stopdis(int obverb,int oblog)
+{
+  stop(obverb,oblog);
+  systemrueck(string("sudo systemctl disable '")+sname+"' >/dev/null 2>&1",obverb,oblog);
+} // int servc::stop(int obverb,int oblog)
+
 int servc::enableggf(int obverb,int oblog)
 {
  return systemrueck(string("systemctl is-enabled '")+sname+"' >/dev/null 2>&1 || sudo systemctl enable '"+sname+"' >/dev/null 2>&1",obverb,oblog);
