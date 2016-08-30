@@ -3494,7 +3494,7 @@ void paramcl::anhalten()
   if (sfaxq) sfaxq->stopdis(obverb,oblog);
   if (shylafaxd) shylafaxd->stopdis(obverb,oblog);
   if (scapisuite) scapisuite->stopdis(obverb,oblog);
-}
+} // void paramcl::anhalten()
 
 // wird aufgerufen in: main
 int paramcl::loeschefax(int obverb, int oblog)
@@ -6678,8 +6678,8 @@ int main(int argc, char** argv)
       Log(blaus+Tx[T_Ende]+schwarz,pm.obverb,pm.oblog);
       pm.schlussanzeige();
     } // if (pm.loef || pm.loew || pm.loea) else
+    pm.pruefcron();
   } // if (pm.kez) else else else
-  pm.pruefcron();
   pm.autofkonfschreib();
   return 0;
 } // int main(int argc, char** argv) 
