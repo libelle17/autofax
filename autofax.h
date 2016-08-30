@@ -101,10 +101,10 @@ class paramcl // Programmparameter
     double tstart, tende;
     svec modems;       // gefundene Modems
     size_t optslsz=0; // last opts.size()
-    string ich; // argv[0]
   public:
-    string prog; // 'autofax'
-    string instverz; // $HOME/autofax
+    string meinname; // base_name(meinpfad()) // argv[0] // 'autofax'
+    string saufr; // (stummaufruf) 'autofax -norf'
+    string instverz=""; // $HOME/autofax
 //    cppSchluess *hconfp=0;
     schlArr hylconf;
     uchar hgelesen=0; // Protokolldatei war auslesbar
@@ -263,7 +263,7 @@ class paramcl // Programmparameter
     ~paramcl();
     void nextnum();
     string stdfaxnr(const string& faxnr);
-    void logvorgaben(const string& vprog);
+    void logvorgaben();
     void getcommandl0();
     void pruefmodem();
     void pruefisdn();
@@ -292,6 +292,7 @@ class paramcl // Programmparameter
     void DateienHerricht();
     void clieskonf();
     int pruefcapi();
+    void pruefinstv();
     void holvongithub(string datei);
     int kompiliere(string was,string endg, string vorcfg="true",string cfgbismake=" && ");
     void hliesconf();
@@ -307,7 +308,7 @@ class paramcl // Programmparameter
     void untersuchespool();
     void zeigweitere();
     void empfarch();
-    void schlussanzeige(const char* const progname);
+    void schlussanzeige();
     void autofkonfschreib();
     void zeigkonf();
 }; // class paramcl

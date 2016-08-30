@@ -1552,12 +1552,12 @@ paramcl::paramcl(int argc, char** argv)
   for(int i=1;i<argc;i++)
     if (argv[i][0])
       argcmv.push_back(argcl(i,argv)); 
-  ich=argv[0];
+  meinname=base_name(meinpfad());// argv[0];
+  saufr=meinname+" -norf";
   tstart=clock();
   cklingelzahl="1";
   hklingelzahl="2"; // muss mindestens 2 sein, um die Nr. des anrufenden zu uebertragen
   konfdatname.clear();
-  scapisuite=new servc("","capisuite");
 } // paramcl::paramcl()
 
 paramcl::~paramcl()
@@ -1680,16 +1680,14 @@ void paramcl::lgnzuw()
 
 
 // wird aufgerufen in: main
-void paramcl::logvorgaben(const string& vprog)
+void paramcl::logvorgaben()
 {
 #ifdef _WIN32
   logvz = "C:\\Dokumente und Einstellungen\\All Users\\Anwendungsdaten";
 #elif linux
   logvz = "/var/log";
 #endif
-  prog=base_name(vprog); // autofax
-  instverz=string(getenv("HOME"))+'/'+prog;
-  logdname = prog+".log";
+  logdname = meinname+".log";
   loggespfad=logvz+vtz+logdname;
   logdt=&loggespfad.front();
 } // void paramcl::logvorgaben
@@ -1928,10 +1926,10 @@ void paramcl::VorgbSpeziell()
   cFaxUeberschrift=Tx[T_Mei_FaxUeberschrift];
   sqlz=sqlvz="0";
 //  host="localhost"; // 'localhost' schon Vorgabe bei Definition
-  zufaxenvz="/var/"+prog+vtz+Tx[T_zufaxen];
-  wvz="/var/"+prog+vtz+Tx[T_warteauffax];
-  nvz="/var/"+prog+vtz+Tx[T_nichtgefaxt];
-  empfvz="/var/"+prog+vtz+Tx[T_empfvz];
+  zufaxenvz="/var/"+meinname+vtz+Tx[T_zufaxen];
+  wvz="/var/"+meinname+vtz+Tx[T_warteauffax];
+  nvz="/var/"+meinname+vtz+Tx[T_nichtgefaxt];
+  empfvz="/var/"+meinname+vtz+Tx[T_empfvz];
   static zielmustercl zmi[]={zielmustercl("[Ss]pamfax","/var/autofax/spam"),zielmustercl("","/var/autofax/gesandt")}; // nur als Beispiel
   zmvp=zmi;
   zmvzn=sizeof zmi/sizeof *zmi;
@@ -2092,7 +2090,7 @@ void paramcl::pruefcvz()
 void paramcl::setzzielmuster(confdat& afconf)
 {
     if (!zmvzn || !zmvp) {
-      zmvp= new zielmustercl{"","/var/"+prog+"/ziel"};
+      zmvp= new zielmustercl{"","/var/"+meinname+"/ziel"};
       zmvzn=1;
     }
     zmvz=ltoan(zmvzn); // aus VorgbSpeziell
@@ -2246,7 +2244,7 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("nvz","nichtgefaxtvz", &Tx, T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,&nvz,pverz,
           &cgconf,"nichtgefaxtvz",&obkschreib));
   opts.push_back(optioncl("evz","empfvz", &Tx, T_Empfangsverzeichnis_fuer_Faxempfang,&empfvz,pverz,&cgconf,"empfvz",&obkschreib));
-  opts.push_back(optioncl("cm","cronminut", &Tx,T_Alle_wieviel_Minuten_soll,&prog,T_aufgerufen_werden_0_ist_gar_nicht, &cronminut, pzahl, 
+  opts.push_back(optioncl("cm","cronminut", &Tx,T_Alle_wieviel_Minuten_soll,&meinname,T_aufgerufen_werden_0_ist_gar_nicht, &cronminut, pzahl, 
                           &cgconf,"cronminut",&obkschreib));
   opts.push_back(optioncl("capi","obcapi", &Tx, T_Capisuite_verwenden ,&obcapi,1,&cgconf,"obcapi",&obkschreib));
   opts.push_back(optioncl("nocapi","keincapi", &Tx, T_Capisuite_nicht_verwenden,&obcapi,0,&cgconf,"obcapi",&obkschreib));
@@ -2352,7 +2350,7 @@ int paramcl::getcommandline()
   lgnzuw();
   Log(string(Tx[T_Fertig_mit_Parsen_der_Befehlszeile]),obverb>1,oblog);
   if (hilfe){
-    cout<<blau<<Tx[T_Gebrauch]<<drot<<ich<<" [-<opt>|--<longopt> [<content>]] ..."<<schwarz<<endl; 
+    cout<<blau<<Tx[T_Gebrauch]<<drot<<meinname<<" [-<opt>|--<longopt> [<content>]] ..."<<schwarz<<endl; 
     cout<<blau<<Tx[T_Faxt_Dateien_aus_Verzeichnis_pfad_die]<<anfaxstr<<
       Tx[T_faxnr_enthalten_und_durch_soffice_in_pdf_konvertierbar_sind_und_traegt_sie]
       <<drot<<dbq<<blau<<Tx[T_Tabellen]<<drot<<touta<<blau<<"`,`"<<drot<<spooltab<<blau<<Tx[T_aein]<<endl;
@@ -2723,7 +2721,7 @@ void paramcl::rueckfragen()
       cgconf[lfd].setze(&undstr);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      cronminut=Tippzahl(Tx[T_Alle_wieviel_Minuten_soll]+prog+Tx[T_aufgerufen_werden_0_ist_gar_nicht],&cronminut);
+      cronminut=Tippzahl(Tx[T_Alle_wieviel_Minuten_soll]+meinname+Tx[T_aufgerufen_werden_0_ist_gar_nicht],&cronminut);
       cgconf[lfd].setze(&cronminut);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
@@ -3124,7 +3122,7 @@ void paramcl::pruefcron()
   if (cronda) {
     int nochkeincron = systemrueck("sudo crontab -l > /dev/null 2>&1",obverb-1,0);
     setztmpc(obverb, oblog);
-    string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 "+meinpfad()+" -norf";// "date >/home/schade/zeit";
+    string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 "+saufr;// "date >/home/schade/zeit";
     string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
     string cbeesc=string("\\*/")+cronminut+" \\* \\* \\* \\*"+cb0; // hier vorne \\- gestrichen
 #ifdef uebersichtlich
@@ -3132,13 +3130,13 @@ void paramcl::pruefcron()
     if (!cronzuplanen) {
       if (nochkeincron) {
       } else {
-        befehl=("bash -c 'grep \""+prog+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+prog+"/d'>")+tmpc+"; sudo crontab "+tmpc+")";
+        befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+"; sudo crontab "+tmpc+")";
       }
     } else {
       if (nochkeincron) {
         befehl=("rm -f ")+tmpc+";";
       } else {
-        befehl = ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+prog+"/d'>"+tmpc+";";
+        befehl = ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+";";
       }
       befehl+=("echo \"")+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+"";
       if (!nochkeincron)
@@ -3147,10 +3145,10 @@ void paramcl::pruefcron()
 #else
     string befehl=cronzuplanen?
       (nochkeincron?("rm -f ")+tmpc+";":
-       ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+prog+"/d'>"+tmpc+"; ")+
+       ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+"; ")+
       "echo \""+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+(nochkeincron?"":")")
       :
-      (nochkeincron?"":("bash -c 'grep \""+prog+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+prog+"/d'>")+tmpc+";"
+      (nochkeincron?"":("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+";"
        "sudo crontab "+tmpc+")")
       ;
 #endif      
@@ -3257,10 +3255,10 @@ void paramcl::pruefsamba()
       if (sapp.is_open()) {
        if (k<4) {
          sapp<<"["<<VSambaName[k]<<"]"<<endl;
-         sapp<<"  comment = "+prog+" "<<VSambaName[k]<<endl;
+         sapp<<"  comment = "+meinname+" "<<VSambaName[k]<<endl;
        } else {
          sapp<<"["<<Tx[T_Gefaxt]<<"_"<<(k-4)<<"]"<<endl;
-         sapp<<"  comment = "+prog+" "<<Tx[T_Gefaxt]<<"_"<<(k-4)<<endl;
+         sapp<<"  comment = "+meinname+" "<<Tx[T_Gefaxt]<<"_"<<(k-4)<<endl;
        }
        sapp<<"  path = "<<*vzn[k]<<endl;
        sapp<<"  directory mask = 0660"<<endl;
@@ -3302,7 +3300,7 @@ void paramcl::pruefsamba()
        if (!obfw) break;
       }
       if (nichtfrei && obfw) {
-      systemrueck("sed -i.bak_"+ich+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
+      systemrueck("sed -i.bak_"+meinname+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
           " && systemctl restart SuSEfirewall2 smb nmb",obverb,oblog); 
       }
       part="client";
@@ -3487,6 +3485,9 @@ void paramcl::anhalten()
 {
   Log(violetts+Tx[T_anhalten]+schwarz,obverb,oblog);
   // crontab
+  setztmpc(obverb, oblog);
+  string befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+"; sudo crontab "+tmpc+")";
+  systemrueck(befehl,obverb,oblog);
   // services
   if (sfaxgetty) sfaxgetty->stopdis(obverb,oblog);
   if (shfaxd) shfaxd->stopdis(obverb,oblog);
@@ -3749,7 +3750,7 @@ void paramcl::DateienHerricht()
           if (ndname!=npdfd.at(i)) {
             dorename(npdfd.at(i),ndname,cuser,&vfehler,obverb,oblog);
             if (vfehler) {
-              cerr<<rot<<prog<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
+              cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
                 blau<<npdfd.at(i)<<schwarz<<" ->\n"<<
                 blau<<ndname<<schwarz<<endl;
               exit(1);
@@ -3766,7 +3767,7 @@ void paramcl::DateienHerricht()
             //          prios.push_back(iprio);
             fxv.push_back(fxfcl(wartedatei,zupdf,iprio));
           } else {
-            cerr<<rot<<prog<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
+            cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
               blau<<npdfd.at(i)<<schwarz<<" ->\n"<<
               blau<<wvz<<schwarz<<endl;
             exit(1);
@@ -3856,7 +3857,7 @@ void paramcl::DateienHerricht()
           if (ndname!=spdfd.at(i)) {
             dorename(spdfd.at(i),ndname,cuser,&vfehler,obverb,oblog);
             if (vfehler) {
-              cerr<<rot<<prog<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
+              cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
                 blau<<spdfd.at(i)<<schwarz<<" ->\n"<<
                 blau<<ndname<<schwarz<<endl;
               exit(1);
@@ -3878,7 +3879,7 @@ void paramcl::DateienHerricht()
               }
             } // if (!vorhanden)
           } else {
-            cerr<<rot<<prog<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
+            cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
               blau<<spdfd.at(i)<<schwarz<<" ->\n"<<
               blau<<wvz<<schwarz<<endl;
             exit(1);
@@ -4511,7 +4512,7 @@ void paramcl::empfarch()
 } // void paramcl::empfarch()
 
 // wird aufgerufen in: main
-void paramcl::schlussanzeige(const char* const progname)
+void paramcl::schlussanzeige()
 {
   Log(violetts+Tx[T_schlussanzeige]+schwarz,obverb,oblog);
   tende = clock();
@@ -4528,7 +4529,7 @@ void paramcl::schlussanzeige(const char* const progname)
   Log(string(Tx[T_davon_erfolgreiche_Faxe])+drot+ltoan(ezahl)+schwarz,1,oblog);
   Log(string(Tx[T_davon_noch_wartende_Faxe])+drot+ltoan(wzahl)+schwarz,1,oblog);
   Log(string(Tx[T_davon_nicht_in_Warteschlange])+drot+ltoan(fzahl)+schwarz,1,oblog);
-  Log(string(Tx[T_Fertig_mit])+blau+progname+schwarz+" !",obverb,oblog);
+  Log(string(Tx[T_Fertig_mit])+blau+meinname+schwarz+" !",obverb,oblog);
 } // paramcl::schlussanzeige
 
 
@@ -4865,7 +4866,7 @@ void paramcl::hconfigtty()
     struct tm *tm=localtime(&tim);
     char buf[80];
     strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", tm);
-    hci<<"# Konfiguration von hylafax durch "+prog+" vom "<<buf<<endl;
+    hci<<"# Konfiguration von hylafax durch "+meinname+" vom "<<buf<<endl;
     hci<<"CountryCode:    "<<this->countrycode<<endl;
     hci<<"AreaCode:   "<<this->citycode<<endl;
     hci<<"FAXNumber:    \""<<this->countrycode<<"."<<this->citycode<<"."<<this->msn<<"\""<<endl;
@@ -4944,6 +4945,7 @@ void paramcl::hconfigtty()
   Log(violetts+Tx[T_Ende]+"hconfigtty()"+schwarz,obverb,oblog);
 } // void hconfigtty(paramcl *pmp,int obverb=0, int oblog=0)
 
+// wird aufgerufen in: pruefcapi
 // lieftert 0, wenn die Dienstdatei gespeichert werden konnte (erg), nicht wenn der Dienst laeuft (csfehler)
 int paramcl::cservice()
 {
@@ -4960,7 +4962,7 @@ int paramcl::cservice()
               " && { mkdir -p /etc/ausrangiert && mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true'",obverb,oblog);
     cspfad=rueck[0];
     // entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
-    csfehler+=!scapisuite->spruef("Capisuite",0,prog,cspfad/*+" -d"*/,"","","",obverb,oblog);
+    csfehler+=!scapisuite->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","","",obverb,oblog);
     if (obverb) Log("csfehler: "+gruens+ltoan(csfehler)+schwarz,obverb,oblog);
 //    return csfehler;
   }
@@ -4978,13 +4980,13 @@ int paramcl::hservice_faxq_hfaxd()
   svec rueck;
   systemrueck("sudo env \"PATH=$PATH\" which hfaxd",obverb,oblog,&rueck);
   if (rueck.size()) hfaxdpfad=rueck[0]; 
-  hylafehler+=!this->shfaxd->spruef("HFaxd",0/*1*/,prog,hfaxdpfad+" -d -i hylafax"/* -s 444*/,
+  hylafehler+=!this->shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/,
       this->varsphylavz+"/etc/setup.cache", "", "", this->obverb,this->oblog);
   this->shfaxd->machfit(obverb,oblog);
   rueck.clear();
   systemrueck("sudo env \"PATH=$PATH\" which faxq",obverb,oblog,&rueck);
   if (rueck.size()) faxqpfad=rueck[0]; 
-  hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,prog,faxqpfad+" -D",
+  hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D",
       this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname+".service", "",this->obverb,this->oblog);
   return hylafehler;
 } // void hservice_faxq_hfaxd()
@@ -4993,7 +4995,7 @@ int paramcl::hservice_faxq_hfaxd()
 int paramcl::hservice_faxgetty()
 {
   Log(violetts+"hservice_faxgetty()"+schwarz,obverb,oblog);
-  return !this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0, prog,this->faxgtpfad+" "+this->hmodem,"","","",this->obverb,this->oblog);
+  return !this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0, meinname,this->faxgtpfad+" "+this->hmodem,"","","",this->obverb,this->oblog);
   // /etc/inittab werde von systemd nicht gelesen
   /*,"cat /etc/inittab 2>/dev/null | grep -E '^[^#].*respawn.*faxgetty' >/dev/null 2>&1"*/ 
 
@@ -5414,19 +5416,28 @@ void pruefmodcron(int obverb, int oblog)
   }
 } // void pruefmodcron(int obverb, int oblog)
 
+void paramcl::pruefinstv()
+{
+  if (instverz.empty()) instverz=string(getenv("HOME"))+'/'+meinname;
+  pruefverz(instverz,obverb,oblog);
+} // void paramcl::pruefinstv()
+
 void paramcl::holvongithub(string datei)
 {
+  pruefinstv();
   svec csrueck;
-  systemrueck("find "+instverz+" -mtime -1 -name "+datei+".tar.gz",obverb,oblog,&csrueck);
+  systemrueck("find \""+instverz+"\" -mtime -1 -name "+datei+".tar.gz",obverb,oblog,&csrueck);
   if (!csrueck.size()) {
   //systemrueck("sh -c 'cd "+instverz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
-    systemrueck("sh -c 'cd "+instverz+"; T="+datei+".tar.gz; wget https://github.com/libelle17/"+datei+"/archive/master.tar.gz -O $T'", obverb,oblog);
+    systemrueck("sh -c 'cd \""+instverz+"\";T="+datei+".tar.gz; wget https://github.com/libelle17/"+datei+"/archive/master.tar.gz -O $T'", 
+                obverb,oblog);
   }
 } // void paramcl::holvongithub(string datei)
 
 int paramcl::kompiliere(string was,string endg, string vorcfg,string cfgbismake)
 {
-  return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
+  pruefinstv();
+  return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instverz+"\" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
       " && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install '",obverb,oblog);
 } // int paramcl::kompiliere(string was,string endg,string nachtar, string vorcfg,string cfgbismake)
 
@@ -5439,6 +5450,7 @@ int paramcl::pruefcapi()
   static uchar capischonerfolgreichinstalliert=0;
   int capilaeuft=0;
   unsigned versuch=0;
+  scapisuite=new servc("","capisuite");
   for(;versuch<2;versuch++) {
     // capi4linux muss zum Laufen der Capisuite installiert sein
     // fuer fcpci muss in driver.c eingefuegt werden:
@@ -5453,6 +5465,7 @@ int paramcl::pruefcapi()
     } else {
       //      pid_t pid = GetPIDbyName("capisuite") ; // If -1 = not found, if -2 = proc fs access error
       uchar fcpcida=0, capida=0, capidrvda=0;
+      pruefinstv();
       vector<string> rueck;
       systemrueck("lsmod",obverb,oblog,&rueck);
       for(size_t i=0;i<rueck.size();i++){
@@ -5587,7 +5600,6 @@ int paramcl::pruefcapi()
         } // if (lsys.getsys(obverb,oblog)==sus) 
 
         if (!capischonerfolgreichinstalliert) {
-          pruefverz(instverz,obverb,oblog);
           holvongithub("capisuite_copy");
           svec csrueck;
           systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' "+string(obverb?"":"2>/dev/null")+"| sort -r",
@@ -6553,7 +6565,7 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
 // statische Variable, 1= mariadb=geprueft
 uchar DB::oisok=0;
 
-void zeigversion(const char* const prog)
+void zeigversion(string& prog)
 {
   struct tm tm;
   char buf[255];
@@ -6593,10 +6605,10 @@ void paramcl::zeigkonf()
 
 int main(int argc, char** argv) 
 {
-  pruefmehrfach(*argv);
-  pruefplatte();
+  pruefmehrfach();
+  pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   paramcl pm(argc,argv); // Programmparameter
-  pm.logvorgaben(*argv);
+  pm.logvorgaben();
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
       pm.VorgbAllg();
   pm.VorgbSpeziell();
@@ -6608,7 +6620,7 @@ int main(int argc, char** argv)
    exit (systemrueck("vi "+pm.konfdatname+" >/dev/tty"));
   }
   if (pm.zeigversion) {
-   zeigversion(*argv);
+   zeigversion(pm.meinname);
    pm.zeigkonf();
    exit(0);
   }
@@ -6664,7 +6676,7 @@ int main(int argc, char** argv)
       pm.zeigweitere();
       pm.empfarch();
       Log(blaus+Tx[T_Ende]+schwarz,pm.obverb,pm.oblog);
-      pm.schlussanzeige(argv[0]);
+      pm.schlussanzeige();
     } // if (pm.loef || pm.loew || pm.loea) else
   } // if (pm.kez) else else else
   pm.pruefcron();

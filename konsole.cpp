@@ -1671,14 +1671,14 @@ void pruefplatte()
   }
 } // pruefplatte
 
-void pruefmehrfach(char* ich)
+void pruefmehrfach(string wen)
 {
   svec rueck;
-  systemrueck(string("ps -eo comm | grep '^")+base_name(ich)+"'",0,0,&rueck);
+  systemrueck("ps -eo comm|grep '^"+wen+"'",0,0,&rueck);
   if (rueck.size()>1) {
-    cout<<Txk[T_Program]<<blau<<ich<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
+    cout<<Txk[T_Program]<<blau<<wen<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
     exit(0);
-  }
+  } //   if (rueck.size()>1) {
   /*
   for(size_t j=0;j<rueck.size();j++) {
    // <<violett<<"rueck["<<j<<"]: "<<rot<<rueck[j]<<schwarz<<endl;
@@ -1721,19 +1721,19 @@ int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer 
 int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl)
 {
   struct stat sverz;
-  int erg=0;
-  uchar fertig=0;
+  int fehler=1;
   if (!verz.empty()) {
     if (!lstat(verz.c_str(), &sverz)) {
       if(S_ISDIR(sverz.st_mode)) {
-        fertig=1;
+        fehler=0;
       }
     }
-    if (!fertig) erg=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
+    if (fehler) fehler=systemrueck("mkdir -p '"+verz+"'",obverb,oblog);
+    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
     if (obmitfacl)
      setfaclggf(verz, wahr, 7, falsch,obverb,oblog);
   }
-  return erg;
+  return fehler;
 } // void pruefverz(const string& verz,int obverb,int oblog)
 
 
@@ -1919,8 +1919,11 @@ string Tippverz(const char *frage,string *vorgabe)
         if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
         if (inpi=="") {inpi=vg2;break;}
         if (strchr("jyJY",inpi[0])) {
+          pruefverz(input);
+          /*
           int erg __attribute__((unused));
           erg=system((string("sudo mkdir -p ")+input).c_str());
+          */
         } else {
           break;
         }
