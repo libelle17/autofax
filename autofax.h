@@ -103,6 +103,7 @@ class paramcl // Programmparameter
     size_t optslsz=0; // last opts.size()
   public:
     string meinname; // base_name(meinpfad()) // argv[0] // 'autofax'
+    string vaufr; // (vollaufruf) z.B. '/usr/bin/autofax -norf'
     string saufr; // (stummaufruf) 'autofax -norf'
     string instverz=""; // $HOME/autofax
 //    cppSchluess *hconfp=0;

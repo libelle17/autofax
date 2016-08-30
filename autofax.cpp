@@ -1553,7 +1553,8 @@ paramcl::paramcl(int argc, char** argv)
     if (argv[i][0])
       argcmv.push_back(argcl(i,argv)); 
   meinname=base_name(meinpfad());// argv[0];
-  saufr=meinname+" -norf";
+  vaufr=meinpfad()+" -norf"; // /usr/bin/autofax -norf
+  saufr=base_name(vaufr); // autofax -norf
   tstart=clock();
   cklingelzahl="1";
   hklingelzahl="2"; // muss mindestens 2 sein, um die Nr. des anrufenden zu uebertragen
@@ -3122,7 +3123,7 @@ void paramcl::pruefcron()
   if (cronda) {
     int nochkeincron = systemrueck("sudo crontab -l > /dev/null 2>&1",obverb-1,0);
     setztmpc(obverb, oblog);
-    string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 "+saufr;// "date >/home/schade/zeit";
+    string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 "+vaufr;// "date >/home/schade/zeit";
     string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
     string cbeesc=string("\\*/")+cronminut+" \\* \\* \\* \\*"+cb0; // hier vorne \\- gestrichen
 #ifdef uebersichtlich
