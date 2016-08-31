@@ -1777,11 +1777,32 @@ void paramcl::pruefmodem()
         if (!systemrueck("sudo stty -F /dev/"+tty+" >/dev/null 2>&1",obverb,oblog,&rue2,wahr,wahr,"",&errv)) {
           obmodem=1;
           modems<<tty;
-          Log(string("Modem: ")+blau+Tx[T_gefunden],obverb,oblog);
+          Log(string("Modem: ")+blau+tty+schwarz+Tx[T_gefunden],obverb,oblog);
         } // if (!systemrueck("sudo stty -F /dev/"+tty+" >/dev/null 2>&1",obverb,oblog,&rue2)) 
       } // if (tty!="ttyS0") 
     } // if (!lstat(((rueck[i])+"/device/driver").c_str(),&entrydriv)) 
   } // for(size_t i=0;i<rueck.size();i++) 
+  //  uchar modemumgesteckt=0;
+  uchar schonda=0;
+  if (!hmodem.empty()) {
+    for(size_t j=0;j<modems.size();j++) {
+      if (modems[j]==hmodem) {
+        schonda=1;
+        break;
+      }
+    }
+    if (!schonda) hmodem.clear();
+  }
+  if (hmodem.empty()) {
+    if (modems.size()) if (!modems[0].empty()) {
+      if (obverb) {
+        Log(string("modems[0]: ")+rot+modems[0]+schwarz,obverb,oblog);
+        Log(string("hmodem:    ")+rot+hmodem+schwarz,obverb,oblog);
+      }
+      hmodem=modems[0];/*modemsumgesteckt=1;*/ 
+      modemgeaendert=1;
+    } //   if (modems.size()) if (!modems[0].empty()) if (modems[0]!=hmodem) 
+  }
   obmdgeprueft=1;
   if (!obmodem) {
     obhyla=0;
@@ -3487,14 +3508,18 @@ void paramcl::anhalten()
   Log(violetts+Tx[T_anhalten]+schwarz,obverb,oblog);
   // crontab
   setztmpc(obverb, oblog);
-  string befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+"; sudo crontab "+tmpc+")";
+  string befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+"; sudo crontab "+tmpc+"); true";
   systemrueck(befehl,obverb,oblog);
   // services
+  befehl="sudo systemctl stop capisuite hylafax-faxq hylafax-hfaxd hylafax-faxgetty-"+hmodem+" hylafax >/dev/null 2>&1; true";
+  systemrueck(befehl,obverb,oblog);
+  /*
   if (sfaxgetty) sfaxgetty->stopdis(obverb,oblog);
   if (shfaxd) shfaxd->stopdis(obverb,oblog);
   if (sfaxq) sfaxq->stopdis(obverb,oblog);
   if (shylafaxd) shylafaxd->stopdis(obverb,oblog);
   if (scapisuite) scapisuite->stopdis(obverb,oblog);
+  */
 } // void paramcl::anhalten()
 
 // wird aufgerufen in: main
@@ -5002,6 +5027,7 @@ int paramcl::hservice_faxgetty()
 
 } // void hservice_faxgetty()
 
+
 // wird aufgerufen in main
 int paramcl::pruefhyla()
 {
@@ -5013,21 +5039,17 @@ int paramcl::pruefhyla()
   uchar falscheshyla=0;
   uchar modemlaeuftnicht=1;
   uchar frischkonfiguriert=0;
-  //  uchar modemumgesteckt=0;
-  if (modems.size()) if (!modems[0].empty()) if (modems[0]!=hmodem) {
-    if (obverb) {
-      Log(string("modems[0]: ")+rot+modems[0]+schwarz,obverb,oblog);
-      Log(string("hmodem:    ")+rot+hmodem+schwarz,obverb,oblog);
-    }
-    hmodem=modems[0];/*modemsumgesteckt=1;*/ 
+
+  if (modemgeaendert) {
     cgconf.setze("hmodem",hmodem);
-    hconfigtty();obkschreib=1;
-  } //   if (modems.size()) if (!modems[0].empty()) if (modems[0]!=hmodem) 
-  
-  vector<string> ruecki;
+    hconfigtty();
+    obkschreib=1;
+  }
+
+  svec ruecki;
   // Baud rate ermitteln ...
   systemrueck(("sudo stty -F /dev/")+this->hmodem+"| head -n 1 | cut -f2 -d' '",obverb,oblog,&ruecki);
-  if (ruecki.size()>0) {
+  if (ruecki.size()) {
     brs=ruecki[0];
     br=atol(brs.c_str());
   }

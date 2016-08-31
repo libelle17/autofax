@@ -101,6 +101,7 @@ class paramcl // Programmparameter
     double tstart, tende;
     svec modems;       // gefundene Modems
     size_t optslsz=0; // last opts.size()
+    uchar modemgeaendert=0; // hmodem neu gesetzt
   public:
     string meinname; // base_name(meinpfad()) // argv[0] // 'autofax'
     string vaufr; // (vollaufruf) z.B. '/usr/bin/autofax -norf'
