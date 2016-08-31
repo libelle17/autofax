@@ -74,9 +74,11 @@ weiter: compiler $(EXEC) man fertig
 #      : auf http://github.com -> view profile and more -> settings -> SSH and GPG keys -> New SSH key <Titel> <key> einfuegen
 #      : git clone ssh://git@github.com/<user>/<reponame>.git
 git:
+	-@echo $$(if ! test -f version; then echo 0.1>version;fi;awk "BEGIN {print `cat version`-0.00001}")>version
 	git add -u
 	git commit -m "Version $$(cat version)"
 	git push
+	-@echo $$(awk "BEGIN {print `cat version`+0.00001}")>version
 
 anzeig:
 	@echo -e " GNU Make, Zieldatei:"$(rot) $(EXEC)$(reset), vorher:
