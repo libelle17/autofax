@@ -576,7 +576,7 @@ class servc {
     void stop(int obverb, int oblog);
     void stopdis(int obverb, int oblog);
     int enableggf(int obverb,int oblog);
-    int machfit(int obverb, int oblog);
+    int machfit(int obverb, int oblog, binaer nureinmal=falsch);
     static void daemon_reload(int obverb=0, int oblog=0);
 };
 

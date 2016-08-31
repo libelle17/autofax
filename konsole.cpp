@@ -2195,9 +2195,9 @@ servc::servc(string vsname,string vename,int obverb, int oblog): sname((vsname.e
   machfit(obverb,oblog);
 }
 
-int servc::machfit(int obverb,int oblog)
+int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
-    if (!obslaeuft(obverb,oblog)) {
+    if (!obslaeuft(obverb,oblog,nureinmal)) {
       restart(obverb,oblog);
     }
     //  if (servicelaeuft)

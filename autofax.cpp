@@ -5108,8 +5108,12 @@ int paramcl::pruefhyla()
     } 
     if (hylafehlt) {
       // falls nein, dann schauen, ob startbar
-      if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog)) hylafehlt=0;
+      if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog) && sfaxgetty->machfit(obverb-1,oblog)) hylafehlt=0;
+			cout<<"hylafehlt: "<<(int)hylafehlt<<endl;
+		} else {
+		  cout<<"hylafehlt nicht!"<<endl;
     }
+
     // <<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
     if (hylafehlt) {
       // 3) ggf. neu installieren
@@ -5481,7 +5485,7 @@ int paramcl::pruefcapi()
     // #  define IRQF_DISABLED 0x00
     // #endif
     //    capilaeuft=(PIDausName("capisuite")>=0);
-    capilaeuft = this->scapisuite->obslaeuft(obverb-1,oblog,wahr);
+    capilaeuft = this->scapisuite->machfit(obverb-1,oblog,wahr);
     Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz,obverb,oblog);
     if (capilaeuft) {
      capischonerfolgreichinstalliert=1;
