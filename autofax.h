@@ -16,7 +16,7 @@ string kopiere(const string& qdatei, const string& zieldp, uint *kfehler, uchar 
 void kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog);
 void pruefprocgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog);
-void faxemitC(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog);
+void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog);
 void faxemitH(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog);
 int pruefcapi(paramcl *pmp, int obverb, int oblog);
 void kuerzevtz(string *vzp);
@@ -115,7 +115,8 @@ class paramcl // Programmparameter
     uchar obfcgeprueft=0; // ob schon geprueft, ob Fritzcard eingesteckt
     uchar obmodem=1;    // ob Modem angeschlossen
     uchar obmdgeprueft=0; // ob schon geprueft, ob Modem verfuegbar
-    string spooltab = "spool";
+    const string spooltab = "spool";
+    const string altspool = "altspool";
     int obverb=0; // verbose
     int oblog=0;  // mehr Protokollieren
     uchar obvi=0;   // ob Konfigurationsdatei editiert werden soll

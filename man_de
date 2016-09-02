@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "31.08.16" "Version 0.40687" "Manual-Seite für autofax"
+.TH man 1 "02.09.16" "Version 0.40709" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -11,46 +11,51 @@ manpage available in english: 'man autofax' or 'man -Len autofax'.
 .SY autofax [-<option>]
 .OP \-lg|--language <d|e>
 .OP \-v|--verbose
-.OP \-l|--log
 .OP \-lvz|--logvz <pfad>
 .OP \-ld|--logdname <string>
+.OP \-l|--log
 .OP \-ldn|--logdateineu
 .OP \-kd|--konfdat <string>
 .OP \-zvz|--zufaxenvz <pfad>
 .OP \-wvz|--wartevz <pfad>
+.OP \-nvz|--nichtgefaxtvz <pfad>
 .OP \-evz|--empfvz <pfad>
 .OP \-cm|--cronminut <zahl>
-.OP \-kc|--keincapi
-.OP \-kh|--keinhyla
+.OP \-capi|--obcapi
+.OP \-nocapi|--keincapi
+.OP \-hyla|--obhyla
+.OP \-nohyla|--keinhyla
 .OP \-cz|--capizuerst
 .OP \-hz|--hylazuerst
-.OP \-mod|--modem <string>
-.OP \-mc|--maxcapinr <zahl>
-.OP \-mh|--maxhylanr <zahl>
-.OP \-ckzl|--capiklingelzahl <zahl>
+.OP \-mod|--hmodem <string>
+.OP \-mc|--maxcapiv <zahl>
+.OP \-mh|--maxhylav <zahl>
 .OP \-cuser|--cuser <string>
+.OP \-ckzl|--capiklingelzahl <zahl>
 .OP \-hkzl|--hylaklingelzahl <zahl>
 .OP \-gz|--gleichziel
-.OP \-afs|--anfaxstring <string>
-.OP \-acfs|--ancfaxstring <string>
-.OP \-ahfs|--anhfaxstring <string>
-.OP \-as|--anstring <string>
-.OP \-us|--undstring <string>
+.OP \-afs|--anfaxstr <string>
+.OP \-acfs|--ancfaxstr <string>
+.OP \-ahfs|--anhfaxstr <string>
+.OP \-as|--anstr <string>
+.OP \-us|--undstr <string>
 .OP \-host|--host <string>
 .OP \-muser|--muser <string>
 .OP \-mpwd|--mpwd <string>
-.OP \-db|--db <string>
-.OP \-sqlv|--sqlv
+.OP \-db|--datenbank <string>
+.OP \-sqlv|--sql-verbose
 .OP \-rf|--rueckfragen
+.OP \-norf|--keinerueckfragen
 .OP \-loef|--loeschefax
 .OP \-loew|--loeschewaise
 .OP \-loea|--loescheallew
 .OP \-loee|--loescheempf
 .OP \-kez|--korrerfolgszeichen
 .OP \-bwv|--bereinigewv
+.OP \-st|--stop
 .OP \-lista|--listarchiv
 .OP \-listf|--listfailed
-.OP \-listi|--listinlet
+.OP \-listi|--listinca
 .OP \-n|--dszahl <zahl>
 .OP \-info|--version
 .OP \-vi|--vi 
@@ -69,7 +74,7 @@ Außerdem können von \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe nach dem Sen
 .br
  P=autofax; T=$P.tar.gz; cd ~; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && { for i in $(ls -d ${P}_* 2>/dev/null | cut -d"_" -f2 | sort -nr); do j=$((i+1)); case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done; test -e $P && mv $P ${P}_1; mv $P-master $P && cd $P; }
 .br
-Wenn das Programm 'make' nicht zur Verfügung steht, können Sie dort 'install.sh' aufrufen, damit sollte 'make' installiert werden; anderenfalls können Sie auch aufrufen:
+Wenn das Programm (gnu) 'make' nicht zur Verfügung steht, können Sie dort './install.sh' aufrufen, damit sollte 'make' installiert werden; anderenfalls können Sie auch aufrufen:
 .br
 - falls Sie vor Kompilierung die Aktualität von gcc6 sicherstellen lassen wollen:
 .br

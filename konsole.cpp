@@ -1728,7 +1728,7 @@ int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl)
         fehler=0;
       }
     }
-    if (fehler) fehler=systemrueck("mkdir -p '"+verz+"'",obverb,oblog);
+    if (fehler) fehler=systemrueck("mkdir -p '"+verz+"' 2>/dev/null",obverb,oblog);
     if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
     if (obmitfacl)
      setfaclggf(verz, wahr, 7, falsch,obverb,oblog);

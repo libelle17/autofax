@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "31.08.16" "Version 0.40687" "\fBautofax\fR man page"
+.TH man 1 "02.09.16" "Version 0.40709" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -11,43 +11,48 @@ manpage-Hilfe in deutsch verfügbar: 'man autofax' oder 'man -Lde autofax'.
 .SY autofax [-<option>]
 .OP \-lg|--language <d|e>
 .OP \-v|--verbose
-.OP \-l|--log
 .OP \-lvz|--logvz <pfad>
 .OP \-ld|--logdname <string>
+.OP \-l|--log
 .OP \-ldn|--logdateineu
 .OP \-kd|--konfdat <string>
 .OP \-zvz|--zufaxenvz <pfad>
 .OP \-wvz|--wartevz <pfad>
+.OP \-nvz|--nichtgefaxtvz <pfad>
 .OP \-evz|--empfvz <pfad>
 .OP \-cm|--cronminut <zahl>
-.OP \-kc|--keincapi
-.OP \-kh|--keinhyla
+.OP \-capi|--obcapi
+.OP \-nocapi|--keincapi
+.OP \-hyla|--obhyla
+.OP \-nohyla|--keinhyla
 .OP \-cz|--capizuerst
 .OP \-hz|--hylazuerst
-.OP \-mod|--modem <string>
-.OP \-mc|--maxcapinr <zahl>
-.OP \-mh|--maxhylanr <zahl>
-.OP \-ckzl|--capiklingelzahl <zahl>
+.OP \-mod|--hmodem <string>
+.OP \-mc|--maxcapiv <zahl>
+.OP \-mh|--maxhylav <zahl>
 .OP \-cuser|--cuser <string>
+.OP \-ckzl|--capiklingelzahl <zahl>
 .OP \-hkzl|--hylaklingelzahl <zahl>
 .OP \-gz|--gleichziel
-.OP \-afs|--anfaxstring <string>
-.OP \-acfs|--ancfaxstring <string>
-.OP \-ahfs|--anhfaxstring <string>
-.OP \-as|--anstring <string>
-.OP \-us|--undstring <string>
+.OP \-afs|--anfaxstr <string>
+.OP \-acfs|--ancfaxstr <string>
+.OP \-ahfs|--anhfaxstr <string>
+.OP \-as|--anstr <string>
+.OP \-us|--undstr <string>
 .OP \-host|--host <string>
 .OP \-muser|--muser <string>
 .OP \-mpwd|--mpwd <string>
-.OP \-db|--db <string>
-.OP \-sqlv|--sqlv
+.OP \-db|--datenbank <string>
+.OP \-sqlv|--sql-verbose
 .OP \-rf|--rueckfragen
+.OP \-norf|--keinerueckfragen
 .OP \-loef|--loeschefax
 .OP \-loew|--loeschewaise
 .OP \-loea|--loescheallew
 .OP \-loee|--loescheempf
 .OP \-kez|--korrerfolgszeichen
 .OP \-bwv|--bereinigewv
+.OP \-st|--stop
 .OP \-lista|--listarchiv
 .OP \-listf|--listfailed
 .OP \-listi|--listinca
