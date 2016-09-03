@@ -370,7 +370,7 @@ enum T_
   T_faxemitC,
   T_inDBh,
   T_faxemitH,
-  T_prufespool,
+  T_pruefspool,
   T_pruefouta,
   T_pruefinca,
   T_pruefprocgettel3,
@@ -1128,10 +1128,10 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"inDBh()","intoDatabaseHyla()"},
   // T_faxemitH
   {"faxemitH()","faxingwithHyla()"},
-  // T_prufespool
-  {"pruefespool()","checkspool()"},
+  // T_pruefspool
+  {"pruefspool()","checkspool()"},
   // T_pruefouta
-  {"pruefeouta()","checkouta()"},
+  {"pruefouta()","checkouta()"},
   // T_pruefinca
   {"pruefinca()","checkinca()"},
   // T_pruefprocgettel3
@@ -6033,7 +6033,7 @@ void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnam
 // wird aufgerufen in: main
 const string& pruefspool(DB *My,const string& spooltab, const string& altspool, int obverb, int oblog, uchar direkt=0)
 {
-  Log(violetts+Tx[T_prufespool]+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_pruefspool]+schwarz+", direkt: "+(direkt?"1":"0"),obverb,oblog);
   if (!direkt) {
     Feld felder[] = {
       Feld("ID","int","10","",Tx[T_eindeutige_Identifikation],1,1),
