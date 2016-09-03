@@ -3388,7 +3388,7 @@ void paramcl::korrerfolgszeichen()
       }
       string sql=string("SELECT titel p0, tsid p1, submt p2, submid p3, oscht p4, subject p5, docname p6, id p7, fsize p8, pages p9, ")+
         "devname p10, retries p11, prio p12, rcfax p13, rcname p14, csid p15, sender p16, transs p17, transe p18, Pid p19, eind p20, Erfolg p21 "
-        "FROM `"+touta+"` WHERE submid "+(runde?"RLIKE '^[0-9]+$'":"LIKE '%fax-%.sff'")+" ORDER BY submt";
+        "FROM `"+touta+"` WHERE submid "+(runde?"RLIKE '^[0-9]+$' AND submid<>0":"LIKE '%fax-%.sff'")+" ORDER BY submt";
       RS routa(My,sql);
       if (!routa.obfehl) {
         char ***cerg;
@@ -4018,7 +4018,7 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
   char ***cerg;
   RS rs(My,string("SELECT id p0,capispooldatei p1,capispoolpfad p2,original p3,cdateidatum p4,"
         " telnr p5,origvu p6,hylanr p7,capidials p8,hyladials p9,hdateidatum p10, adressat p11 "
-        "FROM `")+spooltab+"`",ZDB);
+        "FROM `")+spooltab+"` WHERE (hylanr RLIKE '^[0-9]+$' AND hylanr<>0) OR capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",ZDB);
   if (!rs.obfehl) {
     faxord=0;
     while (cerg=rs.HolZeile(),cerg?*cerg:0) {
@@ -4147,7 +4147,7 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
           } // if (nimmer)
           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) ) {
             uchar geloescht=0;
-            fsf.archiviere(My, this, &entrysend, allegesch , fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?capi:hyla, 
+            fsf.archiviere(My,this,&entrysend,allegesch||nimmer,fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?capi:hyla, 
                 &geloescht, obverb, oblog);
           } 
           if (allegesch || (nimmer && !ogibts[0])) {
@@ -5931,21 +5931,30 @@ void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
     // 27.3.16: Uebernacht wurden die Berechtigungen so eingeschraenkt, dass Faxsenden nicht mehr ging, evtl. durch faxqclean
     systemrueck("sudo find "+pmp->varsphylavz+" -name seqf -exec chmod 660 {} \\;"" -exec chown fax:uucp {} \\;",obverb,oblog);
     const char* tz1="request id is ", *tz2=" (";
-    string cmd=string("sendfax -n -A -d ")+tel+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
-    svec faxerg;
-    // <<rot<<"Achtung: faxemith: "<<endl<<schwarz<<cmd<<endl;
-    systemrueck(cmd,1,1,&faxerg,wahr,wahr,Tx[T_HylafaxBefehl]);
-    for(size_t i=0;i<faxerg.size();i++) {
-      Log(string(Tx[T_RueckmlgZeile])+ltoan(i)+": "+faxerg.at(i),obverb-1,oblog);
-      if (char *z1=strstr((char*)faxerg.at(i).c_str(),tz1)) {
-        if (char *z2=strstr(z1,tz2)) {
-          string hylaid(z1+strlen(tz1),z2-z1-strlen(tz1));
-          //            inDatenbankh(My, pmp->hsendqvz, &hylaid, idsp, npdfp, spdfp, nachrnr, &tel, obverb, oblog);
-          inDBh(My, spooltab, altspool, pmp, hylaid, fsfp,&tel,obverb,oblog);
-        }   // if (char *z2=strstr(z1,tz2)) 
-        break;
-      }    // if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
-    } // faxerg.size
+    svec rueck;
+    string sendfax;
+    systemrueck("sudo sh -c 'which sendfax'",obverb,1,&rueck);
+    if (rueck.size()) {
+      sendfax=rueck[0];
+      string cmd=sendfax+" -n -A -d "+tel+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
+      svec faxerg;
+      // <<rot<<"Achtung: faxemith: "<<endl<<schwarz<<cmd<<endl;
+      if (!systemrueck(cmd,1,1,&faxerg,wahr,wahr,Tx[T_HylafaxBefehl])) {
+        for(size_t i=0;i<faxerg.size();i++) {
+          Log(string(Tx[T_RueckmlgZeile])+ltoan(i)+": "+faxerg.at(i),obverb-1,oblog);
+          if (char *z1=strstr((char*)faxerg.at(i).c_str(),tz1)) {
+            if (char *z2=strstr(z1,tz2)) {
+              string hylaid(z1+strlen(tz1),z2-z1-strlen(tz1));
+              if (isnumeric(hylaid)) {
+                //            inDatenbankh(My, pmp->hsendqvz, &hylaid, idsp, npdfp, spdfp, nachrnr, &tel, obverb, oblog);
+                inDBh(My, spooltab, altspool, pmp, hylaid, fsfp,&tel,obverb,oblog);
+              } // if (isnumeric(hylaid)) 
+            }   // if (char *z2=strstr(z1,tz2)) 
+            break;
+          } // if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
+        } // string cmd=sendfax+" -n -A -d "+tel+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
+      } // if (!systemrueck(cmd,1,1,&faxerg,wahr,wahr,Tx[T_HylafaxBefehl]))
+    } // if (rueck.size()) 
   } // tel.empty() else
 } // faxemitH
 
