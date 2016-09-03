@@ -17,7 +17,7 @@ void kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wiewe
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog);
 void pruefprocgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog);
 void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog);
-void faxemitH(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog);
+void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog);
 int pruefcapi(paramcl *pmp, int obverb, int oblog);
 void kuerzevtz(string *vzp);
 pid_t PIDausName(const char* PName, uchar klgr, uchar exakt, int obverb, int oblog);

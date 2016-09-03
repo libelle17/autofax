@@ -1494,7 +1494,6 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     }
   } // for(int runde=0;runde<2;runde++) 
   if (!rins.fnr) { 
-    RS rscop(My,"INSERT INTO `"+pmp->altspool+"` SELECT * FROM `"+pmp->spooltab+"` WHERE id = \""+id+"\"");
     RS rsloe(My,"DELETE FROM `"+pmp->spooltab+"` WHERE id = \""+id+"\"");
     *geloeschtp=1;
   } // if (!rins.fnr) 
@@ -1642,6 +1641,7 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
         einf.push_back(instyp(My->DBS,"origvu",&oudatei));
       }
       einf.push_back(instyp(My->DBS,"prio",fxvp->at(nachrnr).prio));
+      rins.insert(altspool,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
       rins.insert(spooltab,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
       if (spoolid!="null") break;
@@ -1664,6 +1664,9 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
       break;
     }
     // hier wird die Telefonnummer aus dem Namen extrahiert
+    RS tea(My,string("UPDATE `")+altspool+"` "
+        "SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
+        "WHERE ISNULL(telnr) OR telnr=''",ZDB);
     RS tel(My,string("UPDATE `")+spooltab+"` "
         "SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
         "WHERE ISNULL(telnr) OR telnr=''",ZDB);
@@ -3574,7 +3577,6 @@ int paramcl::loeschefax(int obverb, int oblog)
           /*fsfv[nr].*/setzhylastat(&fsfv[nr], &protdakt, &hyla_uverz_nr, &obsfehlt, 0, obverb, oblog); // hyla_uverz_nr, obsfehlt
           Log(violetts+"capistat: "+schwarz+FxStatS(&fsfv[nr].capistat)+violett+", hylastat: "+schwarz+FxStatS(&fsfv[nr].hylastat),obverb,oblog);
           if (!zdng || (fsfv[nr].capistat==fehlend && fsfv[nr].hylastat==fehlend)) {
-            RS rscop(My,"INSERT INTO `"+altspool+"` SELECT * FROM `"+spooltab+"` WHERE id = \""+fsfv[nr].id+"\"");
             RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE id="+fsfv[nr].id,-obverb);
           }
         } // if (nr>=0 && nr<fsfv.size()) 
@@ -3604,7 +3606,6 @@ int paramcl::loeschewaise(int obverb, int oblog)
     }
   }
   for(size_t i=0;i<ids.size();i++) {
-    RS rscop(My,"INSERT INTO `"+altspool+"` SELECT * FROM `"+spooltab+"` WHERE id = "+ids[i]);
     RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE id="+ids[i]);
   }
   return 0;
@@ -3625,7 +3626,6 @@ int paramcl::loescheallewartende(int obverb, int oblog)
       tuloeschen(allec[i],cuser,obverb,oblog);
       if (allec[i].find(".sff")!=string::npos) {
         string fname=base_name(allec[i]);
-        RS rscop(My,"INSERT INTO `"+altspool+"` SELECT * FROM `"+spooltab+"` WHERE capispooldatei='"+fname+"'");
         RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE capispooldatei='"+fname+"'");
       }
     }
@@ -3641,7 +3641,6 @@ int paramcl::loescheallewartende(int obverb, int oblog)
       ersetzAlle(&transalle,"q","");  
       cmd=string("faxrm ")+transalle;
       if (systemrueck(cmd,obverb,oblog)) {
-        RS rscop(My,"INSERT INTO `"+altspool+"` SELECT * FROM `"+spooltab+"` WHERE hylanr="+transalle);
         RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE hylanr="+transalle);
       }
     }
@@ -3973,7 +3972,7 @@ void paramcl::faxealle()
           " ."+Tx[T_obcapimitDoppelpunkt]+blau+(fsfv[i].fobcapi?Tx[T_ja]:Tx[T_nein])+schwarz+
           " ."+Tx[T_obhylamitDoppelpunkt]+blau+(fsfv[i].fobhyla?Tx[T_ja]:Tx[T_nein])+schwarz,obverb,oblog);
       if (fsfv[i].fobcapi) if (obcapi) faxemitC(My, spooltab, altspool, &fsfv[i],this,obverb,oblog);  
-      if (fsfv[i].fobhyla) if (obhyla) faxemitH(My, spooltab, &fsfv[i],this,obverb,oblog);  
+      if (fsfv[i].fobhyla) if (obhyla) faxemitH(My, spooltab, altspool, &fsfv[i],this,obverb,oblog);  
       //      _out<<fsfv[i].id<<" "<<rot<<fsfv[i].npdf<<" "<<schwarz<<(int)fsfv[i].obcapi<<" "<<(int)fsfv[i].obhyla<<endl;
     }
   }
@@ -4055,6 +4054,7 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
             vector<instyp> einf; // fuer alle Datenbankeinfuegungen
             einf.push_back(instyp(My->DBS,"capidials",&ctries));
             string bedingung=string("id=")+fsf.id;
+            rupd.update(altspool,einf,ZDB,bedingung);
             rupd.update(spooltab,einf,ZDB,bedingung);
 
           } else if (fsf.capistat==gesandt) {
@@ -4092,6 +4092,7 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
             }
             einf.push_back(instyp(My->DBS,"hyladials",&hyladials));
             string bedingung=string("id=")+fsf.id;
+            rupd.update(altspool,einf,ZDB,bedingung);
             rupd.update(spooltab,einf,ZDB,bedingung);
             ausg<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
           } // if (!warteirgendwo)
@@ -5770,7 +5771,7 @@ int paramcl::pruefcapi()
 
 
 // wird aufgerufen in: faxemitC
-void inDbc(DB *My, const string& spooltab, const string& spoolg, fsfcl *fsfp, char* telnr, int obverb, int oblog)
+void inDbc(DB *My, const string& spooltab, const string& altspool, const string& spoolg, fsfcl *fsfp, char* telnr, int obverb, int oblog)
 {
   Log(violetts+Tx[T_inDbc]+schwarz,obverb?obverb-1:0,oblog);
   string spooldir, spoolfil;
@@ -5795,6 +5796,7 @@ void inDbc(DB *My, const string& spooltab, const string& spoolg, fsfcl *fsfp, ch
       einf.push_back(instyp(My->DBS,"cdateizeit",entryspool.st_mtime));
       einf.push_back(instyp(My->DBS,"telnr",telnr));
       string bedingung=string("id=")+fsfp->id;
+      rupd.update(altspool,einf,ZDB,bedingung);
       rupd.update(spooltab,einf,ZDB,bedingung);
 
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
@@ -5849,13 +5851,12 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
              sprintf(buf,"%.3lu",atol(nr.c_str()));
              spoolg=pmp->cfaxusersqvz+vtz+"fax-"+buf+".sff";
             }
-            inDbc(My, spooltab, spoolg, fsfp, z2+strlen(tz2), obverb, oblog);
+            inDbc(My, spooltab, altspool, spoolg, fsfp, z2+strlen(tz2), obverb, oblog);
           }   // if (char *z2=strstr(z1,tz2)) 
           // if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
         } else if (faxerg.at(0).find("can't open")==0) {
           Log(rots+Tx[T_Datei]+blau+pmp->wvz+vtz+fsfp->spdf+rot+"' (id: "+blau+fsfp->id+rot+
               Tx[T_nichtgefundenloeschesieausDB]+schwarz,1,1);
-          RS rscop(My,"INSERT INTO `"+altspool+"` SELECT * FROM `"+spooltab+"` WHERE id = "+fsfp->id,ZDB);
           RS rsloe(My,string("DELETE FROM `")+spooltab+"` WHERE id = "+fsfp->id,ZDB);
         }
       } else {
@@ -5866,7 +5867,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 } // faxemitC
 
 // wird aufgerufen in faxemitH
-void inDBh(DB *My, const string& spooltab, paramcl *pmp, const string& hylaid, fsfcl *fsfp,string *tel, int obverb, int oblog)
+void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp, const string& hylaid, fsfcl *fsfp,string *tel, int obverb, int oblog)
 {
   Log(violetts+Tx[T_inDBh]+schwarz,obverb?obverb-1:0,oblog);
   string spoolfil=string("q")+hylaid;
@@ -5890,6 +5891,7 @@ void inDBh(DB *My, const string& spooltab, paramcl *pmp, const string& hylaid, f
       einf.push_back(instyp(My->DBS,"hdateizeit",entryspool.st_mtime));
       einf.push_back(instyp(My->DBS,"telnr",tel));
       string bedingung=string("id=")+fsfp->id;
+      rupd.update(altspool,einf,ZDB,bedingung);
       rupd.update(spooltab,einf,ZDB,bedingung);
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
       affr=My->affrows();
@@ -5906,7 +5908,7 @@ void inDBh(DB *My, const string& spooltab, paramcl *pmp, const string& hylaid, f
 } // inDBh
 
 // wird aufgerufen in: faxealle
-void faxemitH(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog)
+void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog)
 {
   // wenn in capi maxversuch ueberschritten, dann mit hylafax wegfaxen und wenn erfolgreich im spool, dann in Datenbank aktualisieren
   // 3. wartende Dateien bestimmen
@@ -5939,7 +5941,7 @@ void faxemitH(DB *My, const string& spooltab, fsfcl *fsfp, paramcl *pmp, int obv
         if (char *z2=strstr(z1,tz2)) {
           string hylaid(z1+strlen(tz1),z2-z1-strlen(tz1));
           //            inDatenbankh(My, pmp->hsendqvz, &hylaid, idsp, npdfp, spdfp, nachrnr, &tel, obverb, oblog);
-          inDBh(My, spooltab, pmp, hylaid, fsfp,&tel,obverb,oblog);
+          inDBh(My, spooltab, altspool, pmp, hylaid, fsfp,&tel,obverb,oblog);
         }   // if (char *z2=strstr(z1,tz2)) 
         break;
       }    // if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
@@ -6060,8 +6062,8 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
     //    Feld ifelder3[] = {Feld("original")};       Index i3("original",ifelder3,sizeof ifelder3/sizeof* ifelder3);
     Index indices[]={i0,i1,i2/*,i3*/};
     // auf jeden Fall ginge "binary" statt "utf8" und "" statt "utf8_general_ci"
-    Tabelle tab(spooltab,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,Tx[T_capispooldateien_der_Capisuite],"InnoDB","utf8","utf8_general_ci","DYNAMIC");
     Tabelle taa(altspool,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,Tx[T_capispooldateien_der_Capisuite],"InnoDB","utf8","utf8_general_ci","DYNAMIC");
+    Tabelle tab(spooltab,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,Tx[T_capispooldateien_der_Capisuite],"InnoDB","utf8","utf8_general_ci","DYNAMIC");
     if (My->prueftab(&tab, obverb)) {
       Log(string(Tx[T_Fehler_beim_Pruefen_von])+spooltab,1,1);
       return NULL;
