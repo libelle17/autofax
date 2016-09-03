@@ -6063,6 +6063,10 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
     Index indices[]={i0,i1,i2/*,i3*/};
     // auf jeden Fall ginge "binary" statt "utf8" und "" statt "utf8_general_ci"
     Tabelle taa(altspool,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,Tx[T_capispooldateien_der_Capisuite],"InnoDB","utf8","utf8_general_ci","DYNAMIC");
+    if (My->prueftab(&taa, obverb)) {
+      Log(string(Tx[T_Fehler_beim_Pruefen_von])+altspool,1,1);
+      return NULL;
+    }
     Tabelle tab(spooltab,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,Tx[T_capispooldateien_der_Capisuite],"InnoDB","utf8","utf8_general_ci","DYNAMIC");
     if (My->prueftab(&tab, obverb)) {
       Log(string(Tx[T_Fehler_beim_Pruefen_von])+spooltab,1,1);
