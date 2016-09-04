@@ -986,7 +986,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_Benutzer_fuer_MySQL_MariaDB,
   {"Benutzer fuer MySQL/MariaDB:","user for mysql/mariadb:"},
   // T_Passwort_fuer_MySQL_MariaDB,
-  {"Passwort fuer MySQL/MariaDB","password for mysql/mariadb"},
+  {"Passwort fuer MySQL/MariaDB (Achtung: nur schwach verschluesselt!)","password for mysql/mariadb (caution: only weakly encrypted!)"},
   // "Datenbankname fuer MySQL/MariaDB auf '"
   {"Datenbankname fuer MySQL/MariaDB auf '","database name for mysql/mariabd on '"},
   // T_Logverzeichnis
