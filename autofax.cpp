@@ -1814,7 +1814,14 @@ void paramcl::pruefmodem()
     obhyla=0;
     Log(rots+Tx[T_Kein_Modem_gefunden]+schwarz,obverb,oblog);
   }
-  cgconf.setze("obmodem",obmodem?"1":"0");
+  // wenn zum Konfigurationszeitpunkt kein Modem drinsteckte, aber jetzt, dann rueckfragen
+  if (obmodem && cgconf.hole("obmodem")=="0") {
+   rzf=1;
+  }
+  // wenn nur obkschreib, dann noch nicht auf neu eingestecktes Modem reagieren
+  if (rzf) {
+    cgconf.setze("obmodem",obmodem?"1":"0");
+  }
   // wvdialconf oder schneller: setserial -a /dev/tty*, mit baud_base: <!=0>  als Kriterium
 } // void paramcl::pruefmodem()
 
@@ -1832,7 +1839,14 @@ void paramcl::pruefisdn()
     Log(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_auf]+schwarz+"0.",1,oblog);
     obcapi=obfcard=0;
   }
-  cgconf.setze("obfcard",obfcard?"1":"0");
+  // wenn zum Konfigurationszeitpunkt keine Fritzkarte drinsteckte, aber jetzt, dann rueckfragen
+  if (obfcard && cgconf.hole("obfcard")=="0") {
+   rzf=1;
+  }
+  // wenn nur obkschreib, dann noch nicht auf neu eingesteckte Fritzkarte reagieren
+  if (rzf) {
+    cgconf.setze("obfcard",obfcard?"1":"0");
+  }
   obfcgeprueft=1;
 } // void paramcl::pruefisdn()
 

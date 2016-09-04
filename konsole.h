@@ -349,7 +349,7 @@ class schlArr {
  void init(vector<cppSchluess*> *sqlvp);
  inline /*const*/ cppSchluess& operator[](size_t const& nr) const { return schl[nr]; }
  int setze(const string& name, const string& wert);
- const string* hole(const string& name);
+ const string& hole(const string& name);
  void schreib(mdatei *f);
  int schreib(const string& fname);
  void ausgeb();

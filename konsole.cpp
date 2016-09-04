@@ -1403,15 +1403,15 @@ int schlArr::setze(const string& name, const string& wert)
   return 1;
 } // int schlArr::setze(const string& name, const string& wert)
  
-const string* schlArr::hole(const string& name)
+const string& schlArr::hole(const string& name)
 {
   static const string nix="";
   for(size_t ind=0;ind<zahl;ind++) {
     if (schl[ind].name==name) {
-      return &schl[ind].wert;
+      return schl[ind].wert;
     }
   }
-  return &nix;
+  return nix;
 } // const string* schlArr::hole(const string& name)
 
 void schlArr::schreib(mdatei *f)
