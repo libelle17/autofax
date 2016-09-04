@@ -582,6 +582,10 @@ will be replaced by the current fax number. Example:</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
+</td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
 
 
 <p style="margin-top: 1em">select concat(haname,&rsquo;,
@@ -591,6 +595,10 @@ concat(if(mid(fax1k,1,1)=&rsquo;0&rsquo;,&rsquo;&rsquo;,&rsquo;08131&rsquo;),
 replace(replace(replace(replace(fax1k,&rsquo;
 &rsquo;,&rsquo;&rsquo;),&rsquo;-&rsquo;,&rsquo;&rsquo;),&rsquo;/&rsquo;,&rsquo;&rsquo;),&rsquo;&acute;&rsquo;,&rsquo;&rsquo;))
 = &rsquo;&&faxnr&&&rsquo;</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+</td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

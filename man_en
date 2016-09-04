@@ -292,7 +292,9 @@ The status of the mentioned faxes is being displayed.
 .br
 Such sql commands shall deliver 2 fields, whose contents, separated by a comma, will be used to name to received faxes. When applied, within the sql commands the string '&&faxnr&&' will be replaced by the current fax number. Example:
 .br
+.br
 select concat(haname,', ',ort,', ',kvnu) name, zulg, fax1k from kvaerzte.hae where concat(if(mid(fax1k,1,1)='0','','08131'),                         replace(replace(replace(replace(fax1k,' ',''),'-',''),'/',''),'\'','')) = '&&faxnr&&'
+.br
 .br
 If more sql commands are specified and one of them does not give a result, the next one will be tried.
 .LP
