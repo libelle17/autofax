@@ -64,7 +64,7 @@ manpage available in english: 'man autofax' or 'man -Len autofax'.
 autofax ist ein Befehlszeilenprogramm, mit dem Dateien in einem bestimmten Verzeichnis automatisch an \fBhylafax\fR (falls ein linux-kompatibles Fax-Modem angeschlossen ist) und/oder \fBcapisuite\fR (falls eine Fritzcard 2.0 oder 2.1 angeschlossen ist) weiterleitet werden, wenn die Faxnummer im Dateinamen richtig eingetragen ist,
 weiterhin die versandten Faxe in einer MariaDB-Datenbank abspeichert. 
 .br
-Außerdem können von \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe nach dem Sender anhand dessen Telefonnummer benannt und abgespeichert werden.
+Außerdem können von \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe nach dem Sender anhand dessen Faxnummer benannt und abgespeichert werden.
 .SH INSTALLATION
 - Wenn das Programm 'git' zur Verfuegung steht, können Sie beginnen mit:
 .br
@@ -117,7 +117,7 @@ Gleichzeitig werden sie aus '\fBzufaxen\fR' in das Warteverzeichnis, z.B. '\fBwa
 .br
 Bei jedem Aufruf überprüft autofax den Status von \fBhylafax\fR und/oder \fBCapisuite\fR. Der Abschluss des Faxvorgangs dort hat zur Folge, dass autofax die Quelldateien (also hier die o.g. .doc- und .pdf-Dateien) aus dem Warteverzeichnis in ein oder mehrere alternative Archivverzeichnisse oder ein Verzeichnis für gescheiteterte Faxe ablegt und den Datenbankeintrag von '\fBspooltab\fR' in die Archivtabelle '\fBouta\fR' verschiebt.
 .br
-Weiterhin werden über \fBhylafax\fR oder \fBCapisuite\fR angekommene Faxe in ein Empfangsverzeichnis kopiert und ggf. nach dem Sender benannt. Hierzu werden, falls angegeben, konfigurierbare SQL-Befehle verwendet, die in frei festlegbarer Zahl der Reihe nach so lange aufgerufen werden, bis einer einen Datensatz zu der Telefonnummer findet.
+Weiterhin werden über \fBhylafax\fR oder \fBCapisuite\fR angekommene Faxe in ein Empfangsverzeichnis kopiert und ggf. nach dem Sender benannt. Hierzu werden, falls angegeben, konfigurierbare SQL-Befehle verwendet, die in frei festlegbarer Zahl der Reihe nach so lange aufgerufen werden, bis einer einen Datensatz zu der Faxnummer findet.
 .br
 Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präferenz in den genannten Verzeichnissen, in den Datenbanktabellen oder durch Aufruf von z.B. '\fBautofax\fB', '\fBautofax -lista\fR', '\fBautofax -listf\fR' oder '\fBautofax -listi\fR' den Stand des Faxens überprüfen. 
 .SH OPTIONEN 
@@ -175,7 +175,7 @@ Mit '\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Option
 .br
 \fB-as, --anstring <string>\fR: Adressatenname wird hinter <string> erwartet statt hinter ' an '
 .br
-\fB-us, --undstring <string>\fR: Trennstring <string> fuer mehrere Adressaten/Telefonnummern statt 'und'
+\fB-us, --undstring <string>\fR: Trennstring <string> fuer mehrere Adressaten/Faxnummern statt 'und'
 .br
 \fB-host, --host <string>\fR: verwendet die Datenbank auf Host <string> anstatt auf 'localhost'
 .br
@@ -285,7 +285,7 @@ Der Status der genannten Faxe wird angezeigt.
 17) Weitere in der Warteschleife von hylafax/capisuite befindliche, nicht über autofax erstellte Faxe werden ggf. angezeigt.
 .LP
 .HP 3 
-18) Über \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe werden ggf. mit Hilfe der Telefonnummer anhand voreingestellter SQL-Befehle nach dem Namen des Absenders benannt und in ein Empfangsverzeichnis gestellt.
+18) Über \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe werden ggf. mit Hilfe der Faxnummer anhand voreingestellter SQL-Befehle nach dem Namen des Absenders benannt und in ein Empfangsverzeichnis gestellt.
 .br
 Solche SQL-Befehle sollen zwei Ergebnisfelder liefern, deren Inhalt dann, durch ein Komma getrennt, zur Benennung eines empfangenen Faxes verwendet werden. Bei der Anwendung des SQL-Befehls wird die Zeichenfolge '&&faxnr&&' zur aktuellen Faxnummer erweitert. Beispiel fuer einen solchen SQL-Befehl:
 .br

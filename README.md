@@ -111,7 +111,7 @@ integrated in the file name correctly. Furthermore, autofax
 holds the posted faxes in a mariadb database. <br>
 Additionally, received faxes from
 <b>hylafax</b>/<b>capisuite</b> can be named with the
-sender&rsquo;s name according to his telephone number and
+sender&rsquo;s name according to his fax number and
 stored.</p>
 
 <h2>INSTALLATION
@@ -281,7 +281,7 @@ instead of &rsquo;an hFax&rsquo; <b><br>
 expected after &lt;string&gt; instead of &rsquo; an &rsquo;
 <b><br>
 -us, --undstring &lt;string&gt;</b>: separating string
-&lt;string&gt; for multiple addressees/tel&rsquo;numbers,
+&lt;string&gt; for multiple addressees/fax&rsquo;numbers,
 instead of &rsquo;und&rsquo; <b><br>
 -host, --host &lt;string&gt;</b>: takes the database on host
 &lt;string&gt; instead of &rsquo;localhost&rsquo; <b><br>
@@ -565,10 +565,10 @@ created via autofax, they are displayed.</p></td></tr>
 <p style="margin-top: 1em">18) Via
 <b>hylafax</b>/<b>capisuite</b> received faxes are copied to
 a receiving directory and there named with the name of the
-sender, if possible, by means of their telephone number
-which is being looked up using a predefineable number of
+sender, if possible, by means of their fax number which is
+being looked up using a predefineable number of
 predefineable sql commands, which are applied one after
-another until the telephone number is found.</p></td></tr>
+another until the fax number is found.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

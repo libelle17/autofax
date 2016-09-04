@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sun Sep  4 19:01:18 2016 -->
+<!-- CreationDate: Sun Sep  4 19:05:47 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -131,7 +131,7 @@ im Dateinamen richtig eingetragen ist, weiterhin die
 versandten Faxe in einer MariaDB-Datenbank abspeichert. <br>
 Au&szlig;erdem k&ouml;nnen von
 <b>hylafax</b>/<b>capisuite</b> empfangene Faxe nach dem
-Sender anhand dessen Telefonnummer benannt und abgespeichert
+Sender anhand dessen Faxnummer benannt und abgespeichert
 werden.</p>
 
 <h2>INSTALLATION
@@ -224,8 +224,8 @@ Weiterhin werden &uuml;ber <b>hylafax</b> oder
 kopiert und ggf. nach dem Sender benannt. Hierzu werden,
 falls angegeben, konfigurierbare SQL-Befehle verwendet, die
 in frei festlegbarer Zahl der Reihe nach so lange aufgerufen
-werden, bis einer einen Datensatz zu der Telefonnummer
-findet. <br>
+werden, bis einer einen Datensatz zu der Faxnummer findet.
+<br>
 Der Benutzer k&ouml;nnte also je nach Betriebssystem,
 Zugriffsm&ouml;glichkeit und Pr&auml;ferenz in den
 genannten Verzeichnissen, in den Datenbanktabellen oder
@@ -308,7 +308,7 @@ hylafax wird hinter &lt;string&gt; erwartet statt hinter
 hinter &lt;string&gt; erwartet statt hinter &rsquo; an
 &rsquo; <b><br>
 -us, --undstring &lt;string&gt;</b>: Trennstring
-&lt;string&gt; fuer mehrere Adressaten/Telefonnummern statt
+&lt;string&gt; fuer mehrere Adressaten/Faxnummern statt
 &rsquo;und&rsquo; <b><br>
 -host, --host &lt;string&gt;</b>: verwendet die Datenbank
 auf Host &lt;string&gt; anstatt auf &rsquo;localhost&rsquo;
@@ -603,8 +603,8 @@ autofax erstellte Faxe werden ggf. angezeigt.</p></td></tr>
 
 <p style="margin-top: 1em">18) &Uuml;ber
 <b>hylafax</b>/<b>capisuite</b> empfangene Faxe werden ggf.
-mit Hilfe der Telefonnummer anhand voreingestellter
-SQL-Befehle nach dem Namen des Absenders benannt und in ein
+mit Hilfe der Faxnummer anhand voreingestellter SQL-Befehle
+nach dem Namen des Absenders benannt und in ein
 Empfangsverzeichnis gestellt.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
