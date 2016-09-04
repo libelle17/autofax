@@ -1855,6 +1855,7 @@ void paramcl::pruefisdn()
   if (rzf) {
     cgconf.setze("obfcard",obfcard?"1":"0");
   }
+  if (obverb) Log("obfcard: "+blaus+ltoan(obfcard));
   obfcgeprueft=1;
 } // void paramcl::pruefisdn()
 
