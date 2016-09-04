@@ -562,7 +562,7 @@ created via autofax, they are displayed.</p></td></tr>
 <td width="89%">
 
 
-<p style="margin-top: 1em">18) With
+<p style="margin-top: 1em">18) Via
 <b>hylafax</b>/<b>capisuite</b> received faxes are copied to
 a receiving directory and there named with the name of the
 sender, if possible, by means of their telephone number
