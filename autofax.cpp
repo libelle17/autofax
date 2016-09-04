@@ -1848,7 +1848,7 @@ void paramcl::pruefisdn()
   systemrueck(cmd, obverb,oblog,&rueck);
   // <<"pruefmodem 1 vor  obcapi: "<<(int)obcapi<<endl;
   if (rueck.size()) {
-    Log(rots+Tx[T_ISDN_Karte_gefunden]+schwarz+rueck[0]+rot+Tx[T_Setze]+Tx[T_mitCapi]+rot+Tx[T_auf]+schwarz+"1.",1,oblog);
+    Log(rots+Tx[T_ISDN_Karte_gefunden]+schwarz+rueck[0]+rot+Tx[T_Setze]+Tx[T_mitCapi]+rot+Tx[T_auf]+schwarz+"1.",obverb,oblog);
     obfcard=1;
   } else {
     Log(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_auf]+schwarz+"0.",1,oblog);
