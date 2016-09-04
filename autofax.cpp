@@ -68,11 +68,11 @@ enum T_
   T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird,
   T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird,
   T_Linux_Benutzer_fuer_Capisuite,
-  T_Hylafax_eigene_Landesvorwahl_ohne_plus_oder_00,
-  T_Hylafax_eigene_Ortsvorwahl_ohne_0,
-  T_Hylafax_und_Capisuite_eigene_MSN_Faxnummer_ohne_Vorwahl,
-  T_Hylafax_Praefix_fuer_ausserorts_zB_0,
-  T_Hylafax_Praefix_fuer_das_Ausland_zB_00,
+  T_Eigene_Landesvorwahl_ohne_plus_oder_00,
+  T_Eigene_Ortsvorwahl_ohne_0,
+  T_Eigene_MSN_Faxnummer_ohne_Vorwahl,
+  T_Praefix_fuer_ausserorts_zB_0,
+  T_Praefix_fuer_das_Ausland_zB_00,
   T_Hylafax_bis_10_Buchstabe_fuer_eigenen_Namen,
   T_Capisuite_bis_20_Buchstaben_fuer_eigenen_Namen,
   T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt,
@@ -516,16 +516,16 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Zahl der Versuche in hylafax, bis Capisuite eingeschaltet wird","Number of tries in hylafax, until Capisuite is started"},
   // T_Linux_Benutzer_fuer_Capisuite
   {"Linux-Benutzer fuer Capisuite","Linux user for Capisuite"},
-  // T_Hylafax_eigene_Landesvorwahl_ohne_plus_oder_00
-  {"Hylafax: eigene Landesvorwahl ohne '+' oder '00'","hylafax: own international prefix without '+' or '00'"},
-  // T_Hylafax_eigene_Ortsvorwahl_ohne_0
-  {"Hylafax: eigene Ortsvorwahl ohne '0'","hylafax: own long distance prefix without '0'"},
-  // T_Hylafax_und_Capisuite_eigene_MSN_Faxnummer_ohne_Vorwahl
+  // T_Eigene_Landesvorwahl_ohne_plus_oder_00
+  {"Eigene Landesvorwahl ohne '+' oder '00'","Own international prefix without '+' or '00'"},
+  // T_Eigene_Ortsvorwahl_ohne_0
+  {"Eigene Ortsvorwahl ohne '0'","Own long distance prefix without '0'"},
+  // T_Eigene_MSN_Faxnummer_ohne_Vorwahl
   {"Eigene MSN (Faxnummer ohne Vorwahl)","Own MSN (fax number without prefix)"},
-  // T_Hylafax_Praefix_fuer_ausserorts_zB_0
-  {"Hylafax: Praefix fuer ausserorts (z.B. '0')","hylafax: prefix for long distance (e.g. '0')"},
-  // T_Hylafax_Praefix_fuer_das_Ausland_zB_00
-  {"Hylafax: Praefix fuer das Ausland (z.B. '00')","hylafax: prefix for abroad (e.g. '00')"},
+  // T_Praefix_fuer_ausserorts_zB_0
+  {"Praefix fuer ausserorts (z.B. '0')","prefix for long distance (e.g. '0')"},
+  // T_Praefix_fuer_das_Ausland_zB_00
+  {"Praefix fuer das Ausland (z.B. '00')","prefix for abroad (e.g. '00')"},
   // T_Hylafax_bis_10_Buchstabe_fuer_eigenen_Namen
   {"Hylafax: bis 10 Buchstaben fuer eigenen Namen","hylafax: up to 10 letters for own name"},
   // T_Capisuite_bis_20_Buchstaben_fuer_eigenen_Namen
@@ -2258,15 +2258,15 @@ void paramcl::lieskonfein()
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obhyla); else rzf=1; lfd++;
     konfobhyla=obhyla;
     if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hylazuerst); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxcapiv); else rzf=1;} lfd++;
+    if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxcapiv); else rzf=1;} lfd++;
     if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxhylav); else rzf=1;} lfd++;
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cuser); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&countrycode); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&citycode); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&msn); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&LongDistancePrefix); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&InternationalPrefix); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&LocalIdentifier); else rzf=1;} lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&countrycode); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&citycode); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&msn); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&LongDistancePrefix); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&InternationalPrefix); else rzf=1; lfd++;
+    if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&LocalIdentifier); else rzf=1;} lfd++;
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cFaxUeberschrift); else rzf=1;} lfd++;
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cklingelzahl); else rzf=1;} lfd++;
     if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hmodem); else rzf=1;} lfd++;
@@ -2277,8 +2277,8 @@ void paramcl::lieskonfein()
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&nvz); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&empfvz); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&anfaxstr); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&ancfaxstr); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&anhfaxstr); else rzf=1; lfd++;
+    if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&ancfaxstr); else rzf=1;} lfd++;
+    if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&anhfaxstr); else rzf=1;} lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&anstr); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&undstr); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cronminut); else rzf=1; lfd++;
@@ -2671,41 +2671,45 @@ void paramcl::rueckfragen()
         cuser=Tippstrings(Tx[T_Linux_Benutzer_fuer_Capisuite],&benutzer,&cuser);
         cgconf[lfd].setze(&cuser);
       }
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        countrycode=Tippstring(Tx[T_Hylafax_eigene_Landesvorwahl_ohne_plus_oder_00],&countrycode);
-        cgconf[lfd].setze(&countrycode);
-      }
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        citycode=Tippstring(Tx[T_Hylafax_eigene_Ortsvorwahl_ohne_0],&citycode);
-        cgconf[lfd].setze(&citycode);
-      }
     } else {
-      lfd+=6; // nicht obcapi, aber obhyla kaeme hier
+      lfd+=4; // nicht obcapi, aber obhyla kaeme hier
       hylazuerst=1;
     } // if (obcapi) else
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      countrycode=Tippstring(Tx[T_Eigene_Landesvorwahl_ohne_plus_oder_00],&countrycode);
+      cgconf[lfd].setze(&countrycode);
+    }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      citycode=Tippstring(Tx[T_Eigene_Ortsvorwahl_ohne_0],&citycode);
+      cgconf[lfd].setze(&citycode);
+    }
 
     if (obcapi || obhyla) {
       if (cgconf[++lfd].wert.empty() || rzf) {
-        msn=Tippstring(Tx[T_Hylafax_und_Capisuite_eigene_MSN_Faxnummer_ohne_Vorwahl],&msn);
+        msn=Tippstring(Tx[T_Eigene_MSN_Faxnummer_ohne_Vorwahl],&msn);
         cgconf[lfd].setze(&msn);
       }
     } else {
       lfd++; 
     } //     if (obcapi || obhyla)
 
-    if (obcapi) {
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        LongDistancePrefix=Tippstring(Tx[T_Hylafax_Praefix_fuer_ausserorts_zB_0],&LongDistancePrefix);
-        cgconf[lfd].setze(&LongDistancePrefix);
-      }
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        InternationalPrefix=Tippstring(Tx[T_Hylafax_Praefix_fuer_das_Ausland_zB_00],&InternationalPrefix);
-        cgconf[lfd].setze(&InternationalPrefix);
-      }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      LongDistancePrefix=Tippstring(Tx[T_Praefix_fuer_ausserorts_zB_0],&LongDistancePrefix);
+      cgconf[lfd].setze(&LongDistancePrefix);
+    }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      InternationalPrefix=Tippstring(Tx[T_Praefix_fuer_das_Ausland_zB_00],&InternationalPrefix);
+      cgconf[lfd].setze(&InternationalPrefix);
+    }
+    if (obhyla) {
       if (cgconf[++lfd].wert.empty() || rzf) {
         LocalIdentifier=Tippstring(Tx[T_Hylafax_bis_10_Buchstabe_fuer_eigenen_Namen],&LocalIdentifier);
         cgconf[lfd].setze(&LocalIdentifier);
       }
+    } else {
+       lfd++;
+    }
+    if (obcapi) {
       if (cgconf[++lfd].wert.empty() || rzf) {
         cFaxUeberschrift=Tippstring(Tx[T_Capisuite_bis_20_Buchstaben_fuer_eigenen_Namen],&cFaxUeberschrift);
         cgconf[lfd].setze(&cFaxUeberschrift);
@@ -2715,7 +2719,7 @@ void paramcl::rueckfragen()
         cgconf[lfd].setze(&cklingelzahl);
       }
     } else {
-      lfd+=5; // nicht obcapi, aber obhyla kaeme hier
+      lfd+=2; // nicht obcapi, aber obhyla kaeme hier
     } //     if (obcapi) else
 
     if (obhyla) {
@@ -2759,7 +2763,7 @@ void paramcl::rueckfragen()
       cgconf[lfd].setze(&anfaxstr);
     }
 
-    if (obcapi || obhyla) {
+    if (obcapi && obhyla) {
       if (cgconf[++lfd].wert.empty() || rzf) {
         ancfaxstr=Tippstring(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Capisuite],&ancfaxstr);
         cgconf[lfd].setze(&ancfaxstr);
