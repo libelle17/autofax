@@ -68,6 +68,7 @@ enum T_
   T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird,
   T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird,
   T_Linux_Benutzer_fuer_Capisuite_Samba,
+  T_Linux_Benutzer_fuer_Samba,
   T_Eigene_Landesvorwahl_ohne_plus_oder_00,
   T_Eigene_Ortsvorwahl_ohne_0,
   T_Eigene_MSN_Faxnummer_ohne_Vorwahl,
@@ -252,7 +253,7 @@ enum T_
   T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,
   T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,
   T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt,
-  T_FAxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,
+  T_Faxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,
   T_faxnr_wird_hinter_string_erwartet_statt_hinter,
   T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,
   T_faxnr_fuer_primaer_hylafax_wird_hinter_string_erwartet_statt_hinter,
@@ -516,6 +517,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Zahl der Versuche in hylafax, bis Capisuite eingeschaltet wird","Number of tries in hylafax, until Capisuite is started"},
   // T_Linux_Benutzer_fuer_Capisuite_Samba
   {"Linux-Benutzer fuer Capisuite und Samba","Linux user for capisuite and samba"},
+  // T_Linux_Benutzer_fuer_Samba
+  {"Linux-Benutzer fuer Samba","Linux user for samba"},
   // T_Eigene_Landesvorwahl_ohne_plus_oder_00
   {"Eigene Landesvorwahl ohne '+' oder '00'","Own international prefix without '+' or '00'"},
   // T_Eigene_Ortsvorwahl_ohne_0
@@ -887,8 +890,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt
   {"Zahl der Klingeltoene, bis Hylafax den Anruf annimmt, anstatt","No. of bell rings until hylafaxs accepts the call, instead of"},
   // T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt
-  {"verwendet fuer Capisuite und Samba den Linux-Benutzer <string> anstatt","takes the linux user <string> for capisuite and samba instead of"},
-  // T_FAxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert
+  {"verwendet fuer Capisuite und/oder Samba den Linux-Benutzer <string> anstatt","takes the linux user <string> for capisuite and/or samba instead of"},
+  // T_Faxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert
   {"Faxe werden auch ohne Faxerfolg ins Zielverzeichnis kopiert","copy faxes into target directory irrespective of faxing success"},
   // T_faxnr_wird_hinter_string_erwartet_statt_hinter
   {"faxnr wird hinter <string> erwartet statt hinter","the fax number will be expected after <string> instead of"},
@@ -2322,7 +2325,7 @@ int paramcl::getcommandline()
                                                         &cgconf,"cklingelzahl",&capizukonf));
   opts.push_back(optioncl("hkzl","hklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,&hklingelzahl,pzahl,
                                                         &cgconf,"hklingelzahl",&hylazukonf));
-  opts.push_back(optioncl("gz","gleichziel", &Tx, T_FAxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,&gleichziel,1,
+  opts.push_back(optioncl("gz","gleichziel", &Tx, T_Faxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,&gleichziel,1,
                                                   &cgconf,"gleichziel",&obkschreib));
   opts.push_back(optioncl("afs","anfaxstr",&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,&anfaxstr,psons,&cgconf,"anfaxstr",&obkschreib));
   opts.push_back(optioncl("acfs","ancfaxstr",&Tx, T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,&ancfaxstr,psons,
@@ -2673,7 +2676,7 @@ void paramcl::rueckfragen()
          tmpcuser.find(',')==string::npos); // nur vorhandene User akzeptieren
          cuser=tmpcuser;
        */
-      cuser=Tippstrings(Tx[T_Linux_Benutzer_fuer_Capisuite_Samba],&benutzer,&cuser);
+      cuser=Tippstrings(obcapi?Tx[T_Linux_Benutzer_fuer_Capisuite_Samba]:Tx[T_Linux_Benutzer_fuer_Samba],&benutzer,&cuser);
       cgconf[lfd].setze(&cuser);
     } // if (cgconf[++lfd].wert.empty() || rzf) 
     if (cgconf[++lfd].wert.empty() || rzf) {
