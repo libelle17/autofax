@@ -3342,8 +3342,8 @@ void paramcl::pruefsamba()
     if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
       string pw1, pw2;
       while (1) {
-        pw1=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz,&pw1);
-        pw2=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" ("+Tx[T_erneute_Eingabe]+")",&pw2);
+        pw1=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz,&pw1);
+        pw2=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz+" ("+Tx[T_erneute_Eingabe]+")",&pw2);
         if (pw1==pw2) break;
       }
       systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
@@ -4837,7 +4837,7 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
     Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
     int erg __attribute__((unused));
     pruefplatte();
-    systemrueck("sudo killall hfaxd faxq >/dev/null 2>&1",obverb,oblog);
+    systemrueck("sudo systemctl stop hylafax hylafax-hfaxd >/dev/null 2>&1; sudo killall hfaxd >/dev/null 2>&1;",obverb,oblog);
     erg=system(("sudo $(which sh) $(sudo env \"PATH=$PATH\" which faxsetup) -nointeractive"+string(obverb?" -verbose":"")+
           " && sudo killall hfaxd faxq >/dev/null 2>&1"
           " && sudo systemctl daemon-reload").c_str()); 
