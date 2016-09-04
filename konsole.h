@@ -162,6 +162,7 @@ enum Tkonsole_
   T_nicht_geladen,
   T_am,
   T_als_Dienst_eingerichtet_von,
+  T_Versuch,
   T_konsoleMAX,
 };
 

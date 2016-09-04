@@ -401,7 +401,6 @@ enum T_
   T_Gesamt,
   T_Verwende,
   T_Hylafax_ohne_plus_entdeckt_muss_ich_loeschen,
-  T_Versuch,
   T_nicht_gefunden_kein_Datenbankeintrag,
   T_setzhylastat,
 //  T_empfangene_Dateien_loeschen_die_nicht_verarbeitet_werden_koennen,
@@ -1194,8 +1193,6 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Verwende: ","Using: "},
   // T_Hylafax_ohne_plus_entdeckt_muss_ich_loeschen
   {"Hylafax ohne + entdeckt, muss ich loeschen ...","hylafax without plus found, must delete it ..."},
-  // T_Versuch
-  {" Versuch: "," try no.: "},
   // T_nicht_gefunden_kein_Datenbankeintrag
   {"' nicht gefunden, kein Datenbankeintrag!"," not found, no database entry!"},
   // T_setzhylastat
@@ -5214,7 +5211,7 @@ int paramcl::pruefhyla()
           hylafehlt=linst.obfehlt(hfr,obverb,oblog) || linst.obfehlt(hfcr,obverb,oblog) || 
             obprogda("faxq",obverb,oblog).empty() || obprogda("hfaxd",obverb,oblog).empty() || obprogda("faxgetty",obverb,oblog).empty();
           string vstring=ltoan(versuch);
-          Log(gruens+Tx[T_hylafehlt]+schwarz+ltoan(hylafehlt)+gruen+Tx[T_Versuch]+schwarz+vstring,obverb,oblog);
+          Log(gruens+Tx[T_hylafehlt]+schwarz+ltoan(hylafehlt)+gruen+Txk[T_Versuch]+schwarz+vstring,obverb,oblog);
           // b1) falsches Hylafax loeschen
           if (hylafehlt) {
             if (falscheshyla) {
