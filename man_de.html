@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sun Sep  4 15:39:05 2016 -->
+<!-- CreationDate: Sun Sep  4 16:12:40 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<h1 align="center">AUTOFAX (Version 0.40739)</h1>
+<h1 align="center">AUTOFAX (Version 0.4074)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -606,6 +606,38 @@ autofax erstellte Faxe werden ggf. angezeigt.</p></td></tr>
 mit Hilfe der Telefonnummer anhand voreingestellter
 SQL-Befehle nach dem Namen des Absenders benannt und in ein
 Empfangsverzeichnis gestellt.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">Solche SQL-Befehle sollen zwei
+Ergebnisfelder liefern, deren Inhalt dann, durch ein Komma
+getrennt, zur Benennung eines empfangenen Faxes verwendet
+werden. Bei der Anwendung des SQL-Befehls wird die
+Zeichenfolge &rsquo;&&faxnr&&&rsquo; zur
+aktuellen Faxnummer erweitert. Beispiel fuer einen solchen
+SQL-Befehl:</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">select concat(haname,&rsquo;,
+&rsquo;,ort,&rsquo;, &rsquo;,kvnu) name, zulg, fax1k from
+kvaerzte.hae where
+concat(if(mid(fax1k,1,1)=&rsquo;0&rsquo;,&rsquo;&rsquo;,&rsquo;08131&rsquo;),
+replace(replace(replace(replace(fax1k,&rsquo;
+&rsquo;,&rsquo;&rsquo;),&rsquo;-&rsquo;,&rsquo;&rsquo;),&rsquo;/&rsquo;,&rsquo;&rsquo;),&rsquo;&acute;&rsquo;,&rsquo;&rsquo;))
+= &rsquo;&&faxnr&&&rsquo;</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">Wenn mehrere SQL-Befehle
+angegeben werden, so wird der jeweils naechste angewandt,
+wenn einer kein Ergebnis liefert.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

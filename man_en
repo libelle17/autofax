@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "04.09.16" "Version 0.40739" "\fBautofax\fR man page"
+.TH man 1 "04.09.16" "Version 0.4074" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -289,6 +289,12 @@ The status of the mentioned faxes is being displayed.
 .LP
 .HP 3 
 18) With \fBhylafax\fR/\fBcapisuite\fR received faxes are copied to a receiving directory and there named with the name of the sender, if possible, by means of their telephone number which is being looked up using a predefineable number of predefineable sql commands, which are applied one after another until the telephone number is found.
+.br
+Such sql commands shall deliver 2 fields, whose contents, separated by a comma, will be used to name to received faxes. When applied, within the sql commands the string '&&faxnr&&' will be replaced by the current fax number. Example:
+.br
+select concat(haname,', ',ort,', ',kvnu) name, zulg, fax1k from kvaerzte.hae where concat(if(mid(fax1k,1,1)='0','','08131'),                         replace(replace(replace(replace(fax1k,' ',''),'-',''),'/',''),'\'','')) = '&&faxnr&&'
+.br
+If more sql commands are specified and one of them does not give a result, the next one will be tried.
 .LP
 .HP 3 
 19) The configuration file is being written, if necessary.

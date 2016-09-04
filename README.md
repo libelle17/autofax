@@ -1,5 +1,5 @@
 
-<h1 align="center">AUTOFAX (Version 0.40739)</h1>
+<h1 align="center">AUTOFAX (Version 0.4074)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -569,6 +569,36 @@ sender, if possible, by means of their telephone number
 which is being looked up using a predefineable number of
 predefineable sql commands, which are applied one after
 another until the telephone number is found.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">Such sql commands shall deliver
+2 fields, whose contents, separated by a comma, will be used
+to name to received faxes. When applied, within the sql
+commands the string &rsquo;&&faxnr&&&rsquo;
+will be replaced by the current fax number. Example:</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">select concat(haname,&rsquo;,
+&rsquo;,ort,&rsquo;, &rsquo;,kvnu) name, zulg, fax1k from
+kvaerzte.hae where
+concat(if(mid(fax1k,1,1)=&rsquo;0&rsquo;,&rsquo;&rsquo;,&rsquo;08131&rsquo;),
+replace(replace(replace(replace(fax1k,&rsquo;
+&rsquo;,&rsquo;&rsquo;),&rsquo;-&rsquo;,&rsquo;&rsquo;),&rsquo;/&rsquo;,&rsquo;&rsquo;),&rsquo;&acute;&rsquo;,&rsquo;&rsquo;))
+= &rsquo;&&faxnr&&&rsquo;</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">If more sql commands are
+specified and one of them does not give a result, the next
+one will be tried.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

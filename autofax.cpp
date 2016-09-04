@@ -302,7 +302,7 @@ enum T_
   T_Datenbankname_fuer_MySQL_MariaDB_auf,
   T_Logverzeichnis,
   T_Logdateiname,
-  T_Zahl_der_SQL_Befehle_fuer_Namenszuordnung,
+//  T_Zahl_der_SQL_Befehle_fuer_Namenszuordnung,
   T_SQL_Befehl_Nr,
   T_Capisuite_ist_offenbar_noch_nicht_richtig_konfiguriert,
   T_ist_Apostroph,
@@ -521,7 +521,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_Hylafax_eigene_Ortsvorwahl_ohne_0
   {"Hylafax: eigene Ortsvorwahl ohne '0'","hylafax: own long distance prefix without '0'"},
   // T_Hylafax_und_Capisuite_eigene_MSN_Faxnummer_ohne_Vorwahl
-  {"Hylafax und Capisuite: eigene MSN (Faxnummer ohne Vorwahl)","hylafax and capisuite: own MSN (fax number without prefix)"},
+  {"Eigene MSN (Faxnummer ohne Vorwahl)","Own MSN (fax number without prefix)"},
   // T_Hylafax_Praefix_fuer_ausserorts_zB_0
   {"Hylafax: Praefix fuer ausserorts (z.B. '0')","hylafax: prefix for long distance (e.g. '0')"},
   // T_Hylafax_Praefix_fuer_das_Ausland_zB_00
@@ -876,8 +876,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"versuche faxe zuerst ueber Capisuite wegzuschicken","try to send faxes primarily via capisuite"},
   // T_versuche_faxe_zuerst_ueber_hylafax_wegzuschicken
   {"versuche faxe zuerst ueber hylafax wegzuschicken","try to send faxes primarily via hylafax"},
-  //      // T_sucht_nach_dev_tty_string_als_Modem_mit_string_anstatt
-  //      {"suche nach '/dev/tty<string>*' als Modem, mit <string> anstatt","search for '/dev/tty<string>*' as modem, with <string> instead of"},
+  //  // T_sucht_nach_dev_tty_string_als_Modem_mit_string_anstatt
+  //  KLA "suche nach '/dev/tty<string>*' als Modem, mit <string> anstatt","search for '/dev/tty<string>*' as modem, with <string> instead of" KLZ,
   // T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht
   {"nach <zahl> Versuchen Capisuite wird Hylafax versucht, anstatt nach","try Hylafax after <no> tries of Capisuite instead of"}, 
   // T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet
@@ -993,10 +993,10 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Logverzeichnis","log directory"},
   // T_Logdateiname
   {"Logdateiname","log file name"},
-  // T_Zahl_der_SQL_Befehle_fuer_Namenszuordnung
-  {"Zahl der SQL-Befehle fuer Namenszuordnung:","No.of SQL-commands for assignment of fax names"},
+//  // T_Zahl_der_SQL_Befehle_fuer_Namenszuordnung
+//  KLA "Zahl der SQL-Befehle fuer Namenszuordnung:","No.of SQL-commands for assignment of fax names" KLZ,
   // T_SQL_Befehl_Nr,
-  {"SQL-Befehl Nr. ","SQL command no. "},
+  {"Ggf. SQL-Befehl Nr. ","If desired, SQL command no. "},
   // T_Capisuite_ist_offenbar_noch_nicht_richtig_konfiguriert
   {"Capisuite ist offenbar noch nicht konfiguriert (","Capisuite seems not to be configured correcty ("},
   // T_ist_Apostroph,
@@ -1198,7 +1198,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_setzhylastat
   {"setzhylastat()","sethylastat()"},
 //  // T_empfangene_Dateien_loeschen_die_nicht_verarbeitet_werden_koennen
-//  {"empfangene Dateien loeschen, die nicht verarbeitet werden koennen","delete received files that could not be processed"},
+//  KLA "empfangene Dateien loeschen, die nicht verarbeitet werden koennen","delete received files that could not be processed" KLZ,
   // T_hylafehlt
   {"hylafehlt: ","hylamissing: "},
   // T_capilaeuft
@@ -1248,11 +1248,11 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // "Wollen Sie noch einen SQL-Befehl eingeben?"
   {"Wollen Sie noch einen SQL-Befehl eingeben?","Do You want to enter another sql command?"},
   // T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr
-  {" ('-'=SQL-Befehl loeschen,'&&faxnr&&' wird ersetzt mit der Faxnr)",
-   " ('-'=delete this sql command,'&&faxnr&&' will be replaces with the fax-no.)"},
+  {" ('-'=SQL-Befehl loeschen, 2 Ergebnisfelder, '&&faxnr&&' wird ersetzt mit der Faxnr, s.man -Lde autofax)",
+   " ('-'=delete this sql command, 2 result fileds, '&&faxnr&&' will be replaces with the fax-no., see man autofax)"},
   // T_faxnr_wird_ersetzt_mit_der_Faxnr
-  {" ('&&faxnr&&' wird ersetzt mit der Faxnr)",
-   " ('&&faxnr&&' will be replaces with the fax-no.)"},
+  {" (2 Ergebnisfelder, '&&faxnr&&' wird ersetzt mit der Faxnr)",
+   " (2 result fields, '&&faxnr&&' will be replaces with the fax-no.)"},
   // T_Datenbank
   {"Datenbank '","Database '"},
   // T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben
