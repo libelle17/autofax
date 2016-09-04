@@ -67,7 +67,7 @@ enum T_
   T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden,
   T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird,
   T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird,
-  T_Linux_Benutzer_fuer_Capisuite,
+  T_Linux_Benutzer_fuer_Capisuite_Samba,
   T_Eigene_Landesvorwahl_ohne_plus_oder_00,
   T_Eigene_Ortsvorwahl_ohne_0,
   T_Eigene_MSN_Faxnummer_ohne_Vorwahl,
@@ -251,7 +251,7 @@ enum T_
   T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet,
   T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,
   T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,
-  T_verwendet_fuer_Capisuite_den_Linux_Benutzer_string_anstatt,
+  T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt,
   T_FAxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,
   T_faxnr_wird_hinter_string_erwartet_statt_hinter,
   T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,
@@ -453,7 +453,7 @@ enum T_
   T_ermittelt,
   T_hylafax_Verzeichnis,
   T_Bezeichnung_des_Anrufers,
-  T_Password_fuer_samba_fuer_Benutzer,
+  T_Passwort_fuer_samba_fuer_Benutzer,
   T_Zeigt_die_Programmversion_an,
   T_Freie_Software,
   T_Verfasser,
@@ -514,8 +514,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Zahl der Versuche in Capisuite, bis hylafax eingeschaltet wird","Number of tries in Capisuite, until hylafax is started"},
   // T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird
   {"Zahl der Versuche in hylafax, bis Capisuite eingeschaltet wird","Number of tries in hylafax, until Capisuite is started"},
-  // T_Linux_Benutzer_fuer_Capisuite
-  {"Linux-Benutzer fuer Capisuite","Linux user for Capisuite"},
+  // T_Linux_Benutzer_fuer_Capisuite_Samba
+  {"Linux-Benutzer fuer Capisuite und Samba","Linux user for capisuite and samba"},
   // T_Eigene_Landesvorwahl_ohne_plus_oder_00
   {"Eigene Landesvorwahl ohne '+' oder '00'","Own international prefix without '+' or '00'"},
   // T_Eigene_Ortsvorwahl_ohne_0
@@ -886,8 +886,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Zahl der Klingeltoene, bis Capisuite den Anruf annimmt, anstatt","No. of bell rings until Capisuite accepts the call, instead of"},
   // T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt
   {"Zahl der Klingeltoene, bis Hylafax den Anruf annimmt, anstatt","No. of bell rings until hylafaxs accepts the call, instead of"},
-  // T_verwendet_fuer_Capisuite_den_Linux_Benutzer_string_anstatt
-  {"verwendet fuer Capisuite den Linux-Benutzer <string> anstatt","takes the linux user <string> for Capisuite instead of"},
+  // T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt
+  {"verwendet fuer Capisuite und Samba den Linux-Benutzer <string> anstatt","takes the linux user <string> for capisuite and samba instead of"},
   // T_FAxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert
   {"Faxe werden auch ohne Faxerfolg ins Zielverzeichnis kopiert","copy faxes into target directory irrespective of faxing success"},
   // T_faxnr_wird_hinter_string_erwartet_statt_hinter
@@ -1302,8 +1302,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"hylafax-Verzeichnis: ","hylafax-directory: "},
   // T_Bezeichnung_des_Anrufers
   {"Bezeichnung des Anrufers","Labelling of the caller"},
-  // T_Password_fuer_samba_fuer_Benutzer
-  {"Password fuer samba fuer Benutzer ","Password for samba for user "},
+  // T_Passwort_fuer_samba_fuer_Benutzer
+  {"Passwort fuer samba fuer Benutzer ","Password for samba for user "},
   // T_Zeigt_die_Programmversion_an
   {"Zeigt die Programmversion an","shows the program version"},
   // T_Freie_Software,
@@ -2260,7 +2260,7 @@ void paramcl::lieskonfein()
     if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hylazuerst); else rzf=1;} lfd++;
     if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxcapiv); else rzf=1;} lfd++;
     if (obcapi && obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxhylav); else rzf=1;} lfd++;
-    if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cuser); else rzf=1;} lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cuser); else rzf=1; lfd++; // auch fuer samba
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&countrycode); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&citycode); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&msn); else rzf=1; lfd++;
@@ -2316,7 +2316,8 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("mod","hmodem",&Tx, T_Fuer_Hylafax_verwendetes_Modem,&hmodem,psons,&cgconf,"hmodem",&hylazukonf));
   opts.push_back(optioncl("mc","maxcapiv",&Tx, T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht,&maxcapiv,pzahl,&cgconf,"maxcapiv",&obkschreib));
   opts.push_back(optioncl("mh","maxhylav",&Tx, T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet,&maxhylav,pzahl,&cgconf,"maxhylav",&obkschreib));
-  opts.push_back(optioncl("cuser","cuser",&Tx, T_verwendet_fuer_Capisuite_den_Linux_Benutzer_string_anstatt,&cuser,psons,&cgconf,"cuser",&capizukonf));
+  opts.push_back(optioncl("cuser","cuser",&Tx, T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt,&cuser,psons,
+                                                        &cgconf,"cuser",&capizukonf));
   opts.push_back(optioncl("ckzl","cklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,&cklingelzahl,pzahl,
                                                         &cgconf,"cklingelzahl",&capizukonf));
   opts.push_back(optioncl("hkzl","hklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,&hklingelzahl,pzahl,
@@ -2649,32 +2650,32 @@ void paramcl::rueckfragen()
         lfd+=3;
         hylazuerst=0;
       }
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        //        string bliste, tmpcuser;
-        vector<string> benutzer;
-        cmd="cat /etc/passwd | grep /home/ | cut -d':' -f 1";
-        systemrueck(cmd,obverb,oblog,&benutzer);
-        if (benutzer.size()>1) for(size_t i=0;i<benutzer.size();i++) if (benutzer[i]=="syslog") {benutzer.erase(benutzer.begin()+i);break;}
-        for(size_t i=0;i<benutzer.size();i++) {
-          //          bliste+=benutzer[i];
-          //          if (i<benutzer.size()-1) bliste+=",";
-          if (cuser.empty()) cuser=benutzer[i]; // Vorgabe
-        }
-        /*
-           string Frage=string("Linux-Benutzer fuer Capisuite (")+bliste+"):";
-           do KLA
-           tmpcuser=Tippstring(Frage.c_str(),&cuser);
-           KLZ while (benutzer.size() && bliste.find(tmpcuser)==string::npos && 
-           tmpcuser.find(',')==string::npos); // nur vorhandene User akzeptieren
-           cuser=tmpcuser;
-         */
-        cuser=Tippstrings(Tx[T_Linux_Benutzer_fuer_Capisuite],&benutzer,&cuser);
-        cgconf[lfd].setze(&cuser);
-      }
     } else {
-      lfd+=4; // nicht obcapi, aber obhyla kaeme hier
+      lfd+=3; // nicht obcapi, aber obhyla kaeme hier
       hylazuerst=1;
     } // if (obcapi) else
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      //        string bliste, tmpcuser;
+      vector<string> benutzer;
+      cmd="cat /etc/passwd | grep /home/ | cut -d':' -f 1";
+      systemrueck(cmd,obverb,oblog,&benutzer);
+      if (benutzer.size()>1) for(size_t i=0;i<benutzer.size();i++) if (benutzer[i]=="syslog") {benutzer.erase(benutzer.begin()+i);break;}
+      for(size_t i=0;i<benutzer.size();i++) {
+        //          bliste+=benutzer[i];
+        //          if (i<benutzer.size()-1) bliste+=",";
+        if (cuser.empty()) cuser=benutzer[i]; // Vorgabe
+      }
+      /*
+         string Frage=string("Linux-Benutzer fuer Capisuite (")+bliste+"):";
+         do KLA
+         tmpcuser=Tippstring(Frage.c_str(),&cuser);
+         KLZ while (benutzer.size() && bliste.find(tmpcuser)==string::npos && 
+         tmpcuser.find(',')==string::npos); // nur vorhandene User akzeptieren
+         cuser=tmpcuser;
+       */
+      cuser=Tippstrings(Tx[T_Linux_Benutzer_fuer_Capisuite_Samba],&benutzer,&cuser);
+      cgconf[lfd].setze(&cuser);
+    } // if (cgconf[++lfd].wert.empty() || rzf) 
     if (cgconf[++lfd].wert.empty() || rzf) {
       countrycode=Tippstring(Tx[T_Eigene_Landesvorwahl_ohne_plus_oder_00],&countrycode);
       cgconf[lfd].setze(&countrycode);
@@ -3338,8 +3339,8 @@ void paramcl::pruefsamba()
     if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
       string pw1, pw2;
       while (1) {
-        pw1=Tippstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz,&pw1);
-        pw2=Tippstring(Tx[T_Password_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" ("+Tx[T_erneute_Eingabe]+")",&pw2);
+        pw1=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz,&pw1);
+        pw2=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+blaus+cuser+schwarz+" ("+Tx[T_erneute_Eingabe]+")",&pw2);
         if (pw1==pw2) break;
       }
       systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
