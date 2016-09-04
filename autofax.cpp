@@ -5128,7 +5128,7 @@ int paramcl::pruefhyla()
       hylalaeuftnicht=1;
       hylafehlt=1;
       lsysen system=lsys.getsys(obverb,oblog);
-      if (system==deb || system==fed) {
+      if (system==deb /* || system==fed*/) {
         hyinstart=hysrc;
       } else {
         hyinstart=hyppk;
