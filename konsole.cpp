@@ -187,7 +187,7 @@ void perfcl::ausgeb(const string& stelle)
   t1=time(NULL);
   cout<<gruen;
   if (!stelle.empty())
-   cout<<vonwo<<" "<<stelle<<" "<<++nr;
+   cout<<vonwo<<" "<<stelle<<" "<<++nr<<" ";
   cout<<Txk[T_Dauer]<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" clocks = "
     <<fixed<<(t1-t0)<<schwarz<<setprecision(0)<<" s\r";cout.flush();
 } // void perfcl::ausgeb(const string& stelle)
@@ -2300,7 +2300,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         break;
       } else if (sysrueck[0].find("activating")!=string::npos) {
         if (nureinmal || prf.oberreicht(120)) break;
-        prf.ausgeb();
+        prf.ausgeb(Txk[T_Aktiviere_Dienst]+sname);
       } else if (sysrueck[0].find("loaded")!=string::npos) {
         serviceda=1;
         break;
