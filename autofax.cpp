@@ -1851,7 +1851,7 @@ void paramcl::pruefisdn()
     Log(rots+Tx[T_ISDN_Karte_gefunden]+schwarz+rueck[0]+rot+Tx[T_Setze]+Tx[T_mitCapi]+rot+Tx[T_auf]+schwarz+"1.",obverb,oblog);
     obfcard=1;
   } else {
-    Log(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_auf]+schwarz+"0.",1,oblog);
+    Log(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_auf]+schwarz+"0.",obverb,oblog);
     obcapi=obfcard=0;
   }
   // wenn zum Konfigurationszeitpunkt keine Fritzkarte drinsteckte, aber jetzt, dann rueckfragen
