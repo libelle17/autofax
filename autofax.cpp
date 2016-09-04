@@ -234,6 +234,8 @@ enum T_
   T_wirklich_geloescht_werden,
   T_Kein_Fax_zum_Loeschen_vorhanden,
   T_Keine_ISDN_Karte_gefunden,
+  T_ISDN_Karte_gefunden,
+  T_Setze,
   T_mitCapi,
   T_auf,
   T_verwendet_Kofigurationsdatei_string_anstatt,
@@ -850,6 +852,10 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Kein Fax zum Loeschen vorhanden","No fax there to be deleted"},
   // T_Keine_ISDN_Karte_gefunden
   {"Keine ISDN-Karte gefunden. Setze ","No ISDN-Card found. Setting "},
+  // T_ISDN_Karte_gefunden
+  {"ISDN-Karte gefunden: ","ISDN-Card found: "},
+  // T_Setze
+  {". Setze ",". Setting "},
   // T_mitCapi
   {"mitCapi","withCapi"},
   // T_auf
@@ -1842,6 +1848,7 @@ void paramcl::pruefisdn()
   systemrueck(cmd, obverb,oblog,&rueck);
   // <<"pruefmodem 1 vor  obcapi: "<<(int)obcapi<<endl;
   if (rueck.size()) {
+    Log(rots+Tx[T_ISDN_Karte_gefunden]+schwarz+rueck[0]+rot+Tx[T_Setze]+Tx[T_mitCapi]+rot+Tx[T_auf]+schwarz+"1.",1,oblog);
     obfcard=1;
   } else {
     Log(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_auf]+schwarz+"0.",1,oblog);
