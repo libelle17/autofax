@@ -1552,14 +1552,22 @@ paramcl::paramcl(int argc, char** argv)
   for(int i=1;i<argc;i++)
     if (argv[i][0])
       argcmv.push_back(argcl(i,argv)); 
-  meinname=base_name(meinpfad());// argv[0];
-  vaufr=meinpfad()+" -norf"; // /usr/bin/autofax -norf
+  mpfad=meinpfad();
+  meinname=base_name(mpfad); // argv[0];
+  vaufr=mpfad+" -norf"; // /usr/bin/autofax -norf
   saufr=base_name(vaufr); // autofax -norf
   tstart=clock();
   cklingelzahl="1";
   hklingelzahl="2"; // muss mindestens 2 sein, um die Nr. des anrufenden zu uebertragen
-  konfdatname.clear();
+//  konfdatname.clear();
 } // paramcl::paramcl()
+
+void paramcl::pruefggfmehrfach()
+{
+  if (!hilfe && !obvi && !zeigvers && !listi && !listf && !lista) {
+    pruefmehrfach(meinname);
+  }
+} // void paramcl::pruefggfmehrfach()
 
 paramcl::~paramcl()
 {
@@ -2339,7 +2347,7 @@ int paramcl::getcommandline()
   opts.push_back(optioncl("listf","listfailed", &Tx, T_listet_Datensaetze_aus, &touta, T_ohne_Erfolgskennzeichen_auf, &listf,1));
   opts.push_back(optioncl("listi","listinca", &Tx, T_listet_Datensaetze_aus, &tinca, T__auf, &listi,1));
   opts.push_back(optioncl("n","dszahl", &Tx, T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt, &dszahl,pzahl));
-  opts.push_back(optioncl("info","version", &Tx, T_Zeigt_die_Programmversion_an, &zeigversion,1));
+  opts.push_back(optioncl("info","version", &Tx, T_Zeigt_die_Programmversion_an, &zeigvers,1));
   opts.push_back(optioncl("vi","vi", &Tx, T_Konfigurationsdatei_editieren, &obvi,1));
   opts.push_back(optioncl("h","hilfe", &Tx, T_Zeigt_diesen_Bildschirm_an, &hilfe,1));
   opts.push_back(optioncl("?","help", &Tx, -1, &hilfe,1));
@@ -6646,11 +6654,10 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
 // statische Variable, 1= mariadb=geprueft
 uchar DB::oisok=0;
 
-void zeigversion(string& prog)
+void zeigversion(string& prog,string& mpfad)
 {
   struct tm tm;
   char buf[255];
-  string mpfad=meinpfad();
   cout<<endl<<Tx[T_Programm]<<violett<<mpfad<<schwarz<<endl;
   cout<<"Copyright: "<<blau<<Tx[T_Freie_Software]<<schwarz<<Tx[T_Verfasser]<<blau<<"Gerald Schade"<<schwarz<<endl;
   cout<<"Version: "<<blau<<version<<schwarz<<endl;
@@ -6686,9 +6693,8 @@ void paramcl::zeigkonf()
 
 int main(int argc, char** argv) 
 {
-  pruefmehrfach();
-  pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   paramcl pm(argc,argv); // Programmparameter
+  pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
       pm.VorgbAllg();
@@ -6697,11 +6703,12 @@ int main(int argc, char** argv)
 
   if (!pm.getcommandline()) 
     exit(1);
+  pm.pruefggfmehrfach();
   if (pm.obvi) {
    exit (systemrueck("vi "+pm.konfdatname+" >/dev/tty"));
   }
-  if (pm.zeigversion) {
-   zeigversion(pm.meinname);
+  if (pm.zeigvers) {
+   zeigversion(pm.meinname,pm.mpfad);
    pm.zeigkonf();
    exit(0);
   }

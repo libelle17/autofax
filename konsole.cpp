@@ -1671,9 +1671,10 @@ void pruefplatte()
   }
 } // pruefplatte
 
-void pruefmehrfach(string wen)
+void pruefmehrfach(string& wen)
 {
   svec rueck;
+  if (wen.empty()) wen=base_name(meinpfad());
   systemrueck("ps -eo comm|grep '^"+wen+"'",0,0,&rueck);
   if (rueck.size()>1) {
     cout<<Txk[T_Program]<<blau<<wen<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;

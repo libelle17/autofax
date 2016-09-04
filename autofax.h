@@ -103,6 +103,7 @@ class paramcl // Programmparameter
     size_t optslsz=0; // last opts.size()
     uchar modemgeaendert=0; // hmodem neu gesetzt
   public:
+    string mpfad;  // meinpfad()
     string meinname; // base_name(meinpfad()) // argv[0] // 'autofax'
     string vaufr; // (vollaufruf) z.B. '/usr/bin/autofax -norf'
     string saufr; // (stummaufruf) 'autofax -norf'
@@ -133,7 +134,7 @@ class paramcl // Programmparameter
     string dszahl="30"; // Datensatzzahl fuer Tabellenausgaben
     uchar logdateineu=0; // logdt vorher loeschen
     uchar hilfe=0;      // Hilfe anzeigen
-    uchar zeigversion=0;  // Version anzeigen
+    uchar zeigvers=0;  // Version anzeigen
     unsigned long faxord; // Ordinalzahl des Faxes unter allen anstehenden Faxen
     unsigned long geszahl=0;
     unsigned long ankzahl=0; // Zahl der angekommenen Faxe
@@ -264,6 +265,7 @@ class paramcl // Programmparameter
   public:
     paramcl(int argc,char** argv);
     ~paramcl();
+    void pruefggfmehrfach();
     void nextnum();
     string stdfaxnr(const string& faxnr);
     void logvorgaben();
