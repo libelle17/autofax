@@ -4813,7 +4813,7 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
         pmp->sfaxq->restart(obverb,oblog);
         /*
            systemrueck(string("sudo systemctl stop ")+pmp->sfaxgetty->sname+" "+pmp->shfaxd->sname+" "+pmp->sfaxq->sname,obverb,oblog);
-           systemrueck(string("sudo killall ")+pmp->sfaxgetty->ename+" "+pmp->shfaxd->ename+" "+pmp->sfaxq->ename,obverb,oblog);
+           systemrueck(string("sudo pkill ")+pmp->sfaxgetty->ename+" "+pmp->shfaxd->ename+" "+pmp->sfaxq->ename,obverb,oblog);
          */
         Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+afaxsu+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
         system((string("/usr/bin/sh ")+afaxsu+(obverb?" -verbose":"")).c_str()); 
@@ -4829,14 +4829,14 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
     pmp->sfaxq->stop(obverb,oblog);
     /*
        systemrueck(string("sudo systemctl stop ")+pmp->sfaxgetty->sname+" "+pmp->shfaxd->sname+" "+pmp->sfaxq->sname,obverb,oblog);
-       systemrueck(string("sudo killall ")+pmp->sfaxgetty->ename+" "+pmp->shfaxd->ename+" "+pmp->sfaxq->ename,obverb,oblog);
+       systemrueck(string("sudo pkill ")+pmp->sfaxgetty->ename+" "+pmp->shfaxd->ename+" "+pmp->sfaxq->ename,obverb,oblog);
      */
     Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
     int erg __attribute__((unused));
     pruefplatte();
-    systemrueck("sudo systemctl stop hylafax hylafax-hfaxd hylafax-faxq >/dev/null 2>&1; sudo killall hfaxd faxq >/dev/null 2>&1;",obverb,oblog);
+    systemrueck("sudo systemctl stop hylafax hylafax-hfaxd hylafax-faxq >/dev/null 2>&1; sudo pkill hfaxd faxq >/dev/null 2>&1;",obverb,oblog);
     erg=system(("sudo $(which sh) $(sudo env \"PATH=$PATH\" which faxsetup) -nointeractive"+string(obverb?" -verbose":"")+
-          " && sudo killall hfaxd faxq >/dev/null 2>&1"
+          " && sudo pkill hfaxd faxq >/dev/null 2>&1"
           " && sudo systemctl daemon-reload").c_str()); 
     pmp->sfaxgetty->start(obverb,oblog);
     pmp->shfaxd->start(obverb,oblog);
@@ -5034,7 +5034,7 @@ int paramcl::cservice()
   svec rueck;
   erg=systemrueck("sudo env \"PATH=$PATH\" which capisuite",obverb,oblog,&rueck);
   if (rueck.size()) {
-    erg=systemrueck("sudo sh -c 'systemctl stop capisuite; killall capisuite >/dev/null 2>&1; killall -9 capisuite >/dev/null 2>&1; "
+    erg=systemrueck("sudo sh -c 'systemctl stop capisuite; pkill capisuite >/dev/null 2>&1; pkill -9 capisuite >/dev/null 2>&1; "
         "cd /etc/init.d"
         " && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
         " && { mkdir -p /etc/ausrangiert && mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true'",obverb,oblog);
@@ -5194,8 +5194,8 @@ int paramcl::pruefhyla()
                 " && sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
                 " && sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
                 " && test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
-                " && sudo killall hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive && echo $? = Ergebnis nach faxsetup -nointeractive"
-                " && sudo killall hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
+                " && sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive && echo $? = Ergebnis nach faxsetup -nointeractive"
+                " && sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
                 " && sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload"
                 "'"
                 ,2,oblog);
@@ -5374,7 +5374,7 @@ int paramcl::pruefhyla()
              obverb,oblog)) {
           systemrueck("sudo systemctl stop hylafax 2>/dev/null",obverb-2,oblog);
           systemrueck("sudo systemctl disable hylafax 2>/dev/null",obverb-2,oblog);
-          systemrueck(string("sudo killall ")+sfaxgetty->ename+" "+shfaxd->ename+" "+sfaxq->ename+" >/dev/null 2>&1",obverb-2,oblog);
+          systemrueck(string("sudo pkill ")+sfaxgetty->ename+" "+shfaxd->ename+" "+sfaxq->ename+" >/dev/null 2>&1",obverb-2,oblog);
         } // if (!systemrueck(string("sudo systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
         if (!systemrueck(string("sudo systemctl start '")+this->sfaxgetty->sname+"' '"+this->shfaxd->sname+"' '"+this->sfaxq->sname+"'",obverb,oblog)) {
           systemrueck(string("sudo systemctl enable '")+this->sfaxgetty->sname+"' '"+this->shfaxd->sname+"' '"+this->sfaxq->sname+"'",obverb,oblog);

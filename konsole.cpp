@@ -1669,7 +1669,7 @@ void pruefplatte()
   string platte="/";
   statvfs(platte.c_str(),&fp);   
   if (fp.f_bsize * fp.f_bfree < 100000) { // wenn weniger als 100 MB frei sind ...
-    systemrueck("sudo killall postdrop");
+    systemrueck("sudo pkill postdrop");
   }
 } // pruefplatte
 
@@ -2235,7 +2235,7 @@ uchar servc::spruef(const string& sbez,uchar obfork, const string& parent, const
         if (svgibts && serviceda) {
           restart(obverb,oblog); // hier wird auch serviceslaeuft gesetzt
           /*
-             servicelaeuft=!systemrueck(("sudo killall ")+ename+" >/dev/null 2>&1; sudo systemctl restart "+sname,obverb-1,oblog); 
+             servicelaeuft=!systemrueck(("sudo pkill ")+ename+" >/dev/null 2>&1; sudo systemctl restart "+sname,obverb-1,oblog); 
            */
           // bei restart return value da 
           //          <<dblau<<"serviceda: "<<schwarz<<sname<<", servicelaeuft: "<<(int)servicelaeuft<<endl;
@@ -2331,7 +2331,7 @@ int servc::restart(int obverb,int oblog)
     systemrueck(string("sudo systemctl restart '")+sname+"' >/dev/null 2>&1",obverb,oblog);
     if (obslaeuft(obverb,oblog)) break;
     if (i) break;
-    systemrueck(("sudo killall '")+ename+"' >/dev/null 2>&1",obverb-1,oblog);
+    systemrueck(("sudo pkill '")+ename+"' >/dev/null 2>&1",obverb-1,oblog);
   }
   return servicelaeuft;
 } // int servc::restart(int obverb,int oblog)
