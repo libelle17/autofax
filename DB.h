@@ -60,6 +60,10 @@ enum Txdb_
   T_Programmfehler,
   T_nicht_anfangen_bei_isql_empty_Aufruf_von_RS_insert_beim_ersten_Mal_ohn_anfangen_bei,
   T_Datenbank_nicht_zu_oeffnen,
+  T_Erweitere_Feld,
+  T_von,
+  T_auf,
+  T_Aendere_Feld,
   T_dbMAX,
 };
 
@@ -108,14 +112,15 @@ template<typename T, size_t N> T * end(T (&ra)[N])
 
 class instyp 
 {
+ public:
+    const string feld;
+    string wert;
+    unsigned char obkeinwert; // bei update wird <wert> nicht als Wert, sondern als Feld o.ae. verwendet (z.B. update xy set altdatum = datum)
   private:
     //	char dbuf[21];
     inline string ersetze(const char *u, const char* alt, const char* neu);
     inline string *sersetze( string *src, string const& target, string const& repl);
   public:
-    const string feld;
-    string wert;
-    unsigned char obkeinwert; // bei update wird <wert> nicht als Wert, sondern als Feld o.ae. verwendet (z.B. update xy set altdatum = datum)
     template <typename tC> explicit instyp (DBSTyp eDBS, char* const feld, tC vwert): feld(feld) {
 //      feld=feld;
       wert=sqlft(eDBS,vwert);
@@ -262,7 +267,7 @@ class DB
     string cmd;
     string datadir;
     RS *spalt=nullptr;
-    char **spnamen=nullptr,**splenge=nullptr;
+    char **spnamen=nullptr,**splenge=nullptr,**sptyp=nullptr;
     int usedb(const string& db);
     void pruefrpw(const string& wofuer, unsigned versuchzahl);
     void setzrpw();
@@ -270,6 +275,7 @@ class DB
     vector< vector<instyp> > ins;
     void erweitern(const string& tab, vector<instyp> einf,uchar obstumm,uchar obsammeln=0, const unsigned long *maxl=0);
     uchar tuerweitern(const string& tab, const string& feld,long wlength,uchar obstumm);
+    int machbinaer(const string& tabs, const string& fmeld,uchar obstumm);
     //	DB(DBSTyp DBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag);
     DB();
     DB(DBSTyp nDBS, const char* const phost, const char* const user,const char* const ppasswd, const char* const uedb="", unsigned int port=0, 

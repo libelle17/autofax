@@ -238,7 +238,7 @@ enum T_
   T_ISDN_Karte_gefunden,
   T_Setze,
   T_mitCapi,
-  T_auf,
+  T_aauf,
   T_verwendet_Kofigurationsdatei_string_anstatt,
   T_faxt_die_Dateien_aus_pfad_anstatt,
   T_Dateien_warten_in_pfad_anstatt,
@@ -392,7 +392,7 @@ enum T_
   T_ohne_Erfolgskennzeichen_auf,
   T__auf,
   T_Zahl_der_empfangenen_Faxe,
-  T_von,
+  T_avon,
   T_nicht_erkannt,
   T_Fehlermeldung_beim_Loeschversuch_eines_Hyla_Faxes_mit_faxrm,
   T_Zahl_der_nicht_geloeschten_Dateien,
@@ -860,7 +860,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {". Setze ",". Setting "},
   // T_mitCapi
   {"mitCapi","withCapi"},
-  // T_auf
+  // T_aauf
   {" auf "," to "},
   // T_verwendet_Kofigurationsdatei_string_anstatt
   {"verwendet Konfigurationsdatei <string> anstatt","uses configuration file <string> instead of"},
@@ -1175,7 +1175,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"` auf","`"},
   // T_Zahl_der_empfangenen_Faxe
   {"       Zahl der empfangenen Faxe: ","       Number of received faxes: "},
-  // T_von
+  // T_avon
   {" von "," from "},
   // T_nicht_erkannt
   {" nicht erkannt!"," not identified!"},
@@ -1848,10 +1848,10 @@ void paramcl::pruefisdn()
   systemrueck(cmd, obverb,oblog,&rueck);
   // <<"pruefmodem 1 vor  obcapi: "<<(int)obcapi<<endl;
   if (rueck.size()) {
-    Log(rots+Tx[T_ISDN_Karte_gefunden]+schwarz+rueck[0]+rot+Tx[T_Setze]+Tx[T_mitCapi]+rot+Tx[T_auf]+schwarz+"1.",obverb,oblog);
+    Log(rots+Tx[T_ISDN_Karte_gefunden]+schwarz+rueck[0]+rot+Tx[T_Setze]+Tx[T_mitCapi]+rot+Tx[T_aauf]+schwarz+"1.",obverb,oblog);
     obfcard=1;
   } else {
-    Log(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_auf]+schwarz+"0.",obverb,oblog);
+    Log(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_aauf]+schwarz+"0.",obverb,oblog);
     obcapi=obfcard=0;
   }
   // wenn zum Konfigurationszeitpunkt keine Fritzkarte drinsteckte, aber jetzt, dann rueckfragen
@@ -4427,7 +4427,7 @@ void paramcl::empfarch()
     strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
     if (absdr.length()>187) absdr.erase(187);
     if (absdr.length()>70) absdr.erase(70);
-    string hdatei = "Fax h"+fnr+","+Tx[T_von]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf+".tif";
+    string hdatei = "Fax h"+fnr+","+Tx[T_avon]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf+".tif";
     string hpfad=empfvz+vtz+hdatei;
     Log(blaus+base+schwarz+" => "+gruen+hdatei+schwarz,1,1);
     // ..., die empfangene Datei in hpfad kopieren ...
@@ -4514,7 +4514,7 @@ void paramcl::empfarch()
       getname+=bsname;
       if (getname.length()>187) getname.erase(187);
       if (getname.length()>70) getname.erase(70);
-      string crumpf = "Fax c"+fnr+","+Tx[T_von]+getname+", T."+stdfaxnr(umst[1].wert)+","+Tx[T_vom]+tbuf;
+      string crumpf = "Fax c"+fnr+","+Tx[T_avon]+getname+", T."+stdfaxnr(umst[1].wert)+","+Tx[T_vom]+tbuf;
       string cdatei = crumpf +".tif";
       string cpfad= empfvz + vtz+cdatei; // Tx[T_Fax_von]+umst[1].wert+Tx[T_an]+umst[2].wert+Tx[T_vom]+tbuf+".tif";
       Log(blaus+stamm+schwarz+" => "+gruen+cdatei+schwarz,1,1);
@@ -6666,8 +6666,6 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
   return 0;
 } // int tuloeschen(string zuloe,int obverb, int oblog)
 
-// statische Variable, 1= mariadb=geprueft
-uchar DB::oisok=0;
 
 void zeigversion(string& prog,string& mpfad)
 {

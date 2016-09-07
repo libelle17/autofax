@@ -56,6 +56,14 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
     " !anfangen at isql.empty() (call of RS::insert the first timee without anfangen)! at: "},
   // T_Datenbank_nicht_zu_oeffnen
   {"Datenbank nicht zu oeffnen","could not open database"},
+  // T_Erweitere_Feld
+  {"Erweitere Feld: ","Enlarging field: "},
+  // T_von
+  {" von: "," from: "},
+  // T_auf
+  {" auf: "," to: "},
+  // T_Aendere_Feld
+  {"Aendere Feld: ","Changing field: "},
   {"",""}
 };
 
@@ -143,6 +151,9 @@ Index::Index(const string& name, Feld *felder, int feldzahl) :
   collate(collate),
   rowformat(rowformat)
 {}
+
+// statische Variable, 1= mariadb=geprueft
+uchar DB::oisok=0;
 
 DB::DB() 
 {
@@ -489,19 +500,22 @@ void DB::lesespalten(Tabelle *ltab)
   //  spalt=new RS(this,string("SELECT column_name,character_maximum_length FROM information_schema.columns WHERE table_name = '")+ltab->name
   //      +"' and table_schema = '"+db+"' order by ordinal_position"); // geht nicht fuer Zahlen
   spalt=new RS(this,string("SELECT column_name p0,"
-        "MID(column_type,INSTR(column_type,'(')+1,INSTR(column_type,')')-INSTR(column_type,'(')-1) p1, column_type "
+        "MID(column_type,INSTR(column_type,'(')+1,INSTR(column_type,')')-INSTR(column_type,'(')-1) p1, column_type p2 "
         "FROM information_schema.columns WHERE table_name = '")+ltab->name+"' AND table_schema = '"+db+"' ORDER BY ordinal_position");
   if (!spalt->obfehl) {
     delete spnamen;
     spnamen= new char*[spalt->num_rows];
     delete splenge;
     splenge= new char*[spalt->num_rows];
+    delete sptyp;
+    sptyp= new char*[spalt->num_rows];
     int spnr=0;
     //    <<violett<<"Schema: "<<schwarz<<db<<endl;
     //    <<violett<<"Tabelle: "<<schwarz<<ltab->name<<endl;
     while (cerg=spalt->HolZeile(),cerg?*cerg:0) {
       spnamen[spnr]=*(*cerg);
       splenge[spnr]=*(*cerg+1);
+      sptyp[spnr]=*(*cerg+2);
       /*
          MYSQL_RES *dbres;
          dbres = mysql_list_fields(conn,ltab->name.c_str(),ltab->felder[spnr].name.c_str());
@@ -534,15 +548,15 @@ int DB::prueftab(Tabelle *ptab,bool verbose)
       }
     }
   }
+  vector<string> fstr;
+  vector<string> istr;
+  const char* def_engine="InnoDB";
+  const char* def_charset="latin1";
+  const char* def_collate="latin1_german2_ci";
+  const char* def_rowformat="DYNAMIC";
   switch (DBS){
     case MySQL:
       {
-        const char* def_engine="InnoDB";
-        const char* def_charset="latin1";
-        const char* def_collate="latin1_german2_ci";
-        const char* def_rowformat="DYNAMIC";
-        vector<string> fstr;
-        vector<string> istr;
         if (conn==0) conn = mysql_init(NULL);
         lesespalten(ptab);
 
@@ -624,10 +638,15 @@ int DB::prueftab(Tabelle *ptab,bool verbose)
           binaer verschieb=falsch, aendere=falsch;
           for(unsigned spnr=0;spnr<spalt->num_rows;spnr++) { // reale Spalten
             if (!strcasecmp(ptab->felder[gspn].name.c_str(),spnamen[spnr])) { // Feldnamen identisch
-              if ((ptab->felder[gspn].lenge!="0" && !ptab->felder[gspn].lenge.empty()) &&
-                  atol(ptab->felder[gspn].lenge.c_str()) > (long)atol(splenge[spnr])) {
-                aendere=wahr;
+              if (strcasecmp(sptyp[spnr],"mediumtext") && strcasecmp(sptyp[spnr],"blob") && strcasecmp(sptyp[spnr],"longblob") && 
+                  strcasecmp(sptyp[spnr],"longtext") && strcasecmp(sptyp[spnr],"text")) {
+                if ((ptab->felder[gspn].lenge!="0" && !ptab->felder[gspn].lenge.empty()) &&
+                    atol(ptab->felder[gspn].lenge.c_str()) > (long)atol(splenge[spnr])) {
+                  aendere=wahr;
+                }
               }
+              // <<"ptab->felder[gspn].lenge: "<<rot<<ptab->felder[gspn].lenge<<schwarz<<endl;
+              // <<"splenge[spnr]: "<<rot<<splenge[spnr]<<schwarz<<endl;
               if (gspn) { // Verschiebung erst ab der zweiten geplanten Spalte reicht auch und vermeidet Speicherunterlaeufe
                 verschieb=wahr; 
                 if (spnr) if (!strcasecmp(ptab->felder[gspn-1].name.c_str(),spnamen[spnr-1])) verschieb=falsch;
@@ -637,6 +656,8 @@ int DB::prueftab(Tabelle *ptab,bool verbose)
             }
           }
           if (verschieb || aendere) {
+            // <<"verschieb: "<<rot<<verschieb<<schwarz<<endl;
+            // <<"aendere: "<<rot<<aendere<<schwarz<<endl;
             sql.str(std::string()); sql.clear();
             sql<<"ALTER TABLE `"<<ptab->name<<"` MODIFY "<<fstr[gspn];
             if (gspn) sql<<" AFTER `"<<ptab->felder[gspn-1].name<<"`";
@@ -698,16 +719,16 @@ int DB::prueftab(Tabelle *ptab,bool verbose)
                 sql<<"`"<<ptab->indices[i].felder[j].name<<"`";
                 for(unsigned spnr=0;spnr<spalt->num_rows;spnr++) { // reale Spalten
                   if (!strcasecmp(ptab->indices[i].felder[j].name.c_str(),spnamen[spnr])) { // Feldnamen identisch
-                   long numsplen=atol(splenge[spnr]);
-                   long numinlen=ptab->indices[i].felder[j].lenge.empty()?0:atol(ptab->indices[i].felder[j].lenge.c_str());
-                   if (!numinlen) {
-                    // das sollte reichen
-                    if (numsplen>50) ptab->indices[i].felder[j].lenge="50";
-                   } else if (numinlen>numsplen) {
-                     // laenger darf ein MariadB-Index z.Zt. nicht sein
-                     if (numsplen>767) ptab->indices[i].felder[j].lenge="767";
-                     else ptab->indices[i].felder[j].lenge=splenge[spnr];
-                   }
+                    long numsplen=atol(splenge[spnr]);
+                    long numinlen=ptab->indices[i].felder[j].lenge.empty()?0:atol(ptab->indices[i].felder[j].lenge.c_str());
+                    if (!numinlen) {
+                      // das sollte reichen
+                      if (numsplen>50) ptab->indices[i].felder[j].lenge="50";
+                    } else if (numinlen>numsplen) {
+                      // laenger darf ein MariadB-Index z.Zt. nicht sein
+                      if (numsplen>767) ptab->indices[i].felder[j].lenge="767";
+                      else ptab->indices[i].felder[j].lenge=splenge[spnr];
+                    }
                   }
                 }
                 if (ptab->indices[i].felder[j].lenge!="0" && ptab->indices[i].felder[j].lenge!="") {
@@ -743,19 +764,33 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,uchar 
       if (*(*cerg+0)) {
         lenge=*(*cerg+0);
         if (atol(lenge.c_str())<wlength) {
-          Log(string("Erweitere Feld: ")+tabs+"."+feld+" von: "+lenge.c_str()+" auf: "+ltoan(wlength),1,1);
+          Log(string(Txd[T_Erweitere_Feld])+tabs+"."+feld+Txd[T_von]+lenge.c_str()+Txd[T_auf]+ltoan(wlength),1,1);
           korr.str(std::string()); korr.clear();
           if (*(*cerg+1) && *(*cerg+2)) {
             korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<*(*cerg+1)/*data_type*/<<"("<<wlength<<") "<<
               (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(*(*cerg+3)?string("DEFAULT '")+*(*cerg+3)+"'":"")<<
               " COMMENT '"<<ersetzAllezu(*(*cerg+4),"'","\\'")<<"'";
-            RS spaltaend(this,korr.str(),obstumm);
+            RS spaltaend(this,korr.str(),255/*obstumm*/);
             if (spaltaend.fnr==1074) {
               korr.str(std::string()); korr.clear();
-              korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<"MEDIUMTEXT"/*data_type*/<<" "<<
-                (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(*(*cerg+3)?string("DEFAULT '")+*(*cerg+3)+"'":"")<<
-                " COMMENT '"<<ersetzAllezu(*(*cerg+4),"'","\\'")<<"'";
-              RS spaltaend2(this,korr.str(),obstumm);
+              string neufeld;
+              if (!strcasecmp(*(*cerg+1),"binary")) neufeld="mediumblob";
+              else if (!strcasecmp(*(*cerg+1),"varbinary")) neufeld="mediumblob";
+              else if (!strcasecmp(*(*cerg+1),"tinyblob")) neufeld="mediumblob";
+              else if (!strcasecmp(*(*cerg+1),"blob")) neufeld="mediumblob";
+              else if (!strcasecmp(*(*cerg+1),"char")) neufeld="mediumtext";
+              else if (!strcasecmp(*(*cerg+1),"varchar")) neufeld="mediumtext";
+              else if (!strcasecmp(*(*cerg+1),"text")) neufeld="mediumtext";
+              else if (!strcasecmp(*(*cerg+1),"tinytext")) neufeld="mediumtext";
+              else if (!strcasecmp(*(*cerg+1),"mediumtext")) neufeld="longtext";
+              else if (!strcasecmp(*(*cerg+1),"mediumblob")) neufeld="longblob";
+              if (!neufeld.empty()) {
+                Log(string(Txd[T_Aendere_Feld])+tabs+"."+feld+" von: "+*(*cerg+1)+" auf: "+neufeld,1,1);
+                korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<neufeld/*data_type*/<<" "<<
+                  (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(*(*cerg+3)?string("DEFAULT '")+*(*cerg+3)+"'":"")<<
+                  " COMMENT '"<<ersetzAllezu(*(*cerg+4),"'","\\'")<<"'";
+                RS spaltaend2(this,korr.str(),255/*obstumm*/);
+              }
             } // if (fnr==1074) 
           }
           return -1; // Aenderung durchgefuehrt
@@ -787,6 +822,53 @@ void DB::erweitern(const string& tabs, vector<instyp> einf,uchar obstumm,uchar o
     tuerweitern(tabs,einf[i].feld,wlength,obstumm);
   }
 } // RS::erweitern
+
+int DB::machbinaer(const string& tabs, const string& fmeld,uchar obstumm)
+{
+  Log(violetts+"machbinaer()"+schwarz+" tabs. "+blau+tabs+schwarz+" fmeld: "+blau+fmeld+schwarz+" obstumm: "+ltoan(obstumm),!obstumm);
+  size_t p1,p2,p3,p4;
+  p1=fmeld.find("'")+1;
+  if (p1==string::npos) return 1;
+  p2=fmeld.find("'",p1)+1;
+  if (p2==string::npos) return 2;
+  //                string inc=fmeld.substr(p1,p2-p1-1);
+  p3=fmeld.find("'",p2)+1;
+  if (p3==string::npos) return 3;
+  p4=fmeld.find("'",p3)+1;
+  if (p4==string::npos) return 4;
+  string feld=fmeld.substr(p3,p4-p3-1);
+  stringstream korr;
+  string lenge;
+  string neufeld;
+  korr<<"SELECT character_maximum_length p0, data_type p1,is_nullable p2,column_default p3,column_comment p4"
+    " FROM information_schema.columns WHERE table_schema='"<<
+    db<<"' AND table_name='"<<tabs<<"' AND column_name='"<<feld<<"'";
+  RS spaltlen(this,korr.str(),obstumm);
+  if (!spaltlen.obfehl) {
+    char*** cerg;
+    while(cerg= spaltlen.HolZeile(),cerg?*cerg:0) {
+      if (*(*cerg+0)) {
+        lenge=*(*cerg+0);
+        if (!strcasecmp(*(*cerg+1),"CHAR")) neufeld="BINARY";
+        else if (!strcasecmp(*(*cerg+1),"VARCHAR")) neufeld="VARBINARY";
+        else continue;
+        while(1) { 
+          korr.str(std::string()); korr.clear();
+          korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<neufeld/*data_type*/<<"("<<lenge<<") "<<
+            (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(*(*cerg+3)?string("DEFAULT '")+*(*cerg+3)+"'":"")<<
+            " COMMENT '"<<ersetzAllezu(*(*cerg+4),"'","\\'")<<"'";
+          RS spaltaend(this,korr.str(),255/*obstumm*/);
+          if (mysql_errno(this->conn)!=1406) break;
+          lenge=ltoan(atol(lenge.c_str())+10); 
+        }
+        return -1; // Aenderung durchgefuehrt
+      } 
+      return 0; // kein Fehler, keine Aenderung noetig
+    } 
+    return 6;
+  } 
+  return 7;
+} // RS::machbinaer
 
 inline string instyp::ersetze(const char *u, const char* alt, const char* neu) 
 {
@@ -1127,7 +1209,7 @@ int RS::doAbfrage(uchar obstumm)
           Log(string(Txd[T_Fehler_db])+drot+ltoan(fnr)+schwarz+" (\""+fehler+"\") in doAbfrage, sql: "+
               tuerkis+sql+schwarz,(fnr!=1406 && obstumm!=2) || (fnr==1406 && obstumm==255),1);
           if (!fehler.find("Disk full"))
-          exit(0);
+          exit(115);
         } else {
 erfolg:
           obfehl=0;
@@ -1238,6 +1320,7 @@ void RS::update(const string& utab, vector< instyp > einf,uchar obstumm, const s
             break;
           }  else {
             Log(string(tuerkis)+string("SQL: ")+schwarz+isql,(fnr!=1406 && obstumm!=2) || (fnr==1406 && obstumm==255),1);
+            string fmeld=mysql_error(db->conn);
             Log(mysql_error(db->conn),(fnr!=1406 && obstumm!=2) || (fnr==1406 && obstumm==255),1);
             if (fnr==1406){
               db->erweitern(utab,einf,obstumm,0);
@@ -1247,7 +1330,10 @@ void RS::update(const string& utab, vector< instyp > einf,uchar obstumm, const s
               //              "locks: "<<drot<<locks<<endl;
               mysql_commit(db->conn);
               continue;
+            } else if (fnr==1366) { // Incorrect string value
+              db->machbinaer(utab,fmeld,0);
             } else {
+              cout<<rot<<"Fehler "<<schwarz<<fnr<<" bei sql-Befehl: "<<isql<<endl;
               break; 
             }
           }
@@ -1364,7 +1450,7 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
           if (i) isql+=',';
           isql+=db->dnb+einf[i].feld+db->dne;
         }
-        isql+=") values(";
+        isql+=") VALUES(";
         break;
       case Postgres:
         break;
@@ -1382,7 +1468,7 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
             Log(string("einf[")+ltoan(i)+"].feld: "+blau+einf[i].feld+schwarz,1,1);
             Log(string("einf[")+ltoan(i)+"].wert: "+tuerkis+einf[i].wert+schwarz,1,1);
           }
-          exit(0);
+          exit(114);
         }
         if (zaehler>1) isql+=",(";
         for(uint i = 0;i<einf.size();i++) {
@@ -1391,6 +1477,7 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
             isql+=',';
           }
           //					isql.reserve(isql.length()+2+strlen(einf[i].wert.c_str()));
+//          if (einf[i].feld=="EML") { isql+="_utf8"; }
           isql+=(einf[i].wert);
         }
         //				isql.reserve(isql.length()+2);
@@ -1413,7 +1500,8 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
               altsqlm=*(*cerg+1);
             Abfrage("SET sql_mode = 'STRICT_ALL_TABLES'",obstumm);
           }
-          for (int iru=0;iru<2;iru++) { // interne Runde
+           // interne Runde
+          for (int iru=0;iru<2;iru++) {
             Abfrage(isql,obstumm);
             if (id) {
               if (obfehl) *id="null";
@@ -1423,7 +1511,8 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
               break;
             }  else {
               Log(string(tuerkis)+string("SQL: ")+schwarz+isql,(fnr!=1406 && obstumm!=2) || (fnr==1406 && obstumm==255),1);
-              Log(mysql_error(db->conn),(fnr!=1406 && obstumm!=2) || (fnr==1406 && obstumm==255),1);
+              string fmeld=mysql_error(db->conn);
+              Log(fmeld,(fnr!=1406 && obstumm!=2) || (fnr==1406 && obstumm==255),1);
               if (fnr==1406){
                 db->erweitern(itab,einf,obstumm, sammeln || (!sammeln && !anfangen),maxl);
                 //                if (obfehl) break; // 16.1.16, sonst wirkt die aktuelle Abfrage nicht mehr
@@ -1432,7 +1521,11 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
                 //              "locks: "<<drot<<locks<<endl;
                 mysql_commit(db->conn);
                 continue;
+              } else if (fnr==1366) { // Incorrect string value
+                db->machbinaer(itab,fmeld,0);
               } else {
+                cout<<rot<<"Fehler "<<schwarz<<fnr<<" bei sql-Befehl: "<<isql<<endl;
+                exit(113);
                 break; 
               }
             }
