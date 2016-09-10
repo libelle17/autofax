@@ -64,6 +64,10 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
   {" auf: "," to: "},
   // T_Aendere_Feld
   {"Aendere Feld: ","Changing field: "},
+  // T_Pruefe_Tabelle
+  {"Pruefe Tabelle: '","Checking table: '"},
+  // T_Lesespalten
+  {"lesespalten()","readcolumns()"},
   {"",""}
 };
 
@@ -492,8 +496,9 @@ return ergi;
  */
 
 // wird aufgerufen in: prueftab
-void DB::lesespalten(Tabelle *ltab)
+void DB::lesespalten(Tabelle *ltab,int obverb)
 {
+  Log(violetts+Txd[T_Lesespalten]+blau+ltab->name+"'"+schwarz,obverb);
   char ***cerg;
   //          RS spalt(this,string("SHOW COLUMNS FROM `")+tab->name+"`");
   delete spalt;
@@ -503,11 +508,11 @@ void DB::lesespalten(Tabelle *ltab)
         "MID(column_type,INSTR(column_type,'(')+1,INSTR(column_type,')')-INSTR(column_type,'(')-1) p1, column_type p2 "
         "FROM information_schema.columns WHERE table_name = '")+ltab->name+"' AND table_schema = '"+db+"' ORDER BY ordinal_position");
   if (!spalt->obfehl) {
-    delete spnamen;
+    delete[] spnamen;
     spnamen= new char*[spalt->num_rows];
-    delete splenge;
+    delete[] splenge;
     splenge= new char*[spalt->num_rows];
-    delete sptyp;
+    delete[] sptyp;
     sptyp= new char*[spalt->num_rows];
     int spnr=0;
     //    <<violett<<"Schema: "<<schwarz<<db<<endl;
@@ -528,11 +533,19 @@ void DB::lesespalten(Tabelle *ltab)
        */
       spnr++;
     }
+    if (obverb) {
+      for(size_t j=0;j<spalt->num_rows;j++) {
+       Log(blaus+"spanmen["+ltoan(j)+"]: "+schwarz+spnamen[j]);
+       Log(blaus+"splenge["+ltoan(j)+"]:  "+schwarz+splenge[j]);
+       Log(blaus+"sptyp["+ltoan(j)+"]:    "+schwarz+sptyp[j]);
+      }
+    }
   }
 } // lesespalten
 
-int DB::prueftab(Tabelle *ptab,bool verbose) 
+int DB::prueftab(Tabelle *ptab,int obverb) 
 {
+  Log(violetts+Txd[T_Pruefe_Tabelle]+blau+ptab->name+"'"+schwarz,obverb);
   int gesfehlr=0;
   RS rs(this);
   std::stringstream sql;
@@ -558,7 +571,7 @@ int DB::prueftab(Tabelle *ptab,bool verbose)
     case MySQL:
       {
         if (conn==0) conn = mysql_init(NULL);
-        lesespalten(ptab);
+        lesespalten(ptab,obverb>1);
 
         for(int i=0;i<ptab->feldzahl;i++) {
           if (!spalt->obfehl)
@@ -604,10 +617,10 @@ int DB::prueftab(Tabelle *ptab,bool verbose)
             <<(ptab->collate==""?(ptab->charset!=""?"":def_collate):ptab->collate);
           sql<<" ROW_FORMAT="
             <<(ptab->rowformat==""?def_rowformat:ptab->rowformat);
-          rs.Abfrage(sql.str(),verbose?255:1); // falls verbose, dann sql-String ausgeben
+          rs.Abfrage(sql.str(),obverb?255:1); // falls obverb, dann sql-String ausgeben
           gesfehlr+=rs.obfehl;
           if (gesfehlr) Log(string("gesfehlr 1: ")+ltoan(gesfehlr),1,1);
-          lesespalten(ptab);
+          lesespalten(ptab,obverb>1);
         } // if (!dbres->row_count) 
         mysql_free_result(dbres);
 
@@ -627,7 +640,7 @@ int DB::prueftab(Tabelle *ptab,bool verbose)
             if (gspn) sql<<" AFTER `"<<ptab->felder[gspn-1].name<<"`";
             else sql<<" FIRST";
             sql<<istr[gspn];
-            /*int erg=*/rs.Abfrage(sql.str(),verbose?255:1);
+            /*int erg=*/rs.Abfrage(sql.str(),obverb?255:1);
             gesfehlr+=rs.obfehl;
             if (gesfehlr) Log(string("gesfehlr 2: ")+ltoan(gesfehlr),1,1);
           }
@@ -662,17 +675,17 @@ int DB::prueftab(Tabelle *ptab,bool verbose)
             sql<<"ALTER TABLE `"<<ptab->name<<"` MODIFY "<<fstr[gspn];
             if (gspn) sql<<" AFTER `"<<ptab->felder[gspn-1].name<<"`";
             else sql<<" FIRST";
-            /*int erg=*/rs.Abfrage(sql.str(),verbose?255:1);
+            /*int erg=*/rs.Abfrage(sql.str(),obverb?255:1);
             gesfehlr+=rs.obfehl;
             if (gesfehlr) Log(string("gesfehlr 3: ")+ltoan(gesfehlr),1,1);
             if (verschieb) 
-              lesespalten(ptab);
+              lesespalten(ptab,obverb>1);
             if (aendere) {
               if (!istr[gspn].empty()) {
                 RS rloesch(this,string("DROP INDEX `")+ptab->felder[gspn].name +"` ON `"+ptab->name+"`");
                 sql.str(std::string()); sql.clear();
                 sql<<"ALTER TABLE `"<<ptab->name<<"`"<<istr[gspn].substr(1);
-                rs.Abfrage(sql.str(),verbose?255:1);
+                rs.Abfrage(sql.str(),obverb?255:1);
               }
             }
           }
@@ -721,9 +734,9 @@ int DB::prueftab(Tabelle *ptab,bool verbose)
                   if (!strcasecmp(ptab->indices[i].felder[j].name.c_str(),spnamen[spnr])) { // Feldnamen identisch
                     long numsplen=atol(splenge[spnr]);
                     long numinlen=ptab->indices[i].felder[j].lenge.empty()?0:atol(ptab->indices[i].felder[j].lenge.c_str());
-                    if (!numinlen) {
+                    if (!numinlen || !numsplen) { // numsplen ist 0 z.B. bei varbinary
                       // das sollte reichen
-                      if (numsplen>50) ptab->indices[i].felder[j].lenge="50";
+                      if (numsplen>50 || !numsplen) ptab->indices[i].felder[j].lenge="50"; 
                     } else if (numinlen>numsplen) {
                       // laenger darf ein MariadB-Index z.Zt. nicht sein
                       if (numsplen>767) ptab->indices[i].felder[j].lenge="767";
@@ -731,6 +744,8 @@ int DB::prueftab(Tabelle *ptab,bool verbose)
                     }
                   }
                 }
+                // <<gruen<<"ptab->indices["<<i<<"].name["<<j<<"].name: "<<schwarz<<ptab->indices[i].felder[j].name<<endl;
+                // <<gruen<<"ptab->indices["<<i<<"].felder["<<j<<"].lenge: "<<schwarz<<ptab->indices[i].felder[j].lenge<<endl;
                 if (ptab->indices[i].felder[j].lenge!="0" && ptab->indices[i].felder[j].lenge!="") {
                   sql<<"("<<ptab->indices[i].felder[j].lenge<<")";
                 }
@@ -739,7 +754,7 @@ int DB::prueftab(Tabelle *ptab,bool verbose)
                 }
               } // for(int j=0;j<ptab->indices[i].feldzahl;j++) 
               sql<<")";
-              rindins.Abfrage(sql.str(),verbose?255:1);
+              rindins.Abfrage(sql.str(),obverb?255:1);
             } // if (obneu) 
           } // if (!rind.obfehl) 
         }
@@ -749,7 +764,7 @@ int DB::prueftab(Tabelle *ptab,bool verbose)
       break;
   }
   return gesfehlr;
-} // int DB::prueftab(Tabelle *ptab,bool verbose) 
+} // int DB::prueftab(Tabelle *ptab,bool obverb) 
 
 uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,uchar obstumm)
 {

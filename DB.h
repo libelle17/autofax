@@ -64,6 +64,8 @@ enum Txdb_
   T_von,
   T_auf,
   T_Aendere_Feld,
+  T_Pruefe_Tabelle,
+  T_Lesespalten,
   T_dbMAX,
 };
 
@@ -303,8 +305,8 @@ class DB
     char* tmtosqlmZ(tm *tmh,char* buf);
     //	char** HolZeile();
     my_ulonglong affrows(); // unsigned __int64
-    void lesespalten(Tabelle *tab);
-    int prueftab(Tabelle *tab,bool verbose=0);
+    void lesespalten(Tabelle *tab,int obverb=0);
+    int prueftab(Tabelle *tab,int obverb=0);
 };
 
 
