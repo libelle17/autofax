@@ -120,11 +120,12 @@ stored.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">- If the
-program &rsquo;git&rsquo; is available, You can start with:
+program &rsquo;git&rsquo; is installed, You can start with:
 <br>
 git clone http://github.com/libelle17/autofax && cd
 autofax <br>
-- otherwise e.g. with: <br>
+- otherwise e.g. (if &rsquo;wget&rsquo; ist installed, which
+is mostly the case) with: <br>
 P=autofax; T=$P.tar.gz; cd ~; wget
 https://github.com/libelle17/$P/archive/master.tar.gz -O $T
 && tar xpvf $T && rm -f $T && { for
