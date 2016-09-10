@@ -87,6 +87,7 @@ extern const char *_rot, *_hrot, *_schwarz, *_blau, *_gelb, *_tuerkis, *_hgrau;
 #include <fstream> // kopiere
 #include <algorithm>    // std::transform
 
+extern string nix;
 // typedef const char *TCtp[][Smax];
 typedef const char * const * const TCtp[Smax];
 class TxB // Text-Basisklasse
@@ -529,7 +530,7 @@ std::string dir_name(const std::string& path);
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
                 binaer ob0heissterfolg=wahr, binaer obergebnisanzeig=wahr, const string& ueberschr="",vector<errmsgcl> *errm=0);
 void pruefplatte();
-void pruefmehrfach(string& wen);
+void pruefmehrfach(string& wen=nix);
 int setfaclggf(const string& datei, const binaer obunter=falsch, const int mod=4, binaer obimmer=falsch,int obverb=0,int oblog=0);
 int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=1);
 string aktprogverz();

@@ -35,6 +35,7 @@ printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTe
 //char logdatei[PATH_MAX+1]="v:\\log_termine.txt";
 #endif
 #define obfstream
+string nix;
 
 
 const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
@@ -592,7 +593,7 @@ int kuerzelogdatei(const char* logdatei,int obverb)
   //	vector<string> Zeilen;   //Der Vektor Zeilen enthält String-Elemente
   char Zeile[256]; //Die maximale Zeilenlänge beträgt 255 Zeichen, weil ein String mit einer Null endet
   if (obverb>1) {
-    cout<<"verbose: "<<(int)obverb<<Txk[T_kuerze_logdatei]<<drot<<logdatei<<schwarz<<endl;
+    cout<<"obverb: "<<(int)obverb<<Txk[T_kuerze_logdatei]<<drot<<logdatei<<schwarz<<endl;
   }
   //  Log(string("kuerzelogdatei: ") + drot + logdatei + schwarz,obverb,0);
   // ersetze(logdatei,"\\","\\\\")
