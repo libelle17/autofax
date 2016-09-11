@@ -2224,10 +2224,10 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
         }
         if (obse) {
           linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
-          systemrueck("grep \""+sname+"\" /var/log/audit/audit.log | audit2allow -m \""+sname+"local\" >\"$(HOME)"+sname+"local.te\"",obverb,oblog);
-          systemrueck("grep \""+sname+"\" /var/log/audit/audit.log | audit2allow -M \"$(HOME)"+sname+"local.pp\"",obverb,oblog);
+          systemrueck("grep \""+sname+"\" /var/log/audit/audit.log | audit2allow -m \""+sname+"local\" >\"$HOME"+sname+"local.te\"",obverb,oblog);
+          systemrueck("grep \""+sname+"\" /var/log/audit/audit.log | audit2allow -M \"$HOME"+sname+"local.pp\"",obverb,oblog);
           linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
-          systemrueck("semodule -i \""+sname+"local.pp\"",obverb,oblog);
+          systemrueck("semodule -i \"$HOME"+sname+"local.pp\"",obverb,oblog);
           exit(0);
         }
        }
