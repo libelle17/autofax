@@ -2230,6 +2230,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
           systemrueck("sudo setenforce 1",obverb,oblog);
           linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
           systemrueck("sudo semodule -i \""+sname+"local.pp\"",obverb,oblog);
+          exit(0);
         }
        }
       }
