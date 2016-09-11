@@ -2296,6 +2296,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
 {
 //  Log(violetts+Txk[T_obslaeuft]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
   perfcl prf(Txk[T_Aktiviere_Dienst]+sname);
+  uchar aktiviernoch=0;
   while (1) {
     svec sysrueck;
     servicelaeuft=0;
@@ -2311,7 +2312,10 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         cout<<"sname: "<<sname<<endl;
         cout<<gruen<<sysrueck[0]<<schwarz<<endl;
         cout<<"nureinmal: "<<(int)nureinmal<<endl;
-        if (nureinmal || prf.oberreicht(3)) break;
+        if (nureinmal || prf.oberreicht(3)) {
+          aktiviernoch=1;
+          break;
+        }
         prf.ausgeb();
       } else if (sysrueck[0].find("loaded")!=string::npos) {
         serviceda=1;
@@ -2320,10 +2324,10 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         break;
       }
     } else { // if (!sysrueck.empty()) 
-     break;
+      break;
     }
   } // while (1)
-        exit(0);
+  if (aktiviernoch) exit(0);
   if (!serviceda) {
     vector<errmsgcl> errv;
     string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
