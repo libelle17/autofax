@@ -5324,11 +5324,10 @@ int paramcl::pruefhyla()
     if (1) {
       for (uchar iru=0;iru<3;iru++) {
         if ((fglaeuftnicht=!this->sfaxgetty->obslaeuft(obverb,oblog))) {
-        exit(0);
           // falls nein, dann schauen, ob startbar
           cout<<"vor machfit"<<endl;
           if (sfaxgetty->machfit(obverb-1,oblog)) fglaeuftnicht=0;
-          cout<<"nach machfit"<<endl;
+          cout<<"nach machfit"<<endl; exit(0);
         }
         cout<<"Stelle 1"<<endl; exit(0);
       // <<rot<<" fglaueftnicht: "<<fglaeuftnicht<<", hmodem: "<<hmodem<<schwarz<<endl;
