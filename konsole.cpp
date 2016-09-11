@@ -36,6 +36,7 @@ printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTe
 #endif
 #define obfstream
 string nix;
+class linstcl linst;
 
 
 const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
@@ -2207,7 +2208,25 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
   Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
     if (serviceda && !servicelaeuft) {
-      systemrueck("journalctl -xe \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\"",1,0);
+      svec sr1;
+      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",obverb,0,&sr1);
+      if (sr1.size()) {
+       if (sr1[0].find("permission")!=string::npos) {
+        svec sr2;
+        systemrueck("sestatus",obverb,oblog,&sr2);
+        uchar obse=0;
+        for(size_t j=0;j<sr2.size();j++) {
+         if (!sr2[j].find("Current mode:"))
+          if (!sr2[j].find("enforcing")!=string::npos) {
+           obse=1; 
+           break;
+          }
+        }
+        if (obse) {
+          linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
+        }
+       }
+      }
       exit(5);
     }
     if (!obslaeuft(obverb,oblog,nureinmal)) {

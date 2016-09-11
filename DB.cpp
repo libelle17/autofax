@@ -1,5 +1,6 @@
 #include "konsole.h"
 #include "DB.h"
+extern class linstcl linst;
 
 const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
   // T_DB_wird_initialisiert
@@ -74,8 +75,6 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
 Txdbcl::Txdbcl() {TCp=(const char* const * const * const *)&TextC;}
 
 class Txdbcl Txd;
-
-class linstcl linst;
 
 // Datenbanknamen aus sql-String extrahieren
 svec holdbaussql(string sql) 
