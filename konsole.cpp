@@ -2224,10 +2224,12 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
         }
         if (obse) {
           linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
+          systemrueck("grep '"+sname+"' /var/log/audit/audit.log | audit2allow -M '"+sname+"local'",obverb,oblog);
+          linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
+          systemrueck("semodule -i '"+sname+"local.pp'",obverb,oblog);
         }
        }
       }
-      exit(5);
     }
     if (!obslaeuft(obverb,oblog,nureinmal)) {
       restart(obverb,oblog);
