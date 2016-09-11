@@ -2314,6 +2314,8 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         cout<<"sname: "<<sname<<endl;
         cout<<gruen<<sysrueck[0]<<schwarz<<endl;
         cout<<"nureinmal: "<<(int)nureinmal<<endl;
+        cout<<gruen<<sysrueck[1]<<schwarz<<endl;
+        exit(0);
         if (nureinmal || prf.oberreicht(3)) {
           aktiviernoch=1;
           break;
