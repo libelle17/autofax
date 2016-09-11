@@ -2206,8 +2206,8 @@ servc::servc(string vsname,string vename,int obverb, int oblog): sname((vsname.e
 
 int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
-  Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" serviceda: "+(serviceda?"1":"0")+" servicelaeuft: "+(servicelaeuft?"1":"0"),
-      obverb,oblog);
+  Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" serviceda: "+blau+(serviceda?"1":"0")+schwarz+
+      " servicelaeuft: "+blau+(servicelaeuft?"1":"0")+schwarz, obverb,oblog);
 
     if (serviceda && !servicelaeuft) {
       svec sr1;
@@ -2228,10 +2228,10 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
           linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
           systemrueck("sudo setenforce 0",obverb,oblog);
           restart(obverb,oblog);
-          systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+sname+"local.te\"",obverb,oblog);
+          systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+sname+"_selocal\"",obverb,oblog);
           systemrueck("sudo setenforce 1",obverb,oblog);
           linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
-          systemrueck("sudo semodule -i \""+sname+"local.pp\"",obverb,oblog);
+          systemrueck("sudo semodule -i \""+sname+"_selocal.pp\"",obverb,oblog);
           exit(0);
         }
        }
