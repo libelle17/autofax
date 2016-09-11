@@ -2315,6 +2315,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         if (srueck.size()) {
          string *sp=&srueck[srueck.size()-1];
          if (sp->find("exited")!=string::npos) {
+          // z.B.: 'Main PID: 17031 (code=exited, status=255)'
           cout<<"Fehler Nr: "<<atol(sp->substr(sp->rfind("=")+1).c_str())<<endl;
           exit(0);
          }
