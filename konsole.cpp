@@ -2310,8 +2310,8 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
       } else if (sysrueck[0].find("activating")!=string::npos) {
         cout<<"sname: "<<sname<<endl;
         cout<<gruen<<sysrueck[0]<<schwarz<<endl;
-        exit(0);
-        if (nureinmal || prf.oberreicht(120)) break;
+        cout<<"nureinmal: "<<(int)nureinmal<<endl;
+        if (nureinmal || prf.oberreicht(3)) break;
         prf.ausgeb();
       } else if (sysrueck[0].find("loaded")!=string::npos) {
         serviceda=1;
@@ -2323,6 +2323,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
      break;
     }
   } // while (1)
+        exit(0);
   if (!serviceda) {
     vector<errmsgcl> errv;
     string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
