@@ -2325,9 +2325,11 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
               fehler=atol(sp->substr(gpos+1).c_str());
             else 
               fehler=1;
+            cout<<gruen<<*sp<<schwarz<<endl;
+            exit(7);
             break;
           } // if (sp->find("exited")!=string::npos) 
-        }
+        } // if (srueck.size()) 
         if (nureinmal || prf.oberreicht(3)) {
           break;
         }
