@@ -6706,6 +6706,9 @@ void paramcl::zeigkonf()
 
 int main(int argc, char** argv) 
 {
+  string sp[0];
+  sp[0]="Hier bin ich";
+  cout<<sp[1]<<endl;
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();

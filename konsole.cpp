@@ -2221,6 +2221,7 @@ uchar servc::spruef(const string& sbez,uchar obfork, const string& parent, const
   Log(violetts+Txk[T_spruef_sname]+schwarz+sname,obverb,oblog);
   string systemd;
   int svgibts=0; // 1 = Datei systemd existiert
+  pfad=sexec;
   if (!wennnicht0.empty()) {
     servicelaeuft=!systemrueck(wennnicht0,obverb-1,oblog);
   }
@@ -2318,9 +2319,8 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
             // z.B.: 'Main PID: 17031 (code=exited, status=255)'
             serviceda=1;
             servicelaeuft=0;
-            cout<<"Fehler Nr: "<<atol(sp->substr(sp->rfind("=")+1).c_str())<<endl;
-            cout<<"ename: "<<ename<<endl;
-            exit(0);
+            fehler=atol(sp->substr(sp->rfind("=")+1).c_str());
+            break;
           }
         }
         cout<<"sname: "<<sname<<endl;
