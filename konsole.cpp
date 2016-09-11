@@ -2205,7 +2205,7 @@ servc::servc(string vsname,string vename,int obverb, int oblog): sname((vsname.e
 
 int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
-  Log(violetts+Txk[T_machfit]+schwarz,obverb,oblog);
+  Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
     if (!obslaeuft(obverb,oblog,nureinmal)) {
       restart(obverb,oblog);
     }
@@ -2313,9 +2313,9 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         svec srueck;
         systemrueck("systemctl --lines 0 status '"+sname+"'",obverb,oblog,&srueck);
         if (sysrueck.size()) {
-         string *sp=&sysrueck[sysrueck.size()-1];
+         string *sp=&sysrueck[srueck.size()-1];
          if (sp->find("exited")!=string::npos) {
-          cout<<"Fehler Nr: "<< atol(sp->substr(sp->find("=")+1).c_str())<<endl;
+          cout<<"Fehler Nr: "<<atol(sp->substr(sp->find("=")+1).c_str())<<endl;
           exit(0);
          }
         }
