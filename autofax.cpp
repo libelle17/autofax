@@ -5161,8 +5161,6 @@ int paramcl::pruefhyla()
       } 
       if (hylafehlt) {
         // falls nein, dann schauen, ob startbar
-        cout<<"hylafehlt"<<endl;
-        exit(0);
         if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog) && sfaxgetty->machfit(obverb-1,oblog)) {
           hylafehlt=0;
           hylalaeuftnicht=0;
@@ -5325,6 +5323,8 @@ int paramcl::pruefhyla()
     int fglaeuftnicht=0;
     if (1) {
       for (uchar iru=0;iru<3;iru++) {
+        cout<<"fglaeuftnicht"<<endl;
+        exit(0);
         if ((fglaeuftnicht=!this->sfaxgetty->obslaeuft(obverb,oblog))) {
           // falls nein, dann schauen, ob startbar
           if (sfaxgetty->machfit(obverb-1,oblog)) fglaeuftnicht=0;
