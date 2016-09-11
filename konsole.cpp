@@ -2207,7 +2207,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
   Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
     if (serviceda && !servicelaeuft) {
-      systemrueck("journalctl -xe ''",1,0);
+      systemrueck("journalctl -xe \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\"",1,0);
       exit(5);
     }
     if (!obslaeuft(obverb,oblog,nureinmal)) {
