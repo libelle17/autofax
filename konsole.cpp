@@ -2206,7 +2206,9 @@ servc::servc(string vsname,string vename,int obverb, int oblog): sname((vsname.e
 
 int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
-  Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
+  Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" serviceda: "+(serviceda?"1":"0")+" servicelaeuft: "+(servicelaeuft?"1":"0"),
+      obverb,oblog);
+
     if (serviceda && !servicelaeuft) {
       svec sr1;
       systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",obverb,0,&sr1);
@@ -2343,7 +2345,6 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         break;
       } else if (sysrueck[0].find("activating")!=string::npos) {
         svec srueck;
-        cout<<"obverb: "<<obverb<<endl;
         serviceda=1;
         servicelaeuft=0;
         systemrueck("systemctl --lines 0 status '"+sname+"' 2>/dev/null",obverb,oblog,&srueck);
