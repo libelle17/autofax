@@ -3159,11 +3159,8 @@ void paramcl::verzeichnisse()
 void setztmpc(int obverb, int oblog)
 {
   if (tmpc.empty()) {
-    svec hrueck;
     // Einbau von '~' ergaebe bei Aufruf mit und ohne sudo unterschiedliche Erweiterungen
-    systemrueck("echo $HOME",obverb,oblog,&hrueck);
-    if (hrueck.size()) tmpc=hrueck[0]; 
-    tmpc+="/rootscrontab";
+    tmpc+=gethome()+"/rootscrontab";
   }
 } // void setztmpc()
 

@@ -2199,6 +2199,19 @@ string meinpfad() {
   return string(buff);
 } // meinpfad
 
+string gethome()
+{
+ static string erg;
+ if (erg.empty()) {
+   svec srueck;
+   systemrueck("echo $HOME",0,0,&srueck);
+   if (srueck.size()) {
+     erg=srueck[0];
+   }
+ }
+ return erg;
+} // string gethome()
+
 servc::servc(string vsname,string vename,int obverb, int oblog): sname((vsname.empty()?vename:vsname)),ename(vename) 
 {
   machfit(obverb,oblog);
@@ -2210,10 +2223,10 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
       " servicelaeuft: "+blau+(servicelaeuft?"1":"0")+schwarz, obverb,oblog);
 
     if (serviceda && !servicelaeuft) {
-      svec sr1;
-      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",obverb,0,&sr1);
-      if (sr1.size()) {
-       if (sr1[0].find("permission")!=string::npos) {
+//      svec sr1;
+//      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",obverb,0,&sr1);
+//      if (sr1.size()) KLA
+//       if (sr1[0].find("permission")!=string::npos) KLA
         svec sr2;
         systemrueck("sestatus",obverb,oblog,&sr2);
         uchar obse=0;
@@ -2228,15 +2241,15 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
           linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
           systemrueck("sudo setenforce 0",obverb,oblog);
           restart(obverb,oblog);
-          systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+sname+"_selocal\"",obverb,oblog);
+          systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+gethome()+"/"+sname+"_selocal\"",obverb,oblog);
           systemrueck("sudo setenforce 1",obverb,oblog);
           linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
-          systemrueck("sudo semodule -i \""+sname+"_selocal.pp\"",obverb,oblog);
+          systemrueck("sudo semodule -i \""+gethome()+"/"+sname+"_selocal.pp\"",obverb,oblog);
           exit(0);
         }
-       }
-      }
-    }
+//       KLZ
+//      KLZ
+    } // if (serviceda && !servicelaeuft) 
     if (!obslaeuft(obverb,oblog,nureinmal)) {
       restart(obverb,oblog);
     }

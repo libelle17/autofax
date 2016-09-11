@@ -382,6 +382,7 @@ class lsyscl
 string obprogda(string prog,int obverb, int oblog);
 enum instprog {keinp,zypper,apt,dnf,yum};
 instprog pruefipr(int obverb=0, int oblog=0);
+string gethome();
 
 #ifdef _MSC_VER
 extern inline void wait();
