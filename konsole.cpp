@@ -2317,6 +2317,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
           break;
         }
         prf.ausgeb();
+        cout<<"nach ausgeb!"<<endl;exit(0);
       } else if (sysrueck[0].find("loaded")!=string::npos) {
         serviceda=1;
         break;
