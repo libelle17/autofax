@@ -158,6 +158,8 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {", als Dienst eingerichtet von '",", installed as service by '"},
   // T_Versuch
   {", Versuch: ",", try no.: "},
+  // T_machfit
+  {"machfit()","makefit()"},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -2202,9 +2204,11 @@ servc::servc(string vsname,string vename,int obverb, int oblog): sname((vsname.e
 
 int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
+  Log(violetts+Txk[T_machfit]+schwarz,obverb?obverb:obverb,oblog);
     if (!obslaeuft(obverb,oblog,nureinmal)) {
       restart(obverb,oblog);
     }
+    exit(0);
     //  if (servicelaeuft)
     enableggf(obverb,oblog);
     return servicelaeuft;
