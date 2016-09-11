@@ -5323,8 +5323,8 @@ int paramcl::pruefhyla()
     int fglaeuftnicht=0;
     if (1) {
       for (uchar iru=0;iru<3;iru++) {
-        exit(0);
         if ((fglaeuftnicht=!this->sfaxgetty->obslaeuft(obverb,oblog))) {
+        exit(0);
           // falls nein, dann schauen, ob startbar
           cout<<"vor machfit"<<endl;
           if (sfaxgetty->machfit(obverb-1,oblog)) fglaeuftnicht=0;
