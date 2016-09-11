@@ -2315,7 +2315,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         if (srueck.size()) {
          string *sp=&srueck[srueck.size()-1];
          if (sp->find("exited")!=string::npos) {
-          cout<<"Fehler Nr: "<<atol(sp->substr(sp->find("=")+1).c_str())<<endl;
+          cout<<"Fehler Nr: "<<atol(sp->substr(sp->rfind("=")+1).c_str())<<endl;
           exit(0);
          }
         }
