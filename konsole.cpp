@@ -2206,6 +2206,10 @@ servc::servc(string vsname,string vename,int obverb, int oblog): sname((vsname.e
 int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
   Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
+    if (serviceda && !servicelaeuft) {
+      systemrueck("journalctl -xe '"+pfad+"'",1,0);
+      exit(5);
+    }
     if (!obslaeuft(obverb,oblog,nureinmal)) {
       restart(obverb,oblog);
     }
@@ -2334,7 +2338,10 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
           break;
         }
         prf.ausgeb();
-        if (runde>10) {cout<<"nach ausgeb!"<<endl;exit(0);}
+        if (runde>10) {
+           // <<"nach ausgeb!"<<endl;
+           exit(1);
+        }
       } else if (sysrueck[0].find("loaded")!=string::npos) {
         serviceda=1;
         break;
