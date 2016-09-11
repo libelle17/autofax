@@ -2312,7 +2312,6 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
           } // if (syst.is_open()) 
         } // if (svgibts && serviceda) else
       } // if (!svgibts || !obslaeuft(obverb,oblog)) 
-        cout<<rot<<"Stelle 2"<<schwarz<<endl;
       if (servicelaeuft) { 
         if (systemrueck("systemctl is-enabled "+sname,obverb-1,oblog)) {
           systemrueck("sudo systemctl enable "+sname,obverb,oblog);
@@ -2345,14 +2344,14 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
       } else if (sysrueck[0].find("activating")!=string::npos) {
         svec srueck;
         cout<<"obverb: "<<obverb<<endl;
-        systemrueck("systemctl --lines 0 status '"+sname+"'",obverb,oblog,&srueck);
-        if (srueck.size()) {
-          string *sp=&srueck[srueck.size()-1];
+        serviceda=1;
+        servicelaeuft=0;
+        systemrueck("systemctl --lines 0 status '"+sname+"' 2>/dev/null",obverb,oblog,&srueck);
+        for(size_t j=0;j<srueck.size();j++) {
+          string *sp=&srueck[j];
           if (sp->find("exited")!=string::npos) {
             // z.B.: 'Main PID: 17031 (code=exited, status=255)'
             // 11.9.16: dann muss selinux angepasst werden
-            serviceda=1;
-            servicelaeuft=0;
             size_t gpos=sp->rfind('=');
             if (gpos<sp->length()-1)
               fehler=atol(sp->substr(gpos+1).c_str());
@@ -2360,15 +2359,14 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
               fehler=1;
             break;
           } // if (sp->find("exited")!=string::npos) 
+        }
+        if (fehler) break;
+        if (srueck.size()) {
         } // if (srueck.size()) 
         if (nureinmal || prf.oberreicht(3)) {
           break;
         }
         prf.ausgeb();
-        if (runde>10) {
-           // <<"nach ausgeb!"<<endl;
-           exit(1);
-        }
       } else if (sysrueck[0].find("loaded")!=string::npos) {
         serviceda=1;
         break;
