@@ -2296,14 +2296,13 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
 {
 //  Log(violetts+Txk[T_obslaeuft]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
   perfcl prf(Txk[T_Aktiviere_Dienst]+sname);
-  uchar aktiviernoch=0;
   size_t runde=0;
   while (1) {
     runde++;
     svec sysrueck;
     servicelaeuft=0;
     serviceda=0;
-    systemrueck(("systemctl -a --no-legend list-units '")+sname+".service'",obverb,oblog,&sysrueck);  // bei list-units return value immer 0
+    systemrueck("systemctl -a --no-legend list-units '"+sname+"'",obverb,oblog,&sysrueck);  // bei list-units return value immer 0
     if (!sysrueck.empty()) {
       Log(blau+sysrueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
       if (sysrueck[0].find("active running")!=string::npos) {
@@ -2311,13 +2310,21 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         serviceda=1;
         break;
       } else if (sysrueck[0].find("activating")!=string::npos) {
+        svec srueck;
+        systemrueck("systemctl --lines 0 status '"+sname+"'",obverb,oblog,&srueck);
+        if (sysrueck.size()) {
+         string *sp=&sysrueck[sysrueck.size()-1];
+         if (sp->find("exited")!=string::npos) {
+          cout<<"Fehler Nr: "<< atol(sp->substr(sp->find("=")+1).c_str())<<endl;
+          exit(0);
+         }
+        }
         cout<<"sname: "<<sname<<endl;
         cout<<gruen<<sysrueck[0]<<schwarz<<endl;
         cout<<"nureinmal: "<<(int)nureinmal<<endl;
         cout<<gruen<<sysrueck[1]<<schwarz<<endl;
         exit(0);
         if (nureinmal || prf.oberreicht(3)) {
-          aktiviernoch=1;
           break;
         }
         prf.ausgeb();
@@ -2332,7 +2339,6 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
       break;
     }
   } // while (1)
-  if (aktiviernoch) exit(0);
   if (!serviceda) {
     vector<errmsgcl> errv;
     string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
