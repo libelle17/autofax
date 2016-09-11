@@ -2306,19 +2306,22 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
     if (!sysrueck.empty()) {
       Log(blau+sysrueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
       if (sysrueck[0].find("active running")!=string::npos) {
-        servicelaeuft=1; 
+        servicelaeuft=1;
         serviceda=1;
         break;
       } else if (sysrueck[0].find("activating")!=string::npos) {
         svec srueck;
         systemrueck("systemctl --lines 0 status '"+sname+"'",obverb,oblog,&srueck);
         if (srueck.size()) {
-         string *sp=&srueck[srueck.size()-1];
-         if (sp->find("exited")!=string::npos) {
-          // z.B.: 'Main PID: 17031 (code=exited, status=255)'
-          cout<<"Fehler Nr: "<<atol(sp->substr(sp->rfind("=")+1).c_str())<<endl;
-          exit(0);
-         }
+          string *sp=&srueck[srueck.size()-1];
+          if (sp->find("exited")!=string::npos) {
+            // z.B.: 'Main PID: 17031 (code=exited, status=255)'
+            serviceda=1;
+            servicelaeuft=0;
+            cout<<"Fehler Nr: "<<atol(sp->substr(sp->rfind("=")+1).c_str())<<endl;
+            cout<<"ename: "<<ename<<endl;
+            exit(0);
+          }
         }
         cout<<"sname: "<<sname<<endl;
         cout<<gruen<<sysrueck[0]<<schwarz<<endl;
