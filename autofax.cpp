@@ -6703,7 +6703,13 @@ void paramcl::zeigkonf()
   }
 } // void paramcl::zeigkonf()
 
-
+class myexception: public exception
+{
+  virtual const char* what() const throw()
+  {
+    return "My exception happened";
+  }
+} myex;
 int main(int argc, char** argv) 
 {
   string sp[0];
@@ -6712,9 +6718,9 @@ int main(int argc, char** argv)
     cout<<sp[1]<<endl;
     throw 5;
   }
-  catch(int e) {
-    cout<<"Hier Fehler!"<<e<<endl;
-    exit(0);
+  catch(exception& e) {
+    cout<<e.what()<<endl;
+    exit(1);
   }
   exit(0);
   paramcl pm(argc,argv); // Programmparameter
