@@ -2267,7 +2267,9 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
       struct stat svstat;
       svgibts=!lstat(systemd.c_str(),&svstat);
       if (!svgibts || !obslaeuft(obverb,oblog)) {
+        cout<<rot<<"Stelle 0"<<schwarz<<endl;
         if (svgibts && serviceda) {
+        cout<<rot<<"Stelle 1"<<schwarz<<endl;
           restart(obverb,oblog); // hier wird auch serviceslaeuft gesetzt
           /*
              servicelaeuft=!systemrueck(("sudo pkill ")+ename+" >/dev/null 2>&1; sudo systemctl restart "+sname,obverb-1,oblog); 
