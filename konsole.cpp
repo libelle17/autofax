@@ -2217,7 +2217,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
         uchar obse=0;
         for(size_t j=0;j<sr2.size();j++) {
          if (!sr2[j].find("Current mode:"))
-          if (!sr2[j].find("enforcing")!=string::npos) {
+          if (sr2[j].find("enforcing")!=string::npos) {
            obse=1; 
            break;
           }
