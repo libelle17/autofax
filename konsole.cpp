@@ -2312,8 +2312,8 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
       } else if (sysrueck[0].find("activating")!=string::npos) {
         svec srueck;
         systemrueck("systemctl --lines 0 status '"+sname+"'",obverb,oblog,&srueck);
-        if (sysrueck.size()) {
-         string *sp=&sysrueck[srueck.size()-1];
+        if (srueck.size()) {
+         string *sp=&srueck[srueck.size()-1];
          if (sp->find("exited")!=string::npos) {
           cout<<"Fehler Nr: "<<atol(sp->substr(sp->find("=")+1).c_str())<<endl;
           exit(0);
