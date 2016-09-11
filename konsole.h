@@ -165,6 +165,7 @@ enum Tkonsole_
   T_als_Dienst_eingerichtet_von,
   T_Versuch,
   T_machfit,
+  T_obslaeuft,
   T_konsoleMAX,
 };
 

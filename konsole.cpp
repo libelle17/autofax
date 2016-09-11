@@ -160,6 +160,8 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {", Versuch: ",", try no.: "},
   // T_machfit
   {"machfit()","makefit()"},
+  // T_obslaeuft
+  {"obslaeuft()","whetheritruns()"},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -2204,7 +2206,7 @@ servc::servc(string vsname,string vename,int obverb, int oblog): sname((vsname.e
 
 int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
-  Log(violetts+Txk[T_machfit]+schwarz,obverb?obverb:obverb,oblog);
+  Log(violetts+Txk[T_machfit]+schwarz,obverb,oblog);
     if (!obslaeuft(obverb,oblog,nureinmal)) {
       exit(0);
       restart(obverb,oblog);
@@ -2295,6 +2297,7 @@ uchar servc::spruef(const string& sbez,uchar obfork, const string& parent, const
 // wird aufgerufen in: pruefhyla, pruefcapi, spruef
 int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
 {
+  Log(violetts+Txk[T_obslaeuft]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
   perfcl prf(Txk[T_Aktiviere_Dienst]+sname);
   while (1) {
     svec sysrueck;
@@ -2302,7 +2305,9 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
     serviceda=0;
     systemrueck(("systemctl -a --no-legend list-units '")+sname+".service'",obverb,oblog,&sysrueck);  // bei list-units return value immer 0
     if (!sysrueck.empty()) {
+      obverb=5;
       Log(blau+sysrueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
+      exit(0);
       if (sysrueck[0].find("active running")!=string::npos) {
         servicelaeuft=1; 
         serviceda=1;

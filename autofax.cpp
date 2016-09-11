@@ -5083,7 +5083,7 @@ int paramcl::hservice_faxgetty()
 // wird aufgerufen in main
 int paramcl::pruefhyla()
 {
-  Log(violetts+Tx[T_pruefhyla]+schwarz,obverb?obverb:obverb,oblog);
+  Log(violetts+Tx[T_pruefhyla]+schwarz,obverb,oblog);
   long br=0; // baud rate
   string brs; // Baud-Rate-String
   int hylalaeuftnicht=0;
@@ -5325,7 +5325,7 @@ int paramcl::pruefhyla()
       for (uchar iru=0;iru<3;iru++) {
         if ((fglaeuftnicht=!this->sfaxgetty->obslaeuft(obverb,oblog))) {
           // falls nein, dann schauen, ob startbar
-          cout<<"vor machfit"<<endl;
+          cout<<"vor machfit"<<endl; exit(0);
           if (sfaxgetty->machfit(obverb,oblog)) fglaeuftnicht=0;
           cout<<"nach machfit"<<endl; exit(0);
         }
@@ -5409,7 +5409,7 @@ int paramcl::pruefhyla()
                   "sudo sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax", obverb,oblog);
   }
   } // if (0)
-  Log(violetts+Tx[T_Ende]+" "+Tx[T_pruefhyla]+schwarz,obverb?obverb:obverb,oblog);
+  Log(violetts+Tx[T_Ende]+" "+Tx[T_pruefhyla]+schwarz,obverb,oblog);
   return 0;
 } // int paramcl::pruefhyla()
 
@@ -5535,7 +5535,7 @@ int paramcl::kompiliere(string was,string endg, string vorcfg,string cfgbismake)
 // wird aufgerufen in: untersuchespool, main
 int paramcl::pruefcapi()
 {
-  Log(violetts+Tx[T_pruefcapi]+schwarz,obverb?obverb:obverb,oblog);
+  Log(violetts+Tx[T_pruefcapi]+schwarz,obverb,oblog);
   static uchar capiloggekuerzt=0;
   static uchar capischonerfolgreichinstalliert=0;
   int capilaeuft=0;
