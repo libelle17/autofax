@@ -2219,7 +2219,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 } // int servc::machfit(int obverb,int oblog)
 
 // wird aufgerufen in: hservice_faxq_hfaxd, hservice_faxgetty
-uchar servc::spruef(const string& sbez,uchar obfork, const string& parent, const string& sexec, const string& CondPath, const string& After, 
+uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, const string& sexec, const string& CondPath, const string& After, 
                     const string& wennnicht0, int obverb,int oblog)
 {
   Log(violetts+Txk[T_spruef_sname]+schwarz+sname,obverb,oblog);
