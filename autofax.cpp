@@ -5323,11 +5323,11 @@ int paramcl::pruefhyla()
     int fglaeuftnicht=0;
     if (1) {
       for (uchar iru=0;iru<3;iru++) {
-        cout<<"fglaeuftnicht"<<endl;
-        exit(0);
         if ((fglaeuftnicht=!this->sfaxgetty->obslaeuft(obverb,oblog))) {
           // falls nein, dann schauen, ob startbar
           if (sfaxgetty->machfit(obverb-1,oblog)) fglaeuftnicht=0;
+        cout<<"fglaeuftnicht"<<endl;
+        exit(0);
         }
       // <<rot<<" fglaueftnicht: "<<fglaeuftnicht<<", hmodem: "<<hmodem<<schwarz<<endl;
         modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
