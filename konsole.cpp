@@ -2302,7 +2302,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
     svec sysrueck;
     servicelaeuft=0;
     serviceda=0;
-    systemrueck("systemctl -a --no-legend list-units '"+sname+"'",obverb,oblog,&sysrueck);  // bei list-units return value immer 0
+    systemrueck("systemctl -a --no-legend list-units '"+sname+".service'",obverb,oblog,&sysrueck);  // bei list-units return value immer 0
     if (!sysrueck.empty()) {
       Log(blau+sysrueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
       if (sysrueck[0].find("active running")!=string::npos) {
