@@ -2224,7 +2224,10 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
         }
         if (obse) {
           linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
+          systemrueck("setenforce 0",obverb,oblog);
+          restart(obverb,oblog);
           systemrueck("sudo grep \""+sname+"\" /var/log/audit/audit.log | audit2allow -M \""+sname+"local.te\"",obverb,oblog);
+          systemrueck("setenforce 1",obverb,oblog);
           linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
           systemrueck("sudo semodule -i \""+sname+"local.pp\"",obverb,oblog);
           exit(0);
