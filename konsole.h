@@ -569,7 +569,7 @@ class servc {
   public:
     int servicelaeuft=0, serviceda=0;
     int fehler=0;
-    string sname,ename,pfad; // ausgefuehrte Datei
+    string sname,ename; // ausgefuehrte Datei
     servc(string vsname,string vename): sname((vsname.empty()?vename:vsname)),ename(vename) {}
     servc(string vsname,string vename,int obverb, int oblog);
     uchar spruef(const string& sbez,uchar obfork,const string& parent, const string& sexec, const string& CondPath, const string& After, 

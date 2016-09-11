@@ -4867,10 +4867,6 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
     if (rueckf.size()) 
       pmp->faxgtpfad=rueckf[0];
   }
-   cout<<rot<<"faxgtpfad: "<<pmp->faxgtpfad<<" (pmp->sfaxgetty): "<<(pmp->sfaxgetty)<<schwarz<<endl;
-  if (pmp->sfaxgetty) {
-   pmp->sfaxgetty->pfad=pmp->faxgtpfad;
-  }
   // violett<<"pmp->faxgtpfad 4: "<<pmp->faxgtpfad<<schwarz<<endl;
 } // hfaxsetup
 

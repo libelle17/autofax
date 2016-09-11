@@ -2207,7 +2207,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
   Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
     if (serviceda && !servicelaeuft) {
-      systemrueck("journalctl -xe '"+pfad+"'",1,0);
+      systemrueck("journalctl -xe ''",1,0);
       exit(5);
     }
     if (!obslaeuft(obverb,oblog,nureinmal)) {
@@ -2225,7 +2225,6 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
   Log(violetts+Txk[T_spruef_sname]+schwarz+sname,obverb,oblog);
   string systemd;
   int svgibts=0; // 1 = Datei systemd existiert
-  pfad=sexec;
   if (!wennnicht0.empty()) {
     servicelaeuft=!systemrueck(wennnicht0,obverb-1,oblog);
   }
