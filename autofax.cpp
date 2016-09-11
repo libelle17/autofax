@@ -6708,12 +6708,20 @@ int main(int argc, char** argv)
 {
   string sp[0];
   sp[0]="Hier bin ich";
-  cout<<sp[1]<<endl;
+  try {
+    cout<<sp[1]<<endl;
+    throw 5;
+  }
+  catch(int e) {
+    cout<<"Hier Fehler!"<<e<<endl;
+    exit(0);
+  }
+  exit(0);
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
-      pm.VorgbAllg();
+  pm.VorgbAllg();
   pm.VorgbSpeziell();
   pm.lieskonfein();
 
@@ -6721,7 +6729,7 @@ int main(int argc, char** argv)
     exit(1);
   pm.pruefggfmehrfach();
   if (pm.obvi) {
-   exit (systemrueck("vi "+pm.konfdatname+" >/dev/tty"));
+    exit (systemrueck("vi "+pm.konfdatname+" >/dev/tty"));
   }
   if (pm.zeigvers) {
    zeigversion(pm.meinname,pm.mpfad);
