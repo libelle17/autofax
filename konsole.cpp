@@ -2265,6 +2265,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
     */
       systemd="/etc/systemd/system/"+sname+".service";
       struct stat svstat;
+        cout<<rot<<"Stelle 3"<<schwarz<<endl;
       svgibts=!lstat(systemd.c_str(),&svstat);
       if (!svgibts || !obslaeuft(obverb,oblog)) {
         cout<<rot<<"Stelle 0"<<schwarz<<endl;
@@ -2311,6 +2312,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
           } // if (syst.is_open()) 
         } // if (svgibts && serviceda) else
       } // if (!svgibts || !obslaeuft(obverb,oblog)) 
+        cout<<rot<<"Stelle 2"<<schwarz<<endl;
       if (servicelaeuft) { 
         if (systemrueck("systemctl is-enabled "+sname,obverb-1,oblog)) {
           systemrueck("sudo systemctl enable "+sname,obverb,oblog);
