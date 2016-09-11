@@ -1549,7 +1549,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
   string hcmd;
   uchar obfind=(cmd.substr(0,4)=="find" || cmd.substr(0,9)=="sudo find");
   if (obfind && (obverb<1 || strcmp(curruser(),"root"))) {
-   hcmd=cmd+" 2>/dev/null";
+   hcmd=cmd+" 2>/dev/null; true";
    czg=&hcmd;
   }
   // "obfind: "<<(int)obfind<<", obverb: "<<(int)obverb<<", curruser(): "<<curruser()<<", '"<<violett<<*czg<<schwarz<<"'"<<endl;
@@ -2280,12 +2280,9 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
     */
       systemd="/etc/systemd/system/"+sname+".service";
       struct stat svstat;
-        cout<<rot<<"Stelle 3"<<schwarz<<endl;
       svgibts=!lstat(systemd.c_str(),&svstat);
       if (!svgibts || !obslaeuft(obverb,oblog)) {
-        cout<<rot<<"Stelle 0"<<schwarz<<endl;
         if (svgibts && serviceda) {
-        cout<<rot<<"Stelle 1"<<schwarz<<endl;
           restart(obverb,oblog); // hier wird auch serviceslaeuft gesetzt
           /*
              servicelaeuft=!systemrueck(("sudo pkill ")+ename+" >/dev/null 2>&1; sudo systemctl restart "+sname,obverb-1,oblog); 

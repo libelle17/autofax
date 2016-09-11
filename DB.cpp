@@ -237,8 +237,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
               datadir=zrueck[zrueck.size()-1];  
             } else {
               svec zzruck, zincldir;
-              systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit"+string(obverb?"":" 2>/dev/null")+"; true",
-                          obverb,oblog,&zzruck);
+              systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit", obverb,oblog,&zzruck);
               if (!zzruck.size())
                 systemrueck("find ${HOME} -name .my.cnf -printf '%p\\n' -quit",obverb,oblog,&zzruck);
               if (zzruck.size()) {
