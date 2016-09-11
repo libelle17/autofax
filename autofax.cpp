@@ -6705,17 +6705,6 @@ void paramcl::zeigkonf()
 
 int main(int argc, char** argv) 
 {
-  string sp[0];
-  sp[0]="Hier bin ich";
-  try
-  {
-    *(int*) 0 = 0;
-  }
-  catch (std::exception& e)
-  {
-    std::cerr << "Exception catched : " << e.what() << std::endl;
-  }
-  exit(0);
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();

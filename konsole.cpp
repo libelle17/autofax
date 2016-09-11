@@ -2317,17 +2317,17 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
           string *sp=&srueck[srueck.size()-1];
           if (sp->find("exited")!=string::npos) {
             // z.B.: 'Main PID: 17031 (code=exited, status=255)'
+            // 11.9.16: dann muss selinux angepasst werden
             serviceda=1;
             servicelaeuft=0;
-            fehler=atol(sp->substr(sp->rfind("=")+1).c_str());
+            size_t gpos=sp->rfind('=');
+            if (gpos<sp->length()-1)
+              fehler=atol(sp->substr(gpos+1).c_str());
+            else 
+              fehler=1;
             break;
-          }
+          } // if (sp->find("exited")!=string::npos) 
         }
-        cout<<"sname: "<<sname<<endl;
-        cout<<gruen<<sysrueck[0]<<schwarz<<endl;
-        cout<<"nureinmal: "<<(int)nureinmal<<endl;
-        cout<<gruen<<sysrueck[1]<<schwarz<<endl;
-        exit(0);
         if (nureinmal || prf.oberreicht(3)) {
           break;
         }
