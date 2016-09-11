@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "11.09.16" "Version 0.40792" "\fBautofax\fR man page"
+.TH man 1 "11.09.16" "Version 0.40793" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
