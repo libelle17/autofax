@@ -2090,6 +2090,7 @@ string linstcl::ersetzeprog(const string& prog)
     case dnf: case yum:
       if (prog=="mariadb") return "mariadb-server";
       if (prog=="kernel-source") return "kernel-devel-$(uname -r)";
+      if (prog=="tiff") return "libtiff-tools";
       if (prog=="libcapi20-2") return "isdn4k-utils";
       if (prog=="libcapi20-3") return "";
       if (prog=="capiutils") return "";
@@ -2294,7 +2295,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
     svec sysrueck;
     servicelaeuft=0;
     serviceda=0;
-    systemrueck(("systemctl list-units '")+sname+".service' --all --no-legend",obverb,oblog,&sysrueck);  // bei list-units return value immer 0
+    systemrueck(("systemctl -a --no-legend list-units '")+sname+".service'",obverb,oblog,&sysrueck);  // bei list-units return value immer 0
     if (!sysrueck.empty()) {
       Log(blau+sysrueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
       if (sysrueck[0].find("active running")!=string::npos) {
