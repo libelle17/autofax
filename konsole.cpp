@@ -2206,6 +2206,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
   Log(violetts+Txk[T_machfit]+schwarz,obverb?obverb:obverb,oblog);
     if (!obslaeuft(obverb,oblog,nureinmal)) {
+      exit(0);
       restart(obverb,oblog);
     }
     exit(0);

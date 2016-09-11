@@ -5326,7 +5326,7 @@ int paramcl::pruefhyla()
         if ((fglaeuftnicht=!this->sfaxgetty->obslaeuft(obverb,oblog))) {
           // falls nein, dann schauen, ob startbar
           cout<<"vor machfit"<<endl;
-          if (sfaxgetty->machfit(obverb-1,oblog)) fglaeuftnicht=0;
+          if (sfaxgetty->machfit(obverb,oblog)) fglaeuftnicht=0;
           cout<<"nach machfit"<<endl; exit(0);
         }
         cout<<"Stelle 1"<<endl; exit(0);
