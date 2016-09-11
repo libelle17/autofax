@@ -263,7 +263,7 @@ if (alt[0]==0 || !strcmp(alt,neu)) {
 erg=u;
 } else {
 for(char* p=(char*)u.c_str();p<(char*)u.c_str()+u.length();p++)  {
-if (logdatei[0]=='1') exit(0);
+if (logdatei[0]=='1') xit(0);
 char *pi = (char*)alt;
 int i=0,gleich=1;
 for(;*(pi+i);i++)
@@ -694,7 +694,6 @@ int kuerzelogdatei(const char* logdatei,int obverb)
             //          	  char tbuf[20];
             //              strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
             //              <<"Datum: "<<tbuf<<endl;
-            //              exit(0);
             time_t jetzt;
             jetzt=time(0);
             sekunden=(long)(jetzt-gesz);
@@ -2208,10 +2207,8 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
   Log(violetts+Txk[T_machfit]+schwarz,obverb,oblog);
     if (!obslaeuft(obverb,oblog,nureinmal)) {
-      exit(0);
       restart(obverb,oblog);
     }
-    exit(0);
     //  if (servicelaeuft)
     enableggf(obverb,oblog);
     return servicelaeuft;
@@ -2305,13 +2302,15 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
     serviceda=0;
     systemrueck(("systemctl -a --no-legend list-units '")+sname+".service'",obverb,oblog,&sysrueck);  // bei list-units return value immer 0
     if (!sysrueck.empty()) {
-      obverb=5; 
       Log(blau+sysrueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
       if (sysrueck[0].find("active running")!=string::npos) {
         servicelaeuft=1; 
         serviceda=1;
         break;
       } else if (sysrueck[0].find("activating")!=string::npos) {
+        cout<<"sname: "<<sname<<endl;
+        cout<<gruen<<sysrueck[0]<<schwarz<<endl;
+        exit(0);
         if (nureinmal || prf.oberreicht(120)) break;
         prf.ausgeb();
       } else if (sysrueck[0].find("loaded")!=string::npos) {
