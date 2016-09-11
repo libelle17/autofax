@@ -2297,7 +2297,9 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
 //  Log(violetts+Txk[T_obslaeuft]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
   perfcl prf(Txk[T_Aktiviere_Dienst]+sname);
   uchar aktiviernoch=0;
+  size_t runde=0;
   while (1) {
+    runde++;
     svec sysrueck;
     servicelaeuft=0;
     serviceda=0;
@@ -2317,7 +2319,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
           break;
         }
         prf.ausgeb();
-        cout<<"nach ausgeb!"<<endl;exit(0);
+        if (runde>10) {cout<<"nach ausgeb!"<<endl;exit(0);}
       } else if (sysrueck[0].find("loaded")!=string::npos) {
         serviceda=1;
         break;
