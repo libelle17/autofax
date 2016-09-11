@@ -2316,6 +2316,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         break;
       } else if (sysrueck[0].find("activating")!=string::npos) {
         svec srueck;
+        cout<<"obverb: "<<obverb<<endl;
         systemrueck("systemctl --lines 0 status '"+sname+"'",obverb,oblog,&srueck);
         if (srueck.size()) {
           string *sp=&srueck[srueck.size()-1];
@@ -2329,8 +2330,6 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
               fehler=atol(sp->substr(gpos+1).c_str());
             else 
               fehler=1;
-            cout<<gruen<<*sp<<schwarz<<endl;
-            exit(7);
             break;
           } // if (sp->find("exited")!=string::npos) 
         } // if (srueck.size()) 
