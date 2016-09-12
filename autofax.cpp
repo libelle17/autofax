@@ -5635,7 +5635,7 @@ int paramcl::pruefcapi()
           linst.doggfinst("capiutils",obverb+1,oblog);
         if (system==fed) {
           // P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
-          if (!obprogda("sfftobm",obverb,oblog)) {
+          if (!obprogda("sfftobmp",obverb,oblog)) {
             string befehl = "cd "+instverz+
               " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
               " && tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make >/dev/null 2>&1 && sudo make install ";
@@ -5662,7 +5662,6 @@ int paramcl::pruefcapi()
         } else {
           linst.doggfinst("sfftobmp",obverb+1,oblog);
         }
-        exit(0);
         linst.doggfinst("libcapi20-2",obverb+1,oblog);
         linst.doggfinst("libcapi20-3",obverb+1,oblog);
         linst.doggfinst("python-devel",obverb+1,oblog);
