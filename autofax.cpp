@@ -5640,7 +5640,7 @@ int paramcl::pruefcapi()
               " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
               " && tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make >/dev/null 2>&1 && sudo make install ";
               if (!systemrueck(befehl,obverb,oblog)) {
-                if (!linst.doggfinst("boost",obverb,oblog)) {
+                if (!linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog)) {
                   befehl= "cd "+instverz+
                     " && { sudo grep '/usr/local/lib' /etc/ld.so.conf || "
                         "{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig; } } "
