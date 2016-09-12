@@ -5641,7 +5641,8 @@ int paramcl::pruefcapi()
               " && tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make >/dev/null 2>&1 && sudo make install ";
               if (!systemrueck(befehl,obverb,oblog)) {
                 if (!linst.doggfinst("boost",obverb,oblog)) {
-                  befehl= " { grep '/usr/local/lib' /etc/ld.so.conf || { echo '/usr/local/lib' >> /etc/ld.so.conf; ldconfig; } } && cd .. "
+                  befehl= "cd "+instverz+
+                    " && { grep '/usr/local/lib' /etc/ld.so.conf || { sudo echo '/usr/local/lib' >> /etc/ld.so.conf; sudo ldconfig; } } && cd .. "
                     " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
                     " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
                     " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp "
