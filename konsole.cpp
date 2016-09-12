@@ -2221,41 +2221,44 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
   Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" serviceda: "+blau+(serviceda?"1":"0")+schwarz+
       " servicelaeuft: "+blau+(servicelaeuft?"1":"0")+schwarz, obverb,oblog);
-
-    if (serviceda && !servicelaeuft) {
-      svec sr1;
-      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
-//      if (sr1.size()) KLA
-//       if (sr1[0].find("permission")!=string::npos) KLA
-        svec sr2;
-        systemrueck("sestatus",obverb,oblog,&sr2);
-        uchar obse=0;
-        for(size_t j=0;j<sr2.size();j++) {
-         if (!sr2[j].find("Current mode:"))
-          if (sr2[j].find("enforcing")!=string::npos) {
-           obse=1; 
-           break;
-          }
-        }
-        if (obse) {
-          linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
-          systemrueck("sudo setenforce 0",obverb,oblog);
-          restart(obverb,oblog);
-          systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+sname+"_selocal\"",obverb,oblog);
-          systemrueck("sudo setenforce 1",obverb,oblog);
-          linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
-          systemrueck("sudo semodule -i \""+sname+"_selocal.pp\"",obverb,oblog);
-          exit(0);
-        }
-//       KLZ
-//      KLZ
-    } // if (serviceda && !servicelaeuft) 
-    if (!obslaeuft(obverb,oblog,nureinmal)) {
+  for(int iru=0;iru<2;iru++) {
+    if (obslaeuft(obverb,oblog,nureinmal)) {
+      break;
+    } else {
       restart(obverb,oblog);
     }
-    //  if (servicelaeuft)
-    enableggf(obverb,oblog);
-    return servicelaeuft;
+    if (!iru && serviceda && !servicelaeuft) {
+      svec sr1;
+      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
+      //      if (sr1.size()) KLA
+      //       if (sr1[0].find("permission")!=string::npos) KLA
+      svec sr2;
+      systemrueck("sestatus",obverb,oblog,&sr2);
+      uchar obse=0;
+      for(size_t j=0;j<sr2.size();j++) {
+        if (!sr2[j].find("Current mode:"))
+          if (sr2[j].find("enforcing")!=string::npos) {
+            obse=1; 
+            break;
+          }
+      }
+      if (obse) {
+        linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
+        systemrueck("sudo setenforce 0",obverb,oblog);
+        restart(obverb,oblog);
+        systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+sname+"_selocal\"",obverb,oblog);
+        systemrueck("sudo setenforce 1",obverb,oblog);
+        linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
+        systemrueck("sudo semodule -i \""+sname+"_selocal.pp\"",obverb,oblog);
+        exit(0);
+      }
+      //       KLZ
+      //      KLZ
+    } // if (serviceda && !servicelaeuft) 
+  } // for(int iru=0;iru<2;iru++) 
+  //  if (servicelaeuft)
+  enableggf(obverb,oblog);
+  return servicelaeuft;
 } // int servc::machfit(int obverb,int oblog)
 
 // wird aufgerufen in: hservice_faxq_hfaxd, hservice_faxgetty
