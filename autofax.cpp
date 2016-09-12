@@ -5645,10 +5645,10 @@ int paramcl::pruefcapi()
                     " && { sudo grep '/usr/local/lib' /etc/ld.so.conf || "
                         "{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig; } } && cd .. "
                     " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T"
-                    ; string b2=
+                    "; }"; string b2=
                     " && mv ${P}-master/* . && rmdir ${P}-master; } "
                     " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
-                    " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp "
+                    " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp"
                     //                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
                     //                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
                     " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
