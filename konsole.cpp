@@ -2228,10 +2228,10 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
       restart(obverb,oblog);
     }
     if (!iru && serviceda && !servicelaeuft) {
-      svec sr1;
-      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
-      //      if (sr1.size()) KLA
-      //       if (sr1[0].find("permission")!=string::npos) KLA
+//      svec sr1;
+//      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
+//      if (sr1.size()) KLA
+//       if (sr1[0].find("permission")!=string::npos) KLA
       svec sr2;
       systemrueck("sestatus",obverb,oblog,&sr2);
       uchar obse=0;
