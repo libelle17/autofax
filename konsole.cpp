@@ -2223,8 +2223,8 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
       " servicelaeuft: "+blau+(servicelaeuft?"1":"0")+schwarz, obverb,oblog);
 
     if (serviceda && !servicelaeuft) {
-//      svec sr1;
-//      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",obverb,0,&sr1);
+      svec sr1;
+      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
 //      if (sr1.size()) KLA
 //       if (sr1[0].find("permission")!=string::npos) KLA
         svec sr2;
