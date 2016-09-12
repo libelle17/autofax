@@ -5643,8 +5643,8 @@ int paramcl::pruefcapi()
                 if (!linst.doggfinst("boost",obverb,oblog)) {
                   befehl= "cd "+instverz+
                     " && { sudo grep '/usr/local/lib' /etc/ld.so.conf || "
-                        "{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig; } } && cd .. "
-                    " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T"
+                        "{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig; } } "
+                    " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T " // && tar xpvf $T && rm -f $T"
                     "; }"; string b2=
                     " && mv ${P}-master/* . && rmdir ${P}-master; } "
                     " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
