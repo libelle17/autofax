@@ -379,7 +379,7 @@ class lsyscl
 
 // enum betrsys {keins,suse,ubuntu,fedora};
 // betrsys pruefos();
-string obprogda(string prog,int obverb, int oblog);
+int obprogda(string prog,int obverb, int oblog, string *pfad=0);
 enum instprog {keinp,zypper,apt,dnf,yum};
 instprog pruefipr(int obverb=0, int oblog=0);
 string gethome();
@@ -558,8 +558,8 @@ class linstcl
     uchar obnmr=1;
     string eprog; // ersetztes Programm
     string ersetzeprog(const string& prog);
-    uchar doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda="", binaer alsroot=falsch);
-    uchar doinst(const char* prog,int obverb=0,int oblog=0,const string& fallsnichtda="", binaer alsroot=falsch);
+    uchar doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda="");
+    uchar doinst(const char* prog,int obverb=0,int oblog=0,const string& fallsnichtda="");
     uchar doggfinst(const string& prog,int obverb=0,int oblog=0);
     uchar douninst(const string& prog,int obverb=0,int oblog=0);
     uchar obfehlt(const string& prog,int obverb=0,int oblog=0);

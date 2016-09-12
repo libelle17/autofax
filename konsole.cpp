@@ -1106,11 +1106,20 @@ betrsys pruefos()
 } // betrsys pruefos()
 */
 
-string obprogda(string prog,int obverb, int oblog)
+// erg=1: gibt es fuer den aktuellen Benutzer; erg=2: gibt es fuer root; erg=0: nicht gefunden
+int obprogda(string prog,int obverb, int oblog, string *pfad)
 {
   svec rueck;
-  if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck))
-    return rueck[0];
+  if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck)) {
+    if (pfad) *pfad=rueck[0];
+    return 1;
+  } // if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck))
+  if (strcmp(curruser(),"root")) {
+    if (!systemrueck("sudo env \"PATH=$PATH\" which "+prog+" 2>/dev/null",obverb,oblog,&rueck)) {
+      if (pfad) *pfad=rueck[0];
+      return 2;
+    }
+  } // if (strcmp(curruser(),"root")) 
   for(int iru=0;iru<3;iru++) {
     struct stat fstat;
     string verz;
@@ -1121,25 +1130,28 @@ string obprogda(string prog,int obverb, int oblog)
       default: break;
     }
     verz+=prog;
-    if (!lstat(verz.c_str(),&fstat))
-      return verz;
-  }
-  return ""; 
+    if (!lstat(verz.c_str(),&fstat)) {
+      if (pfad) *pfad=verz;
+      return 2;
+    }
+  } // for(int iru=0;iru<3;iru++) 
+  if (pfad) *pfad="";
+  return 0; 
 } // string obprogda(string prog,int obverb, int oblog)
 
 instprog pruefipr(int obverb,int oblog)
 {
   static instprog aktipr=keinp;
   if (aktipr==keinp) {
-    if (!systemrueck("which zypper 2>/dev/null",obverb-1,oblog))
+    if (obprogda("zypper",obverb-1,oblog))
       // heruntergeladene Dateien behalten
       aktipr=zypper;
-    else if (!systemrueck("which apt-get 2>/dev/null",obverb-1,oblog))
+    else if (obprogda("apt-get",obverb-1,oblog))
       // hier werden die Dateien vorgabemaessig behalten
       aktipr=apt;
-    else if (!systemrueck("which dnf 2>/dev/null",obverb-1,oblog))
+    else if (obprogda("dnf",obverb-1,oblog))
       aktipr=dnf;
-    else if (!systemrueck("which yum 2>/dev/null",obverb-1,oblog))
+    else if (obprogda("yum",obverb-1,oblog))
       aktipr=yum;
    else
      cerr<<Txk[T_Weder_zypper_noch_apt_get_noch_dnf_noch_yum_als_Installationspgrogramm_gefunden]<<endl;
@@ -1701,7 +1713,7 @@ int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer 
 {
   static string cuser=curruser(); 
   if (cuser!="root") {
-      static int obsetfacl=!systemrueck("which setfacl",obverb-1,0); 
+      static int obsetfacl=obprogda("setfacl",obverb-1,0);
       if (obsetfacl) {
        const char* modbuch;
        switch (mod) {
@@ -2106,12 +2118,15 @@ string linstcl::ersetzeprog(const string& prog)
 } // string linstcl::ersetzeprog(const string& prog) 
 
 
-uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsnichtda, binaer alsroot) 
+uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsnichtda)
 {
   // <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
   uchar ret=2;
   if (eprog.empty()) eprog=ersetzeprog(prog);
-  if (!fallsnichtda.empty()) if (!systemrueck((alsroot?string("root "):string(""))+"which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) return 0;
+  if (!fallsnichtda.empty()) 
+//    if (!systemrueck((alsroot?string("root "):string(""))+"which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) 
+    if (obprogda(fallsnichtda,obverb,oblog))
+      return 0;
   if (!eprog.empty()) {
     switch (pruefipr()) {
       case zypper:
@@ -2147,11 +2162,11 @@ uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
   return 0;
 } // uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
 
-uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda,binaer alsroot)
+uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
 {
   const string& progs=prog;
   // <<rot<<"doinst 2: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
-  return doinst(progs,obverb,oblog,fallsnichtda,alsroot);
+  return doinst(progs,obverb,oblog,fallsnichtda);
 } // uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
 
 uchar linstcl::douninst(const string& prog,int obverb,int oblog) 

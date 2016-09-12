@@ -3174,7 +3174,7 @@ void paramcl::pruefcron()
   int cronzuplanen = (cronminut!="0");
 
   for (uchar runde=0;runde<2;runde++) {
-    cronda = !systemrueck("which crontab > /dev/null 2>&1",obverb-1,0);
+    cronda=obprogda("crontab",obverb-1,0);
     if (cronda) break;
     // systemrueck("which zypper 2>/dev/null && zypper -n in cron || 
     //              KLA which apt-get 2>/dev/null && apt-get --assume-yes install cron; KLZ",1,1);
@@ -4741,9 +4741,7 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
   struct stat entrybuf;
   string faxsu;
   svec rueck;
-  //  systemrueck("sudo sh -c 'which faxsetup'",obverb,oblog,&rueck);
-  systemrueck("sudo env \"PATH=$PATH\" which faxsetup",obverb,oblog,&rueck);
-  if (rueck.size()) faxsu=rueck[0];
+  obprogda("faxsetup",obverb,oblog,&faxsu);  
   //  const char *faxsu="/usr/sbin/faxsetup";
   if (!lstat(faxsu.c_str(), &entrybuf)) {
 #ifdef autofaxsetup
@@ -4847,18 +4845,13 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
 #endif
   } //   if (!lstat(faxsu, &entrybuf)) KLA
 
-  svec rueckf;
   struct stat entryfaxgt;
   pmp->faxgtpfad.clear();
   //  pmp->faxgtpfad="/usr/lib/fax/faxgetty";
   //    pmp->faxgtpfad="/usr/sbin/faxgetty";
-  if (!systemrueck("sudo env \"PATH=$PATH\" which faxgetty",obverb-1,oblog,&rueckf)) {
-    if (rueckf.size()) {
-      pmp->faxgtpfad=rueckf[0];
-    }
-  }
+  obprogda("faxgetty",obverb,oblog,&pmp->faxgtpfad);
   if (pmp->faxgtpfad.empty() || lstat(pmp->faxgtpfad.c_str(),&entryfaxgt)) {
-    rueckf.clear();
+    svec rueckf;
     pmp->faxgtpfad.clear();
     systemrueck("sudo find /usr/lib/fax /usr/sbin /usr/bin /root/bin /sbin -perm /111 -name faxgetty",obverb-1,oblog,&rueckf);
     if (rueckf.size()) 
@@ -5028,19 +5021,16 @@ int paramcl::cservice()
   int csfehler=0;
   int erg;
   string cspfad;
-  svec rueck;
-  erg=systemrueck("sudo env \"PATH=$PATH\" which capisuite",obverb,oblog,&rueck);
-  if (rueck.size()) {
+  if (obprogda("capisuite",obverb,oblog,&cspfad)) {
     erg=systemrueck("sudo sh -c 'systemctl stop capisuite; pkill capisuite >/dev/null 2>&1; pkill -9 capisuite >/dev/null 2>&1; "
         "cd /etc/init.d"
         " && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
         " && { mkdir -p /etc/ausrangiert && mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true'",obverb,oblog);
-    cspfad=rueck[0];
     // entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
     csfehler+=!scapisuite->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","","",obverb,oblog);
     if (obverb) Log("csfehler: "+gruens+ltoan(csfehler)+schwarz,obverb,oblog);
     //    return csfehler;
-  }
+  } // if (obprogda("capisuite",obverb,oblog,&cspfad)) 
   return erg;
 } // int paramcl::cservice()
 
@@ -5052,15 +5042,11 @@ int paramcl::hservice_faxq_hfaxd()
   int hylafehler=0;
   Log(violetts+"hservice_faxq_hfaxd()"+schwarz,this->obverb,this->oblog);
   string faxqpfad,hfaxdpfad;
-  svec rueck;
-  systemrueck("sudo env \"PATH=$PATH\" which hfaxd",obverb,oblog,&rueck);
-  if (rueck.size()) hfaxdpfad=rueck[0]; 
+  obprogda("hfaxd",obverb,oblog,&hfaxdpfad);
   hylafehler+=!this->shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/,
       this->varsphylavz+"/etc/setup.cache", "", "", this->obverb,this->oblog);
   this->shfaxd->machfit(obverb,oblog);
-  rueck.clear();
-  systemrueck("sudo env \"PATH=$PATH\" which faxq",obverb,oblog,&rueck);
-  if (rueck.size()) faxqpfad=rueck[0]; 
+  obprogda("hfaxd",obverb,oblog,&faxqpfad);
   hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D",
       this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname+".service", "",this->obverb,this->oblog);
   return hylafehler;
@@ -5175,7 +5161,7 @@ int paramcl::pruefhyla()
         linst.doinst("ghostscript",obverb+1,oblog,"gs");
         linst.doinst("tiff",obverb+1,oblog,"tiff2ps");
         linst.doinst("tiff",obverb+1,oblog,"fax2ps");
-        linst.doinst("sendmail",obverb+1,oblog,"sendmail", wahr);
+        linst.doinst("sendmail",obverb+1,oblog,"sendmail");
         if (obverb) Log(blaus+"hyinstart: "+schwarz+ltoan(hyinstart),obverb,oblog);
         if (hyinstart==hysrc) {
           if (1) {
@@ -5208,7 +5194,7 @@ int paramcl::pruefhyla()
           }
           // <<"hfr: "<<violett<<hfr<<schwarz<<" hfcr: "<<violett<<hfcr<<schwarz<<" obverb: "<<(int)obverb<<endl;
           hylafehlt=linst.obfehlt(hfr,obverb,oblog) || linst.obfehlt(hfcr,obverb,oblog) || 
-            obprogda("faxq",obverb,oblog).empty() || obprogda("hfaxd",obverb,oblog).empty() || obprogda("faxgetty",obverb,oblog).empty();
+            !obprogda("faxq",obverb,oblog) || !obprogda("hfaxd",obverb,oblog) || !obprogda("faxgetty",obverb,oblog);
           string vstring=ltoan(versuch);
           Log(gruens+Tx[T_hylafehlt]+schwarz+ltoan(hylafehlt)+gruen+Txk[T_Versuch]+schwarz+vstring,obverb,oblog);
           // b1) falsches Hylafax loeschen
@@ -5249,7 +5235,7 @@ int paramcl::pruefhyla()
         } // if (hyinstart==hysrc)  else
 
         // wenn sich faxsend findet ...
-        if (!systemrueck("sudo env \"PATH=$PATH\" which faxsend",obverb,oblog)) {
+        if (obprogda("faxsend",obverb,oblog)) {
           // und ein hylafax-Verzeichnis da ist ...
           if (this->setzhylavz()) {
             this->obhyla=0;
@@ -5299,7 +5285,7 @@ int paramcl::pruefhyla()
             systemrueck("sudo chown uucp:uucp -R "+this->varsphylavz,obverb,oblog);
         else
           systemrueck("sudo chown fax:uucp -R "+this->varsphylavz,obverb,oblog);
-      } // if (!systemrueck("which faxsend",obverb,oblog)) 
+      } // if (obprogda("faxsend",obverb,oblog))
       /*
       Log(string(Tx[T_StarteHylafax]),1,oblog);
       //      if (hyinstart==hypak) hylalaeuftnicht=hservice_faxq_hfaxd();
@@ -5648,25 +5634,31 @@ int paramcl::pruefcapi()
         if (system!=sus)
           linst.doggfinst("capiutils",obverb+1,oblog);
         if (system==fed) {
-        // P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
-          string befehl = "which sfftobmp || { cd "+instverz+
-           " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
-           " && tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make >/dev/null 2>&1 && sudo make install "
-           " && yum -y install boost "
-           " && { grep '/usr/local/lib' /etc/ld.so.conf || { echo '/usr/local/lib' >> /etc/ld.so.conf; ldconfig; } } && cd .. "
-           " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
-           " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
-           " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp "
-//                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
-//                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
-                      " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
-                      " && ./configure && make && sudo make install "
-                      ";} ";
-//                      <<gruen<<befehl<<schwarz<<endl;
-                      systemrueck(befehl,obverb,oblog);
+          // P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
+          if (!obprogda("sfftobm",obverb,oblog)) {
+            string befehl = "cd "+instverz+
+              " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
+              " && tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make >/dev/null 2>&1 && sudo make install ";
+              if (!systemrueck(befehl,obverb,oblog)) {
+                if (!linst.doggfinst("boost",obverb,oblog)) {
+                  befehl= " { grep '/usr/local/lib' /etc/ld.so.conf || { echo '/usr/local/lib' >> /etc/ld.so.conf; ldconfig; } } && cd .. "
+                    " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
+                    " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
+                    " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp "
+                    //                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
+                    //                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
+                    " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
+                    " && ./configure && make && sudo make install "
+                    ;
+                  //                      <<gruen<<befehl<<schwarz<<endl;
+                  systemrueck(befehl,obverb,oblog);
+                }
+              }
+          }
         } else {
           linst.doggfinst("sfftobmp",obverb+1,oblog);
         }
+        exit(0);
         linst.doggfinst("libcapi20-2",obverb+1,oblog);
         linst.doggfinst("libcapi20-3",obverb+1,oblog);
         linst.doggfinst("python-devel",obverb+1,oblog);
@@ -5975,11 +5967,9 @@ void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
     // 27.3.16: Uebernacht wurden die Berechtigungen so eingeschraenkt, dass Faxsenden nicht mehr ging, evtl. durch faxqclean
     systemrueck("sudo find "+pmp->varsphylavz+" -name seqf -exec chmod 660 {} \\;"" -exec chown fax:uucp {} \\;",obverb,oblog);
     const char* tz1="request id is ", *tz2=" (";
-    svec rueck;
     string sendfax;
-    systemrueck("sudo sh -c 'which sendfax'",obverb,1,&rueck);
-    if (rueck.size()) {
-      sendfax=rueck[0];
+//    systemrueck("sudo sh -c 'which sendfax'",obverb,1,&rueck);
+    if (obprogda("sendfax",obverb,oblog,&sendfax)) {
       string cmd=sendfax+" -n -A -d "+tel+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
       svec faxerg;
       // <<rot<<"Achtung: faxemith: "<<endl<<schwarz<<cmd<<endl;
@@ -6702,6 +6692,7 @@ void paramcl::zeigkonf()
 
 int main(int argc, char** argv) 
 {
+
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();
