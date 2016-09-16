@@ -88,6 +88,8 @@ dann weiter:
 .br
  \fBsudo make install\fR
 .br
+Zuletzt rufen Sie auf:
+.br
  \fBautofax\fR
 .br
 (einige Rueckfragen des Programms beantworten)

@@ -144,7 +144,8 @@ make</b> <br>
 - otherwise: <b><br>
 make glei</b> <br>
 furtheron: <b><br>
-sudo make install <br>
+sudo make install</b> <br>
+At last, call: <b><br>
 autofax</b> <br>
 (answer some questions of the program) <br>
 The first execution may take some time. <br>
