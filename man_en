@@ -68,7 +68,7 @@ Additionally, received faxes from \fBhylafax\fR/\fBcapisuite\fR can be named wit
 .SH INSTALLATION
 - If the program 'git' is installed, You can start with:
 .br
- git clone http://github.com/libelle17/autofax && cd autofax
+ \fBgit clone http://github.com/libelle17/autofax && cd autofax\fR
 .br
 - otherwise e.g. (if 'wget' ist installed, which is mostly the case) with:
 .br

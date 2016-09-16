@@ -68,7 +68,7 @@ Außerdem können von \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe nach dem Sen
 .SH INSTALLATION
 - Wenn das Programm 'git' zur Verfuegung steht, können Sie beginnen mit:
 .br
- git clone http://github.com/libelle17/autofax && cd autofax
+ \fBgit clone http://github.com/libelle17/autofax && cd autofax\fR
 .br
 - ansonsten z.B. (falls 'wget' installiert ist, was meist der Fall ist) mit:
 .br

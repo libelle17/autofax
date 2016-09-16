@@ -121,9 +121,9 @@ stored.</p>
 
 <p style="margin-left:11%; margin-top: 1em">- If the
 program &rsquo;git&rsquo; is installed, You can start with:
-<br>
+<b><br>
 git clone http://github.com/libelle17/autofax && cd
-autofax <br>
+autofax</b> <br>
 - otherwise e.g. (if &rsquo;wget&rsquo; ist installed, which
 is mostly the case) with: <br>
 P=autofax; T=$P.tar.gz; cd ~; wget
