@@ -4924,7 +4924,7 @@ void paramcl::hconfigtty()
 {
   Log(violetts+"hconfigtty()"+schwarz,obverb,oblog);
   setzmodconfd();
-  systemrueck("test -f '"+modconfdat+"' && test -f '"+modconfdat+".bak' || cp -a '"+modconfdat+"' '"+modconfdat+".bak'",obverb,oblog);
+  systemrueck("test -f '"+modconfdat+"' && test -f '"+modconfdat+".bak' || sudo cp -a '"+modconfdat+"' '"+modconfdat+".bak'",obverb,oblog);
   // <<rot<<modconfdat<<schwarz<<endl;
   // z.B. /var/spool/hylafax/etc/config.ttyACM0
   mdatei hci(modconfdat,ios::out);
