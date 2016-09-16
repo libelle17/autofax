@@ -2040,15 +2040,15 @@ void paramcl::liescapiconf()
        cuser=benutzer;
       hylazuerst=1;
     }
-  }
+  } // which vik 2>/dev/null || which vi
   if (capiconf[0].wert.empty()) {
     spoolcapivz="/var/spool/capisuite";
   }  else {           
     //  if (cpplies(cfaxconfdat,capiconf,ccs,&rest)) KLA
     spoolcapivz=capiconf[0].wert;
     cfaxuservz=capiconf[1].wert;
-  }
-  if (cfaxuservz.empty()) 
+  } // if (capiconf[0].wert.empty()) else
+  if (cfaxuservz.empty())
     cfaxuservz=spoolcapivz+"/users";
   // <<rot<<"cfaxuservz in Vorgallg: "<<cfaxuservz<<schwarz<<endl;
 
