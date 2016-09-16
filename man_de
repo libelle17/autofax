@@ -66,7 +66,8 @@ weiterhin die versandten Faxe in einer MariaDB-Datenbank abspeichert.
 .br
 Außerdem können von \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe nach dem Sender anhand dessen Faxnummer benannt und abgespeichert werden.
 .SH INSTALLATION
-- Wenn das Programm 'git' zur Verfuegung steht, können Sie beginnen mit:
+Zunächst lesen Sie bitte die Kapitel 'Funktionsweise', 'Voraussetzungen' und 'Auswirkungen'. Anschließend:
+- wenn das Programm 'git' zur Verfuegung steht, können Sie beginnen mit:
 .br
  \fBgit clone http://github.com/libelle17/autofax && cd autofax\fR
 .br

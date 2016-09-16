@@ -66,7 +66,9 @@ Furthermore, autofax holds the posted faxes in a mariadb database.
 .br
 Additionally, received faxes from \fBhylafax\fR/\fBcapisuite\fR can be named with the sender's name according to his fax number and stored.
 .SH INSTALLATION
-- If the program 'git' is installed, You can start with:
+First, read the chapters 'functionality', 'preconditions' and 'impact' below. Then:
+.br
+- if the program 'git' is installed, You can start with:
 .br
  \fBgit clone http://github.com/libelle17/autofax && cd autofax\fR
 .br
@@ -95,8 +97,6 @@ At last, call:
 (answer some questions of the program)
 .br
 The first execution may take some time.
-.br
-Preconditions see below
 .SH USAGE
 Ideally, the program should have installed itsself after a single call (see above) in a self-running way (especially on openSUSE-Leap 42.1 or Ubuntu 16.040 (only with a modem via hylafax), possibly on others; systemctl (systemd) should run).
 .br

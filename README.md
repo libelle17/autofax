@@ -119,9 +119,12 @@ stored.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">- If the
-program &rsquo;git&rsquo; is installed, You can start with:
-<b><br>
+<p style="margin-left:11%; margin-top: 1em">First, read the
+chapters &rsquo;functionality&rsquo;,
+&rsquo;preconditions&rsquo; and &rsquo;impact&rsquo; below.
+Then: <br>
+- if the program &rsquo;git&rsquo; is installed, You can
+start with: <b><br>
 git clone http://github.com/libelle17/autofax && cd
 autofax</b> <br>
 - otherwise e.g. (if &rsquo;wget&rsquo; ist installed, which
@@ -148,8 +151,7 @@ sudo make install</b> <br>
 At last, call: <b><br>
 autofax</b> <br>
 (answer some questions of the program) <br>
-The first execution may take some time. <br>
-Preconditions see below</p>
+The first execution may take some time.</p>
 
 <h2>USAGE
 <a name="USAGE"></a>
