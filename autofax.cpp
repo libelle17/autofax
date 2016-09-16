@@ -6708,7 +6708,7 @@ int main(int argc, char** argv)
     exit(1);
   pm.pruefggfmehrfach();
   if (pm.obvi) {
-    exit (systemrueck("vi "+pm.konfdatname+" >/dev/tty"));
+    exit (systemrueck("$(which vik 2>/dev/null || which vi) "+pm.konfdatname+" >/dev/tty"));
   }
   if (pm.zeigvers) {
    zeigversion(pm.meinname,pm.mpfad);
