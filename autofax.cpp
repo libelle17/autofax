@@ -1496,7 +1496,7 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     if (!rins.fnr) break;
     if (runde==1) {
       Log(string(Tx[T_Fehler_af])+drot+ltoan(rins.fnr)+schwarz+Tx[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,oblog);
-      exit(0);
+      exit(10);
     }
   } // for(int runde=0;runde<2;runde++) 
   if (!rins.fnr) { 
@@ -1661,7 +1661,7 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
       if (spoolid!="null") break;
       if (runde==1) {
         Log(string(Tx[T_Fehler_af])+drot+ltoan(rins.fnr)+schwarz+Tx[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,oblog);
-        exit(0);
+        exit(12);
       }
     }   // for(int runde=0;runde<2;runde++)
     Log(drots+string("  Spool-ID: ")+schwarz+spoolid,obverb,oblog);
@@ -3516,7 +3516,7 @@ void paramcl::bereinigewv()
                           dorename(quel,zdt,cuser,&vfehler,1,1);
                           if (vfehler) {
                             Log(rots+Tx[T_Fehler_beim_Verschieben_Ausrufezeichen]+": "+ltoan(vfehler)+schwarz,1,1);
-                            exit(2);
+                            exit(14);
                           }
                           fdn.erase(fit);
                           break;
@@ -3819,7 +3819,7 @@ void paramcl::DateienHerricht()
               cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
                 blau<<npdfd.at(i)<<schwarz<<" ->\n"<<
                 blau<<ndname<<schwarz<<endl;
-              exit(1);
+              exit(16);
             }
             npdfd.at(i)=ndname;
           }
@@ -3836,7 +3836,7 @@ void paramcl::DateienHerricht()
             cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
               blau<<npdfd.at(i)<<schwarz<<" ->\n"<<
               blau<<wvz<<schwarz<<endl;
-            exit(1);
+            exit(18);
           } // if (!vfehler) 
         } // for(size_t i=0;i<npdfd.size();i++) 
       } // if (!anfxstrvec.at(iprio).empty()) 
@@ -3926,7 +3926,7 @@ void paramcl::DateienHerricht()
               cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
                 blau<<spdfd.at(i)<<schwarz<<" ->\n"<<
                 blau<<ndname<<schwarz<<endl;
-              exit(1);
+              exit(20);
             }
             spdfd.at(i)=ndname;
           }
@@ -3948,7 +3948,7 @@ void paramcl::DateienHerricht()
             cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
               blau<<spdfd.at(i)<<schwarz<<" ->\n"<<
               blau<<wvz<<schwarz<<endl;
-            exit(1);
+            exit(22);
           } // if (!vfehler) else 
         } // for(size_t i=0
       } // if (!anfxstrvec.at(iprio).empty()) 
@@ -4456,7 +4456,7 @@ void paramcl::empfarch()
         if (!rins.fnr) break;
         if (runde==1) {
           Log(string(Tx[T_Fehler_af])+drot+ltoan(rins.fnr)+schwarz+Tx[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,oblog);
-          exit(0);
+          exit(24);
         }
       } // for(int runde=0;runde<2;runde++) 
     } // if (!lstat(hpfad.c_str(),&entrynd)) 
@@ -4579,7 +4579,7 @@ void paramcl::empfarch()
         if (!rins.fnr) break;
         if (runde==1) {
           Log(string(Tx[T_Fehler_af])+drot+ltoan(rins.fnr)+schwarz+Tx[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,oblog);
-          exit(0);
+          exit(26);
         }
       } // for(int runde=0;runde<2;runde++) 
     } // for(size_t i=0;i<rueck.size();i++) 
@@ -4894,7 +4894,7 @@ void hconfig(paramcl *pmp,int obverb=0, int oblog=0)
     conf<<"Use2D:      \"no\""<<endl;
   } else {
     cerr<<"hconfig(): "<<Tx[T_Datei]<<confd<<Tx[T_nichtbeschreibbar]<<endl;
-    exit(0);
+    exit(28);
   }
   Log(violetts+Tx[T_Ende]+"hconfig()"+schwarz,obverb,oblog);
 } // void hconfig(paramcl *pmp,int obverb=0, int oblog=0)
@@ -5008,7 +5008,7 @@ void paramcl::hconfigtty()
   } else {
     cerr<<Tx[T_Datei]<<modconfdat<<Tx[T_nichtbeschreibbar]<<endl;
     // <<rot<<" nicht offen"<<schwarz<<endl;
-    exit(0);
+    exit(30);
   }
   Log(violetts+Tx[T_Ende]+"hconfigtty()"+schwarz,obverb,oblog);
 } // void hconfigtty(paramcl *pmp,int obverb=0, int oblog=0)
@@ -5140,7 +5140,7 @@ int paramcl::pruefhyla()
         hylalaeuftnicht=0;
         hylafehlt=0;
       } else if (versuch) {
-        exit(0);
+        exit(32);
       } 
       if (hylafehlt) {
         // falls nein, dann schauen, ob startbar
@@ -5843,7 +5843,7 @@ void inDbc(DB *My, const string& spooltab, const string& altspool, const string&
       if (affr>0) break;
       if (runde==1) {
         Log(string(Tx[T_Fehler_af])+drot+ltoan(rupd.fnr)+schwarz+Tx[T_bei]+tuerkis+rupd.sql+schwarz+": "+blau+rupd.fehler+schwarz,1,oblog);
-        exit(0);
+        exit(34);
       }
     }   // for(int runde=0;runde<2;runde++)
     Log(drots+string("  affected_rows(): ")+schwarz+ltoan(affr),obverb,oblog);
@@ -5937,7 +5937,7 @@ void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp,
       if (affr>0) break;
       if (runde==1) {
         Log(string(Tx[T_Fehler_af])+drot+ltoan(rupd.fnr)+schwarz+Tx[T_bei]+tuerkis+rupd.sql+schwarz+": "+blau+rupd.fehler+schwarz,1,pmp->oblog);
-        exit(0);
+        exit(36);
       }
     }   // for(int runde=0;runde<2;runde++)
     Log(drots+"  affected_rows(): "+schwarz+ltoan(affr),pmp->obverb,pmp->oblog);
@@ -6705,7 +6705,7 @@ int main(int argc, char** argv)
   pm.lieskonfein();
 
   if (!pm.getcommandline()) 
-    exit(1);
+    exit(40);
   pm.pruefggfmehrfach();
   if (pm.obvi) {
     exit (systemrueck("$(which vim 2>/dev/null || which vi) "+pm.konfdatname+" >/dev/tty"));

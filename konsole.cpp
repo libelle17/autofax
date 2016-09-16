@@ -208,7 +208,7 @@ void perfcl::ausgab1000(const string& stelle)
   if (zp1-zp0>10000) {
     cout<<gruen<<vonwo<<" "<<stelle<<" "<<nr<<Txk[T_Dauer]<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" = "
       <<fixed<<((zp1-zp0)/CLOCKS_PER_SEC)<<schwarz<<setprecision(0)<<" s"<<endl;
-    exit(0);
+    exit(102);
   }
 } // void perfcl::ausgab1000(const string& stelle)
 
@@ -1697,7 +1697,7 @@ void pruefmehrfach(string& wen)
   systemrueck("ps -eo comm|grep '^"+wen+"'",0,0,&rueck);
   if (rueck.size()>1) {
     cout<<Txk[T_Program]<<blau<<wen<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
-    exit(0);
+    exit(98);
   } //   if (rueck.size()>1) {
   /*
   for(size_t j=0;j<rueck.size();j++) {
@@ -2265,7 +2265,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
         systemrueck("sudo setenforce 1",obverb,oblog);
         linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
         systemrueck("sudo semodule -i \""+sname+"_selocal.pp\"",obverb,oblog);
-        exit(0);
+        exit(100);
       }
       //       KLZ
       //      KLZ
