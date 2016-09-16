@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Fri Sep 16 19:20:44 2016 -->
+<!-- CreationDate: Fri Sep 16 19:24:28 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -145,7 +145,7 @@ k&ouml;nnen Sie beginnen mit: <b><br>
 git clone http://github.com/libelle17/autofax && cd
 autofax</b> <br>
 - ansonsten z.B. (falls &rsquo;wget&rsquo; installiert ist,
-was meist der Fall ist) mit: <br>
+was meist der Fall ist) mit: <b><br>
 P=autofax; T=$P.tar.gz; cd ~; wget
 https://github.com/libelle17/$P/archive/master.tar.gz -O $T
 && tar xpvf $T && rm -f $T && { for
@@ -153,20 +153,20 @@ i in $(ls -d ${P}_* 2&gt;/dev/null | cut -d&quot;_&quot; -f2
 | sort -nr); do j=$((i+1)); case $i in
 &quot;&quot;|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done;
 test -e $P && mv $P ${P}_1; mv $P-master $P
-&& cd $P; } <br>
+&& cd $P; }</b> <br>
 Wenn das Programm (gnu) &rsquo;make&rsquo; nicht zur
 Verf&uuml;gung steht, k&ouml;nnen Sie dort
 &rsquo;./install.sh&rsquo; aufrufen, damit sollte
 &rsquo;make&rsquo; installiert werden; anderenfalls
 k&ouml;nnen Sie auch aufrufen: <br>
 - falls Sie vor Kompilierung die Aktualit&auml;t von
-gcc6 sicherstellen lassen wollen: <br>
-make <br>
-- ansonsten: <br>
-make glei <br>
-dann weiter: <br>
+gcc6 sicherstellen lassen wollen: <b><br>
+make</b> <br>
+- ansonsten: <b><br>
+make glei</b> <br>
+dann weiter: <b><br>
 sudo make install <br>
-autofax <br>
+autofax</b> <br>
 (einige Rueckfragen des Programms beantworten) <br>
 Voraussetzungen s.u.</p>
 

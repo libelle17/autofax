@@ -125,7 +125,7 @@ program &rsquo;git&rsquo; is installed, You can start with:
 git clone http://github.com/libelle17/autofax && cd
 autofax</b> <br>
 - otherwise e.g. (if &rsquo;wget&rsquo; ist installed, which
-is mostly the case) with: <br>
+is mostly the case) with: <b><br>
 P=autofax; T=$P.tar.gz; cd ~; wget
 https://github.com/libelle17/$P/archive/master.tar.gz -O $T
 && tar xpvf $T && rm -f $T && { for
@@ -133,18 +133,19 @@ i in $(ls -d ${P}_* 2&gt;/dev/null | cut -d&quot;_&quot; -f2
 | sort -nr); do j=$((i+1)); case $i in
 &quot;&quot;|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done;
 test -e $P && mv $P ${P}_1; mv $P-master $P
-&& cd $P; } <br>
+&& cd $P; }</b> <br>
 there, if the program &rsquo;make&rsquo; is not available,
-You can call &rsquo;install.sh&rsquo;, this should install
-&rsquo;make&rsquo;; otherwise, You also can call: <br>
+You can call &rsquo;<b>./install.sh</b>&rsquo;, this should
+install &rsquo;make&rsquo;; otherwise, You also can call:
+<br>
 - if You want to have ensured the currentness of
-&rsquo;gcc6&rsquo; before compilation: <br>
-make <br>
-- otherwise: <br>
-make glei <br>
-furtheron: <br>
+&rsquo;gcc6&rsquo; before compilation: <b><br>
+make</b> <br>
+- otherwise: <b><br>
+make glei</b> <br>
+furtheron: <b><br>
 sudo make install <br>
-autofax <br>
+autofax</b> <br>
 (answer some questions of the program) <br>
 The first execution may take some time. <br>
 Preconditions see below</p>
