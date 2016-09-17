@@ -663,7 +663,7 @@ calling &rsquo;<b>faxsetup -nointeracitve</b>&rsquo;, by
 editing the configuration files <b>config</b> and
 <b>config.*</b> (e.g. <b>config.ttyACM0</b>) in the hylafax
 configuration directory (default e.g.
-/var/spool/hylafax/etc).</p> </td></tr>
+<b>/var/spool/hylafax/etc</b>).</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -683,7 +683,7 @@ rings before answer, creation and edition of the files
 <td width="89%">
 
 
-<p style="margin-top: 1em">3) Installation of services</p></td></tr>
+<p style="margin-top: 1em">3) Installation of services:</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">a) in systemd (in the directory

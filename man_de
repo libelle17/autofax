@@ -317,7 +317,7 @@ cron, soffice, convert, hylafax+, hylafax+-client, kernel-source, fcpci-3.10.0, 
 Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:
 .LP
 .HP 3
-1) Installieren von Hylafax+, falls ein Modem angeschlossen ist und Hylafax+ nicht installiert ist. Ggf. Konfiguration von Hylafax+ durch Aufruf von 'faxsetup -nointeracitve', durch Editieren der Konfigurationsdateien config und config.* im hylafax-Konfigurationsverzeichnis (Vorgabe z.B.: /var/spool/hylafax/etc/)
+1) Installieren von \fBHylafax+\fR, falls ein Modem angeschlossen ist und Hylafax+ nicht installiert ist. Ggf. Konfiguration von Hylafax+ durch Aufruf von '\fBfaxsetup -nointeracitve\fR', durch Editieren der Konfigurationsdateien \fBconfig\fR und \fBconfig.*\fR (z.B. \fBconfig.ttyACM0\fR) im hylafax-Konfigurationsverzeichnis (Vorgabe z.B.: \fB/var/spool/hylafax/etc/\fR)
 .LP
 .HP 3
 2) Installieren von capisuite, falls eine Fritzkarte eingebaut ist und capisuite nicht installiert ist.
@@ -325,7 +325,7 @@ Ggf. Bearbeitung der Konfigurationsdateien /etc/capisuite/capisuite.conf und /et
 Ggf. Bearbeitung des Python-Scripts für ankommende Faxe (Vorgabe z.B.: /usr/lib64/capisuite/incoming.py) zur Bestimmung der Zahl der Klingeltöne bis zur Faxannahme, Erstellung bzw. Bearbeitung der Dateien '/etc/udev/rules.d/46-FKN_isdn_capi.rules', '/etc/modprobe.d/50-blacklist.conf'.
 .LP
 .HP 3
-3) Einrichten von Diensten 
+3) Einrichten von Diensten: 
 .br
 a) in systemd (im Verzeichnis /usr/lib/systemd/system oder /lib/systemd/system), insbesondere:
 .br
