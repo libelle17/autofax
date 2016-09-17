@@ -490,6 +490,8 @@ enum T_
   T_autofax_anhalten,
   T_Zielmuster_Nr,
   T_Zielverzeichnis_Nr,
+  T_ueber_den_Quellcode,
+  T_ueber_das_Installationspaket,
   T_MAX
 };
 
@@ -1379,6 +1381,10 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Zielmuster Nr. ","Target pattern no. "},
   // T_Zielverzeichnis_Nr
   {"Zielverzeichnis Nr. ","Target directory no. "},
+  // T_ueber_den_Quellcode
+  {"... ueber den Quellcode","... with the source code"},
+  // T_ueber_das_Installationspaket
+  {"... ueber das Installationspaket","... with the installation package"},
   {"",""}
 };
 
@@ -5171,6 +5177,7 @@ int paramcl::pruefhyla()
         if (obverb) Log(blaus+"hyinstart: "+schwarz+ltoan(hyinstart),obverb,oblog);
         if (hyinstart==hysrc) {
           if (1) {
+            Log(Tx[T_ueber_den_Quellcode],1,1);
             systemrueck("sudo wget -O hylafax+ https://sourceforge.net/projects/hylafax/files/latest",obverb,oblog);
             systemrueck("sudo tar xvf hylafax+",obverb,oblog);
             // 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
@@ -5192,6 +5199,7 @@ int paramcl::pruefhyla()
             // hservice_faxq_hfaxd();
           }
         } else {
+            Log(Tx[T_ueber_das_Installationspaket],1,1);
           // b) mit dem Installationspaket
           if (!linst.obfehlt(hff) || !linst.obfehlt(hfcf)) {
             Log(hfftext,-1,1);
