@@ -1275,7 +1275,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_beim_letzten_nichts_eingeben
   {" (beim letzten '-' eingeben)"," (for the last one enter '-')"},
   // T_Muss_Hylafax_installieren
-  {"Muss Hylafax installieren","Have to install hylafax"},
+  {"Muss Hylafax installieren ...","Have to install hylafax ..."},
   // T_pruefstdfaxnr
   {"pruefstdfaxnr()","checkstdfaxnr()"},
   // T_Letzte
@@ -5177,7 +5177,7 @@ int paramcl::pruefhyla()
         if (obverb) Log(blaus+"hyinstart: "+schwarz+ltoan(hyinstart),obverb,oblog);
         if (hyinstart==hysrc) {
           if (1) {
-            Log(Tx[T_ueber_den_Quellcode],1,1);
+            Log(rots+Tx[T_ueber_den_Quellcode]+schwarz,1,1);
             systemrueck("sudo wget -O hylafax+ https://sourceforge.net/projects/hylafax/files/latest",obverb,oblog);
             systemrueck("sudo tar xvf hylafax+",obverb,oblog);
             // 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
@@ -5199,7 +5199,7 @@ int paramcl::pruefhyla()
             // hservice_faxq_hfaxd();
           }
         } else {
-            Log(Tx[T_ueber_das_Installationspaket],1,1);
+            Log(rots+Tx[T_ueber_das_Installationspaket]+schwarz,1,1);
           // b) mit dem Installationspaket
           if (!linst.obfehlt(hff) || !linst.obfehlt(hfcf)) {
             Log(hfftext,-1,1);
