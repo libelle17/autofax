@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "17.09.16" "Version 0.40847" "\fBautofax\fR man page"
+.TH man 1 "17.09.16" "Version 0.40846" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -321,7 +321,7 @@ The program has to take the following measures for its neat function:
 1) Installation of \fBhylafax+\fR, in case a modem is connected and hylafax+ is not installed. If necessary configuration of hylafax+ by calling '\fBfaxsetup -nointeracitve\fR', by editing the configuration files \fBconfig\fR and \fBconfig.*\fR (e.g. \fBconfig.ttyACM0\fR) in the hylafax configuration directory (default e.g. \fB/var/spool/hylafax/etc\fR).   
 .LP
 .HP 3
-2) Installation of capisuite, in case a fritzcard is inserted and capisuite is not installed. If necessary configuration of /etc/capisuite/capisuite.conf and /etc/capisuite/fax.conf. If necessary edition of the python-script for received faxes (default e.g. /usr/lib64/capisuite/incoming.py) in order to determine the rings before answer, creation and edition of the files '/etc/udev/rules.d/46-FKN_isdn_capi.rules', '/etc/modprobe.d/50-blacklist.conf'.
+2) Installation of \fRcapisuite\fR, in case a fritzcard is inserted and capisuite is not installed. If necessary configuration of \fB/etc/capisuite/capisuite.conf\fR and \fB/etc/capisuite/fax.conf\fR. If necessary edition of the python-script for received faxes (default e.g. \fB/usr/lib64/capisuite/incoming.py\fR) in order to determine the rings before answer, creation and edition of the files '\fB/etc/udev/rules.d/46-FKN_isdn_capi.rules\fR', '\fB/etc/modprobe.d/50-blacklist.conf\fR'.
 .LP
 .HP 3
 3) Installation of services: 
