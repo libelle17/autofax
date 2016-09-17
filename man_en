@@ -318,7 +318,7 @@ cron, soffice, convert, hylafax+, hylafax+-client, kernel-source, fcpci-3.10.0, 
 The program has to take the following measures for its neat function:
 .LP
 .HP 3
-1) Installation of hylafax+, in case a modem is connected and hylafax+ is not installed. If necessary configuration of hylafax+ by calling 'faxsetup -nointeracitve', by editing the configuration files config and config.* in the hylafax configuration directory (default e.g. /var/spool/hylafax/etc)   
+1) Installation of \fBhylafax+\fR, in case a modem is connected and hylafax+ is not installed. If necessary configuration of hylafax+ by calling '\fBfaxsetup -nointeracitve\fR', by editing the configuration files \fBconfig\fR and \fBconfig.*\fR (e.g. \fBconfig.ttyACM0\fR) in the hylafax configuration directory (default e.g. /var/spool/hylafax/etc).   
 .LP
 .HP 3
 2) Installation of capisuite, in case a fritzcard is inserted and capisuite is not installed. If necessary configuration of /etc/capisuite/capisuite.conf and /etc/capisuite/fax.conf. If necessary edition of the python-script for received faxes (default e.g. /usr/lib64/capisuite/incoming.py) in order to determine the rings before answer, creation and edition of the files '/etc/udev/rules.d/46-FKN_isdn_capi.rules', '/etc/modprobe.d/50-blacklist.conf'.
