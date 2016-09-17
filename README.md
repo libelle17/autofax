@@ -1,5 +1,5 @@
 
-<h1 align="center">AUTOFAX (Version 0.40847)</h1>
+<h1 align="center">AUTOFAX (Version 0.40848)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -669,9 +669,9 @@ configuration directory (default e.g.
 <td width="89%">
 
 
-<p style="margin-top: 1em">2) Installation of capisuite, in
-case a fritzcard is inserted and capisuite is not installed.
-If necessary configuration of
+<p style="margin-top: 1em">2) Installation of
+<b>capisuite</b>, in case a fritzcard is inserted and
+capisuite is not installed. If necessary configuration of
 <b>/etc/capisuite/capisuite.conf</b> and
 <b>/etc/capisuite/fax.conf</b>. If necessary edition of the
 python-script for received faxes (default e.g.
@@ -726,7 +726,8 @@ directory /etc/ausrangiert: <b>hylafax</b>,
 <p style="margin-top: 1em">c) In case <b>selinux</b> is
 active (as per default in fedora), it impedes per default
 hylafax-hfaxd; in this case, a module for selinux is
-arranged which allows again running hylafax-hfaxd.</p></td></tr>
+silently arranged in order to allow running
+hylafax-hfaxd.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -740,17 +741,18 @@ default <b>/var/log/autofax.log</b>.</p></td></tr>
 
 
 <p style="margin-top: 1em">5) if necessary creation and
-making accessible of the configurable directories for faxes
-to be sent, waiting, finished and failed.</p></td></tr>
+making accessible of the configurable <b>directories</b> for
+faxes to be sent, waiting, finished and failed.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
 <p style="margin-top: 1em">6) if necessary creation and
-making accessible of the configuration file autofax.conf in
-the same directory where the program is located by itsself
-(default: /usr/local/sbin/autofax).</p></td></tr>
+making accessible of the configuration file
+<b>autofax.conf</b> in the same directory where the program
+is located by itsself (default:
+<b>/usr/local/sbin/autofax</b>).</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

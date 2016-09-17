@@ -488,6 +488,8 @@ enum T_
   T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,
   T_Muss_falsches_hylafax_loeschen,
   T_autofax_anhalten,
+  T_Zielmuster_Nr,
+  T_Zielverzeichnis_Nr,
   T_MAX
 };
 
@@ -1373,6 +1375,10 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Muss falsches hylafax loeschen!!!","Have to delete the wrong hylafax!!!"},
   // T_autofax_anhalten
   {"autofax anhalten","stop autofax"},
+  // T_Zielmuster_Nr
+  {"Zielmuster Nr. ","Target pattern no. "},
+  // T_Zielverzeichnis_Nr
+  {"Zielverzeichnis Nr. ","Target directory no. "},
   {"",""}
 };
 
@@ -2434,7 +2440,7 @@ void paramcl::rueckfragen()
     int lfd=-1;
     char *locale = setlocale(LC_CTYPE,"");
     if (langu.empty()) if (locale) if (strchr("defi",locale[0])) langu=locale[0];
-    vector<string> sprachen={"e","d","f","i"};
+    vector<string> sprachen={"e","d"/*,"f","i"*/};
     if (cgconf[++lfd].wert.empty() || rzf) {
       langu=Tippstrings("Language/Sprache/Lingue/Lingua",&sprachen, &langu);
       lgnzuw();
@@ -2554,13 +2560,13 @@ void paramcl::rueckfragen()
     for(;;akt++) {
       cppSchluess* neuS=new cppSchluess;
       neuS->name=string("ZMMuster_")+ltoan(akt+1);
-      neuS->wert=Tippstring(string("Zielmuster Nr. ")+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],(akt<zmzn)?&zmp[akt].holmuster():&nix);
+      neuS->wert=Tippstring(string(Tx[T_Zielmuster_Nr])+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],(akt<zmzn)?&zmp[akt].holmuster():&nix);
       if (neuS->wert=="-") neuS->wert.clear();
       uchar obabbrech=(neuS->wert.empty()); // das letzte Muster muss leer sein, damit jede Datei irgendwo hinkommt
       zmv.push_back(neuS);
       neuS=new cppSchluess;
       neuS->name=string("ZMZiel_")+ltoan(akt+1);
-      neuS->wert=Tippstring(string("Zielverzeichnis Nr. ")+ltoan(akt+1),(akt<zmzn)?&zmp[akt].ziel:&nix);
+      neuS->wert=Tippstring(string(Tx[T_Zielverzeichnis_Nr])+ltoan(akt+1),(akt<zmzn)?&zmp[akt].ziel:&nix);
       zmv.push_back(neuS);
       if (obabbrech) break;
     }
@@ -3362,8 +3368,8 @@ void paramcl::pruefsamba()
        if (!obfw) break;
       }
       if (nichtfrei && obfw) {
-      systemrueck("sed -i.bak_"+meinname+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
-          " && systemctl restart SuSEfirewall2 smb nmb",obverb,oblog); 
+      systemrueck("sudo sed -i.bak_"+meinname+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
+          " && sudo systemctl restart SuSEfirewall2 smb nmb",obverb,oblog); 
       }
       part="client";
     } // for(int i=1;i<3;i++) 

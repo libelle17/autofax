@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "17.09.16" "Version 0.40846" "\fBautofax\fR man page"
+.TH man 1 "17.09.16" "Version 0.40848" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -321,7 +321,7 @@ The program has to take the following measures for its neat function:
 1) Installation of \fBhylafax+\fR, in case a modem is connected and hylafax+ is not installed. If necessary configuration of hylafax+ by calling '\fBfaxsetup -nointeracitve\fR', by editing the configuration files \fBconfig\fR and \fBconfig.*\fR (e.g. \fBconfig.ttyACM0\fR) in the hylafax configuration directory (default e.g. \fB/var/spool/hylafax/etc\fR).   
 .LP
 .HP 3
-2) Installation of \fRcapisuite\fR, in case a fritzcard is inserted and capisuite is not installed. If necessary configuration of \fB/etc/capisuite/capisuite.conf\fR and \fB/etc/capisuite/fax.conf\fR. If necessary edition of the python-script for received faxes (default e.g. \fB/usr/lib64/capisuite/incoming.py\fR) in order to determine the rings before answer, creation and edition of the files '\fB/etc/udev/rules.d/46-FKN_isdn_capi.rules\fR', '\fB/etc/modprobe.d/50-blacklist.conf\fR'.
+2) Installation of \fBcapisuite\fR, in case a fritzcard is inserted and capisuite is not installed. If necessary configuration of \fB/etc/capisuite/capisuite.conf\fR and \fB/etc/capisuite/fax.conf\fR. If necessary edition of the python-script for received faxes (default e.g. \fB/usr/lib64/capisuite/incoming.py\fR) in order to determine the rings before answer, creation and edition of the files '\fB/etc/udev/rules.d/46-FKN_isdn_capi.rules\fR', '\fB/etc/modprobe.d/50-blacklist.conf\fR'.
 .LP
 .HP 3
 3) Installation of services: 
@@ -335,16 +335,16 @@ a) in systemd (in the directory /usr/lib/systemd/system or /lib/systemd/system),
 b) Moving of existing service files from the directory /etc/init.d to a newly created directory /etc/ausrangiert:
 \fBhylafax\fR, \fBcapisuite\fR
 .br
-c) In case \fBselinux\fR is active (as per default in fedora), it impedes per default \fRhylafax-hfaxd\fR; in this case, a module for selinux is arranged which allows again running hylafax-hfaxd. 
+c) In case \fBselinux\fR is active (as per default in fedora), it impedes per default \fRhylafax-hfaxd\fR; in this case, a module for selinux is silently arranged in order to allow running hylafax-hfaxd. 
 .LP
 .HP 3
 4) Creation of a logfile, per default \fB/var/log/autofax.log\fR.
 .LP
 .HP 3
-5) if necessary creation and making accessible of the configurable directories for faxes to be sent, waiting, finished and failed.   
+5) if necessary creation and making accessible of the configurable \fBdirectories\fR for faxes to be sent, waiting, finished and failed.
 .LP
 .HP 3
-6) if necessary creation and making accessible of the configuration file autofax.conf in the same directory where the program is located by itsself (default: /usr/local/sbin/autofax).
+6) if necessary creation and making accessible of the configuration file \fBautofax.conf\fR in the same directory where the program is located by itsself (default: \fB/usr/local/sbin/autofax\fR).
 .LP
 .HP 3
 7) Insertion of a line for the program in crontab (of root)

@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "17.09.16" "Version 0.40846" "Manual-Seite für autofax"
+.TH man 1 "17.09.16" "Version 0.40848" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -336,13 +336,13 @@ capisuite.service,
 b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neu eingerichtes Verzeichnis /etc/ausrangiert:
 \fBhylafax\fR, \fBcapisuite\fR
 .br
-c) falls \fBselinux\fR aktiv ist (wie standardmäßig in fedora), dann behindert es standardmäßig \fBhylafax-hfaxd\fR; in diesem Fall wird ein Modul für selinux eingerichtet, das den Betrieb von hylafax-hfaxd wieder erlaubt.
+c) falls \fBselinux\fR aktiv ist (wie standardmäßig in fedora), dann behindert es standardmäßig \fBhylafax-hfaxd\fR; in diesem Fall wird im Hintergrund ein Modul für selinux eingerichtet, um den Betrieb von hylafax-hfaxd wieder zu erlauben.
 .LP
 .HP 3
 4) Erstellen einer Protokolldatei, standardmäßig \fB/var/log/autofax.log\fR.
 .LP
 .HP 3
-5) ggf. Erstellen und Zugreifbarmachen der bestimmbaren Verzeichnisse für zu sendende, wartende, abgearbeitete und empfangene Faxe.
+5) ggf. Erstellen und Zugreifbarmachen der bestimmbaren \fBVerzeichnisse\fR für zu sendende, wartende, abgearbeitete und empfangene Faxe.
 .LP
 .HP 3
 6) ggf. Erstellen und Verändern der Konfigurationsdatei autofax.conf in dem Verzeichnis, in dem auch es selbst steht (Vorgabe: /usr/local/sbin/autofax).
