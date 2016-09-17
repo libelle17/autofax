@@ -4835,11 +4835,13 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
        systemrueck(string("sudo systemctl stop ")+pmp->sfaxgetty->sname+" "+pmp->shfaxd->sname+" "+pmp->sfaxq->sname,obverb,oblog);
        systemrueck(string("sudo pkill ")+pmp->sfaxgetty->ename+" "+pmp->shfaxd->ename+" "+pmp->sfaxq->ename,obverb,oblog);
      */
-    Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
+    Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+"sudo "+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
     int erg __attribute__((unused));
     pruefplatte();
-    systemrueck("sudo systemctl stop hylafax hylafax-hfaxd hylafax-faxq >/dev/null 2>&1; sudo pkill hfaxd faxq >/dev/null 2>&1;",obverb,oblog);
-    if (!systemrueck(faxsu+" -nointeractive"+(obverb?" -verbose":""),obverb,oblog)) {
+    pmp->shfaxd->stop(obverb,oblog);
+    pmp->sfaxq->stop(obverb,oblog);
+    systemrueck("sudo pkill hfaxd faxq >/dev/null 2>&1;",obverb,oblog);
+    if (!systemrueck("sudo "+faxsu+" -nointeractive"+(obverb?" -verbose":""),obverb,oblog)) {
      pmp->shfaxd->stop(obverb,oblog);
      pmp->sfaxq->stop(obverb,oblog);
      servc::daemon_reload();
