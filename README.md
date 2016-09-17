@@ -684,15 +684,26 @@ rings before answer, creation and edition of the files
 
 
 <p style="margin-top: 1em">3) Installation of services:</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">a) in systemd (in the directory
+/usr/lib/systemd/system or /lib/systemd/system),
+especially:</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em"><b>hylafax-faxq.service</b>,
+<b>hylafax-hfaxd.service</b>,
+<b>hylafax-faxgetty-....service</b> (e.g.
+<b>hylafax-faxgetty-ttyACM0</b>),</p> </td></tr>
 </table>
 
-<p style="margin-left:15%;">a) in systemd (in the directory
-/usr/lib/systemd/system or /lib/systemd/system), especially:
-<b><br>
-hylafax-faxq.service</b>, <b>hylafax-hfaxd.service</b>,
-<b>hylafax-faxgetty-....service</b> (e.g.
-<b>hylafax-faxgetty-ttyACM0</b>), <b><br>
-capisuite.service</b>, <br>
+<p style="margin-left:15%;"><b>capisuite.service</b>, <br>
 b) Moving of existing service files from the directory
 /etc/init.d to a newly created directory /etc/ausrangiert:
 <b>hylafax</b>, <b>capisuite</b> <br>
@@ -708,8 +719,8 @@ hylafax-hfaxd.</p>
 <td width="89%">
 
 
-<p style="margin-top: 1em">4) Creation of a logfile
-/var/log/autofax.log</p> </td></tr>
+<p style="margin-top: 1em">4) Creation of a logfile, per
+default <b>/var/log/autofax.log</b>.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

@@ -339,7 +339,7 @@ b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neu eingerich
 c) falls \fBselinux\fR aktiv ist (wie standardmäßig in fedora), dann behindert es standardmäßig \fBhylafax-hfaxd\fR; in diesem Fall wird ein Modul für selinux eingerichtet, das den Betrieb von hylafax-hfaxd wieder erlaubt.
 .LP
 .HP 3
-4) Erstellen einer Protokolldatei /var/log/autofax.log.
+4) Erstellen einer Protokolldatei, standardmäßig \fB/var/log/autofax.log\fR.
 .LP
 .HP 3
 5) ggf. Erstellen und Zugreifbarmachen der bestimmbaren Verzeichnisse für zu sendende, wartende, abgearbeitete und empfangene Faxe.

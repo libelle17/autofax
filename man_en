@@ -325,9 +325,11 @@ The program has to take the following measures for its neat function:
 .LP
 .HP 3
 3) Installation of services: 
-.br
+.LP
+.HP 3
 a) in systemd (in the directory /usr/lib/systemd/system or /lib/systemd/system), especially:
-.br
+.LP
+.HP 3
 \fBhylafax-faxq.service\fR, \fBhylafax-hfaxd.service\fR, \fBhylafax-faxgetty-....service\fR (e.g. \fBhylafax-faxgetty-ttyACM0\fR),
 .br
 \fBcapisuite.service\fR,
@@ -338,7 +340,7 @@ b) Moving of existing service files from the directory /etc/init.d to a newly cr
 c) In case \fBselinux\fR is active (as per default in fedora), it impedes per default \fRhylafax-hfaxd\fR; in this case, a module for selinux is arranged which allows again running hylafax-hfaxd. 
 .LP
 .HP 3
-4) Creation of a logfile /var/log/autofax.log
+4) Creation of a logfile, per default \fB/var/log/autofax.log\fR.
 .LP
 .HP 3
 5) if necessary creation and making accessible of the configurable directories for faxes to be sent, waiting, finished and failed.   
