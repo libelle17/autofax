@@ -1,5 +1,5 @@
 
-<h1 align="center">AUTOFAX (Version 0.40846)</h1>
+<h1 align="center">AUTOFAX (Version 0.40847)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -684,25 +684,47 @@ rings before answer, creation and edition of the files
 
 
 <p style="margin-top: 1em">3) Installation of services:</p></td></tr>
-</table>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
 
 <p style="margin-top: 1em">a) in systemd (in the directory
-/usr/lib/systemd/system or /lib/systemd/system), especially:
-<b><br>
-hylafax-faxq.service</b>, <b>hylafax-hfaxd.service</b>,
-<b>hylafax-faxgetty-....service</b> (e.g.
-<b>hylafax-faxgetty-ttyACM0</b>), <b><br>
-capisuite.service</b>, <br>
-b) Moving of existing service files from the directory
-/etc/init.d to a newly created directory /etc/ausrangiert:
-<b>hylafax</b>, <b>capisuite</b> <br>
-c) In case <b>selinux</b> is active (as per default in
-fedora), it impedes per default hylafax-hfaxd; in this case,
-a module for selinux is arranged which allows again running
-hylafax-hfaxd.</p>
+/usr/lib/systemd/system or /lib/systemd/system),
+especially:</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+
+<p style="margin-top: 1em"><b>hylafax-faxq.service</b>,
+<b>hylafax-hfaxd.service</b>,
+<b>hylafax-faxgetty-....service</b> (e.g.
+<b>hylafax-faxgetty-ttyACM0</b>),</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em"><b>capisuite.service</b>,</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">b) Moving of existing service
+files from the directory /etc/init.d to a newly created
+directory /etc/ausrangiert: <b>hylafax</b>,
+<b>capisuite</b></p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">c) In case <b>selinux</b> is
+active (as per default in fedora), it impedes per default
+hylafax-hfaxd; in this case, a module for selinux is
+arranged which allows again running hylafax-hfaxd.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -762,15 +784,25 @@ those tables.</p></td></tr>
 
 <p style="margin-top: 1em">10) With specific command line
 options for autofax, faxes can be deleted, especially:</p></td></tr>
-</table>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
 
-<p style="margin-left:15%;">a) in hylafax by callinng
-&rsquo;faxrm&rsquo; <br>
-b) in capisuite: by deleting files like
+
+<p style="margin-top: 1em">a) in hylafax by callinng
+&rsquo;faxrm&rsquo;</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">b) in capisuite: by deleting
+files like
 /var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und
 ~/*.sff. In capisuite, an orphaned lock file
 (/var/spool/capisuite/users/&lt;user&gt;/sendq/*.lock) can
-be deleted, too.</p>
+be deleted, too.</p></td></tr>
+</table>
 
 <h2>ERRORS
 <a name="ERRORS"></a>
