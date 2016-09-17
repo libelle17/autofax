@@ -5046,7 +5046,7 @@ int paramcl::hservice_faxq_hfaxd()
   hylafehler+=!this->shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/,
       this->varsphylavz+"/etc/setup.cache", "", "", this->obverb,this->oblog);
   this->shfaxd->machfit(obverb,oblog);
-  obprogda("hfaxd",obverb,oblog,&faxqpfad);
+  obprogda("faxq",obverb,oblog,&faxqpfad);
   hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D",
       this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname+".service", "",this->obverb,this->oblog);
   return hylafehler;
