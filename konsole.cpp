@@ -2122,11 +2122,15 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fall
 {
   // <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
   uchar ret=2;
+  // eprog kann auch von aussen vor Programmaufruf gesetzt werden
   if (eprog.empty()) eprog=ersetzeprog(prog);
-  if (!fallsnichtda.empty()) 
-//    if (!systemrueck((alsroot?string("root "):string(""))+"which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) 
-    if (obprogda(fallsnichtda,obverb,oblog))
+  if (!fallsnichtda.empty()) {
+    //    if (!systemrueck((alsroot?string("root "):string(""))+"which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) 
+    if (obprogda(fallsnichtda,obverb,oblog)) {
+      eprog.clear();
       return 0;
+    }
+  }
   if (!eprog.empty()) {
     switch (pruefipr()) {
       case zypper:
