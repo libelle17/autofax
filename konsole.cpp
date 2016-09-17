@@ -1135,7 +1135,7 @@ int obprogda(string prog,int obverb, int oblog, string *pfad)
       return 2;
     }
   } // for(int iru=0;iru<3;iru++) 
-  if (pfad) *pfad="";
+  if (pfad) pfad->clear();
   return 0; 
 } // string obprogda(string prog,int obverb, int oblog)
 

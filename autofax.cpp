@@ -4750,12 +4750,9 @@ void kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wiewe
 void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
 {
   Log(violetts+"hfaxsetup()"+schwarz,obverb,oblog);
-  struct stat entrybuf;
   string faxsu;
-  svec rueck;
-  obprogda("faxsetup",obverb,oblog,&faxsu);  
   //  const char *faxsu="/usr/sbin/faxsetup";
-  if (!lstat(faxsu.c_str(), &entrybuf)) {
+  if (obprogda("faxsetup",obverb,oblog,&faxsu)) {
 #ifdef autofaxsetup
     // das Skript faxsetup soll leicht veraendert als 'autofaxsetup' abgespeichert und dann aufgerufen werden
     const char *afaxsu="/usr/local/sbin/autofaxsetup";
@@ -4842,9 +4839,16 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
     int erg __attribute__((unused));
     pruefplatte();
     systemrueck("sudo systemctl stop hylafax hylafax-hfaxd hylafax-faxq >/dev/null 2>&1; sudo pkill hfaxd faxq >/dev/null 2>&1;",obverb,oblog);
+    if (!systemrueck(faxsu+" -nointeractive"+(obverb?" -verbose":""),obverb,oblog)) {
+     pmp->shfaxd->stop(obverb,oblog);
+     pmp->sfaxq->stop(obverb,oblog);
+     servc::daemon_reload();
+    }
+    /*
     erg=system(("sudo $(which sh) $(sudo env \"PATH=$PATH\" which faxsetup) -nointeractive"+string(obverb?" -verbose":"")+
           " && sudo pkill hfaxd faxq >/dev/null 2>&1"
           " && sudo systemctl daemon-reload").c_str()); 
+    */
     pmp->sfaxgetty->start(obverb,oblog);
     pmp->shfaxd->start(obverb,oblog);
     pmp->sfaxq->start(obverb,oblog);
