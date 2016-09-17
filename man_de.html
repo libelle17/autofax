@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sat Sep 17 12:40:09 2016 -->
+<!-- CreationDate: Sat Sep 17 12:55:26 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -741,8 +741,10 @@ insbesondere:</p> </td></tr>
 <td width="89%">
 
 
-<p style="margin-top: 1em">hylafax-faxq.service,
-hylafax-hfaxd.service, hylafax-faxgetty-....service,</p></td></tr>
+<p style="margin-top: 1em"><b>hylafax-faxq.service</b>,
+<b>hylafax-hfaxd.service</b>,
+<b>hylafax-faxgetty-....service</b> (z.B.
+<b>hylafax-faxgetty-ttyACM0</b>),</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -756,13 +758,19 @@ hylafax-hfaxd.service, hylafax-faxgetty-....service,</p></td></tr>
 
 <p style="margin-top: 1em">b) Verschieben von Diensten aus
 dem Verzeichnis /etc/init.d in ein neu eingerichtes
-Verzeichnis /etc/ausrangiert:</p></td></tr>
+Verzeichnis /etc/ausrangiert: <b>hylafax</b>,
+<b>capisuite</b></p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-<p style="margin-top: 1em">hylafax, capisuite</p></td></tr>
+<p style="margin-top: 1em">c) falls <b>selinux</b> aktiv
+ist (wie standardm&auml;&szlig;ig in fedora), dann
+behindert es standardm&auml;&szlig;ig
+<b>hylafax-hfaxd</b>; in diesem Fall wird ein Modul
+f&uuml;r selinux eingerichtet, das den Betrieb von
+hylafax-hfaxd wieder erlaubt.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

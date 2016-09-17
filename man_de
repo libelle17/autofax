@@ -329,13 +329,14 @@ Ggf. Bearbeitung des Python-Scripts für ankommende Faxe (Vorgabe z.B.: /usr/lib
 .br
 a) in systemd (im Verzeichnis /usr/lib/systemd/system oder /lib/systemd/system), insbesondere:
 .br
-hylafax-faxq.service, hylafax-hfaxd.service, hylafax-faxgetty-....service,
+\fBhylafax-faxq.service\fR, \fBhylafax-hfaxd.service\fR, \fBhylafax-faxgetty-....service\fR (z.B. \fBhylafax-faxgetty-ttyACM0\fR),
 .br
 capisuite.service,
 .br
 b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neu eingerichtes Verzeichnis /etc/ausrangiert:
+\fBhylafax\fR, \fBcapisuite\fR
 .br
-hylafax, capisuite
+c) falls \fBselinux\fR aktiv ist (wie standardmäßig in fedora), dann behindert es standardmäßig \fBhylafax-hfaxd\fR; in diesem Fall wird ein Modul für selinux eingerichtet, das den Betrieb von hylafax-hfaxd wieder erlaubt.
 .LP
 .HP 3
 4) Erstellen einer Protokolldatei /var/log/autofax.log.

@@ -333,8 +333,9 @@ a) in systemd (in the directory /usr/lib/systemd/system or /lib/systemd/system),
 \fBcapisuite.service\fR,
 .br
 b) Moving of existing service files from the directory /etc/init.d to a newly created directory /etc/ausrangiert:
+\fBhylafax\fR, \fBcapisuite\fR
 .br
-hylafax, capisuite
+c) In case \fBselinux\fR is active (as per default in fedora), it impedes per default \fRhylafax-hfaxd\fR; in this case, a module for selinux is arranged which allows again running hylafax-hfaxd. 
 .LP
 .HP 3
 4) Creation of a logfile /var/log/autofax.log

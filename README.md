@@ -695,8 +695,11 @@ hylafax-faxq.service</b>, <b>hylafax-hfaxd.service</b>,
 capisuite.service</b>, <br>
 b) Moving of existing service files from the directory
 /etc/init.d to a newly created directory /etc/ausrangiert:
-<br>
-hylafax, capisuite</p>
+<b>hylafax</b>, <b>capisuite</b> <br>
+c) In case <b>selinux</b> is active (as per default in
+fedora), it impedes per default hylafax-hfaxd; in this case,
+a module for selinux is arranged which allows again running
+hylafax-hfaxd.</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
