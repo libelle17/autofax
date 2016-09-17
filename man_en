@@ -325,11 +325,9 @@ The program has to take the following measures for its neat function:
 .LP
 .HP 3
 3) Installation of services: 
-.LP
-.HP 3
+.br
 a) in systemd (in the directory /usr/lib/systemd/system or /lib/systemd/system), especially:
-.LP
-.HP 3
+.br
 \fBhylafax-faxq.service\fR, \fBhylafax-hfaxd.service\fR, \fBhylafax-faxgetty-....service\fR (e.g. \fBhylafax-faxgetty-ttyACM0\fR),
 .br
 \fBcapisuite.service\fR,
