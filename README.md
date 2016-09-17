@@ -9,7 +9,7 @@
 <a href="#OPTIONS">OPTIONS</a><br>
 <a href="#FUNCTIONALITY">FUNCTIONALITY</a><br>
 <a href="#PRECONDITIONS">PRECONDITIONS</a><br>
-<a href="#IMPACT">IMPACT</a><br>
+<a href="#IMPLICATIONS">IMPLICATIONS</a><br>
 <a href="#ERRORS">ERRORS</a><br>
 <a href="#LIABILITY">LIABILITY</a><br>
 <a href="#AUTHOR">AUTHOR</a><br>
@@ -121,8 +121,8 @@ stored.</p>
 
 <p style="margin-left:11%; margin-top: 1em">First, read the
 chapters &rsquo;functionality&rsquo;,
-&rsquo;preconditions&rsquo; and &rsquo;impact&rsquo; below.
-Then: <br>
+&rsquo;preconditions&rsquo; and &rsquo;implications&rsquo;
+below. Then: <br>
 - if the program &rsquo;git&rsquo; is installed, You can
 start with: <b><br>
 git clone http://github.com/libelle17/autofax && cd
@@ -641,8 +641,8 @@ cron, soffice, convert, hylafax+, hylafax+-client,
 kernel-source, fcpci-3.10.0, kkeil Factory repository,
 capisuite, capi4linux, i4l-isdnlog, mariadb.</p>
 
-<h2>IMPACT
-<a name="IMPACT"></a>
+<h2>IMPLICATIONS
+<a name="IMPLICATIONS"></a>
 </h2>
 
 
@@ -683,41 +683,22 @@ rings before answer, creation and edition of the files
 
 
 <p style="margin-top: 1em">3) Installation of services</p></td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
+</table>
 
+<p style="margin-left:15%;">a) in systemd (in the directory
+/usr/lib/systemd/system or /lib/systemd/system), especially:
+<b><br>
+hylafax-faxq.service</b>, <b>hylafax-hfaxd.service</b>,
+<b>hylafax-faxgetty-....service</b> (e.g.
+<b>hylafax-faxgetty-ttyACM0</b>), <b><br>
+capisuite.service</b>, <br>
+b) Moving of existing service files from the directory
+/etc/init.d to a newly created directory /etc/ausrangiert:
+<br>
+hylafax, capisuite</p>
 
-<p style="margin-top: 1em">a) in systemd (in the directory
-/usr/lib/systemd/system or /lib/systemd/system),
-especially:</p> </td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
-
-
-<p style="margin-top: 1em">hylafax-faxq.service,
-hylafax-hfaxd.service, hylafax-faxgetty-....service,</p></td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
-
-
-<p style="margin-top: 1em">capisuite.service,</p></td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
-
-
-<p style="margin-top: 1em">b) Moving of existing service
-files from the directory /etc/init.d to a newly created
-directory /etc/ausrangiert:</p></td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
-
-
-<p style="margin-top: 1em">hylafax, capisuite</p></td></tr>
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -777,25 +758,15 @@ those tables.</p></td></tr>
 
 <p style="margin-top: 1em">10) With specific command line
 options for autofax, faxes can be deleted, especially:</p></td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
+</table>
 
-
-<p style="margin-top: 1em">a) in hylafax by callinng
-&rsquo;faxrm&rsquo;</p> </td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
-
-
-<p style="margin-top: 1em">b) in capisuite: by deleting
-files like
+<p style="margin-left:15%;">a) in hylafax by callinng
+&rsquo;faxrm&rsquo; <br>
+b) in capisuite: by deleting files like
 /var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und
 ~/*.sff. In capisuite, an orphaned lock file
 (/var/spool/capisuite/users/&lt;user&gt;/sendq/*.lock) can
-be deleted, too.</p></td></tr>
-</table>
+be deleted, too.</p>
 
 <h2>ERRORS
 <a name="ERRORS"></a>
