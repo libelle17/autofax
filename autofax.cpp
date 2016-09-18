@@ -497,6 +497,7 @@ enum T_
   T_nicht,
   T_Loesche_Fax_hylanr,
   T_erfolgreich_geloescht_fax_mit,
+  T_Moment_muss_Kernel_herunterladen,
   T_MAX
 };
 
@@ -1398,6 +1399,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Loesche das Fax mit der hylanr: ","Deleting the fax with the hylano: "},
   // T_erfolgreich_geloescht_fax_mit
   {"Erfolgreich geloescht: Fax mit der hylanr: ","Successfully deleted: Fax with the hylano: "},
+  // T_Moment_muss_Kernel_herunterladen
+  {"Moment, muss Kernel-rpm herunterladen ...","One moment, must download kernel-rpm ..."},
   {"",""}
 };
 
@@ -5698,9 +5701,10 @@ int paramcl::pruefcapi()
         
         if (systemrueck("sudo modprobe capi",obverb,oblog)) {
         // nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
-         int altobverb=obverb;obverb=1;
+         int altobverb=obverb;obverb=2;
          systemrueck("sudo dnf install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
          systemrueck("sudo rpmdev-setuptree",obverb,oblog);
+         Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
          systemrueck("cd "+instverz+" && sudo dnf download --source kernel",obverb,oblog);
          svec rueck;
          string kstring;
@@ -5710,7 +5714,7 @@ int paramcl::pruefcapi()
          systemrueck("cd "+instverz+" && sudo dnf builddep "+kstring,obverb,oblog);
          systemrueck("cd "+instverz+" && rpm -Uvh "+kstring,obverb,oblog);
          }
-         exit(0);
+         exit(70);
          obverb=altobverb;
         }
         systemrueck("sudo modprobe capidrv",obverb,oblog);
