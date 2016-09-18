@@ -1571,9 +1571,9 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
                  obverb, oblog,&rueck);
      if (rueck.size() && rueck[0]!="root") {
       fuser=rueck[0]; 
-      systemrueck("sudo su -c \"faxrm "+hylanr+"\" "+fuser,oblog,obverb,&rmerg);
+      systemrueck("sudo su -c \"faxrm "+hylanr+"\" "+fuser+" 2>&1",oblog,obverb,&rmerg);
      } else {
-      systemrueck("sudo faxrm "+hylanr,oblog,obverb,&rmerg);
+      systemrueck("sudo faxrm "+hylanr+" 2>&1",oblog,obverb,&rmerg);
      }
 // folgender Befehl kann einen tac: write error: Broken pipe -Fehler erzeugen
 //      systemrueck("sudo su -c \"faxrm "+hylanr+"\" $(tac \""+pmp->xferfaxlog+"\"|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg);
