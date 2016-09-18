@@ -1549,7 +1549,7 @@ int fsfcl::loeschecapi(int obverb, int oblog)
 } // void fsfcl::loeschecapi(int obverb, int oblog)
 
 // Rueckgabe: Zahl der nicht geloeschten Eintraege
-// wird aufgerufen in: loeschefax, untersuchespool
+// wird aufgerufen in: loeschefax, loescheallewartende, untersuchespool,
 int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
 {
   Log(violetts+Tx[T_loeschehyla]+schwarz,obverb,oblog);
@@ -3711,7 +3711,7 @@ int paramcl::loescheallewartende(int obverb, int oblog)
         RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE capispooldatei='"+fname+"'");
       }
     }
-  }
+  } // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
   //  cmd=string("rm ")+cfaxuservz+vtz+cuser+vtz+"sendq"+vtz+"fax-*.*"; //  "/var/spool/capisuite/users/<user>/sendq";
   if (!lstat(hsendqvz.c_str(),&entryvz)) {
     cmd=string("sudo find '")+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";
@@ -3722,13 +3722,13 @@ int paramcl::loescheallewartende(int obverb, int oblog)
       string transalle=alled[i];
       ersetzAlle(&transalle,"q","");  
       fsfcl zuloe(transalle);
-      if (zuloe.loeschehyla(this,obverb,oblog)) {
+      if (!zuloe.loeschehyla(this,obverb,oblog)) {
 //      cmd=string("faxrm ")+transalle;
-//      if (systemrueck(cmd,obverb,oblog)) {
-        RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE hylanr="+transalle);
+//      if (systemrueck(cmd,obverb,oblog)) KLA
+        RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE hylanr="+transalle,ZDB);
       }
-    }
-  }
+    } // for(size_t i=0;i<alled.size();i++) 
+  } // if (!lstat(hsendqvz.c_str(),&entryvz)) 
   return erg;
 } // int paramcl::loescheallewartende(int obverb, int oblog)
 
