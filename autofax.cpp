@@ -5633,6 +5633,7 @@ int paramcl::pruefcapi()
         Log("Lade Capi-Module ...",-1,0);
         systemrueck("sudo modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog,0,1);
         for(uchar ivers=0;ivers<2;ivers++) {
+          if (!fcpcida)
           if (systemrueck("sudo modprobe -v fcpci",obverb-1,oblog)) {
             if (ivers) {
               Log(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+schwarz,1,1);
