@@ -1559,24 +1559,24 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
     pmp->hylasv2(hysrc,obverb,oblog);
     for(uchar iru=0;iru<vmax;iru++) {
       if (iru) {
-        if (pmp->sfaxgetty) pmp->sfaxgetty->restart(obverb-1,oblog);
-        if (pmp->shfaxd) pmp->shfaxd->restart(obverb-1,oblog);
-        if (pmp->sfaxq) pmp->sfaxq->restart(obverb-1,oblog);
-//      systemrueck(string("sudo systemctl restart '")+pmp->sfaxgetty->sname+"' '"+pmp->shfaxd->sname+"' '"+pmp->sfaxq->sname+"'",obverb-1,oblog);
+        if (pmp->sfaxgetty) pmp->sfaxgetty->restart(obverb+1,oblog);
+        if (pmp->shfaxd) pmp->shfaxd->restart(obverb+1,oblog);
+        if (pmp->sfaxq) pmp->sfaxq->restart(obverb+1,oblog);
+        //      systemrueck(string("sudo systemctl restart '")+pmp->sfaxgetty->sname+"' '"+pmp->shfaxd->sname+"' '"+pmp->sfaxq->sname+"'",obverb-1,oblog);
       } // if (iru) 
 
-     svec rueck, rmerg;
-     string fuser;
-     systemrueck("tac \""+pmp->xferfaxlog+"\" 2>/dev/null|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;      s/\"$//'",
-                 obverb, oblog,&rueck);
-     if (rueck.size() && rueck[0]!="root") {
-      fuser=rueck[0]; 
-      systemrueck("sudo su -c \"faxrm "+hylanr+"\" "+fuser+" 2>&1",oblog,obverb,&rmerg);
-     } else {
-      systemrueck("sudo faxrm "+hylanr+" 2>&1",oblog,obverb,&rmerg);
-     }
-// folgender Befehl kann einen tac: write error: Broken pipe -Fehler erzeugen
-//      systemrueck("sudo su -c \"faxrm "+hylanr+"\" $(tac \""+pmp->xferfaxlog+"\"|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg);
+      svec rueck, rmerg;
+      string fuser;
+      systemrueck("tac \""+pmp->xferfaxlog+"\" 2>/dev/null|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;      s/\"$//'",
+          obverb, oblog,&rueck);
+      if (rueck.size() && rueck[0]!="root") {
+        fuser=rueck[0]; 
+        systemrueck("sudo su -c \"faxrm "+hylanr+"\" "+fuser+" 2>&1",oblog,obverb,&rmerg);
+      } else {
+        systemrueck("sudo faxrm "+hylanr+" 2>&1",oblog,obverb,&rmerg);
+      }
+      // folgender Befehl kann einen tac: write error: Broken pipe -Fehler erzeugen
+      //      systemrueck("sudo su -c \"faxrm "+hylanr+"\" $(tac \""+pmp->xferfaxlog+"\"|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg);
       if (rmerg.size()) {
         if (rmerg[0].find(" removed")!=string::npos || rmerg[0].find("job does not exist")!=string::npos) {
           return 0;
@@ -3713,8 +3713,10 @@ int paramcl::loescheallewartende(int obverb, int oblog)
     for(size_t i=0;i<alled.size();i++) {
       string transalle=alled[i];
       ersetzAlle(&transalle,"q","");  
-      cmd=string("faxrm ")+transalle;
-      if (systemrueck(cmd,obverb,oblog)) {
+      fsfcl zuloe(transalle);
+      if (zuloe.loeschehyla(this,obverb,oblog)) {
+//      cmd=string("faxrm ")+transalle;
+//      if (systemrueck(cmd,obverb,oblog)) {
         RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE hylanr="+transalle);
       }
     }
