@@ -2227,11 +2227,14 @@ string gethome()
 {
  static string erg;
  if (erg.empty()) {
+   erg=getenv("HOME");
+   /*
    svec srueck;
    systemrueck("echo $HOME",0,0,&srueck);
    if (srueck.size()) {
      erg=srueck[0];
    }
+   */
  }
  return erg;
 } // string gethome()

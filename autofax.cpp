@@ -5689,7 +5689,30 @@ int paramcl::pruefcapi()
             } // if (lstat(fcpciko.c_str(), &entryfc)) 
           } // if (systemrueck("sudo modprobe -v fcpci",obverb-1,oblog)) 
         } // for(uchar ivers=0;ivers<2;ivers++) 
-        systemrueck("sudo modprobe capi",obverb,oblog);
+
+        // Fedora:
+        // dnf install ncurses-devel
+        // cd /usr/src/kernels/4.7.3-200.fc24.x86_64
+        // make olddefconfig
+        // dnf install elfutils-libelf-devel
+        
+        if (systemrueck("sudo modprobe capi",obverb,oblog)) {
+        // nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
+         int altobverb=obverb;obverb=1;
+         systemrueck("sudo dnf install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
+         systemrueck("sudo rpmdev-setuptree",obverb,oblog);
+         systemrueck("cd "+instverz+" && sudo dnf download --source kernel",obverb,oblog);
+         svec rueck;
+         string kstring;
+         systemrueck("cd "+instverz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);
+         if (rueck.size()) { kstring=rueck[0];
+
+         systemrueck("cd "+instverz+" && sudo dnf builddep "+kstring,obverb,oblog);
+         systemrueck("cd "+instverz+" && rpm -Uvh "+kstring,obverb,oblog);
+         }
+         exit(0);
+         obverb=altobverb;
+        }
         systemrueck("sudo modprobe capidrv",obverb,oblog);
       } // if (!fcpcida || !capida || !capidrvda) 
       pruefrules(obverb,oblog);
