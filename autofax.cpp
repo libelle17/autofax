@@ -495,6 +495,8 @@ enum T_
   T_ueber_das_Installationspaket,
   T_gibts,
   T_nicht,
+  T_Loesche_Fax_hylanr,
+  T_erfolgreich_geloescht_fax_mit,
   T_MAX
 };
 
@@ -658,7 +660,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_nichtstarten
   {"' nicht starten",""},
   // T_VersucheDatei
-  {"Versuche Datei: '","Trying to install file: '"},
+  {"Versuche Datei: '","Trying to install the file: '"},
   // T_zuinstallieren
   {"' zu installieren",""},
   // T_bittestellenSiedieInstallationsdatei
@@ -1256,7 +1258,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Wollen Sie noch einen SQL-Befehl eingeben?","Do You want to enter another sql command?"},
   // T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr
   {" ('-'=SQL-Befehl loeschen, 2 Ergebnisfelder, '&&faxnr&&' wird ersetzt mit der Faxnr, s.man -Lde autofax)",
-   " ('-'=delete this sql command, 2 result fileds, '&&faxnr&&' will be replaces with the fax-no., see man autofax)"},
+   " ('-'=delete this sql command, 2 result fields, '&&faxnr&&' will be replaces with the fax-no., see man autofax)"},
   // T_faxnr_wird_ersetzt_mit_der_Faxnr
   {" (2 Ergebnisfelder, '&&faxnr&&' wird ersetzt mit der Faxnr)",
    " (2 result fields, '&&faxnr&&' will be replaces with the fax-no.)"},
@@ -1392,6 +1394,10 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {" gibts"," exists"},
   // T_nicht
   {" nicht"," not"},
+  // T_Loesche_Fax_hylanr
+  {"Loesche das Fax mit der hylanr: ","Deleting the fax with the hylano: "},
+  // T_erfolgreich_geloescht_fax_mit
+  {"Erfolgreich geloescht: Fax mit der hylanr: ","Successfully deleted: Fax with the hylano: "},
   {"",""}
 };
 
@@ -1569,7 +1575,7 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
       string fuser;
       systemrueck("tac \""+pmp->xferfaxlog+"\" 2>/dev/null|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;      s/\"$//'",
           obverb, oblog,&rueck);
-      Log("Loesche Fax hylanr: "+hylanr,-1,0);
+      Log(Tx[T_Loesche_Fax_hylanr]+hylanr+" ...",-1,0);
       if (rueck.size() && rueck[0]!="root") {
         fuser=rueck[0]; 
         systemrueck("sudo su -c \"faxrm "+hylanr+"\" "+fuser+" 2>&1",oblog,obverb,&rmerg);
@@ -1580,6 +1586,7 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
       //      systemrueck("sudo su -c \"faxrm "+hylanr+"\" $(tac \""+pmp->xferfaxlog+"\"|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg);
       if (rmerg.size()) {
         if (rmerg[0].find(" removed")!=string::npos || rmerg[0].find("job does not exist")!=string::npos) {
+          Log(Tx[T_erfolgreich_geloescht_fax_mit]+hylanr,1,1);
           return 0;
         }
         Log(rots+Tx[T_Fehlermeldung_beim_Loeschversuch_eines_Hyla_Faxes_mit_faxrm]+hylanr+"`:\n    "+schwarz+rmerg[0],1,1);
