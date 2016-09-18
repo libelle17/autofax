@@ -6711,7 +6711,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, string& 
 // wird aufgerufen in: loeschecapi, untersuchespool
 int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
 {
-  Log(violetts+Tx[T_tuloeschen]+schwarz,obverb,oblog);
+//  Log(violetts+Tx[T_tuloeschen]+schwarz,obverb,oblog);
   struct stat entryzuloe;
   if (!lstat(zuloe.c_str(),&entryzuloe)) {
     Log(string(Tx[T_Loesche_Ausrufezeichen])+rot+zuloe+schwarz,obverb,oblog);
