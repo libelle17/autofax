@@ -2,6 +2,7 @@
 
 enum FaxTyp:uchar {capi=1,hyla};
 enum FxStat:uchar {init,wartend,gesandt,gescheitert,fehlend,woasined};
+enum hyinst {keineh,hysrc,hypak,hyppk}; // hyla source, hyla Paket, hylaplus Paket
 
 class zielmustercl; // fuer die Verteilung der erfolgreich gefaxten Dateien auf verschiedene Dateien
 class fxfcl; // Faxfile
@@ -296,6 +297,7 @@ class paramcl // Programmparameter
     void tu_listi();
     void DateienHerricht();
     void clieskonf();
+    void capisv(int obverb,int oblog);
     int pruefcapi();
     void pruefinstv();
     void holvongithub(string datei);
@@ -304,7 +306,9 @@ class paramcl // Programmparameter
     void hconfigtty();
     int cservice();
     int hservice_faxq_hfaxd();
-    int hservice_faxgetty();
+    void hylasv1(int obverb,int oblog);
+    void hylasv2(hyinst hyinstart, int obverb,int oblog);
+//    int hservice_faxgetty();
     int pruefhyla();
     int  loeschefax(int obverb, int oblog);
     int  loeschewaise(int obverb, int oblog);

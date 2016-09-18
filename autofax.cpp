@@ -1600,6 +1600,7 @@ paramcl::~paramcl()
   if (shfaxd) delete shfaxd;
   if (sfaxgetty) delete sfaxgetty;
   if (scapisuite) delete scapisuite;
+  if (shylafaxd) delete shylafaxd;
 } // paramcl::~paramcl()
 
 // wird aufgerufen in: bereinigewv
@@ -3573,6 +3574,10 @@ void paramcl::anhalten()
   befehl="sudo systemctl stop capisuite hylafax-faxq hylafax-hfaxd hylafax-faxgetty-"+hmodem+" hylafax >/dev/null 2>&1; true";
   systemrueck(befehl,obverb,oblog);
   */
+  
+  hylasv1(obverb,oblog);
+  hylasv2(hysrc,obverb,oblog);
+  capisv(obverb,oblog);
   if (sfaxgetty) sfaxgetty->stopdis(obverb,oblog);
   if (shfaxd) shfaxd->stopdis(obverb,oblog);
   if (sfaxq) sfaxq->stopdis(obverb,oblog);
@@ -4818,21 +4823,24 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
         } // while(getline(alt,zeile)) 
         neu.close();
         systemrueck(string("sudo chmod 770 '")+afaxsu+"'",0,1);
-        pmp->sfaxgetty->restart(obverb,oblog);
-        pmp->shfaxd->restart(obverb,oblog);
-        pmp->sfaxq->restart(obverb,oblog);
+        pmp->sfaxgetty->stop(obverb,oblog);
+        pmp->shfaxd->stop(obverb,oblog);
+        pmp->sfaxq->stop(obverb,oblog);
         /*
            systemrueck(string("sudo systemctl stop ")+pmp->sfaxgetty->sname+" "+pmp->shfaxd->sname+" "+pmp->sfaxq->sname,obverb,oblog);
            systemrueck(string("sudo pkill ")+pmp->sfaxgetty->ename+" "+pmp->shfaxd->ename+" "+pmp->sfaxq->ename,obverb,oblog);
          */
         Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+afaxsu+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
-        system((string("/usr/bin/sh ")+afaxsu+(obverb?" -verbose":"")).c_str()); 
+        system((string("/usr/bin/sh ")+afaxsu+(obverb?" -verbose":"")+" >/dev/null 2>&1").c_str()); 
+        pmp->sfaxgetty->restart(obverb,oblog);
+        pmp->shfaxd->restart(obverb,oblog);
+        pmp->sfaxq->restart(obverb,oblog);
         //        systemrueck(string("source ")+afaxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
         Log(blaus+Tx[T_Fertig_mit]+schwarz+afaxsu,1,oblog);
         servc::daemon_reload();
         //        systemrueck(string("rm ")+afaxsu,1,1);
-      }
-    }
+      } // if (neu.is_open()) 
+    } // if (alt.is_open()) 
 #else
     pmp->sfaxgetty->stop(obverb,oblog,1);
     pmp->shfaxd->stop(obverb,oblog,1);
@@ -4844,11 +4852,11 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
     Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+"sudo "+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
     int erg __attribute__((unused));
     pruefplatte();
-    if (!systemrueck("sudo "+faxsu+" -nointeractive"+(obverb?" -verbose":""),obverb,oblog)) {
+    if (!systemrueck("sudo "+faxsu+" -nointeractive"+(obverb?" -verbose":""),obverb,oblog,0,2)) {
      pmp->shfaxd->stop(obverb,oblog,1);
      pmp->sfaxq->stop(obverb,oblog,1);
      servc::daemon_reload();
-    }
+    } // if (!systemrueck("sudo "+faxsu+" -nointeractive"+(obverb?" -verbose":""),obverb,oblog,0,2)) 
     /*
     erg=system(("sudo $(which sh) $(sudo env \"PATH=$PATH\" which faxsetup) -nointeractive"+string(obverb?" -verbose":"")+
           " && sudo pkill hfaxd faxq >/dev/null 2>&1"
@@ -5074,15 +5082,35 @@ int paramcl::hservice_faxq_hfaxd()
   return hylafehler;
 } // void hservice_faxq_hfaxd()
 
+void paramcl::hylasv1(int obverb,int oblog)
+{
+  if (!this->sfaxgetty) this->sfaxgetty=new servc("hylafax-faxgetty-"+this->hmodem,"faxgetty");
+} // void paramcl::hylasv1(obverb,oblog)
+
+void paramcl::hylasv2(hyinst hyinstart,int obverb,int oblog)
+{
+  if (hyinstart==hysrc || hyinstart==hyppk) {
+    if (!sfaxq) sfaxq=new servc("hylafax-faxq","faxq");
+    if (!shfaxd) shfaxd=new servc("hylafax-hfaxd","hfaxd");
+    // => hyinstart==hypak
+  } else {
+    if (!sfaxq) sfaxq=new servc("","faxq");
+    if (!shfaxd) shfaxd=new servc("","hfaxd");
+  } // if (hyinstart==hysrc || hyinstart==hyppk) else
+  if (!shylafaxd) shylafaxd=new servc("hylafax","faxq hfaxd");
+} // void paramcl::hylasv2(obverb,oblog)
+
+/*
 // wird aufgerufen in: pruefhyla (1x)
 int paramcl::hservice_faxgetty()
-{
+KLA
   Log(violetts+"hservice_faxgetty()"+schwarz,obverb,oblog);
   return !this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0, meinname,this->faxgtpfad+" "+this->hmodem,"","","",this->obverb,this->oblog);
   // /etc/inittab werde von systemd nicht gelesen
-  /*,"cat /etc/inittab 2>/dev/null | grep -E '^[^#].*respawn.*faxgetty' >/dev/null 2>&1"*/ 
+  *//*,"cat /etc/inittab 2>/dev/null | grep -E '^[^#].*respawn.*faxgetty' >/dev/null 2>&1"*//*
 
-} // void hservice_faxgetty()
+KLZ // void hservice_faxgetty()
+*/
 
 
 // wird aufgerufen in main
@@ -5118,7 +5146,7 @@ int paramcl::pruefhyla()
     Log(string("Modem '")+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+gruen+brs+schwarz+Tx[T_wird_verwendet],obverb,oblog);
   } //   if (br<=0) else
   if (1) {
-    if (!this->sfaxgetty) this->sfaxgetty=new servc("hylafax-faxgetty-"+this->hmodem,"faxgetty");
+    hylasv1(obverb,oblog);
     for(unsigned versuch=0;versuch<3;versuch++) {
       // 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
       // pruefen, ob hylafax.service laeuft
@@ -5128,7 +5156,7 @@ int paramcl::pruefhyla()
       const char* const c_hfps="hylafax+";
       const char* const c_hfpc="hylafax+-client";
       char *hfr, *hfcr, *hff, *hfcf; // hylafax richtig, hylafax client richtig, hylafax falsch, hylafax client falsch
-      enum hyinst {keineh,hysrc,hypak,hyppk} hyinstart; // hyla source, hyla Paket, hylaplus Paket
+      hyinst hyinstart; // hyla source, hyla Paket, hylaplus Paket
       string hfftext;
       hylalaeuftnicht=1;
       hylafehlt=1;
@@ -5138,24 +5166,16 @@ int paramcl::pruefhyla()
       } else {
         hyinstart=hyppk;
       } 
+      hylasv2(hyinstart,obverb,oblog);
       if (hyinstart==hysrc || hyinstart==hyppk) {
-        // #define obhp // ob hylafax+ (statt hylafax)
-        //#ifdef obhp      
         hfr=(char*)c_hfps; hfcr=(char*)c_hfpc; hff=(char*)c_hfs; hfcf=(char*)c_hfc;
         hfftext=Tx[T_Hylafax_ohne_plus_entdeckt_muss_ich_loeschen];
-        sfaxq=new servc("hylafax-faxq","faxq");
-        shfaxd=new servc("hylafax-hfaxd","hfaxd");
         // => hyinstart==hypak
       } else {
-        //#else
         hfr=(char*)c_hfs; hfcr=(char*)c_hfc; hff=(char*)c_hfps; hfcf=(char*)c_hfpc;
         hfftext=Tx[T_Hylafaxplus_entdeckt_muss_ich_loeschen];
-        sfaxq=new servc("","faxq");
-        shfaxd=new servc("","hfaxd");
-        //#endif
-      }
+      } // if (hyinstart==hysrc || hyinstart==hyppk) else
       // 2) deren Existenz, Betrieb und ggf. Startbarkeit pruefen
-      if (!shylafaxd) shylafaxd=new servc("hylafax","faxq hfaxd");
       // wenn die richtigen Dienste laufen, dann nichts weiter ueberpruefen ..
       if ((this->sfaxq->obslaeuft(obverb-1,oblog) && this->shfaxd->obslaeuft(obverb-1,oblog)) /*|| this->shylafaxd->obslaeuft(obverb-1,oblog)*/) {
         Log(Tx[T_Hylafax_laeuft],obverb,oblog);
@@ -5200,7 +5220,8 @@ int paramcl::pruefhyla()
                 " && sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
                 " && sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
                 " && test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
-                " && sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive && echo $? = Ergebnis nach faxsetup -nointeractive"
+                " && sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
+                " && echo $? = Ergebnis nach faxsetup -nointeractive"
                 " && sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
                 " && sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload"
                 "'"
@@ -5355,7 +5376,7 @@ int paramcl::pruefhyla()
             // <<rot<<"hier faxsetup!"<<endl;
             hfaxsetup(this,obverb,oblog);
             // if (0)
-            hservice_faxgetty();
+            // hservice_faxgetty();
           }
         } // for (uchar iru=0;iru<3;iru++)
         // wenn !hylazukonf, dann auslesen, mit den Werten vergleichen und ggf. zu 1 setzen
@@ -5540,6 +5561,11 @@ int paramcl::kompiliere(string was,string endg, string vorcfg,string cfgbismake)
       " && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install '",obverb,oblog);
 } // int paramcl::kompiliere(string was,string endg,string nachtar, string vorcfg,string cfgbismake)
 
+// wird aufgerufen in: pruefcapi(), anhalten()
+void paramcl::capisv(int obverb,int oblog)
+{
+  if (!scapisuite) scapisuite=new servc("","capisuite");
+} // void paramcl::capisv(obverb,oblog)
 
 // wird aufgerufen in: untersuchespool, main
 int paramcl::pruefcapi()
@@ -5549,7 +5575,7 @@ int paramcl::pruefcapi()
   static uchar capischonerfolgreichinstalliert=0;
   int capilaeuft=0;
   unsigned versuch=0;
-  scapisuite=new servc("","capisuite");
+  capisv(obverb,oblog);
   for(;versuch<2;versuch++) {
     // capi4linux muss zum Laufen der Capisuite installiert sein
     // fuer fcpci muss in driver.c eingefuegt werden:

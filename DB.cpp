@@ -464,6 +464,7 @@ DB::~DB(void)
     case Postgres:
       break;
   }
+ if (dbsv) delete dbsv;
 } // DB::~DB(void)
 /*
    int DB::Abfrage(string sql,const char** erg,uchar obstumm) 

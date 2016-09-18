@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "18.09.16" "Version 0.40856" "\fBautofax\fR man page"
+.TH man 1 "18.09.16" "Version 0.40858" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -96,7 +96,9 @@ At last, call:
 .br
 (answer some questions of the program)
 .br
-The first execution may take some time.
+The first execution and the first processing of a fax may take some time.
+.br
+Preconditions see below.
 .SH USAGE
 Ideally, the program should have installed itsself after a single call (see above) in a self-running way (especially on openSUSE-Leap 42.1 or Ubuntu 16.040 (only with a modem via hylafax), possibly on others; systemctl (systemd) should run).
 .br
@@ -304,7 +306,7 @@ If more sql commands are specified and one of them does not give a result, the n
 19) The configuration file is being written, if necessary.
 .LP
 .SH PRECONDITIONS
-The program was adjusted to an installation of Opensuse 42.1 or Ubuntu 16.04 with standard options. The user must be allowed to call the command 'sudo'. 'GNU make' has to be installed (which shall be accomplished if necessary by calling install.sh). Further needed programs will be installed by the makefile or by autofax itsself via zypper or apt-get, if possible. Those are:
+The program was adjusted to an installation of Opensuse 42.1 or Ubuntu 16.04 with standard options. The user must be allowed to call the command 'sudo'. 'GNU make' has to be installed (which shall be accomplished if necessary by calling ./install.sh). Further needed programs will be installed by the makefile or by autofax itsself via zypper or apt-get, if possible. Those are:
 .br
 \fBmakefile:\fR
 .br
