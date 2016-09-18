@@ -497,6 +497,8 @@ enum T_
   T_nicht,
   T_Loesche_Fax_hylanr,
   T_erfolgreich_geloescht_fax_mit,
+  T_Geloescht,
+  T_Nicht_geloescht,
   T_MAX
 };
 
@@ -1398,6 +1400,10 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Loesche das Fax mit der hylanr: ","Deleting the fax with the hylano: "},
   // T_erfolgreich_geloescht_fax_mit
   {"Erfolgreich geloescht: Fax mit der hylanr: ","Successfully deleted: Fax with the hylano: "},
+  // T_Geloescht
+  {"Geloescht: ","Deleted: "},
+  // T_Nicht_geloescht
+  {"Nicht geloescht: ","Not deleted: "},
   {"",""}
 };
 
@@ -1540,7 +1546,12 @@ int fsfcl::loeschecapi(int obverb, int oblog)
   if (!stamm.empty()) {
     for(uchar ru=0;ru<2;ru++) {
       string zuloe=cspf+vtz+stamm+(ru?".txt":".sff");
-      zdng+=tuloeschen(zuloe,"",obverb,oblog);
+      if (tuloeschen(zuloe,"",obverb,oblog)) {
+       Log(blaus+Tx[T_Geloescht]+schwarz+zuloe,1,1);
+      } else {
+       Log(rots+Tx[T_Nicht_geloescht]+schwarz+zuloe,1,1);
+       zdng++;
+      }
     }
   } else { 
     zdng=1;
@@ -1586,7 +1597,7 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
       //      systemrueck("sudo su -c \"faxrm "+hylanr+"\" $(tac \""+pmp->xferfaxlog+"\"|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg);
       if (rmerg.size()) {
         if (rmerg[0].find(" removed")!=string::npos || rmerg[0].find("job does not exist")!=string::npos) {
-          Log(Tx[T_erfolgreich_geloescht_fax_mit]+hylanr,1,1);
+          Log(blaus+Tx[T_erfolgreich_geloescht_fax_mit]+schwarz+hylanr,1,1);
           return 0;
         }
         Log(rots+Tx[T_Fehlermeldung_beim_Loeschversuch_eines_Hyla_Faxes_mit_faxrm]+hylanr+"`:\n    "+schwarz+rmerg[0],1,1);
@@ -4172,8 +4183,8 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
               } else if (fsf.hylastat==gesandt) { // (hylastate=="7") // 7, status erfolgreich
                 // ... und ggf. in capisuite loeschen
                 fsf.loeschecapi(obverb,oblog);
-              }
-            }
+              } // if (fsf.hylastat==gescheitert) else
+            } // if (!hyla_uverz_nr) 
             einf.push_back(instyp(My->DBS,"hyladials",&hyladials));
             string bedingung=string("id=")+fsf.id;
             rupd.update(altspool,einf,ZDB,bedingung);
