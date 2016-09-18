@@ -48,6 +48,7 @@ const char *logdt="/var/log/autofaxvorgabe.log";// darauf wird in konsole.h verw
 
 // const char* logdatname;
 uchar ZDB=0; // 255 = mit Debug
+const char sep = 9; // geht auch: "[[:blank:]]"
 
 class Txautofaxcl: public TxB
 {
@@ -1459,8 +1460,8 @@ inline const char* FxStatS(FxStat *i)
       case gescheitert: return Tx[T_gescheitert];
       case fehlend: return Tx[T_nicht_in_der_Warteschlange];
       default:;
-    }
-  }
+    } // switch (*i)
+  } // if (i)
   return Tx[T_woasined];
 } // FxStatS
 
@@ -1535,9 +1536,9 @@ int fsfcl::loeschecapi(int obverb, int oblog)
       string zuloe=cspf+vtz+stamm+(ru?".txt":".sff");
       zdng+=tuloeschen(zuloe,"",obverb,oblog);
     }
-  } else {
+  } else { 
     zdng=1;
-  }
+  } // if (!stamm.empty())
   return zdng;
 } // void fsfcl::loeschecapi(int obverb, int oblog)
 
@@ -1555,11 +1556,17 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
     if (!findrueck.size()) {
       return 0;
     }
+    pmp->hylasv1(obverb,oblog);
+    pmp->hylasv2(hysrc,obverb,oblog);
     for(uchar iru=0;iru<vmax;iru++) {
       if (iru) {
-        systemrueck(string("sudo systemctl restart '")+pmp->sfaxgetty->sname+"' '"+pmp->shfaxd->sname+"' '"+pmp->sfaxq->sname+"'",obverb-1,oblog);
-      }
-      systemrueck(string("sudo faxrm ")+hylanr+" 2>&1",obverb,oblog,&rmerg);
+        if (pmp->sfaxgetty) pmp->sfaxgetty->restart(obverb-1,oblog);
+        if (pmp->shfaxd) pmp->shfaxd->restart(obverb-1,oblog);
+        if (pmp->sfaxq) pmp->sfaxq->restart(obverb-1,oblog);
+//      systemrueck(string("sudo systemctl restart '")+pmp->sfaxgetty->sname+"' '"+pmp->shfaxd->sname+"' '"+pmp->sfaxq->sname+"'",obverb-1,oblog);
+      } // if (iru) 
+      systemrueck("sudo su -c \"faxrm "+hylanr+"\" $(tac \""+pmp->xferfaxlog+"\"|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|"
+                  "cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg);
       if (rmerg.size()) {
         if (rmerg[0].find(" removed")!=string::npos || rmerg[0].find("job does not exist")!=string::npos) {
           return 0;
@@ -1595,12 +1602,12 @@ void paramcl::pruefggfmehrfach()
 
 paramcl::~paramcl()
 {
-  if (My) delete My;
-  if (sfaxq) delete sfaxq;
-  if (shfaxd) delete shfaxd;
-  if (sfaxgetty) delete sfaxgetty;
-  if (scapisuite) delete scapisuite;
-  if (shylafaxd) delete shylafaxd;
+  if (My) {delete My; My=0;}
+  if (sfaxq) {delete sfaxq; sfaxq=0;}
+  if (shfaxd) {delete shfaxd; shfaxd=0;}
+  if (sfaxgetty) {delete sfaxgetty; sfaxgetty=0;}
+  if (scapisuite) {delete scapisuite; scapisuite=0;}
+  if (shylafaxd) {delete shylafaxd; shylafaxd=0;}
 } // paramcl::~paramcl()
 
 // wird aufgerufen in: bereinigewv
@@ -3640,7 +3647,7 @@ int paramcl::loeschefax(int obverb, int oblog)
       } // if (Tippob(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+violett+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],"n")) 
     } else {
       Log(Tx[T_Kein_Fax_zum_Loeschen_vorhanden],1,oblog);
-    }
+    } // if (fsfv.size()) 
   } // !nrzf
   return 1;
 } // int paramcl::loeschefax(int obverb, int oblog)
@@ -6476,7 +6483,6 @@ int paramcl::xferlog(const string& jobid, string *erg, int obverb, int oblog)
   perfcl prf("xferlog");
 #endif
   int gefunden=0;
-  const char sep = 9; // geht auch: "[[:blank:]]"
 #define mitgrep
 #ifdef mitgrep
   svec grueck;
