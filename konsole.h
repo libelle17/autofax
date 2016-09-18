@@ -531,7 +531,7 @@ int multischlschreib(const string& fname, schlArr **confs, size_t cszahl);
 std::string base_name(const std::string& path);
 std::string dir_name(const std::string& path);
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
-                binaer ob0heissterfolg=wahr, binaer obergebnisanzeig=wahr, const string& ueberschr="",vector<errmsgcl> *errm=0);
+                int verbergen=0, binaer obergebnisanzeig=wahr, const string& ueberschr="",vector<errmsgcl> *errm=0);
 void pruefplatte();
 void pruefmehrfach(string& wen=nix);
 int setfaclggf(const string& datei, const binaer obunter=falsch, const int mod=4, binaer obimmer=falsch,int obverb=0,int oblog=0);
@@ -579,8 +579,9 @@ class servc {
     int restart(int obverb, int oblog);
     void start(int obverb, int oblog);
     int startundenable(int obverb, int oblog);
-    void stop(int obverb, int oblog);
-    void stopdis(int obverb, int oblog);
+    void stop(int obverb,int oblog,uchar mitpkill=0);
+    void stopdis(int obverb,int oblog,uchar mitpkill=0);
+    void pkill(int obverb,int oblog);
     int enableggf(int obverb,int oblog);
     int machfit(int obverb, int oblog, binaer nureinmal=falsch);
     static void daemon_reload(int obverb=0, int oblog=0);

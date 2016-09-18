@@ -1552,16 +1552,21 @@ std::string dir_name(const std::string& path)
 // ausser bei 'find', da die Zahl der Funde
 // bei rueck==0 liefert es das Ergebnis der system(..)-Funktion zurueck
 int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck, 
-    binaer ob0heissterfolg, binaer obergebnisanzeig, const string& ueberschr,vector<errmsgcl> *errm)
+    int verbergen, binaer obergebnisanzeig, const string& ueberschr,vector<errmsgcl> *errm)
 {
+// verbergen: 0 = nichts, 1= '2>/dev/null' anhaengen + true zurueckliefern, 2='>/dev/null 2>&1' anhaengen + Ergebnis zurueckliefern
+  binaer ob0heissterfolg=wahr;
   uchar neurueck=0;
   uchar weiter=0;
   int erg;
   string const * czg=&cmd;
   string hcmd;
   uchar obfind=(cmd.substr(0,4)=="find" || cmd.substr(0,9)=="sudo find");
-  if (obfind && (obverb<1 || strcmp(curruser(),"root"))) {
+  if (verbergen==1 || (obfind && (obverb<1 || strcmp(curruser(),"root")))) {
    hcmd=cmd+" 2>/dev/null; true";
+   czg=&hcmd;
+  } else if (verbergen==2) {
+   hcmd=cmd+" >/dev/null 2>&1";
    czg=&hcmd;
   }
   // "obfind: "<<(int)obfind<<", obverb: "<<(int)obverb<<", curruser(): "<<curruser()<<", '"<<violett<<*czg<<schwarz<<"'"<<endl;
@@ -1654,7 +1659,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
           ergebnis=(erg?rots:schwarzs)+ltoan(erg)+": "+errm->at(i).msg;
           break;
         }
-      }
+      } // for(size_t i=0;i<errm->size();i++) 
     }  // if (errm)
     if (ergebnis.empty()) {
       if (ob0heissterfolg) {
@@ -2347,9 +2352,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
         } // if (svgibts && serviceda) else
       } // if (!svgibts || !obslaeuft(obverb,oblog)) 
       if (servicelaeuft) { 
-        if (systemrueck("systemctl is-enabled "+sname,obverb-1,oblog)) {
-          systemrueck("sudo systemctl enable "+sname,obverb,oblog);
-        }
+        enableggf(obverb,oblog);
         break;
       }
     } //  for(uchar iru=0;iru<2;iru++) 
@@ -2379,7 +2382,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         svec srueck;
         serviceda=1;
         servicelaeuft=0;
-        systemrueck("systemctl --lines 0 status '"+sname+"' 2>/dev/null",obverb,oblog,&srueck);
+        systemrueck("systemctl --lines 0 status '"+sname+"'",obverb,oblog,&srueck,1);
         for(size_t j=0;j<srueck.size();j++) {
           string *sp=&srueck[j];
           if (sp->find("exited")!=string::npos) {
@@ -2417,25 +2420,30 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
     string f1=froh+Txk[T_nicht_geladen];
     errv.push_back(errmsgcl(0,f0));
     errv.push_back(errmsgcl(1,f1));
-    serviceda=!systemrueck("systemctl status '"+sname+"'| grep ' loaded '",obverb,oblog,0,wahr,wahr,"",&errv);
+    serviceda=!systemrueck("systemctl status '"+sname+"'| grep ' loaded '",obverb,oblog,0,falsch,wahr,"",&errv);
   }
   return servicelaeuft;
 } // int servc::obslaeuft(int obverb,int oblog)
 
+void servc::pkill(int obverb,int oblog)
+{
+    systemrueck(("sudo pkill '")+ename+"'",obverb-1,oblog,0,2);
+}
+
 int servc::restart(int obverb,int oblog)
 {
   for(int i=0;i<2;i++) {
-    systemrueck(string("sudo systemctl restart '")+sname+"' >/dev/null 2>&1",obverb,oblog);
+    systemrueck(string("sudo systemctl restart '")+sname+"'",obverb,oblog,0,2);
     if (obslaeuft(obverb,oblog)) break;
     if (i) break;
-    systemrueck(("sudo pkill '")+ename+"' >/dev/null 2>&1",obverb-1,oblog);
+    pkill(obverb,oblog);
   }
   return servicelaeuft;
 } // int servc::restart(int obverb,int oblog)
 
 void servc::start(int obverb,int oblog)
 {
-  systemrueck(string("sudo systemctl start '")+sname+"' >/dev/null 2>&1",obverb,oblog);
+  systemrueck(string("sudo systemctl start '")+sname+"'",obverb,oblog,0,2);
 } // int servc::start(int obverb,int oblog)
 
 int servc::startundenable(int obverb,int oblog)
@@ -2445,20 +2453,23 @@ int servc::startundenable(int obverb,int oblog)
   return obslaeuft(obverb,oblog);
 } // int servc::start(int obverb,int oblog)
 
-void servc::stop(int obverb,int oblog)
+void servc::stop(int obverb,int oblog,uchar mitpkill)
 {
-  systemrueck(string("sudo systemctl stop '")+sname+"' >/dev/null 2>&1",obverb,oblog);
+  systemrueck("sudo systemctl stop '"+sname+"'",obverb,oblog,0,2);
+  if (mitpkill) {
+    pkill(obverb,oblog);
+  }
 } // int servc::stop(int obverb,int oblog)
 
-void servc::stopdis(int obverb,int oblog)
+void servc::stopdis(int obverb,int oblog,uchar mitpkill)
 {
   stop(obverb,oblog);
-  systemrueck(string("sudo systemctl disable '")+sname+"' >/dev/null 2>&1",obverb,oblog);
+  systemrueck(string("sudo systemctl disable '")+sname+"'",obverb,oblog,0,2);
 } // int servc::stop(int obverb,int oblog)
 
 int servc::enableggf(int obverb,int oblog)
 {
- return systemrueck(string("systemctl is-enabled '")+sname+"' >/dev/null 2>&1 || sudo systemctl enable '"+sname+"' >/dev/null 2>&1",obverb,oblog);
+ return systemrueck(string("systemctl is-enabled '")+sname+"' >/dev/null 2>&1 || sudo systemctl enable '"+sname+"'",obverb,oblog,0,2);
 }
 
 void servc::daemon_reload(int obverb, int oblog)

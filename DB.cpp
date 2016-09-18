@@ -208,6 +208,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
           break;
         default: break;
       }
+      if (!dbsv) dbsv=new servc(db_systemctl_name,"mysqld");
       if (!oisok) {
         // schauen, ob die Exe-Datei da ist 
         for (int iru=0;iru<2;iru++) {
@@ -281,7 +282,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
           }
           if (!datadirda) {
             systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db"+string(obverb?"":" 2>/dev/null")+"`",1,1);
-            systemrueck("sudo systemctl start "+db_systemctl_name,obverb,oblog);
+            dbsv->start(obverb,oblog);
           }
           oisok=1;
         } // if (installiert)
@@ -327,13 +328,13 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                 if (!strcasecmp(host.c_str(),"localhost")) {
                   Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_mysql_zu_starten],1,1);
 #ifdef linux
-                  systemrueck("sudo systemctl enable "+db_systemctl_name,1,1); 
+                  dbsv->enableggf(1,1);
                   svec gstat;
                   systemrueck("getfacl -e -t "+datadir+" 2>/dev/null | grep 'user[ \t]*"+"mysql"+"[ \t]*rwx' || true",obverb,oblog,&gstat);
                   if (!gstat.size()) {
                     systemrueck("sudo setfacl -Rm 'u:mysql:7' '"+datadir+"'",obverb,oblog);
                   }
-                  if (!systemrueck("sudo systemctl start "+db_systemctl_name,1,1)) {
+                  if (dbsv->restart(1,1)) {
                     Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
                   }
 #endif
