@@ -5643,11 +5643,15 @@ int paramcl::pruefcapi()
             Log(string(Tx[T_Kernelversion])+blau+unbuf.release+schwarz,obverb,oblog);
             struct stat entryfc;
             string fcpciko = string("/lib/modules/")+unbuf.release+"/kernel/extras/fcpci.ko";
+              cout<<"Stelle 0"<<endl;
             if (lstat(fcpciko.c_str(), &entryfc)) {
+              cout<<"Stelle 1"<<endl;
               Log(string(Tx[T_Datei])+blau+fcpciko+schwarz+Tx[T_nichtgefFcpciMfdKinstallierwerden],obverb,1);
               //              systemrueck("which zypper 2>/dev/null && zypper -n in kernel-source || "
               //                  "{ which apt-get 2>/dev/null && apt-get --assume-yes install linux-source; }", 1+obverb,oblog);
+              cout<<"Stelle 2"<<endl;
               linst.doinst("kernel-source",1+obverb,oblog);
+              cout<<"Stelle 3"<<endl;
 /*              
               const string qvz="/usr/src";
               const string versi="fcpci-3.10.0";
@@ -5699,7 +5703,9 @@ int paramcl::pruefcapi()
         // make olddefconfig
         // dnf install elfutils-libelf-devel
         
+              cout<<"Stelle 4"<<endl;
         if (systemrueck("sudo modprobe capi",obverb,oblog)) {
+              cout<<"Stelle 5"<<endl;
         // nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
          int altobverb=obverb;obverb=2;
          systemrueck("sudo dnf install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
@@ -5717,6 +5723,7 @@ int paramcl::pruefcapi()
          exit(70);
          obverb=altobverb;
         }
+              cout<<"Stelle 10"<<endl;
         systemrueck("sudo modprobe capidrv",obverb,oblog);
       } // if (!fcpcida || !capida || !capidrvda) 
       pruefrules(obverb,oblog);
