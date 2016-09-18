@@ -5719,8 +5719,7 @@ int paramcl::pruefcapi()
           // P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
           if (!obprogda("sfftobmp",obverb,oblog)) {
             string befehl = "cd "+instverz+
-              " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master; } "
-              " && tar xvf jpegsrc.v9b.tar.gz >/dev/null && cd jpeg-9b && ./configure && make >/dev/null 2>&1 && sudo make install ";
+              " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install; } ";
               if (!systemrueck(befehl,obverb,oblog)) {
                 if (!linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog)) {
                   befehl= "cd "+instverz+
@@ -5759,7 +5758,7 @@ int paramcl::pruefcapi()
           // i4l-base geloescht
           capischonerfolgreichinstalliert=!linst.doinst("-f capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
         } // if (lsys.getsys(obverb,oblog)==sus) 
-
+cout<<rot<<"Hier capischonerfolgreichinstalliert: "<<violett<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
         if (!capischonerfolgreichinstalliert) {
           holvongithub("capisuite_copy");
           svec csrueck;
