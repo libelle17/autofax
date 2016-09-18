@@ -1548,8 +1548,7 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
 {
   Log(violetts+Tx[T_loeschehyla]+schwarz,obverb,oblog);
   if (hylanr!="0" && !hylanr.empty()) {
-    svec rmerg;
-    uchar vmax=5;
+    const uchar vmax=5;
     svec findrueck;
     // wenn Datei nicht mehr in sendq, sondern in doneq, sei es gelungen oder gescheitert, dann ist loeschen sinnlos
     systemrueck(("sudo find '")+pmp->hsendqvz+"' -name q"+hylanr,obverb,oblog,&findrueck);
@@ -1565,8 +1564,19 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
         if (pmp->sfaxq) pmp->sfaxq->restart(obverb-1,oblog);
 //      systemrueck(string("sudo systemctl restart '")+pmp->sfaxgetty->sname+"' '"+pmp->shfaxd->sname+"' '"+pmp->sfaxq->sname+"'",obverb-1,oblog);
       } // if (iru) 
-      systemrueck("sudo su -c \"faxrm "+hylanr+"\" $(tac \""+pmp->xferfaxlog+"\"|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|"
-                  "cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg);
+
+     svec rueck, rmerg;
+     string fuser;
+     systemrueck("tac \""+pmp->xferfaxlog+"\" 2>/dev/null|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;      s/\"$//'",
+                 obverb, oblog,&rueck);
+     if (rueck.size() && rueck[0]!="root") {
+      fuser=rueck[0]; 
+      systemrueck("sudo su -c \"faxrm "+hylanr+"\" "+fuser,oblog,obverb,&rmerg);
+     } else {
+      systemrueck("sudo faxrm "+hylanr,oblog,obverb,&rmerg);
+     }
+// folgender Befehl kann einen tac: write error: Broken pipe -Fehler erzeugen
+//      systemrueck("sudo su -c \"faxrm "+hylanr+"\" $(tac \""+pmp->xferfaxlog+"\"|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg);
       if (rmerg.size()) {
         if (rmerg[0].find(" removed")!=string::npos || rmerg[0].find("job does not exist")!=string::npos) {
           return 0;
