@@ -497,8 +497,6 @@ enum T_
   T_nicht,
   T_Loesche_Fax_hylanr,
   T_erfolgreich_geloescht_fax_mit,
-  T_Geloescht,
-  T_Nicht_geloescht,
   T_MAX
 };
 
@@ -1400,10 +1398,6 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Loesche das Fax mit der hylanr: ","Deleting the fax with the hylano: "},
   // T_erfolgreich_geloescht_fax_mit
   {"Erfolgreich geloescht: Fax mit der hylanr: ","Successfully deleted: Fax with the hylano: "},
-  // T_Geloescht
-  {"Geloescht: ","Deleted: "},
-  // T_Nicht_geloescht
-  {"Nicht geloescht: ","Not deleted: "},
   {"",""}
 };
 
@@ -1546,12 +1540,7 @@ int fsfcl::loeschecapi(int obverb, int oblog)
   if (!stamm.empty()) {
     for(uchar ru=0;ru<2;ru++) {
       string zuloe=cspf+vtz+stamm+(ru?".txt":".sff");
-      if (tuloeschen(zuloe,"",obverb,oblog)) {
-       Log(blaus+Tx[T_Geloescht]+schwarz+zuloe,1,1);
-      } else {
-       Log(rots+Tx[T_Nicht_geloescht]+schwarz+zuloe,1,1);
-       zdng++;
-      }
+      zdng+=tuloeschen(zuloe,"",1,oblog);
     }
   } else { 
     zdng=1;
@@ -3716,7 +3705,7 @@ int paramcl::loescheallewartende(int obverb, int oblog)
     systemrueck(cmd,obverb,oblog,&allec);
     erg+=allec.size();
     for(size_t i=0;i<allec.size();i++) {
-      tuloeschen(allec[i],cuser,obverb,oblog);
+      tuloeschen(allec[i],cuser,1,oblog);
       if (allec[i].find(".sff")!=string::npos) {
         string fname=base_name(allec[i]);
         RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE capispooldatei='"+fname+"'");
