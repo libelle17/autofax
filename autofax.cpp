@@ -1569,6 +1569,7 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
       string fuser;
       systemrueck("tac \""+pmp->xferfaxlog+"\" 2>/dev/null|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;      s/\"$//'",
           obverb, oblog,&rueck);
+      Log("Loesche Fax hylanr: "+hylanr,-1,0);
       if (rueck.size() && rueck[0]!="root") {
         fuser=rueck[0]; 
         systemrueck("sudo su -c \"faxrm "+hylanr+"\" "+fuser+" 2>&1",oblog,obverb,&rmerg);
