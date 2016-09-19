@@ -5751,7 +5751,24 @@ int paramcl::pruefcapi()
          cout<<"Stelle 11"<<endl;
          cout<<"Stelle 11"<<endl;
          for(unsigned iru=0;iru<2;iru++) {
-           if (!systemrueck("cd "+gethome()+"/rpmbuild/SPECS && rpmbuild -bp --target=$(uname -m) kernel.spec"+kstring,obverb,oblog)) break;
+           if (!systemrueck("cd "+gethome()+"/rpmbuild/SPECS && rpmbuild -bp --target=$(uname -m) kernel.spec",obverb,oblog)) {
+         cout<<"Stelle 12"<<endl;
+         cout<<"Stelle 12"<<endl;
+         cout<<"Stelle 12"<<endl;
+         cout<<"Stelle 12"<<endl;
+         cout<<"Stelle 12"<<endl;
+            systemrueck("dnf -y install kernel-devel",obverb,oblog);
+         cout<<"Stelle 13"<<endl;
+         cout<<"Stelle 13"<<endl;
+         cout<<"Stelle 13"<<endl;
+         cout<<"Stelle 13"<<endl;
+         cout<<"Stelle 13"<<endl;
+         cout<<"Stelle 13"<<endl;
+         cout<<"Stelle 13"<<endl;
+            systemrueck("cd "+gethome()+"/rpmbuild/BUILD/"+kstring+" && make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules",
+                        obverb,oblog);
+           break;
+           }
            if (iru) break;
            systemrueck("dnf -y install $(cd '"+gethome()+"/rpmbuild/SPECS' && rpmbuild -bp --target=$(uname -m) kernel.spec 2>&1 >/dev/null "
                "| sed '/is needed by/!d;s/^[[:blank:]]*\\(.*\\) is needed by.*/\\1/')",obverb,oblog);
