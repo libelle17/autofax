@@ -5709,7 +5709,7 @@ int paramcl::pruefcapi()
               cout<<"Stelle 5"<<endl;
         // nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
          int altobverb=obverb;obverb=2;
-//         systemrueck("sudo dnf install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
+         systemrueck("sudo dnf -y install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
               cout<<"Stelle 6"<<endl;
               cout<<"Stelle 6"<<endl;
               cout<<"Stelle 6"<<endl;
@@ -5739,15 +5739,34 @@ int paramcl::pruefcapi()
               cout<<"Stelle 9"<<endl;
          if (rueck.size()) { kstring=rueck[0];
 
-         systemrueck("cd "+instverz+" && sudo dnf builddep "+kstring,obverb,oblog);
+         systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
+              cout<<"Stelle 10"<<endl;
+              cout<<"Stelle 10"<<endl;
+              cout<<"Stelle 10"<<endl;
+              cout<<"Stelle 10"<<endl;
               cout<<"Stelle 10"<<endl;
          systemrueck("cd "+instverz+" && rpm -Uvh "+kstring,obverb,oblog);
-              cout<<"Stelle 11"<<endl;
+         cout<<"Stelle 11"<<endl;
+         cout<<"Stelle 11"<<endl;
+         cout<<"Stelle 11"<<endl;
+         cout<<"Stelle 11"<<endl;
+         for(unsigned iru=0;iru<2;iru++) {
+           if (!systemrueck("cd "+gethome()+"/rpmbuild/SPECS && rpmbuild -bp --target=$(uname -m) kernel.spec"+kstring,obverb,oblog)) break;
+           if (iru) break;
+           systemrueck("dnf -y install $(cd '"+gethome()+"/rpmbuild/SPECS' && rpmbuild -bp --target=$(uname -m) kernel.spec 2>&1 >/dev/null "
+               "| sed '/is needed by/!d;s/^[[:blank:]]*\\(.*\\) is needed by.*/\\1/')",obverb,oblog);
+           // dnf install audit-libs-devel binutils-devel bison elfutils-devel flex hmaccalc newt-devel numactl-devel 
+           //     pciutils-devel "perl(ExtUtils::Embed)" perl-devel xz-devel
+           // dann nochmal
+         }
+         // dann nach Anleitung: dnf -y install kernel-devel
+         // cd ~/rpmbuild/BUILD/kernel<version>/linux<version>
+         // make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules
          }
          exit(70);
          obverb=altobverb;
         }
-              cout<<"Stelle 10"<<endl;
+        cout<<"Stelle 10"<<endl;
         systemrueck("sudo modprobe capidrv",obverb,oblog);
       } // if (!fcpcida || !capida || !capidrvda) 
       pruefrules(obverb,oblog);
