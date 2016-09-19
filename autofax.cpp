@@ -5709,7 +5709,7 @@ int paramcl::pruefcapi()
               cout<<"Stelle 5"<<endl;
         // nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
          int altobverb=obverb;obverb=2;
-         systemrueck("sudo dnf install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
+//         systemrueck("sudo dnf install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
               cout<<"Stelle 6"<<endl;
               cout<<"Stelle 6"<<endl;
               cout<<"Stelle 6"<<endl;
