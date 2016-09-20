@@ -5765,8 +5765,7 @@ int paramcl::pruefcapi()
          cout<<"Stelle 13"<<endl;
          cout<<"Stelle 13"<<endl;
          cout<<"Stelle 13"<<endl;
-            systemrueck("cd "+gethome()+"/rpmbuild/BUILD/"+kstring+" && make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules",
-                        obverb,oblog);
+            systemrueck("KSTRING="+kstring+" && cd $HOME/rpmbuild/BUILD/$(echo $KSTRING|cut -d. -f1,2,4)/`uname -r` && make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules",obverb,oblog);
            break;
            }
            if (iru) break;
