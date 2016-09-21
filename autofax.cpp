@@ -5706,6 +5706,7 @@ int paramcl::pruefcapi()
         
               cout<<"Stelle 4"<<endl;
         if (systemrueck("sudo modprobe capi",obverb,oblog)) {
+           exit(0);
            systemrueck("sudo dnf -y install kernel-modules-extra && "
                        "{ lsmod | grep capidrv || sudo modprobe capidrv; lsmod | grep kernelcapi || sudo modprobe kernelcapi; }",obverb,oblog);
               cout<<"Stelle 5"<<endl;
