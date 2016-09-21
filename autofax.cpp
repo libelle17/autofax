@@ -5706,11 +5706,12 @@ int paramcl::pruefcapi()
         
               cout<<"Stelle 4"<<endl;
         if (systemrueck("sudo modprobe capi",obverb,oblog)) {
-              exit(0);
+           systemrueck("sudo dnf -y install kernel-modules-extra && "
+                       "{ lsmod | grep capidrv || sudo modprobe capidrv; lsmod | grep kernelcapi || sudo modprobe kernelcapi; }",obverb,oblog);
               cout<<"Stelle 5"<<endl;
         // nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
          int altobverb=obverb;obverb=2;
-         systemrueck("sudo dnf -y install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
+//         systemrueck("sudo dnf -y install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
               cout<<"Stelle 6"<<endl;
               cout<<"Stelle 6"<<endl;
               cout<<"Stelle 6"<<endl;
