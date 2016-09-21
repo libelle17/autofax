@@ -498,6 +498,9 @@ enum T_
   T_Loesche_Fax_hylanr,
   T_erfolgreich_geloescht_fax_mit,
   T_Moment_muss_Kernel_herunterladen,
+  T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten,
+  T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten,
+  T_aufrufen,
   T_MAX
 };
 
@@ -1401,6 +1404,16 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Erfolgreich geloescht: Fax mit der hylanr: ","Successfully deleted: Fax with the hylano: "},
   // T_Moment_muss_Kernel_herunterladen
   {"Moment, muss Kernel-rpm herunterladen ...","One moment, must download kernel-rpm ..."},
+  // T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten,
+  {"Zur Inbetriebnahme der Capisuite muss das Modul capi geladen werden. Zu dessen Erstellung musste der Befehl "
+            "'sudo dnf -y install kernel-modules-extra' aufgerufen werden, des den Linux-Kernel aktualisiert hat (",
+   "In order to use the capisuite, the module capi has to be loaded. In order to generate this, the command "
+   "'sudo dnf -y install kernel-modules-extra' hat to be called, which updated the linux kernel ("},
+  // T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten
+  {"). Bitte zu dessen Verwendung den Rechner neu starten und dann nochmal ",
+   "). Please reboot and afterwords call "},
+  // T_aufrufen,
+  {" aufrufen!"," again!"},
   {"",""}
 };
 
@@ -5629,6 +5642,7 @@ int paramcl::pruefcapi()
         if (!capida) {if (!rueck[i].find("capi")) {capida=1;continue;}}
         if (fcpcida && capida && capidrvda) break;
       }
+      lsysen system=lsys.getsys(obverb,oblog);
       if (!fcpcida || !capida || !capidrvda) {
         Log("Lade Capi-Module ...",-1,0);
         systemrueck("sudo modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog,0,1);
@@ -5704,87 +5718,57 @@ int paramcl::pruefcapi()
         // make olddefconfig
         // dnf install elfutils-libelf-devel
         
-              cout<<"Stelle 4"<<endl;
         if (systemrueck("sudo modprobe capi",obverb,oblog)) {
-           exit(0);
-           systemrueck("sudo dnf -y install kernel-modules-extra && "
-                       "{ lsmod | grep capidrv || sudo modprobe capidrv; lsmod | grep kernelcapi || sudo modprobe kernelcapi; }",obverb,oblog);
-              cout<<"Stelle 5"<<endl;
-        // nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
-         int altobverb=obverb;obverb=2;
-//         systemrueck("sudo dnf -y install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
-              cout<<"Stelle 6"<<endl;
-              cout<<"Stelle 6"<<endl;
-              cout<<"Stelle 6"<<endl;
-              cout<<"Stelle 6"<<endl;
-              cout<<"Stelle 6"<<endl;
-              cout<<"Stelle 6"<<endl;
-         systemrueck("sudo rpmdev-setuptree",obverb,oblog);
-              cout<<"Stelle 7"<<endl;
-              cout<<"Stelle 7"<<endl;
-              cout<<"Stelle 7"<<endl;
-              cout<<"Stelle 7"<<endl;
-              cout<<"Stelle 7"<<endl;
-              cout<<"Stelle 7"<<endl;
-              cout<<"Stelle 7"<<endl;
-         Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
-         systemrueck("cd "+instverz+" && sudo dnf download --source kernel",obverb,oblog);
-              cout<<"Stelle 8"<<endl;
-              cout<<"Stelle 8"<<endl;
-              cout<<"Stelle 8"<<endl;
-              cout<<"Stelle 8"<<endl;
-              cout<<"Stelle 8"<<endl;
-              cout<<"Stelle 8"<<endl;
-              cout<<"Stelle 8"<<endl;
-         svec rueck;
-         string kstring;
-         systemrueck("cd "+instverz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);
-              cout<<"Stelle 9"<<endl;
-         if (rueck.size()) { kstring=rueck[0];
-
-         systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
-              cout<<"Stelle 10"<<endl;
-              cout<<"Stelle 10"<<endl;
-              cout<<"Stelle 10"<<endl;
-              cout<<"Stelle 10"<<endl;
-              cout<<"Stelle 10"<<endl;
-         systemrueck("cd "+instverz+" && rpm -Uvh "+kstring,obverb,oblog);
-         cout<<"Stelle 11"<<endl;
-         cout<<"Stelle 11"<<endl;
-         cout<<"Stelle 11"<<endl;
-         cout<<"Stelle 11"<<endl;
-         for(unsigned iru=0;iru<2;iru++) {
-           if (!systemrueck("cd "+gethome()+"/rpmbuild/SPECS && rpmbuild -bp --target=$(uname -m) kernel.spec",obverb,oblog)) {
-         cout<<"Stelle 12"<<endl;
-         cout<<"Stelle 12"<<endl;
-         cout<<"Stelle 12"<<endl;
-         cout<<"Stelle 12"<<endl;
-         cout<<"Stelle 12"<<endl;
-            systemrueck("dnf -y install kernel-devel",obverb,oblog);
-         cout<<"Stelle 13"<<endl;
-         cout<<"Stelle 13"<<endl;
-         cout<<"Stelle 13"<<endl;
-         cout<<"Stelle 13"<<endl;
-         cout<<"Stelle 13"<<endl;
-         cout<<"Stelle 13"<<endl;
-         cout<<"Stelle 13"<<endl;
-            systemrueck("KSTRING="+kstring+" && cd $HOME/rpmbuild/BUILD/$(echo $KSTRING|cut -d. -f1,2,4)/linux-`uname -r` && make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules",obverb,oblog);
-           break;
-           }
-           if (iru) break;
-           systemrueck("dnf -y install $(cd '"+gethome()+"/rpmbuild/SPECS' && rpmbuild -bp --target=$(uname -m) kernel.spec 2>&1 >/dev/null "
-               "| sed '/is needed by/!d;s/^[[:blank:]]*\\(.*\\) is needed by.*/\\1/')",obverb,oblog);
-           // dnf install audit-libs-devel binutils-devel bison elfutils-devel flex hmaccalc newt-devel numactl-devel 
-           //     pciutils-devel "perl(ExtUtils::Embed)" perl-devel xz-devel
-           // dann nochmal
-         }
-         // dann nach Anleitung: dnf -y install kernel-devel
-         // cd ~/rpmbuild/BUILD/kernel<version>/linux<version>
-         // make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules
-         }
-         exit(70);
-         obverb=altobverb;
-        }
+          if (system==fed) {
+            svec vrueck1,vrueck2;
+            string v1,v2;
+            systemrueck("sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5",obverb,oblog,&vrueck1);
+            if (vrueck1.size()) v1=vrueck1[0];
+            systemrueck("sudo dnf -y install kernel-modules-extra && "
+                "{ lsmod | grep capidrv || sudo modprobe capidrv; lsmod | grep kernelcapi || sudo modprobe kernelcapi; }",obverb,oblog);
+            systemrueck("sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5",obverb,oblog,&vrueck2);
+            if (vrueck2.size()) v2=vrueck2[0];
+            if (v1!=v2) {
+              Log(blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
+                  +schwarz+v2+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
+                  +schwarz,1,1);
+              exit(0);
+            } // if (v1!=v2) 
+            // nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
+            int altobverb=obverb;obverb=2;
+            //         systemrueck("sudo dnf -y install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
+            systemrueck("sudo rpmdev-setuptree",obverb,oblog);
+            Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
+            systemrueck("cd "+instverz+" && sudo dnf download --source kernel",obverb,oblog);
+            svec rueck;
+            string kstring;
+            systemrueck("cd "+instverz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);
+            if (rueck.size()) { 
+              kstring=rueck[0];
+              systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
+              systemrueck("cd "+instverz+" && rpm -Uvh "+kstring,obverb,oblog);
+              for(unsigned iru=0;iru<2;iru++) {
+                if (!systemrueck("cd "+gethome()+"/rpmbuild/SPECS && rpmbuild -bp --target=$(uname -m) kernel.spec",obverb,oblog)) {
+                  systemrueck("dnf -y install kernel-devel",obverb,oblog);
+                  systemrueck("KSTRING="+kstring+" && cd $HOME/rpmbuild/BUILD/$(echo $KSTRING|cut -d. -f1,2,4)/linux-`uname -r` && "
+                              "make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules",obverb,oblog);
+                  break;
+                }
+                if (iru) break;
+                systemrueck("dnf -y install $(cd '"+gethome()+"/rpmbuild/SPECS' && rpmbuild -bp --target=$(uname -m) kernel.spec 2>&1 >/dev/null "
+                    "| sed '/is needed by/!d;s/^[[:blank:]]*\\(.*\\) is needed by.*/\\1/')",obverb,oblog);
+                // dnf install audit-libs-devel binutils-devel bison elfutils-devel flex hmaccalc newt-devel numactl-devel 
+                //     pciutils-devel "perl(ExtUtils::Embed)" perl-devel xz-devel
+                // dann nochmal
+              } // for(unsigned iru=0;iru<2;iru++) 
+              // dann nach Anleitung: dnf -y install kernel-devel
+              // cd ~/rpmbuild/BUILD/kernel<version>/linux<version>
+              // make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules
+            }
+            exit(70);
+            obverb=altobverb;
+          } // if (system==fed) 
+        } // if (systemrueck("sudo modprobe capi",obverb,oblog))
         cout<<"Stelle 10"<<endl;
         systemrueck("sudo modprobe capidrv",obverb,oblog);
       } // if (!fcpcida || !capida || !capidrvda) 
@@ -5808,7 +5792,6 @@ int paramcl::pruefcapi()
            return 1;
            }
          */
-        lsysen system=lsys.getsys(obverb,oblog);
         if (system!=sus)
           linst.doggfinst("capiutils",obverb+1,oblog);
         if (system==fed) {
