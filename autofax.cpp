@@ -5734,6 +5734,7 @@ int paramcl::pruefcapi()
                   +schwarz,1,1);
               exit(0);
             } // if (v1!=v2) 
+            cout<<"vi: "<<v1<<"\n"<<"v2: "<<v2<<endl;
             // nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
             int altobverb=obverb;obverb=2;
             //         systemrueck("sudo dnf -y install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
