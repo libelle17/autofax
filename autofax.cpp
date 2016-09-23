@@ -5728,13 +5728,13 @@ int paramcl::pruefcapi()
                 "{ lsmod | grep capidrv || sudo modprobe capidrv; lsmod | grep kernelcapi || sudo modprobe kernelcapi; }",obverb,oblog);
             systemrueck("sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5",obverb,oblog,&vrueck2);
             if (vrueck2.size()) v2=vrueck2[0];
+//            cout<<"vi: "<<v1<<"\n"<<"v2: "<<v2<<endl;
             if (v1!=v2) {
               Log(blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
                   +schwarz+v2+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
                   +schwarz,1,1);
-//              exit(0);
+              exit(0);
             } // if (v1!=v2) 
-            cout<<"vi: "<<v1<<"\n"<<"v2: "<<v2<<endl;
 //            exit(1);
             // nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
             int altobverb=obverb;obverb=2;
