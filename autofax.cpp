@@ -498,9 +498,13 @@ enum T_
   T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten,
   T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten,
   T_aufrufen,
-  T_Text_aus_empfangenen_Faxen_und_gesandten_Bildern_wird_ermittelt,
-  T_soll_Text_in_empfangenen_Faxen_und_gesandten_Bildern_mit_OCR_gesucht_werden,
+  T_Text_aus_empfangenen_Faxen_wird_ermittelt,
+  T_Text_aus_gesandten_Bildern_wird_ermittelt,
+  T_soll_Text_in_empfangenen_Faxen_mit_OCR_gesucht_werden,
+  T_soll_Text_in_gesandten_Bildern_mit_OCR_gesucht_werden,
   T_nicht_angekommen,
+  T_Optionen_die_nicht_gespeichert_werden,
+  T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden,
   T_MAX
 };
 
@@ -1408,13 +1412,22 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
    "). Please reboot and afterwords call "},
   // T_aufrufen,
   {" aufrufen!"," again!"},
-  // T_Text_aus_empfangenen_Faxen_und_gesandten_Bildern_wird_ermittelt
-  {"Text aus empfangenen Faxen und gesandten Bildern wird ermittelt","Text from received faxes and sent pictures will bei filtered"},
-  // T_soll_Text_in_empfangenen_Faxen_und_gesandten_Bildern_mit_OCR_gesucht_werden
-  {"Soll Text in empfangenen Faxen und gesandten Bildern (mit \"OCR\") gesucht werden?",
-   "Shall text from received faxes and sent pictures be searched (wicht \"ocr\")?"},
+  // T_Text_aus_empfangenen_Faxen_wird_ermittelt
+  {"Text aus empfangenen Faxen wird ermittelt","Text from received faxes will bei filtered"},
+  // T_Text_aus_gesandten_Bildern_wird_ermittelt
+  {"Text aus gesandten Bildern wird ermittelt","Text from sent pictures will bei filtered"},
+  // T_soll_Text_in_empfangenen_Faxen_mit_OCR_gesucht_werden
+  {"Soll Text in empfangenen Faxen (mit \"OCR\") gesucht werden?",
+   "Shall text from received faxes be searched (with \"ocr\")?"},
+  // T_soll_Text_in_gesandten_Bildern_mit_OCR_gesucht_werden
+  {"Soll Text in gesandten Bildern (mit \"OCR\") gesucht werden?",
+   "Shall text from sent pictures be searched (with \"ocr\")?"},
   // T_nicht_angekommen
   {"nicht angekommen ","not arrived "},
+  // T_Optionen_die_nicht_gespeichert_werden
+  {"Optionen, die nicht gespeichert werden: ","Options which are not saved: "},
+  // T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden,
+  {"Optionen, die in der Konfigurationsdatei gespeichert werden: ","Options which will be saved in the configuration file: "},
   {"",""}
 };
 
@@ -1783,7 +1796,7 @@ void paramcl::getcommandl0()
     "obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
     "countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
     "cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl",
-    "gleichziel","ocr","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
+    "gleichziel","ocri","ocra","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
     "anstr","undstr","cronminut","logvz","logdname","obmodem","obfcard");
   uchar plusverb=0;
   //  for(int i=argc-1;i>0;i--) KLA if (argv[i][0]==0) argc--; KLZ // damit fuer das Compilermakro auch im bash-script argc stimmt
@@ -1806,7 +1819,7 @@ void paramcl::getcommandl0()
       case 2:
         opts.push_back(optioncl("kd","konfdat", &Tx, T_verwendet_Kofigurationsdatei_string_anstatt,&konfdatname,pfile));
         break;
-    }
+    } //     switch (iru)
     // hier wird die Befehlszeile ueberprueft:
     for(;optslsz<opts.size();optslsz++) {
       for(size_t i=0;i<argcmv.size();i++) {
@@ -1814,11 +1827,11 @@ void paramcl::getcommandl0()
           if (iru==1) {
             if (plusverb) {obverb++;plusverb=0;}
             if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
-          }
+          } //           if (iru==1)
           if (opts[optslsz].kurz!="v") break;
-        }
-      }
-    }
+        } // if (opts[optslsz].pruefp(&argcmv,&i,&hilfe))
+      } // for(size_t i=0;i<argcmv.size();i++) 
+    } //     for(;optslsz<opts.size();optslsz++)
     optslsz=opts.size();
     if (!iru) lgnzuw();
   } // for(unsigned iru=0;iru<3;iru++)
@@ -1829,7 +1842,7 @@ void paramcl::getcommandl0()
       // <<rot<<"logdt: "<<logdt<<endl;
       // <<rot<<"loggespfad: "<<loggespfad<<endl;
       //<<violett<<"logdname: "<<*cgconf.hole("logdname")<<schwarz<<endl;
-    }
+    } //     if (!logdname.empty())
     obkschreib=1;
   } // if (logvneu ||logdneu) 
 } // void paramcl::getcommandl0(int argc, char** argv)
@@ -2167,7 +2180,8 @@ void paramcl::VorgbAllg()
   maxcapiv="3";
   maxhylav="3";
   gleichziel=1;
-  obocr=1;
+  obocri=1;
+  obocra=1;
   anfaxstr=Tx[T_an_Fax];
   ancfaxstr=Tx[T_an_cFax];
   anhfaxstr=Tx[T_an_hFax];
@@ -2225,7 +2239,7 @@ void paramcl::setzzielmuster(confdat& afconf)
       // Vorgaben uebernehmen
       zmz=zmvz;
       obkschreib=1;
-    }
+    } //     for(int iru=0;;iru++) {
     
 //    zmconfp = new cppSchluess[zmzn+zmzn];
     zmconf.neu(zmzn+zmzn);
@@ -2287,7 +2301,7 @@ void paramcl::lieskonfein()
   static cppSchluess gconf[]={{"langu"},{"obcapi"},{"obhyla"},{"hylazuerst"},{"maxcapiv"},{"maxhylav"},{"cuser"},
     {"countrycode"},{"citycode"},{"msn"},{"LongDistancePrefix"},{"InternationalPrefix"},{"LocalIdentifier"},
     {"cFaxUeberschrift"},{"cklingelzahl"},{"hmodem"},{"hklingelzahl"},
-    {"gleichziel"},{"ocr"},{"zufaxenvz"},{"wartevz"},{"nichtgefaxtvz"},{"empfvz"},{"cronminut"},{"anfaxstr"},{"ancfaxstr"},{"anhfaxstr"},
+    {"gleichziel"},{"ocri"},{"ocra"},{"zufaxenvz"},{"wartevz"},{"nichtgefaxtvz"},{"empfvz"},{"cronminut"},{"anfaxstr"},{"ancfaxstr"},{"anhfaxstr"},
     {"anstr"},{"undstr"},{"host"},{"muser"},{"mpwd"},{"datenbank"},{"logvz"},{"logdname"},{"sqlz"},{"musterzahl"}};
   cgconfp=gconf;
   gcs=sizeof gconf/sizeof*gconf;
@@ -2334,7 +2348,8 @@ void paramcl::lieskonfein()
     if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hmodem); else rzf=1;} lfd++;
     if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hklingelzahl); else rzf=1;} lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&gleichziel); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obocr); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obocri); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obocra); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&zufaxenvz); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&wvz); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&nvz); else rzf=1; lfd++;
@@ -2387,8 +2402,10 @@ int paramcl::getcommandline()
                                                         &cgconf,"hklingelzahl",&hylazukonf));
   opts.push_back(optioncl("gz","gleichziel", &Tx, T_Faxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,&gleichziel,1,
                                                   &cgconf,"gleichziel",&obkschreib));
-  opts.push_back(optioncl("ocr","ocr", &Tx, T_Text_aus_empfangenen_Faxen_und_gesandten_Bildern_wird_ermittelt,&obocr,1,
-                                                  &cgconf,"obocr",&obkschreib));
+  opts.push_back(optioncl("ocri","ocri", &Tx, T_Text_aus_empfangenen_Faxen_wird_ermittelt,&obocri,1,
+                                                  &cgconf,"obocri",&obkschreib));
+  opts.push_back(optioncl("ocra","ocra", &Tx, T_Text_aus_gesandten_Bildern_wird_ermittelt,&obocra,1,
+                                                  &cgconf,"obocra",&obkschreib));
   opts.push_back(optioncl("afs","anfaxstr",&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,&anfaxstr,psons,&cgconf,"anfaxstr",&obkschreib));
   opts.push_back(optioncl("acfs","ancfaxstr",&Tx, T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,&ancfaxstr,psons,
                                                       &cgconf,"ancfaxstr",&obkschreib));
@@ -2436,15 +2453,15 @@ int paramcl::getcommandline()
       if (opts[optslsz].pruefp(&argcmv,&i,&hilfe)) {
         break;
       }
-    }
-  }
+    } // for(size_t i=0;i<argcmv.size();i++) 
+  } //   for(;optslsz<opts.size();optslsz++)
   if (nrzf) rzf=0;
   for(size_t i=0;i<argcmv.size();i++) {
     if (!argcmv[i].agef) {
       Log(rots+"Parameter: "+gruen+argcmv[i].argcs+rot+Tx[T_nicht_erkannt]+schwarz,1,1);
       hilfe=1;
     }
-  }
+  } //   for(size_t i=0;i<argcmv.size();i++)
   if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
   /*
   if (altlogdname!=logdname || altlogvz!=logvz) {
@@ -2475,16 +2492,24 @@ int paramcl::getcommandline()
 
   lgnzuw();
   Log(string(Tx[T_Fertig_mit_Parsen_der_Befehlszeile]),obverb>1,oblog);
-  if (hilfe){
+  // Ausgabe der Hilfe
+  if (hilfe) {
     cout<<blau<<Tx[T_Gebrauch]<<drot<<meinname<<" [-<opt>|--<longopt> [<content>]] ..."<<schwarz<<endl; 
     cout<<blau<<Tx[T_Faxt_Dateien_aus_Verzeichnis_pfad_die]<<anfaxstr<<
       Tx[T_faxnr_enthalten_und_durch_soffice_in_pdf_konvertierbar_sind_und_traegt_sie]
       <<drot<<dbq<<blau<<Tx[T_Tabellen]<<drot<<touta<<blau<<"`,`"<<drot<<spooltab<<blau<<Tx[T_aein]<<endl;
+    cout<<blau<<Tx[T_Optionen_die_nicht_gespeichert_werden]<<schwarz<<endl;
     for(size_t j=0;j<opts.size();j++) {
+      if (!opts[j].obschreibp)
+      opts[j].hilfezeile(Tx.lgn);
+    }
+    cout<<blau<<Tx[T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden]<<schwarz<<endl;
+    for(size_t j=0;j<opts.size();j++) {
+      if (opts[j].obschreibp)
       opts[j].hilfezeile(Tx.lgn);
     }
     return 0;
-  }
+  } // if (hilfe)
   return 1;
 } // int paramcl::getcommandline(int argc, char** argv)
 
@@ -2807,8 +2832,12 @@ void paramcl::rueckfragen()
       cgconf[lfd].setze(&gleichziel);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      obocr=Tippob(Tx[T_soll_Text_in_empfangenen_Faxen_und_gesandten_Bildern_mit_OCR_gesucht_werden],obocr?Tx[T_j_af]:"j");
-      cgconf[lfd].setze(&obocr);
+      obocri=Tippob(Tx[T_soll_Text_in_empfangenen_Faxen_mit_OCR_gesucht_werden],obocri?Tx[T_j_af]:"j");
+      cgconf[lfd].setze(&obocri);
+    }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      obocra=Tippob(Tx[T_soll_Text_in_gesandten_Bildern_mit_OCR_gesucht_werden],obocra?Tx[T_j_af]:"j");
+      cgconf[lfd].setze(&obocra);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
       zufaxenvz=Tippverz(Tx[T_Verzeichnis_mit_zu_faxenden_Dateien],&zufaxenvz);
@@ -3999,12 +4028,12 @@ void paramcl::DateienHerricht()
         uint kfehler=0;
         kopiere(fxv[nachrnr].npdf, zmp, &kfehler, 1, obverb, oblog);
         string zield=kopiere(fxv[nachrnr].spdf, zmp, &kfehler, 1, obverb, oblog);
-        if (obocr) if (!zield.empty()) {
+        if (obocra) if (!zield.empty()) {
           if (pruefocr()) {
             systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+zield+"\" \""+zield+"\""
                 " && chmod +r \""+zield+"\"" ,obverb,oblog);
           } // pruefocr()
-        } // if (obocr) if (!zield.empty()) 
+        } // if (obocra) if (!zield.empty()) 
       } // if (gleichziel)
     } else {
       //      spdfp->erase(spdfp->begin()+nachrnr);
@@ -4055,12 +4084,12 @@ void paramcl::DateienHerricht()
               if (gleichziel) {
                 uint kfehler=0;
                 string zield=kopiere(wartedatei, zmp, &kfehler, 1, obverb, oblog);
-                if (obocr) if (!zield.empty()) {
+                if (obocra) if (!zield.empty()) {
                   if (pruefocr()) {
                     systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+zield+"\" \""+zield+"\""
                         " && chmod +r \""+zield+"\"" ,obverb,oblog);
                   } // pruefocr()
-                } // if (obocr) if (!zield.empty()) 
+                } // if (obocra) if (!zield.empty()) 
               }
             } //if (!vorhanden)
           } else {
@@ -4563,7 +4592,7 @@ void paramcl::empfarch()
     struct stat entrynd;
     uchar obhpfadda=!lstat(hpfad.c_str(),&entrynd);
     if (obhpfadda) systemrueck("sudo chmod +r \""+hpfad+"\"",obverb,oblog);
-    if (obocr) {
+    if (obocri) {
       string quelle;
       if (pruefsoffice()) {
         if (systemrueck("cd $HOME; soffice --headless --convert-to pdf --outdir \""+empfvz+"\" \""+vorsoffice+"\"",obverb,oblog)) {
@@ -4580,7 +4609,7 @@ void paramcl::empfarch()
          hpfad=ziel;
         }
       } // if (pruefocr()) 
-    } // if (obocr) 
+    } // if (obocri) 
     memset(&entrynd,0,sizeof entrynd);
     uchar obpdfda=!lstat(ziel.c_str(),&entrynd);
     if (obpdfda) {
@@ -4693,7 +4722,7 @@ void paramcl::empfarch()
               systemrueck("sudo chown --reference=\""+empfvz+"\" \""+cpfad+"\"",obverb,oblog);
               systemrueck("sudo chmod --reference=\""+empfvz+"\" \""+cpfad+"\"",obverb,oblog);
             }
-          } else if (obocr) {
+          } else if (obocri) {
             string quelle;
             if (pruefsoffice()) {
               if (systemrueck("cd $HOME; soffice --headless --convert-to pdf --outdir \""+empfvz+"\" \""+cpfad+"\"",obverb,oblog)) {
@@ -4709,7 +4738,7 @@ void paramcl::empfarch()
                 cpfad=ziel; // fuer unten
               }
             } // if (pruefocr()) 
-          } // if ((erg=systemrueck(cmd,obverb,oblog)))
+          } // if ((erg=systemrueck(cmd,obverb,oblog))) else if (obocri)
         } else {
           // empfangenes Fax mit 0 Bytes, vermutlich abgefangen von anderem System, samt Textdatei nach 'falsche' verschieben
           verschieb=2;
@@ -5285,7 +5314,7 @@ int paramcl::pruefhyla()
     cgconf.setze("hmodem",hmodem);
     hconfigtty();
     obkschreib=1;
-  }
+  } //   if (modemgeaendert)
 
   // Baud rate ermitteln ...
   svec ruecki;

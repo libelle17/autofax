@@ -145,7 +145,8 @@ class paramcl // Programmparameter
     unsigned long fzahl=0;
     unsigned long weizahl=0; // Zahl der weiteren wartenden Faxe, die nicht in der Spooltabelle dieses Programms eingetragen sind
     uchar gleichziel; // faxe auch ohne Fax-Erfolg auf Zielverzeichnis abspeichern
-    uchar obocr; // empfangene Faxe und gesandte Bilder OCR unterziehen
+    uchar obocri; // empfangene Faxe OCR unterziehen
+    uchar obocra; // gesandte Bilder OCR unterziehen
     uchar obcapi=1; // ob ueberhaupt die Capisuite verwendet werden soll
     uchar obhyla=1; // ob ueberhaupt hylafax verwendet werden soll
     uchar konfobcapi; // ob obcapi in der Konfigurationsdatei eingestellt ist
