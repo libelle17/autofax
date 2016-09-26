@@ -163,6 +163,12 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {"machfit()","makefit()"},
   // T_obslaeuft
   {"obslaeuft()","whetheritruns()"},
+  //   T_Loesche_Ausrufezeichen
+  {"Loesche: ","Deleting: "},
+  // T_Fehler_beim_Loeschen
+  {"Fehler beim Loeschen","error deleting"},
+  // T_nicht_geloescht_war_eh_nicht_mehr_da
+  {" nicht geloescht, war eh nicht mehr da."," not deleted, was no more there."},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -2123,10 +2129,10 @@ string linstcl::ersetzeprog(const string& prog)
 } // string linstcl::ersetzeprog(const string& prog) 
 
 
-uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsnichtda)
+int linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsnichtda)
 {
   // <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
-  uchar ret=2;
+  int ret=2;
   // eprog kann auch von aussen vor Programmaufruf gesetzt werden
   if (eprog.empty()) eprog=ersetzeprog(prog);
   if (!fallsnichtda.empty()) {
@@ -2135,7 +2141,7 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fall
       eprog.clear();
       return 0;
     }
-  }
+  } // if (!fallsnichtda.empty()) 
   if (!eprog.empty()) {
     switch (pruefipr()) {
       case zypper:
@@ -2155,13 +2161,13 @@ uchar linstcl::doinst(const string& prog,int obverb,int oblog,const string& fall
         ret=systemrueck("sudo yum -y install "+eprog,obverb+1,oblog);
         break;
       default: break;
-    }
+    } // switch (pruefipr()) 
     eprog.clear();
-  }
+  } // if (!eprog.empty()) 
   return ret;
 } // uchar linstcl::doinst(const string& prog,int obverb,int oblog) 
 
-uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
+int linstcl::doggfinst(const string& prog,int obverb,int oblog)
 {
   if (!(eprog=ersetzeprog(prog)).empty()) {
     if (obfehlt(eprog,obverb,oblog)) {
@@ -2171,14 +2177,14 @@ uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
   return 0;
 } // uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
 
-uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
+int linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
 {
   const string& progs=prog;
   // <<rot<<"doinst 2: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
   return doinst(progs,obverb,oblog,fallsnichtda);
 } // uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
 
-uchar linstcl::douninst(const string& prog,int obverb,int oblog) 
+int linstcl::douninst(const string& prog,int obverb,int oblog) 
 {
   switch (pruefipr()) {
     case zypper:
@@ -2199,7 +2205,7 @@ uchar linstcl::douninst(const string& prog,int obverb,int oblog)
 } // uchar linstcl::douninst(const string& prog,int obverb,int oblog) 
 
 
-uchar linstcl::obfehlt(const string& prog,int obverb,int oblog)
+int linstcl::obfehlt(const string& prog,int obverb,int oblog)
 {
  // <<violett<<"linst::obfehlt: "<<schwarz<<prog<<endl;
   switch (pruefipr()) {
@@ -2478,4 +2484,34 @@ void servc::daemon_reload(int obverb, int oblog)
 {
  systemrueck("sudo systemctl daemon-reload",obverb,oblog);
 }
+
+// Rueckgabe: Zahl der nicht Geloeschten
+// wird aufgerufen in: loeschecapi, untersuchespool
+int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
+{
+//  Log(violetts+Tx[T_tuloeschen]+schwarz,obverb,oblog);
+  struct stat entryzuloe;
+  if (!lstat(zuloe.c_str(),&entryzuloe)) {
+    Log(string(Txk[T_Loesche_Ausrufezeichen])+rot+zuloe+schwarz,obverb,oblog);
+    int erg;
+    for(uchar iru=1;iru<3;iru++) {
+      if ((erg=remove(zuloe.c_str()))) {
+        if(cuser.empty()) iru++;
+        if(iru==1) {
+          setfaclggf(zuloe, falsch, 6, falsch,obverb,oblog);
+        } else {
+          if (errno) if (errno!=13) perror((string(Txk[T_Fehler_beim_Loeschen])+" "+ltoan(errno)).c_str()); // Permission denied
+          string cmd=string("sudo rm -rf \"")+zuloe+"\"";
+          erg=systemrueck(cmd,obverb+1,1);
+        } // if(iru) else
+      } else {
+        erg=0;
+        break;
+      }
+    } // for(uchar iru=1;iru>-1;iru--)
+    return erg;
+  } // if (!lstat(zuloe.c_str(),&entryzuloe)) 
+  Log(rot+zuloe+schwarz+Txk[T_nicht_geloescht_war_eh_nicht_mehr_da],obverb,oblog);
+  return 0;
+} // int tuloeschen(string zuloe,int obverb, int oblog)
 

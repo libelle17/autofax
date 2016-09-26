@@ -177,8 +177,6 @@ enum T_
   T_obgescheitert,
   T_Fehler_beim_Verschieben_Ausrufezeichen,
   T_0Bytes,
-  T_Loesche_Ausrufezeichen,
-  T_nicht_geloescht_war_eh_nicht_mehr_da,
   T_Verwaiste_Datei,
   T_geloescht_Fax_schon_in,
   T_archiviert_Ausrufezeichen,
@@ -478,7 +476,6 @@ enum T_
   T_und,
   T_erneute_Eingabe,
   T_liescapiconf,
-  T_Fehler_beim_Loeschen,
   T_VorgbAllg,
   T_pruefisdn,
   T_keine_Rueckfragen_zB_aus_Cron,
@@ -501,6 +498,9 @@ enum T_
   T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten,
   T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten,
   T_aufrufen,
+  T_Text_aus_empfangenen_Faxen_und_gesandten_Bildern_wird_ermittelt,
+  T_soll_Text_in_empfangenen_Faxen_und_gesandten_Bildern_mit_OCR_gesucht_werden,
+  T_nicht_angekommen,
   T_MAX
 };
 
@@ -747,10 +747,6 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Fehler beim Verschieben!","Error while moving!"},
   // T_0Bytes
   {"0 Bytes: '","0 bytes: '"},
-  // T_Loesche_Ausrufezeichen
-  {"Loesche: ","Deleting: "},
-  // T_nicht_geloescht_war_eh_nicht_mehr_da
-  {" nicht geloescht, war eh nicht mehr da."," not deleted, was no more there."},
   // T_Verwaiste_Datei
   {"Verwaiste Datei: ","Orphaned file: "},
   // T_geloescht_Fax_schon_in
@@ -1363,8 +1359,6 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"erneute Eingabe","once more"},
   // T_liescapiconf
   {"liescapiconf()","readcapiconf()"},
-  // T_Fehler_beim_Loeschen
-  {"Fehler beim Loeschen","error deleting"},
   // T_VorgbAllg
   {"VorgbAllg()","generalprefs()"},
   // T_pruefisdn
@@ -1414,6 +1408,13 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
    "). Please reboot and afterwords call "},
   // T_aufrufen,
   {" aufrufen!"," again!"},
+  // T_Text_aus_empfangenen_Faxen_und_gesandten_Bildern_wird_ermittelt
+  {"Text aus empfangenen Faxen und gesandten Bildern wird ermittelt","Text from received faxes and sent pictures will bei filtered"},
+  // T_soll_Text_in_empfangenen_Faxen_und_gesandten_Bildern_mit_OCR_gesucht_werden
+  {"Soll Text in empfangenen Faxen und gesandten Bildern (mit \"OCR\") gesucht werden?",
+   "Shall text from received faxes and sent pictures be searched (wicht \"ocr\")?"},
+  // T_nicht_angekommen
+  {"nicht angekommen ","not arrived "},
   {"",""}
 };
 
@@ -1655,7 +1656,7 @@ string paramcl::getzielvz(const string& qdatei)
   return "";
 } // getzielvz
 
-// passt einen Dateinamen gemaess der vorhandenen Dateien in allen moegenlichen Zielverzeichnissen so an
+// passt einen Dateinamen gemaess der vorhandenen Dateien in allen moeglichen Zielverzeichnissen so an
 // dass er beim Umwandeln in PDF und Verschieben als erfolgreiches oder nicht erfolgreiches Fax sich nicht ueberschneidet
 // wird aufgerufen in: DateienHerricht
 string paramcl::neuerdateiname(const string& qpfad)
@@ -1778,11 +1779,11 @@ void paramcl::getcommandl0()
 {
   Log(violetts+"getcommandl0()"+schwarz,obverb,oblog);
   // Reihenfolge muss koordiniert werden mit lieskonfein und rueckfragen
-  cgconf.init(38, "language","host","muser","mpwd","datenbank","sqlz","musterzahl",
+  cgconf.init(39, "language","host","muser","mpwd","datenbank","sqlz","musterzahl",
     "obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
     "countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
     "cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl",
-    "gleichziel","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
+    "gleichziel","ocr","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
     "anstr","undstr","cronminut","logvz","logdname","obmodem","obfcard");
   uchar plusverb=0;
   //  for(int i=argc-1;i>0;i--) KLA if (argv[i][0]==0) argc--; KLZ // damit fuer das Compilermakro auch im bash-script argc stimmt
@@ -2166,6 +2167,7 @@ void paramcl::VorgbAllg()
   maxcapiv="3";
   maxhylav="3";
   gleichziel=1;
+  obocr=1;
   anfaxstr=Tx[T_an_Fax];
   ancfaxstr=Tx[T_an_cFax];
   anhfaxstr=Tx[T_an_hFax];
@@ -2285,7 +2287,7 @@ void paramcl::lieskonfein()
   static cppSchluess gconf[]={{"langu"},{"obcapi"},{"obhyla"},{"hylazuerst"},{"maxcapiv"},{"maxhylav"},{"cuser"},
     {"countrycode"},{"citycode"},{"msn"},{"LongDistancePrefix"},{"InternationalPrefix"},{"LocalIdentifier"},
     {"cFaxUeberschrift"},{"cklingelzahl"},{"hmodem"},{"hklingelzahl"},
-    {"gleichziel"},{"zufaxenvz"},{"wartevz"},{"nichtgefaxtvz"},{"empfvz"},{"cronminut"},{"anfaxstr"},{"ancfaxstr"},{"anhfaxstr"},
+    {"gleichziel"},{"ocr"},{"zufaxenvz"},{"wartevz"},{"nichtgefaxtvz"},{"empfvz"},{"cronminut"},{"anfaxstr"},{"ancfaxstr"},{"anhfaxstr"},
     {"anstr"},{"undstr"},{"host"},{"muser"},{"mpwd"},{"datenbank"},{"logvz"},{"logdname"},{"sqlz"},{"musterzahl"}};
   cgconfp=gconf;
   gcs=sizeof gconf/sizeof*gconf;
@@ -2332,6 +2334,7 @@ void paramcl::lieskonfein()
     if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hmodem); else rzf=1;} lfd++;
     if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hklingelzahl); else rzf=1;} lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&gleichziel); else rzf=1; lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obocr); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&zufaxenvz); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&wvz); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&nvz); else rzf=1; lfd++;
@@ -2384,6 +2387,8 @@ int paramcl::getcommandline()
                                                         &cgconf,"hklingelzahl",&hylazukonf));
   opts.push_back(optioncl("gz","gleichziel", &Tx, T_Faxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,&gleichziel,1,
                                                   &cgconf,"gleichziel",&obkschreib));
+  opts.push_back(optioncl("ocr","ocr", &Tx, T_Text_aus_empfangenen_Faxen_und_gesandten_Bildern_wird_ermittelt,&obocr,1,
+                                                  &cgconf,"obocr",&obkschreib));
   opts.push_back(optioncl("afs","anfaxstr",&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,&anfaxstr,psons,&cgconf,"anfaxstr",&obkschreib));
   opts.push_back(optioncl("acfs","ancfaxstr",&Tx, T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,&ancfaxstr,psons,
                                                       &cgconf,"ancfaxstr",&obkschreib));
@@ -2488,8 +2493,6 @@ void paramcl::rueckfragen()
 {
   Log(violetts+Tx[T_rueckfragen]+schwarz,obverb,oblog);
   const string& nix="";
-  //  static Schluessel gconf[]=KLA KLA"hylazuerst"KLZ,KLA"maxcapiv"KLZ,KLA"maxhylav"KLZ,
-  //                                KLA"gleichziel"KLZ,KLA"zufaxenvz"KLZ,KLA"wartevz"KLZ KLZ;
   if (rzf) {
     int lfd=-1;
     char *locale = setlocale(LC_CTYPE,"");
@@ -2802,6 +2805,10 @@ void paramcl::rueckfragen()
     if (cgconf[++lfd].wert.empty() || rzf) {
       gleichziel=Tippob(Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden],gleichziel?Tx[T_j_af]:"n");
       cgconf[lfd].setze(&gleichziel);
+    }
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      obocr=Tippob(Tx[T_soll_Text_in_empfangenen_Faxen_und_gesandten_Bildern_mit_OCR_gesucht_werden],obocr?Tx[T_j_af]:"j");
+      cgconf[lfd].setze(&obocr);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
       zufaxenvz=Tippverz(Tx[T_Verzeichnis_mit_zu_faxenden_Dateien],&zufaxenvz);
@@ -3306,14 +3313,14 @@ void paramcl::pruefsamba()
 //  <<rot<<"dienstzahl: "<<dienstzahl<<endl;
   if (dienstzahl<2 || conffehlt) {
     for(int aru=0;aru<2;aru++) {
-      if (aru) { 
+      if (aru) {
         if (!nrzf) {
           obinst=Tippob(Tx[T_Samba_muesste_installiert_werden_soll_ich],Tx[T_j_af]);
           if (obinst)
             linst.doinst("samba",obverb,oblog);
           //        smbrestart=0;
-        }
-      }
+        } // if (!nrzf) 
+      } // if (aru) 
       if (smb.serviceda) {
         smb.machfit(obverb,oblog);
         gestartet=1;
@@ -3330,9 +3337,9 @@ void paramcl::pruefsamba()
       }
       if (smb.serviceda) if (smb.obslaeuft(obverb,oblog)) if (nmb.serviceda) if (nmb.obslaeuft(obverb,oblog)) break;
       if (smbd.serviceda) if (smbd.obslaeuft(obverb,oblog)) if (nmbd.serviceda) if (nmbd.obslaeuft(obverb,oblog)) break;
-    }
+    } // for(int aru=0;aru<2;aru++) 
 //    if (gestartet==2) smbrestart=0;
-  }
+  } // if (dienstzahl<2 || conffehlt) 
   confdat smbcf(smbdatei,obverb);
   smbcf.Abschn_auswert(obverb);
   vector<string*> vzn;
@@ -3389,8 +3396,8 @@ void paramcl::pruefsamba()
        sapp<<"  recycle:versions = Yes"<<endl;
        sapp<<"  recycle:keeptree = Yes"<<endl;
        sapp<<"  recycle:repository = Papierkorb"<<endl;
-      }
-    }
+      } // if (sapp.is_open()) 
+    } // if (!gef[k]) 
   } // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
   if (!nrzf) {
     if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
@@ -3402,14 +3409,14 @@ void paramcl::pruefsamba()
       }
       systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
       systemrueck("(echo "+pw1+"; echo "+pw2+") | sudo smbpasswd -s "+cuser,obverb,oblog);
-    }
+    } // if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) 
   } // if (!nrzf)
   if (smbrestart) {
     if (smb.serviceda) smb.restart(obverb-1,oblog);
     else if (smbd.serviceda) smbd.restart(obverb-1,oblog);
     if (nmb.serviceda) nmb.restart(obverb-1,oblog);
     else if (nmbd.serviceda) nmbd.restart(obverb-1,oblog);
-  }
+  } // if (smbrestart) 
   // Suse-Firewall
   struct stat fstat;
   const char *susefw="/etc/sysconfig/SuSEfirewall2";
@@ -3780,6 +3787,48 @@ void paramcl::tu_listi()
   }
 } // tu_listi
 
+// verwendet in DateienHerricht(), empfarch()
+int paramcl::pruefsoffice()
+{
+  static uchar sofficegeprueft=0;
+  static int sofficeda=0;
+  if (!sofficegeprueft) {
+    //              systemrueck("which zypper 2>/dev/null && zypper -n in soffice || "
+    //                          "{ which apt-get 2>/dev/null && apt-get --assume-yes install soffice; }",obverb,oblog);
+    sofficeda=!linst.doinst("libreoffice-base",obverb,oblog,"soffice");
+    sofficegeprueft=1;
+  }
+  return sofficeda;
+} // int paramcl::pruefsoffice()
+
+// verwendet in DateienHerricht
+int paramcl::pruefconvert()
+{
+  static uchar convertgeprueft=0;
+  static int convertda=0;
+  if (!convertgeprueft) {
+    //              systemrueck("which zypper 2>/dev/null && zypper -n in convert || "
+    //                          "{ which apt-get 2>/dev/null && apt-get --assume-yes install convert; }",obverb,oblog);
+    convertda=!linst.doinst("imagemagick",obverb,oblog,"convert");
+    convertgeprueft=1;
+  }
+  return convertda;
+} // int paramcl::pruefconvert()
+
+// verwendet in empfarch()
+int paramcl::pruefocr()
+{
+ static uchar ocrgeprueft=0;
+ static int ocrda=0;
+ if (!ocrgeprueft) {
+  if ((ocrda=!linst.doinst("tesseract-ocr",obverb,oblog,"tesseract"))) {
+    systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
+  }
+  ocrgeprueft=1;
+ }
+ return ocrda;
+} // int paramcl::pruefocr()
+
 // zufaxenvz = zufaxen-Verzeichnis
 // 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 // 1b. die Nicht-PDF-Dateien in dem Verzeichnis zum PDF-Druck ermitteln, in Warteverzeichnis verschieben und in die PDF-Liste spdf eintragen ...
@@ -3789,7 +3838,6 @@ void paramcl::tu_listi()
 void paramcl::DateienHerricht() 
 {
   Log(violetts+Tx[T_DateienHerricht],obverb,oblog);
-  static uchar sofficegeprueft=0, convertgeprueft=0;
   struct stat entrynpdf;
   //vector<string> npdf, spdf, *npdfp=&npdf, *spdfp=&spdf;  vector<uchar> prios;
   vector<fxfcl> fxv;
@@ -3854,8 +3902,8 @@ void paramcl::DateienHerricht()
               if (vfehler)
                 Log(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz,1,1);
               Log(string(Tx[T_ErstelledurchBenennen])+rot+tmp+schwarz,1,oblog);
-            }
-          }
+            } // if (iprid.at(i)!=tmp) 
+          } // if (j<toknr.size()-1) 
         } // for(unsigned j=0;j<toknr.size();j++) 
       } // if (tok.size()>1) 
     } // for(size_t i=0;i<iprid.size();i++) 
@@ -3912,7 +3960,7 @@ void paramcl::DateienHerricht()
     Log(string("npdf[")+rot+ltoan(i)+schwarz+"]: "+rot+fxv[i].npdf+schwarz,obverb,oblog);
     Log(string("spdf[")+rot+ltoan(i)+schwarz+"]: "+rot+fxv[i].spdf+schwarz,obverb,oblog);
     Log(string("prio[")+rot+ltoan(i)+schwarz+"]: "+rot+ltoan(fxv[i].prio)+schwarz,obverb,oblog);
-  }
+  } // for(unsigned i=0;i<fxv.size();i++)
   // zufaxenvz = zufaxen-Verzeichnis
   Log(string(Tx[T_aus])+drot+zufaxenvz+schwarz+vtz+Tx[T_verarbeitete_Nicht_PDF_Dateien]+drot+ltoan(fxv.size())+schwarz,1,oblog);
   //  geszahl+=npdfp->size(); // 1b
@@ -3926,39 +3974,38 @@ void paramcl::DateienHerricht()
       continue;
     } // (lstat((*pfad + vtz + dirEntry->d_name).c_str(), &entrynpdf)) 
     for(unsigned runde=1;runde<=2;runde++) {
+      cmd.clear();
       switch (runde) {
         case 1: 
-          if (!sofficegeprueft) {
-              //              systemrueck("which zypper 2>/dev/null && zypper -n in soffice || "
-              //                          "{ which apt-get 2>/dev/null && apt-get --assume-yes install soffice; }",obverb,oblog);
-            linst.doinst("libreoffice-base",obverb,oblog,"soffice");
-            sofficegeprueft=1;
-          }
-          cmd=string("sudo soffice --headless --convert-to pdf --outdir \"")+wvz+"\" \""+fxv[nachrnr].npdf+"\"";
+          if (pruefsoffice())
+            cmd=string("cd $HOME; soffice --headless --convert-to pdf --outdir \"")+wvz+"\" \""+fxv[nachrnr].npdf+"\"";
           break; // Ergebnis immer 0
         case 2: 
-          if (!convertgeprueft) {
-              //              systemrueck("which zypper 2>/dev/null && zypper -n in convert || "
-              //                          "{ which apt-get 2>/dev/null && apt-get --assume-yes install convert; }",obverb,oblog);
-            linst.doinst("imagemagick",obverb,oblog,"convert");
-            convertgeprueft=1;
-          }
-          cmd=string("sudo convert \""+fxv[nachrnr].npdf+"\" \""+fxv[nachrnr].spdf+"\""); 
+          if (pruefconvert())
+            cmd=string("sudo convert \""+fxv[nachrnr].npdf+"\" \""+fxv[nachrnr].spdf+"\""); 
           break;
-      }
-      vector<string> umwd;
-      systemrueck(cmd, obverb,oblog,&umwd);
-      erg=lstat(fxv[nachrnr].spdf.c_str(),&entrynpdf); 
-      Log(string(Tx[T_Umwandlungvon])+blau+fxv[nachrnr].npdf+Tx[T_inPDFmit]+tuerkis+(runde==1?"soffice":"convert")+schwarz+
-          Tx[T_beendetErgebnis]+rot+(erg?Tx[T_misserfolg]:Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
-      if (!erg) break; 
+      } // switch (runde) 
+      if (cmd.empty()) erg=1; else {
+        vector<string> umwd;
+        systemrueck(cmd, obverb,oblog,&umwd);
+        erg=lstat(fxv[nachrnr].spdf.c_str(),&entrynpdf); 
+        Log(string(Tx[T_Umwandlungvon])+blau+fxv[nachrnr].npdf+Tx[T_inPDFmit]+tuerkis+(runde==1?"soffice":"convert")+schwarz+
+            Tx[T_beendetErgebnis]+rot+(erg?Tx[T_misserfolg]:Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
+        if (!erg) break; 
+      } // if (cmd.empty()) erg=1; else 
     } // for(unsigned runde=1;runde<=2;runde++) 
     if (!erg) {
       if (gleichziel) {
         uint kfehler=0;
         kopiere(fxv[nachrnr].npdf, zmp, &kfehler, 1, obverb, oblog);
-        kopiere(fxv[nachrnr].spdf, zmp, &kfehler, 1, obverb, oblog);
-      }
+        string zield=kopiere(fxv[nachrnr].spdf, zmp, &kfehler, 1, obverb, oblog);
+        if (obocr) if (!zield.empty()) {
+          if (pruefocr()) {
+            systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+zield+"\" \""+zield+"\""
+                " && chmod +r \""+zield+"\"" ,obverb,oblog);
+          } // pruefocr()
+        } // if (obocr) if (!zield.empty()) 
+      } // if (gleichziel)
     } else {
       //      spdfp->erase(spdfp->begin()+nachrnr);
       // Misserfolg, zurueckverschieben und aus der Datenbank loeschen
@@ -4007,9 +4054,15 @@ void paramcl::DateienHerricht()
               fxv.push_back(fxfcl(wartedatei,iprio));
               if (gleichziel) {
                 uint kfehler=0;
-                kopiere(wartedatei, zmp, &kfehler, 1, obverb, oblog);
+                string zield=kopiere(wartedatei, zmp, &kfehler, 1, obverb, oblog);
+                if (obocr) if (!zield.empty()) {
+                  if (pruefocr()) {
+                    systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+zield+"\" \""+zield+"\""
+                        " && chmod +r \""+zield+"\"" ,obverb,oblog);
+                  } // pruefocr()
+                } // if (obocr) if (!zield.empty()) 
               }
-            } // if (!vorhanden)
+            } //if (!vorhanden)
           } else {
             cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
               blau<<spdfd.at(i)<<schwarz<<" ->\n"<<
@@ -4023,7 +4076,7 @@ void paramcl::DateienHerricht()
     Log(string("npdf[")+rot+ltoan(i)+schwarz+"]: "+rot+fxv[i].npdf+schwarz,obverb,oblog);
     Log(string("spdf[")+rot+ltoan(i)+schwarz+"]: "+rot+fxv[i].spdf+schwarz,obverb,oblog);
     Log(string("prio:       ")+rot+ltoan(fxv[i].prio)+schwarz,obverb,oblog);
-  }
+  } //   for(unsigned i=0;i<fxv.size();i++)
 
   Log(string(Tx[T_aus])+drot+zufaxenvz+schwarz+vtz+Tx[T_verarbeitete_PDF_Dateien]+drot+ltoan(fxv.size())+schwarz,1,oblog);
   geszahl=fxv.size();
@@ -4065,7 +4118,7 @@ void paramcl::faxealle()
         fsfv.push_back(fsfcl(*(*cerg+0), *(*cerg+1), *(*cerg+2), *(*cerg+3), atoi(*(*cerg+4)), *(*cerg+5),
               atoi(*(*cerg+6)), *(*cerg+7), atoi(*(*cerg+8)), (binaer)atoi(*(*cerg+9)), (binaer)atoi(*(*cerg+10)), *(*cerg+11)));
       }
-    }
+    } // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
     Log(string(Tx[T_ZahldDSmwegzuschickendenFaxenin])+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz,obverb,oblog);
     for(unsigned i=0;i<fsfv.size();i++) {
       Log(string(" i: ")+blau+ltoan(i)+schwarz+Tx[T_PDFDatei]+blau+fsfv[i].spdf+schwarz+
@@ -4074,8 +4127,8 @@ void paramcl::faxealle()
       if (fsfv[i].fobcapi) if (obcapi) faxemitC(My, spooltab, altspool, &fsfv[i],this,obverb,oblog);  
       if (fsfv[i].fobhyla) if (obhyla) faxemitH(My, spooltab, altspool, &fsfv[i],this,obverb,oblog);  
       //      _out<<fsfv[i].id<<" "<<rot<<fsfv[i].npdf<<" "<<schwarz<<(int)fsfv[i].obcapi<<" "<<(int)fsfv[i].obhyla<<endl;
-    }
-  }
+    } // for(unsigned i=0;i<fsfv.size();i++) 
+  } // if (r0.obfehl) else  
 } // faxealle
 
 // wird aufgerufen in: untersuchespool, loeschefax
@@ -4254,9 +4307,11 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
             // Fax gescheitert, Dateien von warteauffax nach nichtgefaxt verschieben
             for(unsigned iru=0;iru<2;iru++) {
               uint vfehler=0;
-              if (ogibts[iru])
+              if (ogibts[iru]) {
                 verschiebe(odatei[iru],nvz,cuser,&vfehler, 1, obverb,oblog);
-            }
+                systemrueck("touch "+zmvp[0].ziel+vtz+Tx[T_nichtgefaxt]+" "+odatei[iru]+".nix",obverb,oblog);
+              } // if (ogibts[iru]) 
+            } // for(unsigned iru=0;iru<2;iru++) 
           } // if (allegesch || (nimmer && !ogibts[0]))
         } // if (obcapi || obhyla)
         Log(ausg.str(),1,oblog);
@@ -4490,16 +4545,55 @@ void paramcl::empfarch()
     strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
     if (absdr.length()>187) absdr.erase(187);
     if (absdr.length()>70) absdr.erase(70);
-    string hdatei = "Fax h"+fnr+","+Tx[T_avon]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf+".tif";
+    string hrumpf="Fax h"+fnr+","+Tx[T_avon]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf;
+    string hdatei=hrumpf+".tif";
     string hpfad=empfvz+vtz+hdatei;
+    string ziel=empfvz+vtz+hrumpf+".pdf";
     Log(blaus+base+schwarz+" => "+gruen+hdatei+schwarz,1,1);
     // ..., die empfangene Datei in hpfad kopieren ...
-    cmd=string("sudo cp -ai \"")+rueck[i]+"\" \""+hpfad+"\"";
-    systemrueck(cmd,obverb,oblog);
+    uint kfehler=0;
+    string vorsoffice=kopiere(rueck[i],hpfad,&kfehler,1,obverb,oblog);
+    if (!kfehler) {
+      systemrueck("sudo chown --reference=\""+empfvz+"\" \""+hpfad+"\"",obverb,oblog);
+      systemrueck("sudo chmod --reference=\""+empfvz+"\" \""+hpfad+"\"",obverb,oblog);
+    } else {
+      vorsoffice=rueck[i];
+    }
     struct stat entrynd;
-    if (!lstat(hpfad.c_str(),&entrynd)) {
-      cmd=string("sudo chmod 777 \"")+hpfad+"\"";
-      systemrueck(cmd,obverb,oblog);
+    uchar obhpfadda=!lstat(hpfad.c_str(),&entrynd);
+    if (obhpfadda) systemrueck("sudo chmod +r \""+hpfad+"\"",obverb,oblog);
+    if (obocr) {
+      string quelle;
+      if (pruefsoffice()) {
+        if (systemrueck("cd $HOME; soffice --headless --convert-to pdf --outdir \""+empfvz+"\" \""+vorsoffice+"\"",obverb,oblog)) {
+          string stamm,exten;
+          getstammext(&vorsoffice,&stamm,&exten);
+          quelle=empfvz+vtz+base_name(stamm)+".pdf"; 
+        }
+      } // if (pruefsoffice()) 
+      if (quelle.empty()) quelle=rueck[i];
+      if (pruefocr()) {
+        if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+quelle+"\" \""+ziel+"\" && chmod +r \""+ziel+"\""
+            ,obverb,oblog)) {
+         if (!kfehler) tuloeschen(hpfad,cuser,obverb,oblog);
+         hpfad=ziel;
+        }
+      } // if (pruefocr()) 
+    } // if (obocr) 
+    memset(&entrynd,0,sizeof entrynd);
+    uchar obpdfda=!lstat(ziel.c_str(),&entrynd);
+    if (obpdfda) {
+      struct stat st0;
+      if (!lstat(rueck[i].c_str(),&st0)) {
+        struct utimbuf ubuf;
+        ubuf.modtime = st0.st_mtime;
+        ubuf.actime = st0.st_mtime;
+        if (utime(ziel.c_str(),&ubuf)) {
+            Log(rots+Tx[T_Fehler_beim_Datumsetzen_von]+ziel+rot+"'"+schwarz,1,1);
+        }
+      }
+    }
+    if (obhpfadda||obpdfda) {
       cmd=string("sudo mv -i \"")+rueck[i]+"\" \""+hempfavz+"\"";
       systemrueck(cmd,obverb,oblog);
       RS zs(My);
@@ -4577,9 +4671,9 @@ void paramcl::empfarch()
       getname+=bsname;
       if (getname.length()>187) getname.erase(187);
       if (getname.length()>70) getname.erase(70);
-      string crumpf = "Fax c"+fnr+","+Tx[T_avon]+getname+", T."+stdfaxnr(umst[1].wert)+","+Tx[T_vom]+tbuf;
-      string cdatei = crumpf +".tif";
-      string cpfad= empfvz + vtz+cdatei; // Tx[T_Fax_von]+umst[1].wert+Tx[T_an]+umst[2].wert+Tx[T_vom]+tbuf+".tif";
+      string crumpf="Fax c"+fnr+","+Tx[T_avon]+getname+", T."+stdfaxnr(umst[1].wert)+","+Tx[T_vom]+tbuf;
+      string cdatei=crumpf+".tif";
+      string cpfad=empfvz+vtz+cdatei; // Tx[T_Fax_von]+umst[1].wert+Tx[T_an]+umst[2].wert+Tx[T_vom]+tbuf+".tif";
       Log(blaus+stamm+schwarz+" => "+gruen+cdatei+schwarz,1,1);
       // ..., die empfangene Datei in hpfad kopieren ...
       uint vfehler=0;
@@ -4587,25 +4681,40 @@ void paramcl::empfarch()
         // .txt nach falsche verschieben
         verschieb=1;
       } else {
+        uint kfehler=1;
         if (entrysff.st_size) {
           cmd=string("sfftobmp -f -t ")+sffname+" -o \""+cpfad+"\"";
           if ((erg=systemrueck(cmd,obverb,oblog))) {
             verschieb=2;
             cpfad=empfvz+vtz+crumpf+".sff";
-//            if (!loee) KLA
-              uint kfehler;
-              cpfad=kopiere(sffname,cpfad,&kfehler,1,obverb,oblog);
+            cpfad=kopiere(sffname,cpfad,&kfehler,1,obverb,oblog);
+            if (!kfehler) {
               systemrueck("sudo chown --reference=\""+empfvz+"\" \""+cpfad+"\"",obverb,oblog);
               systemrueck("sudo chmod --reference=\""+empfvz+"\" \""+cpfad+"\"",obverb,oblog);
-//            KLZ
-          }
+            }
+          } else if (obocr) {
+            string quelle;
+            if (pruefsoffice()) {
+              if (systemrueck("cd $HOME; soffice --headless --convert-to pdf --outdir \""+empfvz+"\" \""+cpfad+"\"",obverb,oblog)) {
+                quelle=empfvz+vtz+crumpf+".pdf"; 
+              }
+            } // if (pruefsoffice()) 
+            if (quelle.empty()) quelle=cpfad;
+            if (pruefocr()) {
+              string ziel=empfvz+vtz+crumpf+".pdf";
+              if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+quelle+"\" \""+ziel+"\"&&chmod +r \""+ziel+"\""
+                   ,2,oblog)) {
+                if (!tuloeschen(cpfad,cuser,obverb,oblog))
+                cpfad=ziel; // fuer unten
+              }
+            } // if (pruefocr()) 
+          } // if ((erg=systemrueck(cmd,obverb,oblog)))
         } else {
           // empfangenes Fax mit 0 Bytes, vermutlich abgefangen von anderem System, samt Textdatei nach 'falsche' verschieben
           verschieb=2;
-        }
-        // wenn sfftobmp funktioniert hat oder die Datei verschoben wurde
-        struct stat entrycpfad;
-        if (!lstat(cpfad.c_str(),&entrycpfad)) {
+        } // if (entrysff.st_size)
+        // wenn sfftobmp funktioniert hat // oder die Datei verschoben wurde
+        if (!erg) {
           struct utimbuf ubuf;
           ubuf.modtime = modz;
           ubuf.actime = modz;
@@ -4625,6 +4734,8 @@ void paramcl::empfarch()
           if (verschieb==2) {
             Log(string(Tx[T_Dateien])+rot+stamm+".* "+schwarz+Tx[T_nicht_verarbeitbar_Verschiebe_sie_nach]+rot+"./falsche"+schwarz+".",1,1);
             verschiebe(sffname,falsche,cuser,&vfehler,1,obverb,oblog);
+            // so, dass es jeder merkt
+            systemrueck("touch '"+empfvz+vtz+Tx[T_nicht_angekommen]+crumpf+".nix",obverb,oblog);
           }
 //      KLZ // if (loee) 
       } // if (verschieb) 
@@ -4769,34 +4880,35 @@ void verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser, ui
   if (!ziel.empty()) dorename(qdatei,ziel,cuser,vfehler,obverb,oblog);
 } // verschiebe
 
-// wird aufgerufen in Dateienherricht und empfarch
+// wird aufgerufen in Dateienherricht und empfarch und kopiere (andere Definition)
 string kopiere(const string& qdatei, const string& zield, uint *kfehler, uchar wieweiterzaehl, int obverb, int oblog)
 {
   // wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
   string dir=dir_name(zield);
   string base=base_name(zield);
   string ziel;
+  int fehler=0;
   if (!base.empty() && !dir.empty()) {
     ziel=zielname(base,dir,wieweiterzaehl,0, obverb,oblog);
     Log(string(Tx[T_Kopiere_Doppelpunkt])+rot+qdatei+schwarz+"'\n         -> '"+rot+ziel+schwarz+"'",obverb,oblog);
     string cmd=string("sudo cp -a \"")+qdatei+"\" \""+ziel+"\"";
-    kfehler+= systemrueck(cmd,obverb>1,oblog);
+    fehler= systemrueck(cmd,obverb>1,oblog);
+    if (fehler) {
+     kfehler+=fehler;
+     Log(rots+Tx[T_Fehler_beim_Kopieren]+Tx[T_Dateiname]+blau+zield+schwarz,1,1);
+    }
   } else {
-    cerr<<rot<<Tx[T_Fehler_beim_Kopieren]<<Tx[T_Dateiname]<<blau<<zield<<schwarz<<Tx[T_schlechtgeformt]<<endl;
+    Log(rots+Tx[T_Fehler_beim_Kopieren]+Tx[T_Dateiname]+blau+zield+schwarz+Tx[T_schlechtgeformt],1,1);
   }
   return ziel;
 } // string kopiere
 
 // wird aufgerufen in Dateienherricht
-void kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb, int oblog) 
+string kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb, int oblog) 
 {
   // wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
   string ziel=zielname(qdatei,zmp,wieweiterzaehl,0, obverb,oblog);
-  if (!ziel.empty()) {
-    Log(string(Tx[T_Kopiere_Doppelpunkt])+rot+qdatei+schwarz+"'\n         -> '"+rot+ziel+schwarz+"'",obverb,oblog);
-    string cmd=string("sudo cp -a \"")+qdatei+"\" \""+ziel+"\"";
-    kfehler+= systemrueck(cmd,obverb>1,oblog);
-  }
+  return kopiere(qdatei, ziel, kfehler, wieweiterzaehl,obverb,oblog);
 } // string kopiere
 
 // wird aufgerufen in pruefhyla
@@ -5658,15 +5770,11 @@ int paramcl::pruefcapi()
             Log(string(Tx[T_Kernelversion])+blau+unbuf.release+schwarz,obverb,oblog);
             struct stat entryfc;
             string fcpciko = string("/lib/modules/")+unbuf.release+"/kernel/extras/fcpci.ko";
-              cout<<"Stelle 0"<<endl;
             if (lstat(fcpciko.c_str(), &entryfc)) {
-              cout<<"Stelle 1"<<endl;
               Log(string(Tx[T_Datei])+blau+fcpciko+schwarz+Tx[T_nichtgefFcpciMfdKinstallierwerden],obverb,1);
               //              systemrueck("which zypper 2>/dev/null && zypper -n in kernel-source || "
               //                  "{ which apt-get 2>/dev/null && apt-get --assume-yes install linux-source; }", 1+obverb,oblog);
-              cout<<"Stelle 2"<<endl;
               linst.doinst("kernel-source",1+obverb,oblog);
-              cout<<"Stelle 3"<<endl;
 /*              
               const string qvz="/usr/src";
               const string versi="fcpci-3.10.0";
@@ -5771,7 +5879,6 @@ int paramcl::pruefcapi()
             obverb=altobverb;
           } // if (system==fed) 
         } // if (systemrueck("sudo modprobe capi",obverb,oblog))
-        cout<<"Stelle 10"<<endl;
         systemrueck("sudo modprobe capidrv",obverb,oblog);
       } // if (!fcpcida || !capida || !capidrvda) 
       pruefrules(obverb,oblog);
@@ -6787,36 +6894,6 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, string& 
   }
 } // void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obverb, uchar obzaehl, int oblog)
 
-// Rueckgabe: Zahl der nicht Geloeschten
-// wird aufgerufen in: loeschecapi, untersuchespool
-int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
-{
-//  Log(violetts+Tx[T_tuloeschen]+schwarz,obverb,oblog);
-  struct stat entryzuloe;
-  if (!lstat(zuloe.c_str(),&entryzuloe)) {
-    Log(string(Tx[T_Loesche_Ausrufezeichen])+rot+zuloe+schwarz,obverb,oblog);
-    int erg;
-    for(uchar iru=1;iru<3;iru++) {
-      if ((erg=remove(zuloe.c_str()))) {
-        if(cuser.empty()) iru++;
-        if(iru==1) {
-          setfaclggf(zuloe, falsch, 6, falsch,obverb,oblog);
-        } else {
-          if (errno) if (errno!=13) perror((string(Tx[T_Fehler_beim_Loeschen])+" "+ltoan(errno)).c_str()); // Permission denied
-          string cmd=string("sudo rm -rf \"")+zuloe+"\"";
-          erg=systemrueck(cmd,obverb+1,1);
-        } // if(iru) else
-      } else {
-        erg=0;
-        break;
-      }
-    } // for(uchar iru=1;iru>-1;iru--)
-    return erg;
-  } // if (!lstat(zuloe.c_str(),&entryzuloe)) 
-  Log(rot+zuloe+schwarz+Tx[T_nicht_geloescht_war_eh_nicht_mehr_da],obverb,oblog);
-  return 0;
-} // int tuloeschen(string zuloe,int obverb, int oblog)
-
 
 void zeigversion(string& prog,string& mpfad)
 {
@@ -6856,7 +6933,6 @@ void paramcl::zeigkonf()
 
 int main(int argc, char** argv) 
 {
-
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();
@@ -6946,10 +7022,15 @@ int main(int argc, char** argv)
 // bei hyla die dateigroesse der pdf-Datei nehmen
 
 // vor Samba-Ueberpruefung rueckfragen
-// Firwallkorrektur in man einbauen
+// Firewallkorrektur in man einbauen
 // Urspruenglichen Dateinamen speichern
 // evtl. manuell umbenannte Dateien in der Datenbank registrieren
-// bei hyla aktiven Sendevorgang markieren
 // evtl. die Ausgaben verschiedener capisuitefax -Parameter beruecksichtigen
-// Aenderung der Klingelzahl korrigieren
-// Dienste und cron stoppen: -st --stop
+
+// Tesseract:
+//  zypper in  tesseract-ocr tesseract-ocr-traineddata-english tesseract-ocr-traineddata-german tesseract-ocr-traineddata-orientation_and_script_detection
+// (ldconfig /usr/lib64)
+// git clone https://github.com/jbarlow83/OCRmyPDF.git
+// cd OCRmyPDF
+// pip3 install ocrmypdf
+

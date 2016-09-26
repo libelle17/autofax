@@ -166,6 +166,9 @@ enum Tkonsole_
   T_Versuch,
   T_machfit,
   T_obslaeuft,
+  T_Loesche_Ausrufezeichen,
+  T_Fehler_beim_Loeschen,
+  T_nicht_geloescht_war_eh_nicht_mehr_da,
   T_konsoleMAX,
 };
 
@@ -550,6 +553,7 @@ char* Tippcstring(const char *frage, char* buf, unsigned long buflen, const char
 string Tippstring(const string& frage, const string *vorgabe=0);
 string Tippverz(const char *frage,string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
+int tuloeschen(const string& zuloe,const string& cuser="",int obverb=0, int oblog=0);
 
 class linstcl
 {
@@ -558,11 +562,11 @@ class linstcl
     uchar obnmr=1;
     string eprog; // ersetztes Programm
     string ersetzeprog(const string& prog);
-    uchar doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda="");
-    uchar doinst(const char* prog,int obverb=0,int oblog=0,const string& fallsnichtda="");
-    uchar doggfinst(const string& prog,int obverb=0,int oblog=0);
-    uchar douninst(const string& prog,int obverb=0,int oblog=0);
-    uchar obfehlt(const string& prog,int obverb=0,int oblog=0);
+    int doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda="");
+    int doinst(const char* prog,int obverb=0,int oblog=0,const string& fallsnichtda="");
+    int doggfinst(const string& prog,int obverb=0,int oblog=0);
+    int douninst(const string& prog,int obverb=0,int oblog=0);
+    int obfehlt(const string& prog,int obverb=0,int oblog=0);
 };
 
 // Service aus SystemD

@@ -14,7 +14,7 @@ void dorename(const string& quelle, const string& ziel, const string& cuser="", 
 string verschiebe(const string& qdatei, const string& zielvz, const string& cuser="",uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0,int oblog=0);
 void verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser="", uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0, int oblog=0);
 string kopiere(const string& qdatei, const string& zieldp, uint *kfehler, uchar wieweiterzaehl, int obverb=0,int oblog=0);
-void kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
+string kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog);
 void pruefprocgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog);
 void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog);
@@ -23,7 +23,6 @@ int pruefcapi(paramcl *pmp, int obverb, int oblog);
 void kuerzevtz(string *vzp);
 pid_t PIDausName(const char* PName, uchar klgr, uchar exakt, int obverb, int oblog);
 void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,int obverb=0,int oblog=0);
-int tuloeschen(const string& zuloe,const string& cuser="",int obverb=0, int oblog=0);
 
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster
 class zielmustercl 
@@ -146,6 +145,7 @@ class paramcl // Programmparameter
     unsigned long fzahl=0;
     unsigned long weizahl=0; // Zahl der weiteren wartenden Faxe, die nicht in der Spooltabelle dieses Programms eingetragen sind
     uchar gleichziel; // faxe auch ohne Fax-Erfolg auf Zielverzeichnis abspeichern
+    uchar obocr; // empfangene Faxe und gesandte Bilder OCR unterziehen
     uchar obcapi=1; // ob ueberhaupt die Capisuite verwendet werden soll
     uchar obhyla=1; // ob ueberhaupt hylafax verwendet werden soll
     uchar konfobcapi; // ob obcapi in der Konfigurationsdatei eingestellt ist
@@ -295,6 +295,9 @@ class paramcl // Programmparameter
     void anhalten();
     void tu_lista(const string& oberfolg);
     void tu_listi();
+    int pruefsoffice();
+    int pruefconvert();
+    int pruefocr();
     void DateienHerricht();
     void clieskonf();
     void capisv(int obverb,int oblog);
