@@ -197,7 +197,7 @@ class argcl
 {
  public:
  char* argcs;  // Zeiger auf einen Commandline-Parameter
- uchar agef=0; // gefunden
+ uchar agef=0; // dieser wurde gefunden
  argcl(int i,char** argv);
 };
 
@@ -484,30 +484,31 @@ class optioncl
 //    string oerkl;
     uchar *pptr=0; // Zeiger auf Parameter, der hier eingestellt werden kann
     int wert; // Wert, der pptr zugewiesen wird, falls dieser Parameter gewaehlt wird
-    string *zptr=0; // zusatzzeiger auf Parameter, der hier eingegeben werden kann
+    string *zptr=0; // Zeiger auf Zusatzparameter, der hier eingegeben werden kann
     par_t art; // Parameterart
     schlArr *cp=0; // Konfigurationsarray, das ggf. geschrieben werden muss
     const char *pname; // Name des Konfigurationsparameters
     uchar *obschreibp=0; // ob Konfiguration geschrieben werden muss
 //    uchar ogefunden=0; // braucht man nicht, ist in argcl
-    optioncl(string kurz, string lang, TxB *TxBp, long Txi) : 
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi) {}
-    optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *zptr, par_t art,schlArr *cp=0, const char *pname=0,uchar* obschreibp=0) : 
+    uchar obno=0; // ob auch die Option mit vorangestelltem 'no' eingefueft werden soll
+///*1*/optioncl(string kurz, string lang, TxB *TxBp, long Txi) : 
+//               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi) {}
+/*2*/optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *zptr, par_t art,schlArr *cp=0, const char *pname=0,uchar* obschreibp=0) : 
                kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), zptr(zptr), art(art),cp(cp),pname(pname),obschreibp(obschreibp) {}
-    optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp=0, 
-             const char *pname=0,uchar* obschreibp=0) : 
+/*3*/optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp=0, 
+              const char *pname=0,uchar* obschreibp=0) : 
                kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), zptr(zptr), art(art),
                cp(cp),pname(pname),obschreibp(obschreibp)  {}
-    optioncl(string kurz, string lang, TxB *TxBp, long Txi, uchar *pptr, int wert,schlArr *cp=0, const char *pname=0,uchar* obschreibp=0) : 
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert),cp(cp),pname(pname),obschreibp(obschreibp) {}
-    optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *rottxt, long Txi2, uchar *pptr, int wert) : 
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), pptr(pptr), wert(wert) {}
-    optioncl(string kurz, string lang, TxB *TxBp, long Txi, const string *rottxt, long Txi2, uchar *pptr, int wert) : 
+/*4*/optioncl(string kurz, string lang, TxB *TxBp, long Txi, uchar *pptr, int wert,schlArr *cp=0, const char *pname=0,uchar* obschreibp=0) :
+               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0) {}
+///*5*/optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *rottxt, long Txi2, uchar *pptr, int wert) : 
+//               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), pptr(pptr), wert(wert) {}
+/*6*/optioncl(string kurz, string lang, TxB *TxBp, long Txi, const string *rottxt, long Txi2, uchar *pptr, int wert) : 
                kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt((string*)rottxt), Txi2(Txi2), pptr(pptr), wert(wert) {}
-    optioncl(string kurz, string lang, TxB *TxBp, long Txi, binaer *pptr, int wert) : 
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr((uchar*)pptr), wert(wert) {}
-    optioncl(string kurz, string lang, TxB *TxBp, long Txi, int *pptr, int wert) : 
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr((uchar*)pptr), wert(wert) {}
+///*7*/optioncl(string kurz, string lang, TxB *TxBp, long Txi, binaer *pptr, int wert) : 
+//               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr((uchar*)pptr), wert(wert) {}
+///*8*/    optioncl(string kurz, string lang, TxB *TxBp, long Txi, int *pptr, int wert) : 
+//               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr((uchar*)pptr), wert(wert) {}
     optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *rottxt, long Txi2, int *pptr, int wert) : 
                kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), pptr((uchar*)pptr), wert(wert) {}
     int pruefp(vector<argcl> *argcvm , size_t *akt, uchar *hilfe); // 1 = das war der Parameter, 0 = nicht

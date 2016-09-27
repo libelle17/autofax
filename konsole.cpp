@@ -485,9 +485,9 @@ string *sersetze(string* src, string const& target, string const& repl)
         if (idx == string::npos)  break;
         src->replace( idx, target.length(), repl);
         idx += repl.length();
-      }
-    }
-  }
+      } //       for (;;)
+    } //     if (src->length())
+  } // if (target.length())
   return src;
 } // sersetze( string src, string const& target, string const& repl)
 
@@ -500,7 +500,7 @@ void getstammext(string *ganz, string *stamm, string *exten)
   } else {
     *exten="";
     *stamm=string(*ganz);
-  }
+  } //   if (posp!=std::string::npos) else
 } // void getstammext(string *ganz, string *stamm, string *exten) 
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
@@ -1976,67 +1976,133 @@ uchar VerzeichnisGibts(const char* vname)
 } // VerzeichnisGibts
 
 int optioncl::pruefp(vector<argcl> *argcvm , size_t *akt, uchar *hilfe) // 1 = das war der Parameter, 0 = nicht
+// argcvm = Vector der Kommandozeilenparameter
+// *akt = Index auf aktuell zu untersuchenden
+// *hilfe = Aussage, ob Hilfe aufgerufen werden muss
+// vorangestellte "1" => opschreibp auf 0 setzen
+// vorangestelltes "un" => bei beinaeren Operatoren nicht
 {
+  uchar nichtspeichern=0;
+  uchar gegenteil=0;
+// wenn der Index noch im Bereich und der zugehoerige Kommandozeilenparameter noch nicht unter den Programmparametern gefunden wurde ...
   if (*akt<argcvm->size()) if (!argcvm->at(*akt).agef) {
     char *acstr=argcvm->at(*akt).argcs;
-    if (strlen(acstr)>1) {
-      if (acstr[0]=='-'||acstr[0]=='/') {
-        if (!strcmp(&(acstr[1]),kurz.c_str())) {
+    int aclen=strlen(acstr);
+    if (aclen>1) {
+      if (aclen>2 && acstr[0]=='-'&&acstr[1]=='-') {
+        acstr+=2;
+        aclen-=2;
+        if (aclen>1 && *acstr=='1') {
+         nichtspeichern=1; 
+         acstr++;
+         aclen--;
+        }
+        if (aclen>2 && acstr[0]=='n'&&acstr[1]=='o') {
+         gegenteil=1;
+         acstr+=2;
+         aclen-=2;
+        }
+        if (!strcmp(acstr,lang.c_str())) {
           argcvm->at(*akt).agef=1;
         }
-      }
-      if (!argcvm->at(*akt).agef) if (strlen(acstr)>2) if (acstr[0]=='-'&&acstr[1]=='-') 
-        if (!strcmp(&(acstr[2]),lang.c_str())) {
+      } else if (strchr("-/",acstr[0])) {
+        acstr+=1;
+        aclen-=1;
+        if (aclen>1 && *acstr=='1') {
+         nichtspeichern=1; 
+         acstr++;
+         aclen--;
+        }
+        if (aclen>2 && acstr[0]=='n'&&acstr[1]=='o') {
+         gegenteil=1;
+         acstr+=2;
+         aclen-=2;
+        }
+        if (!strcmp(acstr,kurz.c_str())) {
           argcvm->at(*akt).agef=1;
         }
-    }
+      } //       if (strchr("-/",acstr[0])
+    } // if (strlen(acstr)>1) 
+    // wenn Kommandozeilenparameter gefunden ...
     if (argcvm->at(*akt).agef) {
+      // ... und zu setzender binaerer Parameter hinterlegt ...
       if (pptr) {
+        // ggf. auf Gegenteil korrigieren
+        if (gegenteil) wert=!wert;
+        // ... und dieser noch nicht richtig gesetzt ist ...
         if (*pptr!=wert) {
+          // ... dann setzen ...
           *pptr=wert;
-          if (obschreibp) *obschreibp=1;
-          if (cp && pname) {
-            cp->setze(pname,ltoan(wert));
-          }
-        }
+          // ... merken, dass die Konfigurationsdatei geschrieben werden muss ...
+          if (!nichtspeichern) {
+            if (obschreibp) *obschreibp=1;
+            // ... und wenn ein Konfigurationsarray uebergeben wurde und ein Elementname dazu ...
+            if (cp && pname) {
+              // ... dann diesen auch auf den Wert setzen
+              cp->setze(pname,ltoan(wert));
+            } //             if (cp && pname)
+          } // if (!nichtspeichern)
+        } // if (*pptr!=wert) 
+        // wenn also kein binaerer Parameter hinterlegt (=> Textparameter)
       } else {
         char *pstr=0;
         uchar falsch=0;
-        if (*akt<argcvm->size()-1)  {
+        // und hinter dem aktuellen Parameter noch einer kommt ...
+        if (*akt<argcvm->size()-1) {
           char *nacstr=argcvm->at(*akt+1).argcs;
           struct stat entryarg;
           switch (art) {
+              // und das ein "sonstiger Parameter" ist, ...
             case psons:
+            // er also nicht mit '-' oder '/' anfaengt ...
               if (!strchr("-/",nacstr[0])) {
+                // ... dann zuweisen
                 pstr=nacstr;
               }
               break;
+              // wenn es ein Verzeichnis oder eine Datei sein soll ...
             case pverz:
             case pfile:
+              // ... die also nicht mit '-' anfaengt
               if (nacstr[0]!='-') {
+                // ... und sie bestimmte existentielle Bedingungen erfuellt ...
                 if (stat(nacstr,&entryarg)) falsch=1;  // wenn inexistent
                 else if ((art==pverz)^(S_ISDIR(entryarg.st_mode))) falsch=2; // Datei fuer Verzeichnis o.u.
+                // ... dann zuweisen
                 else pstr=nacstr;
               }
               break;
+              // oder wenn es eine Zahl sein soll ...
             case pzahl:
+            // und sie nicht mit '-' oder '/' anfaengt ...
               if (!strchr("-/",nacstr[0])) {
+                // und tatsaechlich numerisch ist ...
                 if (!isnumeric(nacstr)) falsch=1;
+                // dann zuweisen
                 else pstr=nacstr;
-              }
+              } // if (!strchr("-/",nacstr[0])) 
               break;
-          }
-        }
+          } // switch (art) 
+        } // if (*akt<argcvm->size()-1)
+        /// wenn nacstr als Zusatzparameter bestaetigt
         if (pstr) {
+          // ... und dessen Inhalt sich von zptr unterscheidet ...
           if (*zptr!=pstr) {
+            // ... dann zuweisen ...
             *zptr=pstr; 
-            if (obschreibp) *obschreibp=1;
-            if (cp && pname) {
-             cp->setze(pname,pstr);
-            }
-          }
+            // ... und ggf. Konfigurationsdatei speichern, 
+            if (!nichtspeichern) {
+              if (obschreibp) *obschreibp=1;
+              // wenn Konfigurationsarray und ein Indexname dort uebergeben ... 
+              if (cp && pname) {
+                // dann Inhalt dort zuweisen
+                cp->setze(pname,pstr);
+              } // if (cp && pname)
+            } // if (!nichtspeichern)
+          } // if (*zptr!=pstr) 
           argcvm->at(++(*akt)).agef=1;
         } else {
+          // wenn kein Zusatzparameter erkennbar, dann melden
           switch (art) {
             case psons:
               Log(drots+Txk[T_Fehlender_Parameter_string_zu]+kurz+Txk[T_oder]+lang+"!"+schwarz,1,1);
@@ -2049,7 +2115,7 @@ int optioncl::pruefp(vector<argcl> *argcvm , size_t *akt, uchar *hilfe) // 1 = d
             case pzahl:
               Log(drots+(falsch==1?Txk[T_Nicht_numerischer]:Txk[T_Fehlender])+Txk[T_Parameter_nr_zu]+kurz+Txk[T_oder]+lang+"!"+schwarz,1,1);
               break;
-          }
+          } // switch (art)
           *hilfe=1;
         } // if (pstr) else
       } // if (pptr) else
@@ -2071,6 +2137,7 @@ void optioncl::hilfezeile(Sprache lg)
         if (rottxt) cout<<blau<<*rottxt<<schwarz;
         if (Txi2!=-1) cout<<(const char*)hilf[Txi2][lg]; 
         if (zptr) cout<<" '"<<blau<<*zptr<<schwarz<<"'";
+        if (obno) cout<<violett<<" oder nicht"<<schwarz;
         cout<<endl;
       } // if (TxBp->TCp[Txi][lg])
     } // if (Txi!=-1)

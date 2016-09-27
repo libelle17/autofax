@@ -66,6 +66,7 @@ altc: CCInst=gcc-c++
 altc: CCName=g++
 altc: opts
 
+new: neu
 neu: anzeig clean weiter
 
 weiter: compiler $(EXEC) man fertig
@@ -183,7 +184,7 @@ clean:
 	@echo -n " Bereinige ..."
 	@echo -e -n "\r" 
 	@$(shell rm -f $(EXEC) $(OBJ) .d/* 2>/dev/null)
-	@$(shell sudo rm -f $(INSTEXEC) 2>/dev/null)
+#	@$(shell sudo rm -f $(INSTEXEC) 2>/dev/null)
 	@echo -e " Fertig mit Bereinigen!"  
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
