@@ -1287,7 +1287,7 @@ RS::~RS()
       case Postgres:
         break;
     }
-}
+} // RS::~RS() 
 
 void RS::update(const string& utab, vector< instyp > einf,uchar obstumm, const string& bedingung) 
 {

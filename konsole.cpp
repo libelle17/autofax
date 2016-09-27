@@ -1167,7 +1167,7 @@ instprog pruefipr(int obverb,int oblog)
 
 const string& absch::suche(const char* const sname)
 {
-  static string nix="";
+  static const string nix;
   for (size_t i=0;i<av.size();i++) {
     if (av[i].name==sname) {
       return av[i].wert;
@@ -1417,11 +1417,12 @@ void schlArr::init(size_t vzahl, ...)
  va_end(list);
 } // void schlArr::init(size_t vzahl, ...)
 
-int schlArr::setze(const string& name, const string& wert)
+int schlArr::setze(const string& name, const string& wert, const string& bem)
 {
   for(size_t ind=0;ind<zahl;ind++) {
     if (schl[ind].name==name) {
       schl[ind].wert=wert;
+      schl[ind].bemerk=bem;
       return 0;
     }
   }
@@ -1430,7 +1431,7 @@ int schlArr::setze(const string& name, const string& wert)
  
 const string& schlArr::hole(const string& name)
 {
-  static const string nix="";
+  static const string nix;
   for(size_t ind=0;ind<zahl;ind++) {
     if (schl[ind].name==name) {
       return schl[ind].wert;
@@ -1439,22 +1440,34 @@ const string& schlArr::hole(const string& name)
   return nix;
 } // const string* schlArr::hole(const string& name)
 
-void schlArr::schreib(mdatei *f)
+
+void schlArr::setzbem(const string& name,const string& bem)
+{
+  for(size_t ind=0;ind<zahl;ind++) {
+    if (schl[ind].name==name) {
+      schl[ind].bemerk=bem;
+      break;
+    }
+  }
+}
+
+void schlArr::aschreib(mdatei *f)
 {
   for (size_t i = 0;i<zahl;i++) {
+    *f<<"# "<<schl[i].bemerk<<endl;
     *f<<schl[i].name<<" = \""<<schl[i].wert<<"\""<<endl;
-  }
-} // void schlArr::schreib(mdatei *f)
+  } //   for (size_t i = 0;i<zahl;i++)
+} // void schlArr::aschreib(mdatei *f)
 
-int schlArr::schreib(const string& fname)
+int schlArr::fschreib(const string& fname)
 {
   mdatei f(fname,ios::out);
   if (f.is_open()) {
-    schreib(&f);
+    aschreib(&f);
     return 0;
-  }
+  } //   if (f.is_open())
   return 1;
-} // int schlArr::schreib(const string& fname)
+} // int schlArr::fschreib(const string& fname)
 
 schlArr::~schlArr()
 {
@@ -1466,10 +1479,10 @@ int multischlschreib(const string& fname, schlArr **confs, size_t cszahl)
   mdatei f(fname,ios::out);
   if (f.is_open()) {
     for (size_t j=0;j<cszahl;j++) {
-     confs[j]->schreib(&f);
+     confs[j]->aschreib(&f);
     }
     return 0;
-  }
+  } //   if (f.is_open())
   return 1;
 } // int multischlschreib(const string& fname, schlArr **confs, size_t cszahl)
 
@@ -1481,7 +1494,7 @@ string XOR(const string& value, const string& key)
   for(v=0;v<vlen;v++) {
     retval[v]=value[v]^key[k];
     k=(++k<klen?k:0);
-  }
+  } //   for(v=0;v<vlen;v++)
   return retval;
 } // string XOR(const string& value, const string& key)
 
@@ -1514,7 +1527,8 @@ int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, siz
 } // int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, size_t cszahl)
 */
 
-int schreib(const char *fname, Schluessel *conf, size_t csize)
+#ifdef notcpp
+int Schschreib(const char *fname, Schluessel *conf, size_t csize)
 {
 #ifdef false
   uchar erfolg=0;
@@ -1541,7 +1555,8 @@ int schreib(const char *fname, Schluessel *conf, size_t csize)
 #endif
 #endif	
   return 0;
-} // int schreib(const char *fname, Schluessel *conf, size_t csize)
+} // int Schschreib(const char *fname, Schluessel *conf, size_t csize)
+#endif
 
 
 std::string base_name(const std::string& path)
@@ -1975,7 +1990,7 @@ uchar VerzeichnisGibts(const char* vname)
   return 0;
 } // VerzeichnisGibts
 
-int optioncl::pruefp(vector<argcl> *argcvm , size_t *akt, uchar *hilfe) // 1 = das war der Parameter, 0 = nicht
+int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprache lg) // 1 = das war der Parameter, 0 = nicht
 // argcvm = Vector der Kommandozeilenparameter
 // *akt = Index auf aktuell zu untersuchenden
 // *hilfe = Aussage, ob Hilfe aufgerufen werden muss
@@ -2046,7 +2061,7 @@ int optioncl::pruefp(vector<argcl> *argcvm , size_t *akt, uchar *hilfe) // 1 = d
         // wenn also kein binaerer Parameter hinterlegt (=> Textparameter)
       } else {
         char *pstr=0;
-        uchar falsch=0;
+        uchar wiefalsch=0;
         // und hinter dem aktuellen Parameter noch einer kommt ...
         if (*akt<argcvm->size()-1) {
           char *nacstr=argcvm->at(*akt+1).argcs;
@@ -2066,8 +2081,8 @@ int optioncl::pruefp(vector<argcl> *argcvm , size_t *akt, uchar *hilfe) // 1 = d
               // ... die also nicht mit '-' anfaengt
               if (nacstr[0]!='-') {
                 // ... und sie bestimmte existentielle Bedingungen erfuellt ...
-                if (stat(nacstr,&entryarg)) falsch=1;  // wenn inexistent
-                else if ((art==pverz)^(S_ISDIR(entryarg.st_mode))) falsch=2; // Datei fuer Verzeichnis o.u.
+                if (stat(nacstr,&entryarg)) wiefalsch=1;  // wenn inexistent
+                else if ((art==pverz)^(S_ISDIR(entryarg.st_mode))) wiefalsch=2; // Datei fuer Verzeichnis o.u.
                 // ... dann zuweisen
                 else pstr=nacstr;
               }
@@ -2077,7 +2092,7 @@ int optioncl::pruefp(vector<argcl> *argcvm , size_t *akt, uchar *hilfe) // 1 = d
             // und sie nicht mit '-' oder '/' anfaengt ...
               if (!strchr("-/",nacstr[0])) {
                 // und tatsaechlich numerisch ist ...
-                if (!isnumeric(nacstr)) falsch=1;
+                if (!isnumeric(nacstr)) wiefalsch=1;
                 // dann zuweisen
                 else pstr=nacstr;
               } // if (!strchr("-/",nacstr[0])) 
@@ -2109,11 +2124,11 @@ int optioncl::pruefp(vector<argcl> *argcvm , size_t *akt, uchar *hilfe) // 1 = d
               break;
             case pverz:
             case pfile:
-              Log(drots+Txk[T_Fehler_Parameter]+kurz+Txk[T_oder]+lang+" "+(falsch==1?Txk[T_ohne_gueltigen]:falsch==2?
+              Log(drots+Txk[T_Fehler_Parameter]+kurz+Txk[T_oder]+lang+" "+(wiefalsch==1?Txk[T_ohne_gueltigen]:wiefalsch==2?
                     Txk[T_mit_Datei_als]:Txk[T_mit_falschem])+Txk[T_Pfad_angegeben]+schwarz,1,1);
               break;
             case pzahl:
-              Log(drots+(falsch==1?Txk[T_Nicht_numerischer]:Txk[T_Fehlender])+Txk[T_Parameter_nr_zu]+kurz+Txk[T_oder]+lang+"!"+schwarz,1,1);
+              Log(drots+(wiefalsch==1?Txk[T_Nicht_numerischer]:Txk[T_Fehlender])+Txk[T_Parameter_nr_zu]+kurz+Txk[T_oder]+lang+"!"+schwarz,1,1);
               break;
           } // switch (art)
           *hilfe=1;
@@ -2123,7 +2138,26 @@ int optioncl::pruefp(vector<argcl> *argcvm , size_t *akt, uchar *hilfe) // 1 = d
     } // if (argcvm->at(*akt).agef)
   } // if (*akt<argcvm->size()) if (!argcvm->at(*akt).agef) 
   return 0;
-} // pruefp
+} // pruefpar
+
+string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
+{
+ static const string nix;
+ bemerkung.clear();
+  if (TxBp) {
+    if (Txi!=-1) {
+      if (TxBp->TCp[Txi][lg]) {
+        TCtp *hilf = reinterpret_cast<TCtp*>(TxBp->TCp);
+        bemerkung= (const char*)hilf[Txi][lg];
+        if (rottxt) bemerkung+=(obfarbe?blaus:nix)+*rottxt+(obfarbe?schwarz:nix);
+        if (Txi2!=-1) bemerkung+=(const char*)hilf[Txi2][lg]; 
+        if (zptr) bemerkung+=" '"+(obfarbe?blaus:nix)+*zptr+(obfarbe?schwarz:nix)+"'";
+        if (obno) bemerkung+=(obfarbe?violetts:nix)+" oder nicht"+(obfarbe?schwarz:nix);
+      } // if (TxBp->TCp[Txi][lg])
+    } // if (Txi!=-1)
+  } // if (TxBp)
+  return bemerkung;
+} // string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
 
 void optioncl::hilfezeile(Sprache lg)
 {
@@ -2132,13 +2166,7 @@ void optioncl::hilfezeile(Sprache lg)
       if (TxBp->TCp[Txi][lg]) {
         cout<<drot<<" -"<<kurz<<", --"<<lang;
         if (zptr) {if (art==psons || art==pfile) cout<<" <string>"; else if (art==pverz) cout<<" <"<<Txk[T_pfad]<<">"; else cout<<" <zahl>";}
-        TCtp *hilf = reinterpret_cast<TCtp*>(TxBp->TCp);
-        cout<<schwarz<<": "<< (const char*)hilf[Txi][lg];
-        if (rottxt) cout<<blau<<*rottxt<<schwarz;
-        if (Txi2!=-1) cout<<(const char*)hilf[Txi2][lg]; 
-        if (zptr) cout<<" '"<<blau<<*zptr<<schwarz<<"'";
-        if (obno) cout<<violett<<" oder nicht"<<schwarz;
-        cout<<endl;
+        cout<<schwarz<<": "<< machbemerkung(lg)<<endl;
       } // if (TxBp->TCp[Txi][lg])
     } // if (Txi!=-1)
   } // if (TxBp)
@@ -2582,3 +2610,28 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
   return 0;
 } // int tuloeschen(string zuloe,int obverb, int oblog)
 
+
+
+/*2*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : 
+               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), zptr(zptr), art(art),cp(cp),pname(pname),obschreibp(obschreibp) 
+  {
+    if (cp && pname) {
+      cp->setzbem(pname,machbemerkung(TxBp->lgn,falsch));
+    }
+  }
+/*3*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp, 
+              const char *pname,uchar* obschreibp) : 
+               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), zptr(zptr), art(art),
+               cp(cp),pname(pname),obschreibp(obschreibp) 
+  {
+    if (cp && pname) {
+      cp->setzbem(pname,machbemerkung(TxBp->lgn,falsch));
+    }
+  }
+/*4*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, uchar *pptr, int wert,schlArr *cp, const char *pname,uchar* obschreibp) :
+               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0)
+  {
+    if (cp && pname) {
+      cp->setzbem(pname,machbemerkung(TxBp->lgn,falsch));
+    }
+  }

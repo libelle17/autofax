@@ -313,6 +313,7 @@ long cmpmem( char* feld, const char* search, int len_feld); // , int len_search
 char* ltoan(long value, int base=10, uchar obtz=0, uchar minstel=0); 
 char* ltoa_(long value, char* result, int base); 
 
+#ifdef notcpp
 class Schluessel {
   public:
     char key[90];
@@ -327,24 +328,33 @@ template <> inline void Schluessel::hole < binaer > (binaer *var) { *var = (bina
 template <> inline void Schluessel::setze < char* > (char** var) { strncpy(val,*var,sizeof val-1);val[sizeof val-1]=0; }
 template <> inline void Schluessel::setze < const char* > (const char** var) { strncpy(val,*var,sizeof val-1);val[sizeof val-1]=0; }
 template <> inline void Schluessel::setze < string > (string *var) { strncpy(val,var->c_str(),sizeof val-1);val[sizeof val-1]=0;}
+#endif
 
 class cppSchluess {
   public:
     string name;
     uchar gelesen;
     string wert;
+    string bemerk;
 //    inline cppSchluess& operator=(cppSchluess zuzuw){name=zuzuw.name;wert=zuzuw.wert; return *this;} // wird nicht benoetigt
     template <typename T> void hole(T *var) { *var=atol(wert.c_str()); }
     template <typename T> void setze(T *var) { wert=ltoan(*var); }
+//    template <typename T> void setze(T *var,string& bem) { wert=ltoan(*var); bemerk=bem;}
 };
 template <> inline void cppSchluess::hole < char* > (char** var) {*var = (char*)wert.c_str(); }
 template <> inline void cppSchluess::hole < const char* > (const char** var) {*var = wert.c_str(); }
 template <> inline void cppSchluess::hole < string > (string *var) {*var = wert; }
 template <> inline void cppSchluess::hole < binaer > (binaer *var) { *var = (binaer)atoi(wert.c_str()); }
-template <> inline void cppSchluess::setze < char* > (char** var) {wert=*var; }
-template <> inline void cppSchluess::setze < const char* > (const char** var) {wert=*var;}
+template <> inline void cppSchluess::setze < char* > (char** var) {wert=*var;  }
+template <> inline void cppSchluess::setze < const char* > (const char** var) {wert=*var; }
 template <> inline void cppSchluess::setze < string > (string *var) {wert=*var;}
-template <> inline void cppSchluess::setze < const string > (const string *var) {wert=*var;}
+template <> inline void cppSchluess::setze < const string > (const string *var) {wert=*var; }
+/*
+template <> inline void cppSchluess::setze < char* > (char** var, string& bem) {wert=*var; if (!bem.empty()) bemerk=bem; }
+template <> inline void cppSchluess::setze < const char* > (const char** var, string& bem) {wert=*var; if (!bem.empty()) bemerk=bem;}
+template <> inline void cppSchluess::setze < string > (string *var, string& bem) {wert=*var;if (!bem.empty()) bemerk=bem;}
+template <> inline void cppSchluess::setze < const string > (const string *var, string& bem) {wert=*var; if (!bem.empty()) bemerk=bem;}
+*/
 
 class schlArr {
  public:
@@ -355,10 +365,11 @@ class schlArr {
  void init(size_t vzahl, ...);
  void init(vector<cppSchluess*> *sqlvp);
  inline /*const*/ cppSchluess& operator[](size_t const& nr) const { return schl[nr]; }
- int setze(const string& name, const string& wert);
+ int setze(const string& name, const string& wert, const string& bem="");
  const string& hole(const string& name);
- void schreib(mdatei *f);
- int schreib(const string& fname);
+ void setzbem(const string& name,const string& bem);
+ void aschreib(mdatei *f);
+ int fschreib(const string& fname);
  void ausgeb();
  void reset();
  ~schlArr();
@@ -491,27 +502,25 @@ class optioncl
     uchar *obschreibp=0; // ob Konfiguration geschrieben werden muss
 //    uchar ogefunden=0; // braucht man nicht, ist in argcl
     uchar obno=0; // ob auch die Option mit vorangestelltem 'no' eingefueft werden soll
-///*1*/optioncl(string kurz, string lang, TxB *TxBp, long Txi) : 
-//               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi) {}
-/*2*/optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *zptr, par_t art,schlArr *cp=0, const char *pname=0,uchar* obschreibp=0) : 
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), zptr(zptr), art(art),cp(cp),pname(pname),obschreibp(obschreibp) {}
-/*3*/optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp=0, 
-              const char *pname=0,uchar* obschreibp=0) : 
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), zptr(zptr), art(art),
-               cp(cp),pname(pname),obschreibp(obschreibp)  {}
-/*4*/optioncl(string kurz, string lang, TxB *TxBp, long Txi, uchar *pptr, int wert,schlArr *cp=0, const char *pname=0,uchar* obschreibp=0) :
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0) {}
-///*5*/optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *rottxt, long Txi2, uchar *pptr, int wert) : 
-//               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), pptr(pptr), wert(wert) {}
-/*6*/optioncl(string kurz, string lang, TxB *TxBp, long Txi, const string *rottxt, long Txi2, uchar *pptr, int wert) : 
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt((string*)rottxt), Txi2(Txi2), pptr(pptr), wert(wert) {}
-///*7*/optioncl(string kurz, string lang, TxB *TxBp, long Txi, binaer *pptr, int wert) : 
-//               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr((uchar*)pptr), wert(wert) {}
-///*8*/    optioncl(string kurz, string lang, TxB *TxBp, long Txi, int *pptr, int wert) : 
-//               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr((uchar*)pptr), wert(wert) {}
-    optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *rottxt, long Txi2, int *pptr, int wert) : 
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), pptr((uchar*)pptr), wert(wert) {}
-    int pruefp(vector<argcl> *argcvm , size_t *akt, uchar *hilfe); // 1 = das war der Parameter, 0 = nicht
+    string bemerkung;
+///*1*/optioncl(string kurz,string lang,TxB *TxBp,long Txi) : 
+//               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi) {}
+/*2*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *zptr,par_t art,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
+/*3*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cp=0,
+              const char *pname=0,uchar* obschreibp=0);
+/*4*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar *pptr,int wert,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
+///*5*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *rottxt,long Txi2,uchar *pptr,int wert) : 
+//               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),rottxt(rottxt),Txi2(Txi2),pptr(pptr),wert(wert) {}
+/*6*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,const string *rottxt,long Txi2,uchar *pptr,int wert) : 
+               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),rottxt((string*)rottxt),Txi2(Txi2),pptr(pptr),wert(wert) {}
+///*7*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,binaer *pptr,int wert) : 
+//               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),pptr((uchar*)pptr),wert(wert) {}
+///*8*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,int *pptr,int wert) : 
+//               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),pptr((uchar*)pptr),wert(wert) {}
+/*9*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *rottxt,long Txi2,int *pptr,int wert) : 
+               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),rottxt(rottxt),Txi2(Txi2),pptr((uchar*)pptr),wert(wert) {}
+    int pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprache lg); // 1 = das war der Parameter, 0 = nicht
+    string& machbemerkung(Sprache lg,binaer obfarbe=wahr);
     void hilfezeile(Sprache lg);
 };
 
@@ -528,7 +537,9 @@ void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtme
 void getstammext(string *ganz, string *stamm, string *exten);
 // int cpplies(string fname,cppSchluess *conf,size_t csize,vector<string> *rest=0,char tz='=',short obverb=0);
 string XOR(const string& value, const string& key);
-int schreib(const char *fname, Schluessel *conf, size_t csize);
+#ifdef notcpp
+int Schschreib(const char *fname, Schluessel *conf, size_t csize);
+#endif
 int cppschreib(const string& fname, cppSchluess *conf, size_t csize);
 // int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, size_t cszahl);
 int multischlschreib(const string& fname, schlArr **confs, size_t cszahl);

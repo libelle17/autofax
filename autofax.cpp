@@ -511,6 +511,7 @@ enum T_
   T_nicht_angekommen,
   T_Optionen_die_nicht_gespeichert_werden,
   T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden,
+  T_ob_ein_Modem_drinstak,
   T_MAX
 };
 
@@ -1447,6 +1448,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden,
   {"Optionen, die in der Konfigurationsdatei gespeichert werden koennen (vorausgehendes: '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):",
    "Options which can be saved in the configuration file: ('1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):"},
+  // T_ob_ein_Modem_drinstak
+  {"ob ein Modem drinstak, als diese Konfigurationsdatei geschrieben wurde","if a modem was present, when this configuration file was written"},
   {"",""}
 };
 
@@ -1842,13 +1845,13 @@ void paramcl::getcommandl0()
     // hier wird die Befehlszeile ueberprueft:
     for(;optslsz<opts.size();optslsz++) {
       for(size_t i=0;i<argcmv.size();i++) {
-        if (opts[optslsz].pruefp(&argcmv,&i,&hilfe)) {
+        if (opts[optslsz].pruefpar(&argcmv,&i,&hilfe,Tx.lgn)) {
           if (iru==1) {
             if (plusverb) {obverb++;plusverb=0;}
             if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
           } //           if (iru==1)
           if (opts[optslsz].kurz!="v") break;
-        } // if (opts[optslsz].pruefp(&argcmv,&i,&hilfe))
+        } // if (opts[optslsz].pruefpar(&argcmv,&i,&hilfe))
       } // for(size_t i=0;i<argcmv.size();i++) 
     } //     for(;optslsz<opts.size();optslsz++)
     optslsz=opts.size();
@@ -1929,6 +1932,7 @@ void paramcl::pruefmodem()
   if (rzf) {
     cgconf.setze("obmodem",obmodem?"1":"0");
   }
+  cgconf.setzbem("obmodem",Tx[T_ob_ein_Modem_drinstak]);
   // wvdialconf oder schneller: setserial -a /dev/tty*, mit baud_base: <!=0>  als Kriterium
 } // void paramcl::pruefmodem()
 
@@ -2473,7 +2477,7 @@ int paramcl::getcommandline()
   // hier wird die Befehlszeile ueberprueft:
   for(;optslsz<opts.size();optslsz++) {
     for(size_t i=0;i<argcmv.size();i++) {
-      if (opts[optslsz].pruefp(&argcmv,&i,&hilfe)) {
+      if (opts[optslsz].pruefpar(&argcmv,&i,&hilfe,Tx.lgn)) {
         break;
       }
     } // for(size_t i=0;i<argcmv.size();i++) 
@@ -2674,7 +2678,7 @@ void paramcl::rueckfragen()
       neuS->wert=Tippstring(string(Tx[T_Zielverzeichnis_Nr])+ltoan(akt+1),(akt<zmzn)?&zmp[akt].ziel:&nix);
       zmv.push_back(neuS);
       if (obabbrech) break;
-    }
+    } //     for(;;akt++)
     zmconf.init(&zmv);
     string nzmz=ltoan(akt+1);
     // <<rot<<"lfd: "<<lfd<<" nzmz: "<<nzmz<<schwarz<<endl;
@@ -2731,7 +2735,7 @@ void paramcl::rueckfragen()
         obcapi=0;
       }
       cgconf[lfd].setze(&obcapi);
-    }
+    } //     if (cgconf[++lfd].wert.empty() || rzf)
   // <<"rueckfragen 1 nach obcapi: "<<(int)obcapi<<endl;
     if (cgconf[++lfd].wert.empty() || rzf) {
       if (!obmdgeprueft) pruefmodem();
@@ -2741,7 +2745,7 @@ void paramcl::rueckfragen()
         obhyla=0;
       }
       cgconf[lfd].setze(&obhyla);
-    }
+    } //     if (cgconf[++lfd].wert.empty() || rzf)
     if (obcapi) {
       if (obhyla) {
         if (cgconf[++lfd].wert.empty() || rzf) {
