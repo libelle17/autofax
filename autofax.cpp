@@ -512,6 +512,10 @@ enum T_
   T_Optionen_die_nicht_gespeichert_werden,
   T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden,
   T_ob_ein_Modem_drinstak,
+  T_or,
+  T_ob_eine_Fritzcard_drinstak,
+  T_Zahl_der_angegebenen_sql_Befehle_zur_Suche_nach_Absendern,
+  T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe,
   T_MAX
 };
 
@@ -1450,6 +1454,14 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
    "Options which can be saved in the configuration file: ('1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):"},
   // T_ob_ein_Modem_drinstak
   {"ob ein Modem drinstak, als diese Konfigurationsdatei geschrieben wurde","if a modem was present, when this configuration file was written"},
+  // T_or
+  {"' oder '","' or '"},
+  // T_ob_eine_Fritzcard_drinstak
+  {"ob eine Fritzcard drinstak, als die Konfigurationsdatei geschrieben wurde","if a fritzcard was present when the configuration file was written"},
+  // T_Zahl_der_angegebenen_sql_Befehle_zur_Suche_nach_Absendern
+  {"Zahl der angegebenen SQL-Befehle zur Suche nach Absendern","No. of specified sql commands for the search for senders"},
+  // T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe
+  {"Zahl der Muster/Verzeichnis-Paare zum Speichern ankomender Faxe","No. of pattern/directory-pairs for saving received faxes"},
   {"",""}
 };
 
@@ -1497,14 +1509,15 @@ int zielmustercl::setzemuster(const string& vmuster)
 {
  muster=vmuster;
  return kompilier();
-}
+} // int zielmustercl::setzemuster(const string& vmuster)
+
 int zielmustercl::obmusterleer() {
  return muster.empty();
-}
+} // int zielmustercl::obmusterleer() 
 
 const string& zielmustercl::holmuster() {
  return muster;
-}
+} // const string& zielmustercl::holmuster()
 
 // wird aufgerufen in: loeschefax, untersuchespool, capiwausgeb, setzhylastat, hylaausgeb
 inline const char* FxStatS(FxStat *i) 
@@ -1814,18 +1827,22 @@ void paramcl::getcommandl0()
 {
   Log(violetts+"getcommandl0()"+schwarz,obverb,oblog);
   // Reihenfolge muss koordiniert werden mit lieskonfein und rueckfragen
-  cgconf.init(39, "language","host","muser","mpwd","datenbank","sqlz","musterzahl",
-    "obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
+  cgconf.init(40, "language","host","muser","mpwd","datenbank","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
     "countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
     "cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl",
     "gleichziel","ocri","ocra","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
-    "anstr","undstr","cronminut","logvz","logdname","obmodem","obfcard");
+    "anstr","undstr","cronminut","logvz","logdname","obmodem","obfcard","sqlz","musterzahl");
   uchar plusverb=0;
+  string sprachstr;
+
   //  for(int i=argc-1;i>0;i--) KLA if (argv[i][0]==0) argc--; KLZ // damit fuer das Compilermakro auch im bash-script argc stimmt
   for(unsigned iru=0;iru<3;iru++) {
     switch (iru) {
       case 0:
-        opts.push_back(/*2*/optioncl("lg","language", &Tx,T_sprachstr,&langu,psons));
+        opts.push_back(/*2*/optioncl("lg","language", &Tx,T_sprachstr,&langu,psons,&cgconf,"language",&oblgschreib));
+        sprachstr=Tx[T_sprachstr];
+        loeschefarbenaus(&sprachstr);
+        cgconf.setzbem("language",sprachstr);
         opts.push_back(/*2*/optioncl("langu","sprache", &Tx,-1,&langu,psons));
         opts.push_back(/*2*/optioncl("lang","lingue", &Tx,-1,&langu,psons));
         break;
@@ -1855,7 +1872,9 @@ void paramcl::getcommandl0()
       } // for(size_t i=0;i<argcmv.size();i++) 
     } //     for(;optslsz<opts.size();optslsz++)
     optslsz=opts.size();
-    if (!iru) lgnzuw();
+    if (!iru) {
+      lgnzuw();
+    }
   } // for(unsigned iru=0;iru<3;iru++)
   if (logvneu ||logdneu) {
     if (!logdname.empty()) {
@@ -1951,16 +1970,17 @@ void paramcl::pruefisdn()
     Log(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_aauf]+schwarz+"0.",obverb,oblog);
     obcapi=obfcard=0;
   }
-  // wenn zum Konfigurationszeitpunkt keine Fritzkarte drinsteckte, aber jetzt, dann rueckfragen
+  if (obverb) Log("obfcard: "+blaus+ltoan(obfcard));
+  obfcgeprueft=1;
+  // wenn zum Konfigurationszeitpunkt keine Fritzcard drinsteckte, aber jetzt, dann rueckfragen
   if (obfcard && cgconf.hole("obfcard")=="0") {
    rzf=1;
   }
-  // wenn nur obkschreib, dann noch nicht auf neu eingesteckte Fritzkarte reagieren
+  // wenn nur obkschreib, dann noch nicht auf neu eingesteckte Fritzcard reagieren
   if (rzf) {
     cgconf.setze("obfcard",obfcard?"1":"0");
   }
-  if (obverb) Log("obfcard: "+blaus+ltoan(obfcard));
-  obfcgeprueft=1;
+  cgconf.setzbem("obfcard",Tx[T_ob_eine_Fritzcard_drinstak]);
 } // void paramcl::pruefisdn()
 
 // wird aufgerufen in: main, pruefhyla
@@ -2330,26 +2350,36 @@ void paramcl::lieskonfein()
   gcs=sizeof gconf/sizeof*gconf;
   */
     // cgconf.init muss spaetetens am Anfang von getcommandl0 kommen
-  confdat afconf(konfdatname,&cgconf,obverb); // hier werden die Daten aus der Datei eingelesen
   if (1) {
     //  if (cpplies(konfdatname,gconf,gcs)) KLA
     // sodann werden die Daten aus gconf den einzelenen Klassenmitgliedsvariablen zugewiesen 
     // die Reihenfolge muss der in cgconf.init (in getcommandl0) sowie der in rueckfragen entsprechen
     rzf=0;
     unsigned lfd=0;
+    confdat afconf(konfdatname,&cgconf,obverb); // hier werden die Daten aus der Datei eingelesen
+    // wenn die Sprache noch nicht in der Kommandozeile zugewiesen wurde
     if (langu.empty()) {
-      if (cgconf[lfd].gelesen) cgconf[lfd].hole(&langu); else rzf=1; // Sprache aus der Commandline geht vor Konfiguration
-      lgnzuw();
-    } 
+    // und in der Konfigurationsdatei enthalten war 
+      if (cgconf[lfd].gelesen) {
+      // dann langu auf die Sprache aus der Konfigurationsdatei setzen
+          cgconf[lfd].hole(&langu); 
+          lgnzuw();
+      } else rzf=1; // Sprache aus der Commandline geht vor Konfiguration
+      // wenn die Sprache schon in der Kommandozeile festgelegt wurde
+    } else {
+      // ... und sich von der aus der Konfigurationsdatei unterscheidet ...
+      if (cgconf[lfd].wert.compare(langu)) {
+        cgconf[lfd].setze(&langu);
+        // ... und der Aufruf nicht nur einmal geschehen sollte
+        if (oblgschreib)
+        obkschreib=1;
+      } // if (cgconf[lfd].wert.compare(langu)) 
+    } //     if (langu.empty())  else
     lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&host); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&muser); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) mpwd=XOR(string(cgconf[lfd].wert),pk); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&dbq); else rzf=1; lfd++;
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&sqlz); else rzf=1; lfd++;
-    setzsql(afconf);
-    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&zmz); else rzf=1; lfd++;
-    setzzielmuster(afconf);
   // <<"lieskonfein vor  obcapi: "<<(int)obcapi<<endl;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obcapi); else rzf=1; lfd++;
   // <<"lieskonfein nach obcapi: "<<(int)obcapi<<endl;
@@ -2387,6 +2417,14 @@ void paramcl::lieskonfein()
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logvz); else rzf=1; lfd++;
     if (logdneu) cgconf[lfd].setze(&logdname);
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&logdname); else rzf=1; lfd++;
+    // obmodem
+    lfd++;
+    // obfcard
+    lfd++;
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&sqlz); else rzf=1; lfd++;
+    setzsql(afconf);
+    if (cgconf[lfd].gelesen) cgconf[lfd].hole(&zmz); else rzf=1; lfd++;
+    setzzielmuster(afconf);
     loggespfad=logvz+vtz+logdname;
     logdt=&loggespfad.front();
   } else {
@@ -2517,7 +2555,6 @@ int paramcl::getcommandline()
   if (capizukonf || hylazukonf)
     obkschreib=1;
 
-  lgnzuw();
   Log(string(Tx[T_Fertig_mit_Parsen_der_Befehlszeile])+(obkschreib?Tx[T_ja]:Tx[T_nein]),1,oblog);
   // Ausgabe der Hilfe
   if (hilfe) {
@@ -2544,7 +2581,7 @@ int paramcl::getcommandline()
 void paramcl::rueckfragen()
 {
   Log(violetts+Tx[T_rueckfragen]+schwarz,obverb,oblog);
-  const string& nix="";
+  const string nix;
   if (rzf) {
     int lfd=-1;
     char *locale = setlocale(LC_CTYPE,"");
@@ -2577,156 +2614,54 @@ void paramcl::rueckfragen()
       dbq=Tippstring(string(Tx[T_Datenbankname_fuer_MySQL_MariaDB_auf])+host+"'",&dbq);
       cgconf[lfd].setze(&dbq);
     }
-//      for(size_t zkt=0;zkt<sqlzn;zkt++) KLA
-//        <<"zkt: "<<blau<<zkt<<schwarz<<", sqlconf["<<zkt<<"]: "<<rot<<sqlconf[zkt].wert<<schwarz<<endl;
-//        <<gruen<<(sqlconf[zkt].wert.empty()?sqlconfvp[zkt].wert:sqlconf[zkt].wert)<<schwarz<<endl;
-//       KLZ
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      size_t nsqlzn=0;
-      vector<cppSchluess*> sqlv; 
-      size_t aktsp=0;
-      for(size_t akt=0;;akt++) {
-       const string *vorgabe=
-           akt<sqlzn?
-           (sqlconf[akt].wert.empty()?&sqlconfv[akt].wert:&sqlconf[akt].wert): // wird in auswert zurueckgesetzt
-           akt<sqlvzn?
-           &sqlconfv[akt].wert:
-           &nix;
-       string zwi;
-       while (1) {
-         zwi=Tippstring(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt+1)+(vorgabe->empty()?
-               Tx[T_faxnr_wird_ersetzt_mit_der_Faxnr]:
-               Tx[T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr]),
-             vorgabe);
-         if (zwi=="-") zwi.clear();
-         if (zwi.empty()) {
-           break;
-         } else {
-           svec dben=holdbaussql(zwi);
-           // <<"dben.size(): "<<(int)dben.size()<<endl;
-           uchar dbda=1;
-           if (!dben.size()) {
-             if (Tippob(string(Tx[T_In])+rot+zwi+blau+Tx[T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
-             dbda=0;
-           } else { // if (!dben.size()) 
-             uchar nochmal=0;
-             for(size_t i=0;i<dben.size();i++) {
-               // <<"i: "<<blau<<i<<rot<<": "<<dben[i]<<schwarz<<endl;
-               if (pruefDB(dben[i])) {
-                 dbda=0;
-                 if (Tippob(string(Tx[T_Datenbank])+rot+dben[i]+blau+Tx[T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) {
-                   nochmal=1;
-                   break;
-                 } // if (strchr("jyJYoOsS",(int)erg)) 
-               } // if (pruefDB(dben[i])) 
-             } // for(size_t i=0;i<dben.size();i++) 
-             if (nochmal) continue;     
-           } // if (!dben.size()) 
-           if (dbda) {
-             if (zwi.find("&&faxnr&&")==string::npos) {
-               if (Tippob(string(Tx[T_In])+rot+zwi+blau+Tx[T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
-             } else {
-               RS rtest(this->My,ersetzAllezu(zwi,"&&faxnr&&","9999")); // (const char*)trimfaxnr));
-               if (rtest.obfehl) {
-                 if (Tippob(string(Tx[T_In])+rot+zwi+blau+Tx[T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
-               } // if (rtest.obfehl)
-             } // if (zwi.find("&&faxnr&&")==string::npos) 
-           } // if (dbda)
-         } // if (zwi.empty()) else
-         break;
-       } // while (1)
-       if (zwi.empty()) {
-         if (akt>sqlzn && akt >sqlvzn) akt--;
-       } else {
-         // hier Sql-Dateien pruefen
-         cppSchluess* neuS=new cppSchluess;
-         neuS->name=string("SQL_")+ltoan(++aktsp);
-         neuS->wert=zwi;
-         sqlv.push_back(neuS);
-         nsqlzn++;
-       } // if (zwi.empty()) else
-       if (akt>=sqlzn && akt>=sqlvzn) {
-         if (!Tippob(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],Tx[T_j_af])) break;
-       }
-      } // for(size_t akt=0;;akt++) 
-      string nsqlz=ltoan(nsqlzn);
-      cgconf[lfd].setze(&nsqlz);
-      sqlzn=nsqlzn;
-      /*
-      // Vektor in Array umwandeln
-      static cppSchluess *nsqlconfp = new cppSchluess[sqlv.size()];
-      for(size_t sqli=0;sqli<sqlv.size();sqli++) KLA
-       nsqlconfp[sqli]=*sqlv[sqli];
-      KLZ
-      sqlconfp=nsqlconfp;
-      static schlArr *nsqlconfp = new schlArr(&sqlv);
-      sqlconfp=nsqlconfp;
-      */
-      sqlconf.init(&sqlv);
-    } // if (cgconf[++lfd].wert.empty() || rzf) 
-    vector<cppSchluess*> zmv; 
-    size_t akt=0;
-    for(;;akt++) {
-      cppSchluess* neuS=new cppSchluess;
-      neuS->name=string("ZMMuster_")+ltoan(akt+1);
-      neuS->wert=Tippstring(string(Tx[T_Zielmuster_Nr])+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],(akt<zmzn)?&zmp[akt].holmuster():&nix);
-      if (neuS->wert=="-") neuS->wert.clear();
-      uchar obabbrech=(neuS->wert.empty()); // das letzte Muster muss leer sein, damit jede Datei irgendwo hinkommt
-      zmv.push_back(neuS);
-      neuS=new cppSchluess;
-      neuS->name=string("ZMZiel_")+ltoan(akt+1);
-      neuS->wert=Tippstring(string(Tx[T_Zielverzeichnis_Nr])+ltoan(akt+1),(akt<zmzn)?&zmp[akt].ziel:&nix);
-      zmv.push_back(neuS);
-      if (obabbrech) break;
-    } //     for(;;akt++)
-    zmconf.init(&zmv);
-    string nzmz=ltoan(akt+1);
-    // <<rot<<"lfd: "<<lfd<<" nzmz: "<<nzmz<<schwarz<<endl;
-    cgconf[++lfd].setze(&nzmz);
+    //      for(size_t zkt=0;zkt<sqlzn;zkt++) KLA
+    //        <<"zkt: "<<blau<<zkt<<schwarz<<", sqlconf["<<zkt<<"]: "<<rot<<sqlconf[zkt].wert<<schwarz<<endl;
+    //        <<gruen<<(sqlconf[zkt].wert.empty()?sqlconfvp[zkt].wert:sqlconf[zkt].wert)<<schwarz<<endl;
+    //       KLZ
 
     /*
-    if (cgconf[++lfd].wert.empty() || rzf) KLA
-      string  nzmz=Tippzahl(Tx[T_Zahl_der_Verzeichnisse_fuer_erfolgreich_verschickte_Faxe],&zmz);
-      size_t nzmzn;
-      while (1) KLA
-        nzmzn=atol(nzmz.c_str());
-        if (nzmzn>0) break;
-        nzmz="1";
-      KLZ
-      cgconf[lfd].setze(&nzmz);
-      // zmconfp=nzmconfp;
-      // static cppSchluess *nzmconfp= new cppSchluess[nzmzn+nzmzn];
-      zmconf.neu(nzmzn+nzmzn);
-      for(size_t akt=0;akt<(nzmzn<zmzn?nzmzn:zmzn);akt++) KLA
-       if (zmconf[2*akt].wert.empty())
-        zmconf[2*akt].wert=zmp[akt].holmuster();
-       if (zmconf[2*akt+1].wert.empty())
-        zmconf[2*akt+1].wert=zmp[akt].ziel;
-      KLZ
-      while (1) KLA
-        int fehler=0;
-        for(size_t akt=0;akt<nzmzn;akt++) KLA
-          string zwi=Tippstring(string("Zielmuster Nr. ")+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],&zmconf[2*akt].wert);
-          zmconf[2*akt].name=string("ZMMuster_")+ltoan(akt+1);
-          if (akt==nzmzn-1) zwi.clear(); // das letzte Muster muss leer sein, damit jede Datei irgendwo hinkommt
-          zmconf[2*akt].setze(&zwi);
-          zwi=Tippstring(string("Zielverzeichnis Nr. ")+ltoan(akt+1),&zmconf[2*akt+1].wert);
-          zmconf[2*akt+1].name=string("ZMZiel_")+ltoan(akt+1);
-          zmconf[2*akt+1].setze(&zwi);
-        KLZ
-        zmp=new zielmustercl[nzmzn];
-        for(uint imu=0;imu<nzmzn;imu++) KLA
-          zmp[imu].setzemuster(zmconf[2*imu].wert);
-          fehler+=zmp[imu].kompilier();
-          zmp[imu].ziel=zmconf[2*imu+1].wert;
-        KLZ
-       if (!fehler) break;
-      KLZ
-      zmz=nzmz;
-      zmzn=nzmzn;
+       if (cgconf[++lfd].wert.empty() || rzf) KLA
+       string  nzmz=Tippzahl(Tx[T_Zahl_der_Verzeichnisse_fuer_erfolgreich_verschickte_Faxe],&zmz);
+       size_t nzmzn;
+       while (1) KLA
+       nzmzn=atol(nzmz.c_str());
+       if (nzmzn>0) break;
+       nzmz="1";
+       KLZ
+       cgconf[lfd].setze(&nzmz);
+    // zmconfp=nzmconfp;
+    // static cppSchluess *nzmconfp= new cppSchluess[nzmzn+nzmzn];
+    zmconf.neu(nzmzn+nzmzn);
+    for(size_t akt=0;akt<(nzmzn<zmzn?nzmzn:zmzn);akt++) KLA
+    if (zmconf[2*akt].wert.empty())
+    zmconf[2*akt].wert=zmp[akt].holmuster();
+    if (zmconf[2*akt+1].wert.empty())
+    zmconf[2*akt+1].wert=zmp[akt].ziel;
+    KLZ
+    while (1) KLA
+    int fehler=0;
+    for(size_t akt=0;akt<nzmzn;akt++) KLA
+    string zwi=Tippstring(string("Zielmuster Nr. ")+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],&zmconf[2*akt].wert);
+    zmconf[2*akt].name=string("ZMMuster_")+ltoan(akt+1);
+    if (akt==nzmzn-1) zwi.clear(); // das letzte Muster muss leer sein, damit jede Datei irgendwo hinkommt
+    zmconf[2*akt].setze(&zwi);
+    zwi=Tippstring(string("Zielverzeichnis Nr. ")+ltoan(akt+1),&zmconf[2*akt+1].wert);
+    zmconf[2*akt+1].name=string("ZMZiel_")+ltoan(akt+1);
+    zmconf[2*akt+1].setze(&zwi);
+    KLZ
+    zmp=new zielmustercl[nzmzn];
+    for(uint imu=0;imu<nzmzn;imu++) KLA
+    zmp[imu].setzemuster(zmconf[2*imu].wert);
+    fehler+=zmp[imu].kompilier();
+    zmp[imu].ziel=zmconf[2*imu+1].wert;
+    KLZ
+    if (!fehler) break;
+    KLZ
+    zmz=nzmz;
+    zmzn=nzmzn;
     KLZ // if (cgconf[++lfd].wert.empty() || rzf) 
-    */
-  // <<"rueckfragen 1 vor  obcapi: "<<(int)obcapi<<endl;
+     */
+    // <<"rueckfragen 1 vor  obcapi: "<<(int)obcapi<<endl;
     if (cgconf[++lfd].wert.empty() || rzf) {
       if (!obfcgeprueft) pruefisdn();
       if (obfcard) {
@@ -2736,7 +2671,7 @@ void paramcl::rueckfragen()
       }
       cgconf[lfd].setze(&obcapi);
     } //     if (cgconf[++lfd].wert.empty() || rzf)
-  // <<"rueckfragen 1 nach obcapi: "<<(int)obcapi<<endl;
+    // <<"rueckfragen 1 nach obcapi: "<<(int)obcapi<<endl;
     if (cgconf[++lfd].wert.empty() || rzf) {
       if (!obmdgeprueft) pruefmodem();
       if (obmodem) {
@@ -2823,7 +2758,7 @@ void paramcl::rueckfragen()
         cgconf[lfd].setze(&LocalIdentifier);
       }
     } else {
-       lfd++;
+      lfd++;
     }
     if (obcapi) {
       if (cgconf[++lfd].wert.empty() || rzf) {
@@ -2840,7 +2775,7 @@ void paramcl::rueckfragen()
 
     if (obhyla) {
       if (cgconf[++lfd].wert.empty() || rzf) {
-//        hmodem=Tippstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,hmodem.empty()?&modems[0]:&hmodem);
+        //        hmodem=Tippstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,hmodem.empty()?&modems[0]:&hmodem);
         if (hmodem.empty()) hmodem=modems[0];
         hmodem=Tippstrings(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,&hmodem);
         cgconf[lfd].setze(&hmodem);
@@ -2922,6 +2857,115 @@ void paramcl::rueckfragen()
     }
     loggespfad=string(logvz)+vtz+logdname;
     logdt=&loggespfad.front();
+
+    // obmodem
+    ++lfd;
+    // obfcard
+    ++lfd;
+
+    if (cgconf[++lfd].wert.empty() || rzf) {
+      size_t nsqlzn=0;
+      vector<cppSchluess*> sqlv; 
+      size_t aktsp=0;
+      for(size_t akt=0;;akt++) {
+        const string *vorgabe=
+          akt<sqlzn?
+          (sqlconf[akt].wert.empty()?&sqlconfv[akt].wert:&sqlconf[akt].wert): // wird in auswert zurueckgesetzt
+          akt<sqlvzn?
+          &sqlconfv[akt].wert:
+          &nix;
+        string zwi;
+        while (1) {
+          zwi=Tippstring(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt+1)+(vorgabe->empty()?
+                Tx[T_faxnr_wird_ersetzt_mit_der_Faxnr]:
+                Tx[T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr]),
+              vorgabe);
+          if (zwi=="-") zwi.clear();
+          if (zwi.empty()) {
+            break;
+          } else {
+            svec dben=holdbaussql(zwi);
+            // <<"dben.size(): "<<(int)dben.size()<<endl;
+            uchar dbda=1;
+            if (!dben.size()) {
+              if (Tippob(string(Tx[T_In])+rot+zwi+blau+Tx[T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
+              dbda=0;
+            } else { // if (!dben.size()) 
+              uchar nochmal=0;
+              for(size_t i=0;i<dben.size();i++) {
+                // <<"i: "<<blau<<i<<rot<<": "<<dben[i]<<schwarz<<endl;
+                if (pruefDB(dben[i])) {
+                  dbda=0;
+                  if (Tippob(string(Tx[T_Datenbank])+rot+dben[i]+blau+Tx[T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) {
+                    nochmal=1;
+                    break;
+                  } // if (strchr("jyJYoOsS",(int)erg)) 
+                } // if (pruefDB(dben[i])) 
+              } // for(size_t i=0;i<dben.size();i++) 
+              if (nochmal) continue;     
+            } // if (!dben.size()) 
+            if (dbda) {
+              if (zwi.find("&&faxnr&&")==string::npos) {
+                if (Tippob(string(Tx[T_In])+rot+zwi+blau+Tx[T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
+              } else {
+                RS rtest(this->My,ersetzAllezu(zwi,"&&faxnr&&","9999")); // (const char*)trimfaxnr));
+                if (rtest.obfehl) {
+                  if (Tippob(string(Tx[T_In])+rot+zwi+blau+Tx[T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
+                } // if (rtest.obfehl)
+              } // if (zwi.find("&&faxnr&&")==string::npos) 
+            } // if (dbda)
+          } // if (zwi.empty()) else
+          break;
+        } // while (1)
+        if (zwi.empty()) {
+          if (akt>sqlzn && akt >sqlvzn) akt--;
+        } else {
+          // hier Sql-Dateien pruefen
+          cppSchluess* neuS=new cppSchluess;
+          neuS->name=string("SQL_")+ltoan(++aktsp);
+          neuS->wert=zwi;
+          sqlv.push_back(neuS);
+          nsqlzn++;
+        } // if (zwi.empty()) else
+        if (akt>=sqlzn && akt>=sqlvzn) {
+          if (!Tippob(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],Tx[T_j_af])) break;
+        }
+      } // for(size_t akt=0;;akt++) 
+      string nsqlz=ltoan(nsqlzn);
+      cgconf[lfd].setze(&nsqlz);
+      sqlzn=nsqlzn;
+      /*
+      // Vektor in Array umwandeln
+      static cppSchluess *nsqlconfp = new cppSchluess[sqlv.size()];
+      for(size_t sqli=0;sqli<sqlv.size();sqli++) KLA
+      nsqlconfp[sqli]=*sqlv[sqli];
+      KLZ
+      sqlconfp=nsqlconfp;
+      static schlArr *nsqlconfp = new schlArr(&sqlv);
+      sqlconfp=nsqlconfp;
+       */
+      sqlconf.init(&sqlv);
+    } // if (cgconf[++lfd].wert.empty() || rzf) 
+
+    vector<cppSchluess*> zmv; 
+    size_t akt=0;
+    for(;;akt++) {
+      cppSchluess* neuS=new cppSchluess;
+      neuS->name=string("ZMMuster_")+ltoan(akt+1);
+      neuS->wert=Tippstring(string(Tx[T_Zielmuster_Nr])+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],(akt<zmzn)?&zmp[akt].holmuster():&nix);
+      if (neuS->wert=="-") neuS->wert.clear();
+      uchar obabbrech=(neuS->wert.empty()); // das letzte Muster muss leer sein, damit jede Datei irgendwo hinkommt
+      zmv.push_back(neuS);
+      neuS=new cppSchluess;
+      neuS->name=string("ZMZiel_")+ltoan(akt+1);
+      neuS->wert=Tippstring(string(Tx[T_Zielverzeichnis_Nr])+ltoan(akt+1),(akt<zmzn)?&zmp[akt].ziel:&nix);
+      zmv.push_back(neuS);
+      if (obabbrech) break;
+    } //     for(;;akt++)
+    zmconf.init(&zmv);
+    string nzmz=ltoan(akt+1);
+    // <<rot<<"lfd: "<<lfd<<" nzmz: "<<nzmz<<schwarz<<endl;
+    cgconf[++lfd].setze(&nzmz);
   } // if (rzf)
 
   // hier wurde falls noetig ermittelt, ob Fritzcard/Modem vorhanden
@@ -2929,6 +2973,7 @@ void paramcl::rueckfragen()
     string obmodems=ltoan(obmodem); 
     Log(blaus+"obfcard: "+schwarz+ltoan(obfcard)+blau+", obmodem: "+schwarz+obmodems,obverb,oblog);
   }
+
   // die Verzeichnisnamen standardisieren
   kuerzevtz(&spoolcapivz);
   kuerzevtz(&cdonevz);
@@ -2954,12 +2999,22 @@ void paramcl::autofkonfschreib()
   sprintf(buf,"rzf: %d, capizukonf: %d, hylazukonf: %d, obkschreib: %d",(int)rzf, (int)capizukonf, (int)hylazukonf, (int)obkschreib);
   Log(blaus+buf+schwarz,obverb,oblog);
   */
-
   if (rzf||obkschreib) {
     Log(gruens+Tx[T_schreibe_Konfiguration]+schwarz,obverb,oblog);
+    // restliche Erklaerungen festlegen
+//    cgconf.setzbem("language",sprachstr);
+    cgconf.setzbem("countrycode",Tx[T_Eigene_Landesvorwahl_ohne_plus_oder_00]);
+    cgconf.setzbem("citycode",Tx[T_Eigene_Ortsvorwahl_ohne_0]);
+    cgconf.setzbem("msn",Tx[T_Eigene_MSN_Faxnummer_ohne_Vorwahl]);
+    cgconf.setzbem("LongDistancePrefix",Tx[T_Praefix_fuer_ausserorts_zB_0]);
+    cgconf.setzbem("InternationalPrefix",Tx[T_Praefix_fuer_das_Ausland_zB_00]);
+    cgconf.setzbem("LocalIdentifier",Tx[T_Hylafax_bis_10_Buchstabe_fuer_eigenen_Namen]);
+    cgconf.setzbem("cFaxUeberschrift",Tx[T_Capisuite_bis_20_Buchstaben_fuer_eigenen_Namen]);
+    cgconf.setzbem("sqlz",Tx[T_Zahl_der_angegebenen_sql_Befehle_zur_Suche_nach_Absendern]);
+    cgconf.setzbem("musterzahl",Tx[T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe]);
     for (size_t i=0;i<cgconf.zahl;i++) {
-     if (cgconf[i].name=="obhyla") cgconf[i].setze(&obhyla);
-     else if (cgconf[i].name=="obcapi") cgconf[i].setze(&obcapi);
+      if (cgconf[i].name=="obhyla") cgconf[i].setze(&obhyla);
+      else if (cgconf[i].name=="obcapi") cgconf[i].setze(&obcapi);
     }
 //    cppSchluess *schlp[3]={cgconfp,sqlconfp,zmconfp};
     schlArr *schlp[3]={&cgconf,&sqlconf,&zmconf};
@@ -6003,7 +6058,6 @@ int paramcl::pruefcapi()
           // i4l-base geloescht
           capischonerfolgreichinstalliert=!linst.doinst("-f capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
         } // if (lsys.getsys(obverb,oblog)==sus) 
-cout<<rot<<"Hier capischonerfolgreichinstalliert: "<<violett<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
         if (!capischonerfolgreichinstalliert) {
           holvongithub("capisuite_copy");
           svec csrueck;
@@ -6969,7 +7023,7 @@ void zeigversion(string& prog,string& mpfad)
   strftime(buf, sizeof(buf), "%d.%m.%Y %H:%M:%S", &tm);
   cout<<"              "<<Tx[T_Kompiliert]<<blau<<buf<<schwarz<<endl;
   cout<<Tx[T_Quelle]<<blau<<"https://github.com/libelle17/"<<prog<<schwarz<<endl;
-  cout<<Tx[T_Hilfe]<<braun<<"man "<<base_name(mpfad)<<schwarz<<"' oder '"<<braun<<"man -Lde "<<base_name(mpfad)<<schwarz<<"'"<<endl;
+  cout<<Tx[T_Hilfe]<<braun<<"man "<<base_name(mpfad)<<schwarz<<Tx[T_or]<<braun<<"man -Lde "<<base_name(mpfad)<<schwarz<<"'"<<endl;
 } // void zeigversion(const char* const prog)
 
 void paramcl::zeigkonf()

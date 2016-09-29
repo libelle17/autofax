@@ -184,6 +184,7 @@ class paramcl // Programmparameter
     string hklingelzahl; // Zahl der Klingeltoene, bis Hylafax einen Anruf annnimmt
     uchar capizukonf=0; // capi zu konfigurieren
     uchar hylazukonf=0; // hyla zu konfigurieren
+    uchar oblgschreib=0; // Konfigurationsdatei seitens der Sprache voraussichtlich schreiben
     uchar obkschreib=0; // Konfigurationsdatei schreiben
     uchar logdneu=0;    // Logdatei geaendert
     uchar logvneu=0;    // Logverzeichnis geaendert

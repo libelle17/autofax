@@ -169,6 +169,8 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {"Fehler beim Loeschen","error deleting"},
   // T_nicht_geloescht_war_eh_nicht_mehr_da
   {" nicht geloescht, war eh nicht mehr da."," not deleted, was no more there."},
+  // T_pruefpar
+  {"pruefpar()","checkpar()"},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -797,7 +799,26 @@ return 0;
 //************************************
 }	 // int kuerzelogdatei(const char* logdatei,int obverb)
 
-
+string* loeschefarbenaus(string *zwi)
+{
+  loeschealleaus(zwi,schwarz);
+  loeschealleaus(zwi,dgrau); 
+  loeschealleaus(zwi,drot); 
+  loeschealleaus(zwi,rot); 
+  loeschealleaus(zwi,gruen); 
+  loeschealleaus(zwi,hgruen); 
+  loeschealleaus(zwi,braun); 
+  loeschealleaus(zwi,gelb); 
+  loeschealleaus(zwi,blau); 
+  loeschealleaus(zwi,dblau); 
+  loeschealleaus(zwi,violett); 
+  loeschealleaus(zwi,hviolett); 
+  loeschealleaus(zwi,tuerkis); 
+  loeschealleaus(zwi,htuerkis); 
+  loeschealleaus(zwi,hgrau); 
+  loeschealleaus(zwi,weiss); 
+  return zwi;
+} // void loeschefarbenaus(string *zwi)
 
 int Log(const string& text, short screen, short file, bool oberr, short klobverb)
 {
@@ -824,22 +845,7 @@ int Log(const string& text, short screen, short file, bool oberr, short klobverb
         cerr<<rot<<Txk[T_Variable_logdatei_leer]<<schwarz<<endl;
       } else {
         string zwi=text; 
-        loeschealleaus(&zwi,schwarz);
-        loeschealleaus(&zwi,dgrau); 
-        loeschealleaus(&zwi,drot); 
-        loeschealleaus(&zwi,rot); 
-        loeschealleaus(&zwi,gruen); 
-        loeschealleaus(&zwi,hgruen); 
-        loeschealleaus(&zwi,braun); 
-        loeschealleaus(&zwi,gelb); 
-        loeschealleaus(&zwi,blau); 
-        loeschealleaus(&zwi,dblau); 
-        loeschealleaus(&zwi,violett); 
-        loeschealleaus(&zwi,hviolett); 
-        loeschealleaus(&zwi,tuerkis); 
-        loeschealleaus(&zwi,htuerkis); 
-        loeschealleaus(&zwi,hgrau); 
-        loeschealleaus(&zwi,weiss); 
+        loeschefarbenaus(&zwi);
         static bool erstaufruf=1;
 
         char tbuf[20];
@@ -1413,6 +1419,7 @@ void schlArr::init(size_t vzahl, ...)
  schl = new cppSchluess[zahl];
  for(size_t i=0;i<zahl;i++) {
   schl[i].name=va_arg(list,const char*);
+// <<rot<<"schl["<<i<<"].name: "<<schwarz<<schl[i].name<<endl;
  }
  va_end(list);
 } // void schlArr::init(size_t vzahl, ...)
@@ -1422,7 +1429,7 @@ int schlArr::setze(const string& name, const string& wert, const string& bem)
   for(size_t ind=0;ind<zahl;ind++) {
     if (schl[ind].name==name) {
       schl[ind].wert=wert;
-      schl[ind].bemerk=bem;
+      if (!bem.empty()) schl[ind].bemerk=bem;
       return 0;
     }
   }
@@ -1447,9 +1454,9 @@ void schlArr::setzbem(const string& name,const string& bem)
     if (schl[ind].name==name) {
       schl[ind].bemerk=bem;
       break;
-    }
-  }
-}
+    } //     if (schl[ind].name==name)
+  } //   for(size_t ind=0;ind<zahl;ind++)
+} // void schlArr::setzbem(const string& name,const string& bem)
 
 void schlArr::aschreib(mdatei *f)
 {
@@ -1997,11 +2004,13 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
 // vorangestellte "1" => opschreibp auf 0 setzen
 // vorangestelltes "un" => bei beinaeren Operatoren nicht
 {
+//  Log(violetts+Txk[T_pruefpar]+schwarz+" "+ltoan(*akt),1,0);
   uchar nichtspeichern=0;
   uchar gegenteil=0;
 // wenn der Index noch im Bereich und der zugehoerige Kommandozeilenparameter noch nicht unter den Programmparametern gefunden wurde ...
   if (*akt<argcvm->size()) if (!argcvm->at(*akt).agef) {
     char *acstr=argcvm->at(*akt).argcs;
+//    <<rot<<"acstr: "<<schwarz<<acstr<<endl;
     int aclen=strlen(acstr);
     if (aclen>1) {
       if (aclen>2 && acstr[0]=='-'&&acstr[1]=='-') {
@@ -2142,7 +2151,8 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
 
 string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
 {
- static const string nix;
+ cout<<"name: "<<kurz<<" machbemerkung"<<" lg: "<<lg<<" obfarbe: "<<(int)obfarbe;
+ static const string nix="";
  bemerkung.clear();
   if (TxBp) {
     if (Txi!=-1) {
@@ -2156,6 +2166,7 @@ string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
       } // if (TxBp->TCp[Txi][lg])
     } // if (Txi!=-1)
   } // if (TxBp)
+  cout<<" bemerkung: "<<bemerkung<<endl;
   return bemerkung;
 } // string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
 

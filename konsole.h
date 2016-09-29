@@ -33,6 +33,7 @@
 #endif
 
 using namespace std;
+string* loeschefarbenaus(string *zwi);
 int Log(const string& text,short screen=1,short file=1,bool oberr=0,short klobverb=0);
 
 #ifdef _MSC_VER
@@ -169,6 +170,7 @@ enum Tkonsole_
   T_Loesche_Ausrufezeichen,
   T_Fehler_beim_Loeschen,
   T_nicht_geloescht_war_eh_nicht_mehr_da,
+  T_pruefpar,
   T_konsoleMAX,
 };
 
@@ -333,7 +335,7 @@ template <> inline void Schluessel::setze < string > (string *var) { strncpy(val
 class cppSchluess {
   public:
     string name;
-    uchar gelesen;
+    uchar gelesen=0;
     string wert;
     string bemerk;
 //    inline cppSchluess& operator=(cppSchluess zuzuw){name=zuzuw.name;wert=zuzuw.wert; return *this;} // wird nicht benoetigt
