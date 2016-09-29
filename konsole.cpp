@@ -2151,7 +2151,6 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
 
 string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
 {
- cout<<"name: "<<kurz<<" machbemerkung"<<" lg: "<<lg<<" obfarbe: "<<(int)obfarbe;
  static const string nix="";
  bemerkung.clear();
   if (TxBp) {
@@ -2166,7 +2165,6 @@ string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
       } // if (TxBp->TCp[Txi][lg])
     } // if (Txi!=-1)
   } // if (TxBp)
-  cout<<" bemerkung: "<<bemerkung<<endl;
   return bemerkung;
 } // string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
 
