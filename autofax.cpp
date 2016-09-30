@@ -1463,7 +1463,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe
   {"Zahl der Muster/Verzeichnis-Paare zum Speichern ankomender Faxe","No. of pattern/directory-pairs for saving received faxes"},
   {"",""}
-};
+}; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
 
 const string& pk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax";
@@ -1833,16 +1833,13 @@ void paramcl::getcommandl0()
     "gleichziel","ocri","ocra","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
     "anstr","undstr","cronminut","logvz","logdname","obmodem","obfcard","sqlz","musterzahl");
   uchar plusverb=0;
-  string sprachstr;
 
   //  for(int i=argc-1;i>0;i--) KLA if (argv[i][0]==0) argc--; KLZ // damit fuer das Compilermakro auch im bash-script argc stimmt
   for(unsigned iru=0;iru<3;iru++) {
     switch (iru) {
       case 0:
         opts.push_back(/*2*/optioncl("lg","language", &Tx,T_sprachstr,&langu,psons,&cgconf,"language",&oblgschreib));
-        sprachstr=Tx[T_sprachstr];
-        loeschefarbenaus(&sprachstr);
-        cgconf.setzbem("language",sprachstr);
+        cgconf.setzbemv("language",&Tx,T_sprachstr,1);
         opts.push_back(/*2*/optioncl("langu","sprache", &Tx,-1,&langu,psons));
         opts.push_back(/*2*/optioncl("lang","lingue", &Tx,-1,&langu,psons));
         break;
@@ -1951,7 +1948,7 @@ void paramcl::pruefmodem()
   if (rzf) {
     cgconf.setze("obmodem",obmodem?"1":"0");
   }
-  cgconf.setzbem("obmodem",Tx[T_ob_ein_Modem_drinstak]);
+  cgconf.setzbemv("obmodem",&Tx,T_ob_ein_Modem_drinstak);
   // wvdialconf oder schneller: setserial -a /dev/tty*, mit baud_base: <!=0>  als Kriterium
 } // void paramcl::pruefmodem()
 
@@ -1980,7 +1977,13 @@ void paramcl::pruefisdn()
   if (rzf) {
     cgconf.setze("obfcard",obfcard?"1":"0");
   }
-  cgconf.setzbem("obfcard",Tx[T_ob_eine_Fritzcard_drinstak]);
+  string bemst; 
+  svec bemv;
+  for(int akts=0;akts<Smax;akts++) {
+    bemst=Tx[T_ob_ein_Modem_drinstak][akts];
+    bemv<<bemst;
+  } //         for(int akts=0;akts<Smax;akts++)
+  cgconf.setzbemv("obfcard",&Tx,T_ob_eine_Fritzcard_drinstak);
 } // void paramcl::pruefisdn()
 
 // wird aufgerufen in: main, pruefhyla
@@ -3003,15 +3006,15 @@ void paramcl::autofkonfschreib()
     Log(gruens+Tx[T_schreibe_Konfiguration]+schwarz,obverb,oblog);
     // restliche Erklaerungen festlegen
 //    cgconf.setzbem("language",sprachstr);
-    cgconf.setzbem("countrycode",Tx[T_Eigene_Landesvorwahl_ohne_plus_oder_00]);
-    cgconf.setzbem("citycode",Tx[T_Eigene_Ortsvorwahl_ohne_0]);
-    cgconf.setzbem("msn",Tx[T_Eigene_MSN_Faxnummer_ohne_Vorwahl]);
-    cgconf.setzbem("LongDistancePrefix",Tx[T_Praefix_fuer_ausserorts_zB_0]);
-    cgconf.setzbem("InternationalPrefix",Tx[T_Praefix_fuer_das_Ausland_zB_00]);
-    cgconf.setzbem("LocalIdentifier",Tx[T_Hylafax_bis_10_Buchstabe_fuer_eigenen_Namen]);
-    cgconf.setzbem("cFaxUeberschrift",Tx[T_Capisuite_bis_20_Buchstaben_fuer_eigenen_Namen]);
-    cgconf.setzbem("sqlz",Tx[T_Zahl_der_angegebenen_sql_Befehle_zur_Suche_nach_Absendern]);
-    cgconf.setzbem("musterzahl",Tx[T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe]);
+    cgconf.setzbemv("countrycode",&Tx,T_Eigene_Landesvorwahl_ohne_plus_oder_00);
+    cgconf.setzbemv("citycode",&Tx,T_Eigene_Ortsvorwahl_ohne_0);
+    cgconf.setzbemv("msn",&Tx,T_Eigene_MSN_Faxnummer_ohne_Vorwahl);
+    cgconf.setzbemv("LongDistancePrefix",&Tx,T_Praefix_fuer_ausserorts_zB_0);
+    cgconf.setzbemv("InternationalPrefix",&Tx,T_Praefix_fuer_das_Ausland_zB_00);
+    cgconf.setzbemv("LocalIdentifier",&Tx,T_Hylafax_bis_10_Buchstabe_fuer_eigenen_Namen);
+    cgconf.setzbemv("cFaxUeberschrift",&Tx,T_Capisuite_bis_20_Buchstaben_fuer_eigenen_Namen);
+    cgconf.setzbemv("sqlz",&Tx,T_Zahl_der_angegebenen_sql_Befehle_zur_Suche_nach_Absendern);
+    cgconf.setzbemv("musterzahl",&Tx,T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe);
     for (size_t i=0;i<cgconf.zahl;i++) {
       if (cgconf[i].name=="obhyla") cgconf[i].setze(&obhyla);
       else if (cgconf[i].name=="obcapi") cgconf[i].setze(&obcapi);
@@ -3021,8 +3024,8 @@ void paramcl::autofkonfschreib()
 //    size_t groe[sizeof schlp/sizeof *schlp]={gcs,sqlzn,zmzn+zmzn};
     //    for(size_t i=0;i<sqlzn;i++) KLA _out<<"i: "<<i<<sqlconfp[i].name<<endl; KLZ
 //    multicppschreib(konfdatname, schlp, groe, sizeof schlp/sizeof *schlp);
-    multischlschreib(konfdatname, schlp, sizeof schlp/sizeof *schlp);
-  }
+    multischlschreib(konfdatname, schlp, sizeof schlp/sizeof *schlp, mpfad);
+  } // if (rzf||obkschreib) 
   //    ::cppschreib(konfdatname, cgconfp, gcs);
 } // void paramcl::autofkonfschreib()
 

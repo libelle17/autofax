@@ -171,6 +171,10 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {" nicht geloescht, war eh nicht mehr da."," not deleted, was no more there."},
   // T_pruefpar
   {"pruefpar()","checkpar()"},
+  // T_Konfiguration_fuer
+  {"# Konfiguration fuer '","# Configuration for '"},
+  // T_erstellt_automatisch_durch_dieses_am
+  {"', erstellt automatisch durch dieses am: ","', generated automatically by itself at: "},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -1253,17 +1257,28 @@ void confdat::Abschn_auswert(int obverb, char tz)
 //  KLZ
 } // void confdat::Abschn_auswert(int obverb, char tz)
 
-
-
+// aufgerufen in: confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fname)
 void confdat::auswert(schlArr *sA, int obverb, char tz)
 {
   richtige=0;
   sA->reset();
   if (obgelesen) {
+    string ibemerk;
     for(size_t i=0;i<zn.size();i++) {
       string *zeile=&zn[i];
       size_t pos=zeile->find('#');
-      if (pos!=string::npos) zeile->erase(pos);
+      if (pos!=string::npos) {
+        // wir nehmen an, die Kommentarzeile gehoert zum naechsten Parameter, wenn sie vorne beginnt
+        if (!pos) {
+        // Ueberschrift am Anfang  weglassen
+          if (!richtige && zeile->find("onfigura")!=string::npos && zeile->find("automati")!=string::npos) {
+          } else {
+            if (!ibemerk.empty()) ibemerk+='\n';
+            ibemerk+=zeile->substr(pos);
+          } // if (!richtige ... else
+        } // if (!pos)
+        zeile->erase(pos);
+      } // if (pos!=string::npos)
       ltrim(zeile);
       if (!zeile->empty()) {
         if (obverb>1) Log(string(Txk[T_stern_zeile])+*zeile,obverb);
@@ -1278,8 +1293,12 @@ void confdat::auswert(schlArr *sA, int obverb, char tz)
                 ++richtige;
                 (*sA)[ii].wert=zeile->substr(pos+1);
                 gtrim(&(*sA)[ii].wert); // Leerzeichen entfernen
-                // Anfuerhungszeichen entfernen
+                // Anfuehrungszeichen entfernen
                 anfzweg((*sA)[ii].wert);
+//      if (name.find("autofax")!=string::npos)
+//       <<" name: "<<schwarz<<(*sA)[ii].name<<violett<<" bemerk: '"<<ibemerk<<"'"<<schwarz<<endl;
+                (*sA)[ii].bemerk=ibemerk;
+                ibemerk.clear();
               } // if (strchr((string(" ")+(char)9+tz).c_str(),gef+(*sA)[ii].name.length())) 
               break;
             } // if( !strcmp(sA[i].name.c_str(),zeile->c_str()) ) 
@@ -1424,15 +1443,16 @@ void schlArr::init(size_t vzahl, ...)
  va_end(list);
 } // void schlArr::init(size_t vzahl, ...)
 
-int schlArr::setze(const string& name, const string& wert, const string& bem)
+// das Setzen auch der Bemerkung wird bisher nicht benoetigt
+int schlArr::setze(const string& name, const string& wert/*, const string& bem*/)
 {
   for(size_t ind=0;ind<zahl;ind++) {
     if (schl[ind].name==name) {
       schl[ind].wert=wert;
-      if (!bem.empty()) schl[ind].bemerk=bem;
+//      if (!bem.empty()) schl[ind].bemerk=bem;
       return 0;
     }
-  }
+  } //   for(size_t ind=0;ind<zahl;ind++)
   return 1;
 } // int schlArr::setze(const string& name, const string& wert)
  
@@ -1443,25 +1463,52 @@ const string& schlArr::hole(const string& name)
     if (schl[ind].name==name) {
       return schl[ind].wert;
     }
-  }
+  } //   for(size_t ind=0;ind<zahl;ind++)
   return nix;
 } // const string* schlArr::hole(const string& name)
 
-
-void schlArr::setzbem(const string& name,const string& bem)
+// wenn die bisherige Bemerkung in einer Sprache mit der zu setzenden identisch, also nicht zwischenzeitlich manuell geaendert, 
+// dann in aktueller Sprache uebernehmen
+void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,svec *fertige)
 {
+  string bemst; 
+  svec bemv, *vp;
+  if (fertige) {
+    vp=fertige;
+  } else {
+  for(int akts=0;akts<Smax;akts++) {
+    bemst=(*TxBp)[Tind][akts];
+    if (obfarbe) loeschefarbenaus(&bemst);
+    bemv<<bemst;
+  } //         for(int akts=0;akts<Smax;akts++)
+   vp=&bemv;
+  }
   for(size_t ind=0;ind<zahl;ind++) {
     if (schl[ind].name==name) {
-      schl[ind].bemerk=bem;
-      break;
+     uchar gefunden=0;
+     if (schl[ind].bemerk.empty())
+       gefunden=1;
+     else {
+       string bv=schl[ind].bemerk.substr(2);
+       for(int aktsp=0;aktsp<Smax;aktsp++) {
+         if (bv==(*vp)[aktsp]) {
+           gefunden=(aktsp!=Txk.lgn); // wenn aktuelle Sprache, nichts tun
+           break;
+         } // if (bv==bemv[aktsp]) 
+       } // for(int aktsp=0;aktsp<Smax;aktsp++) 
+     } // (schl[ind].bemerk.empty) else
+     if (gefunden) {
+      schl[ind].bemerk="# "+(*vp)[Txk.lgn];
+     }
     } //     if (schl[ind].name==name)
   } //   for(size_t ind=0;ind<zahl;ind++)
-} // void schlArr::setzbem(const string& name,const string& bem)
+} // void schlArr::setzbemv(const string& name,const string& bem)
+
 
 void schlArr::aschreib(mdatei *f)
 {
   for (size_t i = 0;i<zahl;i++) {
-    *f<<"# "<<schl[i].bemerk<<endl;
+    if (!schl[i].bemerk.empty()) *f<<(schl[i].bemerk[0]=='#'?"":"# ")<<schl[i].bemerk<<endl;
     *f<<schl[i].name<<" = \""<<schl[i].wert<<"\""<<endl;
   } //   for (size_t i = 0;i<zahl;i++)
 } // void schlArr::aschreib(mdatei *f)
@@ -1481,10 +1528,18 @@ schlArr::~schlArr()
   if (schl) delete[] schl;
 }
 
-int multischlschreib(const string& fname, schlArr **confs, size_t cszahl)
+int multischlschreib(const string& fname, schlArr **confs, size_t cszahl,string mpfad)
 {
   mdatei f(fname,ios::out);
   if (f.is_open()) {
+    if (!mpfad.empty()) {
+      char buf[30];
+      time_t jetzt=time(0);
+      tm *ltm = localtime(&jetzt);
+      strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", ltm);
+      string ueberschr=Txk[T_Konfiguration_fuer]+mpfad+Txk[T_erstellt_automatisch_durch_dieses_am]+buf;
+      if (!ueberschr.empty()) f<<ueberschr<<endl;
+    }
     for (size_t j=0;j<cszahl;j++) {
      confs[j]->aschreib(&f);
     }
@@ -2619,28 +2674,32 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
   return 0;
 } // int tuloeschen(string zuloe,int obverb, int oblog)
 
-
+// in optioncl::optioncl
+void optioncl::setzebem(schlArr *cp,const char *pname)
+{
+  if (cp && pname) {
+    svec bems;
+    for(int akts=0;akts<Smax;akts++) bems<<machbemerkung((Sprache)akts,falsch);
+    cp->setzbemv(pname,0,0,0,&bems);
+  }
+} // void optioncl::setzebem(TxB *TxBp,schlArr *cp,const char *pname)
 
 /*2*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : 
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), zptr(zptr), art(art),cp(cp),pname(pname),obschreibp(obschreibp) 
-  {
-    if (cp && pname) {
-      cp->setzbem(pname,machbemerkung(TxBp->lgn,falsch));
-    }
-  }
+  kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), zptr(zptr), art(art),cp(cp),pname(pname),obschreibp(obschreibp) 
+{
+  setzebem(cp,pname);
+}
+
 /*3*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp, 
-              const char *pname,uchar* obschreibp) : 
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), zptr(zptr), art(art),
-               cp(cp),pname(pname),obschreibp(obschreibp) 
-  {
-    if (cp && pname) {
-      cp->setzbem(pname,machbemerkung(TxBp->lgn,falsch));
-    }
-  }
+    const char *pname,uchar* obschreibp) : 
+  kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), zptr(zptr), art(art),
+  cp(cp),pname(pname),obschreibp(obschreibp) 
+{
+  setzebem(cp,pname);
+}
+
 /*4*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, uchar *pptr, int wert,schlArr *cp, const char *pname,uchar* obschreibp) :
-               kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0)
-  {
-    if (cp && pname) {
-      cp->setzbem(pname,machbemerkung(TxBp->lgn,falsch));
-    }
-  }
+  kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0)
+{
+  setzebem(cp,pname);
+}

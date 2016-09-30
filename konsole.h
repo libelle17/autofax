@@ -171,6 +171,8 @@ enum Tkonsole_
   T_Fehler_beim_Loeschen,
   T_nicht_geloescht_war_eh_nicht_mehr_da,
   T_pruefpar,
+  T_Konfiguration_fuer,
+  T_erstellt_automatisch_durch_dieses_am,
   T_konsoleMAX,
 };
 
@@ -357,6 +359,7 @@ template <> inline void cppSchluess::setze < const char* > (const char** var, st
 template <> inline void cppSchluess::setze < string > (string *var, string& bem) {wert=*var;if (!bem.empty()) bemerk=bem;}
 template <> inline void cppSchluess::setze < const string > (const string *var, string& bem) {wert=*var; if (!bem.empty()) bemerk=bem;}
 */
+class svec;
 
 class schlArr {
  public:
@@ -367,9 +370,9 @@ class schlArr {
  void init(size_t vzahl, ...);
  void init(vector<cppSchluess*> *sqlvp);
  inline /*const*/ cppSchluess& operator[](size_t const& nr) const { return schl[nr]; }
- int setze(const string& name, const string& wert, const string& bem="");
+ int setze(const string& name, const string& wert/*, const string& bem=""*/);
  const string& hole(const string& name);
- void setzbem(const string& name,const string& bem);
+ void setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe=0,svec *fertige=0);
  void aschreib(mdatei *f);
  int fschreib(const string& fname);
  void ausgeb();
@@ -505,6 +508,9 @@ class optioncl
 //    uchar ogefunden=0; // braucht man nicht, ist in argcl
     uchar obno=0; // ob auch die Option mit vorangestelltem 'no' eingefueft werden soll
     string bemerkung;
+  private:
+    void setzebem(schlArr *cp,const char *pname);
+  public:
 ///*1*/optioncl(string kurz,string lang,TxB *TxBp,long Txi) : 
 //               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi) {}
 /*2*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *zptr,par_t art,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
@@ -544,7 +550,7 @@ int Schschreib(const char *fname, Schluessel *conf, size_t csize);
 #endif
 int cppschreib(const string& fname, cppSchluess *conf, size_t csize);
 // int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, size_t cszahl);
-int multischlschreib(const string& fname, schlArr **confs, size_t cszahl);
+int multischlschreib(const string& fname, schlArr **confs, size_t cszahl,string mpfad="");
 std::string base_name(const std::string& path);
 std::string dir_name(const std::string& path);
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
