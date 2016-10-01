@@ -120,7 +120,6 @@ class paramcl // Programmparameter
     uchar obmodem=1;    // ob Modem angeschlossen
     uchar obmdgeprueft=0; // ob schon geprueft, ob Modem verfuegbar
     uchar obocrgeprueft=0; // ob ocrmypdf installiert ist
-    int ocrda=0; // ocrmypdf erfolgreich ueberprueft
     const string spooltab = "spool";
     const string altspool = "altspool";
     int obverb=0; // verbose

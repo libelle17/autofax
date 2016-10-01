@@ -2272,6 +2272,10 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="libreoffice-base") return "libreoffice-common libreoffice-base";
       if (prog=="libcapi20-2") return "libcapi20-dev";
       if (prog=="python-devel") return "python-dev";
+      if (prog=="python-devel") return "python-dev";
+      if (prog=="tesseract-ocr-traineddata-english") return "tesseract-ocr-eng";
+      if (prog=="tesseract-ocr-traineddata-german") return "tesseract-ocr-deu";
+      if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-ocr-osd";
       break;
     case dnf: case yum:
       if (prog=="mariadb") return "mariadb-server";

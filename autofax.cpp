@@ -3942,7 +3942,12 @@ int paramcl::pruefocr()
 {
   if (!obocrgeprueft) {
     if (!obprogda("ocrmypdf",oblog,obverb)) {
-      if ((ocrda=!linst.doinst("tesseract-ocr tesseract-ocr-traineddata-english tesseract-ocr-traineddata-german tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog,"tesseract"))) {
+
+      if (!obprogda("tesseract",obverb,oblog)) {
+        linst.doinst("tesseract-ocr",obverb,oblog);
+        linst.doinst("tesseract-ocr-traineddata-english",obverb,oblog);
+        linst.doinst("tesseract-ocr-traineddata-german",obverb,oblog);
+        linst.doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
         systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
       }
       if (!linst.doggfinst("python-devel",obverb+1,oblog)) {
@@ -3960,7 +3965,7 @@ int paramcl::pruefocr()
     } //     if (!obprogda("ocrmypdf",oblog,obverb))
     obocrgeprueft=1;
   } // if (!obocrgeprueft) 
-  return ocrda;
+  return 0;
 } // int paramcl::pruefocr()
 
 // zufaxenvz = zufaxen-Verzeichnis
@@ -4704,13 +4709,10 @@ void paramcl::empfarch()
           string stamm,exten;
           getstammext(&vorsoffice,&stamm,&exten);
           quelle=empfvz+vtz+base_name(stamm)+".pdf"; 
-          cout<<rot<<"Quelle: "<<violett<<quelle<<schwarz<<endl;
         }
       } // if (pruefsoffice()) 
       if (quelle.empty()) quelle=rueck[i];
-          cout<<rot<<"Quelle: "<<violett<<quelle<<schwarz<<endl;
       if (!pruefocr()) {
-        cout<<"hier gleich ocr"<<endl;
         if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+quelle+"\" \""+ziel+"\" && chmod +r \""+ziel+"\""
             ,2,oblog)) {
          if (!kfehler) tuloeschen(hpfad,cuser,obverb,oblog);
