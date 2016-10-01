@@ -3953,7 +3953,7 @@ int paramcl::pruefocr()
           string srcvz=instverz+vtz+proj+".tar.gz";
           holvongithub(proj);
           if (!kompilbase(proj,s_gz)) {
-            return systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" &&  sudo pip3 install ocrmypdf'",1,oblog);
+            return systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" &&  sudo pip3 install ocrmypdf'",obverb,oblog);
           } //    if (!kompilbase(was,endg))
         } //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
       } //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
@@ -4709,7 +4709,7 @@ void paramcl::empfarch()
       if (quelle.empty()) quelle=rueck[i];
       if (pruefocr()) {
         if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+quelle+"\" \""+ziel+"\" && chmod +r \""+ziel+"\""
-            ,obverb,oblog)) {
+            ,2,oblog)) {
          if (!kfehler) tuloeschen(hpfad,cuser,obverb,oblog);
          hpfad=ziel;
         }
