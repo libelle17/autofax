@@ -1367,7 +1367,7 @@ confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fna
   if (!fname.empty()) {
     lies(fname,obverb);
     auswert(sA,obverb,tz);
-  }
+  } //   if (!fname.empty())
 } // confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fname)
 
 

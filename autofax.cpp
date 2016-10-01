@@ -2025,8 +2025,11 @@ int paramcl::setzhylavz()
 //    cppSchluess hylaconf[]={{"SPOOL"},{"HYLAFAX_HOME"}};
 //    size_t cs=sizeof hylaconf/sizeof*hylaconf;
     schlArr hyconf; hyconf.init(2,"SPOOL","HYLAFAX_HOME");
-    string hylacdat="/etc/init.d/hylafax";
-    confdat hylac(hylacdat,&hyconf,obverb);
+    const string hylacdat="/etc/init.d/hylafax";
+    struct stat hstat;
+    if (!lstat(hylacdat.c_str(),&hstat)) {
+      confdat hylac(hylacdat,&hyconf,obverb);
+    }
     if (!hyconf[1].wert.empty()) {
       //  if (cpplies(hylacdat,hylaconf,cs)) KLA
       varsphylavz=hyconf[1].wert;
@@ -5431,7 +5434,6 @@ int paramcl::pruefhyla()
   uchar falscheshyla=0;
   uchar modemlaeuftnicht=1;
   uchar frischkonfiguriert=0;
-  exit(0);
 
   if (modemgeaendert) {
     cgconf.setze("hmodem",hmodem);
