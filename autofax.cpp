@@ -3941,20 +3941,23 @@ int paramcl::pruefconvert()
 int paramcl::pruefocr()
 {
   if (!obocrgeprueft) {
-    if ((ocrda=!linst.doinst("tesseract-ocr",obverb,oblog,"tesseract"))) {
-      systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
-    }
-    if (!linst.doggfinst("python-devel",obverb+1,oblog)) {
-      if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3")) {
-        systemrueck("sudo pip3 install --upgrade pip",obverb,oblog);
-        string proj="ocrmypdf_copy";
-        string srcvz=instverz+vtz+proj+".tar.gz";
-        holvongithub(proj);
-        if (!kompilbase(proj,s_gz)) {
-          return systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" &&  sudo pip3 install ocrmypdf'",1,oblog);
-        } //    if (!kompilbase(was,endg))
-      } //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
-    } //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
+    if (!obprogda("ocrmypdf",oblog,obverb)) {
+      if ((ocrda=!linst.doinst("tesseract-ocr",obverb,oblog,"tesseract"))) {
+        systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
+      }
+      if (!linst.doggfinst("python-devel",obverb+1,oblog)) {
+        if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3")) {
+          lsysen system=lsys.getsys(obverb,oblog);
+          if (system==deb)  linst.doggfinst("python3-setuptools",obverb+1,oblog);
+          string proj="ocrmypdf_copy";
+          string srcvz=instverz+vtz+proj+".tar.gz";
+          holvongithub(proj);
+          if (!kompilbase(proj,s_gz)) {
+            return systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" &&  sudo pip3 install ocrmypdf'",1,oblog);
+          } //    if (!kompilbase(was,endg))
+        } //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
+      } //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
+    } //     if (!obprogda("ocrmypdf",oblog,obverb))
     obocrgeprueft=1;
   } // if (!obocrgeprueft) 
   return ocrda;
@@ -5895,7 +5898,6 @@ void paramcl::pruefsfftobmp()
       } // if (!systemrueck(befehl,obverb,oblog)) 
     } // if (!obprogda("sfftobmp",obverb,oblog)) 
   } else {
-    cout<<rot<<"muesste sfftobmp installieren!"<<schwarz<<endl;
     linst.doggfinst("sfftobmp",obverb+1,oblog);
   } // if (system==fed) else
 } // pruefsfftobmp
