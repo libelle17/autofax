@@ -5431,6 +5431,7 @@ int paramcl::pruefhyla()
   uchar falscheshyla=0;
   uchar modemlaeuftnicht=1;
   uchar frischkonfiguriert=0;
+  exit(0);
 
   if (modemgeaendert) {
     cgconf.setze("hmodem",hmodem);
@@ -5504,7 +5505,6 @@ int paramcl::pruefhyla()
 
       // <<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
       if (hylafehlt) {
-        exit(0);
         // 3) ggf. neu installieren
         Log(rots+Tx[T_Muss_Hylafax_installieren]+schwarz,1,1);
         // a) von der source
@@ -5514,7 +5514,6 @@ int paramcl::pruefhyla()
         linst.doinst("sendmail",obverb+1,oblog,"sendmail");
         if (obverb) Log(blaus+"hyinstart: "+schwarz+ltoan(hyinstart),obverb,oblog);
         if (hyinstart==hysrc) {
-          if (1) {
             Log(rots+Tx[T_ueber_den_Quellcode]+schwarz,1,1);
             systemrueck("sudo wget -O hylafax+ https://sourceforge.net/projects/hylafax/files/latest",obverb,oblog);
             systemrueck("sudo tar xvf hylafax+",obverb,oblog);
@@ -5536,7 +5535,6 @@ int paramcl::pruefhyla()
                 ,2,oblog);
             // hservice_faxgetty();
             // hservice_faxq_hfaxd();
-          }
         } else {
           Log(rots+Tx[T_ueber_das_Installationspaket]+schwarz,1,1);
           // b) mit dem Installationspaket
