@@ -3942,7 +3942,7 @@ int paramcl::pruefocr()
 {
   if (!obocrgeprueft) {
     if (!obprogda("ocrmypdf",oblog,obverb)) {
-      if ((ocrda=!linst.doinst("tesseract-ocr",obverb,oblog,"tesseract"))) {
+      if ((ocrda=!linst.doinst("tesseract-ocr tesseract-ocr-traineddata-english tesseract-ocr-traineddata-german tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog,"tesseract"))) {
         systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
       }
       if (!linst.doggfinst("python-devel",obverb+1,oblog)) {
