@@ -1244,7 +1244,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_Fuehre_aus_Dp
   {"Fuehre aus: ","Executing: "},
   // T_falls_es_hier_haengt_bitte_erneut_aufrufen
-  {" (falls es hier, insbes. laenger als 3 Wochen, haengt, bitte erneut aufrufen)"," (if it hangs, especially more than 3 weeks, please invoke again)"},
+  {" (falls es hier haengt, insbes. laenger als 3 Wochen, dann bitte erneut aufrufen)",
+   " (if it hangs, especially more than 3 weeks, please invoke again)"},
   // T_pruefsamba
   {"pruefsamba()","checksamba()"},
   // T_Zufaxen
@@ -4424,7 +4425,7 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
               if (ogibts[iru]) {
                 verschiebe(odatei[iru],nvz,cuser,&vfehler, 1, obverb,oblog);
                 // an vorderster Stelle Scheitern erkennen lassen
-                systemrueck("touch "+zmvp[0].ziel+vtz+Tx[T_nichtgefaxt]+" "+odatei[iru]+".nix",1,1);
+                systemrueck("touch '"+zmvp[0].ziel+vtz+Tx[T_nichtgefaxt]+" "+odatei[iru]+".nix'",1,1);
               } // if (ogibts[iru]) 
             } // for(unsigned iru=0;iru<2;iru++) 
           } // if (allegesch || (nimmer && !ogibts[0]))
@@ -4850,8 +4851,8 @@ void paramcl::empfarch()
             Log(string(Tx[T_Dateien])+rot+stamm+".* "+schwarz+Tx[T_nicht_verarbeitbar_Verschiebe_sie_nach]+rot+"./falsche"+schwarz+".",1,1);
             verschiebe(sffname,falsche,cuser,&vfehler,1,obverb,oblog);
             // so, dass es jeder merkt
-            systemrueck("touch '"+empfvz+vtz+Tx[T_nicht_angekommen]+crumpf+".nix",1,1);
-          }
+            systemrueck("touch '"+empfvz+vtz+Tx[T_nicht_angekommen]+crumpf+".nix'",1,1);
+          } // if (verschieb==2) 
 //      KLZ // if (loee) 
       } // if (verschieb) 
       RS zs(My);
@@ -5868,7 +5869,7 @@ int paramcl::pruefcapi()
         if (!capidrvda) {if (!rueck[i].find("capidrv")) {capidrvda=1;continue;}}
         if (!capida) {if (!rueck[i].find("capi")) {capida=1;continue;}}
         if (fcpcida && capida && capidrvda) break;
-      }
+      } // for(size_t i=0;i<rueck.size();i++)
       lsysen system=lsys.getsys(obverb,oblog);
       if (!fcpcida || !capida || !capidrvda) {
         Log("Lade Capi-Module ...",-1,0);
@@ -5879,7 +5880,7 @@ int paramcl::pruefcapi()
             if (ivers) {
               Log(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+schwarz,1,1);
               return 1;
-            }
+            } // if (ivers)
             utsname unbuf;
             uname(&unbuf);
             Log(string(Tx[T_Kernelversion])+blau+unbuf.release+schwarz,obverb,oblog);
@@ -5968,7 +5969,7 @@ int paramcl::pruefcapi()
             svec rueck;
             string kstring;
             systemrueck("cd "+instverz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);
-            if (rueck.size()) { 
+            if (rueck.size()) {
               kstring=rueck[0];
               systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
               systemrueck("cd "+instverz+" && rpm -Uvh "+kstring,obverb,oblog);
@@ -5989,7 +5990,7 @@ int paramcl::pruefcapi()
               // dann nach Anleitung: dnf -y install kernel-devel
               // cd ~/rpmbuild/BUILD/kernel<version>/linux<version>
               // make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules
-            }
+            } // if (rueck.size()) 
             exit(70);
             obverb=altobverb;
           } // if (system==fed) 
@@ -6040,12 +6041,12 @@ int paramcl::pruefcapi()
                     ;
                   //                      <<gruen<<befehl<<schwarz<<endl;
                   systemrueck(befehl,obverb,oblog);
-                }
-              }
-          }
+                } // if (!linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog)) 
+              } // if (!systemrueck(befehl,obverb,oblog)) 
+          } // if (!obprogda("sfftobmp",obverb,oblog)) 
         } else {
           linst.doggfinst("sfftobmp",obverb+1,oblog);
-        }
+        } // if (system==fed) else
         linst.doggfinst("libcapi20-2",obverb+1,oblog);
         linst.doggfinst("libcapi20-3",obverb+1,oblog);
         linst.doggfinst("python-devel",obverb+1,oblog);
@@ -6144,7 +6145,7 @@ int paramcl::pruefcapi()
         // in src/backend/connection.cpp eine Zeile 26 einfuegen: #include <cstring>
       } // if (!capischonerfolgreichinstalliert)
       servc::daemon_reload();
-    } // if (!capischonerfolgreichinstalliert) 
+    } // if (capilaeuft) else
     // <<rot<<"capischonerfolgreichinstalliert: "<<schwarz<<(int)capischonerfolgreichinstalliert<<endl;
     // <<rot<<"capizukonf: "<<schwarz<<(int)capizukonf<<endl;
     // <<rot<<"versuch: "<<schwarz<<versuch<<endl;
@@ -6187,7 +6188,7 @@ int paramcl::pruefcapi()
   } else {
     Log(rots+Tx[T_konntecapisuiteservice]+gruen+ltoan(versuch)+rot+Tx[T_malnichtstartenverwN]+schwarz,1,1);
     return 1;
-  }
+  } //   if (capilaeuft)
   return 0;
 } // pruefcapi()
 
