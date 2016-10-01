@@ -50,6 +50,10 @@ const char *logdt="/var/log/autofaxvorgabe.log";// darauf wird in konsole.h verw
 uchar ZDB=0; // 255 = mit Debug
 const char sep = 9; // geht auch: "[[:blank:]]"
 
+const string s_true="true";
+const string s_dampand=" && ";
+const string s_gz="gz";
+
 class Txautofaxcl: public TxB
 {
   public:
@@ -3942,10 +3946,14 @@ int paramcl::pruefocr()
     }
     if (!linst.doggfinst("python-devel",obverb+1,oblog)) {
       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3")) {
+        systemrueck("sudo pip3 install --upgrade pip",obverb,oblog);
         string proj="ocrmypdf_copy";
         string srcvz=instverz+vtz+proj+".tar.gz";
         holvongithub(proj);
-        kompiliere(proj,"gz");
+        kompiliere(proj,s_gz);
+        if (!kompilbase(proj,s_gz)) {
+          return systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" &&  sudo pip3 install ocrmypdf'",obverb,oblog);
+        } //    if (!kompilbase(was,endg))
       } //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
     } //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
     obocrgeprueft=1;
@@ -5817,29 +5825,39 @@ void pruefmodcron(int obverb, int oblog)
   }
 } // void pruefmodcron(int obverb, int oblog)
 
-void paramcl::pruefinstv()
+int paramcl::pruefinstv()
 {
   if (instverz.empty()) instverz=string(getenv("HOME"))+'/'+meinname;
-  pruefverz(instverz,obverb,oblog);
+  return pruefverz(instverz,obverb,oblog);
 } // void paramcl::pruefinstv()
 
 void paramcl::holvongithub(string datei)
 {
-  pruefinstv();
-  svec csrueck;
-  systemrueck("find \""+instverz+"\" -mtime -1 -name "+datei+".tar.gz",obverb,oblog,&csrueck);
-  if (!csrueck.size()) {
-  //systemrueck("sh -c 'cd "+instverz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
-    systemrueck("sh -c 'cd \""+instverz+"\";T="+datei+".tar.gz; wget https://github.com/libelle17/"+datei+"/archive/master.tar.gz -O $T'", 
-                obverb,oblog);
-  }
+  if (!pruefinstv()) {
+    svec csrueck;
+    systemrueck("find \""+instverz+"\" -mtime -1 -name "+datei+".tar.gz",obverb,oblog,&csrueck);
+    if (!csrueck.size()) {
+      //systemrueck("sh -c 'cd "+instverz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
+      systemrueck("sh -c 'cd \""+instverz+"\";T="+datei+".tar.gz; wget https://github.com/libelle17/"+datei+"/archive/master.tar.gz -O $T'", 
+          obverb,oblog);
+    } //     if (!csrueck.size())
+  } // if (!pruefinstv())
 } // void paramcl::holvongithub(string datei)
 
-int paramcl::kompiliere(string was,string endg, string vorcfg,string cfgbismake)
+int paramcl::kompilbase(const string& was, const string& endg)
 {
-  pruefinstv();
-  return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instverz+"\" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
-      " && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install '",obverb,oblog);
+  if (!pruefinstv()) {
+    return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instverz+"\" && tar xpvf $T && rm -rf $P; mv $M $P'",obverb,oblog);
+  } //   if (!pruefinstv())
+  return 1;
+} // int paramcl::kompilbase(string& was,string& endg)
+
+int paramcl::kompiliere(const string& was,const string& endg, const string& vorcfg, const string& cfgbismake)
+{
+  if (!kompilbase(was,endg)) {
+    return systemrueck("sh -c 'cd \""+instverz+vtz+was+"\" && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install '",obverb,oblog);
+  } //    if (!kompilbase(was,endg))
+  return 1;
 } // int paramcl::kompiliere(string was,string endg,string nachtar, string vorcfg,string cfgbismake)
 
 // wird aufgerufen in: pruefcapi(), anhalten()
@@ -5970,13 +5988,15 @@ int paramcl::pruefcapi()
               string proj="fcpci_copy";
               string srcvz=instverz+vtz+proj+".tar.gz";
               holvongithub(proj);
-              kompiliere(proj,"gz","sudo test -f driver.c.bak || sed -i.bak \"/request_irq/i#if !defined(IRQF_DISABLED)\\n"
+              const string vorcfg="sudo test -f driver.c.bak || sed -i.bak \"/request_irq/i#if !defined(IRQF_DISABLED)\\n"
                   "# define IRQF_DISABLED 0x00\\n#endif\" driver.c;"
                   "sudo sed -e '\\''/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>'\\'' "
                   "-e '\\''/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
                   "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);'\\'' "
                   "main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
-                  "sudo make clean"," 2>/dev/null; sudo ");
+                  "sudo make clean";
+              const string cfgbismake=" 2>/dev/null; sudo ";
+              kompiliere(proj,s_gz,vorcfg,cfgbismake);
             } // if (lstat(fcpciko.c_str(), &entryfc)) 
           } // if (systemrueck("sudo modprobe -v fcpci",obverb-1,oblog)) 
         } // for(uchar ivers=0;ivers<2;ivers++) 
@@ -6089,7 +6109,7 @@ int paramcl::pruefcapi()
             struct stat c20stat;
             if (lstat("/usr/lib64/libcapi20.so",&c20stat)) {
               holvongithub("capi20_copy");
-              kompiliere("capi20_copy","gz");
+              kompiliere("capi20_copy",s_gz);
               systemrueck("sh -c 'cd "+instverz+" && L=/usr/lib64/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "
                           "ln -s $L3 $L; test -f $L;'",obverb,oblog);
             }
@@ -6098,7 +6118,7 @@ int paramcl::pruefcapi()
 //            svec rueck;
 //            systemrueck("find /usr -name capi20.h 2>/dev/null",obverb,oblog,&rueck); 
             systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; }; }'",obverb-1,oblog);
-            if (!kompiliere("capisuite_copy","gz",
+            if (!kompiliere("capisuite_copy",s_gz,
                            "sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
 //                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
 //                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }"

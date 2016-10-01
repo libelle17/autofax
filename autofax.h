@@ -94,6 +94,9 @@ class fsfcl : public fxfcl // Faxsendfile
     void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, string& hylastate, int obverb=0, uchar obzaehl=0, int oblog=0);
 }; // class fsfcl
 
+extern const string s_true; // ="true";
+extern const string s_dampand; // =" && ";
+extern const string s_gz; // ="gz";
 
 class paramcl // Programmparameter 
 {
@@ -268,6 +271,9 @@ class paramcl // Programmparameter
     void setzmodconfd();
     void setzzielmuster(confdat& afconf);
     void setzsql(confdat& afconf);
+    int pruefinstv();
+    int kompilbase(const string& was,const string& endg);
+    int kompiliere(const string& was,const string& endg, const string& vorcfg=s_true,const string& cfgbismake=s_dampand);
   public:
     paramcl(int argc,char** argv);
     ~paramcl();
@@ -307,9 +313,7 @@ class paramcl // Programmparameter
     void clieskonf();
     void capisv(int obverb,int oblog);
     int pruefcapi();
-    void pruefinstv();
     void holvongithub(string datei);
-    int kompiliere(string was,string endg, string vorcfg="true",string cfgbismake=" && ");
     void hliesconf();
     void hconfigtty();
     int cservice();
