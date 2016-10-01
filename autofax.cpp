@@ -3943,7 +3943,7 @@ int paramcl::pruefocr()
   if (!obocrgeprueft) {
     uchar tda=1, deuda=0, engda=0, osdda=0;
     svec rueck;
-    systemrueck("tesseract --list-langs 2>/dev/null",obverb,oblog,&rueck);
+    systemrueck("tesseract --list-langs 2>&1",obverb,oblog,&rueck); // gibt das normale Ergebnis als Fehlermeldung aus!
     if (!rueck.size()) tda=0; else if (rueck[0].find("List of available")) tda=0;
     if (!tda) {
       linst.doinst("tesseract-ocr",obverb,oblog);
