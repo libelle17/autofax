@@ -4134,7 +4134,7 @@ void paramcl::DateienHerricht()
         kopiere(fxv[nachrnr].npdf, zmp, &kfehler, 1, obverb, oblog);
         string zield=kopiere(fxv[nachrnr].spdf, zmp, &kfehler, 1, obverb, oblog);
         if (obocra) if (!zield.empty()) {
-          if (pruefocr()) {
+          if (!pruefocr()) {
             systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+zield+"\" \""+zield+"\""
                 " && chmod +r \""+zield+"\"" ,obverb,oblog);
           } // pruefocr()
@@ -4704,10 +4704,13 @@ void paramcl::empfarch()
           string stamm,exten;
           getstammext(&vorsoffice,&stamm,&exten);
           quelle=empfvz+vtz+base_name(stamm)+".pdf"; 
+          cout<<rot<<"Quelle: "<<violett<<quelle<<schwarz<<endl;
         }
       } // if (pruefsoffice()) 
       if (quelle.empty()) quelle=rueck[i];
-      if (pruefocr()) {
+          cout<<rot<<"Quelle: "<<violett<<quelle<<schwarz<<endl;
+      if (!pruefocr()) {
+        cout<<"hier gleich ocr"<<endl;
         if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+quelle+"\" \""+ziel+"\" && chmod +r \""+ziel+"\""
             ,2,oblog)) {
          if (!kfehler) tuloeschen(hpfad,cuser,obverb,oblog);
@@ -4836,7 +4839,7 @@ void paramcl::empfarch()
               }
             } // if (pruefsoffice()) 
             if (quelle.empty()) quelle=cpfad;
-            if (pruefocr()) {
+            if (!pruefocr()) {
               string ziel=empfvz+vtz+crumpf+".pdf";
               if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+quelle+"\" \""+ziel+"\"&&chmod +r \""+ziel+"\""
                    ,2,oblog)) {
