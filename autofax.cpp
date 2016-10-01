@@ -5518,6 +5518,7 @@ int paramcl::pruefhyla()
             systemrueck("sudo wget -O hylafax+ https://sourceforge.net/projects/hylafax/files/latest",obverb,oblog);
             systemrueck("sudo tar xvf hylafax+",obverb,oblog);
             // 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
+            exit(0);
             systemrueck("sudo sh -c 'cd $(sudo tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
                 "./configure --nointeractive && echo $? = Ergebnis nach configure && "
                 "sed -i.bak \"s.PAGESIZE='\\''North American Letter'\\''.PAGESIZE='\\''ISO A4'\\''.g;"
