@@ -3950,9 +3950,8 @@ int paramcl::pruefocr()
         string proj="ocrmypdf_copy";
         string srcvz=instverz+vtz+proj+".tar.gz";
         holvongithub(proj);
-        kompiliere(proj,s_gz);
         if (!kompilbase(proj,s_gz)) {
-          return systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" &&  sudo pip3 install ocrmypdf'",obverb,oblog);
+          return systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" &&  sudo pip3 install ocrmypdf'",1,oblog);
         } //    if (!kompilbase(was,endg))
       } //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
     } //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
