@@ -3941,15 +3941,25 @@ int paramcl::pruefconvert()
 int paramcl::pruefocr()
 {
   if (!obocrgeprueft) {
-    if (!obprogda("ocrmypdf",oblog,obverb)) {
-
-      if (!obprogda("tesseract",obverb,oblog)) {
-        linst.doinst("tesseract-ocr",obverb,oblog);
-        linst.doinst("tesseract-ocr-traineddata-english",obverb,oblog);
-        linst.doinst("tesseract-ocr-traineddata-german",obverb,oblog);
-        linst.doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
-        systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
+    uchar tda=1, deuda=0, engda=0, osdda=0;
+    svec rueck;
+    systemrueck("tesseract --list-langs 2>/dev/null",obverb,oblog,&rueck);
+    if (!rueck.size()) tda=0; else if (rueck[0].find("List of available")) tda=0;
+    if (!tda) {
+      linst.doinst("tesseract-ocr",obverb,oblog);
+      systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
+    } else {
+      for(size_t i=1;i<rueck.size();i++) {
+       if (rueck[i]=="deu") deuda=1;
+       else if (rueck[i]=="eng") engda=1;
+       else if (rueck[i]=="osd") osdda=1;
       }
+    }
+    if (!deuda) linst.doinst("tesseract-ocr-traineddata-german",obverb,oblog);
+    if (!engda) linst.doinst("tesseract-ocr-traineddata-english",obverb,oblog);
+    if (!osdda) linst.doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
+
+    if (!obprogda("ocrmypdf",oblog,obverb)) {
       if (!linst.doggfinst("python-devel",obverb+1,oblog)) {
         if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3")) {
           lsysen system=lsys.getsys(obverb,oblog);
@@ -3958,7 +3968,8 @@ int paramcl::pruefocr()
           string srcvz=instverz+vtz+proj+".tar.gz";
           holvongithub(proj);
           if (!kompilbase(proj,s_gz)) {
-            return systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" &&  sudo pip3 install ocrmypdf'",obverb,oblog);
+            systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" &&  sudo -H pip3 install ocrmypdf'",obverb,oblog);
+            linst.doinst("unpaper",obverb,oblog);
           } //    if (!kompilbase(was,endg))
         } //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
       } //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
