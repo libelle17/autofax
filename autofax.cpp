@@ -516,6 +516,7 @@ enum T_
   T_ob_eine_Fritzcard_drinstak,
   T_Zahl_der_angegebenen_sql_Befehle_zur_Suche_nach_Absendern,
   T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe,
+  T_pruefsfftobmp,
   T_MAX
 };
 
@@ -1463,6 +1464,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Zahl der angegebenen SQL-Befehle zur Suche nach Absendern","No. of specified sql commands for the search for senders"},
   // T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe
   {"Zahl der Muster/Verzeichnis-Paare zum Speichern ankomender Faxe","No. of pattern/directory-pairs for saving received faxes"},
+  // T_pruefsfftobmp
+  {"pruefsfftobmp()","checksfftobmp()"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -4707,8 +4710,8 @@ void paramcl::empfarch()
         if (utime(ziel.c_str(),&ubuf)) {
             Log(rots+Tx[T_Fehler_beim_Datumsetzen_von]+ziel+rot+"'"+schwarz,1,1);
         }
-      }
-    }
+      } // if (!lstat(rueck[i].c_str(),&st0)) 
+    } // if (obpdfda)
     if (obhpfadda||obpdfda) {
       cmd=string("sudo mv -i \"")+rueck[i]+"\" \""+hempfavz+"\"";
       systemrueck(cmd,obverb,oblog);
@@ -4756,7 +4759,8 @@ void paramcl::empfarch()
     for(size_t i=0;i<rueck.size();i++) {
       if (!i) {
         pruefverz(cempfavz,obverb,oblog);
-      }
+        pruefsfftobmp();
+      } // if (!i)
       ankzahl++;
       // ..., Informationen darueber einsammeln, ...
       string stamm,exten;
@@ -5838,6 +5842,41 @@ void paramcl::capisv(int obverb,int oblog)
   if (!scapisuite) scapisuite=new servc("","capisuite");
 } // void paramcl::capisv(obverb,oblog)
 
+void paramcl::pruefsfftobmp()
+{
+  Log(violetts+Tx[T_pruefsfftobmp]+schwarz,obverb,oblog);
+  lsysen system=lsys.getsys(obverb,oblog);
+  if (system==fed) {
+    // P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
+    if (!obprogda("sfftobmp",obverb,oblog)) {
+      string befehl = "cd "+instverz+
+        " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install; } ";
+      if (!systemrueck(befehl,obverb,oblog)) {
+        if (!linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog)) {
+          befehl= "cd "+instverz+
+            " && { sudo grep '/usr/local/lib' /etc/ld.so.conf || "
+            "{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig; } } "
+            " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T"
+            " && mv ${P}-master ${P}; } "
+            " && cd ${P} "
+            //                    " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
+            " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp"
+            //                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
+            //                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
+            " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
+            " && ./configure && make && sudo make install "
+            ;
+          //                      <<gruen<<befehl<<schwarz<<endl;
+          systemrueck(befehl,obverb,oblog);
+        } // if (!linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog)) 
+      } // if (!systemrueck(befehl,obverb,oblog)) 
+    } // if (!obprogda("sfftobmp",obverb,oblog)) 
+  } else {
+    cout<<rot<<"muesste sfftobmp installieren!"<<schwarz<<endl;
+    linst.doggfinst("sfftobmp",obverb+1,oblog);
+  } // if (system==fed) else
+} // pruefsfftobmp
+
 // wird aufgerufen in: untersuchespool, main
 int paramcl::pruefcapi()
 {
@@ -6019,34 +6058,7 @@ int paramcl::pruefcapi()
          */
         if (system!=sus)
           linst.doggfinst("capiutils",obverb+1,oblog);
-        if (system==fed) {
-          // P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
-          if (!obprogda("sfftobmp",obverb,oblog)) {
-            string befehl = "cd "+instverz+
-              " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install; } ";
-              if (!systemrueck(befehl,obverb,oblog)) {
-                if (!linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog)) {
-                  befehl= "cd "+instverz+
-                    " && { sudo grep '/usr/local/lib' /etc/ld.so.conf || "
-                        "{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig; } } "
-                    " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T"
-                    " && mv ${P}-master ${P}; } "
-                    " && cd ${P} "
-//                    " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
-                    " && sed -i.bak -e 's/\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp"
-                    //                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
-                    //                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
-                    " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
-                    " && ./configure && make && sudo make install "
-                    ;
-                  //                      <<gruen<<befehl<<schwarz<<endl;
-                  systemrueck(befehl,obverb,oblog);
-                } // if (!linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog)) 
-              } // if (!systemrueck(befehl,obverb,oblog)) 
-          } // if (!obprogda("sfftobmp",obverb,oblog)) 
-        } else {
-          linst.doggfinst("sfftobmp",obverb+1,oblog);
-        } // if (system==fed) else
+        pruefsfftobmp();
         linst.doggfinst("libcapi20-2",obverb+1,oblog);
         linst.doggfinst("libcapi20-3",obverb+1,oblog);
         linst.doggfinst("python-devel",obverb+1,oblog);

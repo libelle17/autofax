@@ -256,6 +256,7 @@ class paramcl // Programmparameter
     string getzielvz(const string& datei); // in bereinigewv
     int setzegcp(const string& name, string *wert);
     void pruefcvz();
+    void pruefsfftobmp();
     void setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, int *obsfehltp, uchar startvznr,
                       int obverb=0, int oblog=0, string *hylastatep=0, string *hyladialsp=0, string *hylastatusp=0, string *hylastatuscodep=0);
     void konfcapi();
