@@ -6007,6 +6007,29 @@ int paramcl::pruefcapi()
               systemrueck("cd "+srcvz+";sudo make all ",1+obverb,oblog); // || { sudo dnf clean all; sudo dnf update; sudo make all; }
               systemrueck("cd "+srcvz+";sudo make install",1+obverb,oblog);
               */
+              uchar obdown=0;
+              string gccpfad,gpppfad;
+              struct utsname unameD;
+              uname(&unameD);
+              string rel=unameD.release;
+              size_t p1=rel.find('.');
+              if (p1!=string::npos) {
+               size_t p2=rel.find('.',p1+1);
+               if (p2!=string::npos) {
+                float vers=atof(rel.substr(0,p2).c_str());
+                if (vers>0 && vers<3.14) {
+                 if (!obprogda("gcc",obverb,oblog,&gccpfad) && !obprogda("g++",obverb,oblog,&gpppfad)) {
+                 obdown=1;
+                 systemrueck("sudo cp \""+gccpfad+"\" \""+gccpfad+".bak\" && "
+                             "sudo cp \""+gpppfad+"\" \""+gpppfad+".bak\"",obverb,oblog);
+                 linst.doinst("gcc-4.8",1+obverb,oblog);
+                 linst.doinst("g++-4.8",1+obverb,oblog);
+                 systemrueck("sudo ln -sf \""+gccpfad+"-4.8\" \""+gccpfad+"\" && "
+                             "sudo ln -sf \""+gpppfad+"-4.8\" \""+gpppfad+"\"",obverb,oblog);
+                 } // if (!obprogda("gcc",obverb,oblog,&gccpfad) && !obprogda("g++",obverb,oblog,&gpppfad)) 
+                } // if (vers>0 && vers<3.14) 
+               } // if (p2!=string::npos) 
+              } // if (p1!=string::npos) 
               systemrueck("ls -l /lib/modules/$(uname -r)/build 2>/dev/null || "
                   "{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
                   "sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU && sudo cp -a $NEU /lib/modules/$(uname -r)/build; }",obverb,oblog);
@@ -6023,6 +6046,10 @@ int paramcl::pruefcapi()
               const string cfgbismake=" 2>/dev/null; sudo ";
               kompiliere(proj,s_gz,vorcfg,cfgbismake);
               systemrueck("sudo depmod",obverb,oblog);
+              if (obdown) {
+               systemrueck("sudo mv -f \""+gccpfad+".bak\" \""+gccpfad+"\" && "
+                           "sudo mv -f \""+gpppfad+".bak\" \""+gpppfad+"\"",obverb,oblog);
+              }
             } // if (lstat(fcpciko.c_str(), &entryfc)) 
           } // if (systemrueck("sudo modprobe -v fcpci",obverb-1,oblog)) 
         } // for(uchar ivers=0;ivers<2;ivers++) 
