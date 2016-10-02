@@ -2198,14 +2198,14 @@ void paramcl::liescapiconf()
       if (aktgelzeit>lgelzeit) {
         lgelzeit=aktgelzeit;
         obneuer=1;
-      }
-    }
+      } //       if (aktgelzeit>lgelzeit)
+    } // if (!lstat(ccapiconfdat.c_str(),&cstat)) 
     if (obneuer || !cconf.zahl) {
       if (!cconf.zahl) {
         cconf.init(3,"incoming_script","log_file","log_error");
       } else {
         cconf.reset();
-      }
+      } //       if (!cconf.zahl) else
       confdat ccapic(ccapiconfdat,&cconf,obverb);
       if (!cuser.empty()) {
         for(size_t j=1;j<3;j++) {
@@ -2213,8 +2213,8 @@ void paramcl::liescapiconf()
             struct stat statdat;
             if (!lstat(cconf[j].wert.c_str(),&statdat)) {
               setfaclggf(cconf[j].wert, falsch, 6, falsch,obverb,oblog);
-            }
-          }
+            } //             if (!lstat(cconf[j].wert.c_str(),&statdat))
+          } // if (!cconf[j].wert.empty()) 
         } // for(size_t j=1;j<3;j++) 
       } // if (!cuser.empty()) 
     } // if (obneuer || !cconf.zahl) 
@@ -2223,7 +2223,7 @@ void paramcl::liescapiconf()
   if (!spoolcapivz.empty()) {
     cdonevz = mitvtz(spoolcapivz)+"done";
     cfailedvz = mitvtz(spoolcapivz)+"failed";
-  }
+  } //   if (!spoolcapivz.empty())
 } // void paramcl::liescapiconf()
 
 // wird aufgerufen in: main
@@ -3465,101 +3465,103 @@ void paramcl::pruefsamba()
     } // for(int aru=0;aru<2;aru++) 
     //    if (gestartet==2) smbrestart=0;
   } // if (dienstzahl<2 || conffehlt) 
-  confdat smbcf(smbdatei,obverb);
-  smbcf.Abschn_auswert(obverb);
-  vector<string*> vzn;
-  const char* const VSambaName[4]={Tx[T_Zufaxen],Tx[T_Warteauffax],Tx[T_Nichtgefaxt],Tx[T_Faxempfang]};
-  //={&zufaxenvz,&wvz,&nvz,&empfvz};
-  vzn.push_back(&zufaxenvz);
-  vzn.push_back(&wvz);
-  vzn.push_back(&nvz);
-  vzn.push_back(&empfvz);
-  for(zielmustercl *zmakt=zmp;1;zmakt++){
-    vzn.push_back(&zmakt->ziel);
-    if (zmakt->obmusterleer()) break;
-  }
-  uchar gef[vzn.size()];
-  for(unsigned k=0;k<vzn.size();k++) {
-    gef[k]=0;
-  }
-  for(size_t i=0;i<smbcf.abschv.size();i++) {
-    if (smbcf.abschv[i].aname!="global") {
-      const string& pfad = smbcf.abschv[i].suche("path");
-      if (!pfad.empty()) {
-        for(unsigned k=0;k<vzn.size();k++) {
-          if (!gef[k]) if (!vzn[k]->empty()) {
-            if (!vzn[k]->find(pfad)) {
-              gef[k]=1;
-            }
-          } // if (!gef[k]) if (!vzn[k]->empty()) 
-        } // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
-      } // if (!pfad.empty()) 
-    } // if (smbcf.abschv.aname!="global") 
-  } // for(size_t i=0;i<smbcf.abschv.size();i++) 
-  uchar smbrestart=0;
-  for(unsigned k=0;k<vzn.size();k++) {
-    if (!gef[k]) {
-      smbrestart=1;
-      if (!obinst) {
-        obinst=Tippob(Tx[T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden],Tx[T_j_af]);
-        if (!obinst) break;
-      }
-      Log(rots+Tx[T_Verzeichnis]+blau+*vzn[k]+rot+Tx[T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt]+schwarz,1,oblog);
-      mdatei sapp(smbdatei,ios::out|ios::app);
-      if (sapp.is_open()) {
-        if (k<4) {
-          sapp<<"["<<VSambaName[k]<<"]"<<endl;
-          sapp<<"  comment = "+meinname+" "<<VSambaName[k]<<endl;
-        } else {
-          sapp<<"["<<Tx[T_Gefaxt]<<"_"<<(k-4)<<"]"<<endl;
-          sapp<<"  comment = "+meinname+" "<<Tx[T_Gefaxt]<<"_"<<(k-4)<<endl;
+  if (!(conffehlt=lstat(smbdatei,&sstat))) {
+    confdat smbcf(smbdatei,obverb);
+    smbcf.Abschn_auswert(obverb);
+    vector<string*> vzn;
+    const char* const VSambaName[4]={Tx[T_Zufaxen],Tx[T_Warteauffax],Tx[T_Nichtgefaxt],Tx[T_Faxempfang]};
+    //={&zufaxenvz,&wvz,&nvz,&empfvz};
+    vzn.push_back(&zufaxenvz);
+    vzn.push_back(&wvz);
+    vzn.push_back(&nvz);
+    vzn.push_back(&empfvz);
+    for(zielmustercl *zmakt=zmp;1;zmakt++){
+      vzn.push_back(&zmakt->ziel);
+      if (zmakt->obmusterleer()) break;
+    }
+    uchar gef[vzn.size()];
+    for(unsigned k=0;k<vzn.size();k++) {
+      gef[k]=0;
+    }
+    for(size_t i=0;i<smbcf.abschv.size();i++) {
+      if (smbcf.abschv[i].aname!="global") {
+        const string& pfad = smbcf.abschv[i].suche("path");
+        if (!pfad.empty()) {
+          for(unsigned k=0;k<vzn.size();k++) {
+            if (!gef[k]) if (!vzn[k]->empty()) {
+              if (!vzn[k]->find(pfad)) {
+                gef[k]=1;
+              }
+            } // if (!gef[k]) if (!vzn[k]->empty()) 
+          } // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
+        } // if (!pfad.empty()) 
+      } // if (smbcf.abschv.aname!="global") 
+    } // for(size_t i=0;i<smbcf.abschv.size();i++) 
+    uchar smbrestart=0;
+    for(unsigned k=0;k<vzn.size();k++) {
+      if (!gef[k]) {
+        smbrestart=1;
+        if (!obinst) {
+          obinst=Tippob(Tx[T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden],Tx[T_j_af]);
+          if (!obinst) break;
         }
-        sapp<<"  path = "<<*vzn[k]<<endl;
-        sapp<<"  directory mask = 0660"<<endl;
-        sapp<<"  browseable = Yes"<<endl;
-        sapp<<"  vfs objects = recycle"<<endl;
-        sapp<<"  recycle:versions = Yes"<<endl;
-        sapp<<"  recycle:keeptree = Yes"<<endl;
-        sapp<<"  recycle:repository = Papierkorb"<<endl;
-      } // if (sapp.is_open()) 
-    } // if (!gef[k]) 
-  } // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
-  if (!nrzf) {
-    if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
-      string pw1, pw2;
-      while (1) {
-        pw1=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz,&pw1);
-        pw2=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz+" ("+Tx[T_erneute_Eingabe]+")",&pw2);
-        if (pw1==pw2) break;
-      }
-      systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
-      systemrueck("(echo "+pw1+"; echo "+pw2+") | sudo smbpasswd -s "+cuser,obverb,oblog);
-    } // if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) 
-  } // if (!nrzf)
-  if (smbrestart) {
-    if (smb.serviceda) smb.restart(obverb-1,oblog);
-    else if (smbd.serviceda) smbd.restart(obverb-1,oblog);
-    if (nmb.serviceda) nmb.restart(obverb-1,oblog);
-    else if (nmbd.serviceda) nmbd.restart(obverb-1,oblog);
-  } // if (smbrestart) 
-  // Suse-Firewall
-  struct stat fstat;
-  const char *susefw="/etc/sysconfig/SuSEfirewall2";
-  if (!lstat(susefw,&fstat)) {
-    string part="server";
-    for(int i=1;i<3;i++) {
-      int nichtfrei=systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+part+"' "+susefw,obverb,oblog,0,2);
-      if (nichtfrei && !nrzf && !obfw) {
-        obfw=Tippob(Tx[T_Soll_die_SuSEfirewall_bearbeitet_werden],Tx[T_j_af]);
-        if (!obfw) break;
-      }
-      if (nichtfrei && obfw) {
-        systemrueck("sudo sed -i.bak_"+meinname+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
-            " && sudo systemctl restart SuSEfirewall2 smb nmb",obverb,oblog); 
-      }
-      part="client";
-    } // for(int i=1;i<3;i++) 
-  } // if (!lstat(susefw,&fstat)) 
+        Log(rots+Tx[T_Verzeichnis]+blau+*vzn[k]+rot+Tx[T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt]+schwarz,1,oblog);
+        mdatei sapp(smbdatei,ios::out|ios::app);
+        if (sapp.is_open()) {
+          if (k<4) {
+            sapp<<"["<<VSambaName[k]<<"]"<<endl;
+            sapp<<"  comment = "+meinname+" "<<VSambaName[k]<<endl;
+          } else {
+            sapp<<"["<<Tx[T_Gefaxt]<<"_"<<(k-4)<<"]"<<endl;
+            sapp<<"  comment = "+meinname+" "<<Tx[T_Gefaxt]<<"_"<<(k-4)<<endl;
+          }
+          sapp<<"  path = "<<*vzn[k]<<endl;
+          sapp<<"  directory mask = 0660"<<endl;
+          sapp<<"  browseable = Yes"<<endl;
+          sapp<<"  vfs objects = recycle"<<endl;
+          sapp<<"  recycle:versions = Yes"<<endl;
+          sapp<<"  recycle:keeptree = Yes"<<endl;
+          sapp<<"  recycle:repository = Papierkorb"<<endl;
+        } // if (sapp.is_open()) 
+      } // if (!gef[k]) 
+    } // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
+    if (!nrzf) {
+      if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
+        string pw1, pw2;
+        while (1) {
+          pw1=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz,&pw1);
+          pw2=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz+" ("+Tx[T_erneute_Eingabe]+")",&pw2);
+          if (pw1==pw2) break;
+        }
+        systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
+        systemrueck("(echo "+pw1+"; echo "+pw2+") | sudo smbpasswd -s "+cuser,obverb,oblog);
+      } // if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) 
+    } // if (!nrzf)
+    if (smbrestart) {
+      if (smb.serviceda) smb.restart(obverb-1,oblog);
+      else if (smbd.serviceda) smbd.restart(obverb-1,oblog);
+      if (nmb.serviceda) nmb.restart(obverb-1,oblog);
+      else if (nmbd.serviceda) nmbd.restart(obverb-1,oblog);
+    } // if (smbrestart) 
+    // Suse-Firewall
+    struct stat fstat;
+    const char *susefw="/etc/sysconfig/SuSEfirewall2";
+    if (!lstat(susefw,&fstat)) {
+      string part="server";
+      for(int i=1;i<3;i++) {
+        int nichtfrei=systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+part+"' "+susefw,obverb,oblog,0,2);
+        if (nichtfrei && !nrzf && !obfw) {
+          obfw=Tippob(Tx[T_Soll_die_SuSEfirewall_bearbeitet_werden],Tx[T_j_af]);
+          if (!obfw) break;
+        }
+        if (nichtfrei && obfw) {
+          systemrueck("sudo sed -i.bak_"+meinname+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
+              " && sudo systemctl restart SuSEfirewall2 smb nmb",obverb,oblog); 
+        }
+        part="client";
+      } // for(int i=1;i<3;i++) 
+    } // if (!lstat(susefw,&fstat)) 
+  } //   if (!(conffehlt=lstat(smbdatei,&sstat)))
 } // pruefsamba
 
 // wird aufgerufen in: main
@@ -5247,13 +5249,18 @@ void paramcl::hliesconf()
 {
   schlArr hyalt; hyalt.init(7,"CountryCode","AreaCode","FAXNumber","LongDistancePrefix","InternationalPrefix","RingsBeforeAnswer","LocalIdentifier");
   setzmodconfd();
-  confdat haltconf(modconfdat,&hyalt,obverb,':');
-  if (hyalt.schl[0].wert!=countrycode || hyalt.schl[1].wert!=citycode || hyalt.schl[2].wert!=countrycode+"."+citycode+"."+msn 
-      || hyalt.schl[3].wert!=LongDistancePrefix || hyalt.schl[4].wert!=InternationalPrefix 
-      || hyalt.schl[5].wert!=hklingelzahl || hyalt.schl[6].wert!=LocalIdentifier
-     ) {
+  struct stat mstat;
+  if (lstat(modconfdat.c_str(),&mstat)) {
     hylazukonf=1;
-  }
+  } else {
+    confdat haltconf(modconfdat,&hyalt,obverb,':');
+    if (hyalt.schl[0].wert!=countrycode || hyalt.schl[1].wert!=citycode || hyalt.schl[2].wert!=countrycode+"."+citycode+"."+msn 
+        || hyalt.schl[3].wert!=LongDistancePrefix || hyalt.schl[4].wert!=InternationalPrefix 
+        || hyalt.schl[5].wert!=hklingelzahl || hyalt.schl[6].wert!=LocalIdentifier
+       ) {
+      hylazukonf=1;
+    } // if (hyalt.shl[0].wert ...
+  } //   if (lstat(modconfdat.c_str(),&mstat)) else
   // hyalt.ausgeb();
 }
 
@@ -6823,8 +6830,9 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, strin
       size_t cs=sizeof cconf/sizeof*cconf;
       */
       schlArr cconf; cconf.init(3,"tries","starttime","dialstring");
-      confdat cpconf(suchtxt,&cconf,obverb);
-      if (1) {
+      struct stat cstat;
+      if (!lstat(suchtxt.c_str(),&cstat)) {
+        confdat cpconf(suchtxt,&cconf,obverb);
         //    if (cpplies(suchtxt,cconf,cs)) KLA
         // RS rmod(My,string("update spool set capidials=")+cconf[0].val+" where id = "+*(*cerg+0),ZDB);
         if (ctriesp) *ctriesp=cconf[0].wert;
@@ -6843,7 +6851,7 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, strin
         *ausgp<<", T.: "<<blau<<setw(12)<<cconf[2].wert<<schwarz; 
         *ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
         *ausgp<<Tx[T_bzw]<<blau<<"*.txt"<<schwarz;
-      } // if (1)
+      } // if (!lstat(suchtxt.c_str(),&cstat))
     } // if (p1)
     if (ctriesp) if (ctriesp->empty()) *ctriesp="0";
   } // if (capistat!=fehlend) 
