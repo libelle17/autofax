@@ -6022,6 +6022,7 @@ int paramcl::pruefcapi()
                   "sudo make clean";
               const string cfgbismake=" 2>/dev/null; sudo ";
               kompiliere(proj,s_gz,vorcfg,cfgbismake);
+              systemrueck("sudo depmod",obverb,oblog);
             } // if (lstat(fcpciko.c_str(), &entryfc)) 
           } // if (systemrueck("sudo modprobe -v fcpci",obverb-1,oblog)) 
         } // for(uchar ivers=0;ivers<2;ivers++) 
