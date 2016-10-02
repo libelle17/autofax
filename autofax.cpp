@@ -6007,6 +6007,7 @@ int paramcl::pruefcapi()
               systemrueck("cd "+srcvz+";sudo make all ",1+obverb,oblog); // || { sudo dnf clean all; sudo dnf update; sudo make all; }
               systemrueck("cd "+srcvz+";sudo make install",1+obverb,oblog);
               */
+              // in Mint musste man gcc downgraden, um fcpci installieren zu koennen
               uchar obdown=0;
               string gccpfad,gpppfad;
               struct utsname unameD;
@@ -6018,7 +6019,7 @@ int paramcl::pruefcapi()
                if (p2!=string::npos) {
                 float vers=atof(rel.substr(0,p2).c_str());
                 if (vers>0 && vers<3.14) {
-                 if (!obprogda("gcc",obverb,oblog,&gccpfad) && !obprogda("g++",obverb,oblog,&gpppfad)) {
+                 if (obprogda("gcc",obverb,oblog,&gccpfad) && obprogda("g++",obverb,oblog,&gpppfad)) {
                  obdown=1;
                  systemrueck("sudo cp \""+gccpfad+"\" \""+gccpfad+".bak\" && "
                              "sudo cp \""+gpppfad+"\" \""+gpppfad+".bak\"",obverb,oblog);
