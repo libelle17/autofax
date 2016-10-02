@@ -1854,10 +1854,12 @@ void paramcl::getcommandl0()
       case 1:
         opts.push_back(/*4*/optioncl("v","verbose", &Tx, T_Bildschirmausgabe_gespraechiger,&plusverb,1));
         loggespfad=logvz+vtz+logdname;
+        logdt=&loggespfad.front();
         opts.push_back(/*2*/optioncl("lvz","logvz", &Tx, T_waehlt_als_Logverzeichnis_pfad_derzeit,&logvz, pverz,&cgconf,"logvz",&logvneu));
         opts.push_back(/*3*/optioncl("ld","logdname", &Tx, T_logdatei_string_im_Pfad, &logvz, T_wird_verwendet_anstatt, &logdname, psons,
            &cgconf,"logdname",&logdneu));
         opts.push_back(/*9*/optioncl("l","log",&Tx, T_protokolliert_ausfuehrlich_in_Datei, &loggespfad, T_sonst_knapper, &oblog,1));
+        logdt=&loggespfad.front();
         opts.push_back(/*4*/optioncl("ldn","logdateineu", &Tx, T_logdatei_vorher_loeschen, &logdateineu, 1));
         break;
       case 2:
@@ -1965,7 +1967,6 @@ void paramcl::pruefisdn()
   Log(violetts+Tx[T_pruefisdn]+schwarz,obverb,oblog);
   svec rueck;
   cmd="{ lspci 2>/dev/null || sudo lspci 2>/dev/null;}|grep -i 'isdn'";
-  logdt=&loggespfad.front();
   systemrueck(cmd, obverb,oblog,&rueck);
   // <<"pruefmodem 1 vor  obcapi: "<<(int)obcapi<<endl;
   if (rueck.size()) {
@@ -2498,6 +2499,7 @@ int paramcl::getcommandline()
   opts.push_back(/*2*/optioncl("mpwd","mpwd",&Tx, T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string_anstatt,&mpwd,psons,&cgconf,"mpwd",&obkschreib));
   opts.push_back(/*2*/optioncl("db","datenbank",&Tx, T_verwendet_die_Datenbank_string_anstatt,&dbq,psons,&cgconf,"datenbank",&obkschreib));
   //  opts.push_back(optioncl("l","log", &Tx, T_protokolliert_ausfuehrlich_in_Datei+drot+loggespfad+schwarz+Tx[T_sonst_knapper],&oblog,1));
+  //  logdt=&loggespfad.front();
   //  opts.push_back(optioncl("lvz","logvz",&Tx, T_waehlt_als_Logverzeichnis_pfad_anstatt,&logvz,pverz));
   //  opts.push_back(optioncl("ld","logdname",&Tx, T_logdatei_string_im_Pfad+drot+logvz+schwarz+Tx[T_wird_verwendet_anstatt],&logdname,psons));
   //  opts.push_back(optioncl("ldn","logdateineu", &Tx, T_logdatei_vorher_loeschen,&logdateineu,1));

@@ -207,7 +207,7 @@ class paramcl // Programmparameter
     string logdname; // Logdatei-Name ohne Pfad
     string logvz; // nur das Verzeichnis
     string loggespfad; // Gesamtpfad, auf den dann die in konsole.h verwiesene und oben definierte Variable logdt zeigt
-
+                       // bei jeder Aenderung muss auch logdt neu gesetzt werden!
     string zufaxenvz;
     string wvz; // Warteverzeichnis
     string nvz; // Gescheitertenverzeichnis
