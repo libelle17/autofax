@@ -6033,6 +6033,11 @@ int paramcl::pruefcapi()
                 } // if (vers>0 && vers<3.14) 
                } // if (p2!=string::npos) 
               } // if (p1!=string::npos) 
+              if (systemrueck("ls /lib/modules/$(uname -r)/build",obverb,oblog)) {
+               if (system==deb) {
+                systemrueck("sudo apt -y install linux-headers-$(uname -r)",obverb,oblog);
+               }
+              }
               systemrueck("ls -l /lib/modules/$(uname -r)/build 2>/dev/null || "
                   "{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
                   "sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU && sudo cp -a $NEU /lib/modules/$(uname -r)/build; }",obverb,oblog);
