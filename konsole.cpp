@@ -2337,7 +2337,8 @@ int linstcl::doggfinst(const string& prog,int obverb,int oblog)
     if (obfehlt(eprog,obverb,oblog)) {
       return doinst(prog,obverb,oblog);
     }
-  }
+    eprog.clear();
+  } // if (!(eprog=ersetzeprog(prog)).empty()) 
   return 0;
 } // uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
 
