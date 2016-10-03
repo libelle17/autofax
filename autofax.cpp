@@ -4330,7 +4330,7 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
   // Schaue nach, welche der gespoolten schon weggeschickt sind, Anpassung der Primaerdateien und des Datenbankeintrags
   Log(violetts+Tx[T_untersuchespool]+schwarz,obverb,oblog);
   char ***cerg;
-#define srpf
+// #define srpf
 #ifdef srpf
   perfcl prf("usp");
 #endif
