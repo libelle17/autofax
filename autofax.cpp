@@ -521,6 +521,7 @@ enum T_
   T_Zahl_der_angegebenen_sql_Befehle_zur_Suche_nach_Absendern,
   T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe,
   T_pruefsfftobmp,
+  T_listet_wartende_Faxe_auf,
   T_MAX
 };
 
@@ -1470,6 +1471,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Zahl der Muster/Verzeichnis-Paare zum Speichern ankomender Faxe","No. of pattern/directory-pairs for saving received faxes"},
   // T_pruefsfftobmp
   {"pruefsfftobmp()","checksfftobmp()"},
+  // T_listet_wartende_Faxe_auf
+  {"listet wartende Faxe auf","lists waiting faxes"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -1686,7 +1689,7 @@ paramcl::paramcl(int argc, char** argv)
 
 void paramcl::pruefggfmehrfach()
 {
-  if (!hilfe && !obvi && !zeigvers && !listi && !listf && !lista) {
+  if (!hilfe && !obvi && !zeigvers && !lista && !listf && !listi && !listw && !loef && !loew && !loea) {
     pruefmehrfach(meinname);
   }
 } // void paramcl::pruefggfmehrfach()
@@ -2518,6 +2521,7 @@ int paramcl::getcommandline()
   opts.push_back(/*6*/optioncl("lista","listarchiv", &Tx, T_listet_Datensaetze_aus, &touta, T_mit_Erfolgskennzeichen_auf, &lista,1));
   opts.push_back(/*6*/optioncl("listf","listfailed", &Tx, T_listet_Datensaetze_aus, &touta, T_ohne_Erfolgskennzeichen_auf, &listf,1));
   opts.push_back(/*6*/optioncl("listi","listinca", &Tx, T_listet_Datensaetze_aus, &tinca, T__auf, &listi,1));
+  opts.push_back(/*4*/optioncl("listw","listwart", &Tx, T_listet_wartende_Faxe_auf, &listw,1));
   opts.push_back(/*2*/optioncl("n","dszahl", &Tx, T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt, &dszahl,pzahl));
   opts.push_back(/*4*/optioncl("info","version", &Tx, T_Zeigt_die_Programmversion_an, &zeigvers,1));
   opts.push_back(/*4*/optioncl("vi","vi", &Tx, T_Konfigurationsdatei_editieren, &obvi,1));
@@ -7195,6 +7199,8 @@ int main(int argc, char** argv)
     pm.tu_lista("0");
   } else if (pm.listi) {
     pm.tu_listi();
+  } else if (pm.listw) {
+    pm.untersuchespool();
   } else {
     pruefstdfaxnr(pm.My,pm.muser,pm.mpwd,pm.host,pm.obverb,pm.oblog);
     pruefprocgettel3(pm.My,pm.muser,pm.mpwd,pm.host,pm.obverb,pm.oblog);

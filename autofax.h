@@ -134,6 +134,7 @@ class paramcl // Programmparameter
     uchar anhl=0;    // autofax anhalten
     uchar lista=0;   // liste Archiv auf
     uchar listf=0;   // liste gescheiterte auf
+    uchar listw=0;   // liste wartende auf
     uchar listi=0;   // liste Eingegangene auf
     string dszahl="30"; // Datensatzzahl fuer Tabellenausgaben
     uchar logdateineu=0; // logdt vorher loeschen
