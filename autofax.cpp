@@ -4325,24 +4325,17 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
 
 // Dateien in Spool-Tabelle nach inzwischen verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
 // wird aufgerufen in: main
-void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
+void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla 
 {
   // Schaue nach, welche der gespoolten schon weggeschickt sind, Anpassung der Primaerdateien und des Datenbankeintrags
   Log(violetts+Tx[T_untersuchespool]+schwarz,obverb,oblog);
   char ***cerg;
-// #define srpf
-#ifdef srpf
-  perfcl prf("usp");
-#endif
   RS rs(My,string("SELECT id p0,capispooldatei p1,capispoolpfad p2,original p3,cdateidatum p4,"
         " telnr p5,origvu p6,hylanr p7,capidials p8,hyladials p9,hdateidatum p10, adressat p11 "
         "FROM `")+spooltab+"` WHERE (hylanr RLIKE '^[0-9]+$' AND hylanr<>0) OR capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",ZDB);
   if (!rs.obfehl) {
     faxord=0;
     while (cerg=rs.HolZeile(),cerg?*cerg:0) {
-#ifdef srpf
-      prf.ausgeb("vor if",1);
-#endif
       faxord++;
       if (*(*cerg+0)) if (*(*cerg+3)) {
         (dbzahl)++;
@@ -4363,50 +4356,29 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
         // a) ueber capisuite
         // den Status in Capi der aus spool geholten Zeile untersuchen, dort aktualisieren
         //   und ggf. in hylafax stoppen
-#ifdef srpf
-        prf.ausgeb("vor obcapi",1);
-#endif
         struct stat entrysend;
         if (obcapi) {
           if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
           fsf.setzcapistat(this, &entrysend);
           string ctries;
-#ifdef srpf
-        prf.ausgeb("vor capiwausgeb",1);
-#endif
           fsf.capiwausgeb(&ausg, &capiconf[2].wert, obverb, &ctries, oblog);
-#ifdef srpf
-        prf.ausgeb("nach capiwausgeb",1);
-#endif
-
-          if (fsf.capistat==wartend) {
-            RS rupd(My); 
-            vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-            einf.push_back(instyp(My->DBS,"capidials",&ctries));
-            string bedingung=string("id=")+fsf.id;
-#ifdef srpf
-        prf.ausgeb("vor update altspool",1);
-#endif
-            rupd.update(altspool,einf,ZDB,bedingung,1);
-#ifdef srpf
-        prf.ausgeb("vor update spooltab",1);
-#endif
-            rupd.update(spooltab,einf,ZDB,bedingung,1);
-#ifdef srpf
-        prf.ausgeb("nach update",1);
-#endif
-
-          } else if (fsf.capistat==gesandt) {
-            // ... und ggf. in hylafax loeschen
-            fsf.loeschehyla(this,obverb, oblog);
-          } else if (fsf.capistat==gescheitert) {
-          } else if (fsf.capistat==fehlend) {
+          if (mitupd) {
+            if (fsf.capistat==wartend) {
+              RS rupd(My); 
+              vector<instyp> einf; // fuer alle Datenbankeinfuegungen
+              einf.push_back(instyp(My->DBS,"capidials",&ctries));
+              string bedingung=string("id=")+fsf.id;
+              if (mitupd) rupd.update(altspool,einf,ZDB,bedingung,1);
+              if (mitupd) rupd.update(spooltab,einf,ZDB,bedingung,1);
+            } else if (fsf.capistat==gesandt) {
+              // ... und ggf. in hylafax loeschen
+              fsf.loeschehyla(this,obverb, oblog);
+            } else if (fsf.capistat==gescheitert) {
+            } else if (fsf.capistat==fehlend) {
+            } //             if (fsf.capistat==wartend)  else else else 
           }
         } // if (obcapi) 
 
-#ifdef srpf
-        prf.ausgeb("vor obhyla",1);
-#endif
         // b) ueber hylafax
         if (obhyla) {
           string protdakt;
@@ -4417,32 +4389,32 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
           setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, &obsfehlt, 0, obverb, oblog, &hylastate, &hyladials, &hylastatus, &hylastatuscode);
           fsf.hylaausgeb(&ausg, this, obsfehlt, hylastate, obverb, 0, oblog);
           if (!obsfehlt) { // Protokolldatei vorhanden
-            RS rupd(My); 
-            vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-            einf.push_back(instyp(My->DBS,"hylastate",&hylastate));
-            if (!hyla_uverz_nr) { // wenn fertig
-              if (fsf.hylastat==gescheitert) { // (hylastate=="8") // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
-                einf.push_back(instyp(My->DBS,"hylanr","0",(uchar)1));
-                //                  einf.push_back(instyp(My->DBS,"hyladials","-1",(uchar)1));
-                hyladials="-1";
-                einf.push_back(instyp(My->DBS,"hylastatus",&hylastatus));
-                einf.push_back(instyp(My->DBS,"hylastatuscode",&hylastatuscode));
-              } else if (fsf.hylastat==gesandt) { // (hylastate=="7") // 7, status erfolgreich
-                // ... und ggf. in capisuite loeschen
-                fsf.loeschecapi(obverb,oblog);
-              } // if (fsf.hylastat==gescheitert) else
-            } // if (!hyla_uverz_nr) 
-            einf.push_back(instyp(My->DBS,"hyladials",&hyladials));
-            string bedingung=string("id=")+fsf.id;
-            rupd.update(altspool,einf,ZDB,bedingung,1);
-            rupd.update(spooltab,einf,ZDB,bedingung,1);
+            if (mitupd) {
+              RS rupd(My); 
+              vector<instyp> einf; // fuer alle Datenbankeinfuegungen
+              einf.push_back(instyp(My->DBS,"hylastate",&hylastate));
+              if (!hyla_uverz_nr) { // wenn fertig
+                if (fsf.hylastat==gescheitert) { // (hylastate=="8") // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
+                  einf.push_back(instyp(My->DBS,"hylanr","0",(uchar)1));
+                  //                  einf.push_back(instyp(My->DBS,"hyladials","-1",(uchar)1));
+                  hyladials="-1";
+                  einf.push_back(instyp(My->DBS,"hylastatus",&hylastatus));
+                  einf.push_back(instyp(My->DBS,"hylastatuscode",&hylastatuscode));
+                } else if (fsf.hylastat==gesandt) { // (hylastate=="7") // 7, status erfolgreich
+                  // ... und ggf. in capisuite loeschen
+                  fsf.loeschecapi(obverb,oblog);
+                } // if (fsf.hylastat==gescheitert) else
+              } // if (!hyla_uverz_nr) 
+              einf.push_back(instyp(My->DBS,"hyladials",&hyladials));
+              string bedingung=string("id=")+fsf.id;
+              rupd.update(altspool,einf,ZDB,bedingung,1);
+              rupd.update(spooltab,einf,ZDB,bedingung,1);
+            }
             ausg<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
           } // if (!warteirgendwo)
         } // if (!obsfehlt) ... else
-#ifdef srpf
-        prf.ausgeb("vor obcapi || obhyla",1);
-#endif
-        if (obcapi || obhyla) {
+
+        if (mitupd && (obcapi || obhyla)) {
           // im Erfolgsfall zugrundeliegende Dateien verschieben
           if (fsf.capistat==gesandt || fsf.hylastat==gesandt) {
             (ezahl)++;
@@ -4508,9 +4480,6 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
           } // if (allegesch || (nimmer && !ogibts[0]))
         } // if (obcapi || obhyla)
         Log(ausg.str(),1,oblog);
-#ifdef srpf
-        prf.ausgeb("naach obcapi||obhyla",1);
-#endif
       } // if (*(*cerg+0)) if (*(*cerg+3))
     } // while (cerg=rs.HolZeile(),cerg?*cerg:0) 
   } // if (!rs.obfehl) 
@@ -7234,7 +7203,7 @@ int main(int argc, char** argv)
   } else if (pm.listi) {
     pm.tu_listi();
   } else if (pm.listw) {
-    pm.untersuchespool();
+    pm.untersuchespool(0);
     pm.zeigweitere();
     Log(blaus+Tx[T_Ende]+schwarz,pm.obverb,pm.oblog);
     pm.schlussanzeige();

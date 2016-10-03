@@ -326,7 +326,7 @@ class paramcl // Programmparameter
     int  loeschewaise(int obverb, int oblog);
     int  loescheallewartende(int obverb, int oblog);
     void faxealle();
-    void untersuchespool();
+    void untersuchespool(uchar mitupd=1);
     void zeigweitere();
     void empfarch();
     void schlussanzeige();
