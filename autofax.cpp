@@ -5920,7 +5920,7 @@ void paramcl::pruefsfftobmp()
             " && rm -rf $P && mv ${P}-master ${P}; } "
             " && cd ${P} "
             //                    " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
-            " && sed -i.bak -e 's/\\^[[:blank:]]*(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp"
+            " && sed -i.bak -e 's/^[[:blank:]]*\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp"
             //                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
             //                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
             " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
