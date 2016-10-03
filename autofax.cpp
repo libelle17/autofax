@@ -4368,8 +4368,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
               vector<instyp> einf; // fuer alle Datenbankeinfuegungen
               einf.push_back(instyp(My->DBS,"capidials",&ctries));
               string bedingung=string("id=")+fsf.id;
-              if (mitupd) rupd.update(altspool,einf,ZDB,bedingung,1);
-              if (mitupd) rupd.update(spooltab,einf,ZDB,bedingung,1);
+              if (mitupd) rupd.update(altspool,einf,ZDB,bedingung,0);
+              if (mitupd) rupd.update(spooltab,einf,ZDB,bedingung,0);
             } else if (fsf.capistat==gesandt) {
               // ... und ggf. in hylafax loeschen
               fsf.loeschehyla(this,obverb, oblog);
@@ -4407,8 +4407,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
               } // if (!hyla_uverz_nr) 
               einf.push_back(instyp(My->DBS,"hyladials",&hyladials));
               string bedingung=string("id=")+fsf.id;
-              rupd.update(altspool,einf,ZDB,bedingung,1);
-              rupd.update(spooltab,einf,ZDB,bedingung,1);
+              rupd.update(altspool,einf,ZDB,bedingung,0);
+              rupd.update(spooltab,einf,ZDB,bedingung,0);
             }
             ausg<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
           } // if (!warteirgendwo)
@@ -4538,7 +4538,7 @@ void paramcl::zeigweitere()
       for(size_t i=0;i<rueck.size();i++) {
         uchar indb=0;
         char ***cerg;
-        ZDB=0;
+//        ZDB=0;
         RS rs(My,string("SELECT id FROM `")+spooltab+"` WHERE CONCAT(capispoolpfad,'/',capispooldatei)='"+rueck[i]+"'",ZDB);
         if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
         if (!indb) {
