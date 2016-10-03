@@ -4313,9 +4313,9 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
           if (!lstat((sendqgespfad.c_str()), entrysendp)) break; 
         } 
         // hier koennte capistat auch fehlend sein
-      } 
-    }
-  }
+      }  //       if (!lstat(sendqgespfad.c_str(),entrysendp)) else
+    } // if ((p1=cspf.rfind(vtz))) if ((p2=cspf.rfind(vtz,p1-1))) 
+  } //   if (capisd.empty()) else
 } // fsfcl::setzcapistat
 
 // hylafax: bei zu faxenden Dateien stehen die Steuerdateien in /var/spool/fax/sendq/q105, benannt nach /var/spool/fax/etc/xferfaxlog, dort steht in der 6. Spalte die hyla-Index-Nummer z.B. 105, die als Rueckmeldung von sendfax erscheint ("request id is 105 (group id 105) for host localhost (1 file)")
