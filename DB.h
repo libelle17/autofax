@@ -336,11 +336,11 @@ class RS
     void weisezu(DB* pdb);
     void clear();
     template<typename sT> 
-      int Abfrage(sT psql,uchar obstumm=0){
+      int Abfrage(sT psql,uchar obstumm=0,uchar asy=0){
         int erg=0;
         this->sql=psql;
         if (!sql.empty()) {
-          erg = doAbfrage(obstumm);
+          erg = doAbfrage(obstumm,asy);
         }
         return erg;
       }
@@ -349,10 +349,10 @@ class RS
     RS(DB* pdb,const string& psql, uchar obstumm=0);
     RS(DB* pdb,stringstream psqls, uchar obstumm=0);
     ~RS();
-    void update(const string& tab, vector<instyp> einf,uchar obstumm, const string& bedingung);
-    void insert(const string& tab, vector<instyp> einf, uchar anfangen=1,uchar sammeln=0,uchar obstumm=0,string *id=0,uchar eindeutig=0);
+    void update(const string& tab,vector<instyp> einf,uchar obstumm, const string& bedingung, uchar asy=0);
+    void insert(const string& tab,vector<instyp> einf,uchar anfangen=1,uchar sammeln=0,uchar obstumm=0,string *id=0,uchar eindeutig=0,uchar asy=0);
   private:
-    int doAbfrage(uchar obstumm);
+    int doAbfrage(uchar obstumm,uchar asy=0);
 };
 
 //string ersetze(const char *u, const char* alt, const char* neu);

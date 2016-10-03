@@ -209,11 +209,11 @@ class perfcl
 {
  public:
  string vonwo;
- clock_t zp0, zp1;
- time_t t0, t1;
+ clock_t zp0, zp1, zp1alt;
+ time_t t0=0, t1;
  unsigned long nr=0;
  perfcl(const string& vvonwo);
- void ausgeb(const string& stelle="");
+ void ausgeb(const string& stelle="",uchar obdauer=0);
  void ausgab1000(const string& stelle="");
  int oberreicht(unsigned long sek);
 };

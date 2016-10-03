@@ -158,7 +158,7 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   // T_als_Dienst_eingerichtet_von
   {", als Dienst eingerichtet von '",", installed as service by '"},
   // T_Versuch
-  {", Versuch: ",", try no.: "},
+  {", Nr: ",", no.: "},
   // T_machfit
   {"machfit()","makefit()"},
   // T_obslaeuft
@@ -197,19 +197,21 @@ const string drots=drot, rots=rot, schwarzs=schwarz, blaus=blau, gelbs=gelb, tue
 
 perfcl::perfcl(const string& vvonwo): vonwo(vvonwo)
 {
-  zp0=clock(); 
+  zp0=zp1=clock(); 
   t0=time(NULL);
 }
 
-void perfcl::ausgeb(const string& stelle)
+void perfcl::ausgeb(const string& stelle,uchar obdauer)
 {
+  zp1alt=zp1;
   zp1=clock();
   t1=time(NULL);
   cout<<gruen;
   if (!vonwo.empty())
-   cout<<vonwo<<Txk[T_Versuch]<<++nr<<", ";
+   cout<<vonwo<<Txk[T_Versuch]<<setw(4)<<++nr<<", "<<setw(22)<<stelle<<": ";
   cout<<Txk[T_Dauer]<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" clocks = "
-    <<fixed<<(t1-t0)<<schwarz<<setprecision(0)<<" s\r";cout.flush();
+    <<fixed<<(t1-t0)<<setprecision(0)<<" s, "
+    "delta= "<<setprecision(7)<<setw(9)<<(long)(zp1-zp1alt)<<" clocks"<<fixed<<schwarz<<(obdauer?"\n":"\r");cout.flush();
 } // void perfcl::ausgeb(const string& stelle)
 
 

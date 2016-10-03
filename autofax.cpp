@@ -1689,7 +1689,7 @@ paramcl::paramcl(int argc, char** argv)
 
 void paramcl::pruefggfmehrfach()
 {
-  if (!hilfe && !obvi && !zeigvers && !lista && !listf && !listi && !listw && !loef && !loew && !loea) {
+  if (!hilfe && !obvi && !zeigvers && !lista && !listf && !listi && !listw && !loef && !loew && !loea && !anhl) {
     pruefmehrfach(meinname);
   }
 } // void paramcl::pruefggfmehrfach()
@@ -4330,12 +4330,19 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
   // Schaue nach, welche der gespoolten schon weggeschickt sind, Anpassung der Primaerdateien und des Datenbankeintrags
   Log(violetts+Tx[T_untersuchespool]+schwarz,obverb,oblog);
   char ***cerg;
+#define srpf
+#ifdef srpf
+  perfcl prf("usp");
+#endif
   RS rs(My,string("SELECT id p0,capispooldatei p1,capispoolpfad p2,original p3,cdateidatum p4,"
         " telnr p5,origvu p6,hylanr p7,capidials p8,hyladials p9,hdateidatum p10, adressat p11 "
         "FROM `")+spooltab+"` WHERE (hylanr RLIKE '^[0-9]+$' AND hylanr<>0) OR capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",ZDB);
   if (!rs.obfehl) {
     faxord=0;
     while (cerg=rs.HolZeile(),cerg?*cerg:0) {
+#ifdef srpf
+      prf.ausgeb("vor if",1);
+#endif
       faxord++;
       if (*(*cerg+0)) if (*(*cerg+3)) {
         (dbzahl)++;
@@ -4356,20 +4363,38 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
         // a) ueber capisuite
         // den Status in Capi der aus spool geholten Zeile untersuchen, dort aktualisieren
         //   und ggf. in hylafax stoppen
+#ifdef srpf
+        prf.ausgeb("vor obcapi",1);
+#endif
         struct stat entrysend;
         if (obcapi) {
           if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
           fsf.setzcapistat(this, &entrysend);
           string ctries;
+#ifdef srpf
+        prf.ausgeb("vor capiwausgeb",1);
+#endif
           fsf.capiwausgeb(&ausg, &capiconf[2].wert, obverb, &ctries, oblog);
+#ifdef srpf
+        prf.ausgeb("nach capiwausgeb",1);
+#endif
 
           if (fsf.capistat==wartend) {
             RS rupd(My); 
             vector<instyp> einf; // fuer alle Datenbankeinfuegungen
             einf.push_back(instyp(My->DBS,"capidials",&ctries));
             string bedingung=string("id=")+fsf.id;
-            rupd.update(altspool,einf,ZDB,bedingung);
-            rupd.update(spooltab,einf,ZDB,bedingung);
+#ifdef srpf
+        prf.ausgeb("vor update altspool",1);
+#endif
+            rupd.update(altspool,einf,ZDB,bedingung,1);
+#ifdef srpf
+        prf.ausgeb("vor update spooltab",1);
+#endif
+            rupd.update(spooltab,einf,ZDB,bedingung,1);
+#ifdef srpf
+        prf.ausgeb("nach update",1);
+#endif
 
           } else if (fsf.capistat==gesandt) {
             // ... und ggf. in hylafax loeschen
@@ -4379,6 +4404,9 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
           }
         } // if (obcapi) 
 
+#ifdef srpf
+        prf.ausgeb("vor obhyla",1);
+#endif
         // b) ueber hylafax
         if (obhyla) {
           string protdakt;
@@ -4406,11 +4434,14 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
             } // if (!hyla_uverz_nr) 
             einf.push_back(instyp(My->DBS,"hyladials",&hyladials));
             string bedingung=string("id=")+fsf.id;
-            rupd.update(altspool,einf,ZDB,bedingung);
-            rupd.update(spooltab,einf,ZDB,bedingung);
+            rupd.update(altspool,einf,ZDB,bedingung,1);
+            rupd.update(spooltab,einf,ZDB,bedingung,1);
             ausg<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
           } // if (!warteirgendwo)
         } // if (!obsfehlt) ... else
+#ifdef srpf
+        prf.ausgeb("vor obcapi || obhyla",1);
+#endif
         if (obcapi || obhyla) {
           // im Erfolgsfall zugrundeliegende Dateien verschieben
           if (fsf.capistat==gesandt || fsf.hylastat==gesandt) {
@@ -4477,6 +4508,9 @@ void paramcl::untersuchespool() // faxart 0=capi, 1=hyla
           } // if (allegesch || (nimmer && !ogibts[0]))
         } // if (obcapi || obhyla)
         Log(ausg.str(),1,oblog);
+#ifdef srpf
+        prf.ausgeb("naach obcapi||obhyla",1);
+#endif
       } // if (*(*cerg+0)) if (*(*cerg+3))
     } // while (cerg=rs.HolZeile(),cerg?*cerg:0) 
   } // if (!rs.obfehl) 
@@ -7201,6 +7235,9 @@ int main(int argc, char** argv)
     pm.tu_listi();
   } else if (pm.listw) {
     pm.untersuchespool();
+    pm.zeigweitere();
+    Log(blaus+Tx[T_Ende]+schwarz,pm.obverb,pm.oblog);
+    pm.schlussanzeige();
   } else {
     pruefstdfaxnr(pm.My,pm.muser,pm.mpwd,pm.host,pm.obverb,pm.oblog);
     pruefprocgettel3(pm.My,pm.muser,pm.mpwd,pm.host,pm.obverb,pm.oblog);

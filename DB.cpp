@@ -686,10 +686,10 @@ int DB::prueftab(Tabelle *ptab,int obverb)
                 sql.str(std::string()); sql.clear();
                 sql<<"ALTER TABLE `"<<ptab->name<<"`"<<istr[gspn].substr(1);
                 rs.Abfrage(sql.str(),obverb?255:1);
-              }
-            }
-          }
-        }
+              } // if (!istr[gspn].empty()) 
+            } // if (aendere) 
+          } // if (verschieb || aendere)
+        } // for(int gspn=0;gspn<ptab->feldzahl;gspn++) 
 
         for(int i=0;i<ptab->indexzahl;i++) {
           // steht aus: Namen nicht beruecksichtigen, nur Feldreihenfolge und ggf. -laenge
@@ -757,12 +757,12 @@ int DB::prueftab(Tabelle *ptab,int obverb)
               rindins.Abfrage(sql.str(),obverb?255:1);
             } // if (obneu) 
           } // if (!rind.obfehl) 
-        }
-      }
+        } // for(int i=0;i<ptab->indexzahl;i++)
+      } // case Mysql
       break;
     case Postgres:
       break;
-  }
+  } // switch (DBS)
   return gesfehlr;
 } // int DB::prueftab(Tabelle *ptab,bool obverb) 
 
@@ -1184,9 +1184,10 @@ void RS::weisezu(DB* pdb)
 }
 
 // fuer obstumm gibt es die Stufen: 255 (zeige SQL an), 0, 1, 2 (zeige auch bei Fehler nichts an)
-int RS::doAbfrage(uchar obstumm) 
+int RS::doAbfrage(uchar obstumm,uchar asy) 
 {
   fnr=0;
+  int obfalsch=0;
   // fuer wiederholten Abfragen
   // <<"in doAbfrage: "<<blau<<sql<<schwarz<<endl;
   switch (db->DBS) {
@@ -1205,7 +1206,11 @@ int RS::doAbfrage(uchar obstumm)
        fnr=9999;
        fehler=Txd[T_Datenbank_nicht_zu_oeffnen];
       } else {
-        if (mysql_query(db->conn,sql.c_str())) {
+        if (asy)
+          obfalsch=mysql_send_query(db->conn,sql.c_str(),sql.length());
+        else
+          obfalsch=mysql_real_query(db->conn,sql.c_str(),sql.length());
+        if (obfalsch) {
           fnr=mysql_errno(db->conn);
           fehler=mysql_error(db->conn);
           if (fnr==1138) { // Invalid use of NULL value; bei Spaltenverschiebungen kann oft NOT NULL nicht mehr geaendert werden
@@ -1213,7 +1218,7 @@ int RS::doAbfrage(uchar obstumm)
             transform(sql.begin(),sql.end(),std::back_inserter(lsql),::toupper);
             if ((!lsql.find("ALTER TABLE") || !lsql.find("CREATE TABLE")) && lsql.find("NOT NULL")!=string::npos) {
               lsql=caseersetze(sql,"NOT NULL","");
-              if (!mysql_query(db->conn,lsql.c_str())) goto erfolg;
+              if (!mysql_real_query(db->conn,lsql.c_str(),lsql.length())) goto erfolg;
               else {
                 fnr=mysql_errno(db->conn);
                 fehler=mysql_error(db->conn);
@@ -1235,7 +1240,7 @@ erfolg:
           } else {
           }
           //			row = mysql_fetch_row(result);
-        } // if (mysql_query(db->conn,sql.c_str())) else  
+        } // if (mysql_real_query(db->conn,sql.c_str(),sql.length())) else  
       } // if (!db->conn) else
       break;
     case Postgres:
@@ -1289,7 +1294,7 @@ RS::~RS()
     }
 } // RS::~RS() 
 
-void RS::update(const string& utab, vector< instyp > einf,uchar obstumm, const string& bedingung) 
+void RS::update(const string& utab, vector< instyp > einf,uchar obstumm, const string& bedingung,uchar asy) 
 {
   ulong locks=0;
 
@@ -1330,7 +1335,7 @@ void RS::update(const string& utab, vector< instyp > einf,uchar obstumm, const s
           Abfrage("SET sql_mode = 'STRICT_ALL_TABLES'",obstumm);
         }
         for (int iru=0;iru<2;iru++) { // interne Runde
-          Abfrage(isql,obstumm);
+          Abfrage(isql,obstumm,asy);
           if (!obfehl) {
             break;
           }  else {
@@ -1362,9 +1367,9 @@ void RS::update(const string& utab, vector< instyp > einf,uchar obstumm, const s
     case Postgres:
       break;
   }
-} // update, aus int DB::insert(vector< instyp > einf,const char** erg,int anfangen=1,int sammeln=0) 
+} // void RS::update(const string& utab, vector< instyp > einf,uchar obstumm, const string& bedingung,uchar asy) 
 
-void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar sammeln,uchar obstumm,string *id,uchar eindeutig) 
+void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar sammeln,uchar obstumm,string *id,uchar eindeutig,uchar asy) 
 {
   /*
      anf=1,sammeln=0 ohne Puffer
@@ -1517,7 +1522,7 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
           }
            // interne Runde
           for (int iru=0;iru<2;iru++) {
-            Abfrage(isql,obstumm);
+            Abfrage(isql,obstumm,asy);
             if (id) {
               if (obfehl) *id="null";
               else *id=ltoan(mysql_insert_id(db->conn));
