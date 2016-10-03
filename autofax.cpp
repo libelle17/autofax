@@ -4548,10 +4548,10 @@ void paramcl::zeigweitere()
           }
           fsfcl fsf(rueck[i],wartend);
           fsf.capiwausgeb(&ausg, &capiconf[2].wert, obverb, 0, oblog, ++faxord);
-        }
+        } // if (!indb) 
       } // for(size_t i=0
-    }
-  }
+    } // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
+  } // if (obcapi)
   if (obhyla) {
     if (!lstat(hsendqvz.c_str(),&entryvz)) {
       cmd=string("sudo find '")+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";

@@ -1330,10 +1330,11 @@ void RS::update(const string& utab, vector< instyp > einf,uchar obstumm, const s
         string altsqlm;
         RS sqlm(db,"SHOW VARIABLES LIKE 'sql_mode'");
         if (!sqlm.obfehl) while (cerg=sqlm.HolZeile(),cerg?*cerg:0) {
-          if (*(*cerg+1)) if (!strcmp(*(*cerg+1),"STRICT_ALL_VARIABLES")) 
+          if (*(*cerg+1)) if (!strcmp(*(*cerg+1),"STRICT_ALL_VARIABLES")) {
             altsqlm=*(*cerg+1);
-          Abfrage("SET sql_mode = 'STRICT_ALL_TABLES'",obstumm);
-        }
+            Abfrage("SET sql_mode = 'STRICT_ALL_TABLES'",obstumm);
+          } // if (*(*cerg+1)) if (!strcmp(*(*cerg+1),"STRICT_ALL_VARIABLES")) 
+        } // if (!sqlm.obfehl) while (cerg=sqlm.HolZeile(),cerg?*cerg:0) 
         for (int iru=0;iru<2;iru++) { // interne Runde
           Abfrage(isql,obstumm,asy);
           if (!obfehl) {
