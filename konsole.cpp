@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <sys/statvfs.h> // fuer statfs
+#include <utime.h>
 
 
 #ifdef _WIN32
@@ -175,6 +176,10 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {"# Konfiguration fuer '","# Configuration for '"},
   // T_erstellt_automatisch_durch_dieses_am
   {"', erstellt automatisch durch dieses am: ","', generated automatically by itself at: "},
+  // T_Fehler_bei_lstat
+  {"Fehler_bei_lstat ","Error at lstat "},
+  // T_Datum_nicht_gesetzt_bei
+  {"Datum nicht gesetzt bei '","Date not set for '"},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -2710,4 +2715,33 @@ void optioncl::setzebem(schlArr *cp,const char *pname)
   kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0)
 {
   setzebem(cp,pname);
+}
+
+// gleicht das Datum von <zu> an <gemaess> an, aehnlich touch
+int datumangleich(string& zu, string& gemaess,int obverb, int oblog)
+{
+  struct stat statgm;
+  if (lstat(gemaess.c_str(),&statgm)) {
+    Log(string(rots+Txk[T_Fehler_bei_lstat])+schwarz+gemaess,obverb,oblog);
+    return 1;
+  }
+  struct stat statzu;
+  if (lstat(zu.c_str(),&statzu)) {
+    Log(string(rots+Txk[T_Fehler_bei_lstat])+schwarz+zu,obverb,oblog);
+    return 1;
+  }
+  tm mptm;
+  memset(&mptm,0,sizeof(struct tm));
+  struct utimbuf ubuf;
+  ubuf.modtime = statgm.st_mtime;
+  ubuf.actime = ubuf.modtime;
+  if (utime(zu.c_str(),&ubuf)) {
+   systemrueck("touch -r \""+gemaess+"\" \""+zu+"\"",obverb,oblog);
+  }
+  lstat(zu.c_str(),&statzu);
+  if (memcmp(&statgm.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime)) {
+    Log(rots+Txk[T_Datum_nicht_gesetzt_bei]+schwarz+zu+rot+"'"+schwarz,1,1);
+    //          exit(0);
+  }
+  return 0;
 }

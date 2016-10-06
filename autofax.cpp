@@ -4152,7 +4152,10 @@ void paramcl::DateienHerricht()
         erg=lstat(fxv[nachrnr].spdf.c_str(),&entrynpdf); 
         Log(string(Tx[T_Umwandlungvon])+blau+fxv[nachrnr].npdf+Tx[T_inPDFmit]+tuerkis+(runde==1?"soffice":"convert")+schwarz+
             Tx[T_beendetErgebnis]+rot+(erg?Tx[T_misserfolg]:Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
-        if (!erg) break; 
+        if (!erg) {
+         datumangleich(fxv[nachrnr].spdf,fxv[nachrnr].npdf);
+         break; 
+        }
       } // if (cmd.empty()) erg=1; else 
     } // for(unsigned runde=1;runde<=2;runde++) 
     if (!erg) {
@@ -4201,9 +4204,9 @@ void paramcl::DateienHerricht()
                 blau<<spdfd.at(i)<<schwarz<<" ->\n"<<
                 blau<<ndname<<schwarz<<endl;
               exit(20);
-            }
+            } // if (vfehler) 
             spdfd.at(i)=ndname;
-          }
+          } // if (ndname!=spdfd.at(i))
           string wartedatei=verschiebe(spdfd.at(i),wvz,cuser,&vfehler,1,obverb,oblog);
           if (!vfehler) {
             int vorhanden=0; // 1= Datei schon zuvor als nicht-PDF-Datei eingetragen

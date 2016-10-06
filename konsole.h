@@ -173,6 +173,8 @@ enum Tkonsole_
   T_pruefpar,
   T_Konfiguration_fuer,
   T_erstellt_automatisch_durch_dieses_am,
+  T_Fehler_bei_lstat,
+  T_Datum_nicht_gesetzt_bei,
   T_konsoleMAX,
 };
 
@@ -574,6 +576,7 @@ string Tippstring(const string& frage, const string *vorgabe=0);
 string Tippverz(const char *frage,string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
 int tuloeschen(const string& zuloe,const string& cuser="",int obverb=0, int oblog=0);
+int datumangleich(string& zu, string& gemaess,int obverb=0, int oblog=0);
 
 class linstcl
 {
