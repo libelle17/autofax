@@ -1635,12 +1635,13 @@ int Schschreib(const char *fname, Schluessel *conf, size_t csize)
 } // int Schschreib(const char *fname, Schluessel *conf, size_t csize)
 #endif
 
-
+// Dateiname ohne Pfad
 std::string base_name(const std::string& path)
 {
   return path.substr(path.find_last_of("/\\") + 1);
 } // std::string base_name(std::string const & path)
 
+// Pfadname einer Datei
 std::string dir_name(const std::string& path)
 {
   return path.substr(0,path.find_last_of("/\\"));
@@ -2725,7 +2726,7 @@ void optioncl::setzebem(schlArr *cp,const char *pname)
 }
 
 // gleicht das Datum von <zu> an <gemaess> an, aehnlich touch
-int datumangleich(string& zu, string& gemaess,int obverb, int oblog)
+int attrangleich(string& zu, string& gemaess,int obverb, int oblog)
 {
   struct stat statgm;
   if (lstat(gemaess.c_str(),&statgm)) {
@@ -2737,13 +2738,16 @@ int datumangleich(string& zu, string& gemaess,int obverb, int oblog)
     Log(string(rots+Txk[T_Fehler_bei_lstat])+schwarz+zu,obverb,oblog);
     return 1;
   }
-  tm mptm;
-  memset(&mptm,0,sizeof(struct tm));
+  if (chmod(zu.c_str(),statgm.st_mode)) {
+   systemrueck("sudo chmod --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog);
+  }
+  if (chown(zu.c_str(),statgm.st_uid,statgm.st_gid)) {
+   systemrueck("sudo chown --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog);
+  }
   struct utimbuf ubuf;
-  ubuf.modtime = statgm.st_mtime;
-  ubuf.actime = ubuf.modtime;
+  ubuf.actime=ubuf.modtime=statgm.st_mtime;
   if (utime(zu.c_str(),&ubuf)) {
-   systemrueck("touch -r \""+gemaess+"\" \""+zu+"\"",obverb,oblog);
+   systemrueck("sudo touch -r \""+gemaess+"\" \""+zu+"\"",obverb,oblog);
   }
   lstat(zu.c_str(),&statzu);
   if (memcmp(&statgm.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime)) {
@@ -2751,7 +2755,8 @@ int datumangleich(string& zu, string& gemaess,int obverb, int oblog)
     //          exit(0);
   }
   return 0;
-}
+} // int attrangleich(string& zu, string& gemaess,int obverb, int oblog)
+
 // liefert 0, wenn Erfolg
 int kopier(const string& quel, const string& ziel, int obverb, int oblog)
 {

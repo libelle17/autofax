@@ -3953,6 +3953,7 @@ int paramcl::pruefocr()
 {
   if (!obocrgeprueft) {
     uchar tda=1, deuda=0, engda=0, osdda=0;
+    systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
     svec rueck;
     systemrueck("tesseract --list-langs 2>&1",obverb,oblog,&rueck); // gibt das normale Ergebnis als Fehlermeldung aus!
     if (!rueck.size()) tda=0; else if (rueck[0].find("List of available")) tda=0;
@@ -4159,7 +4160,7 @@ void paramcl::DateienHerricht()
                 " && chmod +r \""+fxv[nachrnr].spdf+"\"" ,obverb,oblog);
           } // pruefocr()
          } // if (obocra)
-         datumangleich(fxv[nachrnr].spdf,fxv[nachrnr].npdf);
+         attrangleich(fxv[nachrnr].spdf,fxv[nachrnr].npdf);
          if (gleichziel) {
            uint kfehler=0;
            kopiere(fxv[nachrnr].npdf, zmp, &kfehler, 1, obverb, oblog);
@@ -4451,7 +4452,11 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           if (obverb>0) {
             Log(violetts+"Capistat: "+schwarz+FxStatS(&fsf.capistat)+violett+", Hylastat: "+schwarz+FxStatS(&fsf.hylastat),obverb,oblog);
           }
-          uchar allegesch = ((!obcapi || fsf.capistat==gescheitert) && (!obhyla || fsf.hylastat==gescheitert));
+          // die Flags aller aktivierten Faxwege stehen auf gescheitert
+          uchar allegesch=0;
+          if (fsf.capistat==gescheitert && maxcapiv>=capiconf[2].wert) allegesch=1;
+          else allegesch = ((!obcapi || fsf.capistat==gescheitert) && (!obhyla || fsf.hylastat==gescheitert));
+          // die Flags aller aktivierten Faxwege stehen auf gescheitert oder fehlend
           uchar nimmer = ((!obcapi || fsf.capistat==fehlend || fsf.capistat==gescheitert) && 
               (!obhyla || fsf.hylastat==fehlend || fsf.hylastat==gescheitert));
           uchar ogibts[2] = {0,0};
@@ -4473,6 +4478,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
             fsf.archiviere(My,this,&entrysend,allegesch||nimmer,fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?capi:hyla, 
                 &geloescht, obverb, oblog);
           } 
+          // wenn alle aktivierten Faxwege auf gescheitert oder fehlend stehen oder die Quelldatei fehlt ...
           if (allegesch || (nimmer && !ogibts[0])) {
             // Fax gescheitert, Dateien von warteauffax nach nichtgefaxt verschieben
             for(unsigned iru=0;iru<2;iru++) {
@@ -4480,7 +4486,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
               if (ogibts[iru]) {
                 verschiebe(odatei[iru],nvz,cuser,&vfehler, 1, obverb,oblog);
                 // an vorderster Stelle Scheitern erkennen lassen
-                systemrueck("touch '"+zmvp[0].ziel+vtz+Tx[T_nichtgefaxt]+" "+odatei[iru]+".nix'",1,1);
+                systemrueck("touch '"+zmvp[0].ziel+vtz+Tx[T_nichtgefaxt]+" "+base_name(odatei[iru])+".nix'",1,1);
               } // if (ogibts[iru]) 
             } // for(unsigned iru=0;iru<2;iru++) 
           } // if (allegesch || (nimmer && !ogibts[0]))
@@ -4753,7 +4759,7 @@ void paramcl::empfarch()
     } // if (obocri) 
     uchar obpdfda=!lstat(ziel.c_str(),&entrynd);
     if (obpdfda) {
-     datumangleich(ziel,rueck[i],obverb,oblog);
+     attrangleich(ziel,rueck[i],obverb,oblog);
     }
     if (obhpfadda||obpdfda) {
       cmd=string("sudo mv -i \"")+rueck[i]+"\" \""+hempfavz+"\"";
@@ -5350,7 +5356,7 @@ void paramcl::hconfigtty()
     hci<<"# modem \"idles\" in Class 0 while not sending or receiving facsimile."<<endl;
     hci<<"ModemSetupAACmd:  AT+FCLASS=0 # leave modem idling in class 0"<<endl;
     hci<<"ModemAnswerCmd:   AT+FCLASS=1A  # answer in Class 1"<<endl;
-    hci<<" die folgenden sind aus dem Internet"<<endl;
+    hci<<"# die folgenden sind aus dem Internet"<<endl;
     hci<<"ModemResetCmds:   ATS19=255"<<endl;
     hci<<"ModemAnswerFaxCmd:  ATS27=8S56=0+FCLASS=1;A"<<endl;
     hci<<"ModemAnswerDataCmd: ATS27=1S56=16+FCLASS=0;A"<<endl;

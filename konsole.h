@@ -579,7 +579,7 @@ string Tippstring(const string& frage, const string *vorgabe=0);
 string Tippverz(const char *frage,string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
 int tuloeschen(const string& zuloe,const string& cuser="",int obverb=0, int oblog=0);
-int datumangleich(string& zu, string& gemaess,int obverb=0, int oblog=0);
+int attrangleich(string& zu, string& gemaess,int obverb=0, int oblog=0);
 int kopier(const string& quel, const string& ziel, int obverb=0, int oblog=0);
 
 class linstcl
