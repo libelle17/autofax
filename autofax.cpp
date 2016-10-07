@@ -3432,8 +3432,8 @@ void paramcl::pruefsamba()
     if (!(conffehlt=lstat(smbdatei,&sstat))) break;
     if (iru) break;
     pruefverz("/etc/samba",obverb,oblog,0);
-    systemrueck("test -f "+quelle+" && sudo cp -a "+quelle+" "+smbdatei,obverb,oblog);
-  }
+    kopier(quelle,smbdatei,obverb,oblog);
+  } //   for(uchar iru=0;iru<2;iru++)
   int dienstzahl=2;
   servc smb("smb","smbd");
   servc smbd("smbd","smbd");
@@ -4095,9 +4095,9 @@ void paramcl::DateienHerricht()
                 blau<<npdfd.at(i)<<schwarz<<" ->\n"<<
                 blau<<ndname<<schwarz<<endl;
               exit(16);
-            }
+            } // if (vfehler) 
             npdfd.at(i)=ndname;
-          }
+          } // if (ndname!=npdfd.at(i)) 
           string wartedatei=verschiebe(npdfd.at(i),wvz,cuser,&vfehler,1,obverb,oblog);
           if (!vfehler) {
             string stamm,exten;
@@ -4153,24 +4153,23 @@ void paramcl::DateienHerricht()
         Log(string(Tx[T_Umwandlungvon])+blau+fxv[nachrnr].npdf+Tx[T_inPDFmit]+tuerkis+(runde==1?"soffice":"convert")+schwarz+
             Tx[T_beendetErgebnis]+rot+(erg?Tx[T_misserfolg]:Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
         if (!erg) {
+         if (obocra) {
+          if (!pruefocr()) {
+            systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+fxv[nachrnr].spdf+"\" \""+fxv[nachrnr].spdf+"\""
+                " && chmod +r \""+fxv[nachrnr].spdf+"\"" ,obverb,oblog);
+          } // pruefocr()
+         } // if (obocra)
          datumangleich(fxv[nachrnr].spdf,fxv[nachrnr].npdf);
+         if (gleichziel) {
+           uint kfehler=0;
+           kopiere(fxv[nachrnr].npdf, zmp, &kfehler, 1, obverb, oblog);
+           string zield=kopiere(fxv[nachrnr].spdf, zmp, &kfehler, 1, obverb, oblog);
+         } // if (gleichziel)
          break; 
-        }
+        } // if (!erg)
       } // if (cmd.empty()) erg=1; else 
     } // for(unsigned runde=1;runde<=2;runde++) 
-    if (!erg) {
-      if (gleichziel) {
-        uint kfehler=0;
-        kopiere(fxv[nachrnr].npdf, zmp, &kfehler, 1, obverb, oblog);
-        string zield=kopiere(fxv[nachrnr].spdf, zmp, &kfehler, 1, obverb, oblog);
-        if (obocra) if (!zield.empty()) {
-          if (!pruefocr()) {
-            systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+zield+"\" \""+zield+"\""
-                " && chmod +r \""+zield+"\"" ,obverb,oblog);
-          } // pruefocr()
-        } // if (obocra) if (!zield.empty()) 
-      } // if (gleichziel)
-    } else {
+    if (erg) {
       //      spdfp->erase(spdfp->begin()+nachrnr);
       // Misserfolg, zurueckverschieben und aus der Datenbank loeschen
       uint wfehler;
@@ -4195,6 +4194,16 @@ void paramcl::DateienHerricht()
         vector<string> spdfd;
         systemrueck(cmd,obverb, oblog, &spdfd);
         for(size_t i=0;i<spdfd.size();i++) {
+          if (obocra) {
+            struct stat spdfstat;
+            if (!lstat(spdfd.at(i).c_str(),&spdfstat)) {
+              struct utimbuf ubuf;
+              ubuf.actime=ubuf.modtime=spdfstat.st_mtime;
+              systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+spdfd.at(i)+"\" \""+spdfd.at(i)+"\""
+                  " && chmod +r \""+spdfd.at(i)+"\"" ,obverb,oblog);
+              utime(spdfd.at(i).c_str(),&ubuf);
+            } // if (!lstat(spdfd.at(i).c_str(),&spdfstat)) 
+          } // if (obocra) 
           string ndname=zufaxenvz+vtz+neuerdateiname(spdfd.at(i));
           uint vfehler=0;
           if (ndname!=spdfd.at(i)) {
@@ -4219,12 +4228,6 @@ void paramcl::DateienHerricht()
               if (gleichziel) {
                 uint kfehler=0;
                 string zield=kopiere(wartedatei, zmp, &kfehler, 1, obverb, oblog);
-                if (obocra) if (!zield.empty()) {
-                  if (pruefocr()) {
-                    systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+zield+"\" \""+zield+"\""
-                        " && chmod +r \""+zield+"\"" ,obverb,oblog);
-                  } // pruefocr()
-                } // if (obocra) if (!zield.empty()) 
               } //  if (gleichziel)
             } //if (!vorhanden)
           } else {
@@ -4236,11 +4239,11 @@ void paramcl::DateienHerricht()
         } // for(size_t i=0
       } // if (!anfxstrvec.at(iprio).empty()) 
     } // for(unsigned iprio=0;iprio<anfxstrvec.size();iprio++) 
-  for(unsigned i=0;i<fxv.size();i++) {
-    Log(string("npdf[")+rot+ltoan(i)+schwarz+"]: "+rot+fxv[i].npdf+schwarz,obverb,oblog);
-    Log(string("spdf[")+rot+ltoan(i)+schwarz+"]: "+rot+fxv[i].spdf+schwarz,obverb,oblog);
-    Log(string("prio:       ")+rot+ltoan(fxv[i].prio)+schwarz,obverb,oblog);
-  } //   for(unsigned i=0;i<fxv.size();i++)
+    for(unsigned i=0;i<fxv.size();i++) {
+      Log(string("npdf[")+rot+ltoan(i)+schwarz+"]: "+rot+fxv[i].npdf+schwarz,obverb,oblog);
+      Log(string("spdf[")+rot+ltoan(i)+schwarz+"]: "+rot+fxv[i].spdf+schwarz,obverb,oblog);
+      Log(string("prio:       ")+rot+ltoan(fxv[i].prio)+schwarz,obverb,oblog);
+    } //   for(unsigned i=0;i<fxv.size();i++)
 
   Log(string(Tx[T_aus])+drot+zufaxenvz+schwarz+vtz+Tx[T_verarbeitete_PDF_Dateien]+drot+ltoan(fxv.size())+schwarz,1,oblog);
   geszahl=fxv.size();
@@ -4748,19 +4751,10 @@ void paramcl::empfarch()
         }
       } // if (pruefocr()) 
     } // if (obocri) 
-    memset(&entrynd,0,sizeof entrynd);
     uchar obpdfda=!lstat(ziel.c_str(),&entrynd);
     if (obpdfda) {
-      struct stat st0;
-      if (!lstat(rueck[i].c_str(),&st0)) {
-        struct utimbuf ubuf;
-        ubuf.modtime = st0.st_mtime;
-        ubuf.actime = st0.st_mtime;
-        if (utime(ziel.c_str(),&ubuf)) {
-            Log(rots+Tx[T_Fehler_beim_Datumsetzen_von]+ziel+rot+"'"+schwarz,1,1);
-        }
-      } // if (!lstat(rueck[i].c_str(),&st0)) 
-    } // if (obpdfda)
+     datumangleich(ziel,rueck[i],obverb,oblog);
+    }
     if (obhpfadda||obpdfda) {
       cmd=string("sudo mv -i \"")+rueck[i]+"\" \""+hempfavz+"\"";
       systemrueck(cmd,obverb,oblog);
@@ -4824,6 +4818,7 @@ void paramcl::empfarch()
       memset(&tm, 0, sizeof(struct tm));
       strptime(umst[3].wert.c_str(), "%a %b %d %H:%M:%S %Y", &tm);
       strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
+      // tbuf und tm enthalten also z.B. die in /var/spool/capisuite/users/<user>/received/fax-999999.txt unter "time" stehende Zeit
       Log(rots+"   "+umst[0].name+": "+schwarz+umst[0].wert,obverb,oblog);
       Log(rots+"   "+umst[1].name+": "+schwarz+umst[1].wert,obverb,oblog);
       Log(rots+"   "+umst[2].name+": "+schwarz+umst[2].wert,obverb,oblog);
@@ -4838,7 +4833,7 @@ void paramcl::empfarch()
       getSender(this,umst[1].wert,&getname,&bsname,obverb,oblog);
       getname+=", ";
       getname+=bsname;
-      if (getname.length()>187) getname.erase(187);
+//      if (getname.length()>187) getname.erase(187);
       if (getname.length()>70) getname.erase(70);
       string crumpf="Fax c"+fnr+","+Tx[T_avon]+getname+", T."+stdfaxnr(umst[1].wert)+","+Tx[T_vom]+tbuf;
       string cdatei=crumpf+".tif";
@@ -5060,15 +5055,14 @@ string kopiere(const string& qdatei, const string& zield, uint *kfehler, uchar w
   if (!base.empty() && !dir.empty()) {
     ziel=zielname(base,dir,wieweiterzaehl,0, obverb,oblog);
     Log(string(Tx[T_Kopiere_Doppelpunkt])+rot+qdatei+schwarz+"'\n         -> '"+rot+ziel+schwarz+"'",obverb,oblog);
-    string cmd=string("sudo cp -a \"")+qdatei+"\" \""+ziel+"\"";
-    fehler= systemrueck(cmd,obverb>1,oblog);
+    fehler=kopier(qdatei,ziel,obverb,oblog);
     if (fehler) {
      kfehler+=fehler;
      Log(rots+Tx[T_Fehler_beim_Kopieren]+Tx[T_Dateiname]+blau+zield+schwarz,1,1);
-    }
+    } // if (fehler) 
   } else {
     Log(rots+Tx[T_Fehler_beim_Kopieren]+Tx[T_Dateiname]+blau+zield+schwarz+Tx[T_schlechtgeformt],1,1);
-  }
+  } // if (!base.empty() && !dir.empty())  else 
   return ziel;
 } // string kopiere
 
@@ -5282,7 +5276,11 @@ void paramcl::hconfigtty()
 {
   Log(violetts+"hconfigtty()"+schwarz,obverb,oblog);
   setzmodconfd();
-  systemrueck("test -f '"+modconfdat+"' && test -f '"+modconfdat+".bak' || sudo cp -a '"+modconfdat+"' '"+modconfdat+".bak'",obverb,oblog);
+  struct stat bakstat;
+  if (lstat((modconfdat+".bak").c_str(),&bakstat)) {
+   kopier(modconfdat,modconfdat+".bak",obverb,oblog);
+  }
+//  systemrueck("test -f '"+modconfdat+"' && test -f '"+modconfdat+".bak' || sudo cp -a '"+modconfdat+"' '"+modconfdat+".bak'",obverb,oblog);
   // <<rot<<modconfdat<<schwarz<<endl;
   // z.B. /var/spool/hylafax/etc/config.ttyACM0
   mdatei hci(modconfdat,ios::out);
@@ -5621,7 +5619,8 @@ int paramcl::pruefhyla()
           if (!lstat(xferfaxlog.c_str(),&entryxfer)) {
             if (entryxfer.st_size<10) { // wenn neu
               if (!lstat(d0.c_str(),&entryxfer0) && entryxfer0.st_size>10) {
-                systemrueck("sudo cp -a "+d0+" "+xferfaxlog,obverb,oblog);
+                kopier(d0,xferfaxlog,obverb,oblog);
+//                systemrueck("sudo cp -a "+d0+" "+xferfaxlog,obverb,oblog);
               } else {
                 if (falscheshyla)  {
                   char* fspoolvz=0;
@@ -6045,8 +6044,8 @@ int paramcl::pruefcapi()
                 if (vers>0 && vers<3.14) {
                  if (obprogda("gcc",obverb,oblog,&gccpfad) && obprogda("g++",obverb,oblog,&gpppfad)) {
                  obdown=1;
-                 systemrueck("sudo cp \""+gccpfad+"\" \""+gccpfad+".bak\" && "
-                             "sudo cp \""+gpppfad+"\" \""+gpppfad+".bak\"",obverb,oblog);
+//                 systemrueck("sudo cp \""+gccpfad+"\" \""+gccpfad+".bak\" && " "sudo cp \""+gpppfad+"\" \""+gpppfad+".bak\"",obverb,oblog);
+                 if (!kopier(gccpfad,gccpfad+".bak",obverb,oblog)) kopier(gpppfad,gpppfad+".bak",obverb,oblog);
                  linst.doinst("gcc-4.8",1+obverb,oblog);
                  linst.doinst("g++-4.8",1+obverb,oblog);
                  systemrueck("sudo ln -sf \""+gccpfad+"-4.8\" \""+gccpfad+"\" && "

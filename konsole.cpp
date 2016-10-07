@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <sys/statvfs.h> // fuer statfs
 #include <utime.h>
+#include <sys/sendfile.h> // fuer sendfile64
 
 
 #ifdef _WIN32
@@ -180,6 +181,12 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {"Fehler_bei_lstat ","Error at lstat "},
   // T_Datum_nicht_gesetzt_bei
   {"Datum nicht gesetzt bei '","Date not set for '"},
+  // T_Konnte_Datei
+  {"Konnte Datei '","Could not open file '"},
+  // T_nicht_zum_Lesen_oeffnen
+  {"' nicht zum Lesen oeffen!","' for reading!"},
+  // T_nicht_zum_Schreiben_oeffnen
+  {"' nicht zum Schreiben oeffnen!","' for writing!"},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -2745,3 +2752,39 @@ int datumangleich(string& zu, string& gemaess,int obverb, int oblog)
   }
   return 0;
 }
+// liefert 0, wenn Erfolg
+int kopier(const string& quel, const string& ziel, int obverb, int oblog)
+{
+  int erg=-1;
+  int fehler=1;
+  int source=open(quel.c_str(),O_RDONLY,0);
+  if (source==-1) {
+//    Log(Txk[T_Konnte_Datei]+rots+quel+schwarz+Txk[T_nicht_zum_Lesen_oeffnen],obverb,oblog);
+  } else {
+    struct stat statq;
+    if (!fstat(source,&statq)) {
+      int dest=open(ziel.c_str(),O_WRONLY|O_CREAT,statq.st_mode);
+      if (dest==-1) {
+        fehler=2;
+//        Log(Txk[T_Konnte_Datei]+rots+ziel+schwarz+Txk[T_nicht_zum_Schreiben_oeffnen],obverb,oblog);
+      } else {
+        erg=sendfile64(dest,source,0,statq.st_size);
+        close(dest);
+        if (erg==-1) {
+          fehler=3;
+        } else {
+          fehler=0;
+          chmod(ziel.c_str(),statq.st_mode);
+          chown(ziel.c_str(),statq.st_uid,statq.st_gid);
+          struct utimbuf ubuf;
+          ubuf.actime=ubuf.modtime=statq.st_mtime;
+          utime(ziel.c_str(),&ubuf);
+        } // if (erg==-1)
+      } // if (dest==-1) else 
+      close(source);
+    } // if (!fstat(source,&statq)) 
+  } // if (source==-1) else 
+  if (fehler)
+    return systemrueck("sudo test -f \""+quel+"\" && sudo sh -c 'cp -a \""+quel+"\" \""+ziel+"\"'",obverb,oblog);
+  return 0;
+} // int kopier(string& quel, string& ziel, int obverb, int oblog)

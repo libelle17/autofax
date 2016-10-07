@@ -175,6 +175,9 @@ enum Tkonsole_
   T_erstellt_automatisch_durch_dieses_am,
   T_Fehler_bei_lstat,
   T_Datum_nicht_gesetzt_bei,
+  T_Konnte_Datei,
+  T_nicht_zum_Lesen_oeffnen,
+  T_nicht_zum_Schreiben_oeffnen,
   T_konsoleMAX,
 };
 
@@ -577,6 +580,7 @@ string Tippverz(const char *frage,string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
 int tuloeschen(const string& zuloe,const string& cuser="",int obverb=0, int oblog=0);
 int datumangleich(string& zu, string& gemaess,int obverb=0, int oblog=0);
+int kopier(const string& quel, const string& ziel, int obverb=0, int oblog=0);
 
 class linstcl
 {
