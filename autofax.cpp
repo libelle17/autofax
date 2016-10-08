@@ -232,6 +232,7 @@ enum T_
   T_Faxnummer_des_Senders_nur_MSFax,
   T_Beginn_der_Uebertragung_nur_MSFax,
   T_Archiv_fuer_die_erfolgreichen_Faxe,
+  T_Archiv_fuer_die_Dateinamen_vor_Aufteilung,
   T_Archiv_fuer_die_gescheiterten_Faxe,
   T_Welches_Fax_soll_geloescht_werden,
   T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch,
@@ -378,6 +379,7 @@ enum T_
   T_faxemitH,
   T_pruefspool,
   T_pruefouta,
+  T_pruefudoc,
   T_pruefinca,
   T_pruefprocgettel3,
   T_capiwausgeb,
@@ -878,6 +880,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Beginn der Uebertragung (nur MS Fax)","transmission begin (only ms fax)"},
   // T_Archiv_fuer_die_erfolgreichen_Faxe
   {"Archiv fuer die erfolgreichen Faxe","archive for successful faxes"},
+  // T_Archiv_fuer_die_Dateinamen_vor_Aufteilung
+  {"Archiv fuer die Dateinamen vor Aufteilung","archive for filenames before splitting"},
   // T_Archiv_fuer_die_gescheiterten_Faxe
   {"Archiv fuer die gescheiterte Faxe","archive for failed faxes"},
   // T_Welches_Fax_soll_geloescht_werden
@@ -1176,6 +1180,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"pruefspool()","checkspool()"},
   // T_pruefouta
   {"pruefouta()","checkouta()"},
+  // T_pruefudoc
+  {"pruefudoc()","checkudoc()"},
   // T_pruefinca
   {"pruefinca()","checkinca()"},
   // T_pruefprocgettel3
@@ -6770,6 +6776,26 @@ void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direk
 } // int pruefouttab(DB *My, string touta, int obverb, int oblog, uchar direkt=0)
 
 // wird aufgerufen in: main
+void pruefudoc(DB *My, const string& udoc, int obverb, int oblog, uchar direkt=0)
+{
+  Log(violetts+Tx[T_pruefudoc]+schwarz,obverb,oblog);
+  if (!direkt) {
+    Feld felder[] = {
+      Feld("id","int","10","",Tx[T_eindeutige_Identifikation],1,1),
+      Feld("udocname","varchar","1","",Tx[T_Dateiname],0,0,1),
+    };
+    Feld ifelder0[] = {Feld("udocname")};   Index i0("udocname",ifelder0,sizeof ifelder0/sizeof* ifelder0);
+    Index indices[]={i0};
+    // auf jeden Fall ginge "binary" statt "utf8" und "" statt "utf8_general_ci"
+    Tabelle taba(udoc,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,
+        Tx[T_Archiv_fuer_die_Dateinamen_vor_Aufteilung],"InnoDB","utf8","utf8_general_ci","DYNAMIC");
+    if (My->prueftab(&taba, obverb)) {
+      Log(string(Tx[T_Fehler_beim_Pruefen_von])+udoc,1,1);
+    }
+  } // if (!direkt)
+} // int pruefudoc(DB *My, string udoc, int obverb, int oblog, uchar direkt=0)
+
+// wird aufgerufen in: main
 void pruefinctab(DB *My, const string& tinca, int obverb, int oblog, uchar direkt=0)
 {
   Log(violetts+Tx[T_pruefinca]+schwarz,obverb,oblog);
@@ -7301,6 +7327,7 @@ int main(int argc, char** argv)
   // pruefe Tabelle <spooltab> und stelle sie ggf. her
   pruefspool(pm.My,pm.spooltab, pm.altspool, pm.obverb,pm.oblog);
   pruefouttab(pm.My,pm.touta, pm.obverb,pm.oblog);
+  pruefudoc(pm.My,pm.touta, pm.obverb,pm.oblog);
   pruefinctab(pm.My,pm.tinca, pm.obverb,pm.oblog);
   if (pm.kez) {
     pm.korrerfolgszeichen();
