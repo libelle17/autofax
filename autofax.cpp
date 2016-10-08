@@ -6776,7 +6776,7 @@ void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direk
 } // int pruefouttab(DB *My, string touta, int obverb, int oblog, uchar direkt=0)
 
 // wird aufgerufen in: main
-void pruefudoc(DB *My, const string& udoc, int obverb, int oblog, uchar direkt=0)
+void pruefudoc(DB *My, const string& tudoc, int obverb, int oblog, uchar direkt=0)
 {
   Log(violetts+Tx[T_pruefudoc]+schwarz,obverb,oblog);
   if (!direkt) {
@@ -6787,13 +6787,13 @@ void pruefudoc(DB *My, const string& udoc, int obverb, int oblog, uchar direkt=0
     Feld ifelder0[] = {Feld("udocname")};   Index i0("udocname",ifelder0,sizeof ifelder0/sizeof* ifelder0);
     Index indices[]={i0};
     // auf jeden Fall ginge "binary" statt "utf8" und "" statt "utf8_general_ci"
-    Tabelle taba(udoc,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,
+    Tabelle taba(tudoc,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,
         Tx[T_Archiv_fuer_die_Dateinamen_vor_Aufteilung],"InnoDB","utf8","utf8_general_ci","DYNAMIC");
     if (My->prueftab(&taba, obverb)) {
-      Log(string(Tx[T_Fehler_beim_Pruefen_von])+udoc,1,1);
+      Log(string(Tx[T_Fehler_beim_Pruefen_von])+tudoc,1,1);
     }
   } // if (!direkt)
-} // int pruefudoc(DB *My, string udoc, int obverb, int oblog, uchar direkt=0)
+} // int pruefudoc(DB *My, string tudoc, int obverb, int oblog, uchar direkt=0)
 
 // wird aufgerufen in: main
 void pruefinctab(DB *My, const string& tinca, int obverb, int oblog, uchar direkt=0)
@@ -7327,7 +7327,7 @@ int main(int argc, char** argv)
   // pruefe Tabelle <spooltab> und stelle sie ggf. her
   pruefspool(pm.My,pm.spooltab, pm.altspool, pm.obverb,pm.oblog);
   pruefouttab(pm.My,pm.touta, pm.obverb,pm.oblog);
-  pruefudoc(pm.My,pm.touta, pm.obverb,pm.oblog);
+  pruefudoc(pm.My,pm.tudoc, pm.obverb,pm.oblog);
   pruefinctab(pm.My,pm.tinca, pm.obverb,pm.oblog);
   if (pm.kez) {
     pm.korrerfolgszeichen();

@@ -168,6 +168,7 @@ class paramcl // Programmparameter
     string mpwd;  // Passwort fuer Mysql/MariaDB
     DB* My=0;
     const string touta="outa"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
+    const string tudoc="udoc"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tinca="inca"; // MariaDB-Tabelle fuer empfangene Faxe
     string cfaxconfdat; // /etc/capisuite/fax.conf oder /usr/local/etc/capisuite/fax.conf laut Handbuch
     string ccapiconfdat; // /etc/capisuite/capisuite.conf oder /usr/local/etc/capisuite/capisuite.conf laut Handbuch
