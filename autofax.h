@@ -134,8 +134,9 @@ class paramcl // Programmparameter
     uchar anhl=0;    // autofax anhalten
     uchar lista=0;   // liste Archiv auf
     uchar listf=0;   // liste gescheiterte auf
-    uchar listw=0;   // liste wartende auf
     uchar listi=0;   // liste Eingegangene auf
+    uchar listw=0;   // liste wartende auf
+    string suchstr;  // Wortteil, nach dem in alten Faxen gesucht werden soll
     string dszahl="30"; // Datensatzzahl fuer Tabellenausgaben
     uchar logdateineu=0; // logdt vorher loeschen
     uchar hilfe=0;      // Hilfe anzeigen
@@ -187,6 +188,7 @@ class paramcl // Programmparameter
     string cFaxUeberschrift; // eigener Namen fuer Capisuite bis 20 Buchstaben
     string cklingelzahl; // Zahl der Klingeltoene, bis Capisuite einen Anruf annnimmt
     string hklingelzahl; // Zahl der Klingeltoene, bis Hylafax einen Anruf annnimmt
+    string maxdials;     // Zahl der Wahlversuche in Hylafax
     uchar capizukonf=0; // capi zu konfigurieren
     uchar hylazukonf=0; // hyla zu konfigurieren
     uchar oblgschreib=0; // Konfigurationsdatei seitens der Sprache voraussichtlich schreiben
@@ -306,6 +308,7 @@ class paramcl // Programmparameter
     void anhalten();
     void tu_lista(const string& oberfolg);
     void tu_listi();
+    void suchestr();
     int pruefsoffice();
     int pruefconvert();
     int pruefocr();

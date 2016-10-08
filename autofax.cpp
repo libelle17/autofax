@@ -446,7 +446,7 @@ enum T_
   T_empfangene_Faxe,
   T_erfolgreich,
   T_erfolglos,
-  T_versandten_Faxe,
+  T_versandte_Faxe,
   T_aus_systemd_fax_service_Datei_ermittelt,
   T_aus_etc_init_d_hylafax_ermittelt,
   T_aus_seiner_ausschliesslichen_Existenz_ermittelt,
@@ -522,11 +522,16 @@ enum T_
   T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe,
   T_pruefsfftobmp,
   T_listet_wartende_Faxe_auf,
+  T_cronzuplanen,
+  T_Zahl_der_Wahlversuche_in_Hylafax,
+  T_suche_in_verarbeiteten_Faxen_nach,
+  T_mitstr,
+  T_wartende_Faxe,
   T_MAX
 };
 
 
-const string sprachstr=string("language/Sprache/Lingue/Lingua [")+blau+'d'+schwarz+"eutsch,"+blau+'e'+schwarz+"nglisch]"+"";
+const string sprachstr=string("Language/Sprache/Lingue/Lingua [")+blau+'d'+schwarz+"eutsch,"+blau+'e'+schwarz+"nglisch]"+"";
 const char* sprachcstr=&sprachstr.front();
 
 char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
@@ -1081,7 +1086,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_Alle_wieviel_Minuten_soll
   {"alle wieviel Minuten soll ","every how many minutes shall "},
   // T_aufgerufen_werden_0_ist_gar_nicht]
-  {" ueber crontab aufgerufen werden (0=gar nicht)", " be called in crontab (0=not at all)"},
+  {" ueber crontab aufgerufen werden (0=gar nicht), anstatt ", " be called in crontab (0=not at all), instead of "},
   // T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht
   {"Kann Capisuite nicht installieren, verwende Capi nicht","Can't install capisuite, not using capi"},
   // T_wird_verwendet
@@ -1089,7 +1094,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_mit_Baudrate,
   {"' mit Baudrate ","' with baud rate "},
   // T_Fuer_Hylafax_verwendetes_Modem
-  {"Fuer Hylafax verwendetes Modem","Modem used for hylafax"},
+  {"Fuer Hylafax verwendetes Modem, anstatt ","Modem used for hylafax, instead of "},
   // T_archiviere
   {"archiviere()","archiving()"},
   // T_loeschecapi
@@ -1313,8 +1318,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {" erfolgreich"," successfully"},
   // T_erfolglos
   {" erfolglos"," unsuccessfully"},
-  // T_versandten_Faxe
-  {" versandten Faxe:"," sent faxes:"},
+  // T_versandte_Faxe
+  {" versandte Faxe:"," sent faxes:"},
   // T_aus_systemd_fax_service_Datei_ermittelt
   {" aus systemd-fax-service-Datei ermittelt"," determined from systemd fax service file"},
   // T_aus_etc_init_d_hylafax_ermittelt,
@@ -1473,6 +1478,16 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"pruefsfftobmp()","checksfftobmp()"},
   // T_listet_wartende_Faxe_auf
   {"listet wartende Faxe auf","lists waiting faxes"},
+  // T_cronzuplanen
+  {", cronzuplanen: ",", crontoscedule: "},
+  // T_Zahl_der_Wahlversuche_in_Hylafax
+  {"Zahl der Wahlversuche in Hylafax, anstatt ","No of dialing retries in hylafax, instead of  "},
+  // T_suche_in_verarbeiteten_Faxen_nach
+  {"Suche in verarbeiteten Faxen nach <string>: ","Look in processed faxes for <string>: "},
+  // T_mitstr
+  {" mit '"," with '"},
+  // T_wartende_Faxe
+  {" wartende Faxe "," waiting faxes"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -1684,12 +1699,13 @@ paramcl::paramcl(int argc, char** argv)
   tstart=clock();
   cklingelzahl="1";
   hklingelzahl="2"; // muss mindestens 2 sein, um die Nr. des anrufenden zu uebertragen
+  maxdials=11;
 //  konfdatname.clear();
 } // paramcl::paramcl()
 
 void paramcl::pruefggfmehrfach()
 {
-  if (!hilfe && !obvi && !zeigvers && !lista && !listf && !listi && !listw && !loef && !loew && !loea && !anhl) {
+  if (!hilfe && !obvi && !zeigvers && !lista && !listf && !listi && !listw && suchstr.empty() && !loef && !loew && !loea && !anhl) {
     pruefmehrfach(meinname);
   }
 } // void paramcl::pruefggfmehrfach()
@@ -1838,9 +1854,9 @@ void paramcl::getcommandl0()
 {
   Log(violetts+"getcommandl0()"+schwarz,obverb,oblog);
   // Reihenfolge muss koordiniert werden mit lieskonfein und rueckfragen
-  cgconf.init(40, "language","host","muser","mpwd","datenbank","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
+  cgconf.init(41, "language","host","muser","mpwd","datenbank","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
     "countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
-    "cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl",
+    "cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl","maxdials",
     "gleichziel","ocri","ocra","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
     "anstr","undstr","cronminut","logvz","logdname","obmodem","obfcard","sqlz","musterzahl");
   uchar plusverb=0;
@@ -2085,10 +2101,10 @@ int paramcl::setzhylavz()
       } else if (iru==sizeof moeglhvz/sizeof *moeglhvz) {
         // obhyla=0 hier noch nicht, da setzhylavz auch einmal vor der Installation schon aufgerufen wird
         break; // kein Verzeichnis gefunden
-      }
+      } //   else if (iru==sizeof moeglhvz/sizeof *moeglhvz)
       testvz=moeglhvz[iru];
-    }
-  }
+    } //     for(unsigned iru=0;iru<(sizeof moeglhvz/sizeof *moeglhvz)+1;iru++)
+  } //   if (weiterpruefen)
   if (obverb) {
     string grund;
     switch (fundart) {
@@ -2098,9 +2114,9 @@ int paramcl::setzhylavz()
       case 4: grund=Tx[T_aus_seinem_geringen_Alter_ermittelt];break;
       case 5: grund=Tx[T_aus_mangelnder_Alternative_ermittelt];break;
       case 6: grund=Tx[T_aus_Existenz_von]+blaus+testcmd+schwarz+Tx[T_ermittelt];break;
-    }
+    } //     switch (fundart)
     Log(string(Tx[T_hylafax_Verzeichnis])+blau+varsphylavz+schwarz+grund,obverb,oblog);
-  }
+  } // if (obverb)
   kuerzevtz(&varsphylavz);
   hsendqvz=varsphylavz+"/sendq";
   xferfaxlog=varsphylavz+"/etc/xferfaxlog"; 
@@ -2240,6 +2256,7 @@ void paramcl::VorgbAllg()
   // hmodemstr="ACM";
   maxcapiv="3";
   maxhylav="3";
+  maxdials="11";
   gleichziel=1;
   obocri=1;
   obocra=1;
@@ -2361,7 +2378,7 @@ void paramcl::lieskonfein()
   /*
      static cppSchluess gconf[]={{"langu"},{"obcapi"},{"obhyla"},{"hylazuerst"},{"maxcapiv"},{"maxhylav"},{"cuser"},
      {"countrycode"},{"citycode"},{"msn"},{"LongDistancePrefix"},{"InternationalPrefix"},{"LocalIdentifier"},
-     {"cFaxUeberschrift"},{"cklingelzahl"},{"hmodem"},{"hklingelzahl"},
+     {"cFaxUeberschrift"},{"cklingelzahl"},{"hmodem"},{"hklingelzahl"},{"maxdials"},
      {"gleichziel"},{"ocri"},{"ocra"},{"zufaxenvz"},{"wartevz"},{"nichtgefaxtvz"},{"empfvz"},{"cronminut"},{"anfaxstr"},{"ancfaxstr"},{"anhfaxstr"},
      {"anstr"},{"undstr"},{"host"},{"muser"},{"mpwd"},{"datenbank"},{"logvz"},{"logdname"},{"sqlz"},{"musterzahl"}};
      cgconfp=gconf;
@@ -2418,6 +2435,7 @@ void paramcl::lieskonfein()
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cklingelzahl); else rzf=1;} lfd++;
     if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hmodem); else rzf=1;} lfd++;
     if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hklingelzahl); else rzf=1;} lfd++;
+    if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxdials); else rzf=1;} lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&gleichziel); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obocri); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obocra); else rzf=1; lfd++;
@@ -2479,6 +2497,8 @@ int paramcl::getcommandline()
         &cgconf,"cklingelzahl",&capizukonf));
   opts.push_back(/*2*/optioncl("hkzl","hklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,&hklingelzahl,pzahl,
         &cgconf,"hklingelzahl",&hylazukonf));
+  opts.push_back(/*2*/optioncl("md","maxdials",&Tx, T_Zahl_der_Wahlversuche_in_Hylafax,&maxdials,pzahl,
+        &cgconf,"maxdials",&hylazukonf));
   opts.push_back(/*4*/optioncl("gz","gleichziel", &Tx, T_Faxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,&gleichziel,1,
         &cgconf,"gleichziel",&obkschreib));
   opts.push_back(/*4*/optioncl("ocri","ocri", &Tx, T_Text_aus_empfangenen_Faxen_wird_ermittelt,&obocri,1, &cgconf,"ocri",&obkschreib));
@@ -2522,6 +2542,8 @@ int paramcl::getcommandline()
   opts.push_back(/*6*/optioncl("listf","listfailed", &Tx, T_listet_Datensaetze_aus, &touta, T_ohne_Erfolgskennzeichen_auf, &listf,1));
   opts.push_back(/*6*/optioncl("listi","listinca", &Tx, T_listet_Datensaetze_aus, &tinca, T__auf, &listi,1));
   opts.push_back(/*4*/optioncl("listw","listwart", &Tx, T_listet_wartende_Faxe_auf, &listw,1));
+  string nix;
+  opts.push_back(/*3*/optioncl("s","suche",&Tx, T_suche_in_verarbeiteten_Faxen_nach,&nix,T_MAX,&suchstr,psons));
   opts.push_back(/*2*/optioncl("n","dszahl", &Tx, T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt, &dszahl,pzahl));
   opts.push_back(/*4*/optioncl("info","version", &Tx, T_Zeigt_die_Programmversion_an, &zeigvers,1));
   opts.push_back(/*4*/optioncl("vi","vi", &Tx, T_Konfigurationsdatei_editieren, &obvi,1));
@@ -2804,8 +2826,12 @@ void paramcl::rueckfragen()
         hklingelzahl=Tippzahl(Tx[T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt],hklingelzahl.c_str());
         cgconf[lfd].setze(&hklingelzahl);
       }
+      if (cgconf[++lfd].wert.empty() || rzf) {
+        maxdials=Tippzahl(Tx[T_Zahl_der_Wahlversuche_in_Hylafax],maxdials.c_str());
+        cgconf[lfd].setze(&maxdials);
+      }
     } else {
-      lfd+=2;
+      lfd+=3;
       hylazuerst=0;
     } //     if (obhyla) else
 
@@ -3110,12 +3136,12 @@ void paramcl::konfcapi()
      mdatei f(cconf[0].wert,ios::in); // /usr/lib64/capisuite/incoming.py
      if (f.is_open()) KLA
      string zeile;
-     const char* suchstr="connect_faxG3(";
+     const char* searchstr="connect_faxG3(";
   // <<rot<<"Lese: "<<cconf[0].wert<<schwarz<<endl;
   while(getline(f,zeile)) KLA
-  size_t nk=zeile.find(suchstr);
+  size_t nk=zeile.find(searchstr);
   if (nk!=string::npos) KLA
-  nk+=strlen(suchstr);
+  nk+=strlen(searchstr);
   const char* headline="headline";
   size_t nkh=zeile.find(headline,nk);
   if (nkh!=string::npos) KLA
@@ -3131,7 +3157,7 @@ void paramcl::konfcapi()
   mdatei falt(cconf[0].wert,ios::in);
   if (falt.is_open()) if (fneu.is_open()) KLA
   while(getline(falt,zeile)) KLA
-  nk=zeile.find(suchstr);
+  nk=zeile.find(searchstr);
   if (nk!=string::npos) KLA
   fneu<<neuzeile<<endl;
   KLZ else KLA
@@ -3152,7 +3178,7 @@ void paramcl::konfcapi()
   KLZ // if (nkz!=cklingelzahl) 
   KLZ // if (klap!=string::npos) 
   KLZ //           if (nkh!=string::npos) KLA
-  KLZ // if ((nkz=strstr(zeile,suchstr))) 
+  KLZ // if ((nkz=strstr(zeile,searchstr))) 
   KLZ // while(getline(f,zeile)) 
   KLZ // if (f.is_open()) 
   KLZ // if (cpplies(ccapiconfdat,cconf,cs)) 
@@ -3195,7 +3221,7 @@ void paramcl::konfcapi()
     capiconf[8].wert=Tippstring(string("fax_email_from: ")+
         Tx[T_Adressat_empfangener_Faxe_die_ueber_Email_verteilt_werden],&capiconf[8].wert);
     // send_tries
-    capiconf[2].wert="15";
+    if (!isnumeric(capiconf[2].wert)) capiconf[2].wert="15";
     do {
       capiconf[2].wert=Tippstring(string("send_tries: ")+Tx[T_Zahl_der_Sendeversuche],&capiconf[2].wert);
     } while (capiconf[2].wert.empty() || !isnumeric(capiconf[2].wert));
@@ -3366,10 +3392,10 @@ void setztmpc(int obverb, int oblog)
 // wird aufgerufen in: main
 void paramcl::pruefcron()
 {
-  Log(violetts+Tx[T_pruefcron],obverb,oblog);
   //  svec rueck;
   int cronda;
   int cronzuplanen = (cronminut!="0");
+  Log(violetts+Tx[T_pruefcron]+schwarz+Tx[T_cronzuplanen]+violetts+ltoan(cronzuplanen)+schwarz,obverb,oblog);
 
   for (uchar runde=0;runde<2;runde++) {
     cronda=obprogda("crontab",obverb-1,0);
@@ -3378,7 +3404,7 @@ void paramcl::pruefcron()
     //              KLA which apt-get 2>/dev/null && apt-get --assume-yes install cron; KLZ",1,1);
     linst.doinst("cron",1,1);
     //  int obionice=!systemrueck("which ionice > /dev/null 2>&1",0,0);
-  }
+  } //   for (uchar runde=0;runde<2;runde++) 
   if (cronda) {
     int nochkeincron = systemrueck("sudo crontab -l",obverb-1,0,0,2);
     setztmpc(obverb, oblog);
@@ -3409,11 +3435,11 @@ void paramcl::pruefcron()
       "echo \""+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+(nochkeincron?"":")")
       :
       (nochkeincron?"":("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+";"
-       "sudo crontab "+tmpc+")")
+       "sudo crontab "+tmpc+")||true")
       ;
 #endif      
     systemrueck(befehl,obverb,oblog);
-  }
+  } //   if (cronda) 
   //  systemrueck(string("mv -i '")+mpfad+"' /root/bin",1,0);
 } // pruefcron
 
@@ -3899,7 +3925,7 @@ void paramcl::tu_lista(const string& oberfolg)
       touta+"` WHERE Erfolg = "+oberfolg+" ORDER BY eind desc limit "+dszahl+
       ") i ORDER BY transe",ZDB);
 
-  cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandten_Faxe]<<endl;
+  cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandte_Faxe]<<endl;
   while (cerg=lista.HolZeile(),cerg?*cerg:0) {
     cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(14)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(65)<<*(*cerg+2)<<"|"
       <<schwarz<<setw(30)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
@@ -3919,6 +3945,59 @@ void paramcl::tu_listi()
       <<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
   } // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
 } // tu_listi
+
+void paramcl::suchestr()
+{
+  for(int erf=1;erf>=0;erf--) {
+    string oberfolg=ltoan(erf);
+    char ***cerg;
+    RS lista(My,string("SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM (")+
+        "SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
+        "RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe FROM `"+
+        touta+"` WHERE Erfolg = "+oberfolg+" AND (Docname LIKE \"%"+suchstr+"%\" OR rcname LIKE \"%"+suchstr+"%\" "
+        " OR rcfax LIKE \"%"+suchstr+"%\" OR submid LIKE \"%"+suchstr+"%\" OR transe LIKE \"%"+suchstr+"%\") "
+        " ORDER BY eind desc limit "+dszahl+
+        ") i ORDER BY transe",ZDB);
+    ulong zeile=0;
+    while (cerg=lista.HolZeile(),cerg?*cerg:0) {
+      if (!zeile)
+        cout<<gruen<<Tx[T_Letzte]<<blau<<dszahl<<gruen<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandte_Faxe]<<
+          Tx[T_mitstr]<<blau<<suchstr<<"':"<<endl;
+      zeile++;
+      cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(14)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(65)<<*(*cerg+2)<<"|"
+        <<schwarz<<setw(30)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
+    } // while (cerg=lista.HolZeile(),cerg?*cerg:0) 
+  } //   for(int erf=1;erf>=0;erf--) 
+
+  char ***cerg;
+  RS listi(My,string("SELECT * FROM (SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') p0,RIGHT(CONCAT(SPACE(85),LEFT(titel,85)),85) p1,"
+        "fsize p2,tsid p3,id p4 FROM `")+tinca+"` i WHERE (titel LIKE \"%"+suchstr+"%\" OR tsid LIKE \"%"+suchstr+"%\" "
+      " OR transe LIKE \"%"+suchstr+"%\" OR id LIKE \"%"+suchstr+"%\")"
+      " ORDER BY transe desc limit "+dszahl+") i ORDER BY p0",ZDB);
+  ulong zeile=0;
+  while (cerg=listi.HolZeile(),cerg?*cerg:0) {
+    if (!zeile)
+      cout<<gruen<<Tx[T_Letzte]<<blau<<dszahl<<gruen<<Tx[T_empfangene_Faxe]<<Tx[T_mitstr]<<blau<<suchstr<<"':"<<endl;
+    zeile++;
+    cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(85)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(17)<<*(*cerg+2)<<"|"
+      <<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
+  } // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
+
+  RS spool(My,"SELECT * FROM (SELECT DATE_FORMAT(if(hdateidatum=0,cdateidatum,hdateidatum),'%d.%m.%y %H:%i:%s') p0,"
+        "RIGHT(CONCAT(SPACE(85),LEFT(origvu,85)),85) p1,"
+        "IF(capidials=0,hyladials,capidials) p2,IF(hylanr=0,capispooldatei,hylanr) p3,id p4 "
+        "FROM `"+spooltab+"` i WHERE (origvu LIKE \"%"+suchstr+"%\" OR original LIKE \"%"+suchstr+"%\" "
+      " OR telnr LIKE \"%"+suchstr+"%\" OR capispooldatei LIKE \"%"+suchstr+"%\" OR cdateidatum LIKE \"%"+suchstr+"%\")"
+      " LIMIT "+dszahl+") i ORDER BY p0",ZDB);
+  zeile=0;
+  while (cerg=spool.HolZeile(),cerg?*cerg:0) {
+    if (!zeile)
+      cout<<gruen<<Tx[T_Letzte]<<blau<<dszahl<<gruen<<Tx[T_wartende_Faxe]<<Tx[T_mitstr]<<blau<<suchstr<<"':"<<endl;
+    zeile++;
+    cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(85)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(17)<<*(*cerg+2)<<"|"
+      <<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
+  } // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
+}
 
 // verwendet in DateienHerricht(), empfarch()
 int paramcl::pruefsoffice()
@@ -4454,7 +4533,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           }
           // die Flags aller aktivierten Faxwege stehen auf gescheitert
           uchar allegesch=0;
-          if (fsf.capistat==gescheitert && maxcapiv>=capiconf[2].wert) allegesch=1;
+          if (obcapi && obhyla && fsf.capistat==gescheitert && maxcapiv>=capiconf[2].wert) allegesch=1;
+          else if (obcapi && obhyla && fsf.hylastat==gescheitert && maxhylav>=maxdials) allegesch=1;
           else allegesch = ((!obcapi || fsf.capistat==gescheitert) && (!obhyla || fsf.hylastat==gescheitert));
           // die Flags aller aktivierten Faxwege stehen auf gescheitert oder fehlend
           uchar nimmer = ((!obcapi || fsf.capistat==fehlend || fsf.capistat==gescheitert) && 
@@ -5259,7 +5339,8 @@ void paramcl::setzmodconfd()
 
 void paramcl::hliesconf()
 {
-  schlArr hyalt; hyalt.init(7,"CountryCode","AreaCode","FAXNumber","LongDistancePrefix","InternationalPrefix","RingsBeforeAnswer","LocalIdentifier");
+  schlArr hyalt; hyalt.init(8,"CountryCode","AreaCode","FAXNumber","LongDistancePrefix","InternationalPrefix",
+                              "RingsBeforeAnswer","LocalIdentifier","MaxDials");
   setzmodconfd();
   struct stat mstat;
   if (lstat(modconfdat.c_str(),&mstat)) {
@@ -5268,13 +5349,13 @@ void paramcl::hliesconf()
     confdat haltconf(modconfdat,&hyalt,obverb,':');
     if (hyalt.schl[0].wert!=countrycode || hyalt.schl[1].wert!=citycode || hyalt.schl[2].wert!=countrycode+"."+citycode+"."+msn 
         || hyalt.schl[3].wert!=LongDistancePrefix || hyalt.schl[4].wert!=InternationalPrefix 
-        || hyalt.schl[5].wert!=hklingelzahl || hyalt.schl[6].wert!=LocalIdentifier
+        || hyalt.schl[5].wert!=hklingelzahl || hyalt.schl[6].wert!=LocalIdentifier /*|| hyalt.schl[7].wert!=maxdials */
        ) {
       hylazukonf=1;
     } // if (hyalt.shl[0].wert ...
   } //   if (lstat(modconfdat.c_str(),&mstat)) else
   // hyalt.ausgeb();
-}
+} // void paramcl::hliesconf()
 
 // wird aufgerufen in: pruefhyla (2x)
 // Modem konfigurieren
@@ -5450,6 +5531,7 @@ KLZ // void hservice_faxgetty()
 int paramcl::pruefhyla()
 {
   Log(violetts+Tx[T_pruefhyla]+schwarz,obverb,oblog);
+  int ret=0;
   long br=0; // baud rate
   string brs; // Baud-Rate-String
   int hylalaeuftnicht=0;
@@ -5478,106 +5560,105 @@ int paramcl::pruefhyla()
   } else {
     Log(string("Modem '")+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+gruen+brs+schwarz+Tx[T_wird_verwendet],obverb,oblog);
   } //   if (br<=0) else
-  if (1) {
-    hylasv1(obverb,oblog);
-    for(unsigned versuch=0;versuch<3;versuch++) {
-      // 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
-      // pruefen, ob hylafax.service laeuft
-      Log(Tx[T_Pruefe_ob_Hylafax_gestartet],-1,oblog);
-      const char* const c_hfs="hylafax";
-      const char* const c_hfc="hylafax-client";
-      const char* const c_hfps="hylafax+";
-      const char* const c_hfpc="hylafax+-client";
-      char *hfr, *hfcr, *hff, *hfcf; // hylafax richtig, hylafax client richtig, hylafax falsch, hylafax client falsch
-      hyinst hyinstart; // hyla source, hyla Paket, hylaplus Paket
-      string hfftext;
-      hylalaeuftnicht=1;
-      hylafehlt=1;
-      lsysen system=lsys.getsys(obverb,oblog);
-      if (system==deb /* || system==fed*/) {
-        hyinstart=hysrc;
-      } else {
-        hyinstart=hyppk;
-      } 
-      hylasv2(hyinstart,obverb,oblog);
-      if (hyinstart==hysrc || hyinstart==hyppk) {
-        hfr=(char*)c_hfps; hfcr=(char*)c_hfpc; hff=(char*)c_hfs; hfcf=(char*)c_hfc;
-        hfftext=Tx[T_Hylafax_ohne_plus_entdeckt_muss_ich_loeschen];
-        // => hyinstart==hypak
-      } else {
-        hfr=(char*)c_hfs; hfcr=(char*)c_hfc; hff=(char*)c_hfps; hfcf=(char*)c_hfpc;
-        hfftext=Tx[T_Hylafaxplus_entdeckt_muss_ich_loeschen];
-      } // if (hyinstart==hysrc || hyinstart==hyppk) else
-      // 2) deren Existenz, Betrieb und ggf. Startbarkeit pruefen
-      // wenn die richtigen Dienste laufen, dann nichts weiter ueberpruefen ..
-      if ((this->sfaxq->obslaeuft(obverb-1,oblog) && this->shfaxd->obslaeuft(obverb-1,oblog)) /*|| this->shylafaxd->obslaeuft(obverb-1,oblog)*/) {
-        Log(Tx[T_Hylafax_laeuft],obverb,oblog);
-        hylalaeuftnicht=0;
+  hylasv1(obverb,oblog);
+  for(unsigned versuch=0;versuch<3;versuch++) {
+    // 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
+    // pruefen, ob hylafax.service laeuft
+    Log(Tx[T_Pruefe_ob_Hylafax_gestartet],-1,oblog);
+    const char* const c_hfs="hylafax";
+    const char* const c_hfc="hylafax-client";
+    const char* const c_hfps="hylafax+";
+    const char* const c_hfpc="hylafax+-client";
+    char *hfr, *hfcr, *hff, *hfcf; // hylafax richtig, hylafax client richtig, hylafax falsch, hylafax client falsch
+    hyinst hyinstart; // hyla source, hyla Paket, hylaplus Paket
+    string hfftext;
+    hylalaeuftnicht=1;
+    hylafehlt=1;
+    lsysen system=lsys.getsys(obverb,oblog);
+    if (system==deb /* || system==fed*/) {
+      hyinstart=hysrc;
+    } else {
+      hyinstart=hyppk;
+    } 
+    hylasv2(hyinstart,obverb,oblog);
+    if (hyinstart==hysrc || hyinstart==hyppk) {
+      hfr=(char*)c_hfps; hfcr=(char*)c_hfpc; hff=(char*)c_hfs; hfcf=(char*)c_hfc;
+      hfftext=Tx[T_Hylafax_ohne_plus_entdeckt_muss_ich_loeschen];
+      // => hyinstart==hypak
+    } else {
+      hfr=(char*)c_hfs; hfcr=(char*)c_hfc; hff=(char*)c_hfps; hfcf=(char*)c_hfpc;
+      hfftext=Tx[T_Hylafaxplus_entdeckt_muss_ich_loeschen];
+    } // if (hyinstart==hysrc || hyinstart==hyppk) else
+    // 2) deren Existenz, Betrieb und ggf. Startbarkeit pruefen
+    // wenn die richtigen Dienste laufen, dann nichts weiter ueberpruefen ..
+    if ((this->sfaxq->obslaeuft(obverb-1,oblog) && this->shfaxd->obslaeuft(obverb-1,oblog)) /*|| this->shylafaxd->obslaeuft(obverb-1,oblog)*/) {
+      Log(Tx[T_Hylafax_laeuft],obverb,oblog);
+      hylalaeuftnicht=0;
+      hylafehlt=0;
+    } else if (versuch>1) {
+      exit(32);
+    } 
+    if (hylafehlt) {
+      // falls nein, dann schauen, ob startbar
+      if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog) && sfaxgetty->machfit(obverb-1,oblog)) {
         hylafehlt=0;
-      } else if (versuch>1) {
-        exit(32);
-      } 
-      if (hylafehlt) {
-        // falls nein, dann schauen, ob startbar
-        if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog) && sfaxgetty->machfit(obverb-1,oblog)) {
-          hylafehlt=0;
-          hylalaeuftnicht=0;
-        }
-        // <<"hylafehlt: "<<(int)hylafehlt<<endl;
-      } else {
-        // <<"hylafehlt nicht!"<<endl;
+        hylalaeuftnicht=0;
       }
+      // <<"hylafehlt: "<<(int)hylafehlt<<endl;
+    } else {
+      // <<"hylafehlt nicht!"<<endl;
+    }
 
-      // <<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
-      if (hylafehlt) {
-        // 3) ggf. neu installieren
-        Log(rots+Tx[T_Muss_Hylafax_installieren]+schwarz,1,1);
-        // a) von der source
-        linst.doinst("ghostscript",obverb+1,oblog,"gs");
-        linst.doinst("tiff",obverb+1,oblog,"tiff2ps");
-        linst.doinst("tiff",obverb+1,oblog,"fax2ps");
-        linst.doinst("sendmail",obverb+1,oblog,"sendmail");
-        if (obverb) Log(blaus+"hyinstart: "+schwarz+ltoan(hyinstart),obverb,oblog);
-        if (hyinstart==hysrc) {
-            Log(rots+Tx[T_ueber_den_Quellcode]+schwarz,1,1);
-            systemrueck("sudo wget -O hylafax+ https://sourceforge.net/projects/hylafax/files/latest",obverb,oblog);
-            systemrueck("sudo tar xvf hylafax+",obverb,oblog);
-            // 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
-            systemrueck("sudo sh -c 'cd $(sudo tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
-                "./configure --nointeractive && echo $? = Ergebnis nach configure && "
-                "sed -i.bak \"s.PAGESIZE='\\''North American Letter'\\''.PAGESIZE='\\''ISO A4'\\''.g;"
-                "s.PATH_GETTY='\\''\\.*'\\''.PATH_GETTY='\\''"
-                "$(grep LIBEXEC defs | cut -d'\\''='\\'' -f2 | sed '\\''s/^[[:space:]]*//;s/[[:space:]]*$//'\\'')/faxgetty'\\''.g\" config.cache"
-                " && echo $? = Ergebnis nach sed"
-                " && sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
-                " && sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
-                " && test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
-                " && sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
-                " && echo $? = Ergebnis nach faxsetup -nointeractive"
-                " && sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
-                " && sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload"
-                "'"
-                ,2,oblog);
-            // hservice_faxgetty();
-            // hservice_faxq_hfaxd();
-        } else {
-          Log(rots+Tx[T_ueber_das_Installationspaket]+schwarz,1,1);
-          // b) mit dem Installationspaket
-          if (!linst.obfehlt(hff) || !linst.obfehlt(hfcf)) {
-            Log(hfftext,-1,1);
-            linst.douninst(string(hff)+" "+hfcf,obverb,oblog);
-            falscheshyla=1;
-          }
-          // <<"hfr: "<<violett<<hfr<<schwarz<<" hfcr: "<<violett<<hfcr<<schwarz<<" obverb: "<<(int)obverb<<endl;
-          hylafehlt=linst.obfehlt(hfr,obverb,oblog) || linst.obfehlt(hfcr,obverb,oblog) || 
-            !obprogda("faxq",obverb,oblog) || !obprogda("hfaxd",obverb,oblog) || !obprogda("faxgetty",obverb,oblog);
-          string vstring=ltoan(versuch);
-          Log(gruens+Tx[T_hylafehlt]+schwarz+ltoan(hylafehlt)+gruen+Txk[T_Versuch]+schwarz+vstring,obverb,oblog);
-          // b1) falsches Hylafax loeschen
-          if (hylafehlt) {
-            if (falscheshyla) {
-              Log(rots+Tx[T_Muss_falsches_hylafax_loeschen]+schwarz,1,1);
-              if (0) {
+    // <<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
+    if (hylafehlt) {
+      // 3) ggf. neu installieren
+      Log(rots+Tx[T_Muss_Hylafax_installieren]+schwarz,1,1);
+      // a) von der source
+      linst.doinst("ghostscript",obverb+1,oblog,"gs");
+      linst.doinst("tiff",obverb+1,oblog,"tiff2ps");
+      linst.doinst("tiff",obverb+1,oblog,"fax2ps");
+      linst.doinst("sendmail",obverb+1,oblog,"sendmail");
+      if (obverb) Log(blaus+"hyinstart: "+schwarz+ltoan(hyinstart),obverb,oblog);
+      if (hyinstart==hysrc) {
+        Log(rots+Tx[T_ueber_den_Quellcode]+schwarz,1,1);
+        systemrueck("sudo wget -O hylafax+ https://sourceforge.net/projects/hylafax/files/latest",obverb,oblog);
+        systemrueck("sudo tar xvf hylafax+",obverb,oblog);
+        // 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
+        systemrueck("sudo sh -c 'cd $(sudo tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
+            "./configure --nointeractive && echo $? = Ergebnis nach configure && "
+            "sed -i.bak \"s.PAGESIZE='\\''North American Letter'\\''.PAGESIZE='\\''ISO A4'\\''.g;"
+            "s.PATH_GETTY='\\''\\.*'\\''.PATH_GETTY='\\''"
+            "$(grep LIBEXEC defs | cut -d'\\''='\\'' -f2 | sed '\\''s/^[[:space:]]*//;s/[[:space:]]*$//'\\'')/faxgetty'\\''.g\" config.cache"
+            " && echo $? = Ergebnis nach sed"
+            " && sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
+            " && sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
+            " && test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
+            " && sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
+            " && echo $? = Ergebnis nach faxsetup -nointeractive"
+            " && sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
+            " && sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload"
+            "'"
+            ,2,oblog);
+        // hservice_faxgetty();
+        // hservice_faxq_hfaxd();
+      } else {
+        Log(rots+Tx[T_ueber_das_Installationspaket]+schwarz,1,1);
+        // b) mit dem Installationspaket
+        if (!linst.obfehlt(hff) || !linst.obfehlt(hfcf)) {
+          Log(hfftext,-1,1);
+          linst.douninst(string(hff)+" "+hfcf,obverb,oblog);
+          falscheshyla=1;
+        }
+        // <<"hfr: "<<violett<<hfr<<schwarz<<" hfcr: "<<violett<<hfcr<<schwarz<<" obverb: "<<(int)obverb<<endl;
+        hylafehlt=linst.obfehlt(hfr,obverb,oblog) || linst.obfehlt(hfcr,obverb,oblog) || 
+          !obprogda("faxq",obverb,oblog) || !obprogda("hfaxd",obverb,oblog) || !obprogda("faxgetty",obverb,oblog);
+        string vstring=ltoan(versuch);
+        Log(gruens+Tx[T_hylafehlt]+schwarz+ltoan(hylafehlt)+gruen+Txk[T_Versuch]+schwarz+vstring,obverb,oblog);
+        // b1) falsches Hylafax loeschen
+        if (hylafehlt) {
+          if (falscheshyla) {
+            Log(rots+Tx[T_Muss_falsches_hylafax_loeschen]+schwarz,1,1);
+            if (0) {
                 systemrueck("sudo sh -c 'cd /etc/init.d"
                     " && [ $(find . -maxdepth 1 -name \"*faxq*\" -or -name \"*hfaxd*\" -or -name \"hylafax*\" 2>/dev/null | wc -l) -ne 0 ]"
                     " && { mkdir -p /etc/ausrangiert && mv -f *faxq* *hfaxd* hylafax* /etc/ausrangiert; } || true'",-2,oblog);
@@ -5615,8 +5696,9 @@ int paramcl::pruefhyla()
           // und ein hylafax-Verzeichnis da ist ...
           if (this->setzhylavz()) {
             this->obhyla=0;
-            return 1;
-          }
+            ret=1;
+            break;
+          } else {
           // falls oben hylafax neu installiert wurde und zuvor eine hylafax-Installation nach Gebrauch geloescht worden war,
           // dann die alten Eintraege (xferfaxlog.rpmsave) wieder aktivieren
           struct stat entryxfer, entryxfer0;
@@ -5662,6 +5744,7 @@ int paramcl::pruefhyla()
             systemrueck("sudo chown uucp:uucp -R "+this->varsphylavz,obverb,oblog);
           else
             systemrueck("sudo chown fax:uucp -R "+this->varsphylavz,obverb,oblog);
+         }
         } // if (obprogda("faxsend",obverb,oblog))
         /*
            Log(string(Tx[T_StarteHylafax]),1,oblog);
@@ -5681,74 +5764,73 @@ int paramcl::pruefhyla()
          */
       } // if (hylafehlt)
       int fglaeuftnicht=0;
-      if (1) {
-        for (uchar iru=0;iru<3;iru++) {
-          if ((fglaeuftnicht=!this->sfaxgetty->obslaeuft(obverb,oblog))) {
-            // falls nein, dann schauen, ob startbar
-            if (sfaxgetty->machfit(obverb,oblog)) fglaeuftnicht=0;
-          }
-          // <<rot<<" fglaueftnicht: "<<fglaeuftnicht<<", hmodem: "<<hmodem<<schwarz<<endl;
-          modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
-          //        if (!modemlaeuftnicht) break;
-          //  <<rot<<" hyinstart: "<<(int)hyinstart<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
-          //  <<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
-          if (hyinstart==hypak || hyinstart==hysrc) {
-            // if (0)
-            hylalaeuftnicht=hservice_faxq_hfaxd()+fglaeuftnicht;
-          }
-          //  <<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
-          if (!hylalaeuftnicht && !modemlaeuftnicht) break;
-          if (iru>1) {
-            systemrueck(("sudo chmod 660 ")+this->varsphylavz+"/FIFO*",obverb,oblog);
-            hconfig(this,obverb,oblog);
-            hconfigtty();
-            frischkonfiguriert=1;
-          }
-          if (!iru) {
-            // <<rot<<"hier faxsetup!"<<endl;
-            hfaxsetup(this,obverb,oblog);
-            // if (0)
-            // hservice_faxgetty();
-          }
-        } // for (uchar iru=0;iru<3;iru++)
-        // wenn !hylazukonf, dann auslesen, mit den Werten vergleichen und ggf. zu 1 setzen
-        if (!hylazukonf) {
-          hliesconf();
+      for (uchar iru=0;iru<3;iru++) {
+        if ((fglaeuftnicht=!this->sfaxgetty->obslaeuft(obverb,oblog))) {
+          // falls nein, dann schauen, ob startbar
+          if (sfaxgetty->machfit(obverb,oblog)) fglaeuftnicht=0;
         }
-        // <<rot<<"fglaeuftincht: "<<(int)fglaeuftnicht<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<", hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
-        // if (!hylalaeuftnicht && !modemlaeuftnicht) break;
+        // <<rot<<" fglaueftnicht: "<<fglaeuftnicht<<", hmodem: "<<hmodem<<schwarz<<endl;
+        modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
+        //        if (!modemlaeuftnicht) break;
+        //  <<rot<<" hyinstart: "<<(int)hyinstart<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
+        //  <<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
+        if (hyinstart==hypak || hyinstart==hysrc) {
+          // if (0)
+          hylalaeuftnicht=hservice_faxq_hfaxd()+fglaeuftnicht;
+        }
+        //  <<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
+        if (!hylalaeuftnicht && !modemlaeuftnicht) break;
+        if (iru>1) {
+          systemrueck(("sudo chmod 660 ")+this->varsphylavz+"/FIFO*",obverb,oblog);
+          hconfig(this,obverb,oblog);
+          hconfigtty();
+          frischkonfiguriert=1;
+        }
+        if (!iru) {
+          // <<rot<<"hier faxsetup!"<<endl;
+          hfaxsetup(this,obverb,oblog);
+          // if (0)
+          // hservice_faxgetty();
+        }
+      } // for (uchar iru=0;iru<3;iru++)
+      // wenn !hylazukonf, dann auslesen, mit den Werten vergleichen und ggf. zu 1 setzen
+      if (!hylazukonf) {
+        hliesconf();
+      }
+      // <<rot<<"fglaeuftincht: "<<(int)fglaeuftnicht<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<", hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
+      // if (!hylalaeuftnicht && !modemlaeuftnicht) break;
 
-        //          cmd=string("zypper -n in uucp"); // fuer cu
-        //          systemrueck(cmd,1,1,0,wahr,wahr,"installiere cu"); 
-        //          cmd=string("usermod -a -G dialout root");
-        //          systemrueck(cmd,1,1,0,wahr,wahr,"berechtige mich"); 
-        //          cmd=string("chmod 666 ")+this->hmodem;
-        //          systemrueck(cmd,1,1,0,wahr,wahr,"berechtige mich"); 
-        if (this->hylazukonf && !frischkonfiguriert) {
-          //    hconfig(this,obverb,oblog); // countrycode, citycode/areacode, longdistancepraefix, internationalprefix
-          if (!frischkonfiguriert) {
-            // dieser Aufruf geschieht z.B. nach Parameter -hkzl 7
-            hconfigtty();
-          }
-          if (sfaxgetty) sfaxgetty->stopdis(obverb,oblog,1);
-          if (shfaxd) shfaxd->stop(obverb,oblog,1);
-          if (sfaxq) sfaxq->stop(obverb,oblog,1);
-          if (shylafaxd) shylafaxd->stopdis(obverb,oblog,1);
-          /*
-             if (!systemrueck("sudo systemctl stop '"+this->sfaxgetty->sname+"' '"+this->shfaxd->sname+"' '"+this->sfaxq->sname+"' 2>/dev/null",
-             obverb,oblog)) KLA
-             systemrueck("sudo systemctl stop hylafax 2>/dev/null",obverb-2,oblog);
-             systemrueck("sudo systemctl disable hylafax 2>/dev/null",obverb-2,oblog);
-             systemrueck(string("sudo pkill ")+sfaxgetty->ename+" "+shfaxd->ename+" "+sfaxq->ename+" >/dev/null 2>&1",obverb-2,oblog);
-             KLZ // if (!systemrueck(string("sudo systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
-           */
-          if (sfaxgetty->startundenable(obverb,oblog) &&  shfaxd->startundenable(obverb,oblog) && sfaxq->startundenable(obverb,oblog)) {
-            this->hylazukonf=0;
-          } // if (!systemrueck(string("sudo systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
-        } // if (this->hylazukonf && !frischkonfiguriert) 
-        // systemrueck("grep -rl 'faxcron\\|faxqclean' /etc/cron* | /usr/bin/xargs ls -l;",obverb,oblog); 
-        // // in hylafax: /etc/cron.daily/suse.de-faxcron, 
-      } // if (1)
+      //          cmd=string("zypper -n in uucp"); // fuer cu
+      //          systemrueck(cmd,1,1,0,wahr,wahr,"installiere cu"); 
+      //          cmd=string("usermod -a -G dialout root");
+      //          systemrueck(cmd,1,1,0,wahr,wahr,"berechtige mich"); 
+      //          cmd=string("chmod 666 ")+this->hmodem;
+      //          systemrueck(cmd,1,1,0,wahr,wahr,"berechtige mich"); 
+      if (this->hylazukonf && !frischkonfiguriert) {
+        //    hconfig(this,obverb,oblog); // countrycode, citycode/areacode, longdistancepraefix, internationalprefix
+        if (!frischkonfiguriert) {
+          // dieser Aufruf geschieht z.B. nach Parameter -hkzl 7
+          hconfigtty();
+        }
+        if (sfaxgetty) sfaxgetty->stopdis(obverb,oblog,1);
+        if (shfaxd) shfaxd->stop(obverb,oblog,1);
+        if (sfaxq) sfaxq->stop(obverb,oblog,1);
+        if (shylafaxd) shylafaxd->stopdis(obverb,oblog,1);
+        /*
+           if (!systemrueck("sudo systemctl stop '"+this->sfaxgetty->sname+"' '"+this->shfaxd->sname+"' '"+this->sfaxq->sname+"' 2>/dev/null",
+           obverb,oblog)) KLA
+           systemrueck("sudo systemctl stop hylafax 2>/dev/null",obverb-2,oblog);
+           systemrueck("sudo systemctl disable hylafax 2>/dev/null",obverb-2,oblog);
+           systemrueck(string("sudo pkill ")+sfaxgetty->ename+" "+shfaxd->ename+" "+sfaxq->ename+" >/dev/null 2>&1",obverb-2,oblog);
+           KLZ 
+           // if (!systemrueck(string("sudo systemctl stop ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
+         */
+        if (sfaxgetty->startundenable(obverb,oblog) &&  shfaxd->startundenable(obverb,oblog) && sfaxq->startundenable(obverb,oblog)) {
+          this->hylazukonf=0;
+        } // if (!systemrueck(string("sudo systemctl start ")+this->sfaxgetty->sname+" "+this->shfaxd->sname+" "+this->sfaxq->sname,obverb,oblog)) 
+      } // if (this->hylazukonf && !frischkonfiguriert) 
+      // systemrueck("grep -rl 'faxcron\\|faxqclean' /etc/cron* | /usr/bin/xargs ls -l;",obverb,oblog); 
+      // // in hylafax: /etc/cron.daily/suse.de-faxcron, 
       //     break; // zu Testzwecken
       if (hylalaeuftnicht || modemlaeuftnicht) {
         // hier Fehler: nach einem Versuch darf 
@@ -5758,30 +5840,32 @@ int paramcl::pruefhyla()
         if (versuch>1) {
           Log(string(Tx[T_hylafaxspringtnichtan]),1,1);
           this->obhyla=0;
-          return 1;
-        }
+          ret=1;
+          break;
+        } //         if (versuch>1) 
       } else {
         break;
       } // if (hylalaeuftnicht || modemlaeuftnicht) 
     } // for(unsigned versuch=0;versuch<2;versuch++)
     // Archivierung ggf. aktivieren
-    struct stat hfstat;
-    if (!lstat("/etc/cron.hourly/hylafax",&hfstat)) {
-      systemrueck("! sudo grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || "
-          "sudo sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax", obverb,oblog);
-    }
-  } // if (1)
+    if (!hylalaeuftnicht) {
+      struct stat hfstat;
+      if (!lstat("/etc/cron.hourly/hylafax",&hfstat)) {
+        systemrueck("! sudo grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || "
+            "sudo sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax", obverb,oblog);
+      }
+    } //     if (!hylalaeuftnicht)
   Log(violetts+Tx[T_Ende]+" "+Tx[T_pruefhyla]+schwarz,obverb,oblog);
-  return 0;
+  return ret;
 } // int paramcl::pruefhyla()
 
 /*
-long GetFileSize(string filename)
-{
-  struct stat stat_buf;
-  int rc = stat(filename.c_str(), &stat_buf);
-  return rc ? -1 : stat_buf.st_size;
-} // GetFileSize
+   long GetFileSize(string filename)
+   {
+   struct stat stat_buf;
+   int rc = stat(filename.c_str(), &stat_buf);
+   return rc ? -1 : stat_buf.st_size;
+   } // GetFileSize
 
 void clear_kb(void) // statt fflush(stdin) nach getchar
 {
@@ -6279,7 +6363,7 @@ int paramcl::pruefcapi()
       if (!capizukonf) {
         clieskonf();
       }
-      if (obcapi && (versuch>0 || this->capizukonf)) {
+      if (obcapi && (versuch>0 || this->capizukonf || rzf)) {
         this->konfcapi();
         scapisuite->restart(obverb-1,oblog);
         capizukonf=0;
@@ -6483,7 +6567,7 @@ void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
     string sendfax;
 //    systemrueck("sudo sh -c 'which sendfax'",obverb,1,&rueck);
     if (obprogda("sendfax",obverb,oblog,&sendfax)) {
-      string cmd=sendfax+" -n -A -d "+tel+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
+      string cmd=sendfax+" -n -A "+(isnumeric(pmp->maxdials)?"-T "+pmp->maxdials:"")+" -d "+tel+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
       svec faxerg;
       // <<rot<<"Achtung: faxemith: "<<endl<<schwarz<<cmd<<endl;
       if (!systemrueck(cmd,1,1,&faxerg,0,wahr,Tx[T_HylafaxBefehl])) {
@@ -7227,6 +7311,8 @@ int main(int argc, char** argv)
     pm.zeigweitere();
     Log(blaus+Tx[T_Ende]+schwarz,pm.obverb,pm.oblog);
     pm.schlussanzeige();
+  } else if (!pm.suchstr.empty()) {
+    pm.suchestr();
   } else {
     pruefstdfaxnr(pm.My,pm.muser,pm.mpwd,pm.host,pm.obverb,pm.oblog);
     pruefprocgettel3(pm.My,pm.muser,pm.mpwd,pm.host,pm.obverb,pm.oblog);

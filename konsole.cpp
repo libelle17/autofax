@@ -1258,10 +1258,10 @@ void confdat::Abschn_auswert(int obverb, char tz)
           gtrim(&wert);
           anfzweg(wert);
           abp.av.push_back(abSchl(name,wert));
-        }
-      }
-    }
-  }
+        } //         if (pos!=string::npos && pos>0) 
+      } //       if (zeile->at(0)=='[' && zeile->at(zeile->length()-1)==']') 
+    } //     if (zeile->length()) 
+  } //   for(size_t i=0;i<zn.size();i++) 
   if (!abp.aname.empty() && abp.av.size()) {
     abschv.push_back(abp);
   }
@@ -1311,7 +1311,7 @@ void confdat::auswert(schlArr *sA, int obverb, char tz)
                 // Anfuehrungszeichen entfernen
                 anfzweg((*sA)[ii].wert);
 //      if (name.find("autofax")!=string::npos)
-//       <<" name: "<<schwarz<<(*sA)[ii].name<<violett<<" bemerk: '"<<ibemerk<<"'"<<schwarz<<endl;
+// <<" name: "<<schwarz<<(*sA)[ii].name<<violett<<" wert: '"<<schwarz<<(*sA)[ii].wert<<"'"<<violett<<" bemerk: '"<<ibemerk<<"'"<<schwarz<<endl;
                 (*sA)[ii].bemerk=ibemerk;
                 ibemerk.clear();
               } // if (strchr((string(" ")+(char)9+tz).c_str(),gef+(*sA)[ii].name.length())) 
@@ -1324,6 +1324,11 @@ void confdat::auswert(schlArr *sA, int obverb, char tz)
       } // if (!zeile->empty()) 
     } // for(size_t i=0;i<zn.size();i++) 
   } // if (obgelesen) 
+//  if (name.find("config.tty")!=string::npos) KLA
+//    for(size_t ii=0;ii<sA->zahl;ii++) KLA
+// <<" name: "<<schwarz<<(*sA)[ii].name<<violett<<" wert: '"<<schwarz<<(*sA)[ii].wert<<"'"<<violett<<" bemerk: '"<<(*sA)[ii].bemerk<<"'"<<schwarz<<endl;
+//    KLZ
+//  KLZ
 } // void sAdat::auswert(cppSchluess *sA, size_t csize, int obverb, char tz)
 
 /*
@@ -2069,11 +2074,11 @@ uchar VerzeichnisGibts(const char* vname)
 } // VerzeichnisGibts
 
 int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprache lg) // 1 = das war der Parameter, 0 = nicht
-// argcvm = Vector der Kommandozeilenparameter
+// argcvm = Vektor der Kommandozeilenparameter
 // *akt = Index auf aktuell zu untersuchenden
 // *hilfe = Aussage, ob Hilfe aufgerufen werden muss
 // vorangestellte "1" => opschreibp auf 0 setzen
-// vorangestelltes "un" => bei beinaeren Operatoren nicht
+// vorangestelltes "un" => bei binaeren Operatoren nicht
 {
 //  Log(violetts+Txk[T_pruefpar]+schwarz+" "+ltoan(*akt),1,0);
   uchar nichtspeichern=0;
