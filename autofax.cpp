@@ -527,6 +527,7 @@ enum T_
   T_suche_in_verarbeiteten_Faxen_nach,
   T_mitstr,
   T_wartende_Faxe,
+  T_Index_auf_urspruenglichen_Dateinamen,
   T_MAX
 };
 
@@ -1488,6 +1489,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {" mit '"," with '"},
   // T_wartende_Faxe
   {" wartende Faxe "," waiting faxes"},
+  // T_Index_auf_urspruenglichen_Dateinamen
+  {"Index auf urspruenglichen Dateinamen","Index on original filename"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -4708,6 +4711,7 @@ void paramcl::empfarch()
     struct stat entrylog;
     memset(&entrylog,0,sizeof entrylog);
     if (!lstat(rueck[i].c_str(),&entrylog))  {
+      if (chmod(rueck[i].c_str(),S_IRWXU|S_IRWXG|S_IRWXO))
       systemrueck("sudo chmod 777 "+rueck[i],obverb,oblog);
       memcpy(&tm, localtime(&entrylog.st_mtime),sizeof(tm));
       strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", &tm);
@@ -4818,7 +4822,9 @@ void paramcl::empfarch()
     }
     struct stat entrynd;
     uchar obhpfadda=!lstat(hpfad.c_str(),&entrynd);
-    if (obhpfadda) systemrueck("sudo chmod +r \""+hpfad+"\"",obverb,oblog);
+     if (obhpfadda)
+     if (chmod(hpfad.c_str(),S_IRWXU|S_IRGRP|S_IROTH))
+     systemrueck("sudo chmod +r \""+hpfad+"\"",obverb,oblog);
     if (obocri) {
       string quelle;
       if (pruefsoffice()) {
@@ -5226,7 +5232,8 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
           znr++;
         } // while(getline(alt,zeile)) 
         neu.close();
-        systemrueck(string("sudo chmod 770 '")+afaxsu+"'",0,1);
+        if (chmod(afaxsu.c_str(),S_IRWXU|S_IRWXG))
+          systemrueck(string("sudo chmod 770 '")+afaxsu+"'",0,1);
         pmp->sfaxgetty->stop(obverb,oblog);
         pmp->shfaxd->stop(obverb,oblog);
         pmp->sfaxq->stop(obverb,oblog);
@@ -6729,6 +6736,7 @@ void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direk
       Feld("transe","datetime","0","0",Tx[T_Ende_der_Uebertragung],0,0,1),
       Feld("submid","varchar","1","",Tx[T_Kennung_im_Faxsystem_hylafax_Nr_Capisuite_Datei_MSFax_Fax_Dateiname],0,0,1),
       Feld("docname","varchar","1","",Tx[T_Dateiname],0,0,1),
+      Feld("idudoc","int","10","",Tx[T_Index_auf_urspruenglichen_Dateinamen],0,0,1),
       Feld("fsize","int","10","",Tx[T_Dateigroesse],0,0,1),
       Feld("pages","int","10","",Tx[T_Seitenzahl],0,0,1),
       Feld("retries","int","10","",Tx[T_Zahl_der_Anwahlen],0,0,1),
