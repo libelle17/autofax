@@ -1039,12 +1039,14 @@ char* ltoa_(long value, char* result, int base=10)
   return result;
 } // ltoa_(long value, char* result, int base)
 
-void kopiere(string *quelle, string *ziel)
+#ifdef notwendig
+void kopierm(string *quelle, string *ziel)
 {
   mdatei fileIn(quelle->c_str(),ios::in|ios::binary);
   mdatei fileOut(ziel->c_str(),ios::out | ios::trunc | ios::binary);
   fileOut<<fileIn.rdbuf();
-} // void kopiere(string *quelle, string *ziel)
+} // void kopierm(string *quelle, string *ziel)
+#endif
 
 
 void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach)

@@ -542,7 +542,11 @@ class optioncl
 extern const char *logdt;
 
 int kuerzelogdatei(const char* logdatei,int obverb);
-void kopiere(string *quelle, string *ziel);
+
+// #define notwendig
+#ifdef notwendig
+void kopierm(string *quelle, string *ziel);
+#endif
 void aufSplit(vector<string> *tokens, const string *text, char sep, bool nichtmehrfach=1);
 void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach=1);
 void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach=1);

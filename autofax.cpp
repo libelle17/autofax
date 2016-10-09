@@ -1774,13 +1774,21 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
   Log(violetts+Tx[T_WVZinDatenbank]+schwarz,obverb,oblog);
   RS rins(My); 
   RS zs(My);
-  string spoolid;
+  string spoolid,udocid;
   for (unsigned nachrnr=0; nachrnr<fxvp->size(); ++nachrnr) {
     for(int runde=0;runde<2;runde++) {
       if (runde==0) { zs.Abfrage("SET NAMES 'utf8'");
       } else if (runde==1) zs.Abfrage("SET NAMES 'latin1'");
       rins.clear();
       vector<instyp> einf; // fuer alle Datenbankeinfuegungen
+      if (fxvp->at(nachrnr).spdf!=fxvp->at(nachrnr).ur||fxvp->at(nachrnr).npdf!=fxvp->at(nachrnr).ur) {
+       einf.push_back(instyp(My->DBS,"udocname",fxvp->at(nachrnr).ur));
+       rins.insert(udoctab,einf,1,0,ZDB?ZDB:!runde,&udocid);
+       rins.clear();
+       einf.clear();
+      }
+      if (!udocid.empty()) 
+        einf.push_back(instyp(My->DBS,"idudoc",udocid));
       string odatei = base_name(fxvp->at(nachrnr).spdf);
       einf.push_back(instyp(My->DBS,"original",&odatei));
       // den Adressaten ermitteln
@@ -3821,7 +3829,7 @@ int paramcl::loeschefax(int obverb, int oblog)
   while (cerg=zul.HolZeile(),cerg?*cerg:0) {
     if (*(*cerg+0) && *(*cerg+1)) {
       Log(string("Fax ")+blau+ltoan(++nr)+schwarz+": "+*(*cerg+0),1,1);
-      fsfv.push_back(fsfcl(*(*cerg+1),*(*cerg+2),*(*cerg+4),*(*cerg+3)));
+      /*3*/fsfv.push_back(fsfcl(*(*cerg+1),*(*cerg+2),*(*cerg+4),*(*cerg+3)));
     } // if (*(*cerg+0) && *(*cerg+1)) 
   } // while (cerg=zul.HolZeile(),cerg?*cerg:0) 
   if (!nrzf) {
@@ -3912,7 +3920,7 @@ int paramcl::loescheallewartende(int obverb, int oblog)
     for(size_t i=0;i<alled.size();i++) {
       string transalle=alled[i];
       ersetzAlle(&transalle,"q","");  
-      fsfcl zuloe(transalle);
+      /*4*/fsfcl zuloe(transalle);
       if (!zuloe.loeschehyla(this,obverb,oblog)) {
         //      cmd=string("faxrm ")+transalle;
         //      if (systemrueck(cmd,obverb,oblog)) KLA
@@ -4095,13 +4103,15 @@ void paramcl::DateienHerricht()
   anfxstrvec.push_back(anfaxstr);
   if (!ancfaxstr.empty()) anfxstrvec.push_back(ancfaxstr);
   if (!anhfaxstr.empty()) anfxstrvec.push_back(anhfaxstr);
+  vector <urfxcl> urfx;
+  // der Reihe nach nach Dateien suchen, die das jeweilige Trennzeichen enthalten
   for(uchar iprio=0;iprio<anfxstrvec.size();iprio++) {
     // 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
     cmd=string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\"";
     vector<string> iprid;
     systemrueck(cmd,obverb,oblog, &iprid);
     for(size_t i=0;i<iprid.size();i++) {
-      string stamm,exten;
+      string stamm,exten,urname=iprid.at(i);
       getstammext(&(iprid.at(i)),&stamm,&exten);
       Log(string(Tx[T_Endung])+tuerkis+exten+schwarz,obverb>1,oblog);
       Log(string(Tx[T_Stamm])+tuerkis+stamm+schwarz,obverb>1,oblog);
@@ -4112,20 +4122,23 @@ void paramcl::DateienHerricht()
         for(unsigned k=0;k<tok.size();k++) {
           Log(blaus+tok[k]+schwarz,obverb>1,oblog);
         }
+        // die Faxnummern auseinanderfieseln
         aufiSplit(&toknr,&tok[1],undstr.c_str());
         for(unsigned k=0;k<toknr.size();k++) {
           Log(tuerkiss+"toknr["+ltoan(k)+"]: "+toknr[k]+schwarz,obverb>1,oblog);
         }
+        // ggf. die Adressatennamen suchen ...
         aufiSplit(&toktxt,&tok[0],anstr.c_str());
         for(unsigned k=0;k<toktxt.size();k++) {
           Log(blaus+"toktxt["+ltoan(k)+"]: "+toktxt[k]+schwarz,obverb>1,oblog);
         }
+        // und ggf. aufffieseln
         if (toktxt.size()>1) {
           aufiSplit(&tokname,&toktxt[1],undstr.c_str());
           for(unsigned i=0;i<tokname.size();i++) {
             Log(tuerkiss+"tokname["+ltoan(i)+"]: "+tokname[i]+schwarz,obverb>1,oblog);
           }
-        }
+        } //         if (toktxt.size()>1)
         for(unsigned j=0;j<toknr.size();j++) { // alle bis auf die letzte Adresse
           string tmp;
           gtrim(&toknr[j]);
@@ -4142,8 +4155,9 @@ void paramcl::DateienHerricht()
           Log(tuerkiss+toknr[j]+schwarz,obverb>1,oblog);
           uint kfehler=0;
           if (j<toknr.size()-1) {
-            kopiere(iprid.at(i),tmp,&kfehler,1);
-            if (kfehler) break;
+            string kopiert=kopiere(iprid.at(i),tmp,&kfehler,1);
+            if (kfehler) continue;
+            urfx.push_back(urfxcl(kopiert,urname,iprio));
             Log(string(Tx[T_ErstelledurchKopieren])+rot+tmp+schwarz,1,oblog);
           } else {
             if (iprid.at(i)!=tmp) {
@@ -4151,7 +4165,10 @@ void paramcl::DateienHerricht()
               dorename((iprid.at(i)),tmp,cuser,&vfehler,obverb,oblog);
               if (vfehler)
                 Log(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz,1,1);
+              else {
+              urfx.push_back(urfxcl(tmp,urname,iprio));
               Log(string(Tx[T_ErstelledurchBenennen])+rot+tmp+schwarz,1,oblog);
+              }
             } // if (iprid.at(i)!=tmp) 
           } // if (j<toknr.size()-1) 
         } // for(unsigned j=0;j<toknr.size();j++) 
@@ -4168,43 +4185,46 @@ void paramcl::DateienHerricht()
        (anhfaxstr.empty()?"":string("\\|")+anhfaxstr+
        "\\) [ -,/;:\\\\\\.\\+]*[0123456789]+.*\" -not -iname \"*.pdf\"";
      */
-    for(unsigned iprio=0;iprio<anfxstrvec.size();iprio++) {
-      if (!anfxstrvec.at(iprio).empty()) {
-        cmd= string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\""
-          " -not -iname \"*.pdf\"";
-        vector<string> npdfd;
-        systemrueck(cmd, obverb,oblog, &npdfd);
-        for(size_t i=0;i<npdfd.size();i++) {
-          uint vfehler=0;
-          string ndname=zufaxenvz+vtz+neuerdateiname(npdfd.at(i));
-          if (ndname!=npdfd.at(i)) {
-            dorename(npdfd.at(i),ndname,cuser,&vfehler,obverb,oblog);
-            if (vfehler) {
-              cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
-                blau<<npdfd.at(i)<<schwarz<<" ->\n"<<
-                blau<<ndname<<schwarz<<endl;
-              exit(16);
-            } // if (vfehler) 
-            npdfd.at(i)=ndname;
-          } // if (ndname!=npdfd.at(i)) 
-          string wartedatei=verschiebe(npdfd.at(i),wvz,cuser,&vfehler,1,obverb,oblog);
-          if (!vfehler) {
-            string stamm,exten;
-            //          npdfp->push_back(wartedatei);
-            getstammext(&wartedatei,&stamm,&exten);
-            string zupdf=stamm+".pdf"; 
-            //          spdfp->push_back(zupdf);
-            //          prios.push_back(iprio);
-            fxv.push_back(fxfcl(wartedatei,zupdf,iprio));
-          } else {
-            cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
-              blau<<npdfd.at(i)<<schwarz<<" ->\n"<<
-              blau<<wvz<<schwarz<<endl;
-            exit(18);
-          } // if (!vfehler) 
-        } // for(size_t i=0;i<npdfd.size();i++) 
-      } // if (!anfxstrvec.at(iprio).empty()) 
-    } // for(unsigned iprio=0;iprio<anfxstrvec.size();iprio++) 
+//    for(unsigned iprio=0;iprio<anfxstrvec.size();iprio++) KLA
+//      if (!anfxstrvec.at(iprio).empty()) KLA
+//        cmd= string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\""
+//          " -not -iname \"*.pdf\"";
+//        vector<string> npdfd;
+//        systemrueck(cmd, obverb,oblog, &npdfd);
+//        for(size_t i=0;i<npdfd.size();i++) KLA
+  for(size_t i=0;i<urfx.size();i++) {
+    uint vfehler=0;
+    // wenn die Datei im zufaxenvz in einen Namenskonflikt geriete ...
+    string ndname=zufaxenvz+vtz+neuerdateiname(urfx.at(i).teil);
+    if (ndname!=urfx.at(i).teil) {
+      dorename(urfx.at(i).teil,ndname,cuser,&vfehler,obverb,oblog);
+      if (vfehler) {
+        cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
+          blau<<urfx.at(i).teil<<schwarz<<" ->\n"<<
+          blau<<ndname<<schwarz<<endl;
+        continue;
+      } // if (vfehler) 
+      urfx.at(i).teil=ndname;
+    } // if (ndname!=urfx.at(i).teil) 
+    string wartedatei=verschiebe(urfx.at(i).teil,wvz,cuser,&vfehler,1,obverb,oblog);
+    if (vfehler) {
+      cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
+        blau<<urfx.at(i).teil<<schwarz<<" ->\n"<<
+        blau<<wvz<<schwarz<<endl;
+      continue;
+    }
+    // hier gabe es also weder beim Kopieren ins zufaxenverzeichnis noch beim Verschieben ins Warteververzeichnis ein Problem
+    string stamm,exten;
+    //          npdfp->push_back(wartedatei);
+    getstammext(&wartedatei,&stamm,&exten);
+    string zupdf=stamm+".pdf"; 
+    //          spdfp->push_back(zupdf);
+    //          prios.push_back(iprio);
+    fxv.push_back(fxfcl(wartedatei,zupdf,urfx.at(i).ur,urfx.at(i).prio));
+  }
+  //        KLZ // for(size_t i=0;i<npdfd.size();i++) 
+  //      KLZ // if (!anfxstrvec.at(iprio).empty()) 
+//    KLZ // for(unsigned iprio=0;iprio<anfxstrvec.size();iprio++) 
 
   for(unsigned i=0;i<fxv.size();i++) {
     Log(string("npdf[")+rot+ltoan(i)+schwarz+"]: "+rot+fxv[i].npdf+schwarz,obverb,oblog);
@@ -4301,30 +4321,28 @@ void paramcl::DateienHerricht()
               cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
                 blau<<spdfd.at(i)<<schwarz<<" ->\n"<<
                 blau<<ndname<<schwarz<<endl;
-              exit(20);
+              continue;
             } // if (vfehler) 
-            spdfd.at(i)=ndname;
+//            spdfd.at(i)=ndname;
           } // if (ndname!=spdfd.at(i))
-          string wartedatei=verschiebe(spdfd.at(i),wvz,cuser,&vfehler,1,obverb,oblog);
-          if (!vfehler) {
-            int vorhanden=0; // 1= Datei schon zuvor als nicht-PDF-Datei eingetragen
-            for(unsigned i=0;i<fxv.size();i++) {
-              if (i>=spdfd.size()) break;
-              if (fxv[i].spdf==spdfd.at(i)) {vorhanden=1;break;} 
-            }
-            if (!vorhanden) {
-              fxv.push_back(fxfcl(wartedatei,iprio));
-              if (gleichziel) {
-                uint kfehler=0;
-                string zield=kopiere(wartedatei, zmp, &kfehler, 1, obverb, oblog);
-              } //  if (gleichziel)
-            } //if (!vorhanden)
-          } else {
+          string wartedatei=verschiebe(ndname,wvz,cuser,&vfehler,1,obverb,oblog);
+          if (vfehler) {
             cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
               blau<<spdfd.at(i)<<schwarz<<" ->\n"<<
               blau<<wvz<<schwarz<<endl;
-            exit(22);
-          } // if (!vfehler) else 
+            continue; 
+          }
+          uchar vorhanden=0; // 1= Datei schon zuvor als nicht-PDF-Datei eingetragen
+          for(size_t ii=0;ii<fxv.size()&&ii<spdfd.size();ii++) {
+            if (fxv[ii].spdf==ndname) {vorhanden=1;break;} 
+          }
+          if (!vorhanden) {
+            fxv.push_back(fxfcl(wartedatei,spdfd.at(i),iprio));
+            if (gleichziel) {
+              uint kfehler=0;
+              string zield=kopiere(wartedatei, zmp, &kfehler, 1, obverb, oblog);
+            } //  if (gleichziel)
+          } //if (!vorhanden)
         } // for(size_t i=0
       } // if (!anfxstrvec.at(iprio).empty()) 
     } // for(unsigned iprio=0;iprio<anfxstrvec.size();iprio++) 
@@ -4371,7 +4389,7 @@ void paramcl::faxealle()
       if (*(*cerg+0) && *(*cerg+1) && *(*cerg+2) && *(*cerg+3) && *(*cerg+4) && *(*cerg+5) && 
           *(*cerg+6) && *(*cerg+7) && *(*cerg+8) && *(*cerg+9) && *(*cerg+10)) {
         // obcapi = *(*cerg+9), obhyla=*(*cerg+10)
-        fsfv.push_back(fsfcl(*(*cerg+0), *(*cerg+1), *(*cerg+2), *(*cerg+3), atoi(*(*cerg+4)), *(*cerg+5),
+        fsfv.push_back(/*1*/fsfcl(*(*cerg+0), *(*cerg+1), *(*cerg+2), *(*cerg+3), atoi(*(*cerg+4)), *(*cerg+5),
               atoi(*(*cerg+6)), *(*cerg+7), atoi(*(*cerg+8)), (binaer)atoi(*(*cerg+9)), (binaer)atoi(*(*cerg+10)), *(*cerg+11)));
       }
     } // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
@@ -4435,7 +4453,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
       if (*(*cerg+0)) if (*(*cerg+3)) {
         (dbzahl)++;
         stringstream ausg; //      ausg.str(std::string()); ausg.clear();
-        fsfcl fsf(*(*cerg+0),*(*cerg+3)); // id, original
+        /*2*/fsfcl fsf(*(*cerg+0),*(*cerg+3)); // id, original
         if (*(*cerg+1)) fsf.capisd =*(*cerg+1); // capispooldatei
         if (*(*cerg+2)) fsf.cspf   =*(*cerg+2); // capispoolpfad
         if (*(*cerg+4)) fsf.cdd    =*(*cerg+4); // cdateidatum
@@ -4647,7 +4665,7 @@ void paramcl::zeigweitere()
             ausg<<rot<<Tx[T_Weitere_Spool_Eintraege]<<schwarz;
             obtitel=1;
           }
-          fsfcl fsf(rueck[i],wartend);
+          /*5*/fsfcl fsf(rueck[i],wartend);
           fsf.capiwausgeb(&ausg, &capiconf[2].wert, obverb, 0, oblog, ++faxord);
         } // if (!indb) 
       } // for(size_t i=0
@@ -4669,7 +4687,7 @@ void paramcl::zeigweitere()
             ausg<<rot<<Tx[T_Weitere_Spool_Eintraege]<<schwarz;
             obtitel=1;
           }
-          fsfcl fsf(hylanr); // fsf(rueck[i]);
+          /*4*/fsfcl fsf(hylanr); // fsf(rueck[i]);
           string protdakt=hsendqvz+vtz+hylanr; // rueck[i];
           uchar hyla_uverz_nr=1;
           int obsfehlt=-1;

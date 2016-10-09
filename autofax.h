@@ -43,14 +43,26 @@ class zielmustercl
     int obmusterleer();
 }; // class zielmustercl
 
+class urfxcl // urspruengliche Dateidaten vor Aufteilung an verschiedene Faxadressaten
+{
+ public:
+    string teil;
+    string ur;
+    unsigned prio;
+    urfxcl(string& teil, string& ur,unsigned prio): teil(teil), ur(ur), prio(prio) {}
+};
+
 class fxfcl // Faxfile
 {
   public:
     string npdf; // nicht-PDF
     string spdf; // schon-PDF
+    string ur;   // urspruenglicher Dateinamen
     unsigned prio; // Prioritaet der Fax-Programme: 0=keine,1=Capi, 2=Hyla
-    fxfcl(string npdf,string spdf,unsigned prio): npdf(npdf),spdf(spdf),prio(prio) {}
-    fxfcl(string spdf,unsigned prio): npdf(""),spdf(spdf),prio(prio) {}
+    fxfcl(string& npdf,string& spdf,string& ur,unsigned prio): npdf(npdf),spdf(spdf),ur(ur),prio(prio) {}
+    // nur fuer Initialisierung in fsfcl, Konstruktur /*1*/, nur fuer faxealle
+    fxfcl(unsigned prio, string& npdf,string& spdf): npdf(npdf),spdf(spdf),prio(prio) {}
+    fxfcl(string& spdf,string& ur,unsigned prio): npdf(""),spdf(spdf),prio(prio) {}
     fxfcl() {}
 };
 
@@ -81,14 +93,14 @@ class fsfcl : public fxfcl // Faxsendfile
     void archiviere(DB *My, paramcl *pmp, struct stat *entryp,uchar obgescheitert, FaxTyp ftyp, uchar *gel, int obverb, int oblog);
     int loeschecapi(int obverb, int oblog);
     int loeschehyla(paramcl *pmp,int obverb, int oblog);
-    fsfcl(string id, string npdf, string spdf, string telnr, unsigned prio, string capisd, int capids, string hylanr, int hylads, 
+    /*1*/fsfcl(string id, string npdf, string spdf, string telnr, unsigned prio, string capisd, int capids, string hylanr, int hylads, 
         uchar obcapi, uchar obhyla, string adressat):
-      fxfcl(npdf,spdf,prio), 
+      fxfcl(prio,npdf,spdf), 
             id(id), telnr(telnr), capisd(capisd), capids(capids), hylanr(hylanr), hylads(hylads), fobcapi(obcapi), fobhyla(obhyla), adressat(adressat) {}
-    fsfcl(string id,string original): id(id), original(original) {}
-    fsfcl(string id, string capisd, string hylanr, string cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
-    fsfcl(string hylanr): hylanr(hylanr) {}
-    fsfcl(string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
+    /*2*/fsfcl(string id,string original): id(id), original(original) {}
+    /*3*/fsfcl(string id, string capisd, string hylanr, string cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
+    /*4*/fsfcl(string& hylanr): hylanr(hylanr) {}
+    /*5*/fsfcl(string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
     void setzcapistat(paramcl *pmp, struct stat *entrysendp);
     void capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, string *ctriesp, int oblog,unsigned long faxord=0);
     void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, string& hylastate, int obverb=0, uchar obzaehl=0, int oblog=0);
@@ -120,8 +132,9 @@ class paramcl // Programmparameter
     uchar obmodem=1;    // ob Modem angeschlossen
     uchar obmdgeprueft=0; // ob schon geprueft, ob Modem verfuegbar
     uchar obocrgeprueft=0; // ob ocrmypdf installiert ist
-    const string spooltab = "spool";
-    const string altspool = "altspool";
+    const string spooltab="spool";
+    const string altspool="altspool";
+    const string udoctab="udoc";
     int obverb=0; // verbose
     int oblog=0;  // mehr Protokollieren
     uchar obvi=0;   // ob Konfigurationsdatei editiert werden soll
