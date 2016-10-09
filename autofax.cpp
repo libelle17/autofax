@@ -1608,6 +1608,7 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     einf.push_back(instyp(My->DBS,"Erfolg",(int)!obgescheitert));
     einf.push_back(instyp(My->DBS,"docname",&original));
     Log(string("original (docname): ")+blau+original+schwarz,obverb,oblog);
+    einf.push_back(instyp(My->DBS,"idudoc",&idudoc));
     einf.push_back(instyp(My->DBS,"transe",&jetzt));
     if (!telnr.empty()) {
       string stdfax=pmp->stdfaxnr(telnr);
@@ -4444,7 +4445,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
   Log(violetts+Tx[T_untersuchespool]+schwarz,obverb,oblog);
   char ***cerg;
   RS rs(My,string("SELECT id p0,capispooldatei p1,capispoolpfad p2,original p3,cdateidatum p4,"
-        " telnr p5,origvu p6,hylanr p7,capidials p8,hyladials p9,hdateidatum p10, adressat p11 "
+        " telnr p5,origvu p6,hylanr p7,capidials p8,hyladials p9,hdateidatum p10, adressat p11, idudoc p12 "
         "FROM `")+spooltab+"` WHERE (hylanr RLIKE '^[0-9]+$' AND hylanr<>0) OR capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",ZDB);
   if (!rs.obfehl) {
     faxord=0;
@@ -4464,6 +4465,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
         if (*(*cerg+9)) fsf.hdials =*(*cerg+9); // hyladials
         if (*(*cerg+10)) fsf.hdd   =*(*cerg+10); // hdateidatum
         if (*(*cerg+11)) fsf.adressat =*(*cerg+11); // adressat
+        if (*(*cerg+12)) fsf.idudoc = *(*cerg+12);  // id des ursp.Dateinamens in udoc
         Log(string("id: ")+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
         ausg<<blau<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; // ab hier Neue-Zeile-Zeichen immer am Anfang der naechsten Zeile
         // a) ueber capisuite

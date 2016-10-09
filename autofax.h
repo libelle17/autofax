@@ -80,6 +80,7 @@ class fsfcl : public fxfcl // Faxsendfile
     string adressat; // Name des Adressaten aus Faxdatei
     string original; // base_name(spdf)
     string origvu;   // base_name(npdf)
+    string idudoc;   // id des urspruenglichen Dateinamens in tabelle udoc
     string cspf;     // capispoolpfad
     string cdd;      // cdateidatum
     string cdials;   // capidials
