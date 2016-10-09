@@ -530,6 +530,7 @@ enum T_
   T_mitstr,
   T_wartende_Faxe,
   T_Index_auf_urspruenglichen_Dateinamen,
+  T_Gesammelt_wurden,
   T_MAX
 };
 
@@ -1497,6 +1498,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {" wartende Faxe "," waiting faxes"},
   // T_Index_auf_urspruenglichen_Dateinamen
   {"Index auf urspruenglichen Dateinamen","Index on original filename"},
+  // T_Gesammelt_wurden
+  {"Gesammelt wurden: ","Collected were: "},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -4227,6 +4230,7 @@ void paramcl::DateienHerricht()
   //      KLZ // if (!anfxstrvec.at(iprio).empty()) 
 //    KLZ // for(unsigned iprio=0;iprio<anfxstrvec.size();iprio++) 
 
+  Log(blaus+Tx[T_Gesammelt_wurden]+schwarz,obverb,oblog);
   for(unsigned i=0;i<fxv.size();i++) {
     Log(string("npdf[")+rot+ltoan(i)+schwarz+"]: "+rot+fxv[i].npdf+schwarz,obverb,oblog);
     Log(string("spdf[")+rot+ltoan(i)+schwarz+"]: "+rot+fxv[i].spdf+schwarz,obverb,oblog);

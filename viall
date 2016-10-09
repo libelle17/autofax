@@ -1,3 +1,4 @@
 #!/bin/zsh
+ctags *.cpp *.h 2>/dev/null
 `which vim || which vi` autofax.cpp autofax.h vorgaben.cpp DB.cpp DB.h konsole.cpp konsole.h -p -c "syntax on" -c "set number" -c "set autoindent" -c "set autoindent" -c "set tabstop=2" -c "set ignorecase" -c "set showmatch" -c "set magic" -c "set ruler" 
 
