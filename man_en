@@ -2,29 +2,45 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "09.10.16" "Version 0.41262" "\fBautofax\fR man page"
+.TH man 1 "10.10.16" "Version 0.41262" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
 manpage-Hilfe in deutsch verfügbar: 'man autofax' oder 'man -Lde autofax'.
 .SH SYNOPSIS
 .SY autofax [-<option>]
-.OP \-lg|--language <d|e>
 .OP \-v|--verbose
-.OP \-lvz|--logvz <pfad>
-.OP \-ld|--logdname <string>
 .OP \-l|--log
 .OP \-ldn|--logdateineu
 .OP \-kd|--konfdat <string>
+.OP \-sqlv|--sql-verbose
+.OP \-rf|--rueckfragen
+.OP \-norf|--keinerueckfragen
+.OP \-loef|--loeschefax
+.OP \-loew|--loeschewaise
+.OP \-loea|--loescheallew
+.OP \-kez|--korrerfolgszeichen
+.OP \-bwv|--bereinigewv
+.OP \-st|--stop
+.OP \-lista|--listarchiv
+.OP \-listf|--listfailed
+.OP \-listi|--listinca
+.OP \-listi|--listwart
+.OP \-s|--suche <string>
+.OP \-n|--dszahl <zahl>
+.OP \-info|--version
+.OP \-vi|--vi 
+.OP \-h|-help|-?|-hilfe
+.OP \-lg|--language <d|e>
+.OP \-lvz|--logvz <pfad>
+.OP \-ld|--logdname <string>
 .OP \-zvz|--zufaxenvz <pfad>
 .OP \-wvz|--wartevz <pfad>
 .OP \-nvz|--nichtgefaxtvz <pfad>
 .OP \-evz|--empfvz <pfad>
 .OP \-cm|--cronminut <zahl>
 .OP \-capi|--obcapi
-.OP \-nocapi|--keincapi
 .OP \-hyla|--obhyla
-.OP \-nohyla|--keinhyla
 .OP \-cz|--capizuerst
 .OP \-hz|--hylazuerst
 .OP \-mod|--hmodem <string>
@@ -33,7 +49,10 @@ manpage-Hilfe in deutsch verfügbar: 'man autofax' oder 'man -Lde autofax'.
 .OP \-cuser|--cuser <string>
 .OP \-ckzl|--capiklingelzahl <zahl>
 .OP \-hkzl|--hylaklingelzahl <zahl>
+.OP \-md|--maxdials <zahl>
 .OP \-gz|--gleichziel
+.OP \-ocri|--ocri
+.OP \-ocra|--ocra
 .OP \-afs|--anfaxstr <string>
 .OP \-acfs|--ancfaxstr <string>
 .OP \-ahfs|--anhfaxstr <string>
@@ -43,23 +62,6 @@ manpage-Hilfe in deutsch verfügbar: 'man autofax' oder 'man -Lde autofax'.
 .OP \-muser|--muser <string>
 .OP \-mpwd|--mpwd <string>
 .OP \-db|--datenbank <string>
-.OP \-sqlv|--sql-verbose
-.OP \-rf|--rueckfragen
-.OP \-norf|--keinerueckfragen
-.OP \-loef|--loeschefax
-.OP \-loew|--loeschewaise
-.OP \-loea|--loescheallew
-.OP \-loee|--loescheempf
-.OP \-kez|--korrerfolgszeichen
-.OP \-bwv|--bereinigewv
-.OP \-st|--stop
-.OP \-lista|--listarchiv
-.OP \-listf|--listfailed
-.OP \-listi|--listinca
-.OP \-n|--dszahl <zahl>
-.OP \-info|--version
-.OP \-vi|--vi 
-.OP \-h|-help|-?|-hilfe
 .SH SHORT DESCRIPTION 
 autofax is a command line programme to remit files of a certain directory automatically to \fBhylafax\fR (in case a linux-compatible modem is installed) and/or \fBcapisuite\fR (in case a fritzcard 2.0 or 2.1 is installed), if the fax number is integrated in the file name correctly.
 Furthermore, autofax holds the posted faxes in a mariadb database.
