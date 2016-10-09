@@ -187,6 +187,8 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {"' nicht zum Lesen oeffen!","' for reading!"},
   // T_nicht_zum_Schreiben_oeffnen
   {"' nicht zum Schreiben oeffnen!","' for writing!"},
+  // T_Zeilen
+  {" Zeilen"," lines"},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -1664,17 +1666,17 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
   binaer ob0heissterfolg=wahr;
   uchar neurueck=0;
   uchar weiter=0;
-  int erg;
-  string const * czg=&cmd;
-  string hcmd;
+  int erg=-111;
+  string hcmd=cmd;
   uchar obfind=(cmd.substr(0,4)=="find" || cmd.substr(0,9)=="sudo find");
   if (verbergen==1 || (obfind && (obverb<1 || strcmp(curruser(),"root")))) {
-   hcmd=cmd+" 2>/dev/null; true";
-   czg=&hcmd;
+    if (obverb<=1) 
+      hcmd+=" 2>/dev/null; true";
   } else if (verbergen==2) {
-   hcmd=cmd+" >/dev/null 2>&1";
-   czg=&hcmd;
+    if (obverb<=1)
+      hcmd+=" >/dev/null 2>&1";
   }
+  string const * czg=&hcmd;
   // "obfind: "<<(int)obfind<<", obverb: "<<(int)obverb<<", curruser(): "<<curruser()<<", '"<<violett<<*czg<<schwarz<<"'"<<endl;
   string meld(Txk[T_Rueckmeldung]);
   string aktues;
@@ -1739,9 +1741,9 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
       Log(*czg,1,oblog)
         prf.ausgab1000("vor pclose");
 #endif
-      if (obfind)
+      if (obfind) {
         erg=rueck->size();
-      else
+      } else
         erg = pclose(pipe)/256;
 #ifdef systemrueckprofiler
       prf.ausgab1000("nach pclose");
@@ -1749,7 +1751,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
     } else {
       perror((string("popen() ")+Txk[T_fehlgeschlagen_bei]+*czg).c_str());
       erg=1;
-    }
+    } //     if (FILE* pipe = popen(czg->c_str(), "r"))  else 
   } else {
     erg= system(czg->c_str());
   } // if (rueck) else
@@ -1768,9 +1770,12 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
       } // for(size_t i=0;i<errm->size();i++) 
     }  // if (errm)
     if (ergebnis.empty()) {
+      if (obfind) {
+        ergebnis=gruens+ltoan(erg)+blau+string(Txk[T_Zeilen]);
+      } else {
       if (ob0heissterfolg) {
         if (erg) {
-          ergebnis=rots+string(Txk[T_Fehler])+ltoan(erg)+schwarz;
+            ergebnis=rots+string(Txk[T_Fehler])+ltoan(erg)+schwarz;
           if (obverb>=0) obergebnisanzeig=wahr;
           obverb++;
         } else {
@@ -1779,6 +1784,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
       } else {
         ergebnis=ltoan(erg);
       }
+          }
     } //     if (ergebnis.empty() {
 #ifdef systemrueckprofiler
     prf.ausgab1000("vor log");

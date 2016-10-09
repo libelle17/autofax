@@ -4170,10 +4170,10 @@ void paramcl::DateienHerricht()
               if (vfehler)
                 Log(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz,1,1);
               else {
-              urfx.push_back(urfxcl(tmp,urname,iprio));
-              Log(string(Tx[T_ErstelledurchBenennen])+rot+tmp+schwarz,1,oblog);
+                Log(string(Tx[T_ErstelledurchBenennen])+rot+tmp+schwarz,1,oblog);
               }
             } // if (iprid.at(i)!=tmp) 
+            urfx.push_back(urfxcl(tmp,urname,iprio));
           } // if (j<toknr.size()-1) 
         } // for(unsigned j=0;j<toknr.size();j++) 
       } // if (tok.size()>1) 

@@ -178,6 +178,7 @@ enum Tkonsole_
   T_Konnte_Datei,
   T_nicht_zum_Lesen_oeffnen,
   T_nicht_zum_Schreiben_oeffnen,
+  T_Zeilen,
   T_konsoleMAX,
 };
 
