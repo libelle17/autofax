@@ -3969,14 +3969,15 @@ void paramcl::tu_listi()
 
 void paramcl::suchestr()
 {
+  string scnv=" CONVERT(\"%"+suchstr+"%\" USING utf8) ";
   for(int erf=1;erf>=0;erf--) {
     string oberfolg=ltoan(erf);
     char ***cerg;
     RS lista(My,string("SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM (")+
         "SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
         "RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe FROM `"+
-        touta+"` WHERE Erfolg = "+oberfolg+" AND (Docname LIKE \"%"+suchstr+"%\" OR rcname LIKE \"%"+suchstr+"%\" "
-        " OR rcfax LIKE \"%"+suchstr+"%\" OR submid LIKE \"%"+suchstr+"%\" OR transe LIKE \"%"+suchstr+"%\") "
+        touta+"` WHERE Erfolg = "+oberfolg+" AND (Docname LIKE"+scnv+"OR rcname LIKE"+scnv+"OR rcfax LIKE"+scnv+""
+        "OR submid LIKE"+scnv+"OR transe LIKE CONVERT(\"%"+suchstr+"%\" USING utf8)) "
         " ORDER BY eind desc limit "+dszahl+
         ") i ORDER BY transe",ZDB);
     ulong zeile=0;
@@ -3985,16 +3986,16 @@ void paramcl::suchestr()
         cout<<gruen<<Tx[T_Letzte]<<blau<<dszahl<<gruen<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandte_Faxe]<<
           Tx[T_mitstr]<<blau<<suchstr<<"':"<<endl;
       zeile++;
-      cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(14)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(65)<<*(*cerg+2)<<"|"
+      cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(14)<<*(*cerg+1)<<schwarz<<"|"<<(erf?blau:violett)<<setw(65)<<*(*cerg+2)<<"|"
         <<schwarz<<setw(30)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
     } // while (cerg=lista.HolZeile(),cerg?*cerg:0) 
   } //   for(int erf=1;erf>=0;erf--) 
 
   char ***cerg;
   RS listi(My,string("SELECT * FROM (SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') p0,RIGHT(CONCAT(SPACE(85),LEFT(titel,85)),85) p1,"
-        "fsize p2,tsid p3,id p4 FROM `")+tinca+"` i WHERE (titel LIKE \"%"+suchstr+"%\" OR tsid LIKE \"%"+suchstr+"%\" "
-      " OR transe LIKE \"%"+suchstr+"%\" OR id LIKE \"%"+suchstr+"%\")"
-      " ORDER BY transe desc limit "+dszahl+") i ORDER BY p0",ZDB);
+        "fsize p2,tsid p3,id p4 FROM `")+tinca+"` i WHERE (titel LIKE"+scnv+""
+        "OR tsid LIKE"+scnv+"OR transe LIKE"+scnv+"OR id LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
+        " ORDER BY transe desc limit "+dszahl+") i ORDER BY p0",ZDB);
   ulong zeile=0;
   while (cerg=listi.HolZeile(),cerg?*cerg:0) {
     if (!zeile)
@@ -4007,8 +4008,8 @@ void paramcl::suchestr()
   RS spool(My,"SELECT * FROM (SELECT DATE_FORMAT(if(hdateidatum=0,cdateidatum,hdateidatum),'%d.%m.%y %H:%i:%s') p0,"
         "RIGHT(CONCAT(SPACE(85),LEFT(origvu,85)),85) p1,"
         "IF(capidials=0,hyladials,capidials) p2,IF(hylanr=0,capispooldatei,hylanr) p3,id p4 "
-        "FROM `"+spooltab+"` i WHERE (origvu LIKE \"%"+suchstr+"%\" OR original LIKE \"%"+suchstr+"%\" "
-      " OR telnr LIKE \"%"+suchstr+"%\" OR capispooldatei LIKE \"%"+suchstr+"%\" OR cdateidatum LIKE \"%"+suchstr+"%\")"
+        "FROM `"+spooltab+"` i WHERE (origvu LIKE"+scnv+"OR original LIKE"+scnv+"OR telnr LIKE"+scnv+"OR capispooldatei LIKE"+scnv+""
+      " OR cdateidatum LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
       " LIMIT "+dszahl+") i ORDER BY p0",ZDB);
   zeile=0;
   while (cerg=spool.HolZeile(),cerg?*cerg:0) {
