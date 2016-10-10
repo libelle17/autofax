@@ -550,7 +550,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_Soll_die_Capisuite_verwendet_werden
   {"Soll die Capisuite verwendet werden","Shall Capisuite be used"},
   // T_Soll_Hylafax_verwendet_werden
-  {"Soll hylafax verwendet werden","Shall hylafax be uses"},
+  {"Soll hylafax verwendet werden","Shall hylafax be used"},
   // T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden
   {"Soll vorrangig die Capisuite statt hylafax gewaehlt werden","Shall capisuite instead of hylafax bei chosen preferentially"},
   // T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird
