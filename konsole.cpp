@@ -2686,7 +2686,7 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
   struct stat entryzuloe;
   if (!lstat(zuloe.c_str(),&entryzuloe)) {
     Log(string(Txk[T_Loesche_Ausrufezeichen])+rot+zuloe+schwarz,obverb,oblog);
-    int erg;
+    int erg=-1;
     for(uchar iru=1;iru<3;iru++) {
       if ((erg=remove(zuloe.c_str()))) {
         if(cuser.empty()) iru++;
