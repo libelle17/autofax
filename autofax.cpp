@@ -4908,7 +4908,6 @@ void paramcl::empfarch()
   } // for(size_t i=0;i<rueck.size();i++) 
 
   // 2) capi
-  int erg;
   string cempfavz=spoolcapivz+"/autofaxarch"; // /var/spool/capisuite/empfarch/
   /*
      cppSchluess umst[]={{"filename"},{"call_from"},{"call_to"},{"time"},{"cause"}};
@@ -4969,6 +4968,7 @@ void paramcl::empfarch()
         verschieb=1;
       } else {
         uint kfehler=1;
+        int erg;
         if (entrysff.st_size) {
           cmd=string("sfftobmp -f -t ")+sffname+" -o \""+cpfad+"\"";
           if ((erg=systemrueck(cmd,obverb,oblog))) {
@@ -5500,7 +5500,7 @@ int paramcl::cservice()
 {
   Log(violetts+"cservice()"+schwarz,this->obverb,this->oblog);
   int csfehler=0;
-  int erg;
+  int erg=-1;
   string cspfad;
   if (obprogda("capisuite",obverb,oblog,&cspfad)) {
     scapisuite->stop(obverb,oblog,1); 
