@@ -4968,7 +4968,7 @@ void paramcl::empfarch()
         verschieb=1;
       } else {
         uint kfehler=1;
-        int erg;
+        int erg=-1;
         if (entrysff.st_size) {
           cmd=string("sfftobmp -f -t ")+sffname+" -o \""+cpfad+"\"";
           if ((erg=systemrueck(cmd,obverb,oblog))) {
