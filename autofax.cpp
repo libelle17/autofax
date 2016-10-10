@@ -3414,7 +3414,7 @@ void setztmpc(int obverb, int oblog)
 void paramcl::pruefcron()
 {
   //  svec rueck;
-  int cronda;
+  int cronda=0;
   int cronzuplanen = (cronminut!="0");
   Log(violetts+Tx[T_pruefcron]+schwarz+Tx[T_cronzuplanen]+violetts+ltoan(cronzuplanen)+schwarz,obverb,oblog);
 
@@ -3471,7 +3471,7 @@ void paramcl::pruefsamba()
   const char* const smbdatei="/etc/samba/smb.conf";
   struct stat sstat;
   int gestartet=0;
-  uchar conffehlt;
+  uchar conffehlt=1;
   const string quelle="/usr/share/samba/smb.conf";
   uchar obinst=0; // ob Samba installiert werden soll bzw. die smb.conf bearbeitet
   uchar obfw=0; // ob SuSEfirewall bearbeitet werden soll
