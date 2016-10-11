@@ -3943,7 +3943,7 @@ void paramcl::tu_lista(const string& oberfolg)
   RS lista(My,string("SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM (")+
       "SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
       "RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe FROM `"+
-      touta+"` WHERE Erfolg = "+oberfolg+" ORDER BY eind DESC LIMIT "+dszahl+
+      touta+"` WHERE Erfolg = "+oberfolg+" ORDER BY transe LIMIT "+dszahl+
       ") i",ZDB);
 
   cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandte_Faxe]<<endl;
@@ -3978,7 +3978,7 @@ void paramcl::suchestr()
         "RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe FROM `"+
         touta+"` WHERE Erfolg = "+oberfolg+" AND (Docname LIKE"+scnv+"OR rcname LIKE"+scnv+"OR rcfax LIKE"+scnv+""
         "OR submid LIKE"+scnv+"OR transe LIKE CONVERT(\"%"+suchstr+"%\" USING utf8)) "
-        " ORDER BY eind DESC LIMIT "+dszahl+
+        " ORDER BY transe LIMIT "+dszahl+
         ") i",ZDB);
     ulong zeile=0;
     while (cerg=lista.HolZeile(),cerg?*cerg:0) {
@@ -3995,7 +3995,7 @@ void paramcl::suchestr()
   RS listi(My,string("SELECT * FROM (SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') p0,RIGHT(CONCAT(SPACE(85),LEFT(titel,85)),85) p1,"
         "fsize p2,tsid p3,id p4 FROM `")+tinca+"` i WHERE (titel LIKE"+scnv+""
         "OR tsid LIKE"+scnv+"OR transe LIKE"+scnv+"OR id LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
-        " ORDER BY transe DESC LIMIT "+dszahl+") i",ZDB);
+        " ORDER BY transe LIMIT "+dszahl+") i",ZDB);
   ulong zeile=0;
   while (cerg=listi.HolZeile(),cerg?*cerg:0) {
     if (!zeile)
@@ -4010,7 +4010,7 @@ void paramcl::suchestr()
         "IF(capidials=0,hyladials,capidials) p2,IF(hylanr=0,capispooldatei,hylanr) p3,id p4 "
         "FROM `"+spooltab+"` i WHERE (origvu LIKE"+scnv+"OR original LIKE"+scnv+"OR telnr LIKE"+scnv+"OR capispooldatei LIKE"+scnv+""
       " OR cdateidatum LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
-      " ORDER BY if(hdateidatum=0,cdateidatum,hdateidatum) DESC LIMIT "+dszahl+") i",ZDB);
+      " ORDER BY if(hdateidatum=0,cdateidatum,hdateidatum) LIMIT "+dszahl+") i",ZDB);
   zeile=0;
   while (cerg=spool.HolZeile(),cerg?*cerg:0) {
     if (!zeile)
