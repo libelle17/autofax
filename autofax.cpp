@@ -3974,12 +3974,13 @@ void paramcl::suchestr()
     string oberfolg=ltoan(erf);
     char ***cerg;
     RS lista(My,string("SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM (")+
+        "SELECT * FROM ("
         "SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
         "RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe FROM `"+
         touta+"` WHERE Erfolg = "+oberfolg+" AND (Docname LIKE"+scnv+"OR rcname LIKE"+scnv+"OR rcfax LIKE"+scnv+""
         "OR submid LIKE"+scnv+"OR transe LIKE CONVERT(\"%"+suchstr+"%\" USING utf8)) "
-        " ORDER BY transe LIMIT "+dszahl+
-        ") i",ZDB);
+        " ORDER BY transe DESC LIMIT "+dszahl+
+        ") i ORDER BY transe) i",ZDB);
     ulong zeile=0;
     while (cerg=lista.HolZeile(),cerg?*cerg:0) {
       if (!zeile)
@@ -3995,7 +3996,7 @@ void paramcl::suchestr()
   RS listi(My,string("SELECT * FROM (SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') p0,RIGHT(CONCAT(SPACE(85),LEFT(titel,85)),85) p1,"
         "fsize p2,tsid p3,id p4 FROM `")+tinca+"` i WHERE (titel LIKE"+scnv+""
         "OR tsid LIKE"+scnv+"OR transe LIKE"+scnv+"OR id LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
-        " ORDER BY transe LIMIT "+dszahl+") i",ZDB);
+        " ORDER BY transe DESC LIMIT "+dszahl+") i ",ZDB);
   ulong zeile=0;
   while (cerg=listi.HolZeile(),cerg?*cerg:0) {
     if (!zeile)
