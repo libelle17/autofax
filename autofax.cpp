@@ -3979,7 +3979,7 @@ void paramcl::suchestr()
         touta+"` WHERE Erfolg = "+oberfolg+" AND (Docname LIKE"+scnv+"OR rcname LIKE"+scnv+"OR rcfax LIKE"+scnv+""
         "OR submid LIKE"+scnv+"OR transe LIKE CONVERT(\"%"+suchstr+"%\" USING utf8)) "
         " ORDER BY eind desc limit "+dszahl+
-        ") i ORDER BY transe",ZDB);
+        ") i",ZDB);
     ulong zeile=0;
     while (cerg=lista.HolZeile(),cerg?*cerg:0) {
       if (!zeile)
@@ -3995,7 +3995,7 @@ void paramcl::suchestr()
   RS listi(My,string("SELECT * FROM (SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') p0,RIGHT(CONCAT(SPACE(85),LEFT(titel,85)),85) p1,"
         "fsize p2,tsid p3,id p4 FROM `")+tinca+"` i WHERE (titel LIKE"+scnv+""
         "OR tsid LIKE"+scnv+"OR transe LIKE"+scnv+"OR id LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
-        " ORDER BY transe desc limit "+dszahl+") i ORDER BY p0",ZDB);
+        " ORDER BY transe desc LIMIT "+dszahl+") i",ZDB);
   ulong zeile=0;
   while (cerg=listi.HolZeile(),cerg?*cerg:0) {
     if (!zeile)
@@ -4010,7 +4010,7 @@ void paramcl::suchestr()
         "IF(capidials=0,hyladials,capidials) p2,IF(hylanr=0,capispooldatei,hylanr) p3,id p4 "
         "FROM `"+spooltab+"` i WHERE (origvu LIKE"+scnv+"OR original LIKE"+scnv+"OR telnr LIKE"+scnv+"OR capispooldatei LIKE"+scnv+""
       " OR cdateidatum LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
-      " LIMIT "+dszahl+") i ORDER BY p0",ZDB);
+      " ORDER BY if(hdateidatum=0,cdateidatum,hdateidatum) DESC LIMIT "+dszahl+") i",ZDB);
   zeile=0;
   while (cerg=spool.HolZeile(),cerg?*cerg:0) {
     if (!zeile)
@@ -4496,7 +4496,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
             } else if (fsf.capistat==gescheitert) {
             } else if (fsf.capistat==fehlend) {
             } //             if (fsf.capistat==wartend)  else else else 
-          }
+          } // if (mitupd) 
         } // if (obcapi) 
 
         // b) ueber hylafax
@@ -4529,7 +4529,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
               string bedingung=string("id=")+fsf.id;
               rupd.update(altspool,einf,ZDB,bedingung,0);
               rupd.update(spooltab,einf,ZDB,bedingung,0);
-            }
+            } // if (mitupd) 
             ausg<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
           } // if (!warteirgendwo)
         } // if (!obsfehlt) ... else
