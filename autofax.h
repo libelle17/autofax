@@ -282,8 +282,7 @@ class paramcl // Programmparameter
     int setzegcp(const string& name, string *wert);
     void pruefcvz();
     void pruefsfftobmp();
-    void setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, int *obsfehltp, uchar startvznr,
-                      int obverb=0, int oblog=0);
+    void setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, uchar startvznr,int *obsfehltp=0, int obverb=0, int oblog=0);
     void konfcapi();
     int xferlog(fsfcl *fsfp, int obverb=0, int oblog=0,
         string *totpages=0, string *ntries=0, string *totdials=0, string *maxdials=0, string *tottries=0, string *maxtries=0);

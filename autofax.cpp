@@ -3858,8 +3858,7 @@ int paramcl::loeschefax(int obverb, int oblog)
           fsfv[nr].setzcapistat(this,&entrysend);
           string protdakt;
           uchar hyla_uverz_nr=1;
-          int obsfehlt=-1;
-          /*fsfv[nr].*/setzhylastat(&fsfv[nr], &protdakt, &hyla_uverz_nr, &obsfehlt, 0, obverb, oblog); // hyla_uverz_nr, obsfehlt
+          /*fsfv[nr].*/setzhylastat(&fsfv[nr], &protdakt, &hyla_uverz_nr, 0, 0, obverb, oblog); // hyla_uverz_nr, obsfehlt
           Log(violetts+"capistat: "+schwarz+FxStatS(&fsfv[nr].capistat)+violett+", hylastat: "+schwarz+FxStatS(&fsfv[nr].hylastat),obverb,oblog);
           if (!zdng || (fsfv[nr].capistat==fehlend && fsfv[nr].hylastat==fehlend)) {
             RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE id="+fsfv[nr].id,-obverb);
@@ -4516,12 +4515,12 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
         if (obhyla) {
           string protdakt;
           uchar hyla_uverz_nr; // kleine Runde
-          int obsfehlt=-1;
           string number;
+          int obsfehlt=-1;
           /*fsf.*/
-          setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, &obsfehlt, 0, obverb, oblog);
+          setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 0, &obsfehlt, obverb, oblog);
           fsf.hylaausgeb(&ausg, this, obsfehlt, obverb, 0, oblog);
-//          if (!obsfehlt) KLA // Protokolldatei vorhanden
+//          if (!obsfehlt) KLA // Protokolldatei vorhanden 12.10.16 sollte jetzt auch mit xferfax gehen
             if (mitupd) {
               RS rupd(My); 
               vector<instyp> einf; // fuer alle Datenbankeinfuegungen
@@ -4710,9 +4709,8 @@ void paramcl::zeigweitere()
           /*4*/fsfcl fsf(hylanr); // fsf(rueck[i]);
           string protdakt=hsendqvz+vtz+hylanr; // rueck[i];
           uchar hyla_uverz_nr=1;
-          int obsfehlt=-1;
           /*fsf.*/
-          setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, &obsfehlt, 2, obverb, oblog);
+          setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 2, 0, obverb, oblog);
           fsf.hylaausgeb(&ausg, this, 0, obverb, 0, oblog);
         } // if (!indb)
       } // for(size_t i=0;i<rueck.size();i++) 
@@ -7231,9 +7229,10 @@ uchar paramcl::setzhconfp(string *protdaktp,int obverb)
 } // paramcl::setzhconfp
 
 // wird aufgerufen in paramcl::loeschefax, paramcl::untersuchespool, paramcl::zeigweitere
-void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, int *obsfehltp, uchar startvznr, int obverb, int oblog) 
+void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, uchar startvznr, int *obsfehltp,int obverb, int oblog) 
 {
   Log(violetts+Tx[T_setzhylastat]+schwarz,obverb,oblog);
+  uchar obsfehlt=1;
   string startvznrs = ltoan(startvznr);
   Log(violetts+"hylanr: "+schwarz+fsf->hylanr+violetts+" "+Tx[T_setzhylastat]+schwarz+
       " hyla_uverz_nrp: "+blau+ltoan(*hyla_uverz_nrp)+schwarz+" startvznr: "+blau+startvznrs+schwarz,
@@ -7247,18 +7246,19 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
   systemrueck(cmd,obverb,oblog,&rueck);
   if (rueck.size()) {
     *protdaktp=rueck[0];
-    *obsfehltp=lstat(protdaktp->c_str(), &entryprot);
+    obsfehlt=lstat(protdaktp->c_str(), &entryprot);
     *hyla_uverz_nrp=rueck.at(0).find("/doneq")==string::npos && rueck.at(0).find("/archive")==string::npos;
   }
   if (obverb) {
-    Log(schwarzs+"*obsfehltp: "+blau+(*obsfehltp?"1":"0")+schwarz+", hyla_uverz_nr: "+blau+(*hyla_uverz_nrp?"1":"0")+schwarz,obverb,oblog);
+    Log(schwarzs+"obsfehlt: "+blau+(obsfehlt?"1":"0")+schwarz+", hyla_uverz_nr: "+blau+(*hyla_uverz_nrp?"1":"0")+schwarz,obverb,oblog);
   }
-  if (*obsfehltp) {
+  if (obsfehltp) *obsfehltp=obsfehlt;
+  if (obsfehlt) {
 //    this->hconfp=0;
     // wenn also die Datenbankdatei weder im Spool noch bei den Erledigten nachweisbar ist
     this->xferlog(fsf,obverb,oblog);
     fsf->sendqgespfad.clear();
-  //   if (*obsfehltp)
+  //   if (obsfehlt)
   } else {
     hgelesen = setzhconfp(protdaktp,obverb);
     //  if (cpplies(*protdaktp,hconf,cs,0,':')) KLA
@@ -7287,7 +7287,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
         fsf->hylastat=woasined;
       }
     } // if (*hyla_uverz_nrp) 
-  } // if (*obsfehltp) else
+  } // if (obsfehlt) else
   Log(violetts+Tx[T_Ende]+" "+Tx[T_setzhylastat]+", hylastat: "+blau+FxStatS(&fsf->hylastat)+schwarz,obverb,oblog);
 } // setzhylastat
 
