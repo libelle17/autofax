@@ -74,7 +74,7 @@ class fsfcl : public fxfcl // Faxsendfile
     string capisd; // capispooldatei
     int capids;  //capidials
     string hylanr; // hylanr
-    int hylads; // hyladials
+    int hdialsn; // hyladials
     uchar fobcapi; // ob es jetzt mit Capi weggefaxt werden muss
     uchar fobhyla; // ob es jetzt mit Hyla weggefaxt werden muss
     string adressat; // Name des Adressaten aus Faxdatei
@@ -84,6 +84,9 @@ class fsfcl : public fxfcl // Faxsendfile
     string cspf;     // capispoolpfad
     string cdd;      // cdateidatum
     string cdials;   // capidials
+    string hstate; // Statuszahl ("state" in man sendq)
+    string hstatus; // Textbeschreibung des letztes Fehlschlags
+    string hstatuscode; // in xferfaxlog nicht gefunden
     string hdials;   // hyladials
     string hdd;      // hdateidatum
     string sendqgespfad;
@@ -94,17 +97,17 @@ class fsfcl : public fxfcl // Faxsendfile
     void archiviere(DB *My, paramcl *pmp, struct stat *entryp,uchar obgescheitert, FaxTyp ftyp, uchar *gel, int obverb, int oblog);
     int loeschecapi(int obverb, int oblog);
     int loeschehyla(paramcl *pmp,int obverb, int oblog);
-    /*1*/fsfcl(string id, string npdf, string spdf, string telnr, unsigned prio, string capisd, int capids, string hylanr, int hylads, 
-        uchar obcapi, uchar obhyla, string adressat):
-      fxfcl(prio,npdf,spdf), 
-            id(id), telnr(telnr), capisd(capisd), capids(capids), hylanr(hylanr), hylads(hylads), fobcapi(obcapi), fobhyla(obhyla), adressat(adressat) {}
+    /*1*/fsfcl(string id, string npdf, string spdf, string telnr, unsigned prio, string capisd, int capids, string hylanr, int hdialsn, 
+         uchar obcapi, uchar obhyla, string adressat):
+         fxfcl(prio,npdf,spdf),id(id), telnr(telnr), capisd(capisd), capids(capids), 
+         hylanr(hylanr), hdialsn(hdialsn), fobcapi(obcapi), fobhyla(obhyla), adressat(adressat) {}
     /*2*/fsfcl(string id,string original): id(id), original(original) {}
     /*3*/fsfcl(string id, string capisd, string hylanr, string cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
     /*4*/fsfcl(string& hylanr): hylanr(hylanr) {}
     /*5*/fsfcl(string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
     void setzcapistat(paramcl *pmp, struct stat *entrysendp);
     void capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, string *ctriesp, int oblog,unsigned long faxord=0);
-    void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, string& hylastate, int obverb=0, uchar obzaehl=0, int oblog=0);
+    void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obverb=0, uchar obzaehl=0, int oblog=0);
 }; // class fsfcl
 
 extern const string s_true; // ="true";
@@ -280,9 +283,10 @@ class paramcl // Programmparameter
     void pruefcvz();
     void pruefsfftobmp();
     void setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, int *obsfehltp, uchar startvznr,
-                      int obverb=0, int oblog=0, string *hylastatep=0, string *hyladialsp=0, string *hylastatusp=0, string *hylastatuscodep=0);
+                      int obverb=0, int oblog=0);
     void konfcapi();
-    int  xferlog(const string& jobid, string *erg,int obverb=0, int oblog=0);
+    int xferlog(fsfcl *fsfp, int obverb=0, int oblog=0,
+        string *totpages=0, string *ntries=0, string *totdials=0, string *maxdials=0, string *tottries=0, string *maxtries=0);
     void richtcapiher();
     uchar setzhconfp(string *protdaktp,int obverb);
     void setzmodconfd();

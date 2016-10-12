@@ -1589,11 +1589,11 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     vector<instyp> einf;
     if (runde==0) zs.Abfrage("SET NAMES 'utf8'");
     else if (runde==1) zs.Abfrage("SET NAMES 'latin1'");
-    einf.push_back(instyp(My->DBS,"titel",&bsname));
-    einf.push_back(instyp(My->DBS,"rcname",&getname));
+    einf.push_back(/*2*/instyp(My->DBS,"titel",&bsname));
+    einf.push_back(/*2*/instyp(My->DBS,"rcname",&getname));
     if (capi) {if (cdd.empty()) cdd="0000-00-00";} else {if (hdd.empty()) hdd="0000-00-00";}
-    einf.push_back(instyp(My->DBS,"submt",ftyp==capi?&cdd:&hdd));
-    einf.push_back(instyp(My->DBS,"submid",ftyp==capi?&capisd:&hylanr));
+    einf.push_back(/*2*/instyp(My->DBS,"submt",ftyp==capi?&cdd:&hdd));
+    einf.push_back(/*2*/instyp(My->DBS,"submid",ftyp==capi?&capisd:&hylanr));
     string pid;
     if (!original.empty()) {
       const char* ocstr=original.c_str(); // da c_str() fluechtig sein koennte
@@ -1607,19 +1607,19 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
       }
     }
     if (pid.empty()) pid="0";
-    einf.push_back(instyp(My->DBS,"pid",&pid));
-    einf.push_back(instyp(My->DBS,"Erfolg",(int)!obgescheitert));
-    einf.push_back(instyp(My->DBS,"docname",&original));
+    einf.push_back(/*2*/instyp(My->DBS,"pid",&pid));
+    einf.push_back(/*2*/instyp(My->DBS,"Erfolg",(int)!obgescheitert));
+    einf.push_back(/*2*/instyp(My->DBS,"docname",&original));
     Log(string("original (docname): ")+blau+original+schwarz,obverb,oblog);
-    einf.push_back(instyp(My->DBS,"idudoc",&idudoc));
-    einf.push_back(instyp(My->DBS,"transe",&jetzt));
+    einf.push_back(/*2*/instyp(My->DBS,"idudoc",&idudoc));
+    einf.push_back(/*2*/instyp(My->DBS,"transe",&jetzt));
     if (!telnr.empty()) {
       string stdfax=pmp->stdfaxnr(telnr);
-      einf.push_back(instyp(My->DBS,"rcfax",&stdfax));
+      einf.push_back(/*2*/instyp(My->DBS,"rcfax",&stdfax));
     }
-    if (!adressat.empty()) einf.push_back(instyp(My->DBS,"adressat",&adressat));
+    if (!adressat.empty()) einf.push_back(/*2*/instyp(My->DBS,"adressat",&adressat));
 
-    einf.push_back(instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
+    einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
     rins.insert(pmp->touta,einf, 1,0,ZDB?ZDB:!runde); 
     if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
     if (!rins.fnr) break;
@@ -1645,7 +1645,7 @@ int fsfcl::loeschecapi(int obverb, int oblog)
     for(uchar ru=0;ru<2;ru++) {
       string zuloe=cspf+vtz+stamm+(ru?".txt":".sff");
       zdng+=tuloeschen(zuloe,"",1,oblog);
-    }
+    } //     for(uchar ru=0;ru<2;ru++) 
   } else { 
     zdng=1;
   } // if (!stamm.empty())
@@ -1786,15 +1786,15 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
       rins.clear();
       vector<instyp> einf; // fuer alle Datenbankeinfuegungen
       if (fxvp->at(nachrnr).spdf!=fxvp->at(nachrnr).ur||fxvp->at(nachrnr).npdf!=fxvp->at(nachrnr).ur) {
-       einf.push_back(instyp(My->DBS,"udocname",fxvp->at(nachrnr).ur));
+       einf.push_back(/*2*/instyp(My->DBS,"udocname",fxvp->at(nachrnr).ur));
        rins.insert(udoctab,einf,1,0,ZDB?ZDB:!runde,&udocid);
        rins.clear();
        einf.clear();
       }
       if (!udocid.empty()) 
-        einf.push_back(instyp(My->DBS,"idudoc",udocid));
+        einf.push_back(/*2*/instyp(My->DBS,"idudoc",udocid));
       string odatei = base_name(fxvp->at(nachrnr).spdf);
-      einf.push_back(instyp(My->DBS,"original",&odatei));
+      einf.push_back(/*2*/instyp(My->DBS,"original",&odatei));
       // den Adressaten ermitteln
       size_t pn, pt, ptc, pth;
       pn=odatei.find(anstr);
@@ -1805,13 +1805,13 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
       if (pth<pt) pt=pth;
       if (pt!=string::npos && pn<pt-anstr.length()-1) { // mind. 1 Buchstaben sollte der Absender haben
        string subst=odatei.substr(pn+anstr.length(),pt-pn-anstr.length());
-       einf.push_back(instyp(My->DBS,"adressat",&subst));
+       einf.push_back(/*2*/instyp(My->DBS,"adressat",&subst));
       }
       if (nachrnr<fxvp->size()) {
         string oudatei = base_name(fxvp->at(nachrnr).npdf);
-        einf.push_back(instyp(My->DBS,"origvu",&oudatei));
+        einf.push_back(/*2*/instyp(My->DBS,"origvu",&oudatei));
       }
-      einf.push_back(instyp(My->DBS,"prio",fxvp->at(nachrnr).prio));
+      einf.push_back(/*2*/instyp(My->DBS,"prio",fxvp->at(nachrnr).prio));
       rins.insert(altspool,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
       rins.insert(spooltab,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
@@ -3940,11 +3940,13 @@ void paramcl::tu_lista(const string& oberfolg)
 {
   Log(violetts+Tx[T_tu_lista]+schwarz,obverb,oblog);
   char ***cerg;
-  RS lista(My,string("SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM (")+
-      "SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
-      "RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe FROM `"+
-      touta+"` WHERE Erfolg = "+oberfolg+" ORDER BY transe LIMIT "+dszahl+
-      ") i",ZDB);
+    RS lista(My,string("SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM (")+
+        "SELECT * FROM ("
+        "SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
+        "RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe FROM `"+
+        touta+"` WHERE Erfolg = "+oberfolg+" "
+        " ORDER BY transe DESC LIMIT "+dszahl+") i "
+        " ORDER BY transe LIMIT 18446744073709551615) i",ZDB);
 
   cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandte_Faxe]<<endl;
   while (cerg=lista.HolZeile(),cerg?*cerg:0) {
@@ -3958,8 +3960,12 @@ void paramcl::tu_listi()
 {
   Log(violetts+Tx[T_tu_listi]+schwarz,obverb,oblog);
   char ***cerg;
-  RS listi(My,string("SELECT * FROM (SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') p0,RIGHT(CONCAT(SPACE(85),LEFT(titel,85)),85) p1,"
-        "fsize p2,tsid p3,id p4 FROM `")+tinca+"` i ORDER BY transe DESC LIMIT "+dszahl+") i",ZDB);
+  RS listi(My,string("select p0, p1, p2, p3, p4 FROM (")+
+        "SELECT * FROM ("
+        "SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') p0,RIGHT(CONCAT(SPACE(85),LEFT(titel,85)),85) p1,"
+        "fsize p2,tsid p3,id p4, transe FROM `"+tinca+"` i "
+        " ORDER BY transe DESC LIMIT "+dszahl+") i "
+        " ORDER BY transe LIMIT 18446744073709551615) i",ZDB);
   cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<Tx[T_empfangene_Faxe]<<schwarz<<endl;
   while (cerg=listi.HolZeile(),cerg?*cerg:0) {
     cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(85)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(17)<<*(*cerg+2)<<"|"
@@ -3979,8 +3985,8 @@ void paramcl::suchestr()
         "RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe FROM `"+
         touta+"` WHERE Erfolg = "+oberfolg+" AND (Docname LIKE"+scnv+"OR rcname LIKE"+scnv+"OR rcfax LIKE"+scnv+""
         "OR submid LIKE"+scnv+"OR transe LIKE CONVERT(\"%"+suchstr+"%\" USING utf8)) "
-        " ORDER BY transe DESC LIMIT "+dszahl+
-        ") i ORDER BY transe) i",ZDB);
+        " ORDER BY transe DESC LIMIT "+dszahl+") i "
+        " ORDER BY transe LIMIT 18446744073709551615) i",ZDB);
     ulong zeile=0;
     while (cerg=lista.HolZeile(),cerg?*cerg:0) {
       if (!zeile)
@@ -3993,10 +3999,13 @@ void paramcl::suchestr()
   } //   for(int erf=1;erf>=0;erf--) 
 
   char ***cerg;
-  RS listi(My,string("SELECT * FROM (SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') p0,RIGHT(CONCAT(SPACE(85),LEFT(titel,85)),85) p1,"
-        "fsize p2,tsid p3,id p4 FROM `")+tinca+"` i WHERE (titel LIKE"+scnv+""
+  RS listi(My,string("select p0, p1, p2, p3, p4 FROM (")+
+        "SELECT * FROM ("
+        "SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') p0,RIGHT(CONCAT(SPACE(85),LEFT(titel,85)),85) p1,"
+        "fsize p2,tsid p3,id p4, transe FROM `"+tinca+"` i WHERE (titel LIKE"+scnv+""
         "OR tsid LIKE"+scnv+"OR transe LIKE"+scnv+"OR id LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
-        " ORDER BY transe DESC LIMIT "+dszahl+") i ",ZDB);
+        " ORDER BY transe DESC LIMIT "+dszahl+") i "
+        " ORDER BY transe LIMIT 18446744073709551615) i",ZDB);
   ulong zeile=0;
   while (cerg=listi.HolZeile(),cerg?*cerg:0) {
     if (!zeile)
@@ -4006,12 +4015,15 @@ void paramcl::suchestr()
       <<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
   } // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
 
-  RS spool(My,"SELECT * FROM (SELECT DATE_FORMAT(if(hdateidatum=0,cdateidatum,hdateidatum),'%d.%m.%y %H:%i:%s') p0,"
+  RS spool(My,string("SELECT p0, p1, p2, p3, p4 FROM (")+
+        "SELECT * FROM ("
+        "SELECT DATE_FORMAT(if(hdateidatum=0,cdateidatum,hdateidatum),'%d.%m.%y %H:%i:%s') p0,"
         "RIGHT(CONCAT(SPACE(85),LEFT(origvu,85)),85) p1,"
-        "IF(capidials=0,hyladials,capidials) p2,IF(hylanr=0,capispooldatei,hylanr) p3,id p4 "
-        "FROM `"+spooltab+"` i WHERE (origvu LIKE"+scnv+"OR original LIKE"+scnv+"OR telnr LIKE"+scnv+"OR capispooldatei LIKE"+scnv+""
-      " OR cdateidatum LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
-      " ORDER BY if(hdateidatum=0,cdateidatum,hdateidatum) LIMIT "+dszahl+") i",ZDB);
+        "IF(capidials=0,hyladials,capidials) p2,IF(hylanr=0,capispooldatei,hylanr) p3,id p4, if(hdateidatum=0,cdateidatum,hdateidatum) so "
+        "FROM `"+spooltab+"` i WHERE (origvu LIKE"+scnv+"OR original LIKE"+scnv+"OR telnr LIKE"+scnv+"OR capispooldatei LIKE"+scnv+
+        "OR cdateidatum LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
+        " ORDER BY so DESC LIMIT "+dszahl+") i "
+        " ORDER BY so LIMIT 18446744073709551615) i",ZDB);
   zeile=0;
   while (cerg=spool.HolZeile(),cerg?*cerg:0) {
     if (!zeile)
@@ -4487,7 +4499,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
             if (fsf.capistat==wartend) {
               RS rupd(My); 
               vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-              einf.push_back(instyp(My->DBS,"capidials",&ctries));
+              einf.push_back(/*2*/instyp(My->DBS,"capidials",&ctries));
               string bedingung=string("id=")+fsf.id;
               if (mitupd) rupd.update(altspool,einf,ZDB,bedingung,0);
               if (mitupd) rupd.update(spooltab,einf,ZDB,bedingung,0);
@@ -4505,35 +4517,35 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           string protdakt;
           uchar hyla_uverz_nr; // kleine Runde
           int obsfehlt=-1;
-          string hylastate, hyladials, hylastatus, hylastatuscode, number;
+          string number;
           /*fsf.*/
-          setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, &obsfehlt, 0, obverb, oblog, &hylastate, &hyladials, &hylastatus, &hylastatuscode);
-          fsf.hylaausgeb(&ausg, this, obsfehlt, hylastate, obverb, 0, oblog);
-          if (!obsfehlt) { // Protokolldatei vorhanden
+          setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, &obsfehlt, 0, obverb, oblog);
+          fsf.hylaausgeb(&ausg, this, obsfehlt, obverb, 0, oblog);
+//          if (!obsfehlt) KLA // Protokolldatei vorhanden
             if (mitupd) {
               RS rupd(My); 
               vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-              einf.push_back(instyp(My->DBS,"hylastate",&hylastate));
+              einf.push_back(/*2*/instyp(My->DBS,"hylastate",&fsf.hstate));
               if (!hyla_uverz_nr) { // wenn fertig
                 if (fsf.hylastat==gescheitert) { // (hylastate=="8") // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
-                  einf.push_back(instyp(My->DBS,"hylanr","0",(uchar)1));
+                  einf.push_back(/*6*/instyp(My->DBS,"hylanr","0",(uchar)1));
                   //                  einf.push_back(instyp(My->DBS,"hyladials","-1",(uchar)1));
-                  hyladials="-1";
-                  einf.push_back(instyp(My->DBS,"hylastatus",&hylastatus));
-                  einf.push_back(instyp(My->DBS,"hylastatuscode",&hylastatuscode));
+                  fsf.hdials="-1";
+                  einf.push_back(/*2*/instyp(My->DBS,"hylastatus",&fsf.hstatus));
+                  einf.push_back(/*2*/instyp(My->DBS,"hylastatuscode",&fsf.hstatuscode));
                 } else if (fsf.hylastat==gesandt) { // (hylastate=="7") // 7, status erfolgreich
                   // ... und ggf. in capisuite loeschen
                   fsf.loeschecapi(obverb,oblog);
                 } // if (fsf.hylastat==gescheitert) else
               } // if (!hyla_uverz_nr) 
-              einf.push_back(instyp(My->DBS,"hyladials",&hyladials));
+              einf.push_back(/*2*/instyp(My->DBS,"hyladials",&fsf.hdials));
               string bedingung=string("id=")+fsf.id;
               rupd.update(altspool,einf,ZDB,bedingung,0);
               rupd.update(spooltab,einf,ZDB,bedingung,0);
             } // if (mitupd) 
             ausg<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
           } // if (!warteirgendwo)
-        } // if (!obsfehlt) ... else
+//        KLZ // if (!obsfehlt) ... else
 
         if (mitupd && (obcapi || obhyla)) {
           // im Erfolgsfall zugrundeliegende Dateien verschieben
@@ -4700,9 +4712,8 @@ void paramcl::zeigweitere()
           uchar hyla_uverz_nr=1;
           int obsfehlt=-1;
           /*fsf.*/
-          string hylastate;
-          setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, &obsfehlt, 2, obverb, oblog, &hylastate);
-          fsf.hylaausgeb(&ausg, this, 0, hylastate, obverb, 0, oblog);
+          setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, &obsfehlt, 2, obverb, oblog);
+          fsf.hylaausgeb(&ausg, this, 0, obverb, 0, oblog);
         } // if (!indb)
       } // for(size_t i=0;i<rueck.size();i++) 
     } // if (!lstat(hsendqvz.c_str(),&entryvz))
@@ -4889,14 +4900,14 @@ void paramcl::empfarch()
         } else if (runde==1) zs.Abfrage("SET NAMES 'latin1'");
         RS rins(My); 
         vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-        einf.push_back(instyp(My->DBS,"fsize",entrylog.st_size));
-        einf.push_back(instyp(My->DBS,"pages",seiten));
-        einf.push_back(instyp(My->DBS,"titel",&absdr));
-        einf.push_back(instyp(My->DBS,"tsid",&tsid));
+        einf.push_back(/*2*/instyp(My->DBS,"fsize",entrylog.st_size));
+        einf.push_back(/*2*/instyp(My->DBS,"pages",seiten));
+        einf.push_back(/*2*/instyp(My->DBS,"titel",&absdr));
+        einf.push_back(/*2*/instyp(My->DBS,"tsid",&tsid));
         //        einf.push_back(instyp(My->DBS,"callerid",&callerid));
-        einf.push_back(instyp(My->DBS,"devname",&devname));
-        einf.push_back(instyp(My->DBS,"id",&base));
-        einf.push_back(instyp(My->DBS,"transe",&tm));
+        einf.push_back(/*2*/instyp(My->DBS,"devname",&devname));
+        einf.push_back(/*2*/instyp(My->DBS,"id",&base));
+        einf.push_back(/*2*/instyp(My->DBS,"transe",&tm));
         rins.insert(tinca,einf, 1,0,ZDB?ZDB:!runde); 
         if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
         if (!rins.fnr) break;
@@ -5033,12 +5044,12 @@ void paramcl::empfarch()
         } else if (runde==1) zs.Abfrage("SET NAMES 'latin1'");
         RS rins(My); 
         vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-        einf.push_back(instyp(My->DBS,"titel",getname+", "+bsname));
-        einf.push_back(instyp(My->DBS,"tsid",&umst[1].wert));
-        einf.push_back(instyp(My->DBS,"transe",&modz));
-        einf.push_back(instyp(My->DBS,"id",&base));
-        einf.push_back(instyp(My->DBS,"fsize",entrysff.st_size));
-        einf.push_back(instyp(My->DBS,"csid",&umst[2].wert));
+        einf.push_back(/*2*/instyp(My->DBS,"titel",getname+", "+bsname));
+        einf.push_back(/*2*/instyp(My->DBS,"tsid",&umst[1].wert));
+        einf.push_back(/*2*/instyp(My->DBS,"transe",&modz));
+        einf.push_back(/*2*/instyp(My->DBS,"id",&base));
+        einf.push_back(/*2*/instyp(My->DBS,"fsize",entrysff.st_size));
+        einf.push_back(/*2*/instyp(My->DBS,"csid",&umst[2].wert));
         rins.insert(tinca,einf, 1,0,ZDB?ZDB:!runde); 
         if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
         if (!rins.fnr) break;
@@ -6462,11 +6473,11 @@ void inDbc(DB *My, const string& spooltab, const string& altspool, const string&
       RS rupd(My); 
       rupd.clear();
       vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-      einf.push_back(instyp(My->DBS,"capispoolpfad",&spooldir));
-      einf.push_back(instyp(My->DBS,"capispooldatei",&spoolfil));
-      einf.push_back(instyp(My->DBS,"cdateidatum",&entryspool.st_mtime));
-      einf.push_back(instyp(My->DBS,"cdateizeit",entryspool.st_mtime));
-      einf.push_back(instyp(My->DBS,"telnr",telnr));
+      einf.push_back(/*2*/instyp(My->DBS,"capispoolpfad",&spooldir));
+      einf.push_back(/*2*/instyp(My->DBS,"capispooldatei",&spoolfil));
+      einf.push_back(/*2*/instyp(My->DBS,"cdateidatum",&entryspool.st_mtime));
+      einf.push_back(/*2*/instyp(My->DBS,"cdateizeit",entryspool.st_mtime));
+      einf.push_back(/*2*/instyp(My->DBS,"telnr",telnr));
       string bedingung=string("id=")+fsfp->id;
       rupd.update(altspool,einf,ZDB,bedingung);
       rupd.update(spooltab,einf,ZDB,bedingung);
@@ -6558,10 +6569,10 @@ void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp,
       RS rupd(My); 
       rupd.clear();
       vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-      einf.push_back(instyp(My->DBS,"hylanr",hylaid));
-      einf.push_back(instyp(My->DBS,"hdateidatum",&entryspool.st_mtime));
-      einf.push_back(instyp(My->DBS,"hdateizeit",entryspool.st_mtime));
-      einf.push_back(instyp(My->DBS,"telnr",tel));
+      einf.push_back(/*2*/instyp(My->DBS,"hylanr",hylaid));
+      einf.push_back(/*2*/instyp(My->DBS,"hdateidatum",&entryspool.st_mtime));
+      einf.push_back(/*2*/instyp(My->DBS,"hdateizeit",entryspool.st_mtime));
+      einf.push_back(/*2*/instyp(My->DBS,"telnr",tel));
       string bedingung=string("id=")+fsfp->id;
       rupd.update(altspool,einf,ZDB,bedingung);
       rupd.update(spooltab,einf,ZDB,bedingung);
@@ -7067,7 +7078,8 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, strin
 
 
 // wird aufgerufen in: setzhylastat
-int paramcl::xferlog(const string& jobid, string *erg, int obverb, int oblog)
+int paramcl::xferlog(fsfcl *fsfp, int obverb, int oblog,
+     string *totpages, string *ntries, string *totdials, string *maxdials, string *tottries, string *maxtries)
 {
   // mit grep braucht er fuer eine 400 kb Datei ca. 170 clock()-Einheiten (vorne und hinten)
   // rueckwaerts braucht er fuer eine 400 kb Datei bis zum letzten Satz 93 clock()-Einheiten, bis zum ersten 220000.
@@ -7084,12 +7096,62 @@ int paramcl::xferlog(const string& jobid, string *erg, int obverb, int oblog)
 #ifdef direkt
   // ggf. broken pipe error; schadet aber experimentell dem Ergebnis nicht, deshalb Fehler unsichtbar
 //  systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null | grep -m 1 \""+this->hmodem+sep+jobid+sep+"\" | cut -f 14",obverb,oblog,&grueck); 
-  systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"tty[^"+sep+"]*"+sep+jobid+sep+"\" | cut -f 14",obverb,oblog,&grueck); 
+int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
+  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"tty[^"+sep+"]*"+sep+fsfp->hylanr+sep+"\" | cut -f 2,14,20",obverb,oblog,&grueck); 
   if (grueck.size()) {
     gefunden=1;
-    *erg=grueck[0];
+    vector<string> tok;
+    aufSplit(&tok,&grueck[0],sep);
+    if (tok.size()) {
+      fsfp->hstatus=tok[0];
+      if (tok[0]=="SEND") aktion=1;
+      else if (tok[0]=="UNSENT") aktion=2;
+      if (tok.size()>1) {
+        fsfp->hgerg=tok[1];
+        anfzweg(fsfp->hgerg);
+        switch (aktion) {
+          case 2: fsfp->hstate="8"; break;
+          case 1: 
+                  if (fsfp->hgerg.empty()) {
+                    fsfp->hylastat=gesandt;
+                    fsfp->hstate="7"; 
+                  } else {
+                    fsfp->hylastat=gescheitert;
+                    fsfp->hstate="6";
+                  }
+                  break;
+        } //         switch (aktion)
+        if (tok.size()>2) {
+          vector<string> toi;
+          aufSplit(&toi,&tok[1],'/');
+          if (toi.size()) {
+            if (totpages) *totpages=toi[0];
+            if (toi.size()>1) {
+              if (ntries) *ntries=toi[1];
+              if (toi.size()>2) {
+                fsfp->hdials=toi[2];
+                if (toi.size()>3) {
+                  if (totdials) *totdials=toi[3];
+                  if (toi.size()>4) {
+                    if (maxdials) *maxdials=toi[4];
+                    if (toi.size()>5) {
+                      if (tottries) *tottries=toi[5];
+                      if (toi.size()>6) {
+                        if (maxtries) *maxtries=toi[6];
+                      } //                       if (toi.size()>6)
+                    } //                     if (toi.size()>5)
+                  } //                   if (toi.size()>4)
+                } //                 if (toi.size()>3)
+              } //               if (toi.size()>2) 
+            } //             if (toi.size()>1) 
+          } //           if (toi.size()) 
+        } //         if (tok.size()>2) 
+      } //       if (tok.size()>1)
+    } else {
+      fsfp->hgerg=grueck[0];
+    } //     if (tok.size()) else
 #else
-    systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null | grep -m 1 \""+this->hmodem+sep+jobid+sep+"\"",obverb,oblog,&grueck); // ggf. broken pipe error
+    systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \""+this->hmodem+sep+fsfp->hylanr+sep+"\"",obverb,oblog,&grueck); // ggf. broken pipe error
     if (grueck.size()) KLA
       vector<string> tok;
     aufSplit(&tok,&grueck[grueck.size()-1],sep);
@@ -7117,18 +7179,18 @@ int paramcl::xferlog(const string& jobid, string *erg, int obverb, int oblog)
 #endif // mitgrep else
 #ifndef direkt
     if (tok.size()>15) KLA
-      if (tok[4]==jobid) KLA
+      if (tok[4]==fsfp->hylanr) KLA
         gefunden=1;
-    *erg=tok[13];
-    if ((*erg)=="\"\"") erg->clear();
+    fsfp->herg=tok[13];
+    if ((fsfp->herg)=="\"\"") fsfp->herg.clear();
     //            if (erg->length()>1) if ((*erg)[0]=='"' && (*erg)[erg->length()-1]=='"') *erg=erg->substr(1,erg->length()-2);
     if (obverb) KLA
-      Log(blaus+"tok[13]: "+schwarz+*erg,obverb,oblog);
+      Log(blaus+"tok[13]: "+schwarz+fsfp->herg,obverb,oblog);
     KLZ
 #ifndef mitgrep
 #ifdef rueckwaerts
       break;
-    KLZ // if (tok[4]==jobid) KLA
+    KLZ // if (tok[4]==fsfp->hylanr) KLA
       KLZ // if (tok.size()>15)
       rzeile.clear();
     KLZ else KLA
@@ -7138,6 +7200,8 @@ int paramcl::xferlog(const string& jobid, string *erg, int obverb, int oblog)
     KLZ // 
       KLZ // if (ch==10)
 #endif  // not direkt
+  } else {
+      fsfp->hylastat=fehlend;
   } // if f.is_open() oder (grueck.size()
 #ifdef profiler
   prf.ausgeb();
@@ -7167,8 +7231,7 @@ uchar paramcl::setzhconfp(string *protdaktp,int obverb)
 } // paramcl::setzhconfp
 
 // wird aufgerufen in paramcl::loeschefax, paramcl::untersuchespool, paramcl::zeigweitere
-void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, int *obsfehltp, uchar startvznr,
-    int obverb, int oblog, string *hylastatep, string *hyladialsp, string *hylastatusp, string *hylastatuscodep) 
+void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, int *obsfehltp, uchar startvznr, int obverb, int oblog) 
 {
   Log(violetts+Tx[T_setzhylastat]+schwarz,obverb,oblog);
   string startvznrs = ltoan(startvznr);
@@ -7193,25 +7256,17 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
   if (*obsfehltp) {
 //    this->hconfp=0;
     // wenn also die Datenbankdatei weder im Spool noch bei den Erledigten nachweisbar ist
-    if (this->xferlog(fsf->hylanr, &fsf->hgerg,obverb,oblog)) {
-      anfzweg(fsf->hgerg);
-      if (fsf->hgerg.empty()) {
-        fsf->hylastat=gesandt;
-      } else {
-        fsf->hylastat=gescheitert;
-      }
-    } else {
-      fsf->hylastat=fehlend;
-    }
+    this->xferlog(fsf,obverb,oblog);
+    fsf->sendqgespfad.clear();
   //   if (*obsfehltp)
   } else {
     hgelesen = setzhconfp(protdaktp,obverb);
     //  if (cpplies(*protdaktp,hconf,cs,0,':')) KLA
-    if (hylastatep) *hylastatep=this->hylconf[0].wert;
-    if (hyladialsp) *hyladialsp=this->hylconf[1].wert;
-    if (hylastatusp) *hylastatusp=this->hylconf[2].wert;
+    fsf->hstate=this->hylconf[0].wert;
+    fsf->hdials=this->hylconf[1].wert;
+    fsf->hstatus=this->hylconf[2].wert;
     if (this->hylconf[3].wert.empty()) this->hylconf[3].wert="0";
-    if (hylastatuscodep) *hylastatuscodep=this->hylconf[3].wert;
+    fsf->hstatuscode=this->hylconf[3].wert;
     vector<string> tok;
     string pdf=this->hylconf[4].wert==""?this->hylconf[8].wert:this->hylconf[4].wert;
     aufiSplit(&tok,&pdf,":");
@@ -7221,7 +7276,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
     if (*hyla_uverz_nrp) {
       fsf->hylastat=wartend;
-    // if (*obsfehltp) 
+    // if (*hyla_uverz_nrp) 
     }  else { 
       if (this->hylconf[0].wert=="8") {  
         fsf->hylastat=gescheitert;
@@ -7237,7 +7292,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
 } // setzhylastat
 
 // wird aufgerufen in untersuchespool und zeigweitere
-void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, string& hylastate, int obverb, uchar obzaehl, int oblog)
+void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obverb, uchar obzaehl, int oblog)
 {
   Log(violetts+Tx[T_hylaausgeb]+schwarz+"  hylastat: "+blau+FxStatS(&hylastat)+schwarz,obverb,oblog);
   *ausgp<<blau<<endl;
@@ -7270,7 +7325,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, string& 
     char buf[100];
     int hversuzahl=atol(pmp->hylconf[1].wert.c_str()); // totdials
     snprintf(buf,4,"%3d",hversuzahl);
-    *ausgp<<blau<<buf<<schwarz<<"/"<<pmp->hylconf[7].wert<<(hylastate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
+    *ausgp<<blau<<buf<<schwarz<<"/"<<pmp->hylconf[7].wert<<(this->hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
     // hier muss noch JobReqBusy, JobReqNoAnswer, JobReqNoCarrier, JobReqNoFCon, JobReqOther, JobReqProto dazu gerechnet werden
     time_t spoolbeg=(time_t)atol(pmp->hylconf[5].wert.c_str());
     strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", localtime(&spoolbeg));

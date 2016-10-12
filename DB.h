@@ -117,39 +117,40 @@ class instyp
  public:
     const string feld;
     string wert;
-    unsigned char obkeinwert; // bei update wird <wert> nicht als Wert, sondern als Feld o.ae. verwendet (z.B. update xy set altdatum = datum)
+    unsigned char obkeinwert; // bei update wird <wert> nicht als Wert, sondern ohne Anf'z.(z.B.als Feld) verwendet (z.B. update xy set altdatum = datum)
   private:
     //	char dbuf[21];
     inline string ersetze(const char *u, const char* alt, const char* neu);
     inline string *sersetze( string *src, string const& target, string const& repl);
   public:
-    template <typename tC> explicit instyp (DBSTyp eDBS, char* const feld, tC vwert): feld(feld) {
+    /*1*/template <typename tC> explicit instyp (DBSTyp eDBS, char* const feld, tC vwert): feld(feld) {
 //      feld=feld;
       wert=sqlft(eDBS,vwert);
       obkeinwert=0;
     }
-    template <typename tC> explicit instyp (DBSTyp eDBS, const char* feld, tC vwert):feld(feld) {
+    /*2*/template <typename tC> explicit instyp (DBSTyp eDBS, const char* feld, tC vwert):feld(feld) {
 //      feld=feld;
       wert=sqlft(eDBS,vwert);
       obkeinwert=0;
     }
 //    void init(){feld="";wert="";obkeinwert=0;}
-    instyp (DBSTyp eDBS, char* feld, char *vwert):feld(feld) {
+
+    /*3*/instyp (DBSTyp eDBS, char* feld, char *vwert):feld(feld) {
 //      feld=feld;
       wert=sqlft(eDBS,vwert,false);
       obkeinwert=0;
     }
-    instyp (DBSTyp eDBS, char* feld, char *vwert,char* zs):feld(feld) {
+    /*4*/instyp (DBSTyp eDBS, char* feld, char *vwert,char* zs):feld(feld) {
 //      feld=feld;
       wert=sqlft(eDBS,vwert,zs);
       obkeinwert=0;
     }
-    instyp (DBSTyp eDBS, char* feld, char *vwert,bool obzahl):feld(feld) {
+    /*5*/instyp (DBSTyp eDBS, char* feld, char *vwert,bool obzahl):feld(feld) {
 //      feld=feld;
       wert=sqlft(eDBS,vwert,obzahl);
       obkeinwert=0;
     }
-    instyp (DBSTyp eDBS, const char* feld, const char *vwert,unsigned char vobkeinwert):feld(feld) {
+    /*6*/instyp (DBSTyp eDBS, const char* feld, const char *vwert,unsigned char vobkeinwert):feld(feld) {
 //      feld=feld;
       wert=vwert;
       obkeinwert=vobkeinwert;
