@@ -4657,7 +4657,7 @@ void paramcl::zeigweitere()
         if (lstat(zugeh.c_str(),&entryvz)) {
           tuloeschen(rueck[i],cuser,obverb,oblog);
         }
-      }
+      } //       for(size_t i=0;i<rueck.size();i++)
       rueck.clear();
       // 20.1.16: wenn dort eine .txt-steht ohne zugehoerige .sff-Datei, dann haelt sie den ganzen Betrieb auf
       cmd=string("sudo find '")+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.txt'"; //  -printf '%f\\n'";
@@ -4723,6 +4723,7 @@ void paramcl::zeigweitere()
           string protdakt=hsendqvz+vtz+hylanr; // rueck[i];
           uchar hyla_uverz_nr=1;
           /*fsf.*/
+          ++faxord;
           setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 2, 0, obverb, oblog);
           fsf.hylaausgeb(&ausg, this, 0, obverb, 0, oblog);
         } // if (!indb)
