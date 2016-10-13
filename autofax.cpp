@@ -3839,6 +3839,7 @@ int paramcl::loeschefax(int obverb, int oblog)
     } // if (*(*cerg+0) && *(*cerg+1)) 
   } // while (cerg=zul.HolZeile(),cerg?*cerg:0) 
   svec crueck;
+  obverb=2;
   systemrueck("find /var/spool/capisuite/users -path \"*/sendq/fax*\" -name \"*.sff\"",obverb,oblog,&crueck);
   for(size_t i=0;i<crueck.size();i++) {
       /*5*/fsfcl fsf(crueck[i],wartend);
@@ -3850,6 +3851,7 @@ int paramcl::loeschefax(int obverb, int oblog)
       fsf.cspf=dir_name(crueck[i]);
       fsfv.push_back(fsf);
   }
+  obverb=0;
   if (!nrzf) {
     if (fsfv.size()) {
       ergnr=Tippzahl(Tx[T_Welches_Fax_soll_geloescht_werden]);
