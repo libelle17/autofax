@@ -3853,8 +3853,10 @@ int paramcl::loeschefax(int obverb, int oblog)
   } //   for(size_t i=0;i<crueck.size();i++)
   size_t ivorher=fsfv.size();
   sammlehyla(&fsfv);
-  Log("Hyla:",1,0);
   for(size_t i=ivorher;i<fsfv.size();i++) {
+      if (i==ivorher) {
+        Log("Hyla:",1,0);
+      }
       stringstream aus;
       fsfv[i].hylaausgeb(&aus,this,0,1,obverb,1,oblog);
       string auss=aus.str();
