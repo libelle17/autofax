@@ -3856,10 +3856,10 @@ int paramcl::loeschefax(int obverb, int oblog)
   Log("Hyla:",1,0);
   for(size_t i=ivorher;i<fsfv.size();i++) {
       stringstream aus;
-      fsfv[i].hylaausgeb(&aus,this,0,obverb,1,oblog);
+      fsfv[i].hylaausgeb(&aus,this,0,1,obverb,1,oblog);
       string auss=aus.str();
-      Log(auss+"'",1,oblog);
-  }
+      Log(auss,1,oblog);
+  } //   for(size_t i=ivorher;i<fsfv.size();i++) {
 
   if (!nrzf) {
     if (fsfv.size()) {
@@ -4543,7 +4543,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           int obsfehlt=-1;
           /*fsf.*/
           setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 0, &obsfehlt, obverb, oblog);
-          fsf.hylaausgeb(&ausg, this, obsfehlt, obverb, 0, oblog);
+          fsf.hylaausgeb(&ausg, this, obsfehlt, 0, obverb, 0, oblog);
 //          if (!obsfehlt) KLA // Protokolldatei vorhanden 12.10.16 sollte jetzt auch mit xferfax gehen
             if (mitupd) {
               RS rupd(My); 
@@ -4722,7 +4722,7 @@ void paramcl::zeigweitere()
         ausg<<rot<<Tx[T_Weitere_Spool_Eintraege]<<schwarz;
         obtitel=1;
       }
-      fsfv[i].hylaausgeb(&ausg, this, 0, obverb, 1, oblog);
+      fsfv[i].hylaausgeb(&ausg, this, 0, 0, obverb, 1, oblog);
     }
   } // if (obhyla) 
   if (obtitel) Log(ausg.str(),1,oblog);
@@ -7334,10 +7334,10 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
 } // setzhylastat
 
 // wird aufgerufen in untersuchespool und zeigweitere
-void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obverb, uchar obzaehl, int oblog)
+void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fuerlog, int obverb, uchar obzaehl, int oblog)
 {
   Log(violetts+Tx[T_hylaausgeb]+schwarz+"  hylastat: "+blau+FxStatS(&hylastat)+schwarz,obverb,oblog);
-  *ausgp<<blau<<endl;
+  if (!fuerlog) *ausgp<<blau<<endl;
   if (obzaehl) *ausgp<<++pmp->faxord<<")";
   else *ausgp<<"  ";
   *ausgp<<"Hyla: "<<schwarz;
