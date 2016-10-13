@@ -3848,10 +3848,17 @@ int paramcl::loeschefax(int obverb, int oblog)
       fsf.capisd=base_name(crueck[i]);
       fsf.hylanr="-1";
       fsf.cspf=dir_name(crueck[i]);
-      Log(string("Fax ")+blau+ltoan(++nr)+schwarz+": "+blau+fsf.dialstring+schwarz+"; "+blau+crueck[i]+schwarz,1,1);
+      Log(string("Fax ")+blau+ltoan(++nr)+schwarz+": "+blau+fsf.dialstring+schwarz+"; "+blau+crueck[i]+schwarz,1,0);
       fsfv.push_back(fsf);
   } //   for(size_t i=0;i<crueck.size();i++)
+  size_t ivorher=fsfv.size();
   sammlehyla(&fsfv);
+  Log("Hyla:",1,0);
+  for(size_t i=ivorher;i<fsfv.size();i++) {
+      stringstream aus;
+      fsfv[i].hylaausgeb(&aus,this,0,obverb,0,oblog);
+  }
+
   if (!nrzf) {
     if (fsfv.size()) {
       ergnr=Tippzahl(Tx[T_Welches_Fax_soll_geloescht_werden]);
