@@ -84,17 +84,22 @@ class fsfcl : public fxfcl // Faxsendfile
     string cspf;     // capispoolpfad
     string cdd;      // cdateidatum
     string cdials;   // capidials
+    string ctries; // parameter aus capiprot
+    string starttime; // parameter aus capiprot
+    string dialstring; // parameter aus capiprot
     string hstate; // Statuszahl ("state" in man sendq)
     string hstatus; // Textbeschreibung des letztes Fehlschlags
     string hstatuscode; // in xferfaxlog nicht gefunden
     string hdials;   // hyladials
     string hdd;      // hdateidatum
-    string sendqgespfad;
+    string sendqgespfad; // kann fuer capi oder hyla verwendet werden
     string hgerg;  // hyla_gescheitert_erg
     int hversuzahl;
     FxStat capistat=init;// 1=wartend, 2=gesandt, 3=gescheitert, 4=fehlend (in spool keine Capi-Datei eingetragen oder die eingetragene gibts nicht)
     FxStat hylastat=init;// 1=wartend, 2=gesandt, 3=gescheitert, 4=fehlend (in spool keine Capi-Datei eingetragen oder die eingetragene gibts nicht)
-    void archiviere(DB *My, paramcl *pmp, struct stat *entryp,uchar obgescheitert, FaxTyp ftyp, uchar *gel, int obverb, int oblog);
+  private:
+  public:
+      void archiviere(DB *My, paramcl *pmp, struct stat *entryp,uchar obgescheitert, FaxTyp ftyp, uchar *gel, int obverb, int oblog);
     int loeschecapi(int obverb, int oblog);
     int loeschehyla(paramcl *pmp,int obverb, int oblog);
     /*1*/fsfcl(string id, string npdf, string spdf, string telnr, unsigned prio, string capisd, int capids, string hylanr, int hdialsn, 
@@ -106,8 +111,9 @@ class fsfcl : public fxfcl // Faxsendfile
     /*4*/fsfcl(string& hylanr): hylanr(hylanr) {}
     /*5*/fsfcl(string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
     void setzcapistat(paramcl *pmp, struct stat *entrysendp);
-    void capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, string *ctriesp, int oblog,unsigned long faxord=0);
+    void capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, int oblog,unsigned long faxord=0);
     void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obverb=0, uchar obzaehl=0, int oblog=0);
+    int holcapiprot(int obverb);
 }; // class fsfcl
 
 extern const string s_true; // ="true";

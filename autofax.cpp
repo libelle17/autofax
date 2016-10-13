@@ -3830,12 +3830,26 @@ int paramcl::loeschefax(int obverb, int oblog)
       "IF(ISNULL(capispooldatei),'NULL',capispooldatei) p2,"
       "IF(ISNULL(capispoolpfad),'"+cfaxusersqvz+"',capispoolpfad) p3,"
       "hylanr p4 FROM `"+spooltab+"` ORDER BY id",ZDB);
+  size_t idmax=0;
   while (cerg=zul.HolZeile(),cerg?*cerg:0) {
     if (*(*cerg+0) && *(*cerg+1)) {
       Log(string("Fax ")+blau+ltoan(++nr)+schwarz+": "+*(*cerg+0),1,1);
+      idmax=atol(*(*cerg+1));
       /*3*/fsfv.push_back(fsfcl(*(*cerg+1),*(*cerg+2),*(*cerg+4),*(*cerg+3)));
     } // if (*(*cerg+0) && *(*cerg+1)) 
   } // while (cerg=zul.HolZeile(),cerg?*cerg:0) 
+  svec crueck;
+  systemrueck("find /var/spool/capisuite/users -path \"*/sendq/fax*\" -name \"*.sff\"",obverb,oblog,&crueck);
+  for(size_t i=0;i<crueck.size();i++) {
+      /*5*/fsfcl fsf(crueck[i],wartend);
+      fsf.holcapiprot(obverb);
+      idmax++;
+      fsf.id=ltoan(idmax);
+      fsf.capisd=base_name(crueck[i]);
+      fsf.hylanr="-1";
+      fsf.cspf=dir_name(crueck[i]);
+      fsfv.push_back(fsf);
+  }
   if (!nrzf) {
     if (fsfv.size()) {
       ergnr=Tippzahl(Tx[T_Welches_Fax_soll_geloescht_werden]);
@@ -4430,7 +4444,7 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
     capistat=fehlend;
   } else {
     string aktuser;
-    sendqgespfad = cspf+vtz+capisd;
+    sendqgespfad=cspf+vtz+capisd;
     size_t p1,p2;
     if ((p1=cspf.rfind(vtz))) if ((p2=cspf.rfind(vtz,p1-1))) {
       aktuser=cspf.substr(p2+1,p1-p2-1);
@@ -4440,7 +4454,7 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
         // gesandte und gescheiterte Faxe wurden von capisuite entsprechend umbenannt
         for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1)) { 
           // entspr. gefaxte/gescheiterte Datei in capisuite
-          sendqgespfad = (capistat==gescheitert?pmp->cfailedvz:pmp->cdonevz)+vtz+aktuser+"-"+capisd; 
+          sendqgespfad=(capistat==gescheitert?pmp->cfailedvz:pmp->cdonevz)+vtz+aktuser+"-"+capisd; 
           if (!lstat((sendqgespfad.c_str()), entrysendp)) break; 
         } 
         // hier koennte capistat auch fehlend sein
@@ -4492,13 +4506,12 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
         if (obcapi) {
           if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
           fsf.setzcapistat(this, &entrysend);
-          string ctries;
-          fsf.capiwausgeb(&ausg, &capiconf[2].wert, obverb, &ctries, oblog);
+          fsf.capiwausgeb(&ausg, &capiconf[2].wert, obverb, oblog);
           if (mitupd) {
             if (fsf.capistat==wartend) {
               RS rupd(My); 
               vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-              einf.push_back(/*2*/instyp(My->DBS,"capidials",&ctries));
+              einf.push_back(/*2*/instyp(My->DBS,"capidials",&fsf.ctries));
               string bedingung=string("id=")+fsf.id;
               if (mitupd) rupd.update(altspool,einf,ZDB,bedingung,0);
               if (mitupd) rupd.update(spooltab,einf,ZDB,bedingung,0);
@@ -4685,7 +4698,7 @@ void paramcl::zeigweitere()
             obtitel=1;
           }
           /*5*/fsfcl fsf(rueck[i],wartend);
-          fsf.capiwausgeb(&ausg, &capiconf[2].wert, obverb, 0, oblog, ++faxord);
+          fsf.capiwausgeb(&ausg, &capiconf[2].wert, obverb, oblog, ++faxord);
         } // if (!indb) 
       } // for(size_t i=0
     } // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
@@ -7015,13 +7028,33 @@ void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& 
   }
 }  // void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
 
-
+// wird verwendet in capiwausgeb, loeschef
+// Ergebnis: p1 (>=0): Datei war da und enthielt Punkt, -2: Datei war nicht da oder enthielt keinen Punkt
+int fsfcl::holcapiprot(int obverb)
+{
+  size_t p1=sendqgespfad.rfind('.');
+  if (p1) {
+    string suchtxt=sendqgespfad.substr(0,p1)+".txt";
+    schlArr cconf; cconf.init(3,"tries","starttime","dialstring");
+    struct stat cstat;
+    if (lstat(suchtxt.c_str(),&cstat)) {
+      return -2;
+    } else {
+      confdat cpconf(suchtxt,&cconf,obverb);
+      ctries=cconf[0].wert;
+      starttime=cconf[1].wert;
+      dialstring=cconf[2].wert;
+    } //   if (lstat(suchtxt.c_str(),&cstat)) else
+    return p1;
+  } //   if (p1)
+  return -1;
+} // int fsfcl::holcapiprot()
 
 
 // ermittelt die letzten Sendedaten zu sendqgespfad mit fsf.capistat, schreibt die Zahl der Versuche in ctries zurueck und ergaenzt den 
 // Anzeigezeiger ausgp
 // wird aufgerufen in: untersuchespool, zeigweitere
-void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, string *ctriesp, int oblog,unsigned long faxord)
+void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, int oblog,unsigned long faxord)
 {
   Log(violetts+Tx[T_capiwausgeb]+schwarz+"  capistat: "+blau+FxStatS(&capistat)+schwarz+ " maxtries: "+blau+*maxtries+schwarz,obverb,oblog);
   *ausgp<<blau<<endl;
@@ -7039,38 +7072,27 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, strin
     *ausgp<<hgrau<<" "<<Tx[T_nicht_in_der_Warteschlange]<<schwarz;
   }
   if (capistat!=fehlend) {
-    size_t p1=sendqgespfad.rfind('.');
-    if (p1) {
-      string suchtxt = sendqgespfad.substr(0,p1)+".txt";
-      /*
-      cppSchluess cconf[]={{"tries"},{"starttime"},{"dialstring"}};
-      size_t cs=sizeof cconf/sizeof*cconf;
-      */
-      schlArr cconf; cconf.init(3,"tries","starttime","dialstring");
-      struct stat cstat;
-      if (!lstat(suchtxt.c_str(),&cstat)) {
-        confdat cpconf(suchtxt,&cconf,obverb);
-        //    if (cpplies(suchtxt,cconf,cs)) KLA
-        // RS rmod(My,string("update spool set capidials=")+cconf[0].val+" where id = "+*(*cerg+0),ZDB);
-        if (ctriesp) *ctriesp=cconf[0].wert;
-        char buf[255];
-        int versuzahl=atol(cconf[0].wert.c_str());
-        snprintf(buf,4,"%3d",versuzahl);
-        struct stat statlock;
-        int objetzt=!lstat((sendqgespfad.substr(0,p1)+".lock").c_str(),&statlock);
-        *ausgp<<", "<<blau<<buf<<"/"<<*maxtries<<schwarz<<(objetzt?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
-        //                      if (versuzahl>12) ausg<<"zu spaet, ";
-        struct tm tm;
-        memset(&tm, 0, sizeof(struct tm));
-        strptime(cconf[1].wert.c_str(), "%a %b %d %H:%M:%S %Y", &tm);
-        strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", &tm);
-        *ausgp<<blau<<buf<<schwarz; 
-        *ausgp<<", T.: "<<blau<<setw(12)<<cconf[2].wert<<schwarz; 
-        *ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
-        *ausgp<<Tx[T_bzw]<<blau<<"*.txt"<<schwarz;
-      } // if (!lstat(suchtxt.c_str(),&cstat))
-    } // if (p1)
-    if (ctriesp) if (ctriesp->empty()) *ctriesp="0";
+    int p1=-3;
+    if ((p1=holcapiprot(obverb))>0) {
+      //    if (cpplies(suchtxt,cconf,cs)) KLA
+      // RS rmod(My,string("update spool set capidials=")+cconf[0].val+" where id = "+*(*cerg+0),ZDB);
+      char buf[255];
+      int versuzahl=atol(ctries.c_str());
+      snprintf(buf,4,"%3d",versuzahl);
+      struct stat statlock;
+      int objetzt=!lstat((sendqgespfad.substr(0,p1)+".lock").c_str(),&statlock);
+      *ausgp<<", "<<blau<<buf<<"/"<<*maxtries<<schwarz<<(objetzt?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
+      //                      if (versuzahl>12) ausg<<"zu spaet, ";
+      struct tm tm;
+      memset(&tm, 0, sizeof(struct tm));
+      strptime(starttime.c_str(), "%a %b %d %H:%M:%S %Y", &tm);
+      strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", &tm);
+      *ausgp<<blau<<buf<<schwarz; 
+      *ausgp<<", T.: "<<blau<<setw(12)<<dialstring<<schwarz; 
+      *ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
+      *ausgp<<Tx[T_bzw]<<blau<<"*.txt"<<schwarz;
+    } // if (!lstat(suchtxt.c_str(),&cstat))
+    if (ctries.empty()) ctries="0";
   } // if (capistat!=fehlend) 
 } // void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, string *ctriesp, int oblog,unsigned long faxord)
 
@@ -7270,7 +7292,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     vector<string> tok;
     string pdf=this->hylconf[4].wert==""?this->hylconf[8].wert:this->hylconf[4].wert;
     aufiSplit(&tok,&pdf,":");
-    fsf->sendqgespfad = this->varsphylavz + vtz + tok[tok.size()-1];
+    fsf->sendqgespfad=this->varsphylavz+vtz+tok[tok.size()-1];
     //    struct stat entryh;
     //    lstat(sendqgespfad.c_str(),&entryh); 
     // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
