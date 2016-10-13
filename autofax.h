@@ -355,6 +355,7 @@ class paramcl // Programmparameter
     void faxealle();
     void untersuchespool(uchar mitupd=1);
     void zeigweitere();
+    void sammlehyla(vector<fsfcl> *fsfvp);
     void empfarch();
     void schlussanzeige();
     void autofkonfschreib();

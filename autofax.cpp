@@ -3839,7 +3839,7 @@ int paramcl::loeschefax(int obverb, int oblog)
     } // if (*(*cerg+0) && *(*cerg+1)) 
   } // while (cerg=zul.HolZeile(),cerg?*cerg:0) 
   svec crueck;
-  systemrueck("find /var/spool/capisuite/users -path \"*/sendq/fax*\" -name \"*.sff\"",obverb,oblog,&crueck);
+  systemrueck("find \""+cfaxuservz+"\" -path \"*/sendq/fax*\" -name \"*.sff\"",obverb,oblog,&crueck);
   for(size_t i=0;i<crueck.size();i++) {
       /*5*/fsfcl fsf(crueck[i],wartend);
       fsf.holcapiprot(obverb);
@@ -3851,6 +3851,7 @@ int paramcl::loeschefax(int obverb, int oblog)
       Log(string("Fax ")+blau+ltoan(++nr)+schwarz+": "+blau+fsf.dialstring+schwarz+"; "+blau+crueck[i]+schwarz,1,1);
       fsfv.push_back(fsf);
   } //   for(size_t i=0;i<crueck.size();i++)
+  sammlehyla(&fsfv);
   if (!nrzf) {
     if (fsfv.size()) {
       ergnr=Tippzahl(Tx[T_Welches_Fax_soll_geloescht_werden]);
@@ -4705,34 +4706,43 @@ void paramcl::zeigweitere()
     } // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
   } // if (obcapi)
   if (obhyla) {
+    vector<fsfcl> fsfv;
+    sammlehyla(&fsfv);
+    for(size_t i=0;i<fsfv.size();i++) {
+      if (!obtitel) {
+        ausg<<rot<<Tx[T_Weitere_Spool_Eintraege]<<schwarz;
+        obtitel=1;
+      }
+      fsfv[i].hylaausgeb(&ausg, this, 0, obverb, 1, oblog);
+    }
+  } // if (obhyla) 
+  if (obtitel) Log(ausg.str(),1,oblog);
+} // void zeigweitere(DB *My, paramcl *pmp, int obverb=0,int oblog=0)
+
+void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
+{
+    struct stat entryvz;
     if (!lstat(hsendqvz.c_str(),&entryvz)) {
       cmd=string("sudo find '")+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";
-      rueck.clear();
-      systemrueck(cmd,obverb,oblog,&rueck);
-      for(size_t i=0;i<rueck.size();i++) {
+      svec qrueck;
+      systemrueck(cmd,obverb,oblog,&qrueck);
+      for(size_t i=0;i<qrueck.size();i++) {
         uchar indb=0;
-        string hylanr=rueck[i].substr(1);
+        string hylanr=qrueck[i].substr(1);
         char ***cerg;
         RS rs(My,string("SELECT id FROM `")+spooltab+"` WHERE hylanr="+hylanr,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
         if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
         if (!indb) {
-          if (!obtitel) {
-            ausg<<rot<<Tx[T_Weitere_Spool_Eintraege]<<schwarz;
-            obtitel=1;
-          }
           /*4*/fsfcl fsf(hylanr); // fsf(rueck[i]);
           string protdakt=hsendqvz+vtz+hylanr; // rueck[i];
           uchar hyla_uverz_nr=1;
           /*fsf.*/
           setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 2, 0, obverb, oblog);
-          fsf.hylaausgeb(&ausg, this, 0, obverb, 1, oblog);
+          fsfvp->push_back(fsf);
         } // if (!indb)
       } // for(size_t i=0;i<rueck.size();i++) 
     } // if (!lstat(hsendqvz.c_str(),&entryvz))
-  } // if (obhyla) 
-  if (obtitel) Log(ausg.str(),1,oblog);
-} // void zeigweitere(DB *My, paramcl *pmp, int obverb=0,int oblog=0)
-
+} // void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 
 // wird aufgerufen in: main
 void paramcl::empfarch()
