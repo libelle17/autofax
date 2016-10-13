@@ -4723,10 +4723,8 @@ void paramcl::zeigweitere()
           string protdakt=hsendqvz+vtz+hylanr; // rueck[i];
           uchar hyla_uverz_nr=1;
           /*fsf.*/
-          ++faxord;
-          cout<<rot<<"faxord: "<<faxord<<schwarz<<endl;
           setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 2, 0, obverb, oblog);
-          fsf.hylaausgeb(&ausg, this, 0, obverb, 0, oblog);
+          fsf.hylaausgeb(&ausg, this, 0, obverb, 1, oblog);
         } // if (!indb)
       } // for(size_t i=0;i<rueck.size();i++) 
     } // if (!lstat(hsendqvz.c_str(),&entryvz))
