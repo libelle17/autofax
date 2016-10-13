@@ -4724,6 +4724,7 @@ void paramcl::zeigweitere()
           uchar hyla_uverz_nr=1;
           /*fsf.*/
           ++faxord;
+          cout<<rot<<"faxord: "<<faxord<<schwarz<<endl;
           setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 2, 0, obverb, oblog);
           fsf.hylaausgeb(&ausg, this, 0, obverb, 0, oblog);
         } // if (!indb)
