@@ -3857,6 +3857,7 @@ int paramcl::loeschefax(int obverb, int oblog)
   for(size_t i=ivorher;i<fsfv.size();i++) {
       stringstream aus;
       fsfv[i].hylaausgeb(&aus,this,0,obverb,0,oblog);
+      Log(aus.str(),obverb,oblog);
   }
 
   if (!nrzf) {
