@@ -3818,7 +3818,7 @@ int paramcl::loeschefax(int obverb, int oblog)
 {
   Log(violetts+Tx[T_loeschefax]+schwarz,obverb,oblog);
   vector<fsfcl> fsfv;
-  size_t nr=0;
+  faxord=0;
   string ergnr,erg;
   char*** cerg;
   RS zul(My,string("SELECT CONCAT_WS(' ',LEFT(CONCAT(IF(ISNULL(original),'NULL',original),SPACE(50)),50),"
@@ -3833,7 +3833,7 @@ int paramcl::loeschefax(int obverb, int oblog)
   size_t idmax=0;
   while (cerg=zul.HolZeile(),cerg?*cerg:0) {
     if (*(*cerg+0) && *(*cerg+1)) {
-      Log(string("Fax ")+blau+ltoan(++nr)+schwarz+": "+*(*cerg+0),1,1);
+      Log(string("Fax ")+blau+ltoan(++faxord)+schwarz+": "+*(*cerg+0),1,1);
       idmax=atol(*(*cerg+1));
       /*3*/fsfv.push_back(fsfcl(*(*cerg+1),*(*cerg+2),*(*cerg+4),*(*cerg+3)));
     } // if (*(*cerg+0) && *(*cerg+1)) 
@@ -3848,7 +3848,7 @@ int paramcl::loeschefax(int obverb, int oblog)
       fsf.capisd=base_name(crueck[i]);
       fsf.hylanr="-1";
       fsf.cspf=dir_name(crueck[i]);
-      Log(string("Fax ")+blau+ltoan(++nr)+schwarz+": "+blau+fsf.dialstring+schwarz+"; "+blau+crueck[i]+schwarz,1,0);
+      Log(string("Fax ")+blau+ltoan(++faxord)+schwarz+": "+blau+fsf.dialstring+schwarz+"; "+blau+crueck[i]+schwarz,1,0);
       fsfv.push_back(fsf);
   } //   for(size_t i=0;i<crueck.size();i++)
   size_t ivorher=fsfv.size();
@@ -3866,7 +3866,7 @@ int paramcl::loeschefax(int obverb, int oblog)
       ergnr=Tippzahl(Tx[T_Welches_Fax_soll_geloescht_werden]);
       if (ergnr=="0") return 0;
       if (Tippob(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+gruen+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],"n")) {
-        nr=atol(ergnr.c_str())-1;
+        size_t nr=atol(ergnr.c_str())-1;
         if (nr>=0 && nr<fsfv.size()) {
           int zdng=0; // Zahl der nicht geloeschten
           if (fsfv[nr].capisd!="NULL" && !fsfv[nr].capisd.empty()) {
