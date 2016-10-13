@@ -3848,7 +3848,7 @@ int paramcl::loeschefax(int obverb, int oblog)
       fsf.capisd=base_name(crueck[i]);
       fsf.hylanr="-1";
       fsf.cspf=dir_name(crueck[i]);
-      Log(string("Fax ")+blau+ltoan(++nr)+schwarz+": "+blau+fsf.capisd+schwarz+"; "+blau+crueck[i]+schwarz,1,1);
+      Log(string("Fax ")+blau+ltoan(++nr)+schwarz+": "+blau+fsf.dialstring+schwarz+"; "+blau+crueck[i]+schwarz,1,1);
       fsfv.push_back(fsf);
   } //   for(size_t i=0;i<crueck.size();i++)
   if (!nrzf) {
