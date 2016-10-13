@@ -3857,7 +3857,7 @@ int paramcl::loeschefax(int obverb, int oblog)
   for(size_t i=ivorher;i<fsfv.size();i++) {
       stringstream aus;
       fsfv[i].hylaausgeb(&aus,this,0,obverb,1,oblog);
-      Log(aus.str(),1,oblog);
+      Log(aus.str().substr(0,aus.str().length()-1),1,oblog);
   }
 
   if (!nrzf) {
@@ -3884,7 +3884,7 @@ int paramcl::loeschefax(int obverb, int oblog)
           uchar hyla_uverz_nr=1;
           /*fsfv[nr].*/setzhylastat(&fsfv[nr], &protdakt, &hyla_uverz_nr, 0, 0, obverb, oblog); // hyla_uverz_nr, obsfehlt
           Log(violetts+"capistat: "+schwarz+FxStatS(&fsfv[nr].capistat)+violett+", hylastat: "+schwarz+FxStatS(&fsfv[nr].hylastat),obverb,oblog);
-          if (!zdng || (fsfv[nr].capistat==fehlend && fsfv[nr].hylastat==fehlend)) {
+          if (!zdng || (fsfv[nr].capistat==fehlend && fsfv[nr].hylastat==fehlend && !fsfv[nr].id.empty())) {
             RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE id="+fsfv[nr].id,-obverb);
           }
         } // if (nr>=0 && nr<fsfv.size()) 
