@@ -7261,26 +7261,6 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
   return gefunden;
 } // void xferlog(string varsphylavz, string jobid, string *erg)
 
-// wird aufgerufen in setzhylastat
-uchar paramcl::setzhconfp(string *protdaktp,int obverb)
-{
-  /*
-  static cppSchluess hconf[]={{"state"},{"totdials"},{"status"},{"statuscode"},{"!pdf"},{"tts"},{"number"},{"maxdials"},{"pdf"}};
-  static size_t cs=sizeof hconf/sizeof*hconf;
-  */
-  if (hylconf.zahl==9) {
-    hylconf.reset();
-  } else { 
-    hylconf.init(9,"state","totdials","status","statuscode","!pdf","tts","number","maxdials","pdf");
-  }
-//  static string *alt_protdaktp=0;
-//  if (alt_protdaktp!=protdaktp) KLA
-    confdat hylc(*protdaktp,&hylconf,obverb,':');
-    return hylc.obgelesen;
-//    alt_protdaktp=protdaktp;
-//  KLZ
-//  hconfp= hconf;
-} // paramcl::setzhconfp
 
 // wird aufgerufen in paramcl::loeschefax, paramcl::untersuchespool, paramcl::zeigweitere
 void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, uchar startvznr, int *obsfehltp,int obverb, int oblog) 
@@ -7313,8 +7293,14 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     this->xferlog(fsf,obverb,oblog);
     fsf->sendqgespfad.clear();
   //   if (obsfehlt)
-  } else {
-    hgelesen = setzhconfp(protdaktp,obverb);
+	} else {
+		if (hylconf.zahl==9) {
+			hylconf.reset();
+		} else { 
+			hylconf.init(9,"state","totdials","status","statuscode","!pdf","tts","number","maxdials","pdf");
+		}
+		confdat hylc(*protdaktp,&hylconf,obverb,':');
+		hgelesen= hylc.obgelesen;
     //  if (cpplies(*protdaktp,hconf,cs,0,':')) KLA
     fsf->hstate=this->hylconf[0].wert;
     fsf->hdials=this->hylconf[1].wert;
@@ -7322,6 +7308,8 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     fsf->hstatus=this->hylconf[2].wert;
     if (this->hylconf[3].wert.empty()) this->hylconf[3].wert="0";
     fsf->hstatuscode=this->hylconf[3].wert;
+		fsf->tts=hylconf[5].wert;
+		fsf->number=hylconf[6].wert;
     vector<string> tok;
     string pdf=this->hylconf[4].wert==""?this->hylconf[8].wert:this->hylconf[4].wert;
     aufiSplit(&tok,&pdf,":");
@@ -7380,13 +7368,13 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
     char buf[100];
     int hversuzahl=atol(hdials.c_str()); // totdials
     snprintf(buf,4,"%3d",hversuzahl);
-    *ausgp<<blau<<buf<<"/"<<pmp->hylconf[7].wert<<schwarz<<(this->hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
+    *ausgp<<blau<<buf<<"/"<<maxdials<<schwarz<<(hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
     // hier muss noch JobReqBusy, JobReqNoAnswer, JobReqNoCarrier, JobReqNoFCon, JobReqOther, JobReqProto dazu gerechnet werden
-    time_t spoolbeg=(time_t)atol(pmp->hylconf[5].wert.c_str());
+    time_t spoolbeg=(time_t)atol(tts.c_str());
     strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", localtime(&spoolbeg));
     *ausgp<<blau<<buf<<schwarz; 
     //              if (hversuzahl>12) ausg<<", zu spaet";
-    *ausgp<<", T.: "<<blau<<setw(12)<<pmp->hylconf[6].wert<<schwarz;
+    *ausgp<<", T.: "<<blau<<setw(12)<<number<<schwarz;
     *ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
   }
 } // void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obverb, uchar obzaehl, int oblog)

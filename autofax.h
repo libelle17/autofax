@@ -90,6 +90,8 @@ class fsfcl : public fxfcl // Faxsendfile
     string hstate; // Statuszahl ("state" in man sendq)
     string hstatus; // Textbeschreibung des letztes Fehlschlags
     string hstatuscode; // in xferfaxlog nicht gefunden
+		string tts;
+		string number;
     string hdials;   // hyladials
 		string maxdials; // maxdials (hylafax)
     string hdd;      // hdateidatum
@@ -295,7 +297,6 @@ class paramcl // Programmparameter
     int xferlog(fsfcl *fsfp, int obverb=0, int oblog=0,
         string *totpages=0, string *ntries=0, string *totdials=0, string *tottries=0, string *maxtries=0);
     void richtcapiher();
-    uchar setzhconfp(string *protdaktp,int obverb);
     void setzmodconfd();
     void setzzielmuster(confdat& afconf);
     void setzsql(confdat& afconf);
