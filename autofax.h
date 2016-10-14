@@ -91,6 +91,7 @@ class fsfcl : public fxfcl // Faxsendfile
     string hstatus; // Textbeschreibung des letztes Fehlschlags
     string hstatuscode; // in xferfaxlog nicht gefunden
     string hdials;   // hyladials
+		string maxdials; // maxdials (hylafax)
     string hdd;      // hdateidatum
     string sendqgespfad; // kann fuer capi oder hyla verwendet werden
     string hgerg;  // hyla_gescheitert_erg
@@ -111,7 +112,7 @@ class fsfcl : public fxfcl // Faxsendfile
     /*4*/fsfcl(string& hylanr): hylanr(hylanr) {}
     /*5*/fsfcl(string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
     void setzcapistat(paramcl *pmp, struct stat *entrysendp);
-    void capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, int oblog,unsigned long faxord=0);
+    void capiwausgeb(stringstream *ausgp, string& maxctrials, int obverb, int oblog,unsigned long faxord=0);
     void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
     int holcapiprot(int obverb);
 }; // class fsfcl
@@ -164,8 +165,8 @@ class paramcl // Programmparameter
     uchar logdateineu=0; // logdt vorher loeschen
     uchar hilfe=0;      // Hilfe anzeigen
     uchar zeigvers=0;  // Version anzeigen
-    unsigned long faxord; // Ordinalzahl des Faxes unter allen anstehenden Faxen
-    unsigned long geszahl=0;
+		size_t faxord; // Ordinalzahl des Faxes unter allen anstehenden Faxen
+		unsigned long geszahl=0;
     unsigned long ankzahl=0; // Zahl der angekommenen Faxe
     unsigned long dbzahl=0; // Zahl der ueberprueften Datenbankeintraege
     unsigned long wzahl=0;
@@ -212,7 +213,8 @@ class paramcl // Programmparameter
     string cFaxUeberschrift; // eigener Namen fuer Capisuite bis 20 Buchstaben
     string cklingelzahl; // Zahl der Klingeltoene, bis Capisuite einen Anruf annnimmt
     string hklingelzahl; // Zahl der Klingeltoene, bis Hylafax einen Anruf annnimmt
-    string maxdials;     // Zahl der Wahlversuche in Hylafax
+    string maxhdials;     // Zahl der Wahlversuche in Hylafax
+		string maxcdials;    // Zahl der Wahlversuche in Capisuite
     uchar capizukonf=0; // capi zu konfigurieren
     uchar hylazukonf=0; // hyla zu konfigurieren
     uchar oblgschreib=0; // Konfigurationsdatei seitens der Sprache voraussichtlich schreiben
@@ -291,7 +293,7 @@ class paramcl // Programmparameter
     void setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, uchar startvznr,int *obsfehltp=0, int obverb=0, int oblog=0);
     void konfcapi();
     int xferlog(fsfcl *fsfp, int obverb=0, int oblog=0,
-        string *totpages=0, string *ntries=0, string *totdials=0, string *maxdials=0, string *tottries=0, string *maxtries=0);
+        string *totpages=0, string *ntries=0, string *totdials=0, string *tottries=0, string *maxtries=0);
     void richtcapiher();
     uchar setzhconfp(string *protdaktp,int obverb);
     void setzmodconfd();

@@ -1710,9 +1710,6 @@ paramcl::paramcl(int argc, char** argv)
   vaufr=mpfad+" -norf"; // /usr/bin/autofax -norf
   saufr=base_name(vaufr); // autofax -norf
   tstart=clock();
-  cklingelzahl="1";
-  hklingelzahl="2"; // muss mindestens 2 sein, um die Nr. des anrufenden zu uebertragen
-  maxdials=11;
 //  konfdatname.clear();
 } // paramcl::paramcl()
 
@@ -2213,6 +2210,7 @@ void paramcl::liescapiconf()
       hylazuerst=1;
     }
   } // which vik 2>/dev/null || which vi
+	maxcdials=capiconf[2].wert; // 14.10.16
   if (capiconf[0].wert.empty()) {
     spoolcapivz="/var/spool/capisuite";
   }  else {           
@@ -2277,7 +2275,7 @@ void paramcl::VorgbAllg()
   // hmodemstr="ACM";
   maxcapiv="3";
   maxhylav="3";
-  maxdials="11";
+  maxhdials="11";
   gleichziel=1;
   obocri=1;
   obocra=1;
@@ -2289,6 +2287,8 @@ void paramcl::VorgbAllg()
   countrycode="49";
   LongDistancePrefix="0";
   InternationalPrefix="00";
+  cklingelzahl="1";
+  hklingelzahl="2"; // muss mindestens 2 sein, um die Nr. des anrufenden zu uebertragen
    // um z.B. spezielle Vorgaben (s. VorgbSpeziell) vom Server abhaengig machen zu koennen
 #ifdef _WIN32
   // char lpszUsername[255]; DWORD dUsername = sizeof(lpszUsername); GetUserName(lpszUsername, &dUsername);
@@ -2456,7 +2456,7 @@ void paramcl::lieskonfein()
     if (obcapi) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&cklingelzahl); else rzf=1;} lfd++;
     if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hmodem); else rzf=1;} lfd++;
     if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&hklingelzahl); else rzf=1;} lfd++;
-    if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxdials); else rzf=1;} lfd++;
+    if (obhyla) {if (cgconf[lfd].gelesen) cgconf[lfd].hole(&maxhdials); else rzf=1;} lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&gleichziel); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obocri); else rzf=1; lfd++;
     if (cgconf[lfd].gelesen) cgconf[lfd].hole(&obocra); else rzf=1; lfd++;
@@ -2518,7 +2518,7 @@ int paramcl::getcommandline()
         &cgconf,"cklingelzahl",&capizukonf));
   opts.push_back(/*2*/optioncl("hkzl","hklingelzahl",&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,&hklingelzahl,pzahl,
         &cgconf,"hklingelzahl",&hylazukonf));
-  opts.push_back(/*2*/optioncl("md","maxdials",&Tx, T_Zahl_der_Wahlversuche_in_Hylafax,&maxdials,pzahl,
+  opts.push_back(/*2*/optioncl("md","maxdials",&Tx, T_Zahl_der_Wahlversuche_in_Hylafax,&maxhdials,pzahl,
         &cgconf,"maxdials",&hylazukonf));
   opts.push_back(/*4*/optioncl("gz","gleichziel", &Tx, T_Faxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,&gleichziel,1,
         &cgconf,"gleichziel",&obkschreib));
@@ -2848,8 +2848,8 @@ void paramcl::rueckfragen()
         cgconf[lfd].setze(&hklingelzahl);
       }
       if (cgconf[++lfd].wert.empty() || rzf) {
-        maxdials=Tippzahl(Tx[T_Zahl_der_Wahlversuche_in_Hylafax],maxdials.c_str());
-        cgconf[lfd].setze(&maxdials);
+        maxhdials=Tippzahl(Tx[T_Zahl_der_Wahlversuche_in_Hylafax],maxhdials.c_str());
+        cgconf[lfd].setze(&maxhdials);
       }
     } else {
       lfd+=3;
@@ -3830,28 +3830,24 @@ int paramcl::loeschefax(int obverb, int oblog)
       "IF(ISNULL(capispooldatei),'NULL',capispooldatei) p2,"
       "IF(ISNULL(capispoolpfad),'"+cfaxusersqvz+"',capispoolpfad) p3,"
       "hylanr p4 FROM `"+spooltab+"` ORDER BY id",ZDB);
-  size_t idmax=0;
   while (cerg=zul.HolZeile(),cerg?*cerg:0) {
     if (*(*cerg+0) && *(*cerg+1)) {
       Log(string("Fax ")+blau+ltoan(++faxord)+schwarz+": "+*(*cerg+0),1,1);
-      idmax=atol(*(*cerg+1));
       /*3*/fsfv.push_back(fsfcl(*(*cerg+1),*(*cerg+2),*(*cerg+4),*(*cerg+3)));
     } // if (*(*cerg+0) && *(*cerg+1)) 
   } // while (cerg=zul.HolZeile(),cerg?*cerg:0) 
-  svec crueck;
-  systemrueck("find \""+cfaxuservz+"\" -path \"*/sendq/fax*\" -name \"*.sff\"",obverb,oblog,&crueck);
-  for(size_t i=0;i<crueck.size();i++) {
-      /*5*/fsfcl fsf(crueck[i],wartend);
-      fsf.holcapiprot(obverb);
-      idmax++;
-      fsf.id=ltoan(idmax);
-      fsf.capisd=base_name(crueck[i]);
-      fsf.hylanr="-1";
-      fsf.cspf=dir_name(crueck[i]);
-      Log(string("Fax ")+blau+ltoan(++faxord)+schwarz+": "+blau+fsf.dialstring+schwarz+"; "+blau+crueck[i]+schwarz,1,0);
-      fsfv.push_back(fsf);
-  } //   for(size_t i=0;i<crueck.size();i++)
   size_t ivorher=fsfv.size();
+	sammlecapi(&fsfv);
+  for(size_t i=ivorher;i<fsfv.size();i++) {
+      if (i==ivorher) {
+        Log("Capi:",1,0);
+      }
+			stringstream aus;
+			fsfv[i].capiwausgeb(&aus,maxcdials,obverb,oblog,++faxord);
+      string auss=aus.str();
+      Log(auss,1,oblog);
+	}
+  ivorher=fsfv.size();
   sammlehyla(&fsfv);
   for(size_t i=ivorher;i<fsfv.size();i++) {
       if (i==ivorher) {
@@ -4519,7 +4515,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
         if (obcapi) {
           if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
           fsf.setzcapistat(this, &entrysend);
-          fsf.capiwausgeb(&ausg, &capiconf[2].wert, obverb, oblog);
+          fsf.capiwausgeb(&ausg,maxcdials, obverb, oblog);
           if (mitupd) {
             if (fsf.capistat==wartend) {
               RS rupd(My); 
@@ -4605,8 +4601,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           }
           // die Flags aller aktivierten Faxwege stehen auf gescheitert
           uchar allegesch=0;
-          if (obcapi && obhyla && fsf.capistat==gescheitert && maxcapiv>=capiconf[2].wert) allegesch=1;
-          else if (obcapi && obhyla && fsf.hylastat==gescheitert && maxhylav>=maxdials) allegesch=1;
+          if (obcapi && obhyla && fsf.capistat==gescheitert && maxcapiv>=maxcdials) allegesch=1;
+          else if (obcapi && obhyla && fsf.hylastat==gescheitert && maxhylav>=maxhdials) allegesch=1;
           else allegesch = ((!obcapi || fsf.capistat==gescheitert) && (!obhyla || fsf.hylastat==gescheitert));
           // die Flags aller aktivierten Faxwege stehen auf gescheitert oder fehlend
           uchar nimmer = ((!obcapi || fsf.capistat==fehlend || fsf.capistat==gescheitert) && 
@@ -4664,8 +4660,8 @@ void paramcl::zeigweitere()
         ausg<<rot<<Tx[T_Weitere_Spool_Eintraege]<<schwarz;
         obtitel=1;
       }
-      fsfv[i].capiwausgeb(&ausg, &capiconf[2].wert, obverb, oblog, ++faxord);
-    }
+      fsfv[i].capiwausgeb(&ausg, maxcdials, obverb, oblog, ++faxord);
+    } //     for(size_t i=0;i<fsfv.size();i++)
   } // if (obcapi)
   if (obhyla) {
     vector<fsfcl> fsfv;
@@ -4696,13 +4692,11 @@ void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
         if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
         if (!indb) {
           /*5*/fsfcl fsf(rueck[i],wartend);
-      fsf.holcapiprot(obverb);
-      idmax++;
-      fsf.id=ltoan(idmax);
-      fsf.capisd=base_name(crueck[i]);
-      fsf.hylanr="-1";
-      fsf.cspf=dir_name(crueck[i]);
-          fsfvp->push_back(fsf);
+					fsf.holcapiprot(obverb);
+					fsf.capisd=base_name(rueck[i]);
+					fsf.hylanr="-1";
+					fsf.cspf=dir_name(rueck[i]);
+					fsfvp->push_back(fsf);
         } // if (!indb) 
       } // for(size_t i=0
     } // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
@@ -6671,7 +6665,7 @@ void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
     string sendfax;
 //    systemrueck("sudo sh -c 'which sendfax'",obverb,1,&rueck);
     if (obprogda("sendfax",obverb,oblog,&sendfax)) {
-      string cmd=sendfax+" -n -A "+(isnumeric(pmp->maxdials)?"-T "+pmp->maxdials:"")+" -d "+tel+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
+      string cmd=sendfax+" -n -A "+(isnumeric(pmp->maxhdials)?"-T "+pmp->maxhdials:"")+" -d "+tel+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
       svec faxerg;
       // <<rot<<"Achtung: faxemith: "<<endl<<schwarz<<cmd<<endl;
       if (!systemrueck(cmd,1,1,&faxerg,0,wahr,Tx[T_HylafaxBefehl])) {
@@ -7097,9 +7091,9 @@ int fsfcl::holcapiprot(int obverb)
 // ermittelt die letzten Sendedaten zu sendqgespfad mit fsf.capistat, schreibt die Zahl der Versuche in ctries zurueck und ergaenzt den 
 // Anzeigezeiger ausgp
 // wird aufgerufen in: untersuchespool, zeigweitere
-void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, int oblog,unsigned long faxord)
+void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, int obverb, int oblog,unsigned long faxord)
 {
-  Log(violetts+Tx[T_capiwausgeb]+schwarz+"  capistat: "+blau+FxStatS(&capistat)+schwarz+ " maxtries: "+blau+*maxtries+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_capiwausgeb]+schwarz+"  capistat: "+blau+FxStatS(&capistat)+schwarz+ " maxcdials: "+blau+maxcdials+schwarz,obverb,oblog);
   *ausgp<<blau<<endl;
   if (faxord) *ausgp<<faxord<<")";
   else *ausgp<<"  ";
@@ -7124,7 +7118,7 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, int o
       snprintf(buf,4,"%3d",versuzahl);
       struct stat statlock;
       int objetzt=!lstat((sendqgespfad.substr(0,p1)+".lock").c_str(),&statlock);
-      *ausgp<<", "<<blau<<buf<<"/"<<*maxtries<<schwarz<<(objetzt?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
+      *ausgp<<", "<<blau<<buf<<"/"<<maxcdials<<schwarz<<(objetzt?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
       //                      if (versuzahl>12) ausg<<"zu spaet, ";
       struct tm tm;
       memset(&tm, 0, sizeof(struct tm));
@@ -7137,12 +7131,11 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, int o
     } // if (!lstat(suchtxt.c_str(),&cstat))
     if (ctries.empty()) ctries="0";
   } // if (capistat!=fehlend) 
-} // void fsfcl::capiwausgeb(stringstream *ausgp, string *maxtries, int obverb, string *ctriesp, int oblog,unsigned long faxord)
+} // void fsfcl::capiwausgeb(stringstream *ausgp, int obverb, string *ctriesp, int oblog,unsigned long faxord)
 
 
 // wird aufgerufen in: setzhylastat
-int paramcl::xferlog(fsfcl *fsfp, int obverb, int oblog,
-     string *totpages, string *ntries, string *totdials, string *maxdials, string *tottries, string *maxtries)
+int paramcl::xferlog(fsfcl *fsfp,int obverb,int oblog,string *totpages,string *ntries,string *totdials,string *tottries,string *maxtries)
 {
   // mit grep braucht er fuer eine 400 kb Datei ca. 170 clock()-Einheiten (vorne und hinten)
   // rueckwaerts braucht er fuer eine 400 kb Datei bis zum letzten Satz 93 clock()-Einheiten, bis zum ersten 220000.
@@ -7196,7 +7189,7 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
                 if (toi.size()>3) {
                   if (totdials) *totdials=toi[3];
                   if (toi.size()>4) {
-                    if (maxdials) *maxdials=toi[4];
+                    fsfp->maxdials=toi[4];
                     if (toi.size()>5) {
                       if (tottries) *tottries=toi[5];
                       if (toi.size()>6) {
@@ -7329,6 +7322,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     //  if (cpplies(*protdaktp,hconf,cs,0,':')) KLA
     fsf->hstate=this->hylconf[0].wert;
     fsf->hdials=this->hylconf[1].wert;
+    fsf->maxdials=this->hylconf[7].wert;
     fsf->hstatus=this->hylconf[2].wert;
     if (this->hylconf[3].wert.empty()) this->hylconf[3].wert="0";
     fsf->hstatuscode=this->hylconf[3].wert;

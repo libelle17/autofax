@@ -55,4 +55,4 @@ nnoremap <C-j> :cclose<CR>
 nnoremap <C-T> :GtagsCursor<CR>
 map <C-n> :cn<CR>
 map <C-p> :cp<CR>
-map <C-h> :Gtags-cscope<CR><CR> 
+map <C-k> :Gtags-cscope<CR><CR> 
