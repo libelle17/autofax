@@ -3839,9 +3839,7 @@ int paramcl::loeschefax(int obverb, int oblog)
   size_t ivorher=fsfv.size();
 	sammlecapi(&fsfv);
   for(size_t i=ivorher;i<fsfv.size();i++) {
-      if (i==ivorher) {
-        Log("Capi:",1,0);
-      }
+//      if (i==ivorher)  Log("Capi:",1,0);
 			stringstream aus;
 			fsfv[i].capiwausgeb(&aus,maxcdials,1,obverb,oblog,++faxord);
       string auss=aus.str();
@@ -3850,9 +3848,7 @@ int paramcl::loeschefax(int obverb, int oblog)
   ivorher=fsfv.size();
   sammlehyla(&fsfv);
   for(size_t i=ivorher;i<fsfv.size();i++) {
-      if (i==ivorher) {
-        Log("Hyla:",1,0);
-      }
+//      if (i==ivorher) Log("Hyla:",1,0);
       stringstream aus;
       fsfv[i].hylaausgeb(&aus,this,0,1,obverb,1,oblog);
       string auss=aus.str();
