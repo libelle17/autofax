@@ -3843,7 +3843,7 @@ int paramcl::loeschefax(int obverb, int oblog)
         Log("Capi:",1,0);
       }
 			stringstream aus;
-			fsfv[i].capiwausgeb(&aus,maxcdials,obverb,oblog,++faxord);
+			fsfv[i].capiwausgeb(&aus,maxcdials,1,obverb,oblog,++faxord);
       string auss=aus.str();
       Log(auss,1,oblog);
 	}
@@ -4515,7 +4515,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
         if (obcapi) {
           if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
           fsf.setzcapistat(this, &entrysend);
-          fsf.capiwausgeb(&ausg,maxcdials, obverb, oblog);
+          fsf.capiwausgeb(&ausg,maxcdials, 0, obverb, oblog);
           if (mitupd) {
             if (fsf.capistat==wartend) {
               RS rupd(My); 
@@ -4660,7 +4660,7 @@ void paramcl::zeigweitere()
         ausg<<rot<<Tx[T_Weitere_Spool_Eintraege]<<schwarz;
         obtitel=1;
       }
-      fsfv[i].capiwausgeb(&ausg, maxcdials, obverb, oblog, ++faxord);
+      fsfv[i].capiwausgeb(&ausg, maxcdials, 0, obverb, oblog, ++faxord);
     } //     for(size_t i=0;i<fsfv.size();i++)
   } // if (obcapi)
   if (obhyla) {
@@ -7091,10 +7091,10 @@ int fsfcl::holcapiprot(int obverb)
 // ermittelt die letzten Sendedaten zu sendqgespfad mit fsf.capistat, schreibt die Zahl der Versuche in ctries zurueck und ergaenzt den 
 // Anzeigezeiger ausgp
 // wird aufgerufen in: untersuchespool, zeigweitere
-void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, int obverb, int oblog,unsigned long faxord)
+void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, int obverb, int oblog,unsigned long faxord)
 {
   Log(violetts+Tx[T_capiwausgeb]+schwarz+"  capistat: "+blau+FxStatS(&capistat)+schwarz+ " maxcdials: "+blau+maxcdials+schwarz,obverb,oblog);
-  *ausgp<<blau<<endl;
+  if (!fuerlog) *ausgp<<blau<<endl;
   if (faxord) *ausgp<<faxord<<")";
   else *ausgp<<"  ";
   *ausgp<<"Capi: "<<schwarz;
@@ -7375,7 +7375,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
     } else if (hylastat==gesandt) {
       *ausgp<<blau<<" "<<Tx[T_gesandt]<<schwarz;
     }
-  }
+  } // if (obsfehlt) else
   // wenn eine Protokolldatei auslesbar war
 //  if (pmp->hconfp) {
         // modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
@@ -7384,7 +7384,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
     char buf[100];
     int hversuzahl=atol(pmp->hylconf[1].wert.c_str()); // totdials
     snprintf(buf,4,"%3d",hversuzahl);
-    *ausgp<<blau<<buf<<schwarz<<"/"<<pmp->hylconf[7].wert<<(this->hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
+    *ausgp<<blau<<buf<<"/"<<pmp->hylconf[7].wert<<schwarz<<(this->hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
     // hier muss noch JobReqBusy, JobReqNoAnswer, JobReqNoCarrier, JobReqNoFCon, JobReqOther, JobReqProto dazu gerechnet werden
     time_t spoolbeg=(time_t)atol(pmp->hylconf[5].wert.c_str());
     strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", localtime(&spoolbeg));

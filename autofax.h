@@ -112,7 +112,7 @@ class fsfcl : public fxfcl // Faxsendfile
     /*4*/fsfcl(string& hylanr): hylanr(hylanr) {}
     /*5*/fsfcl(string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
     void setzcapistat(paramcl *pmp, struct stat *entrysendp);
-    void capiwausgeb(stringstream *ausgp, string& maxctrials, int obverb, int oblog,unsigned long faxord=0);
+    void capiwausgeb(stringstream *ausgp, string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,unsigned long faxord=0);
     void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
     int holcapiprot(int obverb);
 }; // class fsfcl
