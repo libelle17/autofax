@@ -7378,7 +7378,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
   if (pmp->hgelesen) {
     *ausgp<<", ";
     char buf[100];
-    int hversuzahl=atol(pmp->hylconf[1].wert.c_str()); // totdials
+    int hversuzahl=atol(hdials.c_str()); // totdials
     snprintf(buf,4,"%3d",hversuzahl);
     *ausgp<<blau<<buf<<"/"<<pmp->hylconf[7].wert<<schwarz<<(this->hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
     // hier muss noch JobReqBusy, JobReqNoAnswer, JobReqNoCarrier, JobReqNoFCon, JobReqOther, JobReqProto dazu gerechnet werden
