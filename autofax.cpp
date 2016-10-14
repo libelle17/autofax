@@ -3858,32 +3858,32 @@ int paramcl::loeschefax(int obverb, int oblog)
   if (!nrzf) {
     if (fsfv.size()) {
       ergnr=Tippzahl(Tx[T_Welches_Fax_soll_geloescht_werden]);
-      if (ergnr=="0") return 0;
-      if (Tippob(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+gruen+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],"n")) {
-        size_t nr=atol(ergnr.c_str())-1;
-        if (nr>=0 && nr<fsfv.size()) {
-          int zdng=0; // Zahl der nicht geloeschten
-          if (fsfv[nr].capisd!="NULL" && !fsfv[nr].capisd.empty()) {
-            zdng+=fsfv[nr].loeschecapi(obverb,oblog);
-            Log(blaus+"capi: "+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng)+blau+Tx[T_Capispooldatei]+
-                schwarz+fsfv[nr].capisd,obverb,oblog);
-          }
-          if (fsfv[nr].hylanr!="NULL" && !fsfv[nr].hylanr.empty()) {
-            zdng+=fsfv[nr].loeschehyla(this,obverb,oblog);
-            Log(blaus+"hyla: "+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng)+blau+Tx[T_hylanr]+schwarz+fsfv[nr].capisd,obverb,oblog);
-          }
-          Log(blaus+Tx[T_Gesamt]+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng),obverb,oblog);
-          struct stat entrysend;
-          fsfv[nr].setzcapistat(this,&entrysend);
-          string protdakt;
-          uchar hyla_uverz_nr=1;
-          /*fsfv[nr].*/setzhylastat(&fsfv[nr], &protdakt, &hyla_uverz_nr, 0, 0, obverb, oblog); // hyla_uverz_nr, obsfehlt
-          Log(violetts+"capistat: "+schwarz+FxStatS(&fsfv[nr].capistat)+violett+", hylastat: "+schwarz+FxStatS(&fsfv[nr].hylastat),obverb,oblog);
-          if ((!zdng || (fsfv[nr].capistat==fehlend && fsfv[nr].hylastat==fehlend)) && !fsfv[nr].id.empty()) {
-            RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE id="+fsfv[nr].id,-obverb);
-          }
-        } // if (nr>=0 && nr<fsfv.size()) 
-      } // if (Tippob(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+violett+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],"n")) 
+			if (ergnr=="0") return 0;
+			size_t nr=atol(ergnr.c_str())-1;
+			if (nr>=0 && nr<fsfv.size()) {
+				if (Tippob(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+gruen+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],"n")) {
+					int zdng=0; // Zahl der nicht geloeschten
+					if (fsfv[nr].capisd!="NULL" && !fsfv[nr].capisd.empty()) {
+						zdng+=fsfv[nr].loeschecapi(obverb,oblog);
+						Log(blaus+"capi: "+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng)+blau+Tx[T_Capispooldatei]+
+								schwarz+fsfv[nr].capisd,obverb,oblog);
+					}
+					if (fsfv[nr].hylanr!="NULL" && !fsfv[nr].hylanr.empty()) {
+						zdng+=fsfv[nr].loeschehyla(this,obverb,oblog);
+						Log(blaus+"hyla: "+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng)+blau+Tx[T_hylanr]+schwarz+fsfv[nr].capisd,obverb,oblog);
+					}
+					Log(blaus+Tx[T_Gesamt]+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng),obverb,oblog);
+					struct stat entrysend;
+					fsfv[nr].setzcapistat(this,&entrysend);
+					string protdakt;
+					uchar hyla_uverz_nr=1;
+					/*fsfv[nr].*/setzhylastat(&fsfv[nr], &protdakt, &hyla_uverz_nr, 0, 0, obverb, oblog); // hyla_uverz_nr, obsfehlt
+					Log(violetts+"capistat: "+schwarz+FxStatS(&fsfv[nr].capistat)+violett+", hylastat: "+schwarz+FxStatS(&fsfv[nr].hylastat),obverb,oblog);
+					if ((!zdng || (fsfv[nr].capistat==fehlend && fsfv[nr].hylastat==fehlend)) && !fsfv[nr].id.empty()) {
+						RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE id="+fsfv[nr].id,-obverb);
+					}
+				} // if (Tippob(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+violett+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],"n")) 
+			} // if (nr>=0 && nr<fsfv.size()) 
     } else {
       Log(Tx[T_Kein_Fax_zum_Loeschen_vorhanden],1,oblog);
     } // if (fsfv.size()) 
