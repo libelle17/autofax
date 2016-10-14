@@ -28,7 +28,7 @@ syntax enable
 " set background=dark
 set encoding=utf8
 set ffs=unix,dos,mac
-set expandtab
+set noexpandtab
 set smarttab
 set shiftwidth=2
 set lbr
@@ -37,7 +37,7 @@ set tw=1000
 " set si
 set wrap
 set laststatus=2
-" set mouse=a
+set mouse=a
 nnoremap <silent><C-j> m`:silent +g/\m^\s*$/d<CR>``:noh<CR>
 nnoremap <silent><C-k> m`:silent -g/\m^\s*$/d<CR>``:noh<CR>
 nnoremap <silent><A-j> :set paste<CR>m`o<Esc>``:set nopaste<CR>
@@ -50,4 +50,9 @@ inoremap <c-c> <c-o>:set nocul<cr><c-c>
 " :au InsertLeave *  hi StatusLine term=reverse ctermfg=0 ctermbg=7 gui=bold,reverse
 set tabpagemax=100
 nnoremap t <C-]>
-nmap \\ <c-]>
+" nmap \\ <c-]>
+nnoremap <C-j> :cclose<CR>
+nnoremap <C-T> :GtagsCursor<CR>
+map <C-n> :cn<CR>
+map <C-p> :cp<CR>
+map <C-h> :Gtags-cscope<CR><CR> 

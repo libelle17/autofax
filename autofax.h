@@ -300,6 +300,7 @@ class paramcl // Programmparameter
     int pruefinstv();
     int kompilbase(const string& was,const string& endg);
     int kompiliere(const string& was,const string& endg, const string& vorcfg=s_true,const string& cfgbismake=s_dampand);
+    void bereinigecapi();
   public:
     paramcl(int argc,char** argv);
     ~paramcl();
@@ -355,6 +356,7 @@ class paramcl // Programmparameter
     void faxealle();
     void untersuchespool(uchar mitupd=1);
     void zeigweitere();
+    void sammlecapi(vector<fsfcl> *fsfvp);
     void sammlehyla(vector<fsfcl> *fsfvp);
     void empfarch();
     void schlussanzeige();

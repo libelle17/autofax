@@ -4656,65 +4656,16 @@ void paramcl::zeigweitere()
   Log(violetts+Tx[T_zeigweitere]+schwarz,obverb,oblog);
   static int obtitel=0;
   stringstream ausg; //      ausg.str(std::string()); ausg.clear();
-  vector<string> rueck;
-  struct stat entryvz;
   if (obcapi) {
-    if (!lstat(cfaxusersqvz.c_str(),&entryvz)) {
-      // 7.2.16: alte *.lock-Dateien loeschen
-      cmd=string("sudo find '")+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.lock'"; //  -printf '%f\\n'";
-      systemrueck(cmd,obverb,oblog,&rueck);
-      for(size_t i=0;i<rueck.size();i++) {
-        string stamm,exten;
-        getstammext(&rueck[i],&stamm,&exten);
-        string zugeh=stamm+".sff";
-        if (lstat(zugeh.c_str(),&entryvz)) {
-          tuloeschen(rueck[i],cuser,obverb,oblog);
-        }
-      } //       for(size_t i=0;i<rueck.size();i++)
-      rueck.clear();
-      // 20.1.16: wenn dort eine .txt-steht ohne zugehoerige .sff-Datei, dann haelt sie den ganzen Betrieb auf
-      cmd=string("sudo find '")+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.txt'"; //  -printf '%f\\n'";
-      systemrueck(cmd,obverb,oblog,&rueck);
-      for(size_t i=0;i<rueck.size();i++) {
-        string stamm,exten;
-        getstammext(&rueck[i],&stamm,&exten);
-        string zugeh=stamm+".sff";
-        if (lstat(zugeh.c_str(),&entryvz)) {
-          string base=base_name(zugeh);
-          RS inouta(My,string("SELECT submid FROM `")+touta+"` WHERE submid = '"+base+"'",ZDB);
-          if (inouta.num_rows) {
-            Log(blaus+Tx[T_Verwaiste_Datei]+gruen+rueck[i]+schwarz+Tx[T_geloescht_Fax_schon_in]+gruen+touta+schwarz+
-                Tx[T_archiviert_Ausrufezeichen],1,1);
-            tuloeschen(rueck[i],cuser,obverb,oblog);
-            break;
-          } else {
-            // 31.1.16: ... und wenn diese sich nicht in outa findet ...
-            string waisen = cfaxusersqvz+"/waisen";
-            pruefverz(waisen,obverb,oblog,1);
-            uint vfehler=0;
-            verschiebe(rueck[i],waisen,cuser,&vfehler,1,obverb,oblog);
-          } // if (inouta.num_rows) else 
-        } // if (lstat(zugeh.c_str(),&entryvz)) 
-      } // for(size_t i=0;i<rueck.size();i++) 
-      cmd=string("sudo find '")+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.sff'"; //  -printf '%f\\n'";
-      rueck.clear();
-      systemrueck(cmd,obverb,oblog,&rueck);
-      for(size_t i=0;i<rueck.size();i++) {
-        uchar indb=0;
-        char ***cerg;
-//        ZDB=0;
-        RS rs(My,string("SELECT id FROM `")+spooltab+"` WHERE CONCAT(capispoolpfad,'/',capispooldatei)='"+rueck[i]+"'",ZDB);
-        if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
-        if (!indb) {
-          if (!obtitel) {
-            ausg<<rot<<Tx[T_Weitere_Spool_Eintraege]<<schwarz;
-            obtitel=1;
-          }
-          /*5*/fsfcl fsf(rueck[i],wartend);
-          fsf.capiwausgeb(&ausg, &capiconf[2].wert, obverb, oblog, ++faxord);
-        } // if (!indb) 
-      } // for(size_t i=0
-    } // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
+    vector<fsfcl> fsfv;
+    sammlecapi(&fsfv);
+    for(size_t i=0;i<fsfv.size();i++) {
+      if (!obtitel) {
+        ausg<<rot<<Tx[T_Weitere_Spool_Eintraege]<<schwarz;
+        obtitel=1;
+      }
+      fsfv[i].capiwausgeb(&ausg, &capiconf[2].wert, obverb, oblog, ++faxord);
+    }
   } // if (obcapi)
   if (obhyla) {
     vector<fsfcl> fsfv;
@@ -4725,10 +4676,80 @@ void paramcl::zeigweitere()
         obtitel=1;
       }
       fsfv[i].hylaausgeb(&ausg, this, 0, 0, obverb, 1, oblog);
-    }
+    } //     for(size_t i=0;i<fsfv.size();i++) 
   } // if (obhyla) 
   if (obtitel) Log(ausg.str(),1,oblog);
+} // void paramcl::zeigweitere()
+
+void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
+{
+    struct stat entryvz;
+    if (!lstat(cfaxusersqvz.c_str(),&entryvz)) {
+      bereinigecapi();
+      cmd=string("sudo find '")+cfaxuservz+"' -path \"*/sendq/fax*\" -type f -iname 'fax*.sff'"; //  -printf '%f\\n'";
+      svec rueck;
+      systemrueck(cmd,obverb,oblog,&rueck);
+      for(size_t i=0;i<rueck.size();i++) {
+        uchar indb=0;
+        char ***cerg;
+        RS rs(My,string("SELECT id FROM `")+spooltab+"` WHERE CONCAT(capispoolpfad,'/',capispooldatei)='"+rueck[i]+"'",ZDB);
+        if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
+        if (!indb) {
+          /*5*/fsfcl fsf(rueck[i],wartend);
+      fsf.holcapiprot(obverb);
+      idmax++;
+      fsf.id=ltoan(idmax);
+      fsf.capisd=base_name(crueck[i]);
+      fsf.hylanr="-1";
+      fsf.cspf=dir_name(crueck[i]);
+          fsfvp->push_back(fsf);
+        } // if (!indb) 
+      } // for(size_t i=0
+    } // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
 } // void zeigweitere(DB *My, paramcl *pmp, int obverb=0,int oblog=0)
+
+void paramcl::bereinigecapi()
+{
+  svec rueck;
+  struct stat entryvz;
+  // 7.2.16: alte *.lock-Dateien loeschen
+  cmd=string("sudo find '")+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.lock'"; //  -printf '%f\\n'";
+  systemrueck(cmd,obverb,oblog,&rueck);
+  for(size_t i=0;i<rueck.size();i++) {
+    string stamm,exten;
+    getstammext(&rueck[i],&stamm,&exten);
+    string zugeh=stamm+".sff";
+    if (lstat(zugeh.c_str(),&entryvz)) {
+      tuloeschen(rueck[i],cuser,obverb,oblog);
+    }
+  } //       for(size_t i=0;i<rueck.size();i++)
+  rueck.clear();
+  // 20.1.16: wenn dort eine .txt-steht ohne zugehoerige .sff-Datei, dann haelt sie den ganzen Betrieb auf
+  cmd=string("sudo find '")+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.txt'"; //  -printf '%f\\n'";
+  systemrueck(cmd,obverb,oblog,&rueck);
+  for(size_t i=0;i<rueck.size();i++) {
+    string stamm,exten;
+    getstammext(&rueck[i],&stamm,&exten);
+    string zugeh=stamm+".sff";
+    if (lstat(zugeh.c_str(),&entryvz)) {
+      string base=base_name(zugeh);
+      RS inouta(My,string("SELECT submid FROM `")+touta+"` WHERE submid = '"+base+"'",ZDB);
+      if (inouta.num_rows) {
+        Log(blaus+Tx[T_Verwaiste_Datei]+gruen+rueck[i]+schwarz+Tx[T_geloescht_Fax_schon_in]+gruen+touta+schwarz+
+            Tx[T_archiviert_Ausrufezeichen],1,1);
+        tuloeschen(rueck[i],cuser,obverb,oblog);
+        break;
+      } else {
+        // 31.1.16: ... und wenn diese sich nicht in outa findet ...
+        string waisen = cfaxusersqvz+"/waisen";
+        pruefverz(waisen,obverb,oblog,1);
+        uint vfehler=0;
+        verschiebe(rueck[i],waisen,cuser,&vfehler,1,obverb,oblog);
+      } // if (inouta.num_rows) else 
+    } // if (lstat(zugeh.c_str(),&entryvz)) 
+  } // for(size_t i=0;i<rueck.size();i++) 
+} // void paramcl::bereinigecapi()
+
 
 void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 {
