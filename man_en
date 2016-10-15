@@ -213,7 +213,7 @@ With '\fBautofax -?\fR', all command line options can be seen. Some options (e.g
 .br
 \fB-hkzl, --hylaklingelzahl <zahl>\fR: No. of bell rings until hylafax accepts the call, instead of '2'
 .br
-\fB-md, --maxdials\rR: No. of dialing retries in hylafax, instead of '11'
+\fB-md, --maxdials\fR: No. of dialing retries in hylafax, instead of '11'
 .br
 \fB-gz, --gleichziel\fR: copy faxes into target directory irrespective of faxing success
 .br

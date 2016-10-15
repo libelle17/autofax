@@ -305,10 +305,10 @@ hylafax <b><br>
 until Capisuite accepts the call, instead of &rsquo;1&rsquo;
 <b><br>
 -hkzl, --hylaklingelzahl &lt;zahl&gt;</b>: No. of bell rings
-until hylafax accepts the call, instead of
-&rsquo;2&rsquo;<b>R: No. of dialing retries in hylafax,
-instead of &rsquo;11&rsquo; <br>
--md, --maxdials <br>
+until hylafax accepts the call, instead of &rsquo;2&rsquo;
+<b><br>
+-md, --maxdials</b>: No. of dialing retries in hylafax,
+instead of &rsquo;11&rsquo; <b><br>
 -gz, --gleichziel</b>: copy faxes into target directory
 irrespective of faxing success <b><br>
 -orci, --ocri</b>: Text from received faxed will be filtered
