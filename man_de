@@ -101,7 +101,7 @@ Der erste Programmaufruf und die erste Faxverarbeitung können jeweils etwas dau
 .br
 Voraussetzungen s.u.
 .SH GEBRAUCH
-Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft (insbesondere auf openSUSE-Leap 42.1 oder Ubuntu 16.04 (nur mit Modem über hylafax), evtl. auch andere; es sollte systemctl (systemd) laufen).
+Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft (z.B. auf openSUSE-Leap 42.1, Debian 8.6, Ubuntu 16.04, Mint 18, Fedora 24); systemctl (systemd) muss laufen, sudo muss installiert sein (Debian), der aktuelle Benutzer muss Mitglied von sudoers sein).
 .br
 Es existiert dann ein Verzeichnis z.B. '\fBzufaxen\fR', in das z.B. Benutzer im Netzwerk (z.B. über eine Samba-Freigabe) zu faxende Dateien stellen können wie z.B. 
 .br
