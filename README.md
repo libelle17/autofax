@@ -161,10 +161,11 @@ Preconditions see below.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Ideally, the
 program should have installed itsself after a single call
-(see above) in a self-running way (especially on
-openSUSE-Leap 42.1 or Ubuntu 16.040 (only with a modem via
-hylafax), possibly on others; systemctl (systemd) should
-run). <br>
+(see above) in a self-running way (especially on e.g.
+openSUSE-Leap 42.1, Debian 8.6, Mint 18, Ubuntu 16.040 or
+Fedora 24); systemctl (systemd) must run, sudo must be
+installed (Debian), the current user must be am member of
+sudoers). <br>
 Then a directory e.g. &rsquo;<b>zufaxen</b>&rsquo; exists,
 in which e.g. users in a network (e.g. via a samba share)
 can deposit files to be faxed, e.g. <br>
