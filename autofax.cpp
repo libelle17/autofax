@@ -978,7 +978,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Eintraege aus `","delete entries from `"},
   // T_loeschen_zu_denen_kein_Datei_im_Wartevz_und_kein_Capi_oder_Hylafax_nachweisbar_ist
   {"` loeschen, zu denen keine Datei im Wartevz.und kein Capi- oder Hylafax nachweisbar ist",
-    "` without detection of file in waiting directory or capisuite fax or hyla-fax"},
+    "` without detection of file in waiting directory or capisuite fax or hylafax"},
   // T_alle_wartenden_Faxe_und_zugehoerige_Eintraege_aus
   {"alle wartenden Faxe und zugehoerige Eintraege aus `","delete all waiting faxes and associated entries from `"},
   // T_loeschen
@@ -1399,7 +1399,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_pruefisdn
   {"T_pruefisdn()","checkisdn()"},
   // T_keine_Rueckfragen_zB_aus_Cron
-  {"keine Rueckfragen, z.B. aus cron","no questions, e.g. for cron"},
+  {"keine Rueckfragen, z.B. aus cron","no questions, e.g. for a call of autofax within cron"},
   // T_Samba_muesste_installiert_werden_soll_ich
   {"Samba muesste installiert werden, soll ich?","samba needs to be installed, shall I?"},
   // T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden
@@ -1470,8 +1470,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_Optionen_die_nicht_gespeichert_werden
   {"Optionen, die nicht gespeichert werden: ","Options which are not saved: "},
   // T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden,
-  {"Optionen, die in der Konfigurationsdatei gespeichert werden koennen (vorausgehendes: '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):",
-   "Options which can be saved in the configuration file: ('1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):"},
+  {"Optionen, die in der Konfigurationsdatei gespeichert werden koennen (vorausgehendes '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):",
+   "Options which can be saved in the configuration file: (preceding '1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):"},
   // T_ob_ein_Modem_drinstak
   {"ob ein Modem drinstak, als diese Konfigurationsdatei geschrieben wurde","if a modem was present, when this configuration file was written"},
   // T_or

@@ -189,6 +189,8 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {"' nicht zum Schreiben oeffnen!","' for writing!"},
   // T_Zeilen
   {" Zeilen"," lines"},
+	// T_oder_nicht
+	{" oder nicht"," or not"},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -2245,7 +2247,7 @@ string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
         if (rottxt) bemerkung+=(obfarbe?blaus:nix)+*rottxt+(obfarbe?schwarz:nix);
         if (Txi2!=-1) bemerkung+=(const char*)hilf[Txi2][lg]; 
         if (zptr) bemerkung+=" '"+(obfarbe?blaus:nix)+*zptr+(obfarbe?schwarz:nix)+"'";
-        if (obno) bemerkung+=(obfarbe?violetts:nix)+" oder nicht"+(obfarbe?schwarz:nix);
+        if (obno) bemerkung+=(obfarbe?violetts:nix)+Txk[T_oder_nicht]+(obfarbe?schwarz:nix);
       } // if (TxBp->TCp[Txi][lg])
     } // if (Txi!=-1)
   } // if (TxBp)

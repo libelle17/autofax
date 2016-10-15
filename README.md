@@ -60,7 +60,7 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;.</p>
 [<b>&minus;lista|--listarchiv</b>]
 [<b>&minus;listf|--listfailed</b>]
 [<b>&minus;listi|--listinca</b>]
-[<b>&minus;listi|--listwart</b>]
+[<b>&minus;listw|--listwart</b>]
 [<b>&minus;s|--suche&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;n|--dszahl&nbsp;</b><i>&lt;zahl&gt;</i>]
 [<b>&minus;info|--version</b>] [<b>&minus;vi|--vi</b>]
@@ -220,23 +220,61 @@ by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
 can be seen. Some options (e.g. the sql commands) cannot bei
 set via the command line, but only via the configuration
 file, which can be edited directly or interactively by
-&rsquo;<b>autofax -rf</b>&rsquo;. <b><br>
--lg, --language &lt;string&gt;</b>:
-language/Sprache/Lingue/Lingua [deutsch,english]
-&rsquo;e&rsquo; <b><br>
+&rsquo;<b>autofax -rf</b>&rsquo;. <br>
+Options which are not saved: <b><br>
 -v, --verbose</b>: screen output more verbose <b><br>
 -l, --log</b>: put detailed logs in file
 &rsquo;/var/log/autofax.log&rsquo; (otherwise shorter)
 <b><br>
+-ldn, --logdateineu</b>: delete log file afore <b><br>
+-kd, --konfdat &lt;string&gt;</b>: uses configuration file
+&lt;string&gt; instead of
+&rsquo;/usr/local/sbin/autofax.conf&rsquo; <b><br>
+-sqlv, --sql-verbose</b>: screen output with SQL commands
+<b><br>
+-rf, --rueckfragen</b>: all parameters will be prompted
+(some of them not shown here) <b><br>
+-norf, --keinerueckfragen</b>: no questions, e.g. for a call
+of autofax within cron <b><br>
+-loef, --loeschefax</b>: delete a fax with query <b><br>
+-loew, --loeschewaise</b>: delete entries from
+&lsquo;spool&lsquo; without detection of file in waiting
+directory or capisuite fax or hylafax <b><br>
+-loea, --loescheallew</b>: delete all waiting faxes and
+associated entries from &lsquo;spool&lsquo; <b><br>
+-kez, --korrerfolgszeichen</b>: in the database table
+&lsquo;outa&lsquo; the success flag is being corrected
+<b><br>
+-bwv, --bereinigewv</b>: Examine files in waiting directory
+against the tables &lsquo;outa&lsquo; and clean them up
+<b><br>
+-st, --stop</b>: stop autofax <b><br>
+-lista, --listarchiv</b>: lists entries from
+&lsquo;outa&lsquo; with success flag <b><br>
+-listf, --listfailed</b>: lists entries from
+&lsquo;outa&lsquo; without success flag <b><br>
+-listi, --listinca</b>: lists entries from
+&lsquo;inca&lsquo; <b><br>
+-listw, --listwart</b>: list waiting faxes <b><br>
+-s, --suche &lt;string&gt;</b>: Look in processed faxes for
+&lt;string&gt; <b><br>
+-n, --dszahl &lt;zahl&gt;</b>: No. of listed entries =
+&lt;zahl&gt; instead of &rsquo;30&rsquo; <b><br>
+-info, --version</b> : shows the program version <b><br>
+-vi, --vi</b> : edit the configuration file <b><br>
+-h, --hilfe</b>: shows this screen <br>
+Options which can be saved in the configuration file
+(preceding &rsquo;1&rsquo;=don&rsquo;t save,
+&rsquo;no&rsquo;=contrary, e.g. &rsquo;-noocra&rsquo;,
+&rsquo;-1noocri&rsquo;): <b><br>
+-lg, --language &lt;string&gt;</b>:
+language/Sprache/Lingue/Lingua [deutsch,english]
+&rsquo;e&rsquo; <b><br>
 -lvz, --logvz &lt;path&gt;</b>: choses &lt;path&gt; as log
 directory, currently &rsquo;/var/log&rsquo; <b><br>
 -ld, --logdname &lt;string&gt;</b>: log file &lt;string&gt;
 (in path &rsquo;/var/log&rsquo;) will be used instead of
 &rsquo;autofax.log&rsquo; <b><br>
--ldn, --logdateineu</b>: delete log file afore <b><br>
--kd, --konfdat &lt;string&gt;</b>: uses configuration file
-&lt;string&gt; instead of
-&rsquo;/usr/local/sbin/autofax.conf&rsquo; <b><br>
 -zvz, --zufaxenvz &lt;path&gt;</b>: faxes the files from
 &lt;path&gt; instead of &rsquo;...&rsquo; <b><br>
 -wvz, --wartevz &lt;path&gt;</b>: files are waiting in
@@ -246,31 +284,36 @@ faxes &rsquo;...&rsquo; <b><br>
 -cm, --cronminut &lt;zahl&gt;</b>: every how many minutes
 shall autofax be called in crontab (0=not at all)
 &rsquo;2&rsquo; <b><br>
--kc, --keincapi</b>: do not use capisuite <b><br>
--kh, --keinhyla</b>: do not use hylafax <b><br>
+-capi, --obcapi</b>: use capisuite <b><br>
+-hyla, --obhyla</b>: use hylafax <b><br>
 -cz, --capizuerst</b>: try to send faxes primarily via
 capisuite <b><br>
 -hz, --hylazuerst</b>: try to send faxes primarily via
 hylafax <b><br>
--mod, --modem &lt;string&gt;</b>: Modem used for hylafax
+-mod, --hmodem &lt;string&gt;</b>: Modem used for hylafax
 &rsquo;&rsquo; <b><br>
--mc, --maxcapinr &lt;zahl&gt;</b>: try Hylafax after
+-mc, --maxcapiv &lt;zahl&gt;</b>: try Hylafax after
 &lt;no&gt; tries of Capisuite instead of &rsquo;3&rsquo;
 <b><br>
--mh, --maxhylanr &lt;zahl&gt;</b>: try Capisuite after
+-mh, --maxhylav &lt;zahl&gt;</b>: try Capisuite after
 &lt;no&gt; tries of Hylafax instead of &rsquo;3&rsquo;
-<b><br>
--ckzl, --capiklingelzahl &lt;zahl&gt;</b>: No. of bell rings
-until Capisuite accepts the call, instead of &rsquo;1&rsquo;
 <b><br>
 -cuser, --cuser &lt;string&gt;</b>: takes the linux user
 &lt;string&gt; for Capisuite instead of &rsquo;schade&rsquo;
 <b><br>
--hkzl, --hylaklingelzahl &lt;zahl&gt;</b>: No. of bell rings
-until hylafaxs accepts the call, instead of &rsquo;2&rsquo;
+-ckzl, --capiklingelzahl &lt;zahl&gt;</b>: No. of bell rings
+until Capisuite accepts the call, instead of &rsquo;1&rsquo;
 <b><br>
+-ckzl, --hylaklingelzahl &lt;zahl&gt;</b>: No. of bell rings
+until hylafax accepts the call, instead of
+&rsquo;2&rsquo;<b>R: No. of dialing retries in hylafax,
+instead of &rsquo;11&rsquo; <br>
+-md, --maxdials <br>
 -gz, --gleichziel</b>: copy faxes into target directory
-irrespective of faxing success <b><br>
+irrespective of faxing success<b>R: Text from received faxed
+will be received <br>
+-orci, --ocriR: Text from sent faxed will be received <br>
+-orci, --ocri <br>
 -afs, --anfaxstring &lt;string&gt;</b>: the fax number will
 be expected after &lt;string&gt; instead of &rsquo;an
 Fax&rsquo; <b><br>
@@ -294,36 +337,8 @@ instead of &rsquo;und&rsquo; <b><br>
 -mpwd, --mpwd &lt;string&gt;</b>: takes the password
 &lt;string&gt; for MySQL/MariaDB instead of
 &rsquo;...&rsquo; <b><br>
--db, --db &lt;string&gt;</b>: uses the database
+-db, --datenbank &lt;string&gt;</b>: uses the database
 &lt;string&gt; instead of &rsquo;...&rsquo; <b><br>
--sqlv, --sql-verbose</b>: screen output with SQL commands
-<b><br>
--rf, --rueckfragen</b>: all parameters will be prompted
-(some of them not shown here) <b><br>
--loef, --loeschefax</b>: delete a fax with query <b><br>
--loew, --loeschewaise</b>: delete entries from
-&lsquo;spool&lsquo; without detection of file in waiting
-directory or capisuite fax or hyla-fax <b><br>
--loea, --loescheallew</b>: delete all waiting faxes and
-associated entries from &lsquo;spool&lsquo; <b><br>
--loee, --loescheempf</b>: delete received files that could
-not be processed <b><br>
--kez, --korrerfolgszeichen</b>: in the database table
-&lsquo;outa&lsquo; the success flag is being corrected
-<b><br>
--bwv, --bereinigewv</b>: Examine files in waiting directory
-against the tables &lsquo;outa&lsquo; and clean them up
-<b><br>
--lista, --listarchiv</b>: lists entries from
-&lsquo;outa&lsquo; with success flag <b><br>
--listf, --listfailed</b>: lists entries from
-&lsquo;outa&lsquo; without success flag <b><br>
--listi, --listinlet</b>: lists entries from
-&lsquo;inca&lsquo; <b><br>
--n, --dszahl &lt;zahl&gt;</b>: No. of listed entries =
-&lt;zahl&gt; instead of &rsquo;30&rsquo; <b><br>
--info, --version</b> : shows the program version <b><br>
--vi, --vi</b> : edit the configuration file <b><br>
 -h, --help</b> : shows help</p>
 
 <h2>FUNCTIONALITY

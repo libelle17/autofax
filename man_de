@@ -25,7 +25,7 @@ manpage available in english: 'man autofax' or 'man -Len autofax'.
 .OP \-lista|--listarchiv
 .OP \-listf|--listfailed
 .OP \-listi|--listinca
-.OP \-listi|--listwart
+.OP \-listw|--listwart
 .OP \-s|--suche <string>
 .OP \-n|--dszahl <zahl>
 .OP \-info|--version
