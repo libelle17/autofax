@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.3 -->
-<!-- CreationDate: Sat Oct 15 22:21:05 2016 -->
+<!-- CreationDate: Sat Oct 15 22:24:41 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -239,8 +239,8 @@ by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
 can be seen. Some options (e.g. the sql commands) cannot bei
 set via the command line, but only via the configuration
 file, which can be edited directly or interactively by
-&rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Options which are not saved: <b><br>
+&rsquo;<b>autofax -rf</b>&rsquo;. <b><br>
+Options which are not saved</b>: <b><br>
 -v, --verbose</b>: screen output more verbose <b><br>
 -l, --log</b>: put detailed logs in file
 &rsquo;/var/log/autofax.log&rsquo; (otherwise shorter)
@@ -281,11 +281,11 @@ against the tables &lsquo;outa&lsquo; and clean them up
 &lt;zahl&gt; instead of &rsquo;30&rsquo; <b><br>
 -info, --version</b> : shows the program version <b><br>
 -vi, --vi</b> : edit the configuration file <b><br>
--h, --hilfe</b>: shows this screen <br>
+-h, --hilfe</b>: shows this screen <b><br>
 Options which can be saved in the configuration file
 (preceding &rsquo;1&rsquo;=don&rsquo;t save,
 &rsquo;no&rsquo;=contrary, e.g. &rsquo;-noocra&rsquo;,
-&rsquo;-1noocri&rsquo;): <b><br>
+&rsquo;-1noocri&rsquo;)</b>: <b><br>
 -lg, --language &lt;string&gt;</b>:
 language/Sprache/Lingue/Lingua [deutsch,english]
 &rsquo;e&rsquo; <b><br>
@@ -323,16 +323,17 @@ hylafax <b><br>
 -ckzl, --capiklingelzahl &lt;zahl&gt;</b>: No. of bell rings
 until Capisuite accepts the call, instead of &rsquo;1&rsquo;
 <b><br>
--ckzl, --hylaklingelzahl &lt;zahl&gt;</b>: No. of bell rings
+-hkzl, --hylaklingelzahl &lt;zahl&gt;</b>: No. of bell rings
 until hylafax accepts the call, instead of
 &rsquo;2&rsquo;<b>R: No. of dialing retries in hylafax,
 instead of &rsquo;11&rsquo; <br>
 -md, --maxdials <br>
 -gz, --gleichziel</b>: copy faxes into target directory
-irrespective of faxing success<b>R: Text from received faxed
-will be received <br>
--orci, --ocriR: Text from sent faxed will be received <br>
--orci, --ocri <br>
+irrespective of faxing success <b><br>
+-orci, --ocri</b>: Text from received faxed will be filtered
+<b><br>
+-orci, --ocri</b>: Text from sent faxed will be filtered
+<b><br>
 -afs, --anfaxstring &lt;string&gt;</b>: the fax number will
 be expected after &lt;string&gt; instead of &rsquo;an
 Fax&rsquo; <b><br>

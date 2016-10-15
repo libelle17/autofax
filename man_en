@@ -131,7 +131,7 @@ Depending on operating system, accessability and preferences the users thus coul
 With '\fBautofax -?\fR', all command line options can be seen. Some options (e.g. the sql commands) cannot bei set via the command line, but only via the configuration file, which can be edited directly or interactively by '\fBautofax -rf\fR'.
 .br
 .br
-Options which are not saved:
+\fBOptions which are not saved\fR:
 .br
 \fB-v, --verbose\fR: screen output more verbose
 .br
@@ -177,7 +177,7 @@ Options which are not saved:
 .br
 \fB-h, --hilfe\fR: shows this screen
 .br
-Options which can be saved in the configuration file (preceding '1'=don't save, 'no'=contrary, e.g. '-noocra', '-1noocri'):
+\fBOptions which can be saved in the configuration file (preceding '1'=don't save, 'no'=contrary, e.g. '-noocra', '-1noocri')\fR:
 .br
 \fB-lg, --language <string>\fR: language/Sprache/Lingue/Lingua [deutsch,english] 'e'
 .br
@@ -211,15 +211,15 @@ Options which can be saved in the configuration file (preceding '1'=don't save, 
 .br
 \fB-ckzl, --capiklingelzahl <zahl>\fR: No. of bell rings until Capisuite accepts the call, instead of '1'
 .br
-\fB-ckzl, --hylaklingelzahl <zahl>\fR: No. of bell rings until hylafax accepts the call, instead of '2'
+\fB-hkzl, --hylaklingelzahl <zahl>\fR: No. of bell rings until hylafax accepts the call, instead of '2'
 .br
 \fB-md, --maxdials\rR: No. of dialing retries in hylafax, instead of '11'
 .br
 \fB-gz, --gleichziel\fR: copy faxes into target directory irrespective of faxing success
 .br
-\fB-orci, --ocri\rR: Text from received faxed will be received
+\fB-orci, --ocri\fR: Text from received faxed will be filtered
 .br
-\fB-orci, --ocri\rR: Text from sent faxed will be received
+\fB-orci, --ocri\fR: Text from sent faxed will be filtered
 .br
 \fB-afs, --anfaxstring <string>\fR: the fax number will be expected after <string> instead of 'an Fax'
 .br
