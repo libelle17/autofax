@@ -102,7 +102,7 @@ The first execution and the first processing of a fax may take some time.
 .br
 Preconditions see below.
 .SH USAGE
-Ideally, the program should have installed itsself after a single call (see above) in a self-running way (especially on e.g. openSUSE-Leap 42.1, Debian 8.6, Mint 18, Ubuntu 16.040 or Fedora 24); systemctl (systemd) must run, sudo must be installed (Debian), the current user must be am member of sudoers).
+Ideally, the program should have installed itsself after a single call (see above) in a self-running way.
 .br
 Then a directory e.g. '\fBzufaxen\fR' exists, in which e.g. users in a network (e.g. via a samba share) can deposit files to be faxed, e.g. 
 .br
@@ -308,7 +308,7 @@ If more sql commands are specified and one of them does not give a result, the n
 19) The configuration file is being written, if necessary.
 .LP
 .SH PRECONDITIONS
-The program was adjusted to an installation of Opensuse 42.1 or Ubuntu 16.04 with standard options. The user must be allowed to call the command 'sudo'. 'GNU make' has to be installed (which shall be accomplished if necessary by calling ./install.sh). Further needed programs will be installed by the makefile or by autofax itsself via zypper or apt-get, if possible. Those are:
+The program was adjusted to an installation of Opensuse 42.1, Debian 8.60, Ubuntu 16.04, Mint 18 or Fedora 24 with standard options. systemctl (systemd) must run, sudo must be installed (missing per default in Debian), the user must be allowed to call the command 'sudo' (must be member of the group 'sudoers'), 'GNU make' has to be installed (which shall be accomplished if necessary by calling ./install.sh). Further needed programs will be installed by the makefile or by autofax itsself via zypper or apt-get, if possible. Those are:
 .br
 \fBmakefile:\fR
 .br

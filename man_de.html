@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.3 -->
-<!-- CreationDate: Sat Oct 15 21:36:11 2016 -->
+<!-- CreationDate: Sat Oct 15 21:48:00 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -183,11 +183,8 @@ Voraussetzungen s.u.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Im Idealfall
 sollte sich das Programm nach einmaligem Aufruf (s.o.) so
-eingerichtet haben, dass es von selbst weiter l&auml;uft
-(z.B. auf openSUSE-Leap 42.1, Debian 8.6, Ubuntu 16.04, Mint
-18, Fedora 24); systemctl (systemd) muss laufen, sudo muss
-installiert sein (Debian), der aktuelle Benutzer muss
-Mitglied von sudoers sein). <br>
+eingerichtet haben, dass es von selbst weiter
+l&auml;uft. <br>
 Es existiert dann ein Verzeichnis z.B.
 &rsquo;<b>zufaxen</b>&rsquo;, in das z.B. Benutzer im
 Netzwerk (z.B. &uuml;ber eine Samba-Freigabe) zu faxende
@@ -669,14 +666,18 @@ wenn einer kein Ergebnis liefert.</p></td></tr>
 
 
 <p style="margin-left:11%; margin-top: 1em">Das Programm
-wurde auf eine Installation von Opensuse 42.1 oder Ubuntu
-16.04 mit den Standardoptionen abgestimmt. Der Benutzer muss
-den Befehl &rsquo;sudo&rsquo; ausf&uuml;hren
-d&uuml;rfen. &rsquo;GNU make&rsquo; wird
-ben&ouml;tigt, was durch Aufruf von ./install.sh ggf.
-installiert werden kann. Weitere ben&ouml;tigte Programm
-werden falls m&ouml;glich vom makefile oder von autofax
-selbst nachstalliert. Diese sind: <b><br>
+wurde auf eine Installation von Opensuse 42.1, Debian 8.60,
+Ubuntu 16.04, Mint 18 oder Fedora 24 mit den
+Standardoptionen abgestimmt. systemctl (systemd) muss
+laufen, sudo muss installiert sein (fehlt anfangs bei
+Standardinstallation in Debian), der Benutzer muss den
+Befehl &rsquo;sudo&rsquo; ausf&uuml;hren d&uuml;rfen
+(Mitglied in der Gruppe &rsquo;sudoers&rsquo; sein),
+&rsquo;GNU make&rsquo; wird ben&ouml;tigt, was durch
+Aufruf von ./install.sh ggf. installiert werden kann.
+Weitere ben&ouml;tigte Programm werden falls
+m&ouml;glich vom makefile oder von autofax selbst
+nachstalliert. Diese sind: <b><br>
 makefile:</b> <br>
 g++, libmysqlclient-dev(el), libtiff-dev(el) <b><br>
 autofax:</b> <br>

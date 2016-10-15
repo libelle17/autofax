@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.3 -->
-<!-- CreationDate: Sat Oct 15 21:36:11 2016 -->
+<!-- CreationDate: Sat Oct 15 21:48:00 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -180,11 +180,7 @@ Preconditions see below.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Ideally, the
 program should have installed itsself after a single call
-(see above) in a self-running way (especially on e.g.
-openSUSE-Leap 42.1, Debian 8.6, Mint 18, Ubuntu 16.040 or
-Fedora 24); systemctl (systemd) must run, sudo must be
-installed (Debian), the current user must be am member of
-sudoers). <br>
+(see above) in a self-running way. <br>
 Then a directory e.g. &rsquo;<b>zufaxen</b>&rsquo; exists,
 in which e.g. users in a network (e.g. via a samba share)
 can deposit files to be faxed, e.g. <br>
@@ -648,10 +644,13 @@ being written, if necessary.</p></td></tr>
 
 
 <p style="margin-left:11%; margin-top: 1em">The program was
-adjusted to an installation of Opensuse 42.1 or Ubuntu 16.04
-with standard options. The user must be allowed to call the
-command &rsquo;sudo&rsquo;. &rsquo;GNU make&rsquo; has to be
-installed (which shall be accomplished if necessary by
+adjusted to an installation of Opensuse 42.1, Debian 8.60,
+Ubuntu 16.04, Mint 18 or Fedora 24 with standard options.
+systemctl (systemd) must run, sudo must be installed
+(missing per default in Debian), the user must be allowed to
+call the command &rsquo;sudo&rsquo; (must be member of the
+group &rsquo;sudoers&rsquo;), &rsquo;GNU make&rsquo; has to
+be installed (which shall be accomplished if necessary by
 calling ./install.sh). Further needed programs will be
 installed by the makefile or by autofax itsself via zypper
 or apt-get, if possible. Those are: <b><br>
