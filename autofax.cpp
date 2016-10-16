@@ -4538,6 +4538,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
         struct stat entrysend;
         if (obcapi) {
           if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
+					fsf.holcapiprot(0);
           fsf.setzcapistat(this, &entrysend);
           fsf.capiwausgeb(&ausg,maxcdials, 0, obverb, oblog);
           if (mitupd) {
