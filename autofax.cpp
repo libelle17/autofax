@@ -4473,15 +4473,19 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
     size_t p1,p2;
     if ((p1=cspf.rfind(vtz))) if ((p2=cspf.rfind(vtz,p1-1))) {
       aktuser=cspf.substr(p2+1,p1-p2-1);
-      if (!lstat(sendqgespfad.c_str(),entrysendp)) {
-        capistat=wartend;
-      } else {
+			if (!lstat(sendqgespfad.c_str(),entrysendp)) {
+				struct stat statlock;
+				if (lstat((sendqgespfad.substr(0,p1)+".lock").c_str(),&statlock))
+					capistat=wartend;
+				else
+					capistat=verarb;
+			} else {
         // gesandte und gescheiterte Faxe wurden von capisuite entsprechend umbenannt
         for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1)) { 
           // entspr. gefaxte/gescheiterte Datei in capisuite
           sendqgespfad=(capistat==gescheitert?pmp->cfailedvz:pmp->cdonevz)+vtz+aktuser+"-"+capisd; 
           if (!lstat((sendqgespfad.c_str()), entrysendp)) break; 
-        } 
+        }  //         for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1))
         // hier koennte capistat auch fehlend sein
       }  //       if (!lstat(sendqgespfad.c_str(),entrysendp)) else
     } // if ((p1=cspf.rfind(vtz))) if ((p2=cspf.rfind(vtz,p1-1))) 
@@ -4712,6 +4716,8 @@ void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
 					fsf.capisd=base_name(rueck[i]);
 					fsf.hylanr="-1";
 					fsf.cspf=dir_name(rueck[i]);
+					struct stat entrysend;
+					fsf.setzcapistat(this,&entrysend);
 					fsfvp->push_back(fsf);
         } // if (!indb) 
       } // for(size_t i=0
@@ -7114,6 +7120,8 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, i
   if (faxord) *ausgp<<faxord<<")";
   else *ausgp<<"  ";
   *ausgp<<"Capi: "<<schwarz;
+	*ausgp<<(capistat==fehlend?hgrau:(capistat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<" "<<FxStatS(&capistat)<<schwarz;
+	/*
   if (capistat==wartend) {
     *ausgp<<schwarz<<" "<<Tx[T_wartend]<<schwarz;
   } else if (capistat==gesandt) {
@@ -7124,6 +7132,7 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, i
     //    *ausgp<<hgrau<<" "<<FxStatS(&capistat)<<schwarz; // bringt zur Zeit keinen Vorteil
     *ausgp<<hgrau<<" "<<Tx[T_nicht_in_der_Warteschlange]<<schwarz;
   }
+	*/
   if (capistat!=fehlend) {
     int p1=-3;
     if ((p1=holcapiprot(obverb))>0) {
@@ -7132,9 +7141,7 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, i
       char buf[255];
       int versuzahl=atol(ctries.c_str());
       snprintf(buf,4,"%3d",versuzahl);
-      struct stat statlock;
-      int objetzt=!lstat((sendqgespfad.substr(0,p1)+".lock").c_str(),&statlock);
-      *ausgp<<", "<<blau<<buf<<"/"<<maxcdials<<schwarz<<(objetzt?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
+      *ausgp<<", "<<blau<<buf<<"/"<<maxcdials<<schwarz<<(capistat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
       //                      if (versuzahl>12) ausg<<"zu spaet, ";
       struct tm tm;
       memset(&tm, 0, sizeof(struct tm));
@@ -7365,7 +7372,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
   if (obzaehl) *ausgp<<++pmp->faxord<<")";
   else *ausgp<<"  ";
   *ausgp<<"Hyla: "<<schwarz;
-	  *ausgp<<(hylastat==fehlend?hgrau:(hylastat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<" "<<FxStatS(&hylastat)<<(hgerg.empty()?"":" ("+hgerg+")")<<schwarz;
+	*ausgp<<(hylastat==fehlend?hgrau:(hylastat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<" "<<FxStatS(&hylastat)<<(hgerg.empty()?"":" ("+hgerg+")")<<schwarz;
 	/*
   if (obsfehlt) {
     // wenn also die Datenbankdatei weder im Spool noch bei den Erledigten nachweisbar ist
