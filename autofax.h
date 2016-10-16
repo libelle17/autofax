@@ -87,7 +87,7 @@ class fsfcl : public fxfcl // Faxsendfile
     string ctries; // parameter aus capiprot
     string starttime; // parameter aus capiprot
     string dialstring; // parameter aus capiprot
-    string hstate; // Statuszahl ("state" in man sendq)
+    string hstate="0"; // Statuszahl ("state" in man sendq)
     string hstatus; // Textbeschreibung des letztes Fehlschlags
     string hstatuscode; // in xferfaxlog nicht gefunden
 		string tts;
