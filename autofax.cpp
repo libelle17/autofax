@@ -4474,7 +4474,7 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
     if ((p1=cspf.rfind(vtz))) if ((p2=cspf.rfind(vtz,p1-1))) {
       aktuser=cspf.substr(p2+1,p1-p2-1);
       if (!lstat(sendqgespfad.c_str(),entrysendp)) {
-        capistat=wartend;
+        capistat=schlafend;
       } else {
         // gesandte und gescheiterte Faxe wurden von capisuite entsprechend umbenannt
         for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1)) { 
@@ -4533,7 +4533,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           fsf.setzcapistat(this, &entrysend);
           fsf.capiwausgeb(&ausg,maxcdials, 0, obverb, oblog);
           if (mitupd) {
-            if (fsf.capistat==wartend) {
+            if (fsf.capistat==schlafend) {
               RS rupd(My); 
               vector<instyp> einf; // fuer alle Datenbankeinfuegungen
               einf.push_back(/*2*/instyp(My->DBS,"capidials",&fsf.ctries));
@@ -4545,7 +4545,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
               fsf.loeschehyla(this,obverb, oblog);
             } else if (fsf.capistat==gescheitert) {
             } else if (fsf.capistat==fehlend) {
-            } //             if (fsf.capistat==wartend)  else else else 
+            } //             if (fsf.capistat==schlafend)  else else else 
           } // if (mitupd) 
         } // if (obcapi) 
 
@@ -4608,7 +4608,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           } else if ((!obhyla && fsf.capistat==fehlend) || (!obcapi && fsf.hylastat==fehlend) || 
                      (fsf.capistat==fehlend && fsf.hylastat==fehlend)) {
             (fzahl)++;
-          } else if (fsf.capistat==wartend || (fsf.hylastat>static_cast<FxStat>(gestrichen)&&fsf.hylastat<=static_cast<FxStat>(wartend))) {
+          } else if (fsf.capistat==schlafend || (fsf.hylastat>static_cast<FxStat>(gestrichen)&&fsf.hylastat<=static_cast<FxStat>(wartend))) {
             (wzahl)++;
           }
           // Aktionen, wenn in beiden gescheitert oder fehlend
@@ -4707,7 +4707,7 @@ void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
         RS rs(My,string("SELECT id FROM `")+spooltab+"` WHERE CONCAT(capispoolpfad,'/',capispooldatei)='"+rueck[i]+"'",ZDB);
         if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
         if (!indb) {
-          /*5*/fsfcl fsf(rueck[i],wartend);
+          /*5*/fsfcl fsf(rueck[i],schlafend);
 					fsf.holcapiprot(obverb);
 					fsf.capisd=base_name(rueck[i]);
 					fsf.hylanr="-1";
@@ -7114,7 +7114,7 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, i
   if (faxord) *ausgp<<faxord<<")";
   else *ausgp<<"  ";
   *ausgp<<"Capi: "<<schwarz;
-  if (capistat==wartend) {
+  if (capistat==schlafend) {
     *ausgp<<schwarz<<" "<<Tx[T_wartend]<<schwarz;
   } else if (capistat==gesandt) {
     *ausgp<<blau<<" "<<Tx[T_gesandt]<<schwarz;
