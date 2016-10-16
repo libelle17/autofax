@@ -4475,22 +4475,25 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
       aktuser=cspf.substr(p2+1,p1-p2-1);
 			if (!lstat(sendqgespfad.c_str(),entrysendp)) {
 				struct stat statlock;
-				cout<<rot<<"pruefe lock "<<schwarz<<sendqgespfad.substr(0,p1)+".lock"<<endl;
-				if (lstat((sendqgespfad.substr(0,p1)+".lock").c_str(),&statlock))
-					capistat=wartend;
-				else
-					capistat=verarb;
+				if (protpos==-1) {
+					capistat=fehlend;
+				} else {
+					if (lstat((sendqgespfad.substr(0,protpos)+".lock").c_str(),&statlock))
+						capistat=wartend;
+					else
+						capistat=verarb;
+				} // 				if ((p3=holcapiprot(obverb))<0)
 			} else {
-        // gesandte und gescheiterte Faxe wurden von capisuite entsprechend umbenannt
-        for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1)) { 
-          // entspr. gefaxte/gescheiterte Datei in capisuite
-          sendqgespfad=(capistat==gescheitert?pmp->cfailedvz:pmp->cdonevz)+vtz+aktuser+"-"+capisd; 
-          if (!lstat((sendqgespfad.c_str()), entrysendp)) break; 
-        }  //         for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1))
-        // hier koennte capistat auch fehlend sein
-      }  //       if (!lstat(sendqgespfad.c_str(),entrysendp)) else
-    } // if ((p1=cspf.rfind(vtz))) if ((p2=cspf.rfind(vtz,p1-1))) 
-  } //   if (capisd.empty()) else
+				// gesandte und gescheiterte Faxe wurden von capisuite entsprechend umbenannt
+				for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1)) { 
+					// entspr. gefaxte/gescheiterte Datei in capisuite
+					sendqgespfad=(capistat==gescheitert?pmp->cfailedvz:pmp->cdonevz)+vtz+aktuser+"-"+capisd; 
+					if (!lstat((sendqgespfad.c_str()), entrysendp)) break; 
+				}  //         for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1))
+				// hier koennte capistat auch fehlend sein
+			}  //       if (!lstat(sendqgespfad.c_str(),entrysendp)) else
+		} // if ((p1=cspf.rfind(vtz))) if ((p2=cspf.rfind(vtz,p1-1))) 
+	} //   if (capisd.empty()) else
 } // fsfcl::setzcapistat
 
 // hylafax: bei zu faxenden Dateien stehen die Steuerdateien in /var/spool/fax/sendq/q105, benannt nach /var/spool/fax/etc/xferfaxlog, dort steht in der 6. Spalte die hyla-Index-Nummer z.B. 105, die als Rueckmeldung von sendfax erscheint ("request id is 105 (group id 105) for host localhost (1 file)")
@@ -7093,7 +7096,7 @@ void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& 
 int fsfcl::holcapiprot(int obverb)
 {
   size_t p1=sendqgespfad.rfind('.');
-  if (p1) {
+  if (p1!=string::npos) {
     string suchtxt=sendqgespfad.substr(0,p1)+".txt";
     schlArr cconf; cconf.init(3,"tries","starttime","dialstring");
     struct stat cstat;
@@ -7104,8 +7107,9 @@ int fsfcl::holcapiprot(int obverb)
       ctries=cconf[0].wert;
       starttime=cconf[1].wert;
       dialstring=cconf[2].wert;
+			protpos=p1;
     } //   if (lstat(suchtxt.c_str(),&cstat)) else
-    return p1;
+    return (int)p1;
   } //   if (p1)
   return -1;
 } // int fsfcl::holcapiprot()
@@ -7135,8 +7139,6 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, i
   }
 	*/
   if (capistat!=fehlend) {
-    int p1=-3;
-    if ((p1=holcapiprot(obverb))>0) {
       //    if (cpplies(suchtxt,cconf,cs)) KLA
       // RS rmod(My,string("update spool set capidials=")+cconf[0].val+" where id = "+*(*cerg+0),ZDB);
       char buf[255];
@@ -7152,7 +7154,6 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, i
       *ausgp<<", T.: "<<blau<<setw(12)<<dialstring<<schwarz; 
       *ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
       *ausgp<<Tx[T_bzw]<<blau<<"*.txt"<<schwarz;
-    } // if (!lstat(suchtxt.c_str(),&cstat))
     if (ctries.empty()) ctries="0";
   } // if (capistat!=fehlend) 
 } // void fsfcl::capiwausgeb(stringstream *ausgp, int obverb, string *ctriesp, int oblog,unsigned long faxord)
