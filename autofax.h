@@ -1,7 +1,7 @@
 #include <regex.h> // regex_t, regex, regcomp, regexec
 
 enum FaxTyp:uchar {capi=1,hyla};
-enum FxStat:uchar {init,gestrichen,schwebend,schlafend,blockiert,bereit,wartend,gesandt,gescheitert,fehlend,woasined};
+enum FxStat:uchar {init,gestrichen,schwebend,wartend,blockiert,bereit,verarb,gesandt,gescheitert,fehlend,woasined};
 enum hyinst {keineh,hysrc,hypak,hyppk}; // hyla source, hyla Paket, hylaplus Paket
 
 class zielmustercl; // fuer die Verteilung der erfolgreich gefaxten Dateien auf verschiedene Dateien
