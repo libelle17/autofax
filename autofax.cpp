@@ -84,11 +84,6 @@ enum T_
   T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt,
   T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt,
   T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden,
-  T_wartend,
-  T_gesandt,
-  T_gescheitert,
-  T_nicht_in_der_Warteschlange,
-  T_woasined,
   T_Der_regulaere_Ausdruck,
   T_konnte_nicht_kompiliert_werden,
   Verbindung_zur_Datenbank_nicht_herstellbar,
@@ -531,6 +526,16 @@ enum T_
   T_wartende_Faxe,
   T_Index_auf_urspruenglichen_Dateinamen,
   T_Gesammelt_wurden,
+  T_wartend,
+  T_gesandt,
+  T_gescheitert,
+  T_nicht_in_der_Warteschlange,
+  T_woasined,
+	T_gestrichen,
+	T_schwebend,
+	T_schlafend,
+	T_blockiert,
+	T_bereit,
   T_MAX
 };
 
@@ -582,16 +587,6 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden
   {"Sollen die Dateien unabhaengig vom Faxerfolg im Zielverzeichnis gespeichert werden",
     "Shall files be stored in target directory irrespective of fax success"},
-  // T_wartend
-  {"wartend","waiting"},
-  // T_gesandt
-  {"gesandt","sent"},
-  // T_gescheitert
-  {"gescheitert","failed"},
-  // T_nicht_in_der_Warteschlange
-  {"nicht in der Warteschlage","not in queue"},
-  // T_woasined
-  {"unbekannt","unknown"},
   // T_Der_regulaere_Ausdruck
   {"Der regulaere Ausdruck '","The regular expression '"},
   // T_konnte_nicht_kompiliert_werden
@@ -1500,6 +1495,26 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Index auf urspruenglichen Dateinamen","Index on original filename"},
   // T_Gesammelt_wurden
   {"Gesammelt wurden: ","Collected were: "},
+  // T_wartend
+  {"wartend","waiting"},
+  // T_gesandt
+  {"gesandt","sent"},
+  // T_gescheitert
+  {"gescheitert","failed"},
+  // T_nicht_in_der_Warteschlange
+  {"nicht in der Warteschlage","not in queue"},
+  // T_woasined
+  {"unbekannt","unknown"},
+	// T_gestrichen
+	{"gestri.","suspen."},
+	// T_schwebend
+	{"schweb.","pending"},
+	// T_schlafend
+	{"schlaf.","sleepi."},
+	// T_blockiert,
+	{"blocki.","blocked"},
+	// T_bereit
+	{"bereit","ready"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -1564,6 +1579,11 @@ inline const char* FxStatS(FxStat *i)
   if (i) {
     switch (*i){
       case init: return "init";
+			case gestrichen: return Tx[T_gestrichen];
+			case schwebend: return Tx[T_schwebend];
+			case schlafend: return Tx[T_schlafend];
+			case blockiert: return Tx[T_blockiert]; 
+			case bereit: return Tx[T_bereit];
       case wartend: return Tx[T_wartend];
       case gesandt: return Tx[T_gesandt];
       case gescheitert: return Tx[T_gescheitert];
@@ -4588,7 +4608,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           } else if ((!obhyla && fsf.capistat==fehlend) || (!obcapi && fsf.hylastat==fehlend) || 
                      (fsf.capistat==fehlend && fsf.hylastat==fehlend)) {
             (fzahl)++;
-          } else if (fsf.capistat==wartend || fsf.hylastat==wartend) {
+          } else if (fsf.capistat==wartend || (fsf.hylastat>static_cast<FxStat>(gestrichen)&&fsf.hylastat<=static_cast<FxStat>(wartend))) {
             (wzahl)++;
           }
           // Aktionen, wenn in beiden gescheitert oder fehlend
@@ -7345,6 +7365,8 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
   if (obzaehl) *ausgp<<++pmp->faxord<<")";
   else *ausgp<<"  ";
   *ausgp<<"Hyla: "<<schwarz;
+	  *ausgp<<(hylastat==fehlend?hgrau:(hylastat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<" "<<FxStatS(&hylastat)<<(hgerg.empty()?"":" ("+hgerg+")")<<schwarz;
+	/*
   if (obsfehlt) {
     // wenn also die Datenbankdatei weder im Spool noch bei den Erledigten nachweisbar ist
     if (hylastat==gesandt) {
@@ -7355,14 +7377,8 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
       *ausgp<<hgrau<<" "<<Tx[T_nicht_in_der_Warteschlange]<<schwarz;
     }
   } else {
-    if (hylastat==wartend) {
-      *ausgp<<schwarz<<" "<<Tx[T_wartend]<<schwarz;
-    } else if (hylastat==gescheitert) {
-      *ausgp<<blau<<Tx[T_gescheitert]<<schwarz;
-    } else if (hylastat==gesandt) {
-      *ausgp<<blau<<" "<<Tx[T_gesandt]<<schwarz;
-    }
   } // if (obsfehlt) else
+	*/
   // wenn eine Protokolldatei auslesbar war
 //  if (pmp->hconfp) {
         // modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
