@@ -1496,7 +1496,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_Gesammelt_wurden
   {"Gesammelt wurden: ","Collected were: "},
   // T_wartend
-  {"wartend","waiting"},
+  {"verarb.","proces."},
   // T_gesandt
   {"gesandt","sent"},
   // T_gescheitert
@@ -1510,7 +1510,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	// T_schwebend
 	{"schweb.","pending"},
 	// T_schlafend
-	{"schlaf.","sleepi."},
+	{"wartend","waiting"},
 	// T_blockiert,
 	{"blocki.","blocked"},
 	// T_bereit
