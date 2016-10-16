@@ -4590,7 +4590,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
               rupd.update(altspool,einf,ZDB,bedingung,0);
               rupd.update(spooltab,einf,ZDB,bedingung,0);
             } // if (mitupd) 
-            ausg<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
+            if (!protdakt.empty()) ausg<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
           } // if (!warteirgendwo)
 //        KLZ // if (!obsfehlt) ... else
 
