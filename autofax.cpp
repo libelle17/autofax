@@ -7115,7 +7115,7 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, i
   else *ausgp<<"  ";
   *ausgp<<"Capi: "<<schwarz;
   if (capistat==wartend) {
-    *ausgp<<schwarz<<" "<<Tx[T_verarb]<<schwarz;
+    *ausgp<<schwarz<<" "<<Tx[T_wartend]<<schwarz;
   } else if (capistat==gesandt) {
     *ausgp<<blau<<" "<<Tx[T_gesandt]<<schwarz;
   } else if (capistat==gescheitert) {
