@@ -4470,20 +4470,10 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
   } else {
     string aktuser;
     sendqgespfad=cspf+vtz+capisd;
-    size_t p1,p2;
+		size_t p1,p2;
     if ((p1=cspf.rfind(vtz))) if ((p2=cspf.rfind(vtz,p1-1))) {
       aktuser=cspf.substr(p2+1,p1-p2-1);
-			if (!lstat(sendqgespfad.c_str(),entrysendp)) {
-				struct stat statlock;
-				if (protpos==-1) {
-					capistat=fehlend;
-				} else {
-					if (lstat((sendqgespfad.substr(0,protpos)+".lock").c_str(),&statlock))
-						capistat=wartend;
-					else
-						capistat=verarb;
-				} // 				if ((p3=holcapiprot(obverb))<0)
-			} else {
+			if (lstat(sendqgespfad.c_str(),entrysendp)) {
 				// gesandte und gescheiterte Faxe wurden von capisuite entsprechend umbenannt
 				for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1)) { 
 					// entspr. gefaxte/gescheiterte Datei in capisuite
@@ -4491,6 +4481,18 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
 					if (!lstat((sendqgespfad.c_str()), entrysendp)) break; 
 				}  //         for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1))
 				// hier koennte capistat auch fehlend sein
+			}
+			if (!lstat(sendqgespfad.c_str(),entrysendp)) {
+				holcapiprot(pmp->obverb);
+				if (protpos==-1) {
+					capistat=fehlend;
+				} else {
+					struct stat statlock;
+					if (lstat((sendqgespfad.substr(0,protpos)+".lock").c_str(),&statlock))
+						capistat=wartend;
+					else
+						capistat=verarb;
+				} // 				if ((p3=holcapiprot(obverb))<0)
 			}  //       if (!lstat(sendqgespfad.c_str(),entrysendp)) else
 		} // if ((p1=cspf.rfind(vtz))) if ((p2=cspf.rfind(vtz,p1-1))) 
 	} //   if (capisd.empty()) else
@@ -4538,7 +4540,6 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
         struct stat entrysend;
         if (obcapi) {
           if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
-					fsf.holcapiprot(0);
           fsf.setzcapistat(this, &entrysend);
           fsf.capiwausgeb(&ausg,maxcdials, 0, obverb, oblog);
           if (mitupd) {
@@ -4717,7 +4718,6 @@ void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
         if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
         if (!indb) {
           /*5*/fsfcl fsf(rueck[i],wartend);
-					fsf.holcapiprot(obverb);
 					fsf.capisd=base_name(rueck[i]);
 					fsf.hylanr="-1";
 					fsf.cspf=dir_name(rueck[i]);
