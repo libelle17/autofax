@@ -4475,6 +4475,7 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
       aktuser=cspf.substr(p2+1,p1-p2-1);
 			if (!lstat(sendqgespfad.c_str(),entrysendp)) {
 				struct stat statlock;
+				cout<<rot<<"pruefe lock"<<schwarz<<endl;
 				if (lstat((sendqgespfad.substr(0,p1)+".lock").c_str(),&statlock))
 					capistat=wartend;
 				else
