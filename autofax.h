@@ -1,7 +1,7 @@
 #include <regex.h> // regex_t, regex, regcomp, regexec
 
 enum FaxTyp:uchar {capi=1,hyla};
-enum FxStat:uchar {init,wartend,gesandt,gescheitert,fehlend,woasined};
+enum FxStat:uchar {init,gestrichen,schwebend,schlafend,blockiert,bereit,wartend,gesandt,gescheitert,fehlend,woasined};
 enum hyinst {keineh,hysrc,hypak,hyppk}; // hyla source, hyla Paket, hylaplus Paket
 
 class zielmustercl; // fuer die Verteilung der erfolgreich gefaxten Dateien auf verschiedene Dateien
@@ -99,7 +99,7 @@ class fsfcl : public fxfcl // Faxsendfile
     string hgerg;  // hyla_gescheitert_erg
     int hversuzahl;
     FxStat capistat=init;// 1=wartend, 2=gesandt, 3=gescheitert, 4=fehlend (in spool keine Capi-Datei eingetragen oder die eingetragene gibts nicht)
-    FxStat hylastat=init;// 1=wartend, 2=gesandt, 3=gescheitert, 4=fehlend (in spool keine Capi-Datei eingetragen oder die eingetragene gibts nicht)
+    FxStat hylastat=init;// 1=wartend, 2=gesandt, 3=gescheitert, 4=fehlend (in spool keine hyla-Datei eingetragen oder die eingetragene gibts nicht)
   private:
   public:
       void archiviere(DB *My, paramcl *pmp, struct stat *entryp,uchar obgescheitert, FaxTyp ftyp, uchar *gel, int obverb, int oblog);

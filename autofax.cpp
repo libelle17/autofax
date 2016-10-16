@@ -1560,7 +1560,7 @@ const string& zielmustercl::holmuster() {
 // wird aufgerufen in: loeschefax, untersuchespool, capiwausgeb, setzhylastat, hylaausgeb
 inline const char* FxStatS(FxStat *i) 
 {
-  enum FxStat:uchar {init,wartend,gesandt,gescheitert,fehlend,woasined};
+//  enum FxStat:uchar {init,wartend,gesandt,gescheitert,fehlend,woasined};
   if (i) {
     switch (*i){
       case init: return "init";
@@ -7162,19 +7162,22 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
         fsfp->hgerg=tok[1];
         anfzweg(fsfp->hgerg);
         switch (aktion) {
-          case 2: fsfp->hstate="8"; break;
-          case 1: 
-                  if (fsfp->hgerg.empty()) {
-                    fsfp->hylastat=gesandt;
-                    fsfp->hstate="7"; 
-                  } else {
-                    fsfp->hylastat=gescheitert;
-                    fsfp->hstate="6";
-                  }
-                  break;
-        } //         switch (aktion)
-        if (tok.size()>2) {
-          vector<string> toi;
+          case 2: 
+						fsfp->hylastat=gescheitert;
+						fsfp->hstate="8"; 
+									break;
+					case 1: 
+						if (fsfp->hgerg.empty()) {
+							fsfp->hylastat=gesandt;
+							fsfp->hstate="7"; 
+						} else {
+							fsfp->hylastat=wartend;
+							fsfp->hstate="6";
+						}
+						break;
+				} //         switch (aktion)
+				if (tok.size()>2) {
+					vector<string> toi;
           aufSplit(&toi,&tok[1],'/');
           if (toi.size()) {
             if (totpages) *totpages=toi[0];
@@ -7318,7 +7321,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     //    lstat(sendqgespfad.c_str(),&entryh); 
     // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
     if (*hyla_uverz_nrp) {
-      fsf->hylastat=wartend;
+      fsf->hylastat=static_cast<FxStat>(atol(hylconf[0].wert.c_str()));
     // if (*hyla_uverz_nrp) 
     }  else { 
       if (this->hylconf[0].wert=="8") {  
@@ -7326,7 +7329,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
         // 7, status erfolgreich
       } else if (this->hylconf[0].wert=="7") { 
         fsf->hylastat=gesandt;
-      } else {
+      } else { // wird kaum vorkommen
         fsf->hylastat=woasined;
       }
     } // if (*hyla_uverz_nrp) 
