@@ -1506,7 +1506,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	// T_bereit
 	{"bereit","ready"},
   // T_verarb
-  {"verarb.","proces."},
+  {"in Arb.","proces."},
   // T_gesandt
   {"gesandt","sent"},
   // T_gescheitert
