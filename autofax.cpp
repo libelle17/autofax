@@ -4478,11 +4478,11 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
 				for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1)) { 
 					// entspr. gefaxte/gescheiterte Datei in capisuite
 					sendqgespfad=(capistat==gescheitert?pmp->cfailedvz:pmp->cdonevz)+vtz+aktuser+"-"+capisd; 
+					Log(string("capistat: ")+ltoan((int)capistat)+" "+blau+sendqgespfad+schwarz,pmp->obverb,pmp->oblog);
 					if (!lstat((sendqgespfad.c_str()), entrysendp)) break; 
 				}  //         for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1))
 				// hier koennte capistat auch fehlend sein
-			}
-			if (!lstat(sendqgespfad.c_str(),entrysendp)) {
+			} else {
 				holcapiprot(pmp->obverb);
 				if (protpos==-1) {
 					capistat=fehlend;
@@ -4540,6 +4540,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
         struct stat entrysend;
         if (obcapi) {
           if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
+					obverb=2;
           fsf.setzcapistat(this, &entrysend);
           fsf.capiwausgeb(&ausg,maxcdials, 0, obverb, oblog);
           if (mitupd) {
@@ -4557,6 +4558,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
             } else if (fsf.capistat==fehlend) {
             } //             if (fsf.capistat==wartend)  else else else 
           } // if (mitupd) 
+					obverb=0;
         } // if (obcapi) 
 
         // b) ueber hylafax
@@ -6619,9 +6621,9 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
         }
       } else {
         Log(rots+string(Tx[T_KeinErgebnisbeimFaxen])+schwarz,1,1);
-      }
-    }
-  }
+      } //       if (faxerg.size())
+    } //     if (lstat(ff.c_str(), &entryff))  else else
+  } //   if (fsfp->telnr.empty())
 } // faxemitC
 
 // wird aufgerufen in faxemitH
