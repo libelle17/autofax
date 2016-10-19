@@ -1622,10 +1622,10 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
         if (pidp==ocstr || (pidp>ocstr && (strchr(" .,;",*(pidp-1))))){
           for(pidp+=4;*pidp && *pidp!=' ';pidp++) {
             if (strchr("0123456789",*pidp)) pid+=*pidp;
-          } 
-        }
-      }
-    }
+          }  //           for(pidp+=4;*pidp && *pidp!=' ';pidp++)
+        } //         if (pidp==ocstr || (pidp>ocstr && (strchr(" .,;",*(pidp-1)))))
+      } //       if (pidp)
+    } //     if (!original.empty())
     if (pid.empty()) pid="0";
     einf.push_back(/*2*/instyp(My->DBS,"pid",&pid));
     einf.push_back(/*2*/instyp(My->DBS,"Erfolg",(int)!obgescheitert));
@@ -1636,7 +1636,7 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     if (!telnr.empty()) {
       string stdfax=pmp->stdfaxnr(telnr);
       einf.push_back(/*2*/instyp(My->DBS,"rcfax",&stdfax));
-    }
+    } //     if (!telnr.empty())
     if (!adressat.empty()) einf.push_back(/*2*/instyp(My->DBS,"adressat",&adressat));
 
     einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
@@ -1646,7 +1646,7 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     if (runde==1) {
       Log(string(Tx[T_Fehler_af])+drot+ltoan(rins.fnr)+schwarz+Tx[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,oblog);
       exit(10);
-    }
+    } //     if (runde==1)
   } // for(int runde=0;runde<2;runde++) 
   if (!rins.fnr) { 
     RS rsloe(My,"DELETE FROM `"+pmp->spooltab+"` WHERE id = \""+id+"\"");
@@ -4429,9 +4429,9 @@ void paramcl::faxealle()
   RS r0(My,string("SELECT id p0, origvu p1, original p2, telnr p3, prio p4, "
         "IF(ISNULL(capispooldatei),'',capispooldatei) p5, IF(ISNULL(capidials),'',capidials) p6, "
         "IF(ISNULL(hylanr),'',hylanr) p7, IF(ISNULL(hyladials),'',hyladials) p8, "
-        "((ISNULL(capispooldatei)or capispooldatei='') AND (ISNULL(hyladials) OR hyladials>")+maxhylav+" OR hyladials=-1 OR "
+        "((ISNULL(capispooldatei)or capispooldatei='') AND (ISNULL(hyladials) OR hyladials>=")+maxhylav+" OR hyladials=-1 OR "
       "    (ISNULL(prio) OR prio=1 OR (prio=0 AND NOT "+hzstr+")))) p9, "
-      "((ISNULL(hylanr) OR hylanr='') AND (ISNULL(capidials) OR capidials>" +maxcapiv+" OR capidials=-1 OR "
+      "((ISNULL(hylanr) OR hylanr='') AND (ISNULL(capidials) OR capidials>=" +maxcapiv+" OR capidials=-1 OR "
       "      (ISNULL(prio) OR prio=2 OR (prio=0 AND "+hzstr+")))) p10, "
       "adressat p11 "
       "FROM `"+spooltab+"` "
@@ -6613,10 +6613,11 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
           }   // if (char *z2=strstr(z1,tz2)) 
           // if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
         } else if (faxerg.at(0).find("can't open")==0) {
+				  // Fax nicht in capisuite-spool gestellt, da Datei nicht zu oeffnen, also auch wieder aus Tabelle loeschen
           Log(rots+Tx[T_Datei]+blau+pmp->wvz+vtz+fsfp->spdf+rot+"' (id: "+blau+fsfp->id+rot+
               Tx[T_nichtgefundenloeschesieausDB]+schwarz,1,1);
           RS rsloe(My,string("DELETE FROM `")+spooltab+"` WHERE id = "+fsfp->id,ZDB);
-        }
+        } //         if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
       } else {
         Log(rots+string(Tx[T_KeinErgebnisbeimFaxen])+schwarz,1,1);
       } //       if (faxerg.size())
