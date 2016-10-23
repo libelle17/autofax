@@ -2336,6 +2336,7 @@ int linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsn
       return 0;
     }
   } // if (!fallsnichtda.empty()) 
+	int iru;
   if (!eprog.empty()) {
     switch (pruefipr()) {
       case zypper:
@@ -2346,7 +2347,10 @@ int linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsn
         ret=systemrueck("sudo zypper -n --gpg-auto-import-keys in -f "+eprog,obverb+1,oblog);
         break;
       case apt:
-        ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog);
+				for(iru=0;iru<2;iru++) {
+					if ((ret=systemrueck("sudo apt -y install "+eprog,obverb+1,oblog))!=100) break;
+					systemrueck("sudo dpkg --configure -a",obverb+1,oblog);
+				}
         break; 
       case dnf:
         ret=systemrueck("sudo dnf -y install "+eprog,obverb+1,oblog);
