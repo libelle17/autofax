@@ -1,7 +1,7 @@
 #include <regex.h> // regex_t, regex, regcomp, regexec
 
 enum FaxTyp:uchar {capi=1,hyla};
-enum FxStat:uchar {init,gestrichen,schwebend,wartend,blockiert,bereit,verarb,gesandt,gescheitert,fehlend,woasined};
+enum FxStat:uchar {init/*0*/,gestrichen,schwebend,wartend/*3*/,blockiert,bereit,verarb/*6*/,gesandt/*7*/,gescheitert/*8*/,fehlend,woasined};
 enum hyinst {keineh,hysrc,hypak,hyppk}; // hyla source, hyla Paket, hylaplus Paket
 
 class zielmustercl; // fuer die Verteilung der erfolgreich gefaxten Dateien auf verschiedene Dateien
@@ -48,7 +48,7 @@ class urfxcl // urspruengliche Dateidaten vor Aufteilung an verschiedene Faxadre
  public:
     string teil;
     string ur;
-    unsigned prio;
+    unsigned prio; // Prioritaet der Fax-Programme: 0 = capi und 0 = hyla per Konfigurationsdatei, 1= capi und 2= hyla per Faxdateiname
     urfxcl(string& teil, string& ur,unsigned prio): teil(teil), ur(ur), prio(prio) {}
 };
 
@@ -58,7 +58,7 @@ class fxfcl // Faxfile
     string npdf; // nicht-PDF
     string spdf; // schon-PDF
     string ur;   // urspruenglicher Dateinamen
-    unsigned prio; // Prioritaet der Fax-Programme: 0=keine,1=Capi, 2=Hyla
+    unsigned prio; // Prioritaet der Fax-Programme: 0 = capi und 0 = hyla per Konfigurationsdatei, 1= capi und 2= hyla per Faxdateiname
     fxfcl(string& npdf,string& spdf,string& ur,unsigned prio): npdf(npdf),spdf(spdf),ur(ur),prio(prio) {}
     // nur fuer Initialisierung in fsfcl, Konstruktur /*1*/, nur fuer faxealle
     fxfcl(unsigned prio, string& npdf,string& spdf): npdf(npdf),spdf(spdf),prio(prio) {}

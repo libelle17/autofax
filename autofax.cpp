@@ -203,6 +203,7 @@ enum T_
   T_Aenderungszeit_der_Hylaspooldatei_im_Time_Format,
   T_jobid_in_letztem_gescheitertem_hylafax,
   T_state_Feld_in_hylafax,
+  T_capistat,
   T_statuscode_in_letztem_gescheitertem_hylafax,
   T_status_in_letztem_gescheitertem_hylafax,
   T_capispooldateien_der_Capisuite,
@@ -805,7 +806,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_zu_senden_an
   {"zu senden an","to be sent to"},
   // T_Prioritaet_aus_Dateinamen
-  {"Prioritaet aus Dateinamen: 0=keine, 1=capi, 2=hyla","Priority from file name: 0=none, 1=capi, 2=hyla"},
+  {"Prioritaet der Fax-Programme: 0=capi und 1=hyla per Konfigurationsdatei, 2=capi und 3=hyla per Faxdateiname",
+	 "Priority of the fax programs: 0=capi and 1=hyla via configuration file, 2=capi and 3=hyla via fax file name"},
   // T_Zahl_der_bisherigen_Versuche_in_Capisuite
   {"Zahl der bisherigen Versuche in Capisuite","No. of previous tries in Capisuite"},
   // T_Zahl_der_bisherigen_Versuche_in_Hylafax
@@ -826,7 +828,11 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_jobid_in_letztem_gescheitertem_hylafax
   {"jobid in letztem gescheitertem hylafax","job id of the last failed hylafax"},
   // T_state_Feld_in_hylafax
-  {"state-Feld in hylafax","state field in hylafax"},
+	{"state-Feld in hylafax: 0=init,1=gestrichen,2=schwebend,3=wartend,4=blockiert,5=bereit,6=verarb,7=gesandt,8=gescheitert,9=fehlend,10=woasined",
+	 "state-field in hylafax: 0=init,1=suspended,2=pending,3=sleeping,4=blocked,5=ready,6=active,7=done,8=failed,9=missing,10=unknown"},
+	// T_capistat
+	{"capistat: 0=init,1=gestrichen,2=schwebend,3=wartend,4=blockiert,5=bereit,6=verarb,7=gesandt,8=gescheitert,9=fehlend,10=woasined",
+	 "capistat: 0=init,1=suspended,2=pending,3=sleeping,4=blocked,5=ready,6=active,7=done,8=failed,9=missing,10=unknown"},
   // T_statuscode_in_letztem_gescheitertem_hylafax
   {"statuscode in letztem gescheitertem hylafax","status code of the last failed hylafax"},
   // T_status_in_letztem_gescheitertem_hylafax
@@ -1828,6 +1834,11 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
         string oudatei = base_name(fxvp->at(nachrnr).npdf);
         einf.push_back(/*2*/instyp(My->DBS,"origvu",&oudatei));
       }
+			// in fxvp:
+			// Prioritaet der Fax-Programme: 0 = capi und 0 = hyla per Konfigurationsdatei, 1= capi und 2= hyla per Faxdateiname
+			// in Datenbank: 
+			// Prioritaet der Fax-Programme: 0 = capi und 1 = hyla per Konfigurationsdatei, 2= capi und 3= hyla per Faxdateiname
+      if (fxvp->at(nachrnr).prio>0 || hylazuerst) fxvp->at(nachrnr).prio++;
       einf.push_back(/*2*/instyp(My->DBS,"prio",fxvp->at(nachrnr).prio));
       rins.insert(altspool,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
       rins.insert(spooltab,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
@@ -4423,16 +4434,18 @@ void paramcl::faxealle()
   vector<fsfcl> fsfv;
   char ***cerg;
   unsigned long dbszahl=0; // Zahl der Datenbanksaetze
-  string hzstr=ltoan(hylazuerst);
+//  string hzstr=ltoan(hylazuerst);
   if (!isnumeric(maxhylav)) maxhylav="3";
   if (!isnumeric(maxcapiv)) maxcapiv="3";
   RS r0(My,string("SELECT id p0, origvu p1, original p2, telnr p3, prio p4, "
         "IF(ISNULL(capispooldatei),'',capispooldatei) p5, IF(ISNULL(capidials),'',capidials) p6, "
         "IF(ISNULL(hylanr),'',hylanr) p7, IF(ISNULL(hyladials),'',hyladials) p8, "
-        "((ISNULL(capispooldatei)or capispooldatei='') AND (ISNULL(hyladials) OR hyladials>=")+maxhylav+" OR hyladials=-1 OR "
-      "    (ISNULL(prio) OR prio=1 OR (prio=0 AND NOT "+hzstr+")))) p9, "
+        "((ISNULL(capispooldatei)or capispooldatei='') AND (ISNULL(hyladials) OR hyladials>=")+maxhylav+" OR hylastate=8 OR " // hyladials=-1
+//      "    (ISNULL(prio) OR prio=1 OR (prio=0 AND NOT "+hzstr+")))) p9, "
+      "    (ISNULL(prio) OR prio=2 OR prio=0))) p9, "
       "((ISNULL(hylanr) OR hylanr='') AND (ISNULL(capidials) OR capidials>=" +maxcapiv+" OR capidials=-1 OR "
-      "      (ISNULL(prio) OR prio=2 OR (prio=0 AND "+hzstr+")))) p10, "
+//      "      (ISNULL(prio) OR prio=2 OR (prio=0 AND "+hzstr+")))) p10, "
+      "      (ISNULL(prio) OR prio=3 OR prio=1))) p10, "
       "adressat p11 "
       "FROM `"+spooltab+"` "
       "WHERE original>''",ZDB);
@@ -4446,8 +4459,9 @@ void paramcl::faxealle()
       if (*(*cerg+0) && *(*cerg+1) && *(*cerg+2) && *(*cerg+3) && *(*cerg+4) && *(*cerg+5) && 
           *(*cerg+6) && *(*cerg+7) && *(*cerg+8) && *(*cerg+9) && *(*cerg+10)) {
         // obcapi = *(*cerg+9), obhyla=*(*cerg+10)
-        fsfv.push_back(/*1*/fsfcl(*(*cerg+0), *(*cerg+1), *(*cerg+2), *(*cerg+3), atoi(*(*cerg+4)), *(*cerg+5),
-              atoi(*(*cerg+6)), *(*cerg+7), atoi(*(*cerg+8)), (binaer)atoi(*(*cerg+9)), (binaer)atoi(*(*cerg+10)), *(*cerg+11)));
+        fsfv.push_back(/*1*/fsfcl(*(*cerg+0)/*id*/, *(*cerg+1)/*npdf*/, *(*cerg+2)/*spdf*/, *(*cerg+3)/*telnr*/, 
+					 atoi(*(*cerg+4))/*prio*/, *(*cerg+5)/*capisd*/, atoi(*(*cerg+6))/*capids*/, *(*cerg+7)/*hylanr*/, 
+					 atoi(*(*cerg+8))/*hdialsn*/, (binaer)atoi(*(*cerg+9))/*obcapi*/, (binaer)atoi(*(*cerg+10))/*obhyla*/, *(*cerg+11))/*adressat*/);
       }
     } // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
     Log(string(Tx[T_ZahldDSmwegzuschickendenFaxenin])+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz,obverb,oblog);
@@ -4511,7 +4525,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
   Log(violetts+Tx[T_untersuchespool]+schwarz,obverb,oblog);
   char ***cerg;
   RS rs(My,string("SELECT id p0,capispooldatei p1,capispoolpfad p2,original p3,cdateidatum p4,"
-        " telnr p5,origvu p6,hylanr p7,capidials p8,hyladials p9,hdateidatum p10, adressat p11, idudoc p12 "
+        " telnr p5,origvu p6,hylanr p7,capidials p8,hyladials p9,hdateidatum p10, adressat p11, idudoc p12, prio p13 "
         "FROM `")+spooltab+"` WHERE (hylanr RLIKE '^[0-9]+$' AND hylanr<>0) OR capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",ZDB);
   if (!rs.obfehl) {
     faxord=0;
@@ -4532,6 +4546,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
         if (*(*cerg+10)) fsf.hdd   =*(*cerg+10); // hdateidatum
         if (*(*cerg+11)) fsf.adressat =*(*cerg+11); // adressat
         if (*(*cerg+12)) fsf.idudoc = *(*cerg+12);  // id des ursp.Dateinamens in udoc
+        if (*(*cerg+13)) fsf.prio = atol(*(*cerg+13));  // Prioritaet wie in Datenbank
         Log(string("id: ")+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
         ausg<<blau<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; // ab hier Neue-Zeile-Zeichen immer am Anfang der naechsten Zeile
         // a) ueber capisuite
@@ -4543,17 +4558,17 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           fsf.setzcapistat(this, &entrysend);
           fsf.capiwausgeb(&ausg,maxcdials, 0, obverb, oblog);
           if (mitupd) {
-            if (fsf.capistat==wartend) {
-              RS rupd(My); 
-              vector<instyp> einf; // fuer alle Datenbankeinfuegungen
+						RS rupd(My); 
+						vector<instyp> einf; // fuer alle Datenbankeinfuegungen
+						string bedingung=string("id=")+fsf.id;
+						if (fsf.capistat==wartend || fsf.capistat==gescheitert) {
               einf.push_back(/*2*/instyp(My->DBS,"capidials",&fsf.ctries));
-              string bedingung=string("id=")+fsf.id;
-              if (mitupd) rupd.update(altspool,einf,ZDB,bedingung,0);
-              if (mitupd) rupd.update(spooltab,einf,ZDB,bedingung,0);
+							einf.push_back(/*2*/instyp(My->DBS,"capistate",fsf.capistat));
+              rupd.update(altspool,einf,ZDB,bedingung,0);
+              rupd.update(spooltab,einf,ZDB,bedingung,0);
             } else if (fsf.capistat==gesandt) {
               // ... und ggf. in hylafax loeschen
               fsf.loeschehyla(this,obverb, oblog);
-            } else if (fsf.capistat==gescheitert) {
             } else if (fsf.capistat==fehlend) {
             } //             if (fsf.capistat==wartend)  else else else 
           } // if (mitupd) 
@@ -4573,13 +4588,13 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
               RS rupd(My); 
               vector<instyp> einf; // fuer alle Datenbankeinfuegungen
               einf.push_back(/*2*/instyp(My->DBS,"hylastate",&fsf.hstate));
-              if (!hyla_uverz_nr) { // wenn fertig
-                if (fsf.hylastat==gescheitert) { // (hylastate=="8") // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
-                  einf.push_back(/*6*/instyp(My->DBS,"hylanr","0",(uchar)1));
-                  //                  einf.push_back(instyp(My->DBS,"hyladials","-1",(uchar)1));
-                  fsf.hdials="-1";
                   einf.push_back(/*2*/instyp(My->DBS,"hylastatus",&fsf.hstatus));
                   einf.push_back(/*2*/instyp(My->DBS,"hylastatuscode",&fsf.hstatuscode));
+              if (!hyla_uverz_nr) { // wenn fertig
+                if (fsf.hylastat==gescheitert) { // (hylastate=="8") // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
+//                  einf.push_back(/*6*/instyp(My->DBS,"hylanr","0",(uchar)1));
+                  //                  einf.push_back(instyp(My->DBS,"hyladials","-1",(uchar)1));
+//                  fsf.hdials="-1";
                 } else if (fsf.hylastat==gesandt) { // (hylastate=="7") // 7, status erfolgreich
                   // ... und ggf. in capisuite loeschen
                   fsf.loeschecapi(obverb,oblog);
@@ -4591,7 +4606,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
               rupd.update(spooltab,einf,ZDB,bedingung,0);
             } // if (mitupd) 
             if (!protdakt.empty()) ausg<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
-          } // if (!warteirgendwo)
+          } // if (obhyla)
 //        KLZ // if (!obsfehlt) ... else
 
         if (mitupd && (obcapi || obhyla)) {
@@ -6810,6 +6825,7 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
       Feld("adressat","varchar","1","",Tx[T_zu_senden_an],0,0,1),
       Feld("prio","int","1","",Tx[T_Prioritaet_aus_Dateinamen],0,0,1),
       Feld("capidials","int","10","",Tx[T_Zahl_der_bisherigen_Versuche_in_Capisuite],0,0,1),
+			Feld("capistat","int","2","",Tx[T_capistat],0,0,1),
       Feld("hyladials","int","10","",Tx[T_Zahl_der_bisherigen_Versuche_in_Hylafax],0,0,1),
       Feld("capispooldatei","varchar","1","",Tx[T_Spooldatei_in_Capisuite],0,0,1),
       Feld("capispoolpfad","varchar","1","",Tx[T_Pfad_zur_Spooldatei_in_Capisuite_ohne_abschliessendes_Verzeichnistrennzeichen],0,0,1),
@@ -6869,7 +6885,7 @@ void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direk
       Feld("oscht","datetime","0","0",Tx[T_outgoing_schedule_time_oder_so_aehnlich_nur_MSFax],0,0,1),
       Feld("subject","varchar","1","",Tx[T_Hinweis_auf_Dateiinhalt_oder_Adressat_nur_MSFax],0,0,1),
       Feld("id","varchar","1","",Tx[T_identisch_zu_submid_nur_MSFax],0,0,1),
-      Feld("prio","int","10","",Tx[T_Prioritaet_nur_MSFax],0,0,1),
+      Feld("prio","int","1","",Tx[T_Prioritaet_nur_MSFax],0,0,1),
       Feld("csid","varchar","1","",Tx[T_FAxnummer_des_Adressaten_nur_MSFax],0,0,1),
       Feld("sender","varchar","1","",Tx[T_Faxnummer_des_Senders_nur_MSFax],0,0,1),
       Feld("transs","datetime","0","0",Tx[T_Beginn_der_Uebertragung_nur_MSFax],0,0,1),
