@@ -7475,9 +7475,8 @@ int main(int argc, char** argv)
 
   if (!pm.getcommandline()) 
     exit(40);
-  pm.pruefggfmehrfach();
   if (pm.obvi) {
-    exit (systemrueck("$(which vim 2>/dev/null || which vi) "+pm.konfdatname+" >/dev/tty"));
+		exit (systemrueck("$(which vim 2>/dev/null || which vi) "+pm.konfdatname+" >/dev/tty"));
   }
   if (pm.zeigvers) {
    zeigversion(pm.meinname,pm.mpfad);
@@ -7487,9 +7486,13 @@ int main(int argc, char** argv)
   if (pm.obhyla) pm.pruefmodem();
   if (pm.obcapi) pm.pruefisdn();
   pm.rueckfragen();
-  pm.setzhylavz();
+	pm.pruefggfmehrfach();
+	pm.setzhylavz();
   pm.verzeichnisse();
   pm.pruefsamba();
+	// Rueckfragen koennen auftauchen in: rueckfragen, konfcapi (<- pruefcapi), loeschefax, pruefsamba
+	// als Kompromiss blockieren wir hier
+	pm.pruefggfmehrfach();
 
   if (pm.logdateineu) tuloeschen(logdt,"",pm.obverb,pm.oblog);
   Log(string(Tx[T_zufaxenvz])+drot+pm.zufaxenvz+schwarz+"'",pm.obverb,pm.oblog);
