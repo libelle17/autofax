@@ -4649,7 +4649,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           // die Flags aller aktivierten Faxwege stehen auf gescheitert oder fehlend
           uchar nimmer = ((!obcapi || fsf.capistat==fehlend || fsf.capistat==gescheitert) && 
               (!obhyla || fsf.hylastat==fehlend || fsf.hylastat==gescheitert));
-					cout<<rot<<"\nfsf.capistat: "<<violett<<fsf.capistat<<rot<<" fsf.hylastat: "<<violett<<fsf.hylastat<<rot<<" allegesch: "<<violett<<(int)allegesch<<rot<<" nimmer: "<<violett<<(int)nimmer<<schwarz<<endl;
+					// <<rot<<"\nfsf.capistat: "<<violett<<fsf.capistat<<rot<<" fsf.hylastat: "<<violett<<fsf.hylastat<<rot<<" allegesch: "<<violett<<(int)allegesch<<rot<<" nimmer: "<<violett<<(int)nimmer<<schwarz<<endl;
           uchar ogibts[2] = {0,0};
           string odatei[2];
           if (nimmer) {
@@ -6149,7 +6149,6 @@ void paramcl::pruefsfftobmp()
         obfrei = !systemrueck(befehl,obverb,oblog);
       }
       if (obfrei) {
-        obverb=2;
         svec brueck;
         systemrueck("sudo find /usr/lib64 /usr/lib /usr/local/lib /usr/local/lib64 /lib -name libboost_python.so -print -quit",obverb,oblog,&brueck);
         uchar obboostda=brueck.size();
@@ -6340,7 +6339,7 @@ int paramcl::pruefcapi()
             } // if (v1!=v2) 
 //            exit(1);
             // nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
-            int altobverb=obverb;obverb=2;
+            // int altobverb=obverb;obverb=2;
             //         systemrueck("sudo dnf -y install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
             systemrueck("sudo rpmdev-setuptree",obverb,oblog);
             Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
@@ -6371,7 +6370,7 @@ int paramcl::pruefcapi()
               // make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules
             } // if (rueck.size()) 
             exit(70);
-            obverb=altobverb;
+            // obverb=altobverb;
           } // if (system==fed) 
         } // if (systemrueck("sudo modprobe capi",obverb,oblog))
         systemrueck("sudo modprobe capidrv",obverb,oblog);

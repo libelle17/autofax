@@ -1,5 +1,5 @@
 
-<h1 align="center">AUTOFAX (Version 0.41351)</h1>
+<h1 align="center">AUTOFAX (Version 0.41352)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -649,14 +649,19 @@ call the command &rsquo;sudo&rsquo; (must be member of the
 group &rsquo;sudoers&rsquo;), &rsquo;GNU make&rsquo; has to
 be installed (which shall be accomplished if necessary by
 calling ./install.sh). Further needed programs will be
-installed by the makefile or by autofax itsself via zypper
-or apt-get, if possible. Those are: <b><br>
+installed by the makefile or by autofax itsself via zypper,
+apt, dnf or yum, if needed and possible, especially: <b><br>
 makefile:</b> <br>
-g++, libmysqlclient-dev(el), libtiff-dev(el) <b><br>
+gcc, g++, libmysqlclient-dev(el), libtiff-dev(el) <b><br>
 autofax:</b> <br>
-cron, soffice, convert, hylafax+, hylafax+-client,
-kernel-source, fcpci-3.10.0, kkeil Factory repository,
-capisuite, capi4linux, i4l-isdnlog, mariadb.</p>
+boost, boost-devel, capiutils, capisuite, capi4linux,
+convert, cron, fcpci-3.10.0, ghostscript, hylafax+,
+hylafax+-client, imagemagick, i4l-isdnlog, kernel-source,
+libcapi20-2, libcapi20-3, libreoffice-base, libxslt-tools,
+linux-headers-$(uname -r), mariadb, ocrmypdf,
+policycoreutils, policycoreutils-python-utils, python-devel,
+python-setuptools, python3-pip, samba, sendmail, sfftobmp,
+soffice, tesseract-ocr, tiff, unpaper.</p>
 
 <h2>IMPLICATIONS
 <a name="IMPLICATIONS"></a>
