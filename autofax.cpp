@@ -4643,12 +4643,12 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           // die Flags aller aktivierten Faxwege stehen auf gescheitert
           uchar allegesch=0;
           if (obcapi && obhyla && fsf.capistat==gescheitert && maxcapiv>=maxcdials) allegesch=1;
-          else if (obcapi && obhyla && fsf.hylastat==gescheitert && maxhylav>=maxhdials) allegesch=1;
+//          else if (obcapi && obhyla && fsf.hylastat==gescheitert && maxhylav>=maxhdials) allegesch=1;
           else allegesch = ((!obcapi || fsf.capistat==gescheitert) && (!obhyla || fsf.hylastat==gescheitert));
           // die Flags aller aktivierten Faxwege stehen auf gescheitert oder fehlend
           uchar nimmer = ((!obcapi || fsf.capistat==fehlend || fsf.capistat==gescheitert) && 
               (!obhyla || fsf.hylastat==fehlend || fsf.hylastat==gescheitert));
-					cout<<rot<<"fsf.capistat: "<<violett<<fsf.capistat<<rot<<" fsf.hylastat: "<<violett<<fsf.hylastat<<rot<<" allegesch: "<<violett<<(int)allegesch<<rot<<" nimmer: "<<violett<<(int)nimmer<<schwarz<<endl;
+					cout<<rot<<"\nfsf.capistat: "<<violett<<fsf.capistat<<rot<<" fsf.hylastat: "<<violett<<fsf.hylastat<<rot<<" allegesch: "<<violett<<(int)allegesch<<rot<<" nimmer: "<<violett<<(int)nimmer<<schwarz<<endl;
           uchar ogibts[2] = {0,0};
           string odatei[2];
           if (nimmer) {
