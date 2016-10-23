@@ -4648,6 +4648,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           // die Flags aller aktivierten Faxwege stehen auf gescheitert oder fehlend
           uchar nimmer = ((!obcapi || fsf.capistat==fehlend || fsf.capistat==gescheitert) && 
               (!obhyla || fsf.hylastat==fehlend || fsf.hylastat==gescheitert));
+					cout<<rot<<"fsf.capistat: "<<violett<<fsf.capistat<<rot<<" fsf.hylastat: "<<violett<<fsf.hylastat<<rot<<" allegesch: "<<violett<<(int)allegesch<<rot<<" nimmer: "<<violett<<(int)nimmer<<schwarz<<endl;
           uchar ogibts[2] = {0,0};
           string odatei[2];
           if (nimmer) {
