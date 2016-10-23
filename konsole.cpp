@@ -1152,7 +1152,7 @@ int obprogda(string prog,int obverb, int oblog, string *pfad)
     return 1;
   } // if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck))
   if (strcmp(curruser(),"root")) {
-    if (!systemrueck("sudo env \"PATH=$PATH\" which "+prog+" 2>/dev/null",obverb,oblog,&rueck)) {
+    if (!systemrueck("sudo which \""+prog+"\" 2>/dev/null || sudo env \"PATH=$PATH\" which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck)) {
       if (pfad) *pfad=rueck[0];
       return 2;
     }
