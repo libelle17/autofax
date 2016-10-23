@@ -559,8 +559,9 @@ forwarded to the second of the two programs.</p></td></tr>
 <p style="margin-top: 1em">If the fax transmission is
 finished (with/without success), the file is being moved
 from the waiting directory to the respective directory for
-sent faxes or for failed faxes and the database entry is
-being transferred from <b>spooltab</b> to <b>outa</b>.</p></td></tr>
+sent faxes or for failed faxes, optionally modified by ocr
+via ocrmypdf, and the database entry is being transferred
+from <b>spooltab</b> to <b>outa</b>.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -626,6 +627,13 @@ replace(replace(replace(replace(fax1k,&rsquo;
 <p style="margin-top: 1em">If more sql commands are
 specified and one of them does not give a result, the next
 one will be tried.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">Optionally, the received faxes
+are subjected to ocr via a call of ocrmypdf.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

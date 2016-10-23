@@ -282,7 +282,7 @@ Falls neue Dateien erstellt wurden, werden die nachfolgenden Verschiebungen und 
 .br
 Falls sowohl hylafax als auch capisuite aktiv sind und eine voreingestellte Zahl an Anwahlversuchen im Programm der ersten Präferenz dieser beiden erfolglos erreicht ist, wird das Fax auch noch an das jeweils andere Programm weitergeleiet.
 .br
-Falls der Faxvorgang (erfolgreich oder erfolglos) beendet ist, wird die Datei aus dem Warteverzeichnis in die Verzeichnisse für fertige bzw. gescheiterte Faxe verschoben und der Datenbankeintrag aus \fBspooltab\fR in die Tabelle \fBouta\fR verschoben.
+Falls der Faxvorgang (erfolgreich oder erfolglos) beendet ist, wird die Datei aus dem Warteverzeichnis in die Verzeichnisse für fertige bzw. gescheiterte Faxe verschoben, optional mit ocrmypdf einer Texterkennung unterzogen, und der Datenbankeintrag aus \fBspooltab\fR in die Tabelle \fBouta\fR verschoben.
 .br
 Der Status der genannten Faxe wird angezeigt.
 .\" untersuchespool()
@@ -300,6 +300,8 @@ select concat(haname,', ',ort,', ',kvnu) name, zulg, fax1k from kvaerzte.hae whe
 .br
 .br
 Wenn mehrere SQL-Befehle angegeben werden, so wird der jeweils naechste angewandt, wenn einer kein Ergebnis liefert.
+.br
+Optional werden die empfangenen Dateien mit Hilfe von ocrmypdf einer Texterkennung unterzogen.
 .LP
 .HP 3 
 19) Die Konfigurationsdatei \fBautofax.conf\fR wird ggf. geschrieben.

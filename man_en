@@ -304,7 +304,7 @@ If more files have been generated, the successive movements and recordings are b
 .br
 If hylafax and capisuite are working simultaneously and a prespecified number of send tries has been reached without success in the programs of the first preference of those two, the fax is additionally forwarded to the second of the two programs.
 .br
-If the fax transmission is finished (with/without success), the file is being moved from the waiting directory to the respective directory for sent faxes or for failed faxes and the database entry is being transferred from \fBspooltab\fR to \fBouta\fR.
+If the fax transmission is finished (with/without success), the file is being moved from the waiting directory to the respective directory for sent faxes or for failed faxes, optionally modified by ocr via ocrmypdf, and the database entry is being transferred from \fBspooltab\fR to \fBouta\fR.
 .br
 The status of the mentioned faxes is being displayed.
 .\" untersuchespool()
@@ -322,6 +322,8 @@ select concat(haname,', ',ort,', ',kvnu) name, zulg, fax1k from kvaerzte.hae whe
 .br
 .br
 If more sql commands are specified and one of them does not give a result, the next one will be tried.
+.br
+Optionally, the received faxes are subjected to ocr via a call of ocrmypdf.
 .LP
 .HP 3 
 19) The configuration file is being written, if necessary.

@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sun Oct 23 16:41:17 2016 -->
+<!-- CreationDate: Sun Oct 23 16:55:21 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -583,7 +583,8 @@ an das jeweils andere Programm weitergeleiet.</p></td></tr>
 <p style="margin-top: 1em">Falls der Faxvorgang
 (erfolgreich oder erfolglos) beendet ist, wird die Datei aus
 dem Warteverzeichnis in die Verzeichnisse f&uuml;r
-fertige bzw. gescheiterte Faxe verschoben und der
+fertige bzw. gescheiterte Faxe verschoben, optional mit
+ocrmypdf einer Texterkennung unterzogen, und der
 Datenbankeintrag aus <b>spooltab</b> in die Tabelle
 <b>outa</b> verschoben.</p></td></tr>
 <tr valign="top" align="left">
@@ -651,6 +652,14 @@ replace(replace(replace(replace(fax1k,&rsquo;
 <p style="margin-top: 1em">Wenn mehrere SQL-Befehle
 angegeben werden, so wird der jeweils naechste angewandt,
 wenn einer kein Ergebnis liefert.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">Optional werden die empfangenen
+Dateien mit Hilfe von ocrmypdf einer Texterkennung
+unterzogen.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
