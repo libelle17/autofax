@@ -4563,7 +4563,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						string bedingung=string("id=")+fsf.id;
 						if (fsf.capistat==wartend || fsf.capistat==gescheitert) {
               einf.push_back(/*2*/instyp(My->DBS,"capidials",&fsf.ctries));
-							einf.push_back(/*2*/instyp(My->DBS,"capistate",fsf.capistat));
+							einf.push_back(/*2*/instyp(My->DBS,"capistat",fsf.capistat));
               rupd.update(altspool,einf,ZDB,bedingung,0);
               rupd.update(spooltab,einf,ZDB,bedingung,0);
             } else if (fsf.capistat==gesandt) {
