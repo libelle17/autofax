@@ -2348,7 +2348,7 @@ int linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsn
         break;
       case apt:
 				for(iru=0;iru<2;iru++) {
-					if ((ret=systemrueck("sudo apt -y install "+eprog,obverb+1,oblog))!=100) break;
+					if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
 					systemrueck("sudo dpkg --configure -a",obverb+1,oblog);
 				}
         break; 
