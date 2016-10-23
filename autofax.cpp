@@ -4642,7 +4642,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           }
           // die Flags aller aktivierten Faxwege stehen auf gescheitert
           uchar allegesch=0;
-          if (obcapi && obhyla && fsf.capistat==gescheitert && maxcapiv>=maxcdials) allegesch=1;
+					 if (obcapi && obhyla && fsf.capistat==gescheitert && fsf.hylastat==gescheitert) allegesch=1;
+//          if (obcapi && obhyla && fsf.capistat==gescheitert && maxcapiv>=maxcdials) allegesch=1;
 //          else if (obcapi && obhyla && fsf.hylastat==gescheitert && maxhylav>=maxhdials) allegesch=1;
           else allegesch = ((!obcapi || fsf.capistat==gescheitert) && (!obhyla || fsf.hylastat==gescheitert));
           // die Flags aller aktivierten Faxwege stehen auf gescheitert oder fehlend
