@@ -1,5 +1,5 @@
 
-<h1 align="center">AUTOFAX (Version 0.41354)</h1>
+<h1 align="center">AUTOFAX (Version 0.41363)</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
@@ -142,7 +142,9 @@ install &rsquo;make&rsquo;; otherwise, You also can call:
 <br>
 - if You want to have ensured the currentness of
 &rsquo;gcc6&rsquo; before compilation: <b><br>
-make</b> <br>
+make <br>
+make</b> or for runtime optimizing <b>make optfast</b> or
+for size optimizing <b>make opts</b> <br>
 - otherwise: <b><br>
 make glei</b> <br>
 furtheron: <b><br>
