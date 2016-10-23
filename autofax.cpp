@@ -4588,8 +4588,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
               RS rupd(My); 
               vector<instyp> einf; // fuer alle Datenbankeinfuegungen
               einf.push_back(/*2*/instyp(My->DBS,"hylastate",&fsf.hstate));
-                  einf.push_back(/*2*/instyp(My->DBS,"hylastatus",&fsf.hstatus));
-                  einf.push_back(/*2*/instyp(My->DBS,"hylastatuscode",&fsf.hstatuscode));
+							if (!fsf.hstatus.empty()) einf.push_back(/*2*/instyp(My->DBS,"hylastatus",&fsf.hstatus));
+							if (!fsf.hstatuscode.empty()) einf.push_back(/*2*/instyp(My->DBS,"hylastatuscode",&fsf.hstatuscode));
               if (!hyla_uverz_nr) { // wenn fertig
                 if (fsf.hylastat==gescheitert) { // (hylastate=="8") // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
 //                  einf.push_back(/*6*/instyp(My->DBS,"hylanr","0",(uchar)1));
