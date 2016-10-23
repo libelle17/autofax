@@ -4677,7 +4677,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
               if (ogibts[iru]) {
                 verschiebe(odatei[iru],nvz,cuser,&vfehler, 1, obverb,oblog);
                 // an vorderster Stelle Scheitern erkennen lassen
-                systemrueck("touch '"+zmvp[0].ziel+vtz+Tx[T_nichtgefaxt]+" "+base_name(odatei[iru])+".nix'",1,1);
+                systemrueck("touch '"+zmvp[0].ziel+vtz+Tx[T_nichtgefaxt]+" "+base_name(odatei[iru])+".nix'",obverb,oblog);
               } // if (ogibts[iru]) 
             } // for(unsigned iru=0;iru<2;iru++) 
           } // if (allegesch || (nimmer && !ogibts[0]))
@@ -5126,7 +5126,7 @@ void paramcl::empfarch()
             Log(string(Tx[T_Dateien])+rot+stamm+".* "+schwarz+Tx[T_nicht_verarbeitbar_Verschiebe_sie_nach]+rot+"./falsche"+schwarz+".",1,1);
             verschiebe(sffname,falsche,cuser,&vfehler,1,obverb,oblog);
             // so, dass es jeder merkt
-            systemrueck("touch '"+empfvz+vtz+Tx[T_nicht_angekommen]+crumpf+".nix'",1,1);
+            systemrueck("touch '"+empfvz+vtz+Tx[T_nicht_angekommen]+crumpf+".nix'",obverb,oblog);
           } // if (verschieb==2) 
 //      KLZ // if (loee) 
       } // if (verschieb) 
