@@ -339,9 +339,13 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                   if (!gstat.size()) {
                     systemrueck("sudo setfacl -Rm 'u:mysql:7' '"+datadir+"'",obverb,oblog);
                   }
+									cout<<"Vor restart"<<endl;
                   if (dbsv->restart(1,1)) {
                     Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
-                  }
+									} else if (versuch) {
+									  cout<<"Muss mariadb installieren"<<endl;
+										linst.doinst("mariadb",obverb,oblog);
+									}
 #endif
                 } //                 if (!strcasecmp(host.c_str(),"localhost")) {
                 break;
