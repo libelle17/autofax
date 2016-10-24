@@ -2628,13 +2628,13 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
     errv.push_back(errmsgcl(0,f0));
     errv.push_back(errmsgcl(1,f1));
     serviceda=!systemrueck("systemctl status '"+sname+"'| grep ' loaded '",obverb,oblog,0,falsch,wahr,"",&errv);
-  }
+  } //   if (!serviceda)
   return servicelaeuft;
 } // int servc::obslaeuft(int obverb,int oblog)
 
 void servc::pkill(int obverb,int oblog)
 {
-    systemrueck(("sudo pkill '")+ename+"'",obverb-1,oblog,0,2);
+    systemrueck(("sudo pkill '")+ename+"'",obverb-1,oblog,0,1);
 }
 
 int servc::restart(int obverb,int oblog)
@@ -2644,7 +2644,7 @@ int servc::restart(int obverb,int oblog)
     if (obslaeuft(obverb,oblog)) break;
     if (i) break;
     pkill(obverb,oblog);
-  }
+  } //   for(int i=0;i<2;i++)
   return servicelaeuft;
 } // int servc::restart(int obverb,int oblog)
 
