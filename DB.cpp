@@ -69,6 +69,10 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
   {"Pruefe Tabelle: '","Checking table: '"},
   // T_Lesespalten
   {"lesespalten()","readcolumns()"},
+	// T_Vor_restart
+	{"Vor restart, ","Before restart, "},
+	// T_Versuch_Nr
+	{"Versuch Nr. ","try no. "},
   {"",""}
 };
 
@@ -339,12 +343,11 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                   if (!gstat.size()) {
                     systemrueck("sudo setfacl -Rm 'u:mysql:7' '"+datadir+"'",obverb,oblog);
                   }
-									cout<<"Vor restart"<<endl;
+									Log(blaus+Txd[T_Vor_restart]+Txd[T_Versuch_Nr]+schwarz+ltoan(versuch),1,oblog);
                   if (dbsv->restart(1,1)) {
                     Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
 									} else if (versuch) {
-									  cout<<"Muss mariadb installieren"<<endl;
-										linst.doinst("mariadb",obverb,oblog);
+										linst.doinst("mariadb",1,oblog);
 									}
 #endif
                 } //                 if (!strcasecmp(host.c_str(),"localhost")) {

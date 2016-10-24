@@ -66,6 +66,8 @@ enum Txdb_
   T_Aendere_Feld,
   T_Pruefe_Tabelle,
   T_Lesespalten,
+	T_Vor_restart,
+	T_Versuch_Nr,
   T_dbMAX,
 };
 
