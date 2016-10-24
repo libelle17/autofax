@@ -227,6 +227,8 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
               installiert=0;
 						else if (systemrueck("grep \"^mysql:\" /etc/passwd",obverb,oblog))
 						  installiert=0;
+						else if (systemrueck("mysql -V",obverb,oblog))
+						  installiert=0;
 					}
           if (installiert) break;
           //        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get --assume-yes install mariadb-server; }",1,1);
