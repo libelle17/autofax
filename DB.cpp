@@ -236,7 +236,16 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 					}
           if (installiert) break;
           //        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get --assume-yes install mariadb-server; }",1,1);
-          linst.doinst("mariadb",obverb,oblog);
+					if (pruefipr()==apt) {
+					 systemrueck("export DEBIAN_FRONTEND=noninteractive && "
+					 "sudo debconf-set-selections <<< 'mariadb-server-10.0 mysql-server/root_password password PASS' && "
+					 "sudo debconf-set-selections <<< 'mariadb-server-10.0 mysql-server/root_password_again password PASS' && "
+					 "sudo apt-get install -y mariadb-server && "
+					 "mysql -uroot -pPASS -e \"SET PASSWORD = PASSWORD('');\"",1,1);
+					} else {
+						linst.doinst("mariadb",obverb,oblog);
+					}
+					
         }
         // Datenverzeichnis suchen und pruefen
         if (installiert) {
