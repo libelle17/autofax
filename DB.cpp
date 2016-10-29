@@ -211,7 +211,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
           db_systemctl_name="mariadb";
           break;
         default: break;
-      }
+      } //       switch (pruefipr())
       if (!dbsv) dbsv=new servc(db_systemctl_name,"mysqld");
       if (!oisok) {
         // schauen, ob die Exe-Datei da ist 
@@ -237,16 +237,11 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
           if (installiert) break;
           //        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get --assume-yes install mariadb-server; }",1,1);
 					if (pruefipr()==apt) {
-					 systemrueck("export DEBIAN_FRONTEND=noninteractive && "
-					 "sudo debconf-set-selections <<< 'mariadb-server-10.0 mysql-server/root_password password PASS' && "
-					 "sudo debconf-set-selections <<< 'mariadb-server-10.0 mysql-server/root_password_again password PASS' && "
-					 "sudo apt-get install -y mariadb-server && "
-					 "mysql -uroot -pPASS -e \"SET PASSWORD = PASSWORD('');\"",1,1);
+					 systemrueck("sudo sh -c 'apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server'",1,1);
 					} else {
 						linst.doinst("mariadb",obverb,oblog);
 					}
-					
-        }
+        } //         for (int iru=0;iru<2;iru++)
         // Datenverzeichnis suchen und pruefen
         if (installiert) {
           svec zrueck;
@@ -268,8 +263,8 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                   for(size_t i=0;i<zzruck2.size();i++) {
                     zzruck<<zzruck2[i];
                   }
-                }
-              }
+                } //                 for(size_t i=0;i<zincldir.size();i++)
+              } //               if (zzruck.size())
               if(zzruck.size()) {
                 for(size_t i=0;i<zzruck.size();i++) {
                   svec zrueck;
@@ -297,7 +292,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
             } else {
               systemrueck("sudo rm -f '"+datadir+"'",1,1);
             }
-          }
+          } //           if (!lstat(datadir.c_str(), &datadst))
           if (!datadirda) {
             systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db"+string(obverb?"":" 2>/dev/null")+"`",1,1);
             dbsv->start(obverb,oblog);

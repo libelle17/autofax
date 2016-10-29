@@ -1183,10 +1183,12 @@ instprog pruefipr(int obverb,int oblog)
     if (obprogda("zypper",obverb-1,oblog))
       // heruntergeladene Dateien behalten
       aktipr=zypper;
-    else if (obprogda("apt-get",obverb-1,oblog))
+    else if (obprogda("apt-get",obverb-1,oblog)) {
+		// Frage nach cdrom ausschalten
+			systemrueck("sudo sh -c \"grep -q -m 1 '^[^#]*cdrom' /etc/apt/sources.list && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' /etc/apt/sources.list | cut -d: -f1) \\> 0$(grep -n -m 1 '^[^#]*cdrom' /etc/apt/sources.list | cut -d: -f1) && ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/^[^#]*cdrom/d' /etc/apt/sources.list\"",obverb,oblog);
       // hier werden die Dateien vorgabemaessig behalten
       aktipr=apt;
-    else if (obprogda("dnf",obverb-1,oblog))
+    } else if (obprogda("dnf",obverb-1,oblog))
       aktipr=dnf;
     else if (obprogda("yum",obverb-1,oblog))
       aktipr=yum;
