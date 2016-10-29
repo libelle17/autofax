@@ -3453,7 +3453,7 @@ void paramcl::pruefcron()
     cronda=obprogda("crontab",obverb-1,0);
     if (cronda) break;
     // systemrueck("which zypper 2>/dev/null && zypper -n in cron || 
-    //              KLA which apt-get 2>/dev/null && apt-get --assume-yes install cron; KLZ",1,1);
+    //              KLA which apt-get 2>/dev/null && apt-get -y install cron; KLZ",1,1);
     linst.doinst("cron",1,1);
     //  int obionice=!systemrueck("which ionice > /dev/null 2>&1",0,0);
   } //   for (uchar runde=0;runde<2;runde++) 
@@ -4090,7 +4090,7 @@ int paramcl::pruefsoffice()
   static int sofficeda=0;
   if (!sofficegeprueft) {
     //              systemrueck("which zypper 2>/dev/null && zypper -n in soffice || "
-    //                          "{ which apt-get 2>/dev/null && apt-get --assume-yes install soffice; }",obverb,oblog);
+    //                          "{ which apt-get 2>/dev/null && apt-get -y install soffice; }",obverb,oblog);
     sofficeda=!linst.doinst("libreoffice-base",obverb,oblog,"soffice");
     sofficegeprueft=1;
   }
@@ -4104,7 +4104,7 @@ int paramcl::pruefconvert()
   static int convertda=0;
   if (!convertgeprueft) {
     //              systemrueck("which zypper 2>/dev/null && zypper -n in convert || "
-    //                          "{ which apt-get 2>/dev/null && apt-get --assume-yes install convert; }",obverb,oblog);
+    //                          "{ which apt-get 2>/dev/null && apt-get -y install convert; }",obverb,oblog);
     convertda=!linst.doinst("imagemagick",obverb,oblog,"convert");
     convertgeprueft=1;
   } //   if (!convertgeprueft)
@@ -5897,7 +5897,7 @@ int paramcl::pruefhyla()
         //        Log(string(Tx[(T_)T_Installation_von_Hylafax_nicht_feststellbar_versuche_es_zu_installieren]),-2,1);
 
         //        string cmd("which zypper 2>/dev/null && zypper -n in hylafax hylafax-client || "
-        //        "KLA which apt-get 2>/dev/null && apt-get --assume-yes install hylafax-server hylafax-client; KLZ; systemctl daemon-reload; ");
+        //        "KLA which apt-get 2>/dev/null && apt-get -y install hylafax-server hylafax-client; KLZ; systemctl daemon-reload; ");
         //        hylafehlt=systemrueck(cmd,1+obverb,oblog,0,wahr,wahr,Tx[T_hylafax_faxmodem_nicht_gefunden_Versuche_es_zu_installieren_mit]); 
 
         }
@@ -6231,7 +6231,7 @@ int paramcl::pruefcapi()
             if (lstat(fcpciko.c_str(), &entryfc)) {
               Log(string(Tx[T_Datei])+blau+fcpciko+schwarz+Tx[T_nichtgefFcpciMfdKinstallierwerden],obverb,1);
               //              systemrueck("which zypper 2>/dev/null && zypper -n in kernel-source || "
-              //                  "{ which apt-get 2>/dev/null && apt-get --assume-yes install linux-source; }", 1+obverb,oblog);
+              //                  "{ which apt-get 2>/dev/null && apt-get -y install linux-source; }", 1+obverb,oblog);
               linst.doinst("kernel-source",1+obverb,oblog);
 /*              
               const string qvz="/usr/src";

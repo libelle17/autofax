@@ -235,7 +235,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 						  installiert=0;
 					} //           if (installiert)
           if (installiert) break;
-          //        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get --assume-yes install mariadb-server; }",1,1);
+          //        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get -y install mariadb-server; }",1,1);
 					if (pruefipr()==apt) {
 					 systemrueck("sudo sh -c 'apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
 					} else {
