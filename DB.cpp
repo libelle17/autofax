@@ -187,6 +187,16 @@ DB::DB(DBSTyp nDBS, const char* const phost, const char* const puser,const char*
   init(nDBS,phost,puser,ppasswd,uedb,port,unix_socket,client_flag,obverb,oblog,versuchzahl,ggferstellen);
 }
 
+// 2 x in DB::init
+void DB::instmaria(int obverb, int oblog)
+{
+	if (pruefipr()==apt) {
+		systemrueck("sudo sh -c 'apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
+	} else {
+		linst.doinst("mariadb",obverb,oblog);
+	} // 					if (pruefipr()==apt) else
+} // void DB::instmaria()
+
 void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,const char* const ppasswd, const char* const uedb, 
               unsigned int port, const char *const unix_socket, unsigned long client_flag,int obverb,int oblog,unsigned versuchzahl,
               uchar ggferstellen)
@@ -236,11 +246,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 					} //           if (installiert)
           if (installiert) break;
           //        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get -y install mariadb-server; }",1,1);
-					if (pruefipr()==apt) {
-					 systemrueck("sudo sh -c 'apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
-					} else {
-						linst.doinst("mariadb",obverb,oblog);
-					} // 					if (pruefipr()==apt) else
+					instmaria(obverb, oblog);
         } //         for (int iru=0;iru<2;iru++)
         // Datenverzeichnis suchen und pruefen
         if (installiert) {
@@ -351,7 +357,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
                   if (dbsv->restart(1,1)) {
                     Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
 									} else if (versuch) {
-										linst.doinst("mariadb",1,oblog);
+										instmaria(obverb, oblog);
 									}
 #endif
                 } //                 if (!strcasecmp(host.c_str(),"localhost")) {

@@ -273,14 +273,17 @@ class DB
     string cmd;
     string datadir;
     RS *spalt=nullptr;
-    char **spnamen=nullptr,**splenge=nullptr,**sptyp=nullptr;
-    int usedb(const string& db);
-    void pruefrpw(const string& wofuer, unsigned versuchzahl);
-    void setzrpw();
-    my_ulonglong arows;
-    vector< vector<instyp> > ins;
-    void erweitern(const string& tab, vector<instyp> einf,uchar obstumm,uchar obsammeln=0, const unsigned long *maxl=0);
-    uchar tuerweitern(const string& tab, const string& feld,long wlength,uchar obstumm);
+		char **spnamen=nullptr,**splenge=nullptr,**sptyp=nullptr;
+	private:
+		void instmaria(int obverb, int oblog);
+	public:
+		int usedb(const string& db);
+		void pruefrpw(const string& wofuer, unsigned versuchzahl);
+		void setzrpw();
+		my_ulonglong arows;
+		vector< vector<instyp> > ins;
+		void erweitern(const string& tab, vector<instyp> einf,uchar obstumm,uchar obsammeln=0, const unsigned long *maxl=0);
+		uchar tuerweitern(const string& tab, const string& feld,long wlength,uchar obstumm);
     int machbinaer(const string& tabs, const string& fmeld,uchar obstumm);
     //	DB(DBSTyp DBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag);
     DB();
