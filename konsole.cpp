@@ -1165,7 +1165,7 @@ int obprogda(string prog,int obverb, int oblog, string *pfad)
       case 1: verz="/usr/sbin/"; break;
       case 2: verz="/usr/local/sbin/"; break;
       default: break;
-    }
+    } //     switch (iru)
     verz+=prog;
     if (!lstat(verz.c_str(),&fstat)) {
       if (pfad) *pfad=verz;
@@ -1184,7 +1184,7 @@ instprog pruefipr(int obverb,int oblog)
       // heruntergeladene Dateien behalten
       aktipr=zypper;
     else if (obprogda("apt-get",obverb-1,oblog)) {
-		// Frage nach cdrom ausschalten
+		// Repositories: Frage nach cdrom ausschalten
 			systemrueck("sudo sh -c \"grep -q -m 1 '^[^#]*cdrom' /etc/apt/sources.list && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' /etc/apt/sources.list | cut -d: -f1) \\> 0$(grep -n -m 1 '^[^#]*cdrom' /etc/apt/sources.list | cut -d: -f1) && ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/^[^#]*cdrom/d' /etc/apt/sources.list\"",obverb,oblog);
       // hier werden die Dateien vorgabemaessig behalten
       aktipr=apt;
@@ -1194,7 +1194,7 @@ instprog pruefipr(int obverb,int oblog)
       aktipr=yum;
    else
      cerr<<Txk[T_Weder_zypper_noch_apt_get_noch_dnf_noch_yum_als_Installationspgrogramm_gefunden]<<endl;
- }
+ } //   if (aktipr==keinp)
  return aktipr;
 } // instprog pruefipr(int obverb,int oblog)
 
@@ -1205,7 +1205,7 @@ const string& absch::suche(const char* const sname)
     if (av[i].name==sname) {
       return av[i].wert;
     }
-  }
+  } //   for (size_t i=0;i<av.size();i++)
   return nix;
 } // const string& absch::suche(const char* const sname)
 

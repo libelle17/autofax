@@ -225,7 +225,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
             if (!frueck.size()) 
               // .. dann wohl nicht installiert
               installiert=0;
-          }
+          } //           if (!obprogda("mysqld",obverb,oblog))
           if (installiert) {
             if (!obprogda("mysql",obverb,oblog))
               installiert=0;
@@ -233,14 +233,14 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 						  installiert=0;
 						else if (systemrueck("mysql -V",obverb,oblog))
 						  installiert=0;
-					}
+					} //           if (installiert)
           if (installiert) break;
           //        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get --assume-yes install mariadb-server; }",1,1);
 					if (pruefipr()==apt) {
-					 systemrueck("sudo sh -c 'apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server'",1,1);
+					 systemrueck("sudo sh -c 'apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
 					} else {
 						linst.doinst("mariadb",obverb,oblog);
-					}
+					} // 					if (pruefipr()==apt) else
         } //         for (int iru=0;iru<2;iru++)
         // Datenverzeichnis suchen und pruefen
         if (installiert) {
