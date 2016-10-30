@@ -1,6 +1,6 @@
 <h3>Manual: 1) English, 2) Deutsch (unten anschließend)</h3>
 
-<h1 align="center">AUTOFAX (Version 0.41383)</h1>
+<h1 align="center">AUTOFAX (Version 0.41383) - english</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
