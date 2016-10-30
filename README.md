@@ -1,4 +1,4 @@
-<h3>Manual: 1) English, 2) Deutsch (unten anschließend)</h3>
+<h3>Manual: 1) english, 2) deutsch (unten anschließend)</h3>
 
 <h1 align="center">AUTOFAX (Version 0.41383) - english</h1>
 
