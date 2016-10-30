@@ -6,7 +6,7 @@
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
-manpage available in english: 'man autofax' or 'man -Len autofax'.
+(manpage available in english: 'man autofax' or 'man -Len autofax')
 .SH SYNOPSIS
 .SY autofax [-<option>]
 .OP \-v|--verbose

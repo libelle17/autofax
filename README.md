@@ -899,8 +899,8 @@ the program.</p>
 &minus; FaxServer-Funktionalit&auml;t: veranlasst
 automatischen Faxversand von Dateien, Benennung empfangener
 Faxe und Protokollierung aller Faxe in einer Datenbank <br>
-manpage available in english: &rsquo;man autofax&rsquo; or
-&rsquo;man -Len autofax&rsquo;.</p>
+(manpage available in english: &rsquo;man autofax&rsquo; or
+&rsquo;man -Len autofax&rsquo;)</p>
 
 <h2>SYNOPSIS
 <a name="SYNOPSIS_D"></a>
