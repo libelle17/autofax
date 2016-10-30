@@ -75,7 +75,7 @@ weiter: compiler $(EXEC) README.md fertig
 #      : auf http://github.com -> view profile and more -> settings -> SSH and GPG keys -> New SSH key <Titel> <key> einfuegen
 #      : git clone ssh://git@github.com/<user>/<reponame>.git
 git:
-	git config --global push.default simple
+	@git config --global push.default simple
 	git add -u
 	git commit -m "Version $$(cat version)"
 	git push
