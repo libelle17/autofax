@@ -156,7 +156,8 @@ ${MANPEH}: $(CURDIR)/man_en
 	-@rm -f man_en.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPLICATIONS/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_en.html
 	-@rm -f README.md
-	-@sed -n '20,$$p' man_en.html > README.md 
+	-@echo "Manual: 1) English, 2) Deutsch (s.u.) > README.md
+	-@sed -n '20,$$p' man_en.html >> README.md 
 	@echo -e $(blau)   man_en.html$(reset) und$(blau) README.md$(reset) neu aus$(blau) man_en$(reset) erstellt
 endif
 
