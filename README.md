@@ -872,7 +872,7 @@ the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.41383)</h1>
+<h1 align="center">AUTOFAX (Version 0.41383) - deutsch</h1>
 
 <a href="#NAME">NAME</a><br>
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
