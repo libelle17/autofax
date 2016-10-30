@@ -41,7 +41,7 @@ reset="\033[0m"
 
 alles: anzeig weiter
 
-glei: anzeig $(EXEC) machman fertig
+glei: anzeig $(EXEC) README.md fertig
 
 opt: CFLAGS += -O
 opt: neu
@@ -69,8 +69,7 @@ altc: opts
 new: neu
 neu: anzeig clean weiter
 
-weiter: compiler $(EXEC) machman fertig
-	@echo -e $(rot) "hier weiter" $(reset)
+weiter: compiler $(EXEC) README.md fertig
 
 # davor: xclip -sel clip < ~/.ssh/id_rsa.pub
 #      : auf http://github.com -> view profile and more -> settings -> SSH and GPG keys -> New SSH key <Titel> <key> einfuegen
@@ -127,8 +126,7 @@ compiler:
 .PHONY: install
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
-machman: ${MANPEH} ${MANPDH} README.md
-	@echo -e $(rot) "hier machman" $(reset)
+README.md: ${MANPEH} ${MANPDH} 
 	-@rm -f README.md
 	-@echo "<h3>Manual: 1) English, 2) Deutsch (unten anschließend)</h3>" > README.md
 	-@sed -n '20,$$p' man_en.html >> README.md 
@@ -136,7 +134,7 @@ machman: ${MANPEH} ${MANPDH} README.md
 	@echo -e $(blau) README.md$(reset) neu aus$(blau) man_en$(reset) und$(blau) man_de$(reset) erstellt
 install: $(INSTEXEC) ${MANPE} ${MANPD} 
 else
-machman: ${MANPDH} README.md
+README.md: ${MANPDH}
 	-@rm -f README.md
 	-@sed -n '20,$$p' man_de.html >> README.md 
 	@echo -e $(blau) README.md$(reset) neu aus$(blau) man_de$(reset) erstellt
@@ -144,13 +142,13 @@ install: $(INSTEXEC) ${MANPD}
 endif
 else
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
-machman: ${MANPEH} README.md
+README.md: ${MANPEH}
 	-@rm -f README.md
 	-@sed -n '20,$$p' man_en.html >> README.md 
 	@echo -e $(blau) README.md$(reset) neu aus$(blau) man_en$(reset) erstellt
 install: $(INSTEXEC) ${MANPE} 
 else
-machman: 
+README.md: 
 install: $(INSTEXEC)
 endif
 endif
@@ -167,7 +165,7 @@ ${MANPE}: ${CURDIR}/man_en
 ${MANPEH}: $(CURDIR)/man_en 
 	-@$(GROFFCHECK)
 	-@rm -f man_en.html
-	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPLICATIONS/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_en.html
+	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPLICATIONS/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - english/g" > man_en.html
 	@echo -e $(blau)   man_en.html$(reset) neu aus$(blau) man_en$(reset) erstellt
 endif
 
@@ -179,7 +177,7 @@ ${MANPD}: ${CURDIR}/man_de
 ${MANPDH}: $(CURDIR)/man_de 
 	-@$(GROFFCHECK)
 	-@rm -f man_de.html
-	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_de.html
+	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - deutsch/g" > man_de.html
 #	-@rm -f README.md
 	@echo -e $(blau)   man_de.html$(reset) neu aus$(blau) man_de$(reset) erstellt
 endif
