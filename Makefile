@@ -126,7 +126,7 @@ compiler:
 .PHONY: install
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
-man: ${MANPDH} ${MANPEH}
+man: ${MANPEH} ${MANPDH}
 install: $(INSTEXEC) ${MANPE} ${MANPD} 
 else
 man: ${MANPDH}
