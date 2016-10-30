@@ -41,7 +41,7 @@ reset="\033[0m"
 
 alles: anzeig weiter
 
-glei: anzeig $(EXEC) README.md fertig
+glei: anzeig $(EXEC) machman fertig
 
 opt: CFLAGS += -O
 opt: neu
@@ -69,7 +69,8 @@ altc: opts
 new: neu
 neu: anzeig clean weiter
 
-weiter: compiler $(EXEC) README.md fertig
+weiter: compiler $(EXEC) machman fertig
+	@echo -e $(rot) "hier weiter" $(reset)
 
 # davor: xclip -sel clip < ~/.ssh/id_rsa.pub
 #      : auf http://github.com -> view profile and more -> settings -> SSH and GPG keys -> New SSH key <Titel> <key> einfuegen
@@ -84,7 +85,7 @@ anzeig:
 	@echo -e $(blau) $(shell ls -l $(EXEC) 2>/dev/null) $(reset) 
 	@echo -e " Quelldateien:"$(rot) $(SRCS)$(reset) 
 	@echo -e " Verwende Compiler: "$(rot) $(CCName) $(reset)
-	@echo -e " Pfad für ausführbare Datei: "${EXPFAD}
+	@echo -e " Pfad fuer ausfuehrbare Datei: "${EXPFAD}
 	-@$(shell rm fehler.txt 2>/dev/null)
 
 $(EXEC): $(OBJ)
@@ -126,7 +127,8 @@ compiler:
 .PHONY: install
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
-README.md: ${MANPEH} ${MANPDH}
+machman: ${MANPEH} ${MANPDH} README.md
+	@echo -e $(rot) "hier machman" $(reset)
 	-@rm -f README.md
 	-@echo "<h3>Manual: 1) English, 2) Deutsch (unten anschließend)</h3>" > README.md
 	-@sed -n '20,$$p' man_en.html >> README.md 
@@ -134,7 +136,7 @@ README.md: ${MANPEH} ${MANPDH}
 	@echo -e $(blau) README.md$(reset) neu aus$(blau) man_en$(reset) und$(blau) man_de$(reset) erstellt
 install: $(INSTEXEC) ${MANPE} ${MANPD} 
 else
-README.md: ${MANPDH}
+machman: ${MANPDH} README.md
 	-@rm -f README.md
 	-@sed -n '20,$$p' man_de.html >> README.md 
 	@echo -e $(blau) README.md$(reset) neu aus$(blau) man_de$(reset) erstellt
@@ -142,13 +144,13 @@ install: $(INSTEXEC) ${MANPD}
 endif
 else
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
-README.md: ${MANPEH}
+machman: ${MANPEH} README.md
 	-@rm -f README.md
 	-@sed -n '20,$$p' man_en.html >> README.md 
 	@echo -e $(blau) README.md$(reset) neu aus$(blau) man_en$(reset) erstellt
 install: $(INSTEXEC) ${MANPE} 
 else
-README.md: 
+machman: 
 install: $(INSTEXEC)
 endif
 endif
