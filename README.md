@@ -198,7 +198,7 @@ and/or <b>Capisuite</b>. The Finishing of a fax process
 there causes autofax to move the source files (here the
 above mentioned .doc- and .pdf-files) from the waiting
 directory to one or several archive directories or a
-directory for failed faxes and to move their databas record
+directory for failed faxes and to move their database record
 from &rsquo;<b>spooltab</b>&rsquo; to the archive table
 &rsquo;<b>outa</b>&rsquo;. <br>
 Further on, incoming faxes via <b>hylafax</b> or

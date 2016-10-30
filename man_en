@@ -123,7 +123,7 @@ Those are subsequently being relayed to \fBhylafax\fR or \fBCapisuite\fR and fro
 .br
 Simultaneously they are being moved from '\fBzufaxen\fR' to the waiting directory, e.g. '\fBwarteauffax\fR' and recorded in the spool table \fBspooltab\fR.
 .br
-At each call, autofax checks the status of \fBhylafax\fR and/or \fBCapisuite\fR. The Finishing of a fax process there causes autofax to move the source files (here the above mentioned .doc- and .pdf-files) from the waiting directory to one or several archive directories or a directory for failed faxes and to move their databas record from  '\fBspooltab\fR' to the archive table '\fBouta\fR'.
+At each call, autofax checks the status of \fBhylafax\fR and/or \fBCapisuite\fR. The Finishing of a fax process there causes autofax to move the source files (here the above mentioned .doc- and .pdf-files) from the waiting directory to one or several archive directories or a directory for failed faxes and to move their database record from  '\fBspooltab\fR' to the archive table '\fBouta\fR'.
 .br
 Further on, incoming faxes via \fBhylafax\fR or \fBCapisuite\fR are being transmitted to an incoming directory and if applicable named including the sender's name. To this purpose, customizeable sql commands are being used, if specified.
 .br
