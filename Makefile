@@ -129,7 +129,7 @@ ifneq ("$(wildcard $(CURDIR)/man_de)","")
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
 README.md: ${MANPEH} ${MANPDH} 
 	-@rm -f README.md
-	-@echo "<h3>Manual: 1) <a href=\"#english\">english</a>, 2) <a href=\"#deutsch\">deutsch (unten anschließend)</a></h3>" > README.md
+	-@echo "<h3>Manual: 1) <a href=\"#english_E\">english</a>, 2) <a href=\"#deutsch_D\">deutsch (unten anschließend)</a></h3>" > README.md
 	-@sed -n '20,$$p' man_en.html >> README.md 
 	-@sed -n '20,$$p' man_de.html >> README.md 
 	@echo -e $(blau) README.md$(reset) neu aus$(blau) man_en$(reset) und$(blau) man_de$(reset) erstellt

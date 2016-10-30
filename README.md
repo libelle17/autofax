@@ -1,4 +1,4 @@
-<h3>Manual: 1) <a href="#english">english</a>, 2) <a href="#deutsch">deutsch (unten anschließend)</a></h3>
+<h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
 <h1 align="center">AUTOFAX (Version 0.41383) - english<a name="english_E"></a></h1>
 
