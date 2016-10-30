@@ -167,7 +167,6 @@ ${MANPD}: ${CURDIR}/man_de
 	-sudo mv ${PROGRAM}.1.gz ${MANPD}
 ${MANPDH}: $(CURDIR)/man_de 
 	-@$(GROFFCHECK)
-#	-@{ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} || sudo zypper -n --gpg-auto-import-keys in groff || { which apt-get && { sudo apt-get -y install groff groff-base; } || { which dnf && { dnf install -y groff groff-base; } || { which yum && yum install -y groff groff-base; } } }
 	-@rm -f man_de.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s/<h1 align=\"center\">man/<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version))/g" > man_de.html
 #	-@rm -f README.md
@@ -185,6 +184,7 @@ clean:
 	@echo -e -n "\r" 
 	@$(shell rm -f $(EXEC) $(OBJ) .d/* 2>/dev/null)
 	@$(shell sudo rm -f $(INSTEXEC) 2>/dev/null)
+	@$(shell sudo rm -f ${MANPEH} ${MANPDH}
 	@echo -e " Fertig mit Bereinigen!"  
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
