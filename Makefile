@@ -166,7 +166,7 @@ ${MANPE}: ${CURDIR}/man_en
 ${MANPEH}: $(CURDIR)/man_en 
 	-@$(GROFFCHECK)
 	-@rm -f man_en.html
-	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPLICATIONS/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - english<a name=\"english\"></a>@g" > man_en.html
+	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPLICATIONS/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - english<a name=\"english\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_E/g" > man_en.html
 	@echo -e $(blau)   man_en.html$(reset) neu aus$(blau) man_en$(reset) erstellt
 endif
 
@@ -178,7 +178,7 @@ ${MANPD}: ${CURDIR}/man_de
 ${MANPDH}: $(CURDIR)/man_de 
 	-@$(GROFFCHECK)
 	-@rm -f man_de.html
-	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - deutsch<a name=\"deutsch\"></a>@g" > man_de.html
+	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - deutsch<a name=\"deutsch\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > man_de.html
 #	-@rm -f README.md
 	@echo -e $(blau)   man_de.html$(reset) neu aus$(blau) man_de$(reset) erstellt
 endif

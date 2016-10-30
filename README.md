@@ -1,126 +1,25 @@
 <h3>Manual: 1) <a href="#english">english</a>, 2) <a href="#deutsch">deutsch (unten anschließend)</a></h3>
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<h1 align="center">AUTOFAX (Version 0.41383) - english<a name="english"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.41383) - english<a name="english_E"></a></h1>
 
-<a href="#NAME">NAME</a><br>
-<a href="#SYNOPSIS">SYNOPSIS</a><br>
-<a href="#SHORT DESCRIPTION">SHORT DESCRIPTION</a><br>
-<a href="#INSTALLATION">INSTALLATION</a><br>
-<a href="#USAGE">USAGE</a><br>
-<a href="#OPTIONS">OPTIONS</a><br>
-<a href="#FUNCTIONALITY">FUNCTIONALITY</a><br>
-<a href="#PRECONDITIONS">PRECONDITIONS</a><br>
-<a href="#IMPLICATIONS">IMPLICATIONS</a><br>
-<a href="#ERRORS">ERRORS</a><br>
-<a href="#LIABILITY">LIABILITY</a><br>
-<a href="#AUTHOR">AUTHOR</a><br>
+<a href="#NAME_E">NAME</a><br>
+<a href="#SYNOPSIS_E">SYNOPSIS</a><br>
+<a href="#SHORT DESCRIPTION_E">SHORT DESCRIPTION</a><br>
+<a href="#INSTALLATION_E">INSTALLATION</a><br>
+<a href="#USAGE_E">USAGE</a><br>
+<a href="#OPTIONS_E">OPTIONS</a><br>
+<a href="#FUNCTIONALITY_E">FUNCTIONALITY</a><br>
+<a href="#PRECONDITIONS_E">PRECONDITIONS</a><br>
+<a href="#IMPLICATIONS_E">IMPLICATIONS</a><br>
+<a href="#ERRORS_E">ERRORS</a><br>
+<a href="#LIABILITY_E">LIABILITY</a><br>
+<a href="#AUTHOR_E">AUTHOR</a><br>
 
 <hr>
 
 
 <h2>NAME
-<a name="NAME"></a>
+<a name="NAME_E"></a>
 </h2>
 
 
@@ -132,7 +31,7 @@ manpage-Hilfe in deutsch verf&uuml;gbar: &rsquo;man
 autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;.</p>
 
 <h2>SYNOPSIS
-<a name="SYNOPSIS"></a>
+<a name="SYNOPSIS_E"></a>
 </h2>
 
 
@@ -199,7 +98,7 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;.</p>
 </table>
 
 <h2>SHORT DESCRIPTION
-<a name="SHORT DESCRIPTION"></a>
+<a name="SHORT DESCRIPTION_E"></a>
 </h2>
 
 
@@ -216,7 +115,7 @@ sender&rsquo;s name according to his fax number and
 stored.</p>
 
 <h2>INSTALLATION
-<a name="INSTALLATION"></a>
+<a name="INSTALLATION_E"></a>
 </h2>
 
 
@@ -259,7 +158,7 @@ take some time. <br>
 Preconditions see below.</p>
 
 <h2>USAGE
-<a name="USAGE"></a>
+<a name="USAGE_E"></a>
 </h2>
 
 
@@ -315,7 +214,7 @@ by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
 &rsquo;<b>autofax -listi</b>&rsquo;.</p>
 
 <h2>OPTIONS
-<a name="OPTIONS"></a>
+<a name="OPTIONS_E"></a>
 </h2>
 
 
@@ -447,7 +346,7 @@ instead of &rsquo;und&rsquo; <b><br>
 -h, --help</b> : shows help</p>
 
 <h2>FUNCTIONALITY
-<a name="FUNCTIONALITY"></a>
+<a name="FUNCTIONALITY_E"></a>
 </h2>
 
 
@@ -748,7 +647,7 @@ being written, if necessary.</p></td></tr>
 </table>
 
 <h2>PRECONDITIONS
-<a name="PRECONDITIONS"></a>
+<a name="PRECONDITIONS_E"></a>
 </h2>
 
 
@@ -776,7 +675,7 @@ python-setuptools, python3-pip, samba, sendmail, sfftobmp,
 soffice, tesseract-ocr, tiff, unpaper.</p>
 
 <h2>IMPLICATIONS
-<a name="IMPLICATIONS"></a>
+<a name="IMPLICATIONS_E"></a>
 </h2>
 
 
@@ -943,7 +842,7 @@ be deleted, too.</p></td></tr>
 </table>
 
 <h2>ERRORS
-<a name="ERRORS"></a>
+<a name="ERRORS_E"></a>
 </h2>
 
 
@@ -952,7 +851,7 @@ any errors. Please report as well, if different hard- or
 software yield a requirement for a program modification.</p>
 
 <h2>LIABILITY
-<a name="LIABILITY"></a>
+<a name="LIABILITY_E"></a>
 </h2>
 
 
@@ -963,7 +862,7 @@ Nevertheless the author cannot be liable for any damage by
 the program.</p>
 
 <h2>AUTHOR
-<a name="AUTHOR"></a>
+<a name="AUTHOR_E"></a>
 </h2>
 
 
@@ -973,26 +872,26 @@ the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.41383) - deutsch<a name="deutsch"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.41383) - deutsch<a name="deutsch_D"></a></h1>
 
-<a href="#NAME">NAME</a><br>
-<a href="#SYNOPSIS">SYNOPSIS</a><br>
-<a href="#KURZBESCHREIBUNG">KURZBESCHREIBUNG</a><br>
-<a href="#INSTALLATION">INSTALLATION</a><br>
-<a href="#GEBRAUCH">GEBRAUCH</a><br>
-<a href="#OPTIONEN">OPTIONEN</a><br>
-<a href="#FUNKTIONSWEISE">FUNKTIONSWEISE</a><br>
-<a href="#VORAUSSETZUNGEN">VORAUSSETZUNGEN</a><br>
-<a href="#AUSWIRKUNGEN">AUSWIRKUNGEN</a><br>
-<a href="#FEHLER">FEHLER</a><br>
-<a href="#HAFTUNG">HAFTUNG</a><br>
-<a href="#AUTOR">AUTOR</a><br>
+<a href="#NAME_D">NAME</a><br>
+<a href="#SYNOPSIS_D">SYNOPSIS</a><br>
+<a href="#KURZBESCHREIBUNG_D">KURZBESCHREIBUNG</a><br>
+<a href="#INSTALLATION_D">INSTALLATION</a><br>
+<a href="#GEBRAUCH_D">GEBRAUCH</a><br>
+<a href="#OPTIONEN_D">OPTIONEN</a><br>
+<a href="#FUNKTIONSWEISE_D">FUNKTIONSWEISE</a><br>
+<a href="#VORAUSSETZUNGEN_D">VORAUSSETZUNGEN</a><br>
+<a href="#AUSWIRKUNGEN_D">AUSWIRKUNGEN</a><br>
+<a href="#FEHLER_D">FEHLER</a><br>
+<a href="#HAFTUNG_D">HAFTUNG</a><br>
+<a href="#AUTOR_D">AUTOR</a><br>
 
 <hr>
 
 
 <h2>NAME
-<a name="NAME"></a>
+<a name="NAME_D"></a>
 </h2>
 
 
@@ -1004,7 +903,7 @@ manpage available in english: &rsquo;man autofax&rsquo; or
 &rsquo;man -Len autofax&rsquo;.</p>
 
 <h2>SYNOPSIS
-<a name="SYNOPSIS"></a>
+<a name="SYNOPSIS_D"></a>
 </h2>
 
 
@@ -1071,7 +970,7 @@ manpage available in english: &rsquo;man autofax&rsquo; or
 </table>
 
 <h2>KURZBESCHREIBUNG
-<a name="KURZBESCHREIBUNG"></a>
+<a name="KURZBESCHREIBUNG_D"></a>
 </h2>
 
 
@@ -1089,7 +988,7 @@ Sender anhand dessen Faxnummer benannt und abgespeichert
 werden.</p>
 
 <h2>INSTALLATION
-<a name="INSTALLATION"></a>
+<a name="INSTALLATION_D"></a>
 </h2>
 
 
@@ -1133,7 +1032,7 @@ k&ouml;nnen jeweils etwas dauern. <br>
 Voraussetzungen s.u.</p>
 
 <h2>GEBRAUCH
-<a name="GEBRAUCH"></a>
+<a name="GEBRAUCH_D"></a>
 </h2>
 
 
@@ -1196,7 +1095,7 @@ durch Aufruf von z.B. &rsquo;<b>autofax&rsquo;,
 den Stand des Faxens &uuml;berpr&uuml;fen.</p>
 
 <h2>OPTIONEN
-<a name="OPTIONEN"></a>
+<a name="OPTIONEN_D"></a>
 </h2>
 
 
@@ -1314,7 +1213,7 @@ Datensaetze = &lt;zahl&gt; statt &rsquo;30&rsquo; <b><br>
 -h, --hilfe</b>: Zeigt Hilfe an</p>
 
 <h2>FUNKTIONSWEISE
-<a name="FUNKTIONSWEISE"></a>
+<a name="FUNKTIONSWEISE_D"></a>
 </h2>
 
 
@@ -1626,7 +1525,7 @@ unterzogen.</p> </td></tr>
 </table>
 
 <h2>VORAUSSETZUNGEN
-<a name="VORAUSSETZUNGEN"></a>
+<a name="VORAUSSETZUNGEN_D"></a>
 </h2>
 
 
@@ -1657,7 +1556,7 @@ python-setuptools, python3-pip, samba, sendmail, sfftobmp,
 soffice, tesseract-ocr, tiff, unpaper.</p>
 
 <h2>AUSWIRKUNGEN
-<a name="AUSWIRKUNGEN"></a>
+<a name="AUSWIRKUNGEN_D"></a>
 </h2>
 
 
@@ -1838,7 +1737,7 @@ gel&ouml;scht werden.</p></td></tr>
 </table>
 
 <h2>FEHLER
-<a name="FEHLER"></a>
+<a name="FEHLER_D"></a>
 </h2>
 
 
@@ -1848,7 +1747,7 @@ melden. Bitte auch melden, wenn sich
 ergeben.</p>
 
 <h2>HAFTUNG
-<a name="HAFTUNG"></a>
+<a name="HAFTUNG_D"></a>
 </h2>
 
 
@@ -1860,7 +1759,7 @@ haften, die durch das Programm entstehen
 k&ouml;nnten</p>
 
 <h2>AUTOR
-<a name="AUTOR"></a>
+<a name="AUTOR_D"></a>
 </h2>
 
 
