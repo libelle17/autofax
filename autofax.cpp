@@ -5669,6 +5669,7 @@ int paramcl::hservice_faxq_hfaxd()
       this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname+".service", "",this->obverb,this->oblog);
 	setzfaxgtpfad();
 	hylafehler+=!this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0,meinname,this->faxgtpfad+" "+this->hmodem,"","","",obverb,oblog,0);
+	cout<<rot<<"hylafehler: "<<violett<<(int)hylafehler<<schwarz<<endl;
   return hylafehler;
 } // void hservice_faxq_hfaxd()
 
