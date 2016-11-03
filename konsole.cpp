@@ -2353,7 +2353,7 @@ int linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsn
 //					if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
 //					systemrueck("sudo dpkg --configure -a",obverb+1,oblog);
 //				KLZ
-				ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog);
+				ret=systemrueck("sudo apt-get -y --force-yes install "+eprog,obverb+1,oblog);
 				break; 
       case dnf:
         ret=systemrueck("sudo dnf -y install "+eprog,obverb+1,oblog);
