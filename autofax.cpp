@@ -5663,6 +5663,7 @@ int paramcl::hservice_faxq_hfaxd()
   obprogda("faxq",obverb,oblog,&faxqpfad);
   hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D",
       this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname+".service", "",this->obverb,this->oblog);
+	hylafehler+=!this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0,meinname,this->faxgtpfad+" "+this->hmodem,"","","",obverb,oblog,0);
   return hylafehler;
 } // void hservice_faxq_hfaxd()
 
@@ -5767,7 +5768,7 @@ int paramcl::pruefhyla()
       hylafehlt=0;
     } else if (versuch>1) {
       exit(32);
-    } 
+    } //     if ((this->sfaxq->obslaeuft(obverb-1,oblog) && this->shfaxd->obslaeuft(obverb-1,oblog))  else
     if (hylafehlt) {
       // falls nein, dann schauen, ob startbar
       if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog) && sfaxgetty->machfit(obverb-1,oblog)) {
@@ -5777,7 +5778,7 @@ int paramcl::pruefhyla()
       // <<"hylafehlt: "<<(int)hylafehlt<<endl;
     } else {
       // <<"hylafehlt nicht!"<<endl;
-    }
+    } //     if (hylafehlt) else
 
     // <<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
     if (hylafehlt) {
@@ -5851,7 +5852,7 @@ int paramcl::pruefhyla()
                   systemrueck("sudo sh -c 'rm -rf /usr/"+local+"/lib/hylafax",-2,oblog,0,1);
                   systemrueck("sudo sh -c 'rm -rf /usr/"+local+"/lib/libfax*",-2,oblog,0,1);
                   systemrueck("sudo sh -c 'rm -rf /usr/"+local+"/lib/libhylafax*",-2,oblog,0,1);
-                }
+                } //                 for(int iru=0;iru<2;iru++)
                 systemrueck("sudo sh -c 'rm -rf /etc/hylafax",-2,oblog,0,1);
                 // es bleiben noch /var/log/hylafax und /var/spool/fax oder /var/spool/hylafax
               } // if (0)

@@ -2497,7 +2497,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 
 // wird aufgerufen in: hservice_faxq_hfaxd, hservice_faxgetty
 uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, const string& sexec, const string& CondPath, const string& After, 
-                    const string& wennnicht0, int obverb,int oblog)
+                    const string& wennnicht0, int obverb/*=0*/,int oblog/*=0*/, uchar mitstarten/*=1*/)
 {
   Log(violetts+Txk[T_spruef_sname]+schwarz+sname,obverb,oblog);
   string systemd;
@@ -2505,7 +2505,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
   if (!wennnicht0.empty()) {
     servicelaeuft=!systemrueck(wennnicht0,obverb-1,oblog);
   }
-  if (servicelaeuft && svgibts) {
+  if (mitstarten && servicelaeuft && svgibts) {
     Log(("Service ")+blaus+sname+schwarz+Txk[T_lief_schon],obverb,oblog);
   } else {
     for(uchar iru=0;iru<2;iru++) {
@@ -2518,8 +2518,8 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
       systemd="/etc/systemd/system/"+sname+".service";
       struct stat svstat;
       svgibts=!lstat(systemd.c_str(),&svstat);
-      if (!svgibts || !obslaeuft(obverb,oblog)) {
-        if (svgibts && serviceda) {
+      if (!svgibts || (mitstarten && !obslaeuft(obverb,oblog))) {
+        if (mitstarten && svgibts && serviceda) {
           restart(obverb,oblog); // hier wird auch serviceslaeuft gesetzt
           /*
              servicelaeuft=!systemrueck(("sudo pkill ")+ename+" >/dev/null 2>&1; sudo systemctl restart "+sname,obverb-1,oblog); 
@@ -2561,6 +2561,9 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
           } // if (syst.is_open()) 
         } // if (svgibts && serviceda) else
       } // if (!svgibts || !obslaeuft(obverb,oblog)) 
+			if (!mitstarten) {
+			 return 0;
+			}
       if (servicelaeuft) { 
         enableggf(obverb,oblog);
         break;
@@ -2621,7 +2624,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
       }
     } else { // if (!sysrueck.empty()) 
       break;
-    }
+    } //     if (!sysrueck.empty())  else 
   } // while (1)
   if (!serviceda) {
     vector<errmsgcl> errv;
