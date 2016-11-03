@@ -5376,7 +5376,7 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
                   vorgabe="no";
               }
               zukomm=1;
-            }
+            } //             if (zeile[0]!='#' && (p0=zeile.find("prompt "))!=string::npos)
             // wenn in der oder der naechsten Zeile read steht
             // (z.B. in den Funktionen promptFor...parameter()), dann soll ohne Rueckfrage die Vorgabe verwendet werden
             if ((znr==promptz || znr==promptz+1) && zeile[0]!='#' && (p1=zeile.find("read "))!=string::npos) {
@@ -5447,21 +5447,25 @@ void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
 
 #endif
   } //   if (!lstat(faxsu, &entrybuf)) KLA
+  pmp->setzfaxgtpfad();
+} // hfaxsetup
 
+void paramcl::setzfaxgtpfad()
+{
   struct stat entryfaxgt;
-  pmp->faxgtpfad.clear();
-  //  pmp->faxgtpfad="/usr/lib/fax/faxgetty";
-  //    pmp->faxgtpfad="/usr/sbin/faxgetty";
-  obprogda("faxgetty",obverb,oblog,&pmp->faxgtpfad);
-  if (pmp->faxgtpfad.empty() || lstat(pmp->faxgtpfad.c_str(),&entryfaxgt)) {
+  this->faxgtpfad.clear();
+  //  faxgtpfad="/usr/lib/fax/faxgetty";
+  //    faxgtpfad="/usr/sbin/faxgetty";
+  obprogda("faxgetty",obverb,oblog,&faxgtpfad);
+  if (faxgtpfad.empty() || lstat(faxgtpfad.c_str(),&entryfaxgt)) {
     svec rueckf;
-    pmp->faxgtpfad.clear();
+    faxgtpfad.clear();
     systemrueck("sudo find /usr/lib/fax /usr/sbin /usr/bin /root/bin /sbin -perm /111 -name faxgetty",obverb-1,oblog,&rueckf);
     if (rueckf.size()) 
-      pmp->faxgtpfad=rueckf[0];
+      faxgtpfad=rueckf[0];
   }
-  // violett<<"pmp->faxgtpfad 4: "<<pmp->faxgtpfad<<schwarz<<endl;
-} // hfaxsetup
+  // violett<<"faxgtpfad 4: "<<faxgtpfad<<schwarz<<endl;
+}
 
 // wird aufgerufen in: pruefhyla
 void hconfig(paramcl *pmp,int obverb=0, int oblog=0)
@@ -5663,6 +5667,7 @@ int paramcl::hservice_faxq_hfaxd()
   obprogda("faxq",obverb,oblog,&faxqpfad);
   hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D",
       this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname+".service", "",this->obverb,this->oblog);
+	setzfaxgtpfad();
 	hylafehler+=!this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0,meinname,this->faxgtpfad+" "+this->hmodem,"","","",obverb,oblog,0);
   return hylafehler;
 } // void hservice_faxq_hfaxd()

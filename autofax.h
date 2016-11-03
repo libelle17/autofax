@@ -314,7 +314,8 @@ class paramcl // Programmparameter
     void logvorgaben();
     void getcommandl0();
     void pruefmodem();
-    void pruefisdn();
+		void setzfaxgtpfad();
+		void pruefisdn();
     void liescapiconf();
     void VorgbAllg(); // allgemeine Vorgaben
     #ifdef autofaxcpp
