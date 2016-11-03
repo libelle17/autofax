@@ -5661,15 +5661,18 @@ int paramcl::hservice_faxq_hfaxd()
   Log(violetts+"hservice_faxq_hfaxd()"+schwarz,this->obverb,this->oblog);
   string faxqpfad,hfaxdpfad;
   obprogda("hfaxd",obverb,oblog,&hfaxdpfad);
+	cout<<rot<<"hylafehler 0: "<<violett<<(int)hylafehler<<schwarz<<endl;
   hylafehler+=!this->shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/,
       this->varsphylavz+"/etc/setup.cache", "", "", this->obverb,this->oblog);
+	cout<<rot<<"hylafehler 1: "<<violett<<(int)hylafehler<<schwarz<<endl;
   this->shfaxd->machfit(obverb,oblog);
   obprogda("faxq",obverb,oblog,&faxqpfad);
   hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D",
       this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname+".service", "",this->obverb,this->oblog);
+	cout<<rot<<"hylafehler 2: "<<violett<<(int)hylafehler<<schwarz<<endl;
 	setzfaxgtpfad();
 	hylafehler+=!this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0,meinname,this->faxgtpfad+" "+this->hmodem,"","","",obverb,oblog,0);
-	cout<<rot<<"hylafehler: "<<violett<<(int)hylafehler<<schwarz<<endl;
+	cout<<rot<<"hylafehler 3: "<<violett<<(int)hylafehler<<schwarz<<endl;
   return hylafehler;
 } // void hservice_faxq_hfaxd()
 
