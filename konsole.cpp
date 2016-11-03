@@ -2562,7 +2562,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
         } // if (svgibts && serviceda) else
       } // if (!svgibts || !obslaeuft(obverb,oblog)) 
 			if (!mitstarten) {
-			 return 0;
+			 return 1;
 			}
       if (servicelaeuft) { 
         enableggf(obverb,oblog);
