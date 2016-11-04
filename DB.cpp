@@ -191,7 +191,7 @@ DB::DB(DBSTyp nDBS, const char* const phost, const char* const puser,const char*
 void DB::instmaria(int obverb, int oblog)
 {
 	if (pruefipr()==apt) {
-		systemrueck("sudo sh -c 'apt-get update && apt-get -y install apt-transport-https && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
+		systemrueck("sudo sh -c 'apt-get -y install apt-transport-https; apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
 	} else {
 		linst.doinst("mariadb",obverb,oblog);
 	} // 					if (pruefipr()==apt) else
