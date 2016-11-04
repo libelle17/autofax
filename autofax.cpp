@@ -2663,12 +2663,12 @@ int paramcl::getcommandline()
     for(size_t j=0;j<opts.size();j++) {
       if (!opts[j].obschreibp)
         opts[j].hilfezeile(Tx.lgn);
-    }
+    } //     for(size_t j=0;j<opts.size();j++)
     cout<<blau<<Tx[T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden]<<schwarz<<endl;
     for(size_t j=0;j<opts.size();j++) {
       if (opts[j].obschreibp)
         opts[j].hilfezeile(Tx.lgn);
-    }
+    } //     for(size_t j=0;j<opts.size();j++)
     return 0;
   } // if (hilfe)
   return 1;
@@ -5667,11 +5667,8 @@ int paramcl::hservice_faxq_hfaxd()
   obprogda("faxq",obverb,oblog,&faxqpfad);
   hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D",
       this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname+".service", "",this->obverb,this->oblog);
-	cout<<rot<<"hylafehler 2: "<<violett<<(int)hylafehler<<schwarz<<endl;
 	setzfaxgtpfad();
 	hylafehler+=!this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0,meinname,this->faxgtpfad+" "+this->hmodem,"","","",obverb,oblog,0);
-	cout<<rot<<"hylafehler 3: "<<violett<<(int)hylafehler<<schwarz<<endl;
-	cout<<rot<<"hylafehler: "<<violett<<(int)hylafehler<<schwarz<<endl;
   return hylafehler;
 } // void hservice_faxq_hfaxd()
 
@@ -6367,7 +6364,7 @@ int paramcl::pruefcapi()
                 "{ lsmod | grep capidrv || sudo modprobe capidrv; lsmod | grep kernelcapi || sudo modprobe kernelcapi; }",obverb,oblog);
             systemrueck("sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5",obverb,oblog,&vrueck2);
             if (vrueck2.size()) v2=vrueck2[0];
-//            cout<<"vi: "<<v1<<"\n"<<"v2: "<<v2<<endl;
+//            <<"vi: "<<v1<<"\n"<<"v2: "<<v2<<endl;
             if (v1!=v2) {
               Log(blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
                   +schwarz+v2+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
@@ -7493,7 +7490,7 @@ void paramcl::zeigkonf()
     memset(&tm, 0, sizeof(struct tm));
     memcpy(&tm, localtime(&kstat.st_mtime),sizeof(tm));
     strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", &tm);
-  }
+  } //   if (!lstat(konfdatname.c_str(),&kstat))
   cout<<Tx[T_aktuelle_Einstellungen_aus]<<blau<<konfdatname<<schwarz<<"' ("<<buf<<"):"<<endl;
   for(unsigned i=0;i<cgconf.zahl;i++) {
     cout<<blau<<setw(20)<<cgconf[i].name<<schwarz<<": "<<cgconf[i].wert<<endl;
