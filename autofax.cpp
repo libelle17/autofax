@@ -4146,7 +4146,19 @@ int paramcl::pruefocr()
           string srcvz=instverz+vtz+proj+".tar.gz";
           holvongithub(proj);
           if (!kompilbase(proj,s_gz)) {
-            systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" &&  sudo -H pip3 install ocrmypdf'",obverb,oblog);
+						// sudo pip3 install image PyPDF2 ruffus reportlab cryptography cffi
+						svec urueck;
+						systemrueck("unpaper -V",obverb,oblog,&urueck);
+						double vers=0;
+						if (urueck.size()) vers=atol(urueck[0].c_str());
+						if (!urueck.size()||vers<6.1) {
+							if (pruefipr()==apt) linst.doggfinst("libavformat-dev",obverb+1,oblog);
+							holvongithub("unpaper_copy");
+							if (vers) systemrueck("sudo rm $(which unpaper) && hash -r",obverb,oblog);
+							kompiliere("unpaper_copy",s_gz);
+						} // 						if (!urueck.size()||vers<6.1)
+            systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" &&  sudo -H pip3 install image PyPDF2 ruffus reportlab cryptography cffi ocrmypdf'",
+						            obverb,oblog);
             linst.doinst("unpaper",obverb,oblog);
           } //    if (!kompilbase(was,endg))
         } //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
