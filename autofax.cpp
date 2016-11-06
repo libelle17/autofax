@@ -4161,7 +4161,7 @@ int paramcl::pruefocr()
 							if (vers) systemrueck("sudo rm $(which unpaper) && hash -r",obverb,oblog);
 							kompiliere("unpaper_copy",s_gz);
 						} // 						if (!urueck.size()||vers<6.1)
-            systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" &&  sudo -H pip3 install image PyPDF2 ruffus reportlab cryptography cffi ocrmypdf'",
+            systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" && sudo -H pip3 install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf'",
 						            obverb,oblog);
             linst.doinst("unpaper",obverb,oblog);
           } //    if (!kompilbase(was,endg))
