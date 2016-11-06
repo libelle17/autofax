@@ -540,7 +540,7 @@ enum T_
 	T_nichtfaxbar,
 	T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von,
 	T_nach,
-	T_verjuengt_Bitte_den_ganzen_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen,
+	T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen,
 	T_MAX
 };
 
@@ -1531,8 +1531,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	{"Der Kernel hat sich offenbar seit dem Einloggen von '","The kernel seems to have been updated sind logging in from '"},
 	// T_nach
 	{"' nach '","' to '"},
-	// T_verjuengt_Bitte_den_ganzen_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen
-	{"' verjuengt. Bitte den ganzen Rechner neu starten und}dann mich nochmal aufrufen!","'. Please restart the pc and then call me again!"},
+	// T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen
+	{"' verjuengt. \nBitte den Rechner neu starten und}dann mich nochmal aufrufen!","'. \nPlease restart the pc and then call me again!"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -6421,7 +6421,7 @@ int paramcl::pruefcapi()
 							string relev=release.substr(0,release.find(unbuf.machine)-1);
 							if (kernel.find(relev)) {
 							 Log(Tx[T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von]+blaus+relev+schwarz+Tx[T_nach]+blau+kernel+schwarz+
-							     Tx[T_verjuengt_Bitte_den_ganzen_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1,1);
+							     Tx[T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1,1);
 							 exit(0);
 							}
               systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
