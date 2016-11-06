@@ -4141,7 +4141,7 @@ int paramcl::pruefocr()
        else if (rueck[i]=="eng") engda=1;
        else if (rueck[i]=="osd") osdda=1;
       }
-    }
+    } //     if (!tda)
     if (!deuda) linst.doinst("tesseract-ocr-traineddata-german",obverb,oblog);
     if (!engda) linst.doinst("tesseract-ocr-traineddata-english",obverb,oblog);
     if (!osdda) linst.doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
@@ -4166,7 +4166,7 @@ int paramcl::pruefocr()
 						double vers=0;
 						if (urueck.size()) vers=atol(urueck[0].c_str());
 						if (!urueck.size()||vers<6.1) {
-							if (pruefipr()==apt) linst.doggfinst("libavformat-dev",obverb+1,oblog);
+							if (pruefipr()==apt||pruefipr()==dnf||pruefipr()==yum) linst.doggfinst("libavformat-dev",obverb+1,oblog);
 							holvongithub("unpaper_copy");
 							if (vers) systemrueck("sudo rm $(which unpaper) && hash -r",obverb,oblog);
 							kompiliere("unpaper_copy",s_gz);
@@ -5966,7 +5966,6 @@ int paramcl::pruefhyla()
          */
       } // if (hylafehlt)
       int fglaeuftnicht=0;
-				cout<<rot<<"Stelle 1"<<schwarz<<endl;
       for (uchar iru=0;iru<3;iru++) {
         if ((fglaeuftnicht=!this->sfaxgetty->obslaeuft(obverb,oblog))) {
           // falls nein, dann schauen, ob startbar
@@ -5977,10 +5976,8 @@ int paramcl::pruefhyla()
         //        if (!modemlaeuftnicht) break;
         //  <<rot<<" hyinstart: "<<(int)hyinstart<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
         //  <<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
-				cout<<rot<<"Stelle 2, hyinstart: "<<(int)hyinstart<<schwarz<<endl;
         if (hyinstart==hypak || hyinstart==hysrc || hyinstart==hyppk) {
           // if (0)
-					cout<<rot<<"Stelle 3"<<schwarz<<endl;
 					hylalaeuftnicht=hservice_faxq_hfaxd()+fglaeuftnicht;
         }
         //  <<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
