@@ -4141,8 +4141,11 @@ int paramcl::pruefocr()
       if (!linst.doggfinst("python-devel",obverb+1,oblog)) {
         if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3")) {
           lsysen system=lsys.getsys(obverb,oblog);
-          if (system==deb)  linst.doggfinst("python3-setuptools",obverb+1,oblog);
-          string proj="ocrmypdf_copy";
+					if (system==deb) {
+						linst.doggfinst("pkg-config",obverb+1,oblog);
+						linst.doggfinst("python3-setuptools",obverb+1,oblog);
+					}
+					string proj="ocrmypdf_copy";
           string srcvz=instverz+vtz+proj+".tar.gz";
           holvongithub(proj);
           if (!kompilbase(proj,s_gz)) {
