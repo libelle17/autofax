@@ -6405,10 +6405,10 @@ int paramcl::pruefcapi()
               kstring=rueck[0];
               systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
               systemrueck("cd "+instverz+" && sudo rpm -Uvh "+kstring,obverb,oblog);
-							exit(0);
               for(unsigned iru=0;iru<2;iru++) {
                 if (!systemrueck("cd "+gethome()+"/rpmbuild/SPECS && rpmbuild -bp --target=$(uname -m) kernel.spec",obverb,oblog)) {
-                  systemrueck("dnf -y install kernel-devel",obverb,oblog);
+                  systemrueck("sudo dnf -y install kernel-devel",obverb,oblog);
+									exit(0);
                   systemrueck("KSTRING="+kstring+" && cd $HOME/rpmbuild/BUILD/$(echo $KSTRING|cut -d. -f1,2,4)/linux-`uname -r` && "
                               "make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules",obverb,oblog);
                   break;
