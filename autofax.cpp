@@ -6412,13 +6412,15 @@ int paramcl::pruefcapi()
             systemrueck("cd "+instverz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);
             if (rueck.size()) {
               kstring=rueck[0]; // "kernel-4.8.4-200.fc24.src.rpm"
-							string kernel=kstring.substr(kstring.find("-")+1);
+							string kernel=kstring.substr(kstring.find('-')+1);
+							kernel.erase(kernel.rfind('.'));
+							kernel.erase(kernel.rfind('.'));
 							utsname unbuf;
 							uname(&unbuf);
 							string release=unbuf.release;
 							string relev=release.substr(0,release.find(unbuf.machine)-1);
 							if (kernel.find(relev)) {
-							 Log(Tx[T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von]+blaus+kernel+schwarz+Tx[T_nach]+blau+relev+schwarz+
+							 Log(Tx[T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von]+blaus+relev+schwarz+Tx[T_nach]+blau+kernel+schwarz+
 							     Tx[T_verjuengt_Bitte_den_ganzen_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1,1);
 							 exit(0);
 							}
