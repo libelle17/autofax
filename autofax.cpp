@@ -538,7 +538,10 @@ enum T_
   T_nicht_in_der_Warteschlange,
   T_woasined,
 	T_nichtfaxbar,
-  T_MAX
+	T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von,
+	T_nach,
+	T_verjuengt_Bitte_den_ganzen_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen,
+	T_MAX
 };
 
 
@@ -1524,6 +1527,12 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"unbekannt","unknown"},
 	// T_nichtfaxbar
 	{"nicht faxbar wg. Benennung","not faxable due to naming"},
+	// T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von
+	{"Der Kernel hat sich offenbar seit dem Einloggen von '","The kernel seems to have been updated sind logging in from '"},
+	// T_nach
+	{"' nach '","' to '"},
+	// T_verjuengt_Bitte_den_ganzen_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen
+	{"' verjuengt. Bitte den ganzen Rechner neu starten und}dann mich nochmal aufrufen!","'. Please restart the pc and then call me again!"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -6402,7 +6411,17 @@ int paramcl::pruefcapi()
             string kstring; // kernel-4.8.4-200.fc24.src.rpm
             systemrueck("cd "+instverz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);
             if (rueck.size()) {
-              kstring=rueck[0];
+              kstring=rueck[0]; // "kernel-4.8.4-200.fc24.src.rpm"
+							string kernel=kstring.substr(kstring.find("-")+1);
+							utsname unbuf;
+							uname(&unbuf);
+							string release=unbuf.release;
+							string relev=release.substr(0,release.find(unbuf.machine)-1);
+							if (kernel.find(relev)) {
+							 Log(Tx[T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von]+blaus+kernel+schwarz+Tx[T_nach]+blau+relev+schwarz+
+							     Tx[T_verjuengt_Bitte_den_ganzen_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1,1);
+							 exit(0);
+							}
               systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
               systemrueck("cd "+instverz+" && sudo rpm -Uvh "+kstring,obverb,oblog);
               for(unsigned iru=0;iru<2;iru++) {
@@ -7519,21 +7538,6 @@ void paramcl::zeigkonf()
 
 int main(int argc, char** argv) 
 {
-  string kstring="kernel-4.8.4-200.fc24.src.rpm";
-	string kernel=kstring.substr(kstring.find("-")+1);
-	cout<<kernel<<endl;
-            utsname unbuf;
-            uname(&unbuf);
-						cout<<unbuf.sysname<<endl;
-						cout<<unbuf.nodename<<endl;
-						cout<<unbuf.release<<endl;
-						cout<<unbuf.version<<endl;
-						cout<<unbuf.machine<<endl;
-	string release=unbuf.release;
-	string relev=release.substr(0,release.find(unbuf.machine)-1);
-	cout<<"relev: "<<relev<<endl;
-
-	exit(0);
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();
