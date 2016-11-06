@@ -5978,7 +5978,7 @@ int paramcl::pruefhyla()
         //  <<rot<<" hyinstart: "<<(int)hyinstart<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
         //  <<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
 				cout<<rot<<"Stelle 2, hyinstart: "<<(int)hyinstart<<schwarz<<endl;
-        if (hyinstart==hypak || hyinstart==hysrc) {
+        if (hyinstart==hypak || hyinstart==hysrc || hyinstart==hyppk) {
           // if (0)
 					cout<<rot<<"Stelle 3"<<schwarz<<endl;
 					hylalaeuftnicht=hservice_faxq_hfaxd()+fglaeuftnicht;
