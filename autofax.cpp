@@ -6404,7 +6404,8 @@ int paramcl::pruefcapi()
             if (rueck.size()) {
               kstring=rueck[0];
               systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
-              systemrueck("cd "+instverz+" && rpm -Uvh "+kstring,obverb,oblog);
+              systemrueck("cd "+instverz+" && sudo rpm -Uvh "+kstring,obverb,oblog);
+							exit(0);
               for(unsigned iru=0;iru<2;iru++) {
                 if (!systemrueck("cd "+gethome()+"/rpmbuild/SPECS && rpmbuild -bp --target=$(uname -m) kernel.spec",obverb,oblog)) {
                   systemrueck("dnf -y install kernel-devel",obverb,oblog);
