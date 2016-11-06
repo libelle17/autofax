@@ -1690,10 +1690,10 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
     } else {
       aktues=Txk[T_Fuehre_aus];
       weiter=1;
-    }
+    } //     if (obfind)
   } else {
     aktues=ueberschr;
-  }
+  } //   if (ueberschr.empty())
   Log(aktues+": "+blau+czg->substr(0,getcols()-7-aktues.length())+schwarz+" ...",obverb>0?-1:0,oblog);
   if (!rueck) if (obergebnisanzeig) {neurueck=1;rueck=new vector<string>;}
   // #define systemrueckprofiler
@@ -1762,34 +1762,38 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
 #ifdef systemrueckprofiler
   prf.ausgab1000("vor weiter");
 #endif
-  if (weiter) aktues=Txk[T_Fuehrte_aus];
-  if (obverb>0 || oblog) {
-    string ergebnis;
-    if (errm) {
-      for(size_t i=0;i<errm->size();i++) {
-        if (erg==errm->at(i).errnr) {
-          ergebnis=(erg?rots:schwarzs)+ltoan(erg)+": "+errm->at(i).msg;
-          break;
-        }
-      } // for(size_t i=0;i<errm->size();i++) 
-    }  // if (errm)
-    if (ergebnis.empty()) {
-      if (obfind) {
-        ergebnis=gruens+ltoan(erg)+blau+string(Txk[T_Zeilen]);
-      } else {
-      if (ob0heissterfolg) {
-        if (erg) {
-            ergebnis=rots+string(Txk[T_Fehler])+ltoan(erg)+schwarz;
-          if (obverb>=0) obergebnisanzeig=wahr;
-          obverb++;
-        } else {
-          ergebnis=Txk[T_Erfolg];
-        } // ob0heissterfolg else
-      } else {
-        ergebnis=ltoan(erg);
-      }
-          }
-    } //     if (ergebnis.empty() {
+	if (weiter) aktues=Txk[T_Fuehrte_aus];
+	if (obverb>0 || oblog) {
+		string ergebnis;
+		if (errm) {
+			for(size_t i=0;i<errm->size();i++) {
+				if (erg==errm->at(i).errnr) {
+					ergebnis=(erg?rots:schwarzs)+ltoan(erg)+": "+errm->at(i).msg;
+					break;
+				}
+			} // for(size_t i=0;i<errm->size();i++) 
+		}  // if (errm)
+		if (ergebnis.empty()) {
+			if (obfind) {
+				ergebnis=gruens+ltoan(erg)+blau+string(Txk[T_Zeilen]);
+			} else {
+				if (ob0heissterfolg) {
+					if (erg) {
+						if (cmd.substr(0,7)=="dpkg -s" || cmd.substr(0,5)=="which" || cmd.substr(0,10)=="sudo which") {
+							ergebnis=gruens+Txk[T_nicht_gefunden];
+						} else {
+							ergebnis=rots+Txk[T_Fehler]+ltoan(erg);
+						}
+						if (obverb>=0) obergebnisanzeig=wahr;
+						obverb++;
+					} else {
+						ergebnis=Txk[T_Erfolg];
+					} // ob0heissterfolg else
+				} else {
+					ergebnis=ltoan(erg);
+				} // 				if (ob0heissterfolg)
+			} // 			if (obfind)
+		} //     if (ergebnis.empty() {
 #ifdef systemrueckprofiler
     prf.ausgab1000("vor log");
 #endif
