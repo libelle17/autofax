@@ -1770,7 +1770,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
 				if (erg==errm->at(i).errnr) {
 					ergebnis=(erg?rots:schwarzs)+ltoan(erg)+": "+errm->at(i).msg;
 					break;
-				}
+				} // 				if (erg==errm->at(i).errnr)
 			} // for(size_t i=0;i<errm->size();i++) 
 		}  // if (errm)
 		if (ergebnis.empty()) {
@@ -1779,7 +1779,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
 			} else {
 				if (ob0heissterfolg) {
 					if (erg) {
-						if (cmd.substr(0,7)=="dpkg -s" || cmd.substr(0,5)=="which" || cmd.substr(0,10)=="sudo which") {
+						if (cmd.substr(0,6)=="rpm -q" || cmd.substr(0,7)=="dpkg -s" || cmd.substr(0,5)=="which" || cmd.substr(0,10)=="sudo which") {
 							ergebnis=gruens+Txk[T_nicht_gefunden];
 						} else {
 							ergebnis=rots+Txk[T_Fehler]+ltoan(erg);
@@ -1791,8 +1791,8 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
 					} // ob0heissterfolg else
 				} else {
 					ergebnis=ltoan(erg);
-				} // 				if (ob0heissterfolg)
-			} // 			if (obfind)
+				} // 				if (ob0heissterfolg) else
+			} // 			if (obfind) else
 		} //     if (ergebnis.empty() {
 #ifdef systemrueckprofiler
     prf.ausgab1000("vor log");
@@ -1845,7 +1845,7 @@ int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer 
         case 4: modbuch="r"; break;
         case 6: modbuch="rw"; break;
         default: modbuch="rwx";  // 7
-       }
+       } //        switch (mod)
        if (!obimmer) {
         svec gstat;
         systemrueck("getfacl -e -t "+datei+" 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*"+modbuch+"' || true",obverb,oblog,&gstat);
@@ -1855,9 +1855,9 @@ int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer 
           if (obverb) systemrueck("sudo sh -c 'ls -l "+datei+"'",2,0);
           systemrueck(string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'",obverb,oblog);
           if (obverb) systemrueck("sudo sh -c 'ls -l "+datei+"'",2,0);
-       }
-      }
-  }
+       } //        if (obimmer)
+      } //       if (obsetfacl)
+  } //   if (cuser!="root")
   return 0;
 } // int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer obimmer,int obverb, int oblog)
 
@@ -1914,7 +1914,7 @@ char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], co
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
     if (input=="" && vorgabe) {input=vorgabe;break;}
     if (input[0]) if (strchr(erlaubt,(int)input[0])) break;
-  }
+  } //   while(1)
   return input[0];
   //  return Tippbuchst(frage.c_str(), moegl.c_str(), berkl, erlaubt, vorgabe);
 } // char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
@@ -1949,9 +1949,9 @@ string Tippstrings(const char *frage, char* moegl[], char *vorgabe)
       for(unsigned i=0;moegl[i];i++) {
         if (!strcmp(moegl[i],input.c_str())) {passt=1;break;}
       }
-    }
+    } //     if (input[0])
     if (passt) break; 
-  }
+  } //   while(1)
   return input;
 } // Tippstrings
 
@@ -1965,7 +1965,7 @@ string Tippstrings(const char *frage, vector<string> *moegl, string *vorgabe)
       if (i) cout<<",";
       //      cout<<"'"<<drot<<moegl->at(i)<<schwarz<<"'";
       cout<<drot<<moegl->at(i)<<schwarz;
-    }
+    } //     for(unsigned i=0;i<moegl->size();i++)
     cout<<")"<<(vorgabe->empty()?"":string("['")+tuerkis+*vorgabe+schwarz+"']")<<"?: ";
     input="";
     getline(cin,input);
@@ -1976,9 +1976,9 @@ string Tippstrings(const char *frage, vector<string> *moegl, string *vorgabe)
       for(unsigned i=0;i<moegl->size();i++) {
         if (moegl->at(i)==input) {passt=1;break;}
       }
-    }
+    } //     if (input[0])
     if (passt) break; 
-  }
+  } //   while(1)
   return input;
 } // Tippstrings
 
@@ -2024,15 +2024,15 @@ string Tippstring(const string& frage, const string *vorgabe)
   string input;
   while(1) {
     cout<<blau<<frage<<schwarz<<(!vorgabe || vorgabe->empty()?"":string(" [\"")+tuerkis+*vorgabe+schwarz+"\"]")<<"? ";
-    input="";
+    input.clear();
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
-    if (input=="" && vorgabe) {
+    if (input.empty() && vorgabe) {
      input=*vorgabe;
      break;
-    }
+    } //     if (input=="" && vorgabe)
     break;
-  }
+  } //   while(1)
   return input;
 } // Tippstring
 
@@ -2071,11 +2071,11 @@ string Tippverz(const char *frage,string *vorgabe)
           */
         } else {
           break;
-        }
-      }
-    }
+        } //         if (strchr("jyJY",inpi[0])) else
+      } //       if (!lstat(input.c_str(), &st)) else
+    } //     while (1)
     if (fertig) break;
-  }
+  } //   while(1)
   return input;
 } // Tippverz
 
@@ -2324,7 +2324,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="imagemagick") return "ImageMagick ImageMagick-doc";
       break;
     default: break;
-  }
+  } //   switch(pruefipr())
   return prog;
 } // string linstcl::ersetzeprog(const string& prog) 
 
@@ -2447,7 +2447,7 @@ string gethome()
      erg=srueck[0];
    }
    */
- }
+ } //  if (erg.empty())
  return erg;
 } // string gethome()
 
@@ -2480,7 +2480,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
             obse=1; 
             break;
           }
-      }
+      } //       for(size_t j=0;j<sr2.size();j++)
       if (obse) {
         linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
         systemrueck("sudo setenforce 0",obverb,oblog);
@@ -2716,7 +2716,7 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
       } else {
         erg=0;
         break;
-      }
+      } //       if ((erg=remove(zuloe.c_str())))
     } // for(uchar iru=1;iru>-1;iru--)
     return erg;
   } // if (!lstat(zuloe.c_str(),&entryzuloe)) 
