@@ -6403,6 +6403,8 @@ int paramcl::pruefcapi()
             systemrueck("cd "+instverz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);
             if (rueck.size()) {
               kstring=rueck[0];
+						cout<<"kstring: "<<kstring<<endl;
+						exit(0);
               systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
               systemrueck("cd "+instverz+" && sudo rpm -Uvh "+kstring,obverb,oblog);
               for(unsigned iru=0;iru<2;iru++) {
