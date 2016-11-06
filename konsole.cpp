@@ -2322,6 +2322,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="libcapi20-3") return "";
       if (prog=="capiutils") return "";
       if (prog=="imagemagick") return "ImageMagick ImageMagick-doc";
+      if (prog=="libxslt-tools") return "libxslt-devel";
       break;
     default: break;
   } //   switch(pruefipr())
