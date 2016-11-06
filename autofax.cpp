@@ -5977,7 +5977,7 @@ int paramcl::pruefhyla()
         //        if (!modemlaeuftnicht) break;
         //  <<rot<<" hyinstart: "<<(int)hyinstart<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
         //  <<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
-				cout<<rot<<"Stelle 2"<<schwarz<<endl;
+				cout<<rot<<"Stelle 2, hyinstart: "<<(int)hyinstart<<schwarz<<endl;
         if (hyinstart==hypak || hyinstart==hysrc) {
           // if (0)
 					cout<<rot<<"Stelle 3"<<schwarz<<endl;
