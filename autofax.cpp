@@ -1532,7 +1532,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	// T_nach
 	{"' nach '","' to '"},
 	// T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen
-	{"' verjuengt. \nBitte den Rechner neu starten und}dann mich nochmal aufrufen!","'. \nPlease restart the pc and then call me again!"},
+	{"' verjuengt. \nBitte den Rechner neu starten und dann mich nochmal aufrufen!","'. \nPlease restart the pc and then call me again!"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
