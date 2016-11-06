@@ -7529,6 +7529,8 @@ int main(int argc, char** argv)
 						cout<<unbuf.release<<endl;
 						cout<<unbuf.version<<endl;
 						cout<<unbuf.machine<<endl;
+	string relev=kernel.substr(0,kernel.find(unbuf.machine)-1);
+	cout<<"relev: "<<relev<<endl;
 
 	exit(0);
   paramcl pm(argc,argv); // Programmparameter
