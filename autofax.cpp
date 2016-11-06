@@ -6392,6 +6392,7 @@ int paramcl::pruefcapi()
             // nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
             // int altobverb=obverb;obverb=2;
             //         systemrueck("sudo dnf -y install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
+						linst.doinst("rpmdevtools",obverb+1,oblog,"rpmdev-setuptree");
             systemrueck("sudo rpmdev-setuptree",obverb,oblog);
             Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
             systemrueck("cd "+instverz+" && sudo dnf download --source kernel",obverb,oblog);
