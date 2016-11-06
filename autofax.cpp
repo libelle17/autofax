@@ -6399,12 +6399,10 @@ int paramcl::pruefcapi()
             Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
             systemrueck("cd "+instverz+" && sudo dnf download --source kernel",obverb,oblog);
             svec rueck;
-            string kstring;
+            string kstring; // kernel-4.8.4-200.fc24.src.rpm
             systemrueck("cd "+instverz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);
             if (rueck.size()) {
               kstring=rueck[0];
-						cout<<"kstring: "<<kstring<<endl;
-						exit(0);
               systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
               systemrueck("cd "+instverz+" && sudo rpm -Uvh "+kstring,obverb,oblog);
               for(unsigned iru=0;iru<2;iru++) {
@@ -7521,6 +7519,18 @@ void paramcl::zeigkonf()
 
 int main(int argc, char** argv) 
 {
+  string kstring="kernel-4.8.4-200.fc24.src.rpm";
+	string kernel=kstring.substr(kstring.find("-")+1);
+	cout<<kernel<<endl;
+            utsname unbuf;
+            uname(&unbuf);
+						cout<<unbuf.sysname<<endl;
+						cout<<unbuf.nodename<<endl;
+						cout<<unbuf.release<<endl;
+						cout<<unbuf.version<<endl;
+						cout<<unbuf.machine<<endl;
+
+	exit(0);
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();
