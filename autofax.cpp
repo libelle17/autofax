@@ -4130,7 +4130,7 @@ void paramcl::pruefunpaper()
 	double vers=0;
 	if (urueck.size()) vers=atol(urueck[0].c_str());
 	if (!urueck.size()||vers<6.1) {
-		if (pruefipr()==apt||pruefipr()==dnf||pruefipr()==yum) linst.doggfinst("libavformat-dev",obverb+1,oblog);
+		/*if (pruefipr()==apt||pruefipr()==dnf||pruefipr()==yum)*/ linst.doggfinst("libavformat-devel",obverb+1,oblog);
 		holvongithub("unpaper_copy");
 		if (vers) systemrueck("sudo rm $(which unpaper) && hash -r",obverb,oblog);
 		kompiliere("unpaper_copy",s_gz);

@@ -2313,6 +2313,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="tesseract-ocr-traineddata-english") return "tesseract-ocr-eng";
       if (prog=="tesseract-ocr-traineddata-german") return "tesseract-ocr-deu";
       if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-ocr-osd";
+      if (prog=="libavformat-devel") return "libavformat-dev";
       break;
     case dnf: case yum:
       if (prog=="mariadb") return "mariadb-server";
@@ -2324,7 +2325,6 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="capiutils") return "";
       if (prog=="imagemagick") return "ImageMagick ImageMagick-doc";
       if (prog=="libxslt-tools") return "libxslt";
-      if (prog=="libavformat-dev") return "libavformat-devel";
       if (prog=="libreoffice-base") return "libreoffice-writer libreoffice-common libreoffice-base";
       if (prog=="tesseract-ocr") return "tesseract";
       if (prog=="tesseract-ocr-traineddata-english") return "";
