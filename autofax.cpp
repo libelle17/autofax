@@ -4379,6 +4379,7 @@ void paramcl::DateienHerricht()
       } // switch (runde) 
       if (cmd.empty()) erg=1; else {
         vector<string> umwd;
+				cout<<violett<<cmd<<schwarz<<endl;
         systemrueck(cmd, obverb,oblog,&umwd);
         erg=lstat(fxv[nachrnr].spdf.c_str(),&entrynpdf); 
         Log(string(Tx[T_Umwandlungvon])+blau+fxv[nachrnr].npdf+Tx[T_inPDFmit]+tuerkis+(runde==1?"soffice":"convert")+schwarz+
