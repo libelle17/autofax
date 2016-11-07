@@ -2324,6 +2324,11 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="imagemagick") return "ImageMagick ImageMagick-doc";
       if (prog=="libxslt-tools") return "libxslt";
       if (prog=="libavformat-dev") return "libavformat-devel";
+      if (prog=="libreoffice-base") return "libreoffice-writer libreoffice-common libreoffice-base";
+      if (prog=="tesseract-ocr") return "tesseract";
+      if (prog=="tesseract-ocr-traineddata-english") return "";
+      if (prog=="tesseract-ocr-traineddata-german") return "tesseract-langpack-deu tesseract-langpack-deu_frak";
+      if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-osd";
       break;
     default: break;
   } //   switch(pruefipr())
