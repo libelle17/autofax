@@ -4171,13 +4171,35 @@ int paramcl::pruefocr()
 // sudo dnf install ffmpeg-devel
 // sudo dnf install ffmpeg-compat
 // sudo PKG_CONFIG_PATH=/usr/lib64/ffmpeg-compat/pkgconfig pkg-config --cflags libavcodec
+// moegliche weitere Befehle:
+// sudo dnf -y --reinstall install python3-pip
+// sudo dnf clean all
+// sudo dnf -y update
+// sudo pip install -U setuptools
+// dnf install mupdf mupdf-devel
+// pyvenv venv
+// source venv/bin/activate
+// .. pip3 install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf
+//  pip install --upgrade pip
+// pip3 install --upgrade git+https://github.com/jbarlow83/OCRmyPDF.git
+// /home/schade/autofax/venv/bin/pip3 install --upgrade git+https://github.com/jbarlow83/OCRmyPDF.git
+// sudo python3 -m pip install ocrmypdf
+// dnf install python3-devel (fuer Python.h)
+// sudo dnf -y install libffi libffi-devel (fuer ffi.h)
+// CFLAGS=-I/usr/include/libffi/include ./autofax/venv/bin/pip3 install pyOpenSSL
+// sudo python3 -m pip install ocrmypdf
+// sudo dnf -y install qpdf
+// oder:
+// sudo dnf install python3-pip python3-devel libffi-devel qpdf tesseract tesseract-langpack-deu tesseract-osd
+// sudo python3 -m pip install ocrmypdf // http://www.uhlme.ch/pdf_ocr
+
 							if (pruefipr()==apt||pruefipr()==dnf||pruefipr()==yum) linst.doggfinst("libavformat-dev",obverb+1,oblog);
 							holvongithub("unpaper_copy");
 							if (vers) systemrueck("sudo rm $(which unpaper) && hash -r",obverb,oblog);
 							kompiliere("unpaper_copy",s_gz);
 						} // 						if (!urueck.size()||vers<6.1)
 						// in fedora pip statt pip3
-            systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" && sudo -H $(which pip3||which pip) install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf'",
+            systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" && sudo -H python3 -m pip install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf'",
 						            obverb,oblog);
             linst.doinst("unpaper",obverb,oblog);
           } //    if (!kompilbase(was,endg))
