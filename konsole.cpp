@@ -2309,7 +2309,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="libreoffice-base") return "libreoffice-common libreoffice-base";
       if (prog=="libcapi20-2") return "libcapi20-dev";
       if (prog=="python-devel") return "python-dev";
-      if (prog=="python-devel") return "python-dev";
+      if (prog=="python3-devel") return "python3-dev";
       if (prog=="tesseract-ocr-traineddata-english") return "tesseract-ocr-eng";
       if (prog=="tesseract-ocr-traineddata-german") return "tesseract-ocr-deu";
       if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-ocr-osd";
@@ -2320,6 +2320,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="tiff") return "libtiff-tools";
       if (prog=="libcapi20-2") return "isdn4k-utils";
       if (prog=="libcapi20-3") return "";
+      if (prog=="python-devel") return "python3-devel";
       if (prog=="capiutils") return "";
       if (prog=="imagemagick") return "ImageMagick ImageMagick-doc";
       if (prog=="libxslt-tools") return "libxslt";

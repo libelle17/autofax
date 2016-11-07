@@ -308,6 +308,7 @@ class paramcl // Programmparameter
   public:
     paramcl(int argc,char** argv);
     ~paramcl();
+		void pruefunpaper();
     void pruefggfmehrfach();
     void nextnum();
     string stdfaxnr(const string& faxnr);

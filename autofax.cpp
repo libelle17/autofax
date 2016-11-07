@@ -4123,15 +4123,29 @@ int paramcl::pruefconvert()
   return convertda;
 } // int paramcl::pruefconvert()
 
+void paramcl::pruefunpaper()
+{
+	svec urueck;
+	systemrueck("unpaper -V",obverb,oblog,&urueck);
+	double vers=0;
+	if (urueck.size()) vers=atol(urueck[0].c_str());
+	if (!urueck.size()||vers<6.1) {
+		if (pruefipr()==apt||pruefipr()==dnf||pruefipr()==yum) linst.doggfinst("libavformat-dev",obverb+1,oblog);
+		holvongithub("unpaper_copy");
+		if (vers) systemrueck("sudo rm $(which unpaper) && hash -r",obverb,oblog);
+		kompiliere("unpaper_copy",s_gz);
+	} // 						if (!urueck.size()||vers<6.1)
+}
+
 // verwendet in empfarch()
 int paramcl::pruefocr()
 {
-  if (!obocrgeprueft) {
-    uchar tda=1, deuda=0, engda=0, osdda=0;
-    systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
-    svec rueck;
-    systemrueck("tesseract --list-langs 2>&1",obverb,oblog,&rueck); // gibt das normale Ergebnis als Fehlermeldung aus!
-    if (!rueck.size()) tda=0; else if (rueck[0].find("List of available")) tda=0;
+	if (!obocrgeprueft) {
+		uchar tda=1, deuda=0, engda=0, osdda=0;
+		systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
+		svec rueck;
+		systemrueck("tesseract --list-langs 2>&1",obverb,oblog,&rueck); // gibt das normale Ergebnis als Fehlermeldung aus!
+		if (!rueck.size()) tda=0; else if (rueck[0].find("List of available")) tda=0;
     if (!tda) {
       linst.doinst("tesseract-ocr",obverb,oblog);
       systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
@@ -4161,11 +4175,6 @@ int paramcl::pruefocr()
           holvongithub(proj);
           if (!kompilbase(proj,s_gz)) {
 						// sudo pip3 install image PyPDF2 ruffus reportlab cryptography cffi
-						svec urueck;
-						systemrueck("unpaper -V",obverb,oblog,&urueck);
-						double vers=0;
-						if (urueck.size()) vers=atol(urueck[0].c_str());
-						if (!urueck.size()||vers<6.1) {
 // sudo rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
 // sudo dnf install ffmpeg
 // sudo dnf install ffmpeg-devel
@@ -4193,12 +4202,8 @@ int paramcl::pruefocr()
 // sudo dnf install python3-pip python3-devel libffi-devel qpdf tesseract tesseract-langpack-deu tesseract-osd
 // sudo python3 -m pip install ocrmypdf // http://www.uhlme.ch/pdf_ocr
 
-							if (pruefipr()==apt||pruefipr()==dnf||pruefipr()==yum) linst.doggfinst("libavformat-dev",obverb+1,oblog);
-							holvongithub("unpaper_copy");
-							if (vers) systemrueck("sudo rm $(which unpaper) && hash -r",obverb,oblog);
-							kompiliere("unpaper_copy",s_gz);
-						} // 						if (!urueck.size()||vers<6.1)
 						// in fedora pip statt pip3
+						pruefunpaper();
             systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" && sudo -H python3 -m pip install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf'",
 						            obverb,oblog);
             linst.doinst("unpaper",obverb,oblog);
@@ -4415,6 +4420,7 @@ void paramcl::DateienHerricht()
         if (!erg) {
          if (obocra) {
           if (!pruefocr()) {
+						pruefunpaper();
             systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+fxv[nachrnr].spdf+"\" \""+fxv[nachrnr].spdf+"\""
                 " && chmod +r \""+fxv[nachrnr].spdf+"\"" ,obverb,oblog);
           } // pruefocr()
