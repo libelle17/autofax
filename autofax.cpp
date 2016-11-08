@@ -541,6 +541,7 @@ enum T_
 	T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von,
 	T_nach,
 	T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen,
+	T_pruefDB,
 	T_MAX
 };
 
@@ -1533,6 +1534,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	{"' nach '","' to '"},
 	// T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen
 	{"' verjuengt. \nBitte den Rechner neu starten und dann mich nochmal aufrufen!","'. \nPlease restart the pc and then call me again!"},
+	// T_pruefDB
+	{"pruefDB(","checkDB("},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -3141,12 +3144,12 @@ void paramcl::autofkonfschreib()
 void paramcl::clieskonf()
 {
   Log(violetts+Tx[T_clieskonf]+schwarz+", cfaxcp->name: "+violett+cfaxcp->name+schwarz,obverb,oblog);
-  if (capiconf[6].wert!="+"+countrycode+" "+citycode+" "+msn  
-      || capiconf[4].wert!=msn  
-      || capiconf[7].wert!=cFaxUeberschrift  
-     ) {
-    capizukonf=1;
-  }
+	if (capiconf[6].wert!="+"+countrycode+" "+citycode+" "+msn  
+			|| capiconf[4].wert!=msn  
+			|| capiconf[7].wert!=cFaxUeberschrift  
+		 ) {
+		capizukonf=1;
+	}
   int richtige=0;
   if (cfaxcp) {
     cfaxcp->Abschn_auswert(obverb);
@@ -3161,12 +3164,12 @@ void paramcl::clieskonf()
           else if (cfaxcp->abschv[i].av[j].name=="fax_email_from") {if (cfaxcp->abschv[i].av[j].wert==capiconf[8].wert) richtige++;}
         }
         break;
-      }
-    }
+      } //       if (cfaxcp->abschv[i].aname==cuser)
+    } //     for(size_t i=0;i<cfaxcp->abschv.size();i++)
     if (richtige!=4) {
       capizukonf=1;
     }
-  }
+  } //   if (cfaxcp)
   svec ckzlrueck;
   systemrueck("grep connect_faxG3 `grep incoming_script= "+ccapiconfdat+" 2>/dev/null|cut -d'\"' -f2 2>/dev/null`"
       "|sed 's/.*headline//;s/^,//;s/).*//'",obverb,oblog,&ckzlrueck,1);
@@ -3674,7 +3677,7 @@ int paramcl::initDB()
 
 int paramcl::pruefDB(const string& db)
 {
-  Log(violetts+"pruefDB("+db+")"+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_pruefDB]+db+")"+schwarz,obverb,oblog);
   My = new DB(myDBS,host,muser,mpwd,db,0,0,0,obverb,oblog,3,0);
   return (My->fehnr); 
 } // pruefDB
@@ -4412,7 +4415,6 @@ void paramcl::DateienHerricht()
       } // switch (runde) 
       if (cmd.empty()) erg=1; else {
         vector<string> umwd;
-				cout<<violett<<cmd<<schwarz<<endl;
         systemrueck(cmd, obverb,oblog,&umwd);
         erg=lstat(fxv[nachrnr].spdf.c_str(),&entrynpdf); 
         Log(string(Tx[T_Umwandlungvon])+blau+fxv[nachrnr].npdf+Tx[T_inPDFmit]+tuerkis+(runde==1?"soffice":"convert")+schwarz+
