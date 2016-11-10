@@ -2325,7 +2325,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="capiutils") return "";
       if (prog=="imagemagick") return "ImageMagick ImageMagick-doc";
       if (prog=="libxslt-tools") return "libxslt";
-      if (prog=="libreoffice-base") return "libreoffice-writer libreoffice-common libreoffice-base";
+      if (prog=="libreoffice-base") return "libreoffice-filters libreoffice-langpack-de";
       if (prog=="tesseract-ocr") return "tesseract";
       if (prog=="tesseract-ocr-traineddata-english") return "";
       if (prog=="tesseract-ocr-traineddata-german") return "tesseract-langpack-deu tesseract-langpack-deu_frak";

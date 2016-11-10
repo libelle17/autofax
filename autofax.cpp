@@ -4133,12 +4133,21 @@ void paramcl::pruefunpaper()
 	double vers=0;
 	if (urueck.size()) vers=atol(urueck[0].c_str());
 	if (!urueck.size()||vers<6.1) {
+   if (pruefipr()==dnf||pruefipr()==yum) {
+// sudo rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm 
+//               http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
+   systemrueck("rpm -Uvh https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-free-release-stable.noarch.rpm "
+	                     " https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-nonfree-release-stable.noarch.rpm",obverb,oblog);
+	 linst.doinst("ffmpeg",obverb,oblog);
+	 linst.doinst("ffmpeg-devel",obverb,oblog);
+	 linst.doinst("ffmpeg-compat",obverb,oblog);
+	 }
 		/*if (pruefipr()==apt||pruefipr()==dnf||pruefipr()==yum)*/ linst.doggfinst("libavformat-devel",obverb+1,oblog);
 		holvongithub("unpaper_copy");
 		if (vers) systemrueck("sudo rm $(which unpaper) && hash -r",obverb,oblog);
 		kompiliere("unpaper_copy",s_gz);
 	} // 						if (!urueck.size()||vers<6.1)
-}
+} // void paramcl::pruefunpaper()
 
 // verwendet in empfarch()
 int paramcl::pruefocr()
@@ -4164,6 +4173,17 @@ int paramcl::pruefocr()
     if (!osdda) linst.doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
 
     if (!obprogda("ocrmypdf",oblog,obverb)) {
+			if (pruefipr()==dnf||pruefipr()==yum) {
+						// in fedora pip statt pip3
+     linst.doinst("python3-pip python3-devel libffi-devel qpdf gcc redhat-rpm-config ghostscript");
+		 systemrueck("sudo pip3 -y install --upgrade setuptools pip");
+						pruefunpaper();
+     systemrueck("python3 -m pip install ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
+// pruefunpaper();
+// sudo dnf install ./ghostscript-9.16-4.fc24.i686.rpm
+//// sudo dnf -y install ghostscript // ghostscript 9.20 geht nicht mit pdf/a und overwrite
+
+			} else {
       if (!linst.doggfinst("python-devel",obverb+1,oblog)) {
         if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3")) {
           lsysen system=lsys.getsys(obverb,oblog);
@@ -4178,10 +4198,6 @@ int paramcl::pruefocr()
           holvongithub(proj);
           if (!kompilbase(proj,s_gz)) {
 						// sudo pip3 install image PyPDF2 ruffus reportlab cryptography cffi
-// sudo rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
-// sudo dnf install ffmpeg
-// sudo dnf install ffmpeg-devel
-// sudo dnf install ffmpeg-compat
 // sudo PKG_CONFIG_PATH=/usr/lib64/ffmpeg-compat/pkgconfig pkg-config --cflags libavcodec
 // moegliche weitere Befehle:
 // sudo dnf -y --reinstall install python3-pip
@@ -4201,11 +4217,7 @@ int paramcl::pruefocr()
 // CFLAGS=-I/usr/include/libffi/include ./autofax/venv/bin/pip3 install pyOpenSSL
 // sudo python3 -m pip install ocrmypdf
 // sudo dnf -y install qpdf
-// oder:
-// sudo dnf install python3-pip python3-devel libffi-devel qpdf tesseract tesseract-langpack-deu tesseract-osd
-// sudo python3 -m pip install ocrmypdf // http://www.uhlme.ch/pdf_ocr
 
-						// in fedora pip statt pip3
 						pruefunpaper();
             systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" && sudo -H python3 -m pip install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf'",
 						            obverb,oblog);
@@ -4213,6 +4225,7 @@ int paramcl::pruefocr()
           } //    if (!kompilbase(was,endg))
         } //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
       } //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
+		} // if (pruefipr()==dnf)
     } //     if (!obprogda("ocrmypdf",oblog,obverb))
     obocrgeprueft=1;
   } // if (!obocrgeprueft) 
