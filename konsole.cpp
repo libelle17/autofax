@@ -1011,7 +1011,7 @@ char* ltoan(long value, int base, uchar obtz, uchar minstel)
     *ptr1++ = tmp_char;
   }
   return result;
-} // ltoa_(long value, char* result, int base)
+} // ltoan(long value, char* result, int base)
 
 char* ltoa_(long value, char* result, int base=10) 
 {
@@ -1042,6 +1042,17 @@ char* ltoa_(long value, char* result, int base=10)
   }
   return result;
 } // ltoa_(long value, char* result, int base)
+
+// Programmversion, falls diese beim Programm mit " --version" abrufbar ist
+double progvers(const string& prog,int obverb, int oblog)
+{
+	svec urueck;
+	systemrueck(prog+" --version",obverb,oblog,&urueck);
+	double vers=0;
+	if (urueck.size()) vers=atol(urueck[0].c_str());
+	return vers;
+} // double progvers(string prog,int obverb, int oblog)
+
 
 #ifdef notwendig
 void kopierm(string *quelle, string *ziel)

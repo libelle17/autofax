@@ -4128,11 +4128,7 @@ int paramcl::pruefconvert()
 
 void paramcl::pruefunpaper()
 {
-	svec urueck;
-	systemrueck("unpaper -V",obverb,oblog,&urueck);
-	double vers=0;
-	if (urueck.size()) vers=atol(urueck[0].c_str());
-	if (!urueck.size()||vers<6.1) {
+	if (double vers=progvers("unpaper",obverb,oblog)<6.1) {
    if (pruefipr()==dnf||pruefipr()==yum) {
 // sudo rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm 
 //               http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
@@ -4166,13 +4162,15 @@ int paramcl::pruefocr()
        if (rueck[i]=="deu") deuda=1;
        else if (rueck[i]=="eng") engda=1;
        else if (rueck[i]=="osd") osdda=1;
-      }
+      } //       for(size_t i=1;i<rueck.size();i++)
     } //     if (!tda)
     if (!deuda) linst.doinst("tesseract-ocr-traineddata-german",obverb,oblog);
     if (!engda) linst.doinst("tesseract-ocr-traineddata-english",obverb,oblog);
     if (!osdda) linst.doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
 
-    if (!obprogda("ocrmypdf",oblog,obverb)) {
+    // uchar alt=0;
+    if (obprogda("ocrmypdf",obverb,oblog)) {
+	  } else {
 			if (pruefipr()==dnf||pruefipr()==yum) {
 						// in fedora pip statt pip3
      linst.doinst("python3-pip python3-devel libffi-devel qpdf gcc redhat-rpm-config ghostscript");
@@ -4226,7 +4224,7 @@ int paramcl::pruefocr()
         } //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
       } //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
 		} // if (pruefipr()==dnf)
-    } //     if (!obprogda("ocrmypdf",oblog,obverb))
+    } //     if (!obprogda("ocrmypdf",obverb,oblog))
     obocrgeprueft=1;
   } // if (!obocrgeprueft) 
   return 0;
