@@ -1043,16 +1043,32 @@ char* ltoa_(long value, char* result, int base=10)
   return result;
 } // ltoa_(long value, char* result, int base)
 
+double verszuzahl(string vers)
+{
+ string vneu;
+ uchar obkomma=0;
+ for(size_t i=0;i<vers.size();i++) {
+  if (strchr("0123456789",vers[i])) {
+	 vneu+=vers[i];
+	} else if (vers[i]=='.'||vers[i]==',') {
+	 if (!obkomma) {
+	  vneu+='.';
+		obkomma=1;
+	 } // 	 if (!obkomma)
+	} //   if (strchr("0123456789",vers[i]))  else if ..
+ } //  for(size_t i=0;i<vers.size();i++)
+ if (vneu.empty()) return 0; else return atof(vneu.c_str());
+} // double verstozahl(string vers)
+
 // Programmversion, falls diese beim Programm mit " --version" abrufbar ist
 double progvers(const string& prog,int obverb, int oblog)
 {
 	svec urueck;
 	systemrueck(prog+" --version",obverb,oblog,&urueck);
 	double vers=0;
-	if (urueck.size()) vers=atol(urueck[0].c_str());
+	if (urueck.size()) vers=verszuzahl(urueck[0].c_str());
 	return vers;
 } // double progvers(string prog,int obverb, int oblog)
-
 
 #ifdef notwendig
 void kopierm(string *quelle, string *ziel)
