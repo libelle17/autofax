@@ -324,6 +324,8 @@ long cmpmem( char* feld, const char* search, int len_feld); // , int len_search
 char* ltoan(long value, int base=10, uchar obtz=0, uchar minstel=0); 
 char* ltoa_(long value, char* result, int base); 
 
+double progvers(const string& prog,int obverb, int oblog);
+
 #ifdef notcpp
 class Schluessel {
   public:
