@@ -5085,7 +5085,7 @@ void paramcl::empfarch()
      attrangleich(ziel,rueck[i],obverb,oblog);
     }
     if (obhpfadda||obpdfda) {
-      cmd=string("sudo mv -i \"")+rueck[i]+"\" \""+hempfavz+"\"";
+      cmd=string("sudo mv \"")+rueck[i]+"\" \""+hempfavz+"\"";
       systemrueck(cmd,obverb,oblog);
       RS zs(My);
       // ... und falls erfolgreich in der Datenbanktabelle inca eintragen
@@ -6253,7 +6253,7 @@ void paramcl::pruefsfftobmp()
       uchar obfrei= obprogda("jpegtran",obverb,oblog) && obprogda("cjpeg",obverb,oblog) && obprogda("djpeg",obverb,oblog);
       if (!obfrei) {
       string befehl = "cd "+instverz+ " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T "
-                      " && rm -f $T && mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install; } ";
+                      " && rm -rf $P && mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install; } ";
         obfrei = !systemrueck(befehl,obverb,oblog);
       }
       if (obfrei) {
@@ -6267,7 +6267,7 @@ void paramcl::pruefsfftobmp()
           string befehl= "cd "+instverz+
             " && { sudo grep '/usr/local/lib' /etc/ld.so.conf || "
             "{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig; } } "
-            " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T"
+            " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -rf $P"
             " && mv ${P}-master ${P}; } "
             " && cd ${P} "
             //                    " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
