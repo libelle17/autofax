@@ -2348,7 +2348,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="tiff") return "libtiff-tools";
       if (prog=="libcapi20-2") return "isdn4k-utils";
       if (prog=="libcapi20-3") return "";
-//      if (prog=="python-devel") return "python3-devel"; // bei capisuite_copy falsch; dann bei ocrmypdf fuer apt und suse noch zu pruefen
+//      if (prog=="python-devel") return "python3-devel"; // bei capisuite_copy falsch; dann bei ocrmypdf fuer apt noch zu pruefen
       if (prog=="capiutils") return "";
       if (prog=="imagemagick") return "ImageMagick ImageMagick-doc";
       if (prog=="libxslt-tools") return "libxslt";
@@ -2358,6 +2358,9 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="tesseract-ocr-traineddata-german") return "tesseract-langpack-deu tesseract-langpack-deu_frak";
       if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-osd";
       break;
+	  case zypper:
+		  if (prog=="redhat-rpm-config") return "";
+			if (prog=="libffi-devel") return "libffi$(gcc --version|head -n1|sed \"s/.*) \\(.\\).\\(.\\).*/\\1\\2/\")-devel";
     default: break;
   } //   switch(pruefipr())
   return prog;

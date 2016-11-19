@@ -4171,12 +4171,18 @@ int paramcl::pruefocr()
 		// uchar alt=0;
 		if (obprogda("ocrmypdf",obverb,oblog)) {
 		} else {
-			if (pruefipr()==dnf||pruefipr()==yum) {
+			if (pruefipr()==dnf||pruefipr()==yum||pruefipr()==zypper) {
 				// in fedora pip statt pip3
-				linst.doinst("python3-pip python3-devel libffi-devel qpdf gcc redhat-rpm-config ghostscript");
-				systemrueck("sudo pip3 -y install --upgrade setuptools pip");
+				linst.doinst("python3-pip",obverb+1,oblog,"pip3");
+				linst.doinst("python3-devel",obverb+1,oblog,"/usr/bin/python3-config");
+				linst.doggfinst("qpdf");
+				linst.doggfinst("gcc");
+				linst.doinst("libffi-devel");
+				linst.doinst("redhat-rpm-config",obverb+1,oblog);
+				linst.doinst("ghostscript",obverb+1,oblog,"gs");
+				systemrueck("sudo python3 -m pip install --upgrade setuptools pip");
 				pruefunpaper();
-				systemrueck("python3 -m pip install ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
+				systemrueck("python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
 				// pruefunpaper();
 				// sudo dnf install ./ghostscript-9.16-4.fc24.i686.rpm
 				//// sudo dnf -y install ghostscript // ghostscript 9.20 geht nicht mit pdf/a und overwrite
