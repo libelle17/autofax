@@ -4154,80 +4154,80 @@ int paramcl::pruefocr()
 		svec rueck;
 		systemrueck("tesseract --list-langs 2>&1",obverb,oblog,&rueck); // gibt das normale Ergebnis als Fehlermeldung aus!
 		if (!rueck.size()) tda=0; else if (rueck[0].find("List of available")) tda=0;
-    if (!tda) {
-      linst.doinst("tesseract-ocr",obverb,oblog);
-      systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
-    } else {
-      for(size_t i=1;i<rueck.size();i++) {
-       if (rueck[i]=="deu") deuda=1;
-       else if (rueck[i]=="eng") engda=1;
-       else if (rueck[i]=="osd") osdda=1;
-      } //       for(size_t i=1;i<rueck.size();i++)
-    } //     if (!tda)
-    if (!deuda) linst.doinst("tesseract-ocr-traineddata-german",obverb,oblog);
-    if (!engda) linst.doinst("tesseract-ocr-traineddata-english",obverb,oblog);
-    if (!osdda) linst.doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
+		if (!tda) {
+			linst.doinst("tesseract-ocr",obverb,oblog);
+			systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
+		} else {
+			for(size_t i=1;i<rueck.size();i++) {
+				if (rueck[i]=="deu") deuda=1;
+				else if (rueck[i]=="eng") engda=1;
+				else if (rueck[i]=="osd") osdda=1;
+			} //       for(size_t i=1;i<rueck.size();i++)
+		} //     if (!tda)
+		if (!deuda) linst.doinst("tesseract-ocr-traineddata-german",obverb,oblog);
+		if (!engda) linst.doinst("tesseract-ocr-traineddata-english",obverb,oblog);
+		if (!osdda) linst.doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
 
-    // uchar alt=0;
-    if (obprogda("ocrmypdf",obverb,oblog)) {
-	  } else {
+		// uchar alt=0;
+		if (obprogda("ocrmypdf",obverb,oblog)) {
+		} else {
 			if (pruefipr()==dnf||pruefipr()==yum) {
-						// in fedora pip statt pip3
-     linst.doinst("python3-pip python3-devel libffi-devel qpdf gcc redhat-rpm-config ghostscript");
-		 systemrueck("sudo pip3 -y install --upgrade setuptools pip");
-						pruefunpaper();
-     systemrueck("python3 -m pip install ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
-// pruefunpaper();
-// sudo dnf install ./ghostscript-9.16-4.fc24.i686.rpm
-//// sudo dnf -y install ghostscript // ghostscript 9.20 geht nicht mit pdf/a und overwrite
+				// in fedora pip statt pip3
+				linst.doinst("python3-pip python3-devel libffi-devel qpdf gcc redhat-rpm-config ghostscript");
+				systemrueck("sudo pip3 -y install --upgrade setuptools pip");
+				pruefunpaper();
+				systemrueck("python3 -m pip install ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
+				// pruefunpaper();
+				// sudo dnf install ./ghostscript-9.16-4.fc24.i686.rpm
+				//// sudo dnf -y install ghostscript // ghostscript 9.20 geht nicht mit pdf/a und overwrite
 
 			} else {
-      if (!linst.doggfinst("python-devel",obverb+1,oblog)) {
-        if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3")) {
-          lsysen system=lsys.getsys(obverb,oblog);
-					if (system==deb) {
-						linst.doggfinst("pkg-config",obverb+1,oblog);
-						linst.doggfinst("python3-setuptools",obverb+1,oblog);
-						linst.doggfinst("libffi-dev",obverb+1,oblog);
-						linst.doggfinst("libssl-dev",obverb+1,oblog);
-					}
-					string proj="ocrmypdf_copy";
-          string srcvz=instverz+vtz+proj+".tar.gz";
-          holvongithub(proj);
-          if (!kompilbase(proj,s_gz)) {
-						// sudo pip3 install image PyPDF2 ruffus reportlab cryptography cffi
-// sudo PKG_CONFIG_PATH=/usr/lib64/ffmpeg-compat/pkgconfig pkg-config --cflags libavcodec
-// moegliche weitere Befehle:
-// sudo dnf -y --reinstall install python3-pip
-// sudo dnf clean all
-// sudo dnf -y update
-// sudo pip install -U setuptools
-// dnf install mupdf mupdf-devel
-// pyvenv venv
-// source venv/bin/activate
-// .. pip3 install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf
-//  pip install --upgrade pip
-// pip3 install --upgrade git+https://github.com/jbarlow83/OCRmyPDF.git
-// /home/schade/autofax/venv/bin/pip3 install --upgrade git+https://github.com/jbarlow83/OCRmyPDF.git
-// sudo python3 -m pip install ocrmypdf
-// dnf install python3-devel (fuer Python.h)
-// sudo dnf -y install libffi libffi-devel (fuer ffi.h)
-// CFLAGS=-I/usr/include/libffi/include ./autofax/venv/bin/pip3 install pyOpenSSL
-// sudo python3 -m pip install ocrmypdf
-// sudo dnf -y install qpdf
+				if (!linst.doggfinst("python3-devel",obverb+1,oblog)) {
+					if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3")) {
+						lsysen system=lsys.getsys(obverb,oblog);
+						if (system==deb) {
+							linst.doggfinst("pkg-config",obverb+1,oblog);
+							linst.doggfinst("python3-setuptools",obverb+1,oblog);
+							linst.doggfinst("libffi-dev",obverb+1,oblog);
+							linst.doggfinst("libssl-dev",obverb+1,oblog);
+						}
+						string proj="ocrmypdf_copy";
+						string srcvz=instverz+vtz+proj+".tar.gz";
+						holvongithub(proj);
+						if (!kompilbase(proj,s_gz)) {
+							// sudo pip3 install image PyPDF2 ruffus reportlab cryptography cffi
+							// sudo PKG_CONFIG_PATH=/usr/lib64/ffmpeg-compat/pkgconfig pkg-config --cflags libavcodec
+							// moegliche weitere Befehle:
+							// sudo dnf -y --reinstall install python3-pip
+							// sudo dnf clean all
+							// sudo dnf -y update
+							// sudo pip install -U setuptools
+							// dnf install mupdf mupdf-devel
+							// pyvenv venv
+							// source venv/bin/activate
+							// .. pip3 install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf
+							//  pip install --upgrade pip
+							// pip3 install --upgrade git+https://github.com/jbarlow83/OCRmyPDF.git
+							// /home/schade/autofax/venv/bin/pip3 install --upgrade git+https://github.com/jbarlow83/OCRmyPDF.git
+							// sudo python3 -m pip install ocrmypdf
+							// dnf install python3-devel (fuer Python.h)
+							// sudo dnf -y install libffi libffi-devel (fuer ffi.h)
+							// CFLAGS=-I/usr/include/libffi/include ./autofax/venv/bin/pip3 install pyOpenSSL
+							// sudo python3 -m pip install ocrmypdf
+							// sudo dnf -y install qpdf
 
-						pruefunpaper();
-            systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" && sudo -H python3 -m pip install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf'",
-						            obverb,oblog);
-            linst.doinst("unpaper",obverb,oblog);
-          } //    if (!kompilbase(was,endg))
-        } //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
-      } //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
-		} // if (pruefipr()==dnf)
-    } //     if (!obprogda("ocrmypdf",obverb,oblog))
-    obocrgeprueft=1;
-  } // if (!obocrgeprueft) 
-  return 0;
+							pruefunpaper();
+							systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" && sudo -H python3 -m pip install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf'",
+									obverb,oblog);
+							linst.doinst("unpaper",obverb,oblog);
+						} //    if (!kompilbase(was,endg))
+					} //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
+				} //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
+			} // if (pruefipr()==dnf)
+		} //     if (!obprogda("ocrmypdf",obverb,oblog))
+		obocrgeprueft=1;
+	} // if (!obocrgeprueft) 
+	return 0;
 } // int paramcl::pruefocr()
 
 // zufaxenvz = zufaxen-Verzeichnis

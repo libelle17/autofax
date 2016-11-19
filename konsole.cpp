@@ -2348,7 +2348,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="tiff") return "libtiff-tools";
       if (prog=="libcapi20-2") return "isdn4k-utils";
       if (prog=="libcapi20-3") return "";
-      if (prog=="python-devel") return "python3-devel";
+//      if (prog=="python-devel") return "python3-devel"; // bei capisuite_copy falsch; dann bei ocrmypdf fuer apt und suse noch zu pruefen
       if (prog=="capiutils") return "";
       if (prog=="imagemagick") return "ImageMagick ImageMagick-doc";
       if (prog=="libxslt-tools") return "libxslt";
