@@ -4142,7 +4142,9 @@ void paramcl::pruefunpaper()
 	 linst.doinst("ffmpeg-devel",obverb,oblog);
 	 linst.doinst("ffmpeg-compat",obverb,oblog);
 	 }
-		/*if (pruefipr()==apt||pruefipr()==dnf||pruefipr()==yum)*/ linst.doggfinst("libavformat-devel",obverb+1,oblog);
+		/*if (pruefipr()==apt||pruefipr()==dnf||pruefipr()==yum)*/ 
+		if (pruefipr()!=dnf && pruefipr()!=yum) 
+		  linst.doggfinst("libavformat-devel",obverb+1,oblog);
 		holvongithub("unpaper_copy");
 		if (vers) systemrueck("sudo rm $(which unpaper) && hash -r",obverb,oblog);
 		kompiliere("unpaper_copy",s_gz);
@@ -4186,11 +4188,11 @@ int paramcl::pruefocr()
 				linst.doinst("ghostscript",obverb+1,oblog,"gs");
 				systemrueck("sudo python3 -m pip install --upgrade setuptools pip");
 				pruefunpaper();
-				systemrueck("python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
+				systemrueck("sudo python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
 				// pruefunpaper();
 				// sudo dnf install ./ghostscript-9.16-4.fc24.i686.rpm
 				//// sudo dnf -y install ghostscript // ghostscript 9.20 geht nicht mit pdf/a und overwrite
-
+#ifdef sonstige
 			} else {
 				if (!linst.doggfinst("python3-devel",obverb+1,oblog)) {
 					if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3")) {
@@ -4227,12 +4229,13 @@ int paramcl::pruefocr()
 							// sudo dnf -y install qpdf
 
 							pruefunpaper();
-							systemrueck("sh -c 'cd \""+instverz+vtz+proj+"\" && sudo -H python3 -m pip install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf'",
-									obverb,oblog);
+							systemrueck("sh -c 'cd \""+instverz+vtz+proj+
+							            "\" && sudo -H python3 -m pip install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf'", obverb,oblog);
 							linst.doinst("unpaper",obverb,oblog);
 						} //    if (!kompilbase(was,endg))
 					} //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
 				} //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
+#endif
 			} // if (pruefipr()==dnf)
 		} //     if (!obprogda("ocrmypdf",obverb,oblog))
 		obocrgeprueft=1;
