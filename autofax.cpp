@@ -4137,7 +4137,7 @@ void paramcl::pruefunpaper()
 	 string rpf="rpmfusion_copy";
    holvongithub(rpf);
 	 kompilbase(rpf,s_gz);
-	 systemrueck("sh -c 'cd "+rpf+"&& rpm -Uvh ffmpeg ffmpeg-devel ffmpeg-compat'",obverb+1,oblog);
+	 systemrueck("sh -c 'cd \""+instverz+vtz+rpf+"\"&& rpm -Uvh ./ffmpeg*x86_64.rpm'",obverb+1,oblog);
 	 /*
 	 linst.doinst("ffmpeg",obverb,oblog);
 	 linst.doinst("ffmpeg-devel",obverb,oblog);
