@@ -4134,10 +4134,15 @@ void paramcl::pruefunpaper()
 //               http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
 //   systemrueck("rpm -Uvh https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-free-release-stable.noarch.rpm "
 //	                     " https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-nonfree-release-stable.noarch.rpm",obverb,oblog);
- 	holvongithub("rpmfusion_copy");
+	 string rpf="rpmfusion_copy";
+   holvongithub(rpf);
+	 kompilbase(rpf,s_gz);
+	 systemrueck("sh -c 'cd "+rpf+"&& rpm -Uvh ffmpeg ffmpeg-devel ffmpeg-compat'",obverb+1,oblog);
+	 /*
 	 linst.doinst("ffmpeg",obverb,oblog);
 	 linst.doinst("ffmpeg-devel",obverb,oblog);
 	 linst.doinst("ffmpeg-compat",obverb,oblog);
+	 */
 	 }
 		/*if (pruefipr()==apt||pruefipr()==dnf||pruefipr()==yum)*/ linst.doggfinst("libavformat-devel",obverb+1,oblog);
 		holvongithub("unpaper_copy");
