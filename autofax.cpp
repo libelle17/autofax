@@ -6234,7 +6234,7 @@ void paramcl::holvongithub(string datei)
 int paramcl::kompilbase(const string& was, const string& endg)
 {
   if (!pruefinstv()) {
-    return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instverz+"\" && tar xpvf $T && rm -rf $P||sudo rm -rf $P&& mv $M $P'",obverb,oblog);
+    return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instverz+"\" && tar xpvf $T && rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv $M $P'",obverb,oblog);
   } //   if (!pruefinstv())
   return 1;
 } // int paramcl::kompilbase(string& was,string& endg)
@@ -6262,8 +6262,9 @@ void paramcl::pruefsfftobmp()
     if (!obprogda("sfftobmp",obverb,oblog)) {
       uchar obfrei= obprogda("jpegtran",obverb,oblog) && obprogda("cjpeg",obverb,oblog) && obprogda("djpeg",obverb,oblog);
       if (!obfrei) {
-      string befehl = "cd "+instverz+ " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T "
-                      " && rm -rf $P||sudo rm -rf $P&& mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install; } ";
+      string befehl = "cd "+instverz+
+			  " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T "
+        " && rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install; } ";
         obfrei = !systemrueck(befehl,obverb,oblog);
       }
       if (obfrei) {
@@ -6278,7 +6279,7 @@ void paramcl::pruefsfftobmp()
             " && { sudo grep '/usr/local/lib' /etc/ld.so.conf || "
             "{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig; } } "
             " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T"
-						" && rm -rf $P||sudo rm -rf $P&& mv ${P}-master ${P}; } "
+						" && rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv ${P}-master ${P}; } "
             " && cd ${P} "
             //                    " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
             " && sed -i.bak -e 's/^[[:blank:]]*\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp"
