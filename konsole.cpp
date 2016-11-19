@@ -191,6 +191,8 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {" Zeilen"," lines"},
 	// T_oder_nicht
 	{" oder nicht"," or not"},
+	// T_nicht_einfuegbar
+	{"nicht einfuegbar","not insertable"},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 
@@ -1808,6 +1810,8 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
 					if (erg) {
 						if (cmd.substr(0,6)=="rpm -q" || cmd.substr(0,7)=="dpkg -s" || cmd.substr(0,5)=="which" || cmd.substr(0,10)=="sudo which") {
 							ergebnis=gruens+Txk[T_nicht_gefunden];
+						} else if (cmd.substr(0,14)=="sudo modprobe ") {
+						  ergebnis=gruens+Txk[T_nicht_einfuegbar];
 						} else {
 							ergebnis=rots+Txk[T_Fehler]+ltoan(erg);
 						}
@@ -1900,8 +1904,8 @@ int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl)
         fehler=0;
       }
     } //     if (!lstat(verz.c_str(), &sverz))
-    if (fehler) fehler=systemrueck("mkdir -p '"+verz+"' 2>/dev/null",obverb,oblog);
-    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
+    if (fehler) fehler=systemrueck("mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'",obverb,oblog);
+//    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
     if (obmitfacl)
      setfaclggf(verz, wahr, 7, falsch,obverb,oblog);
   } // if (!verz.empty())
