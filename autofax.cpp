@@ -6230,7 +6230,7 @@ void paramcl::holvongithub(string datei)
 int paramcl::kompilbase(const string& was, const string& endg)
 {
   if (!pruefinstv()) {
-    return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instverz+"\" && tar xpvf $T && rm -rf $P; mv $M $P'",obverb,oblog);
+    return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instverz+"\" && tar xpvf $T && rm -rf $P||sudo rm -rf $P&& mv $M $P'",obverb,oblog);
   } //   if (!pruefinstv())
   return 1;
 } // int paramcl::kompilbase(string& was,string& endg)
@@ -6259,7 +6259,7 @@ void paramcl::pruefsfftobmp()
       uchar obfrei= obprogda("jpegtran",obverb,oblog) && obprogda("cjpeg",obverb,oblog) && obprogda("djpeg",obverb,oblog);
       if (!obfrei) {
       string befehl = "cd "+instverz+ " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T "
-                      " && rm -rf $P && mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install; } ";
+                      " && rm -rf $P||sudo rm -rf $P&& mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install; } ";
         obfrei = !systemrueck(befehl,obverb,oblog);
       }
       if (obfrei) {
@@ -6273,8 +6273,8 @@ void paramcl::pruefsfftobmp()
           string befehl= "cd "+instverz+
             " && { sudo grep '/usr/local/lib' /etc/ld.so.conf || "
             "{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig; } } "
-            " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -rf $P"
-            " && mv ${P}-master ${P}; } "
+            " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T"
+						" && rm -rf $P||sudo rm -rf $P&& mv ${P}-master ${P}; } "
             " && cd ${P} "
             //                    " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
             " && sed -i.bak -e 's/^[[:blank:]]*\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp"
@@ -6446,7 +6446,8 @@ int paramcl::pruefcapi()
             if (vrueck2.size()) v2=vrueck2[0];
 //            <<"vi: "<<v1<<"\n"<<"v2: "<<v2<<endl;
             if (v1!=v2) {
-              Log(blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
+							autofkonfschreib();
+							Log(blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
                   +schwarz+v2+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
                   +schwarz,1,1);
               exit(0);
