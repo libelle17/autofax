@@ -5723,7 +5723,7 @@ int paramcl::cservice()
     erg=systemrueck(/*"sudo sh -c 'systemctl stop capisuite; pkill capisuite >/dev/null 2>&1; pkill -9 capisuite >/dev/null 2>&1; "*/
         "cd /etc/init.d"
         " && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
-        " && { mkdir -p /etc/ausrangiert && mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true'",obverb,oblog);
+        " && { mkdir -p /etc/ausrangiert && mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true"/*'*/,obverb,oblog);
     // entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
     csfehler+=!scapisuite->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","","",obverb,oblog);
     if (obverb) Log("csfehler: "+gruens+ltoan(csfehler)+schwarz,obverb,oblog);
