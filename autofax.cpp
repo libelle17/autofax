@@ -4184,7 +4184,7 @@ int paramcl::pruefocr()
 				linst.doggfinst("qpdf");
 				linst.doggfinst("gcc");
 				linst.doinst("libffi-devel");
-				linst.doinst("redhat-rpm-config",obverb+1,oblog);
+				if (pruefipr()!=zypper) linst.doinst("redhat-rpm-config",obverb+1,oblog);
 				linst.doinst("ghostscript",obverb+1,oblog,"gs");
 				systemrueck("sudo python3 -m pip install --upgrade setuptools pip");
 				pruefunpaper();
