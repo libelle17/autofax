@@ -6515,7 +6515,9 @@ int paramcl::pruefcapi()
       } // if (!fcpcida || !capida || !capidrvda) 
       pruefrules(obverb,oblog);
       pruefblack(obverb,oblog);
+			cout<<rot<<"capischonerfolgreichinstalliert: "<<violett<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
       capischonerfolgreichinstalliert=!linst.obfehlt("capisuite capi4linux i4l-isdnlog");
+			cout<<rot<<"capischonerfolgreichinstalliert: "<<violett<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
       if (capischonerfolgreichinstalliert) {
        struct stat d1, d2;
        if (lstat("/etc/capisuite",&d1) && lstat("/usr/local/etc/capisuite",&d2))
