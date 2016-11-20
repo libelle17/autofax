@@ -6580,7 +6580,10 @@ int paramcl::pruefcapi()
 						 pyvz="\\/usr\\/lib64\\/python2.7";
 						}
             if (!kompiliere("capisuite_copy",s_gz,
-                           "sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/;"
+                           "sed -i.bak \""
+            // 20.11.16 diese Zeile scheint jetzt wieder in Fedora 24 unnoetig
+//													 "s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/;"
+						// 20.11.16 pyexecdir und pythondir mussten in Fedora 24 so gesetzt werden
 													 "s/\\( *pyexecdir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
 													 "s/\\( *pythondir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/"
 													 "\" configure"
