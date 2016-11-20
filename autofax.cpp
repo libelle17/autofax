@@ -6572,14 +6572,17 @@ int paramcl::pruefcapi()
 						uchar altobverb=obverb;
 						obverb++;
 						svec rueck;
+						string pyvz;
 						systemrueck("python -c \"import os; print os.path.dirname(os.__file__)\"",obverb,oblog,&rueck);
 						if (rueck.size()) {
-						 cout<<*sersetze(&rueck[0],"/","\\")<<endl;
+						 pyvz=*sersetze(&rueck[0],"/","\\/");
+						} else {
+						 pyvz="\\/usr\\/lib64\\/python2.7";
 						}
             if (!kompiliere("capisuite_copy",s_gz,
                            "sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/;"
-													 "s/\\( *pyexecdir=\\).*/\\1\\/usr\\/lib64\\/python2.7\\/site-packages\\/capisuite/;"
-													 "s/\\( *pythondir=\\).*/\\1\\/usr\\/lib64\\/python2.7\\/site-packages\\/capisuite/"
+													 "s/\\( *pyexecdir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
+													 "s/\\( *pythondir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/"
 													 "\" configure"
 //                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
 //                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }"
