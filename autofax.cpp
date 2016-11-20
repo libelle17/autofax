@@ -6574,7 +6574,7 @@ int paramcl::pruefcapi()
 						svec rueck;
 						systemrueck("python -c \"import os; print os.path.dirname(os.__file__)\"",obverb,oblog,&rueck);
 						if (rueck.size()) {
-						 cout<<sersetze(&rueck[0],"/","\\")<<endl;
+						 cout<<*sersetze(&rueck[0],"/","\\")<<endl;
 						}
             if (!kompiliere("capisuite_copy",s_gz,
                            "sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/;"
