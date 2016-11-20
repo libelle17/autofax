@@ -6574,8 +6574,8 @@ int paramcl::pruefcapi()
 						obverb=1;
             if (!kompiliere("capisuite_copy",s_gz,
                            "sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/;"
-													 "s/\\( *pyexecdir=\\).*/\\1/usr/lib64/python2.7/site-packages/;"
-													 "s/\\( *pythondir=\\).*/\\1/usr/lib64/python2.7/site-packages/"
+													 "s/\\( *pyexecdir=\\).*/\\1\\/usr\\/lib64\\/python2.7\\/site-packages\\/;"
+													 "s/\\( *pythondir=\\).*/\\1\\/usr\\/lib64\\/python2.7\\/site-packages\\/"
 													 "\" configure"
 //                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
 //                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }"
