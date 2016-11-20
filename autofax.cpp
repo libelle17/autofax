@@ -6571,6 +6571,7 @@ int paramcl::pruefcapi()
 //            svec rueck;
 //            systemrueck("find /usr -name capi20.h 2>/dev/null",obverb,oblog,&rueck); 
             systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; }; }'",obverb-1,oblog);
+						obverb=1;
             if (!kompiliere("capisuite_copy",s_gz,
                            "sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/;"
 													 "s/\\( *pyexecdir=\\).*/\\1/usr/lib64/python2.7/site-packages/;"
@@ -6580,6 +6581,7 @@ int paramcl::pruefcapi()
 //                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }"
                            ,"HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var && "
                            "sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp && ")) {
+						  obverb=0;
               mitcservice=1;
             }
 //            string befehl="sh -c 'P=capisuite; T=$P.tar.gz; M=$P-master; cd "+instverz+""
