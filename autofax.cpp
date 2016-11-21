@@ -3662,35 +3662,34 @@ void paramcl::pruefsamba()
 				obzu=1;
 				break;
 			} // 		for(size_t i=0;i<ports.size();i++) 
-			cout<<"obzu: "<<violett<<(int)obzu<<schwarz<<endl;
-			exit(0);
 			if (obzu) {
-				// Suse-Firewall
-				const char *susefw="/etc/sysconfig/SuSEfirewall2";
-				struct stat fstat;
-				if (!lstat(susefw,&fstat)) {
-					string part="server";
-					for(int i=1;i<3;i++) {
-						int nichtfrei=systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+part+"' "+susefw,obverb,oblog,0,2);
-						if (nichtfrei && !nrzf && !obfw) {
-							obfw=Tippob(Tx[T_Soll_die_SuSEfirewall_bearbeitet_werden],Tx[T_j_af]);
-							if (!obfw) break;
-						} // 					if (nichtfrei && !nrzf && !obfw)
-						if (nichtfrei && obfw) {
-							systemrueck("sudo sed -i.bak_"+meinname+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
-									" && sudo systemctl restart SuSEfirewall2 smb nmb",obverb,oblog); 
-						} // 					if (nichtfrei && obfw)
-						part="client";
-					} // for(int i=1;i<3;i++) 
-				} // if (!lstat(susefw,&fstat)) 
-				// fedora:
-				// firewall-cmd --state
-				// sudo firewall-cmd --permanent --add-service=samba
-				// selinux:
+				lsysen system=lsys.getsys(obverb,oblog);
+				if (system==fed) {
+					// fedora:
+					// firewall-cmd --state
+					systemrueck("sudo firewall-cmd --permanent --add-service=samba && sudo firewall-cmd --reload",obverb,oblog);
+					// selinux: // offenbar unnoetig
+				} else {
+					// Suse-Firewall
+					const char *susefw="/etc/sysconfig/SuSEfirewall2";
+					struct stat fstat;
+					if (!lstat(susefw,&fstat)) {
+						string part="server";
+						for(int i=1;i<3;i++) {
+							int nichtfrei=systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+part+"' "+susefw,obverb,oblog,0,2);
+							if (nichtfrei && !nrzf && !obfw) {
+								obfw=Tippob(Tx[T_Soll_die_SuSEfirewall_bearbeitet_werden],Tx[T_j_af]);
+								if (!obfw) break;
+							} // 					if (nichtfrei && !nrzf && !obfw)
+							if (nichtfrei && obfw) {
+								systemrueck("sudo sed -i.bak_"+meinname+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
+										" && sudo systemctl restart SuSEfirewall2 smb nmb",obverb,oblog); 
+							} // 					if (nichtfrei && obfw)
+							part="client";
+						} // for(int i=1;i<3;i++) 
+					} // if (!lstat(susefw,&fstat)) 
+				} // 			  if (system==fed) else 
 			} // obzu
-		} else {
-		 cout<<"laueft nicht"<<endl;
-		 exit(0);
 		} // obslaueft
   } //   if (!(conffehlt=lstat(smbdatei,&sstat)))
 } // pruefsamba
