@@ -3642,24 +3642,56 @@ void paramcl::pruefsamba()
       if (nmb.serviceda) nmb.restart(obverb-1,oblog);
       else if (nmbd.serviceda) nmbd.restart(obverb-1,oblog);
     } // if (smbrestart) 
-    // Suse-Firewall
-    struct stat fstat;
-    const char *susefw="/etc/sysconfig/SuSEfirewall2";
-    if (!lstat(susefw,&fstat)) {
-      string part="server";
-      for(int i=1;i<3;i++) {
-        int nichtfrei=systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+part+"' "+susefw,obverb,oblog,0,2);
-        if (nichtfrei && !nrzf && !obfw) {
-          obfw=Tippob(Tx[T_Soll_die_SuSEfirewall_bearbeitet_werden],Tx[T_j_af]);
-          if (!obfw) break;
-        }
-        if (nichtfrei && obfw) {
-          systemrueck("sudo sed -i.bak_"+meinname+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
-              " && sudo systemctl restart SuSEfirewall2 smb nmb",obverb,oblog); 
-        }
-        part="client";
-      } // for(int i=1;i<3;i++) 
-    } // if (!lstat(susefw,&fstat)) 
+		// Firewall(s)
+		uchar obslaueft=0;
+		svec rueckr;
+		systemrueck("systemctl list-units|grep firewall|grep -v init",obverb,oblog,&rueckr);
+		if (rueckr.size()) if (rueckr[0].find("active running")!=string::npos ||rueckr[0].find("active exited")!=string::npos) obslaueft=1;
+		if (obslaueft) {
+			// firewall-ports, geht in SUSE und Fedora
+			uchar obzu=0;
+			// udp, udp, tcp, tcp
+			svec ports; ports<<"137"<<"138"<<"139"<<"445";
+			for(size_t i=0;i<ports.size();i++) {
+				svec rueck;
+				systemrueck("sudo iptables -L -n|grep "+ports[i],obverb,oblog,&rueck);
+				if (rueck.size()) {
+					if (obverb>1) Log(rueck[0],obverb-1,oblog);
+					if (rueck[0].substr(0,6)=="ACCEPT" || rueck[0].substr(0,3)=="LOG") continue;
+				} // 			if (rueck.size())
+				obzu=1;
+				break;
+			} // 		for(size_t i=0;i<ports.size();i++) 
+			cout<<"obzu: "<<violett<<(int)obzu<<schwarz<<endl;
+			exit(0);
+			if (obzu) {
+				// Suse-Firewall
+				const char *susefw="/etc/sysconfig/SuSEfirewall2";
+				struct stat fstat;
+				if (!lstat(susefw,&fstat)) {
+					string part="server";
+					for(int i=1;i<3;i++) {
+						int nichtfrei=systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+part+"' "+susefw,obverb,oblog,0,2);
+						if (nichtfrei && !nrzf && !obfw) {
+							obfw=Tippob(Tx[T_Soll_die_SuSEfirewall_bearbeitet_werden],Tx[T_j_af]);
+							if (!obfw) break;
+						} // 					if (nichtfrei && !nrzf && !obfw)
+						if (nichtfrei && obfw) {
+							systemrueck("sudo sed -i.bak_"+meinname+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
+									" && sudo systemctl restart SuSEfirewall2 smb nmb",obverb,oblog); 
+						} // 					if (nichtfrei && obfw)
+						part="client";
+					} // for(int i=1;i<3;i++) 
+				} // if (!lstat(susefw,&fstat)) 
+				// fedora:
+				// firewall-cmd --state
+				// sudo firewall-cmd --permanent --add-service=samba
+				// selinux:
+			} // obzu
+		} else {
+		 cout<<"laueft nicht"<<endl;
+		 exit(0);
+		} // obslaueft
   } //   if (!(conffehlt=lstat(smbdatei,&sstat)))
 } // pruefsamba
 

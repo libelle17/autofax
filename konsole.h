@@ -465,7 +465,7 @@ class tsvec: public vector<T> {
       this->push_back(str);
       ((T&)str).init();
       return *this;
-    }
+    } // inline tsvec
 };
 
 // Abschnitt einer Konfigurationsdatei
