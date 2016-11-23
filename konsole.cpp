@@ -153,6 +153,10 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   {"Dienst ","Service "},
   // T_geladen
   {" geladen"," loaded"},
+	// 	T_ermoeglicht
+	{" ermoeglicht"," enabled"},
+	// T_nicht_ermoeglicht
+	{" nicht ermoeglicht"," not enabled"},
   // T_nicht_geladen
   {" nicht geladen"," not loaded"},
   // T_am
@@ -1797,7 +1801,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
 		if (errm) {
 			for(size_t i=0;i<errm->size();i++) {
 				if (erg==errm->at(i).errnr) {
-					ergebnis=(erg?rots:schwarzs)+ltoan(erg)+": "+errm->at(i).msg;
+					ergebnis=(erg?rots:gruens)+ltoan(erg)+": "+gruen+errm->at(i).msg;
 					break;
 				} // 				if (erg==errm->at(i).errnr)
 			} // for(size_t i=0;i<errm->size();i++) 
@@ -2728,7 +2732,14 @@ void servc::stopdis(int obverb,int oblog,uchar mitpkill)
 
 int servc::enableggf(int obverb,int oblog)
 {
- return systemrueck(string("systemctl is-enabled '")+sname+"' >/dev/null 2>&1 || sudo systemctl enable '"+sname+"'",obverb,oblog,0,2);
+    vector<errmsgcl> errv;
+    string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
+    string f0=froh+Txk[T_ermoeglicht];
+    string f1=froh+Txk[T_nicht_ermoeglicht];
+    errv.push_back(errmsgcl(0,f0));
+    errv.push_back(errmsgcl(1,f1));
+    errv.push_back(errmsgcl(6,f1));
+ return systemrueck(string("systemctl is-enabled '")+sname+"' >/dev/null 2>&1 || sudo systemctl enable '"+sname+"'",obverb,oblog,0,2,wahr,"",&errv);
 }
 
 void servc::daemon_reload(int obverb, int oblog)

@@ -161,6 +161,8 @@ enum Tkonsole_
   T_Dauer,
   T_Dienst,
   T_geladen,
+	T_ermoeglicht,
+	T_nicht_ermoeglicht,
   T_nicht_geladen,
   T_am,
   T_als_Dienst_eingerichtet_von,
