@@ -2514,7 +2514,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 //      if (sr1.size()) KLA
 //       if (sr1[0].find("permission")!=string::npos) KLA
       svec sr2;
-      systemrueck("sestatus",obverb,oblog,&sr2);
+      systemrueck("which sestatus 2>/dev/null && sestatus",obverb,oblog,&sr2);
       uchar obse=0;
       for(size_t j=0;j<sr2.size();j++) {
         if (!sr2[j].find("Current mode:"))

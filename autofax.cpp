@@ -4473,7 +4473,7 @@ void paramcl::DateienHerricht()
         systemrueck(cmd, obverb,oblog,&umwd);
         erg=lstat(fxv[nachrnr].spdf.c_str(),&entrynpdf); 
         Log(string(Tx[T_Umwandlungvon])+blau+fxv[nachrnr].npdf+Tx[T_inPDFmit]+tuerkis+(runde==1?"soffice":"convert")+schwarz+
-            Tx[T_beendetErgebnis]+rot+(erg?Tx[T_misserfolg]:Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
+            Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
         if (!erg) {
          if (obocra) {
           if (!pruefocr()) {
@@ -6064,7 +6064,7 @@ int paramcl::pruefhyla()
           if (sfaxgetty->machfit(obverb,oblog)) fglaeuftnicht=0;
         }
         // <<rot<<" fglaueftnicht: "<<fglaeuftnicht<<", hmodem: "<<hmodem<<schwarz<<endl;
-        modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
+        modemlaeuftnicht=systemrueck("which faxstat 2>/dev/null && sudo faxstat | grep "+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
         //        if (!modemlaeuftnicht) break;
         //  <<rot<<" hyinstart: "<<(int)hyinstart<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
         //  <<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
