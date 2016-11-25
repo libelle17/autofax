@@ -452,31 +452,29 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
 
 void DB::setzrpw()
 {
-  string rootpw2, cmd;
-  if (!nrzf) {
-    while (1) {
-      if (Tippob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) {
-        rootpwd=Tippstring(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
-        rootpw2=Tippstring(string("")+Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein]+" ("+Txk[T_erneute_Eingabe]+")",&rootpw2);
-        if (rootpw2==rootpwd && !rootpwd.empty()) {
-          cmd=string("sudo mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
-            "' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
-          Log(string(Txd[T_Fuehre_aus_db])+blau+cmd+schwarz,1,1);
-          int erg __attribute__((unused));
-          erg=system(cmd.c_str());
-          break;
-        } // if (rootpw2==rootpwd ...
-      } else {
-        break;
-      } // if (Tippob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) 
-    } // while (1)
-  } // if (!nrzf)
+	if (!nrzf) {
+		if (Tippob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) {
+			string rootpw2;
+			while (1) {
+				do {
+					rootpwd=Tippstring(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
+				} while (rootpwd.empty());	
+				rootpw2=Tippstring(string("")+Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein]+" ("+Txk[T_erneute_Eingabe]+")",&rootpw2);
+				if (rootpw2==rootpwd) break;
+			} //         while (1)
+			string cmd=string("sudo mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
+				"' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
+			Log(string(Txd[T_Fuehre_aus_db])+blau+cmd+schwarz,1,1);
+			int erg __attribute__((unused));
+			erg=system(cmd.c_str());
+		} // if (Tippob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) 
+	} // if (!nrzf)
 } // setzrpw
 
 DB::~DB(void)
 {
-  switch (DBS) {
-    case MySQL:
+	switch (DBS) {
+		case MySQL:
       if (!this->ConnError)
         mysql_close(conn);
       conn=0;
