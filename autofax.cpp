@@ -6622,7 +6622,7 @@ int paramcl::pruefcapi()
 													 "\" configure"
 //                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
 //                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }"
-                           ,"HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var && "
+                           ,"HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib64 --sysconfdir=/etc --localstatedir=/var && "
                            "sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp && ")) {
               mitcservice=1;
             }
