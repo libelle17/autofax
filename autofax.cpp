@@ -2709,8 +2709,11 @@ void paramcl::rueckfragen()
     }
 		if (cgconf[++lfd].wert.empty() || rzf) {
 			string mpw2;
+			mpwd.clear();
 			while (1) {
-				mpwd=Tippstring(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Tx[T_fuer_Benutzer]+tuerkiss+muser+schwarz+"'",&mpwd);
+				do {
+					mpwd=Tippstring(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Tx[T_fuer_Benutzer]+tuerkiss+muser+schwarz+"'",&mpwd);
+				} while (mpwd.empty());
 				mpw2=Tippstring(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Tx[T_fuer_Benutzer]+tuerkiss+muser+schwarz+"'"+" ("+Txk[T_erneute_Eingabe]+")",&mpw2);
 				if (mpwd==mpw2) break;
 			} //         while (1)
@@ -3627,8 +3630,10 @@ void paramcl::pruefsamba()
       if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
         string pw1, pw2;
         while (1) {
-          pw1=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz,&pw1);
-          pw2=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz+" ("+Txk[T_erneute_Eingabe]+")",&pw2);
+					do {
+						pw1=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz,&pw1);
+					} while (pw1.empty());
+					pw2=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz+" ("+Txk[T_erneute_Eingabe]+")",&pw2);
           if (pw1==pw2) break;
         } //         while (1)
         systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
