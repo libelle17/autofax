@@ -6573,6 +6573,8 @@ int paramcl::pruefcapi()
         linst.doggfinst("python-devel",obverb+1,oblog);
         linst.doinst("libxslt-tools",obverb+1,oblog,"xsltproc");
         uchar mitcservice=0;
+				// 25.11.16 nicht mehr auf Repo
+				/*
         if (system==sus) {
           linst.doggfinst("capi4linux i4l-isdnlog",obverb+1,oblog);
           systemrueck("zypper lr | grep 'kkeil factory development project' || "
@@ -6583,6 +6585,7 @@ int paramcl::pruefcapi()
           // i4l-base geloescht
           capischonerfolgreichinstalliert=!linst.doinst("-f capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
         } // if (lsys.getsys(obverb,oblog)==sus) 
+				*/
         if (!capischonerfolgreichinstalliert) {
           holvongithub("capisuite_copy");
           svec csrueck;
