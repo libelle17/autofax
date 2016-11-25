@@ -34,8 +34,6 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
   {"j","y"},
   // T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein
   {"Bitte geben Sie ein MySQL-Passwort fuer Benutzer 'root' ein: ","Please indicate a mysql password for user 'root': "},
-  // T_Bitte_geben_Sie_das_MySQL_Passwort_fuer_Benutzer_root_erneut_ein
-  {"Bitte geben Sie das MySQL-Passwort fuer Benutzer 'root' erneut ein: ","Please confirm the mysql password for user 'root': "},
   // T_Fuehre_aus_db
   {"Fuehre aus: ","Executing: "},
   // T_falsche_Fehlernr
@@ -459,7 +457,7 @@ void DB::setzrpw()
     while (1) {
       if (Tippob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) {
         rootpwd=Tippstring(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
-        rootpw2=Tippstring(Txd[T_Bitte_geben_Sie_das_MySQL_Passwort_fuer_Benutzer_root_erneut_ein],&rootpw2);
+        rootpw2=Tippstring(string("")+Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein]+" ("+Txk[T_erneute_Eingabe]+")",&rootpw2);
         if (rootpw2==rootpwd && !rootpwd.empty()) {
           cmd=string("sudo mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
             "' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";

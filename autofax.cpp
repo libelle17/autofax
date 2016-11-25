@@ -476,7 +476,6 @@ enum T_
   T_an_cFax,
   T_an_hFax,
   T_und,
-  T_erneute_Eingabe,
   T_liescapiconf,
   T_VorgbAllg,
   T_pruefisdn,
@@ -1396,8 +1395,6 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"an hFax","to hfax"},
   // T_und
   {"und","and"},
-  // T_erneute_Eingabe
-  {"erneute Eingabe","once more"},
   // T_liescapiconf
   {"liescapiconf()","readcapiconf()"},
   // T_VorgbAllg
@@ -2710,15 +2707,17 @@ void paramcl::rueckfragen()
       muser=Tippstring(Frage.c_str(),&muser);
       cgconf[lfd].setze(&muser);
     }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      string Frage=string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Tx[T_fuer_Benutzer]+drot+muser+schwarz+"'";
-      do {
-        mpwd=Tippstring(Frage.c_str(),&mpwd);
-      }
-      while (mpwd.empty());
-      string pwdstr=XOR(mpwd,pk);
-      cgconf[lfd].setze(&pwdstr);
-    }
+		if (cgconf[++lfd].wert.empty() || rzf) {
+			string mpw2;
+			while (1) {
+				mpwd=Tippstring(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Tx[T_fuer_Benutzer]+tuerkiss+muser+schwarz+"'",&mpwd);
+				mpw2=Tippstring(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Tx[T_fuer_Benutzer]+tuerkiss+muser+schwarz+"'"+" ("+Txk[T_erneute_Eingabe]+")",&mpw2);
+				if (mpwd==mpw2) break;
+			} //         while (1)
+			while (mpwd.empty());
+			string pwdstr=XOR(mpwd,pk);
+			cgconf[lfd].setze(&pwdstr);
+		}
     if (cgconf[++lfd].wert.empty() || rzf) {
       dbq=Tippstring(string(Tx[T_Datenbankname_fuer_MySQL_MariaDB_auf])+host+"'",&dbq);
       cgconf[lfd].setze(&dbq);
@@ -3629,9 +3628,9 @@ void paramcl::pruefsamba()
         string pw1, pw2;
         while (1) {
           pw1=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz,&pw1);
-          pw2=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz+" ("+Tx[T_erneute_Eingabe]+")",&pw2);
+          pw2=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz+" ("+Txk[T_erneute_Eingabe]+")",&pw2);
           if (pw1==pw2) break;
-        }
+        } //         while (1)
         systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
         systemrueck("(echo "+pw1+"; echo "+pw2+") | sudo smbpasswd -s "+cuser,obverb,oblog);
       } // if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) 

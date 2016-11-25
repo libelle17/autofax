@@ -197,6 +197,8 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 	{" oder nicht"," or not"},
 	// T_nicht_einfuegbar
 	{"nicht einfuegbar","not insertable"},
+  // T_erneute_Eingabe
+  {"erneute Eingabe","once more"},
   {"",""}
 }; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 

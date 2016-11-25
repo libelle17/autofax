@@ -183,6 +183,7 @@ enum Tkonsole_
   T_Zeilen,
 	T_oder_nicht,
 	T_nicht_einfuegbar,
+  T_erneute_Eingabe,
 	T_konsoleMAX,
 };
 
