@@ -6547,6 +6547,7 @@ int paramcl::pruefcapi()
       pruefrules(obverb,oblog);
       pruefblack(obverb,oblog);
       capischonerfolgreichinstalliert=!linst.obfehlt("capisuite capi4linux i4l-isdnlog");
+			cout<<violett<<"capischonerfolgreichinstalliert: "<<schwarz<<(int)capischonerfolgreichinstalliert<<endl;
       if (capischonerfolgreichinstalliert) {
        struct stat d1, d2;
        if (lstat("/etc/capisuite",&d1) && lstat("/usr/local/etc/capisuite",&d2))
@@ -6615,6 +6616,7 @@ int paramcl::pruefcapi()
             // 20.11.16 diese Zeile scheint jetzt wieder in Fedora 24 unnoetig
 //													 "s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/;"
 						// 20.11.16 pyexecdir und pythondir mussten in Fedora 24 so gesetzt werden
+						// 23.11.16: fuer openSUE muesste wohl --datarootdir=/usr/local/lib64 versucht werden, so wie es in capisuite.conf hier auch schon steht
 													 "s/\\( *pyexecdir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
 													 "s/\\( *pythondir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/"
 													 "\" configure"
