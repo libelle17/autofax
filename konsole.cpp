@@ -567,7 +567,7 @@ mdatei::mdatei(const string& name, ios_base::openmode modus,int obverb, int oblo
       break;
     }
     //    int erg __attribute__((unused));
-    pruefverz(dir_name(name),0,0,0);
+    pruefverz(dir_name(name),0,0,0,0);
     if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) {
       setfaclggf(name,falsch,modus&ios::out?6:4,falsch,obverb,oblog);
     } // if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) 
@@ -1914,6 +1914,7 @@ int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl,uchar obm
 //    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
     if (obmitfacl)
      setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
+		 cout<<violett<<verz<<schwarz<<endl;
 		if (obmitcon)
       systemrueck("which sestatus 2>/dev/null && chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
   } // if (!verz.empty())

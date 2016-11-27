@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sun Nov 27 16:12:19 2016 -->
+<!-- CreationDate: Sun Nov 27 16:45:50 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<h1 align="center">AUTOFAX (Version 0.41532) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.41533) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -162,7 +162,6 @@ install &rsquo;make&rsquo;; otherwise, You also can call:
 <br>
 - if You want or have to have ensured the currentness of
 &rsquo;gcc6&rsquo; before compilation: <b><br>
-make <br>
 make</b> or for runtime optimizing <b>make optfast</b> or
 for size optimizing <b>make opts</b> <br>
 - otherwise: <b><br>
@@ -679,10 +678,12 @@ call the command &rsquo;sudo&rsquo; (must be member of the
 group &rsquo;sudoers&rsquo;), &rsquo;GNU make&rsquo; has to
 be installed (which shall be accomplished if necessary by
 calling ./install.sh). Further needed programs will be
-installed by the makefile or by autofax itsself via zypper,
-apt, dnf or yum, if needed and possible, especially: <b><br>
+installed by the makefile or by autofax itsself including
+preconditioned programs via zypper, apt, dnf or yum, if
+needed and possible, especially: <b><br>
 makefile:</b> <br>
-gcc, g++, libmysqlclient-dev(el), libtiff-dev(el) <b><br>
+gcc V.6, g++ V.6, groff, libmysqlclient-dev(el),
+libtiff-dev(el) <b><br>
 autofax:</b> <br>
 boost, boost-devel, capiutils, capisuite, capi4linux,
 convert, cron, fcpci-3.10.0, ghostscript, hylafax+,
@@ -691,7 +692,12 @@ libcapi20-2, libcapi20-3, libreoffice-base, libxslt-tools,
 linux-headers-$(uname -r), mariadb, ocrmypdf,
 policycoreutils, policycoreutils-python-utils, python-devel,
 python-setuptools, python3-pip, samba, sendmail, sfftobmp,
-soffice, tesseract-ocr, tiff, unpaper.</p>
+soffice, tesseract-ocr, tiff, unpaper. <br>
+The installation of kernel-source may include the
+installation of a current kernel. <br>
+If You don&rsquo;t want one of those programs or want to
+keep an older version of one, You may not install
+autofax.</p>
 
 <h2>IMPLICATIONS
 <a name="IMPLICATIONS_E"></a>
@@ -818,7 +824,7 @@ program in crontab (of root)</p></td></tr>
 
 
 <p style="margin-top: 1em">8) if necessary insertion of
-sections for the directories mentioned unter 3) in
+sections for the directories mentioned under 3) in
 /etc/samba/smb.conf, if necessary insertion of the program
 user or (if root) the user chosen for the capisuite as samba
 user.</p> </td></tr>

@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.41532) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.41533) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -144,7 +144,6 @@ install &rsquo;make&rsquo;; otherwise, You also can call:
 <br>
 - if You want or have to have ensured the currentness of
 &rsquo;gcc6&rsquo; before compilation: <b><br>
-make <br>
 make</b> or for runtime optimizing <b>make optfast</b> or
 for size optimizing <b>make opts</b> <br>
 - otherwise: <b><br>
@@ -661,10 +660,12 @@ call the command &rsquo;sudo&rsquo; (must be member of the
 group &rsquo;sudoers&rsquo;), &rsquo;GNU make&rsquo; has to
 be installed (which shall be accomplished if necessary by
 calling ./install.sh). Further needed programs will be
-installed by the makefile or by autofax itsself via zypper,
-apt, dnf or yum, if needed and possible, especially: <b><br>
+installed by the makefile or by autofax itsself including
+preconditioned programs via zypper, apt, dnf or yum, if
+needed and possible, especially: <b><br>
 makefile:</b> <br>
-gcc, g++, libmysqlclient-dev(el), libtiff-dev(el) <b><br>
+gcc V.6, g++ V.6, groff, libmysqlclient-dev(el),
+libtiff-dev(el) <b><br>
 autofax:</b> <br>
 boost, boost-devel, capiutils, capisuite, capi4linux,
 convert, cron, fcpci-3.10.0, ghostscript, hylafax+,
@@ -673,7 +674,12 @@ libcapi20-2, libcapi20-3, libreoffice-base, libxslt-tools,
 linux-headers-$(uname -r), mariadb, ocrmypdf,
 policycoreutils, policycoreutils-python-utils, python-devel,
 python-setuptools, python3-pip, samba, sendmail, sfftobmp,
-soffice, tesseract-ocr, tiff, unpaper.</p>
+soffice, tesseract-ocr, tiff, unpaper. <br>
+The installation of kernel-source may include the
+installation of a current kernel. <br>
+If You don&rsquo;t want one of those programs or want to
+keep an older version of one, You may not install
+autofax.</p>
 
 <h2>IMPLICATIONS
 <a name="IMPLICATIONS_E"></a>
@@ -800,7 +806,7 @@ program in crontab (of root)</p></td></tr>
 
 
 <p style="margin-top: 1em">8) if necessary insertion of
-sections for the directories mentioned unter 3) in
+sections for the directories mentioned under 3) in
 /etc/samba/smb.conf, if necessary insertion of the program
 user or (if root) the user chosen for the capisuite as samba
 user.</p> </td></tr>
@@ -873,7 +879,7 @@ the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.41532) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.41533) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1545,10 +1551,12 @@ Befehl &rsquo;sudo&rsquo; ausf&uuml;hren d&uuml;rfen
 Aufruf von ./install.sh ggf. installiert werden kann.
 Weitere ben&ouml;tigte Programm werden falls
 m&ouml;glich vom makefile oder von autofax bei Bedarf
-selbst mithilfe von zypper, apt, dnf oder yum nachstalliert,
-insbesondere: <b><br>
+selbst mitsamt vorausgesetzter Programme mithilfe von
+zypper, apt, dnf oder yum nachstalliert, insbesondere:
+<b><br>
 makefile:</b> <br>
-gcc, g++, libmysqlclient-dev(el), libtiff-dev(el) <b><br>
+gcc V.6, g++ V.6, groff, libmysqlclient-dev(el),
+libtiff-dev(el) <b><br>
 autofax:</b> <br>
 boost, boost-devel, capiutils, capisuite, capi4linux,
 convert, cron, fcpci-3.10.0, ghostscript, hylafax+,
@@ -1557,7 +1565,11 @@ libcapi20-2, libcapi20-3, libreoffice-base, libxslt-tools,
 linux-headers-$(uname -r), mariadb, ocrmypdf,
 policycoreutils, policycoreutils-python-utils, python-devel,
 python-setuptools, python3-pip, samba, sendmail, sfftobmp,
-soffice, tesseract-ocr, tiff, unpaper.</p>
+soffice, tesseract-ocr, tiff, unpaper. <br>
+Die Installation von kernel-source kann auch die Intallation
+eines neuen Kernels beinhalten. <br>
+Wenn Sie eines dieser Programme nicht wollen oder eine
+aeltere Version 0.41533</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>

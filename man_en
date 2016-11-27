@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "27.11.16" "Version 0.41528" "\fBautofax\fR man page"
+.TH man 1 "27.11.16" "Version 0.41533" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -82,7 +82,6 @@ there, if the program 'make' is not available, You can call '\fB./install.sh\fR'
 .br
 - if You want or have to have ensured the currentness of 'gcc6' before compilation:
 .br
- \fBmake\fR 
  \fBmake\fR or for runtime optimizing \fBmake optfast\fR or for size optimizing \fBmake opts\fR
 .br
 - otherwise:
@@ -330,15 +329,19 @@ Optionally, the received faxes are subjected to ocr via a call of ocrmypdf.
 19) The configuration file is being written, if necessary.
 .LP
 .SH PRECONDITIONS
-The program was adjusted to an installation of Opensuse 42.1, Debian 8.60, Ubuntu 16.04, Mint 18 or Fedora 24 with standard options. systemctl (systemd) must run, sudo must be installed (missing per default in Debian), the user must be allowed to call the command 'sudo' (must be member of the group 'sudoers'), 'GNU make' has to be installed (which shall be accomplished if necessary by calling ./install.sh). Further needed programs will be installed by the makefile or by autofax itsself via zypper, apt, dnf or yum, if needed and possible, especially:
+The program was adjusted to an installation of Opensuse 42.1, Debian 8.60, Ubuntu 16.04, Mint 18 or Fedora 24 with standard options. systemctl (systemd) must run, sudo must be installed (missing per default in Debian), the user must be allowed to call the command 'sudo' (must be member of the group 'sudoers'), 'GNU make' has to be installed (which shall be accomplished if necessary by calling ./install.sh). Further needed programs will be installed by the makefile or by autofax itsself including preconditioned programs via zypper, apt, dnf or yum, if needed and possible, especially:
 .br
 \fBmakefile:\fR
 .br
-gcc, g++, libmysqlclient-dev(el), libtiff-dev(el)
+gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el)
 .br
 \fBautofax:\fR
 .br
 boost, boost-devel, capiutils, capisuite, capi4linux, convert, cron, fcpci-3.10.0, ghostscript, hylafax+, hylafax+-client, imagemagick, i4l-isdnlog, kernel-source, libcapi20-2, libcapi20-3, libreoffice-base, libxslt-tools, linux-headers-$(uname -r), mariadb, ocrmypdf, policycoreutils, policycoreutils-python-utils, python-devel, python-setuptools, python3-pip, samba, sendmail, sfftobmp, soffice, tesseract-ocr, tiff, unpaper.
+.br
+The installation of kernel-source may include the installation of a current kernel.
+.br
+If You don't want one of those programs or want to keep an older version of one, You may not install autofax.
 
 .SH IMPLICATIONS
 The program has to take the following measures for its neat function:
@@ -376,7 +379,7 @@ c) In case \fBselinux\fR is active (as per default in fedora), it impedes per de
 7) Insertion of a line for the program in crontab (of root)
 .LP
 .HP 3
-8) if necessary insertion of sections for the directories mentioned unter 3) in /etc/samba/smb.conf, if necessary insertion of the program user or (if root) the user chosen for the capisuite as samba user.
+8) if necessary insertion of sections for the directories mentioned under 3) in /etc/samba/smb.conf, if necessary insertion of the program user or (if root) the user chosen for the capisuite as samba user.
 .LP
 .HP 3
 9) if necessary insertion of a database in mariadb with a configurable name, creation and modification of several tables and a procedure in this database, if necessary insertion of a user with a configurable name in mariadb for the data management within those tables.

@@ -3578,7 +3578,7 @@ void paramcl::pruefsamba()
   for(uchar iru=0;iru<2;iru++) {
     if (!(conffehlt=lstat(smbdatei,&sstat))) break;
     if (iru) break;
-    pruefverz("/etc/samba",obverb,oblog,0);
+    pruefverz("/etc/samba",obverb,oblog,0,0);
     kopier(quelle,smbdatei,obverb,oblog);
   } //   for(uchar iru=0;iru<2;iru++)
   int dienstzahl=2;
@@ -4982,7 +4982,7 @@ void paramcl::bereinigecapi()
       } else {
         // 31.1.16: ... und wenn diese sich nicht in outa findet ...
         string waisen = cfaxusersqvz+"/waisen";
-        pruefverz(waisen,obverb,oblog,1);
+        pruefverz(waisen,obverb,oblog);
         uint vfehler=0;
         verschiebe(rueck[i],waisen,cuser,&vfehler,1,obverb,oblog);
       } // if (inouta.num_rows) else 
