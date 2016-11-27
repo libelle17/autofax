@@ -541,6 +541,14 @@ enum T_
 	T_nach,
 	T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen,
 	T_pruefDB,
+	T_wird,
+	T_gar_nicht,
+	T_alle,
+	T_Minuten,
+	T_statt,
+	T_aufgerufen,
+	T_unveraendert,
+	T_Kein_cron_gesetzt_nicht_zu_setzen,
 	T_MAX
 };
 
@@ -1533,6 +1541,22 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	{"' verjuengt. \nBitte den Rechner neu starten und dann mich nochmal aufrufen!","'. \nPlease restart the pc and then call me again!"},
 	// T_pruefDB
 	{"pruefDB(","checkDB("},
+	// T_wird
+	{" wird "," will be called "},
+	// T_gar_nicht
+	{"gar nicht","not at all"},
+	// T_alle
+	{"alle ","every "},
+	// T_Minuten
+	{" Minuten"," minutes"},
+	// T_statt
+	{" statt "," instead of "},
+	// T_aufgerufen
+	{" aufgerufen.","."},
+	// T_unveraendert
+	{"unveraendert ","as it was "},
+  // T_Kein_cron_gesetzt_nicht_zu_setzen
+	{"Kein cron gesetzt, nicht zu setzen","No cron set, not to set"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -3479,28 +3503,55 @@ void paramcl::pruefcron()
     setztmpc(obverb, oblog);
     string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 "+vaufr;// "date >/home/schade/zeit";
     string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
-    string cbeesc=string("\\*/")+cronminut+" \\* \\* \\* \\*"+cb0; // hier vorne \\- gestrichen
+		string czt=" \\* \\* \\* \\*";
+		string vorcm;
+		if (!nochkeincron) {
+			cmd="bash -c 'grep \"\\*/.*"+czt+cb0+"\" <(sudo crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
+			svec cmrueck;
+			systemrueck(cmd,obverb,oblog,&cmrueck);
+			if (cmrueck.size()) vorcm=cmrueck[0];
+		} // 		if (!nochkeincron) 
+		if (vorcm.empty() && cronminut=="0") {
+				if (obverb) Log(Tx[T_Kein_cron_gesetzt_nicht_zu_setzen],1,oblog);
+		} else {
+		  if (cronminut==vorcm) {
+			 if (obverb) Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+Tx[T_unveraendert]+
+			                             	    +blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
+			} else {
+        cmd="rm -f "+tmpc+";";
+				if (!nochkeincron)
+					cmd="sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+";";
+				if (cronminut!="0") {
+					cmd+=" echo \""+cbef+"\">>"+tmpc+";";
+				}
+				cmd+=" sudo crontab "+tmpc+";";
+				systemrueck(cmd,obverb,oblog);
+				Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronminut=="0"?Tx[T_gar_nicht]:Tx[T_alle]+cronminut+Tx[T_Minuten])+schwarz+Tx[T_statt]+
+			                             	    +blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
+			}
+		} // 		if (vorcm.empty() && cronminut=="0")
+#ifdef stumm
 #ifdef uebersichtlich
-    string befehl;
-    if (!cronzuplanen) {
+		string befehl;
+		if (!cronzuplanen) {
       if (nochkeincron) {
       } else {
         befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+"; sudo crontab "+tmpc+")";
       }
     } else {
       if (nochkeincron) {
-        befehl=("rm -f ")+tmpc+";";
+        befehl="rm -f "+tmpc+";";
       } else {
-        befehl = ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+";";
+        befehl="bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+";";
       }
-      befehl+=("echo \"")+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+"";
+      befehl+="echo \""+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+"";
       if (!nochkeincron)
         befehl+=")";
     }
 #else
     string befehl=cronzuplanen?
       (nochkeincron?("rm -f ")+tmpc+";":
-       ("bash -c 'grep \"")+cbeesc+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+"; ")+
+       "bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+"; ")+
       "echo \""+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+(nochkeincron?"":")")
       :
       (nochkeincron?"":("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+";"
@@ -3508,6 +3559,7 @@ void paramcl::pruefcron()
       ;
 #endif      
     systemrueck(befehl,obverb,oblog);
+#endif
   } //   if (cronda) 
   //  systemrueck(string("mv -i '")+mpfad+"' /root/bin",1,0);
 } // pruefcron
