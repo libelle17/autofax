@@ -6679,8 +6679,8 @@ int paramcl::pruefcapi()
 						// 23.11.16: fuer openSUE muesste wohl --datarootdir=/usr/local/lib64 versucht werden, so wie es in capisuite.conf hier auch schon steht
 													 "s/\\( *pyexecdir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
 													 "s/\\( *pythondir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
-													 "s/\\( *python_configdir=\\).*/\\1`${PYTHON} -c \\\"import distutils.sysconfig;"
-      													 "print distutils.sysconfig.get_config_var('LIBPL')\\\"`/"
+													 "s/\\( *python_configdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import distutils.sysconfig;"
+      													 "print distutils.sysconfig.get_config_var('LIBPL')\\\"\\`/"
 													 "\" configure"
 //                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
 //                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }"
