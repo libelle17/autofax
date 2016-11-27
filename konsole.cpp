@@ -1916,7 +1916,7 @@ int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl,uchar obm
      setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
 		 cout<<violett<<verz<<schwarz<<endl;
 		if (obmitcon)
-      systemrueck("which sestatus 2>/dev/null && chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
+      systemrueck("which sestatus 2>/dev/null && sudo chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
   } // if (!verz.empty())
   return fehler;
 } // void pruefverz(const string& verz,int obverb,int oblog)

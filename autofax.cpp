@@ -2937,7 +2937,7 @@ void paramcl::rueckfragen()
       cgconf[lfd].setze(&obocri);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
-      obocra=Tippob(Tx[T_soll_Text_in_gesandten_Bildern_mit_OCR_gesucht_werden],obocra?Tx[T_j_af]:"j");
+      obocra=Tippob(Tx[T_soll_Text_in_gesandten_Bildern_mit_OCR_gesucht_werden],obocra?Tx[T_j_af]:"n");
       cgconf[lfd].setze(&obocra);
     }
     if (cgconf[++lfd].wert.empty() || rzf) {
