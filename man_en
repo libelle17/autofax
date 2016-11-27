@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "27.11.16" "Version 0.41534" "\fBautofax\fR man page"
+.TH man 1 "27.11.16" "Version 0.41535" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -339,7 +339,7 @@ gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el)
 .br
 boost, boost-devel, capiutils, capisuite, capi4linux, convert, cron, fcpci-3.10.0, ghostscript, hylafax+, hylafax+-client, imagemagick, i4l-isdnlog, kernel-source, libcapi20-2, libcapi20-3, libreoffice-base, libxslt-tools, linux-headers-$(uname -r), mariadb, ocrmypdf, policycoreutils, policycoreutils-python-utils, python-devel, python-setuptools, python3-pip, samba, sendmail, sfftobmp, soffice, tesseract-ocr, tiff, unpaper.
 .br
-The installation of kernel-source may include the installation of a current kernel.
+In fedora, the installation of capisuite can necessitate and include the installation of a current kernel.
 .br
 If You don't want one of those programs or want to keep an older version of one, You may not install autofax.
 

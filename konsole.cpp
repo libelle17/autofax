@@ -1914,7 +1914,7 @@ int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl,uchar obm
 //    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
     if (obmitfacl)
      setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
-		 cout<<violett<<verz<<schwarz<<endl;
+		 // <<violett<<verz<<schwarz<<endl;
 		if (obmitcon)
       systemrueck("which sestatus 2>/dev/null && sudo chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
   } // if (!verz.empty())

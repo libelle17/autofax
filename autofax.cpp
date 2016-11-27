@@ -2345,7 +2345,7 @@ void paramcl::VorgbAllg()
   maxhdials="11";
   gleichziel=1;
   obocri=1;
-  obocra=1;
+  obocra=0;
   anfaxstr=Tx[T_an_Fax];
   ancfaxstr=Tx[T_an_cFax];
   anhfaxstr=Tx[T_an_hFax];
@@ -2591,7 +2591,7 @@ int paramcl::getcommandline()
         &cgconf,"gleichziel",&obkschreib));
   opts.push_back(/*4*/optioncl("ocri","ocri", &Tx, T_Text_aus_empfangenen_Faxen_wird_ermittelt,&obocri,1, &cgconf,"ocri",&obkschreib));
   //  opts.push_back(/*4*/optioncl("noocri","noocri", &Tx, T_Text_aus_empfangenen_Faxen_wird_nicht_ermittelt,&obocri,0, &cgconf,"ocri",&obkschreib));
-  opts.push_back(/*4*/optioncl("ocra","ocra", &Tx, T_Text_aus_gesandten_Bildern_wird_ermittelt,&obocra,1, &cgconf,"ocra",&obkschreib));
+  opts.push_back(/*4*/optioncl("ocra","ocra", &Tx, T_Text_aus_gesandten_Bildern_wird_ermittelt,&obocra,0, &cgconf,"ocra",&obkschreib));
   //  opts.push_back(/*4*/optioncl("noocra","ocra", &Tx, T_Text_aus_gesandten_Bildern_wird_nicht_ermittelt,&obocra,0, &cgconf,"ocra",&obkschreib));
   //  opts.push_back(/*4*/optioncl("1ocri","1ocri", &Tx, T_Text_aus_empfangenen_Faxen_wird_bei_diesem_Aufruf_ermittelt,&obocri,1));
   //  opts.push_back(/*4*/optioncl("1noocri","1noocri", &Tx, T_Text_aus_empfangenen_Faxen_wird_bei_diesem_Aufruf_nicht_ermittelt,&obocri,0));

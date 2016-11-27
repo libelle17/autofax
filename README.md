@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.41534) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.41535) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -675,8 +675,8 @@ linux-headers-$(uname -r), mariadb, ocrmypdf,
 policycoreutils, policycoreutils-python-utils, python-devel,
 python-setuptools, python3-pip, samba, sendmail, sfftobmp,
 soffice, tesseract-ocr, tiff, unpaper. <br>
-The installation of kernel-source may include the
-installation of a current kernel. <br>
+In fedora, the installation of capisuite can necessitate and
+include the installation of a current kernel. <br>
 If You don&rsquo;t want one of those programs or want to
 keep an older version of one, You may not install
 autofax.</p>
@@ -879,7 +879,7 @@ the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.41534) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.41535) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1566,10 +1566,10 @@ linux-headers-$(uname -r), mariadb, ocrmypdf,
 policycoreutils, policycoreutils-python-utils, python-devel,
 python-setuptools, python3-pip, samba, sendmail, sfftobmp,
 soffice, tesseract-ocr, tiff, unpaper. <br>
-Die Installation von kernel-source kann auch die Intallation
-eines neuen Kernels beinhalten. <br>
+In Fedora kann die Verwendung von Capisuite die Installation
+eines neuen Kernels erfordern und beinhalten. <br>
 Wenn Sie eines dieser Programme nicht wollen oder eine
-aeltere Version 0.41534</p>
+aeltere Version 0.41535</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>
