@@ -1871,7 +1871,7 @@ void pruefmehrfach(string& wen)
 // <datei> kann auch Verzeichnis sein
 // obunter = mit allen Unterverzeichnissen
 // obimmer = immer setzen, sonst nur, falls mit getfacl fuer datei Berechtigung fehlt (wichtig fuer Unterverzeichnisse)
-int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer obimmer,int obverb, int oblog)
+int setfaclggf(const string& datei, const binaer obunter, const int mod, uchar obimmer,int obverb, int oblog)
 {
   static string cuser=curruser(); 
   if (cuser!="root") {
