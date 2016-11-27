@@ -128,7 +128,8 @@ start with: <b><br>
 git clone http://github.com/libelle17/autofax && cd
 autofax</b> <br>
 - otherwise e.g. (if &rsquo;wget&rsquo; ist installed, which
-is mostly the case) with: <b><br>
+is mostly the case) with (e.g. by copying an pasting to the
+command line): <b><br>
 P=autofax; T=$P.tar.gz; cd ~; wget
 https://github.com/libelle17/$P/archive/master.tar.gz -O $T
 && tar xpvf $T && rm -f $T && { for
@@ -1002,7 +1003,8 @@ k&ouml;nnen Sie beginnen mit: <b><br>
 git clone http://github.com/libelle17/autofax && cd
 autofax</b> <br>
 - ansonsten z.B. (falls &rsquo;wget&rsquo; installiert ist,
-was meist der Fall ist) mit: <b><br>
+was meist der Fall ist) mit (am besten markieren und an die
+Kommandozeile kopieren): <b><br>
 P=autofax; T=$P.tar.gz; cd ~; wget
 https://github.com/libelle17/$P/archive/master.tar.gz -O $T
 && tar xpvf $T && rm -f $T && { for

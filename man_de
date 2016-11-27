@@ -73,7 +73,7 @@ Zunächst lesen Sie bitte die Kapitel 'Funktionsweise', 'Voraussetzungen' und 'A
 .br
  \fBgit clone http://github.com/libelle17/autofax && cd autofax\fR
 .br
-- ansonsten z.B. (falls 'wget' installiert ist, was meist der Fall ist) mit:
+- ansonsten z.B. (falls 'wget' installiert ist, was meist der Fall ist) mit (am besten markieren und an die Kommandozeile kopieren):
 .br
  \fBP=autofax; T=$P.tar.gz; cd ~; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && { for i in $(ls -d ${P}_* 2>/dev/null | cut -d"_" -f2 | sort -nr); do j=$((i+1)); case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done; test -e $P && mv $P ${P}_1; mv $P-master $P && cd $P; }\fR
 .br
