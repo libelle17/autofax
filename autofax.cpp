@@ -6680,7 +6680,7 @@ int paramcl::pruefcapi()
 													 "s/\\( *pyexecdir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
 													 "s/\\( *pythondir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
 													 "s/\\( *python_configdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import distutils.sysconfig;"
-      													 "print distutils.sysconfig.get_config_var(\\\\'LIBPL\\\\')\\\"\\`/"
+      													 "print distutils.sysconfig.get_config_var(\\\\\'LIBPL\\\\\')\\\"\\`/"
 													 "\" configure"
 //                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
 //                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }"
