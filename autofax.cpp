@@ -3704,6 +3704,7 @@ void paramcl::pruefsamba()
 		systemrueck("systemctl list-units|grep firewall|grep -v init",obverb,oblog,&rueckr);
 		if (rueckr.size()) if (rueckr[0].find("active running")!=string::npos ||rueckr[0].find("active exited")!=string::npos) obslaueft=1;
 		if (obslaueft) {
+		cout<<violett<<" vor iptables"<<schwarz<<endl;
 			// firewall-ports, geht in SUSE und Fedora
 			uchar obzu=0;
 			// udp, udp, tcp, tcp
@@ -6427,7 +6428,7 @@ int paramcl::pruefcapi()
         systemrueck("sudo modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog,0,1);
         for(uchar ivers=0;ivers<2;ivers++) {
           if (!fcpcida)
-          if (systemrueck("sudo modprobe -v fcpci",obverb-1,oblog)) {
+          if (systemrueck("sudo modprobe -v fcpci 2>/dev/null",obverb-1,oblog)) {
             if (ivers) {
               Log(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+schwarz,1,1);
               return 1;
@@ -6529,15 +6530,16 @@ int paramcl::pruefcapi()
         // make olddefconfig
         // dnf install elfutils-libelf-devel
         
-        if (systemrueck("sudo modprobe capi",obverb,oblog)) {
+        if (systemrueck("sudo modprobe capi 2>/dev/null",obverb,oblog)) {
           if (system==fed) {
             svec vrueck1,vrueck2;
             string v1,v2;
             systemrueck("sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5",obverb,oblog,&vrueck1);
             if (vrueck1.size()) v1=vrueck1[0];
             systemrueck("sudo dnf -y install kernel-modules-extra && "
-                "{ lsmod | grep capidrv || sudo modprobe capidrv; lsmod | grep kernelcapi || sudo modprobe kernelcapi; }",obverb,oblog);
-            systemrueck("sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5",obverb,oblog,&vrueck2);
+						"{ lsmod | grep capidrv || sudo modprobe capidrv 2>/dev/null; "
+						  "lsmod | grep kernelcapi || sudo modprobe kernelcapi 2>/dev/null;}",obverb,oblog);
+						systemrueck("sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5",obverb,oblog,&vrueck2);
             if (vrueck2.size()) v2=vrueck2[0];
 //            <<"vi: "<<v1<<"\n"<<"v2: "<<v2<<endl;
             if (v1!=v2) {
@@ -6598,12 +6600,12 @@ int paramcl::pruefcapi()
             // obverb=altobverb;
           } // if (system==fed) 
         } // if (systemrueck("sudo modprobe capi",obverb,oblog))
-        systemrueck("sudo modprobe capidrv",obverb,oblog);
+        systemrueck("sudo modprobe capidrv 2>/dev/null",obverb,oblog);
       } // if (!fcpcida || !capida || !capidrvda) 
       pruefrules(obverb,oblog);
       pruefblack(obverb,oblog);
       capischonerfolgreichinstalliert=!linst.obfehlt("capisuite capi4linux i4l-isdnlog");
-			cout<<violett<<"capischonerfolgreichinstalliert: "<<schwarz<<(int)capischonerfolgreichinstalliert<<endl;
+			// <<violett<<"capischonerfolgreichinstalliert: "<<schwarz<<(int)capischonerfolgreichinstalliert<<endl;
       if (capischonerfolgreichinstalliert) {
        struct stat d1, d2;
        if (lstat("/etc/capisuite",&d1) && lstat("/usr/local/etc/capisuite",&d2))

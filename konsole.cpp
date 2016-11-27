@@ -2533,10 +2533,11 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
         linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
         systemrueck("sudo setenforce 0",obverb,oblog);
         restart(obverb,oblog);
-        systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+sname+"_selocal\"",obverb,oblog);
+				string selocal=sname+"_selocal";
+        systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+selocal+"\"",obverb,oblog);
         systemrueck("sudo setenforce 1",obverb,oblog);
         linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
-        systemrueck("sudo semodule -i \""+sname+"_selocal.pp\"",obverb,oblog);
+        systemrueck("test -f \""+selocal+".pp\" && sudo semodule -i \""+selocal+".pp\"",obverb,oblog);
       }  // if (obse)
       //       KLZ
       //      KLZ
