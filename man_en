@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "27.11.16" "Version 0.41532" "\fBautofax\fR man page"
+.TH man 1 "27.11.16" "Version 0.41528" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -80,7 +80,7 @@ First, read the chapters 'functionality', 'preconditions' and 'implications' bel
 .br
 there, if the program 'make' is not available, You can call '\fB./install.sh\fR', this should install 'make'; otherwise, You also can call:
 .br
-- if You want to have ensured the currentness of 'gcc6' before compilation:
+- if You want or have to have ensured the currentness of 'gcc6' before compilation:
 .br
  \fBmake\fR 
  \fBmake\fR or for runtime optimizing \fBmake optfast\fR or for size optimizing \fBmake opts\fR
@@ -99,7 +99,7 @@ At last, call:
 .br
 (answer some questions of the program)
 .br
-The first execution and the first processing of a fax may take some time.
+The first execution and the first processing of a fax may take some time and need some input.
 .br
 Preconditions see below.
 .SH USAGE

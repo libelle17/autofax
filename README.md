@@ -141,7 +141,7 @@ there, if the program &rsquo;make&rsquo; is not available,
 You can call &rsquo;<b>./install.sh</b>&rsquo;, this should
 install &rsquo;make&rsquo;; otherwise, You also can call:
 <br>
-- if You want to have ensured the currentness of
+- if You want or have to have ensured the currentness of
 &rsquo;gcc6&rsquo; before compilation: <b><br>
 make <br>
 make</b> or for runtime optimizing <b>make optfast</b> or
@@ -154,7 +154,7 @@ At last, call: <b><br>
 autofax</b> <br>
 (answer some questions of the program) <br>
 The first execution and the first processing of a fax may
-take some time. <br>
+take some time and need some input. <br>
 Preconditions see below.</p>
 
 <h2>USAGE
@@ -1017,7 +1017,8 @@ Verf&uuml;gung steht, k&ouml;nnen Sie dort
 &rsquo;make&rsquo; installiert werden; anderenfalls
 k&ouml;nnen Sie auch aufrufen: <br>
 - falls Sie vor Kompilierung die Aktualit&auml;t von
-gcc6 sicherstellen lassen wollen: <b><br>
+gcc6 sicherstellen lassen wollen oder m&uuml;ssen:
+<b><br>
 make</b> oder zur Laufzeitoptimierung <b>make optfast</b>
 oder zur Groessenoptimierung <b>make opts</b> <br>
 - ansonsten: <b><br>
@@ -1028,7 +1029,8 @@ Zuletzt rufen Sie auf: <b><br>
 autofax</b> <br>
 (einige Rueckfragen des Programms beantworten) <br>
 Der erste Programmaufruf und die erste Faxverarbeitung
-k&ouml;nnen jeweils etwas dauern. <br>
+k&ouml;nnen jeweils etwas dauern und ein paar Eingaben
+erfordern. <br>
 Voraussetzungen s.u.</p>
 
 <h2>GEBRAUCH
