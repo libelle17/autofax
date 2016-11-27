@@ -574,8 +574,8 @@ int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *r
                 int verbergen=0, binaer obergebnisanzeig=wahr, const string& ueberschr="",vector<errmsgcl> *errm=0);
 void pruefplatte();
 void pruefmehrfach(string& wen=nix);
-int setfaclggf(const string& datei, const binaer obunter=falsch, const int mod=4, binaer obimmer=falsch,int obverb=0,int oblog=0);
-int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=1);
+int setfaclggf(const string& datei, const binaer obunter=falsch, const int mod=4, uchar obimmer=0,int obverb=0,int oblog=0);
+int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=1, uchar obmitcon=1);
 string aktprogverz();
 char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
 // vorgabe fur vorgabe = T_j_k; alternativ='n'

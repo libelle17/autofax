@@ -2376,15 +2376,15 @@ void paramcl::pruefcvz()
   // <<rot<<"cfaxuservz in pruefcvz: "<<cfaxuservz<<schwarz<<endl;
   Log(violetts+Tx[T_pruefcvz]+schwarz+"ccfaxuservz: "+violett+cfaxuservz+schwarz,obverb,oblog);
   kuerzevtz(&cfaxuservz);
-  pruefverz(cfaxuservz,obverb,oblog,1);
+  pruefverz(cfaxuservz,obverb,oblog);
   cfaxusersqvz=cfaxuservz+vtz+cuser+"/sendq"; //  "/var/spool/capisuite/users/<user>/sendq";
-  pruefverz(cfaxusersqvz,obverb,oblog,1);
+  pruefverz(cfaxusersqvz,obverb,oblog);
   cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
   // <<violett<<"cfaxuserrcvz: "<<cfaxuserrcvz<<schwarz<<endl;
-  pruefverz(cfaxuserrcvz,obverb,oblog,1);
-  pruefverz(cfaxuservz+vtz+"/autofaxarch",obverb,oblog,1);
-  pruefverz(cfaxuservz+vtz+"/failed",obverb,oblog,1);
-  pruefverz(cfaxuservz+vtz+"/sendq",obverb,oblog,1);
+  pruefverz(cfaxuserrcvz,obverb,oblog);
+  pruefverz(cfaxuservz+vtz+"/autofaxarch",obverb,oblog);
+  pruefverz(cfaxuservz+vtz+"/failed",obverb,oblog);
+  pruefverz(cfaxuservz+vtz+"/sendq",obverb,oblog);
 
 } // paramcl::pruefcvz
 
@@ -3704,7 +3704,6 @@ void paramcl::pruefsamba()
 		systemrueck("systemctl list-units|grep firewall|grep -v init",obverb,oblog,&rueckr);
 		if (rueckr.size()) if (rueckr[0].find("active running")!=string::npos ||rueckr[0].find("active exited")!=string::npos) obslaueft=1;
 		if (obslaueft) {
-		cout<<violett<<" vor iptables"<<schwarz<<endl;
 			// firewall-ports, geht in SUSE und Fedora
 			uchar obzu=0;
 			// udp, udp, tcp, tcp

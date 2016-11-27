@@ -1899,8 +1899,8 @@ int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer 
 } // int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer obimmer,int obverb, int oblog)
 
 
-// obmitfacl: 1= setzen, falls noetig, 2= immer setzen
-int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl)
+// obmitfacl: 1= setzen, falls noetig, >1= immer setzen
+int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl,uchar obmitcon)
 {
   struct stat sverz;
   int fehler=1;
@@ -1913,7 +1913,9 @@ int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl)
     if (fehler) fehler=systemrueck("mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'",obverb,oblog);
 //    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
     if (obmitfacl)
-     setfaclggf(verz, wahr, 7, falsch,obverb,oblog);
+     setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
+		if (obmitcon)
+      systemrueck("which sestatus 2>/dev/null && chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
   } // if (!verz.empty())
   return fehler;
 } // void pruefverz(const string& verz,int obverb,int oblog)
