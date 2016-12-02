@@ -6574,7 +6574,7 @@ int paramcl::pruefcapi()
 							 Log(Tx[T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von]+blaus+relev+schwarz+Tx[T_nach]+blau+kernel+schwarz+
 							     Tx[T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1,1);
 							 exit(0);
-							}
+							} // 							if (kernel.find(relev))
               systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
               systemrueck("cd "+instverz+" && sudo rpm -Uvh "+kstring,obverb,oblog);
               for(unsigned iru=0;iru<2;iru++) {
@@ -6677,10 +6677,18 @@ int paramcl::pruefcapi()
 //													 "s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/;"
 						// 20.11.16 pyexecdir und pythondir mussten in Fedora 24 so gesetzt werden
 						// 23.11.16: fuer openSUE muesste wohl --datarootdir=/usr/local/lib64 versucht werden, so wie es in capisuite.conf hier auch schon steht
-													 "s/\\( *pyexecdir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
-													 "s/\\( *pythondir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
+													 "s/\\( *pyexecdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
+      													 "print site.getsitepackages()[0]\\\"\\`/;"
+													 "s/\\( *pythondir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
+      													 "print site.getsitepackages()[0]\\\"\\`/;"
+//													 "s/\\( *pyexecdir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
+//													 "s/\\( *pythondir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
 													 "s/\\( *python_configdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import distutils.sysconfig;"
-      													 "print distutils.sysconfig.get_config_var('\\''LIBPL'\\'')\\\"\\`/"
+      													 "print distutils.sysconfig.get_config_var('\\''LIBPL'\\'')\\\"\\`/;"
+													 "s/\\( *python_moduledir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
+      													 "print site.getsitepackages()[0]\\\"\\`/;"
+													 "s/\\( *python_moduleexecdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
+      													 "print site.getsitepackages()[0]\\\"\\`/;"
 													 "\" configure"
 //                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
 //                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }"
