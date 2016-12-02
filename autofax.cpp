@@ -6677,9 +6677,9 @@ int paramcl::pruefcapi()
 //													 "s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/;"
 						// 20.11.16 pyexecdir und pythondir mussten in Fedora 24 so gesetzt werden
 						// 23.11.16: fuer openSUE muesste wohl --datarootdir=/usr/local/lib64 versucht werden, so wie es in capisuite.conf hier auch schon steht
-													 "s/\\( *pyexecdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
+													 "s/\\( +pyexecdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
       													 "print site.getsitepackages()[0]\\\"\\`/;"
-													 "s/\\( *pythondir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
+													 "s/\\( +pythondir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
       													 "print site.getsitepackages()[0]\\\"\\`/;"
 //													 "s/\\( *pyexecdir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
 //													 "s/\\( *pythondir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
