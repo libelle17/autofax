@@ -3169,7 +3169,7 @@ void paramcl::autofkonfschreib()
 // in pruefcapi
 void paramcl::clieskonf()
 {
-  Log(violetts+Tx[T_clieskonf]+schwarz+", cfaxcp->name: "+violett+cfaxcp->name+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_clieskonf]+schwarz+", cfaxcp->name: "+violett+(cfaxcp?cfaxcp->name:"0")+schwarz,obverb,oblog);
 	if (capiconf[6].wert!="+"+countrycode+" "+citycode+" "+msn  
 			|| capiconf[4].wert!=msn  
 			|| capiconf[7].wert!=cFaxUeberschrift  
