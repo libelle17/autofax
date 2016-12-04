@@ -5284,7 +5284,8 @@ void paramcl::empfarch()
         uint kfehler=1;
         int erg=-1;
         if (entrysff.st_size) {
-          cmd=string("sfftobmp -d -t ")+sffname+" -o \""+cpfad+"\"";
+					// -f == force, steht nicht in --help
+          cmd=string("sfftobmp -f -d -t ")+sffname+" -o \""+cpfad+"\"";
 					erg=systemrueck(cmd,obverb,oblog);
 					if (erg) {
 					 cmd="sudo "+cmd+" && sudo chown --reference=\""+sffname+"\" \""+cpfad+"\" && sudo chmod --reference=\""+sffname+"\" \""+cpfad+"\"";
