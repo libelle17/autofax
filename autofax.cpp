@@ -2074,7 +2074,7 @@ void paramcl::pruefisdn()
   systemrueck(cmd, obverb,oblog,&rueck);
   // <<"pruefmodem 1 vor  obcapi: "<<(int)obcapi<<endl;
   if (rueck.size()) {
-    Log(rots+Tx[T_ISDN_Karte_gefunden]+schwarz+rueck[0]+rot+Tx[T_Setze]+Tx[T_mitCapi]+rot+Tx[T_aauf]+schwarz+"1.",obverb,oblog);
+    Log(blaus+Tx[T_ISDN_Karte_gefunden]+schwarz+rueck[0]+rot+Tx[T_Setze]+Tx[T_mitCapi]+blau+Tx[T_aauf]+schwarz+"1.",obverb,oblog);
     obfcard=1;
   } else {
     Log(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_aauf]+schwarz+"0.",obverb,oblog);
@@ -3713,8 +3713,12 @@ void paramcl::pruefsamba()
 				systemrueck("sudo iptables -L -n|grep "+ports[i],obverb,oblog,&rueck);
 				if (rueck.size()) {
 					if (obverb>1) Log(rueck[0],obverb-1,oblog);
-					if (rueck[0].substr(0,6)=="ACCEPT" || rueck[0].substr(0,3)=="LOG") continue;
+					if (rueck[0].substr(0,6)=="ACCEPT" || rueck[0].substr(0,3)=="LOG") {
+						if (obverb) Log("Firewallport "+blaus+ports[i]+schwarz+" offen",obverb,oblog);
+						continue;
+					}
 				} // 			if (rueck.size())
+				if (obverb) Log("Firewallport "+blaus+ports[i]+schwarz+" zu",obverb,oblog);
 				obzu=1;
 				break;
 			} // 		for(size_t i=0;i<ports.size();i++) 
