@@ -5284,10 +5284,10 @@ void paramcl::empfarch()
         uint kfehler=1;
         int erg=-1;
         if (entrysff.st_size) {
-          cmd=string("sfftobmp -f -t ")+sffname+" -o \""+cpfad+"\"";
+          cmd=string("sfftobmp -d -t ")+sffname+" -o \""+cpfad+"\"";
 					erg=systemrueck(cmd,obverb,oblog);
 					if (erg) {
-					 cmd="sudo "+cmd;
+					 cmd="sudo "+cmd+" && sudo chown --reference=\""+sffname+"\" \""+cpfad+"\" && sudo chmod --reference=\""+sffname+"\" \""+cpfad+"\"";
 					 erg=systemrueck(cmd,obverb,oblog);
 					}
           if (erg) {
@@ -5320,6 +5320,7 @@ void paramcl::empfarch()
           verschieb=2;
         } // if (entrysff.st_size)
         // wenn sfftobmp funktioniert hat // oder die Datei verschoben wurde
+#ifdef ueberfluessig 
         if (!erg) {
           struct utimbuf ubuf;
           ubuf.modtime = modz;
@@ -5331,6 +5332,7 @@ void paramcl::empfarch()
             dorename(rueck[i],cempfavz+vtz+cuser+"-"+base_name(rueck[i]),cuser,&vfehler,obverb,oblog);
           } // if (utime(cpfad.c_str(),&ubuf))  else
         } // if (!lstat(cpfad.c_str(),&entrycpfad))
+#endif
       } // if (lstat(sffname.c_str(),&entrysff)) else  
       if (verschieb) {
 //        if (loee) KLA
