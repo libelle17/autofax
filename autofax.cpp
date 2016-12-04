@@ -4242,7 +4242,7 @@ void paramcl::pruefunpaper()
 	} // 						if (!urueck.size()||vers<6.1)
 } // void paramcl::pruefunpaper()
 
-// verwendet in empfarch()
+// verwendet in empfarch() (2x) und DateienHerricht() (2x)
 int paramcl::pruefocr()
 {
 	if (!obocrgeprueft) {
@@ -4266,8 +4266,11 @@ int paramcl::pruefocr()
 		if (!osdda) linst.doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
 
 		// uchar alt=0;
-		if (obprogda("ocrmypdf",obverb,oblog)) {
-		} else {
+		uchar ocrzuinst=1;
+		if (obprogda("ocrmypdf",obverb,oblog)) 
+		 if (progvers("ocrmypdf",obverb,oblog)>4.32) 
+		  ocrzuinst=0;
+		if (ocrzuinst) {
 			if (pruefipr()==dnf||pruefipr()==yum||pruefipr()==zypper) {
 				// in fedora pip statt pip3
 				linst.doinst("python3-pip",obverb+1,oblog,"pip3");
@@ -4537,7 +4540,6 @@ void paramcl::DateienHerricht()
         if (!erg) {
          if (obocra) {
           if (!pruefocr()) {
-						pruefunpaper();
             systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+fxv[nachrnr].spdf+"\" \""+fxv[nachrnr].spdf+"\""
                 " && chmod +r \""+fxv[nachrnr].spdf+"\"" ,obverb,oblog);
           } // pruefocr()
@@ -4582,8 +4584,10 @@ void paramcl::DateienHerricht()
             if (!lstat(spdfd.at(i).c_str(),&spdfstat)) {
               struct utimbuf ubuf;
               ubuf.actime=ubuf.modtime=spdfstat.st_mtime;
-              systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+spdfd.at(i)+"\" \""+spdfd.at(i)+"\""
-                  " && chmod +r \""+spdfd.at(i)+"\"" ,obverb,oblog);
+							if (!pruefocr()) {
+								systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+spdfd.at(i)+"\" \""+spdfd.at(i)+"\""
+										" && chmod +r \""+spdfd.at(i)+"\"" ,obverb,oblog);
+							}
               utime(spdfd.at(i).c_str(),&ubuf);
             } // if (!lstat(spdfd.at(i).c_str(),&spdfstat)) 
           } // if (obocra) 
