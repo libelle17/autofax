@@ -5285,7 +5285,12 @@ void paramcl::empfarch()
         int erg=-1;
         if (entrysff.st_size) {
           cmd=string("sfftobmp -f -t ")+sffname+" -o \""+cpfad+"\"";
-          if ((erg=systemrueck(cmd,obverb,oblog))) {
+					erg=systemrueck(cmd,obverb,oblog);
+					if (erg) {
+					 cmd="sudo "+cmd;
+					 erg=systemrueck(cmd,obverb,oblog);
+					}
+          if (erg) {
             verschieb=2;
             cpfad=empfvz+vtz+crumpf+".sff";
             cpfad=kopiere(sffname,cpfad,&kfehler,1,obverb,oblog);
