@@ -6332,7 +6332,8 @@ void paramcl::holvongithub(string datei)
 int paramcl::kompilbase(const string& was, const string& endg)
 {
   if (!pruefinstv()) {
-    return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instverz+"\" && tar xpvf $T && rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv $M $P'",obverb,oblog);
+    return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instverz+"\" && tar xpvf $T"
+                       "&& rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv $M $P'",obverb,oblog);
   } //   if (!pruefinstv())
   return 1;
 } // int paramcl::kompilbase(string& was,string& endg)
