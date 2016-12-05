@@ -5235,7 +5235,7 @@ void paramcl::empfarch()
       string stamm,exten;
       getstammext(&(rueck[i]),&stamm,&exten);
       Log(string("txt: ")+tuerkis+(rueck[i])+schwarz,obverb,oblog);
-      string sffname=stamm+".sff";
+      string sffdatei=stamm+".sff";
       struct stat entrysff;
       uchar verschieb=0;
       confdat empfconf(rueck[i],&umst,obverb);
@@ -5261,13 +5261,13 @@ void paramcl::empfarch()
       getname+=bsname;
 //      if (getname.length()>187) getname.erase(187);
       if (getname.length()>70) getname.erase(70);
-      string crumpf="Fax c"+fnr+","+Tx[T_avon]+getname+", T."+stdfaxnr(umst[1].wert)+","+Tx[T_vom]+tbuf;
-      string cdatei=crumpf+".tif";
-      string cpfad=empfvz+vtz+cdatei; // Tx[T_Fax_von]+umst[1].wert+Tx[T_an]+umst[2].wert+Tx[T_vom]+tbuf+".tif";
-      Log(blaus+stamm+schwarz+" => "+gruen+cdatei+schwarz,1,1);
-      // ..., die empfangene Datei in hpfad kopieren ...
+      string tifrumpf="Fax c"+fnr+","+Tx[T_avon]+getname+", T."+stdfaxnr(umst[1].wert)+","+Tx[T_vom]+tbuf;
+      string tifdatei=tifrumpf+".tif";
+      string tifpfad=empfvz+vtz+tifdatei; // Tx[T_Fax_von]+umst[1].wert+Tx[T_an]+umst[2].wert+Tx[T_vom]+tbuf+".tif";
+      Log(blaus+stamm+schwarz+" => "+gruen+tifdatei+schwarz,1,1);
+      // ..., die empfangene Datei in tifpfad kopieren ...
       uint vfehler=0;
-      if (lstat(sffname.c_str(),&entrysff)) {
+      if (lstat(sffdatei.c_str(),&entrysff)) {
         // .txt nach falsche verschieben
         verschieb=1;
       } else {
@@ -5275,36 +5275,27 @@ void paramcl::empfarch()
         int erg=-1;
         if (entrysff.st_size) {
 					// -f == force, steht nicht in --help
-          cmd=string("sfftobmp -f -d -t ")+sffname+" -o \""+cpfad+"\"";
+          cmd=string("sfftobmp -f -d -t ")+sffdatei+" -o \""+tifpfad+"\"";
 					erg=systemrueck(cmd,obverb,oblog);
-					if (erg) {
-					 cmd="sudo "+cmd+" && sudo chown --reference=\""+sffname+"\" \""+cpfad+"\" && sudo chmod --reference=\""+sffname+"\" \""+cpfad+"\"";
-					 erg=systemrueck(cmd,obverb,oblog);
+					if (!erg) {
+					 attrangleich(tifpfad,sffdatei,obverb,oblog);
 					}
           if (erg) {
             verschieb=2;
-            cpfad=empfvz+vtz+crumpf+".sff";
-            cpfad=kopiere(sffname,cpfad,&kfehler,1,obverb,oblog);
+            tifpfad=empfvz+vtz+tifrumpf+".sff";
+            kopiere(sffdatei,tifpfad,&kfehler,1,obverb,oblog);
             if (!kfehler) {
-              systemrueck("sudo chown --reference=\""+empfvz+"\" \""+cpfad+"\"",obverb,oblog);
-              systemrueck("sudo chmod --reference=\""+empfvz+"\" \""+cpfad+"\"",obverb,oblog);
+              systemrueck("sudo chown --reference=\""+empfvz+"\" \""+tifpfad+"\"",obverb,oblog);
+              systemrueck("sudo chmod --reference=\""+empfvz+"\" \""+tifpfad+"\"",obverb,oblog);
+						} else {
+						  tifpfad=sffdatei;
             }
-          } else if (obocri) {
-            string quelle;
-            if (pruefsoffice()) {
-              if (systemrueck("cd $HOME; soffice --headless --convert-to pdf --outdir \""+empfvz+"\" \""+cpfad+"\"",obverb,oblog)) {
-                quelle=empfvz+vtz+crumpf+".pdf"; 
-              }
-            } // if (pruefsoffice()) 
-            if (quelle.empty()) quelle=cpfad;
-            if (!pruefocr()) {
-              string ziel=empfvz+vtz+crumpf+".pdf";
-              if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+quelle+"\" \""+ziel+"\"&&chmod +r \""+ziel+"\""
-                   ,2,oblog)) {
-                if (!tuloeschen(cpfad,cuser,obverb,oblog))
-                cpfad=ziel; // fuer unten
-              }
-            } // if (pruefocr()) 
+					}
+          if (obocri) {
+					  string ziel=empfvz+vtz+tifrumpf+".pdf"; 
+						int obpdfda=!zupdf(tifpfad, ziel, obocri, obverb, oblog); // 0=Erfolg
+						struct stat entrynd;
+						if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) if (!kfehler) tuloeschen(tifpfad,cuser,obverb,oblog);
           } // if ((erg=systemrueck(cmd,obverb,oblog))) else if (obocri)
         } else {
           // empfangenes Fax mit 0 Bytes, vermutlich abgefangen von anderem System, samt Textdatei nach 'falsche' verschieben
@@ -5316,15 +5307,15 @@ void paramcl::empfarch()
           struct utimbuf ubuf;
           ubuf.modtime = modz;
           ubuf.actime = modz;
-          if (utime(cpfad.c_str(),&ubuf)) {
-            Log(rots+Tx[T_Fehler_beim_Datumsetzen_von]+cpfad+rot+"'"+schwarz,1,1);
+          if (utime(tifpfad.c_str(),&ubuf)) {
+            Log(rots+Tx[T_Fehler_beim_Datumsetzen_von]+tifpfad+rot+"'"+schwarz,1,1);
           } else if (!verschieb) {
-            dorename(sffname,cempfavz+vtz+cuser+"-"+base+".sff",cuser,&vfehler,obverb,oblog);
+            dorename(sffdatei,cempfavz+vtz+cuser+"-"+base+".sff",cuser,&vfehler,obverb,oblog);
             dorename(rueck[i],cempfavz+vtz+cuser+"-"+base_name(rueck[i]),cuser,&vfehler,obverb,oblog);
-          } // if (utime(cpfad.c_str(),&ubuf))  else
-        } // if (!lstat(cpfad.c_str(),&entrycpfad))
+          } // if (utime(tifpfad.c_str(),&ubuf))  else
+        } // if (!lstat(tifpfad.c_str(),&entrytifpfad))
 #endif
-      } // if (lstat(sffname.c_str(),&entrysff)) else  
+      } // if (lstat(sffdatei.c_str(),&entrysff)) else  
       if (verschieb) {
 //        if (loee) KLA
           string falsche = cfaxuserrcvz+"/falsche";
@@ -5332,9 +5323,9 @@ void paramcl::empfarch()
           verschiebe(rueck[i],falsche,cuser,&vfehler,1,obverb,oblog);
           if (verschieb==2) {
             Log(string(Tx[T_Dateien])+rot+stamm+".* "+schwarz+Tx[T_nicht_verarbeitbar_Verschiebe_sie_nach]+rot+"./falsche"+schwarz+".",1,1);
-            verschiebe(sffname,falsche,cuser,&vfehler,1,obverb,oblog);
+            verschiebe(sffdatei,falsche,cuser,&vfehler,1,obverb,oblog);
             // so, dass es jeder merkt
-            systemrueck("touch '"+empfvz+vtz+Tx[T_nicht_angekommen]+crumpf+".nix'",obverb,oblog);
+            systemrueck("touch '"+empfvz+vtz+Tx[T_nicht_angekommen]+tifrumpf+".nix'",obverb,oblog);
           } // if (verschieb==2) 
 //      KLZ // if (loee) 
       } // if (verschieb) 
