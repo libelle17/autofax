@@ -5173,32 +5173,15 @@ void paramcl::empfarch()
       vorsoffice=rueck[i];
     }
     struct stat entrynd;
-    uchar obhpfadda=!lstat(hpfad.c_str(),&entrynd);
+		int obpdfda=0;
+    int obhpfadda=!lstat(hpfad.c_str(),&entrynd);
 		if (obhpfadda)
 			if (chmod(hpfad.c_str(),S_IRWXU|S_IRGRP|S_IROTH))
 				systemrueck("sudo chmod +r \""+hpfad+"\"",obverb,oblog);
 		if (obocri) {
-      string quelle;
-      if (pruefsoffice()) {
-        if (systemrueck("cd $HOME; soffice --headless --convert-to pdf --outdir \""+empfvz+"\" \""+vorsoffice+"\"",obverb,oblog)) {
-          string stamm,exten;
-          getstammext(&vorsoffice,&stamm,&exten);
-          quelle=empfvz+vtz+base_name(stamm)+".pdf"; 
-        }
-      } // if (pruefsoffice()) 
-      if (quelle.empty()) quelle=rueck[i];
-      if (!pruefocr()) {
-        if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+quelle+"\" \""+ziel+"\" && chmod +r \""+ziel+"\""
-            ,2,oblog)) {
-         if (!kfehler) tuloeschen(hpfad,cuser,obverb,oblog);
-         hpfad=ziel;
-        }
-      } // if (pruefocr()) 
+      obpdfda=!zupdf(vorsoffice, ziel, obocri, obverb, oblog); // 0=Erfolg
+			if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) if (!kfehler) tuloeschen(hpfad,cuser,obverb,oblog);
     } // if (obocri) 
-    uchar obpdfda=!lstat(ziel.c_str(),&entrynd);
-    if (obpdfda) {
-     attrangleich(ziel,rueck[i],obverb,oblog);
-    }
     if (obhpfadda||obpdfda) {
       cmd=string("sudo mv \"")+rueck[i]+"\" \""+hempfavz+"\"";
       systemrueck(cmd,obverb,oblog);
