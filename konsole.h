@@ -568,8 +568,8 @@ int Schschreib(const char *fname, Schluessel *conf, size_t csize);
 int cppschreib(const string& fname, cppSchluess *conf, size_t csize);
 // int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, size_t cszahl);
 int multischlschreib(const string& fname, schlArr **confs, size_t cszahl,string mpfad="");
-std::string base_name(const std::string& path);
-std::string dir_name(const std::string& path);
+std::string base_name(const std::string& path); // Dateiname ohne Pfad
+std::string dir_name(const std::string& path);  // Pfadname einer Datei
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
                 int verbergen=0, binaer obergebnisanzeig=wahr, const string& ueberschr="",vector<errmsgcl> *errm=0);
 void pruefplatte();

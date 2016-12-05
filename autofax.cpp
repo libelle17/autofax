@@ -4337,6 +4337,43 @@ int paramcl::pruefocr()
 	return 0;
 } // int paramcl::pruefocr()
 
+int paramcl::zupdf(string quell, string ziel, int obocr, int obverb, int oblog) // 0=Erfolg
+{
+	int erg=0;
+	string cmd;
+	for(unsigned runde=1;runde<=2;runde++) {
+		cmd.clear();
+		switch (runde) {
+			case 1: 
+				if (pruefsoffice())
+					cmd="cd $HOME; soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+quell+"\"";
+				break; // Ergebnis immer 0
+			case 2: 
+				if (pruefconvert())
+					cmd=string("sudo convert \""+quell+"\" \""+ziel+"\""); 
+				break;
+		} // switch (runde) 
+		if (cmd.empty()) erg=1; else {
+			vector<string> umwd;
+			systemrueck(cmd, obverb,oblog,&umwd);
+			struct stat entryziel;
+			erg=lstat(ziel.c_str(),&entryziel); 
+			Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+(runde==1?"soffice":"convert")+schwarz+
+					Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
+			if (!erg) {
+				if (obocr) {
+					if (!pruefocr()) {
+						systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+ziel+"\" \""+ziel+"\" && chmod +r \""+ziel+"\"" ,obverb,oblog);
+					} // pruefocr()
+				} // if (obocra)
+				attrangleich(ziel,quell);
+				break; 
+			} // if (!erg)
+		} // if (cmd.empty()) erg=1; else 
+	} // for(unsigned runde=1;runde<=2;runde++) 
+	return erg; 
+} // int paramcl::zupdf(string von, string zielvz, int obocr, int obverb, int oblog)
+
 // zufaxenvz = zufaxen-Verzeichnis
 // 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 // 1b. die Nicht-PDF-Dateien in dem Verzeichnis zum PDF-Druck ermitteln, in Warteverzeichnis verschieben und in die PDF-Liste spdf eintragen ...
@@ -4487,16 +4524,14 @@ void paramcl::DateienHerricht()
         blau<<urfx.at(i).teil<<schwarz<<" ->\n"<<
         blau<<wvz<<schwarz<<endl;
       continue;
-    }
+    } //     if (vfehler)
     // hier gaebe es also weder beim Kopieren ins zufaxenverzeichnis noch beim Verschieben ins Warteververzeichnis ein Problem
     string stamm,exten;
     //          npdfp->push_back(wartedatei);
     getstammext(&wartedatei,&stamm,&exten);
-    string zupdf=stamm+".pdf"; 
-    //          spdfp->push_back(zupdf);
-    //          prios.push_back(iprio);
-    fxv.push_back(fxfcl(wartedatei,zupdf,urfx.at(i).ur,urfx.at(i).prio));
-  }
+		string wartepdf=stamm+".pdf";
+    fxv.push_back(fxfcl(wartedatei,wartepdf,urfx.at(i).ur,urfx.at(i).prio));
+  } //   for(size_t i=0;i<urfx.size();i++)
   //        KLZ // for(size_t i=0;i<npdfd.size();i++) 
   //      KLZ // if (!anfxstrvec.at(iprio).empty()) 
 //    KLZ // for(unsigned iprio=0;iprio<anfxstrvec.size();iprio++) 
@@ -4519,55 +4554,27 @@ void paramcl::DateienHerricht()
       Log(string(Tx[T_lstatfehlgeschlagen]) + strerror(errno) + Tx[T_beiDatei]+ fxv[nachrnr].npdf,1,1,1);
       continue;
     } // (lstat((*pfad + vtz + dirEntry->d_name).c_str(), &entrynpdf)) 
-    for(unsigned runde=1;runde<=2;runde++) {
-      cmd.clear();
-      switch (runde) {
-        case 1: 
-          if (pruefsoffice())
-            cmd=string("cd $HOME; soffice --headless --convert-to pdf --outdir \"")+wvz+"\" \""+fxv[nachrnr].npdf+"\"";
-          break; // Ergebnis immer 0
-        case 2: 
-          if (pruefconvert())
-            cmd=string("sudo convert \""+fxv[nachrnr].npdf+"\" \""+fxv[nachrnr].spdf+"\""); 
-          break;
-      } // switch (runde) 
-      if (cmd.empty()) erg=1; else {
-        vector<string> umwd;
-        systemrueck(cmd, obverb,oblog,&umwd);
-        erg=lstat(fxv[nachrnr].spdf.c_str(),&entrynpdf); 
-        Log(string(Tx[T_Umwandlungvon])+blau+fxv[nachrnr].npdf+Tx[T_inPDFmit]+tuerkis+(runde==1?"soffice":"convert")+schwarz+
-            Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
-        if (!erg) {
-         if (obocra) {
-          if (!pruefocr()) {
-            systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+fxv[nachrnr].spdf+"\" \""+fxv[nachrnr].spdf+"\""
-                " && chmod +r \""+fxv[nachrnr].spdf+"\"" ,obverb,oblog);
-          } // pruefocr()
-         } // if (obocra)
-         attrangleich(fxv[nachrnr].spdf,fxv[nachrnr].npdf);
-         if (gleichziel) {
-           uint kfehler=0;
-           kopiere(fxv[nachrnr].npdf, zmp, &kfehler, 1, obverb, oblog);
-           string zield=kopiere(fxv[nachrnr].spdf, zmp, &kfehler, 1, obverb, oblog);
-         } // if (gleichziel)
-         break; 
-        } // if (!erg)
-      } // if (cmd.empty()) erg=1; else 
-    } // for(unsigned runde=1;runde<=2;runde++) 
-    if (erg) {
-      //      spdfp->erase(spdfp->begin()+nachrnr);
-      // Misserfolg, zurueckverschieben und aus der Datenbank loeschen
-      uint wfehler;
-     // <<violett<<"fxv["<<(int)nachrnr<<"].npdf: "<<fxv[nachrnr].npdf<<schwarz<<endl;
-     // <<violett<<"fxv["<<(int)nachrnr<<"].spdf: "<<fxv[nachrnr].spdf<<schwarz<<endl;
-      struct stat npdfstat;
-      if (!lstat(fxv[nachrnr].npdf.c_str(), &npdfstat))
-        verschiebe(fxv[nachrnr].npdf,zufaxenvz,cuser,&wfehler,1,obverb,oblog);
-      struct stat spdfstat;
-      if (!lstat(fxv[nachrnr].spdf.c_str(), &spdfstat))
-        verschiebe(fxv[nachrnr].spdf,zufaxenvz,cuser,&wfehler,1,obverb,oblog);
-      fxv.erase(fxv.begin()+nachrnr);
-    } // if (!erg) else
+		erg=zupdf(fxv[nachrnr].npdf, fxv[nachrnr].spdf, obocra, obverb, oblog);
+		if (erg) {
+			//      spdfp->erase(spdfp->begin()+nachrnr);
+			// Misserfolg, zurueckverschieben und aus der Datenbank loeschen
+			uint wfehler;
+			// <<violett<<"fxv["<<(int)nachrnr<<"].npdf: "<<fxv[nachrnr].npdf<<schwarz<<endl;
+			// <<violett<<"fxv["<<(int)nachrnr<<"].spdf: "<<fxv[nachrnr].spdf<<schwarz<<endl;
+			struct stat npdfstat;
+			if (!lstat(fxv[nachrnr].npdf.c_str(), &npdfstat))
+				verschiebe(fxv[nachrnr].npdf,zufaxenvz,cuser,&wfehler,1,obverb,oblog);
+			struct stat spdfstat;
+			if (!lstat(fxv[nachrnr].spdf.c_str(), &spdfstat))
+				verschiebe(fxv[nachrnr].spdf,zufaxenvz,cuser,&wfehler,1,obverb,oblog);
+			fxv.erase(fxv.begin()+nachrnr);
+		} else {
+			if (gleichziel) {
+				uint kfehler=0;
+				kopiere(fxv[nachrnr].npdf, zmp, &kfehler, 1, obverb, oblog);
+				/*string zield=*/kopiere(fxv[nachrnr].spdf, zmp, &kfehler, 1, obverb, oblog);
+			} // if (gleichziel)
+		} // if (!erg) else
   } // for (int nachrnr=npdfp->size()-1; nachrnr>=0; --nachrnr)  // 2.
 
   // 2b. Die originalen PDF-Dateien ins Warteverzeichnis verschieben, falls erfolgreich, nicht schon registriert und gleichziel 
@@ -4618,7 +4625,7 @@ void paramcl::DateienHerricht()
             fxv.push_back(fxfcl(wartedatei,spdfd.at(i),iprio));
             if (gleichziel) {
               uint kfehler=0;
-              string zield=kopiere(wartedatei, zmp, &kfehler, 1, obverb, oblog);
+              /*string zield=*/kopiere(wartedatei, zmp, &kfehler, 1, obverb, oblog);
             } //  if (gleichziel)
           } //if (!vorhanden)
         } // for(size_t i=0
@@ -5167,10 +5174,10 @@ void paramcl::empfarch()
     }
     struct stat entrynd;
     uchar obhpfadda=!lstat(hpfad.c_str(),&entrynd);
-     if (obhpfadda)
-     if (chmod(hpfad.c_str(),S_IRWXU|S_IRGRP|S_IROTH))
-     systemrueck("sudo chmod +r \""+hpfad+"\"",obverb,oblog);
-    if (obocri) {
+		if (obhpfadda)
+			if (chmod(hpfad.c_str(),S_IRWXU|S_IRGRP|S_IROTH))
+				systemrueck("sudo chmod +r \""+hpfad+"\"",obverb,oblog);
+		if (obocri) {
       string quelle;
       if (pruefsoffice()) {
         if (systemrueck("cd $HOME; soffice --headless --convert-to pdf --outdir \""+empfvz+"\" \""+vorsoffice+"\"",obverb,oblog)) {
