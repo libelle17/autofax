@@ -5314,8 +5314,6 @@ void paramcl::empfarch()
         					if (!verschieb) {
             dorename(sffdatei,cempfavz+vtz+cuser+"-"+base+".sff",cuser,&vfehler,obverb,oblog);
             dorename(rueck[i],cempfavz+vtz+cuser+"-"+base_name(rueck[i]),cuser,&vfehler,obverb,oblog);
-#ifdef ueberfluessig 
-#endif
           } // if (utime(tifpfad.c_str(),&ubuf))  else
         } // if (!lstat(tifpfad.c_str(),&entrytifpfad))
       } // if (lstat(sffdatei.c_str(),&entrysff)) else  
