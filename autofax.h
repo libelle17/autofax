@@ -305,7 +305,7 @@ class paramcl // Programmparameter
     int kompilbase(const string& was,const string& endg);
     int kompiliere(const string& was,const string& endg, const string& vorcfg=s_true,const string& cfgbismake=s_dampand);
     void bereinigecapi();
-	  int zupdf(string quell, string ziel, int obocr, int obverb, int oblog); // 0=Erfolg
+	  int zupdf(string& quell, string& ziel, int obocr, int obverb, int oblog); // 0=Erfolg
   public:
     paramcl(int argc,char** argv);
     ~paramcl();

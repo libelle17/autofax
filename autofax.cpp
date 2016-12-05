@@ -4337,7 +4337,7 @@ int paramcl::pruefocr()
 	return 0;
 } // int paramcl::pruefocr()
 
-int paramcl::zupdf(string quell, string ziel, int obocr, int obverb, int oblog) // 0=Erfolg
+int paramcl::zupdf(string& quell, string& ziel, int obocr, int obverb, int oblog) // 0=Erfolg
 {
 	int erg=0;
 	string cmd;
@@ -4363,11 +4363,11 @@ int paramcl::zupdf(string quell, string ziel, int obocr, int obverb, int oblog) 
 		} // if (cmd.empty()) erg=1; else 
    if (!erg) break;
 	} // for(unsigned runde=1;runde<=2;runde++) 
-  string oquel=(erg?quell:ziel);
+  string *oquel=(erg?&quell:&ziel);
 	if (obocr) {
 		if (!pruefocr()) {
-			if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+oquel+"\" \""+ziel+"\" && chmod +r \""+ziel+"\"" ,obverb,oblog))
-			 erg=0;
+			if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*oquel+"\" \""+ziel+"\" && chmod +r \""+ziel+"\"" ,obverb,oblog))
+			 erg=0; // nicht umgekehrt
 		} // pruefocr()
 	} // if (obocra)
 	attrangleich(ziel,quell);
