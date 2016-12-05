@@ -4353,24 +4353,24 @@ int paramcl::zupdf(string quell, string ziel, int obocr, int obverb, int oblog) 
 					cmd=string("sudo convert \""+quell+"\" \""+ziel+"\""); 
 				break;
 		} // switch (runde) 
-		if (cmd.empty()) erg=1; else {
+		if (cmd.empty() && !obocr) erg=1; else {
 			vector<string> umwd;
 			systemrueck(cmd, obverb,oblog,&umwd);
 			struct stat entryziel;
 			erg=lstat(ziel.c_str(),&entryziel); 
 			Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+(runde==1?"soffice":"convert")+schwarz+
 					Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
-			if (!erg) {
-				if (obocr) {
-					if (!pruefocr()) {
-						systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+ziel+"\" \""+ziel+"\" && chmod +r \""+ziel+"\"" ,obverb,oblog);
-					} // pruefocr()
-				} // if (obocra)
-				attrangleich(ziel,quell);
-				break; 
-			} // if (!erg)
 		} // if (cmd.empty()) erg=1; else 
+   if (!erg) break;
 	} // for(unsigned runde=1;runde<=2;runde++) 
+  string oquel=(erg?quell:ziel);
+	if (obocr) {
+		if (!pruefocr()) {
+			if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+oquel+"\" \""+ziel+"\" && chmod +r \""+ziel+"\"" ,obverb,oblog))
+			 erg=0;
+		} // pruefocr()
+	} // if (obocra)
+	attrangleich(ziel,quell);
 	return erg; 
 } // int paramcl::zupdf(string von, string zielvz, int obocr, int obverb, int oblog)
 
