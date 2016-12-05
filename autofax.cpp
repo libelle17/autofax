@@ -5302,19 +5302,22 @@ void paramcl::empfarch()
           verschieb=2;
         } // if (entrysff.st_size)
         // wenn sfftobmp funktioniert hat // oder die Datei verschoben wurde
-#ifdef ueberfluessig 
         if (!erg) {
+#ifdef ueberfluessig 
           struct utimbuf ubuf;
           ubuf.modtime = modz;
           ubuf.actime = modz;
           if (utime(tifpfad.c_str(),&ubuf)) {
             Log(rots+Tx[T_Fehler_beim_Datumsetzen_von]+tifpfad+rot+"'"+schwarz,1,1);
-          } else if (!verschieb) {
+          } else 
+#endif
+        					if (!verschieb) {
             dorename(sffdatei,cempfavz+vtz+cuser+"-"+base+".sff",cuser,&vfehler,obverb,oblog);
             dorename(rueck[i],cempfavz+vtz+cuser+"-"+base_name(rueck[i]),cuser,&vfehler,obverb,oblog);
+#ifdef ueberfluessig 
+#endif
           } // if (utime(tifpfad.c_str(),&ubuf))  else
         } // if (!lstat(tifpfad.c_str(),&entrytifpfad))
-#endif
       } // if (lstat(sffdatei.c_str(),&entrysff)) else  
       if (verschieb) {
 //        if (loee) KLA
