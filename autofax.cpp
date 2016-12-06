@@ -5278,7 +5278,7 @@ void paramcl::empfarch()
           cmd=string("sfftobmp -f -d -t ")+sffdatei+" -o \""+tifpfad+"\"";
 					erg=systemrueck(cmd,obverb,oblog);
 					if (!erg) {
-					 attrangleich(tifpfad,sffdatei,obverb,oblog);
+					 attrangleich(tifpfad,empfvz,obverb,oblog);
 					}
           if (erg) {
             verschieb=2;
