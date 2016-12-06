@@ -4344,7 +4344,7 @@ int paramcl::zupdf(string& quell, string& ziel, int obocr, int obverb, int oblog
 	getstammext(quellp,&stamm,&exten);
 	int keinbild= (exten=="doc"||exten=="xls"||exten=="txt"||exten=="odf"||exten=="ppt");
 	for(int aru=0;aru<2;aru++) {
-		if (!keinbild) {
+		if (aru||!keinbild) {
 			if (obocr) {
 				if (!pruefocr()) {
 					if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*quellp+"\" \""+ziel+"\" && chmod +r \""+ziel+"\"" ,obverb,oblog)) {
@@ -4373,19 +4373,23 @@ int paramcl::zupdf(string& quell, string& ziel, int obocr, int obverb, int oblog
 							cmd=string("sudo convert \""+quell+"\" \""+ziel+"\""); 
 						break;
 				} // switch (runde) 
-				if (cmd.empty() && !obocr) erg=1; else {
+				if (!cmd.empty()) {
 					vector<string> umwd;
 					systemrueck(cmd, obverb,oblog,&umwd);
 					struct stat entryziel;
 					erg=lstat(ziel.c_str(),&entryziel); 
 					Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+pname+schwarz+
 							Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
+					if (!erg) break;
 				} // if (cmd.empty()) erg=1; else 
-				if (!erg) break;
 			} // for(unsigned runde=1;runde<=2;runde++) 
+			cout<<"Stelle 1"<<endl;
 			if (erg) if (keinbild) break; // ocrmypdf kann nur Bilder umwandeln
+			cout<<"Stelle 2"<<endl;
 			if (!erg) if (!obocr) break;  // ocrmypdf hier nicht erwuenscht
+			cout<<"Stelle 3"<<endl;
 			if (!erg) quellp=&ziel; // ocrmypdf mit der Ergebnisdatei
+			cout<<"Stelle 4"<<endl;
 			//  string *oquel=(erg?&quell:&ziel);
 		} // (erg)
 	} // 	for(int aru=0;aru<2;aru++)
