@@ -4344,11 +4344,12 @@ int paramcl::zupdf(string& quell, string& ziel, int obocr, int obverb, int oblog
 	for(unsigned runde=1;runde<=2;runde++) {
 		cmd.clear();
 		switch (runde) {
-			case 1: 
+			case 2: 
+			// 5.12.16 opensuse: bearbeitet jetzt nur (noch?) die erste Seite!
 				if (pruefsoffice())
 					cmd="cd $HOME; soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+quell+"\"";
 				break; // Ergebnis immer 0
-			case 2: 
+			case 1: 
 				if (pruefconvert())
 					cmd=string("sudo convert \""+quell+"\" \""+ziel+"\""); 
 				break;
