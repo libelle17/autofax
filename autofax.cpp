@@ -4359,7 +4359,7 @@ int paramcl::zupdf(string& quell, string& ziel, int obocr, int obverb, int oblog
 			systemrueck(cmd, obverb,oblog,&umwd);
 			struct stat entryziel;
 			erg=lstat(ziel.c_str(),&entryziel); 
-			Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+(runde==1?"soffice":"convert")+schwarz+
+			Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+(runde==2?"soffice":"convert")+schwarz+
 					Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
 		} // if (cmd.empty()) erg=1; else 
    if (!erg) break;
