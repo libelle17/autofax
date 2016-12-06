@@ -4337,14 +4337,15 @@ int paramcl::pruefocr()
 	return 0;
 } // int paramcl::pruefocr()
 
-int paramcl::zupdf(string& quell, string& ziel, int obocr, int obverb, int oblog) // 0=Erfolg
+// in Dateinherricht und empfarch
+int paramcl::zupdf(string& quell, string& ziel, int obocr/*=1*/, int loeschen/*=1*/, int obverb/*=0*/, int oblog/*=0*/) // 0=Erfolg
 {
 	int erg=1;
 	string stamm,exten, *quellp=&quell;
 	getstammext(quellp,&stamm,&exten);
 	int keinbild= (exten=="doc"||exten=="xls"||exten=="txt"||exten=="odf"||exten=="ppt");
 	for(int aru=0;aru<2;aru++) {
-		if (aru||!keinbild) {
+		if (/*aru||*/!keinbild) {
 			if (obocr) {
 				if (!pruefocr()) {
 					if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*quellp+"\" \""+ziel+"\" && chmod +r \""+ziel+"\"" ,obverb,oblog)) {
@@ -4383,21 +4384,21 @@ int paramcl::zupdf(string& quell, string& ziel, int obocr, int obverb, int oblog
 					if (!erg) break;
 				} // if (cmd.empty()) erg=1; else 
 			} // for(unsigned runde=1;runde<=2;runde++) 
-			cout<<"Stelle 1"<<endl;
-			if (erg) if (keinbild) break; // ocrmypdf kann nur Bilder umwandeln
-			cout<<"Stelle 2"<<endl;
-			if (!erg) if (!obocr) break;  // ocrmypdf hier nicht erwuenscht
-			cout<<"Stelle 3"<<endl;
-			if (!erg) quellp=&ziel; // ocrmypdf mit der Ergebnisdatei
-			cout<<"Stelle 4"<<endl;
+			if (erg) {
+				if (keinbild) break; // ocrmypdf kann nur Bilder umwandeln
+			} else {
+				if (!obocr||keinbild) break;  // ocrmypdf hier nicht erwuenscht oder sinnvoll
+				quellp=&ziel; // ocrmypdf mit der Ergebnisdatei
+			} // (erg) else
 			//  string *oquel=(erg?&quell:&ziel);
 		} // (erg)
 	} // 	for(int aru=0;aru<2;aru++)
-	if (!erg)
+	if (!erg) {
 		attrangleich(ziel,quell);
-	// falls erg==0 und Seitenzahl gleich, dann tif loeschen
+	// falls !erg und Seitenzahl gleich, dann tif loeschen
 	// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
 	// pdfinfo /DATA/shome/gerald/t.pdf |grep Pages|sed 's/[^ ]*[ ]*\(.*\)/\1/'
+	}
 	return erg; 
 } // int paramcl::zupdf(string von, string zielvz, int obocr, int obverb, int oblog)
 
@@ -4581,7 +4582,7 @@ void paramcl::DateienHerricht()
       Log(string(Tx[T_lstatfehlgeschlagen]) + strerror(errno) + Tx[T_beiDatei]+ fxv[nachrnr].npdf,1,1,1);
       continue;
     } // (lstat((*pfad + vtz + dirEntry->d_name).c_str(), &entrynpdf)) 
-		erg=zupdf(fxv[nachrnr].npdf, fxv[nachrnr].spdf, obocra, obverb, oblog);
+		erg=zupdf(fxv[nachrnr].npdf, fxv[nachrnr].spdf, obocra, 0, obverb, oblog);
 		if (erg) {
 			//      spdfp->erase(spdfp->begin()+nachrnr);
 			// Misserfolg, zurueckverschieben und aus der Datenbank loeschen
@@ -5224,7 +5225,7 @@ void paramcl::empfarch()
 			if (chmod(hpfad.c_str(),S_IRWXU|S_IRGRP|S_IROTH))
 				systemrueck("sudo chmod +r \""+hpfad+"\"",obverb,oblog);
 		if (obocri) {
-      obpdfda=!zupdf(vorsoffice, ziel, obocri, obverb, oblog); // 0=Erfolg
+      obpdfda=!zupdf(vorsoffice, ziel, obocri, 1, obverb, oblog); // 0=Erfolg
 			if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) if (!kfehler) tuloeschen(hpfad,cuser,obverb,oblog);
     } // if (obocri) 
     if (obhpfadda||obpdfda) {
@@ -5338,7 +5339,7 @@ void paramcl::empfarch()
 					}
           if (obocri) {
 					  string ziel=empfvz+vtz+tifrumpf+".pdf"; 
-						int obpdfda=!zupdf(tifpfad, ziel, obocri, obverb, oblog); // 0=Erfolg
+						int obpdfda=!zupdf(tifpfad, ziel, obocri, 1, obverb, oblog); // 0=Erfolg
 						struct stat entrynd;
 						if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) if (!kfehler) tuloeschen(tifpfad,cuser,obverb,oblog);
           } // if ((erg=systemrueck(cmd,obverb,oblog))) else if (obocri)
