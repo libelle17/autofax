@@ -4339,39 +4339,52 @@ int paramcl::pruefocr()
 
 int paramcl::zupdf(string& quell, string& ziel, int obocr, int obverb, int oblog) // 0=Erfolg
 {
-	int erg=0;
-	string cmd;
-	for(unsigned runde=1;runde<=2;runde++) {
-		cmd.clear();
-		switch (runde) {
-			case 2: 
-			// 5.12.16 opensuse: bearbeitet jetzt nur (noch?) die erste Seite!
-				if (pruefsoffice())
-					cmd="cd $HOME; soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+quell+"\"";
-				break; // Ergebnis immer 0
-			case 1: 
-				if (pruefconvert())
-					cmd=string("sudo convert \""+quell+"\" \""+ziel+"\""); 
-				break;
-		} // switch (runde) 
-		if (cmd.empty() && !obocr) erg=1; else {
-			vector<string> umwd;
-			systemrueck(cmd, obverb,oblog,&umwd);
-			struct stat entryziel;
-			erg=lstat(ziel.c_str(),&entryziel); 
-			Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+(runde==2?"soffice":"convert")+schwarz+
-					Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
-		} // if (cmd.empty()) erg=1; else 
-   if (!erg) break;
-	} // for(unsigned runde=1;runde<=2;runde++) 
-  string *oquel=(erg?&quell:&ziel);
+	int erg=1;
 	if (obocr) {
 		if (!pruefocr()) {
-			if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*oquel+"\" \""+ziel+"\" && chmod +r \""+ziel+"\"" ,obverb,oblog))
+			if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+quell+"\" \""+ziel+"\" && chmod +r \""+ziel+"\"" ,obverb,oblog))
 			 erg=0; // nicht umgekehrt
 		} // pruefocr()
-	} // if (obocra)
-	attrangleich(ziel,quell);
+	} // if (obocr)
+	if (erg) {
+	  int reihenf=0;
+    string stamm,exten;
+    getstammext(&quell,&stamm,&exten);
+		if (exten=="doc") reihenf=1; 
+		string cmd;
+		for(unsigned runde=1;runde<=2;runde++) {
+			cmd.clear();
+			string pname;
+			switch ((runde+reihenf)%2) {
+				case 1: 
+					// 5.12.16 opensuse: bearbeitet jetzt nur (noch?) die erste Seite!
+					pname="soffice";
+					if (pruefsoffice())
+						cmd="cd $HOME; soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+quell+"\"";
+					break; // Ergebnis immer 0
+				case 0: 
+				  pname="convert";
+					if (pruefconvert())
+						cmd=string("sudo convert \""+quell+"\" \""+ziel+"\""); 
+					break;
+			} // switch (runde) 
+			if (cmd.empty() && !obocr) erg=1; else {
+				vector<string> umwd;
+				systemrueck(cmd, obverb,oblog,&umwd);
+				struct stat entryziel;
+				erg=lstat(ziel.c_str(),&entryziel); 
+				Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+pname+schwarz+
+						Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
+			} // if (cmd.empty()) erg=1; else 
+			if (!erg) break;
+		} // for(unsigned runde=1;runde<=2;runde++) 
+		//  string *oquel=(erg?&quell:&ziel);
+	}
+	if (!erg)
+		attrangleich(ziel,quell);
+	// falls erg==0 und Seitenzahl gleich, dann tif loeschen
+	// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
+	// pdfinfo /DATA/shome/gerald/t.pdf |grep Pages|sed 's/[^ ]*[ ]*\(.*\)/\1/'
 	return erg; 
 } // int paramcl::zupdf(string von, string zielvz, int obocr, int obverb, int oblog)
 
@@ -5032,6 +5045,85 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
     } // if (!lstat(hsendqvz.c_str(),&entryvz))
 } // void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 
+// aufgerufen in: empfarch, zupdf
+int paramcl::gettif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elogp, string *absdrp,string *tsidp,string *calleridp,string *devnamep,int obverb,int oblog)
+{
+    int erg=1;
+    vector<string> tok; // fuer imagedescription
+		if (tmp) {
+			memset(tmp, 0, sizeof(*tmp));
+			if (elogp) {
+				memset(elogp,0,sizeof *elogp);
+				if (!lstat(datei.c_str(),elogp))  {
+					if (chmod(datei.c_str(),S_IRWXU|S_IRWXG|S_IRWXO))
+						systemrueck("sudo chmod +r \""+datei+"\"",obverb,oblog);
+					memcpy(tmp, localtime(&elogp->st_mtime),sizeof(*tmp));
+					char buf[255];
+					strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", tmp);
+					// <<"Buf: "<<buf<<endl;
+				} //     if (!lstat(datei.c_str(),elogp)) 
+			} // if (elogp)
+		} // if (tmp)
+    if (TIFF* tif = TIFFOpen(datei.c_str(), "r")) {
+			erg=0;
+			char *rdesc=0;
+			if (tmp) {
+				if (TIFFGetField(tif, TIFFTAG_DATETIME, &rdesc)) {
+					// <<"Datetime: \n"<<rdesc<<endl;
+					strptime(rdesc,"%Y:%m:%d %H:%M:%S",tmp);
+					/*
+						 char buf[255];
+						 strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", tmp);
+						 <<"Buf (2): "<<buf<<endl;
+					 */
+				} // if (TIFFGetField(tif, TIFFTAG_DATETIME, &rdesc))
+			} // if (tmp)
+      if (seitenp) *seitenp=TIFFNumberOfDirectories(tif);
+      rdesc=0;
+      if (TIFFGetField(tif, TIFFTAG_IMAGEDESCRIPTION, &rdesc)) {
+        //          printf("Beschreibung: %s\n",beschreib);
+        //  out<<"Beschreibung: \n"<<rdesc<<endl;
+        tok.clear();
+        aufSplit(&tok,rdesc,'\n');
+        if (tok.size()) {
+          if (tok.size()>1) {
+            // <<gruen<<"tok[0]: "<<schwarz<<tok[0]<<endl;
+            if (calleridp) *calleridp=tok[0];
+            // <<gruen<<"tok[1]: "<<schwarz<<tok[1]<<endl;
+            *tsidp=tok[1];
+            if (tok.size()>2) if (absdrp) *absdrp=tok[2];
+          } else {
+            if (istelnr(tok[0])) {
+              // <<gruen<<"tok[0] b: "<<schwarz<<tok[0]<<endl;
+              if (calleridp) *calleridp=tok[0]; 
+            } else { 
+              // <<gruen<<"tok[0] c: "<<schwarz<<tok[0]<<endl;
+              if (absdrp) *absdrp=tok[0];
+            }
+          } //           if (tok.size()>1)  else
+        } // if (tok.size()) 
+      } // if (TIFFGetField(tif, TIFFTAG_IMAGEDESCRIPTION, &rdesc)) 
+      // rdesc=0;
+      // if (TIFFGetField(tif, TIFFTAG_MODEL, &rdesc))
+      rdesc=0;
+			uchar obdev=0;
+			if (calleridp) {if (calleridp->empty()) obdev=1;} else obdev=1;
+			if (obdev) if (!devnamep) obdev=0;
+      if (obdev) {
+        if (TIFFGetField(tif, TIFFTAG_MAKE, &rdesc)) {
+          //          printf("Beschreibung: %s\n",beschreib);
+          // <<gruen<<"rdesc: "<<schwarz<<rdesc<<endl;
+          if (rdesc) {
+            *devnamep+=", ";
+            *devnamep+=rdesc;
+          }
+        } // if (TIFFGetField(tif, TIFFTAG_MAKE, &rdesc)) 
+      } // if (calleridp->empty()) 
+      TIFFClose(tif);
+    } // if (TIFF* tif = TIFFOpen(datei.c_str(), "r")) 
+ return erg;
+} // int paramcl::gettif(string& datei,struct tm *tmp,ulong *seitenp,string *calleridp,string *devnamep,int obverb,int oblog)
+
 // wird aufgerufen in: main
 void paramcl::empfarch()
 {
@@ -5050,84 +5142,23 @@ void paramcl::empfarch()
     // ..., Informationen darueber einsammeln, ...
     string zeit;
     string absdr,tsid,callerid,devname=hmodem;
-    ulong seiten=0;
     string stamm,exten,ganz=rueck[i];
     getstammext(&ganz,&stamm,&exten);
     string base=base_name(stamm);
     string fnr=base.substr(3);
     fnr=fnr.substr(fnr.find_first_not_of("0"));
-    vector<string> tok; // fuer imagedescription
-    char buf[255];
-    char *rdesc=buf;
     struct tm tm;
-    memset(&tm, 0, sizeof(struct tm));
-    struct stat entrylog;
-    memset(&entrylog,0,sizeof entrylog);
-    if (!lstat(rueck[i].c_str(),&entrylog))  {
-      if (chmod(rueck[i].c_str(),S_IRWXU|S_IRWXG|S_IRWXO))
-      systemrueck("sudo chmod 777 "+rueck[i],obverb,oblog);
-      memcpy(&tm, localtime(&entrylog.st_mtime),sizeof(tm));
-      strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", &tm);
-      // <<"Buf: "<<buf<<endl;
-    } //     if (!lstat(rueck[i].c_str(),&entrylog)) 
-    if (TIFF* tif = TIFFOpen(rueck[i].c_str(), "r")) {
-      ankzahl++;
-      rdesc=0;
-      if (TIFFGetField(tif, TIFFTAG_DATETIME, &rdesc)) {
-        // <<"Datetime: \n"<<rdesc<<endl;
-        strptime(rdesc,"%Y:%m:%d %H:%M:%S",&tm);
-        /*
-           char buf[255];
-           strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", &tm);
-           <<"Buf (2): "<<buf<<endl;
-         */
-      }
-      seiten=TIFFNumberOfDirectories(tif);
-      rdesc=0;
-      if (TIFFGetField(tif, TIFFTAG_IMAGEDESCRIPTION, &rdesc)) {
-        //          printf("Beschreibung: %s\n",beschreib);
-        //  out<<"Beschreibung: \n"<<rdesc<<endl;
-        tok.clear();
-        aufSplit(&tok,rdesc,'\n');
-        if (tok.size()) {
-          if (tok.size()>1) {
-            // <<gruen<<"tok[0]: "<<schwarz<<tok[0]<<endl;
-            callerid=tok[0];
-            // <<gruen<<"tok[1]: "<<schwarz<<tok[1]<<endl;
-            tsid=tok[1];
-            if (tok.size()>2) absdr=tok[2];
-          } else {
-            if (istelnr(tok[0])) {
-              // <<gruen<<"tok[0] b: "<<schwarz<<tok[0]<<endl;
-              callerid=tok[0]; 
-            } else { 
-              // <<gruen<<"tok[0] c: "<<schwarz<<tok[0]<<endl;
-              absdr=tok[0];
-            }
-          } //           if (tok.size()>1)  else
-        } // if (tok.size()) 
-      } // if (TIFFGetField(tif, TIFFTAG_IMAGEDESCRIPTION, &rdesc)) 
-      // rdesc=0;
-      // if (TIFFGetField(tif, TIFFTAG_MODEL, &rdesc))
-      rdesc=0;
-      if (callerid.empty()) {
-        if (TIFFGetField(tif, TIFFTAG_MAKE, &rdesc)) {
-          //          printf("Beschreibung: %s\n",beschreib);
-          // <<gruen<<"rdesc: "<<schwarz<<rdesc<<endl;
-          if (rdesc) {
-            devname+=", ";
-            devname+=rdesc;
-          }
-        } // if (TIFFGetField(tif, TIFFTAG_MAKE, &rdesc)) 
-      } // if (callerid.empty()) 
-      TIFFClose(tif);
-    } // if (TIFF* tif = TIFFOpen(rueck[i].c_str(), "r")) 
+		struct stat elog;
+    ulong seiten=0;
+		if (!gettif(rueck[i],&seiten,&tm,&elog,&absdr,&tsid,&callerid,&devname,obverb,oblog))
+			ankzahl++;
+
     string tabsdr; // transferierter Absender
     if (callerid.empty()) {
       svec trueck;
       systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null | grep -m 1 \""+base_name(rueck[i])+"\" | cut -f 8,9",obverb,oblog,&trueck); 
       if (trueck.size()) {
-        tok.clear();
+				vector<string> tok; // fuer imagedescription
         aufSplit(&tok,&trueck[0],'\t');
         if (tok.size()) {
           // <<gruen<<"tok[0] d: "<<schwarz<<tok[0]<<endl; // Tel'nr z.B. 49.8131.1234567
@@ -5193,7 +5224,7 @@ void paramcl::empfarch()
         } else if (runde==1) zs.Abfrage("SET NAMES 'latin1'");
         RS rins(My); 
         vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-        einf.push_back(/*2*/instyp(My->DBS,"fsize",entrylog.st_size));
+        einf.push_back(/*2*/instyp(My->DBS,"fsize",elog.st_size));
         einf.push_back(/*2*/instyp(My->DBS,"pages",seiten));
         einf.push_back(/*2*/instyp(My->DBS,"titel",&absdr));
         einf.push_back(/*2*/instyp(My->DBS,"tsid",&tsid));
