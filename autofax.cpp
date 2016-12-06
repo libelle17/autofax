@@ -4340,46 +4340,55 @@ int paramcl::pruefocr()
 int paramcl::zupdf(string& quell, string& ziel, int obocr, int obverb, int oblog) // 0=Erfolg
 {
 	int erg=1;
-	if (obocr) {
-		if (!pruefocr()) {
-			if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+quell+"\" \""+ziel+"\" && chmod +r \""+ziel+"\"" ,obverb,oblog))
-			 erg=0; // nicht umgekehrt
-		} // pruefocr()
-	} // if (obocr)
-	if (erg) {
-	  int reihenf=0;
-    string stamm,exten;
-    getstammext(&quell,&stamm,&exten);
-		if (exten=="doc") reihenf=1; 
-		string cmd;
-		for(unsigned runde=1;runde<=2;runde++) {
-			cmd.clear();
-			string pname;
-			switch ((runde+reihenf)%2) {
-				case 1: 
-					// 5.12.16 opensuse: bearbeitet jetzt nur (noch?) die erste Seite!
-					pname="soffice";
-					if (pruefsoffice())
-						cmd="cd $HOME; soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+quell+"\"";
-					break; // Ergebnis immer 0
-				case 0: 
-				  pname="convert";
-					if (pruefconvert())
-						cmd=string("sudo convert \""+quell+"\" \""+ziel+"\""); 
-					break;
-			} // switch (runde) 
-			if (cmd.empty() && !obocr) erg=1; else {
-				vector<string> umwd;
-				systemrueck(cmd, obverb,oblog,&umwd);
-				struct stat entryziel;
-				erg=lstat(ziel.c_str(),&entryziel); 
-				Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+pname+schwarz+
-						Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
-			} // if (cmd.empty()) erg=1; else 
-			if (!erg) break;
-		} // for(unsigned runde=1;runde<=2;runde++) 
-		//  string *oquel=(erg?&quell:&ziel);
-	}
+	string stamm,exten, *quellp=&quell;
+	getstammext(quellp,&stamm,&exten);
+	int keinbild= (exten=="doc"||exten=="xls"||exten=="txt"||exten=="odf"||exten=="ppt");
+	for(int aru=0;aru<2;aru++) {
+		if (!keinbild) {
+			if (obocr) {
+				if (!pruefocr()) {
+					if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*quellp+"\" \""+ziel+"\" && chmod +r \""+ziel+"\"" ,obverb,oblog)) {
+						erg=0; // nicht umgekehrt
+						break;
+					}
+				} // pruefocr()
+			} // if (obocr)
+		} // 		if (!keinbild)
+		if (aru) break; // 1,5 Runden maximal benoetigt
+		if (erg) {
+			string cmd;
+			for(unsigned runde=1;runde<=2;runde++) {
+				cmd.clear();
+				string pname;
+				switch ((runde+keinbild)%2) {
+					case 0: 
+						// 5.12.16 opensuse: bearbeitet jetzt nur (noch?) die erste Seite!
+						pname="soffice";
+						if (pruefsoffice())
+							cmd="cd $HOME; soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+quell+"\"";
+						break; // Ergebnis immer 0
+					case 1: 
+						pname="convert";
+						if (pruefconvert())
+							cmd=string("sudo convert \""+quell+"\" \""+ziel+"\""); 
+						break;
+				} // switch (runde) 
+				if (cmd.empty() && !obocr) erg=1; else {
+					vector<string> umwd;
+					systemrueck(cmd, obverb,oblog,&umwd);
+					struct stat entryziel;
+					erg=lstat(ziel.c_str(),&entryziel); 
+					Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+pname+schwarz+
+							Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
+				} // if (cmd.empty()) erg=1; else 
+				if (!erg) break;
+			} // for(unsigned runde=1;runde<=2;runde++) 
+			if (erg) if (keinbild) break; // ocrmypdf kann nur Bilder umwandeln
+			if (!erg) if (!obocr) break;  // ocrmypdf hier nicht erwuenscht
+			if (!erg) quellp=&ziel; // ocrmypdf mit der Ergebnisdatei
+			//  string *oquel=(erg?&quell:&ziel);
+		} // (erg)
+	} // 	for(int aru=0;aru<2;aru++)
 	if (!erg)
 		attrangleich(ziel,quell);
 	// falls erg==0 und Seitenzahl gleich, dann tif loeschen
