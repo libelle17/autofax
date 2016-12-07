@@ -549,6 +549,7 @@ enum T_
 	T_aufgerufen,
 	T_unveraendert,
 	T_Kein_cron_gesetzt_nicht_zu_setzen,
+	T_Seiten,
 	T_MAX
 };
 
@@ -1557,6 +1558,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	{"unveraendert ","as it was "},
   // T_Kein_cron_gesetzt_nicht_zu_setzen
 	{"Kein cron gesetzt, nicht zu setzen","No cron set, not to set"},
+	// T_Seiten
+	{" Seite(n)"," page(s)"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -4396,8 +4399,25 @@ int paramcl::zupdf(string& quell, string& ziel, int obocr/*=1*/, int loeschen/*=
 	if (!erg) {
 		attrangleich(ziel,quell);
 	// falls !erg und Seitenzahl gleich, dann tif loeschen
-	// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
-	// pdfinfo /DATA/shome/gerald/t.pdf |grep Pages|sed 's/[^ ]*[ ]*\(.*\)/\1/'
+	if (loeschen && exten=="tif") {
+		// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
+	  linst.doinst("poppler-tools",obverb+1,oblog,"pdfinfo");
+		svec rueck;
+		systemrueck("pdfinfo \""+ziel+"\"|grep Pages|sed 's/[^ ]*[ ]*\\(.*\\)/\\1/'",obverb,oblog,&rueck);
+		ulong seiten;
+    gettif(quell, &seiten,0,0,0,0,0,0,obverb,oblog);
+		Log("TIF: "+blaus+quell+": "+gruen+ltoan(seiten)+schwarz+Tx[T_Seiten],obverb,oblog);
+		if (rueck.size()) {
+		 Log("PDF: "+blaus+ziel+": "+gruen+rueck[0]+schwarz+Tx[T_Seiten],obverb,oblog);
+		 ulong pseiten=atol(rueck[0].c_str());
+		 if (pseiten==seiten && seiten>0) {
+		  tuloeschen(quell,cuser,obverb,oblog);
+		 } else if (pseiten<seiten || !pseiten) {
+		  tuloeschen(ziel,cuser,obverb,oblog);
+		 }
+		}
+		// pdfinfo /DATA/shome/gerald/t.pdf |grep Pages|sed 's/[^ ]*[ ]*\(.*\)/\1/'
+	}
 	}
 	return erg; 
 } // int paramcl::zupdf(string von, string zielvz, int obocr, int obverb, int oblog)

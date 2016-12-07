@@ -332,7 +332,7 @@ string caseersetze(const string& u, const char* alt, const char* neu)
         {gleich=0;break;}
       if (gleich) {erg+=neu;p+=i-1;} else erg+=(*p);
     }
-  }
+  } //   if (alt[0]==0 || !strcmp(alt,neu)) else
   return erg;
 } // ersetze(char *u, const char* alt, const char* neu)
 
@@ -2354,6 +2354,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="tesseract-ocr-traineddata-german") return "tesseract-ocr-deu";
       if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-ocr-osd";
       if (prog=="libavformat-devel") return "libavformat-dev";
+      if (prog=="poppler-tools") return "poppler-utils";
       break;
     case dnf: case yum:
       if (prog=="mariadb") return "mariadb-server";
@@ -2370,6 +2371,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="tesseract-ocr-traineddata-english") return "";
       if (prog=="tesseract-ocr-traineddata-german") return "tesseract-langpack-deu tesseract-langpack-deu_frak";
       if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-osd";
+      if (prog=="poppler-tools") return "poppler-utils";
       break;
 	  case zypper:
 		  if (prog=="redhat-rpm-config") return "";
