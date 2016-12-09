@@ -4364,7 +4364,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 		} // 		if (!keinbild)
 		if (aru) break; // 1,5 Runden maximal benoetigt
 		if (erg) {
-			string cmd;
+			string cmd0, cmd;
 			for(unsigned runde=1;runde<=2;runde++) {
 				cmd.clear();
 				string pname;
@@ -4373,27 +4373,29 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 						// 5.12.16 opensuse: bearbeitet jetzt nur (noch?) die erste Seite!
 						pname="soffice";
 						if (pruefsoffice())
-							cmd="cd $HOME; soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+quell+"\" 2>&1";
+						  cmd0="cd $HOME; ";
+							cmd="soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+quell+"\" 2>&1";
 						break; // Ergebnis immer 0
 					case 1: 
 						pname="convert";
 						if (pruefconvert())
+							cmd0.clear();
 							cmd=string("sudo convert \""+quell+"\" \""+ziel+"\""); 
 						break;
 				} // switch (runde) 
 				if (!cmd.empty()) {
 					vector<string> umwd;
 					int erg=0;
-					if ((erg=systemrueck(cmd, obverb,oblog,&umwd))) {
+					if ((erg=systemrueck(cmd0+cmd, obverb,oblog,&umwd))) {
 					 for(unsigned uru=0;uru<umwd.size();uru++) {
-					  if (umwd[uru].find("javaldx failed")!=string::npos) {
+					  if (umwd[uru].find("failed to read path from javaldx")!=string::npos) {
 						 cout<<rot<<"Hier der Fehler!"<<schwarz<<endl;
+					   erg=systemrueck(cmd0+"sudo "+cmd, obverb,oblog);
 						 /*
 						 int altobverb=obverb;
 						 obverb=1;
 						 pruefsoffice(1);
 						 obverb=altobverb;
-					   erg=systemrueck(cmd, obverb,oblog);
 						 */
 						} // 					  if (umwd[uru].find("javaldx failed")!=string::npos)
 					 } // 					 for(unsigned uru=0;uru<umwd.size();uru++)
@@ -4631,7 +4633,6 @@ void paramcl::DateienHerricht()
 		cout<<rot<<"fxv[nachrnr].npdf: "<<schwarz<<fxv[nachrnr].npdf<<endl;
 		erg=zupdf(fxv[nachrnr].npdf, fxv[nachrnr].spdf, &fxv[nachrnr].pseiten, obocra, 0, obverb, oblog);
 		cout<<violett<<"erg: "<<rot<<(int)erg<<schwarz<<endl;
-		exit(0);
 		if (erg) {
 			//      spdfp->erase(spdfp->begin()+nachrnr);
 			// Misserfolg, zurueckverschieben und aus der Datenbank loeschen
