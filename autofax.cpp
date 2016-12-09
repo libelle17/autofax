@@ -5537,15 +5537,28 @@ void dorename(const string& quelle, const string& ziel, const string& cuser, uin
 {
   Log(string(Tx[T_Verschiebe])+rot+quelle+schwarz+"'\n         -> '"+rot+ziel+schwarz+"'",obverb,oblog);
   for(uchar iru=1;iru<3;iru++) {
+	  cout<<"ren 1"<<endl;
     if (rename(quelle.c_str(),ziel.c_str())) {
+	  cout<<"ren 2"<<endl;
       if(cuser.empty()) iru++;
+	  cout<<"ren 3"<<endl;
       if(iru==1) {
+	  cout<<"ren 4"<<endl;
         setfaclggf(dir_name(quelle), wahr, 7, wahr,obverb,oblog);
+	  cout<<"ren 5"<<endl;
       } else {
+	  cout<<"ren 6"<<endl;
         perror(Tx[T_Fehler_beim_Verschieben]);
+	  cout<<"ren 7"<<endl;
         string cmd=string("sudo mv \"")+quelle+"\" \""+ziel+"\"";
+	  cout<<"ren 8"<<endl;
         int erg=systemrueck(cmd,obverb,1);
-        if (vfehler) *vfehler+=erg;
+	  cout<<"ren 9"<<endl;
+		if (vfehler) {
+		cout<<"ren 10"<<endl;
+			*vfehler+=erg;
+		}
+	  cout<<"ren 11"<<endl;
       } // if(iru) else
     } // if (rename(quelle.c_str(),ziel.c_str())) 
     else break;
