@@ -4409,15 +4409,18 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 	cout<<gruen<<"erg 7: "<<schwarz<<erg<<endl;
 					Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+pname+schwarz+
 							Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
+	cout<<gruen<<"erg 7a: "<<schwarz<<erg<<endl;
 					if (!erg) break;
 				} // if (cmd.empty()) erg=1; else 
 			} // for(unsigned runde=1;runde<=2;runde++) 
+	cout<<gruen<<"erg 7c: "<<schwarz<<erg<<endl;
 			if (erg) {
 				if (keinbild) break; // ocrmypdf kann nur Bilder umwandeln
 			} else {
 				if (!obocr||keinbild) break;  // ocrmypdf hier nicht erwuenscht oder sinnvoll
 				quellp=&ziel; // ocrmypdf mit der Ergebnisdatei
 			} // (erg) else
+	cout<<gruen<<"erg 7d: "<<schwarz<<erg<<endl;
 			//  string *oquel=(erg?&quell:&ziel);
 		} // (erg)
 	} // 	for(int aru=0;aru<2;aru++)
