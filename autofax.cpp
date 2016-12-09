@@ -4388,8 +4388,11 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 					 for(unsigned uru=0;uru<umwd.size();uru++) {
 					  if (umwd[uru].find("javaldx failed")!=string::npos) {
 						 cout<<rot<<"Hier der Fehler!"<<schwarz<<endl;
+						 int altobverb=obverb;
+						 obverb=1;
 						 pruefsoffice(1);
-					   erg=systemrueck(cmd, obverb,oblog,&umwd);
+						 obverb=altobverb;
+					   erg=systemrueck(cmd, obverb,oblog);
 						} // 					  if (umwd[uru].find("javaldx failed")!=string::npos)
 					 } // 					 for(unsigned uru=0;uru<umwd.size();uru++)
 					} // 					if ((erg=systemrueck(cmd, obverb,oblog,&umwd)))
