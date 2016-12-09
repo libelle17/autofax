@@ -71,6 +71,8 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
 	{"Vor restart, ","Before restart, "},
 	// T_Versuch_Nr
 	{"Versuch Nr. ","try no. "},
+	// T_bei_sql_Befehl
+	{" bei sql-Befehl: "," at sql-command: "},
   {"",""}
 };
 
@@ -1331,7 +1333,7 @@ void RS::update(const string& utab, vector< instyp > einf,uchar obstumm, const s
           isql+=(einf[i].wert);
         if (i<einf.size()-1)
           isql+=", ";
-      }
+      } //       for(uint i = 0;i<einf.size();i++)
       isql+=" WHERE ";
       isql+=bedingung;
       // <<blau<<isql<<schwarz<<endl;
@@ -1372,20 +1374,20 @@ void RS::update(const string& utab, vector< instyp > einf,uchar obstumm, const s
             } else if (fnr==1366) { // Incorrect string value
               db->machbinaer(utab,fmeld,0);
             } else {
-              cout<<rot<<"Fehler "<<schwarz<<fnr<<" bei sql-Befehl: "<<isql<<endl;
+              cout<<rot<<Txk[T_Fehler]<<schwarz<<fnr<<Txd[T_bei_sql_Befehl]<<isql<<endl;
               break; 
             }
-          }
+          } //   if (!obfehl) else
         } //  for (int iru=0;iru<2;iru++) 
         if (!altsqlm.empty()) 
           Abfrage(string("SET sql_mode = '")+altsqlm+"'",obstumm);
         // nach Gebrauch loeschen
         isql.clear();
-      }
+      } // case
       break;
     case Postgres:
       break;
-  }
+  } //   switch (db->DBS)
 } // void RS::update(const string& utab, vector< instyp > einf,uchar obstumm, const string& bedingung,uchar asy) 
 
 void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar sammeln,uchar obstumm,string *id,uchar eindeutig,uchar asy) 
@@ -1563,8 +1565,8 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
               } else if (fnr==1366) { // Incorrect string value
                 db->machbinaer(itab,fmeld,0);
               } else {
-                cout<<rot<<"Fehler "<<schwarz<<fnr<<" bei sql-Befehl: "<<isql<<endl;
-                exit(113);
+								cout<<rot<<Txk[T_Fehler]<<schwarz<<fnr<<Txd[T_bei_sql_Befehl]<<isql<<endl;
+								exit(113);
                 break; 
               }
             }

@@ -4389,46 +4389,31 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 					if ((erg=systemrueck(cmd0+cmd, obverb,oblog,&umwd))) {
 					 for(unsigned uru=0;uru<umwd.size();uru++) {
 					  if (umwd[uru].find("failed to read path from javaldx")!=string::npos) {
-						 cout<<rot<<"Hier der Fehler!"<<schwarz<<endl;
 					   erg=systemrueck(cmd0+"sudo "+cmd, obverb,oblog);
-						 cout<<"erg nach cmd mit sudo: "<<(int)erg<<endl;
-						 /*
-						 int altobverb=obverb;
-						 obverb=1;
-						 pruefsoffice(1);
-						 obverb=altobverb;
-						 */
+						 /* int altobverb=obverb; obverb=1; pruefsoffice(1); obverb=altobverb; */
 						} // 					  if (umwd[uru].find("javaldx failed")!=string::npos)
 					 } // 					 for(unsigned uru=0;uru<umwd.size();uru++)
 					} // 					if ((erg=systemrueck(cmd, obverb,oblog,&umwd)))
 					struct stat entryziel;
-	cout<<gruen<<"erg 6: "<<schwarz<<erg<<endl;
-	cout<<"ziel: "<<ziel<<endl;
 					erg=lstat(ziel.c_str(),&entryziel); 
-	cout<<gruen<<"erg 7: "<<schwarz<<erg<<endl;
 					Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+pname+schwarz+
 							Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
-	cout<<gruen<<"erg 7a: "<<schwarz<<erg<<endl;
 					if (!erg) break;
 				} // if (cmd.empty()) erg=1; else 
 			} // for(unsigned runde=1;runde<=2;runde++) 
-	cout<<gruen<<"erg 7c: "<<schwarz<<erg<<endl;
 			if (erg) {
 				if (keinbild) break; // ocrmypdf kann nur Bilder umwandeln
 			} else {
 				if (!obocr||keinbild) break;  // ocrmypdf hier nicht erwuenscht oder sinnvoll
 				quellp=&ziel; // ocrmypdf mit der Ergebnisdatei
 			} // (erg) else
-	cout<<gruen<<"erg 7d: "<<schwarz<<erg<<endl;
 			//  string *oquel=(erg?&quell:&ziel);
 		} // (erg)
 	} // 	for(int aru=0;aru<2;aru++)
-	cout<<gruen<<"erg 7b: "<<schwarz<<erg<<endl;
 	if (!erg) {
 		attrangleich(ziel,quell);
 	// falls !erg und Seitenzahl gleich, dann tif loeschen
 		svec rueck;
-	cout<<gruen<<"erg 8: "<<schwarz<<erg<<endl;
 		if (pseitenp) {
 			// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
 			linst.doinst("poppler-tools",obverb+1,oblog,"pdfinfo");
@@ -4438,9 +4423,8 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 				*pseitenp=atol(rueck[0].c_str());
 			} // 			if (rueck.size())
 		} // 		if (pseitenp)
-	cout<<gruen<<"erg 9: "<<schwarz<<erg<<endl;
 		if (loeschen && exten=="tif") {
-			ulong seiten;
+			ulong seiten=0;
 			gettif(quell, &seiten,0,0,0,0,0,0,obverb,oblog);
 			Log("TIF: "+blaus+quell+": "+gruen+ltoan(seiten)+schwarz+Tx[T_Seiten],obverb,oblog);
 			if (rueck.size()) {
@@ -4455,7 +4439,6 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 			// pdfinfo /DATA/shome/gerald/t.pdf |grep Pages|sed 's/[^ ]*[ ]*\(.*\)/\1/'
 		} // 		if (loeschen && exten=="tif")
 	} // 	if (!erg)
-	cout<<gruen<<"erg 10: "<<schwarz<<erg<<endl;
 	return erg; 
 } // int paramcl::zupdf(string von, string zielvz, int obocr, int obverb, int oblog)
 
@@ -4603,9 +4586,7 @@ void paramcl::DateienHerricht()
       } // if (vfehler) 
       urfx.at(i).teil=ndname;
     } // if (ndname!=urfx.at(i).teil) 
-		cout<<rot<<"vor verschieben"<<schwarz<<endl;
     string wartedatei=verschiebe(urfx.at(i).teil,wvz,cuser,&vfehler,1,obverb,oblog);
-		cout<<rot<<"nach verschieben, wartedatei: "<<schwarz<<wartedatei<<endl;
     if (vfehler) {
       cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
         blau<<urfx.at(i).teil<<schwarz<<" ->\n"<<
@@ -4641,9 +4622,7 @@ void paramcl::DateienHerricht()
       Log(string(Tx[T_lstatfehlgeschlagen]) + strerror(errno) + Tx[T_beiDatei]+ fxv[nachrnr].npdf,1,1,1);
       continue;
     } // (lstat((*pfad + vtz + dirEntry->d_name).c_str(), &entrynpdf)) 
-		cout<<rot<<"fxv[nachrnr].npdf: "<<schwarz<<fxv[nachrnr].npdf<<endl;
 		erg=zupdf(fxv[nachrnr].npdf, fxv[nachrnr].spdf, &fxv[nachrnr].pseiten, obocra, 0, obverb, oblog);
-		cout<<violett<<"erg: "<<rot<<(int)erg<<schwarz<<endl;
 		if (erg) {
 			//      spdfp->erase(spdfp->begin()+nachrnr);
 			// Misserfolg, zurueckverschieben und aus der Datenbank loeschen
@@ -5550,39 +5529,25 @@ string zielname(const string& qdatei, zielmustercl *zmp, uchar wieweiterzaehl=0,
 // wird aufgerufen in: verschiebe (Version 1), verschiebe (Version 2), DateienHerricht
 void dorename(const string& quelle, const string& ziel, const string& cuser, uint *vfehler, int obverb, int oblog)
 {
-  Log(string(Tx[T_Verschiebe])+rot+quelle+schwarz+"'\n         -> '"+rot+ziel+schwarz+"'",obverb,oblog);
-  for(uchar iru=1;iru<3;iru++) {
-	  cout<<"ren 1"<<endl;
+	Log(string(Tx[T_Verschiebe])+rot+quelle+schwarz+"'\n         -> '"+rot+ziel+schwarz+"'",obverb,oblog);
+	for(uchar iru=1;iru<3;iru++) {
 		int renerg=rename(quelle.c_str(),ziel.c_str());
-		struct stat exist;
-		int gibts=!lstat(ziel.c_str(),&exist);
-		cout<<rot<<"renerg: "<<renerg<<" gibts: "<<gibts<<" ziel: "<<ziel<<endl;
-//    if (rename(quelle.c_str(),ziel.c_str())) {
-    if (renerg) {
-	  cout<<"ren 2"<<endl;
-      if(cuser.empty()) iru++;
-	  cout<<"ren 3"<<endl;
-      if(iru==1) {
-	  cout<<"ren 4"<<endl;
-        setfaclggf(dir_name(quelle), wahr, 7, wahr,obverb,oblog);
-	  cout<<"ren 5"<<endl;
-      } else {
-	  cout<<"ren 6"<<endl;
-        perror(Tx[T_Fehler_beim_Verschieben]);
-	  cout<<"ren 7"<<endl;
-        string cmd=string("sudo mv \"")+quelle+"\" \""+ziel+"\"";
-	  cout<<"ren 8"<<endl;
-        int erg=systemrueck(cmd,obverb,1);
-	  cout<<"ren 9"<<endl;
-		if (vfehler) {
-		cout<<"ren 10"<<endl;
-			*vfehler+=erg;
-		}
-	  cout<<"ren 11"<<endl;
-      } // if(iru) else
-    } // if (rename(quelle.c_str(),ziel.c_str())) 
-    else break;
-  } // for(uchar iru=1;iru>-1;iru--)
+		//    if (rename(quelle.c_str(),ziel.c_str()))
+		if (renerg) {
+			if(cuser.empty()) iru++;
+			if(iru==1) {
+				setfaclggf(dir_name(quelle), wahr, 7, wahr,obverb,oblog);
+			} else {
+				perror(Tx[T_Fehler_beim_Verschieben]);
+				string cmd=string("sudo mv \"")+quelle+"\" \""+ziel+"\"";
+				int erg=systemrueck(cmd,obverb,1);
+				if (vfehler) {
+					*vfehler+=erg;
+				}
+			} // if(iru) else
+		} // if (rename(quelle.c_str(),ziel.c_str())) 
+		else break;
+	} // for(uchar iru=1;iru>-1;iru--)
 } // dorename
 
 

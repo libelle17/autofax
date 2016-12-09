@@ -67,6 +67,7 @@ enum Txdb_
   T_Lesespalten,
 	T_Vor_restart,
 	T_Versuch_Nr,
+	T_bei_sql_Befehl,
   T_dbMAX,
 };
 
