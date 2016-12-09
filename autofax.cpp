@@ -5538,6 +5538,10 @@ void dorename(const string& quelle, const string& ziel, const string& cuser, uin
   Log(string(Tx[T_Verschiebe])+rot+quelle+schwarz+"'\n         -> '"+rot+ziel+schwarz+"'",obverb,oblog);
   for(uchar iru=1;iru<3;iru++) {
 	  cout<<"ren 1"<<endl;
+		int renerg=rename(quelle.c_str(),ziel.c_str());
+		struct stat exist;
+		int gibts=!lstat(ziel.c_str(),&exist);
+		cout<<rot<<"renerg: "<<renerg<<" gibts: "<<gibts<<" ziel: "<<ziel<<endl;
     if (rename(quelle.c_str(),ziel.c_str())) {
 	  cout<<"ren 2"<<endl;
       if(cuser.empty()) iru++;
