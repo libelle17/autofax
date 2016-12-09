@@ -4929,11 +4929,9 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
             Log(violetts+"Capistat: "+schwarz+FxStatS(&fsf.capistat)+violett+", Hylastat: "+schwarz+FxStatS(&fsf.hylastat),obverb,oblog);
           } //           if (obverb>0)
           // die Flags aller aktivierten Faxwege stehen auf gescheitert
-          uchar allegesch=0;
-					 if (obcapi && obhyla && fsf.capistat==gescheitert && fsf.hylastat==gescheitert) allegesch=1;
+					uchar allegesch = (obcapi||obhyla) && ((!obcapi || fsf.capistat==gescheitert) && (!obhyla || fsf.hylastat==gescheitert));
 //          if (obcapi && obhyla && fsf.capistat==gescheitert && maxcapiv>=maxcdials) allegesch=1;
 //          else if (obcapi && obhyla && fsf.hylastat==gescheitert && maxhylav>=maxhdials) allegesch=1;
-          else allegesch = ((!obcapi || fsf.capistat==gescheitert) && (!obhyla || fsf.hylastat==gescheitert));
           // die Flags aller aktivierten Faxwege stehen auf gescheitert oder fehlend
           uchar nimmer = ((!obcapi || fsf.capistat==fehlend || fsf.capistat==gescheitert) && 
               (!obhyla || fsf.hylastat==fehlend || fsf.hylastat==gescheitert));
@@ -4954,16 +4952,15 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           } // if (nimmer)
           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) ) {
             uchar geloescht=0;
-						cout<<gruen<<"allegesch: "<<schwarz<<(int)allegesch<<endl;
-						cout<<gruen<<"nimmer: "<<schwarz<<(int)nimmer<<endl;
-						cout<<gruen<<"gesandt: "<<schwarz<<(int)gesandt<<endl;
-						cout<<gruen<<"fsf.capistat: "<<schwarz<<(int)fsf.capistat<<endl;
-						cout<<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
-						cout<<gruen<<"hyla: "<<schwarz<<(int)hyla<<endl;
-						cout<<gruen<<"capi: "<<schwarz<<(int)capi<<endl;
-						cout<<gruen<<"fsf.capisd.empty(): "<<schwarz<<(int)fsf.capisd.empty()<<endl;
-            fsf.archiviere(My,this,&entrysend,
-						  allegesch||nimmer,fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?capi:hyla,
+						// <<gruen<<"gesandt: "<<schwarz<<(int)gesandt<<endl;
+						// <<gruen<<"gescheitert: "<<schwarz<<(int)gescheitert<<endl;
+						// <<gruen<<"allegesch: "<<schwarz<<(int)allegesch<<endl;
+						// <<gruen<<"nimmer: "<<schwarz<<(int)nimmer<<endl;
+						// <<gruen<<"fsf.capistat: "<<schwarz<<(int)fsf.capistat<<endl;
+						// <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
+						// <<gruen<<"fsf.capisd.empty(): "<<schwarz<<(int)fsf.capisd.empty()<<endl;
+            fsf.archiviere(My,this,&entrysend,allegesch||nimmer,
+					    fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?capi:hyla,
 							&geloescht, obverb, oblog);
           } //           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) )
           // wenn alle aktivierten Faxwege auf gescheitert oder fehlend stehen oder die Quelldatei fehlt ...
