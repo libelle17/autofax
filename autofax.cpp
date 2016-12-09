@@ -4954,8 +4954,17 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           } // if (nimmer)
           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) ) {
             uchar geloescht=0;
-            fsf.archiviere(My,this,&entrysend,allegesch||nimmer,fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?capi:hyla, 
-                &geloescht, obverb, oblog);
+						cout<<gruen<<"allegesch: "<<schwarz<<(int)allegesch<<endl;
+						cout<<gruen<<"nimmer: "<<schwarz<<(int)nimmer<<endl;
+						cout<<gruen<<"gesandt: "<<schwarz<<(int)gesandt<<endl;
+						cout<<gruen<<"fsf.capistat: "<<schwarz<<(int)fsf.capistat<<endl;
+						cout<<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
+						cout<<gruen<<"hyla: "<<schwarz<<(int)hyla<<endl;
+						cout<<gruen<<"capi: "<<schwarz<<(int)capi<<endl;
+						cout<<gruen<<"fsf.capisd.empty(): "<<schwarz<<(int)fsf.capisd.empty()<<endl;
+            fsf.archiviere(My,this,&entrysend,
+						  allegesch||nimmer,fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?capi:hyla,
+							&geloescht, obverb, oblog);
           } //           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) )
           // wenn alle aktivierten Faxwege auf gescheitert oder fehlend stehen oder die Quelldatei fehlt ...
           if (allegesch || (nimmer && !ogibts[0])) {
