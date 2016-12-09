@@ -3886,8 +3886,8 @@ void paramcl::bereinigewv()
                     case 2: dbdocname=stamm+".xls"; break;
                     case 3: dbdocname=stamm+".jpg"; break;
                     case 4: dbdocname=stamm+".tif"; break;
-                  }
-                }
+                  } //                   switch (aru)
+                } //                 if (aru)
                 if ((fit=fdn.find(dbdocname))!=fdn.end()) { // wenn Datenbankeintrag in der sortierten Mengen der Dateinamen enthalten
                   struct stat entryfit;
                   string quel=wvz+vtz+*fit;
@@ -3906,14 +3906,14 @@ void paramcl::bereinigewv()
                           if (vfehler) {
                             Log(rots+Tx[T_Fehler_beim_Verschieben_Ausrufezeichen]+": "+ltoan(vfehler)+schwarz,1,1);
                             exit(14);
-                          }
+                          } // if (vfehler)
                           fdn.erase(fit);
                           break;
                         } // if (!zlvz.empty()) 
-                      } else {// if (runde) 
+                      } else { // if (runde) 
                         fdn.erase(fit); // die in der Spool-Tabelle genannten Dateien stehen lassen
-                      }
-                      //                      Log(string(ltoan(entryfit.st_size))+" "+(runde==2?dblau:runde==1?blau:rot)+*fit+schwarz,1,1);
+                      } //    if (runde) else
+                      //     Log(string(ltoan(entryfit.st_size))+" "+(runde==2?dblau:runde==1?blau:rot)+*fit+schwarz,1,1);
                       Log(string(ltoan(entryfit.st_size))+" "+(runde?(**(*cerg+2)=='1'?blau:gruen):rot)+*fit+schwarz,1,1);
                     } else {
                       Log(string(Tx[T_0Bytes])+gruen+wvz+vtz+*fit+schwarz+"'",1,1);
@@ -4388,11 +4388,13 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 					 for(unsigned uru=0;uru<umwd.size();uru++) {
 					  if (umwd[uru].find("javaldx failed")!=string::npos) {
 						 cout<<rot<<"Hier der Fehler!"<<schwarz<<endl;
+						 /*
 						 int altobverb=obverb;
 						 obverb=1;
 						 pruefsoffice(1);
 						 obverb=altobverb;
 					   erg=systemrueck(cmd, obverb,oblog);
+						 */
 						} // 					  if (umwd[uru].find("javaldx failed")!=string::npos)
 					 } // 					 for(unsigned uru=0;uru<umwd.size();uru++)
 					} // 					if ((erg=systemrueck(cmd, obverb,oblog,&umwd)))
@@ -4588,7 +4590,9 @@ void paramcl::DateienHerricht()
       } // if (vfehler) 
       urfx.at(i).teil=ndname;
     } // if (ndname!=urfx.at(i).teil) 
+		cout<<rot<<"vor verschieben"<<schwarz<<endl;
     string wartedatei=verschiebe(urfx.at(i).teil,wvz,cuser,&vfehler,1,obverb,oblog);
+		cout<<rot<<"nach verschieben"<<schwarz<<endl;
     if (vfehler) {
       cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
         blau<<urfx.at(i).teil<<schwarz<<" ->\n"<<
