@@ -4352,6 +4352,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 	getstammext(quellp,&stamm,&exten);
 	int keinbild= (exten=="doc"||exten=="xls"||exten=="txt"||exten=="odf"||exten=="ppt"||exten=="docx"||exten=="htm"||exten=="html");
 	for(int aru=0;aru<2;aru++) {
+	  cout<<"aru: "<<gruen<<aru<<schwarz<<endl;
 		if (/*aru||*/!keinbild) {
 			if (obocr) {
 				if (!pruefocr()) {
@@ -4402,10 +4403,10 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 					 } // 					 for(unsigned uru=0;uru<umwd.size();uru++)
 					} // 					if ((erg=systemrueck(cmd, obverb,oblog,&umwd)))
 					struct stat entryziel;
-	cout<<gruen<<"erg 7: "<<schwarz<<erg<<endl;
+	cout<<gruen<<"erg 6: "<<schwarz<<erg<<endl;
 	cout<<"ziel: "<<ziel<<endl;
 					erg=lstat(ziel.c_str(),&entryziel); 
-	cout<<gruen<<"erg 8: "<<schwarz<<erg<<endl;
+	cout<<gruen<<"erg 7: "<<schwarz<<erg<<endl;
 					Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+pname+schwarz+
 							Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
 					if (!erg) break;
@@ -4432,8 +4433,8 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 			if (rueck.size()) {
 				Log("PDF: "+blaus+ziel+": "+gruen+rueck[0]+schwarz+Tx[T_Seiten],obverb,oblog);
 				*pseitenp=atol(rueck[0].c_str());
-			}
-		}
+			} // 			if (rueck.size())
+		} // 		if (pseitenp)
 	cout<<gruen<<"erg 9: "<<schwarz<<erg<<endl;
 		if (loeschen && exten=="tif") {
 			ulong seiten;
