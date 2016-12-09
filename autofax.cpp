@@ -4592,7 +4592,8 @@ void paramcl::DateienHerricht()
     } // if (ndname!=urfx.at(i).teil) 
 		cout<<rot<<"vor verschieben"<<schwarz<<endl;
     string wartedatei=verschiebe(urfx.at(i).teil,wvz,cuser,&vfehler,1,obverb,oblog);
-		cout<<rot<<"nach verschieben"<<schwarz<<endl;
+		cout<<rot<<"nach verschieben, wartedatei: "<<schwarz<<wartedatei<<endl;
+		exit(0);
     if (vfehler) {
       cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
         blau<<urfx.at(i).teil<<schwarz<<" ->\n"<<
