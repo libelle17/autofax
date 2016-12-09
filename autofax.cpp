@@ -4402,7 +4402,10 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 					 } // 					 for(unsigned uru=0;uru<umwd.size();uru++)
 					} // 					if ((erg=systemrueck(cmd, obverb,oblog,&umwd)))
 					struct stat entryziel;
+	cout<<gruen<<"erg 7: "<<schwarz<<erg<<endl;
+	cout<<"ziel: "<<ziel<<endl;
 					erg=lstat(ziel.c_str(),&entryziel); 
+	cout<<gruen<<"erg 8: "<<schwarz<<erg<<endl;
 					Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+pname+schwarz+
 							Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
 					if (!erg) break;
@@ -4421,6 +4424,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 		attrangleich(ziel,quell);
 	// falls !erg und Seitenzahl gleich, dann tif loeschen
 		svec rueck;
+	cout<<gruen<<"erg 8: "<<schwarz<<erg<<endl;
 		if (pseitenp) {
 			// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
 			linst.doinst("poppler-tools",obverb+1,oblog,"pdfinfo");
@@ -4430,6 +4434,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 				*pseitenp=atol(rueck[0].c_str());
 			}
 		}
+	cout<<gruen<<"erg 9: "<<schwarz<<erg<<endl;
 		if (loeschen && exten=="tif") {
 			ulong seiten;
 			gettif(quell, &seiten,0,0,0,0,0,0,obverb,oblog);
@@ -4446,7 +4451,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 			// pdfinfo /DATA/shome/gerald/t.pdf |grep Pages|sed 's/[^ ]*[ ]*\(.*\)/\1/'
 		} // 		if (loeschen && exten=="tif")
 	} // 	if (!erg)
-	cout<<gruen<<"erg: "<<schwarz<<erg<<endl;
+	cout<<gruen<<"erg 10: "<<schwarz<<erg<<endl;
 	return erg; 
 } // int paramcl::zupdf(string von, string zielvz, int obocr, int obverb, int oblog)
 
