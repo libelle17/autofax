@@ -1685,6 +1685,7 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     if (!adressat.empty()) einf.push_back(/*2*/instyp(My->DBS,"adressat",&adressat));
 
     einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
+		einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
     rins.insert(pmp->touta,einf, 1,0,ZDB?ZDB:!runde); 
     if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
     if (!rins.fnr) break;
@@ -1879,6 +1880,7 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
 			// Prioritaet der Fax-Programme: 0 = capi und 1 = hyla per Konfigurationsdatei, 2= capi und 3= hyla per Faxdateiname
       if (fxvp->at(nachrnr).prio>0 || hylazuerst) fxvp->at(nachrnr).prio++;
       einf.push_back(/*2*/instyp(My->DBS,"prio",fxvp->at(nachrnr).prio));
+      einf.push_back(/*2*/instyp(My->DBS,"pages",fxvp->at(nachrnr).pseiten));
       rins.insert(altspool,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
       rins.insert(spooltab,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
@@ -4131,6 +4133,7 @@ void paramcl::tu_listi()
   } // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
 } // tu_listi
 
+// wird aufgerufen in: main
 void paramcl::suchestr()
 {
   string scnv=" CONVERT(\"%"+suchstr+"%\" USING utf8) ";
@@ -4340,8 +4343,8 @@ int paramcl::pruefocr()
 	return 0;
 } // int paramcl::pruefocr()
 
-// in Dateinherricht und empfarch
-int paramcl::zupdf(string& quell, string& ziel, int obocr/*=1*/, int loeschen/*=1*/, int obverb/*=0*/, int oblog/*=0*/) // 0=Erfolg
+// in Dateinherricht und empfarch (2x)
+int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr/*=1*/, int loeschen/*=1*/, int obverb/*=0*/, int oblog/*=0*/) // 0=Erfolg
 {
 	int erg=1;
 	string stamm,exten, *quellp=&quell;
@@ -4399,26 +4402,32 @@ int paramcl::zupdf(string& quell, string& ziel, int obocr/*=1*/, int loeschen/*=
 	if (!erg) {
 		attrangleich(ziel,quell);
 	// falls !erg und Seitenzahl gleich, dann tif loeschen
-	if (loeschen && exten=="tif") {
-		// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
-	  linst.doinst("poppler-tools",obverb+1,oblog,"pdfinfo");
 		svec rueck;
-		systemrueck("pdfinfo \""+ziel+"\"|grep Pages|sed 's/[^ ]*[ ]*\\(.*\\)/\\1/'",obverb,oblog,&rueck);
-		ulong seiten;
-    gettif(quell, &seiten,0,0,0,0,0,0,obverb,oblog);
-		Log("TIF: "+blaus+quell+": "+gruen+ltoan(seiten)+schwarz+Tx[T_Seiten],obverb,oblog);
-		if (rueck.size()) {
-		 Log("PDF: "+blaus+ziel+": "+gruen+rueck[0]+schwarz+Tx[T_Seiten],obverb,oblog);
-		 ulong pseiten=atol(rueck[0].c_str());
-		 if (pseiten==seiten && seiten>0) {
-		  tuloeschen(quell,cuser,obverb,oblog);
-		 } else if (pseiten<seiten || !pseiten) {
-		  tuloeschen(ziel,cuser,obverb,oblog);
-		 }
+		if (pseitenp) {
+			// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
+			linst.doinst("poppler-tools",obverb+1,oblog,"pdfinfo");
+			systemrueck("pdfinfo \""+ziel+"\"|grep Pages|sed 's/[^ ]*[ ]*\\(.*\\)/\\1/'",obverb,oblog,&rueck);
+			if (rueck.size()) {
+				Log("PDF: "+blaus+ziel+": "+gruen+rueck[0]+schwarz+Tx[T_Seiten],obverb,oblog);
+				*pseitenp=atol(rueck[0].c_str());
+			}
 		}
-		// pdfinfo /DATA/shome/gerald/t.pdf |grep Pages|sed 's/[^ ]*[ ]*\(.*\)/\1/'
-	}
-	}
+		if (loeschen && exten=="tif") {
+			ulong seiten;
+			gettif(quell, &seiten,0,0,0,0,0,0,obverb,oblog);
+			Log("TIF: "+blaus+quell+": "+gruen+ltoan(seiten)+schwarz+Tx[T_Seiten],obverb,oblog);
+			if (rueck.size()) {
+				if (pseitenp) {
+					if (*pseitenp==seiten && seiten>0) {
+						tuloeschen(quell,cuser,obverb,oblog);
+					} else if (*pseitenp<seiten || !*pseitenp) {
+						tuloeschen(ziel,cuser,obverb,oblog);
+					} // 		 if (*pseitenp==seiten && seiten>0) else
+				} // 		 if (pseitenp)
+			} // if (rueck.size())
+			// pdfinfo /DATA/shome/gerald/t.pdf |grep Pages|sed 's/[^ ]*[ ]*\(.*\)/\1/'
+		} // 		if (loeschen && exten=="tif")
+	} // 	if (!erg)
 	return erg; 
 } // int paramcl::zupdf(string von, string zielvz, int obocr, int obverb, int oblog)
 
@@ -4602,7 +4611,7 @@ void paramcl::DateienHerricht()
       Log(string(Tx[T_lstatfehlgeschlagen]) + strerror(errno) + Tx[T_beiDatei]+ fxv[nachrnr].npdf,1,1,1);
       continue;
     } // (lstat((*pfad + vtz + dirEntry->d_name).c_str(), &entrynpdf)) 
-		erg=zupdf(fxv[nachrnr].npdf, fxv[nachrnr].spdf, obocra, 0, obverb, oblog);
+		erg=zupdf(fxv[nachrnr].npdf, fxv[nachrnr].spdf, &fxv[nachrnr].pseiten, obocra, 0, obverb, oblog);
 		if (erg) {
 			//      spdfp->erase(spdfp->begin()+nachrnr);
 			// Misserfolg, zurueckverschieben und aus der Datenbank loeschen
@@ -4683,6 +4692,7 @@ void paramcl::DateienHerricht()
       Log(string("npdf[")+rot+ltoan(i)+schwarz+"]: "+rot+fxv[i].npdf+schwarz,obverb,oblog);
       Log(string("spdf[")+rot+ltoan(i)+schwarz+"]: "+rot+fxv[i].spdf+schwarz,obverb,oblog);
       Log(string("prio:       ")+rot+ltoan(fxv[i].prio)+schwarz,obverb,oblog);
+      Log(string("pseiten:    ")+rot+ltoan(fxv[i].pseiten)+schwarz,obverb,oblog);
     } //   for(unsigned i=0;i<fxv.size();i++)
 
   Log(string(Tx[T_aus])+drot+zufaxenvz+schwarz+vtz+Tx[T_verarbeitete_PDF_Dateien]+drot+ltoan(fxv.size())+schwarz,1,oblog);
@@ -4711,7 +4721,7 @@ void paramcl::faxealle()
       "((ISNULL(hylanr) OR hylanr='') AND (ISNULL(capidials) OR capidials>=" +maxcapiv+" OR capidials=-1 OR "
 //      "      (ISNULL(prio) OR prio=2 OR (prio=0 AND "+hzstr+")))) p10, "
       "      (ISNULL(prio) OR prio=3 OR prio=1))) p10, "
-      "adressat p11 "
+      "adressat p11, pages p12 "
       "FROM `"+spooltab+"` "
       "WHERE original>''",ZDB);
   if (r0.obfehl) {
@@ -4726,7 +4736,8 @@ void paramcl::faxealle()
         // obcapi = *(*cerg+9), obhyla=*(*cerg+10)
         fsfv.push_back(/*1*/fsfcl(*(*cerg+0)/*id*/, *(*cerg+1)/*npdf*/, *(*cerg+2)/*spdf*/, *(*cerg+3)/*telnr*/, 
 					 atoi(*(*cerg+4))/*prio*/, *(*cerg+5)/*capisd*/, atoi(*(*cerg+6))/*capids*/, *(*cerg+7)/*hylanr*/, 
-					 atoi(*(*cerg+8))/*hdialsn*/, (binaer)atoi(*(*cerg+9))/*obcapi*/, (binaer)atoi(*(*cerg+10))/*obhyla*/, *(*cerg+11))/*adressat*/);
+					 atoi(*(*cerg+8))/*hdialsn*/, (binaer)atoi(*(*cerg+9))/*obcapi*/, (binaer)atoi(*(*cerg+10))/*obhyla*/, *(*cerg+11)/*adressat*/,
+					 atoi(*(*cerg+12))/*pages*/));
       }
     } // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
     Log(string(Tx[T_ZahldDSmwegzuschickendenFaxenin])+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz,obverb,oblog);
@@ -4790,7 +4801,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
   Log(violetts+Tx[T_untersuchespool]+schwarz,obverb,oblog);
   char ***cerg;
   RS rs(My,string("SELECT id p0,capispooldatei p1,capispoolpfad p2,original p3,cdateidatum p4,"
-        " telnr p5,origvu p6,hylanr p7,capidials p8,hyladials p9,hdateidatum p10, adressat p11, idudoc p12, prio p13 "
+        " telnr p5,origvu p6,hylanr p7,capidials p8,hyladials p9,hdateidatum p10, adressat p11, idudoc p12, prio p13, pages p14 "
         "FROM `")+spooltab+"` WHERE (hylanr RLIKE '^[0-9]+$' AND hylanr<>0) OR capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",ZDB);
   if (!rs.obfehl) {
     faxord=0;
@@ -4812,6 +4823,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
         if (*(*cerg+11)) fsf.adressat =*(*cerg+11); // adressat
         if (*(*cerg+12)) fsf.idudoc = *(*cerg+12);  // id des ursp.Dateinamens in udoc
         if (*(*cerg+13)) fsf.prio = atol(*(*cerg+13));  // Prioritaet wie in Datenbank
+        if (*(*cerg+14)) fsf.pseiten = atol(*(*cerg+14));  // pages wie in Datenbank
         Log(string("id: ")+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
         ausg<<blau<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; // ab hier Neue-Zeile-Zeichen immer am Anfang der naechsten Zeile
         // a) ueber capisuite
@@ -4900,11 +4912,11 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
             (fzahl)++;
           } else if (fsf.capistat==wartend || (fsf.hylastat>static_cast<FxStat>(gestrichen)&&fsf.hylastat<=static_cast<FxStat>(verarb))) {
             (wzahl)++;
-          }
+          } //           if (fsf.capistat==gesandt || fsf.hylastat==gesandt) else if ...
           // Aktionen, wenn in beiden gescheitert oder fehlend
           if (obverb>0) {
             Log(violetts+"Capistat: "+schwarz+FxStatS(&fsf.capistat)+violett+", Hylastat: "+schwarz+FxStatS(&fsf.hylastat),obverb,oblog);
-          }
+          } //           if (obverb>0)
           // die Flags aller aktivierten Faxwege stehen auf gescheitert
           uchar allegesch=0;
 					 if (obcapi && obhyla && fsf.capistat==gescheitert && fsf.hylastat==gescheitert) allegesch=1;
@@ -4933,7 +4945,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
             uchar geloescht=0;
             fsf.archiviere(My,this,&entrysend,allegesch||nimmer,fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?capi:hyla, 
                 &geloescht, obverb, oblog);
-          } 
+          } //           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) )
           // wenn alle aktivierten Faxwege auf gescheitert oder fehlend stehen oder die Quelldatei fehlt ...
           if (allegesch || (nimmer && !ogibts[0])) {
             // Fax gescheitert, Dateien von warteauffax nach nichtgefaxt verschieben
@@ -4985,6 +4997,7 @@ void paramcl::zeigweitere()
   if (obtitel) Log(ausg.str(),1,oblog);
 } // void paramcl::zeigweitere()
 
+// in loeschefax und zeigweitere
 void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
 {
     struct stat entryvz;
@@ -5011,6 +5024,7 @@ void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
     } // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
 } // void zeigweitere(DB *My, paramcl *pmp, int obverb=0,int oblog=0)
 
+// in sammlecapi
 void paramcl::bereinigecapi()
 {
   svec rueck;
@@ -5163,6 +5177,7 @@ void paramcl::empfarch()
 {
   Log(violetts+Tx[T_empfarch]+schwarz,obverb,oblog);
   char tbuf[255];
+	ulong pseiten=0;
   // 1) hyla
   string hempfavz=varsphylavz+"/autofaxarch"; // /var/spool/capisuite/empfarch/
   // Faxe in der Empfangswarteschlange auflisten, ...
@@ -5245,7 +5260,7 @@ void paramcl::empfarch()
 			if (chmod(hpfad.c_str(),S_IRWXU|S_IRGRP|S_IROTH))
 				systemrueck("sudo chmod +r \""+hpfad+"\"",obverb,oblog);
 		if (obocri) {
-      obpdfda=!zupdf(vorsoffice, ziel, obocri, 1, obverb, oblog); // 0=Erfolg
+      obpdfda=!zupdf(vorsoffice, ziel, &pseiten, obocri, 1, obverb, oblog); // 0=Erfolg
 			if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) if (!kfehler) tuloeschen(hpfad,cuser,obverb,oblog);
     } // if (obocri) 
     if (obhpfadda||obpdfda) {
@@ -5345,7 +5360,7 @@ void paramcl::empfarch()
 					erg=systemrueck(cmd,obverb,oblog);
 					if (!erg) {
 					 attrangleich(tifpfad,empfvz,obverb,oblog);
-					}
+					} // if (!erg)
           if (erg) {
             verschieb=2;
             tifpfad=empfvz+vtz+tifrumpf+".sff";
@@ -5355,11 +5370,11 @@ void paramcl::empfarch()
               systemrueck("sudo chmod --reference=\""+empfvz+"\" \""+tifpfad+"\"",obverb,oblog);
 						} else {
 						  tifpfad=sffdatei;
-            }
-					}
+            } // if (!kfehler) else
+					} // if (erg)
           if (obocri) {
 					  string ziel=empfvz+vtz+tifrumpf+".pdf"; 
-						int obpdfda=!zupdf(tifpfad, ziel, obocri, 1, obverb, oblog); // 0=Erfolg
+						int obpdfda=!zupdf(tifpfad, ziel, &pseiten, obocri, 1, obverb, oblog); // 0=Erfolg
 						struct stat entrynd;
 						if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) if (!kfehler) tuloeschen(tifpfad,cuser,obverb,oblog);
           } // if ((erg=systemrueck(cmd,obverb,oblog))) else if (obocri)
@@ -5377,8 +5392,8 @@ void paramcl::empfarch()
             Log(rots+Tx[T_Fehler_beim_Datumsetzen_von]+tifpfad+rot+"'"+schwarz,1,1);
           } else 
 #endif
-        					if (!verschieb) {
-            dorename(sffdatei,cempfavz+vtz+cuser+"-"+base+".sff",cuser,&vfehler,obverb,oblog);
+						if (!verschieb) {
+							dorename(sffdatei,cempfavz+vtz+cuser+"-"+base+".sff",cuser,&vfehler,obverb,oblog);
             dorename(rueck[i],cempfavz+vtz+cuser+"-"+base_name(rueck[i]),cuser,&vfehler,obverb,oblog);
           } // if (utime(tifpfad.c_str(),&ubuf))  else
         } // if (!lstat(tifpfad.c_str(),&entrytifpfad))
@@ -5408,6 +5423,7 @@ void paramcl::empfarch()
         einf.push_back(/*2*/instyp(My->DBS,"id",&base));
         einf.push_back(/*2*/instyp(My->DBS,"fsize",entrysff.st_size));
         einf.push_back(/*2*/instyp(My->DBS,"csid",&umst[2].wert));
+        einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
         rins.insert(tinca,einf, 1,0,ZDB?ZDB:!runde); 
         if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
         if (!rins.fnr) break;
@@ -6997,7 +7013,7 @@ void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp,
       if (runde==1) {
         Log(string(Tx[T_Fehler_af])+drot+ltoan(rupd.fnr)+schwarz+Tx[T_bei]+tuerkis+rupd.sql+schwarz+": "+blau+rupd.fehler+schwarz,1,pmp->oblog);
         exit(36);
-      }
+      } //       if (runde==1)
     }   // for(int runde=0;runde<2;runde++)
     Log(drots+"  affected_rows(): "+schwarz+ltoan(affr),pmp->obverb,pmp->oblog);
   } else {
@@ -7082,8 +7098,8 @@ string paramcl::stdfaxnr(const string& faxnr)
         // ansonsten alles abschreiben
         else
           trimfaxnr+=*it;
-      }
-    }
+      } //       if (strchr("+0123456789",*it))
+    } //     for (string::const_iterator it=faxnr.begin(); it!=faxnr.end(); ++it)
     // wenn am Schluss das eigene Land am Anfang steht, dann streichen
     if (!trimfaxnr.find(land)) trimfaxnr=this->LongDistancePrefix+trimfaxnr.substr(land.length());
   return trimfaxnr;
@@ -7162,6 +7178,7 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
       Feld("hylastate","int","2","",Tx[T_state_Feld_in_hylafax],0,0,1),
       Feld("hylastatuscode","int","10","",Tx[T_statuscode_in_letztem_gescheitertem_hylafax],0,0,1),
       Feld("hylastatus","varchar","80","",Tx[T_status_in_letztem_gescheitertem_hylafax],0,0,1),
+      Feld("pages","int","10","",Tx[T_Seitenzahl],0,0,1),
     };
     Feld ifelder0[] = {Feld("capispooldatei")}; Index i0("capispooldatei",ifelder0,sizeof ifelder0/sizeof* ifelder0);
     Feld ifelder1[] = {Feld("cdateidatum")};    Index i1("cdateidatum",ifelder1,sizeof ifelder1/sizeof* ifelder1);
