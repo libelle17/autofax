@@ -4196,16 +4196,17 @@ void paramcl::suchestr()
 }
 
 // verwendet in DateienHerricht(), empfarch()
-int paramcl::pruefsoffice()
+int paramcl::pruefsoffice(uchar mitloe/*=0*/)
 {
   static uchar sofficegeprueft=0;
   static int sofficeda=0;
   if (!sofficegeprueft) {
     //              systemrueck("which zypper 2>/dev/null && zypper -n in soffice || "
     //                          "{ which apt-get 2>/dev/null && apt-get -y install soffice; }",obverb,oblog);
+    if (mitloe) linst.doinst("libreoffice-base",obverb,oblog,"",1);
     sofficeda=!linst.doinst("libreoffice-base",obverb,oblog,"soffice");
     sofficegeprueft=1;
-  }
+  } //   if (!sofficegeprueft)
   return sofficeda;
 } // int paramcl::pruefsoffice()
 
@@ -4372,7 +4373,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 						// 5.12.16 opensuse: bearbeitet jetzt nur (noch?) die erste Seite!
 						pname="soffice";
 						if (pruefsoffice())
-							cmd="cd $HOME; soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+quell+"\"";
+							cmd="cd $HOME; soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+quell+"\" 2>&1";
 						break; // Ergebnis immer 0
 					case 1: 
 						pname="convert";
@@ -4382,13 +4383,16 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 				} // switch (runde) 
 				if (!cmd.empty()) {
 					vector<string> umwd;
-					if (systemrueck(cmd, obverb,oblog,&umwd)) {
+					int erg=0;
+					if ((erg=systemrueck(cmd, obverb,oblog,&umwd))) {
 					 for(unsigned uru=0;uru<umwd.size();uru++) {
 					  if (umwd[uru].find("javaldx failed")!=string::npos) {
 						 cout<<rot<<"Hier der Fehler!"<<schwarz<<endl;
-						}
-					 }
-					}
+						 pruefsoffice(1);
+					   erg=systemrueck(cmd, obverb,oblog,&umwd);
+						} // 					  if (umwd[uru].find("javaldx failed")!=string::npos)
+					 } // 					 for(unsigned uru=0;uru<umwd.size();uru++)
+					} // 					if ((erg=systemrueck(cmd, obverb,oblog,&umwd)))
 					struct stat entryziel;
 					erg=lstat(ziel.c_str(),&entryziel); 
 					Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+pname+schwarz+

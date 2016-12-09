@@ -344,7 +344,7 @@ class paramcl // Programmparameter
     void tu_lista(const string& oberfolg);
     void tu_listi();
     void suchestr();
-    int pruefsoffice();
+    int pruefsoffice(uchar mitloe=0);
     int pruefconvert();
     int pruefocr();
     void DateienHerricht();

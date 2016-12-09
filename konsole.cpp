@@ -2382,7 +2382,7 @@ string linstcl::ersetzeprog(const string& prog)
 } // string linstcl::ersetzeprog(const string& prog) 
 
 
-int linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsnichtda)
+int linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsnichtda,uchar obun/*=0*/)
 {
   // <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
   int ret=2;
@@ -2393,7 +2393,7 @@ int linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsn
     if (obprogda(fallsnichtda,obverb,oblog)) {
       eprog.clear();
       return 0;
-    }
+    } //     if (obprogda(fallsnichtda,obverb,oblog))
   } // if (!fallsnichtda.empty()) 
 //	int iru;
   if (!eprog.empty()) {
@@ -2402,21 +2402,21 @@ int linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsn
         if (obnmr) {
           obnmr=0;
           systemrueck("sudo zypper mr -k -all",obverb,oblog);
-        }
-        ret=systemrueck("sudo zypper -n --gpg-auto-import-keys in -f "+eprog,obverb+1,oblog);
+        } //         if (obnmr)
+        ret=systemrueck(string("sudo zypper -n --gpg-auto-import-keys ")+(obun?"rm":"in")+" -f "+eprog,obverb+1,oblog);
         break;
       case apt:
 //				for(iru=0;iru<2;iru++) KLA
 //					if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
 //					systemrueck("sudo dpkg --configure -a",obverb+1,oblog);
 //				KLZ
-				ret=systemrueck("sudo apt-get -y --force-yes install "+eprog,obverb+1,oblog);
+				ret=systemrueck(string("sudo apt-get -y --force-yes ")+(obun?"remove ":"install ")+eprog,obverb+1,oblog);
 				break; 
       case dnf:
-        ret=systemrueck("sudo dnf -y install "+eprog,obverb+1,oblog);
+        ret=systemrueck(string("sudo dnf -y ")+(obun?"remove ":"install ")+eprog,obverb+1,oblog);
         break;
       case yum:
-        ret=systemrueck("sudo yum -y install "+eprog,obverb+1,oblog);
+        ret=systemrueck(string("sudo yum -y ")+(obun?"remove ":"install ")+eprog,obverb+1,oblog);
         break;
       default: break;
     } // switch (pruefipr()) 
@@ -2436,11 +2436,11 @@ int linstcl::doggfinst(const string& prog,int obverb,int oblog)
   return 0;
 } // uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
 
-int linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
+int linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda,uchar obun/*=0*/)
 {
   const string& progs=prog;
   // <<rot<<"doinst 2: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
-  return doinst(progs,obverb,oblog,fallsnichtda);
+  return doinst(progs,obverb,oblog,fallsnichtda,obun);
 } // uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
 
 int linstcl::douninst(const string& prog,int obverb,int oblog) 

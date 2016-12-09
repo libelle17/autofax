@@ -601,8 +601,8 @@ class linstcl
     uchar obnmr=1;
     string eprog; // ersetztes Programm
     string ersetzeprog(const string& prog);
-    int doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda="");
-    int doinst(const char* prog,int obverb=0,int oblog=0,const string& fallsnichtda="");
+    int doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda="",uchar obun=0);
+    int doinst(const char* prog,int obverb=0,int oblog=0,const string& fallsnichtda="",uchar obun=0);
     int doggfinst(const string& prog,int obverb=0,int oblog=0);
     int douninst(const string& prog,int obverb=0,int oblog=0);
     int obfehlt(const string& prog,int obverb=0,int oblog=0);
