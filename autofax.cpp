@@ -4593,7 +4593,6 @@ void paramcl::DateienHerricht()
 		cout<<rot<<"vor verschieben"<<schwarz<<endl;
     string wartedatei=verschiebe(urfx.at(i).teil,wvz,cuser,&vfehler,1,obverb,oblog);
 		cout<<rot<<"nach verschieben, wartedatei: "<<schwarz<<wartedatei<<endl;
-		exit(0);
     if (vfehler) {
       cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
         blau<<urfx.at(i).teil<<schwarz<<" ->\n"<<
@@ -4629,6 +4628,8 @@ void paramcl::DateienHerricht()
       Log(string(Tx[T_lstatfehlgeschlagen]) + strerror(errno) + Tx[T_beiDatei]+ fxv[nachrnr].npdf,1,1,1);
       continue;
     } // (lstat((*pfad + vtz + dirEntry->d_name).c_str(), &entrynpdf)) 
+		cout<<rot<<"fxv[nachrnr].npdf: "<<schwarz<<fxv[nachrnr].npdf<<endl;
+		exit(0);
 		erg=zupdf(fxv[nachrnr].npdf, fxv[nachrnr].spdf, &fxv[nachrnr].pseiten, obocra, 0, obverb, oblog);
 		if (erg) {
 			//      spdfp->erase(spdfp->begin()+nachrnr);
