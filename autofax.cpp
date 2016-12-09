@@ -4629,8 +4629,9 @@ void paramcl::DateienHerricht()
       continue;
     } // (lstat((*pfad + vtz + dirEntry->d_name).c_str(), &entrynpdf)) 
 		cout<<rot<<"fxv[nachrnr].npdf: "<<schwarz<<fxv[nachrnr].npdf<<endl;
-		exit(0);
 		erg=zupdf(fxv[nachrnr].npdf, fxv[nachrnr].spdf, &fxv[nachrnr].pseiten, obocra, 0, obverb, oblog);
+		cout<<violett<<"erg: "<<rot<<(int)erg<<schwarz<<endl;
+		exit(0);
 		if (erg) {
 			//      spdfp->erase(spdfp->begin()+nachrnr);
 			// Misserfolg, zurueckverschieben und aus der Datenbank loeschen
