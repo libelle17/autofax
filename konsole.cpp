@@ -1815,7 +1815,7 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
 				if (ob0heissterfolg) {
 					if (erg) {
 						if (cmd.substr(0,6)=="rpm -q" || cmd.substr(0,7)=="dpkg -s" || 
-						    cmd.substr(0,5)=="which" || cmd.substr(0,10)=="sudo which" || cmd.substr(0,20)=="sudo iptables -L") {
+						    cmd.substr(0,5)=="which" || cmd.substr(0,10)=="sudo which" || cmd.substr(0,16)=="sudo iptables -L") {
 							ergebnis=gruens+Txk[T_nicht_gefunden];
 						} else if (cmd.substr(0,14)=="sudo modprobe ") {
 						  ergebnis=gruens+Txk[T_nicht_einfuegbar];

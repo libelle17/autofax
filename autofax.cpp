@@ -4350,7 +4350,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 	int erg=1;
 	string stamm,exten, *quellp=&quell;
 	getstammext(quellp,&stamm,&exten);
-	int keinbild= (exten=="doc"||exten=="xls"||exten=="txt"||exten=="odf"||exten=="ppt");
+	int keinbild= (exten=="doc"||exten=="xls"||exten=="txt"||exten=="odf"||exten=="ppt"||exten=="docx"||exten=="htm"||exten=="html");
 	for(int aru=0;aru<2;aru++) {
 		if (/*aru||*/!keinbild) {
 			if (obocr) {
@@ -4391,6 +4391,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 					  if (umwd[uru].find("failed to read path from javaldx")!=string::npos) {
 						 cout<<rot<<"Hier der Fehler!"<<schwarz<<endl;
 					   erg=systemrueck(cmd0+"sudo "+cmd, obverb,oblog);
+						 cout<<"erg nach cmd mit sudo: "<<(int)erg<<endl;
 						 /*
 						 int altobverb=obverb;
 						 obverb=1;
@@ -4445,6 +4446,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 			// pdfinfo /DATA/shome/gerald/t.pdf |grep Pages|sed 's/[^ ]*[ ]*\(.*\)/\1/'
 		} // 		if (loeschen && exten=="tif")
 	} // 	if (!erg)
+	cout<<gruen<<"erg: "<<schwarz<<erg<<endl;
 	return erg; 
 } // int paramcl::zupdf(string von, string zielvz, int obocr, int obverb, int oblog)
 
