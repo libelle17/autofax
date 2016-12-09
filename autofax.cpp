@@ -4421,6 +4421,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 			//  string *oquel=(erg?&quell:&ziel);
 		} // (erg)
 	} // 	for(int aru=0;aru<2;aru++)
+	cout<<gruen<<"erg 7b: "<<schwarz<<erg<<endl;
 	if (!erg) {
 		attrangleich(ziel,quell);
 	// falls !erg und Seitenzahl gleich, dann tif loeschen

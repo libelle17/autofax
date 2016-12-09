@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "09.12.16" "Version 0.41614" "Manual-Seite für autofax"
+.TH man 1 "09.12.16" "Version 0.41615" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -320,7 +320,7 @@ boost, boost-devel, capiutils, capisuite, capi4linux, convert, cron, fcpci-3.10.
 .br
 In Fedora kann die Verwendung von Capisuite die Installation eines neuen Kernels erfordern und beinhalten.
 .br
-Wenn Sie eines dieser Programme nicht wollen oder eine aeltere Version 0.41614
+Wenn Sie eines dieser Programme nicht wollen oder eine aeltere Version 0.41615
 
 .SH AUSWIRKUNGEN
 Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:
