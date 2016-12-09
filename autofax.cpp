@@ -4386,7 +4386,6 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 				} // switch (runde) 
 				if (!cmd.empty()) {
 					vector<string> umwd;
-					int erg=0;
 					if ((erg=systemrueck(cmd0+cmd, obverb,oblog,&umwd))) {
 					 for(unsigned uru=0;uru<umwd.size();uru++) {
 					  if (umwd[uru].find("failed to read path from javaldx")!=string::npos) {
