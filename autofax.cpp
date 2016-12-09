@@ -5542,7 +5542,8 @@ void dorename(const string& quelle, const string& ziel, const string& cuser, uin
 		struct stat exist;
 		int gibts=!lstat(ziel.c_str(),&exist);
 		cout<<rot<<"renerg: "<<renerg<<" gibts: "<<gibts<<" ziel: "<<ziel<<endl;
-    if (rename(quelle.c_str(),ziel.c_str())) {
+//    if (rename(quelle.c_str(),ziel.c_str())) {
+    if (renerg) {
 	  cout<<"ren 2"<<endl;
       if(cuser.empty()) iru++;
 	  cout<<"ren 3"<<endl;
