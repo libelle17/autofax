@@ -4200,7 +4200,7 @@ int paramcl::pruefsoffice(uchar mitloe/*=0*/)
 {
   static uchar sofficegeprueft=0;
   static int sofficeda=0;
-  if (!sofficegeprueft) {
+  if (mitloe || !sofficegeprueft) {
     //              systemrueck("which zypper 2>/dev/null && zypper -n in soffice || "
     //                          "{ which apt-get 2>/dev/null && apt-get -y install soffice; }",obverb,oblog);
     if (mitloe) linst.doinst("libreoffice-base",obverb,oblog,"",1);
