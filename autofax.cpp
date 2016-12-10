@@ -4373,15 +4373,17 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 					case 0: 
 						// 5.12.16 opensuse: bearbeitet jetzt nur (noch?) die erste Seite!
 						pname="soffice";
-						if (pruefsoffice())
+						if (pruefsoffice()) {
 						  cmd0="cd $HOME; ";
 							cmd="soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+quell+"\" 2>&1";
+						}
 						break; // Ergebnis immer 0
 					case 1: 
 						pname="convert";
-						if (pruefconvert())
+						if (pruefconvert()) {
 							cmd0.clear();
 							cmd=string("sudo convert \""+quell+"\" \""+ziel+"\""); 
+						}
 						break;
 				} // switch (runde) 
 				if (!cmd.empty()) {

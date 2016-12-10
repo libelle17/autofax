@@ -1011,6 +1011,9 @@ autofax</b> <br>
 - ansonsten z.B. (falls &rsquo;wget&rsquo; installiert ist,
 was meist der Fall ist) mit (am besten markieren und an die
 Kommandozeile kopieren): <b><br>
+P=autofaxinst.sh; wget
+https://raw.githubusercontent.com/libelle17/autofax/master/install.sh
+-O $P; sh ./$P <br>
 P=autofax; T=$P.tar.gz; cd ~; wget
 https://github.com/libelle17/$P/archive/master.tar.gz -O $T
 && tar xpvf $T && rm -f $T && { for
