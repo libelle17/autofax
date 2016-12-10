@@ -21,7 +21,7 @@ else
 # CC=sudo $(CCName)
  CC=$(CCName)
 endif
-GROFFCHECK={ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} || { which zypper >/dev/null 2>&1 && { sudo zypper -n --gpg-auto-import-keys in groff 2>/dev/null;true;} || { which apt-get >/dev/null 2>&1 && { sudo apt-get -y --force-yes install groff groff-base;true;} || { which dnf >/dev/null 2>&1 && { sudo dnf -y install groff groff-base;true;} || { which yum >/dev/null 2>&1 && sudo yum -y install groff groff-base;true;} } } }
+GROFFCHECK={ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} ||{ which zypper >/dev/null 2>&1 &&{ sudo zypper -n --gpg-auto-import-keys in groff 2>/dev/null;true;} ||{ which apt-get >/dev/null 2>&1 &&{ sudo apt-get -y --force-yes install groff groff-base;true;} ||{ which dnf >/dev/null 2>&1 &&{ sudo dnf -y install groff groff-base;true;} ||{ which yum >/dev/null 2>&1 && sudo yum -y install groff groff-base;true;} } } }
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
