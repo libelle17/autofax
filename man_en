@@ -69,9 +69,9 @@ Furthermore, autofax holds the posted faxes in a mariadb database.
 Additionally, received faxes from \fBhylafax\fR/\fBcapisuite\fR can be named with the sender's name according to his fax number and stored.
 .SH INSTALLATION
 .br
-First, read the chapters 'functionality', 'preconditions' and 'implications' below. Then:
+First, read the chapters 'functionality', 'preconditions' and 'implications' below. Then, if connected to the internet, call:
 .br
-\fBP=autofax_inst.sh; wget https://raw.githubusercontent.com/libelle17/autofax/master/install.sh -O $P; sh $P\fR
+ \fBP=autofax_inst.sh; wget https://raw.githubusercontent.com/libelle17/autofax/master/install.sh -O $P; sh $P\fR
 .br
 At last, call:
 .br
