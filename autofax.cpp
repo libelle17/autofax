@@ -550,6 +550,12 @@ enum T_
 	T_unveraendert,
 	T_Kein_cron_gesetzt_nicht_zu_setzen,
 	T_Seiten,
+	T_suchestr,
+	T_pruefsoffice,
+	T_pruefconvert,
+	T_pruefunpaper,
+	T_pruefocr,
+	T_zupdf,
 	T_MAX
 };
 
@@ -1560,6 +1566,18 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	{"Kein cron gesetzt, nicht zu setzen","No cron set, not to set"},
 	// T_Seiten
 	{" Seite(n)"," page(s)"},
+	// T_suchestr
+	{"suchestr()","searchstr()"},
+	// T_pruefsoffice
+	{"pruefsoffice()","checksoffice()"},
+	// T_pruefconvert
+	{"pruefconvert()","checkconvert()"},
+	// T_pruefunpaper
+	{"pruefunpaper()","checkunpaper()"},
+	// T_pruefocr
+	{"pruefocr()","checkocr()"},
+	// T_zupdf
+	{"zupdf()","topdf()"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -4198,6 +4216,7 @@ void paramcl::suchestr()
 // verwendet in DateienHerricht(), empfarch()
 int paramcl::pruefsoffice(uchar mitloe/*=0*/)
 {
+  Log(violetts+Tx[T_pruefsoffice]+schwarz,obverb,oblog);
   static uchar sofficegeprueft=0;
   static int sofficeda=0;
   if (mitloe || !sofficegeprueft) {
@@ -4213,6 +4232,7 @@ int paramcl::pruefsoffice(uchar mitloe/*=0*/)
 // verwendet in DateienHerricht
 int paramcl::pruefconvert()
 {
+  Log(violetts+Tx[T_pruefconvert]+schwarz,obverb,oblog);
   static uchar convertgeprueft=0;
   static int convertda=0;
   if (!convertgeprueft) {
@@ -4226,6 +4246,7 @@ int paramcl::pruefconvert()
 
 void paramcl::pruefunpaper()
 {
+  Log(violetts+Tx[T_pruefunpaper]+schwarz,obverb,oblog);
 	if (double vers=progvers("unpaper",obverb,oblog)<6.1) {
    if (pruefipr()==dnf||pruefipr()==yum) {
 // sudo rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm 
@@ -4252,6 +4273,7 @@ void paramcl::pruefunpaper()
 // verwendet in empfarch() (2x) und DateienHerricht() (2x)
 int paramcl::pruefocr()
 {
+  Log(violetts+Tx[T_pruefocr]+schwarz,obverb,oblog);
 	if (!obocrgeprueft) {
 		uchar tda=1, deuda=0, engda=0, osdda=0;
 		systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
@@ -4347,6 +4369,7 @@ int paramcl::pruefocr()
 // in Dateinherricht und empfarch (2x)
 int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr/*=1*/, int loeschen/*=1*/, int obverb/*=0*/, int oblog/*=0*/) // 0=Erfolg
 {
+  Log(violetts+Tx[T_zupdf]+schwarz+" '"+blau+quell+schwarz+"' '"+blau+ziel+schwarz+"'",obverb,oblog);
 	int erg=1;
 	string stamm,exten, *quellp=&quell;
 	getstammext(quellp,&stamm,&exten);
