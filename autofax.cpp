@@ -3481,7 +3481,7 @@ void paramcl::verzeichnisse()
 {
   Log(violetts+Tx[T_verzeichnisse],obverb,oblog);
   pruefcvz(); 
-  pruefverz(zufaxenvz,2,oblog,2); // dahin soll man schreiben koennen
+  pruefverz(zufaxenvz,obverb,oblog,2); // dahin soll man schreiben koennen
   pruefverz(wvz,obverb,oblog);
   pruefverz(nvz,obverb,oblog);
   pruefverz(empfvz,obverb,oblog);
@@ -4273,6 +4273,7 @@ void paramcl::pruefunpaper()
 // verwendet in empfarch() (2x) und DateienHerricht() (2x)
 int paramcl::pruefocr()
 {
+  Log(rots+Tx[T_pruefocr]+schwarz,obverb,oblog);
   Log(gruens+Tx[T_pruefocr]+schwarz,obverb,oblog);
   Log(violetts+Tx[T_pruefocr]+schwarz,obverb,oblog);
 	if (!obocrgeprueft) {
