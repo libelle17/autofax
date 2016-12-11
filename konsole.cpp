@@ -1540,7 +1540,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
     vp=fertige;
   } else {
   for(int akts=0;akts<Smax;akts++) {
-    bemst=(*TxBp)[Tind][akts];
+    bemst=TxBp[Tind][akts];
 		caus<<"name: "<<violett<<name<<schwarz<<" bemst: "<<violett<<bemst<<schwarz<<endl;
     if (obfarbe) loeschefarbenaus(&bemst);
     bemv<<bemst;
@@ -2283,7 +2283,7 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
 
 string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
 {
- static const string nix="";
+ static const string nix; // =""
  bemerkung.clear();
   if (TxBp) {
     if (Txi!=-1) {
