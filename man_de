@@ -69,29 +69,8 @@ weiterhin die versandten Faxe in einer MariaDB-Datenbank abspeichert.
 Außerdem können von \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe nach dem Sender anhand dessen Faxnummer benannt und abgespeichert werden.
 .SH INSTALLATION
 Zunächst lesen Sie bitte die Kapitel 'Funktionsweise', 'Voraussetzungen' und 'Auswirkungen'. Anschließend:
-- wenn das Programm 'git' zur Verfuegung steht, können Sie beginnen mit:
 .br
- \fBgit clone http://github.com/libelle17/autofax && cd autofax\fR
-.br
-- ansonsten z.B. (falls 'wget' installiert ist, was meist der Fall ist) mit (am besten markieren und an die Kommandozeile kopieren):
-.br
-\fBP=autofaxinst.sh; wget https://raw.githubusercontent.com/libelle17/autofax/master/install.sh -O $P; sh ./$P\fR
-.br
- \fBP=autofax; T=$P.tar.gz; cd ~; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && { for i in $(ls -d ${P}_* 2>/dev/null | cut -d"_" -f2 | sort -nr); do j=$((i+1)); case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done; test -e $P && mv $P ${P}_1; mv $P-master $P && cd $P; }\fR
-.br
-Wenn das Programm (gnu) 'make' nicht zur Verfügung steht, können Sie dort './install.sh' aufrufen, damit sollte 'make' installiert werden; anderenfalls können Sie auch aufrufen:
-.br
-- falls Sie vor Kompilierung die Aktualität von gcc6 sicherstellen lassen wollen oder müssen:
-.br
- \fBmake\fR oder zur Laufzeitoptimierung \fBmake optfast\fR oder zur Groessenoptimierung \fBmake opts\fR
-.br
-- ansonsten:
-.br
- \fBmake glei\fR
-.br
-dann weiter:
-.br
- \fBsudo make install\fR
+\fBP=autofax_inst.sh; wget https://raw.githubusercontent.com/libelle17/autofax/master/install.sh -O $P; sh ./$P\fR
 .br
 Zuletzt rufen Sie auf:
 .br
