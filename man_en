@@ -68,29 +68,10 @@ Furthermore, autofax holds the posted faxes in a mariadb database.
 .br
 Additionally, received faxes from \fBhylafax\fR/\fBcapisuite\fR can be named with the sender's name according to his fax number and stored.
 .SH INSTALLATION
+.br
 First, read the chapters 'functionality', 'preconditions' and 'implications' below. Then:
 .br
-- if the program 'git' is installed, You can start with:
-.br
- \fBgit clone http://github.com/libelle17/autofax && cd autofax\fR
-.br
-- otherwise e.g. (if 'wget' ist installed, which is mostly the case) with (e.g. by copying an pasting to the command line):
-.br
- \fBP=autofax; T=$P.tar.gz; cd ~; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && { for i in $(ls -d ${P}_* 2>/dev/null | cut -d"_" -f2 | sort -nr); do j=$((i+1)); case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done; test -e $P && mv $P ${P}_1; mv $P-master $P && cd $P; }\fR
-.br
-there, if the program 'make' is not available, You can call '\fB./install.sh\fR', this should install 'make'; otherwise, You also can call:
-.br
-- if You want or have to have ensured the currentness of 'gcc6' before compilation:
-.br
- \fBmake\fR or for runtime optimizing \fBmake optfast\fR or for size optimizing \fBmake opts\fR
-.br
-- otherwise:
-.br
- \fBmake glei\fR
-.br
-furtheron:
-.br
- \fBsudo make install\fR
+\fBP=autofax_inst.sh; wget https://raw.githubusercontent.com/libelle17/autofax/master/install.sh -O $P; sh $P\fR
 .br
 At last, call:
 .br
