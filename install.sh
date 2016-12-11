@@ -22,9 +22,9 @@ getIPR() {
 SUG="root\| sudo\| wheel\| admin";
 getIPR;
 which sudo >/dev/null && id -Gn $USER|grep -qw "$SUG"&&{ 
-	echo "Please enter root's password if asked/ Bitte geben Sie bei der Frage das Passwort von 'root' ein:";
+	echo -e "Please enter root's password if asked\nBitte geben Sie bei der Frage das Passwort von 'root' ein:";
 	su -c "$IPR sudo; usermod -aG $(cut -d: -f1 /etc/group|grep "$SUG"|head -n 1) "$USER";"; 
-	echo -e "Please log out and in again, change to the directory '$PWD' and then call this script again!/\nBitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$PWD' und rufen Sie das Script dann nochmal auf!";
+	echo -e "Please log out and in again, change to the directory '$PWD' and then call this script again!\nBitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$PWD' und rufen Sie das Script dann nochmal auf!";
 	exit;
 }
 $SPR make >/dev/null 2>&1 ||{
@@ -59,4 +59,4 @@ $SPR make >/dev/null || exit
 make &&
 sudo make install; erg=$?;
 [ $erg = 0 ] && farbe=$blau || farbe=$rot;
-echo -e Ergebniscode: ${farbe}$erg${reset}
+echo -e Result code/ Ergebniscode: ${farbe}$erg${reset}
