@@ -1543,7 +1543,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
 	  caus<<"name: "<<violett<<name<<schwarz<<" Tind: "<<Tind<<" akts: "<<akts<<endl;
 		cout<<TxBp[0][0]<<endl;
 		cout<<TxBp[0][1]<<endl;
-		cout<<TxBp[1][0]<<endl;
+		cout<<(TxBp[0])[1]<<endl;
     bemst=TxBp[Tind][akts];
 		caus<<"name: "<<violett<<name<<schwarz<<" bemst: "<<violett<<bemst<<schwarz<<endl;
     if (obfarbe) loeschefarbenaus(&bemst);
