@@ -5,7 +5,7 @@
 #include <sys/statvfs.h> // fuer statfs
 #include <utime.h>
 #include <sys/sendfile.h> // fuer sendfile64
-#define caus cout // um fuers Debugging eingegebene cout nachher wieder leichter auffinden zu koennen
+#define caus cout // nur zum Debuggen
 
 #ifdef _WIN32
 const char *dir = "dir ";
@@ -223,14 +223,14 @@ perfcl::perfcl(const string& vvonwo): vonwo(vvonwo)
 {
   zp0=zp1=clock(); 
   t0=time(NULL);
-}
+} // perfcl::perfcl(const string& vvonwo): vonwo(vvonwo)
 
 void perfcl::ausgeb(const string& stelle,uchar obdauer)
 {
   zp1alt=zp1;
   zp1=clock();
   t1=time(NULL);
-  caus<<gruen;
+  cout<<gruen;
   if (!vonwo.empty())
    cout<<vonwo<<Txk[T_Versuch]<<setw(4)<<++nr<<", "<<setw(22)<<stelle<<": ";
   cout<<Txk[T_Dauer]<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" clocks = "
@@ -255,7 +255,7 @@ int perfcl::oberreicht(unsigned long sek)
  zp1=clock();
 // <<"zp1-zp0: "<<(zp1-zp0)<<", sek: "<<(long)(sek*CLOCKS_PER_SEC)*0.1<<endl;
  return ((zp1-zp0)>(long)sek*CLOCKS_PER_SEC*0.1);
-}
+} // int perfcl::oberreicht(unsigned long sek)
 
 
 string ersetzefuerdatei(const string& u) 

@@ -38,6 +38,7 @@ const double& version=
 ;
 // Bestandteile der Ueberpruefung auf Funktionsfaehigkeit von hylafax: 
 // faxmodem
+#define caus cout // nur zum Debuggen
 
 
 // const char *logvz; // das reine Verzeichnis
@@ -4277,7 +4278,6 @@ int paramcl::pruefocr()
   Log(gruens+Tx[T_pruefocr]+schwarz,obverb,oblog);
   Log(violetts+Tx[T_pruefocr]+schwarz,obverb,oblog);
 	if (!obocrgeprueft) {
-	  cout<<"Stelle 1"<<endl;
 		uchar tda=1, deuda=0, engda=0, osdda=0;
 		systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
 		svec rueck;
@@ -4302,18 +4302,15 @@ int paramcl::pruefocr()
 		if (obprogda("ocrmypdf",obverb,oblog)) 
 		 if (progvers("ocrmypdf",obverb,oblog)>4.32) 
 		  ocrzuinst=0;
-		cout<<rot<<"ocrzuinst: "<<blau<<(int)ocrzuinst<<schwarz<<endl;
 		if (ocrzuinst) {
-		cout<<rot<<"2. ocrzuinst: "<<blau<<(int)ocrzuinst<<schwarz<<endl;
 			if (pruefipr()==dnf||pruefipr()==yum||pruefipr()==zypper||pruefipr()==apt) {
-		cout<<rot<<"3. ocrzuinst: "<<blau<<(int)ocrzuinst<<schwarz<<endl;
 				// in fedora pip statt pip3
 				linst.doinst("python3-pip",obverb+1,oblog,"pip3");
 				linst.doinst("python3-devel",obverb+1,oblog,"/usr/bin/python3-config");
 				linst.doggfinst("qpdf");
 				linst.doggfinst("gcc");
 				linst.doinst("libffi-devel");
-				if (pruefipr()!=zypper) linst.doinst("redhat-rpm-config",obverb+1,oblog);
+				if (pruefipr()==dnf || pruefipr()==yum) linst.doinst("redhat-rpm-config",obverb+1,oblog);
 				linst.doinst("ghostscript",obverb+1,oblog,"gs");
 				systemrueck("sudo python3 -m pip install --upgrade setuptools pip");
 				pruefunpaper();

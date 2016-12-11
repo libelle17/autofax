@@ -1,5 +1,6 @@
 #include "konsole.h"
 #include "DB.h"
+#define caus cout // nur zum Debuggen
 extern class linstcl linst;
 
 const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
