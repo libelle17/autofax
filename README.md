@@ -122,7 +122,7 @@ stored.</p>
 <p style="margin-left:11%; margin-top: 1em">First, read the
 chapters &rsquo;functionality&rsquo;,
 &rsquo;preconditions&rsquo; and &rsquo;implications&rsquo;
-below. Then: <b><br>
+below. Then, if connected to the internet, call: <b><br>
 P=autofax_inst.sh; wget
 https://raw.githubusercontent.com/libelle17/autofax/master/install.sh
 -O $P; sh $P</b> <br>
@@ -979,7 +979,9 @@ werden.</p>
 <p style="margin-left:11%; margin-top: 1em">Zun&auml;chst
 lesen Sie bitte die Kapitel &rsquo;Funktionsweise&rsquo;,
 &rsquo;Voraussetzungen&rsquo; und
-&rsquo;Auswirkungen&rsquo;. Anschlie&szlig;end: <b><br>
+&rsquo;Auswirkungen&rsquo;. A <br>
+Anschlie&szlig;end verbinden Sie den Rechner falls
+n&ouml;tig mit dem Internet und rufen Sie auf: <b><br>
 P=autofax_inst.sh; wget
 https://raw.githubusercontent.com/libelle17/autofax/master/install.sh
 -O $P; sh $P</b> <br>
