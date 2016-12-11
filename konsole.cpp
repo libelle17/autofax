@@ -1913,8 +1913,10 @@ int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl,uchar obm
     } //     if (!lstat(verz.c_str(), &sverz))
     if (fehler) fehler=systemrueck("mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'",obverb,oblog);
 //    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
-    if (obmitfacl)
+    if (obmitfacl) {
+		  cout<<"mitfacl"<<endl;
      setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
+		 }
 		 // <<violett<<verz<<schwarz<<endl;
 		if (obmitcon)
       systemrueck("which sestatus 2>/dev/null && sudo chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
