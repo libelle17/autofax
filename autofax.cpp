@@ -3695,6 +3695,8 @@ void paramcl::pruefsamba()
           sapp<<"  path = "<<*vzn[k]<<endl;
           sapp<<"  directory mask = 0660"<<endl;
           sapp<<"  browseable = Yes"<<endl;
+					if (!k)
+					  sapp<<"  read only = no"<<endl; // zufaxenvz soll beschreibbar sein
           sapp<<"  vfs objects = recycle"<<endl;
           sapp<<"  recycle:versions = Yes"<<endl;
           sapp<<"  recycle:keeptree = Yes"<<endl;
