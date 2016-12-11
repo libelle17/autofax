@@ -3481,7 +3481,7 @@ void paramcl::verzeichnisse()
 {
   Log(violetts+Tx[T_verzeichnisse],obverb,oblog);
   pruefcvz(); 
-  pruefverz(zufaxenvz,obverb,oblog);
+  pruefverz(zufaxenvz,obverb,oblog,2); // dahin soll man schreiben koennen
   pruefverz(wvz,obverb,oblog);
   pruefverz(nvz,obverb,oblog);
   pruefverz(empfvz,obverb,oblog);
