@@ -5,7 +5,7 @@
 #include <sys/statvfs.h> // fuer statfs
 #include <utime.h>
 #include <sys/sendfile.h> // fuer sendfile64
-
+#define caus cout // um fuers Debugging eingegebene cout nachher wieder leichter auffinden zu koennen
 
 #ifdef _WIN32
 const char *dir = "dir ";
@@ -230,7 +230,7 @@ void perfcl::ausgeb(const string& stelle,uchar obdauer)
   zp1alt=zp1;
   zp1=clock();
   t1=time(NULL);
-  cout<<gruen;
+  caus<<gruen;
   if (!vonwo.empty())
    cout<<vonwo<<Txk[T_Versuch]<<setw(4)<<++nr<<", "<<setw(22)<<stelle<<": ";
   cout<<Txk[T_Dauer]<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" clocks = "
@@ -2354,6 +2354,7 @@ string linstcl::ersetzeprog(const string& prog)
       if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-ocr-osd";
       if (prog=="libavformat-devel") return "libavformat-dev";
       if (prog=="poppler-tools") return "poppler-utils";
+			if (prog=="libffi-devel") return "libffi-dev";
       break;
     case dnf: case yum:
       if (prog=="mariadb") return "mariadb-server";
