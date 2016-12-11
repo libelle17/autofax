@@ -4304,7 +4304,9 @@ int paramcl::pruefocr()
 		  ocrzuinst=0;
 		cout<<rot<<"ocrzuinst: "<<blau<<(int)ocrzuinst<<schwarz<<endl;
 		if (ocrzuinst) {
-			if (pruefipr()==dnf||pruefipr()==yum||pruefipr()==zypper) {
+		cout<<rot<<"2. ocrzuinst: "<<blau<<(int)ocrzuinst<<schwarz<<endl;
+			if (pruefipr()==dnf||pruefipr()==yum||pruefipr()==zypper||pruefipr()==apt) {
+		cout<<rot<<"3. ocrzuinst: "<<blau<<(int)ocrzuinst<<schwarz<<endl;
 				// in fedora pip statt pip3
 				linst.doinst("python3-pip",obverb+1,oblog,"pip3");
 				linst.doinst("python3-devel",obverb+1,oblog,"/usr/bin/python3-config");
