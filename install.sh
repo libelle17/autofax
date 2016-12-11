@@ -23,8 +23,8 @@ SUG="root\| sudo\| wheel\| admin";
 getIPR;
 which sudo >/dev/null && id -Gn $USER|grep -qw "$SUG"&&{ 
 	echo -e "Please enter root's password if asked:\nBitte geben Sie bei der Frage das Passwort von 'root' ein:";
-	su -c "$IPR sudo; usermod -aG $(cut -d: -f1 /etc/group|grep "$SUG"|head -n 1) "$USER";"; 
-	echo -e "Please log out and in again, change to the directory ${rot}'$PWD'${reset} and then call this script again!\nBitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach ${blau}'$PWD'${reset} und rufen Sie das Script dann nochmal auf!";
+	su -c "$IPR sudo; usermod -aG $(cut -d: -f1 /etc/group|grep "$SUG"|head -n 1) "$USER";"||exit
+	echo -e "Please log out and in again, change to the directory ${blau}'$PWD'${reset} and then call this script again!\nBitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach ${blau}'$PWD'${reset} und rufen Sie das Script dann nochmal auf!";
 	exit;
 }
 $SPR make >/dev/null 2>&1 ||{
@@ -32,7 +32,7 @@ $SPR make >/dev/null 2>&1 ||{
 	su -c "$IPR make;"
 }
 $SPR make >/dev/null || exit
-# wenn schon im Verzeichnis autofax und wenn es dort einige notwendige Dateien gibt, dann nur kompilieren und installieren
+# wenn schon im Verzeichnis $P und wenn es dort einige notwendige Dateien gibt, dann nur kompilieren und installieren
 [ $nPWD = $P -a -f Makefile -a -f $P.cpp ]&&{
 	echo -e ${rot} Installing/ Installiere ... ${reset}
 	true;
