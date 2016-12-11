@@ -4273,6 +4273,7 @@ void paramcl::pruefunpaper()
 // verwendet in empfarch() (2x) und DateienHerricht() (2x)
 int paramcl::pruefocr()
 {
+  Log(gruens+Tx[T_pruefocr]+schwarz,obverb,oblog);
   Log(violetts+Tx[T_pruefocr]+schwarz,obverb,oblog);
 	if (!obocrgeprueft) {
 		uchar tda=1, deuda=0, engda=0, osdda=0;
@@ -4376,7 +4377,6 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 	getstammext(quellp,&stamm,&exten);
 	int keinbild= (exten=="doc"||exten=="xls"||exten=="txt"||exten=="odf"||exten=="ppt"||exten=="docx"||exten=="htm"||exten=="html");
 	for(int aru=0;aru<2;aru++) {
-	  cout<<"aru: "<<gruen<<aru<<schwarz<<endl;
 		if (/*aru||*/!keinbild) {
 			if (obocr) {
 				if (!pruefocr()) {
