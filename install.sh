@@ -17,7 +17,6 @@ getIPR() {
 }
 
 fuellTU() {
-VORIGE=$(ls -d ~/${P}_* 2>/dev/null | cut -d"_" -f2 | sort -nr)
 TU="{ rpm -q make >/dev/null 2>&1 ||dpkg -s make >/dev/null 2>&1;} ||
     { which zypper >/dev/null 2>&1 &&
       { sudo zypper -n --gpg-auto-import-keys in make >/dev/null 2>&1;true;} ||
@@ -61,7 +60,8 @@ $SPR make >/dev/null || exit
  tar xpvf $T && 
  rm -f $T && {
   echo -e ${rot}$VORIGE${reset}
-  for i in "$VORIGE"; do 
+	VORIGE=$(ls -d ~/${P}_* 2>/dev/null | cut -d"_" -f2 | sort -nr);
+	for i in "$VORIGE"; do 
     j=\"$((i+1))\"; 
     case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; 
   done; 
