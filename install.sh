@@ -60,7 +60,7 @@ $SPR make >/dev/null || exit
  tar xpvf $T && 
  rm -f $T && {
 	VORIGE=$(ls -d ~/${P}_* 2>/dev/null | cut -d"_" -f2 | sort -nr);
-  echo -e Vorige: ${rot}$VORIGE${reset}
+  echo -e Vorige: ${rot}$VORIGE${reset};
 	for i in "$VORIGE"; do 
     j=$((i+1)); 
     case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; 
