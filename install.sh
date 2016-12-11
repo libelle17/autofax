@@ -22,7 +22,7 @@ getIPR() {
 SUG="root\|sudo\|wheel\|admin";
 getIPR;
 { which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
-	echo -e "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'. Please enter ${blau}root$reset's password if asked:\nMuss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:";
+	echo "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'. Please enter ${blau}root$reset's password if asked:\nMuss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:";
 	su -c "$IPR sudo; usermod -aG $(cut -d: -f1 /etc/group|grep "$SUG"|head -n 1) "$USER";"||exit
 	echo -e "Please log out and in again, change to the directory '$blau$PWD$reset' and then call this script again!\nBitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie dieses Script dann nochmal auf!";
 	exit;

@@ -4299,6 +4299,7 @@ int paramcl::pruefocr()
 		if (obprogda("ocrmypdf",obverb,oblog)) 
 		 if (progvers("ocrmypdf",obverb,oblog)>4.32) 
 		  ocrzuinst=0;
+		cout<<rot<<"ocrzuinst: "<<blau<<(int)ocrzuinst<<schwarz<<endl;
 		if (ocrzuinst) {
 			if (pruefipr()==dnf||pruefipr()==yum||pruefipr()==zypper) {
 				// in fedora pip statt pip3
