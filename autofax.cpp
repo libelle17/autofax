@@ -3481,7 +3481,6 @@ void paramcl::verzeichnisse()
 {
   Log(violetts+Tx[T_verzeichnisse],obverb,oblog);
   pruefcvz(); 
-	cout<<rot<<"vor pruefverz zufaxenvz"<<schwarz<<endl;
   pruefverz(zufaxenvz,2,oblog,2); // dahin soll man schreiben koennen
   pruefverz(wvz,obverb,oblog);
   pruefverz(nvz,obverb,oblog);
@@ -4277,6 +4276,7 @@ int paramcl::pruefocr()
   Log(gruens+Tx[T_pruefocr]+schwarz,obverb,oblog);
   Log(violetts+Tx[T_pruefocr]+schwarz,obverb,oblog);
 	if (!obocrgeprueft) {
+	  cout<<"Stelle 1"<<endl;
 		uchar tda=1, deuda=0, engda=0, osdda=0;
 		systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
 		svec rueck;
