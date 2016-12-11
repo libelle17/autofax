@@ -1538,21 +1538,17 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
   svec bemv, *vp;
   if (fertige) {
     vp=fertige;
-  } else {
-  for(int akts=0;akts<Smax-1;akts++) {
-	  caus<<"name: "<<violett<<name<<schwarz<<" Tind: "<<Tind<<" akts: "<<akts<<endl;
-		caus<<(*TxBp)[2]<<endl;
-		TxBp->lgn=(Sprache)1;
-		caus<<(*TxBp)[2]<<endl;
-		TxBp->lgn=(Sprache)akts;
-    bemst=(*TxBp)[Tind];
-		caus<<"name: "<<violett<<name<<schwarz<<" bemst: "<<violett<<bemst<<schwarz<<endl;
-    if (obfarbe) loeschefarbenaus(&bemst);
-    bemv<<bemst;
-  } //         for(int akts=0;akts<Smax;akts++)
-   vp=&bemv;
-  }
-	caus<<"hier bin ich noch, zahl: "<<zahl<<endl;
+	} else {
+	  Sprache altSpr=TxBp->lgn;
+		for(int akts=0;akts<Smax-1;akts++) {
+			TxBp->lgn=(Sprache)akts;
+			bemst=(*TxBp)[Tind];
+			if (obfarbe) loeschefarbenaus(&bemst);
+			bemv<<bemst;
+		} //         for(int akts=0;akts<Smax;akts++)
+		TxBp->lgn=altSpr;
+		vp=&bemv;
+	}
   for(size_t ind=0;ind<zahl;ind++) {
     if (schl[ind].name==name) {
      uchar gefunden=0;
@@ -1572,7 +1568,6 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
      }
     } //     if (schl[ind].name==name)
   } //   for(size_t ind=0;ind<zahl;ind++)
-	caus<<"hier auch noch"<<endl;
 } // void schlArr::setzbemv(const string& name,const string& bem)
 
 
