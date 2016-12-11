@@ -59,10 +59,10 @@ $SPR make >/dev/null || exit
  wget https://github.com/libelle17/$P/archive/master.tar.gz -O "$T" && 
  tar xpvf $T && 
  rm -f $T && {
-  echo -e ${rot}$VORIGE${reset}
 	VORIGE=$(ls -d ~/${P}_* 2>/dev/null | cut -d"_" -f2 | sort -nr);
+  echo -e Vorige: ${rot}$VORIGE${reset}
 	for i in "$VORIGE"; do 
-    j=\"$((i+1))\"; 
+    j=$((i+1)); 
     case $i in ""|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; 
   done; 
   test -e $P && mv $P ${P}_1; 
