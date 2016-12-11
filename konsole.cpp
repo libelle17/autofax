@@ -1540,6 +1540,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
     vp=fertige;
   } else {
   for(int akts=0;akts<Smax-1;akts++) {
+	  caus<<"Tind: "<<Tind<<" akts: "<<akts<<endl;
     bemst=TxBp[Tind][akts];
 		caus<<"name: "<<violett<<name<<schwarz<<" bemst: "<<violett<<bemst<<schwarz<<endl;
     if (obfarbe) loeschefarbenaus(&bemst);
@@ -1547,6 +1548,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
   } //         for(int akts=0;akts<Smax;akts++)
    vp=&bemv;
   }
+	caus<<"hier bin ich noch"<<endl;
   for(size_t ind=0;ind<zahl;ind++) {
     if (schl[ind].name==name) {
      uchar gefunden=0;
@@ -1566,6 +1568,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
      }
     } //     if (schl[ind].name==name)
   } //   for(size_t ind=0;ind<zahl;ind++)
+	caus<<"hier auch noch"<<endl;
 } // void schlArr::setzbemv(const string& name,const string& bem)
 
 
