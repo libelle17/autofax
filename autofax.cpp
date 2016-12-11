@@ -3481,6 +3481,7 @@ void paramcl::verzeichnisse()
 {
   Log(violetts+Tx[T_verzeichnisse],obverb,oblog);
   pruefcvz(); 
+	cout<<rot<<"vor pruefverz zufaxenvz"<<schwarz<<endl;
   pruefverz(zufaxenvz,obverb,oblog,2); // dahin soll man schreiben koennen
   pruefverz(wvz,obverb,oblog);
   pruefverz(nvz,obverb,oblog);
