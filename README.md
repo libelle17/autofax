@@ -1003,39 +1003,10 @@ werden.</p>
 <p style="margin-left:11%; margin-top: 1em">Zun&auml;chst
 lesen Sie bitte die Kapitel &rsquo;Funktionsweise&rsquo;,
 &rsquo;Voraussetzungen&rsquo; und
-&rsquo;Auswirkungen&rsquo;. Anschlie&szlig;end: - wenn
-das Programm &rsquo;git&rsquo; zur Verfuegung steht,
-k&ouml;nnen Sie beginnen mit: <b><br>
-git clone http://github.com/libelle17/autofax && cd
-autofax</b> <br>
-- ansonsten z.B. (falls &rsquo;wget&rsquo; installiert ist,
-was meist der Fall ist) mit (am besten markieren und an die
-Kommandozeile kopieren): <b><br>
-P=autofaxinst.sh; wget
+&rsquo;Auswirkungen&rsquo;. Anschlie&szlig;end: <b><br>
+P=autofax_inst.sh; wget
 https://raw.githubusercontent.com/libelle17/autofax/master/install.sh
--O $P; sh ./$P <br>
-P=autofax; T=$P.tar.gz; cd ~; wget
-https://github.com/libelle17/$P/archive/master.tar.gz -O $T
-&& tar xpvf $T && rm -f $T && { for
-i in $(ls -d ${P}_* 2&gt;/dev/null | cut -d&quot;_&quot; -f2
-| sort -nr); do j=$((i+1)); case $i in
-&quot;&quot;|*[!0-9]*);; *) mv ${P}_$i ${P}_$j; esac; done;
-test -e $P && mv $P ${P}_1; mv $P-master $P
-&& cd $P; }</b> <br>
-Wenn das Programm (gnu) &rsquo;make&rsquo; nicht zur
-Verf&uuml;gung steht, k&ouml;nnen Sie dort
-&rsquo;./install.sh&rsquo; aufrufen, damit sollte
-&rsquo;make&rsquo; installiert werden; anderenfalls
-k&ouml;nnen Sie auch aufrufen: <br>
-- falls Sie vor Kompilierung die Aktualit&auml;t von
-gcc6 sicherstellen lassen wollen oder m&uuml;ssen:
-<b><br>
-make</b> oder zur Laufzeitoptimierung <b>make optfast</b>
-oder zur Groessenoptimierung <b>make opts</b> <br>
-- ansonsten: <b><br>
-make glei</b> <br>
-dann weiter: <b><br>
-sudo make install</b> <br>
+-O $P; sh ./$P</b> <br>
 Zuletzt rufen Sie auf: <b><br>
 autofax</b> <br>
 (einige Rueckfragen des Programms beantworten) <br>
