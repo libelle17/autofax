@@ -81,11 +81,10 @@ git:
 	git push
 
 anzeig:
-	@echo -e " GNU Make, Zieldatei:"$(rot) $(EXEC)$(reset), vorher:
-	@echo -e $(blau) $(shell ls -l $(EXEC) 2>/dev/null) $(reset) 
-	@echo -e " Quelldateien:"$(rot) $(SRCS)$(reset) 
-	@echo -e " Verwende Compiler: "$(rot) $(CCName) $(reset)
-	@echo -e " Pfad fuer ausfuehrbare Datei: "${EXPFAD}
+	@printf " GNU Make, Zieldatei: %b%s%b, vorher:\n" $(rot) $(EXEC) $(reset)
+	@printf " %b%s%b\n" $(blau) "$(shell ls -l $(EXEC) 2>/dev/null)" $(reset) 
+	@printf " Quelldateien: %b%s%b\n" $(rot) "$(SRCS)" $(reset) 
+	@printf " Compiler: %b%s%b; Zielpfad fuer '%bmake install%b': %b%s%b\n" $(rot) "$(CCName)" $(reset) $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset)
 	-@$(shell rm fehler.txt 2>/dev/null)
 
 $(EXEC): $(OBJ)
