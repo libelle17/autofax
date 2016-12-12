@@ -1548,7 +1548,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
 		} //         for(int akts=0;akts<Smax;akts++)
 		TxBp->lgn=altSpr;
 		vp=&bemv;
-	}
+	} // if fertige else
   for(size_t ind=0;ind<zahl;ind++) {
     if (schl[ind].name==name) {
      uchar gefunden=0;
