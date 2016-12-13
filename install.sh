@@ -33,7 +33,7 @@ getIPR;
 }
 $SPR make >/dev/null 2>&1 ||{
 	echo Installing/ Installiere 'make' ....;
-	su -c "$IPR make;"
+  id su >/dev/null 2>&1 && { su -c "$IPR make;";true;} || sudo $IPR make;
 }
 $SPR make >/dev/null || exit
 # wenn schon im Verzeichnis $P und wenn es dort einige notwendige Dateien gibt, dann nur kompilieren und installieren
