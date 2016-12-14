@@ -3165,8 +3165,9 @@ void paramcl::autofkonfschreib()
   if (rzf||obkschreib) {
     Log(gruens+Tx[T_schreibe_Konfiguration]+schwarz,obverb,oblog);
     // restliche Erklaerungen festlegen
-    //    cgconf.setzbem("language",sprachstr);
-    cgconf.setzbemv("countrycode",&Tx,T_Eigene_Landesvorwahl_ohne_plus_oder_00);
+    // cgconf.setzbem("language",sprachstr);
+		cgconf.setzbemv("language",&Tx,T_sprachstr,1);
+		cgconf.setzbemv("countrycode",&Tx,T_Eigene_Landesvorwahl_ohne_plus_oder_00);
     cgconf.setzbemv("citycode",&Tx,T_Eigene_Ortsvorwahl_ohne_0);
     cgconf.setzbemv("msn",&Tx,T_Eigene_MSN_Faxnummer_ohne_Vorwahl);
     cgconf.setzbemv("LongDistancePrefix",&Tx,T_Praefix_fuer_ausserorts_zB_0);
