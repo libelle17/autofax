@@ -330,7 +330,8 @@ capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source,
 .br
 in case hylafax shall be used:
 .LP
-.HP 10
+.HP 3
+.HP 3
 hylafax+, hylafax+-client, sendmail, tiff,
 .br
 in case ocr shall be used:
