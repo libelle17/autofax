@@ -313,6 +313,7 @@ Optionally, the received faxes are subjected to ocr via a call of ocrmypdf.
 The program was adjusted to an installation of Opensuse 42.1, Debian 8.60, Ubuntu 16.04, Mint 18 or Fedora 24 with standard options. systemctl (systemd) must run, sudo must be installed (missing per default in Debian), the user must be allowed to call the command 'sudo' (must be member of the group 'sudoers'), 'GNU make' has to be installed (which shall be accomplished if necessary by calling ./install.sh). Further needed programs will be installed by the makefile or by autofax itsself including preconditioned programs via zypper, apt, dnf or yum, python3 pip, if needed and possible, especially:
 .br
 .br
+.br
 \fBmakefile:\fR
 .LP
 .HP 3
