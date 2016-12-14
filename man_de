@@ -323,16 +323,6 @@ ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmy
 All diese Installationen können abhängige Programme einschließen.
 .br
 Falls Sie eines dieser Programme nicht wollen oder eine ältere Version desselben behalten wollen, dürfen Sie autofax oder den entsprechenden Programmteil nicht verwenden.
-.br
-gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el)
-.br
-\fBautofax:\fR
-.br
-boost, boost-devel, capiutils, capisuite, capi4linux, convert, cron, fcpci-3.10.0, ghostscript, hylafax+, hylafax+-client, imagemagick, i4l-isdnlog, kernel-source, libcapi20-2, libcapi20-3, libreoffice-base, libxslt-tools, linux-headers-$(uname -r), mariadb, ocrmypdf, policycoreutils, policycoreutils-python-utils, python-devel, python-setuptools, python3-pip, samba, sendmail, sfftobmp, soffice, tesseract-ocr, tiff, unpaper.
-.br
-In Fedora kann die Verwendung von Capisuite die Installation eines neuen Kernels erfordern und beinhalten.
-.br
-Wenn Sie eines dieser Programme nicht wollen oder eine aeltere Version 0.41674
 
 .SH AUSWIRKUNGEN
 Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:

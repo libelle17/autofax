@@ -1663,22 +1663,7 @@ einschlie&szlig;en. <br>
 Falls Sie eines dieser Programme nicht wollen oder eine
 &auml;ltere Version desselben behalten wollen,
 d&uuml;rfen Sie autofax oder den entsprechenden
-Programmteil nicht verwenden. <br>
-gcc V.6, g++ V.6, groff, libmysqlclient-dev(el),
-libtiff-dev(el) <b><br>
-autofax:</b> <br>
-boost, boost-devel, capiutils, capisuite, capi4linux,
-convert, cron, fcpci-3.10.0, ghostscript, hylafax+,
-hylafax+-client, imagemagick, i4l-isdnlog, kernel-source,
-libcapi20-2, libcapi20-3, libreoffice-base, libxslt-tools,
-linux-headers-$(uname -r), mariadb, ocrmypdf,
-policycoreutils, policycoreutils-python-utils, python-devel,
-python-setuptools, python3-pip, samba, sendmail, sfftobmp,
-soffice, tesseract-ocr, tiff, unpaper. <br>
-In Fedora kann die Verwendung von Capisuite die Installation
-eines neuen Kernels erfordern und beinhalten. <br>
-Wenn Sie eines dieser Programme nicht wollen oder eine
-aeltere Version 0.41674</p>
+Programmteil nicht verwenden.</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>
