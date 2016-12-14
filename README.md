@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.4168) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.41681) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -643,14 +643,24 @@ makefile:</b> <br>
 gcc V.6, g++ V.6, groff, libmysqlclient-dev(el),
 libtiff-dev(el) <b><br>
 autofax:</b> <br>
-boost, boost-devel, capiutils, capisuite, capi4linux,
-convert, cron, fcpci-3.10.0, ghostscript, hylafax+,
-hylafax+-client, imagemagick, i4l-isdnlog, kernel-source,
-libcapi20-2, libcapi20-3, libreoffice-base, libxslt-tools,
-linux-headers-$(uname -r), mariadb, ocrmypdf,
-policycoreutils, policycoreutils-python-utils, python-devel,
-python-setuptools, python3-pip, samba, sendmail, sfftobmp,
-soffice, tesseract-ocr, tiff, unpaper. <br>
+boost, boost-devel, cron, ghostscript, imagemagick,
+libreoffice-base, linux-headers-$(uname -r), mariadb,
+policycoreutils, policycoreutils-python-utils,
+poppler-tools, samba, sfftobmp, soffice, <br>
+in case capisuite shall be used: <br>
+capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8,
+g++-4.8, i4l-isdnlog, kernel-source, libcapi20-2,
+libcapi20-3, libxslt-tools, numactl-devel, pesign,
+python-devel, rpmdevtools <br>
+in case hylafax shall be used: <br>
+hylafax+, hylafax+-client, sendmail, tiff <br>
+in case ocr shall be used: <br>
+ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel,
+libffi-devel, ocrmypdf, python3-devel, python3-pip,
+python3-setuptools, rpmfusion, qpdf, redhat-rpm-config,
+tesseract-ocr, unpaper, and via &rsquo;python3 pip&rsquo;:
+cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2,
+reportlab, ruffus <br>
 In fedora, the installation of capisuite can necessitate and
 include the installation of a current kernel. <br>
 If You don&rsquo;t want one of those programs or want to
@@ -855,7 +865,7 @@ the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.4168) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.41681) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1521,7 +1531,7 @@ soffice, tesseract-ocr, tiff, unpaper. <br>
 In Fedora kann die Verwendung von Capisuite die Installation
 eines neuen Kernels erfordern und beinhalten. <br>
 Wenn Sie eines dieser Programme nicht wollen oder eine
-aeltere Version 0.4168</p>
+aeltere Version 0.41681</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>

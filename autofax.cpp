@@ -6153,7 +6153,7 @@ int paramcl::pruefhyla()
                   systemrueck("sudo sh -c 'cd /usr/"+local+"sbin 2>/dev/null && "
                       "rm -f choptest cqtest dialtest edit-faxcover faxabort faxaddmodem "
                       "faxadduser faxanswer faxconfig faxcron faxdeluser faxinfo faxlock faxmodem faxmsg faxq faxqclean faxquit faxsetup "
-                      "faxsetup.linux faxstate faxwatch probemodem rchylafax* recvstats tagtest tiffcheck tsitest  typetest xferfaxstats "
+                      "faxsetup.linux faxstate faxwatch probemodem rchylafax* recvstats tagtest tiffcheck tsitest typetest xferfaxstats "
                       "faxsetup.bsdi faxsetup.iri faxgetty faxsend hfaxd hylafax lockname ondelay pagesend textfmt;'",-2,oblog);
                   systemrueck("sudo sh -c 'rm -rf /usr/"+local+"/lib/fax",-2,oblog,0,1);
                   systemrueck("sudo sh -c 'rm -rf /usr/"+local+"/share/hylafax",-2,oblog,0,1);
