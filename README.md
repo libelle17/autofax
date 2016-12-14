@@ -638,8 +638,10 @@ be installed (which shall be accomplished if necessary by
 calling ./install.sh). Further needed programs will be
 installed by the makefile or by autofax itsself including
 preconditioned programs via zypper, apt, dnf or yum, python3
-pip, if needed and possible, especially: <b><br>
-makefile:</b></p>
+pip, if needed and possible, especially:</p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>makefile:</b></p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
