@@ -637,13 +637,15 @@ group &rsquo;sudoers&rsquo;), &rsquo;GNU make&rsquo; has to
 be installed (which shall be accomplished if necessary by
 calling ./install.sh). Further needed programs will be
 installed by the makefile or by autofax itsself including
-preconditioned programs via zypper, apt, dnf or yum, if
-needed and possible, especially: <b><br>
+preconditioned programs via zypper, apt, dnf or yum, python3
+pip, if needed and possible, especially: <b><br>
 makefile:</b> <br>
 gcc V.6, g++ V.6, groff, libmysqlclient-dev(el),
 libtiff-dev(el) <b><br>
-autofax:</b> <br>
-boost, boost-devel, cron, ghostscript, imagemagick,
+autofax:</b></p></table>
+
+<p style="margin-left:15%; margin-top: 1em">boost,
+boost-devel, cron, ghostscript, imagemagick,
 libreoffice-base, mariadb, policycoreutils,
 policycoreutils-python-utils, poppler-tools, samba,
 sfftobmp, soffice, <br>
