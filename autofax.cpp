@@ -2742,7 +2742,7 @@ void paramcl::rueckfragen()
     if (langu.empty()) if (locale) if (strchr("defi",locale[0])) langu=locale[0];
     vector<string> sprachen={"e","d"/*,"f","i"*/};
     if (cgconf[++lfd].wert.empty() || rzf) {
-      langu=Tippstrings("Language/Sprache/Lingue/Lingua",&sprachen, &langu);
+      langu=Tippstrings(sprachstr.c_str()/*"Language/Sprache/Lingue/Lingua"*/,&sprachen, &langu);
       lgnzuw();
       cgconf[lfd].setze(&langu);
     }
@@ -3165,9 +3165,8 @@ void paramcl::autofkonfschreib()
   if (rzf||obkschreib) {
     Log(gruens+Tx[T_schreibe_Konfiguration]+schwarz,obverb,oblog);
     // restliche Erklaerungen festlegen
-    // cgconf.setzbem("language",sprachstr);
-		cgconf.setzbemv("language",&Tx,T_sprachstr,1);
-		cgconf.setzbemv("countrycode",&Tx,T_Eigene_Landesvorwahl_ohne_plus_oder_00);
+    //    cgconf.setzbem("language",sprachstr);
+    cgconf.setzbemv("countrycode",&Tx,T_Eigene_Landesvorwahl_ohne_plus_oder_00);
     cgconf.setzbemv("citycode",&Tx,T_Eigene_Ortsvorwahl_ohne_0);
     cgconf.setzbemv("msn",&Tx,T_Eigene_MSN_Faxnummer_ohne_Vorwahl);
     cgconf.setzbemv("LongDistancePrefix",&Tx,T_Praefix_fuer_ausserorts_zB_0);
