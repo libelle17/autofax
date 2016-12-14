@@ -1543,9 +1543,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
 		for(int akts=0;akts<Smax-1;akts++) {
 			TxBp->lgn=(Sprache)akts;
 			bemst=(*TxBp)[Tind];
-			cout<<"bemst: "<<rot<<bemst<<schwarz<<endl;
 			if (obfarbe) loeschefarbenaus(&bemst);
-			cout<<"bemst: "<<rot<<bemst<<schwarz<<endl;
 			bemv<<bemst;
 		} //         for(int akts=0;akts<Smax;akts++)
 		TxBp->lgn=altSpr;
@@ -1576,7 +1574,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
 void schlArr::aschreib(mdatei *f)
 {
   for (size_t i = 0;i<zahl;i++) {
-    if (!schl[i].bemerk.empty()) *f<<(schl[i].bemerk[0]=='#'?"":"# ")<<schl[i].bemerk<<endl;
+    if (!schl[i].bemerk.empty()) *f<<(schl[i].bemerk[0]=='#'?"":"# ")<<loeschefarbenaus(&schl[i].bemerk)<<endl;
     *f<<schl[i].name<<" = \""<<schl[i].wert<<"\""<<endl;
   } //   for (size_t i = 0;i<zahl;i++)
 } // void schlArr::aschreib(mdatei *f)
