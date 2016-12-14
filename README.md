@@ -702,7 +702,7 @@ sendmail, tiff,</p></td>
 </td></tr>
 </table>
 
-<p style="margin-left:18%;">in case ocr shall be used:</p>
+<p style="margin-left:26%;">in case ocr shall be used:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
