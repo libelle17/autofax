@@ -2,9 +2,9 @@
 P=autofax
 HOSTER=github.com
 ACC=libelle17
-rot="\e[1;31m"
-blau="\e[1;34m"
-reset="\e[0m"
+rot="\033[1;31m"
+blau="\033[1;34m"
+reset="\033[0m"
 aPWD=`pwd`
 nPWD=${PWD##*/}
 IPR="nix"
