@@ -642,9 +642,9 @@ pip, if needed and possible, especially: <b><br>
 makefile:</b> <br>
 gcc V.6, g++ V.6, groff, libmysqlclient-dev(el),
 libtiff-dev(el) <b><br>
-autofax:</b></p>
+autofax:</b></p></table>
 
-<p style="margin-left:11%; margin-top: 1em">boost,
+<p style="margin-left:15%; margin-top: 1em">boost,
 boost-devel, cron, ghostscript, imagemagick,
 libreoffice-base, mariadb, policycoreutils,
 policycoreutils-python-utils, poppler-tools, samba,

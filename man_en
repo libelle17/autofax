@@ -317,8 +317,8 @@ The program was adjusted to an installation of Opensuse 42.1, Debian 8.60, Ubunt
  gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el)
 .br
 \fBautofax:\fR
-.br
 .LP
+.HP 3
  boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-base, mariadb, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp, soffice,
 .br
 in case capisuite shall be used:
