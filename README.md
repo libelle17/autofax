@@ -639,9 +639,10 @@ calling ./install.sh). Further needed programs will be
 installed by the makefile or by autofax itsself including
 preconditioned programs via zypper, apt, dnf or yum, python3
 pip, if needed and possible, especially: <b><br>
-makefile:</b> <br>
-gcc V.6, g++ V.6, groff, libmysqlclient-dev(el),
-libtiff-dev(el) <b><br>
+makefile:</b></p></table>
+
+<p style="margin-left:15%; margin-top: 1em">gcc V.6, g++
+V.6, groff, libmysqlclient-dev(el), libtiff-dev(el) <b><br>
 autofax:</b></p>
 
 <table width="100%" border="0" rules="none" frame="void"
@@ -654,7 +655,7 @@ autofax:</b></p>
 <p style="margin-top: 1em">boost, boost-devel, cron,
 ghostscript, imagemagick, libreoffice-base, mariadb,
 policycoreutils, policycoreutils-python-utils,
-poppler-tools, samba, sfftobmp, soffice,</p></td></tr>
+poppler-tools, samba, sfftobmp,</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">in case capisuite shall be
@@ -679,20 +680,9 @@ current kernel),</p></td></tr>
 <p style="margin-left:15%;">in case hylafax shall be
 used:</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="64%">
-
-
-<p style="margin-top: 1em">hylafax+, hylafax+-client,
-sendmail, tiff,</p></td>
-<td width="25%">
-</td></tr>
-</table>
-
-<p style="margin-left:15%;">in case ocr shall be used:</p>
+<p style="margin-left:15%; margin-top: 1em">hylafax+,
+hylafax+-client, sendmail, tiff, <br>
+in case ocr shall be used:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -706,7 +696,7 @@ ffmpeg-compat, gcc, libavformat-devel, libffi-devel,
 ocrmypdf, python3-devel, python3-pip, python3-setuptools,
 rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper,
 and via &rsquo;python3 pip&rsquo;: cryptography, cffi,
-image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus,</p></td></tr>
+image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">All those installations may

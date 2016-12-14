@@ -313,14 +313,15 @@ Optionally, the received faxes are subjected to ocr via a call of ocrmypdf.
 The program was adjusted to an installation of Opensuse 42.1, Debian 8.60, Ubuntu 16.04, Mint 18 or Fedora 24 with standard options. systemctl (systemd) must run, sudo must be installed (missing per default in Debian), the user must be allowed to call the command 'sudo' (must be member of the group 'sudoers'), 'GNU make' has to be installed (which shall be accomplished if necessary by calling ./install.sh). Further needed programs will be installed by the makefile or by autofax itsself including preconditioned programs via zypper, apt, dnf or yum, python3 pip, if needed and possible, especially:
 .br
 \fBmakefile:\fR
-.br
+.LP
+.HP 3
  gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el)
 .br
 .br
 \fBautofax:\fR
 .LP
 .HP 3
-boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-base, mariadb, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp, soffice,
+boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-base, mariadb, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp,
 .br
 in case capisuite shall be used:
 .LP
@@ -330,12 +331,12 @@ capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source,
 in case hylafax shall be used:
 .LP
 .HP 3
-hylafax+, hylafax+-client, sendmail, tiff,
+ hylafax+, hylafax+-client, sendmail, tiff,
 .br
 in case ocr shall be used:
 .LP
 .HP 3
-ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmypdf, python3-devel, python3-pip, python3-setuptools, rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper, and via 'python3 pip': cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus,
+ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmypdf, python3-devel, python3-pip, python3-setuptools, rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper, and via 'python3 pip': cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.
 .br
 All those installations may include dependent programs.
 .br
