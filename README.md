@@ -123,8 +123,8 @@ stored.</p>
 chapters &rsquo;functionality&rsquo;,
 &rsquo;preconditions&rsquo; and &rsquo;implications&rsquo;
 below. Then, if connected to the internet, call: <b><br>
-P=autofax_inst.sh; wget
-https://raw.githubusercontent.com/libelle17/autofax/master/install.sh
+N=autofax;P=$N_inst.sh; wget
+https://raw.githubusercontent.com/libelle17/$N/master/install.sh
 -O $P && sh $P</b> <br>
 At last, call: <b><br>
 autofax</b> <br>
@@ -982,8 +982,8 @@ lesen Sie bitte die Kapitel &rsquo;Funktionsweise&rsquo;,
 &rsquo;Auswirkungen&rsquo;. A <br>
 Anschlie&szlig;end verbinden Sie den Rechner falls
 n&ouml;tig mit dem Internet und rufen Sie auf: <b><br>
-P=autofax_inst.sh; wget
-https://raw.githubusercontent.com/libelle17/autofax/master/install.sh
+N=autofax;P=$N_inst.sh; wget
+https://raw.githubusercontent.com/libelle17/$N/master/install.sh
 -O $P && sh $P</b> <br>
 Zuletzt rufen Sie auf: <b><br>
 autofax</b> <br>
@@ -1521,7 +1521,7 @@ soffice, tesseract-ocr, tiff, unpaper. <br>
 In Fedora kann die Verwendung von Capisuite die Installation
 eines neuen Kernels erfordern und beinhalten. <br>
 Wenn Sie eines dieser Programme nicht wollen oder eine
-aeltere Version 0.41676</p>
+aeltere Version 0.41674</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>
