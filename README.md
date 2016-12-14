@@ -911,8 +911,8 @@ software yield a requirement for a program modification.</p>
 <p style="margin-left:11%; margin-top: 1em">The program has
 been written with the best aim and has been tested by the
 author. <br>
-Nevertheless the author cannot be liable for any damage by
-the program.</p>
+Nevertheless the author cannot be liable for any damage
+caused by the program.</p>
 
 <h2>AUTHOR
 <a name="AUTHOR_E"></a>
