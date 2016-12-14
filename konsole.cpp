@@ -1574,7 +1574,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
 void schlArr::aschreib(mdatei *f)
 {
   for (size_t i = 0;i<zahl;i++) {
-    if (!schl[i].bemerk.empty()) *f<<(schl[i].bemerk[0]=='#'?"":"# ")<<loeschefarbenaus(&schl[i].bemerk)<<endl;
+    if (!schl[i].bemerk.empty()) *f<<(schl[i].bemerk[0]=='#'?"":"# ")<<*loeschefarbenaus(&schl[i].bemerk)<<endl;
     *f<<schl[i].name<<" = \""<<schl[i].wert<<"\""<<endl;
   } //   for (size_t i = 0;i<zahl;i++)
 } // void schlArr::aschreib(mdatei *f)
