@@ -694,12 +694,6 @@ used:</p>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="64%">
-</td>
-<td width="25%">
-</td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="64%">
 
 
 <p style="margin-top: 1em">hylafax+, hylafax+-client,
