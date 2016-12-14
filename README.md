@@ -642,14 +642,23 @@ pip, if needed and possible, especially: <b><br>
 makefile:</b> <br>
 gcc V.6, g++ V.6, groff, libmysqlclient-dev(el),
 libtiff-dev(el) <b><br>
-autofax:</b></p></table>
+autofax:</b></p>
 
-<p style="margin-left:15%; margin-top: 1em">boost,
-boost-devel, cron, ghostscript, imagemagick,
-libreoffice-base, mariadb, policycoreutils,
-policycoreutils-python-utils, poppler-tools, samba,
-sfftobmp, soffice, <br>
-in case capisuite shall be used: <br>
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">boost, boost-devel, cron,
+ghostscript, imagemagick, libreoffice-base, mariadb,
+policycoreutils, policycoreutils-python-utils,
+poppler-tools, samba, sfftobmp, soffice,</p></td></tr>
+</table>
+
+<p style="margin-left:15%;">in case capisuite shall be
+used: <br>
 capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8,
 g++-4.8, kernel-source, libcapi20-2, libcapi20-3,
 libxslt-tools, linux-headers-$(uname -r), python-devel, (in
