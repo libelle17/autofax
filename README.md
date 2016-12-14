@@ -658,23 +658,59 @@ poppler-tools, samba, sfftobmp, soffice,</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">in case capisuite shall be
-used: <br>
-capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8,
-g++-4.8, kernel-source, libcapi20-2, libcapi20-3,
-libxslt-tools, linux-headers-$(uname -r), python-devel, (in
-fedora, additionally: kernel, kernel-devel,
-kernel-modules-extra, numactl-devel, pesign, rpmdevtools;
-this may install a current kernel), <br>
-in case hylafax shall be used: <br>
-hylafax+, hylafax+-client, sendmail, tiff, <br>
-in case ocr shall be used: <br>
-ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel,
-libffi-devel, ocrmypdf, python3-devel, python3-pip,
-python3-setuptools, rpmfusion, qpdf, redhat-rpm-config,
-tesseract-ocr, unpaper, and via &rsquo;python3 pip&rsquo;:
-cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2,
-reportlab, ruffus, <br>
-All those installations may include dependent programs. <br>
+used:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">capisuite, capiutils,
+capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source,
+libcapi20-2, libcapi20-3, libxslt-tools,
+linux-headers-$(uname -r), python-devel, (in fedora,
+additionally: kernel, kernel-devel, kernel-modules-extra,
+numactl-devel, pesign, rpmdevtools; this may install a
+current kernel),</p></td></tr>
+</table>
+
+<p style="margin-left:15%;">in case hylafax shall be
+used:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="64%">
+
+
+<p style="margin-top: 1em">hylafax+, hylafax+-client,
+sendmail, tiff,</p></td>
+<td width="25%">
+</td></tr>
+</table>
+
+<p style="margin-left:15%;">in case ocr shall be used:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">ffmpeg, ffmpeg-devel,
+ffmpeg-compat, gcc, libavformat-devel, libffi-devel,
+ocrmypdf, python3-devel, python3-pip, python3-setuptools,
+rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper,
+and via &rsquo;python3 pip&rsquo;: cryptography, cffi,
+image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus,</p></td></tr>
+</table>
+
+<p style="margin-left:15%;">All those installations may
+include dependent programs. <br>
 If You don&rsquo;t want one of those programs or want to
 keep an older version of one, You may not install autofax or
 use the respective program parts.</p>
