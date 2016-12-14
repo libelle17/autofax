@@ -1576,7 +1576,94 @@ m&ouml;glich vom makefile oder von autofax bei Bedarf
 selbst mitsamt vorausgesetzter Programme mithilfe von
 zypper, apt, dnf oder yum nachstalliert, insbesondere:
 <b><br>
-makefile:</b> <br>
+makefile:</b></p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">gcc V.6, g++ V.6, groff,
+libmysqlclient-dev(el), libtiff-dev(el)</p></td></tr>
+</table>
+
+<p style="margin-left:15%;"><b>autofax:</b></p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">boost, boost-devel, cron,
+ghostscript, imagemagick, libreoffice-base, mariadb,
+policycoreutils, policycoreutils-python-utils,
+poppler-tools, samba, sfftobmp,</p></td></tr>
+</table>
+
+<p style="margin-left:15%;">falls capisuite benutzt werden
+soll:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">capisuite, capiutils,
+capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source,
+libcapi20-2, libcapi20-3, libxslt-tools,
+linux-headers-$(uname -r), python-devel, (in fedora,
+additionally: kernel, kernel-devel, kernel-modules-extra,
+numactl-devel, pesign, rpmdevtools; this may install a
+current kernel),</p></td></tr>
+</table>
+
+<p style="margin-left:15%;">falls hylafax benutzt werden
+soll:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="64%">
+
+
+<p style="margin-top: 1em">hylafax+, hylafax+-client,
+sendmail, tiff,</p></td>
+<td width="25%">
+</td></tr>
+</table>
+
+<p style="margin-left:15%;">falls ocr benutzt werden
+soll:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">ffmpeg, ffmpeg-devel,
+ffmpeg-compat, gcc, libavformat-devel, libffi-devel,
+ocrmypdf, python3-devel, python3-pip, python3-setuptools,
+rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper,
+and via &rsquo;python3 pip&rsquo;: cryptography, cffi,
+image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
+</table>
+
+<p style="margin-left:15%;">All diese Installationen
+k&ouml;nnen abh&auml;ngige Programme
+einschlie&szlig;en. <br>
+Falls Sie eines dieser Programme nicht wollen oder eine
+&auml;ltere Version desselben behalten wollen,
+d&uuml;rfen Sie autofax oder den entsprechenden
+Programmteil nicht verwenden. <br>
 gcc V.6, g++ V.6, groff, libmysqlclient-dev(el),
 libtiff-dev(el) <b><br>
 autofax:</b> <br>
@@ -1591,7 +1678,7 @@ soffice, tesseract-ocr, tiff, unpaper. <br>
 In Fedora kann die Verwendung von Capisuite die Installation
 eines neuen Kernels erfordern und beinhalten. <br>
 Wenn Sie eines dieser Programme nicht wollen oder eine
-aeltere Version 0.41682</p>
+aeltere Version 0.41674</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>
