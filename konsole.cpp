@@ -1543,7 +1543,9 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
 		for(int akts=0;akts<Smax-1;akts++) {
 			TxBp->lgn=(Sprache)akts;
 			bemst=(*TxBp)[Tind];
+			cout<<"bemst: "<<rot<<bemst<<schwarz<<endl;
 			if (obfarbe) loeschefarbenaus(&bemst);
+			cout<<"bemst: "<<rot<<bemst<<schwarz<<endl;
 			bemv<<bemst;
 		} //         for(int akts=0;akts<Smax;akts++)
 		TxBp->lgn=altSpr;
