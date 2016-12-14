@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "14.12.16" "Version 0.41681" "\fBautofax\fR man page"
+.TH man 1 "14.12.16" "Version 0.41682" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -314,27 +314,27 @@ The program was adjusted to an installation of Opensuse 42.1, Debian 8.60, Ubunt
 .br
 \fBmakefile:\fR
 .br
-gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el)
+ gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el)
 .br
 \fBautofax:\fR
 .br
-boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-base, linux-headers-$(uname -r), mariadb, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp, soffice,
+ boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-base, mariadb, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp, soffice,
 .br
 in case capisuite shall be used:
 .br
-capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, i4l-isdnlog, kernel-source, libcapi20-2, libcapi20-3, libxslt-tools, numactl-devel, pesign, python-devel, rpmdevtools
+ capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source, libcapi20-2, libcapi20-3, libxslt-tools, linux-headers-$(uname -r), python-devel, (in fedora, additionally: kernel, kernel-devel, kernel-modules-extra, numactl-devel, pesign, rpmdevtools; this may install a current kernel), 
 .br
 in case hylafax shall be used:
 .br
-hylafax+, hylafax+-client, sendmail, tiff
+ hylafax+, hylafax+-client, sendmail, tiff,
 .br
 in case ocr shall be used:
 .br
-ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmypdf, python3-devel, python3-pip, python3-setuptools, rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper, and via 'python3 pip': cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus 
+ ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmypdf, python3-devel, python3-pip, python3-setuptools, rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper, and via 'python3 pip': cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus,
 .br
-In fedora, the installation of capisuite can necessitate and include the installation of a current kernel.
+All those installations may include dependent programs.
 .br
-If You don't want one of those programs or want to keep an older version of one, You may not install autofax.
+If You don't want one of those programs or want to keep an older version of one, You may not install autofax or use the respective program parts.
 
 .SH IMPLICATIONS
 The program has to take the following measures for its neat function:

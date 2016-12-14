@@ -6098,9 +6098,9 @@ int paramcl::pruefhyla()
       linst.doinst("tiff",obverb+1,oblog,"tiff2ps");
       linst.doinst("tiff",obverb+1,oblog,"fax2ps");
       linst.doinst("sendmail",obverb+1,oblog,"sendmail");
-      if (obverb) Log(blaus+"hyinstart: "+schwarz+ltoan(hyinstart),obverb,oblog);
+      if (obverb) Log(violetts+"hyinstart: "+schwarz+ltoan(hyinstart),1,1);
       if (hyinstart==hysrc) {
-        Log(rots+Tx[T_ueber_den_Quellcode]+schwarz,1,1);
+        Log(violetts+Tx[T_ueber_den_Quellcode]+schwarz,1,1);
         systemrueck("sudo wget -O hylafax+ https://sourceforge.net/projects/hylafax/files/latest",obverb,oblog);
         systemrueck("sudo tar xvf hylafax+",obverb,oblog);
         // 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
@@ -6116,13 +6116,13 @@ int paramcl::pruefhyla()
             " && sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
             " && echo $? = Ergebnis nach faxsetup -nointeractive"
             " && sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
-            " && sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload"
+            " && sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload; true;"
             "'"
             ,2,oblog);
         // hservice_faxgetty();
         // hservice_faxq_hfaxd();
       } else {
-        Log(rots+Tx[T_ueber_das_Installationspaket]+schwarz,1,1);
+        Log(violetts+Tx[T_ueber_das_Installationspaket]+schwarz,1,1);
         // b) mit dem Installationspaket
         if (!linst.obfehlt(hff) || !linst.obfehlt(hfcf)) {
           Log(hfftext,-1,1);
