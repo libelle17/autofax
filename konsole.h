@@ -81,7 +81,7 @@ extern const char *dir;
 // extern const char *rot, *weinrot, *schwarz, *blau, *gelb; // muss spaeter kompilerunabhaengig
 extern const char *schwarz, *dgrau, *drot, *rot, *gruen, *hgruen, *braun, *gelb, *blau, *dblau, *violett, *hviolett,
        *tuerkis, *htuerkis, *hgrau, *weiss, *umgek;
-extern const string drots,rots,schwarzs,blaus,gelbs,tuerkiss,hgraus,violetts,gruens;
+extern const string drots,rots,schwarzs,blaus,dblaus,gelbs,tuerkiss,hgraus,violetts,gruens;
 #ifdef linux
 extern const char *_rot, *_hrot, *_schwarz, *_blau, *_gelb, *_tuerkis, *_hgrau;
 #endif

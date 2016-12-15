@@ -217,7 +217,7 @@ argcl::argcl(int i,char** argv)
   argcs=argv[i];
 }
 
-const string drots=drot, rots=rot, schwarzs=schwarz, blaus=blau, gelbs=gelb, tuerkiss=tuerkis, violetts=violett, gruens=gruen;
+const string drots=drot, rots=rot, schwarzs=schwarz, blaus=blau, dblaus=dblau, gelbs=gelb, tuerkiss=tuerkis, violetts=violett, gruens=gruen;
 
 perfcl::perfcl(const string& vvonwo): vonwo(vvonwo)
 {
