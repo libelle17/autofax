@@ -2866,35 +2866,38 @@ void paramcl::rueckfragen()
       vector<string> benutzer;
       cmd="cat /etc/passwd | grep /home/ | cut -d':' -f 1";
       systemrueck(cmd,obverb,oblog,&benutzer);
-      if (benutzer.size()>1) for(size_t i=0;i<benutzer.size();i++) if (benutzer[i]=="syslog") {benutzer.erase(benutzer.begin()+i);break;}
-      for(size_t i=0;i<benutzer.size();i++) {
-        //          bliste+=benutzer[i];
-        //          if (i<benutzer.size()-1) bliste+=",";
-        if (cuser.empty()) cuser=benutzer[i]; // Vorgabe
-      }
-      /*
-         string Frage=string("Linux-Benutzer fuer Capisuite (")+bliste+"):";
-         do KLA
-         tmpcuser=Tippstring(Frage.c_str(),&cuser);
-         KLZ while (benutzer.size() && bliste.find(tmpcuser)==string::npos && 
-         tmpcuser.find(',')==string::npos); // nur vorhandene User akzeptieren
-         cuser=tmpcuser;
-       */
-      cuser=Tippstrings(obcapi?Tx[T_Linux_Benutzer_fuer_Capisuite_Samba]:Tx[T_Linux_Benutzer_fuer_Samba],&benutzer,&cuser);
-      cgconf[lfd].setze(&cuser);
-    } // if (cgconf[++lfd].wert.empty() || rzf) 
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      countrycode=Tippstring(Tx[T_Eigene_Landesvorwahl_ohne_plus_oder_00],&countrycode);
-      cgconf[lfd].setze(&countrycode);
-    }
-    if (cgconf[++lfd].wert.empty() || rzf) {
-      citycode=Tippstring(Tx[T_Eigene_Ortsvorwahl_ohne_0],&citycode);
-      cgconf[lfd].setze(&citycode);
-    }
+			if (benutzer.size()>1) for(size_t i=0;i<benutzer.size();i++) 
+				if (benutzer[i]=="syslog"||benutzer[i]=="ntp") {
+				  benutzer.erase(benutzer.begin()+i);break;
+				}
+			for(size_t i=0;i<benutzer.size();i++) {
+				//          bliste+=benutzer[i];
+				//          if (i<benutzer.size()-1) bliste+=",";
+				if (cuser.empty()) cuser=benutzer[i]; // Vorgabe
+			}
+			/*
+				 string Frage=string("Linux-Benutzer fuer Capisuite (")+bliste+"):";
+				 do KLA
+				 tmpcuser=Tippstring(Frage.c_str(),&cuser);
+				 KLZ while (benutzer.size() && bliste.find(tmpcuser)==string::npos && 
+				 tmpcuser.find(',')==string::npos); // nur vorhandene User akzeptieren
+				 cuser=tmpcuser;
+			 */
+			cuser=Tippstrings(obcapi?Tx[T_Linux_Benutzer_fuer_Capisuite_Samba]:Tx[T_Linux_Benutzer_fuer_Samba],&benutzer,&cuser);
+			cgconf[lfd].setze(&cuser);
+		} // if (cgconf[++lfd].wert.empty() || rzf) 
+		if (cgconf[++lfd].wert.empty() || rzf) {
+			countrycode=Tippstring(Tx[T_Eigene_Landesvorwahl_ohne_plus_oder_00],&countrycode);
+			cgconf[lfd].setze(&countrycode);
+		}
+		if (cgconf[++lfd].wert.empty() || rzf) {
+			citycode=Tippstring(Tx[T_Eigene_Ortsvorwahl_ohne_0],&citycode);
+			cgconf[lfd].setze(&citycode);
+		}
 
-    if (obcapi || obhyla) {
-      if (cgconf[++lfd].wert.empty() || rzf) {
-        msn=Tippstring(Tx[T_Eigene_MSN_Faxnummer_ohne_Vorwahl],&msn);
+		if (obcapi || obhyla) {
+			if (cgconf[++lfd].wert.empty() || rzf) {
+				msn=Tippstring(Tx[T_Eigene_MSN_Faxnummer_ohne_Vorwahl],&msn);
         cgconf[lfd].setze(&msn);
       }
     } else {
