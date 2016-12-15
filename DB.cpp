@@ -26,8 +26,12 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
   {"Fehler beim Verbinden: ","Error connecting: "},
   // T_Erfolg_beim_Initialisieren_der_Verbindung_zu_mysql
   {"Erfolg beim Initialisieren der Verbindung zu MySQL!","Success initializing the connection to MySQL!"},
-  // T_Benoetige_MySQL_Passwort_fuer_Benutzer_root_fuer_Befehl
-  {"MySQL-Passwort fuer Benutzer 'root' (wird benoetigt fuer Befehl: ","MySQL password for user 'root' (is needed for command: "},
+	// T_MySQL_Passwort
+	{"MySQL-Passwort","MySQL password"},
+	// T_fuer_Benutzer
+	{" fuer Benutzer '"," for user '"},
+	// T_wird_benoetigt_fuer_Befehl
+	{"' (wird benoetigt fuer Befehl: ","' (is needed for command: "},
   // T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen
   {"Das MySQL-Passwort fuer Benutzer 'root' ist leer. Wollen Sie eines festlegen?",
    "The MySQL password for the user 'root' is empty. Do You want to give one?"},
@@ -442,7 +446,8 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
     }
     if (miterror) {
       if (!nrzf) {
-        rootpwd=Tippstring(string(Txd[T_Benoetige_MySQL_Passwort_fuer_Benutzer_root_fuer_Befehl])+"\n"+tuerkis+wofuer+schwarz+")",0);
+				rootpwd=Tippstring(string(Txd[T_MySQL_Passwort])+Txd[T_fuer_Benutzer]+dblau+"root"+schwarz+
+				                          Txd[T_wird_benoetigt_fuer_Befehl]+"\n"+tuerkis+wofuer+schwarz+")",0);
         //                    if (rootpwd.empty()) return; // while (1)
         if (user=="root") passwd=rootpwd;
       }

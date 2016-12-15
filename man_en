@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "15.12.16" "Version 0.41684" "\fBautofax\fR man page"
+.TH man 1 "15.12.16" "Version 0.41685" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -391,7 +391,9 @@ a) in hylafax by callinng 'faxrm'
 b) in capisuite: by deleting files like /var/spool/capisuite/users/<user>/sendq/*.txt und ~/*.sff. In capisuite, an orphaned lock file (/var/spool/capisuite/users/<user>/sendq/*.lock) can be deleted, too.
 
 .SH ERRORS
-Please report any errors. Please report as well, if different hard- or software yield a requirement for a program modification.
+Please report any errors with the word 'autofax' included in the headline. 
+.br
+Please report as well, if different hard- or software yield a requirement for a program modification.
 .SH LIABILITY
 The program has been written with the best aim and has been tested by the author.
 .br

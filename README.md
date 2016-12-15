@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.41684) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.41685) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -900,8 +900,10 @@ be deleted, too.</p></td></tr>
 
 
 <p style="margin-left:11%; margin-top: 1em">Please report
-any errors. Please report as well, if different hard- or
-software yield a requirement for a program modification.</p>
+any errors with the word &rsquo;autofax&rsquo; included in
+the headline. <br>
+Please report as well, if different hard- or software yield
+a requirement for a program modification.</p>
 
 <h2>LIABILITY
 <a name="LIABILITY_E"></a>
@@ -925,7 +927,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.41684) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.41685) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1661,7 +1663,7 @@ image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 k&ouml;nnen abh&auml;ngige Programme
 einschlie&szlig;en. <br>
 Falls Sie eines dieser Programme nicht wollen oder eine
-&auml;ltere Version 0.41684</p>
+&auml;ltere Version 0.41685</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>
@@ -1850,9 +1852,10 @@ gel&ouml;scht werden.</p></td></tr>
 
 
 <p style="margin-left:11%; margin-top: 1em">Fehler bitte
-melden. Bitte auch melden, wenn sich
-&Auml;nderungsbedarf durch andere Hard- bzw. Software
-ergeben.</p>
+mit u.a. dem Wort &rsquo;autofax&rsquo; in der Ueberschrift
+melden. <br>
+Bitte auch melden, wenn sich &Auml;nderungsbedarf durch
+andere Hard- bzw. Software ergeben.</p>
 
 <h2>HAFTUNG
 <a name="HAFTUNG_D"></a>

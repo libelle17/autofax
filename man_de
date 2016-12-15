@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "15.12.16" "Version 0.41684" "Manual-Seite für autofax"
+.TH man 1 "15.12.16" "Version 0.41685" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -322,7 +322,7 @@ ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmy
 .br
 All diese Installationen können abhängige Programme einschließen.
 .br
-Falls Sie eines dieser Programme nicht wollen oder eine ältere Version 0.41684
+Falls Sie eines dieser Programme nicht wollen oder eine ältere Version 0.41685
 
 .SH AUSWIRKUNGEN
 Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:
@@ -379,7 +379,9 @@ In capisuite kann auch eine verwaiste Lock-Datei (/var/spool/capisuite/users/<us
 
 
 .SH FEHLER
-Fehler bitte melden. Bitte auch melden, wenn sich Änderungsbedarf durch andere Hard- bzw. Software ergeben.
+Fehler bitte mit u.a. dem Wort 'autofax' in der Ueberschrift melden. 
+.br
+Bitte auch melden, wenn sich Änderungsbedarf durch andere Hard- bzw. Software ergeben.
 
 .SH HAFTUNG
 Das Programm wurde mit bester Absicht entwickelt und durch den Autor getestet.

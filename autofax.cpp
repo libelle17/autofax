@@ -329,7 +329,6 @@ enum T_
   T_Fax_von,
   T_an,
   T_vom,
-  T_fuer_Benutzer,
   T_Alle_wieviel_Minuten_soll,
   T_aufgerufen_werden_0_ist_gar_nicht,
   T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht,
@@ -1108,8 +1107,6 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {" an "," to "},
   // T_vom
   {" vom "," at "},
-  // T_fuer_Benutzer
-  {" fuer Benutzer '"," for user '"},
   // T_Alle_wieviel_Minuten_soll
   {"alle wieviel Minuten soll ","every how many minutes shall "},
   // T_aufgerufen_werden_0_ist_gar_nicht]
@@ -2761,9 +2758,9 @@ void paramcl::rueckfragen()
 			mpwd.clear();
 			while (1) {
 				do {
-					mpwd=Tippstring(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Tx[T_fuer_Benutzer]+dblau+muser+schwarz+"'",&mpwd);
+					mpwd=Tippstring(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Txd[T_fuer_Benutzer]+dblau+muser+schwarz+"'",&mpwd);
 				} while (mpwd.empty());
-				mpw2=Tippstring(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Tx[T_fuer_Benutzer]+dblau+muser+schwarz+"'"+" ("+Txk[T_erneute_Eingabe]+")",&mpw2);
+				mpw2=Tippstring(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Txd[T_fuer_Benutzer]+dblau+muser+schwarz+"'"+" ("+Txk[T_erneute_Eingabe]+")",&mpw2);
 				if (mpwd==mpw2) break;
 			} //         while (1)
 			while (mpwd.empty());
@@ -3710,9 +3707,9 @@ void paramcl::pruefsamba()
         string pw1, pw2;
         while (1) {
 					do {
-						pw1=Tippstring(string(Tx[T_Passwort_fuer_samba])+Tx[T_fuer_Benutzer]+dblau+cuser+schwarz+"'",&pw1);
+						pw1=Tippstring(string(Tx[T_Passwort_fuer_samba])+Txd[T_fuer_Benutzer]+dblau+cuser+schwarz+"'",&pw1);
 					} while (pw1.empty());
-					pw2=Tippstring(string(Tx[T_Passwort_fuer_samba])+Tx[T_fuer_Benutzer]+dblau+cuser+schwarz+"' ("+Txk[T_erneute_Eingabe]+")",&pw2);
+					pw2=Tippstring(string(Tx[T_Passwort_fuer_samba])+Txd[T_fuer_Benutzer]+dblau+cuser+schwarz+"' ("+Txk[T_erneute_Eingabe]+")",&pw2);
           if (pw1==pw2) break;
         } //         while (1)
         systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
