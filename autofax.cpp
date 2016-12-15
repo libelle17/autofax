@@ -455,7 +455,7 @@ enum T_
   T_ermittelt,
   T_hylafax_Verzeichnis,
   T_Bezeichnung_des_Anrufers,
-  T_Passwort_fuer_samba_fuer_Benutzer,
+  T_Passwort_fuer_samba,
   T_Zeigt_die_Programmversion_an,
   T_Freie_Software,
   T_Verfasser,
@@ -1367,8 +1367,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"hylafax-Verzeichnis: ","hylafax-directory: "},
   // T_Bezeichnung_des_Anrufers
   {"Bezeichnung des Anrufers","Labelling of the caller"},
-  // T_Passwort_fuer_samba_fuer_Benutzer
-  {"Passwort fuer samba fuer Benutzer ","Password for samba for user "},
+  // T_Passwort_fuer_samba
+  {"Passwort fuer samba ","Password for samba "},
   // T_Zeigt_die_Programmversion_an
   {"Zeigt die Programmversion an","shows the program version"},
   // T_Freie_Software,
@@ -3710,9 +3710,9 @@ void paramcl::pruefsamba()
         string pw1, pw2;
         while (1) {
 					do {
-						pw1=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz,&pw1);
+						pw1=Tippstring(string(Tx[T_Passwort_fuer_samba])+Tx[T_fuer_Benutzer]+dblau+cuser+schwarz+"'",&pw1);
 					} while (pw1.empty());
-					pw2=Tippstring(Tx[T_Passwort_fuer_samba_fuer_Benutzer]+tuerkiss+cuser+schwarz+" ("+Txk[T_erneute_Eingabe]+")",&pw2);
+					pw2=Tippstring(string(Tx[T_Passwort_fuer_samba])+Tx[T_fuer_Benutzer]+dblau+cuser+schwarz+"' ("+Txk[T_erneute_Eingabe]+")",&pw2);
           if (pw1==pw2) break;
         } //         while (1)
         systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
