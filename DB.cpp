@@ -460,7 +460,7 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
 void DB::setzrpw()
 {
 	if (!nrzf) {
-		if (Tippob(Txd[T_MySQL_Passwort]+(Txd[T_fuer_Benutzer]+dblaus)+"root"+schwarz+Txd[T_ist_leer_Wollen_Sie_eines_festlegen])) {
+		if (Tippob(string(Txd[T_MySQL_Passwort])+Txd[T_fuer_Benutzer]+dblau+"root"+schwarz+Txd[T_ist_leer_Wollen_Sie_eines_festlegen])) {
 			string rootpw2;
 			while (1) {
 				do {
