@@ -48,7 +48,7 @@ enum Txdb_
 	T_MySQL_Passwort,
 	T_fuer_Benutzer,
 	T_wird_benoetigt_fuer_Befehl,
-  T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen,
+  T_ist_leer_Wollen_Sie_eines_festlegen,
   T_j,
   T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein,
   T_Fuehre_aus_db,

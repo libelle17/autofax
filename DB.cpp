@@ -32,9 +32,8 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
 	{" fuer Benutzer '"," for user '"},
 	// T_wird_benoetigt_fuer_Befehl
 	{"' (wird benoetigt fuer Befehl: ","' (is needed for command: "},
-  // T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen
-  {"Das MySQL-Passwort fuer Benutzer 'root' ist leer. Wollen Sie eines festlegen?",
-   "The MySQL password for the user 'root' is empty. Do You want to give one?"},
+  // T_ist_leer_Wollen_Sie_eines_festlegen
+  {"' ist leer. Wollen Sie eines festlegen?", "' is empty. Do You want to give one?"},
   // T_j
   {"j","y"},
   // T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein
@@ -461,7 +460,7 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
 void DB::setzrpw()
 {
 	if (!nrzf) {
-		if (Tippob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) {
+		if (Tippob(string(Txd[T_MySQL_Passwort])+Txd[T_fuer_Benutzer]+dblau+"root"+schwarz+Txd[T_ist_leer_Wollen_Sie_eines_festlegen])) {
 			string rootpw2;
 			while (1) {
 				do {
