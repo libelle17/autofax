@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "15.12.16" "Version 0.41689" "Manual-Seite für autofax"
+.TH man 1 "15.12.16" "Version 0.4169" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -303,7 +303,7 @@ gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el)
 \fBautofax:\fR
 .LP
 .HP 3
-boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-base, mariadb, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp,
+boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoffice-base, mariadb, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp,
 .br
 falls capisuite benutzt werden soll:
 .LP
@@ -322,7 +322,7 @@ ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmy
 .br
 All diese Installationen können abhängige Programme einschließen.
 .br
-Falls Sie eines dieser Programme nicht wollen oder eine ältere Version 0.41689
+Falls Sie eines dieser Programme nicht wollen oder eine ältere Version 0.4169
 
 .SH AUSWIRKUNGEN
 Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:

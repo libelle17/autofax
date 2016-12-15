@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.41689) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4169) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -664,9 +664,10 @@ libmysqlclient-dev(el), libtiff-dev(el)</p></td></tr>
 
 
 <p style="margin-top: 1em">boost, boost-devel, cron,
-ghostscript, imagemagick, libreoffice-base, mariadb,
-policycoreutils, policycoreutils-python-utils,
-poppler-tools, samba, sfftobmp,</p></td></tr>
+ghostscript, imagemagick, libreoffice-common,
+libreoffice-base, mariadb, policycoreutils,
+policycoreutils-python-utils, poppler-tools, samba,
+sfftobmp,</p> </td></tr>
 </table>
 
 <p style="margin-left:15%;">in case capisuite shall be
@@ -927,7 +928,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.41689) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4169) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1601,9 +1602,10 @@ libmysqlclient-dev(el), libtiff-dev(el)</p></td></tr>
 
 
 <p style="margin-top: 1em">boost, boost-devel, cron,
-ghostscript, imagemagick, libreoffice-base, mariadb,
-policycoreutils, policycoreutils-python-utils,
-poppler-tools, samba, sfftobmp,</p></td></tr>
+ghostscript, imagemagick, libreoffice-common,
+libreoffice-base, mariadb, policycoreutils,
+policycoreutils-python-utils, poppler-tools, samba,
+sfftobmp,</p> </td></tr>
 </table>
 
 <p style="margin-left:15%;">falls capisuite benutzt werden
@@ -1663,7 +1665,7 @@ image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 k&ouml;nnen abh&auml;ngige Programme
 einschlie&szlig;en. <br>
 Falls Sie eines dieser Programme nicht wollen oder eine
-&auml;ltere Version 0.41689</p>
+&auml;ltere Version 0.4169</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>

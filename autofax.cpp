@@ -6090,7 +6090,7 @@ int paramcl::pruefhyla()
     // <<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
     if (hylafehlt) {
       // 3) ggf. neu installieren
-      Log(rots+Tx[T_Muss_Hylafax_installieren]+schwarz,1,1);
+      Log(violetts+Tx[T_Muss_Hylafax_installieren]+schwarz,1,1);
       // a) von der source
       linst.doinst("ghostscript",obverb+1,oblog,"gs");
       linst.doinst("tiff",obverb+1,oblog,"tiff2ps");

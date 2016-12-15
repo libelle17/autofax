@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "15.12.16" "Version 0.41689" "\fBautofax\fR man page"
+.TH man 1 "15.12.16" "Version 0.4169" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -321,7 +321,7 @@ gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el)
 \fBautofax:\fR
 .LP
 .HP 3
-boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-base, mariadb, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp,
+boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoffice-base, mariadb, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp,
 .br
 in case capisuite shall be used:
 .LP
