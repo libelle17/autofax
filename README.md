@@ -903,7 +903,7 @@ be deleted, too.</p></td></tr>
 <p style="margin-left:11%; margin-top: 1em">Please report
 any errors with the word &rsquo;autofax&rsquo; included in
 the headline. <br>
-Please report as well, if different hard- or software yield
+Please report as well, if different hard- or software yields
 a requirement for a program modification.</p>
 
 <h2>LIABILITY
