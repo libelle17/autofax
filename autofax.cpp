@@ -4987,13 +4987,16 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           } // if (nimmer)
           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) ) {
             uchar geloescht=0;
-						// <<"\n"<<gruen<<"gesandt: "<<schwarz<<(int)gesandt<<endl;
-						// <<gruen<<"gescheitert: "<<schwarz<<(int)gescheitert<<endl;
-						// <<gruen<<"fehlend: "<<schwarz<<(int)fehlend<<endl;
-						// <<gruen<<"allegesch: "<<schwarz<<(int)allegesch<<endl;
-						// <<gruen<<"nimmer: "<<schwarz<<(int)nimmer<<endl;
-						// <<gruen<<"fsf.capistat: "<<schwarz<<(int)fsf.capistat<<endl;
-						// <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
+						caus <<"\n"<<gruen<<"gesandt: "<<schwarz<<(int)gesandt<<endl;
+						caus <<gruen<<"gescheitert: "<<schwarz<<(int)gescheitert<<endl;
+						caus <<gruen<<"fehlend: "<<schwarz<<(int)fehlend<<endl;
+						caus <<gruen<<"allegesch: "<<schwarz<<(int)allegesch<<endl;
+						caus <<gruen<<"nimmer: "<<schwarz<<(int)nimmer<<endl;
+						caus <<gruen<<"fsf.capistat: "<<schwarz<<(int)fsf.capistat<<endl;
+						caus <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
+						caus <<"obcapi: "<<(int)obcapi<<endl;
+						caus <<"obhyla: "<<(int)obhyla<<endl;
+						caus <<"fsf.capisd: '"<<fsf.capisd<<"'"<<endl;
 						// <<gruen<<"fsf.capisd.empty(): "<<schwarz<<(int)fsf.capisd.empty()<<endl;
             fsf.archiviere(My,this,&entrysend,allegesch||nimmer,
 					    fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?capi:hyla,
