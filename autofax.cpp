@@ -3857,7 +3857,7 @@ void paramcl::korrerfolgszeichen()
                   Tx[T_Falschals]<<(**(*cerg+21)=='0'?Tx[T_gescheitert]:Tx[T_gesandt])<<Tx[T_eingeordnet]<<farbe<<setw(14)<<
                   *(*cerg+3)<<schwarz<<" "<<*(*cerg+2)<<" "<<blau<<*(*cerg+6)<<schwarz;
                 Log(ausg.str(),1,1);
-                RS vs(My,string("UPDATE `")+touta+"` SET Erfolg= !Erfolg WHERE submid = '"+*(*cerg+3)+"'",255);
+//                RS vs(My,string("UPDATE `")+touta+"` SET Erfolg= !Erfolg WHERE submid = '"+*(*cerg+3)+"'",255);
               }
             } // ((fit!=fdn.end()) != (**(*cerg+21)=='0')) else
           } // if (*(*cerg+3)) if (*(*cerg+20)) if (*(*cerg+21)) 
