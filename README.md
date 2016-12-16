@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.41693) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.41694) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -665,9 +665,10 @@ libmysqlclient-dev(el), libtiff-dev(el)</p></td></tr>
 
 <p style="margin-top: 1em">boost, boost-devel, cron,
 ghostscript, imagemagick, libreoffice-common,
-libreoffice-base, mariadb, policycoreutils,
+libreoffice-base, mariadb-server, policycoreutils,
 policycoreutils-python-utils, poppler-tools, samba,
-sfftobmp,</p> </td></tr>
+sfftobmp, (in debian-derivates, for mariadb, additionally:
+apt-transport-https)</p> </td></tr>
 </table>
 
 <p style="margin-left:15%;">in case capisuite shall be
@@ -681,8 +682,8 @@ used:</p>
 
 
 <p style="margin-top: 1em">capisuite, capiutils,
-capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source,
-libcapi20-2, libcapi20-3, libxslt-tools,
+capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source
+(linux-source), libcapi20-2, libcapi20-3, libxslt-tools,
 linux-headers-$(uname -r), python-devel, (in fedora,
 additionally: kernel, kernel-devel, kernel-modules-extra,
 numactl-devel, pesign, rpmdevtools; this may install a
@@ -928,7 +929,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.41693) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.41694) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1603,9 +1604,10 @@ libmysqlclient-dev(el), libtiff-dev(el)</p></td></tr>
 
 <p style="margin-top: 1em">boost, boost-devel, cron,
 ghostscript, imagemagick, libreoffice-common,
-libreoffice-base, mariadb, policycoreutils,
+libreoffice-base, mariadb-server, policycoreutils,
 policycoreutils-python-utils, poppler-tools, samba,
-sfftobmp,</p> </td></tr>
+sfftobmp, (in debian-derivates, f&uuml;r mariadb,
+zus&auml;tzlich: apt-transport-https)</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">falls capisuite benutzt werden
@@ -1619,12 +1621,12 @@ soll:</p>
 
 
 <p style="margin-top: 1em">capisuite, capiutils,
-capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source,
-libcapi20-2, libcapi20-3, libxslt-tools,
+capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source
+(linux-source), libcapi20-2, libcapi20-3, libxslt-tools,
 linux-headers-$(uname -r), python-devel, (in fedora,
-additionally: kernel, kernel-devel, kernel-modules-extra,
-numactl-devel, pesign, rpmdevtools; this may install a
-current kernel),</p></td></tr>
+zus&auml;tzlich: kernel, kernel-devel,
+kernel-modules-extra, numactl-devel, pesign, rpmdevtools;
+dadurch kann in aktueller kernel installiert werden),</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">falls hylafax benutzt werden
@@ -1665,7 +1667,7 @@ image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 k&ouml;nnen abh&auml;ngige Programme
 einschlie&szlig;en. <br>
 Falls Sie eines dieser Programme nicht wollen oder eine
-&auml;ltere Version 0.41693</p>
+&auml;ltere Version 0.41694</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>

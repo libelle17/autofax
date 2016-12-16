@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "16.12.16" "Version 0.41693" "\fBautofax\fR man page"
+.TH man 1 "16.12.16" "Version 0.41694" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -321,12 +321,12 @@ gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el)
 \fBautofax:\fR
 .LP
 .HP 3
-boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoffice-base, mariadb, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp,
+boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoffice-base, mariadb-server, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp, (in debian-derivates, for mariadb, additionally: apt-transport-https)
 .br
 in case capisuite shall be used:
 .LP
 .HP 3
-capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source, libcapi20-2, libcapi20-3, libxslt-tools, linux-headers-$(uname -r), python-devel, (in fedora, additionally: kernel, kernel-devel, kernel-modules-extra, numactl-devel, pesign, rpmdevtools; this may install a current kernel), 
+capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source (linux-source), libcapi20-2, libcapi20-3, libxslt-tools, linux-headers-$(uname -r), python-devel, (in fedora, additionally: kernel, kernel-devel, kernel-modules-extra, numactl-devel, pesign, rpmdevtools; this may install a current kernel), 
 .br
 in case hylafax shall be used:
 .LP

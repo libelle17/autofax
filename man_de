@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "16.12.16" "Version 0.41693" "Manual-Seite für autofax"
+.TH man 1 "16.12.16" "Version 0.41694" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -303,12 +303,12 @@ gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el)
 \fBautofax:\fR
 .LP
 .HP 3
-boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoffice-base, mariadb, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp,
+boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoffice-base, mariadb-server, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp, (in debian-derivates, für mariadb, zusätzlich: apt-transport-https)
 .br
 falls capisuite benutzt werden soll:
 .LP
 .HP 3
-capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source, libcapi20-2, libcapi20-3, libxslt-tools, linux-headers-$(uname -r), python-devel, (in fedora, additionally: kernel, kernel-devel, kernel-modules-extra, numactl-devel, pesign, rpmdevtools; this may install a current kernel), 
+capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source (linux-source), libcapi20-2, libcapi20-3, libxslt-tools, linux-headers-$(uname -r), python-devel, (in fedora, zusätzlich: kernel, kernel-devel, kernel-modules-extra, numactl-devel, pesign, rpmdevtools; dadurch kann in aktueller kernel installiert werden), 
 .br
 falls hylafax benutzt werden soll:
 .LP
@@ -322,7 +322,7 @@ ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmy
 .br
 All diese Installationen können abhängige Programme einschließen.
 .br
-Falls Sie eines dieser Programme nicht wollen oder eine ältere Version 0.41693
+Falls Sie eines dieser Programme nicht wollen oder eine ältere Version 0.41694
 
 .SH AUSWIRKUNGEN
 Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:

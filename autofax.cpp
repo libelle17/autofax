@@ -556,6 +556,7 @@ enum T_
 	T_pruefunpaper,
 	T_pruefocr,
 	T_zupdf,
+	T_Lade_Capi_Module,
 	T_MAX
 };
 
@@ -1576,6 +1577,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	{"pruefocr()","checkocr()"},
 	// T_zupdf
 	{"zupdf()","topdf()"},
+	// T_Lade_Capi_Module
+	{"Lade Capi-Module ...","Loading capi-modules ..."},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -6558,7 +6561,7 @@ int paramcl::pruefcapi()
       } // for(size_t i=0;i<rueck.size();i++)
       lsysen system=lsys.getsys(obverb,oblog);
       if (!fcpcida || !capida || !capidrvda) {
-        Log("Lade Capi-Module ...",-1,0);
+        Log(Tx[T_Lade_Capi_Module],-1,0);
         systemrueck("sudo modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog,0,1);
         for(uchar ivers=0;ivers<2;ivers++) {
           if (!fcpcida)
@@ -7004,7 +7007,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
       pmp->nextnum();
       string cmd=string("capisuitefax -n ")+(strcmp("root",curruser())?"":"-u"+pmp->cuser)+" -d "+fsfp->telnr+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
       vector<string> faxerg;
-      systemrueck(cmd,obverb,oblog,&faxerg,0,wahr,Tx[T_Faxbefehl]);
+      systemrueck(cmd,1,1,&faxerg,0,wahr,Tx[T_Faxbefehl]);
       if (faxerg.size()) {
         const char* tz1="uccessful enqueued as ", // muss sprachlich so falsch bleiben wie im python-Script
               *tz2=" for ";
