@@ -123,7 +123,7 @@ stored.</p>
 chapters &rsquo;functionality&rsquo;,
 &rsquo;preconditions&rsquo; and &rsquo;implications&rsquo;
 below. Then, if connected to the internet, call: <b><br>
-N=autofax;P=$N_inst.sh; wget
+N=autofax;P=${N}_inst.sh; wget
 https://raw.githubusercontent.com/libelle17/$N/master/install.sh
 -O $P && sh $P</b> <br>
 At last, call: <b><br>
@@ -1056,7 +1056,7 @@ lesen Sie bitte die Kapitel &rsquo;Funktionsweise&rsquo;,
 &rsquo;Auswirkungen&rsquo;. A <br>
 Anschlie&szlig;end verbinden Sie den Rechner falls
 n&ouml;tig mit dem Internet und rufen Sie auf: <b><br>
-N=autofax;P=$N_inst.sh; wget
+N=autofax;P=${N}_inst.sh; wget
 https://raw.githubusercontent.com/libelle17/$N/master/install.sh
 -O $P && sh $P</b> <br>
 Zuletzt rufen Sie auf: <b><br>
@@ -1667,7 +1667,7 @@ image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 k&ouml;nnen abh&auml;ngige Programme
 einschlie&szlig;en. <br>
 Falls Sie eines dieser Programme nicht wollen oder eine
-&auml;ltere Version 0.41696</p>
+&auml;ltere Version 0.41693</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>

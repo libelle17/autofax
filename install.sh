@@ -20,8 +20,8 @@ getIPR() {
 	{ which dpkg >/dev/null 2>&1 && SPR="dpkg -s ";}
 }
 
-# Gruppen, deren Mitglieder sudo aufrufen koennen
-SUG="root\|sudo\|wheel\|admin";
+# Gruppen, deren Mitglieder sudo aufrufen koennen; fuer Debian muss zuerst 'sudo' genannt werden, weil eine Zuordnung zu 'root' nichts hilft
+SUG="sudo\|root\|wheel\|admin";
 
 # hier geht's los
 getIPR;
