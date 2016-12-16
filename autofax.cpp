@@ -3725,6 +3725,8 @@ void paramcl::pruefsamba()
       if (nmb.serviceda) nmb.restart(obverb-1,oblog);
       else if (nmbd.serviceda) nmbd.restart(obverb-1,oblog);
     } // if (smbrestart) 
+		// VFS
+		if (pruefipr()==apt) linst.doggfinst("samba-vfs-modules",obverb,oblog);
 		// Firewall(s)
 		uchar obslaueft=0;
 		svec rueckr;
