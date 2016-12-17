@@ -2900,9 +2900,11 @@ void paramcl::rueckfragen()
 
 		if (obcapi || obhyla) {
 			if (cgconf[++lfd].wert.empty() || rzf) {
-				msn=Tippstring(Tx[T_Eigene_MSN_Faxnummer_ohne_Vorwahl],&msn);
-        cgconf[lfd].setze(&msn);
-      }
+				do {
+					msn=Tippstring(Tx[T_Eigene_MSN_Faxnummer_ohne_Vorwahl],&msn);
+				} while (msn.empty()||!isnumeric(msn)||isneun(msn));
+				cgconf[lfd].setze(&msn);
+			}
     } else {
       lfd++; 
     } //     if (obcapi || obhyla)
