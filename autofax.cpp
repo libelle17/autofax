@@ -557,6 +557,10 @@ enum T_
 	T_pruefocr,
 	T_zupdf,
 	T_Lade_Capi_Module,
+	T_sammlecapi,
+	T_bereinigecapi,
+	T_sammlehyla,
+	T_holtif,
 	T_MAX
 };
 
@@ -1579,6 +1583,14 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	{"zupdf()","topdf()"},
 	// T_Lade_Capi_Module
 	{"Lade Capi-Module ...","Loading capi-modules ..."},
+	// T_sammlecapi
+	{"sammlecapi()","collectcapi()"},
+	// T_bereinigecapi
+	{"bereinigecapi()","revisecapi()"},
+	// T_sammlehyla
+	{"sammlehyla()","collecthyla()"},
+	// T_holtif
+	{"holtif()","gettif()"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -4462,7 +4474,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 		} // 		if (pseitenp)
 		if (loeschen && exten=="tif") {
 			ulong seiten=0;
-			gettif(quell, &seiten,0,0,0,0,0,0,obverb,oblog);
+			holtif(quell, &seiten,0,0,0,0,0,0,obverb,oblog);
 			Log("TIF: "+blaus+quell+": "+gruen+ltoan(seiten)+schwarz+Tx[T_Seiten],obverb,oblog);
 			if (rueck.size()) {
 				if (pseitenp) {
@@ -5056,9 +5068,10 @@ void paramcl::zeigweitere()
   if (obtitel) Log(ausg.str(),1,oblog);
 } // void paramcl::zeigweitere()
 
-// in loeschefax und zeigweitere
+// aufgerufen in loeschefax, zeigweitere
 void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
 {
+  Log(violetts+Tx[T_sammlecapi]+schwarz,obverb,oblog);
     struct stat entryvz;
     if (!lstat(cfaxusersqvz.c_str(),&entryvz)) {
       bereinigecapi();
@@ -5086,6 +5099,7 @@ void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
 // in sammlecapi
 void paramcl::bereinigecapi()
 {
+  Log(violetts+Tx[T_bereinigecapi]+schwarz,obverb,oblog);
   svec rueck;
   struct stat entryvz;
   // 7.2.16: alte *.lock-Dateien loeschen
@@ -5127,8 +5141,10 @@ void paramcl::bereinigecapi()
 } // void paramcl::bereinigecapi()
 
 
+// aufgerufen in: zeigweitere, loeschefax
 void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 {
+  Log(violetts+Tx[T_sammlehyla]+schwarz,obverb,oblog);
     struct stat entryvz;
     if (!lstat(hsendqvz.c_str(),&entryvz)) {
       cmd=string("sudo find '")+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";
@@ -5153,9 +5169,10 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 } // void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 
 // aufgerufen in: empfarch, zupdf
-int paramcl::gettif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elogp, string *absdrp,string *tsidp,string *calleridp,string *devnamep,int obverb,int oblog)
+int paramcl::holtif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elogp, string *absdrp,string *tsidp,string *calleridp,string *devnamep,int obverb,int oblog)
 {
-    int erg=1;
+	Log(violetts+Tx[T_holtif]+schwarz,obverb,oblog);
+	int erg=1;
     vector<string> tok; // fuer imagedescription
 		if (tmp) {
 			memset(tmp, 0, sizeof(*tmp));
@@ -5229,7 +5246,7 @@ int paramcl::gettif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elo
       TIFFClose(tif);
     } // if (TIFF* tif = TIFFOpen(datei.c_str(), "r")) 
  return erg;
-} // int paramcl::gettif(string& datei,struct tm *tmp,ulong *seitenp,string *calleridp,string *devnamep,int obverb,int oblog)
+} // int paramcl::holtif(string& datei,struct tm *tmp,ulong *seitenp,string *calleridp,string *devnamep,int obverb,int oblog)
 
 // wird aufgerufen in: main
 void paramcl::empfarch()
@@ -5258,7 +5275,7 @@ void paramcl::empfarch()
     struct tm tm;
 		struct stat elog;
     ulong seiten=0;
-		if (!gettif(rueck[i],&seiten,&tm,&elog,&absdr,&tsid,&callerid,&devname,obverb,oblog))
+		if (!holtif(rueck[i],&seiten,&tm,&elog,&absdr,&tsid,&callerid,&devname,obverb,oblog))
 			ankzahl++;
 
     string tabsdr; // transferierter Absender
@@ -6542,7 +6559,8 @@ int paramcl::pruefcapi()
   int capilaeuft=0;
   unsigned versuch=0;
   capisv(obverb,oblog);
-  for(;versuch<2;versuch++) {
+	linst.doinst("ghostscript",obverb+1,oblog,"gs");
+	for(;versuch<2;versuch++) {
     // capi4linux muss zum Laufen der Capisuite installiert sein
     // fuer fcpci muss in driver.c eingefuegt werden:
     // #if !defined(IRQF_DISABLED)
