@@ -629,16 +629,20 @@ being written, if necessary.</p></td></tr>
 
 <p style="margin-left:11%; margin-top: 1em">The program was
 adjusted to an installation of Opensuse 42.1, Debian 8.60,
-Ubuntu 16.04, Mint 18 or Fedora 24 with standard options.
-systemctl (systemd) must run, sudo must be installed
-(missing per default in Debian), the user must be allowed to
-call the command &rsquo;sudo&rsquo; (must be member of the
-group &rsquo;sudoers&rsquo;), &rsquo;GNU make&rsquo; has to
-be installed (which shall be accomplished if necessary by
-calling ./install.sh). Further needed programs will be
-installed by the makefile or by autofax itsself including
-preconditioned programs via zypper, apt, dnf or yum, python3
-pip, if needed and possible, especially:</p>
+Ubuntu 16.04, Mint 18 or Fedora 24 with standard options. In
+Debian, it may be advantageous to check that in the file
+/etc/apt/sources.list no dvd is mentioned before the
+standard online-repositories. systemctl (systemd) must run,
+sudo is needed (missing per default in Debian), the user
+must be allowed to call the command &rsquo;sudo&rsquo; (must
+be member of a group mentioned in /etc/sudoers, otherwise,
+the above mentioned installation program tries to enter him
+there), &rsquo;GNU make&rsquo; has to be installed (which
+shall be accomplished if necessary by calling ./install.sh).
+Further needed programs will be installed by the makefile or
+by autofax itsself including preconditioned programs via
+zypper, apt, dnf or yum, python3 pip, if needed and
+possible, especially:</p>
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>makefile:</b></p>
@@ -1568,17 +1572,21 @@ unterzogen.</p> </td></tr>
 <p style="margin-left:11%; margin-top: 1em">Das Programm
 wurde auf eine Installation von Opensuse 42.1, Debian 8.60,
 Ubuntu 16.04, Mint 18 oder Fedora 24 mit den
-Standardoptionen abgestimmt. systemctl (systemd) muss
+Standardoptionen abgestimmt. In Debian kann es vorteilhaft
+sein, darauf zu achten, dass in der Datei
+/etc/apt/sources.list kein DVD-Eintrag vor den
+Standard-Online-Repositories steht. systemctl (systemd) muss
 laufen, sudo muss installiert sein (fehlt anfangs bei
 Standardinstallation in Debian), der Benutzer muss den
 Befehl &rsquo;sudo&rsquo; ausf&uuml;hren d&uuml;rfen
-(Mitglied in der Gruppe &rsquo;sudoers&rsquo; sein),
-&rsquo;GNU make&rsquo; wird ben&ouml;tigt, was durch
-Aufruf von ./install.sh ggf. installiert werden kann.
-Weitere ben&ouml;tigte Programm werden falls
-m&ouml;glich vom makefile oder von autofax bei Bedarf
-selbst mitsamt vorausgesetzter Programme mithilfe von
-zypper, apt, dnf oder yum nachstalliert, insbesondere:
+(Mitglied einer Gruppe sein, die in /etc/sudoers genannt
+wird, andernfalls versucht das o.g. Installationsprogramm,
+ihn dort einzutragen), &rsquo;GNU make&rsquo; wird
+ben&ouml;tigt, was durch Aufruf von ./install.sh ggf.
+installiert werden kann. Weitere ben&ouml;tigte Programm
+werden falls m&ouml;glich vom makefile oder von autofax
+bei Bedarf selbst mitsamt vorausgesetzter Programme mithilfe
+von zypper, apt, dnf oder yum nachstalliert, insbesondere:
 <b><br>
 makefile:</b></p>
 

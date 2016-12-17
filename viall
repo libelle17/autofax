@@ -2,4 +2,12 @@
 ctags *.cpp *.h 2>/dev/null
 # which gtags ||{ sudo dnf -y install global;} && gtags
 # `which vim || which vi` autofax.cpp autofax.h vorgaben.cpp DB.cpp DB.h konsole.cpp konsole.h -p -c "syntax on" -c "set number" -c "set autoindent" -c "set autoindent" -c "set tabstop=2" -c "set ignorecase" -c "set showmatch" -c "set magic" -c "set ruler" 
-`which vim || which vi` autofax.cpp autofax.h vorgaben.cpp DB.cpp DB.h konsole.cpp konsole.h man_en man_de Makefile install.sh viall .exrc -pNu .exrc
+DATEIEN="autofax.cpp autofax.h vorgaben.cpp DB.cpp DB.h konsole.cpp konsole.h man_en man_de Makefile install.sh viall .exrc"
+ALLES="v1 v2"
+if [ "$1" = "nv" ]; then
+ echo Neue Version
+ touch $ALLES
+ make && make install && make git
+else
+`which vim || which vi` $DATEIEN -pNu .exrc
+fi

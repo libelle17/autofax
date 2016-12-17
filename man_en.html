@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Fri Dec 16 21:16:13 2016 -->
+<!-- CreationDate: Sat Dec 17 11:22:48 2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -647,16 +647,20 @@ being written, if necessary.</p></td></tr>
 
 <p style="margin-left:11%; margin-top: 1em">The program was
 adjusted to an installation of Opensuse 42.1, Debian 8.60,
-Ubuntu 16.04, Mint 18 or Fedora 24 with standard options.
-systemctl (systemd) must run, sudo must be installed
-(missing per default in Debian), the user must be allowed to
-call the command &rsquo;sudo&rsquo; (must be member of the
-group &rsquo;sudoers&rsquo;), &rsquo;GNU make&rsquo; has to
-be installed (which shall be accomplished if necessary by
-calling ./install.sh). Further needed programs will be
-installed by the makefile or by autofax itsself including
-preconditioned programs via zypper, apt, dnf or yum, python3
-pip, if needed and possible, especially:</p>
+Ubuntu 16.04, Mint 18 or Fedora 24 with standard options. In
+Debian, it may be advantageous to check that in the file
+/etc/apt/sources.list no dvd is mentioned before the
+standard online-repositories. systemctl (systemd) must run,
+sudo is needed (missing per default in Debian), the user
+must be allowed to call the command &rsquo;sudo&rsquo; (must
+be member of a group mentioned in /etc/sudoers, otherwise,
+the above mentioned installation program tries to enter him
+there), &rsquo;GNU make&rsquo; has to be installed (which
+shall be accomplished if necessary by calling ./install.sh).
+Further needed programs will be installed by the makefile or
+by autofax itsself including preconditioned programs via
+zypper, apt, dnf or yum, python3 pip, if needed and
+possible, especially:</p>
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>makefile:</b></p>
