@@ -4905,7 +4905,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
           int obsfehlt=-1;
           /*fsf.*/
           setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 0, &obsfehlt, 1, oblog);
-          fsf.hylaausgeb(&ausg, this, obsfehlt, 0, obverb, 0, oblog);
+					caus <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
+					fsf.hylaausgeb(&ausg, this, obsfehlt, 0, obverb, 0, oblog);
 //          if (!obsfehlt) KLA // Protokolldatei vorhanden 12.10.16 sollte jetzt auch mit xferfax gehen
             if (mitupd) {
               RS rupd(My); 
