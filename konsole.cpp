@@ -1574,6 +1574,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
 			for(size_t j=0;j<(*vp).size();j++) {
 			 caus<<"(*vp)["<<j<<"]:"<<" "<<(*vp)[j]<<endl;
 			}
+			caus<<"TxBP->lgn: "<<TxBp->lgn<<endl;
       schl[ind].bemerk="# "+(*vp)[TxBp->lgn];
 	caus<<rot<<"Stelle 14"<<schwarz<<endl;
      }
