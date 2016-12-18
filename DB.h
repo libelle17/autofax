@@ -31,7 +31,6 @@ using namespace std;
 #ifdef _MSC_VER
 //#pragma comment(lib, "libmysql.lib")
 #endif
-#define CLIENT_MULTI_STATEMENTS (1UL << 16) /* Enable/disable multi-stmt support */
 
 enum Txdb_ 
 {
