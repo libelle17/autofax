@@ -1560,14 +1560,14 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
        string bv=schl[ind].bemerk.substr(2);
        for(int aktsp=0;aktsp<Smax;aktsp++) {
          if (bv==(*vp)[aktsp]) {
-           gefunden=(aktsp!=Txk.lgn); // wenn aktuelle Sprache, nichts tun
+           gefunden=(aktsp!=TxBp->lgn); // wenn aktuelle Sprache, nichts tun
            break;
          } // if (bv==bemv[aktsp]) 
        } // for(int aktsp=0;aktsp<Smax;aktsp++) 
      } // (schl[ind].bemerk.empty) else
      if (gefunden) {
 	caus<<rot<<"Stelle 13"<<schwarz<<endl;
-      schl[ind].bemerk="# "+(*vp)[Txk.lgn];
+      schl[ind].bemerk="# "+(*vp)[TxBp->lgn];
 	caus<<rot<<"Stelle 14"<<schwarz<<endl;
      }
     } //     if (schl[ind].name==name)
