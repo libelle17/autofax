@@ -563,6 +563,7 @@ enum T_
 	T_sammlefertigehyla,
 	T_holtif,
 	T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden,
+	T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden,
 	T_MAX
 };
 
@@ -1596,8 +1597,11 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	// T_holtif
 	{"holtif()","gettif()"},
 	// T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden
-	{"Bei folgenden Faxen mußte das Erfolgskennzeichen gemaess Hylafax-Protkolldatei auf Mißerfolg gesetzt werden:",
+	{"Bei folgenden Faxen musste das Erfolgskennzeichen gemaess Hylafax-Protkolldatei auf Misserfolg gesetzt werden:",
 	 "For the following faxes, the success-flag had to be set to failure following the hylfax logfile:"},
+	// T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden,
+	{"Bei folgenden Faxen mußte das Erfolgskennzeichen gemaess Hylafax-Protkolldatei auf Erfolg gesetzt werden:",
+	 "For the following faxes, the success-flag had to be set to success following the hylfax logfile:"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -5213,19 +5217,20 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 		auswe[auswe.size()-1]=')';
 		auswm[auswm.size()-1]=')';
 		char ***cerg;
-		RS rs1(My,string("SELECT submid FROM `")+touta+"` WHERE erfolg=0 and submid in "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+		RS rs1(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=0 AND submid IN "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 		size_t cergz=0;
 		while (cerg=rs1.HolZeile(),cerg?*cerg:0) {
 			if (!cergz++)
-				Log("Bei folgenden Faxen mußte das Erfolgskennzeichen gemaess Hylafax-Protkoll auf Erfolg gesetzt werden:",1,1);
+				Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden],1,1);
 			auswmf+=*(*cerg+0); auswmf+=",";
 			// <<violett<<*(*cerg+0)<<schwarz<<endl; 
 		} // 				while (cerg=rs1.HolZeile(),cerg?*cerg:0)
 		if (cergz) {
 			auswmf[auswmf.size()-1]=')';
 			tu_lista("",auswmf);
+			RS k1(My,"UPDATE `"+touta+"` SET erfolg=1 WHERE erfolg=0 AND submid IN "+auswe,ZDB);
 		} // 				if (cergz) 
-		RS rs2(My,string("SELECT submid FROM `")+touta+"` WHERE erfolg=1 and submid in "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+		RS rs2(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=1 AND submid IN "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 		cergz=0;
 		while (cerg=rs2.HolZeile(),cerg?*cerg:0) {
 			if (!cergz++)
@@ -5236,6 +5241,7 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 		if (cergz) {
 			auswef[auswef.size()-1]=')';
 			tu_lista("",auswef);
+			RS k1(My,"UPDATE `"+touta+"` SET erfolg=0 WHERE erfolg=1 AND submid IN "+auswm,ZDB);
 		} // 				if (cergz) 
 		caus<<blau<<auswe<<schwarz<<endl;
 		caus<<rot<<auswm<<schwarz<<endl;
