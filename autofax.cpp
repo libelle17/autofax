@@ -2107,6 +2107,7 @@ void paramcl::pruefmodem()
     cgconf.setze("obmodem",obmodem?"1":"0");
   }
   cgconf.setzbemv("obmodem",&Tx,T_ob_ein_Modem_drinstak);
+  Log(violetts+Tx[T_pruefmodem]+" Ende"+schwarz,obverb,oblog);
   // wvdialconf oder schneller: setserial -a /dev/tty*, mit baud_base: <!=0>  als Kriterium
 } // void paramcl::pruefmodem()
 
