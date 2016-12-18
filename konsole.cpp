@@ -1570,9 +1570,9 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
      } // (schl[ind].bemerk.empty) else
      if (gefunden) {
 	caus<<rot<<"Stelle 13"<<schwarz<<endl;
-	    caus<<"bemv.size(): "<<bemv.size()<<endl;
-			for(size_t j=0;j<bemv.size();j++) {
-			 caus<<"bemv["<<j<<"]:"<<" "<<bemv[j]<<endl;
+	    caus<<"(*vp).size(): "<<(*vp).size()<<endl;
+			for(size_t j=0;j<(*vp).size();j++) {
+			 caus<<"(*vp)["<<j<<"]:"<<" "<<(*vp)[j]<<endl;
 			}
       schl[ind].bemerk="# "+(*vp)[TxBp->lgn];
 	caus<<rot<<"Stelle 14"<<schwarz<<endl;
