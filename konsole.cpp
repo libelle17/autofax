@@ -1545,7 +1545,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
 	} else {
 	caus<<rot<<"Stelle 10b"<<schwarz<<endl;
 	  Sprache altSpr=TxBp->lgn;
-		for(int akts=0;akts<Smax-1;akts++) {
+		for(int akts=0;akts<Smax;akts++) {
 			TxBp->lgn=(Sprache)akts;
 			bemst=(*TxBp)[Tind];
 			if (obfarbe) loeschefarbenaus(&bemst);
@@ -2809,9 +2809,6 @@ void optioncl::setzebem(schlArr *cp,const char *pname)
   if (cp && pname) {
     svec bems;
     for(int akts=0;akts<Smax;akts++) bems<<machbemerkung((Sprache)akts,falsch);
-			for(size_t j=0;j<bems.size();j++) {
-			 caus<<"bems["<<j<<"]:"<<" "<<bems[j]<<endl;
-			}
     cp->setzbemv(pname,&Txk,0,0,&bems);
   }
 } // void optioncl::setzebem(TxB *TxBp,schlArr *cp,const char *pname)
