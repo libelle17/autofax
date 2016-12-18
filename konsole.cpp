@@ -1538,8 +1538,10 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
   svec bemv, *vp;
 	caus<<rot<<"Stelle 10"<<schwarz<<endl;
   if (fertige) {
+	caus<<rot<<"Stelle 10a"<<schwarz<<endl;
     vp=fertige;
 	} else {
+	caus<<rot<<"Stelle 10b"<<schwarz<<endl;
 	  Sprache altSpr=TxBp->lgn;
 		for(int akts=0;akts<Smax-1;akts++) {
 			TxBp->lgn=(Sprache)akts;
@@ -1567,6 +1569,10 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
      } // (schl[ind].bemerk.empty) else
      if (gefunden) {
 	caus<<rot<<"Stelle 13"<<schwarz<<endl;
+	    caus<<"bemv.size(): "<<bemv.size()<<endl;
+			for(size_t j=0;j<bemv.size();j++) {
+			 caus<<"bemv["<<j<<"]:"<<" "<<bemv[j]<<endl;
+			}
       schl[ind].bemerk="# "+(*vp)[TxBp->lgn];
 	caus<<rot<<"Stelle 14"<<schwarz<<endl;
      }
