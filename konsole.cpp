@@ -1537,6 +1537,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
   caus<<"Setzbemv: "<<"name: "<<name<<" Tind: "<<Tind<<" fertige: "<<fertige<<endl;
   string bemst; 
   svec bemv, *vp;
+			caus<<"TxBP->lgn: "<<TxBp->lgn<<endl;
 	caus<<rot<<"Stelle 10"<<schwarz<<endl;
   if (fertige) {
 	caus<<rot<<"Stelle 10a"<<schwarz<<endl;
