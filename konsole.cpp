@@ -1534,6 +1534,7 @@ const string& schlArr::hole(const string& name)
 // dann in aktueller Sprache uebernehmen
 void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,svec *fertige)
 {
+  caus<<"Setzbemv: "<<"name: "<<name<<" Tind: "<<Tind<<endl;
   string bemst; 
   svec bemv, *vp;
 	caus<<rot<<"Stelle 10"<<schwarz<<endl;
