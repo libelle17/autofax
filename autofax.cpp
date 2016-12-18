@@ -5217,6 +5217,7 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 				} // 				while (cerg=rs1.HolZeile(),cerg?*cerg:0)
 				if (cergz) {
 					auswef[auswef.size()-1]=')';
+					caus<<gelb<<auswef<<schwarz<<endl;
 					tu_lista("",auswef);
 				} // 				if (cergz) 
 			RS rs2(My,string("SELECT submid FROM `")+touta+"` WHERE erfolg=1 and submid in "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
