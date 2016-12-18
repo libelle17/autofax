@@ -5067,6 +5067,8 @@ void paramcl::zeigweitere()
 		} //     for(size_t i=0;i<fsfv.size();i++)
 	} // if (obcapi)
 	if (obhyla) {
+		vector<fsfcl> fsfv2;
+		sammlefertigehyla(&fsfv2);
 		vector<fsfcl> fsfv;
 		sammlehyla(&fsfv);
 		for(size_t i=0;i<fsfv.size();i++) {
@@ -5076,8 +5078,6 @@ void paramcl::zeigweitere()
 			}
 			fsfv[i].hylaausgeb(&ausg, this, 0, 0, obverb, 1, oblog);
 		} //     for(size_t i=0;i<fsfv.size();i++) 
-		vector<fsfcl> fsfv2;
-		sammlefertigehyla(&fsfv2);
 	} // if (obhyla) 
 	if (obtitel) Log(ausg.str(),1,oblog);
 } // void paramcl::zeigweitere()
@@ -5201,7 +5201,7 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 		svec qrueck;
 		// wenn unter SEND im Feld reason ($14) nichts steht, erfolgreich, sonst erfolglos
 		systemrueck(cmd,obverb,oblog,&qrueck);
-		string auswe="(", auswm="(", auswef="(",auswmf="(";
+		string auswe="(", auswm="(", auswef="(",auswmf="(", inse, insm;
 		for(size_t i=0;i<qrueck.size();i++) {
 			vector<string> tok; 
 			aufSplit(&tok,&qrueck[i],'\t');
@@ -5210,12 +5210,15 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 				if (qrueck[i].substr(0,4)=="SEND") {
 					if (tok[2]=="\"\"") erfolg=1;
 				}
-				if (erfolg) {auswe+=tok[1]; auswe+=",";}
-				else {auswm+=tok[1]; auswm+=",";}
+				if (erfolg) {auswe+=tok[1]+","; inse+="("+tok[1]+"),";}
+				else {auswm+=tok[1]+","; insm+="("+tok[1]+"),";}
 			} // 				if (tok.size()>0)
 		} // for(size_t i=0;i<rueck.size();i++) 
 		auswe[auswe.size()-1]=')';
+		inse.erase(inse.length()-1);
 		auswm[auswm.size()-1]=')';
+		insm.erase(insm.length()-1);
+		RS vgl(My,"DROP TABLE IF EXISTS tmp; CREATE TABLE tmp(i INT KEY); INSERT INTO tmp() VALUES "+inse,ZDB);
 		char ***cerg;
 		RS rs1(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=0 AND submid IN "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 		size_t cergz=0;
