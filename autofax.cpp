@@ -2670,7 +2670,6 @@ int paramcl::getcommandline()
   opts.push_back(/*6*/optioncl("listf","listfailed", &Tx, T_listet_Datensaetze_aus, &touta, T_ohne_Erfolgskennzeichen_auf, &listf,1));
   opts.push_back(/*6*/optioncl("listi","listinca", &Tx, T_listet_Datensaetze_aus, &tinca, T__auf, &listi,1));
   opts.push_back(/*4*/optioncl("listw","listwart", &Tx, T_listet_wartende_Faxe_auf, &listw,1));
-  string nix;
   opts.push_back(/*3*/optioncl("s","suche",&Tx, T_suche_in_verarbeiteten_Faxen_nach,&nix,T_MAX,&suchstr,psons));
   opts.push_back(/*2*/optioncl("n","dszahl", &Tx, T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt, &dszahl,pzahl));
   opts.push_back(/*4*/optioncl("info","version", &Tx, T_Zeigt_die_Programmversion_an, &zeigvers,1));
@@ -4140,7 +4139,7 @@ int paramcl::loescheallewartende(int obverb, int oblog)
 } // int paramcl::loescheallewartende(int obverb, int oblog)
 
 // wird aufgerufen in: main (2x)
-void paramcl::tu_lista(const string& oberfolg)
+void paramcl::tu_lista(const string& oberfolg, const string& submids)
 {
   Log(violetts+Tx[T_tu_lista]+schwarz,obverb,oblog);
   char ***cerg;
@@ -4148,7 +4147,7 @@ void paramcl::tu_lista(const string& oberfolg)
         "SELECT * FROM ("
         "SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
         "RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe FROM `"+
-        touta+"` WHERE Erfolg = "+oberfolg+" "
+        touta+"` WHERE "+(submids.empty()?"Erfolg = "+oberfolg+" ":"submid in "+submids+" ")+
         " ORDER BY transe DESC LIMIT "+dszahl+") i "
         " ORDER BY transe LIMIT 18446744073709551615) i",ZDB);
 
@@ -5186,11 +5185,13 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 			// ausw[ausw.size()-1]=')';
 			// tac /var/spool/hylafax/etc/xferfaxlog | awk -vDate=`date -d'now-1 month' +%m/%d/%y` 'function isdate(var) { if (var ~ /[0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]/) return 1; return 0; } isdate($1) && $1 > Date {print Date " " $0}'
 //		  cmd="tac \""+xferfaxlog+"\" 2>/dev/null|grep '"+sep+"UNSENT"+sep+"\\|"+sep+"SEND"+sep+"'|cut -f 2,5,14,20|awk '!s[$2]++'";
+// awk-Befehl: Suche bis vor 3 Monaten von zu jeder hylanr ($5) die letzte Zeile (s[$5]==0) mit dem Befehl ($2) SEND oder UNSENT; gib mit \t aus
 			cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-3 month' +%m/%d/%y` 'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];}"
-			    " $1<Date {exit 0} ($2 in arr && !s[$5]++) {print $2,$5,$14,$20}'"; //...$20;gz++} END{print gz}'
+			    " $1<Date {exit 0} ($2 in arr && !s[$5]++) {print $2,$5,$14}'"; //...$14,$20;gz++} END{print gz}'
       svec qrueck;
+// wenn unter SEND im Feld reason ($14) nichts steht, erfolgreich, sonst erfolglos
       systemrueck(cmd,obverb,oblog,&qrueck);
-			string auswe="(", auswm="(";
+			string auswe="(", auswm="(", auswef="(",ausmf="(";
 			for(size_t i=0;i<qrueck.size();i++) {
 				vector<string> tok; 
 				aufSplit(&tok,&qrueck[i],'\t');
@@ -5207,9 +5208,17 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 			auswm[auswm.size()-1]=')';
 			char ***cerg;
 			RS rs1(My,string("SELECT submid FROM `")+touta+"` WHERE erfolg=0 and submid in "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
-			while (cerg=rs1.HolZeile(),cerg?*cerg:0) {
-			 caus<<violett<<*(*cerg+0)<<schwarz<<endl; 
-			}
+				size_t cergz=0;
+				while (cerg=rs1.HolZeile(),cerg?*cerg:0) {
+				  if (!cergz++)
+						Log("Bei folgenden Faxen mußte das Erfolgskennzeichen gemaess Hylafax-Protkoll auf Mißerfolg gesetzt werden:",1,1);
+					auswef+=*(*cerg+0); auswef+=",";
+					caus<<violett<<*(*cerg+0)<<schwarz<<endl; 
+				} // 				while (cerg=rs1.HolZeile(),cerg?*cerg:0)
+				if (cergz) {
+					auswef[auswef.size()-1]=')';
+					tu_lista("",auswef);
+				} // 				if (cergz) 
 			RS rs2(My,string("SELECT submid FROM `")+touta+"` WHERE erfolg=1 and submid in "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 			while (cerg=rs2.HolZeile(),cerg?*cerg:0) {
 			 caus<<rot<<*(*cerg+0)<<schwarz<<endl; 

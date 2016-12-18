@@ -341,7 +341,7 @@ class paramcl // Programmparameter
     void korrerfolgszeichen();
     void bereinigewv();
     void anhalten();
-    void tu_lista(const string& oberfolg);
+    void tu_lista(const string& oberfolg,const string& submids=nix);
     void tu_listi();
     void suchestr();
     int pruefsoffice(uchar mitloe=0);

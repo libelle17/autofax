@@ -88,7 +88,7 @@ extern const char *_rot, *_hrot, *_schwarz, *_blau, *_gelb, *_tuerkis, *_hgrau;
 #include <fstream> // kopiere
 #include <algorithm>    // std::transform
 
-extern string nix;
+extern const string nix;
 // typedef const char *TCtp[][Smax];
 typedef const char * const * const TCtp[Smax];
 class TxB // Text-Basisklasse
@@ -509,7 +509,7 @@ class optioncl
     string lang;
     TxB *TxBp=0;
     long Txi;
-    string *rottxt=0; // ggf rot zu markierender Text zwischen Txi und Txi2
+    const string *rottxt=0; // ggf rot zu markierender Text zwischen Txi und Txi2
     long Txi2=-1;
 //    string oerkl;
     uchar *pptr=0; // Zeiger auf Parameter, der hier eingestellt werden kann
@@ -528,7 +528,7 @@ class optioncl
 ///*1*/optioncl(string kurz,string lang,TxB *TxBp,long Txi) : 
 //               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi) {}
 /*2*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *zptr,par_t art,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
-/*3*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cp=0,
+/*3*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,const string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cp=0,
               const char *pname=0,uchar* obschreibp=0);
 /*4*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar *pptr,int wert,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
 ///*5*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *rottxt,long Txi2,uchar *pptr,int wert) : 
@@ -574,7 +574,7 @@ std::string dir_name(const std::string& path);  // Pfadname einer Datei
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
                 int verbergen=0, binaer obergebnisanzeig=wahr, const string& ueberschr="",vector<errmsgcl> *errm=0);
 void pruefplatte();
-void pruefmehrfach(string& wen=nix);
+void pruefmehrfach(const string& wen=nix);
 int setfaclggf(const string& datei, const binaer obunter=falsch, const int mod=4, uchar obimmer=0,int obverb=0,int oblog=0);
 int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=1, uchar obmitcon=1);
 string aktprogverz();

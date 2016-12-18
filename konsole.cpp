@@ -37,7 +37,7 @@ printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTe
 //char logdatei[PATH_MAX+1]="v:\\log_termine.txt";
 #endif
 #define obfstream
-string nix;
+const string nix;
 class linstcl linst;
 
 const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
@@ -1856,13 +1856,14 @@ void pruefplatte()
   }
 } // pruefplatte
 
-void pruefmehrfach(string& wen)
+// ob das aktuelle Programm mehrfach laeuft
+void pruefmehrfach(const string& wen)
 {
   svec rueck;
-  if (wen.empty()) wen=base_name(meinpfad());
-  systemrueck("ps -eo comm|grep '^"+wen+"'",0,0,&rueck);
+	string iwen=wen.empty()?base_name(meinpfad()):wen;
+  systemrueck("ps -eo comm|grep '^"+iwen+"'",0,0,&rueck);
   if (rueck.size()>1) {
-    cout<<Txk[T_Program]<<blau<<wen<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
+    cout<<Txk[T_Program]<<blau<<iwen<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
     exit(98);
   } //   if (rueck.size()>1) {
   /*
@@ -2804,7 +2805,7 @@ void optioncl::setzebem(schlArr *cp,const char *pname)
   setzebem(cp,pname);
 }
 
-/*3*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp, 
+/*3*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, const string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp, 
     const char *pname,uchar* obschreibp) : 
   kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), zptr(zptr), art(art),
   cp(cp),pname(pname),obschreibp(obschreibp) 
