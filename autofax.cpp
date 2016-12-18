@@ -4151,7 +4151,8 @@ void paramcl::tu_lista(const string& oberfolg, const string& submids)
 			" ORDER BY transe DESC LIMIT "+dszahl+") i "
 			" ORDER BY transe LIMIT 18446744073709551615) i",ZDB);
 
-	cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandte_Faxe]<<schwarz<<endl;
+	if (submids.empty())
+		cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandte_Faxe]<<schwarz<<endl;
 	while (cerg=lista.HolZeile(),cerg?*cerg:0) {
 		cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(14)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(65)<<*(*cerg+2)<<"|"
 			<<schwarz<<setw(30)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
