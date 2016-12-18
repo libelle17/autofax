@@ -5186,7 +5186,8 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 			// ausw[ausw.size()-1]=')';
 			// tac /var/spool/hylafax/etc/xferfaxlog | awk -vDate=`date -d'now-1 month' +%m/%d/%y` 'function isdate(var) { if (var ~ /[0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]/) return 1; return 0; } isdate($1) && $1 > Date {print Date " " $0}'
 //		  cmd="tac \""+xferfaxlog+"\" 2>/dev/null|grep '"+sep+"UNSENT"+sep+"\\|"+sep+"SEND"+sep+"'|cut -f 2,5,14,20|awk '!s[$2]++'";
-			cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-3 month' +%m/%d/%y` 'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];} $1<Date {exit 0} ($2 in arr && !s[$3]++) {print $2,$5,$14,$20}'"; //...$20;gz++} END{print gz}'
+			cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-3 month' +%m/%d/%y` 'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];}"
+			    " $1<Date {exit 0} ($2 in arr && !s[$5]++) {print $2,$5,$14,$20}'"; //...$20;gz++} END{print gz}'
       svec qrueck;
       systemrueck(cmd,obverb,oblog,&qrueck);
 			string auswe="(", auswm="(";
@@ -5200,18 +5201,18 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 					}
 					if (erfolg) {auswe+=tok[1]; auswe+=",";}
 					else {auswm+=tok[1]; auswm+=",";}
-				}
+				} // 				if (tok.size()>0)
       } // for(size_t i=0;i<rueck.size();i++) 
 			auswe[auswe.size()-1]=')';
 			auswm[auswm.size()-1]=')';
 			char ***cerg;
 			RS rs1(My,string("SELECT submid FROM `")+touta+"` WHERE erfolg=0 and submid in "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 			while (cerg=rs1.HolZeile(),cerg?*cerg:0) {
-			 cout<<violett<<*(*cerg+0)<<schwarz<<endl; 
+			 caus<<violett<<*(*cerg+0)<<schwarz<<endl; 
 			}
 			RS rs2(My,string("SELECT submid FROM `")+touta+"` WHERE erfolg=1 and submid in "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 			while (cerg=rs2.HolZeile(),cerg?*cerg:0) {
-			 cout<<rot<<*(*cerg+0)<<schwarz<<endl; 
+			 caus<<rot<<*(*cerg+0)<<schwarz<<endl; 
 			}
 			caus<<blau<<auswe<<schwarz<<endl;
 			caus<<rot<<auswm<<schwarz<<endl;
