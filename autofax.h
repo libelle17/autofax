@@ -368,6 +368,7 @@ class paramcl // Programmparameter
     void zeigweitere();
     void sammlecapi(vector<fsfcl> *fsfvp);
     void sammlehyla(vector<fsfcl> *fsfvp);
+    void sammlefertigehyla(vector<fsfcl> *fsfvp);
     void empfarch();
     void schlussanzeige();
     void autofkonfschreib();

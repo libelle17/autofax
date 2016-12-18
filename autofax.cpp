@@ -560,6 +560,7 @@ enum T_
 	T_sammlecapi,
 	T_bereinigecapi,
 	T_sammlehyla,
+	T_sammlefertigehyla,
 	T_holtif,
 	T_MAX
 };
@@ -1589,6 +1590,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	{"bereinigecapi()","revisecapi()"},
 	// T_sammlehyla
 	{"sammlehyla()","collecthyla()"},
+	// T_sammlefertigehyla
+	{"sammlefertigehyla()","collectfinishedhyla()"},
 	// T_holtif
 	{"holtif()","gettif()"},
   {"",""}
@@ -3411,7 +3414,7 @@ void paramcl::konfcapi()
                 // _out<<"snr: "<<snr<<", lzeile: "<<tuerkis<<lzeile<<schwarz<<", rzeile: "<<blau<<rzeile<<schwarz<<endl;
                 string altwert=rzeile;
                 gtrim(&altwert);
-                anfzweg(altwert);// Anfuehrungszeichen entfernen
+                anfzweg(altwert); // Anfuehrungszeichen entfernen
                 if (snr==0 || snr==1) capiconf[snr].wert=altwert; // spool_dir und fax_user_dir hier nicht konfigurierbar
                 Log(string("capiconf[")+ltoan(snr)+"].name: "+tuerkis+capiconf[snr].name+schwarz+Tx[T_komma_wert]+
                     (capiconf[snr].wert==altwert?blau:rot)+capiconf[snr].wert+schwarz+Tx[T_komma_Altwert]+
@@ -3848,8 +3851,8 @@ void paramcl::korrerfolgszeichen()
           for(ruecki=0;ruecki<rueck.size();ruecki++) {
             size_t pos;
             if ((pos=rueck[ruecki].rfind("/q"))!=string::npos) fdn.insert(rueck[ruecki].substr(pos+2));
-          } 
-      }
+          } //           for(ruecki=0;ruecki<rueck.size();ruecki++)
+      } // switch (runde)
       string sql=string("SELECT titel p0, tsid p1, submt p2, submid p3, oscht p4, subject p5, docname p6, id p7, fsize p8, pages p9, ")+
         "devname p10, retries p11, prio p12, rcfax p13, rcname p14, csid p15, sender p16, transs p17, transe p18, Pid p19, eind p20, Erfolg p21 "
         "FROM `"+touta+"` WHERE submid "+(runde?"RLIKE '^[0-9]+$' AND submid<>0":"LIKE '%fax-%.sff'")+" ORDER BY submt";
@@ -5014,7 +5017,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						caus <<"fsf.capisd: '"<<fsf.capisd<<"'"<<endl;
 						// <<gruen<<"fsf.capisd.empty(): "<<schwarz<<(int)fsf.capisd.empty()<<endl;
             fsf.archiviere(My,this,&entrysend,allegesch||nimmer,
-					    fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?capi:hyla,
+					    fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?hyla:capi,
 							&geloescht, 2, oblog);
           } //           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) )
           // wenn alle aktivierten Faxwege auf gescheitert oder fehlend stehen oder die Quelldatei fehlt ...
@@ -5064,6 +5067,8 @@ void paramcl::zeigweitere()
       }
       fsfv[i].hylaausgeb(&ausg, this, 0, 0, obverb, 1, oblog);
     } //     for(size_t i=0;i<fsfv.size();i++) 
+    vector<fsfcl> fsfv2;
+		sammlefertigehyla(&fsfv2);
   } // if (obhyla) 
   if (obtitel) Log(ausg.str(),1,oblog);
 } // void paramcl::zeigweitere()
@@ -5165,6 +5170,64 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
           fsfvp->push_back(fsf);
         } // if (!indb)
       } // for(size_t i=0;i<rueck.size();i++) 
+    } // if (!lstat(hsendqvz.c_str(),&entryvz))
+} // void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
+
+// aufgerufen in: zeigweitere
+void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
+{
+  Log(violetts+Tx[T_sammlefertigehyla]+schwarz,obverb,oblog);
+    struct stat entryvz;
+    if (!lstat(hsendqvz.c_str(),&entryvz)) {
+      // cmd=string("sudo find '")+varsphylavz+"' -type f -regex '.*/q[0123456789]+'";
+      // string hylanr=qrueck[i].substr(qrueck[i].rfind('q')+1);
+				// ausw+=hylanr;
+				// ausw+=",";
+			// ausw[ausw.size()-1]=')';
+			// tac /var/spool/hylafax/etc/xferfaxlog | awk -vDate=`date -d'now-1 month' +%m/%d/%y` 'function isdate(var) { if (var ~ /[0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]/) return 1; return 0; } isdate($1) && $1 > Date {print Date " " $0}'
+//		  cmd="tac \""+xferfaxlog+"\" 2>/dev/null|grep '"+sep+"UNSENT"+sep+"\\|"+sep+"SEND"+sep+"'|cut -f 2,5,14,20|awk '!s[$2]++'";
+			cmd="tac \""+xferfaxlog+"\"|awk -vDate=`date -d'now-3 month' +%m/%d/%y` 'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];} $1<Date {exit 0} ($2 in arr && !s[$3]++) {print $2,$5,$14,$20}'"; //...$20;gz++} END{print gz}'
+      svec qrueck;
+      systemrueck(cmd,obverb,oblog,&qrueck);
+			string auswe="(", auswm="(";
+			for(size_t i=0;i<qrueck.size();i++) {
+				vector<string> tok; 
+				aufSplit(&tok,&qrueck[i],'\t');
+				if (tok.size()>0) {
+					uchar erfolg=0;
+					if (qrueck[i].substr(0,4)=="SEND") {
+						if (tok[2]=="\"\"") erfolg=1;
+					}
+					if (erfolg) {auswe+=tok[1]; auswe+=",";}
+					else {auswm+=tok[1]; auswm+=",";}
+				}
+      } // for(size_t i=0;i<rueck.size();i++) 
+			auswe[auswe.size()-1]=')';
+			auswm[auswm.size()-1]=')';
+			char ***cerg;
+			RS rs1(My,string("SELECT submid FROM `")+touta+"` WHERE erfolg=0 and submid in "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+			while (cerg=rs1.HolZeile(),cerg?*cerg:0) {
+			 cout<<violett<<*(*cerg+0)<<schwarz<<endl; 
+			}
+			RS rs2(My,string("SELECT submid FROM `")+touta+"` WHERE erfolg=1 and submid in "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+			while (cerg=rs2.HolZeile(),cerg?*cerg:0) {
+			 cout<<rot<<*(*cerg+0)<<schwarz<<endl; 
+			}
+			caus<<blau<<auswe<<schwarz<<endl;
+			caus<<rot<<auswm<<schwarz<<endl;
+			return;
+			string ausw="(";
+			uchar indb;
+			string hylanr;
+//        RS rs(My,string("SELECT id FROM `")+touta+"` WHERE submid="+hylanr,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+//        if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
+        RS rs(My,string("SELECT id FROM `")+touta+"` WHERE submid in "+ausw,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+				while (cerg=rs.HolZeile(),cerg?*cerg:0) {
+				}
+					if (!indb) {
+					caus<<hylanr<<" fehlt"<<endl;
+					/*4*/fsfcl fsf(hylanr); // fsf(rueck[i]);
+        } // if (!indb)
     } // if (!lstat(hsendqvz.c_str(),&entryvz))
 } // void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 
@@ -5281,9 +5344,9 @@ void paramcl::empfarch()
     string tabsdr; // transferierter Absender
     if (callerid.empty()) {
       svec trueck;
-      systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null | grep -m 1 \""+base_name(rueck[i])+"\" | cut -f 8,9",obverb,oblog,&trueck); 
+      systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null |grep -m 1 \""+base_name(rueck[i])+"\" |cut -f8,9",obverb,oblog,&trueck); 
       if (trueck.size()) {
-				vector<string> tok; // fuer imagedescription
+				vector<string> tok; 
         aufSplit(&tok,&trueck[0],'\t');
         if (tok.size()) {
           // <<gruen<<"tok[0] d: "<<schwarz<<tok[0]<<endl; // Tel'nr z.B. 49.8131.1234567
@@ -5291,7 +5354,7 @@ void paramcl::empfarch()
           if (tok.size()>1) {
             // <<gruen<<"tok[1] d: "<<schwarz<<tok[1]<<endl; // Namen z.B. G.Schade
             tabsdr=tok[1];
-            anfzweg(tabsdr);
+            anfzweg(tabsdr); // Anfuehrungszeichen entfernen
           }
         } // if (tok.size()) 
       } // if (trueck.size()) 
@@ -6559,7 +6622,6 @@ int paramcl::pruefcapi()
   int capilaeuft=0;
   unsigned versuch=0;
   capisv(obverb,oblog);
-	linst.doinst("ghostscript",obverb+1,oblog,"gs");
 	for(;versuch<2;versuch++) {
     // capi4linux muss zum Laufen der Capisuite installiert sein
     // fuer fcpci muss in driver.c eingefuegt werden:
@@ -6775,7 +6837,8 @@ int paramcl::pruefcapi()
       // <<rot<<"capischonerfolgreichinstalliert 0: "<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
       if (!capischonerfolgreichinstalliert) {
         Log(string(Tx[T_Konnte])+blau+"capisuite"+schwarz+Tx[T_nichtstarten],1,oblog);
-        // if (systemrueck("which zypper",-1,-1)) KLA
+				linst.doinst("ghostscript",obverb+1,oblog,"gs");
+				// if (systemrueck("which zypper",-1,-1)) KLA
         //        if (linst.checkinst(-1,-1)!=zyp) KLA
         /*
            if (pruefipr()!=zypper) {
@@ -7066,7 +7129,7 @@ void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp,
 {
   Log(violetts+Tx[T_inDBh]+schwarz,obverb?obverb-1:0,oblog);
   string spoolfil=string("q")+hylaid;
-  string spoolg= pmp->hsendqvz + vtz + spoolfil;
+  string spoolg= pmp->hsendqvz+vtz+spoolfil;
   uint affr=0;
   Log(string(Tx[T_SpoolDateierstellt])+rot+spoolg+schwarz+"'",pmp->obverb,pmp->oblog);
   Log(string(Tx[T_SpoolDatei])+rot+spoolfil+schwarz+"'",pmp->obverb,pmp->oblog);
@@ -7618,7 +7681,7 @@ int paramcl::xferlog(fsfcl *fsfp,int obverb,int oblog,string *totpages,string *n
   // ggf. broken pipe error; schadet aber experimentell dem Ergebnis nicht, deshalb Fehler unsichtbar
 //  systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null | grep -m 1 \""+this->hmodem+sep+jobid+sep+"\" | cut -f 14",obverb,oblog,&grueck); 
 int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
-  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"tty[^"+sep+"]*"+sep+fsfp->hylanr+sep+"\" | cut -f 2,14,20",obverb,oblog,&grueck); 
+  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"tty[^"+sep+"]*"+sep+fsfp->hylanr+sep+"\" | cut -f2,14,20",obverb,oblog,&grueck); 
   if (grueck.size()) {
     gefunden=1;
     vector<string> tok;
@@ -7629,7 +7692,7 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
       else if (tok[0]=="UNSENT") aktion=2;
       if (tok.size()>1) {
         fsfp->hgerg=tok[1];
-        anfzweg(fsfp->hgerg);
+        anfzweg(fsfp->hgerg); // Anfuehrungszeichen entfernen
         switch (aktion) {
           case 2: 
 						fsfp->hylastat=gescheitert;

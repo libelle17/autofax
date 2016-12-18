@@ -40,7 +40,6 @@ printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTe
 string nix;
 class linstcl linst;
 
-
 const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 {
   //TCtp Txkonsolecl::TextC=KLA
@@ -1140,6 +1139,7 @@ void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtme
   tokens->push_back(text->substr(start));
 } // void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtmehrfach) 
 
+// Anfuehrungszeichen weg
 string* anfzweg(string& quel) {
   if (quel.length()>1) {if (quel[0]==quel[quel.length()-1] && strchr("\"'",quel[0])) {
     quel.erase(quel.length()-1,1);

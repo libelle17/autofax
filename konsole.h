@@ -282,14 +282,15 @@ inline int isnumeric(char* str)
   }
   return 1;
 }
-
+ 
 string* anfzweg(string& quel);
 
+// Gesamt-Trim
 inline std::string *gtrim(std::string *str) {
   str->erase(0, str->find_first_not_of("\t "));       //prefixing spaces
   str->erase(str->find_last_not_of("\t ")+1);         //surfixing spaces
   return str;
-}
+} // inline std::string *gtrim(std::string *str)
 
 inline std::string *ltrim(std::string *str) {
   str->erase(0, str->find_first_not_of("\t "));       //prefixing spaces
