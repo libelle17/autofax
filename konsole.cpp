@@ -1536,6 +1536,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
 {
   string bemst; 
   svec bemv, *vp;
+	caus<<rot<<"Stelle 10"<<schwarz<<endl;
   if (fertige) {
     vp=fertige;
 	} else {
@@ -1549,6 +1550,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
 		TxBp->lgn=altSpr;
 		vp=&bemv;
 	} // if fertige else
+	caus<<rot<<"Stelle 11"<<schwarz<<endl;
   for(size_t ind=0;ind<zahl;ind++) {
     if (schl[ind].name==name) {
      uchar gefunden=0;
@@ -1568,6 +1570,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
      }
     } //     if (schl[ind].name==name)
   } //   for(size_t ind=0;ind<zahl;ind++)
+	caus<<rot<<"Stelle 12"<<schwarz<<endl;
 } // void schlArr::setzbemv(const string& name,const string& bem)
 
 
