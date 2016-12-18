@@ -5215,10 +5215,10 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 			} // 				if (tok.size()>0)
 		} // for(size_t i=0;i<rueck.size();i++) 
 		auswe[auswe.size()-1]=')';
-		inse.erase(inse.length()-1);
+		inse[inse.size()-1]=';';
 		auswm[auswm.size()-1]=')';
 		insm.erase(insm.length()-1);
-		RS vgl(My,"DROP TABLE IF EXISTS tmp; CREATE TABLE tmp(i INT KEY); INSERT INTO tmp() VALUES "+inse,ZDB);
+		RS vgl(My,"DROP TABLE IF EXISTS tmp; CREATE TABLE tmp(i INT KEY); INSERT INTO tmp VALUES "+inse,ZDB);
 		char ***cerg;
 		RS rs1(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=0 AND submid IN "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 		size_t cergz=0;
