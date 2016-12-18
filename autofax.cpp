@@ -562,6 +562,7 @@ enum T_
 	T_sammlehyla,
 	T_sammlefertigehyla,
 	T_holtif,
+	T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden,
 	T_MAX
 };
 
@@ -1594,6 +1595,9 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	{"sammlefertigehyla()","collectfinishedhyla()"},
 	// T_holtif
 	{"holtif()","gettif()"},
+	// T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden
+	{"Bei folgenden Faxen mußte das Erfolgskennzeichen gemaess Hylafax-Protkolldatei auf Mißerfolg gesetzt werden:",
+	 "For the following faxes, the success-flag had to be set to failure following the hylfax logfile:"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -4148,7 +4152,7 @@ void paramcl::tu_lista(const string& oberfolg, const string& submids)
 			"SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
 			"RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe FROM `"+
 			touta+"` WHERE "+(submids.empty()?"Erfolg = "+oberfolg+" ":"submid in "+submids+" ")+
-			" ORDER BY transe DESC LIMIT "+dszahl+") i "
+			" ORDER BY transe DESC"+(submids.empty()?"":" LIMIT "+dszahl)+") i "
 			" ORDER BY transe LIMIT 18446744073709551615) i",ZDB);
 
 	if (submids.empty())
@@ -5214,7 +5218,7 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 			if (!cergz++)
 				Log("Bei folgenden Faxen mußte das Erfolgskennzeichen gemaess Hylafax-Protkoll auf Erfolg gesetzt werden:",1,1);
 			auswmf+=*(*cerg+0); auswmf+=",";
-			caus<<violett<<*(*cerg+0)<<schwarz<<endl; 
+			// <<violett<<*(*cerg+0)<<schwarz<<endl; 
 		} // 				while (cerg=rs1.HolZeile(),cerg?*cerg:0)
 		if (cergz) {
 			auswmf[auswmf.size()-1]=')';
@@ -5224,9 +5228,9 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 		cergz=0;
 		while (cerg=rs2.HolZeile(),cerg?*cerg:0) {
 			if (!cergz++)
-				Log("Bei folgenden Faxen mußte das Erfolgskennzeichen gemaess Hylafax-Protkoll auf Mißerfolg gesetzt werden:",1,1);
+				Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden],1,1);
 			auswef+=*(*cerg+0); auswef+=",";
-			caus<<rot<<*(*cerg+0)<<schwarz<<endl; 
+			// <<rot<<*(*cerg+0)<<schwarz<<endl; 
 		}
 		if (cergz) {
 			auswef[auswef.size()-1]=')';
