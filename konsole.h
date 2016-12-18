@@ -505,8 +505,8 @@ enum par_t:uchar {psons,pverz,pfile,pzahl}; // Parameterart: Sonstiges, Verzeich
 class optioncl
 {
   public:
-    string kurz;
-    string lang;
+    const string kurz;
+    const string lang;
     TxB *TxBp=0;
     long Txi;
     const string *rottxt=0; // ggf rot zu markierender Text zwischen Txi und Txi2
