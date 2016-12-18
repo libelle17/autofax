@@ -1532,18 +1532,14 @@ const string& schlArr::hole(const string& name)
 
 // wenn die bisherige Bemerkung in einer Sprache mit der zu setzenden identisch, also nicht zwischenzeitlich manuell geaendert, 
 // dann in aktueller Sprache uebernehmen
+// fertige wird nur aufgerufen aus optioncl::setzebem(
 void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,svec *fertige)
 {
-  caus<<"Setzbemv: "<<"name: "<<name<<" Tind: "<<Tind<<" fertige: "<<fertige<<endl;
   string bemst; 
   svec bemv, *vp;
-			caus<<"TxBP->lgn: "<<TxBp->lgn<<endl;
-	caus<<rot<<"Stelle 10"<<schwarz<<endl;
   if (fertige) {
-	caus<<rot<<"Stelle 10a"<<schwarz<<endl;
     vp=fertige;
 	} else {
-	caus<<rot<<"Stelle 10b"<<schwarz<<endl;
 	  Sprache altSpr=TxBp->lgn;
 		for(int akts=0;akts<Smax;akts++) {
 			TxBp->lgn=(Sprache)akts;
@@ -1554,7 +1550,6 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
 		TxBp->lgn=altSpr;
 		vp=&bemv;
 	} // if fertige else
-	caus<<rot<<"Stelle 11"<<schwarz<<endl;
   for(size_t ind=0;ind<zahl;ind++) {
     if (schl[ind].name==name) {
      uchar gefunden=0;
@@ -1570,18 +1565,10 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
        } // for(int aktsp=0;aktsp<Smax;aktsp++) 
      } // (schl[ind].bemerk.empty) else
      if (gefunden) {
-	caus<<rot<<"Stelle 13"<<schwarz<<endl;
-	    caus<<"(*vp).size(): "<<(*vp).size()<<endl;
-			for(size_t j=0;j<(*vp).size();j++) {
-			 caus<<"(*vp)["<<j<<"]:"<<" "<<(*vp)[j]<<endl;
-			}
-			caus<<"TxBP->lgn: "<<TxBp->lgn<<endl;
       schl[ind].bemerk="# "+(*vp)[TxBp->lgn];
-	caus<<rot<<"Stelle 14"<<schwarz<<endl;
      }
     } //     if (schl[ind].name==name)
   } //   for(size_t ind=0;ind<zahl;ind++)
-	caus<<rot<<"Stelle 12"<<schwarz<<endl;
 } // void schlArr::setzbemv(const string& name,const string& bem)
 
 

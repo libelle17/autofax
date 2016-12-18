@@ -2073,7 +2073,6 @@ void paramcl::pruefmodem()
     } // if (!lstat(((rueck[i])+"/device/driver").c_str(),&entrydriv)) 
   } // for(size_t i=0;i<rueck.size();i++) 
   //  uchar modemumgesteckt=0;
-	caus<<rot<<"Stelle 1"<<schwarz<<endl;
   uchar schonda=0;
   if (!hmodem.empty()) {
     for(size_t j=0;j<modems.size();j++) {
@@ -2084,7 +2083,6 @@ void paramcl::pruefmodem()
     } // for(size_t j=0;j<modems.size();j++) 
     if (!schonda) hmodem.clear();
   } // if (!hmodem.empty()) 
-	caus<<rot<<"Stelle 2"<<schwarz<<endl;
   if (hmodem.empty()) {
     if (modems.size()) if (!modems[0].empty()) {
       if (obverb) {
@@ -2095,25 +2093,20 @@ void paramcl::pruefmodem()
       modemgeaendert=1;
     } //   if (modems.size()) if (!modems[0].empty()) if (modems[0]!=hmodem) 
   } // if (hmodem.empty()) 
-	caus<<rot<<"Stelle 3"<<schwarz<<endl;
   obmdgeprueft=1;
   if (!obmodem) {
     obhyla=0;
     Log(rots+Tx[T_Kein_Modem_gefunden]+schwarz,obverb,oblog);
   }
-	caus<<rot<<"Stelle 4"<<schwarz<<endl;
   // wenn zum Konfigurationszeitpunkt kein Modem drinsteckte, aber jetzt, dann rueckfragen
   if (obmodem && cgconf.hole("obmodem")=="0") {
    rzf=1;
   }
-	caus<<rot<<"Stelle 5"<<schwarz<<endl;
   // wenn nur obkschreib, dann noch nicht auf neu eingestecktes Modem reagieren
   if (rzf) {
     cgconf.setze("obmodem",obmodem?"1":"0");
   }
-	caus<<rot<<"Stelle 6"<<schwarz<<endl;
   cgconf.setzbemv("obmodem",&Tx,T_ob_ein_Modem_drinstak);
-	caus<<rot<<"Stelle 7"<<schwarz<<endl;
   Log(violetts+Tx[T_pruefmodem]+" Ende"+schwarz,obverb,oblog);
   // wvdialconf oder schneller: setserial -a /dev/tty*, mit baud_base: <!=0>  als Kriterium
 } // void paramcl::pruefmodem()
