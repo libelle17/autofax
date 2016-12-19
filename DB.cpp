@@ -752,7 +752,7 @@ int DB::prueftab(Tabelle *ptab,int obverb)
 							}
 						} //             if (!rind.result->row_count) else
 					} // if (obneu) 
-
+          caus<<violett<<"obneu: "<<(int)obneu<<schwarz<<endl;
 					if (obneu) {
 						RS rindins(this);
 						sql.str(std::string()); sql.clear();
