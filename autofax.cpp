@@ -5207,7 +5207,7 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 			vector<string> tok; 
 			aufSplit(&tok,&qrueck[i],'\t');
 			if (tok.size()>5) {
-			  caus<<tok[0]<<'|'<<tok[1]<<'|'<<tok[2]<<'|'<<tok[3]<<'|'<<tok[4]<<'|'<<tok[5]<<'|'<<tok[6]<<endl;
+			  // caus<<tok[0]<<'|'<<tok[1]<<'|'<<tok[2]<<'|'<<tok[3]<<'|'<<tok[4]<<'|'<<tok[5]<<'|'<<tok[6]<<endl;
 				uchar erfolg=0;
 				if (tok[1]=="SEND") {
 					if (tok[5]=="\"\"") erfolg=1;
@@ -5221,38 +5221,44 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 		auswm[auswm.size()-1]=')';
 		insm.erase(insm.length()-1);
 //		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
-		RS vgl1(My,"DROP TABLE IF EXISTS tmpt",ZDB);
-		RS vgl2(My,"CREATE TABLE tmpt(submid VARCHAR(11) KEY);",ZDB);
-		RS vgl3(My,"INSERT INTO tmpt VALUES "+inse,ZDB);
-		// "select tmpt.i,submid,erfolg,outa.* from tmpt left join outa on tmpt.i=outa.submid
-//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_OFF);
-		char ***cerg;
-		RS rs1(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=0 AND submid IN "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
-		size_t cergz=0;
-		while (cerg=rs1.HolZeile(),cerg?*cerg:0) {
-			if (!cergz++)
-				Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden],1,1);
-			auswmf+=*(*cerg+0); auswmf+=",";
-			// <<violett<<*(*cerg+0)<<schwarz<<endl; 
-		} // 				while (cerg=rs1.HolZeile(),cerg?*cerg:0)
-		if (cergz) {
-			auswmf[auswmf.size()-1]=')';
-			tu_lista("",auswmf);
-			RS k1(My,"UPDATE `"+touta+"` SET erfolg=1 WHERE erfolg=0 AND submid IN "+auswe,ZDB);
-		} // 				if (cergz) 
-		RS rs2(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=1 AND submid IN "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
-		cergz=0;
-		while (cerg=rs2.HolZeile(),cerg?*cerg:0) {
-			if (!cergz++)
-				Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden],1,1);
-			auswef+=*(*cerg+0); auswef+=",";
-			// <<rot<<*(*cerg+0)<<schwarz<<endl; 
+		if (inse.size()>1) {
+			RS vgl1(My,"DROP TABLE IF EXISTS tmpt",ZDB);
+			RS vgl2(My,"CREATE TABLE tmpt(submid VARCHAR(11) KEY);",ZDB);
+			RS vgl3(My,"INSERT INTO tmpt VALUES "+inse,ZDB);
 		}
-		if (cergz) {
-			auswef[auswef.size()-1]=')';
-			tu_lista("",auswef);
-			RS k1(My,"UPDATE `"+touta+"` SET erfolg=0 WHERE erfolg=1 AND submid IN "+auswm,ZDB);
-		} // 				if (cergz) 
+		// "select tmpt.i,submid,erfolg,outa.* from tmpt left join outa on tmpt.i=outa.submid
+		//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_OFF);
+		char ***cerg;
+		size_t cergz=0;
+		if (auswe.size()>1) {
+			RS rs1(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=0 AND submid IN "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+			while (cerg=rs1.HolZeile(),cerg?*cerg:0) {
+				if (!cergz++)
+					Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden],1,1);
+				auswmf+=*(*cerg+0); auswmf+=",";
+				// <<violett<<*(*cerg+0)<<schwarz<<endl; 
+			} // 				while (cerg=rs1.HolZeile(),cerg?*cerg:0)
+			if (cergz) {
+				auswmf[auswmf.size()-1]=')';
+				tu_lista("",auswmf);
+				RS k1(My,"UPDATE `"+touta+"` SET erfolg=1 WHERE erfolg=0 AND submid IN "+auswe,ZDB);
+			} // 				if (cergz) 
+		}
+		if (auswm.size()>1) {
+			RS rs2(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=1 AND submid IN "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+			cergz=0;
+			while (cerg=rs2.HolZeile(),cerg?*cerg:0) {
+				if (!cergz++)
+					Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden],1,1);
+				auswef+=*(*cerg+0); auswef+=",";
+				// <<rot<<*(*cerg+0)<<schwarz<<endl; 
+			}
+			if (cergz) {
+				auswef[auswef.size()-1]=')';
+				tu_lista("",auswef);
+				RS k1(My,"UPDATE `"+touta+"` SET erfolg=0 WHERE erfolg=1 AND submid IN "+auswm,ZDB);
+			} // 				if (cergz) 
+		}
 		caus<<blau<<auswe<<schwarz<<endl;
 		caus<<rot<<auswm<<schwarz<<endl;
 		return;
