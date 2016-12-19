@@ -715,11 +715,12 @@ int DB::prueftab(Tabelle *ptab,int obverb)
             } // if (aendere) 
           } // if (verschieb || aendere)
         } // for(int gspn=0;gspn<ptab->feldzahl;gspn++) 
-
+        caus<<"ptab->name: "<<ptab->name<<", Indexzahl: "<<ptab->indexzahl<<endl;
 				for(int i=0;i<ptab->indexzahl;i++) {
 					// steht aus: Namen nicht beruecksichtigen, nur Feldreihenfolge und ggf. -laenge
 					uchar obneu=0;
-					RS rind(this,string("SHOW INDEX FROM `") + ptab->name+"` WHERE KEY_NAME = '"+ ptab->indices[i].name +"'");
+					caus<<"ptab->name: "<<ptab->name+" ptab-indices["<<i<<"].name: "<<ptab->indices[i].name<<endl;
+					RS rind(this,"SHOW INDEX FROM `"+ptab->name+"` WHERE KEY_NAME = '"+ptab->indices[i].name+"'");
 					if (rind.obfehl) {
 						obneu=1;
 					} else {
