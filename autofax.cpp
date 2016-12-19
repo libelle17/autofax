@@ -5238,7 +5238,7 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 		if (cergz) {
 			auswmf[auswmf.size()-1]=')';
 			tu_lista("",auswmf);
-//			RS k1(My,"UPDATE `"+touta+"` SET erfolg=1 WHERE erfolg=0 AND submid IN "+auswe,ZDB);
+			RS k1(My,"UPDATE `"+touta+"` SET erfolg=1 WHERE erfolg=0 AND submid IN "+auswe,ZDB);
 		} // 				if (cergz) 
 		RS rs2(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=1 AND submid IN "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 		cergz=0;
