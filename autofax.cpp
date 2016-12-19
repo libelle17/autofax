@@ -7417,7 +7417,7 @@ void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direk
     Feld ifelder2[] = {Feld("docname"),Feld("Erfolg")}; Index i2("docname",ifelder2,sizeof ifelder2/sizeof* ifelder2);
     Feld ifelder3[] = {Feld("pid"),Feld("Erfolg")};     Index i3("pid",ifelder3,sizeof ifelder3/sizeof* ifelder3);
     Feld ifelder4[] = {Feld("rcfax"),Feld("Erfolg")};   Index i4("rcfax",ifelder4,sizeof ifelder4/sizeof* ifelder4);
-    Feld ifelder5[] = {Feld("submid"),Feld("Erfolg")}; Index i5("submid",ifelder5,sizeof ifelder5/sizeof* ifelder5);
+    Feld ifelder5[] = {Feld("submid")}; Index i5("submid",ifelder5,sizeof ifelder5/sizeof* ifelder5);
     Index indices[]={i0,i1,i2,i3,i4,i5};
     // auf jeden Fall ginge "binary" statt "utf8" und "" statt "utf8_general_ci"
     Tabelle taba(touta,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,
