@@ -323,7 +323,6 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
         for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
           //          <<"versuch: "<<versuch<<", conn: "<<conn<<", host: "<<host<<", user: "<<user<<", passwd "<<passwd<<", uedb: "<<uedb<<", port: "<<port<<", client_flag: "<<client_flag<<", obverb: "<<(int)obverb<<", oblog: "<<(int)oblog<<endl;
           fehnr=0;
-					client_flag=CLIENT_MULTI_STATEMENTS;
           if (mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), uedb, port, unix_socket, client_flag)) {
             break;
           } else {
@@ -370,7 +369,6 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
               case 1049:
                 if (ggferstellen) {
                   Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_Datenbank]+drot+uedb+schwarz+Txd[T_zu_erstellen],1,1);
-					client_flag=CLIENT_MULTI_STATEMENTS;
                   mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), 0, port, unix_socket, client_flag);
                   fehnr=mysql_errno(conn);
                   if (!fehnr) {

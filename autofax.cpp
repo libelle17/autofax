@@ -5218,7 +5218,9 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 		inse[inse.size()-1]=';';
 		auswm[auswm.size()-1]=')';
 		insm.erase(insm.length()-1);
+		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 		RS vgl(My,"DROP TABLE IF EXISTS tmp; CREATE TABLE tmp(i INT KEY); INSERT INTO tmp VALUES "+inse,ZDB);
+		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_OFF);
 		char ***cerg;
 		RS rs1(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=0 AND submid IN "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 		size_t cergz=0;

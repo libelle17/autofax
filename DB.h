@@ -290,17 +290,17 @@ class DB
     //	DB(DBSTyp DBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag);
     DB();
     DB(DBSTyp nDBS, const char* const phost, const char* const user,const char* const ppasswd, const char* const uedb="", unsigned int port=0, 
-       const char *const unix_socket=NULL, unsigned long client_flag=CLIENT_MULTI_STATEMENTS,
+       const char *const unix_socket=NULL, unsigned long client_flag=0,
 			 int obverb=0,int oblog=0,int versuchzahl=3,uchar ggferstellen=1);
     DB(DBSTyp nDBS, const char* const phost, const char* const user, const char* const ppasswd, const char* const prootpwd, const char* const uedb="", 
-       unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=CLIENT_MULTI_STATEMENTS,
+       unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=0,
 			 int obverb=0,int oblog=0,int versuchzahl=3,
        uchar ggferstellen=1);
     DB(DBSTyp nDBS, const string& phost, const string& puser, const string& ppasswd, const string& uedb, unsigned int port, const char* 
-       const unix_socket, unsigned long client_flag=CLIENT_MULTI_STATEMENTS,
+       const unix_socket, unsigned long client_flag=0,
        int obverb=0,int oblog=0,int versuchzahl=3,uchar ggferstellen=1);
     void init(DBSTyp nDBS, const char* const phost, const char* const user,const char* const ppasswd, const char* const uedb="", unsigned int port=0, 
-              const char *const unix_socket=NULL, unsigned long client_flag=CLIENT_MULTI_STATEMENTS,int obverb=0,int oblog=0,unsigned versuchzahl=3,
+              const char *const unix_socket=NULL, unsigned long client_flag=0,int obverb=0,int oblog=0,unsigned versuchzahl=3,
               uchar ggferstellen=1);
     ~DB(void);
     /*
