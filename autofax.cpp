@@ -5197,7 +5197,8 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 		//		  cmd="tac \""+xferfaxlog+"\" 2>/dev/null|grep '"+sep+"UNSENT"+sep+"\\|"+sep+"SEND"+sep+"'|cut -f 2,5,14,20|awk '!s[$2]++'";
 		// awk-Befehl: Suche bis vor 3 Monaten von zu jeder hylanr ($5) die letzte Zeile (s[$5]==0) mit dem Befehl ($2) SEND oder UNSENT; gib mit \t aus
 		cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-3 month' +%m/%d/%y` 'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];}"
-			" $1<Date {exit 0} ($2 in arr && !s[$5]++) {print $2,$5,$14}'"; //...$14,$20;gz++KLZ END KLA print gz KLZ'
+			" $1<Date {exit 0} ($2 in arr && !s[$5]++) {print $1,$2,$5,$8,$11,$14,$20}'"; //...$14,$20;gz++KLZ END KLA print gz KLZ'
+		//$1=Date,$2=action,$5=qfile(hylid,sumid),$8=Tel'nr,$11=Seitenzahl,$14=reason,$20=jobinfo(totpages/ntries/ndials/totdials/maxdials/tot/maxtries)
 		svec qrueck;
 		// wenn unter SEND im Feld reason ($14) nichts steht, erfolgreich, sonst erfolglos
 		systemrueck(cmd,obverb,oblog,&qrueck);
@@ -5205,13 +5206,13 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 		for(size_t i=0;i<qrueck.size();i++) {
 			vector<string> tok; 
 			aufSplit(&tok,&qrueck[i],'\t');
-			if (tok.size()>0) {
+			if (tok.size()>5) {
 				uchar erfolg=0;
 				if (qrueck[i].substr(0,4)=="SEND") {
-					if (tok[2]=="\"\"") erfolg=1;
+					if (tok[5]=="\"\"") erfolg=1;
 				}
-				if (erfolg) {auswe+=tok[1]+","; inse+="("+tok[1]+"),";}
-				else {auswm+=tok[1]+","; insm+="("+tok[1]+"),";}
+				if (erfolg) {auswe+=tok[2]+","; inse+="("+tok[2]+"),";}
+				else {auswm+=tok[2]+","; insm+="("+tok[2]+"),";}
 			} // 				if (tok.size()>0)
 		} // for(size_t i=0;i<rueck.size();i++) 
 		auswe[auswe.size()-1]=')';
@@ -5220,8 +5221,9 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 		insm.erase(insm.length()-1);
 //		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 		RS vgl1(My,"DROP TABLE IF EXISTS tmpt",ZDB);
-		RS vgl2(My,"CREATE TABLE tmpt(i VARCHAR(11) KEY);",ZDB);
+		RS vgl2(My,"CREATE TABLE tmpt(submid VARCHAR(11) KEY);",ZDB);
 		RS vgl3(My,"INSERT INTO tmpt VALUES "+inse,ZDB);
+		// "select tmpt.i,submid,erfolg,outa.* from tmpt left join outa on tmpt.i=outa.submid
 //		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_OFF);
 		char ***cerg;
 		RS rs1(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=0 AND submid IN "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
