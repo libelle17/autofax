@@ -5209,7 +5209,7 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 			if (tok.size()>5) {
 			  caus<<tok[0]<<'|'<<tok[1]<<'|'<<tok[2]<<'|'<<tok[3]<<'|'<<tok[4]<<'|'<<tok[5]<<'|'<<tok[6]<<endl;
 				uchar erfolg=0;
-				if (qrueck[i].substr(0,4)=="SEND") {
+				if (tok[1]=="SEND") {
 					if (tok[5]=="\"\"") erfolg=1;
 				}
 				if (erfolg) {auswe+=tok[2]+","; inse+="("+tok[2]+"),";}
