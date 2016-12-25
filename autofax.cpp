@@ -4157,7 +4157,7 @@ void paramcl::tu_lista(const string& oberfolg, const string& submids)
 			"SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
 			"RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe FROM `"+
 			touta+"` WHERE "+(submids.empty()?"Erfolg = "+oberfolg+" ":"submid in "+submids+" ")+
-			" ORDER BY transe DESC"+(submids.empty()?"":" LIMIT "+dszahl)+") i "
+			" ORDER BY transe DESC"+(submids.empty()?" LIMIT "+dszahl:"")+") i "
 			" ORDER BY transe LIMIT 18446744073709551615) i",ZDB);
 
 	if (submids.empty())
