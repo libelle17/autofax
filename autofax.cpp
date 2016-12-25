@@ -4514,19 +4514,18 @@ void paramcl::DateienHerricht()
 	Log(violetts+Tx[T_DateienHerricht],obverb,oblog);
 	struct stat entrynpdf;
 	//vector<string> npdf, spdf, *npdfp=&npdf, *spdfp=&spdf;  vector<uchar> prios;
-	vector<fxfcl> fxv;
-	vector<string> anfxstrvec;
+	vector<fxfcl> fxv; // Faxvektor
+	vector<string> anfxstrvec; // Trennstrings fuer Faxnummer
 	anfxstrvec.push_back(anfaxstr);
 	if (!ancfaxstr.empty()) anfxstrvec.push_back(ancfaxstr);
 	if (!anhfaxstr.empty()) anfxstrvec.push_back(anhfaxstr);
-	vector <urfxcl> urfx;
+	vector <urfxcl> urfx; // urspruenglicher Dateiname
 	svec iprid;
 	systemrueck("sudo find \""+zufaxenvz+"\" -maxdepth 1 -type f",obverb,oblog,&iprid);
 	zielmustercl mu[anfxstrvec.size()];
 	for(uchar iprio=0;iprio<anfxstrvec.size();iprio++) {
-		string mstr=anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]";
+		string mstr=anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]"; // z.B. "an Fax +49"
 		mu[iprio].setzemuster(mstr);
-		mu[iprio].kompilier();
 
 		// der Reihe nach nach Dateien suchen, die das jeweilige Trennzeichen enthalten
 		for(size_t i=0;i<iprid.size();i++) {
@@ -5202,7 +5201,7 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 		svec qrueck;
 		// wenn unter SEND im Feld reason ($14) nichts steht, erfolgreich, sonst erfolglos
 		systemrueck(cmd,obverb,oblog,&qrueck);
-		string auswe="(", auswm="(", auswef="(",auswmf="(", inse, insm;
+		string auswe="(", auswm="(", auswef="(",auswmf="(", inse;
 		for(size_t i=0;i<qrueck.size();i++) {
 			vector<string> tok; 
 			aufSplit(&tok,&qrueck[i],'\t');
@@ -5212,22 +5211,26 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 				if (tok[1]=="SEND") {
 					if (tok[5]=="\"\"") erfolg=1;
 				}
-				if (erfolg) {auswe+=tok[2]+","; inse+="("+tok[2]+"),";}
-				else {auswm+=tok[2]+","; insm+="("+tok[2]+"),";}
+				if (erfolg) {
+					auswe+=tok[2]+","; 
+					inse+="("+tok[2]+","+"\"20"+tok[0].substr(6,2)+"-"+tok[0].substr(0,2)+"-"+tok[0].substr(3,2)+" "+tok[0].substr(9,2)+":"+tok[0].substr(12,2)+"\","+tok[3]+","+tok[4]+",\""+tok[6]+"\",1),";
+				} else {
+					auswm+=tok[2]+","; 
+					inse+="("+tok[2]+","+"\"20"+tok[0].substr(6,2)+"-"+tok[0].substr(0,2)+"-"+tok[0].substr(3,2)+" "+tok[0].substr(9,2)+":"+tok[0].substr(12,2)+"\","+tok[3]+","+tok[4]+",\""+tok[6]+"\",0),";
+				}
 			} // 				if (tok.size()>0)
 		} // for(size_t i=0;i<rueck.size();i++) 
 		auswe[auswe.size()-1]=')';
 		inse[inse.size()-1]=';';
 		auswm[auswm.size()-1]=')';
-		insm.erase(insm.length()-1);
-//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 		if (inse.size()>1) {
+			//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 			RS vgl1(My,"DROP TABLE IF EXISTS tmpt",ZDB);
-			RS vgl2(My,"CREATE TABLE tmpt(submid VARCHAR(11) KEY);",ZDB);
+			RS vgl2(My,"CREATE TABLE tmpt(submid VARCHAR(11) KEY,Datum DATETIME,tel VARCHAR(30),pages INT,attr VARCHAR(20),erfolg INT);",ZDB);
 			RS vgl3(My,"INSERT INTO tmpt VALUES "+inse,ZDB);
+			//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_OFF);
 		}
 		// "select tmpt.i,submid,erfolg,outa.* from tmpt left join outa on tmpt.i=outa.submid
-		//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_OFF);
 		char ***cerg;
 		size_t cergz=0;
 		if (auswe.size()>1) {
