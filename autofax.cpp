@@ -3871,7 +3871,7 @@ void paramcl::korrerfolgszeichen()
 					if (inse.size()>1) {
 						//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 						RS vgl1(My,"DROP TABLE IF EXISTS tmpc",ZDB);
-						RS vgl2(My,"CREATE TABLE tmpc(submid VARCHAR(11) KEY,erfolg INT);",ZDB);
+						RS vgl2(My,"CREATE TABLE tmpc(submid VARCHAR(25) KEY,erfolg INT);",ZDB);
 						RS vgl3(My,"INSERT INTO tmpc VALUES "+inse,ZDB);
 						// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, und zu denen nicht bereits eine erfolgreiche
 						// capisuite-Uebertragung eingetragen ist
