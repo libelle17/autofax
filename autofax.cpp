@@ -4807,9 +4807,9 @@ void paramcl::faxealle()
 			"FROM `"+spooltab+"` "
 			"WHERE original>''",ZDB);
 	*/
-	RS r0(My,string("SELECT s.id p0, s.origvu p1, s.original p2, s.telnr p3, s.prio p4, s.capispooldatei p5, s.capidials p6, "
+	RS r0(My,"SELECT s.id p0, s.origvu p1, s.original p2, s.telnr p3, s.prio p4, s.capispooldatei p5, s.capidials p6, "
 				"s.hylanr p7, s.hyladials p8, "
-				"((s.capispooldatei='') AND (s.hyladials>=")+maxhylav+" OR s.hylastate=8 OR " // hyladials=-1
+				"((s.capispooldatei='') AND (s.hyladials>="+maxhylav+" OR s.hylastate=8 OR " // hyladials=-1
 			//      "    (prio=1 OR (prio=0 AND NOT "+hzstr+")))) p9, "
 			"    (s.prio=2 OR s.prio=0))) p9, "
 			"((s.hylanr='' OR s.hylanr=0) AND (s.capidials>=" +maxcapiv+" OR s.capidials=-1 OR "
@@ -4821,6 +4821,7 @@ void paramcl::faxealle()
 			"LEFT JOIN `"+altspool+"` cas ON s.capispooldatei=cas.capispooldatei AND s.capispooldatei<>'' AND cas.capispooldatei<>'' "
 			"LEFT JOIN `"+altspool+"` has ON s.hylanr=has.hylanr AND s.hylanr<>0 AND has.hylanr<>0 "
 			"WHERE s.original>''",ZDB);
+			caus<<"Hier bin ich noch"<<endl;
 	if (r0.obfehl) {
 		cerr<<rots<<Tx[T_Fehler_af]<<schwarz<<r0.obfehl<<rot<<Tx[T_beiSQLAbfrage]<<schwarz<<r0.sql<<endl;
 	} else {
