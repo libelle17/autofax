@@ -1725,7 +1725,6 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
       einf.push_back(/*2*/instyp(My->DBS,"rcfax",&stdfax));
     } //     if (!telnr.empty())
     if (!adressat.empty()) einf.push_back(/*2*/instyp(My->DBS,"adressat",&adressat));
-		caus<<violett<<"entryp->st_size: "<<rot<<entryp->st_size<<schwarz<<endl;
 		einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
 		einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
     rins.insert(pmp->touta,einf, 1,0,ZDB?ZDB:!runde);  // einfuegen
@@ -4927,8 +4926,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				if (*(*cerg+13)) fsf.prio = atol(*(*cerg+13));  // Prioritaet wie in Datenbank
 				if (*(*cerg+14)) fsf.pseiten = atol(*(*cerg+14));  // pages wie in Datenbank
 				if (*(*cerg+15)) fsf.idalt = *(*cerg+15);  // id hyla
-				caus<<"fsf.id: "<<violett<<fsf.id<<schwarz;
-				caus<<"fsf.idalt: "<<violett<<fsf.idalt<<schwarz;
+				caus<<"fsf.id: "<<violett<<fsf.id<<schwarz<<endl;
+				caus<<"fsf.idalt: "<<violett<<fsf.idalt<<schwarz<<endl;
 				Log(string("id: ")+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
 				ausg<<blau<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; // ab hier Neue-Zeile-Zeichen immer am Anfang der naechsten Zeile
 				// a) ueber capisuite
@@ -4966,7 +4965,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 					int obsfehlt=-1;
 					/*fsf.*/
 					setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 0, &obsfehlt, &entrysend, obverb, oblog);
-					caus <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
+					caus<<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
 					fsf.hylaausgeb(&ausg, this, obsfehlt, 0, obverb, 0, oblog);
 					//          if (!obsfehlt) KLA // Protokolldatei vorhanden 12.10.16 sollte jetzt auch mit xferfax gehen
 					if (mitupd) {
@@ -5535,7 +5534,6 @@ void paramcl::empfarch()
         } else if (runde==1) zs.Abfrage("SET NAMES 'latin1'");
         RS rins(My); 
         vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-				caus<<violett<<"elog.st_size: "<<rot<<elog.st_size<<schwarz<<endl;
         einf.push_back(/*2*/instyp(My->DBS,"fsize",elog.st_size));
         einf.push_back(/*2*/instyp(My->DBS,"pages",seiten));
         einf.push_back(/*2*/instyp(My->DBS,"titel",&absdr));
@@ -5684,7 +5682,6 @@ void paramcl::empfarch()
         einf.push_back(/*2*/instyp(My->DBS,"tsid",&umst[1].wert));
         einf.push_back(/*2*/instyp(My->DBS,"transe",&modz));
         einf.push_back(/*2*/instyp(My->DBS,"id",&base));
-				caus<<violett<<"entrysff.st_size: "<<rot<<entrysff.st_size<<schwarz<<endl;
         einf.push_back(/*2*/instyp(My->DBS,"fsize",entrysff.st_size));
         einf.push_back(/*2*/instyp(My->DBS,"csid",&umst[2].wert));
         einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
@@ -7489,7 +7486,7 @@ void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direk
       Feld("submid","varchar","1","",Tx[T_Kennung_im_Faxsystem_hylafax_Nr_Capisuite_Datei_MSFax_Fax_Dateiname],0,0,1),
       Feld("docname","varchar","1","",Tx[T_Dateiname],0,0,1),
       Feld("idudoc","int","10","",Tx[T_Index_auf_urspruenglichen_Dateinamen],0,0,1),
-      Feld("fsize","int","10","",Tx[T_Dateigroesse],0,0,1),
+      Feld("fsize","int","10","",Tx[T_Dateigroesse],0,0,1,"",1),
       Feld("pages","int","10","",Tx[T_Seitenzahl],0,0,1),
       Feld("retries","int","10","",Tx[T_Zahl_der_Anwahlen],0,0,1),
       Feld("rcfax","varchar","1","",Tx[T_FAxnummer_des_Adressaten],0,0,1),
@@ -7963,6 +7960,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
   if (obsfehlt) {
 //    this->hconfp=0;
     // wenn also die Datenbankdatei weder im Spool noch bei den Erledigten nachweisbar ist
+		if (est) memset(est,0,sizeof *est);
     this->xferlog(fsf,obverb,oblog);
     fsf->sendqgespfad.clear();
   //   if (obsfehlt)

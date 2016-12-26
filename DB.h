@@ -210,8 +210,9 @@ class Feld
     bool obauto;
     bool nnull;
     string defa;
+		bool unsig;
     Feld(const string& name, string typ="", const string& lenge="", const string& prec="", 
-         const string& comment="", bool obind=0, bool obauto=0, bool nnull=0, string defa="");
+         const string& comment="", bool obind=0, bool obauto=0, bool nnull=0, string defa="", bool unsig=0);
 };
 
 class Index 

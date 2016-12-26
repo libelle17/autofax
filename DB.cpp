@@ -120,17 +120,18 @@ svec holdbaussql(string sql)
   return erg;
 } // holdbaussql
 
-Feld::Feld(const string& name, string typ, const string& lenge, const string& prec, 
-    const string& comment, bool obind, bool obauto, bool nnull, string vdefa):
-  name(name),
-  typ(typ),
-  lenge(lenge),
-  prec(prec),
-  comment(comment),
-  obind(obind),
-  obauto(obauto),
-  nnull(nnull),
-  defa(vdefa) // Namensdifferenz hier noetig, sonst wird im Konstruktur die falsche Variable bearbeitet
+Feld::Feld(const string& name, string typ/*=""*/, const string& lenge/*=""*/, const string& prec/*=""*/, 
+    const string& comment/*=""*/, bool obind/*=0*/, bool obauto/*=0*/, bool nnull/*=0*/, string vdefa/*=""*/, bool unsig/*=0*/):
+  name(name)
+  ,typ(typ)
+  ,lenge(lenge)
+  ,prec(prec)
+  ,comment(comment)
+  ,obind(obind)
+  ,obauto(obauto)
+  ,nnull(nnull)
+  ,defa(vdefa) // Namensdifferenz hier noetig, sonst wird im Konstruktur die falsche Variable bearbeitet
+  ,unsig(unsig)
 {
   if (!obauto) if (defa.empty()) {
     transform(typ.begin(),typ.end(),typ.begin(),::toupper);
@@ -619,6 +620,7 @@ int DB::prueftab(Tabelle *ptab,int obverb)
               ((ptab->felder[i].prec=="")?"":
                (string(",")+ptab->felder[i].prec))
               +")"))
+						+(ptab->felder[i].unsig  ?  " UNSIGNED ":"")
             +(ptab->felder[i].nnull  ?  " NOT NULL ":"")
             +(ptab->felder[i].defa.empty()&&!ptab->felder[i].nnull?"":string(" DEFAULT '")+ptab->felder[i].defa+"'")
             +(ptab->felder[i].obauto?" AUTO_INCREMENT":" ")
