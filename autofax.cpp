@@ -4081,7 +4081,7 @@ int paramcl::loeschefax(int obverb, int oblog)
 					fsfv[nr].setzcapistat(this,&entrysend);
 					string protdakt;
 					uchar hyla_uverz_nr=1;
-					/*fsfv[nr].*/setzhylastat(&fsfv[nr], &protdakt, &hyla_uverz_nr, 0, 0, obverb, oblog); // hyla_uverz_nr, obsfehlt
+					/*fsfv[nr].*/setzhylastat(&fsfv[nr], &protdakt, &hyla_uverz_nr, 0, 0, 0, obverb, oblog); // hyla_uverz_nr, obsfehlt
 					Log(violetts+"capistat: "+schwarz+FxStatS(&fsfv[nr].capistat)+violett+", hylastat: "+schwarz+FxStatS(&fsfv[nr].hylastat),obverb,oblog);
 					if ((!zdng || (fsfv[nr].capistat==fehlend && fsfv[nr].hylastat==fehlend)) && !fsfv[nr].id.empty()) {
 						RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE id="+fsfv[nr].id,-obverb);
@@ -4965,7 +4965,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 					string number;
 					int obsfehlt=-1;
 					/*fsf.*/
-					setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 0, &obsfehlt, 1, oblog);
+					setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 0, &obsfehlt, &entrysend, obverb, oblog);
 					caus <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
 					fsf.hylaausgeb(&ausg, this, obsfehlt, 0, obverb, 0, oblog);
 					//          if (!obsfehlt) KLA // Protokolldatei vorhanden 12.10.16 sollte jetzt auch mit xferfax gehen
@@ -5212,7 +5212,7 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 				string protdakt=hsendqvz+vtz+hylanr; // rueck[i];
 				uchar hyla_uverz_nr=1;
 				/*fsf.*/
-				setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 2, 0, obverb, oblog);
+				setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 2, 0, 0, obverb, oblog);
 				fsfvp->push_back(fsf);
 			} // if (!indb)
 		} // for(size_t i=0;i<rueck.size();i++) 
@@ -7935,7 +7935,8 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 
 
 // wird aufgerufen in paramcl::loeschefax, paramcl::untersuchespool, paramcl::zeigweitere
-void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, uchar startvznr, int *obsfehltp,int obverb, int oblog) 
+void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, uchar startvznr, int *obsfehltp/*=0*/,
+              struct stat *est/*=0*/, int obverb/*=0*/, int oblog/*=0*/) 
 {
   Log(violetts+Tx[T_setzhylastat]+schwarz,obverb,oblog);
   uchar obsfehlt=1;
@@ -7987,8 +7988,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     string pdf=this->hylconf[4].wert==""?this->hylconf[8].wert:this->hylconf[4].wert;
     aufiSplit(&tok,&pdf,":");
     fsf->sendqgespfad=this->varsphylavz+vtz+tok[tok.size()-1];
-    //    struct stat entryh;
-    //    lstat(sendqgespfad.c_str(),&entryh); 
+    if (est) lstat(fsf->sendqgespfad.c_str(),est); 
     // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
     if (*hyla_uverz_nrp) {
       fsf->hylastat=static_cast<FxStat>(atol(hylconf[0].wert.c_str()));
