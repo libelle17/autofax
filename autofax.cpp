@@ -3844,7 +3844,7 @@ void paramcl::korrerfolgszeichen()
   Log(violetts+Tx[T_korrerfolgszeichen]+schwarz,obverb,oblog);
   // geht wegen Loeschens der Protokolldateien nur (noch) fuer Gefundene, s.u.
   if (1) {
-    for(uchar runde=1;runde<2;runde++) {
+    for(uchar runde=0;runde<2;runde++) {
       set<string>::iterator fit; // Iterator dafuer
       vector<string> rueck;
       set<string> fdn; // Fax-Dateien
