@@ -5245,14 +5245,18 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 				uchar erfolg=0;
 				if (tok[1]=="SEND") {
 					if (tok[5]=="\"\"") erfolg=1;
-				}
+				} // 				if (tok[1]=="SEND")
 				if (erfolg) {
 					auswe+=tok[2]+","; 
-					inse+="("+tok[2]+","+"\"20"+tok[0].substr(6,2)+"-"+tok[0].substr(0,2)+"-"+tok[0].substr(3,2)+" "+tok[0].substr(9,2)+":"+tok[0].substr(12,2)+"\","+tok[3]+","+tok[4]+",\""+tok[6]+"\",1),";
+					inse+="("+tok[2]+","+"\"20"+tok[0].substr(6,2)+"-"+tok[0].substr(0,2)+"-"+tok[0].substr(3,2)+" "+tok[0].substr(9,2)+":"+
+					          tok[0].substr(12,2)+"\","+tok[3]+","+tok[4]+",\""+tok[6]+"\",1),";
 				} else {
 					auswm+=tok[2]+","; 
-					inse+="("+tok[2]+","+"\"20"+tok[0].substr(6,2)+"-"+tok[0].substr(0,2)+"-"+tok[0].substr(3,2)+" "+tok[0].substr(9,2)+":"+tok[0].substr(12,2)+"\","+tok[3]+","+tok[4]+",\""+tok[6]+"\",0),";
-				}
+#ifdef mitmisserfolg
+					inse+="("+tok[2]+","+"\"20"+tok[0].substr(6,2)+"-"+tok[0].substr(0,2)+"-"+tok[0].substr(3,2)+" "+tok[0].substr(9,2)+":"+
+					          tok[0].substr(12,2)+"\","+tok[3]+","+tok[4]+",\""+tok[6]+"\",0),";
+#endif
+				} // if /erfolg) else
 			} // 				if (tok.size()>0)
 		} // for(size_t i=0;i<rueck.size();i++) 
 		auswe[auswe.size()-1]=')';
