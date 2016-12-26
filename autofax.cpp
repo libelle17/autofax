@@ -4875,7 +4875,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				" s.telnr p5,s.origvu p6,s.hylanr p7,s.capidials p8,s.hyladials p9,s.hdateidatum p10,s.adressat p11,s.idudoc p12,s.prio p13,s.pages p14 "
 				",cas.id p15, has.id p16 "
 				"FROM `")+spooltab+"` s "
-				"left join `"+altspool+"` cas on s.capispooldatei=cas.scapispooldatei "
+				"left join `"+altspool+"` cas on s.capispooldatei=cas.capispooldatei "
 				"left join `"+altspool+"` has on s.hylanr=has.hylanr "
 				"WHERE (s.hylanr RLIKE '^[0-9]+$' AND s.hylanr<>0) OR s.capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",ZDB);
 	if (!rs.obfehl) {
