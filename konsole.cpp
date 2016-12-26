@@ -874,13 +874,12 @@ int Log(const string& text, short screen, short file, bool oberr, short klobverb
       if (!logdt || !*logdt) {
         cerr<<rot<<Txk[T_Variable_logdatei_leer]<<schwarz<<endl;
       } else {
-        string zwi=text; 
-        loeschefarbenaus(&zwi);
         static bool erstaufruf=1;
-
         char tbuf[20];
         time_t jetzt=time(0);
-        strftime(tbuf,19,"%d.%m.%y %X ",localtime(&jetzt));
+        strftime(tbuf,sizeof tbuf,"%d.%m.%y %X: ",localtime(&jetzt));
+        string zwi=tbuf+text; 
+        loeschefarbenaus(&zwi);
 
         if (erstaufruf) {
           kuerzelogdatei(logdt,klobverb); // screen

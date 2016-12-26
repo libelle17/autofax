@@ -135,6 +135,7 @@ class paramcl // Programmparameter
     size_t optslsz=0; // last opts.size()
     uchar modemgeaendert=0; // hmodem neu gesetzt
   public:
+	  string cl; // comanndline
     string mpfad;  // meinpfad()
     string meinname; // base_name(meinpfad()) // argv[0] // 'autofax'
     string vaufr; // (vollaufruf) z.B. '/usr/bin/autofax -norf'

@@ -1813,9 +1813,13 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
 
 paramcl::paramcl(int argc, char** argv)
 {
+  cl=argv[0];
   for(int i=1;i<argc;i++)
-    if (argv[i][0])
+    if (argv[i][0]) {
       argcmv.push_back(argcl(i,argv)); 
+			cl+=" ";
+			cl+=argv[i];
+		}
   mpfad=meinpfad();
   meinname=base_name(mpfad); // argv[0];
   vaufr=mpfad+" -norf"; // /usr/bin/autofax -norf
@@ -5109,9 +5113,7 @@ void paramcl::zeigweitere()
 	} // if (obcapi)
 	if (obhyla) {
 		vector<fsfcl> fsfv2;
-  perfcl prf("sammlefertigehyla");
-		sammlefertigehyla(&fsfv2);
-    prf.ausgeb("nach sammlefertigehyla");
+		sammlefertigehyla(&fsfv2); // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
 		vector<fsfcl> fsfv;
 		sammlehyla(&fsfv);
 		for(size_t i=0;i<fsfv.size();i++) {
@@ -8093,6 +8095,7 @@ void paramcl::zeigkonf()
 int main(int argc, char** argv) 
 {
   paramcl pm(argc,argv); // Programmparameter
+	Log(pm.cl,0,1);
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
