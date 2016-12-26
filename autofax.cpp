@@ -4873,10 +4873,10 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 	char ***cerg;
 	RS rs(My,string("SELECT s.id p0,s.capispooldatei p1,s.capispoolpfad p2,s.original p3,s.cdateidatum p4,"
 				" s.telnr p5,s.origvu p6,s.hylanr p7,s.capidials p8,s.hyladials p9,s.hdateidatum p10,s.adressat p11,s.idudoc p12,s.prio p13,s.pages p14 "
-				",asc.id p15, ash.id p16 "
+				",cas.id p15, has.id p16 "
 				"FROM `")+spooltab+"` s "
-				"left join `"+altspool+"` asc on s.capispooldatei=asc.scapispooldatei "
-				"left join `"+altspool+"` ash on s.hylanr=ash.hylanr "
+				"left join `"+altspool+"` cas on s.capispooldatei=cas.scapispooldatei "
+				"left join `"+altspool+"` has on s.hylanr=has.hylanr "
 				"WHERE (hylanr RLIKE '^[0-9]+$' AND hylanr<>0) OR capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",ZDB);
 	if (!rs.obfehl) {
 		faxord=0;
