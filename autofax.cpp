@@ -4925,6 +4925,9 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				if (*(*cerg+14)) fsf.pseiten = atol(*(*cerg+14));  // pages wie in Datenbank
 				if (*(*cerg+15)) fsf.idc = *(*cerg+15);  // id capi
 				if (*(*cerg+16)) fsf.idh = *(*cerg+16);  // id hyla
+				caus<<"fsf.id: "<<violett<<fsf.id<<schwarz;
+				caus<<"fsf.idc: "<<violett<<fsf.idc<<schwarz;
+				caus<<"fsf.idh: "<<violett<<fsf.idh<<schwarz;
 				Log(string("id: ")+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
 				ausg<<blau<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; // ab hier Neue-Zeile-Zeichen immer am Anfang der naechsten Zeile
 				// a) ueber capisuite
@@ -7171,8 +7174,11 @@ void inDbc(DB *My, const string& spooltab, const string& altspool, const string&
       einf.push_back(/*2*/instyp(My->DBS,"cdateidatum",&entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"cdateizeit",entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"telnr",telnr));
-      string bedingung=string("id=")+fsfp->id;
-      rupd.update(altspool,einf,ZDB,bedingung);
+			if (!fsfp->idc.empty()) {
+				string bedc="id="+fsfp->idc;
+				rupd.update(altspool,einf,ZDB,bedc);
+			}
+      string bedingung="id="+fsfp->id;
       rupd.update(spooltab,einf,ZDB,bedingung);
 
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
@@ -7267,8 +7273,11 @@ void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp,
       einf.push_back(/*2*/instyp(My->DBS,"hdateidatum",&entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"hdateizeit",entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"telnr",tel));
-      string bedingung=string("id=")+fsfp->id;
-      rupd.update(altspool,einf,ZDB,bedingung);
+			if (!fsfp->idh.empty()) {
+				string bedh="id="+fsfp->idh;
+				rupd.update(altspool,einf,ZDB,bedh);
+			}
+      string bedingung="id="+fsfp->id;
       rupd.update(spooltab,einf,ZDB,bedingung);
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
       affr=My->affrows();
