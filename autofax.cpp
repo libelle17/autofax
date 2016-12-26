@@ -4926,6 +4926,9 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				if (*(*cerg+14)) fsf.pseiten = atol(*(*cerg+14));  // pages wie in Datenbank
 				if (*(*cerg+15)) fsf.idc = atol(*(*cerg+15));  // id capi
 				if (*(*cerg+16)) fsf.idh = atol(*(*cerg+16));  // id hyla
+				caus<<"fsf.idc: '"<<fsf.idc<<"', length: "<<fsf.idc.length()<<", empty: "<<fsf.idc.empty()<<endl;
+				caus<<"fsf.idh: '"<<fsf.idh<<"', length: "<<fsf.idh.length()<<", empty: "<<fsf.idh.empty()<<endl;
+				exit(0);
 				Log(string("id: ")+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
 				ausg<<blau<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; // ab hier Neue-Zeile-Zeichen immer am Anfang der naechsten Zeile
 				// a) ueber capisuite
