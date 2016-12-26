@@ -4829,8 +4829,12 @@ void paramcl::faxealle()
 			(dbszahl)++;
 			if (!*(*cerg+9)) *(*cerg+9)=(char*)"";
 			if (!*(*cerg+10)) *(*cerg+10)=(char*)"";
+			if (!*(*cerg+11)) *(*cerg+11)=(char*)"";
+			if (!*(*cerg+12)) *(*cerg+12)=(char*)"";
+			if (!*(*cerg+13)) *(*cerg+13)=(char*)"";
+			if (!*(*cerg+14)) *(*cerg+14)=(char*)"";
 			if (*(*cerg+0) && *(*cerg+1) && *(*cerg+2) && *(*cerg+3) && *(*cerg+4) && *(*cerg+5) && 
-					*(*cerg+6) && *(*cerg+7) && *(*cerg+8) && *(*cerg+9) && *(*cerg+10)) {
+					*(*cerg+6) && *(*cerg+7) && *(*cerg+8)) {
 				// obcapi = *(*cerg+9), obhyla=*(*cerg+10)
 				caus<<"Stelle 10"<<endl;
 				fsfv.push_back(/*1*/fsfcl(*(*cerg+0)/*id*/, *(*cerg+1)/*npdf*/, *(*cerg+2)/*spdf*/, *(*cerg+3)/*telnr*/, 
