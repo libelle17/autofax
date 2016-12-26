@@ -1719,10 +1719,10 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     Log(string("original (docname): ")+blau+original+schwarz,obverb,oblog);
     einf.push_back(/*2*/instyp(My->DBS,"idudoc",&idudoc));
 		if (!tts) tts=time(0);
-		cout<<gruen<<"tts: "<<rot<<tts<<schwarz<<endl;
+		caus<<gruen<<"tts: "<<rot<<tts<<schwarz<<endl;
 		char buf[100];
     strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", localtime(&tts));
-		cout<<"buf: "<<buf<<endl;
+		caus<<"buf: "<<buf<<endl;
     einf.push_back(/*2*/instyp(My->DBS,"transe",&tts));
     if (!telnr.empty()) {
       string stdfax=pmp->stdfaxnr(telnr);
@@ -4259,7 +4259,7 @@ void paramcl::suchestr()
 		cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(85)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(17)<<*(*cerg+2)<<"|"
 			<<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
 	} // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
-}
+} // suchestr
 
 // verwendet in DateienHerricht(), empfarch()
 int paramcl::pruefsoffice(uchar mitloe/*=0*/)
@@ -4941,6 +4941,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				if (obcapi) {
 					if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
 					fsf.setzcapistat(this, &entrysend);
+					fsf.tts=0;
 					fsf.capiwausgeb(&ausg,maxcdials, 0, obverb, oblog);
 					if (mitupd) {
 						RS rupd(My); 
