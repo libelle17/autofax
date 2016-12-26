@@ -1949,10 +1949,10 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
     // hier wird die Telefonnummer aus dem Namen extrahiert
     RS tea(My,string("UPDATE `")+altspool+"` "
         "SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
-        "WHERE ISNULL(telnr) OR telnr=''",255);
+        "WHERE telnr=''",255);
     RS tel(My,string("UPDATE `")+spooltab+"` "
         "SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
-        "WHERE ISNULL(telnr) OR telnr=''",ZDB);
+        "WHERE telnr=''",ZDB);
   }
 } // WVZinDatenbank
 
@@ -4015,6 +4015,7 @@ int paramcl::loeschefax(int obverb, int oblog)
 	faxord=0;
 	string ergnr,erg;
 	char*** cerg;
+	/*
 	RS zul(My,string("SELECT CONCAT_WS(' ',LEFT(CONCAT(IF(ISNULL(original),'NULL',original),SPACE(50)),50),"
 				"RIGHT(CONCAT(SPACE(15),IF(ISNULL(capispooldatei),'NULL',capispooldatei)),15),")+
 			"CONCAT('Capidials:',RIGHT(CONCAT(SPACE(4),IF(ISNULL(capidials),'NULL',capidials)),4)),"
@@ -4023,7 +4024,17 @@ int paramcl::loeschefax(int obverb, int oblog)
 			"id p1,"
 			"IF(ISNULL(capispooldatei),'NULL',capispooldatei) p2,"
 			"IF(ISNULL(capispoolpfad),'"+cfaxusersqvz+"',capispoolpfad) p3,"
-			"hylanr p4 FROM `"+spooltab+"` ORDER BY id",ZDB);
+		 	"hylanr p4 FROM `"+spooltab+"` ORDER BY id",ZDB);
+	*/
+	RS zul(My,string("SELECT CONCAT_WS(' ',LEFT(CONCAT(original,SPACE(50)),50),"
+				"RIGHT(CONCAT(SPACE(15),capispooldatei),15),")+
+			"CONCAT('Capidials:',RIGHT(CONCAT(SPACE(4),capidials),4)),"
+			"CONCAT('Hyla:',RIGHT(CONCAT(SPACE(5),hylanr),5)), "
+			"CONCAT('Hyladials:',RIGHT(CONCAT(SPACE(4),hyladials),4))) p0,"
+			"id p1,"
+			"capispooldatei p2,"
+			"IF(capispoolpfad='','"+cfaxusersqvz+"',capispoolpfad) p3,"
+		 	"hylanr p4 FROM `"+spooltab+"` ORDER BY id",ZDB);
 	while (cerg=zul.HolZeile(),cerg?*cerg:0) {
 		if (*(*cerg+0) && *(*cerg+1)) {
 			Log(string("Fax ")+blau+ltoan(++faxord)+schwarz+": "+*(*cerg+0),1,1);
@@ -4783,6 +4794,7 @@ void paramcl::faxealle()
 	//  string hzstr=ltoan(hylazuerst);
 	if (!isnumeric(maxhylav)) maxhylav="3";
 	if (!isnumeric(maxcapiv)) maxcapiv="3";
+	/*
 	RS r0(My,string("SELECT id p0, origvu p1, original p2, telnr p3, prio p4, "
 				"IF(ISNULL(capispooldatei),'',capispooldatei) p5, IF(ISNULL(capidials),'',capidials) p6, "
 				"IF(ISNULL(hylanr),'',hylanr) p7, IF(ISNULL(hyladials),'',hyladials) p8, "
@@ -4792,6 +4804,19 @@ void paramcl::faxealle()
 			"((ISNULL(hylanr) OR hylanr='') AND (ISNULL(capidials) OR capidials>=" +maxcapiv+" OR capidials=-1 OR "
 			//      "      (ISNULL(prio) OR prio=2 OR (prio=0 AND "+hzstr+")))) p10, "
 			"      (ISNULL(prio) OR prio=3 OR prio=1))) p10, "
+			"adressat p11, pages p12 "
+			"FROM `"+spooltab+"` "
+			"WHERE original>''",ZDB);
+	*/
+	RS r0(My,string("SELECT id p0, origvu p1, original p2, telnr p3, prio p4, "
+				"capispooldatei p5, capidials p6, "
+				"hylanr p7, hyladials p8, "
+				"((capispooldatei='') AND (hyladials>=")+maxhylav+" OR hylastate=8 OR " // hyladials=-1
+			//      "    (prio=1 OR (prio=0 AND NOT "+hzstr+")))) p9, "
+			"    (prio=2 OR prio=0))) p9, "
+			"((hylanr='' OR hylanr=0) AND (OR capidials>=" +maxcapiv+" OR capidials=-1 OR "
+			//      "      (prio=2 OR (prio=0 AND "+hzstr+")))) p10, "
+			"      (prio=3 OR prio=1))) p10, "
 			"adressat p11, pages p12 "
 			"FROM `"+spooltab+"` "
 			"WHERE original>''",ZDB);
@@ -4875,10 +4900,9 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				" s.telnr p5,s.origvu p6,s.hylanr p7,s.capidials p8,s.hyladials p9,s.hdateidatum p10,s.adressat p11,s.idudoc p12,s.prio p13,s.pages p14 "
 				",cas.id p15, has.id p16 "
 				"FROM `")+spooltab+"` s "
-				"left join `"+altspool+"` cas on s.capispooldatei=cas.capispooldatei and not isnull(cas.capispooldatei) "
-				"left join `"+altspool+"` has on s.hylanr=has.hylanr and not isnull(has.hylanr) and has.hylanr<>0 "
+				"left join `"+altspool+"` cas on s.capispooldatei=cas.capispooldatei and s.capispooldatei<>'' and cas.capispooldatei<>'' "
+				"left join `"+altspool+"` has on s.hylanr=has.hylanr and s.hylanr<>0 and has.hylanr<>0 "
 				"WHERE (s.hylanr RLIKE '^[0-9]+$' AND s.hylanr<>0) OR s.capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",255);
-				exit(0);
 	if (!rs.obfehl) {
 		faxord=0;
 		while (cerg=rs.HolZeile(),cerg?*cerg:0) {
@@ -5241,7 +5265,7 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 			// capisuite-Uebertragung eingetragen ist
 			RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpt t "
 								"LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
-                "LEFT JOIN outa o2 ON o2.submid=a.capispooldatei WHERE isnull(o.submid) AND t.erfolg<>0 AND (isnull(o2.erfolg) OR o2.erfolg=0)",ZDB);
+                "LEFT JOIN outa o2 ON o2.submid=a.capispooldatei WHERE o.submid='' AND t.erfolg<>0 AND o2.erfolg=0",ZDB);
 			char ***cerg;
 			while (cerg=ntr.HolZeile(),cerg?*cerg:0) {
 			  string hylanr = *(*cerg+0);
