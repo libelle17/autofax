@@ -5111,7 +5111,7 @@ void paramcl::zeigweitere()
 		vector<fsfcl> fsfv2;
   perfcl prf("sammlefertigehyla");
 		sammlefertigehyla(&fsfv2);
-    prf.ausgab1000("nach sammlefertigehyla");
+    prf.ausgeb("nach sammlefertigehyla");
 		vector<fsfcl> fsfv;
 		sammlehyla(&fsfv);
 		for(size_t i=0;i<fsfv.size();i++) {
