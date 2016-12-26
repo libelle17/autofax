@@ -4832,10 +4832,12 @@ void paramcl::faxealle()
 			if (*(*cerg+0) && *(*cerg+1) && *(*cerg+2) && *(*cerg+3) && *(*cerg+4) && *(*cerg+5) && 
 					*(*cerg+6) && *(*cerg+7) && *(*cerg+8) && *(*cerg+9) && *(*cerg+10)) {
 				// obcapi = *(*cerg+9), obhyla=*(*cerg+10)
+				caus<<"Stelle 10"<<endl;
 				fsfv.push_back(/*1*/fsfcl(*(*cerg+0)/*id*/, *(*cerg+1)/*npdf*/, *(*cerg+2)/*spdf*/, *(*cerg+3)/*telnr*/, 
 							atoi(*(*cerg+4))/*prio*/, *(*cerg+5)/*capisd*/, atoi(*(*cerg+6))/*capids*/, *(*cerg+7)/*hylanr*/, 
 							atoi(*(*cerg+8))/*hdialsn*/, (binaer)atoi(*(*cerg+9))/*obcapi*/, (binaer)atoi(*(*cerg+10))/*obhyla*/, *(*cerg+11)/*adressat*/,
 							atoi(*(*cerg+12)/*pages*/), *(*cerg+13)/*cas.id*/, *(*cerg+14)));
+				caus<<"Stelle 11"<<endl;
 			}
 		} // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
 		Log(string(Tx[T_ZahldDSmwegzuschickendenFaxenin])+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz,obverb,oblog);
