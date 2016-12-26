@@ -4902,7 +4902,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				"FROM `"+spooltab+"` s "
 				"LEFT JOIN `"+altspool+"` cas ON s.capispooldatei=cas.capispooldatei AND s.capispooldatei<>'' AND cas.capispooldatei<>'' "
 				"LEFT JOIN `"+altspool+"` has ON s.hylanr=has.hylanr AND s.hylanr<>0 AND has.hylanr<>0 "
-				"WHERE (s.hylanr RLIKE '^[0-9]+$' AND s.hylanr<>0) OR s.capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",255);
+				"WHERE (s.hylanr RLIKE '^[0-9]+$' AND s.hylanr<>0) OR s.capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",ZDB);
 	if (!rs.obfehl) {
 		faxord=0;
 		while (cerg=rs.HolZeile(),cerg?*cerg:0) {
@@ -4926,11 +4926,6 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				if (*(*cerg+14)) fsf.pseiten = atol(*(*cerg+14));  // pages wie in Datenbank
 				if (*(*cerg+15)) fsf.idc = *(*cerg+15);  // id capi
 				if (*(*cerg+16)) fsf.idh = *(*cerg+16);  // id hyla
-				caus<<"fsf.idc: '"<<fsf.idc<<"', length: "<<fsf.idc.length()<<", empty: "<<fsf.idc.empty()<<endl;
-				caus<<"fsf.idh: '"<<fsf.idh<<"', length: "<<fsf.idh.length()<<", empty: "<<fsf.idh.empty()<<endl;
-				if (fsf.idh.length())
-				  caus<<(int)fsf.idh[0]<<endl;
-				exit(0);
 				Log(string("id: ")+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
 				ausg<<blau<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; // ab hier Neue-Zeile-Zeichen immer am Anfang der naechsten Zeile
 				// a) ueber capisuite
