@@ -1719,6 +1719,7 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     Log(string("original (docname): ")+blau+original+schwarz,obverb,oblog);
     einf.push_back(/*2*/instyp(My->DBS,"idudoc",&idudoc));
 		if (!tts) tts=time(0);
+		cout<<gruen<<"tts: "<<rot<<tts<<schwarz<<endl;
     einf.push_back(/*2*/instyp(My->DBS,"transe",&tts));
     if (!telnr.empty()) {
       string stdfax=pmp->stdfaxnr(telnr);
@@ -6295,7 +6296,7 @@ int paramcl::pruefhyla()
     } //     if ((this->sfaxq->obslaeuft(obverb-1,oblog) && this->shfaxd->obslaeuft(obverb-1,oblog))  else
     if (hylafehlt) {
       // falls nein, dann schauen, ob startbar
-      if (sfaxq->machfit(obverb-1,oblog) && shfaxd->machfit(obverb-1,oblog) && sfaxgetty->machfit(obverb-1,oblog)) {
+      if (sfaxq->machfit(obverb?obverb-1:0,oblog) && shfaxd->machfit(obverb?obverb-1:0,oblog) && sfaxgetty->machfit(obverb?obverb-1:0,oblog)) {
         hylafehlt=0;
         hylalaeuftnicht=0;
       }
@@ -6751,8 +6752,7 @@ int paramcl::pruefcapi()
     // #  define IRQF_DISABLED 0x00
     // #endif
     //    capilaeuft=(PIDausName("capisuite")>=0);
-		cout<<gruen<<" obverb: "<<rot<<(int)obverb<<schwarz<<endl;
-    capilaeuft = this->scapisuite->machfit(obverb-1,oblog,wahr);
+    capilaeuft = this->scapisuite->machfit(obverb?obverb-1:0,oblog,wahr);
     Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz,obverb,oblog);
     if (capilaeuft) {
      capischonerfolgreichinstalliert=1;
