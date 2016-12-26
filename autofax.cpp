@@ -5258,7 +5258,6 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 		inse[inse.size()-1]=';';
 		auswm[auswm.size()-1]=')';
 		if (inse.size()>1) {
-		caus<<"Stelle 0"<<endl; ZDB=255;
 			//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 			RS vgl1(My,"DROP TABLE IF EXISTS tmpt",ZDB);
 			RS vgl2(My,"CREATE TABLE tmpt(submid VARCHAR(11) KEY,Datum DATETIME,tel VARCHAR(30),pages INT,attr VARCHAR(20),erfolg INT);",ZDB);
@@ -5294,7 +5293,6 @@ caus<<"vor archiviere, telnr: "<<fsf.telnr<<" tts: "<<fsf.tts<<" hdd: "<<fsf.hdd
 			}
 			//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_OFF);
 		}
-		caus<<"Stelle 1"<<endl;
 		// "select tmpt.i,submid,erfolg,outa.* from tmpt left join outa on tmpt.i=outa.submid
 		// select t.*,a.capispooldatei,o2.erfolg, o2.submid from tmpt t left join outa o on t.submid = o.submid left join altspool a on a.hylanr = t.submid left join outa o2 on a.capispooldatei=o2.submid where isnull(o.submid);
 		char ***cerg;
