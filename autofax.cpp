@@ -4817,7 +4817,7 @@ void paramcl::faxealle()
 			"      (s.prio=3 OR s.prio=1))) p10, "
 			"s.adressat p11, s.pages p12 "
 			",cas.id p13, has.id p14 "
-			"FROM `"+spooltab+"` "
+			"FROM `"+spooltab+"` s "
 			"LEFT JOIN `"+altspool+"` cas ON s.capispooldatei=cas.capispooldatei AND s.capispooldatei<>'' AND cas.capispooldatei<>'' "
 			"LEFT JOIN `"+altspool+"` has ON s.hylanr=has.hylanr AND s.hylanr<>0 AND has.hylanr<>0 "
 			"WHERE s.original>''",ZDB);
