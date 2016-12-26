@@ -5217,6 +5217,7 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 // aufgerufen in: zeigweitere
 void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 {
+obverb=1;
 	Log(violetts+Tx[T_sammlefertigehyla]+schwarz,obverb,oblog);
 	struct stat entryvz;
 	if (!lstat(hsendqvz.c_str(),&entryvz)) {
