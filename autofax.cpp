@@ -4941,7 +4941,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						vector<instyp> einf; // fuer alle Datenbankeinfuegungen
 						string bedingung=string("id=")+fsf.id;
 						string bedc=string("id=")+fsf.idc;
-						cout<<"bedc: "<<fsf.idc<<endl;
+						cout<<"bedc: '"<<bedc<<"'"<<endl;
 						if (fsf.capistat==wartend || fsf.capistat==gescheitert) {
 							einf.push_back(/*2*/instyp(My->DBS,"capidials",&fsf.ctries));
 							einf.push_back(/*2*/instyp(My->DBS,"capistat",fsf.capistat));
@@ -4985,7 +4985,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						einf.push_back(/*2*/instyp(My->DBS,"hyladials",&fsf.hdials));
 						string bedingung=string("id=")+fsf.id;
 						string bedh=string("id=")+fsf.idh;
-						cout<<"bedh: "<<fsf.idh<<endl;
+						cout<<"bedh: '"<<bedh<<"'"<<endl;
 						if (!fsf.idh.empty()) rupd.update(altspool,einf,255,bedh,0);
 						rupd.update(spooltab,einf,ZDB,bedingung,0);
 					} // if (mitupd) 
