@@ -3860,7 +3860,7 @@ void paramcl::korrerfolgszeichen()
             if ((pos=rueck[ruecki].rfind("/q"))!=string::npos) fdn.insert(rueck[ruecki].substr(pos+2));
           } //           for(ruecki=0;ruecki<rueck.size();ruecki++)
       } // switch (runde)
-      string sql=string("SELECT titel p0, tsid p1, submt p2, submid p3, oscht p4, subject p5, docname p6, id p7, fsize p8, pages p9, ")+
+      string sql="SELECT titel p0, tsid p1, submt p2, submid p3, oscht p4, subject p5, docname p6, id p7, fsize p8, pages p9, "
         "devname p10, retries p11, prio p12, rcfax p13, rcname p14, csid p15, sender p16, transs p17, transe p18, Pid p19, eind p20, Erfolg p21 "
         "FROM `"+touta+"` WHERE submid "+(runde?"RLIKE '^[0-9]+$' AND submid<>0":"LIKE '%fax-%.sff'")+" ORDER BY submt";
       RS routa(My,sql);
@@ -3917,9 +3917,9 @@ void paramcl::bereinigewv()
   for(unsigned runde=0;runde<2;runde++) {
     string sql;
     switch (runde) {
-      case 0: sql=string("SELECT id p0, original p1, origvu p2 FROM `")+spooltab+"`"; break;
-      case 1: sql=string("SELECT eind p0, docname p1, Erfolg p2 FROM `")+touta+"`"; break;
-    }
+      case 0: sql="SELECT id p0, original p1, origvu p2 FROM `"+spooltab+"`"; break;
+      case 1: sql="SELECT eind p0, docname p1, Erfolg p2 FROM `"+touta+"`"; break;
+    } //     switch (runde)
     RS rsp(My,sql,ZDB);
     char ***cerg;
     while (cerg=rsp.HolZeile(),cerg?*cerg:0) {
@@ -4807,18 +4807,20 @@ void paramcl::faxealle()
 			"FROM `"+spooltab+"` "
 			"WHERE original>''",ZDB);
 	*/
-	RS r0(My,string("SELECT id p0, origvu p1, original p2, telnr p3, prio p4, "
-				"capispooldatei p5, capidials p6, "
-				"hylanr p7, hyladials p8, "
-				"((capispooldatei='') AND (hyladials>=")+maxhylav+" OR hylastate=8 OR " // hyladials=-1
+	RS r0(My,string("SELECT s.id p0, s.origvu p1, s.original p2, s.telnr p3, s.prio p4, s.capispooldatei p5, s.capidials p6, "
+				"s.hylanr p7, s.hyladials p8, "
+				"((s.capispooldatei='') AND (s.hyladials>=")+maxhylav+" OR s.hylastate=8 OR " // hyladials=-1
 			//      "    (prio=1 OR (prio=0 AND NOT "+hzstr+")))) p9, "
-			"    (prio=2 OR prio=0))) p9, "
-			"((hylanr='' OR hylanr=0) AND (capidials>=" +maxcapiv+" OR capidials=-1 OR "
+			"    (s.prio=2 OR s.prio=0))) p9, "
+			"((s.hylanr='' OR s.hylanr=0) AND (s.capidials>=" +maxcapiv+" OR s.capidials=-1 OR "
 			//      "      (prio=2 OR (prio=0 AND "+hzstr+")))) p10, "
-			"      (prio=3 OR prio=1))) p10, "
-			"adressat p11, pages p12 "
+			"      (s.prio=3 OR s.prio=1))) p10, "
+			"s.adressat p11, s.pages p12 "
+			",cas.id p13, has.id p14 "
 			"FROM `"+spooltab+"` "
-			"WHERE original>''",ZDB);
+			"LEFT JOIN `"+altspool+"` cas ON s.capispooldatei=cas.capispooldatei AND s.capispooldatei<>'' AND cas.capispooldatei<>'' "
+			"LEFT JOIN `"+altspool+"` has ON s.hylanr=has.hylanr AND s.hylanr<>0 AND has.hylanr<>0 "
+			"WHERE s.original>''",ZDB);
 	if (r0.obfehl) {
 		cerr<<rots<<Tx[T_Fehler_af]<<schwarz<<r0.obfehl<<rot<<Tx[T_beiSQLAbfrage]<<schwarz<<r0.sql<<endl;
 	} else {
@@ -4832,7 +4834,7 @@ void paramcl::faxealle()
 				fsfv.push_back(/*1*/fsfcl(*(*cerg+0)/*id*/, *(*cerg+1)/*npdf*/, *(*cerg+2)/*spdf*/, *(*cerg+3)/*telnr*/, 
 							atoi(*(*cerg+4))/*prio*/, *(*cerg+5)/*capisd*/, atoi(*(*cerg+6))/*capids*/, *(*cerg+7)/*hylanr*/, 
 							atoi(*(*cerg+8))/*hdialsn*/, (binaer)atoi(*(*cerg+9))/*obcapi*/, (binaer)atoi(*(*cerg+10))/*obhyla*/, *(*cerg+11)/*adressat*/,
-							atoi(*(*cerg+12))/*pages*/));
+							atoi(*(*cerg+12)/*pages*/), *(*cerg+13)/*cas.id*/, *(*cerg+14)));
 			}
 		} // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
 		Log(string(Tx[T_ZahldDSmwegzuschickendenFaxenin])+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz,obverb,oblog);
@@ -5197,14 +5199,14 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 	Log(violetts+Tx[T_sammlehyla]+schwarz,obverb,oblog);
 	struct stat entryvz;
 	if (!lstat(hsendqvz.c_str(),&entryvz)) {
-		cmd=string("sudo find '")+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";
+		cmd="sudo find '"+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";
 		svec qrueck;
 		systemrueck(cmd,obverb,oblog,&qrueck);
 		for(size_t i=0;i<qrueck.size();i++) {
 			uchar indb=0;
 			string hylanr=qrueck[i].substr(1);
 			char ***cerg;
-			RS rs(My,string("SELECT id FROM `")+spooltab+"` WHERE hylanr="+hylanr,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+			RS rs(My,"SELECT id FROM `"+spooltab+"` WHERE hylanr="+hylanr,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 			if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
 			if (!indb) {
 				/*4*/fsfcl fsf(hylanr); // fsf(rueck[i]);

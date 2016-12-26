@@ -71,8 +71,6 @@ class fsfcl : public fxfcl // Faxsendfile
 {
   public:
     string id;   // id in spooltab
-		string idc; // id des mit der gleichen capispooldatei in altspool zugeordneten Satzes
-		string idh; // id des mit der gleichen hylanr in altspool zugeordneten Satzes
     string telnr;    // Telnr. des Adressaten
     string capisd; // capispooldatei
     int capids;  //capidials
@@ -81,6 +79,8 @@ class fsfcl : public fxfcl // Faxsendfile
     uchar fobcapi; // ob es jetzt mit Capi weggefaxt werden muss
     uchar fobhyla; // ob es jetzt mit Hyla weggefaxt werden muss
     string adressat; // Name des Adressaten aus Faxdatei
+		string idc; // id des mit der gleichen capispooldatei in altspool zugeordneten Satzes
+		string idh; // id des mit der gleichen hylanr in altspool zugeordneten Satzes
     string original; // base_name(spdf)
     string origvu;   // base_name(npdf)
     string idudoc;   // id des urspruenglichen Dateinamens in tabelle udoc
@@ -111,9 +111,9 @@ class fsfcl : public fxfcl // Faxsendfile
     int loeschecapi(int obverb, int oblog);
     int loeschehyla(paramcl *pmp,int obverb, int oblog);
     /*1*/fsfcl(string id, string npdf, string spdf, string telnr, unsigned prio, string capisd, int capids, string hylanr, int hdialsn, 
-         uchar obcapi, uchar obhyla, string adressat,ulong pseiten):
+         uchar obcapi, uchar obhyla, string adressat,ulong pseiten,string idc,string idh):
          fxfcl(prio,npdf,spdf,pseiten), id(id), telnr(telnr), capisd(capisd), capids(capids), 
-         hylanr(hylanr), hdialsn(hdialsn), fobcapi(obcapi), fobhyla(obhyla), adressat(adressat) {}
+         hylanr(hylanr), hdialsn(hdialsn), fobcapi(obcapi), fobhyla(obhyla), adressat(adressat),idc(idc),idh(idh) {}
     /*2*/fsfcl(string id,string original): id(id), original(original) {}
     /*3*/fsfcl(string id, string capisd, string hylanr, string cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
     /*4*/fsfcl(string& hylanr): hylanr(hylanr) {}
