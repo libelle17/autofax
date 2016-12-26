@@ -8121,6 +8121,7 @@ int main(int argc, char** argv)
   } else if (pm.listi) {
     pm.tu_listi();
   } else if (pm.listw) {
+		caus<<"Stelle 0"<<endl;
     pm.untersuchespool(0);
 		caus<<"Stelle 1"<<endl;
     pm.zeigweitere();
