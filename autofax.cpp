@@ -3547,79 +3547,79 @@ void paramcl::pruefcron()
   //  svec rueck;
   int cronda=0;
   int cronzuplanen = (cronminut!="0");
+	obverb=1;
   Log(violetts+Tx[T_pruefcron]+schwarz+Tx[T_cronzuplanen]+violetts+ltoan(cronzuplanen)+schwarz,obverb,oblog);
-
-  for (uchar runde=0;runde<2;runde++) {
-    cronda=obprogda("crontab",obverb-1,0);
-    if (cronda) break;
-    // systemrueck("which zypper 2>/dev/null && zypper -n in cron || 
-    //              KLA which apt-get 2>/dev/null && apt-get -y install cron; KLZ",1,1);
-    linst.doinst("cron",1,1);
-    //  int obionice=!systemrueck("which ionice > /dev/null 2>&1",0,0);
-  } //   for (uchar runde=0;runde<2;runde++) 
-  if (cronda) {
-    int nochkeincron = systemrueck("sudo crontab -l",obverb-1,0,0,2);
-    setztmpc(obverb, oblog);
-    string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 "+vaufr;// "date >/home/schade/zeit";
-    string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
-		string czt=" \\* \\* \\* \\*";
-		string vorcm;
-		if (!nochkeincron) {
-			cmd="bash -c 'grep \"\\*/.*"+czt+cb0+"\" <(sudo crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
-			svec cmrueck;
-			systemrueck(cmd,obverb,oblog,&cmrueck);
-			if (cmrueck.size()) vorcm=cmrueck[0];
-		} // 		if (!nochkeincron) 
-		if (vorcm.empty() && cronminut=="0") {
+		for (uchar runde=0;runde<2;runde++) {
+			cronda=obprogda("crontab",obverb-1,0);
+			if (cronda) break;
+			// systemrueck("which zypper 2>/dev/null && zypper -n in cron || 
+			//              KLA which apt-get 2>/dev/null && apt-get -y install cron; KLZ",1,1);
+			linst.doinst("cron",1,1);
+			//  int obionice=!systemrueck("which ionice > /dev/null 2>&1",0,0);
+		} //   for (uchar runde=0;runde<2;runde++) 
+		if (cronda) {
+			int nochkeincron = systemrueck("sudo crontab -l",obverb-1,0,0,2);
+			setztmpc(obverb, oblog);
+			string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 "+vaufr;// "date >/home/schade/zeit";
+			string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
+			string czt=" \\* \\* \\* \\*";
+			string vorcm;
+			if (!nochkeincron) {
+				cmd="bash -c 'grep \"\\*/.*"+czt+cb0+"\" <(sudo crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
+				svec cmrueck;
+				systemrueck(cmd,obverb,oblog,&cmrueck);
+				if (cmrueck.size()) vorcm=cmrueck[0];
+			} // 		if (!nochkeincron) 
+			if (vorcm.empty() && cronminut=="0") {
 				if (obverb) Log(Tx[T_Kein_cron_gesetzt_nicht_zu_setzen],1,oblog);
-		} else {
-		  if (cronminut==vorcm) {
-			 if (obverb) Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+Tx[T_unveraendert]+
-			                             	    +blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
 			} else {
-        cmd="rm -f "+tmpc+";";
-				if (!nochkeincron)
-					cmd="sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+";";
-				if (cronminut!="0") {
-					cmd+=" echo \""+cbef+"\">>"+tmpc+";";
+				if (cronminut==vorcm) {
+					if (obverb) Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+Tx[T_unveraendert]+
+							+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
+				} else {
+					cmd="rm -f "+tmpc+";";
+					if (!nochkeincron)
+						cmd="sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+";";
+					if (cronminut!="0") {
+						cmd+=" echo \""+cbef+"\">>"+tmpc+";";
+					}
+					cmd+=" sudo crontab "+tmpc+";";
+					systemrueck(cmd,obverb,oblog);
+					Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronminut=="0"?Tx[T_gar_nicht]:Tx[T_alle]+cronminut+Tx[T_Minuten])+schwarz+Tx[T_statt]+
+							+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
 				}
-				cmd+=" sudo crontab "+tmpc+";";
-				systemrueck(cmd,obverb,oblog);
-				Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronminut=="0"?Tx[T_gar_nicht]:Tx[T_alle]+cronminut+Tx[T_Minuten])+schwarz+Tx[T_statt]+
-			                             	    +blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
-			}
-		} // 		if (vorcm.empty() && cronminut=="0")
+			} // 		if (vorcm.empty() && cronminut=="0")
 #ifdef stumm
 #ifdef uebersichtlich
-		string befehl;
-		if (!cronzuplanen) {
-      if (nochkeincron) {
-      } else {
-        befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+"; sudo crontab "+tmpc+")";
-      }
-    } else {
-      if (nochkeincron) {
-        befehl="rm -f "+tmpc+";";
-      } else {
-        befehl="bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+";";
-      }
-      befehl+="echo \""+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+"";
-      if (!nochkeincron)
-        befehl+=")";
-    }
+			string befehl;
+			if (!cronzuplanen) {
+				if (nochkeincron) {
+				} else {
+					befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+"; sudo crontab "+tmpc+")";
+				}
+			} else {
+				if (nochkeincron) {
+					befehl="rm -f "+tmpc+";";
+				} else {
+					befehl="bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+";";
+				}
+				befehl+="echo \""+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+"";
+				if (!nochkeincron)
+					befehl+=")";
+			}
 #else
-    string befehl=cronzuplanen?
-      (nochkeincron?("rm -f ")+tmpc+";":
-       "bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+"; ")+
-      "echo \""+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+(nochkeincron?"":")")
-      :
-      (nochkeincron?"":("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+";"
-       "sudo crontab "+tmpc+")||true")
-      ;
+			string befehl=cronzuplanen?
+				(nochkeincron?("rm -f ")+tmpc+";":
+				 "bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+"; ")+
+				"echo \""+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+(nochkeincron?"":")")
+				:
+				(nochkeincron?"":("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+";"
+				 "sudo crontab "+tmpc+")||true")
+				;
 #endif      
-    systemrueck(befehl,obverb,oblog);
+			systemrueck(befehl,obverb,oblog);
 #endif
-  } //   if (cronda) 
+		} //   if (cronda) 
   //  systemrueck(string("mv -i '")+mpfad+"' /root/bin",1,0);
 } // pruefcron
 
@@ -8098,7 +8098,7 @@ int main(int argc, char** argv)
 	cout<<pm.cl<<endl;
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();
-	Log(pm.cl,0,1);
+	Log("main(): "+pm.cl,0,1);
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
   pm.VorgbAllg();
   pm.VorgbSpeziell(); // die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion "void paramcl::VorgbSpeziell()" ueberladbar sind

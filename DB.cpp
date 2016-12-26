@@ -524,7 +524,7 @@ return ergi;
 // wird aufgerufen in: prueftab
 void DB::lesespalten(Tabelle *ltab,int obverb/*=0*/,int oblog/*=0*/)
 {
-  Log(violetts+Txd[T_Lesespalten]+blau+ltab->name+"'"+schwarz,obverb,oblog);
+  Log(violetts+Txd[T_Lesespalten]+blau+": "+ltab->name+"'"+schwarz,obverb,oblog);
   char ***cerg;
   //          RS spalt(this,string("SHOW COLUMNS FROM `")+tab->name+"`");
   delete spalt;
