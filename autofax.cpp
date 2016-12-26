@@ -5237,6 +5237,7 @@ obverb=1;
 		systemrueck(cmd,obverb,oblog,&qrueck);
 		string auswe="(", auswm="(", auswef="(",auswmf="(", inse;
 		for(size_t i=0;i<qrueck.size();i++) {
+		caus<<"i: "<<i<<" qrueck: "<<qrueck[i]<<endl;
 			vector<string> tok; 
 			aufSplit(&tok,&qrueck[i],'\t');
 			if (tok.size()>5) {
