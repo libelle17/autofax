@@ -5267,7 +5267,7 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 			// capisuite-Uebertragung eingetragen ist
 			RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpt t "
 								"LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
-                "LEFT JOIN outa o2 ON o2.submid=a.capispooldatei WHERE o.submid='' AND t.erfolg<>0 AND o2.erfolg=0",ZDB);
+                "LEFT JOIN outa o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
 			char ***cerg;
 			size_t znr=0;
 			while (cerg=ntr.HolZeile(),cerg?*cerg:0) {
