@@ -5236,6 +5236,7 @@ obverb=1;
 		// wenn unter SEND im Feld reason ($14) nichts steht, erfolgreich, sonst erfolglos
 		systemrueck(cmd,obverb,oblog,&qrueck);
 		string auswe="(", auswm="(", auswef="(",auswmf="(", inse;
+		caus<<"qrueck.size(): "<<qrueck.size()<<endl;
 		for(size_t i=0;i<qrueck.size();i++) {
 		caus<<"i: "<<i<<" qrueck: "<<qrueck[i]<<endl;
 			vector<string> tok; 
@@ -5255,6 +5256,7 @@ obverb=1;
 				}
 			} // 				if (tok.size()>0)
 		} // for(size_t i=0;i<rueck.size();i++) 
+		caus<<"Hier bin ich"<<endl;
 		auswe[auswe.size()-1]=')';
 		inse[inse.size()-1]=';';
 		auswm[auswm.size()-1]=')';
