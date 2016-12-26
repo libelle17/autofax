@@ -1720,6 +1720,9 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     einf.push_back(/*2*/instyp(My->DBS,"idudoc",&idudoc));
 		if (!tts) tts=time(0);
 		cout<<gruen<<"tts: "<<rot<<tts<<schwarz<<endl;
+		char buf[100];
+    strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", localtime(&tts));
+		cout<<"buf: "<<buf<<endl;
     einf.push_back(/*2*/instyp(My->DBS,"transe",&tts));
     if (!telnr.empty()) {
       string stdfax=pmp->stdfaxnr(telnr);
