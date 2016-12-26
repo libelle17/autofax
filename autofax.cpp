@@ -5076,8 +5076,11 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				} // if (obcapi || obhyla)
 				Log(ausg.str(),1,oblog);
 			} // if (*(*cerg+0)) if (*(*cerg+3))
+		caus<<"Stelle 12"<<endl;
 		} // while (cerg=rs.HolZeile(),cerg?*cerg:0) 
+		caus<<"Stelle 11"<<endl;
 	} // if (!rs.obfehl) 
+		caus<<"Stelle 10"<<endl;
 } // untersuchespool
 
 // Zeige Dateien im Spool an, die nicht in der Spool-Tabelle stehen
