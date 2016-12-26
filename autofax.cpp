@@ -4984,7 +4984,6 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						einf.push_back(/*2*/instyp(My->DBS,"hyladials",&fsf.hdials));
 						string bedingung=string("id=")+fsf.id;
 						string bedh=string("id=")+fsf.idh;
-						cout<<"bedh: '"<<bedh<<"'"<<endl;
 						if (!fsf.idh.empty()) 
 						   rupd.update(altspool,einf,ZDB,bedh,0);
 						rupd.update(spooltab,einf,ZDB,bedingung,0);
@@ -5292,7 +5291,8 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 				if (*(*cerg+4)) fsf.hdd=*(*cerg+4);
 				if (*(*cerg+5)) fsf.idudoc=*(*cerg+5);
 				if (*(*cerg+6)) fsf.pseiten=atol(*(*cerg+6));
-caus<<"vor archiviere, telnr: "<<fsf.telnr<<" tts: "<<fsf.tts<<" hdd: "<<fsf.hdd<<" original: "<<fsf.original<<" hdd: "<<fsf.hdd<<" idudoc: "<<fsf.idudoc<<endl;
+// <<"vor archiviere, telnr: "<<fsf.telnr<<" tts: "<<fsf.tts<<" hdd: "<<fsf.hdd<<" original: "<<fsf.original<<
+//                           " hdd: "<<fsf.hdd<<" idudoc: "<<fsf.idudoc<<endl;
 				fsf.archiviere(My,this,&entrys,0,hyla,0,obverb,oblog);
 			}
 			//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_OFF);
@@ -5330,8 +5330,8 @@ caus<<"vor archiviere, telnr: "<<fsf.telnr<<" tts: "<<fsf.tts<<" hdd: "<<fsf.hdd
 				RS k1(My,"UPDATE `"+touta+"` SET erfolg=0 WHERE erfolg=1 AND submid IN "+auswm,ZDB);
 			} // 				if (cergz) 
 		} // 		if (auswm.size()>1)
-		caus<<blau<<auswe<<schwarz<<endl;
-		caus<<rot<<auswm<<schwarz<<endl;
+		// <<blau<<auswe<<schwarz<<endl;
+		// <<rot<<auswm<<schwarz<<endl;
 		return;
 		// string ausw="(";
 		// uchar indb;
@@ -5339,7 +5339,7 @@ caus<<"vor archiviere, telnr: "<<fsf.telnr<<" tts: "<<fsf.tts<<" hdd: "<<fsf.hdd
 		//        RS rs(My,string("SELECT id FROM `")+touta+"` WHERE submid="+hylanr,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 		//        if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
 		// if (!indb) KLA
-		//		caus<<hylanr<<" fehlt"<<endl;
+		//		<<hylanr<<" fehlt"<<endl;
 		//		/*4*/fsfcl fsf(hylanr); // fsf(rueck[i]);
 		// KLZ // if (!indb)
 		// RS rs(My,string("SELECT id FROM `")+touta+"` WHERE submid in "+ausw,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
