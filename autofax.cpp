@@ -4924,8 +4924,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				if (*(*cerg+12)) fsf.idudoc = *(*cerg+12);  // id des ursp.Dateinamens in udoc
 				if (*(*cerg+13)) fsf.prio = atol(*(*cerg+13));  // Prioritaet wie in Datenbank
 				if (*(*cerg+14)) fsf.pseiten = atol(*(*cerg+14));  // pages wie in Datenbank
-				if (*(*cerg+15)) fsf.idc = atol(*(*cerg+15));  // id capi
-				if (*(*cerg+16)) fsf.idh = atol(*(*cerg+16));  // id hyla
+				if (*(*cerg+15)) fsf.idc = *(*cerg+15);  // id capi
+				if (*(*cerg+16)) fsf.idh = *(*cerg+16);  // id hyla
 				caus<<"fsf.idc: '"<<fsf.idc<<"', length: "<<fsf.idc.length()<<", empty: "<<fsf.idc.empty()<<endl;
 				caus<<"fsf.idh: '"<<fsf.idh<<"', length: "<<fsf.idh.length()<<", empty: "<<fsf.idh.empty()<<endl;
 				if (fsf.idh.length())
