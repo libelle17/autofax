@@ -3860,7 +3860,7 @@ void paramcl::korrerfolgszeichen()
 							fdn.insert(rueck[ruecki]);
 						} 
 					}
-          cmd="sudo find '"+cdonevz+"' -maxdepth 1 -mtime 90 -iname '*-fax-*.sff' -printf '%f\\n'|cut -d- -f2,3";
+          cmd="sudo find '"+cdonevz+"' -maxdepth 1 -mtime -90 -iname '*-fax-*.sff' -printf '%f\\n'|cut -d- -f2,3";
           systemrueck(cmd,obverb,oblog,&rueck);
           for(ruecki=0;ruecki<rueck.size();ruecki++) {
 						auswe+=rueck[ruecki]+","; 
