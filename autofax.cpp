@@ -3844,19 +3844,41 @@ void paramcl::korrerfolgszeichen()
   Log(violetts+Tx[T_korrerfolgszeichen]+schwarz,obverb,oblog);
   // geht wegen Loeschens der Protokolldateien nur (noch) fuer Gefundene, s.u.
   if (1) {
-    for(uchar runde=0;runde<2;runde++) {
+    for(uchar runde=0;runde<1;runde++) {
       set<string>::iterator fit; // Iterator dafuer
-      vector<string> rueck;
+      svec rueck;
       set<string> fdn; // Fax-Dateien
       size_t ruecki;
-      switch (runde) {
+			string auswe="(", auswm="(", auswef="(",auswmf="(", inse;
+			switch (runde) {
         case 0: // capi
-          cmd=string("sudo find '")+cdonevz+"' -maxdepth 1 -type f -iname '*-fax-*.sff'"; //  -printf '%f\\n'"; // cfailedvz weniger wichtig
+					if (0) {
+						cmd="sudo find '"+cdonevz+"' -maxdepth 1 -type f -iname '*-fax-*.sff'"; //  -printf '%f\\n'"; // cfailedvz weniger wichtig
+						systemrueck(cmd,obverb,oblog,&rueck);
+						// sortieren
+						for(ruecki=0;ruecki<rueck.size();ruecki++) {
+							fdn.insert(rueck[ruecki]);
+						} 
+					}
+          cmd="sudo find '"+cdonevz+"' -maxdepth 1 -mtime 90 -iname '*-fax-*.dff' -printf '%f\\n'|cut -d- -f2,3";
           systemrueck(cmd,obverb,oblog,&rueck);
-          // sortieren
           for(ruecki=0;ruecki<rueck.size();ruecki++) {
-            fdn.insert(rueck[ruecki]);
-          } 
+						auswe+=rueck[ruecki]+","; 
+						inse+="("+rueck[ruecki]+",1),";
+					}
+					auswe[auswe.size()-1]=')';
+					inse[inse.size()-1]=';';
+					if (inse.size()>1) {
+						//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
+						RS vgl1(My,"DROP TABLE IF EXISTS tmpc",ZDB);
+						RS vgl2(My,"CREATE TABLE tmpc(submid VARCHAR(11) KEY,erfolg INT);",ZDB);
+						RS vgl3(My,"INSERT INTO tmpc VALUES "+inse,ZDB);
+						// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, und zu denen nicht bereits eine erfolgreiche
+						// capisuite-Uebertragung eingetragen ist
+						RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpt t "
+								"LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
+								"LEFT JOIN outa o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
+					}
           break;
         default: // hyla
           //        fdn.clear();
@@ -3868,6 +3890,7 @@ void paramcl::korrerfolgszeichen()
             if ((pos=rueck[ruecki].rfind("/q"))!=string::npos) fdn.insert(rueck[ruecki].substr(pos+2));
           } //           for(ruecki=0;ruecki<rueck.size();ruecki++)
       } // switch (runde)
+			if (0) {
       string sql="SELECT titel p0, tsid p1, submt p2, submid p3, oscht p4, subject p5, docname p6, id p7, fsize p8, pages p9, "
         "devname p10, retries p11, prio p12, rcfax p13, rcname p14, csid p15, sender p16, transs p17, transe p18, Pid p19, eind p20, Erfolg p21 "
         "FROM `"+touta+"` WHERE submid "+(runde?"RLIKE '^[0-9]+$' AND submid<>0":"LIKE '%fax-%.sff'")+" ORDER BY submt";
@@ -3895,6 +3918,7 @@ void paramcl::korrerfolgszeichen()
           } // if (*(*cerg+3)) if (*(*cerg+20)) if (*(*cerg+21)) 
         } // while (cerg=routa.HolZeile(),cerg?*cerg:0) 
       } // if (!routa.obfehl) 
+			} // if (0)
     } // for(uchar runde=1;runde<2;runde++) 
   } // if (0) 
 	obverb=0;
@@ -5233,133 +5257,135 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 {
 	Log(violetts+Tx[T_sammlefertigehyla]+schwarz,obverb,oblog);
-	struct stat entryvz;
-	if (!lstat(hsendqvz.c_str(),&entryvz)) {
-		// cmd=string("sudo find '")+varsphylavz+"' -type f -regex '.*/q[0123456789]+'";
-		// string hylanr=qrueck[i].substr(qrueck[i].rfind('q')+1);
-		// ausw+=hylanr;
-		// ausw+=",";
-		// ausw[ausw.size()-1]=')';
-		// tac /var/spool/hylafax/etc/xferfaxlog | awk -vDate=`date -d'now-1 month' +%m/%d/%y` 'function isdate(var) KLA if (var ~ /[0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]/) return 1; return 0; KLZ isdate($1) && $1 > Date KLAprint Date " " $0KLZ'
-		//		  cmd="tac \""+xferfaxlog+"\" 2>/dev/null|grep '"+sep+"UNSENT"+sep+"\\|"+sep+"SEND"+sep+"'|cut -f 2,5,14,20|awk '!s[$2]++'";
-		// awk-Befehl: Suche bis vor 3 Monaten von zu jeder hylanr ($5) die letzte Zeile (s[$5]==0) mit dem Befehl ($2) SEND oder UNSENT; gib mit \t aus
-		cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-3 month' +%m/%d/%y` 'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];}"
-			" $1<Date {exit 0} ($2 in arr && !s[$5]++) {print $1,$2,$5,$8,$11,$14,$20}'"; //...$14,$20;gz++KLZ END KLA print gz KLZ'
-		//$1=Date,$2=action,$5=qfile(hylid,sumid),$8=Tel'nr,$11=Seitenzahl,$14=reason,$20=jobinfo(totpages/ntries/ndials/totdials/maxdials/tot/maxtries)
-		svec qrueck;
-		// wenn unter SEND im Feld reason ($14) nichts steht, erfolgreich, sonst erfolglos
-		systemrueck(cmd,obverb,oblog,&qrueck);
-		string auswe="(", auswm="(", auswef="(",auswmf="(", inse;
-		for(size_t i=0;i<qrueck.size();i++) {
-			vector<string> tok; 
-			aufSplit(&tok,&qrueck[i],'\t');
-			if (tok.size()>5) {
-			  // <<tok[0]<<'|'<<tok[1]<<'|'<<tok[2]<<'|'<<tok[3]<<'|'<<tok[4]<<'|'<<tok[5]<<'|'<<tok[6]<<endl;
-				uchar erfolg=0;
-				if (tok[1]=="SEND") {
-					if (tok[5]=="\"\"") erfolg=1;
-				} // 				if (tok[1]=="SEND")
-				if (erfolg) {
-					auswe+=tok[2]+","; 
-				} else {
-					auswm+=tok[2]+","; 
-				} // if /erfolg) else
+	if (!xferfaxlog.empty()) {
+		struct stat entryvz;
+		if (!lstat(xferfaxlog.c_str(),&entryvz)) {
+			// cmd=string("sudo find '")+varsphylavz+"' -type f -regex '.*/q[0123456789]+'";
+			// string hylanr=qrueck[i].substr(qrueck[i].rfind('q')+1);
+			// ausw+=hylanr;
+			// ausw+=",";
+			// ausw[ausw.size()-1]=')';
+			// tac /var/spool/hylafax/etc/xferfaxlog | awk -vDate=`date -d'now-1 month' +%m/%d/%y` 'function isdate(var) KLA if (var ~ /[0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]/) return 1; return 0; KLZ isdate($1) && $1 > Date KLAprint Date " " $0KLZ'
+			//		  cmd="tac \""+xferfaxlog+"\" 2>/dev/null|grep '"+sep+"UNSENT"+sep+"\\|"+sep+"SEND"+sep+"'|cut -f 2,5,14,20|awk '!s[$2]++'";
+			// awk-Befehl: Suche bis vor 3 Monaten von zu jeder hylanr ($5) die letzte Zeile (s[$5]==0) mit dem Befehl ($2) SEND oder UNSENT; gib mit \t aus
+			cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-3 month' +%m/%d/%y` 'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];}"
+				" $1<Date {exit 0} ($2 in arr && !s[$5]++) {print $1,$2,$5,$8,$11,$14,$20}'"; //...$14,$20;gz++KLZ END KLA print gz KLZ'
+			//$1=Date,$2=action,$5=qfile(hylid,sumid),$8=Tel'nr,$11=Seitenzahl,$14=reason,$20=jobinfo(totpages/ntries/ndials/totdials/maxdials/tot/maxtries)
+			svec qrueck;
+			// wenn unter SEND im Feld reason ($14) nichts steht, erfolgreich, sonst erfolglos
+			systemrueck(cmd,obverb,oblog,&qrueck);
+			string auswe="(", auswm="(", auswef="(",auswmf="(", inse;
+			for(size_t i=0;i<qrueck.size();i++) {
+				vector<string> tok; 
+				aufSplit(&tok,&qrueck[i],'\t');
+				if (tok.size()>5) {
+					// <<tok[0]<<'|'<<tok[1]<<'|'<<tok[2]<<'|'<<tok[3]<<'|'<<tok[4]<<'|'<<tok[5]<<'|'<<tok[6]<<endl;
+					uchar erfolg=0;
+					if (tok[1]=="SEND") {
+						if (tok[5]=="\"\"") erfolg=1;
+					} // 				if (tok[1]=="SEND")
+					if (erfolg) {
+						auswe+=tok[2]+","; 
+					} else {
+						auswm+=tok[2]+","; 
+					} // if /erfolg) else
 #ifndef mitmisserfolg
-				if (erfolg)
+					if (erfolg)
 #endif
-					inse+="("+tok[2]+","+"\"20"+tok[0].substr(6,2)+"-"+tok[0].substr(0,2)+"-"+tok[0].substr(3,2)+" "+tok[0].substr(9,2)+":"+
-						tok[0].substr(12,2)+"\","+tok[3]+","+tok[4]+",\""+tok[6]+"\","+(erfolg?"1":"0")+"),";
-			} // 				if (tok.size()>0)
-		} // for(size_t i=0;i<rueck.size();i++) 
-		auswe[auswe.size()-1]=')';
-		inse[inse.size()-1]=';';
-		auswm[auswm.size()-1]=')';
-		if (inse.size()>1) {
-			//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
-			RS vgl1(My,"DROP TABLE IF EXISTS tmpt",ZDB);
-			RS vgl2(My,"CREATE TABLE tmpt(submid VARCHAR(11) KEY,Datum DATETIME,tel VARCHAR(30),pages INT,attr VARCHAR(20),erfolg INT);",ZDB);
-			RS vgl3(My,"INSERT INTO tmpt VALUES "+inse,ZDB);
-			// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, und zu denen nicht bereits eine erfolgreiche
-			// capisuite-Uebertragung eingetragen ist
-			RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpt t "
-								"LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
-                "LEFT JOIN outa o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
-			char ***cerg;
-			size_t znr=0;
-			while (cerg=ntr.HolZeile(),cerg?*cerg:0) {
-			  caus<<"znr: "<<rot<<++znr<<schwarz<<endl;
-			  string hylanr = *(*cerg+0);
-				/*4*/fsfcl fsf(hylanr); // hylanr
-				
-				svec rueckf;
-				cmd="find "+varsphylavz+"/archive/"+hylanr+" -iname \"doc*\\.pdf\\."+hylanr+"\"";
-				systemrueck(cmd,obverb-1,oblog,&rueckf);
-				struct stat entrys;
-				memset(&entrys,0,sizeof entrys);
-				if (rueckf.size()) {
-				 lstat(rueckf[0].c_str(),&entrys);
+						inse+="("+tok[2]+","+"\"20"+tok[0].substr(6,2)+"-"+tok[0].substr(0,2)+"-"+tok[0].substr(3,2)+" "+tok[0].substr(9,2)+":"+
+							tok[0].substr(12,2)+"\","+tok[3]+","+tok[4]+",\""+tok[6]+"\","+(erfolg?"1":"0")+"),";
+				} // 				if (tok.size()>0)
+			} // for(size_t i=0;i<rueck.size();i++) 
+			auswe[auswe.size()-1]=')';
+			inse[inse.size()-1]=';';
+			auswm[auswm.size()-1]=')';
+			if (inse.size()>1) {
+				//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
+				RS vgl1(My,"DROP TABLE IF EXISTS tmpt",ZDB);
+				RS vgl2(My,"CREATE TABLE tmpt(submid VARCHAR(11) KEY,Datum DATETIME,tel VARCHAR(30),pages INT,attr VARCHAR(20),erfolg INT);",ZDB);
+				RS vgl3(My,"INSERT INTO tmpt VALUES "+inse,ZDB);
+				// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, und zu denen nicht bereits eine erfolgreiche
+				// capisuite-Uebertragung eingetragen ist
+				RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpt t "
+						"LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
+						"LEFT JOIN outa o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
+				char ***cerg;
+				size_t znr=0;
+				while (cerg=ntr.HolZeile(),cerg?*cerg:0) {
+					caus<<"znr: "<<rot<<++znr<<schwarz<<endl;
+					string hylanr = *(*cerg+0);
+					/*4*/fsfcl fsf(hylanr); // hylanr
+
+					svec rueckf;
+					cmd="find "+varsphylavz+"/archive/"+hylanr+" -iname \"doc*\\.pdf\\."+hylanr+"\"";
+					systemrueck(cmd,obverb-1,oblog,&rueckf);
+					struct stat entrys;
+					memset(&entrys,0,sizeof entrys);
+					if (rueckf.size()) {
+						lstat(rueckf[0].c_str(),&entrys);
+					}
+					if (*(*cerg+1)) fsf.telnr=*(*cerg+1);    // tel
+					if (*(*cerg+2)) fsf.original=*(*cerg+2); // original
+					if (*(*cerg+3)) fsf.tts=atol(*(*cerg+3)); // Datum (aus xferfaxlog, tts
+					if (*(*cerg+4)) fsf.hdd=*(*cerg+4);
+					if (*(*cerg+5)) fsf.idudoc=*(*cerg+5);
+					if (*(*cerg+6)) fsf.pseiten=atol(*(*cerg+6));
+					// <<"vor archiviere, telnr: "<<fsf.telnr<<" tts: "<<fsf.tts<<" hdd: "<<fsf.hdd<<" original: "<<fsf.original<<
+					//                           " hdd: "<<fsf.hdd<<" idudoc: "<<fsf.idudoc<<endl;
+					fsf.archiviere(My,this,&entrys,0,hyla,0,obverb,oblog);
 				}
-				if (*(*cerg+1)) fsf.telnr=*(*cerg+1);    // tel
-				if (*(*cerg+2)) fsf.original=*(*cerg+2); // original
-				if (*(*cerg+3)) fsf.tts=atol(*(*cerg+3)); // Datum (aus xferfaxlog, tts
-				if (*(*cerg+4)) fsf.hdd=*(*cerg+4);
-				if (*(*cerg+5)) fsf.idudoc=*(*cerg+5);
-				if (*(*cerg+6)) fsf.pseiten=atol(*(*cerg+6));
-// <<"vor archiviere, telnr: "<<fsf.telnr<<" tts: "<<fsf.tts<<" hdd: "<<fsf.hdd<<" original: "<<fsf.original<<
-//                           " hdd: "<<fsf.hdd<<" idudoc: "<<fsf.idudoc<<endl;
-				fsf.archiviere(My,this,&entrys,0,hyla,0,obverb,oblog);
+				//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_OFF);
 			}
-			//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_OFF);
-		}
-		// "select tmpt.i,submid,erfolg,outa.* from tmpt left join outa on tmpt.i=outa.submid
-		// select t.*,a.capispooldatei,o2.erfolg, o2.submid from tmpt t left join outa o on t.submid = o.submid left join altspool a on a.hylanr = t.submid left join outa o2 on a.capispooldatei=o2.submid where isnull(o.submid);
-		char ***cerg;
-		size_t cergz=0;
-		if (auswe.size()>1) {
-			RS rs1(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=0 AND submid IN "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
-			while (cerg=rs1.HolZeile(),cerg?*cerg:0) {
-				if (!cergz++)
-					Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden],1,1);
-				auswmf+=*(*cerg+0); auswmf+=",";
-				// <<violett<<*(*cerg+0)<<schwarz<<endl; 
-			} // 				while (cerg=rs1.HolZeile(),cerg?*cerg:0)
-			if (cergz) {
-				auswmf[auswmf.size()-1]=')';
-				tu_lista("",auswmf);
-				RS k1(My,"UPDATE `"+touta+"` SET erfolg=1 WHERE erfolg=0 AND submid IN "+auswe,ZDB);
-			} // 				if (cergz) 
-		} // 		if (auswe.size()>1)
-		if (auswm.size()>1) {
-			RS rs2(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=1 AND submid IN "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
-			cergz=0;
-			while (cerg=rs2.HolZeile(),cerg?*cerg:0) {
-				if (!cergz++)
-					Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden],1,1);
-				auswef+=*(*cerg+0); auswef+=",";
-				// <<rot<<*(*cerg+0)<<schwarz<<endl; 
-			} // 			while (cerg=rs2.HolZeile(),cerg?*cerg:0)
-			if (cergz) {
-				auswef[auswef.size()-1]=')';
-				tu_lista("",auswef);
-				RS k1(My,"UPDATE `"+touta+"` SET erfolg=0 WHERE erfolg=1 AND submid IN "+auswm,ZDB);
-			} // 				if (cergz) 
-		} // 		if (auswm.size()>1)
-		// <<blau<<auswe<<schwarz<<endl;
-		// <<rot<<auswm<<schwarz<<endl;
-		return;
-		// string ausw="(";
-		// uchar indb;
-		// string hylanr;
-		//        RS rs(My,string("SELECT id FROM `")+touta+"` WHERE submid="+hylanr,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
-		//        if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
-		// if (!indb) KLA
-		//		<<hylanr<<" fehlt"<<endl;
-		//		/*4*/fsfcl fsf(hylanr); // fsf(rueck[i]);
-		// KLZ // if (!indb)
-		// RS rs(My,string("SELECT id FROM `")+touta+"` WHERE submid in "+ausw,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
-		// while (cerg=rs.HolZeile(),cerg?*cerg:0) KLA
-		// KLZ
-	} // if (!lstat(hsendqvz.c_str(),&entryvz))
+			// "select tmpt.i,submid,erfolg,outa.* from tmpt left join outa on tmpt.i=outa.submid
+			// select t.*,a.capispooldatei,o2.erfolg, o2.submid from tmpt t left join outa o on t.submid = o.submid left join altspool a on a.hylanr = t.submid left join outa o2 on a.capispooldatei=o2.submid where isnull(o.submid);
+			char ***cerg;
+			size_t cergz=0;
+			if (auswe.size()>1) {
+				RS rs1(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=0 AND submid IN "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+				while (cerg=rs1.HolZeile(),cerg?*cerg:0) {
+					if (!cergz++)
+						Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden],1,1);
+					auswmf+=*(*cerg+0); auswmf+=",";
+					// <<violett<<*(*cerg+0)<<schwarz<<endl; 
+				} // 				while (cerg=rs1.HolZeile(),cerg?*cerg:0)
+				if (cergz) {
+					auswmf[auswmf.size()-1]=')';
+					tu_lista("",auswmf);
+					RS k1(My,"UPDATE `"+touta+"` SET erfolg=1 WHERE erfolg=0 AND submid IN "+auswe,ZDB);
+				} // 				if (cergz) 
+			} // 		if (auswe.size()>1)
+			if (auswm.size()>1) {
+				RS rs2(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=1 AND submid IN "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+				cergz=0;
+				while (cerg=rs2.HolZeile(),cerg?*cerg:0) {
+					if (!cergz++)
+						Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden],1,1);
+					auswef+=*(*cerg+0); auswef+=",";
+					// <<rot<<*(*cerg+0)<<schwarz<<endl; 
+				} // 			while (cerg=rs2.HolZeile(),cerg?*cerg:0)
+				if (cergz) {
+					auswef[auswef.size()-1]=')';
+					tu_lista("",auswef);
+					RS k1(My,"UPDATE `"+touta+"` SET erfolg=0 WHERE erfolg=1 AND submid IN "+auswm,ZDB);
+				} // 				if (cergz) 
+			} // 		if (auswm.size()>1)
+			// <<blau<<auswe<<schwarz<<endl;
+			// <<rot<<auswm<<schwarz<<endl;
+			return;
+			// string ausw="(";
+			// uchar indb;
+			// string hylanr;
+			//        RS rs(My,string("SELECT id FROM `")+touta+"` WHERE submid="+hylanr,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+			//        if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
+			// if (!indb) KLA
+			//		<<hylanr<<" fehlt"<<endl;
+			//		/*4*/fsfcl fsf(hylanr); // fsf(rueck[i]);
+			// KLZ // if (!indb)
+			// RS rs(My,string("SELECT id FROM `")+touta+"` WHERE submid in "+ausw,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+			// while (cerg=rs.HolZeile(),cerg?*cerg:0) KLA
+			// KLZ
+		} // if (!lstat(hsendqvz.c_str(),&entryvz))
+	} // 	if (!xferfaxlog.empty())
 } // void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 
 // aufgerufen in: empfarch, zupdf
