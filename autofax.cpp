@@ -4814,7 +4814,7 @@ void paramcl::faxealle()
 				"((capispooldatei='') AND (hyladials>=")+maxhylav+" OR hylastate=8 OR " // hyladials=-1
 			//      "    (prio=1 OR (prio=0 AND NOT "+hzstr+")))) p9, "
 			"    (prio=2 OR prio=0))) p9, "
-			"((hylanr='' OR hylanr=0) AND (OR capidials>=" +maxcapiv+" OR capidials=-1 OR "
+			"((hylanr='' OR hylanr=0) AND (capidials>=" +maxcapiv+" OR capidials=-1 OR "
 			//      "      (prio=2 OR (prio=0 AND "+hzstr+")))) p10, "
 			"      (prio=3 OR prio=1))) p10, "
 			"adressat p11, pages p12 "
@@ -4896,12 +4896,12 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 	// Schaue nach, welche der gespoolten schon weggeschickt sind, Anpassung der Primaerdateien und des Datenbankeintrags
 	Log(violetts+Tx[T_untersuchespool]+schwarz,obverb,oblog);
 	char ***cerg;
-	RS rs(My,string("SELECT s.id p0,s.capispooldatei p1,s.capispoolpfad p2,s.original p3,s.cdateidatum p4,"
+	RS rs(My,"SELECT s.id p0,s.capispooldatei p1,s.capispoolpfad p2,s.original p3,s.cdateidatum p4,"
 				" s.telnr p5,s.origvu p6,s.hylanr p7,s.capidials p8,s.hyladials p9,s.hdateidatum p10,s.adressat p11,s.idudoc p12,s.prio p13,s.pages p14 "
 				",cas.id p15, has.id p16 "
-				"FROM `")+spooltab+"` s "
-				"left join `"+altspool+"` cas on s.capispooldatei=cas.capispooldatei and s.capispooldatei<>'' and cas.capispooldatei<>'' "
-				"left join `"+altspool+"` has on s.hylanr=has.hylanr and s.hylanr<>0 and has.hylanr<>0 "
+				"FROM `"+spooltab+"` s "
+				"LEFT JOIN `"+altspool+"` cas ON s.capispooldatei=cas.capispooldatei AND s.capispooldatei<>'' AND cas.capispooldatei<>'' "
+				"LEFT JOIN `"+altspool+"` has ON s.hylanr=has.hylanr AND s.hylanr<>0 AND has.hylanr<>0 "
 				"WHERE (s.hylanr RLIKE '^[0-9]+$' AND s.hylanr<>0) OR s.capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",255);
 	if (!rs.obfehl) {
 		faxord=0;
