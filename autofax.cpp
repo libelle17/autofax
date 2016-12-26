@@ -3547,7 +3547,6 @@ void paramcl::pruefcron()
   //  svec rueck;
   int cronda=0;
   int cronzuplanen = (cronminut!="0");
-	obverb=1;
   Log(violetts+Tx[T_pruefcron]+schwarz+Tx[T_cronzuplanen]+violetts+ltoan(cronzuplanen)+schwarz,obverb,oblog);
 		for (uchar runde=0;runde<2;runde++) {
 			cronda=obprogda("crontab",obverb-1,0);
@@ -3570,7 +3569,7 @@ void paramcl::pruefcron()
 				systemrueck(cmd,obverb,oblog,&cmrueck);
 				if (cmrueck.size()) vorcm=cmrueck[0];
 			} // 		if (!nochkeincron) 
-			if (vorcm.empty() && cronminut=="0") {
+			if (vorcm.empty() && !cronzuplanen) {
 				if (obverb) Log(Tx[T_Kein_cron_gesetzt_nicht_zu_setzen],1,oblog);
 			} else {
 				if (cronminut==vorcm) {
@@ -3580,14 +3579,14 @@ void paramcl::pruefcron()
 					cmd="rm -f "+tmpc+";";
 					if (!nochkeincron)
 						cmd="sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+";";
-					if (cronminut!="0") {
+					if (cronzuplanen) {
 						cmd+=" echo \""+cbef+"\">>"+tmpc+";";
 					}
 					cmd+=" sudo crontab "+tmpc+";";
 					systemrueck(cmd,obverb,oblog);
-					Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronminut=="0"?Tx[T_gar_nicht]:Tx[T_alle]+cronminut+Tx[T_Minuten])+schwarz+Tx[T_statt]+
+					Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronzuplanen?Tx[T_alle]+cronminut+Tx[T_Minuten]:Tx[T_gar_nicht])+schwarz+Tx[T_statt]+
 							+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
-				}
+				} // 				if (cronminut==vorcm) else
 			} // 		if (vorcm.empty() && cronminut=="0")
 #ifdef stumm
 #ifdef uebersichtlich
