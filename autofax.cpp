@@ -4928,6 +4928,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				if (*(*cerg+16)) fsf.idh = atol(*(*cerg+16));  // id hyla
 				caus<<"fsf.idc: '"<<fsf.idc<<"', length: "<<fsf.idc.length()<<", empty: "<<fsf.idc.empty()<<endl;
 				caus<<"fsf.idh: '"<<fsf.idh<<"', length: "<<fsf.idh.length()<<", empty: "<<fsf.idh.empty()<<endl;
+				if (fsf.idh.length())
+				  caus<<(int)fsf.idh[0]<<endl;
 				exit(0);
 				Log(string("id: ")+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
 				ausg<<blau<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; // ab hier Neue-Zeile-Zeichen immer am Anfang der naechsten Zeile
