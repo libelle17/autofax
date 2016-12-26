@@ -1923,7 +1923,7 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
       if (fxvp->at(nachrnr).prio>0 || hylazuerst) fxvp->at(nachrnr).prio++;
       einf.push_back(/*2*/instyp(My->DBS,"prio",fxvp->at(nachrnr).prio));
       einf.push_back(/*2*/instyp(My->DBS,"pages",fxvp->at(nachrnr).pseiten));
-      rins.insert(altspool,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
+      rins.insert(altspool,einf, 1,0,ZDB?ZDB:!runde); // ,&spoolid);
       rins.insert(spooltab,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
       if (spoolid!="null") break;
