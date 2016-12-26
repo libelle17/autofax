@@ -26,7 +26,6 @@
 #include "DB.h"
 // #include "iconverter.h"
 // #include "datetime_utils.hpp"
-// G.Schade 22.4.14 fuer Zusatz-Debugging (SQL): 255, sonst: 0
 // fuer die Prozessliste
 #define PROC_VERZ "/proc/"
 #ifdef linux
@@ -48,7 +47,7 @@ const double& version=
 const char *logdt="/var/log/autofaxvorgabe.log";// darauf wird in konsole.h verwiesen; muss dann auf lgp zeigen
 
 // const char* logdatname;
-uchar ZDB=0; // 255 = mit Debug
+uchar ZDB=0; // G.Schade 22.4.14 fuer Zusatz-Debugging (SQL): ZDB 255, sonst: 0
 const char sep = 9; // geht auch: "[[:blank:]]"
 
 const string s_true="true";
@@ -1924,14 +1923,14 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
       if (fxvp->at(nachrnr).prio>0 || hylazuerst) fxvp->at(nachrnr).prio++;
       einf.push_back(/*2*/instyp(My->DBS,"prio",fxvp->at(nachrnr).prio));
       einf.push_back(/*2*/instyp(My->DBS,"pages",fxvp->at(nachrnr).pseiten));
-      rins.insert(altspool,einf, 1,0,255,&spoolid);
+      rins.insert(altspool,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
       rins.insert(spooltab,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
       if (spoolid!="null") break;
       if (runde==1) {
         Log(string(Tx[T_Fehler_af])+drot+ltoan(rins.fnr)+schwarz+Tx[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,oblog);
         exit(12);
-      }
+      } //       if (runde==1)
     }   // for(int runde=0;runde<2;runde++)
     Log(drots+string("  Spool-ID: ")+schwarz+spoolid,obverb,oblog);
   } // for (unsigned nachrnr=0; nachrnr<spdfp->size(); ++nachrnr) 
@@ -1949,11 +1948,11 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
     // hier wird die Telefonnummer aus dem Namen extrahiert
     RS tea(My,string("UPDATE `")+altspool+"` "
         "SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
-        "WHERE telnr=''",255);
+        "WHERE telnr=''",ZDB);
     RS tel(My,string("UPDATE `")+spooltab+"` "
         "SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
         "WHERE telnr=''",ZDB);
-  }
+  } //   for (uchar tr=0;tr<2;tr++)
 } // WVZinDatenbank
 
 // in lieskonfein, getcommandl0, getcommandline, rueckfragen
@@ -3882,8 +3881,8 @@ void paramcl::korrerfolgszeichen()
                   Tx[T_Falschals]<<(**(*cerg+21)=='0'?Tx[T_gescheitert]:Tx[T_gesandt])<<Tx[T_eingeordnet]<<farbe<<setw(14)<<
                   *(*cerg+3)<<schwarz<<" "<<*(*cerg+2)<<" "<<blau<<*(*cerg+6)<<schwarz;
                 Log(ausg.str(),1,1);
-//                RS vs(My,string("UPDATE `")+touta+"` SET Erfolg= !Erfolg WHERE submid = '"+*(*cerg+3)+"'",255);
-              }
+//                RS vs(My,string("UPDATE `")+touta+"` SET Erfolg= !Erfolg WHERE submid = '"+*(*cerg+3)+"'",ZDB);
+              } //               if (fit!=fdn.end())
             } // ((fit!=fdn.end()) != (**(*cerg+21)=='0')) else
           } // if (*(*cerg+3)) if (*(*cerg+20)) if (*(*cerg+21)) 
         } // while (cerg=routa.HolZeile(),cerg?*cerg:0) 
@@ -4941,11 +4940,11 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						vector<instyp> einf; // fuer alle Datenbankeinfuegungen
 						string bedingung=string("id=")+fsf.id;
 						string bedc=string("id=")+fsf.idc;
-						cout<<"bedc: '"<<bedc<<"'"<<endl;
 						if (fsf.capistat==wartend || fsf.capistat==gescheitert) {
 							einf.push_back(/*2*/instyp(My->DBS,"capidials",&fsf.ctries));
 							einf.push_back(/*2*/instyp(My->DBS,"capistat",fsf.capistat));
-							if (!fsf.idc.empty()) rupd.update(altspool,einf,255,bedc,0);
+							if (!fsf.idc.empty()) 
+								rupd.update(altspool,einf,ZDB,bedc,0);
 							rupd.update(spooltab,einf,ZDB,bedingung,0);
 						} else if (fsf.capistat==gesandt) {
 							// ... und ggf. in hylafax loeschen
@@ -4986,7 +4985,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						string bedingung=string("id=")+fsf.id;
 						string bedh=string("id=")+fsf.idh;
 						cout<<"bedh: '"<<bedh<<"'"<<endl;
-						if (!fsf.idh.empty()) rupd.update(altspool,einf,255,bedh,0);
+						if (!fsf.idh.empty()) 
+						   rupd.update(altspool,einf,ZDB,bedh,0);
 						rupd.update(spooltab,einf,ZDB,bedingung,0);
 					} // if (mitupd) 
 					if (!protdakt.empty()) ausg<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
@@ -5359,9 +5359,11 @@ int paramcl::holtif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elo
 					if (chmod(datei.c_str(),S_IRWXU|S_IRWXG|S_IRWXO))
 						systemrueck("sudo chmod +r \""+datei+"\"",obverb,oblog);
 					memcpy(tmp, localtime(&elogp->st_mtime),sizeof(*tmp));
-					char buf[255];
+					/*
+					char buf[100];
 					strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", tmp);
 					// <<"Buf: "<<buf<<endl;
+					*/
 				} //     if (!lstat(datei.c_str(),elogp)) 
 			} // if (elogp)
 		} // if (tmp)
@@ -5373,7 +5375,7 @@ int paramcl::holtif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elo
 					// <<"Datetime: \n"<<rdesc<<endl;
 					strptime(rdesc,"%Y:%m:%d %H:%M:%S",tmp);
 					/*
-						 char buf[255];
+						 char buf[100];
 						 strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", tmp);
 						 <<"Buf (2): "<<buf<<endl;
 					 */
@@ -5429,7 +5431,7 @@ int paramcl::holtif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elo
 void paramcl::empfarch()
 {
   Log(violetts+Tx[T_empfarch]+schwarz,obverb,oblog);
-  char tbuf[255];
+  char tbuf[100];
 	ulong pseiten=0;
   // 1) hyla
   string hempfavz=varsphylavz+"/autofaxarch"; // /var/spool/capisuite/empfarch/
@@ -5440,7 +5442,7 @@ void paramcl::empfarch()
   for(size_t i=0;i<rueck.size();i++) {
     if (!i) {
       pruefverz(hempfavz,obverb,oblog);
-    }
+    } //     if (!i)
     // ..., Informationen darueber einsammeln, ...
     string zeit;
     string absdr,tsid,callerid,devname=hmodem;
@@ -5469,7 +5471,7 @@ void paramcl::empfarch()
             // <<gruen<<"tok[1] d: "<<schwarz<<tok[1]<<endl; // Namen z.B. G.Schade
             tabsdr=tok[1];
             anfzweg(tabsdr); // Anfuehrungszeichen entfernen
-          }
+          } //           if (tok.size()>1)
         } // if (tok.size()) 
       } // if (trueck.size()) 
     } // if (callerid.empty()) 
@@ -5486,7 +5488,7 @@ void paramcl::empfarch()
       if (absdr.empty() || istelnr(absdr)) { // wenn Nr. nicht gefunden, kommt sie in absdr wieder zurueck
         absdr=tabsdr;
       }
-    }
+    } //     if (absdr.empty())
     if (absdr.length()>187) absdr.erase(187);
 
     strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
@@ -5505,7 +5507,7 @@ void paramcl::empfarch()
       systemrueck("sudo chmod --reference=\""+empfvz+"\" \""+hpfad+"\"",obverb,oblog);
     } else {
       vorsoffice=rueck[i];
-    }
+    } //     if (!kfehler) else
     struct stat entrynd;
 		int obpdfda=0;
     int obhpfadda=!lstat(hpfad.c_str(),&entrynd);
@@ -5540,7 +5542,7 @@ void paramcl::empfarch()
         if (runde==1) {
           Log(string(Tx[T_Fehler_af])+drot+ltoan(rins.fnr)+schwarz+Tx[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,oblog);
           exit(24);
-        }
+        } //         if (runde==1)
       } // for(int runde=0;runde<2;runde++) 
     } // if (!lstat(hpfad.c_str(),&entrynd)) 
   } // for(size_t i=0;i<rueck.size();i++) 
@@ -6556,7 +6558,7 @@ int paramcl::pruefhyla()
 
 void clear_kb(void) // statt fflush(stdin) nach getchar
 {
-  char junk[255];
+  char junk[200];
   fgets (junk,sizeof junk,stdin);
 } // clear_kb
 */
@@ -7167,7 +7169,7 @@ void inDbc(DB *My, const string& spooltab, const string& altspool, const string&
       einf.push_back(/*2*/instyp(My->DBS,"cdateizeit",entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"telnr",telnr));
       string bedingung=string("id=")+fsfp->id;
-      rupd.update(altspool,einf,255,bedingung);
+      rupd.update(altspool,einf,ZDB,bedingung);
       rupd.update(spooltab,einf,ZDB,bedingung);
 
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
@@ -7250,7 +7252,7 @@ void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp,
   Log(string(Tx[T_SpoolPfad])+rot+pmp->hsendqvz+schwarz+"'",pmp->obverb,pmp->oblog);
   RS zs(My);
   struct stat entryspool;
-  string spoolid="";
+  string spoolid;
   if (!lstat(spoolg.c_str(), &entryspool)) {
     for(int runde=0;runde<2;runde++) {
       if (runde==0) { zs.Abfrage("SET NAMES 'utf8'");
@@ -7263,7 +7265,7 @@ void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp,
       einf.push_back(/*2*/instyp(My->DBS,"hdateizeit",entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"telnr",tel));
       string bedingung=string("id=")+fsfp->id;
-      rupd.update(altspool,einf,255,bedingung);
+      rupd.update(altspool,einf,ZDB,bedingung);
       rupd.update(spooltab,einf,ZDB,bedingung);
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
       affr=My->affrows();
@@ -7625,7 +7627,7 @@ void pruefprocgettel3(DB *Myp, const string& usr, const string& pwd, const strin
       }
       break;
     } 
-    //   RS rs(Myp,string("select definer from mysql.proc where definer like '`")+usr+"`@`"+mhost+"`'",255);
+    //   RS rs(Myp,string("select definer from mysql.proc where definer like '`")+usr+"`@`"+mhost+"`'",ZDB);
     if (fehlt) {
       DB *aktMyp;
       if (!runde) aktMyp=Myp; else {
@@ -7690,7 +7692,7 @@ void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& 
       }
       break;
     } 
-    //   RS rs(Myp,string("select definer from mysql.proc where definer like '`")+usr+"`@`"+mhost+"`'",255);
+    //   RS rs(Myp,string("select definer from mysql.proc where definer like '`")+usr+"`@`"+mhost+"`'",ZDB);
     if (fehlt) {
       DB *aktMyp;
       if (!runde) aktMyp=Myp; else {
@@ -7759,7 +7761,7 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, i
   if (capistat!=fehlend) {
       //    if (cpplies(suchtxt,cconf,cs)) KLA
       // RS rmod(My,string("update spool set capidials=")+cconf[0].val+" where id = "+*(*cerg+0),ZDB);
-      char buf[255];
+      char buf[100];
       int versuzahl=atol(ctries.c_str());
       snprintf(buf,4,"%3d",versuzahl);
       *ausgp<<", "<<blau<<buf<<"/"<<maxcdials<<schwarz<<(capistat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
@@ -8035,7 +8037,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
 void zeigversion(string& prog,string& mpfad)
 {
   struct tm tm;
-  char buf[255];
+  char buf[100];
   cout<<endl<<Tx[T_Programm]<<violett<<mpfad<<schwarz<<endl;
   cout<<"Copyright: "<<blau<<Tx[T_Freie_Software]<<schwarz<<Tx[T_Verfasser]<<blau<<"Gerald Schade"<<schwarz<<endl;
   cout<<"Version: "<<blau<<version<<schwarz<<endl;
@@ -8055,7 +8057,7 @@ void zeigversion(string& prog,string& mpfad)
 void paramcl::zeigkonf()
 {
   struct stat kstat;
-  char buf[255];
+  char buf[100];
   if (!lstat(konfdatname.c_str(),&kstat)) {
     struct tm tm;
     memset(&tm, 0, sizeof(struct tm));
