@@ -4890,7 +4890,7 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
 // sendfax -n -A -d   98765432 "/DATA/Patientendokumente/warteauffax/... .pdf""  ( (mit utf8)
 
 // Dateien in Spool-Tabelle nach inzwischen verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
-// wird aufgerufen in: main
+// wird aufgerufen in: main (2x)
 void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla 
 {
 	// Schaue nach, welche der gespoolten schon weggeschickt sind, Anpassung der Primaerdateien und des Datenbankeintrags
@@ -4902,7 +4902,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				"FROM `"+spooltab+"` s "
 				"LEFT JOIN `"+altspool+"` cas ON s.capispooldatei=cas.capispooldatei AND s.capispooldatei<>'' AND cas.capispooldatei<>'' "
 				"LEFT JOIN `"+altspool+"` has ON s.hylanr=has.hylanr AND s.hylanr<>0 AND has.hylanr<>0 "
-				"WHERE (s.hylanr RLIKE '^[0-9]+$' AND s.hylanr<>0) OR s.capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",255);
+				"WHERE (s.hylanr RLIKE '^[0-9]+$' AND s.hylanr<>0) OR s.capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",ZDB);
 	if (!rs.obfehl) {
 		faxord=0;
 		while (cerg=rs.HolZeile(),cerg?*cerg:0) {
@@ -5076,11 +5076,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				} // if (obcapi || obhyla)
 				Log(ausg.str(),1,oblog);
 			} // if (*(*cerg+0)) if (*(*cerg+3))
-		caus<<"Stelle 12"<<endl;
 		} // while (cerg=rs.HolZeile(),cerg?*cerg:0) 
-		caus<<"Stelle 11"<<endl;
 	} // if (!rs.obfehl) 
-		caus<<"Stelle 10"<<endl;
 } // untersuchespool
 
 // Zeige Dateien im Spool an, die nicht in der Spool-Tabelle stehen
@@ -5270,7 +5267,9 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 								"LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
                 "LEFT JOIN outa o2 ON o2.submid=a.capispooldatei WHERE o.submid='' AND t.erfolg<>0 AND o2.erfolg=0",ZDB);
 			char ***cerg;
+			size_t znr=0;
 			while (cerg=ntr.HolZeile(),cerg?*cerg:0) {
+			  caus<<"znr: "<<rot<<++znr<<schwarz<<endl;
 			  string hylanr = *(*cerg+0);
 				/*4*/fsfcl fsf(hylanr); // hylanr
 				
@@ -8121,15 +8120,10 @@ int main(int argc, char** argv)
   } else if (pm.listi) {
     pm.tu_listi();
   } else if (pm.listw) {
-		caus<<"Stelle 0"<<endl;
     pm.untersuchespool(0);
-		caus<<"Stelle 1"<<endl;
     pm.zeigweitere();
-		caus<<"Stelle 2"<<endl;
     Log(blaus+Tx[T_Ende]+schwarz,pm.obverb,pm.oblog);
-		caus<<"Stelle 3"<<endl;
     pm.schlussanzeige();
-		caus<<"Stelle 4"<<endl;
   } else if (!pm.suchstr.empty()) {
     pm.suchestr();
   } else {
