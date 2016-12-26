@@ -1725,8 +1725,8 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
       einf.push_back(/*2*/instyp(My->DBS,"rcfax",&stdfax));
     } //     if (!telnr.empty())
     if (!adressat.empty()) einf.push_back(/*2*/instyp(My->DBS,"adressat",&adressat));
-
-    einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
+		caus<<violett<<"entryp->st_size: "<<rot<<entryp->st_size<<schwarz<<endl;
+		einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
 		einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
     rins.insert(pmp->touta,einf, 1,0,ZDB?ZDB:!runde);  // einfuegen
     if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
@@ -1946,10 +1946,10 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
       break;
     }
     // hier wird die Telefonnummer aus dem Namen extrahiert
-    RS tea(My,string("UPDATE `")+altspool+"` "
+    RS tea(My,"UPDATE `"+altspool+"` "
         "SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
         "WHERE telnr=''",ZDB);
-    RS tel(My,string("UPDATE `")+spooltab+"` "
+    RS tel(My,"UPDATE `"+spooltab+"` "
         "SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
         "WHERE telnr=''",ZDB);
   } //   for (uchar tr=0;tr<2;tr++)
@@ -4183,7 +4183,7 @@ void paramcl::tu_listi()
 {
 	Log(violetts+Tx[T_tu_listi]+schwarz,obverb,oblog);
 	char ***cerg;
-	RS listi(My,string("select p0, p1, p2, p3, p4 FROM (")+
+	RS listi(My,"select p0, p1, p2, p3, p4 FROM ("
 			"SELECT * FROM ("
 			"SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') p0,RIGHT(CONCAT(SPACE(85),LEFT(titel,85)),85) p1,"
 			"fsize p2,tsid p3,id p4, transe FROM `"+tinca+"` i "
@@ -4223,7 +4223,7 @@ void paramcl::suchestr()
 	} //   for(int erf=1;erf>=0;erf--) 
 
 	char ***cerg;
-	RS listi(My,string("select p0, p1, p2, p3, p4 FROM (")+
+	RS listi(My,"select p0, p1, p2, p3, p4 FROM ("
 			"SELECT * FROM ("
 			"SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') p0,RIGHT(CONCAT(SPACE(85),LEFT(titel,85)),85) p1,"
 			"fsize p2,tsid p3,id p4, transe FROM `"+tinca+"` i WHERE (titel LIKE"+scnv+""
@@ -4816,12 +4816,10 @@ void paramcl::faxealle()
 			//      "      (prio=2 OR (prio=0 AND "+hzstr+")))) p10, "
 			"      (s.prio=3 OR s.prio=1))) p10, "
 			"s.adressat p11, s.pages p12 "
-			",cas.id p13, has.id p14 "
+			",alts.id p13 "
 			"FROM `"+spooltab+"` s "
-			"LEFT JOIN `"+altspool+"` cas ON s.capispooldatei=cas.capispooldatei AND s.capispooldatei<>'' AND cas.capispooldatei<>'' "
-			"LEFT JOIN `"+altspool+"` has ON s.hylanr=has.hylanr AND s.hylanr<>0 AND has.hylanr<>0 "
+			"LEFT JOIN `"+altspool+"` alts ON s.idudoc=alts.idudoc "
 			"WHERE s.original>''",ZDB);
-			caus<<"Hier bin ich noch"<<endl;
 	if (r0.obfehl) {
 		cerr<<rots<<Tx[T_Fehler_af]<<schwarz<<r0.obfehl<<rot<<Tx[T_beiSQLAbfrage]<<schwarz<<r0.sql<<endl;
 	} else {
@@ -4832,16 +4830,13 @@ void paramcl::faxealle()
 			if (!*(*cerg+11)) *(*cerg+11)=(char*)"";
 			if (!*(*cerg+12)) *(*cerg+12)=(char*)"";
 			if (!*(*cerg+13)) *(*cerg+13)=(char*)"";
-			if (!*(*cerg+14)) *(*cerg+14)=(char*)"";
 			if (*(*cerg+0) && *(*cerg+1) && *(*cerg+2) && *(*cerg+3) && *(*cerg+4) && *(*cerg+5) && 
 					*(*cerg+6) && *(*cerg+7) && *(*cerg+8)) {
 				// obcapi = *(*cerg+9), obhyla=*(*cerg+10)
-				caus<<"Stelle 10"<<endl;
 				fsfv.push_back(/*1*/fsfcl(*(*cerg+0)/*id*/, *(*cerg+1)/*npdf*/, *(*cerg+2)/*spdf*/, *(*cerg+3)/*telnr*/, 
 							atoi(*(*cerg+4))/*prio*/, *(*cerg+5)/*capisd*/, atoi(*(*cerg+6))/*capids*/, *(*cerg+7)/*hylanr*/, 
 							atoi(*(*cerg+8))/*hdialsn*/, (binaer)atoi(*(*cerg+9))/*obcapi*/, (binaer)atoi(*(*cerg+10))/*obhyla*/, *(*cerg+11)/*adressat*/,
-							atoi(*(*cerg+12)/*pages*/), *(*cerg+13)/*cas.id*/, *(*cerg+14)));
-				caus<<"Stelle 11"<<endl;
+							atoi(*(*cerg+12)/*pages*/), *(*cerg+13)/*alts.id*/));
 			}
 		} // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
 		Log(string(Tx[T_ZahldDSmwegzuschickendenFaxenin])+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz,obverb,oblog);
@@ -4906,10 +4901,9 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 	char ***cerg;
 	RS rs(My,"SELECT s.id p0,s.capispooldatei p1,s.capispoolpfad p2,s.original p3,s.cdateidatum p4,"
 				" s.telnr p5,s.origvu p6,s.hylanr p7,s.capidials p8,s.hyladials p9,s.hdateidatum p10,s.adressat p11,s.idudoc p12,s.prio p13,s.pages p14 "
-				",cas.id p15, has.id p16 "
+				",alts.id p15 "
 				"FROM `"+spooltab+"` s "
-				"LEFT JOIN `"+altspool+"` cas ON s.capispooldatei=cas.capispooldatei AND s.capispooldatei<>'' AND cas.capispooldatei<>'' "
-				"LEFT JOIN `"+altspool+"` has ON s.hylanr=has.hylanr AND s.hylanr<>0 AND has.hylanr<>0 "
+				"LEFT JOIN `"+altspool+"` alts ON s.idudoc=alts.idudoc "
 				"WHERE (s.hylanr RLIKE '^[0-9]+$' AND s.hylanr<>0) OR s.capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",ZDB);
 	if (!rs.obfehl) {
 		faxord=0;
@@ -4932,11 +4926,9 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				if (*(*cerg+12)) fsf.idudoc = *(*cerg+12);  // id des ursp.Dateinamens in udoc
 				if (*(*cerg+13)) fsf.prio = atol(*(*cerg+13));  // Prioritaet wie in Datenbank
 				if (*(*cerg+14)) fsf.pseiten = atol(*(*cerg+14));  // pages wie in Datenbank
-				if (*(*cerg+15)) fsf.idc = *(*cerg+15);  // id capi
-				if (*(*cerg+16)) fsf.idh = *(*cerg+16);  // id hyla
+				if (*(*cerg+15)) fsf.idalt = *(*cerg+15);  // id hyla
 				caus<<"fsf.id: "<<violett<<fsf.id<<schwarz;
-				caus<<"fsf.idc: "<<violett<<fsf.idc<<schwarz;
-				caus<<"fsf.idh: "<<violett<<fsf.idh<<schwarz;
+				caus<<"fsf.idalt: "<<violett<<fsf.idalt<<schwarz;
 				Log(string("id: ")+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
 				ausg<<blau<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; // ab hier Neue-Zeile-Zeichen immer am Anfang der naechsten Zeile
 				// a) ueber capisuite
@@ -4951,11 +4943,11 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						RS rupd(My); 
 						vector<instyp> einf; // fuer alle Datenbankeinfuegungen
 						string bedingung=string("id=")+fsf.id;
-						string bedc=string("id=")+fsf.idc;
+						string bedc=string("id=")+fsf.idalt;
 						if (fsf.capistat==wartend || fsf.capistat==gescheitert) {
 							einf.push_back(/*2*/instyp(My->DBS,"capidials",&fsf.ctries));
 							einf.push_back(/*2*/instyp(My->DBS,"capistat",fsf.capistat));
-							if (!fsf.idc.empty()) 
+							if (!fsf.idalt.empty()) 
 								rupd.update(altspool,einf,ZDB,bedc,0);
 							rupd.update(spooltab,einf,ZDB,bedingung,0);
 						} else if (fsf.capistat==gesandt) {
@@ -4995,8 +4987,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						} // if (!hyla_uverz_nr) 
 						einf.push_back(/*2*/instyp(My->DBS,"hyladials",&fsf.hdials));
 						string bedingung=string("id=")+fsf.id;
-						string bedh=string("id=")+fsf.idh;
-						if (!fsf.idh.empty()) 
+						string bedh=string("id=")+fsf.idalt;
+						if (!fsf.idalt.empty()) 
 						   rupd.update(altspool,einf,ZDB,bedh,0);
 						rupd.update(spooltab,einf,ZDB,bedingung,0);
 					} // if (mitupd) 
@@ -5543,6 +5535,7 @@ void paramcl::empfarch()
         } else if (runde==1) zs.Abfrage("SET NAMES 'latin1'");
         RS rins(My); 
         vector<instyp> einf; // fuer alle Datenbankeinfuegungen
+				caus<<violett<<"elog.st_size: "<<rot<<elog.st_size<<schwarz<<endl;
         einf.push_back(/*2*/instyp(My->DBS,"fsize",elog.st_size));
         einf.push_back(/*2*/instyp(My->DBS,"pages",seiten));
         einf.push_back(/*2*/instyp(My->DBS,"titel",&absdr));
@@ -5691,6 +5684,7 @@ void paramcl::empfarch()
         einf.push_back(/*2*/instyp(My->DBS,"tsid",&umst[1].wert));
         einf.push_back(/*2*/instyp(My->DBS,"transe",&modz));
         einf.push_back(/*2*/instyp(My->DBS,"id",&base));
+				caus<<violett<<"entrysff.st_size: "<<rot<<entrysff.st_size<<schwarz<<endl;
         einf.push_back(/*2*/instyp(My->DBS,"fsize",entrysff.st_size));
         einf.push_back(/*2*/instyp(My->DBS,"csid",&umst[2].wert));
         einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
@@ -7183,8 +7177,8 @@ void inDbc(DB *My, const string& spooltab, const string& altspool, const string&
       einf.push_back(/*2*/instyp(My->DBS,"cdateidatum",&entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"cdateizeit",entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"telnr",telnr));
-			if (!fsfp->idc.empty()) {
-				string bedc="id="+fsfp->idc;
+			if (!fsfp->idalt.empty()) {
+				string bedc="id="+fsfp->idalt;
 				rupd.update(altspool,einf,ZDB,bedc);
 			}
       string bedingung="id="+fsfp->id;
@@ -7282,8 +7276,8 @@ void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp,
       einf.push_back(/*2*/instyp(My->DBS,"hdateidatum",&entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"hdateizeit",entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"telnr",tel));
-			if (!fsfp->idh.empty()) {
-				string bedh="id="+fsfp->idh;
+			if (!fsfp->idalt.empty()) {
+				string bedh="id="+fsfp->idalt;
 				rupd.update(altspool,einf,ZDB,bedh);
 			}
       string bedingung="id="+fsfp->id;
