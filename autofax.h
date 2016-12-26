@@ -92,7 +92,8 @@ class fsfcl : public fxfcl // Faxsendfile
     string hstate="0"; // Statuszahl ("state" in man sendq)
     string hstatus; // Textbeschreibung des letztes Fehlschlags
     string hstatuscode; // in xferfaxlog nicht gefunden
-		string tts;
+		time_t tts;
+		time_t killtime;
 		string number;
     string hdials;   // hyladials
 		string maxdials; // maxdials (hylafax)
@@ -228,7 +229,7 @@ class paramcl // Programmparameter
     string varsphylavz; // Verzeichnis der Hyla-Spool-Dateien /var/spool/fax
     string xferfaxlog; // varsphylavz + "/etc/xferfaxlog"; 
     string faxgtpfad;   // /usr/lib/fax/faxgetty
-    string hsendqvz; // /var/spool/fax/sendq
+    string hsendqvz; // /var/spool/hylafax/sendq
 #ifdef _WIN32
     char cpt[255];
     DWORD dcpt;

@@ -1682,13 +1682,12 @@ inline const char* FxStatS(FxStat *i)
 } // FxStatS
 
 //archiviert den Datensatz
-// wird aufgerufen in: untersuchespool
+// wird aufgerufen in: untersuchespool, sammlefertigehyla
 void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgescheitert, FaxTyp ftyp, uchar *geloeschtp, int obverb, int oblog)
 {
 //  string nob=ltoan((int)!obgescheitert);
   Log(violetts+Tx[T_archiviere]+schwarz+Tx[T_obgescheitert]+blau+ltoan((int)obgescheitert)+schwarz/*+" !obgescheitert: "+nob+*/,obverb,oblog);
   // Voraussetzung: telnr, original, id; veraendert: geloescht
-  static time_t jetzt = time(0);
   RS rins(My); 
   RS zs(My);
   string getname,bsname;
@@ -1720,7 +1719,8 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     einf.push_back(/*2*/instyp(My->DBS,"docname",&original));
     Log(string("original (docname): ")+blau+original+schwarz,obverb,oblog);
     einf.push_back(/*2*/instyp(My->DBS,"idudoc",&idudoc));
-    einf.push_back(/*2*/instyp(My->DBS,"transe",&jetzt));
+		if (!tts) tts=time(0);
+    einf.push_back(/*2*/instyp(My->DBS,"transe",&tts));
     if (!telnr.empty()) {
       string stdfax=pmp->stdfaxnr(telnr);
       einf.push_back(/*2*/instyp(My->DBS,"rcfax",&stdfax));
@@ -1729,7 +1729,7 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
 
     einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
 		einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
-    rins.insert(pmp->touta,einf, 1,0,ZDB?ZDB:!runde); 
+    rins.insert(pmp->touta,einf, 1,0,ZDB?ZDB:!runde);  // einfuegen
     if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
     if (!rins.fnr) break;
     if (runde==1) {
@@ -1737,7 +1737,7 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
       exit(10);
     } //     if (runde==1)
   } // for(int runde=0;runde<2;runde++) 
-  if (!rins.fnr) { 
+  if (!rins.fnr && geloeschtp) { 
     RS rsloe(My,"DELETE FROM `"+pmp->spooltab+"` WHERE id = \""+id+"\"");
     *geloeschtp=1;
   } // if (!rins.fnr) 
@@ -4786,7 +4786,7 @@ void paramcl::faxealle()
 	RS r0(My,string("SELECT id p0, origvu p1, original p2, telnr p3, prio p4, "
 				"IF(ISNULL(capispooldatei),'',capispooldatei) p5, IF(ISNULL(capidials),'',capidials) p6, "
 				"IF(ISNULL(hylanr),'',hylanr) p7, IF(ISNULL(hyladials),'',hyladials) p8, "
-				"((ISNULL(capispooldatei)or capispooldatei='') AND (ISNULL(hyladials) OR hyladials>=")+maxhylav+" OR hylastate=8 OR " // hyladials=-1
+				"((ISNULL(capispooldatei)OR capispooldatei='') AND (ISNULL(hyladials) OR hyladials>=")+maxhylav+" OR hylastate=8 OR " // hyladials=-1
 			//      "    (ISNULL(prio) OR prio=1 OR (prio=0 AND NOT "+hzstr+")))) p9, "
 			"    (ISNULL(prio) OR prio=2 OR prio=0))) p9, "
 			"((ISNULL(hylanr) OR hylanr='') AND (ISNULL(capidials) OR capidials>=" +maxcapiv+" OR capidials=-1 OR "
@@ -5228,9 +5228,37 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 			RS vgl1(My,"DROP TABLE IF EXISTS tmpt",ZDB);
 			RS vgl2(My,"CREATE TABLE tmpt(submid VARCHAR(11) KEY,Datum DATETIME,tel VARCHAR(30),pages INT,attr VARCHAR(20),erfolg INT);",ZDB);
 			RS vgl3(My,"INSERT INTO tmpt VALUES "+inse,ZDB);
+			// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, und zu denen nicht bereits eine erfolgreiche
+			// capisuite-Uebertragung eingetragen ist
+			RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpt t "
+								"LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
+                "LEFT JOIN outa o2 ON o2.submid=a.capispooldatei WHERE isnull(o.submid) AND t.erfolg<>0 AND (isnull(o2.erfolg) OR o2.erfolg=0)",ZDB);
+			char ***cerg;
+			while (cerg=ntr.HolZeile(),cerg?*cerg:0) {
+			  string hylanr = *(*cerg+0);
+				/*4*/fsfcl fsf(hylanr); // hylanr
+				
+				svec rueckf;
+				cmd="find "+varsphylavz+"/archive/"+hylanr+" -iname \"doc*\\.pdf\\."+hylanr+"\"";
+				systemrueck(cmd,obverb-1,oblog,&rueckf);
+				struct stat entrys;
+				memset(&entrys,0,sizeof entrys);
+				if (rueckf.size()) {
+				 lstat(rueckf[0].c_str(),&entrys);
+				}
+				if (*(*cerg+1)) fsf.telnr=*(*cerg+1);    // tel
+				if (*(*cerg+2)) fsf.original=*(*cerg+2); // original
+				if (*(*cerg+3)) fsf.tts=atol(*(*cerg+3)); // Datum (aus xferfaxlog, tts
+				if (*(*cerg+4)) fsf.hdd=*(*cerg+4);
+				if (*(*cerg+5)) fsf.idudoc=*(*cerg+5);
+				if (*(*cerg+6)) fsf.pseiten=atol(*(*cerg+6));
+caus<<"vor archiviere, telnr: "<<fsf.telnr<<" tts: "<<fsf.tts<<" hdd: "<<fsf.hdd<<" original: "<<fsf.original<<" hdd: "<<fsf.hdd<<" idudoc: "<<fsf.idudoc<<endl;
+				fsf.archiviere(My,this,&entrys,0,hyla,0,obverb,oblog);
+			}
 			//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_OFF);
 		}
 		// "select tmpt.i,submid,erfolg,outa.* from tmpt left join outa on tmpt.i=outa.submid
+		// select t.*,a.capispooldatei,o2.erfolg, o2.submid from tmpt t left join outa o on t.submid = o.submid left join altspool a on a.hylanr = t.submid left join outa o2 on a.capispooldatei=o2.submid where isnull(o.submid);
 		char ***cerg;
 		size_t cergz=0;
 		if (auswe.size()>1) {
@@ -5246,7 +5274,7 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 				tu_lista("",auswmf);
 				RS k1(My,"UPDATE `"+touta+"` SET erfolg=1 WHERE erfolg=0 AND submid IN "+auswe,ZDB);
 			} // 				if (cergz) 
-		}
+		} // 		if (auswe.size()>1)
 		if (auswm.size()>1) {
 			RS rs2(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=1 AND submid IN "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 			cergz=0;
@@ -5255,13 +5283,13 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 					Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden],1,1);
 				auswef+=*(*cerg+0); auswef+=",";
 				// <<rot<<*(*cerg+0)<<schwarz<<endl; 
-			}
+			} // 			while (cerg=rs2.HolZeile(),cerg?*cerg:0)
 			if (cergz) {
 				auswef[auswef.size()-1]=')';
 				tu_lista("",auswef);
 				RS k1(My,"UPDATE `"+touta+"` SET erfolg=0 WHERE erfolg=1 AND submid IN "+auswm,ZDB);
 			} // 				if (cergz) 
-		}
+		} // 		if (auswm.size()>1)
 		caus<<blau<<auswe<<schwarz<<endl;
 		caus<<rot<<auswm<<schwarz<<endl;
 		return;
@@ -7731,62 +7759,67 @@ int paramcl::xferlog(fsfcl *fsfp,int obverb,int oblog,string *totpages,string *n
   // ggf. broken pipe error; schadet aber experimentell dem Ergebnis nicht, deshalb Fehler unsichtbar
 //  systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null | grep -m 1 \""+this->hmodem+sep+jobid+sep+"\" | cut -f 14",obverb,oblog,&grueck); 
 int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
-  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"tty[^"+sep+"]*"+sep+fsfp->hylanr+sep+"\" | cut -f2,14,20",obverb,oblog,&grueck); 
+  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"tty[^"+sep+"]*"+sep+fsfp->hylanr+sep+"\" | cut -f1,2,14,20",obverb,oblog,&grueck); 
   if (grueck.size()) {
     gefunden=1;
     vector<string> tok;
     aufSplit(&tok,&grueck[0],sep);
-    if (tok.size()) {
-      fsfp->hstatus=tok[0];
-      if (tok[0]=="SEND") aktion=1;
-      else if (tok[0]=="UNSENT") aktion=2;
-      if (tok.size()>1) {
-        fsfp->hgerg=tok[1];
-        anfzweg(fsfp->hgerg); // Anfuehrungszeichen entfernen
-        switch (aktion) {
-          case 2: 
-						fsfp->hylastat=gescheitert;
-						fsfp->hstate="8"; 
-									break;
-					case 1: 
-						if (fsfp->hgerg.empty()) {
-							fsfp->hylastat=gesandt;
-							fsfp->hstate="7"; 
-						} else {
-							fsfp->hylastat=verarb;
-							fsfp->hstate="6";
-						}
-						break;
-				} //         switch (aktion)
+		if (tok.size()<=2) fsfp->hgerg=grueck[0];
+		if (tok.size()) {
+			struct tm tm;
+			if (strptime(tok[0].c_str(),"%m/%d/%y %H:%M",&tm)) {
+				fsfp->tts=mktime(&tm);
+			}
+			if (tok.size()>1) {
+				fsfp->hstatus=tok[1];
+				if (tok[1]=="SEND") aktion=1;
+				else if (tok[1]=="UNSENT") aktion=2;
 				if (tok.size()>2) {
-					vector<string> toi;
-          aufSplit(&toi,&tok[1],'/');
-          if (toi.size()) {
-            if (totpages) *totpages=toi[0];
-            if (toi.size()>1) {
-              if (ntries) *ntries=toi[1];
-              if (toi.size()>2) {
-                fsfp->hdials=toi[2];
-                if (toi.size()>3) {
-                  if (totdials) *totdials=toi[3];
-                  if (toi.size()>4) {
-                    fsfp->maxdials=toi[4];
-                    if (toi.size()>5) {
-                      if (tottries) *tottries=toi[5];
-                      if (toi.size()>6) {
-                        if (maxtries) *maxtries=toi[6];
-                      } //                       if (toi.size()>6)
-                    } //                     if (toi.size()>5)
-                  } //                   if (toi.size()>4)
-                } //                 if (toi.size()>3)
-              } //               if (toi.size()>2) 
-            } //             if (toi.size()>1) 
-          } //           if (toi.size()) 
-        } //         if (tok.size()>2) 
-      } //       if (tok.size()>1)
-    } else {
-      fsfp->hgerg=grueck[0];
-    } //     if (tok.size()) else
+					fsfp->hgerg=tok[2];
+					anfzweg(fsfp->hgerg); // Anfuehrungszeichen entfernen
+					switch (aktion) {
+						case 2: 
+							fsfp->hylastat=gescheitert;
+							fsfp->hstate="8"; 
+							break;
+						case 1: 
+							if (fsfp->hgerg.empty()) {
+								fsfp->hylastat=gesandt;
+								fsfp->hstate="7"; 
+							} else {
+								fsfp->hylastat=verarb;
+								fsfp->hstate="6";
+							}
+							break;
+					} //         switch (aktion)
+					if (tok.size()>3) {
+						vector<string> toi;
+						aufSplit(&toi,&tok[3],'/');
+						if (toi.size()) {
+							if (totpages) *totpages=toi[0];
+							if (toi.size()>1) {
+								if (ntries) *ntries=toi[1];
+								if (toi.size()>2) {
+									fsfp->hdials=toi[2];
+									if (toi.size()>3) {
+										if (totdials) *totdials=toi[3];
+										if (toi.size()>4) {
+											fsfp->maxdials=toi[4];
+											if (toi.size()>5) {
+												if (tottries) *tottries=toi[5];
+												if (toi.size()>6) {
+													if (maxtries) *maxtries=toi[6];
+												} //                       if (toi.size()>6)
+											} //                       if (toi.size()>5)
+										} //                     if (toi.size()>4)
+									} //                   if (toi.size()>3)
+								} //                 if (toi.size()>2)
+							} //               if (toi.size()>1) 
+						} //             if (toi.size()) 
+					} //           if (tok.size()>3) 
+				} //         if (tok.size()>2) 
+			} //       if (tok.size()>1)
+		} //     if (tok.size()) else
 #else
     systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \""+this->hmodem+sep+fsfp->hylanr+sep+"\"",obverb,oblog,&grueck); // ggf. broken pipe error
     if (grueck.size()) KLA
@@ -7882,7 +7915,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
 		if (hylconf.zahl==9) {
 			hylconf.reset();
 		} else { 
-			hylconf.init(9,"state","totdials","status","statuscode","!pdf","tts","number","maxdials","pdf");
+			hylconf.init(10,"state","totdials","status","statuscode","!pdf","tts","number","maxdials","pdf","killtime");
 		}
 		confdat hylc(*protdaktp,&hylconf,obverb,':');
 		hgelesen= hylc.obgelesen;
@@ -7893,7 +7926,8 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     fsf->hstatus=this->hylconf[2].wert;
     if (this->hylconf[3].wert.empty()) this->hylconf[3].wert="0";
     fsf->hstatuscode=this->hylconf[3].wert;
-		fsf->tts=hylconf[5].wert;
+		fsf->tts=atol(hylconf[5].wert.c_str());
+		fsf->killtime=atol(hylconf[9].wert.c_str());
 		fsf->number=hylconf[6].wert;
     vector<string> tok;
     string pdf=this->hylconf[4].wert==""?this->hylconf[8].wert:this->hylconf[4].wert;
@@ -7951,8 +7985,8 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
     snprintf(buf,4,"%3d",hversuzahl);
     *ausgp<<blau<<buf<<"/"<<maxdials<<schwarz<<(hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
     // hier muss noch JobReqBusy, JobReqNoAnswer, JobReqNoCarrier, JobReqNoFCon, JobReqOther, JobReqProto dazu gerechnet werden
-    time_t spoolbeg=(time_t)atol(tts.c_str());
-    strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", localtime(&spoolbeg));
+    // time_t spoolbeg=(time_t)atol(tts.c_str());
+    strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", localtime(&tts));
     *ausgp<<blau<<buf<<schwarz; 
     //              if (hversuzahl>12) ausg<<", zu spaet";
     *ausgp<<", T.: "<<blau<<setw(12)<<number<<schwarz;
