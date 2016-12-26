@@ -3839,6 +3839,8 @@ int paramcl::pruefDB(const string& db)
 // wird aufgerufen in: main
 void paramcl::korrerfolgszeichen()
 {
+  obverb=1;
+	ZDB=255;
   Log(violetts+Tx[T_korrerfolgszeichen]+schwarz,obverb,oblog);
   // geht wegen Loeschens der Protokolldateien nur (noch) fuer Gefundene, s.u.
   if (1) {
@@ -3895,7 +3897,8 @@ void paramcl::korrerfolgszeichen()
       } // if (!routa.obfehl) 
     } // for(uchar runde=1;runde<2;runde++) 
   } // if (0) 
-
+	obverb=0;
+	ZDB=0;
 } // korrerfolgszeichen
 
 // Parameter -bwv
