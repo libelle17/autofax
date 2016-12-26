@@ -4926,8 +4926,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				if (*(*cerg+13)) fsf.prio = atol(*(*cerg+13));  // Prioritaet wie in Datenbank
 				if (*(*cerg+14)) fsf.pseiten = atol(*(*cerg+14));  // pages wie in Datenbank
 				if (*(*cerg+15)) fsf.idalt = *(*cerg+15);  // id hyla
-				caus<<"fsf.id: "<<violett<<fsf.id<<schwarz<<endl;
-				caus<<"fsf.idalt: "<<violett<<fsf.idalt<<schwarz<<endl;
+				// <<"fsf.id: "<<violett<<fsf.id<<schwarz<<endl;
+				// <<"fsf.idalt: "<<violett<<fsf.idalt<<schwarz<<endl;
 				Log(string("id: ")+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
 				ausg<<blau<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; // ab hier Neue-Zeile-Zeichen immer am Anfang der naechsten Zeile
 				// a) ueber capisuite
@@ -4965,7 +4965,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 					int obsfehlt=-1;
 					/*fsf.*/
 					setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 0, &obsfehlt, &entrysend, obverb, oblog);
-					caus<<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
+					// <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
 					fsf.hylaausgeb(&ausg, this, obsfehlt, 0, obverb, 0, oblog);
 					//          if (!obsfehlt) KLA // Protokolldatei vorhanden 12.10.16 sollte jetzt auch mit xferfax gehen
 					if (mitupd) {
