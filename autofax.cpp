@@ -1719,10 +1719,10 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     Log(string("original (docname): ")+blau+original+schwarz,obverb,oblog);
     einf.push_back(/*2*/instyp(My->DBS,"idudoc",&idudoc));
 		if (!tts) tts=time(0);
-		caus<<gruen<<"tts: "<<rot<<tts<<schwarz<<endl;
-		char buf[100];
-    strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", localtime(&tts));
-		caus<<"buf: "<<buf<<endl;
+		// <<gruen<<"tts: "<<rot<<tts<<schwarz<<endl;
+		// char buf[100];
+    // strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", localtime(&tts));
+		// <<"buf: "<<buf<<endl;
     einf.push_back(/*2*/instyp(My->DBS,"transe",&tts));
     if (!telnr.empty()) {
       string stdfax=pmp->stdfaxnr(telnr);
@@ -4941,7 +4941,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				if (obcapi) {
 					if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
 					fsf.setzcapistat(this, &entrysend);
-					fsf.tts=0;
+					fsf.tts=0; // fuer archiviere
 					fsf.capiwausgeb(&ausg,maxcdials, 0, obverb, oblog);
 					if (mitupd) {
 						RS rupd(My); 
@@ -5068,7 +5068,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						// <<gruen<<"fsf.capisd.empty(): "<<schwarz<<(int)fsf.capisd.empty()<<endl;
 						fsf.archiviere(My,this,&entrysend,allegesch||nimmer,
 								fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?hyla:capi,
-								&geloescht, 2, oblog);
+								&geloescht, obverb, oblog);
 					} //           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) )
 					// wenn alle aktivierten Faxwege auf gescheitert oder fehlend stehen oder die Quelldatei fehlt ...
 					if (allegesch || (nimmer && !ogibts[0])) {
@@ -5248,7 +5248,7 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 			vector<string> tok; 
 			aufSplit(&tok,&qrueck[i],'\t');
 			if (tok.size()>5) {
-			  // caus<<tok[0]<<'|'<<tok[1]<<'|'<<tok[2]<<'|'<<tok[3]<<'|'<<tok[4]<<'|'<<tok[5]<<'|'<<tok[6]<<endl;
+			  // <<tok[0]<<'|'<<tok[1]<<'|'<<tok[2]<<'|'<<tok[3]<<'|'<<tok[4]<<'|'<<tok[5]<<'|'<<tok[6]<<endl;
 				uchar erfolg=0;
 				if (tok[1]=="SEND") {
 					if (tok[5]=="\"\"") erfolg=1;
