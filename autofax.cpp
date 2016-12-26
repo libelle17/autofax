@@ -3864,7 +3864,7 @@ void paramcl::korrerfolgszeichen()
           systemrueck(cmd,obverb,oblog,&rueck);
           for(ruecki=0;ruecki<rueck.size();ruecki++) {
 						auswe+=rueck[ruecki]+","; 
-						inse+="("+rueck[ruecki]+",1),";
+						inse+="('"+rueck[ruecki]+"',1),";
 					}
 					auswe[auswe.size()-1]=')';
 					inse[inse.size()-1]=';';
