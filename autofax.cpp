@@ -1924,7 +1924,7 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
       if (fxvp->at(nachrnr).prio>0 || hylazuerst) fxvp->at(nachrnr).prio++;
       einf.push_back(/*2*/instyp(My->DBS,"prio",fxvp->at(nachrnr).prio));
       einf.push_back(/*2*/instyp(My->DBS,"pages",fxvp->at(nachrnr).pseiten));
-      rins.insert(altspool,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
+      rins.insert(altspool,einf, 1,0,255,&spoolid);
       rins.insert(spooltab,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
       if (spoolid!="null") break;
@@ -1949,7 +1949,7 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
     // hier wird die Telefonnummer aus dem Namen extrahiert
     RS tea(My,string("UPDATE `")+altspool+"` "
         "SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
-        "WHERE ISNULL(telnr) OR telnr=''",ZDB);
+        "WHERE ISNULL(telnr) OR telnr=''",255);
     RS tel(My,string("UPDATE `")+spooltab+"` "
         "SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
         "WHERE ISNULL(telnr) OR telnr=''",ZDB);
@@ -4871,9 +4871,13 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 	// Schaue nach, welche der gespoolten schon weggeschickt sind, Anpassung der Primaerdateien und des Datenbankeintrags
 	Log(violetts+Tx[T_untersuchespool]+schwarz,obverb,oblog);
 	char ***cerg;
-	RS rs(My,string("SELECT id p0,capispooldatei p1,capispoolpfad p2,original p3,cdateidatum p4,"
-				" telnr p5,origvu p6,hylanr p7,capidials p8,hyladials p9,hdateidatum p10, adressat p11, idudoc p12, prio p13, pages p14 "
-				"FROM `")+spooltab+"` WHERE (hylanr RLIKE '^[0-9]+$' AND hylanr<>0) OR capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",ZDB);
+	RS rs(My,string("SELECT s.id p0,s.capispooldatei p1,s.capispoolpfad p2,s.original p3,s.cdateidatum p4,"
+				" s.telnr p5,s.origvu p6,s.hylanr p7,s.capidials p8,s.hyladials p9,s.hdateidatum p10,s.adressat p11,s.idudoc p12,s.prio p13,s.pages p14 "
+				",asc.id p15, ash.id p16 "
+				"FROM `")+spooltab+"` s "
+				"left join `"+altspool+"` asc on s.capispooldatei=asc.scapispooldatei "
+				"left join `"+altspool+"` ash on s.hylanr=ash.hylanr "
+				"WHERE (hylanr RLIKE '^[0-9]+$' AND hylanr<>0) OR capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",ZDB);
 	if (!rs.obfehl) {
 		faxord=0;
 		while (cerg=rs.HolZeile(),cerg?*cerg:0) {
@@ -4895,6 +4899,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				if (*(*cerg+12)) fsf.idudoc = *(*cerg+12);  // id des ursp.Dateinamens in udoc
 				if (*(*cerg+13)) fsf.prio = atol(*(*cerg+13));  // Prioritaet wie in Datenbank
 				if (*(*cerg+14)) fsf.pseiten = atol(*(*cerg+14));  // pages wie in Datenbank
+				if (*(*cerg+15)) fsf.idc = atol(*(*cerg+15));  // id capi
+				if (*(*cerg+16)) fsf.idh = atol(*(*cerg+16));  // id hyla
 				Log(string("id: ")+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
 				ausg<<blau<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; // ab hier Neue-Zeile-Zeichen immer am Anfang der naechsten Zeile
 				// a) ueber capisuite
@@ -4909,10 +4915,11 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						RS rupd(My); 
 						vector<instyp> einf; // fuer alle Datenbankeinfuegungen
 						string bedingung=string("id=")+fsf.id;
+						string bedc=string("id=")+fsf.idc;
 						if (fsf.capistat==wartend || fsf.capistat==gescheitert) {
 							einf.push_back(/*2*/instyp(My->DBS,"capidials",&fsf.ctries));
 							einf.push_back(/*2*/instyp(My->DBS,"capistat",fsf.capistat));
-							rupd.update(altspool,einf,ZDB,bedingung,0);
+							rupd.update(altspool,einf,255,bedc,0);
 							rupd.update(spooltab,einf,ZDB,bedingung,0);
 						} else if (fsf.capistat==gesandt) {
 							// ... und ggf. in hylafax loeschen
@@ -4951,7 +4958,8 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						} // if (!hyla_uverz_nr) 
 						einf.push_back(/*2*/instyp(My->DBS,"hyladials",&fsf.hdials));
 						string bedingung=string("id=")+fsf.id;
-						rupd.update(altspool,einf,ZDB,bedingung,0);
+						string bedh=string("id=")+fsf.idh;
+						rupd.update(altspool,einf,255,bedh,0);
 						rupd.update(spooltab,einf,ZDB,bedingung,0);
 					} // if (mitupd) 
 					if (!protdakt.empty()) ausg<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
@@ -7130,7 +7138,7 @@ void inDbc(DB *My, const string& spooltab, const string& altspool, const string&
       einf.push_back(/*2*/instyp(My->DBS,"cdateizeit",entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"telnr",telnr));
       string bedingung=string("id=")+fsfp->id;
-      rupd.update(altspool,einf,ZDB,bedingung);
+      rupd.update(altspool,einf,255,bedingung);
       rupd.update(spooltab,einf,ZDB,bedingung);
 
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
@@ -7226,7 +7234,7 @@ void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp,
       einf.push_back(/*2*/instyp(My->DBS,"hdateizeit",entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"telnr",tel));
       string bedingung=string("id=")+fsfp->id;
-      rupd.update(altspool,einf,ZDB,bedingung);
+      rupd.update(altspool,einf,255,bedingung);
       rupd.update(spooltab,einf,ZDB,bedingung);
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
       affr=My->affrows();

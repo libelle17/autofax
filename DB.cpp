@@ -791,6 +791,7 @@ int DB::prueftab(Tabelle *ptab,int obverb)
   return gesfehlr;
 } // int DB::prueftab(Tabelle *ptab,bool obverb) 
 
+// erweitert die Spaltenbreite einer Spalte auf mindenstens wlength, falls sie geringer ist
 uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,uchar obstumm)
 {
   stringstream korr;

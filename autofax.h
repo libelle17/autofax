@@ -70,7 +70,9 @@ class fxfcl // Faxfile
 class fsfcl : public fxfcl // Faxsendfile
 {
   public:
-    string id;
+    string id;   // id in spooltab
+		string idc; // id des mit der gleichen capispooldatei in altspool zugeordneten Satzes
+		string idh; // id des mit der gleichen hylanr in altspool zugeordneten Satzes
     string telnr;    // Telnr. des Adressaten
     string capisd; // capispooldatei
     int capids;  //capidials
