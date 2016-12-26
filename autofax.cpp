@@ -4944,7 +4944,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						if (fsf.capistat==wartend || fsf.capistat==gescheitert) {
 							einf.push_back(/*2*/instyp(My->DBS,"capidials",&fsf.ctries));
 							einf.push_back(/*2*/instyp(My->DBS,"capistat",fsf.capistat));
-							rupd.update(altspool,einf,255,bedc,0);
+							if (!fsf.idc.empty()) rupd.update(altspool,einf,255,bedc,0);
 							rupd.update(spooltab,einf,ZDB,bedingung,0);
 						} else if (fsf.capistat==gesandt) {
 							// ... und ggf. in hylafax loeschen
@@ -4984,7 +4984,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						einf.push_back(/*2*/instyp(My->DBS,"hyladials",&fsf.hdials));
 						string bedingung=string("id=")+fsf.id;
 						string bedh=string("id=")+fsf.idh;
-						rupd.update(altspool,einf,255,bedh,0);
+						if (!fsf.idh.empty()) rupd.update(altspool,einf,255,bedh,0);
 						rupd.update(spooltab,einf,ZDB,bedingung,0);
 					} // if (mitupd) 
 					if (!protdakt.empty()) ausg<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
