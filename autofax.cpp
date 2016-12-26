@@ -4903,9 +4903,12 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				"LEFT JOIN `"+altspool+"` cas ON s.capispooldatei=cas.capispooldatei AND s.capispooldatei<>'' AND cas.capispooldatei<>'' "
 				"LEFT JOIN `"+altspool+"` has ON s.hylanr=has.hylanr AND s.hylanr<>0 AND has.hylanr<>0 "
 				"WHERE (s.hylanr RLIKE '^[0-9]+$' AND s.hylanr<>0) OR s.capispooldatei RLIKE '^fax-[0-9]+\\.sff$'",255);
+				caus<<"stelle 0"<<endl;
 	if (!rs.obfehl) {
+				caus<<"stelle 1"<<endl;
 		faxord=0;
 		while (cerg=rs.HolZeile(),cerg?*cerg:0) {
+				caus<<"stelle 2"<<endl;
 			faxord++;
 			if (*(*cerg+0)) if (*(*cerg+3)) {
 				(dbzahl)++;
@@ -5078,6 +5081,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 			} // if (*(*cerg+0)) if (*(*cerg+3))
 		} // while (cerg=rs.HolZeile(),cerg?*cerg:0) 
 	} // if (!rs.obfehl) 
+				caus<<"stelle 5"<<endl;
 } // untersuchespool
 
 // Zeige Dateien im Spool an, die nicht in der Spool-Tabelle stehen
