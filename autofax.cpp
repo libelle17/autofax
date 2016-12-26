@@ -8096,9 +8096,9 @@ int main(int argc, char** argv)
 {
   paramcl pm(argc,argv); // Programmparameter
 	cout<<pm.cl<<endl;
-	Log(pm.cl,0,1);
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();
+	Log(pm.cl,0,1);
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
   pm.VorgbAllg();
   pm.VorgbSpeziell(); // die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion "void paramcl::VorgbSpeziell()" ueberladbar sind
