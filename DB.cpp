@@ -522,7 +522,7 @@ return ergi;
  */
 
 // wird aufgerufen in: prueftab
-void DB::lesespalten(Tabelle *ltab,int obverb)
+void DB::lesespalten(Tabelle *ltab,int obverb/*=0*/,int oblog/*=0*/)
 {
   Log(violetts+Txd[T_Lesespalten]+blau+ltab->name+"'"+schwarz,obverb);
   char ***cerg;
@@ -569,9 +569,9 @@ void DB::lesespalten(Tabelle *ltab,int obverb)
   }
 } // lesespalten
 
-int DB::prueftab(Tabelle *ptab,int obverb) 
+int DB::prueftab(Tabelle *ptab,int obverb/*=0*/,int oblog/*=0*/) 
 {
-  Log(violetts+Txd[T_Pruefe_Tabelle]+blau+ptab->name+"'"+schwarz,obverb);
+  Log(violetts+Txd[T_Pruefe_Tabelle]+blau+ptab->name+"'"+schwarz,obverb,oblog);
   int gesfehlr=0;
   RS rs(this);
   std::stringstream sql;
@@ -584,9 +584,9 @@ int DB::prueftab(Tabelle *ptab,int obverb)
             if (atol(ptab->felder[k].lenge.c_str())<atol(ptab->indices[i].felder[j].lenge.c_str())){
               ptab->felder[k].lenge=ptab->indices[i].felder[j].lenge;
             }
-      }
-    }
-  }
+      } //       for(int k=0;k<ptab->feldzahl;k++)
+    } //     for(int j=0;j<ptab->indices[i].feldzahl;j++)
+  } //   for(int i=0;i<ptab->indexzahl;i++)
   vector<string> fstr;
   vector<string> istr;
   const char* def_engine="InnoDB";
@@ -597,7 +597,7 @@ int DB::prueftab(Tabelle *ptab,int obverb)
     case MySQL:
       {
         if (conn==0) conn = mysql_init(NULL);
-        lesespalten(ptab,obverb>1);
+        lesespalten(ptab,obverb>1,oblog);
 
         for(int i=0;i<ptab->feldzahl;i++) {
           if (!spalt->obfehl)
@@ -647,7 +647,7 @@ int DB::prueftab(Tabelle *ptab,int obverb)
           rs.Abfrage(sql.str(),obverb?255:1); // falls obverb, dann sql-String ausgeben
           gesfehlr+=rs.obfehl;
           if (gesfehlr) Log(string("gesfehlr 1: ")+ltoan(gesfehlr),1,1);
-          lesespalten(ptab,obverb>1);
+          lesespalten(ptab,obverb>1,oblog);
         } // if (!dbres->row_count) 
         mysql_free_result(dbres);
 
@@ -706,7 +706,7 @@ int DB::prueftab(Tabelle *ptab,int obverb)
             gesfehlr+=rs.obfehl;
             if (gesfehlr) Log(string("gesfehlr 3: ")+ltoan(gesfehlr),1,1);
             if (verschieb) 
-              lesespalten(ptab,obverb>1);
+              lesespalten(ptab,obverb>1,oblog);
             if (aendere) {
               if (!istr[gspn].empty()) {
                 RS rloesch(this,string("DROP INDEX `")+ptab->felder[gspn].name +"` ON `"+ptab->name+"`");

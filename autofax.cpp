@@ -8095,6 +8095,7 @@ void paramcl::zeigkonf()
 int main(int argc, char** argv) 
 {
   paramcl pm(argc,argv); // Programmparameter
+	cout<<pm.cl<<endl;
 	Log(pm.cl,0,1);
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();

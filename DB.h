@@ -317,8 +317,8 @@ class DB
     char* tmtosqlmZ(tm *tmh,char* buf);
     //	char** HolZeile();
     my_ulonglong affrows(); // unsigned __int64
-    void lesespalten(Tabelle *tab,int obverb=0);
-    int prueftab(Tabelle *tab,int obverb=0);
+    void lesespalten(Tabelle *tab,int obverb=0,int oblog=0);
+    int prueftab(Tabelle *tab,int obverb=0,int oblog=0);
 };
 
 
