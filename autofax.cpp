@@ -3851,6 +3851,7 @@ void paramcl::korrerfolgszeichen()
       size_t ruecki;
 			string auswe="(", auswm="(", auswef="(",auswmf="(", inse;
 			string tel,zp,tries,user;
+			size_t size;
 			char buf[100];
 			struct tm tm;
 			switch (runde) {
@@ -3866,7 +3867,11 @@ void paramcl::korrerfolgszeichen()
           cmd="sudo find '"+cdonevz+"' -maxdepth 1 -mtime -90 -iname '*-fax-*.sff'";//  -printf '%f\\n'";
           systemrueck(cmd,obverb,oblog,&rueck);
           for(ruecki=0;ruecki<rueck.size();ruecki++) {
-					  tel.clear();zp.clear();tries.clear();user.clear();
+					  tel.clear();zp.clear();tries.clear();user.clear();size=0;
+						struct stat sffstat;
+						if (!lstat(rueck[ruecki].c_str(),&sffstat)) {
+						 size=sffstat.st_size;
+						}
 						auswe+=rueck[ruecki]+","; 
 						string stamm,exten;
 						getstammext(&rueck[ruecki],&stamm,&exten);
@@ -3891,14 +3896,14 @@ void paramcl::korrerfolgszeichen()
 						aufSplit(&tok,&ursp,'-');
 						ursp.clear(); for(size_t j=1;j<tok.size();j++){ursp+=tok[j];if (j<tok.size()-1) ursp+="-";}
 						caus<<"ursp: "<<ursp<<endl;
-						inse+="('"+ursp+"',"+tel+",'"+zp+"',"+tries+",1),";
+						inse+="('"+ursp+"',"+tel+",'"+zp+"',"+tries+","+ltoan(size)+",1),";
 					}
 					auswe[auswe.size()-1]=')';
 					inse[inse.size()-1]=';';
 					if (inse.size()>1) {
 						//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 						RS vgl1(My,"DROP TABLE IF EXISTS tmpc",ZDB);
-						RS vgl2(My,"CREATE TABLE tmpc(submid VARCHAR(25) KEY,tel VARCHAR(25),zp DATETIME, tries INT, erfolg INT);",ZDB);
+						RS vgl2(My,"CREATE TABLE tmpc(submid VARCHAR(25) KEY,tel VARCHAR(25),zp DATETIME, tries INT, size INT(15), erfolg INT);",ZDB);
 						RS vgl3(My,"INSERT INTO tmpc VALUES "+inse,ZDB);
 						// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, und zu denen nicht bereits eine erfolgreiche
 						// capisuite-Uebertragung eingetragen ist
