@@ -1721,7 +1721,7 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
 		if (!tts) tts=time(0);
 		// <<gruen<<"tts: "<<rot<<tts<<schwarz<<endl;
 		// char buf[100];
-    // strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", localtime(&tts));
+    // strftime(buf, sizeof(buf), "%d.%m.%y %T", localtime(&tts));
 		// <<"buf: "<<buf<<endl;
     einf.push_back(/*2*/instyp(My->DBS,"transe",&tts));
     if (!telnr.empty()) {
@@ -3879,12 +3879,11 @@ void paramcl::korrerfolgszeichen()
 							confdat txtcf(txtf,&txtconf,1,'='); // static wertet nichts aus
               tel=txtconf[0].wert;
 							if (strptime(txtconf[1].wert.c_str(),"%c",&tm)) {
-								strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", &tm);
+								strftime(buf, sizeof(buf), "%F %T", &tm);
 								zp=buf;
-								caus<<"zp: "<<zp<<endl;
 							}
-							caus<<txtconf[0].name<<" "<<txtconf[0].wert<<endl;
-							caus<<txtconf[1].name<<" "<<txtconf[1].wert<<endl;
+							tries=txtconf[2].wert;
+							user=txtconf[3].wert;
 						}
 						caus<<"txtf: "<<txtf<<endl;
 						string ursp=base_name(rueck[ruecki]);
@@ -3892,14 +3891,14 @@ void paramcl::korrerfolgszeichen()
 						aufSplit(&tok,&ursp,'-');
 						ursp.clear(); for(size_t j=1;j<tok.size();j++){ursp+=tok[j];if (j<tok.size()-1) ursp+="-";}
 						caus<<"ursp: "<<ursp<<endl;
-						inse+="('"+ursp+"',1),";
+						inse+="('"+ursp+"',"+tel+",'"+zp+"',"+tries+",1),";
 					}
 					auswe[auswe.size()-1]=')';
 					inse[inse.size()-1]=';';
 					if (inse.size()>1) {
 						//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 						RS vgl1(My,"DROP TABLE IF EXISTS tmpc",ZDB);
-						RS vgl2(My,"CREATE TABLE tmpc(submid VARCHAR(25) KEY,erfolg INT);",ZDB);
+						RS vgl2(My,"CREATE TABLE tmpc(submid VARCHAR(25) KEY,tel VARCHAR(25),zp DATETIME, tries INT, erfolg INT);",ZDB);
 						RS vgl3(My,"INSERT INTO tmpc VALUES "+inse,ZDB);
 						// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, und zu denen nicht bereits eine erfolgreiche
 						// capisuite-Uebertragung eingetragen ist
@@ -5444,7 +5443,7 @@ int paramcl::holtif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elo
 			if (tmp) {
 				if (TIFFGetField(tif, TIFFTAG_DATETIME, &rdesc)) {
 					// <<"Datetime: \n"<<rdesc<<endl;
-					strptime(rdesc,"%Y:%m:%d %H:%M:%S",tmp);
+					strptime(rdesc,"%Y:%m:%d %T",tmp);
 					/*
 						 char buf[100];
 						 strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", tmp);
@@ -5649,7 +5648,7 @@ void paramcl::empfarch()
       //    if (cpplies(rueck[i],umst,cs)) KLA
       struct tm tm;
       memset(&tm, 0, sizeof(struct tm));
-      strptime(umst[3].wert.c_str(), "%a %b %d %H:%M:%S %Y", &tm);
+      strptime(umst[3].wert.c_str(), "%c", &tm);
       strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
       // tbuf und tm enthalten also z.B. die in /var/spool/capisuite/users/<user>/received/fax-999999.txt unter "time" stehende Zeit
       Log(rots+"   "+umst[0].name+": "+schwarz+umst[0].wert,obverb,oblog);
@@ -6134,7 +6133,7 @@ void paramcl::hconfigtty()
     time_t tim=time(0);
     struct tm *tm=localtime(&tim);
     char buf[80];
-    strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", tm);
+    strftime(buf, sizeof(buf), "%d.%m.%y %T", tm);
     hci<<"# Konfiguration von hylafax durch "+meinname+" vom "<<buf<<endl;
     hci<<"CountryCode:    "<<this->countrycode<<endl;
     hci<<"AreaCode:   "<<this->citycode<<endl;
@@ -7845,8 +7844,8 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, i
       //                      if (versuzahl>12) ausg<<"zu spaet, ";
       struct tm tm;
       memset(&tm, 0, sizeof(struct tm));
-      strptime(starttime.c_str(), "%a %b %d %H:%M:%S %Y", &tm);
-      strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", &tm);
+      strptime(starttime.c_str(), "%c", &tm);
+      strftime(buf, sizeof(buf), "%d.%m.%y %T", &tm);
       *ausgp<<blau<<buf<<schwarz; 
       *ausgp<<", T.: "<<blau<<setw(12)<<dialstring<<schwarz; 
       *ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
@@ -8103,7 +8102,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
     *ausgp<<blau<<buf<<"/"<<maxdials<<schwarz<<(hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
     // hier muss noch JobReqBusy, JobReqNoAnswer, JobReqNoCarrier, JobReqNoFCon, JobReqOther, JobReqProto dazu gerechnet werden
     // time_t spoolbeg=(time_t)atol(tts.c_str());
-    strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", localtime(&tts));
+    strftime(buf, sizeof(buf), "%d.%m.%y %T", localtime(&tts));
     *ausgp<<blau<<buf<<schwarz; 
     //              if (hversuzahl>12) ausg<<", zu spaet";
     *ausgp<<", T.: "<<blau<<setw(12)<<number<<schwarz;
@@ -8120,13 +8119,13 @@ void zeigversion(string& prog,string& mpfad)
   cout<<"Copyright: "<<blau<<Tx[T_Freie_Software]<<schwarz<<Tx[T_Verfasser]<<blau<<"Gerald Schade"<<schwarz<<endl;
   cout<<"Version: "<<blau<<version<<schwarz<<endl;
   memset(&tm, 0, sizeof(struct tm));
-  strptime(__TIMESTAMP__,"%a %b %d %H:%M:%S %Y", &tm);
+  strptime(__TIMESTAMP__,"%c", &tm);
   //<<tm.tm_sec<<" "<<tm.tm_min<<" "<<tm.tm_hour<<" "<<tm.tm_mday<<" "<<tm.tm_mon<<" "<<tm.tm_year<<" "<<tm.tm_wday<<" "<<tm.tm_yday<<" "<<tm.tm_isdst<<endl;
-  strftime(buf, sizeof(buf), "%d.%m.%Y %H:%M:%S", &tm);
+  strftime(buf, sizeof(buf), "%d.%m.%Y %T", &tm);
   cout<<Tx[T_Letzte_Programmaenderung]<<blau<<buf<<schwarz<<endl;
   memset(&tm, 0, sizeof(struct tm));
-  strptime((string(__DATE__)+" "+__TIME__).c_str(),"%b %d %Y %H:%M:%S", &tm);
-  strftime(buf, sizeof(buf), "%d.%m.%Y %H:%M:%S", &tm);
+  strptime((string(__DATE__)+" "+__TIME__).c_str(),"%b %d %Y %T", &tm);
+  strftime(buf, sizeof(buf), "%d.%m.%Y %T", &tm);
   cout<<"              "<<Tx[T_Kompiliert]<<blau<<buf<<schwarz<<endl;
   cout<<Tx[T_Quelle]<<blau<<"https://github.com/libelle17/"<<prog<<schwarz<<endl;
   cout<<Tx[T_Hilfe]<<braun<<"man "<<base_name(mpfad)<<schwarz<<Tx[T_or]<<braun<<"man -Lde "<<base_name(mpfad)<<schwarz<<"'"<<endl;
