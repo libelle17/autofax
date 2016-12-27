@@ -3860,11 +3860,23 @@ void paramcl::korrerfolgszeichen()
 							fdn.insert(rueck[ruecki]);
 						} 
 					}
-          cmd="sudo find '"+cdonevz+"' -maxdepth 1 -mtime -90 -iname '*-fax-*.sff' -printf '%f\\n'|cut -d- -f2,3";
+          cmd="sudo find '"+cdonevz+"' -maxdepth 1 -mtime -90 -iname '*-fax-*.sff'";//  -printf '%f\\n'";
           systemrueck(cmd,obverb,oblog,&rueck);
           for(ruecki=0;ruecki<rueck.size();ruecki++) {
 						auswe+=rueck[ruecki]+","; 
-						inse+="('"+rueck[ruecki]+"',1),";
+						string stamm,exten;
+						getstammext(&rueck[ruecki],&stamm,&exten);
+						string txtf=stamm+".txt";
+						struct stat txtstat;
+						if (!lstat(txtf.c_str(),&txtstat)) {
+						}
+						cout<<"txtf: "<<txtf<<endl;
+						string ursp=base_name(rueck[ruecki]);
+						vector<string> tok; 
+						aufSplit(&tok,&ursp,'-');
+						ursp.clear(); for(size_t j=1;j<tok.size();j++){ursp+=tok[j];if (j<tok.size()-1) ursp+="-";}
+						cout<<"ursp: "<<ursp<<endl;
+						inse+="('"+ursp+"',1),";
 					}
 					auswe[auswe.size()-1]=')';
 					inse[inse.size()-1]=';';
