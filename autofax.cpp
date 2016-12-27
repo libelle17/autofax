@@ -3878,7 +3878,7 @@ void paramcl::korrerfolgszeichen()
 							txtconf.init(6,"dialstring","starttime","tries","user","addressee","subject");
 							confdat txtcf(txtf,&txtconf,1,'='); // static wertet nichts aus
               tel=txtconf[0].wert;
-							if (strptime(txtconf[1].wert.c_str(),"%a %b %d %T %Y",&tm)) {
+							if (strptime(txtconf[1].wert.c_str(),"%c",&tm)) {
 								strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", &tm);
 								zp=buf;
 								caus<<"zp: "<<zp<<endl;
