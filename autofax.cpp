@@ -3872,7 +3872,7 @@ void paramcl::korrerfolgszeichen()
 						  caus<<gruen<<txtf<<schwarz<<endl;
 							schlArr txtconf; 
 							txtconf.init(6,"dialstring","starttime","tries","user","addressee","subject");
-							static confdat txtcf(txtf,&txtconf,1,'=');
+							confdat txtcf(txtf,&txtconf,1,'=');
 							caus<<"name:"<<txtconf[0].name<<" "<<txtconf[0].wert<<endl;
 							caus<<"name:"<<txtconf[1].name<<" "<<txtconf[1].wert<<endl;
 						}
