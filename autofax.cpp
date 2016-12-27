@@ -3850,6 +3850,9 @@ void paramcl::korrerfolgszeichen()
       set<string> fdn; // Fax-Dateien
       size_t ruecki;
 			string auswe="(", auswm="(", auswef="(",auswmf="(", inse;
+			string tel,zp,tries,user;
+			char buf[100];
+			struct tm tm;
 			switch (runde) {
         case 0: // capi
 					if (0) {
@@ -3863,6 +3866,7 @@ void paramcl::korrerfolgszeichen()
           cmd="sudo find '"+cdonevz+"' -maxdepth 1 -mtime -90 -iname '*-fax-*.sff'";//  -printf '%f\\n'";
           systemrueck(cmd,obverb,oblog,&rueck);
           for(ruecki=0;ruecki<rueck.size();ruecki++) {
+					  tel.clear();zp.clear();tries.clear();user.clear();
 						auswe+=rueck[ruecki]+","; 
 						string stamm,exten;
 						getstammext(&rueck[ruecki],&stamm,&exten);
@@ -3872,9 +3876,15 @@ void paramcl::korrerfolgszeichen()
 						  caus<<gruen<<txtf<<schwarz<<endl;
 							schlArr txtconf; 
 							txtconf.init(6,"dialstring","starttime","tries","user","addressee","subject");
-							confdat txtcf(txtf,&txtconf,1,'=');
-							caus<<"name:"<<txtconf[0].name<<" "<<txtconf[0].wert<<endl;
-							caus<<"name:"<<txtconf[1].name<<" "<<txtconf[1].wert<<endl;
+							confdat txtcf(txtf,&txtconf,1,'='); // static wertet nichts aus
+              tel=txtconf[0].wert;
+							if (strptime(txtconf[1].wert.c_str()," %a %b %m %T %Y",&tm)) {
+								strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", &tm);
+								zp=buf;
+								caus<<"zp: "<<zp<<endl;
+							}
+							caus<<txtconf[0].name<<" "<<txtconf[0].wert<<endl;
+							caus<<txtconf[1].name<<" "<<txtconf[1].wert<<endl;
 						}
 						caus<<"txtf: "<<txtf<<endl;
 						string ursp=base_name(rueck[ruecki]);
