@@ -3869,13 +3869,19 @@ void paramcl::korrerfolgszeichen()
 						string txtf=stamm+".txt";
 						struct stat txtstat;
 						if (!lstat(txtf.c_str(),&txtstat)) {
+						  caus<<gruen<<txtf<<schwarz<<endl;
+							schlArr txtconf; 
+							txtconf.init(6,"dialstring","starttime","tries","user","addressee","subject");
+							static confdat txtcf(txtf,&txtconf,obverb);
+							caus<<"dialstring: "<<txtconf[0].wert<<endl;
+							caus<<"starttime: "<<txtconf[1].wert<<endl;
 						}
-						cout<<"txtf: "<<txtf<<endl;
+						caus<<"txtf: "<<txtf<<endl;
 						string ursp=base_name(rueck[ruecki]);
 						vector<string> tok; 
 						aufSplit(&tok,&ursp,'-');
 						ursp.clear(); for(size_t j=1;j<tok.size();j++){ursp+=tok[j];if (j<tok.size()-1) ursp+="-";}
-						cout<<"ursp: "<<ursp<<endl;
+						caus<<"ursp: "<<ursp<<endl;
 						inse+="('"+ursp+"',1),";
 					}
 					auswe[auswe.size()-1]=')';
