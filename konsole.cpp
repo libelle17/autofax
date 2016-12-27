@@ -1320,6 +1320,7 @@ void confdat::auswert(schlArr *sA, int obverb, char tz)
   richtige=0;
   sA->reset();
   if (obgelesen) {
+	caus<<" nach obgelesen"<<endl;
     string ibemerk;
     for(size_t i=0;i<zn.size();i++) {
       string *zeile=&zn[i];
