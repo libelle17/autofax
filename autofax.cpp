@@ -3882,7 +3882,7 @@ void paramcl::korrerfolgszeichen()
 							schlArr txtconf; 
 							txtconf.init(6,"dialstring","starttime","tries","user","addressee","subject");
 							confdat txtcf(txtf,&txtconf,1,'='); // static wertet nichts aus
-              tel=txtconf[0].wert;
+              tel=stdfaxnr(txtconf[0].wert);
 							if (strptime(txtconf[1].wert.c_str(),"%c",&tm)) {
 								strftime(buf, sizeof(buf), "%F %T", &tm);
 								zp=buf;
