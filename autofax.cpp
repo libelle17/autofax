@@ -563,6 +563,7 @@ enum T_
 	T_holtif,
 	T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden,
 	T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden,
+	T_Folgende_Faxe_waren_falsch_als_erfolglos_eingetragen_was_korrigiert_wird,
 	T_MAX
 };
 
@@ -1601,6 +1602,9 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	// T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden,
 	{"Bei folgenden Faxen mußte das Erfolgskennzeichen gemaess Hylafax-Protkolldatei auf Erfolg gesetzt werden:",
 	 "For the following faxes, the success-flag had to be set to success following the hylfax logfile:"},
+	// T_Folgende_Faxe_waren_falsch_als_erfolglos_eingetragen_was_korrigiert_wird
+	{"Folgende Faxe waren falsch als erfolglos eingetragen, was korrigiert wird:",
+	 "The following faxes were wrongly documented as successless, which will be corrected:"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -3839,8 +3843,6 @@ int paramcl::pruefDB(const string& db)
 // wird aufgerufen in: main
 void paramcl::korrerfolgszeichen()
 {
-  obverb=1;
-	ZDB=255;
   Log(violetts+Tx[T_korrerfolgszeichen]+schwarz,obverb,oblog);
   // geht wegen Loeschens der Protokolldateien nur (noch) fuer Gefundene, s.u.
   if (1) {
@@ -3850,7 +3852,7 @@ void paramcl::korrerfolgszeichen()
       set<string> fdn; // Fax-Dateien
       size_t ruecki;
 			string auswe="(", auswm="(", auswef="(",auswmf="(", inse;
-			string tel,zp,tries,user;
+			string teln,zp,tries,user;
 			size_t size;
 			char buf[100];
 			struct tm tm;
@@ -3863,11 +3865,11 @@ void paramcl::korrerfolgszeichen()
 						for(ruecki=0;ruecki<rueck.size();ruecki++) {
 							fdn.insert(rueck[ruecki]);
 						} 
-					}
+					} // if (0)
           cmd="sudo find '"+cdonevz+"' -maxdepth 1 -mtime -90 -iname '*-fax-*.sff'";//  -printf '%f\\n'";
           systemrueck(cmd,obverb,oblog,&rueck);
           for(ruecki=0;ruecki<rueck.size();ruecki++) {
-					  tel.clear();zp.clear();tries.clear();user.clear();size=0;
+					  teln.clear();zp.clear();tries.clear();user.clear();size=0;
 						struct stat sffstat;
 						if (!lstat(rueck[ruecki].c_str(),&sffstat)) {
 						 size=sffstat.st_size;
@@ -3878,39 +3880,53 @@ void paramcl::korrerfolgszeichen()
 						string txtf=stamm+".txt";
 						struct stat txtstat;
 						if (!lstat(txtf.c_str(),&txtstat)) {
-						  caus<<gruen<<txtf<<schwarz<<endl;
+						  // <<gruen<<txtf<<schwarz<<endl;
 							schlArr txtconf; 
 							txtconf.init(6,"dialstring","starttime","tries","user","addressee","subject");
-							confdat txtcf(txtf,&txtconf,1,'='); // static wertet nichts aus
-              tel=stdfaxnr(txtconf[0].wert);
+							confdat txtcf(txtf,&txtconf,obverb,'='); // static wertet nichts aus
+              teln=stdfaxnr(txtconf[0].wert);
 							if (strptime(txtconf[1].wert.c_str(),"%c",&tm)) {
 								strftime(buf, sizeof(buf), "%F %T", &tm);
 								zp=buf;
-							}
+							} // 							if (strptime(txtconf[1].wert.c_str(),"%c",&tm))
 							tries=txtconf[2].wert;
 							user=txtconf[3].wert;
-						}
-						caus<<"txtf: "<<txtf<<endl;
+						} // 						if (!lstat(txtf.c_str(),&txtstat))
+						// <<"txtf: "<<txtf<<endl;
 						string ursp=base_name(rueck[ruecki]);
 						vector<string> tok; 
 						aufSplit(&tok,&ursp,'-');
 						ursp.clear(); for(size_t j=1;j<tok.size();j++){ursp+=tok[j];if (j<tok.size()-1) ursp+="-";}
-						caus<<"ursp: "<<ursp<<endl;
-						inse+="('"+ursp+"',"+tel+",'"+zp+"',"+tries+","+ltoan(size)+",1),";
-					}
+						// <<"ursp: "<<ursp<<endl;
+						inse+="('"+ursp+"','"+teln+"','"+zp+"',"+tries+","+ltoan(size)+",1),";
+					} //           for(ruecki=0;ruecki<rueck.size();ruecki++)
 					auswe[auswe.size()-1]=')';
 					inse[inse.size()-1]=';';
 					if (inse.size()>1) {
 						//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 						RS vgl1(My,"DROP TABLE IF EXISTS tmpc",ZDB);
-						RS vgl2(My,"CREATE TABLE tmpc(submid VARCHAR(25) KEY,tel VARCHAR(25),zp DATETIME, tries INT, size INT(15), erfolg INT);",ZDB);
+						RS vgl2(My,"CREATE TABLE tmpc(submid VARCHAR(25) KEY,teln VARCHAR(25),zp DATETIME, tries INT, size INT(15), erfolg INT);",ZDB);
 						RS vgl3(My,"INSERT INTO tmpc VALUES "+inse,ZDB);
-						// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, und zu denen nicht bereits eine erfolgreiche
-						// capisuite-Uebertragung eingetragen ist
-						RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpt t "
-								"LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
+						// die laut tmpc uebermittelten Faxe, die in outa als Mißerfolg eintragen sind
+						char ***cerg;
+						RS kor1(My,"SELECT t.submid p0, t.teln p1, t.zp p2, a.submt p3, t.tries p4, t.size p5, a.docname p6 "
+								"FROM `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid WHERE a.erfolg=0",ZDB);
+						cout<<violett<<Tx[T_Folgende_Faxe_waren_falsch_als_erfolglos_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
+						cout<<schwarz<<setw(14)<<"submid"<<"|"<<setw(15)<<"tel'n."<<"|"<<setw(19)<<"zp"<<"|"
+							<<setw(19)<<"submt"<<"|"<<setw(5)<<"tries"<<"|"<<setw(10)<<"size"<<"|"<<"docname"<<schwarz<<endl;
+						while (cerg=kor1.HolZeile(),cerg?*cerg:0) {
+							cout<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(15)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"<<schwarz<<setw(17)
+							<<*(*cerg+3)<<"|"<<blau<<setw(5)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+5)<<"|"<<blau<<string(*(*cerg+6)).substr(0,67)<<endl;
+						} // while (cerg=kor1.HolZeile(),cerg?*cerg:0) 
+
+						// die laut tmpc uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
+						// und zu denen nicht bereits eine erfolgreiche hylafax-Uebertragung eingetragen ist
+						/*
+							 RS ntr(My,"SELECT t.submid p0,t.teln p1,a.original p2,unix_timestamp(t.zp) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpc t "
+							 "LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
 								"LEFT JOIN outa o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
-					}
+								*/
+					} // 					if (inse.size()>1)
           break;
         default: // hyla
           //        fdn.clear();
@@ -4230,8 +4246,8 @@ void paramcl::tu_lista(const string& oberfolg, const string& submids)
 	RS lista(My,string("SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM (")+
 			"SELECT * FROM ("
 			"SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
-			"RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe FROM `"+
-			touta+"` WHERE "+(submids.empty()?"Erfolg = "+oberfolg+" ":"submid in "+submids+" ")+
+			"RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe "
+			"FROM `"+touta+"` WHERE "+(submids.empty()?"Erfolg = "+oberfolg+" ":"submid in "+submids+" ")+
 			" ORDER BY transe DESC"+(submids.empty()?" LIMIT "+dszahl:"")+") i "
 			" ORDER BY transe LIMIT 18446744073709551615) i",ZDB);
 
@@ -4271,8 +4287,8 @@ void paramcl::suchestr()
 		RS lista(My,string("SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM (")+
 				"SELECT * FROM ("
 				"SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
-				"RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe FROM `"+
-				touta+"` WHERE Erfolg = "+oberfolg+" AND (Docname LIKE"+scnv+"OR rcname LIKE"+scnv+"OR rcfax LIKE"+scnv+""
+				"RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe "
+				"FROM `"+touta+"` WHERE Erfolg = "+oberfolg+" AND (Docname LIKE"+scnv+"OR rcname LIKE"+scnv+"OR rcfax LIKE"+scnv+""
 				"OR submid LIKE"+scnv+"OR transe LIKE CONVERT(\"%"+suchstr+"%\" USING utf8)) "
 				" ORDER BY transe DESC LIMIT "+dszahl+") i "
 				" ORDER BY transe LIMIT 18446744073709551615) i",ZDB);
@@ -5240,7 +5256,7 @@ void paramcl::bereinigecapi()
 		string zugeh=stamm+".sff";
 		if (lstat(zugeh.c_str(),&entryvz)) {
 			string base=base_name(zugeh);
-			RS inouta(My,string("SELECT submid FROM `")+touta+"` WHERE submid = '"+base+"'",ZDB);
+			RS inouta(My,"SELECT submid FROM `"+touta+"` WHERE submid = '"+base+"'",ZDB);
 			if (inouta.num_rows) {
 				Log(blaus+Tx[T_Verwaiste_Datei]+gruen+rueck[i]+schwarz+Tx[T_geloescht_Fax_schon_in]+gruen+touta+schwarz+
 						Tx[T_archiviert_Ausrufezeichen],1,1);
@@ -5336,11 +5352,11 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 				RS vgl1(My,"DROP TABLE IF EXISTS tmpt",ZDB);
 				RS vgl2(My,"CREATE TABLE tmpt(submid VARCHAR(11) KEY,Datum DATETIME,tel VARCHAR(30),pages INT,attr VARCHAR(20),erfolg INT);",ZDB);
 				RS vgl3(My,"INSERT INTO tmpt VALUES "+inse,ZDB);
-				// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, und zu denen nicht bereits eine erfolgreiche
-				// capisuite-Uebertragung eingetragen ist
+				// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
+				// und zu denen nicht bereits eine erfolgreiche capisuite-Uebertragung eingetragen ist
 				RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpt t "
-						"LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
-						"LEFT JOIN outa o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
+						"LEFT JOIN `"+touta+"` o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
+						"LEFT JOIN `"+touta+"` o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
 				char ***cerg;
 				size_t znr=0;
 				while (cerg=ntr.HolZeile(),cerg?*cerg:0) {
@@ -7456,10 +7472,11 @@ void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnam
     string trimfaxnr=pmp->stdfaxnr(faxnr);
     // vor den angegebenen SQL-Befehlen nachschauen, wie die gesandten Faxe benannt wurden
     string **locsqlp=new string*[pmp->sqlzn+1];
-    string sql0=string("SELECT adressat, titel FROM `")+pmp->touta+
-      "` WHERE rcfax" // stdfaxnr(rcfax,"+pmp->InternationalPrefix+","+pmp->LongDistancePrefix+","+pmp->countrycode+","+pmp->citycode+")"
-                        "='&&faxnr&&' ORDER BY subMT DESC";
-    locsqlp[0]=&sql0;
+    string sql0="SELECT adressat, titel "
+		"FROM `"+pmp->touta+"` WHERE rcfax"
+		//stdfaxnr(rcfax,"+pmp->InternationalPrefix+","+pmp->LongDistancePrefix+","+pmp->countrycode+","+pmp->citycode+")"
+		"='&&faxnr&&' ORDER BY subMT DESC";
+		locsqlp[0]=&sql0;
     for(size_t snr=0;snr<pmp->sqlzn;snr++) {
       locsqlp[snr+1]=&(pmp->sqlconf)[snr].wert;
     }
