@@ -564,6 +564,7 @@ enum T_
 	T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden,
 	T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden,
 	T_Folgende_Faxe_waren_falsch_als_erfolglos_eingetragen_was_korrigiert_wird,
+	T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird,
 	T_MAX
 };
 
@@ -1601,10 +1602,13 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	 "For the following faxes, the success-flag had to be set to failure following the hylfax logfile:"},
 	// T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden,
 	{"Bei folgenden Faxen mußte das Erfolgskennzeichen gemaess Hylafax-Protkolldatei auf Erfolg gesetzt werden:",
-	 "For the following faxes, the success-flag had to be set to success following the hylfax logfile:"},
+	 "For the following faxes, the success-flag had to be set to success following the hylafax logfile:"},
 	// T_Folgende_Faxe_waren_falsch_als_erfolglos_eingetragen_was_korrigiert_wird
 	{"Folgende Faxe waren falsch als erfolglos eingetragen, was korrigiert wird:",
 	 "The following faxes were wrongly documented as successless, which will be corrected:"},
+	// T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird
+	{"Folgende Faxe waren nicht eingetragen, was korrigiert wird:",
+	 "The following faxes from the hylafax logfile have not been documented, which will be corrected:"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -3911,13 +3915,36 @@ void paramcl::korrerfolgszeichen()
 						char ***cerg;
 						RS kor1(My,"SELECT t.submid p0, t.teln p1, t.zp p2, a.submt p3, t.tries p4, t.size p5, a.docname p6 "
 								"FROM `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid WHERE a.erfolg=0",ZDB);
-						cout<<violett<<Tx[T_Folgende_Faxe_waren_falsch_als_erfolglos_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
-						cout<<schwarz<<setw(14)<<"submid"<<"|"<<setw(15)<<"tel'n."<<"|"<<setw(19)<<"zp"<<"|"
-							<<setw(19)<<"submt"<<"|"<<setw(5)<<"tries"<<"|"<<setw(10)<<"size"<<"|"<<"docname"<<schwarz<<endl;
-						while (cerg=kor1.HolZeile(),cerg?*cerg:0) {
-							cout<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(15)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"<<schwarz<<setw(17)
-							<<*(*cerg+3)<<"|"<<blau<<setw(5)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+5)<<"|"<<blau<<string(*(*cerg+6)).substr(0,67)<<endl;
-						} // while (cerg=kor1.HolZeile(),cerg?*cerg:0) 
+						if (!kor1.obfehl) {
+							size_t zru=0;
+							while (cerg=kor1.HolZeile(),cerg?*cerg:0) {
+								if (!zru++) {
+									cout<<violett<<Tx[T_Folgende_Faxe_waren_falsch_als_erfolglos_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
+									cout<<schwarz<<setw(14)<<"submid"<<"|"<<setw(15)<<"tel'n."<<"|"<<setw(19)<<"zp"<<"|"
+										<<setw(19)<<"submt"<<"|"<<setw(5)<<"tries"<<"|"<<setw(10)<<"size"<<"|"<<"docname"<<schwarz<<endl;
+								}
+								cout<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(15)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"<<schwarz<<setw(17)
+									<<*(*cerg+3)<<"|"<<blau<<setw(5)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+5)<<"|"<<blau<<string(*(*cerg+6)).substr(0,67)<<endl;
+							} // while (cerg=kor1.HolZeile(),cerg?*cerg:0) 
+							RS kor2(My,"UPDATE `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid SET a.erfolg=1 where a.erfolg=0",ZDB);
+						} // 						if (!kor1.obfehl) 
+						RS kor3(My,"SELECT t.submid p0, t.teln p1, t.zp p2, t.tries p4, t.size p5 "
+								"FROM `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid WHERE ISNULL(a.erfolg)",ZDB);
+						if (!kor3.obfehl) {
+						size_t zru=0;
+						while (cerg=kor3.HolZeile(),cerg?*cerg:0) {
+							if (!zru++) {
+								cout<<violett<<Tx[T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
+								cout<<schwarz<<setw(14)<<"submid"<<"|"<<setw(15)<<"tel'n."<<"|"<<setw(19)<<"zp"<<"|"
+									<<setw(5)<<"tries"<<"|"<<setw(10)<<"size"<<schwarz<<endl;
+							}
+							cout<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(15)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"<<schwarz<<setw(5)
+								<<*(*cerg+3)<<"|"<<violett<<setw(10)<<*(*cerg+4)<<endl;
+						} // while (cerg=kor3.HolZeile(),cerg?*cerg:0) 
+						RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,fsize,retries,rcfax) "
+								"SELECT t.erfolg,t.zp,t.zp,t.submid,t.size,t.tries,t.teln FROM tmpc t LEFT JOIN `"+touta+"` o ON a.submid=t.submid "
+								"WHERE ISNULL(a.erfolg)",ZDB);
+						} // 						if (!kor3.obfehl)
 
 						// die laut tmpc uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
 						// und zu denen nicht bereits eine erfolgreiche hylafax-Uebertragung eingetragen ist
@@ -4280,6 +4307,7 @@ void paramcl::tu_listi()
 // wird aufgerufen in: main
 void paramcl::suchestr()
 {
+	Log(violetts+Tx[T_suchestr]+schwarz,obverb,oblog);
 	string scnv=" CONVERT(\"%"+suchstr+"%\" USING utf8) ";
 	for(int erf=1;erf>=0;erf--) {
 		string oberfolg=ltoan(erf);
@@ -4289,7 +4317,7 @@ void paramcl::suchestr()
 				"SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
 				"RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe "
 				"FROM `"+touta+"` WHERE Erfolg = "+oberfolg+" AND (Docname LIKE"+scnv+"OR rcname LIKE"+scnv+"OR rcfax LIKE"+scnv+""
-				"OR submid LIKE"+scnv+"OR transe LIKE CONVERT(\"%"+suchstr+"%\" USING utf8)) "
+				"OR submid LIKE"+scnv+" OR transe LIKE CONVERT(\"%"+suchstr+"%\" USING utf8)) "
 				" ORDER BY transe DESC LIMIT "+dszahl+") i "
 				" ORDER BY transe LIMIT 18446744073709551615) i",ZDB);
 		ulong zeile=0;
