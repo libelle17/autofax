@@ -3942,7 +3942,7 @@ void paramcl::korrerfolgszeichen()
 								<<*(*cerg+3)<<"|"<<violett<<setw(10)<<*(*cerg+4)<<endl;
 						} // while (cerg=kor3.HolZeile(),cerg?*cerg:0) 
 						RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,fsize,retries,rcfax) "
-								"SELECT t.erfolg,t.zp,t.zp,t.submid,t.size,t.tries,t.teln FROM tmpc t LEFT JOIN `"+touta+"` o ON a.submid=t.submid "
+								"SELECT t.erfolg,t.zp,t.zp,t.submid,t.size,t.tries,t.teln FROM tmpc t LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
 								"WHERE ISNULL(a.erfolg)",ZDB);
 						} // 						if (!kor3.obfehl)
 
