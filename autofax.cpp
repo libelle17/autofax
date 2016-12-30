@@ -4601,7 +4601,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 		svec rueck;
 		if (pseitenp) {
 			// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
-			linst.doinst("poppler-tools",obverb+1,oblog,"pdfinfo");
+			linst.doinst("poppler-tools",obverb,oblog,"pdfinfo");
 			systemrueck("pdfinfo \""+ziel+"\"|grep Pages|sed 's/[^ ]*[ ]*\\(.*\\)/\\1/'",obverb,oblog,&rueck);
 			if (rueck.size()) {
 				Log("PDF: "+blaus+ziel+": "+gruen+rueck[0]+schwarz+Tx[T_Seiten],obverb,oblog);
