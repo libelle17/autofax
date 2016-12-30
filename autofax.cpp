@@ -347,7 +347,7 @@ enum T_
   T_clieskonf,
   T_verzeichnisse,
   T_pruefcron,
-  T_korrerfolgszeichen,
+  T_korrigierecapi,
   T_bereinigewv,
   T_anhalten,
   T_loeschefax,
@@ -563,8 +563,9 @@ enum T_
 	T_holtif,
 	T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden,
 	T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden,
-	T_Folgende_Faxe_waren_falsch_als_erfolglos_eingetragen_was_korrigiert_wird,
+	T_Folgende_Faxe_waren_mit_falschem_Erfolgskennzeichen_eingetragen_was_korrigiert_wird,
 	T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird,
+	T_Faxnr,
 	T_MAX
 };
 
@@ -1154,8 +1155,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"verzeichnisse()","directories()"},
   // T_pruefcron
   {"pruefcron()","checkcron()"},
-  // T_korrerfolgszeichen
-  {"korrerfolgszeichen()","correctwrongsuccessflag()"},
+  // T_korrigierecapi
+  {"korrigierecapi()","correctcapi()"},
   // T_bereinigewv
   {"bereinigewv()","purgewaitingdirectory()"},
   // T_anhalten
@@ -1594,7 +1595,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	// T_sammlehyla
 	{"sammlehyla()","collecthyla()"},
 	// T_sammlefertigehyla
-	{"sammlefertigehyla()","collectfinishedhyla()"},
+	{"korrigierehyla()","correcthyla()"},
 	// T_holtif
 	{"holtif()","gettif()"},
 	// T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden
@@ -1603,12 +1604,14 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	// T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden,
 	{"Bei folgenden Faxen mußte das Erfolgskennzeichen gemaess Hylafax-Protkolldatei auf Erfolg gesetzt werden:",
 	 "For the following faxes, the success-flag had to be set to success following the hylafax logfile:"},
-	// T_Folgende_Faxe_waren_falsch_als_erfolglos_eingetragen_was_korrigiert_wird
-	{"Folgende Faxe waren falsch als erfolglos eingetragen, was korrigiert wird:",
-	 "The following faxes were wrongly documented as successless, which will be corrected:"},
+	// T_Folgende_Faxe_waren_mit_falschem_Erfolgskennzeichen_eingetragen_was_korrigiert_wird
+	{"Folgende Faxe waren mit falschem Erfolgskennzeichen eingetragen, was korrigiert wird:",
+	 "The following faxes were documented with wrong success flag, which will be corrected:"},
 	// T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird
 	{"Folgende Faxe waren nicht eingetragen, was korrigiert wird:",
 	 "The following faxes from the hylafax logfile have not been documented, which will be corrected:"},
+	// T_Faxnr
+	{"Faxnr.","fax no."},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -1689,7 +1692,7 @@ inline const char* FxStatS(FxStat *i)
 } // FxStatS
 
 //archiviert den Datensatz
-// wird aufgerufen in: untersuchespool, sammlefertigehyla
+// wird aufgerufen in: untersuchespool, korrigierehyla
 void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgescheitert, FaxTyp ftyp, uchar *geloeschtp, int obverb, int oblog)
 {
 //  string nob=ltoan((int)!obgescheitert);
@@ -2170,8 +2173,8 @@ void paramcl::pruefisdn()
 int paramcl::setzhylavz()
 {
   Log(violetts+Tx[T_setzhylavz]+schwarz,obverb,oblog);
-  // wird fruehestens in korrerfolgszeichen benoetigt
-  // varsphylavz wird benoetigt in: korrerfolgszeichen, untersuchespool, hfaxsetup(pruefhyla), pruefhyla, hylaausgeb(untersuchespool,zeigweitere)
+  // wird fruehestens in korrigierecapi benoetigt
+  // varsphylavz wird benoetigt in: korrigierecapi, untersuchespool, hfaxsetup(pruefhyla), pruefhyla, hylaausgeb(untersuchespool,zeigweitere)
   // hsendqvz wird benoetigt in: loescheallewartende, loeschewaise, zeigweitere, inDBh(faxemitH)
   const char* testcmd="/bin/faxrcvd";
   int fundart=0;
@@ -3845,9 +3848,9 @@ int paramcl::pruefDB(const string& db)
 
 // Parameter -kez
 // wird aufgerufen in: main
-void paramcl::korrerfolgszeichen()
+void paramcl::korrigierecapi()
 {
-  Log(violetts+Tx[T_korrerfolgszeichen]+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_korrigierecapi]+schwarz,obverb,oblog);
   // geht wegen Loeschens der Protokolldateien nur (noch) fuer Gefundene, s.u.
   if (1) {
     for(uchar runde=0;runde<1;runde++) {
@@ -3870,40 +3873,43 @@ void paramcl::korrerfolgszeichen()
 							fdn.insert(rueck[ruecki]);
 						} 
 					} // if (0)
-          cmd="sudo find '"+cdonevz+"' -maxdepth 1 -mtime -90 -iname '*-fax-*.sff'";//  -printf '%f\\n'";
-          systemrueck(cmd,obverb,oblog,&rueck);
-          for(ruecki=0;ruecki<rueck.size();ruecki++) {
-					  teln.clear();zp.clear();tries.clear();user.clear();size=0;
-						struct stat sffstat;
-						if (!lstat(rueck[ruecki].c_str(),&sffstat)) {
-						 size=sffstat.st_size;
-						}
-						auswe+=rueck[ruecki]+","; 
-						string stamm,exten;
-						getstammext(&rueck[ruecki],&stamm,&exten);
-						string txtf=stamm+".txt";
-						struct stat txtstat;
-						if (!lstat(txtf.c_str(),&txtstat)) {
-						  // <<gruen<<txtf<<schwarz<<endl;
-							schlArr txtconf; 
-							txtconf.init(6,"dialstring","starttime","tries","user","addressee","subject");
-							confdat txtcf(txtf,&txtconf,obverb,'='); // static wertet nichts aus
-              teln=stdfaxnr(txtconf[0].wert);
-							if (strptime(txtconf[1].wert.c_str(),"%c",&tm)) {
-								strftime(buf, sizeof(buf), "%F %T", &tm);
-								zp=buf;
-							} // 							if (strptime(txtconf[1].wert.c_str(),"%c",&tm))
-							tries=txtconf[2].wert;
-							user=txtconf[3].wert;
-						} // 						if (!lstat(txtf.c_str(),&txtstat))
-						// <<"txtf: "<<txtf<<endl;
-						string ursp=base_name(rueck[ruecki]);
-						vector<string> tok; 
-						aufSplit(&tok,&ursp,'-');
-						ursp.clear(); for(size_t j=1;j<tok.size();j++){ursp+=tok[j];if (j<tok.size()-1) ursp+="-";}
-						// <<"ursp: "<<ursp<<endl;
-						inse+="('"+ursp+"','"+teln+"','"+zp+"',"+tries+","+ltoan(size)+",1),";
-					} //           for(ruecki=0;ruecki<rueck.size();ruecki++)
+					for(int cru=0;cru<2;cru++) {
+            rueck.clear();
+						cmd="sudo find '"+(cru?cdonevz:cfailedvz)+"' -maxdepth 1 -mtime -90 -iname '*-fax-*.sff'";//  -printf '%f\\n'";
+						systemrueck(cmd,obverb,oblog,&rueck);
+						for(ruecki=0;ruecki<rueck.size();ruecki++) {
+							teln.clear();zp.clear();tries.clear();user.clear();size=0;
+							struct stat sffstat;
+							if (!lstat(rueck[ruecki].c_str(),&sffstat)) {
+								size=sffstat.st_size;
+							}
+							auswe+=rueck[ruecki]+","; 
+							string stamm,exten;
+							getstammext(&rueck[ruecki],&stamm,&exten);
+							string txtf=stamm+".txt";
+							struct stat txtstat;
+							if (!lstat(txtf.c_str(),&txtstat)) {
+								// <<gruen<<txtf<<schwarz<<endl;
+								schlArr txtconf; 
+								txtconf.init(6,"dialstring","starttime","tries","user","addressee","subject");
+								confdat txtcf(txtf,&txtconf,obverb,'='); // static wertet nichts aus
+								teln=stdfaxnr(txtconf[0].wert);
+								if (strptime(txtconf[1].wert.c_str(),"%c",&tm)) {
+									strftime(buf, sizeof(buf), "%F %T", &tm);
+									zp=buf;
+								} // 							if (strptime(txtconf[1].wert.c_str(),"%c",&tm))
+								tries=txtconf[2].wert;
+								user=txtconf[3].wert;
+							} // 						if (!lstat(txtf.c_str(),&txtstat))
+							// <<"txtf: "<<txtf<<endl;
+							string ursp=base_name(rueck[ruecki]);
+							vector<string> tok; 
+							aufSplit(&tok,&ursp,'-');
+							ursp.clear(); for(size_t j=1;j<tok.size();j++){ursp+=tok[j];if (j<tok.size()-1) ursp+="-";}
+							// <<"ursp: "<<ursp<<endl;
+							inse+="('"+ursp+"','"+teln+"','"+zp+"',"+tries+","+ltoan(size)+","+(cru?"1":"0")+"),";
+						} //           for(ruecki=0;ruecki<rueck.size();ruecki++)
+					} // 					for(uchar cru=0;cru<2;cru++)
 					auswe[auswe.size()-1]=')';
 					inse[inse.size()-1]=';';
 					if (inse.size()>1) {
@@ -3913,37 +3919,38 @@ void paramcl::korrerfolgszeichen()
 						RS vgl3(My,"INSERT INTO tmpc VALUES "+inse,ZDB);
 						// die laut tmpc uebermittelten Faxe, die in outa als Mißerfolg eintragen sind
 						char ***cerg;
-						RS kor1(My,"SELECT t.submid p0, t.teln p1, t.zp p2, a.submt p3, t.tries p4, t.size p5, a.docname p6 "
-								"FROM `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid WHERE a.erfolg=0",ZDB);
+						RS kor1(My,"SELECT t.submid p0, t.teln p1, t.zp p2, a.submt p3, t.tries p4, t.erfolg p6, t.size p6, a.docname p7 "
+								"FROM `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid WHERE a.erfolg<>t.erfolg",ZDB);
 						if (!kor1.obfehl) {
 							size_t zru=0;
 							while (cerg=kor1.HolZeile(),cerg?*cerg:0) {
 								if (!zru++) {
-									cout<<violett<<Tx[T_Folgende_Faxe_waren_falsch_als_erfolglos_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
-									cout<<schwarz<<setw(14)<<"submid"<<"|"<<setw(15)<<"tel'n."<<"|"<<setw(19)<<"zp"<<"|"
-										<<setw(19)<<"submt"<<"|"<<setw(5)<<"tries"<<"|"<<setw(10)<<"size"<<"|"<<"docname"<<schwarz<<endl;
-								}
-								cout<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(15)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"<<schwarz<<setw(17)
-									<<*(*cerg+3)<<"|"<<blau<<setw(5)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+5)<<"|"<<blau<<string(*(*cerg+6)).substr(0,67)<<endl;
+									cout<<violett<<Tx[T_Folgende_Faxe_waren_mit_falschem_Erfolgskennzeichen_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
+									cout<<schwarz<<setw(14)<<"submid"<<"|"<<setw(15)<<Tx[T_Faxnr]<<"|"<<setw(19)<<"zp"<<"|"
+										<<setw(19)<<"submt"<<"|"<<setw(5)<<"tries"<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<"size"<<"|"<<"docname"<<schwarz<<endl;
+								} // 								if (!zru++)
+								cout<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(15)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"
+									<<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<setw(5)<<*(*cerg+4)<<"|"<<violett<<setw(6)<<*(*cerg+5)<<"|"
+									<<blau<<setw(10)<<*(*cerg+6)<<"|"<<violett<<string(*(*cerg+7)).substr(0,60)<<endl;
 							} // while (cerg=kor1.HolZeile(),cerg?*cerg:0) 
-							RS kor2(My,"UPDATE `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid SET a.erfolg=1 where a.erfolg=0",ZDB);
+							RS kor2(My,"UPDATE `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid SET a.erfolg=t.erfolg where a.erfolg<>t.erfolg",ZDB);
 						} // 						if (!kor1.obfehl) 
-						RS kor3(My,"SELECT t.submid p0, t.teln p1, t.zp p2, t.tries p4, t.size p5 "
+						RS kor3(My,"SELECT t.submid p0, t.teln p1, t.zp p2, t.tries p3, t.erfolg p4, t.size p5 "
 								"FROM `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid WHERE ISNULL(a.erfolg)",ZDB);
 						if (!kor3.obfehl) {
 						size_t zru=0;
 						while (cerg=kor3.HolZeile(),cerg?*cerg:0) {
 							if (!zru++) {
 								cout<<violett<<Tx[T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
-								cout<<schwarz<<setw(14)<<"submid"<<"|"<<setw(15)<<"tel'n."<<"|"<<setw(19)<<"zp"<<"|"
-									<<setw(5)<<"tries"<<"|"<<setw(10)<<"size"<<schwarz<<endl;
-							}
-							cout<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(15)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"<<schwarz<<setw(5)
-								<<*(*cerg+3)<<"|"<<violett<<setw(10)<<*(*cerg+4)<<endl;
+								cout<<schwarz<<setw(14)<<"submid"<<"|"<<setw(25)<<"tel'n."<<"|"<<setw(19)<<"zp"<<"|"
+									<<setw(5)<<"tries"<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<"size"<<schwarz<<endl;
+							} // 							if (!zru++)
+							cout<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(25)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"
+							<<violett<<setw(5)<<*(*cerg+3)<<"|"<<blau<<setw(6)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+4)<<endl;
 						} // while (cerg=kor3.HolZeile(),cerg?*cerg:0) 
 						RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,fsize,retries,rcfax) "
 								"SELECT t.erfolg,t.zp,t.zp,t.submid,t.size,t.tries,t.teln FROM tmpc t LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
-								"WHERE ISNULL(a.erfolg)",ZDB);
+								"WHERE ISNULL(a.submid)",ZDB);
 						} // 						if (!kor3.obfehl)
 
 						// die laut tmpc uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
@@ -3996,9 +4003,7 @@ void paramcl::korrerfolgszeichen()
 			} // if (0)
     } // for(uchar runde=1;runde<2;runde++) 
   } // if (0) 
-	obverb=0;
-	ZDB=0;
-} // korrerfolgszeichen
+} // korrigierecapi
 
 // Parameter -bwv
 // wird aufgerufen in: main
@@ -5203,6 +5208,7 @@ void paramcl::zeigweitere()
 	static int obtitel=0;
 	stringstream ausg; //      ausg.str(std::string()); ausg.clear();
 	if (obcapi) {
+	  korrigierecapi();
 		vector<fsfcl> fsfv;
 		sammlecapi(&fsfv);
 		for(size_t i=0;i<fsfv.size();i++) {
@@ -5214,8 +5220,7 @@ void paramcl::zeigweitere()
 		} //     for(size_t i=0;i<fsfv.size();i++)
 	} // if (obcapi)
 	if (obhyla) {
-		vector<fsfcl> fsfv2;
-		sammlefertigehyla(&fsfv2); // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
+		korrigierehyla(); // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
 		vector<fsfcl> fsfv;
 		sammlehyla(&fsfv);
 		for(size_t i=0;i<fsfv.size();i++) {
@@ -5330,7 +5335,7 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 } // void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 
 // aufgerufen in: zeigweitere
-void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
+void paramcl::korrigierehyla()
 {
 	Log(violetts+Tx[T_sammlefertigehyla]+schwarz,obverb,oblog);
 	if (!xferfaxlog.empty()) {
@@ -5462,7 +5467,7 @@ void paramcl::sammlefertigehyla(vector<fsfcl> *fsfvp)
 			// KLZ
 		} // if (!lstat(hsendqvz.c_str(),&entryvz))
 	} // 	if (!xferfaxlog.empty())
-} // void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
+} // void paramcl::korrigierehyla()
 
 // aufgerufen in: empfarch, zupdf
 int paramcl::holtif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elogp, string *absdrp,string *tsidp,string *calleridp,string *devnamep,int obverb,int oblog)
@@ -8240,7 +8245,8 @@ int main(int argc, char** argv)
   pruefudoc(pm.My,pm.tudoc, pm.obverb,pm.oblog);
   pruefinctab(pm.My,pm.tinca, pm.obverb,pm.oblog);
   if (pm.kez) {
-    pm.korrerfolgszeichen();
+    pm.korrigierecapi();
+    pm.korrigierehyla();
   } else if (pm.bwv) {
     pm.bereinigewv();
   } else if (pm.anhl) {

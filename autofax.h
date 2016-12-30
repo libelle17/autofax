@@ -342,7 +342,6 @@ class paramcl // Programmparameter
     int  initDB();
     int  pruefDB(const string& db);
 
-    void korrerfolgszeichen();
     void bereinigewv();
     void anhalten();
     void tu_lista(const string& oberfolg,const string& submids=nix);
@@ -372,7 +371,8 @@ class paramcl // Programmparameter
     void zeigweitere();
     void sammlecapi(vector<fsfcl> *fsfvp);
     void sammlehyla(vector<fsfcl> *fsfvp);
-    void sammlefertigehyla(vector<fsfcl> *fsfvp);
+    void korrigierecapi();
+    void korrigierehyla();
     void empfarch();
     void schlussanzeige();
     void autofkonfschreib();
