@@ -5414,11 +5414,12 @@ void paramcl::korrigierehyla()
 					// <<"vor archiviere, telnr: "<<fsf.telnr<<" tts: "<<fsf.tts<<" hdd: "<<fsf.hdd<<" original: "<<fsf.original<<
 					//                           " hdd: "<<fsf.hdd<<" idudoc: "<<fsf.idudoc<<endl;
 					fsf.archiviere(My,this,&entrys,0,hyla,0,obverb,oblog);
-				}
+				} // 				while (cerg=ntr.HolZeile(),cerg?*cerg:0)
 				//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_OFF);
-			}
+			} // 			if (inse.size()>1)
 			// "select tmpt.i,submid,erfolg,outa.* from tmpt left join outa on tmpt.i=outa.submid
-			// select t.*,a.capispooldatei,o2.erfolg, o2.submid from tmpt t left join outa o on t.submid = o.submid left join altspool a on a.hylanr = t.submid left join outa o2 on a.capispooldatei=o2.submid where isnull(o.submid);
+			// select t.*,a.capispooldatei,o2.erfolg, o2.submid from tmpt t left join outa o on t.submid = o.submid 
+			// left join altspool a on a.hylanr = t.submid left join outa o2 on a.capispooldatei=o2.submid where isnull(o.submid);
 			char ***cerg;
 			size_t cergz=0;
 			if (auswe.size()>1) {
@@ -8270,7 +8271,9 @@ int main(int argc, char** argv)
     //  int qerg = mysql_query(My.conn,proc.c_str());
     // 1) nicht-pdf-Dateien in pdf umwandeln, 2) pdf-Dateien wegfaxen, 3) alle in warte-Verzeichnis kopieren, 4) in Spool-Tabelle eintragen
     //  vector<string> npdf, spdf;
-    pm.DateienHerricht();  
+		if (!(pm.loef||pm.loew||pm.loea)) {
+			pm.DateienHerricht();  
+		}
     if (pm.obfcard) if (pm.obcapi) pm.obcapi= !pm.pruefcapi();
     if (pm.obmodem) if (pm.obhyla) pm.obhyla= !pm.pruefhyla();
     Log(Tx[T_Verwende]+blaus+(pm.obcapi?"Capisuite":"")+schwarz+(pm.obcapi&&pm.obhyla?", ":"")+blau+(pm.obhyla?"Hylafax":"")+schwarz+
