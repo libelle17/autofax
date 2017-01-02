@@ -81,8 +81,8 @@ weiter: compiler $(EXEC) README.md fertig
 # xclip -sel clip < ~/.ssh/id_rsa_git.pub
 # auf http://github.com -> view profile and more -> settings -> SSH and GPG keys -> New SSH key <Titel> <key> einfuegen
 git:
-#	@git config --global user.name "Gerald Schade"
-#	@git config --global user.email "gerald.schade@gmx.de"
+	@git config --global user.name "Gerald Schade"
+	@git config --global user.email "gerald.schade@gmx.de"
 	@git config --global push.default simple
 	@git add -u
 	@git commit -m "Version $$(cat version)"
