@@ -5244,9 +5244,9 @@ void paramcl::zeigweitere()
 	if (obcapi || obhyla) {
 		// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 3 Monate und des Monats 30 Jahre
 		if (monatsaufr==3) {
-			tage=10950;
-		}	else if (tagesaufr==3) {
 			tage=90;
+		}	else if (tagesaufr==3) {
+			tage=10;
 		}	else if (!(tagesaufr % 3)) {
 			tage=1;
 		}
