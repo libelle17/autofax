@@ -97,7 +97,7 @@ anzeig:
 	-@$(shell rm fehler.txt 2>/dev/null)
 
 $(EXEC): $(OBJ)
-	-@test -f version || echo 0.1>version; test -f entwickeln && awk "BEGIN {print `cat version`+0.00001}">version
+	-@test -f version || echo 0.1>version; if test -f entwickeln; then awk "BEGIN {print `cat version`+0.00001}">version; else echo " Datei 'entwickeln' fehlt, lasse die Version gleich"; fi;
 	-@printf " verlinke %s zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset)
 	-@df --output=ipcent / |tail -n1|grep - && sudo killall postdrop; true
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
@@ -107,8 +107,8 @@ ifneq ("$(wildcard $(CURDIR)/man_de)","")
 	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_de)
 endif
 	-@printf " (Version: %b%s%s%b\n " $(blau) "$$(cat version)" ")" $(reset)
-	-$(CC) $^ -o $@ $(LDFLAGS)
-	$(shell for datei in .d/*.Td; do mv -f $${datei} $${datei%.Td}.d; done)
+	$(CC) $^ -o $@ $(LDFLAGS)
+	-@for datei in .d/*.Td; do mv -f $${datei} $${datei%.Td}.d; done
 	$(shell touch *.o $${EXEC})
 
 %.o : %.cpp

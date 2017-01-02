@@ -37,7 +37,6 @@ const double& version=
 ;
 // Bestandteile der Ueberpruefung auf Funktionsfaehigkeit von hylafax: 
 // faxmodem
-#define caus cout // nur zum Debuggen
 
 
 // const char *logvz; // das reine Verzeichnis
@@ -53,6 +52,7 @@ const char sep = 9; // geht auch: "[[:blank:]]"
 const string s_true="true";
 const string s_dampand=" && ";
 const string s_gz="gz";
+// const char *tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
 
 class Txautofaxcl: public TxB
 {
@@ -2621,6 +2621,35 @@ void paramcl::lieskonfein()
     rzf=1;
   } // (1) else
   if (nrzf) rzf=0;
+	// Aufrufstatistik, um in zeigweitere die Dateien korrigieren zu koennen:
+	// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 3 Monate und des Monats unbefristet
+	string zaehlerdatei=konfdatname+".zaehl";
+  schlArr zschl; // Zaehlkonfiguration
+	zschl.init(4,"aufrufe","lDatum","tagesaufr","monatsaufr");
+	confdat zconf(zaehlerdatei,&zschl,obverb); // hier werden die Daten aus der Datei eingelesen
+	if (zschl[0].gelesen) zschl[0].hole(&aufrufe);
+	aufrufe++;
+  zschl[0].setze(&aufrufe);
+	if (zschl[2].gelesen) zschl[2].hole(&tagesaufr);
+	if (zschl[3].gelesen) zschl[3].hole(&monatsaufr);
+	if (zschl[1].gelesen) zschl[1].hole(&laufrtag);
+  time_t jetzt=time(0);
+	struct tm heute=*localtime(&jetzt);
+	if (heute.tm_year!=laufrtag.tm_year || heute.tm_yday!=laufrtag.tm_yday) {
+	 tagesaufr=0;
+	}
+	if (heute.tm_year!=laufrtag.tm_year || heute.tm_mon!=laufrtag.tm_mon) {
+	 monatsaufr=0;
+	}
+	zschl[1].setze(&heute);
+	tagesaufr++;
+  zschl[2].setze(&tagesaufr);
+	monatsaufr++;
+  zschl[3].setze(&monatsaufr);
+  mdatei f(zaehlerdatei,ios::out);
+	if (f.is_open()) {
+     zschl.aschreib(&f);
+	}
 } // void paramcl::lieskonfein()
 
 // wird aufgerufen in: main
@@ -3848,7 +3877,7 @@ int paramcl::pruefDB(const string& db)
 
 // Parameter -kez
 // wird aufgerufen in: main
-void paramcl::korrigierecapi()
+void paramcl::korrigierecapi(unsigned tage/*=90*/)
 {
   Log(violetts+Tx[T_korrigierecapi]+schwarz,obverb,oblog);
   // geht wegen Loeschens der Protokolldateien nur (noch) fuer Gefundene, s.u.
@@ -3875,7 +3904,7 @@ void paramcl::korrigierecapi()
 					} // if (0)
 					for(int cru=0;cru<2;cru++) {
             rueck.clear();
-						cmd="sudo find '"+(cru?cdonevz:cfailedvz)+"' -maxdepth 1 -mtime -90 -iname '*-fax-*.sff'";//  -printf '%f\\n'";
+						cmd="sudo find '"+(cru?cdonevz:cfailedvz)+"' -maxdepth 1 "+(tage?string("-mtime -")+ltoan(tage):"")+" -iname '*-fax-*.sff'";//  -printf '%f\\n'";
 						systemrueck(cmd,obverb,oblog,&rueck);
 						for(ruecki=0;ruecki<rueck.size();ruecki++) {
 							teln.clear();zp.clear();tries.clear();user.clear();size=0;
@@ -3894,10 +3923,13 @@ void paramcl::korrigierecapi()
 								txtconf.init(6,"dialstring","starttime","tries","user","addressee","subject");
 								confdat txtcf(txtf,&txtconf,obverb,'='); // static wertet nichts aus
 								teln=stdfaxnr(txtconf[0].wert);
-								if (strptime(txtconf[1].wert.c_str(),"%c",&tm)) {
-									strftime(buf, sizeof(buf), "%F %T", &tm);
-									zp=buf;
-								} // 							if (strptime(txtconf[1].wert.c_str(),"%c",&tm))
+								for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
+									if (strptime(txtconf[1].wert.c_str(),tmmoegl[im],&tm)) {
+										strftime(buf, sizeof(buf), "%F %T", &tm);
+										zp=buf;
+										break;
+									} // 							if (strptime(txtconf[1].wert.c_str(),"%c",&tm))
+								} // 								for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++)
 								tries=txtconf[2].wert;
 								user=txtconf[3].wert;
 							} // 						if (!lstat(txtf.c_str(),&txtstat))
@@ -3911,8 +3943,8 @@ void paramcl::korrigierecapi()
 						} //           for(ruecki=0;ruecki<rueck.size();ruecki++)
 					} // 					for(uchar cru=0;cru<2;cru++)
 					auswe[auswe.size()-1]=')';
-					inse[inse.size()-1]=';';
 					if (inse.size()>1) {
+						inse[inse.size()-1]=';';
 						//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 						RS vgl1(My,"DROP TABLE IF EXISTS tmpc",ZDB);
 						RS vgl2(My,"CREATE TABLE tmpc(submid VARCHAR(25) KEY,teln VARCHAR(25),zp DATETIME, tries INT, size INT(15), erfolg INT);",ZDB);
@@ -4003,6 +4035,7 @@ void paramcl::korrigierecapi()
 			} // if (0)
     } // for(uchar runde=1;runde<2;runde++) 
   } // if (0) 
+  Log(violetts+"Ende "+Tx[T_korrigierecapi]+schwarz,obverb,oblog);
 } // korrigierecapi
 
 // Parameter -bwv
@@ -5207,27 +5240,39 @@ void paramcl::zeigweitere()
 	Log(violetts+Tx[T_zeigweitere]+schwarz,obverb,oblog);
 	static int obtitel=0;
 	stringstream ausg; //      ausg.str(std::string()); ausg.clear();
+	unsigned tage=0;
+	if (obcapi || obhyla) {
+		// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 3 Monate und des Monats 30 Jahre
+		if (monatsaufr==3) {
+			tage=10950;
+		}	else if (tagesaufr==3) {
+			tage=90;
+		}	else if (!(tagesaufr % 3)) {
+			tage=1;
+		}
+	}
+	caus<<"Tage: "<<tage<<endl;
 	if (obcapi) {
-	  korrigierecapi();
+	  if (tage) korrigierecapi(tage);
 		vector<fsfcl> fsfv;
 		sammlecapi(&fsfv);
 		for(size_t i=0;i<fsfv.size();i++) {
 			if (!obtitel) {
 				ausg<<rot<<Tx[T_Weitere_Spool_Eintraege]<<schwarz;
 				obtitel=1;
-			}
+			} // 			if (!obtitel) 
 			fsfv[i].capiwausgeb(&ausg, maxcdials, 0, obverb, oblog, ++faxord);
 		} //     for(size_t i=0;i<fsfv.size();i++)
 	} // if (obcapi)
 	if (obhyla) {
-		korrigierehyla(); // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
+		if (tage) korrigierehyla(tage); // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
 		vector<fsfcl> fsfv;
 		sammlehyla(&fsfv);
 		for(size_t i=0;i<fsfv.size();i++) {
 			if (!obtitel) {
 				ausg<<rot<<Tx[T_Weitere_Spool_Eintraege]<<schwarz;
 				obtitel=1;
-			}
+			} // 		for(size_t i=0;i<fsfv.size();i++)
 			fsfv[i].hylaausgeb(&ausg, this, 0, 0, obverb, 1, oblog);
 		} //     for(size_t i=0;i<fsfv.size();i++) 
 	} // if (obhyla) 
@@ -5335,7 +5380,7 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 } // void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 
 // aufgerufen in: zeigweitere
-void paramcl::korrigierehyla()
+void paramcl::korrigierehyla(unsigned tage/*=90*/)
 {
 	Log(violetts+Tx[T_sammlefertigehyla]+schwarz,obverb,oblog);
 	if (!xferfaxlog.empty()) {
@@ -5349,7 +5394,7 @@ void paramcl::korrigierehyla()
 			// tac /var/spool/hylafax/etc/xferfaxlog | awk -vDate=`date -d'now-1 month' +%m/%d/%y` 'function isdate(var) KLA if (var ~ /[0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]/) return 1; return 0; KLZ isdate($1) && $1 > Date KLAprint Date " " $0KLZ'
 			//		  cmd="tac \""+xferfaxlog+"\" 2>/dev/null|grep '"+sep+"UNSENT"+sep+"\\|"+sep+"SEND"+sep+"'|cut -f 2,5,14,20|awk '!s[$2]++'";
 			// awk-Befehl: Suche bis vor 3 Monaten von zu jeder hylanr ($5) die letzte Zeile (s[$5]==0) mit dem Befehl ($2) SEND oder UNSENT; gib mit \t aus
-			cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-3 month' +%m/%d/%y` 'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];}"
+			cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-"+ltoan(tage)+" day' +%m/%d/%y` 'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];}"
 				" $1<Date {exit 0} ($2 in arr && !s[$5]++) {print $1,$2,$5,$8,$11,$14,$20}'"; //...$14,$20;gz++KLZ END KLA print gz KLZ'
 			//$1=Date,$2=action,$5=qfile(hylid,sumid),$8=Tel'nr,$11=Seitenzahl,$14=reason,$20=jobinfo(totpages/ntries/ndials/totdials/maxdials/tot/maxtries)
 			svec qrueck;
@@ -5400,8 +5445,7 @@ void paramcl::korrigierehyla()
 					svec rueckf;
 					cmd="find "+varsphylavz+"/archive/"+hylanr+" -iname \"doc*\\.pdf\\."+hylanr+"\"";
 					systemrueck(cmd,obverb-1,oblog,&rueckf);
-					struct stat entrys;
-					memset(&entrys,0,sizeof entrys);
+					struct stat entrys={0};
 					if (rueckf.size()) {
 						lstat(rueckf[0].c_str(),&entrys);
 					}
@@ -5701,9 +5745,10 @@ void paramcl::empfarch()
       uchar verschieb=0;
       confdat empfconf(rueck[i],&umst,obverb);
       //    if (cpplies(rueck[i],umst,cs)) KLA
-      struct tm tm;
-      memset(&tm, 0, sizeof(struct tm));
-      strptime(umst[3].wert.c_str(), "%c", &tm);
+      struct tm tm={0};
+			for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
+				if (strptime(umst[3].wert.c_str(), tmmoegl[im], &tm)) break;
+			}
       strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
       // tbuf und tm enthalten also z.B. die in /var/spool/capisuite/users/<user>/received/fax-999999.txt unter "time" stehende Zeit
       Log(rots+"   "+umst[0].name+": "+schwarz+umst[0].wert,obverb,oblog);
@@ -6515,8 +6560,7 @@ int paramcl::pruefhyla()
           } else {
           // falls oben hylafax neu installiert wurde und zuvor eine hylafax-Installation nach Gebrauch geloescht worden war,
           // dann die alten Eintraege (xferfaxlog.rpmsave) wieder aktivieren
-          struct stat entryxfer, entryxfer0;
-          memset(&entryxfer0,0,sizeof entryxfer0);
+          struct stat entryxfer, entryxfer0={0};
           string d0=xferfaxlog+".rpmsave";
           if (!lstat(xferfaxlog.c_str(),&entryxfer)) {
             if (entryxfer.st_size<10) { // wenn neu
@@ -7898,10 +7942,11 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, i
       snprintf(buf,4,"%3d",versuzahl);
       *ausgp<<", "<<blau<<buf<<"/"<<maxcdials<<schwarz<<(capistat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
       //                      if (versuzahl>12) ausg<<"zu spaet, ";
-      struct tm tm;
-      memset(&tm, 0, sizeof(struct tm));
-      strptime(starttime.c_str(), "%c", &tm);
-      strftime(buf, sizeof(buf), "%d.%m.%y %T", &tm);
+      struct tm tm={0};
+			for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
+				if (strptime(starttime.c_str(), tmmoegl[im], &tm)) break;
+			}
+			strftime(buf, sizeof(buf), "%d.%m.%y %T", &tm);
       *ausgp<<blau<<buf<<schwarz; 
       *ausgp<<", T.: "<<blau<<setw(12)<<dialstring<<schwarz; 
       *ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
@@ -8169,12 +8214,11 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
 
 void zeigversion(string& prog,string& mpfad)
 {
-  struct tm tm;
+  struct tm tm={0};
   char buf[100];
   cout<<endl<<Tx[T_Programm]<<violett<<mpfad<<schwarz<<endl;
   cout<<"Copyright: "<<blau<<Tx[T_Freie_Software]<<schwarz<<Tx[T_Verfasser]<<blau<<"Gerald Schade"<<schwarz<<endl;
   cout<<"Version: "<<blau<<version<<schwarz<<endl;
-  memset(&tm, 0, sizeof(struct tm));
   strptime(__TIMESTAMP__,"%c", &tm);
   //<<tm.tm_sec<<" "<<tm.tm_min<<" "<<tm.tm_hour<<" "<<tm.tm_mday<<" "<<tm.tm_mon<<" "<<tm.tm_year<<" "<<tm.tm_wday<<" "<<tm.tm_yday<<" "<<tm.tm_isdst<<endl;
   strftime(buf, sizeof(buf), "%d.%m.%Y %T", &tm);
@@ -8192,8 +8236,7 @@ void paramcl::zeigkonf()
   struct stat kstat;
   char buf[100];
   if (!lstat(konfdatname.c_str(),&kstat)) {
-    struct tm tm;
-    memset(&tm, 0, sizeof(struct tm));
+    struct tm tm={0};
     memcpy(&tm, localtime(&kstat.st_mtime),sizeof(tm));
     strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", &tm);
   } //   if (!lstat(konfdatname.c_str(),&kstat))

@@ -12,6 +12,7 @@ const char *dir = "dir ";
 #elif linux
 const char *dir = "ls -l ";
 #endif
+const char *tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
 
 #ifdef linux
 #include <iomanip> // setprecision
@@ -1529,6 +1530,15 @@ const string& schlArr::hole(const string& name)
   return nix;
 } // const string* schlArr::hole(const string& name)
 
+void cppSchluess::hole (struct tm *tmp) {
+	if (!wert.empty()) {
+		for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
+			if (strptime(wert.c_str(), tmmoegl[im], tmp)) break;
+		}
+		//		strptime(wert.c_str(), "%d.%m.%y %T", tmp);
+	} // 	if (!wert.empty())
+} // void cppSchluess::hole (struct tm *tmp)
+
 // wenn die bisherige Bemerkung in einer Sprache mit der zu setzenden identisch, also nicht zwischenzeitlich manuell geaendert, 
 // dann in aktueller Sprache uebernehmen
 // fertige wird nur aufgerufen aus optioncl::setzebem(
@@ -1605,7 +1615,7 @@ int multischlschreib(const string& fname, schlArr **confs, size_t cszahl,string 
       strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", ltm);
       string ueberschr=Txk[T_Konfiguration_fuer]+mpfad+Txk[T_erstellt_automatisch_durch_dieses_am]+buf;
       if (!ueberschr.empty()) f<<ueberschr<<endl;
-    }
+    } //     if (!mpfad.empty())
     for (size_t j=0;j<cszahl;j++) {
      confs[j]->aschreib(&f);
     }

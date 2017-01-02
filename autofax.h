@@ -232,6 +232,10 @@ class paramcl // Programmparameter
     string xferfaxlog; // varsphylavz + "/etc/xferfaxlog"; 
     string faxgtpfad;   // /usr/lib/fax/faxgetty
     string hsendqvz; // /var/spool/hylafax/sendq
+		unsigned long aufrufe=0; // Zahl der bisherigen Programmaufrufe
+		struct tm laufrtag={0}; // Tag des letztes Aufrufs
+		unsigned long tagesaufr=0; // Zahl der bisherigen Programmaufrufe heute
+		unsigned long monatsaufr=0; // Zahl der bisherigen Programmaufrufe heute
 #ifdef _WIN32
     char cpt[255];
     DWORD dcpt;
@@ -371,8 +375,8 @@ class paramcl // Programmparameter
     void zeigweitere();
     void sammlecapi(vector<fsfcl> *fsfvp);
     void sammlehyla(vector<fsfcl> *fsfvp);
-    void korrigierecapi();
-    void korrigierehyla();
+    void korrigierecapi(unsigned tage=90);
+    void korrigierehyla(unsigned tage=90);
     void empfarch();
     void schlussanzeige();
     void autofkonfschreib();

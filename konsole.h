@@ -77,6 +77,7 @@ typedef unsigned char uchar;
 enum binaer:uchar {falsch,wahr};
 enum Sprache {deutsch,englisch,Smax};
 extern const char *dir;
+extern const char *tmmoegl[2];
 //extern const string datei;
 // extern const char *rot, *weinrot, *schwarz, *blau, *gelb; // muss spaeter kompilerunabhaengig
 extern const char *schwarz, *dgrau, *drot, *rot, *gruen, *hgruen, *braun, *gelb, *blau, *dblau, *violett, *hviolett,
@@ -87,6 +88,8 @@ extern const char *_rot, *_hrot, *_schwarz, *_blau, *_gelb, *_tuerkis, *_hgrau;
 #endif
 #include <fstream> // kopiere
 #include <algorithm>    // std::transform
+
+#define caus cout // nur zum Debuggen
 
 extern const string nix;
 // typedef const char *TCtp[][Smax];
@@ -358,15 +361,31 @@ class cppSchluess {
     template <typename T> void hole(T *var) { *var=atol(wert.c_str()); }
     template <typename T> void setze(T *var) { wert=ltoan(*var); }
 //    template <typename T> void setze(T *var,string& bem) { wert=ltoan(*var); bemerk=bem;}
+		void hole (struct tm *tmp);
 };
 template <> inline void cppSchluess::hole < char* > (char** var) {*var = (char*)wert.c_str(); }
 template <> inline void cppSchluess::hole < const char* > (const char** var) {*var = wert.c_str(); }
 template <> inline void cppSchluess::hole < string > (string *var) {*var = wert; }
 template <> inline void cppSchluess::hole < binaer > (binaer *var) { *var = (binaer)atoi(wert.c_str()); }
+/*
+template <> inline void cppSchluess::hole < struct tm > (struct tm *tmp) {
+	if (!wert.empty()) {
+		for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
+			if (strptime(wert.c_str(), tmmoegl[im], tmp)) break;
+		}
+									//		strptime(wert.c_str(), "%d.%m.%y %T", tmp);
+	}
+}
+*/
 template <> inline void cppSchluess::setze < char* > (char** var) {wert=*var;  }
 template <> inline void cppSchluess::setze < const char* > (const char** var) {wert=*var; }
 template <> inline void cppSchluess::setze < string > (string *var) {wert=*var;}
 template <> inline void cppSchluess::setze < const string > (const string *var) {wert=*var; }
+template <> inline void cppSchluess::setze < struct tm > (struct tm *tmp) {
+	char buf[30];
+	strftime(buf, sizeof(buf), "%d.%m.%y %T", tmp);
+	wert=buf;
+}
 /*
 template <> inline void cppSchluess::setze < char* > (char** var, string& bem) {wert=*var; if (!bem.empty()) bemerk=bem; }
 template <> inline void cppSchluess::setze < const char* > (const char** var, string& bem) {wert=*var; if (!bem.empty()) bemerk=bem;}
