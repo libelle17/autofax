@@ -73,4 +73,5 @@ printf "Result code/ Ergebniscode: ${farbe}$erg${reset}\n"
 # ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa_git -C "gerald.schade@gmx.de@github.com"
 # eval "$(ssh-agent -s)"
 # ssh-add ~/.ssh/id_rsa_git
-# xclip -sel clip < ~/.ssh/id_rsa_git
+# xclip -sel clip < ~/.ssh/id_rsa_git.pub
+# http://github.com/libelle17, Profil, Einstellungen, SSH and GPG keys, New SSH key, 
