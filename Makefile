@@ -85,8 +85,8 @@ git:
 	@git config --global user.email "gerald.schade@gmx.de"
 	@git config --global push.default simple
 	@git add -u
-	git commit -m "Version $$(cat version)"
-	git push
+	@git commit -m "Version $$(cat version)"
+	@git push
 
 anzeig:
 # 'echo -e' geht nicht z.B. in ubuntu
