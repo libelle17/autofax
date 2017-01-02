@@ -1,4 +1,5 @@
 #!/bin/sh
+# git clone https://www.github.com/libelle17/autofax
 P=autofax
 HOSTER=github.com
 ACC=libelle17
