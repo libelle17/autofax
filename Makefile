@@ -84,7 +84,7 @@ git:
 	@git config --global user.name "Gerald Schade"
 	@git config --global user.email "gerald.schade@gmx.de"
 	@git config --global push.default simple
-	git add -u
+	@git add -u
 	git commit -m "Version $$(cat version)"
 	git push
 
