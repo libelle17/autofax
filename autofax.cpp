@@ -3879,6 +3879,8 @@ int paramcl::pruefDB(const string& db)
 // wird aufgerufen in: main
 void paramcl::korrigierecapi(unsigned tage/*=90*/)
 {
+	  ZDB=255;
+		obverb=0;
   Log(violetts+Tx[T_korrigierecapi]+schwarz,obverb,oblog);
   // geht wegen Loeschens der Protokolldateien nur (noch) fuer Gefundene, s.u.
   if (1) {
@@ -3905,6 +3907,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 					for(int cru=0;cru<2;cru++) {
             rueck.clear();
 						cmd="sudo find '"+(cru?cdonevz:cfailedvz)+"' -maxdepth 1 "+(tage?string("-mtime -")+ltoan(tage):"")+" -iname '*-fax-*.sff'";//  -printf '%f\\n'";
+						caus<<"cmd: "<<cmd<<endl;
 						systemrueck(cmd,obverb,oblog,&rueck);
 						for(ruecki=0;ruecki<rueck.size();ruecki++) {
 							teln.clear();zp.clear();tries.clear();user.clear();size=0;
@@ -4035,6 +4038,8 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 			} // if (0)
     } // for(uchar runde=1;runde<2;runde++) 
   } // if (0) 
+	  ZDB=0;
+		obverb=0;
   Log(violetts+"Ende "+Tx[T_korrigierecapi]+schwarz,obverb,oblog);
 } // korrigierecapi
 
@@ -5382,6 +5387,8 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 // aufgerufen in: zeigweitere
 void paramcl::korrigierehyla(unsigned tage/*=90*/)
 {
+  obverb=1;
+	ZDB=255;
 	Log(violetts+Tx[T_sammlefertigehyla]+schwarz,obverb,oblog);
 	if (!xferfaxlog.empty()) {
 		struct stat entryvz;
@@ -5396,6 +5403,7 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			// awk-Befehl: Suche bis vor 3 Monaten von zu jeder hylanr ($5) die letzte Zeile (s[$5]==0) mit dem Befehl ($2) SEND oder UNSENT; gib mit \t aus
 			cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-"+ltoan(tage)+" day' +%m/%d/%y` 'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];}"
 				" $1<Date {exit 0} ($2 in arr && !s[$5]++) {print $1,$2,$5,$8,$11,$14,$20}'"; //...$14,$20;gz++KLZ END KLA print gz KLZ'
+				caus<<"cmd: "<<cmd<<endl;
 			//$1=Date,$2=action,$5=qfile(hylid,sumid),$8=Tel'nr,$11=Seitenzahl,$14=reason,$20=jobinfo(totpages/ntries/ndials/totdials/maxdials/tot/maxtries)
 			svec qrueck;
 			// wenn unter SEND im Feld reason ($14) nichts steht, erfolgreich, sonst erfolglos
@@ -5512,6 +5520,8 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			// KLZ
 		} // if (!lstat(hsendqvz.c_str(),&entryvz))
 	} // 	if (!xferfaxlog.empty())
+  ZDB=0;
+	obverb=0;
 } // void paramcl::korrigierehyla()
 
 // aufgerufen in: empfarch, zupdf
