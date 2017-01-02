@@ -72,7 +72,7 @@ neu: anzeig clean weiter
 
 weiter: compiler $(EXEC) README.md fertig
 
-# davor: xclip -sel clip < ~/.ssh/id_rsa.pub
+# davor: xclip -sel clip < ~/.ssh/id_rsa_git.pub
 #      : auf http://github.com -> view profile and more -> settings -> SSH and GPG keys -> New SSH key <Titel> <key> einfuegen
 #      : git clone ssh://git@github.com/<user>/<reponame>.git
 git:
