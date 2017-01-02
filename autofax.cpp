@@ -3879,8 +3879,6 @@ int paramcl::pruefDB(const string& db)
 // wird aufgerufen in: main
 void paramcl::korrigierecapi(unsigned tage/*=90*/)
 {
-	  ZDB=255;
-		obverb=0;
   Log(violetts+Tx[T_korrigierecapi]+schwarz,obverb,oblog);
   // geht wegen Loeschens der Protokolldateien nur (noch) fuer Gefundene, s.u.
   if (1) {
@@ -3907,7 +3905,6 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 					for(int cru=0;cru<2;cru++) {
             rueck.clear();
 						cmd="sudo find '"+(cru?cdonevz:cfailedvz)+"' -maxdepth 1 "+(tage?string("-mtime -")+ltoan(tage):"")+" -iname '*-fax-*.sff'";//  -printf '%f\\n'";
-						caus<<"cmd: "<<cmd<<endl;
 						systemrueck(cmd,obverb,oblog,&rueck);
 						for(ruecki=0;ruecki<rueck.size();ruecki++) {
 							teln.clear();zp.clear();tries.clear();user.clear();size=0;
@@ -4038,8 +4035,6 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 			} // if (0)
     } // for(uchar runde=1;runde<2;runde++) 
   } // if (0) 
-	  ZDB=0;
-		obverb=0;
   Log(violetts+"Ende "+Tx[T_korrigierecapi]+schwarz,obverb,oblog);
 } // korrigierecapi
 
@@ -5256,7 +5251,7 @@ void paramcl::zeigweitere()
 			tage=1;
 		}
 	}
-	caus<<"Tage: "<<tage<<endl;
+	// <<"Korrektur wird durchgefuehrt ueber Tage: "<<tage<<endl;
 	if (obcapi) {
 	  if (tage) korrigierecapi(tage);
 		vector<fsfcl> fsfv;
@@ -5387,8 +5382,6 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 // aufgerufen in: zeigweitere
 void paramcl::korrigierehyla(unsigned tage/*=90*/)
 {
-  obverb=1;
-	ZDB=255;
 	Log(violetts+Tx[T_sammlefertigehyla]+schwarz,obverb,oblog);
 	if (!xferfaxlog.empty()) {
 		struct stat entryvz;
@@ -5403,7 +5396,6 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			// awk-Befehl: Suche bis vor 3 Monaten von zu jeder hylanr ($5) die letzte Zeile (s[$5]==0) mit dem Befehl ($2) SEND oder UNSENT; gib mit \t aus
 			cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-"+ltoan(tage)+" day' +%m/%d/%y` 'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];}"
 				" $1<Date {exit 0} ($2 in arr && !s[$5]++) {print $1,$2,$5,$8,$11,$14,$20}'"; //...$14,$20;gz++KLZ END KLA print gz KLZ'
-				caus<<"cmd: "<<cmd<<endl;
 			//$1=Date,$2=action,$5=qfile(hylid,sumid),$8=Tel'nr,$11=Seitenzahl,$14=reason,$20=jobinfo(totpages/ntries/ndials/totdials/maxdials/tot/maxtries)
 			svec qrueck;
 			// wenn unter SEND im Feld reason ($14) nichts steht, erfolgreich, sonst erfolglos
@@ -5435,12 +5427,12 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			auswm[auswm.size()-1]=')';
 			if (inse.size()>1) {
 				//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
-				RS vgl1(My,"DROP TABLE IF EXISTS tmpt",ZDB);
-				RS vgl2(My,"CREATE TABLE tmpt(submid VARCHAR(11) KEY,Datum DATETIME,tel VARCHAR(30),pages INT,attr VARCHAR(20),erfolg INT);",ZDB);
-				RS vgl3(My,"INSERT INTO tmpt VALUES "+inse,ZDB);
+				RS vgl1(My,"DROP TABLE IF EXISTS tmph",ZDB);
+				RS vgl2(My,"CREATE TABLE tmph(submid VARCHAR(11) KEY,Datum DATETIME,tel VARCHAR(30),pages INT,attr VARCHAR(20),erfolg INT);",ZDB);
+				RS vgl3(My,"INSERT INTO tmph VALUES "+inse,ZDB);
 				// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
 				// und zu denen nicht bereits eine erfolgreiche capisuite-Uebertragung eingetragen ist
-				RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpt t "
+				RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmph t "
 						"LEFT JOIN `"+touta+"` o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
 						"LEFT JOIN `"+touta+"` o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
 				char ***cerg;
@@ -5469,8 +5461,8 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 				} // 				while (cerg=ntr.HolZeile(),cerg?*cerg:0)
 				//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_OFF);
 			} // 			if (inse.size()>1)
-			// "select tmpt.i,submid,erfolg,outa.* from tmpt left join outa on tmpt.i=outa.submid
-			// select t.*,a.capispooldatei,o2.erfolg, o2.submid from tmpt t left join outa o on t.submid = o.submid 
+			// "select tmph.i,submid,erfolg,outa.* from tmph left join outa on tmph.i=outa.submid
+			// select t.*,a.capispooldatei,o2.erfolg, o2.submid from tmph t left join outa o on t.submid = o.submid 
 			// left join altspool a on a.hylanr = t.submid left join outa o2 on a.capispooldatei=o2.submid where isnull(o.submid);
 			char ***cerg;
 			size_t cergz=0;
@@ -5520,8 +5512,6 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			// KLZ
 		} // if (!lstat(hsendqvz.c_str(),&entryvz))
 	} // 	if (!xferfaxlog.empty())
-  ZDB=0;
-	obverb=0;
 } // void paramcl::korrigierehyla()
 
 // aufgerufen in: empfarch, zupdf
