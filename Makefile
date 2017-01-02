@@ -72,9 +72,14 @@ neu: anzeig clean weiter
 
 weiter: compiler $(EXEC) README.md fertig
 
-# davor: xclip -sel clip < ~/.ssh/id_rsa_git.pub
-#      : auf http://github.com -> view profile and more -> settings -> SSH and GPG keys -> New SSH key <Titel> <key> einfuegen
-#      : git clone ssh://git@github.com/<user>/<reponame>.git
+# davor:
+# git clone ssh://git@github.com/<user>/<reponame>.git
+# git clone ssh://git@github.com/libelle17/autofax.git # https://www.github.com/libelle17/autofax
+# ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa_git -C "gerald.schade@gmx.de@github.com"
+# eval "$(ssh-agent -s)"
+# ssh-add ~/.ssh/id_rsa_git
+# xclip -sel clip < ~/.ssh/id_rsa_git.pub
+# auf http://github.com -> view profile and more -> settings -> SSH and GPG keys -> New SSH key <Titel> <key> einfuegen
 git:
 	@git config --global push.default simple
 	git add -u
