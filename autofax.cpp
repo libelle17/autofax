@@ -3904,7 +3904,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 					} // if (0)
 					for(int cru=0;cru<2;cru++) {
             rueck.clear();
-						cmd="sudo find '"+(cru?cdonevz:cfailedvz)+"' -maxdepth 1 "+(tage?string("-mtime -")+ltoan(tage):"")+" -iname '*-fax-*.sff'";//  -printf '%f\\n'";
+						cmd="sudo find '"+(cru?cdonevz:cfailedvz)+"' -maxdepth 1 "+(tage?string("-mtime -")+ltoan(tage):"")+" -iname '*-fax-*.sff'";//-printf '%f\\n'";
 						systemrueck(cmd,obverb,oblog,&rueck);
 						for(ruecki=0;ruecki<rueck.size();ruecki++) {
 							teln.clear();zp.clear();tries.clear();user.clear();size=0;
@@ -3980,9 +3980,14 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 							cout<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(25)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"
 							<<violett<<setw(5)<<*(*cerg+3)<<"|"<<blau<<setw(6)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+4)<<endl;
 						} // while (cerg=kor3.HolZeile(),cerg?*cerg:0) 
-						RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,fsize,retries,rcfax) "
-								"SELECT t.erfolg,t.zp,t.zp,t.submid,t.size,t.tries,t.teln FROM tmpc t LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
-								"WHERE ISNULL(a.submid)",ZDB);
+						RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,fsize,retries,rcfax,docname,idudoc,pages,rcname) "
+						"SELECT t.erfolg,t.zp,t.zp,t.submid,t.size,t.tries,t.teln,IF(ISNULL(asp.original),'',asp.original),"
+						"IF(ISNULL(asp.idudoc),0,asp.idudoc),IF(ISNULL(asp.pages),0,asp.pages),IF(ISNULL(asp.adressat),0,asp.adressat) "
+						"FROM tmpc t "
+						"LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
+						"LEFT JOIN altspool asp ON t.submid=asp.capispooldatei "
+						"WHERE ISNULL(a.submid) "
+						"GROUP BY a.submid",ZDB);
 						} // 						if (!kor3.obfehl)
 
 						// die laut tmpc uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
