@@ -3985,7 +3985,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 								"IF(ISNULL(asp.adressat) OR asp.adressat=t.teln,'',asp.adressat) p9 "
 								"FROM tmpc t "
 								"LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
-								"LEFT JOIN altspool asp ON asp.capispooldatei=t.submid "
+								"LEFT JOIN `"+altspool+"` asp ON asp.capispooldatei=t.submid "
 								"LEFT JOIN `"+touta+"` av ON av.erfolg<>0 AND av.idudoc=asp.idudoc AND av.idudoc<>0 "
 								"WHERE ISNULL(a.submid) AND (t.erfolg<>0 OR ISNULL(av.idudoc)) "
 								"GROUP BY t.submid",ZDB);
@@ -4007,7 +4007,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 									"IF(ISNULL(asp.adressat) OR asp.adressat=t.teln,'',asp.adressat) "
 									"FROM tmpc t "
 									"LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
-									"LEFT JOIN altspool asp ON asp.capispooldatei=t.submid "
+									"LEFT JOIN `"+altspool+"` asp ON asp.capispooldatei=t.submid "
 									"LEFT JOIN `"+touta+"` av ON av.erfolg<>0 AND av.idudoc=asp.idudoc AND av.idudoc<>0 "
 									"WHERE ISNULL(a.submid) AND (t.erfolg<>0 OR ISNULL(av.idudoc)) "
 									"GROUP BY t.submid",ZDB);
@@ -4261,7 +4261,7 @@ int paramcl::loeschefax(int obverb, int oblog)
 					/*fsfv[nr].*/setzhylastat(&fsfv[nr], &protdakt, &hyla_uverz_nr, 0, 0, 0, obverb, oblog); // hyla_uverz_nr, obsfehlt
 					Log(violetts+"capistat: "+schwarz+FxStatS(&fsfv[nr].capistat)+violett+", hylastat: "+schwarz+FxStatS(&fsfv[nr].hylastat),obverb,oblog);
 					if ((!zdng || (fsfv[nr].capistat==fehlend && fsfv[nr].hylastat==fehlend)) && !fsfv[nr].id.empty()) {
-						RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE id="+fsfv[nr].id,-obverb);
+						RS loe(My,"DELETE FROM `"+spooltab+"` WHERE id="+fsfv[nr].id,-obverb);
 					}
 				} // if (Tippob(string(Tx[T_Soll_das_Fax_geloescht_werden_0_ist_Abbruch])+violett+ergnr+schwarz+Tx[T_wirklich_geloescht_werden],"n")) 
 			} // if (nr>=0 && nr<fsfv.size()) 
@@ -4279,7 +4279,7 @@ int paramcl::loeschewaise(int obverb, int oblog)
 	vector<string> allec;
 	vector<string> ids;
 	char*** cerg;
-	RS su(My,string("SELECT original p0, capispooldatei p1, hylanr p2, id p3 FROM `")+spooltab+"`");
+	RS su(My,"SELECT original p0, capispooldatei p1, hylanr p2, id p3 FROM `"+spooltab+"`");
 	while (cerg=su.HolZeile(),cerg?*cerg:0) {
 		if (*(*cerg+0)) {
 			struct stat entryo;
@@ -4290,7 +4290,7 @@ int paramcl::loeschewaise(int obverb, int oblog)
 		} // if (*(*cerg+0)) 
 	} // while (cerg=su.HolZeile(),cerg?*cerg:0) 
 	for(size_t i=0;i<ids.size();i++) {
-		RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE id="+ids[i]);
+		RS loe(My,"DELETE FROM `"+spooltab+"` WHERE id="+ids[i]);
 	}
 	return 0;
 } // int paramcl::loeschewaise(int obverb, int oblog)
@@ -4310,7 +4310,7 @@ int paramcl::loescheallewartende(int obverb, int oblog)
 			tuloeschen(allec[i],cuser,1,oblog);
 			if (allec[i].find(".sff")!=string::npos) {
 				string fname=base_name(allec[i]);
-				RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE capispooldatei='"+fname+"'");
+				RS loe(My,"DELETE FROM `"+spooltab+"` WHERE capispooldatei='"+fname+"'");
 			}
 		} // for(size_t i=0;i<allec.size();i++) 
 	} // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
@@ -4327,7 +4327,7 @@ int paramcl::loescheallewartende(int obverb, int oblog)
 			if (!zuloe.loeschehyla(this,obverb,oblog)) {
 				//      cmd=string("faxrm ")+transalle;
 				//      if (systemrueck(cmd,obverb,oblog)) KLA
-				RS loe(My,string("DELETE FROM `")+spooltab+"` WHERE hylanr="+transalle,ZDB);
+				RS loe(My,"DELETE FROM `"+spooltab+"` WHERE hylanr="+transalle,ZDB);
 			}
 		} // for(size_t i=0;i<alled.size();i++) 
 	} // if (!lstat(hsendqvz.c_str(),&entryvz)) 
@@ -5323,7 +5323,7 @@ void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
 		for(size_t i=0;i<rueck.size();i++) {
 			uchar indb=0;
 			char ***cerg;
-			RS rs(My,string("SELECT id FROM `")+spooltab+"` WHERE CONCAT(capispoolpfad,'/',capispooldatei)='"+rueck[i]+"'",ZDB);
+			RS rs(My,"SELECT id FROM `"+spooltab+"` WHERE CONCAT(capispoolpfad,'/',capispooldatei)='"+rueck[i]+"'",ZDB);
 			if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
 			if (!indb) {
 				/*5*/fsfcl fsf(rueck[i],wartend);
@@ -5425,13 +5425,15 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			// tac /var/spool/hylafax/etc/xferfaxlog | awk -vDate=`date -d'now-1 month' +%m/%d/%y` 'function isdate(var) KLA if (var ~ /[0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]/) return 1; return 0; KLZ isdate($1) && $1 > Date KLAprint Date " " $0KLZ'
 			//		  cmd="tac \""+xferfaxlog+"\" 2>/dev/null|grep '"+sep+"UNSENT"+sep+"\\|"+sep+"SEND"+sep+"'|cut -f 2,5,14,20|awk '!s[$2]++'";
 			// awk-Befehl: Suche bis vor 3 Monaten von zu jeder hylanr ($5) die letzte Zeile (s[$5]==0) mit dem Befehl ($2) SEND oder UNSENT; gib mit \t aus
-			cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-"+ltoan(tage)+" day' +%m/%d/%y` 'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];}"
+			cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-"+ltoan(tage)+" day' +%m/%d/%y` "
+				"'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];}"
 				" $1<Date {exit 0} ($2 in arr && !s[$5]++) {print $1,$2,$5,$8,$11,$14,$20}'"; //...$14,$20;gz++KLZ END KLA print gz KLZ'
 			//$1=Date,$2=action,$5=qfile(hylid,sumid),$8=Tel'nr,$11=Seitenzahl,$14=reason,$20=jobinfo(totpages/ntries/ndials/totdials/maxdials/tot/maxtries)
 			svec qrueck;
 			// wenn unter SEND im Feld reason ($14) nichts steht, erfolgreich, sonst erfolglos
 			systemrueck(cmd,obverb,oblog,&qrueck);
-			string auswe="(", auswm="(", auswef="(",auswmf="(", inse;
+			//Erfolgskennzeichenkorrektur: auswe=Erfolg, auswm=Misserfolg; inse = fehlende Eintraege
+			string auswe="(", auswm="(", inse;
 			for(size_t i=0;i<qrueck.size();i++) {
 				vector<string> tok; 
 				aufSplit(&tok,&qrueck[i],'\t');
@@ -5464,7 +5466,8 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 				// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
 				// und zu denen nicht bereits eine erfolgreiche capisuite-Uebertragung eingetragen ist
 				RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmph t "
-						"LEFT JOIN `"+touta+"` o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
+						"LEFT JOIN `"+touta+"` o ON t.submid = o.submid "
+						"LEFT JOIN `"+altspool+"` a ON t.submid=a.hylanr "
 						"LEFT JOIN `"+touta+"` o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
 				char ***cerg;
 				size_t znr=0;
@@ -5499,6 +5502,7 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			size_t cergz=0;
 			if (auswe.size()>1) {
 				RS rs1(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=0 AND submid IN "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+				string auswmf="(";  // fuer die Ausgabe
 				while (cerg=rs1.HolZeile(),cerg?*cerg:0) {
 					if (!cergz++)
 						Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden],1,1);
@@ -5514,6 +5518,7 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			if (auswm.size()>1) {
 				RS rs2(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=1 AND submid IN "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 				cergz=0;
+				string auswef="("; // zur Ausgabe
 				while (cerg=rs2.HolZeile(),cerg?*cerg:0) {
 					if (!cergz++)
 						Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden],1,1);
@@ -7434,7 +7439,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 				  // Fax nicht in capisuite-spool gestellt, da Datei nicht zu oeffnen, also auch wieder aus Tabelle loeschen
           Log(rots+Tx[T_Datei]+blau+pmp->wvz+vtz+fsfp->spdf+rot+"' (id: "+blau+fsfp->id+rot+
               Tx[T_nichtgefundenloeschesieausDB]+schwarz,1,1);
-          RS rsloe(My,string("DELETE FROM `")+spooltab+"` WHERE id = "+fsfp->id,ZDB);
+          RS rsloe(My,"DELETE FROM `"+spooltab+"` WHERE id = "+fsfp->id,ZDB);
         } //         if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
       } else {
         Log(rots+string(Tx[T_KeinErgebnisbeimFaxen])+schwarz,1,1);

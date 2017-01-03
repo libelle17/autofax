@@ -151,7 +151,7 @@ class paramcl // Programmparameter
     uchar obmdgeprueft=0; // ob schon geprueft, ob Modem verfuegbar
     uchar obocrgeprueft=0; // ob ocrmypdf installiert ist
     const string spooltab="spool";
-    const string altspool="altspool";
+    const string altspool="altspool"; // Historie der Spooltabelle
     const string udoctab="udoc";
     int obverb=0; // verbose
     int oblog=0;  // mehr Protokollieren
