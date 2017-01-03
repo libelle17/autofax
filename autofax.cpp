@@ -1523,7 +1523,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_wartende_Faxe
   {" wartende Faxe "," waiting faxes"},
   // T_Index_auf_urspruenglichen_Dateinamen
-  {"Index auf urspruenglichen Dateinamen","Index on original filename"},
+  {"Index auf urspruenglichen Dateinamen in Tabelle udoc","Index on original filename in table udoc"},
   // T_Gesammelt_wurden
   {"Gesammelt wurden: ","Collected were: "},
 	// T_gestrichen
@@ -3892,7 +3892,6 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 			string teln,zp,tries,user;
 			size_t size;
 			char buf[100];
-			struct tm tm;
 			switch (runde) {
         case 0: // capi
 					/*
@@ -3918,6 +3917,9 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 								struct stat sffstat;
 								if (!lstat(rueck[cru][ruecki].c_str(),&sffstat)) {
 									size=sffstat.st_size;
+									struct tm *tmp=localtime(&sffstat.st_mtime);
+									strftime(buf, sizeof(buf), "%F %T", tmp);
+									zp=buf;
 								}
 //								auswe+=rueck[cru][ruecki]+","; 
 								string stamm,exten;
@@ -3930,13 +3932,16 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 									txtconf.init(6,"dialstring","starttime","tries","user","addressee","subject");
 									confdat txtcf(txtf,&txtconf,obverb,'='); // static wertet nichts aus
 									teln=stdfaxnr(txtconf[0].wert);
-									for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
-										if (strptime(txtconf[1].wert.c_str(),tmmoegl[im],&tm)) {
+									/* // liegt in der Zukunft!
+									for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) KLA
+										struct tm tm;
+										if (strptime(txtconf[1].wert.c_str(),tmmoegl[im],&tm)) KLA
 											strftime(buf, sizeof(buf), "%F %T", &tm);
 											zp=buf;
 											break;
-										} // 							if (strptime(txtconf[1].wert.c_str(),"%c",&tm))
-									} // 								for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++)
+										KLZ // 							if (strptime(txtconf[1].wert.c_str(),"%c",&tm))
+									KLZ // 								for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++)
+									*/
 									tries=txtconf[2].wert;
 									user=txtconf[3].wert;
 								} // 						if (!lstat(txtf.c_str(),&txtstat))
@@ -3947,7 +3952,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 								ursp.clear(); for(size_t j=1;j<tok.size();j++){ursp+=tok[j];if (j<tok.size()-1) ursp+="-";}
 								// <<"ursp: "<<ursp<<endl;
 								inse+="('"+ursp+"','"+teln+"','"+zp+"',"+tries+","+ltoan(size)+","+(cru?"1":"0")+"),";
-								if (ruecki==100||ruecki==rueck[cru].size()-1) {
+								if (!(ruecki % 100)||ruecki==rueck[cru].size()-1) {
 									inse[inse.size()-1]=';';
 									//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 									RS vgl3(My,"INSERT INTO tmpc VALUES "+inse,ZDB);
@@ -3958,42 +3963,53 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 //						auswe[auswe.size()-1]=')';
 						// die laut tmpc uebermittelten Faxe, die in outa als Mißerfolg eintragen sind
 						char ***cerg;
-						RS kor1(My,"SELECT t.submid p0, t.teln p1, t.zp p2, a.submt p3, t.tries p4, t.erfolg p6, t.size p6, a.docname p7 "
+						RS kor1(My,"SELECT t.submid p0, t.teln p1, t.zp p2, a.submt p3, t.tries p4, t.erfolg p5, t.size p6, a.docname p7 "
 								"FROM `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid WHERE a.erfolg<>t.erfolg",ZDB);
 						if (!kor1.obfehl) {
 							size_t zru=0;
 							while (cerg=kor1.HolZeile(),cerg?*cerg:0) {
 								if (!zru++) {
 									cout<<violett<<Tx[T_Folgende_Faxe_waren_mit_falschem_Erfolgskennzeichen_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
-									cout<<schwarz<<setw(14)<<"submid"<<"|"<<setw(15)<<Tx[T_Faxnr]<<"|"<<setw(19)<<"zp"<<"|"
+									cout<<schwarz<<setw(19)<<"submid"<<"|"<<setw(15)<<Tx[T_Faxnr]<<"|"<<setw(19)<<"zp"<<"|"
 										<<setw(19)<<"submt"<<"|"<<setw(5)<<"tries"<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<"size"<<"|"<<"docname"<<schwarz<<endl;
 								} // 								if (!zru++)
-								cout<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(15)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"
+								cout<<setw(3)<<zru<<") "<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(15)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"
 									<<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<setw(5)<<*(*cerg+4)<<"|"<<violett<<setw(6)<<*(*cerg+5)<<"|"
-									<<blau<<setw(10)<<*(*cerg+6)<<"|"<<violett<<string(*(*cerg+7)).substr(0,60)<<endl;
+									<<blau<<setw(10)<<*(*cerg+6)<<"|"<<violett<<string(*(*cerg+7)).substr(0,55)<<endl;
 							} // while (cerg=kor1.HolZeile(),cerg?*cerg:0) 
 							RS kor2(My,"UPDATE `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid SET a.erfolg=t.erfolg where a.erfolg<>t.erfolg",ZDB);
 						} // 						if (!kor1.obfehl) 
-						RS kor3(My,"SELECT t.submid p0, t.teln p1, t.zp p2, t.tries p3, t.erfolg p4, t.size p5 "
-								"FROM `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid WHERE ISNULL(a.erfolg)",ZDB);
+						RS kor3(My,"SELECT t.submid p0,t.teln p1,t.zp p2,t.tries p3,t.erfolg p4,t.size p5,"
+								"IF(ISNULL(asp.original),'',asp.original) p6,"
+								"IF(ISNULL(asp.idudoc),0,asp.idudoc) p7,IF(ISNULL(asp.pages),0,asp.pages) p8,"
+								"IF(ISNULL(asp.adressat) OR asp.adressat=t.teln,'',asp.adressat) p9 "
+								"FROM tmpc t "
+								"LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
+								"LEFT JOIN altspool asp ON asp.capispooldatei=t.submid "
+								"LEFT JOIN `"+touta+"` av ON av.erfolg<>0 AND av.idudoc=asp.idudoc AND av.idudoc<>0 "
+								"WHERE ISNULL(a.submid) AND (t.erfolg<>0 OR ISNULL(av.idudoc)) "
+								"GROUP BY t.submid",ZDB);
 						if (!kor3.obfehl) {
 							size_t zru=0;
 							while (cerg=kor3.HolZeile(),cerg?*cerg:0) {
 								if (!zru++) {
 									cout<<violett<<Tx[T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
-									cout<<schwarz<<setw(14)<<"submid"<<"|"<<setw(25)<<"tel'n."<<"|"<<setw(19)<<"zp"<<"|"
-										<<setw(5)<<"tries"<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<"size"<<schwarz<<endl;
+									cout<<schwarz<<setw(20)<<"submid"<<"|"<<setw(25)<<"tel'n."<<"|"<<setw(19)<<"zp"<<"|"
+										<<setw(5)<<"tries"<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<"size"<<schwarz<<"|"<<blau<<"docname"<<endl;
 								} // 							if (!zru++)
-								cout<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(25)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"
-									<<violett<<setw(5)<<*(*cerg+3)<<"|"<<blau<<setw(6)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+4)<<endl;
+								cout<<setw(4)<<zru<<") "<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(25)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"
+									<<violett<<setw(5)<<*(*cerg+3)<<"|"<<blau<<setw(6)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+5)<<"|"
+									<<blau<<string(*(*cerg+6)).substr(0,55)<<endl;
 							} // while (cerg=kor3.HolZeile(),cerg?*cerg:0) 
 							RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,fsize,retries,rcfax,docname,idudoc,pages,rcname) "
 									"SELECT t.erfolg,t.zp,t.zp,t.submid,t.size,t.tries,t.teln,IF(ISNULL(asp.original),'',asp.original),"
-									"IF(ISNULL(asp.idudoc),0,asp.idudoc),IF(ISNULL(asp.pages),0,asp.pages),IF(ISNULL(asp.adressat),0,asp.adressat) "
+									"IF(ISNULL(asp.idudoc),0,asp.idudoc),IF(ISNULL(asp.pages),0,asp.pages),"
+									"IF(ISNULL(asp.adressat) OR asp.adressat=t.teln,'',asp.adressat) "
 									"FROM tmpc t "
 									"LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
-									"LEFT JOIN altspool asp ON t.submid=asp.capispooldatei "
-									"WHERE ISNULL(a.submid) "
+									"LEFT JOIN altspool asp ON asp.capispooldatei=t.submid "
+									"LEFT JOIN `"+touta+"` av ON av.erfolg<>0 AND av.idudoc=asp.idudoc AND av.idudoc<>0 "
+									"WHERE ISNULL(a.submid) AND (t.erfolg<>0 OR ISNULL(av.idudoc)) "
 									"GROUP BY t.submid",ZDB);
 						} // 						if (!kor3.obfehl)
 
