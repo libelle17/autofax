@@ -5413,6 +5413,8 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 // aufgerufen in: zeigweitere
 void paramcl::korrigierehyla(unsigned tage/*=90*/)
 {
+  obverb=1;
+	ZDB=255;
 	Log(violetts+Tx[T_sammlefertigehyla]+schwarz,obverb,oblog);
 	if (!xferfaxlog.empty()) {
 		struct stat entryvz;
@@ -5548,6 +5550,8 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			// KLZ
 		} // if (!lstat(hsendqvz.c_str(),&entryvz))
 	} // 	if (!xferfaxlog.empty())
+	obverb=0;
+	ZDB=0;
 } // void paramcl::korrigierehyla()
 
 // aufgerufen in: empfarch, zupdf
