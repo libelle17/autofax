@@ -5247,7 +5247,7 @@ void paramcl::zeigweitere()
 	stringstream ausg; //      ausg.str(std::string()); ausg.clear();
 	unsigned tage=0;
 	if (obcapi || obhyla) {
-		// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 3 Monate und des Monats 30 Jahre
+		// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 30 Tage und des Monats 2 Jahre, bei mehr => mysql-Serverabsturz
 		if (monatsaufr==3) {
 			tage=730;
 		}	else if (tagesaufr==3) {
