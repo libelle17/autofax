@@ -5249,7 +5249,7 @@ void paramcl::zeigweitere()
 	if (obcapi || obhyla) {
 		// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 3 Monate und des Monats 30 Jahre
 		if (monatsaufr==3) {
-			tage=1460;
+			tage=1000;
 		}	else if (tagesaufr==3) {
 			tage=30;
 		}	else if (!(tagesaufr % 3)) {
