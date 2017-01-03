@@ -4958,7 +4958,7 @@ void paramcl::DateienHerricht()
 	geszahl=fxv.size();
 	// 3) in spooltab eintragen
 	WVZinDatenbank(&fxv);
-} // void DateienHerricht(DB *My, string *wvz, string *zufaxenvz, zielmustercl zmp, unsigned long *geszahl,uchar gleichziel, int obverb=0,int oblog=0)
+} // void DateienHerricht()
 
 // wird aufgerufen in: main
 void paramcl::faxealle()
@@ -5336,7 +5336,7 @@ void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
 			} // if (!indb) 
 		} // for(size_t i=0
 	} // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
-} // void zeigweitere(DB *My, paramcl *pmp, int obverb=0,int oblog=0)
+} // void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
 
 // in sammlecapi
 void paramcl::bereinigecapi()
@@ -5922,7 +5922,7 @@ void paramcl::schlussanzeige()
 // ermittelt fuer eine in ein Zielverzeichnis zu kopierende Datei den dortigen Namen, falls gewuenscht unter Beruecksichtigung 
 // dort evtl. schon vorhandener Dateien
 // wird aufgerufen von verschiebe (Version 1) und kopiere (Version 1), neuerdateiname, zielname (Version 2)
-string zielname(const string& qdatei, const string& zielverz, uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0)
+string zielname(const string& qdatei, const string& zielverz, uchar wieweiterzaehl/*=0*/, string* zieldatei/*=0*/, int obverb/*=0*/, int oblog/*=0*/)
 {
   //  Log(violetts+Tx[T_zielname]+schwarz,obverb,oblog);
   // wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
@@ -5960,7 +5960,7 @@ string zielname(const string& qdatei, const string& zielverz, uchar wieweiterzae
 } // zielname 
 
 // wird aufgerufen in: verschiebe (Version 2), kopiere (Version 2), neuerdateiname, 
-string zielname(const string& qdatei, zielmustercl *zmp, uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0)
+string zielname(const string& qdatei, zielmustercl *zmp, uchar wieweiterzaehl/*=0*/, string* zieldatei/*=0*/, int obverb/*=0*/, int oblog/*=0*/)
 {
   //  Log(violetts+Tx[T_zielname]+schwarz,obverb,oblog);
   for(zielmustercl *zmakt=zmp;1;zmakt++){
@@ -6050,7 +6050,7 @@ string kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wie
 
 // wird aufgerufen in pruefhyla
 // hylafax konfigurieren 
-void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0)
+void hfaxsetup(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
 {
   Log(violetts+"hfaxsetup()"+schwarz,obverb,oblog);
   string faxsu;
@@ -6187,7 +6187,7 @@ void paramcl::setzfaxgtpfad()
 }
 
 // wird aufgerufen in: pruefhyla
-void hconfig(paramcl *pmp,int obverb=0, int oblog=0)
+void hconfig(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
 {
   Log(violetts+"hconfig()"+schwarz,obverb,oblog);
   string confd=pmp->varsphylavz+"/etc/config";
@@ -6223,7 +6223,7 @@ void hconfig(paramcl *pmp,int obverb=0, int oblog=0)
     exit(28);
   }
   Log(violetts+Tx[T_Ende]+"hconfig()"+schwarz,obverb,oblog);
-} // void hconfig(paramcl *pmp,int obverb=0, int oblog=0)
+} // void hconfig(paramcl *pmp,int obverb, int oblog)
 
 void paramcl::setzmodconfd()
 {
@@ -6347,7 +6347,7 @@ void paramcl::hconfigtty()
     exit(30);
   }
   Log(violetts+Tx[T_Ende]+"hconfigtty()"+schwarz,obverb,oblog);
-} // void hconfigtty(paramcl *pmp,int obverb=0, int oblog=0)
+} // void paramcl::hconfigtty()
 
 // wird aufgerufen in: pruefcapi
 // lieftert 0, wenn die Dienstdatei gespeichert werden konnte (erg), nicht wenn der Dienst laeuft (csfehler)
@@ -7621,7 +7621,7 @@ void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnam
      *getnamep=trimfaxnr;
     }
   } // if (!faxnr->empty()) 
-} // void getSender(paramcl *pmp,const char* faxnrc, string *getnamep, string *bsnamep,int obverb=0,int oblog=0) 
+} // void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,int obverb,int oblog) 
 
 // wird aufgerufen in: main
 const string& pruefspool(DB *My,const string& spooltab, const string& altspool, int obverb, int oblog, uchar direkt=0)

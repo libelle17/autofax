@@ -8,8 +8,8 @@ class zielmustercl; // fuer die Verteilung der erfolgreich gefaxten Dateien auf 
 class fxfcl; // Faxfile
 class fsfcl; // Faxsendfile
 class paramcl; // Programmparameter
-string zielname(const string& qdatei, const string& zielverz,uchar wieweiterzaehl, string* zieldatei, int obverb, int oblog);
-string zielname(const string& qdatei, zielmustercl *zmp,uchar wieweiterzaehl, string* zieldatei, int obverb, int oblog);
+string zielname(const string& qdatei, const string& zielverz,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0);
+string zielname(const string& qdatei, zielmustercl *zmp,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0);
 void dorename(const string& quelle, const string& ziel, const string& cuser="", uint *vfehler=0, int obverb=0, int oblog=0);
 string verschiebe(const string& qdatei, const string& zielvz, const string& cuser="",uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0,int oblog=0);
 void verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser="", uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0, int oblog=0);
@@ -23,6 +23,8 @@ int pruefcapi(paramcl *pmp, int obverb, int oblog);
 void kuerzevtz(string *vzp);
 pid_t PIDausName(const char* PName, uchar klgr, uchar exakt, int obverb, int oblog);
 void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,int obverb=0,int oblog=0);
+void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0);
+void hconfig(paramcl *pmp,int obverb=0, int oblog=0);
 
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster
 class zielmustercl 
