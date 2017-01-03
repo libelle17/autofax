@@ -3987,7 +3987,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 						"LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
 						"LEFT JOIN altspool asp ON t.submid=asp.capispooldatei "
 						"WHERE ISNULL(a.submid) "
-						"GROUP BY a.submid",ZDB);
+						"GROUP BY t.submid",ZDB);
 						} // 						if (!kor3.obfehl)
 
 						// die laut tmpc uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
@@ -5249,9 +5249,9 @@ void paramcl::zeigweitere()
 	if (obcapi || obhyla) {
 		// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 3 Monate und des Monats 30 Jahre
 		if (monatsaufr==3) {
-			tage=90;
+			tage=730;
 		}	else if (tagesaufr==3) {
-			tage=10;
+			tage=30;
 		}	else if (!(tagesaufr % 3)) {
 			tage=1;
 		}
