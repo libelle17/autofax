@@ -3884,16 +3884,18 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
   if (1) {
     for(uchar runde=0;runde<1;runde++) {
       set<string>::iterator fit; // Iterator dafuer
-      svec rueck;
+      svec rueck[2];
       set<string> fdn; // Fax-Dateien
       size_t ruecki;
-			string auswe="(", auswm="(", auswef="(",auswmf="(", inse;
+//			string auswe="(", auswm="(", auswef="(",auswmf="(";
+			string inse;
 			string teln,zp,tries,user;
 			size_t size;
 			char buf[100];
 			struct tm tm;
 			switch (runde) {
         case 0: // capi
+					/*
 					if (0) {
 						cmd="sudo find '"+cdonevz+"' -maxdepth 1 -type f -iname '*-fax-*.sff'"; //  -printf '%f\\n'"; // cfailedvz weniger wichtig
 						systemrueck(cmd,obverb,oblog,&rueck);
@@ -3902,53 +3904,58 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 							fdn.insert(rueck[ruecki]);
 						} 
 					} // if (0)
+					*/
 					for(int cru=0;cru<2;cru++) {
-            rueck.clear();
 						cmd="sudo find '"+(cru?cdonevz:cfailedvz)+"' -maxdepth 1 "+(tage?string("-mtime -")+ltoan(tage):"")+" -iname '*-fax-*.sff'";//-printf '%f\\n'";
-						systemrueck(cmd,obverb,oblog,&rueck);
-						for(ruecki=0;ruecki<rueck.size();ruecki++) {
-							teln.clear();zp.clear();tries.clear();user.clear();size=0;
-							struct stat sffstat;
-							if (!lstat(rueck[ruecki].c_str(),&sffstat)) {
-								size=sffstat.st_size;
-							}
-							auswe+=rueck[ruecki]+","; 
-							string stamm,exten;
-							getstammext(&rueck[ruecki],&stamm,&exten);
-							string txtf=stamm+".txt";
-							struct stat txtstat;
-							if (!lstat(txtf.c_str(),&txtstat)) {
-								// <<gruen<<txtf<<schwarz<<endl;
-								schlArr txtconf; 
-								txtconf.init(6,"dialstring","starttime","tries","user","addressee","subject");
-								confdat txtcf(txtf,&txtconf,obverb,'='); // static wertet nichts aus
-								teln=stdfaxnr(txtconf[0].wert);
-								for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
-									if (strptime(txtconf[1].wert.c_str(),tmmoegl[im],&tm)) {
-										strftime(buf, sizeof(buf), "%F %T", &tm);
-										zp=buf;
-										break;
-									} // 							if (strptime(txtconf[1].wert.c_str(),"%c",&tm))
-								} // 								for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++)
-								tries=txtconf[2].wert;
-								user=txtconf[3].wert;
-							} // 						if (!lstat(txtf.c_str(),&txtstat))
-							// <<"txtf: "<<txtf<<endl;
-							string ursp=base_name(rueck[ruecki]);
-							vector<string> tok; 
-							aufSplit(&tok,&ursp,'-');
-							ursp.clear(); for(size_t j=1;j<tok.size();j++){ursp+=tok[j];if (j<tok.size()-1) ursp+="-";}
-							// <<"ursp: "<<ursp<<endl;
-							inse+="('"+ursp+"','"+teln+"','"+zp+"',"+tries+","+ltoan(size)+","+(cru?"1":"0")+"),";
-						} //           for(ruecki=0;ruecki<rueck.size();ruecki++)
-					} // 					for(uchar cru=0;cru<2;cru++)
-					auswe[auswe.size()-1]=')';
-					if (inse.size()>1) {
-						inse[inse.size()-1]=';';
-						//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
+						systemrueck(cmd,obverb,oblog,&rueck[cru]);
+					}
+					if (rueck[0].size()||rueck[1].size()) {
 						RS vgl1(My,"DROP TABLE IF EXISTS tmpc",ZDB);
 						RS vgl2(My,"CREATE TABLE tmpc(submid VARCHAR(25) KEY,teln VARCHAR(25),zp DATETIME, tries INT, size INT(15), erfolg INT);",ZDB);
-						RS vgl3(My,"INSERT INTO tmpc VALUES "+inse,ZDB);
+						for(int cru=0;cru<2;cru++) {
+							for(ruecki=0;ruecki<rueck[cru].size();ruecki++) {
+								teln.clear();zp.clear();tries.clear();user.clear();size=0;
+								struct stat sffstat;
+								if (!lstat(rueck[cru][ruecki].c_str(),&sffstat)) {
+									size=sffstat.st_size;
+								}
+//								auswe+=rueck[cru][ruecki]+","; 
+								string stamm,exten;
+								getstammext(&rueck[cru][ruecki],&stamm,&exten);
+								string txtf=stamm+".txt";
+								struct stat txtstat;
+								if (!lstat(txtf.c_str(),&txtstat)) {
+									// <<gruen<<txtf<<schwarz<<endl;
+									schlArr txtconf; 
+									txtconf.init(6,"dialstring","starttime","tries","user","addressee","subject");
+									confdat txtcf(txtf,&txtconf,obverb,'='); // static wertet nichts aus
+									teln=stdfaxnr(txtconf[0].wert);
+									for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
+										if (strptime(txtconf[1].wert.c_str(),tmmoegl[im],&tm)) {
+											strftime(buf, sizeof(buf), "%F %T", &tm);
+											zp=buf;
+											break;
+										} // 							if (strptime(txtconf[1].wert.c_str(),"%c",&tm))
+									} // 								for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++)
+									tries=txtconf[2].wert;
+									user=txtconf[3].wert;
+								} // 						if (!lstat(txtf.c_str(),&txtstat))
+								// <<"txtf: "<<txtf<<endl;
+								string ursp=base_name(rueck[cru][ruecki]);
+								vector<string> tok; 
+								aufSplit(&tok,&ursp,'-');
+								ursp.clear(); for(size_t j=1;j<tok.size();j++){ursp+=tok[j];if (j<tok.size()-1) ursp+="-";}
+								// <<"ursp: "<<ursp<<endl;
+								inse+="('"+ursp+"','"+teln+"','"+zp+"',"+tries+","+ltoan(size)+","+(cru?"1":"0")+"),";
+								if (ruecki==100||ruecki==rueck[cru].size()-1) {
+									inse[inse.size()-1]=';';
+									//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
+									RS vgl3(My,"INSERT INTO tmpc VALUES "+inse,ZDB);
+									inse.clear();
+								} // 							if (ruecki==100||rueck==rueck[cru].size()-1)
+							} //           for(ruecki=0;ruecki<rueck[cru].size();ruecki++)
+						} // 					for(uchar cru=0;cru<2;cru++)
+//						auswe[auswe.size()-1]=')';
 						// die laut tmpc uebermittelten Faxe, die in outa als Mißerfolg eintragen sind
 						char ***cerg;
 						RS kor1(My,"SELECT t.submid p0, t.teln p1, t.zp p2, a.submt p3, t.tries p4, t.erfolg p6, t.size p6, a.docname p7 "
@@ -3970,24 +3977,24 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 						RS kor3(My,"SELECT t.submid p0, t.teln p1, t.zp p2, t.tries p3, t.erfolg p4, t.size p5 "
 								"FROM `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid WHERE ISNULL(a.erfolg)",ZDB);
 						if (!kor3.obfehl) {
-						size_t zru=0;
-						while (cerg=kor3.HolZeile(),cerg?*cerg:0) {
-							if (!zru++) {
-								cout<<violett<<Tx[T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
-								cout<<schwarz<<setw(14)<<"submid"<<"|"<<setw(25)<<"tel'n."<<"|"<<setw(19)<<"zp"<<"|"
-									<<setw(5)<<"tries"<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<"size"<<schwarz<<endl;
-							} // 							if (!zru++)
-							cout<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(25)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"
-							<<violett<<setw(5)<<*(*cerg+3)<<"|"<<blau<<setw(6)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+4)<<endl;
-						} // while (cerg=kor3.HolZeile(),cerg?*cerg:0) 
-						RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,fsize,retries,rcfax,docname,idudoc,pages,rcname) "
-						"SELECT t.erfolg,t.zp,t.zp,t.submid,t.size,t.tries,t.teln,IF(ISNULL(asp.original),'',asp.original),"
-						"IF(ISNULL(asp.idudoc),0,asp.idudoc),IF(ISNULL(asp.pages),0,asp.pages),IF(ISNULL(asp.adressat),0,asp.adressat) "
-						"FROM tmpc t "
-						"LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
-						"LEFT JOIN altspool asp ON t.submid=asp.capispooldatei "
-						"WHERE ISNULL(a.submid) "
-						"GROUP BY t.submid",ZDB);
+							size_t zru=0;
+							while (cerg=kor3.HolZeile(),cerg?*cerg:0) {
+								if (!zru++) {
+									cout<<violett<<Tx[T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
+									cout<<schwarz<<setw(14)<<"submid"<<"|"<<setw(25)<<"tel'n."<<"|"<<setw(19)<<"zp"<<"|"
+										<<setw(5)<<"tries"<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<"size"<<schwarz<<endl;
+								} // 							if (!zru++)
+								cout<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(25)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"
+									<<violett<<setw(5)<<*(*cerg+3)<<"|"<<blau<<setw(6)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+4)<<endl;
+							} // while (cerg=kor3.HolZeile(),cerg?*cerg:0) 
+							RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,fsize,retries,rcfax,docname,idudoc,pages,rcname) "
+									"SELECT t.erfolg,t.zp,t.zp,t.submid,t.size,t.tries,t.teln,IF(ISNULL(asp.original),'',asp.original),"
+									"IF(ISNULL(asp.idudoc),0,asp.idudoc),IF(ISNULL(asp.pages),0,asp.pages),IF(ISNULL(asp.adressat),0,asp.adressat) "
+									"FROM tmpc t "
+									"LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
+									"LEFT JOIN altspool asp ON t.submid=asp.capispooldatei "
+									"WHERE ISNULL(a.submid) "
+									"GROUP BY t.submid",ZDB);
 						} // 						if (!kor3.obfehl)
 
 						// die laut tmpc uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
@@ -3995,12 +4002,13 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 						/*
 							 RS ntr(My,"SELECT t.submid p0,t.teln p1,a.original p2,unix_timestamp(t.zp) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpc t "
 							 "LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
-								"LEFT JOIN outa o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
-								*/
-					} // 					if (inse.size()>1)
+							 "LEFT JOIN outa o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
+						 */
+					} // 							if (rueck[0].size()||rueck[1].size()) 
           break;
         default: // hyla
           //        fdn.clear();
+					svec rueck;
           cmd=string("sudo find ")+varsphylavz+" -name 'q*' -print0 "+(obverb?"":"2>/dev/null")+"| /usr/bin/xargs -0 grep -l ^state:7 ";
           rueck.clear();
           systemrueck(cmd,obverb,oblog,&rueck);
@@ -4009,6 +4017,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
             if ((pos=rueck[ruecki].rfind("/q"))!=string::npos) fdn.insert(rueck[ruecki].substr(pos+2));
           } //           for(ruecki=0;ruecki<rueck.size();ruecki++)
       } // switch (runde)
+			/*
 			if (0) {
       string sql="SELECT titel p0, tsid p1, submt p2, submid p3, oscht p4, subject p5, docname p6, id p7, fsize p8, pages p9, "
         "devname p10, retries p11, prio p12, rcfax p13, rcname p14, csid p15, sender p16, transs p17, transe p18, Pid p19, eind p20, Erfolg p21 "
@@ -4038,8 +4047,9 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
         } // while (cerg=routa.HolZeile(),cerg?*cerg:0) 
       } // if (!routa.obfehl) 
 			} // if (0)
+			*/
     } // for(uchar runde=1;runde<2;runde++) 
-  } // if (0) 
+  } // if (1) 
   Log(violetts+"Ende "+Tx[T_korrigierecapi]+schwarz,obverb,oblog);
 } // korrigierecapi
 
@@ -5247,9 +5257,9 @@ void paramcl::zeigweitere()
 	stringstream ausg; //      ausg.str(std::string()); ausg.clear();
 	unsigned tage=0;
 	if (obcapi || obhyla) {
-		// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 30 Tage und des Monats 2 Jahre, bei mehr => mysql-Serverabsturz
+		// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 30 Tage und des Monats 200 Jahre, bei mehr => mysql-Serverabsturz
 		if (monatsaufr==3) {
-			tage=730;
+			tage=73000;
 		}	else if (tagesaufr==3) {
 			tage=30;
 		}	else if (!(tagesaufr % 3)) {
