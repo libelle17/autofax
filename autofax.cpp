@@ -4337,6 +4337,7 @@ int paramcl::loescheallewartende(int obverb, int oblog)
 // wird aufgerufen in: main (2x)
 void paramcl::tu_lista(const string& oberfolg, const string& submids)
 {
+// "... submid id ()" wuerde zu Mysql-Fehler fuehren
 	Log(violetts+Tx[T_tu_lista]+schwarz,obverb,oblog);
 	char ***cerg;
 	RS lista(My,string("SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM (")+
