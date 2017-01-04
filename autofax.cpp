@@ -5473,7 +5473,9 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 				RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmph t "
 						"LEFT JOIN `"+touta+"` o ON t.submid = o.submid "
 						"LEFT JOIN `"+altspool+"` a ON t.submid=a.hylanr "
-						"LEFT JOIN `"+touta+"` o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
+						"LEFT JOIN `"+touta+"` o2 ON o2.submid=a.capispooldatei AND NOT ISNULL(a.capispooldatei) AND a.capispooldatei<>'' AND o2.erfolg<>0 "
+						"WHERE ISNULL(o.erfolg) AND t.erfolg<>0 AND (ISNULL(o2.submid) OR o2.submid='') "
+						"GROUP BY t.submid",ZDB);
 				char ***cerg;
 				size_t znr=0;
 				while (cerg=ntr.HolZeile(),cerg?*cerg:0) {
