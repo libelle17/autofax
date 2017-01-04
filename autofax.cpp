@@ -4343,11 +4343,11 @@ void paramcl::tu_lista(const string& oberfolg, const string& submids)
 			"SELECT * FROM ("
 			"SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
 			"RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe "
-			"FROM `"+touta+"` WHERE "+(submids.empty()?"Erfolg = "+oberfolg+" ":"submid in "+submids+" ")+
-			" ORDER BY transe DESC"+(submids.empty()?" LIMIT "+dszahl:"")+") i "
+			"FROM `"+touta+"` WHERE "+(submids.length()<=2?"Erfolg = "+oberfolg+" ":"submid in "+submids+" ")+
+			" ORDER BY transe DESC"+(submids.length()<=2?" LIMIT "+dszahl:"")+") i "
 			" ORDER BY transe LIMIT 18446744073709551615) i",ZDB);
 
-	if (submids.empty())
+	if (submids.length()<=2)
 		cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandte_Faxe]<<schwarz<<endl;
 	while (cerg=lista.HolZeile(),cerg?*cerg:0) {
 		cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(14)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(65)<<*(*cerg+2)<<"|"
@@ -5461,7 +5461,7 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			} // for(size_t i=0;i<rueck.size();i++) 
 			auswe[auswe.size()-1]=')';
 			auswm[auswm.size()-1]=')';
-			if (inse.size()>1) {
+			if (inse.size()>2) {
 				inse[inse.size()-1]=';';
 				//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 				RS vgl1(My,"DROP TABLE IF EXISTS tmph",ZDB);
@@ -5504,7 +5504,7 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			// left join altspool a on a.hylanr = t.submid left join outa o2 on a.capispooldatei=o2.submid where isnull(o.submid);
 			char ***cerg;
 			size_t cergz=0;
-			if (auswe.size()>1) {
+			if (auswe.size()>2) {
 				RS rs1(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=0 AND submid IN "+auswe,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 				string auswmf="(";  // fuer die Ausgabe
 				while (cerg=rs1.HolZeile(),cerg?*cerg:0) {
@@ -5519,7 +5519,7 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 					RS k1(My,"UPDATE `"+touta+"` SET erfolg=1 WHERE erfolg=0 AND submid IN "+auswe,ZDB);
 				} // 				if (cergz) 
 			} // 		if (auswe.size()>1)
-			if (auswm.size()>1) {
+			if (auswm.size()>2) {
 				RS rs2(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=1 AND submid IN "+auswm,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 				cergz=0;
 				string auswef="("; // zur Ausgabe
