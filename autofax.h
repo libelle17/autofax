@@ -91,7 +91,6 @@ class fsfcl : public fxfcl // Faxsendfile
     string ctries; // parameter aus capiprot
     string starttime; // parameter aus capiprot
     string dialstring; // parameter aus capiprot
-		int protpos=-1; // Ergebnis von holcapiprot 
     string hstate="0"; // Statuszahl ("state" in man sendq)
     string hstatus; // Textbeschreibung des letztes Fehlschlags
     string hstatuscode; // in xferfaxlog nicht gefunden
@@ -120,7 +119,7 @@ class fsfcl : public fxfcl // Faxsendfile
     /*4*/fsfcl(string& hylanr): hylanr(hylanr) {}
     /*5*/fsfcl(string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
     void setzcapistat(paramcl *pmp, struct stat *entrysendp);
-    void capiwausgeb(stringstream *ausgp, string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,unsigned long faxord=0);
+    void capiausgeb(stringstream *ausgp, string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,unsigned long faxord=0);
     void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
     int holcapiprot(int obverb);
 }; // class fsfcl

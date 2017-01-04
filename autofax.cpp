@@ -381,7 +381,7 @@ enum T_
   T_pruefudoc,
   T_pruefinca,
   T_pruefprocgettel3,
-  T_capiwausgeb,
+  T_capiausgeb,
   T_hylaausgeb,
   T_tuloeschen,
   T_Installation_von_Hylafax_nicht_feststellbar_versuche_es_zu_installieren,
@@ -1220,8 +1220,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"pruefinca()","checkinca()"},
   // T_pruefprocgettel3
   {"pruefprocgettel3()","checkprocgettel3()"},
-  // T_capiwausgeb
-  {"capiwausgeb()","displaycapitries()"},
+  // T_capiausgeb
+  {"capiausgeb()","displaycapitries()"},
   // T_hylaausgeb
   {"hylaausgeb()","displayhylatries()"},
   // T_tuloeschen
@@ -1548,7 +1548,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   // T_gescheitert
   {"gescheitert","failed"},
   // T_nicht_in_der_Warteschlange
-  {"nicht in der Warteschlage","not in queue"},
+  {"nicht in der Warteschlange","not in queue"},
   // T_woasined
   {"unbekannt","unknown"},
 	// T_nichtfaxbar
@@ -1676,7 +1676,7 @@ const string& zielmustercl::holmuster() {
  return muster;
 } // const string& zielmustercl::holmuster()
 
-// wird aufgerufen in: loeschefax, untersuchespool, capiwausgeb, setzhylastat, hylaausgeb
+// wird aufgerufen in: loeschefax, untersuchespool, capiausgeb, setzhylastat, hylaausgeb
 inline const char* FxStatS(FxStat *i) 
 {
 //  enum FxStat:uchar {init,wartend,gesandt,gescheitert,fehlend,woasined};
@@ -1737,7 +1737,7 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     Log(string("original (docname): ")+blau+original+schwarz,obverb,oblog);
     einf.push_back(/*2*/instyp(My->DBS,"idudoc",&idudoc));
 		if (!tts) tts=time(0);
-		// <<gruen<<"tts: "<<rot<<tts<<schwarz<<endl;
+		//<<gruen<<"tts: "<<rot<<tts<<schwarz<<endl;
 		// char buf[100];
     // strftime(buf, sizeof(buf), "%d.%m.%y %T", localtime(&tts));
 		// <<"buf: "<<buf<<endl;
@@ -4229,10 +4229,10 @@ int paramcl::loeschefax(int obverb, int oblog)
 	for(size_t i=ivorher;i<fsfv.size();i++) {
 		//      if (i==ivorher)  Log("Capi:",1,0);
 		stringstream aus;
-		fsfv[i].capiwausgeb(&aus,maxcdials,1,obverb,oblog,++faxord);
+		fsfv[i].capiausgeb(&aus,maxcdials,1,obverb,oblog,++faxord);
 		string auss=aus.str();
 		Log(auss,1,oblog);
-	}
+	} // 	for(size_t i=ivorher;i<fsfv.size();i++)
 	ivorher=fsfv.size();
 	sammlehyla(&fsfv);
 	for(size_t i=ivorher;i<fsfv.size();i++) {
@@ -5040,6 +5040,8 @@ void paramcl::faxealle()
 // wird aufgerufen in: untersuchespool, loeschefax
 void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
 {
+  int dateifehlt=0;
+	int protpos=0;
 	if (capisd.empty()) {
 		capistat=fehlend;
 	} else {
@@ -5048,20 +5050,20 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
 		size_t p1,p2;
 		if ((p1=cspf.rfind(vtz))) if ((p2=cspf.rfind(vtz,p1-1))) {
 			aktuser=cspf.substr(p2+1,p1-p2-1);
-			if (lstat(sendqgespfad.c_str(),entrysendp)) {
+			if ((dateifehlt=lstat(sendqgespfad.c_str(),entrysendp))) {
 				// gesandte und gescheiterte Faxe wurden von capisuite entsprechend umbenannt
 				for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1)) { 
 					// entspr. gefaxte/gescheiterte Datei in capisuite
 					sendqgespfad=(capistat==gescheitert?pmp->cfailedvz:pmp->cdonevz)+vtz+aktuser+"-"+capisd; 
 					Log(string("capistat: ")+ltoan((int)capistat)+" "+blau+sendqgespfad+schwarz,pmp->obverb,pmp->oblog);
-					if (!lstat((sendqgespfad.c_str()), entrysendp)) break; 
+					if (!(dateifehlt=lstat((sendqgespfad.c_str()), entrysendp))) break; 
 				}  //         for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1))
 				// hier koennte capistat auch fehlend sein
-			} else {
-				holcapiprot(pmp->obverb);
-				if (protpos==-1) {
+			}
+		  if (!dateifehlt) {	
+				if ((protpos=holcapiprot(pmp->obverb)<0)) {
 					capistat=fehlend;
-				} else {
+				} else if (capistat!=gesandt && capistat!=gescheitert) {
 					struct stat statlock;
 					if (lstat((sendqgespfad.substr(0,protpos)+".lock").c_str(),&statlock))
 						capistat=wartend;
@@ -5125,7 +5127,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 					if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
 					fsf.setzcapistat(this, &entrysend);
 					fsf.tts=0; // fuer archiviere
-					fsf.capiwausgeb(&ausg,maxcdials, 0, obverb, oblog);
+					fsf.capiausgeb(&ausg,maxcdials, 0, obverb, oblog);
 					if (mitupd) {
 						RS rupd(My); 
 						vector<instyp> einf; // fuer alle Datenbankeinfuegungen
@@ -5300,7 +5302,7 @@ void paramcl::zeigweitere()
 				ausg<<rot<<Tx[T_Weitere_Spool_Eintraege]<<schwarz;
 				obtitel=1;
 			} // 			if (!obtitel) 
-			fsfv[i].capiwausgeb(&ausg, maxcdials, 0, obverb, oblog, ++faxord);
+			fsfv[i].capiausgeb(&ausg, maxcdials, 0, obverb, oblog, ++faxord);
 		} //     for(size_t i=0;i<fsfv.size();i++)
 	} // if (obcapi)
 	if (obhyla) {
@@ -7937,7 +7939,7 @@ void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& 
   }
 }  // void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
 
-// wird verwendet in capiwausgeb, loeschef
+// wird verwendet in setzcapistat
 // Ergebnis: p1 (>=0): Datei war da und enthielt Punkt, -2: Datei war nicht da oder enthielt keinen Punkt
 int fsfcl::holcapiprot(int obverb)
 {
@@ -7947,26 +7949,25 @@ int fsfcl::holcapiprot(int obverb)
     schlArr cconf; cconf.init(3,"tries","starttime","dialstring");
     struct stat cstat;
     if (lstat(suchtxt.c_str(),&cstat)) {
-      return -2;
+      return -2; // .txt-Datei fehlt
     } else {
       confdat cpconf(suchtxt,&cconf,obverb);
       ctries=cconf[0].wert;
       starttime=cconf[1].wert;
       dialstring=cconf[2].wert;
-			protpos=p1;
     } //   if (lstat(suchtxt.c_str(),&cstat)) else
     return (int)p1;
   } //   if (p1)
-  return -1;
+  return -1; // sendqgespfad enthaelt keinen ., .txt-Datei nicht zu benennen
 } // int fsfcl::holcapiprot()
 
 
 // ermittelt die letzten Sendedaten zu sendqgespfad mit fsf.capistat, schreibt die Zahl der Versuche in ctries zurueck und ergaenzt den 
 // Anzeigezeiger ausgp
-// wird aufgerufen in: untersuchespool, zeigweitere
-void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, int obverb, int oblog,unsigned long faxord)
+// wird aufgerufen in: loeschefax, untersuchespool, zeigweitere
+void fsfcl::capiausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, int obverb, int oblog,unsigned long faxord)
 {
-  Log(violetts+Tx[T_capiwausgeb]+schwarz+"  capistat: "+blau+FxStatS(&capistat)+schwarz+ " maxcdials: "+blau+maxcdials+schwarz,obverb,oblog);
+  Log(violetts+Tx[T_capiausgeb]+schwarz+"  capistat: "+blau+FxStatS(&capistat)+schwarz+ " maxcdials: "+blau+maxcdials+schwarz,obverb,oblog);
   if (!fuerlog) *ausgp<<blau<<endl;
   if (faxord) *ausgp<<faxord<<")";
   else *ausgp<<"  ";
@@ -8003,7 +8004,7 @@ void fsfcl::capiwausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, i
       *ausgp<<Tx[T_bzw]<<blau<<"*.txt"<<schwarz;
     if (ctries.empty()) ctries="0";
   } // if (capistat!=fehlend) 
-} // void fsfcl::capiwausgeb(stringstream *ausgp, int obverb, string *ctriesp, int oblog,unsigned long faxord)
+} // void fsfcl::capiausgeb(stringstream *ausgp, int obverb, string *ctriesp, int oblog,unsigned long faxord)
 
 
 // wird aufgerufen in: setzhylastat
@@ -8228,7 +8229,8 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
   if (obzaehl) *ausgp<<++pmp->faxord<<")";
   else *ausgp<<"  ";
   *ausgp<<"Hyla: "<<schwarz;
-	*ausgp<<(hylastat==fehlend?hgrau:(hylastat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<" "<<FxStatS(&hylastat)<<(hgerg.empty()?"":" ("+hgerg+")")<<schwarz;
+	*ausgp<<(hylastat==fehlend?hgrau:(hylastat>=static_cast<FxStat>(gesandt)?blau:schwarz))
+	      <<" "<<FxStatS(&hylastat)<<(hgerg.empty()?"":" ("+hgerg+")")<<schwarz;
 	/*
   if (obsfehlt) {
     // wenn also die Datenbankdatei weder im Spool noch bei den Erledigten nachweisbar ist
@@ -8245,7 +8247,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
   // wenn eine Protokolldatei auslesbar war
 //  if (pmp->hconfp) {
         // modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
-  if (pmp->hgelesen) {
+  if (pmp->hgelesen && hylastat!=fehlend) {
     *ausgp<<", ";
     char buf[100];
     int hversuzahl=atol(hdials.c_str()); // totdials

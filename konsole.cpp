@@ -584,248 +584,195 @@ FILE*
 oeffne(const string& datei, uchar art, uchar* erfolg,int obverb=0, int oblog=0)
 {
 #ifdef obfstream	
-  ios_base::openmode mode;
-  switch (art) {
-    case 0: mode=ios_base::in; break;
-    case 1: mode=ios_base::out; break;
-    case 2: mode=ios_base::out | ios_base::app; break;
-    case 3: mode=ios_base::out; break; // text mode, default
-  }
-  fstream *sdat;
-  for(int iru=0;iru<2;iru++) {
-    sdat = new fstream(datei,mode);
-    if (sdat) if (!sdat->is_open()) sdat=0;
-    if (sdat) {
+	ios_base::openmode mode;
+	switch (art) {
+		case 0: mode=ios_base::in; break;
+		case 1: mode=ios_base::out; break;
+		case 2: mode=ios_base::out | ios_base::app; break;
+		case 3: mode=ios_base::out; break; // text mode, default
+	}
+	fstream *sdat;
+	for(int iru=0;iru<2;iru++) {
+		sdat = new fstream(datei,mode);
+		if (sdat) if (!sdat->is_open()) sdat=0;
+		if (sdat) {
 #else
-      const char *mode;
-      switch (art) {
-        case 0: mode="r"; break;
-        case 1: mode="w"; break;
-        case 2: mode="a"; break;
-        case 3: mode="wt"; break; // text mode, default
-      }
-      FILE *sdat;
-      for(int iru=0;iru<2;iru++) {
-        if ((sdat= fopen(datei.c_str(),mode))) {
+			const char *mode;
+			switch (art) {
+				case 0: mode="r"; break;
+				case 1: mode="w"; break;
+				case 2: mode="a"; break;
+				case 3: mode="wt"; break; // text mode, default
+			}
+			FILE *sdat;
+			for(int iru=0;iru<2;iru++) {
+				if ((sdat= fopen(datei.c_str(),mode))) {
 #endif
-      *erfolg=1;
-      setfaclggf(datei,falsch,art?6:4,falsch,obverb,oblog);
-      break;
-    } 
-    if (!*erfolg) {
-      int erg __attribute__((unused));
-      erg=systemrueck("sudo touch '"+datei+"'",obverb,oblog);
-    }
-  } // oeffne
-  return sdat;
-}
+					*erfolg=1;
+					setfaclggf(datei,falsch,art?6:4,falsch,obverb,oblog);
+					break;
+				} 
+				if (!*erfolg) {
+					int erg __attribute__((unused));
+					erg=systemrueck("sudo touch '"+datei+"'",obverb,oblog);
+				}
+			} // oeffne
+			return sdat;
+		}
 #endif	
-
-
-#ifdef schrott
-#endif
 
 
 
 int kuerzelogdatei(const char* logdatei,int obverb)
 {
 #ifdef false
-  uchar erfolg=0;
+	uchar erfolg=0;
 #endif
-  // zutun: nicht erst in Vektor einlesen, sondern gleich in die tmp-Datei schreiben 10.6.12
+	// zutun: nicht erst in Vektor einlesen, sondern gleich in die tmp-Datei schreiben 10.6.12
 
-  //	vector<string> Zeilen;   //Der Vektor Zeilen enthält String-Elemente
-  char Zeile[256]; //Die maximale Zeilenlänge beträgt 255 Zeichen, weil ein String mit einer Null endet
-  if (obverb>1) {
-    cout<<"obverb: "<<(int)obverb<<Txk[T_kuerze_logdatei]<<drot<<logdatei<<schwarz<<endl;
-  }
-  //  Log(string("kuerzelogdatei: ") + drot + logdatei + schwarz,obverb,0);
-  // ersetze(logdatei,"\\","\\\\")
-  struct stat stat;
-  if (lstat(logdatei,&stat)){
-    if (obverb>1) {
-      cout<<Txk[T_Logdatei]<<drot<<logdatei<<schwarz<<Txk[T_gibt_es_noch_nicht_Kuerze_sie_daher_nicht]<<endl;
-    }
-    return 1;
-  }
-  if (obverb>1) {
-    cout<<rot<<Txk[T_Logdateidpp]<<endl<<schwarz; 
-    int erg __attribute__((unused));
-    erg=system((string(dir) + "\"" + logdatei + "\"").c_str());
-  }
-  string ofil=string(logdatei)+"tmp";
-  int abhier=0;
-  mdatei outfile(ofil,ios::out);
-  if (!outfile.is_open()) {
-    perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_als_fstream_zum_Schreiben_oeffnen]).c_str());
-    return 1;
-  }
-  mdatei logf(logdatei,ios::in);
-  if (!logf.is_open()) {
-    perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_als_fstream_zum_Lesen_oeffnen]).c_str());
-    return 1;
-  }
-  while (logf.getline (Zeile, sizeof(Zeile))) {
+	//	vector<string> Zeilen;   //Der Vektor Zeilen enthält String-Elemente
+	char Zeile[256]; //Die maximale Zeilenlänge beträgt 255 Zeichen, weil ein String mit einer Null endet
+	if (obverb>1) {
+		cout<<"obverb: "<<(int)obverb<<Txk[T_kuerze_logdatei]<<drot<<logdatei<<schwarz<<endl;
+	}
+	//  Log(string("kuerzelogdatei: ") + drot + logdatei + schwarz,obverb,0);
+	// ersetze(logdatei,"\\","\\\\")
+	struct stat stat;
+	if (lstat(logdatei,&stat)){
+		if (obverb>1) {
+			cout<<Txk[T_Logdatei]<<drot<<logdatei<<schwarz<<Txk[T_gibt_es_noch_nicht_Kuerze_sie_daher_nicht]<<endl;
+		}
+		return 1;
+	}
+	if (obverb>1) {
+		cout<<rot<<Txk[T_Logdateidpp]<<endl<<schwarz; 
+		int erg __attribute__((unused));
+		erg=system((string(dir) + "\"" + logdatei + "\"").c_str());
+	}
+	string ofil=string(logdatei)+"tmp";
+	int abhier=0;
+	mdatei outfile(ofil,ios::out);
+	if (!outfile.is_open()) {
+		perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_als_fstream_zum_Schreiben_oeffnen]).c_str());
+		return 1;
+	}
+	mdatei logf(logdatei,ios::in);
+	if (!logf.is_open()) {
+		perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_als_fstream_zum_Lesen_oeffnen]).c_str());
+		return 1;
+	}
+	while (logf.getline (Zeile, sizeof(Zeile))) {
 #ifdef false
 #ifdef obfstream	
-    fstream *outfile=oeffne(ofil,2,&erfolg);
-    if (!erfolg) {
-      perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_als_fstream_zum_Schreiben_oeffnen]).c_str());
-      return 1;
-    }
-    fstream *logf=oeffne(logdatei,0,&erfolg); //Die Zeilen dieser Datei sollen in einen Vektor geschrieben werden.
-    if (!erfolg) {
-      perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_als_fstream_zum_Lesen_oeffnen]).c_str());
-      return 1;
-    }
-    while (logf->getline (Zeile, sizeof(Zeile))) {
-      //		Zeilen.push_back(Zeile); //hängt einfach den Inhalt der Zeile als Vektorelement an das Ende des Vektors
+		fstream *outfile=oeffne(ofil,2,&erfolg);
+		if (!erfolg) {
+			perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_als_fstream_zum_Schreiben_oeffnen]).c_str());
+			return 1;
+		}
+		fstream *logf=oeffne(logdatei,0,&erfolg); //Die Zeilen dieser Datei sollen in einen Vektor geschrieben werden.
+		if (!erfolg) {
+			perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_als_fstream_zum_Lesen_oeffnen]).c_str());
+			return 1;
+		}
+		while (logf->getline (Zeile, sizeof(Zeile))) {
+			//		Zeilen.push_back(Zeile); //hängt einfach den Inhalt der Zeile als Vektorelement an das Ende des Vektors
 #else	
-      FILE *outfile=oeffne(ofil,2,&erfolg);
-      if (!erfolg) {
-        perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_mit_fopen_zum_Schreiben_oeffnen]).c_str());
-        return 1;
-      }
-      FILE *logf=oeffne(logdatei,0,&erfolg);
-      if (!erfolg) {
-        Log(string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_mit_fopen_zum_Lesen_oeffnen],1,0);
-        return 1;
-      }
-      while (fgets(Zeile, sizeof Zeile, logf)) {
-        //	 Zeilen.push_back(Zeile);
+			FILE *outfile=oeffne(ofil,2,&erfolg);
+			if (!erfolg) {
+				perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_mit_fopen_zum_Schreiben_oeffnen]).c_str());
+				return 1;
+			}
+			FILE *logf=oeffne(logdatei,0,&erfolg);
+			if (!erfolg) {
+				Log(string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_mit_fopen_zum_Lesen_oeffnen],1,0);
+				return 1;
+			}
+			while (fgets(Zeile, sizeof Zeile, logf)) {
+				//	 Zeilen.push_back(Zeile);
 #endif	
 #endif	
-        if (!abhier) {
-          tm *atm = new tm; time_t gesz; long sekunden; // int aktz;
-          //	for(aktz=Zeilen.size()-1;aktz>=0;aktz--) {
-          //         Log(string("aktz=") + ltoa_(aktz,buffer,10),obverb,0);
-          int verwertbar=0, index;
-          for(unsigned j=0;j<2;j++) {
-            if (verwertbar) {
-              index = verwertbar-1;
-              j=2;
-            } else {
-              index = j;
-            }
-            switch (index) {
-              case 0: 
-                if (sscanf(Zeile,"%2d.%2d.%2d %2d:%2d:%2d%*s",&atm->tm_mday,&atm->tm_mon,&atm->tm_year,&atm->tm_hour,&atm->tm_min,&atm->tm_sec)==6) {
-                  if (!verwertbar) {
-                    verwertbar=1;
-                    j=2;
-                  }
-                  atm->tm_mon--;
-                  atm->tm_year+=100; // 2000-1900
-                  //	  <<atm->tm_mday<<"."<<atm->tm_mon+1<<"."<<atm->tm_year<<"."<<atm->tm_hour<<"."<<atm->tm_min<<"."<<atm->tm_sec<<endl;
-                  atm->tm_isdst=-1; // sonst wird zufällig ab und zu eine Stunde abgezogen
-                } else if (verwertbar) verwertbar=0;
-                break;
-              case 1:
-                if (strptime(Zeile,"%a %b %d %T %Y", atm)) {
-                  if (!verwertbar) {
-                    verwertbar=2;
-                    j=2;
-                  } 
-                } else if (verwertbar) verwertbar=0;
-            }
-          }
-          if (verwertbar) {
-            gesz=mktime(atm);
-            //          	  char tbuf[20];
-            //              strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
-            //              <<"Datum: "<<tbuf<<endl;
-            time_t jetzt;
-            jetzt=time(0);
-            sekunden=(long)(jetzt-gesz);
-            if (sekunden<1209600) {// jünger als zwei Wochen => behalten
-              abhier=1;
-            }
-            //	  <<jetzt<<"- "<<gesz<<"="<<sekunden<<endl;
-          } // if (sscanf(Zeile
-          delete[] atm;
-        } // (!abhier)
-        if (abhier) {
-          outfile<<Zeile<<endl;
-        }
-        }
-        outfile.close();
+				if (!abhier) {
+					tm *atm = new tm; time_t gesz; long sekunden; // int aktz;
+					//	for(aktz=Zeilen.size()-1;aktz>=0;aktz--) KLA
+					//         Log(string("aktz=") + ltoa_(aktz,buffer,10),obverb,0);
+					int verwertbar=0, index;
+					for(unsigned j=0;j<2;j++) {
+						if (verwertbar) {
+							index = verwertbar-1;
+							j=2;
+						} else {
+							index = j;
+						}
+						switch (index) {
+							case 0: 
+								if (sscanf(Zeile,"%2d.%2d.%2d %2d:%2d:%2d%*s",&atm->tm_mday,&atm->tm_mon,&atm->tm_year,&atm->tm_hour,&atm->tm_min,&atm->tm_sec)==6) {
+									if (!verwertbar) {
+										verwertbar=1;
+										j=2;
+									}
+									atm->tm_mon--;
+									atm->tm_year+=100; // 2000-1900
+									//	  <<atm->tm_mday<<"."<<atm->tm_mon+1<<"."<<atm->tm_year<<"."<<atm->tm_hour<<"."<<atm->tm_min<<"."<<atm->tm_sec<<endl;
+									atm->tm_isdst=-1; // sonst wird zufällig ab und zu eine Stunde abgezogen
+								} else if (verwertbar) verwertbar=0;
+								break;
+							case 1:
+								if (strptime(Zeile,"%a %b %d %T %Y", atm)) {
+									if (!verwertbar) {
+										verwertbar=2;
+										j=2;
+									} //                   if (!verwertbar)
+								} else if (verwertbar) verwertbar=0;
+						} //             switch (index)
+					} //           for(unsigned j=0;j<2;j++)
+					if (verwertbar) {
+						gesz=mktime(atm);
+						//          	  char tbuf[20];
+						//              strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
+						//              <<"Datum: "<<tbuf<<endl;
+						time_t jetzt;
+						jetzt=time(0);
+						sekunden=(long)(jetzt-gesz);
+						if (sekunden<1209600) {// jünger als zwei Wochen => behalten
+							abhier=1;
+						}
+						//	  <<jetzt<<"- "<<gesz<<"="<<sekunden<<endl;
+					} // if (sscanf(Zeile
+					delete[] atm;
+				} // (!abhier)
+				if (abhier) {
+					outfile<<Zeile<<endl;
+				} //         if (abhier)
+			} //         if (!abhier)
+			outfile.close();
 #ifdef false
 #ifdef obfstream
-        *outfile<<Zeile<<endl;
-      }
-    }
-    logf->close();
-    outfile->close();
+			*outfile<<Zeile<<endl;
+		}
+	}
+	logf->close();
+	outfile->close();
 #else
-    fputs(Zeile,outfile);
-    //          fputs("\n",outfile);
-  } // (abhier)
+	fputs(Zeile,outfile);
+	//          fputs("\n",outfile);
+} // (abhier)
 } // while (fgets(Zeile
 fclose(logf);
 fclose(outfile);
 #endif
 #endif
-/*	
-    Log(string("kuerzelogdatei, nach Einlesen"),obverb,0);	
-    tm *atm = new tm; time_t gesz; long sekunden; int aktz;
-    for(aktz=Zeilen.size()-1;aktz>=0;aktz--) {
-//         Log(string("aktz=") + ltoa_(aktz,buffer,10),obverb,0);
-if (sscanf(Zeilen[aktz].c_str(),"%2d.%2d.%2d %2d:%2d:%2d%*s", &atm->tm_mday,&atm->tm_mon,&atm->tm_year,&atm->tm_hour,&atm->tm_min,&atm->tm_sec)==6)
-{
-atm->tm_mon-=1;
-atm->tm_year+=100; // 2000-1900
-//	  <<atm->tm_mday<<"."<<atm->tm_mon+1<<"."<<atm->tm_year<<"."<<atm->tm_hour<<"."<<atm->tm_min<<"."<<atm->tm_sec<<endl;
-gesz=mktime(atm);
-//	  char tbuf[20];
-//      strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
-//      <<tbuf<<endl;
-time_t jetzt;
-jetzt=time(0);
-sekunden=(long)(jetzt-gesz);
-if (sekunden>1209600) {// älter als zwei Wochen => abschneiden
-break;
-}
-//	  <<jetzt<<"- "<<gesz<<"="<<sekunden<<endl;
-}
-}
-Log(string("kuerzelogdatei, nach Datumspruefung"),obverb,0);	
-string ofil=string(logdatei)+"tmp";
-#ifdef obfstream
-fstream outfile(ofil.c_str(),ios::out);
-if (!outfile) {
-perror((string("\nkuerzelogdatei: Kann Datei '")+ofil+"' nicht als fstream zum Schreiben oeffnen.").c_str());
-return 1;
-} else {
-for(int j=aktz+1;j<Zeilen.size();j++) {
-outfile<<Zeilen[j]<<endl;
-}
-}
-#else
-logf = fopen(ofil.c_str(),"w");
-if (!logf) {
-perror((string("\nkuerzelogdatei: Kann Datei '")+ofil+"' nicht mit logf zum Schreiben oeffnen.").c_str());
-return 1;
-} else {
-for(unsigned j=aktz+1;j<Zeilen.size();j++) {
-fputs(Zeilen[j].c_str(),logf);
-fputs("\n",logf);
-} 
-fclose(logf);
-}
-#endif
- */	
 if (abhier) {
-  remove(logdatei);
-  rename(ofil.c_str(),logdatei);
+	remove(logdatei);
+	rename(ofil.c_str(),logdatei);
 }else{
-  remove(ofil.c_str());
+	remove(ofil.c_str());
 }
 return 0;
 //  << "Alle Zeilen:" << endl;
 // unsigned int ii; //unsigned, weil ansonsten Vergleich von signed- und unsigned-Werten. signed=vorzeichenbehaftet
-// for(ii=0; ii < Zeilen.size(); ii++ddddddddds) {
+// for(ii=0; ii < Zeilen.size(); ii++ddddddddds) KLA
 //  << Zeilen[ii] << endl;
-// }
+// KLZ
 //  << endl;
 //************************************
 }	 // int kuerzelogdatei(const char* logdatei,int obverb)
