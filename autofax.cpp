@@ -5458,9 +5458,9 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 				} // 				if (tok.size()>0)
 			} // for(size_t i=0;i<rueck.size();i++) 
 			auswe[auswe.size()-1]=')';
-			inse[inse.size()-1]=';';
 			auswm[auswm.size()-1]=')';
 			if (inse.size()>1) {
+				inse[inse.size()-1]=';';
 				//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 				RS vgl1(My,"DROP TABLE IF EXISTS tmph",ZDB);
 				RS vgl2(My,"CREATE TABLE tmph(submid VARCHAR(11) KEY,Datum DATETIME,tel VARCHAR(30),pages INT,attr VARCHAR(20),erfolg INT);",ZDB);
