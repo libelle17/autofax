@@ -5427,9 +5427,11 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			// tac /var/spool/hylafax/etc/xferfaxlog | awk -vDate=`date -d'now-1 month' +%m/%d/%y` 'function isdate(var) KLA if (var ~ /[0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]/) return 1; return 0; KLZ isdate($1) && $1 > Date KLAprint Date " " $0KLZ'
 			//		  cmd="tac \""+xferfaxlog+"\" 2>/dev/null|grep '"+sep+"UNSENT"+sep+"\\|"+sep+"SEND"+sep+"'|cut -f 2,5,14,20|awk '!s[$2]++'";
 			// awk-Befehl: Suche bis vor 3 Monaten von zu jeder hylanr ($5) die letzte Zeile (s[$5]==0) mit dem Befehl ($2) SEND oder UNSENT; gib mit \t aus
-			cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-"+ltoan(tage)+" day' +%m/%d/%y` "
-				"'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];}"
-				" $1<Date {exit 0} ($2 in arr && !s[$5]++) {print $1,$2,$5,$8,$11,$14,$20}'"; //...$14,$20;gz++KLZ END KLA print gz KLZ'
+			cmd="tac \""+xferfaxlog+"\" 2>/dev/null|awk -vDate=`date -d'now-"+ltoan(tage)+" day' +%Y%m%d` "
+				"'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];}; "
+				"merk=20(substr($1,7,2))substr($1,1,2)substr($1,4,2); "
+				"merk~/^[0-9]+$/ && merk!=\"20\" && merk<Date {exit 0}; "
+				"merk~/^[0-9]+$/ && merk!=\"20\" && $2 in arr && !s[$5]++ {print $1,$2,$5,$8,$11,$14,$20}'"; //...$14,$20;gz++KLZ END KLA print gz KLZ'
 			//$1=Date,$2=action,$5=qfile(hylid,sumid),$8=Tel'nr,$11=Seitenzahl,$14=reason,$20=jobinfo(totpages/ntries/ndials/totdials/maxdials/tot/maxtries)
 			svec qrueck;
 			// wenn unter SEND im Feld reason ($14) nichts steht, erfolgreich, sonst erfolglos
