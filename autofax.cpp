@@ -5231,16 +5231,16 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 					} // if (nimmer)
 					if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) ) {
 						uchar geloescht=0;
-						caus <<"\n"<<gruen<<"gesandt: "<<schwarz<<(int)gesandt<<endl;
-						caus <<gruen<<"gescheitert: "<<schwarz<<(int)gescheitert<<endl;
-						caus <<gruen<<"fehlend: "<<schwarz<<(int)fehlend<<endl;
-						caus <<gruen<<"allegesch: "<<schwarz<<(int)allegesch<<endl;
-						caus <<gruen<<"nimmer: "<<schwarz<<(int)nimmer<<endl;
-						caus <<gruen<<"fsf.capistat: "<<schwarz<<(int)fsf.capistat<<endl;
-						caus <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
-						caus <<"obcapi: "<<(int)obcapi<<endl;
-						caus <<"obhyla: "<<(int)obhyla<<endl;
-						caus <<"fsf.capisd: '"<<fsf.capisd<<"'"<<endl;
+						// <<"\n"<<gruen<<"gesandt: "<<schwarz<<(int)gesandt<<endl;
+						// <<gruen<<"gescheitert: "<<schwarz<<(int)gescheitert<<endl;
+						// <<gruen<<"fehlend: "<<schwarz<<(int)fehlend<<endl;
+						// <<gruen<<"allegesch: "<<schwarz<<(int)allegesch<<endl;
+						// <<gruen<<"nimmer: "<<schwarz<<(int)nimmer<<endl;
+						// <<gruen<<"fsf.capistat: "<<schwarz<<(int)fsf.capistat<<endl;
+						// <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
+						// <<"obcapi: "<<(int)obcapi<<endl;
+						// <<"obhyla: "<<(int)obhyla<<endl;
+						// <<"fsf.capisd: '"<<fsf.capisd<<"'"<<endl;
 						// <<gruen<<"fsf.capisd.empty(): "<<schwarz<<(int)fsf.capisd.empty()<<endl;
 						fsf.archiviere(My,this,&entrysend,allegesch||nimmer,
 								fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?hyla:capi,
@@ -5414,8 +5414,6 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 // aufgerufen in: zeigweitere
 void paramcl::korrigierehyla(unsigned tage/*=90*/)
 {
-  obverb=2;
-	ZDB=255;
 	Log(violetts+Tx[T_sammlefertigehyla]+schwarz,obverb,oblog);
 	if (!xferfaxlog.empty()) {
 		struct stat entryvz;
@@ -5470,16 +5468,17 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 				RS vgl3(My,"INSERT INTO tmph VALUES "+inse,ZDB);
 				// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
 				// und zu denen nicht bereits eine erfolgreiche capisuite-Uebertragung eingetragen ist
-				RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmph t "
+				RS ntr(My,"SELECT t.submid p0,t.tel p1,a.original p2,unix_timestamp(t.Datum) p3,IF(ISNULL(a.hdateidatum),t.Datum,a.hdateidatum) p4, "
+				    "a.idudoc p5,t.pages p6 FROM tmph t "
 						"LEFT JOIN `"+touta+"` o ON t.submid = o.submid "
 						"LEFT JOIN `"+altspool+"` a ON t.submid=a.hylanr "
 						"LEFT JOIN `"+touta+"` o2 ON o2.submid=a.capispooldatei AND NOT ISNULL(a.capispooldatei) AND a.capispooldatei<>'' AND o2.erfolg<>0 "
 						"WHERE ISNULL(o.erfolg) AND t.erfolg<>0 AND (ISNULL(o2.submid) OR o2.submid='') "
 						"GROUP BY t.submid",ZDB);
 				char ***cerg;
-				size_t znr=0;
+				// size_t znr=0;
 				while (cerg=ntr.HolZeile(),cerg?*cerg:0) {
-					caus<<"znr: "<<rot<<++znr<<schwarz<<endl;
+					//<<"znr: "<<rot<<++znr<<schwarz<<endl;
 					string hylanr = *(*cerg+0);
 					/*4*/fsfcl fsf(hylanr); // hylanr
 
@@ -5495,6 +5494,7 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 					if (*(*cerg+3)) fsf.tts=atol(*(*cerg+3)); // Datum (aus xferfaxlog, tts
 					if (*(*cerg+4)) fsf.hdd=*(*cerg+4);
 					if (*(*cerg+5)) fsf.idudoc=*(*cerg+5);
+					if (fsf.idudoc.empty()) fsf.idudoc="0";
 					if (*(*cerg+6)) fsf.pseiten=atol(*(*cerg+6));
 					// <<"vor archiviere, telnr: "<<fsf.telnr<<" tts: "<<fsf.tts<<" hdd: "<<fsf.hdd<<" original: "<<fsf.original<<
 					//                           " hdd: "<<fsf.hdd<<" idudoc: "<<fsf.idudoc<<endl;
@@ -5555,8 +5555,6 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			// KLZ
 		} // if (!lstat(hsendqvz.c_str(),&entryvz))
 	} // 	if (!xferfaxlog.empty())
-	obverb=0;
-	ZDB=0;
 } // void paramcl::korrigierehyla()
 
 // aufgerufen in: empfarch, zupdf
