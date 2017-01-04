@@ -43,7 +43,6 @@ const double& version=
 // string logpfad; // zusammengesetzt aus Verzeichnis und name
 // const char lgs logdatei_a[PATH_MAX+1] ="/var/log/log_vmparse.txt";
 // const char *logdatei = logdatei_a;
-const char *logdt="/var/log/autofaxvorgabe.log";// darauf wird in konsole.h verwiesen; muss dann auf lgp zeigen
 
 // const char* logdatname;
 uchar ZDB=0; // G.Schade 22.4.14 fuer Zusatz-Debugging (SQL): ZDB 255, sonst: 0
@@ -53,6 +52,11 @@ const string s_true="true";
 const string s_dampand=" && ";
 const string s_gz="gz";
 // const char *tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
+
+const char *logdt="/var/log/autofaxvorgabe.log";// darauf wird in konsole.h verwiesen; muss dann auf lgp zeigen
+const unsigned ktage=1; // kurzes Intervall fuer Faxtabellenkorrektur, 1 Tag
+const unsigned mtage=30; // mittleres Intervall fuer Faxtabellenkorrektur, 1 Monat
+const unsigned ltage=73000; // langes Intervall fuer Faxtabellenkorrektur, 200 Jahre
 
 class Txautofaxcl: public TxB
 {
@@ -208,14 +212,14 @@ enum T_
   T_status_in_letztem_gescheitertem_hylafax,
   T_capispooldateien_der_Capisuite,
   T_Fehler_beim_Pruefen_von,
-  T_Name_des_Adressaten,
+  T_Name_des_Adressaten_aus_Dateiname,
   T_Datum_des_Losschickens,
   T_Ende_der_Uebertragung,
   T_Kennung_im_Faxsystem_hylafax_Nr_Capisuite_Datei_MSFax_Fax_Dateiname,
   T_Dateigroesse,
   T_Seitenzahl,
   T_Zahl_der_Anwahlen,
-  T_FAxnummer_des_Adressaten,
+  T_Faxnummer_des_Adressaten,
   T_Titel_des_Adressaten,
   T_PID_falls_aus_Dateinamen_ermittelt,
   T_Kurzbezeichnung_der_eigenen_Faxstelle,
@@ -224,7 +228,7 @@ enum T_
   T_Hinweis_auf_Dateiinhalt_oder_Adressat_nur_MSFax,
   T_identisch_zu_submid_nur_MSFax,
   T_Prioritaet_nur_MSFax,
-  T_FAxnummer_des_Adressaten_nur_MSFax,
+  T_Faxnummer_des_Adressaten_nur_MSFax,
   T_Faxnummer_des_Senders_nur_MSFax,
   T_Beginn_der_Uebertragung_nur_MSFax,
   T_Archiv_fuer_die_erfolgreichen_Faxe,
@@ -566,6 +570,7 @@ enum T_
 	T_Folgende_Faxe_waren_mit_falschem_Erfolgskennzeichen_eingetragen_was_korrigiert_wird,
 	T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird,
 	T_Faxnr,
+	T_Name_des_Adressaten_aus_Faxnummer_ermittelt,
 	T_MAX
 };
 
@@ -870,8 +875,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"capiSpooldateien der Capisuite","capi spool files of capisuite"},
   // T_Fehler_beim_Pruefen_von
   {"Fehler beim Pruefen von: ","Error while examining: "},
-  // T_Name_des_Adressaten
-  {"Name des Adressaten","Name of the receiver"},
+  // T_Name_des_Adressaten_aus_Dateiname
+  {"Name des Adressaten aus Dateiname","Name of the receiver from file name"},
   // T_Datum_des_Losschickens
   {"Datum des Losschickens","submit time"},
   // T_Ende_der_Uebertragung
@@ -885,7 +890,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Seitenzahl","no. of pages"},
   // T_Zahl_der_Anwahlen
   {"Zahl der Anwahlen","No. of tries"},
-  // T_FAxnummer_des_Adressaten
+  // T_Faxnummer_des_Adressaten
   {"Faxnummer des Adressaten","receiver's fax no"},
   // T_Titel_des_Adressaten
   {"Titel des Adressaten","receiver's fax no"},
@@ -903,7 +908,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"identisch zu submid (nur MS Fax)","identical to submid (only ms fax)"},
   // T_Prioritaet_nur_MSFax
   {"Prioritaet (nur MS Fax)","priority (only ms fax)"},
-  // T_FAxnummer_des_Adressaten_nur_MSFax
+  // T_Faxnummer_des_Adressaten_nur_MSFax
   {"Faxnummer des Adressaten (nur MS Fax)","receiver's fax no. (only ms fax)"},
   // T_Faxnummer_des_Senders_nur_MSFax
   {"Faxnummer des Senders (nur MS Fax)","sender's fax no. (only ms fax)"},
@@ -1612,6 +1617,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	 "The following faxes from the hylafax logfile have not been documented, which will be corrected:"},
 	// T_Faxnr
 	{"Faxnr.","fax no."},
+	// T_Name_des_Adressaten_aus_Faxnummer_ermittelt
+  {"Name des Adressaten, aus Faxnummer ermittelt","Name of the receiver according to his fax number"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -4001,7 +4008,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 									<<violett<<setw(5)<<*(*cerg+3)<<"|"<<blau<<setw(6)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+5)<<"|"
 									<<blau<<string(*(*cerg+6)).substr(0,55)<<endl;
 							} // while (cerg=kor3.HolZeile(),cerg?*cerg:0) 
-							RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,fsize,retries,rcfax,docname,idudoc,pages,rcname) "
+							RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,fsize,retries,rcfax,docname,idudoc,pages,adressat) "
 									"SELECT t.erfolg,t.zp,t.zp,t.submid,t.size,t.tries,t.teln,IF(ISNULL(asp.original),'',asp.original),"
 									"IF(ISNULL(asp.idudoc),0,asp.idudoc),IF(ISNULL(asp.pages),0,asp.pages),"
 									"IF(ISNULL(asp.adressat) OR asp.adressat=t.teln,'',asp.adressat) "
@@ -5274,13 +5281,13 @@ void paramcl::zeigweitere()
 	stringstream ausg; //      ausg.str(std::string()); ausg.clear();
 	unsigned tage=0;
 	if (obcapi || obhyla) {
-		// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 30 Tage und des Monats 200 Jahre, bei mehr => mysql-Serverabsturz
+		// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 30 Tage und des Monats 200 Jahre
 		if (monatsaufr==3) {
-			tage=73000;
+			tage=ltage; // 73000
 		}	else if (tagesaufr==3) {
-			tage=30;
+			tage=mtage; // 30
 		}	else if (!(tagesaufr % 3)) {
-			tage=1;
+			tage=ktage; // 1
 		}
 	}
 	// <<"Korrektur wird durchgefuehrt ueber Tage: "<<tage<<endl;
@@ -7596,7 +7603,7 @@ void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnam
     string sql0="SELECT adressat, titel "
 		"FROM `"+pmp->touta+"` WHERE rcfax"
 		//stdfaxnr(rcfax,"+pmp->InternationalPrefix+","+pmp->LongDistancePrefix+","+pmp->countrycode+","+pmp->citycode+")"
-		"='&&faxnr&&' ORDER BY subMT DESC";
+		"='&&faxnr&&' ORDER BY submt DESC";
 		locsqlp[0]=&sql0;
     for(size_t snr=0;snr<pmp->sqlzn;snr++) {
       locsqlp[snr+1]=&(pmp->sqlconf)[snr].wert;
@@ -7687,7 +7694,7 @@ void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direk
     Feld felder[] = {
       Feld("eind","int","10","",Tx[T_eindeutige_Identifikation],1,1),
       Feld("Erfolg","int","1","",Tx[T_1_ist_erfolgreiche_Uebertragung_0_ist_fehlgeschlagen],0,0,1),
-      Feld("rcname","varchar","1","",Tx[T_Name_des_Adressaten],0,0,1),
+      Feld("rcname","varchar","1","",Tx[T_Name_des_Adressaten_aus_Faxnummer_ermittelt],0,0,1),
       Feld("submt","datetime","0","0",Tx[T_Datum_des_Losschickens],0,0,1),
       Feld("transe","datetime","0","0",Tx[T_Ende_der_Uebertragung],0,0,1),
       Feld("submid","varchar","1","",Tx[T_Kennung_im_Faxsystem_hylafax_Nr_Capisuite_Datei_MSFax_Fax_Dateiname],0,0,1),
@@ -7696,8 +7703,8 @@ void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direk
       Feld("fsize","int","10","",Tx[T_Dateigroesse],0,0,1,"",1),
       Feld("pages","int","10","",Tx[T_Seitenzahl],0,0,1),
       Feld("retries","int","10","",Tx[T_Zahl_der_Anwahlen],0,0,1),
-      Feld("rcfax","varchar","1","",Tx[T_FAxnummer_des_Adressaten],0,0,1),
-      Feld("adressat","varchar","1","",Tx[T_Name_des_Adressaten],0,0,1),
+      Feld("rcfax","varchar","1","",Tx[T_Faxnummer_des_Adressaten],0,0,1),
+      Feld("adressat","varchar","1","",Tx[T_Name_des_Adressaten_aus_Dateiname],0,0,1),
       Feld("titel","varchar","1","",Tx[T_Titel_des_Adressaten],0,0,1),
       Feld("pid","int","10","",Tx[T_PID_falls_aus_Dateinamen_ermittelt],0,0,1),
       Feld("tsid","varchar","1","",Tx[T_Kurzbezeichnung_der_eigenen_Faxstelle],0,0,1),
@@ -7706,7 +7713,7 @@ void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direk
       Feld("subject","varchar","1","",Tx[T_Hinweis_auf_Dateiinhalt_oder_Adressat_nur_MSFax],0,0,1),
       Feld("id","varchar","1","",Tx[T_identisch_zu_submid_nur_MSFax],0,0,1),
       Feld("prio","int","1","",Tx[T_Prioritaet_nur_MSFax],0,0,1),
-      Feld("csid","varchar","1","",Tx[T_FAxnummer_des_Adressaten_nur_MSFax],0,0,1),
+      Feld("csid","varchar","1","",Tx[T_Faxnummer_des_Adressaten_nur_MSFax],0,0,1),
       Feld("sender","varchar","1","",Tx[T_Faxnummer_des_Senders_nur_MSFax],0,0,1),
       Feld("transs","datetime","0","0",Tx[T_Beginn_der_Uebertragung_nur_MSFax],0,0,1),
     };
@@ -7762,7 +7769,7 @@ void pruefinctab(DB *My, const string& tinca, int obverb, int oblog, uchar direk
       Feld("fsize","int","10","",Tx[T_Dateigroesse],0,0,1),
       Feld("pages","int","10","",Tx[T_Seitenzahl],0,0,1),
       Feld("retries","int","10","",Tx[T_Zahl_der_Anwahlen],0,0,1),
-      //      Feld("rcfax","varchar","1","",Tx[T_FAxnummer_des_Adressaten],0,0,1),
+      //      Feld("rcfax","varchar","1","",Tx[T_Faxnummer_des_Adressaten],0,0,1),
       Feld("titel","varchar","1","",Tx[T_Titel_des_Adressaten],0,0,1),
       //      Feld("pid","int","10","",Tx[T_PID_falls_aus_Dateinamen_ermittelt],0,0,1),
       Feld("tsid","varchar","1","",Tx[T_Kurzbezeichnung_der_eigenen_Faxstelle],0,0,1),
@@ -7772,7 +7779,7 @@ void pruefinctab(DB *My, const string& tinca, int obverb, int oblog, uchar direk
       //      Feld("subject","varchar","1","",Tx[T_Hinweis_auf_Dateiinhalt_oder_Adressat_nur_MSFax],0,0,1),
       Feld("id","varchar","1","",Tx[T_identisch_zu_submid_nur_MSFax],0,0,1),
       //      Feld("prio","int","10","",Tx[T_Prioritaet_nur_MSFax],0,0,1),
-      Feld("csid","varchar","1","",Tx[T_FAxnummer_des_Adressaten_nur_MSFax],0,0,1),
+      Feld("csid","varchar","1","",Tx[T_Faxnummer_des_Adressaten_nur_MSFax],0,0,1),
       //      Feld("sender","varchar","1","",Tx[T_Faxnummer_des_Senders_nur_MSFax],0,0,1),
       Feld("transs","datetime","0","0",Tx[T_Beginn_der_Uebertragung_nur_MSFax],0,0,1),
     };
@@ -8332,8 +8339,8 @@ int main(int argc, char** argv)
   pruefudoc(pm.My,pm.tudoc, pm.obverb,pm.oblog);
   pruefinctab(pm.My,pm.tinca, pm.obverb,pm.oblog);
   if (pm.kez) {
-    if (pm.obcapi) pm.korrigierecapi(73000);
-    if (pm.obhyla) pm.korrigierehyla(73000);
+    if (pm.obcapi) pm.korrigierecapi(ltage);
+    if (pm.obhyla) pm.korrigierehyla(ltage);
   } else if (pm.bwv) {
     pm.bereinigewv();
   } else if (pm.anhl) {
