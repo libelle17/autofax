@@ -5414,7 +5414,7 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 // aufgerufen in: zeigweitere
 void paramcl::korrigierehyla(unsigned tage/*=90*/)
 {
-  obverb=1;
+  obverb=2;
 	ZDB=255;
 	Log(violetts+Tx[T_sammlefertigehyla]+schwarz,obverb,oblog);
 	if (!xferfaxlog.empty()) {
@@ -8332,8 +8332,8 @@ int main(int argc, char** argv)
   pruefudoc(pm.My,pm.tudoc, pm.obverb,pm.oblog);
   pruefinctab(pm.My,pm.tinca, pm.obverb,pm.oblog);
   if (pm.kez) {
-    pm.korrigierecapi();
-    pm.korrigierehyla();
+    if (pm.obcapi) pm.korrigierecapi(73000);
+    if (pm.obhyla) pm.korrigierehyla(73000);
   } else if (pm.bwv) {
     pm.bereinigewv();
   } else if (pm.anhl) {
