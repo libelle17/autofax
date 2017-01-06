@@ -1632,7 +1632,7 @@ extern class lsyscl lsys;
 extern class linstcl linst;
 
 using namespace std;
-const DBSTyp myDBS=MySQL;
+const DBSTyp myDBS=Postgres; // MySQL;
 string tmpc; // fuer crontab
 
 #define autofaxcpp

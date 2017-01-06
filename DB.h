@@ -15,6 +15,8 @@
 #include <sstream>
 // Project->Properties->C/C++ ->General->Additional Include Directories->"$(ProjectDir)\..\..\..\MySQL Connector C 6.0.2\include"
 #include <mysql.h> 
+// sudo dnf install postgresql-devel
+#include <libpq-fe.h> // PGconn
 // G.Schade 26.1.14: Den Rest aus der Datei braucht man scheinbar nicht; sonst Konflikt mit bitset unter -std=gnu++11
 #ifndef HAVE_UCHAR
 typedef unsigned char	uchar;	/* Short for unsigned char */
@@ -70,6 +72,8 @@ enum Txdb_
 	T_Vor_restart,
 	T_Versuch_Nr,
 	T_bei_sql_Befehl,
+	T_PostgreSQL_musste_neu_eingerichtet_werden,
+	T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein,
   T_dbMAX,
 };
 
@@ -282,7 +286,7 @@ class DB
 	public:
 		int usedb(const string& db);
 		void pruefrpw(const string& wofuer, unsigned versuchzahl);
-		void setzrpw();
+		void setzrpw(int obverb=0, int oblog=0);
 		my_ulonglong arows;
 		vector< vector<instyp> > ins;
 		void erweitern(const string& tab, vector<instyp> einf,uchar obstumm,uchar obsammeln=0, const unsigned long *maxl=0);

@@ -77,7 +77,13 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
 	{"Versuch Nr. ","try no. "},
 	// T_bei_sql_Befehl
 	{" bei sql-Befehl: "," at sql-command: "},
-  {"",""}
+	// T_PostgreSQL_musste_neu_eingerichtet_werden
+	{"PostgreSQL musste neu eingerichtet werden. ",
+	 "Postgresql had to be installed newly. "},
+	// T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein
+	{"Welches Passwort soll der Benutzer `postgres` haben",
+   "Which password shall the user `postgres` have"},
+	{"",""}
 };
 
 Txdbcl::Txdbcl() {TCp=(const char* const * const * const *)&TextC;}
@@ -227,7 +233,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
           break;
         default: break;
       } //       switch (pruefipr())
-      if (!dbsv) dbsv=new servc(db_systemctl_name,"mysqld");
+      if (!dbsv) dbsv=new servc(db_systemctl_name,"mysqld",obverb,oblog);
       if (!oisok) {
         // schauen, ob die Exe-Datei da ist 
         for (int iru=0;iru<2;iru++) {
@@ -414,9 +420,24 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
       dnb = '`'; dne = '`'; dvb = '\''; dve = '\'';
       db=uedb;
       break;
-    case Postgres:
-      break;
-  } // switch (DBS) 
+		case Postgres:
+			if (!dbsv) { 
+				if (!obprogda("postgres",obverb,oblog)) {
+					systemrueck("V0=/usr/bin/postgres; V1=${V0}_alt; V2=${V0}_uralt; test -d $V0 &&{ test -d $V1 && sudo mv $V1 $V2; sudo mv $V0 $V1;}; true;", obverb,oblog);
+					linst.doinst("postgresql-server",obverb,oblog);// postgresql-contrib
+					datadir="/var/lib/pgsql/data";
+					setzrpw();
+				}
+				dbsv=new servc("postgresql","postgres",obverb,oblog);
+				if (!oisok) {
+					// sudo systemctl start postgresql
+					// oisok=1;
+					caus<<"Ende Gelaende"<<endl;
+					exit(7);
+				}
+			}
+			break;
+								} // switch (DBS) 
 } // DB::DB(DBSTyp nDBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag,const char** erg)
 
 int DB::usedb(const string& db)
@@ -458,24 +479,39 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
   if (rootpwd.empty()) setzrpw();
 } // pruefrpw
 
-void DB::setzrpw()
+void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 {
 	if (!nrzf) {
-		if (Tippob(Txd[T_MySQL_Passwort]+(Txd[T_fuer_Benutzer]+dblaus)+"root"+schwarz+Txd[T_ist_leer_Wollen_Sie_eines_festlegen])) {
-			string rootpw2;
-			while (1) {
-				do {
-					rootpwd=Tippstring(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
-				} while (rootpwd.empty());	
-				rootpw2=Tippstring(string("")+Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein]+" ("+Txk[T_erneute_Eingabe]+")",&rootpw2);
-				if (rootpw2==rootpwd) break;
-			} //         while (1)
-			string cmd=string("sudo mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
-				"' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
-			Log(string(Txd[T_Fuehre_aus_db])+blau+cmd+schwarz,1,1);
-			int erg __attribute__((unused));
-			erg=system(cmd.c_str());
-		} // if (Tippob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) 
+		string rootpw2;
+		switch (DBS) {
+			case MySQL:
+				if (Tippob(Txd[T_MySQL_Passwort]+(Txd[T_fuer_Benutzer]+dblaus)+"root"+schwarz+Txd[T_ist_leer_Wollen_Sie_eines_festlegen])) {
+					while (1) {
+						do {
+							rootpwd=Tippstring(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
+						} while (rootpwd.empty());	
+						rootpw2=Tippstring(string("")+Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein]+" ("+Txk[T_erneute_Eingabe]+")",&rootpw2);
+						if (rootpw2==rootpwd) break;
+					} //         while (1)
+					string cmd=string("sudo mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
+						"' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
+					Log(string(Txd[T_Fuehre_aus_db])+blau+cmd+schwarz,1,1);
+					int erg __attribute__((unused));
+					erg=system(cmd.c_str());
+				} // if (Tippob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) 
+				break;
+			case Postgres:
+				while (1) {
+					do {
+						rootpwd=Tippstring(string("")+Txd[T_PostgreSQL_musste_neu_eingerichtet_werden]+Txd[T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein]+": ",&rootpwd);
+					} while (rootpwd.empty());
+					rootpw2=Tippstring(string("")+Txd[T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein]+" ("+Txk[T_erneute_Eingabe]+"): ",&rootpw2);
+					if (rootpw2==rootpwd) break;
+				} // while (1)
+				linst.doinst("passwd",obverb,oblog,"chpasswd"); 
+				systemrueck("sh -c 'echo \"postgres:"+rootpwd+"\"|sudo chpasswd'",obverb,oblog);
+				systemrueck("sh -c 'echo \""+rootpwd+"\"|su postgres -c \"initdb -D "+datadir+"\"'",obverb,oblog);
+		} // 		switch (DBS) 
 	} // if (!nrzf)
 } // setzrpw
 
@@ -483,8 +519,8 @@ DB::~DB(void)
 {
 	switch (DBS) {
 		case MySQL:
-      if (!this->ConnError)
-        mysql_close(conn);
+			if (!this->ConnError)
+				mysql_close(conn);
       conn=0;
       break;
     case Postgres:
