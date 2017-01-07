@@ -1658,8 +1658,10 @@ std::string dir_name(const std::string& path)
 // soll fuer den Fall eines uebergebenen 'rueck'-Zeigers den Rueckgabewert der aufgerufenen Funktion zuruckliefern,
 // ausser bei 'find', da die Zahl der Funde
 // bei rueck==0 liefert es das Ergebnis der system(..)-Funktion zurueck
-int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck, 
-    int verbergen, binaer obergebnisanzeig, const string& ueberschr,vector<errmsgcl> *errm)
+// obverb: 1 = Befehl anzeigen, 2 = auch Rueckgabezeilen anzeigen
+// obergebnisanzeig: 1=falls Fehler und obverb>1, >1=falls Fehler
+int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<string> *rueck/*=0*/, 
+    int verbergen/*=0*/, int obergebnisanzeig/*wahr*/, const string& ueberschr/*=""*/,vector<errmsgcl> *errm/*=0*/)
 {
 // verbergen: 0 = nichts, 1= '2>/dev/null' anhaengen + true zurueckliefern, 2='>/dev/null 2>&1' anhaengen + Ergebnis zurueckliefern
   binaer ob0heissterfolg=wahr;
@@ -1791,14 +1793,14 @@ int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck
 					ergebnis=ltoan(erg);
 				} // 				if (ob0heissterfolg) else
 			} // 			if (obfind) else
-		} //     if (ergebnis.empty() {
+		} //     if (ergebnis.empty()
 #ifdef systemrueckprofiler
     prf.ausgab1000("vor log");
 #endif
     Log(aktues+": "+blau+*czg+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz,obverb>0?obverb:0,oblog);
   } // if (obverb>0 || oblog)
   if (obergebnisanzeig) if (rueck->size()) 
-    Log(meld,obverb>1,oblog);
+    Log(meld,obverb>1||(ob0heissterfolg && erg && obergebnisanzeig>1),oblog);
   if (neurueck) delete rueck;
   return erg; 
 } // int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck, binaer ...

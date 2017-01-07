@@ -1,7 +1,7 @@
 ICH := $(firstword $(MAKEFILE_LIST))
 SRCS = $(wildcard *.cpp)
 OBJ = $(SRCS:.cpp=.o)
-CFLAGS=-c -Wall `mysql_config --cflags` 
+CFLAGS=-c -Wall `mysql_config --cflags` -I/usr/include/pgsql
 LDFLAGS=`mysql_config --libs` -ltiff -lpq
 PROGRAM=$(shell basename $(CURDIR))
 PROGGROSS=`echo $(PROGRAM) | tr a-z A-Z`
@@ -129,6 +129,7 @@ compiler:
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
 	-@which $(CCName) >/dev/null 2>&1 || { which zypper >/dev/null 2>&1 && { sudo zypper lr | grep 'g++\|devel_gcc' || sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release | grep ^NAME= | cut -d'"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'"' -f2`/devel:gcc.repo; sudo zypper --gpg-auto-import-keys in gcc gcc-c++ $(CCInst);true;} || { which apt-get >/dev/null 2>&1 && { sudo apt-get -y --force-yes install build-essential linux-headers-`uname -r`;true;} || { which dnf >/dev/null 2>&1 && { sudo dnf -y install make automake gcc-c++ kernel-devel;true;} || { which yum >/dev/null 2>&1 && yum install -y make automake gcc-c++ kernel-devel;true;} } } }
 	-@if { sudo /sbin/ldconfig; ! sudo /sbin/ldconfig -p | grep -q "libmysqlclient.so ";} || ! test -f /usr/include/mysql/mysql.h; then { which zypper >/dev/null 2>&1 && { sudo zypper -n --gpg-auto-import-keys in libmysqlclient-devel;true;} || { which apt-get >/dev/null 2>&1 && { sudo apt-get -y --force-yes --reinstall install libmysqlclient-dev;true;} || { which dnf >/dev/null 2>&1 && { sudo dnf -y install mysql-devel;true;} || { which yum >/dev/null 2>&1 && sudo yum install -y mysql-devel;true;} } }; sudo /sbin/ldconfig;}; fi
+	-@which zypper >/dev/null 2>&1 && { sudo zypper -n --gpg-auto-import-keys in postgresql-devel;true;} || { which apt-get >/dev/null 2>&1 && { sudo apt-get -y --force-yes --reinstall install postgresql-dev;true;} || { which dnf >/dev/null 2>&1 && { sudo dnf -y install postgresql-devel;true;} || { which yum >/dev/null 2>&1 && sudo yum install -y postgresql-devel;true;} } }; sudo /sbin/ldconfig;
 	-@test -f /usr/include/tiff.h || { which zypper >/dev/null 2>&1 && { sudo zypper -n --gpg-auto-import-keys in libtiff-devel;true;} || { which apt-get >/dev/null 2>&1 && { sudo apt-get -y --force-yes install libtiff-dev;true;} || { which dnf >/dev/null 2>&1 && { sudo dnf -y install libtiff-devel;true;} || { which yum >/dev/null 2>&1 && sudo yum install -y libtiff-devel;true;} } } }
 
 .PHONY: install

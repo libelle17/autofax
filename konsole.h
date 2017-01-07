@@ -591,7 +591,7 @@ int multischlschreib(const string& fname, schlArr **confs, size_t cszahl,string 
 std::string base_name(const std::string& path); // Dateiname ohne Pfad
 std::string dir_name(const std::string& path);  // Pfadname einer Datei
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
-                int verbergen=0, binaer obergebnisanzeig=wahr, const string& ueberschr="",vector<errmsgcl> *errm=0);
+                int verbergen=0, int obergebnisanzeig=wahr, const string& ueberschr="",vector<errmsgcl> *errm=0);
 void pruefplatte();
 void pruefmehrfach(const string& wen=nix);
 int setfaclggf(const string& datei, const binaer obunter=falsch, const int mod=4, uchar obimmer=0,int obverb=0,int oblog=0);

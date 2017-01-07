@@ -86,6 +86,8 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
 	// T_Welches_Passwort_soll_der_Benutzer_postgres_haben
 	{"Welches Passwort soll der Benutzer `postgres` haben",
    "Which password shall the user `postgres` have"},
+	// T_Ende_Gelaende
+	{"Ende Gelaende!","That's it!"},
 	{"",""}
 };
 
@@ -424,22 +426,33 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 			db=uedb;
 			break;
 		case Postgres:
+			uchar neu=0;
 			if (!dbsv) { 
 				if (!obprogda("postgres",obverb,oblog)) {
-					systemrueck("V0=/usr/bin/postgres; V1=${V0}_alt; V2=${V0}_uralt; test -d $V0 &&{ test -d $V1 && sudo mv $V1 $V2; sudo mv $V0 $V1;}; true;", obverb,oblog);
+				  caus<<"Programm postgres nicht da"<<endl;
+					systemrueck("V0=/usr/bin/postgres; V1=${V0}_alt; V2=${V0}_uralt; test -d $V0 &&{ test -d $V1 && sudo mv $V1 $V2; sudo mv $V0 $V1;}; true;",
+					            obverb,oblog);
 					linst.doinst("postgresql-server",obverb,oblog);// postgresql-contrib
-					datadir="/var/lib/pgsql/data";
-					setzrpw();
-				}
+					neu=1;
+				} // 				if (!obprogda("postgres",obverb,oblog))
 				dbsv=new servc("postgresql","postgres",obverb,oblog);
+				datadir.clear();
+				for(int iru=0;iru<2;iru++) {
+					if (!dbsv->machfit(obverb,oblog)||neu) {
+						if (!iru) setzrpw(obverb,oblog);
+						neu=0;
+					}
+				}
 				if (!dbsv->obslaeuft(obverb,oblog)) {
+				  systemrueck("journalctl -xe --no-pager -n 9",2,2);
 					// sudo systemctl start postgresql
 					// oisok=1;
-					caus<<"Ende Gelaende"<<endl;
+					Log(Txd[T_Ende_Gelaende],obverb,oblog);
 					exit(7);
-				}
-			}
+				} // 				if (!dbsv->obslaeuft(obverb,oblog))
+			} // 			if (!dbsv)
 			string ip_a="127.0.0.1";
+			caus<<"in DB::DB"<<endl;
 			port=5432;
 			string constr =string("user='")+puser+"' password='"+ppasswd+"' dbname='" + uedb + "' hostaddr='"+ip_a+"' port='"+ltoan(port)+"'";
 			caus<<constr<<endl;
@@ -542,7 +555,20 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 				} // while (1)
 				linst.doinst("passwd",obverb,oblog,"chpasswd"); 
 				systemrueck("sh -c 'echo \"postgres:"+rootpwd+"\"|sudo chpasswd'",obverb,oblog);
-				systemrueck("sh -c 'echo \""+rootpwd+"\"|su postgres -c \"initdb -D "+datadir+"\"'",obverb,oblog);
+				svec rueck;
+				systemrueck("ps aux|grep postgres|grep -- -D|rev|cut -d' ' -f1|rev",obverb,oblog,&rueck);
+				if (rueck.size()) {
+					datadir=rueck[0];
+					caus<<"Datadir: "<<datadir<<endl;
+				} else
+					datadir="/var/lib/pgsql/data";
+				systemrueck("sh -c 'V="+dir_name(datadir)+";mkdir -p $V;chown postgres:postgres -R $V'",obverb,oblog);
+			  rueck.clear();	
+				if (systemrueck("sh -c 'echo \""+rootpwd+"\"|su - postgres -c \"initdb -D "+datadir+"\" 2>&1'",obverb,oblog,&rueck,0,2)) {
+					// dann laeuft es wahrscheinlich schon
+					Log(Txd[T_Ende_Gelaende],obverb,oblog);
+					exit(7);
+				}
 		} // 		switch (DBS) 
 	} // if (!nrzf)
 } // setzrpw

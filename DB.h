@@ -75,6 +75,7 @@ enum Txdb_
 	T_PostgreSQL_musste_neu_eingerichtet_werden,
 	T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein,
 	T_Welches_Passwort_soll_der_Benutzer_postgres_haben,
+	T_Ende_Gelaende,
   T_dbMAX,
 };
 
