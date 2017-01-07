@@ -2,7 +2,7 @@ ICH := $(firstword $(MAKEFILE_LIST))
 SRCS = $(wildcard *.cpp)
 OBJ = $(SRCS:.cpp=.o)
 CFLAGS=-c -Wall `mysql_config --cflags` 
-LDFLAGS=`mysql_config --libs` -ltiff
+LDFLAGS=`mysql_config --libs` -ltiff -lpq
 PROGRAM=$(shell basename $(CURDIR))
 PROGGROSS=`echo $(PROGRAM) | tr a-z A-Z`
 #EXPFAD=/usr/local/sbin

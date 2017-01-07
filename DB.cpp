@@ -81,6 +81,9 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
 	{"PostgreSQL musste neu eingerichtet werden. ",
 	 "Postgresql had to be installed newly. "},
 	// T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein
+	{"Bitte geben Sie das Passwort fuer Benutzer `postgres` ein",
+	 "Please enter the password for user `postgres`"},
+	// T_Welches_Passwort_soll_der_Benutzer_postgres_haben
 	{"Welches Passwort soll der Benutzer `postgres` haben",
    "Which password shall the user `postgres` have"},
 	{"",""}
@@ -212,214 +215,214 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
               unsigned int port, const char *const unix_socket, unsigned long client_flag,int obverb,int oblog,unsigned versuchzahl,
               uchar ggferstellen)
 {
-  DBS = nDBS;
-  fehnr=0;
-  string Frage;
-  Log(string(Txd[T_DB_wird_initialisiert]),obverb>1,oblog);
-  host=phost;
-  user=puser;
-  passwd=ppasswd;
-  uchar installiert=0;
-  uchar datadirda=0;
-  switch (DBS) {
-    case MySQL:
+	DBS = nDBS;
+	fehnr=0;
+	string Frage;
+	Log(string(Txd[T_DB_wird_initialisiert]),obverb>1,oblog);
+	host=phost;
+	user=puser;
+	passwd=ppasswd;
+	uchar installiert=0;
+	uchar datadirda=0;
+	switch (DBS) {
+		case MySQL:
 #ifdef linux
-      switch (pruefipr()) {
-        case zypper: case apt:
-          db_systemctl_name="mysql";
-          break;
-        case dnf: case yum:
-          db_systemctl_name="mariadb";
-          break;
-        default: break;
-      } //       switch (pruefipr())
-      if (!dbsv) dbsv=new servc(db_systemctl_name,"mysqld",obverb,oblog);
-      if (!oisok) {
-        // schauen, ob die Exe-Datei da ist 
-        for (int iru=0;iru<2;iru++) {
-          installiert=1;
-          // wenn nicht gefunden ...
-          if (!obprogda("mysqld",obverb,oblog)) {
-            svec frueck;
-            // .. und auch hier nicht gefunden ...
-            systemrueck("find /usr/sbin /usr/bin /usr/libexec -executable -size +1M -name mysqld",obverb,oblog, &frueck);
-            if (!frueck.size()) 
-              // .. dann wohl nicht installiert
-              installiert=0;
-          } //           if (!obprogda("mysqld",obverb,oblog))
-          if (installiert) {
-            if (!obprogda("mysql",obverb,oblog))
-              installiert=0;
+			switch (pruefipr()) {
+				case zypper: case apt:
+					db_systemctl_name="mysql";
+					break;
+				case dnf: case yum:
+					db_systemctl_name="mariadb";
+					break;
+				default: break;
+			} //       switch (pruefipr())
+			if (!dbsv) dbsv=new servc(db_systemctl_name,"mysqld",obverb,oblog);
+			if (!oisok) {
+				// schauen, ob die Exe-Datei da ist 
+				for (int iru=0;iru<2;iru++) {
+					installiert=1;
+					// wenn nicht gefunden ...
+					if (!obprogda("mysqld",obverb,oblog)) {
+						svec frueck;
+						// .. und auch hier nicht gefunden ...
+						systemrueck("find /usr/sbin /usr/bin /usr/libexec -executable -size +1M -name mysqld",obverb,oblog, &frueck);
+						if (!frueck.size()) 
+							// .. dann wohl nicht installiert
+							installiert=0;
+					} //           if (!obprogda("mysqld",obverb,oblog))
+					if (installiert) {
+						if (!obprogda("mysql",obverb,oblog))
+							installiert=0;
 						else if (systemrueck("grep \"^mysql:\" /etc/passwd",obverb,oblog))
-						  installiert=0;
+							installiert=0;
 						else if (systemrueck("mysql -V",obverb,oblog))
-						  installiert=0;
+							installiert=0;
 					} //           if (installiert)
-          if (installiert) break;
-          //        systemrueck("which zypper && zypper -n in mariadb || { which apt-get && apt-get -y install mariadb-server; }",1,1);
+					if (installiert) break;
+					//        systemrueck("which zypper && zypper -n in mariadb || KLA which apt-get && apt-get -y install mariadb-server; KLZ",1,1);
 					instmaria(obverb, oblog);
-        } //         for (int iru=0;iru<2;iru++)
-        // Datenverzeichnis suchen und pruefen
-        if (installiert) {
-          svec zrueck;
-          if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null "
-                "| grep datadir | cut -d'=' -f2",obverb,oblog,&zrueck)) {
-            if (zrueck.size()) {
-              datadir=zrueck[zrueck.size()-1];  
-            } else {
-              svec zzruck, zincldir;
-              systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit", obverb,oblog,&zzruck);
-              if (!zzruck.size())
-                systemrueck("find ${HOME} -name .my.cnf -printf '%p\\n' -quit",obverb,oblog,&zzruck);
-              if (zzruck.size()) {
-                systemrueck("sudo cat "+zzruck[0]+" | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", 
-                    obverb,oblog,&zincldir); 
-                for(size_t i=0;i<zincldir.size();i++) {
-                  svec zzruck2;
-                  systemrueck("sudo find "+zincldir[i]+" -not -type d",obverb,oblog,&zzruck2); // auch links
-                  for(size_t i=0;i<zzruck2.size();i++) {
-                    zzruck<<zzruck2[i];
-                  }
-                } //                 for(size_t i=0;i<zincldir.size();i++)
-              } //               if (zzruck.size())
-              if(zzruck.size()) {
-                for(size_t i=0;i<zzruck.size();i++) {
-                  svec zrueck;
-                  if (!systemrueck(("sudo sed 's/#.*$//g' '")+zzruck[i]+"' | grep datadir | cut -d'=' -f2",
-                        obverb,oblog,&zrueck)) {
-                    if (zrueck.size()) {
-                      datadir=zrueck[zrueck.size()-1];  
-                      break;
-                    } // if (zrueck.size()) 
-                  } // if (!systemrueck(("cat ")+zzruck[i]+" | sed 's/#.*$//g' | grep datadir | cut -d'=' -f2",obverb-1,oblog,&zrueck)) 
-                } // for(size_t i=0;i<zzruck.size();i++) 
-              } // if(zzruck.size()) 
-            } // if (zrueck.size()) else
-          } // if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null " ...
-          gtrim(&datadir);
-          // <<rot<<datadir<<schwarz<<endl;
-          if (datadir.empty()) {
-            datadir="/var/lib/mysql";
-          }
-          if (obverb) Log("datadir: "+blaus+datadir+schwarz,obverb,oblog);
-          struct stat datadst;
-          if (!lstat(datadir.c_str(), &datadst)) {
-            if(S_ISDIR(datadst.st_mode)) {
-              datadirda=1;
-            } else {
-              systemrueck("sudo rm -f '"+datadir+"'",1,1);
-            }
-          } //           if (!lstat(datadir.c_str(), &datadst))
-          if (!datadirda) {
-            systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db"+string(obverb?"":" 2>/dev/null")+"`",1,1);
-            dbsv->start(obverb,oblog);
-          }
-          oisok=1;
-        } // if (installiert)
-      } // if (!oisok)
+				} //         for (int iru=0;iru<2;iru++)
+				// Datenverzeichnis suchen und pruefen
+				if (installiert) {
+					svec zrueck;
+					if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null "
+								"| grep datadir | cut -d'=' -f2",obverb,oblog,&zrueck)) {
+						if (zrueck.size()) {
+							datadir=zrueck[zrueck.size()-1];  
+						} else {
+							svec zzruck, zincldir;
+							systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit", obverb,oblog,&zzruck);
+							if (!zzruck.size())
+								systemrueck("find ${HOME} -name .my.cnf -printf '%p\\n' -quit",obverb,oblog,&zzruck);
+							if (zzruck.size()) {
+								systemrueck("sudo cat "+zzruck[0]+" | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", 
+										obverb,oblog,&zincldir); 
+								for(size_t i=0;i<zincldir.size();i++) {
+									svec zzruck2;
+									systemrueck("sudo find "+zincldir[i]+" -not -type d",obverb,oblog,&zzruck2); // auch links
+									for(size_t i=0;i<zzruck2.size();i++) {
+										zzruck<<zzruck2[i];
+									}
+								} //                 for(size_t i=0;i<zincldir.size();i++)
+							} //               if (zzruck.size())
+							if(zzruck.size()) {
+								for(size_t i=0;i<zzruck.size();i++) {
+									svec zrueck;
+									if (!systemrueck(("sudo sed 's/#.*$//g' '")+zzruck[i]+"' | grep datadir | cut -d'=' -f2",
+												obverb,oblog,&zrueck)) {
+										if (zrueck.size()) {
+											datadir=zrueck[zrueck.size()-1];  
+											break;
+										} // if (zrueck.size()) 
+									} // if (!systemrueck(("cat ")+zzruck[i]+" | sed 's/#.*$//g' | grep datadir | cut -d'=' -f2",obverb-1,oblog,&zrueck)) 
+								} // for(size_t i=0;i<zzruck.size();i++) 
+							} // if(zzruck.size()) 
+						} // if (zrueck.size()) else
+					} // if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/KLAn;pKLZ'` 2>/dev/null " ...
+					gtrim(&datadir);
+					// <<rot<<datadir<<schwarz<<endl;
+					if (datadir.empty()) {
+						datadir="/var/lib/mysql";
+					}
+					if (obverb) Log("datadir: "+blaus+datadir+schwarz,obverb,oblog);
+					struct stat datadst;
+					if (!lstat(datadir.c_str(), &datadst)) {
+						if(S_ISDIR(datadst.st_mode)) {
+							datadirda=1;
+						} else {
+							systemrueck("sudo rm -f '"+datadir+"'",1,1);
+						}
+					} //           if (!lstat(datadir.c_str(), &datadst))
+					if (!datadirda) {
+						systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db"+string(obverb?"":" 2>/dev/null")+"`",1,1);
+						dbsv->start(obverb,oblog);
+					}
+					oisok=1;
+				} // if (installiert)
+			} // if (!oisok)
 
 #endif
-      conn = mysql_init(NULL);
-      if (!conn) {
-        this->ConnError=mysql_error(conn);
-        //			printf("Fehler %u beim Erstellen einer MySQL-Verbindung: %s\n", mysql_errno(conn), *erg=mysql_error(conn));
-        cerr<<Txd[T_Fehler_db]<<mysql_errno(conn)<<Txd[T_beim_Initialisieren_von_MySQL]<<this->ConnError<<endl;
-        //			throw "Fehler beim Erstellen einer MySQL-Verbindung";
-      } else {
-        RS *rs;
-        for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
-          //          <<"versuch: "<<versuch<<", conn: "<<conn<<", host: "<<host<<", user: "<<user<<", passwd "<<passwd<<", uedb: "<<uedb<<", port: "<<port<<", client_flag: "<<client_flag<<", obverb: "<<(int)obverb<<", oblog: "<<(int)oblog<<endl;
-          fehnr=0;
-          if (mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), uedb, port, unix_socket, client_flag)) {
-            break;
-          } else {
-            switch ((fehnr=mysql_errno(conn))) {
-              case 1044: // Access denied for user '<user>'@'<host>' to database '...' (Ubuntu)
-              case 1045: // Access denied for user '<user>'@'<host>' (using password: YES)
-              case 1698: // dasselbe auf Ubuntu
-                for(unsigned aru=0;aru<1;aru++) {
-                  for(unsigned iru=0;iru<2;iru++) {
-                    cmd=string("sudo mysql -uroot -h'")+host+"' "+(rootpwd.empty()?"":string("-p")+rootpwd)+" -e \"GRANT ALL ON "+uedb+".* TO '"+
-                      user+"'@'"+myloghost+"' IDENTIFIED BY '"+ersetze(passwd.c_str(),"\"","\\\"")+"' WITH GRANT OPTION\" 2>&1";
-                    if (iru) break;
-                    pruefrpw(cmd, versuchzahl);
-                  } //                   for(unsigned iru=0;iru<2;iru++) {
-                  myr.clear();
-                  systemrueck(cmd,1,1,&myr);
-                  miterror=1;
-                  if (!myr.size()) miterror=0; else if (!strcasestr(myr[0].c_str(),"error")) miterror=0;
-                  else {
-                    Log(string(Txd[T_Fehler_dp])+rot+myr[0]+schwarz+Txd[T_bei_Befehl]+blau+cmd+schwarz,1,1);
-                  }
-                  if (!miterror) break;
-                } // while (1)
-                break;
-              case 2002:
-                if (!strcasecmp(host.c_str(),"localhost")) {
-                  Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_mysql_zu_starten],1,1);
+			conn = mysql_init(NULL);
+			if (!conn) {
+				this->ConnError=mysql_error(conn);
+				//			printf("Fehler %u beim Erstellen einer MySQL-Verbindung: %s\n", mysql_errno(conn), *erg=mysql_error(conn));
+				cerr<<Txd[T_Fehler_db]<<mysql_errno(conn)<<Txd[T_beim_Initialisieren_von_MySQL]<<this->ConnError<<endl;
+				//			throw "Fehler beim Erstellen einer MySQL-Verbindung";
+			} else {
+				RS *rs;
+				for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
+					//          <<"versuch: "<<versuch<<", conn: "<<conn<<", host: "<<host<<", user: "<<user<<", passwd "<<passwd<<", uedb: "<<uedb<<", port: "<<port<<", client_flag: "<<client_flag<<", obverb: "<<(int)obverb<<", oblog: "<<(int)oblog<<endl;
+					fehnr=0;
+					if (mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), uedb, port, unix_socket, client_flag)) {
+						break;
+					} else {
+						switch ((fehnr=mysql_errno(conn))) {
+							case 1044: // Access denied for user '<user>'@'<host>' to database '...' (Ubuntu)
+							case 1045: // Access denied for user '<user>'@'<host>' (using password: YES)
+							case 1698: // dasselbe auf Ubuntu
+								for(unsigned aru=0;aru<1;aru++) {
+									for(unsigned iru=0;iru<2;iru++) {
+										cmd=string("sudo mysql -uroot -h'")+host+"' "+(rootpwd.empty()?"":string("-p")+rootpwd)+" -e \"GRANT ALL ON "+uedb+".* TO '"+
+											user+"'@'"+myloghost+"' IDENTIFIED BY '"+ersetze(passwd.c_str(),"\"","\\\"")+"' WITH GRANT OPTION\" 2>&1";
+										if (iru) break;
+										pruefrpw(cmd, versuchzahl);
+									} //                   for(unsigned iru=0;iru<2;iru++) 
+									myr.clear();
+									systemrueck(cmd,1,1,&myr);
+									miterror=1;
+									if (!myr.size()) miterror=0; else if (!strcasestr(myr[0].c_str(),"error")) miterror=0;
+									else {
+										Log(string(Txd[T_Fehler_dp])+rot+myr[0]+schwarz+Txd[T_bei_Befehl]+blau+cmd+schwarz,1,1);
+									}
+									if (!miterror) break;
+								} // while (1)
+								break;
+							case 2002:
+								if (!strcasecmp(host.c_str(),"localhost")) {
+									Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_mysql_zu_starten],1,1);
 #ifdef linux
-                  dbsv->enableggf(1,1);
-                  svec gstat;
-                  systemrueck("getfacl -e -t "+datadir+" 2>/dev/null | grep 'user[ \t]*"+"mysql"+"[ \t]*rwx' || true",obverb,oblog,&gstat);
-                  if (!gstat.size()) {
-                    systemrueck("sudo setfacl -Rm 'u:mysql:7' '"+datadir+"'",obverb,oblog);
-                  }
+									dbsv->enableggf(1,1);
+									svec gstat;
+									systemrueck("getfacl -e -t "+datadir+" 2>/dev/null | grep 'user[ \t]*"+"mysql"+"[ \t]*rwx' || true",obverb,oblog,&gstat);
+									if (!gstat.size()) {
+										systemrueck("sudo setfacl -Rm 'u:mysql:7' '"+datadir+"'",obverb,oblog);
+									}
 									Log(blaus+Txd[T_Vor_restart]+Txd[T_Versuch_Nr]+schwarz+ltoan(versuch),1,oblog);
-                  if (dbsv->restart(1,1)) {
-                    Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
+									if (dbsv->restart(1,1)) {
+										Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
 									} else if (versuch) {
 										instmaria(obverb, oblog);
 									}
 #endif
-                } //                 if (!strcasecmp(host.c_str(),"localhost")) {
-                break;
-              case 1049:
-                if (ggferstellen) {
-                  Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_Datenbank]+drot+uedb+schwarz+Txd[T_zu_erstellen],1,1);
-                  mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), 0, port, unix_socket, client_flag);
-                  fehnr=mysql_errno(conn);
-                  if (!fehnr) {
-                    rs=new RS(this,string("CREATE DATABASE IF NOT EXISTS `")+uedb+"`");
-                    fehnr=mysql_errno(conn);
-                    if (!fehnr) {
-                      //                    rs->Abfrage(string("USE `")+uedb+"`");
-                      usedb(uedb);
-                      fehnr=mysql_errno(conn);
-                      if (!fehnr) {
-                        delete(rs);
-                      }
-                    }
-                  } else {
-                    Log(string(Txd[T_Fehler_beim_Verbinden])+ltoan(fehnr),1,1);
-                  } //                   if (!fehnr) {
-                  // if (ggferstellen)
-                } else {
-                  Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz,obverb,oblog);
-                } // if (ggferstellen)
-                break;
-              case 0:
-                break;
-              default:
-                Log(string(Txd[T_Fehler_db])+drot+ltoan(mysql_errno(conn))+schwarz+" "+blau+mysql_error(conn)+schwarz,1,1);
-            } //             switch ((fehnr=mysql_errno(conn))) {
-            if (!fehnr) break;
-          } //           if (mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), uedb, port, unix_socket, client_flag))  else 
-        } //         for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
-        if (!fehnr && conn) {
-          Log(string(Txd[T_Erfolg_beim_Initialisieren_der_Verbindung_zu_mysql]),obverb>1,oblog);
-          this->ConnError=NULL;
-        } else {
-          //			printf("Fehler %u beim Verbinden mit MySQL: %s\n", mysql_errno(conn), *erg= mysql_error(conn));
-          this->ConnError=mysql_error(conn);
-          //          cerr<<"Fehler "<<rot<<mysql_errno(conn)<<schwarz<<" beim Verbinden mit MySQL: "<<rot<<this->ConnError<<schwarz<<endl;
-          mysql_close(conn);
-          conn=0;
-          //			throw "Fehler beim Verbinden mit MySQL";
-        } // if (mysql_real_connect(conn, host, user, passwd.c_str(), uedb, port, unix_socket, client_flag))
-      } // if (!conn) 
-      dnb = '`'; dne = '`'; dvb = '\''; dve = '\'';
-      db=uedb;
-      break;
+								} //                 if (!strcasecmp(host.c_str(),"localhost")) 
+								break;
+							case 1049:
+								if (ggferstellen) {
+									Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_Datenbank]+drot+uedb+schwarz+Txd[T_zu_erstellen],1,1);
+									mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), 0, port, unix_socket, client_flag);
+									fehnr=mysql_errno(conn);
+									if (!fehnr) {
+										rs=new RS(this,string("CREATE DATABASE IF NOT EXISTS `")+uedb+"`");
+										fehnr=mysql_errno(conn);
+										if (!fehnr) {
+											//                    rs->Abfrage(string("USE `")+uedb+"`");
+											usedb(uedb);
+											fehnr=mysql_errno(conn);
+											if (!fehnr) {
+												delete(rs);
+											}
+										}
+									} else {
+										Log(string(Txd[T_Fehler_beim_Verbinden])+ltoan(fehnr),1,1);
+									} //                   if (!fehnr) 
+									// if (ggferstellen)
+								} else {
+									Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz,obverb,oblog);
+								} // if (ggferstellen)
+								break;
+							case 0:
+								break;
+							default:
+								Log(string(Txd[T_Fehler_db])+drot+ltoan(mysql_errno(conn))+schwarz+" "+blau+mysql_error(conn)+schwarz,1,1);
+						} //             switch ((fehnr=mysql_errno(conn))) 
+						if (!fehnr) break;
+					} //           if (mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), uedb, port, unix_socket, client_flag))  else 
+				} //         for(unsigned versuch=0;versuch<versuchzahl;versuch++) 
+				if (!fehnr && conn) {
+					Log(string(Txd[T_Erfolg_beim_Initialisieren_der_Verbindung_zu_mysql]),obverb>1,oblog);
+					this->ConnError=NULL;
+				} else {
+					//			printf("Fehler %u beim Verbinden mit MySQL: %s\n", mysql_errno(conn), *erg= mysql_error(conn));
+					this->ConnError=mysql_error(conn);
+					//          cerr<<"Fehler "<<rot<<mysql_errno(conn)<<schwarz<<" beim Verbinden mit MySQL: "<<rot<<this->ConnError<<schwarz<<endl;
+					mysql_close(conn);
+					conn=0;
+					//			throw "Fehler beim Verbinden mit MySQL";
+				} // if (mysql_real_connect(conn, host, user, passwd.c_str(), uedb, port, unix_socket, client_flag))
+			} // if (!conn) 
+			dnb = '`'; dne = '`'; dvb = '\''; dve = '\'';
+			db=uedb;
+			break;
 		case Postgres:
 			if (!dbsv) { 
 				if (!obprogda("postgres",obverb,oblog)) {
@@ -429,15 +432,44 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 					setzrpw();
 				}
 				dbsv=new servc("postgresql","postgres",obverb,oblog);
-				if (!oisok) {
+				if (!dbsv->obslaeuft(obverb,oblog)) {
 					// sudo systemctl start postgresql
 					// oisok=1;
 					caus<<"Ende Gelaende"<<endl;
 					exit(7);
 				}
 			}
+			string ip_a="127.0.0.1";
+			port=5432;
+			string constr =string("user='")+puser+"' password='"+ppasswd+"' dbname='" + uedb + "' hostaddr='"+ip_a+"' port='"+ltoan(port)+"'";
+			caus<<constr<<endl;
+			do {
+				pconn = PQconnectdb(constr.c_str()); //192.168.178.21 port=5432
+				if (PQstatus(pconn) != CONNECTION_OK) {
+					while (rootpwd.empty()) {
+						rootpwd=Tippstring(string("")+Txd[T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein],&rootpwd);
+					}
+					string mconstr =string("user='")+"postgres"+"' password='"+rootpwd+/*"' dbname='" + uedb */+ "' hostaddr='"+ip_a+"' port='"+ltoan(port)+"'";
+					pmconn = PQconnectdb(mconstr.c_str()); 
+					if (PQstatus(pmconn) != CONNECTION_OK) {
+						caus<<"Connection-String: "<<rot<<mconstr<<schwarz<<endl;
+						Log("\aVerbindung zur Standarddatenbank '"+rots+uedb+schwarz+"' gescheitert!",1,1);
+						pconn=NULL;
+						break;
+					}
+					caus<<"jetzt Benutzererstellung"<<endl;
+					RS be(this,string("CREATE USER ")+puser+" CREATEDB CREATEUSER INHERIT REPLICATION PASSWORD '"+ppasswd+"'",!obverb);
+					caus<<endl;
+          exit(8);
+				} else {
+					Log("Verbindung zu '"+blaus+uedb+schwarz+"' gelungen, user '"+blau+user+schwarz+"', host: '"+blau+ip_a+schwarz+"', port: '"+blau+ltoan(port)+schwarz+"'",obverb,oblog);
+					caus<<"is gangen"<<endl;
+					break;
+				}
+			} while (1);
 			break;
-								} // switch (DBS) 
+	} // switch (DBS) 
+	exit(9);
 } // DB::DB(DBSTyp nDBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag,const char** erg)
 
 int DB::usedb(const string& db)
@@ -503,9 +535,9 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 			case Postgres:
 				while (1) {
 					do {
-						rootpwd=Tippstring(string("")+Txd[T_PostgreSQL_musste_neu_eingerichtet_werden]+Txd[T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein]+": ",&rootpwd);
+						rootpwd=Tippstring(string("")+Txd[T_PostgreSQL_musste_neu_eingerichtet_werden]+Txd[T_Welches_Passwort_soll_der_Benutzer_postgres_haben]+": ",&rootpwd);
 					} while (rootpwd.empty());
-					rootpw2=Tippstring(string("")+Txd[T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein]+" ("+Txk[T_erneute_Eingabe]+"): ",&rootpw2);
+					rootpw2=Tippstring(string("")+Txd[T_Welches_Passwort_soll_der_Benutzer_postgres_haben]+" ("+Txk[T_erneute_Eingabe]+"): ",&rootpw2);
 					if (rootpw2==rootpwd) break;
 				} // while (1)
 				linst.doinst("passwd",obverb,oblog,"chpasswd"); 
@@ -1243,10 +1275,12 @@ void RS::weisezu(DB* pdb)
 {
   db=pdb;
   this->result = 0;
+	this->pres=0;
   // um bei wiederholten Abfragen vorher mysql_free_result aufrufen zu koennen
   obfehl=-1;
 }
 
+// wird aufgerufen im template RS::Abfrage
 // fuer obstumm gibt es die Stufen: 255 (zeige SQL an), 0, 1, 2 (zeige auch bei Fehler nichts an)
 int RS::doAbfrage(uchar obstumm,uchar asy) 
 {
@@ -1254,7 +1288,7 @@ int RS::doAbfrage(uchar obstumm,uchar asy)
   int obfalsch=0;
   // fuer wiederholten Abfragen
   // <<"in doAbfrage: "<<blau<<sql<<schwarz<<endl;
-  switch (db->DBS) {
+	switch (db->DBS) {
     case MySQL:
       if (!obfehl)  {
         mysql_free_result(result);
@@ -1306,13 +1340,16 @@ erfolg:
           //			row = mysql_fetch_row(result);
         } // if (mysql_real_query(db->conn,sql.c_str(),sql.length())) else  
       } // if (!db->conn) else
+			if (obfehl) if ((fnr!=1406 && !obstumm) || (fnr==1406 && obstumm==255)) {
+				//		printf("Fehler %u: %s\n", fnr, fehler);
+				cerr<<Txd[T_Fehler_db]<<drot<<fnr<<schwarz<<Txd[T_bei_Abfrage]<<blau<<sql<<schwarz<<": "<<endl<<drot<<fehler<<schwarz<<endl;
+			}
       break;
     case Postgres:
-      break;
-  }
-  if (obfehl) if ((fnr!=1406 && !obstumm) || (fnr==1406 && obstumm==255)) {
-    //		printf("Fehler %u: %s\n", fnr, fehler);
-    cerr<<Txd[T_Fehler_db]<<drot<<fnr<<schwarz<<Txd[T_bei_Abfrage]<<blau<<sql<<schwarz<<": "<<endl<<drot<<fehler<<schwarz<<endl;
+			string ausfstr= "Ausfuehr: "+sql;
+			Log(ausfstr+" ...",!obstumm?-1:0,0);
+			pres = PQexec(db->pconn, sql.c_str());
+			break;
   }
   return (int)obfehl;
 } // RS::doAbfrage

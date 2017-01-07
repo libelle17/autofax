@@ -74,6 +74,7 @@ enum Txdb_
 	T_bei_sql_Befehl,
 	T_PostgreSQL_musste_neu_eingerichtet_werden,
 	T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein,
+	T_Welches_Passwort_soll_der_Benutzer_postgres_haben,
   T_dbMAX,
 };
 
@@ -255,6 +256,7 @@ class DB
     string db_systemctl_name; // mysql, mariadb je nach System
     servc *dbsv=0;
     MYSQL *conn;
+		PGconn *pconn,*pmconn;
     //	MYSQL_RES *result;
     //	MYSQL_ROW row;
     DBSTyp DBS;
@@ -336,7 +338,8 @@ class RS
     string fehler;
     unsigned int fnr;
     MYSQL_RES *result;
-    unsigned long *lengths;
+		PGresult *pres;
+		unsigned long *lengths;
     MYSQL_ROW row;
     unsigned int num_fields;
     unsigned long long  num_rows;
@@ -352,13 +355,13 @@ class RS
     void clear();
     template<typename sT> 
       int Abfrage(sT psql,uchar obstumm=0,uchar asy=0){
-        int erg=0;
+        int erg=-1;
         this->sql=psql;
         if (!sql.empty()) {
           erg = doAbfrage(obstumm,asy);
         }
         return erg;
-      }
+      } //       int Abfrage(sT psql,uchar obstumm=0,uchar asy=0)
 
     RS(DB* pdb,const char* const psql, uchar obstumm=0);
     RS(DB* pdb,const string& psql, uchar obstumm=0);
