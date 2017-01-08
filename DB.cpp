@@ -452,13 +452,12 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 				} // 				if (!dbsv->obslaeuft(obverb,oblog))
 			} // 			if (!dbsv)
 			string ip_a="127.0.0.1";
-			caus<<"in DB::DB"<<endl;
 			port=5432;
 			string constr =string("user='")+puser+"' password='"+ppasswd+"' dbname='" + uedb + "' hostaddr='"+ip_a+"' port='"+ltoan(port)+"'";
 			caus<<constr<<endl;
 			do {
 				pconn = PQconnectdb(constr.c_str()); //192.168.178.21 port=5432
-				if (PQstatus(pconn) != CONNECTION_OK) {
+				if ((fehnr=PQstatus(pconn)) != CONNECTION_OK) {
 					while (rootpwd.empty()) {
 						rootpwd=Tippstring(string("")+Txd[T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein],&rootpwd);
 					}
@@ -470,10 +469,9 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 						pconn=NULL;
 						break;
 					}
-					caus<<"jetzt Benutzererstellung"<<endl;
-					RS be(this,string("CREATE USER ")+puser+" CREATEDB CREATEUSER INHERIT REPLICATION PASSWORD '"+ppasswd+"'",!obverb);
-					caus<<endl;
-          exit(8);
+					caus<<"jetzt Benutzererstellung"<<endl<<endl;
+					PQexec(pmconn, (string("CREATE USER ")+puser+" CREATEDB CREATEUSER INHERIT REPLICATION PASSWORD '"+ppasswd+"'").c_str());
+					PQexec(pmconn, (string("CREATE DATABASE \"") + uedb + "\" ENCODING 'LATIN1' TEMPLATE template0 LC_CTYPE 'de_DE.ISO88591' LC_COLLATE 'de_DE.ISO88591'").c_str());
 				} else {
 					Log("Verbindung zu '"+blaus+uedb+schwarz+"' gelungen, user '"+blau+user+schwarz+"', host: '"+blau+ip_a+schwarz+"', port: '"+blau+ltoan(port)+schwarz+"'",obverb,oblog);
 					caus<<"is gangen"<<endl;
@@ -482,7 +480,6 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 			} while (1);
 			break;
 	} // switch (DBS) 
-	exit(9);
 } // DB::DB(DBSTyp nDBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag,const char** erg)
 
 int DB::usedb(const string& db)
@@ -553,22 +550,35 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 					rootpw2=Tippstring(string("")+Txd[T_Welches_Passwort_soll_der_Benutzer_postgres_haben]+" ("+Txk[T_erneute_Eingabe]+"): ",&rootpw2);
 					if (rootpw2==rootpwd) break;
 				} // while (1)
-				linst.doinst("passwd",obverb,oblog,"chpasswd"); 
-				systemrueck("sh -c 'echo \"postgres:"+rootpwd+"\"|sudo chpasswd'",obverb,oblog);
-				svec rueck;
-				systemrueck("ps aux|grep postgres|grep -- -D|rev|cut -d' ' -f1|rev",obverb,oblog,&rueck);
-				if (rueck.size()) {
-					datadir=rueck[0];
-					caus<<"Datadir: "<<datadir<<endl;
-				} else
-					datadir="/var/lib/pgsql/data";
-				systemrueck("sh -c 'V="+dir_name(datadir)+";mkdir -p $V;chown postgres:postgres -R $V'",obverb,oblog);
-			  rueck.clear();	
-				if (systemrueck("sh -c 'echo \""+rootpwd+"\"|su - postgres -c \"initdb -D "+datadir+"\" 2>&1'",obverb,oblog,&rueck,0,2)) {
-					// dann laeuft es wahrscheinlich schon
-					Log(Txd[T_Ende_Gelaende],obverb,oblog);
-					exit(7);
-				}
+				uchar geht=0;
+				for(int iru=0;iru<2;iru++) {
+					svec irueck;
+					systemrueck("echo "+rootpwd+"|su - postgres -c \"psql -c 'select datname from pg_database order by datname'\"",obverb,oblog,&irueck);
+					for(unsigned zeile=0;zeile<irueck.size();zeile++) {
+					 if (irueck[zeile].find("template0")!=string::npos) {
+					  geht=1;
+						break;
+					 }
+					}
+					if (geht) break;
+					linst.doinst("passwd",obverb,oblog,"chpasswd"); 
+					systemrueck("sh -c 'echo \"postgres:"+rootpwd+"\"|sudo chpasswd'",obverb,oblog);
+					svec rueck;
+					systemrueck("ps aux|grep postgres|grep -- -D|rev|cut -d' ' -f1|rev",obverb,oblog,&rueck);
+					if (rueck.size()) {
+						datadir=rueck[0];
+						caus<<"Datadir: "<<datadir<<endl;
+					} else
+						datadir="/var/lib/pgsql/data";
+					systemrueck("sh -c 'V="+dir_name(datadir)+";mkdir -p $V;chown postgres:postgres -R $V'",obverb,oblog);
+					rueck.clear();	
+					if (systemrueck("sh -c 'echo \""+rootpwd+"\"|su - postgres -c \"initdb -D "+datadir+"\" 2>&1'",obverb,oblog,&rueck,0,2)) {
+						// dann laeuft es wahrscheinlich schon
+						Log(Txd[T_Ende_Gelaende],obverb,oblog);
+						exit(7);
+					}
+				} // 				for(int iru=0;iru<2;iru++) 
+				caus<<"geht: "<<(int)geht<<endl;
 		} // 		switch (DBS) 
 	} // if (!nrzf)
 } // setzrpw

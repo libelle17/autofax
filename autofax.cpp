@@ -3872,6 +3872,7 @@ int paramcl::initDB()
     Log(rots+Tx[Verbindung_zur_Datenbank_nicht_herstellbar]+schwarz+ltoan(My->fehnr)+rot+Tx[T_Breche_ab]+schwarz,1,1);
     return 1;
   }
+	caus<<"vervielfachen!"<<endl;
   return 0;
 } // initDB
 
