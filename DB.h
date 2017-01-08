@@ -76,6 +76,8 @@ enum Txdb_
 	T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein,
 	T_Welches_Passwort_soll_der_Benutzer_postgres_haben,
 	T_Ende_Gelaende,
+	T_Verbindung_zu,
+	T_gelungen,
   T_dbMAX,
 };
 
@@ -292,9 +294,9 @@ class DB
 		void setzrpw(int obverb=0, int oblog=0);
 		my_ulonglong arows;
 		vector< vector<instyp> > ins;
-		void erweitern(const string& tab, vector<instyp> einf,uchar obstumm,uchar obsammeln=0, const unsigned long *maxl=0);
-		uchar tuerweitern(const string& tab, const string& feld,long wlength,uchar obstumm);
-    int machbinaer(const string& tabs, const string& fmeld,uchar obstumm);
+		void erweitern(const string& tab, vector<instyp> einf,uchar obverb,uchar obsammeln=0, const unsigned long *maxl=0);
+		uchar tuerweitern(const string& tab, const string& feld,long wlength,uchar obverb);
+    int machbinaer(const string& tabs, const string& fmeld,uchar obverb);
     //	DB(DBSTyp DBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag);
     DB();
     DB(DBSTyp nDBS, const char* const phost, const char* const user,const char* const ppasswd, const char* const uedb="", unsigned int port=0, 
@@ -312,10 +314,10 @@ class DB
               uchar ggferstellen=1);
     ~DB(void);
     /*
-       int Abfrage(const char* sql,const char** erg=(const char**)&"", uchar obstumm=0);
-       int Abfrage(string sql,const char** erg=(const char**)&"", uchar obstumm=0);
-       int AbfragemE(const char* sql,const char** erg=(const char**)&"", uchar obstumm=0); // mit Ende
-       int AbfragemE(string sql,const char** erg=(const char**)&"", uchar obstumm=0);      // mit Ende
+       int Abfrage(const char* sql,const char** erg=(const char**)&"", uchar obverb=1);
+       int Abfrage(string sql,const char** erg=(const char**)&"", uchar obverb=1);
+       int AbfragemE(const char* sql,const char** erg=(const char**)&"", uchar obverb=1); // mit Ende
+       int AbfragemE(string sql,const char** erg=(const char**)&"", uchar obverb=1);      // mit Ende
      */
     //	int insert(const char* tab, vector<instyp> einf, const char** erg=(const char**)&"",uchar anfangen=1,uchar sammeln=0);
     //	void AbfrageEnde();
@@ -337,6 +339,7 @@ class RS
     string isql; // insert-sql
     uchar obfehl;
     string fehler;
+		char **betroffen=0; // fuer Abfrage in postgres
     unsigned int fnr;
     MYSQL_RES *result;
 		PGresult *pres;
@@ -355,23 +358,23 @@ class RS
     void weisezu(DB* pdb);
     void clear();
     template<typename sT> 
-      int Abfrage(sT psql,uchar obstumm=0,uchar asy=0){
+      int Abfrage(sT psql,uchar obverb=1,uchar asy=0,int oblog=0){
         int erg=-1;
         this->sql=psql;
         if (!sql.empty()) {
-          erg = doAbfrage(obstumm,asy);
+          erg = doAbfrage(obverb,asy,oblog);
         }
         return erg;
-      } //       int Abfrage(sT psql,uchar obstumm=0,uchar asy=0)
+      } //       int Abfrage(sT psql,uchar obverb=1,uchar asy=0)
 
-    RS(DB* pdb,const char* const psql, uchar obstumm=0);
-    RS(DB* pdb,const string& psql, uchar obstumm=0);
-    RS(DB* pdb,stringstream psqls, uchar obstumm=0);
+    RS(DB* pdb,const char* const psql, uchar obverb=1);
+    RS(DB* pdb,const string& psql, uchar obverb=1);
+    RS(DB* pdb,stringstream psqls, uchar obverb=1);
     ~RS();
-    void update(const string& tab,vector<instyp> einf,uchar obstumm, const string& bedingung, uchar asy=0);
-    void insert(const string& tab,vector<instyp> einf,uchar anfangen=1,uchar sammeln=0,uchar obstumm=0,string *id=0,uchar eindeutig=0,uchar asy=0);
+    void update(const string& tab,vector<instyp> einf,uchar obverb, const string& bedingung, uchar asy=0);
+    void insert(const string& tab,vector<instyp> einf,uchar anfangen=1,uchar sammeln=0,uchar obverb=1,string *id=0,uchar eindeutig=0,uchar asy=0);
   private:
-    int doAbfrage(uchar obstumm,uchar asy=0);
+    int doAbfrage(uchar obverb,uchar asy=0,int oblog=0);
 };
 
 //string ersetze(const char *u, const char* alt, const char* neu);
