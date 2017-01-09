@@ -474,8 +474,13 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 						break;
 					}
 					caus<<"jetzt Benutzererstellung"<<endl<<endl;
-					PQexec(pmconn, (string("CREATE USER ")+puser+" CREATEDB CREATEUSER INHERIT REPLICATION PASSWORD '"+ppasswd+"'").c_str());
-					PQexec(pmconn, (string("CREATE DATABASE \"") + uedb + "\" ENCODING 'LATIN1' TEMPLATE template0 LC_CTYPE 'de_DE.ISO88591' LC_COLLATE 'de_DE.ISO88591'").c_str());
+		      PGconn *zwi=pconn;
+					pconn=pmconn;
+			    RS p1(this,string("CREATE USER ")+puser+" CREATEDB CREATEUSER INHERIT REPLICATION PASSWORD '"+ppasswd+"'",obverb);
+//					PQexec(pmconn, (string("CREATE USER ")+puser+" CREATEDB CREATEUSER INHERIT REPLICATION PASSWORD '"+ppasswd+"'").c_str());
+			    RS p2(this,string("CREATE DATABASE \"") + uedb + "\" ENCODING 'LATIN1' TEMPLATE template0 LC_CTYPE 'de_DE.ISO88591' LC_COLLATE 'de_DE.ISO88591'",obverb);
+//					PQexec(pmconn, (string("CREATE DATABASE \"") + uedb + "\" ENCODING 'LATIN1' TEMPLATE template0 LC_CTYPE 'de_DE.ISO88591' LC_COLLATE 'de_DE.ISO88591'").c_str());
+          pconn=zwi;
 				} else {
 					Log(Txd[T_Verbindung_zu]+blaus+uedb+schwarz+Txd[T_gelungen]+blau+user+schwarz+"', host: '"+blau+ip_a+schwarz+"', port: '"+blau+ltoan(port)+schwarz+"'",obverb,oblog);
 					caus<<"is gangen"<<endl;
@@ -494,7 +499,9 @@ int DB::usedb(const string& db)
       fehler = mysql_select_db(conn,db.c_str());    
       break;
     case Postgres:
-		   
+		  caus<<"hier usedb"<<endl;
+			exit(10);
+      RS cdb(this,"\\c "+db);		   
       break;
   }
   return fehler;
@@ -597,6 +604,8 @@ DB::~DB(void)
       conn=0;
       break;
     case Postgres:
+		  caus<<"hier ~DB"<<endl;
+			exit(10);
       break;
   }
  if (dbsv) delete dbsv;
@@ -897,6 +906,8 @@ int DB::prueftab(Tabelle *ptab,int obverb/*=0*/,int oblog/*=0*/)
       } // case Mysql
       break;
     case Postgres:
+		  caus<<"hier prueftab "<<ptab->name<<endl;
+			exit(10);
       break;
   } // switch (DBS)
   return gesfehlr;
@@ -1236,6 +1247,8 @@ void DB::LetzteID(string *erg)
         }
         break;
       case Postgres:
+		  caus<<"hier letzteid"<<endl;
+			exit(10);
         break;
     }
   }
@@ -1248,6 +1261,8 @@ char* DB::tmtosql(tm *tmh,char* buf)
       sprintf(buf,"%.4d%.2d%.2d",tmh->tm_year+1900,tmh->tm_mon+1,tmh->tm_mday);
       break;
     case Postgres:
+		  caus<<"hier tmtosql"<<endl;
+			exit(10);
       break;
   }
   return buf;
@@ -1260,6 +1275,8 @@ char* DB::tmtosqlmZ(tm *tmh,char* buf)
       sprintf(buf,"%.4d%.2d%.2d%.2d%.2d%.2d",tmh->tm_year+1900,tmh->tm_mon+1,tmh->tm_mday,tmh->tm_hour,tmh->tm_min,tmh->tm_sec);
       break;
     case Postgres:
+		  caus<<"hier tmtosql"<<endl;
+			exit(10);
       break;
   }
   return buf;
@@ -1274,6 +1291,8 @@ my_ulonglong DB::affrows()
       return arows;
       break;
     case Postgres:
+		  caus<<"hier affrows"<<endl;
+			exit(10);
       break;
   }
   return arows=0;
@@ -1301,6 +1320,8 @@ char*** RS::HolZeile()
         }
       break;
     case Postgres:
+		  caus<<"hier HolZeile"<<endl;
+			exit(10);
       break;
   }
   return (char***)0;
@@ -1323,7 +1344,7 @@ void RS::weisezu(DB* pdb)
 
 // wird aufgerufen im template RS::Abfrage
 // fuer obverb gibt es die Stufen: 255 (zeige SQL an), 0, 1, 2 (zeige auch bei Fehler nichts an)
-int RS::doAbfrage(uchar obverb,uchar asy,int oblog/*=0*/) 
+int RS::doAbfrage(uchar obverb/*=0*/,uchar asy/*=0*/,int oblog/*=0*/) 
 {
   fnr=0;
   int obfalsch=0;
@@ -1457,6 +1478,8 @@ RS::~RS()
         }
         break;
       case Postgres:
+		  caus<<"hier ~RS"<<endl;
+			exit(10);
         break;
     }
 } // RS::~RS() 
@@ -1486,6 +1509,8 @@ void RS::update(const string& utab, vector< instyp > einf,uchar obverb, const st
       // <<blau<<isql<<schwarz<<endl;
       break;
     case Postgres:
+		  caus<<"hier update 1"<<endl;
+			exit(10);
       break;
   } // switch (db->DBS) 
 
@@ -1533,6 +1558,8 @@ void RS::update(const string& utab, vector< instyp > einf,uchar obverb, const st
       } // case
       break;
     case Postgres:
+		  caus<<"hier update 2"<<endl;
+			exit(10);
       break;
   } //   switch (db->DBS)
 } // void RS::update(const string& utab, vector< instyp > einf,uchar obverb, const string& bedingung,uchar asy) 
@@ -1618,6 +1645,8 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
         } // (!obfehl)
         break;
       case Postgres:
+		  caus<<"hier insert 1"<<endl;
+			exit(10);
         break;
     } // switch (db->DBS)
   } // eindeutig
@@ -1641,6 +1670,8 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
         isql+=") VALUES(";
         break;
       case Postgres:
+		  caus<<"hier insert 2"<<endl;
+			exit(10);
         break;
     } // switch (db->DBS) 
   } // if (obeinfuegen)
@@ -1672,6 +1703,8 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
         isql+=")";
         break;
       case Postgres:
+		  caus<<"hier insert 3"<<endl;
+			exit(10);
         break;
     } // switch (db->DBS) 
   } // if (obeinfuegen)
@@ -1725,6 +1758,8 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
         }
         break;
       case Postgres:
+		  caus<<"hier insert 4"<<endl;
+			exit(10);
         break;
     }
   } // switch (db->DBS) 

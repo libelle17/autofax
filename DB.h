@@ -374,7 +374,7 @@ class RS
     void update(const string& tab,vector<instyp> einf,uchar obverb, const string& bedingung, uchar asy=0);
     void insert(const string& tab,vector<instyp> einf,uchar anfangen=1,uchar sammeln=0,uchar obverb=1,string *id=0,uchar eindeutig=0,uchar asy=0);
   private:
-    int doAbfrage(uchar obverb,uchar asy=0,int oblog=0);
+    int doAbfrage(uchar obverb=0,uchar asy=0,int oblog=0);
 };
 
 //string ersetze(const char *u, const char* alt, const char* neu);
