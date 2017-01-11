@@ -16,7 +16,10 @@
 // Project->Properties->C/C++ ->General->Additional Include Directories->"$(ProjectDir)\..\..\..\MySQL Connector C 6.0.2\include"
 #include <mysql.h> 
 // sudo dnf install postgresql-devel
+//#define mitpostgres
+#ifdef mitpostgres 
 #include <libpq-fe.h> // PGconn
+#endif
 // G.Schade 26.1.14: Den Rest aus der Datei braucht man scheinbar nicht; sonst Konflikt mit bitset unter -std=gnu++11
 #ifndef HAVE_UCHAR
 typedef unsigned char	uchar;	/* Short for unsigned char */
@@ -259,7 +262,9 @@ class DB
     string db_systemctl_name; // mysql, mariadb je nach System
     servc *dbsv=0;
     MYSQL *conn;
+#ifdef mitpostgres 
 		PGconn *pconn,*pmconn;
+#endif
     //	MYSQL_RES *result;
     //	MYSQL_ROW row;
     DBSTyp DBS;
@@ -342,7 +347,9 @@ class RS
 		char **betroffen=0; // fuer Abfrage in postgres
     unsigned int fnr;
     MYSQL_RES *result;
+#ifdef mitpostgres 
 		PGresult *pres;
+#endif
 		unsigned long *lengths;
     MYSQL_ROW row;
     unsigned int num_fields;

@@ -32,6 +32,7 @@
 #include <sys/utsname.h> // utsname
 #endif
 #include <set>
+//#define mitpostgres
 const double& version=
 #include "version"
 ;
@@ -1632,7 +1633,12 @@ extern class lsyscl lsys;
 extern class linstcl linst;
 
 using namespace std;
+//#define mitpostgres
+#ifdef mitpostgres 
 const DBSTyp myDBS=Postgres; // MySQL;
+#else
+const DBSTyp myDBS=MySQL; // Postgres; // MySQL;
+#endif
 string tmpc; // fuer crontab
 
 #define autofaxcpp

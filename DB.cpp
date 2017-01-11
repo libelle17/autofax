@@ -430,6 +430,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 			db=uedb;
 			break;
 		case Postgres:
+#ifdef mitpostgres 
 			uchar neu=0;
 			if (!dbsv) { 
 				if (!obprogda("postgres",obverb,oblog)) {
@@ -487,6 +488,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 					break;
 				}
 			} while (1);
+#endif
 			break;
 	} // switch (DBS) 
 } // DB::DB(DBSTyp nDBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag,const char** erg)
@@ -1337,7 +1339,9 @@ void RS::weisezu(DB* pdb)
 {
   db=pdb;
   this->result = 0;
+#ifdef mitpostgres 
 	this->pres=0;
+#endif
   // um bei wiederholten Abfragen vorher mysql_free_result aufrufen zu koennen
   obfehl=-1;
 }
@@ -1408,6 +1412,7 @@ erfolg:
 			}
       break;
     case Postgres:
+#ifdef mitpostgres 
 			string ausfstr= "Ausfuehr: "+sql;
 			Log(ausfstr+" ...",obverb?-1:0,0);
 			pres = PQexec(db->pconn, sql.c_str());
@@ -1436,8 +1441,9 @@ erfolg:
 			} // (pres != PGRES_COMMAND_OK && (logscreen||oblog)) KLAA
 			if (betroffen) *betroffen=PQcmdTuples(pres);
 			PQclear(pres);
+#endif
 			break;
-  }
+  } // 	switch (db->DBS)
   return (int)obfehl;
 } // RS::doAbfrage
 
