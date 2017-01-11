@@ -13,6 +13,9 @@ DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f\n'` `find . -maxde
 # wenn eiheitliche Versionsnummer gewuenscht
 if [ "$1" = "nv" ]; then
  printf touch $DATEIEN
+ printf touch $DATEIEN
+ printf touch "$DATEIEN"
+ printf touch "$DATEIEN"
  touch $DATEIEN
  make && make install && make git
 else
