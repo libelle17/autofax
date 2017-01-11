@@ -555,14 +555,9 @@ faxes is being displayed.</p></td></tr>
 
 <p style="margin-top: 1em">17) If additional faxes in the
 spool of hylafax/capisuite are detected which are not
-created via autofax, they are displayed.</p></td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
-
-
-<p style="margin-top: 1em">In intervals they will be
-integrated into the autofax database.</p></td></tr>
+created via autofax, they are displayed. In intervals they
+will be integrated into the autofax database (without the
+not available information on the original file name).</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -1503,14 +1498,10 @@ wird angezeigt.</p></td></tr>
 
 <p style="margin-top: 1em">17) Weitere in der Warteschleife
 von hylafax/capisuite befindliche, nicht &uuml;ber
-autofax erstellte Faxe werden ggf. angezeigt.</p></td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
-
-
-<p style="margin-top: 1em">In Intervallen werden sie in die
-Autofax-Datenbank integriert</p></td></tr>
+autofax erstellte Faxe werden ggf. angezeigt. In Intervallen
+werden sie in die Autofax-Datenbank integriert (ohne die
+fehlende Information &uuml;ber den
+urspr&uuml;nglichen Dateinamen)</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -1689,7 +1680,7 @@ image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 k&ouml;nnen abh&auml;ngige Programme
 einschlie&szlig;en. <br>
 Falls Sie eines dieser Programme nicht wollen oder eine
-&auml;ltere Version 0.42083</p>
+&auml;ltere Version 0.42081</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>
