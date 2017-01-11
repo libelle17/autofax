@@ -9,15 +9,20 @@
 # Aufrufvarianten:
 # "mitpg=1 make <..>" => es wird mit/fuer postgres kompiliert und gelinkt, die Praeprozessordirektive "mitpostgres" wird dem Compiler uebergeben
 # "make glei" => der Compiler wird vorher nicht ueberprueft
-# "make opt" => optimiere mit -O
-# "make opt2" => optimiere mit -O2
-# "make opt3" => optimiere mit -O3
-# "make opts" => optimiere mit -Os, nach Groesse
-# "make optfast" => optimiere mit -Ofast, nach Ausfuerungsgeschwindigkeit
-# "make optg" => optimiere mit -Og, zum Debuggen
+# "make opt" => optimiere mit -O; kompiliere alles neu
+# "make opt2" => optimiere mit -O2; kompiliere alles neu
+# "make opt3" => optimiere mit -O3; kompiliere alles neu
+# "make opts" => optimiere mit -Os, nach Groesse; kompiliere alles neu
+# "make optfast" => optimiere mit -Ofast, nach Ausfuerungsgeschwindigkeit; kompiliere alles neu
+# "make optg" => optimiere mit -Og, zum Debuggen; kompiliere alles neu
 # "make new" oder "make neu" => kompiliere alles neu
 # "make clean" => loesche Objekt- und ausfuehrbare Dateien
 # "make altc" => kompiliere mit -std=gnu++11
+# "make anzeig" => zeige Informationen zu Programm, Quelldateien und Compiler an
+# "make install => installiere die erstellte Datei in den kuerzesten Pfad aus $PATH, der '/usr/' enthaelt,
+#                  installiert man-Seiten aus man_de und man_en, ferner *.html-Dateien und eine README.md-Datei fuer den git-Server
+#
+# "make git => aktualisiert die Datei auf dem zugeordneten git-Server
 
 ICH := $(firstword $(MAKEFILE_LIST))
 SRCS = $(wildcard *.cpp)
