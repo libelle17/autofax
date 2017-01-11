@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.42082) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42083) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -561,6 +561,13 @@ created via autofax, they are displayed.</p></td></tr>
 <td width="89%">
 
 
+<p style="margin-top: 1em">In intervals they will be
+integrated into the autofax database.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
 <p style="margin-top: 1em">18) Via
 <b>hylafax</b>/<b>capisuite</b> received faxes are copied to
 a receiving directory and there named with the name of the
@@ -933,7 +940,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.42082) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42083) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1502,6 +1509,13 @@ autofax erstellte Faxe werden ggf. angezeigt.</p></td></tr>
 <td width="89%">
 
 
+<p style="margin-top: 1em">In Intervallen werden sie in die
+Autofax-Datenbank integriert</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
 <p style="margin-top: 1em">18) &Uuml;ber
 <b>hylafax</b>/<b>capisuite</b> empfangene Faxe werden ggf.
 mit Hilfe der Faxnummer anhand voreingestellter SQL-Befehle
@@ -1675,7 +1689,7 @@ image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 k&ouml;nnen abh&auml;ngige Programme
 einschlie&szlig;en. <br>
 Falls Sie eines dieser Programme nicht wollen oder eine
-&auml;ltere Version 0.42082</p>
+&auml;ltere Version 0.42083</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>

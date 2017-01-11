@@ -5294,8 +5294,8 @@ void paramcl::zeigweitere()
 			tage=mtage; // 30
 		}	else if (!(tagesaufr % 3)) {
 			tage=ktage; // 1
-		}
-	}
+		} // 		if (monatsaufr==3) else if else if
+	} // 	if (obcapi || obhyla)
 	// <<"Korrektur wird durchgefuehrt ueber Tage: "<<tage<<endl;
 	if (obcapi) {
 	  if (tage) korrigierecapi(tage);

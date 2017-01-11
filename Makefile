@@ -21,7 +21,6 @@
 # "make anzeig" => zeige Informationen zu Programm, Quelldateien und Compiler an
 # "make install => installiere die erstellte Datei in den kuerzesten Pfad aus $PATH, der '/usr/' enthaelt,
 #                  installiert man-Seiten aus man_de und man_en, ferner *.html-Dateien und eine README.md-Datei fuer den git-Server
-#
 # "make git => aktualisiert die Datei auf dem zugeordneten git-Server
 
 ICH := $(firstword $(MAKEFILE_LIST))

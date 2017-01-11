@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "12.01.17" "Version 0.42082" "\fBautofax\fR man page"
+.TH man 1 "12.01.17" "Version 0.42083" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -292,6 +292,8 @@ The status of the mentioned faxes is being displayed.
 .LP
 .HP 3 
 17) If additional faxes in the spool of hylafax/capisuite are detected which are not created via autofax, they are displayed.
+.br
+In intervals they will be integrated into the autofax database.
 .LP
 .HP 3 
 18) Via \fBhylafax\fR/\fBcapisuite\fR received faxes are copied to a receiving directory and there named with the name of the sender, if possible, by means of their fax number which is being looked up using a predefineable number of predefineable sql commands, which are applied one after another until the fax number is found.
