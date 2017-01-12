@@ -17,6 +17,7 @@ if [ "$1" = "nv" ]; then
  mkdir -p res
  cp -a $DATEIEN res
  git rm -cached $DATEIEN
+ git commit -m "nix"
  git add $DATEIEN
  make git
 # make && make install && make git
