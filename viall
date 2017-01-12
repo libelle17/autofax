@@ -12,13 +12,7 @@ test -f $ZD || echo 1>$ZD; awk "BEGIN {print `cat $ZD`+1}">$ZD
 DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile install.sh $0 .exrc"
 # wenn eiheitliche Versionsnummer gewuenscht
 if [ "$1" = "nv" ]; then
- echo "Achtung"
- printf "touch $DATEIEN\n"
  touch $DATEIEN
- printf "git commit -m \"Version rein\" $DATEIEN\n"
- git commit -m "Version rein" $DATEIEN
- git push
- exit
  make && make install && make git
 else
 `which vim || which vi` $DATEIEN -pNu .exrc
