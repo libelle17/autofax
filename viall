@@ -10,6 +10,7 @@ test -f $ZD || echo 1>$ZD; awk "BEGIN {print `cat $ZD`+1}">$ZD
 # DATEIEN="autofax.cpp autofax.h vorgaben.cpp DB.cpp DB.h konsole.cpp konsole.h man_en man_de Makefile install.sh viall .exrc"
 # .. und so etwas allgemeiner
 DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile install.sh $0 .exrc"
+
 # wenn eiheitliche Versionsnummer gewuenscht
 if [ "$1" = "nv" ]; then
  touch $DATEIEN
