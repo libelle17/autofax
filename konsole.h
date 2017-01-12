@@ -362,7 +362,7 @@ class cppSchluess {
     template <typename T> void setze(T *var) { wert=ltoan(*var); }
 //    template <typename T> void setze(T *var,string& bem) { wert=ltoan(*var); bemerk=bem;}
 		void hole (struct tm *tmp);
-};
+}; // class cppSchluess
 template <> inline void cppSchluess::hole < char* > (char** var) {*var = (char*)wert.c_str(); }
 template <> inline void cppSchluess::hole < const char* > (const char** var) {*var = wert.c_str(); }
 template <> inline void cppSchluess::hole < string > (string *var) {*var = wert; }
