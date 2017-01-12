@@ -14,7 +14,12 @@ DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdept
 # wenn eiheitliche Versionsnummer gewuenscht
 if [ "$1" = "nv" ]; then
  touch $DATEIEN
- make && make install && make git
+ mkdir -p res
+ cp -a $DATEIEN res
+ git rm -cached $DATEIEN
+ git add $DATEIEN
+ make git
+# make && make install && make git
 else
 `which vim || which vi` $DATEIEN -pNu .exrc
 fi
