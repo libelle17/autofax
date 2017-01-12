@@ -15,8 +15,9 @@ if [ "$1" = "nv" ]; then
  echo "Achtung"
  printf "touch $DATEIEN\n"
  touch $DATEIEN
- printf "git commit -m \"Version rein\" $DATEIEN"
+ printf "git commit -m \"Version rein\" $DATEIEN\n"
  git commit -m "Version rein" $DATEIEN
+ git push
  exit
  make && make install && make git
 else
