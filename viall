@@ -15,6 +15,7 @@ if [ "$1" = "nv" ]; then
  echo "Achtung"
  printf "touch $DATEIEN\n"
  touch $DATEIEN
+ git commit -m "Version rein" $DATEIEN
  make && make install && make git
 else
 `which vim || which vi` $DATEIEN -pNu .exrc
