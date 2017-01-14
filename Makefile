@@ -202,7 +202,7 @@ compiler:
 	cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . && \
 	make && \
 	sudo make install && \
-	touch $$NACHWEIS;};true
+	sudo touch $$NACHWEIS;};true
 #	-@test -f /usr/include/tiff.h||echo $(Ihigh) libtiff-$(dev)
 
 .PHONY: install
