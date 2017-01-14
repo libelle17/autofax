@@ -657,7 +657,8 @@ possible, especially:</p>
 
 
 <p style="margin-top: 1em">gcc V.6, g++ V.6, groff,
-libmysqlclient-dev(el), libtiff-dev(el)</p></td></tr>
+libmysqlclient-dev(el), libtiff-dev(el) (in case of version
+4.0.7 with a slight modification, see Makefile)</p></td></tr>
 </table>
 
 <p style="margin-left:15%;"><b>autofax:</b></p>
@@ -703,13 +704,12 @@ used:</p>
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="64%">
+<td width="89%">
 
 
 <p style="margin-top: 1em">hylafax+, hylafax+-client,
-sendmail, tiff,</p></td>
-<td width="25%">
-</td></tr>
+sendmail, tiff (in case of version 4.0.7 with a slight
+modification, see Makefile)</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">in case ocr shall be used:</p>
@@ -1603,7 +1603,8 @@ makefile:</b></p>
 
 
 <p style="margin-top: 1em">gcc V.6, g++ V.6, groff,
-libmysqlclient-dev(el), libtiff-dev(el)</p></td></tr>
+libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Version
+4.0.7 mit einer winzigen Korrektur, s.Makefile)</p></td></tr>
 </table>
 
 <p style="margin-left:15%;"><b>autofax:</b></p>
@@ -1649,13 +1650,12 @@ soll:</p>
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="64%">
+<td width="89%">
 
 
 <p style="margin-top: 1em">hylafax+, hylafax+-client,
-sendmail, tiff,</p></td>
-<td width="25%">
-</td></tr>
+sendmail, tiff (im Fall von Version 4.0.7 mit einer winzigen
+Korrektur, s.Makefile),</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">falls ocr benutzt werden

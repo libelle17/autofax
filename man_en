@@ -316,7 +316,7 @@ The program was adjusted to an installation of Opensuse 42.1, Debian 8.60, Ubunt
 \fBmakefile:\fR
 .LP
 .HP 3
-gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el)
+gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el) (in case of version 4.0.7 with a slight modification, see Makefile)
 .br
 .br
 \fBautofax:\fR
@@ -332,7 +332,7 @@ capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source 
 in case hylafax shall be used:
 .LP
 .HP 3
-hylafax+, hylafax+-client, sendmail, tiff,
+hylafax+, hylafax+-client, sendmail, tiff (in case of version 4.0.7 with a slight modification, see Makefile)
 .br
 in case ocr shall be used:
 .LP

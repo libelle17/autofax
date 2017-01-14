@@ -46,14 +46,43 @@ CCInst=gcc6-c++
 ifneq ($(shell g++-6 --version >/dev/null 2>&1),0)
  CCName=g++
 # CC=sudo $(CCName)
- CC=$(CCName)
- $(eval CFLAGS=$(CFLAGS) -std=gnu++11)
+ CC:=$(CCName)
+ CFLAGS:=$(CFLAGS) -std=gnu++11
 else
  CCName=g++-6
 # CC=sudo $(CCName)
- CC=$(CCName)
+ CC:=$(CCName)
 endif
-GROFFCHECK={ rpm -q groff >/dev/null 2>&1 || dpkg -s groff groff-base >/dev/null 2>&1;} ||{ which zypper >/dev/null 2>&1 &&{ sudo zypper -n --gpg-auto-import-keys in groff 2>/dev/null;true;} ||{ which apt-get >/dev/null 2>&1 &&{ sudo apt-get -y --force-yes install groff groff-base;true;} ||{ which dnf >/dev/null 2>&1 &&{ sudo dnf -y install groff groff-base;true;} ||{ which yum >/dev/null 2>&1 && sudo yum -y install groff groff-base;true;} } } }
+OR:= >/dev/null 2>&1
+pgroff:=groff groff-base
+dev:=devel
+libmc:=libmysqlclient
+ifeq ($(shell which rpm$(OR);echo $$?),0)
+ Ilow:=rpm -q
+ ifeq ($(shell which zypper$(OR);echo $$?),0)
+  pgroff:=groff
+  Ihigh:=sudo zypper -n --gpg-auto-import-keys in
+  REPOS:=sudo zypper lr|grep 'g++\|devel_gcc'$(OR)||sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release | grep ^NAME= | cut -d'"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'"' -f2`/devel:gcc.repo;
+  COMP:=gcc gcc-c++ $(CCInst)
+ else
+  COMP:=make automake gcc-c++ kernel-devel
+  libmc:=mysql
+  ifeq ($(shell which dnf$(OR);echo $$?),0)
+   Ihigh:=sudo dnf -y install 
+  else ifeq ($(shell which yum$(OR);echo $$?),0)
+   Ihigh:=sudo yum -y install 
+  endif
+ endif
+else ifeq ($(shell apt-get$(OR);echo $$?),0)
+ Ilow:=dpkg -s
+ Ihigh:=sudo apt-get -y --force-yes install 
+ COMP:=install build-essential linux-headers-`uname -r`
+ dev:=dev
+endif
+libmcd:=$(libmc)-$(dev)
+pgd:=postgresql-$(dev)
+slc:=sudo /sbin/ldconfig
+GROFFCHECK:=$(Ilow) $(pgroff)$(OR)||$(Ihigh) $(pgroff);true
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
@@ -159,10 +188,20 @@ compiler:
 	@printf " Untersuche Compiler ...\r"
 #	@printf " CCName: %b%s%b                  \n" $(blau) "${CCName}" $(reset)
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
-	-@which $(CCName) >/dev/null 2>&1 || { which zypper >/dev/null 2>&1 && { sudo zypper lr | grep 'g++\|devel_gcc' || sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release | grep ^NAME= | cut -d'"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'"' -f2`/devel:gcc.repo; sudo zypper --gpg-auto-import-keys in gcc gcc-c++ $(CCInst);true;} || { which apt-get >/dev/null 2>&1 && { sudo apt-get -y --force-yes install build-essential linux-headers-`uname -r`;true;} || { which dnf >/dev/null 2>&1 && { sudo dnf -y install make automake gcc-c++ kernel-devel;true;} || { which yum >/dev/null 2>&1 && yum install -y make automake gcc-c++ kernel-devel;true;} } } }
-	-@if { sudo /sbin/ldconfig; ! sudo /sbin/ldconfig -p | grep -q "libmysqlclient.so ";} || ! test -f /usr/include/mysql/mysql.h; then { which zypper >/dev/null 2>&1 && { sudo zypper -n --gpg-auto-import-keys in libmysqlclient-devel;true;} || { which apt-get >/dev/null 2>&1 && { sudo apt-get -y --force-yes --reinstall install libmysqlclient-dev;true;} || { which dnf >/dev/null 2>&1 && { sudo dnf -y install mysql-devel;true;} || { which yum >/dev/null 2>&1 && sudo yum install -y mysql-devel;true;} } }; sudo /sbin/ldconfig;}; fi
-	-@[ -z $$mitpg ]||{ P=postgresql-dev;Pl=$${P}el;N=;{ which zypper>/dev/null 2>&1&& { rpm -q $$Pl >/dev/null||{ sudo zypper -n --gpg-auto-import-keys in $$Pl;N=y;} } } ||{ which apt-get>/dev/null 2>&1&& { dpkg -s $$Pl >/dev/null||{ sudo apt-get -y --force-yes --reinstall install $$P;N=y;} } } ||{ which dnf>/dev/null 2>&1&& { rpm -q $${Pl} >/dev/null||{ sudo dnf -y install $$Pl;N=1;} } } ||{ which yum >/dev/null && { rpm -q $$Pl >/dev/null||{ sudo yum -y install $$Pl;N=1;} } }; [ ! -z $$N ] && sudo /sbin/ldconfig;}; true;
-	-@test -f /usr/include/tiff.h || { which zypper >/dev/null 2>&1 && { sudo zypper -n --gpg-auto-import-keys in libtiff-devel;true;} || { which apt-get >/dev/null 2>&1 && { sudo apt-get -y --force-yes install libtiff-dev;true;} || { which dnf >/dev/null 2>&1 && { sudo dnf -y install libtiff-devel;true;} || { which yum >/dev/null 2>&1 && sudo yum install -y libtiff-devel;true;} } } }
+	-@which $(CCName)$(OR)||{ $(REPOS)$(Ihigh) $(COMP);} ;true;
+	-@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(Ihigh) $(libmcd);fi
+	-@[ -z $$mitpg ]||$(Ilow) $(pgd)$(OR)||{ $(Ihigh) $(pgd);$(slc);};true;
+# ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
+	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
+	P=tiff_copy; T=$$P.tar.gz; Z=tiff-4.0.7; \
+	wget https://github.com/libelle17/$$P/archive/master.tar.gz -O $$T && \
+	tar xpvf $$T && mv $${P}-master $$Z && cd $$Z && \
+	sed -i.bak s'/uint16 Param;/uint32 Param;/' libtiff/tif_fax3.h && \
+	cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . && \
+	make && \
+	sudo make install && \
+	touch $$NACHWEIS;};true
+#	-@test -f /usr/include/tiff.h||echo $(Ihigh) libtiff-$(dev)
 
 .PHONY: install
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
