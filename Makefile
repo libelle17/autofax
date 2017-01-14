@@ -191,6 +191,7 @@ compiler:
 	-@which $(CCName)$(OR)||{ $(REPOS)$(Ihigh) $(COMP);} ;true;
 	-@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(Ihigh) $(libmcd);fi
 	-@[ -z $$mitpg ]||$(Ilow) $(pgd)$(OR)||{ $(Ihigh) $(pgd);$(slc);};true;
+	-@test -f /usr/include/tiff.h||echo $(Ihigh) libtiff-$(dev)
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
 	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
 	$(Ilow) cmake||$(Ihigh) cmake;true && \
@@ -203,7 +204,6 @@ compiler:
 	make && \
 	sudo make install && \
 	sudo touch $$NACHWEIS;};true
-#	-@test -f /usr/include/tiff.h||echo $(Ihigh) libtiff-$(dev)
 
 .PHONY: install
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
