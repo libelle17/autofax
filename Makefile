@@ -197,6 +197,7 @@ compiler:
 	P=tiff_copy; T=$$P.tar.gz; Z=tiff-4.0.7; \
 	wget https://github.com/libelle17/$$P/archive/master.tar.gz -O $$T && \
 	tar xpvf $$T && mv $${P}-master $$Z && cd $$Z && \
+	rm -f CMakeCache.txt && \
 	sed -i.bak s'/uint16 Param;/uint32 Param;/' libtiff/tif_fax3.h && \
 	cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . && \
 	make && \
