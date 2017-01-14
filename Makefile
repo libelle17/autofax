@@ -193,6 +193,7 @@ compiler:
 	-@[ -z $$mitpg ]||$(Ilow) $(pgd)$(OR)||{ $(Ihigh) $(pgd);$(slc);};true;
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
 	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
+	$(Ilow) cmake||$(Ihigh) cmake;true && \
 	P=tiff_copy; T=$$P.tar.gz; Z=tiff-4.0.7; \
 	wget https://github.com/libelle17/$$P/archive/master.tar.gz -O $$T && \
 	tar xpvf $$T && mv $${P}-master $$Z && cd $$Z && \
