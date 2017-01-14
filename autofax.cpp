@@ -7109,7 +7109,7 @@ int paramcl::pruefcapi()
             if (v1!=v2) {
 							autofkonfschreib();
 							Log(blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
-                  +schwarz+v2+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
+                  +schwarz+v2+"\n"+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
                   +schwarz,1,1);
               exit(0);
             } // if (v1!=v2) 
@@ -7849,7 +7849,7 @@ void pruefprocgettel3(DB *Myp, const string& usr, const string& pwd, const strin
   for(uchar runde=0;runde<2;runde++) {
     uchar fehlt=1;
     char ***cerg;
-    RS rs(Myp,"SHOW CREATE FUNCTION gettel3",2-obverb);
+    RS rs(Myp,"SHOW CREATE FUNCTION gettel3",obverb);
     while (cerg=rs.HolZeile(),cerg?*cerg:0) {
       for(uint i=1;i<=2;i++) {
         if (*(*cerg+i)) if (strstr(*(*cerg+i),body.c_str())) if (strstr(*(*cerg+i),owner.c_str())) {
@@ -7914,7 +7914,7 @@ void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& 
   for(uchar runde=0;runde<2;runde++) {
     uchar fehlt=1;
     char ***cerg;
-    RS rs(Myp,"SHOW CREATE FUNCTION stdfaxnr",2-obverb);
+    RS rs(Myp,"SHOW CREATE FUNCTION stdfaxnr",obverb);
     while (cerg=rs.HolZeile(),cerg?*cerg:0) {
       for(uint i=1;i<=2;i++) {
         if (*(*cerg+i)) if (strstr(*(*cerg+i),body.c_str())) if (strstr(*(*cerg+i),owner.c_str())) {
