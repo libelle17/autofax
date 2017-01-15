@@ -8045,6 +8045,11 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 			if (strptime(tok[0].c_str(),"%m/%d/%y %H:%M",&tm)) {
 				fsfp->tts=mktime(&tm);
 		caus<<violett<<"fsfp->tts in xferlog: "<<schwarz<<fsfp->tts<<endl;
+  struct tm zt;
+  memcpy(&zt,localtime(&fsfp->tts),sizeof zt);
+	char buf2[100];
+  sprintf(buf2,"%c%.4d-%.2d-%.2d %.2d:%.2d:%.2d%c",'\'',zt.tm_year+1900,zt.tm_mon+1,zt.tm_mday,zt.tm_hour,zt.tm_min,zt.tm_sec,'\'');
+		caus<<violett<<"buf2: "<<schwarz<<buf2<<endl;
 			}
 			if (tok.size()>1) {
 				fsfp->hstatus=tok[1];
