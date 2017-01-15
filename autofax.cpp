@@ -1740,11 +1740,13 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     einf.push_back(/*2*/instyp(My->DBS,"docname",&original));
     Log(string("original (docname): ")+blau+original+schwarz,obverb,oblog);
     einf.push_back(/*2*/instyp(My->DBS,"idudoc",&idudoc));
+		caus<<violett<<"tts in archiviere: "<<schwarz<<tts<<endl;
 		if (!tts) tts=time(0);
 		//<<gruen<<"tts: "<<rot<<tts<<schwarz<<endl;
 		// char buf[100];
     // strftime(buf, sizeof(buf), "%d.%m.%y %T", localtime(&tts));
 		// <<"buf: "<<buf<<endl;
+		caus<<violett<<"tts in archiviere(2): "<<schwarz<<tts<<endl;
     einf.push_back(/*2*/instyp(My->DBS,"transe",&tts));
     if (!telnr.empty()) {
       string stdfax=pmp->stdfaxnr(telnr);
@@ -5505,6 +5507,7 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 					if (*(*cerg+1)) fsf.telnr=*(*cerg+1);    // tel
 					if (*(*cerg+2)) fsf.original=*(*cerg+2); // original
 					if (*(*cerg+3)) fsf.tts=atol(*(*cerg+3)); // Datum (aus xferfaxlog, tts
+		caus<<violett<<"fsf.tts in korrigierehyla: "<<schwarz<<fsf.tts<<endl;
 					if (*(*cerg+4)) fsf.hdd=*(*cerg+4);
 					if (*(*cerg+5)) fsf.idudoc=*(*cerg+5);
 					if (fsf.idudoc.empty()) fsf.idudoc="0";
@@ -8038,8 +8041,10 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 		if (tok.size()<=2) fsfp->hgerg=grueck[0];
 		if (tok.size()) {
 			struct tm tm;
+		caus<<violett<<"tok[0] in xferlog: "<<schwarz<<tok[0]<<endl;
 			if (strptime(tok[0].c_str(),"%m/%d/%y %H:%M",&tm)) {
 				fsfp->tts=mktime(&tm);
+		caus<<violett<<"fsfp->tts in xferlog: "<<schwarz<<fsfp->tts<<endl;
 			}
 			if (tok.size()>1) {
 				fsfp->hstatus=tok[1];
@@ -8200,6 +8205,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     if (this->hylconf[3].wert.empty()) this->hylconf[3].wert="0";
     fsf->hstatuscode=this->hylconf[3].wert;
 		fsf->tts=atol(hylconf[5].wert.c_str());
+		caus<<violett<<"tts in setzhylastat: "<<schwarz<<fsf->tts<<endl;
 		fsf->killtime=atol(hylconf[9].wert.c_str());
 		fsf->number=hylconf[6].wert;
     vector<string> tok;
@@ -8259,7 +8265,9 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
     *ausgp<<blau<<buf<<"/"<<maxdials<<schwarz<<(hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
     // hier muss noch JobReqBusy, JobReqNoAnswer, JobReqNoCarrier, JobReqNoFCon, JobReqOther, JobReqProto dazu gerechnet werden
     // time_t spoolbeg=(time_t)atol(tts.c_str());
+		caus<<violett<<"tts in hylaausgeb: "<<schwarz<<tts<<endl;
     strftime(buf, sizeof(buf), "%d.%m.%y %T", localtime(&tts));
+		caus<<violett<<"buf in hylaausgeb: "<<schwarz<<buf<<endl;
     *ausgp<<blau<<buf<<schwarz; 
     //              if (hversuzahl>12) ausg<<", zu spaet";
     *ausgp<<", T.: "<<blau<<setw(12)<<number<<schwarz;
@@ -8373,8 +8381,8 @@ int main(int argc, char** argv)
 		if (!(pm.loef||pm.loew||pm.loea)) {
 			pm.DateienHerricht();  
 		}
-    if (pm.obfcard) if (pm.obcapi) pm.obcapi= !pm.pruefcapi();
-    if (pm.obmodem) if (pm.obhyla) pm.obhyla= !pm.pruefhyla();
+    if (pm.obfcard) if (pm.obcapi) pm.obcapi=!pm.pruefcapi();
+    if (pm.obmodem) if (pm.obhyla) pm.obhyla=!pm.pruefhyla();
     Log(Tx[T_Verwende]+blaus+(pm.obcapi?"Capisuite":"")+schwarz+(pm.obcapi&&pm.obhyla?", ":"")+blau+(pm.obhyla?"Hylafax":"")+schwarz+
         (!pm.obcapi&&!pm.obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):""),1,pm.oblog);
     if (pm.loef || pm.loew || pm.loea) {
