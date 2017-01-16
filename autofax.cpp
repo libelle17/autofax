@@ -8048,7 +8048,7 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 //			 if (!iss.fail()) {
         int y,M,d,h,m;
 			if (sscanf(tok[0].c_str(), "%d/%d/%d %d:%d", &M, &d, &y, &h, &m)==5) {
-			  tm.tm_year=y-1900;
+			  tm.tm_year=y+(y<100?100:-1900);
 				tm.tm_mon=M-1;
 				tm.tm_mday=d;
 				tm.tm_hour=h;
