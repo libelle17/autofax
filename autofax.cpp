@@ -1740,13 +1740,11 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     einf.push_back(/*2*/instyp(My->DBS,"docname",&original));
     Log(string("original (docname): ")+blau+original+schwarz,obverb,oblog);
     einf.push_back(/*2*/instyp(My->DBS,"idudoc",&idudoc));
-		caus<<violett<<"tts in archiviere: "<<schwarz<<tts<<endl;
 		if (!tts) tts=time(0);
 		//<<gruen<<"tts: "<<rot<<tts<<schwarz<<endl;
 		// char buf[100];
     // strftime(buf, sizeof(buf), "%d.%m.%y %T", localtime(&tts));
 		// <<"buf: "<<buf<<endl;
-		caus<<violett<<"tts in archiviere(2): "<<schwarz<<tts<<endl;
     einf.push_back(/*2*/instyp(My->DBS,"transe",&tts));
     if (!telnr.empty()) {
       string stdfax=pmp->stdfaxnr(telnr);
@@ -5507,7 +5505,6 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 					if (*(*cerg+1)) fsf.telnr=*(*cerg+1);    // tel
 					if (*(*cerg+2)) fsf.original=*(*cerg+2); // original
 					if (*(*cerg+3)) fsf.tts=atol(*(*cerg+3)); // Datum (aus xferfaxlog, tts
-		caus<<violett<<"fsf.tts in korrigierehyla: "<<schwarz<<fsf.tts<<endl;
 					if (*(*cerg+4)) fsf.hdd=*(*cerg+4);
 					if (*(*cerg+5)) fsf.idudoc=*(*cerg+5);
 					if (fsf.idudoc.empty()) fsf.idudoc="0";
@@ -8041,12 +8038,14 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 		if (tok.size()<=2) fsfp->hgerg=grueck[0];
 		if (tok.size()) {
 			struct tm tm={};
-			caus<<violett<<"tok[0] in xferlog: "<<schwarz<<tok[0]<<endl;
+// a) fuehrt (zumindest hier) zu grottenfalschen Daten
 //			if (strptime(tok[0].c_str(),"%m/%d/%y %H:%M",&tm)) {
+// b) get_time ist (zumindest hier) noch nicht in <iomanip>
 //       istringstream iss(tok[0]);
 //			 iss>>get_time(&tm,"%m/%d/%y %H:%M");
 //			 if (!iss.fail()) {
-        int y,M,d,h,m;
+// c) das geht:
+			int y,M,d,h,m;
 			if (sscanf(tok[0].c_str(), "%d/%d/%d %d:%d", &M, &d, &y, &h, &m)==5) {
 			  tm.tm_year=y+(y<100?100:-1900);
 				tm.tm_mon=M-1;
@@ -8054,13 +8053,7 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 				tm.tm_hour=h;
 				tm.tm_min=m;
 				fsfp->tts=mktime(&tm);
-				caus<<violett<<"fsfp->tts in xferlog: "<<schwarz<<fsfp->tts<<endl;
-				struct tm zt;
-				memcpy(&zt,localtime(&fsfp->tts),sizeof zt);
-				char buf2[100];
-				sprintf(buf2,"%c%.4d-%.2d-%.2d %.2d:%.2d:%.2d%c",'\'',zt.tm_year+1900,zt.tm_mon+1,zt.tm_mday,zt.tm_hour,zt.tm_min,zt.tm_sec,'\'');
-				caus<<violett<<"buf2: "<<schwarz<<buf2<<endl;
-			}
+			} // 			if (sscanf(tok[0].c_str(), "%d/%d/%d %d:%d", &M, &d, &y, &h, &m)==5)
 			if (tok.size()>1) {
 				fsfp->hstatus=tok[1];
 				if (tok[1]=="SEND") aktion=1;
@@ -8220,7 +8213,6 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     if (this->hylconf[3].wert.empty()) this->hylconf[3].wert="0";
     fsf->hstatuscode=this->hylconf[3].wert;
 		fsf->tts=atol(hylconf[5].wert.c_str());
-		caus<<violett<<"tts in setzhylastat: "<<schwarz<<fsf->tts<<endl;
 		fsf->killtime=atol(hylconf[9].wert.c_str());
 		fsf->number=hylconf[6].wert;
     vector<string> tok;
@@ -8280,9 +8272,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
     *ausgp<<blau<<buf<<"/"<<maxdials<<schwarz<<(hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
     // hier muss noch JobReqBusy, JobReqNoAnswer, JobReqNoCarrier, JobReqNoFCon, JobReqOther, JobReqProto dazu gerechnet werden
     // time_t spoolbeg=(time_t)atol(tts.c_str());
-		caus<<violett<<"tts in hylaausgeb: "<<schwarz<<tts<<endl;
     strftime(buf, sizeof(buf), "%d.%m.%y %T", localtime(&tts));
-		caus<<violett<<"buf in hylaausgeb: "<<schwarz<<buf<<endl;
     *ausgp<<blau<<buf<<schwarz; 
     //              if (hversuzahl>12) ausg<<", zu spaet";
     *ausgp<<", T.: "<<blau<<setw(12)<<number<<schwarz;
