@@ -8040,16 +8040,26 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
     aufSplit(&tok,&grueck[0],sep);
 		if (tok.size()<=2) fsfp->hgerg=grueck[0];
 		if (tok.size()) {
-			struct tm tm;
-		caus<<violett<<"tok[0] in xferlog: "<<schwarz<<tok[0]<<endl;
-			if (strptime(tok[0].c_str(),"%m/%d/%y %H:%M",&tm)) {
+			struct tm tm={};
+			caus<<violett<<"tok[0] in xferlog: "<<schwarz<<tok[0]<<endl;
+//			if (strptime(tok[0].c_str(),"%m/%d/%y %H:%M",&tm)) {
+//       istringstream iss(tok[0]);
+//			 iss>>get_time(&tm,"%m/%d/%y %H:%M");
+//			 if (!iss.fail()) {
+        int y,M,d,h,m;
+			if (sscanf(tok[0].c_str(), "%d/%d/%d %d:%d", &M, &d, &y, &h, &m)==5) {
+			  tm.tm_year=y-1900;
+				tm.tm_mon=M-1;
+				tm.tm_mday=d;
+				tm.tm_hour=h;
+				tm.tm_min=m;
 				fsfp->tts=mktime(&tm);
-		caus<<violett<<"fsfp->tts in xferlog: "<<schwarz<<fsfp->tts<<endl;
-  struct tm zt;
-  memcpy(&zt,localtime(&fsfp->tts),sizeof zt);
-	char buf2[100];
-  sprintf(buf2,"%c%.4d-%.2d-%.2d %.2d:%.2d:%.2d%c",'\'',zt.tm_year+1900,zt.tm_mon+1,zt.tm_mday,zt.tm_hour,zt.tm_min,zt.tm_sec,'\'');
-		caus<<violett<<"buf2: "<<schwarz<<buf2<<endl;
+				caus<<violett<<"fsfp->tts in xferlog: "<<schwarz<<fsfp->tts<<endl;
+				struct tm zt;
+				memcpy(&zt,localtime(&fsfp->tts),sizeof zt);
+				char buf2[100];
+				sprintf(buf2,"%c%.4d-%.2d-%.2d %.2d:%.2d:%.2d%c",'\'',zt.tm_year+1900,zt.tm_mon+1,zt.tm_mday,zt.tm_hour,zt.tm_min,zt.tm_sec,'\'');
+				caus<<violett<<"buf2: "<<schwarz<<buf2<<endl;
 			}
 			if (tok.size()>1) {
 				fsfp->hstatus=tok[1];
