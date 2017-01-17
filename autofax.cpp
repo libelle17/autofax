@@ -1470,8 +1470,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
    "In order to use the capisuite, the module capi has to be loaded. In order to generate this, the command "
    "'sudo dnf -y install kernel-modules-extra' hat to be called, which updated the linux kernel ("},
   // T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten
-  {"). Bitte zu dessen Verwendung den Rechner neu starten und dann nochmal ",
-   "). Please reboot and afterwords call "},
+  {"Bitte zu dessen Verwendung den Rechner neu starten und dann nochmal ",
+   "Please reboot and afterwords call "},
   // T_aufrufen,
   {" aufrufen!"," again!"},
   // T_Text_aus_empfangenen_Faxen_wird_ermittelt
@@ -7122,7 +7122,7 @@ int paramcl::pruefcapi()
             if (v1!=v2) {
 							autofkonfschreib();
 							Log(blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
-                  +schwarz+v2+"\n"+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
+                  +schwarz+v2+blau+").\n"+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
                   +schwarz,1,1);
               exit(0);
             } // if (v1!=v2) 
