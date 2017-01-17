@@ -6475,6 +6475,7 @@ int paramcl::pruefhyla()
   } else {
     Log(string("Modem '")+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+gruen+brs+schwarz+Tx[T_wird_verwendet],obverb,oblog);
   } //   if (br<=0) else
+	// ein Fehler in der Version 4.0.7 von libtiff verhindert die Zusammenarbeit mit hylafax
   distri.pruefipr();
 	systemrueck("sh -c \"NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f \\$NACHWEIS &&{ "+
 	distri.schau+" cmake||"+distri.instp+" cmake;true && "

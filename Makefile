@@ -191,7 +191,7 @@ compiler:
 	-@which $(CCName)$(OR)||{ $(REPOS)$(instp) $(COMP);} ;true;
 	-@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(instp) $(libmcd);fi
 	-@[ -z $$mitpg ]||$(schau) $(pgd)$(OR)||{ $(instp) $(pgd);$(slc);};true;
-	-@test -f /usr/include/tiff.h||echo $(instp) libtiff-$(dev)
+	-@test -f /usr/include/tiff.h||$(instp) libtiff-$(dev)
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
 # 17.1.17 in Programm verlagert
 #	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
