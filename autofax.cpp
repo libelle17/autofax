@@ -3810,7 +3810,7 @@ void paramcl::pruefsamba()
       else if (nmbd.serviceda) nmbd.restart(obverb-1,oblog);
     } // if (smbrestart) 
 		// VFS
-		if (pruefipr()==apt) linst.doggfinst("samba-vfs-modules",obverb,oblog);
+		if (distri.pruefipr()==apt) linst.doggfinst("samba-vfs-modules",obverb,oblog);
 		// Firewall(s)
 		uchar obslaueft=0;
 		svec rueckr;
@@ -4483,7 +4483,7 @@ void paramcl::pruefunpaper()
 {
 	Log(violetts+Tx[T_pruefunpaper]+schwarz,obverb,oblog);
 	if (double vers=progvers("unpaper",obverb,oblog)<6.1) {
-		if (pruefipr()==dnf||pruefipr()==yum) {
+		if (distri.pruefipr()==dnf||distri.pruefipr()==yum) {
 			// sudo rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm 
 			//               http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
 			//   systemrueck("sudo rpm -Uvh https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-free-release-stable.noarch.rpm "
@@ -4496,8 +4496,8 @@ void paramcl::pruefunpaper()
 			linst.doinst("ffmpeg-devel",obverb,oblog);
 			linst.doinst("ffmpeg-compat",obverb,oblog);
 		}
-		/*if (pruefipr()==apt||pruefipr()==dnf||pruefipr()==yum)*/ 
-		if (pruefipr()!=dnf && pruefipr()!=yum) 
+		/*if (distri.pruefipr()==apt||distri.pruefipr()==dnf||distri.pruefipr()==yum)*/ 
+		if (distri.pruefipr()!=dnf && distri.pruefipr()!=yum) 
 			linst.doggfinst("libavformat-devel",obverb+1,oblog);
 		holvongithub("unpaper_copy");
 		if (vers) systemrueck("sudo rm $(which unpaper) && hash -r",obverb,oblog);
@@ -4537,14 +4537,14 @@ int paramcl::pruefocr()
 			if (progvers("ocrmypdf",obverb,oblog)>4.32) 
 				ocrzuinst=0;
 		if (ocrzuinst) {
-			if (pruefipr()==dnf||pruefipr()==yum||pruefipr()==zypper||pruefipr()==apt) {
+			if (distri.pruefipr()==dnf||distri.pruefipr()==yum||distri.pruefipr()==zypper||distri.pruefipr()==apt) {
 				// in fedora pip statt pip3
 				linst.doinst("python3-pip",obverb+1,oblog,"pip3");
 				linst.doinst("python3-devel",obverb+1,oblog,"/usr/bin/python3-config");
 				linst.doggfinst("qpdf");
 				linst.doggfinst("gcc");
 				linst.doinst("libffi-devel");
-				if (pruefipr()==dnf || pruefipr()==yum) linst.doinst("redhat-rpm-config",obverb+1,oblog);
+				if (distri.pruefipr()==dnf||distri.pruefipr()==yum) linst.doinst("redhat-rpm-config",obverb+1,oblog);
 				linst.doinst("ghostscript",obverb+1,oblog,"gs");
 				systemrueck("sudo python3 -m pip install --upgrade setuptools pip");
 				pruefunpaper();
@@ -4596,7 +4596,7 @@ int paramcl::pruefocr()
 					} //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
 				} //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
 #endif
-			} // if (pruefipr()==dnf)
+			} // if (distri.pruefipr()==dnf)
 		} //     if (!obprogda("ocrmypdf",obverb,oblog))
 		obocrgeprueft=1;
 	} // if (!obocrgeprueft) 
@@ -6475,6 +6475,18 @@ int paramcl::pruefhyla()
   } else {
     Log(string("Modem '")+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+gruen+brs+schwarz+Tx[T_wird_verwendet],obverb,oblog);
   } //   if (br<=0) else
+  distri.pruefipr();
+	systemrueck("sh -c \"NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f \\$NACHWEIS &&{ "+
+	distri.schau+" cmake||"+distri.instp+" cmake;true && "
+	"P=tiff_copy; T=\\$P.tar.gz; Z=tiff-4.0.7; "
+	"wget https://github.com/libelle17/\\$P/archive/master.tar.gz -O \\$T && "
+	"tar xpvf \\$T && mv \\${P}-master \\$Z && cd \\$Z && "
+	"rm -f CMakeCache.txt && "
+	"sed -i.bak s'/uint16 Param;/uint32 Param;/' libtiff/tif_fax3.h && "
+	"cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . && "
+	"make && "
+	"sudo make install && "
+	"sudo touch \\$NACHWEIS;};true\"",obverb,oblog);
   hylasv1(obverb,oblog);
   for(unsigned versuch=0;versuch<3;versuch++) {
     // 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
@@ -7182,7 +7194,7 @@ int paramcl::pruefcapi()
 				// if (systemrueck("which zypper",-1,-1)) KLA
         //        if (linst.checkinst(-1,-1)!=zyp) KLA
         /*
-           if (pruefipr()!=zypper) {
+           if (distri.pruefipr()!=zypper) {
            Log(rots+Tx[T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht],1,1);
            this->obcapi=0;
            return 1;

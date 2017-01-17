@@ -210,11 +210,11 @@ DB::DB(DBSTyp nDBS, const char* const phost, const char* const puser,const char*
 // 2 x in DB::init
 void DB::instmaria(int obverb, int oblog)
 {
-	if (pruefipr()==apt) {
+	if (distri.pruefipr()==apt) {
 		systemrueck("sudo sh -c 'apt-get -y install apt-transport-https; apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
 	} else {
 		linst.doinst("mariadb",obverb,oblog);
-	} // 					if (pruefipr()==apt) else
+	} // 					if (distri.pruefipr()==apt) else
 } // void DB::instmaria()
 
 void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,const char* const ppasswd, const char* const uedb, 
@@ -233,7 +233,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 	switch (DBS) {
 		case MySQL:
 #ifdef linux
-			switch (pruefipr()) {
+			switch (distri.pruefipr()) {
 				case zypper: case apt:
 					db_systemctl_name="mysql";
 					break;
@@ -241,7 +241,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 					db_systemctl_name="mariadb";
 					break;
 				default: break;
-			} //       switch (pruefipr())
+			} //       switch (distri.pruefipr())
 			if (!dbsv) dbsv=new servc(db_systemctl_name,"mysqld",obverb,oblog);
 			if (!oisok) {
 				// schauen, ob die Exe-Datei da ist 

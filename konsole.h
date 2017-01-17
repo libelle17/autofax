@@ -433,8 +433,20 @@ class lsyscl
 // betrsys pruefos();
 int obprogda(string prog,int obverb, int oblog, string *pfad=0);
 enum instprog {keinp,zypper,apt,dnf,yum};
-instprog pruefipr(int obverb=0, int oblog=0);
 string gethome();
+
+class distri_cl // Distribution
+{
+ instprog ipr=keinp; // installiertes Program
+ public:
+ string schau; // Befehl zum Pruefen auf Vorhandensein ueber das Installationssystem
+ string instp; // Befehl zum Installieren ueber das Installationnssystem
+ string repos; // Befehl zum Hinzufuegen des Repositories fuer den Compiler
+ string compil; // Paketnamen fuer den Compiler
+ string dev; // Anhaengsel fuer die development-Versionen ("-dev" oder "-devel")
+ instprog pruefipr(int obverb=0, int oblog=0);
+};
+extern distri_cl distri;
 
 #ifdef _MSC_VER
 extern inline void wait();

@@ -40,6 +40,7 @@ printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTe
 #define obfstream
 const string nix;
 class linstcl linst;
+class distri_cl distri;
 
 const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
 {
@@ -1158,27 +1159,46 @@ int obprogda(string prog,int obverb, int oblog, string *pfad)
   return 0; 
 } // string obprogda(string prog,int obverb, int oblog)
 
-instprog pruefipr(int obverb,int oblog)
+instprog distri_cl::pruefipr(int obverb,int oblog)
 {
-  static instprog aktipr=keinp;
-  if (aktipr==keinp) {
-    if (obprogda("zypper",obverb-1,oblog))
-      // heruntergeladene Dateien behalten
-      aktipr=zypper;
-    else if (obprogda("apt-get",obverb-1,oblog)) {
-		// Repositories: Frage nach cdrom ausschalten
-			systemrueck("sudo sh -c \"grep -q -m 1 '^[^#]*cdrom' /etc/apt/sources.list && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' /etc/apt/sources.list | cut -d: -f1) \\> 0$(grep -n -m 1 '^[^#]*cdrom' /etc/apt/sources.list | cut -d: -f1) && ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/^[^#]*cdrom/d' /etc/apt/sources.list\"",obverb,oblog);
-      // hier werden die Dateien vorgabemaessig behalten
-      aktipr=apt;
-    } else if (obprogda("dnf",obverb-1,oblog))
-      aktipr=dnf;
-    else if (obprogda("yum",obverb-1,oblog))
-      aktipr=yum;
-   else
-     cerr<<Txk[T_Weder_zypper_noch_apt_get_noch_dnf_noch_yum_als_Installationspgrogramm_gefunden]<<endl;
- } //   if (aktipr==keinp)
- return aktipr;
-} // instprog pruefipr(int obverb,int oblog)
+	if (ipr==keinp) {
+		if (obprogda("rpm",obverb-1,oblog)) {
+			schau="rpm -q";
+			dev="devel";
+			if (obprogda("zypper",obverb-1,oblog)) { // opensuse
+				// heruntergeladene Dateien behalten
+				ipr=zypper;
+				instp="sudo zypper -n --gpg-auto-import-keys in ";
+				repos="sudo zypper lr | grep 'g++\\|devel_gcc'>/dev/null 2>&1 || sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release |"
+					"grep ^NAME= | cut -d'\"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'\"' -f2`/devel:gcc.repo;";
+				compil="gcc gcc-c++ gcc6-c++";
+			} else { // dann fedora
+				if (obprogda("dnf",obverb-1,oblog)) {
+					ipr=dnf;
+					instp="sudo dnf -y install ";
+				} else if (obprogda("yum",obverb-1,oblog)) {
+					ipr=yum;
+					instp="sudo yum -y install ";
+				} // 				if (obprogda("dnf",obverb-1,oblog))
+				compil="make automake gcc-c++ kernel-devel";
+			} // 			if (obprogda("zypper",obverb-1,oblog)) KLZ // opensuse
+		} else if (obprogda("apt-get",obverb-1,oblog)) {
+			// Repositories: Frage nach cdrom ausschalten
+			systemrueck("sudo sh -c \"grep -q -m 1 '^[^#]*cdrom' /etc/apt/sources.list && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' /etc/apt/sources.list |"
+					"cut -d: -f1) \\> 0$(grep -n -m 1 '^[^#]*cdrom' /etc/apt/sources.list | cut -d: -f1) && "
+					"ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/^[^#]*cdrom/d' /etc/apt/sources.list\"",obverb,oblog);
+			// hier werden die Dateien vorgabemaessig behalten
+			ipr=apt;
+			schau="dpkg -s";
+			instp="sudo apt-get -y --force-yes install "; 
+			compil="install build-essential linux-headers-`uname -r`";
+			dev="dev";
+		} else {
+			cerr<<Txk[T_Weder_zypper_noch_apt_get_noch_dnf_noch_yum_als_Installationspgrogramm_gefunden]<<endl;
+		} // 		if (obprogda("rpm",obverb-1,oblog))
+	} //   if (ipr==keinp)
+	return ipr;
+} // instprog distri_cl::pruefipr(int obverb,int oblog)
 
 const string& absch::suche(const char* const sname)
 {
@@ -2297,7 +2317,7 @@ linsten linstcl::checkinst(int obverb, int oblog)
 
 string linstcl::ersetzeprog(const string& prog) 
 {
-  switch(pruefipr()) {
+  switch(distri.pruefipr()) {
     case apt:
       if (prog=="mariadb") return "mariadb-server";
       if (prog=="hylafax") return "hylafax-server";
@@ -2340,7 +2360,7 @@ string linstcl::ersetzeprog(const string& prog)
 		  if (prog=="redhat-rpm-config") return "";
 			if (prog=="libffi-devel") return "libffi$(gcc --version|head -n1|sed \"s/.*) \\(.\\).\\(.\\).*/\\1\\2/\")-devel";
     default: break;
-  } //   switch(pruefipr())
+  } //   switch(distri.pruefipr())
   return prog;
 } // string linstcl::ersetzeprog(const string& prog) 
 
@@ -2360,7 +2380,7 @@ int linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsn
   } // if (!fallsnichtda.empty()) 
 //	int iru;
   if (!eprog.empty()) {
-    switch (pruefipr()) {
+    switch (distri.pruefipr()) {
       case zypper:
         if (obnmr) {
           obnmr=0;
@@ -2382,7 +2402,7 @@ int linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsn
         ret=systemrueck(string("sudo yum -y ")+(obun?"remove ":"install ")+eprog,obverb+1,oblog);
         break;
       default: break;
-    } // switch (pruefipr()) 
+    } // switch (distri.pruefipr()) 
     eprog.clear();
   } // if (!eprog.empty()) 
   return ret;
@@ -2408,7 +2428,7 @@ int linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnic
 
 int linstcl::douninst(const string& prog,int obverb,int oblog) 
 {
-  switch (pruefipr()) {
+  switch (distri.pruefipr()) {
     case zypper:
       return systemrueck("sudo zypper -n rm "+prog,obverb,oblog);
       break;
@@ -2430,7 +2450,7 @@ int linstcl::douninst(const string& prog,int obverb,int oblog)
 int linstcl::obfehlt(const string& prog,int obverb,int oblog)
 {
  // <<violett<<"linst::obfehlt: "<<schwarz<<prog<<endl;
-  switch (pruefipr()) {
+  switch (distri.pruefipr()) {
     case zypper: case dnf: case yum: 
       return systemrueck("rpm -q "+prog+" 2>/dev/null",obverb,oblog);
     case apt:

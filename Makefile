@@ -58,31 +58,31 @@ pgroff:=groff groff-base
 dev:=devel
 libmc:=libmysqlclient
 ifeq ($(shell which rpm$(OR);echo $$?),0)
- Ilow:=rpm -q
+ schau:=rpm -q
  ifeq ($(shell which zypper$(OR);echo $$?),0)
   pgroff:=groff
-  Ihigh:=sudo zypper -n --gpg-auto-import-keys in
+  instp:=sudo zypper -n --gpg-auto-import-keys in
   REPOS:=sudo zypper lr|grep 'g++\|devel_gcc'$(OR)||sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release | grep ^NAME= | cut -d'"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'"' -f2`/devel:gcc.repo;
   COMP:=gcc gcc-c++ $(CCInst)
  else
   COMP:=make automake gcc-c++ kernel-devel
   libmc:=mysql
   ifeq ($(shell which dnf$(OR);echo $$?),0)
-   Ihigh:=sudo dnf -y install 
+   instp:=sudo dnf -y install 
   else ifeq ($(shell which yum$(OR);echo $$?),0)
-   Ihigh:=sudo yum -y install 
+   instp:=sudo yum -y install 
   endif
  endif
 else ifeq ($(shell apt-get$(OR);echo $$?),0)
- Ilow:=dpkg -s
- Ihigh:=sudo apt-get -y --force-yes install 
+ schau:=dpkg -s
+ instp:=sudo apt-get -y --force-yes install 
  COMP:=install build-essential linux-headers-`uname -r`
  dev:=dev
 endif
 libmcd:=$(libmc)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
-GROFFCHECK:=$(Ilow) $(pgroff)$(OR)||$(Ihigh) $(pgroff);true
+GROFFCHECK:=$(schau) $(pgroff)$(OR)||$(instp) $(pgroff);true
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
@@ -188,13 +188,14 @@ compiler:
 	@printf " Untersuche Compiler ...\r"
 #	@printf " CCName: %b%s%b                  \n" $(blau) "${CCName}" $(reset)
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
-	-@which $(CCName)$(OR)||{ $(REPOS)$(Ihigh) $(COMP);} ;true;
-	-@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(Ihigh) $(libmcd);fi
-	-@[ -z $$mitpg ]||$(Ilow) $(pgd)$(OR)||{ $(Ihigh) $(pgd);$(slc);};true;
-	-@test -f /usr/include/tiff.h||echo $(Ihigh) libtiff-$(dev)
+	-@which $(CCName)$(OR)||{ $(REPOS)$(instp) $(COMP);} ;true;
+	-@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(instp) $(libmcd);fi
+	-@[ -z $$mitpg ]||$(schau) $(pgd)$(OR)||{ $(instp) $(pgd);$(slc);};true;
+	-@test -f /usr/include/tiff.h||echo $(instp) libtiff-$(dev)
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
-	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
-	$(Ilow) cmake||$(Ihigh) cmake;true && \
+# 17.1.17 in Programm verlagert
+#	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
+	$(schau) cmake||$(instp) cmake;true && \
 	P=tiff_copy; T=$$P.tar.gz; Z=tiff-4.0.7; \
 	wget https://github.com/libelle17/$$P/archive/master.tar.gz -O $$T && \
 	tar xpvf $$T && mv $${P}-master $$Z && cd $$Z && \
