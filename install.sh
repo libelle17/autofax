@@ -21,7 +21,7 @@ getIPR() {
 }
 
 # Gruppen, deren Mitglieder sudo aufrufen koennen; fuer Debian muss zuerst 'sudo' genannt werden, weil eine Zuordnung zu 'root' nichts hilft (s.u. tail)
-SUG="admin\|root\|sudo\|wheel";
+SUG="admin\|root\|sudo\|wheel\|ntadmin";
 
 # hier geht's los
 getIPR;
