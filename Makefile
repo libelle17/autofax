@@ -192,10 +192,10 @@ compiler:
 	@printf " Untersuche Compiler ...\r"
 #	@printf " CCName: %b%s%b                  \n" $(blau) "${CCName}" $(reset)
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
-	-@which $(CCName)$(OR)||{ $(REPOS)$(instp) $(COMP);} ;true;
-	-@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(instp) $(libmcd);fi
-	[ -z $$mitpg ]||$(schau) $(pgd)$(OR)||{ $(instpf) $(pgd);$(slc);};
-	-@test -f /usr/include/tiff.h||$(instp) libtiff-$(dev)
+	which $(CCName)$(OR)||{ $(REPOS)$(instpf) $(COMP);};
+	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(instp) $(libmcd);fi
+	@[ -z $$mitpg ]||$(schau) $(pgd)$(OR)||{ $(instp) $(pgd);$(slc);};
+	@test -f /usr/include/tiff.h||$(instp) libtiff-$(dev)
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
 # 17.1.17 in Programm verlagert
 #	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
