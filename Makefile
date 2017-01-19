@@ -62,6 +62,7 @@ ifeq ($(shell which rpm$(OR);echo $$?),0)
  ifeq ($(shell which zypper$(OR);echo $$?),0)
   pgroff:=groff
   instp:=sudo zypper -n --gpg-auto-import-keys in
+  instpf:=sudo zypper --gpg-auto-import-keys in
   REPOS:=sudo zypper lr|grep 'g++\|devel_gcc'$(OR)||sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release | grep ^NAME= | cut -d'"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'"' -f2`/devel:gcc.repo;
   COMP:=gcc gcc-c++ $(CCInst)
  else
@@ -69,13 +70,16 @@ ifeq ($(shell which rpm$(OR);echo $$?),0)
   libmc:=mysql
   ifeq ($(shell which dnf$(OR);echo $$?),0)
    instp:=sudo dnf -y install 
+   instpf:=sudo dnf install 
   else ifeq ($(shell which yum$(OR);echo $$?),0)
    instp:=sudo yum -y install 
+   instpf:=sudo yum install 
   endif
  endif
 else ifeq ($(shell apt-get$(OR);echo $$?),0)
  schau:=dpkg -s
  instp:=sudo apt-get -y --force-yes install 
+ instpf:=sudo apt-get --force-yes install 
  COMP:=install build-essential linux-headers-`uname -r`
  dev:=dev
 endif
@@ -190,7 +194,7 @@ compiler:
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
 	-@which $(CCName)$(OR)||{ $(REPOS)$(instp) $(COMP);} ;true;
 	-@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(instp) $(libmcd);fi
-	-@[ -z $$mitpg ]||$(schau) $(pgd)$(OR)||{ $(instp) $(pgd);$(slc);};true;
+	[ -z $$mitpg ]||$(schau) $(pgd)$(OR)||{ $(instpf) $(pgd);$(slc);};
 	-@test -f /usr/include/tiff.h||$(instp) libtiff-$(dev)
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
 # 17.1.17 in Programm verlagert
