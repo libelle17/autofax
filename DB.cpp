@@ -559,7 +559,8 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 			case Postgres:
 				while (1) {
 					do {
-						rootpwd=Tippstring(string("")+Txd[T_PostgreSQL_musste_neu_eingerichtet_werden]+Txd[T_Welches_Passwort_soll_der_Benutzer_postgres_haben]+": ",&rootpwd);
+						rootpwd=Tippstring(string("")+Txd[T_PostgreSQL_musste_neu_eingerichtet_werden]+
+								Txd[T_Welches_Passwort_soll_der_Benutzer_postgres_haben]+": ",&rootpwd);
 					} while (rootpwd.empty());
 					rootpw2=Tippstring(string("")+Txd[T_Welches_Passwort_soll_der_Benutzer_postgres_haben]+" ("+Txk[T_erneute_Eingabe]+"): ",&rootpw2);
 					if (rootpw2==rootpwd) break;

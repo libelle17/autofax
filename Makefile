@@ -16,7 +16,8 @@
 # "make optfast" => optimiere mit -Ofast, nach Ausfuerungsgeschwindigkeit; kompiliere alles neu
 # "make optg" => optimiere mit -Og, zum Debuggen; kompiliere alles neu
 # "make new" oder "make neu" => kompiliere alles neu
-# "make clean" => loesche Objekt- und ausfuehrbare Dateien
+# "make hierclean" => loesche Objekt- und ausfuehrbare Dateien im Kompilierverzeichnis
+# "make clean" => loesche Objekt- und ausfuehrbare Dateien einschliesslich installierter Version
 # "make altc" => kompiliere mit -std=gnu++11
 # "make anzeig" => zeige Informationen zu Programm, Quelldateien und Compiler an
 # "make install => installiere die erstellte Datei in den kuerzesten Pfad aus $PATH, der '/usr/' enthaelt,
@@ -76,11 +77,11 @@ ifeq ($(shell which rpm$(OR);echo $$?),0)
    instpf:=sudo yum install 
   endif
  endif
-else ifeq ($(shell apt-get$(OR);echo $$?),0)
+else ifeq ($(shell which apt-get$(OR);echo $$?),0)
  schau:=dpkg -s
  instp:=sudo apt-get -y --force-yes install 
  instpf:=sudo apt-get --force-yes install 
- COMP:=install build-essential linux-headers-`uname -r`
+ COMP:=build-essential linux-headers-`uname -r`
  dev:=dev
 endif
 libmcd:=$(libmc)-$(dev)
@@ -133,7 +134,7 @@ altc: CCName=g++
 altc: opts
 
 new: neu
-neu: anzeig clean weiter
+neu: anzeig hierclean weiter
 
 weiter: compiler $(EXEC) README.md fertig
 
@@ -279,12 +280,17 @@ fertig:
 	@printf " Fertig mit %s, nachher:\n" "$(ICH)"
 	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC))" $(reset) 
 
-.PHONY: clean
-clean: 
+.PHONY: hierclean
+hierclean: 
 	@printf " Bereinige ...\r"
 	@$(shell rm -f $(EXEC) $(OBJ) .d/* 2>/dev/null)
-	@$(shell sudo rm -f $(INSTEXEC) 2>/dev/null)
 	@$(shell sudo rm -f ${MANPEH} ${MANPDH} 2>/dev/null)
-	@printf " %b%s,%s,%s,%s,%s%b geloescht!\n" $(blau) "$(EXEC)" "$(OBJ)" "$(INSTEXEC)" "$(MANPEH)" "$(MANPDH)" $(reset)
+	@printf " %b%s,%s,%s,%s%b geloescht!\n" $(blau) "$(EXEC)" "$(OBJ)" "$(MANPEH)" "$(MANPDH)" $(reset)
+
+-include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
+.PHONY: clean
+clean: hierclean
+	@$(shell sudo rm -f $(INSTEXEC) 2>/dev/null)
+	@printf " %b%s%b geloescht!\n" $(blau) "$(INSTEXEC)" $(reset) 
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
