@@ -8,7 +8,7 @@ class zielmustercl; // fuer die Verteilung der erfolgreich gefaxten Dateien auf 
 class fxfcl; // Faxfile
 class fsfcl; // Faxsendfile
 class paramcl; // Programmparameter
-string zielname(const string& qdatei, const string& zielverz,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0);
+string zielname(const string& qdatei, const string& zielvz,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0);
 string zielname(const string& qdatei, zielmustercl *zmp,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0);
 void dorename(const string& quelle, const string& ziel, const string& cuser="", uint *vfehler=0, int obverb=0, int oblog=0);
 string verschiebe(const string& qdatei, const string& zielvz, const string& cuser="",uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0,int oblog=0);

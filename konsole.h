@@ -424,9 +424,11 @@ class abSchl {
 enum lsysen:uchar {usys,sus,deb,fed};
 class lsyscl
 {
+    lsysen sys=usys; 
+		string usr_lib64_vz;
   public:
-    lsysen sys; 
     lsysen getsys(int obverb=0,int oblog=0);
+		string& getlib64(int obverb=0,int oblog=0);
 };
 
 // enum betrsys {keins,suse,ubuntu,fedora};

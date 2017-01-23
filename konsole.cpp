@@ -406,7 +406,7 @@ string ersetzAllezu(string *quelle, const char* alt, const char* neu)
 
 string ersetzAllezu(const char *quelle, const char* alt, const char* neu) 
 {
-  string erg="";
+  string erg;
   if (alt[0]==0 || !strcmp(alt,neu)) {
     erg=quelle;
   } else {
@@ -416,11 +416,13 @@ string ersetzAllezu(const char *quelle, const char* alt, const char* neu)
       for(;*(pi+i);i++)
         if (*(pi+i)!=*(p+i))
         {gleich=0;break;}
-      if (gleich) {erg+=neu;p+=i-1;} else {
+      if (gleich) {
+			  erg+=neu;p+=i-1;
+			} else {
         erg+=(*p);
-      }
-    }
-  }
+      } // if (gleich) else
+    } //     for(char* p=(char*)quelle;p<quelle+strlen(quelle);p++)
+  } //   if (alt[0]==0 || !strcmp(alt,neu)) else
   return erg;
 } // string ersetzAllezu(const char *quelle, const char* alt, const char* neu) 
 
@@ -1097,15 +1099,27 @@ string* anfzweg(string& quel) {
 } // string* anfzweg(
 
 
-lsysen lsyscl::getsys(int obverb,int oblog)
+lsysen lsyscl::getsys(int obverb/*=0*/,int oblog/*=0*/)
 {
       if (sys==usys) {
         if (!systemrueck("cat /proc/version | grep SUSE",obverb-2,oblog)) return sus;
         if (!systemrueck("cat /proc/version | grep 'Ubuntu\\|ebian'",obverb-2,oblog)) return deb;
         if (!systemrueck("cat /proc/version | grep edora",obverb-2,oblog)) return fed;
-      }
+      } //       if (sys==usys)
       return usys;
-}
+} // lsysen lsyscl::getsys(int obverb/*=0*/,int oblog/*=0*/)
+
+string& lsyscl::getlib64(int obverb/*=0*/,int oblog/*=0*/)
+{
+	if (usr_lib64_vz.empty()){
+		if (getsys()==deb) {
+			usr_lib64_vz="/usr/lib/x86_64-linux-gnu";
+		} else {
+			usr_lib64_vz="/usr/lib64";
+		} // 		if (getsys()==deb) else
+	} // 	if (usr_lib64_vz.empty())
+	return usr_lib64_vz;
+} // string& lsyscl::getlib64(int obverb/*=0*/,int oblog/*=0*/)
 
 class lsyscl lsys;
 

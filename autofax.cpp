@@ -4513,13 +4513,13 @@ int paramcl::pruefocr()
 	Log(violetts+Tx[T_pruefocr]+schwarz,obverb,oblog);
 	if (!obocrgeprueft) {
 		uchar tda=1, deuda=0, engda=0, osdda=0;
-		systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
+		systemrueck("sudo ldconfig "+lsys.getlib64(),obverb,oblog);
 		svec rueck;
 		systemrueck("tesseract --list-langs 2>&1",obverb,oblog,&rueck); // gibt das normale Ergebnis als Fehlermeldung aus!
 		if (!rueck.size()) tda=0; else if (rueck[0].find("List of available")) tda=0;
 		if (!tda) {
 			linst.doinst("tesseract-ocr",obverb,oblog);
-			systemrueck("sudo ldconfig /usr/lib64",obverb,oblog);
+			systemrueck("sudo ldconfig "+lsys.getlib64(),obverb,oblog);
 		} else {
 			for(size_t i=1;i<rueck.size();i++) {
 				if (rueck[i]=="deu") deuda=1;
@@ -5942,13 +5942,13 @@ void paramcl::schlussanzeige()
 // ermittelt fuer eine in ein Zielverzeichnis zu kopierende Datei den dortigen Namen, falls gewuenscht unter Beruecksichtigung 
 // dort evtl. schon vorhandener Dateien
 // wird aufgerufen von verschiebe (Version 1) und kopiere (Version 1), neuerdateiname, zielname (Version 2)
-string zielname(const string& qdatei, const string& zielverz, uchar wieweiterzaehl/*=0*/, string* zieldatei/*=0*/, int obverb/*=0*/, int oblog/*=0*/)
+string zielname(const string& qdatei, const string& zielvz, uchar wieweiterzaehl/*=0*/, string* zieldatei/*=0*/, int obverb/*=0*/, int oblog/*=0*/)
 {
   //  Log(violetts+Tx[T_zielname]+schwarz,obverb,oblog);
   // wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
   struct stat entryziel;
   string dateiname=base_name(qdatei);
-  string ziel = zielverz + (zielverz[zielverz.length()-1]==vtz?"":vtzs)+ dateiname;
+  string ziel = zielvz + (zielvz[zielvz.length()-1]==vtz?"":vtzs)+ dateiname;
   Log(string(Tx[T_zielname_erstes_Ziel])+rot+ziel+schwarz+"'",obverb,oblog);
   if (wieweiterzaehl<2) {
     unsigned long ausweich=0;
@@ -5971,7 +5971,7 @@ string zielname(const string& qdatei, const string& zielverz, uchar wieweiterzae
       ausweich++;
       ausgewichen=1;
       dateiname=stamm+"_"+ltoan(ausweich)+"."+exten;
-      ziel=zielverz + (zielverz[zielverz.length()-1]==vtz?"":vtzs) + dateiname;
+      ziel=zielvz + (zielvz[zielvz.length()-1]==vtz?"":vtzs) + dateiname;
     } // for(;1;) 
     if (ausgewichen) Log(string(Tx[T_zielname_Ausweichziel])+rot+ziel+schwarz+"'",obverb,oblog);
   } // if (wieweiterzaehl<2) 
@@ -6477,7 +6477,7 @@ int paramcl::pruefhyla()
   } //   if (br<=0) else
 	// ein Fehler in der Version 4.0.7 von libtiff verhindert die Zusammenarbeit mit hylafax
   distri.pruefipr();
-	systemrueck("sh -c \"NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f \\$NACHWEIS &&{ "+
+	systemrueck("sh -c \"NACHWEIS="+lsys.getlib64()+"/sclibtiff;! test -f /usr/include/tiff.h ||! test -f \\$NACHWEIS &&{ "+
 	distri.schau+" cmake||"+distri.instp+" cmake;true && "
 	"P=tiff_copy; T=\\$P.tar.gz; Z=tiff-4.0.7; "
 	"wget https://github.com/libelle17/\\$P/archive/master.tar.gz -O \\$T && "
@@ -6937,7 +6937,7 @@ void paramcl::pruefsfftobmp()
       }
       if (obfrei) {
         svec brueck;
-        systemrueck("sudo find /usr/lib64 /usr/lib /usr/local/lib /usr/local/lib64 /lib -name libboost_python.so -print -quit",obverb,oblog,&brueck);
+        systemrueck("sudo find "+lsys.getlib64()+" /usr/lib /usr/local/lib /usr/local/lib64 /lib -name libboost_python.so -print -quit",obverb,oblog,&brueck);
         uchar obboostda=brueck.size();
         if (!obboostda) {
           obboostda = !linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog);
@@ -7229,10 +7229,10 @@ int paramcl::pruefcapi()
                       obverb,oblog,&csrueck);
           if (csrueck.size()) {
             struct stat c20stat;
-            if (lstat("/usr/lib64/libcapi20.so",&c20stat)) {
+            if (lstat((lsys.getlib64()+"/libcapi20.so").c_str(),&c20stat)) {
               holvongithub("capi20_copy");
               kompiliere("capi20_copy",s_gz);
-              systemrueck("sh -c 'cd "+instverz+" && L=/usr/lib64/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "
+              systemrueck("sh -c 'cd "+instverz+" && L="+lsys.getlib64()+"/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "
                           "ln -s $L3 $L; test -f $L;'",obverb,oblog);
             }
 //            systemrueck("sh -c 'P=capi20_copy;T=$P.tar.bz2;M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
@@ -7248,7 +7248,7 @@ int paramcl::pruefcapi()
 						if (rueck.size()) {
 						 pyvz=*sersetze(&rueck[0],"/","\\/");
 						} else {
-						 pyvz="\\/usr\\/lib64\\/python2.7";
+						 pyvz=ersetzAllezu(lsys.getlib64(),"/","\\/")+"\\/python2.7";
 						}
             if (!kompiliere("capisuite_copy",s_gz,
                            "sed -i.bak \""
