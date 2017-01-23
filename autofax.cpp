@@ -3898,7 +3898,6 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
       svec rueck[2];
       set<string> fdn; // Fax-Dateien
       size_t ruecki;
-//			string auswe="(", auswm="(", auswef="(",auswmf="(";
 			string inse;
 			string teln,zp,tries,user;
 			size_t size;
@@ -3932,7 +3931,6 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 									strftime(buf, sizeof(buf), "%F %T", tmp);
 									zp=buf;
 								}
-//								auswe+=rueck[cru][ruecki]+","; 
 								string stamm,exten;
 								getstammext(&rueck[cru][ruecki],&stamm,&exten);
 								string txtf=stamm+".txt";
@@ -5460,9 +5458,13 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 						if (tok[5]=="\"\"") erfolg=1;
 					} // 				if (tok[1]=="SEND")
 					if (erfolg) {
-						auswe+=tok[2]+","; 
+						auswe+="'";
+						auswe+=tok[2];
+						auswe+=+"',"; 
 					} else {
-						auswm+=tok[2]+","; 
+						auswm+="'";
+						auswm+=tok[2];
+						auswm+=+"',"; 
 					} // if /erfolg) else
 #ifndef mitmisserfolg
 					if (erfolg)
@@ -5526,7 +5528,9 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 				while (cerg=rs1.HolZeile(),cerg?*cerg:0) {
 					if (!cergz++)
 						Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden],1,1);
-					auswmf+=*(*cerg+0); auswmf+=",";
+					auswmf+="'";
+					auswmf+=*(*cerg+0); 
+					auswmf+="',";
 					// <<violett<<*(*cerg+0)<<schwarz<<endl; 
 				} // 				while (cerg=rs1.HolZeile(),cerg?*cerg:0)
 				if (cergz) {
@@ -5542,7 +5546,9 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 				while (cerg=rs2.HolZeile(),cerg?*cerg:0) {
 					if (!cergz++)
 						Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden],1,1);
-					auswef+=*(*cerg+0); auswef+=",";
+					auswef+="'";
+					auswef+=*(*cerg+0); 
+					auswef+="',";
 					// <<rot<<*(*cerg+0)<<schwarz<<endl; 
 				} // 			while (cerg=rs2.HolZeile(),cerg?*cerg:0)
 				if (cergz) {
