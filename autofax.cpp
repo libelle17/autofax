@@ -4635,14 +4635,14 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 						if (pruefsoffice()) {
 							cmd0="cd $HOME; ";
 							cmd="soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+quell+"\" 2>&1";
-						}
+						} // 						if (pruefsoffice())
 						break; // Ergebnis immer 0
 					case 1: 
 						pname="convert";
 						if (pruefconvert()) {
 							cmd0.clear();
 							cmd=string("sudo convert \""+quell+"\" \""+ziel+"\""); 
-						}
+						} // 						if (pruefconvert())
 						break;
 				} // switch (runde) 
 				if (!cmd.empty()) {
@@ -6262,7 +6262,7 @@ void paramcl::hliesconf()
     confdat haltconf(modconfdat,&hyalt,obverb,':');
     if (hyalt.schl[0].wert!=countrycode || hyalt.schl[1].wert!=citycode || hyalt.schl[2].wert!=countrycode+"."+citycode+"."+msn 
         || hyalt.schl[3].wert!=LongDistancePrefix || hyalt.schl[4].wert!=InternationalPrefix 
-        || hyalt.schl[5].wert!=hklingelzahl || hyalt.schl[6].wert!=LocalIdentifier /*|| hyalt.schl[7].wert!=maxdials */
+        || hyalt.schl[5].wert!=hklingelzahl || hyalt.schl[6].wert!=LocalIdentifier|| hyalt.schl[7].wert!=maxhdials /*|| hyalt.schl[7].wert!=maxdials */
        ) {
       hylazukonf=1;
     } // if (hyalt.shl[0].wert ...
@@ -6303,6 +6303,8 @@ void paramcl::hconfigtty()
     hci<<"LogFileMode:    0600"<<endl;
     hci<<"DeviceMode:   0600"<<endl;
     hci<<"RingsBeforeAnswer:  "<<this->hklingelzahl<<" #muss mindestens 2 sein zur Uebergabe der Nummer des Anrufenden"<<endl;
+		hci<<"MaxDials: "<<this->maxhdials<<endl;
+		hci<<"MaxTries: "<<this->maxhdials<<endl;
     hci<<"CIDNumber: NMBR="<<endl;
     hci<<"CIDName:   NAME="<<endl;
     hci<<"SpeakerVolume:    off"<<endl;
