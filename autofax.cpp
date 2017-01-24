@@ -2948,7 +2948,7 @@ void paramcl::rueckfragen()
       systemrueck(cmd,obverb,oblog,&benutzer);
 			if (benutzer.size()>1) for(size_t i=0;i<benutzer.size();i++) 
 				if (benutzer[i]=="syslog"||benutzer[i]=="ntp") {
-				  benutzer.erase(benutzer.begin()+i);break;
+				  benutzer.erase(benutzer.begin()+i);
 				}
 			for(size_t i=0;i<benutzer.size();i++) {
 				//          bliste+=benutzer[i];
