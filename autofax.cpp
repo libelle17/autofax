@@ -2946,7 +2946,8 @@ void paramcl::rueckfragen()
       vector<string> benutzer;
       cmd="cat /etc/passwd | grep /home/ | cut -d':' -f 1";
       systemrueck(cmd,obverb,oblog,&benutzer);
-			if (benutzer.size()>1) for(size_t i=benutzer.size();i;) {
+			caus<<"Vor Benutzerpruefung"<<endl;
+			if (benutzer.size()>1) for(size_t i=benutzer.size();i>0;) {
 				--i;
 				  caus<<gruen<<"i: "<<i<<", Benutzer vor Pruefung: "<<benutzer[i]<<endl;
 				if (benutzer[i]=="syslog"||benutzer[i]=="ntp") {
