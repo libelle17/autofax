@@ -1,7 +1,7 @@
 #include <regex.h> // regex_t, regex, regcomp, regexec
 
 enum FaxTyp:uchar {capi=1,hyla};
-enum FxStat:uchar {init/*0*/,gestrichen,schwebend,wartend/*3*/,blockiert,bereit,verarb/*6*/,gesandt/*7*/,gescheitert/*8*/,fehlend,woasined};
+enum FxStat:uchar {init/*0*/,gestrichen,schwebend,wartend/*3*/,blockiert/*4*/,bereit/*5*/,verarb/*6*/,gesandt/*7*/,gescheitert/*8*/,fehlend,woasined};
 enum hyinst {keineh,hysrc,hypak,hyppk}; // hyla source, hyla Paket, hylaplus Paket
 
 class zielmustercl; // fuer die Verteilung der erfolgreich gefaxten Dateien auf verschiedene Dateien
@@ -25,6 +25,15 @@ pid_t PIDausName(const char* PName, uchar klgr, uchar exakt, int obverb, int obl
 void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,int obverb=0,int oblog=0);
 void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0);
 void hconfig(paramcl *pmp,int obverb=0, int oblog=0);
+const string& pruefspool(DB *My,const string& spooltab, const string& altspool, int obverb, int oblog, uchar direkt=0);
+void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direkt=0);
+void pruefudoc(DB *My, const string& tudoc, int obverb, int oblog, uchar direkt=0);
+void pruefinctab(DB *My, const string& tinca, int obverb, int oblog, uchar direkt=0);
+void pruefprocgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog);
+void kuerzevtz(string *vzp);
+void pruefrules(int obverb, int oblog);
+void pruefblack(int obverb, int oblog);
+void pruefmodcron(int obverb, int oblog);
 
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster
 class zielmustercl 

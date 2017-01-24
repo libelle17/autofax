@@ -2085,7 +2085,7 @@ void paramcl::pruefmodem()
   cmd="find /sys/class/tty";
   systemrueck(cmd, obverb,oblog,&rueck);
   for(size_t i=0;i<rueck.size();i++) {
-    struct stat entrydriv;
+    struct stat entrydriv={0};
     if (!lstat(((rueck[i])+"/device/driver").c_str(),&entrydriv)) {
       string tty=base_name(rueck[i]);
       // ttyS0 erscheint auf Opensuse und Ubuntu konfiguriert, auch wenn kein Modem da ist
@@ -2208,7 +2208,7 @@ int paramcl::setzhylavz()
 //    size_t cs=sizeof hylaconf/sizeof*hylaconf;
     schlArr hyconf; hyconf.init(2,"SPOOL","HYLAFAX_HOME");
     const string hylacdat="/etc/init.d/hylafax";
-    struct stat hstat;
+    struct stat hstat={0};
     if (!lstat(hylacdat.c_str(),&hstat)) {
       confdat hylac(hylacdat,&hyconf,obverb);
     }
@@ -2221,11 +2221,9 @@ int paramcl::setzhylavz()
       fundart=2;
     } else {
       // 3) ... ansonsten schauen, welches Verzeichnis es gibt ...
-      struct stat hstat,fstat;
-      int hgibts, fgibts;
+      struct stat hstat,fstat={0};
       const char *hfax="/var/spool/hylafax", *ffax="/var/spool/fax";
-      hgibts=!lstat(hfax,&hstat);
-      fgibts=!lstat(ffax,&hstat);
+      int hgibts=!lstat(hfax,&hstat), fgibts=!lstat(ffax,&hstat);
       if (hgibts && !fgibts) {
         varsphylavz=hfax; 
         fundart=3;
@@ -2244,8 +2242,8 @@ int paramcl::setzhylavz()
         // 5) ... falls beide nicht, dann /var/spool/hylafax
         varsphylavz=hfax;
         fundart=5;
-      }
-    }
+      } //       if (hgibts && !fgibts) else else
+    } //     if (!hyconf[1].wert.empty())  else else 
     weiterpruefen=1;
   } // if (hrueck.size()) else 
 
@@ -2255,7 +2253,7 @@ int paramcl::setzhylavz()
     //  else if (lsys.getsys(obverb,oblog)==deb) varsphylavz="/var/spool/hylafax";
     string testvz=varsphylavz;
     for(unsigned iru=0;iru<(sizeof moeglhvz/sizeof *moeglhvz)+1;iru++) {
-      struct stat entryhyla;
+      struct stat entryhyla={0};
       if (!lstat((testvz+testcmd).c_str(),&entryhyla)) {
         varsphylavz=testvz; 
         if (iru) fundart=6;
@@ -2332,19 +2330,18 @@ void paramcl::liescapiconf()
 //    cuser="";
     string ncuser;
     for(size_t i=cfaxconf.zn.size();i>0;) {
-      int erg;
-      char buf[250];
-      if ((erg=sscanf(cfaxconf.zn[--i].c_str(),"[%[^]]]",buf))>0) 
+      char buf[250]={0};
+      if ((sscanf(cfaxconf.zn[--i].c_str(),"[%[^]]]",buf))>0) 
         if (strcasecmp(buf,"global")) {
           if (!cuser.empty()) {
            if (cuser==buf) {
             ncuser.clear();
             break;
-           }
-          }
+           } //            if (cuser==buf)
+          } //           if (!cuser.empty())
           if (ncuser.empty()) ncuser=buf; // nehme den letzten besten user
-        }
-    }
+        } //         if (strcasecmp(buf,"global"))
+    } //     for(size_t i=cfaxconf.zn.size();i>0;)
     if (cuser.empty()) 
       cuser=ncuser;
     if (cuser.empty()) {
@@ -2373,7 +2370,7 @@ void paramcl::liescapiconf()
   }
   if (!ccapiconfdat.empty()) {
     uchar obneuer=0;
-    struct stat cstat;
+    struct stat cstat={0};
     static time_t lgelzeit=0; // Aenderungszeitpunkt der evtl. zuletzt eingelesenen ccapiconfdat
     time_t aktgelzeit;
     if (!lstat(ccapiconfdat.c_str(),&cstat)) { // <<rot<<ccapiconfdat<<" existiert!"<<schwarz<<endl;
@@ -2393,7 +2390,7 @@ void paramcl::liescapiconf()
       if (!cuser.empty()) {
         for(size_t j=1;j<3;j++) {
           if (!cconf[j].wert.empty()) {
-            struct stat statdat;
+            struct stat statdat={0};
             if (!lstat(cconf[j].wert.c_str(),&statdat)) {
               setfaclggf(cconf[j].wert, falsch, 6, falsch,obverb,oblog);
             } //             if (!lstat(cconf[j].wert.c_str(),&statdat))
@@ -3447,8 +3444,6 @@ void paramcl::konfcapi()
   // es gibt zwei moegliche Gruende zum Neuschreiben der Datei: 1) Parameter diffierieren, 2) noch kein User angelegt
   uchar cuserda=0, paramdiff=0, neuschreiben=0;
   string zeile, neudatei;
-  uchar geschrieben;
-  size_t kommpos;
   // iru=0 => pruefen, ob Datei geaendert werden muss; iru=1 => aendern
   for(uchar iru=0;iru<2;iru++) {
     mdatei *fneu=0;
@@ -3460,8 +3455,8 @@ void paramcl::konfcapi()
         if (!fneu->is_open()) break;
       } // if (iru)
       while(f.is_open() && getline(f,zeile)) {
-        kommpos=zeile.find('#');
-        geschrieben=0;
+        size_t kommpos=zeile.find('#');
+        uchar geschrieben=0;
         //          if (kommpos!=string::npos) zeile.erase(kommpos);
         //          if (!zeile.length()) continue;
         if (!cuserda) 
@@ -3518,7 +3513,7 @@ void paramcl::konfcapi()
         if (fneu) delete fneu;
         setfaclggf(cfaxconfdat, falsch, 6, falsch,obverb,oblog);
         string origdatei=cfaxconfdat+"_orig";
-        struct stat entryorig;
+        struct stat entryorig={0};
         if (lstat(origdatei.c_str(),&entryorig)) {
           dorename(cfaxconfdat,origdatei,cuser,0,obverb,oblog);
         } else {
@@ -3540,7 +3535,7 @@ void paramcl::nextnum()
 {
   // dieser Abschnitt war zuvor richtcapiher
   unsigned long nextnr=0;
-  struct stat entrynextnr;
+  struct stat entrynextnr={0};
   // <<"cfaxusersqvz: "<<cfaxusersqvz<<endl;
   nextdatei=cfaxusersqvz+"/fax-nextnr";
   // <<ndatei<<endl;
@@ -3678,7 +3673,7 @@ void paramcl::pruefsamba()
 {
   Log(violetts+Tx[T_pruefsamba],obverb,oblog);
   const char* const smbdatei="/etc/samba/smb.conf";
-  struct stat sstat;
+  struct stat sstat={0};
   int gestartet=0;
   uchar conffehlt=1;
   const string quelle="/usr/share/samba/smb.conf";
@@ -3741,10 +3736,7 @@ void paramcl::pruefsamba()
       vzn.push_back(&zmakt->ziel);
       if (zmakt->obmusterleer()) break;
     }
-    uchar gef[vzn.size()];
-    for(unsigned k=0;k<vzn.size();k++) {
-      gef[k]=0;
-    }
+    uchar gef[vzn.size()]; memset(gef,0,vzn.size()*sizeof(uchar));
     for(size_t i=0;i<smbcf.abschv.size();i++) {
       if (smbcf.abschv[i].aname!="global") {
         const string& pfad = smbcf.abschv[i].suche("path");
@@ -3845,7 +3837,7 @@ void paramcl::pruefsamba()
 				} else {
 					// Suse-Firewall
 					const char *susefw="/etc/sysconfig/SuSEfirewall2";
-					struct stat fstat;
+					struct stat fstat={0};
 					if (!lstat(susefw,&fstat)) {
 						string part="server";
 						for(int i=1;i<3;i++) {
@@ -3901,7 +3893,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 			string inse;
 			string teln,zp,tries,user;
 			size_t size;
-			char buf[100];
+			char buf[100]={0};
 			switch (runde) {
         case 0: // capi
 					/*
@@ -3924,7 +3916,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 						for(int cru=0;cru<2;cru++) {
 							for(ruecki=0;ruecki<rueck[cru].size();ruecki++) {
 								teln.clear();zp.clear();tries.clear();user.clear();size=0;
-								struct stat sffstat;
+								struct stat sffstat={0};
 								if (!lstat(rueck[cru][ruecki].c_str(),&sffstat)) {
 									size=sffstat.st_size;
 									struct tm *tmp=localtime(&sffstat.st_mtime);
@@ -3934,7 +3926,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 								string stamm,exten;
 								getstammext(&rueck[cru][ruecki],&stamm,&exten);
 								string txtf=stamm+".txt";
-								struct stat txtstat;
+								struct stat txtstat={0};
 								if (!lstat(txtf.c_str(),&txtstat)) {
 									// <<gruen<<txtf<<schwarz<<endl;
 									schlArr txtconf; 
@@ -4126,7 +4118,7 @@ void paramcl::bereinigewv()
                   } //                   switch (aru)
                 } //                 if (aru)
                 if ((fit=fdn.find(dbdocname))!=fdn.end()) { // wenn Datenbankeintrag in der sortierten Mengen der Dateinamen enthalten
-                  struct stat entryfit;
+                  struct stat entryfit={0};
                   string quel=wvz+vtz+*fit;
                   if (!lstat(quel.c_str(),&entryfit)) { // duerfte immer erfuellt sein
                     if (entryfit.st_size) { // keine 0-Bytes-Dateien kopieren
@@ -4263,7 +4255,7 @@ int paramcl::loeschefax(int obverb, int oblog)
 						Log(blaus+"hyla: "+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng)+blau+Tx[T_hylanr]+schwarz+fsfv[nr].capisd,obverb,oblog);
 					}
 					Log(blaus+Tx[T_Gesamt]+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng),obverb,oblog);
-					struct stat entrysend;
+					struct stat entrysend={0};
 					fsfv[nr].setzcapistat(this,&entrysend);
 					string protdakt;
 					uchar hyla_uverz_nr=1;
@@ -4291,7 +4283,7 @@ int paramcl::loeschewaise(int obverb, int oblog)
 	RS su(My,"SELECT original p0, capispooldatei p1, hylanr p2, id p3 FROM `"+spooltab+"`");
 	while (cerg=su.HolZeile(),cerg?*cerg:0) {
 		if (*(*cerg+0)) {
-			struct stat entryo;
+			struct stat entryo={0};
 			if (!lstat((wvz+vtz+*(*cerg+0)).c_str(),&entryo)) continue; // Wenn es die Datei im Warteverzeichnis gibt
 			if (*(*cerg+1)) if (!lstat((cfaxusersqvz+vtz+*(*cerg+1)).c_str(),&entryo)) continue; // wenn eine Capispooldatei drinsteht und es sie gibt
 			if (*(*cerg+2)) if (!lstat((hsendqvz+"/q"+*(*cerg+2)).c_str(),&entryo)) continue; // wenn eine Hylaspooldatei drinsteht und es sie gibt
@@ -4310,7 +4302,7 @@ int paramcl::loescheallewartende(int obverb, int oblog)
 	Log(blaus+Tx[T_loescheallewartenden]+schwarz,obverb,oblog);
 	int erg=0;
 	vector<string> allec;
-	struct stat entryvz;
+	struct stat entryvz={0};
 	if (!lstat(cfaxusersqvz.c_str(),&entryvz)) {
 		cmd=string("sudo find '")+cfaxusersqvz+"/' -maxdepth 1 -type f -iname 'fax-*.*'";
 		systemrueck(cmd,obverb,oblog,&allec);
@@ -4653,7 +4645,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 							} // 					  if (umwd[uru].find("javaldx failed")!=string::npos)
 						} // 					 for(unsigned uru=0;uru<umwd.size();uru++)
 					} // 					if ((erg=systemrueck(cmd, obverb,oblog,&umwd)))
-					struct stat entryziel;
+					struct stat entryziel={0};
 					erg=lstat(ziel.c_str(),&entryziel); 
 					Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+pname+schwarz+
 							Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
@@ -4710,7 +4702,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 void paramcl::DateienHerricht() 
 {
 	Log(violetts+Tx[T_DateienHerricht],obverb,oblog);
-	struct stat entrynpdf;
+	struct stat entrynpdf={0};
 	//vector<string> npdf, spdf, *npdfp=&npdf, *spdfp=&spdf;  vector<uchar> prios;
 	vector<fxfcl> fxv; // Faxvektor
 	vector<string> anfxstrvec; // Trennstrings fuer Faxnummer
@@ -4884,13 +4876,13 @@ void paramcl::DateienHerricht()
 		if (erg) {
 			//      spdfp->erase(spdfp->begin()+nachrnr);
 			// Misserfolg, zurueckverschieben und aus der Datenbank loeschen
-			uint wfehler;
+			uint wfehler=0;
 			// <<violett<<"fxv["<<(int)nachrnr<<"].npdf: "<<fxv[nachrnr].npdf<<schwarz<<endl;
 			// <<violett<<"fxv["<<(int)nachrnr<<"].spdf: "<<fxv[nachrnr].spdf<<schwarz<<endl;
-			struct stat npdfstat;
+			struct stat npdfstat={0};
 			if (!lstat(fxv[nachrnr].npdf.c_str(), &npdfstat))
 				verschiebe(fxv[nachrnr].npdf,zufaxenvz,cuser,&wfehler,1,obverb,oblog);
-			struct stat spdfstat;
+			struct stat spdfstat={0};
 			if (!lstat(fxv[nachrnr].spdf.c_str(), &spdfstat))
 				verschiebe(fxv[nachrnr].spdf,zufaxenvz,cuser,&wfehler,1,obverb,oblog);
 			fxv.erase(fxv.begin()+nachrnr);
@@ -4913,7 +4905,7 @@ void paramcl::DateienHerricht()
 			systemrueck(cmd,obverb, oblog, &spdfd);
 			for(size_t i=0;i<spdfd.size();i++) {
 				if (obocra) {
-					struct stat spdfstat;
+					struct stat spdfstat={0};
 					if (!lstat(spdfd.at(i).c_str(),&spdfstat)) {
 						struct utimbuf ubuf;
 						ubuf.actime=ubuf.modtime=spdfstat.st_mtime;
@@ -5066,7 +5058,7 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
 				if ((protpos=holcapiprot(pmp->obverb)<0)) {
 					capistat=fehlend;
 				} else if (capistat!=gesandt && capistat!=gescheitert) {
-					struct stat statlock;
+					struct stat statlock={0};
 					if (lstat((sendqgespfad.substr(0,protpos)+".lock").c_str(),&statlock))
 						capistat=wartend;
 					else
@@ -5084,7 +5076,7 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
 
 // Dateien in Spool-Tabelle nach inzwischen verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
 // wird aufgerufen in: main (2x)
-void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla 
+void paramcl::untersuchespool(uchar mitupd/*=1*/) // faxart 0=capi, 1=hyla 
 {
 	// Schaue nach, welche der gespoolten schon weggeschickt sind, Anpassung der Primaerdateien und des Datenbankeintrags
 	Log(violetts+Tx[T_untersuchespool]+schwarz,obverb,oblog);
@@ -5124,7 +5116,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				// a) ueber capisuite
 				// den Status in Capi der aus spool geholten Zeile untersuchen, dort aktualisieren
 				//   und ggf. in hylafax stoppen
-				struct stat entrysend;
+				struct stat entrysend={0};
 				if (obcapi) {
 					if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
 					fsf.setzcapistat(this, &entrysend);
@@ -5152,7 +5144,7 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 				// b) ueber hylafax
 				if (obhyla) {
 					string protdakt;
-					uchar hyla_uverz_nr; // kleine Runde
+					uchar hyla_uverz_nr=0; // suche ueberall, liefere 1 zuruck, wenn weder in /doneq noch in /archive gefunden
 					string number;
 					int obsfehlt=-1;
 					/*fsf.*/
@@ -5166,16 +5158,17 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 						einf.push_back(/*2*/instyp(My->DBS,"hylastate",&fsf.hstate));
 						if (!fsf.hstatus.empty()) einf.push_back(/*2*/instyp(My->DBS,"hylastatus",&fsf.hstatus));
 						if (!fsf.hstatuscode.empty()) einf.push_back(/*2*/instyp(My->DBS,"hylastatuscode",&fsf.hstatuscode));
-						if (!hyla_uverz_nr) { // wenn fertig
-							if (fsf.hylastat==gescheitert) { // (hylastate=="8") // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
+//						if (!hyla_uverz_nr) KLA // wenn fertig
+//							if (fsf.hylastat==gescheitert) KLA // (hylastate=="8") // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
 								//                  einf.push_back(/*6*/instyp(My->DBS,"hylanr","0",(uchar)1));
 								//                  einf.push_back(instyp(My->DBS,"hyladials","-1",(uchar)1));
 								//                  fsf.hdials="-1";
-							} else if (fsf.hylastat==gesandt) { // (hylastate=="7") // 7, status erfolgreich
+//							KLZ else 
+							if (fsf.hylastat==gesandt) { // (hylastate=="7") // 7, status erfolgreich
 								// ... und ggf. in capisuite loeschen
 								fsf.loeschecapi(obverb,oblog);
 							} // if (fsf.hylastat==gescheitert) else
-						} // if (!hyla_uverz_nr) 
+//						KLZ // if (!hyla_uverz_nr) 
 						einf.push_back(/*2*/instyp(My->DBS,"hyladials",&fsf.hdials));
 						string bedingung=string("id=")+fsf.id;
 						string bedh=string("id=")+fsf.idalt;
@@ -5226,14 +5219,14 @@ void paramcl::untersuchespool(uchar mitupd) // faxart 0=capi, 1=hyla
 					uchar nimmer = ((!obcapi || fsf.capistat==fehlend || fsf.capistat==gescheitert) && 
 							(!obhyla || fsf.hylastat==fehlend || fsf.hylastat==gescheitert));
 					// <<rot<<"\nfsf.capistat: "<<violett<<fsf.capistat<<rot<<" fsf.hylastat: "<<violett<<fsf.hylastat<<rot<<" allegesch: "<<violett<<(int)allegesch<<rot<<" nimmer: "<<violett<<(int)nimmer<<schwarz<<endl;
-					uchar ogibts[2] = {0,0};
+					uchar ogibts[2]={0};
 					string odatei[2];
 					if (nimmer) {
 						for(unsigned iru=0;iru<2;iru++) {
 							string *datei=iru?&fsf.origvu:&fsf.original;
 							if (!datei->empty()) {
 								odatei[iru] = wvz+ vtz + *datei;
-								struct stat ostat;
+								struct stat ostat={0};
 								ogibts[iru]=!lstat(odatei[iru].c_str(),&ostat);
 								Log(blaus+"odatei["+(iru?"1":"0")+"]: "+odatei[iru],obverb,oblog);
 								Log(blaus+"ogibts["+(iru?"1":"0")+"]: "+(ogibts[iru]?"1":"0"),obverb,oblog);
@@ -5326,7 +5319,7 @@ void paramcl::zeigweitere()
 void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
 {
 	Log(violetts+Tx[T_sammlecapi]+schwarz,obverb,oblog);
-	struct stat entryvz;
+	struct stat entryvz={0};
 	if (!lstat(cfaxusersqvz.c_str(),&entryvz)) {
 		bereinigecapi();
 		cmd=string("sudo find '")+cfaxuservz+"' -path \"*/sendq/fax*\" -type f -iname 'fax*.sff'"; //  -printf '%f\\n'";
@@ -5342,7 +5335,7 @@ void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
 				fsf.capisd=base_name(rueck[i]);
 				fsf.hylanr="-1";
 				fsf.cspf=dir_name(rueck[i]);
-				struct stat entrysend;
+				struct stat entrysend={0};
 				fsf.setzcapistat(this,&entrysend);
 				fsfvp->push_back(fsf);
 			} // if (!indb) 
@@ -5355,7 +5348,7 @@ void paramcl::bereinigecapi()
 {
 	Log(violetts+Tx[T_bereinigecapi]+schwarz,obverb,oblog);
 	svec rueck;
-	struct stat entryvz;
+	struct stat entryvz={0};
 	// 7.2.16: alte *.lock-Dateien loeschen
 	cmd=string("sudo find '")+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.lock'"; //  -printf '%f\\n'";
 	systemrueck(cmd,obverb,oblog,&rueck);
@@ -5399,7 +5392,7 @@ void paramcl::bereinigecapi()
 void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 {
 	Log(violetts+Tx[T_sammlehyla]+schwarz,obverb,oblog);
-	struct stat entryvz;
+	struct stat entryvz={0};
 	if (!lstat(hsendqvz.c_str(),&entryvz)) {
 		cmd="sudo find '"+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";
 		svec qrueck;
@@ -5427,7 +5420,7 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 {
 	Log(violetts+Tx[T_sammlefertigehyla]+schwarz,obverb,oblog);
 	if (!xferfaxlog.empty()) {
-		struct stat entryvz;
+		struct stat entryvz={0};
 		if (!lstat(xferfaxlog.c_str(),&entryvz)) {
 			// cmd=string("sudo find '")+varsphylavz+"' -type f -regex '.*/q[0123456789]+'";
 			// string hylanr=qrueck[i].substr(qrueck[i].rfind('q')+1);
@@ -5661,28 +5654,28 @@ int paramcl::holtif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elo
 // wird aufgerufen in: main
 void paramcl::empfarch()
 {
-  Log(violetts+Tx[T_empfarch]+schwarz,obverb,oblog);
-  char tbuf[100];
+	Log(violetts+Tx[T_empfarch]+schwarz,obverb,oblog);
+	char tbuf[100]={0};
 	ulong pseiten=0;
-  // 1) hyla
-  string hempfavz=varsphylavz+"/autofaxarch"; // /var/spool/capisuite/empfarch/
-  // Faxe in der Empfangswarteschlange auflisten, ...
-  cmd=string("sudo find \"")+varsphylavz+"/recvq\" -name \"fax*.tif\"";
-  vector<string> rueck;
-  systemrueck(cmd,obverb,oblog, &rueck);
-  for(size_t i=0;i<rueck.size();i++) {
-    if (!i) {
-      pruefverz(hempfavz,obverb,oblog);
-    } //     if (!i)
-    // ..., Informationen darueber einsammeln, ...
-    string zeit;
-    string absdr,tsid,callerid,devname=hmodem;
-    string stamm,exten,ganz=rueck[i];
-    getstammext(&ganz,&stamm,&exten);
-    string base=base_name(stamm);
-    string fnr=base.substr(3);
-    fnr=fnr.substr(fnr.find_first_not_of("0"));
-    struct tm tm;
+	// 1) hyla
+	string hempfavz=varsphylavz+"/autofaxarch"; // /var/spool/capisuite/empfarch/
+	// Faxe in der Empfangswarteschlange auflisten, ...
+	cmd=string("sudo find \"")+varsphylavz+"/recvq\" -name \"fax*.tif\"";
+	vector<string> rueck;
+	systemrueck(cmd,obverb,oblog, &rueck);
+	for(size_t i=0;i<rueck.size();i++) {
+		if (!i) {
+			pruefverz(hempfavz,obverb,oblog);
+		} //     if (!i)
+		// ..., Informationen darueber einsammeln, ...
+		string zeit;
+		string absdr,tsid,callerid,devname=hmodem;
+		string stamm,exten,ganz=rueck[i];
+		getstammext(&ganz,&stamm,&exten);
+		string base=base_name(stamm);
+		string fnr=base.substr(3);
+		fnr=fnr.substr(fnr.find_first_not_of("0"));
+		struct tm tm={0};
 		struct stat elog;
     ulong seiten=0;
 		if (!holtif(rueck[i],&seiten,&tm,&elog,&absdr,&tsid,&callerid,&devname,obverb,oblog))
@@ -6169,7 +6162,6 @@ void hfaxsetup(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
        systemrueck(string("sudo pkill ")+pmp->sfaxgetty->ename+" "+pmp->shfaxd->ename+" "+pmp->sfaxq->ename,obverb,oblog);
      */
     Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+"sudo "+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
-    int erg __attribute__((unused));
     pruefplatte();
     if (!systemrueck("sudo "+faxsu+" -nointeractive"+(obverb?" -verbose":""),obverb,oblog,0,2)) {
      pmp->shfaxd->stop(obverb,oblog,1);
@@ -6177,6 +6169,7 @@ void hfaxsetup(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
      servc::daemon_reload();
     } // if (!systemrueck("sudo "+faxsu+" -nointeractive"+(obverb?" -verbose":""),obverb,oblog,0,2)) 
     /*
+    int erg __attribute__((unused));
     erg=system(("sudo $(which sh) $(sudo env \"PATH=$PATH\" which faxsetup) -nointeractive"+string(obverb?" -verbose":"")+
           " && sudo pkill hfaxd faxq >/dev/null 2>&1"
           " && sudo systemctl daemon-reload").c_str()); 
@@ -6294,7 +6287,7 @@ void paramcl::hconfigtty()
     // <<rot<<" ist offen"<<schwarz<<endl;
     time_t tim=time(0);
     struct tm *tm=localtime(&tim);
-    char buf[80];
+    char buf[80]={0};
     strftime(buf, sizeof(buf), "%d.%m.%y %T", tm);
     hci<<"# Konfiguration von hylafax durch "+meinname+" vom "<<buf<<endl;
     hci<<"CountryCode:    "<<this->countrycode<<endl;
@@ -6841,7 +6834,7 @@ void pruefblack(int obverb, int oblog)
   Log(violetts+Tx[T_pruefblack]+schwarz,obverb?obverb-1:0,oblog);
   const string blackd="/etc/modprobe.d/50-blacklist.conf";
   const char* vgl[]={"blacklist avmfritz", "blacklist mISDNipac"};
-  uchar obda[]={0,0}, obeinsfehlt=0;
+  uchar obda[]={0}, obeinsfehlt=0;
   mdatei blacki(blackd,ios::in);
   if (blacki.is_open()) {
     string zeile;
@@ -7469,10 +7462,10 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
             //            inDatenbankc(My, &spoolg, idsp, npdfp, spdfp, nachrnr, z2+strlen(tz2), obverb, oblog);
             if (!spoolg.find("job ")) {
              string nr=spoolg.substr(4); 
-             char buf[20];
+             char buf[20]={0};
              sprintf(buf,"%.3lu",atol(nr.c_str()));
              spoolg=pmp->cfaxusersqvz+vtz+"fax-"+buf+".sff";
-            }
+            } //             if (!spoolg.find("job "))
             inDbc(My, spooltab, altspool, spoolg, fsfp, z2+strlen(tz2), obverb, oblog);
           }   // if (char *z2=strstr(z1,tz2)) 
           // if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
@@ -7665,7 +7658,7 @@ void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnam
 } // void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,int obverb,int oblog) 
 
 // wird aufgerufen in: main
-const string& pruefspool(DB *My,const string& spooltab, const string& altspool, int obverb, int oblog, uchar direkt=0)
+const string& pruefspool(DB *My,const string& spooltab, const string& altspool, int obverb, int oblog, uchar direkt/*=0*/)
 {
   Log(violetts+Tx[T_pruefspool]+schwarz+", direkt: "+(direkt?"1":"0"),obverb,oblog);
   if (!direkt) {
@@ -7692,29 +7685,31 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
       Feld("hylastatuscode","int","10","",Tx[T_statuscode_in_letztem_gescheitertem_hylafax],0,0,1),
       Feld("hylastatus","varchar","80","",Tx[T_status_in_letztem_gescheitertem_hylafax],0,0,1),
       Feld("pages","int","10","",Tx[T_Seitenzahl],0,0,1),
-    };
+    }; //     Feld felder[] = 
     Feld ifelder0[] = {Feld("capispooldatei")}; Index i0("capispooldatei",ifelder0,sizeof ifelder0/sizeof* ifelder0);
     Feld ifelder1[] = {Feld("cdateidatum")};    Index i1("cdateidatum",ifelder1,sizeof ifelder1/sizeof* ifelder1);
     Feld ifelder2[] = {Feld("hdateidatum")};    Index i2("hdateidatum",ifelder2,sizeof ifelder2/sizeof* ifelder2);
     //    Feld ifelder3[] = {Feld("original")};       Index i3("original",ifelder3,sizeof ifelder3/sizeof* ifelder3);
     Index indices[]={i0,i1,i2/*,i3*/};
     // auf jeden Fall ginge "binary" statt "utf8" und "" statt "utf8_general_ci"
-    Tabelle taa(altspool,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,Tx[T_capispooldateien_der_Capisuite],"InnoDB","utf8","utf8_general_ci","DYNAMIC");
-    if (My->prueftab(&taa, obverb)) {
+    Tabelle taa(altspool,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,Tx[T_capispooldateien_der_Capisuite],
+				"InnoDB","utf8","utf8_general_ci","DYNAMIC");
+		if (My->prueftab(&taa, obverb)) {
       Log(string(Tx[T_Fehler_beim_Pruefen_von])+altspool,1,1);
       return NULL;
-    }
-    Tabelle tab(spooltab,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,Tx[T_capispooldateien_der_Capisuite],"InnoDB","utf8","utf8_general_ci","DYNAMIC");
-    if (My->prueftab(&tab, obverb)) {
+    } // 		if (My->prueftab(&taa, obverb))
+    Tabelle tab(spooltab,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,Tx[T_capispooldateien_der_Capisuite],
+				"InnoDB","utf8","utf8_general_ci","DYNAMIC");
+		if (My->prueftab(&tab, obverb)) {
       Log(string(Tx[T_Fehler_beim_Pruefen_von])+spooltab,1,1);
       return NULL;
-    }
+    } // 		if (My->prueftab(&tab, obverb))
   } // if (!direkt) 
   return spooltab;
 } // const char* pruefspool(DB *My,const char* spooltab, int obverb, int oblog, uchar direkt=0)
 
 // wird aufgerufen in: main
-void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direkt=0)
+void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direkt/*=0*/)
 {
   Log(violetts+Tx[T_pruefouta]+schwarz,obverb,oblog);
   if (!direkt) {
@@ -7761,7 +7756,7 @@ void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direk
 } // int pruefouttab(DB *My, string touta, int obverb, int oblog, uchar direkt=0)
 
 // wird aufgerufen in: main
-void pruefudoc(DB *My, const string& tudoc, int obverb, int oblog, uchar direkt=0)
+void pruefudoc(DB *My, const string& tudoc, int obverb, int oblog, uchar direkt/*=0*/)
 {
   Log(violetts+Tx[T_pruefudoc]+schwarz,obverb,oblog);
   if (!direkt) {
@@ -7781,7 +7776,7 @@ void pruefudoc(DB *My, const string& tudoc, int obverb, int oblog, uchar direkt=
 } // int pruefudoc(DB *My, string tudoc, int obverb, int oblog, uchar direkt=0)
 
 // wird aufgerufen in: main
-void pruefinctab(DB *My, const string& tinca, int obverb, int oblog, uchar direkt=0)
+void pruefinctab(DB *My, const string& tinca, int obverb, int oblog, uchar direkt/*=0*/)
 {
   Log(violetts+Tx[T_pruefinca]+schwarz,obverb,oblog);
   if (!direkt){
@@ -8013,7 +8008,7 @@ void fsfcl::capiausgeb(stringstream *ausgp, string& maxcdials, uchar fuerlog, in
   if (capistat!=fehlend) {
       //    if (cpplies(suchtxt,cconf,cs)) KLA
       // RS rmod(My,string("update spool set capidials=")+cconf[0].val+" where id = "+*(*cerg+0),ZDB);
-      char buf[100];
+      char buf[100]={0};
       int versuzahl=atol(ctries.c_str());
       snprintf(buf,4,"%3d",versuzahl);
       *ausgp<<", "<<blau<<buf<<"/"<<maxcdials<<schwarz<<(capistat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
@@ -8058,7 +8053,7 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
     aufSplit(&tok,&grueck[0],sep);
 		if (tok.size()<=2) fsfp->hgerg=grueck[0];
 		if (tok.size()) {
-			struct tm tm={};
+			struct tm tm={0};
 // a) fuehrt (zumindest hier) zu grottenfalschen Daten
 //			if (strptime(tok[0].c_str(),"%m/%d/%y %H:%M",&tm)) {
 // b) get_time ist (zumindest hier) noch nicht in <iomanip>
@@ -8066,7 +8061,7 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 //			 iss>>get_time(&tm,"%m/%d/%y %H:%M");
 //			 if (!iss.fail()) {
 // c) das geht:
-			int y,M,d,h,m;
+			int y=0,M=0,d=0,h=0,m=0;
 			if (sscanf(tok[0].c_str(), "%d/%d/%d %d:%d", &M, &d, &y, &h, &m)==5) {
 			  tm.tm_year=y+(y<100?100:-1900);
 				tm.tm_mon=M-1;
@@ -8197,7 +8192,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
       obverb,oblog);
   // wenn in *hyla_uverz_nrp '1' uebergeben wird, nur in sendq suchen
   // Rueckgabe: 0 = in doneq oder archive gefunden
-  struct stat entryprot;
+  struct stat entryprot={0};
   string cmd=string("sudo find ")+this->varsphylavz+"/sendq "+(*hyla_uverz_nrp?" ":this->varsphylavz+"/doneq "+this->varsphylavz+"/archive ")
     +" -name 'q"+fsf->hylanr+"'";
   svec rueck;
@@ -8205,7 +8200,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
   if (rueck.size()) {
     *protdaktp=rueck[0];
     obsfehlt=lstat(protdaktp->c_str(), &entryprot);
-    *hyla_uverz_nrp=rueck.at(0).find("/doneq")==string::npos && rueck.at(0).find("/archive")==string::npos;
+    *hyla_uverz_nrp=(rueck.at(0).find("/doneq")==string::npos && rueck.at(0).find("/archive")==string::npos);
   }
   if (obverb) {
     Log(schwarzs+"obsfehlt: "+blau+(obsfehlt?"1":"0")+schwarz+", hyla_uverz_nr: "+blau+(*hyla_uverz_nrp?"1":"0")+schwarz,obverb,oblog);
@@ -8241,20 +8236,23 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
     aufiSplit(&tok,&pdf,":");
     fsf->sendqgespfad=this->varsphylavz+vtz+tok[tok.size()-1];
     if (est) lstat(fsf->sendqgespfad.c_str(),est); 
-    // 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
-    if (*hyla_uverz_nrp) {
+		fsf->hylastat=static_cast<FxStat>(atol(hylconf[0].wert.c_str()));
+		// 8, status gescheitert, evtl. unzureichend dokumentiert, aber wahr
+		/*
+    if (*hyla_uverz_nrp) KLA
       fsf->hylastat=static_cast<FxStat>(atol(hylconf[0].wert.c_str()));
     // if (*hyla_uverz_nrp) 
-    }  else { 
-      if (this->hylconf[0].wert=="8") {  
+    KLZ  else KLA 
+      if (this->hylconf[0].wert=="8") KLA
         fsf->hylastat=gescheitert;
         // 7, status erfolgreich
-      } else if (this->hylconf[0].wert=="7") { 
+      KLZ else if (this->hylconf[0].wert=="7") KLA 
         fsf->hylastat=gesandt;
-      } else { // wird kaum vorkommen
+      KLZ else KLA // wird kaum vorkommen
         fsf->hylastat=woasined;
-      }
-    } // if (*hyla_uverz_nrp) 
+      KLZ
+    KLZ // if (*hyla_uverz_nrp) 
+		*/
   } // if (obsfehlt) else
   Log(violetts+Tx[T_Ende]+" "+Tx[T_setzhylastat]+", hylastat: "+blau+FxStatS(&fsf->hylastat)+schwarz,obverb,oblog);
 } // setzhylastat
@@ -8287,7 +8285,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
         // modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
   if (pmp->hgelesen && hylastat!=fehlend) {
     *ausgp<<", ";
-    char buf[100];
+    char buf[100]={0};
     int hversuzahl=atol(hdials.c_str()); // totdials
     snprintf(buf,4,"%3d",hversuzahl);
     *ausgp<<blau<<buf<<"/"<<maxdials<<schwarz<<(hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
@@ -8305,7 +8303,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
 void zeigversion(string& prog,string& mpfad)
 {
   struct tm tm={0};
-  char buf[100];
+  char buf[100]={0};
   cout<<endl<<Tx[T_Programm]<<violett<<mpfad<<schwarz<<endl;
   cout<<"Copyright: "<<blau<<Tx[T_Freie_Software]<<schwarz<<Tx[T_Verfasser]<<blau<<"Gerald Schade"<<schwarz<<endl;
   cout<<"Version: "<<blau<<version<<schwarz<<endl;
@@ -8323,8 +8321,8 @@ void zeigversion(string& prog,string& mpfad)
 
 void paramcl::zeigkonf()
 {
-  struct stat kstat;
-  char buf[100];
+  struct stat kstat={0};
+  char buf[100]={0};
   if (!lstat(konfdatname.c_str(),&kstat)) {
     struct tm tm={0};
     memcpy(&tm, localtime(&kstat.st_mtime),sizeof(tm));
