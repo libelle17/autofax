@@ -2946,10 +2946,12 @@ void paramcl::rueckfragen()
       vector<string> benutzer;
       cmd="cat /etc/passwd | grep /home/ | cut -d':' -f 1";
       systemrueck(cmd,obverb,oblog,&benutzer);
-			if (benutzer.size()>1) for(size_t i=0;i<benutzer.size();i++) 
+			if (benutzer.size()>1) for(size_t i=benutzer.size();i;) {
+				--i;
 				if (benutzer[i]=="syslog"||benutzer[i]=="ntp") {
-				  benutzer.erase(benutzer.begin()+i);
+					benutzer.erase(benutzer.begin()+i);
 				}
+			} // for(size_t i=benutzer.size();i;)
 			for(size_t i=0;i<benutzer.size();i++) {
 				//          bliste+=benutzer[i];
 				//          if (i<benutzer.size()-1) bliste+=",";
