@@ -15,8 +15,8 @@ string verschiebe(const string& qdatei, const string& zielvz, const string& cuse
 void verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser="", uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0, int oblog=0);
 string kopiere(const string& qdatei, const string& zieldp, uint *kfehler, uchar wieweiterzaehl, int obverb=0,int oblog=0);
 string kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
-void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog);
-void pruefprocgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog);
+void prueffuncgettel3(DB *Myp, const string& usr, const string& host, int obverb, int oblog);
+void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, int obverb, int oblog);
 void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog);
 void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog);
 int pruefcapi(paramcl *pmp, int obverb, int oblog);
@@ -29,7 +29,6 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
 void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direkt=0);
 void pruefudoc(DB *My, const string& tudoc, int obverb, int oblog, uchar direkt=0);
 void pruefinctab(DB *My, const string& tinca, int obverb, int oblog, uchar direkt=0);
-void pruefprocgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog);
 void kuerzevtz(string *vzp);
 void pruefrules(int obverb, int oblog);
 void pruefblack(int obverb, int oblog);

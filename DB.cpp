@@ -92,6 +92,8 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
 	{"Verbindung zu '","Connection to '"},
 	// T_gelungen
 	{"' gelungen, user '","' succeeded, user '"},
+	// T_prueffunc
+	{"prueffunc()","checkfunc()"},
 	{"",""}
 };
 
@@ -1776,6 +1778,45 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
     }
   }
 } // int DB::insert(vector< instyp > einf,const char** erg,int anfangen=1,int sammeln=0) 
+
+void DB::prueffunc(const string& pname, const string& body, const string& para, int obverb, int oblog)
+{
+  Log(violetts+Txd[T_prueffunc]+schwarz+" "+pname,obverb,oblog);
+  string mhost = host=="localhost"?host:"%";
+  string owner=string("`")+user+"`@`"+mhost+"`";
+  for(uchar runde=0;runde<2;runde++) {
+    uchar fehlt=1;
+		RS rs0(this,"SHOW FUNCTION STATUS WHERE db='"+db+"' AND name='"+pname+"';",obverb);
+		if (!rs0.obfehl) {
+			if (rs0.result->row_count){
+				RS rs(this,"SHOW CREATE FUNCTION `"+pname+"`",obverb);
+				char ***cerg;
+				while (cerg=rs.HolZeile(),cerg?*cerg:0) {
+					for(uint i=1;i<=2;i++) {
+						if (*(*cerg+i)) if (strstr(*(*cerg+i),body.c_str())) if (strstr(*(*cerg+i),owner.c_str())) {
+							fehlt=0;
+							break; // for(uint
+						} // 						if (*(*cerg+i)) if (strstr(*(*cerg+i),body.c_str())) if (strstr(*(*cerg+i),owner.c_str()))
+					} // 					for(uint i=1;i<=2;i++)
+					break; // while(cerg=
+				} // 				while (cerg=rs.HolZeile(),cerg?*cerg:0)
+			} // 			if (rs0.result->row_count)
+		} // 		if (!rs0.obfehl)
+    //   RS rs(this,string("select definer from mysql.proc where definer like '`")+user+"`@`"+mhost+"`'",ZDB);
+    if (fehlt) {
+      DB *aktMyp;
+      if (!runde) aktMyp=this; else {
+        DB MySup(DBS,this->host.c_str(),"root",this->rootpwd.c_str(),this->db.c_str(),0,0,0,obverb,oblog);
+        aktMyp=&MySup;
+      }
+      string proc= "DROP FUNCTION IF EXISTS `"+pname+"`";
+      RS rs0(aktMyp, proc);
+      proc = "CREATE DEFINER="+owner+" FUNCTION `"+pname+"`\n"+para+body;
+      RS rs1(aktMyp, proc);
+    } else 
+      break; // for(uchar runde=0
+  } //   for(uchar runde=0;runde<2;runde++)
+} // void DB::prueffunc(const string& pname, const string& body, const string& para, int obverb, int oblog)
 
 void RS::clear()
 {

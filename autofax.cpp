@@ -380,7 +380,7 @@ enum T_
   T_pruefouta,
   T_pruefudoc,
   T_pruefinca,
-  T_pruefprocgettel3,
+  T_prueffuncgettel3,
   T_capiausgeb,
   T_hylaausgeb,
   T_tuloeschen,
@@ -1218,8 +1218,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"pruefudoc()","checkudoc()"},
   // T_pruefinca
   {"pruefinca()","checkinca()"},
-  // T_pruefprocgettel3
-  {"pruefprocgettel3()","checkprocgettel3()"},
+  // T_prueffuncgettel3
+  {"prueffuncgettel3()","checkfuncgettel3()"},
   // T_capiausgeb
   {"capiausgeb()","displaycapitries()"},
   // T_hylaausgeb
@@ -7822,142 +7822,85 @@ void pruefinctab(DB *My, const string& tinca, int obverb, int oblog, uchar direk
 
 
 // wird aufgerufen in: main
-void pruefprocgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
+void prueffuncgettel3(DB *Myp, const string& usr, const string& host, int obverb, int oblog)
 {
-  Log(violetts+Tx[T_pruefprocgettel3]+schwarz,obverb,oblog);
-  string body;
-  body+= "begin \n";
-  body+= " declare pos int;\n";
-  body+= " declare ch char default '0';\n";
-  body+= " declare tel varchar(100) default '';\n";
-  body+= " set pos = instr(dname,anfaxstr);\n";
-  body+= " if pos>0 then\n";
-  body+= "  set pos=pos+length(anfaxstr);\n";
-  body+= " else\n";
-  body+= "  if ancfaxstr > '' then\n";
-  body+= "   set pos = instr(dname,ancfaxstr);\n";
-  body+= "   if pos>0 then\n";
-  body+= "    set pos=pos+length(ancfaxstr);\n";
-  body+= "   else\n";
-  body+= "    if anhfaxstr > '' then\n";
-  body+= "     set pos = instr(dname,anhfaxstr);\n";
-  body+= "     if pos>0 then\n";
-  body+= "      set pos=pos+length(anhfaxstr);\n";
-  body+= "     end if;\n";
-  body+= "    end if;\n";
-  body+= "   end if;\n";
-  body+= "  end if;\n";
-  body+= " end if;\n";
-  body+= " if pos>0 then\n";
-  body+= "  wlab: loop\n";
-  body+= "   set ch = substring(dname,pos,1);\n";
-  body+= "   if ch = '_' then leave wlab; end if;\n";
-  body+= "   if instr('0123456789',ch) then set tel=concat(tel,ch);\n";
-  body+= "   else if ch='+' then set tel=concat(tel,'00'); end if; end if;\n";
-  body+= "   set pos=pos+1;\n";
-  body+= "   if pos>length(dname) then leave wlab; end if;\n";
-  body+= "  end loop;\n";
-  body+= " end if;\n";
-  body+= " return tel;\n";
-  body+= "end";
-  string mhost = host=="localhost"?host:"%";
-  string owner=string("`")+usr+"`@`"+mhost+"`";
-  for(uchar runde=0;runde<2;runde++) {
-    uchar fehlt=1;
-    char ***cerg;
-    RS rs(Myp,"SHOW CREATE FUNCTION gettel3",obverb);
-    while (cerg=rs.HolZeile(),cerg?*cerg:0) {
-      for(uint i=1;i<=2;i++) {
-        if (*(*cerg+i)) if (strstr(*(*cerg+i),body.c_str())) if (strstr(*(*cerg+i),owner.c_str())) {
-          fehlt=0;
-          break;
-        }
-      }
-      break;
-    } 
-    //   RS rs(Myp,string("select definer from mysql.proc where definer like '`")+usr+"`@`"+mhost+"`'",ZDB);
-    if (fehlt) {
-      DB *aktMyp;
-      if (!runde) aktMyp=Myp; else {
-        DB MySup(myDBS,Myp->host.c_str(),"root",Myp->rootpwd.c_str(),Myp->db.c_str(),0,0,0,obverb,oblog);
-        aktMyp=&MySup;
-      }
-      string proc= "DROP FUNCTION IF EXISTS `gettel3`";
-      RS rs0(aktMyp, proc);
-      proc = "CREATE DEFINER="+owner+" FUNCTION `gettel3`\n"
-        "(dname VARCHAR(1000), anfaxstr VARCHAR(100), ancfaxstr VARCHAR(100), anhfaxstr VARCHAR(100)) \n"
+  Log(violetts+Tx[T_prueffuncgettel3]+schwarz,obverb,oblog);
+  string body=
+   "begin \n"
+   " declare pos int;\n"
+   " declare ch char default '0';\n"
+   " declare tel varchar(100) default '';\n"
+   " set pos = instr(dname,anfaxstr);\n"
+   " if pos>0 then\n"
+   "  set pos=pos+length(anfaxstr);\n"
+   " else\n"
+   "  if ancfaxstr > '' then\n"
+   "   set pos = instr(dname,ancfaxstr);\n"
+   "   if pos>0 then\n"
+   "    set pos=pos+length(ancfaxstr);\n"
+   "   else\n"
+   "    if anhfaxstr > '' then\n"
+   "     set pos = instr(dname,anhfaxstr);\n"
+   "     if pos>0 then\n"
+   "      set pos=pos+length(anhfaxstr);\n"
+   "     end if;\n"
+   "    end if;\n"
+   "   end if;\n"
+   "  end if;\n"
+   " end if;\n"
+   " if pos>0 then\n"
+   "  wlab: loop\n"
+   "   set ch = substring(dname,pos,1);\n"
+   "   if ch = '_' then leave wlab; end if;\n"
+   "   if instr('0123456789',ch) then set tel=concat(tel,ch);\n"
+   "   else if ch='+' then set tel=concat(tel,'00'); end if; end if;\n"
+   "   set pos=pos+1;\n"
+   "   if pos>length(dname) then leave wlab; end if;\n"
+   "  end loop;\n"
+   " end if;\n"
+   " return tel;\n"
+   "end";
+ string para= "(dname VARCHAR(1000), anfaxstr VARCHAR(100), ancfaxstr VARCHAR(100), anhfaxstr VARCHAR(100)) \n"
         "RETURNS VARCHAR(1000) CHARSET latin1 COLLATE latin1_german2_ci DETERMINISTIC\n";
-      proc+=body;
-      RS rs1(aktMyp, proc);
-    } else 
-      break; // runde
-  }
-} // void pruefprocgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
+ Myp->prueffunc("gettel3", body, para, obverb,oblog);
+} // void prueffuncgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
 
 
-void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
+void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, int obverb, int oblog)
 {
   Log(violetts+Tx[T_pruefstdfaxnr]+schwarz,obverb,oblog);
-  string body;
-  body+= "begin \n";
-  body+= " declare anfg varchar(100) default concat(IPf,'+');\n";
-  body+= " declare pos int default 0;\n";
-  body+= " declare it char default '';\n";
-  body+= " declare land varchar(100) default concat(IPf,CoCd);\n";
-  body+= " declare trimfaxnr varchar(100) default '';\n";
-  body+= " glp: loop\n";
-  body+= "   set it = substring(faxnr,pos,1);\n";
-  body+= "   if instr('+0123456789',it) then\n";
-  body+= "    if trimfaxnr='' and not instr(anfg,it) then\n";
-  body+= "     set trimfaxnr=concat(LDPf,CiCd);\n";
-  body+= "    end if;\n";
-  body+= "   end if;\n";
-  body+= "   if (it='+') then\n";
-  body+= "    set trimfaxnr=concat(trimfaxnr,IPf);\n";
-  body+= "   else\n";
-  body+= "    set trimfaxnr=concat(trimfaxnr,it);\n";
-  body+= "   end if;\n";
-  body+= "   set pos=pos+1;\n";
-  body+= "   if pos>length(faxnr) then leave glp; end if;\n";
-  body+= " end loop;\n";
-  body+= " if instr(trimfaxnr,land)=1 then\n";
-  body+= "  set trimfaxnr=concat(LDPf,substr(trimfaxnr,length(land)+1));\n";
-  body+= " end if;\n";
-  body+= " return trimfaxnr;\n";
-  body+= "end";
-  string mhost = host=="localhost"?host:"%";
-  string owner=string("`")+usr+"`@`"+mhost+"`";
-  for(uchar runde=0;runde<2;runde++) {
-    uchar fehlt=1;
-    char ***cerg;
-    RS rs(Myp,"SHOW CREATE FUNCTION stdfaxnr",obverb);
-    while (cerg=rs.HolZeile(),cerg?*cerg:0) {
-      for(uint i=1;i<=2;i++) {
-        if (*(*cerg+i)) if (strstr(*(*cerg+i),body.c_str())) if (strstr(*(*cerg+i),owner.c_str())) {
-          fehlt=0;
-          break;
-        }
-      }
-      break;
-    } 
-    //   RS rs(Myp,string("select definer from mysql.proc where definer like '`")+usr+"`@`"+mhost+"`'",ZDB);
-    if (fehlt) {
-      DB *aktMyp;
-      if (!runde) aktMyp=Myp; else {
-        DB MySup(myDBS,Myp->host.c_str(),"root",Myp->rootpwd.c_str(),Myp->db.c_str(),0,0,0,obverb,oblog);
-        aktMyp=&MySup;
-      }
-      string proc= "DROP FUNCTION IF EXISTS `stdfaxnr`";
-      RS rs0(aktMyp, proc);
-      proc = "CREATE DEFINER="+owner+" FUNCTION `stdfaxnr`\n"
-        "(faxnr VARCHAR(200), IPf VARCHAR(10), LDPf VARCHAR(20), CoCd VARCHAR(20), CiCd VARCHAR(20)) \n"
-        "RETURNS VARCHAR(200) CHARSET latin1 COLLATE latin1_german2_ci DETERMINISTIC\n";
-      proc+=body;
-      RS rs1(aktMyp, proc);
-    } else 
-      break; // runde
-  }
+  string body=
+   "begin \n"
+   " declare anfg varchar(100) default concat(IPf,'+');\n"
+   " declare pos int default 0;\n"
+   " declare it char default '';\n"
+   " declare land varchar(100) default concat(IPf,CoCd);\n"
+   " declare trimfaxnr varchar(100) default '';\n"
+   " glp: loop\n"
+   "   set it = substring(faxnr,pos,1);\n"
+   "   if instr('+0123456789',it) then\n"
+   "    if trimfaxnr='' and not instr(anfg,it) then\n"
+   "     set trimfaxnr=concat(LDPf,CiCd);\n"
+   "    end if;\n"
+   "   end if;\n"
+   "   if (it='+') then\n"
+   "    set trimfaxnr=concat(trimfaxnr,IPf);\n"
+   "   else\n"
+   "    set trimfaxnr=concat(trimfaxnr,it);\n"
+   "   end if;\n"
+   "   set pos=pos+1;\n"
+   "   if pos>length(faxnr) then leave glp; end if;\n"
+   " end loop;\n"
+   " if instr(trimfaxnr,land)=1 then\n"
+   "  set trimfaxnr=concat(LDPf,substr(trimfaxnr,length(land)+1));\n"
+   " end if;\n"
+   " return trimfaxnr;\n"
+   "end";
+	string para="(faxnr VARCHAR(200), IPf VARCHAR(10), LDPf VARCHAR(20), CoCd VARCHAR(20), CiCd VARCHAR(20)) \n"
+		"RETURNS VARCHAR(200) CHARSET latin1 COLLATE latin1_german2_ci DETERMINISTIC\n";
+ Myp->prueffunc("stdfaxnr", body, para, obverb,oblog);
 }  // void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
+
 
 // wird verwendet in setzcapistat
 // Ergebnis: p1 (>=0): Datei war da und enthielt Punkt, -2: Datei war nicht da oder enthielt keinen Punkt
@@ -8397,8 +8340,8 @@ int main(int argc, char** argv)
   } else if (!pm.suchstr.empty()) {
     pm.suchestr();
   } else {
-    pruefstdfaxnr(pm.My,pm.muser,pm.mpwd,pm.host,pm.obverb,pm.oblog);
-    pruefprocgettel3(pm.My,pm.muser,pm.mpwd,pm.host,pm.obverb,pm.oblog);
+    pruefstdfaxnr(pm.My,pm.muser,pm.host,pm.obverb,pm.oblog);
+    prueffuncgettel3(pm.My,pm.muser,pm.host,pm.obverb,pm.oblog);
     //  int qerg = mysql_query(My.conn,proc.c_str());
     // 1) nicht-pdf-Dateien in pdf umwandeln, 2) pdf-Dateien wegfaxen, 3) alle in warte-Verzeichnis kopieren, 4) in Spool-Tabelle eintragen
     //  vector<string> npdf, spdf;

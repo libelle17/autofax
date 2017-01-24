@@ -81,7 +81,8 @@ enum Txdb_
 	T_Ende_Gelaende,
 	T_Verbindung_zu,
 	T_gelungen,
-  T_dbMAX,
+	T_prueffunc,
+	T_dbMAX,
 };
 
 extern class Txdbcl Txd;
@@ -297,6 +298,7 @@ class DB
 		int usedb(const string& db);
 		void pruefrpw(const string& wofuer, unsigned versuchzahl);
 		void setzrpw(int obverb=0, int oblog=0);
+		void prueffunc(const string& pname, const string& body, const string& para, int obverb, int oblog);
 		my_ulonglong arows;
 		vector< vector<instyp> > ins;
 		void erweitern(const string& tab, vector<instyp> einf,uchar obverb,uchar obsammeln=0, const unsigned long *maxl=0);
