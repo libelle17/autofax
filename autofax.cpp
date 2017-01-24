@@ -2948,7 +2948,9 @@ void paramcl::rueckfragen()
       systemrueck(cmd,obverb,oblog,&benutzer);
 			if (benutzer.size()>1) for(size_t i=benutzer.size();i;) {
 				--i;
+				  caus<<gruen<<"i: "<<i<<", Benutzer vor Pruefung: "<<benutzer[i]<<endl;
 				if (benutzer[i]=="syslog"||benutzer[i]=="ntp") {
+				  caus<<gruen<<"Benutzer nach Pruefung: "<<benutzer[i]<<endl;
 					benutzer.erase(benutzer.begin()+i);
 				}
 			} // for(size_t i=benutzer.size();i;)
