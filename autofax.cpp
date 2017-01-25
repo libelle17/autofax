@@ -2946,12 +2946,9 @@ void paramcl::rueckfragen()
       vector<string> benutzer;
       cmd="cat /etc/passwd | grep /home/ | cut -d':' -f 1";
       systemrueck(cmd,obverb,oblog,&benutzer);
-			caus<<"Vor Benutzerpruefung"<<endl;
 			if (benutzer.size()>1) for(size_t i=benutzer.size();i;) {
 				--i;
-				  caus<<gruen<<"i: "<<i<<", Benutzer vor Pruefung: "<<benutzer[i]<<endl;
 				if (benutzer[i]=="syslog"||benutzer[i]=="ntp") {
-				  caus<<gruen<<"Benutzer nach Pruefung: "<<benutzer[i]<<endl;
 					benutzer.erase(benutzer.begin()+i);
 				}
 			} // for(size_t i=benutzer.size();i;)
@@ -4494,8 +4491,9 @@ void paramcl::pruefunpaper()
 		/*if (distri.pruefipr()==apt||distri.pruefipr()==dnf||distri.pruefipr()==yum)*/ 
 		if (distri.pruefipr()!=dnf && distri.pruefipr()!=yum) 
 			linst.doggfinst("libavformat-devel",obverb+1,oblog);
+		linst.doggfinst("pkg-config",obverb+1,oblog);
 		holvongithub("unpaper_copy");
-		if (vers) systemrueck("sudo rm $(which unpaper) && hash -r",obverb,oblog);
+		if (vers) systemrueck("which unpaper && rm $(which unpaper) && hash -r",obverb,oblog);
 		kompiliere("unpaper_copy",s_gz);
 	} // 						if (!urueck.size()||vers<6.1)
 } // void paramcl::pruefunpaper()
@@ -4503,8 +4501,6 @@ void paramcl::pruefunpaper()
 // verwendet in empfarch() (2x) und DateienHerricht() (2x)
 int paramcl::pruefocr()
 {
-	Log(rots+Tx[T_pruefocr]+schwarz,obverb,oblog);
-	Log(gruens+Tx[T_pruefocr]+schwarz,obverb,oblog);
 	Log(violetts+Tx[T_pruefocr]+schwarz,obverb,oblog);
 	if (!obocrgeprueft) {
 		uchar tda=1, deuda=0, engda=0, osdda=0;
