@@ -4606,10 +4606,20 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 		if (/*aru||*/!keinbild) {
 			if (obocr) {
 				if (!pruefocr()) {
-					if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*quellp+"\" \""+ziel+"\" && chmod +r \""+ziel+"\"" ,obverb,oblog)) {
+				  svec rueck;
+					if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*quellp+"\" \""+ziel+"\" 2>&1",obverb,oblog,&rueck)) {
 						erg=0; // nicht umgekehrt
-						break;
+						for(unsigned uru=0;uru<rueck.size();uru++) {
+						 if (rueck[uru].find("ERROR")!=string::npos) {
+						  erg=1;
+							break;
+						 }
+						}
 					}
+					if (!erg) {
+						systemrueck("chmod +r \""+ziel+"\"",obverb,oblog);
+						break;
+					} // 					if (!erg)
 				} // pruefocr()
 			} // if (obocr)
 		} // 		if (!keinbild)
