@@ -73,7 +73,7 @@ Zunächst lesen Sie bitte die Kapitel 'Funktionsweise', 'Voraussetzungen' und 'A
 .br
 Anschließend verbinden Sie den Rechner falls nötig mit dem Internet und rufen Sie auf:
 .br
-\fBN=autofax;P=${N}_inst.sh;cd ~;wget https://raw.githubusercontent.com/libelle17/$N/master/install.sh -O $P && sh $P\fR
+\fBN=autofax;P=${N}_inst.sh;cd ~;wget https://raw.githubusercontent.com/libelle17/$N/master/install.sh -O $P&&sh $P\fR
 .br
 Zuletzt rufen Sie auf:
 .br
