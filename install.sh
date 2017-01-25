@@ -29,7 +29,7 @@ getIPR;
 { which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
 	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'. Please enter ${blau}root$reset's password if asked:\nMuss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
 	su -c "$IPR sudo; usermod -aG $(cut -d: -f1 /etc/group|grep "$SUG"|tail -n1) "$USER";"||exit
-	printf "Please log out and in again, change to the directory '$blau$PWD$reset' and then call this script again!\nBitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie dieses Script dann nochmal auf!\n";
+	printf "Please log out and in again, change to the directory '$blau$PWD$reset' and then call this script again!\nBitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '$blau$0$reset' dann nochmal auf!\n";
 	exit;
 }
 # falls make fehlt, dann installieren ...
