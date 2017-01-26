@@ -1466,7 +1466,7 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
   {"Moment, muss Kernel-rpm herunterladen ...","One moment, must download kernel-rpm ..."},
   // T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten,
   {"Zur Inbetriebnahme der Capisuite muss das Modul capi geladen werden. Zu dessen Erstellung musste der Befehl "
-            "'sudo dnf -y install kernel-modules-extra' aufgerufen werden, des den Linux-Kernel aktualisiert hat (",
+            "'sudo dnf -y install kernel-modules-extra' aufgerufen werden, der den Linux-Kernel aktualisiert hat (",
    "In order to use the capisuite, the module capi has to be loaded. In order to generate this, the command "
    "'sudo dnf -y install kernel-modules-extra' hat to be called, which updated the linux kernel ("},
   // T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten
@@ -4478,8 +4478,8 @@ void paramcl::pruefunpaper()
 		if (distri.pruefipr()==dnf||distri.pruefipr()==yum) {
 			// sudo rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm 
 			//               http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
-			//   systemrueck("sudo rpm -Uvh https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-free-release-stable.noarch.rpm "
-			//	                          " https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-nonfree-release-stable.noarch.rpm",obverb,oblog);
+			// systemrueck("sudo rpm -Uvh https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-free-release-stable.noarch.rpm "
+			//                          " https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-nonfree-release-stable.noarch.rpm",obverb,oblog);
 			string rpf="rpmfusion_copy";
 			holvongithub(rpf);
 			kompilbase(rpf,s_gz);
@@ -4487,11 +4487,13 @@ void paramcl::pruefunpaper()
 			linst.doinst("ffmpeg",obverb,oblog);
 			linst.doinst("ffmpeg-devel",obverb,oblog);
 			linst.doinst("ffmpeg-compat",obverb,oblog);
+		} else { 
+			linst.doggfinst("libavformat-devel",obverb+1,oblog);
+			if (distri.pruefipr()==apt) {
+				linst.doggfinst("pkg-config",obverb+1,oblog);
+			}
 		}
 		/*if (distri.pruefipr()==apt||distri.pruefipr()==dnf||distri.pruefipr()==yum)*/ 
-		if (distri.pruefipr()!=dnf && distri.pruefipr()!=yum) 
-			linst.doggfinst("libavformat-devel",obverb+1,oblog);
-		linst.doggfinst("pkg-config",obverb+1,oblog);
 		holvongithub("unpaper_copy");
 		if (vers) systemrueck("which unpaper && rm $(which unpaper) && hash -r",obverb,oblog);
 		kompiliere("unpaper_copy",s_gz);
