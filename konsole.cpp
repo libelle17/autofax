@@ -560,7 +560,7 @@ char* curruser()
   return passwd->pw_name;
 } // curruser()
 
-// Achtung: Wegen der Notwendigkeit zur Existenz der Datei zum Aufruf von setfacl kann die Datei erstellt werden!
+// Achtung: Wegen der Notwendigkeit der Existenz der Datei zum Aufruf von setfacl kann die Datei erstellt werden!
 mdatei::mdatei(const string& name, ios_base::openmode modus,int obverb, int oblog)
 {
   for(int iru=0;iru<3;iru++) {

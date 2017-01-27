@@ -4487,12 +4487,12 @@ void paramcl::pruefunpaper()
 			linst.doinst("ffmpeg",obverb,oblog);
 			linst.doinst("ffmpeg-devel",obverb,oblog);
 			linst.doinst("ffmpeg-compat",obverb,oblog);
-		} else { 
+		} else {
 			linst.doggfinst("libavformat-devel",obverb+1,oblog);
 			if (distri.pruefipr()==apt) {
 				linst.doggfinst("pkg-config",obverb+1,oblog);
 			}
-		}
+		} // 		if (distri.pruefipr()==dnf||distri.pruefipr()==yum)
 		/*if (distri.pruefipr()==apt||distri.pruefipr()==dnf||distri.pruefipr()==yum)*/ 
 		holvongithub("unpaper_copy");
 		if (vers) systemrueck("which unpaper && rm $(which unpaper) && hash -r",obverb,oblog);
@@ -5593,8 +5593,7 @@ int paramcl::holtif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elo
 			if (elogp) {
 				memset(elogp,0,sizeof *elogp);
 				if (!lstat(datei.c_str(),elogp))  {
-					if (chmod(datei.c_str(),S_IRWXU|S_IRWXG|S_IRWXO))
-						systemrueck("sudo chmod +r \""+datei+"\"",obverb,oblog);
+//					if (chmod(datei.c_str(),S_IRWXU|S_IRWXG|S_IRWXO)) systemrueck("sudo chmod +r \""+datei+"\"",obverb,oblog);
 					memcpy(tmp, localtime(&elogp->st_mtime),sizeof(*tmp));
 					/*
 					char buf[100];
@@ -5604,7 +5603,8 @@ int paramcl::holtif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elo
 				} //     if (!lstat(datei.c_str(),elogp)) 
 			} // if (elogp)
 		} // if (tmp)
-    if (TIFF* tif = TIFFOpen(datei.c_str(), "r")) {
+		setfaclggf(datei,falsch,4,falsch,obverb,oblog);
+		if (TIFF* tif = TIFFOpen(datei.c_str(), "r")) {
 			erg=0;
 			char *rdesc=0;
 			if (tmp) {
