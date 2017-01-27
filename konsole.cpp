@@ -1020,10 +1020,13 @@ double verszuzahl(string vers)
 // Programmversion, falls diese beim Programm mit " --version" abrufbar ist
 double progvers(const string& prog,int obverb, int oblog)
 {
-	svec urueck;
-	systemrueck(prog+" --version",obverb,oblog,&urueck);
 	double vers=0;
-	if (urueck.size()) vers=verszuzahl(urueck[0].c_str());
+	string pfad;
+	if (obprogda(prog,obverb,oblog,&pfad)) {
+		svec urueck;
+		systemrueck(pfad+" --version",obverb,oblog,&urueck);
+		if (urueck.size()) vers=verszuzahl(urueck[0].c_str());
+	}
 	return vers;
 } // double progvers(string prog,int obverb, int oblog)
 
@@ -1141,7 +1144,7 @@ betrsys pruefos()
 */
 
 // erg=1: gibt es fuer den aktuellen Benutzer; erg=2: gibt es fuer root; erg=0: nicht gefunden
-int obprogda(string prog,int obverb, int oblog, string *pfad)
+int obprogda(string prog,int obverb, int oblog, string *pfad/*=0*/)
 {
   svec rueck;
   if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck)) {

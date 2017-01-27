@@ -6789,6 +6789,8 @@ int paramcl::pruefhyla()
         break;
       } // if (hylalaeuftnicht || modemlaeuftnicht) 
     } // for(unsigned versuch=0;versuch<2;versuch++)
+		// Empfangsberechtigungen sicherstellen
+		systemrueck("sudo sh -c \"V="+varsphylavz+";L=\\$V/log;R=\\$V/recvq;chmod 774 \\$L \\$R;chmod 660 \\$L/seqf \\$R/seqf\"",obverb,oblog);
     // Archivierung ggf. aktivieren
     if (!hylalaeuftnicht) {
       struct stat hfstat;

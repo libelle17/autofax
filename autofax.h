@@ -237,7 +237,7 @@ class paramcl // Programmparameter
     uchar obkschreib=0; // Konfigurationsdatei schreiben
     uchar logdneu=0;    // Logdatei geaendert
     uchar logvneu=0;    // Logverzeichnis geaendert
-    string varsphylavz; // Verzeichnis der Hyla-Spool-Dateien /var/spool/fax
+    string varsphylavz; // Verzeichnis der Hyla-Spool-Dateien /var/spool/hylafax oder /var/spool/fax
     string xferfaxlog; // varsphylavz + "/etc/xferfaxlog"; 
     string faxgtpfad;   // /usr/lib/fax/faxgetty
     string hsendqvz; // /var/spool/hylafax/sendq
