@@ -5603,6 +5603,7 @@ int paramcl::holtif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elo
 				} //     if (!lstat(datei.c_str(),elogp)) 
 			} // if (elogp)
 		} // if (tmp)
+		setfaclggf(dir_name(datei),falsch,7,falsch,obverb,oblog);
 		setfaclggf(datei,falsch,4,falsch,obverb,oblog);
 		if (TIFF* tif = TIFFOpen(datei.c_str(), "r")) {
 			erg=0;

@@ -1883,13 +1883,13 @@ int setfaclggf(const string& datei, const binaer obunter, const int mod, uchar o
        } //        switch (mod)
        if (!obimmer) {
         svec gstat;
-        systemrueck("getfacl -e -t "+datei+" 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*"+modbuch+"' || true",obverb,oblog,&gstat);
+        systemrueck("getfacl -e -t '"+datei+"' 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*"+modbuch+"' || true",obverb,oblog,&gstat);
         if (!gstat.size()) obimmer=wahr; // wenn keine Berechtigung gefunden => erstellen
        }
        if (obimmer) {
-          if (obverb) systemrueck("sudo sh -c 'ls -l "+datei+"'",2,0);
+          if (obverb) systemrueck("sudo sh -c 'ls -l \""+datei+"\"'",2,0);
           systemrueck(string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'",obverb,oblog);
-          if (obverb) systemrueck("sudo sh -c 'ls -l "+datei+"'",2,0);
+          if (obverb) systemrueck("sudo sh -c 'ls -l \""+datei+"\"'",2,0);
        } //        if (obimmer)
       } //       if (obsetfacl)
   } //   if (cuser!="root")
