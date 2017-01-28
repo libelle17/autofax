@@ -8394,7 +8394,8 @@ int main(int argc, char** argv)
     if (pm.obfcard) pm.obcapi=!pm.pruefcapi();
     if (pm.obmodem) if (pm.obhyla) pm.obhyla=!pm.pruefhyla();
     Log(Tx[T_Verwende]+blaus+(pm.obcapi?"Capisuite":"")+schwarz+(pm.obcapi&&pm.obhyla?", ":"")+blau+(pm.obhyla?"Hylafax":"")+schwarz+
-        (!pm.obcapi&&!pm.obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):"")+" "+Tx[T_Aufrufintervall]+blau+pm.cronminut+schwarz,1,pm.oblog);
+        (!pm.obcapi&&!pm.obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):"")+
+				Tx[T_Aufrufintervall]+blau+pm.cronminut+schwarz+Tx[T_Minuten],1,pm.oblog);
     if (pm.loef || pm.loew || pm.loea) {
       if (pm.loef) pm.loeschefax(pm.obverb,pm.oblog);
       if (pm.loew) pm.loeschewaise(pm.obverb,pm.oblog);
