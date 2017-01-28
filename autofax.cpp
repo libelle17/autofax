@@ -4819,7 +4819,8 @@ void paramcl::DateienHerricht()
 	// nicht faxbare
 	for(size_t i=0;i<iprid.size();i++) {
 		if (!iprid[i].empty()) {
-			systemrueck("touch '"+zmvp[0].ziel+vtz+Tx[T_nichtfaxbar]+" `"+base_name(iprid[i])+"`.nix'",obverb,oblog);
+//			systemrueck("touch '"+zmvp[0].ziel+vtz+Tx[T_nichtfaxbar]+" `"+base_name(iprid[i])+"`.nix'",obverb,oblog);
+			touch(zmvp[0].ziel+vtz+Tx[T_nichtfaxbar]+" `"+base_name(iprid[i])+"`.nix");
 		}
 	} // 	for(size_t i=0;i<iprid.size();i++) 
 
@@ -5276,7 +5277,8 @@ void paramcl::untersuchespool(uchar mitupd/*=1*/) // faxart 0=capi, 1=hyla
 							if (ogibts[iru]) {
 								verschiebe(odatei[iru],nvz,cuser,&vfehler, 1, obverb,oblog);
 								// an vorderster Stelle Scheitern erkennen lassen
-								systemrueck("touch '"+zmvp[0].ziel+vtz+Tx[T_nichtgefaxt]+" `"+base_name(odatei[iru])+"`.nix'",obverb,oblog);
+//								systemrueck("touch '"+zmvp[0].ziel+vtz+Tx[T_nichtgefaxt]+" `"+base_name(odatei[iru])+"`.nix'",obverb,oblog);
+								touch(zmvp[0].ziel+vtz+Tx[T_nichtgefaxt]+" `"+base_name(odatei[iru])+"`.nix");
 							} // if (ogibts[iru]) 
 						} // for(unsigned iru=0;iru<2;iru++) 
 					} // if (allegesch || (nimmer && !ogibts[0]))
@@ -5906,7 +5908,8 @@ void paramcl::empfarch()
             Log(string(Tx[T_Dateien])+rot+stamm+".* "+schwarz+Tx[T_nicht_verarbeitbar_Verschiebe_sie_nach]+rot+"./falsche"+schwarz+".",1,1);
             verschiebe(sffdatei,falsche,cuser,&vfehler,1,obverb,oblog);
             // so, dass es jeder merkt
-            systemrueck("touch '"+empfvz+vtz+Tx[T_nicht_angekommen]+tifrumpf+".nix'",obverb,oblog);
+//            systemrueck("touch '"+empfvz+vtz+Tx[T_nicht_angekommen]+tifrumpf+".nix'",obverb,oblog);
+            touch(empfvz+vtz+Tx[T_nicht_angekommen]+tifrumpf+".nix");
           } // if (verschieb==2) 
 //      KLZ // if (loee) 
       } // if (verschieb) 
@@ -6536,6 +6539,7 @@ int paramcl::pruefhyla()
     } else {
       hfr=(char*)c_hfs; hfcr=(char*)c_hfc; hff=(char*)c_hfps; hfcf=(char*)c_hfpc;
       hfftext=Tx[T_Hylafaxplus_entdeckt_muss_ich_loeschen];
+			huser="fax";
     } // if (hyinstart==hysrc || hyinstart==hyppk) else
     // 2) deren Existenz, Betrieb und ggf. Startbarkeit pruefen
     // wenn die richtigen Dienste laufen, dann nichts weiter ueberpruefen ..
@@ -6687,10 +6691,7 @@ int paramcl::pruefhyla()
           } // if (!lstat(xferfaxlog.c_str(),&entryxfer)) 
           // bei hysrc ist das folgende wohl eigentlich nicht noetig
           // Berechtigungen korrigieren
-          if (hyinstart==hyppk || hyinstart==hysrc)
-            systemrueck("sudo chown uucp:uucp -R "+this->varsphylavz,obverb,oblog);
-          else
-            systemrueck("sudo chown fax:uucp -R "+this->varsphylavz,obverb,oblog);
+					systemrueck("sudo chown "+huser+":uucp -R "+this->varsphylavz,obverb,oblog);
          }
         } // if (obprogda("faxsend",obverb,oblog))
         /*
@@ -6795,7 +6796,17 @@ int paramcl::pruefhyla()
       } // if (hylalaeuftnicht || modemlaeuftnicht) 
     } // for(unsigned versuch=0;versuch<2;versuch++)
 		// Empfangsberechtigungen sicherstellen
-		systemrueck("sudo sh -c \"V="+varsphylavz+";L=\\$V/log;R=\\$V/recvq;chmod 774 \\$L \\$R;chmod -f 660 \\$L/seqf \\$R/seqf\"",obverb,oblog);
+//		char *uvz[2]={(char*)"/log/",(char*)"/recvq/"};
+		string uvz[2]={"/log/","/recvq/"};
+		for (unsigned i=0;i<2;i++) {
+		 string dt=varsphylavz+uvz[i]+"seqf";
+		 struct stat dstat;
+		 if (lstat(dt.c_str(),&dstat)) {
+		  touch(dt);
+			systemrueck("sudo chown "+huser+":uucp "+dt,obverb,oblog);
+		 } // 		 if (lstat(dt.c_str(),&dstat))
+		} // 		for (unsigned i=0;i<2;i++)
+		systemrueck("sudo sh -c \"V="+varsphylavz+";L=\\$V/log;R=\\$V/recvq;chmod 774 \\$L \\$R;chmod 660 \\$L/seqf \\$R/seqf\"",obverb,oblog);
     // Archivierung ggf. aktivieren
     if (!hylalaeuftnicht) {
       struct stat hfstat;
@@ -6807,6 +6818,8 @@ int paramcl::pruefhyla()
   Log(violetts+Tx[T_Ende]+" "+Tx[T_pruefhyla]+schwarz,obverb,oblog);
   return ret;
 } // int paramcl::pruefhyla()
+
+
 
 /*
    long GetFileSize(string filename)
@@ -7569,7 +7582,7 @@ void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
   } else {
     Log(string(Tx[T_DieFaxnrvon])+drot+fsfp->spdf+schwarz+Tx[T_ist]+blau+tel+schwarz,obverb,oblog);
     // 27.3.16: Uebernacht wurden die Berechtigungen so eingeschraenkt, dass Faxsenden nicht mehr ging, evtl. durch faxqclean
-    systemrueck("sudo find "+pmp->varsphylavz+" -name seqf -exec chmod 660 {} \\;"" -exec chown fax:uucp {} \\;",obverb,oblog);
+    systemrueck("sudo find "+pmp->varsphylavz+" -name seqf -exec chmod 660 {} \\;"" -exec chown "+pmp->huser+":uucp {} \\;",obverb,oblog);
     const char* tz1="request id is ", *tz2=" (";
     string sendfax;
 //    systemrueck("sudo sh -c 'which sendfax'",obverb,1,&rueck);

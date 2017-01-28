@@ -333,6 +333,7 @@ char* ltoan(long value, int base=10, uchar obtz=0, uchar minstel=0);
 char* ltoa_(long value, char* result, int base); 
 
 double progvers(const string& prog,int obverb, int oblog);
+void touch(const std::string& pathname);
 
 #ifdef notcpp
 class Schluessel {

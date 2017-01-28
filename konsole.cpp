@@ -1039,6 +1039,40 @@ void kopierm(string *quelle, string *ziel)
 } // void kopierm(string *quelle, string *ziel)
 #endif
 
+// von http://chris-sharpe.blogspot.de/2013/05/better-than-systemtouch.html
+void touch(const std::string& pathname)
+{
+	int fd = open(pathname.c_str(),
+			O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK,
+			0666);
+	if (fd<0) // Couldn't open that path.
+	{
+		std::cerr
+			<< __PRETTY_FUNCTION__
+			<< ": Couldn't open() path \""
+			<< pathname
+			<< "\"\n";
+		return;
+	}
+	int rc = utimensat(AT_FDCWD,
+			pathname.c_str(),
+			nullptr,
+			0);
+	if (rc)
+	{
+		std::cerr
+			<< __PRETTY_FUNCTION__
+			<< ": Couldn't utimensat() path \""
+			<< pathname
+			<< "\"\n";
+		return;
+	}
+	std::clog
+		<< __PRETTY_FUNCTION__
+		<< ": Completed touch() on path \""
+		<< pathname
+		<< "\"\n";
+}
 
 void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach)
 {
