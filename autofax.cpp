@@ -7476,6 +7476,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
   // 5. wegfaxen
   //      und wenn erfolgreich im spool, dann jeweils in Datenbank eintragen
 {
+  oblog=1;
   Log(violetts+Tx[T_faxemitC]+schwarz,obverb,oblog);
   // 5. wegfaxen und wenn erfolgreich im spool, dann in Datenbank eintragen
   if (fsfp->telnr.empty()) {
