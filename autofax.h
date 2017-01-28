@@ -194,7 +194,7 @@ class paramcl // Programmparameter
     uchar gleichziel; // faxe auch ohne Fax-Erfolg auf Zielverzeichnis abspeichern
     uchar obocri; // empfangene Faxe OCR unterziehen
     uchar obocra; // gesandte Bilder OCR unterziehen
-    uchar obcapi=1; // ob ueberhaupt die Capisuite verwendet werden soll
+    uchar obcapi=1; // ob ueberhaupt die Capisuite verwendet werden soll, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
     uchar obhyla=1; // ob ueberhaupt hylafax verwendet werden soll
     uchar konfobcapi; // ob obcapi in der Konfigurationsdatei eingestellt ist
     uchar konfobhyla; // ob obhyla in der Konfigurationsdatei eingestellt ist

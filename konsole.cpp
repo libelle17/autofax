@@ -2665,6 +2665,13 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
   return servicelaeuft;
 } // void servc::spruef() 
 
+int servc::obda(int obverb,int oblog)
+{
+ systemrueck("systemctl -a --no-legend list-units '"+sname+".service'",obverb,oblog,&srueck);  // bei list-units return value immer 0
+ serviceda=!srueck.empty();
+ return serviceda;
+}
+
 // wird aufgerufen in: pruefhyla, pruefcapi, spruef
 int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
 {
@@ -2673,23 +2680,18 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
   size_t runde=0;
   while (1) {
     runde++;
-    svec sysrueck;
     servicelaeuft=0;
-    serviceda=0;
-    systemrueck("systemctl -a --no-legend list-units '"+sname+".service'",obverb,oblog,&sysrueck);  // bei list-units return value immer 0
-    if (!sysrueck.empty()) {
-      Log(blau+sysrueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
-      if (sysrueck[0].find("active running")!=string::npos) {
+		if (obda(obverb,oblog)) {
+      Log(blau+srueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
+      if (srueck[0].find("active running")!=string::npos) {
         servicelaeuft=1;
-        serviceda=1;
         break;
-      } else if (sysrueck[0].find("activating")!=string::npos) {
-        svec srueck;
-        serviceda=1;
+      } else if (srueck[0].find("activating")!=string::npos) {
         servicelaeuft=0;
-        systemrueck("systemctl --lines 0 status '"+sname+"'",obverb,oblog,&srueck,1);
-        for(size_t j=0;j<srueck.size();j++) {
-          string *sp=&srueck[j];
+        svec statrueck;
+        systemrueck("systemctl --lines 0 status '"+sname+"'",obverb,oblog,&statrueck,1);
+        for(size_t j=0;j<statrueck.size();j++) {
+          string *sp=&statrueck[j];
           if (sp->find("exited")!=string::npos) {
             // z.B.: 'Main PID: 17031 (code=exited, status=255)'
             // 11.9.16: dann muss selinux angepasst werden
@@ -2702,21 +2704,19 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
           } // if (sp->find("exited")!=string::npos) 
         }
         if (fehler) break;
-        if (srueck.size()) {
-        } // if (srueck.size()) 
         if (nureinmal || prf.oberreicht(3)) {
           break;
         }
         prf.ausgeb();
-      } else if (sysrueck[0].find("loaded")!=string::npos) {
-        serviceda=1;
+      } else if (srueck[0].find("loaded")!=string::npos) {
         break;
       } else {
+			  serviceda=0;
         break;
       }
-    } else { // if (!sysrueck.empty()) 
+    } else { // if (!srueck.empty()) 
       break;
-    } //     if (!sysrueck.empty())  else 
+    } //     if (!srueck.empty())  else 
   } // while (1)
   if (!serviceda) {
     vector<errmsgcl> errv;
@@ -2768,8 +2768,10 @@ void servc::stop(int obverb,int oblog,uchar mitpkill)
 
 void servc::stopdis(int obverb,int oblog,uchar mitpkill)
 {
-  stop(obverb,oblog);
-  systemrueck(string("sudo systemctl disable '")+sname+"'",obverb,oblog,0,2);
+	if (obda(obverb,oblog)) {
+		stop(obverb,oblog);
+		systemrueck(string("sudo systemctl disable '")+sname+"'",obverb,oblog,0,2);
+	}
 } // int servc::stop(int obverb,int oblog)
 
 int servc::enableggf(int obverb,int oblog)

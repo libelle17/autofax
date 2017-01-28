@@ -3263,7 +3263,7 @@ void paramcl::autofkonfschreib()
     for (size_t i=0;i<cgconf.zahl;i++) {
       if (cgconf[i].name=="obhyla") cgconf[i].setze(&obhyla);
       else if (cgconf[i].name=="obcapi") cgconf[i].setze(&obcapi);
-    }
+    } //     for (size_t i=0;i<cgconf.zahl;i++)
     //    cppSchluess *schlp[3]={cgconfp,sqlconfp,zmconfp};
     schlArr *schlp[3]={&cgconf,&sqlconf,&zmconf};
     //    size_t groe[sizeof schlp/sizeof *schlp]={gcs,sqlzn,zmzn+zmzn};
@@ -7002,416 +7002,423 @@ void paramcl::pruefsfftobmp()
 } // pruefsfftobmp
 
 // wird aufgerufen in: untersuchespool, main
+// rueckgabe: wie obcapi eingestellt sein sollte
 int paramcl::pruefcapi()
 {
-  Log(violetts+Tx[T_pruefcapi]+schwarz,obverb,oblog);
-  static uchar capiloggekuerzt=0;
-  static uchar capischonerfolgreichinstalliert=0;
-  int capilaeuft=0;
-  unsigned versuch=0;
-  capisv(obverb,oblog);
-	for(;versuch<2;versuch++) {
-    // capi4linux muss zum Laufen der Capisuite installiert sein
-    // fuer fcpci muss in driver.c eingefuegt werden:
-    // #if !defined(IRQF_DISABLED)
-    // #  define IRQF_DISABLED 0x00
-    // #endif
-    //    capilaeuft=(PIDausName("capisuite")>=0);
-    capilaeuft = this->scapisuite->machfit(obverb?obverb-1:0,oblog,wahr);
-    Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz,obverb,oblog);
-    if (capilaeuft) {
-     capischonerfolgreichinstalliert=1;
-    } else {
-      //      pid_t pid = GetPIDbyName("capisuite") ; // If -1 = not found, if -2 = proc fs access error
-      uchar fcpcida=0, capida=0, capidrvda=0;
-      pruefinstv();
-      vector<string> rueck;
-      systemrueck("lsmod",obverb,oblog,&rueck);
-      for(size_t i=0;i<rueck.size();i++){
-        if (!fcpcida) {if (!rueck[i].find("fcpci")) {fcpcida=1;continue;}}
-        if (!capidrvda) {if (!rueck[i].find("capidrv")) {capidrvda=1;continue;}}
-        if (!capida) {if (!rueck[i].find("capi")) {capida=1;continue;}}
-        if (fcpcida && capida && capidrvda) break;
-      } // for(size_t i=0;i<rueck.size();i++)
-      lsysen system=lsys.getsys(obverb,oblog);
-      if (!fcpcida || !capida || !capidrvda) {
-        Log(Tx[T_Lade_Capi_Module],-1,0);
-        systemrueck("sudo modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog,0,1);
-        for(uchar ivers=0;ivers<2;ivers++) {
-          if (!fcpcida)
-          if (systemrueck("sudo modprobe -v fcpci 2>/dev/null",obverb-1,oblog)) {
-            if (ivers) {
-              Log(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+schwarz,1,1);
-              return 1;
-            } // if (ivers)
-            utsname unbuf;
-            uname(&unbuf);
-            Log(string(Tx[T_Kernelversion])+blau+unbuf.release+schwarz,obverb,oblog);
-            struct stat entryfc;
-            string fcpciko = string("/lib/modules/")+unbuf.release+"/kernel/extras/fcpci.ko";
-            if (lstat(fcpciko.c_str(), &entryfc)) {
-              Log(string(Tx[T_Datei])+blau+fcpciko+schwarz+Tx[T_nichtgefFcpciMfdKinstallierwerden],obverb,1);
-              //              systemrueck("which zypper 2>/dev/null && zypper -n in kernel-source || "
-              //                  "{ which apt-get 2>/dev/null && apt-get -y install linux-source; }", 1+obverb,oblog);
-              linst.doinst("kernel-source",1+obverb,oblog);
-/*              
-              const string qvz="/usr/src";
-              const string versi="fcpci-3.10.0";
-              const string srcf=string("fritz-")+versi+".tar.bz2";
-              pruefverz(qvz,obverb,oblog,0);
-              struct stat entrysrc;
-              if (lstat((qvz+vtz+srcf).c_str(),&entrysrc)) KLA
-                systemrueck(string("cd ")+qvz+";sudo wget https://belug.de/~lutz/pub/fcpci/"+srcf+" --no-check-certificate",1+obverb,oblog);
-              KLZ
-              string srcvz=qvz+vtz+versi+"/src";
-              if (lstat(srcvz.c_str(),&entrysrc)) KLA
-                systemrueck(string("cd ")+qvz+";sudo tar xjf "+srcf,obverb,oblog);
-                //                sed -e '/#include <linux\/isdn\/capilli.h>/ a\#include <linux\/utsname.h>' -e '/NOTE("(%s built on %s at %s)\\n", TARGET, __DATE__, __TIME__);/ c    NOTE("(%s built on release %s, version %s)\\n", TARGET, utsname()->release, utsname()->version);' main.c >main_neu.c
-                // fuer Kernel 4.3.3-3-default und gcc muss jetzt noch 1) , __DATE__ und __TIME__ aus main.c Zeile 365 entfernt werden,
-                // 2) in driver.c Zeile 373 IRQF_DISABLED durch 0x00 ersetzt werden, dann kompilier- und installierbar
-              KLZ
-              systemrueck("cd "+srcvz+";sudo test -f driver.c.bak || sed -i.bak '/request_irq/i#if !defined(IRQF_DISABLED)\\n"
-                  "# define IRQF_DISABLED 0x00\\n#endif' driver.c;"
-                  "sudo sed -e '/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>' "
-                  "-e '/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
-                  "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);' "
-                  "main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
-                  "sudo make clean",1+obverb,oblog);
-              svec rueck;
-              systemrueck("sudo rm -f /root/bin/xargs",1+obverb,oblog);
-              systemrueck("cd "+srcvz+";sudo make all ",1+obverb,oblog); // || { sudo dnf clean all; sudo dnf update; sudo make all; }
-              systemrueck("cd "+srcvz+";sudo make install",1+obverb,oblog);
-              */
-              // in Mint musste man gcc downgraden, um fcpci installieren zu koennen
-              uchar obdown=0;
-              string gccpfad,gpppfad;
-              struct utsname unameD;
-              uname(&unameD);
-              string rel=unameD.release;
-              size_t p1=rel.find('.');
-              if (p1!=string::npos) {
-               size_t p2=rel.find('.',p1+1);
-               if (p2!=string::npos) {
-                float vers=atof(rel.substr(0,p2).c_str());
-                if (vers>0 && vers<3.14) {
-                 if (obprogda("gcc",obverb,oblog,&gccpfad) && obprogda("g++",obverb,oblog,&gpppfad)) {
-                 obdown=1;
-//                 systemrueck("sudo cp \""+gccpfad+"\" \""+gccpfad+".bak\" && " "sudo cp \""+gpppfad+"\" \""+gpppfad+".bak\"",obverb,oblog);
-                 if (!kopier(gccpfad,gccpfad+".bak",obverb,oblog)) kopier(gpppfad,gpppfad+".bak",obverb,oblog);
-                 linst.doinst("gcc-4.8",1+obverb,oblog);
-                 linst.doinst("g++-4.8",1+obverb,oblog);
-                 systemrueck("sudo ln -sf \""+gccpfad+"-4.8\" \""+gccpfad+"\" && "
-                             "sudo ln -sf \""+gpppfad+"-4.8\" \""+gpppfad+"\"",obverb,oblog);
-                 } // if (!obprogda("gcc",obverb,oblog,&gccpfad) && !obprogda("g++",obverb,oblog,&gpppfad)) 
-                } // if (vers>0 && vers<3.14) 
-               } // if (p2!=string::npos) 
-              } // if (p1!=string::npos) 
-              if (systemrueck("ls /lib/modules/$(uname -r)/build",obverb,oblog)) {
-               if (system==deb) {
-                systemrueck("sudo apt -y install linux-headers-$(uname -r)",obverb,oblog);
-               }
-              }
-              systemrueck("ls -l /lib/modules/$(uname -r)/build 2>/dev/null || "
-                  "{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
-                  "sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU && sudo cp -a $NEU /lib/modules/$(uname -r)/build; }",obverb,oblog);
-              string proj="fcpci_copy";
-              string srcvz=instverz+vtz+proj+".tar.gz";
-              holvongithub(proj);
-              const string vorcfg="sudo test -f driver.c.bak || sed -i.bak \"/request_irq/i#if !defined(IRQF_DISABLED)\\n"
-                  "# define IRQF_DISABLED 0x00\\n#endif\" driver.c;"
-                  "sudo sed -e '\\''/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>'\\'' "
-                  "-e '\\''/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
-                  "c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);'\\'' "
-                  "main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
-                  "sudo make clean";
-              const string cfgbismake=" 2>/dev/null; sudo ";
-              kompiliere(proj,s_gz,vorcfg,cfgbismake);
-              systemrueck("sudo depmod",obverb,oblog);
-              if (obdown) {
-               systemrueck("sudo mv -f \""+gccpfad+".bak\" \""+gccpfad+"\" && "
-                           "sudo mv -f \""+gpppfad+".bak\" \""+gpppfad+"\"",obverb,oblog);
-              }
-            } // if (lstat(fcpciko.c_str(), &entryfc)) 
-          } // if (systemrueck("sudo modprobe -v fcpci",obverb-1,oblog)) 
-        } // for(uchar ivers=0;ivers<2;ivers++) 
+	Log(violetts+Tx[T_pruefcapi]+schwarz,obverb,oblog);
+	static uchar capiloggekuerzt=0;
+	static uchar capischonerfolgreichinstalliert=0;
+	int capilaeuft=0;
+	unsigned versuch=0;
+	capisv(obverb,oblog);
+	if (obcapi) {
+		for(;versuch<2;versuch++) {
+			// capi4linux muss zum Laufen der Capisuite installiert sein
+			// fuer fcpci muss in driver.c eingefuegt werden:
+			// #if !defined(IRQF_DISABLED)
+			// #  define IRQF_DISABLED 0x00
+			// #endif
+			//    capilaeuft=(PIDausName("capisuite")>=0);
+			capilaeuft = this->scapisuite->machfit(obverb?obverb-1:0,oblog,wahr);
+			Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz,obverb,oblog);
+			if (capilaeuft) {
+				capischonerfolgreichinstalliert=1;
+			} else {
+				//      pid_t pid = GetPIDbyName("capisuite") ; // If -1 = not found, if -2 = proc fs access error
+				uchar fcpcida=0, capida=0, capidrvda=0;
+				pruefinstv();
+				vector<string> rueck;
+				systemrueck("lsmod",obverb,oblog,&rueck);
+				for(size_t i=0;i<rueck.size();i++){
+					if (!fcpcida) {if (!rueck[i].find("fcpci")) {fcpcida=1;continue;}}
+					if (!capidrvda) {if (!rueck[i].find("capidrv")) {capidrvda=1;continue;}}
+					if (!capida) {if (!rueck[i].find("capi")) {capida=1;continue;}}
+					if (fcpcida && capida && capidrvda) break;
+				} // for(size_t i=0;i<rueck.size();i++)
+				lsysen system=lsys.getsys(obverb,oblog);
+				if (!fcpcida || !capida || !capidrvda) {
+					Log(Tx[T_Lade_Capi_Module],-1,0);
+					systemrueck("sudo modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog,0,1);
+					for(uchar ivers=0;ivers<2;ivers++) {
+						if (!fcpcida)
+							if (systemrueck("sudo modprobe -v fcpci 2>/dev/null",obverb-1,oblog)) {
+								if (ivers) {
+									Log(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+schwarz,1,1);
+									return 1;
+								} // if (ivers)
+								utsname unbuf;
+								uname(&unbuf);
+								Log(string(Tx[T_Kernelversion])+blau+unbuf.release+schwarz,obverb,oblog);
+								struct stat entryfc;
+								string fcpciko = string("/lib/modules/")+unbuf.release+"/kernel/extras/fcpci.ko";
+								if (lstat(fcpciko.c_str(), &entryfc)) {
+									Log(string(Tx[T_Datei])+blau+fcpciko+schwarz+Tx[T_nichtgefFcpciMfdKinstallierwerden],obverb,1);
+									//              systemrueck("which zypper 2>/dev/null && zypper -n in kernel-source || "
+									//                  "{ which apt-get 2>/dev/null && apt-get -y install linux-source; }", 1+obverb,oblog);
+									linst.doinst("kernel-source",1+obverb,oblog);
+									/*              
+																	const string qvz="/usr/src";
+																	const string versi="fcpci-3.10.0";
+																	const string srcf=string("fritz-")+versi+".tar.bz2";
+																	pruefverz(qvz,obverb,oblog,0);
+																	struct stat entrysrc;
+																	if (lstat((qvz+vtz+srcf).c_str(),&entrysrc)) KLA
+																	systemrueck(string("cd ")+qvz+";sudo wget https://belug.de/~lutz/pub/fcpci/"+srcf+" --no-check-certificate",1+obverb,oblog);
+																	KLZ
+																	string srcvz=qvz+vtz+versi+"/src";
+																	if (lstat(srcvz.c_str(),&entrysrc)) KLA
+																	systemrueck(string("cd ")+qvz+";sudo tar xjf "+srcf,obverb,oblog);
+									//                sed -e '/#include <linux\/isdn\/capilli.h>/ a\#include <linux\/utsname.h>' -e '/NOTE("(%s built on %s at %s)\\n", TARGET, __DATE__, __TIME__);/ c    NOTE("(%s built on release %s, version %s)\\n", TARGET, utsname()->release, utsname()->version);' main.c >main_neu.c
+									// fuer Kernel 4.3.3-3-default und gcc muss jetzt noch 1) , __DATE__ und __TIME__ aus main.c Zeile 365 entfernt werden,
+									// 2) in driver.c Zeile 373 IRQF_DISABLED durch 0x00 ersetzt werden, dann kompilier- und installierbar
+									KLZ
+									systemrueck("cd "+srcvz+";sudo test -f driver.c.bak || sed -i.bak '/request_irq/i#if !defined(IRQF_DISABLED)\\n"
+									"# define IRQF_DISABLED 0x00\\n#endif' driver.c;"
+									"sudo sed -e '/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>' "
+									"-e '/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
+									"c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);' "
+									"main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
+									"sudo make clean",1+obverb,oblog);
+									svec rueck;
+									systemrueck("sudo rm -f /root/bin/xargs",1+obverb,oblog);
+									systemrueck("cd "+srcvz+";sudo make all ",1+obverb,oblog); // || { sudo dnf clean all; sudo dnf update; sudo make all; }
+									systemrueck("cd "+srcvz+";sudo make install",1+obverb,oblog);
+									 */
+									// in Mint musste man gcc downgraden, um fcpci installieren zu koennen
+									uchar obdown=0;
+									string gccpfad,gpppfad;
+									struct utsname unameD;
+									uname(&unameD);
+									string rel=unameD.release;
+									size_t p1=rel.find('.');
+									if (p1!=string::npos) {
+										size_t p2=rel.find('.',p1+1);
+										if (p2!=string::npos) {
+											float vers=atof(rel.substr(0,p2).c_str());
+											if (vers>0 && vers<3.14) {
+												if (obprogda("gcc",obverb,oblog,&gccpfad) && obprogda("g++",obverb,oblog,&gpppfad)) {
+													obdown=1;
+													//                 systemrueck("sudo cp \""+gccpfad+"\" \""+gccpfad+".bak\" && " "sudo cp \""+gpppfad+"\" \""+gpppfad+".bak\"",obverb,oblog);
+													if (!kopier(gccpfad,gccpfad+".bak",obverb,oblog)) kopier(gpppfad,gpppfad+".bak",obverb,oblog);
+													linst.doinst("gcc-4.8",1+obverb,oblog);
+													linst.doinst("g++-4.8",1+obverb,oblog);
+													systemrueck("sudo ln -sf \""+gccpfad+"-4.8\" \""+gccpfad+"\" && "
+															"sudo ln -sf \""+gpppfad+"-4.8\" \""+gpppfad+"\"",obverb,oblog);
+												} // if (!obprogda("gcc",obverb,oblog,&gccpfad) && !obprogda("g++",obverb,oblog,&gpppfad)) 
+											} // if (vers>0 && vers<3.14) 
+										} // if (p2!=string::npos) 
+									} // if (p1!=string::npos) 
+									if (systemrueck("ls /lib/modules/$(uname -r)/build",obverb,oblog)) {
+										if (system==deb) {
+											systemrueck("sudo apt -y install linux-headers-$(uname -r)",obverb,oblog);
+										}
+									}
+									systemrueck("ls -l /lib/modules/$(uname -r)/build 2>/dev/null || "
+											"{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
+											"sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU && sudo cp -a $NEU /lib/modules/$(uname -r)/build; }",obverb,oblog);
+									string proj="fcpci_copy";
+									string srcvz=instverz+vtz+proj+".tar.gz";
+									holvongithub(proj);
+									const string vorcfg="sudo test -f driver.c.bak || sed -i.bak \"/request_irq/i#if !defined(IRQF_DISABLED)\\n"
+										"# define IRQF_DISABLED 0x00\\n#endif\" driver.c;"
+										"sudo sed -e '\\''/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>'\\'' "
+										"-e '\\''/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
+										"c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);'\\'' "
+										"main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
+										"sudo make clean";
+									const string cfgbismake=" 2>/dev/null; sudo ";
+									kompiliere(proj,s_gz,vorcfg,cfgbismake);
+									systemrueck("sudo depmod",obverb,oblog);
+									if (obdown) {
+										systemrueck("sudo mv -f \""+gccpfad+".bak\" \""+gccpfad+"\" && "
+												"sudo mv -f \""+gpppfad+".bak\" \""+gpppfad+"\"",obverb,oblog);
+									}
+								} // if (lstat(fcpciko.c_str(), &entryfc)) 
+							} // if (systemrueck("sudo modprobe -v fcpci",obverb-1,oblog)) 
+					} // for(uchar ivers=0;ivers<2;ivers++) 
 
-        // Fedora:
-        // dnf install ncurses-devel
-        // cd /usr/src/kernels/4.7.3-200.fc24.x86_64
-        // make olddefconfig
-        // dnf install elfutils-libelf-devel
-        
-        if (systemrueck("sudo modprobe capi 2>/dev/null",obverb,oblog)) {
-          if (system==fed) {
-            svec vrueck1,vrueck2;
-            string v1,v2;
-            systemrueck("sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5",obverb,oblog,&vrueck1);
-            if (vrueck1.size()) v1=vrueck1[0];
-            systemrueck("sudo dnf -y install kernel-modules-extra && "
-						"{ lsmod | grep capidrv || sudo modprobe capidrv 2>/dev/null; "
-						  "lsmod | grep kernelcapi || sudo modprobe kernelcapi 2>/dev/null;}",obverb,oblog);
-						systemrueck("sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5",obverb,oblog,&vrueck2);
-            if (vrueck2.size()) v2=vrueck2[0];
-//            <<"vi: "<<v1<<"\n"<<"v2: "<<v2<<endl;
-            if (v1!=v2) {
-							autofkonfschreib();
-							Log(blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
-                  +schwarz+v2+blau+").\n"+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
-                  +schwarz,1,1);
-              exit(0);
-            } // if (v1!=v2) 
-//            exit(1);
-            // nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
-            // int altobverb=obverb;obverb=2;
-            //         systemrueck("sudo dnf -y install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
-						linst.doinst("rpmdevtools",obverb+1,oblog,"rpmdev-setuptree");
-						linst.doggfinst("numactl-devel",obverb+1,oblog);
-						linst.doggfinst("pesign",obverb+1,oblog);
-            systemrueck("sudo rpmdev-setuptree",obverb,oblog);
-            Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
-            systemrueck("cd "+instverz+" && sudo dnf download --source kernel",obverb,oblog);
-            svec rueck;
-            string kstring; // kernel-4.8.4-200.fc24.src.rpm
-            systemrueck("cd "+instverz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);
-            if (rueck.size()) {
-              kstring=rueck[0]; // "kernel-4.8.4-200.fc24.src.rpm"
-							string kernel=kstring.substr(kstring.find('-')+1);
-							kernel.erase(kernel.rfind('.'));
-							kernel.erase(kernel.rfind('.'));
-							utsname unbuf;
-							uname(&unbuf);
-							string release=unbuf.release;
-							string relev=release.substr(0,release.find(unbuf.machine)-1);
-							if (kernel.find(relev)) {
-							 Log(Tx[T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von]+blaus+relev+schwarz+Tx[T_nach]+blau+kernel+schwarz+
-							     Tx[T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1,1);
-							 exit(0);
-							} // 							if (kernel.find(relev))
-              systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
-              systemrueck("cd "+instverz+" && sudo rpm -Uvh "+kstring,obverb,oblog);
-              for(unsigned iru=0;iru<2;iru++) {
-                if (!systemrueck("cd "+gethome()+"/rpmbuild/SPECS && rpmbuild -bp --target=$(uname -m) kernel.spec",obverb,oblog)) {
-                  systemrueck("sudo dnf -y install kernel-devel",obverb,oblog);
-                  systemrueck("KSTRING="+kstring+" && cd $HOME/rpmbuild/BUILD/$(echo $KSTRING|cut -d. -f1,2,4)/linux-`uname -r` && "
-                              "make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules",obverb,oblog);
-                  break;
-                }
-                if (iru) break;
-                systemrueck("dnf -y install $(cd '"+gethome()+"/rpmbuild/SPECS' && rpmbuild -bp --target=$(uname -m) kernel.spec 2>&1 >/dev/null "
-                    "| sed '/is needed by/!d;s/^[[:blank:]]*\\(.*\\) is needed by.*/\\1/')",obverb,oblog);
-                // dnf install audit-libs-devel binutils-devel bison elfutils-devel flex hmaccalc newt-devel numactl-devel 
-                //     pciutils-devel "perl(ExtUtils::Embed)" perl-devel xz-devel
-                // dann nochmal
-              } // for(unsigned iru=0;iru<2;iru++) 
-              // dann nach Anleitung: dnf -y install kernel-devel
-              // cd ~/rpmbuild/BUILD/kernel<version>/linux<version>
-              // make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules
-            } // if (rueck.size()) 
-            exit(70);
-            // obverb=altobverb;
-          } // if (system==fed) 
-        } // if (systemrueck("sudo modprobe capi",obverb,oblog))
-        systemrueck("sudo modprobe capidrv 2>/dev/null",obverb,oblog);
-      } // if (!fcpcida || !capida || !capidrvda) 
-      pruefrules(obverb,oblog);
-      pruefblack(obverb,oblog);
-      capischonerfolgreichinstalliert=!linst.obfehlt("capisuite capi4linux i4l-isdnlog");
-			// <<violett<<"capischonerfolgreichinstalliert: "<<schwarz<<(int)capischonerfolgreichinstalliert<<endl;
-      if (capischonerfolgreichinstalliert) {
-       struct stat d1, d2;
-       if (lstat("/etc/capisuite",&d1) && lstat("/usr/local/etc/capisuite",&d2))
-         capischonerfolgreichinstalliert=0;
-      }
-      // <<rot<<"capischonerfolgreichinstalliert 0: "<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
-      if (!capischonerfolgreichinstalliert) {
-        Log(string(Tx[T_Konnte])+blau+"capisuite"+schwarz+Tx[T_nichtstarten],1,oblog);
-				linst.doinst("ghostscript",obverb+1,oblog,"gs");
-				// if (systemrueck("which zypper",-1,-1)) KLA
-        //        if (linst.checkinst(-1,-1)!=zyp) KLA
-        /*
-           if (distri.pruefipr()!=zypper) {
-           Log(rots+Tx[T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht],1,1);
-           this->obcapi=0;
-           return 1;
-           }
-         */
-        if (system!=sus)
-          linst.doggfinst("capiutils",obverb+1,oblog);
-        pruefsfftobmp();
-        linst.doggfinst("libcapi20-2",obverb+1,oblog);
-        linst.doggfinst("libcapi20-3",obverb+1,oblog);
-        linst.doggfinst("python-devel",obverb+1,oblog);
-        linst.doinst("libxslt-tools",obverb+1,oblog,"xsltproc");
-        uchar mitcservice=0;
-				// 25.11.16 nicht mehr auf Repo
-				/*
-        if (system==sus) {
-          linst.doggfinst("capi4linux i4l-isdnlog",obverb+1,oblog);
-          systemrueck("zypper lr | grep 'kkeil factory development project' || "
-              "sudo zypper ar -f http://download.opensuse.org/repositories/home:/kkeil:/Factory/openSUSE_Factory/home:kkeil:Factory.repo",
-              1,1);
-          // i4l-isdnlog scheint nicht wirklich noetig zu sein
-          //   capischonerfolgreichinstalliert=!systemrueck("zypper -n --gpg-auto-import-keys in capisuite capi4linux i4l-isdnlog", 1+obverb,oblog); 
-          // i4l-base geloescht
-          capischonerfolgreichinstalliert=!linst.doinst("-f capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
-        } // if (lsys.getsys(obverb,oblog)==sus) 
-				*/
-        if (!capischonerfolgreichinstalliert) {
-          holvongithub("capisuite_copy");
-          svec csrueck;
-          systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' "+string(obverb?"":"2>/dev/null")+"| sort -r",
-                      obverb,oblog,&csrueck);
-          if (csrueck.size()) {
-            struct stat c20stat;
-            if (lstat((lsys.getlib64()+"/libcapi20.so").c_str(),&c20stat)) {
-              holvongithub("capi20_copy");
-              kompiliere("capi20_copy",s_gz);
-              systemrueck("sh -c 'cd "+instverz+" && L="+lsys.getlib64()+"/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "
-                          "ln -s $L3 $L; test -f $L;'",obverb,oblog);
-            }
-//            systemrueck("sh -c 'P=capi20_copy;T=$P.tar.bz2;M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
-//                        " && ./configure && make && sudo make install '",obverb,oblog);
-//            svec rueck;
-//            systemrueck("find /usr -name capi20.h 2>/dev/null",obverb,oblog,&rueck); 
-            systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; }; }'",obverb-1,oblog);
-						uchar altobverb=obverb;
-						obverb++;
-						svec rueck;
-						string pyvz;
-						systemrueck("python -c \"import os; print os.path.dirname(os.__file__)\"",obverb,oblog,&rueck);
-						if (rueck.size()) {
-						 pyvz=*sersetze(&rueck[0],"/","\\/");
-						} else {
-						 pyvz=ersetzAllezu(lsys.getlib64(),"/","\\/")+"\\/python2.7";
-						}
-            if (!kompiliere("capisuite_copy",s_gz,
-                           "sed -i.bak \""
-            // 20.11.16 diese Zeile scheint jetzt wieder in Fedora 24 unnoetig
-//													 "s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/;"
-						// 20.11.16 pyexecdir und pythondir mussten in Fedora 24 so gesetzt werden
-						// 23.11.16: fuer openSUE muesste wohl --datarootdir=/usr/local/lib64 versucht werden, so wie es in capisuite.conf hier auch schon steht
-													 "s/\\( pyexecdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
-      													 "print site.getsitepackages()[0]\\\"\\`/;"
-													 "s/\\( pythondir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
-      													 "print site.getsitepackages()[0]\\\"\\`/;"
-//													 "s/\\( *pyexecdir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
-//													 "s/\\( *pythondir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
-													 "s/\\( *python_configdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import distutils.sysconfig;"
-      													 "print distutils.sysconfig.get_config_var('\\''LIBPL'\\'')\\\"\\`/;"
-													 "s/\\( *python_moduledir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
-      													 "print site.getsitepackages()[0]\\\"\\`/;"
-													 "s/\\( *python_moduleexecdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
-      													 "print site.getsitepackages()[0]\\\"\\`/;"
-													 "\" configure"
-//                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
-//                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }"
-                           ,"HAVE_NEW_CAPI4LINUX=0 --libdir=/usr/local/lib64 --datarootdir=/usr/local/lib64 --sysconfdir=/etc --localstatedir=/var && "
-                           "sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp && ")) {
-              mitcservice=1;
-            }
-						obverb=altobverb;
-						//            string befehl="sh -c 'P=capisuite; T=$P.tar.gz; M=$P-master; cd "+instverz+""
-//                  " && tar xpvf $T && rm -rf $P ; mv $M $P && cd $P"
-//                  " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
-//                  " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
-//                        "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; } "
-//                  " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var"
-//                  " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
-////                  " && sed -i.bak 's/<capi20.h>/\\\""+*sersetze(&rueck[0],"/","\\\"\\/")+"/' src/backend/capi.h"
-////                  " && sed -i.bak 's/<capi20.h>/\\\""+*sersetze(&rueck[0],"/","\\\"\\/")+"/' src/backend/connection.h"
-//                  " && make"
-//                  " && sudo make install"
-//                  " && sudo systemctl daemon-reload; "
-//                  "'";
-//            if (!systemrueck(befehl,obverb,oblog)) {
-//              //            pruefverz("/etc/capisuite",obverb,oblog,wahr);
-//              //            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
-//              //            systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instverz+"/capisuite/scripts/fax.conf /etc/capisuite");
-////              pruefverz("/usr/local/var/log",obverb,oblog,wahr);
-//              //         pruefverz("/usr/local/var/log");
-//              mitcservice=1;
-//            } // if (!systemrueck(sh -c ...
-          } // if (csrueck.size()) 
-          // aktuelles Verzeichnis
-        } // if (!capischonerfolgreichinstalliert) 
-        liescapiconf();
-        if (mitcservice) {
-          capischonerfolgreichinstalliert=!cservice() && !ccapiconfdat.empty() && !cfaxconfdat.empty();
-        }
-        // capisuite unter Kernel 4: 
-        // zypper in sfftobmp libcapi20-2
-        //        // scp linux2:/usr/include/capiutils.h /usr/include
-        //        // scp linux2:/usr/include/capicmd.h /usr/include
-        // zypper in libcapi20-3 python-devel capi4linux capi4linux-devel
-        // in ubuntu: sfftobmp, (libcapi20-3)?, libcapi20-dev, python-dev, xsltproc
+					// Fedora:
+					// dnf install ncurses-devel
+					// cd /usr/src/kernels/4.7.3-200.fc24.x86_64
+					// make olddefconfig
+					// dnf install elfutils-libelf-devel
 
-        // git clone https://github.com/larsimmisch/capisuite.git
-        // wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz
-        // tar xpvf capisuite.tar.gz
-        // mv capisuite-master capisuite
-        // cd capisuite
-        // bei mehreren Installationen wird hier unsortiert die erste Zeile genommen:
-        // sed -i.bak 's/python_configdir=.*/python_configdir=`find \/usr\/lib*\/python* -type f -name Makefile -printf "%h\\\\n"`/' configure
-        // bei mehreren Installationen koennte hier die richtigen genommen werden:
-      // sed -i.bak 's/python_configdir=.*/python_configdir=`cat $(which python-config) | head -n 1| sed "s\/#\\!\\(.*\\)\/\\1\\\/config\/"`/' configure
-      // auf Fedora funzt aber nur die Original-configure
-        // in ubuntu: ./configure HAVE_NEW_CAPI4LINUX 0
-        //            make
-        //            sudo make install
-        // sudo cp -ai /home/schade/autofax/capisuite/src/capisuite.conf /etc/capisuite/
-        // sudo cp -ai /home/schade/autofax/capisuite/scripts/fax.conf /etc/capisuite/
-        // sudo chmod 777 /usr/local/var/log
-        // ln -s /usr/lib64/libcapi20.so.3.0.6 libcapi20.so
-        // in ./src/application/pythonscript.cpp Zeile 104: (Py_ssize_t*)&length statt &length
-        // in /usr/include/capiutils.h eine dritte Zeile einfuegen: #define CAPI_LIBRARY_V2
-        // in src/backend/connection.cpp eine Zeile 26 einfuegen: #include <cstring>
-      } // if (!capischonerfolgreichinstalliert)
-      servc::daemon_reload();
-    } // if (capilaeuft) else
-    // <<rot<<"capischonerfolgreichinstalliert: "<<schwarz<<(int)capischonerfolgreichinstalliert<<endl;
-    // <<rot<<"capizukonf: "<<schwarz<<(int)capizukonf<<endl;
-    // <<rot<<"versuch: "<<schwarz<<versuch<<endl;
-    if (capischonerfolgreichinstalliert) {
-      if (!capizukonf) {
-        clieskonf();
-      }
-      if (obcapi && (versuch>0 || this->capizukonf || rzf)) {
-        this->konfcapi();
-        scapisuite->restart(obverb-1,oblog);
-        capizukonf=0;
-      } //     if (versuch>0) KLA
-      // das folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
-      //    capilaeuft = !systemrueck("systemctl status capisuite | grep ' active (running)' >/dev/null 2>&1",0,obverb,oblog);
-      //     capilaeuft  = !systemrueck("systemctl is-active capisuite",0,obverb,oblog);
-      capilaeuft = this->scapisuite->obslaeuft(obverb-1,oblog);
-      if (capilaeuft) {
-        break;
-      } else {
-        servc::daemon_reload();
-        systemrueck("sudo systemctl stop isdn",obverb>0?obverb:-1,oblog,0,1);
-        //      systemrueck("sudo systemctl start isdn",obverb,oblog);
-        Log(string(Tx[T_StarteCapisuite]),-1,oblog);
-        scapisuite->stop(-1,oblog);
-        capilaeuft=scapisuite->startundenable(-1,oblog);
-        if (capilaeuft) {
-          Log(Tx[T_Capisuite_gestartet],1,oblog);
-        } else {
-          //       Log("Capisuite konnte nicht gestartet werden.",1,1);
-        }
-      } //       if (capilaeuft) else
-    } // if (capischonerfolgreichinstalliert) 
-  } //  for(unsigned versuch=0;1;versuch++) (3.)
-  if (capilaeuft) {
-    if (!capiloggekuerzt) {
-      kuerzelogdatei("/var/log/capisuite.log",obverb); // screen
-      capiloggekuerzt=1;
-    }
-    if (this->obcapi) pruefmodcron(obverb,oblog);
-  } else {
-    Log(rots+Tx[T_konntecapisuiteservice]+gruen+ltoan(versuch)+rot+Tx[T_malnichtstartenverwN]+schwarz,1,1);
-    return 1;
-  } //   if (capilaeuft)
-  return 0;
+					if (systemrueck("sudo modprobe capi 2>/dev/null",obverb,oblog)) {
+						if (system==fed) {
+							svec vrueck1,vrueck2;
+							string v1,v2;
+							systemrueck("sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5",obverb,oblog,&vrueck1);
+							if (vrueck1.size()) v1=vrueck1[0];
+							systemrueck("sudo dnf -y install kernel-modules-extra && "
+									"{ lsmod | grep capidrv || sudo modprobe capidrv 2>/dev/null; "
+									"lsmod | grep kernelcapi || sudo modprobe kernelcapi 2>/dev/null;}",obverb,oblog);
+							systemrueck("sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5",obverb,oblog,&vrueck2);
+							if (vrueck2.size()) v2=vrueck2[0];
+							//            <<"vi: "<<v1<<"\n"<<"v2: "<<v2<<endl;
+							if (v1!=v2) {
+								autofkonfschreib();
+								Log(blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
+										+schwarz+v2+blau+").\n"+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
+										+schwarz,1,1);
+								exit(0);
+							} // if (v1!=v2) 
+							//            exit(1);
+							// nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
+							// int altobverb=obverb;obverb=2;
+							//         systemrueck("sudo dnf -y install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
+							linst.doinst("rpmdevtools",obverb+1,oblog,"rpmdev-setuptree");
+							linst.doggfinst("numactl-devel",obverb+1,oblog);
+							linst.doggfinst("pesign",obverb+1,oblog);
+							systemrueck("sudo rpmdev-setuptree",obverb,oblog);
+							Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
+							systemrueck("cd "+instverz+" && sudo dnf download --source kernel",obverb,oblog);
+							svec rueck;
+							string kstring; // kernel-4.8.4-200.fc24.src.rpm
+							systemrueck("cd "+instverz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);
+							if (rueck.size()) {
+								kstring=rueck[0]; // "kernel-4.8.4-200.fc24.src.rpm"
+								string kernel=kstring.substr(kstring.find('-')+1);
+								kernel.erase(kernel.rfind('.'));
+								kernel.erase(kernel.rfind('.'));
+								utsname unbuf;
+								uname(&unbuf);
+								string release=unbuf.release;
+								string relev=release.substr(0,release.find(unbuf.machine)-1);
+								if (kernel.find(relev)) {
+									Log(Tx[T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von]+blaus+relev+schwarz+Tx[T_nach]+blau+kernel+schwarz+
+											Tx[T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1,1);
+									exit(0);
+								} // 							if (kernel.find(relev))
+								systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
+								systemrueck("cd "+instverz+" && sudo rpm -Uvh "+kstring,obverb,oblog);
+								for(unsigned iru=0;iru<2;iru++) {
+									if (!systemrueck("cd "+gethome()+"/rpmbuild/SPECS && rpmbuild -bp --target=$(uname -m) kernel.spec",obverb,oblog)) {
+										systemrueck("sudo dnf -y install kernel-devel",obverb,oblog);
+										systemrueck("KSTRING="+kstring+" && cd $HOME/rpmbuild/BUILD/$(echo $KSTRING|cut -d. -f1,2,4)/linux-`uname -r` && "
+												"make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules",obverb,oblog);
+										break;
+									}
+									if (iru) break;
+									systemrueck("dnf -y install $(cd '"+gethome()+"/rpmbuild/SPECS' && rpmbuild -bp --target=$(uname -m) kernel.spec 2>&1 >/dev/null "
+											"| sed '/is needed by/!d;s/^[[:blank:]]*\\(.*\\) is needed by.*/\\1/')",obverb,oblog);
+									// dnf install audit-libs-devel binutils-devel bison elfutils-devel flex hmaccalc newt-devel numactl-devel 
+									//     pciutils-devel "perl(ExtUtils::Embed)" perl-devel xz-devel
+									// dann nochmal
+								} // for(unsigned iru=0;iru<2;iru++) 
+								// dann nach Anleitung: dnf -y install kernel-devel
+								// cd ~/rpmbuild/BUILD/kernel<version>/linux<version>
+								// make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules
+							} // if (rueck.size()) 
+							exit(70);
+							// obverb=altobverb;
+						} // if (system==fed) 
+					} // if (systemrueck("sudo modprobe capi",obverb,oblog))
+					systemrueck("sudo modprobe capidrv 2>/dev/null",obverb,oblog);
+				} // if (!fcpcida || !capida || !capidrvda) 
+				pruefrules(obverb,oblog);
+				pruefblack(obverb,oblog);
+				capischonerfolgreichinstalliert=!linst.obfehlt("capisuite capi4linux i4l-isdnlog");
+				// <<violett<<"capischonerfolgreichinstalliert: "<<schwarz<<(int)capischonerfolgreichinstalliert<<endl;
+				if (capischonerfolgreichinstalliert) {
+					struct stat d1, d2;
+					if (lstat("/etc/capisuite",&d1) && lstat("/usr/local/etc/capisuite",&d2))
+						capischonerfolgreichinstalliert=0;
+				}
+				// <<rot<<"capischonerfolgreichinstalliert 0: "<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
+				if (!capischonerfolgreichinstalliert) {
+					Log(string(Tx[T_Konnte])+blau+"capisuite"+schwarz+Tx[T_nichtstarten],1,oblog);
+					linst.doinst("ghostscript",obverb+1,oblog,"gs");
+					// if (systemrueck("which zypper",-1,-1)) KLA
+					//        if (linst.checkinst(-1,-1)!=zyp) KLA
+					/*
+						 if (distri.pruefipr()!=zypper) {
+						 Log(rots+Tx[T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht],1,1);
+						 this->obcapi=0;
+						 return 1;
+						 }
+					 */
+					if (system!=sus)
+						linst.doggfinst("capiutils",obverb+1,oblog);
+					pruefsfftobmp();
+					linst.doggfinst("libcapi20-2",obverb+1,oblog);
+					linst.doggfinst("libcapi20-3",obverb+1,oblog);
+					linst.doggfinst("python-devel",obverb+1,oblog);
+					linst.doinst("libxslt-tools",obverb+1,oblog,"xsltproc");
+					uchar mitcservice=0;
+					// 25.11.16 nicht mehr auf Repo
+					/*
+						 if (system==sus) {
+						 linst.doggfinst("capi4linux i4l-isdnlog",obverb+1,oblog);
+						 systemrueck("zypper lr | grep 'kkeil factory development project' || "
+						 "sudo zypper ar -f http://download.opensuse.org/repositories/home:/kkeil:/Factory/openSUSE_Factory/home:kkeil:Factory.repo",
+						 1,1);
+					// i4l-isdnlog scheint nicht wirklich noetig zu sein
+					//   capischonerfolgreichinstalliert=!systemrueck("zypper -n --gpg-auto-import-keys in capisuite capi4linux i4l-isdnlog", 1+obverb,oblog); 
+					// i4l-base geloescht
+					capischonerfolgreichinstalliert=!linst.doinst("-f capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
+					} // if (lsys.getsys(obverb,oblog)==sus) 
+					 */
+					if (!capischonerfolgreichinstalliert) {
+						holvongithub("capisuite_copy");
+						svec csrueck;
+						systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' "+string(obverb?"":"2>/dev/null")+"| sort -r",
+								obverb,oblog,&csrueck);
+						if (csrueck.size()) {
+							struct stat c20stat;
+							if (lstat((lsys.getlib64()+"/libcapi20.so").c_str(),&c20stat)) {
+								holvongithub("capi20_copy");
+								kompiliere("capi20_copy",s_gz);
+								systemrueck("sh -c 'cd "+instverz+" && L="+lsys.getlib64()+"/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "
+										"ln -s $L3 $L; test -f $L;'",obverb,oblog);
+							}
+							//            systemrueck("sh -c 'P=capi20_copy;T=$P.tar.bz2;M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
+							//                        " && ./configure && make && sudo make install '",obverb,oblog);
+							//            svec rueck;
+							//            systemrueck("find /usr -name capi20.h 2>/dev/null",obverb,oblog,&rueck); 
+							systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; }; }'",obverb-1,oblog);
+							uchar altobverb=obverb;
+							obverb++;
+							svec rueck;
+							string pyvz;
+							systemrueck("python -c \"import os; print os.path.dirname(os.__file__)\"",obverb,oblog,&rueck);
+							if (rueck.size()) {
+								pyvz=*sersetze(&rueck[0],"/","\\/");
+							} else {
+								pyvz=ersetzAllezu(lsys.getlib64(),"/","\\/")+"\\/python2.7";
+							}
+							if (!kompiliere("capisuite_copy",s_gz,
+										"sed -i.bak \""
+										// 20.11.16 diese Zeile scheint jetzt wieder in Fedora 24 unnoetig
+										//													 "s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/;"
+										// 20.11.16 pyexecdir und pythondir mussten in Fedora 24 so gesetzt werden
+										// 23.11.16: fuer openSUE muesste wohl --datarootdir=/usr/local/lib64 versucht werden, so wie es in capisuite.conf hier auch schon steht
+										"s/\\( pyexecdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
+										"print site.getsitepackages()[0]\\\"\\`/;"
+										"s/\\( pythondir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
+										"print site.getsitepackages()[0]\\\"\\`/;"
+										//													 "s/\\( *pyexecdir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
+										//													 "s/\\( *pythondir=\\).*/\\1"+pyvz+"\\/site-packages\\/capisuite/;"
+										"s/\\( *python_configdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import distutils.sysconfig;"
+										"print distutils.sysconfig.get_config_var('\\''LIBPL'\\'')\\\"\\`/;"
+										"s/\\( *python_moduledir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
+										"print site.getsitepackages()[0]\\\"\\`/;"
+										"s/\\( *python_moduleexecdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
+										"print site.getsitepackages()[0]\\\"\\`/;"
+										"\" configure"
+										//                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
+										//                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }"
+										,"HAVE_NEW_CAPI4LINUX=0 --libdir=/usr/local/lib64 --datarootdir=/usr/local/lib64 --sysconfdir=/etc --localstatedir=/var && "
+										"sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp && ")) {
+											mitcservice=1;
+										}
+							obverb=altobverb;
+							//            string befehl="sh -c 'P=capisuite; T=$P.tar.gz; M=$P-master; cd "+instverz+""
+							//                  " && tar xpvf $T && rm -rf $P ; mv $M $P && cd $P"
+							//                  " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
+							//                  " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
+							//                        "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; } "
+							//                  " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var"
+							//                  " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
+							////                  " && sed -i.bak 's/<capi20.h>/\\\""+*sersetze(&rueck[0],"/","\\\"\\/")+"/' src/backend/capi.h"
+							////                  " && sed -i.bak 's/<capi20.h>/\\\""+*sersetze(&rueck[0],"/","\\\"\\/")+"/' src/backend/connection.h"
+							//                  " && make"
+							//                  " && sudo make install"
+							//                  " && sudo systemctl daemon-reload; "
+							//                  "'";
+							//            if (!systemrueck(befehl,obverb,oblog)) {
+							//              //            pruefverz("/etc/capisuite",obverb,oblog,wahr);
+							//              //            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
+							//              //            systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instverz+"/capisuite/scripts/fax.conf /etc/capisuite");
+							////              pruefverz("/usr/local/var/log",obverb,oblog,wahr);
+							//              //         pruefverz("/usr/local/var/log");
+							//              mitcservice=1;
+							//            } // if (!systemrueck(sh -c ...
+						} // if (csrueck.size()) 
+						// aktuelles Verzeichnis
+					} // if (!capischonerfolgreichinstalliert) 
+					liescapiconf();
+					if (mitcservice) {
+						capischonerfolgreichinstalliert=!cservice() && !ccapiconfdat.empty() && !cfaxconfdat.empty();
+					}
+					// capisuite unter Kernel 4: 
+					// zypper in sfftobmp libcapi20-2
+					//        // scp linux2:/usr/include/capiutils.h /usr/include
+					//        // scp linux2:/usr/include/capicmd.h /usr/include
+					// zypper in libcapi20-3 python-devel capi4linux capi4linux-devel
+					// in ubuntu: sfftobmp, (libcapi20-3)?, libcapi20-dev, python-dev, xsltproc
+
+					// git clone https://github.com/larsimmisch/capisuite.git
+					// wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz
+					// tar xpvf capisuite.tar.gz
+					// mv capisuite-master capisuite
+					// cd capisuite
+					// bei mehreren Installationen wird hier unsortiert die erste Zeile genommen:
+					// sed -i.bak 's/python_configdir=.*/python_configdir=`find \/usr\/lib*\/python* -type f -name Makefile -printf "%h\\\\n"`/' configure
+					// bei mehreren Installationen koennte hier die richtigen genommen werden:
+					// sed -i.bak 's/python_configdir=.*/python_configdir=`cat $(which python-config) | head -n 1| sed "s\/#\\!\\(.*\\)\/\\1\\\/config\/"`/' configure
+					// auf Fedora funzt aber nur die Original-configure
+					// in ubuntu: ./configure HAVE_NEW_CAPI4LINUX 0
+					//            make
+					//            sudo make install
+					// sudo cp -ai /home/schade/autofax/capisuite/src/capisuite.conf /etc/capisuite/
+					// sudo cp -ai /home/schade/autofax/capisuite/scripts/fax.conf /etc/capisuite/
+					// sudo chmod 777 /usr/local/var/log
+					// ln -s /usr/lib64/libcapi20.so.3.0.6 libcapi20.so
+					// in ./src/application/pythonscript.cpp Zeile 104: (Py_ssize_t*)&length statt &length
+					// in /usr/include/capiutils.h eine dritte Zeile einfuegen: #define CAPI_LIBRARY_V2
+					// in src/backend/connection.cpp eine Zeile 26 einfuegen: #include <cstring>
+				} // if (!capischonerfolgreichinstalliert)
+				servc::daemon_reload();
+			} // if (capilaeuft) else
+			// <<rot<<"capischonerfolgreichinstalliert: "<<schwarz<<(int)capischonerfolgreichinstalliert<<endl;
+			// <<rot<<"capizukonf: "<<schwarz<<(int)capizukonf<<endl;
+			// <<rot<<"versuch: "<<schwarz<<versuch<<endl;
+			if (capischonerfolgreichinstalliert) {
+				if (!capizukonf) {
+					clieskonf();
+				}
+				if (/*obcapi && */(versuch>0 || this->capizukonf || rzf)) {
+					this->konfcapi();
+					scapisuite->restart(obverb-1,oblog);
+					capizukonf=0;
+				} //     if (versuch>0) KLA
+				// das folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
+				//    capilaeuft = !systemrueck("systemctl status capisuite | grep ' active (running)' >/dev/null 2>&1",0,obverb,oblog);
+				//     capilaeuft  = !systemrueck("systemctl is-active capisuite",0,obverb,oblog);
+				capilaeuft = this->scapisuite->obslaeuft(obverb-1,oblog);
+				if (capilaeuft) {
+					break;
+				} else {
+					servc::daemon_reload();
+					systemrueck("sudo systemctl stop isdn",obverb>0?obverb:-1,oblog,0,1);
+					//      systemrueck("sudo systemctl start isdn",obverb,oblog);
+					Log(string(Tx[T_StarteCapisuite]),-1,oblog);
+					scapisuite->stop(-1,oblog);
+					capilaeuft=scapisuite->startundenable(-1,oblog);
+					if (capilaeuft) {
+						Log(Tx[T_Capisuite_gestartet],1,oblog);
+					} else {
+						//       Log("Capisuite konnte nicht gestartet werden.",1,1);
+					}
+				} //       if (capilaeuft) else
+			} // if (capischonerfolgreichinstalliert) 
+		} //  for(unsigned versuch=0;1;versuch++) (3.)
+		if (capilaeuft) {
+			if (!capiloggekuerzt) {
+				kuerzelogdatei("/var/log/capisuite.log",obverb); // screen
+				capiloggekuerzt=1;
+			}
+			/*if (this->obcapi) */pruefmodcron(obverb,oblog);
+		} else {
+			Log(rots+Tx[T_konntecapisuiteservice]+gruen+ltoan(versuch)+rot+Tx[T_malnichtstartenverwN]+schwarz,1,1);
+			return 1;
+		} //   if (capilaeuft)
+	// if (obcapi)
+	} else {
+		if (scapisuite) scapisuite->stopdis(obverb,oblog);
+		return 1;
+	} // 	if (obcapi) else
+	return 0;
 } // pruefcapi()
 
 
@@ -8381,7 +8388,7 @@ int main(int argc, char** argv)
 		if (!(pm.loef||pm.loew||pm.loea)) {
 			pm.DateienHerricht();  
 		}
-    if (pm.obfcard) if (pm.obcapi) pm.obcapi=!pm.pruefcapi();
+    if (pm.obfcard) pm.obcapi=!pm.pruefcapi();
     if (pm.obmodem) if (pm.obhyla) pm.obhyla=!pm.pruefhyla();
     Log(Tx[T_Verwende]+blaus+(pm.obcapi?"Capisuite":"")+schwarz+(pm.obcapi&&pm.obhyla?", ":"")+blau+(pm.obhyla?"Hylafax":"")+schwarz+
         (!pm.obcapi&&!pm.obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):""),1,pm.oblog);
