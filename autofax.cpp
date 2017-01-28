@@ -6802,8 +6802,7 @@ int paramcl::pruefhyla()
 		 string dt=varsphylavz+uvz[i]+"seqf";
 		 struct stat dstat;
 		 if (lstat(dt.c_str(),&dstat)) {
-		  touch(dt);
-			systemrueck("sudo chown "+huser+":uucp "+dt,obverb,oblog);
+			systemrueck("sudo touch "+dt+" && sudo chown "+huser+":uucp "+dt,obverb,oblog);
 		 } // 		 if (lstat(dt.c_str(),&dstat))
 		} // 		for (unsigned i=0;i<2;i++)
 		systemrueck("sudo sh -c \"V="+varsphylavz+";L=\\$V/log;R=\\$V/recvq;chmod 774 \\$L \\$R;chmod 660 \\$L/seqf \\$R/seqf\"",obverb,oblog);
