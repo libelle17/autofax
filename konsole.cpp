@@ -2667,6 +2667,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 
 int servc::obda(int obverb,int oblog)
 {
+ srueck.clear();
  systemrueck("systemctl -a --no-legend list-units '"+sname+".service'",obverb,oblog,&srueck);  // bei list-units return value immer 0
  serviceda=!srueck.empty();
  return serviceda;

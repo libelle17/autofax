@@ -193,7 +193,7 @@ compiler:
 	@printf " Untersuche Compiler ...\r"
 #	@printf " CCName: %b%s%b                  \n" $(blau) "${CCName}" $(reset)
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
-	which $(CCName)$(OR)||{ $(REPOS)$(instpf) $(COMP);};
+	@which $(CCName)$(OR)||{ $(REPOS)$(instpf) $(COMP);};
 	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(instp) $(libmcd);fi
 	@[ -z $$mitpg ]||$(schau) $(pgd)$(OR)||{ $(instp) $(pgd);$(slc);};
 	@test -f /usr/include/tiff.h||$(instp) libtiff-$(dev)

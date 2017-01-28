@@ -254,8 +254,8 @@ class paramcl // Programmparameter
     size_t cptlen;
 #endif
     string host="localhost";  // fuer MySQL/MariaDB
-    string logdname; // Logdatei-Name ohne Pfad
-    string logvz; // nur das Verzeichnis
+    string logdname; // Logdatei-Name ohne Pfad autofax.log
+    string logvz; // nur das Verzeichnis /var/log
     string loggespfad; // Gesamtpfad, auf den dann die in konsole.h verwiesene und oben definierte Variable logdt zeigt
                        // bei jeder Aenderung muss auch logdt neu gesetzt werden!
     string zufaxenvz;

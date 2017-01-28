@@ -7008,7 +7008,7 @@ void paramcl::pruefsfftobmp()
 // rueckgabe: wie obcapi eingestellt sein sollte
 int paramcl::pruefcapi()
 {
-	Log(violetts+Tx[T_pruefcapi]+schwarz,obverb,oblog);
+	Log(violetts+Tx[T_pruefcapi]+schwarz+" obcapi: "+(obcapi?"1":"0"),obverb,oblog);
 	static uchar capiloggekuerzt=0;
 	static uchar capischonerfolgreichinstalliert=0;
 	int capilaeuft=0;
@@ -7492,35 +7492,40 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
       Log(rots+Tx[T_faxemitCFehler]+schwarz+Tx[T_Faxdatei]+blau+ff+rot+ Tx[T_hat0Bytes]+schwarz,1,1);
     } else {
       // capisuitefax mit Userangabe nur fuer root erlaubt
-      pmp->nextnum();
-      string cmd=string("capisuitefax -n ")+(strcmp("root",curruser())?"":"-u"+pmp->cuser)+" -d "+fsfp->telnr+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
-      vector<string> faxerg;
-      systemrueck(cmd,1,1,&faxerg,0,wahr,Tx[T_Faxbefehl]);
-      if (faxerg.size()) {
-        const char* tz1="uccessful enqueued as ", // muss sprachlich so falsch bleiben wie im python-Script
-              *tz2=" for ";
-        if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1)) {
-          if (char *z2=strstr(z1,tz2)) {
-            string spoolg(z1+strlen(tz1),z2-z1-strlen(tz1));
-            //            inDatenbankc(My, &spoolg, idsp, npdfp, spdfp, nachrnr, z2+strlen(tz2), obverb, oblog);
-            if (!spoolg.find("job ")) {
-             string nr=spoolg.substr(4); 
-             char buf[20]={0};
-             sprintf(buf,"%.3lu",atol(nr.c_str()));
-             spoolg=pmp->cfaxusersqvz+vtz+"fax-"+buf+".sff";
-            } //             if (!spoolg.find("job "))
-            inDbc(My, spooltab, altspool, spoolg, fsfp, z2+strlen(tz2), obverb, oblog);
-          }   // if (char *z2=strstr(z1,tz2)) 
-          // if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
-        } else if (faxerg.at(0).find("can't open")==0) {
-				  // Fax nicht in capisuite-spool gestellt, da Datei nicht zu oeffnen, also auch wieder aus Tabelle loeschen
-          Log(rots+Tx[T_Datei]+blau+pmp->wvz+vtz+fsfp->spdf+rot+"' (id: "+blau+fsfp->id+rot+
-              Tx[T_nichtgefundenloeschesieausDB]+schwarz,1,1);
-          RS rsloe(My,"DELETE FROM `"+spooltab+"` WHERE id = "+fsfp->id,ZDB);
-        } //         if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
-      } else {
-        Log(rots+string(Tx[T_KeinErgebnisbeimFaxen])+schwarz,1,1);
-      } //       if (faxerg.size())
+			pmp->nextnum();
+			string csfpfad;
+			if (obprogda("capisuitefax",obverb,oblog,&csfpfad)) {
+				string cmd=csfpfad+" -n "+(strcmp("root",curruser())?"":"-u"+pmp->cuser)+" -d "+fsfp->telnr+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
+				vector<string> faxerg;
+				systemrueck(cmd,1,1,&faxerg,0,wahr,Tx[T_Faxbefehl]);
+				if (faxerg.size()) {
+					const char* tz1="uccessful enqueued as ", // muss sprachlich so falsch bleiben wie im python-Script
+								*tz2=" for ";
+					if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1)) {
+						if (char *z2=strstr(z1,tz2)) {
+							string spoolg(z1+strlen(tz1),z2-z1-strlen(tz1));
+							//            inDatenbankc(My, &spoolg, idsp, npdfp, spdfp, nachrnr, z2+strlen(tz2), obverb, oblog);
+							if (!spoolg.find("job ")) {
+								string nr=spoolg.substr(4); 
+								char buf[20]={0};
+								sprintf(buf,"%.3lu",atol(nr.c_str()));
+								spoolg=pmp->cfaxusersqvz+vtz+"fax-"+buf+".sff";
+							} //             if (!spoolg.find("job "))
+							inDbc(My, spooltab, altspool, spoolg, fsfp, z2+strlen(tz2), obverb, oblog);
+						}   // if (char *z2=strstr(z1,tz2)) 
+						// if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
+					} else if (faxerg.at(0).find("can't open")==0) {
+						// Fax nicht in capisuite-spool gestellt, da Datei nicht zu oeffnen, also auch wieder aus Tabelle loeschen
+						Log(rots+Tx[T_Datei]+blau+pmp->wvz+vtz+fsfp->spdf+rot+"' (id: "+blau+fsfp->id+rot+
+								Tx[T_nichtgefundenloeschesieausDB]+schwarz,1,1);
+						RS rsloe(My,"DELETE FROM `"+spooltab+"` WHERE id = "+fsfp->id,ZDB);
+					} //         if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
+				} else {
+					Log(rots+string(Tx[T_KeinErgebnisbeimFaxen])+schwarz,1,1);
+				} //       if (faxerg.size())
+			} else {
+		   cerr<<rot<<"capisuitefax "<<Txk[T_nicht_gefunden]<<schwarz<<endl;
+		 } // 	if (obprogda(prog,obverb,oblog,&csfpfad)) else
     } //     if (lstat(ff.c_str(), &entryff))  else else
   } //   if (fsfp->telnr.empty())
 } // faxemitC
