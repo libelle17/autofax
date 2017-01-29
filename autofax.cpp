@@ -4894,15 +4894,16 @@ void paramcl::DateienHerricht()
 
 	// 2a. ... und im Warteverzeichnis in PDF umwandeln, falls erfolgreich und gleichziel => auch in ziel kopieren
 	for (int nachrnr=fxv.size()-1; nachrnr>=0; --nachrnr) {
-		unsigned erg=-1;
-		if (lstat((fxv[nachrnr].npdf.c_str()), &entrynpdf)) {
-			// ZPKT(" nach lstat: "hh;
-			Log(string(Tx[T_lstatfehlgeschlagen]) + strerror(errno) + Tx[T_beiDatei]+ fxv[nachrnr].npdf,1,1,1);
-			continue;
-		} // (lstat((*pfad + vtz + dirEntry->d_name).c_str(), &entrynpdf)) 
-		erg=zupdf(fxv[nachrnr].npdf, fxv[nachrnr].spdf, &fxv[nachrnr].pseiten, obocra, 0, obverb, oblog);
-		if (erg) {
-			//      spdfp->erase(spdfp->begin()+nachrnr);
+	  unsigned nfehlt=1;
+	  if (!fxv[nachrnr].npdf.empty()) {
+			if ((nfehlt=lstat((fxv[nachrnr].npdf.c_str()), &entrynpdf))) {
+				Log(string(Tx[T_lstatfehlgeschlagen])+rot+strerror(errno)+schwarz+Tx[T_beiDatei]+ fxv[nachrnr].npdf,1,1,1);
+				continue;
+      } else {
+				/*erg=*/zupdf(fxv[nachrnr].npdf, fxv[nachrnr].spdf, &fxv[nachrnr].pseiten, obocra, 0, obverb, oblog); // 0=erfolg
+			}
+		} // 	  if (!fxv[nachrnr].npdf.empty())
+	  if (lstat((fxv[nachrnr].npdf.c_str()), &entrynpdf)) {
 			// Misserfolg, zurueckverschieben und aus der Datenbank loeschen
 			uint wfehler=0;
 			// <<violett<<"fxv["<<(int)nachrnr<<"].npdf: "<<fxv[nachrnr].npdf<<schwarz<<endl;
@@ -4915,12 +4916,13 @@ void paramcl::DateienHerricht()
 				verschiebe(fxv[nachrnr].spdf,zufaxenvz,cuser,&wfehler,1,obverb,oblog);
 			fxv.erase(fxv.begin()+nachrnr);
 		} else {
+		  // Erfolg
 			if (gleichziel) {
 				uint kfehler=0;
-				kopiere(fxv[nachrnr].npdf, zmp, &kfehler, 1, obverb, oblog);
+				if (!nfehlt) kopiere(fxv[nachrnr].npdf, zmp, &kfehler, 1, obverb, oblog);
 				/*string zield=*/kopiere(fxv[nachrnr].spdf, zmp, &kfehler, 1, obverb, oblog);
 			} // if (gleichziel)
-		} // if (!erg) else
+		} // 	  if (lstat((fxv[nachrnr].npdf.c_str()), &entrynpdf)) else
 	} // for (int nachrnr=npdfp->size()-1; nachrnr>=0; --nachrnr)  // 2.
 
 	// 2b. Die originalen PDF-Dateien ins Warteverzeichnis verschieben, falls erfolgreich, nicht schon registriert und gleichziel 
