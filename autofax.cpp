@@ -1625,9 +1625,9 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	// T_Aufrufintervall
 	{", Aufrufintervall: ",", (cron) call interval: "},
 	// T_kein_Aufruf
-	{"kein Aufruf","no cron call"},
+	{"kein cron-Aufruf","no cron call"},
 	// T_Minute
-	{"Minute","minute"},
+	{" Minute"," minute"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
