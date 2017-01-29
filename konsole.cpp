@@ -1040,38 +1040,23 @@ void kopierm(string *quelle, string *ziel)
 #endif
 
 // von http://chris-sharpe.blogspot.de/2013/05/better-than-systemtouch.html
-void touch(const std::string& pathname)
+void touch(const std::string& pathname,int obverb/*=0*/,int oblog/*=*/)
 {
-	int fd = open(pathname.c_str(),
-			O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK,
-			0666);
-	if (fd<0) // Couldn't open that path.
-	{
-		std::cerr
-			<< __PRETTY_FUNCTION__
-			<< ": Couldn't open() path \""
-			<< pathname
-			<< "\"\n";
-		return;
+  int fehler=0;
+	int fd = open(pathname.c_str(), O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, 0666);
+	if (fd<0) { // Couldn't open that path.
+		std::cerr << __PRETTY_FUNCTION__ << ": Couldn't open() path \"" << pathname << "\"\n";
+		fehler=1;
+	} else {
+		int rc = utimensat(AT_FDCWD, pathname.c_str(), nullptr, 0);
+		if (rc) {
+			std::cerr << __PRETTY_FUNCTION__ << ": Couldn't utimensat() path \"" << pathname << "\"\n";
+			fehler=1;
+		}
+		std::clog << __PRETTY_FUNCTION__ << ": Completed touch() on path \"" << pathname << "\"\n";
 	}
-	int rc = utimensat(AT_FDCWD,
-			pathname.c_str(),
-			nullptr,
-			0);
-	if (rc)
-	{
-		std::cerr
-			<< __PRETTY_FUNCTION__
-			<< ": Couldn't utimensat() path \""
-			<< pathname
-			<< "\"\n";
-		return;
-	}
-	std::clog
-		<< __PRETTY_FUNCTION__
-		<< ": Completed touch() on path \""
-		<< pathname
-		<< "\"\n";
+	if (fehler)
+		systemrueck("touch '"+pathname+"'",obverb,oblog);
 }
 
 void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach)
@@ -1191,13 +1176,16 @@ int obprogda(string prog,int obverb, int oblog, string *pfad/*=0*/)
       return 2;
     }
   } // if (strcmp(curruser(),"root")) 
-  for(int iru=0;iru<3;iru++) {
+  for(int iru=0;iru<6;iru++) {
     struct stat fstat;
     string verz;
     switch (iru) {
       case 0: verz="/sbin/"; break;
       case 1: verz="/usr/sbin/"; break;
       case 2: verz="/usr/local/sbin/"; break;
+      case 3: verz="/bin/"; break;
+      case 4: verz="/usr/bin/"; break;
+      case 5: verz="/usr/local/bin/"; break;
       default: break;
     } //     switch (iru)
     verz+=prog;
@@ -1732,7 +1720,7 @@ std::string dir_name(const std::string& path)
 // obverb: 1 = Befehl anzeigen, 2 = auch Rueckgabezeilen anzeigen
 // obergebnisanzeig: 1=falls Fehler und obverb>1, >1=falls Fehler
 int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<string> *rueck/*=0*/, 
-    int verbergen/*=0*/, int obergebnisanzeig/*wahr*/, const string& ueberschr/*=""*/,vector<errmsgcl> *errm/*=0*/)
+    int verbergen/*=0*/, int obergebnisanzeig/*wahr*/, const string& ueberschr/*=""*/,vector<errmsgcl> *errm/*=0*/,uchar obincron/*=0*/)
 {
 // verbergen: 0 = nichts, 1= '2>/dev/null' anhaengen + true zurueckliefern, 2='>/dev/null 2>&1' anhaengen + Ergebnis zurueckliefern
   binaer ob0heissterfolg=wahr;
@@ -1747,8 +1735,20 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
   } else if (verbergen==2) {
     if (obverb<=1)
       hcmd+=" >/dev/null 2>&1";
-  }
-  string const * czg=&hcmd;
+  } //   if (verbergen==1 || (obfind && (obverb<1 || strcmp(curruser(),"root")))) else iff
+  string *czg=&hcmd;
+	if (obincron) {
+    vector<string> tok;
+    aufSplit(&tok,czg,' ');
+		if (tok.size()>0) {
+		 if (obprogda(tok[0],obverb,oblog,czg)) {
+			for(unsigned j=1;j<tok.size();j++) {
+			 *czg+=' ';
+			 *czg+=tok[j];
+			} // 			for(unsigned j=1;j<tok.size();j++)
+		 } // 		 if (obprogda(tok[0],obverb,oblog,czg))
+		} // 		if (tok.size()>0)
+	} // 	if (obincron)
   // "obfind: "<<(int)obfind<<", obverb: "<<(int)obverb<<", curruser(): "<<curruser()<<", '"<<violett<<*czg<<schwarz<<"'"<<endl;
   string meld(Txk[T_Rueckmeldung]);
   string aktues;
