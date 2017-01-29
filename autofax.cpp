@@ -572,6 +572,8 @@ enum T_
 	T_Faxnr,
 	T_Name_des_Adressaten_aus_Faxnummer_ermittelt,
 	T_Aufrufintervall,
+	T_kein_Aufruf,
+	T_Minute,
 	T_MAX
 };
 
@@ -1621,7 +1623,11 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	// T_Name_des_Adressaten_aus_Faxnummer_ermittelt
   {"Name des Adressaten, aus Faxnummer ermittelt","Name of the receiver according to his fax number"},
 	// T_Aufrufintervall
-	{", Aufrufintervall: ",", call interval: "},
+	{", Aufrufintervall: ",", (cron) call interval: "},
+	// T_kein_Aufruf
+	{"kein Aufruf","no cron call"},
+	// T_Minute
+	{"Minute","minute"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -8401,7 +8407,8 @@ int main(int argc, char** argv)
     if (pm.obmodem) pm.obhyla=!pm.pruefhyla();
     Log(Tx[T_Verwende]+blaus+(pm.obcapi?"Capisuite":"")+schwarz+(pm.obcapi&&pm.obhyla?", ":"")+blau+(pm.obhyla?"Hylafax":"")+schwarz+
         (!pm.obcapi&&!pm.obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):"")+
-				Tx[T_Aufrufintervall]+blau+pm.cronminut+schwarz+Tx[T_Minuten],1,pm.oblog);
+				Tx[T_Aufrufintervall]+blau+(pm.cronminut=="0"?Tx[T_kein_Aufruf]+schwarzs:pm.cronminut+schwarz+(pm.cronminut=="1"?Tx[T_Minute]:Tx[T_Minuten])),
+				1,pm.oblog);
     if (pm.loef || pm.loew || pm.loea) {
       if (pm.loef) pm.loeschefax(pm.obverb,pm.oblog);
       if (pm.loew) pm.loeschewaise(pm.obverb,pm.oblog);
