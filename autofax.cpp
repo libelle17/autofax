@@ -4875,6 +4875,7 @@ void paramcl::DateienHerricht()
 		//          npdfp->push_back(wartedatei);
 		getstammext(&wartedatei,&stamm,&exten);
 		string wartepdf=stamm+".pdf";
+		if (!strcasecmp(exten.c_str(),"pdf")) wartedatei.clear();
 		fxv.push_back(fxfcl(wartedatei,wartepdf,urfx.at(i).ur,urfx.at(i).prio));
 	} //   for(size_t i=0;i<urfx.size();i++)
 	//        KLZ // for(size_t i=0;i<npdfd.size();i++) 
