@@ -4623,7 +4623,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 			if (obocr) {
 				if (!pruefocr()) {
 				  svec rueck;
-					if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*quellp+"\" \""+ziel+"\" 2>&1",obverb,oblog,&rueck)) {
+					if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*quellp+"\" \""+ziel+"\" 2>&1",obverb,oblog,&rueck,0,wahr,"",0,1)) {
 						erg=0; // nicht umgekehrt
 						for(unsigned uru=0;uru<rueck.size();uru++) {
 						 if (rueck[uru].find("ERROR")!=string::npos) {
