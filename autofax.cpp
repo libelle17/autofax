@@ -5867,8 +5867,9 @@ void paramcl::empfarch()
         int erg=-1;
         if (entrysff.st_size) {
 					// -f == force, steht nicht in --help
+					svec sfferg;
           cmd=string("sfftobmp -f -d -t ")+sffdatei+" -o \""+tifpfad+"\"";
-					erg=systemrueck(cmd,obverb,oblog);
+					erg=systemrueck(cmd,obverb,oblog,0,0,wahr,"",0,1);
 					if (!erg) {
 					 attrangleich(tifpfad,empfvz,obverb,oblog);
 					} // if (!erg)
