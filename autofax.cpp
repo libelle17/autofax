@@ -8341,7 +8341,7 @@ int main(int argc, char** argv)
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();
-	Log("main(): "+pm.cl,0,1);
+	// Log("main(): "+pm.cl,0,1);
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
   pm.VorgbAllg();
   pm.VorgbSpeziell(); // die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion "void paramcl::VorgbSpeziell()" ueberladbar sind
