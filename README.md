@@ -820,9 +820,12 @@ directory /etc/ausrangiert: <b>hylafax</b>,
 
 <p style="margin-top: 1em">c) In case <b>selinux</b> is
 active (as per default in fedora), it impedes per default
-hylafax-hfaxd; in this case, a module for selinux is
-silently arranged in order to allow running
-hylafax-hfaxd.</p> </td></tr>
+hylafax; in this case, a module for selinux is silently
+arranged in order to allow running hylafax-hfaxd. Furtheron,
+up to the possible construction of a better fitting
+solution, the domain &rsquo;getty&rsquo; has to be
+deactivated with the command &rsquo;<b>semanage permissive
+-a getty_t</b>&rsquo; in order to receive faxes.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -1605,7 +1608,7 @@ makefile:</b></p>
 
 <p style="margin-top: 1em">gcc V.6, g++ V.6, groff,
 libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Version
-0.42228</p> </td></tr>
+0.42225</p> </td></tr>
 </table>
 
 <p style="margin-left:15%;"><b>autofax:</b></p>
@@ -1655,7 +1658,7 @@ soll:</p>
 
 
 <p style="margin-top: 1em">hylafax+, hylafax+-client,
-sendmail, tiff (im Fall von Version 0.42228</p></td></tr>
+sendmail, tiff (im Fall von Version 0.42225</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">falls ocr benutzt werden
@@ -1680,7 +1683,7 @@ image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 k&ouml;nnen abh&auml;ngige Programme
 einschlie&szlig;en. <br>
 Falls Sie eines dieser Programme nicht wollen oder eine
-&auml;ltere Version 0.42228</p>
+&auml;ltere Version 0.42225</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>
@@ -1769,9 +1772,14 @@ Verzeichnis /etc/ausrangiert: <b>hylafax</b>,
 <p style="margin-top: 1em">c) falls <b>selinux</b> aktiv
 ist (wie standardm&auml;&szlig;ig in fedora), dann
 behindert es standardm&auml;&szlig;ig
-<b>hylafax-hfaxd</b>; in diesem Fall wird im Hintergrund ein
-Modul f&uuml;r selinux eingerichtet, um den Betrieb von
-hylafax-hfaxd wieder zu erlauben.</p></td></tr>
+<b>hylafax</b>; in diesem Fall wird im Hintergrund ein Modul
+f&uuml;r selinux eingerichtet, um den Betrieb von
+hylafax-hfaxd wieder zu erlauben. Ferner muss (bis zur
+eventuellen Erstellung einer ma&szlig;geschneiderteren
+L&ouml;sung) die Dom&auml;ne &rsquo;getty&rsquo; mit
+dem Befehl &rsquo;<b>semanage permissive -a
+getty_t</b>&rsquo; in selinux entsch&auml;rft werden, um
+faxe &uuml;ber hylafax empfangen zu k&ouml;nnen.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

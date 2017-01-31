@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Wed Feb  1 00:01:04 2017 -->
+<!-- CreationDate: Wed Feb  1 00:09:59 2017 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -838,9 +838,12 @@ directory /etc/ausrangiert: <b>hylafax</b>,
 
 <p style="margin-top: 1em">c) In case <b>selinux</b> is
 active (as per default in fedora), it impedes per default
-hylafax-hfaxd; in this case, a module for selinux is
-silently arranged in order to allow running
-hylafax-hfaxd.</p> </td></tr>
+hylafax; in this case, a module for selinux is silently
+arranged in order to allow running hylafax-hfaxd. Furtheron,
+up to the possible construction of a better fitting
+solution, the domain &rsquo;getty&rsquo; has to be
+deactivated with the command &rsquo;<b>semanage permissive
+-a getty_t</b>&rsquo; in order to receive faxes.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

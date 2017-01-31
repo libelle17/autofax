@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "01.02.17" "Version 0.42228" "\fBautofax\fR man page"
+.TH man 1 "31.01.17" "Version 0.42225" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -364,7 +364,7 @@ a) in systemd (in the directory /usr/lib/systemd/system or /lib/systemd/system),
 b) Moving of existing service files from the directory /etc/init.d to a newly created directory /etc/ausrangiert:
 \fBhylafax\fR, \fBcapisuite\fR
 .br
-c) In case \fBselinux\fR is active (as per default in fedora), it impedes per default \fRhylafax-hfaxd\fR; in this case, a module for selinux is silently arranged in order to allow running hylafax-hfaxd. 
+c) In case \fBselinux\fR is active (as per default in fedora), it impedes per default \fRhylafax\fR; in this case, a module for selinux is silently arranged in order to allow running hylafax-hfaxd. Furtheron, up to the possible construction of a better fitting solution, the domain 'getty' has to be deactivated with the command '\fBsemanage permissive -a getty_t\fR' in order to receive faxes.  
 .LP
 .HP 3
 4) Creation of a logfile, per default \fB/var/log/autofax.log\fR.
