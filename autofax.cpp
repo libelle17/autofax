@@ -3735,14 +3735,14 @@ void paramcl::pruefsamba()
       } else if (smbd.serviceda) {
         smbd.machfit(obverb,oblog);
         gestartet=1;
-      }
+      } //       if (smb.serviceda)
       if (nmb.serviceda) {
         nmb.machfit(obverb,oblog);
         if (gestartet==1) gestartet=2;
       } else if (nmbd.serviceda) {
         nmbd.machfit(obverb,oblog);
         if (gestartet==1) gestartet=2;
-      }
+      } //       if (nmb.serviceda)
       if (smb.serviceda) if (smb.obslaeuft(obverb,oblog)) if (nmb.serviceda) if (nmb.obslaeuft(obverb,oblog)) break;
       if (smbd.serviceda) if (smbd.obslaeuft(obverb,oblog)) if (nmbd.serviceda) if (nmbd.obslaeuft(obverb,oblog)) break;
     } // for(int aru=0;aru<2;aru++) 
@@ -3761,7 +3761,7 @@ void paramcl::pruefsamba()
     for(zielmustercl *zmakt=zmp;1;zmakt++){
       vzn.push_back(&zmakt->ziel);
       if (zmakt->obmusterleer()) break;
-    }
+    } //     for(zielmustercl *zmakt=zmp;1;zmakt++)
     uchar gef[vzn.size()]; memset(gef,0,vzn.size()*sizeof(uchar));
     for(size_t i=0;i<smbcf.abschv.size();i++) {
       if (smbcf.abschv[i].aname!="global") {
@@ -3893,7 +3893,7 @@ int paramcl::initDB()
   if (My->fehnr) {
     ::Log(rots+Tx[Verbindung_zur_Datenbank_nicht_herstellbar]+schwarz+ltoan(My->fehnr)+rot+Tx[T_Breche_ab]+schwarz,1,1);
     return 1;
-  }
+  } //   if (My->fehnr)
   return 0;
 } // initDB
 

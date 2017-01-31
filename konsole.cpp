@@ -2558,26 +2558,30 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 //      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
 //      if (sr1.size()) KLA
 //       if (sr1[0].find("permission")!=string::npos) KLA
-      svec sr2;
-      systemrueck("which sestatus 2>/dev/null && sestatus",obverb,oblog,&sr2);
-      uchar obse=0;
-      for(size_t j=0;j<sr2.size();j++) {
-        if (!sr2[j].find("Current mode:"))
-          if (sr2[j].find("enforcing")!=string::npos) {
-            obse=1; 
-            break;
-          }
-      } //       for(size_t j=0;j<sr2.size();j++)
-      if (obse) {
-        linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
-        systemrueck("sudo setenforce 0",obverb,oblog);
-        restart(obverb,oblog);
-				string selocal=sname+"_selocal";
-        systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+selocal+"\"",obverb,oblog);
-        systemrueck("sudo setenforce 1",obverb,oblog);
-        linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
-        systemrueck("test -f \""+selocal+".pp\" && sudo semodule -i \""+selocal+".pp\"",obverb,oblog);
-      }  // if (obse)
+			string sepfad;
+			if (obprogda("sestatus",obverb,oblog,&sepfad)) {
+				uchar obse=0;
+				svec sr2;
+				systemrueck("sestatus",obverb,oblog,&sr2);
+				for(size_t j=0;j<sr2.size();j++) {
+					if (!sr2[j].find("Current mode:"))
+						if (sr2[j].find("enforcing")!=string::npos) {
+							obse=1; 
+							break;
+						}
+				} //       for(size_t j=0;j<sr2.size();j++)
+				if (obse) {
+					linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
+					systemrueck("sudo setenforce 0",obverb,oblog);
+					restart(obverb,oblog);
+					string selocal=sname+"_selocal";
+					systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+selocal+"\"",obverb,oblog);
+					systemrueck("sudo setenforce 1",obverb,oblog);
+					linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
+					systemrueck("test -f \""+selocal+".pp\" && sudo semodule -i \""+selocal+".pp\"",obverb,oblog);
+				}  // if (obse)
+			} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
+
       //       KLZ
       //      KLZ
     } // if (serviceda && !servicelaeuft) 
