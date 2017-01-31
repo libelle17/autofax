@@ -1165,35 +1165,35 @@ betrsys pruefos()
 // erg=1: gibt es fuer den aktuellen Benutzer; erg=2: gibt es fuer root; erg=0: nicht gefunden
 int obprogda(string prog,int obverb, int oblog, string *pfad/*=0*/)
 {
-  svec rueck;
-  if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck)) {
-    if (pfad) *pfad=rueck[0];
-    return 1;
-  } // if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck))
-  if (strcmp(curruser(),"root")) {
-    if (!systemrueck("sudo which \""+prog+"\" 2>/dev/null || sudo env \"PATH=$PATH\" which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck)) {
-      if (pfad) *pfad=rueck[0];
-      return 2;
-    }
-  } // if (strcmp(curruser(),"root")) 
   for(int iru=0;iru<6;iru++) {
     struct stat fstat;
     string verz;
     switch (iru) {
-      case 0: verz="/sbin/"; break;
-      case 1: verz="/usr/sbin/"; break;
+      case 0: verz="/usr/local/bin/"; break;
+      case 1: verz="/usr/bin/"; break;
       case 2: verz="/usr/local/sbin/"; break;
-      case 3: verz="/bin/"; break;
-      case 4: verz="/usr/bin/"; break;
-      case 5: verz="/usr/local/bin/"; break;
+      case 3: verz="/usr/sbin/"; break;
+      case 4: verz="/sbin/"; break;
+      case 5: verz="/bin/"; break;
       default: break;
     } //     switch (iru)
     verz+=prog;
     if (!lstat(verz.c_str(),&fstat)) {
       if (pfad) *pfad=verz;
-      return 2;
+      return 1;
     }
   } // for(int iru=0;iru<3;iru++) 
+  svec rueck;
+  if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck)) {
+    if (pfad) *pfad=rueck[0];
+    return 2;
+  } // if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck))
+  if (strcmp(curruser(),"root")) {
+    if (!systemrueck("sudo which \""+prog+"\" 2>/dev/null || sudo env \"PATH=$PATH\" which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck)) {
+      if (pfad) *pfad=rueck[0];
+      return 3;
+    }
+  } // if (strcmp(curruser(),"root")) 
   if (pfad) pfad->clear();
   return 0; 
 } // string obprogda(string prog,int obverb, int oblog)

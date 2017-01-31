@@ -312,10 +312,9 @@ class paramcl // Programmparameter
     void pruefcvz();
     void pruefsfftobmp();
     void setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, uchar startvznr,int *obsfehltp=0, 
-				struct stat *est=0, int obverb=0, int oblog=0);
+				struct stat *est=0);
 		void konfcapi();
-    int xferlog(fsfcl *fsfp, int obverb=0, int oblog=0,
-        string *totpages=0, string *ntries=0, string *totdials=0, string *tottries=0, string *maxtries=0);
+    int xferlog(fsfcl *fsfp, string *totpages=0, string *ntries=0, string *totdials=0, string *tottries=0, string *maxtries=0);
     void richtcapiher();
     void setzmodconfd();
     void setzzielmuster(confdat& afconf);
@@ -324,13 +323,18 @@ class paramcl // Programmparameter
     int kompilbase(const string& was,const string& endg);
     int kompiliere(const string& was,const string& endg, const string& vorcfg=s_true,const string& cfgbismake=s_dampand);
     void bereinigecapi();
-	  int zupdf(string& quell, string& ziel, ulong *pseitenp=0, int obocr=1, int loeschen=1, int obverb=0, int oblog=0); // 0=Erfolg
+	  int zupdf(string& quell, string& ziel, ulong *pseitenp=0, int obocr=1, int loeschen=1); // 0=Erfolg
 		int holtif(string& datei,ulong *seitenp=0,struct tm *tmp=0,struct stat *elogp=0,
-		           string *absdrp=0,string *tsidp=0,string *calleridp=0,string *devnamep=0,int obverb=0,int oblog=0);
+		           string *absdrp=0,string *tsidp=0,string *calleridp=0,string *devnamep=0);
+		void setztmpc();
+		void pruefmodcron();
+		void pruefunpaper();
+    int pruefocr();
 	public:
+		void unpaperfuercron();
+		int Log(const string& text,bool oberr=0,short klobverb=0);
     paramcl(int argc,char** argv);
     ~paramcl();
-		void pruefunpaper();
     void pruefggfmehrfach();
     void nextnum();
     string stdfaxnr(const string& faxnr);
@@ -363,23 +367,22 @@ class paramcl // Programmparameter
     void suchestr();
     int pruefsoffice(uchar mitloe=0);
     int pruefconvert();
-    int pruefocr();
     void DateienHerricht();
     void clieskonf();
-    void capisv(int obverb,int oblog);
+    void capisv();
     int pruefcapi();
     void holvongithub(string datei);
     void hliesconf();
     void hconfigtty();
     int cservice();
     int hservice_faxq_hfaxd();
-    void hylasv1(int obverb,int oblog);
-    void hylasv2(hyinst hyinstart, int obverb,int oblog);
+    void hylasv1();
+    void hylasv2(hyinst hyinstart);
 //    int hservice_faxgetty();
     int pruefhyla();
-    int  loeschefax(int obverb, int oblog);
-    int  loeschewaise(int obverb, int oblog);
-    int  loescheallewartende(int obverb, int oblog);
+    int  loeschefax();
+    int  loeschewaise();
+    int  loescheallewartende();
     void faxealle();
     void untersuchespool(uchar mitupd=1);
     void zeigweitere();
