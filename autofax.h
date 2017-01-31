@@ -330,8 +330,8 @@ class paramcl // Programmparameter
 		void pruefmodcron();
 		void pruefunpaper();
     int pruefocr();
-	public:
 		void unpaperfuercron();
+	public:
 		int Log(const string& text,bool oberr=0,short klobverb=0);
     paramcl(int argc,char** argv);
     ~paramcl();

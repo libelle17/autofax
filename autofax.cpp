@@ -4627,21 +4627,21 @@ int paramcl::pruefocr()
 	return 0;
 } // int paramcl::pruefocr()
 
+// ocrmypdf laueft z.T. nicht aus einam Programm, das aus cron aufgerufen wird, wenn sich nicht im selben Verzeichnis unpaper findet
 void paramcl::unpaperfuercron()
 {
  const string ocr="ocrmypdf", unp="unpaper";
  string prog;
  if (obprogda(ocr,obverb,oblog,&prog)) {
-  caus<<violett<<" "<<ocr<<": "<<gruen<<prog<<schwarz<<endl;
 	string uppfad=dir_name(prog)+"/"+unp;
 	struct stat lst;
 	if (lstat(uppfad.c_str(),&lst)) {
 	 if (obprogda(unp,obverb,oblog,&prog)) {
 	  systemrueck("sudo ln -s '"+prog+"' '"+uppfad+"'",obverb,oblog);
-	 }
-	}
- }
-}
+	 } // 	 if (obprogda(unp,obverb,oblog,&prog))
+	} // 	if (lstat(uppfad.c_str(),&lst))
+ } //  if (obprogda(ocr,obverb,oblog,&prog))
+} // void paramcl::unpaperfuercron()
 
 // in Dateinherricht und empfarch (2x)
 int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr/*=1*/, int loeschen/*=1*/) // 0=Erfolg
@@ -8462,7 +8462,6 @@ int main(int argc, char** argv)
     pm.pruefcron();
   } // if (pm.kez) else else else
   pm.autofkonfschreib();
-  pm.unpaperfuercron();
   return 0;
 } // int main(int argc, char** argv) 
 
