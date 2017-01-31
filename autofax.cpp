@@ -5905,24 +5905,24 @@ void paramcl::empfarch()
 					erg=systemrueck(cmd,obverb,oblog,0,0,wahr,"",0,1);
 					if (!erg) {
 					 attrangleich(tifpfad,empfvz,obverb,oblog);
-					} // if (!erg)
-          if (erg) {
-            verschieb=2;
-            tifpfad=empfvz+vtz+tifrumpf+".sff";
-            kopiere(sffdatei,tifpfad,&kfehler,1,obverb,oblog);
+					 // bereits hier, da weder convert noch soffice noch ocrmypdf eine *.sff-Datei lesen kann, convert auch keine tiff-Datei
+					 if (obocri) {
+						 string ziel=empfvz+vtz+tifrumpf+".pdf"; 
+						 int obpdfda=!zupdf(tifpfad, ziel, &pseiten, obocri, 1); // 0=Erfolg
+						 struct stat entrynd;
+						 if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) if (!kfehler) tuloeschen(tifpfad,cuser,obverb,oblog);
+					 } // if ((erg=systemrueck(cmd,obverb,oblog))) else if (obocri)
+					} else {
+						verschieb=2;
+						tifpfad=empfvz+vtz+tifrumpf+".sff";
+						kopiere(sffdatei,tifpfad,&kfehler,1,obverb,oblog);
             if (!kfehler) {
               systemrueck("sudo chown --reference=\""+empfvz+"\" \""+tifpfad+"\"",obverb,oblog);
               systemrueck("sudo chmod --reference=\""+empfvz+"\" \""+tifpfad+"\"",obverb,oblog);
 						} else {
 						  tifpfad=sffdatei;
             } // if (!kfehler) else
-					} // if (erg)
-          if (obocri) {
-					  string ziel=empfvz+vtz+tifrumpf+".pdf"; 
-						int obpdfda=!zupdf(tifpfad, ziel, &pseiten, obocri, 1); // 0=Erfolg
-						struct stat entrynd;
-						if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) if (!kfehler) tuloeschen(tifpfad,cuser,obverb,oblog);
-          } // if ((erg=systemrueck(cmd,obverb,oblog))) else if (obocri)
+					} // if (!erg) else
         } else {
           // empfangenes Fax mit 0 Bytes, vermutlich abgefangen von anderem System, samt Textdatei nach 'falsche' verschieben
           verschieb=2;
