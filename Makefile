@@ -62,10 +62,10 @@ ifeq ($(shell which rpm$(OR);echo $$?),0)
  schau:=rpm -q
  ifeq ($(shell which zypper$(OR);echo $$?),0)
   pgroff:=groff
-  instp:=sudo zypper -n --gpg-auto-import-keys in # -n = --non-interactive
-  instpf:=sudo zypper --gpg-auto-import-keys in
-  uninp:=sudo zypper rm -u # -u = --clean-deps
-  # unigp:=for f in $$(rpm -q --configfiles $$PACK); do sudo rm -f $$f; done; sudo zypper rm -u $$PACK; // Loeschen der Konfdateien verhindert Deinst
+  IPR:=sudo zypper -n --gpg-auto-import-keys in # -n = --non-interactive
+  IP_R:=sudo zypper --gpg-auto-import-keys in
+  UP_R:=sudo zypper rm -u # -u = --clean-deps
+  # UPR:=for f in $$(rpm -q --configfiles $$PACK); do sudo rm -f $$f; done; sudo zypper rm -u $$PACK; // Loeschen der Konfdateien verhindert Deinst
   REPOS:=sudo zypper lr|grep 'g++\|devel_gcc'$(OR)||sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release | grep ^NAME= | cut -d'"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'"' -f2`/devel:gcc.repo;
   urepo:=sudo zypper lr|grep \"g++\\|devel_gcc\"$(OR) && sudo zypper rr devel_gcc;
   COMP:=gcc gcc-c++ $(CCInst)
@@ -73,30 +73,30 @@ ifeq ($(shell which rpm$(OR);echo $$?),0)
   COMP:=make automake gcc-c++ kernel-devel
   libmc:=mysql
   ifeq ($(shell which dnf$(OR);echo $$?),0)
-   instp:=sudo dnf -y install 
-   instpf:=sudo dnf install 
-   uninp:=sudo dnf remove
+   IPR:=sudo dnf -y install 
+   IP_R:=sudo dnf install 
+   UP_R:=sudo dnf remove
   else ifeq ($(shell which yum$(OR);echo $$?),0)
-   instp:=sudo yum -y install 
-   instpf:=sudo yum install 
-   uninp:=sudo yum remove
+   IPR:=sudo yum -y install 
+   IP_R:=sudo yum install 
+   UP_R:=sudo yum remove
   endif
  endif
- unigp:=$(uninp)
+ UPR:=$(UP_R)
 else ifeq ($(shell which apt-get$(OR);echo $$?),0)
  schau:=dpkg -s
- instp:=sudo apt-get -y --force-yes install 
- instpf:=sudo apt-get --force-yes install 
- uninp:=sudo apt-get autoremove
- unigp:=sudo apt-get purge --auto-remove
+ IPR:=sudo apt-get -y --force-yes install 
+ IP_R:=sudo apt-get --force-yes install 
+ UP_R:=sudo apt-get autoremove
+ UPR:=sudo apt-get purge --auto-remove
  COMP:=build-essential linux-headers-`uname -r`
  dev:=dev
 endif
 libmcd:=$(libmc)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
-un:=uninstall.sh
-GROFFCHECK:=$(schau) $(pgroff)$(OR)||{ $(instp) $(pgroff);printf '$(unigp) $(pgroff)\n'>>$(un);};true
+UN:=uninstall.sh
+GROFFCHECK:=$(schau) $(pgroff)$(OR)||{ $(IPR) $(pgroff);printf '$(UPR) $(pgroff)\n'>>$(UN);};true
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
@@ -215,14 +215,14 @@ compiler:
 	@printf " Untersuche Compiler ...\r"
 #	@printf " CCName: %b%s%b                  \n" $(blau) "${CCName}" $(reset)
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
-	@which $(CCName)$(OR)||{ $(REPOS)$(instpf) $(COMP);printf '$(unigp) $(COMP);$(urepo)\n'>>$(un);};
-	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(instp) $(libmcd);printf '$(unigp) $(libmcd)\n'>>$(un);fi
-	@[ -z $$mitpg ]||$(schau) $(pgd)$(OR)||{ $(instp) $(pgd);printf '$(unigp) $(pgd)\n'>>$(un);$(slc);};
-	@test -f /usr/include/tiff.h||{ $(instp) libtiff-$(dev);printf '$(unigp) libtiff-$(dev)\n'>>$(un);}
+	@which $(CCName)$(OR)||{ $(REPOS)$(IP_R) $(COMP);printf '$(UPR) $(COMP);$(urepo)\n'>>$(UN);};
+	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(IPR) $(libmcd);printf '$(UPR) $(libmcd)\n'>>$(UN);fi
+	@[ -z $$mitpg ]||$(schau) $(pgd)$(OR)||{ $(IPR) $(pgd);printf '$(UPR) $(pgd)\n'>>$(UN);$(slc);};
+	@test -f /usr/include/tiff.h||{ $(IPR) libtiff-$(dev);printf '$(UPR) libtiff-$(dev)\n'>>$(UN);}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
 # 17.1.17 in Programm verlagert
 #	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
-	$(schau) cmake||$(instp) cmake;true && \
+	$(schau) cmake||$(IPR) cmake;true && \
 	P=tiff_copy; T=$$P.tar.gz; Z=tiff-4.0.7; \
 	wget https://github.com/libelle17/$$P/archive/master.tar.gz -O $$T && \
 	tar xpvf $$T && mv $${P}-master $$Z && cd $$Z && \
