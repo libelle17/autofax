@@ -38,6 +38,11 @@ printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTe
 //char logdatei[PATH_MAX+1]="v:\\log_termine.txt";
 #endif
 #define obfstream
+
+// z.B. "/root/autofax"
+const string& instvz=
+#include "instvz" // wird in Makefile erstellt
+;
 const string nix;
 class linstcl linst;
 class distri_cl distri;

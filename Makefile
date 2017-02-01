@@ -62,9 +62,12 @@ ifeq ($(shell which rpm$(OR);echo $$?),0)
  schau:=rpm -q
  ifeq ($(shell which zypper$(OR);echo $$?),0)
   pgroff:=groff
-  instp:=sudo zypper -n --gpg-auto-import-keys in
+  instp:=sudo zypper -n --gpg-auto-import-keys in # -n = --non-interactive
   instpf:=sudo zypper --gpg-auto-import-keys in
+  uninp:=sudo zypper rm -u # -u = --clean-deps
+  # unigp:=for f in $$(rpm -q --configfiles $$PACK); do sudo rm -f $$f; done; sudo zypper rm -u $$PACK; // Loeschen der Konfdateien verhindert Deinst
   REPOS:=sudo zypper lr|grep 'g++\|devel_gcc'$(OR)||sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release | grep ^NAME= | cut -d'"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'"' -f2`/devel:gcc.repo;
+  urepo:=sudo zypper lr|grep \"g++\\|devel_gcc\"$(OR) && sudo zypper rr devel_gcc;
   COMP:=gcc gcc-c++ $(CCInst)
  else
   COMP:=make automake gcc-c++ kernel-devel
@@ -72,22 +75,28 @@ ifeq ($(shell which rpm$(OR);echo $$?),0)
   ifeq ($(shell which dnf$(OR);echo $$?),0)
    instp:=sudo dnf -y install 
    instpf:=sudo dnf install 
+   uninp:=sudo dnf remove
   else ifeq ($(shell which yum$(OR);echo $$?),0)
    instp:=sudo yum -y install 
    instpf:=sudo yum install 
+   uninp:=sudo yum remove
   endif
  endif
+ unigp:=$(uninp)
 else ifeq ($(shell which apt-get$(OR);echo $$?),0)
  schau:=dpkg -s
  instp:=sudo apt-get -y --force-yes install 
  instpf:=sudo apt-get --force-yes install 
+ uninp:=sudo apt-get autoremove
+ unigp:=sudo apt-get purge --auto-remove
  COMP:=build-essential linux-headers-`uname -r`
  dev:=dev
 endif
 libmcd:=$(libmc)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
-GROFFCHECK:=$(schau) $(pgroff)$(OR)||$(instp) $(pgroff);true
+un:=uninstall.sh
+GROFFCHECK:=$(schau) $(pgroff)$(OR)||{ $(instp) $(pgroff);printf '$(unigp) $(pgroff)\n'>>$(un);};true
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
@@ -106,36 +115,47 @@ gruen="\033[0;32m"
 rot="\033[1;31m"
 reset="\033[0m"
 
+.PHONY: alles
 alles: anzeig weiter
 
+.PHONY: glei
 glei: anzeig $(EXEC) README.md fertig
 
+.PHONY: opt
 opt: CFLAGS += -O
 opt: neu
 
+.PHONY: opt2
 opt2: CFLAGS+= -O2
 opt2: neu
 
+.PHONY: opt3
 opt3: CFLAGS+= -O3
 opt3: neu
 
+.PHONY: optfast
 optfast: CFLAGS+= -Ofast
 optfast: neu
 
+.PHONY: optc
 opts: CFLAGS+= -Os
 opts: neu
 
+.PHONY: optg
 optg: CFLAGS+= -Og
 optg: neu
 
+.PHONY: altc
 altc: CFLAGS+= -std=gnu++11
 altc: CCInst=gcc-c++
 altc: CCName=g++
 altc: opts
 
+.PHONY: neu
 new: neu
 neu: anzeig hierclean weiter
 
+.PHONY: weiter
 weiter: compiler $(EXEC) README.md fertig
 
 # davor:
@@ -180,6 +200,7 @@ endif
 %.o : %.cpp
 %.o : %.cpp $(DEPDIR)/%.d
 	@printf " kompiliere %b%s%b: " $(blau) "$<" $(reset)
+	-@if ! test -f instvz; then printf \"$$(pwd)\">instvz; fi;
 	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< 2>> fehler.txt
 	-@sed -i 's/version //g' $(DEPDIR)/*.Td
 	-@if test -s fehler.txt; then vi +0/error fehler.txt; else rm fehler.txt; fi;
@@ -189,14 +210,15 @@ endif
 $(DEPDIR)/%.d: ;
 .PRECIOUS: $(DEPDIR)/%.d
 
+.PHONY: compiler
 compiler:
 	@printf " Untersuche Compiler ...\r"
 #	@printf " CCName: %b%s%b                  \n" $(blau) "${CCName}" $(reset)
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
-	@which $(CCName)$(OR)||{ $(REPOS)$(instpf) $(COMP);};
-	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(instp) $(libmcd);fi
-	@[ -z $$mitpg ]||$(schau) $(pgd)$(OR)||{ $(instp) $(pgd);$(slc);};
-	@test -f /usr/include/tiff.h||$(instp) libtiff-$(dev)
+	@which $(CCName)$(OR)||{ $(REPOS)$(instpf) $(COMP);printf '$(unigp) $(COMP);$(urepo)\n'>>$(un);};
+	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(instp) $(libmcd);printf '$(unigp) $(libmcd)\n'>>$(un);fi
+	@[ -z $$mitpg ]||$(schau) $(pgd)$(OR)||{ $(instp) $(pgd);printf '$(unigp) $(pgd)\n'>>$(un);$(slc);};
+	@test -f /usr/include/tiff.h||{ $(instp) libtiff-$(dev);printf '$(unigp) libtiff-$(dev)\n'>>$(un);}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
 # 17.1.17 in Programm verlagert
 #	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
@@ -211,7 +233,6 @@ compiler:
 	sudo make install && \
 	sudo touch $$NACHWEIS;};true
 
-.PHONY: install
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
 README.md: ${MANPEH} ${MANPDH} 
@@ -220,6 +241,8 @@ README.md: ${MANPEH} ${MANPDH}
 	-@sed -n '20,$$p' man_en.html >> README.md 
 	-@sed -n '20,$$p' man_de.html >> README.md 
 	@printf " %b%s%b neu aus %b%s%b und %b%s%b erstellt\n" $(blau) "README.md" $(reset) $(blau) "man_en" $(reset) $(blau) "man_de" $(reset)
+
+.PHONY: install
 install: $(INSTEXEC) ${MANPE} ${MANPD} 
 else
 README.md: ${MANPDH}
@@ -276,6 +299,7 @@ ${MANPDH}: $(CURDIR)/man_de
 	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "man_de.html" $(reset) $(blau) "man_de" $(reset)
 endif
 
+.PHONY: fertig
 fertig:
 	@printf " Fertig mit %s, nachher:\n" "$(ICH)"
 	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC))" $(reset) 
@@ -292,5 +316,9 @@ hierclean:
 clean: hierclean
 	@$(shell sudo rm -f $(INSTEXEC) 2>/dev/null)
 	@printf " %b%s%b geloescht!\n" $(blau) "$(INSTEXEC)" $(reset) 
+
+.PHONY: uninstall
+uninstall:
+	-@sh uninstall.sh
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
