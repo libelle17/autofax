@@ -8,14 +8,16 @@ reset="\033[0m"
 aPWD=`pwd`
 nPWD=${PWD##*/}
 IPR="nix"
+UPR="nix"
 SPR="nix"
+UN="uninstall.sh"
 
 # Installationsprogramm ermitteln
 getIPR() {
-	{ which zypper  >/dev/null 2>&1 && IPR="zypper -n --gpg-auto-import-keys in ";}||
-	{ which apt-get >/dev/null 2>&1 && IPR="apt-get --assume-yes install ";}||
-	{ which dnf     >/dev/null 2>&1 && IPR="dnf -y install ";}||
-	{ which yum     >/dev/null 2>&1 && IPR="yum -y install ";}
+	{ which zypper  >/dev/null 2>&1 &&{ IPR="zypper -n --gpg-auto-import-keys in ";UPR="sudo zypper rm -u ";} }||
+	{ which apt-get >/dev/null 2>&1 &&{ IPR="apt-get --assume-yes install ";UPR="sudo apt-get purge --auto-remove ";} }||
+	{ which dnf     >/dev/null 2>&1 &&{ IPR="dnf -y install ";UPR="sudo dnf remove ";} }||
+	{ which yum     >/dev/null 2>&1 &&{ IPR="yum -y install ";UPR="sudo yum remove ";} }
 	{ which rpm >/dev/null 2>&1 && SPR="rpm -q ";}||
 	{ which dpkg >/dev/null 2>&1 && SPR="dpkg -s ";}
 }
@@ -29,7 +31,7 @@ getIPR;
 { which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
 	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'. Please enter ${blau}root$reset's password if asked:\n"
 	printf "Muss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
-	su -c "$IPR sudo; usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";"||exit
+	su -c "$IPR sudo; printf '$(UPR) sudo\n'>>$(UN); usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";"||exit
 	printf "Please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh $0$reset' again!\n"
 	printf "Bitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh $0$reset' dann nochmal auf!\n";
 	exit;
@@ -38,6 +40,7 @@ getIPR;
 $SPR make >/dev/null 2>&1 ||{
 	echo Installing/ Installiere 'make' ....;
   id su >/dev/null 2>&1 && { su -c "$IPR make;";true;} || sudo $IPR make;
+	printf '$(UPR) make\n'>>$(UN);
 }
 $SPR make >/dev/null || exit
 # wenn $P schon das aktuelle Verzeichnis ist und wenn es dort einige notwendige Dateien gibt, dann nicht mehr neu runterladen ...
