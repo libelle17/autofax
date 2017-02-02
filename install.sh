@@ -3,23 +3,46 @@ P=autofax
 HOSTER=github.com
 ACC=libelle17
 rot="\033[1;31m"
+gruen="\033[1;32m"
 blau="\033[1;34m"
 reset="\033[0m"
 aPWD=`pwd`
 nPWD=${PWD##*/}
+
 IPR="nix"
 UPR="nix"
 SPR="nix"
 UN="uninstall.sh"
+pgroff="groff groff-base"
+dev=devel
+libmc=libmysqlclient
+fed=0
+REPOS=
+urepo=
+CCInst=gcc6-c++
 
 # Installationsprogramm ermitteln
 getIPR() {
-	{ which zypper  >/dev/null 2>&1 &&{ IPR="zypper -n --gpg-auto-import-keys in ";UPR="sudo zypper rm -u ";} }||
-	{ which apt-get >/dev/null 2>&1 &&{ IPR="apt-get --assume-yes install ";UPR="sudo apt-get purge --auto-remove ";} }||
-	{ which dnf     >/dev/null 2>&1 &&{ IPR="dnf -y install ";UPR="sudo dnf remove ";} }||
-	{ which yum     >/dev/null 2>&1 &&{ IPR="yum -y install ";UPR="sudo yum remove ";} }
+	{ which zypper  >/dev/null 2>&1 &&{ 
+		Z=zypper;g=--gpg-auto-import-keys;IPR="$Z -n $g in ";IP_R="$Z $g in ";UPR="sudo zypper rm -u ";pgroff=groff;
+  REPOS="sudo zypper lr|grep 'g++\|devel_gcc'\$(OR)||sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
+  urepo="sudo zypper lr|grep \\\"g++\\\\\|devel_gcc\\\"\$(OR) && sudo zypper rr devel_gcc;";
+  COMP="gcc gcc-c++ \$(CCInst)";
+	} }||
+	{ which apt-get >/dev/null 2>&1 &&{ IPR="apt-get --assume-yes install ";
+	                                    UPR="sudo apt-get purge --auto-remove ";
+																			dev=devel;
+																			COMP:=build-essential linux-headers-\`uname -r\`;} }||
+	{ which dnf     >/dev/null 2>&1 &&{ fed=1;IPR="dnf -y install ";UPR="sudo dnf remove ";} }||
+	{ which yum     >/dev/null 2>&1 &&{ fed=1;IPR="yum -y install ";UPR="sudo yum remove ";} }
+	[ $fed = 1 ] &&{ libmc=mysql;COMP=make automake gcc-c++ kernel-devel;}
 	{ which rpm >/dev/null 2>&1 && SPR="rpm -q ";}||
 	{ which dpkg >/dev/null 2>&1 && SPR="dpkg -s ";}
+}
+
+exportvars() {
+	rm -f vars
+	for v in IPR IP_R UPR SPR UN pgroff dev libmc REPOS urepo COMP; do eval nv=\$$v; printf "$v:=$nv\n">>vars; done
 }
 
 # Gruppen, deren Mitglieder sudo aufrufen koennen; fuer Debian muss zuerst 'sudo' genannt werden, weil eine Zuordnung zu 'root' nichts hilft (s.u. tail)
@@ -27,6 +50,7 @@ SUG="admin\|root\|sudo\|wheel\|ntadmin";
 
 # hier geht's los
 getIPR;
+exportvars;
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
 { which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
 	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'. Please enter ${blau}root$reset's password if asked:\n"

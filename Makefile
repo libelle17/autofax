@@ -43,6 +43,7 @@ EXPFAD := $(shell echo ${PATH} | tr -s ':' '\n' | grep /usr/ | head -n 1)
 EXPFAD := $(shell echo ${PATH} | tr -s ':' '\n' | grep /usr/ | awk '{ print length, $$0 }' | sort -n -s | cut -d" " -f2- | head -n1)
 EXEC=$(PROGRAM)
 INSTEXEC=$(EXPFAD)/$(EXEC)
+
 CCInst=gcc6-c++
 ifneq ($(shell g++-6 --version >/dev/null 2>&1),0)
  CCName=g++
@@ -55,48 +56,11 @@ else
  CC:=$(CCName)
 endif
 OR:= >/dev/null 2>&1
-pgroff:=groff groff-base
-dev:=devel
-libmc:=libmysqlclient
-ifeq ($(shell which rpm$(OR);echo $$?),0)
- schau:=rpm -q
- ifeq ($(shell which zypper$(OR);echo $$?),0)
-  pgroff:=groff
-  IPR:=sudo zypper -n --gpg-auto-import-keys in # -n = --non-interactive
-  IP_R:=sudo zypper --gpg-auto-import-keys in
-  UP_R:=sudo zypper rm -u # -u = --clean-deps
-  # UPR:=for f in $$(rpm -q --configfiles $$PACK); do sudo rm -f $$f; done; sudo zypper rm -u $$PACK; // Loeschen der Konfdateien verhindert Deinst
-  REPOS:=sudo zypper lr|grep 'g++\|devel_gcc'$(OR)||sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release | grep ^NAME= | cut -d'"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'"' -f2`/devel:gcc.repo;
-  urepo:=sudo zypper lr|grep \"g++\\|devel_gcc\"$(OR) && sudo zypper rr devel_gcc;
-  COMP:=gcc gcc-c++ $(CCInst)
- else
-  COMP:=make automake gcc-c++ kernel-devel
-  libmc:=mysql
-  ifeq ($(shell which dnf$(OR);echo $$?),0)
-   IPR:=sudo dnf -y install 
-   IP_R:=sudo dnf install 
-   UP_R:=sudo dnf remove
-  else ifeq ($(shell which yum$(OR);echo $$?),0)
-   IPR:=sudo yum -y install 
-   IP_R:=sudo yum install 
-   UP_R:=sudo yum remove
-  endif
- endif
- UPR:=$(UP_R)
-else ifeq ($(shell which apt-get$(OR);echo $$?),0)
- schau:=dpkg -s
- IPR:=sudo apt-get -y --force-yes install 
- IP_R:=sudo apt-get --force-yes install 
- UP_R:=sudo apt-get autoremove
- UPR:=sudo apt-get purge --auto-remove
- COMP:=build-essential linux-headers-`uname -r`
- dev:=dev
-endif
+-include vars
 libmcd:=$(libmc)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
-UN:=uninstall.sh
-GROFFCHECK:=$(schau) $(pgroff)$(OR)||{ $(IPR) $(pgroff);printf '$(UPR) $(pgroff)\n'>>$(UN);};true
+GROFFCHECK:=$(SPR) $(pgroff)$(OR)||{ $(IPR) $(pgroff);printf '$(UPR) $(pgroff)\n'>>$(UN);};true
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
@@ -109,10 +73,10 @@ MANPD=${MANP}/de/man1/${PROGRAM}.1.gz
 MANPE=${MANP}/man1/${PROGRAM}.1.gz
 MANPDH=$(CURDIR)/man_de.html
 MANPEH=$(CURDIR)/man_en.html
-blau="\033[0;34;1;47m"
-blau="\033[1;34m"
-gruen="\033[0;32m"
 rot="\033[1;31m"
+gruen="\033[0;32m"
+#blau="\033[0;34;1;47m"
+blau="\033[1;34m"
 reset="\033[0m"
 
 .PHONY: alles
@@ -217,12 +181,12 @@ compiler:
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
 	@which $(CCName)$(OR)||{ $(REPOS)$(IP_R) $(COMP);printf '$(UPR) $(COMP);$(urepo)\n'>>$(UN);};
 	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(IPR) $(libmcd);printf '$(UPR) $(libmcd)\n'>>$(UN);fi
-	@[ -z $$mitpg ]||$(schau) $(pgd)$(OR)||{ $(IPR) $(pgd);printf '$(UPR) $(pgd)\n'>>$(UN);$(slc);};
+	@[ -z $$mitpg ]||$(SPR) $(pgd)$(OR)||{ $(IPR) $(pgd);printf '$(UPR) $(pgd)\n'>>$(UN);$(slc);};
 	@test -f /usr/include/tiff.h||{ $(IPR) libtiff-$(dev);printf '$(UPR) libtiff-$(dev)\n'>>$(UN);}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
 # 17.1.17 in Programm verlagert
 #	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
-	$(schau) cmake||$(IPR) cmake;true && \
+	$(SPR) cmake||$(IPR) cmake;true && \
 	P=tiff_copy; T=$$P.tar.gz; Z=tiff-4.0.7; \
 	wget https://github.com/libelle17/$$P/archive/master.tar.gz -O $$T && \
 	tar xpvf $$T && mv $${P}-master $$Z && cd $$Z && \
