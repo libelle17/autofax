@@ -32,10 +32,10 @@ getIPR() {
 	{ which apt-get >/dev/null 2>&1 &&{ IPR="apt-get --assume-yes install ";
 	                                    UPR="sudo apt-get purge --auto-remove ";
 																			dev=devel;
-																			COMP:=build-essential linux-headers-\`uname -r\`;} }||
+																			COMP:="build-essential linux-headers-\`uname -r\`";} }||
 	{ which dnf     >/dev/null 2>&1 &&{ fed=1;IPR="dnf -y install ";UPR="sudo dnf remove ";} }||
 	{ which yum     >/dev/null 2>&1 &&{ fed=1;IPR="yum -y install ";UPR="sudo yum remove ";} }
-	[ $fed = 1 ] &&{ libmc=mysql;COMP=make automake gcc-c++ kernel-devel;}
+	[ $fed = 1 ] &&{ libmc=mysql;COMP="make automake gcc-c++ kernel-devel";}
 	{ which rpm >/dev/null 2>&1 && SPR="rpm -q ";}||
 	{ which dpkg >/dev/null 2>&1 && SPR="dpkg -s ";}
 }
@@ -50,7 +50,6 @@ SUG="admin\|root\|sudo\|wheel\|ntadmin";
 
 # hier geht's los
 getIPR;
-exportvars;
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
 { which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
 	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'. Please enter ${blau}root$reset's password if asked:\n"
@@ -92,6 +91,7 @@ $SPR make >/dev/null || exit
 					cd $P;
 		}|| exit;
 }
+exportvars;
 # ... und dann kompilieren und installieren
 make &&
 sudo make install; erg=$?;
