@@ -1,4 +1,4 @@
-#include "konsole.h"
+#include "kons.h"
 #include "DB.h"
 #define caus cout // nur zum Debuggen
 extern class linstcl linst;

@@ -2,8 +2,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#ifndef KONSOLE_H_DRIN
-#define KONSOLE_H_DRIN
+#ifndef kons_H_DRIN
+#define kons_H_DRIN
 #ifdef _WIN32
 #include <winsock2.h> // entfaellt bei mysql
 #include <io.h> // fuer isatty und _isatty
@@ -109,7 +109,7 @@ class TxB // Text-Basisklasse
 
 string meinpfad();
 
-enum Tkonsole_ 
+enum Tkons_ 
 {
   T_pfad,
   T_kuerze_logdatei,
@@ -188,17 +188,17 @@ enum Tkonsole_
 	T_oder_nicht,
 	T_nicht_einfuegbar,
   T_erneute_Eingabe,
-	T_konsoleMAX,
+	T_konsMAX,
 };
 
-extern class Txkonsolecl Txk;
+extern class Txkonscl Txk;
 
-class Txkonsolecl : public TxB
+class Txkonscl : public TxB
 {
   public:
-    static const char *TextC[T_konsoleMAX+1][Smax];
-    Txkonsolecl();
-//    inline const char* operator[](Tkonsole_ const& nr) const { return TextC[nr][lgn]; }
+    static const char *TextC[T_konsMAX+1][Smax];
+    Txkonscl();
+//    inline const char* operator[](Tkons_ const& nr) const { return TextC[nr][lgn]; }
 };
 
 extern uchar nrzf; // nicht rueckzufragen, fuer Aufruf aus Cron
@@ -581,7 +581,7 @@ class optioncl
     void hilfezeile(Sprache lg);
 };
 
-#endif // KONSOLE_H_DRIN
+#endif // kons_H_DRIN
 
 extern const char *logdt;
 

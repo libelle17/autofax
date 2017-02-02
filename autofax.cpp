@@ -15,14 +15,14 @@
 #endif
 
 // #include <iostream>
-// #include <fstream> // jetzt in konsole.h
+// #include <fstream> // jetzt in kons.h
 // #include <sstream>
 // #include <dirent.h> // DIR, dirent, opendir, readdir, PATH_MAX
-// #include <boost/algorithm/string.hpp> // clock // jetzt in konsole.h
+// #include <boost/algorithm/string.hpp> // clock // jetzt in kons.h
 
 // #include "vmime/vmime.hpp"
 // #include "vmime/platforms/posix/posixHandler.hpp"
-#include "konsole.h"
+#include "kons.h"
 #include "DB.h"
 // #include "iconverter.h"
 // #include "datetime_utils.hpp"
@@ -53,7 +53,7 @@ const string s_dampand=" && ";
 const string s_gz="gz";
 // const char *tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
 
-const char *logdt="/var/log/autofaxvorgabe.log";// darauf wird in konsole.h verwiesen; muss dann auf lgp zeigen
+const char *logdt="/var/log/autofaxvorgabe.log";// darauf wird in kons.h verwiesen; muss dann auf lgp zeigen
 const unsigned ktage=1; // kurzes Intervall fuer Faxtabellenkorrektur, 1 Tag
 const unsigned mtage=30; // mittleres Intervall fuer Faxtabellenkorrektur, 1 Monat
 const unsigned ltage=73000; // langes Intervall fuer Faxtabellenkorrektur, 200 Jahre

@@ -1,4 +1,4 @@
-#include "konsole.h"
+#include "kons.h"
 #include "DB.h"
 #include "autofax.h"
 

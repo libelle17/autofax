@@ -1,4 +1,4 @@
-#include "konsole.h"
+#include "kons.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdarg.h>
@@ -47,9 +47,9 @@ const string nix;
 class linstcl linst;
 class distri_cl distri;
 
-const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
+const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 {
-  //TCtp Txkonsolecl::TextC=KLA
+  //TCtp Txkonscl::TextC=KLA
   // T_pfad,
   {"pfad","path"},
   // T_kuerze_logdatei,
@@ -206,15 +206,15 @@ const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
   // T_erneute_Eingabe
   {"erneute Eingabe","once more"},
   {"",""}
-}; // const char *Txkonsolecl::TextC[T_konsoleMAX+1][Smax]=
+}; // const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 
 
-Txkonsolecl::Txkonsolecl() 
+Txkonscl::Txkonscl() 
 {
   TCp=(const char* const * const * const *)&TextC;
 }
 
-class Txkonsolecl Txk;
+class Txkonscl Txk;
 
 uchar nrzf=0; // nicht rueckzufragen, fuer Aufruf aus Cron
 
