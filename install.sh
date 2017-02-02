@@ -9,7 +9,7 @@ reset="\033[0m"
 aPWD=`pwd`
 nPWD=${PWD##*/}
 
-. ./hdistr.sh
+. ./hdist.sh
 
 exportvars() {
 	rm -f vars
