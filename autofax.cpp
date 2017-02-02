@@ -577,6 +577,7 @@ enum T_
 	T_Firewallport,
 	T_offen,
 	T_zu,
+	T_Installationsverzeichnis,
 	T_MAX
 };
 
@@ -1637,6 +1638,8 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	{" offen"," open"},
 	// T_zu
 	{" zu"," shut"},
+	// T_Installationsverzeichnis
+	{"Installationsverzeichnis: ","Installation directory: "},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -8348,6 +8351,7 @@ void zeigversion(string& prog,string& mpfad)
   strftime(buf, sizeof(buf), "%d.%m.%Y %T", &tm);
   cout<<"              "<<Tx[T_Kompiliert]<<blau<<buf<<schwarz<<endl;
   cout<<Tx[T_Quelle]<<blau<<"https://github.com/libelle17/"<<prog<<schwarz<<endl;
+	cout<<Tx[T_Installationsverzeichnis]<<blau<<instvz<<schwarz<<endl;
   cout<<Tx[T_Hilfe]<<braun<<"man "<<base_name(mpfad)<<schwarz<<Tx[T_or]<<braun<<"man -Lde "<<base_name(mpfad)<<schwarz<<"'"<<endl;
 } // void zeigversion(const char* const prog)
 
