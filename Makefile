@@ -56,7 +56,7 @@ else
  CC:=$(CCName)
 endif
 OR:= >/dev/null 2>&1
--include vars
+-include vars # wird durch install.sh generiert
 libmcd:=$(libmc)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
