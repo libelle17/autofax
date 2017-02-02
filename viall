@@ -1,8 +1,40 @@
 #!/bin/zsh
 # versucht alle Dateien eines Projekts zu editieren, mit Parameter 'nv' sollen alle aufs aktuelle Datum gesetzt werden
+IPR="nix"
+UPR="nix"
+SPR="nix"
+UN="uninstall.sh"
+pgroff="groff groff-base"
+dev=devel
+libmc=libmysqlclient
+fed=0
+REPOS=
+urepo=
+CCInst=gcc6-c++
+
+# Installationsprogramm ermitteln
+getIPR() {
+	{ which zypper  >/dev/null 2>&1 &&{ 
+		Z=zypper;g=--gpg-auto-import-keys;IPR="$Z -n $g in ";IP_R="$Z $g in ";UPR="sudo zypper rm -u ";pgroff=groff;
+  REPOS="sudo zypper lr|grep 'g++\|devel_gcc'\$(OR)||sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
+  urepo="sudo zypper lr|grep \\\"g++\\\\\|devel_gcc\\\"\$(OR) && sudo zypper rr devel_gcc;";
+  COMP="gcc gcc-c++ \$(CCInst)";
+	} }||
+	{ which apt-get >/dev/null 2>&1 &&{ IPR="sudo apt-get --assume-yes install ";IP_R=$IPR;
+	                                    UPR="sudo apt-get --auto-remove purge ";
+																			dev=devel;
+																			COMP:="build-essential linux-headers-\`uname -r\`";} }||
+	{ which dnf     >/dev/null 2>&1 &&{ fed=1;IPR="sudo dnf -y install ";UPR="sudo dnf remove ";} }||
+	{ which yum     >/dev/null 2>&1 &&{ fed=1;IPR="sudo yum -y install ";UPR="sudo yum remove ";} }
+	[ $fed = 1 ] &&{ libmc=mysql;COMP="make automake gcc-c++ kernel-devel";IP_R=$IPR;}
+	{ which rpm >/dev/null 2>&1 && SPR="rpm -q ";}||
+	{ which dpkg >/dev/null 2>&1 && SPR="dpkg -s ";}
+}
+
+# diese Datei wird wegen obigem in install.sh gesourcet, deshalb dort der Rest zu uebergehen
+if [ $(basename "$0") = viall ]; then
 ZD=viaufruf # speichere die Zahl der Aufrufe in Datei dieses Namens
 FREQUENZ=5 # rufe gtags jedes 5. Mal auf
-. ./insth.sh
 
 ctags *.cpp *.h 2>/dev/null
 test -f $ZD || echo 1>$ZD; awk "BEGIN {print `cat $ZD`+1}">$ZD
@@ -11,7 +43,7 @@ test -f $ZD || echo 1>$ZD; awk "BEGIN {print `cat $ZD`+1}">$ZD
 # `which vim || which vi` autofax.cpp autofax.h vgb.cpp DB.cpp DB.h kons.cpp kons.h -p -c "syntax on" -c "set number" -c "set autoindent" -c "set autoindent" -c "set tabstop=2" -c "set ignorecase" -c "set showmatch" -c "set magic" -c "set ruler" 
 # DATEIEN="autofax.cpp autofax.h vgb.cpp DB.cpp DB.h kons.cpp kons.h man_en man_de Makefile install.sh viall .exrc"
 # .. und so etwas allgemeiner
-DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile install.sh insth.sh $0 .exrc"
+DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile install.sh $0 .exrc"
 
 # wenn eiheitliche Versionsnummer gewuenscht
 if [ "$1" = "nv" ]; then
@@ -25,4 +57,5 @@ if [ "$1" = "nv" ]; then
  make && make install && make git
 else
 `which vim || which vi` $DATEIEN -pNu .exrc
+fi
 fi

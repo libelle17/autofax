@@ -1,4 +1,11 @@
 #!/bin/sh
+. ./viall
+
+exportvars() {
+	rm -f vars
+	for v in IPR IP_R UPR SPR UN pgroff dev libmc REPOS urepo COMP; do eval nv=\$$v; printf "$v:=$nv\n">>vars; done
+}
+
 P=autofax
 HOSTER=github.com
 ACC=libelle17
@@ -8,13 +15,6 @@ blau="\033[1;34m"
 reset="\033[0m"
 aPWD=`pwd`
 nPWD=${PWD##*/}
-
-. ./insth.sh
-
-exportvars() {
-	rm -f vars
-	for v in IPR IP_R UPR SPR UN pgroff dev libmc REPOS urepo COMP; do eval nv=\$$v; printf "$v:=$nv\n">>vars; done
-}
 
 # Gruppen, deren Mitglieder sudo aufrufen koennen; fuer Debian muss zuerst 'sudo' genannt werden, weil eine Zuordnung zu 'root' nichts hilft (s.u. tail)
 SUG="admin\|root\|sudo\|wheel\|ntadmin";
@@ -68,4 +68,3 @@ make &&
 sudo make install; erg=$?;
 [ $erg = 0 ] && farbe=$blau || farbe=$rot;
 printf "Result code/ Ergebniscode: ${farbe}$erg${reset}\n"
-
