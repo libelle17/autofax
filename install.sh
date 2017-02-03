@@ -32,7 +32,9 @@ exportvars() {
 }
 
 # diese Datei wird wegen obigem in viall gesourcet, deshalb dort der Rest zu uebergehen
-if [ $(basename "$0") = install.sh ]; then
+basenam=$(basename $0)
+ext=${basenam##*.}
+if [ $ext = sh ]; then
 P=autofax
 HOSTER=github.com
 ACC=libelle17
