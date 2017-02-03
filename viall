@@ -1,15 +1,10 @@
 #!/bin/zsh
 # versucht alle Dateien eines Projekts zu editieren, mit Parameter 'nv' sollen alle aufs aktuelle Datum gesetzt werden
-IPR="nix"
-UPR="nix"
-SPR="nix"
 UN="uninstall.sh"
 pgroff="groff groff-base"
 dev=devel
 libmc=libmysqlclient
 fed=0
-REPOS=
-urepo=
 CCInst=gcc6-c++
 
 # Installationsprogramm ermitteln
