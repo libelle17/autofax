@@ -1,0 +1,393 @@
+.\" t -*- coding: UTF-8 -*-
+.\" Manual-Seite für autofax
+.\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
+.pc
+.TH man 1 "02.02.17" "Version 0.42234" "Manual-Seite für autofax"
+.SH NAME
+\fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
+.br
+(manpage available in english: 'man autofax' or 'man -Len autofax')
+.SH SYNOPSIS
+.SY autofax [-<option>]
+.OP \-v|--verbose
+.OP \-l|--log
+.OP \-ldn|--logdateineu
+.OP \-kd|--konfdat <string>
+.OP \-sqlv|--sql-verbose
+.OP \-rf|--rueckfragen
+.OP \-norf|--keinerueckfragen
+.OP \-loef|--loeschefax
+.OP \-loew|--loeschewaise
+.OP \-loea|--loescheallew
+.OP \-kez|--korrerfolgszeichen
+.OP \-bwv|--bereinigewv
+.OP \-st|--stop
+.OP \-lista|--listarchiv
+.OP \-listf|--listfailed
+.OP \-listi|--listinca
+.OP \-listw|--listwart
+.OP \-s|--suche <string>
+.OP \-n|--dszahl <zahl>
+.OP \-info|--version
+.OP \-vi|--vi 
+.OP \-h|-help|-?|-hilfe
+.OP \-lg|--language <d|e>
+.OP \-lvz|--logvz <pfad>
+.OP \-ld|--logdname <string>
+.OP \-zvz|--zufaxenvz <pfad>
+.OP \-wvz|--wartevz <pfad>
+.OP \-nvz|--nichtgefaxtvz <pfad>
+.OP \-evz|--empfvz <pfad>
+.OP \-cm|--cronminut <zahl>
+.OP \-capi|--obcapi
+.OP \-hyla|--obhyla
+.OP \-cz|--capizuerst
+.OP \-hz|--hylazuerst
+.OP \-mod|--hmodem <string>
+.OP \-mc|--maxcapiv <zahl>
+.OP \-mh|--maxhylav <zahl>
+.OP \-cuser|--cuser <string>
+.OP \-ckzl|--capiklingelzahl <zahl>
+.OP \-hkzl|--hylaklingelzahl <zahl>
+.OP \-md|--maxdials <zahl>
+.OP \-gz|--gleichziel
+.OP \-ocri|--ocri
+.OP \-ocra|--ocra
+.OP \-afs|--anfaxstr <string>
+.OP \-acfs|--ancfaxstr <string>
+.OP \-ahfs|--anhfaxstr <string>
+.OP \-as|--anstr <string>
+.OP \-us|--undstr <string>
+.OP \-host|--host <string>
+.OP \-muser|--muser <string>
+.OP \-mpwd|--mpwd <string>
+.OP \-db|--datenbank <string>
+.SH KURZBESCHREIBUNG
+autofax ist ein Befehlszeilenprogramm, mit dem Dateien in einem bestimmten Verzeichnis automatisch an \fBhylafax\fR (falls ein linux-kompatibles Fax-Modem angeschlossen ist) und/oder \fBcapisuite\fR (falls eine Fritzcard 2.0 oder 2.1 angeschlossen ist) weiterleitet werden, wenn die Faxnummer im Dateinamen richtig eingetragen ist,
+weiterhin die versandten Faxe in einer MariaDB-Datenbank abspeichert. 
+.br
+Außerdem können von \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe nach dem Sender anhand dessen Faxnummer benannt und abgespeichert werden.
+.SH INSTALLATION
+.br
+Zunächst lesen Sie bitte die Kapitel 'Funktionsweise', 'Voraussetzungen' und 'Auswirkungen'. A
+.br
+Anschließend verbinden Sie den Rechner falls nötig mit dem Internet und rufen Sie auf:
+.br
+\fBN=autofax;P=${N}_inst.sh;cd ~;wget https://raw.githubusercontent.com/libelle17/$N/master/install.sh -O$P&&sh $P\fR
+.br
+Zuletzt rufen Sie auf:
+.br
+ \fBautofax\fR
+.br
+(einige Rueckfragen des Programms beantworten)
+.br
+Der erste Programmaufruf und die erste Faxverarbeitung können jeweils etwas dauern und ein paar zusätzliche Eingaben erfordern.
+.br
+Voraussetzungen s.u.
+.SH GEBRAUCH
+Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft.
+.br
+Es existiert dann ein Verzeichnis z.B. '\fBzufaxen\fR', in das z.B. Benutzer im Netzwerk (z.B. über eine Samba-Freigabe) zu faxende Dateien stellen können wie z.B. 
+.br
+"\fBArztbericht zu Franz Krank an Dr. Gesund und Franz Krank an Fax 099 987654321 und 088 887654321.doc\fR" (es könnte auch z.B. eine *.xls, eine *.jpg, eine *.tif, eine *.txt oder eine *.pdf-Datei sein; die Passage 'an Dr. Gesund und Franz Krank ' ist optional für die spätere Zordnung der Faxnummer(n) in der Datenbank, sie darf auch fehlen).
+.br
+Wenn \fBautofax\fR beim nächsten Mal automatisch aufgerufen wird (standardmäßig alle 2 Minuten), wird die o.g. Beispieldatei zunächst kopiert und umbenannt in 
+.br
+"\fBArztbericht zu Franz Krank an Dr. Gesund an Fax 099 987654321.doc\fR" und 
+.br
+"\fBArztbericht zu Franz Krank an Franz Krank an Fax 088 887654321.doc\fR" und in die PDF-Dateien 
+.br
+"\fBArztbericht zu Franz Krank an Dr. Gesund an Fax 099 987654321.pdf\fR" und 
+.br
+"\fBArztbericht zu Franz Krank an Franz Krank an Fax 088 887654321.pdf\fR" umgewandelt.
+.br
+Diese werden dann automatisch an \fBhylafax\fR oder \fBCapisuite\fR weitergeleitet und von dort aus verschickt.
+.br
+Gleichzeitig werden sie aus '\fBzufaxen\fR' in das Warteverzeichnis, z.B. '\fBwarteauffax\fR' verschoben und in die Spooltabelle \fBspooltab\fR eingetragen.
+.br
+Bei jedem Aufruf überprüft autofax den Status von \fBhylafax\fR und/oder \fBCapisuite\fR. Der Abschluss des Faxvorgangs dort hat zur Folge, dass autofax die Quelldateien (also hier die o.g. .doc- und .pdf-Dateien) aus dem Warteverzeichnis in ein oder mehrere alternative Archivverzeichnisse oder ein Verzeichnis für gescheiteterte Faxe ablegt und den Datenbankeintrag von '\fBspooltab\fR' in die Archivtabelle '\fBouta\fR' verschiebt.
+.br
+Weiterhin werden über \fBhylafax\fR oder \fBCapisuite\fR angekommene Faxe in ein Empfangsverzeichnis kopiert und ggf. nach dem Sender benannt. Hierzu werden, falls angegeben, konfigurierbare SQL-Befehle verwendet, die in frei festlegbarer Zahl der Reihe nach so lange aufgerufen werden, bis einer einen Datensatz zu der Faxnummer findet.
+.br
+Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präferenz in den genannten Verzeichnissen, in den Datenbanktabellen oder durch Aufruf von z.B. '\fBautofax\fB', '\fBautofax -lista\fR', '\fBautofax -listf\fR' oder '\fBautofax -listi\fR' den Stand des Faxens überprüfen. 
+.SH OPTIONEN 
+Mit '\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Optionen (z.B. SQL-Befehle) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum direkt editiert oder auch über '\fBautofax -rf\fR' interaktiv gepflegt werden kann.
+.br
+\fB-lg, --language <string>\fR: language/Sprache/Lingue/Lingua [deutsch,englisch]
+.br
+\fB-v, --verbose\fR: Bildschirmausgabe gespraechiger
+.br
+\fB-l, --log\fR: protokolliert ausfuehrlich in Datei '/var/log/autofax.log' (sonst knapper)
+.br
+\fB-lvz, --logvz <pfad>\fR: waehlt als Logverzeichnis <pfad>, derzeit '/var/log'
+.br
+\fB-ld, --logdname <string>\fR: logdatei <string> (im Pfad '/var/log') wird verwendet anstatt 'autofax.log'
+.br
+\fB-ldn, --logdateineu\fR: logdatei vorher loeschen
+.br
+\fB-kd, --konfdat <string>\fR: verwendet Konfigurationsdatei <string> anstatt '/usr/local/sbin/autofax.conf'
+.br
+\fB-zvz, --zufaxenvz <pfad>\fR: faxt die Dateien aus <pfad> anstatt '...'
+.br
+\fB-wvz, --wartevz <pfad>\fR: Dateien warten in <pfad> anstatt '...'
+.br
+\fB-evz, --empfvz <pfad>\fR: Empfangsverzeichnis fuer Faxempfang '...'
+.br
+\fB-cm, --cronminut <zahl>\fR: alle wieviel Minuten soll autofax ueber crontab aufgerufen werden (0=gar nicht) '2'
+.br
+\fB-kc, --keincapi\fR: capisuite nicht verwenden
+.br
+\fB-kh, --keinhyla\fR: hylafax nicht verwenden
+.br
+\fB-cz, --capizuerst\fR: versuche faxe zuerst ueber Capisuite wegzuschicken
+.br
+\fB-hz, --hylazuerst\fR: versuche faxe zuerst ueber hylafax wegzuschicken
+.br
+\fB-mod, --modem <string>\fR: Fuer Hylafax verwendetes Modem ''
+.br
+\fB-mc, --maxcapinr <zahl>\fR: nach <zahl> Versuchen Capisuite wird Hylafax versucht, anstatt nach '3'
+.br
+\fB-mh, --maxhylanr <zahl>\fR: nach <zahl> Versuchen Hylafax wird Capisuite versucht, anstatt nach '3'
+.br
+\fB-ckzl, --capiklingelzahl <zahl>\fR: Zahl der Klingeltoene, bis Capisuite den Anruf annimmt, anstatt '1'
+.br
+\fB-cuser, --cuser <string>\fR: verwendet fuer Capisuite den Linux-Benutzer <string> anstatt 'schade'
+.br
+\fB-hkzl, --hylaklingelzahl <zahl>\fR: Zahl der Klingeltoene, bis Hylafax den Anruf annimmt, anstatt '2'
+.br
+\fB-gz, --gleichziel\fR: Faxe werden auch ohne Faxerfolg ins Zielverzeichnis kopiert
+.br
+\fB-afs, --anfaxstring <string>\fR: faxnr wird hinter <string> erwartet statt hinter 'an Fax'
+.br
+\fB-acfs, --ancfaxstring <string>\fR: faxnr fuer primaer Capisuite wird hinter <string> erwartet statt hinter 'an cFax'
+.br
+\fB-ahfs, --anhfaxstring <string>\fR: faxnr fuer primaer hylafax wird hinter <string> erwartet statt hinter 'an hFax'
+.br
+\fB-as, --anstring <string>\fR: Adressatenname wird hinter <string> erwartet statt hinter ' an '
+.br
+\fB-us, --undstring <string>\fR: Trennstring <string> fuer mehrere Adressaten/Faxnummern statt 'und'
+.br
+\fB-host, --host <string>\fR: verwendet die Datenbank auf Host <string> anstatt auf 'localhost'
+.br
+\fB-muser, --muser <string>\fR: verwendet fuer MySQL/MariaDB den Benutzer <string> anstatt 'praxis'
+.br
+\fB-mpwd, --mpwd <string>\fR: verwendet fuer MySQL/MariaDB das Passwort <string> anstatt '...'
+.br
+\fB-db, --db <string>\fR: verwendet die Datenbank <string> anstatt '...'
+.br
+\fB-sqlv, --sql-verbose\fR: Bildschirmausgabe mit SQL-Befehlen
+.br
+\fB-rf, --rueckfragen\fR: alle Parameter werden abgefragt (darunter einige hier nicht gezeigte)
+.br
+\fB-loef, --loeschefax\fR: ein Fax nach Rueckfrage loeschen
+.br
+\fB-loew, --loeschewaise\fR: Eintraege aus `spool` loeschen, zu denen keine Datei im Wartevz.und kein Capi- oder Hylafax nachweisbar ist
+.br
+\fB-loea, --loescheallew\fR: alle wartenden Faxe und zugehoerige Eintraege aus `spool` loeschen
+.br
+\fB-loee, --loescheempf\fR: empfangene Dateien loeschen, die nicht verarbeitet werden koennen
+.br
+\fB-kez, --korrerfolgszeichen\fR: in der Datenbanktabelle `outa` wird das Erfolgszeichen korrigiert
+.br
+\fB-bwv, --bereinigewv\fR: Dateien aus Warteverzeichnis gegen `outa` pruefen und ggf. verschieben
+.br
+\fB-lista, --listarchiv\fR: listet Datensaetze aus `outa` mit Erfolgskennzeichen auf
+.br
+\fB-listf, --listfailed\fR: listet Datensaetze aus `outa` ohne Erfolgskennzeichen auf
+.br
+\fB-listi, --listinca\fR: listet Datensaetze aus `inca` auf
+.br
+\fB-n, --dszahl <zahl>\fR: Zahl der aufzulistenden Datensaetze = <zahl> statt '30'
+.br
+\fB-info, --version \fR: Zeigt die Programmversion an
+.br
+\fB-vi, --vi \fR: Konfigurationsdatei editieren
+.br
+\fB-h, --hilfe\fR: Zeigt Hilfe an
+.SH FUNKTIONSWEISE
+.HP 3 
+1) Die aktuelle Hardware wird überprüft:
+.br
+a) mit dem Befehl '\fBlspci | grep -i isdn\fR' bezüglich einer ISDN-Karte
+.br
+b) mit dem Befehl '\fBstty -F\fR' bezüglich eines Fax-Modems.
+.LP
+.HP 3 
+2) Die Fax-Konfigurationsdatei \fBfax.conf\fR der Capisuite wird eingelesen, falls es sie gibt
+.LP
+.HP 3 
+3) Weitere Vorgaben aus dem Programmcode werden zugewiesen, die durch die autofax-Konfigurationsdatei (siehe 4), Kommandozeilenargumente oder Antworten auf Rückfragen (siehe 5) überdeckt werden können.
+.LP
+.HP 3 
+4) Vorgaben werden geladen aus der Konfigurationsdatei, falls existent (standardmäßig \fBautofax.conf\fR im selben Verzeichnis wie \fBautofax\fR, standardmäßig \fB/usr/local/sbin/autofax\fR)) 
+.LP
+.HP 3 
+5) Rückfragen werden gestellt, falls in der Konfigurationsdatei Werte fehlen oder falls eine Kommandozeilenoption Interaktivität verlangt.
+.LP
+.HP 3 
+6) Das Verzeichnis von \fBhylafax\fR wird ermittelt (\fB/var/spool/hylafax\fR oder \fB/var/spool/fax\fR), falls hylafax installiert ist.
+.LP
+.HP 3 
+7) Von Benutzern verwendete Verzeichnisse für zu verschickende, wartende, versandte und gescheiterte und empfangene Fax-Dateien werden überprüft und ggf. erstellt. Dabei können in der Konfiguration angegebene Dateinamensmuster berücksichtigt werden, um erfolgreich versandte Faxe je nach Dateinamen in verschiedenen Verzeichnissen zu speichern.
+.LP
+.HP 3 
+8) Das Programm trägt sich ggf. in \fBcrontab\fR ein, um auf Wunsch in (einstellbaren) Abständen aufgerufen zu werden. Um dies zu verhindern, kann entweder '\fBcronminut\fR' auf \fB0\fR eingestellt werden oder der bereits erstellte autofax-Eintrag mit \fBcrontab -e\fR mit einem vorangestellten '\fB#\fR' auskommentiert werden.
+.LP
+.HP 3 
+9) Das Programm überprüft, ob alle benutzerreleventen Verzeichnisse (s. 7) von Sambafreigaben in \fR/etc/samba/smb.conf\fB erfasst werden, solche werden nötigenfalls ergänzt.
+.LP
+.HP 3 
+10) Der Betrieb von MariaDB wird überprüft, ggf. wird es (installiert und) in Betrieb gesetzt, die Datenbanktabellen \fBspooltab\fR (für gerade laufende Faxe), \fBouta\fR (für gesandte und gescheiterte Faxe) und \fBinca\fR (für angekommene Faxe) werden überprüft und ggf. erstellt oder erweitert.
+.LP
+.HP 3 
+11) Im Fall der entsprechenden Kommandozeilenoptionen werden Korrekturen bei Dateien im Warteverzeichnis oder den Protokolltabellen durchgeführt oder deren Inhalt aufgelistet und das Programm dann beendet.
+.LP
+.HP 3 
+12) Andernfalls werden Dateien im \fBZufaxenverzeichnis\fR analysiert. Jede Datei, deren im Dateinamen enthaltene Faxnummer(n) ermittelbar ist/sind und die in eine PDF-Datei umwandelbar ist (oder schon so vorliegt), wird ins Warteverzeichnis verschoben und in \fBspooltab\fR eingetragen.
+.br
+Falls eine Datei mehrere Faxnummern enthält und/oder eine PDF-Umwandlung nötig ist, werden zusätzliche Dateien erstellt und die ursprüngliche Datei ggf. umbenannt.
+Falls nötig, können die Dateien zusätzliche Zifferm nahe ihrem Namensende bekommen, so dass die Namen mit keinem anderen der unter 7) genannten Verzeichnisse in Konflikt steht.
+.br
+Falls neue Dateien erstellt wurden, werden die nachfolgenden Verschiebungen und Protokollierungen mit allen durchgeführt.
+.\" DateienHerricht(), WVZinDatenbank()
+.LP
+.HP 3 
+13) Je nach Konfiguration wird die Funktionsfähigkeit von \fBhylafax\fR und/oder \fBcapisuite\fR überprüft und ggf. versucht herzustellen (falls nötig und möglich auch mit Installation dieser Programme; für eine Fritzcard 2.0 sowie für ein Faxmodem USR5637 kann auch eine automatische Konfiguration erfolgen).
+.LP
+.HP 3 
+14) Im Fall entsprechender Kommandozeilenoptionen werden Faxe gelöscht und das Programm dann beendet.
+.LP
+.HP 3 
+15) Andernfalls werden die unter 12) in \fBspooltab\fR eingetragenen Dateien an \fBhylafax\fR oder \fBcapisuite\fR weitergeleitet und dies in \fBspooltab\fR protokolliert.
+.\" faxealle()
+.LP
+.HP 3 
+16) Alle in \fBspooltab\fR als wartend stehenden Faxe werden in \fBhylafax\fR/\fBcapisuite\fR auf ihren Status überprüft, dieser wird in \fBspooltab\fR aktualisiert (Zahl der bisherigen Faxversuche).
+.br
+Falls sowohl hylafax als auch capisuite aktiv sind und eine voreingestellte Zahl an Anwahlversuchen im Programm der ersten Präferenz dieser beiden erfolglos erreicht ist, wird das Fax auch noch an das jeweils andere Programm weitergeleiet.
+.br
+Falls der Faxvorgang (erfolgreich oder erfolglos) beendet ist, wird die Datei aus dem Warteverzeichnis in die Verzeichnisse für fertige bzw. gescheiterte Faxe verschoben, optional mit ocrmypdf einer Texterkennung unterzogen, und der Datenbankeintrag aus \fBspooltab\fR in die Tabelle \fBouta\fR verschoben.
+.br
+Der Status der genannten Faxe wird angezeigt.
+.\" untersuchespool()
+.LP
+.HP 3 
+17) Weitere in der Warteschleife von hylafax/capisuite befindliche, nicht über autofax erstellte Faxe werden ggf. angezeigt.
+In Intervallen werden sie in die Autofax-Datenbank integriert (ohne die fehlende Information über den ursprünglichen Dateinamen)
+.LP
+.HP 3 
+18) Über \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe werden ggf. mit Hilfe der Faxnummer anhand voreingestellter SQL-Befehle nach dem Namen des Absenders benannt und in ein Empfangsverzeichnis gestellt.
+.br
+Solche SQL-Befehle sollen zwei Ergebnisfelder liefern, deren Inhalt dann, durch ein Komma getrennt, zur Benennung eines empfangenen Faxes verwendet werden. Bei der Anwendung des SQL-Befehls wird die Zeichenfolge '&&faxnr&&' zur aktuellen Faxnummer erweitert. Beispiel fuer einen solchen SQL-Befehl:
+.br
+.br
+select concat(haname,', ',ort,', ',kvnu) name, zulg, fax1k from kvaerzte.hae where concat(if(mid(fax1k,1,1)='0','','08131'),                         replace(replace(replace(replace(fax1k,' ',''),'-',''),'/',''),'\'','')) = '&&faxnr&&'
+.br
+.br
+Wenn mehrere SQL-Befehle angegeben werden, so wird der jeweils naechste angewandt, wenn einer kein Ergebnis liefert.
+.br
+Optional werden die empfangenen Dateien mit Hilfe von ocrmypdf einer Texterkennung unterzogen.
+.LP
+.HP 3 
+19) Die Konfigurationsdatei \fBautofax.conf\fR wird ggf. geschrieben.
+.LP
+
+.SH VORAUSSETZUNGEN
+Das Programm wurde auf eine Installation von Opensuse 42.1, Debian 8.60, Ubuntu 16.04, Mint 18 oder Fedora 24 mit den Standardoptionen abgestimmt. In Debian kann es vorteilhaft sein, darauf zu achten, dass in der Datei /etc/apt/sources.list kein DVD-Eintrag vor den Standard-Online-Repositories steht. systemctl (systemd) muss laufen, sudo muss installiert sein (fehlt anfangs bei Standardinstallation in Debian), der Benutzer muss den Befehl 'sudo' ausführen dürfen (Mitglied einer Gruppe sein, die in /etc/sudoers genannt wird, andernfalls versucht das o.g. Installationsprogramm, ihn dort einzutragen), 'GNU make' wird benötigt, was durch Aufruf von ./install.sh ggf. installiert werden kann. Weitere benötigte Programm werden falls möglich vom makefile oder von autofax bei Bedarf selbst mitsamt vorausgesetzter Programme mithilfe von zypper, apt, dnf oder yum nachstalliert, insbesondere:
+.br
+\fBmakefile:\fR
+.LP
+.HP 3
+gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Version 0.42234
+.br
+.br
+\fBautofax:\fR
+.LP
+.HP 3
+boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoffice-base, mariadb-server, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp, (in debian-derivates, für mariadb, zusätzlich: apt-transport-https)
+.br
+falls capisuite benutzt werden soll:
+.LP
+.HP 3
+capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source (linux-source), libcapi20-2, libcapi20-3, libxslt-tools, linux-headers-$(uname -r), python-devel, (in fedora, zusätzlich: kernel, kernel-devel, kernel-modules-extra, numactl-devel, pesign, rpmdevtools; dadurch kann in aktueller kernel installiert werden), 
+.br
+falls hylafax benutzt werden soll:
+.LP
+.HP 3
+hylafax+, hylafax+-client, sendmail, tiff (im Fall von Version 0.42234
+.br
+falls ocr benutzt werden soll:
+.LP
+.HP 3
+ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmypdf, python3-devel, python3-pip, python3-setuptools, rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper, and via 'python3 pip': cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.
+.br
+All diese Installationen können abhängige Programme einschließen.
+.br
+Falls Sie eines dieser Programme nicht wollen oder eine ältere Version 0.42234
+
+.SH AUSWIRKUNGEN
+Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:
+.LP
+.HP 3
+1) Installieren von \fBHylafax+\fR, falls ein Modem angeschlossen ist und Hylafax+ nicht installiert ist. Ggf. Konfiguration von Hylafax+ durch Aufruf von '\fBfaxsetup -nointeracitve\fR', durch Editieren der Konfigurationsdateien \fBconfig\fR und \fBconfig.*\fR (z.B. \fBconfig.ttyACM0\fR) im hylafax-Konfigurationsverzeichnis (Vorgabe z.B.: \fB/var/spool/hylafax/etc/\fR)
+.LP
+.HP 3
+2) Installieren von \fBcapisuite\fR, falls eine Fritzkarte eingebaut ist und capisuite nicht installiert ist.
+Ggf. Bearbeitung der Konfigurationsdateien \fB/etc/capisuite/capisuite.conf\fR und \fB/etc/capisuite/fax.conf\fR.
+Ggf. Bearbeitung des Python-Scripts für ankommende Faxe (Vorgabe z.B.: \fB/usr/lib64/capisuite/incoming.py\fR) zur Bestimmung der Zahl der Klingeltöne bis zur Faxannahme, Erstellung bzw. Bearbeitung der Dateien '\fB/etc/udev/rules.d/46-FKN_isdn_capi.rules\fR', '\fB/etc/modprobe.d/50-blacklist.conf\fR'.
+.LP
+.HP 3
+3) Einrichten von Diensten: 
+.br
+a) in systemd (im Verzeichnis /usr/lib/systemd/system oder /lib/systemd/system), insbesondere:
+.br
+\fBhylafax-faxq.service\fR, \fBhylafax-hfaxd.service\fR, \fBhylafax-faxgetty-....service\fR (z.B. \fBhylafax-faxgetty-ttyACM0\fR),
+.br
+capisuite.service,
+.br
+b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neu eingerichtes Verzeichnis /etc/ausrangiert:
+\fBhylafax\fR, \fBcapisuite\fR
+.br
+c) falls \fBselinux\fR aktiv ist (wie standardmäßig in fedora), dann behindert es standardmäßig \fBhylafax\fR; in diesem Fall wird im Hintergrund ein Modul für selinux eingerichtet, um den Betrieb von hylafax-hfaxd wieder zu erlauben. Ferner muss (bis zur eventuellen Erstellung einer maßgeschneiderteren Lösung) die Domäne 'getty' mit dem Befehl '\fBsemanage permissive -a getty_t\fR' in selinux entschärft werden, um faxe über hylafax empfangen zu können.
+.LP
+.HP 3
+4) Erstellen einer Protokolldatei, standardmäßig \fB/var/log/autofax.log\fR.
+.LP
+.HP 3
+5) ggf. Erstellen und Zugreifbarmachen der bestimmbaren \fBVerzeichnisse\fR für zu sendende, wartende, abgearbeitete und empfangene Faxe.
+.LP
+.HP 3
+6) ggf. Erstellen und Verändern der Konfigurationsdatei autofax.conf in dem Verzeichnis, in dem auch es selbst steht (Vorgabe: /usr/local/sbin/autofax).
+.LP
+.HP 3
+7) ggf. Einfügen einer Zeile zum Aufruf des Programms in das crontab (von root)
+.LP
+.HP 3
+8) ggf. Einfügen von Abschnitten für die unter 3) genannten Verzeichnisse in /etc/samba/smb.conf, ggf. Einfügen/Passwortzuteilen des Programmbenutzers bzw. (falls root) des für die Capisuite gewählten Benutzers als Samba-Bentzer.
+.br
+Falls Suse-Firewall vorhanden, samba-Server fuer "externe Zone" eintragen.
+.LP
+.HP 3
+9) ggf. Einfügen einer Datenbank für die Faxe in mariadb unter einem bestimmbaren Namen, Anlage und Veränderung mehrerer Tabellen und einer Prozedur in dieser Datenbank, ggf. Einfügen eines Benutzers mit bestimmbarem Namen in mariadb zur Datenpflege in diesen Tabellen 
+.LP
+.HP 3
+10) durch entsprechende Befehlszeilenoptionen von autofax können innerhalb von hylafax und capisuite Faxe gelöscht werden, insbesondere:
+.br
+a) in hylafax: durch Aufruf von 'faxrm'
+.br
+b) in capisuite: durch Löschen der Dateien wie /var/spool/capisuite/users/<user>/sendq/*.txt und ~/*.sff.
+In capisuite kann auch eine verwaiste Lock-Datei (/var/spool/capisuite/users/<user>/sendq/*.lock) gelöscht werden.
+
+
+.SH FEHLER
+Fehler bitte mit u.a. dem Wort 'autofax' in der Ueberschrift melden. 
+.br
+Bitte auch melden, wenn sich Änderungsbedarf durch andere Hard- bzw. Software ergeben.
+
+.SH HAFTUNG
+Das Programm wurde mit bester Absicht entwickelt und durch den Autor getestet.
+.br
+Trotzdem kann der Autor für keine Schäden haften, die durch das Programm entstehen könnten
+
+.SH AUTOR
+Gerald Schade (geraldschade@gmx.de; www.diabdachau.de)
