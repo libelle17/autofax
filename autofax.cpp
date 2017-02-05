@@ -6571,21 +6571,32 @@ int paramcl::pruefhyla()
 				"|| printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall; cd \\\""+instverz+"\\\"\\n\\\" >> \\\""+unindt+"\\\";} "
 				"&& sudo touch \\$NACHWEIS;};true\"";
 		*/
-		const string befehl="sh -c 'NACHWEIS="+lsys.getlib64()+"/sclibtiff;! test -f /usr/include/tiff.h ||! test -f \\$NACHWEIS"
+		/*
+      systemrueck("sh -c 'cd \""+instverz+"\";T="+datei+".tar.gz; wget https://github.com/libelle17/"+datei+"/archive/master.tar.gz -O $T'", 
+    return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instverz+"\" && tar xpvf $T"
+                       "&& rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv $M $P'",obverb,oblog);
+    return systemrueck("sh -c 'cd \""+instverz+vtz+was+"\" && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install "
+							"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
+							"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\";} "
+							"'"
+		*/
+		// Die Datei /usr/lib64/sclibtiff wird als Nachweis verwendet, dass die Installationskorrektur durchgefuert wurde
+		const string befehl="sh -c 'NACHWEIS=\""+lsys.getlib64()+"/sclibtiff\";! test -f /usr/include/tiff.h ||! test -f \"$NACHWEIS\""
+		
 		    "&&{ "+linst.schau+" cmake||"+linst.instyp+" cmake;true"
-				"&& P=tiff_copy; T=\\$P.tar.gz; Z=tiff-4.0.7"
-				"; wget https://github.com/libelle17/\\$P/archive/master.tar.gz -O \\$T"
-				"&& tar xpvf \\$T && mv \\${P}-master \\$Z && cd \\$Z"
+				"&& P=tiff_copy; T=$P.tar.gz; Z=tiff-4.0.7"
+				"; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T"
+				"&& tar xpvf $T && mv ${P}-master $Z && cd $Z"
 				"&& rm -f CMakeCache.txt"
 				"&& sed -i.bak s\"/uint16 Param;/uint32 Param;/\" libtiff/tif_fax3.h"
 				"&& cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . "
 				"&& make"
 				"&& sudo make install"
 				"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
-				"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\";} "
-				"&& sudo touch \\$NACHWEIS;};true'";
-				
+				"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\nrm -f \"$NACHWEIS\"\\n\" >> \""+unindt+"\";} "
+				"&& sudo touch \"$NACHWEIS\";};true'";
 		systemrueck(befehl,obverb,oblog);
+
 		for(unsigned versuch=0;versuch<3;versuch++) {
 			// 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
 			// pruefen, ob hylafax.service laeuft

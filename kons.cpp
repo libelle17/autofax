@@ -2468,7 +2468,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 							obda=1;
 							break;
 						}
-					}
+					} // 					while (getline(uni0,zeile))
 				} // 				if (uni0.is_open())
 			}
 			if (!obda) {
