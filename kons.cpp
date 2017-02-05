@@ -2458,12 +2458,27 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
     } // switch (linst.pruefipr()) 
 		const uchar obyes=1;
 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog))) {
-			mdatei uniff(unindt,ios::app);
-			if (uniff.is_open()) {
-				uniff<<upr<<eprog<<endl; 
-			} else {
-				perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
-			} // 			if (uniff.is_open())
+			uchar obda=0;
+			{
+				mdatei uni0(unindt,ios::in);
+				if (uni0.is_open()) {
+					string zeile;
+					while (getline(uni0,zeile)) {
+						if (zeile.find(upr+eprog)!=string::npos) {
+							obda=1;
+							break;
+						}
+					}
+				} // 				if (uni0.is_open())
+			}
+			if (!obda) {
+				mdatei uniff(unindt,ios::app);
+				if (uniff.is_open()) {
+					uniff<<upr<<eprog<<endl; 
+				} else {
+					perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
+				} // 			if (uniff.is_open())
+			}
 		} // 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog)))
 		//				for(iru=0;iru<2;iru++) KLA
 		//					if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
@@ -2474,7 +2489,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 	return ret;
 } // uchar linst_cl::doinst(const string& prog,int obverb,int oblog) 
 
-int linst_cl::doggfinst(const string& prog,int obverb,int oblog)
+	int linst_cl::doggfinst(const string& prog,int obverb,int oblog)
 {
   if (!(eprog=ersetzeprog(prog)).empty()) {
     if (obfehlt(eprog,obverb,oblog)) {
