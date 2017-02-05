@@ -7000,7 +7000,7 @@ int paramcl::kompiliere(const string& was,const string& endg, const string& vorc
 {
   if (!kompilbase(was,endg)) {
     return systemrueck("sh -c 'cd \""+instverz+vtz+was+"\" && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install "
-//							" && printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall && cd ..\\n\\\" >> \\\""+unindt+"\\\"'" 
+							" && printf \\\"cd \\\"\\$\\(pwd\\)\\\" && make uninstall && cd ..\\n\\\" >> \\\""+unindt+"\\\""
 							"'"
 		,obverb,oblog);
   } //    if (!kompilbase(was,endg))
