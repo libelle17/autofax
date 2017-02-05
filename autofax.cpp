@@ -6595,7 +6595,8 @@ int paramcl::pruefhyla()
 				"&& make"
 				"&& sudo make install"
 				"&&{ grep -q \"cd \\\""+instverz+vtz+proj+"\\\"\" \""+unindt+"\""
-				"|| printf \"cd \""+instverz+vtz+proj+"\" && make uninstall; cd \""+instverz+"\"\\nsudo rm -f \"$NACHWEIS\"\\n\" >> \""+unindt+"\";} "
+				"|| printf \"cd \\\""+instverz+vtz+proj+"\\\" && make uninstall; "
+				  "cd \\\""+instverz+"\\\"\\nsudo rm -f \\\""+nachw+"\\\"\\n\" >> \""+unindt+"\";} "
         ";true'";
 			systemrueck(befehl,obverb,oblog);
 			touch(nachw,obverb,oblog);
