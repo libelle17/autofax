@@ -4575,6 +4575,7 @@ int paramcl::pruefocr()
 				systemrueck("sudo python3 -m pip install --upgrade setuptools pip");
 				pruefunpaper();
 				systemrueck("sudo python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
+			  // pip remove ocrmypdf	
 				// pruefunpaper();
 				// sudo dnf install ./ghostscript-9.16-4.fc24.i686.rpm
 				//// sudo dnf -y install ghostscript // ghostscript 9.20 geht nicht mit pdf/a und overwrite
