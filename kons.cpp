@@ -2432,8 +2432,8 @@ string linst_cl::ersetzeprog(const string& prog)
   return prog;
 } // string linst_cl::ersetzeprog(const string& prog) 
 
-
-int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar obyes/*=1*/)
+// Problem: bei obyes erscheint die Rueckfrage dem Benutzer nicht, statt dessen wartet das Programm
+int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/) // ,uchar obyes/*=1*/)
 {
   // <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
   int ret=2;
@@ -2456,6 +2456,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
         } //         if (obnmr)
       default: break;
     } // switch (linst.pruefipr()) 
+		const uchar obyes=1;
 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog))) {
 			mdatei uniff(unindt,ios::app);
 			if (uniff.is_open()) {

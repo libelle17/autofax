@@ -6557,7 +6557,7 @@ int paramcl::pruefhyla()
 		// ein Fehler in der Version 4.0.7 von libtiff verhindert die Zusammenarbeit mit hylafax
 		linst.pruefipr();
 		const string befehl="sh -c \"NACHWEIS="+lsys.getlib64()+"/sclibtiff;! test -f /usr/include/tiff.h ||! test -f \\$NACHWEIS"
-		    "&&{ "+linst.schau+" cmake||"+linst.instp+" cmake;true"
+		    "&&{ "+linst.schau+" cmake||"+linst.instyp+" cmake;true"
 				"&& P=tiff_copy; T=\\$P.tar.gz; Z=tiff-4.0.7"
 				"; wget https://github.com/libelle17/\\$P/archive/master.tar.gz -O \\$T"
 				"&& tar xpvf \\$T && mv \\${P}-master \\$Z && cd \\$Z"
