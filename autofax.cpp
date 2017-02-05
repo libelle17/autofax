@@ -6595,7 +6595,7 @@ int paramcl::pruefhyla()
 				"&& make"
 				"&& sudo make install"
 				"&&{ grep -q \"cd \\\""+instverz+vtz+proj+"\\\"\" \""+unindt+"\""
-				"|| printf \"cd \\\""+instverz+vtz+proj+"\\\" && make uninstall; "
+				"|| printf \"cd \\\""+instverz+vtz+proj+"\\\" && cat install_manifest.txt|sudo xargs rm; "
 				  "cd \\\""+instverz+"\\\"\\nsudo rm -f \\\""+nachw+"\\\"\\n\" >> \""+unindt+"\";} "
         ";true'";
 			systemrueck(befehl,obverb,oblog);
