@@ -7000,7 +7000,8 @@ int paramcl::kompiliere(const string& was,const string& endg, const string& vorc
 {
   if (!kompilbase(was,endg)) {
     return systemrueck("sh -c 'cd \""+instverz+vtz+was+"\" && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install "
-							" && printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall && cd ..\\n\\\" >> \\\""+unindt+"\\\"'" 
+//							" && printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall && cd ..\\n\\\" >> \\\""+unindt+"\\\"'" 
+							"'"
 		,obverb,oblog);
   } //    if (!kompilbase(was,endg))
   return 1;
@@ -7185,8 +7186,8 @@ int paramcl::pruefcapi()
 										"-e '\\''/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
 										"c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);'\\'' "
 										"main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
-//										"sudo sed -i.bak \"/install: / i .PHONY: uninstall\\nuninstall:\\n\\t\\t"
-//										                  "sudo modprobe -r \\$\\(CARD\\).ko\\n\\t\\tsudo rm \\$\\(TARGETDIR\\)/\\$\\(CARD\\)\\n\" Makefile;"
+										"sudo sed -i.bak \"/install: / i .PHONY: uninstall\\nuninstall:\\n\\t\\t"
+										                  "sudo modprobe -r \\$\\(CARD\\).ko\\n\\t\\tsudo rm \\$\\(TARGETDIR\\)/\\$\\(CARD\\)\\n\" Makefile;"
 										"sudo make clean";
 									const string cfgbismake=" 2>/dev/null; sudo ";
 									kompiliere(proj,s_gz,vorcfg,cfgbismake);
