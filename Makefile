@@ -45,7 +45,9 @@ EXEC=$(PROGRAM)
 INSTEXEC=$(EXPFAD)/$(EXEC)
 
 CCInst=gcc6-c++
-ifneq ($(shell g++-6 --version >/dev/null 2>&1),0)
+OR= >/dev/null 2>&1
+KF= 2>/dev/null
+ifneq ($(shell g++-6 --version $(OR)),0)
  CCName=g++
 # CC=sudo $(CCName)
  CC:=$(CCName)
@@ -55,7 +57,6 @@ else
 # CC=sudo $(CCName)
  CC:=$(CCName)
 endif
-OR:= >/dev/null 2>&1
 -include vars # wird durch install.sh generiert
 libmcd:=$(libmc)-$(dev)
 pgd:=postgresql-$(dev)
@@ -63,7 +64,7 @@ slc:=sudo /sbin/ldconfig
 GROFFCHECK:=$(SPR) $(pgroff)$(OR)||{ $(IPR) $(pgroff);printf '$(UPR) $(pgroff)\n'>>$(UN);};true
 
 DEPDIR := .d
-$(shell mkdir -p $(DEPDIR) >/dev/null)
+$(shell mkdir -p $(DEPDIR) $(OR))
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
 # POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d 2>/dev/null
@@ -78,6 +79,15 @@ gruen="\033[0;32m"
 #blau="\033[0;34;1;47m"
 blau="\033[1;34m"
 reset="\033[0m"
+LT:=libtiff
+LT:=$(LT) $(LT)-$(dev)
+
+t5:
+ifeq ($(shell ls /usr $(OR)),0)
+	 { echo 1 $(OR);}
+else
+	 { echo 2 $(OR);}
+endif
 
 .PHONY: alles
 alles: anzeig weiter
@@ -141,10 +151,10 @@ git:
 anzeig:
 # 'echo -e' geht nicht z.B. in ubuntu
 	@printf " %bGNU Make%b, Zieldatei: %b%s%b, vorher:                                      \n" $(gruen) $(reset) $(rot) "$(EXEC)" $(reset)
-	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC) 2>/dev/null)" $(reset) 
+	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC) $(KF))" $(reset) 
 	@printf " Quelldateien: %b%s%b\n" $(blau) "$(SRCS)" $(reset) 
 	@printf " Compiler: %b%s%b, installiert als: %b%s%b; Zielpfad fuer '%bmake install%b': %b%s%b\n" $(blau) "$(CCName)" $(reset) $(blau) "$(CCInst)" $(reset) $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset)
-	-@$(shell rm fehler.txt 2>/dev/null)
+	-@$(shell rm fehler.txt $(KF))
 
 $(EXEC): $(OBJ)
 	-@test -f version || echo 0.1>version; if test -f entwickeln; then awk "BEGIN {print `cat version`+0.00001}">version; else echo " Datei 'entwickeln' fehlt, lasse die Version gleich"; fi;
@@ -182,7 +192,7 @@ compiler:
 	@which $(CCName)$(OR)||{ $(REPOS)$(IP_R) $(COMP);printf '$(UPR) $(COMP);$(urepo)\n'>>$(UN);};
 	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(IPR) $(libmcd);printf '$(UPR) $(libmcd)\n'>>$(UN);fi
 	@[ -z $$mitpg ]||$(SPR) $(pgd)$(OR)||{ $(IPR) $(pgd);printf '$(UPR) $(pgd)\n'>>$(UN);$(slc);};
-	@test -f /usr/include/tiff.h||{ $(IPR) libtiff-$(dev);printf '$(UPR) libtiff-$(dev)\n'>>$(UN);}
+	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR) $(LT) $(KF);$(IPR) $(LT);printf '$(UPR) $(LT)\n'>>$(UN);}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
 # 17.1.17 in Programm verlagert
 #	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
@@ -230,7 +240,7 @@ endif
 
 $(INSTEXEC): $(EXEC)
 	@printf " Kopiere Programmdatei: %b%s%b -> %b%s%b\n" $(blau) "$(EXEC)" $(reset) $(blau) "$(INSTEXEC)" $(reset)
-	-@sudo killall $(EXEC) 2>/dev/null; sudo killall -9 $(EXEC) 2>/dev/null; sudo cp -p "$(EXEC)" "$(INSTEXEC)"
+	-@sudo killall $(EXEC) $(KF); sudo killall -9 $(EXEC) $(KF); sudo cp -p "$(EXEC)" "$(INSTEXEC)"
 
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
 ${MANPE}: ${CURDIR}/man_en
@@ -271,14 +281,14 @@ fertig:
 .PHONY: hierclean
 hierclean: 
 	@printf " Bereinige ...\r"
-	@$(shell rm -f $(EXEC) $(OBJ) .d/* 2>/dev/null)
-	@$(shell sudo rm -f ${MANPEH} ${MANPDH} 2>/dev/null)
+	@$(shell rm -f $(EXEC) $(OBJ) .d/* $(KF))
+	@$(shell sudo rm -f ${MANPEH} ${MANPDH} $(KF))
 	@printf " %b%s,%s,%s,%s%b geloescht!\n" $(blau) "$(EXEC)" "$(OBJ)" "$(MANPEH)" "$(MANPDH)" $(reset)
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
 .PHONY: clean
 clean: hierclean
-	@$(shell sudo rm -f $(INSTEXEC) 2>/dev/null)
+	@$(shell sudo rm -f $(INSTEXEC) $(KF))
 	@printf " %b%s%b geloescht!\n" $(blau) "$(INSTEXEC)" $(reset) 
 
 .PHONY: uninstall
