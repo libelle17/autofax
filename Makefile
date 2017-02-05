@@ -59,6 +59,8 @@ else
 endif
 -include vars # wird durch install.sh generiert
 libmcd:=$(libmc)-$(dev)
+LT:=libtiff
+LT:=$(LT) $(LT)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
 GROFFCHECK:=$(SPR) $(pgroff)$(OR)||{ $(IPR) $(pgroff);printf '$(UPR) $(pgroff)\n'>>$(UN);};true
@@ -79,15 +81,7 @@ gruen="\033[0;32m"
 #blau="\033[0;34;1;47m"
 blau="\033[1;34m"
 reset="\033[0m"
-LT:=libtiff
-LT:=$(LT) $(LT)-$(dev)
 
-t5:
-ifeq ($(shell ls /usr $(OR)),0)
-	 { echo 1 $(OR);}
-else
-	 { echo 2 $(OR);}
-endif
 
 .PHONY: alles
 alles: anzeig weiter
