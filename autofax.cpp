@@ -6581,12 +6581,14 @@ int paramcl::pruefhyla()
 							"'"
 		*/
 		// Die Datei /usr/lib64/sclibtiff wird als Nachweis verwendet, dass die Installationskorrektur durchgefuert wurde
-		const string befehl="sh -c 'NACHWEIS=\""+lsys.getlib64()+"/sclibtiff\";! test -f /usr/include/tiff.h ||! test -f \"$NACHWEIS\""
-		
-		    "&&{ "+linst.schau+" cmake||"+linst.instyp+" cmake;true"
-				"&& P=tiff_copy; T=$P.tar.gz; Z=tiff-4.0.7"
-				"; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T"
-				"&& tar xpvf $T && mv ${P}-master $Z && cd $Z"
+		 struct stat lnachw, ltiffh;
+		 const string nachw=lsys.getlib64()+"/sclibtiff";
+		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh)) {
+		  linst.doggfinst("cmake",obverb,oblog); 
+			const string proj="tiff_copy";
+		  holvongithub(proj);
+			kompilbase(proj,s_gz);
+			const string befehl="sh -c 'cd \""+instverz+"\";"
 				"&& rm -f CMakeCache.txt"
 				"&& sed -i.bak s\"/uint16 Param;/uint32 Param;/\" libtiff/tif_fax3.h"
 				"&& cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . "
@@ -6594,8 +6596,10 @@ int paramcl::pruefhyla()
 				"&& sudo make install"
 				"&&{ grep -q \"cd $(pwd)\" \""+unindt+"\""
 				"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\nrm -f \"$NACHWEIS\"\\n\" >> \""+unindt+"\";} "
-				"&& sudo touch \"$NACHWEIS\";};true'";
-		systemrueck(befehl,obverb,oblog);
+        ";true'";
+			systemrueck(befehl,obverb,oblog);
+			touch(nachw,obverb,oblog);
+		 }
 
 		for(unsigned versuch=0;versuch<3;versuch++) {
 			// 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
