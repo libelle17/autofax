@@ -6588,14 +6588,14 @@ int paramcl::pruefhyla()
 			const string proj="tiff_copy";
 		  holvongithub(proj);
 			kompilbase(proj,s_gz);
-			const string befehl="sh -c 'cd \""+instverz+"\";"
+			const string befehl="sh -c 'cd \""+instverz+vtz+proj+"\""
 				"&& rm -f CMakeCache.txt"
 				"&& sed -i.bak s\"/uint16 Param;/uint32 Param;/\" libtiff/tif_fax3.h"
 				"&& cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . "
 				"&& make"
 				"&& sudo make install"
-				"&&{ grep -q \"cd '$(pwd)'\" \""+unindt+"\""
-				"|| printf \"cd \"'$(pwd)'\" && make uninstall; cd \""+instverz+"\"\\nsudo rm -f \"$NACHWEIS\"\\n\" >> \""+unindt+"\";} "
+				"&&{ grep -q \"cd \\\""+instverz+vtz+proj+"\\\"\" \""+unindt+"\""
+				"|| printf \"cd \""+instverz+vtz+proj+"\" && make uninstall; cd \""+instverz+"\"\\nsudo rm -f \"$NACHWEIS\"\\n\" >> \""+unindt+"\";} "
         ";true'";
 			systemrueck(befehl,obverb,oblog);
 			touch(nachw,obverb,oblog);
