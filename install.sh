@@ -87,8 +87,9 @@ $SPR make >/dev/null || exit
 				esac; 
 				done; 
 				test -e $P && mv $P ${P}_1; 
-				mv $P-master $P && 
-					cd $P;
+				mv $P-master $P &&{
+				  Q=${P}_1/$UN; test -f $Q && cp -ai $Q $P
+					cd $P; }
 		}|| exit;
 }
 exportvars;
