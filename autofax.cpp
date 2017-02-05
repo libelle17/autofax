@@ -6556,7 +6556,7 @@ int paramcl::pruefhyla()
 		} //   if (br<=0) else
 		// ein Fehler in der Version 4.0.7 von libtiff verhindert die Zusammenarbeit mit hylafax
 		linst.pruefipr();
-		systemrueck("sh -c \"NACHWEIS="+lsys.getlib64()+"/sclibtiff;! test -f /usr/include/tiff.h ||! test -f \\$NACHWEIS"
+		const string befehl="sh -c \"NACHWEIS="+lsys.getlib64()+"/sclibtiff;! test -f /usr/include/tiff.h ||! test -f \\$NACHWEIS"
 		    "&&{ "+linst.schau+" cmake||"+linst.instp+" cmake;true"
 				"&& P=tiff_copy; T=\\$P.tar.gz; Z=tiff-4.0.7"
 				"; wget https://github.com/libelle17/\\$P/archive/master.tar.gz -O \\$T"
@@ -6567,7 +6567,10 @@ int paramcl::pruefhyla()
 				"&& make"
 				"&& sudo make install"
 				"&& printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall && cd ..\\n\\\" >> \\\""+unindt+"\\\""
-				"&& sudo touch \\$NACHWEIS;};true\"",obverb,oblog);
+				"&& sudo touch \\$NACHWEIS;};true\"";
+				caus<<violett<<befehl<<schwarz<<endl;
+				
+		systemrueck(befehl,obverb,oblog);
 		for(unsigned versuch=0;versuch<3;versuch++) {
 			// 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
 			// pruefen, ob hylafax.service laeuft
