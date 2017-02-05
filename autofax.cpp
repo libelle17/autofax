@@ -6592,7 +6592,7 @@ int paramcl::pruefhyla()
 				"&& cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . "
 				"&& make"
 				"&& sudo make install"
-				"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
+				"&&{ grep -q \"cd $(pwd)\" \""+unindt+"\""
 				"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\nrm -f \"$NACHWEIS\"\\n\" >> \""+unindt+"\";} "
 				"&& sudo touch \"$NACHWEIS\";};true'";
 		systemrueck(befehl,obverb,oblog);
