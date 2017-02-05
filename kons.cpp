@@ -2579,7 +2579,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 					linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
 					systemrueck("test -f \""+selocal+".pp\" && sudo semodule -i \""+selocal+".pp\"",obverb,oblog);
 					if (ename.find("faxgetty")!=string::npos) {
-					 systemrueck("semodule -l|grep permissive_getty_t >/dev/null||semanage permissive -a getty_t",obverb,oblog);
+					 systemrueck("sudo semodule -l|grep permissive_getty_t >/dev/null||sudo semanage permissive -a getty_t",obverb,oblog);
 					}
 				}  // if (obse)
 			} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
