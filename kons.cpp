@@ -1049,18 +1049,18 @@ void touch(const std::string& pathname,int obverb/*=0*/,int oblog/*=*/)
   int fehler=0;
 	int fd = open(pathname.c_str(), O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, 0666);
 	if (fd<0) { // Couldn't open that path.
-		std::cerr << __PRETTY_FUNCTION__ << ": Couldn't open() path \"" << pathname << "\"\n";
+		if (obverb) std::cerr << __PRETTY_FUNCTION__ << ": Couldn't open() path \"" << pathname << "\"\n";
 		fehler=1;
 	} else {
 		int rc = utimensat(AT_FDCWD, pathname.c_str(), nullptr, 0);
 		if (rc) {
-			std::cerr << __PRETTY_FUNCTION__ << ": Couldn't utimensat() path \"" << pathname << "\"\n";
+			if (obverb) std::cerr << __PRETTY_FUNCTION__ << ": Couldn't utimensat() path \"" << pathname << "\"\n";
 			fehler=1;
 		}
-		std::clog << __PRETTY_FUNCTION__ << ": Completed touch() on path \"" << pathname << "\"\n";
+		if (obverb||oblog) std::clog << __PRETTY_FUNCTION__ << ": Completed touch() on path \"" << pathname << "\"\n";
 	}
 	if (fehler)
-		systemrueck("touch '"+pathname+"'",obverb,oblog);
+		systemrueck("sudo touch '"+pathname+"'",obverb,oblog);
 }
 
 void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach)
