@@ -1650,7 +1650,7 @@ const string& pk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax";
 
 
 extern class lsyscl lsys;
-extern class linstcl linst;
+extern class linst_cl linst;
 
 using namespace std;
 #ifdef mitpostgres 
@@ -3634,9 +3634,9 @@ void paramcl::pruefcron()
 		if (cronda) {
 			int nochkeincron = systemrueck("sudo crontab -l",obverb-1,0,0,2);
 			setztmpc();
-			string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 "+vaufr;// "date >/home/schade/zeit";
-			string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
-			string czt=" \\* \\* \\* \\*";
+			const string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 "+vaufr;// "date >/home/schade/zeit";
+			const string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
+			const string czt=" \\* \\* \\* \\*";
 			string vorcm;
 			if (!nochkeincron) {
 				cmd="bash -c 'grep \"\\*/.*"+czt+cb0+"\" <(sudo crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
@@ -3682,7 +3682,7 @@ void paramcl::pruefcron()
 					befehl+=")";
 			}
 #else
-			string befehl=cronzuplanen?
+			const string befehl=cronzuplanen?
 				(nochkeincron?("rm -f ")+tmpc+";":
 				 "bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+"; ")+
 				"echo \""+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+(nochkeincron?"":")")
@@ -3831,7 +3831,7 @@ void paramcl::pruefsamba()
       else if (nmbd.serviceda) nmbd.restart(obverb-1,oblog);
     } // if (smbrestart) 
 		// VFS
-		if (distri.pruefipr()==apt) linst.doggfinst("samba-vfs-modules",obverb,oblog);
+		if (linst.pruefipr()==apt) linst.doggfinst("samba-vfs-modules",obverb,oblog);
 		// Firewall(s)
 		uchar obslaueft=0;
 		svec rueckr;
@@ -3954,7 +3954,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 								}
 								string stamm,exten;
 								getstammext(&rueck[cru][ruecki],&stamm,&exten);
-								string txtf=stamm+".txt";
+								const string txtf=stamm+".txt";
 								struct stat txtstat={0};
 								if (!lstat(txtf.c_str(),&txtstat)) {
 									// <<gruen<<txtf<<schwarz<<endl;
@@ -4114,7 +4114,7 @@ void paramcl::bereinigewv()
     fdn.insert(rueck[i]);
   } 
   //  for(fit=fdn.begin();fit!=fdn.end();++fit) _out<<blau<<*fit<<schwarz<<endl;
-  string vgl="Beispiel 997.doc"; // nicht existente Datei
+  const string vgl="Beispiel 997.doc"; // nicht existente Datei
   ::Log(string(Tx[T_DateienzahlimVz])+blau+ltoan(fdn.size())+schwarz,1,1);
   for(fit=fdn.begin();fit!=fdn.end();++fit) {
     if (*fit==vgl) {
@@ -4148,7 +4148,7 @@ void paramcl::bereinigewv()
                 } //                 if (aru)
                 if ((fit=fdn.find(dbdocname))!=fdn.end()) { // wenn Datenbankeintrag in der sortierten Mengen der Dateinamen enthalten
                   struct stat entryfit={0};
-                  string quel=wvz+vtz+*fit;
+                  const string quel=wvz+vtz+*fit;
                   if (!lstat(quel.c_str(),&entryfit)) { // duerfte immer erfuellt sein
                     if (entryfit.st_size) { // keine 0-Bytes-Dateien kopieren
                       if (runde) { // wenn nicht in der Spool-Tabelle
@@ -4159,7 +4159,7 @@ void paramcl::bereinigewv()
                         }
                         unsigned vfehler=0;
                         if (!zlvz.empty()) {
-                          string zdt=zlvz+vtz+*fit;
+                          const string zdt=zlvz+vtz+*fit;
                           dorename(quel,zdt,cuser,&vfehler,1,1);
                           if (vfehler) {
                             ::Log(rots+Tx[T_Fehler_beim_Verschieben_Ausrufezeichen]+": "+ltoan(vfehler)+schwarz,1,1);
@@ -4195,7 +4195,7 @@ void paramcl::anhalten()
   Log(violetts+Tx[T_anhalten]+schwarz);
   // crontab
   setztmpc();
-  string befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+"; sudo crontab "+tmpc+"); true";
+  const string befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&&(sudo crontab -l|sed '/"+saufr+"/d'>")+tmpc+";sudo crontab "+tmpc+");true";
   systemrueck(befehl,obverb,oblog);
   // services
   /*
@@ -4253,7 +4253,7 @@ int paramcl::loeschefax()
 		//      if (i==ivorher)  ::Log("Capi:",1,0);
 		stringstream aus;
 		fsfv[i].capiausgeb(&aus,maxcdials,1,obverb,oblog,++faxord);
-		string auss=aus.str();
+		const string auss=aus.str();
 		::Log(auss,1,oblog);
 	} // 	for(size_t i=ivorher;i<fsfv.size();i++)
 	ivorher=fsfv.size();
@@ -4262,7 +4262,7 @@ int paramcl::loeschefax()
 		//      if (i==ivorher) ::Log("Hyla:",1,0);
 		stringstream aus;
 		fsfv[i].hylaausgeb(&aus,this,0,1,obverb,1,oblog);
-		string auss=aus.str();
+		const string auss=aus.str();
 		::Log(auss,1,oblog);
 	} //   for(size_t i=ivorher;i<fsfv.size();i++) {
 
@@ -4339,7 +4339,7 @@ int paramcl::loescheallewartende()
 		for(size_t i=0;i<allec.size();i++) {
 			tuloeschen(allec[i],cuser,1,oblog);
 			if (allec[i].find(".sff")!=string::npos) {
-				string fname=base_name(allec[i]);
+				const string fname=base_name(allec[i]);
 				RS loe(My,"DELETE FROM `"+spooltab+"` WHERE capispooldatei='"+fname+"'");
 			}
 		} // for(size_t i=0;i<allec.size();i++) 
@@ -4408,9 +4408,9 @@ void paramcl::tu_listi()
 void paramcl::suchestr()
 {
 	Log(violetts+Tx[T_suchestr]+schwarz);
-	string scnv=" CONVERT(\"%"+suchstr+"%\" USING utf8) ";
+	const string scnv=" CONVERT(\"%"+suchstr+"%\" USING utf8) ";
 	for(int erf=1;erf>=0;erf--) {
-		string oberfolg=ltoan(erf);
+		const string oberfolg=ltoan(erf);
 		char ***cerg;
 		RS lista(My,string("SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM (")+
 				"SELECT * FROM ("
@@ -4476,7 +4476,7 @@ int paramcl::pruefsoffice(uchar mitloe/*=0*/)
 	if (mitloe || !sofficegeprueft) {
 		//              systemrueck("which zypper 2>/dev/null && zypper -n in soffice || "
 		//                          "{ which apt-get 2>/dev/null && apt-get -y install soffice; }",obverb,oblog);
-		if (mitloe) linst.doinst("libreoffice-base",obverb,oblog,"",1);
+		if (mitloe) linst.douninst("libreoffice-base",obverb,oblog);
 		sofficeda=!linst.doinst("libreoffice-base",obverb,oblog,"soffice");
 		sofficegeprueft=1;
 	} //   if (!sofficegeprueft)
@@ -4504,12 +4504,12 @@ void paramcl::pruefunpaper()
 	Log(violetts+Tx[T_pruefunpaper]+schwarz);
 	double vers=progvers("unpaper",obverb,oblog);
 	if (vers<6.1) {
-		if (distri.pruefipr()==dnf||distri.pruefipr()==yum) {
+		if (linst.pruefipr()==dnf||linst.pruefipr()==yum) {
 			// sudo rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm 
 			//               http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
 			// systemrueck("sudo rpm -Uvh https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-free-release-stable.noarch.rpm "
 			//                          " https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-nonfree-release-stable.noarch.rpm",obverb,oblog);
-			string rpf="rpmfusion_copy";
+			const string rpf="rpmfusion_copy";
 			holvongithub(rpf);
 			kompilbase(rpf,s_gz);
 			systemrueck("sh -c 'cd \""+instverz+vtz+rpf+"\"&& sudo rpm -Uvh ./rpmfusion*rpm'",obverb+1,oblog);
@@ -4518,11 +4518,11 @@ void paramcl::pruefunpaper()
 			linst.doinst("ffmpeg-compat",obverb,oblog);
 		} else {
 			linst.doggfinst("libavformat-devel",obverb+1,oblog);
-			if (distri.pruefipr()==apt) {
+			if (linst.pruefipr()==apt) {
 				linst.doggfinst("pkg-config",obverb+1,oblog);
 			}
-		} // 		if (distri.pruefipr()==dnf||distri.pruefipr()==yum)
-		/*if (distri.pruefipr()==apt||distri.pruefipr()==dnf||distri.pruefipr()==yum)*/ 
+		} // 		if (linst.pruefipr()==dnf||linst.pruefipr()==yum)
+		/*if (linst.pruefipr()==apt||linst.pruefipr()==dnf||linst.pruefipr()==yum)*/ 
 		holvongithub("unpaper_copy");
 		if (vers) systemrueck("which unpaper && rm $(which unpaper) && hash -r",obverb,oblog);
 		kompiliere("unpaper_copy",s_gz);
@@ -4563,14 +4563,14 @@ int paramcl::pruefocr()
 			if (progvers("ocrmypdf",obverb,oblog)>4.32) 
 				ocrzuinst=0;
 		if (ocrzuinst) {
-			if (distri.pruefipr()==dnf||distri.pruefipr()==yum||distri.pruefipr()==zypper||distri.pruefipr()==apt) {
+			if (linst.pruefipr()==dnf||linst.pruefipr()==yum||linst.pruefipr()==zypper||linst.pruefipr()==apt) {
 				// in fedora pip statt pip3
 				linst.doinst("python3-pip",obverb+1,oblog,"pip3");
 				linst.doinst("python3-devel",obverb+1,oblog,"/usr/bin/python3-config");
 				linst.doggfinst("qpdf");
 				linst.doggfinst("gcc");
-				linst.doinst("libffi-devel");
-				if (distri.pruefipr()==dnf||distri.pruefipr()==yum) linst.doinst("redhat-rpm-config",obverb+1,oblog);
+				linst.doinst("libffi-devel",obverb+1,oblog);
+				if (linst.pruefipr()==dnf||linst.pruefipr()==yum) linst.doinst("redhat-rpm-config",obverb+1,oblog);
 				linst.doinst("ghostscript",obverb+1,oblog,"gs");
 				systemrueck("sudo python3 -m pip install --upgrade setuptools pip");
 				pruefunpaper();
@@ -4589,8 +4589,8 @@ int paramcl::pruefocr()
 							linst.doggfinst("libffi-dev",obverb+1,oblog);
 							linst.doggfinst("libssl-dev",obverb+1,oblog);
 						}
-						string proj="ocrmypdf_copy";
-						string srcvz=instverz+vtz+proj+".tar.gz";
+						const string proj="ocrmypdf_copy";
+						const string srcvz=instverz+vtz+proj+".tar.gz";
 						holvongithub(proj);
 						if (!kompilbase(proj,s_gz)) {
 							// sudo pip3 install image PyPDF2 ruffus reportlab cryptography cffi
@@ -4622,7 +4622,7 @@ int paramcl::pruefocr()
 					} //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
 				} //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
 #endif
-			} // if (distri.pruefipr()==dnf)
+			} // if (linst.pruefipr()==dnf)
 		} //     		if (ocrzuinst)
 		unpaperfuercron();
 		obocrgeprueft=1;
@@ -4636,7 +4636,7 @@ void paramcl::unpaperfuercron()
  const string ocr="ocrmypdf", unp="unpaper";
  string prog;
  if (obprogda(ocr,obverb,oblog,&prog)) {
-	string uppfad=dir_name(prog)+"/"+unp;
+	const string uppfad=dir_name(prog)+"/"+unp;
 	struct stat lst;
 	if (lstat(uppfad.c_str(),&lst)) {
 	 if (obprogda(unp,obverb,oblog,&prog)) {
@@ -4647,19 +4647,20 @@ void paramcl::unpaperfuercron()
 } // void paramcl::unpaperfuercron()
 
 // in Dateinherricht und empfarch (2x)
-int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr/*=1*/, int loeschen/*=1*/) // 0=Erfolg
+int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/, const int obocr/*=1*/, const int loeschen/*=1*/) // 0=Erfolg
 {
-	Log(violetts+Tx[T_zupdf]+schwarz+" '"+blau+quell+schwarz+"' '"+blau+ziel+schwarz+"'");
+	Log(violetts+Tx[T_zupdf]+schwarz+" '"+blau+*quellp+schwarz+"' '"+blau+ziel+schwarz+"'");
 	int erg=1;
-	string stamm,exten, *quellp=&quell;
+	string stamm,exten; // , *quellp=&quell;
 	getstammext(quellp,&stamm,&exten);
-	int keinbild= (exten=="doc"||exten=="xls"||exten=="txt"||exten=="odf"||exten=="ppt"||exten=="docx"||exten=="htm"||exten=="html");
+	const int keinbild= (exten=="doc"||exten=="xls"||exten=="txt"||exten=="odf"||exten=="ppt"||exten=="docx"||exten=="htm"||exten=="html");
+	const string* lqp=quellp; // laufender quell-pointer
 	for(int aru=0;aru<2;aru++) {
 		if (/*aru||*/!keinbild) {
 			if (obocr) {
 				if (!pruefocr()) {
 				  svec rueck;
-					if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*quellp+"\" \""+ziel+"\" 2>&1",obverb,oblog,&rueck,0,wahr,"",0,1)) {
+					if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*lqp+"\" \""+ziel+"\" 2>&1",obverb,oblog,&rueck,0,wahr,"",0,1)) {
 						erg=0; // nicht umgekehrt
 						for(unsigned uru=0;uru<rueck.size();uru++) {
 						 if (rueck[uru].find("ERROR")!=string::npos) {
@@ -4687,14 +4688,14 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 						pname="soffice";
 						if (pruefsoffice()) {
 							cmd0="cd $HOME; ";
-							cmd="soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+quell+"\" 2>&1";
+							cmd="soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+*quellp+"\" 2>&1";
 						} // 						if (pruefsoffice())
 						break; // Ergebnis immer 0
 					case 1: 
 						pname="convert";
 						if (pruefconvert()) {
 							cmd0.clear();
-							cmd=string("sudo convert \""+quell+"\" \""+ziel+"\""); 
+							cmd=string("sudo convert \""+*quellp+"\" \""+ziel+"\""); 
 						} // 						if (pruefconvert())
 						break;
 				} // switch (runde) 
@@ -4710,7 +4711,7 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 					} // 					if ((erg=systemrueck(cmd, obverb,oblog,&umwd)))
 					struct stat entryziel={0};
 					erg=lstat(ziel.c_str(),&entryziel); 
-					::Log(string(Tx[T_Umwandlungvon])+blau+quell+Tx[T_inPDFmit]+tuerkis+pname+schwarz+
+					::Log(string(Tx[T_Umwandlungvon])+blau+*quellp+Tx[T_inPDFmit]+tuerkis+pname+schwarz+
 							Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
 					if (!erg) break;
 				} // if (cmd.empty()) erg=1; else 
@@ -4719,13 +4720,13 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 				if (keinbild) break; // ocrmypdf kann nur Bilder umwandeln
 			} else {
 				if (!obocr||keinbild) break;  // ocrmypdf hier nicht erwuenscht oder sinnvoll
-				quellp=&ziel; // ocrmypdf mit der Ergebnisdatei
+				lqp=&ziel; // ocrmypdf mit der Ergebnisdatei
 			} // (erg) else
 			//  string *oquel=(erg?&quell:&ziel);
 		} // (erg)
 	} // 	for(int aru=0;aru<2;aru++)
 	if (!erg) {
-		attrangleich(ziel,quell);
+		attrangleich(ziel,*quellp);
 		// falls !erg und Seitenzahl gleich, dann tif loeschen
 		svec rueck;
 		if (pseitenp) {
@@ -4739,12 +4740,12 @@ int paramcl::zupdf(string& quell, string& ziel, ulong *pseitenp/*=0*/, int obocr
 		} // 		if (pseitenp)
 		if (loeschen && exten=="tif") {
 			ulong seiten=0;
-			holtif(quell, &seiten,0,0,0,0,0,0);
-			Log("TIF: "+blaus+quell+": "+gruen+ltoan(seiten)+schwarz+Tx[T_Seiten]);
+			holtif(*quellp, &seiten,0,0,0,0,0,0);
+			Log("TIF: "+blaus+*quellp+": "+gruen+ltoan(seiten)+schwarz+Tx[T_Seiten]);
 			if (rueck.size()) {
 				if (pseitenp) {
 					if (*pseitenp==seiten && seiten>0) {
-						tuloeschen(quell,cuser,obverb,oblog);
+						tuloeschen(*quellp,cuser,obverb,oblog);
 					} else if (*pseitenp<seiten || !*pseitenp) {
 						tuloeschen(ziel,cuser,obverb,oblog);
 					} // 		 if (*pseitenp==seiten && seiten>0) else
@@ -4777,7 +4778,7 @@ void paramcl::DateienHerricht()
 	systemrueck("sudo find \""+zufaxenvz+"\" -maxdepth 1 -type f",obverb,oblog,&iprid);
 	zielmustercl mu[anfxstrvec.size()];
 	for(uchar iprio=0;iprio<anfxstrvec.size();iprio++) {
-		string mstr=anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]"; // z.B. "an Fax +49"
+		const string mstr=anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]"; // z.B. "an Fax +49"
 		mu[iprio].setzemuster(mstr);
 
 		// der Reihe nach nach Dateien suchen, die das jeweilige Trennzeichen enthalten
@@ -4835,7 +4836,7 @@ void paramcl::DateienHerricht()
 						::Log(tuerkiss+toknr[j]+schwarz,obverb>1,oblog);
 						uint kfehler=0;
 						if (j<toknr.size()-1) {
-							string kopiert=kopiere(iprid.at(i),tmp,&kfehler,1);
+							const string kopiert=kopiere(iprid.at(i),tmp,&kfehler,1);
 							if (kfehler) continue;
 							urfx.push_back(urfxcl(kopiert,urname,iprio));
 							::Log(string(Tx[T_ErstelledurchKopieren])+rot+tmp+schwarz,1,oblog);
@@ -4888,7 +4889,7 @@ void paramcl::DateienHerricht()
 	for(size_t i=0;i<urfx.size();i++) {
 		uint vfehler=0;
 		// wenn die Datei im zufaxenvz in einen Namenskonflikt geriete ...
-		string ndname=zufaxenvz+vtz+neuerdateiname(urfx.at(i).teil);
+		const string ndname=zufaxenvz+vtz+neuerdateiname(urfx.at(i).teil);
 		if (ndname!=urfx.at(i).teil) {
 			dorename(urfx.at(i).teil,ndname,cuser,&vfehler,obverb,oblog);
 			if (vfehler) {
@@ -4936,7 +4937,7 @@ void paramcl::DateienHerricht()
 				::Log(string(Tx[T_lstatfehlgeschlagen])+rot+strerror(errno)+schwarz+Tx[T_beiDatei]+ fxv[nachrnr].npdf,1,1,1);
 				continue;
       } else {
-				/*erg=*/zupdf(fxv[nachrnr].npdf, fxv[nachrnr].spdf, &fxv[nachrnr].pseiten, obocra, 0); // 0=erfolg
+				/*erg=*/zupdf(&fxv[nachrnr].npdf, fxv[nachrnr].spdf, &fxv[nachrnr].pseiten, obocra, 0); // 0=erfolg
 			}
 		} // 	  if (!fxv[nachrnr].npdf.empty())
 	  if (lstat((fxv[nachrnr].npdf.c_str()), &entrynpdf)) {
@@ -4982,7 +4983,7 @@ void paramcl::DateienHerricht()
 						utime(spdfd.at(i).c_str(),&ubuf);
 					} // if (!lstat(spdfd.at(i).c_str(),&spdfstat)) 
 				} // if (obocra) 
-				string ndname=zufaxenvz+vtz+neuerdateiname(spdfd.at(i));
+				const string ndname=zufaxenvz+vtz+neuerdateiname(spdfd.at(i));
 				uint vfehler=0;
 				if (ndname!=spdfd.at(i)) {
 					dorename(spdfd.at(i),ndname,cuser,&vfehler,obverb,oblog);
@@ -5191,8 +5192,8 @@ void paramcl::untersuchespool(uchar mitupd/*=1*/) // faxart 0=capi, 1=hyla
 					if (mitupd) {
 						RS rupd(My); 
 						vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-						string bedingung=string("id=")+fsf.id;
-						string bedc=string("id=")+fsf.idalt;
+						const string bedingung="id="+fsf.id;
+						const string bedc="id="+fsf.idalt;
 						if (fsf.capistat==wartend || fsf.capistat==gescheitert) {
 							einf.push_back(/*2*/instyp(My->DBS,"capidials",&fsf.ctries));
 							einf.push_back(/*2*/instyp(My->DBS,"capistat",fsf.capistat));
@@ -5236,8 +5237,8 @@ void paramcl::untersuchespool(uchar mitupd/*=1*/) // faxart 0=capi, 1=hyla
 							} // if (fsf.hylastat==gescheitert) else
 //						KLZ // if (!hyla_uverz_nr) 
 						einf.push_back(/*2*/instyp(My->DBS,"hyladials",&fsf.hdials));
-						string bedingung=string("id=")+fsf.id;
-						string bedh=string("id=")+fsf.idalt;
+						const string bedingung=string("id=")+fsf.id;
+						const string bedh=string("id=")+fsf.idalt;
 						if (!fsf.idalt.empty()) 
 						   rupd.update(altspool,einf,ZDB,bedh,0);
 						rupd.update(spooltab,einf,ZDB,bedingung,0);
@@ -5253,9 +5254,9 @@ void paramcl::untersuchespool(uchar mitupd/*=1*/) // faxart 0=capi, 1=hyla
 
 						// Fax gelungen, Dateien in warteauffax nach zielmuster verschieben bzw. loeschen ...
 						for(unsigned iru=0;iru<2;iru++) {
-							string *datei=iru?&fsf.origvu:&fsf.original;
+							const string *datei=iru?&fsf.origvu:&fsf.original;
 							if (!datei->empty()) {
-								string zuloe = wvz+ vtz + *datei;
+								const string zuloe =wvz+vtz+*datei;
 								if (gleichziel) { 
 									tuloeschen(zuloe,cuser,obverb,oblog);
 								} else {
@@ -5289,7 +5290,7 @@ void paramcl::untersuchespool(uchar mitupd/*=1*/) // faxart 0=capi, 1=hyla
 					string odatei[2];
 					if (nimmer) {
 						for(unsigned iru=0;iru<2;iru++) {
-							string *datei=iru?&fsf.origvu:&fsf.original;
+							const string *datei=iru?&fsf.origvu:&fsf.original;
 							if (!datei->empty()) {
 								odatei[iru] = wvz+ vtz + *datei;
 								struct stat ostat={0};
@@ -5421,7 +5422,7 @@ void paramcl::bereinigecapi()
 	for(size_t i=0;i<rueck.size();i++) {
 		string stamm,exten;
 		getstammext(&rueck[i],&stamm,&exten);
-		string zugeh=stamm+".sff";
+		const string zugeh=stamm+".sff";
 		if (lstat(zugeh.c_str(),&entryvz)) {
 			tuloeschen(rueck[i],cuser,obverb,oblog);
 		}
@@ -5433,9 +5434,9 @@ void paramcl::bereinigecapi()
 	for(size_t i=0;i<rueck.size();i++) {
 		string stamm,exten;
 		getstammext(&rueck[i],&stamm,&exten);
-		string zugeh=stamm+".sff";
+		const string zugeh=stamm+".sff";
 		if (lstat(zugeh.c_str(),&entryvz)) {
-			string base=base_name(zugeh);
+			const string base=base_name(zugeh);
 			RS inouta(My,"SELECT submid FROM `"+touta+"` WHERE submid = '"+base+"'",ZDB);
 			if (inouta.num_rows) {
 				::Log(blaus+Tx[T_Verwaiste_Datei]+gruen+rueck[i]+schwarz+Tx[T_geloescht_Fax_schon_in]+gruen+touta+schwarz+
@@ -5444,7 +5445,7 @@ void paramcl::bereinigecapi()
 				break;
 			} else {
 				// 31.1.16: ... und wenn diese sich nicht in outa findet ...
-				string waisen = cfaxusersqvz+"/waisen";
+				const string waisen = cfaxusersqvz+"/waisen";
 				pruefverz(waisen,obverb,oblog);
 				uint vfehler=0;
 				verschiebe(rueck[i],waisen,cuser,&vfehler,1,obverb,oblog);
@@ -5465,7 +5466,7 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 		systemrueck(cmd,obverb,oblog,&qrueck);
 		for(size_t i=0;i<qrueck.size();i++) {
 			uchar indb=0;
-			string hylanr=qrueck[i].substr(1);
+			const string hylanr=qrueck[i].substr(1);
 			char ***cerg;
 			RS rs(My,"SELECT id FROM `"+spooltab+"` WHERE hylanr="+hylanr,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 			if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
@@ -5553,7 +5554,7 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 				// size_t znr=0;
 				while (cerg=ntr.HolZeile(),cerg?*cerg:0) {
 					//<<"znr: "<<rot<<++znr<<schwarz<<endl;
-					string hylanr = *(*cerg+0);
+					const string hylanr = *(*cerg+0);
 					/*4*/fsfcl fsf(hylanr); // hylanr
 
 					svec rueckf;
@@ -5636,7 +5637,8 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 } // void paramcl::korrigierehyla()
 
 // aufgerufen in: empfarch, zupdf
-int paramcl::holtif(string& datei,ulong *seitenp,struct tm *tmp,struct stat *elogp, string *absdrp,string *tsidp,string *calleridp,string *devnamep)
+int paramcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct stat *elogp, 
+                    string *absdrp,string *tsidp,string *calleridp,string *devnamep)
 {
 	Log(violetts+Tx[T_holtif]+schwarz);
 	int erg=1;
@@ -5725,7 +5727,7 @@ void paramcl::empfarch()
 	char tbuf[100]={0};
 	ulong pseiten=0;
 	// 1) hyla
-	string hempfavz=varsphylavz+"/autofaxarch"; // /var/spool/capisuite/empfarch/
+	const string hempfavz=varsphylavz+"/autofaxarch"; // /var/spool/capisuite/empfarch/
 	// Faxe in der Empfangswarteschlange auflisten, ...
 	cmd=string("sudo find \"")+varsphylavz+"/recvq\" -name \"fax*.tif\"";
 	vector<string> rueck;
@@ -5737,7 +5739,7 @@ void paramcl::empfarch()
 		// ..., Informationen darueber einsammeln, ...
 		string zeit;
 		string absdr,tsid,callerid,devname=hmodem;
-		string stamm,exten,ganz=rueck[i];
+		string stamm,exten;const string ganz=rueck[i];
 		getstammext(&ganz,&stamm,&exten);
 		string base=base_name(stamm);
 		string fnr=base.substr(3);
@@ -5785,10 +5787,10 @@ void paramcl::empfarch()
     strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
     if (absdr.length()>187) absdr.erase(187);
     if (absdr.length()>70) absdr.erase(70);
-    string hrumpf="Fax h"+fnr+","+Tx[T_avon]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf;
-    string hdatei=hrumpf+".tif";
-    string hpfad=empfvz+vtz+hdatei;
-    string ziel=empfvz+vtz+hrumpf+".pdf";
+    const string hrumpf="Fax h"+fnr+","+Tx[T_avon]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf;
+    const string hdatei=hrumpf+".tif";
+    const string hpfad=empfvz+vtz+hdatei;
+    const string ziel=empfvz+vtz+hrumpf+".pdf";
     ::Log(blaus+base+schwarz+" => "+gruen+hdatei+schwarz,1,1);
     // ..., die empfangene Datei in hpfad kopieren ...
     uint kfehler=0;
@@ -5806,7 +5808,7 @@ void paramcl::empfarch()
 			if (chmod(hpfad.c_str(),S_IRWXU|S_IRGRP|S_IROTH))
 				systemrueck("sudo chmod +r \""+hpfad+"\"",obverb,oblog);
 		if (obocri) {
-      obpdfda=!zupdf(vorsoffice, ziel, &pseiten, obocri, 1); // 0=Erfolg
+      obpdfda=!zupdf(&vorsoffice, ziel, &pseiten, obocri, 1); // 0=Erfolg
 			if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) if (!kfehler) tuloeschen(hpfad,cuser,obverb,oblog);
     } // if (obocri) 
     if (obhpfadda||obpdfda) {
@@ -5839,7 +5841,7 @@ void paramcl::empfarch()
   } // for(size_t i=0;i<rueck.size();i++) 
 
   // 2) capi
-  string cempfavz=spoolcapivz+"/autofaxarch"; // /var/spool/capisuite/empfarch/
+  const string cempfavz=spoolcapivz+"/autofaxarch"; // /var/spool/capisuite/empfarch/
   /*
      cppSchluess umst[]={{"filename"},{"call_from"},{"call_to"},{"time"},{"cause"}};
      size_t cs=sizeof umst/sizeof*umst;
@@ -5862,7 +5864,7 @@ void paramcl::empfarch()
       string stamm,exten;
       getstammext(&(rueck[i]),&stamm,&exten);
       Log(string("txt: ")+tuerkis+(rueck[i])+schwarz);
-      string sffdatei=stamm+".sff";
+      const string sffdatei=stamm+".sff";
       struct stat entrysff;
       uchar verschieb=0;
       confdat empfconf(rueck[i],&umst,obverb);
@@ -5879,8 +5881,8 @@ void paramcl::empfarch()
       Log(rots+"   "+umst[3].name+": "+schwarz+tbuf);
       Log(rots+"   "+umst[4].name+": "+schwarz+umst[4].wert);
 
-      string base=base_name(stamm);
-      string fnr=base.substr(4);
+      const string base=base_name(stamm);
+      const string fnr=base.substr(4);
       tm.tm_isdst=-1; // sonst wird zufaellig ab und zu eine Stunde abgezogen
       time_t modz=mktime(&tm);
       string getname,bsname;
@@ -5889,8 +5891,8 @@ void paramcl::empfarch()
       getname+=bsname;
 //      if (getname.length()>187) getname.erase(187);
       if (getname.length()>70) getname.erase(70);
-      string tifrumpf="Fax c"+fnr+","+Tx[T_avon]+getname+", T."+stdfaxnr(umst[1].wert)+","+Tx[T_vom]+tbuf;
-      string tifdatei=tifrumpf+".tif";
+      const string tifrumpf="Fax c"+fnr+","+Tx[T_avon]+getname+", T."+stdfaxnr(umst[1].wert)+","+Tx[T_vom]+tbuf;
+      const string tifdatei=tifrumpf+".tif";
       string tifpfad=empfvz+vtz+tifdatei; // Tx[T_Fax_von]+umst[1].wert+Tx[T_an]+umst[2].wert+Tx[T_vom]+tbuf+".tif";
       ::Log(blaus+stamm+schwarz+" => "+gruen+tifdatei+schwarz,1,1);
       // ..., die empfangene Datei in tifpfad kopieren ...
@@ -5910,8 +5912,8 @@ void paramcl::empfarch()
 					 attrangleich(tifpfad,empfvz,obverb,oblog);
 					 // bereits hier, da weder convert noch soffice noch ocrmypdf eine *.sff-Datei lesen kann, convert auch keine tiff-Datei
 					 if (obocri) {
-						 string ziel=empfvz+vtz+tifrumpf+".pdf"; 
-						 int obpdfda=!zupdf(tifpfad, ziel, &pseiten, obocri, 1); // 0=Erfolg
+						 const string ziel=empfvz+vtz+tifrumpf+".pdf"; 
+						 int obpdfda=!zupdf(&tifpfad, ziel, &pseiten, obocri, 1); // 0=Erfolg
 						 struct stat entrynd;
 						 if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) if (!kfehler) tuloeschen(tifpfad,cuser,obverb,oblog);
 					 } // if ((erg=systemrueck(cmd,obverb,oblog))) else if (obocri)
@@ -5948,7 +5950,7 @@ void paramcl::empfarch()
       } // if (lstat(sffdatei.c_str(),&entrysff)) else  
       if (verschieb) {
 //        if (loee) KLA
-          string falsche = cfaxuserrcvz+"/falsche";
+          const string falsche = cfaxuserrcvz+"/falsche";
           pruefverz(falsche,obverb,oblog);
           verschiebe(rueck[i],falsche,cuser,&vfehler,1,obverb,oblog);
           if (verschieb==2) {
@@ -6025,7 +6027,7 @@ string zielname(const string& qdatei, const string& zielvz, uchar wieweiterzaehl
     if (wieweiterzaehl) {
       size_t pos = stamm.rfind('_');
       if (pos!=string::npos) {
-        string auswstr=stamm.substr(pos+1);
+        const string auswstr=stamm.substr(pos+1);
         if (isnumeric(auswstr)) { 
           ausweich=atol(auswstr.c_str());
           if (ausweich) if (stamm.length()>pos) stamm.erase(pos);
@@ -6076,7 +6078,7 @@ void dorename(const string& quelle, const string& ziel, const string& cuser, uin
 				setfaclggf(dir_name(quelle), wahr, 7, wahr,obverb,oblog);
 			} else {
 				perror(Tx[T_Fehler_beim_Verschieben]);
-				string cmd=string("sudo mv \"")+quelle+"\" \""+ziel+"\"";
+				const string cmd=string("sudo mv \"")+quelle+"\" \""+ziel+"\"";
 				int erg=systemrueck(cmd,obverb,1);
 				if (vfehler) {
 					*vfehler+=erg;
@@ -6092,7 +6094,7 @@ void dorename(const string& quelle, const string& ziel, const string& cuser, uin
 string verschiebe(const string& qdatei, const string& zielvz, const string& cuser, uint *vfehler, uchar wieweiterzaehl, int obverb,int oblog)
 {
   // wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
-  string ziel=zielname(qdatei,zielvz,wieweiterzaehl,0,obverb,oblog);
+  const string ziel=zielname(qdatei,zielvz,wieweiterzaehl,0,obverb,oblog);
   if (!ziel.empty()) dorename(qdatei,ziel,cuser,vfehler,obverb,oblog);
   return ziel;
 } // string verschiebe
@@ -6101,7 +6103,7 @@ string verschiebe(const string& qdatei, const string& zielvz, const string& cuse
 void verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser, uint *vfehler, uchar wieweiterzaehl, int obverb, int oblog) 
 {
   // wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
-  string ziel=zielname(qdatei,zmp,wieweiterzaehl,0,obverb,oblog);
+  const string ziel=zielname(qdatei,zmp,wieweiterzaehl,0,obverb,oblog);
   if (!ziel.empty()) dorename(qdatei,ziel,cuser,vfehler,obverb,oblog);
 } // verschiebe
 
@@ -6109,8 +6111,8 @@ void verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser, ui
 string kopiere(const string& qdatei, const string& zield, uint *kfehler, uchar wieweiterzaehl, int obverb, int oblog)
 {
   // wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
-  string dir=dir_name(zield);
-  string base=base_name(zield);
+  const string dir=dir_name(zield);
+  const string base=base_name(zield);
   string ziel;
   int fehler=0;
   if (!base.empty() && !dir.empty()) {
@@ -6131,7 +6133,7 @@ string kopiere(const string& qdatei, const string& zield, uint *kfehler, uchar w
 string kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb, int oblog) 
 {
   // wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
-  string ziel=zielname(qdatei,zmp,wieweiterzaehl,0, obverb,oblog);
+  const string ziel=zielname(qdatei,zmp,wieweiterzaehl,0, obverb,oblog);
   return kopiere(qdatei, ziel, kfehler, wieweiterzaehl,obverb,oblog);
 } // string kopiere
 
@@ -6277,7 +6279,7 @@ void paramcl::setzfaxgtpfad()
 void hconfig(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
 {
   Log(violetts+"hconfig()"+schwarz,obverb,oblog);
-  string confd=pmp->varsphylavz+"/etc/config";
+  const string confd=pmp->varsphylavz+"/etc/config";
   mdatei conf(confd,ios::out);
   if (conf.is_open()) {
     conf<<"LogFacility:    daemon"<<endl;
@@ -6288,28 +6290,26 @@ void hconfig(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
     conf<<"DialStringRules:  \"etc/dialrules\""<<endl;
     conf<<"ServerTracing:    1"<<endl;
     conf<<"SessionTracing:   0xffffffff"<<endl;
-    {
-      struct stat entryfaxsd;
-      svec rueckf;
-      string faxsdpfad=pmp->varsphylavz+"/bin/faxsend";
-      if (lstat(faxsdpfad.c_str(),&entryfaxsd)) {
-        faxsdpfad="/usr/sbin/faxsend";
-        if (lstat(faxsdpfad.c_str(),&entryfaxsd)) {
-          faxsdpfad.clear();
-          systemrueck("sudo find /usr /root/bin /sbin -perm /111 -name faxsend",obverb-1,oblog,&rueckf);
-          if (rueckf.size()) 
-            faxsdpfad=rueckf[0];
-        }
-      }
-      if (!faxsdpfad.empty())
-        conf<<"SendFaxCmd:   "<<faxsdpfad<<endl;
-    }
-    conf<<"Use2D:      \"no\""<<endl;
-  } else {
-    cerr<<"hconfig(): "<<Tx[T_Datei]<<confd<<Tx[T_nichtbeschreibbar]<<endl;
-    exit(28);
-  }
-  Log(violetts+Tx[T_Ende]+"hconfig()"+schwarz,obverb,oblog);
+		struct stat entryfaxsd;
+		svec rueckf;
+		string faxsdpfad=pmp->varsphylavz+"/bin/faxsend";
+		if (lstat(faxsdpfad.c_str(),&entryfaxsd)) {
+			faxsdpfad="/usr/sbin/faxsend";
+			if (lstat(faxsdpfad.c_str(),&entryfaxsd)) {
+				faxsdpfad.clear();
+				systemrueck("sudo find /usr /root/bin /sbin -perm /111 -name faxsend",obverb-1,oblog,&rueckf);
+				if (rueckf.size()) 
+					faxsdpfad=rueckf[0];
+			} // 			if (lstat(faxsdpfad.c_str(),&entryfaxsd))
+		} // 		if (lstat(faxsdpfad.c_str(),&entryfaxsd))
+		if (!faxsdpfad.empty())
+			conf<<"SendFaxCmd:   "<<faxsdpfad<<endl;
+		conf<<"Use2D:      \"no\""<<endl;
+	} else {
+		cerr<<"hconfig(): "<<Tx[T_Datei]<<confd<<Tx[T_nichtbeschreibbar]<<endl;
+		exit(28);
+	} //   if (conf.is_open())
+	Log(violetts+Tx[T_Ende]+"hconfig()"+schwarz,obverb,oblog);
 } // void hconfig(paramcl *pmp,int obverb, int oblog)
 
 void paramcl::setzmodconfd()
@@ -6555,18 +6555,19 @@ int paramcl::pruefhyla()
 			Log(string("Modem '")+blau+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+gruen+brs+schwarz+Tx[T_wird_verwendet]);
 		} //   if (br<=0) else
 		// ein Fehler in der Version 4.0.7 von libtiff verhindert die Zusammenarbeit mit hylafax
-		distri.pruefipr();
-		systemrueck("sh -c \"NACHWEIS="+lsys.getlib64()+"/sclibtiff;! test -f /usr/include/tiff.h ||! test -f \\$NACHWEIS &&{ "+
-				distri.schau+" cmake||"+distri.instp+" cmake;true && "
-				"P=tiff_copy; T=\\$P.tar.gz; Z=tiff-4.0.7; "
-				"wget https://github.com/libelle17/\\$P/archive/master.tar.gz -O \\$T && "
-				"tar xpvf \\$T && mv \\${P}-master \\$Z && cd \\$Z && "
-				"rm -f CMakeCache.txt && "
-				"sed -i.bak s'/uint16 Param;/uint32 Param;/' libtiff/tif_fax3.h && "
-				"cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . && "
-				"make && "
-				"sudo make install && "
-				"sudo touch \\$NACHWEIS;};true\"",obverb,oblog);
+		linst.pruefipr();
+		systemrueck("sh -c \"NACHWEIS="+lsys.getlib64()+"/sclibtiff;! test -f /usr/include/tiff.h ||! test -f \\$NACHWEIS"
+		    "&&{ "+linst.schau+" cmake||"+linst.instp+" cmake;true"
+				"&& P=tiff_copy; T=\\$P.tar.gz; Z=tiff-4.0.7"
+				"; wget https://github.com/libelle17/\\$P/archive/master.tar.gz -O \\$T"
+				"&& tar xpvf \\$T && mv \\${P}-master \\$Z && cd \\$Z"
+				"&& rm -f CMakeCache.txt"
+				"&& sed -i.bak s'/uint16 Param;/uint32 Param;/' libtiff/tif_fax3.h"
+				"&& cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . "
+				"&& make"
+				"&& sudo make install"
+				"&& printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall && cd ..\\n\\\" >> \\\""+unindt+"\\\""
+				"&& sudo touch \\$NACHWEIS;};true\"",obverb,oblog);
 		for(unsigned versuch=0;versuch<3;versuch++) {
 			// 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
 			// pruefen, ob hylafax.service laeuft
@@ -6623,19 +6624,20 @@ int paramcl::pruefhyla()
 					systemrueck("sudo wget -O hylafax+ https://sourceforge.net/projects/hylafax/files/latest",obverb,oblog);
 					systemrueck("sudo tar xvf hylafax+",obverb,oblog);
 					// 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
-					systemrueck("sudo sh -c 'cd $(sudo tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
+					systemrueck("sh -c 'cd $(sudo tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
 							"./configure --nointeractive && echo $? = Ergebnis nach configure && "
 							"sed -i.bak \"s.PAGESIZE='\\''North American Letter'\\''.PAGESIZE='\\''ISO A4'\\''.g;"
 							"s.PATH_GETTY='\\''\\.*'\\''.PATH_GETTY='\\''"
 							"$(grep LIBEXEC defs | cut -d'\\''='\\'' -f2 | sed '\\''s/^[[:space:]]*//;s/[[:space:]]*$//'\\'')/faxgetty'\\''.g\" config.cache"
-							" && echo $? = Ergebnis nach sed"
-							" && sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
-							" && sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
-							" && test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
-							" && sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
-							" && echo $? = Ergebnis nach faxsetup -nointeractive"
-							" && sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
-							" && sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload; true;"
+							"&& echo $? = Ergebnis nach sed"
+							"&& sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
+							"&& printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall && cd ..\\n\\\" >> \\\""+unindt+"\\\""
+							"&& sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
+							"&& test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
+							"&& sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
+							"&& echo $? = Ergebnis nach faxsetup -nointeractive"
+							"&& sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
+							"&& sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload; true;"
 							"'"
 							,2,oblog);
 					// hservice_faxgetty();
@@ -6651,7 +6653,7 @@ int paramcl::pruefhyla()
 					// <<"hfr: "<<violett<<hfr<<schwarz<<" hfcr: "<<violett<<hfcr<<schwarz<<" obverb: "<<(int)obverb<<endl;
 					hylafehlt=linst.obfehlt(hfr,obverb,oblog) || linst.obfehlt(hfcr,obverb,oblog) || 
 						!obprogda("faxq",obverb,oblog) || !obprogda("hfaxd",obverb,oblog) || !obprogda("faxgetty",obverb,oblog);
-					string vstring=ltoan(versuch);
+					const string vstring=ltoan(versuch);
 					Log(gruens+Tx[T_hylafehlt]+schwarz+ltoan(hylafehlt)+gruen+Txk[T_Versuch]+schwarz+vstring);
 					// b1) falsches Hylafax loeschen
 					if (hylafehlt) {
@@ -6701,7 +6703,7 @@ int paramcl::pruefhyla()
 						// falls oben hylafax neu installiert wurde und zuvor eine hylafax-Installation nach Gebrauch geloescht worden war,
 						// dann die alten Eintraege (xferfaxlog.rpmsave) wieder aktivieren
 						struct stat entryxfer, entryxfer0={0};
-						string d0=xferfaxlog+".rpmsave";
+						const string d0=xferfaxlog+".rpmsave";
 						if (!lstat(xferfaxlog.c_str(),&entryxfer)) {
 							if (entryxfer.st_size<10) { // wenn neu
 								if (!lstat(d0.c_str(),&entryxfer0) && entryxfer0.st_size>10) {
@@ -6844,9 +6846,9 @@ int paramcl::pruefhyla()
 		} // for(unsigned versuch=0;versuch<2;versuch++)
 		// Empfangsberechtigungen sicherstellen
 		//		char *uvz[2]={(char*)"/log/",(char*)"/recvq/"};
-		string uvz[2]={"/log/","/recvq/"};
+		const string uvz[2]={"/log/","/recvq/"};
 		for (unsigned i=0;i<2;i++) {
-			string dt=varsphylavz+uvz[i]+"seqf";
+			const string dt=varsphylavz+uvz[i]+"seqf";
 			struct stat dstat;
 			if (lstat(dt.c_str(),&dstat)) {
 				systemrueck("sudo touch "+dt+" && sudo chown "+huser+":uucp "+dt,obverb,oblog);
@@ -6997,7 +6999,9 @@ int paramcl::kompilbase(const string& was, const string& endg)
 int paramcl::kompiliere(const string& was,const string& endg, const string& vorcfg, const string& cfgbismake)
 {
   if (!kompilbase(was,endg)) {
-    return systemrueck("sh -c 'cd \""+instverz+vtz+was+"\" && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install '",obverb,oblog);
+    return systemrueck("sh -c 'cd \""+instverz+vtz+was+"\" && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install "
+							" && printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall && cd ..\\n\\\" >> \\\""+unindt+"\\\"'" 
+		,obverb,oblog);
   } //    if (!kompilbase(was,endg))
   return 1;
 } // int paramcl::kompiliere(string was,string endg,string nachtar, string vorcfg,string cfgbismake)
@@ -7017,9 +7021,11 @@ void paramcl::pruefsfftobmp()
     if (!obprogda("sfftobmp",obverb,oblog)) {
       uchar obfrei= obprogda("jpegtran",obverb,oblog) && obprogda("cjpeg",obverb,oblog) && obprogda("djpeg",obverb,oblog);
       if (!obfrei) {
-      string befehl = "cd "+instverz+
+      const string befehl = "cd "+instverz+
 			  " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T "
-        " && rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install; } ";
+        " && rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install"
+				" && printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall && cd ..\\n\\\" >> \\\""+unindt+"\\\""
+				"; } ";
         obfrei = !systemrueck(befehl,obverb,oblog);
       }
       if (obfrei) {
@@ -7030,19 +7036,20 @@ void paramcl::pruefsfftobmp()
           obboostda = !linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog);
         }
         if (obboostda) {
-          string befehl= "cd "+instverz+
-            " && { sudo grep '/usr/local/lib' /etc/ld.so.conf || "
-            "{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig; } } "
-            " && { P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T"
-						" && rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv ${P}-master ${P}; } "
-            " && cd ${P} "
+          const string befehl= "cd "+instverz+
+            "&& { sudo grep '/usr/local/lib' /etc/ld.so.conf"
+            "||{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig; } } "
+            "&&{ P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T"
+						"&& rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv ${P}-master ${P}; } "
+            "&& cd ${P} "
             //                    " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
-            " && sed -i.bak -e 's/^[[:blank:]]*\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp"
-            " && sed -i.bak -e 's/lboost_filesystem-mt/lboost_filesystem/g' src/Makefile.in "
+            "&& sed -i.bak -e 's/^[[:blank:]]*\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp"
+            "&& sed -i.bak -e 's/lboost_filesystem-mt/lboost_filesystem/g' src/Makefile.in "
             //                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
             //                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
-            " && sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
-            " && ./configure && make && sudo make install "
+            "&& sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
+            "&& ./configure && make && sudo make install "
+						"&& printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall && cd ..\\n\\\" >> \\\""+unindt+"\\\""
             ;
           //                      <<gruen<<befehl<<schwarz<<endl;
           systemrueck(befehl,obverb,oblog);
@@ -7103,7 +7110,7 @@ int paramcl::pruefcapi()
 								uname(&unbuf);
 								Log(string(Tx[T_Kernelversion])+blau+unbuf.release+schwarz);
 								struct stat entryfc;
-								string fcpciko = string("/lib/modules/")+unbuf.release+"/kernel/extras/fcpci.ko";
+								const string fcpciko = string("/lib/modules/")+unbuf.release+"/kernel/extras/fcpci.ko";
 								if (lstat(fcpciko.c_str(), &entryfc)) {
 									::Log(string(Tx[T_Datei])+blau+fcpciko+schwarz+Tx[T_nichtgefFcpciMfdKinstallierwerden],obverb,1);
 									//              systemrueck("which zypper 2>/dev/null && zypper -n in kernel-source || "
@@ -7142,7 +7149,7 @@ int paramcl::pruefcapi()
 									string gccpfad,gpppfad;
 									struct utsname unameD;
 									uname(&unameD);
-									string rel=unameD.release;
+									const string rel=unameD.release;
 									size_t p1=rel.find('.');
 									if (p1!=string::npos) {
 										size_t p2=rel.find('.',p1+1);
@@ -7169,8 +7176,8 @@ int paramcl::pruefcapi()
 									systemrueck("ls -l /lib/modules/$(uname -r)/build 2>/dev/null || "
 											"{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
 											"sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU && sudo cp -a $NEU /lib/modules/$(uname -r)/build; }",obverb,oblog);
-									string proj="fcpci_copy";
-									string srcvz=instverz+vtz+proj+".tar.gz";
+									const string proj="fcpci_copy";
+									const string srcvz=instverz+vtz+proj+".tar.gz";
 									holvongithub(proj);
 									const string vorcfg="sudo test -f driver.c.bak || sed -i.bak \"/request_irq/i#if !defined(IRQF_DISABLED)\\n"
 										"# define IRQF_DISABLED 0x00\\n#endif\" driver.c;"
@@ -7178,6 +7185,8 @@ int paramcl::pruefcapi()
 										"-e '\\''/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
 										"c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);'\\'' "
 										"main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"
+										"sudo sed -i.bak \"/install: / i .PHONY: uninstall\\nuninstall:\\n\\t\\t"
+										                  "sudo modprobe -r \\$(CARD).ko\\n\\t\\tsudo rm \\$(TARGETDIR)/\\$(CARD)\\n\" Makefile;"
 										"sudo make clean";
 									const string cfgbismake=" 2>/dev/null; sudo ";
 									kompiliere(proj,s_gz,vorcfg,cfgbismake);
@@ -7235,8 +7244,8 @@ int paramcl::pruefcapi()
 								kernel.erase(kernel.rfind('.'));
 								utsname unbuf;
 								uname(&unbuf);
-								string release=unbuf.release;
-								string relev=release.substr(0,release.find(unbuf.machine)-1);
+								const string release=unbuf.release;
+								const string relev=release.substr(0,release.find(unbuf.machine)-1);
 								if (kernel.find(relev)) {
 									::Log(Tx[T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von]+blaus+relev+schwarz+Tx[T_nach]+blau+kernel+schwarz+
 											Tx[T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1,1);
@@ -7284,7 +7293,7 @@ int paramcl::pruefcapi()
 					// if (systemrueck("which zypper",-1,-1)) KLA
 					//        if (linst.checkinst(-1,-1)!=zyp) KLA
 					/*
-						 if (distri.pruefipr()!=zypper) {
+						 if (linst.pruefipr()!=zypper) {
 						 ::Log(rots+Tx[T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht],1,1);
 						 this->obcapi=0;
 						 return 1;
@@ -7501,10 +7510,10 @@ void inDbc(DB *My, const string& spooltab, const string& altspool, const string&
       einf.push_back(/*2*/instyp(My->DBS,"cdateizeit",entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"telnr",telnr));
 			if (!fsfp->idalt.empty()) {
-				string bedc="id="+fsfp->idalt;
+				const string bedc="id="+fsfp->idalt;
 				rupd.update(altspool,einf,ZDB,bedc);
 			}
-      string bedingung="id="+fsfp->id;
+      const string bedingung="id="+fsfp->id;
       rupd.update(spooltab,einf,ZDB,bedingung);
 
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
@@ -7513,7 +7522,7 @@ void inDbc(DB *My, const string& spooltab, const string& altspool, const string&
       if (runde==1) {
         Log(string(Tx[T_Fehler_af])+drot+ltoan(rupd.fnr)+schwarz+Tx[T_bei]+tuerkis+rupd.sql+schwarz+": "+blau+rupd.fehler+schwarz,1,oblog);
         exit(34);
-      }
+      } //       if (runde==1)
     }   // for(int runde=0;runde<2;runde++)
     Log(drots+string("  affected_rows(): ")+schwarz+ltoan(affr),obverb,oblog);
   }   // if (!lstat((*spoolgp->c_str()), &entryspool)) 
@@ -7534,7 +7543,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
   } else {
     Log(string(Tx[T_DieFaxnrvon])+drot+fsfp->spdf+schwarz+Tx[T_ist]+blau+fsfp->telnr+schwarz,obverb,oblog);
     struct stat entryff;
-    string ff=pmp->wvz+vtz+fsfp->spdf;
+    const string ff=pmp->wvz+vtz+fsfp->spdf;
     if (lstat(ff.c_str(), &entryff)) {
       Log(rots+Tx[T_faxemitCFehler]+schwarz+Tx[T_Faxdatei]+blau+ff+rot+ Tx[T_fehlt]+schwarz,1,1);
       // archiviere
@@ -7544,7 +7553,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
       // capisuitefax mit Userangabe nur fuer root erlaubt
 			pmp->nextnum();
 			string csfpfad;
-			string cmd="capisuitefax -n "+(strcmp("root",curruser())?"":"-u"+pmp->cuser)+" -d "+fsfp->telnr+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
+			const string cmd="capisuitefax -n "+(strcmp("root",curruser())?"":"-u"+pmp->cuser)+" -d "+fsfp->telnr+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
 			vector<string> faxerg;
 			systemrueck(cmd,1,1,&faxerg,0,wahr,Tx[T_Faxbefehl],0,1);
 			if (faxerg.size()) {
@@ -7555,7 +7564,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 						string spoolg(z1+strlen(tz1),z2-z1-strlen(tz1));
 						//            inDatenbankc(My, &spoolg, idsp, npdfp, spdfp, nachrnr, z2+strlen(tz2), obverb, oblog);
 						if (!spoolg.find("job ")) {
-							string nr=spoolg.substr(4); 
+							const string nr=spoolg.substr(4); 
 							char buf[20]={0};
 							sprintf(buf,"%.3lu",atol(nr.c_str()));
 							spoolg=pmp->cfaxusersqvz+vtz+"fax-"+buf+".sff";
@@ -7580,8 +7589,8 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp, const string& hylaid, fsfcl *fsfp,string *tel, int obverb, int oblog)
 {
   Log(violetts+Tx[T_inDBh]+schwarz,obverb?obverb-1:0,oblog);
-  string spoolfil=string("q")+hylaid;
-  string spoolg= pmp->hsendqvz+vtz+spoolfil;
+  const string spoolfil=string("q")+hylaid;
+  const string spoolg= pmp->hsendqvz+vtz+spoolfil;
   uint affr=0;
   Log(string(Tx[T_SpoolDateierstellt])+rot+spoolg+schwarz+"'",pmp->obverb,pmp->oblog);
   Log(string(Tx[T_SpoolDatei])+rot+spoolfil+schwarz+"'",pmp->obverb,pmp->oblog);
@@ -7601,10 +7610,10 @@ void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp,
       einf.push_back(/*2*/instyp(My->DBS,"hdateizeit",entryspool.st_mtime));
       einf.push_back(/*2*/instyp(My->DBS,"telnr",tel));
 			if (!fsfp->idalt.empty()) {
-				string bedh="id="+fsfp->idalt;
+				const string bedh="id="+fsfp->idalt;
 				rupd.update(altspool,einf,ZDB,bedh);
 			}
-      string bedingung="id="+fsfp->id;
+      const string bedingung="id="+fsfp->id;
       rupd.update(spooltab,einf,ZDB,bedingung);
       if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
       affr=My->affrows();
@@ -7647,7 +7656,7 @@ void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
     string sendfax;
 //    systemrueck("sudo sh -c 'which sendfax'",obverb,1,&rueck);
     if (obprogda("sendfax",obverb,oblog,&sendfax)) {
-      string cmd=sendfax+" -n -A "+(isnumeric(pmp->maxhdials)?"-T "+pmp->maxhdials:"")+" -d "+tel+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
+      const string cmd=sendfax+" -n -A "+(isnumeric(pmp->maxhdials)?"-T "+pmp->maxhdials:"")+" -d "+tel+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
       svec faxerg;
       // <<rot<<"Achtung: faxemith: "<<endl<<schwarz<<cmd<<endl;
       if (!systemrueck(cmd,1,1,&faxerg,0,wahr,Tx[T_HylafaxBefehl])) {
@@ -7711,9 +7720,9 @@ void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnam
   Log(violetts+"getSender("+"..,"+faxnr+")"+schwarz,obverb,oblog);
   if (!faxnr.empty()) {
     pmp->My->usedb(pmp->My->db);
-    string trimfaxnr=pmp->stdfaxnr(faxnr);
+    const string trimfaxnr=pmp->stdfaxnr(faxnr);
     // vor den angegebenen SQL-Befehlen nachschauen, wie die gesandten Faxe benannt wurden
-    string **locsqlp=new string*[pmp->sqlzn+1];
+    string **const locsqlp=new string*[pmp->sqlzn+1];
     string sql0="SELECT adressat, titel "
 		"FROM `"+pmp->touta+"` WHERE rcfax"
 		//stdfaxnr(rcfax,"+pmp->InternationalPrefix+","+pmp->LongDistancePrefix+","+pmp->countrycode+","+pmp->citycode+")"
@@ -7919,7 +7928,7 @@ void pruefinctab(DB *My, const string& tinca, int obverb, int oblog, uchar direk
 void prueffuncgettel3(DB *Myp, const string& usr, const string& host, int obverb, int oblog)
 {
   Log(violetts+Tx[T_prueffuncgettel3]+schwarz,obverb,oblog);
-  string body=
+  const string body=
    "begin \n"
    " declare pos int;\n"
    " declare ch char default '0';\n"
@@ -7954,7 +7963,7 @@ void prueffuncgettel3(DB *Myp, const string& usr, const string& host, int obverb
    " end if;\n"
    " return tel;\n"
    "end";
- string para= "(dname VARCHAR(1000), anfaxstr VARCHAR(100), ancfaxstr VARCHAR(100), anhfaxstr VARCHAR(100)) \n"
+ const string para= "(dname VARCHAR(1000), anfaxstr VARCHAR(100), ancfaxstr VARCHAR(100), anhfaxstr VARCHAR(100)) \n"
         "RETURNS VARCHAR(1000) CHARSET latin1 COLLATE latin1_german2_ci DETERMINISTIC\n";
  Myp->prueffunc("gettel3", body, para, obverb,oblog);
 } // void prueffuncgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
@@ -7963,7 +7972,7 @@ void prueffuncgettel3(DB *Myp, const string& usr, const string& host, int obverb
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, int obverb, int oblog)
 {
   Log(violetts+Tx[T_pruefstdfaxnr]+schwarz,obverb,oblog);
-  string body=
+  const string body=
    "begin \n"
    " declare anfg varchar(100) default concat(IPf,'+');\n"
    " declare pos int default 0;\n"
@@ -7990,7 +7999,7 @@ void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, int obverb, i
    " end if;\n"
    " return trimfaxnr;\n"
    "end";
-	string para="(faxnr VARCHAR(200), IPf VARCHAR(10), LDPf VARCHAR(20), CoCd VARCHAR(20), CiCd VARCHAR(20)) \n"
+	const string para="(faxnr VARCHAR(200), IPf VARCHAR(10), LDPf VARCHAR(20), CoCd VARCHAR(20), CiCd VARCHAR(20)) \n"
 		"RETURNS VARCHAR(200) CHARSET latin1 COLLATE latin1_german2_ci DETERMINISTIC\n";
  Myp->prueffunc("stdfaxnr", body, para, obverb,oblog);
 }  // void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
@@ -8002,7 +8011,7 @@ int fsfcl::holcapiprot(int obverb)
 {
   size_t p1=sendqgespfad.rfind('.');
   if (p1!=string::npos) {
-    string suchtxt=sendqgespfad.substr(0,p1)+".txt";
+    const string suchtxt=sendqgespfad.substr(0,p1)+".txt";
     schlArr cconf; cconf.init(3,"tries","starttime","dialstring");
     struct stat cstat;
     if (lstat(suchtxt.c_str(),&cstat)) {
@@ -8222,13 +8231,13 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
 {
   Log(violetts+Tx[T_setzhylastat]+schwarz);
   uchar obsfehlt=1;
-  string startvznrs = ltoan(startvznr);
+  const string startvznrs = ltoan(startvznr);
   Log(violetts+"hylanr: "+schwarz+fsf->hylanr+violetts+" "+Tx[T_setzhylastat]+schwarz+
       " hyla_uverz_nrp: "+blau+ltoan(*hyla_uverz_nrp)+schwarz+" startvznr: "+blau+startvznrs+schwarz);
   // wenn in *hyla_uverz_nrp '1' uebergeben wird, nur in sendq suchen
   // Rueckgabe: 0 = in doneq oder archive gefunden
   struct stat entryprot={0};
-  string cmd=string("sudo find ")+this->varsphylavz+"/sendq "+(*hyla_uverz_nrp?" ":this->varsphylavz+"/doneq "+this->varsphylavz+"/archive ")
+  const string cmd=string("sudo find ")+this->varsphylavz+"/sendq "+(*hyla_uverz_nrp?" ":this->varsphylavz+"/doneq "+this->varsphylavz+"/archive ")
     +" -name 'q"+fsf->hylanr+"'";
   svec rueck;
   systemrueck(cmd,obverb,oblog,&rueck);
@@ -8267,7 +8276,7 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
 		fsf->killtime=atol(hylconf[9].wert.c_str());
 		fsf->number=hylconf[6].wert;
     vector<string> tok;
-    string pdf=this->hylconf[4].wert==""?this->hylconf[8].wert:this->hylconf[4].wert;
+    const string pdf=this->hylconf[4].wert==""?this->hylconf[8].wert:this->hylconf[4].wert;
     aufiSplit(&tok,&pdf,":");
     fsf->sendqgespfad=this->varsphylavz+vtz+tok[tok.size()-1];
     if (est) lstat(fsf->sendqgespfad.c_str(),est); 

@@ -34,6 +34,7 @@
 
 using namespace std;
 extern const string& instvz; // z.B. /root/autofax
+extern const string& unindt; // uninstall.sh
 string* loeschefarbenaus(string *zwi);
 int Log(const string& text,short screen=1,short file=1,bool oberr=0,short klobverb=0);
 
@@ -208,7 +209,7 @@ class errmsgcl
 public:
  int errnr;
  string msg;
- errmsgcl(int errnr,string& msg):errnr(errnr),msg(msg){}
+ errmsgcl(int errnr,const string& msg):errnr(errnr),msg(msg){}
 };
 
 // arg-Class
@@ -439,18 +440,6 @@ int obprogda(string prog,int obverb, int oblog, string *pfad=0);
 enum instprog {keinp,zypper,apt,dnf,yum};
 string gethome();
 
-class distri_cl // Distribution
-{
- instprog ipr=keinp; // installiertes Program
- public:
- string schau; // Befehl zum Pruefen auf Vorhandensein ueber das Installationssystem
- string instp; // Befehl zum Installieren ueber das Installationnssystem
- string repos; // Befehl zum Hinzufuegen des Repositories fuer den Compiler
- string compil; // Paketnamen fuer den Compiler
- string dev; // Anhaengsel fuer die development-Versionen ("-dev" oder "-devel")
- instprog pruefipr(int obverb=0, int oblog=0);
-};
-extern distri_cl distri;
 
 #ifdef _MSC_VER
 extern inline void wait();
@@ -595,7 +584,7 @@ void aufSplit(vector<string> *tokens, const string *text, char sep, bool nichtme
 void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach=1);
 void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach=1);
 void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtmehrfach=1);
-void getstammext(string *ganz, string *stamm, string *exten);
+void getstammext(const string *const ganz, string *stamm, string *exten);
 // int cpplies(string fname,cppSchluess *conf,size_t csize,vector<string> *rest=0,char tz='=',short obverb=0);
 string XOR(const string& value, const string& key);
 #ifdef notcpp
@@ -627,20 +616,37 @@ string Tippstring(const string& frage, const string *vorgabe=0);
 string Tippverz(const char *frage,string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
 int tuloeschen(const string& zuloe,const string& cuser="",int obverb=0, int oblog=0);
-int attrangleich(string& zu, string& gemaess,int obverb=0, int oblog=0);
+int attrangleich(const string& zu, const string& gemaess,int obverb=0, int oblog=0);
 int kopier(const string& quel, const string& ziel, int obverb=0, int oblog=0);
+#ifdef falsch
+#define obfstream
+#ifdef obfstream
+fstream*
+#else
+FILE*
+#endif
+oeffne(const string& datei, uchar art, uchar* erfolg,int obverb=0, int oblog=0);
+#endif
 
-class linstcl
+class linst_cl
 {
-  public:
-//    linsten inst;
+ instprog ipr=keinp; // installiertes Program
+ public:
+ string schau; // Befehl zum Pruefen auf Vorhandensein ueber das Installationssystem
+ string instp; // Befehl zum Installieren ueber das Installationnssystem
+ string instyp; // Befehl zum Installieren ueber das Installationnssystem mit automatischem yes auf Rueckfragen
+ string upr;   // Befehl zum Deinstallieren ueber das Installationssystem
+ string uypr;   // Befehl zum Deinstallieren ueber das Installationssystem
+ string repos; // Befehl zum Hinzufuegen des Repositories fuer den Compiler
+ string compil; // Paketnamen fuer den Compiler
+ string dev; // Anhaengsel fuer die development-Versionen ("-dev" oder "-devel")
+ instprog pruefipr(int obverb=0, int oblog=0);
     uchar obnmr=1;
     string eprog; // ersetztes Programm
     string ersetzeprog(const string& prog);
-    int doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda="",uchar obun=0);
-    int doinst(const char* prog,int obverb=0,int oblog=0,const string& fallsnichtda="",uchar obun=0);
+    int doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda="",uchar obyes=1);
     int doggfinst(const string& prog,int obverb=0,int oblog=0);
-    int douninst(const string& prog,int obverb=0,int oblog=0);
+    int douninst(const string& prog,int obverb=0,int oblog=0,uchar obyes=1);
     int obfehlt(const string& prog,int obverb=0,int oblog=0);
 };
 

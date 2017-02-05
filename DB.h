@@ -109,7 +109,7 @@ class sqlft: public string
   public:
     //	string feld;
     sqlft(DBSTyp eDBS, const string& vwert);
-    sqlft(DBSTyp eDBS, string* vwert);
+    sqlft(DBSTyp eDBS, const string* vwert);
     sqlft(DBSTyp eDBS, char* vwert,char* zs);
     sqlft(DBSTyp eDBS, char* vwert,bool obzahl=0);
     sqlft(DBSTyp eDBS, time_t *zt);
@@ -224,7 +224,7 @@ class Feld
     string defa;
 		bool unsig;
     Feld(const string& name, string typ="", const string& lenge="", const string& prec="", 
-         const string& comment="", bool obind=0, bool obauto=0, bool nnull=0, string defa="", bool unsig=0);
+         const string& comment="", bool obind=0, bool obauto=0, bool nnull=0, const string& defa="", bool unsig=0);
 };
 
 class Index 

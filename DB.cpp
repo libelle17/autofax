@@ -1,7 +1,7 @@
 #include "kons.h"
 #include "DB.h"
 #define caus cout // nur zum Debuggen
-extern class linstcl linst;
+extern class linst_cl linst;
 
 const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
   // T_DB_wird_initialisiert
@@ -138,7 +138,7 @@ svec holdbaussql(string sql)
 } // holdbaussql
 
 Feld::Feld(const string& name, string typ/*=""*/, const string& lenge/*=""*/, const string& prec/*=""*/, 
-    const string& comment/*=""*/, bool obind/*=0*/, bool obauto/*=0*/, bool nnull/*=0*/, string vdefa/*=""*/, bool unsig/*=0*/):
+    const string& comment/*=""*/, bool obind/*=0*/, bool obauto/*=0*/, bool nnull/*=0*/, const string& vdefa/*=""*/, bool unsig/*=0*/):
   name(name)
   ,typ(typ)
   ,lenge(lenge)
@@ -212,11 +212,11 @@ DB::DB(DBSTyp nDBS, const char* const phost, const char* const puser,const char*
 // 2 x in DB::init
 void DB::instmaria(int obverb, int oblog)
 {
-	if (distri.pruefipr()==apt) {
+	if (linst.pruefipr()==apt) {
 		systemrueck("sudo sh -c 'apt-get -y install apt-transport-https; apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
 	} else {
 		linst.doinst("mariadb",obverb,oblog);
-	} // 					if (distri.pruefipr()==apt) else
+	} // 					if (linst.pruefipr()==apt) else
 } // void DB::instmaria()
 
 void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,const char* const ppasswd, const char* const uedb, 
@@ -235,7 +235,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 	switch (DBS) {
 		case MySQL:
 #ifdef linux
-			switch (distri.pruefipr()) {
+			switch (linst.pruefipr()) {
 				case zypper: case apt:
 					db_systemctl_name="mysql";
 					break;
@@ -243,7 +243,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 					db_systemctl_name="mariadb";
 					break;
 				default: break;
-			} //       switch (distri.pruefipr())
+			} //       switch (linst.pruefipr())
 			if (!dbsv) dbsv=new servc(db_systemctl_name,"mysqld",obverb,oblog);
 			if (!oisok) {
 				// schauen, ob die Exe-Datei da ist 
@@ -458,9 +458,9 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 					exit(7);
 				} // 				if (!dbsv->obslaeuft(obverb,oblog))
 			} // 			if (!dbsv)
-			string ip_a="127.0.0.1";
+			const string ip_a="127.0.0.1";
 			port=5432;
-			string constr =string("user='")+puser+"' password='"+ppasswd+"' dbname='" + uedb + "' hostaddr='"+ip_a+"' port='"+ltoan(port)+"'";
+			const string constr =string("user='")+puser+"' password='"+ppasswd+"' dbname='" + uedb + "' hostaddr='"+ip_a+"' port='"+ltoan(port)+"'";
 			caus<<constr<<endl;
 			do {
 				pconn = PQconnectdb(constr.c_str()); //192.168.178.21 port=5432
@@ -468,7 +468,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 					while (rootpwd.empty()) {
 						rootpwd=Tippstring(string("")+Txd[T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein],&rootpwd);
 					}
-					string mconstr =string("user='")+"postgres"+"' password='"+rootpwd+/*"' dbname='" + uedb */+ "' hostaddr='"+ip_a+"' port='"+ltoan(port)+"'";
+					const string mconstr ="user='postgres' password='"+rootpwd+/*"' dbname='" + uedb */+ "' hostaddr='"+ip_a+"' port='"+ltoan(port)+"'";
 					pmconn = PQconnectdb(mconstr.c_str()); 
 					if (PQstatus(pmconn) != CONNECTION_OK) {
 						caus<<"Connection-String: "<<rot<<mconstr<<schwarz<<endl;
@@ -551,7 +551,7 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 						rootpw2=Tippstring(string("")+Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein]+" ("+Txk[T_erneute_Eingabe]+")",&rootpw2);
 						if (rootpw2==rootpwd) break;
 					} //         while (1)
-					string cmd=string("sudo mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
+					const string cmd=string("sudo mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
 						"' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
 					Log(string(Txd[T_Fuehre_aus_db])+blau+cmd+schwarz,1,1);
 					int erg __attribute__((unused));
@@ -1004,7 +1004,7 @@ int DB::machbinaer(const string& tabs, const string& fmeld,uchar obverb)
   if (p3==string::npos) return 3;
   p4=fmeld.find("'",p3)+1;
   if (p4==string::npos) return 4;
-  string feld=fmeld.substr(p3,p4-p3-1);
+  const string feld=fmeld.substr(p3,p4-p3-1);
   stringstream korr;
   string lenge;
   string neufeld;
@@ -1040,7 +1040,7 @@ int DB::machbinaer(const string& tabs, const string& fmeld,uchar obverb)
 
 inline string instyp::ersetze(const char *u, const char* alt, const char* neu) 
 {
-  string erg="";
+  string erg;
   if (alt[0]==0 || !strcmp(alt,neu)) {
     erg.append(u);
   } else {
@@ -1052,7 +1052,7 @@ inline string instyp::ersetze(const char *u, const char* alt, const char* neu)
         {gleich=0;break;}
       if (gleich) {erg+=neu;p+=i-1;} else erg+=(*p);
     }
-  }
+  } //   if (alt[0]==0 || !strcmp(alt,neu)) else
   return erg;
 } // ersetze(char *u, const char* alt, const char* neu)
 
@@ -1097,7 +1097,7 @@ sqlft::sqlft(DBSTyp eDBS, const string& vwert):
   append(1,dve(eDBS));
 }
 
-sqlft::sqlft(DBSTyp eDBS, string *vwert):
+sqlft::sqlft(DBSTyp eDBS, const string *vwert):
   string(*vwert) 
 {
   ersetze("\\","\\\\");
@@ -1416,7 +1416,7 @@ erfolg:
       break;
     case Postgres:
 #ifdef mitpostgres 
-			string ausfstr= "Ausfuehr: "+sql;
+			const string ausfstr= "Ausfuehr: "+sql;
 			Log(ausfstr+" ...",obverb?-1:0,0);
 			pres = PQexec(db->pconn, sql.c_str());
 			fnr=PQresultStatus(pres);
@@ -1465,7 +1465,7 @@ RS::RS(DB* pdb,const char* const psql,uchar obverb)
 
 RS::RS(DB* pdb,stringstream psqls,uchar obverb) 
 {
-  string ueber= psqls.str();
+  const string ueber= psqls.str();
   weisezu(pdb);
   Abfrage(ueber, obverb);
 }
@@ -1542,7 +1542,7 @@ void RS::update(const string& utab, vector< instyp > einf,uchar obverb, const st
             break;
           }  else {
             Log(string(tuerkis)+string("SQL: ")+schwarz+isql,(fnr!=1406 && obverb!=2) || (fnr==1406 && obverb==255),1);
-            string fmeld=mysql_error(db->conn);
+            const string fmeld=mysql_error(db->conn);
             Log(mysql_error(db->conn),(fnr!=1406 && obverb!=2) || (fnr==1406 && obverb==255),1);
             if (fnr==1406){
               db->erweitern(utab,einf,obverb,0);
@@ -1741,7 +1741,7 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
               break;
             }  else {
               Log(string(tuerkis)+string("SQL: ")+schwarz+isql,(fnr!=1406 && obverb!=2) || (fnr==1406 && obverb==255),1);
-              string fmeld=mysql_error(db->conn);
+              const string fmeld=mysql_error(db->conn);
               Log(fmeld,(fnr!=1406 && obverb!=2) || (fnr==1406 && obverb==255),1);
               if (fnr==1406){
                 db->erweitern(itab,einf,obverb, sammeln || (!sammeln && !anfangen),maxl);
@@ -1782,8 +1782,8 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
 void DB::prueffunc(const string& pname, const string& body, const string& para, int obverb, int oblog)
 {
   Log(violetts+Txd[T_prueffunc]+schwarz+" "+pname,obverb,oblog);
-  string mhost = host=="localhost"?host:"%";
-  string owner=string("`")+user+"`@`"+mhost+"`";
+  const string mhost = host=="localhost"?host:"%";
+  const string owner=string("`")+user+"`@`"+mhost+"`";
   for(uchar runde=0;runde<2;runde++) {
     uchar fehlt=1;
 		RS rs0(this,"SHOW FUNCTION STATUS WHERE db='"+db+"' AND name='"+pname+"';",obverb);

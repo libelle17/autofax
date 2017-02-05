@@ -37,15 +37,14 @@ printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTe
   }
 //char logdatei[PATH_MAX+1]="v:\\log_termine.txt";
 #endif
-#define obfstream
 
 // z.B. "/root/autofax"
 const string& instvz=
 #include "instvz" // wird in Makefile erstellt
 ;
+const string& unindt=instvz+"/uninstall.sh";
 const string nix;
-class linstcl linst;
-class distri_cl distri;
+class linst_cl linst;
 
 const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 {
@@ -325,7 +324,7 @@ return erg;
 
 string caseersetze(const string& u, const char* alt, const char* neu) 
 {
-  string erg="";
+  string erg;
   if (alt[0]==0 || !strcmp(alt,neu)) {
     erg=u;
   } else {
@@ -499,7 +498,7 @@ void chersetze(string str, string *wsRet, const string& from, const char to)
 
 string ersetze(const char *u, const char* alt, const char* neu) 
 {
-  string erg="";
+  string erg;
   if (alt[0]==0 || !strcmp(alt,neu)) {
     erg.append(u);
   } else {
@@ -531,7 +530,7 @@ string *sersetze(string* src, string const& target, string const& repl)
   return src;
 } // sersetze( string src, string const& target, string const& repl)
 
-void getstammext(string *ganz, string *stamm, string *exten) 
+void getstammext(const string *const ganz, string *stamm, string *exten) 
 {
   size_t posp = ganz->rfind('.');
   if (posp!=std::string::npos) {
@@ -583,13 +582,13 @@ mdatei::mdatei(const string& name, ios_base::openmode modus,int obverb, int oblo
 } // mdatei::mdatei (const string& name, ios_base::openmode modus)
 
 
-#ifdef falsc
+#ifdef falsch
 #ifdef obfstream
 fstream*
 #else
 FILE*
 #endif
-oeffne(const string& datei, uchar art, uchar* erfolg,int obverb=0, int oblog=0)
+oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog/*=0*/)
 {
 #ifdef obfstream	
 	ios_base::openmode mode;
@@ -626,7 +625,7 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb=0, int oblog=0)
 				}
 			} // oeffne
 			return sdat;
-		}
+		} // 		if (sdat)
 #endif	
 
 
@@ -657,7 +656,7 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 		int erg __attribute__((unused));
 		erg=system((string(dir) + "\"" + logdatei + "\"").c_str());
 	}
-	string ofil=string(logdatei)+"tmp";
+	const string ofil=string(logdatei)+"tmp";
 	int abhier=0;
 	mdatei outfile(ofil,ios::out);
 	if (!outfile.is_open()) {
@@ -882,7 +881,7 @@ int Log(const string& text, short screen, short file, bool oberr, short klobverb
           cerr<<text<<endl; // <<": "<<hstrerror<<endl;
         }
         errno=0;
-      }
+      } //       if (oberr)
     } // (file)
   } // if (file || screen) 
   // <<"Screen: "<<screen<<"letztesmaloZ: "<<letztesmaloZ;
@@ -1066,7 +1065,7 @@ void touch(const std::string& pathname,int obverb/*=0*/,int oblog/*=*/)
 
 void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach)
 {
-  string texts=text;
+  const string texts=text;
   aufSplit(tokens,&texts,sep,nichtmehrfach);
 } // void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach)
 
@@ -1203,7 +1202,7 @@ int obprogda(string prog,int obverb, int oblog, string *pfad/*=0*/)
   return 0; 
 } // string obprogda(string prog,int obverb, int oblog)
 
-instprog distri_cl::pruefipr(int obverb,int oblog)
+instprog linst_cl::pruefipr(int obverb,int oblog)
 {
 	if (ipr==keinp) {
 		if (obprogda("rpm",obverb-1,oblog)) {
@@ -1213,16 +1212,26 @@ instprog distri_cl::pruefipr(int obverb,int oblog)
 				// heruntergeladene Dateien behalten
 				ipr=zypper;
 				instp="sudo zypper -n --gpg-auto-import-keys in ";
-				repos="sudo zypper lr | grep 'g++\\|devel_gcc'>/dev/null 2>&1 || sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release |"
-					"grep ^NAME= | cut -d'\"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'\"' -f2`/devel:gcc.repo;";
+				instyp=instp+"-y ";
+				upr="sudo zypper -n rm -u ";
+				uypr=upr+"-y ";
+				repos="sudo zypper lr | grep 'g++\\|devel_gcc'>/dev/null 2>&1 || "
+				      "sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release |"
+							"grep ^NAME= | cut -d'\"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'\"' -f2`/devel:gcc.repo;";
 				compil="gcc gcc-c++ gcc6-c++";
 			} else { // dann fedora
 				if (obprogda("dnf",obverb-1,oblog)) {
 					ipr=dnf;
-					instp="sudo dnf -y install ";
+					instp="sudo dnf install ";
+					instyp="sudo dnf -y install ";
+					upr="sudo dnf remove ";
+					uypr="sudo dnf -y remove ";
 				} else if (obprogda("yum",obverb-1,oblog)) {
 					ipr=yum;
-					instp="sudo yum -y install ";
+					instp="sudo yum install ";
+					instyp="sudo yum -y install ";
+					upr="sudo yum remove ";
+					uypr="sudo yum -y remove ";
 				} // 				if (obprogda("dnf",obverb-1,oblog))
 				compil="make automake gcc-c++ kernel-devel";
 			} // 			if (obprogda("zypper",obverb-1,oblog)) KLZ // opensuse
@@ -1234,7 +1243,10 @@ instprog distri_cl::pruefipr(int obverb,int oblog)
 			// hier werden die Dateien vorgabemaessig behalten
 			ipr=apt;
 			schau="dpkg -s";
-			instp="sudo apt-get -y --force-yes install "; 
+			instp="sudo apt-get install "; 
+			instyp="sudo apt-get -y --force-yes --reinstall install "; 
+			upr="sudo apt-get --auto-remove purge ";
+			uypr="sudo apt-get -y --auto-remove purge ";
 			compil="install build-essential linux-headers-`uname -r`";
 			dev="dev";
 		} else {
@@ -1242,7 +1254,7 @@ instprog distri_cl::pruefipr(int obverb,int oblog)
 		} // 		if (obprogda("rpm",obverb-1,oblog))
 	} //   if (ipr==keinp)
 	return ipr;
-} // instprog distri_cl::pruefipr(int obverb,int oblog)
+} // instprog linst_cl::pruefipr(int obverb,int oblog)
 
 const string& absch::suche(const char* const sname)
 {
@@ -1576,7 +1588,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
      if (schl[ind].bemerk.empty())
        gefunden=1;
      else {
-       string bv=schl[ind].bemerk.substr(2);
+       const string bv=schl[ind].bemerk.substr(2);
        for(int aktsp=0;aktsp<Smax;aktsp++) {
          if (bv==(*vp)[aktsp]) {
            gefunden=(aktsp!=TxBp->lgn); // wenn aktuelle Sprache, nichts tun
@@ -1624,7 +1636,7 @@ int multischlschreib(const string& fname, schlArr **confs, size_t cszahl,string 
       time_t jetzt=time(0);
       tm *ltm = localtime(&jetzt);
       strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", ltm);
-      string ueberschr=Txk[T_Konfiguration_fuer]+mpfad+Txk[T_erstellt_automatisch_durch_dieses_am]+buf;
+      const string ueberschr=Txk[T_Konfiguration_fuer]+mpfad+Txk[T_erstellt_automatisch_durch_dieses_am]+buf;
       if (!ueberschr.empty()) f<<ueberschr<<endl;
     } //     if (!mpfad.empty())
     for (size_t j=0;j<cszahl;j++) {
@@ -1884,7 +1896,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 void pruefplatte()
 {
   struct statvfs fp;
-  string platte="/";
+  const string platte="/";
   statvfs(platte.c_str(),&fp);   
   if (fp.f_bsize * fp.f_bfree < 100000) { // wenn weniger als 100 MB frei sind ...
     systemrueck("sudo pkill postdrop");
@@ -1895,7 +1907,7 @@ void pruefplatte()
 void pruefmehrfach(const string& wen)
 {
   svec rueck;
-	string iwen=wen.empty()?base_name(meinpfad()):wen;
+	const string iwen=wen.empty()?base_name(meinpfad()):wen;
   systemrueck("ps -eo comm|grep '^"+iwen+"'",0,0,&rueck);
   if (rueck.size()>1) {
     cout<<Txk[T_Program]<<blau<<iwen<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
@@ -1913,7 +1925,7 @@ void pruefmehrfach(const string& wen)
 // obimmer = immer setzen, sonst nur, falls mit getfacl fuer datei Berechtigung fehlt (wichtig fuer Unterverzeichnisse)
 int setfaclggf(const string& datei, const binaer obunter, const int mod, uchar obimmer,int obverb, int oblog)
 {
-  static string cuser=curruser(); 
+  static const string cuser=curruser(); 
   if (cuser!="root") {
       static int obsetfacl=obprogda("setfacl",obverb-1,0);
       if (obsetfacl) {
@@ -2086,7 +2098,7 @@ string Tippzahl(const string& frage, string *vorgabe)
 
 char* Tippcstring(const char *frage, char* buf, unsigned long buflen, const char* vorgabe) 
 {
-  string vstr=string(vorgabe);
+  const string vstr=string(vorgabe);
   strncpy(buf,Tippstring(string(frage),&vstr).c_str(),buflen-1);
   buf[buflen-1]=0;
   return buf;
@@ -2371,9 +2383,9 @@ linsten linstcl::checkinst(int obverb, int oblog)
 */
 
 
-string linstcl::ersetzeprog(const string& prog) 
+string linst_cl::ersetzeprog(const string& prog) 
 {
-  switch(distri.pruefipr()) {
+  switch(linst.pruefipr()) {
     case apt:
       if (prog=="mariadb") return "mariadb-server";
       if (prog=="hylafax") return "hylafax-server";
@@ -2416,12 +2428,12 @@ string linstcl::ersetzeprog(const string& prog)
 		  if (prog=="redhat-rpm-config") return "";
 			if (prog=="libffi-devel") return "libffi$(gcc --version|head -n1|sed \"s/.*) \\(.\\).\\(.\\).*/\\1\\2/\")-devel";
     default: break;
-  } //   switch(distri.pruefipr())
+  } //   switch(linst.pruefipr())
   return prog;
-} // string linstcl::ersetzeprog(const string& prog) 
+} // string linst_cl::ersetzeprog(const string& prog) 
 
 
-int linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsnichtda,uchar obun/*=0*/)
+int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar obyes/*=1*/)
 {
   // <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
   int ret=2;
@@ -2436,35 +2448,32 @@ int linstcl::doinst(const string& prog,int obverb,int oblog,const string& fallsn
   } // if (!fallsnichtda.empty()) 
 //	int iru;
   if (!eprog.empty()) {
-    switch (distri.pruefipr()) {
+    switch (linst.pruefipr()) {
       case zypper:
         if (obnmr) {
           obnmr=0;
           systemrueck("sudo zypper mr -k -all",obverb,oblog);
         } //         if (obnmr)
-        ret=systemrueck(string("sudo zypper -n --gpg-auto-import-keys ")+(obun?"rm":"in")+" -f "+eprog,obverb+1,oblog);
-        break;
-      case apt:
-//				for(iru=0;iru<2;iru++) KLA
-//					if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
-//					systemrueck("sudo dpkg --configure -a",obverb+1,oblog);
-//				KLZ
-				ret=systemrueck(string("sudo apt-get -y --force-yes ")+(obun?"remove ":"install ")+eprog,obverb+1,oblog);
-				break; 
-      case dnf:
-        ret=systemrueck(string("sudo dnf -y ")+(obun?"remove ":"install ")+eprog,obverb+1,oblog);
-        break;
-      case yum:
-        ret=systemrueck(string("sudo yum -y ")+(obun?"remove ":"install ")+eprog,obverb+1,oblog);
-        break;
       default: break;
-    } // switch (distri.pruefipr()) 
-    eprog.clear();
-  } // if (!eprog.empty()) 
-  return ret;
-} // uchar linstcl::doinst(const string& prog,int obverb,int oblog) 
+    } // switch (linst.pruefipr()) 
+		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog))) {
+			mdatei uniff(unindt,ios::app);
+			if (uniff.is_open()) {
+				uniff<<upr<<eprog<<endl; 
+			} else {
+				perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
+			} // 			if (uniff.is_open())
+		} // 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog)))
+		//				for(iru=0;iru<2;iru++) KLA
+		//					if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
+		//					systemrueck("sudo dpkg --configure -a",obverb+1,oblog);
+		//				KLZ
+		eprog.clear();
+	} // if (!eprog.empty()) 
+	return ret;
+} // uchar linst_cl::doinst(const string& prog,int obverb,int oblog) 
 
-int linstcl::doggfinst(const string& prog,int obverb,int oblog)
+int linst_cl::doggfinst(const string& prog,int obverb,int oblog)
 {
   if (!(eprog=ersetzeprog(prog)).empty()) {
     if (obfehlt(eprog,obverb,oblog)) {
@@ -2473,40 +2482,24 @@ int linstcl::doggfinst(const string& prog,int obverb,int oblog)
     eprog.clear();
   } // if (!(eprog=ersetzeprog(prog)).empty()) 
   return 0;
-} // uchar linstcl::doggfinst(const string& prog,int obverb,int oblog)
+} // uchar linst_cl::doggfinst(const string& prog,int obverb,int oblog)
 
-int linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda,uchar obun/*=0*/)
+int linst_cl::douninst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,uchar obyes/*=1*/) 
 {
-  const string& progs=prog;
-  // <<rot<<"doinst 2: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
-  return doinst(progs,obverb,oblog,fallsnichtda,obun);
-} // uchar linstcl::doinst(const char* prog,int obverb,int oblog,const string& fallsnichtda)
-
-int linstcl::douninst(const string& prog,int obverb,int oblog) 
-{
-  switch (distri.pruefipr()) {
-    case zypper:
-      return systemrueck("sudo zypper -n rm "+prog,obverb,oblog);
-      break;
-    case apt:
-      return systemrueck("sudo apt-get -y remove "+ersetzeprog(prog),obverb,oblog);
-      break; 
-    case dnf:
-      return systemrueck("sudo dnf -y remove "+ersetzeprog(prog),obverb,oblog);
-      break; 
-    case yum:
-      return systemrueck("sudo yum -y remove "+ersetzeprog(prog),obverb,oblog);
-      break; 
-    default: break;
-  }
-  return 2;
-} // uchar linstcl::douninst(const string& prog,int obverb,int oblog) 
+	int ret=2;
+	if (eprog.empty()) eprog=ersetzeprog(prog);
+	if (!eprog.empty()) {
+		ret=systemrueck((obyes?uypr:upr)+prog,obverb,oblog);
+		eprog.clear();
+	}
+	return ret;
+} // uchar linst_cl::douninst(const string& prog,int obverb,int oblog) 
 
 
-int linstcl::obfehlt(const string& prog,int obverb,int oblog)
+int linst_cl::obfehlt(const string& prog,int obverb,int oblog)
 {
  // <<violett<<"linst::obfehlt: "<<schwarz<<prog<<endl;
-  switch (distri.pruefipr()) {
+  switch (linst.pruefipr()) {
     case zypper: case dnf: case yum: 
       return systemrueck("rpm -q "+prog+" 2>/dev/null",obverb,oblog);
     case apt:
@@ -2514,7 +2507,7 @@ int linstcl::obfehlt(const string& prog,int obverb,int oblog)
     default: break;
   }
   return 2;
-} // uchar linstcl::obfehlt(const string& prog,int obverb,int oblog)
+} // uchar linst_cl::obfehlt(const string& prog,int obverb,int oblog)
 
 
 string meinpfad() {
@@ -2579,7 +2572,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 					linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
 					systemrueck("sudo setenforce 0",obverb,oblog);
 					restart(obverb,oblog);
-					string selocal=sname+"_selocal";
+					const string selocal=sname+"_selocal";
 					systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+selocal+"\"",obverb,oblog);
 					systemrueck("sudo setenforce 1",obverb,oblog);
 					linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
@@ -2682,7 +2675,7 @@ int servc::obda(int obverb,int oblog)
  systemrueck("systemctl -a --no-legend list-units '"+sname+".service'",obverb,oblog,&srueck);  // bei list-units return value immer 0
  serviceda=!srueck.empty();
  return serviceda;
-}
+} // int servc::obda(int obverb,int oblog)
 
 // wird aufgerufen in: pruefhyla, pruefcapi, spruef
 int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
@@ -2703,7 +2696,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
         svec statrueck;
         systemrueck("systemctl --lines 0 status '"+sname+"'",obverb,oblog,&statrueck,1);
         for(size_t j=0;j<statrueck.size();j++) {
-          string *sp=&statrueck[j];
+          const string *sp=&statrueck[j];
           if (sp->find("exited")!=string::npos) {
             // z.B.: 'Main PID: 17031 (code=exited, status=255)'
             // 11.9.16: dann muss selinux angepasst werden
@@ -2725,16 +2718,16 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
       } else {
 			  serviceda=0;
         break;
-      }
+      } //       if (srueck[0].find("active running")!=string::npos) else else else else
     } else { // if (!srueck.empty()) 
       break;
     } //     if (!srueck.empty())  else 
   } // while (1)
   if (!serviceda) {
     vector<errmsgcl> errv;
-    string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
-    string f0=froh+Txk[T_geladen];
-    string f1=froh+Txk[T_nicht_geladen];
+    const string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
+    const string f0=froh+Txk[T_geladen];
+    const string f1=froh+Txk[T_nicht_geladen];
     errv.push_back(errmsgcl(0,f0));
     errv.push_back(errmsgcl(1,f1));
     serviceda=!systemrueck("systemctl status '"+sname+"'| grep ' loaded '",obverb,oblog,0,falsch,wahr,"",&errv);
@@ -2789,14 +2782,15 @@ void servc::stopdis(int obverb,int oblog,uchar mitpkill)
 int servc::enableggf(int obverb,int oblog)
 {
     vector<errmsgcl> errv;
-    string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
-    string f0=froh+Txk[T_ermoeglicht];
-    string f1=froh+Txk[T_nicht_ermoeglicht];
+    const string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
+    const string f0=froh+Txk[T_ermoeglicht];
+    const string f1=froh+Txk[T_nicht_ermoeglicht];
     errv.push_back(errmsgcl(0,f0));
     errv.push_back(errmsgcl(1,f1));
     errv.push_back(errmsgcl(6,f1));
  return systemrueck(string("systemctl is-enabled '")+sname+"' >/dev/null 2>&1 || sudo systemctl enable '"+sname+"'",obverb,oblog,0,2,wahr,"",&errv);
-}
+} // int servc::enableggf(int obverb,int oblog)
+
 
 void servc::daemon_reload(int obverb, int oblog)
 {
@@ -2819,7 +2813,7 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
           setfaclggf(zuloe, falsch, 6, falsch,obverb,oblog);
         } else {
           if (errno) if (errno!=13) perror((string(Txk[T_Fehler_beim_Loeschen])+" "+ltoan(errno)).c_str()); // Permission denied
-          string cmd=string("sudo rm -rf \"")+zuloe+"\"";
+          const string cmd=string("sudo rm -rf \"")+zuloe+"\"";
           erg=systemrueck(cmd,obverb+1,1);
         } // if(iru) else
       } else {
@@ -2864,7 +2858,7 @@ void optioncl::setzebem(schlArr *cp,const char *pname)
 }
 
 // gleicht das Datum von <zu> an <gemaess> an, aehnlich touch
-int attrangleich(string& zu, string& gemaess,int obverb, int oblog)
+int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
 {
   struct stat statgm;
   if (lstat(gemaess.c_str(),&statgm)) {

@@ -59,7 +59,7 @@ class urfxcl // urspruengliche Dateidaten vor Aufteilung an verschiedene Faxadre
     string teil;
     string ur;
     unsigned prio; // Prioritaet der Fax-Programme: 0 = capi und 0 = hyla per Konfigurationsdatei, 1= capi und 2= hyla per Faxdateiname
-    urfxcl(string& teil, string& ur,unsigned prio): teil(teil), ur(ur), prio(prio) {}
+    urfxcl(const string& teil, string& ur,unsigned prio): teil(teil), ur(ur), prio(prio) {}
 };
 
 class fxfcl // Faxfile
@@ -70,10 +70,10 @@ class fxfcl // Faxfile
     string ur;   // urspruenglicher Dateinamen
     unsigned prio; // Prioritaet der Fax-Programme: 0 = capi und 0 = hyla per Konfigurationsdatei, 1= capi und 2= hyla per Faxdateiname
 		ulong pseiten; // PDF-Seitenzahl
-    fxfcl(string& npdf,string& spdf,string& ur,unsigned prio): npdf(npdf),spdf(spdf),ur(ur),prio(prio),pseiten(0) {}
+    fxfcl(const string& npdf,const string& spdf,const string& ur,unsigned prio): npdf(npdf),spdf(spdf),ur(ur),prio(prio),pseiten(0) {}
     // nur fuer Initialisierung in fsfcl, Konstruktur /*1*/, nur fuer faxealle
-    fxfcl(unsigned prio, string& npdf,string& spdf,ulong pseiten): npdf(npdf),spdf(spdf),prio(prio),pseiten(pseiten) {}
-    fxfcl(string& spdf,string& ur,unsigned prio): npdf(""),spdf(spdf),prio(prio),pseiten(0) {}
+    fxfcl(unsigned prio, const string& npdf,const string& spdf,ulong pseiten): npdf(npdf),spdf(spdf),prio(prio),pseiten(pseiten) {}
+    fxfcl(const string& spdf,const string& ur,unsigned prio): npdf(""),spdf(spdf),prio(prio),pseiten(0) {}
     fxfcl() {}
 };
 
@@ -118,14 +118,14 @@ class fsfcl : public fxfcl // Faxsendfile
       void archiviere(DB *My, paramcl *pmp, struct stat *entryp,uchar obgescheitert, FaxTyp ftyp, uchar *gel, int obverb, int oblog);
     int loeschecapi(int obverb, int oblog);
     int loeschehyla(paramcl *pmp,int obverb, int oblog);
-    /*1*/fsfcl(string id, string npdf, string spdf, string telnr, unsigned prio, string capisd, int capids, string hylanr, int hdialsn, 
-         uchar obcapi, uchar obhyla, string adressat, ulong pseiten, string idalt):
+    /*1*/fsfcl(const string id, const string npdf, const string spdf, const string telnr, unsigned prio, const string capisd, int capids, 
+		           const string hylanr, int hdialsn, uchar obcapi, uchar obhyla, const string adressat, ulong pseiten, string idalt):
          fxfcl(prio,npdf,spdf,pseiten), id(id), telnr(telnr), capisd(capisd), capids(capids), 
          hylanr(hylanr), hdialsn(hdialsn), fobcapi(obcapi), fobhyla(obhyla), adressat(adressat),idalt(idalt) {}
-    /*2*/fsfcl(string id,string original): id(id), original(original) {}
-    /*3*/fsfcl(string id, string capisd, string hylanr, string cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
-    /*4*/fsfcl(string& hylanr): hylanr(hylanr) {}
-    /*5*/fsfcl(string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
+    /*2*/fsfcl(const string id,const string original): id(id), original(original) {}
+    /*3*/fsfcl(const string id, const string capisd, const string hylanr, string const cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
+    /*4*/fsfcl(const string& hylanr): hylanr(hylanr) {}
+    /*5*/fsfcl(const string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
     void setzcapistat(paramcl *pmp, struct stat *entrysendp);
     void capiausgeb(stringstream *ausgp, string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,unsigned long faxord=0);
     void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
@@ -323,8 +323,8 @@ class paramcl // Programmparameter
     int kompilbase(const string& was,const string& endg);
     int kompiliere(const string& was,const string& endg, const string& vorcfg=s_true,const string& cfgbismake=s_dampand);
     void bereinigecapi();
-	  int zupdf(string& quell, string& ziel, ulong *pseitenp=0, int obocr=1, int loeschen=1); // 0=Erfolg
-		int holtif(string& datei,ulong *seitenp=0,struct tm *tmp=0,struct stat *elogp=0,
+	  int zupdf(const string* quell, const string& ziel, ulong *pseitenp=0, int obocr=1, int loeschen=1); // 0=Erfolg
+		int holtif(const string& datei,ulong *seitenp=0,struct tm *tmp=0,struct stat *elogp=0,
 		           string *absdrp=0,string *tsidp=0,string *calleridp=0,string *devnamep=0);
 		void setztmpc();
 		void pruefmodcron();
