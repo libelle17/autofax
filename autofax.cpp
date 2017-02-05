@@ -6566,7 +6566,8 @@ int paramcl::pruefhyla()
 				"&& cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . "
 				"&& make"
 				"&& sudo make install"
-				"&& printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall; cd \\\""+instverz+"\\\"\\n\\\" >> \\\""+unindt+"\\\""
+				"&&{ grep -q \\\"cd \\\"\\$(pwd)\\\" \\\""+unindt+"\\\""
+				"|| printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall; cd \\\""+instverz+"\\\"\\n\\\" >> \\\""+unindt+"\\\";} "
 				"&& sudo touch \\$NACHWEIS;};true\"";
 				
 		systemrueck(befehl,obverb,oblog);
@@ -6633,7 +6634,8 @@ int paramcl::pruefhyla()
 							"$(grep LIBEXEC defs | cut -d'\\''='\\'' -f2 | sed '\\''s/^[[:space:]]*//;s/[[:space:]]*$//'\\'')/faxgetty'\\''.g\" config.cache"
 							"&& echo $? = Ergebnis nach sed"
 							"&& sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
-							"&& printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\""
+							"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
+							"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\";} "
 							"&& sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
 							"&& test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
 							"&& sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
@@ -7002,7 +7004,8 @@ int paramcl::kompiliere(const string& was,const string& endg, const string& vorc
 {
   if (!kompilbase(was,endg)) {
     return systemrueck("sh -c 'cd \""+instverz+vtz+was+"\" && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install "
-							" && printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\""
+							"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
+							"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\";} "
 							"'"
 		,obverb,oblog);
   } //    if (!kompilbase(was,endg))
@@ -7025,9 +7028,10 @@ void paramcl::pruefsfftobmp()
       uchar obfrei= obprogda("jpegtran",obverb,oblog) && obprogda("cjpeg",obverb,oblog) && obprogda("djpeg",obverb,oblog);
       if (!obfrei) {
       const string befehl = "cd "+instverz+
-			  " && { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T "
-        " && rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install"
-				" && printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\""
+			  "&& { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T "
+        "&& rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install"
+				"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
+				"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\";} "
 				"; } ";
         obfrei = !systemrueck(befehl,obverb,oblog);
       }
@@ -7052,7 +7056,8 @@ void paramcl::pruefsfftobmp()
             //                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
             "&& sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
             "&& ./configure && make && sudo make install "
-						"&& printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\""
+						"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
+						"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\";} "
             ;
           //                      <<gruen<<befehl<<schwarz<<endl;
           systemrueck(befehl,obverb,oblog);
