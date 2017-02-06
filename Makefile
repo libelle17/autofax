@@ -63,7 +63,7 @@ LT:=libtiff
 LT:=$(LT) $(LT)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
-GROFFCHECK:=$(SPR) $(pgroff)$(OR)||{ $(IPR) $(pgroff);printf '$(UPR) $(pgroff)\n'>>$(UN);};true
+GROFFCHECK:=$(SPR) $(pgroff)$(OR)||{ $(IPR) $(pgroff);grep -q '$(pgroff)' '$(UN)'||printf '$(UPR) $(pgroff)\n'>>$(UN);};true
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) $(OR))
@@ -183,10 +183,10 @@ compiler:
 	@printf " Untersuche Compiler ...\r"
 #	@printf " CCName: %b%s%b                  \n" $(blau) "${CCName}" $(reset)
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
-	@which $(CCName)$(OR)||{ $(REPOS)$(IP_R) $(COMP);printf '$(UPR) $(COMP);$(urepo)\n'>>$(UN);};
-	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(IPR) $(libmcd);printf '$(UPR) $(libmcd)\n'>>$(UN);fi
-	@[ -z $$mitpg ]||$(SPR) $(pgd)$(OR)||{ $(IPR) $(pgd);printf '$(UPR) $(pgd)\n'>>$(UN);$(slc);};
-	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR) $(LT) $(KF);$(IPR) $(LT);printf '$(UPR) $(LT)\n'>>$(UN);}
+	@which $(CCName)$(OR)||{ $(REPOS)$(IP_R) $(COMP);grep -q '$(COMP)' '$(UN)'||printf '$(UPR) $(COMP);$(urepo)\n'>>$(UN);};
+	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(IPR) $(libmcd);grep -q '$(libmcd)' '$(UN)'||printf '$(UPR) $(libmcd)\n'>>$(UN);fi
+	@[ -z $$mitpg ]||$(SPR) $(pgd)$(OR)||{ $(IPR) $(pgd);grep -q '$(pgc)' '$(UN)'||printf '$(UPR) $(pgd)\n'>>$(UN);$(slc);};
+	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR) $(LT) $(KF);$(IPR) $(LT);grep -q '$(LT)' '$(UN)'||printf '$(UPR) $(LT)\n'>>$(UN);}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
 # 17.1.17 in Programm verlagert
 #	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
@@ -272,6 +272,9 @@ fertig:
 	@printf " Fertig mit %s, nachher:\n" "$(ICH)"
 	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC))" $(reset) 
 
+.PHONY: clean
+clean: hierclean distclean
+
 .PHONY: hierclean
 hierclean: 
 	@printf " Bereinige ...\r"
@@ -279,14 +282,13 @@ hierclean:
 	@$(shell sudo rm -f ${MANPEH} ${MANPDH} $(KF))
 	@printf " %b%s,%s,%s,%s%b geloescht!\n" $(blau) "$(EXEC)" "$(OBJ)" "$(MANPEH)" "$(MANPDH)" $(reset)
 
--include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
-.PHONY: clean
-clean: hierclean
-	@$(shell sudo rm -f $(INSTEXEC) $(KF))
+.PHONY: distclean
+distclean:
+	@$(shell sudo rm -f $(INSTEXEC) ${MANPD} ${MANPE} $(KF))
 	@printf " %b%s%b geloescht!\n" $(blau) "$(INSTEXEC)" $(reset) 
 
 .PHONY: uninstall
-uninstall:
+uninstall: distclean
 	-@sh uninstall.sh
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))

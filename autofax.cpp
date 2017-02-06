@@ -4512,7 +4512,7 @@ void paramcl::pruefunpaper()
 			const string rpf="rpmfusion_copy";
 			holvongithub(rpf);
 			kompilbase(rpf,s_gz);
-			systemrueck("sh -c 'cd \""+instverz+vtz+rpf+"\"&& sudo rpm -Uvh ./rpmfusion*rpm'",obverb+1,oblog);
+			systemrueck("sh -c 'cd \""+instvz+vtz+rpf+"\"&& sudo rpm -Uvh ./rpmfusion*rpm'",obverb+1,oblog);
 			linst.doinst("ffmpeg",obverb,oblog);
 			linst.doinst("ffmpeg-devel",obverb,oblog);
 			linst.doinst("ffmpeg-compat",obverb,oblog);
@@ -4560,7 +4560,7 @@ int paramcl::pruefocr()
 		// uchar alt=0;
 		uchar ocrzuinst=1;
 		if (obprogda("ocrmypdf",obverb,oblog)) 
-			if (progvers("ocrmypdf",obverb,oblog)>4.32) 
+			if (progvers("ocrmypdf",obverb,oblog)>4.40) 
 				ocrzuinst=0;
 		if (ocrzuinst) {
 			if (linst.pruefipr()==dnf||linst.pruefipr()==yum||linst.pruefipr()==zypper||linst.pruefipr()==apt) {
@@ -4574,9 +4574,17 @@ int paramcl::pruefocr()
 				linst.doinst("ghostscript",obverb+1,oblog,"gs");
 				systemrueck("sudo python3 -m pip install --upgrade setuptools pip");
 				pruefunpaper();
-				systemrueck("sudo python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
-			  // pip remove ocrmypdf	
-				// pruefunpaper();
+//				systemrueck("sudo python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
+				// python3 -m venv ocrvenv
+				// python3 -m venv --upgrade ocrvenv
+				// source ocrvenv/bin/activate
+				// sudo pip3 install ocrmypdf
+				systemrueck("sudo -c 'python3 -m venv \""+instvz+"/ocrv\";"
+						"python3 -m venv --upgrade \""+instvz+"/ocrv\";"
+						"source \""+instvz+"/ocrv/bin/activate\";"
+						"grep ocrmypdf \""+instvz+"/uninstall.sh\""
+						"||sed -i \"/ python3/isudo pip3 uninstall --yes ocrmypdf\" \""+instvz+"/uninstall.sh\"'",obverb,oblog);
+				// sudo pip3 uninstall --yes ocrmypdf
 				// sudo dnf install ./ghostscript-9.16-4.fc24.i686.rpm
 				//// sudo dnf -y install ghostscript // ghostscript 9.20 geht nicht mit pdf/a und overwrite
 #ifdef sonstige
@@ -4591,7 +4599,7 @@ int paramcl::pruefocr()
 							linst.doggfinst("libssl-dev",obverb+1,oblog);
 						}
 						const string proj="ocrmypdf_copy";
-						const string srcvz=instverz+vtz+proj+".tar.gz";
+						const string srcvz=instvz+vtz+proj+".tar.gz";
 						holvongithub(proj);
 						if (!kompilbase(proj,s_gz)) {
 							// sudo pip3 install image PyPDF2 ruffus reportlab cryptography cffi
@@ -4616,7 +4624,7 @@ int paramcl::pruefocr()
 							// sudo dnf -y install qpdf
 
 							pruefunpaper();
-							systemrueck("sh -c 'cd \""+instverz+vtz+proj+
+							systemrueck("sh -c 'cd \""+instvz+vtz+proj+
 									"\" && sudo -H python3 -m pip install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf'", obverb,oblog);
 							linst.doinst("unpaper",obverb,oblog);
 						} //    if (!kompilbase(was,endg))
@@ -6569,16 +6577,16 @@ int paramcl::pruefhyla()
 				"&& make"
 				"&& sudo make install"
 				"&&{ grep -q \\\"cd \\\"\\$(pwd)\\\" \\\""+unindt+"\\\""
-				"|| printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall; cd \\\""+instverz+"\\\"\\n\\\" >> \\\""+unindt+"\\\";} "
+				"|| printf \\\"cd \\\"\\$(pwd)\\\" && make uninstall; cd \\\""+instvz+"\\\"\\n\\\" >> \\\""+unindt+"\\\";} "
 				"&& sudo touch \\$NACHWEIS;};true\"";
 		*/
 		/*
-      systemrueck("sh -c 'cd \""+instverz+"\";T="+datei+".tar.gz; wget https://github.com/libelle17/"+datei+"/archive/master.tar.gz -O $T'", 
-    return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instverz+"\" && tar xpvf $T"
+      systemrueck("sh -c 'cd \""+instvz+"\";T="+datei+".tar.gz; wget https://github.com/libelle17/"+datei+"/archive/master.tar.gz -O $T'", 
+    return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instvz+"\" && tar xpvf $T"
                        "&& rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv $M $P'",obverb,oblog);
-    return systemrueck("sh -c 'cd \""+instverz+vtz+was+"\" && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install "
+    return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install "
 							"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
-							"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\";} "
+							"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instvz+"\"\\n\" >> \""+unindt+"\";} "
 							"'"
 		*/
 		// Die Datei /usr/lib64/sclibtiff wird als Nachweis verwendet, dass die Installationskorrektur durchgefuert wurde
@@ -6589,15 +6597,15 @@ int paramcl::pruefhyla()
 			const string proj="tiff_copy";
 		  holvongithub(proj);
 			kompilbase(proj,s_gz);
-			const string befehl="sh -c 'cd \""+instverz+vtz+proj+"\""
+			const string befehl="sh -c 'cd \""+instvz+vtz+proj+"\""
 				"&& rm -f CMakeCache.txt"
 				"&& sed -i.bak s\"/uint16 Param;/uint32 Param;/\" libtiff/tif_fax3.h"
 				"&& cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . "
 				"&& make"
 				"&& sudo make install"
-				"&&{ grep -q \"cd \\\""+instverz+vtz+proj+"\\\"\" \""+unindt+"\""
-				"|| printf \"cd \\\""+instverz+vtz+proj+"\\\" && cat install_manifest.txt|sudo xargs rm; "
-				  "cd \\\""+instverz+"\\\"\\nsudo rm -f \\\""+nachw+"\\\"\\n\" >> \""+unindt+"\";} "
+				"&&{ grep -q \"cd \\\""+instvz+vtz+proj+"\\\"\" \""+unindt+"\""
+				"|| printf \"cd \\\""+instvz+vtz+proj+"\\\" && cat install_manifest.txt|sudo xargs rm; "
+				  "cd \\\""+instvz+"\\\"\\nsudo rm -f \\\""+nachw+"\\\"\\n\" >> \""+unindt+"\";} "
         ";true'";
 			systemrueck(befehl,obverb,oblog);
 			touch(nachw,obverb,oblog);
@@ -6667,7 +6675,7 @@ int paramcl::pruefhyla()
 							"&& echo $? = Ergebnis nach sed"
 							"&& sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
 							"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
-							"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\";} "
+							"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instvz+"\"\\n\" >> \""+unindt+"\";} "
 							"&& sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
 							"&& test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
 							"&& sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
@@ -7006,18 +7014,18 @@ void paramcl::pruefmodcron()
 
 int paramcl::pruefinstv()
 {
-  if (instverz.empty()) instverz=string(getenv("HOME"))+'/'+meinname;
-  return pruefverz(instverz,obverb,oblog);
+  if (instvz.empty()) instvz=string(getenv("HOME"))+'/'+meinname;
+  return pruefverz(instvz,obverb,oblog);
 } // void paramcl::pruefinstv()
 
 void paramcl::holvongithub(string datei)
 {
   if (!pruefinstv()) {
     svec csrueck;
-    systemrueck("find \""+instverz+"\" -mtime -1 -name "+datei+".tar.gz",obverb,oblog,&csrueck);
+    systemrueck("find \""+instvz+"\" -mtime -1 -name "+datei+".tar.gz",obverb,oblog,&csrueck);
     if (!csrueck.size()) {
-      //systemrueck("sh -c 'cd "+instverz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
-      systemrueck("sh -c 'cd \""+instverz+"\";T="+datei+".tar.gz; wget https://github.com/libelle17/"+datei+"/archive/master.tar.gz -O $T'", 
+      //systemrueck("sh -c 'cd "+instvz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
+      systemrueck("sh -c 'cd \""+instvz+"\";T="+datei+".tar.gz; wget https://github.com/libelle17/"+datei+"/archive/master.tar.gz -O $T'", 
           obverb,oblog);
     } //     if (!csrueck.size())
   } // if (!pruefinstv())
@@ -7026,7 +7034,7 @@ void paramcl::holvongithub(string datei)
 int paramcl::kompilbase(const string& was, const string& endg)
 {
   if (!pruefinstv()) {
-    return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instverz+"\" && tar xpvf $T"
+    return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instvz+"\" && tar xpvf $T"
                        "&& rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv $M $P'",obverb,oblog);
   } //   if (!pruefinstv())
   return 1;
@@ -7035,9 +7043,9 @@ int paramcl::kompilbase(const string& was, const string& endg)
 int paramcl::kompiliere(const string& was,const string& endg, const string& vorcfg, const string& cfgbismake)
 {
   if (!kompilbase(was,endg)) {
-    return systemrueck("sh -c 'cd \""+instverz+vtz+was+"\" && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install "
+    return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install "
 							"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
-							"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\";} "
+							"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instvz+"\"\\n\" >> \""+unindt+"\";} "
 							"'"
 		,obverb,oblog);
   } //    if (!kompilbase(was,endg))
@@ -7059,11 +7067,11 @@ void paramcl::pruefsfftobmp()
     if (!obprogda("sfftobmp",obverb,oblog)) {
       uchar obfrei= obprogda("jpegtran",obverb,oblog) && obprogda("cjpeg",obverb,oblog) && obprogda("djpeg",obverb,oblog);
       if (!obfrei) {
-      const string befehl = "cd "+instverz+
+      const string befehl = "cd "+instvz+
 			  "&& { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T "
         "&& rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install"
 				"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
-				"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\";} "
+				"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instvz+"\"\\n\" >> \""+unindt+"\";} "
 				"; } ";
         obfrei = !systemrueck(befehl,obverb,oblog);
       }
@@ -7075,7 +7083,7 @@ void paramcl::pruefsfftobmp()
           obboostda = !linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog);
         }
         if (obboostda) {
-          const string befehl= "cd "+instverz+
+          const string befehl= "cd "+instvz+
             "&& { sudo grep '/usr/local/lib' /etc/ld.so.conf"
             "||{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig; } } "
             "&&{ P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T"
@@ -7089,7 +7097,7 @@ void paramcl::pruefsfftobmp()
             "&& sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
             "&& ./configure && make && sudo make install "
 						"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
-						"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instverz+"\"\\n\" >> \""+unindt+"\";} "
+						"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instvz+"\"\\n\" >> \""+unindt+"\";} "
             ;
           //                      <<gruen<<befehl<<schwarz<<endl;
           systemrueck(befehl,obverb,oblog);
@@ -7217,7 +7225,7 @@ int paramcl::pruefcapi()
 											"{ NEU=$(find /lib/modules -type l -name build -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|"
 											"sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU && sudo cp -a $NEU /lib/modules/$(uname -r)/build; }",obverb,oblog);
 									const string proj="fcpci_copy";
-									const string srcvz=instverz+vtz+proj+".tar.gz";
+									const string srcvz=instvz+vtz+proj+".tar.gz";
 									holvongithub(proj);
 									const string vorcfg="sudo test -f driver.c.bak || sed -i.bak \"/request_irq/i#if !defined(IRQF_DISABLED)\\n"
 										"# define IRQF_DISABLED 0x00\\n#endif\" driver.c;"
@@ -7273,10 +7281,10 @@ int paramcl::pruefcapi()
 							linst.doggfinst("pesign",obverb+1,oblog);
 							systemrueck("sudo rpmdev-setuptree",obverb,oblog);
 							::Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
-							systemrueck("cd "+instverz+" && sudo dnf download --source kernel",obverb,oblog);
+							systemrueck("cd "+instvz+" && sudo dnf download --source kernel",obverb,oblog);
 							svec rueck;
 							string kstring; // kernel-4.8.4-200.fc24.src.rpm
-							systemrueck("cd "+instverz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);
+							systemrueck("cd "+instvz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);
 							if (rueck.size()) {
 								kstring=rueck[0]; // "kernel-4.8.4-200.fc24.src.rpm"
 								string kernel=kstring.substr(kstring.find('-')+1);
@@ -7291,8 +7299,8 @@ int paramcl::pruefcapi()
 											Tx[T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1,1);
 									exit(0);
 								} // 							if (kernel.find(relev))
-								systemrueck("cd "+instverz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
-								systemrueck("cd "+instverz+" && sudo rpm -Uvh "+kstring,obverb,oblog);
+								systemrueck("cd "+instvz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
+								systemrueck("cd "+instvz+" && sudo rpm -Uvh "+kstring,obverb,oblog);
 								for(unsigned iru=0;iru<2;iru++) {
 									if (!systemrueck("cd "+gethome()+"/rpmbuild/SPECS && rpmbuild -bp --target=$(uname -m) kernel.spec",obverb,oblog)) {
 										systemrueck("sudo dnf -y install kernel-devel",obverb,oblog);
@@ -7370,14 +7378,14 @@ int paramcl::pruefcapi()
 							if (lstat((lsys.getlib64()+"/libcapi20.so").c_str(),&c20stat)) {
 								holvongithub("capi20_copy");
 								kompiliere("capi20_copy",s_gz);
-								systemrueck("sh -c 'cd "+instverz+" && L="+lsys.getlib64()+"/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "
+								systemrueck("sh -c 'cd "+instvz+" && L="+lsys.getlib64()+"/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "
 										"ln -s $L3 $L; test -f $L;'",obverb,oblog);
 							}
-							//            systemrueck("sh -c 'P=capi20_copy;T=$P.tar.bz2;M=$P-master;cd "+instverz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
+							//            systemrueck("sh -c 'P=capi20_copy;T=$P.tar.bz2;M=$P-master;cd "+instvz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
 							//                        " && ./configure && make && sudo make install '",obverb,oblog);
 							//            svec rueck;
 							//            systemrueck("find /usr -name capi20.h 2>/dev/null",obverb,oblog,&rueck); 
-							systemrueck("sh -c 'cd "+instverz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; }; }'",obverb-1,oblog);
+							systemrueck("sh -c 'cd "+instvz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; }; }'",obverb-1,oblog);
 							uchar altobverb=obverb;
 							obverb++;
 							svec rueck;
@@ -7414,7 +7422,7 @@ int paramcl::pruefcapi()
 											mitcservice=1;
 										}
 							obverb=altobverb;
-							//            string befehl="sh -c 'P=capisuite; T=$P.tar.gz; M=$P-master; cd "+instverz+""
+							//            string befehl="sh -c 'P=capisuite; T=$P.tar.gz; M=$P-master; cd "+instvz+""
 							//                  " && tar xpvf $T && rm -rf $P ; mv $M $P && cd $P"
 							//                  " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
 							//                  " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
@@ -7428,9 +7436,9 @@ int paramcl::pruefcapi()
 							//                  " && sudo systemctl daemon-reload; "
 							//                  "'";
 							//            if (!systemrueck(befehl,obverb,oblog)) {
-							//              //            pruefverz("/etc/capisuite",obverb,oblog,wahr);
-							//              //            systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instverz+"/capisuite/src/capisuite.conf /etc/capisuite");
-							//              //            systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instverz+"/capisuite/scripts/fax.conf /etc/capisuite");
+							//              //        pruefverz("/etc/capisuite",obverb,oblog,wahr);
+							//              //        systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instvz+"/capisuite/src/capisuite.conf /etc/capisuite");
+							//              //        systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instvz+"/capisuite/scripts/fax.conf /etc/capisuite");
 							////              pruefverz("/usr/local/var/log",obverb,oblog,wahr);
 							//              //         pruefverz("/usr/local/var/log");
 							//              mitcservice=1;
