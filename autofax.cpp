@@ -7077,6 +7077,7 @@ void paramcl::pruefsfftobmp()
       }
       if (obfrei) {
         svec brueck;
+				// rpm -q boost-devel / dpkg -s libboost-dev -> evtl. besser
         systemrueck("sudo find "+lsys.getlib64()+" /usr/lib /usr/local/lib /usr/local/lib64 /lib -name libboost_python.so -print -quit",obverb,oblog,&brueck);
         uchar obboostda=brueck.size();
         if (!obboostda) {
@@ -7096,8 +7097,8 @@ void paramcl::pruefsfftobmp()
             //                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
             "&& sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
             "&& ./configure && make && sudo make install "
-						"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
-						"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instvz+"\"\\n\" >> \""+unindt+"\";} "
+						"&&{ grep -q \"cd $(pwd)\" \""+unindt+"\""
+						"|| printf \"cd \\\"$(pwd)\\\" && make uninstall; cd \\\""+instvz+"\\\"\\n\" >> \""+unindt+"\";} "
             ;
           //                      <<gruen<<befehl<<schwarz<<endl;
           systemrueck(befehl,obverb,oblog);

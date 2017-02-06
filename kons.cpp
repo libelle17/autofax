@@ -2406,6 +2406,7 @@ string linst_cl::ersetzeprog(const string& prog)
       if (prog=="libavformat-devel") return "libavformat-dev";
       if (prog=="poppler-tools") return "poppler-utils";
 			if (prog=="libffi-devel") return "libffi-dev";
+			if (prog=="boost-devel") return "libboost-dev";
       break;
     case dnf: case yum:
       if (prog=="mariadb") return "mariadb-server";
