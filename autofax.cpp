@@ -7014,7 +7014,7 @@ void paramcl::pruefmodcron()
 
 int paramcl::pruefinstv()
 {
-  if (instvz.empty()) instvz=string(getenv("HOME"))+'/'+meinname;
+  if (instvz.empty()) instvz=gethome()+vtz+meinname;
   return pruefverz(instvz,obverb,oblog);
 } // void paramcl::pruefinstv()
 
