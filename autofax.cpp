@@ -7044,8 +7044,8 @@ int paramcl::kompiliere(const string& was,const string& endg, const string& vorc
 {
   if (!kompilbase(was,endg)) {
     return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install "
-							"&&{ grep -q \"cd \"$(pwd)\" \""+unindt+"\""
-							"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instvz+"\"\\n\" >> \""+unindt+"\";} "
+							"&&{ grep -q \"cd \\\""+instvz+vtz+was+"\\\"\" \""+unindt+"\""
+							"|| printf \"cd \\\""+instvz+vtz+was+"\\\" && make uninstall; cd \\\""+instvz+"\\\"\\n\" >> \""+unindt+"\";} "
 							"'"
 		,obverb,oblog);
   } //    if (!kompilbase(was,endg))
