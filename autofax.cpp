@@ -578,6 +578,8 @@ enum T_
 	T_offen,
 	T_zu,
 	T_Installationsverzeichnis,
+	T_Ergebnis_nach_make,
+	T_Ergebnis_nach_make_install,
 	T_MAX
 };
 
@@ -1640,6 +1642,10 @@ char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
 	{" zu"," shut"},
 	// T_Installationsverzeichnis
 	{"Installationsverzeichnis: ","Installation directory: "},
+	// T_Ergebnis_nach_make
+	{"Ergebnis nach make","Result of make"},
+	// T_Ergebnis_nach_make_install
+	{"Ergebnis nach make install","result after make install"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -6674,27 +6680,25 @@ int paramcl::pruefhyla()
 						}
 					}
 					if (!was.empty()) {
-					}
-					// 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
-					systemrueck("sh -c 'cd $(sudo tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
-							"./configure --nointeractive && echo $? = Ergebnis nach configure && "
+								const string cfgbismake=" --nointeractive && echo $? = Ergebnis nach configure && "
 							"sed -i.bak \"s.PAGESIZE='\\''North American Letter'\\''.PAGESIZE='\\''ISO A4'\\''.g;"
 							"s.PATH_GETTY='\\''\\.*'\\''.PATH_GETTY='\\''"
 							"$(grep LIBEXEC defs | cut -d'\\''='\\'' -f2 | sed '\\''s/^[[:space:]]*//;s/[[:space:]]*$//'\\'')/faxgetty'\\''.g\" config.cache"
 							"&& echo $? = Ergebnis nach sed"
-							"&& sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
-						  "&&{ grep -q \"cd \\\"$(pwd)\\\"\" \""+unindt+"\""
-						  "||printf \"H="+gethome()+";A=$H/"+meinname+";P=hylafax+;cd \\\"$A/$P\\\""
-							"||cd $(find \\\"$H\\\" -name $P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2)"
-							"&& sudo make uninstall; cd \\\"$H\\\"\\n\" >> \""+unindt+"\";} "
-							"&& sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
+							"&& sudo";
+								if (!kompilfort(was,nix,cfgbismake)) {
+								const string nachcfg=
+							"sh -c 'sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
 							"&& test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
 							"&& sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
 							"&& echo $? = Ergebnis nach faxsetup -nointeractive"
 							"&& sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
-							"&& sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload; true;"
-							"'"
-							,2,oblog);
+							"&& sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload; true;'";
+								systemrueck(nachcfg,2,oblog);
+								}
+					} // !was.empty()
+					// 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
+//					systemrueck("sh -c 'cd $(sudo tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
 					// hservice_faxgetty();
 					// hservice_faxq_hfaxd();
 				} else {
@@ -7053,8 +7057,9 @@ int paramcl::kompilbase(const string& was, const string& endg)
 
 int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 {
-    return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" && "+vorcfg+(ohneconf?nix:" && ./configure ")+cfgbismake+" make && sudo make install "
-						"&&{ grep -q \"P="+was+"\" \""+unindt+"\""
+    return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" && "+vorcfg+(ohneconf?nix:" && ./configure ")+cfgbismake+
+				" make && echo $? = "+Tx[T_Ergebnis_nach_make]+" && sudo make install && echo $? = "+Tx[T_Ergebnis_nach_make_install]+
+				"&&{ grep -q \"P="+was+"\" \""+unindt+"\""
 						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P=$P;cd \\\"\\$A/\\$P\\\" 2>/dev/null"
 						"||cd \\$(find \\\"\\$H\\\" -name \\$P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2) "
 						"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
