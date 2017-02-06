@@ -6675,7 +6675,9 @@ int paramcl::pruefhyla()
 							"&& echo $? = Ergebnis nach sed"
 							"&& sudo make && echo $? = Ergebnis nach make && sudo make install && echo $? = Ergebnis nach make install"
 						  "&&{ grep -q \"cd \\\"$(pwd)\\\"\" \""+unindt+"\""
-						  "|| printf \"cd \\\"$(pwd)\\\" && sudo make uninstall; cd \\\""+instvz+"\\\"\\n\" >> \""+unindt+"\";} "
+						  "|| printf \"cd \\\"$(pwd)\\\""
+							"|| find \\\""+gethome()+"\\\" -name sfftobmp_copy -printf \\\"%T@ %p\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2"
+							"&& sudo make uninstall; cd \\\""+instvz+"\\\"\\n\" >> \""+unindt+"\";} "
 							"&& sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
 							"&& test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
 							"&& sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
@@ -7058,6 +7060,7 @@ void paramcl::capisv()
   if (!scapisuite) scapisuite=new servc("","capisuite");
 } // void paramcl::capisv(obverb,oblog)
 
+// in empfarch() und pruefcapi()
 void paramcl::pruefsfftobmp()
 {
   Log(violetts+Tx[T_pruefsfftobmp]+schwarz);
