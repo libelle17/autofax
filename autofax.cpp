@@ -49,7 +49,7 @@ uchar ZDB=0; // G.Schade 22.4.14 fuer Zusatz-Debugging (SQL): ZDB 255, sonst: 0
 const char sep = 9; // geht auch: "[[:blank:]]"
 
 const string s_true="true";
-const string s_dampand=" && ";
+const string s_dampand="&&";
 const string s_gz="gz";
 // const char *tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
 
@@ -6664,8 +6664,17 @@ int paramcl::pruefhyla()
 				if (obverb) ::Log(violetts+"hyinstart: "+schwarz+ltoan(hyinstart),1,1);
 				if (hyinstart==hysrc) {
 					::Log(violetts+Tx[T_ueber_den_Quellcode]+schwarz,1,1);
-					systemrueck("sudo wget -O hylafax+ https://sourceforge.net/projects/hylafax/files/latest",obverb,oblog);
-					systemrueck("sudo tar xvf hylafax+",obverb,oblog);
+					string was;
+					if (!systemrueck("sudo wget -O hylafax+ https://sourceforge.net/projects/hylafax/files/latest",obverb,oblog)) {
+						svec hrueck;
+						if (systemrueck("sudo tar xvf hylafax+",obverb,oblog,&hrueck)) {
+							if (hrueck.size()) {
+								was=hrueck[0].substr(0,hrueck[0].length()-2);
+							}
+						}
+					}
+					if (!was.empty()) {
+					}
 					// 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
 					systemrueck("sh -c 'cd $(sudo tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
 							"./configure --nointeractive && echo $? = Ergebnis nach configure && "
@@ -7042,19 +7051,20 @@ int paramcl::kompilbase(const string& was, const string& endg)
   return 1;
 } // int paramcl::kompilbase(string& was,string& endg)
 
-int paramcl::kompiliere(const string& was,const string& endg, const string& vorcfg, const string& cfgbismake)
+int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
+{
+    return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" && "+vorcfg+(ohneconf?nix:" && ./configure ")+cfgbismake+" make && sudo make install "
+						"&&{ grep -q \"P="+was+" \""+unindt+"\""
+						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P=$P;cd \\\"\\$A/\\$P\\\" 2>/dev/null"
+						"||cd \\$(find \\\"\\$H\\\" -name \\$P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2) "
+						"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
+						"'",obverb,oblog);
+}
+
+int paramcl::kompiliere(const string& was,const string& endg, const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/)
 {
   if (!kompilbase(was,endg)) {
-    return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" && "+vorcfg+" && ./configure "+cfgbismake+" make && sudo make install "
-							"&&{ grep -q \"cd \\\""+instvz+vtz+was+"\\\"\" \""+unindt+"\""
-						  "||printf \"H="+gethome()+";A=$H/"+meinname+";P="+was+";cd \\\"$A/$P\\\""
-							"||cd $(find \\\"$H\\\" -name $P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2)"
-							"&& sudo make uninstall; cd \\\"$H\\\"\\n\" >> \""+unindt+"\";} "
-//							"|| printf \"cd \\\""+instvz+vtz+was+"\\\" "
-//							"|| find \\\""+gethome()+"\\\" -name "+was+" -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2"
-//							"&& sudo make uninstall; cd \\\""+instvz+"\\\"\\n\" >> \""+unindt+"\";} "
-							"'"
-		,obverb,oblog);
+		return kompilfort(was,vorcfg,cfgbismake);
   } //    if (!kompilbase(was,endg))
   return 1;
 } // int paramcl::kompiliere(string was,string endg,string nachtar, string vorcfg,string cfgbismake)
@@ -7068,64 +7078,45 @@ void paramcl::capisv()
 // in empfarch() und pruefcapi()
 void paramcl::pruefsfftobmp()
 {
-  Log(violetts+Tx[T_pruefsfftobmp]+schwarz);
-  lsysen system=lsys.getsys(obverb,oblog);
-  if (system==fed) {
-    // P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
-    if (!obprogda("sfftobmp",obverb,oblog)) {
-      uchar obfrei= obprogda("jpegtran",obverb,oblog) && obprogda("cjpeg",obverb,oblog) && obprogda("djpeg",obverb,oblog);
-      if (!obfrei) {
-      const string befehl = "cd "+instvz+
-			  "&& { P=jpegsrc_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T "
-        "&& rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv ${P}-master $P && cd $P && ./configure && make >/dev/null 2>&1 && sudo make install"
-				"&&{ grep -q \"cd \\\"$(pwd)\\\"\" \""+unindt+"\""
-						  "||printf \"H="+gethome()+";A=$H/"+meinname+";P=$P;cd \\\"$A/$P\\\""
-							"||cd $(find \\\"$H\\\" -name $P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2)"
-							"&& sudo make uninstall; cd \\\"$H\\\"\\n\" >> \""+unindt+"\";} "
-//				"|| printf \"cd \\\"$(pwd)\\\""
-//				"|| find \\\""+gethome()+"\\\" -name $P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2"
-//				"&& sudo make uninstall; cd \\\""+instvz+"\\\"\\n\" >> \""+unindt+"\";} "
-				"; } ";
-        obfrei = !systemrueck(befehl,obverb,oblog);
-      }
-      if (obfrei) {
-        svec brueck;
+	Log(violetts+Tx[T_pruefsfftobmp]+schwarz);
+	lsysen system=lsys.getsys(obverb,oblog);
+	if (system==fed) {
+		// P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
+		if (!obprogda("sfftobmp",obverb,oblog)) {
+			uchar obfrei= obprogda("jpegtran",obverb,oblog) && obprogda("cjpeg",obverb,oblog) && obprogda("djpeg",obverb,oblog);
+			if (!obfrei) {
+				const string jpeg="jpegsrc_copy";
+				holvongithub(jpeg);
+				obfrei=!kompiliere(jpeg,s_gz);
+			}
+			if (obfrei) {
+				svec brueck;
 				// rpm -q boost-devel / dpkg -s libboost-dev -> evtl. besser
-        systemrueck("sudo find "+lsys.getlib64()+" /usr/lib /usr/local/lib /usr/local/lib64 /lib -name libboost_python.so -print -quit",obverb,oblog,&brueck);
-        uchar obboostda=brueck.size();
-        if (!obboostda) {
-          obboostda = !linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog);
-        }
-        if (obboostda) {
-          const string befehl= "cd "+instvz+
-            "&& { sudo grep '/usr/local/lib' /etc/ld.so.conf"
-            "||{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig; } } "
-            "&&{ P=sfftobmp_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T"
-						"&& rm -rf $P 2>/dev/null||sudo rm -rf $P&& mv ${P}-master ${P}; } "
-            "&& cd ${P} "
-            //                    " && unzip sfftobmp_3_1_src.zip >/dev/null && cd sfftobmp3.1 "
-            "&& sed -i.bak -e 's/^[[:blank:]]*\\(char \\*shortopts.*\\)/const \\1/;s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp"
-            "&& sed -i.bak -e 's/lboost_filesystem-mt/lboost_filesystem/g' src/Makefile.in "
-            //                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
-            //                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
-            "&& sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in "
-            "&& ./configure && make && sudo make install "
-						"&&{ grep -q \"P=$P\" \""+unindt+"\""
-						  "||printf \"H="+gethome()+";A=\\$H/"+meinname+";P=$P;cd \\\"\\$A/\\$P\\\""
-							"||cd \\$(find \\\"\\$H\\\" -name \\$P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2)"
-							"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
-//						"|| printf \"cd \\\"$(pwd)\\\""
-//						"|| find \\\""+gethome()+"\\\" -name $P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2"
-//						"&& sudo make uninstall; cd \\\""+instvz+"\\\"\\n\" >> \""+unindt+"\";} "
-            ;
-          //                      <<gruen<<befehl<<schwarz<<endl;
-          systemrueck(befehl,obverb,oblog);
-        } // if (!linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog)) 
-      } // if (!systemrueck(befehl,obverb,oblog)) 
-    } // if (!obprogda("sfftobmp",obverb,oblog)) 
-  } else {
-    linst.doggfinst("sfftobmp",obverb+1,oblog);
-  } // if (system==fed) else
+				systemrueck("sudo find "+lsys.getlib64()+" /usr/lib /usr/local/lib /usr/local/lib64 /lib -name libboost_python.so -print -quit",
+						obverb,oblog,&brueck);
+				uchar obboostda=brueck.size();
+				if (!obboostda) {
+					obboostda = !linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog);
+				}
+				if (obboostda) {
+					if (!systemrueck("sudo grep '/usr/local/lib' /etc/ld.so.conf||{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig;}",
+								obverb,oblog)) {
+						const string sff="sfftobmp_copy";
+						holvongithub(sff);
+						const string vorcfg="sed -i.bak -e 's/^[[:blank:]]*\\(char \\*shortopts.*\\)/const \\1/;"
+							"s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/' src/cmdline.cpp"
+							"&& sed -i.bak -e 's/lboost_filesystem-mt/lboost_filesystem/g' src/Makefile.in "
+							//                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
+							//                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
+							"&& sed -i.bak -e 's/\\(-lboost_filesystem\\)/-lboost_system \\1/g' src/Makefile.in ";
+						kompiliere(sff,s_gz,vorcfg);
+					} // if (!systemrueck("sudo grep
+				} // if (!linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog)) 
+			} // if (!systemrueck(befehl,obverb,oblog)) 
+		} // if (!obprogda("sfftobmp",obverb,oblog)) 
+	} else {
+		linst.doggfinst("sfftobmp",obverb+1,oblog);
+	} // if (system==fed) else
 } // pruefsfftobmp
 
 // wird aufgerufen in: untersuchespool, main

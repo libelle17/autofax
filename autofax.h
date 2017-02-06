@@ -321,7 +321,8 @@ class paramcl // Programmparameter
     void setzsql(confdat& afconf);
     int pruefinstv();
     int kompilbase(const string& was,const string& endg);
-    int kompiliere(const string& was,const string& endg, const string& vorcfg=s_true,const string& cfgbismake=s_dampand);
+    int kompiliere(const string& was,const string& endg,const string& vorcfg=s_true,const string& cfgbismake=s_dampand);
+		int kompilfort(const string& was,const string& vorcfg=s_true,const string& cfgbismake=s_dampand,uchar ohneconf=0);
     void bereinigecapi();
 	  int zupdf(const string* quell, const string& ziel, ulong *pseitenp=0, int obocr=1, int loeschen=1); // 0=Erfolg
 		int holtif(const string& datei,ulong *seitenp=0,struct tm *tmp=0,struct stat *elogp=0,
