@@ -6466,7 +6466,7 @@ int paramcl::cservice()
     erg=systemrueck(/*"sudo sh -c 'systemctl stop capisuite; pkill capisuite >/dev/null 2>&1; pkill -9 capisuite >/dev/null 2>&1; "*/
         "cd /etc/init.d"
         " && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
-        " && { mkdir -p /etc/ausrangiert && mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true"/*'*/,obverb,oblog);
+        " && { sudo mkdir -p /etc/ausrangiert && suod mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true"/*'*/,obverb,oblog);
     // entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
     csfehler+=!scapisuite->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","","",obverb,oblog);
     if (obverb) Log("csfehler: "+gruens+ltoan(csfehler)+schwarz);
@@ -6673,29 +6673,29 @@ int paramcl::pruefhyla()
 					string was;
 					if (!systemrueck("sudo wget -O hylafax+ https://sourceforge.net/projects/hylafax/files/latest",obverb,oblog)) {
 						svec hrueck;
-						if (systemrueck("sudo tar xvf hylafax+",obverb,oblog,&hrueck)) {
+						if (!systemrueck("sudo tar xvf hylafax+",obverb,oblog,&hrueck)) {
 							if (hrueck.size()) {
-								was=hrueck[0].substr(0,hrueck[0].length()-2);
+								was=hrueck[0].substr(0,hrueck[0].length()-1);
 							}
 						}
 					}
 					if (!was.empty()) {
-								const string cfgbismake=" --nointeractive && echo $? = Ergebnis nach configure && "
+						const string cfgbismake=" --nointeractive && echo $? = Ergebnis nach configure && "
 							"sed -i.bak \"s.PAGESIZE='\\''North American Letter'\\''.PAGESIZE='\\''ISO A4'\\''.g;"
 							"s.PATH_GETTY='\\''\\.*'\\''.PATH_GETTY='\\''"
 							"$(grep LIBEXEC defs | cut -d'\\''='\\'' -f2 | sed '\\''s/^[[:space:]]*//;s/[[:space:]]*$//'\\'')/faxgetty'\\''.g\" config.cache"
 							"&& echo $? = Ergebnis nach sed"
 							"&& sudo";
-								if (!kompilfort(was,nix,cfgbismake)) {
-								const string nachcfg=
-							"sh -c 'sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
-							"&& test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
-							"&& sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
-							"&& echo $? = Ergebnis nach faxsetup -nointeractive"
-							"&& sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
-							"&& sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload; true;'";
-								systemrueck(nachcfg,2,oblog);
-								}
+						if (!kompilfort(was,nix,cfgbismake)) {
+							const string nachcfg=
+								"sh -c 'sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
+								"&& test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
+								"&& sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
+								"&& echo $? = Ergebnis nach faxsetup -nointeractive"
+								"&& sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
+								"&& sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload; true;'";
+							systemrueck(nachcfg,2,oblog);
+						}
 					} // !was.empty()
 					// 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
 //					systemrueck("sh -c 'cd $(sudo tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
@@ -7057,7 +7057,8 @@ int paramcl::kompilbase(const string& was, const string& endg)
 
 int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 {
-    return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" && "+vorcfg+(ohneconf?nix:" && ./configure ")+cfgbismake+
+		pruefinstv();
+    return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" "+vorcfg+(ohneconf?nix:" && ./configure ")+cfgbismake+
 				" make && echo $? = "+Tx[T_Ergebnis_nach_make]+" && sudo make install && echo $? = "+Tx[T_Ergebnis_nach_make_install]+
 				"&&{ grep -q \"P="+was+"\" \""+unindt+"\""
 						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P=$P;cd \\\"\\$A/\\$P\\\" 2>/dev/null"
