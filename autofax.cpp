@@ -7064,7 +7064,7 @@ int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const
     return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" "+vorcfg+(ohneconf?nix:" && ./configure ")+cfgbismake+
 				" make && echo $? = "+Tx[T_Ergebnis_nach_make]+" && sudo make install && echo $? = "+Tx[T_Ergebnis_nach_make_install]+
 				"&&{ grep -q \"P="+was+"\" \""+unindt+"\""
-						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P=$P;cd \\\"\\$A/\\$P\\\" 2>/dev/null"
+						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P=\\$P;cd \\\"\\$A/\\$P\\\" 2>/dev/null"
 						"||cd \\$(find \\\"\\$H\\\" -name \\$P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2) "
 						"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
 						"'",obverb,oblog);
