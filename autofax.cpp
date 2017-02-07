@@ -2128,7 +2128,7 @@ void paramcl::pruefmodem()
         string f1=f0+Tx[T_nicht];
         errv.push_back(errmsgcl(0,f0));
         errv.push_back(errmsgcl(1,f1));
-        if (!systemrueck("sudo stty -F /dev/"+tty,obverb,oblog,&rue2,2,wahr,"",&errv)) {
+        if (!systemrueck("sudo stty -F /dev/"+tty+" time 10",obverb,oblog,&rue2,2,wahr,"",&errv)) {
           obmodem=1;
           modems<<tty;
           Log(string("Modem: ")+blau+tty+schwarz+Tx[T_gefunden]);
