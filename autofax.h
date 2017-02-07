@@ -135,6 +135,8 @@ class fsfcl : public fxfcl // Faxsendfile
 extern const string s_true; // ="true";
 extern const string s_dampand; // =" && ";
 extern const string s_gz; // ="gz";
+extern const string defvors; // ="https://github.com/libelle17/"
+extern const string defnachs; // ="/archive/master.tar.gz"
 
 class paramcl // Programmparameter 
 {
@@ -240,7 +242,8 @@ class paramcl // Programmparameter
     uchar logvneu=0;    // Logverzeichnis geaendert
     string varsphylavz; // Verzeichnis der Hyla-Spool-Dateien /var/spool/hylafax oder /var/spool/fax
     string xferfaxlog; // varsphylavz + "/etc/xferfaxlog"; 
-    string faxgtpfad;   // /usr/lib/fax/faxgetty
+		string faxqpfad,hfaxdpfad; // /usr/local/sbin/faxq, /usr/local/sbin/hfaxq
+		string faxgtpfad;   // /usr/lib/fax/faxgetty oder /usr/local/sbin/faxgetty
     string hsendqvz; // /var/spool/hylafax/sendq
 		unsigned long aufrufe=0; // Zahl der bisherigen Programmaufrufe
 		struct tm laufrtag={0}; // Tag des letztes Aufrufs
@@ -372,7 +375,7 @@ class paramcl // Programmparameter
     void clieskonf();
     void capisv();
     int pruefcapi();
-    void holvongithub(string datei);
+		int holvomnetz(const string& datei,const string& vors=defvors,const string& nachs=defnachs);
     void hliesconf();
     void hconfigtty();
     int cservice();

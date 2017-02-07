@@ -289,6 +289,6 @@ distclean:
 
 .PHONY: uninstall
 uninstall: distclean
-	-@sh uninstall.sh
+	-@sh $(UN)|tac # uninstallinv von hinten nach vorne abarbeiten
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))

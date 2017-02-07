@@ -1,5 +1,5 @@
 #!/bin/sh
-UN="uninstall.sh"
+UN=uninstallinv # Name muss identisch sein mit Ende von uindt in kons.cpp 
 pgroff="groff groff-base"
 dev=devel
 libmc=libmysqlclient
@@ -31,9 +31,10 @@ exportvars() {
 	for v in IPR IP_R UPR SPR UN pgroff dev libmc REPOS urepo COMP; do eval nv=\$$v; printf "$v:=$nv\n">>vars; done
 }
 
-# diese Datei wird wegen obigem in viall gesourcet, deshalb dort der Rest zu uebergehen
 basenam=$(basename $0)
 ext=${basenam##*.}
+
+# diese Datei wird wegen obigem in viall gesourcet, deshalb dort der Rest zu uebergehen
 if [ $ext = sh ]; then
 P=autofax
 HOSTER=github.com

@@ -4516,7 +4516,7 @@ void paramcl::pruefunpaper()
 			// systemrueck("sudo rpm -Uvh https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-free-release-stable.noarch.rpm "
 			//                          " https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-nonfree-release-stable.noarch.rpm",obverb,oblog);
 			const string rpf="rpmfusion_copy";
-			holvongithub(rpf);
+			holvomnetz(rpf);
 			kompilbase(rpf,s_gz);
 			systemrueck("sh -c 'cd \""+instvz+vtz+rpf+"\"&& sudo rpm -Uvh ./rpmfusion*rpm'",obverb+1,oblog);
 			linst.doinst("ffmpeg",obverb,oblog);
@@ -4529,7 +4529,7 @@ void paramcl::pruefunpaper()
 			}
 		} // 		if (linst.pruefipr()==dnf||linst.pruefipr()==yum)
 		/*if (linst.pruefipr()==apt||linst.pruefipr()==dnf||linst.pruefipr()==yum)*/ 
-		holvongithub("unpaper_copy");
+		holvomnetz("unpaper_copy");
 		if (vers) systemrueck("which unpaper && rm $(which unpaper) && hash -r",obverb,oblog);
 		kompiliere("unpaper_copy",s_gz);
 	} // 						if (!urueck.size()||vers<6.1)
@@ -4588,8 +4588,10 @@ int paramcl::pruefocr()
 				systemrueck("sudo -c 'python3 -m venv \""+instvz+"/ocrv\";"
 						"python3 -m venv --upgrade \""+instvz+"/ocrv\";"
 						"source \""+instvz+"/ocrv/bin/activate\";"
-						"grep ocrmypdf \""+instvz+"/uninstall.sh\""
-						"||sed -i \"/ python3/isudo pip3 uninstall --yes ocrmypdf\" \""+instvz+"/uninstall.sh\"'",obverb,oblog);
+						"grep \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\" \""+unindt+"\"||printf \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\";"
+						"grep ocrmypdf \""+unindt+"\"||printf \"sudo pip3 uninstall --yes ocrmpydf\">>\""+unindt+"\";"
+//						"||sed -i \"/ python3/isudo pip3 uninstall --yes ocrmypdf\" \""+unindt+"\""
+						"'",obverb,oblog);
 				// sudo pip3 uninstall --yes ocrmypdf
 				// sudo dnf install ./ghostscript-9.16-4.fc24.i686.rpm
 				//// sudo dnf -y install ghostscript // ghostscript 9.20 geht nicht mit pdf/a und overwrite
@@ -4606,7 +4608,7 @@ int paramcl::pruefocr()
 						}
 						const string proj="ocrmypdf_copy";
 						const string srcvz=instvz+vtz+proj+".tar.gz";
-						holvongithub(proj);
+						holvomnetz(proj);
 						if (!kompilbase(proj,s_gz)) {
 							// sudo pip3 install image PyPDF2 ruffus reportlab cryptography cffi
 							// sudo PKG_CONFIG_PATH=/usr/lib64/ffmpeg-compat/pkgconfig pkg-config --cflags libavcodec
@@ -6276,17 +6278,19 @@ void hfaxsetup(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
 void paramcl::setzfaxgtpfad()
 {
   struct stat entryfaxgt;
-  this->faxgtpfad.clear();
-  //  faxgtpfad="/usr/lib/fax/faxgetty";
-  //    faxgtpfad="/usr/sbin/faxgetty";
-  obprogda("faxgetty",obverb,oblog,&faxgtpfad);
-  if (faxgtpfad.empty() || lstat(faxgtpfad.c_str(),&entryfaxgt)) {
-    svec rueckf;
-    faxgtpfad.clear();
-    systemrueck("sudo find /usr/lib/fax /usr/sbin /usr/bin /root/bin /sbin -perm /111 -name faxgetty",obverb-1,oblog,&rueckf);
-    if (rueckf.size()) 
-      faxgtpfad=rueckf[0];
-  }
+	if (lstat(faxgtpfad.c_str(),&entryfaxgt)) {
+		faxgtpfad.clear();
+		//  faxgtpfad="/usr/lib/fax/faxgetty";
+		//    faxgtpfad="/usr/sbin/faxgetty";
+		obprogda("faxgetty",obverb,oblog,&faxgtpfad);
+		if (faxgtpfad.empty() || lstat(faxgtpfad.c_str(),&entryfaxgt)) {
+			svec rueckf;
+			faxgtpfad.clear();
+			systemrueck("sudo find /usr/lib/fax /usr/sbin /usr/bin /root/bin /sbin /usr/local/sbin /usr/local/bin -perm /111 -name faxgetty",obverb-1,oblog,&rueckf);
+			if (rueckf.size()) 
+				faxgtpfad=rueckf[0];
+		}
+	}
   // violett<<"faxgtpfad 4: "<<faxgtpfad<<schwarz<<endl;
 }
 
@@ -6482,16 +6486,14 @@ int paramcl::hservice_faxq_hfaxd()
 {
   int hylafehler=0;
   Log(violetts+"hservice_faxq_hfaxd()"+schwarz);
-  string faxqpfad,hfaxdpfad;
-  obprogda("hfaxd",obverb,oblog,&hfaxdpfad);
-  hylafehler+=!this->shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/,
-      this->varsphylavz+"/etc/setup.cache", "", "", this->obverb,this->oblog);
+	struct stat hstat, fstat;
+	if (hfaxdpfad.empty()||lstat(hfaxdpfad.c_str(),&hstat)) { obprogda("hfaxd",obverb,oblog,&hfaxdpfad); }
+  hylafehler+=!shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/, varsphylavz+"/etc/setup.cache", "", "", obverb,oblog);
   this->shfaxd->machfit(obverb,oblog);
-  obprogda("faxq",obverb,oblog,&faxqpfad);
-  hylafehler+=!this->sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D",
-      this->varsphylavz+"/etc/setup.cache", this->shfaxd->sname+".service", "",this->obverb,this->oblog);
+	if (faxqpfad.empty()||lstat(faxqpfad.c_str(),&fstat)) { obprogda("faxq",obverb,oblog,&faxqpfad); }
+  hylafehler+=!sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D", varsphylavz+"/etc/setup.cache", shfaxd->sname+".service", "",obverb,oblog);
 	setzfaxgtpfad();
-	hylafehler+=!this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0,meinname,this->faxgtpfad+" "+this->hmodem,"","","",obverb,oblog,0);
+	hylafehler+=!this->sfaxgetty->spruef("HylaFAX faxgetty for "+this->hmodem,0,meinname,faxgtpfad+" "+this->hmodem,"","","",obverb,oblog,0);
   return hylafehler;
 } // void hservice_faxq_hfaxd()
 
@@ -6601,7 +6603,7 @@ int paramcl::pruefhyla()
 		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh)) {
 		  linst.doggfinst("cmake",obverb,oblog); 
 			const string proj="tiff_copy";
-		  holvongithub(proj);
+		  holvomnetz(proj);
 			kompilbase(proj,s_gz);
 			const string befehl="sh -c 'cd \""+instvz+vtz+proj+"\""
 				"&& rm -f CMakeCache.txt"
@@ -6671,9 +6673,9 @@ int paramcl::pruefhyla()
 				if (hyinstart==hysrc) {
 					::Log(violetts+Tx[T_ueber_den_Quellcode]+schwarz,1,1);
 					string was;
-					if (!systemrueck("sudo wget -O hylafax+ https://sourceforge.net/projects/hylafax/files/latest",obverb,oblog)) {
+					if (!holvomnetz("hylafax","https://sourceforge.net/projects/","/files/latest")) {
 						svec hrueck;
-						if (!systemrueck("sudo tar xvf hylafax+",obverb,oblog,&hrueck)) {
+						if (!systemrueck("sh -c 'cd \""+instvz+"\"&& sudo tar xvf hylafax+'",obverb,oblog,&hrueck)) {
 							if (hrueck.size()) {
 								was=hrueck[0].substr(0,hrueck[0].length()-1);
 							}
@@ -6695,7 +6697,22 @@ int paramcl::pruefhyla()
 								"&& sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
 								"&& sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload; true;'";
 							systemrueck(nachcfg,2,oblog);
-						}
+						  mdatei confc(instvz+vtz+was+vtz+"config.cache");
+							if (confc.is_open()) {
+								string zeile;
+								while(getline(confc,zeile)) {
+									if (zeile.find("DIR_LIBEXEC")!=string::npos) {
+									  string rechts=zeile.substr(zeile.find("=")+1);
+										anfzweg(rechts);
+										faxgtpfad=rechts+vtz+"faxgetty";
+										faxqpfad=rechts+vtz+"faxq";
+										hfaxdpfad=rechts+vtz+"hfaxd";
+										break;
+									} // 									if (zeile.find("DIR_LIBEXEC")!=string::npos)
+								} // 								while(getline(confc,zeile))
+								confc.close();
+							} // 							if (confc.is_open())
+						} // 						if (!kompilfort(was,nix,cfgbismake))
 					} // !was.empty()
 					// 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
 //					systemrueck("sh -c 'cd $(sudo tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
@@ -7036,18 +7053,21 @@ int paramcl::pruefinstv()
   return pruefverz(instvz,obverb,oblog);
 } // void paramcl::pruefinstv()
 
-void paramcl::holvongithub(string datei)
+const string defvors="https://github.com/libelle17/";
+const string defnachs="/archive/master.tar.gz";
+int paramcl::holvomnetz(const string& datei,const string& vors/*=defvors*/,const string& nachs/*=defnachs*/)
 {
+  int erg=1;
   if (!pruefinstv()) {
     svec csrueck;
     systemrueck("find \""+instvz+"\" -mtime -1 -name "+datei+".tar.gz",obverb,oblog,&csrueck);
     if (!csrueck.size()) {
       //systemrueck("sh -c 'cd "+instvz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
-      systemrueck("sh -c 'cd \""+instvz+"\";T="+datei+".tar.gz; wget https://github.com/libelle17/"+datei+"/archive/master.tar.gz -O $T'", 
-          obverb,oblog);
+      erg=systemrueck("sh -c 'cd \""+instvz+"\";T="+datei+".tar.gz; wget "+vors+datei+nachs+" -O $T'", obverb,oblog);
     } //     if (!csrueck.size())
   } // if (!pruefinstv())
-} // void paramcl::holvongithub(string datei)
+	return erg;
+}
 
 int paramcl::kompilbase(const string& was, const string& endg)
 {
@@ -7064,7 +7084,7 @@ int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const
     return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" "+vorcfg+(ohneconf?nix:" && ./configure ")+cfgbismake+
 				" make && echo $? = "+Tx[T_Ergebnis_nach_make]+" && sudo make install && echo $? = "+Tx[T_Ergebnis_nach_make_install]+
 				"&&{ grep -q \"P="+was+"\" \""+unindt+"\""
-						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P=\\$P;cd \\\"\\$A/\\$P\\\" 2>/dev/null"
+						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P="+was+";cd \\\"\\$A/\\$P\\\" 2>/dev/null"
 						"||cd \\$(find \\\"\\$H\\\" -name \\$P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2) "
 						"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
 						"'",obverb,oblog);
@@ -7095,7 +7115,7 @@ void paramcl::pruefsfftobmp()
 			uchar obfrei= obprogda("jpegtran",obverb,oblog) && obprogda("cjpeg",obverb,oblog) && obprogda("djpeg",obverb,oblog);
 			if (!obfrei) {
 				const string jpeg="jpegsrc_copy";
-				holvongithub(jpeg);
+				holvomnetz(jpeg);
 				obfrei=!kompiliere(jpeg,s_gz);
 			}
 			if (obfrei) {
@@ -7111,7 +7131,7 @@ void paramcl::pruefsfftobmp()
 					if (!systemrueck("sudo grep '/usr/local/lib' /etc/ld.so.conf||{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig;}",
 								obverb,oblog)) {
 						const string sff="sfftobmp_copy";
-						holvongithub(sff);
+						holvomnetz(sff);
 						const string vorcfg="sed -i.bak -e \"s/^[[:blank:]]*\\(char \\*shortopts.*\\)/const \\1/;"
 							"s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );/\" src/cmdline.cpp"
 							"&& sed -i.bak -e \"s/lboost_filesystem-mt/lboost_filesystem/g\" src/Makefile.in "
@@ -7245,7 +7265,7 @@ int paramcl::pruefcapi()
 											"sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU && sudo cp -a $NEU /lib/modules/$(uname -r)/build; }",obverb,oblog);
 									const string proj="fcpci_copy";
 									const string srcvz=instvz+vtz+proj+".tar.gz";
-									holvongithub(proj);
+									holvomnetz(proj);
 									const string vorcfg="sudo test -f driver.c.bak || sed -i.bak \"/request_irq/i#if !defined(IRQF_DISABLED)\\n"
 										"# define IRQF_DISABLED 0x00\\n#endif\" driver.c;"
 										"sudo sed -e '\\''/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>'\\'' "
@@ -7388,14 +7408,14 @@ int paramcl::pruefcapi()
 					} // if (lsys.getsys(obverb,oblog)==sus) 
 					 */
 					if (!capischonerfolgreichinstalliert) {
-						holvongithub("capisuite_copy");
+						holvomnetz("capisuite_copy");
 						svec csrueck;
 						systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' "+string(obverb?"":"2>/dev/null")+"| sort -r",
 								obverb,oblog,&csrueck);
 						if (csrueck.size()) {
 							struct stat c20stat;
 							if (lstat((lsys.getlib64()+"/libcapi20.so").c_str(),&c20stat)) {
-								holvongithub("capi20_copy");
+								holvomnetz("capi20_copy");
 								kompiliere("capi20_copy",s_gz);
 								systemrueck("sh -c 'cd "+instvz+" && L="+lsys.getlib64()+"/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "
 										"ln -s $L3 $L; test -f $L;'",obverb,oblog);
