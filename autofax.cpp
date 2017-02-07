@@ -6466,7 +6466,7 @@ int paramcl::cservice()
     erg=systemrueck(/*"sudo sh -c 'systemctl stop capisuite; pkill capisuite >/dev/null 2>&1; pkill -9 capisuite >/dev/null 2>&1; "*/
         "cd /etc/init.d"
         " && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
-        " && { sudo mkdir -p /etc/ausrangiert && suod mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true"/*'*/,obverb,oblog);
+        " && { sudo mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true"/*'*/,obverb,oblog);
     // entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
     csfehler+=!scapisuite->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","","",obverb,oblog);
     if (obverb) Log("csfehler: "+gruens+ltoan(csfehler)+schwarz);
@@ -6689,7 +6689,7 @@ int paramcl::pruefhyla()
 						if (!kompilfort(was,nix,cfgbismake)) {
 							const string nachcfg=
 								"sh -c 'sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
-								"&& test -f /etc/init.d/hylafax && { mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
+								"&& test -f /etc/init.d/hylafax && { sudo mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
 								"&& sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
 								"&& echo $? = Ergebnis nach faxsetup -nointeractive"
 								"&& sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
@@ -6826,7 +6826,10 @@ int paramcl::pruefhyla()
 					if (sfaxgetty->machfit(obverb,oblog)) fglaeuftnicht=0;
 				}
 				// <<rot<<" fglaueftnicht: "<<fglaeuftnicht<<", hmodem: "<<hmodem<<schwarz<<endl;
-				modemlaeuftnicht=systemrueck("which faxstat 2>/dev/null && sudo faxstat | grep "+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
+				string pfad;
+				if (obprogda("faxstat",obverb,oblog,&pfad)) {
+					modemlaeuftnicht=systemrueck("sudo "+pfad+"|grep "+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
+				}
 				//        if (!modemlaeuftnicht) break;
 				//  <<rot<<" hyinstart: "<<(int)hyinstart<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
 				//  <<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
