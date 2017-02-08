@@ -7106,6 +7106,7 @@ int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const
 						"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
 						"'",obverb,oblog);
 	  }
+		return 1;
 } // int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 
 int paramcl::kompiliere(const string& was,const string& endg, const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/)
