@@ -1,4 +1,5 @@
 # kompiliert alle *.cpp-Dateien im aktuellen Verzeichnis
+# statt erstmaliger Verwendung bitte "./install.sh" aufrufen, dort wird das hier eingeschlossene "vars" erstellt und  ggf. 'make' installiert
 # nach "touch entwickeln" wird eine Datei 'version' erstellt, deren Inhalt, eine Versionsnummer, bei jedem Kompiliervorgang um 0.0001 erhoeht wird
 # und die in die man_de und man_en-Datei eingebaut wird sowie ueber
 #  const double& version=
@@ -284,11 +285,12 @@ hierclean:
 
 .PHONY: distclean
 distclean:
-	@$(shell sudo rm -f $(INSTEXEC) ${MANPD} ${MANPE} $(KF))
-	@printf " %b%s%b geloescht!\n" $(blau) "$(INSTEXEC)" $(reset) 
+	-@$(shell sudo rm -f $(INSTEXEC) ${MANPD} ${MANPE} $(KF))
+	-@printf " %b%s%b geloescht!\n" $(blau) "$(INSTEXEC)" $(reset) 
 
 .PHONY: uninstall
 uninstall: distclean
-	-@cat $(UN)>tmp_$(UN)||sh tmp_$(UN) # uninstallinv von hinten nach vorne abarbeiten
+	-@cat $(UN)>tmp_$(UN)&& sudo sh tmp_$(UN) # uninstallinv von hinten nach vorne abarbeiten
+	-@printf "Fertig mit uinstall!\n"
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))

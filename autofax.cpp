@@ -4575,8 +4575,13 @@ int paramcl::pruefocr()
 				linst.doinst("python3-devel",obverb+1,oblog,"/usr/bin/python3-config");
 				linst.doggfinst("qpdf");
 				linst.doggfinst("gcc");
-				linst.doinst("libffi-devel",obverb+1,oblog);
-				if (linst.pruefipr()==dnf||linst.pruefipr()==yum) linst.doinst("redhat-rpm-config",obverb+1,oblog);
+				struct stat lffi;
+				if (lstat("/usr/lib64/libffi.so",&lffi)) {
+					if (linst.obfehlt("libffi48-devel",obverb+1,oblog))
+						linst.doggfinst("libffi-devel",obverb+1,oblog);
+				}
+				if (linst.pruefipr()==dnf||linst.pruefipr()==yum) 
+					linst.doggfinst("redhat-rpm-config",obverb+1,oblog);
 				linst.doinst("ghostscript",obverb+1,oblog,"gs");
 				systemrueck("sudo python3 -m pip install --upgrade setuptools pip");
 				pruefunpaper();
@@ -4585,7 +4590,7 @@ int paramcl::pruefocr()
 				// python3 -m venv --upgrade ocrvenv
 				// source ocrvenv/bin/activate
 				// sudo pip3 install ocrmypdf
-				systemrueck("sudo -c 'python3 -m venv \""+instvz+"/ocrv\";"
+				systemrueck("sudo sh -c 'python3 -m venv \""+instvz+"/ocrv\";"
 						"python3 -m venv --upgrade \""+instvz+"/ocrv\";"
 						"source \""+instvz+"/ocrv/bin/activate\";"
 						"grep \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\" \""+unindt+"\"||printf \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\\n\">>\""+unindt+"\";"
@@ -4683,9 +4688,13 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 						 if (rueck[uru].find("ERROR")!=string::npos) {
 						  erg=1;
 							break;
-						 }
-						}
-					}
+						 } // 						 if (rueck[uru].find("ERROR")!=string::npos)
+						} // 						for(unsigned uru=0;uru<rueck.size();uru++)
+					} // 					if (!systemrueck(string("ocrmypdf -rcsl ")+...
+					if (!erg) {
+					 struct stat lziel;
+					 erg=lstat(ziel.c_str(),&lziel);
+					} // 					if (!erg)
 					if (!erg) {
 						systemrueck("chmod +r \""+ziel+"\"",obverb,oblog);
 						break;
@@ -7112,6 +7121,7 @@ void paramcl::pruefsfftobmp()
 	lsysen system=lsys.getsys(obverb,oblog);
 	if (system==fed) {
 		// P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
+		uchar obboostda=!linst.doggfinst("boost-devel",obverb,oblog);
 		if (!obprogda("sfftobmp",obverb,oblog)) {
 			uchar obfrei= obprogda("jpegtran",obverb,oblog) && obprogda("cjpeg",obverb,oblog) && obprogda("djpeg",obverb,oblog);
 			if (!obfrei) {
@@ -7120,14 +7130,16 @@ void paramcl::pruefsfftobmp()
 				obfrei=!kompiliere(jpeg,s_gz);
 			}
 			if (obfrei) {
+			/*
 				svec brueck;
 				// rpm -q boost-devel / dpkg -s libboost-dev -> evtl. besser
 				systemrueck("sudo find "+lsys.getlib64()+" /usr/lib /usr/local/lib /usr/local/lib64 /lib -name libboost_python.so -print -quit",
 						obverb,oblog,&brueck);
 				uchar obboostda=brueck.size();
-				if (!obboostda) {
+				if (!obboostda) KLA
 					obboostda = !linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog);
-				}
+				KLZ
+				*/
 				if (obboostda) {
 					if (!systemrueck("sudo grep '/usr/local/lib' /etc/ld.so.conf||{ sudo sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\"; sudo ldconfig;}",
 								obverb,oblog)) {
