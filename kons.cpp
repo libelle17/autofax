@@ -2671,7 +2671,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
             syst<<"WantedBy=multi-user.target "<<endl;
             syst.close();
             systemrueck("sudo systemctl daemon-reload",obverb-1,oblog);
-					  systemrueck("grep ocrmypdf \"sudo rm -f "+systemd+"\"||printf \"sudo rm -f "+systemd+"\">>\""+unindt+"\";",obverb-1,oblog);
+					  systemrueck("grep ocrmypdf \"sudo rm -f "+systemd+"\"||printf \"sudo rm -f "+systemd+"\\n\">>\""+unindt+"\";",obverb-1,oblog);
           } // if (syst.is_open()) 
         } // if (svgibts && serviceda) else
       } // if (!svgibts || !obslaeuft(obverb,oblog)) 
