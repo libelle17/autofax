@@ -4696,7 +4696,8 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 					 erg=lstat(ziel.c_str(),&lziel);
 					} // 					if (!erg)
 					if (!erg) {
-						systemrueck("chmod +r \""+ziel+"\"",obverb,oblog);
+						if (chmod(ziel.c_str(),S_IRWXU|S_IRWXG|S_IRWXO)) 
+							systemrueck("sudo chmod +r \""+ziel+"\"",obverb,oblog);
 						break;
 					} // 					if (!erg)
 				} // pruefocr()
