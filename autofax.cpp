@@ -4588,7 +4588,7 @@ int paramcl::pruefocr()
 				systemrueck("sudo -c 'python3 -m venv \""+instvz+"/ocrv\";"
 						"python3 -m venv --upgrade \""+instvz+"/ocrv\";"
 						"source \""+instvz+"/ocrv/bin/activate\";"
-						"grep \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\" \""+unindt+"\"||printf \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\";"
+						"grep \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\" \""+unindt+"\"||printf \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\">>\""+unindt+"\";"
 						"grep ocrmypdf \""+unindt+"\"||printf \"sudo pip3 uninstall --yes ocrmpydf\">>\""+unindt+"\";"
 //						"||sed -i \"/ python3/isudo pip3 uninstall --yes ocrmypdf\" \""+unindt+"\""
 						"'",obverb,oblog);
@@ -6670,12 +6670,13 @@ int paramcl::pruefhyla()
 				linst.doinst("tiff",obverb+1,oblog,"fax2ps");
 				linst.doinst("sendmail",obverb+1,oblog,"sendmail");
 				if (obverb) ::Log(violetts+"hyinstart: "+schwarz+ltoan(hyinstart),1,1);
+				hyinstart=hysrc; // spaeter zu loeschen
 				if (hyinstart==hysrc) {
 					::Log(violetts+Tx[T_ueber_den_Quellcode]+schwarz,1,1);
 					string was;
 					if (!holvomnetz("hylafax","https://sourceforge.net/projects/","/files/latest")) {
 						svec hrueck;
-						if (!systemrueck("sh -c 'cd \""+instvz+"\"&& sudo tar xvf hylafax+'",obverb,oblog,&hrueck)) {
+						if (!systemrueck("sh -c 'cd \""+instvz+"\"&& sudo tar xvf hylafax.tar.gz'",obverb,oblog,&hrueck)) {
 							if (hrueck.size()) {
 								was=hrueck[0].substr(0,hrueck[0].length()-1);
 							}
