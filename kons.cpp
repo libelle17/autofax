@@ -42,7 +42,7 @@ printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTe
 const string& instvz=
 #include "instvz" // wird in Makefile erstellt
 ;
-const string& unindt=instvz+"/uninstallinv"; // # Name muss identisch sein mit Variabler UN in install.sh
+const string& unindt=instvz+"/uninstallinv"; // # Name muss identisch sein mit Variabler UNF in install.sh
 const string nix;
 class linst_cl linst;
 

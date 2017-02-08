@@ -6,7 +6,7 @@ FREQUENZ=5 # rufe gtags jedes 5. Mal auf
 
 ctags *.cpp *.h 2>/dev/null
 test -f $ZD || echo 1>$ZD; awk "BEGIN {print `cat $ZD`+1}">$ZD
-(($(cat $ZD)%$FREQUENZ)) ||{ PR=gtags;PK=global;which $PR||{ getIPR;$IPR $PK;grep -q \" $PK\" $UN||printf "$UPR $PK\n">>$UN;} &&$PR;} # in Fedora koennte gtags noch installiert werden muessen
+(($(cat $ZD)%$FREQUENZ)) ||{ PR=gtags;PK=global;which $PR||{ getIPR;$IPR $PK;grep -q \" $PK\" $UNF||printf "$UPR $PK\n">>$UNF;} &&$PR;} # in Fedora koennte gtags noch installiert werden muessen
 # so waere es projektspezfisch
 # `which vim || which vi` autofax.cpp autofax.h vgb.cpp DB.cpp DB.h kons.cpp kons.h -p -c "syntax on" -c "set number" -c "set autoindent" -c "set autoindent" -c "set tabstop=2" -c "set ignorecase" -c "set showmatch" -c "set magic" -c "set ruler" 
 # DATEIEN="autofax.cpp autofax.h vgb.cpp DB.cpp DB.h kons.cpp kons.h man_en man_de Makefile install.sh viall .exrc"

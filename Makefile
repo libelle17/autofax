@@ -64,7 +64,7 @@ LT:=libtiff
 LT:=$(LT) $(LT)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
-GROFFCHECK:=$(SPR) $(pgroff)$(OR)||{ $(IPR) $(pgroff);grep -q '$(pgroff)' $(UN)||printf '$(UPR) $(pgroff)\n'>>$(UN);};true
+GROFFCHECK:=$(SPR) $(pgroff)$(OR)||{ $(IPR) $(pgroff);grep -q '$(pgroff)' $(UNF)||printf '$(UPR) $(pgroff)\n'>>$(UNF);};true
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) $(OR))
@@ -184,10 +184,10 @@ compiler:
 	@printf " Untersuche Compiler ...\r"
 #	@printf " CCName: %b%s%b                  \n" $(blau) "${CCName}" $(reset)
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
-	@which $(CCName)$(OR)||{ $(REPOS)$(IP_R) $(COMP);grep -q '$(COMP)' $(UN)||printf '$(UPR) $(COMP);$(urepo)\n'>>$(UN);};
-	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(IPR) $(libmcd);grep -q '$(libmcd)' $(UN)||printf '$(UPR) $(libmcd)\n'>>$(UN);fi
-	@[ -z $$mitpg ]||$(SPR) $(pgd)$(OR)||{ $(IPR) $(pgd);grep -q '$(pgc)' $(UN)||printf '$(UPR) $(pgd)\n'>>$(UN);$(slc);};
-	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR) $(LT) $(KF);$(IPR) $(LT);grep -q '$(LT)' $(UN)||printf '$(UPR) $(LT)\n'>>$(UN);}
+	@which $(CCName)$(OR)||{ $(REPOS)$(IP_R) $(COMP);grep -q '$(COMP)' $(UNF)||printf '$(UPR) $(COMP);$(urepo)\n'>>$(UNF);};
+	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(IPR) $(libmcd);grep -q '$(libmcd)' $(UNF)||printf '$(UPR) $(libmcd)\n'>>$(UNF);fi
+	@[ -z $$mitpg ]||$(SPR) $(pgd)$(OR)||{ $(IPR) $(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR) $(pgd)\n'>>$(UNF);$(slc);};
+	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR) $(LT) $(KF);$(IPR) $(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR) $(LT)\n'>>$(UNF);}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
 # 17.1.17 in Programm verlagert
 #	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
@@ -290,7 +290,7 @@ distclean:
 
 .PHONY: uninstall
 uninstall: distclean
-	-@cat $(UN)>tmp_$(UN)&& sudo sh tmp_$(UN) # uninstallinv von hinten nach vorne abarbeiten
+	-@cat $(UNROH)>tmp_$(UNROH)&& sudo sh tmp_$(UNROH) # uninstallinv von hinten nach vorne abarbeiten
 	-@printf "Fertig mit uinstall!\n"
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
