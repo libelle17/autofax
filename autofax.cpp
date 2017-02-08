@@ -4595,7 +4595,7 @@ int paramcl::pruefocr()
 						"python3 -m venv --upgrade \""+instvz+"/ocrv\";"
 						"source \""+instvz+"/ocrv/bin/activate\";"
 						"grep \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\" \""+unindt+"\"||printf \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\\n\">>\""+unindt+"\";"
-						"grep ocrmypdf \""+unindt+"\"||printf \"sudo pip3 uninstall --yes ocrmpydf\\n\">>\""+unindt+"\";"
+						"grep ocrmypdf \""+unindt+"\"||printf \"sudo pip3 uninstall --yes ocrmypdf\\n\">>\""+unindt+"\";"
 //						"||sed -i \"/ python3/isudo pip3 uninstall --yes ocrmypdf\" \""+unindt+"\""
 						"'",obverb,oblog);
 				// sudo pip3 uninstall --yes ocrmypdf
