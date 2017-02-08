@@ -1876,10 +1876,11 @@ paramcl::paramcl(int argc, char** argv)
 		}
   mpfad=meinpfad();
   meinname=base_name(mpfad); // argv[0];
+	pruefinstv();
   vaufr=mpfad+" -norf"; // /usr/bin/autofax -norf
   saufr=base_name(vaufr); // autofax -norf
   tstart=clock();
-//  konfdatname.clear();
+	//  konfdatname.clear();
 } // paramcl::paramcl()
 
 void paramcl::pruefggfmehrfach()
@@ -4759,7 +4760,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 		if (pseitenp) {
 			// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
 			linst.doinst("poppler-tools",obverb,oblog,"pdfinfo");
-			systemrueck("pdfinfo \""+ziel+"\"|grep Pages|sed 's/[^ ]*[ ]*\\(.*\\)/\\1/'",obverb,oblog,&rueck);
+			systemrueck("pdfinfo \""+ziel+"\"|grep -a Pages|sed 's/[^ ]*[ ]*\\(.*\\)/\\1/'",obverb,oblog,&rueck);
 			if (rueck.size()) {
 				Log("PDF: "+blaus+ziel+": "+gruen+rueck[0]+schwarz+Tx[T_Seiten]);
 				*pseitenp=atol(rueck[0].c_str());
@@ -7058,10 +7059,15 @@ void paramcl::pruefmodcron()
   } //   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++)
 } // void pruefmodcron(int obverb, int oblog)
 
+// wird aufgerufen in paramcl::paramcl
 int paramcl::pruefinstv()
 {
-  if (instvz.empty()) instvz=gethome()+vtz+meinname;
-  return pruefverz(instvz,obverb,oblog);
+	int erg=0;
+	if (instvz.empty()) {
+		instvz=gethome()+vtz+meinname;
+		erg=pruefverz(instvz,obverb,oblog);
+	} // 	if (instvz.empty()) 
+	return erg;
 } // void paramcl::pruefinstv()
 
 const string defvors="https://github.com/libelle17/";
@@ -7078,7 +7084,7 @@ int paramcl::holvomnetz(const string& datei,const string& vors/*=defvors*/,const
     } //     if (!csrueck.size())
   } // if (!pruefinstv())
 	return erg;
-}
+} // int paramcl::holvomnetz(const string& datei,const string& vors/*=defvors*/,const string& nachs/*=defnachs*/)
 
 int paramcl::kompilbase(const string& was, const string& endg)
 {
@@ -7091,7 +7097,7 @@ int paramcl::kompilbase(const string& was, const string& endg)
 
 int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 {
-		pruefinstv();
+		if (!pruefinstv()) {
     return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" "+vorcfg+(ohneconf?nix:" && ./configure ")+cfgbismake+
 				" make && echo $? = "+Tx[T_Ergebnis_nach_make]+" && sudo make install && echo $? = "+Tx[T_Ergebnis_nach_make_install]+
 				"&&{ grep -q \"P="+was+"\" \""+unindt+"\""
@@ -7099,6 +7105,7 @@ int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const
 						"||cd \\$(find \\\"\\$H\\\" -name \\$P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2) "
 						"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
 						"'",obverb,oblog);
+	  }
 } // int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 
 int paramcl::kompiliere(const string& was,const string& endg, const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/)
@@ -7187,7 +7194,6 @@ int paramcl::pruefcapi()
 			} else {
 				//      pid_t pid = GetPIDbyName("capisuite") ; // If -1 = not found, if -2 = proc fs access error
 				uchar fcpcida=0, capida=0, capidrvda=0;
-				pruefinstv();
 				vector<string> rueck;
 				systemrueck("lsmod",obverb,oblog,&rueck);
 				for(size_t i=0;i<rueck.size();i++){

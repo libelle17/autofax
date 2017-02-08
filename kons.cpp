@@ -1952,7 +1952,7 @@ int setfaclggf(const string& datei, const binaer obunter, const int mod, uchar o
 
 
 // obmitfacl: 1= setzen, falls noetig, >1= immer setzen
-int pruefverz(const string& verz,int obverb,int oblog, uchar obmitfacl,uchar obmitcon)
+int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfacl/*=1*/,uchar obmitcon/*=1*/)
 {
   struct stat sverz;
   int fehler=1;
