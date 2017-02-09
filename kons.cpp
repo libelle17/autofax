@@ -204,6 +204,8 @@ const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 	{"nicht einfuegbar","not insertable"},
   // T_erneute_Eingabe
   {"erneute Eingabe","once more"},
+	// T_obsveh
+	{"obsveh()","ifsvierr()"},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 
@@ -2560,18 +2562,18 @@ servc::servc(string vsname,string vename,int obverb, int oblog): sname((vsname.e
 
 int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
-  Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" serviceda: "+blau+(serviceda?"1":"0")+schwarz+
+  Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svefeh: "+blau+ltoan(svefeh)+schwarz+
       " servicelaeuft: "+blau+(servicelaeuft?"1":"0")+schwarz, obverb,oblog);
 			// ueberpruefen, ob in systemctl status service Datei nach ExecStart existiert
 	svec srueck;
-	if ((serviceda=obda(obverb,oblog))) {
+	if (!(svefeh=obsvefeh(obverb,oblog))) {
 		for(int iru=0;iru<2;iru++) {
 			if (obslaeuft(obverb,oblog,nureinmal)) {
 				break;
 			} else {
 				restart(obverb,oblog);
 			}
-			if (!iru && serviceda && !servicelaeuft) {
+			if (!iru && !svefeh && !servicelaeuft) {
 				//      svec sr1;
 				//      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
 				//      if (sr1.size()) KLA
@@ -2604,11 +2606,11 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 				} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
 				//       KLZ
 				//      KLZ
-			} // if (serviceda && !servicelaeuft) 
+			} // if (!iru && !svefeh && !servicelaeuft) 
 		} // for(int iru=0;iru<2;iru++) 
 		//  if (servicelaeuft)
 		enableggf(obverb,oblog);
-	} // 	if ((serviceda=obda(obverb,oblog))) 
+	} // 	if ((svefeh=obsvefeh(obverb,oblog))) 
   return servicelaeuft;
 } // int servc::machfit(int obverb,int oblog)
 
@@ -2636,15 +2638,15 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
       struct stat svstat;
       svgibts=!lstat(systemd.c_str(),&svstat);
       if (!svgibts || (mitstarten && !obslaeuft(obverb,oblog))) {
-        if (mitstarten && svgibts && serviceda) {
+        if (mitstarten && svgibts && !svefeh) {
           restart(obverb,oblog); // hier wird auch serviceslaeuft gesetzt
           /*
              servicelaeuft=!systemrueck(("sudo pkill ")+ename+" >/dev/null 2>&1; sudo systemctl restart "+sname,obverb-1,oblog); 
            */
           // bei restart return value da 
-          //          <<dblau<<"serviceda: "<<schwarz<<sname<<", servicelaeuft: "<<(int)servicelaeuft<<endl;
+          //          <<dblau<<"svefeh: "<<svefeh<<schwarz<<" sname<<", servicelaeuft: "<<(int)servicelaeuft<<endl;
         } else {
-          //          <<dblau<<"serviceda else: "<<schwarz<<sname<<endl;
+          //          <<dblau<<"svefeh else: "<<schwarz<<sname<<endl;
           //  if (systemrueck("systemctl list-units faxq.service --no-legend | grep 'active running'",obverb-1,oblog)) KLA
           // string systemd="/usr/lib/systemd/system/"+sname+".service"; // außerhalb Opensuse: /lib/systemd/system/ ...
           Log(blaus+systemd+Txk[T_nicht_gefunden_versuche_ihn_einzurichten]+schwarz,1,0);
@@ -2677,7 +2679,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
             systemrueck("sudo systemctl daemon-reload",obverb-1,oblog);
 					  systemrueck("grep ocrmypdf \"sudo rm -f "+systemd+"\"||printf \"sudo rm -f "+systemd+"\\n\">>\""+unindt+"\";",obverb-1,oblog);
           } // if (syst.is_open()) 
-        } // if (svgibts && serviceda) else
+        } // if (svgibts && !svefeh) else
       } // if (!svgibts || !obslaeuft(obverb,oblog)) 
 			if (!mitstarten) {
 			 return 1;
@@ -2691,13 +2693,25 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
   return servicelaeuft;
 } // void servc::spruef() 
 
-int servc::obda(int obverb,int oblog)
+int servc::obsvefeh(int obverb,int oblog) // ob service einrichtungs fehler
 {
- srueck.clear();
- systemrueck("systemctl -a --no-legend list-units '"+sname+".service'",obverb,oblog,&srueck);  // bei list-units return value immer 0
- serviceda=!srueck.empty();
- return serviceda;
-} // int servc::obda(int obverb,int oblog)
+	Log(violetts+Txk[T_obsveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
+	srueck.clear();
+	systemrueck("systemctl -a --no-legend list-units '"+sname+".service'",obverb,oblog,&srueck);  // bei list-units return value immer 0
+	if (!(svefeh=srueck.empty())) { // Dienst inexistent
+		if (srueck[0].find(sname+".service loaded active running")==string::npos) {
+			svec srue2;
+			systemrueck("systemctl --lines 0 status '"+sname+".service'|grep ExecStart|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srue2);
+			if (!srue2.empty()) {
+				struct stat lst;
+				if (lstat(srue2[0].c_str(),&lst)) {
+				 svefeh=2; // Service-Datei fehlt
+				} // 				if (lstat(srue2.c_str(),&lst))
+			} // 			if (!srue2.empty())
+		} // 		if (srueck[0].find(sname+".service loaded active running")==string::npos)
+	} // 	if (!(svefeh=srueck.empty())) 
+	return svefeh;
+} // int servc::obsvefeh(int obverb,int oblog)
 
 // wird aufgerufen in: pruefhyla, pruefcapi, spruef
 int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
@@ -2708,7 +2722,7 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
   while (1) {
     runde++;
     servicelaeuft=0;
-		if (obda(obverb,oblog)) {
+		if (!obsvefeh(obverb,oblog)) {
       Log(blau+srueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
       if (srueck[0].find("active running")!=string::npos) {
         servicelaeuft=1;
@@ -2738,22 +2752,22 @@ int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
       } else if (srueck[0].find("loaded")!=string::npos) {
         break;
       } else {
-			  serviceda=0;
+			  svefeh=1;
         break;
       } //       if (srueck[0].find("active running")!=string::npos) else else else else
     } else { // if (!srueck.empty()) 
       break;
     } //     if (!srueck.empty())  else 
   } // while (1)
-  if (!serviceda) {
+  if (svefeh) {
     vector<errmsgcl> errv;
     const string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
     const string f0=froh+Txk[T_geladen];
     const string f1=froh+Txk[T_nicht_geladen];
     errv.push_back(errmsgcl(0,f0));
     errv.push_back(errmsgcl(1,f1));
-    serviceda=!systemrueck("systemctl status '"+sname+"'| grep ' loaded '",obverb,oblog,0,falsch,wahr,"",&errv);
-  } //   if (!serviceda)
+    svefeh=systemrueck("systemctl status '"+sname+"'| grep ' loaded '",obverb,oblog,0,falsch,wahr,"",&errv);
+  } //   if (svefeh)
   return servicelaeuft;
 } // int servc::obslaeuft(int obverb,int oblog)
 
@@ -2795,10 +2809,10 @@ void servc::stop(int obverb,int oblog,uchar mitpkill)
 
 void servc::stopdis(int obverb,int oblog,uchar mitpkill)
 {
-	if (obda(obverb,oblog)) {
+	if (!obsvefeh(obverb,oblog)) {
 		stop(obverb,oblog);
 		systemrueck(string("sudo systemctl disable '")+sname+"'",obverb,oblog,0,2);
-	}
+	} // 	if (!obsvefeh(obverb,oblog))
 } // int servc::stop(int obverb,int oblog)
 
 int servc::enableggf(int obverb,int oblog)

@@ -3739,22 +3739,22 @@ void paramcl::pruefsamba()
           //        smbrestart=0;
         } // if (!nrzf) 
       } // if (aru) 
-      if (smb.serviceda) {
+      if (!smb.svefeh) {
         smb.machfit(obverb,oblog);
         gestartet=1;
-      } else if (smbd.serviceda) {
+      } else if (!smbd.svefeh) {
         smbd.machfit(obverb,oblog);
         gestartet=1;
-      } //       if (smb.serviceda)
-      if (nmb.serviceda) {
+      } //       if (!smb.svefeh)
+      if (!nmb.svefeh) {
         nmb.machfit(obverb,oblog);
         if (gestartet==1) gestartet=2;
-      } else if (nmbd.serviceda) {
+      } else if (!nmbd.svefeh) {
         nmbd.machfit(obverb,oblog);
         if (gestartet==1) gestartet=2;
-      } //       if (nmb.serviceda)
-      if (smb.serviceda) if (smb.obslaeuft(obverb,oblog)) if (nmb.serviceda) if (nmb.obslaeuft(obverb,oblog)) break;
-      if (smbd.serviceda) if (smbd.obslaeuft(obverb,oblog)) if (nmbd.serviceda) if (nmbd.obslaeuft(obverb,oblog)) break;
+      } //       if (!nmb.svefeh)
+      if (!smb.svefeh) if (smb.obslaeuft(obverb,oblog)) if (!nmb.svefeh) if (nmb.obslaeuft(obverb,oblog)) break;
+      if (!smbd.svefeh) if (smbd.obslaeuft(obverb,oblog)) if (!nmbd.svefeh) if (nmbd.obslaeuft(obverb,oblog)) break;
     } // for(int aru=0;aru<2;aru++) 
     //    if (gestartet==2) smbrestart=0;
   } // if (dienstzahl<2 || conffehlt) 
@@ -3832,10 +3832,10 @@ void paramcl::pruefsamba()
       } // if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) 
     } // if (!nrzf)
     if (smbrestart) {
-      if (smb.serviceda) smb.restart(obverb-1,oblog);
-      else if (smbd.serviceda) smbd.restart(obverb-1,oblog);
-      if (nmb.serviceda) nmb.restart(obverb-1,oblog);
-      else if (nmbd.serviceda) nmbd.restart(obverb-1,oblog);
+      if (!smb.svefeh) smb.restart(obverb-1,oblog);
+      else if (!smbd.svefeh) smbd.restart(obverb-1,oblog);
+      if (!nmb.svefeh) nmb.restart(obverb-1,oblog);
+      else if (!nmbd.svefeh) nmbd.restart(obverb-1,oblog);
     } // if (smbrestart) 
 		// VFS
 		if (linst.pruefipr()==apt) linst.doggfinst("samba-vfs-modules",obverb,oblog);
@@ -7028,11 +7028,11 @@ void pruefblack(int obverb, int oblog)
       for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++) {
         if (zeile.find(vgl[i])!=string::npos) obda[i]=1;
       }
-    }
+    } //     while(getline(blacki,zeile))
     blacki.close();
     for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++) {
       if (!obda[i]) {obeinsfehlt=1;break;}
-    }
+    } //     for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++)
     if (obeinsfehlt) {
       mdatei blacka(blackd,ios::out|ios::app);
       if (blacka.is_open()) {
@@ -7195,7 +7195,7 @@ int paramcl::pruefcapi()
 			// #  define IRQF_DISABLED 0x00
 			// #endif
 			//    capilaeuft=(PIDausName("capisuite")>=0);
-			capilaeuft = this->scapisuite->machfit(obverb?obverb-1:0,oblog,wahr);
+			capilaeuft=this->scapisuite->machfit(obverb?obverb-1:0,oblog,wahr);
 			Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz);
 			if (capilaeuft) {
 				capischonerfolgreichinstalliert=1;
