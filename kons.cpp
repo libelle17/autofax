@@ -1282,7 +1282,7 @@ int confdat::lies(const string& fname, int obverb)
     return 2;
   mdatei f(fname,ios::in);
   if (f.is_open()) {
-    if (obverb>0) cout<<"confdat::lies(fname...), fname: "<<fname<<endl;
+    if (obverb>0) cout<<"confdat::lies(fname...), fname: "<<blau<<fname<<schwarz<<endl;
     while (getline(f,zeile)) {
       zn<<zeile;
     }
@@ -2840,7 +2840,7 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
 //  Log(violetts+Tx[T_tuloeschen]+schwarz,obverb,oblog);
   struct stat entryzuloe;
   if (!lstat(zuloe.c_str(),&entryzuloe)) {
-    Log(string(Txk[T_Loesche_Ausrufezeichen])+rot+zuloe+schwarz,obverb,oblog);
+    Log(string(Txk[T_Loesche_Ausrufezeichen])+gruen+zuloe+schwarz,obverb,oblog);
     int erg=-1;
     for(uchar iru=1;iru<3;iru++) {
       if ((erg=remove(zuloe.c_str()))) {

@@ -6103,7 +6103,7 @@ string zielname(const string& qdatei, zielmustercl *zmp, uchar wieweiterzaehl/*=
 // wird aufgerufen in: verschiebe (Version 1), verschiebe (Version 2), DateienHerricht
 void dorename(const string& quelle, const string& ziel, const string& cuser, uint *vfehler, int obverb, int oblog)
 {
-	Log(string(Tx[T_Verschiebe])+rot+quelle+schwarz+"'\n         -> '"+rot+ziel+schwarz+"'",obverb,oblog);
+	Log(string(Tx[T_Verschiebe])+rot+quelle+schwarz+"'\n         -> '"+gruen+ziel+schwarz+"'",obverb,oblog);
 	for(uchar iru=1;iru<3;iru++) {
 		int renerg=rename(quelle.c_str(),ziel.c_str());
 		//    if (rename(quelle.c_str(),ziel.c_str()))
