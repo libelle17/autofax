@@ -4564,6 +4564,7 @@ int paramcl::pruefocr()
 		if (!engda) linst.doinst("tesseract-ocr-traineddata-english",obverb,oblog);
 		if (!osdda) linst.doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
 
+		pruefunpaper();
 		// uchar alt=0;
 		uchar ocrzuinst=1;
 		if (obprogda("ocrmypdf",obverb,oblog)) 
@@ -4585,7 +4586,6 @@ int paramcl::pruefocr()
 					linst.doggfinst("redhat-rpm-config",obverb+1,oblog);
 				linst.doinst("ghostscript",obverb+1,oblog,"gs");
 				systemrueck("sudo python3 -m pip install --upgrade setuptools pip");
-				pruefunpaper();
 //				systemrueck("sudo python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
 				// python3 -m venv ocrvenv
 				// python3 -m venv --upgrade ocrvenv
