@@ -4565,6 +4565,7 @@ int paramcl::pruefocr()
 		if (!osdda) linst.doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
 
 		pruefunpaper();
+		linst.doggfinst("qpdf");
 		// uchar alt=0;
 		uchar ocrzuinst=1;
 		if (obprogda("ocrmypdf",obverb,oblog)) 
@@ -4575,7 +4576,6 @@ int paramcl::pruefocr()
 				// in fedora pip statt pip3
 				linst.doinst("python3-pip",obverb+1,oblog,"pip3");
 				linst.doinst("python3-devel",obverb+1,oblog,"/usr/bin/python3-config");
-				linst.doggfinst("qpdf");
 				linst.doggfinst("gcc");
 				struct stat lffi;
 				if (lstat("/usr/lib64/libffi.so",&lffi)) {
@@ -4685,7 +4685,10 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 			if (obocr) {
 				if (!pruefocr()) {
 				  svec rueck;
-					if (!systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*lqp+"\" \""+ziel+"\" 2>&1",obverb,oblog,&rueck,0,wahr,"",0,1)) {
+					string cmd=string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*lqp+"\" \""+ziel+"\" 2>&1";
+					int zerg=systemrueck(cmd,obverb,oblog,&rueck,0,wahr,"",0,1);
+					if (zerg==5) zerg=systemrueck("sudo "+cmd,obverb,oblog,&rueck,0,wahr,"",0,1); // kein Schreibrecht im Verzeichnis
+					if (!zerg) {
 						erg=0; // nicht umgekehrt
 						for(unsigned uru=0;uru<rueck.size();uru++) {
 						 if (rueck[uru].find("ERROR")!=string::npos) {
@@ -5007,8 +5010,10 @@ void paramcl::DateienHerricht()
 						struct utimbuf ubuf;
 						ubuf.actime=ubuf.modtime=spdfstat.st_mtime;
 						if (!pruefocr()) {
-							systemrueck(string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+spdfd.at(i)+"\" \""+spdfd.at(i)+"\""
-									" && chmod +r \""+spdfd.at(i)+"\"" ,obverb,oblog);
+							string cmd=string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+spdfd.at(i)+"\" \""+spdfd.at(i)+"\""
+																" && chmod +r \""+spdfd.at(i)+"\"";
+							int zerg=systemrueck(cmd,obverb,oblog);
+							if (zerg==5) zerg=systemrueck("sudo "+cmd,obverb,oblog); // kein Schreibrecht im Verzeichnis
 						}
 						utime(spdfd.at(i).c_str(),&ubuf);
 					} // if (!lstat(spdfd.at(i).c_str(),&spdfstat)) 
