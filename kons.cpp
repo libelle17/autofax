@@ -2562,49 +2562,53 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 {
   Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" serviceda: "+blau+(serviceda?"1":"0")+schwarz+
       " servicelaeuft: "+blau+(servicelaeuft?"1":"0")+schwarz, obverb,oblog);
-  for(int iru=0;iru<2;iru++) {
-    if (obslaeuft(obverb,oblog,nureinmal)) {
-      break;
-    } else {
-      restart(obverb,oblog);
-    }
-    if (!iru && serviceda && !servicelaeuft) {
-//      svec sr1;
-//      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
-//      if (sr1.size()) KLA
-//       if (sr1[0].find("permission")!=string::npos) KLA
-			string sepfad;
-			if (obprogda("sestatus",obverb,oblog,&sepfad)) {
-				uchar obse=0;
-				svec sr2;
-				systemrueck("sestatus",obverb,oblog,&sr2);
-				for(size_t j=0;j<sr2.size();j++) {
-					if (!sr2[j].find("Current mode:"))
-						if (sr2[j].find("enforcing")!=string::npos) {
-							obse=1; 
-							break;
+			// ueberpruefen, ob in systemctl status service Datei nach ExecStart existiert
+	svec srueck;
+	if ((serviceda=obda(obverb,oblog))) {
+		for(int iru=0;iru<2;iru++) {
+			if (obslaeuft(obverb,oblog,nureinmal)) {
+				break;
+			} else {
+				restart(obverb,oblog);
+			}
+			if (!iru && serviceda && !servicelaeuft) {
+				//      svec sr1;
+				//      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
+				//      if (sr1.size()) KLA
+				//       if (sr1[0].find("permission")!=string::npos) KLA
+				string sepfad;
+				if (obprogda("sestatus",obverb,oblog,&sepfad)) {
+					uchar obse=0;
+					svec sr2;
+					systemrueck("sestatus",obverb,oblog,&sr2);
+					for(size_t j=0;j<sr2.size();j++) {
+						if (!sr2[j].find("Current mode:"))
+							if (sr2[j].find("enforcing")!=string::npos) {
+								obse=1; 
+								break;
+							}
+					} //       for(size_t j=0;j<sr2.size();j++)
+					if (obse) {
+						linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
+						systemrueck("sudo setenforce 0",obverb,oblog);
+						restart(obverb,oblog);
+						const string selocal=sname+"_selocal";
+						systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+selocal+"\"",obverb,oblog);
+						systemrueck("sudo setenforce 1",obverb,oblog);
+						linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
+						systemrueck("test -f \""+selocal+".pp\" && sudo semodule -i \""+selocal+".pp\"",obverb,oblog);
+						if (ename.find("faxgetty")!=string::npos) {
+							systemrueck("sudo semodule -l|grep permissive_getty_t >/dev/null||sudo semanage permissive -a getty_t",obverb,oblog);
 						}
-				} //       for(size_t j=0;j<sr2.size();j++)
-				if (obse) {
-					linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
-					systemrueck("sudo setenforce 0",obverb,oblog);
-					restart(obverb,oblog);
-					const string selocal=sname+"_selocal";
-					systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+selocal+"\"",obverb,oblog);
-					systemrueck("sudo setenforce 1",obverb,oblog);
-					linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
-					systemrueck("test -f \""+selocal+".pp\" && sudo semodule -i \""+selocal+".pp\"",obverb,oblog);
-					if (ename.find("faxgetty")!=string::npos) {
-					 systemrueck("sudo semodule -l|grep permissive_getty_t >/dev/null||sudo semanage permissive -a getty_t",obverb,oblog);
-					}
-				}  // if (obse)
-			} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
-      //       KLZ
-      //      KLZ
-    } // if (serviceda && !servicelaeuft) 
-  } // for(int iru=0;iru<2;iru++) 
-  //  if (servicelaeuft)
-  enableggf(obverb,oblog);
+					}  // if (obse)
+				} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
+				//       KLZ
+				//      KLZ
+			} // if (serviceda && !servicelaeuft) 
+		} // for(int iru=0;iru<2;iru++) 
+		//  if (servicelaeuft)
+		enableggf(obverb,oblog);
+	} // 	if ((serviceda=obda(obverb,oblog))) 
   return servicelaeuft;
 } // int servc::machfit(int obverb,int oblog)
 
