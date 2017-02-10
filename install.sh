@@ -98,7 +98,7 @@ $SPR make >/dev/null || exit
 }
 exportvars;
 # ... und dann kompilieren und installieren
-make &&
+make opts &&
 sudo make install; erg=$?;
 [ $erg = 0 ] && farbe=$blau || farbe=$rot;
 printf "Result code/ Ergebniscode: ${farbe}$erg${reset}\n"
