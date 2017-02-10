@@ -5904,17 +5904,20 @@ void paramcl::empfarch()
       uchar verschieb=0;
       confdat empfconf(rueck[i],&umst,obverb);
       //    if (cpplies(rueck[i],umst,cs)) KLA
-      struct tm tm={0};
-			for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
-				if (strptime(umst[3].wert.c_str(), tmmoegl[im], &tm)) break;
+			struct tm tm={0};
+			for(unsigned i=0;i<5;i++) {
+			 string *sptr=&umst[i].wert;
+			 if (i==3) {
+				 for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
+					 if (strptime(umst[i].wert.c_str(), tmmoegl[im], &tm)) break;
+				 }
+				 strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
+				 // tbuf und tm enthalten also z.B. die in /var/spool/capisuite/users/<user>/received/fax-999999.txt unter "time" stehende Zeit
+				 string s=tbuf;
+				 sptr=&s;
+			 }
+			 Log(schwarzs+"   "+umst[i].name+": "+tuerkis+*sptr);
 			}
-      strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
-      // tbuf und tm enthalten also z.B. die in /var/spool/capisuite/users/<user>/received/fax-999999.txt unter "time" stehende Zeit
-      Log(rots+"   "+umst[0].name+": "+schwarz+umst[0].wert);
-      Log(rots+"   "+umst[1].name+": "+schwarz+umst[1].wert);
-      Log(rots+"   "+umst[2].name+": "+schwarz+umst[2].wert);
-      Log(rots+"   "+umst[3].name+": "+schwarz+tbuf);
-      Log(rots+"   "+umst[4].name+": "+schwarz+umst[4].wert);
 
       const string base=base_name(stamm);
       const string fnr=base.substr(4);
@@ -6103,7 +6106,7 @@ string zielname(const string& qdatei, zielmustercl *zmp, uchar wieweiterzaehl/*=
 // wird aufgerufen in: verschiebe (Version 1), verschiebe (Version 2), DateienHerricht
 void dorename(const string& quelle, const string& ziel, const string& cuser, uint *vfehler, int obverb, int oblog)
 {
-	Log(string(Tx[T_Verschiebe])+rot+quelle+schwarz+"'\n         -> '"+gruen+ziel+schwarz+"'",obverb,oblog);
+	Log(string(Tx[T_Verschiebe])+tuerkis+quelle+schwarz+"'\n         -> '"+gruen+ziel+schwarz+"'",obverb,oblog);
 	for(uchar iru=1;iru<3;iru++) {
 		int renerg=rename(quelle.c_str(),ziel.c_str());
 		//    if (rename(quelle.c_str(),ziel.c_str()))

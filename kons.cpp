@@ -2619,11 +2619,15 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
                     const string& wennnicht0, int obverb/*=0*/,int oblog/*=0*/, uchar mitstarten/*=1*/)
 {
   Log(violetts+Txk[T_spruef_sname]+schwarz+sname,obverb,oblog);
-  string systemd;
-  int svgibts=0; // 1 = Datei systemd existiert
   if (!wennnicht0.empty()) {
     servicelaeuft=!systemrueck(wennnicht0,obverb-1,oblog);
   }
+	struct stat svstat={0};
+	string systemd="/etc/systemd/system/"+sname+".service";
+	int svgibts=!lstat(systemd.c_str(),&svstat); // 1 = Datei systemd existiert
+	if (svgibts) if (obsvefeh(obverb-1,oblog)==2) { // wenn die ExecDatei nicht existiert ...
+	 svgibts=0;
+	}
   if (mitstarten && servicelaeuft && svgibts) {
     Log(("Service ")+blaus+sname+schwarz+Txk[T_lief_schon],obverb,oblog);
   } else {
@@ -2634,9 +2638,6 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
       if(bytes >= 1) pBuf[bytes-1] = 0; // ../system statt /systemd
       systemd=string(pBuf)+"/"+sname+".service";
     */
-      systemd="/etc/systemd/system/"+sname+".service";
-      struct stat svstat;
-      svgibts=!lstat(systemd.c_str(),&svstat);
       if (!svgibts || (mitstarten && !obslaeuft(obverb,oblog))) {
         if (mitstarten && svgibts && !svefeh) {
           restart(obverb,oblog); // hier wird auch serviceslaeuft gesetzt
@@ -2653,12 +2654,12 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
           mdatei syst(systemd,ios::out);
           if (syst.is_open()) {
             syst<<"[Unit]"<<endl;
-    char buf[80];
-    time_t jetzt = time(0);
-    struct tm *tmp = localtime(&jetzt);
-    strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", tmp);
-            syst<<"Description="<<sbez<<Txk[T_als_Dienst_eingerichtet_von]<<parent<<Txk[T_am]<<buf<<endl;
-            if (!CondPath.empty()) 
+						char buf[80];
+						time_t jetzt = time(0);
+						struct tm *tmp = localtime(&jetzt);
+						strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", tmp);
+						syst<<"Description="<<sbez<<Txk[T_als_Dienst_eingerichtet_von]<<parent<<Txk[T_am]<<buf<<endl;
+						if (!CondPath.empty()) 
               syst<<"ConditionPathExists="<<CondPath<<endl;
             if (!After.empty())
               syst<<"After="<<After<<endl;
