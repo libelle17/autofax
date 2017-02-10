@@ -182,23 +182,15 @@ compiler:
 	@printf " Untersuche Compiler ...\r"
 #	@printf " CCName: %b%s%b                  \n" $(blau) "${CCName}" $(reset)
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
-	@which $(CCName)$(KR)||{ $(REPOS)for P in $(COMP);do $(PR)$$P||{ $(IP_R)$$P;grep -q "$$P" $(UNF)||printf "$(UPR)$$P;$(urepo)\n">>$(UNF);};done;};
+ifeq ('$(SPR)','')
+$(warning Variable 'SPR' not assigned, please call './install.sh' before!)
+$(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
+endif
+	@which $(CCName)$(KR)||{ $(REPOS)for P in $(COMP);do $(SPR)$$P||{ $(IP_R)$$P;grep -q "$$P" $(UNF)||printf "$(UPR)$$P;$(urepo)\n">>$(UNF);};done;};
 	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(IPR)$(libmcd);grep -q '$(libmcd)' $(UNF)||printf '$(UPR)$(libmcd)\n'>>$(UNF);fi
 	@[ -z $$mitpg ]||$(SPR) $(pgd)$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\n'>>$(UNF);$(slc);};
 	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT)$(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n'>>$(UNF);}
-# ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
-# 17.1.17 in Programm verlagert
-#	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
-	$(SPR) cmake||$(IPR)cmake;true && \
-	P=tiff_copy; T=$$P.tar.gz; Z=tiff-4.0.7; \
-	wget https://github.com/libelle17/$$P/archive/master.tar.gz -O $$T && \
-	tar xpvf $$T && mv $${P}-master $$Z && cd $$Z && \
-	rm -f CMakeCache.txt && \
-	sed -i.bak s'/uint16 Param;/uint32 Param;/' libtiff/tif_fax3.h && \
-	cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . && \
-	make && \
-	sudo make install && \
-	sudo touch $$NACHWEIS;};true
+# ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
