@@ -3707,7 +3707,7 @@ void paramcl::pruefcron()
 // wird aufgerufen in: main
 void paramcl::pruefsamba()
 {
-  Log(violetts+Tx[T_pruefsamba]);
+  Log(violetts+Tx[T_pruefsamba],obverb,oblog);
   const char* const smbdatei="/etc/samba/smb.conf";
   struct stat sstat={0};
   int gestartet=0;
