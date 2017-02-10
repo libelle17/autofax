@@ -2679,8 +2679,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
             syst.close();
             systemrueck("sudo systemctl daemon-reload",obverb-1,oblog);
 					  systemrueck("grep ocrmypdf \"sudo rm -f "+systemd+"\"||printf \"sudo systemctl stop '"+systemd+"';"
-						"sudo rm -f "+systemd+"\\n\">>\""+unindt+"\";"
-						"sudo systemctl daemon-reload;" ,obverb-1,oblog);
+						"sudo rm -f '"+systemd+"'; sudo systemctl daemon-reload;\\n\">>\""+unindt+"\";" ,obverb-1,oblog);
           } // if (syst.is_open()) 
         } // if (svgibts && !svefeh) else
       } // if (!svgibts || !obslaeuft(obverb,oblog)) 

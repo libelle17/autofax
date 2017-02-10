@@ -46,9 +46,8 @@ EXEC=$(PROGRAM)
 INSTEXEC=$(EXPFAD)/$(EXEC)
 
 CCInst=gcc6-c++
-OR= >/dev/null 2>&1
-KF= 2>/dev/null
-ifneq ($(shell g++-6 --version $(OR)),0)
+-include vars # wird durch install.sh generiert
+ifneq ($(shell g++-6 --version $(KR)),0)
  CCName=g++
 # CC=sudo $(CCName)
  CC:=$(CCName)
@@ -58,16 +57,15 @@ else
 # CC=sudo $(CCName)
  CC:=$(CCName)
 endif
--include vars # wird durch install.sh generiert
 libmcd:=$(libmc)-$(dev)
 LT:=libtiff
 LT:=$(LT) $(LT)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
-GROFFCHECK:=$(SPR) $(pgroff)$(OR)||{ $(IPR) $(pgroff);grep -q '$(pgroff)' $(UNF)||printf '$(UPR) $(pgroff)\n'>>$(UNF);};true
+GROFFCHECK:=$(SPR) $(pgroff)$(KR)||{ $(IPR)$(pgroff);grep -q '$(pgroff)' $(UNF)||printf '$(UPR)$(pgroff)\n'>>$(UNF);};true
 
 DEPDIR := .d
-$(shell mkdir -p $(DEPDIR) $(OR))
+$(shell mkdir -p $(DEPDIR)$(KR))
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
 # POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d 2>/dev/null
@@ -184,14 +182,14 @@ compiler:
 	@printf " Untersuche Compiler ...\r"
 #	@printf " CCName: %b%s%b                  \n" $(blau) "${CCName}" $(reset)
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
-	@which $(CCName)$(OR)||{ $(REPOS)$(IP_R) $(COMP);grep -q '$(COMP)' $(UNF)||printf '$(UPR) $(COMP);$(urepo)\n'>>$(UNF);};
-	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(IPR) $(libmcd);grep -q '$(libmcd)' $(UNF)||printf '$(UPR) $(libmcd)\n'>>$(UNF);fi
-	@[ -z $$mitpg ]||$(SPR) $(pgd)$(OR)||{ $(IPR) $(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR) $(pgd)\n'>>$(UNF);$(slc);};
-	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR) $(LT) $(KF);$(IPR) $(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR) $(LT)\n'>>$(UNF);}
+	@which $(CCName)$(KR)||{ $(REPOS)for P in $(COMP);do $(PR)$$P||{ $(IP_R)$$P;grep -q "$$P" $(UNF)||printf "$(UPR)$$P;$(urepo)\n">>$(UNF);};done;};
+	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(IPR)$(libmcd);grep -q '$(libmcd)' $(UNF)||printf '$(UPR)$(libmcd)\n'>>$(UNF);fi
+	@[ -z $$mitpg ]||$(SPR) $(pgd)$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\n'>>$(UNF);$(slc);};
+	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT)$(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n'>>$(UNF);}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+
 # 17.1.17 in Programm verlagert
 #	-@NACHWEIS=/usr/lib64/sclibtiff;! test -f /usr/include/tiff.h ||! test -f $$NACHWEIS &&{ \
-	$(SPR) cmake||$(IPR) cmake;true && \
+	$(SPR) cmake||$(IPR)cmake;true && \
 	P=tiff_copy; T=$$P.tar.gz; Z=tiff-4.0.7; \
 	wget https://github.com/libelle17/$$P/archive/master.tar.gz -O $$T && \
 	tar xpvf $$T && mv $${P}-master $$Z && cd $$Z && \

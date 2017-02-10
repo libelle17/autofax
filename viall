@@ -1,12 +1,15 @@
-#!/bin/zsh
+#!/bin/sh
 . ./install.sh
 # versucht alle Dateien eines Projekts zu editieren, mit Parameter 'nv' sollen alle aufs aktuelle Datum gesetzt werden
 ZD=viaufruf # speichere die Zahl der Aufrufe in Datei dieses Namens
 FREQUENZ=5 # rufe gtags jedes 5. Mal auf
 
-ctags *.cpp *.h 2>/dev/null
+getIPR
+exportvars
+ctags *.cpp *.h
 test -f $ZD || echo 1>$ZD; awk "BEGIN {print `cat $ZD`+1}">$ZD
-(($(cat $ZD)%$FREQUENZ)) ||{ PR=gtags;PK=global;which $PR||{ getIPR;$IPR $PK;grep -q \" $PK\" $UNF||printf "$UPR $PK\n">>$UNF;} &&$PR;} # in Fedora koennte gtags noch installiert werden muessen
+(($(cat $ZD)%$FREQUENZ)) ||{ PR=gtags;PK=global;which $PR >$DN||{ getIPR;${IPR}$PK;grep -q \" $PK\" $UNF||printf "${UPR}$PK\n">>$UNF;} &&$PR;} # in Fedora koennte gtags noch installiert werden muessen
+PR=vim;which $PR >$DN||{ getIPR;${IP_R}$PK;grep -q \" $PK\" $UNF||printf "${UPR}$PK\n">>$UNF;}
 # so waere es projektspezfisch
 # `which vim || which vi` autofax.cpp autofax.h vgb.cpp DB.cpp DB.h kons.cpp kons.h -p -c "syntax on" -c "set number" -c "set autoindent" -c "set autoindent" -c "set tabstop=2" -c "set ignorecase" -c "set showmatch" -c "set magic" -c "set ruler" 
 # DATEIEN="autofax.cpp autofax.h vgb.cpp DB.cpp DB.h kons.cpp kons.h man_en man_de Makefile install.sh viall .exrc"
@@ -22,7 +25,7 @@ if [ "$1" = "nv" ]; then
  git commit -m "nix"
  git add $DATEIEN
  git rm --cached vgb.cpp
- make && make install && make git
+ make opts && sudo make install && make git
 else
 `which vim || which vi` $DATEIEN -pNu .exrc
 fi
