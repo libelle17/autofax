@@ -3729,9 +3729,10 @@ void paramcl::pruefsamba()
   if (!smb.obslaeuft(obverb,oblog)) if (!smbd.obslaeuft(obverb,oblog)) dienstzahl--;
   if (!nmb.obslaeuft(obverb,oblog)) if (!nmbd.obslaeuft(obverb,oblog)) dienstzahl--;
   //  <<rot<<"dienstzahl: "<<dienstzahl<<endl;
-  if (dienstzahl<2 || conffehlt) {
+	int obsfehlt=linst.obfehlt("samba",obverb,oblog);
+  if (dienstzahl<2||conffehlt||obsfehlt) {
     for(int aru=0;aru<2;aru++) {
-      if (aru) {
+      if (aru||obsfehlt) {
         if (!nrzf) {
           obinst=Tippob(Tx[T_Samba_muesste_installiert_werden_soll_ich],Tx[T_j_af]);
           if (obinst)
