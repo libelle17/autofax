@@ -280,7 +280,7 @@ distclean:
 
 .PHONY: uninstall
 uninstall: distclean
-	-@cat $(UNF)>tmp_$(UNROH)&& sudo sh tmp_$(UNROH) # uninstallinv von hinten nach vorne abarbeiten
+	-@tac $(UNF)>tmp_$(UNROH)&& sudo sh tmp_$(UNROH) # uninstallinv von hinten nach vorne abarbeiten
 	-@printf "Fertig mit uinstall!\n"
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
