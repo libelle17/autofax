@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "11.02.17" "Version 0.42428" "Manual-Seite für autofax"
+.TH man 1 "11.02.17" "Version 0.42429" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -298,7 +298,7 @@ Das Programm wurde auf eine Installation von Opensuse 42.1, Debian 8.60, Ubuntu 
 \fBmakefile:\fR
 .LP
 .HP 3
-gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Version 0.42428
+gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Version 0.42429
 .br
 .br
 \fBautofax:\fR
@@ -314,7 +314,7 @@ capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source 
 falls hylafax benutzt werden soll:
 .LP
 .HP 3
-hylafax+, hylafax+-client, sendmail, tiff (im Fall von Version 0.42428
+hylafax+, hylafax+-client, sendmail, tiff (im Fall von Version 0.42429
 .br
 falls ocr benutzt werden soll:
 .LP
@@ -323,7 +323,7 @@ ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmy
 .br
 All diese Installationen können abhängige Programme einschließen.
 .br
-Falls Sie eines dieser Programme nicht wollen oder eine ältere Version 0.42428
+Falls Sie eines dieser Programme nicht wollen oder eine ältere Version 0.42429
 
 .SH AUSWIRKUNGEN
 Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:

@@ -2409,6 +2409,7 @@ string linst_cl::ersetzeprog(const string& prog)
       if (prog=="poppler-tools") return "poppler-utils";
 			if (prog=="libffi-devel") return "libffi-dev";
 			if (prog=="boost-devel") return "libboost-dev";
+			if (prog=="xsltproc") return "libxslt";
       break;
     case dnf: case yum:
       if (prog=="mariadb") return "mariadb-server";
@@ -2426,10 +2427,12 @@ string linst_cl::ersetzeprog(const string& prog)
       if (prog=="tesseract-ocr-traineddata-german") return "tesseract-langpack-deu tesseract-langpack-deu_frak";
       if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-osd";
       if (prog=="poppler-tools") return "poppler-utils";
+			if (prog=="libxslt") return "xsltproc";
       break;
 	  case zypper:
 		  if (prog=="redhat-rpm-config") return "";
 			if (prog=="libffi-devel") return "libffi$(gcc --version|head -n1|sed \"s/.*) \\(.\\).\\(.\\).*/\\1\\2/\")-devel";
+			if (prog=="libxslt") return "xsltproc";
     default: break;
   } //   switch(linst.pruefipr())
   return prog;
@@ -2682,9 +2685,9 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
             syst<<"WantedBy=multi-user.target "<<endl;
             syst.close();
             systemrueck("sudo systemctl daemon-reload",obverb-1,oblog);
-					  systemrueck("grep ocrmypdf \"sudo rm -f "+systemd+"\"||printf \"sudo systemctl stop '"+systemd+"';"
-						"sudo rm -f '"+systemd+"'; sudo systemctl daemon-reload;\\n\">>\""+unindt+"\";" ,obverb-1,oblog);
-          } // if (syst.is_open()) 
+					  systemrueck("printf \"sudo systemctl stop '"+systemd+"';"
+								"sudo rm -f '"+systemd+"'; sudo systemctl daemon-reload;\\n\">>\""+unindt+"\";" ,obverb-1,oblog);
+					} // if (syst.is_open()) 
         } // if (svgibts && !svefeh) else
       } // if (!svgibts || !obslaeuft(obverb,oblog)) 
 			if (!mitstarten) {

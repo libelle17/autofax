@@ -4516,6 +4516,7 @@ void paramcl::pruefunpaper()
 	Log(violetts+Tx[T_pruefunpaper]+schwarz);
 	double vers=progvers("unpaper",obverb,oblog);
 	if (vers<6.1) {
+		linst.doinst("libxslt",obverb,oblog,"xsltproc");
 		if (linst.pruefipr()==dnf||linst.pruefipr()==yum) {
 			// sudo rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm 
 			//               http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
