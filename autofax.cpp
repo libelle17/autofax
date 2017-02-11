@@ -2200,15 +2200,17 @@ void paramcl::pruefisdn()
   if (rzf) {
     cgconf.setze("obfcard",obfcard?"1":"0");
   }
+	/*
   string bemst; 
   svec bemv;
 	Sprache altSpr=Tx.lgn;
-	for(int akts=0;akts<Smax;akts++) {
+	for(int akts=0;akts<Smax;akts++) KLA
 		Tx.lgn=(Sprache)akts;
 		bemst=Tx[T_ob_ein_Modem_drinstak];
     bemv<<bemst;
-  } //         for(int akts=0;akts<Smax;akts++)
+  KLZ //         for(int akts=0;akts<Smax;akts++)
 	Tx.lgn=altSpr;
+	*/
 	cgconf.setzbemv("obfcard",&Tx,T_ob_eine_Fritzcard_drinstak);
 } // void paramcl::pruefisdn()
 
@@ -3768,7 +3770,7 @@ void paramcl::pruefsamba()
     confdat smbcf(smbdatei,obverb);
     smbcf.Abschn_auswert(obverb);
     vector<string*> vzn;
-    const char* const VSambaName[4]={Tx[T_Zufaxen],Tx[T_Warteauffax],Tx[T_Nichtgefaxt],Tx[T_Faxempfang]};
+		const int ISambaName[4]={T_Zufaxen,T_Warteauffax,T_Nichtgefaxt,T_Faxempfang}; 
     //={&zufaxenvz,&wvz,&nvz,&empfvz};
     vzn.push_back(&zufaxenvz);
     vzn.push_back(&wvz);
@@ -3807,19 +3809,26 @@ void paramcl::pruefsamba()
 					::Log(rots+Tx[T_Verzeichnis]+blau+*vzn[k]+rot+Tx[T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt]+schwarz,1,oblog);
 					string abschnitt;
 					if (k<4) {
-						abschnitt=VSambaName[k];
-						suchstr=suchstr+"\\["+VSambaName[k]+"\\]";
-						if (k<vzn.size()-1) suchstr+="\\|";
+						abschnitt=Tx[ISambaName[k]];
+							Sprache altSpr=Tx.lgn;
+							for(int akts=0;akts<Smax;akts++) {
+								Tx.lgn=(Sprache)akts;
+								suchstr=suchstr+"\\["+Tx[ISambaName[k]]+"\\]";
+								if (k<vzn.size()-1||akts<Smax-1) suchstr+="\\|";
+							} //         for(int akts=0;akts<Smax;akts++)
+							Tx.lgn=altSpr;
 					} else {
 						abschnitt=string(Tx[T_Gefaxt])+"_"+ltoan(k-4);
-						Sprache altSpr=Tx.lgn;
-						for(int akts=0;akts<Smax;akts++) {
-							Tx.lgn=(Sprache)akts;
-							suchstr=suchstr+"\\["+Tx[T_Gefaxt]+"_"+ltoan(k-4)+"\\]";
-							if (k<vzn.size()-1 || akts<Smax-1) suchstr+="\\|";
-						} //         for(int akts=0;akts<Smax;akts++)
-						Tx.lgn=altSpr;
-					}
+						if (k==4) {
+							Sprache altSpr=Tx.lgn;
+							for(int akts=0;akts<Smax;akts++) {
+								Tx.lgn=(Sprache)akts;
+								suchstr=suchstr+"\\["+Tx[T_Gefaxt]+"_\\]";
+								if (k<vzn.size()-1||akts<Smax-1) suchstr+="\\|";
+							} //         for(int akts=0;akts<Smax;akts++)
+							Tx.lgn=altSpr;
+						} // 						if (k==4)
+					} // 					if (k<4) else
 					sapp<<"["<<abschnitt<<"]"<<endl;
 					sapp<<"  comment = "<<meinname<<" "<<abschnitt<<endl;
 					sapp<<"  path = "<<*vzn[k]<<endl;
