@@ -3715,6 +3715,15 @@ void paramcl::pruefsamba()
   const string quelle="/usr/share/samba/smb.conf";
   uchar obinst=0; // ob Samba installiert werden soll bzw. die smb.conf bearbeitet
   uchar obfw=0; // ob SuSEfirewall bearbeitet werden soll
+	int obsfehlt=linst.obfehlt("samba",obverb,oblog);
+	if (obsfehlt) {
+		if (!nrzf) {
+			obinst=Tippob(Tx[T_Samba_muesste_installiert_werden_soll_ich],Tx[T_j_af]);
+			if (obinst)
+				linst.doinst("samba",obverb,oblog);
+			//        smbrestart=0;
+		} // if (!nrzf) 
+	} // 	if (obsfehlt)
   for(uchar iru=0;iru<2;iru++) {
     if (!(conffehlt=lstat(smbdatei,&sstat))) break;
     if (iru) break;
@@ -3729,16 +3738,9 @@ void paramcl::pruefsamba()
   if (!smb.obslaeuft(obverb,oblog)) if (!smbd.obslaeuft(obverb,oblog)) dienstzahl--;
   if (!nmb.obslaeuft(obverb,oblog)) if (!nmbd.obslaeuft(obverb,oblog)) dienstzahl--;
   //  <<rot<<"dienstzahl: "<<dienstzahl<<endl;
-	int obsfehlt=linst.obfehlt("samba",obverb,oblog);
-  if (dienstzahl<2||conffehlt||obsfehlt) {
+  if (dienstzahl<2||conffehlt) {
     for(int aru=0;aru<2;aru++) {
-      if (aru||obsfehlt) {
-        if (!nrzf) {
-          obinst=Tippob(Tx[T_Samba_muesste_installiert_werden_soll_ich],Tx[T_j_af]);
-          if (obinst)
-            linst.doinst("samba",obverb,oblog);
-          //        smbrestart=0;
-        } // if (!nrzf) 
+      if (aru) {
       } // if (aru) 
       if (!smb.svefeh) {
         smb.machfit(obverb,oblog);
