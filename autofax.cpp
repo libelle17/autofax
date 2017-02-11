@@ -3790,50 +3790,57 @@ void paramcl::pruefsamba()
         } // if (!pfad.empty()) 
       } // if (smbcf.abschv.aname!="global") 
     } // for(size_t i=0;i<smbcf.abschv.size();i++) 
-    uchar smbrestart=0;
-    for(unsigned k=0;k<vzn.size();k++) {
-      if (!gef[k]) {
-        smbrestart=1;
-        if (!obinst) {
-          obinst=Tippob(Tx[T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden],Tx[T_j_af]);
-          if (!obinst) break;
-        }
-        ::Log(rots+Tx[T_Verzeichnis]+blau+*vzn[k]+rot+Tx[T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt]+schwarz,1,oblog);
-        mdatei sapp(smbdatei,ios::out|ios::app);
-        if (sapp.is_open()) {
-				  string kennz="  # autofax";
-          if (k<4) {
-            sapp<<"["<<VSambaName[k]<<"]"<<kennz<<endl;
-            sapp<<"  comment = "+meinname+" "<<VSambaName[k]<<kennz<<endl;
-          } else {
-            sapp<<"["<<Tx[T_Gefaxt]<<"_"<<(k-4)<<"]"<<kennz<<endl;
-            sapp<<"  comment = "+meinname+" "<<Tx[T_Gefaxt]<<"_"<<(k-4)<<kennz<<endl;
-          }
-          sapp<<"  path = "<<*vzn[k]<<kennz<<endl;
-          sapp<<"  directory mask = 0660"<<kennz<<endl;
-          sapp<<"  browseable = Yes"<<kennz<<endl;
+		uchar smbrestart=0;
+		mdatei sapp(smbdatei,ios::out|ios::app);
+		if (sapp.is_open()) {
+			string suchstr;
+			for(unsigned k=0;k<vzn.size();k++) {
+				if (!gef[k]) {
+					smbrestart=1;
+					if (!obinst) {
+						obinst=Tippob(Tx[T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden],Tx[T_j_af]);
+						if (!obinst) break;
+					}
+					::Log(rots+Tx[T_Verzeichnis]+blau+*vzn[k]+rot+Tx[T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt]+schwarz,1,oblog);
+					string abschnitt;
+					if (k<4) {
+						abschnitt=VSambaName[k];
+						suchstr=suchstr+"\\["+VSambaName[k]+"\\]";
+						if (k<vzn.size()-1) suchstr+="\\|";
+					} else {
+						abschnitt=string(Tx[T_Gefaxt])+"_"+ltoan(k-4);
+						for(int akts=0;akts<Smax;akts++) {
+							suchstr=suchstr+"\\["+Tx[T_Gefaxt][akts]+"_"+ltoan(k-4)+"\\]";
+							if (k<vzn.size()-1 || akts<Smax-1) suchstr+="\\|";
+						} //         for(int akts=0;akts<Smax;akts++)
+					}
+					sapp<<"["<<abschnitt<<"]"<<endl;
+					sapp<<"  comment = "<<meinname<<" "<<abschnitt<<endl;
+					sapp<<"  path = "<<*vzn[k]<<endl;
+					sapp<<"  directory mask = 0660"<<endl;
+					sapp<<"  browseable = Yes"<<endl;
 					if (!k)
-					  sapp<<"  read only = no"<<kennz<<endl; // zufaxenvz soll beschreibbar sein
-          sapp<<"  vfs objects = recycle"<<kennz<<endl;
-          sapp<<"  recycle:versions = Yes"<<kennz<<endl;
-          sapp<<"  recycle:keeptree = Yes"<<kennz<<endl;
-          sapp<<"  recycle:repository = Papierkorb"<<kennz<<endl;
-          anfgggf(unindt,"sudo sed -i.bak '/"+kennz+"/d' /etc/samba/smb.conf");
-        } // if (sapp.is_open()) 
-      } // if (!gef[k]) 
-    } // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
-    if (!nrzf) {
-      if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
-        string pw1, pw2;
-        while (1) {
+						sapp<<"  read only = no"<<endl; // zufaxenvz soll beschreibbar sein
+					sapp<<"  vfs objects = recycle"<<endl;
+					sapp<<"  recycle:versions = Yes"<<endl;
+					sapp<<"  recycle:keeptree = Yes"<<endl;
+					sapp<<"  recycle:repository = Papierkorb"<<endl;
+				} // if (!gef[k]) 
+			} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
+			anfgggf(unindt,"sudo sed -i.vorautofaxbak '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' /etc/samba/smb.conf");
+		} // if (sapp.is_open()) 
+		if (!nrzf) {
+			if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
+				string pw1, pw2;
+				while (1) {
 					do {
 						pw1=Tippstring(string(Tx[T_Passwort_fuer_samba])+Txd[T_fuer_Benutzer]+dblau+cuser+schwarz+"'",&pw1);
 					} while (pw1.empty());
 					pw2=Tippstring(string(Tx[T_Passwort_fuer_samba])+Txd[T_fuer_Benutzer]+dblau+cuser+schwarz+"' ("+Txk[T_erneute_Eingabe]+")",&pw2);
-          if (pw1==pw2) break;
-        } //         while (1)
-        systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
-        systemrueck("(echo "+pw1+"; echo "+pw2+") | sudo smbpasswd -s "+cuser,obverb,oblog);
+					if (pw1==pw2) break;
+				} //         while (1)
+				systemrueck("sudo smbpasswd -n -a "+cuser,obverb,oblog);
+				systemrueck("(echo "+pw1+"; echo "+pw2+") | sudo smbpasswd -s "+cuser,obverb,oblog);
       } // if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) 
     } // if (!nrzf)
     if (smbrestart) {
