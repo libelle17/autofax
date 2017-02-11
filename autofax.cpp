@@ -2202,11 +2202,14 @@ void paramcl::pruefisdn()
   }
   string bemst; 
   svec bemv;
-  for(int akts=0;akts<Smax;akts++) {
-    bemst=Tx[T_ob_ein_Modem_drinstak][akts];
+	Sprache altSpr=Tx.lgn;
+	for(int akts=0;akts<Smax;akts++) {
+		Tx.lgn=(Sprache)akts;
+		bemst=Tx[T_ob_ein_Modem_drinstak];
     bemv<<bemst;
   } //         for(int akts=0;akts<Smax;akts++)
-  cgconf.setzbemv("obfcard",&Tx,T_ob_eine_Fritzcard_drinstak);
+	Tx.lgn=altSpr;
+	cgconf.setzbemv("obfcard",&Tx,T_ob_eine_Fritzcard_drinstak);
 } // void paramcl::pruefisdn()
 
 // wird aufgerufen in: main, pruefhyla
@@ -3809,10 +3812,13 @@ void paramcl::pruefsamba()
 						if (k<vzn.size()-1) suchstr+="\\|";
 					} else {
 						abschnitt=string(Tx[T_Gefaxt])+"_"+ltoan(k-4);
+						Sprache altSpr=Tx.lgn;
 						for(int akts=0;akts<Smax;akts++) {
-							suchstr=suchstr+"\\["+Tx[T_Gefaxt][akts]+"_"+ltoan(k-4)+"\\]";
+							Tx.lgn=(Sprache)akts;
+							suchstr=suchstr+"\\["+Tx[T_Gefaxt]+"_"+ltoan(k-4)+"\\]";
 							if (k<vzn.size()-1 || akts<Smax-1) suchstr+="\\|";
 						} //         for(int akts=0;akts<Smax;akts++)
+						Tx.lgn=altSpr;
 					}
 					sapp<<"["<<abschnitt<<"]"<<endl;
 					sapp<<"  comment = "<<meinname<<" "<<abschnitt<<endl;
