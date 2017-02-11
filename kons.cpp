@@ -2461,27 +2461,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
     } // switch (linst.pruefipr()) 
 		const uchar obyes=1;
 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog))) {
-			uchar obda=0;
-			{
-				mdatei uni0(unindt,ios::in);
-				if (uni0.is_open()) {
-					string zeile;
-					while (getline(uni0,zeile)) {
-						if (zeile.find(upr+eprog)!=string::npos) {
-							obda=1;
-							break;
-						}
-					} // 					while (getline(uni0,zeile))
-				} // 				if (uni0.is_open())
-			}
-			if (!obda) {
-				mdatei uniff(unindt,ios::app);
-				if (uniff.is_open()) {
-					uniff<<upr<<eprog<<endl; 
-				} else {
-					perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
-				} // 			if (uniff.is_open())
-			}
+		  anfgggf(unindt,upr+eprog);
 		} // 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog)))
 		//				for(iru=0;iru<2;iru++) KLA
 		//					if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
@@ -2492,7 +2472,31 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 	return ret;
 } // uchar linst_cl::doinst(const string& prog,int obverb,int oblog) 
 
-	int linst_cl::doggfinst(const string& prog,int obverb,int oblog)
+// fuege an, wenn noch nicht enthalten
+void anfgggf(string datei, string inhalt)
+{
+	uchar obda=0;
+	mdatei uni0(datei,ios::in);
+	if (uni0.is_open()) {
+		string zeile;
+		while (getline(uni0,zeile)) {
+			if (zeile.find(inhalt)!=string::npos) {
+				obda=1;
+				break;
+			} // 						if (zeile.find(upr+eprog)!=string::npos)
+		} // 					while (getline(uni0,zeile))
+	} // 				if (uni0.is_open())
+	if (!obda) {
+		mdatei uniff(datei,ios::app);
+		if (uniff.is_open()) {
+			uniff<<inhalt<<endl; 
+		} else {
+			perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
+		} // 			if (uniff.is_open())
+	} // 			if (!obda)
+} // void anfgggf(string datei, string inhalt)
+
+int linst_cl::doggfinst(const string& prog,int obverb,int oblog)
 {
   if (!(eprog=ersetzeprog(prog)).empty()) {
     if (obfehlt(eprog,obverb,oblog)) {

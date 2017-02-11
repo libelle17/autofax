@@ -12,6 +12,7 @@ CCInst=gcc6-c++
 
 # Installationsprogramm ermitteln
 getIPR() {
+  CTAGS=ctags;
 	{ which zypper  >$DN 2>&1 &&{ 
 		Z=zypper;g=--gpg-auto-import-keys;IPR="$Z -n $g in ";IP_R="$Z $g in ";UPR="sudo zypper rm -u ";pgroff=groff;
   REPOS="sudo zypper lr|grep 'g++\|devel_gcc'\$(KR)||sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
@@ -21,7 +22,8 @@ getIPR() {
 	{ which apt-get >$DN 2>&1 &&{ IPR="sudo apt-get --assume-yes install ";IP_R=$IPR;
 	                                    UPR="sudo apt-get --auto-remove purge ";
 																			dev=devel;
-																			COMP:="build-essential linux-headers-\`uname -r\`";} }||
+																			COMP="build-essential linux-headers-\`uname -r\`";
+																			CTAGS=exuberant-ctags;} }||
 	{ which dnf     >$DN 2>&1 &&{ fed=1;IPR="sudo dnf -y install ";UPR="sudo dnf remove ";} }||
 	{ which yum     >$DN 2>&1 &&{ fed=1;IPR="sudo yum -y install ";UPR="sudo yum remove ";} }
 	[ $fed = 1 ] &&{ libmc=mysql;COMP="make automake gcc-c++ kernel-devel";IP_R=$IPR;}

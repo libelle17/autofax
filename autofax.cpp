@@ -3799,22 +3799,24 @@ void paramcl::pruefsamba()
         ::Log(rots+Tx[T_Verzeichnis]+blau+*vzn[k]+rot+Tx[T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt]+schwarz,1,oblog);
         mdatei sapp(smbdatei,ios::out|ios::app);
         if (sapp.is_open()) {
+				  string kennz="  # autofax";
           if (k<4) {
-            sapp<<"["<<VSambaName[k]<<"]"<<endl;
-            sapp<<"  comment = "+meinname+" "<<VSambaName[k]<<endl;
+            sapp<<"["<<VSambaName[k]<<"]"<<kennz<<endl;
+            sapp<<"  comment = "+meinname+" "<<VSambaName[k]<<kennz<<endl;
           } else {
-            sapp<<"["<<Tx[T_Gefaxt]<<"_"<<(k-4)<<"]"<<endl;
-            sapp<<"  comment = "+meinname+" "<<Tx[T_Gefaxt]<<"_"<<(k-4)<<endl;
+            sapp<<"["<<Tx[T_Gefaxt]<<"_"<<(k-4)<<"]"<<kennz<<endl;
+            sapp<<"  comment = "+meinname+" "<<Tx[T_Gefaxt]<<"_"<<(k-4)<<kennz<<endl;
           }
-          sapp<<"  path = "<<*vzn[k]<<endl;
-          sapp<<"  directory mask = 0660"<<endl;
-          sapp<<"  browseable = Yes"<<endl;
+          sapp<<"  path = "<<*vzn[k]<<kennz<<endl;
+          sapp<<"  directory mask = 0660"<<kennz<<endl;
+          sapp<<"  browseable = Yes"<<kennz<<endl;
 					if (!k)
-					  sapp<<"  read only = no"<<endl; // zufaxenvz soll beschreibbar sein
-          sapp<<"  vfs objects = recycle"<<endl;
-          sapp<<"  recycle:versions = Yes"<<endl;
-          sapp<<"  recycle:keeptree = Yes"<<endl;
-          sapp<<"  recycle:repository = Papierkorb"<<endl;
+					  sapp<<"  read only = no"<<kennz<<endl; // zufaxenvz soll beschreibbar sein
+          sapp<<"  vfs objects = recycle"<<kennz<<endl;
+          sapp<<"  recycle:versions = Yes"<<kennz<<endl;
+          sapp<<"  recycle:keeptree = Yes"<<kennz<<endl;
+          sapp<<"  recycle:repository = Papierkorb"<<kennz<<endl;
+          anfgggf(unindt,"sudo sed -i.bak '/"+kennz+"/d' /etc/samba/smb.conf");
         } // if (sapp.is_open()) 
       } // if (!gef[k]) 
     } // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 

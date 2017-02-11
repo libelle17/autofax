@@ -6,6 +6,7 @@ FREQUENZ=5 # rufe gtags jedes 5. Mal auf
 
 getIPR
 exportvars
+{ PR=ctags;PK=$CTAGS;which $PR >$DN||{ getIPR;${IPR}$PK;grep -q \" $PK\" $UNF||printf "${UPR}$PK\n">>$UNF;} &&$PR;}
 ctags *.cpp *.h
 test -f $ZD || echo 1>$ZD; awk "BEGIN {print `cat $ZD`+1}">$ZD
 (($(cat $ZD)%$FREQUENZ)) ||{ PR=gtags;PK=global;which $PR >$DN||{ getIPR;${IPR}$PK;grep -q \" $PK\" $UNF||printf "${UPR}$PK\n">>$UNF;} &&$PR;} # in Fedora koennte gtags noch installiert werden muessen
