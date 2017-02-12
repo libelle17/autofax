@@ -646,7 +646,7 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 	}
 	//  Log(string("kuerzelogdatei: ") + drot + logdatei + schwarz,obverb,0);
 	// ersetze(logdatei,"\\","\\\\")
-	struct stat stat;
+	struct stat stat={0};
 	if (lstat(logdatei,&stat)){
 		if (obverb>1) {
 			cout<<Txk[T_Logdatei]<<drot<<logdatei<<schwarz<<Txk[T_gibt_es_noch_nicht_Kuerze_sie_daher_nicht]<<endl;
@@ -1172,7 +1172,7 @@ betrsys pruefos()
 int obprogda(string prog,int obverb, int oblog, string *pfad/*=0*/)
 {
   for(int iru=0;iru<6;iru++) {
-    struct stat fstat;
+    struct stat fstat={0};
     string verz;
     switch (iru) {
       case 0: verz="/usr/local/bin/"; break;
@@ -1897,7 +1897,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 
 void pruefplatte()
 {
-  struct statvfs fp;
+  struct statvfs fp={0};
   const string platte="/";
   statvfs(platte.c_str(),&fp);   
   if (fp.f_bsize * fp.f_bfree < 100000) { // wenn weniger als 100 MB frei sind ...
@@ -1956,7 +1956,7 @@ int setfaclggf(const string& datei, const binaer obunter, const int mod, uchar o
 // obmitfacl: 1= setzen, falls noetig, >1= immer setzen
 int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfacl/*=1*/,uchar obmitcon/*=1*/)
 {
-  struct stat sverz;
+  struct stat sverz={0};
   int fehler=1;
   if (!verz.empty()) {
     if (!lstat(verz.c_str(), &sverz)) {
@@ -2137,7 +2137,7 @@ string Tippverz(const char *frage,string *vorgabe)
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
     if (input=="" && vorgabe) {input=*vorgabe;}
-    struct stat st;
+    struct stat st={0};
     //    <<"input: '"<<rot<<input<<schwarz<<"'"<<endl;
     while (1) {
       if (!lstat(input.c_str(), &st)) {
@@ -2258,7 +2258,7 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
         // und hinter dem aktuellen Parameter noch einer kommt ...
         if (*akt<argcvm->size()-1) {
           char *nacstr=argcvm->at(*akt+1).argcs;
-          struct stat entryarg;
+          struct stat entryarg={0};
           switch (art) {
               // und das ein "sonstiger Parameter" ist, ...
             case psons:
@@ -2709,7 +2709,7 @@ int servc::obsvefeh(int obverb,int oblog) // ob service einrichtungs fehler
 			svec srue2;
 			systemrueck("systemctl --lines 0 status '"+sname+".service'|grep ExecStart|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srue2);
 			if (!srue2.empty()) {
-				struct stat lst;
+				struct stat lst={0};
 				if (lstat(srue2[0].c_str(),&lst)) {
 				 svefeh=2; // Service-Datei fehlt
 				} // 				if (lstat(srue2.c_str(),&lst))
@@ -2844,7 +2844,7 @@ void servc::daemon_reload(int obverb, int oblog)
 int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
 {
 //  Log(violetts+Tx[T_tuloeschen]+schwarz,obverb,oblog);
-  struct stat entryzuloe;
+  struct stat entryzuloe={0};
   if (!lstat(zuloe.c_str(),&entryzuloe)) {
     Log(string(Txk[T_Loesche_Ausrufezeichen])+gruen+zuloe+schwarz,obverb,oblog);
     int erg=-1;
@@ -2902,12 +2902,12 @@ void optioncl::setzebem(schlArr *cp,const char *pname)
 // gleicht das Datum von <zu> an <gemaess> an, aehnlich touch
 int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
 {
-  struct stat statgm;
+  struct stat statgm={0};
   if (lstat(gemaess.c_str(),&statgm)) {
     Log(string(rots+Txk[T_Fehler_bei_lstat])+schwarz+gemaess,obverb,oblog);
     return 1;
   }
-  struct stat statzu;
+  struct stat statzu={0};
   if (lstat(zu.c_str(),&statzu)) {
     Log(string(rots+Txk[T_Fehler_bei_lstat])+schwarz+zu,obverb,oblog);
     return 1;
@@ -2918,7 +2918,7 @@ int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
   if (chown(zu.c_str(),statgm.st_uid,statgm.st_gid)) {
    systemrueck("sudo chown --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog);
   }
-  struct utimbuf ubuf;
+  struct utimbuf ubuf={0};
   ubuf.actime=ubuf.modtime=statgm.st_mtime;
   if (utime(zu.c_str(),&ubuf)) {
    systemrueck("sudo touch -r \""+gemaess+"\" \""+zu+"\"",obverb,oblog);
@@ -2940,7 +2940,7 @@ int kopier(const string& quel, const string& ziel, int obverb, int oblog)
   if (source==-1) {
 //    Log(Txk[T_Konnte_Datei]+rots+quel+schwarz+Txk[T_nicht_zum_Lesen_oeffnen],obverb,oblog);
   } else {
-    struct stat statq;
+    struct stat statq={0};
     if (!fstat(source,&statq)) {
       int dest=open(ziel.c_str(),O_WRONLY|O_CREAT,statq.st_mode);
       if (dest==-1) {
@@ -2955,7 +2955,7 @@ int kopier(const string& quel, const string& ziel, int obverb, int oblog)
           fehler=0;
           chmod(ziel.c_str(),statq.st_mode);
           chown(ziel.c_str(),statq.st_uid,statq.st_gid);
-          struct utimbuf ubuf;
+          struct utimbuf ubuf={0};
           ubuf.actime=ubuf.modtime=statq.st_mtime;
           utime(ziel.c_str(),&ubuf);
         } // if (erg==-1)

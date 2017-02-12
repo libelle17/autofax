@@ -2259,7 +2259,7 @@ int paramcl::setzhylavz()
       fundart=2;
     } else {
       // 3) ... ansonsten schauen, welches Verzeichnis es gibt ...
-      struct stat hstat,fstat={0};
+      struct stat hstat={0},fstat={0};
       const char *hfax="/var/spool/hylafax", *ffax="/var/spool/fax";
       int hgibts=!lstat(hfax,&hstat), fgibts=!lstat(ffax,&hstat);
       if (hgibts && !fgibts) {
@@ -2349,7 +2349,8 @@ void paramcl::liescapiconf()
 {
   Log(violetts+Tx[T_liescapiconf]+schwarz);
   svec rueck;
-  systemrueck("find /etc/capisuite /usr/local/etc/capisuite -type f -name fax.conf",obverb-2,oblog,&rueck);
+	const string moegl="find /etc/capisuite /usr/local/etc/capisuite -type f -name ";
+  systemrueck(moegl+"fax.conf",obverb-2,oblog,&rueck);
   if (rueck.size()) cfaxconfdat=rueck[0];
 
   capiconf.init(10,"spool_dir","fax_user_dir","send_tries","send_delays","outgoing_MSN",
@@ -2402,7 +2403,7 @@ void paramcl::liescapiconf()
   // <<rot<<"cfaxuservz in Vorgallg: "<<cfaxuservz<<schwarz<<endl;
 
   rueck.clear();
-  systemrueck("find /etc/capisuite /usr/local/etc/capisuite -type f -name capisuite.conf",obverb-2,oblog,&rueck);
+  systemrueck(moegl+"capisuite.conf",obverb-2,oblog,&rueck);
   if (rueck.size()) {
     ccapiconfdat=rueck[0];
   }
@@ -3405,7 +3406,7 @@ void paramcl::konfcapi()
   KLZ 
 
   KLZ // while(getline(falt,zeile)) 
-  struct stat entryorig;
+  struct stat entryorig={0};
   string origdatei=string(cconf[0].wert)+"_orig";
   if (lstat(origdatei.c_str(),&entryorig)) KLA
   dorename(cconf[0].wert,origdatei,cuser,0,obverb,oblog);
@@ -3998,7 +3999,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 									teln=stdfaxnr(txtconf[0].wert);
 									/* // liegt in der Zukunft!
 									for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) KLA
-										struct tm tm;
+										struct tm tm={0};
 										if (strptime(txtconf[1].wert.c_str(),tmmoegl[im],&tm)) KLA
 											strftime(buf, sizeof(buf), "%F %T", &tm);
 											zp=buf;
@@ -4605,7 +4606,7 @@ int paramcl::pruefocr()
 				linst.doinst("python3-pip",obverb+1,oblog,"pip3");
 				linst.doinst("python3-devel",obverb+1,oblog,"/usr/bin/python3-config");
 				linst.doggfinst("gcc");
-				struct stat lffi;
+				struct stat lffi={0};
 				if (lstat("/usr/lib64/libffi.so",&lffi)) {
 					if (linst.obfehlt("libffi48-devel",obverb+1,oblog))
 						linst.doggfinst("libffi-devel",obverb+1,oblog);
@@ -4690,7 +4691,7 @@ void paramcl::unpaperfuercron()
  string prog;
  if (obprogda(ocr,obverb,oblog,&prog)) {
 	const string uppfad=dir_name(prog)+"/"+unp;
-	struct stat lst;
+	struct stat lst={0};
 	if (lstat(uppfad.c_str(),&lst)) {
 	 if (obprogda(unp,obverb,oblog,&prog)) {
 	  systemrueck("sudo ln -s '"+prog+"' '"+uppfad+"'",obverb,oblog);
@@ -4726,7 +4727,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 						} // 						for(unsigned uru=0;uru<rueck.size();uru++)
 					} // 					if (!systemrueck(string("ocrmypdf -rcsl ")+...
 					if (!erg) {
-					 struct stat lziel;
+					 struct stat lziel={0};
 					 erg=lstat(ziel.c_str(),&lziel);
 					} // 					if (!erg)
 					if (!erg) {
@@ -5035,7 +5036,7 @@ void paramcl::DateienHerricht()
 				if (obocra) {
 					struct stat spdfstat={0};
 					if (!lstat(spdfd.at(i).c_str(),&spdfstat)) {
-						struct utimbuf ubuf;
+						struct utimbuf ubuf={0};
 						ubuf.actime=ubuf.modtime=spdfstat.st_mtime;
 						if (!pruefocr()) {
 							string cmd=string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+spdfd.at(i)+"\" \""+spdfd.at(i)+"\""
@@ -5808,7 +5809,7 @@ void paramcl::empfarch()
 		string fnr=base.substr(3);
 		fnr=fnr.substr(fnr.find_first_not_of("0"));
 		struct tm tm={0};
-		struct stat elog;
+		struct stat elog={0};
     ulong seiten=0;
 		if (!holtif(rueck[i],&seiten,&tm,&elog,&absdr,&tsid,&callerid,&devname))
 			ankzahl++;
@@ -5864,7 +5865,7 @@ void paramcl::empfarch()
     } else {
       vorsoffice=rueck[i];
     } //     if (!kfehler) else
-    struct stat entrynd;
+    struct stat entrynd={0};
 		int obpdfda=0;
     int obhpfadda=!lstat(hpfad.c_str(),&entrynd);
 		if (obhpfadda)
@@ -5910,7 +5911,7 @@ void paramcl::empfarch()
      size_t cs=sizeof umst/sizeof*umst;
    */
   schlArr umst; umst.init(5,"filename","call_from","call_to","time","cause");
-  struct stat entryvz;
+  struct stat entryvz={0};
   //  cfaxuserrcvz="/var/spool/capisuite/users/schade/received";
   if (!lstat(cfaxuserrcvz.c_str(),&entryvz)) /* /var/spool/capisuite/users/~/received */ {
     // Faxe in der Empfangswarteschlange auflisten, ...
@@ -5928,7 +5929,7 @@ void paramcl::empfarch()
       getstammext(&(rueck[i]),&stamm,&exten);
       Log(string("txt: ")+tuerkis+(rueck[i])+schwarz);
       const string sffdatei=stamm+".sff";
-      struct stat entrysff;
+      struct stat entrysff={0};
       uchar verschieb=0;
       confdat empfconf(rueck[i],&umst,obverb);
       //    if (cpplies(rueck[i],umst,cs)) KLA
@@ -5980,7 +5981,7 @@ void paramcl::empfarch()
 					 if (obocri) {
 						 const string ziel=empfvz+vtz+tifrumpf+".pdf"; 
 						 int obpdfda=!zupdf(&tifpfad, ziel, &pseiten, obocri, 1); // 0=Erfolg
-						 struct stat entrynd;
+						 struct stat entrynd={0};
 						 if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) if (!kfehler) tuloeschen(tifpfad,cuser,obverb,oblog);
 					 } // if ((erg=systemrueck(cmd,obverb,oblog))) else if (obocri)
 					} else {
@@ -6001,7 +6002,7 @@ void paramcl::empfarch()
         // wenn sfftobmp funktioniert hat // oder die Datei verschoben wurde
         if (!erg) {
 #ifdef ueberfluessig 
-          struct utimbuf ubuf;
+          struct utimbuf ubuf={0};
           ubuf.modtime = modz;
           ubuf.actime = modz;
           if (utime(tifpfad.c_str(),&ubuf)) {
@@ -6081,7 +6082,7 @@ string zielname(const string& qdatei, const string& zielvz, uchar wieweiterzaehl
 {
   //  Log(violetts+Tx[T_zielname]+schwarz,obverb,oblog);
   // wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
-  struct stat entryziel;
+  struct stat entryziel={0};
   string dateiname=base_name(qdatei);
   string ziel = zielvz + (zielvz[zielvz.length()-1]==vtz?"":vtzs)+ dateiname;
   Log(string(Tx[T_zielname_erstes_Ziel])+rot+ziel+schwarz+"'",obverb,oblog);
@@ -6326,7 +6327,7 @@ void hfaxsetup(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
 
 void paramcl::setzfaxgtpfad()
 {
-  struct stat entryfaxgt;
+  struct stat entryfaxgt={0};
 	if (lstat(faxgtpfad.c_str(),&entryfaxgt)) {
 		faxgtpfad.clear();
 		//  faxgtpfad="/usr/lib/fax/faxgetty";
@@ -6358,7 +6359,7 @@ void hconfig(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
     conf<<"DialStringRules:  \"etc/dialrules\""<<endl;
     conf<<"ServerTracing:    1"<<endl;
     conf<<"SessionTracing:   0xffffffff"<<endl;
-		struct stat entryfaxsd;
+		struct stat entryfaxsd={0};
 		svec rueckf;
 		string faxsdpfad=pmp->varsphylavz+"/bin/faxsend";
 		if (lstat(faxsdpfad.c_str(),&entryfaxsd)) {
@@ -6390,7 +6391,7 @@ void paramcl::hliesconf()
   schlArr hyalt; hyalt.init(8,"CountryCode","AreaCode","FAXNumber","LongDistancePrefix","InternationalPrefix",
                               "RingsBeforeAnswer","LocalIdentifier","MaxDials");
   setzmodconfd();
-  struct stat mstat;
+  struct stat mstat={0};
   if (lstat(modconfdat.c_str(),&mstat)) {
     hylazukonf=1;
   } else {
@@ -6411,7 +6412,7 @@ void paramcl::hconfigtty()
 {
   Log(violetts+"hconfigtty()"+schwarz);
   setzmodconfd();
-  struct stat bakstat;
+  struct stat bakstat={0};
   if (lstat((modconfdat+".bak").c_str(),&bakstat)) {
    kopier(modconfdat,modconfdat+".bak",obverb,oblog);
   }
@@ -6447,7 +6448,7 @@ void paramcl::hconfigtty()
     hci<<"LocalIdentifier:  "<<this->LocalIdentifier<<endl;
     hci<<"LogFacility:    daemon"<<endl;
     // #ifdef obhp
-    struct stat Lstat;
+    struct stat Lstat={0};
     if (!lstat((this->varsphylavz+"/etc/LiberationSans-25.pcf").c_str(),&Lstat)) {
       hci<<"TagLineFont:    etc/LiberationSans-25.pcf"<<endl;
     } else {
@@ -6535,7 +6536,7 @@ int paramcl::hservice_faxq_hfaxd()
 {
   int hylafehler=0;
   Log(violetts+"hservice_faxq_hfaxd()"+schwarz);
-	struct stat hstat, fstat;
+	struct stat hstat={0}, fstat={0};
 	if (hfaxdpfad.empty()||lstat(hfaxdpfad.c_str(),&hstat)) { obprogda("hfaxd",obverb,oblog,&hfaxdpfad); }
   hylafehler+=!shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/, varsphylavz+"/etc/setup.cache", "", "", obverb,oblog);
   this->shfaxd->machfit(obverb,oblog);
@@ -6647,7 +6648,7 @@ int paramcl::pruefhyla()
 							"'"
 		*/
 		// Die Datei /usr/lib64/sclibtiff wird als Nachweis verwendet, dass die Installationskorrektur durchgefuert wurde
-		 struct stat lnachw, ltiffh;
+		 struct stat lnachw={0}, ltiffh={0};
 		 const string nachw=lsys.getlib64()+"/sclibtiff";
 		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh)) {
 		  linst.doggfinst("cmake",obverb,oblog); 
@@ -6828,7 +6829,7 @@ int paramcl::pruefhyla()
 					} else {
 						// falls oben hylafax neu installiert wurde und zuvor eine hylafax-Installation nach Gebrauch geloescht worden war,
 						// dann die alten Eintraege (xferfaxlog.rpmsave) wieder aktivieren
-						struct stat entryxfer, entryxfer0={0};
+						struct stat entryxfer={0}, entryxfer0={0};
 						const string d0=xferfaxlog+".rpmsave";
 						if (!lstat(xferfaxlog.c_str(),&entryxfer)) {
 							if (entryxfer.st_size<10) { // wenn neu
@@ -6978,7 +6979,7 @@ int paramcl::pruefhyla()
 		const string uvz[2]={"/log/","/recvq/"};
 		for (unsigned i=0;i<2;i++) {
 			const string dt=varsphylavz+uvz[i]+"seqf";
-			struct stat dstat;
+			struct stat dstat={0};
 			if (lstat(dt.c_str(),&dstat)) {
 				systemrueck("sudo touch "+dt+" && sudo chown "+huser+":uucp "+dt,obverb,oblog);
 			} // 		 if (lstat(dt.c_str(),&dstat))
@@ -6986,7 +6987,7 @@ int paramcl::pruefhyla()
 		systemrueck("sudo sh -c \"V="+varsphylavz+";L=\\$V/log;R=\\$V/recvq;chmod 774 \\$L \\$R;chmod 660 \\$L/seqf \\$R/seqf\"",obverb,oblog);
 		// Archivierung ggf. aktivieren
 		if (!hylalaeuftnicht) {
-			struct stat hfstat;
+			struct stat hfstat={0};
 			if (!lstat("/etc/cron.hourly/hylafax",&hfstat)) {
 				systemrueck("! sudo grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || "
 						"sudo sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax", obverb,oblog);
@@ -7007,7 +7008,7 @@ int paramcl::pruefhyla()
 /*
    long GetFileSize(string filename)
    {
-   struct stat stat_buf;
+   struct stat stat_buf={0};
    int rc = stat(filename.c_str(), &stat_buf);
    return rc ? -1 : stat_buf.st_size;
    } // GetFileSize
@@ -7034,7 +7035,7 @@ void pruefrules(int obverb, int oblog)
 {
   Log(violetts+Tx[T_pruefrules]+schwarz,obverb?obverb-1:0,oblog);
   const char *rulesd="/etc/udev/rules.d/46-FKN_isdn_capi.rules";
-  struct stat entrybuf;
+  struct stat entrybuf={0};
   if (lstat(rulesd, &entrybuf)) { 
     mdatei rules(rulesd,ios::out);
     if (rules.is_open()) {
@@ -7226,8 +7227,8 @@ int paramcl::pruefcapi()
 			// #  define IRQF_DISABLED 0x00
 			// #endif
 			//    capilaeuft=(PIDausName("capisuite")>=0);
-			capilaeuft=this->scapisuite->machfit(obverb?obverb-1:0,oblog,wahr);
-			Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz);
+			capilaeuft=this->scapisuite->machfit(obverb?obverb-1:0,oblog,wahr)&&!ccapiconfdat.empty()&&!cfaxconfdat.empty();
+			Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz,obverb,oblog);
 			if (capilaeuft) {
 				capischonerfolgreichinstalliert=1;
 			} else {
@@ -7255,7 +7256,7 @@ int paramcl::pruefcapi()
 								utsname unbuf;
 								uname(&unbuf);
 								Log(string(Tx[T_Kernelversion])+blau+unbuf.release+schwarz);
-								struct stat entryfc;
+								struct stat entryfc={0};
 								const string fcpciko = string("/lib/modules/")+unbuf.release+"/kernel/extras/fcpci.ko";
 								if (lstat(fcpciko.c_str(), &entryfc)) {
 									::Log(string(Tx[T_Datei])+blau+fcpciko+schwarz+Tx[T_nichtgefFcpciMfdKinstallierwerden],obverb,1);
@@ -7267,7 +7268,7 @@ int paramcl::pruefcapi()
 																	const string versi="fcpci-3.10.0";
 																	const string srcf=string("fritz-")+versi+".tar.bz2";
 																	pruefverz(qvz,obverb,oblog,0);
-																	struct stat entrysrc;
+																	struct stat entrysrc={0};
 																	if (lstat((qvz+vtz+srcf).c_str(),&entrysrc)) KLA
 																	systemrueck(string("cd ")+qvz+";sudo wget https://belug.de/~lutz/pub/fcpci/"+srcf+" --no-check-certificate",1+obverb,oblog);
 																	KLZ
@@ -7293,7 +7294,7 @@ int paramcl::pruefcapi()
 									// in Mint musste man gcc downgraden, um fcpci installieren zu koennen
 									uchar obdown=0;
 									string gccpfad,gpppfad;
-									struct utsname unameD;
+									struct utsname unameD={0};
 									uname(&unameD);
 									const string rel=unameD.release;
 									size_t p1=rel.find('.');
@@ -7428,7 +7429,7 @@ int paramcl::pruefcapi()
 				capischonerfolgreichinstalliert=!linst.obfehlt("capisuite capi4linux i4l-isdnlog");
 				// <<violett<<"capischonerfolgreichinstalliert: "<<schwarz<<(int)capischonerfolgreichinstalliert<<endl;
 				if (capischonerfolgreichinstalliert) {
-					struct stat d1, d2;
+					struct stat d1={0}, d2={0};
 					if (lstat("/etc/capisuite",&d1) && lstat("/usr/local/etc/capisuite",&d2))
 						capischonerfolgreichinstalliert=0;
 				}
@@ -7472,7 +7473,7 @@ int paramcl::pruefcapi()
 						systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' "+string(obverb?"":"2>/dev/null")+"| sort -r",
 								obverb,oblog,&csrueck);
 						if (csrueck.size()) {
-							struct stat c20stat;
+							struct stat c20stat={0};
 							if (lstat((lsys.getlib64()+"/libcapi20.so").c_str(),&c20stat)) {
 								holvomnetz("capi20_copy");
 								kompiliere("capi20_copy",s_gz);
@@ -7642,7 +7643,7 @@ void inDbc(DB *My, const string& spooltab, const string& altspool, const string&
   Log(string(Tx[T_SpoolDatei])+rot+spoolfil+schwarz+"'",obverb,oblog);
   Log(string(Tx[T_SpoolPfad])+rot+spooldir+schwarz+"'",obverb,oblog);
   RS zs(My);
-  struct stat entryspool;
+  struct stat entryspool={0};
   if (!lstat((spoolg.c_str()), &entryspool)) {
     for(int runde=0;runde<2;runde++) {
       if (runde==0) { zs.Abfrage("SET NAMES 'utf8'");
@@ -7688,7 +7689,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
         drot+fsfp->spdf+schwarz+Tx[T_istleerfaxeesdahernicht],1,1);
   } else {
     Log(string(Tx[T_DieFaxnrvon])+drot+fsfp->spdf+schwarz+Tx[T_ist]+blau+fsfp->telnr+schwarz,obverb,oblog);
-    struct stat entryff;
+    struct stat entryff={0};
     const string ff=pmp->wvz+vtz+fsfp->spdf;
     if (lstat(ff.c_str(), &entryff)) {
       Log(rots+Tx[T_faxemitCFehler]+schwarz+Tx[T_Faxdatei]+blau+ff+rot+ Tx[T_fehlt]+schwarz,1,1);
@@ -7742,7 +7743,7 @@ void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp,
   Log(string(Tx[T_SpoolDatei])+rot+spoolfil+schwarz+"'",pmp->obverb,pmp->oblog);
   Log(string(Tx[T_SpoolPfad])+rot+pmp->hsendqvz+schwarz+"'",pmp->obverb,pmp->oblog);
   RS zs(My);
-  struct stat entryspool;
+  struct stat entryspool={0};
   string spoolid;
   if (!lstat(spoolg.c_str(), &entryspool)) {
     for(int runde=0;runde<2;runde++) {
@@ -8159,7 +8160,7 @@ int fsfcl::holcapiprot(int obverb)
   if (p1!=string::npos) {
     const string suchtxt=sendqgespfad.substr(0,p1)+".txt";
     schlArr cconf; cconf.init(3,"tries","starttime","dialstring");
-    struct stat cstat;
+    struct stat cstat={0};
     if (lstat(suchtxt.c_str(),&cstat)) {
       return -2; // .txt-Datei fehlt
     } else {
