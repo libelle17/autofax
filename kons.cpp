@@ -1966,7 +1966,10 @@ int setfaclggf(const string& datei, const binaer obunter, const int mod, uchar o
        }
        if (obimmer) {
           if (obverb) systemrueck("sudo sh -c 'ls -l \""+datei+"\"'",2,0);
-          systemrueck(string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'",obverb,oblog);
+					string sich=base_name(datei)+"."+base_name(meinpfad())+".perm";
+					systemrueck("sudo sh -c 'cd \""+dir_name(datei)+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(datei)+"\">\""+sich+"\"'", obverb,oblog);
+					anfgggf(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'");
+					systemrueck(string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'",obverb,oblog);
           if (obverb) systemrueck("sudo sh -c 'ls -l \""+datei+"\"'",2,0);
        } //        if (obimmer)
       } //       if (obsetfacl)
@@ -2624,8 +2627,10 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 					systemrueck("sudo setenforce 1",obverb,oblog);
 					linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
 					systemrueck("test -f \""+selocal+".pp\" && sudo semodule -i \""+selocal+".pp\"",obverb,oblog);
+					anfgggf(unindt,"sudo semodule -r \""+selocal+".pp\"");
 					if (ename.find("faxgetty")!=string::npos) {
 						systemrueck("sudo semodule -l|grep permissive_getty_t >/dev/null||sudo semanage permissive -a getty_t",obverb,oblog);
+						anfgggf(unindt,"sudo semanage permissive -d getty_t");
 					}
 				}  // if (obse)
 			} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
