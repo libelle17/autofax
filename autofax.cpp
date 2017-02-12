@@ -3741,29 +3741,29 @@ void paramcl::pruefsamba()
   servc smbd("smbd","smbd");
   servc nmb("nmb","nmbd");
   servc nmbd("nmbd","nmbd");
-  if (!smb.obslaeuft(obverb,oblog)) if (!smbd.obslaeuft(obverb,oblog)) dienstzahl--;
-  if (!nmb.obslaeuft(obverb,oblog)) if (!nmbd.obslaeuft(obverb,oblog)) dienstzahl--;
+  if (smb.obsvfeh(obverb,oblog)) if (smbd.obsvfeh(obverb,oblog)) dienstzahl--;
+  if (nmb.obsvfeh(obverb,oblog)) if (nmbd.obsvfeh(obverb,oblog)) dienstzahl--;
   //  <<rot<<"dienstzahl: "<<dienstzahl<<endl;
   if (dienstzahl<2||conffehlt) {
     for(int aru=0;aru<2;aru++) {
       if (aru) {
       } // if (aru) 
-      if (!smb.svefeh) {
+      if (!smb.svfeh) {
         smb.machfit(obverb,oblog);
         gestartet=1;
-      } else if (!smbd.svefeh) {
+      } else if (!smbd.svfeh) {
         smbd.machfit(obverb,oblog);
         gestartet=1;
-      } //       if (!smb.svefeh)
-      if (!nmb.svefeh) {
+      } //       if (!smb.svfeh)
+      if (!nmb.svfeh) {
         nmb.machfit(obverb,oblog);
         if (gestartet==1) gestartet=2;
-      } else if (!nmbd.svefeh) {
+      } else if (!nmbd.svfeh) {
         nmbd.machfit(obverb,oblog);
         if (gestartet==1) gestartet=2;
-      } //       if (!nmb.svefeh)
-      if (!smb.svefeh) if (smb.obslaeuft(obverb,oblog)) if (!nmb.svefeh) if (nmb.obslaeuft(obverb,oblog)) break;
-      if (!smbd.svefeh) if (smbd.obslaeuft(obverb,oblog)) if (!nmbd.svefeh) if (nmbd.obslaeuft(obverb,oblog)) break;
+      } //       if (!nmb.svfeh)
+      if (!smb.svfeh) if (!smb.obsvfeh(obverb,oblog)) if (!nmb.svfeh) if (!nmb.obsvfeh(obverb,oblog)) break;
+      if (!smbd.svfeh) if (!smbd.obsvfeh(obverb,oblog)) if (!nmbd.svfeh) if (!nmbd.obsvfeh(obverb,oblog)) break;
     } // for(int aru=0;aru<2;aru++) 
     //    if (gestartet==2) smbrestart=0;
   } // if (dienstzahl<2 || conffehlt) 
@@ -3861,19 +3861,19 @@ void paramcl::pruefsamba()
       } // if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) 
     } // if (!nrzf)
     if (smbrestart) {
-      if (!smb.svefeh) smb.restart(obverb-1,oblog);
-      else if (!smbd.svefeh) smbd.restart(obverb-1,oblog);
-      if (!nmb.svefeh) nmb.restart(obverb-1,oblog);
-      else if (!nmbd.svefeh) nmbd.restart(obverb-1,oblog);
+      if (!smb.svfeh) smb.restart(obverb-1,oblog);
+      else if (!smbd.svfeh) smbd.restart(obverb-1,oblog);
+      if (!nmb.svfeh) nmb.restart(obverb-1,oblog);
+      else if (!nmbd.svfeh) nmbd.restart(obverb-1,oblog);
     } // if (smbrestart) 
 		// VFS
 		if (linst.pruefipr()==apt) linst.doggfinst("samba-vfs-modules",obverb,oblog);
 		// Firewall(s)
-		uchar obslaueft=0;
+		uchar obslaeuft=0;
 		svec rueckr;
 		systemrueck("systemctl list-units|grep firewall|grep -v init",obverb,oblog,&rueckr);
-		if (rueckr.size()) if (rueckr[0].find("active running")!=string::npos ||rueckr[0].find("active exited")!=string::npos) obslaueft=1;
-		if (obslaueft) {
+		if (rueckr.size()) if (rueckr[0].find("active running")!=string::npos ||rueckr[0].find("active exited")!=string::npos) obslaeuft=1;
+		if (obslaeuft) {
 			// firewall-ports, geht in SUSE und Fedora
 			uchar obzu=0;
 			// udp, udp, tcp, tcp
@@ -3920,7 +3920,7 @@ void paramcl::pruefsamba()
 					} // if (!lstat(susefw,&fstat)) 
 				} // 			  if (system==fed) else 
 			} // obzu
-		} // obslaueft
+		} // obslaeuft
   } //   if (!(conffehlt=lstat(smbdatei,&sstat)))
 } // pruefsamba
 
@@ -6523,7 +6523,7 @@ int paramcl::cservice()
         " && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
         " && { sudo mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true"/*'*/,obverb,oblog);
     // entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
-    csfehler+=!scapisuite->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","","",obverb,oblog);
+    csfehler+=!scapisuite->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","",obverb,oblog);
     if (obverb) Log("csfehler: "+gruens+ltoan(csfehler)+schwarz);
     //    return csfehler;
   } // if (obprogda("capisuite",obverb,oblog,&cspfad)) 
@@ -6539,12 +6539,12 @@ int paramcl::hservice_faxq_hfaxd()
   Log(violetts+"hservice_faxq_hfaxd()"+schwarz);
 	struct stat hstat={0}, fstat={0};
 	if (hfaxdpfad.empty()||lstat(hfaxdpfad.c_str(),&hstat)) { obprogda("hfaxd",obverb,oblog,&hfaxdpfad); }
-  hylafehler+=!shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/, varsphylavz+"/etc/setup.cache", "", "", obverb,oblog);
+  hylafehler+=!shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/, varsphylavz+"/etc/setup.cache", "",obverb,oblog);
   this->shfaxd->machfit(obverb,oblog);
 	if (faxqpfad.empty()||lstat(faxqpfad.c_str(),&fstat)) { obprogda("faxq",obverb,oblog,&faxqpfad); }
-  hylafehler+=!sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D", varsphylavz+"/etc/setup.cache", shfaxd->sname+".service", "",obverb,oblog);
+  hylafehler+=!sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D", varsphylavz+"/etc/setup.cache", shfaxd->sname+".service", obverb,oblog);
 	setzfaxgtpfad();
-	hylafehler+=!this->sfaxgetty->spruef("HylaFAX faxgetty for "+this->hmodem,0,meinname,faxgtpfad+" "+this->hmodem,"","","",obverb,oblog,0);
+	hylafehler+=!this->sfaxgetty->spruef("HylaFAX faxgetty for "+this->hmodem,0,meinname,faxgtpfad+" "+this->hmodem,"","",obverb,oblog,0);
   return hylafehler;
 } // void hservice_faxq_hfaxd()
 
@@ -6693,7 +6693,7 @@ int paramcl::pruefhyla()
 			} // if (hyinstart==hysrc || hyinstart==hyppk) else
 			// 2) deren Existenz, Betrieb und ggf. Startbarkeit pruefen
 			// wenn die richtigen Dienste laufen, dann nichts weiter ueberpruefen ..
-			if ((this->sfaxq->obslaeuft(obverb-1,oblog) && this->shfaxd->obslaeuft(obverb-1,oblog)) /*|| this->shylafaxd->obslaeuft(obverb-1,oblog)*/) {
+			if ((!sfaxq->obsvfeh(obverb-1,oblog) && !shfaxd->obsvfeh(obverb-1,oblog)) /*|| this->shylafaxd->obslaeuft(obverb-1,oblog)*/) {
 				Log(Tx[T_Hylafax_laeuft]);
 				hylalaeuftnicht=0;
 				hylafehlt=0;
@@ -6890,7 +6890,7 @@ int paramcl::pruefhyla()
 			} // if (hylafehlt)
 			int fglaeuftnicht=0;
 			for (uchar iru=0;iru<3;iru++) {
-				if ((fglaeuftnicht=!this->sfaxgetty->obslaeuft(obverb,oblog))) {
+				if ((fglaeuftnicht=sfaxgetty->obsvfeh(obverb,oblog))) {
 					// falls nein, dann schauen, ob startbar
 					if (sfaxgetty->machfit(obverb,oblog)) fglaeuftnicht=0;
 				}
@@ -7595,7 +7595,7 @@ int paramcl::pruefcapi()
 				// das folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
 				//    capilaeuft = !systemrueck("systemctl status capisuite | grep ' active (running)' >/dev/null 2>&1",0,obverb,oblog);
 				//     capilaeuft  = !systemrueck("systemctl is-active capisuite",0,obverb,oblog);
-				capilaeuft = this->scapisuite->obslaeuft(obverb-1,oblog);
+				capilaeuft = !scapisuite->obsvfeh(obverb-1,oblog);
 				if (capilaeuft) {
 					break;
 				} else {

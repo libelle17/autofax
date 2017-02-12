@@ -174,7 +174,6 @@ enum Tkons_
   T_als_Dienst_eingerichtet_von,
   T_Versuch,
   T_machfit,
-  T_obslaeuft,
   T_Loesche_Ausrufezeichen,
   T_Fehler_beim_Loeschen,
   T_nicht_geloescht_war_eh_nicht_mehr_da,
@@ -191,6 +190,17 @@ enum Tkons_
 	T_nicht_einfuegbar,
   T_erneute_Eingabe,
 	T_obsveh,
+	T_laeuft_jetzt,
+	T_Dienst_inexistent,
+	T_Dienstdateiname_nicht_ermittelbar,
+	T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent,
+	T_Exec_Dateiname_nicht_ermittelbar,
+	T_Exec_Datei_fehlt,
+	T_activating,
+	T_Dienst_kann_gestartet_werden,
+	T_Sonstiges,
+	T_Ergebnis_Dienst,
+	T_Dienst_laeuft,
 	T_konsMAX,
 };
 
@@ -655,17 +665,19 @@ class linst_cl
 // Service aus SystemD
 class servc {
 		svec srueck;
+		string systemd; // Dienst-Datei
   public:
-    int servicelaeuft=0, svefeh=1; // serviceda=0;
-    int fehler=0;
+    int svfeh=1; 
+// svfeh=1: Dienst inexistent, 2: Dienstdateiname nicht ermittelbar, 3: Dienst laeuft noch, aber Dienstdatei inexistent
+// svfeh=4: Exec-Datei nicht ermittelbar, 5: Exec-Datei fehlt, 6: activating 7: Dienst kann gestartet werden, 8: Sonstiges
+    int fehler=0; // Exit-Code der Exe-Datei
     string sname,ename; // Dienstname, Exename
     servc(string vsname,string vename): sname((vsname.empty()?vename:vsname)),ename(vename) {}
     servc(string vsname,string vename,int obverb, int oblog);
     // int obda(int obverb,int oblog);
-		int obsvefeh(int obverb,int oblog); // ob service einrichtungs fehler
+		int obsvfeh(int obverb,int oblog); // ob service einrichtungs fehler
 		uchar spruef(const string& sbez,uchar obfork,const string& parent, const string& sexec, const string& CondPath, const string& After, 
-                 const string& wennnicht0, int obverb=0,int oblog=0, uchar mitstarten=1);
-    int obslaeuft(int obverb, int oblog, binaer nureinmal=falsch);
+                 int obverb=0,int oblog=0, uchar mitstarten=1);
     int restart(int obverb, int oblog);
     void start(int obverb, int oblog);
     int startundenable(int obverb, int oblog);
