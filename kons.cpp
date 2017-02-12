@@ -2600,6 +2600,8 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 			//      if (sr1.size()) KLA
 			//       if (sr1[0].find("permission")!=string::npos) KLA
 			string sepfad;
+	Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, 1,oblog);
+	exit(0);
 			if (obprogda("sestatus",obverb,oblog,&sepfad)) {
 				uchar obse=0;
 				svec sr2;
@@ -2703,6 +2705,7 @@ int servc::obsvfeh(int obverb,int oblog) // ob service einrichtungs fehler
 	// svfeh=1: Dienst inexistent, 2: Dienstdatei nicht ermittelbar, 3: Dienst laeuft noch, aber Dienstdatei inexistent
 	// svfeh=4: Exe-Datei nicht ermittelbar, 5: Exe-Datei fehlt, 6: activating 7: Dienst kann gestartet werden, 8: Sonstiges
 {
+	obverb=3;
 	Log(violetts+Txk[T_obsveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
 	srueck.clear();
 	systemrueck("systemctl -a --no-legend list-units '"+sname+".service'",obverb,oblog,&srueck);  // bei list-units return value immer 0
@@ -2726,11 +2729,13 @@ int servc::obsvfeh(int obverb,int oblog) // ob service einrichtungs fehler
 					// Dienst existent, Dienstdatei bekannt und existent, Dienst laeuft aber nicht
 					svec srue2;
 					systemrueck("systemctl -n 0 status '"+sname+"'|grep ExecStart|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srue2);
-					if (srue2.empty()) {
+					if (!srue2.size())
+          systemrueck("sudo cat '"+systemd+"'|grep ExecStart|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srue2);
+					if (!srue2.size()) {
 						svfeh=4; // Exec-Datei nicht ermittelbar
 					} else {
-						if (ename.empty()) ename=srue2[0];
-						if (ename!=srue2[0]) {
+						if (ename.empty()) ename=base_name(srue2[0]);
+						if (ename!=base_name(srue2[0])) {
 							cout<<"Service "<<violett<<sname<<schwarz<<":"<<endl;
 							cout<<rot<<ename<<schwarz<<"!="<<violett<<srue2[0];
 							exit(11);
@@ -2777,7 +2782,10 @@ int servc::obsvfeh(int obverb,int oblog) // ob service einrichtungs fehler
 	} // 	if (!(svfeh=srueck.empty())) 
 	const int sfeh[]={ T_Dienst_laeuft,T_Dienst_inexistent, T_Dienstdateiname_nicht_ermittelbar, T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent,
 		T_Exec_Dateiname_nicht_ermittelbar, T_Exec_Datei_fehlt, T_activating, T_Dienst_kann_gestartet_werden, T_Sonstiges};
+if (sname!="hylafax") { 
 	Log(Txk[T_Ergebnis_Dienst]+blaus+sname+schwarz+": "+gruen+Txk[sfeh[svfeh]],svfeh,oblog);
+	if (svfeh&&svfeh!=7) exit(0);
+	}
 	return svfeh;
 } // int servc::obsvfeh(int obverb,int oblog)
 
