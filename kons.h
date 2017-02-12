@@ -201,6 +201,7 @@ enum Tkons_
 	T_Sonstiges,
 	T_Ergebnis_Dienst,
 	T_Dienst_laeuft,
+	T_Dienst_disabled,
 	T_konsMAX,
 };
 
@@ -664,12 +665,12 @@ class linst_cl
 
 // Service aus SystemD
 class servc {
-		svec srueck;
 		string systemd; // Dienst-Datei
   public:
     int svfeh=1; 
-// svfeh=1: Dienst inexistent, 2: Dienstdateiname nicht ermittelbar, 3: Dienst laeuft noch, aber Dienstdatei inexistent
-// svfeh=4: Exec-Datei nicht ermittelbar, 5: Exec-Datei fehlt, 6: activating 7: Dienst kann gestartet werden, 8: Sonstiges
+		int obenabled=0;
+	// svfeh=1: Dienst inexistent, 2: Dienst 'disabled' 3: Dienstdatei nicht ermittelbar, 4: Dienst laeuft noch, aber Dienstdatei inexistent
+	// svfeh=5: Exe-Datei nicht ermittelbar, 6: Exe-Datei fehlt, 7: activating 8: Dienst kann gestartet werden, 9: Sonstiges
     int fehler=0; // Exit-Code der Exe-Datei
     string sname,ename; // Dienstname, Exename
     servc(string vsname,string vename): sname((vsname.empty()?vename:vsname)),ename(vename) {}

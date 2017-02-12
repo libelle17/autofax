@@ -3748,17 +3748,17 @@ void paramcl::pruefsamba()
     for(int aru=0;aru<2;aru++) {
       if (aru) {
       } // if (aru) 
-      if (!smb.svfeh) {
+      if (smb.svfeh!=1) {
         smb.machfit(obverb,oblog);
         gestartet=1;
-      } else if (!smbd.svfeh) {
+      } else if (smbd.svfeh!=1) {
         smbd.machfit(obverb,oblog);
         gestartet=1;
       } //       if (!smb.svfeh)
-      if (!nmb.svfeh) {
+      if (nmb.svfeh!=1) {
         nmb.machfit(obverb,oblog);
         if (gestartet==1) gestartet=2;
-      } else if (!nmbd.svfeh) {
+      } else if (nmbd.svfeh!=1) {
         nmbd.machfit(obverb,oblog);
         if (gestartet==1) gestartet=2;
       } //       if (!nmb.svfeh)
@@ -3861,10 +3861,10 @@ void paramcl::pruefsamba()
       } // if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) 
     } // if (!nrzf)
     if (smbrestart) {
-      if (!smb.svfeh) smb.restart(obverb-1,oblog);
-      else if (!smbd.svfeh) smbd.restart(obverb-1,oblog);
-      if (!nmb.svfeh) nmb.restart(obverb-1,oblog);
-      else if (!nmbd.svfeh) nmbd.restart(obverb-1,oblog);
+      if (smb.svfeh!=1) smb.restart(obverb-1,oblog);
+      else if (smbd.svfeh!=1) smbd.restart(obverb-1,oblog);
+      if (nmb.svfeh!=1) nmb.restart(obverb-1,oblog);
+      else if (nmbd.svfeh!=1) nmbd.restart(obverb-1,oblog);
     } // if (smbrestart) 
 		// VFS
 		if (linst.pruefipr()==apt) linst.doggfinst("samba-vfs-modules",obverb,oblog);

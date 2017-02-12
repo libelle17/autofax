@@ -226,6 +226,8 @@ const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 	{"Ergebnis Dienst ","result service "},
 	// T_Dienst_laeuft
 	{"Dienst laeuft","service is running"},
+	// T_Dienst_disabled
+	{"Dienst 'disabled'","service disabled"},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 
@@ -2600,9 +2602,9 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 			//      if (sr1.size()) KLA
 			//       if (sr1[0].find("permission")!=string::npos) KLA
 			string sepfad;
+			if (obprogda("sestatus",obverb,oblog,&sepfad)) {
 	Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, 1,oblog);
 	exit(0);
-			if (obprogda("sestatus",obverb,oblog,&sepfad)) {
 				uchar obse=0;
 				svec sr2;
 				systemrueck("sestatus",obverb,oblog,&sr2);
@@ -2632,7 +2634,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 		} // if (!iru && !svfeh && !servicelaeuft) 
 	} // for(int iru=0;iru<2;iru++) 
 	//  if (servicelaeuft)
-	if (!svfeh)
+	if (!svfeh&&!obenabled)
 		enableggf(obverb,oblog);
 	return !svfeh;
 } // int servc::machfit(int obverb,int oblog)
@@ -2691,101 +2693,157 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst.close();
 				systemrueck("sudo systemctl daemon-reload",obverb-1,oblog);
 				anfgggf(unindt,"N="+sname+";C=\"sudo systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-relaod;$C reset-failed;");
+				syst.close();
+				restart(obverb-1,oblog);
 				obsvfeh(obverb-1,oblog);
 			} // if (syst.is_open()) 
 		} // if (!svgibts || !obslaeuft(obverb,oblog)) 
 	} // if (servicelaeuft) else
-	if (!svfeh) { 
+	if (!svfeh&&!obenabled) { 
 		enableggf(obverb,oblog);
 	}
 	return !svfeh;
 } // void servc::spruef() 
 
 int servc::obsvfeh(int obverb,int oblog) // ob service einrichtungs fehler
-	// svfeh=1: Dienst inexistent, 2: Dienstdatei nicht ermittelbar, 3: Dienst laeuft noch, aber Dienstdatei inexistent
-	// svfeh=4: Exe-Datei nicht ermittelbar, 5: Exe-Datei fehlt, 6: activating 7: Dienst kann gestartet werden, 8: Sonstiges
+	// svfeh=1: Dienst inexistent, 2: Dienst 'disabled' 3: Dienstdatei nicht ermittelbar, 4: Dienst laeuft noch, aber Dienstdatei inexistent
+	// svfeh=5: Exe-Datei nicht ermittelbar, 6: Exe-Datei fehlt, 7: activating 8: Dienst kann gestartet werden, 9: Sonstiges
 {
-	obverb=3;
 	Log(violetts+Txk[T_obsveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
-	srueck.clear();
-	systemrueck("systemctl -a --no-legend list-units '"+sname+".service'",obverb,oblog,&srueck);  // bei list-units return value immer 0
-	if (!(svfeh=srueck.empty())) { // svfeh=1 => Dienst inexistent
-		// Dienst existent
-		if (srueck[0].find(sname+".service loaded active running")==string::npos) { // sonst: svfeh=0
-			// Dienst existent, Dienst laeuft aber nicht
-			if (systemd.empty()) {
-				svec srue3;
-				systemrueck("systemctl -n 0 status '"+sname+"' 2>/dev/null|grep Loaded:|cut -d'(' -f2|cut -d';' -f1",obverb,oblog,&srue3);
-				if (srue3.size()) systemd=srue3[0]; // z.B. /etc/systemd/system/abc.service
-			}
-			if (systemd.empty()) {
-				svfeh=2;
+	string sdatei;
+	fehler=0;
+	svec statrueck;
+	svfeh=-1;
+	obenabled=1;
+	for(int iru=0;iru<2;iru++) {
+		systemrueck("systemctl -n 0 status '"+sname+"'",obverb,oblog,&statrueck,1);
+		for(size_t j=0;j<statrueck.size();j++) {
+			const string *sp=&statrueck[j];
+			if (sp->find("Loaded:")!=string::npos) {
+				size_t p2=string::npos,p1=sp->find("("); if (p1!=string::npos) p2=sp->find(";",p1);
+				if (p2!=string::npos) {
+					sdatei=sp->substr(p1+1,p2-p1-1);
+					if (systemd.empty()) systemd=sdatei;
+				}
+				if (sp->find("disabled")!=string::npos) {
+					// svfeh=2; // stoert bei if (!svfeh) enableggf(
+					obenabled=0;
+				} else if (sp->find("not-found")!=string::npos) {
+					svfeh=1;
+				}
+			} else if (sp->find("active (running)")!=string::npos) {
+				svfeh=0;
+			} else if (sp->find("code=exited")!=string::npos) {
+				svfeh=7; // activating, z.B. Exe-Datei bricht ab
+				// z.B.: 'Main PID: 17031 (code=exited, status=255)'
+				// 11.9.16: dann muss selinux angepasst werden
+				size_t gpos=sp->rfind('=');
+				if (gpos<sp->length()-1)
+					fehler=atol(sp->substr(gpos+1).c_str());
+				else 
+					fehler=1;
+			} // if (sp->find("exited")!=string::npos) 
+		} //  									for(size_t j=0;j<statrueck.size();j++)
+		if (svfeh&&!fehler) {
+			// Dienst existent, Dienstdatei bekannt und existent, Exe-Datei bekannt und existent, Dienst laeuft aber nicht
+			perfcl prf(Txk[T_Aktiviere_Dienst]+sname);
+			while (!prf.oberreicht(3)) {}
+			prf.ausgeb();
+		} else {
+			break;
+		} // 									if (!fehler)
+	} // 	for(int iru=0;iru<2;iru++)
+	if (svfeh) {
+		if (sdatei.empty()) {
+			svfeh=3; // Dienstdatei nicht ermittelbar
+		} else {
+			// Dienst existent, Dienstdatei bekannt
+			struct stat svst={0};
+			if ((svfeh=lstat(systemd.c_str(),&svst))) { 
+				svfeh=4; // // Dienst laeuft evtl. noch, aber Dienstdatei inexistent
 			} else {
-				// Dienst existent, Dienstdatei bekannt, Dienst laeuft aber nicht
-				struct stat svst={0};
-				if ((svfeh=lstat(systemd.c_str(),&svst))) { // Dienst laeuft noch, aber Dienstdatei inexistent
-					svfeh=3;
+				// Dienst existent, Dienstdatei bekannt und existent
+				svec srueExe;
+				systemrueck("sudo cat '"+systemd+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe);
+				if (!srueExe.size()) {
+					svfeh=5; // Exec-Datei nicht ermittelbar
 				} else {
-					// Dienst existent, Dienstdatei bekannt und existent, Dienst laeuft aber nicht
-					svec srue2;
-					systemrueck("systemctl -n 0 status '"+sname+"'|grep ExecStart|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srue2);
-					if (!srue2.size())
-          systemrueck("sudo cat '"+systemd+"'|grep ExecStart|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srue2);
-					if (!srue2.size()) {
-						svfeh=4; // Exec-Datei nicht ermittelbar
-					} else {
-						if (ename.empty()) ename=base_name(srue2[0]);
-						if (ename!=base_name(srue2[0])) {
-							cout<<"Service "<<violett<<sname<<schwarz<<":"<<endl;
-							cout<<rot<<ename<<schwarz<<"!="<<violett<<srue2[0];
-							exit(11);
-						}
-						// Dienst existent, Dienstdatei bekannt und existent, Exe-Datei bekannt, Dienst laeuft aber nicht
-						struct stat lst={0};
-						if (lstat(srue2[0].c_str(),&lst)) {
-							svfeh=5; // Exe-Datei fehlt, hier auch: activating
-						} else {// 				if (lstat(srue2.c_str(),&lst))
-							// Dienst existent, Dienstdatei bekannt und existent, Exe-Datei bekannt und existent, Dienst laeuft aber nicht
-							if (srueck[0].find(sname+".service loaded inactive")==string::npos) {
-								if (srueck[0].find(sname+".service loaded activating")==string::npos) {
-									svfeh=7; // loaded failed = Dienst kann evtl. gestartet werden
-								} else {
-									svfeh=6; // activating, z.B. Exe-Datei bricht ab
-									fehler=0;
-									svec statrueck;
-									systemrueck("systemctl -n 0 status '"+sname+"'",obverb,oblog,&statrueck,1);
-									for(size_t j=0;j<statrueck.size();j++) {
-										const string *sp=&statrueck[j];
-										if (sp->find("code=exited")!=string::npos) {
-											// z.B.: 'Main PID: 17031 (code=exited, status=255)'
-											// 11.9.16: dann muss selinux angepasst werden
-											size_t gpos=sp->rfind('=');
-											if (gpos<sp->length()-1)
-												fehler=atol(sp->substr(gpos+1).c_str());
-											else 
-												fehler=1;
-											break;
-										} // if (sp->find("exited")!=string::npos) 
-									} //  									for(size_t j=0;j<statrueck.size();j++)
-									if (!fehler) {
-										perfcl prf(Txk[T_Aktiviere_Dienst]+sname);
-										while (!prf.oberreicht(3)) {}
-										prf.ausgeb();
-									} // 									if (!fehler)
-								} // 								if (srueck[0].find(sname+".service loaded activating")==string::npos) else
-							} // 							if (srueck[0].find(sname+".service loaded inactive")==string::npos)
-						} // 						if (lstat(srue2[0].c_str(),&lst)) else
-					} // 			if (!srue2.empty())
-				} // if ((svfeh=lstat(systemd.c_str(),&svst))) 
-			} // 			if (systemd.empty())
-		} // 		  if (!systemd.empty() && !(svfeh=lstat(systemd.c_str(),&svst)))
-	} // 	if (!(svfeh=srueck.empty())) 
-	const int sfeh[]={ T_Dienst_laeuft,T_Dienst_inexistent, T_Dienstdateiname_nicht_ermittelbar, T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent,
-		T_Exec_Dateiname_nicht_ermittelbar, T_Exec_Datei_fehlt, T_activating, T_Dienst_kann_gestartet_werden, T_Sonstiges};
-if (sname!="hylafax") { 
-	Log(Txk[T_Ergebnis_Dienst]+blaus+sname+schwarz+": "+gruen+Txk[sfeh[svfeh]],svfeh,oblog);
-	if (svfeh&&svfeh!=7) exit(0);
-	}
+					if (ename.empty()) ename=base_name(srueExe[0]); // stimmt z.B. nicht bei /usr/lib/mysql/mysql-systemd-helper
+					// Dienst existent, Dienstdatei bekannt und existent, Exe-Datei bekannt
+					struct stat lst={0};
+					if (lstat(srueExe[0].c_str(),&lst)) {
+						svfeh=6; // Exec-Datei fehlt, hier auch: activating
+					} else {// 				if (lstat(srueExe.c_str(),&lst))
+					  svfeh=8; // Sonstiges
+					} // 						if (lstat(srueExe[0].c_str(),&lst)) else
+				} // 			if (!srueExe.size()) else
+			} // 			if ((svfeh=lstat(systemd.c_str(),&svst))) 
+		} // if (sdatei.empty()) else
+	} // if (svfeh)
+	/*
+		 svec srueck;
+		 systemrueck("systemctl list-unit-files|grep "+sname+".service",obverb,oblog,&srueck);  // 
+		 if (!srueck.size()) KLA
+		 svfeh=1; // Dienst inexistent
+		 KLZ else KLA
+		 if (!(obenabled=(srueck[0].find("enabled")!=string::npos))) KLA
+		 svfeh=2; // Dienst 'disabled'
+		 KLZ
+		 if (systemd.empty()) KLA
+		 svec srue3;
+		 systemrueck("systemctl -n 0 status '"+sname+"' 2>/dev/null|grep Loaded:|cut -d'(' -f2|cut -d';' -f1",obverb,oblog,&srue3);
+		 if (srue3.size()) systemd=srue3[0]; // z.B. /etc/systemd/system/abc.service
+		 KLZ // 					if (systemd.empty())
+		 if (systemd.empty()) KLA
+		 svfeh=3; // Dienstdatei systemd nicht ermittelbar
+		 KLZ else KLA
+	// Dienst existent, Dienstdatei bekannt
+	struct stat svst=KLA0KLZ;
+	if ((svfeh=lstat(systemd.c_str(),&svst))) KLA 
+	svfeh=4; // // Dienst laeuft noch, aber Dienstdatei inexistent
+	KLZ else KLA
+	// Dienst existent, Dienstdatei bekannt und existent
+	svec srueExe;
+	systemrueck("systemctl -n 0 status '"+sname+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe);
+	if (!srueExe.size())
+	systemrueck("sudo cat '"+systemd+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe);
+	if (!srueExe.size()) KLA
+	svfeh=5; // Exec-Datei nicht ermittelbar
+	KLZ else KLA
+	if (ename.empty()) ename=base_name(srueExe[0]); // stimmt z.B. nicht bei /usr/lib/mysql/mysql-systemd-helper
+	// Dienst existent, Dienstdatei bekannt und existent, Exe-Datei bekannt
+	struct stat lst=KLA0KLZ;
+	if (lstat(srueExe[0].c_str(),&lst)) KLA
+	svfeh=6; // Exec-Datei fehlt, hier auch: activating
+	KLZ else KLA// 				if (lstat(srueExe.c_str(),&lst))
+	KLZ // 						if (lstat(srueExe[0].c_str(),&lst)) else
+	KLZ // 			if (!srueExe.size()) else
+	KLZ // if ((svfeh=lstat(systemd.c_str(),&svst)))  else
+	KLZ // 			if (systemd.empty()) else
+	 */
+
+	/* Folgendes wird vielleicht nicht benoetigt, da es bei disabled eh nicht angezeigt wird
+		 srueck.clear;
+		 systemrueck("systemctl -a --no-legend list-units '"+sname+".service'",obverb,oblog,&srueck);  // bei list-units return value immer 0
+		 if (!srueck.empty()) KLA // svfeh=1 => Dienst inexistent
+	// Dienst existent
+	if (srueck[0].find(sname+".service loaded active running")==string::npos) KLA // sonst: svfeh=0
+	// Dienst existent, Dienst laeuft aber nicht
+	if (srueck[0].find(sname+".service loaded inactive")==string::npos) KLA
+	if (srueck[0].find(sname+".service loaded activating")==string::npos) KLA
+	svfeh=8; // loaded failed = Dienst kann evtl. gestartet werden
+	KLZ else KLA
+	KLZ // 								if (srueck[0].find(sname+".service loaded activating")==string::npos) else
+	KLZ // 							if (srueck[0].find(sname+".service loaded inactive")==string::npos)
+	KLZ // 	if (!(svfeh=srueck.empty())) 
+	KLZ // 		if (!(obenabled=(srueck[0].find("enabled")!=string::npos))) else
+	 */
+	const int sfeh[]={ T_Dienst_laeuft,T_Dienst_inexistent, T_Dienst_disabled, T_Dienstdateiname_nicht_ermittelbar, T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent, T_Exec_Dateiname_nicht_ermittelbar, T_Exec_Datei_fehlt, T_activating, T_Dienst_kann_gestartet_werden, T_Sonstiges};
+	if (sname!="hylafax") { 
+		Log(Txk[T_Ergebnis_Dienst]+blaus+sname+schwarz+": "+gruen+Txk[sfeh[svfeh]]+schwarz,svfeh,oblog);
+		if (svfeh&&svfeh!=7&&svfeh!=1) exit(0);
+	} // 	if (sname!="hylafax")
+	obverb=0;
 	return svfeh;
 } // int servc::obsvfeh(int obverb,int oblog)
 
@@ -2873,8 +2931,9 @@ void servc::stopdis(int obverb,int oblog,uchar mitpkill)
 {
 	if (!obsvfeh(obverb,oblog)) {
 		stop(obverb,oblog);
-		systemrueck(string("sudo systemctl disable '")+sname+"'",obverb,oblog,0,2);
 	} // 	if (!obsvfeh(obverb,oblog))
+	if (svfeh!=1&&obenabled)
+		systemrueck(string("sudo systemctl disable '")+sname+"'",obverb,oblog,0,2);
 } // int servc::stop(int obverb,int oblog)
 
 int servc::enableggf(int obverb,int oblog)
