@@ -3825,8 +3825,8 @@ void paramcl::pruefsamba()
 							Sprache altSpr=Tx.lgn;
 							for(int akts=0;akts<Smax;akts++) {
 								Tx.lgn=(Sprache)akts;
-								suchstr=suchstr+"\\["+Tx[T_Gefaxt]+"_\\]";
-								if (k<vzn.size()-1||akts<Smax-1) suchstr+="\\|";
+								suchstr=suchstr+"\\["+Tx[T_Gefaxt]+"_";
+								if (akts<Smax-1) suchstr+="\\|";
 							} //         for(int akts=0;akts<Smax;akts++)
 							Tx.lgn=altSpr;
 						} // 						if (k==4)
@@ -3844,7 +3844,8 @@ void paramcl::pruefsamba()
 					sapp<<"  recycle:repository = Papierkorb"<<endl;
 				} // if (!gef[k]) 
 			} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
-			anfgggf(unindt,"sudo sed -i.vorautofaxbak '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdatei);
+			if (!suchstr.empty())
+				anfgggf(unindt,"sudo sed -i.vorautofax '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdatei);
 		} // if (sapp.is_open()) 
 		if (!nrzf) {
 			if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
@@ -4626,10 +4627,12 @@ int paramcl::pruefocr()
 						"source \""+instvz+"/ocrv/bin/activate\";"
 						"pip3 install ocrmypdf;"
 						"deactivate;"
-						"grep \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\" \""+unindt+"\"||printf \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\\n\">>\""+unindt+"\";"
-						"grep ocrmypdf \""+unindt+"\"||printf \"sudo pip3 uninstall --yes ocrmypdf\\n\">>\""+unindt+"\";"
+//						"grep \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\" \""+unindt+"\"||printf \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\\n\">>\""+unindt+"\";"
+//						"grep ocrmypdf \""+unindt+"\"||printf \"sudo pip3 uninstall --yes ocrmypdf\\n\">>\""+unindt+"\";"
 //						"||sed -i \"/ python3/isudo pip3 uninstall --yes ocrmypdf\" \""+unindt+"\""
 						"'",obverb,oblog);
+						anfgggf(unindt,"sudo rm -rf \""+instvz+"/ocrv\"");
+						anfgggf(unindt,"sudo pip3 uninstall --yes ocrmypdf");
 				// sudo pip3 uninstall --yes ocrmypdf
 				// sudo dnf install ./ghostscript-9.16-4.fc24.i686.rpm
 				//// sudo dnf -y install ghostscript // ghostscript 9.20 geht nicht mit pdf/a und overwrite
@@ -6662,11 +6665,13 @@ int paramcl::pruefhyla()
 				"&& cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . "
 				"&& make"
 				"&& sudo make install"
-				"&&{ grep -q \"cd \\\""+instvz+vtz+proj+"\\\"\" \""+unindt+"\""
-				"|| printf \"cd \\\""+instvz+vtz+proj+"\\\" && cat install_manifest.txt|sudo xargs rm; "
-				  "cd \\\""+instvz+"\\\"\\nsudo rm -f \\\""+nachw+"\\\"\\n\" >> \""+unindt+"\";} "
+//				"&&{ grep -q \"cd \\\""+instvz+vtz+proj+"\\\"\" \""+unindt+"\""
+//				"|| printf \"cd \\\""+instvz+vtz+proj+"\\\" && cat install_manifest.txt|sudo xargs rm; "
+//				  "cd \\\""+instvz+"\\\"\\nsudo rm -f \\\""+nachw+"\\\"\\n\" >> \""+unindt+"\";} "
         ";true'";
 			systemrueck(befehl,obverb,oblog);
+			anfgggf(unindt,"cd \""+instvz+vtz+proj+"\" && cat install_manifest.txt|sudo xargs rm; cd \""+instvz+"\"");
+			anfgggf(unindt,"sudo rm -f \""+nachw+"\"");
 			touch(nachw,obverb,oblog);
 		 }
 
@@ -7140,11 +7145,14 @@ int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const
 		if (!pruefinstv()) {
     return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" "+vorcfg+(ohneconf?nix:" && ./configure ")+cfgbismake+
 				" make && echo $? = "+Tx[T_Ergebnis_nach_make]+" && sudo make install && echo $? = "+Tx[T_Ergebnis_nach_make_install]+
-				"&&{ grep -q \"P="+was+"\" \""+unindt+"\""
-						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P="+was+";cd \\\"\\$A/\\$P\\\" 2>/dev/null"
-						"||cd \\$(find \\\"\\$H\\\" -name \\$P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2) "
-						"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
+//				"&&{ grep -q \"P="+was+"\" \""+unindt+"\""
+//						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P="+was+";cd \\\"\\$A/\\$P\\\" 2>/dev/null"
+//						"||cd \\$(find \\\"\\$H\\\" -name \\$P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2) "
+//						"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
 						"'",obverb,oblog);
+			anfgggf(unindt,"H="+gethome()+";A=$H/"+meinname+";P=i"+was+";cd \"$A/$P\" 2>/dev/null"
+			"|| cd $(find \"$H\" -name $P -printf \"%T@ %p\n\" 2>/dev/null|sort -rn|head -n1|cut -d\" \" -f2)"
+			"&& sudo make uninstall; cd \"$H\"");
 	  }
 		return 1;
 } // int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)

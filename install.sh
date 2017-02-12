@@ -71,7 +71,7 @@ getIPR;
 $SPR make >$DN 2>&1 ||{
 	echo Installing/ Installiere 'make' ....;
   id su >$DN 2>&1 && { su -c "$IPR make;";true;} || sudo $IPR make;
-	grep -q make $AUNF|printf "${UPR}make\n">>$AUNF;
+	grep -q make $AUNF||printf "${UPR}make\n">>$AUNF;
 }
 $SPR make >/dev/null || exit
 # wenn $P schon das aktuelle Verzeichnis ist und wenn es dort einige notwendige Dateien gibt, dann nicht mehr neu runterladen ...

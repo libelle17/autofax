@@ -202,8 +202,8 @@ const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 	{"nicht einfuegbar","not insertable"},
   // T_erneute_Eingabe
   {"erneute Eingabe","once more"},
-	// T_obsveh
-	{"obsveh()","ifsvierr()"},
+	// T_obsvfeh
+	{"obsvfeh()","ifsverr()"},
 	// T_laeuft_jetzt
 	{"laeuft jetzt","is running now"},
 	// T_Dienst_inexistent
@@ -2604,7 +2604,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 			string sepfad;
 			if (obprogda("sestatus",obverb,oblog,&sepfad)) {
 	Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, 1,oblog);
-	exit(0);
+	exit(108);
 				uchar obse=0;
 				svec sr2;
 				systemrueck("sestatus",obverb,oblog,&sr2);
@@ -2709,7 +2709,7 @@ int servc::obsvfeh(int obverb,int oblog) // ob service einrichtungs fehler
 	// svfeh=1: Dienst inexistent, 2: Dienst 'disabled' 3: Dienstdatei nicht ermittelbar, 4: Dienst laeuft noch, aber Dienstdatei inexistent
 	// svfeh=5: Exe-Datei nicht ermittelbar, 6: Exe-Datei fehlt, 7: activating 8: Dienst kann gestartet werden, 9: Sonstiges
 {
-	Log(violetts+Txk[T_obsveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
+	Log(violetts+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
 	string sdatei;
 	fehler=0;
 	svec statrueck;
@@ -2841,9 +2841,7 @@ int servc::obsvfeh(int obverb,int oblog) // ob service einrichtungs fehler
 	const int sfeh[]={ T_Dienst_laeuft,T_Dienst_inexistent, T_Dienst_disabled, T_Dienstdateiname_nicht_ermittelbar, T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent, T_Exec_Dateiname_nicht_ermittelbar, T_Exec_Datei_fehlt, T_activating, T_Dienst_kann_gestartet_werden, T_Sonstiges};
 	if (sname!="hylafax") { 
 		Log(Txk[T_Ergebnis_Dienst]+blaus+sname+schwarz+": "+gruen+Txk[sfeh[svfeh]]+schwarz,svfeh,oblog);
-		if (svfeh&&svfeh!=7&&svfeh!=1) exit(0);
 	} // 	if (sname!="hylafax")
-	obverb=0;
 	return svfeh;
 } // int servc::obsvfeh(int obverb,int oblog)
 

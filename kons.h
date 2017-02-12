@@ -189,7 +189,7 @@ enum Tkons_
 	T_oder_nicht,
 	T_nicht_einfuegbar,
   T_erneute_Eingabe,
-	T_obsveh,
+	T_obsfveh,
 	T_laeuft_jetzt,
 	T_Dienst_inexistent,
 	T_Dienstdateiname_nicht_ermittelbar,
