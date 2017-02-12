@@ -3715,7 +3715,6 @@ void paramcl::pruefsamba()
 {
   Log(violetts+Tx[T_pruefsamba],obverb,oblog);
   const char* const smbdatei="/etc/samba/smb.conf";
-  struct stat sstat={0};
   int gestartet=0;
   uchar conffehlt=1;
   const string quelle="/usr/share/samba/smb.conf";
@@ -3731,7 +3730,8 @@ void paramcl::pruefsamba()
 		} // if (!nrzf) 
 	} // 	if (obsfehlt)
   for(uchar iru=0;iru<2;iru++) {
-    if (!(conffehlt=lstat(smbdatei,&sstat))) break;
+		struct stat sstat={0};
+		if (!(conffehlt=lstat(smbdatei,&sstat))) break;
     if (iru) break;
     pruefverz("/etc/samba",obverb,oblog,0,0);
     kopier(quelle,smbdatei,obverb,oblog);
@@ -3767,7 +3767,8 @@ void paramcl::pruefsamba()
     } // for(int aru=0;aru<2;aru++) 
     //    if (gestartet==2) smbrestart=0;
   } // if (dienstzahl<2 || conffehlt) 
-  if (!(conffehlt=lstat(smbdatei,&sstat))) {
+	struct stat sstat={0};
+	if (!(conffehlt=lstat(smbdatei,&sstat))) {
     confdat smbcf(smbdatei,obverb);
     smbcf.Abschn_auswert(obverb);
     vector<string*> vzn;
@@ -3843,7 +3844,7 @@ void paramcl::pruefsamba()
 					sapp<<"  recycle:repository = Papierkorb"<<endl;
 				} // if (!gef[k]) 
 			} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
-			anfgggf(unindt,"sudo sed -i.vorautofaxbak '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' /etc/samba/smb.conf");
+			anfgggf(unindt,"sudo sed -i.vorautofaxbak '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdatei);
 		} // if (sapp.is_open()) 
 		if (!nrzf) {
 			if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
