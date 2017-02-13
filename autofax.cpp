@@ -3664,31 +3664,38 @@ void paramcl::pruefcron()
 					if (obverb) ::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+Tx[T_unveraendert]+
 							+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
 				} else {
-					cmd="rm -f "+tmpc+";";
+					string unicmd="rm -f "+tmpc+";";
+					cmd=unicmd;
+					string dazu="sudo crontab -l|sed '/"+saufr+"/d'>"+tmpc+";";
+				  unicmd+=dazu;	
 					if (!nochkeincron)
-						cmd="sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+";";
+						cmd=dazu;
 					if (cronzuplanen) {
 						cmd+=" echo \""+cbef+"\">>"+tmpc+";";
 					}
-					cmd+=" sudo crontab "+tmpc+";";
+					dazu=" sudo crontab "+tmpc+";";
+					unicmd=dazu;
+					cmd+=dazu;
 					systemrueck(cmd,obverb,oblog);
+					anfgggf(unindt,unicmd);
 					::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronzuplanen?Tx[T_alle]+cronminut+Tx[T_Minuten]:Tx[T_gar_nicht])+schwarz+Tx[T_statt]+
 							+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
 				} // 				if (cronminut==vorcm) else
 			} // 		if (vorcm.empty() && cronminut=="0")
 #ifdef stumm
+#define uebersichtlich
 #ifdef uebersichtlich
 			string befehl;
 			if (!cronzuplanen) {
 				if (nochkeincron) {
 				} else {
-					befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+"; sudo crontab "+tmpc+")";
+					befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&& (sudo crontab -l|sed '/"+saufr+"/d'>")+tmpc+";sudo crontab "+tmpc+")||true";
 				}
 			} else {
 				if (nochkeincron) {
 					befehl="rm -f "+tmpc+";";
 				} else {
-					befehl="bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+";";
+					befehl="bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)'|| (sudo crontab -l|sed '/"+saufr+"/d'>"+tmpc+";";
 				}
 				befehl+="echo \""+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+"";
 				if (!nochkeincron)
@@ -3741,6 +3748,7 @@ void paramcl::pruefsamba()
   servc smbd("smbd","smbd");
   servc nmb("nmb","nmbd");
   servc nmbd("nmbd","nmbd");
+	  caus<<violett<<"pruefsamba 1"<<schwarz<<endl;
   if (smb.obsvfeh(obverb,oblog)) if (smbd.obsvfeh(obverb,oblog)) dienstzahl--;
   if (nmb.obsvfeh(obverb,oblog)) if (nmbd.obsvfeh(obverb,oblog)) dienstzahl--;
   //  <<rot<<"dienstzahl: "<<dienstzahl<<endl;
@@ -3762,6 +3770,7 @@ void paramcl::pruefsamba()
         nmbd.machfit(obverb,oblog);
         if (gestartet==1) gestartet=2;
       } //       if (!nmb.svfeh)
+	  caus<<violett<<"pruefsamba 2"<<schwarz<<endl;
       if (!smb.svfeh) if (!smb.obsvfeh(obverb,oblog)) if (!nmb.svfeh) if (!nmb.obsvfeh(obverb,oblog)) break;
       if (!smbd.svfeh) if (!smbd.obsvfeh(obverb,oblog)) if (!nmbd.svfeh) if (!nmbd.obsvfeh(obverb,oblog)) break;
     } // for(int aru=0;aru<2;aru++) 
@@ -3899,12 +3908,13 @@ void paramcl::pruefsamba()
 					// fedora:
 					// firewall-cmd --state
 					systemrueck("sudo firewall-cmd --permanent --add-service=samba && sudo firewall-cmd --reload",obverb,oblog);
+					anfgggf(unindt,"sudo firewall-cmd --permanent --remove-service=samba && sudo firewall-cmd --reload");
 					// selinux: // offenbar unnoetig
 				} else {
 					// Suse-Firewall
-					const char *susefw="/etc/sysconfig/SuSEfirewall2";
+					const string susefw="/etc/sysconfig/SuSEfirewall2";
 					struct stat fstat={0};
-					if (!lstat(susefw,&fstat)) {
+					if (!lstat(susefw.c_str(),&fstat)) {
 						string part="server";
 						for(int i=1;i<3;i++) {
 							int nichtfrei=systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+part+"' "+susefw,obverb,oblog,0,2);
@@ -3913,8 +3923,13 @@ void paramcl::pruefsamba()
 								if (!obfw) break;
 							} // 					if (nichtfrei && !nrzf && !obfw)
 							if (nichtfrei && obfw) {
-								systemrueck("sudo sed -i.bak_"+meinname+ltoan(i)+" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
+							  string bak="bak_"+meinname+ltoan(i);
+								struct stat lbak={0};
+								int fehlt=lstat((susefw+"."+bak).c_str(),&lbak);
+								systemrueck("sudo sed -i"+(fehlt?"."+bak:"")+
+								" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
 										" && sudo systemctl restart SuSEfirewall2 smb nmb",obverb,oblog); 
+								anfgggf(unindt,"sudo sh -c 'cp -a \""+susefw+"."+bak+"\" \""+susefw+"\"'&&systemctl restart SuSEfirewall2 smb nmb");
 							} // 					if (nichtfrei && obfw)
 							part="client";
 						} // for(int i=1;i<3;i++) 
@@ -6698,6 +6713,7 @@ int paramcl::pruefhyla()
 			} // if (hyinstart==hysrc || hyinstart==hyppk) else
 			// 2) deren Existenz, Betrieb und ggf. Startbarkeit pruefen
 			// wenn die richtigen Dienste laufen, dann nichts weiter ueberpruefen ..
+	  caus<<violett<<"pruefhyla 1"<<schwarz<<endl;
 			if ((!sfaxq->obsvfeh(obverb-1,oblog) && !shfaxd->obsvfeh(obverb-1,oblog)) /*|| this->shylafaxd->obslaeuft(obverb-1,oblog)*/) {
 				Log(Tx[T_Hylafax_laeuft]);
 				hylalaeuftnicht=0;
@@ -6895,6 +6911,7 @@ int paramcl::pruefhyla()
 			} // if (hylafehlt)
 			int fglaeuftnicht=0;
 			for (uchar iru=0;iru<3;iru++) {
+	  caus<<violett<<"pruefhyla 2"<<schwarz<<endl;
 				if ((fglaeuftnicht=sfaxgetty->obsvfeh(obverb,oblog))) {
 					// falls nein, dann schauen, ob startbar
 					if (sfaxgetty->machfit(obverb,oblog)) fglaeuftnicht=0;
@@ -7096,11 +7113,14 @@ void paramcl::pruefmodcron()
   setztmpc();
   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++) {
     svec rueck;
-    systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)' || "
-        "(sudo crontab -l 2>/dev/null >"+tmpc+"; echo \""+mps[ru]+"\">>"+tmpc+"; sudo crontab "+tmpc+")",obverb,oblog,&rueck);
+    systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'||"
+        "(sudo crontab -l 2>/dev/null >"+tmpc+";echo \""+mps[ru]+"\">>"+tmpc+";sudo crontab "+tmpc+")",obverb,oblog,&rueck);
     for(size_t znr=0;znr<rueck.size();znr++) {
       ::Log(rueck[znr],1+obverb,oblog);
-    }
+			const string befehl="bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'&&"
+				"(sudo crontab -l 2>/dev/null|sed '/"+saufr+"/d'>"+tmpc+";sudo crontab "+tmpc+");true";
+			anfgggf(unindt,befehl);
+		} //     for(size_t znr=0;znr<rueck.size();znr++)
   } //   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++)
 } // void pruefmodcron(int obverb, int oblog)
 
@@ -7603,6 +7623,7 @@ int paramcl::pruefcapi()
 				// das folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
 				//    capilaeuft = !systemrueck("systemctl status capisuite | grep ' active (running)' >/dev/null 2>&1",0,obverb,oblog);
 				//     capilaeuft  = !systemrueck("systemctl is-active capisuite",0,obverb,oblog);
+	  caus<<violett<<"pruefcapi"<<schwarz<<endl;
 				capilaeuft = !scapisuite->obsvfeh(obverb-1,oblog);
 				if (capilaeuft) {
 					break;

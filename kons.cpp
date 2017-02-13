@@ -1989,7 +1989,10 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
         fehler=0;
       }
     } //     if (!lstat(verz.c_str(), &sverz))
-    if (fehler) fehler=systemrueck("mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'",obverb,oblog);
+    if (fehler) {
+		  fehler=systemrueck("mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'",obverb,oblog);
+			anfgggf(unindt,"sudo rmdir '"+verz+"'");
+		}
 //    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
     if (obmitfacl) setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
 		 // <<violett<<verz<<schwarz<<endl;
@@ -2594,6 +2597,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 	Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, obverb,oblog);
 	// ueberpruefen, ob in systemctl status service Datei nach ExecStart existiert
 	for(int iru=0;iru<2;iru++) {
+	  caus<<violett<<"machfit, iru: "<<gruen<<iru<<schwarz<<endl;
 		if (!obsvfeh(obverb,oblog)) {
 			break;
 		} else {
@@ -2649,6 +2653,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
                     int obverb/*=0*/,int oblog/*=0*/, uchar mitstarten/*=1*/)
 {
 	Log(violetts+Txk[T_spruef_sname]+schwarz+sname,obverb,oblog);
+	  caus<<violett<<"spruef"<<schwarz<<endl;
 	if (!obsvfeh(obverb-1,oblog)) {
 		Log(("Service ")+blaus+sname+schwarz+Txk[T_lief_schon],obverb,oblog);
 	} else {
@@ -2700,6 +2705,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				anfgggf(unindt,"N="+sname+";C=\"sudo systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-relaod;$C reset-failed;");
 				syst.close();
 				restart(obverb-1,oblog);
+	  caus<<violett<<"spruef 2"<<schwarz<<endl;
 				obsvfeh(obverb-1,oblog);
 			} // if (syst.is_open()) 
 		} // if (!svgibts || !obslaeuft(obverb,oblog)) 
@@ -2903,6 +2909,7 @@ int servc::restart(int obverb,int oblog)
 {
   for(int i=0;i<2;i++) {
     systemrueck(string("sudo systemctl daemon-reload; sudo systemctl restart '")+sname+"'",obverb,oblog,0,2);
+	  caus<<violett<<"restart, i: "<<gruen<<i<<schwarz<<endl;
     if (!obsvfeh(obverb,oblog)) break;
     if (i) break;
     pkill(obverb,oblog);
@@ -2919,6 +2926,7 @@ int servc::startundenable(int obverb,int oblog)
 {
   start(obverb,oblog);
   enableggf(obverb,oblog);
+	  caus<<violett<<"startundeable"<<schwarz<<endl;
   return !obsvfeh(obverb,oblog);
 } // int servc::start(int obverb,int oblog)
 
@@ -2932,6 +2940,7 @@ void servc::stop(int obverb,int oblog,uchar mitpkill)
 
 void servc::stopdis(int obverb,int oblog,uchar mitpkill)
 {
+	  caus<<violett<<"stopdis"<<schwarz<<endl;
 	if (!obsvfeh(obverb,oblog)) {
 		stop(obverb,oblog);
 	} // 	if (!obsvfeh(obverb,oblog))
