@@ -2604,6 +2604,7 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 			break;
 		} else {
 			restart(obverb,oblog);
+			if (!svfeh) break;
 		}
 		if (!iru && svfeh>5) {
 			//      svec sr1;
