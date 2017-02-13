@@ -7355,7 +7355,7 @@ int paramcl::pruefcapi()
 									const string proj="fcpci_copy";
 									const string srcvz=instvz+vtz+proj+".tar.gz";
 									holvomnetz(proj);
-									const string vorcfg="sudo test -f driver.c.bak || sed -i.bak \"/request_irq/i#if !defined(IRQF_DISABLED)\\n"
+									const string vorcfg="sudo test -f driver.c.bak || sed -i.bak \"/request_irq/i#if \\!defined(IRQF_DISABLED)\\n"
 										"# define IRQF_DISABLED 0x00\\n#endif\" driver.c;"
 										"sudo sed -e '\\''/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>'\\'' "
 										"-e '\\''/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
