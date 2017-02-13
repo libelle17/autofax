@@ -7160,10 +7160,10 @@ int paramcl::kompilbase(const string& was, const string& endg)
   return 1;
 } // int paramcl::kompilbase(string& was,string& endg)
 
-int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
+int paramcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 {
 		if (!pruefinstv()) {
-    return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\"&&"+vorcfg+(ohneconf?nix:" && ./configure ")+cfgbismake+
+    return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\"&&"+(vorcfg.empty()?s_true:vorcfg)+(ohneconf?nix:"&& ./configure ")+cfgbismake+
 				" make && echo $? = "+Tx[T_Ergebnis_nach_make]+" && sudo make install && echo $? = "+Tx[T_Ergebnis_nach_make_install]+
 //				"&&{ grep -q \"P="+was+"\" \""+unindt+"\""
 //						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P="+was+";cd \\\"\\$A/\\$P\\\" 2>/dev/null"
@@ -7173,11 +7173,11 @@ int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const
 			anfgggf(unindt,"H="+gethome()+";A=$H/"+meinname+";P=i"+was+";cd \"$A/$P\" 2>/dev/null"
 			"|| cd $(find \"$H\" -name $P -printf \"%T@ %p\n\" 2>/dev/null|sort -rn|head -n1|cut -d\" \" -f2)"
 			"&& sudo make uninstall; cd \"$H\"");
-	  }
+	  } // 		if (!pruefinstv())
 		return 1;
-} // int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
+} // int paramcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 
-int paramcl::kompiliere(const string& was,const string& endg, const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/)
+int paramcl::kompiliere(const string& was,const string& endg, const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/)
 {
   if (!kompilbase(was,endg)) {
 		return kompilfort(was,vorcfg,cfgbismake);
