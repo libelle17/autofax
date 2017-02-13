@@ -589,7 +589,7 @@ char* curruser()
 } // curruser()
 
 // Achtung: Wegen der Notwendigkeit der Existenz der Datei zum Aufruf von setfacl kann die Datei erstellt werden!
-mdatei::mdatei(const string& name, ios_base::openmode modus,int obverb, int oblog)
+mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_base::out*/,uchar faclbak/*=1*/,int obverb/*=0*/, int oblog/*=0*/)
 {
   for(int iru=0;iru<3;iru++) {
     open(name,modus);
@@ -600,7 +600,7 @@ mdatei::mdatei(const string& name, ios_base::openmode modus,int obverb, int oblo
     //    int erg __attribute__((unused));
     pruefverz(dir_name(name),0,0,0,0);
     if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) {
-      setfaclggf(name,falsch,modus&ios::out?6:4,falsch,obverb,oblog);
+      setfaclggf(name,falsch,modus&ios::out?6:4,falsch,obverb,oblog,faclbak);
     } // if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) 
   } // for(int iru=0;iru<3;iru++) 
 } // mdatei::mdatei (const string& name, ios_base::openmode modus)
@@ -612,7 +612,7 @@ fstream*
 #else
 FILE*
 #endif
-oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog/*=0*/)
+oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog/*=0*/,uchar faclbak/*=1*/)
 {
 #ifdef obfstream	
 	ios_base::openmode mode;
@@ -640,7 +640,7 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 				if ((sdat= fopen(datei.c_str(),mode))) {
 #endif
 					*erfolg=1;
-					setfaclggf(datei,falsch,art?6:4,falsch,obverb,oblog);
+					setfaclggf(datei,falsch,art?6:4,falsch,obverb,oblog,faclbak);
 					break;
 				} 
 				if (!*erfolg) {
@@ -682,12 +682,12 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 	}
 	const string ofil=string(logdatei)+"tmp";
 	int abhier=0;
-	mdatei outfile(ofil,ios::out);
+	mdatei outfile(ofil,ios::out,0);
 	if (!outfile.is_open()) {
 		perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_als_fstream_zum_Schreiben_oeffnen]).c_str());
 		return 1;
 	}
-	mdatei logf(logdatei,ios::in);
+	mdatei logf(logdatei,ios::in,0);
 	if (!logf.is_open()) {
 		perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_als_fstream_zum_Lesen_oeffnen]).c_str());
 		return 1;
@@ -865,7 +865,7 @@ int Log(const string& text, short screen, short file, bool oberr, short klobverb
           //          Log("nach kuerzelogdatei",screen,0);
           erstaufruf=0;
         }	  
-        mdatei logf(logdt,ios::out|ios::app);
+        mdatei logf(logdt,ios::out|ios::app,0);
         if (!logf.is_open()) {
           perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
           return 1;
@@ -1061,8 +1061,8 @@ double progvers(const string& prog,int obverb, int oblog)
 #ifdef notwendig
 void kopierm(string *quelle, string *ziel)
 {
-  mdatei fileIn(quelle->c_str(),ios::in|ios::binary);
-  mdatei fileOut(ziel->c_str(),ios::out | ios::trunc | ios::binary);
+  mdatei fileIn(quelle->c_str(),ios::in|ios::binary,0);
+  mdatei fileOut(ziel->c_str(),ios::out | ios::trunc | ios::binary,0);
   fileOut<<fileIn.rdbuf();
 } // void kopierm(string *quelle, string *ziel)
 #endif
@@ -1947,7 +1947,7 @@ void pruefmehrfach(const string& wen)
 // <datei> kann auch Verzeichnis sein
 // obunter = mit allen Unterverzeichnissen
 // obimmer = immer setzen, sonst nur, falls mit getfacl fuer datei Berechtigung fehlt (wichtig fuer Unterverzeichnisse)
-int setfaclggf(const string& datei, const binaer obunter, const int mod, uchar obimmer,int obverb, int oblog)
+int setfaclggf(const string& datei,const binaer obunter,const int mod/*=4*/,uchar obimmer/*=0*/,int obverb/*=0*/,int oblog/*=0*/,uchar faclbak/*=1*/)
 {
   static const string cuser=curruser(); 
   if (cuser!="root") {
@@ -1966,9 +1966,11 @@ int setfaclggf(const string& datei, const binaer obunter, const int mod, uchar o
        }
        if (obimmer) {
           if (obverb) systemrueck("sudo sh -c 'ls -l \""+datei+"\"'",2,0);
-					string sich=base_name(datei)+"."+base_name(meinpfad())+".perm";
-					systemrueck("sudo sh -c 'cd \""+dir_name(datei)+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(datei)+"\">\""+sich+"\"'", obverb,oblog);
-					anfgggf(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'");
+					if (faclbak) {
+						string sich=base_name(datei)+"."+base_name(meinpfad())+".perm";
+						systemrueck("sudo sh -c 'cd \""+dir_name(datei)+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(datei)+"\">\""+sich+"\"'",obverb,oblog);
+						anfgggf(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'");
+					}
 					systemrueck(string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'",obverb,oblog);
           if (obverb) systemrueck("sudo sh -c 'ls -l \""+datei+"\"'",2,0);
        } //        if (obimmer)
@@ -2504,7 +2506,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 void anfgggf(string datei, string inhalt)
 {
 	uchar obda=0;
-	mdatei uni0(datei,ios::in);
+	mdatei uni0(datei,ios::in,0);
 	if (uni0.is_open()) {
 		string zeile;
 		while (getline(uni0,zeile)) {
@@ -2515,7 +2517,7 @@ void anfgggf(string datei, string inhalt)
 		} // 					while (getline(uni0,zeile))
 	} // 				if (uni0.is_open())
 	if (!obda) {
-		mdatei uniff(datei,ios::app);
+		mdatei uniff(datei,ios::app,0);
 		if (uniff.is_open()) {
 			uniff<<inhalt<<endl; 
 		} else {
@@ -2979,7 +2981,7 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
       if ((erg=remove(zuloe.c_str()))) {
         if(cuser.empty()) iru++;
         if(iru==1) {
-          setfaclggf(zuloe, falsch, 6, falsch,obverb,oblog);
+          setfaclggf(zuloe, falsch, 6, falsch,obverb,oblog,0);
         } else {
           if (errno) if (errno!=13) perror((string(Txk[T_Fehler_beim_Loeschen])+" "+ltoan(errno)).c_str()); // Permission denied
           const string cmd=string("sudo rm -rf \"")+zuloe+"\"";

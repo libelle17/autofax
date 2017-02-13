@@ -2693,7 +2693,7 @@ void paramcl::lieskonfein()
   zschl[2].setze(&tagesaufr);
 	monatsaufr++;
   zschl[3].setze(&monatsaufr);
-  mdatei f(zaehlerdatei,ios::out);
+  mdatei f(zaehlerdatei,ios::out,0);
 	if (f.is_open()) {
      zschl.aschreib(&f);
 	}
@@ -3492,7 +3492,7 @@ void paramcl::konfcapi()
     if (f.is_open()) {
       if (iru) {
         neudatei=cfaxconfdat+"_neu";
-        fneu=new mdatei(neudatei,ios::out);
+        fneu=new mdatei(neudatei,ios::out,0);
         if (!fneu->is_open()) break;
       } // if (iru)
       while(f.is_open() && getline(f,zeile)) {
@@ -5742,7 +5742,7 @@ int paramcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct sta
 			} // if (elogp)
 		} // if (tmp)
 		setfaclggf(dir_name(datei),falsch,7,falsch,obverb,oblog);
-		setfaclggf(datei,falsch,4,falsch,obverb,oblog);
+		setfaclggf(datei,falsch,4,falsch,obverb,oblog,0);
 		if (TIFF* tif = TIFFOpen(datei.c_str(), "r")) {
 			erg=0;
 			char *rdesc=0;

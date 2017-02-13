@@ -253,7 +253,7 @@ class mdatei: public fstream
 {
   public:
   int oboffen=0;
-  mdatei (const string& filename, ios_base::openmode mode = ios_base::in | ios_base::out, int obverb=0, int oblog=0);
+  mdatei(const string& filename, ios_base::openmode mode=ios_base::in|ios_base::out, uchar faclbak=1, int obverb=0, int oblog=0);
 };
 
 inline string zustr(int _Val) {
@@ -612,7 +612,7 @@ int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *r
                 int verbergen=0, int obergebnisanzeig=wahr, const string& ueberschr="",vector<errmsgcl> *errm=0,uchar obincron=0);
 void pruefplatte();
 void pruefmehrfach(const string& wen=nix);
-int setfaclggf(const string& datei, const binaer obunter=falsch, const int mod=4, uchar obimmer=0,int obverb=0,int oblog=0);
+int setfaclggf(const string& datei, const binaer obunter=falsch, const int mod=4, uchar obimmer=0,int obverb=0,int oblog=0,uchar faclbak=0);
 int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=1, uchar obmitcon=1);
 string aktprogverz();
 char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
@@ -638,7 +638,7 @@ fstream*
 #else
 FILE*
 #endif
-oeffne(const string& datei, uchar art, uchar* erfolg,int obverb=0, int oblog=0);
+oeffne(const string& datei, uchar art, uchar* erfolg,uchar faclbak=1,int obverb=0, int oblog=0);
 #endif
 
 class linst_cl
