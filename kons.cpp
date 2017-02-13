@@ -2762,7 +2762,7 @@ int servc::obsvfeh(int obverb,int oblog) // ob service einrichtungs fehler
 			// Dienst existent, Dienstdatei bekannt und existent, Exe-Datei bekannt und existent, Dienst laeuft aber nicht
 			perfcl prf(Txk[T_Aktiviere_Dienst]+sname);
 			while (!prf.oberreicht(3)) {}
-			prf.ausgeb();
+			if (obverb) prf.ausgeb();
 		} else {
 			break;
 		} // 									if (!fehler)
