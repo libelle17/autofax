@@ -1784,7 +1784,7 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
     if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
     if (!rins.fnr) break;
     if (runde==1) {
-      Log(string(Tx[T_Fehler_af])+drot+ltoan(rins.fnr)+schwarz+Tx[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,oblog);
+      Log(string(Tx[T_Fehler_af])+drot+ltoan(rins.fnr)+schwarz+Tx[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,obverb+1,oblog);
       exit(10);
     } //     if (runde==1)
   } // for(int runde=0;runde<2;runde++) 
@@ -3674,7 +3674,7 @@ void paramcl::pruefcron()
 						cmd+=" echo \""+cbef+"\">>"+tmpc+";";
 					}
 					dazu=" sudo crontab "+tmpc+";";
-					unicmd=dazu;
+					unicmd+=dazu;
 					cmd+=dazu;
 					systemrueck(cmd,obverb,oblog);
 					anfgggf(unindt,unicmd);
@@ -6769,7 +6769,7 @@ int paramcl::pruefhyla()
 								"&& echo $? = Ergebnis nach faxsetup -nointeractive"
 								"&& sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
 								"&& sudo systemctl daemon-reload && echo $? = Ergebnis nach sudo systemctl daemon-reload; true;'";
-							systemrueck(nachcfg,2,oblog);
+							systemrueck(nachcfg,obverb+1,oblog);
 						  mdatei confc(instvz+vtz+was+vtz+"config.cache");
 							if (confc.is_open()) {
 								string zeile;
