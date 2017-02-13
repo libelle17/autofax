@@ -7163,7 +7163,7 @@ int paramcl::kompilbase(const string& was, const string& endg)
 int paramcl::kompilfort(const string& was,const string& vorcfg/*=s_true*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 {
 		if (!pruefinstv()) {
-    return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\" "+vorcfg+(ohneconf?nix:" && ./configure ")+cfgbismake+
+    return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\"&&"+vorcfg+(ohneconf?nix:" && ./configure ")+cfgbismake+
 				" make && echo $? = "+Tx[T_Ergebnis_nach_make]+" && sudo make install && echo $? = "+Tx[T_Ergebnis_nach_make_install]+
 //				"&&{ grep -q \"P="+was+"\" \""+unindt+"\""
 //						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P="+was+";cd \\\"\\$A/\\$P\\\" 2>/dev/null"
