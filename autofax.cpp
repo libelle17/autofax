@@ -4620,7 +4620,7 @@ int paramcl::pruefocr()
 		ocrmp=virtvz+"/bin/ocrmypdf";
 		if (!lstat(ocrmp.c_str(),&ostat))
 //		if (obprogda("ocrmypdf",obverb,oblog)) 
-			if (progvers("ocrmypdf",obverb,oblog)>4.40) 
+			if (progvers(ocrmp,obverb,oblog)>4.40) 
 				ocrzuinst=0;
 		if (ocrzuinst) {
 			if (linst.pruefipr()==dnf||linst.pruefipr()==yum||linst.pruefipr()==zypper||linst.pruefipr()==apt) {
