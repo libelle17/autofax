@@ -1193,6 +1193,8 @@ betrsys pruefos()
 // erg=1: gibt es fuer den aktuellen Benutzer; erg=2: gibt es fuer root; erg=0: nicht gefunden
 int obprogda(const string& prog,int obverb, int oblog, string *pfad/*=0*/)
 {
+  if (prog.empty())
+	  return 0;
   for(int iru=0;iru<6;iru++) {
     struct stat fstat={0};
     string verz;
@@ -2631,15 +2633,19 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 					systemrueck("sudo setenforce 0",obverb,oblog);
 					restart(obverb,oblog);
 					const string selocal=sname+"_selocal";
-					systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+selocal+"\"",obverb,oblog);
+					systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+instvz+vtz+selocal+"\"",obverb,oblog);
 					systemrueck("sudo setenforce 1",obverb,oblog);
-					linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
-					systemrueck("test -f \""+selocal+".pp\" && sudo semodule -i \""+selocal+".pp\"",obverb,oblog);
-					anfgggf(unindt,"sudo semodule -r \""+selocal+".pp\"");
-					if (ename.find("faxgetty")!=string::npos) {
-						systemrueck("sudo semodule -l|grep permissive_getty_t >/dev/null||sudo semanage permissive -a getty_t",obverb,oblog);
-						anfgggf(unindt,"sudo semanage permissive -d getty_t");
-					}
+					struct stat sstat={0};
+					const string mod=instvz+vtz+selocal+".pp";
+					if (!lstat(mod.c_str(),&sstat)) {
+						linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
+						systemrueck("sudo semodule -i \""+mod+"\"",obverb,oblog);
+						anfgggf(unindt,"sudo semodule -r \""+mod+"\"");
+						if (ename.find("faxgetty")!=string::npos) {
+							systemrueck("sudo semodule -l|grep permissive_getty_t >/dev/null||sudo semanage permissive -a getty_t",obverb,oblog);
+							anfgggf(unindt,"sudo semanage permissive -d getty_t");
+						}
+					} // 					if (!lstat((instvz+vtz+selocal+".pp").c_str(),&sstat)
 				}  // if (obse)
 			} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
 			//       KLZ

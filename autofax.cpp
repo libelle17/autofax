@@ -4585,7 +4585,7 @@ void paramcl::pruefunpaper()
 // verwendet in empfarch() (2x) und DateienHerricht() (2x)
 int paramcl::pruefocr()
 {
-	Log(violetts+Tx[T_pruefocr]+schwarz);
+	Log(violetts+Tx[T_pruefocr]+schwarz,obverb,oblog);
 	if (!obocrgeprueft) {
 		uchar tda=0, deuda=0, engda=0, osdda=0;
 		systemrueck("sudo ldconfig "+lsys.getlib64(),obverb,oblog);
@@ -4707,7 +4707,10 @@ int paramcl::pruefocr()
 #endif
 			} // if (linst.pruefipr()==dnf)
 		} //     		if (ocrzuinst)
-		unpaperfuercron();
+		string prog;
+		if (obprogda(ocrmp,obverb,oblog,&prog)) {
+			unpaperfuercron();
+		} //  if (obprogda(ocr,obverb,oblog,&prog))
 		obocrgeprueft=1;
 	} // if (!obocrgeprueft) 
 	return 0;
@@ -4716,23 +4719,21 @@ int paramcl::pruefocr()
 // ocrmypdf laueft z.T. nicht aus einam Programm, das aus cron aufgerufen wird, wenn sich nicht im selben Verzeichnis unpaper findet
 void paramcl::unpaperfuercron()
 {
- const string ocr="ocrmypdf", unp="unpaper";
- string prog;
- if (obprogda(ocr,obverb,oblog,&prog)) {
+	const string unp="unpaper";
+	string prog;
 	const string uppfad=dir_name(prog)+"/"+unp;
 	struct stat lst={0};
 	if (lstat(uppfad.c_str(),&lst)) {
-	 if (obprogda(unp,obverb,oblog,&prog)) {
-	  systemrueck("sudo ln -s '"+prog+"' '"+uppfad+"'",obverb,oblog);
-	 } // 	 if (obprogda(unp,obverb,oblog,&prog))
+		if (obprogda(unp,obverb,oblog,&prog)) {
+			systemrueck("sudo ln -s '"+prog+"' '"+uppfad+"'",obverb,oblog);
+		} // 	 if (obprogda(unp,obverb,oblog,&prog))
 	} // 	if (lstat(uppfad.c_str(),&lst))
- } //  if (obprogda(ocr,obverb,oblog,&prog))
 } // void paramcl::unpaperfuercron()
 
 // in Dateinherricht und empfarch (2x)
 int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/, const int obocr/*=1*/, const int loeschen/*=1*/) // 0=Erfolg
 {
-	Log(violetts+Tx[T_zupdf]+schwarz+" '"+blau+*quellp+schwarz+"' '"+blau+ziel+schwarz+"'");
+	Log(violetts+Tx[T_zupdf]+schwarz+" '"+blau+*quellp+schwarz+"' '"+blau+ziel+schwarz+"'",obverb,oblog);
 	int erg=1;
 	string stamm,exten; // , *quellp=&quell;
 	getstammext(quellp,&stamm,&exten);
