@@ -1195,10 +1195,11 @@ int obprogda(const string& prog,int obverb, int oblog, string *pfad/*=0*/)
 {
   if (prog.empty())
 	  return 0;
-  for(int iru=0;iru<6;iru++) {
+	const int maxz=8;
+  for(int iru=0;iru<maxz;iru++) {
     struct stat fstat={0};
     string verz;
-		if (prog[0]=='/') iru=6; // z.B. /root/autofax/ocrv/bin/ocrmypdf
+		if (prog[0]=='/') iru=maxz; // z.B. /root/autofax/ocrv/bin/ocrmypdf
     switch (iru) {
       case 0: verz="/usr/local/bin/"; break;
       case 1: verz="/usr/bin/"; break;
@@ -1206,6 +1207,8 @@ int obprogda(const string& prog,int obverb, int oblog, string *pfad/*=0*/)
       case 3: verz="/usr/sbin/"; break;
       case 4: verz="/sbin/"; break;
       case 5: verz="/bin/"; break;
+			case 6: verz="/usr/libexec"; break;
+			case 7: verz="/run"; break;
       default: break;
     } //     switch (iru)
     verz+=prog;
