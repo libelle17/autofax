@@ -4614,7 +4614,12 @@ int paramcl::pruefocr()
 		linst.doggfinst("qpdf");
 		// uchar alt=0;
 		uchar ocrzuinst=1;
-		if (obprogda("ocrmypdf",obverb,oblog)) 
+		// zu tun: pruefen statt dessen ~/autofax/ocrv/bin/ocrmypdf
+		struct stat ostat={0};
+		virtvz=instvz+"/ocrv";
+		ocrmp=virtvz+"/bin/ocrmypdf";
+		if (!lstat(ocrmp.c_str(),&ostat))
+//		if (obprogda("ocrmypdf",obverb,oblog)) 
 			if (progvers("ocrmypdf",obverb,oblog)>4.40) 
 				ocrzuinst=0;
 		if (ocrzuinst) {
@@ -4637,17 +4642,22 @@ int paramcl::pruefocr()
 				// python3 -m venv --upgrade ocrvenv
 				// source ocrvenv/bin/activate
 				// sudo pip3 install ocrmypdf
-				systemrueck("sudo sh -c 'python3 -m venv \""+instvz+"/ocrv\";"
-						"python3 -m venv --upgrade \""+instvz+"/ocrv\";"
-						"source \""+instvz+"/ocrv/bin/activate\";"
+				systemrueck("sudo sh -c 'python3 -m venv \""+virtvz+"\";"
+						"python3 -m venv --upgrade \""+virtvz+"\";"
+						"source \""+virtvz+"/bin/activate\";"
+						"pip3 install --upgrade pip;"
 						"pip3 install ocrmypdf;"
 						"deactivate;"
-//						"grep \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\" \""+unindt+"\"||printf \"sudo rm -rf \\\""+instvz+"/ocrv\\\"\\n\">>\""+unindt+"\";"
+//						"grep \"sudo rm -rf \\\""+virtvz+"\\\"\" \""+unindt+"\"||printf \"sudo rm -rf \\\""+virtvz+"\\\"\\n\">>\""+unindt+"\";"
 //						"grep ocrmypdf \""+unindt+"\"||printf \"sudo pip3 uninstall --yes ocrmypdf\\n\">>\""+unindt+"\";"
 //						"||sed -i \"/ python3/isudo pip3 uninstall --yes ocrmypdf\" \""+unindt+"\""
 						"'",obverb,oblog);
-						anfgggf(unindt,"sudo rm -rf \""+instvz+"/ocrv\"");
-						anfgggf(unindt,"sudo pip3 uninstall --yes ocrmypdf");
+						anfgggf(unindt,"sudo rm -rf \""+virtvz+"\"");
+						anfgggf(unindt,
+						"sudo sh -c 'source \""+virtvz+"/bin/activate\";"
+						"sudo pip3 uninstall --yes ocrmypdf;"
+						"deactivate;'");
+						
 				// sudo pip3 uninstall --yes ocrmypdf
 				// sudo dnf install ./ghostscript-9.16-4.fc24.i686.rpm
 				//// sudo dnf -y install ghostscript // ghostscript 9.20 geht nicht mit pdf/a und overwrite
@@ -4733,7 +4743,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 			if (obocr) {
 				if (!pruefocr()) {
 				  svec rueck;
-					string cmd=string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*lqp+"\" \""+ziel+"\" 2>&1";
+					string cmd=string(ocrmp+" -rcsl ")+(langu=="d"?"deu":"eng")+" \""+*lqp+"\" \""+ziel+"\" 2>&1";
 					int zerg=systemrueck(cmd,obverb,oblog,&rueck,0,wahr,"",0,1);
 					if (zerg==5) zerg=systemrueck("sudo "+cmd,obverb,oblog,&rueck,0,wahr,"",0,1); // kein Schreibrecht im Verzeichnis
 					if (!zerg) {
@@ -5058,7 +5068,7 @@ void paramcl::DateienHerricht()
 						struct utimbuf ubuf={0};
 						ubuf.actime=ubuf.modtime=spdfstat.st_mtime;
 						if (!pruefocr()) {
-							string cmd=string("ocrmypdf -rcsl ")+(langu=="d"?"deu":"eng")+" \""+spdfd.at(i)+"\" \""+spdfd.at(i)+"\""
+							string cmd=string(ocrmp+" -rcsl ")+(langu=="d"?"deu":"eng")+" \""+spdfd.at(i)+"\" \""+spdfd.at(i)+"\""
 																" && chmod +r \""+spdfd.at(i)+"\"";
 							int zerg=systemrueck(cmd,obverb,oblog);
 							if (zerg==5) zerg=systemrueck("sudo "+cmd,obverb,oblog); // kein Schreibrecht im Verzeichnis

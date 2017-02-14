@@ -1054,7 +1054,7 @@ double progvers(const string& prog,int obverb, int oblog)
 		svec urueck;
 		systemrueck(pfad+" --version",obverb,oblog,&urueck);
 		if (urueck.size()) vers=verszuzahl(urueck[0].c_str());
-	}
+	} // 	if (obprogda(prog,obverb,oblog,&pfad))
 	return vers;
 } // double progvers(string prog,int obverb, int oblog)
 
@@ -1191,11 +1191,12 @@ betrsys pruefos()
 */
 
 // erg=1: gibt es fuer den aktuellen Benutzer; erg=2: gibt es fuer root; erg=0: nicht gefunden
-int obprogda(string prog,int obverb, int oblog, string *pfad/*=0*/)
+int obprogda(const string& prog,int obverb, int oblog, string *pfad/*=0*/)
 {
   for(int iru=0;iru<6;iru++) {
     struct stat fstat={0};
     string verz;
+		if (prog[0]=='/') iru=6; // z.B. /root/autofax/ocrv/bin/ocrmypdf
     switch (iru) {
       case 0: verz="/usr/local/bin/"; break;
       case 1: verz="/usr/bin/"; break;

@@ -305,6 +305,8 @@ class paramcl // Programmparameter
     servc *sfaxq=0, *shfaxd=0, *shylafaxd=0, *sfaxgetty=0, *scapisuite=0;
     string modconfdat; // hylafax-Konfigurationsdatei, z.B. /var/spool/hylafax/etc/config.ttyACM0
     confdat *cfaxcp=0; // Zeiger auf ausgelesene /etc/capisuite/fax.conf
+		string virtvz; //	instvz+"/ocrv";
+	  string ocrmp; //	virtvz+"/bin/ocrmypdf";
 
   private:
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen

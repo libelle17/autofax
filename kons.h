@@ -449,7 +449,7 @@ class lsyscl
 
 // enum betrsys {keins,suse,ubuntu,fedora};
 // betrsys pruefos();
-int obprogda(string prog,int obverb, int oblog, string *pfad=0);
+int obprogda(const string& prog,int obverb, int oblog, string *pfad=0);
 enum instprog {keinp,zypper,apt,dnf,yum};
 string gethome();
 

@@ -232,6 +232,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 	passwd=ppasswd;
 	uchar installiert=0;
 	uchar datadirda=0;
+	const string mysql="mysql", mysqld="mysqld";
 	switch (DBS) {
 		case MySQL:
 #ifdef linux
@@ -244,26 +245,26 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 					break;
 				default: break;
 			} //       switch (linst.pruefipr())
-			if (!dbsv) dbsv=new servc(db_systemctl_name,"mysqld",obverb,oblog);
+			if (!dbsv) dbsv=new servc(db_systemctl_name,mysqld,obverb,oblog);
 			if (!oisok) {
 				// schauen, ob die Exe-Datei da ist 
 				for (int iru=0;iru<2;iru++) {
 					installiert=1;
 					// wenn nicht gefunden ...
-					if (!obprogda("mysqld",obverb,oblog)) {
+					if (!obprogda(mysqld,obverb,oblog)) {
 						svec frueck;
 						// .. und auch hier nicht gefunden ...
-						systemrueck("find /usr/sbin /usr/bin /usr/libexec -executable -size +1M -name mysqld",obverb,oblog, &frueck);
+						systemrueck("find /usr/sbin /usr/bin /usr/libexec -executable -size +1M -name "+mysqld,obverb,oblog, &frueck);
 						if (!frueck.size()) 
 							// .. dann wohl nicht installiert
 							installiert=0;
 					} //           if (!obprogda("mysqld",obverb,oblog))
 					if (installiert) {
-						if (!obprogda("mysql",obverb,oblog))
+						if (!obprogda(mysql,obverb,oblog))
 							installiert=0;
-						else if (systemrueck("grep \"^mysql:\" /etc/passwd",obverb,oblog))
+						else if (systemrueck("grep \"^"+mysql+":\" /etc/passwd",obverb,oblog))
 							installiert=0;
-						else if (systemrueck("mysql -V",obverb,oblog))
+						else if (systemrueck(mysql+" -V",obverb,oblog))
 							installiert=0;
 					} //           if (installiert)
 					if (installiert) break;
