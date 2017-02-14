@@ -2747,7 +2747,9 @@ int servc::obsvfeh(int obverb,int oblog) // ob service einrichtungs fehler
 				}
 			} else if (sp->find("active (running)")!=string::npos) {
 				svfeh=0;
-			} else if (sp->find("code=exited")!=string::npos) {
+				break;
+			 // z.B.: Process: 10126 ExecStartPre=/usr/share/samba/update-apparmor-samba-profile (code=exited, status=0/SUCCESS)
+			} else if (svfeh && sp->find("code=exited")!=string::npos) {
 				svfeh=7; // activating, z.B. Exe-Datei bricht ab
 				// z.B.: 'Main PID: 17031 (code=exited, status=255)'
 				// 11.9.16: dann muss selinux angepasst werden
