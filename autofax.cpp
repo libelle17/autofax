@@ -3720,7 +3720,7 @@ void paramcl::pruefcron()
 // wird aufgerufen in: main
 void paramcl::pruefsamba()
 {
-  Log(violetts+Tx[T_pruefsamba],obverb,oblog);
+  Log(violetts+Tx[T_pruefsamba]);
   const char* const smbdatei="/etc/samba/smb.conf";
   int gestartet=0;
   uchar conffehlt=1;
@@ -4583,7 +4583,7 @@ void paramcl::pruefunpaper()
 // verwendet in empfarch() (2x) und DateienHerricht() (2x)
 int paramcl::pruefocr()
 {
-	Log(violetts+Tx[T_pruefocr]+schwarz,obverb,oblog);
+	Log(violetts+Tx[T_pruefocr]+schwarz);
 	if (!obocrgeprueft) {
 		uchar tda=0, deuda=0, engda=0, osdda=0;
 		systemrueck("sudo ldconfig "+lsys.getlib64(),obverb,oblog);
@@ -4640,16 +4640,31 @@ int paramcl::pruefocr()
 				// python3 -m venv --upgrade ocrvenv
 				// source ocrvenv/bin/activate
 				// sudo pip3 install ocrmypdf
-				systemrueck("sudo sh -c 'python3 -m venv \""+virtvz+"\";"
-						"python3 -m venv --upgrade \""+virtvz+"\";"
-						"source \""+virtvz+"/bin/activate\";"
-						"pip3 install --upgrade pip;"
-						"pip3 install ocrmypdf;"
-						"deactivate;"
+				string prog;
+				for(int iru=0;iru<2;iru++) {
+					const string virtualenv="virtualenv";
+					if (obprogda(virtualenv,obverb,oblog,&prog)) break;
+					systemrueck("pip3 install "+virtualenv,obverb,oblog);
+				}
+				if (!prog.empty()) {
+					systemrueck("sudo sh -c '"+prog+" \""+virtvz+"\";"
+							"source \""+virtvz+"/bin/activate\";"
+							"pip3 install requests;"
+							"pip3 install --upgrade ocrmypdf;"
+							"deactivate;"
+							"'",obverb,oblog);
+				} else {
+					systemrueck("sudo sh -c 'python3 -m venv \""+virtvz+"\";"
+							"python3 -m venv --upgrade \""+virtvz+"\";"
+							"source \""+virtvz+"/bin/activate\";"
+							"pip3 install --upgrade pip;"
+							"pip3 install ocrmypdf;"
+							"deactivate;"
 //						"grep \"sudo rm -rf \\\""+virtvz+"\\\"\" \""+unindt+"\"||printf \"sudo rm -rf \\\""+virtvz+"\\\"\\n\">>\""+unindt+"\";"
 //						"grep ocrmypdf \""+unindt+"\"||printf \"sudo pip3 uninstall --yes ocrmypdf\\n\">>\""+unindt+"\";"
 //						"||sed -i \"/ python3/isudo pip3 uninstall --yes ocrmypdf\" \""+unindt+"\""
 						"'",obverb,oblog);
+				}
 						anfgggf(unindt,"sudo rm -rf \""+virtvz+"\"");
 						anfgggf(unindt,
 						"sudo sh -c 'source \""+virtvz+"/bin/activate\";"
@@ -4731,7 +4746,7 @@ void paramcl::unpaperfuercron()
 // in Dateinherricht und empfarch (2x)
 int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/, const int obocr/*=1*/, const int loeschen/*=1*/) // 0=Erfolg
 {
-	Log(violetts+Tx[T_zupdf]+schwarz+" '"+blau+*quellp+schwarz+"' '"+blau+ziel+schwarz+"'",obverb,oblog);
+	Log(violetts+Tx[T_zupdf]+schwarz+" '"+blau+*quellp+schwarz+"' '"+blau+ziel+schwarz+"'");
 	int erg=1;
 	string stamm,exten; // , *quellp=&quell;
 	getstammext(quellp,&stamm,&exten);
@@ -5178,11 +5193,11 @@ void paramcl::faxealle()
 							atoi(*(*cerg+12)/*pages*/), *(*cerg+13)/*alts.id*/));
 			}
 		} // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
-		Log(string(Tx[T_ZahldDSmwegzuschickendenFaxenin])+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz,obverb,oblog);
+		Log(string(Tx[T_ZahldDSmwegzuschickendenFaxenin])+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz);
 		for(unsigned i=0;i<fsfv.size();i++) {
 			Log(string(" i: ")+blau+ltoan(i)+schwarz+Tx[T_PDFDatei]+blau+fsfv[i].spdf+schwarz+
 					" ."+Tx[T_obcapimitDoppelpunkt]+blau+(fsfv[i].fobcapi?Tx[T_ja]:Tx[T_nein])+schwarz+
-					" ."+Tx[T_obhylamitDoppelpunkt]+blau+(fsfv[i].fobhyla?Tx[T_ja]:Tx[T_nein])+schwarz,obverb,oblog);
+					" ."+Tx[T_obhylamitDoppelpunkt]+blau+(fsfv[i].fobhyla?Tx[T_ja]:Tx[T_nein])+schwarz);
 			if (fsfv[i].fobcapi) if (obcapi) faxemitC(My, spooltab, altspool, &fsfv[i],this,obverb,oblog);  
 			if (fsfv[i].fobhyla) if (obhyla) faxemitH(My, spooltab, altspool, &fsfv[i],this,obverb,oblog);  
 			//      _out<<fsfv[i].id<<" "<<rot<<fsfv[i].npdf<<" "<<schwarz<<(int)fsfv[i].obcapi<<" "<<(int)fsfv[i].obhyla<<endl;
@@ -5974,7 +5989,7 @@ void paramcl::empfarch()
 				 sptr=&s;
 			 }
 			 Log(schwarzs+"   "+umst[i].name+": "+tuerkis+*sptr);
-			}
+			} // 			for(unsigned i=0;i<5;i++)
 
       const string base=base_name(stamm);
       const string fnr=base.substr(4);
@@ -7266,7 +7281,7 @@ int paramcl::pruefcapi()
 			// #endif
 			//    capilaeuft=(PIDausName("capisuite")>=0);
 			capilaeuft=this->scapisuite->machfit(obverb?obverb-1:0,oblog,wahr)&&!ccapiconfdat.empty()&&!cfaxconfdat.empty();
-			Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz,obverb,oblog);
+			Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz);
 			if (capilaeuft) {
 				capischonerfolgreichinstalliert=1;
 			} else {
@@ -8624,7 +8639,7 @@ int main(int argc, char** argv)
   } else if (pm.listw) {
     pm.untersuchespool(0);
     pm.zeigweitere();
-    Log(blaus+Tx[T_Ende]+schwarz,pm.obverb,pm.oblog);
+    pm.Log(blaus+Tx[T_Ende]+schwarz);
     pm.schlussanzeige();
   } else if (!pm.suchstr.empty()) {
     pm.suchestr();
