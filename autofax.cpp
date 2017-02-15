@@ -3748,7 +3748,6 @@ void paramcl::pruefsamba()
   servc smbd("smbd","smbd");
   servc nmb("nmb","nmbd");
   servc nmbd("nmbd","nmbd");
-	  caus<<violett<<"pruefsamba 1"<<schwarz<<endl;
   if (smb.obsvfeh(obverb,oblog)) if (smbd.obsvfeh(obverb,oblog)) dienstzahl--;
   if (nmb.obsvfeh(obverb,oblog)) if (nmbd.obsvfeh(obverb,oblog)) dienstzahl--;
   //  <<rot<<"dienstzahl: "<<dienstzahl<<endl;
@@ -3770,7 +3769,6 @@ void paramcl::pruefsamba()
         nmbd.machfit(obverb,oblog);
         if (gestartet==1) gestartet=2;
       } //       if (!nmb.svfeh)
-	  caus<<violett<<"pruefsamba 2"<<schwarz<<endl;
       if (!smb.svfeh) if (!smb.obsvfeh(obverb,oblog)) if (!nmb.svfeh) if (!nmb.obsvfeh(obverb,oblog)) break;
       if (!smbd.svfeh) if (!smbd.obsvfeh(obverb,oblog)) if (!nmbd.svfeh) if (!nmbd.obsvfeh(obverb,oblog)) break;
     } // for(int aru=0;aru<2;aru++) 

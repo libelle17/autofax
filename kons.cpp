@@ -598,7 +598,8 @@ mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_b
       break;
     }
     //    int erg __attribute__((unused));
-    pruefverz(dir_name(name),0,0,0,0);
+    if (name!=unindt)  // sonst vielleicht Endlosschleife
+		  pruefverz(dir_name(name),0,0,0,0);
     if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) {
       setfaclggf(name,falsch,modus&ios::out?6:4,falsch,obverb,oblog,faclbak);
     } // if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) 
@@ -2666,7 +2667,6 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
                     int obverb/*=0*/,int oblog/*=0*/, uchar mitstarten/*=1*/)
 {
 	Log(violetts+Txk[T_spruef_sname]+schwarz+sname,obverb,oblog);
-	  caus<<violett<<"spruef"<<schwarz<<endl;
 	if (!obsvfeh(obverb-1,oblog)) {
 		Log(("Service ")+blaus+sname+schwarz+Txk[T_lief_schon],obverb,oblog);
 	} else {
@@ -2718,7 +2718,6 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				anfgggf(unindt,"N="+sname+";C=\"sudo systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-relaod;$C reset-failed;");
 				syst.close();
 				restart(obverb-1,oblog);
-	  caus<<violett<<"spruef 2"<<schwarz<<endl;
 				obsvfeh(obverb-1,oblog);
 			} // if (syst.is_open()) 
 		} // if (!svgibts || !obslaeuft(obverb,oblog)) 
@@ -2868,6 +2867,7 @@ int servc::obsvfeh(int obverb,int oblog) // ob service einrichtungs fehler
 	if (sname!="hylafax") { 
 		Log(Txk[T_Ergebnis_Dienst]+blaus+sname+schwarz+": "+gruen+Txk[sfeh[svfeh]]+schwarz,svfeh,oblog);
 	} // 	if (sname!="hylafax")
+	Log(violetts+"Ende "+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
 	return svfeh;
 } // int servc::obsvfeh(int obverb,int oblog)
 
@@ -2924,7 +2924,7 @@ int servc::restart(int obverb,int oblog)
 {
   for(int i=0;i<2;i++) {
     systemrueck(string("sudo systemctl daemon-reload; sudo systemctl restart '")+sname+"'",obverb,oblog,0,2);
-	  caus<<violett<<"restart, i: "<<gruen<<i<<schwarz<<endl;
+	  caus<<violett<<"restart, i: "<<gruen<<i<<schwarz<<" sname: "<<sname<<endl;
     if (!obsvfeh(obverb,oblog)) break;
     if (i) break;
     pkill(obverb,oblog);
@@ -2941,7 +2941,7 @@ int servc::startundenable(int obverb,int oblog)
 {
   start(obverb,oblog);
   enableggf(obverb,oblog);
-	  caus<<violett<<"startundeable"<<schwarz<<endl;
+	  caus<<violett<<"startundeable, sname: "<<schwarz<<sname<<endl;
   return !obsvfeh(obverb,oblog);
 } // int servc::start(int obverb,int oblog)
 
@@ -2955,7 +2955,7 @@ void servc::stop(int obverb,int oblog,uchar mitpkill)
 
 void servc::stopdis(int obverb,int oblog,uchar mitpkill)
 {
-	  caus<<violett<<"stopdis"<<schwarz<<endl;
+	  caus<<violett<<"stopdis, sname: "<<schwarz<<sname<<endl;
 	if (!obsvfeh(obverb,oblog)) {
 		stop(obverb,oblog);
 	} // 	if (!obsvfeh(obverb,oblog))
