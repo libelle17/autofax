@@ -2596,12 +2596,58 @@ string gethome()
  return erg;
 } // string gethome()
 
-servc::servc(string vsname,string vename,int obverb, int oblog): sname((vsname.empty()?vename:vsname)),ename(vename) 
+servc::servc(const string& vsname,const string& vename,int obverb, int oblog): sname((vsname.empty()?vename:vsname)),ename(vename) 
 {
   machfit(obverb,oblog);
-}
+} // servc::servc(const string& vsname,const string& vename,int obverb, int oblog): sname((vsname.empty()?vename:vsname)),ename(vename)
 
-int servc::machfit(int obverb,int oblog, binaer nureinmal)
+void servc::semodpruef(int obverb/*=0*/,int oblog/*=0*/)
+{
+	string sepfad;
+	if (obprogda("sestatus",obverb,oblog,&sepfad)) {
+		Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, 1,oblog);
+		exit(108);
+		uchar obse=0;
+		svec sr2;
+		systemrueck("sestatus",obverb,oblog,&sr2);
+		for(size_t j=0;j<sr2.size();j++) {
+			if (!sr2[j].find("Current mode:"))
+				if (sr2[j].find("enforcing")!=string::npos) {
+					obse=1; 
+					break;
+				} // 				if (sr2[j].find("enforcing")!=string::npos)
+		} //       for(size_t j=0;j<sr2.size();j++)
+		if (obse) {
+			linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
+			systemrueck("sudo setenforce 0",obverb,oblog);
+			restart(obverb,oblog);
+			const string selocal=sname+"_selocal";
+			systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+instvz+vtz+selocal+"\"",obverb,oblog);
+			systemrueck("sudo setenforce 1",obverb,oblog);
+			struct stat sstat={0};
+			const string mod=instvz+vtz+selocal+".pp";
+			if (!lstat(mod.c_str(),&sstat)) {
+				linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
+				systemrueck("sudo semodule -i \""+mod+"\"",obverb,oblog);
+				anfgggf(unindt,"sudo semodule -r \""+mod+"\"");
+			} // 					if (!lstat((instvz+vtz+selocal+".pp").c_str(),&sstat)
+		}  // if (obse)
+	} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
+} // int servc::sepruef(int obverb,int oblog)
+
+
+void servc::semanpruef(int obverb/*=0*/,int oblog/*=0*/,const string& mod/*="getty_t*/)
+{
+	string sepfad;
+	if (ename.find("faxgetty")!=string::npos) {
+		if (obprogda("sestatus",obverb,oblog,&sepfad)) {
+			systemrueck("sudo semodule -l|grep permissive_"+mod+" >/dev/null||sudo semanage permissive -a "+mod,obverb,oblog);
+			anfgggf(unindt,"sudo semanage permissive -d "+mod);
+		} // 	if (obprogda("sestatus",obverb,oblog,&sepfad))
+	} // 		if (ename.find("faxgetty")!=string::npos)
+} // int servc::semanpruef(const string& mod/*="getty_t*/, int obverb/*=0*/,int oblog/*=0*/)
+
+int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/)
 {
 	Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, obverb,oblog);
 	// ueberpruefen, ob in systemctl status service Datei nach ExecStart existiert
@@ -2618,43 +2664,8 @@ int servc::machfit(int obverb,int oblog, binaer nureinmal)
 			//      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
 			//      if (sr1.size()) KLA
 			//       if (sr1[0].find("permission")!=string::npos) KLA
-			string sepfad;
-			if (obprogda("sestatus",obverb,oblog,&sepfad)) {
-	Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, 1,oblog);
-	exit(108);
-				uchar obse=0;
-				svec sr2;
-				systemrueck("sestatus",obverb,oblog,&sr2);
-				for(size_t j=0;j<sr2.size();j++) {
-					if (!sr2[j].find("Current mode:"))
-						if (sr2[j].find("enforcing")!=string::npos) {
-							obse=1; 
-							break;
-						}
-				} //       for(size_t j=0;j<sr2.size();j++)
-				if (obse) {
-					linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
-					systemrueck("sudo setenforce 0",obverb,oblog);
-					restart(obverb,oblog);
-					const string selocal=sname+"_selocal";
-					systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+instvz+vtz+selocal+"\"",obverb,oblog);
-					systemrueck("sudo setenforce 1",obverb,oblog);
-					struct stat sstat={0};
-					const string mod=instvz+vtz+selocal+".pp";
-					if (!lstat(mod.c_str(),&sstat)) {
-						linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
-						systemrueck("sudo semodule -i \""+mod+"\"",obverb,oblog);
-						anfgggf(unindt,"sudo semodule -r \""+mod+"\"");
-						if (ename.find("faxgetty")!=string::npos) {
-							systemrueck("sudo semodule -l|grep permissive_getty_t >/dev/null||sudo semanage permissive -a getty_t",obverb,oblog);
-							anfgggf(unindt,"sudo semanage permissive -d getty_t");
-						}
-					} // 					if (!lstat((instvz+vtz+selocal+".pp").c_str(),&sstat)
-				}  // if (obse)
-			} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
-			//       KLZ
-			//      KLZ
-		} // if (!iru && !svfeh && !servicelaeuft) 
+			semodpruef(obverb,oblog);
+		} // 		if (!iru && svfeh>5)
 	} // for(int iru=0;iru<2;iru++) 
 	//  if (servicelaeuft)
 	if (!svfeh&&!obenabled)
@@ -2683,7 +2694,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 			if (!svfeh) {
 				Log(("Service ")+blaus+sname+schwarz+Txk[T_laeuft_jetzt],obverb,oblog);
 				break;
-			}
+			} // 			if (!svfeh)
 			//          <<dblau<<"svfeh else: "<<schwarz<<sname<<endl;
 			//  if (systemrueck("systemctl list-units faxq.service --no-legend | grep 'active running'",obverb-1,oblog)) KLA
 			// string systemd="/usr/lib/systemd/system/"+sname+".service"; // außerhalb Opensuse: /lib/systemd/system/ ...
@@ -2719,16 +2730,18 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst.close();
 				restart(obverb-1,oblog);
 				obsvfeh(obverb-1,oblog);
+				semodpruef(obverb,oblog);
+				semanpruef(obverb,oblog);
 			} // if (syst.is_open()) 
 		} // if (!svgibts || !obslaeuft(obverb,oblog)) 
 	} // if (servicelaeuft) else
 	if (!svfeh&&!obenabled) { 
 		enableggf(obverb,oblog);
-	}
+	} // 	if (!svfeh&&!obenabled)
 	return !svfeh;
 } // void servc::spruef() 
 
-int servc::obsvfeh(int obverb,int oblog) // ob service einrichtungs fehler
+int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs fehler
 	// svfeh=1: Dienst inexistent, 2: Dienst 'disabled' 3: Dienstdatei nicht ermittelbar, 4: Dienst laeuft noch, aber Dienstdatei inexistent
 	// svfeh=5: Exe-Datei nicht ermittelbar, 6: Exe-Datei fehlt, 7: activating 8: Dienst kann gestartet werden, 9: Sonstiges
 {
@@ -2915,12 +2928,12 @@ return !svfeh;
 } // int servc::obslaeuft(int obverb,int oblog)
  */
 
-void servc::pkill(int obverb,int oblog)
+void servc::pkill(int obverb/*=0*/,int oblog/*=0*/)
 {
     systemrueck(("sudo pkill '")+ename+"'",obverb-1,oblog,0,1);
 }
 
-int servc::restart(int obverb,int oblog)
+int servc::restart(int obverb/*=0*/,int oblog/*=0*/)
 {
   for(int i=0;i<2;i++) {
     systemrueck(string("sudo systemctl daemon-reload; sudo systemctl restart '")+sname+"'",obverb,oblog,0,2);
@@ -2932,12 +2945,12 @@ int servc::restart(int obverb,int oblog)
   return !svfeh;
 } // int servc::restart(int obverb,int oblog)
 
-void servc::start(int obverb,int oblog)
+void servc::start(int obverb/*=0*/,int oblog/*=0*/)
 {
   systemrueck(string("sudo systemctl start '")+sname+"'",obverb,oblog,0,2);
 } // int servc::start(int obverb,int oblog)
 
-int servc::startundenable(int obverb,int oblog)
+int servc::startundenable(int obverb/*=0*/,int oblog/*=0*/)
 {
   start(obverb,oblog);
   enableggf(obverb,oblog);
@@ -2945,7 +2958,7 @@ int servc::startundenable(int obverb,int oblog)
   return !obsvfeh(obverb,oblog);
 } // int servc::start(int obverb,int oblog)
 
-void servc::stop(int obverb,int oblog,uchar mitpkill)
+void servc::stop(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill/*=0*/)
 {
   systemrueck("sudo systemctl stop '"+sname+"'",obverb,oblog,0,2);
   if (mitpkill) {
@@ -2953,7 +2966,7 @@ void servc::stop(int obverb,int oblog,uchar mitpkill)
   }
 } // int servc::stop(int obverb,int oblog)
 
-void servc::stopdis(int obverb,int oblog,uchar mitpkill)
+void servc::stopdis(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill)
 {
 	  caus<<violett<<"stopdis, sname: "<<schwarz<<sname<<endl;
 	if (!obsvfeh(obverb,oblog)) {
@@ -2963,7 +2976,7 @@ void servc::stopdis(int obverb,int oblog,uchar mitpkill)
 		systemrueck(string("sudo systemctl disable '")+sname+"'",obverb,oblog,0,2);
 } // int servc::stop(int obverb,int oblog)
 
-int servc::enableggf(int obverb,int oblog)
+int servc::enableggf(int obverb/*=0*/,int oblog/*=0*/)
 {
     vector<errmsgcl> errv;
     const string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
@@ -2976,7 +2989,7 @@ int servc::enableggf(int obverb,int oblog)
 } // int servc::enableggf(int obverb,int oblog)
 
 
-void servc::daemon_reload(int obverb, int oblog)
+void servc::daemon_reload(int obverb/*=0*/, int oblog/*=0*/)
 {
  systemrueck("sudo systemctl daemon-reload",obverb,oblog);
 }

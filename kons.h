@@ -673,20 +673,22 @@ class servc {
 	// svfeh=5: Exe-Datei nicht ermittelbar, 6: Exe-Datei fehlt, 7: activating 8: Dienst kann gestartet werden, 9: Sonstiges
     int fehler=0; // Exit-Code der Exe-Datei
     string sname,ename; // Dienstname, Exename
-    servc(string vsname,string vename): sname((vsname.empty()?vename:vsname)),ename(vename) {}
-    servc(string vsname,string vename,int obverb, int oblog);
+    servc(const string& vsname,const string& vename): sname((vsname.empty()?vename:vsname)),ename(vename) {}
+    servc(const string& vsname,const string& vename,int obverb, int oblog);
     // int obda(int obverb,int oblog);
-		int obsvfeh(int obverb,int oblog); // ob service einrichtungs fehler
+		int obsvfeh(int obverb=0,int oblog=0); // ob service einrichtungs fehler
 		uchar spruef(const string& sbez,uchar obfork,const string& parent, const string& sexec, const string& CondPath, const string& After, 
                  int obverb=0,int oblog=0, uchar mitstarten=1);
-    int restart(int obverb, int oblog);
-    void start(int obverb, int oblog);
-    int startundenable(int obverb, int oblog);
-    void stop(int obverb,int oblog,uchar mitpkill=0);
-    void stopdis(int obverb,int oblog,uchar mitpkill=0);
-    void pkill(int obverb,int oblog);
-    int enableggf(int obverb,int oblog);
-    int machfit(int obverb, int oblog, binaer nureinmal=falsch);
-    static void daemon_reload(int obverb=0, int oblog=0);
+    int restart(int obverb=0, int oblog=0);
+    void start(int obverb=0, int oblog=0);
+    int startundenable(int obverb=0, int oblog=0);
+    void stop(int obverb=0,int oblog=0,uchar mitpkill=0);
+    void stopdis(int obverb=0,int oblog=0,uchar mitpkill=0);
+    void pkill(int obverb=0,int oblog=0);
+    int enableggf(int obverb=0,int oblog=0);
+    int machfit(int obverb=0, int oblog=0, binaer nureinmal=falsch);
+		void semodpruef(int obverb=0,int oblog=0);
+		void semanpruef(int obverb=0,int oblog=0,const string& mod="getty_t");
+		static void daemon_reload(int obverb=0, int oblog=0);
 };
 
