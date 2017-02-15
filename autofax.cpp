@@ -2108,7 +2108,7 @@ void paramcl::getcommandl0()
   } // if (logvneu ||logdneu) 
 } // void paramcl::getcommandl0(int argc, char** argv)
 
-// wird aufgerufen in: main
+// wird aufgerufen in: main, rueckfragen
 void paramcl::pruefmodem()
 {
   Log(violetts+Tx[T_pruefmodem]+schwarz);
