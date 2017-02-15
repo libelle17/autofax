@@ -1207,8 +1207,8 @@ int obprogda(const string& prog,int obverb, int oblog, string *pfad/*=0*/)
       case 3: verz="/usr/sbin/"; break;
       case 4: verz="/sbin/"; break;
       case 5: verz="/bin/"; break;
-			case 6: verz="/usr/libexec"; break;
-			case 7: verz="/run"; break;
+			case 6: verz="/usr/libexec/"; break;
+			case 7: verz="/run/"; break;
       default: break;
     } //     switch (iru)
     verz+=prog;
