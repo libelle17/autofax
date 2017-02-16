@@ -7647,7 +7647,6 @@ int paramcl::pruefcapi()
 				// das folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
 				//    capilaeuft = !systemrueck("systemctl status capisuite | grep ' active (running)' >/dev/null 2>&1",0,obverb,oblog);
 				//     capilaeuft  = !systemrueck("systemctl is-active capisuite",0,obverb,oblog);
-	  caus<<violett<<"pruefcapi"<<schwarz<<endl;
 				capilaeuft = !scapisuite->obsvfeh(obverb-1,oblog);
 				if (capilaeuft) {
 					break;

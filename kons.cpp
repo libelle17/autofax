@@ -228,6 +228,10 @@ const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 	{"Dienst laeuft","service is running"},
 	// T_Dienst_disabled
 	{"Dienst 'disabled'","service disabled"},
+	// T_stopdis_sname
+	{"stopdis(), sname: ","stopdis(), sname: "},
+	// T_enableggf
+	{"enableggf()","enableifnecessary()"},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 
@@ -2652,7 +2656,7 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 	Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, obverb,oblog);
 	// ueberpruefen, ob in systemctl status service Datei nach ExecStart existiert
 	for(int iru=0;iru<2;iru++) {
-	  caus<<violett<<"machfit, iru: "<<gruen<<iru<<schwarz<<endl;
+	  caus<<violett<<"machfit "<<blau<<sname<<violett<<", iru: "<<gruen<<iru<<schwarz<<endl;
 		if (!obsvfeh(obverb,oblog)) {
 			break;
 		} else {
@@ -2748,10 +2752,10 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 	Log(violetts+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
 	string sdatei;
 	fehler=0;
-	svec statrueck;
 	svfeh=-1;
 	obenabled=1;
 	for(int iru=0;iru<2;iru++) {
+		svec statrueck;
 		systemrueck("systemctl -n 0 status '"+sname+"'",obverb,oblog,&statrueck,1);
 		for(size_t j=0;j<statrueck.size();j++) {
 			const string *sp=&statrueck[j];
@@ -2770,11 +2774,18 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 			} else if (sp->find("active (running)")!=string::npos) {
 				svfeh=0;
 				break;
+			} else if (sp->find("activating")!=string::npos) {
+			  svfeh=7;
 			 // z.B.: Process: 10126 ExecStartPre=/usr/share/samba/update-apparmor-samba-profile (code=exited, status=0/SUCCESS)
 			} else if (svfeh && sp->find("code=exited")!=string::npos) {
-				svfeh=7; // activating, z.B. Exe-Datei bricht ab
+				// z.B. Exe-Datei bricht ab
 				// z.B.: 'Main PID: 17031 (code=exited, status=255)'
-				// 11.9.16: dann muss selinux angepasst werden
+				// oder:
+				//   Loaded: loaded (/etc/systemd/system/aout.service; disabled; vendor preset: disabled)
+			  //   Active: activating (auto-restart) (Result: exit-code) since Thu 2017-02-16 15:08:33 CET; 1s ago
+				//  Process: 24594 ExecStart=/root/a.aout (code=exited, status=203/EXEC)
+			  // Main PID: 24594 (code=exited, status=203/EXEC)
+				// 11.9.16: dann muss evtl. selinux angepasst werden
 				size_t gpos=sp->rfind('=');
 				if (gpos<sp->length()-1)
 					fehler=atol(sp->substr(gpos+1).c_str());
@@ -2782,7 +2793,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 					fehler=1;
 			} // if (sp->find("exited")!=string::npos) 
 		} //  									for(size_t j=0;j<statrueck.size();j++)
-		if (svfeh&&!fehler) {
+		if (svfeh==7&&!fehler) { // 16.2.17: nur noch bei activating ohne exited
 			// Dienst existent, Dienstdatei bekannt und existent, Exe-Datei bekannt und existent, Dienst laeuft aber nicht
 			perfcl prf(Txk[T_Aktiviere_Dienst]+sname);
 			while (!prf.oberreicht(3)) {}
@@ -2968,7 +2979,7 @@ void servc::stop(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill/*=0*/)
 
 void servc::stopdis(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill)
 {
-	  caus<<violett<<"stopdis, sname: "<<schwarz<<sname<<endl;
+    Log(violetts+string(Txk[T_stopdis_sname])+schwarz+sname,obverb,oblog);
 	if (!obsvfeh(obverb,oblog)) {
 		stop(obverb,oblog);
 	} // 	if (!obsvfeh(obverb,oblog))
@@ -2978,6 +2989,7 @@ void servc::stopdis(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill)
 
 int servc::enableggf(int obverb/*=0*/,int oblog/*=0*/)
 {
+    Log(violetts+string(Txk[T_enableggf])+schwarz+sname,obverb,oblog);
     vector<errmsgcl> errv;
     const string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
     const string f0=froh+Txk[T_ermoeglicht];

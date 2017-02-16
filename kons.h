@@ -202,6 +202,8 @@ enum Tkons_
 	T_Ergebnis_Dienst,
 	T_Dienst_laeuft,
 	T_Dienst_disabled,
+	T_stopdis_sname,
+	T_enableggf,
 	T_konsMAX,
 };
 
