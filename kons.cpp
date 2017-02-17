@@ -232,6 +232,8 @@ const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 	{"stopdis(), sname: ","stopdis(), sname: "},
 	// T_enableggf
 	{"enableggf()","enableifnecessary()"},
+	// T_semodpruef
+	{"semodpruef()","checksemod()"},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 
@@ -2608,6 +2610,7 @@ servc::servc(const string& vsname,const string& vename,int obverb, int oblog): s
 void servc::semodpruef(int obverb/*=0*/,int oblog/*=0*/)
 {
   static uchar obse=2;
+	Log(violetts+Txk[T_semodpruef]+schwarz+sname,obverb,oblog);
 	string sepfad;
 	if (obprogda("sestatus",obverb,oblog,&sepfad)) {
 		Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, 1,oblog);
@@ -2738,7 +2741,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst.close();
 				restart(obverb-1,oblog);
 				obsvfeh(obverb-1,oblog);
-		  caus<<violett<<"spruef, vor semodpruef "<<schwarz<<endl;
+		  caus<<"\n"<<violett<<"spruef, vor semodpruef "<<schwarz<<"\n"<<endl;
 				semodpruef(obverb,oblog);
 				semanpruef(obverb,oblog);
 			} // if (syst.is_open()) 

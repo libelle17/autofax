@@ -204,6 +204,7 @@ enum Tkons_
 	T_Dienst_disabled,
 	T_stopdis_sname,
 	T_enableggf,
+	T_semodpruef,
 	T_konsMAX,
 };
 
