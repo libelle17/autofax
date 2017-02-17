@@ -2630,7 +2630,7 @@ void servc::semodpruef(int obverb/*=0*/,int oblog/*=0*/)
 			systemrueck("sudo setenforce 0",obverb,oblog);
 			restart(obverb,oblog);
 			const string selocal=sname+"_selocal";
-			systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M \""+instvz+vtz+selocal+"\"",obverb,oblog);
+			systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M "+selocal,obverb,oblog);
 			systemrueck("sudo setenforce 1",obverb,oblog);
 			struct stat sstat={0};
 			const string mod=instvz+vtz+selocal+".pp";
