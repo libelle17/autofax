@@ -2674,7 +2674,7 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 			//      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
 			//      if (sr1.size()) KLA
 			//       if (sr1[0].find("permission")!=string::npos) KLA
-			semodpruef(obverb,oblog);
+//			semodpruef(obverb,oblog);
 		} // 		if (!iru && svfeh>5)
 	} // for(int iru=0;iru<2;iru++) 
 	//  if (servicelaeuft)
