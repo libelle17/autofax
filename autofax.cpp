@@ -6913,6 +6913,10 @@ int paramcl::pruefhyla()
 						} // if (!lstat(xferfaxlog.c_str(),&entryxfer)) 
 						// bei hysrc ist das folgende wohl eigentlich nicht noetig
 						// Berechtigungen korrigieren
+						if (systemrueck("sudo getent uucp",obverb,oblog)) {
+						  systemrueck("sudo useradd -b /etc -c \"Unix-to-Unix CoPy\" -U -r uucp",obverb,oblog);
+							anfgggf(unindt,"sudo userdel uucp");
+						}
 						systemrueck("sudo chown "+huser+":uucp -R "+this->varsphylavz,obverb,oblog);
 					}
 				} // if (obprogda("faxsend",obverb,oblog))
