@@ -2740,7 +2740,6 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst.close();
 				restart(obverb-1,oblog);
 				obsvfeh(obverb-1,oblog);
-		  caus<<"\n"<<violett<<"spruef, vor semodpruef "<<schwarz<<"\n"<<endl;
 				semodpruef(obverb,oblog);
 				semanpruef(obverb,oblog);
 			} // if (syst.is_open()) 

@@ -9,7 +9,7 @@ exportvars
 { PR=ctags;PK=$CTAGS;which $PR >$DN||{ getIPR;${IPR}$PK;grep -q \" $PK\" $UNF||printf "${UPR}$PK\n">>$UNF;};}
 ctags *.cpp *.h
 test -f $ZD || echo 1>$ZD; awk "BEGIN {print `cat $ZD`+1}">$ZD
-(($(cat $ZD)%$FREQUENZ)) ||{ PR=gtags;PK=global;which $PR >$DN||{ getIPR;${IPR}$PK;grep -q \" $PK\" $UNF||printf "${UPR}$PK\n">>$UNF;} &&$PR;} # in Fedora koennte gtags noch installiert werden muessen
+(($(cat $ZD)%$FREQUENZ)) ||{ PR=gtags;PK=global;which $PR >$DN||{ getIPR;${IPR}$PK;grep -q \" $PK\" $UNF||printf "${UPR}$PK\nalias vi=vi\n">>$UNF;} &&$PR;} # in Fedora koennte gtags noch installiert werden muessen
 PR=vim;PK=$PR;which $PR >$DN||{ getIPR;[ $fed = 1 ] &&{ sudo yum update vim-minimal;};${IP_R}$PK;grep -q \" $PK\" $UNF||printf "${UPR}$PK\n">>$UNF;}
 # so waere es projektspezfisch
 # `which vim || which vi` autofax.cpp autofax.h vgb.cpp DB.cpp DB.h kons.cpp kons.h -p -c "syntax on" -c "set number" -c "set autoindent" -c "set autoindent" -c "set tabstop=2" -c "set ignorecase" -c "set showmatch" -c "set magic" -c "set ruler" 
