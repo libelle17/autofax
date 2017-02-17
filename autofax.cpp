@@ -1670,6 +1670,15 @@ string tmpc; // fuer crontab
 #include "autofax.h"
 constexpr const char *paramcl::moeglhvz[2];
 // wird nur in VorgbSpeziell gebraucht:
+
+void useruucp(const string& huser, int obverb,int oblog)
+{
+	if (systemrueck("sudo getent "+huser,obverb,oblog)) {
+		systemrueck("sudo useradd -b /etc -c \"Unix-to-Unix CoPy\" -U -r "+huser,obverb,oblog);
+		anfgggf(unindt,"sudo userdel "+huser);
+	} // 	if (systemrueck("sudo getent "+huser,obverb,oblog))
+} // void useruucp(const string& huser, int obverb,int oblog)
+
 zielmustercl::zielmustercl(const char * const vmuster,const char * const vziel):muster(vmuster),ziel(vziel)
 {
  kompilier();
@@ -6913,10 +6922,7 @@ int paramcl::pruefhyla()
 						} // if (!lstat(xferfaxlog.c_str(),&entryxfer)) 
 						// bei hysrc ist das folgende wohl eigentlich nicht noetig
 						// Berechtigungen korrigieren
-						if (systemrueck("sudo getent uucp",obverb,oblog)) {
-						  systemrueck("sudo useradd -b /etc -c \"Unix-to-Unix CoPy\" -U -r uucp",obverb,oblog);
-							anfgggf(unindt,"sudo userdel uucp");
-						}
+						useruucp(huser,obverb,oblog);
 						systemrueck("sudo chown "+huser+":uucp -R "+this->varsphylavz,obverb,oblog);
 					}
 				} // if (obprogda("faxsend",obverb,oblog))
@@ -7032,6 +7038,7 @@ int paramcl::pruefhyla()
 			const string dt=varsphylavz+uvz[i]+"seqf";
 			struct stat dstat={0};
 			if (lstat(dt.c_str(),&dstat)) {
+				useruucp(huser,obverb,oblog);
 				systemrueck("sudo touch "+dt+" && sudo chown "+huser+":uucp "+dt,obverb,oblog);
 			} // 		 if (lstat(dt.c_str(),&dstat))
 		} // 		for (unsigned i=0;i<2;i++)
@@ -7855,7 +7862,8 @@ void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
   } else {
     Log(string(Tx[T_DieFaxnrvon])+drot+fsfp->spdf+schwarz+Tx[T_ist]+blau+tel+schwarz,obverb,oblog);
     // 27.3.16: Uebernacht wurden die Berechtigungen so eingeschraenkt, dass Faxsenden nicht mehr ging, evtl. durch faxqclean
-    systemrueck("sudo find "+pmp->varsphylavz+" -name seqf -exec chmod 660 {} \\;"" -exec chown "+pmp->huser+":uucp {} \\;",obverb,oblog);
+		useruucp(pmp->huser,obverb,oblog);
+		systemrueck("sudo find "+pmp->varsphylavz+" -name seqf -exec chmod 660 {} \\;"" -exec chown "+pmp->huser+":uucp {} \\;",obverb,oblog);
     const char* tz1="request id is ", *tz2=" (";
     string sendfax;
 //    systemrueck("sudo sh -c 'which sendfax'",obverb,1,&rueck);
