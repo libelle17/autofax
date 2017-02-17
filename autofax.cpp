@@ -1673,7 +1673,7 @@ constexpr const char *paramcl::moeglhvz[2];
 
 void useruucp(const string& huser, int obverb,int oblog)
 {
-	if (systemrueck("sudo getent "+huser,obverb,oblog)) {
+	if (systemrueck("sudo getent passwd "+huser,obverb,oblog)) {
 		systemrueck("sudo useradd -b /etc -c \"Unix-to-Unix CoPy\" -U -r "+huser,obverb,oblog);
 		anfgggf(unindt,"sudo userdel "+huser);
 	} // 	if (systemrueck("sudo getent "+huser,obverb,oblog))

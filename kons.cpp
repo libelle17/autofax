@@ -2669,7 +2669,7 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 		}
 		if (!iru && svfeh>5) {
 		  caus<<"machfit, svfeh: "<<gruen<<svfeh<<schwarz<<endl;
-			exit(108);
+//			exit(108);
 			//      svec sr1;
 			//      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
 			//      if (sr1.size()) KLA
