@@ -2607,20 +2607,23 @@ servc::servc(const string& vsname,const string& vename,int obverb, int oblog): s
 
 void servc::semodpruef(int obverb/*=0*/,int oblog/*=0*/)
 {
+  static uchar obse=2;
 	string sepfad;
 	if (obprogda("sestatus",obverb,oblog,&sepfad)) {
 		Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, 1,oblog);
 		exit(108);
-		uchar obse=0;
-		svec sr2;
-		systemrueck("sestatus",obverb,oblog,&sr2);
-		for(size_t j=0;j<sr2.size();j++) {
-			if (!sr2[j].find("Current mode:"))
-				if (sr2[j].find("enforcing")!=string::npos) {
-					obse=1; 
-					break;
-				} // 				if (sr2[j].find("enforcing")!=string::npos)
-		} //       for(size_t j=0;j<sr2.size();j++)
+		if (obse==2) {
+			obse=0;
+			svec sr2;
+			systemrueck("sestatus",obverb,oblog,&sr2);
+			for(size_t j=0;j<sr2.size();j++) {
+				if (!sr2[j].find("Current mode:"))
+					if (sr2[j].find("enforcing")!=string::npos) {
+						obse=1; 
+						break;
+					} // 				if (sr2[j].find("enforcing")!=string::npos)
+			} //       for(size_t j=0;j<sr2.size();j++)
+		}
 		if (obse) {
 			linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
 			systemrueck("sudo setenforce 0",obverb,oblog);
@@ -2664,6 +2667,7 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 			if (!svfeh) break;
 		}
 		if (!iru && svfeh>5) {
+		  caus<<"machfit, svfeh: "<<gruen<<svfeh<<schwarz<<endl;
 			//      svec sr1;
 			//      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
 			//      if (sr1.size()) KLA
@@ -2734,6 +2738,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst.close();
 				restart(obverb-1,oblog);
 				obsvfeh(obverb-1,oblog);
+		  caus<<"spruef "<<schwarz<<endl;
 				semodpruef(obverb,oblog);
 				semanpruef(obverb,oblog);
 			} // if (syst.is_open()) 
