@@ -4649,14 +4649,14 @@ int paramcl::pruefocr()
 				// python3 -m venv --upgrade ocrvenv
 				// source ocrvenv/bin/activate
 				// sudo pip3 install ocrmypdf
-				string prog;
+				string vprog;
 				for(int iru=0;iru<2;iru++) {
 					const string virtualenv="virtualenv";
-					if (obprogda(virtualenv,obverb,oblog,&prog)) break;
-					systemrueck("pip3 install "+virtualenv,obverb,oblog);
+					if (obprogda(virtualenv,obverb,oblog,&vprog)) break;
+					systemrueck("sudo pip3 install "+virtualenv,obverb,oblog);
 				}
-				if (!prog.empty()) {
-					systemrueck("sudo sh -c '"+prog+" \""+virtvz+"\";"
+				if (!vprog.empty()) {
+					systemrueck("sudo sh -c '"+vprog+" \""+virtvz+"\";"
 							"source \""+virtvz+"/bin/activate\";"
 							"pip3 install requests;"
 							"pip3 install --upgrade ocrmypdf;"
