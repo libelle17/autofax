@@ -19,6 +19,7 @@
 # "make new" oder "make neu" => kompiliere alles neu
 # "make hierclean" => loesche Objekt- und ausfuehrbare Dateien im Kompilierverzeichnis
 # "make clean" => loesche Objekt- und ausfuehrbare Dateien einschliesslich installierter Version
+# "make confclean" => loescht die Konfigurationsdatei $(INSTEXEC).conf nach Rueckfrage, falls vorhanden
 # "make altc" => kompiliere mit -std=gnu++11
 # "make anzeig" => zeige Informationen zu Programm, Quelldateien und Compiler an
 # "make install => installiere die erstellte Datei in den kuerzesten Pfad aus $PATH, der '/usr/' enthaelt,
@@ -62,7 +63,7 @@ LT:=libtiff
 LT:=$(LT) $(LT)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
-GROFFCHECK:=$(SPR) $(pgroff)$(KR)||{ $(IPR)$(pgroff);grep -q '$(pgroff)' $(UNF)||printf '$(UPR)$(pgroff)\n'>>$(UNF);};true
+GROFFCHECK:=$(SPR) $(pgroff)$(KR)||{ $(IPR)$(pgroff);grep -q '$(pgroff)' $(UNF)||printf '$(UPR)$(pgroff)\necho $(UPR)$(pgroff)\n'>>$(UNF);};true
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR)$(KR))
@@ -186,10 +187,10 @@ ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
 endif
-	@which $(CCName)$(KR)||{ $(REPOS)for P in $(COMP);do $(SPR)$$P||{ $(IP_R)$$P;grep -q "$$P" $(UNF)||printf "$(UPR)$$P;$(urepo)\n">>$(UNF);};done;};
-	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(IPR)$(libmcd);grep -q '$(libmcd)' $(UNF)||printf '$(UPR)$(libmcd)\n'>>$(UNF);fi
-	@[ -z $$mitpg ]||$(SPR) $(pgd)$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\n'>>$(UNF);$(slc);};
-	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT)$(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n'>>$(UNF);}
+	@which $(CCName)$(KR)||{ $(REPOS)for P in $(COMP);do $(SPR)$$P||{ $(IP_R)$$P;grep -q "$$P" $(UNF)||printf "$(UPR)$$P;$(urepo)\necho $(UPR)$$P;$(urepo)\n">>$(UNF);};done;};
+	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(IPR)$(libmcd);grep -q '$(libmcd)' $(UNF)||printf '$(UPR)$(libmcd)\necho $(UPR)$(libmcd)\n'>>$(UNF);fi
+	@[ -z $$mitpg ]||$(SPR) $(pgd)$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\necho $(UPR)$(pgd)\n'>>$(UNF);$(slc);};
+	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT)$(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
@@ -276,7 +277,11 @@ hierclean:
 .PHONY: distclean
 distclean:
 	-@$(shell sudo rm -f $(INSTEXEC) ${MANPD} ${MANPE} $(KF))
-	-@printf " %b%s%b geloescht!\n" $(blau) "$(INSTEXEC)" $(reset) 
+	-@printf "%b%s%b geloescht!\n" $(blau) "$(INSTEXEC)" $(reset) 
+
+.PHONY: confclean
+confclean:
+	-@sh -c 'D=$(INSTEXEC).conf;test -f $$D &&{ printf "Wollen Sie \"%b$$D%b\" wirklich loeschen (j/n)?" $(blau) $(reset); read answer; if echo "$$answer"|grep -iq "^j\|^y";then rm -r "$$D"$(KR)&&printf \"%b%s%b\" geloescht!\n" $(blau) "$(INSTEXEC).conf" $(reset); fi;true;} ||{ printf "Konfigurationsdatei \"%b$$D%b\" fehlt.\n" $(blau) $(reset);}'
 
 .PHONY: uninstall
 uninstall: distclean

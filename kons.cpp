@@ -46,7 +46,8 @@ const string& unindt=instvz+"/uninstallinv"; // # Name muss identisch sein mit V
 const string nix;
 class linst_cl linst;
 
-const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
+// const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
+const char *kons_T[T_konsMAX+1][Smax]=
 {
   //TCtp Txkonscl::TextC=KLA
   // T_pfad,
@@ -238,12 +239,15 @@ const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 }; // const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 
 
+/*
 Txkonscl::Txkonscl() 
 {
   TCp=(const char* const * const * const *)&TextC;
 }
+*/
+class TxB Txk((const char* const* const* const*)kons_T);
 
-class Txkonscl Txk;
+// class Txkonscl Txk;
 
 uchar nrzf=0; // nicht rueckzufragen, fuer Aufruf aus Cron
 
@@ -730,7 +734,7 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 #endif	
 #endif	
 				if (!abhier) {
-					tm *atm = new tm; time_t gesz; long sekunden; // int aktz;
+					tm *atm = new tm; // int aktz;
 					//	for(aktz=Zeilen.size()-1;aktz>=0;aktz--) KLA
 					//         Log(string("aktz=") + ltoa_(aktz,buffer,10),obverb,0);
 					int verwertbar=0, index;
@@ -764,13 +768,12 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 						} //             switch (index)
 					} //           for(unsigned j=0;j<2;j++)
 					if (verwertbar) {
-						gesz=mktime(atm);
+						time_t gesz=mktime(atm);
 						//          	  char tbuf[20];
 						//              strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
 						//              <<"Datum: "<<tbuf<<endl;
-						time_t jetzt;
-						jetzt=time(0);
-						sekunden=(long)(jetzt-gesz);
+						time_t jetzt=time(0);
+						long sekunden=(long)(jetzt-gesz);
 						if (sekunden<1209600) {// jünger als zwei Wochen => behalten
 							abhier=1;
 						}
@@ -2253,9 +2256,22 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
          acstr+=2;
          aclen-=2;
         }
-        if (!strcmp(acstr,lang.c_str())) {
+				if (langi) {
+					Sprache altSpr=TxBp->lgn;
+					for(int akts=0;akts<Smax;akts++) {
+						TxBp->lgn=(Sprache)akts;
+						if (!strcmp(acstr,(*TxBp)[langi])) {
+							argcvm->at(*akt).agef=1;
+						}
+					} //         for(int akts=0;akts<Smax;akts++)
+					TxBp->lgn=altSpr;
+					/*
+				KLZ else KLA
+        if (!strcmp(acstr,lang.c_str())) KLA
           argcvm->at(*akt).agef=1;
-        }
+        KLZ
+				*/
+				}
       } else if (strchr("-/",acstr[0])) {
         acstr+=1;
         aclen-=1;
@@ -2269,9 +2285,22 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
          acstr+=2;
          aclen-=2;
         }
-        if (!strcmp(acstr,kurz.c_str())) {
-          argcvm->at(*akt).agef=1;
-        }
+				if (kurzi) {
+					Sprache altSpr=TxBp->lgn;
+					for(int akts=0;akts<Smax;akts++) {
+						TxBp->lgn=(Sprache)akts;
+						if (!strcmp(acstr,(*TxBp)[kurzi])) {
+							argcvm->at(*akt).agef=1;
+						}
+					} //         for(int akts=0;akts<Smax;akts++)
+					TxBp->lgn=altSpr;
+				/*
+				KLZ else KLA
+					if (!strcmp(acstr,kurz.c_str())) KLA 
+						argcvm->at(*akt).agef=1;
+					KLZ
+				*/
+				} // if (kurzi) else
       } //       if (strchr("-/",acstr[0])
     } // if (strlen(acstr)>1) 
     // wenn Kommandozeilenparameter gefunden ...
@@ -2356,15 +2385,16 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
           // wenn kein Zusatzparameter erkennbar, dann melden
           switch (art) {
             case psons:
-              Log(drots+Txk[T_Fehlender_Parameter_string_zu]+kurz+Txk[T_oder]+lang+"!"+schwarz,1,1);
+              Log(drots+Txk[T_Fehlender_Parameter_string_zu]+(*TxBp)[kurzi]+Txk[T_oder]+(*TxBp)[langi]+"!"+schwarz,1,1);
               break;
             case pverz:
             case pfile:
-              Log(drots+Txk[T_Fehler_Parameter]+kurz+Txk[T_oder]+lang+" "+(wiefalsch==1?Txk[T_ohne_gueltigen]:wiefalsch==2?
+              Log(drots+Txk[T_Fehler_Parameter]+(*TxBp)[kurzi]+Txk[T_oder]+(*TxBp)[langi]+" "+(wiefalsch==1?Txk[T_ohne_gueltigen]:wiefalsch==2?
                     Txk[T_mit_Datei_als]:Txk[T_mit_falschem])+Txk[T_Pfad_angegeben]+schwarz,1,1);
               break;
             case pzahl:
-              Log(drots+(wiefalsch==1?Txk[T_Nicht_numerischer]:Txk[T_Fehlender])+Txk[T_Parameter_nr_zu]+kurz+Txk[T_oder]+lang+"!"+schwarz,1,1);
+              Log(drots+(wiefalsch==1?Txk[T_Nicht_numerischer]:Txk[T_Fehlender])+Txk[T_Parameter_nr_zu]
+							     +(*TxBp)[kurzi]+Txk[T_oder]+(*TxBp)[langi]+"!"+schwarz,1,1);
               break;
           } // switch (art)
           *hilfe=1;
@@ -2400,7 +2430,7 @@ void optioncl::hilfezeile(Sprache lg)
   if (TxBp) {
     if (Txi!=-1) {
       if (TxBp->TCp[Txi][lg]) {
-        cout<<drot<<" -"<<kurz<<", --"<<lang;
+        cout<<drot<<" -"<<(*TxBp)[kurzi]<<", --"<<(*TxBp)[langi];
         if (zptr) {if (art==psons || art==pfile) cout<<" <string>"; else if (art==pverz) cout<<" <"<<Txk[T_pfad]<<">"; else cout<<" <zahl>";}
         cout<<schwarz<<": "<< machbemerkung(lg)<<endl;
       } // if (TxBp->TCp[Txi][lg])
@@ -2532,7 +2562,7 @@ void anfgggf(string datei, string inhalt)
 	if (!obda) {
 		mdatei uniff(datei,ios::app,0);
 		if (uniff.is_open()) {
-			uniff<<inhalt<<endl; 
+			uniff<<inhalt<<"\n"<<"echo "<<inhalt<<endl;
 		} else {
 			perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
 		} // 			if (uniff.is_open())
@@ -2660,7 +2690,7 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 	Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, obverb,oblog);
 	// ueberpruefen, ob in systemctl status service Datei nach ExecStart existiert
 	for(int iru=0;iru<2;iru++) {
-	  caus<<violett<<"machfit "<<blau<<sname<<violett<<", iru: "<<gruen<<iru<<schwarz<<endl;
+	  // <<violett<<"machfit "<<blau<<sname<<violett<<", iru: "<<gruen<<iru<<schwarz<<endl;
 		if (!obsvfeh(obverb,oblog)) {
 			break;
 		} else {
@@ -2954,7 +2984,7 @@ int servc::restart(int obverb/*=0*/,int oblog/*=0*/)
 {
   for(int i=0;i<2;i++) {
     systemrueck(string("sudo systemctl daemon-reload; sudo systemctl restart '")+sname+"'",obverb,oblog,0,2);
-	  caus<<violett<<"restart, i: "<<gruen<<i<<schwarz<<" sname: "<<sname<<endl;
+	  // <<violett<<"restart, i: "<<gruen<<i<<schwarz<<" sname: "<<sname<<endl;
     if (!obsvfeh(obverb,oblog)) break;
     if (i) break;
     pkill(obverb,oblog);
@@ -2971,7 +3001,7 @@ int servc::startundenable(int obverb/*=0*/,int oblog/*=0*/)
 {
   start(obverb,oblog);
   enableggf(obverb,oblog);
-	  caus<<violett<<"startundeable, sname: "<<schwarz<<sname<<endl;
+	  // <<violett<<"startundeable, sname: "<<schwarz<<sname<<endl;
   return !obsvfeh(obverb,oblog);
 } // int servc::start(int obverb,int oblog)
 
@@ -3052,22 +3082,28 @@ void optioncl::setzebem(schlArr *cp,const char *pname)
   }
 } // void optioncl::setzebem(TxB *TxBp,schlArr *cp,const char *pname)
 
-/*2*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : 
-  kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), zptr(zptr), art(art),cp(cp),pname(pname),obschreibp(obschreibp) 
+// /*2*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), zptr(zptr), art(art),cp(cp),pname(pname),obschreibp(obschreibp) { setzebem(cp,pname); }
+
+/*2a*/optioncl::optioncl(int kurzi, int langi, TxB *TxBp, long Txi, string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : 
+  kurzi(kurzi), langi(langi), TxBp(TxBp), Txi(Txi), zptr(zptr), art(art),cp(cp),pname(pname),obschreibp(obschreibp) 
 {
   setzebem(cp,pname);
 }
 
-/*3*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, const string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp, 
+// /*3*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, const string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), zptr(zptr), art(art), cp(cp),pname(pname),obschreibp(obschreibp) { setzebem(cp,pname); }
+
+/*3a*/optioncl::optioncl(int kurzi, int langi, TxB *TxBp, long Txi, const string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp, 
     const char *pname,uchar* obschreibp) : 
-  kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), zptr(zptr), art(art),
+  kurzi(kurzi), langi(langi), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), zptr(zptr), art(art),
   cp(cp),pname(pname),obschreibp(obschreibp) 
 {
   setzebem(cp,pname);
 }
 
-/*4*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, uchar *pptr, int wert,schlArr *cp, const char *pname,uchar* obschreibp) :
-  kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0)
+// /*4*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, uchar *pptr, int wert,schlArr *cp, const char *pname,uchar* obschreibp) : kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0) { setzebem(cp,pname); }
+
+/*4a*/optioncl::optioncl(int kurzi, int langi, TxB *TxBp, long Txi, uchar *pptr, int wert,schlArr *cp, const char *pname,uchar* obschreibp) :
+  kurzi(kurzi), langi(langi), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert),art(psons),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0)
 {
   setzebem(cp,pname);
 }

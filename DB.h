@@ -85,15 +85,17 @@ enum Txdb_
 	T_dbMAX,
 };
 
-extern class Txdbcl Txd;
-
+// extern class Txdbcl Txd;
+extern const char *DB_T[T_dbMAX+1][Smax];
+extern class TxB Txd;
+/*
 class Txdbcl: public TxB
 {
   public:
     static const char *TextC[][Smax];
     Txdbcl();
 };
-
+*/
 svec holdbaussql(string sql);
 
 //

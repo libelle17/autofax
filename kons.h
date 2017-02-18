@@ -103,6 +103,7 @@ class TxB // Text-Basisklasse
   Sprache lgn; // Sprache numerisch
 //  TCtp* TCp;
   const char * const * const * const *TCp;
+	TxB(const char* const* const* const *TCp):TCp(TCp){}
   inline const char* operator[](long const& nr) const {
     TCtp *hilf = reinterpret_cast<TCtp*>(TCp);
     return (const char*)hilf[nr][lgn];
@@ -208,6 +209,7 @@ enum Tkons_
 	T_konsMAX,
 };
 
+/*
 extern class Txkonscl Txk;
 
 class Txkonscl : public TxB
@@ -217,6 +219,8 @@ class Txkonscl : public TxB
     Txkonscl();
 //    inline const char* operator[](Tkons_ const& nr) const { return TextC[nr][lgn]; }
 };
+*/
+extern class TxB Txk;
 
 extern uchar nrzf; // nicht rueckzufragen, fuer Aufruf aus Cron
 
@@ -545,42 +549,50 @@ enum par_t:uchar {psons,pverz,pfile,pzahl}; // Parameterart: Sonstiges, Verzeich
 class optioncl
 {
   public:
-    const string kurz;
-    const string lang;
+//    const string kurz;
+//    const string lang;
+		const int kurzi=0;
+		const int langi=0;
     TxB *TxBp=0;
-    long Txi;
+    const long Txi=0;
     const string *rottxt=0; // ggf rot zu markierender Text zwischen Txi und Txi2
     long Txi2=-1;
 //    string oerkl;
     uchar *pptr=0; // Zeiger auf Parameter, der hier eingestellt werden kann
     int wert; // Wert, der pptr zugewiesen wird, falls dieser Parameter gewaehlt wird
     string *zptr=0; // Zeiger auf Zusatzparameter, der hier eingegeben werden kann
-    par_t art; // Parameterart
+    const par_t art; // Parameterart
     schlArr *cp=0; // Konfigurationsarray, das ggf. geschrieben werden muss
     const char *pname; // Name des Konfigurationsparameters
     uchar *obschreibp=0; // ob Konfiguration geschrieben werden muss
 //    uchar ogefunden=0; // braucht man nicht, ist in argcl
-    uchar obno=0; // ob auch die Option mit vorangestelltem 'no' eingefueft werden soll
+    const uchar obno=0; // ob auch die Option mit vorangestelltem 'no' eingefueft werden soll
     string bemerkung;
+		uchar obcl=0; // ob die Option ueber die Kommandozeile gesetzt wurde
   private:
     void setzebem(schlArr *cp,const char *pname);
   public:
 ///*1*/optioncl(string kurz,string lang,TxB *TxBp,long Txi) : 
 //               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi) {}
-/*2*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *zptr,par_t art,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
-/*3*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,const string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cp=0,
+// /*2*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *zptr,par_t art,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
+/*2a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,string *zptr,par_t art,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
+// /*3*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,const string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cp=0, const char *pname=0,uchar* obschreibp=0);
+/*3a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,const string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cp=0,
               const char *pname=0,uchar* obschreibp=0);
-/*4*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar *pptr,int wert,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
+// /*4*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar *pptr,int wert,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
+/*4a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar *pptr,int wert,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
 ///*5*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *rottxt,long Txi2,uchar *pptr,int wert) : 
 //               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),rottxt(rottxt),Txi2(Txi2),pptr(pptr),wert(wert) {}
-/*6*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,const string *rottxt,long Txi2,uchar *pptr,int wert) : 
-               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),rottxt((string*)rottxt),Txi2(Txi2),pptr(pptr),wert(wert) {}
+// /*6*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,const string *rottxt,long Txi2,uchar *pptr,int wert) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),rottxt((string*)rottxt),Txi2(Txi2),pptr(pptr),wert(wert) {}
+/*6a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,const string *rottxt,long Txi2,uchar *pptr,int wert) : 
+               kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),rottxt((string*)rottxt),Txi2(Txi2),pptr(pptr),wert(wert),art(psons) {}
 ///*7*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,binaer *pptr,int wert) : 
 //               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),pptr((uchar*)pptr),wert(wert) {}
 ///*8*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,int *pptr,int wert) : 
 //               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),pptr((uchar*)pptr),wert(wert) {}
-/*9*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *rottxt,long Txi2,int *pptr,int wert) : 
-               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),rottxt(rottxt),Txi2(Txi2),pptr((uchar*)pptr),wert(wert) {}
+// /*9*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *rottxt,long Txi2,int *pptr,int wert) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),rottxt(rottxt),Txi2(Txi2),pptr((uchar*)pptr),wert(wert) {}
+/*9a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,string *rottxt,long Txi2,int *pptr,int wert) : 
+               kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),rottxt(rottxt),Txi2(Txi2),pptr((uchar*)pptr),wert(wert),art(psons) {}
     int pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprache lg); // 1 = das war der Parameter, 0 = nicht
     string& machbemerkung(Sprache lg,binaer obfarbe=wahr);
     void hilfezeile(Sprache lg);

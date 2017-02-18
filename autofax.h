@@ -103,8 +103,8 @@ class fsfcl : public fxfcl // Faxsendfile
     string hstate="0"; // Statuszahl ("state" in man sendq)
     string hstatus; // Textbeschreibung des letztes Fehlschlags
     string hstatuscode; // in xferfaxlog nicht gefunden
-		time_t tts;
-		time_t killtime;
+		time_t tts=0;
+		time_t killtime=0;
 		string number;
     string hdials;   // hyladials
 		string maxdials; // maxdials (hylafax)
@@ -302,7 +302,8 @@ class paramcl // Programmparameter
     string undstr;  //  'und'
     string cmd; // string fuer command fuer Betriebssystembefehle
     vector<optioncl> opts;
-    vector<argcl> argcmv; // class member vector
+		uchar keineverarbeitung=0;
+		vector<argcl> argcmv; // class member vector
     servc *sfaxq=0, *shfaxd=0, *shylafaxd=0, *sfaxgetty=0, *scapisuite=0;
     string modconfdat; // hylafax-Konfigurationsdatei, z.B. /var/spool/hylafax/etc/config.ttyACM0
     confdat *cfaxcp=0; // Zeiger auf ausgelesene /etc/capisuite/fax.conf

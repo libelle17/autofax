@@ -3,7 +3,8 @@
 #define caus cout // nur zum Debuggen
 extern class linst_cl linst;
 
-const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
+//const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
+const char *DB_T[T_dbMAX+1][Smax]={
   // T_DB_wird_initialisiert
   {"DB wird initialisiert","DB is being initialized"},
   // T_Fehler_db
@@ -96,10 +97,10 @@ const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
 	{"prueffunc()","checkfunc()"},
 	{"",""}
 };
-
-Txdbcl::Txdbcl() {TCp=(const char* const * const * const *)&TextC;}
-
-class Txdbcl Txd;
+// Txdbcl::Txdbcl() {TCp=(const char* const * const * const *)&TextC;}
+// class Txdbcl Txd;
+// class TxB Txd(DB_T);
+class TxB Txd((const char* const* const* const*)DB_T);
 
 // Datenbanknamen aus sql-String extrahieren
 svec holdbaussql(string sql) 
@@ -596,7 +597,6 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 						exit(7);
 					}
 				} // 				for(int iru=0;iru<2;iru++) 
-				caus<<"geht: "<<(int)geht<<endl;
 		} // 		switch (DBS) 
 	} // if (!nrzf)
 } // setzrpw
@@ -1184,8 +1184,22 @@ sqlft::sqlft(DBSTyp eDBS, time_t *tm): string(21,0)
   druckeein(eDBS,&zt);
 }
 
+void stmax(int *zahl,int stellen=2)
+{
+ int grenze=1;
+ for(int ui=0;ui<stellen;ui++) grenze*=10;
+ grenze-=1;
+ while (*zahl>grenze) (*zahl)/=10;
+}
+
 void sqlft::druckeein(DBSTyp eDBS, tm *zt) 
 {
+	stmax(&zt->tm_year,4);
+	stmax(&zt->tm_mon);
+	stmax(&zt->tm_mday);
+	stmax(&zt->tm_hour);
+	stmax(&zt->tm_min);
+	stmax(&zt->tm_sec);
   sprintf((char*)c_str(),"%c%.4d-%.2d-%.2d %.2d:%.2d:%.2d%c",dvb(eDBS),zt->tm_year+1900,zt->tm_mon+1,zt->tm_mday,zt->tm_hour,zt->tm_min,zt->tm_sec,dve(eDBS));
 }
 
@@ -1264,6 +1278,9 @@ char* DB::tmtosql(tm *tmh,char* buf)
 {
   switch (DBS) {
     case MySQL:
+			stmax(&tmh->tm_year,4);
+			stmax(&tmh->tm_mon);
+			stmax(&tmh->tm_mday);
       sprintf(buf,"%.4d%.2d%.2d",tmh->tm_year+1900,tmh->tm_mon+1,tmh->tm_mday);
       break;
     case Postgres:
@@ -1278,6 +1295,12 @@ char* DB::tmtosqlmZ(tm *tmh,char* buf)
 {
   switch (DBS) {
     case MySQL:
+			stmax(&tmh->tm_year,4);
+			stmax(&tmh->tm_mon);
+			stmax(&tmh->tm_mday);
+			stmax(&tmh->tm_hour);
+			stmax(&tmh->tm_min);
+			stmax(&tmh->tm_sec);
       sprintf(buf,"%.4d%.2d%.2d%.2d%.2d%.2d",tmh->tm_year+1900,tmh->tm_mon+1,tmh->tm_mday,tmh->tm_hour,tmh->tm_min,tmh->tm_sec);
       break;
     case Postgres:

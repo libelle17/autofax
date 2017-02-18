@@ -6,16 +6,16 @@ FREQUENZ=5 # rufe gtags jedes 5. Mal auf
 
 getIPR
 exportvars
-{ PR=ctags;PK=$CTAGS;which $PR >$DN||{ getIPR;${IPR}$PK;grep -q " $PK" $UNF||printf "${UPR}$PK\n">>$UNF;};}
+{ PR=ctags;PK=$CTAGS;which $PR >$DN||{ getIPR;${IPR}$PK;grep -q " $PK" $UNF||printf "${UPR}$PK\necho ${UPR}$PK\n">>$UNF;};}
 ctags *.cpp *.h
 test -f $ZD || echo 1>$ZD; awk "BEGIN {print `cat $ZD`+1}">$ZD
-(($(cat $ZD)%$FREQUENZ)) ||{ PR=gtags;PK=global;which $PR >$DN||{ getIPR;${IPR}$PK;grep -q " $PK" $UNF||printf "${UPR}$PK\n">>$UNF;} &&$PR;} # in Fedora koennte gtags noch installiert werden muessen
-PR=vim;PK=$PR;which $PR >$DN||{ getIPR;[ $fed = 1 ] &&{ sudo yum update vim-minimal;};${IP_R}$PK;grep -q " $PK" $UNF||printf "${UPR}$PK\nalias vi>$DN&&sudo unalias vi\n">>$UNF;}
+(($(cat $ZD)%$FREQUENZ)) ||{ PR=gtags;PK=global;which $PR >$DN||{ getIPR;${IPR}$PK;grep -q " $PK" $UNF||printf "${UPR}$PK\necho ${UPR}$PK\n">>$UNF;} &&$PR;} # in Fedora koennte gtags noch installiert werden muessen
+PR=vim;PK=$PR;which $PR >$DN||{ getIPR;[ $fed = 1 ] &&{ sudo yum update vim-minimal;};${IP_R}$PK;grep -q " $PK" $UNF||printf "${UPR}$PK\necho ${UPR}$PK\nalias vi>$KF&&sudo unalias vi\necho alias vi>$KF&&sudo unalias vi\n">>$UNF;}
 # so waere es projektspezfisch
 # `which vim || which vi` autofax.cpp autofax.h vgb.cpp DB.cpp DB.h kons.cpp kons.h -p -c "syntax on" -c "set number" -c "set autoindent" -c "set autoindent" -c "set tabstop=2" -c "set ignorecase" -c "set showmatch" -c "set magic" -c "set ruler" 
 # DATEIEN="autofax.cpp autofax.h vgb.cpp DB.cpp DB.h kons.cpp kons.h man_en man_de Makefile install.sh viall .exrc"
 # .. und so etwas allgemeiner
-DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile install.sh $0 .exrc"
+DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile install.sh $0 .exrc $UNF"
 
 # wenn eiheitliche Versionsnummer gewuenscht
 if [ "$1" = "nv" ]; then
