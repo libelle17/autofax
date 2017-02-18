@@ -1,0 +1,12 @@
+sudo rm -rf "/root/autofax/ocrv"
+sudo pip3 uninstall --yes ocrmypdf
+sudo rm -f /etc/systemd/system/hylafax-hfaxd.service
+sudo rm -f /etc/systemd/system/hylafax-faxq.service
+sudo rm -f /etc/systemd/system/hylafax-faxgetty-ttyACM0.service
+sudo zypper rm -u ;sudo zypper lr|grep "g++\|devel_gcc">/dev/null 2>&1 && sudo zypper rr devel_gcc;
+sudo sed -i.vorautofaxbak '/^[ \t]/{H;$!d;};x;//d;1d' /etc/samba/smb.conf
+ sudo crontab /root/rootscrontab;
+rm -f /root/rootscrontab;sudo crontab -l|sed '/autofax -norf/d'>/root/rootscrontab; sudo crontab /root/rootscrontab;
+sudo zypper -n rm -u kernel-source
+sudo sh -c 'source "/root/autofax/ocrv/bin/activate";sudo pip3 uninstall --yes ocrmypdf;deactivate;'
+rm -f /root/rootscrontab;sudo crontab -l|sed '/autofax -noia/d'>/root/rootscrontab; sudo crontab /root/rootscrontab;
