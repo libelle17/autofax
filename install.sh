@@ -1,6 +1,6 @@
 #!/bin/sh
 DN=/dev/null
-KR=">$DN 2>&1" # keine Rueckmeldung
+KR="$DN 2>&1" # keine Rueckmeldung
 KF=" 2>$DN" # keine Fehlermeldung
 UNROH=uninstall
 UNF=${UNROH}inv # Name muss identisch sein mit Ende von uindt in kons.cpp 
@@ -33,16 +33,28 @@ getIPR() {
 
 exportvars() {
 	rm -f vars;
-	for v in KR KF IPR IP_R UPR SPR UNROH UNF pgroff dev libmc REPOS urepo COMP; do eval nv=\$$v; printf "$v:=$nv\n">>vars; done
+	for v in KR KF IPR IP_R UPR SPR UNROH UNF AUNF pgroff dev libmc REPOS urepo COMP; do eval nv=\$$v; printf "$v:=$nv\n">>vars; done
+}
+
+function einricht {
+ which $1 >$DN 2>$DN||{
+   getIPR;
+	 printf "Installing/ Installiere $1 ...\n";
+	 ${IPR}$2;
+   grep -q " $2" $AUNF||{
+	  T=${UPR}$2;
+		printf "$T\nprintf \"%%b$T%%b\\\n\" \"\\033[1;34m\" \"\\033[0m\"">>$AUNF;
+	 }
+ }
 }
 
 basenam=$(basename $0)
 ext=${basenam##*.}
 
-# diese Datei wird wegen obigem in viall gesourct, deshalb dort der Rest zu uebergehen
-if [ $ext = sh ]; then
 P=autofax
 AUNF=$HOME/$P/$UNF
+# diese Datei wird wegen obigem in viall gesourct, deshalb dort der Rest zu uebergehen
+if [ $ext = sh ]; then
 HOSTER=github.com
 ACC=libelle17
 rot="\033[1;31m"
@@ -61,18 +73,15 @@ getIPR;
 { which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
 	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'. Please enter ${blau}root$reset's password if asked:\n"
 	printf "Muss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
-	su -c "$IPR sudo;";grep -q \"sudo\" $AUNF||printf \"${UPR}sudo\n\">>$AUNF;
+	su -c "$IPR sudo;";grep -q \"sudo\" $AUNF||printf \"${UPR}sudo\necho \\\"${UPR}sudo\\\"\n\">>$AUNF;
 	su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";"||exit
 	printf "Please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh $0$reset' again!\n"
 	printf "Bitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh $0$reset' dann nochmal auf!\n";
 	exit;
 }
 # falls make fehlt, dann installieren ...
-$SPR make >$DN 2>&1 ||{
-	echo Installing/ Installiere 'make' ....;
-  id su >$DN 2>&1 && { su -c "$IPR make;";true;} || sudo $IPR make;
-	grep -q make $AUNF||printf "${UPR}make\n">>$AUNF;
-}
+einricht make make
+# $SPR make >$DN 2>&1 ||{ echo Installing/ Installiere 'make' ....; id su >$DN 2>&1 && { su -c "$IPR make;";true;} || sudo $IPR make; grep -q make $AUNF||printf "${UPR}make\necho \"${UPR}make\"\n">>$AUNF; }
 $SPR make >/dev/null || exit
 # wenn $P schon das aktuelle Verzeichnis ist und wenn es dort einige notwendige Dateien gibt, dann nicht mehr neu runterladen ...
 [ $nPWD = $P -a -f Makefile -a -f $P.cpp ]&&{

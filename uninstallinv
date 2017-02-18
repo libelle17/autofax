@@ -10,3 +10,5 @@ rm -f /root/rootscrontab;sudo crontab -l|sed '/autofax -norf/d'>/root/rootscront
 sudo zypper -n rm -u kernel-source
 sudo sh -c 'source "/root/autofax/ocrv/bin/activate";sudo pip3 uninstall --yes ocrmypdf;deactivate;'
 rm -f /root/rootscrontab;sudo crontab -l|sed '/autofax -noia/d'>/root/rootscrontab; sudo crontab /root/rootscrontab;
+sudo zypper rm -u ctags
+printf "%bsudo zypper rm -u ctags%b\n" "[1;34m" "[0m"
