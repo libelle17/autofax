@@ -7468,20 +7468,21 @@ void pruefblack(int obverb, int oblog)
 // wird aufgerufen in: pruefcapi
 void paramcl::pruefmodcron()
 {
-  ::Log(violetts+Tx[T_pruefmodcron]+schwarz,obverb?obverb-1:0,oblog);
-  const string mp="@reboot /sbin/modprobe ";
+//  ::Log(violetts+Tx[T_pruefmodcron]+schwarz,obverb?obverb-1:0,oblog);
+	Log(violetts+Tx[T_pruefmodcron]+schwarz);
+	const string mp="@reboot /sbin/modprobe ";
   const string mps[]={mp+"capi",mp+"fcpci"};
   setztmpc();
   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++) {
+		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'",obverb,oblog)) {
     svec rueck;
-    systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'||"
-        "(sudo crontab -l 2>/dev/null >"+tmpc+";echo \""+mps[ru]+"\">>"+tmpc+";sudo crontab "+tmpc+")",obverb,oblog,&rueck);
-    for(size_t znr=0;znr<rueck.size();znr++) {
-      ::Log(rueck[znr],1+obverb,oblog);
+     if (systemrueck("(sudo crontab -l 2>/dev/null >"+tmpc+";echo \""+mps[ru]+"\">>"+tmpc+";sudo crontab "+tmpc+")",obverb,oblog,&rueck)) {
+//    for(size_t znr=0;znr<rueck.size();znr++) { ::Log(rueck[znr],1+obverb,oblog); } //     for(size_t znr=0;znr<rueck.size();znr++)
 			const string befehl="bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'&&"
 				"(sudo crontab -l 2>/dev/null|sed '/"+saufr+"/d'>"+tmpc+";sudo crontab "+tmpc+");true";
 			anfgggf(unindt,befehl);
-		} //     for(size_t znr=0;znr<rueck.size();znr++)
+		 }
+		}
   } //   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++)
 } // void pruefmodcron(int obverb, int oblog)
 

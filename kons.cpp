@@ -2564,7 +2564,7 @@ void anfgggf(string datei, string inhalt)
 	if (!obda) {
 		mdatei uniff(datei,ios::app,0);
 		if (uniff.is_open()) {
-			uniff<<inhalt<<"\n"<<"printf \"%b"<<inhalt<<"%b\\n\" \"\\033[1;34m\" \"\\033[0m\"\n"<<endl;
+			uniff<<inhalt<<"\n"<<"printf \"%b"<<inhalt<<"%b\\n\" \"\\033[1;34m\" \"\\033[0m\""<<endl;
 		} else {
 			perror((string("\n")+Txk[T_Kann_Datei]+datei+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
 		} // 			if (uniff.is_open())
