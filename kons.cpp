@@ -237,6 +237,8 @@ const char *kons_T[T_konsMAX+1][Smax]=
 	{"enableggf()","enableifnecessary()"},
 	// T_semodpruef
 	{"semodpruef()","checksemod()"},
+	// T_Exitcode
+	{"Exitcode ","Exitcode "},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 
@@ -1080,24 +1082,30 @@ void kopierm(string *quelle, string *ziel)
 #endif
 
 // von http://chris-sharpe.blogspot.de/2013/05/better-than-systemtouch.html
-void touch(const std::string& pathname,int obverb/*=0*/,int oblog/*=*/)
+int touch(const std::string& pfad,int obverb/*=0*/,int oblog/*=*/)
 {
-  int fehler=0;
-	int fd = open(pathname.c_str(), O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, 0666);
-	if (fd<0) { // Couldn't open that path.
-		if (obverb) std::cerr << __PRETTY_FUNCTION__ << ": Couldn't open() path \"" << pathname << "\"\n";
-		fehler=1;
-	} else {
-		int rc = utimensat(AT_FDCWD, pathname.c_str(), nullptr, 0);
-		if (rc) {
-			if (obverb) std::cerr << __PRETTY_FUNCTION__ << ": Couldn't utimensat() path \"" << pathname << "\"\n";
-			fehler=1;
+	struct stat tstat;
+  int fehler=lstat(pfad.c_str(),&tstat);
+	if (fehler) {
+		int fd = open(pfad.c_str(), O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, 0666);
+		if (fd<0) { // Couldn't open that path.
+			if (obverb) std::cerr<<__PRETTY_FUNCTION__<<": Couldn't open() path \""<<pfad<<"\"\n";
+		} else {
+			int rc = utimensat(AT_FDCWD, pfad.c_str(), nullptr, 0);
+			if (rc) {
+				if (obverb) std::cerr<<__PRETTY_FUNCTION__<<": Couldn't utimensat() path \""<<pfad<<"\"\n";
+			} else {
+			if (obverb||oblog) 
+			  std::clog<<violett<<__PRETTY_FUNCTION__<<schwarz<<": erfolgreich fuer \""<<blau<<pfad<<schwarz<<"\"\n";
+			 fehler=0;
+			}
 		}
-		if (obverb||oblog) std::clog << __PRETTY_FUNCTION__ << ": Completed touch() on path \"" << pathname << "\"\n";
+		if (fehler)
+			fehler=systemrueck("sudo touch '"+pfad+"'",obverb,oblog);
 	}
-	if (fehler)
-		systemrueck("sudo touch '"+pathname+"'",obverb,oblog);
-}
+	return fehler;
+} // int touch(const std::string& pfad,int obverb/*=0*/,int oblog/*=*/)
+
 
 void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach)
 {
@@ -1912,7 +1920,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 						} else if (cmd.substr(0,14)=="sudo modprobe ") {
 						  ergebnis=gruens+Txk[T_nicht_einfuegbar];
 						} else {
-							ergebnis=rots+Txk[T_Fehler]+ltoan(erg);
+							ergebnis=rots+Txk[T_Exitcode]+ltoan(erg);
 						}
 						if (obverb>=0) obergebnisanzeig=wahr;
 						obverb++;
@@ -2001,6 +2009,7 @@ int setfaclggf(const string& datei,const binaer obunter,const int mod/*=4*/,ucha
 // obmitfacl: 1= setzen, falls noetig, >1= immer setzen
 int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfacl/*=1*/,uchar obmitcon/*=1*/)
 {
+	static int obselinux=-1;
   struct stat sverz={0};
   int fehler=1;
   if (!verz.empty()) {
@@ -2016,7 +2025,12 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 //    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
     if (obmitfacl) setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
 		 // <<violett<<verz<<schwarz<<endl;
-		if (obmitcon) systemrueck("which sestatus 2>/dev/null && sudo chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
+		if (obmitcon) {
+		 if (obselinux==-1) 
+		   obselinux=obprogda("sestatus",obverb,oblog);
+		 if (obselinux)
+			 systemrueck("sudo chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
+		}
   } // if (!verz.empty())
   return fehler;
 } // void pruefverz(const string& verz,int obverb,int oblog)
@@ -2926,59 +2940,11 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 	KLZ // 		if (!(obenabled=(srueck[0].find("enabled")!=string::npos))) else
 	 */
 	const int sfeh[]={ T_Dienst_laeuft,T_Dienst_inexistent, T_Dienst_disabled, T_Dienstdateiname_nicht_ermittelbar, T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent, T_Exec_Dateiname_nicht_ermittelbar, T_Exec_Datei_fehlt, T_activating, T_Dienst_kann_gestartet_werden, T_Sonstiges};
-	caus<<"svfeh: "<<(int)svfeh<<", sfeh[svfeh]: "<<(int)sfeh[svfeh]<<endl;
-	if (sname!="hylafax") { 
-	  int aktobverb=obverb|| (svfeh && svfeh!=8);
-	  caus<<"aktobverb: "<<aktobverb<<endl;
-		Log(Txk[T_Ergebnis_Dienst]+blaus+sname+schwarz+": "+gruen+Txk[sfeh[svfeh]]+schwarz,aktobverb,oblog);
-	} // 	if (sname!="hylafax")
+	int aktobverb=(obverb>-1 && (obverb>0|| (svfeh && svfeh!=8)));
+	Log(Txk[T_Ergebnis_Dienst]+blaus+sname+schwarz+": "+gruen+Txk[sfeh[svfeh]]+schwarz,aktobverb,oblog);
 	Log(violetts+"Ende "+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
 	return svfeh;
 } // int servc::obsvfeh(int obverb,int oblog)
-
-/*
-// wird aufgerufen in: pruefhyla, pruefcapi, spruef
-int servc::obslaeuft(int obverb,int oblog, binaer nureinmal)
-{
-//  Log(violetts+Txk[T_obslaeuft]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
-perfcl prf(Txk[T_Aktiviere_Dienst]+sname);
-size_t runde=0;
-while (1) {
-runde++;
-obsvfeh(obverb,oblog);
-if (svfeh=!1) {
-Log(blau+srueck[0]+schwarz,obverb>1?obverb-1:0,oblog);
-if (!svfeh) {
-break;
-} else if (srueck[0].find("activating")!=string::npos) {
-svfeh=6;
-}
-if (fehler) break;
-if (nureinmal || prf.oberreicht(3)) {
-break;
-}
-prf.ausgeb();
-} else if (srueck[0].find("loaded")!=string::npos) {
-break;
-} else {
-break;
-} //       if (srueck[0].find("active running")!=string::npos) else else else else
-} else { // if (!srueck.empty()) 
-break;
-} //     if (!srueck.empty())  else 
-} // while (1)
-if (svfeh) {
-vector<errmsgcl> errv;
-const string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
-const string f0=froh+Txk[T_geladen];
-const string f1=froh+Txk[T_nicht_geladen];
-errv.push_back(errmsgcl(0,f0));
-errv.push_back(errmsgcl(1,f1));
-svfeh=systemrueck("systemctl -n 0 status '"+sname+"'| grep ' loaded '",obverb,oblog,0,falsch,wahr,"",&errv);
-} //   if (svfeh)
-return !svfeh;
-} // int servc::obslaeuft(int obverb,int oblog)
- */
 
 void servc::pkill(int obverb/*=0*/,int oblog/*=0*/)
 {

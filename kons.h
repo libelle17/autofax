@@ -207,6 +207,7 @@ enum Tkons_
 	T_stopdis_sname,
 	T_enableggf,
 	T_semodpruef,
+	T_Exitcode,
 	T_konsMAX,
 };
 
@@ -356,7 +357,7 @@ char* ltoan(long value, int base=10, uchar obtz=0, uchar minstel=0);
 char* ltoa_(long value, char* result, int base); 
 
 double progvers(const string& prog,int obverb, int oblog);
-void touch(const std::string& pathname,int obverb=0,int oblog=0);
+int touch(const std::string& pathname,int obverb=0,int oblog=0);
 
 #ifdef notcpp
 class Schluessel {

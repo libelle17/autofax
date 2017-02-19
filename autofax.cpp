@@ -7045,8 +7045,8 @@ int paramcl::pruefhyla()
         ";true'";
 			systemrueck(befehl,obverb,oblog);
 			anfgggf(unindt,"cd \""+instvz+vtz+proj+"\" && cat install_manifest.txt|sudo xargs rm; cd \""+instvz+"\"");
-			anfgggf(unindt,"sudo rm -f \""+nachw+"\"");
-			touch(nachw,obverb,oblog);
+			if (!touch(nachw,obverb,oblog))
+				anfgggf(unindt,"sudo rm -f \""+nachw+"\"");
 		 } // 		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh))
 
 		for(unsigned versuch=0;versuch<3;versuch++) {
