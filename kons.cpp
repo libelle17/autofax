@@ -2926,6 +2926,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 	KLZ // 		if (!(obenabled=(srueck[0].find("enabled")!=string::npos))) else
 	 */
 	const int sfeh[]={ T_Dienst_laeuft,T_Dienst_inexistent, T_Dienst_disabled, T_Dienstdateiname_nicht_ermittelbar, T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent, T_Exec_Dateiname_nicht_ermittelbar, T_Exec_Datei_fehlt, T_activating, T_Dienst_kann_gestartet_werden, T_Sonstiges};
+	caus<<"svfeh: "<<(int)svfeh<<", sfeh[svfeh]: "<<(int)sfeh[svfeh]<<endl;
 	if (sname!="hylafax") { 
 	  int aktobverb=obverb|| (svfeh && svfeh!=8);
 		Log(Txk[T_Ergebnis_Dienst]+blaus+sname+schwarz+": "+gruen+Txk[sfeh[svfeh]]+schwarz,aktobverb,oblog);
