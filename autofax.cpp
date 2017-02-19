@@ -2827,9 +2827,9 @@ void paramcl::pruefcvz()
   cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
   // <<violett<<"cfaxuserrcvz: "<<cfaxuserrcvz<<schwarz<<endl;
   pruefverz(cfaxuserrcvz,obverb,oblog);
-  pruefverz(cfaxuservz+vtz+"/autofaxarch",obverb,oblog);
-  pruefverz(cfaxuservz+vtz+"/failed",obverb,oblog);
-  pruefverz(cfaxuservz+vtz+"/sendq",obverb,oblog);
+  pruefverz(cfaxuservz+"/autofaxarch",obverb,oblog);
+  pruefverz(cfaxuservz+"/failed",obverb,oblog);
+  pruefverz(cfaxuservz+"/sendq",obverb,oblog);
 
 } // paramcl::pruefcvz
 
