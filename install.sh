@@ -15,8 +15,8 @@ getIPR() {
   CTAGS=ctags;
 	{ which zypper  >$DN 2>&1 &&{ 
 		Z=zypper;g=--gpg-auto-import-keys;IPR="$Z -n $g in ";IP_R="$Z $g in ";UPR="sudo zypper rm -u ";pgroff=groff;
-  REPOS="sudo zypper lr|grep 'g++\|devel_gcc'\$(KR)||sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
-  urepo="sudo zypper lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\$(KR) && sudo zypper rr devel_gcc;";
+  REPOS="sudo zypper lr|grep 'g++\|devel_gcc'\>$(KR)||sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
+  urepo="sudo zypper lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$(KR) && sudo zypper rr devel_gcc;";
   COMP="gcc gcc-c++ \$(CCInst)";
 	} }||
 	{ which apt-get >$DN 2>&1 &&{ IPR="sudo apt-get --assume-yes install ";IP_R=$IPR;
@@ -43,7 +43,7 @@ function einricht {
 	 ${IPR}$2;
    grep -q " $2" $AUNF||{
 	  T=${UPR}$2;
-		printf "$T\nprintf \"%%b$T%%b\\\n\" \"\\033[1;34m\" \"\\033[0m\"">>$AUNF;
+		printf "$T\nprintf \"%%b$T%%b\\\n\" \"\\033[1;34m\" \"\\033[0m\"\n">>$AUNF;
 	 }
  }
 }

@@ -1254,7 +1254,7 @@ sqlft::sqlft(DBSTyp eDBS, long long int i):
 {
   sprintf((char*)c_str(),"%llu",i);
   resize(strlen(c_str()));
-}
+} // sqlft::sqlft(DBSTyp eDBS, long long int i)
 
 void DB::LetzteID(string *erg) 
 {
@@ -1270,9 +1270,9 @@ void DB::LetzteID(string *erg)
 		  caus<<"hier letzteid"<<endl;
 			exit(10);
         break;
-    }
-  }
-}
+    } //     switch (DBS)
+  } //   if (erg)
+} // void DB::LetzteID(string *erg)
 
 char* DB::tmtosql(tm *tmh,char* buf) 
 {
@@ -1287,9 +1287,10 @@ char* DB::tmtosql(tm *tmh,char* buf)
 		  caus<<"hier tmtosql"<<endl;
 			exit(10);
       break;
-  }
+  } //   switch (DBS)
   return buf;
-}
+} // char* DB::tmtosql(tm *tmh,char* buf)
+
 //
 char* DB::tmtosqlmZ(tm *tmh,char* buf) 
 {
@@ -1307,9 +1308,9 @@ char* DB::tmtosqlmZ(tm *tmh,char* buf)
 		  caus<<"hier tmtosql"<<endl;
 			exit(10);
       break;
-  }
+  } //   switch (DBS)
   return buf;
-}
+} // char* DB::tmtosqlmZ(tm *tmh,char* buf) 
 
 my_ulonglong DB::affrows() 
 { // affected rows

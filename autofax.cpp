@@ -7047,7 +7047,7 @@ int paramcl::pruefhyla()
 			anfgggf(unindt,"cd \""+instvz+vtz+proj+"\" && cat install_manifest.txt|sudo xargs rm; cd \""+instvz+"\"");
 			anfgggf(unindt,"sudo rm -f \""+nachw+"\"");
 			touch(nachw,obverb,oblog);
-		 }
+		 } // 		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh))
 
 		for(unsigned versuch=0;versuch<3;versuch++) {
 			// 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
@@ -8936,7 +8936,6 @@ int main(int argc, char** argv)
   if (pm.obvi) {
 		exit (systemrueck("$(which vim 2>/dev/null || which vi) "+pm.konfdatname+" >/dev/tty"));
   } //   if (pm.obvi)
-	caus<<"Stelle 10"<<endl;
   if (pm.zeigvers) {
    zeigversion(pm.meinname,pm.mpfad);
    pm.zeigkonf();

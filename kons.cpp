@@ -2562,7 +2562,7 @@ void anfgggf(string datei, string inhalt)
 	if (!obda) {
 		mdatei uniff(datei,ios::app,0);
 		if (uniff.is_open()) {
-			uniff<<inhalt<<"\n"<<"echo "<<inhalt<<endl;
+			uniff<<inhalt<<"\n"<<"printf \"%%b"<<inhalt<<"%%b\\\n\" \"\\033[1;34m\" \"\\033[0m\"\n"<<endl;
 		} else {
 			perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
 		} // 			if (uniff.is_open())
@@ -2698,7 +2698,7 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 			if (!svfeh) break;
 		}
 		if (!iru && svfeh>5) {
-		  caus<<"machfit, svfeh: "<<gruen<<svfeh<<schwarz<<endl;
+		  // <<"machfit, svfeh: "<<gruen<<svfeh<<schwarz<<endl;
 //			exit(108);
 			//      svec sr1;
 			//      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
