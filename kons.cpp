@@ -695,12 +695,12 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 	}
 	const string ofil=string(logdatei)+"tmp";
 	int abhier=0;
-	mdatei outfile(ofil,ios::out,1);
+	mdatei outfile(ofil,ios::out,0);
 	if (!outfile.is_open()) {
 		perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_als_fstream_zum_Schreiben_oeffnen]).c_str());
 		return 1;
 	}
-	mdatei logf(logdatei,ios::in,1);
+	mdatei logf(logdatei,ios::in,0);
 	if (!logf.is_open()) {
 		perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_als_fstream_zum_Lesen_oeffnen]).c_str());
 		return 1;
@@ -877,7 +877,7 @@ int Log(const string& text, short screen, short file, bool oberr, short klobverb
           //          Log("nach kuerzelogdatei",screen,0);
           erstaufruf=0;
         }	  
-        mdatei logf(logdt,ios::out|ios::app,1);
+        mdatei logf(logdt,ios::out|ios::app,0);
         if (!logf.is_open()) {
           perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
           return 1;
