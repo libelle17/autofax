@@ -2443,69 +2443,87 @@ void paramcl::getcommandl0()
 // wird aufgerufen in: main, rueckfragen
 void paramcl::pruefmodem()
 {
-  Log(violetts+Tx[T_pruefmodem]+schwarz);
-  svec rueck;
-  // <<"pruefmodem 1 nach obcapi: "<<(int)obcapi<<endl;
-  obmodem=0;
-  cmd="find /sys/class/tty";
-  systemrueck(cmd, obverb,oblog,&rueck);
-  for(size_t i=0;i<rueck.size();i++) {
-    struct stat entrydriv={0};
-    if (!lstat(((rueck[i])+"/device/driver").c_str(),&entrydriv)) {
-      string tty=base_name(rueck[i]);
-      // ttyS0 erscheint auf Opensuse und Ubuntu konfiguriert, auch wenn kein Modem da ist
-      if (tty!="ttyS0") {
-        svec rue2;
-        vector<errmsgcl> errv;
-        string f0=schwarzs+"Modem "+blau+tty+schwarz+Tx[T_gibts];
-        string f1=f0+Tx[T_nicht];
-        errv.push_back(errmsgcl(0,f0));
-        errv.push_back(errmsgcl(1,f1));
-        if (!systemrueck("sudo stty -F /dev/"+tty+" time 10",obverb,oblog,&rue2,2,wahr,"",&errv)) {
-          obmodem=1;
-          modems<<tty;
-          Log(string("Modem: ")+blau+tty+schwarz+Tx[T_gefunden]);
-        } // if (!systemrueck("sudo stty -F /dev/"+tty+" >/dev/null 2>&1",obverb,oblog,&rue2)) 
-      } // if (tty!="ttyS0") 
-    } // if (!lstat(((rueck[i])+"/device/driver").c_str(),&entrydriv)) 
-  } // for(size_t i=0;i<rueck.size();i++) 
-  //  uchar modemumgesteckt=0;
-  uchar schonda=0;
-  if (!hmodem.empty()) {
-    for(size_t j=0;j<modems.size();j++) {
-      if (modems[j]==hmodem) {
-        schonda=1;
-        break;
-      }
-    } // for(size_t j=0;j<modems.size();j++) 
-    if (!schonda) hmodem.clear();
-  } // if (!hmodem.empty()) 
-  if (hmodem.empty()) {
-    if (modems.size()) if (!modems[0].empty()) {
-      if (obverb) {
-        Log(string("modems[0]: ")+rot+modems[0]+schwarz);
-        Log(string("hmodem:    ")+rot+hmodem+schwarz);
-      }
-      hmodem=modems[0];/*modemsumgesteckt=1;*/ 
-      modemgeaendert=1;
-    } //   if (modems.size()) if (!modems[0].empty()) if (modems[0]!=hmodem) 
-  } // if (hmodem.empty()) 
-  obmdgeprueft=1;
-  if (!obmodem) {
-    obhyla=0;
-    Log(rots+Tx[T_Kein_Modem_gefunden]+schwarz);
-  }
-  // wenn zum Konfigurationszeitpunkt kein Modem drinsteckte, aber jetzt, dann rueckfragen
-  if (obmodem && cgconf.hole("obmodem")=="0") {
-   rzf=1;
-  }
-  // wenn nur obkschreib, dann noch nicht auf neu eingestecktes Modem reagieren
-  if (rzf) {
-    cgconf.setze("obmodem",obmodem?"1":"0");
-  }
-  cgconf.setzbemv("obmodem",&Tx,T_ob_ein_Modem_drinstak);
-  Log(violetts+Tx[T_pruefmodem]+" Ende"+schwarz);
-  // wvdialconf oder schneller: setserial -a /dev/tty*, mit baud_base: <!=0>  als Kriterium
+	Log(violetts+Tx[T_pruefmodem]+schwarz);
+	obmodem=0;
+	const string svz="/sys/class/tty/";
+	svec rueck;
+	// <<"pruefmodem 1 nach obcapi: "<<(int)obcapi<<endl;
+	// 19.2.17: evtl. besser mit: dmesg|grep '[^t]*tty[^] 0\t:.$]'|sed 's/[^t]*\(tty[^] \t:.$]*\).*/\1/'
+#define mitdmesg
+#ifdef mitdmesg
+	systemrueck("dmesg|grep tty",obverb,oblog,&rueck);
+	for(size_t i=0;i<rueck.size();i++) {
+		size_t pos=rueck[i].find("tty");
+		if (pos==string::npos) continue;
+		size_t p2=rueck[i].find_first_of("] \t:.,;-",pos);
+		if (p2==string::npos) continue;
+		string modem=rueck[i].substr(pos,p2-pos);
+		if (modem=="tty"||modem=="tty0") continue;
+		modem=svz+modem;
+		// <<rot<<svz+modem<<schwarz<<endl;
+		//}
+#else
+		rueck.clear();
+		systemrueck("find "+svz, obverb,oblog,&rueck);
+		for(size_t i=0;i<rueck.size();i++) {
+			string modem=rueck[i];
+#endif
+			struct stat entrydriv={0};
+			if (!lstat((modem+"/device/driver").c_str(),&entrydriv)) {
+				string tty=base_name(modem);
+				// ttyS0 erscheint auf Opensuse und Ubuntu konfiguriert, auch wenn kein Modem da ist
+				if (tty!="ttyS0") {
+					svec rue2;
+					vector<errmsgcl> errv;
+					string f0=schwarzs+"Modem "+blau+tty+schwarz+Tx[T_gibts];
+					string f1=f0+Tx[T_nicht];
+					errv.push_back(errmsgcl(0,f0));
+					errv.push_back(errmsgcl(1,f1));
+					if (!systemrueck("sudo stty -F /dev/"+tty+" time 10",obverb,oblog,&rue2,2,wahr,"",&errv)) {
+						obmodem=1;
+						modems<<tty;
+						Log(string("Modem: ")+blau+tty+schwarz+Tx[T_gefunden]);
+					} // if (!systemrueck("sudo stty -F /dev/"+tty+" >/dev/null 2>&1",obverb,oblog,&rue2)) 
+				} // if (tty!="ttyS0") 
+			} // if (!lstat(((rueck[i])+"/device/driver").c_str(),&entrydriv)) 
+		} // for(size_t i=0;i<rueck.size();i++) 
+		//  uchar modemumgesteckt=0;
+		uchar schonda=0;
+		if (!hmodem.empty()) {
+			for(size_t j=0;j<modems.size();j++) {
+				if (modems[j]==hmodem) {
+					schonda=1;
+					break;
+				}
+			} // for(size_t j=0;j<modems.size();j++) 
+			if (!schonda) hmodem.clear();
+		} // if (!hmodem.empty()) 
+		if (hmodem.empty()) {
+			if (modems.size()) if (!modems[0].empty()) {
+				if (obverb) {
+					Log(string("modems[0]: ")+rot+modems[0]+schwarz);
+					Log(string("hmodem:    ")+rot+hmodem+schwarz);
+				}
+				hmodem=modems[0];/*modemsumgesteckt=1;*/ 
+				modemgeaendert=1;
+			} //   if (modems.size()) if (!modems[0].empty()) if (modems[0]!=hmodem) 
+		} // if (hmodem.empty()) 
+		obmdgeprueft=1;
+		if (!obmodem) {
+			obhyla=0;
+			Log(rots+Tx[T_Kein_Modem_gefunden]+schwarz);
+		}
+		// wenn zum Konfigurationszeitpunkt kein Modem drinsteckte, aber jetzt, dann rueckfragen
+		if (obmodem && cgconf.hole("obmodem")=="0") {
+			rzf=1;
+		}
+		// wenn nur obkschreib, dann noch nicht auf neu eingestecktes Modem reagieren
+		if (rzf) {
+			cgconf.setze("obmodem",obmodem?"1":"0");
+		}
+		cgconf.setzbemv("obmodem",&Tx,T_ob_ein_Modem_drinstak);
+		Log(violetts+Tx[T_pruefmodem]+" Ende"+schwarz);
+		// wvdialconf oder schneller: setserial -a /dev/tty*, mit baud_base: <!=0>  als Kriterium
 } // void paramcl::pruefmodem()
 
 void paramcl::pruefisdn()
