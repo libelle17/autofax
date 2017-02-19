@@ -286,6 +286,6 @@ confclean:
 .PHONY: uninstall
 uninstall: distclean
 	-@tac $(UNF)>tmp_$(UNROH)&& sudo sh tmp_$(UNROH) # uninstallinv von hinten nach vorne abarbeiten
-	-@printf "Fertig mit uinstall!\n"
+	-@printf "Fertig mit uninstall!\n"
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))

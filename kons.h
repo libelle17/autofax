@@ -125,6 +125,7 @@ enum Tkons_
   T_nicht_mit_fopen_zum_Lesen_oeffnen,
   T_Variable_logdatei_leer,
   T_nicht_als_fstream_zum_Anhaengen_oeffnen,
+	T_nicht_mit_open_zum_Anhaengen_oeffnen,
   T_nicht_mit_fopen_zum_Anhaengen_oeffnen,
   T_Bitte_mit,
   T_beenden,

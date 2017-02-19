@@ -72,6 +72,8 @@ const char *kons_T[T_konsMAX+1][Smax]=
   {"Variable 'logdatei' leer!","Variable 'logdatei' empty!"},
   // T_nicht_als_fstream_zum_Anhaengen_oeffnen
   {"' nicht als fstream zum Anhaengen oeffnen.","' as fstream for appending."},
+	// T_nicht_mit_open_zum_Anhaengen_oeffnen
+  {"' nicht mit open() zum Anhaengen oeffnen.","' with open() for appending."},
   // T_nicht_mit_fopen_zum_Anhaengen_oeffnen
   {"' nicht mit fopen zum Anhaengen oeffnen: ","' with fopen for appending."},
   // T_Bitte_mit
@@ -693,12 +695,12 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 	}
 	const string ofil=string(logdatei)+"tmp";
 	int abhier=0;
-	mdatei outfile(ofil,ios::out,0);
+	mdatei outfile(ofil,ios::out,1);
 	if (!outfile.is_open()) {
 		perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_als_fstream_zum_Schreiben_oeffnen]).c_str());
 		return 1;
 	}
-	mdatei logf(logdatei,ios::in,0);
+	mdatei logf(logdatei,ios::in,1);
 	if (!logf.is_open()) {
 		perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_als_fstream_zum_Lesen_oeffnen]).c_str());
 		return 1;
@@ -875,9 +877,9 @@ int Log(const string& text, short screen, short file, bool oberr, short klobverb
           //          Log("nach kuerzelogdatei",screen,0);
           erstaufruf=0;
         }	  
-        mdatei logf(logdt,ios::out|ios::app,0);
+        mdatei logf(logdt,ios::out|ios::app,1);
         if (!logf.is_open()) {
-          perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
+          perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
           return 1;
         } else {
           logf<<zwi<<endl; 
@@ -2564,7 +2566,7 @@ void anfgggf(string datei, string inhalt)
 		if (uniff.is_open()) {
 			uniff<<inhalt<<"\n"<<"printf \"%%b"<<inhalt<<"%%b\\\n\" \"\\033[1;34m\" \"\\033[0m\"\n"<<endl;
 		} else {
-			perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
+			perror((string("\n")+Txk[T_Kann_Datei]+datei+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
 		} // 			if (uniff.is_open())
 	} // 			if (!obda)
 } // void anfgggf(string datei, string inhalt)
