@@ -2929,6 +2929,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 	caus<<"svfeh: "<<(int)svfeh<<", sfeh[svfeh]: "<<(int)sfeh[svfeh]<<endl;
 	if (sname!="hylafax") { 
 	  int aktobverb=obverb|| (svfeh && svfeh!=8);
+	  caus<<"aktobverb: "<<aktobverb<<endl;
 		Log(Txk[T_Ergebnis_Dienst]+blaus+sname+schwarz+": "+gruen+Txk[sfeh[svfeh]]+schwarz,aktobverb,oblog);
 	} // 	if (sname!="hylafax")
 	Log(violetts+"Ende "+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
