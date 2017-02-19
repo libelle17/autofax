@@ -387,7 +387,7 @@ string *loeschealleaus(string *u, const char* alt)
   return u;
 } // loeschealleaus(char *u, const char* alt, const char* neu)
 
-string ersetzAllezu(string& quelle, const string& alt, const string& neu) 
+string ersetzAllezu(const string& quelle, const string& alt, const string& neu) 
 {
   if(!alt.empty()) {
     string zwi;
@@ -444,7 +444,7 @@ string ersetzAllezu(string *quelle, const char* alt, const char* neu)
 } // string ersetzAllezu(string *quelle, const char* alt, const char* neu) 
 
 
-string ersetzAllezu(const char *quelle, const char* alt, const char* neu) 
+string ersetzAllezu(const char *const quelle, const char* const alt, const char* const neu) 
 {
   string erg;
   if (alt[0]==0 || !strcmp(alt,neu)) {
@@ -467,7 +467,7 @@ string ersetzAllezu(const char *quelle, const char* alt, const char* neu)
 } // string ersetzAllezu(const char *quelle, const char* alt, const char* neu) 
 
 
-void ersetzAlle(string *quelle, const char* alt, const char* neu) 
+void ersetzAlle(string *quelle, const char* const alt, const char* const neu) 
 {
   if(*alt) {
     string zwi;
@@ -532,7 +532,7 @@ void chersetze(string str, string *wsRet, const string& from, const char to)
 } // void chersetze(string str, string *wsRet, const string& from, const char to) 
 
 
-string ersetze(const char *u, const char* alt, const char* neu) 
+string ersetze(const char *const u, const char *const alt, const char *const neu) 
 {
   string erg;
   if (alt[0]==0 || !strcmp(alt,neu)) {
@@ -1981,14 +1981,14 @@ int setfaclggf(const string& datei,const binaer obunter,const int mod/*=4*/,ucha
         svec gstat;
         systemrueck("getfacl -e -t '"+datei+"' 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*"+modbuch+"' || true",obverb,oblog,&gstat);
         if (!gstat.size()) obimmer=wahr; // wenn keine Berechtigung gefunden => erstellen
-       }
+       } //        if (!obimmer)
        if (obimmer) {
           if (obverb) systemrueck("sudo sh -c 'ls -l \""+datei+"\"'",2,0);
 					if (faclbak) {
 						string sich=base_name(datei)+"."+base_name(meinpfad())+".perm";
 						systemrueck("sudo sh -c 'cd \""+dir_name(datei)+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(datei)+"\">\""+sich+"\"'",obverb,oblog);
 						anfgggf(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'");
-					}
+					} // 					if (faclbak)
 					systemrueck(string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'",obverb,oblog);
           if (obverb) systemrueck("sudo sh -c 'ls -l \""+datei+"\"'",2,0);
        } //        if (obimmer)
@@ -2548,7 +2548,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 } // uchar linst_cl::doinst(const string& prog,int obverb,int oblog) 
 
 // fuege an, wenn noch nicht enthalten
-void anfgggf(string datei, string inhalt)
+void anfgggf(const string datei, const string inhalt)
 {
 	uchar obda=0;
 	mdatei uni0(datei,ios::in,0);
@@ -2564,7 +2564,7 @@ void anfgggf(string datei, string inhalt)
 	if (!obda) {
 		mdatei uniff(datei,ios::app,0);
 		if (uniff.is_open()) {
-			uniff<<inhalt<<"\n"<<"printf \"%b"<<inhalt<<"%b\\n\" \"\\033[1;34m\" \"\\033[0m\""<<endl;
+			uniff<<inhalt<<"\n"<<"printf \"%b"<<ersetzAllezu(inhalt,"\"","\\\"")<<"%b\\n\" \"\\033[1;34m\" \"\\033[0m\""<<endl;
 		} else {
 			perror((string("\n")+Txk[T_Kann_Datei]+datei+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
 		} // 			if (uniff.is_open())

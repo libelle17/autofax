@@ -37,7 +37,7 @@ extern const string& instvz; // z.B. /root/autofax
 extern const string& unindt; // instvz+"uninstallinv"
 string* loeschefarbenaus(string *zwi);
 int Log(const string& text,short screen=1,short file=1,bool oberr=0,short klobverb=0);
-void anfgggf(string datei, string inhalt);
+void anfgggf(const string datei, const string inhalt);
 
 #ifdef _MSC_VER
 #define fileno _fileno // sonst Warnung posix deprecated
@@ -335,18 +335,18 @@ string fersetze(const string& u, const char* alt, const char* neu);
 string caseersetze(const string& u, const char* alt, const char* neu); 
 string *loeschealleaus(string *u, const char* alt);
 
-string ersetze(const char *const u, const char* const alt, const char* neu);
+string ersetze(const char *const u, const char* const alt, const char* const neu);
 string *sersetze(string *src, string const& target, string const& repl);
 // wstring ersetze(const wstring& u, const wchar_t* alt, const wchar_t* neu); 
 
-string ersetzAllezu(string& quelle, const string& alt, const string& neu);
+string ersetzAllezu(const string& quelle, const string& alt, const string& neu);
 void ersetzAlle(string& quelle, const string& alt, const string& neu);
-string ersetzAllezu(string *quelle, const char* alt, const char* neu);
-string ersetzAllezu(const char *quelle, const char* alt, const char* neu);
-void ersetzAlle(string *quelle, const char* alt, const char* neu);
+string ersetzAllezu(string *quelle, const char* const alt, const char* const neu);
+string ersetzAllezu(const char *const quelle, const char* const alt, const char* const neu);
+void ersetzAlle(string *quelle, const char* const alt, const char* const neu);
 void ersetzAlle(string *quelle, const string& alt, const string& neu);
 
-char* charersetze(char *u, char alt, char neu);
+char* charersetze(char *u, const char alt, const char neu);
 void chersetze(const string& u, string *z, const string& alt, const char neu);
 string ersetzefuerdatei(const string& u);
 size_t zahlin(string *str, const char* was);
