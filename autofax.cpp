@@ -7479,7 +7479,7 @@ void paramcl::pruefmodcron()
      if (!systemrueck("(sudo crontab -l 2>/dev/null >"+tmpc+";echo \""+mps[ru]+"\">>"+tmpc+";sudo crontab "+tmpc+")",obverb,oblog,&rueck)) {
 //    for(size_t znr=0;znr<rueck.size();znr++) { ::Log(rueck[znr],1+obverb,oblog); } //     for(size_t znr=0;znr<rueck.size();znr++)
 			const string befehl="bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'&&"
-				"(sudo crontab -l 2>/dev/null|sed '/"+mps[ru]+"/d'>"+tmpc+";sudo crontab "+tmpc+");true";
+				"(sudo crontab -l 2>/dev/null|sed '/"+ersetzAllezu(mps[ru],"/","\\/")+"/d'>"+tmpc+";sudo crontab "+tmpc+");true";
 			anfgggf(unindt,befehl);
 		 } //      if (!systemrueck("(sudo crontab -l 2>/dev/null >"+tmpc+";echo \""+mps[ru]+"\">>"+tmpc+";sudo crontab "+tmpc+")",obverb,oblog,&rueck))
 		} // 		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'",obverb,oblog))
