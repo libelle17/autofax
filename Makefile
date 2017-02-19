@@ -153,7 +153,7 @@ anzeig:
 $(EXEC): $(OBJ)
 	-@test -f version || echo 0.1>version; if test -f entwickeln; then awk "BEGIN {print `cat version`+0.00001}">version; else echo " Datei 'entwickeln' fehlt, lasse die Version gleich"; fi;
 	-@printf " verlinke %s zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset)
-	-@df --output=ipcent / |tail -n1|grep - && sudo killall postdrop; true
+	-@df --output=ipcent / |tail -n1|grep - && sudo pkill postdrop; true
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
 	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_en)
 endif
@@ -226,7 +226,7 @@ endif
 
 $(INSTEXEC): $(EXEC)
 	@printf " Kopiere Programmdatei: %b%s%b -> %b%s%b\n" $(blau) "$(EXEC)" $(reset) $(blau) "$(INSTEXEC)" $(reset)
-	-@sudo killall $(EXEC)$(KF); sudo killall -9 $(EXEC)$(KF); sudo cp -p "$(EXEC)" "$(INSTEXEC)"
+	-@sudo pkill $(EXEC)$(KF); sudo pkill -9 $(EXEC)$(KF); sudo cp -p "$(EXEC)" "$(INSTEXEC)"
 
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
 ${MANPE}: ${CURDIR}/man_en
