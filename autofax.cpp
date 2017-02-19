@@ -2457,35 +2457,34 @@ void paramcl::pruefmodem()
 		if (pos==string::npos) continue;
 		size_t p2=rueck[i].find_first_of("] \t:.,;-",pos);
 		if (p2==string::npos) continue;
-		string modem=rueck[i].substr(pos,p2-pos);
-		if (modem=="tty"||modem=="tty0") continue;
-		modem=svz+modem;
+		string tty=rueck[i].substr(pos,p2-pos);
+		if (tty=="tty"||tty=="tty0") continue;
+		//		modem=svz+modem;
 		// <<rot<<svz+modem<<schwarz<<endl;
 		//}
 #else
-		rueck.clear();
-		systemrueck("find "+svz, obverb,oblog,&rueck);
+		systemrueck("sh -c 'cd "+svz+";find */device/driver'", obverb,oblog,&rueck);
 		for(size_t i=0;i<rueck.size();i++) {
-			string modem=rueck[i];
+			string tty=rueck[i].substr(0,rueck[i].find('/'));
+			//			struct stat entrydriv={0};
+			//			if (!lstat((modem+"/device/driver").c_str(),&entrydriv)) KLA
+			//				string tty=base_name(modem);
 #endif
-			struct stat entrydriv={0};
-			if (!lstat((modem+"/device/driver").c_str(),&entrydriv)) {
-				string tty=base_name(modem);
-				// ttyS0 erscheint auf Opensuse und Ubuntu konfiguriert, auch wenn kein Modem da ist
-				if (tty!="ttyS0") {
-					svec rue2;
-					vector<errmsgcl> errv;
-					string f0=schwarzs+"Modem "+blau+tty+schwarz+Tx[T_gibts];
-					string f1=f0+Tx[T_nicht];
-					errv.push_back(errmsgcl(0,f0));
-					errv.push_back(errmsgcl(1,f1));
-					if (!systemrueck("sudo stty -F /dev/"+tty+" time 10",obverb,oblog,&rue2,2,wahr,"",&errv)) {
-						obmodem=1;
-						modems<<tty;
-						Log(string("Modem: ")+blau+tty+schwarz+Tx[T_gefunden]);
-					} // if (!systemrueck("sudo stty -F /dev/"+tty+" >/dev/null 2>&1",obverb,oblog,&rue2)) 
-				} // if (tty!="ttyS0") 
-			} // if (!lstat(((rueck[i])+"/device/driver").c_str(),&entrydriv)) 
+			// ttyS0 erscheint auf Opensuse und Ubuntu konfiguriert, auch wenn kein Modem da ist
+			if (tty!="ttyS0") {
+				svec rue2;
+				vector<errmsgcl> errv;
+				string f0=schwarzs+"Modem "+blau+tty+schwarz+Tx[T_gibts];
+				string f1=f0+Tx[T_nicht];
+				errv.push_back(errmsgcl(0,f0));
+				errv.push_back(errmsgcl(1,f1));
+				if (!systemrueck("sudo stty -F /dev/"+tty+" time 10",obverb,oblog,&rue2,2,wahr,"",&errv)) {
+					obmodem=1;
+					modems<<tty;
+					Log(string("Modem: ")+blau+tty+schwarz+Tx[T_gefunden]);
+				} // if (!systemrueck("sudo stty -F /dev/"+tty+" >/dev/null 2>&1",obverb,oblog,&rue2)) 
+			} // if (tty!="ttyS0") 
+			// KLA // if (!lstat(((rueck[i])+"/device/driver").c_str(),&entrydriv)) 
 		} // for(size_t i=0;i<rueck.size();i++) 
 		//  uchar modemumgesteckt=0;
 		uchar schonda=0;
