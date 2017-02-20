@@ -4611,7 +4611,7 @@ void paramcl::anhalten()
   if (sfaxgetty) sfaxgetty->stopdis(obverb,oblog);
   if (shfaxd) shfaxd->stopdis(obverb,oblog);
   if (sfaxq) sfaxq->stopdis(obverb,oblog);
-  if (shylafaxd) shylafaxd->stopdis(obverb,oblog);
+  if (shylafaxd) shylafaxd->stopdis(obverb-1,oblog);
   if (scapisuite) scapisuite->stopdis(obverb,oblog);
 } // void paramcl::anhalten()
 
@@ -7131,6 +7131,7 @@ int paramcl::pruefhyla()
 						}
 					}
 					if (!was.empty()) {
+						useruucp(huser,obverb,oblog);
 						const string cfgbismake=" --nointeractive && echo $? = Ergebnis nach configure && "
 							"sed -i.bak \"s.PAGESIZE='\\''North American Letter'\\''.PAGESIZE='\\''ISO A4'\\''.g;"
 							"s.PATH_GETTY='\\''\\.*'\\''.PATH_GETTY='\\''"
@@ -7398,7 +7399,7 @@ int paramcl::pruefhyla()
 		if (sfaxgetty) sfaxgetty->stopdis(obverb,oblog);
 		if (shfaxd) shfaxd->stopdis(obverb,oblog);
 		if (sfaxq) sfaxq->stopdis(obverb,oblog);
-		if (shylafaxd) shylafaxd->stopdis(obverb,oblog);
+		if (shylafaxd) shylafaxd->stopdis(obverb-1,oblog);
 		ret=1;
 	} // (obhyla) else
 	Log(violetts+Tx[T_Ende]+" "+Tx[T_pruefhyla]+schwarz);
@@ -7625,6 +7626,7 @@ int paramcl::pruefcapi()
 	static uchar capiloggekuerzt=0;
 	static uchar capischonerfolgreichinstalliert=0;
 	int capilaeuft=0;
+	int erg=0;
 	unsigned versuch=0;
 	capisv();
 	if (obcapi) {
@@ -7659,7 +7661,8 @@ int paramcl::pruefcapi()
 							if (systemrueck("sudo modprobe -v fcpci 2>/dev/null",obverb-1,oblog)) {
 								if (ivers) {
 									::Log(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+schwarz,1,1);
-									return 1;
+									erg=1;
+									goto schluss;
 								} // if (ivers)
 								utsname unbuf;
 								uname(&unbuf);
@@ -7851,7 +7854,8 @@ int paramcl::pruefcapi()
 						 if (linst.pruefipr()!=zypper) {
 						 ::Log(rots+Tx[T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht],1,1);
 						 this->obcapi=0;
-						 return 1;
+						 erg=1;
+						 goto schluss;
 						 }
 					 */
 					if (system!=sus)
@@ -8028,14 +8032,15 @@ int paramcl::pruefcapi()
 			/*if (this->obcapi) */pruefmodcron();
 		} else {
 			::Log(rots+Tx[T_konntecapisuiteservice]+gruen+ltoan(versuch)+rot+Tx[T_malnichtstartenverwN]+schwarz,1,1);
-			return 1;
+			erg=1;
 		} //   if (capilaeuft)
 	// if (obcapi)
 	} else {
 		if (scapisuite) scapisuite->stopdis(obverb,oblog);
-		return 1;
+		erg=1;
 	} // 	if (obcapi) else
-	return 0;
+	schluss: // sonst eine sonst sinnlose for-Schleife mehr oder return mitten aus der Funktion ...
+	return erg;
 } // pruefcapi()
 
 

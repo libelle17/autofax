@@ -1991,14 +1991,14 @@ int setfaclggf(const string& datei,const binaer obunter,const int mod/*=4*/,ucha
         if (!gstat.size()) obimmer=wahr; // wenn keine Berechtigung gefunden => erstellen
        } //        if (!obimmer)
        if (obimmer) {
-          if (obverb) systemrueck("sudo sh -c 'ls -l \""+datei+"\"'",2,0);
+          if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
 					if (faclbak) {
 						string sich=base_name(datei)+"."+base_name(meinpfad())+".perm";
 						systemrueck("sudo sh -c 'cd \""+dir_name(datei)+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(datei)+"\">\""+sich+"\"'",obverb,oblog);
 						anfgggf(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'");
 					} // 					if (faclbak)
 					systemrueck(string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'",obverb,oblog);
-          if (obverb) systemrueck("sudo sh -c 'ls -l \""+datei+"\"'",2,0);
+          if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
        } //        if (obimmer)
       } //       if (obsetfacl)
   } //   if (cuser!="root")
@@ -2707,13 +2707,15 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 	// ueberpruefen, ob in systemctl status service Datei nach ExecStart existiert
 	for(int iru=0;iru<2;iru++) {
 	  // <<violett<<"machfit "<<blau<<sname<<violett<<", iru: "<<gruen<<iru<<schwarz<<endl;
-		if (!obsvfeh(obverb,oblog)) {
+		obsvfeh(obverb,oblog);
+		// wenn restart nicht gebraucht wird oder nichts bringt, also alles außer activating und nicht gestartet ...
+		if (!svfeh||svfeh==1||svfeh==3||svfeh==4||svfeh==5||svfeh==6) {
 			break;
 		} else {
 			restart(obverb,oblog);
 			if (!svfeh) break;
 		}
-		if (!iru && svfeh>5) {
+//		if (!iru && svfeh>5) KLA
 		  // <<"machfit, svfeh: "<<gruen<<svfeh<<schwarz<<endl;
 //			exit(108);
 			//      svec sr1;
@@ -2721,7 +2723,7 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 			//      if (sr1.size()) KLA
 			//       if (sr1[0].find("permission")!=string::npos) KLA
 //			semodpruef(obverb,oblog);
-		} // 		if (!iru && svfeh>5)
+		// KLZ // 		if (!iru && svfeh>5)
 	} // for(int iru=0;iru<2;iru++) 
 	//  if (servicelaeuft)
 	if (!svfeh&&!obenabled)
@@ -2781,7 +2783,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst<<"[Install]"<<endl;
 				syst<<"WantedBy=multi-user.target "<<endl;
 				syst.close();
-				systemrueck("sudo systemctl daemon-reload",obverb-1,oblog);
+				daemon_reload(obverb-1,oblog);
 				anfgggf(unindt,"N="+sname+";C=\"sudo systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-relaod;$C reset-failed;");
 				syst.close();
 				restart(obverb-1,oblog);
@@ -2801,7 +2803,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 	// svfeh=1: Dienst inexistent, 2: Dienst 'disabled' 3: Dienstdatei nicht ermittelbar, 4: Dienst laeuft noch, aber Dienstdatei inexistent
 	// svfeh=5: Exe-Datei nicht ermittelbar, 6: Exe-Datei fehlt, 7: activating 8: Dienst kann gestartet werden, 9: Sonstiges
 {
-	Log(violetts+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
+	Log(violetts+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz+", obverb: "+ltoan(obverb),obverb,oblog);
 	string sdatei;
 	fehler=0;
 	svfeh=-1;
@@ -2942,7 +2944,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 	const int sfeh[]={ T_Dienst_laeuft,T_Dienst_inexistent, T_Dienst_disabled, T_Dienstdateiname_nicht_ermittelbar, T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent, T_Exec_Dateiname_nicht_ermittelbar, T_Exec_Datei_fehlt, T_activating, T_Dienst_kann_gestartet_werden, T_Sonstiges};
 	int aktobverb=(obverb>-1 && (obverb>0|| (svfeh && svfeh!=8)));
 	Log(Txk[T_Ergebnis_Dienst]+blaus+sname+schwarz+": "+gruen+Txk[sfeh[svfeh]]+schwarz,aktobverb,oblog);
-	Log(violetts+"Ende "+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
+//	Log(violetts+"Ende "+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
 	return svfeh;
 } // int servc::obsvfeh(int obverb,int oblog)
 
@@ -2954,7 +2956,8 @@ void servc::pkill(int obverb/*=0*/,int oblog/*=0*/)
 int servc::restart(int obverb/*=0*/,int oblog/*=0*/)
 {
   for(int i=0;i<2;i++) {
-    systemrueck(string("sudo systemctl daemon-reload; sudo systemctl restart '")+sname+"'",obverb,oblog,0,2);
+		daemon_reload(obverb,oblog);
+    systemrueck("sudo systemctl restart '"+sname+"'",obverb,oblog,0,2);
 	  // <<violett<<"restart, i: "<<gruen<<i<<schwarz<<" sname: "<<sname<<endl;
     if (!obsvfeh(obverb,oblog)) break;
     if (i) break;
@@ -2996,7 +2999,7 @@ void servc::stopdis(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill)
 
 int servc::enableggf(int obverb/*=0*/,int oblog/*=0*/)
 {
-    Log(violetts+string(Txk[T_enableggf])+schwarz+sname,obverb,oblog);
+    Log(violetts+string(Txk[T_enableggf])+schwarz+": "+sname,obverb,oblog);
     vector<errmsgcl> errv;
     const string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
     const string f0=froh+Txk[T_ermoeglicht];
