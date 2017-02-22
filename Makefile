@@ -157,7 +157,7 @@ git:
 anzeig:
 # 'echo -e' geht nicht z.B. in ubuntu
 	@printf " %bGNU Make%b, Zieldatei: %b%s%b, vorher:                                      \n" $(gruen) $(reset) $(rot) "$(EXEC)" $(reset)
-	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC)$(KF))" $(reset) 
+	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC) $(KF))" $(reset) 
 	@printf " Quelldateien: %b%s%b\n" $(blau) "$(SRCS)" $(reset) 
 	@printf " Compiler: %b%s%b, installiert als: %b%s%b; Zielpfad fuer '%bmake install%b': %b%s%b\n"\
 	  $(blau) "$(CCName)" $(reset) $(blau) "$(CCInst)" $(reset) $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset)
@@ -207,8 +207,8 @@ endif
 	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(call iunins,$(libmcd))fi
 #	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\necho $(UPR)$(pgd)\n'>>$(UNF);$(slc);};
 	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(call i1unin,$(pgd))$(slc);};
-#	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT)$(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
-	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT)$(KF);$(call i1unin,$(LT))}
+#	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
+	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(call i1unin,$(LT))}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                         \r"
 
@@ -245,7 +245,7 @@ endif
 
 $(INSTEXEC): $(EXEC)
 	@printf " Kopiere Programmdatei: %b%s%b -> %b%s%b\n" $(blau) "$(EXEC)" $(reset) $(blau) "$(INSTEXEC)" $(reset)
-	-@sudo pkill $(EXEC)$(KF); sudo pkill -9 $(EXEC)$(KF); sudo cp -p "$(EXEC)" "$(INSTEXEC)"
+	-@sudo pkill $(EXEC) $(KF); sudo pkill -9 $(EXEC) $(KF); sudo cp -p "$(EXEC)" "$(INSTEXEC)"
 
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
 ${MANPE}: ${CURDIR}/man_en
@@ -290,7 +290,7 @@ clean: hierclean distclean
 hierclean: 
 	@printf " Bereinige ...\r"
 	@$(shell rm -f $(EXEC) $(OBJ) .d/* $(KF))
-	@$(shell sudo rm -f ${MANPEH} ${MANPDH}$(KF))
+	@$(shell sudo rm -f ${MANPEH} ${MANPDH} $(KF))
 	@printf " %b%s,%s,%s,%s%b geloescht!\n" $(blau) "$(EXEC)" "$(OBJ)" "$(MANPEH)" "$(MANPDH)" $(reset)
 
 .PHONY: distclean
