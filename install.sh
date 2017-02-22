@@ -43,7 +43,8 @@ function einricht {
 	 ${IPR}$2;
    grep -q " $2" $AUNF||{
 	  T=${UPR}$2;
-		printf "$T\nprintf \"%%b$T%%b\\\n\" \"\\033[1;34m\" \"\\033[0m\"\n">>$AUNF;
+#		printf "$T\nprintf \"%%b$T%%b\\\n\" \"\\033[1;34m\" \"\\033[0m\"\n">>$AUNF;
+		printf "$T\nprintf \"$blau%%s$reset\\\n\" \"$T\"\n">>$AUNF;
 	 }
  }
 }
@@ -73,7 +74,8 @@ getIPR;
 { which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
 	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'. Please enter ${blau}root$reset's password if asked:\n"
 	printf "Muss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
-	su -c "$IPR sudo;";grep -q \"sudo\" $AUNF||printf \"${UPR}sudo\necho \\\"${UPR}sudo\\\"\n\">>$AUNF;
+#	su -c "$IPR sudo;";grep -q \"sudo\" $AUNF||printf \"${UPR}sudo\necho \\\"${UPR}sudo\\\"\n\">>$AUNF;
+	su -c "$IPR sudo;";grep -q \"sudo\" $AUNF||printf \"${UPR}sudo\nprintf \\\"$blau%%s$reset\\\" \\\"${UPR}sudo\\\"\n\">>$AUNF;
 	su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";"||exit
 	printf "Please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh $0$reset' again!\n"
 	printf "Bitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh $0$reset' dann nochmal auf!\n";

@@ -63,7 +63,20 @@ LT:=libtiff
 LT:=$(LT) $(LT)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
-GROFFCHECK:=$(SPR) $(pgroff)>$(KR)||{ $(IPR)$(pgroff);grep -q '$(pgroff)' $(UNF)||printf '$(UPR)$(pgroff)\necho $(UPR)$(pgroff)\n'>>$(UNF);};true
+# deinstallieren und Ueberschrift vormerken
+uninst=printf '$(UPR)$(1)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$(1)"\n'>>$(UNF);
+# in Protokoll suchen und ...
+sunins=grep -q '$(1)' $(UNF)||{ $(call uninst,$(2))};
+# installieren und ...
+# Selbes Wort in Protokoll suchen wie deinstallieren
+iunins=$(IPR)$(1);$(call sunins,$(1),$(2))
+i1unin=$(call iunins,$(1),$(1))
+i_unins=$(IP_R)$(1);$(call sunins,$(1),$(2))
+# Programm suchen, ggf. installieren und ...
+siunins= $(SPR)$(1)>$(KR)||{ $(call iunins,$(1),$(2))};
+i1siun=$(call siunins,$(1),$(1))
+si_unins=$(SPR)$(1)>$(KR)||{ $(call i_unins,$(1),$(2))};
+GROFFCHECK:=$(call i1siun,$(pgroff))true
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR)>$(KR))
@@ -81,7 +94,6 @@ gruen="\033[0;32m"
 #blau="\033[0;34;1;47m"
 blau="\033[1;34m"
 reset="\033[0m"
-
 
 .PHONY: alles
 alles: anzeig weiter
@@ -147,11 +159,13 @@ anzeig:
 	@printf " %bGNU Make%b, Zieldatei: %b%s%b, vorher:                                      \n" $(gruen) $(reset) $(rot) "$(EXEC)" $(reset)
 	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC)$(KF))" $(reset) 
 	@printf " Quelldateien: %b%s%b\n" $(blau) "$(SRCS)" $(reset) 
-	@printf " Compiler: %b%s%b, installiert als: %b%s%b; Zielpfad fuer '%bmake install%b': %b%s%b\n" $(blau) "$(CCName)" $(reset) $(blau) "$(CCInst)" $(reset) $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset)
+	@printf " Compiler: %b%s%b, installiert als: %b%s%b; Zielpfad fuer '%bmake install%b': %b%s%b\n"\
+	  $(blau) "$(CCName)" $(reset) $(blau) "$(CCInst)" $(reset) $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset)
 	-@$(shell rm fehler.txt $(KF))
 
 $(EXEC): $(OBJ)
-	-@test -f version || echo 0.1>version; if test -f entwickeln; then awk "BEGIN {print `cat version`+0.00001}">version; else echo " Datei 'entwickeln' fehlt, lasse die Version gleich"; fi;
+	-@test -f version || echo 0.1>version; if test -f entwickeln; then awk "BEGIN {print `cat version`+0.00001}">version;\
+	else echo " Datei 'entwickeln' fehlt, lasse die Version gleich"; fi;
 	-@printf " verlinke %s zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset)
 	-@df --output=ipcent / |tail -n1|grep - && sudo pkill postdrop; true
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
@@ -187,11 +201,16 @@ ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
 endif
-	@which $(CCName)>$(KR)||{ $(REPOS)for P in $(COMP);do $(SPR)$$P||{ $(IP_R)$$P;grep -q "$$P" $(UNF)||printf "$(UPR)$$P;$(urepo)\necho $(UPR)$$P;$(urepo)\n">>$(UNF);};done;};
-	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(IPR)$(libmcd);grep -q '$(libmcd)' $(UNF)||printf '$(UPR)$(libmcd)\necho $(UPR)$(libmcd)\n'>>$(UNF);fi
-	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\necho $(UPR)$(pgd)\n'>>$(UNF);$(slc);};
-	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT)$(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
+#	@which $(CCName)>$(KR)||{ $(REPOS)for P in $(COMP);do $(SPR)$$P||{ $(IP_R)$$P;grep -q "$$P" $(UNF)||\
+#	 printf '$(UPR)$$P;$(urepo)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$$P;$(urepo)"\n'>>$(UNF);};done;};
+	@which $(CCName)>$(KR)||{ $(REPOS)$(foreach PG,$(COMP),$(call si_unins,$(PG),$(PG);$(urepo)))}
+	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(call iunins,$(libmcd))fi
+#	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\necho $(UPR)$(pgd)\n'>>$(UNF);$(slc);};
+	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(call i1unin,$(pgd))$(slc);};
+#	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT)$(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
+	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT)$(KF);$(call i1unin,$(LT))}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
+	@printf "                         \r"
 
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
@@ -285,7 +304,25 @@ confclean:
 
 .PHONY: uninstall
 uninstall: distclean
-	-@tac $(UNF)>tmp_$(UNROH)&& sudo sh tmp_$(UNROH) # uninstallinv von hinten nach vorne abarbeiten
+	-@tac $(UNF)>tmp_$(UNROH)&& sudo blau=$(blau) reset=$(reset) sh tmp_$(UNROH) # uninstallinv von hinten nach vorne abarbeiten
 	-@printf "Fertig mit uninstall!\n"
+
+#rufe:
+#	printf '$(UPR)$(pgroff)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$(pgroff)"\n'>>gtest
+#	-@sudo blau=$(blau) reset=$(reset) sh gerufen
+
+#teste:
+#	sh -c 'VAR="lange\
+#	 Varible"; echo $$VAR'
+#	 echo $(GROFFCHECK)
+#	 @echo $(COMP)
+#	 @echo $(words $(COMP))
+#	 @printf "$$blau$(urepo)$$reset\n"
+#	 for P in $(COMP); do echo $$P; VAR="$$P"; echo $$VAR; $(call uninst,$P) done
+#	 $(foreach VAR,$(COMP),echo $(VAR)\n)
+#	 @$(foreach VAR,$(COMP),$(call sunins,$(VAR),$(VAR)))
+#	$(foreach PG,$(COMP),$(call si_unins,$(PG),$(PG);$(urepo)))
+#	 echo $(call uninst,$(COMP))
+#	sudo blau=$(blau) reset=$(reset) sh gtest
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
