@@ -44,7 +44,7 @@ function einricht {
    grep -q " $2" $AUNF||{
 	  T=${UPR}$2;
 #		printf "$T\nprintf \"%%b$T%%b\\\n\" \"\\033[1;34m\" \"\\033[0m\"\n">>$AUNF;
-		printf "$T\nprintf \"$$blau%%s$$reset\\\n\" \"$T\"\n">>$AUNF;
+		printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
 	 }
  }
 }
