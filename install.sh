@@ -10,7 +10,7 @@ getIPR() {
 	} }||
 	{ which apt-get >$DN 2>&1 &&{ IdPR="apt-get --assume-yes install ";IP_R="sudo $IdPR";
 	                                    UPR="sudo apt-get --auto-remove purge ";
-																			dev=devel;
+																			dev=dev;
 																			COMP="build-essential linux-headers-$(shell uname -r)";
 																			CTAGS=exuberant-ctags;} }||
 	{ which dnf     >$DN 2>&1 &&{ fed=1;IdPR="dnf -y install ";UPR="sudo dnf remove ";} }||
