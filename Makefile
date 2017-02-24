@@ -71,9 +71,9 @@ uninst=printf '$(UPR)$(1)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$(1)"\n'>>$(UNF);
 sunins=grep -q '$(1)' $(UNF)||{ $(call uninst,$(2))};
 # installieren und ...
 # Selbes Wort in Protokoll suchen wie deinstallieren
-iunins=$(IPR)$(1);$(call sunins,$(1),$(2))
+iunins=$(IPR)$(1) &&{ $(call sunins,$(1),$(2))};
 i1unin=$(call iunins,$(1),$(1))
-i_unins=$(IP_R)$(1);$(call sunins,$(1),$(2))
+i_unins=$(IP_R)$(1) &&{ $(call sunins,$(1),$(2))};
 # Programm suchen, ggf. installieren und ...
 siunins= $(SPR)$(1)>$(KR)||{ $(call iunins,$(1),$(2))};
 i1siun=$(call siunins,$(1),$(1))
@@ -211,7 +211,7 @@ endif
 	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(call i1unin,$(pgd))$(slc);};
 #	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
 	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(call i1unin,$(LT))}
-	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT5) $(KF);$(call i1unin,$(LT5))}
+	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(call i1unin,$(LT5))}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                         \r"
 

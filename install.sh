@@ -31,7 +31,7 @@ einricht() {
    getIPR;
 	 printf "Installing/ Installiere $1 ...\n";
 	 ${IPR}$2;
-   grep -q " $2" $AUNF||{
+   test -f $AUNF&&grep -q " $2" $AUNF||{
 	  T=${UPR}$2;
 #		printf "$T\nprintf \"%%b$T%%b\\\n\" \"\\033[1;34m\" \"\\033[0m\"\n">>$AUNF;
 		printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
@@ -74,10 +74,11 @@ SUG="admin\|root\|sudo\|wheel\|ntadmin";
 getIPR;
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
 { which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
-	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'. Please enter ${blau}root$reset's password if asked:\n"
-	printf "Muss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. Bitte geben Sie bei den Fragen das Passwort von '${blau}root$reset' ein:\n";
+	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'. Please enter ${blau}root$reset's password at the next two questions:\n"
+	printf "Muss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. "
+	printf "Bitte geben Sie bei den beiden Fragen das Passwort von '${blau}root$reset' ein:\n";
 #	su -c "$IPR sudo;";grep -q \"sudo\" $AUNF||printf \"${UPR}sudo\necho \\\"${UPR}sudo\\\"\n\">>$AUNF;
-	su -c "$IdPR sudo;";grep -q \"sudo\" $AUNF||printf \"${UPR}sudo\\nprintf \\\"$blau%%s$reset\\\" \\\"${UPR}sudo\\\"\n\">>$AUNF;
+	su -c "$IdPR sudo;";test -f $AUNF&&grep -q \"sudo\" $AUNF||printf "${UPR}sudo\nprintf \"\$blau%%s\$reset\\\n\" \"${UPR}sudo\"\n">>$AUNF;
 	su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";"||exit
 	printf "Please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh $0$reset' again!\n"
 	printf "Bitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh $0$reset' dann nochmal auf!\n";
