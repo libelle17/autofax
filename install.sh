@@ -1,34 +1,24 @@
 #!/bin/sh
-DN=/dev/null
-KR="$DN 2>&1" # keine Rueckmeldung
-KF=" 2>$DN" # keine Fehlermeldung
-UNROH=uninstall
-UNF=${UNROH}inv # Name muss identisch sein mit Ende von uindt in kons.cpp 
-pgroff="groff groff-base"
-dev=devel
-libmc=libmysqlclient
-fed=0
-CCInst=gcc6-c++
-
 # Installationsprogramm ermitteln
 getIPR() {
   CTAGS=ctags;
 	{ which zypper  >$DN 2>&1 &&{ 
-		Z=zypper;g=--gpg-auto-import-keys;IPR="$Z -n $g in ";IP_R="$Z $g in ";UPR="sudo zypper rm -u ";pgroff=groff;
-  REPOS="sudo zypper lr|grep 'g++\|devel_gcc'\>$KR||sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
-  urepo="sudo zypper lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && sudo zypper rr devel_gcc;";
+		Z=zypper;g=--gpg-auto-import-keys;IdPR="$Z -n $g in ";IP_R="sudo $Z $g in ";UPR="sudo $Z rm -u ";pgroff=groff;
+  REPOS="sudo $Z lr|grep 'g++\|devel_gcc'\>$KR||sudo $Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
+  urepo="sudo $Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && sudo $Z rr devel_gcc;";
   COMP="gcc gcc-c++ \$(CCInst)";
 	} }||
-	{ which apt-get >$DN 2>&1 &&{ IPR="sudo apt-get --assume-yes install ";IP_R=$IPR;
+	{ which apt-get >$DN 2>&1 &&{ IdPR="apt-get --assume-yes install ";IP_R="sudo $IdPR";
 	                                    UPR="sudo apt-get --auto-remove purge ";
 																			dev=devel;
-																			COMP="build-essential linux-headers-\`uname -r\`";
+																			COMP="build-essential linux-headers-$(shell uname -r)";
 																			CTAGS=exuberant-ctags;} }||
-	{ which dnf     >$DN 2>&1 &&{ fed=1;IPR="sudo dnf -y install ";UPR="sudo dnf remove ";} }||
-	{ which yum     >$DN 2>&1 &&{ fed=1;IPR="sudo yum -y install ";UPR="sudo yum remove ";} }
-	[ $fed = 1 ] &&{ libmc=mysql;COMP="make automake gcc-c++ kernel-devel";IP_R=$IPR;}
+	{ which dnf     >$DN 2>&1 &&{ fed=1;IdPR="dnf -y install ";UPR="sudo dnf remove ";} }||
+	{ which yum     >$DN 2>&1 &&{ fed=1;IdPR="yum -y install ";UPR="sudo yum remove ";} }
+	[ $fed = 1 ] &&{ libmc=mysql;COMP="make automake gcc-c++ kernel-devel";IP_R="sudo $IdPR";}
 	{ which rpm >$DN 2>&1 && SPR="rpm -q ";}||
 	{ which dpkg >$DN 2>&1 && SPR="dpkg -s ";}
+	IPR="sudo $IdPR";
 }
 
 exportvars() {
@@ -36,7 +26,7 @@ exportvars() {
 	for v in KR KF IPR IP_R UPR SPR UNROH UNF AUNF pgroff dev libmc REPOS urepo COMP; do eval nv=\$$v; printf "$v:=$nv\n">>vars; done
 }
 
-function einricht {
+einricht() {
  which $1 >$DN 2>$DN||{
    getIPR;
 	 printf "Installing/ Installiere $1 ...\n";
@@ -49,10 +39,22 @@ function einricht {
  }
 }
 
+DN=/dev/null
+KR="$DN 2>&1" # keine Rueckmeldung
+KF=" 2>$DN" # keine Fehlermeldung
+UNROH=uninstall
+UNF=${UNROH}inv # Name muss identisch sein mit Ende von uindt in kons.cpp 
+pgroff="groff groff-base"
+dev=devel
+libmc=libmysqlclient
+fed=0
+CCInst=gcc6-c++
+
 basenam=$(basename $0)
 ext=${basenam##*.}
 
 P=autofax
+mkdir -p $HOME/$P
 AUNF=$HOME/$P/$UNF
 # diese Datei wird wegen obigem in viall gesourct, deshalb dort der Rest zu uebergehen
 if [ $ext = sh ]; then
@@ -73,9 +75,9 @@ getIPR;
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
 { which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
 	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'. Please enter ${blau}root$reset's password if asked:\n"
-	printf "Muss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
+	printf "Muss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. Bitte geben Sie bei den Fragen das Passwort von '${blau}root$reset' ein:\n";
 #	su -c "$IPR sudo;";grep -q \"sudo\" $AUNF||printf \"${UPR}sudo\necho \\\"${UPR}sudo\\\"\n\">>$AUNF;
-	su -c "$IPR sudo;";grep -q \"sudo\" $AUNF||printf \"${UPR}sudo\nprintf \\\"$blau%%s$reset\\\" \\\"${UPR}sudo\\\"\n\">>$AUNF;
+	su -c "$IdPR sudo;";grep -q \"sudo\" $AUNF||printf \"${UPR}sudo\\nprintf \\\"$blau%%s$reset\\\" \\\"${UPR}sudo\\\"\n\">>$AUNF;
 	su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";"||exit
 	printf "Please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh $0$reset' again!\n"
 	printf "Bitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh $0$reset' dann nochmal auf!\n";
