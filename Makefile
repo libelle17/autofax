@@ -61,6 +61,8 @@ endif
 libmcd:=$(libmc)-$(dev)
 LT:=libtiff
 LT:=$(LT) $(LT)-$(dev)
+LT5:=libtiff5
+LT5:=$(LT5) $(LT5)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
 # deinstallieren und Ueberschrift vormerken
@@ -209,6 +211,7 @@ endif
 	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(call i1unin,$(pgd))$(slc);};
 #	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
 	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(call i1unin,$(LT))}
+	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT5) $(KF);$(call i1unin,$(LT5))}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                         \r"
 
