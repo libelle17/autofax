@@ -5005,7 +5005,7 @@ int paramcl::pruefocr()
 				}
 				if (!vprog.empty()) {
 					systemrueck("sudo sh -c '"+vprog+" \""+virtvz+"\";"
-							"source \""+virtvz+"/bin/activate\";"
+							". \""+virtvz+"/bin/activate\";"
 							"pip3 install requests;"
 							"pip3 install --upgrade ocrmypdf;"
 							"deactivate;"
@@ -5013,7 +5013,7 @@ int paramcl::pruefocr()
 				} else {
 					systemrueck("sudo sh -c 'python3 -m venv \""+virtvz+"\";"
 							"python3 -m venv --upgrade \""+virtvz+"\";"
-							"source \""+virtvz+"/bin/activate\";"
+							". \""+virtvz+"/bin/activate\";"
 							"pip3 install --upgrade pip;"
 							"pip3 install ocrmypdf;"
 							"deactivate;"
