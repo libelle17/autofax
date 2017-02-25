@@ -2894,13 +2894,13 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 					// Dienst existent, Dienstdatei bekannt und existent
 					systemrueck("sudo cat '"+systemd+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe);
 					if (srueExe.size()) {
-						execf=base_name(srueExe[0]);
+						execf=srueExe[0];
 					} // 			if (!srueExe.size()) else
 				} // 			  if (systemd.find("init.d")!=string::npos)
 				if (execf.empty()) {
 					svfeh=5; // Exec-Datei nicht ermittelbar
 				} else {
-					if (ename.empty()) ename=execf; // stimmt z.B. nicht bei /usr/lib/mysql/mysql-systemd-helper
+					if (ename.empty()) ename=base_name(execf); // stimmt z.B. nicht bei /usr/lib/mysql/mysql-systemd-helper
 					// Dienst existent, Dienstdatei bekannt und existent, Exe-Datei bekannt
 					struct stat lst={0};
 					if (lstat(execf.c_str(),&lst)) {
