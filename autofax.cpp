@@ -31,6 +31,9 @@
 #ifdef linux
 #include <sys/utsname.h> // utsname
 #endif
+#include <fcntl.h> // fuer fd_reopen usw.
+#include <termios.h> // fuer tcgetattr
+
 #include <set>
 const double& version=
 #include "version"
@@ -2439,6 +2442,39 @@ void paramcl::getcommandl0()
     obkschreib=1;
   } // if (logvneu ||logdneu) 
 } // void paramcl::getcommandl0(int argc, char** argv)
+	int
+// aus: coreutils
+fd_reopen (int desired_fd, char const *file, int flags, mode_t mode)
+{
+	int fd = open (file, flags, mode);
+
+	if (fd == desired_fd || fd < 0)
+		return fd;
+	else
+	{
+		int fd2 = dup2 (fd, desired_fd);
+		int saved_errno = errno;
+		close (fd);
+		errno = saved_errno;
+		return fd2;
+	}
+}
+
+// mit strace usw. aus coreutils
+int ttytest(const string& tty)
+{
+	int fd,erg=0,fdflags=0;
+	static struct termios mode;
+	if ((fd=fd_reopen (STDIN_FILENO, ("/dev/"+tty).c_str(), O_RDONLY | O_NONBLOCK, 0))>=0) {
+		if ((fdflags = fcntl (STDIN_FILENO, F_GETFL)) != -1 && fcntl (STDIN_FILENO, F_SETFL, fdflags & ~O_NONBLOCK) >= 0) {
+			if (!tcgetattr (STDIN_FILENO, &mode)) {
+				erg=1;
+			}
+		}
+		close(fd);
+	}
+	return erg;
+}
 
 // wird aufgerufen in: main, rueckfragen
 void paramcl::pruefmodem()
@@ -2449,7 +2485,8 @@ void paramcl::pruefmodem()
 	svec rueck;
 	// <<"pruefmodem 1 nach obcapi: "<<(int)obcapi<<endl;
 	// 19.2.17: evtl. besser mit: dmesg|grep '[^t]*tty[^] 0\t:.$]'|sed 's/[^t]*\(tty[^] \t:.$]*\).*/\1/'
-#define mitdmesg
+	// 25.2.17: geht leider nicht nach "autofax -nohyla"
+//#define mitdmesg
 #ifdef mitdmesg
 	systemrueck("dmesg|grep tty",obverb,oblog,&rueck);
 	for(size_t i=0;i<rueck.size();i++) {
@@ -2472,13 +2509,19 @@ void paramcl::pruefmodem()
 #endif
 			// ttyS0 erscheint auf Opensuse und Ubuntu konfiguriert, auch wenn kein Modem da ist
 			if (tty!="ttyS0") {
-				svec rue2;
-				vector<errmsgcl> errv;
-				string f0=schwarzs+"Modem "+blau+tty+schwarz+Tx[T_gibts];
-				string f1=f0+Tx[T_nicht];
-				errv.push_back(errmsgcl(0,f0));
-				errv.push_back(errmsgcl(1,f1));
-				if (!systemrueck("sudo stty -F /dev/"+tty+" time 10",obverb,oblog,&rue2,2,wahr,"",&errv)) {
+				int terg;
+				if (strcmp(curruser(),"root")) {
+					svec rue2;
+					vector<errmsgcl> errv;
+					string f0=schwarzs+"Modem "+blau+tty+schwarz+Tx[T_gibts];
+					string f1=f0+Tx[T_nicht];
+					errv.push_back(errmsgcl(0,f0));
+					errv.push_back(errmsgcl(1,f1));
+					terg=!systemrueck("sudo stty -F /dev/"+tty+" time 10",obverb,oblog,&rue2,2,wahr,"",&errv);
+				} else {
+					terg=ttytest(tty);
+				} // 				if (curruser()=="root") else
+				if (terg) {
 					obmodem=1;
 					modems<<tty;
 					Log(string("Modem: ")+blau+tty+schwarz+Tx[T_gefunden]);
@@ -6949,6 +6992,7 @@ int paramcl::hservice_faxq_hfaxd()
 
 void paramcl::hylasv1()
 {
+	caus<<violett<<"hmodem: "<<gruen<<hmodem<<schwarz<<endl;
   if (!this->sfaxgetty) this->sfaxgetty=new servc("hylafax-faxgetty-"+this->hmodem,"faxgetty");
 } // void paramcl::hylasv1()
 
