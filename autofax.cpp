@@ -4074,7 +4074,7 @@ void paramcl::pruefsamba()
 {
   Log(violetts+Tx[T_pruefsamba]);
   const char* const smbdatei="/etc/samba/smb.conf";
-  int gestartet=0;
+  int sgest=0, ngest=0;
   uchar conffehlt=1;
   const string quelle="/usr/share/samba/smb.conf";
   uchar obinst=0; // ob Samba installiert werden soll bzw. die smb.conf bearbeitet
@@ -4100,32 +4100,37 @@ void paramcl::pruefsamba()
   servc smbd("smbd","smbd");
   servc nmb("nmb","nmbd");
   servc nmbd("nmbd","nmbd");
-  if (smb.obsvfeh(obverb,oblog)) if (smbd.obsvfeh(obverb,oblog)) dienstzahl--;
-  if (nmb.obsvfeh(obverb,oblog)) if (nmbd.obsvfeh(obverb,oblog)) dienstzahl--;
+  if (smb.obsvfeh(obverb-1,oblog)) if (smbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
+  if (nmb.obsvfeh(obverb-1,oblog)) if (nmbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
   //  <<rot<<"dienstzahl: "<<dienstzahl<<endl;
-  if (dienstzahl<2||conffehlt) {
-    for(int aru=0;aru<2;aru++) {
-      if (aru) {
-      } // if (aru) 
-      if (smb.svfeh!=1) {
-        smb.machfit(obverb,oblog);
-        gestartet=1;
-      } else if (smbd.svfeh!=1) {
-        smbd.machfit(obverb,oblog);
-        gestartet=1;
-      } //       if (!smb.svfeh)
-      if (nmb.svfeh!=1) {
-        nmb.machfit(obverb,oblog);
-        if (gestartet==1) gestartet=2;
-      } else if (nmbd.svfeh!=1) {
-        nmbd.machfit(obverb,oblog);
-        if (gestartet==1) gestartet=2;
-      } //       if (!nmb.svfeh)
-      if (!smb.svfeh) if (!smb.obsvfeh(obverb,oblog)) if (!nmb.svfeh) if (!nmb.obsvfeh(obverb,oblog)) break;
-      if (!smbd.svfeh) if (!smbd.obsvfeh(obverb,oblog)) if (!nmbd.svfeh) if (!nmbd.obsvfeh(obverb,oblog)) break;
-    } // for(int aru=0;aru<2;aru++) 
-    //    if (gestartet==2) smbrestart=0;
-  } // if (dienstzahl<2 || conffehlt) 
+	if (dienstzahl<2||conffehlt) {
+		for(int aru=0;aru<2;aru++) {
+			if (!smb.svfeh||!smbd.svfeh) {
+				sgest=1;
+			} else {
+				if (smb.svfeh!=1) {
+					sgest=smb.machfit(obverb,oblog);
+				}
+				if (!sgest && smbd.svfeh!=1) {
+					sgest=smbd.machfit(obverb,oblog);
+				} //       if (!smb.svfeh)
+			} // 			if (!smb.svfeh||!smbd.svfeh)
+			if (!nmb.svfeh||!nmbd.svfeh) {
+				ngest=1;
+			} else {
+				if (nmb.svfeh!=1) {
+					ngest=nmb.machfit(obverb,oblog);
+				}
+				if (!ngest && nmbd.svfeh!=1) {
+					ngest=nmbd.machfit(obverb,oblog);
+				} //       if (!nmb.nvfeh)
+			} // 			if (!nmb.svfeh||!nmbd.svfeh)
+			if (sgest&&ngest) break;
+			// if (!smb.svfeh) if (!smb.obsvfeh(obverb,oblog)) if (!nmb.svfeh) if (!nmb.obsvfeh(obverb,oblog)) break;
+			// if (!smbd.svfeh) if (!smbd.obsvfeh(obverb,oblog)) if (!nmbd.svfeh) if (!nmbd.obsvfeh(obverb,oblog)) break;
+		} // for(int aru=0;aru<2;aru++) 
+		//    if (gestartet==2) smbrestart=0;
+	} // if (dienstzahl<2 || conffehlt) 
 	struct stat sstat={0};
 	if (!(conffehlt=lstat(smbdatei,&sstat))) {
     confdat smbcf(smbdatei,obverb);

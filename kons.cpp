@@ -2704,6 +2704,8 @@ void servc::semanpruef(int obverb/*=0*/,int oblog/*=0*/,const string& mod/*="get
 
 int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/)
 {
+  int altobverb=obverb;
+	if (sname=="nmbd") obverb=3;
 	Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, obverb,oblog);
 	// ueberpruefen, ob in systemctl status service Datei nach ExecStart existiert
 	for(int iru=0;iru<2;iru++) {
@@ -2729,6 +2731,8 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 	//  if (servicelaeuft)
 	if (!svfeh&&!obenabled)
 		enableggf(obverb,oblog);
+	Log(violetts+"Ende "+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, obverb,oblog);
+	obverb=altobverb;
 	return !svfeh;
 } // int servc::machfit(int obverb,int oblog)
 
@@ -2816,6 +2820,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 			const string *sp=&statrueck[j];
 			if (sp->find("Loaded:")!=string::npos) {
 				size_t p2=string::npos,p1=sp->find("("); if (p1!=string::npos) p2=sp->find(";",p1);
+				if (p2==string::npos) if (sp->find("loaded")!=string::npos) p2=sp->find(")",p1);
 				if (p2!=string::npos) {
 					sdatei=sp->substr(p1+1,p2-p1-1);
 					if (systemd.empty()) systemd=sdatei;
@@ -2832,7 +2837,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 			} else if (sp->find("activating")!=string::npos) {
 			  svfeh=7;
 			 // z.B.: Process: 10126 ExecStartPre=/usr/share/samba/update-apparmor-samba-profile (code=exited, status=0/SUCCESS)
-			} else if (svfeh && sp->find("code=exited")!=string::npos) {
+			} else if (svfeh && (sp->find("code=exited")!=string::npos||sp->find("(exited)")!=string::npos)) {
 				// z.B. Exe-Datei bricht ab
 				// z.B.: 'Main PID: 17031 (code=exited, status=255)'
 				// oder:
@@ -2866,21 +2871,44 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 			if ((svfeh=lstat(systemd.c_str(),&svst))) { 
 				svfeh=4; // // Dienst laeuft evtl. noch, aber Dienstdatei inexistent
 			} else {
-				// Dienst existent, Dienstdatei bekannt und existent
+			  string execf;
 				svec srueExe;
-				systemrueck("sudo cat '"+systemd+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe);
-				if (!srueExe.size()) {
+				if (systemd.find("init.d")!=string::npos) {
+				  systemrueck("sudo cat '"+systemd+"'",obverb,oblog,&srueExe);
+					if (srueExe.size()) {
+					 // z.B.:  if ! start-stop-daemon --start --quiet --oknodo --exec /usr/sbin/smbd -- -D; then
+					 for(size_t z=0;z<srueExe.size();z++) {
+					  size_t p1=srueExe[z].find(" --exec ");
+						if (p1!=string::npos) {
+	           size_t p2=srueExe[z].find(" ",p1+8);
+						 if (p2!=string::npos) {
+							 execf=srueExe[z].substr(p1+8,p2-p1-8);
+							 break;
+						 } // 						 if (p2!=string::npos)
+						} // 						if (p1!=string::npos)
+					 } // 					 for(size_t z=0;z<srueExe.size();z++)
+					} else {
+						svfeh=4;// // Dienst laeuft evtl. noch, aber Dienstdatei leer
+					} // 					if (srueExe.size()) else
+				} else {
+					// Dienst existent, Dienstdatei bekannt und existent
+					systemrueck("sudo cat '"+systemd+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe);
+					if (srueExe.size()) {
+						execf=base_name(srueExe[0]);
+					} // 			if (!srueExe.size()) else
+				} // 			  if (systemd.find("init.d")!=string::npos)
+				if (execf.empty()) {
 					svfeh=5; // Exec-Datei nicht ermittelbar
 				} else {
-					if (ename.empty()) ename=base_name(srueExe[0]); // stimmt z.B. nicht bei /usr/lib/mysql/mysql-systemd-helper
+					if (ename.empty()) ename=execf; // stimmt z.B. nicht bei /usr/lib/mysql/mysql-systemd-helper
 					// Dienst existent, Dienstdatei bekannt und existent, Exe-Datei bekannt
 					struct stat lst={0};
-					if (lstat(srueExe[0].c_str(),&lst)) {
+					if (lstat(execf.c_str(),&lst)) {
 						svfeh=6; // Exec-Datei fehlt, hier auch: activating
 					} else {// 				if (lstat(srueExe.c_str(),&lst))
-					  svfeh=8; // Sonstiges
+						svfeh=8; // Sonstiges
 					} // 						if (lstat(srueExe[0].c_str(),&lst)) else
-				} // 			if (!srueExe.size()) else
+				}
 			} // 			if ((svfeh=lstat(systemd.c_str(),&svst))) 
 		} // if (sdatei.empty()) else
 	} // if (svfeh)

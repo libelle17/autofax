@@ -80,8 +80,8 @@ getIPR;
 #	su -c "$IPR sudo;";grep -q \"sudo\" $AUNF||printf \"${UPR}sudo\necho \\\"${UPR}sudo\\\"\n\">>$AUNF;
 	su -c "$IdPR sudo;";test -f $AUNF&&grep -q \"sudo\" $AUNF||printf "${UPR}sudo\nprintf \"\$blau%%s\$reset\\\n\" \"${UPR}sudo\"\n">>$AUNF;
 	su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";"||exit
-	printf "Please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh $0$reset' again!\n"
-	printf "Bitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh $0$reset' dann nochmal auf!\n";
+	printf "Please log out and in again, change to the directory '$blau$HOME/$P$reset' and then call '${blau}sh install.sh$reset'!\n"
+	printf "Bitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$blau$HOME/$P$reset' und rufen Sie '${blau}sh install.sh$reset' auf!\n";
 	exit;
 }
 # falls make fehlt, dann installieren ...

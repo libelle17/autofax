@@ -209,16 +209,16 @@ endif
 #	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(call iunins,$(libmcd))fi
 	-@test -f /usr/include/mysql/mysql.h>$(KR)\
 	&&find $$(find /usr -maxdepth 1 -name "lib*"|sort -r) -name "libmysqlclient.so" -print -quit|grep ''>$(KR)\
-	|| $(call iunins,$(libmcd))
+	|| $(call i1unin,$(libmcd))
 #	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\necho $(UPR)$(pgd)\n'>>$(UNF);$(slc);};
-	[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(call i1unin,$(pgd))$(slc);};
+	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(call i1unin,$(pgd))$(slc);};
 #	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
 	-@find /usr/include -name tiff.h -print -quit|grep ''>$(KR)\
 	&&find $$(find /usr -maxdepth 1 -name "lib*"|sort -r) -name "libtiff.so" -print -quit|grep ''>$(KR)\
 	||{ $(UPR)$(LT) $(KF);$(call i1unin,$(LT))}
 	-@find /usr/include -name tiff.h -print -quit|grep ''>$(KR)\
 	&&find $$(find /usr -maxdepth 1 -name "lib*"|sort -r) -name "libtiff.so" -print -quit|grep ''>$(KR)\
-	||{ $(UPR)$(LT5) $(KF);$(call i1unin,$(LT5))}
+	||{ $(KF);$(call i1unin,$(LT5))}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                         \r"
 
