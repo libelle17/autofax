@@ -6992,7 +6992,6 @@ int paramcl::hservice_faxq_hfaxd()
 
 void paramcl::hylasv1()
 {
-	caus<<violett<<"hmodem: "<<gruen<<hmodem<<schwarz<<endl;
   if (!this->sfaxgetty) this->sfaxgetty=new servc("hylafax-faxgetty-"+this->hmodem,"faxgetty");
 } // void paramcl::hylasv1()
 
