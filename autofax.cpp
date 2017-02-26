@@ -2542,10 +2542,9 @@ void paramcl::pruefmodem()
 		} // if (!hmodem.empty()) 
 		if (hmodem.empty()) {
 			if (modems.size()) if (!modems[0].empty()) {
-				if (obverb) {
-					Log(string("modems[0]: ")+rot+modems[0]+schwarz);
-					Log(string("hmodem:    ")+rot+hmodem+schwarz);
-				}
+				if (obverb>1) {
+					Log(string("modems[0]: ")+blau+modems[0]+schwarz);
+				} // 				if (obverb)
 				hmodem=modems[0];/*modemsumgesteckt=1;*/ 
 				modemgeaendert=1;
 			} //   if (modems.size()) if (!modems[0].empty()) if (modems[0]!=hmodem) 
@@ -4215,7 +4214,7 @@ void paramcl::pruefsamba()
 						obinst=Tippob(Tx[T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden],Tx[T_j_af]);
 						if (!obinst) break;
 					} // 					if (!obinst)
-					::Log(rots+Tx[T_Verzeichnis]+blau+*vzn[k]+rot+Tx[T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt]+schwarz,1,oblog);
+					::Log(gruens+Tx[T_Verzeichnis]+blau+*vzn[k]+gruen+Tx[T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt]+schwarz,1,oblog);
 					string abschnitt;
 					if (k<4) {
 						abschnitt=Tx[ISambaName[k]];
@@ -6959,7 +6958,7 @@ int paramcl::cservice()
   int erg=-1;
   string cspfad;
   if (obprogda("capisuite",obverb,oblog,&cspfad)) {
-    scapisuite->stop(obverb,oblog,1); 
+    scapisuite->stopggf(obverb,oblog,1); 
     erg=systemrueck(/*"sudo sh -c 'systemctl stop capisuite; pkill capisuite >/dev/null 2>&1; pkill -9 capisuite >/dev/null 2>&1; "*/
         "cd /etc/init.d"
         " && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
@@ -7175,9 +7174,9 @@ int paramcl::pruefhyla()
 						if (!systemrueck("sh -c 'cd \""+instvz+"\"&& sudo tar xvf hylafax.tar.gz'",obverb,oblog,&hrueck)) {
 							if (hrueck.size()) {
 								was=hrueck[0].substr(0,hrueck[0].length()-1);
-							}
-						}
-					}
+							} // 							if (hrueck.size())
+						} // 						if (!systemrueck("sh -c 'cd \""+instvz+"\"&& sudo tar xvf hylafax.tar.gz'",obverb,oblog,&hrueck))
+					} // 					if (!holvomnetz("hylafax","https://sourceforge.net/projects/","/files/latest"))
 					if (!was.empty()) {
 						useruucp(huser,obverb,oblog);
 						const string cfgbismake=" --nointeractive && echo $? = Ergebnis nach configure && "
@@ -7189,7 +7188,7 @@ int paramcl::pruefhyla()
 						if (!kompilfort(was,nix,cfgbismake)) {
 							const string nachcfg=
 								"sh -c 'sudo systemctl daemon-reload && sudo systemctl stop hylafax 2>/dev/null"
-								"&& test -f /etc/init.d/hylafax && { sudo mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert; }"
+								"&& test -f /etc/init.d/hylafax &&{ sudo mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/hylafax /etc/ausrangiert;}"
 								"&& sudo pkill hfaxd faxq >/dev/null 2>&1 && sudo faxsetup -nointeractive >/dev/null 2>&1 "
 								"&& echo $? = Ergebnis nach faxsetup -nointeractive"
 								"&& sudo pkill hfaxd faxq >/dev/null 2>&1 " // wird von faxset -nointeractive gestartet und kolligiert mit dem service
@@ -7944,7 +7943,7 @@ int paramcl::pruefcapi()
 							//                        " && ./configure && make && sudo make install '",obverb,oblog);
 							//            svec rueck;
 							//            systemrueck("find /usr -name capi20.h 2>/dev/null",obverb,oblog,&rueck); 
-							systemrueck("sh -c 'cd "+instvz+" && { cd capisuite 2>/dev/null && { test -f Makefile && make clean; }; }'",obverb-1,oblog);
+							systemrueck("sh -c 'cd "+instvz+" &&{ cd capisuite 2>/dev/null &&{ test -f Makefile && make clean;};}'",obverb-1,oblog);
 							uchar altobverb=obverb;
 							obverb++;
 							svec rueck;

@@ -636,7 +636,7 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 		case 1: mode=ios_base::out; break;
 		case 2: mode=ios_base::out | ios_base::app; break;
 		case 3: mode=ios_base::out; break; // text mode, default
-	}
+	} // 	switch (art)
 	fstream *sdat;
 	for(int iru=0;iru<2;iru++) {
 		sdat = new fstream(datei,mode);
@@ -649,7 +649,7 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 				case 1: mode="w"; break;
 				case 2: mode="a"; break;
 				case 3: mode="wt"; break; // text mode, default
-			}
+			} // 			switch (art)
 			FILE *sdat;
 			for(int iru=0;iru<2;iru++) {
 				if ((sdat= fopen(datei.c_str(),mode))) {
@@ -1915,7 +1915,12 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 				if (ob0heissterfolg) {
 					if (erg) {
 						if (cmd.substr(0,6)=="rpm -q" || cmd.substr(0,7)=="dpkg -s" || 
-						    cmd.substr(0,5)=="which" || cmd.substr(0,10)=="sudo which" || cmd.substr(0,16)=="sudo iptables -L") {
+						    cmd.substr(0,5)=="which" || cmd.substr(0,10)=="sudo which" || cmd.substr(0,16)=="sudo iptables -L" ||
+								(cmd.find("grep")!=string::npos && cmd.find(" -q <(sudo crontab -l")!=string::npos) ||
+							  cmd.substr(0,7)=="test -f" || cmd.substr(0,12)=="sudo test -f" ||
+								cmd.substr(0,20)=="systemctl list-units" || cmd.substr(0,15)=="sudo pdbedit -L" ||
+                cmd.find("faxstat|grep")!=string::npos
+								) {
 							ergebnis=gruens+Txk[T_nicht_gefunden];
 						} else if (cmd.substr(0,14)=="sudo modprobe ") {
 						  ergebnis=gruens+Txk[T_nicht_einfuegbar];
@@ -3013,8 +3018,16 @@ void servc::stop(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill/*=0*/)
   systemrueck("sudo systemctl stop '"+sname+"'",obverb,oblog,0,2);
   if (mitpkill) {
     pkill(obverb,oblog);
-  }
+  } //   if (mitpkill)
 } // int servc::stop(int obverb,int oblog)
+
+void servc::stopggf(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill/*=0*/)
+{
+ obsvfeh(obverb,oblog);
+ if (!svfeh||svfeh==7) {
+  stop(obverb,oblog,mitpkill);
+ } //  if (!svfeh||svfeh==7)
+} // void servc::stopggf(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill/*=0*/)
 
 void servc::stopdis(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill)
 {

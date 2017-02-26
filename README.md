@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.42687) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42689) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -941,7 +941,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.42687) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42689) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1707,7 +1707,7 @@ Ma&szlig;nahmen ergreifen:</p>
 <td width="89%">
 
 
-<p style="margin-top: 1em">In Debian kann in der Datei
+<p style="margin-top: 1em">1) In Debian kann in der Datei
 /etc/apt/sources.list ein DVD-Eintrag hinter die
 Standard-Online-Repositories verschoben werden.</p></td></tr>
 <tr valign="top" align="left">
@@ -1715,7 +1715,7 @@ Standard-Online-Repositories verschoben werden.</p></td></tr>
 <td width="89%">
 
 
-<p style="margin-top: 1em">Sudo (fehlt anfangs bei
+<p style="margin-top: 1em">2) Sudo (fehlt anfangs bei
 Standardinstallation in Debian) wird ggf. installiert.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
@@ -1730,13 +1730,17 @@ mu&szlig;.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
-</td></tr>
+
+
+<p style="margin-top: 1em">3) &rsquo;GNU make&rsquo; wird
+ben&ouml;tigt, was durch Aufruf von ./install.sh ggf.
+installiert werden kann.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-<p style="margin-top: 1em">1) Installieren von
+<p style="margin-top: 1em">4) Installieren von
 <b>Hylafax+</b>, falls ein Modem angeschlossen ist und
 Hylafax+ nicht installiert ist. Ggf. Konfiguration von
 Hylafax+ durch Aufruf von &rsquo;<b>faxsetup
@@ -1750,7 +1754,7 @@ hylafax-Konfigurationsverzeichnis (Vorgabe z.B.:
 <td width="89%">
 
 
-<p style="margin-top: 1em">2) Installieren von
+<p style="margin-top: 1em">5) Installieren von
 <b>capisuite</b>, falls eine Fritzkarte eingebaut ist und
 capisuite nicht installiert ist. Ggf. Bearbeitung der
 Konfigurationsdateien <b>/etc/capisuite/capisuite.conf</b>
@@ -1766,7 +1770,7 @@ bzw. Bearbeitung der Dateien
 <td width="89%">
 
 
-<p style="margin-top: 1em">3) Einrichten von Diensten:</p></td></tr>
+<p style="margin-top: 1em">6) Einrichten von Diensten:</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -1820,7 +1824,7 @@ faxe &uuml;ber hylafax empfangen zu k&ouml;nnen.</p></td></tr>
 <td width="89%">
 
 
-<p style="margin-top: 1em">4) Erstellen einer
+<p style="margin-top: 1em">7) Erstellen einer
 Protokolldatei, standardm&auml;&szlig;ig
 <b>/var/log/autofax.log</b>.</p> </td></tr>
 <tr valign="top" align="left">
@@ -1828,7 +1832,7 @@ Protokolldatei, standardm&auml;&szlig;ig
 <td width="89%">
 
 
-<p style="margin-top: 1em">5) ggf. Erstellen und
+<p style="margin-top: 1em">8) ggf. Erstellen und
 Zugreifbarmachen der bestimmbaren <b>Verzeichnisse</b>
 f&uuml;r zu sendende, wartende, abgearbeitete und
 empfangene Faxe.</p></td></tr>
@@ -1837,7 +1841,7 @@ empfangene Faxe.</p></td></tr>
 <td width="89%">
 
 
-<p style="margin-top: 1em">6) ggf. Erstellen und
+<p style="margin-top: 1em">9) ggf. Erstellen und
 Ver&auml;ndern der Konfigurationsdatei autofax.conf in
 dem Verzeichnis, in dem auch es selbst steht (Vorgabe:
 /usr/local/sbin/autofax).</p> </td></tr>
@@ -1846,14 +1850,14 @@ dem Verzeichnis, in dem auch es selbst steht (Vorgabe:
 <td width="89%">
 
 
-<p style="margin-top: 1em">7) ggf. Einf&uuml;gen einer
+<p style="margin-top: 1em">10) ggf. Einf&uuml;gen einer
 Zeile zum Aufruf des Programms in das crontab (von root)</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-<p style="margin-top: 1em">8) ggf. Einf&uuml;gen von
+<p style="margin-top: 1em">11) ggf. Einf&uuml;gen von
 Abschnitten f&uuml;r die unter 3) genannten
 Verzeichnisse in /etc/samba/smb.conf, ggf.
 Einf&uuml;gen/Passwortzuteilen des Programmbenutzers
@@ -1871,7 +1875,7 @@ samba-Server fuer &quot;externe Zone&quot; eintragen.</p></td></tr>
 <td width="89%">
 
 
-<p style="margin-top: 1em">9) ggf. Einf&uuml;gen einer
+<p style="margin-top: 1em">12) ggf. Einf&uuml;gen einer
 Datenbank f&uuml;r die Faxe in mariadb unter einem
 bestimmbaren Namen, Anlage und Ver&auml;nderung mehrerer
 Tabellen und einer Prozedur in dieser Datenbank, ggf.
@@ -1882,7 +1886,7 @@ mariadb zur Datenpflege in diesen Tabellen</p></td></tr>
 <td width="89%">
 
 
-<p style="margin-top: 1em">10) durch entsprechende
+<p style="margin-top: 1em">13) durch entsprechende
 Befehlszeilenoptionen von autofax k&ouml;nnen innerhalb
 von hylafax und capisuite Faxe gel&ouml;scht werden,
 insbesondere:</p> </td></tr>

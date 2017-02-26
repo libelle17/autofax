@@ -700,7 +700,8 @@ class servc {
     void start(int obverb=0, int oblog=0);
     int startundenable(int obverb=0, int oblog=0);
     void stop(int obverb=0,int oblog=0,uchar mitpkill=0);
-    void stopdis(int obverb=0,int oblog=0,uchar mitpkill=0);
+		void stopggf(int obverb=0,int oblog=0,uchar mitpkill=0);
+		void stopdis(int obverb=0,int oblog=0,uchar mitpkill=0);
     void pkill(int obverb=0,int oblog=0);
     int enableggf(int obverb=0,int oblog=0);
     int machfit(int obverb=0, int oblog=0, binaer nureinmal=falsch);
