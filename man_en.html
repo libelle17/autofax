@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sat Feb 25 16:12:04 2017 -->
+<!-- CreationDate: Sun Feb 26 01:09:51 2017 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<h1 align="center">AUTOFAX (Version 0.42685) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42686) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -66,53 +66,54 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
 
 
 <p style="margin-top: 1em">[<b>&minus;v|--verbose</b>]
-[<b>&minus;l|--log</b>] [<b>&minus;ldn|--logdateineu</b>]
-[<b>&minus;kd|--konfdat&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;l|--log</b>] [<b>&minus;lfn|--logfilenew</b>]
+[<b>&minus;cf|--conffile&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;sqlv|--sql-verbose</b>]
-[<b>&minus;rf|--rueckfragen</b>]
-[<b>&minus;norf|--keinerueckfragen</b>]
-[<b>&minus;loef|--loeschefax</b>]
-[<b>&minus;loew|--loeschewaise</b>]
-[<b>&minus;loea|--loescheallew</b>]
-[<b>&minus;kez|--korrerfolgszeichen</b>]
-[<b>&minus;bwv|--bereinigewv</b>] [<b>&minus;st|--stop</b>]
-[<b>&minus;lista|--listarchiv</b>]
+[<b>&minus;ia|--interactive</b>]
+[<b>&minus;noia|--nointeraction</b>]
+[<b>&minus;delf|--deletefax</b>]
+[<b>&minus;delo|--deleteorphans</b>]
+[<b>&minus;dela|--deleteallwaiting</b>]
+[<b>&minus;csf|--correctsuccessflag</b>]
+[<b>&minus;rwd|--revisewaitdir</b>]
+[<b>&minus;st|--stop</b>] [<b>&minus;listo|--listoutg</b>]
 [<b>&minus;listf|--listfailed</b>]
 [<b>&minus;listi|--listinca</b>]
-[<b>&minus;listw|--listwart</b>]
-[<b>&minus;s|--suche&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;n|--dszahl&nbsp;</b><i>&lt;zahl&gt;</i>]
+[<b>&minus;listw|--listwaiting</b>]
+[<b>&minus;s|--search&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;n|--reccount&nbsp;</b><i>&lt;number&gt;</i>]
 [<b>&minus;info|--version</b>] [<b>&minus;vi|--vi</b>]
 [<b>&minus;h|-help|-?|-hilfe</b>]
 [<b>&minus;lg|--language&nbsp;</b><i>&lt;d|e&gt;</i>]
-[<b>&minus;lvz|--logvz&nbsp;</b><i>&lt;pfad&gt;</i>]
-[<b>&minus;ld|--logdname&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;zvz|--zufaxenvz&nbsp;</b><i>&lt;pfad&gt;</i>]
-[<b>&minus;wvz|--wartevz&nbsp;</b><i>&lt;pfad&gt;</i>]
-[<b>&minus;nvz|--nichtgefaxtvz&nbsp;</b><i>&lt;pfad&gt;</i>]
-[<b>&minus;evz|--empfvz&nbsp;</b><i>&lt;pfad&gt;</i>]
-[<b>&minus;cm|--cronminut&nbsp;</b><i>&lt;zahl&gt;</i>]
-[<b>&minus;capi|--obcapi</b>] [<b>&minus;hyla|--obhyla</b>]
-[<b>&minus;cz|--capizuerst</b>]
-[<b>&minus;hz|--hylazuerst</b>]
+[<b>&minus;ldr|--logdir&nbsp;</b><i>&lt;path&gt;</i>]
+[<b>&minus;lf|--logfilename&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;tdr|--tofaxdir&nbsp;</b><i>&lt;path&gt;</i>]
+[<b>&minus;wdr|--waitdir&nbsp;</b><i>&lt;path&gt;</i>]
+[<b>&minus;ndr|--notfaxeddir&nbsp;</b><i>&lt;path&gt;</i>]
+[<b>&minus;rdr|--receiveddir&nbsp;</b><i>&lt;path&gt;</i>]
+[<b>&minus;cm|--cronminutes&nbsp;</b><i>&lt;number&gt;</i>]
+[<b>&minus;capi|--takecapi</b>]
+[<b>&minus;hyla|--takehyla</b>]
+[<b>&minus;fc|--firstcapi</b>]
+[<b>&minus;fh|--firsthyla</b>]
 [<b>&minus;mod|--hmodem&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;mc|--maxcapiv&nbsp;</b><i>&lt;zahl&gt;</i>]
-[<b>&minus;mh|--maxhylav&nbsp;</b><i>&lt;zahl&gt;</i>]
+[<b>&minus;mc|--maxcapitries&nbsp;</b><i>&lt;number&gt;</i>]
+[<b>&minus;mh|--maxhylatries&nbsp;</b><i>&lt;number&gt;</i>]
 [<b>&minus;cuser|--cuser&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;ckzl|--capiklingelzahl&nbsp;</b><i>&lt;zahl&gt;</i>]
-[<b>&minus;hkzl|--hylaklingelzahl&nbsp;</b><i>&lt;zahl&gt;</i>]
-[<b>&minus;md|--maxdials&nbsp;</b><i>&lt;zahl&gt;</i>]
-[<b>&minus;gz|--gleichziel</b>] [<b>&minus;ocri|--ocri</b>]
-[<b>&minus;ocra|--ocra</b>]
-[<b>&minus;afs|--anfaxstr&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;acfs|--ancfaxstr&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;ahfs|--anhfaxstr&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;as|--anstr&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;us|--undstr&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;crct|--cringcount&nbsp;</b><i>&lt;number&gt;</i>]
+[<b>&minus;hrct|--hringcount&nbsp;</b><i>&lt;number&gt;</i>]
+[<b>&minus;hmd|--hmaxdials&nbsp;</b><i>&lt;number&gt;</i>]
+[<b>&minus;it|--immediatelytarget</b>]
+[<b>&minus;ocri|--ocri</b>] [<b>&minus;ocro|--ocro</b>]
+[<b>&minus;tfs|--tofaxstr&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;tcfs|--tocfaxstr&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;thfs|--tohfaxstr&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;ts|--tostr&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;ands|--andstr&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;host|--host&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;muser|--muser&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;mpwd|--mpwd&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;db|--datenbank&nbsp;</b><i>&lt;string&gt;</i>]</p> </td></tr>
+[<b>&minus;db|--database&nbsp;</b><i>&lt;string&gt;</i>]</p> </td></tr>
 </table>
 
 <h2>SHORT DESCRIPTION

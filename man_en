@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "25.02.17" "Version 0.42685" "\fBautofax\fR man page"
+.TH man 1 "26.02.17" "Version 0.42686" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -11,57 +11,57 @@
 .SY autofax [-<option>]
 .OP \-v|--verbose
 .OP \-l|--log
-.OP \-ldn|--logdateineu
-.OP \-kd|--konfdat <string>
+.OP \-lfn|--logfilenew
+.OP \-cf|--conffile <string>
 .OP \-sqlv|--sql-verbose
-.OP \-rf|--rueckfragen
-.OP \-norf|--keinerueckfragen
-.OP \-loef|--loeschefax
-.OP \-loew|--loeschewaise
-.OP \-loea|--loescheallew
-.OP \-kez|--korrerfolgszeichen
-.OP \-bwv|--bereinigewv
+.OP \-ia|--interactive
+.OP \-noia|--nointeraction
+.OP \-delf|--deletefax
+.OP \-delo|--deleteorphans
+.OP \-dela|--deleteallwaiting
+.OP \-csf|--correctsuccessflag
+.OP \-rwd|--revisewaitdir
 .OP \-st|--stop
-.OP \-lista|--listarchiv
+.OP \-listo|--listoutg
 .OP \-listf|--listfailed
 .OP \-listi|--listinca
-.OP \-listw|--listwart
-.OP \-s|--suche <string>
-.OP \-n|--dszahl <zahl>
+.OP \-listw|--listwaiting
+.OP \-s|--search <string>
+.OP \-n|--reccount <number>
 .OP \-info|--version
 .OP \-vi|--vi 
 .OP \-h|-help|-?|-hilfe
 .OP \-lg|--language <d|e>
-.OP \-lvz|--logvz <pfad>
-.OP \-ld|--logdname <string>
-.OP \-zvz|--zufaxenvz <pfad>
-.OP \-wvz|--wartevz <pfad>
-.OP \-nvz|--nichtgefaxtvz <pfad>
-.OP \-evz|--empfvz <pfad>
-.OP \-cm|--cronminut <zahl>
-.OP \-capi|--obcapi
-.OP \-hyla|--obhyla
-.OP \-cz|--capizuerst
-.OP \-hz|--hylazuerst
+.OP \-ldr|--logdir <path>
+.OP \-lf|--logfilename <string>
+.OP \-tdr|--tofaxdir <path>
+.OP \-wdr|--waitdir <path>
+.OP \-ndr|--notfaxeddir <path>
+.OP \-rdr|--receiveddir <path>
+.OP \-cm|--cronminutes <number>
+.OP \-capi|--takecapi
+.OP \-hyla|--takehyla
+.OP \-fc|--firstcapi
+.OP \-fh|--firsthyla
 .OP \-mod|--hmodem <string>
-.OP \-mc|--maxcapiv <zahl>
-.OP \-mh|--maxhylav <zahl>
+.OP \-mc|--maxcapitries <number>
+.OP \-mh|--maxhylatries <number>
 .OP \-cuser|--cuser <string>
-.OP \-ckzl|--capiklingelzahl <zahl>
-.OP \-hkzl|--hylaklingelzahl <zahl>
-.OP \-md|--maxdials <zahl>
-.OP \-gz|--gleichziel
+.OP \-crct|--cringcount <number>
+.OP \-hrct|--hringcount <number>
+.OP \-hmd|--hmaxdials <number>
+.OP \-it|--immediatelytarget
 .OP \-ocri|--ocri
-.OP \-ocra|--ocra
-.OP \-afs|--anfaxstr <string>
-.OP \-acfs|--ancfaxstr <string>
-.OP \-ahfs|--anhfaxstr <string>
-.OP \-as|--anstr <string>
-.OP \-us|--undstr <string>
+.OP \-ocro|--ocro
+.OP \-tfs|--tofaxstr <string>
+.OP \-tcfs|--tocfaxstr <string>
+.OP \-thfs|--tohfaxstr <string>
+.OP \-ts|--tostr <string>
+.OP \-ands|--andstr <string>
 .OP \-host|--host <string>
 .OP \-muser|--muser <string>
 .OP \-mpwd|--mpwd <string>
-.OP \-db|--datenbank <string>
+.OP \-db|--database <string>
 .SH SHORT DESCRIPTION 
 autofax is a command line programme to remit files of a certain directory automatically to \fBhylafax\fR (in case a linux-compatible modem is installed) and/or \fBcapisuite\fR (in case a fritzcard 2.0 or 2.1 is installed), if the fax number is integrated in the file name correctly.
 Furthermore, autofax holds the posted faxes in a mariadb database.

@@ -68,7 +68,7 @@ slc:=sudo /sbin/ldconfig
 # deinstallieren und Ueberschrift vormerken
 uninst=printf '$(UPR)$(1)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$(1)"\n'>>$(UNF);
 # in Protokoll suchen und ...
-sunins=grep -q '$(1)' $(UNF)||{ $(call uninst,$(2))};
+sunins=test -f $(UNF)&&grep -q '$(1)' $(UNF)||{ $(call uninst,$(2))};
 # installieren und ...
 # Selbes Wort in Protokoll suchen wie deinstallieren
 iunins=$(IPR)$(1) &&{ $(call sunins,$(1),$(2))};

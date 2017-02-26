@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.42685) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42686) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -48,53 +48,54 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
 
 
 <p style="margin-top: 1em">[<b>&minus;v|--verbose</b>]
-[<b>&minus;l|--log</b>] [<b>&minus;ldn|--logdateineu</b>]
-[<b>&minus;kd|--konfdat&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;l|--log</b>] [<b>&minus;lfn|--logfilenew</b>]
+[<b>&minus;cf|--conffile&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;sqlv|--sql-verbose</b>]
-[<b>&minus;rf|--rueckfragen</b>]
-[<b>&minus;norf|--keinerueckfragen</b>]
-[<b>&minus;loef|--loeschefax</b>]
-[<b>&minus;loew|--loeschewaise</b>]
-[<b>&minus;loea|--loescheallew</b>]
-[<b>&minus;kez|--korrerfolgszeichen</b>]
-[<b>&minus;bwv|--bereinigewv</b>] [<b>&minus;st|--stop</b>]
-[<b>&minus;lista|--listarchiv</b>]
+[<b>&minus;ia|--interactive</b>]
+[<b>&minus;noia|--nointeraction</b>]
+[<b>&minus;delf|--deletefax</b>]
+[<b>&minus;delo|--deleteorphans</b>]
+[<b>&minus;dela|--deleteallwaiting</b>]
+[<b>&minus;csf|--correctsuccessflag</b>]
+[<b>&minus;rwd|--revisewaitdir</b>]
+[<b>&minus;st|--stop</b>] [<b>&minus;listo|--listoutg</b>]
 [<b>&minus;listf|--listfailed</b>]
 [<b>&minus;listi|--listinca</b>]
-[<b>&minus;listw|--listwart</b>]
-[<b>&minus;s|--suche&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;n|--dszahl&nbsp;</b><i>&lt;zahl&gt;</i>]
+[<b>&minus;listw|--listwaiting</b>]
+[<b>&minus;s|--search&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;n|--reccount&nbsp;</b><i>&lt;number&gt;</i>]
 [<b>&minus;info|--version</b>] [<b>&minus;vi|--vi</b>]
 [<b>&minus;h|-help|-?|-hilfe</b>]
 [<b>&minus;lg|--language&nbsp;</b><i>&lt;d|e&gt;</i>]
-[<b>&minus;lvz|--logvz&nbsp;</b><i>&lt;pfad&gt;</i>]
-[<b>&minus;ld|--logdname&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;zvz|--zufaxenvz&nbsp;</b><i>&lt;pfad&gt;</i>]
-[<b>&minus;wvz|--wartevz&nbsp;</b><i>&lt;pfad&gt;</i>]
-[<b>&minus;nvz|--nichtgefaxtvz&nbsp;</b><i>&lt;pfad&gt;</i>]
-[<b>&minus;evz|--empfvz&nbsp;</b><i>&lt;pfad&gt;</i>]
-[<b>&minus;cm|--cronminut&nbsp;</b><i>&lt;zahl&gt;</i>]
-[<b>&minus;capi|--obcapi</b>] [<b>&minus;hyla|--obhyla</b>]
-[<b>&minus;cz|--capizuerst</b>]
-[<b>&minus;hz|--hylazuerst</b>]
+[<b>&minus;ldr|--logdir&nbsp;</b><i>&lt;path&gt;</i>]
+[<b>&minus;lf|--logfilename&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;tdr|--tofaxdir&nbsp;</b><i>&lt;path&gt;</i>]
+[<b>&minus;wdr|--waitdir&nbsp;</b><i>&lt;path&gt;</i>]
+[<b>&minus;ndr|--notfaxeddir&nbsp;</b><i>&lt;path&gt;</i>]
+[<b>&minus;rdr|--receiveddir&nbsp;</b><i>&lt;path&gt;</i>]
+[<b>&minus;cm|--cronminutes&nbsp;</b><i>&lt;number&gt;</i>]
+[<b>&minus;capi|--takecapi</b>]
+[<b>&minus;hyla|--takehyla</b>]
+[<b>&minus;fc|--firstcapi</b>]
+[<b>&minus;fh|--firsthyla</b>]
 [<b>&minus;mod|--hmodem&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;mc|--maxcapiv&nbsp;</b><i>&lt;zahl&gt;</i>]
-[<b>&minus;mh|--maxhylav&nbsp;</b><i>&lt;zahl&gt;</i>]
+[<b>&minus;mc|--maxcapitries&nbsp;</b><i>&lt;number&gt;</i>]
+[<b>&minus;mh|--maxhylatries&nbsp;</b><i>&lt;number&gt;</i>]
 [<b>&minus;cuser|--cuser&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;ckzl|--capiklingelzahl&nbsp;</b><i>&lt;zahl&gt;</i>]
-[<b>&minus;hkzl|--hylaklingelzahl&nbsp;</b><i>&lt;zahl&gt;</i>]
-[<b>&minus;md|--maxdials&nbsp;</b><i>&lt;zahl&gt;</i>]
-[<b>&minus;gz|--gleichziel</b>] [<b>&minus;ocri|--ocri</b>]
-[<b>&minus;ocra|--ocra</b>]
-[<b>&minus;afs|--anfaxstr&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;acfs|--ancfaxstr&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;ahfs|--anhfaxstr&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;as|--anstr&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;us|--undstr&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;crct|--cringcount&nbsp;</b><i>&lt;number&gt;</i>]
+[<b>&minus;hrct|--hringcount&nbsp;</b><i>&lt;number&gt;</i>]
+[<b>&minus;hmd|--hmaxdials&nbsp;</b><i>&lt;number&gt;</i>]
+[<b>&minus;it|--immediatelytarget</b>]
+[<b>&minus;ocri|--ocri</b>] [<b>&minus;ocro|--ocro</b>]
+[<b>&minus;tfs|--tofaxstr&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;tcfs|--tocfaxstr&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;thfs|--tohfaxstr&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;ts|--tostr&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;ands|--andstr&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;host|--host&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;muser|--muser&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;mpwd|--mpwd&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;db|--datenbank&nbsp;</b><i>&lt;string&gt;</i>]</p> </td></tr>
+[<b>&minus;db|--database&nbsp;</b><i>&lt;string&gt;</i>]</p> </td></tr>
 </table>
 
 <h2>SHORT DESCRIPTION
@@ -939,7 +940,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.42685) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42686) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -986,10 +987,10 @@ Faxe und Protokollierung aller Faxe in einer Datenbank <br>
 <td width="77%">
 
 
-<p style="margin-top: 1em">[<b>&minus;v|--verbose</b>]
+<p style="margin-top: 1em">[<b>&minus;w|--wortreich</b>]
 [<b>&minus;l|--log</b>] [<b>&minus;ldn|--logdateineu</b>]
-[<b>&minus;kd|--konfdat&nbsp;</b><i>&lt;string&gt;</i>]
-[<b>&minus;sqlv|--sql-verbose</b>]
+[<b>&minus;kd|--konfdatei&nbsp;</b><i>&lt;string&gt;</i>]
+[<b>&minus;sqlw|--sql-wortreich</b>]
 [<b>&minus;rf|--rueckfragen</b>]
 [<b>&minus;norf|--keinerueckfragen</b>]
 [<b>&minus;loef|--loeschefax</b>]
@@ -997,22 +998,22 @@ Faxe und Protokollierung aller Faxe in einer Datenbank <br>
 [<b>&minus;loea|--loescheallew</b>]
 [<b>&minus;kez|--korrerfolgszeichen</b>]
 [<b>&minus;bwv|--bereinigewv</b>] [<b>&minus;st|--stop</b>]
-[<b>&minus;lista|--listarchiv</b>]
-[<b>&minus;listf|--listfailed</b>]
-[<b>&minus;listi|--listinca</b>]
-[<b>&minus;listw|--listwart</b>]
+[<b>&minus;lista|--listausg</b>]
+[<b>&minus;listf|--listfehlgeschl</b>]
+[<b>&minus;liste|--listeing</b>]
+[<b>&minus;listw|--listwartende</b>]
 [<b>&minus;s|--suche&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;n|--dszahl&nbsp;</b><i>&lt;zahl&gt;</i>]
 [<b>&minus;info|--version</b>] [<b>&minus;vi|--vi</b>]
 [<b>&minus;h|-help|-?|-hilfe</b>]
-[<b>&minus;lg|--language&nbsp;</b><i>&lt;d|e&gt;</i>]
+[<b>&minus;sp|--sprache&nbsp;</b><i>&lt;d|e&gt;</i>]
 [<b>&minus;lvz|--logvz&nbsp;</b><i>&lt;pfad&gt;</i>]
 [<b>&minus;ld|--logdname&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;zvz|--zufaxenvz&nbsp;</b><i>&lt;pfad&gt;</i>]
 [<b>&minus;wvz|--wartevz&nbsp;</b><i>&lt;pfad&gt;</i>]
 [<b>&minus;nvz|--nichtgefaxtvz&nbsp;</b><i>&lt;pfad&gt;</i>]
 [<b>&minus;evz|--empfvz&nbsp;</b><i>&lt;pfad&gt;</i>]
-[<b>&minus;cm|--cronminut&nbsp;</b><i>&lt;zahl&gt;</i>]
+[<b>&minus;cm|--cronminuten&nbsp;</b><i>&lt;zahl&gt;</i>]
 [<b>&minus;capi|--obcapi</b>] [<b>&minus;hyla|--obhyla</b>]
 [<b>&minus;cz|--capizuerst</b>]
 [<b>&minus;hz|--hylazuerst</b>]
@@ -1022,8 +1023,8 @@ Faxe und Protokollierung aller Faxe in einer Datenbank <br>
 [<b>&minus;cuser|--cuser&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;ckzl|--capiklingelzahl&nbsp;</b><i>&lt;zahl&gt;</i>]
 [<b>&minus;hkzl|--hylaklingelzahl&nbsp;</b><i>&lt;zahl&gt;</i>]
-[<b>&minus;md|--maxdials&nbsp;</b><i>&lt;zahl&gt;</i>]
-[<b>&minus;gz|--gleichziel</b>] [<b>&minus;ocri|--ocri</b>]
+[<b>&minus;hmv|--hmaxwahlvers&nbsp;</b><i>&lt;zahl&gt;</i>]
+[<b>&minus;gz|--gleichziel</b>] [<b>&minus;ocre|--ocre</b>]
 [<b>&minus;ocra|--ocra</b>]
 [<b>&minus;afs|--anfaxstr&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;acfs|--ancfaxstr&nbsp;</b><i>&lt;string&gt;</i>]
@@ -1608,7 +1609,7 @@ makefile:</b></p>
 
 <p style="margin-top: 1em">gcc V.6, g++ V.6, groff,
 libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Version
-0.42685</p> </td></tr>
+0.42686</p> </td></tr>
 </table>
 
 <p style="margin-left:15%;"><b>autofax:</b></p>
@@ -1658,7 +1659,7 @@ soll:</p>
 
 
 <p style="margin-top: 1em">hylafax+, hylafax+-client,
-sendmail, tiff (im Fall von Version 0.42685</p></td></tr>
+sendmail, tiff (im Fall von Version 0.42686</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">falls ocr benutzt werden
@@ -1683,7 +1684,7 @@ image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 k&ouml;nnen abh&auml;ngige Programme
 einschlie&szlig;en. <br>
 Falls Sie eines dieser Programme nicht wollen oder eine
-&auml;ltere Version 0.42685</p>
+&auml;ltere Version 0.42686</p>
 
 <h2>AUSWIRKUNGEN
 <a name="AUSWIRKUNGEN_D"></a>

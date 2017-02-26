@@ -1869,9 +1869,9 @@ char const *autofax_T[T_MAX+1][Smax]={
 	// T_datenbank_l
 	{"datenbank","database"},
 	// T_sqlv_k
-	{"sqlv","sqlv"},
+	{"sqlw","sqlv"},
 	// T_sql_verbose_l
-	{"sql-verbose","sql-wortreich"},
+	{"sql-wortreich","sql-verbose"},
 	// T_rf_k
 	{"rf","ia"},
 	// T_rueckfragen_l
