@@ -5097,7 +5097,7 @@ int paramcl::pruefocr()
 							// sudo pip install -U setuptools
 							// dnf install mupdf mupdf-devel
 							// pyvenv venv
-							// source venv/bin/activate
+							// . venv/bin/activate
 							// .. pip3 install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf
 							//  pip install --upgrade pip
 							// pip3 install --upgrade git+https://github.com/jbarlow83/OCRmyPDF.git
@@ -6726,7 +6726,7 @@ void hfaxsetup(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
         pmp->sfaxgetty->restart(obverb,oblog);
         pmp->shfaxd->restart(obverb,oblog);
         pmp->sfaxq->restart(obverb,oblog);
-        //        systemrueck(string("source ")+afaxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
+        //        systemrueck(string(". ")+afaxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
         Log(blaus+Tx[T_Fertig_mit]+schwarz+afaxsu,1,oblog);
         servc::daemon_reload();
         //        systemrueck(string("rm ")+afaxsu,1,1);
@@ -6757,7 +6757,7 @@ void hfaxsetup(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
     pmp->shfaxd->start(obverb,oblog);
     pmp->sfaxq->start(obverb,oblog);
     pruefplatte();
-    // systemrueck(string("source ")+faxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht 
+    // systemrueck(string(". ")+faxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht 
     // mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
     Log(blaus+Tx[T_Fertig_mit]+schwarz+faxsu,1,oblog);
     //    systemrueck(string("sudo systemctl daemon-reload"),0,1);
