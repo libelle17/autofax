@@ -2199,7 +2199,7 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
 int paramcl::Log(const string& text,bool oberr/*=0*/,short klobverb/*=0*/)
 {
 	return ::Log(text,obverb,oblog,oberr,klobverb);
-}
+} // int paramcl::Log(const string& text,bool oberr/*=0*/,short klobverb/*=0*/)
 
 paramcl::paramcl(int argc, char** argv)
 {
@@ -4658,7 +4658,7 @@ void paramcl::anhalten()
   if (sfaxgetty) sfaxgetty->stopdis(obverb,oblog);
   if (shfaxd) shfaxd->stopdis(obverb,oblog);
   if (sfaxq) sfaxq->stopdis(obverb,oblog);
-  if (shylafaxd) shylafaxd->stopdis(obverb-1,oblog);
+  if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb:0,oblog);
   if (scapisuite) scapisuite->stopdis(obverb,oblog);
 } // void paramcl::anhalten()
 
@@ -5066,7 +5066,7 @@ int paramcl::pruefocr()
 				}
 						anfgggf(unindt,"sudo rm -rf \""+virtvz+"\"");
 						anfgggf(unindt,
-						"sudo sh -c 'source \""+virtvz+"/bin/activate\";"
+						"sudo sh -c '. \""+virtvz+"/bin/activate\";"
 						"sudo pip3 uninstall --yes ocrmypdf;"
 						"deactivate;'");
 						
@@ -7116,7 +7116,7 @@ int paramcl::pruefhyla()
 		for(unsigned versuch=0;versuch<3;versuch++) {
 			// 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren
 			// pruefen, ob hylafax.service laeuft
-			::Log(Tx[T_Pruefe_ob_Hylafax_gestartet],-1,oblog);
+			::Log(Tx[T_Pruefe_ob_Hylafax_gestartet],obverb,oblog);
 			const char* const c_hfs="hylafax";
 			const char* const c_hfc="hylafax-client";
 			const char* const c_hfps="hylafax+";
@@ -7390,7 +7390,7 @@ int paramcl::pruefhyla()
 				if (sfaxgetty) sfaxgetty->stopdis(obverb,oblog,1);
 				if (shfaxd) shfaxd->stop(obverb,oblog,1);
 				if (sfaxq) sfaxq->stop(obverb,oblog,1);
-				if (shylafaxd) shylafaxd->stopdis(obverb,oblog,1);
+				if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb:0,oblog,1);
 				/*
 					 if (!systemrueck("sudo systemctl stop '"+this->sfaxgetty->sname+"' '"+this->shfaxd->sname+"' '"+this->sfaxq->sname+"' 2>/dev/null",
 					 obverb,oblog)) KLA
@@ -7446,7 +7446,7 @@ int paramcl::pruefhyla()
 		if (sfaxgetty) sfaxgetty->stopdis(obverb,oblog);
 		if (shfaxd) shfaxd->stopdis(obverb,oblog);
 		if (sfaxq) sfaxq->stopdis(obverb,oblog);
-		if (shylafaxd) shylafaxd->stopdis(obverb-1,oblog);
+		if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb:0,oblog);
 		ret=1;
 	} // (obhyla) else
 	Log(violetts+Tx[T_Ende]+" "+Tx[T_pruefhyla]+schwarz);
