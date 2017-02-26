@@ -4085,7 +4085,8 @@ void paramcl::pruefcron()
 			if (!cronzuplanen) {
 				if (nochkeincron) {
 				} else {
-					befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&&(sudo crontab -l|sed '/"+saufr+"/d'>")+tmpcron+";sudo crontab "+tmpcron+")||true";
+					befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&&(sudo crontab -l|sed '/"+saufr+"/d'>")+tmpcron+";"
+						"sudo crontab "+tmpcron+")||true";
 				}
 			} else {
 				if (nochkeincron) {
