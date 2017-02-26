@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.42686) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42687) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -632,21 +632,22 @@ being written, if necessary.</p></td></tr>
 
 
 <p style="margin-left:11%; margin-top: 1em">The program was
-adjusted to an installation of Opensuse 42.1, Debian 8.60,
-Ubuntu 16.04, Mint 18 or Fedora 24 with standard options. In
-Debian, it may be advantageous to check that in the file
-/etc/apt/sources.list no dvd is mentioned before the
-standard online-repositories. systemctl (systemd) must run,
-sudo is needed (missing per default in Debian), the user
-must be allowed to call the command &rsquo;sudo&rsquo; (must
-be member of a group mentioned in /etc/sudoers, otherwise,
-the above mentioned installation program tries to enter him
-there), &rsquo;GNU make&rsquo; has to be installed (which
-shall be accomplished if necessary by calling ./install.sh).
-Further needed programs will be installed by the makefile or
-by autofax itsself including preconditioned programs via
-zypper, apt, dnf or yum, python3 pip, if needed and
-possible, especially:</p>
+adjusted to an installation of Opensuse &gt;= 42.1, Debian
+&gt;= 8.60, Ubuntu &gt;= 16.04, Mint &gt;= 18 or Fedora
+&gt;= 24 with standard options. In Debian, it may be
+advantageous to check that in the file /etc/apt/sources.list
+no dvd is mentioned before the standard online-repositories.
+systemctl (systemd) must run, sudo is needed (missing per
+default in Debian), the user must be allowed to call the
+command &rsquo;sudo&rsquo; (must be member of a group
+mentioned in /etc/sudoers, otherwise, the above mentioned
+installation program tries to enter him there), &rsquo;GNU
+make&rsquo; has to be installed (which shall be accomplished
+if necessary by calling ./install.sh). Further needed
+programs will be installed by the makefile or by autofax
+itsself including preconditioned programs via zypper, apt,
+dnf or yum, python3 pip, if needed and possible,
+especially:</p>
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>makefile:</b></p>
@@ -940,7 +941,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.42686) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42687) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -950,7 +951,8 @@ caused by the program.</p>
 <a href="#OPTIONEN_D">OPTIONEN</a><br>
 <a href="#FUNKTIONSWEISE_D">FUNKTIONSWEISE</a><br>
 <a href="#VORAUSSETZUNGEN_D">VORAUSSETZUNGEN</a><br>
-<a href="#AUSWIRKUNGEN_D">AUSWIRKUNGEN</a><br>
+<a href="#AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE_D">AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE</a><br>
+<a href="#AUSWIRKUNGEN DES PROGRAMMABLAUFS_D">AUSWIRKUNGEN DES PROGRAMMABLAUFS</a><br>
 <a href="#FEHLER_D">FEHLER</a><br>
 <a href="#HAFTUNG_D">HAFTUNG</a><br>
 <a href="#AUTOR_D">AUTOR</a><br>
@@ -1580,25 +1582,24 @@ unterzogen.</p> </td></tr>
 
 
 <p style="margin-left:11%; margin-top: 1em">Das Programm
-wurde auf eine Installation von Opensuse 42.1, Debian 8.60,
-Ubuntu 16.04, Mint 18 oder Fedora 24 mit den
-Standardoptionen abgestimmt. In Debian kann es vorteilhaft
-sein, darauf zu achten, dass in der Datei
-/etc/apt/sources.list kein DVD-Eintrag vor den
-Standard-Online-Repositories steht. systemctl (systemd) muss
-laufen, sudo muss installiert sein (fehlt anfangs bei
-Standardinstallation in Debian), der Benutzer muss den
-Befehl &rsquo;sudo&rsquo; ausf&uuml;hren d&uuml;rfen
-(Mitglied einer Gruppe sein, die in /etc/sudoers genannt
-wird, andernfalls versucht das o.g. Installationsprogramm,
-ihn dort einzutragen), &rsquo;GNU make&rsquo; wird
-ben&ouml;tigt, was durch Aufruf von ./install.sh ggf.
-installiert werden kann. Weitere ben&ouml;tigte Programm
-werden falls m&ouml;glich vom makefile oder von autofax
-bei Bedarf selbst mitsamt vorausgesetzter Programme mithilfe
-von zypper, apt, dnf oder yum nachstalliert, insbesondere:
-<b><br>
-makefile:</b></p>
+wurde auf eine Installation von Opensuse &gt;= 42.1, Debian
+&gt;= 8.60, Ubuntu &gt;= 16.04, Mint &gt;= 18 oder Fedora
+&gt;= 24 mit den Standardoptionen abgestimmt. System D muss
+installiert sein bzw. systemctl muss laufen. <br>
+Der Computer sollte mit einem linux-kompatiblen Modem
+oder/und einer Fritzkarte 2.0 oder 2.1 ausgestattet sein. Im
+Fall von beidem kann das Programm beide Faxwege alternativ
+nutzen, um die &Uuml;bertragungssicherheit zu
+erh&ouml;hen.</p>
+
+<h2>AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE
+<a name="AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE_D"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">(hierzu wird je
+nach Distribution zypper, apt-get, dnf oder yum verwendet).
+<b>makefile:</b></p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -1608,8 +1609,8 @@ makefile:</b></p>
 
 
 <p style="margin-top: 1em">gcc V.6, g++ V.6, groff,
-libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Version
-0.42686</p> </td></tr>
+libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Vers.
+4.0.7 mit leichter Modifikation, s. Makefile)</p></td></tr>
 </table>
 
 <p style="margin-left:15%;"><b>autofax:</b></p>
@@ -1659,7 +1660,8 @@ soll:</p>
 
 
 <p style="margin-top: 1em">hylafax+, hylafax+-client,
-sendmail, tiff (im Fall von Version 0.42686</p></td></tr>
+sendmail, tiff (im Fall von Vers. 4.0.7 mit leichter
+Modifikation, s. Makefile)</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">falls ocr benutzt werden
@@ -1680,14 +1682,17 @@ and via &rsquo;python3 pip&rsquo;: cryptography, cffi,
 image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">All diese Installationen
-k&ouml;nnen abh&auml;ngige Programme
-einschlie&szlig;en. <br>
-Falls Sie eines dieser Programme nicht wollen oder eine
-&auml;ltere Version 0.42686</p>
+<p style="margin-left:15%;">falls Sie die Quelldateien mit
+&rsquo;sh viall&rsquo; bearbeiten wollen: vim <br>
+All diese Installationen k&ouml;nnen abh&auml;ngige
+Programme einschlie&szlig;en. <br>
+Falls Sie eines dieser Programme nicht wollen bzw. nicht
+aktualisieren wollen, dann d&uuml;rfen Sie autofax oder
+die entsprechenden Programmteile nicht auf diesem Computer
+verwenden.</p>
 
-<h2>AUSWIRKUNGEN
-<a name="AUSWIRKUNGEN_D"></a>
+<h2>AUSWIRKUNGEN DES PROGRAMMABLAUFS
+<a name="AUSWIRKUNGEN DES PROGRAMMABLAUFS_D"></a>
 </h2>
 
 
@@ -1697,6 +1702,35 @@ Ma&szlig;nahmen ergreifen:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">In Debian kann in der Datei
+/etc/apt/sources.list ein DVD-Eintrag hinter die
+Standard-Online-Repositories verschoben werden.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">Sudo (fehlt anfangs bei
+Standardinstallation in Debian) wird ggf. installiert.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">Der Benutzer beim
+Installationsvorgang wird, falls nicht schon enthalten, in
+eine Administrator-Gruppe eingetragen, die in /etc/sudoers
+genannt wird), da er &quot;sudo&quot; ausf&uuml;hren
+mu&szlig;.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+</td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

@@ -1140,7 +1140,7 @@ char const *autofax_T[T_MAX+1][Smax]={
   // T_listet_Datensaetze_aus
   {"listet Datensaetze aus `","lists entries from `"},
   // T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt
-  {"Zahl der aufzulistenden Datensaetze = <zahl> statt","No. of listed entries = <zahl> instead of"},
+  {"Zahl der aufzulistenden Datensaetze = <zahl> statt","No. of listed entries = <no> instead of"},
   // T_Zeigt_diesen_Bildschirm_an
   {"Zeigt diesen Bildschirm an","shows this screen"},
   // T_Fertig_mit_Parsen_der_Befehlszeile
@@ -3183,7 +3183,7 @@ int paramcl::getcommandline()
 					keineverarbeitung=1;
 				}
         break;
-      }
+      } //       if (opts[optslsz].pruefpar(&argcmv,&i,&hilfe,Tx.lgn))
     } // for(size_t i=0;i<argcmv.size();i++) 
   } //   for(;optslsz<opts.size();optslsz++)
   if (nrzf) rzf=0;
@@ -3191,7 +3191,7 @@ int paramcl::getcommandline()
     if (!argcmv[i].agef) {
       ::Log(rots+"Parameter: "+gruen+argcmv[i].argcs+rot+Tx[T_nicht_erkannt]+schwarz,1,1);
       hilfe=1;
-    }
+    } //     if (!argcmv[i].agef)
   } //   for(size_t i=0;i<argcmv.size();i++)
   if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
   /*
@@ -3668,7 +3668,7 @@ void paramcl::rueckfragen()
   for(zielmustercl *zmakt=zmp;1;zmakt++){
     kuerzevtz(&zmakt->ziel);
     if (zmakt->obmusterleer()) break;
-  }
+  } //   for(zielmustercl *zmakt=zmp;1;zmakt++)
 } // void paramcl::rueckfragen()
 
 // wird aufgerufen in: main
@@ -4214,7 +4214,7 @@ void paramcl::pruefsamba()
 					if (!obinst) {
 						obinst=Tippob(Tx[T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden],Tx[T_j_af]);
 						if (!obinst) break;
-					}
+					} // 					if (!obinst)
 					::Log(rots+Tx[T_Verzeichnis]+blau+*vzn[k]+rot+Tx[T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt]+schwarz,1,oblog);
 					string abschnitt;
 					if (k<4) {
