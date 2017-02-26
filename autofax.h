@@ -334,7 +334,7 @@ class paramcl // Programmparameter
 	  int zupdf(const string* quell, const string& ziel, ulong *pseitenp=0, int obocr=1, int loeschen=1); // 0=Erfolg
 		int holtif(const string& datei,ulong *seitenp=0,struct tm *tmp=0,struct stat *elogp=0,
 		           string *absdrp=0,string *tsidp=0,string *calleridp=0,string *devnamep=0);
-		void setztmpc();
+		void setztmpcron();
 		void pruefmodcron();
 		void pruefunpaper();
     int pruefocr();

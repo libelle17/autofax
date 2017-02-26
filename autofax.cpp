@@ -1991,7 +1991,7 @@ const DBSTyp myDBS=Postgres; // MySQL;
 #else
 const DBSTyp myDBS=MySQL; // Postgres; // MySQL;
 #endif
-string tmpc; // fuer crontab
+string tmpcron; // fuer crontab
 
 #define autofaxcpp
 #include "autofax.h"
@@ -4014,13 +4014,13 @@ void paramcl::verzeichnisse()
 } // paramcl:: verzeichnisse()
 
 // aufgerufen in pruefcron, pruefmodcron und anhalten
-void paramcl::setztmpc()
+void paramcl::setztmpcron()
 {
-  if (tmpc.empty()) {
+  if (tmpcron.empty()) {
     // Einbau von '~' ergaebe bei Aufruf mit und ohne sudo unterschiedliche Erweiterungen
-    tmpc+=gethome()+"/rootscrontab";
+    tmpcron=gethome()+"/rootscrontab";
   }
-} // void setztmpc()
+} // void setztmpcron()
 
 
 // wird aufgerufen in: main
@@ -4040,7 +4040,7 @@ void paramcl::pruefcron()
 		} //   for (uchar runde=0;runde<2;runde++) 
 		if (cronda) {
 			int nochkeincron = systemrueck("sudo crontab -l",obverb-1,0,0,2);
-			setztmpc();
+			setztmpcron();
 			const string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 "+vaufr;// "date >/home/schade/zeit";
 			const string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
 			const string czt=" \\* \\* \\* \\*";
@@ -4058,16 +4058,18 @@ void paramcl::pruefcron()
 					if (obverb) ::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+Tx[T_unveraendert]+
 							+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
 				} else {
-					string unicmd="rm -f "+tmpc+";";
+					string unicmd="rm -f "+tmpcron+";";
 					cmd=unicmd;
-					string dazu="sudo crontab -l|sed '/"+saufr+"/d'>"+tmpc+";";
+					string dazu="sudo crontab -l|sed '/"+saufr+"/d'>"+tmpcron+";";
 				  unicmd+=dazu;	
-					if (!nochkeincron)
-						cmd=dazu;
+					if (!nochkeincron) {
+//					cmd=dazu; // 26.2.17: Debian: nach Deinstallation rootscrontab mit root-Berechtigungen, die Programm hier aufhielten
+						cmd=unicmd;
+          }
 					if (cronzuplanen) {
-						cmd+=" echo \""+cbef+"\">>"+tmpc+";";
+						cmd+=" echo \""+cbef+"\">>"+tmpcron+";";
 					}
-					dazu=" sudo crontab "+tmpc+";";
+					dazu=" sudo crontab "+tmpcron+";";
 					unicmd+=dazu;
 					cmd+=dazu;
 					systemrueck(cmd,obverb,oblog);
@@ -4083,26 +4085,26 @@ void paramcl::pruefcron()
 			if (!cronzuplanen) {
 				if (nochkeincron) {
 				} else {
-					befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&& (sudo crontab -l|sed '/"+saufr+"/d'>")+tmpc+";sudo crontab "+tmpc+")||true";
+					befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&&(sudo crontab -l|sed '/"+saufr+"/d'>")+tmpcron+";sudo crontab "+tmpcron+")||true";
 				}
 			} else {
 				if (nochkeincron) {
-					befehl="rm -f "+tmpc+";";
+					befehl="rm -f "+tmpcron+";";
 				} else {
-					befehl="bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)'|| (sudo crontab -l|sed '/"+saufr+"/d'>"+tmpc+";";
+					befehl="bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)'||(sudo crontab -l|sed '/"+saufr+"/d'>"+tmpcron+";";
 				}
-				befehl+="echo \""+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+"";
+				befehl+="echo \""+cbef+"\">>"+tmpcron+"; sudo crontab "+tmpcron+"";
 				if (!nochkeincron)
 					befehl+=")";
 			}
 #else
 			const string befehl=cronzuplanen?
-				(nochkeincron?("rm -f ")+tmpc+";":
-				 "bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpc+"; ")+
-				"echo \""+cbef+"\">>"+tmpc+"; sudo crontab "+tmpc+(nochkeincron?"":")")
+				(nochkeincron?("rm -f ")+tmpcron+";":
+				 "bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpcron+"; ")+
+				"echo \""+cbef+"\">>"+tmpcron+"; sudo crontab "+tmpcron+(nochkeincron?"":")")
 				:
-				(nochkeincron?"":("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpc+";"
-				 "sudo crontab "+tmpc+")||true")
+				(nochkeincron?"":("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpcron+";"
+				 "sudo crontab "+tmpcron+")||true")
 				;
 #endif      
 			systemrueck(befehl,obverb,oblog);
@@ -4389,8 +4391,8 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 						systemrueck(cmd,obverb,oblog,&rueck[cru]);
 					}
 					if (rueck[0].size()||rueck[1].size()) {
-						RS vgl1(My,"DROP TABLE IF EXISTS tmpc",ZDB);
-						RS vgl2(My,"CREATE TABLE tmpc(submid VARCHAR(25) KEY,teln VARCHAR(25),zp DATETIME, tries INT, size INT(15), erfolg INT);",ZDB);
+						RS vgl1(My,"DROP TABLE IF EXISTS tmpcapi",ZDB);
+						RS vgl2(My,"CREATE TABLE tmpcapi(submid VARCHAR(25) KEY,teln VARCHAR(25),zp DATETIME, tries INT, size INT(15), erfolg INT);",ZDB);
 						for(int cru=0;cru<2;cru++) {
 							for(ruecki=0;ruecki<rueck[cru].size();ruecki++) {
 								teln.clear();zp.clear();tries.clear();user.clear();size=0;
@@ -4434,16 +4436,16 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 								if (!(ruecki % 100)||ruecki==rueck[cru].size()-1) {
 									inse[inse.size()-1]=';';
 									//		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
-									RS vgl3(My,"INSERT INTO tmpc VALUES "+inse,ZDB);
+									RS vgl3(My,"INSERT INTO tmpcapi VALUES "+inse,ZDB);
 									inse.clear();
 								} // 							if (ruecki==100||rueck==rueck[cru].size()-1)
 							} //           for(ruecki=0;ruecki<rueck[cru].size();ruecki++)
 						} // 					for(uchar cru=0;cru<2;cru++)
 //						auswe[auswe.size()-1]=')';
-						// die laut tmpc uebermittelten Faxe, die in outa als Mißerfolg eintragen sind
+						// die laut tmpcapi uebermittelten Faxe, die in outa als Mißerfolg eintragen sind
 						char ***cerg;
 						RS kor1(My,"SELECT t.submid p0, t.teln p1, t.zp p2, a.submt p3, t.tries p4, t.erfolg p5, t.size p6, a.docname p7 "
-								"FROM `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid WHERE a.erfolg<>t.erfolg",ZDB);
+								"FROM `"+touta+"` a RIGHT JOIN tmpcapi t ON t.submid=a.submid WHERE a.erfolg<>t.erfolg",ZDB);
 						if (!kor1.obfehl) {
 							size_t zru=0;
 							while (cerg=kor1.HolZeile(),cerg?*cerg:0) {
@@ -4456,13 +4458,13 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 									<<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<setw(5)<<*(*cerg+4)<<"|"<<violett<<setw(6)<<*(*cerg+5)<<"|"
 									<<blau<<setw(10)<<*(*cerg+6)<<"|"<<violett<<string(*(*cerg+7)).substr(0,55)<<endl;
 							} // while (cerg=kor1.HolZeile(),cerg?*cerg:0) 
-							RS kor2(My,"UPDATE `"+touta+"` a RIGHT JOIN tmpc t ON t.submid=a.submid SET a.erfolg=t.erfolg where a.erfolg<>t.erfolg",ZDB);
+							RS kor2(My,"UPDATE `"+touta+"` a RIGHT JOIN tmpcapi t ON t.submid=a.submid SET a.erfolg=t.erfolg where a.erfolg<>t.erfolg",ZDB);
 						} // 						if (!kor1.obfehl) 
 						RS kor3(My,"SELECT t.submid p0,t.teln p1,t.zp p2,t.tries p3,t.erfolg p4,t.size p5,"
 								"IF(ISNULL(asp.original),'',asp.original) p6,"
 								"IF(ISNULL(asp.idudoc),0,asp.idudoc) p7,IF(ISNULL(asp.pages),0,asp.pages) p8,"
 								"IF(ISNULL(asp.adressat) OR asp.adressat=t.teln,'',asp.adressat) p9 "
-								"FROM tmpc t "
+								"FROM tmpcapi t "
 								"LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
 								"LEFT JOIN `"+altspool+"` asp ON asp.capispooldatei=t.submid "
 								"LEFT JOIN `"+touta+"` av ON av.erfolg<>0 AND av.idudoc=asp.idudoc AND av.idudoc<>0 "
@@ -4484,7 +4486,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 									"SELECT t.erfolg,t.zp,t.zp,t.submid,t.size,t.tries,t.teln,IF(ISNULL(asp.original),'',asp.original),"
 									"IF(ISNULL(asp.idudoc),0,asp.idudoc),IF(ISNULL(asp.pages),0,asp.pages),"
 									"IF(ISNULL(asp.adressat) OR asp.adressat=t.teln,'',asp.adressat) "
-									"FROM tmpc t "
+									"FROM tmpcapi t "
 									"LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
 									"LEFT JOIN `"+altspool+"` asp ON asp.capispooldatei=t.submid "
 									"LEFT JOIN `"+touta+"` av ON av.erfolg<>0 AND av.idudoc=asp.idudoc AND av.idudoc<>0 "
@@ -4492,10 +4494,10 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 									"GROUP BY t.submid",ZDB);
 						} // 						if (!kor3.obfehl)
 
-						// die laut tmpc uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
+						// die laut tmpcapi uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
 						// und zu denen nicht bereits eine erfolgreiche hylafax-Uebertragung eingetragen ist
 						/*
-							 RS ntr(My,"SELECT t.submid p0,t.teln p1,a.original p2,unix_timestamp(t.zp) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpc t "
+							 RS ntr(My,"SELECT t.submid p0,t.teln p1,a.original p2,unix_timestamp(t.zp) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpcapi t "
 							 "LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
 							 "LEFT JOIN outa o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
 						 */
@@ -4643,8 +4645,8 @@ void paramcl::anhalten()
 {
   Log(violetts+Tx[T_anhalten]+schwarz);
   // crontab
-  setztmpc();
-  const string befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&&(sudo crontab -l|sed '/"+saufr+"/d'>")+tmpc+";sudo crontab "+tmpc+");true";
+  setztmpcron();
+  const string befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&&(sudo crontab -l|sed '/"+saufr+"/d'>")+tmpcron+";sudo crontab "+tmpcron+");true";
   systemrueck(befehl,obverb,oblog);
   // services
   /*
@@ -7537,16 +7539,16 @@ void paramcl::pruefmodcron()
 	Log(violetts+Tx[T_pruefmodcron]+schwarz);
 	const string mp="@reboot /sbin/modprobe ";
   const string mps[]={mp+"capi",mp+"fcpci"};
-  setztmpc();
+  setztmpcron();
   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++) {
 		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'",obverb,oblog)) {
     svec rueck;
-     if (!systemrueck("(sudo crontab -l 2>/dev/null >"+tmpc+";echo \""+mps[ru]+"\">>"+tmpc+";sudo crontab "+tmpc+")",obverb,oblog,&rueck)) {
+     if (!systemrueck("(sudo crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";sudo crontab "+tmpcron+")",obverb,oblog,&rueck)) {
 //    for(size_t znr=0;znr<rueck.size();znr++) { ::Log(rueck[znr],1+obverb,oblog); } //     for(size_t znr=0;znr<rueck.size();znr++)
 			const string befehl="bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'&&"
-				"(sudo crontab -l 2>/dev/null|sed '/"+ersetzAllezu(mps[ru],"/","\\/")+"/d'>"+tmpc+";sudo crontab "+tmpc+");true";
+				"(sudo crontab -l 2>/dev/null|sed '/"+ersetzAllezu(mps[ru],"/","\\/")+"/d'>"+tmpcron+";sudo crontab "+tmpcron+");true";
 			anfgggf(unindt,befehl);
-		 } //      if (!systemrueck("(sudo crontab -l 2>/dev/null >"+tmpc+";echo \""+mps[ru]+"\">>"+tmpc+";sudo crontab "+tmpc+")",obverb,oblog,&rueck))
+		 } //      if (!systemrueck("(sudo crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";sudo crontab "+tmpcron+")",obverb,oblog,&rueck))
 		} // 		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'",obverb,oblog))
   } //   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++)
 } // void pruefmodcron(int obverb, int oblog)
