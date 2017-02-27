@@ -113,7 +113,7 @@ Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präf
 .SH OPTIONEN 
 \fBGebrauch: \fBautofax [-<opt>|--<longopt> [<content>]] ...\fR
 .br
-'\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Optionen (z.B. SQL-Befehle) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum direkt editiert oder auch über '\fBautofax -rf\fR' interaktiv gepflegt werden kann.
+Mit '\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Optionen (z.B. SQL-Befehle) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum direkt editiert oder auch über '\fBautofax -rf\fR' interaktiv gepflegt werden kann.
 .br
 \fBOptionen, die nicht gespeichert werden: \fR
 .br

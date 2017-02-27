@@ -1160,7 +1160,14 @@ den Stand des Faxens &uuml;berpr&uuml;fen.</p>
 
 <p style="margin-left:11%; margin-top: 1em"><b>Gebrauch:
 autofax [-&lt;opt&gt;|--&lt;longopt&gt; [&lt;content&gt;]]
-... <br>
+...</b> <br>
+Mit &rsquo;<b>autofax -?</b>&rsquo; werden alle
+Befehlszeilenoptionen sichtbar. Einige Optionen (z.B.
+SQL-Befehle) k&ouml;nnen nicht &uuml;ber die
+Befehlszeile, sondern nur &uuml;ber die
+Konfigurationsdatei eingegeben werden, die wiederum direkt
+editiert oder auch &uuml;ber &rsquo;<b>autofax
+-rf</b>&rsquo; interaktiv gepflegt werden kann. <b><br>
 Optionen, die nicht gespeichert werden: <br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger <b><br>
 -l, --log</b>: protokolliert ausfuehrlich in Datei
