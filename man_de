@@ -111,12 +111,9 @@ Weiterhin werden über \fBhylafax\fR oder \fBCapisuite\fR angekommene Faxe in ei
 .br
 Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präferenz in den genannten Verzeichnissen, in den Datenbanktabellen oder durch Aufruf von z.B. '\fBautofax\fB', '\fBautofax -lista\fR', '\fBautofax -listf\fR' oder '\fBautofax -listi\fR' den Stand des Faxens überprüfen. 
 .SH OPTIONEN 
-M.br
 \fBGebrauch: \fBautofax [-<opt>|--<longopt> [<content>]] ...\fR
 .br
-\fBFaxt Dateien aus Verzeichns <pfad>, die 'an Fax <faxnr>' enthalten und durch soffice in pdf konvertierbar sind 
-.br
-und traegt sie in MariaDB-Datenbank '\fBfaxeinp\fB' (Tabellen: `\fBouta\fB`,`\fBspool\fB`) ein.\fR
+'\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Optionen (z.B. SQL-Befehle) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum direkt editiert oder auch über '\fBautofax -rf\fR' interaktiv gepflegt werden kann.
 .br
 \fBOptionen, die nicht gespeichert werden: \fR
 .br
@@ -226,100 +223,8 @@ und traegt sie in MariaDB-Datenbank '\fBfaxeinp\fB' (Tabellen: `\fBouta\fB`,`\fB
 .br
 \fB -mpwd, --mpwd <string>\fR: verwendet fuer MySQL/MariaDB das Passwort <string> anstatt '\fBsonne\fR'
 .br
-\fB -db, --datenbank <string>\fR: verwendet die Datenbank <string> anstatt '\fBfaxeinp\fR'it '\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Optionen (z.B. SQL-Befehle) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum direkt editiert oder auch über '\fBautofax -rf\fR' interaktiv gepflegt werden kann.
-
+\fB -db, --datenbank <string>\fR: verwendet die Datenbank <string> anstatt '\fBfaxeinp\fR'
 .br
-\fB-lg, --language <string>\fR: language/Sprache/Lingue/Lingua [deutsch,englisch]
-.br
-\fB-v, --verbose\fR: Bildschirmausgabe gespraechiger
-.br
-\fB-l, --log\fR: protokolliert ausfuehrlich in Datei '/var/log/autofax.log' (sonst knapper)
-.br
-\fB-lvz, --logvz <pfad>\fR: waehlt als Logverzeichnis <pfad>, derzeit '/var/log'
-.br
-\fB-ld, --logdname <string>\fR: logdatei <string> (im Pfad '/var/log') wird verwendet anstatt 'autofax.log'
-.br
-\fB-ldn, --logdateineu\fR: logdatei vorher loeschen
-.br
-\fB-kd, --konfdat <string>\fR: verwendet Konfigurationsdatei <string> anstatt '/usr/local/sbin/autofax.conf'
-.br
-\fB-zvz, --zufaxenvz <pfad>\fR: faxt die Dateien aus <pfad> anstatt '...'
-.br
-\fB-wvz, --wartevz <pfad>\fR: Dateien warten in <pfad> anstatt '...'
-.br
-\fB-evz, --empfvz <pfad>\fR: Empfangsverzeichnis fuer Faxempfang '...'
-.br
-\fB-cm, --cronminut <zahl>\fR: alle wieviel Minuten soll autofax ueber crontab aufgerufen werden (0=gar nicht) '2'
-.br
-\fB-kc, --keincapi\fR: capisuite nicht verwenden
-.br
-\fB-kh, --keinhyla\fR: hylafax nicht verwenden
-.br
-\fB-cz, --capizuerst\fR: versuche faxe zuerst ueber Capisuite wegzuschicken
-.br
-\fB-hz, --hylazuerst\fR: versuche faxe zuerst ueber hylafax wegzuschicken
-.br
-\fB-mod, --modem <string>\fR: Fuer Hylafax verwendetes Modem ''
-.br
-\fB-mc, --maxcapinr <zahl>\fR: nach <zahl> Versuchen Capisuite wird Hylafax versucht, anstatt nach '3'
-.br
-\fB-mh, --maxhylanr <zahl>\fR: nach <zahl> Versuchen Hylafax wird Capisuite versucht, anstatt nach '3'
-.br
-\fB-ckzl, --capiklingelzahl <zahl>\fR: Zahl der Klingeltoene, bis Capisuite den Anruf annimmt, anstatt '1'
-.br
-\fB-cuser, --cuser <string>\fR: verwendet fuer Capisuite den Linux-Benutzer <string> anstatt 'schade'
-.br
-\fB-hkzl, --hylaklingelzahl <zahl>\fR: Zahl der Klingeltoene, bis Hylafax den Anruf annimmt, anstatt '2'
-.br
-\fB-gz, --gleichziel\fR: Faxe werden auch ohne Faxerfolg ins Zielverzeichnis kopiert
-.br
-\fB-afs, --anfaxstring <string>\fR: faxnr wird hinter <string> erwartet statt hinter 'an Fax'
-.br
-\fB-acfs, --ancfaxstring <string>\fR: faxnr fuer primaer Capisuite wird hinter <string> erwartet statt hinter 'an cFax'
-.br
-\fB-ahfs, --anhfaxstring <string>\fR: faxnr fuer primaer hylafax wird hinter <string> erwartet statt hinter 'an hFax'
-.br
-\fB-as, --anstring <string>\fR: Adressatenname wird hinter <string> erwartet statt hinter ' an '
-.br
-\fB-us, --undstring <string>\fR: Trennstring <string> fuer mehrere Adressaten/Faxnummern statt 'und'
-.br
-\fB-host, --host <string>\fR: verwendet die Datenbank auf Host <string> anstatt auf 'localhost'
-.br
-\fB-muser, --muser <string>\fR: verwendet fuer MySQL/MariaDB den Benutzer <string> anstatt 'praxis'
-.br
-\fB-mpwd, --mpwd <string>\fR: verwendet fuer MySQL/MariaDB das Passwort <string> anstatt '...'
-.br
-\fB-db, --db <string>\fR: verwendet die Datenbank <string> anstatt '...'
-.br
-\fB-sqlv, --sql-verbose\fR: Bildschirmausgabe mit SQL-Befehlen
-.br
-\fB-rf, --rueckfragen\fR: alle Parameter werden abgefragt (darunter einige hier nicht gezeigte)
-.br
-\fB-loef, --loeschefax\fR: ein Fax nach Rueckfrage loeschen
-.br
-\fB-loew, --loeschewaise\fR: Eintraege aus `spool` loeschen, zu denen keine Datei im Wartevz.und kein Capi- oder Hylafax nachweisbar ist
-.br
-\fB-loea, --loescheallew\fR: alle wartenden Faxe und zugehoerige Eintraege aus `spool` loeschen
-.br
-\fB-loee, --loescheempf\fR: empfangene Dateien loeschen, die nicht verarbeitet werden koennen
-.br
-\fB-kez, --korrerfolgszeichen\fR: in der Datenbanktabelle `outa` wird das Erfolgszeichen korrigiert
-.br
-\fB-bwv, --bereinigewv\fR: Dateien aus Warteverzeichnis gegen `outa` pruefen und ggf. verschieben
-.br
-\fB-lista, --listarchiv\fR: listet Datensaetze aus `outa` mit Erfolgskennzeichen auf
-.br
-\fB-listf, --listfailed\fR: listet Datensaetze aus `outa` ohne Erfolgskennzeichen auf
-.br
-\fB-listi, --listinca\fR: listet Datensaetze aus `inca` auf
-.br
-\fB-n, --dszahl <zahl>\fR: Zahl der aufzulistenden Datensaetze = <zahl> statt '30'
-.br
-\fB-info, --version \fR: Zeigt die Programmversion an
-.br
-\fB-vi, --vi \fR: Konfigurationsdatei editieren
-.br
-\fB-h, --hilfe\fR: Zeigt Hilfe an
 .SH FUNKTIONSWEISE
 .HP 3 
 1) Die aktuelle Hardware wird überprüft:

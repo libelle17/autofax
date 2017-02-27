@@ -109,119 +109,120 @@ Further on, incoming faxes via \fBhylafax\fR or \fBCapisuite\fR are being transm
 .br
 Depending on operating system, accessability and preferences the users thus could look up the status of their faxes in the above mentioned directories, in the database tables or by calling '\fBautofax\fB', '\fBautofax -lista\fR', '\fBautofax -listf\fR' or '\fBautofax -listi\fR'. 
 .SH OPTIONS 
+\fBUsage: \fBautofax [-<opt>|--<longopt> [<content>]] ...\fR
+.br
 With '\fBautofax -?\fR', all command line options can be seen. Some options (e.g. the sql commands) cannot bei set via the command line, but only via the configuration file, which can be edited directly or interactively by '\fBautofax -rf\fR'.
 .br
+\fBOptions which are not saved: \fR
 .br
-\fBOptions which are not saved\fR:
+\fB -v, --verbose\fR: screen output more verbose
 .br
-\fB-v, --verbose\fR: screen output more verbose
+\fB -l, --log\fR: put detailed logs in file '\fB/var/log/gsautofax.log\fR' (otherwise shorter)
 .br
-\fB-l, --log\fR: put detailed logs in file '/var/log/autofax.log' (otherwise shorter)
+\fB -lfn, --logfilenew\fR: delete log file afore
 .br
-\fB-ldn, --logdateineu\fR: delete log file afore
+\fB -cf, --conffile <string>\fR: uses configuration file <string> instead of '\fB/usr/bin/autofax.conf\fR'
 .br
-\fB-kd, --konfdat <string>\fR: uses configuration file <string> instead of '/usr/local/sbin/autofax.conf'
+\fB -sqlv, --sql-verbose\fR: screen output with SQL commands
 .br
-\fB-sqlv, --sql-verbose\fR: screen output with SQL commands
+\fB -ia, --interactive\fR: all parameters will be prompted (some of them not shown here)
 .br
-\fB-rf, --rueckfragen\fR: all parameters will be prompted (some of them not shown here)
+\fB -noia, --nointeraction\fR: no questions, e.g. for a call of autofax within cron
 .br
-\fB-norf, --keinerueckfragen\fR: no questions, e.g. for a call of autofax within cron
+\fB -delf, --deletefax\fR: delete a fax with query
 .br
-\fB-loef, --loeschefax\fR: delete a fax with query
+\fB -delo, --deleteorphans\fR: delete entries from `\fBspool\fR` without detection of file in waiting directory or capisuite fax or hylafax
 .br
-\fB-loew, --loeschewaise\fR: delete entries from `spool` without detection of file in waiting directory or capisuite fax or hylafax
+\fB -dela, --deleteallwaiting\fR: delete all waiting faxes and associated entries from `\fBspool\fR`
 .br
-\fB-loea, --loescheallew\fR: delete all waiting faxes and associated entries from `spool`
+\fB -csf, --correctsuccessflag\fR: in the database table `\fBouta\fR` the success flag is being corrected
 .br
-\fB-kez, --korrerfolgszeichen\fR: in the database table `outa` the success flag is being corrected
+\fB -rwd, --revisewaitdir\fR: Examine files in waiting directory against the tables `\fBouta\fR` and clean them up
 .br
-\fB-bwv, --bereinigewv\fR: Examine files in waiting directory against the tables `outa` and clean them up
+\fB -st, --stop\fR: stop autofax
 .br
-\fB-st, --stop\fR: stop autofax
+\fB -listo, --listoutg\fR: lists entries from `\fBouta\fR` with success flag
 .br
-\fB-lista, --listarchiv\fR: lists entries from `outa` with success flag
+\fB -listf, --listfailed\fR: lists entries from `\fBouta\fR` without success flag
 .br
-\fB-listf, --listfailed\fR: lists entries from `outa` without success flag
+\fB -listi, --listinca\fR: lists entries from `\fBinca\fR`
 .br
-\fB-listi, --listinca\fR: lists entries from `inca`
+\fB -listw, --listwaiting\fR: lists waiting faxes
 .br
-\fB-listw, --listwart\fR: list waiting faxes
+\fB -s, --search <string>\fR: Look in processed faxes for <string>: \fB\fR '\fB\fR'
 .br
-\fB-s, --suche <string>\fR: Look in processed faxes for <string>
+\fB -n, --reccount <zahl>\fR: No. of listed entries = <no> instead of '\fB30\fR'
 .br
-\fB-n, --dszahl <zahl>\fR: No. of listed entries = <zahl> instead of '30'
+\fB -info, --version\fR: shows the program version
 .br
-\fB-info, --version \fR: shows the program version
+\fB -vi, --vi\fR: edit configuration file
 .br
-\fB-vi, --vi \fR: edit the configuration file
+\fB -h, --help\fR: shows this screen
 .br
-\fB-h, --hilfe\fR: shows this screen
+\fBOptions which can be saved in the configuration file: (preceding '1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):\fR
 .br
-\fBOptions which can be saved in the configuration file (preceding '1'=don't save, 'no'=contrary, e.g. '-noocra', '-1noocri')\fR:
+\fB -lg, --language <string>\fR: Language/Sprache/Lingue/Lingua [\fBd\fReutsch,\fBe\fRnglisch] '\fBe\fR'
 .br
-\fB-lg, --language <string>\fR: language/Sprache/Lingue/Lingua [deutsch,english] 'e'
+\fB -ldr, --logdir <path>\fR: choses <path> as log directory, currently '\fB/var/log\fR'
 .br
-\fB-lvz, --logvz <path>\fR: choses <path> as log directory, currently '/var/log'
+\fB -lf, --logfilename <string>\fR: log file <string> (in path '\fB/var/log\fR') will be used instead of '\fBgsautofax.log\fR'
 .br
-\fB-ld, --logdname <string>\fR: log file <string> (in path '/var/log') will be used instead of 'autofax.log'
+\fB -tdr, --tofaxdir <path>\fR: faxes the files from <path> instead of '\fB/vista/P/zufaxen\fR'
 .br
-\fB-zvz, --zufaxenvz <path>\fR: faxes the files from <path> instead of '...'
+\fB -wdr, --waitdir <path>\fR: files are waiting in <path> instead of '\fB/vista/P/warteauffax\fR'
 .br
-\fB-wvz, --wartevz <path>\fR: files are waiting in <path> instead of '...'
+\fB -ndr, --notfaxeddir <path>\fR: Failed Faxes are collected here and not in '\fB/vista/P/nichtgefaxt\fR'
 .br
-\fB-evz, --empfvz <path>\fR: directory for recieved faxes '...'
+\fB -rdr, --receiveddir <path>\fR: directory for recieved faxes '\fB/vista/P\fR'
 .br
-\fB-cm, --cronminut <zahl>\fR: every how many minutes shall autofax be called in crontab (0=not at all) '2'
+\fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB0\fR'
 .br
-\fB-capi, --obcapi\fR: use capisuite
+\fB -capi, --takecapi\fR: use capisuite[0;35m or not\fR
 .br
-\fB-hyla, --obhyla\fR: use hylafax
+\fB -hyla, --takehyla\fR: use hylafax[0;35m or not\fR
 .br
-\fB-cz, --capizuerst\fR: try to send faxes primarily via capisuite
+\fB -fc, --firstcapi\fR: try to send faxes primarily via capisuite[0;35m or not\fR
 .br
-\fB-hz, --hylazuerst\fR: try to send faxes primarily via hylafax
+\fB -fh, --firsthyla\fR: try to send faxes primarily via hylafax[0;35m or not\fR
 .br
-\fB-mod, --hmodem <string>\fR: Modem used for hylafax ''
+\fB -mod, --hmodem <string>\fR: Modem used for hylafax, instead of  '\fBttyS1\fR'
 .br
-\fB-mc, --maxcapiv <zahl>\fR: try Hylafax after <no> tries of Capisuite instead of '3'
+\fB -mc, --maxcapitries <zahl>\fR: try Hylafax after <no> tries of Capisuite instead of '\fB3\fR'
 .br
-\fB-mh, --maxhylav <zahl>\fR: try Capisuite after <no> tries of Hylafax instead of '3'
+\fB -mh, --maxhylatries <zahl>\fR: try Capisuite after <no> tries of Hylafax instead of '\fB3\fR'
 .br
-\fB-cuser, --cuser <string>\fR: takes the linux user <string> for Capisuite instead of 'schade'
+\fB -cuser, --cuser <string>\fR: takes the linux user <string> for capisuite and/or samba instead of '\fBschade\fR'
 .br
-\fB-ckzl, --capiklingelzahl <zahl>\fR: No. of bell rings until Capisuite accepts the call, instead of '1'
+\fB -crct, --cringcount <zahl>\fR: No. of bell rings until Capisuite accepts the call, instead of '\fB10\fR'
 .br
-\fB-hkzl, --hylaklingelzahl <zahl>\fR: No. of bell rings until hylafax accepts the call, instead of '2'
+\fB -hrct, --hringcount <zahl>\fR: No. of bell rings until hylafaxs accepts the call, instead of '\fB2\fR'
 .br
-\fB-md, --maxdials\fR: No. of dialing retries in hylafax, instead of '11'
+\fB -hmd, --hmaxdials <zahl>\fR: No of dialing retries in hylafax, instead of   '\fB11\fR'
 .br
-\fB-gz, --gleichziel\fR: copy faxes into target directory irrespective of faxing success
+\fB -it, --immediatelytarget\fR: copy faxes into target directory irrespective of faxing success[0;35m or not\fR
 .br
-\fB-orci, --ocri\fR: Text from received faxed will be filtered
+\fB -ocri, --ocri\fR: Text from received faxes will be filtered[0;35m or not\fR
 .br
-\fB-orci, --ocri\fR: Text from sent faxed will be filtered
+\fB -ocro, --ocro\fR: Text from sent pictures will be filtered[0;35m or not\fR
 .br
-\fB-afs, --anfaxstring <string>\fR: the fax number will be expected after <string> instead of 'an Fax'
+\fB -tfs, --tofaxstr <string>\fR: the fax number will be expected after <string> instead of '\fBan Fax\fR'
 .br
-\fB-acfs, --ancfaxstring <string>\fR: fax no.for fax with preference to capisuite is expected after <string> instead of 'an cFax'
+\fB -tcfs, --tocfaxstr <string>\fR: fax no.for fax with preference to capisuite is expected after <string> instead of '\fBan cFax\fR'
 .br
-\fB-ahfs, --anhfaxstring <string>\fR: fax no.for fax with preference to hylafax is expected after <string> instead of 'an hFax'
+\fB -thfs, --tohfaxstr <string>\fR: fax no.for fax with preference to hylafax is expected after <string> instead of '\fBan hFax\fR'
 .br
-\fB-as, --anstring <string>\fR: name of addressee is expected after <string> instead of ' an '
+\fB -ts, --tostr <string>\fR: name of addressee is expected after <string> instead of '\fB an \fR'
 .br
-\fB-us, --undstring <string>\fR: separating string <string> for multiple addressees/fax'numbers, instead of 'und'
+\fB -ands, --andstr <string>\fR: separating string <string> for multiple addressees/tel'numbers, instead of '\fBund\fR'
 .br
-\fB-host, --host <string>\fR: takes the database on host <string> instead of 'localhost'
+\fB -host, --host <string>\fR: takes the database on host <string> instead of '\fBlocalhost\fR'
 .br
-\fB-muser, --muser <string>\fR: takes the user <string> for MySQL/MariaDB instead of 'praxis'
+\fB -muser, --muser <string>\fR: takes the user <string> for MySQL/MariaDB instead of '\fBpraxis\fR'
 .br
-\fB-mpwd, --mpwd <string>\fR: takes the password <string> for MySQL/MariaDB instead of '...'
+\fB -mpwd, --mpwd <string>\fR: takes the password <string> for MySQL/MariaDB instead of '\fBsonne\fR'
 .br
-\fB-db, --datenbank <string>\fR: uses the database <string> instead of '...'
+\fB -db, --database <string>\fR: uses the database <string> instead of '\fBfaxeinp\fR'
 .br
-.br
-\fB-h, --help \fR: shows help 
 .SH FUNCTIONALITY
 .HP 3 
 1) The current hardware is being checked.
