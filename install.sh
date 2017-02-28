@@ -97,8 +97,7 @@ still which sudo||{
 	su -c "$IdPR sudo;";
 	exit;
 }
-#{ which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
-#}
+# which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
 # falls make fehlt, dann installieren ...
 einricht make make
 # $SPR make >$DN 2>&1 ||{ echo Installing/ Installiere 'make' ....; id su >$DN 2>&1 && { su -c "$IPR make;";true;} || sudo $IPR make; grep -q make $AUNF||printf "${UPR}make\necho \"${UPR}make\"\n">>$AUNF; }
