@@ -81,21 +81,24 @@ SUG="admin\|root\|sudo\|wheel\|ntadmin";
 
 # hier geht's los
 getIPR;
-# 0=sudo aufrufbar
-a=$(sudo -nv 2>&1);! [[ $a ]]&&echo $a|grep -vq asswor ||{
-	printf "Please enter ${blau}root$reset's password at the next question:\n"
-	printf "Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
-	su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";"||exit
-}
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
 still which sudo||{
-	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'."
-	printf "Please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh $0$reset'!\n"
-	printf "Muss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. "
-	printf "Bitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh $0$reset' auf!\n";
+	printf "Must install 'sudo'. "
+	printf "Please enter ${blau}root$reset's password at the next question:\n"
+	printf "Muss 'sudo' einrichten. "
+	printf "Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
 	test -f $AUNF&&grep -q "[^;] sudo" $AUNF||printf "${UPR}sudo\nprintf \"\$blau%%s\$reset\\\n\" \"${UPR}sudo\"\n">>$AUNF;
 	su -c "$IdPR sudo;";
-	exit;
+}
+# 0=sudo aufrufbar
+a=$(sudo -nv 2>&1);! test -z "$a" && echo $a|grep -q asswor ||{
+	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'."
+	printf "Please enter ${blau}root$reset's password at the next question:\n"
+	printf "Then please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh $0$reset'!\n"
+	printf "Muss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. "
+	printf "Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
+	printf "Danach loggen Sie sich bitte aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh $0$reset' auf!\n";
+	su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";" && exit
 }
 # which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
 # falls make fehlt, dann installieren ...
