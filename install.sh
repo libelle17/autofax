@@ -1,23 +1,32 @@
 #!/bin/sh
+still() {
+	"$@" >/dev/null 2>&1
+}
+
+#kf kein Fehler
+kf() {
+	"$@" 2>/dev/null
+}
+
 # Installationsprogramm ermitteln
 getIPR() {
   CTAGS=ctags;
-	{ which zypper  >$DN 2>&1 &&{ 
+	{ still which zypper &&{ 
 		Z=zypper;g=--gpg-auto-import-keys;IdPR="$Z -n $g in ";IP_R="sudo $Z $g in ";UPR="sudo $Z rm -u ";pgroff=groff;
   REPOS="sudo $Z lr|grep 'g++\|devel_gcc'\>$KR||sudo $Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
   urepo="sudo $Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && sudo $Z rr devel_gcc;";
   COMP="gcc gcc-c++ \$(CCInst)";
 	} }||
-	{ which apt-get >$DN 2>&1 &&{ IdPR="apt-get --assume-yes install ";IP_R="sudo $IdPR";
+	{ still which apt-get &&{ IdPR="apt-get --assume-yes install ";IP_R="sudo $IdPR";
 	                                    UPR="sudo apt-get --auto-remove purge ";
 																			dev=dev;
 																			COMP="build-essential linux-headers-\$(shell uname -r)";
 																			CTAGS=exuberant-ctags;} }||
-	{ which dnf     >$DN 2>&1 &&{ fed=1;IdPR="dnf -y install ";UPR="sudo dnf remove ";} }||
-	{ which yum     >$DN 2>&1 &&{ fed=1;IdPR="yum -y install ";UPR="sudo yum remove ";} }
+	{ still which dnf &&{ fed=1;IdPR="dnf -y install ";UPR="sudo dnf remove ";} }||
+	{ still which yum &&{ fed=1;IdPR="yum -y install ";UPR="sudo yum remove ";} }
 	[ $fed = 1 ] &&{ libmc=mysql;COMP="make automake gcc-c++ kernel-devel";IP_R="sudo $IdPR";}
-	{ which rpm >$DN 2>&1 && SPR="rpm -q ";}||
-	{ which dpkg >$DN 2>&1 && SPR="dpkg -s ";}
+	{ still which rpm && SPR="rpm -q ";}||
+	{ still which dpkg && SPR="dpkg -s ";}
 	IPR="sudo $IdPR";
 }
 
@@ -27,7 +36,7 @@ exportvars() {
 }
 
 einricht() {
- which $1 >$DN 2>$DN||{
+ still which $1 ||{
    getIPR;
 	 printf "Installing/ Installiere $1 ...\n";
 	 ${IPR}$2;
@@ -72,18 +81,24 @@ SUG="admin\|root\|sudo\|wheel\|ntadmin";
 
 # hier geht's los
 getIPR;
+# 0=sudo aufrufbar
+a=$(sudo -nv 2>&1);! [[ $a ]]&&echo $a|grep -vq asswor ||{
+	printf "Please enter ${blau}root$reset's password at the next question:\n"
+	printf "Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
+	su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";"||exit
+}
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
-{ which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
-	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'. Please enter ${blau}root$reset's password at the next two questions:\n"
+still which sudo||{
+	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'."
+	printf "Please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh $0$reset'!\n"
 	printf "Muss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. "
-	printf "Bitte geben Sie bei den beiden Fragen das Passwort von '${blau}root$reset' ein:\n";
+	printf "Bitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh $0$reset' auf!\n";
 	test -f $AUNF&&grep -q "[^;] sudo" $AUNF||printf "${UPR}sudo\nprintf \"\$blau%%s\$reset\\\n\" \"${UPR}sudo\"\n">>$AUNF;
 	su -c "$IdPR sudo;";
-	su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";"||exit
-	printf "Please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh $0$reset'!\n"
-	printf "Bitte loggen Sie sich jetzt aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh $0$reset' auf!\n";
 	exit;
 }
+#{ which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
+#}
 # falls make fehlt, dann installieren ...
 einricht make make
 # $SPR make >$DN 2>&1 ||{ echo Installing/ Installiere 'make' ....; id su >$DN 2>&1 && { su -c "$IPR make;";true;} || sudo $IPR make; grep -q make $AUNF||printf "${UPR}make\necho \"${UPR}make\"\n">>$AUNF; }
