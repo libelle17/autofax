@@ -2442,39 +2442,42 @@ void paramcl::getcommandl0()
     obkschreib=1;
   } // if (logvneu ||logdneu) 
 } // void paramcl::getcommandl0(int argc, char** argv)
-	int
+
 // aus: coreutils
-fd_reopen (int desired_fd, char const *file, int flags, mode_t mode)
+int fd_reopen(int desired_fd, char const *file, int flags, mode_t mode)
 {
 	int fd = open (file, flags, mode);
-
-	if (fd == desired_fd || fd < 0)
+	if (fd==desired_fd||fd<0) {
 		return fd;
-	else
-	{
+	} else {
 		int fd2 = dup2 (fd, desired_fd);
 		int saved_errno = errno;
 		close (fd);
 		errno = saved_errno;
 		return fd2;
-	}
-}
+	} // 	if (fd == desired_fd || fd < 0) else
+} // fd_reopen (int desired_fd, char const *file, int flags, mode_t mode)
 
 // mit strace usw. aus coreutils
 int ttytest(const string& tty)
 {
 	int fd,erg=0,fdflags=0;
-	static struct termios mode;
-	if ((fd=fd_reopen (STDIN_FILENO, ("/dev/"+tty).c_str(), O_RDONLY | O_NONBLOCK, 0))>=0) {
-		if ((fdflags = fcntl (STDIN_FILENO, F_GETFL)) != -1 && fcntl (STDIN_FILENO, F_SETFL, fdflags & ~O_NONBLOCK) >= 0) {
-			if (!tcgetattr (STDIN_FILENO, &mode)) {
-				erg=1;
-			}
-		}
-		close(fd);
-	}
+	int defin;
+	if ((defin=dup(STDIN_FILENO))>=0) {
+		static struct termios mode;
+		if ((fd=fd_reopen (STDIN_FILENO, ("/dev/"+tty).c_str(), O_RDONLY | O_NONBLOCK, 0))>=0) {
+			if ((fdflags = fcntl (STDIN_FILENO, F_GETFL)) != -1 && fcntl (STDIN_FILENO, F_SETFL, fdflags & ~O_NONBLOCK) >= 0) {
+				if (!tcgetattr (STDIN_FILENO, &mode)) {
+					erg=1;
+				} // 				if (!tcgetattr (STDIN_FILENO, &mode))
+			} // 			if ((fdflags = fcntl (STDIN_FILENO, F_GETFL)) != -1 && fcntl (STDIN_FILENO, F_SETFL, fdflags & ~O_NONBLOCK) >= 0)
+			close(fd);
+		} // 		if ((fd=fd_reopen (STDIN_FILENO, ("/dev/"+tty).c_str(), O_RDONLY | O_NONBLOCK, 0))>=0)
+		dup2(defin,STDIN_FILENO);
+		close(defin);
+	} // 	if ((defin=dup(STDIN_FILENO))>=0)
 	return erg;
-}
+} // int ttytest(const string& tty)
 
 // wird aufgerufen in: main, rueckfragen
 void paramcl::pruefmodem()
@@ -3246,6 +3249,7 @@ int paramcl::getcommandline()
 void paramcl::rueckfragen()
 {
   Log(violetts+Tx[T_rueckfragen]+schwarz);
+
   const string nix;
   if (rzf) {
     int lfd=-1;

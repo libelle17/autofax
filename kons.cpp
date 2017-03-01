@@ -2090,7 +2090,7 @@ uchar Tippob(const string& frage,const char *vorgabe)
 } // uchar Tippob(const string& frage,const char *vorgabe) 
 
 // bisher nicht verwendet, 15.12.15
-string Tippstrings(const char *frage, char* moegl[], char *vorgabe)
+string Tippstrings(const char *frage, char* moegl[], char *vorgabe/*=0*/)
   // das letzte Element von moegl muss 0 sein
 {
   string input;
@@ -2102,7 +2102,7 @@ string Tippstrings(const char *frage, char* moegl[], char *vorgabe)
       cout<<"'"<<drot<<moegl[i]<<schwarz<<"'";
     }
     cout<<")"<<(vorgabe?"":string("['")+tuerkis+vorgabe+schwarz+"']")<<"?: ";
-    input="";
+    input.clear();
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
     // <<rot<<"input: '"<<input<<"', vorgabe: '"<<vorgabe<<"'"<<endl<<schwarz;
@@ -2117,7 +2117,7 @@ string Tippstrings(const char *frage, char* moegl[], char *vorgabe)
   return input;
 } // Tippstrings
 
-string Tippstrings(const char *frage, vector<string> *moegl, string *vorgabe)
+string Tippstrings(const char *frage, vector<string> *moegl, string *vorgabe/*=0*/)
 {
   string input;
   while(1) {
@@ -2129,7 +2129,7 @@ string Tippstrings(const char *frage, vector<string> *moegl, string *vorgabe)
       cout<<drot<<moegl->at(i)<<schwarz;
     } //     for(unsigned i=0;i<moegl->size();i++)
     cout<<")"<<(vorgabe->empty()?"":string("['")+tuerkis+*vorgabe+schwarz+"']")<<"?: ";
-    input="";
+		input.clear();
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
     // <<rot<<"input: '"<<input<<"', vorgabe: '"<<*vorgabe<<"'"<<endl<<schwarz;
