@@ -8708,7 +8708,10 @@ int paramcl::xferlog(fsfcl *fsfp,string *totpages,string *ntries,string *totdial
   // ggf. broken pipe error; schadet aber experimentell dem Ergebnis nicht, deshalb Fehler unsichtbar
 //  systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null | grep -m 1 \""+this->hmodem+sep+jobid+sep+"\" | cut -f 14",obverb,oblog,&grueck); 
 int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
-  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"tty[^"+sep+"]*"+sep+fsfp->hylanr+sep+"\" | cut -f1,2,14,20",obverb,oblog,&grueck); 
+//  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"tty[^"+sep+"]*"+sep+fsfp->hylanr+sep+"\" | cut -f1,2,14,20",obverb,oblog,&grueck); 
+// 2.3.17 in Eintraegen UNSENT und SUBMIT kann tty... auch fehlen
+  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"^[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+
+	            sep+fsfp->hylanr+sep+"\" | cut -f1,2,14,20",obverb,oblog,&grueck); 
   if (grueck.size()) {
     gefunden=1;
     vector<string> tok;
@@ -8958,7 +8961,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
     *ausgp<<", T.: "<<blau<<setw(12)<<number<<schwarz;
     *ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
   }
-	*ausgp<<", hylanr: "<<dgrau<<hylanr<<schwarz;
+	*ausgp<<dgrau<<", hylanr: "<<schwarz<<hylanr;
 } // void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obverb, uchar obzaehl, int oblog)
 
 
