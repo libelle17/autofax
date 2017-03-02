@@ -9015,7 +9015,7 @@ int main(int argc, char** argv)
   if (!pm.getcommandline()) 
     exit(40);
   if (pm.obvi) {
-		exit (systemrueck("$(which vim 2>/dev/null || which vi) "+pm.konfdatname+" >/dev/tty"));
+		exit(systemrueck("$(which vim 2>/dev/null || which vi) "+pm.konfdatname+" >/dev/tty"));
   } //   if (pm.obvi)
   if (pm.zeigvers) {
    zeigversion(pm.meinname,pm.mpfad);
