@@ -8958,6 +8958,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
     *ausgp<<", T.: "<<blau<<setw(12)<<number<<schwarz;
     *ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
   }
+	*ausgp<<", hylanr: "<<dgrau<<hylanr<<schwarz;
 } // void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obverb, uchar obzaehl, int oblog)
 
 
