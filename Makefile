@@ -38,11 +38,11 @@ else
  CFLAGS=$(CFLAGSr)
  LDFLAGS=$(LDFLAGSr)
 endif
-# wenn aus vi aufgerufen, kein unnoetigen Ausgaben
+# wenn aus vi aufgerufen, kein unnoetigen Ausgaben, BA=bedingte Ausgabe, BFA=bedingte Fehlerausgabe
+BA:=&1
+BFA:=2>>fehler.txt
 ifdef ausvi
- BA=/dev/null
-else
- BA=&1
+ BA:=/dev/null
 endif
 PROGRAM=$(shell basename $(CURDIR))
 PROGGROSS=`echo $(PROGRAM) | tr a-z A-Z`
@@ -169,7 +169,7 @@ anzeig:
 	@printf " Quelldateien: %b%s%b\n" $(blau) "$(SRCS)" $(reset) >$(BA)
 	@printf " Compiler: %b%s%b, installiert als: %b%s%b; Zielpfad fuer '%bmake install%b': %b%s%b\n"\
 	  $(blau) "$(CCName)" $(reset) $(blau) "$(CCInst)" $(reset) $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset) >$(BA)
-	-@$(shell rm fehler.txt $(KF))
+	-@$(shell rm -f fehler.txt $(KF))
 
 $(EXEC): $(OBJ)
 	-@test -f version || echo 0.1>version; if test -f entwickeln; then awk "BEGIN {print `cat version`+0.00001}">version;\
@@ -191,9 +191,9 @@ endif
 %.o : %.cpp $(DEPDIR)/%.d
 	@printf " kompiliere %b%s%b: " $(blau) "$<" $(reset) >$(BA)
 	-@if ! test -f instvz; then printf \"$$(pwd)\">instvz; fi;
-	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< 2>>fehler.txt
+	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< $(BFA)
 	-@sed -i 's/version //g' $(DEPDIR)/*.Td
-	-@if test -s fehler.txt; then vi +0/error fehler.txt; else rm fehler.txt; fi;
+	-@if test -s fehler.txt; then vi +0/error fehler.txt; else rm -f fehler.txt; fi;
 #	-@$(shell $(POSTCOMPILE))
 	@if test -s fehler.txt; then false; fi;
 
@@ -236,6 +236,11 @@ README.md: ${MANPEH} ${MANPDH}
 	-@sed -n '20,$$p' man_en.html >> README.md 
 	-@sed -n '20,$$p' man_de.html >> README.md 
 	@printf " %b%s%b neu aus %b%s%b und %b%s%b erstellt\n" $(blau) "README.md" $(reset) $(blau) "man_en" $(reset) $(blau) "man_de" $(reset)
+
+.PHONY: stumm
+stumm: BA:=/dev/null
+stumm: BFA:=
+stumm: alles
 
 .PHONY: install
 install: $(INSTEXEC) ${MANPE} ${MANPD} 
