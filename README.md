@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.42758) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42761) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -951,7 +951,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.42758) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42761) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1158,16 +1158,16 @@ den Stand des Faxens &uuml;berpr&uuml;fen.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>Gebrauch:
-autofax [-&lt;opt&gt;|--&lt;longopt&gt; [&lt;content&gt;]]
-...</b> <br>
-Mit &rsquo;<b>autofax -?</b>&rsquo; werden alle
+<p style="margin-left:11%; margin-top: 1em">Mit
+&rsquo;<b>autofax -?</b>&rsquo; werden alle
 Befehlszeilenoptionen sichtbar. Einige Optionen (z.B.
 SQL-Befehle) k&ouml;nnen nicht &uuml;ber die
 Befehlszeile, sondern nur &uuml;ber die
 Konfigurationsdatei eingegeben werden, die wiederum direkt
 editiert oder auch &uuml;ber &rsquo;<b>autofax
 -rf</b>&rsquo; interaktiv gepflegt werden kann. <b><br>
+Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
+[&lt;content&gt;]] ... <br>
 Optionen, die nicht gespeichert werden: <br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger <b><br>
 -l, --log</b>: protokolliert ausfuehrlich in Datei

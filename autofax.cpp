@@ -7026,7 +7026,6 @@ KLA
 KLZ // void hservice_faxgetty()
 */
 
-
 // wird aufgerufen in main
 int paramcl::pruefhyla()
 {

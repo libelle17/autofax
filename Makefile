@@ -38,6 +38,12 @@ else
  CFLAGS=$(CFLAGSr)
  LDFLAGS=$(LDFLAGSr)
 endif
+# wenn aus vi aufgerufen, kein unnoetigen Ausgaben
+ifdef ausvi
+ BA=/dev/null
+else
+ BA=&1
+endif
 PROGRAM=$(shell basename $(CURDIR))
 PROGGROSS=`echo $(PROGRAM) | tr a-z A-Z`
 #EXPFAD=/usr/local/sbin
@@ -158,17 +164,17 @@ git:
 
 anzeig:
 # 'echo -e' geht nicht z.B. in ubuntu
-	@printf " %bGNU Make%b, Zieldatei: %b%s%b, vorher:                                      \n" $(gruen) $(reset) $(rot) "$(EXEC)" $(reset)
-	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC) $(KF))" $(reset) 
-	@printf " Quelldateien: %b%s%b\n" $(blau) "$(SRCS)" $(reset) 
+	@printf " %bGNU Make%b, Zieldatei: %b%s%b, vorher:                                      \n" $(gruen) $(reset) $(rot) "$(EXEC)" $(reset) >$(BA)
+	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC) $(KF))" $(reset) >$(BA)
+	@printf " Quelldateien: %b%s%b\n" $(blau) "$(SRCS)" $(reset) >$(BA)
 	@printf " Compiler: %b%s%b, installiert als: %b%s%b; Zielpfad fuer '%bmake install%b': %b%s%b\n"\
-	  $(blau) "$(CCName)" $(reset) $(blau) "$(CCInst)" $(reset) $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset)
+	  $(blau) "$(CCName)" $(reset) $(blau) "$(CCInst)" $(reset) $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset) >$(BA)
 	-@$(shell rm fehler.txt $(KF))
 
 $(EXEC): $(OBJ)
 	-@test -f version || echo 0.1>version; if test -f entwickeln; then awk "BEGIN {print `cat version`+0.00001}">version;\
-	else echo " Datei 'entwickeln' fehlt, lasse die Version gleich"; fi;
-	-@printf " verlinke %s zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset)
+	else eval "printf \" Datei 'entwickeln' fehlt, lasse die Version gleich\n\" >$(BA)"; fi;
+	-@printf " verlinke %s zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset) >$(BA)
 	-@df --output=ipcent / |tail -n1|grep - && sudo pkill postdrop; true
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
 	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_en)
@@ -176,16 +182,16 @@ endif
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
 	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_de)
 endif
-	-@printf " (Version: %b%s%s%b\n " $(blau) "$$(cat version)" ")" $(reset)
+	-@printf " (Version: %b%s%s%b\n " $(blau) "$$(cat version)" ")" $(reset) >$(BA)
 	$(CC) $^ -o $@ $(LDFLAGS)
-	-@for datei in .d/*.Td; do mv -f $${datei} $${datei%.Td}.d; done
+	-@ls .d/*.Td >$(KR) &&{ for datei in .d/*.Td; do mv -f $${datei} $${datei%.Td}.d; done;};true
 	$(shell touch *.o $${EXEC})
 
 %.o : %.cpp
 %.o : %.cpp $(DEPDIR)/%.d
-	@printf " kompiliere %b%s%b: " $(blau) "$<" $(reset)
+	@printf " kompiliere %b%s%b: " $(blau) "$<" $(reset) >$(BA)
 	-@if ! test -f instvz; then printf \"$$(pwd)\">instvz; fi;
-	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< 2>> fehler.txt
+	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< 2>>fehler.txt
 	-@sed -i 's/version //g' $(DEPDIR)/*.Td
 	-@if test -s fehler.txt; then vi +0/error fehler.txt; else rm fehler.txt; fi;
 #	-@$(shell $(POSTCOMPILE))
@@ -196,7 +202,7 @@ $(DEPDIR)/%.d: ;
 
 .PHONY: compiler
 compiler:
-	@printf " Untersuche Compiler ...\r"
+	@printf " Untersuche Compiler ...\r" >$(BA)
 #	@printf " CCName: %b%s%b                  \n" $(blau) "${CCName}" $(reset)
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
 ifeq ('$(SPR)','')
@@ -220,7 +226,7 @@ endif
 	&&find $$(find /usr -maxdepth 1 -name "lib*"|sort -r) -name "libtiff.so" -print -quit|grep ''>$(KR)\
 	||{ $(KF);$(call i1unin,$(LT5))}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
-	@printf "                         \r"
+	@printf "                         \r" >$(BA)
 
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
@@ -254,7 +260,7 @@ endif
 endif
 
 $(INSTEXEC): $(EXEC)
-	@printf " Kopiere Programmdatei: %b%s%b -> %b%s%b\n" $(blau) "$(EXEC)" $(reset) $(blau) "$(INSTEXEC)" $(reset)
+	@printf " Kopiere Programmdatei: %b%s%b -> %b%s%b\n" $(blau) "$(EXEC)" $(reset) $(blau) "$(INSTEXEC)" $(reset) >$(BA)
 	-@sudo pkill $(EXEC) $(KF); sudo pkill -9 $(EXEC) $(KF); sudo cp -p "$(EXEC)" "$(INSTEXEC)"
 
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
@@ -291,14 +297,14 @@ endif
 .PHONY: fertig
 fertig:
 	@printf " Fertig mit %s, nachher:\n" "$(ICH)"
-	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC))" $(reset) 
+	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC))" $(reset)
 
 .PHONY: clean
 clean: hierclean distclean
 
 .PHONY: hierclean
 hierclean: 
-	@printf " Bereinige ...\r"
+	@printf " Bereinige ...\r" >$(BA)
 	@$(shell rm -f $(EXEC) $(OBJ) .d/* $(KF))
 	@$(shell sudo rm -f ${MANPEH} ${MANPDH} $(KF))
 	@printf " %b%s,%s,%s,%s%b geloescht!\n" $(blau) "$(EXEC)" "$(OBJ)" "$(MANPEH)" "$(MANPDH)" $(reset)
@@ -306,7 +312,7 @@ hierclean:
 .PHONY: distclean
 distclean:
 	-@$(shell sudo rm -f $(INSTEXEC) ${MANPD} ${MANPE} $(KF))
-	-@printf "%b%s%b geloescht!\n" $(blau) "$(INSTEXEC)" $(reset) 
+	-@printf "%b%s%b geloescht!\n" $(blau) "$(INSTEXEC)" $(reset)
 
 .PHONY: confclean
 confclean:

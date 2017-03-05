@@ -56,3 +56,7 @@ nnoremap <C-T> :GtagsCursor<CR>
 map <C-n> :cn<CR>
 map <C-p> :cp<CR>
 map <C-k> :Gtags-cscope<CR><CR> 
+:command -nargs=* Make make <args> | cwindow 3
+:map <Leader>j :Make<CR>
+autocmd QuickFixCmdPost [^l]* nested cwindow
+autocmd QuickFixCmdPost    l* nested lwindow
