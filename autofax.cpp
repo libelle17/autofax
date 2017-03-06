@@ -13,13 +13,12 @@
 // // #include "c:\programme\postgresql\9.1\include\libpq-fe.h"
 // #include "..\..\..\..\programme\postgresql\9.2\include\libpq-fe.h"
 #endif
-
+ 
 // #include <iostream>
 // #include <fstream> // jetzt in kons.h
 // #include <sstream>
 // #include <dirent.h> // DIR, dirent, opendir, readdir, PATH_MAX
 // #include <boost/algorithm/string.hpp> // clock // jetzt in kons.h
-
 // #include "vmime/vmime.hpp"
 // #include "vmime/platforms/posix/posixHandler.hpp"
 #include "kons.h"

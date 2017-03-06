@@ -57,6 +57,8 @@ map <C-n> :cn<CR>
 map <C-p> :cp<CR>
 map <C-k> :Gtags-cscope<CR><CR> 
 :command -nargs=* Make make stumm | cwindow 3
-:map <Leader>j :xa<CR> | :Make<CR>
-" autocmd QuickFixCmdPost [^l]* nested cwindow
-" autocmd QuickFixCmdPost    l* nested lwindow
+inoremap <C-w> <ESC>:wa<CR>
+nnoremap <C-w> :wa<CR>
+map <Leader>0 <C-y>:Make<CR>
+autocmd QuickFixCmdPost [^l]* nested cwindow
+autocmd QuickFixCmdPost    l* nested lwindow
