@@ -56,9 +56,11 @@ nnoremap <C-T> :GtagsCursor<CR>
 map <C-n> :cn<CR>
 map <C-p> :cp<CR>
 map <C-k> :Gtags-cscope<CR><CR> 
-:command -nargs=* Make make stumm | cwindow 3
+command -nargs=* Make make stumm | cwindow 3
+command -nargs=* Meike make <args> | cwindow 3
 inoremap <C-w> <ESC>:wa<CR>
 nnoremap <C-w> :wa<CR>
-map <Leader>0 <C-y>:Make<CR>
+map <Leader>0 <C-w>:Make<CR>
+map <Leader>ß :Meike install<CR>
 autocmd QuickFixCmdPost [^l]* nested cwindow
 autocmd QuickFixCmdPost    l* nested lwindow

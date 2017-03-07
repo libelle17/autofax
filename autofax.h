@@ -86,6 +86,7 @@ class fsfcl : public fxfcl // Faxsendfile
     string capisd; // capispooldatei
     int capids;  //capidials
     string hylanr; // hylanr
+		string protdakt; // z.B. /var/spool/hylafax/doneq/q9902
     int hdialsn; // hyladials
     uchar fobcapi; // ob es jetzt mit Capi weggefaxt werden muss
     uchar fobhyla; // ob es jetzt mit Hyla weggefaxt werden muss
@@ -318,7 +319,7 @@ class paramcl // Programmparameter
     int setzegcp(const string& name, string *wert);
     void pruefcvz();
     void pruefsfftobmp();
-    void setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, uchar startvznr,int *obsfehltp=0, 
+    void setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr,int *obsfehltp=0, 
 				struct stat *est=0);
 		void konfcapi();
     int xferlog(fsfcl *fsfp, string *totpages=0, string *ntries=0, string *totdials=0, string *tottries=0, string *maxtries=0);

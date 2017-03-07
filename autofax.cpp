@@ -2172,17 +2172,18 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
 
       svec rueck, rmerg;
       string fuser;
-      systemrueck("tac \""+pmp->xferfaxlog+"\" 2>/dev/null|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;      s/\"$//'",
+      systemrueck("tac \""+pmp->xferfaxlog+"\" 2>/dev/null|grep -am 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;      s/\"$//'",
           obverb, oblog,&rueck);
       Log(Tx[T_Loesche_Fax_hylanr]+hylanr+" ...",-1,0);
       if (rueck.size() && rueck[0]!="root") {
         fuser=rueck[0]; 
+				// <<violett<<"fuser: "<<fuser<<schwarz<<endl;
         systemrueck("sudo su -c \"faxrm "+hylanr+"\" "+fuser+" 2>&1",oblog,obverb,&rmerg);
       } else {
         systemrueck("sudo faxrm "+hylanr+" 2>&1",oblog,obverb,&rmerg);
       }
       // folgender Befehl kann einen tac: write error: Broken pipe -Fehler erzeugen
-      // systemrueck("sudo su -c \"faxrm "+hylanr+"\" $(tac \""+pmp->xferfaxlog+"\"|grep -m 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg);
+      // systemrueck("sudo su -c \"faxrm "+hylanr+"\" $(tac \""+pmp->xferfaxlog+"\"|grep -am 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg);
       if (rmerg.size()) {
         if (rmerg[0].find(" removed")!=string::npos || rmerg[0].find("job does not exist")!=string::npos) {
           Log(blaus+Tx[T_erfolgreich_geloescht_fax_mit]+schwarz+hylanr,1,1);
@@ -4741,9 +4742,8 @@ int paramcl::loeschefax()
 					Log(blaus+Tx[T_Gesamt]+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng));
 					struct stat entrysend={0};
 					fsfv[nr].setzcapistat(this,&entrysend);
-					string protdakt;
 					uchar hyla_uverz_nr=1;
-					/*fsfv[nr].*/setzhylastat(&fsfv[nr], &protdakt, &hyla_uverz_nr, 0, 0, 0); // hyla_uverz_nr, obsfehlt
+					/*fsfv[nr].*/setzhylastat(&fsfv[nr], &hyla_uverz_nr, 0, 0, 0); // hyla_uverz_nr, obsfehlt
 					Log(violetts+"capistat: "+schwarz+FxStatS(&fsfv[nr].capistat)+violett+", hylastat: "+schwarz+FxStatS(&fsfv[nr].hylastat));
 					if ((!zdng || (fsfv[nr].capistat==fehlend && fsfv[nr].hylastat==fehlend)) && !fsfv[nr].id.empty()) {
 						RS loe(My,"DELETE FROM `"+spooltab+"` WHERE id="+fsfv[nr].id,-obverb);
@@ -5722,13 +5722,13 @@ void paramcl::untersuchespool(uchar mitupd/*=1*/) // faxart 0=capi, 1=hyla
 
 				// b) ueber hylafax
 				if (obhyla) {
-					string protdakt;
 					uchar hyla_uverz_nr=0; // suche ueberall, liefere 1 zuruck, wenn weder in /doneq noch in /archive gefunden
 					string number;
 					int obsfehlt=-1;
 					/*fsf.*/
-					setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 0, &obsfehlt, &entrysend);
+					setzhylastat(&fsf, &hyla_uverz_nr, 0, &obsfehlt, &entrysend);
 					// <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
+					// <<gruen<<"fsf.protdakt: "<<schwarz<<fsf.protdakt<<endl;
 					fsf.hylaausgeb(&ausg, this, obsfehlt, 0, obverb, 0, oblog);
 					//          if (!obsfehlt) KLA // Protokolldatei vorhanden 12.10.16 sollte jetzt auch mit xferfax gehen
 					if (mitupd) {
@@ -5755,7 +5755,6 @@ void paramcl::untersuchespool(uchar mitupd/*=1*/) // faxart 0=capi, 1=hyla
 						   rupd.update(altspool,einf,ZDB,bedh,0);
 						rupd.update(spooltab,einf,ZDB,bedingung,0);
 					} // if (mitupd) 
-					if (!protdakt.empty()) ausg<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
 				} // if (obhyla)
 				//        KLZ // if (!obsfehlt) ... else
 
@@ -5984,10 +5983,9 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 			if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
 			if (!indb) {
 				/*4*/fsfcl fsf(hylanr); // fsf(rueck[i]);
-				string protdakt=hsendqvz+vtz+hylanr; // rueck[i];
 				uchar hyla_uverz_nr=1;
 				/*fsf.*/
-				setzhylastat(&fsf, &protdakt, &hyla_uverz_nr, 2, 0, 0);
+				setzhylastat(&fsf, &hyla_uverz_nr, 2, 0, 0);
 				fsfvp->push_back(fsf);
 			} // if (!indb)
 		} // for(size_t i=0;i<rueck.size();i++) 
@@ -6265,7 +6263,7 @@ void paramcl::empfarch()
     string tabsdr; // transferierter Absender
     if (callerid.empty()) {
       svec trueck;
-      systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null |grep -m 1 \""+base_name(rueck[i])+"\" |cut -f8,9",obverb,oblog,&trueck); 
+      systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null |grep -am 1 \""+base_name(rueck[i])+"\" |cut -f8,9",obverb,oblog,&trueck); 
       if (trueck.size()) {
 				vector<string> tok; 
         aufSplit(&tok,&trueck[0],'\t');
@@ -8708,7 +8706,7 @@ int paramcl::xferlog(fsfcl *fsfp,string *totpages,string *ntries,string *totdial
 int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 //  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"tty[^"+sep+"]*"+sep+fsfp->hylanr+sep+"\" | cut -f1,2,14,20",obverb,oblog,&grueck); 
 // 2.3.17 in Eintraegen UNSENT und SUBMIT kann tty... auch fehlen
-  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"^[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+
+  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -am 1 \"^[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+
 	            sep+fsfp->hylanr+sep+"\" | cut -f1,2,14,20",obverb,oblog,&grueck); 
   if (grueck.size()) {
     gefunden=1;
@@ -8785,7 +8783,7 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 			} //       if (tok.size()>1)
 		} //     if (tok.size()) else
 #else
-    systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \""+this->hmodem+sep+fsfp->hylanr+sep+"\"",obverb,oblog,&grueck); // ggf. broken pipe error
+    systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null|grep -am 1 \""+this->hmodem+sep+fsfp->hylanr+sep+"\"",obverb,oblog,&grueck); // ggf. broken pipe error
     if (grueck.size()) KLA
       vector<string> tok;
     aufSplit(&tok,&grueck[grueck.size()-1],sep);
@@ -8845,7 +8843,7 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 
 
 // wird aufgerufen in paramcl::loeschefax, paramcl::untersuchespool, paramcl::zeigweitere
-void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp, uchar startvznr, int *obsfehltp/*=0*/, struct stat *est/*=0*/) 
+void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, int *obsfehltp/*=0*/, struct stat *est/*=0*/) 
 {
   Log(violetts+Tx[T_setzhylastat]+schwarz);
   uchar obsfehlt=1;
@@ -8855,13 +8853,12 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
   // wenn in *hyla_uverz_nrp '1' uebergeben wird, nur in sendq suchen
   // Rueckgabe: 0 = in doneq oder archive gefunden
   struct stat entryprot={0};
-  const string cmd=string("sudo find ")+this->varsphylavz+"/sendq "+(*hyla_uverz_nrp?" ":this->varsphylavz+"/doneq "+this->varsphylavz+"/archive ")
-    +" -name 'q"+fsf->hylanr+"'";
+  const string cmd="sudo find "+hsendqvz+" "+(*hyla_uverz_nrp?"":varsphylavz+"/doneq "+varsphylavz+"/archive ")+" -name 'q"+fsf->hylanr+"'";
   svec rueck;
   systemrueck(cmd,obverb,oblog,&rueck);
   if (rueck.size()) {
-    *protdaktp=rueck[0];
-    obsfehlt=lstat(protdaktp->c_str(), &entryprot);
+    fsf->protdakt=rueck[0];
+    obsfehlt=lstat(fsf->protdakt.c_str(), &entryprot);
     *hyla_uverz_nrp=(rueck.at(0).find("/doneq")==string::npos && rueck.at(0).find("/archive")==string::npos);
   }
   if (obverb) {
@@ -8881,9 +8878,9 @@ void paramcl::setzhylastat(fsfcl *fsf, string *protdaktp, uchar *hyla_uverz_nrp,
 		} else { 
 			hylconf.init(10,"state","totdials","status","statuscode","!pdf","tts","number","maxdials","pdf","killtime");
 		}
-		confdat hylc(*protdaktp,&hylconf,obverb,':');
+		confdat hylc(fsf->protdakt,&hylconf,obverb,':');
 		hgelesen= hylc.obgelesen;
-    //  if (cpplies(*protdaktp,hconf,cs,0,':')) KLA
+    //  if (cpplies(fsf->protdakt,hconf,cs,0,':')) KLA
     fsf->hstate=this->hylconf[0].wert;
     fsf->hdials=this->hylconf[1].wert;
     fsf->maxdials=this->hylconf[7].wert;
@@ -8930,20 +8927,20 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
 	*ausgp<<(hylastat==fehlend?hgrau:(hylastat>=static_cast<FxStat>(gesandt)?blau:schwarz))
 	      <<" "<<FxStatS(&hylastat)<<(hgerg.empty()?"":" ("+hgerg+")")<<schwarz;
 	/*
-  if (obsfehlt) {
+  if (obsfehlt) KLA
     // wenn also die Datenbankdatei weder im Spool noch bei den Erledigten nachweisbar ist
-    if (hylastat==gesandt) {
+    if (hylastat==gesandt) KLA
       *ausgp<<blau<<" "<<Tx[T_gesandt]<<schwarz;
-    } else if (hylastat==gescheitert) {
+    KLZ else if (hylastat==gescheitert) KLA
       *ausgp<<blau<<" "<<Tx[T_gescheitert]<<" ("<<hgerg<<")"<<schwarz;
-    } else if (hylastat==fehlend) {
+    KLZ else if (hylastat==fehlend) KLA
       *ausgp<<hgrau<<" "<<Tx[T_nicht_in_der_Warteschlange]<<schwarz;
-    }
-  } else {
-  } // if (obsfehlt) else
+    KLZ
+  KLZ else KLA
+  KLZ // if (obsfehlt) else
 	*/
   // wenn eine Protokolldatei auslesbar war
-//  if (pmp->hconfp) {
+//  if (pmp->hconfp) KLA
         // modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
   if (pmp->hgelesen && hylastat!=fehlend) {
     *ausgp<<", ";
@@ -8958,8 +8955,12 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
     //              if (hversuzahl>12) ausg<<", zu spaet";
     *ausgp<<", T.: "<<blau<<setw(12)<<number<<schwarz;
     *ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
-  }
-	*ausgp<<dgrau<<", hylanr: "<<schwarz<<hylanr;
+  } //   if (pmp->hgelesen && hylastat!=fehlend)
+	if (protdakt.empty()) {
+		*ausgp<<dgrau<<", hylanr: "<<schwarz<<hylanr;
+	} else {
+		*ausgp<<Tx[T_bzw]<<blau<<protdakt<<schwarz;
+	}
 } // void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obverb, uchar obzaehl, int oblog)
 
 
