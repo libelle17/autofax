@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.42786) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42788) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -333,7 +333,7 @@ instead of &rsquo;<b>and</b>&rsquo; <b><br>
 &rsquo;<b>praxis</b>&rsquo; <b><br>
 -mpwd, --mpwd &lt;string&gt;</b>: takes the password
 &lt;string&gt; for MySQL/MariaDB instead of
-&rsquo;<b>sonne</b>&rsquo; <b><br>
+&rsquo;<b>K.ZWU</b>&rsquo; <b><br>
 -db, --database &lt;string&gt;</b>: uses the database
 &lt;string&gt; instead of &rsquo;<b>faxeinp</b>&rsquo;</p>
 
@@ -955,7 +955,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.42786) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42788) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1304,7 +1304,7 @@ MySQL/MariaDB den Benutzer &lt;string&gt; anstatt
 &rsquo;<b>praxis</b>&rsquo; <b><br>
 -mpwd, --mpwd &lt;string&gt;</b>: verwendet fuer
 MySQL/MariaDB das Passwort &lt;string&gt; anstatt
-&rsquo;<b>sonne</b>&rsquo; <b><br>
+&rsquo;<b>K.ZWU</b>&rsquo; <b><br>
 -db, --datenbank &lt;string&gt;</b>: verwendet die Datenbank
 &lt;string&gt; anstatt &rsquo;<b>faxeinp</b>&rsquo;</p>
 
