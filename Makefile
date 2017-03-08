@@ -237,13 +237,6 @@ README.md: ${MANPEH} ${MANPDH}
 	-@sed -n '20,$$p' man_de.html >> README.md 
 	@printf " %b%s%b neu aus %b%s%b und %b%s%b erstellt\n" $(blau) "README.md" $(reset) $(blau) "man_en" $(reset) $(blau) "man_de" $(reset)
 
-.PHONY: stumm
-stumm: BA:=/dev/null
-stumm: BFA:=
-stumm: alles
-
-.PHONY: install
-install: $(INSTEXEC) ${MANPE} ${MANPD} 
 else
 README.md: ${MANPDH}
 	-@rm -f README.md
@@ -264,12 +257,29 @@ install: $(INSTEXEC)
 endif
 endif
 
+.PHONY: stumm
+stumm: BA:=/dev/null
+stumm: BFA:=
+stumm: alles
+
+.PHONY: install
+install: $(INSTEXEC) ${MANPE} ${MANPD} 
+
 $(INSTEXEC): $(EXEC)
 	@printf " Kopiere Programmdatei: %b%s%b -> %b%s%b\n" $(blau) "$(EXEC)" $(reset) $(blau) "$(INSTEXEC)" $(reset) >$(BA)
 	-@sudo pkill $(EXEC) $(KF); sudo pkill -9 $(EXEC) $(KF); sudo cp -p "$(EXEC)" "$(INSTEXEC)"
 
+$(CURDIR)/man_en: $(EXEC)
+	-@TMP=tmp_opt;./$(EXEC) -h|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
+	nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
+	von=".SH OPTIONS"; bis=".SH FUNCTIONALITY"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" man_en
+$(CURDIR)/man_de: $(EXEC)
+	-@TMP=tmp_opt;./$(EXEC) -h|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
+	nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
+	von=".SH OPTIONEN"; bis=".SH FUNKTIONSWEISE"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" man_de
+
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
-${MANPE}: ${CURDIR}/man_en
+${MANPE}: $(CURDIR)/man_en
 	@printf " "
 	-sudo mkdir -p $(MANP)/man1
 	@printf " "
@@ -284,7 +294,10 @@ ${MANPEH}: $(CURDIR)/man_en
 endif
 
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
-${MANPD}: ${CURDIR}/man_de 
+${MANPD}: $(CURDIR)/man_de 
+	-@TMP=tmp_opt;./$(EXEC) -h|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
+	nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
+	von=".SH OPTIONEN"; bis=".SH FUNKTIONSWEISE"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" man_de
 	@printf " "
 	-sudo mkdir -p $(MANP)/de/man1
 	@printf " "
@@ -345,5 +358,8 @@ uninstall: distclean
 #	$(foreach PG,$(COMP),$(call si_unins,$(PG),$(PG);$(urepo)))
 #	 echo $(call uninst,$(COMP))
 #	sudo blau=$(blau) reset=$(reset) sh gtest
-
+zussetz:
+	-@TMP=tmp_opt;./$(EXEC) -h|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
+	nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
+	von=".SH OPTIONEN"; bis=".SH FUNKTIONSWEISE"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" man_de
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))

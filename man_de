@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "07.03.17" "Version 0.42781" "Manual-Seite für autofax"
+.TH man 1 "08.03.17" "Version 0.42783" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -115,15 +115,19 @@ Mit '\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Option
 .br
 \fBGebrauch: \fBautofax [-<opt>|--<longopt> [<content>]] ...\fR
 .br
+\fBFaxt Dateien aus Verzeichns <pfad>, die 'an Fax <faxnr>' enthalten und durch soffice in pdf konvertierbar sind 
+.br
+und traegt sie in MariaDB-Datenbank '\fBfaxeinp\fB' (Tabellen: `\fBouta\fB`,`\fBspool\fB`) ein.\fR
+.br
 \fBOptionen, die nicht gespeichert werden: \fR
 .br
 \fB -w, --wortreich\fR: Bildschirmausgabe gespraechiger
 .br
-\fB -l, --log\fR: protokolliert ausfuehrlich in Datei '\fB/var/log/gsautofax.log\fR' (sonst knapper)
+\fB -l, --log\fR: protokolliert ausfuehrlich in Datei '\fB/var/log/autofax.log\fR' (sonst knapper)
 .br
 \fB -ldn, --logdateineu\fR: logdatei vorher loeschen
 .br
-\fB -kd, --konfdatei <string>\fR: verwendet Konfigurationsdatei <string> anstatt '\fB/usr/bin/autofax.conf\fR'
+\fB -kd, --konfdatei <string>\fR: verwendet Konfigurationsdatei <string> anstatt '\fB/root/autofax/autofax.conf\fR'
 .br
 \fB -sqlw, --sql-wortreich\fR: Bildschirmausgabe mit SQL-Befehlen
 .br
@@ -167,27 +171,27 @@ Mit '\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Option
 .br
 \fB -lvz, --logvz <pfad>\fR: waehlt als Logverzeichnis <pfad>, derzeit '\fB/var/log\fR'
 .br
-\fB -ld, --logdname <string>\fR: logdatei <string> (im Pfad '\fB/var/log\fR') wird verwendet anstatt '\fBgsautofax.log\fR'
+\fB -ld, --logdname <string>\fR: logdatei <string> (im Pfad '\fB/var/log\fR') wird verwendet anstatt '\fBautofax.log\fR'
 .br
-\fB -zvz, --zufaxenvz <pfad>\fR: faxt die Dateien aus <pfad> anstatt '\fB/vista/P/zufaxen\fR'
+\fB -zvz, --zufaxenvz <pfad>\fR: faxt die Dateien aus <pfad> anstatt '\fB/DATA/Patientendokumente/zufaxen\fR'
 .br
-\fB -wvz, --wartevz <pfad>\fR: Dateien warten in <pfad> anstatt '\fB/vista/P/warteauffax\fR'
+\fB -wvz, --wartevz <pfad>\fR: Dateien warten in <pfad> anstatt '\fB/DATA/Patientendokumente/warteauffax\fR'
 .br
-\fB -nvz, --nichtgefaxtvz <pfad>\fR: Gescheiterte Faxe werden hier gesammelt anstatt in '\fB/vista/P/nichtgefaxt\fR'
+\fB -nvz, --nichtgefaxtvz <pfad>\fR: Gescheiterte Faxe werden hier gesammelt anstatt in '\fB/DATA/Patientendokumente/nichtgefaxt\fR'
 .br
-\fB -evz, --empfvz <pfad>\fR: Empfangsverzeichnis fuer Faxempfang '\fB/vista/P\fR'
+\fB -evz, --empfvz <pfad>\fR: Empfangsverzeichnis fuer Faxempfang '\fB/DATA/Patientendokumente\fR'
 .br
-\fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB0\fR'
+\fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB2\fR'
 .br
-\fB -capi, --obcapi\fR: Capisuite verwenden[0;35m oder nicht\fR
+\fB -capi, --obcapi\fR: Capisuite verwenden\fB oder nicht\fR
 .br
-\fB -hyla, --obhyla\fR: Hylafax verwenden[0;35m oder nicht\fR
+\fB -hyla, --obhyla\fR: Hylafax verwenden\fB oder nicht\fR
 .br
-\fB -cz, --capizuerst\fR: versuche faxe zuerst ueber Capisuite wegzuschicken[0;35m oder nicht\fR
+\fB -cz, --capizuerst\fR: versuche faxe zuerst ueber Capisuite wegzuschicken\fB oder nicht\fR
 .br
-\fB -hz, --hylazuerst\fR: versuche faxe zuerst ueber hylafax wegzuschicken[0;35m oder nicht\fR
+\fB -hz, --hylazuerst\fR: versuche faxe zuerst ueber hylafax wegzuschicken\fB oder nicht\fR
 .br
-\fB -mod, --hmodem <string>\fR: Fuer Hylafax verwendetes Modem, anstatt  '\fBttyS1\fR'
+\fB -mod, --hmodem <string>\fR: Fuer Hylafax verwendetes Modem, anstatt  '\fBttyACM0\fR'
 .br
 \fB -mc, --maxcapiv <zahl>\fR: nach <zahl> Versuchen Capisuite wird Hylafax versucht, anstatt nach '\fB3\fR'
 .br
@@ -195,17 +199,17 @@ Mit '\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Option
 .br
 \fB -cuser, --cuser <string>\fR: verwendet fuer Capisuite und/oder Samba den Linux-Benutzer <string> anstatt '\fBschade\fR'
 .br
-\fB -ckzl, --cklingelzahl <zahl>\fR: Zahl der Klingeltoene, bis Capisuite den Anruf annimmt, anstatt '\fB10\fR'
+\fB -ckzl, --cklingelzahl <zahl>\fR: Zahl der Klingeltoene, bis Capisuite den Anruf annimmt, anstatt '\fB1\fR'
 .br
 \fB -hkzl, --hklingelzahl <zahl>\fR: Zahl der Klingeltoene, bis Hylafax den Anruf annimmt, anstatt '\fB2\fR'
 .br
 \fB -hmw, --hmaxwahlvers <zahl>\fR: Zahl der Wahlversuche in Hylafax, anstatt  '\fB11\fR'
 .br
-\fB -gz, --gleichziel\fR: Faxe werden auch ohne Faxerfolg ins Zielverzeichnis kopiert[0;35m oder nicht\fR
+\fB -gz, --gleichziel\fR: Faxe werden auch ohne Faxerfolg ins Zielverzeichnis kopiert\fB oder nicht\fR
 .br
-\fB -ocre, --ocre\fR: Text aus empfangenen Faxen wird ermittelt[0;35m oder nicht\fR
+\fB -ocre, --ocre\fR: Text aus empfangenen Faxen wird ermittelt\fB oder nicht\fR
 .br
-\fB -ocra, --ocra\fR: Text aus gesandten Bildern wird ermittelt[0;35m oder nicht\fR
+\fB -ocra, --ocra\fR: Text aus gesandten Bildern wird ermittelt\fB oder nicht\fR
 .br
 \fB -afs, --anfaxstr <string>\fR: faxnr wird hinter <string> erwartet statt hinter '\fBan Fax\fR'
 .br
@@ -224,7 +228,6 @@ Mit '\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Option
 \fB -mpwd, --mpwd <string>\fR: verwendet fuer MySQL/MariaDB das Passwort <string> anstatt '\fBsonne\fR'
 .br
 \fB -db, --datenbank <string>\fR: verwendet die Datenbank <string> anstatt '\fBfaxeinp\fR'
-.br
 .SH FUNKTIONSWEISE
 .HP 3 
 1) Die aktuelle Hardware wird überprüft:
