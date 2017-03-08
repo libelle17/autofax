@@ -3184,6 +3184,10 @@ int paramcl::getcommandline()
 			  if (opts[optslsz].kurzi==T_cm_k) { // cronminuten
 					keineverarbeitung=1;
 				}
+				if (opts[optslsz].kurzi==T_mpwd_k) {
+					string pwdstr=XOR(mpwd,pk);
+					cgconf.setze(string(Tx[T_mpwd_k]),pwdstr);
+				} // 				if (opts[optslsz].kurzi==T_mpwd_k)
         break;
       } //       if (opts[optslsz].pruefpar(&argcmv,&i,&hilfe,Tx.lgn))
     } // for(size_t i=0;i<argcmv.size();i++) 
@@ -3282,12 +3286,8 @@ void paramcl::rueckfragen()
 			} //         while (1)
 			while (mpwd.empty());
 			string pwdstr=XOR(mpwd,pk);
-			caus<<violett<<"mpwd:   "<<gruen<<mpwd<<schwarz<<endl;
-			caus<<violett<<"pwdstr: "<<gruen<<pwdstr<<schwarz<<endl;
-			caus<<violett<<"lfd: "<<gruen<<lfd<<schwarz<<endl;
 			cgconf[lfd].setze(&pwdstr);
-			caus<<violett<<"cgconf["<<lfd<<"].name: "<<gruen<<cgconf[lfd].name<<schwarz<<endl;
-		}
+		} // 		if (cgconf[++lfd].wert.empty() || rzf)
     if (cgconf[++lfd].wert.empty() || rzf) {
       dbq=Tippstring(string(Tx[T_Datenbankname_fuer_MySQL_MariaDB_auf])+host+"'",&dbq);
       cgconf[lfd].setze(&dbq);

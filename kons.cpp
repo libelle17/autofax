@@ -1585,12 +1585,12 @@ void schlArr::init(size_t vzahl, ...)
 // das Setzen auch der Bemerkung wird bisher nicht benoetigt
 int schlArr::setze(const string& name, const string& wert/*, const string& bem*/)
 {
-  for(size_t ind=0;ind<zahl;ind++) {
+	for(size_t ind=0;ind<zahl;ind++) {
     if (schl[ind].name==name) {
       schl[ind].wert=wert;
 //      if (!bem.empty()) schl[ind].bemerk=bem;
       return 0;
-    }
+    } //     if (schl[ind].name==name)
   } //   for(size_t ind=0;ind<zahl;ind++)
   return 1;
 } // int schlArr::setze(const string& name, const string& wert)
@@ -2374,7 +2374,7 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
                 else if ((art==pverz)^(S_ISDIR(entryarg.st_mode))) wiefalsch=2; // Datei fuer Verzeichnis o.u.
                 // ... dann zuweisen
                 else pstr=nacstr;
-              }
+              } //               if (nacstr[0]!='-')
               break;
               // oder wenn es eine Zahl sein soll ...
             case pzahl:
