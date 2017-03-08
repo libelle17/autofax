@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.42795) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42796) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -950,7 +950,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.42795) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42796) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -958,6 +958,7 @@ caused by the program.</p>
 <a href="#INSTALLATION_D">INSTALLATION</a><br>
 <a href="#GEBRAUCH_D">GEBRAUCH</a><br>
 <a href="#OPTIONEN_D">OPTIONEN</a><br>
+<a href="#FUNKTIONSWEISE_D">FUNKTIONSWEISE</a><br>
 <a href="#VORAUSSETZUNGEN_D">VORAUSSETZUNGEN</a><br>
 <a href="#AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE_D">AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE</a><br>
 <a href="#AUSWIRKUNGEN DES PROGRAMMABLAUFS_D">AUSWIRKUNGEN DES PROGRAMMABLAUFS</a><br>
@@ -1299,9 +1300,12 @@ MySQL/MariaDB den Benutzer &lt;string&gt; anstatt
 -mpwd, --mpwd &lt;string&gt;</b>: verwendet fuer
 MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 -db, --datenbank &lt;string&gt;</b>: verwendet die Datenbank
-&lt;string&gt; anstatt &rsquo;<b>faxeinp</b>&rsquo; <b><br>
--w, --wortreichpname 1: -w, --wortreichpname 1: .SH
-FUNKTIONSWEISE</b></p>
+&lt;string&gt; anstatt &rsquo;<b>faxeinp</b>&rsquo;</p>
+
+<h2>FUNKTIONSWEISE
+<a name="FUNKTIONSWEISE_D"></a>
+</h2>
+
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
