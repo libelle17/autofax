@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "08.03.17" "Version 0.42793" "Manual-Seite für autofax"
+.TH man 1 "08.03.17" "Version 0.42794" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -225,7 +225,7 @@ und traegt sie in MariaDB-Datenbank '\fBfaxeinp\fB' (Tabellen: `\fBouta\fB`,`\fB
 .br
 \fB -muser, --muser <string>\fR: verwendet fuer MySQL/MariaDB den Benutzer <string> anstatt '\fBpraxis\fR'
 .br
-\fB -mpwd, --mpwd <string>\fR: verwendet fuer MySQL/MariaDB das Passwort <string> anstatt
+\fB -mpwd, --mpwd <string>\fR: verwendet fuer MySQL/MariaDB das Passwort <string>
 .br
 \fB -db, --datenbank <string>\fR: verwendet die Datenbank <string> anstatt '\fBfaxeinp\fR'
 \fB -w, --wortreichpname 1: \fB -w, --wortreichpname 1: .SH FUNKTIONSWEISE

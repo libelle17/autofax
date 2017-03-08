@@ -260,7 +260,7 @@ enum T_
   T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt,
   T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf,
   T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt,
-  T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string_anstatt,
+  T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string,
   T_verwendet_die_Datenbank_string_anstatt,
   T_protokolliert_ausfuehrlich_in_Datei,
   T_sonst_knapper,
@@ -1099,8 +1099,8 @@ char const *autofax_T[T_MAX+1][Smax]={
   {"verwendet die Datenbank auf Host <string> anstatt auf","takes the database on host <string> instead of"},
   // T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt
   {"verwendet fuer MySQL/MariaDB den Benutzer <string> anstatt","takes the user <string> for MySQL/MariaDB instead of"},
-  // T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string_anstatt
-  {"verwendet fuer MySQL/MariaDB das Passwort <string> anstatt","takes the password <string> for MySQL/MariaDB instead of"},
+  // T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string
+  {"verwendet fuer MySQL/MariaDB das Passwort <string>","takes the password <string> for MySQL/MariaDB"},
   // T_verwendet_die_Datenbank_string_anstatt
   {"verwendet die Datenbank <string> anstatt","uses the database <string> instead of"},
   // T_protokolliert_ausfuehrlich_in_Datei
@@ -3143,7 +3143,7 @@ int paramcl::getcommandline()
         &cgconf,"undstr",&obkschreib));
   opts.push_back(/*2*/optioncl(T_host_k,T_host_l,&Tx, T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf,&host,psons,&cgconf,"host",&obkschreib));
   opts.push_back(/*2*/optioncl(T_muser_k,T_muser_l,&Tx, T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt,&muser,psons,&cgconf,"muser",&obkschreib));
-  opts.push_back(/*2*/optioncl(T_mpwd_k,T_mpwd_l,&Tx, T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string_anstatt,&mpwd,psons,&cgconf,"mpwd",&obkschreib));
+  opts.push_back(/*2*/optioncl(T_mpwd_k,T_mpwd_l,&Tx, T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string,&mpwd,psons,&cgconf,"mpwd",&obkschreib));
   opts.push_back(/*2*/optioncl(T_db_k,T_datenbank_l,&Tx, T_verwendet_die_Datenbank_string_anstatt,&dbq,psons,&cgconf,"datenbank",&obkschreib));
   //  opts.push_back(optioncl("l","log", &Tx, T_protokolliert_ausfuehrlich_in_Datei+drot+loggespfad+schwarz+Tx[T_sonst_knapper],&oblog,1));
   //  logdt=&loggespfad.front();
