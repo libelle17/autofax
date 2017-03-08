@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.42796) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42797) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -8,6 +8,7 @@
 <a href="#INSTALLATION_E">INSTALLATION</a><br>
 <a href="#USAGE_E">USAGE</a><br>
 <a href="#OPTIONS_E">OPTIONS</a><br>
+<a href="#FUNCTIONALITY_E">FUNCTIONALITY</a><br>
 <a href="#PRECONDITIONS_E">PRECONDITIONS</a><br>
 <a href="#IMPLICATIONS_E">IMPLICATIONS</a><br>
 <a href="#ERRORS_E">ERRORS</a><br>
@@ -333,9 +334,12 @@ instead of &rsquo;<b>and</b>&rsquo; <b><br>
 -mpwd, --mpwd &lt;string&gt;</b>: takes the password
 &lt;string&gt; for MySQL/MariaDB <b><br>
 -db, --database &lt;string&gt;</b>: uses the database
-&lt;string&gt; instead of &rsquo;<b>faxeinp</b>&rsquo;
-<b><br>
--v, --verbosepname 1: .SH FUNCTIONALITY</b></p>
+&lt;string&gt; instead of &rsquo;<b>faxeinp</b>&rsquo;</p>
+
+<h2>FUNCTIONALITY
+<a name="FUNCTIONALITY_E"></a>
+</h2>
+
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -950,7 +954,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.42796) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42797) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>

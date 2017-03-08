@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "08.03.17" "Version 0.42796" "\fBautofax\fR man page"
+.TH man 1 "08.03.17" "Version 0.42797" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -226,7 +226,7 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 \fB -mpwd, --mpwd <string>\fR: takes the password <string> for MySQL/MariaDB
 .br
 \fB -db, --database <string>\fR: uses the database <string> instead of '\fBfaxeinp\fR'
-\fB -v, --verbosepname 1: .SH FUNCTIONALITY
+.SH FUNCTIONALITY
 .HP 3 
 1) The current hardware is being checked.
 .br
