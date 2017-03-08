@@ -3275,9 +3275,9 @@ void paramcl::rueckfragen()
 			mpwd.clear();
 			while (1) {
 				do {
-					mpwd=XOR(Tippstring(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Txd[T_fuer_Benutzer]+dblau+muser+schwarz+"'",&mpwd),pk);
+					mpwd=Tippstring(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Txd[T_fuer_Benutzer]+dblau+muser+schwarz+"'",&mpwd);
 				} while (mpwd.empty());
-				mpw2=XOR(Tippstring(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Txd[T_fuer_Benutzer]+dblau+muser+schwarz+"'"+" ("+Txk[T_erneute_Eingabe]+")",&mpw2),pk);
+				mpw2=Tippstring(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Txd[T_fuer_Benutzer]+dblau+muser+schwarz+"'"+" ("+Txk[T_erneute_Eingabe]+")",&mpw2);
 				if (mpwd==mpw2) break;
 			} //         while (1)
 			while (mpwd.empty());

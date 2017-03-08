@@ -2441,7 +2441,8 @@ string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
         bemerkung= (const char*)hilf[Txi][lg];
         if (rottxt) bemerkung+=(obfarbe?blaus:nix)+*rottxt+(obfarbe?schwarz:nix);
         if (Txi2!=-1) bemerkung+=(const char*)hilf[Txi2][lg]; 
-        if (zptr) bemerkung+=" '"+(obfarbe?blaus:nix)+*zptr+(obfarbe?schwarz:nix)+"'";
+//        if (zptr && !strstr(pname,"pwd")) bemerkung+=" '"+(obfarbe?blaus:nix)+*zptr+(obfarbe?schwarz:nix)+"'";
+        if (zptr && bemerkung.find("assw")==string::npos) bemerkung+=" '"+(obfarbe?blaus:nix)+*zptr+(obfarbe?schwarz:nix)+"'";
         if (obno) bemerkung+=(obfarbe?violetts:nix)+Txk[T_oder_nicht]+(obfarbe?schwarz:nix);
       } // if (TxBp->TCp[Txi][lg])
     } // if (Txi!=-1)
