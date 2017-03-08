@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "08.03.17" "Version 0.42784" "\fBautofax\fR man page"
+.TH man 1 "08.03.17" "Version 0.42785" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -113,7 +113,7 @@ With '\fBautofax -?\fR', all command line options can be seen. Some options (e.g
 .br
 \fBUsage: \fBautofax [-<opt>|--<longopt> [<content>]] ...\fR
 .br
-\fBFaxes files from directory <path>, which contain 'an Fax <faxno>' and are convertible into pdf, 
+\fBFaxes files from directory <path>, which contain 'to fax <faxno>' and are convertible into pdf, 
 .br
 and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,`\fBspool\fB`).\fR
 .br
@@ -171,13 +171,13 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -lf, --logfilename <string>\fR: log file <string> (in path '\fB/var/log\fR') will be used instead of '\fBautofax.log\fR'
 .br
-\fB -tdr, --tofaxdir <path>\fR: faxes the files from <path> instead of '\fB/DATA/Patientendokumente/zufaxen\fR'
+\fB -tdr, --tofaxdir <path>\fR: faxes the files from <path> instead of '\fB/var/autofax/tofax\fR'
 .br
-\fB -wdr, --waitdir <path>\fR: files are waiting in <path> instead of '\fB/DATA/Patientendokumente/warteauffax\fR'
+\fB -wdr, --waitdir <path>\fR: files are waiting in <path> instead of '\fB/var/autofax/waitingfax\fR'
 .br
-\fB -ndr, --notfaxeddir <path>\fR: Failed Faxes are collected here and not in '\fB/DATA/Patientendokumente/nichtgefaxt\fR'
+\fB -ndr, --notfaxeddir <path>\fR: Failed Faxes are collected here and not in '\fB/var/autofax/notfaxed\fR'
 .br
-\fB -rdr, --receiveddir <path>\fR: directory for recieved faxes '\fB/DATA/Patientendokumente\fR'
+\fB -rdr, --receiveddir <path>\fR: directory for recieved faxes '\fB/var/autofax/recvdir\fR'
 .br
 \fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
 .br
@@ -191,15 +191,15 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -mod, --hmodem <string>\fR: Modem used for hylafax, instead of  '\fBttyACM0\fR'
 .br
-\fB -mc, --maxcapitries <zahl>\fR: try Hylafax after <no> tries of Capisuite instead of '\fB3\fR'
+\fB -mc, --maxcapitries <zahl>\fR: try Hylafax after <no> tries of Capisuite instead of '\fB1\fR'
 .br
-\fB -mh, --maxhylatries <zahl>\fR: try Capisuite after <no> tries of Hylafax instead of '\fB3\fR'
+\fB -mh, --maxhylatries <zahl>\fR: try Capisuite after <no> tries of Hylafax instead of '\fB2\fR'
 .br
 \fB -cuser, --cuser <string>\fR: takes the linux user <string> for capisuite and/or samba instead of '\fBschade\fR'
 .br
-\fB -crct, --cringcount <zahl>\fR: No. of bell rings until Capisuite accepts the call, instead of '\fB1\fR'
+\fB -crct, --cringcount <zahl>\fR: No. of bell rings until Capisuite accepts the call, instead of '\fB2\fR'
 .br
-\fB -hrct, --hringcount <zahl>\fR: No. of bell rings until hylafaxs accepts the call, instead of '\fB2\fR'
+\fB -hrct, --hringcount <zahl>\fR: No. of bell rings until hylafaxs accepts the call, instead of '\fB3\fR'
 .br
 \fB -hmd, --hmaxdials <zahl>\fR: No of dialing retries in hylafax, instead of   '\fB11\fR'
 .br
@@ -209,15 +209,15 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -ocro, --ocro\fR: Text from sent pictures will be filtered\fB or not\fR
 .br
-\fB -tfs, --tofaxstr <string>\fR: the fax number will be expected after <string> instead of '\fBan Fax\fR'
+\fB -tfs, --tofaxstr <string>\fR: the fax number will be expected after <string> instead of '\fBto fax\fR'
 .br
-\fB -tcfs, --tocfaxstr <string>\fR: fax no.for fax with preference to capisuite is expected after <string> instead of '\fBan cFax\fR'
+\fB -tcfs, --tocfaxstr <string>\fR: fax no.for fax with preference to capisuite is expected after <string> instead of '\fBto cfax\fR'
 .br
-\fB -thfs, --tohfaxstr <string>\fR: fax no.for fax with preference to hylafax is expected after <string> instead of '\fBan hFax\fR'
+\fB -thfs, --tohfaxstr <string>\fR: fax no.for fax with preference to hylafax is expected after <string> instead of '\fBto hfax\fR'
 .br
-\fB -ts, --tostr <string>\fR: name of addressee is expected after <string> instead of '\fB an \fR'
+\fB -ts, --tostr <string>\fR: name of addressee is expected after <string> instead of '\fB to \fR'
 .br
-\fB -ands, --andstr <string>\fR: separating string <string> for multiple addressees/tel'numbers, instead of '\fBund\fR'
+\fB -ands, --andstr <string>\fR: separating string <string> for multiple addressees/tel'numbers, instead of '\fBand\fR'
 .br
 \fB -host, --host <string>\fR: takes the database on host <string> instead of '\fBlocalhost\fR'
 .br

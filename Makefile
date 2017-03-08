@@ -274,7 +274,7 @@ $(CURDIR)/man_en: $(EXEC)
 	nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
 	von=".SH OPTIONS"; bis=".SH FUNCTIONALITY"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" man_en
 $(CURDIR)/man_de: $(EXEC)
-	-@TMP=tmp_opt;./$(EXEC) lg d -h|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
+	-@TMP=tmp_opt;./$(EXEC) -lg d -h|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
 	nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
 	von=".SH OPTIONEN"; bis=".SH FUNKTIONSWEISE"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" man_de
 

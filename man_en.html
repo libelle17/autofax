@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Wed Mar  8 20:24:56 2017 -->
+<!-- CreationDate: Wed Mar  8 20:33:45 2017 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<h1 align="center">AUTOFAX (Version 0.42784) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42785) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -223,7 +223,7 @@ file, which can be edited directly or interactively by
 Usage: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
 Faxes files from directory &lt;path&gt;, which contain
-&rsquo;an Fax &lt;faxno&gt;&rsquo; and are convertible into
+&rsquo;to fax &lt;faxno&gt;&rsquo; and are convertible into
 pdf, <br>
 and logs this in the the mariadb database
 &rsquo;faxeinp&rsquo; (tables:
@@ -285,18 +285,15 @@ directory, currently &rsquo;<b>/var/log</b>&rsquo; <b><br>
 be used instead of &rsquo;<b>autofax.log</b>&rsquo; <b><br>
 -tdr, --tofaxdir &lt;path&gt;</b>: faxes the files from
 &lt;path&gt; instead of
-&rsquo;<b>/DATA/Patientendokumente/zufaxen</b>&rsquo;
-<b><br>
+&rsquo;<b>/var/autofax/tofax</b>&rsquo; <b><br>
 -wdr, --waitdir &lt;path&gt;</b>: files are waiting in
 &lt;path&gt; instead of
-&rsquo;<b>/DATA/Patientendokumente/warteauffax</b>&rsquo;
-<b><br>
+&rsquo;<b>/var/autofax/waitingfax</b>&rsquo; <b><br>
 -ndr, --notfaxeddir &lt;path&gt;</b>: Failed Faxes are
 collected here and not in
-&rsquo;<b>/DATA/Patientendokumente/nichtgefaxt</b>&rsquo;
-<b><br>
+&rsquo;<b>/var/autofax/notfaxed</b>&rsquo; <b><br>
 -rdr, --receiveddir &lt;path&gt;</b>: directory for recieved
-faxes &rsquo;<b>/DATA/Patientendokumente</b>&rsquo; <b><br>
+faxes &rsquo;<b>/var/autofax/recvdir</b>&rsquo; <b><br>
 -cm, --cronminutes &lt;zahl&gt;</b>: every how many minutes
 shall <b>autofax</b> be called in crontab (0=not at all),
 instead of &rsquo;<b>2</b>&rsquo; <b><br>
@@ -310,19 +307,19 @@ hylafax <b>or not <br>
 instead of &rsquo;<b>ttyACM0</b>&rsquo; <b><br>
 -mc, --maxcapitries &lt;zahl&gt;</b>: try Hylafax after
 &lt;no&gt; tries of Capisuite instead of
-&rsquo;<b>3</b>&rsquo; <b><br>
+&rsquo;<b>1</b>&rsquo; <b><br>
 -mh, --maxhylatries &lt;zahl&gt;</b>: try Capisuite after
 &lt;no&gt; tries of Hylafax instead of
-&rsquo;<b>3</b>&rsquo; <b><br>
+&rsquo;<b>2</b>&rsquo; <b><br>
 -cuser, --cuser &lt;string&gt;</b>: takes the linux user
 &lt;string&gt; for capisuite and/or samba instead of
 &rsquo;<b>schade</b>&rsquo; <b><br>
 -crct, --cringcount &lt;zahl&gt;</b>: No. of bell rings
 until Capisuite accepts the call, instead of
-&rsquo;<b>1</b>&rsquo; <b><br>
+&rsquo;<b>2</b>&rsquo; <b><br>
 -hrct, --hringcount &lt;zahl&gt;</b>: No. of bell rings
 until hylafaxs accepts the call, instead of
-&rsquo;<b>2</b>&rsquo; <b><br>
+&rsquo;<b>3</b>&rsquo; <b><br>
 -hmd, --hmaxdials &lt;zahl&gt;</b>: No of dialing retries in
 hylafax, instead of &rsquo;<b>11</b>&rsquo; <b><br>
 -it, --immediatelytarget</b>: copy faxes into target
@@ -332,20 +329,20 @@ directory irrespective of faxing success <b>or not <br>
 -ocro, --ocro</b>: Text from sent pictures will be filtered
 <b>or not <br>
 -tfs, --tofaxstr &lt;string&gt;</b>: the fax number will be
-expected after &lt;string&gt; instead of &rsquo;<b>an
-Fax</b>&rsquo; <b><br>
+expected after &lt;string&gt; instead of &rsquo;<b>to
+fax</b>&rsquo; <b><br>
 -tcfs, --tocfaxstr &lt;string&gt;</b>: fax no.for fax with
 preference to capisuite is expected after &lt;string&gt;
-instead of &rsquo;<b>an cFax</b>&rsquo; <b><br>
+instead of &rsquo;<b>to cfax</b>&rsquo; <b><br>
 -thfs, --tohfaxstr &lt;string&gt;</b>: fax no.for fax with
 preference to hylafax is expected after &lt;string&gt;
-instead of &rsquo;<b>an hFax</b>&rsquo; <b><br>
+instead of &rsquo;<b>to hfax</b>&rsquo; <b><br>
 -ts, --tostr &lt;string&gt;</b>: name of addressee is
-expected after &lt;string&gt; instead of &rsquo; <b>an</b>
+expected after &lt;string&gt; instead of &rsquo; <b>to</b>
 &rsquo; <b><br>
 -ands, --andstr &lt;string&gt;</b>: separating string
 &lt;string&gt; for multiple addressees/tel&rsquo;numbers,
-instead of &rsquo;<b>und</b>&rsquo; <b><br>
+instead of &rsquo;<b>and</b>&rsquo; <b><br>
 -host, --host &lt;string&gt;</b>: takes the database on host
 &lt;string&gt; instead of &rsquo;<b>localhost</b>&rsquo;
 <b><br>
