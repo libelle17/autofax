@@ -152,7 +152,7 @@ const char *kons_T[T_konsMAX+1][Smax]=
   // T_Program
   {"Programm '","Program '"},
   // T_laeuft_schon_einmal_Breche_ab
-  {"' laeuft schon einmal. Breche ab.","' runs already once. Aborting."},
+  {"' laeuft schon einmal. Breche ab.","' is running already once. Aborting."},
   // T_Wert
   {" Wert: "," Value: "},
   // T_Dauer
