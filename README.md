@@ -649,8 +649,8 @@ being written, if necessary.</p></td></tr>
 Computer with a fritzcard 2.0 or 2.1 or/and a linux
 compatible fax modem; in the current version, in case of a
 US Robotics modem USR5637 and one of the below mentioned
-linux versions, the whole installation should/could be run
-automatically by answering some questions. <b><br>
+linux distributions, the whole installation should/could be
+run automatically by answering some questions. <b><br>
 Software</b>: The program was adjusted to an installation of
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
 Mint &gt;= 18 or Fedora &gt;= 24 with standard options. In
@@ -1635,9 +1635,10 @@ unterzogen.</p> </td></tr>
 
 <p style="margin-left:11%; margin-top: 1em"><b>Hardware</b>:
 Computer mit einer Fritzcard 2.0 oder 2.1 und/oder einem
-linux-kompatiblen Modem; in der vorliegenden Version
+linux-kompatiblen Modem; in der vorliegenden Version und
+einer der untenstehenden Linuxdistributionen
 sollte/k&ouml;nnte im Fall des Modems US Robotics
-USR5637 die gesamte Instaallation automatisch ablaufen unter
+USR5637 die gesamte Installation automatisch ablaufen unter
 Beantwortung einiger R&uuml;ckfragen. <b><br>
 Software</b>: Das Programm wurde auf eine Installation von
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,

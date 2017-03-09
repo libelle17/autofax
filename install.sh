@@ -96,7 +96,7 @@ still which sudo||{
 	su -c "$IdPR sudo;";
 }
 # 0=sudo aufrufbar
-a=$(sudo -nV 2>&1);! test -z "$a" && echo $a|grep -qv "Sudo version" ||{
+a=$(sudo -n -v 2>&1);! test -z "$a" && echo $a|grep -q "assw" ||{
 	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'."
 	printf "Please enter ${blau}root$reset's password at the next question:\n"
 	printf "Then please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh $ICH$reset'!\n"
