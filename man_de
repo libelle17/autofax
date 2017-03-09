@@ -276,7 +276,7 @@ Falls neue Dateien erstellt wurden, werden die nachfolgenden Verschiebungen und 
 .\" DateienHerricht(), WVZinDatenbank()
 .LP
 .HP 3 
-13) Je nach Konfiguration wird die Funktionsfähigkeit von \fBhylafax\fR und/oder \fBcapisuite\fR überprüft und ggf. versucht herzustellen (falls nötig und möglich auch mit Installation dieser Programme; für eine Fritzcard 2.0 sowie für ein Faxmodem USR5637 kann auch eine automatische Konfiguration erfolgen).
+13) Je nach Konfiguration wird die Funktionsfähigkeit von \fBhylafax\fR und/oder \fBcapisuite\fR überprüft und ggf. versucht herzustellen (falls nötig und möglich auch mit Installation dieser Programme; für eine Fritzcard 2.0 sowie für ein Faxmodem USR5637 kann/wird auch eine automatische Konfiguration erfolgen).
 .LP
 .HP 3 
 14) Im Fall entsprechender Kommandozeilenoptionen werden Faxe gelöscht und das Programm dann beendet.

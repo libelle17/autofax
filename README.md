@@ -507,7 +507,7 @@ configuration the functionaliy of <b>hylafax</b> and/or
 <b>capisuite</b> is being checked and if necessary and
 possible restored (including by installation of those
 programs; in case of a fritzcard 2.0 or a fax modem USR5637
-an additional automatic configuration can be done).</p></td></tr>
+an additional automatic configuration can/will be done).</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -1485,8 +1485,8 @@ die Funktionsf&auml;higkeit von <b>hylafax</b> und/oder
 versucht herzustellen (falls n&ouml;tig und
 m&ouml;glich auch mit Installation dieser Programme;
 f&uuml;r eine Fritzcard 2.0 sowie f&uuml;r ein
-Faxmodem USR5637 kann auch eine automatische Konfiguration
-erfolgen).</p> </td></tr>
+Faxmodem USR5637 kann/wird auch eine automatische
+Konfiguration erfolgen).</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

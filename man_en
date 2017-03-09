@@ -275,7 +275,7 @@ If more files have been generated, the successive movements and recordings are b
 .\" DateienHerricht(), WVZinDatenbank()
 .LP
 .HP 3 
-13) Depending on the configuration the functionaliy of \fBhylafax\fR and/or \fBcapisuite\fR is being checked and if necessary and possible restored (including by installation of those programs; in case of a fritzcard 2.0 or a fax modem USR5637 an additional automatic configuration can be done).
+13) Depending on the configuration the functionaliy of \fBhylafax\fR and/or \fBcapisuite\fR is being checked and if necessary and possible restored (including by installation of those programs; in case of a fritzcard 2.0 or a fax modem USR5637 an additional automatic configuration can/will be done).
 .LP
 .HP 3 
 14) In case of respective command line options faxes are being deleted and the program is finished.
