@@ -644,23 +644,29 @@ being written, if necessary.</p></td></tr>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">The program was
-adjusted to an installation of Opensuse &gt;= 42.1, Debian
-&gt;= 8.60, Ubuntu &gt;= 16.04, Mint &gt;= 18 or Fedora
-&gt;= 24 with standard options. In Debian, it may be
-advantageous to check that in the file /etc/apt/sources.list
-no dvd is mentioned before the standard online-repositories.
-systemctl (systemd) must run, sudo is needed (missing per
-default in Debian), the user must be allowed to call the
-command &rsquo;sudo&rsquo; (must be member of a group
-mentioned in /etc/sudoers, otherwise, the above mentioned
-installation program tries to enter him there), &rsquo;GNU
-make&rsquo; has to be installed (which shall be accomplished
-if necessary by calling ./install.sh). Further needed
-programs will be installed by the makefile or by autofax
-itsself including preconditioned programs via zypper, apt,
-dnf or yum, python3 pip, if needed and possible,
-especially:</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>Hardware</b>:
+Computer with a fritzcard 2.0 or 2.1 or/and a linux
+compatible fax modem; in the current version, in case of a
+US Robotics modem USR5637 and one of the below mentioned
+linux versions, the whole installation should/could be
+automatically by answering some questions. <br>
+oftware: The program was adjusted to an installation of
+Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
+Mint &gt;= 18 or Fedora &gt;= 24 with standard options. In
+Debian, it may be advantageous to check that in the file
+/etc/apt/sources.list no dvd is mentioned before the
+standard online-repositories. systemctl (systemd) must run,
+sudo is needed (missing per default in Debian), the user
+must be allowed to call the command &rsquo;sudo&rsquo; (must
+be member of a group mentioned in /etc/sudoers, otherwise,
+the above mentioned installation program tries to enter him
+there), &rsquo;GNU make&rsquo; has to be installed (which
+shall be accomplished if necessary by calling ./install.sh).
+Further needed programs will be installed by the makefile or
+by autofax itsself including preconditioned programs via
+zypper, apt, dnf or yum, python3 pip, if needed and
+possible, especially:</p>
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>makefile:</b></p>
