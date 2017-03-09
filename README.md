@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.42807) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42808) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -960,7 +960,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.42807) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42808) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1635,11 +1635,8 @@ unterzogen.</p> </td></tr>
 
 <p style="margin-left:11%; margin-top: 1em"><b>Hardware</b>:
 Computer mit einer Fritzcard 2.0 oder 2.1 und/oder einem
-linux-kompatiblen Modem; in der vorliegenden Version und
-einer der untenstehenden Linuxdistributionen
-sollte/k&ouml;nnte im Fall des Modems US Robotics
-USR5637 die gesamte Installation automatisch ablaufen unter
-Beantwortung einiger R&uuml;ckfragen. <b><br>
+linux-kompatiblen Modem; in der vorliegenden Version 0.42808
+<b><br>
 Software</b>: Das Programm wurde auf eine Installation von
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
 Mint &gt;= 18 oder Fedora &gt;= 24 mit den Standardoptionen
