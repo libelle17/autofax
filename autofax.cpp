@@ -874,7 +874,7 @@ char const *autofax_T[T_MAX+1][Smax]={
   // T_DieFaxnrausTabelle
   {"Die Faxnr aus Tabelle `","The fax number from table `"},
   // T_istleerfaxeesdahernicht
-  {" ist leer! Faxe es dahaer nicht."," is empty! Not faxing it therefore."},
+  {" ist leer! Faxe es daher nicht."," is empty! Not faxing it therefore."},
   // T_DieFaxnrvon
   {"Die Faxnr von ","The fax number of "},
   // T_ist
@@ -7444,10 +7444,15 @@ int paramcl::pruefhyla()
 		// Archivierung ggf. aktivieren
 		if (!hylalaeuftnicht) {
 			struct stat hfstat={0};
-			if (!lstat("/etc/cron.hourly/hylafax",&hfstat)) {
-				systemrueck("! sudo grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || "
-						"sudo sed -i.bak 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax", obverb,oblog);
-			}
+			const string hour="/etc/cron.hourly", fc="faxqclean";
+			if (!lstat(hour.c_str(),&hfstat)) {
+				systemrueck("sudo sh -c \"for D in "+hour+"/*;do grep -q '"+fc+" *$' \\$D&&sed -i 's/"+fc+" *$/"+fc+" -a -A/g' \\$D||true;done\"",1,0);
+			} // 			if (!lstat(hour.c_str(),&hfstat))
+/*
+			if (!lstat("/etc/cron.hourly/hylafax",&hfstat)) KLA
+				systemrueck("! sudo grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || ""sudo sed -i 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax", obverb,oblog); // keine Sicherungskopie, sonst ausgefuehrt
+			KLZ // 			if (!lstat("/etc/cron.hourly/hylafax",&hfstat))
+*/
 		} //     if (!hylalaeuftnicht)
 	} else {
 		if (sfaxgetty) sfaxgetty->stopdis(obverb,oblog);
@@ -7462,17 +7467,17 @@ int paramcl::pruefhyla()
 
 
 /*
-   long GetFileSize(string filename)
-   {
-   struct stat stat_buf={0};
-   int rc = stat(filename.c_str(), &stat_buf);
-   return rc ? -1 : stat_buf.st_size;
-   } // GetFileSize
+	 long GetFileSize(string filename)
+	 {
+	 struct stat stat_buf={0};
+	 int rc = stat(filename.c_str(), &stat_buf);
+	 return rc ? -1 : stat_buf.st_size;
+	 } // GetFileSize
 
-void clear_kb(void) // statt fflush(stdin) nach getchar
-{
-  char junk[200];
-  fgets (junk,sizeof junk,stdin);
+	 void clear_kb(void) // statt fflush(stdin) nach getchar
+	 {
+	 char junk[200];
+	 fgets (junk,sizeof junk,stdin);
 } // clear_kb
 */
 
