@@ -685,6 +685,7 @@ enum T_
 	T_logdateineu_l,
 	T_kd_k,
 	T_konfdatei_l,
+	T_passt_nicht_zu,
 	T_MAX
 };
 
@@ -1971,6 +1972,8 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{"kd","cf"},
 	// T_konfdatei_l
 	{"konfdatei","conffile"},
+	// T_passt_nicht_zu
+	{" passt nicht zu "," doesn't fit for "},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -5282,8 +5285,8 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 // wird aufgerufen in: main
 void paramcl::DateienHerricht() 
 {
-	obverb=2;
 	Log(violetts+Tx[T_DateienHerricht]);
+	const string filter =" [[:punct:]]*[0-9][0-9[:punct:]]*[_]\\?.*\\.";// statt ?.* zuvor ?[0-9]*, aber vielleicht unnoetig
 	struct stat entrynpdf={0};
 	//vector<string> npdf, spdf, *npdfp=&npdf, *spdfp=&spdf;  vector<uchar> prios;
 	vector<fxfcl> fxv; // Faxvektor
@@ -5297,15 +5300,13 @@ void paramcl::DateienHerricht()
 	zielmustercl mu[anfxstrvec.size()];
 	for(uchar iprio=0;iprio<anfxstrvec.size();iprio++) {
 		// der regex-flavor posix_basic (ed) erlaub keinen Abzug aus 
-		const string mstr=anfxstrvec.at(iprio)+" [[:punct:]]*[0-9][0-9[:punct:]]*[_]\\?[0-9]*\\..*"; // z.B. "an Fax +49"
+		const string mstr=anfxstrvec.at(iprio)+filter+".*"; // z.B. "an Fax +49"
 		if (mu[iprio].setzemuster(mstr,0)) 
 			exit(21);
-
 		// der Reihe nach nach Dateien suchen, die das jeweilige Trennzeichen enthalten
 		for(size_t i=0;i<iprid.size();i++) {
 			// 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 			if (!regexec(&mu[iprio].regex,iprid[i].c_str(),0,NULL,0)) {
-			caus<<violett<<iprid[i]<<blau<<" passt"<<schwarz<<endl;
 				// for(uchar iprio=0;iprio<anfxstrvec.size();iprio++)
 				//    // 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 				//    cmd=string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\"";
@@ -5318,26 +5319,31 @@ void paramcl::DateienHerricht()
 				::Log(string(Tx[T_Stamm])+tuerkis+stamm+schwarz,obverb>1,oblog);
 				vector<string> tok, toknr, toktxt, tokname;
 				::Log(string(Tx[T_trennenach])+blau+anfxstrvec.at(iprio)+schwarz+"'",obverb>1,oblog);
-				aufiSplit(&tok,&stamm,anfxstrvec.at(iprio).c_str());
-				if (tok.size()>1) { // sollte immer sein
-					for(unsigned k=0;k<tok.size();k++) {
-						::Log(blaus+tok[k]+schwarz,obverb>1,oblog);
+				size_t pos0=0;
+				if ((pos0=stamm.rfind(anfxstrvec.at(iprio).c_str()))!=string::npos) {
+					string vor=stamm.substr(0,pos0);
+					size_t pos1=0;
+					while ((pos1=vor.rfind(anfxstrvec.at(iprio).c_str()))!=string::npos) { // wenn der Trennstring versehentlich doppelt eingegeben wurde
+					 vor=vor.substr(0,pos1);
 					}
+					::Log(blaus+vor+schwarz,obverb>1,oblog);
+					string nach=stamm.substr(pos0+anfxstrvec.at(iprio).length());
+					::Log(blaus+nach+schwarz,obverb>1,oblog);
 					// die Faxnummern auseinanderfieseln
-					aufiSplit(&toknr,&tok[1],undstr.c_str());
+					aufiSplit(&toknr,&nach,undstr.c_str());
 					for(unsigned k=0;k<toknr.size();k++) {
 						::Log(tuerkiss+"toknr["+ltoan(k)+"]: "+toknr[k]+schwarz,obverb>1,oblog);
 					}
 					// ggf. die Adressatennamen suchen ...
-					aufiSplit(&toktxt,&tok[0],anstr.c_str());
+					aufiSplit(&toktxt,&vor,anstr.c_str());
 					for(unsigned k=0;k<toktxt.size();k++) {
 						::Log(blaus+"toktxt["+ltoan(k)+"]: "+toktxt[k]+schwarz,obverb>1,oblog);
 					}
 					// und ggf. aufffieseln
 					if (toktxt.size()>1) {
 						aufiSplit(&tokname,&toktxt[1],undstr.c_str());
-						for(unsigned i=0;i<tokname.size();i++) {
-							::Log(tuerkiss+"tokname["+ltoan(i)+"]: "+tokname[i]+schwarz,obverb>1,oblog);
+						for(unsigned j=0;j<tokname.size();j++) {
+							::Log(tuerkiss+"tokname["+ltoan(j)+"]: "+tokname[j]+schwarz,obverb>1,oblog);
 						}
 					} //         if (toktxt.size()>1)
 					for(unsigned j=0;j<toknr.size();j++) { // alle bis auf die letzte Adresse
@@ -5373,10 +5379,11 @@ void paramcl::DateienHerricht()
 							urfx.push_back(urfxcl(tmp,urname,iprio));
 						} // if (j<toknr.size()-1) 
 					} // for(unsigned j=0;j<toknr.size();j++) 
-				} // if (tok.size()>1) 
+				} // 				if ((pos0=stamm.rfind(anfxstrvec.at(iprio).c_str()))!=string::npos)
 				iprid[i].clear(); // Datei nach Gebrauch loeschen, um dann die restlichen zu sehen
+				break; // beim ersten passenden aufhoeren
 			} else {
-			caus<<violett<<iprid[i]<<rot<<" passt nicht"<<schwarz<<endl;
+				Log(iprid[i]+rots+Tx[T_passt_nicht_zu]+schwarz+anfxstrvec[iprio],obverb,oblog);
 			} // 		if (!regexec(&mu[0].regex,iprid[i].c_str(),0,NULL,0))
 			//		  else KLA
 			//		   <<gruen<<"keine Uebereinstimmung: "<<mu[iprio].holmuster()<<" mit "<<iprid[i]<<schwarz<<endl;
@@ -5488,9 +5495,8 @@ void paramcl::DateienHerricht()
 	//      => auch in ziel kopieren
 	for(unsigned iprio=0;iprio<anfxstrvec.size();iprio++) {
 		if (!anfxstrvec.at(iprio).empty()) {
-			cmd=string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -regextype ed -iregex \".*"+anfxstrvec.at(iprio)+
+			cmd=string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -regextype ed -iregex \".*"+anfxstrvec.at(iprio)+filter+"pdf\"";
 //			    " [- ,/;:\\\\\\.\\+]*[0-9][- ,/;:\\\\\\.\\+0-9]*[_]*[0-9]*[\\.]{0,1}pdf*$\" -iname \"*.pdf\"";
-					" [[:punct:]]*[0-9][0-9[:punct:]]*[_]\\?[0-9]*\\.pdf\"";
 			vector<string> spdfd;
 			systemrueck(cmd,obverb, oblog, &spdfd);
 			for(size_t i=0;i<spdfd.size();i++) {
@@ -5552,7 +5558,6 @@ void paramcl::DateienHerricht()
 	geszahl=fxv.size();
 	// 3) in spooltab eintragen
 	WVZinDatenbank(&fxv);
-  obverb=0;
 } // void DateienHerricht()
 
 // wird aufgerufen in: main
@@ -7456,7 +7461,7 @@ int paramcl::pruefhyla()
 			struct stat hfstat={0};
 			const string hour="/etc/cron.hourly", fc="faxqclean";
 			if (!lstat(hour.c_str(),&hfstat)) {
-				systemrueck("sudo sh -c \"for D in "+hour+"/*;do grep -q '"+fc+" *$' \\$D&&sed -i 's/"+fc+" *$/"+fc+" -a -A/g' \\$D||true;done\"",1,0);
+				systemrueck("sudo sh -c \"for D in "+hour+"/*;do grep -q '"+fc+" *$' \\$D&&sed -i 's/"+fc+" *$/"+fc+" -a -A/g' \\$D||true;done\"",obverb,oblog);
 			} // 			if (!lstat(hour.c_str(),&hfstat))
 /*
 			if (!lstat("/etc/cron.hourly/hylafax",&hfstat)) KLA
