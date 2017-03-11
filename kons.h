@@ -93,6 +93,7 @@ extern const char *_rot, *_hrot, *_schwarz, *_blau, *_gelb, *_tuerkis, *_hgrau;
 #include <algorithm>    // std::transform
 
 #define caus cout // nur zum Debuggen
+size_t irfind(const string& wo, const string& was);
 
 extern const string nix;
 // typedef const char *TCtp[][Smax];
@@ -208,6 +209,8 @@ enum Tkons_
 	T_enableggf,
 	T_semodpruef,
 	T_Exitcode,
+	T_trenne,
+	T_bei,
 	T_konsMAX,
 };
 
@@ -612,7 +615,7 @@ void kopierm(string *quelle, string *ziel);
 #endif
 void aufSplit(vector<string> *tokens, const string *text, char sep, bool nichtmehrfach=1);
 void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach=1);
-void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach=1);
+void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach=1,int obverb=0,int oblog=0);
 void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtmehrfach=1);
 void getstammext(const string *const ganz, string *stamm, string *exten);
 // int cpplies(string fname,cppSchluess *conf,size_t csize,vector<string> *rest=0,char tz='=',short obverb=0);

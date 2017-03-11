@@ -239,6 +239,10 @@ const char *kons_T[T_konsMAX+1][Smax]=
 	{"semodpruef()","checksemod()"},
 	// T_Exitcode
 	{"Exitcode ","Exitcode "},
+	// T_trenne
+	{" trenne "," splitting "},
+	// T_bei
+	{" bei: "," at: "},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 
@@ -1128,25 +1132,41 @@ void aufSplit(vector<string> *tokens, const string *text, char sep,bool nichtmeh
   tokens->push_back(text->substr(start));
 } // void aufSplit(vector<string> *tokens, const string *text, char sep,bool nichtmehrfach) 
 
-
-void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach) 
+size_t irfind(const string& wo, const string& was)
 {
-  int start = 0, end = 0;
-  size_t len = strlen(sep);
-  char* usep = new char[len];
-  strcpy(usep,sep);
-  for (char *p=usep ; *p; ++p) *p = toupper(*p);
-  string utext;
-  transform(text->begin(),text->end(),std::back_inserter(utext),::toupper);
-  tokens->clear();
-  while ((end = utext.find(usep, start)) != (int)string::npos) {
-    if (nichtmehrfach || end!=start) {
-      tokens->push_back(text->substr(start, end - start));
-    }
-    start = end + len;
-  }
-  tokens->push_back(text->substr(start));
-  delete usep;
+ string wou, wasu;
+ transform(wo.begin(),wo.end(),std::back_inserter(wou),::toupper);
+ transform(was.begin(),was.end(),std::back_inserter(wasu),::toupper);
+ return wou.rfind(wasu);
+}
+
+void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach/*=1*/,int obverb/*=0*/,int oblog/*=0*/) 
+{
+	size_t start=0, end=0,len=strlen(sep),k=0,l2;
+	char* usep = new char[len];
+	if (obverb)
+		::Log(string(Txk[T_trenne])+"'"+blaus+*text+schwarz+"'"+Txk[T_bei]+"'"+blau+sep+schwarz+"':",obverb,oblog);
+	strcpy(usep,sep);
+	for (char *p=usep ; *p; ++p) *p = toupper(*p);
+	string utext;
+	transform(text->begin(),text->end(),std::back_inserter(utext),::toupper);
+	tokens->clear();
+	while (1) {
+		end=utext.find(usep,start);
+		l2=string::npos;
+		if (end!=string::npos) l2-=start;
+		if (end==string::npos || nichtmehrfach || l2) {
+			tokens->push_back(text->substr(start,l2));
+			if (obverb)	
+				::Log(tuerkiss+" tok["+ltoan(k)+"]: "+tokens->at(k)+schwarz,obverb,oblog);
+			k++;
+			if (end==string::npos) {
+				break;
+			} // 		 if (end==string::npos)
+		} // 	 if (l2==string::npos || nichtmehrfach || l2)
+		start = end+len;
+	} // 	while (1)
+	delete usep;
 } // void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach) 
 
 
