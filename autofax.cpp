@@ -84,7 +84,7 @@ enum T_
   T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt,
   T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden,
   T_Der_regulaere_Ausdruck,
-  T_konnte_nicht_kompiliert_werden,
+  T_konnte_nicht_kompiliert_werden_Fehler,
   Verbindung_zur_Datenbank_nicht_herstellbar,
   T_Breche_ab,
   T_Konnte_Verzeichnis,
@@ -738,8 +738,8 @@ char const *autofax_T[T_MAX+1][Smax]={
     "Shall files be stored in target directory irrespective of fax success"},
   // T_Der_regulaere_Ausdruck
   {"Der regulaere Ausdruck '","The regular expression '"},
-  // T_konnte_nicht_kompiliert_werden
-  {"' konnte nicht kompiliert werden.","could not be compiled."},
+  // T_konnte_nicht_kompiliert_werden_Fehler
+  {"' konnte nicht kompiliert werden, Fehler: ","could not be compiled, error: "},
   // Verbindung_zur_Datenbank_nicht_herstellbar
   {"Verbindung zur Datenbank nicht herstellbar, fehnr: ","Connection to the database could not be established, errnr: "},
   // T_Breche_ab
@@ -2019,19 +2019,22 @@ zielmustercl::zielmustercl(const char * const vmuster,const string& vziel):muste
 zielmustercl::zielmustercl() {
 }
 
-int zielmustercl::kompilier() {
-  int reti=regcomp(&regex, muster.c_str(),REG_EXTENDED|REG_ICASE); 
+int zielmustercl::kompilier(uchar obext/*=1*/) {
+  int reti=regcomp(&regex, muster.c_str(),obext?REG_EXTENDED|REG_ICASE:RE_SYNTAX_ED|REG_ICASE); 
   if (reti) {
-    Log(string(Tx[T_Der_regulaere_Ausdruck])+drot+muster+schwarz+Tx[T_konnte_nicht_kompiliert_werden],1,0);
+		const int MAX_ERROR_MSG=0x1000;
+		char error_message[MAX_ERROR_MSG];
+		regerror (reti, &regex, error_message, MAX_ERROR_MSG);
+    Log(string(Tx[T_Der_regulaere_Ausdruck])+drot+muster+schwarz+Tx[T_konnte_nicht_kompiliert_werden_Fehler]+error_message,1,0);
     return 1;
   }
   return 0;
 } // zielmustercl::zielmustercl
 
-int zielmustercl::setzemuster(const string& vmuster)
+int zielmustercl::setzemuster(const string& vmuster,uchar obext/*=1*/)
 {
  muster=vmuster;
- return kompilier();
+ return kompilier(obext);
 } // int zielmustercl::setzemuster(const string& vmuster)
 
 int zielmustercl::obmusterleer() {
@@ -5279,6 +5282,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 // wird aufgerufen in: main
 void paramcl::DateienHerricht() 
 {
+	obverb=2;
 	Log(violetts+Tx[T_DateienHerricht]);
 	struct stat entrynpdf={0};
 	//vector<string> npdf, spdf, *npdfp=&npdf, *spdfp=&spdf;  vector<uchar> prios;
@@ -5292,14 +5296,16 @@ void paramcl::DateienHerricht()
 	systemrueck("sudo find \""+zufaxenvz+"\" -maxdepth 1 -type f",obverb,oblog,&iprid);
 	zielmustercl mu[anfxstrvec.size()];
 	for(uchar iprio=0;iprio<anfxstrvec.size();iprio++) {
-		const string mstr=anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]"; // z.B. "an Fax +49"
-		mu[iprio].setzemuster(mstr);
+		// der regex-flavor posix_basic (ed) erlaub keinen Abzug aus 
+		const string mstr=anfxstrvec.at(iprio)+" [[:punct:]]*[0-9][0-9[:punct:]]*[_]\\?[0-9]*\\..*"; // z.B. "an Fax +49"
+		if (mu[iprio].setzemuster(mstr,0)) 
+			exit(21);
 
 		// der Reihe nach nach Dateien suchen, die das jeweilige Trennzeichen enthalten
 		for(size_t i=0;i<iprid.size();i++) {
 			// 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 			if (!regexec(&mu[iprio].regex,iprid[i].c_str(),0,NULL,0)) {
-
+			caus<<violett<<iprid[i]<<blau<<" passt"<<schwarz<<endl;
 				// for(uchar iprio=0;iprio<anfxstrvec.size();iprio++)
 				//    // 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 				//    cmd=string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\"";
@@ -5369,6 +5375,8 @@ void paramcl::DateienHerricht()
 					} // for(unsigned j=0;j<toknr.size();j++) 
 				} // if (tok.size()>1) 
 				iprid[i].clear(); // Datei nach Gebrauch loeschen, um dann die restlichen zu sehen
+			} else {
+			caus<<violett<<iprid[i]<<rot<<" passt nicht"<<schwarz<<endl;
 			} // 		if (!regexec(&mu[0].regex,iprid[i].c_str(),0,NULL,0))
 			//		  else KLA
 			//		   <<gruen<<"keine Uebereinstimmung: "<<mu[iprio].holmuster()<<" mit "<<iprid[i]<<schwarz<<endl;
@@ -5480,8 +5488,9 @@ void paramcl::DateienHerricht()
 	//      => auch in ziel kopieren
 	for(unsigned iprio=0;iprio<anfxstrvec.size();iprio++) {
 		if (!anfxstrvec.at(iprio).empty()) {
-			cmd=string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\""
-				" -iname \"*.pdf\"";
+			cmd=string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -regextype ed -iregex \".*"+anfxstrvec.at(iprio)+
+//			    " [- ,/;:\\\\\\.\\+]*[0-9][- ,/;:\\\\\\.\\+0-9]*[_]*[0-9]*[\\.]{0,1}pdf*$\" -iname \"*.pdf\"";
+					" [[:punct:]]*[0-9][0-9[:punct:]]*[_]\\?[0-9]*\\.pdf\"";
 			vector<string> spdfd;
 			systemrueck(cmd,obverb, oblog, &spdfd);
 			for(size_t i=0;i<spdfd.size();i++) {
@@ -5543,6 +5552,7 @@ void paramcl::DateienHerricht()
 	geszahl=fxv.size();
 	// 3) in spooltab eintragen
 	WVZinDatenbank(&fxv);
+  obverb=0;
 } // void DateienHerricht()
 
 // wird aufgerufen in: main

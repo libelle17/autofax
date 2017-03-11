@@ -24,6 +24,7 @@
 # "make anzeig" => zeige Informationen zu Programm, Quelldateien und Compiler an
 # "make install => installiere die erstellte Datei in den kuerzesten Pfad aus $PATH, der '/usr/' enthaelt,
 #                  installiert man-Seiten aus man_de und man_en, ferner *.html-Dateien und eine README.md-Datei fuer den git-Server
+# "make stumm und make installstum: zum Aufruf aus vim"
 # "make git => aktualisiert die Datei auf dem zugeordneten git-Server
 
 ICH := $(firstword $(MAKEFILE_LIST))
@@ -97,11 +98,11 @@ MANPD=${MANP}/de/man1/${PROGRAM}.1.gz
 MANPE=${MANP}/man1/${PROGRAM}.1.gz
 MANPDH=$(CURDIR)/man_de.html
 MANPEH=$(CURDIR)/man_en.html
-rot="\033[1;31m"
-gruen="\033[0;32m"
+rot:="\033[1;31m"
+gruen:="\033[0;32m"
 #blau="\033[0;34;1;47m"
-blau="\033[1;34m"
-reset="\033[0m"
+blau:="\033[1;34m"
+reset:="\033[0m"
 
 .PHONY: alles
 alles: anzeig weiter
@@ -260,7 +261,15 @@ endif
 .PHONY: stumm
 stumm: BA:=/dev/null
 stumm: BFA:=
+# die folgenden Farbenzuweisungen wirken nicht
+stumm: rot:=""
+stumm: blau:=""
+stumm: gruen:=""
+stumm: reset:=""
 stumm: alles
+
+.PHONY: installstumm
+installstumm: stumm install
 
 .PHONY: install
 install: $(INSTEXEC) ${MANPE} ${MANPD} 

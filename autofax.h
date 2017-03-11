@@ -48,8 +48,8 @@ class zielmustercl
     zielmustercl(const char * const muster,const char * const ziel);
     zielmustercl(const char * const muster,const string& ziel);
     zielmustercl();
-    int kompilier();
-    int setzemuster(const string& vmuster);
+    int kompilier(uchar obext=1);
+    int setzemuster(const string& vmuster,uchar obext=1);
     const string& holmuster();
     int obmusterleer();
 }; // class zielmustercl

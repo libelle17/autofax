@@ -61,6 +61,6 @@ command -nargs=* Meike make <args> | cwindow 3
 inoremap <C-w> <ESC>:wa<CR>
 nnoremap <C-w> :wa<CR>
 map <Leader>0 <C-w>:Make<CR>
-map <Leader>ß :Meike install<CR>
+map <Leader>ß :Meike installstumm<CR>
 autocmd QuickFixCmdPost [^l]* nested cwindow
 autocmd QuickFixCmdPost    l* nested lwindow
