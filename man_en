@@ -79,7 +79,7 @@ At last, call:
 .br
 (answer some questions of the program)
 .br
-The first execution and the first processing of a fax may take some time and need some additional input, respectively.
+The first execution and the first processing of a fax with each of hylafax and/or capisuite may take some time and need some additional input, respectively.
 .br
 Preconditions see below.
 .SH USAGE
