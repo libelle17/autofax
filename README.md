@@ -130,9 +130,9 @@ https://raw.githubusercontent.com/libelle17/$N/master/install.sh
 At last, call: <b><br>
 autofax</b> <br>
 (answer some questions of the program) <br>
-The first execution and the first processing of a fax may
-take some time and need some additional input, respectively.
-<br>
+The first execution and the first processing of a fax with
+each of hylafax and/or capisuite may take some time and need
+some additional input, respectively. <br>
 Preconditions see below.</p>
 
 <h2>USAGE
@@ -1094,9 +1094,9 @@ https://raw.githubusercontent.com/libelle17/$N/master/install.sh
 Zuletzt rufen Sie auf: <b><br>
 autofax</b> <br>
 (einige Rueckfragen des Programms beantworten) <br>
-Der erste Programmaufruf und die erste Faxverarbeitung
-k&ouml;nnen jeweils etwas dauern und ein paar
-zus&auml;tzliche Eingaben erfordern. <br>
+Der erste Programmaufruf und die erste Faxverarbeitung mit
+Hylafax/Capsiuite k&ouml;nnen jeweils etwas dauern und
+ein paar zus&auml;tzliche Eingaben erfordern. <br>
 Voraussetzungen s.u.</p>
 
 <h2>GEBRAUCH
