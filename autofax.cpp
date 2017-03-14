@@ -5289,7 +5289,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 void paramcl::DateienHerricht() 
 {
 	Log(violetts+Tx[T_DateienHerricht]);
-	const string filter =" [ [:punct:]]*[0-9][0-9 [:punct:]]*[_]\\?.*\\.";// statt ?.* zuvor ?[0-9]*, aber vielleicht unnoetig
+	const string filter =" [[:space:][:punct:]]*[0-9][0-9[:space:][:punct:]]*[_]\\?.*\\.";// statt ?.* zuvor ?[0-9]*, aber vielleicht unnoetig
 	struct stat entrynpdf={0};
 	//vector<string> npdf, spdf, *npdfp=&npdf, *spdfp=&spdf;  vector<uchar> prios;
 	vector<fxfcl> fxv; // Faxvektor
