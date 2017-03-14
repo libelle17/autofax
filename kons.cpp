@@ -1153,8 +1153,7 @@ void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool 
 	tokens->clear();
 	while (1) {
 		end=utext.find(usep,start);
-		l2=string::npos;
-		if (end!=string::npos) l2-=start;
+		if (end!=string::npos) l2=end-start; else l2=string::npos;
 		if (end==string::npos || nichtmehrfach || l2) {
 			tokens->push_back(text->substr(start,l2));
 			if (obverb)	
@@ -1164,7 +1163,7 @@ void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool 
 				break;
 			} // 		 if (end==string::npos)
 		} // 	 if (l2==string::npos || nichtmehrfach || l2)
-		start = end+len;
+		start=end+len;
 	} // 	while (1)
 	delete usep;
 } // void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach) 
@@ -1358,9 +1357,11 @@ int confdat::lies(const string& fname, int obverb)
       zn<<zeile;
     }
     obgelesen=1;
+		if (obverb>0) cout<<"confdat::lies fertig 0"<<endl;
     return 0;
   }
-  return 1;
+	if (obverb>0) cout<<"confdat::lies fertig 1"<<endl;
+	return 1;
 } // lies(const string& fname, int obverb)
 
 void absch::clear()

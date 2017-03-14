@@ -9021,6 +9021,7 @@ void paramcl::zeigkonf()
 
 int main(int argc, char** argv) 
 {
+
 	string prog;
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
