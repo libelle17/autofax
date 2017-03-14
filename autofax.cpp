@@ -5289,7 +5289,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 void paramcl::DateienHerricht() 
 {
 	Log(violetts+Tx[T_DateienHerricht]);
-	const string filter =" [[:punct:]]*[0-9][0-9[:punct:]]*[_]\\?.*\\.";// statt ?.* zuvor ?[0-9]*, aber vielleicht unnoetig
+	const string filter =" [ [:punct:]]*[0-9][0-9 [:punct:]]*[_]\\?.*\\.";// statt ?.* zuvor ?[0-9]*, aber vielleicht unnoetig
 	struct stat entrynpdf={0};
 	//vector<string> npdf, spdf, *npdfp=&npdf, *spdfp=&spdf;  vector<uchar> prios;
 	vector<fxfcl> fxv; // Faxvektor
@@ -5310,7 +5310,7 @@ void paramcl::DateienHerricht()
 		for(size_t iakt=0;iakt<iprid.size();iakt++) {
 			// 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 			if (!iprid.at(iakt).empty()) {
-					if (!regexec(&mu[iprio].regex,iprid[iakt].c_str(),0,NULL,0)) {
+				if (!regexec(&mu[iprio].regex,iprid[iakt].c_str(),0,NULL,0)) {
 					// for(uchar iprio=0;iprio<anfxstrvec.size();iprio++)
 					//    // 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 					//    cmd=string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\"";
@@ -5377,9 +5377,9 @@ void paramcl::DateienHerricht()
 						} // for(unsigned j=0;j<toknr.size();j++) 
 					} // 				if ((pos0=stamm.rfind(anfxstrvec.at(iprio).c_str()))!=string::npos)
 					iprid[iakt].clear(); // Datei nach Gebrauch loeschen, um dann die restlichen zu sehen
-					} else {
-						Log(iprid[iakt]+rots+Tx[T_passt_nicht_zu]+schwarz+anfxstrvec[iprio],obverb,oblog);
-					} // 		if (!regexec(&mu[0].regex,iprid[iakt].c_str(),0,NULL,0))
+				} else {
+					Log(iprid[iakt]+rots+Tx[T_passt_nicht_zu]+schwarz+anfxstrvec[iprio],obverb,oblog);
+				} // 		if (!regexec(&mu[0].regex,iprid[iakt].c_str(),0,NULL,0))
 			} // 			if (!iprid.at(iakt) 
 			//		  else KLA
 			//		   <<gruen<<"keine Uebereinstimmung: "<<mu[iprio].holmuster()<<" mit "<<iprid[iakt]<<schwarz<<endl;
