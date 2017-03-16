@@ -669,7 +669,8 @@ class linst_cl
  string instp; // Befehl zum Installieren ueber das Installationnssystem
  string instyp; // Befehl zum Installieren ueber das Installationnssystem mit automatischem yes auf Rueckfragen
  string upr;   // Befehl zum Deinstallieren ueber das Installationssystem
- string uypr;   // Befehl zum Deinstallieren ueber das Installationssystem
+ string udpr;   // Befehl zum direkten Deinstallieren
+ string uypr;   // Befehl zum Deinstallieren ueber das Installationssystem ohne Rueckfrage
  string repos; // Befehl zum Hinzufuegen des Repositories fuer den Compiler
  string compil; // Paketnamen fuer den Compiler
  string dev; // Anhaengsel fuer die development-Versionen ("-dev" oder "-devel")
@@ -677,7 +678,7 @@ class linst_cl
     uchar obnmr=1;
     string eprog; // ersetztes Programm
     string ersetzeprog(const string& prog);
-    int doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda="");// ,uchar obyes=1);
+    int doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda=nix,uchar ohneab=0);// ,uchar obyes=1);
     int doggfinst(const string& prog,int obverb=0,int oblog=0);
     int douninst(const string& prog,int obverb=0,int oblog=0,uchar obyes=1);
     int obfehlt(const string& prog,int obverb=0,int oblog=0);

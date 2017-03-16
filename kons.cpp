@@ -1305,6 +1305,7 @@ instprog linst_cl::pruefipr(int obverb,int oblog)
 				} // 				if (obprogda("dnf",obverb-1,oblog))
 				compil="make automake gcc-c++ kernel-devel";
 			} // 			if (obprogda("zypper",obverb-1,oblog)) KLZ // opensuse
+			udpr="sudo rpm -e --nodeps ";
 		} else if (obprogda("apt-get",obverb-1,oblog)) {
 			// Repositories: Frage nach cdrom ausschalten
 			systemrueck("sudo sh -c \"grep -q -m 1 '^[^#]*cdrom' /etc/apt/sources.list && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' /etc/apt/sources.list |"
@@ -1316,6 +1317,7 @@ instprog linst_cl::pruefipr(int obverb,int oblog)
 			instp="sudo apt-get install "; 
 			instyp="sudo apt-get -y --force-yes --reinstall install "; 
 			upr="sudo apt-get --auto-remove purge ";
+			udpr="sudo sudo dpkg -r --force-depends ";
 			uypr="sudo apt-get -y --auto-remove purge ";
 			compil="install build-essential linux-headers-`uname -r`";
 			dev="dev";
@@ -2553,7 +2555,7 @@ string linst_cl::ersetzeprog(const string& prog)
 } // string linst_cl::ersetzeprog(const string& prog) 
 
 // Problem: bei obyes erscheint die Rueckfrage dem Benutzer nicht, statt dessen wartet das Programm
-int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/) // ,uchar obyes/*=1*/)
+int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar ohneab/*=0*/) // ,uchar obyes/*=1*/)
 {
   // <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
   int ret=2;
@@ -2578,7 +2580,11 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
     } // switch (linst.pruefipr()) 
 		const uchar obyes=1;
 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog))) {
-		  anfgggf(unindt,upr+eprog);
+			if (ohneab) {
+				anfgggf(unindt,udpr+eprog);
+			} else {
+				anfgggf(unindt,upr+eprog);
+			}
 		} // 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog)))
 		//				for(iru=0;iru<2;iru++) KLA
 		//					if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
