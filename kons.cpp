@@ -1316,9 +1316,9 @@ instprog linst_cl::pruefipr(int obverb,int oblog)
 			schau="dpkg -s";
 			instp="sudo apt-get install "; 
 			instyp="sudo apt-get -y --force-yes --reinstall install "; 
-			upr="sudo apt-get --auto-remove purge ";
-			udpr="sudo sudo dpkg -r --force-depends ";
-			uypr="sudo apt-get -y --auto-remove purge ";
+			upr="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
+			udpr="sudo apt-get -f install; sudo sudo dpkg -r --force-depends ";
+			uypr="sudo apt-get -f install; sudo apt-get -y --auto-remove purge ";
 			compil="install build-essential linux-headers-`uname -r`";
 			dev="dev";
 		} else {
