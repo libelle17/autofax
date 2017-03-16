@@ -556,8 +556,7 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 					const string cmd=string("sudo mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
 						"' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
 					Log(string(Txd[T_Fuehre_aus_db])+blau+cmd+schwarz,1,1);
-					int erg __attribute__((unused));
-					erg=system(cmd.c_str());
+					int erg __attribute__((unused))=system(cmd.c_str());
 				} // if (Tippob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) 
 				break;
 			case Postgres:

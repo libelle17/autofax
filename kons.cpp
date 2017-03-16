@@ -663,8 +663,7 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 					break;
 				} 
 				if (!*erfolg) {
-					int erg __attribute__((unused));
-					erg=systemrueck("sudo touch '"+datei+"'",obverb,oblog);
+					int erg __attribute__((unused))=systemrueck("sudo touch '"+datei+"'",obverb,oblog);
 				}
 			} // oeffne
 			return sdat;
@@ -696,8 +695,7 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 	}
 	if (obverb>1) {
 		cout<<rot<<Txk[T_Logdateidpp]<<endl<<schwarz; 
-		int erg __attribute__((unused));
-		erg=system((string(dir) + "\"" + logdatei + "\"").c_str());
+		int erg __attribute__((unused))=system((string(dir) + "\"" + logdatei + "\"").c_str());
 	}
 	const string ofil=string(logdatei)+"tmp";
 	int abhier=0;
@@ -3203,8 +3201,8 @@ int kopier(const string& quel, const string& ziel, int obverb, int oblog)
           fehler=3;
         } else {
           fehler=0;
-          chmod(ziel.c_str(),statq.st_mode);
-          chown(ziel.c_str(),statq.st_uid,statq.st_gid);
+          bool chmerg __attribute__((unused))=chmod(ziel.c_str(),statq.st_mode);
+          bool choerg __attribute__((unused))=chown(ziel.c_str(),statq.st_uid,statq.st_gid);
           struct utimbuf ubuf={0};
           ubuf.actime=ubuf.modtime=statq.st_mtime;
           utime(ziel.c_str(),&ubuf);
