@@ -5100,7 +5100,7 @@ int paramcl::pruefocr()
 						if (system==deb) {
 							linst.doggfinst("pkg-config",obverb+1,oblog);
 							linst.doggfinst("python3-setuptools",obverb+1,oblog);
-							linst.doggfinst("libffi-dev",obverb+1,oblog);
+							linst.doggfinst("libffi-dev",obverb+1,oblog,1);
 							linst.doggfinst("libssl-dev",obverb+1,oblog);
 						}
 						const string proj="ocrmypdf_copy";

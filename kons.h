@@ -679,7 +679,7 @@ class linst_cl
     string eprog; // ersetztes Programm
     string ersetzeprog(const string& prog);
     int doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda=nix,uchar ohneab=0);// ,uchar obyes=1);
-    int doggfinst(const string& prog,int obverb=0,int oblog=0);
+    int doggfinst(const string& prog,int obverb=0,int oblog=0,uchar ohneab=0);
     int douninst(const string& prog,int obverb=0,int oblog=0,uchar obyes=1);
     int obfehlt(const string& prog,int obverb=0,int oblog=0);
 };

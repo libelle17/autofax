@@ -2584,7 +2584,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				anfgggf(unindt,udpr+eprog);
 			} else {
 				anfgggf(unindt,upr+eprog);
-			}
+			} // 			if (ohneab) else
 		} // 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog)))
 		//				for(iru=0;iru<2;iru++) KLA
 		//					if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
@@ -2620,11 +2620,11 @@ void anfgggf(const string datei, const string inhalt)
 	} // 			if (!obda)
 } // void anfgggf(string datei, string inhalt)
 
-int linst_cl::doggfinst(const string& prog,int obverb,int oblog)
+int linst_cl::doggfinst(const string& prog,int obverb,int oblog,uchar ohneab/*=0*/)
 {
   if (!(eprog=ersetzeprog(prog)).empty()) {
     if (obfehlt(eprog,obverb,oblog)) {
-      return doinst(prog,obverb,oblog);
+      return doinst(prog,obverb,oblog,nix,ohneab);
     }
     eprog.clear();
   } // if (!(eprog=ersetzeprog(prog)).empty()) 
