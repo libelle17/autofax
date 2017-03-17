@@ -85,11 +85,14 @@ iuninsd=$(IPR)$(1) &&{ $(call suninsd,$(1),$(2))}; # direkt
 i1unin=$(call iunins,$(1),$(1))
 i1unind=$(call iuninsd,$(1),$(1)) # direkt
 i_unins=$(IP_R)$(1) &&{ $(call sunins,$(1),$(2))};
+i_uninsd=$(IP_R)$(1) &&{ $(call suninsd,$(1),$(2))}; # direkt
 # Programm suchen, ggf. installieren und ...
 siunins= $(SPR)$(1)>$(KR)||{ $(call iunins,$(1),$(2))};
+siuninsd= $(SPR)$(1)>$(KR)||{ $(call iuninsd,$(1),$(2))}; # direkt
 i1siun=$(call siunins,$(1),$(1))
+i1siund=$(call siuninsd,$(1),$(1)) # direkt
 si_unins=$(SPR)$(1)>$(KR)||{ $(call i_unins,$(1),$(2))};
-GROFFCHECK:=$(call i1siun,$(pgroff))true
+GROFFCHECK:=$(call i1siund,$(pgroff))true
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR)>$(KR))
