@@ -6169,9 +6169,9 @@ int paramcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct sta
 	int erg=1;
     vector<string> tok; // fuer imagedescription
 		if (tmp) {
-			memset(tmp, 0, sizeof(*tmp));
+//			memset(tmp, 0, sizeof(*tmp)); // schon bei Initialisierung
 			if (elogp) {
-				memset(elogp,0,sizeof *elogp);
+//				memset(elogp,0,sizeof *elogp); // schon bei Initialisierung
 				if (!lstat(datei.c_str(),elogp))  {
 //					if (chmod(datei.c_str(),S_IRWXU|S_IRWXG|S_IRWXO)) systemrueck("sudo chmod +r \""+datei+"\"",obverb,oblog);
 					memcpy(tmp, localtime(&elogp->st_mtime),sizeof(*tmp));
@@ -6242,6 +6242,7 @@ int paramcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct sta
       } // if (calleridp->empty()) 
       TIFFClose(tif);
     } // if (TIFF* tif = TIFFOpen(datei.c_str(), "r")) 
+	Log(violetts+Tx[T_Ende]+Tx[T_holtif]+schwarz);
  return erg;
 } // int paramcl::holtif(string& datei,struct tm *tmp,ulong *seitenp,string *calleridp,string *devnamep)
 
@@ -6333,13 +6334,17 @@ void paramcl::empfarch()
 			if (chmod(hpfad.c_str(),S_IRWXU|S_IRGRP|S_IROTH))
 				systemrueck("sudo chmod +r \""+hpfad+"\"",obverb,oblog);
 		if (obocri) {
-      obpdfda=!zupdf(&vorsoffice, ziel, &pseiten, obocri, 1); // 0=Erfolg
-			if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) if (!kfehler) tuloeschen(hpfad,cuser,obverb,oblog);
-    } // if (obocri) 
-    if (obhpfadda||obpdfda) {
-      cmd=string("sudo mv \"")+rueck[i]+"\" \""+hempfavz+"\"";
-      systemrueck(cmd,obverb,oblog);
-      RS zs(My);
+			obpdfda=!zupdf(&vorsoffice, ziel, &pseiten, obocri, 1); // 0=Erfolg
+			if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) {
+				elog.st_size=entrynd.st_size;
+				if (!kfehler) 
+					tuloeschen(hpfad,cuser,obverb,oblog);
+			} // 			if (obpdfda) if (!lstat(ziel.c_str(),&entrynd))
+		} // if (obocri) 
+		if (obhpfadda||obpdfda) {
+			cmd=string("sudo mv \"")+rueck[i]+"\" \""+hempfavz+"\"";
+			systemrueck(cmd,obverb,oblog);
+			RS zs(My);
       // ... und falls erfolgreich in der Datenbanktabelle inca eintragen
       for(int runde=0;runde<2;runde++) {
         if (runde==0) { zs.Abfrage("SET NAMES 'utf8'");
@@ -8117,7 +8122,7 @@ int paramcl::pruefcapi()
 // wird aufgerufen in: faxemitC
 void inDbc(DB *My, const string& spooltab, const string& altspool, const string& spoolg, fsfcl *fsfp, char* telnr, int obverb, int oblog)
 {
-  Log(violetts+Tx[T_inDbc]+schwarz,obverb?obverb-1:0,oblog);
+  Log(violetts+Tx[T_inDbc]+schwarz,obverb/*?obverb-1:0*/,oblog);
   string spooldir, spoolfil;
   spooldir=dir_name(spoolg);
   spoolfil=base_name(spoolg);
@@ -8218,7 +8223,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 // wird aufgerufen in faxemitH
 void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp, const string& hylaid, fsfcl *fsfp,string *tel, int obverb, int oblog)
 {
-  Log(violetts+Tx[T_inDBh]+schwarz,obverb?obverb-1:0,oblog);
+  Log(violetts+Tx[T_inDBh]+schwarz,obverb/*?obverb-1:0*/,oblog);
   const string spoolfil=string("q")+hylaid;
   const string spoolg= pmp->hsendqvz+vtz+spoolfil;
   uint affr=0;
