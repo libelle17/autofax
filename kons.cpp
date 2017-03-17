@@ -2671,7 +2671,9 @@ string gethome()
 {
  static string erg;
  if (erg.empty()) {
-   erg=getenv("HOME");
+//   erg=getenv("HOME");
+   svec rue;
+	 systemrueck("getent passwd $(logname)|cut -d: -f6",0,0,&rue);
    /*
    svec srueck;
    systemrueck("echo $HOME",0,0,&srueck);
