@@ -7459,11 +7459,17 @@ int paramcl::pruefhyla()
 		systemrueck("sudo sh -c \"V="+varsphylavz+";L=\\$V/log;R=\\$V/recvq;chmod 774 \\$L \\$R;chmod 660 \\$L/seqf \\$R/seqf\"",obverb,oblog);
 		// Archivierung ggf. aktivieren
 		if (!hylalaeuftnicht) {
-			struct stat hfstat={0};
 			const string hour="/etc/cron.hourly", fc="faxqclean";
-			if (!lstat(hour.c_str(),&hfstat)) {
-				systemrueck("sudo sh -c \"for D in "+hour+"/*;do grep -q '"+fc+" *$' \\$D&&sed -i 's/"+fc+" *$/"+fc+" -a -A/g' \\$D||true;done\"",obverb,oblog);
-			} // 			if (!lstat(hour.c_str(),&hfstat))
+// das Folgende fuehrt zu einer Bildschirmmeldung mit *, wenn Verzeichnis leer 
+//			struct stat hfstat={0};
+//			if (!lstat(hour.c_str(),&hfstat)) {
+//			systemrueck("sudo sh -c \"for D in "+hour+"/*;do grep -q '"+fc+" *$' \\$D&&sed -i 's/"+fc+" *$/"+fc+" -a -A/g' \\$D||true;done\"",obverb,oblog);
+//			} // 			if (!lstat(hour.c_str(),&hfstat))
+		svec hrue;
+		systemrueck("sudo sh -c 'find "+hour+" -type f -exec grep -l \""+fc+" *$\" {} \\; 2>/dev/null'", obverb,oblog,&hrue);
+		for(size_t i=0;i<hrue.size();i++) {
+			systemrueck("sudo sh -c \"sed -i 's/"+fc+" *$/"+fc+" -a -A/g' "+hrue[i]+"||true;\"",obverb,oblog);
+		}
 /*
 			if (!lstat("/etc/cron.hourly/hylafax",&hfstat)) KLA
 				systemrueck("! sudo grep -q 'faxqclean *$' /etc/cron.hourly/hylafax || ""sudo sed -i 's/faxqclean *$/faxqclean -a -A/g' /etc/cron.hourly/hylafax", obverb,oblog); // keine Sicherungskopie, sonst ausgefuehrt

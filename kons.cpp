@@ -618,7 +618,8 @@ mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_b
     //    int erg __attribute__((unused));
     if (name!=unindt)  // sonst vielleicht Endlosschleife
 		  pruefverz(dir_name(name),0,0,0,0);
-    if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) {
+//    if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) KLA
+		if (!touch(name,obverb,oblog)) {
       setfaclggf(name,falsch,modus&ios::out||modus&ios::app?6:4,falsch,obverb,oblog,faclbak);
     } // if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) 
   } // for(int iru=0;iru<3;iru++) 
@@ -663,7 +664,9 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 					break;
 				} 
 				if (!*erfolg) {
-					int erg __attribute__((unused))=systemrueck("sudo touch '"+datei+"'",obverb,oblog);
+					int erg __attribute__((unused))=
+//                                        systemrueck("sudo touch '"+datei+"'",obverb,oblog);
+					touch(datei,obverb,oblog);
 				}
 			} // oeffne
 			return sdat;
@@ -1087,7 +1090,7 @@ void kopierm(string *quelle, string *ziel)
 #endif
 
 // von http://chris-sharpe.blogspot.de/2013/05/better-than-systemtouch.html
-int touch(const std::string& pfad,int obverb/*=0*/,int oblog/*=*/)
+int touch(const string& pfad,int obverb/*=0*/,int oblog/*=0*/)
 {
 	struct stat tstat;
   int fehler=lstat(pfad.c_str(),&tstat);
@@ -1103,11 +1106,11 @@ int touch(const std::string& pfad,int obverb/*=0*/,int oblog/*=*/)
 			if (obverb||oblog) 
 			  std::clog<<violett<<__PRETTY_FUNCTION__<<schwarz<<": erfolgreich fuer \""<<blau<<pfad<<schwarz<<"\"\n";
 			 fehler=0;
-			}
-		}
+			} // 			if (rc) else
+		} // 		if (fd<0) else
 		if (fehler)
 			fehler=systemrueck("sudo touch '"+pfad+"'",obverb,oblog);
-	}
+	} // 	if (fehler)
 	return fehler;
 } // int touch(const std::string& pfad,int obverb/*=0*/,int oblog/*=*/)
 
@@ -3185,12 +3188,12 @@ int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
   ubuf.actime=ubuf.modtime=statgm.st_mtime;
   if (utime(zu.c_str(),&ubuf)) {
    systemrueck("sudo touch -r \""+gemaess+"\" \""+zu+"\"",obverb,oblog);
-  }
+  } //   if (utime(zu.c_str(),&ubuf))
   lstat(zu.c_str(),&statzu);
   if (memcmp(&statgm.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime)) {
     Log(rots+Txk[T_Datum_nicht_gesetzt_bei]+schwarz+zu+rot+"'"+schwarz,1,1);
     //          exit(0);
-  }
+  } //   if (memcmp(&statgm.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime))
   return 0;
 } // int attrangleich(string& zu, string& gemaess,int obverb, int oblog)
 
