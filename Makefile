@@ -191,6 +191,7 @@ endif
 %.o : %.cpp
 %.o : %.cpp $(DEPDIR)/%.d
 	@printf " kompiliere %b%s%b: " $(blau) "$<" $(reset) >$(BA)
+#	-@if ! test -f instvz; then printf \"$$(getent passwd $$(logname)|cut -d: -f6)\">instvz; fi;
 	-@if ! test -f instvz; then printf \"$$(pwd)\">instvz; fi;
 	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< $(BFA)
 	-@sed -i 's/version //g' $(DEPDIR)/*.Td

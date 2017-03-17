@@ -5210,7 +5210,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 						// 5.12.16 opensuse: bearbeitet jetzt nur (noch?) die erste Seite!
 						pname="soffice";
 						if (pruefsoffice()) {
-							cmd0="cd $HOME; ";
+							cmd0="cd "+gethome()+"; ";
 							cmd="soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+*quellp+"\" 2>&1";
 						} // 						if (pruefsoffice())
 						break; // Ergebnis immer 0
@@ -7583,10 +7583,10 @@ void paramcl::pruefmodcron()
 int paramcl::pruefinstv()
 {
 	int erg=0;
-	if (instvz.empty()) {
-		instvz=gethome()+vtz+meinname;
+//	if (instvz.empty()) KLA
+//		instvz=gethome()+vtz+meinname;
 		erg=pruefverz(instvz,obverb,oblog);
-	} // 	if (instvz.empty()) 
+//	KLZ // 	if (instvz.empty()) 
 	return erg;
 } // void paramcl::pruefinstv()
 
@@ -7887,9 +7887,9 @@ int paramcl::pruefcapi()
 								systemrueck("cd "+instvz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
 								systemrueck("cd "+instvz+" && sudo rpm -Uvh "+kstring,obverb,oblog);
 								for(unsigned iru=0;iru<2;iru++) {
-									if (!systemrueck("cd "+gethome()+"/rpmbuild/SPECS && rpmbuild -bp --target=$(uname -m) kernel.spec",obverb,oblog)) {
+									if (!systemrueck("cd '"+gethome()+"/rpmbuild/SPECS' && rpmbuild -bp --target=$(uname -m) kernel.spec",obverb,oblog)) {
 										systemrueck("sudo dnf -y install kernel-devel",obverb,oblog);
-										systemrueck("KSTRING="+kstring+" && cd $HOME/rpmbuild/BUILD/$(echo $KSTRING|cut -d. -f1,2,4)/linux-`uname -r` && "
+										systemrueck("KSTRING="+kstring+" && cd "+gethome()+"/rpmbuild/BUILD/$(echo $KSTRING|cut -d. -f1,2,4)/linux-`uname -r` && "
 												"make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules",obverb,oblog);
 										break;
 									}

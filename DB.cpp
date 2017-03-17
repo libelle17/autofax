@@ -283,7 +283,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 							svec zzruck, zincldir;
 							systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit", obverb,oblog,&zzruck);
 							if (!zzruck.size())
-								systemrueck("find ${HOME} -name .my.cnf -printf '%p\\n' -quit",obverb,oblog,&zzruck);
+								systemrueck("find "+gethome()+" -name .my.cnf -printf '%p\\n' -quit",obverb,oblog,&zzruck);
 							if (zzruck.size()) {
 								systemrueck("sudo cat "+zzruck[0]+" | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", 
 										obverb,oblog,&zincldir); 

@@ -2672,8 +2672,14 @@ string gethome()
  static string erg;
  if (erg.empty()) {
 //   erg=getenv("HOME");
-   svec rue;
-	 systemrueck("getent passwd $(logname)|cut -d: -f6",0,0,&rue);
+//   svec rue;
+//	 systemrueck("getent passwd $(logname)|cut -d: -f6",0,0,&rue);
+    size_t pos=instvz.rfind('/');
+    if (pos>1&&pos!=string::npos) {
+		  erg=instvz.substr(0,pos);
+		} else {
+		  erg=instvz; // sollte nicht vorkommen
+		}
    /*
    svec srueck;
    systemrueck("echo $HOME",0,0,&srueck);
