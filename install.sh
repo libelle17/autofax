@@ -9,25 +9,26 @@ kf() {
 }
 
 # Installationsprogramm ermitteln
+# inhaltlich parallel linst_cl::pruefipr( in kons.cpp
 getIPR() {
   CTAGS=ctags;
 	{ still which zypper &&{ 
-		Z=zypper;g=--gpg-auto-import-keys;IdPR="$Z -n $g in ";IP_R="sudo $Z $g in ";UPR="sudo $Z rm -u ";pgroff=groff;
-  REPOS="sudo $Z lr|grep 'g++\|devel_gcc'\>$KR||sudo $Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
-  urepo="sudo $Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && sudo $Z rr devel_gcc;";
+		Z=zypper;g=--gpg-auto-import-keys;IdPR="$Z -n $g in ";IP_R="sudo -H $Z $g in ";UPR="sudo -H $Z rm -u ";pgroff=groff;
+  REPOS="sudo -H $Z lr|grep 'g++\|devel_gcc'\>$KR||sudo -H $Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
+  urepo="sudo -H $Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && sudo -H $Z rr devel_gcc;";
   COMP="gcc gcc-c++ \$(CCInst)";
 	} }||
-	{ still which apt-get &&{ IdPR="apt-get --assume-yes install ";IP_R="sudo $IdPR";
-	                                    UPR="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
+	{ still which apt-get &&{ IdPR="apt-get --assume-yes install ";IP_R="sudo -H $IdPR";
+	                                    UPR="sudo -H apt-get -f install; sudo -H apt-get --auto-remove purge ";
 																			dev=dev;
 																			COMP="build-essential linux-headers-\$(shell uname -r)";
 																			CTAGS=exuberant-ctags;} }||
-	{ still which dnf &&{ fed=1;IdPR="dnf -y install ";UPR="sudo dnf remove ";} }||
-	{ still which yum &&{ fed=1;IdPR="yum -y install ";UPR="sudo yum remove ";} }
-	[ $fed = 1 ] &&{ libmc=mysql;COMP="make automake gcc-c++ kernel-devel";IP_R="sudo $IdPR";}
-	{ still which rpm &&{ SPR="rpm -q ";UDPR="sudo rpm -e --nodeps ";};}||
-	{ still which dpkg &&{ SPR="dpkg -s ";UDPR="sudo apt-get -f install; sudo sudo dpkg -r --force-depends ";};}
-	IPR="sudo $IdPR";
+	{ still which dnf &&{ fed=1;IdPR="dnf -y install ";UPR="sudo -H dnf remove ";} }||
+	{ still which yum &&{ fed=1;IdPR="yum -y install ";UPR="sudo -H yum remove ";} }
+	[ $fed = 1 ] &&{ libmc=mysql;COMP="make automake gcc-c++ kernel-devel";IP_R="sudo -H $IdPR";}
+	{ still which rpm &&{ SPR="rpm -q ";UDPR="sudo -H rpm -e --nodeps ";};}||
+	{ still which dpkg &&{ SPR="dpkg -s ";UDPR="sudo -H apt-get -f install; sudo -H dpkg -r --force-depends ";};}
+	IPR="sudo -H $IdPR";
 	DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile install.sh viall .exrc $UNF"
 }
 
