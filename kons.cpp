@@ -1279,47 +1279,47 @@ instprog linst_cl::pruefipr(int obverb,int oblog)
 		if (obprogda("rpm",obverb-1,oblog)) {
 			dev="devel";
 			schau="rpm -q";
-			udpr="sudo -H rpm -e --nodeps ";
+			udpr="sudo rpm -e --nodeps ";
 			if (obprogda("zypper",obverb-1,oblog)) { // opensuse
 				// heruntergeladene Dateien behalten
 				ipr=zypper;
-				instp="sudo -H zypper -n --gpg-auto-import-keys in ";
+				instp="sudo zypper -n --gpg-auto-import-keys in ";
 				instyp=instp+"-y ";
-				upr="sudo -H zypper -n rm -u ";
+				upr="sudo zypper -n rm -u ";
 				uypr=upr+"-y ";
-				repos="sudo -H zypper lr | grep 'g++\\|devel_gcc'>/dev/null 2>&1 || "
-				      "sudo -H zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release |"
+				repos="sudo zypper lr | grep 'g++\\|devel_gcc'>/dev/null 2>&1 || "
+				      "sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release |"
 							"grep ^NAME= | cut -d'\"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'\"' -f2`/devel:gcc.repo;";
 				compil="gcc gcc-c++ gcc6-c++";
 			} else { // dann fedora
 				if (obprogda("dnf",obverb-1,oblog)) {
 					ipr=dnf;
-					instp="sudo -H dnf install ";
-					instyp="sudo -H dnf -y install ";
-					upr="sudo -H dnf remove ";
-					uypr="sudo -H dnf -y remove ";
+					instp="sudo dnf install ";
+					instyp="sudo dnf -y install ";
+					upr="sudo dnf remove ";
+					uypr="sudo dnf -y remove ";
 				} else if (obprogda("yum",obverb-1,oblog)) {
 					ipr=yum;
-					instp="sudo -H yum install ";
-					instyp="sudo -H yum -y install ";
-					upr="sudo -H yum remove ";
-					uypr="sudo -H yum -y remove ";
+					instp="sudo yum install ";
+					instyp="sudo yum -y install ";
+					upr="sudo yum remove ";
+					uypr="sudo yum -y remove ";
 				} // 				if (obprogda("dnf",obverb-1,oblog))
 				compil="make automake gcc-c++ kernel-devel";
 			} // 			if (obprogda("zypper",obverb-1,oblog)) KLZ // opensuse
 		} else if (obprogda("apt-get",obverb-1,oblog)) {
 			// Repositories: Frage nach cdrom ausschalten
-			systemrueck("sudo -H sh -c \"grep -q -m 1 '^[^#]*cdrom' /etc/apt/sources.list && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' /etc/apt/sources.list |"
+			systemrueck("sudo sh -c \"grep -q -m 1 '^[^#]*cdrom' /etc/apt/sources.list && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' /etc/apt/sources.list |"
 					"cut -d: -f1) \\> 0$(grep -n -m 1 '^[^#]*cdrom' /etc/apt/sources.list | cut -d: -f1) && "
 					"ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/^[^#]*cdrom/d' /etc/apt/sources.list\"",obverb,oblog);
 			// hier werden die Dateien vorgabemaessig behalten
 			ipr=apt;
 			schau="dpkg -s";
-			instp="sudo -H apt-get install "; 
-			instyp="sudo -H apt-get -y --force-yes --reinstall install "; 
-			upr="sudo -H apt-get -f install; sudo -H apt-get --auto-remove purge ";
-			udpr="sudo -H apt-get -f install; sudo -H sudo -H dpkg -r --force-depends ";
-			uypr="sudo -H apt-get -f install; sudo -H apt-get -y --auto-remove purge ";
+			instp="sudo apt-get install "; 
+			instyp="sudo apt-get -y --force-yes --reinstall install "; 
+			upr="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
+			udpr="sudo apt-get -f install; sudo sudo dpkg -r --force-depends ";
+			uypr="sudo apt-get -f install; sudo apt-get -y --auto-remove purge ";
 			compil="install build-essential linux-headers-`uname -r`";
 			dev="dev";
 		} else {

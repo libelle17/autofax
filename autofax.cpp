@@ -5052,7 +5052,7 @@ int paramcl::pruefocr()
 				if (linst.pruefipr()==dnf||linst.pruefipr()==yum) 
 					linst.doggfinst("redhat-rpm-config",obverb+1,oblog);
 				linst.doinst("ghostscript",obverb+1,oblog,"gs");
-				systemrueck("sudo python3 -m pip install --upgrade setuptools pip");
+				systemrueck("sudo -H python3 -m pip install --upgrade setuptools pip");
 //				systemrueck("sudo python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
 				// python3 -m venv ocrvenv
 				// python3 -m venv --upgrade ocrvenv
@@ -5062,17 +5062,17 @@ int paramcl::pruefocr()
 				for(int iru=0;iru<2;iru++) {
 					const string virtualenv="virtualenv";
 					if (obprogda(virtualenv,obverb,oblog,&vprog)) break;
-					systemrueck("sudo pip3 install "+virtualenv,obverb,oblog);
+					systemrueck("sudo -H pip3 install "+virtualenv,obverb,oblog);
 				}
 				if (!vprog.empty()) {
-					systemrueck("sudo sh -c '"+vprog+" \""+virtvz+"\";"
+					systemrueck("sudo -H sh -c '"+vprog+" \""+virtvz+"\";"
 							". \""+virtvz+"/bin/activate\";"
 							"pip3 install requests;"
 							"pip3 install --upgrade ocrmypdf;"
 							"deactivate;"
 							"'",obverb,oblog);
 				} else {
-					systemrueck("sudo sh -c 'python3 -m venv \""+virtvz+"\";"
+					systemrueck("sudo -H sh -c 'python3 -m venv \""+virtvz+"\";"
 							"python3 -m venv --upgrade \""+virtvz+"\";"
 							". \""+virtvz+"/bin/activate\";"
 							"pip3 install --upgrade pip;"
@@ -5086,7 +5086,7 @@ int paramcl::pruefocr()
 						anfgggf(unindt,"sudo rm -rf \""+virtvz+"\"");
 						anfgggf(unindt,
 						"sudo sh -c '. \""+virtvz+"/bin/activate\";"
-						"sudo pip3 uninstall --yes ocrmypdf;"
+						"sudo -H pip3 uninstall --yes ocrmypdf;"
 						"deactivate;'");
 						
 				// sudo pip3 uninstall --yes ocrmypdf
