@@ -74,12 +74,16 @@ pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
 # deinstallieren und Ueberschrift vormerken
 uninst=printf '$(UPR)$(1)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$(1)"\n'>>$(UNF);
+uninstd=printf '$(UDPR)$(1)\nprintf "$$blau%%s$$reset\\n" "$(UDPR)$(1)"\n'>>$(UNF); # direkt
 # in Protokoll suchen und ...
 sunins=test -f $(UNF)&&grep -q '$(1)' $(UNF)||{ $(call uninst,$(2))};
+suninsd=test -f $(UNF)&&grep -q '$(1)' $(UNF)||{ $(call uninstd,$(2))}; # direkt
 # installieren und ...
 # Selbes Wort in Protokoll suchen wie deinstallieren
 iunins=$(IPR)$(1) &&{ $(call sunins,$(1),$(2))};
+iuninsd=$(IPR)$(1) &&{ $(call suninsd,$(1),$(2))}; # direkt
 i1unin=$(call iunins,$(1),$(1))
+i1unind=$(call iuninsd,$(1),$(1)) # direkt
 i_unins=$(IP_R)$(1) &&{ $(call sunins,$(1),$(2))};
 # Programm suchen, ggf. installieren und ...
 siunins= $(SPR)$(1)>$(KR)||{ $(call iunins,$(1),$(2))};
@@ -223,10 +227,10 @@ endif
 #	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
 	-@find /usr/include -name tiff.h -print -quit|grep ''>$(KR)\
 	&&find $$(find /usr -maxdepth 1 -name "lib*"|sort -r) -name "libtiff.so" -print -quit|grep ''>$(KR)\
-	||{ $(UPR)$(LT) $(KF);$(call i1unin,$(LT))}
+	||{ $(UPR)$(LT) $(KF);$(call i1unind,$(LT))}
 	-@find /usr/include -name tiff.h -print -quit|grep ''>$(KR)\
 	&&find $$(find /usr -maxdepth 1 -name "lib*"|sort -r) -name "libtiff.so" -print -quit|grep ''>$(KR)\
-	||{ $(KF);$(call i1unin,$(LT5))}
+	||{ $(KF);$(call i1unind,$(LT5))}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                         \r" >$(BA)
 

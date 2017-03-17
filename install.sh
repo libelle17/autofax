@@ -18,22 +18,22 @@ getIPR() {
   COMP="gcc gcc-c++ \$(CCInst)";
 	} }||
 	{ still which apt-get &&{ IdPR="apt-get --assume-yes install ";IP_R="sudo $IdPR";
-	                                    UPR="sudo apt-get --auto-remove purge ";
+	                                    UPR="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
 																			dev=dev;
 																			COMP="build-essential linux-headers-\$(shell uname -r)";
 																			CTAGS=exuberant-ctags;} }||
 	{ still which dnf &&{ fed=1;IdPR="dnf -y install ";UPR="sudo dnf remove ";} }||
 	{ still which yum &&{ fed=1;IdPR="yum -y install ";UPR="sudo yum remove ";} }
 	[ $fed = 1 ] &&{ libmc=mysql;COMP="make automake gcc-c++ kernel-devel";IP_R="sudo $IdPR";}
-	{ still which rpm && SPR="rpm -q ";}||
-	{ still which dpkg && SPR="dpkg -s ";}
+	{ still which rpm &&{ SPR="rpm -q ";UDPR="sudo rpm -e --nodeps ";};}||
+	{ still which dpkg &&{ SPR="dpkg -s ";UDPR="sudo apt-get -f install; sudo sudo dpkg -r --force-depends ";};}
 	IPR="sudo $IdPR";
 	DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile install.sh viall .exrc $UNF"
 }
 
 exportvars() {
 	rm -f vars;
-	for v in KR KF IPR IP_R UPR SPR UNROH UNF AUNF pgroff dev libmc REPOS urepo COMP DATEIEN; do eval nv=\$$v; printf "$v:=$nv\n">>vars; done
+	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF pgroff dev libmc REPOS urepo COMP DATEIEN; do eval nv=\$$v; printf "$v:=$nv\n">>vars; done
 }
 
 einricht() {

@@ -3938,8 +3938,8 @@ void paramcl::konfcapi()
                   } else {
                     *fneu<<capiconf[snr].name<<" = \""<<capiconf[snr].wert<<"\""<<endl;
                     geschrieben=1;
-                  }
-                }
+                  } //                   if (!iru) else
+                } //                 if (capiconf[snr].wert!=altwert)
                 break; // wenn richtige Zeile gefunden, nicht mehr weitersuchen, unabhaengig vom Ergebnis
               } // if ((nkz=strstr(zeile,capiconf[snr].name))) 
             } // if ((nkz=zeile.find(capiconf[snr].wert))!=string::npos) 
@@ -4022,12 +4022,12 @@ void paramcl::verzeichnisse()
   for(zielmustercl *zmakt=zmp;1;zmakt++){
     pruefverz(zmakt->ziel,obverb,oblog);
     if (zmakt->obmusterleer()) break;
-  }
+  } //   for(zielmustercl *zmakt=zmp;1;zmakt++)
   for(uint imu=0;imu<this->zmzn;imu++) {
     char *imus = ltoan(imu);
     ::Log(string(Tx[T_Muster])+imus+": '"+rot+this->zmp[imu].holmuster()+schwarz+"'",this->obverb>1,this->oblog);
     ::Log(string(Tx[T_Ziel])+imus+":   '"+rot+this->zmp[imu].ziel+schwarz+"'",this->obverb>1,this->oblog);
-  }
+  } //   for(uint imu=0;imu<this->zmzn;imu++)
 } // paramcl:: verzeichnisse()
 
 // aufgerufen in pruefcron, pruefmodcron und anhalten
@@ -4036,7 +4036,7 @@ void paramcl::setztmpcron()
   if (tmpcron.empty()) {
     // Einbau von '~' ergaebe bei Aufruf mit und ohne sudo unterschiedliche Erweiterungen
     tmpcron=gethome()+"/rootscrontab";
-  }
+  } //   if (tmpcron.empty())
 } // void setztmpcron()
 
 

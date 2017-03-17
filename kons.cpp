@@ -1276,8 +1276,9 @@ instprog linst_cl::pruefipr(int obverb,int oblog)
 {
 	if (ipr==keinp) {
 		if (obprogda("rpm",obverb-1,oblog)) {
-			schau="rpm -q";
 			dev="devel";
+			schau="rpm -q";
+			udpr="sudo rpm -e --nodeps ";
 			if (obprogda("zypper",obverb-1,oblog)) { // opensuse
 				// heruntergeladene Dateien behalten
 				ipr=zypper;
@@ -1305,7 +1306,6 @@ instprog linst_cl::pruefipr(int obverb,int oblog)
 				} // 				if (obprogda("dnf",obverb-1,oblog))
 				compil="make automake gcc-c++ kernel-devel";
 			} // 			if (obprogda("zypper",obverb-1,oblog)) KLZ // opensuse
-			udpr="sudo rpm -e --nodeps ";
 		} else if (obprogda("apt-get",obverb-1,oblog)) {
 			// Repositories: Frage nach cdrom ausschalten
 			systemrueck("sudo sh -c \"grep -q -m 1 '^[^#]*cdrom' /etc/apt/sources.list && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' /etc/apt/sources.list |"
@@ -2555,7 +2555,7 @@ string linst_cl::ersetzeprog(const string& prog)
 } // string linst_cl::ersetzeprog(const string& prog) 
 
 // Problem: bei obyes erscheint die Rueckfrage dem Benutzer nicht, statt dessen wartet das Programm
-int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar ohneab/*=0*/) // ,uchar obyes/*=1*/)
+int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar ohneabh/*=0*/) // ,uchar obyes/*=1*/)
 {
   // <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
   int ret=2;
@@ -2580,11 +2580,11 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
     } // switch (linst.pruefipr()) 
 		const uchar obyes=1;
 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog))) {
-			if (ohneab) {
+			if (ohneabh) {
 				anfgggf(unindt,udpr+eprog);
 			} else {
 				anfgggf(unindt,upr+eprog);
-			} // 			if (ohneab) else
+			} // 			if (ohneabh) else
 		} // 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog)))
 		//				for(iru=0;iru<2;iru++) KLA
 		//					if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
@@ -2620,11 +2620,11 @@ void anfgggf(const string datei, const string inhalt)
 	} // 			if (!obda)
 } // void anfgggf(string datei, string inhalt)
 
-int linst_cl::doggfinst(const string& prog,int obverb,int oblog,uchar ohneab/*=0*/)
+int linst_cl::doggfinst(const string& prog,int obverb,int oblog,uchar ohneabh/*=0*/)
 {
   if (!(eprog=ersetzeprog(prog)).empty()) {
     if (obfehlt(eprog,obverb,oblog)) {
-      return doinst(prog,obverb,oblog,nix,ohneab);
+      return doinst(prog,obverb,oblog,nix,ohneabh);
     }
     eprog.clear();
   } // if (!(eprog=ersetzeprog(prog)).empty()) 
