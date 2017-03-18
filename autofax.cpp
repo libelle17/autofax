@@ -7896,7 +7896,7 @@ int paramcl::pruefcapi()
 								systemrueck("cd "+instvz+" && sudo rpm -Uvh "+kstring,obverb,oblog);
 								for(unsigned iru=0;iru<2;iru++) {
 									if (!systemrueck("cd '"+gethome()+"/rpmbuild/SPECS' && rpmbuild -bp --target=$(uname -m) kernel.spec",obverb,oblog)) {
-										systemrueck("sudo dnf -y install kernel-devel",obverb,oblog);
+										systemrueck("sudo dnf -y install kernel-devel-$(uname -r)",obverb,oblog);
 										systemrueck("KSTRING="+kstring+" && cd "+gethome()+"/rpmbuild/BUILD/$(echo $KSTRING|cut -d. -f1,2,4)/linux-`uname -r` && "
 												"make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules",obverb,oblog);
 										break;
