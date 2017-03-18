@@ -7849,12 +7849,13 @@ int paramcl::pruefcapi()
 						if (system==fed) {
 							svec vrueck1,vrueck2;
 							string v1,v2;
-							systemrueck("sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5",obverb,oblog,&vrueck1);
+							const string getvmvers="sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5";
+							systemrueck(getvmvers,obverb,oblog,&vrueck1);
 							if (vrueck1.size()) v1=vrueck1[0];
-							systemrueck("sudo dnf -y install kernel-modules-extra && "
+							systemrueck("sudo dnf -y install kernel-modules-extra-$(uname -r) && "
 									"{ lsmod | grep capidrv || sudo modprobe capidrv 2>/dev/null; "
 									"lsmod | grep kernelcapi || sudo modprobe kernelcapi 2>/dev/null;}",obverb,oblog);
-							systemrueck("sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5",obverb,oblog,&vrueck2);
+							systemrueck(getvmvers,obverb,oblog,&vrueck2);
 							if (vrueck2.size()) v2=vrueck2[0];
 							//            <<"vi: "<<v1<<"\n"<<"v2: "<<v2<<endl;
 							if (v1!=v2) {
