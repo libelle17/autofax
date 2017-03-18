@@ -4064,7 +4064,7 @@ void paramcl::pruefcron()
 			const string czt=" \\* \\* \\* \\*";
 			string vorcm;
 			if (!nochkeincron) {
-				cmd="bash -c 'grep \"\\*/.*"+czt+cb0+"\" <(sudo crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
+				cmd="sh -c 'grep \"\\*/.*"+czt+cb0+"\" <(sudo crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
 				svec cmrueck;
 				systemrueck(cmd,obverb,oblog,&cmrueck);
 				if (cmrueck.size()) vorcm=cmrueck[0];
@@ -4078,19 +4078,19 @@ void paramcl::pruefcron()
 				} else {
 					string unicmd="rm -f "+tmpcron+";";
 					cmd=unicmd;
-					string dazu="sudo crontab -l|sed '/"+zsaufr+"/d'>"+tmpcron+";";
-				  unicmd+=dazu;	
+					string dazu="crontab -l|sed '/"+zsaufr+"/d'>"+tmpcron+";";
+					unicmd+=dazu;	
 					if (!nochkeincron) {
-//					cmd=dazu; // 26.2.17: Debian: nach Deinstallation rootscrontab mit root-Berechtigungen, die Programm hier aufhielten
+						//					cmd=dazu; // 26.2.17: Debian: nach Deinstallation rootscrontab mit root-Berechtigungen, die Programm hier aufhielten
 						cmd=unicmd;
-          }
+					}
 					if (cronzuplanen) {
 						cmd+=" echo \""+cbef+"\">>"+tmpcron+";";
 					}
-					dazu=" sudo crontab "+tmpcron+";";
+					dazu=" crontab "+tmpcron+";";
 					unicmd+=dazu;
 					cmd+=dazu;
-					systemrueck(cmd,obverb,oblog);
+					systemrueck("sudo sh -c'"+cmd+"'",obverb,oblog);
 					anfgggf(unindt,unicmd);
 					::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronzuplanen?Tx[T_alle]+cronminut+Tx[T_Minuten]:Tx[T_gar_nicht])+schwarz+Tx[T_statt]+
 							+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
@@ -4103,27 +4103,27 @@ void paramcl::pruefcron()
 			if (!cronzuplanen) {
 				if (nochkeincron) {
 				} else {
-					befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&&(sudo crontab -l|sed '/"+zsaufr+"/d'>")+tmpcron+";"
-						"sudo crontab "+tmpcron+")||true";
+					befehl="sudo sh -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";"
+						"crontab "+tmpcron+";}||true'";
 				}
 			} else {
 				if (nochkeincron) {
 					befehl="rm -f "+tmpcron+";";
 				} else {
-					befehl="bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)'||(sudo crontab -l|sed '/"+zsaufr+"/d'>"+tmpcron+";";
+					befehl="sudo sh -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)'||{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";";
 				}
-				befehl+="echo \""+cbef+"\">>"+tmpcron+"; sudo crontab "+tmpcron+"";
+				befehl+="echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+"";
 				if (!nochkeincron)
-					befehl+=")";
-			}
+					befehl+=";}'";
+			} // 			if (!cronzuplanen)
 #else
 			const string befehl=cronzuplanen?
-				(nochkeincron?("rm -f ")+tmpcron+";":
-				 "bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+zsaufr+"/d'>"+tmpcron+"; ")+
-				"echo \""+cbef+"\">>"+tmpcron+"; sudo crontab "+tmpcron+(nochkeincron?"":")")
+				(nochkeincron?"rm -f "+tmpcron+";":
+				 "sudo sh -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' ||{ sudo crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+"; ")+
+				"echo \""+cbef+"\">>"+tmpcron+"; sudo crontab "+tmpcron+(nochkeincron?"":";}'")
 				:
-				(nochkeincron?"":("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+zsaufr+"/d'>")+tmpcron+";"
-				 "sudo crontab "+tmpcron+")||true")
+				(nochkeincron?"":"sudo sh -c 'grep \""+saufr+"\" -q <(sudo crontab -l) &&{ sudo crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+";"
+				 "sudo crontab "+tmpcron+";}||true'")
 				;
 #endif      
 			systemrueck(befehl,obverb,oblog);
@@ -4665,7 +4665,7 @@ void paramcl::anhalten()
   Log(violetts+Tx[T_anhalten]+schwarz);
   // crontab
   setztmpcron();
-  const string befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&&(sudo crontab -l|sed '/"+zsaufr+"/d'>")+tmpcron+";sudo crontab "+tmpcron+");true";
+  const string befehl="sudo sh -c 'grep \""+saufr+"\" -q<(sudo crontab -l)&&{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";crontab "+tmpcron+";};true'";
   systemrueck(befehl,obverb,oblog);
   // services
   /*
@@ -7576,12 +7576,12 @@ void paramcl::pruefmodcron()
   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++) {
 		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'",obverb,oblog)) {
     svec rueck;
-     if (!systemrueck("(sudo crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";sudo crontab "+tmpcron+")",obverb,oblog,&rueck)) {
+     if (!systemrueck("sudo sh -c 'crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";crontab "+tmpcron+"'",obverb,oblog,&rueck)) {
 //    for(size_t znr=0;znr<rueck.size();znr++) { ::Log(rueck[znr],1+obverb,oblog); } //     for(size_t znr=0;znr<rueck.size();znr++)
-			const string befehl="bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'&&"
-				"(sudo crontab -l 2>/dev/null|sed '/"+ersetzAllezu(mps[ru],"/","\\/")+"/d'>"+tmpcron+";sudo crontab "+tmpcron+");true";
+			const string befehl="sudo sh -c 'grep \""+mps[ru]+"\" -q <(crontab -l 2>/dev/null)&&"
+				"{ crontab -l 2>/dev/null|sed '/"+ersetzAllezu(mps[ru],"/","\\/")+"/d'>"+tmpcron+";crontab "+tmpcron+";};true'";
 			anfgggf(unindt,befehl);
-		 } //      if (!systemrueck("(sudo crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";sudo crontab "+tmpcron+")",obverb,oblog,&rueck))
+		 } //if (!systemrueck("(sudo crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";sudo crontab "+tmpcron+")",obverb,oblog,&rueck))
 		} // 		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'",obverb,oblog))
   } //   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++)
 } // void pruefmodcron(int obverb, int oblog)
