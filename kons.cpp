@@ -1987,19 +1987,21 @@ void pruefplatte()
 } // pruefplatte
 
 // ob das aktuelle Programm mehrfach laeuft
-void pruefmehrfach(const string& wen)
+void pruefmehrfach(const string& wen,uchar obstumm/*=0*/)
 {
   svec rueck;
 	const string iwen=wen.empty()?base_name(meinpfad()):wen;
   systemrueck("ps -eo comm|grep '^"+iwen+"'",0,0,&rueck);
   if (rueck.size()>1) {
-    cout<<Txk[T_Program]<<blau<<iwen<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
+	  if (obstumm)
+			exit(0);
+		cout<<Txk[T_Program]<<blau<<iwen<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
     exit(98);
   } //   if (rueck.size()>1) {
   /*
-  for(size_t j=0;j<rueck.size();j++) {
+  for(size_t j=0;j<rueck.size();j++) KLA
    // <<violett<<"rueck["<<j<<"]: "<<rot<<rueck[j]<<schwarz<<endl;
-  }
+  KLZ
   */
 } // void pruefmehrfach(char* ich)
 

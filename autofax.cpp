@@ -2232,7 +2232,7 @@ paramcl::paramcl(int argc, char** argv)
 void paramcl::pruefggfmehrfach()
 {
   if (!hilfe && !obvi && !zeigvers && !lista && !listf && !listi && !listw && suchstr.empty() && !loef && !loew && !loea && !anhl) {
-    pruefmehrfach(meinname);
+    pruefmehrfach(meinname,nrzf);
   }
 } // void paramcl::pruefggfmehrfach()
 
