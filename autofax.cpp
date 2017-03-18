@@ -4078,7 +4078,7 @@ void paramcl::pruefcron()
 				} else {
 					string unicmd="rm -f "+tmpcron+";";
 					cmd=unicmd;
-					string dazu="crontab -l|sed '\''/"+zsaufr+"/d'\''>"+tmpcron+";";
+					string dazu="crontab -l|sed '\\''/"+zsaufr+"/d'\\''>"+tmpcron+";";
 					unicmd+=dazu;	
 					if (!nochkeincron) {
 						//					cmd=dazu; // 26.2.17: Debian: nach Deinstallation rootscrontab mit root-Berechtigungen, die Programm hier aufhielten
@@ -4090,7 +4090,7 @@ void paramcl::pruefcron()
 					dazu=" crontab "+tmpcron+";";
 					unicmd+=dazu;
 					cmd+=dazu;
-					systemrueck("sudo sh -c'"+cmd+"'",obverb,oblog);
+					systemrueck("sudo sh -c '"+cmd+"'",obverb,oblog);
 					anfgggf(unindt,unicmd);
 					::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronzuplanen?Tx[T_alle]+cronminut+Tx[T_Minuten]:Tx[T_gar_nicht])+schwarz+Tx[T_statt]+
 							+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);

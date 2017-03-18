@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "18.03.17" "Version 0.42948" "Manual-Seite für autofax"
+.TH man 1 "18.03.17" "Version 0.4295" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -317,7 +317,7 @@ Optional werden die empfangenen Dateien mit Hilfe von ocrmypdf einer Texterkennu
 .LP
 
 .SH VORAUSSETZUNGEN
-\fBHardware\fR: Computer mit einer Fritzcard 2.0 oder 2.1 und/oder einem linux-kompatiblen Modem; in der vorliegenden Version 0.42948
+\fBHardware\fR: Computer mit einer Fritzcard 2.0 oder 2.1 und/oder einem linux-kompatiblen Modem; in der vorliegenden Version 0.4295
 .br
 \fBSoftware\fR: Das Programm wurde auf eine Installation von Opensuse >= 42.1, Debian >= 8.60, Ubuntu >= 16.04, Mint >= 18 oder Fedora >= 24 mit den Standardoptionen abgestimmt. System D muss installiert sein bzw. systemctl muss laufen.
 .br
