@@ -7872,9 +7872,9 @@ int paramcl::pruefcapi()
 							linst.doinst("rpmdevtools",obverb+1,oblog,"rpmdev-setuptree");
 							struct stat nstat={0};
 							if (!lstat("/usr/include/numa.h",&nstat))
-							 linst.doggfinst("numactl-devel",obverb+1,oblog);
+							 linst.doinst("numactl-devel",obverb+1,oblog);
 							if (!lstat("/usr/include/curses.h",&nstat))
-							 linst.doggfinst("ncurses-devel",obverb+1,oblog);
+							 linst.doinst("ncurses-devel",obverb+1,oblog);
 							linst.doggfinst("pesign",obverb+1,oblog);
 							systemrueck("sudo rpmdev-setuptree",obverb,oblog);
 							::Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
