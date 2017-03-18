@@ -2224,7 +2224,7 @@ paramcl::paramcl(int argc, char** argv)
 	pruefinstv();
   vaufr=mpfad+" -noia >/dev/null 2>&1"; // /usr/bin/autofax -noia
   saufr=base_name(vaufr); // autofax -noia
-	zsaufr=*sersetze(&saufr,"/","\\/");
+	zsaufr=ersetzAllezu(saufr,"/","\\/");
   tstart=clock();
 	//  konfdatname.clear();
 } // paramcl::paramcl()
