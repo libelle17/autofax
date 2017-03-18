@@ -153,6 +153,7 @@ class paramcl // Programmparameter
     string meinname; // base_name(meinpfad()) // argv[0] // 'autofax'
     string vaufr; // (vollaufruf) z.B. '/usr/bin/autofax -norf'
     string saufr; // (stummaufruf) 'autofax -norf'
+		string zsaufr; // zitiert saufr (in sed)
 //    string instvz; // $HOME/autofax
 //    cppSchluess *hconfp=0;
     schlArr hylconf;

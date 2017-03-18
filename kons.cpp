@@ -1800,7 +1800,7 @@ int Schschreib(const char *fname, Schluessel *conf, size_t csize)
 // Dateiname ohne Pfad
 std::string base_name(const std::string& path)
 {
-  return path.substr(path.find_last_of("/\\") + 1);
+  return path.substr(path.find_last_of("/\\",path.find_first_of("><")) + 1);
 } // std::string base_name(std::string const & path)
 
 // Pfadname einer Datei

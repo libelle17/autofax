@@ -2224,6 +2224,7 @@ paramcl::paramcl(int argc, char** argv)
 	pruefinstv();
   vaufr=mpfad+" -noia >/dev/null 2>&1"; // /usr/bin/autofax -noia
   saufr=base_name(vaufr); // autofax -noia
+	zsaufr=*sersetze(&saufr,"/","\\/");
   tstart=clock();
 	//  konfdatname.clear();
 } // paramcl::paramcl()
@@ -4077,7 +4078,7 @@ void paramcl::pruefcron()
 				} else {
 					string unicmd="rm -f "+tmpcron+";";
 					cmd=unicmd;
-					string dazu="sudo crontab -l|sed '/"+saufr+"/d'>"+tmpcron+";";
+					string dazu="sudo crontab -l|sed '/"+zsaufr+"/d'>"+tmpcron+";";
 				  unicmd+=dazu;	
 					if (!nochkeincron) {
 //					cmd=dazu; // 26.2.17: Debian: nach Deinstallation rootscrontab mit root-Berechtigungen, die Programm hier aufhielten
@@ -4102,14 +4103,14 @@ void paramcl::pruefcron()
 			if (!cronzuplanen) {
 				if (nochkeincron) {
 				} else {
-					befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&&(sudo crontab -l|sed '/"+saufr+"/d'>")+tmpcron+";"
+					befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&&(sudo crontab -l|sed '/"+zsaufr+"/d'>")+tmpcron+";"
 						"sudo crontab "+tmpcron+")||true";
 				}
 			} else {
 				if (nochkeincron) {
 					befehl="rm -f "+tmpcron+";";
 				} else {
-					befehl="bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)'||(sudo crontab -l|sed '/"+saufr+"/d'>"+tmpcron+";";
+					befehl="bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)'||(sudo crontab -l|sed '/"+zsaufr+"/d'>"+tmpcron+";";
 				}
 				befehl+="echo \""+cbef+"\">>"+tmpcron+"; sudo crontab "+tmpcron+"";
 				if (!nochkeincron)
@@ -4118,10 +4119,10 @@ void paramcl::pruefcron()
 #else
 			const string befehl=cronzuplanen?
 				(nochkeincron?("rm -f ")+tmpcron+";":
-				 "bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+saufr+"/d'>"+tmpcron+"; ")+
+				 "bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' || (sudo crontab -l | sed '/"+zsaufr+"/d'>"+tmpcron+"; ")+
 				"echo \""+cbef+"\">>"+tmpcron+"; sudo crontab "+tmpcron+(nochkeincron?"":")")
 				:
-				(nochkeincron?"":("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+saufr+"/d'>")+tmpcron+";"
+				(nochkeincron?"":("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)' && (sudo crontab -l | sed '/"+zsaufr+"/d'>")+tmpcron+";"
 				 "sudo crontab "+tmpcron+")||true")
 				;
 #endif      
@@ -4664,7 +4665,7 @@ void paramcl::anhalten()
   Log(violetts+Tx[T_anhalten]+schwarz);
   // crontab
   setztmpcron();
-  const string befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&&(sudo crontab -l|sed '/"+saufr+"/d'>")+tmpcron+";sudo crontab "+tmpcron+");true";
+  const string befehl=("bash -c 'grep \""+saufr+"\" -q <(sudo crontab -l)'&&(sudo crontab -l|sed '/"+zsaufr+"/d'>")+tmpcron+";sudo crontab "+tmpcron+");true";
   systemrueck(befehl,obverb,oblog);
   // services
   /*
