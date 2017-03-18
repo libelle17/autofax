@@ -2222,7 +2222,7 @@ paramcl::paramcl(int argc, char** argv)
   mpfad=meinpfad();
   meinname=base_name(mpfad); // argv[0];
 	pruefinstv();
-  vaufr=mpfad+" -noia"; // /usr/bin/autofax -noia
+  vaufr=mpfad+" -noia >/dev/null 2>&1"; // /usr/bin/autofax -noia
   saufr=base_name(vaufr); // autofax -noia
   tstart=clock();
 	//  konfdatname.clear();
