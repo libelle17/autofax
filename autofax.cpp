@@ -7796,7 +7796,7 @@ int paramcl::pruefcapi()
 											if (vers>0 && vers<3.14) {
 												if (obprogda("gcc",obverb,oblog,&gccpfad) && obprogda("g++",obverb,oblog,&gpppfad)) {
 													obdown=1;
-													//                 systemrueck("sudo cp \""+gccpfad+"\" \""+gccpfad+".bak\" && " "sudo cp \""+gpppfad+"\" \""+gpppfad+".bak\"",obverb,oblog);
+													// systemrueck("sudo cp \""+gccpfad+"\" \""+gccpfad+".bak\" && " "sudo cp \""+gpppfad+"\" \""+gpppfad+".bak\"",obverb,oblog);
 													if (!kopier(gccpfad,gccpfad+".bak",obverb,oblog)) kopier(gpppfad,gpppfad+".bak",obverb,oblog);
 													linst.doinst("gcc-4.8",1+obverb,oblog);
 													linst.doinst("g++-4.8",1+obverb,oblog);
@@ -7843,7 +7843,7 @@ int paramcl::pruefcapi()
 					// make olddefconfig
 					// dnf install elfutils-libelf-devel
 
-					if (systemrueck("sudo modprobe capi 2>/dev/null",obverb,oblog)) {
+					if (0&&systemrueck("sudo modprobe capi 2>/dev/null",obverb,oblog)) {
 						if (system==fed) {
 							svec vrueck1,vrueck2;
 							string v1,v2;
@@ -7856,6 +7856,7 @@ int paramcl::pruefcapi()
 							systemrueck(getvmvers,obverb,oblog,&vrueck2);
 							if (vrueck2.size()) v2=vrueck2[0];
 							//            <<"vi: "<<v1<<"\n"<<"v2: "<<v2<<endl;
+							// sollte nach Korrektur von kernel-modules-extra zu kernel-modules-extra-$(uname -r) kaum mehr vorkommen
 							if (v1!=v2) {
 								autofkonfschreib();
 								::Log(blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
@@ -7871,9 +7872,9 @@ int paramcl::pruefcapi()
 							linst.doinst("fedora-packager",obverb+1,oblog,"fedora-cert");
 							linst.doinst("rpmdevtools",obverb+1,oblog,"rpmdev-setuptree");
 							struct stat nstat={0};
-							if (!lstat("/usr/include/numa.h",&nstat))
+							if (lstat("/usr/include/numa.h",&nstat))
 							 linst.doinst("numactl-devel",obverb+1,oblog);
-							if (!lstat("/usr/include/curses.h",&nstat))
+							if (lstat("/usr/include/curses.h",&nstat))
 							 linst.doinst("ncurses-devel",obverb+1,oblog);
 							linst.doggfinst("pesign",obverb+1,oblog);
 							systemrueck("sudo rpmdev-setuptree",obverb,oblog);
@@ -7920,7 +7921,7 @@ int paramcl::pruefcapi()
 								// cd ~/rpmbuild/BUILD/kernel<version>/linux<version>
 								// make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules
 							} // if (rueck.size()) 
-							exit(70);
+//							exit(70);
 							// obverb=altobverb;
 						} // if (system==fed) 
 					} // if (systemrueck("sudo modprobe capi",obverb,oblog))
