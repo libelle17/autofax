@@ -4078,7 +4078,7 @@ void paramcl::pruefcron()
 				} else {
 					string unicmd="rm -f "+tmpcron+";";
 					cmd=unicmd;
-					string dazu="crontab -l|sed '/"+zsaufr+"/d'>"+tmpcron+";";
+					string dazu="crontab -l|sed '\''/"+zsaufr+"/d'\''>"+tmpcron+";";
 					unicmd+=dazu;	
 					if (!nochkeincron) {
 						//					cmd=dazu; // 26.2.17: Debian: nach Deinstallation rootscrontab mit root-Berechtigungen, die Programm hier aufhielten
