@@ -7721,7 +7721,7 @@ int paramcl::pruefcapi()
 			//    capilaeuft=(PIDausName("capisuite")>=0);
 			capilaeuft=this->scapisuite->machfit(obverb?obverb-1:0,oblog,wahr)&&!ccapiconfdat.empty()&&!cfaxconfdat.empty();
 			Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz);
-			if (capilaeuft) {
+			if (0&& capilaeuft) {
 				capischonerfolgreichinstalliert=1;
 			} else {
 				//      pid_t pid = GetPIDbyName("capisuite") ; // If -1 = not found, if -2 = proc fs access error
@@ -7735,7 +7735,7 @@ int paramcl::pruefcapi()
 					if (fcpcida && capida && capidrvda) break;
 				} // for(size_t i=0;i<rueck.size();i++)
 				lsysen system=lsys.getsys(obverb,oblog);
-				if (!fcpcida || !capida || !capidrvda) {
+				if (1|| !fcpcida || !capida || !capidrvda) {
 					::Log(Tx[T_Lade_Capi_Module],-1,0);
 					systemrueck("sudo modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog,0,1);
 					for(uchar ivers=0;ivers<2;ivers++) {
@@ -7843,7 +7843,7 @@ int paramcl::pruefcapi()
 					// make olddefconfig
 					// dnf install elfutils-libelf-devel
 
-					if (0&&systemrueck("sudo modprobe capi 2>/dev/null",obverb,oblog)) {
+					if (1||systemrueck("sudo modprobe capi 2>/dev/null",obverb,oblog)) {
 						if (system==fed) {
 							svec vrueck1,vrueck2;
 							string v1,v2;
