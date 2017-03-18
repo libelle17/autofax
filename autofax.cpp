@@ -4064,7 +4064,7 @@ void paramcl::pruefcron()
 			const string czt=" \\* \\* \\* \\*";
 			string vorcm;
 			if (!nochkeincron) {
-				cmd="sh -c 'grep \"\\*/.*"+czt+cb0+"\" <(sudo crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
+				cmd="bash -c 'grep \"\\*/.*"+czt+cb0+"\" <(sudo crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
 				svec cmrueck;
 				systemrueck(cmd,obverb,oblog,&cmrueck);
 				if (cmrueck.size()) vorcm=cmrueck[0];
@@ -4103,14 +4103,14 @@ void paramcl::pruefcron()
 			if (!cronzuplanen) {
 				if (nochkeincron) {
 				} else {
-					befehl="sudo sh -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";"
+					befehl="sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";"
 						"crontab "+tmpcron+";}||true'";
 				}
 			} else {
 				if (nochkeincron) {
 					befehl="rm -f "+tmpcron+";";
 				} else {
-					befehl="sudo sh -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)'||{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";";
+					befehl="sudo bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(crontab -l)||{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";";
 				}
 				befehl+="echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+"";
 				if (!nochkeincron)
@@ -4119,10 +4119,10 @@ void paramcl::pruefcron()
 #else
 			const string befehl=cronzuplanen?
 				(nochkeincron?"rm -f "+tmpcron+";":
-				 "sudo sh -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(sudo crontab -l)' ||{ sudo crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+"; ")+
-				"echo \""+cbef+"\">>"+tmpcron+"; sudo crontab "+tmpcron+(nochkeincron?"":";}'")
+				 "sudo bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+"; ")+
+				"echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+(nochkeincron?"":";}'")
 				:
-				(nochkeincron?"":"sudo sh -c 'grep \""+saufr+"\" -q <(sudo crontab -l) &&{ sudo crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+";"
+				(nochkeincron?"":"sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+";"
 				 "sudo crontab "+tmpcron+";}||true'")
 				;
 #endif      
@@ -4665,7 +4665,7 @@ void paramcl::anhalten()
   Log(violetts+Tx[T_anhalten]+schwarz);
   // crontab
   setztmpcron();
-  const string befehl="sudo sh -c 'grep \""+saufr+"\" -q<(sudo crontab -l)&&{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";crontab "+tmpcron+";};true'";
+  const string befehl="sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";crontab "+tmpcron+";};true'";
   systemrueck(befehl,obverb,oblog);
   // services
   /*
@@ -7578,8 +7578,8 @@ void paramcl::pruefmodcron()
     svec rueck;
      if (!systemrueck("sudo sh -c 'crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";crontab "+tmpcron+"'",obverb,oblog,&rueck)) {
 //    for(size_t znr=0;znr<rueck.size();znr++) { ::Log(rueck[znr],1+obverb,oblog); } //     for(size_t znr=0;znr<rueck.size();znr++)
-			const string befehl="sudo sh -c 'grep \""+mps[ru]+"\" -q <(crontab -l 2>/dev/null)&&"
-				"{ crontab -l 2>/dev/null|sed '/"+ersetzAllezu(mps[ru],"/","\\/")+"/d'>"+tmpcron+";crontab "+tmpcron+";};true'";
+			const string befehl="sudo bash -c 'grep \""+mps[ru]+"\" -q <(crontab -l 2>/dev/null)&&"
+				"{ crontab -l 2>/dev/null|sed \"/"+ersetzAllezu(mps[ru],"/","\\/")+"/d\">"+tmpcron+";crontab "+tmpcron+";};true'";
 			anfgggf(unindt,befehl);
 		 } //if (!systemrueck("(sudo crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";sudo crontab "+tmpcron+")",obverb,oblog,&rueck))
 		} // 		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'",obverb,oblog))
