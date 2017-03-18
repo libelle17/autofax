@@ -7753,9 +7753,7 @@ int paramcl::pruefcapi()
 								const string fcpciko = string("/lib/modules/")+unbuf.release+"/kernel/extras/fcpci.ko";
 								if (lstat(fcpciko.c_str(), &entryfc)) {
 									::Log(string(Tx[T_Datei])+blau+fcpciko+schwarz+Tx[T_nichtgefFcpciMfdKinstallierwerden],obverb,1);
-									//              systemrueck("which zypper 2>/dev/null && zypper -n in kernel-source || "
-									//                  "{ which apt-get 2>/dev/null && apt-get -y install linux-source; }", 1+obverb,oblog);
-									linst.doinst("kernel-source",1+obverb,oblog);
+									linst.doinst("kernel-source-$(uname -r)",1+obverb,oblog);
 									/*              
 																	const string qvz="/usr/src";
 																	const string versi="fcpci-3.10.0";
@@ -7874,7 +7872,7 @@ int paramcl::pruefcapi()
 							linst.doggfinst("pesign",obverb+1,oblog);
 							systemrueck("sudo rpmdev-setuptree",obverb,oblog);
 							::Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
-							systemrueck("cd "+instvz+" && sudo dnf download --source kernel",obverb,oblog);
+							systemrueck("cd "+instvz+" && sudo dnf download --source kernel-$(uname -r)",obverb,oblog);
 							svec rueck;
 							string kstring; // kernel-4.8.4-200.fc24.src.rpm
 							systemrueck("cd "+instvz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);

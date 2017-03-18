@@ -2519,7 +2519,7 @@ string linst_cl::ersetzeprog(const string& prog)
       if (prog=="hylafax+") return "hylafax+-server";
       if (prog=="hylafax hylafax-client") return "hylafax-server hylafax-client";
       if (prog=="hylafax+ hylafax+-client") return "hylafax+-server hylafax+-client";
-      if (prog=="kernel-source") return "linux-source";
+      if (prog=="kernel-source-$(uname -r)") return "linux-source-$(uname -r)";
       if (prog=="tiff") return "libtiff-tools";
       if (prog=="libxslt-tools") return "xsltproc";
       if (prog=="imagemagick") return "imagemagick imagemagick-doc";
@@ -2537,7 +2537,7 @@ string linst_cl::ersetzeprog(const string& prog)
       break;
     case dnf: case yum:
       if (prog=="mariadb") return "mariadb-server";
-      if (prog=="kernel-source") return "kernel-devel-$(uname -r)";
+      if (prog=="kernel-source-$(uname -r)") return "kernel-devel-$(uname -r)";
       if (prog=="tiff") return "libtiff-tools";
       if (prog=="libcapi20-2") return "isdn4k-utils";
       if (prog=="libcapi20-3") return "";
