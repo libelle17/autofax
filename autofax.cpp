@@ -7875,7 +7875,7 @@ int paramcl::pruefcapi()
 							systemrueck("cd "+instvz+" && sudo dnf download --source kernel-$(uname -r)",obverb,oblog);
 							svec rueck;
 							string kstring; // kernel-4.8.4-200.fc24.src.rpm
-							systemrueck("cd "+instvz+" && ls -t kernel*.rpm | head -n 1",obverb,oblog,&rueck);
+							systemrueck("cd "+instvz+" && ls -t kernel*.rpm|head -n 1",obverb,oblog,&rueck);
 							if (rueck.size()) {
 								kstring=rueck[0]; // "kernel-4.8.4-200.fc24.src.rpm"
 								string kernel=kstring.substr(kstring.find('-')+1);
@@ -7891,7 +7891,11 @@ int paramcl::pruefcapi()
 									exit(0);
 								} // 							if (kernel.find(relev))
 								systemrueck("cd "+instvz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
-								systemrueck("cd "+instvz+" && sudo rpm -Uvh "+kstring,obverb,oblog);
+								systemrueck("cd "+instvz+" && sudo rpm -Uvh "+kstring+" 2>/dev/null",obverb,oblog); 
+							                                     	// warning: group/user mockbuild does not exist - using root
+								const string grund=gethome()+"/rpmbuild",specs=grund+"/SPECS",build=grund+"/BUILD";
+								pruefverz(specs);
+								pruefverz(build);
 								for(unsigned iru=0;iru<2;iru++) {
 									if (!systemrueck("cd '"+gethome()+"/rpmbuild/SPECS' && rpmbuild -bp --target=$(uname -m) kernel.spec",obverb,oblog)) {
 										systemrueck("sudo dnf -y install kernel-devel-$(uname -r)",obverb,oblog);
@@ -9034,6 +9038,80 @@ int main(int argc, char** argv)
 {
 	string prog;
   paramcl pm(argc,argv); // Programmparameter
+						  int obverb=1,oblog=0;
+				lsysen system=lsys.getsys(obverb,oblog);
+						if (system==fed) {
+							svec vrueck1,vrueck2;
+							string v1,v2;
+							const string getvmvers="sudo ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5";
+							systemrueck(getvmvers,obverb,oblog,&vrueck1);
+							if (vrueck1.size()) v1=vrueck1[0];
+							systemrueck("sudo dnf -y install kernel-modules-extra-$(uname -r) && "
+									"{ lsmod | grep capidrv || sudo modprobe capidrv 2>/dev/null; "
+									"lsmod | grep kernelcapi || sudo modprobe kernelcapi 2>/dev/null;}",obverb,oblog);
+							systemrueck(getvmvers,obverb,oblog,&vrueck2);
+							if (vrueck2.size()) v2=vrueck2[0];
+							//            <<"vi: "<<v1<<"\n"<<"v2: "<<v2<<endl;
+							if (v1!=v2) {
+								::Log(blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
+										+schwarz+v2+blau+").\n"+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+"mpfad"+blau+Tx[T_aufrufen]
+										+schwarz,1,1);
+								exit(0);
+							} // if (v1!=v2) 
+							//            exit(1);
+							// nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
+							// int altobverb=obverb;obverb=2;
+							//         systemrueck("sudo dnf -y install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
+							linst.doinst("rpmdevtools",obverb+1,oblog,"rpmdev-setuptree");
+							linst.doggfinst("numactl-devel",obverb+1,oblog);
+							linst.doggfinst("pesign",obverb+1,oblog);
+							systemrueck("sudo rpmdev-setuptree",obverb,oblog);
+							::Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
+							systemrueck("cd "+instvz+" && sudo dnf download --source kernel-$(uname -r)",obverb,oblog);
+							svec rueck;
+							string kstring; // kernel-4.8.4-200.fc24.src.rpm
+							systemrueck("cd "+instvz+" && ls -t kernel*.rpm|head -n 1",obverb,oblog,&rueck);
+							if (rueck.size()) {
+								kstring=rueck[0]; // "kernel-4.8.4-200.fc24.src.rpm"
+								string kernel=kstring.substr(kstring.find('-')+1);
+								kernel.erase(kernel.rfind('.'));
+								kernel.erase(kernel.rfind('.'));
+								utsname unbuf;
+								uname(&unbuf);
+								const string release=unbuf.release;
+								const string relev=release.substr(0,release.find(unbuf.machine)-1);
+								if (kernel.find(relev)) {
+									::Log(Tx[T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von]+blaus+relev+schwarz+Tx[T_nach]+blau+kernel+schwarz+
+											Tx[T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1,1);
+									exit(0);
+								} // 							if (kernel.find(relev))
+								systemrueck("cd "+instvz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
+								systemrueck("cd "+instvz+" && sudo rpm -Uvh "+kstring+" 2>/dev/null",obverb,oblog); 
+							                                     	// warning: group/user mockbuild does not exist - using root
+								const string grund=gethome()+"/rpmbuild",specs=grund+"/SPECS",build=grund+"/BUILD";
+								pruefverz(specs);
+								pruefverz(build);
+								for(unsigned iru=0;iru<2;iru++) {
+									if (!systemrueck("cd '"+gethome()+"/rpmbuild/SPECS' && rpmbuild -bp --target=$(uname -m) kernel.spec",obverb,oblog)) {
+										systemrueck("sudo dnf -y install kernel-devel-$(uname -r)",obverb,oblog);
+										systemrueck("KSTRING="+kstring+" && cd "+gethome()+"/rpmbuild/BUILD/$(echo $KSTRING|cut -d. -f1,2,4)/linux-`uname -r` && "
+												"make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules",obverb,oblog);
+										break;
+									}
+									if (iru) break;
+									systemrueck("dnf -y install $(cd '"+gethome()+"/rpmbuild/SPECS' && rpmbuild -bp --target=$(uname -m) kernel.spec 2>&1 >/dev/null "
+											"| sed '/is needed by/!d;s/^[[:blank:]]*\\(.*\\) is needed by.*/\\1/')",obverb,oblog);
+									// dnf install audit-libs-devel binutils-devel bison elfutils-devel flex hmaccalc newt-devel numactl-devel 
+									//     pciutils-devel "perl(ExtUtils::Embed)" perl-devel xz-devel
+									// dann nochmal
+								} // for(unsigned iru=0;iru<2;iru++) 
+								// dann nach Anleitung: dnf -y install kernel-devel
+								// cd ~/rpmbuild/BUILD/kernel<version>/linux<version>
+								// make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules
+							} // if (rueck.size()) 
+							exit(70);
+							// obverb=altobverb;
+						} // if (system==fed) 
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();
 	// Log("main(): "+pm.cl,0,1);

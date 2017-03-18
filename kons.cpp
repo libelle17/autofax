@@ -2045,29 +2045,48 @@ int setfaclggf(const string& datei,const binaer obunter,const int mod/*=4*/,ucha
 int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfacl/*=1*/,uchar obmitcon/*=1*/)
 {
 	static int obselinux=-1;
-  struct stat sverz={0};
-  int fehler=1;
-  if (!verz.empty()) {
-    if (!lstat(verz.c_str(), &sverz)) {
-      if(S_ISDIR(sverz.st_mode)) {
-        fehler=0;
-      }
-    } //     if (!lstat(verz.c_str(), &sverz))
-    if (fehler) {
-		  fehler=systemrueck("mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'",obverb,oblog);
+	struct stat sverz={0};
+	int fehler=1;
+	if (!verz.empty()) {
+		if (!lstat(verz.c_str(), &sverz)) {
+			if(S_ISDIR(sverz.st_mode)) {
+				fehler=0;
+			} // 			if(S_ISDIR(sverz.st_mode))
+		} //     if (!lstat(verz.c_str(), &sverz))
+		if (fehler) {
+			string aktv=verz;
+			svec stack;
+			while (1) {
+				if (aktv.empty()) break;
+				if (!lstat(aktv.c_str(),&sverz)) break;
+				stack<<aktv;
+				aktv=dir_name(aktv);
+			} // 			while (1)
+			while (1) {
+				if (!stack.size()) {
+					fehler=0;
+					break;
+				} // 				if (!stack.size())
+				if (mkdir(stack[stack.size()-1].c_str(),S_IRWXU)) 
+					break;
+				stack.erase(stack.end());
+			} // 			  caus<<aktv<<endl;
+		} // if (fehler)
+		if (fehler) {
+			fehler=systemrueck("mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'",obverb,oblog);
 			anfgggf(unindt,"sudo rmdir '"+verz+"'");
-		}
-//    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
-    if (obmitfacl) setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
-		 // <<violett<<verz<<schwarz<<endl;
+		} //     if (fehler)
+		//    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
+		if (obmitfacl) setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
+		// <<violett<<verz<<schwarz<<endl;
 		if (obmitcon) {
-		 if (obselinux==-1) 
-		   obselinux=obprogda("sestatus",obverb,oblog);
-		 if (obselinux)
-			 systemrueck("sudo chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
-		}
-  } // if (!verz.empty())
-  return fehler;
+			if (obselinux==-1) 
+				obselinux=obprogda("sestatus",obverb,oblog);
+			if (obselinux)
+				systemrueck("sudo chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
+		} // 		if (obmitcon)
+	} // if (!verz.empty())
+	return fehler;
 } // void pruefverz(const string& verz,int obverb,int oblog)
 
 
