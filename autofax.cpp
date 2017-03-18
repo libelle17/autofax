@@ -2218,7 +2218,7 @@ paramcl::paramcl(int argc, char** argv)
       argcmv.push_back(argcl(i,argv)); 
 			cl+=" ";
 			cl+=argv[i];
-		}
+		} //     if (argv[i][0])
   mpfad=meinpfad();
   meinname=base_name(mpfad); // argv[0];
 	pruefinstv();
