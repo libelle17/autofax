@@ -7921,7 +7921,7 @@ int paramcl::pruefcapi()
 								// cd ~/rpmbuild/BUILD/kernel<version>/linux<version>
 								// make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules
 							} // if (rueck.size()) 
-//							exit(70);
+							exit(70);
 							// obverb=altobverb;
 						} // if (system==fed) 
 					} // if (systemrueck("sudo modprobe capi",obverb,oblog))
