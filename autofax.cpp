@@ -7902,7 +7902,7 @@ int paramcl::pruefcapi()
 									exit(0);
 								} // 							if (kernel.find(relev))
 								systemrueck("cd "+instvz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
-								systemrueck("cd "+instvz+" && sudo rpm -Uvh "+kstring+" 2>/dev/null",obverb,oblog); 
+								systemrueck("cd "+instvz+" && sudo rpm -ivh "+kstring+" 2>/dev/null",obverb,oblog); 
 							                                     	// warning: group/user mockbuild does not exist - using root
 								const string grund=gethome()+"/rpmbuild",specs=grund+"/SPECS",build=grund+"/BUILD";
 							exit(70);
