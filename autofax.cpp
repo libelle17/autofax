@@ -7879,7 +7879,7 @@ int paramcl::pruefcapi()
 							linst.doggfinst("pesign",obverb+1,oblog);
 							systemrueck("sudo rpmdev-setuptree",obverb,oblog);
 							svec krue;
-							systemrueck("find "+instvz+" -name kernel-$(uname -r) 2>/dev/null",obverb,oblog,&krue);
+							systemrueck("find "+instvz+" -name kernel-$(uname -r|rev|cut -d. -f2-|rev).src.rpm",obverb,oblog,&krue);
 							if (!krue.size()) {
 								::Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
 								systemrueck("cd "+instvz+" && sudo dnf download --source kernel-$(uname -r)",obverb,oblog);
