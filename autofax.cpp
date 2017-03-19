@@ -7878,8 +7878,12 @@ int paramcl::pruefcapi()
 							 linst.doinst("ncurses-devel",obverb+1,oblog);
 							linst.doggfinst("pesign",obverb+1,oblog);
 							systemrueck("sudo rpmdev-setuptree",obverb,oblog);
-							::Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
-							systemrueck("cd "+instvz+" && sudo dnf download --source kernel-$(uname -r)",obverb,oblog);
+							svec krue;
+							systemrueck("find "+instvz+" -name kernel-$(uname -r) 2>/dev/null",obverb,oblog,&krue);
+							if (!krue.size()) {
+								::Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
+								systemrueck("cd "+instvz+" && sudo dnf download --source kernel-$(uname -r)",obverb,oblog);
+							}
 							svec rueck;
 							string kstring; // kernel-4.8.4-200.fc24.src.rpm
 							systemrueck("cd "+instvz+" && ls -t kernel*.rpm|head -n 1",obverb,oblog,&rueck);
@@ -7901,6 +7905,7 @@ int paramcl::pruefcapi()
 								systemrueck("cd "+instvz+" && sudo rpm -Uvh "+kstring+" 2>/dev/null",obverb,oblog); 
 							                                     	// warning: group/user mockbuild does not exist - using root
 								const string grund=gethome()+"/rpmbuild",specs=grund+"/SPECS",build=grund+"/BUILD";
+							exit(70);
 								pruefverz(specs);
 								pruefverz(build);
 								for(unsigned iru=0;iru<2;iru++) {
@@ -7911,7 +7916,8 @@ int paramcl::pruefcapi()
 										break;
 									}
 									if (iru) break;
-									systemrueck("dnf -y install $(cd '"+gethome()+"/rpmbuild/SPECS' && sudo rpmbuild -bp --target=$(uname -m) kernel.spec 2>&1 >/dev/null"
+									systemrueck("sudo dnf -y install $(cd '"+gethome()+"/rpmbuild/SPECS' && "
+											"sudo rpmbuild -bp --target=$(uname -m) kernel.spec 2>&1 >/dev/null"
 											"| sed '/is needed by/!d;s/^[[:blank:]]*\\(.*\\) is needed by.*/\\1/')",obverb,oblog);
 									// dnf install audit-libs-devel binutils-devel bison elfutils-devel flex hmaccalc newt-devel numactl-devel 
 									//     pciutils-devel "perl(ExtUtils::Embed)" perl-devel xz-devel
@@ -7921,7 +7927,6 @@ int paramcl::pruefcapi()
 								// cd ~/rpmbuild/BUILD/kernel<version>/linux<version>
 								// make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules
 							} // if (rueck.size()) 
-							exit(70);
 							// obverb=altobverb;
 						} // if (system==fed) 
 					} // if (systemrueck("sudo modprobe capi",obverb,oblog))
