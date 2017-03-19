@@ -7721,7 +7721,7 @@ int paramcl::pruefcapi()
 			//    capilaeuft=(PIDausName("capisuite")>=0);
 			capilaeuft=this->scapisuite->machfit(obverb?obverb-1:0,oblog,wahr)&&!ccapiconfdat.empty()&&!cfaxconfdat.empty();
 			Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz);
-			if (0&& capilaeuft) {
+			if (capilaeuft) {
 				capischonerfolgreichinstalliert=1;
 			} else {
 				//      pid_t pid = GetPIDbyName("capisuite") ; // If -1 = not found, if -2 = proc fs access error
@@ -7735,7 +7735,7 @@ int paramcl::pruefcapi()
 					if (fcpcida && capida && capidrvda) break;
 				} // for(size_t i=0;i<rueck.size();i++)
 				lsysen system=lsys.getsys(obverb,oblog);
-				if (1|| !fcpcida || !capida || !capidrvda) {
+				if (!fcpcida || !capida || !capidrvda) {
 					::Log(Tx[T_Lade_Capi_Module],-1,0);
 					systemrueck("sudo modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog,0,1);
 					for(uchar ivers=0;ivers<2;ivers++) {
@@ -7842,8 +7842,8 @@ int paramcl::pruefcapi()
 					// cd /usr/src/kernels/4.7.3-200.fc24.x86_64
 					// make olddefconfig
 					// dnf install elfutils-libelf-devel
-
-					if (1||systemrueck("sudo modprobe capi 2>/dev/null",obverb,oblog)) {
+#ifdef brauchtsaano
+					if (systemrueck("sudo modprobe capi 2>/dev/null",obverb,oblog)) {
 						if (system==fed) {
 							svec vrueck1,vrueck2;
 							string v1,v2;
@@ -7902,10 +7902,9 @@ int paramcl::pruefcapi()
 									exit(0);
 								} // 							if (kernel.find(relev))
 								systemrueck("cd "+instvz+" && sudo dnf -y builddep "+kstring,obverb,oblog);
-								systemrueck("cd "+instvz+" && sudo rpm -ivh "+kstring+" 2>/dev/null",obverb,oblog); 
+								systemrueck("cd "+instvz+" && rpm -ivh "+kstring,obverb,oblog);  // mit sudo wird kernel.spec nicht erstellt
 							                                     	// warning: group/user mockbuild does not exist - using root
 								const string grund=gethome()+"/rpmbuild",specs=grund+"/SPECS",build=grund+"/BUILD";
-							exit(70);
 								pruefverz(specs);
 								pruefverz(build);
 								for(unsigned iru=0;iru<2;iru++) {
@@ -7930,6 +7929,7 @@ int paramcl::pruefcapi()
 							// obverb=altobverb;
 						} // if (system==fed) 
 					} // if (systemrueck("sudo modprobe capi",obverb,oblog))
+#endif					
 					systemrueck("sudo modprobe capidrv 2>/dev/null",obverb,oblog);
 				} // if (!fcpcida || !capida || !capidrvda) 
 				pruefrules(obverb,oblog);
