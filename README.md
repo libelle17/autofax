@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.42956) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42958) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -143,7 +143,7 @@ Preconditions see below.</p>
 <p style="margin-left:11%; margin-top: 1em">Ideally, the
 program should have installed itsself after a single call
 (see above) in a self-running way. <br>
-Then a directory e.g. &rsquo;<b>zufaxen</b>&rsquo; exists,
+Then a directory e.g. &rsquo;<b>tobefaxed</b>&rsquo; exists,
 in which e.g. users in a network (e.g. via a samba share)
 can deposit files to be faxed, e.g. <br>
 &quot;<b>Medical report on Frank Ill to Dr. Healthy and
@@ -168,9 +168,9 @@ be copied and renamed into <br>
 Those are subsequently being relayed to <b>hylafax</b> or
 <b>Capisuite</b> and from there sent. <br>
 Simultaneously they are being moved from
-&rsquo;<b>zufaxen</b>&rsquo; to the waiting directory, e.g.
-&rsquo;<b>warteauffax</b>&rsquo; and recorded in the spool
-table <b>spooltab</b>. <br>
+&rsquo;<b>tobefaxed</b>&rsquo; to the waiting directory,
+e.g. &rsquo;<b>waitingfaxes</b>&rsquo; and recorded in the
+spool table <b>spooltab</b>. <br>
 At each call, autofax checks the status of <b>hylafax</b>
 and/or <b>Capisuite</b>. The Finishing of a fax process
 there causes autofax to move the source files (here the
@@ -714,9 +714,7 @@ used:</p>
 capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source
 (linux-source), libcapi20-2, libcapi20-3, libxslt-tools,
 linux-headers-$(uname -r), python-devel, (in fedora,
-additionally: kernel, kernel-devel, kernel-modules-extra,
-numactl-devel, pesign, rpmdevtools; this may install a
-current kernel),</p></td></tr>
+additionally: kernel-modules-extra),</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">in case hylafax shall be
@@ -960,7 +958,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.42956) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42958) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1635,7 +1633,7 @@ unterzogen.</p> </td></tr>
 
 <p style="margin-left:11%; margin-top: 1em"><b>Hardware</b>:
 Computer mit einer Fritzcard 2.0 oder 2.1 und/oder einem
-linux-kompatiblen Modem; in der vorliegenden Version 0.42956
+linux-kompatiblen Modem; in der vorliegenden Version 0.42958
 <b><br>
 Software</b>: Das Programm wurde auf eine Installation von
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
@@ -1700,9 +1698,7 @@ soll:</p>
 capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source
 (linux-source), libcapi20-2, libcapi20-3, libxslt-tools,
 linux-headers-$(uname -r), python-devel, (in fedora,
-zus&auml;tzlich: kernel, kernel-devel,
-kernel-modules-extra, numactl-devel, pesign, rpmdevtools;
-dadurch kann in aktueller kernel installiert werden),</p></td></tr>
+zus&auml;tzlich: kernel-modules-extra),</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">falls hylafax benutzt werden

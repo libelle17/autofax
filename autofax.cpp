@@ -1518,9 +1518,9 @@ char const *autofax_T[T_MAX+1][Smax]={
   // T_Konfigurationsdatei_editieren
   {"Konfigurationsdatei editieren","edit configuration file"},
   // T_zufaxen
-  {"zufaxen","tofax"},
+  {"zufaxen","tobefaxed"},
   // T_warteauffax,
-  {"warteauffax","waitingfax"},
+  {"warteauffax","waitingfaxes"},
   // T_nichtgefaxt,
   {"nichtgefaxt","notfaxed"},
   // T_empfvz
@@ -7526,8 +7526,8 @@ void pruefrules(int obverb, int oblog)
       rules<<"# Symlink (capi20 -> capi) zu"<<endl;
       rules<<"# Kompatibilitaetszwecken erstellen"<<endl;
       rules<<"KERNEL==\"capi\", SYMLINK=\"capi20\""<<endl;
-    }
-  }
+    } //     if (rules.is_open())
+  } //   if (lstat(rulesd, &entrybuf))
 } // void pruefrules() {
 
 // wird aufgerufen in: pruefcapi
@@ -7842,7 +7842,6 @@ int paramcl::pruefcapi()
 					// cd /usr/src/kernels/4.7.3-200.fc24.x86_64
 					// make olddefconfig
 					// dnf install elfutils-libelf-devel
-#ifdef brauchtsaano
 					if (systemrueck("sudo modprobe capi 2>/dev/null",obverb,oblog)) {
 						if (system==fed) {
 							svec vrueck1,vrueck2;
@@ -7862,8 +7861,9 @@ int paramcl::pruefcapi()
 								::Log(blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
 										+schwarz+v2+blau+").\n"+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
 										+schwarz,1,1);
-								exit(0);
+								exit(17);
 							} // if (v1!=v2) 
+#ifdef brauchtsaano // am 19.3.17 braucht's es ned
 							//            exit(1);
 							// nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
 							// int altobverb=obverb;obverb=2;
@@ -7927,9 +7927,9 @@ int paramcl::pruefcapi()
 								// make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules
 							} // if (rueck.size()) 
 							// obverb=altobverb;
+#endif					
 						} // if (system==fed) 
 					} // if (systemrueck("sudo modprobe capi",obverb,oblog))
-#endif					
 					systemrueck("sudo modprobe capidrv 2>/dev/null",obverb,oblog);
 				} // if (!fcpcida || !capida || !capidrvda) 
 				pruefrules(obverb,oblog);

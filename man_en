@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "19.03.17" "Version 0.42956" "\fBautofax\fR man page"
+.TH man 1 "19.03.17" "Version 0.42958" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -85,7 +85,7 @@ Preconditions see below.
 .SH USAGE
 Ideally, the program should have installed itsself after a single call (see above) in a self-running way.
 .br
-Then a directory e.g. '\fBzufaxen\fR' exists, in which e.g. users in a network (e.g. via a samba share) can deposit files to be faxed, e.g. 
+Then a directory e.g. '\fBtobefaxed\fR' exists, in which e.g. users in a network (e.g. via a samba share) can deposit files to be faxed, e.g. 
 .br
 "\fBMedical report on Frank Ill to Dr. Healthy and Frank Ill to fax 099 987654321 and 088 887654321.doc\fR" (it could also be e.g. an *.xls, a *.jpg, a *.tif, a *.txt, a *pdf file; the section ' to Dr. Healthy and Frank Ill' is optional for the later allocation of the fax number(s) in the database, it may also be obmitted).
 .br
@@ -101,7 +101,7 @@ When \fBautofax\fR is called for the next time (per default 2 minutes), the abov
 .br
 Those are subsequently being relayed to \fBhylafax\fR or \fBCapisuite\fR and from there sent.
 .br
-Simultaneously they are being moved from '\fBzufaxen\fR' to the waiting directory, e.g. '\fBwarteauffax\fR' and recorded in the spool table \fBspooltab\fR.
+Simultaneously they are being moved from '\fBtobefaxed\fR' to the waiting directory, e.g. '\fBwaitingfaxes\fR' and recorded in the spool table \fBspooltab\fR.
 .br
 At each call, autofax checks the status of \fBhylafax\fR and/or \fBCapisuite\fR. The Finishing of a fax process there causes autofax to move the source files (here the above mentioned .doc- and .pdf-files) from the waiting directory to one or several archive directories or a directory for failed faxes and to move their database record from  '\fBspooltab\fR' to the archive table '\fBouta\fR'.
 .br
@@ -333,7 +333,7 @@ boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoff
 in case capisuite shall be used:
 .LP
 .HP 3
-capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source (linux-source), libcapi20-2, libcapi20-3, libxslt-tools, linux-headers-$(uname -r), python-devel, (in fedora, additionally: kernel, kernel-devel, kernel-modules-extra, numactl-devel, pesign, rpmdevtools; this may install a current kernel), 
+capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source (linux-source), libcapi20-2, libcapi20-3, libxslt-tools, linux-headers-$(uname -r), python-devel, (in fedora, additionally: kernel-modules-extra), 
 .br
 in case hylafax shall be used:
 .LP
