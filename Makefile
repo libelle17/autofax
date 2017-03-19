@@ -66,10 +66,6 @@ else
  CC:=$(CCName)
 endif
 libmcd:=$(libmc)-$(dev)
-LT:=libtiff
-LT:=$(LT) $(LT)-$(dev)
-LT5:=libtiff5
-LT5:=$(LT5) $(LT5)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
 # deinstallieren und Ueberschrift vormerken
@@ -228,12 +224,13 @@ endif
 #	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\necho $(UPR)$(pgd)\n'>>$(UNF);$(slc);};
 	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(call i1unin,$(pgd))$(slc);};
 #	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
-	-@find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)\
-	&&find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)\
-	||{ $(UPR)$(LT) $(KF);$(call i1unind,$(LT))}
-	-@find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)\
-	&&find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)\
-	||{ $(KF);$(call i1unind,$(LT5))}
+	-@find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
+	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)||\
+	{ $(UDPR)$(LT) $(KF);$(call i1unind,$(LT))}
+	-@! test -z "$(LT5)"&&{ \
+	find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
+	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)||\
+	{ $(call i1unind,$(LT5))};}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                         \r" >$(BA)
 

@@ -2574,6 +2574,7 @@ string linst_cl::ersetzeprog(const string& prog)
 	  case zypper:
 		  if (prog=="redhat-rpm-config") return "";
 			if (prog=="libffi-devel") return "libffi$(gcc --version|head -n1|sed \"s/.*) \\(.\\).\\(.\\).*/\\1\\2/\")-devel";
+      if (prog=="kernel-source-$(uname -r)") return "kernel-devel";
     default: break;
   } //   switch(linst.pruefipr())
   return prog;

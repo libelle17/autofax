@@ -17,15 +17,17 @@ getIPR() {
   REPOS="sudo $Z lr|grep 'g++\|devel_gcc'\>$KR||sudo $Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
   urepo="sudo $Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && sudo $Z rr devel_gcc;";
   COMP="gcc gcc-c++ \$(CCInst)";
+	LT=${LT}-${dev};
 	} }||
 	{ still which apt-get &&{ IdPR="apt-get --assume-yes install ";IP_R="sudo $IdPR";
 	                                    UPR="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
 																			dev=dev;
 																			COMP="build-essential linux-headers-\$(shell uname -r)";
+																			LT=${LT}-${dev};
 																			CTAGS=exuberant-ctags;} }||
 	{ still which dnf &&{ fed=1;IdPR="dnf -y install ";UPR="sudo dnf remove ";} }||
 	{ still which yum &&{ fed=1;IdPR="yum -y install ";UPR="sudo yum remove ";} }
-	[ $fed = 1 ] &&{ libmc=mysql;COMP="make automake gcc-c++ kernel-devel";IP_R="sudo $IdPR";}
+	[ $fed = 1 ] &&{ libmc=mysql;COMP="make automake gcc-c++ kernel-devel";IP_R="sudo $IdPR";LT="${LT} ${LT}-${dev}";LT5="";}
 	{ still which rpm &&{ SPR="rpm -q ";UDPR="sudo rpm -e --nodeps ";};}||
 	{ still which dpkg &&{ SPR="dpkg -s ";UDPR="sudo apt-get -f install; sudo dpkg -r --force-depends ";};}
 	IPR="sudo $IdPR";
@@ -34,7 +36,7 @@ getIPR() {
 
 exportvars() {
 	rm -f vars;
-	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF pgroff dev libmc REPOS urepo COMP DATEIEN; do eval nv=\$$v; printf "$v:=$nv\n">>vars; done
+	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF pgroff LT LT5 dev libmc REPOS urepo COMP DATEIEN; do eval nv=\$$v; printf "$v:=$nv\n">>vars; done
 }
 
 einricht() {
@@ -86,6 +88,8 @@ nPWD=${PWD##*/}
 SUG="admin\|root\|sudo\|wheel\|ntadmin";
 
 # hier geht's los
+LT="libtiff"
+LT5="${LT}5"
 getIPR;
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
 still which sudo||{
