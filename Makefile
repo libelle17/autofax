@@ -66,6 +66,7 @@ else
  CC:=$(CCName)
 endif
 libmcd:=$(libmc)-$(dev)
+libmc1d:=$(libmc1)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
 # deinstallieren und Ueberschrift vormerken
@@ -218,9 +219,12 @@ endif
 #	 printf '$(UPR)$$P;$(urepo)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$$P;$(urepo)"\n'>>$(UNF);};done;};
 	@which $(CCName)>$(KR)||{ $(REPOS)$(foreach PG,$(COMP),$(call si_unins,$(PG),$(PG);$(urepo)))}
 #	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(call iunins,$(libmcd))fi
-	-@test -f /usr/include/mysql/mysql.h>$(KR)\
-	&&find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)\
-	|| $(call i1unin,$(libmcd))
+	-@test -f /usr/include/mysql/mysql.h>$(KR)&&\
+	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)|| \
+	$(call i1unin,$(libmcd))
+	-@test -f /usr/include/mysql/mysql.h>$(KR)&&\
+	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)|| \
+	$(call i1unin,$(libmc1d))
 #	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\necho $(UPR)$(pgd)\n'>>$(UNF);$(slc);};
 	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(call i1unin,$(pgd))$(slc);};
 #	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}

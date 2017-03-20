@@ -1,5 +1,5 @@
 #!/bin/sh
-. ./install.sh
+. ./configure
 # versucht alle Dateien eines Projekts zu editieren, mit Parameter 'nv' sollen alle aufs aktuelle Datum gesetzt werden
 ZD=viaufruf # speichere die Zahl der Aufrufe in Datei dieses Namens
 FREQUENZ=5 # rufe gtags jedes 5. Mal auf
