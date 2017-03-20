@@ -4710,11 +4710,16 @@ int paramcl::loeschefax()
 			"id p1,"
 			"capispooldatei p2,"
 			"IF(capispoolpfad='','"+cfaxusersqvz+"',capispoolpfad) p3,"
-		 	"hylanr p4 FROM `"+spooltab+"` ORDER BY id",ZDB);
+		 	"hylanr p4,"
+			"original p5, origvu p6 "
+			"FROM `"+spooltab+"` ORDER BY id",ZDB);
 	while (cerg=zul.HolZeile(),cerg?*cerg:0) {
 		if (*(*cerg+0) && *(*cerg+1)) {
 			::Log(string("Fax ")+blau+ltoan(++faxord)+schwarz+": "+*(*cerg+0),1,1);
-			/*3*/fsfv.push_back(fsfcl(*(*cerg+1),*(*cerg+2),*(*cerg+4),*(*cerg+3)));
+			/*3*/fsfcl fsf(*(*cerg+1),*(*cerg+2),*(*cerg+4),*(*cerg+3));
+			if (*(*cerg+5)) fsf.original=*(*cerg+5);
+			if (*(*cerg+6)) fsf.origvu=*(*cerg+6);
+			fsfv.push_back(fsf);
 		} // if (*(*cerg+0) && *(*cerg+1)) 
 	} // while (cerg=zul.HolZeile(),cerg?*cerg:0) 
 	size_t ivorher=fsfv.size();
@@ -4754,6 +4759,17 @@ int paramcl::loeschefax()
 						Log(blaus+"hyla: "+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng)+blau+Tx[T_hylanr]+schwarz+fsfv[nr].capisd);
 					}
 					Log(blaus+Tx[T_Gesamt]+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng));
+// hier werden noch die Dateien von wvz auf gvz verschoben 
+						for(unsigned iru=0;iru<2;iru++) {
+							const string *datei=iru?&fsfv[nr].origvu:&fsfv[nr].original;
+							if (!datei->empty()) {
+								const string zuloe =wvz+vtz+*datei;
+								struct stat zstat;
+								uint vfehler;
+								if (!lstat(zuloe.c_str(),&zstat))
+									verschiebe(zuloe, nvz, cuser,&vfehler, 1, obverb, oblog);
+							} // if (!datei->empty()) 
+						} // for(unsigned iru=0;iru<2;iru++) 
 					struct stat entrysend={0};
 					fsfv[nr].setzcapistat(this,&entrysend);
 					uchar hyla_uverz_nr=1;
