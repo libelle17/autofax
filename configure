@@ -89,6 +89,9 @@ SUG="admin\|root\|sudo\|wheel\|ntadmin";
 # hier geht's los
 LT="libtiff"
 LT5="${LT}5"
+echo Vor getIPR
+echo Vor getIPR
+echo Vor getIPR
 getIPR;
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
 still which sudo||{
