@@ -1,4 +1,6 @@
 #!/bin/sh
+N=autofax;
+test -f configure || wget https://raw.githubusercontent.com/libelle17/$N/master/configure
 . ./configure
 # aPWD=`pwd`
 nPWD=${PWD##*/}
