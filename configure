@@ -55,11 +55,11 @@ einricht() {
  }
 }
 
+UNROH=uninstall
+UNF=${UNROH}inv # Name muss identisch sein mit Ende von uindt in kons.cpp 
 DN=/dev/null
 KR="$DN 2>&1" # keine Rueckmeldung
 KF=" 2>$DN" # keine Fehlermeldung
-UNROH=uninstall
-UNF=${UNROH}inv # Name muss identisch sein mit Ende von uindt in kons.cpp 
 pgroff="groff groff-base"
 dev=devel
 libmc=libmysqlclient
@@ -78,8 +78,6 @@ mkdir -p $HOME/$P
 AUNF=$HOME/$P/$UNF
 # diese Datei wird wegen obigem in viall gesourct, deshalb dort der Rest zu uebergehen
 if test "$ICH" = configure -o "$ICH" = install.sh; then
-HOSTER=github.com
-ACC=libelle17
 rot="\033[1;31m"
 gruen="\033[1;32m"
 blau="\033[1;34m"
