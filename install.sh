@@ -27,12 +27,9 @@ nPWD=${PWD##*/}
 				done; 
 				test -e $P && mv $P ${P}_1; 
 				mv $P-master $P &&{
-				  echo Vor configure
-				  echo Vor configure
-				  echo Vor configure
-				  . $P/configure
-				  Q=${P}_1/$UNF; test -f $Q && cp -ai $Q $P
 					cd $P; 
+				  . ./configure
+				  Q=../${P}_1/$UNF; test -f $Q && cp -ai $Q .||true
 				}
 		}|| exit;
 }

@@ -77,7 +77,7 @@ P=autofax
 mkdir -p $HOME/$P
 AUNF=$HOME/$P/$UNF
 # diese Datei wird wegen obigem in viall gesourct, deshalb dort der Rest zu uebergehen
-if test "$ICH" = configure -o "$ICH" = install.sh; then
+if test "$ICH" = configure -o "$ICH" = install.sh -o "$ICH" = autofax_inst.sh; then
 rot="\033[1;31m"
 gruen="\033[1;32m"
 blau="\033[1;34m"
@@ -89,9 +89,6 @@ SUG="admin\|root\|sudo\|wheel\|ntadmin";
 # hier geht's los
 LT="libtiff"
 LT5="${LT}5"
-echo Vor getIPR
-echo Vor getIPR
-echo Vor getIPR
 getIPR;
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
 still which sudo||{
