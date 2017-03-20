@@ -33,6 +33,7 @@ nPWD=${PWD##*/}
 				}
 		}|| exit;
 }
+$SPR make >/dev/null ||{ echo GNU make missing/fehlt; exit;}
 # ... und dann kompilieren und installieren
 make opts &&
 sudo make install; erg=$?
