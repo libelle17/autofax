@@ -356,7 +356,7 @@ confclean:
 
 .PHONY: uninstall
 uninstall: distclean
-	-@tac $(UNF)>tmp_$(UNROH)&& sudo blau=$(blau) reset=$(reset) sh tmp_$(UNROH) # uninstallinv von hinten nach vorne abarbeiten
+	-@tac $(UNF)>tmp_$(UNROH)&& sudo blau=$(blau) reset=$(reset) bash tmp_$(UNROH) # uninstallinv von hinten nach vorne abarbeiten
 	-@printf "Fertig mit uninstall!\n"
 
 #rufe:

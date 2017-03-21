@@ -2857,7 +2857,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst<<"WantedBy=multi-user.target "<<endl;
 				syst.close();
 				daemon_reload(obverb-1,oblog);
-				anfgggf(unindt,"N="+sname+";C=\"sudo systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-relaod;$C reset-failed;");
+				anfgggf(unindt,"N="+sname+";C=\"sudo systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-reload;$C reset-failed;");
 				syst.close();
 				restart(obverb-1,oblog);
 				obsvfeh(obverb-1,oblog);
