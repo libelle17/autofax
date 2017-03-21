@@ -10,6 +10,9 @@ kf() {
 
 # Installationsprogramm ermitteln
 # inhaltlich parallel linst_cl::pruefipr( in kons.cpp
+# Ubuntu:   libtiff-dev   libtiff5
+# Opensuse: libtiff-devel libtiff5
+# Fedora:   libtiff       libtiff-devel
 getIPR() {
   CTAGS=ctags;
 	{ still which zypper &&{ 
@@ -17,17 +20,17 @@ getIPR() {
   REPOS="sudo $Z lr|grep 'g++\|devel_gcc'\>$KR||sudo $Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
   urepo="sudo $Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && sudo $Z rr devel_gcc;";
   COMP="gcc gcc-c++ \$(CCInst)";
-	LT=${LT}-${dev};
+	LT=${_LT}-${dev};
 	} }||
 	{ still which apt-get &&{ IdPR="apt-get --assume-yes install ";IP_R="sudo $IdPR";
 	                                    UPR="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
 																			dev=dev;
 																			COMP="build-essential linux-headers-\$(shell uname -r)";
-																			LT=${LT}-${dev};
+																			LT=${_LT}-${dev};
 																			CTAGS=exuberant-ctags;} }||
 	{ still which dnf &&{ fed=1;IdPR="dnf -y install ";UPR="sudo dnf remove ";} }||
 	{ still which yum &&{ fed=1;IdPR="yum -y install ";UPR="sudo yum remove ";} }
-	[ $fed = 1 ] &&{ libmc=mysql;libmc1=mariadb;COMP="make automake gcc-c++ kernel-devel";IP_R="sudo $IdPR";LT="${LT} ${LT}-${dev}";LT5="";}
+	[ $fed = 1 ] &&{ libmc=mysql;libmc1=mariadb;COMP="make automake gcc-c++ kernel-devel";IP_R="sudo $IdPR";LT="${_LT} ${_LT}-${dev}";LT5="";}
 	{ still which rpm &&{ SPR="rpm -q ";UDPR="sudo rpm -e --nodeps ";};}||
 	{ still which dpkg &&{ SPR="dpkg -s ";UDPR="sudo apt-get -f install; sudo dpkg -r --force-depends ";};}
 	IPR="sudo $IdPR";
@@ -87,7 +90,7 @@ reset="\033[0m"
 SUG="admin\|root\|sudo\|wheel\|ntadmin";
 
 # hier geht's los
-LT="libtiff"
+_LT="libtiff"
 LT5="${LT}5"
 getIPR;
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
@@ -103,10 +106,10 @@ still which sudo||{
 a=$(sudo -n -v 2>&1);test -z "$a" || echo $a|grep -q "assw" ||{
 	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'."
 	printf "Please enter ${blau}root$reset's password at the next question:\n"
-	printf "Then please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh $ICH$reset'!\n"
+	printf "Then please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh install.sh$reset'!\n"
 	printf "Muss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. "
 	printf "Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
-	printf "Danach loggen Sie sich bitte aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh $ICH$reset' auf!\n";
+	printf "Danach loggen Sie sich bitte aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh install.sh$reset' auf!\n";
 	su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";" && exit
 }
 # which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
