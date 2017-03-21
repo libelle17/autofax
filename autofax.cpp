@@ -274,6 +274,7 @@ enum T_
   T_Eintraege_aus,
   T_loeschen_zu_denen_kein_Datei_im_Wartevz_und_kein_Capi_oder_Hylafax_nachweisbar_ist,
   T_alle_wartenden_Faxe_und_zugehoerige_Eintraege_aus,
+	T_empfangenes_Fax_erneut_bereitstellen,
   T_loeschen,
   T_Dateien_aus_Warteverzeichnis_gegen,
   T_pruefen_und_verschieben,
@@ -349,6 +350,7 @@ enum T_
   T_bereinigewv,
   T_anhalten,
   T_loesche_fax,
+	T_empferneut,
   T_loeschewaise,
   T_loescheallewartenden,
   T_tu_lista, 
@@ -641,7 +643,9 @@ enum T_
 	T_loew,
 	T_loeschewaise_l,
 	T_loea_k,
+	T_erneut_k,
 	T_loescheallew_l,
+	T_erneutempf_l,
 	T_kez_k,
 	T_korrerfolgszeichen_l,
 	T_bwv_k,
@@ -687,6 +691,7 @@ enum T_
 	T_passt_nicht_zu,
 	T_vor,
 	T_danach,
+	T_Bitte_Fax_5te_Spalte_aus_autofax_listi_eingeben,
 	T_MAX
 };
 
@@ -1130,6 +1135,8 @@ char const *autofax_T[T_MAX+1][Smax]={
     "` without detection of file in waiting directory or capisuite fax or hylafax"},
   // T_alle_wartenden_Faxe_und_zugehoerige_Eintraege_aus
   {"alle wartenden Faxe und zugehoerige Eintraege aus `","delete all waiting faxes and associated entries from `"},
+	// T_empfangenes_Fax_erneut_bereitstellen
+	{"empfangenes Fax erneut bereitstellen","present a received fax again"},
   // T_loeschen
   {"` loeschen","`"},
   // T_Dateien_aus_Warteverzeichnis_gegen
@@ -1282,6 +1289,8 @@ char const *autofax_T[T_MAX+1][Smax]={
   {"anhalten()","stop()"},
   // T_loesche_fax
   {"loeschefax()","deletefax()"},
+	// T_empferneut
+	{"empferneut()","recvagain()"},
   // T_loeschewaise,
   {"loeschewaise()","deleteorphans()"},
   // T_loescheallewartenden,
@@ -1885,8 +1894,12 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{"loeschewaise","deleteorphans"},
 	// T_loea_k
 	{"loea","dela"},
+	// T_erneut_k
+	{"erneut","again"},
 	// T_loescheallew_l
 	{"loescheallew","deleteallwaiting"},
+	// T_erneutempf_l
+	{"erneutempf","receiveagain"},
 	// T_kez_k
 	{"kez","csf"},
 	// T_korrerfolgszeichen_l
@@ -1977,6 +1990,8 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{" Vor: "," Before: "},
 	// T_danach
 	{" Nach: "," After: "},
+	// T_Bitte_Fax_5te_Spalte_aus_autofax_listi_eingeben
+	{"Bitte Fax (5. Spalte aus autofax -listi) eingeben: ","Please enter fax (5th column from autofax -listi): "},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -2231,7 +2246,7 @@ paramcl::paramcl(int argc, char** argv)
 
 void paramcl::pruefggfmehrfach()
 {
-  if (!hilfe && !obvi && !zeigvers && !lista && !listf && !listi && !listw && suchstr.empty() && !loef && !loew && !loea && !anhl) {
+  if (!hilfe && !obvi && !zeigvers && !lista && !listf && !listi && !listw && suchstr.empty() && !loef && !loew && !loea && !anhl && !erneut) {
     pruefmehrfach(meinname,nrzf);
   }
 } // void paramcl::pruefggfmehrfach()
@@ -3167,7 +3182,8 @@ int paramcl::getcommandline()
   opts.push_back(/*4a*/optioncl(T_loef_k,T_loeschefax_l, &Tx, T_ein_Fax_nach_Rueckfrage_loeschen,&loef,1));
   opts.push_back(/*6*/optioncl(T_loew,T_loeschewaise_l, &Tx, T_Eintraege_aus, &spooltab, 
         T_loeschen_zu_denen_kein_Datei_im_Wartevz_und_kein_Capi_oder_Hylafax_nachweisbar_ist, &loew,1));
-  opts.push_back(/*6*/optioncl(T_loea_k,T_loescheallew_l, &Tx, T_alle_wartenden_Faxe_und_zugehoerige_Eintraege_aus, &spooltab, T_loeschen, &loea,1));
+  opts.push_back(/*4*/optioncl(T_loea_k,T_loescheallew_l, &Tx, T_alle_wartenden_Faxe_und_zugehoerige_Eintraege_aus, &spooltab, T_loeschen, &loea,1));
+	opts.push_back(/*4*/optioncl(T_erneut_k,T_erneutempf_l, &Tx, T_empfangenes_Fax_erneut_bereitstellen, &erneut,1));
   //  opts.push_back(optioncl("loee","loescheempf", &Tx, T_empfangene_Dateien_loeschen_die_nicht_verarbeitet_werden_koennen,&loee,1));
   opts.push_back(/*6*/optioncl(T_kez_k,T_korrerfolgszeichen_l, &Tx, T_in_der_Datenbanktabelle, &touta, T_wird_das_Erfolgszeichen_korrigiert, &kez,1));
   opts.push_back(/*6*/optioncl(T_bwv_k,T_bereinigewv_l, &Tx, T_Dateien_aus_Warteverzeichnis_gegen, &touta, T_pruefen_und_verschieben, &bwv,1));
@@ -4787,6 +4803,14 @@ int paramcl::loeschefax()
 	} // !nrzf
 	return 1;
 } // int paramcl::loeschefax()
+
+int paramcl::empferneut()
+{
+	Log(violetts+Tx[T_loesche_fax]+schwarz);
+ string fnr=Tippstring(Tx[T_Bitte_Fax_5te_Spalte_aus_autofax_listi_eingeben], 0);
+ caus<<fnr<<endl;
+	return 0;
+} // int paramcl::empferneut()
 
 // wird aufgerufen in: main
 int paramcl::loeschewaise()
@@ -9135,7 +9159,7 @@ int main(int argc, char** argv)
 			//  int qerg = mysql_query(My.conn,proc.c_str());
 			// 1) nicht-pdf-Dateien in pdf umwandeln, 2) pdf-Dateien wegfaxen, 3) alle in warte-Verzeichnis kopieren, 4) in Spool-Tabelle eintragen
 			//  vector<string> npdf, spdf;
-			if (!(pm.loef||pm.loew||pm.loea)) {
+			if (!(pm.loef||pm.loew||pm.loea||pm.erneut)) {
 				pm.DateienHerricht();  
 			}
 			if (pm.obfcard) pm.obcapi=!pm.pruefcapi();
@@ -9148,6 +9172,8 @@ int main(int argc, char** argv)
 				if (pm.loef) pm.loeschefax();
 				if (pm.loew) pm.loeschewaise();
 				if (pm.loea) pm.loescheallewartende();
+			} else if (pm.erneut) {
+			   pm.empferneut();
 			} else {
 				// hier stehen obcapi und obhyla fest
 				pm.faxealle();

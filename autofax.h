@@ -175,6 +175,7 @@ class paramcl // Programmparameter
     uchar loew=0;  // loeschewaise in der Datenbank, aber nicht mehr real nachweisbare Dateien in der Datenbank loeschen
     uchar loea=0; // loesche alle wartenden Faxe und zugehoerige Dateieintraege
     uchar loee=0; // empfangene Dateien loeschen, die nicht verarbeitet werden koennen
+		uchar erneut=0;  // empfangenes Fax erneut bereitstellen
     uchar kez=0;    // korrigiere Erfolgskennzeichen
     uchar bwv=0;    // bereinige Warteverzeichnis
     uchar anhl=0;    // autofax anhalten
@@ -391,6 +392,7 @@ class paramcl // Programmparameter
 //    int hservice_faxgetty();
     int pruefhyla();
     int  loeschefax();
+		int  empferneut();
     int  loeschewaise();
     int  loescheallewartende();
     void faxealle();

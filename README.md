@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.42973) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42987) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -231,6 +231,8 @@ autofax within cron <b><br>
 waiting directory or capisuite fax or hylafax <b><br>
 -dela, --deleteallwaiting</b>: delete all waiting faxes and
 associated entries from &lsquo;<b>spool</b>&lsquo; <b><br>
+-again, --receiveagain</b>: present a received fax again
+<b><br>
 -csf, --correctsuccessflag</b>: in the database table
 &lsquo;<b>outa</b>&lsquo; the success flag is being
 corrected <b><br>
@@ -267,15 +269,18 @@ directory, currently &rsquo;<b>/var/log</b>&rsquo; <b><br>
 be used instead of &rsquo;<b>autofax.log</b>&rsquo; <b><br>
 -tdr, --tofaxdir &lt;path&gt;</b>: faxes the files from
 &lt;path&gt; instead of
-&rsquo;<b>/var/autofax/tofax</b>&rsquo; <b><br>
+&rsquo;<b>/DATA/Patientendokumente/zufaxen</b>&rsquo;
+<b><br>
 -wdr, --waitdir &lt;path&gt;</b>: files are waiting in
 &lt;path&gt; instead of
-&rsquo;<b>/var/autofax/waitingfax</b>&rsquo; <b><br>
+&rsquo;<b>/DATA/Patientendokumente/warteauffax</b>&rsquo;
+<b><br>
 -ndr, --notfaxeddir &lt;path&gt;</b>: Failed Faxes are
 collected here and not in
-&rsquo;<b>/var/autofax/notfaxed</b>&rsquo; <b><br>
+&rsquo;<b>/DATA/Patientendokumente/nichtgefaxt</b>&rsquo;
+<b><br>
 -rdr, --receiveddir &lt;path&gt;</b>: directory for recieved
-faxes &rsquo;<b>/var/autofax/recvdir</b>&rsquo; <b><br>
+faxes &rsquo;<b>/DATA/Patientendokumente</b>&rsquo; <b><br>
 -cm, --cronminutes &lt;zahl&gt;</b>: every how many minutes
 shall <b>autofax</b> be called in crontab (0=not at all),
 instead of &rsquo;<b>2</b>&rsquo; <b><br>
@@ -286,22 +291,22 @@ capisuite <b>or not <br>
 -fh, --firsthyla</b>: try to send faxes primarily via
 hylafax <b>or not <br>
 -mod, --hmodem &lt;string&gt;</b>: Modem used for hylafax,
-instead of &rsquo;<b>ttyACM0</b>&rsquo; <b><br>
+instead of &rsquo;&rsquo; <b><br>
 -mc, --maxcapitries &lt;zahl&gt;</b>: try Hylafax after
 &lt;no&gt; tries of Capisuite instead of
-&rsquo;<b>1</b>&rsquo; <b><br>
+&rsquo;<b>3</b>&rsquo; <b><br>
 -mh, --maxhylatries &lt;zahl&gt;</b>: try Capisuite after
 &lt;no&gt; tries of Hylafax instead of
-&rsquo;<b>2</b>&rsquo; <b><br>
+&rsquo;<b>3</b>&rsquo; <b><br>
 -cuser, --cuser &lt;string&gt;</b>: takes the linux user
 &lt;string&gt; for capisuite and/or samba instead of
-&rsquo;<b>schade</b>&rsquo; <b><br>
+&rsquo;&rsquo; <b><br>
 -crct, --cringcount &lt;zahl&gt;</b>: No. of bell rings
 until Capisuite accepts the call, instead of
-&rsquo;<b>2</b>&rsquo; <b><br>
+&rsquo;<b>1</b>&rsquo; <b><br>
 -hrct, --hringcount &lt;zahl&gt;</b>: No. of bell rings
 until hylafaxs accepts the call, instead of
-&rsquo;<b>3</b>&rsquo; <b><br>
+&rsquo;<b>2</b>&rsquo; <b><br>
 -hmd, --hmaxdials &lt;zahl&gt;</b>: No of dialing retries in
 hylafax, instead of &rsquo;<b>11</b>&rsquo; <b><br>
 -it, --immediatelytarget</b>: copy faxes into target
@@ -958,7 +963,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.42973) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.42987) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1175,7 +1180,7 @@ editiert oder auch &uuml;ber &rsquo;<b>autofax
 -rf</b>&rsquo; interaktiv gepflegt werden kann. <b><br>
 Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
-Faxt Dateien aus Verzeichns &lt;pfad&gt;, die &rsquo;to fax
+Faxt Dateien aus Verzeichns &lt;pfad&gt;, die &rsquo;an Fax
 &lt;faxnr&gt;&rsquo; enthalten und durch soffice in pdf
 konvertierbar sind <br>
 und traegt sie in MariaDB-Datenbank &rsquo;faxeinp&rsquo;
@@ -1203,6 +1208,8 @@ Wartevz.und kein Capi- oder Hylafax nachweisbar ist <b><br>
 -loea, --loescheallew</b>: alle wartenden Faxe und
 zugehoerige Eintraege aus &lsquo;<b>spool</b>&lsquo;
 loeschen <b><br>
+-erneut, --erneutempf</b>: empfangenes Fax erneut
+bereitstellen <b><br>
 -kez, --korrerfolgszeichen</b>: in der Datenbanktabelle
 &lsquo;<b>outa</b>&lsquo; wird das Erfolgszeichen korrigiert
 <b><br>
@@ -1240,16 +1247,20 @@ Language/Sprache/Lingue/Lingua
 (im Pfad &rsquo;<b>/var/log</b>&rsquo;) wird verwendet
 anstatt &rsquo;<b>autofax.log</b>&rsquo; <b><br>
 -zvz, --zufaxenvz &lt;pfad&gt;</b>: faxt die Dateien aus
-&lt;pfad&gt; anstatt &rsquo;<b>/var/autofax/tofax</b>&rsquo;
+&lt;pfad&gt; anstatt
+&rsquo;<b>/DATA/Patientendokumente/zufaxen</b>&rsquo;
 <b><br>
 -wvz, --wartevz &lt;pfad&gt;</b>: Dateien warten in
 &lt;pfad&gt; anstatt
-&rsquo;<b>/var/autofax/waitingfax</b>&rsquo; <b><br>
+&rsquo;<b>/DATA/Patientendokumente/warteauffax</b>&rsquo;
+<b><br>
 -nvz, --nichtgefaxtvz &lt;pfad&gt;</b>: Gescheiterte Faxe
 werden hier gesammelt anstatt in
-&rsquo;<b>/var/autofax/notfaxed</b>&rsquo; <b><br>
+&rsquo;<b>/DATA/Patientendokumente/nichtgefaxt</b>&rsquo;
+<b><br>
 -evz, --empfvz &lt;pfad&gt;</b>: Empfangsverzeichnis fuer
-Faxempfang &rsquo;<b>/var/autofax/recvdir</b>&rsquo; <b><br>
+Faxempfang &rsquo;<b>/DATA/Patientendokumente</b>&rsquo;
+<b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
 nicht), anstatt &rsquo;<b>2</b>&rsquo; <b><br>
@@ -1260,22 +1271,22 @@ wegzuschicken <b>oder nicht <br>
 -hz, --hylazuerst</b>: versuche faxe zuerst ueber hylafax
 wegzuschicken <b>oder nicht <br>
 -mod, --hmodem &lt;string&gt;</b>: Fuer Hylafax verwendetes
-Modem, anstatt &rsquo;<b>ttyACM0</b>&rsquo; <b><br>
+Modem, anstatt &rsquo;&rsquo; <b><br>
 -mc, --maxcapiv &lt;zahl&gt;</b>: nach &lt;zahl&gt;
 Versuchen Capisuite wird Hylafax versucht, anstatt nach
-&rsquo;<b>1</b>&rsquo; <b><br>
+&rsquo;<b>3</b>&rsquo; <b><br>
 -mh, --maxhylav &lt;zahl&gt;</b>: nach &lt;zahl&gt;
 Versuchen Hylafax wird Capisuite versucht, anstatt nach
-&rsquo;<b>2</b>&rsquo; <b><br>
+&rsquo;<b>3</b>&rsquo; <b><br>
 -cuser, --cuser &lt;string&gt;</b>: verwendet fuer Capisuite
 und/oder Samba den Linux-Benutzer &lt;string&gt; anstatt
-&rsquo;<b>schade</b>&rsquo; <b><br>
+&rsquo;&rsquo; <b><br>
 -ckzl, --cklingelzahl &lt;zahl&gt;</b>: Zahl der
 Klingeltoene, bis Capisuite den Anruf annimmt, anstatt
-&rsquo;<b>2</b>&rsquo; <b><br>
+&rsquo;<b>1</b>&rsquo; <b><br>
 -hkzl, --hklingelzahl &lt;zahl&gt;</b>: Zahl der
 Klingeltoene, bis Hylafax den Anruf annimmt, anstatt
-&rsquo;<b>3</b>&rsquo; <b><br>
+&rsquo;<b>2</b>&rsquo; <b><br>
 -hmw, --hmaxwahlvers &lt;zahl&gt;</b>: Zahl der Wahlversuche
 in Hylafax, anstatt &rsquo;<b>11</b>&rsquo; <b><br>
 -gz, --gleichziel</b>: Faxe werden auch ohne Faxerfolg ins
@@ -1285,20 +1296,20 @@ Zielverzeichnis kopiert <b>oder nicht <br>
 -ocra, --ocra</b>: Text aus gesandten Bildern wird ermittelt
 <b>oder nicht <br>
 -afs, --anfaxstr &lt;string&gt;</b>: faxnr wird hinter
-&lt;string&gt; erwartet statt hinter &rsquo;<b>to
-fax</b>&rsquo; <b><br>
+&lt;string&gt; erwartet statt hinter &rsquo;<b>an
+Fax</b>&rsquo; <b><br>
 -acfs, --ancfaxstr &lt;string&gt;</b>: faxnr fuer primaer
 Capisuite wird hinter &lt;string&gt; erwartet statt hinter
-&rsquo;<b>to cfax</b>&rsquo; <b><br>
+&rsquo;<b>an cFax</b>&rsquo; <b><br>
 -ahfs, --anhfaxstr &lt;string&gt;</b>: faxnr fuer primaer
 hylafax wird hinter &lt;string&gt; erwartet statt hinter
-&rsquo;<b>to hfax</b>&rsquo; <b><br>
+&rsquo;<b>an hFax</b>&rsquo; <b><br>
 -as, --anstr &lt;string&gt;</b>: Adressatenname wird hinter
-&lt;string&gt; erwartet statt hinter &rsquo; <b>to</b>
+&lt;string&gt; erwartet statt hinter &rsquo; <b>an</b>
 &rsquo; <b><br>
 -us, --undstr &lt;string&gt;</b>: Trennstring &lt;string&gt;
 fuer mehrere Adressaten/Telefonnummern statt
-&rsquo;<b>and</b>&rsquo; <b><br>
+&rsquo;<b>und</b>&rsquo; <b><br>
 -host, --host &lt;string&gt;</b>: verwendet die Datenbank
 auf Host &lt;string&gt; anstatt auf
 &rsquo;<b>localhost</b>&rsquo; <b><br>
@@ -1633,7 +1644,7 @@ unterzogen.</p> </td></tr>
 
 <p style="margin-left:11%; margin-top: 1em"><b>Hardware</b>:
 Computer mit einer Fritzcard 2.0 oder 2.1 und/oder einem
-linux-kompatiblen Modem; in der vorliegenden Version 0.42973
+linux-kompatiblen Modem; in der vorliegenden Version 0.42987
 <b><br>
 Software</b>: Das Programm wurde auf eine Installation von
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,

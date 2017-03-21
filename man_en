@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "21.03.17" "Version 0.42973" "\fBautofax\fR man page"
+.TH man 1 "21.03.17" "Version 0.42987" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -139,6 +139,8 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -dela, --deleteallwaiting\fR: delete all waiting faxes and associated entries from `\fBspool\fR`
 .br
+\fB -again, --receiveagain\fR: present a received fax again
+.br
 \fB -csf, --correctsuccessflag\fR: in the database table `\fBouta\fR` the success flag is being corrected
 .br
 \fB -rwd, --revisewaitdir\fR: Examine files in waiting directory against the tables `\fBouta\fR` and clean them up
@@ -171,13 +173,13 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -lf, --logfilename <string>\fR: log file <string> (in path '\fB/var/log\fR') will be used instead of '\fBautofax.log\fR'
 .br
-\fB -tdr, --tofaxdir <path>\fR: faxes the files from <path> instead of '\fB/var/autofax/tofax\fR'
+\fB -tdr, --tofaxdir <path>\fR: faxes the files from <path> instead of '\fB/DATA/Patientendokumente/zufaxen\fR'
 .br
-\fB -wdr, --waitdir <path>\fR: files are waiting in <path> instead of '\fB/var/autofax/waitingfax\fR'
+\fB -wdr, --waitdir <path>\fR: files are waiting in <path> instead of '\fB/DATA/Patientendokumente/warteauffax\fR'
 .br
-\fB -ndr, --notfaxeddir <path>\fR: Failed Faxes are collected here and not in '\fB/var/autofax/notfaxed\fR'
+\fB -ndr, --notfaxeddir <path>\fR: Failed Faxes are collected here and not in '\fB/DATA/Patientendokumente/nichtgefaxt\fR'
 .br
-\fB -rdr, --receiveddir <path>\fR: directory for recieved faxes '\fB/var/autofax/recvdir\fR'
+\fB -rdr, --receiveddir <path>\fR: directory for recieved faxes '\fB/DATA/Patientendokumente\fR'
 .br
 \fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
 .br
@@ -189,17 +191,17 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -fh, --firsthyla\fR: try to send faxes primarily via hylafax\fB or not\fR
 .br
-\fB -mod, --hmodem <string>\fR: Modem used for hylafax, instead of  '\fBttyACM0\fR'
+\fB -mod, --hmodem <string>\fR: Modem used for hylafax, instead of  '\fB\fR'
 .br
-\fB -mc, --maxcapitries <zahl>\fR: try Hylafax after <no> tries of Capisuite instead of '\fB1\fR'
+\fB -mc, --maxcapitries <zahl>\fR: try Hylafax after <no> tries of Capisuite instead of '\fB3\fR'
 .br
-\fB -mh, --maxhylatries <zahl>\fR: try Capisuite after <no> tries of Hylafax instead of '\fB2\fR'
+\fB -mh, --maxhylatries <zahl>\fR: try Capisuite after <no> tries of Hylafax instead of '\fB3\fR'
 .br
-\fB -cuser, --cuser <string>\fR: takes the linux user <string> for capisuite and/or samba instead of '\fBschade\fR'
+\fB -cuser, --cuser <string>\fR: takes the linux user <string> for capisuite and/or samba instead of '\fB\fR'
 .br
-\fB -crct, --cringcount <zahl>\fR: No. of bell rings until Capisuite accepts the call, instead of '\fB2\fR'
+\fB -crct, --cringcount <zahl>\fR: No. of bell rings until Capisuite accepts the call, instead of '\fB1\fR'
 .br
-\fB -hrct, --hringcount <zahl>\fR: No. of bell rings until hylafaxs accepts the call, instead of '\fB3\fR'
+\fB -hrct, --hringcount <zahl>\fR: No. of bell rings until hylafaxs accepts the call, instead of '\fB2\fR'
 .br
 \fB -hmd, --hmaxdials <zahl>\fR: No of dialing retries in hylafax, instead of   '\fB11\fR'
 .br
