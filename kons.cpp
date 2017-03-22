@@ -1197,6 +1197,12 @@ char ers(char roh)
   case '|': return 'u';
   case '<': return '(';
   case '>': return ')';
+  case ':': return ';';
+  case '"': return '\'';
+  case '\\': return '`';
+  case '/': return '´';
+  case '*': return '°';
+  case '?': return '~';
 	default: return roh;
  } //  switch(roh)
 } // char ers(char roh)
