@@ -221,6 +221,7 @@ class paramcl // Programmparameter
     string ccapiconfdat; // /etc/capisuite/capisuite.conf oder /usr/local/etc/capisuite/capisuite.conf laut Handbuch
     // Parameter aus /etc/capisuite/fax.conf:
     string spoolcapivz; // Verzeichnis der Capi-Spool-Dateien /var/spool/capisuite/
+		string cempfavz; //  /var/spool/capisuite/autofaxarch/
     string cfaxuservz;    // /var/spool/capisuite/users/
     string cfaxusersqvz;    // /var/spool/capisuite/users/<user>/sendq
     string nextdatei;  // /var/spool/capisuite/users/<user>/sendq/fax-nextnr
@@ -342,6 +343,7 @@ class paramcl // Programmparameter
 		void pruefunpaper();
     int pruefocr();
 		void unpaperfuercron();
+		void empfcapi(const string& stamm,uchar indb=1,uchar mitversch=1);
 	public:
 		int Log(const string& text,bool oberr=0,short klobverb=0);
     paramcl(int argc,char** argv);
