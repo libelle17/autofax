@@ -2739,9 +2739,9 @@ int paramcl::setzhylavz()
   } // if (obverb)
   kuerzevtz(&varsphylavz);
   hsendqvz=varsphylavz+"/sendq";
-  xferfaxlog=varsphylavz+"/etc/xferfaxlog"; 
-  kuerzevtz(&hsendqvz);
   pruefverz(hsendqvz,obverb,oblog);
+  xferfaxlog=varsphylavz+"/etc/xferfaxlog"; 
+	hempfavz=varsphylavz+"/autofaxarch";
   return 0;
 } // int paramcl::setzhylavz()
 
@@ -6299,7 +6299,6 @@ void paramcl::empfarch()
 {
 	Log(violetts+Tx[T_empfarch]+schwarz);
 	// 1) hyla
-	const string hempfavz=varsphylavz+"/autofaxarch"; // /var/spool/capisuite/empfarch/
 	// Faxe in der Empfangswarteschlange auflisten, ...
 	cmd=string("sudo find \"")+varsphylavz+"/recvq\" -name \"fax*.tif\"";
 	vector<string> rueck;

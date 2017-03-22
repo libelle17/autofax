@@ -246,7 +246,8 @@ class paramcl // Programmparameter
     uchar logdneu=0;    // Logdatei geaendert
     uchar logvneu=0;    // Logverzeichnis geaendert
     string varsphylavz; // Verzeichnis der Hyla-Spool-Dateien /var/spool/hylafax oder /var/spool/fax
-    string xferfaxlog; // varsphylavz + "/etc/xferfaxlog"; 
+		string hempfavz;    // var/spool/(hyla)fax/autofaxarch
+		string xferfaxlog; // varsphylavz + "/etc/xferfaxlog"; 
 		string faxqpfad,hfaxdpfad; // /usr/local/sbin/faxq, /usr/local/sbin/hfaxq
 		string faxgtpfad;   // /usr/lib/fax/faxgetty oder /usr/local/sbin/faxgetty
     string hsendqvz; // /var/spool/hylafax/sendq
