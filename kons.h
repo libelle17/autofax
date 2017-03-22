@@ -353,6 +353,7 @@ void ersetzAlle(string *quelle, const string& alt, const string& neu);
 char* charersetze(char *u, const char alt, const char neu);
 void chersetze(const string& u, string *z, const string& alt, const char neu);
 string ersetzefuerdatei(const string& u);
+void fuersamba(string& roh);
 size_t zahlin(string *str, const char* was);
 long cmpmem( char* feld, const char* search, int len_feld); // , int len_search
 // fuer lies (Konfigurationsdatei lesen)

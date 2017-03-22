@@ -231,10 +231,10 @@ endif
 	-@find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)||\
 	{ $(UDPR)$(LT) $(KF);$(call i1unind,$(LT))}
-	-@! test -z "$(LT5)"&&{ \
+	-@if test -n "$(LT5)"; then { \
 	find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)||\
-	{ $(call i1unind,$(LT5))};}
+	{ $(call i1unind,$(LT5))};}; else true; fi
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                         \r" >$(BA)
 

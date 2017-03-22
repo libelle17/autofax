@@ -361,6 +361,7 @@ enum T_
   T_zeigweitere,
   T_empfarch,
 	T_empfcapi,
+	T_empfhyla,
   T_schlussanzeige,
   T_zielname,
   T_PIDausName,
@@ -693,6 +694,7 @@ enum T_
 	T_vor,
 	T_danach,
 	T_Bitte_Fax_5te_Spalte_aus_autofax_listi_eingeben,
+	T_mitversch,
 	T_MAX
 };
 
@@ -1312,6 +1314,8 @@ char const *autofax_T[T_MAX+1][Smax]={
   {"empfarch()","archiveReceived()"},
 	// T_empfcapi
 	{"empfcapi(): ","recvcapi(): "},
+	// T_empfhyla
+	{"empfhyla(): ","recvhyla(): "},
   // T_schlussanzeige
   {"schlussanzeige()","finaldisplay()"},
   // T_zielname
@@ -1995,6 +1999,8 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{" Nach: "," After: "},
 	// T_Bitte_Fax_5te_Spalte_aus_autofax_listi_eingeben
 	{"Bitte Fax (5. Spalte aus autofax -listi) eingeben: ","Please enter fax (5th column from autofax -listi): "},
+	// T_mitversch
+	{", mitversch: ",", withmove: "},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -3291,16 +3297,16 @@ void paramcl::rueckfragen()
       langu=Tippstrings(sprachstr.c_str()/*"Language/Sprache/Lingue/Lingua"*/,&sprachen, &langu);
       lgnzuw();
       cgconf[lfd].setze(&langu);
-    }
+    } //     if (cgconf[++lfd].wert.empty() || rzf)
     if (cgconf[++lfd].wert.empty() || rzf) {
       host=Tippstring(Tx[T_Host_fuer_MySQL_MariaDB_Datenbank],&host);
       cgconf[lfd].setze(&host);
-    }
+    } //     if (cgconf[++lfd].wert.empty() || rzf)
     if (cgconf[++lfd].wert.empty() || rzf) {
       string Frage=Tx[T_Benutzer_fuer_MySQL_MariaDB];
       muser=Tippstring(Frage.c_str(),&muser);
       cgconf[lfd].setze(&muser);
-    }
+    } //     if (cgconf[++lfd].wert.empty() || rzf)
 		if (cgconf[++lfd].wert.empty() || rzf) {
 			string mpw2;
 			mpwd.clear();
@@ -3318,7 +3324,8 @@ void paramcl::rueckfragen()
     if (cgconf[++lfd].wert.empty() || rzf) {
       dbq=Tippstring(string(Tx[T_Datenbankname_fuer_MySQL_MariaDB_auf])+host+"'",&dbq);
       cgconf[lfd].setze(&dbq);
-    }
+    } //     if (cgconf[++lfd].wert.empty() || rzf)
+
     //      for(size_t zkt=0;zkt<sqlzn;zkt++) KLA
     //        <<"zkt: "<<blau<<zkt<<schwarz<<", sqlconf["<<zkt<<"]: "<<rot<<sqlconf[zkt].wert<<schwarz<<endl;
     //        <<gruen<<(sqlconf[zkt].wert.empty()?sqlconfvp[zkt].wert:sqlconf[zkt].wert)<<schwarz<<endl;
@@ -4808,14 +4815,19 @@ int paramcl::loeschefax()
 int paramcl::empferneut()
 {
 	Log(violetts+Tx[T_empferneut]+schwarz);
- string fnr=Tippstring(Tx[T_Bitte_Fax_5te_Spalte_aus_autofax_listi_eingeben], 0);
- if (fnr.find('-')!=string::npos) {
-  string txtd=cempfavz+vtz+cuser+'-'+fnr;
+	string fnr=Tippstring(Tx[T_Bitte_Fax_5te_Spalte_aus_autofax_listi_eingeben], 0);
 	struct stat cstat={0};
-	if (!lstat((txtd+".txt").c_str(),&cstat)&&!lstat((txtd+".sff").c_str(),&cstat))
-		empfcapi(txtd,0,0);
- } //  if (fnr.find('-')!=string::npos)
- return 0;
+	if (fnr.find('-')!=string::npos) {
+		string txtd=cempfavz+vtz+cuser+'-'+fnr;
+		if (!lstat((txtd+".txt").c_str(),&cstat)&&!lstat((txtd+".sff").c_str(),&cstat))
+			empfcapi(txtd,0,0);
+	} else {
+		string txtd=hempfavz+vtz+fnr+".tif";
+		if (!lstat(txtd.c_str(),&cstat)) {
+			empfhyla(txtd,0,0);
+		} // 		if (!lstat(txtd.c_str(),&cstat))
+	} // 	if (fnr.find('-')!=string::npos)
+	return 0;
 } // int paramcl::empferneut()
 
 // wird aufgerufen in: main
@@ -6301,120 +6313,11 @@ void paramcl::empfarch()
 	// 1) hyla
 	// Faxe in der Empfangswarteschlange auflisten, ...
 	cmd=string("sudo find \"")+varsphylavz+"/recvq\" -name \"fax*.tif\"";
-	vector<string> rueck;
+	svec rueck;
 	systemrueck(cmd,obverb,oblog, &rueck);
 	for(size_t i=0;i<rueck.size();i++) {
-		if (!i) {
-			pruefverz(hempfavz,obverb,oblog);
-		} //     if (!i)
 		// ..., Informationen darueber einsammeln, ...
-		string zeit;
-		string absdr,tsid,callerid,devname=hmodem;
-		string stamm,exten;const string ganz=rueck[i];
-		getstammext(&ganz,&stamm,&exten);
-		string base=base_name(stamm);
-		string fnr=base.substr(3);
-		fnr=fnr.substr(fnr.find_first_not_of("0"));
-		struct tm tm={0};
-		struct stat elog={0};
-    ulong seiten=0;
-		if (!holtif(rueck[i],&seiten,&tm,&elog,&absdr,&tsid,&callerid,&devname))
-			ankzahl++;
-
-    string tabsdr; // transferierter Absender
-    if (callerid.empty()) {
-      svec trueck;
-      systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null |grep -am 1 \""+base_name(rueck[i])+"\" |cut -f8,9",obverb,oblog,&trueck); 
-      if (trueck.size()) {
-				vector<string> tok; 
-        aufSplit(&tok,&trueck[0],'\t');
-        if (tok.size()) {
-          // <<gruen<<"tok[0] d: "<<schwarz<<tok[0]<<endl; // Tel'nr z.B. 49.8131.1234567
-          callerid=tok[0];
-          if (tok.size()>1) {
-            // <<gruen<<"tok[1] d: "<<schwarz<<tok[1]<<endl; // Namen z.B. G.Schade
-            tabsdr=tok[1];
-            anfzweg(tabsdr); // Anfuehrungszeichen entfernen
-          } //           if (tok.size()>1)
-        } // if (tok.size()) 
-      } // if (trueck.size()) 
-    } // if (callerid.empty()) 
-    // <<gruen<<"tsid: "<<schwarz<<tsid<<endl;
-    tsid=stdfaxnr(tsid.empty()?callerid:tsid);
-    if (absdr.empty()) {
-      string bsname;
-      getSender(this,tsid,&absdr,&bsname,obverb,oblog);
-      // <<gruen<<"absdr("<<tsid<<"): "<<schwarz<<absdr<<" bsname: "<<bsname<<endl;
-      if (!bsname.empty()) {
-        absdr+=", ";
-        absdr+=bsname;
-      }
-      if (absdr.empty() || istelnr(absdr)) { // wenn Nr. nicht gefunden, kommt sie in absdr wieder zurueck
-        absdr=tabsdr;
-      }
-    } //     if (absdr.empty())
-    if (absdr.length()>187) absdr.erase(187);
-
-		char tbuf[100]={0};
-		strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
-    if (absdr.length()>187) absdr.erase(187);
-    if (absdr.length()>70) absdr.erase(70);
-    const string hrumpf="Fax h"+fnr+","+Tx[T_avon]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf;
-    const string hdatei=hrumpf+".tif";
-    const string hpfad=empfvz+vtz+hdatei;
-    const string ziel=empfvz+vtz+hrumpf+".pdf";
-    ::Log(blaus+base+schwarz+" => "+gruen+hdatei+schwarz,1,1);
-    // ..., die empfangene Datei in hpfad kopieren ...
-    uint kfehler=0;
-    string vorsoffice=kopiere(rueck[i],hpfad,&kfehler,1,obverb,oblog);
-    if (!kfehler) {
-      systemrueck("sudo chown --reference=\""+empfvz+"\" \""+hpfad+"\"",obverb,oblog);
-      systemrueck("sudo chmod --reference=\""+empfvz+"\" \""+hpfad+"\"",obverb,oblog);
-    } else {
-      vorsoffice=rueck[i];
-    } //     if (!kfehler) else
-    struct stat entrynd={0};
-		int obpdfda=0;
-    int obhpfadda=!lstat(hpfad.c_str(),&entrynd);
-		if (obhpfadda)
-			if (chmod(hpfad.c_str(),S_IRWXU|S_IRGRP|S_IROTH))
-				systemrueck("sudo chmod +r \""+hpfad+"\"",obverb,oblog);
-		if (obocri) {
-			ulong pseiten=0;
-			obpdfda=!zupdf(&vorsoffice, ziel, &pseiten, obocri, 1); // 0=Erfolg
-			if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) {
-				elog.st_size=entrynd.st_size;
-				if (!kfehler) 
-					tuloeschen(hpfad,cuser,obverb,oblog);
-			} // 			if (obpdfda) if (!lstat(ziel.c_str(),&entrynd))
-		} // if (obocri) 
-		if (obhpfadda||obpdfda) {
-			cmd=string("sudo mv \"")+rueck[i]+"\" \""+hempfavz+"\"";
-			systemrueck(cmd,obverb,oblog);
-			RS zs(My);
-      // ... und falls erfolgreich in der Datenbanktabelle inca eintragen
-      for(int runde=0;runde<2;runde++) {
-        if (runde==0) { zs.Abfrage("SET NAMES 'utf8'");
-        } else if (runde==1) zs.Abfrage("SET NAMES 'latin1'");
-        RS rins(My); 
-        vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-        einf.push_back(/*2*/instyp(My->DBS,"fsize",elog.st_size));
-        einf.push_back(/*2*/instyp(My->DBS,"pages",seiten));
-        einf.push_back(/*2*/instyp(My->DBS,"titel",&absdr));
-        einf.push_back(/*2*/instyp(My->DBS,"tsid",&tsid));
-        //        einf.push_back(instyp(My->DBS,"callerid",&callerid));
-        einf.push_back(/*2*/instyp(My->DBS,"devname",&devname));
-        einf.push_back(/*2*/instyp(My->DBS,"id",&base));
-        einf.push_back(/*2*/instyp(My->DBS,"transe",&tm));
-        rins.insert(tinca,einf, 1,0,ZDB?ZDB:!runde); 
-        if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
-        if (!rins.fnr) break;
-        if (runde==1) {
-          ::Log(string(Tx[T_Fehler_af])+drot+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,oblog);
-          exit(24);
-        } //         if (runde==1)
-      } // for(int runde=0;runde<2;runde++) 
-    } // if (!lstat(hpfad.c_str(),&entrynd)) 
+		empfhyla(rueck[i]);
   } // for(size_t i=0;i<rueck.size();i++) 
 
   // 2) capi
@@ -6439,9 +6342,131 @@ void paramcl::empfarch()
   } // if (!lstat(cfaxuserrcvz.c_str(),&entryvz)) /* /var/spool/capisuite/users/~/received */ 
 } // void paramcl::empfarch()
 
+void paramcl::empfhyla(const string& ganz,uchar indb/*=1*/,uchar mitversch/*=1*/)
+{
+	Log(violetts+Tx[T_empfhyla]+schwarz+ganz+", indb: "+(indb?"1":"0")+Tx[T_mitversch]+(mitversch?"1":"0"));
+	string stamm,exten;
+	getstammext(&ganz,&stamm,&exten);
+	string base=base_name(stamm);
+	string fnr=base.substr(3);
+	fnr=fnr.substr(fnr.find_first_not_of("0"));
+	struct tm tm={0};
+	struct stat elog={0};
+	ulong seiten=0;
+	string absdr,tsid,callerid,devname=hmodem;
+	if (!holtif(ganz,&seiten,&tm,&elog,&absdr,&tsid,&callerid,&devname))
+		ankzahl++;
+
+	string tabsdr; // transferierter Absender
+	if (callerid.empty()) {
+		svec trueck;
+		systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null |grep -am 1 \""+base_name(ganz)+"\" |cut -f8,9",obverb,oblog,&trueck); 
+		if (trueck.size()) {
+			vector<string> tok; 
+			aufSplit(&tok,&trueck[0],'\t');
+			if (tok.size()) {
+				// <<gruen<<"tok[0] d: "<<schwarz<<tok[0]<<endl; // Tel'nr z.B. 49.8131.1234567
+				callerid=tok[0];
+				if (tok.size()>1) {
+					// <<gruen<<"tok[1] d: "<<schwarz<<tok[1]<<endl; // Namen z.B. G.Schade
+					tabsdr=tok[1];
+					anfzweg(tabsdr); // Anfuehrungszeichen entfernen
+				} //           if (tok.size()>1)
+			} // if (tok.size()) 
+		} // if (trueck.size()) 
+	} // if (callerid.empty()) 
+	// <<gruen<<"tsid: "<<schwarz<<tsid<<endl;
+	tsid=stdfaxnr(tsid.empty()?callerid:tsid);
+	if (absdr.empty()) {
+		string bsname;
+		getSender(this,tsid,&absdr,&bsname,obverb,oblog);
+		// <<gruen<<"absdr("<<tsid<<"): "<<schwarz<<absdr<<" bsname: "<<bsname<<endl;
+		if (!bsname.empty()) {
+			absdr+=", ";
+			absdr+=bsname;
+		}
+		if (absdr.empty() || istelnr(absdr)) { // wenn Nr. nicht gefunden, kommt sie in absdr wieder zurueck
+			absdr=tabsdr;
+		}
+	} //     if (absdr.empty())
+  fuersamba(absdr);  
+
+	char tbuf[100]={0};
+	strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
+	if (absdr.length()>187) absdr.erase(187);
+	if (absdr.length()>70) absdr.erase(70);
+	const string hrumpf="Fax h"+fnr+","+Tx[T_avon]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf;
+	const string hdatei=hrumpf+".tif";
+	const string hpfad=empfvz+vtz+hdatei;
+	const string ziel=empfvz+vtz+hrumpf+".pdf";
+	::Log(blaus+base+schwarz+" => "+gruen+hdatei+schwarz,1,1);
+	// ..., die empfangene Datei in hpfad kopieren ...
+	uint kfehler=0;
+	string vorsoffice=kopiere(ganz,hpfad,&kfehler,1,obverb,oblog);
+	if (!kfehler) {
+		systemrueck("sudo chown --reference=\""+empfvz+"\" \""+hpfad+"\"",obverb,oblog);
+		systemrueck("sudo chmod --reference=\""+empfvz+"\" \""+hpfad+"\"",obverb,oblog);
+	} else {
+		vorsoffice=ganz;
+	} //     if (!kfehler) else
+	struct stat entrynd={0};
+	int obpdfda=0;
+	int obhpfadda=!lstat(hpfad.c_str(),&entrynd);
+	if (obhpfadda)
+		if (chmod(hpfad.c_str(),S_IRWXU|S_IRGRP|S_IROTH))
+			systemrueck("sudo chmod +r \""+hpfad+"\"",obverb,oblog);
+	if (obocri) {
+		ulong pseiten=0;
+		obpdfda=!zupdf(&vorsoffice, ziel, &pseiten, obocri, 1); // 0=Erfolg
+		if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) {
+			elog.st_size=entrynd.st_size;
+			if (!kfehler) 
+				tuloeschen(hpfad,cuser,obverb,oblog);
+		} // 			if (obpdfda) if (!lstat(ziel.c_str(),&entrynd))
+	} // if (obocri) 
+	if (mitversch) {
+		if (obhpfadda||obpdfda) {
+			// cmd=string("sudo mv \"")+ganz+"\" \""+hempfavz+"\""; systemrueck(cmd,obverb,oblog);
+			static uchar hempfgeprueft=0;
+			if (!hempfgeprueft) {
+				pruefverz(hempfavz,obverb,oblog);
+				hempfgeprueft=1;
+			} // 			if (!hempfgeprueft)
+			dorename(ganz,hempfavz,cuser,0,obverb,oblog);
+		} // 	if (obhpfadda||obpdfda)
+	} // 	if (mitversch)
+	if (indb) {
+		if (obhpfadda||obpdfda) {
+			RS zs(My);
+			// ... und falls erfolgreich in der Datenbanktabelle inca eintragen
+			for(int runde=0;runde<2;runde++) {
+				if (runde==0) { zs.Abfrage("SET NAMES 'utf8'");
+				} else if (runde==1) zs.Abfrage("SET NAMES 'latin1'");
+				RS rins(My); 
+				vector<instyp> einf; // fuer alle Datenbankeinfuegungen
+				einf.push_back(/*2*/instyp(My->DBS,"fsize",elog.st_size));
+				einf.push_back(/*2*/instyp(My->DBS,"pages",seiten));
+				einf.push_back(/*2*/instyp(My->DBS,"titel",&absdr));
+				einf.push_back(/*2*/instyp(My->DBS,"tsid",&tsid));
+				//        einf.push_back(instyp(My->DBS,"callerid",&callerid));
+				einf.push_back(/*2*/instyp(My->DBS,"devname",&devname));
+				einf.push_back(/*2*/instyp(My->DBS,"id",&base));
+				einf.push_back(/*2*/instyp(My->DBS,"transe",&tm));
+				rins.insert(tinca,einf, 1,0,ZDB?ZDB:!runde); 
+				if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
+				if (!rins.fnr) break;
+				if (runde==1) {
+					::Log(string(Tx[T_Fehler_af])+drot+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,oblog);
+					exit(24);
+				} //         if (runde==1)
+			} // for(int runde=0;runde<2;runde++) 
+		} // 			if (obhpfadda||obpdfda)
+	} // 		if (indb)
+} // void paramcl::empfhyla(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*/)
+
 void paramcl::empfcapi(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*/)
 {
-	Log(violetts+Tx[T_empfcapi]+schwarz+stamm+", indb: "+ltoan((int)indb));
+	Log(violetts+Tx[T_empfcapi]+schwarz+stamm+", indb: "+(indb?"1":"0")+Tx[T_mitversch]+(mitversch?"1":"0"));
 	schlArr umst; umst.init(5,"filename","call_from","call_to","time","cause");
 	ulong pseiten=0;
 	struct stat entrysff={0};
@@ -6554,7 +6579,7 @@ void paramcl::empfcapi(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*
 			if (!cempfavzgeprueft) {
 				pruefverz(cempfavz,obverb,oblog);
 				cempfavzgeprueft=1;
-			}
+			} // 			if (!cempfavzgeprueft)
 			dorename(sffdatei,cempfavz+vtz+cuser+"-"+base+".sff",cuser,&vfehler,obverb,oblog);
 			dorename(txtdatei,cempfavz+vtz+cuser+"-"+base_name(txtdatei),cuser,&vfehler,obverb,oblog);
 		} // if (utime(tifpfad.c_str(),&ubuf))  else
@@ -6664,29 +6689,37 @@ string zielname(const string& qdatei, zielmustercl *zmp, uchar wieweiterzaehl/*=
 
 
 // wird aufgerufen in: verschiebe (Version 1), verschiebe (Version 2), DateienHerricht
-void dorename(const string& quelle, const string& ziel, const string& cuser, uint *vfehler, int obverb, int oblog)
+void dorename(const string& quelle, const string& ziel, const string& cuser, uint *vfehlerp, int obverb, int oblog)
 {
 	Log(string(Tx[T_Verschiebe])+tuerkis+quelle+schwarz+"'\n         -> '"+gruen+ziel+schwarz+"'",obverb,oblog);
+	string *zielp=(string*)&ziel,ersatzziel;
+	struct stat zstat={0};
+	if (!lstat(ziel.c_str(),&zstat)&&S_ISDIR(zstat.st_mode)) {
+	  ersatzziel=ziel;
+	  kuerzevtz(&ersatzziel);	
+		ersatzziel+=vtz;
+		ersatzziel+=base_name(quelle);
+		zielp=&ersatzziel;
+	} // 	if (!lstat(ziel.c_str(),&zstat)&&S_ISDIR(zstat.st_mode))
 	for(uchar iru=1;iru<3;iru++) {
-		int renerg=rename(quelle.c_str(),ziel.c_str());
-		//    if (rename(quelle.c_str(),ziel.c_str()))
+		int renerg=rename(quelle.c_str(),zielp->c_str());
+		//    if (rename(quelle.c_str(),zielp->c_str()))
 		if (renerg) {
 			if(cuser.empty()) iru++;
 			if(iru==1) {
 				setfaclggf(dir_name(quelle), wahr, 7, wahr,obverb,oblog);
 			} else {
 				perror(Tx[T_Fehler_beim_Verschieben]);
-				const string cmd=string("sudo mv \"")+quelle+"\" \""+ziel+"\"";
+				const string cmd=string("sudo mv \"")+quelle+"\" \""+*zielp+"\"";
 				int erg=systemrueck(cmd,obverb,1);
-				if (vfehler) {
-					*vfehler+=erg;
-				}
+				if (vfehlerp) {
+					*vfehlerp+=erg;
+				} // 				if (vfehlerp)
 			} // if(iru) else
-		} // if (rename(quelle.c_str(),ziel.c_str())) 
+		} // if (rename(quelle.c_str(),zielp->c_str())) 
 		else break;
 	} // for(uchar iru=1;iru>-1;iru--)
 } // dorename
-
 
 // wird aufgerufen von Dateienherricht und untersuchespool; Vorsicht, wenn qdateip ein Verzeichnisname ist!
 string verschiebe(const string& qdatei, const string& zielvz, const string& cuser, uint *vfehler, uchar wieweiterzaehl, int obverb,int oblog)

@@ -1191,6 +1191,18 @@ string* anfzweg(string& quel) {
   return &quel;
 } // string* anfzweg(
 
+char ers(char roh)
+{
+ switch(roh) {
+  case '|': return 'u';
+	default: return roh;
+ } //  switch(roh)
+} // char ers(char roh)
+
+void fuersamba(string& roh)
+{
+  transform(roh.begin(),roh.end(),roh.begin(),ers);
+} // void fuersamba(string& roh)
 
 lsysen lsyscl::getsys(int obverb/*=0*/,int oblog/*=0*/)
 {

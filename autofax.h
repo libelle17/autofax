@@ -11,9 +11,9 @@ class paramcl; // Programmparameter
 void useruucp(const string& huser, int obverb,int oblog);
 string zielname(const string& qdatei, const string& zielvz,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0);
 string zielname(const string& qdatei, zielmustercl *zmp,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0);
-void dorename(const string& quelle, const string& ziel, const string& cuser="", uint *vfehler=0, int obverb=0, int oblog=0);
-string verschiebe(const string& qdatei, const string& zielvz, const string& cuser="",uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0,int oblog=0);
-void verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser="", uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0, int oblog=0);
+void dorename(const string& quelle, const string& ziel, const string& cuser=nix, uint *vfehler=0, int obverb=0, int oblog=0);
+string verschiebe(const string& qdatei, const string& zielvz, const string& cuser=nix,uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0,int oblog=0);
+void verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser=nix, uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0, int oblog=0);
 string kopiere(const string& qdatei, const string& zieldp, uint *kfehler, uchar wieweiterzaehl, int obverb=0,int oblog=0);
 string kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
 void prueffuncgettel3(DB *Myp, const string& usr, const string& host, int obverb, int oblog);
@@ -344,6 +344,7 @@ class paramcl // Programmparameter
 		void pruefunpaper();
     int pruefocr();
 		void unpaperfuercron();
+		void empfhyla(const string& ganz,uchar indb=1,uchar mitversch=1);
 		void empfcapi(const string& stamm,uchar indb=1,uchar mitversch=1);
 	public:
 		int Log(const string& text,bool oberr=0,short klobverb=0);
