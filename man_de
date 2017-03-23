@@ -355,6 +355,8 @@ falls \fBocr\fR benutzt werden soll:
 ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmypdf, python3-devel, python3-pip, python3-setuptools, rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper, and via 'python3 pip': cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.
 .br
 falls Sie die Quelldateien mit 'sh viall' bearbeiten wollen:
+.LP
+.HP 3
 vim
 .br
 All diese Installationen können abhängige Programme einschließen.

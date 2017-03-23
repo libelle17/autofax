@@ -1791,9 +1791,23 @@ image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">falls Sie die Quelldateien mit
-&rsquo;sh viall&rsquo; bearbeiten wollen: vim <br>
-All diese Installationen k&ouml;nnen abh&auml;ngige
-Programme einschlie&szlig;en. <br>
+&rsquo;sh viall&rsquo; bearbeiten wollen:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="4%">
+
+
+<p style="margin-top: 1em">vim</p></td>
+<td width="85%">
+</td></tr>
+</table>
+
+<p style="margin-left:15%;">All diese Installationen
+k&ouml;nnen abh&auml;ngige Programme
+einschlie&szlig;en. <br>
 Falls Sie eines dieser Programme nicht wollen bzw. nicht
 aktualisieren wollen, dann d&uuml;rfen Sie autofax oder
 die entsprechenden Programmteile nicht auf diesem Computer
