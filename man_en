@@ -404,7 +404,7 @@ c) In case \fBselinux\fR is active (as per default in fedora), it impedes per de
 .HP 3
 11) if necessary insertion of sections for the directories mentioned under 8) in /etc/samba/smb.conf, if necessary insertion of the program user or (if root) the user chosen for the capisuite as samba user.
 In case a Suse firewall is present, allow samba-server for "external zone".
-After calling autofax, the directories mentioned in 8) should be readable via samba within a local network and the outgoing directory should also be writable. 
+After calling autofax, the directories mentioned in 8) should be readable via samba within a local network and the directory for faxes to be sent should also be writable. 
 .LP
 .HP 3
 12) if necessary insertion of a database in mariadb with a configurable name, creation and modification of several tables and a procedure in this database, if necessary insertion of a user with a configurable name in mariadb for the management of those tables.

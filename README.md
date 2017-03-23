@@ -936,8 +936,8 @@ user or (if root) the user chosen for the capisuite as samba
 user. In case a Suse firewall is present, allow samba-server
 for &quot;external zone&quot;. After calling autofax, the
 directories mentioned in 8) should be readable via samba
-within a local network and the outgoing directory should
-also be writable.</p></td></tr>
+within a local network and the directory for faxes to be
+sent should also be writable.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -2000,8 +2000,8 @@ gew&auml;hlten Benutzers als Samba-Benutzer. Falls
 Suse-Firewall vorhanden, samba-Server fuer &quot;externe
 Zone&quot; eintragen. Nach Programmaufruf sollten die unter
 8) genannten Verzeichnisse im Samba-Netzwerk sichtbar sein
-und Dateien (als Faxe) im Faxausgangsverzeichnis erstellt
-werden k&ouml;nnen.</p></td></tr>
+und Dateien im Verzeichnis f&uuml;r zu sendende Faxe
+erstellt werden k&ouml;nnen.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
