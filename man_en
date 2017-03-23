@@ -165,7 +165,7 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -h, --help\fR: shows this screen
 .br
-\fBOptions can be saved in the configuration file: (preceding '1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):\fR
+\fBOptions saved in the configuration file: (preceding '1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):\fR
 .br
 \fB -lg, --language <string>\fR: Language/Sprache/Lingue/Lingua [\fBd\fReutsch,\fBe\fRnglisch] '\fBe\fR'
 .br

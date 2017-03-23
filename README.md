@@ -255,7 +255,7 @@ clean them up <b><br>
 -info, --version</b>: shows the program version <b><br>
 -vi, --vi</b>: edit configuration file <b><br>
 -h, --help</b>: shows this screen <b><br>
-Options can be saved in the configuration file: (preceding
+Options saved in the configuration file: (preceding
 &rsquo;1&rsquo;=don&rsquo;t save, &rsquo;no&rsquo;=contrary,
 e.g. &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -lg, --language &lt;string&gt;</b>:
@@ -1287,8 +1287,8 @@ Datensaetze = &lt;zahl&gt; statt &rsquo;<b>30</b>&rsquo;
 -vi, --vi</b>: Konfigurationsdatei editieren <b><br>
 -h, --hilfe</b>: Zeigt diesen Bildschirm an <b><br>
 Optionen, die in der Konfigurationsdatei gespeichert werden
-(vorausgehendes &rsquo;1&rsquo;=doch nicht speichern,
-&rsquo;no&rsquo;=Gegenteil, z.B.
+koennen (vorausgehendes &rsquo;1&rsquo;=doch nicht
+speichern, &rsquo;no&rsquo;=Gegenteil, z.B.
 &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -sp, --sprache &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
