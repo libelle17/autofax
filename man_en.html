@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Wed Mar 22 23:29:32 2017 -->
+<!-- CreationDate: Thu Mar 23 13:54:49 2017 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -28,6 +28,7 @@
 <a href="#OPTIONS_E">OPTIONS</a><br>
 <a href="#FUNCTIONALITY_E">FUNCTIONALITY</a><br>
 <a href="#PRECONDITIONS_E">PRECONDITIONS</a><br>
+<a href="#AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_E">AUTOMATICALLY INSTALLED SOFTWARE PACKAGES</a><br>
 <a href="#IMPLICATIONS_E">IMPLICATIONS</a><br>
 <a href="#ERRORS_E">ERRORS</a><br>
 <a href="#LIABILITY_E">LIABILITY</a><br>
@@ -670,26 +671,25 @@ being written, if necessary.</p></td></tr>
 
 <p style="margin-left:11%; margin-top: 1em"><b>Hardware</b>:
 Computer with a fritzcard 2.0 or 2.1 or/and a linux
-compatible fax modem; in the current version, in case of a
-US Robotics modem USR5637 and one of the below mentioned
-linux distributions, the whole installation should/could be
-run automatically by answering some questions. <b><br>
+compatible fax modem; in the current version, a US Robotics
+modem USR5637 and one of the below mentioned linux
+distributions are needed for an automatic installation (by
+answering some questions). <b><br>
 Software</b>: The program was adjusted to an installation of
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
-Mint &gt;= 18 or Fedora &gt;= 24 with standard options. In
-Debian, it may be advantageous to check that in the file
-/etc/apt/sources.list no dvd is mentioned before the
-standard online-repositories. systemctl (systemd) must run,
-sudo is needed (missing per default in Debian), the user
-must be allowed to call the command &rsquo;sudo&rsquo; (must
-be member of a group mentioned in /etc/sudoers, otherwise,
-the above mentioned installation program tries to enter him
-there), &rsquo;GNU make&rsquo; has to be installed (which
-shall be accomplished if necessary by calling ./install.sh).
-Further needed programs will be installed by the makefile or
-by autofax itsself including preconditioned programs via
-zypper, apt, dnf or yum, python3 pip, if needed and
-possible, especially:</p>
+Mint &gt;= 18 or Fedora &gt;= 24 with standard options.
+System D has to be installed, i.e., &quot;systemctl&quot;
+has to run. <br>
+oftware: The program <b>Software</b>: Das Programm wurde auf
+eine Installation von Opensuse &gt;= 42.1, Debian &gt;=
+8.60, Ubuntu &gt;= 16.04, Mint &gt;= 18 oder Fedora &gt;= 24
+mit jeweils Standardoptionen abgestimmt. System D muss
+installiert sein bzw. systemctl muss laufen.</p>
+
+<h2>AUTOMATICALLY INSTALLED SOFTWARE PACKAGES
+<a name="AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_E"></a>
+</h2>
+
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>makefile:</b></p>

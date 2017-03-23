@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "22.03.17" "Version 0.43007" "\fBautofax\fR man page"
+.TH man 1 "22.03.17" "Version 0.42996" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -317,9 +317,13 @@ Optionally, the received faxes are subjected to ocr via a call of ocrmypdf.
 19) The configuration file is being written, if necessary.
 .LP
 .SH PRECONDITIONS
-\fBHardware\fR: Computer with a fritzcard 2.0 or 2.1 or/and a linux compatible fax modem; in the current version, in case of a US Robotics modem USR5637 and one of the below mentioned linux distributions, the whole installation should/could be run automatically by answering some questions.
+\fBHardware\fR: Computer with a fritzcard 2.0 or 2.1 or/and a linux compatible fax modem; in the current version, a US Robotics modem USR5637 and one of the below mentioned linux distributions are needed for an automatic installation (by answering some questions).
 .br
-\fBSoftware\fR: The program was adjusted to an installation of Opensuse >= 42.1, Debian >= 8.60, Ubuntu >= 16.04, Mint >= 18 or Fedora >= 24 with standard options. In Debian, it may be advantageous to check that in the file /etc/apt/sources.list no dvd is mentioned before the standard online-repositories. systemctl (systemd) must run, sudo is needed (missing per default in Debian), the user must be allowed to call the command 'sudo' (must be member of a group mentioned in /etc/sudoers, otherwise, the above mentioned installation program tries to enter him there), 'GNU make' has to be installed (which shall be accomplished if necessary by calling ./install.sh). Further needed programs will be installed by the makefile or by autofax itsself including preconditioned programs via zypper, apt, dnf or yum, python3 pip, if needed and possible, especially:
+\fBSoftware\fR: The program was adjusted to an installation of Opensuse >= 42.1, Debian >= 8.60, Ubuntu >= 16.04, Mint >= 18 or Fedora >= 24 with standard options. System D has to be installed, i.e., "systemctl" has to run. 
+.br
+\fSoftware\fR: The program 
+\fBSoftware\fR: Das Programm wurde auf eine Installation von Opensuse >= 42.1, Debian >= 8.60, Ubuntu >= 16.04, Mint >= 18 oder Fedora >= 24 mit jeweils Standardoptionen abgestimmt. System D muss installiert sein bzw. systemctl muss laufen.
+.SH AUTOMATICALLY INSTALLED SOFTWARE PACKAGES 
 .LP
 \fBmakefile:\fR
 .LP

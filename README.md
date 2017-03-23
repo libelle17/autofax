@@ -10,6 +10,7 @@
 <a href="#OPTIONS_E">OPTIONS</a><br>
 <a href="#FUNCTIONALITY_E">FUNCTIONALITY</a><br>
 <a href="#PRECONDITIONS_E">PRECONDITIONS</a><br>
+<a href="#AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_E">AUTOMATICALLY INSTALLED SOFTWARE PACKAGES</a><br>
 <a href="#IMPLICATIONS_E">IMPLICATIONS</a><br>
 <a href="#ERRORS_E">ERRORS</a><br>
 <a href="#LIABILITY_E">LIABILITY</a><br>
@@ -652,26 +653,25 @@ being written, if necessary.</p></td></tr>
 
 <p style="margin-left:11%; margin-top: 1em"><b>Hardware</b>:
 Computer with a fritzcard 2.0 or 2.1 or/and a linux
-compatible fax modem; in the current version, in case of a
-US Robotics modem USR5637 and one of the below mentioned
-linux distributions, the whole installation should/could be
-run automatically by answering some questions. <b><br>
+compatible fax modem; in the current version, a US Robotics
+modem USR5637 and one of the below mentioned linux
+distributions are needed for an automatic installation (by
+answering some questions). <b><br>
 Software</b>: The program was adjusted to an installation of
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
-Mint &gt;= 18 or Fedora &gt;= 24 with standard options. In
-Debian, it may be advantageous to check that in the file
-/etc/apt/sources.list no dvd is mentioned before the
-standard online-repositories. systemctl (systemd) must run,
-sudo is needed (missing per default in Debian), the user
-must be allowed to call the command &rsquo;sudo&rsquo; (must
-be member of a group mentioned in /etc/sudoers, otherwise,
-the above mentioned installation program tries to enter him
-there), &rsquo;GNU make&rsquo; has to be installed (which
-shall be accomplished if necessary by calling ./install.sh).
-Further needed programs will be installed by the makefile or
-by autofax itsself including preconditioned programs via
-zypper, apt, dnf or yum, python3 pip, if needed and
-possible, especially:</p>
+Mint &gt;= 18 or Fedora &gt;= 24 with standard options.
+System D has to be installed, i.e., &quot;systemctl&quot;
+has to run. <br>
+oftware: The program <b>Software</b>: Das Programm wurde auf
+eine Installation von Opensuse &gt;= 42.1, Debian &gt;=
+8.60, Ubuntu &gt;= 16.04, Mint &gt;= 18 oder Fedora &gt;= 24
+mit jeweils Standardoptionen abgestimmt. System D muss
+installiert sein bzw. systemctl muss laufen.</p>
+
+<h2>AUTOMATICALLY INSTALLED SOFTWARE PACKAGES
+<a name="AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_E"></a>
+</h2>
+
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>makefile:</b></p>
@@ -1239,8 +1239,7 @@ speichern, &rsquo;no&rsquo;=Gegenteil, z.B.
 &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -sp, --sprache &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
-[<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;<b>d</b>&rsquo;
-<b><br>
+[<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;&rsquo; <b><br>
 -lvz, --logvz &lt;pfad&gt;</b>: waehlt als Logverzeichnis
 &lt;pfad&gt;, derzeit &rsquo;<b>/var/log</b>&rsquo; <b><br>
 -ld, --logdname &lt;string&gt;</b>: logdatei &lt;string&gt;
@@ -1644,18 +1643,19 @@ unterzogen.</p> </td></tr>
 
 <p style="margin-left:11%; margin-top: 1em"><b>Hardware</b>:
 Computer mit einer Fritzcard 2.0 oder 2.1 und/oder einem
-linux-kompatiblen Modem; in der vorliegenden Version 0.43007
-<b><br>
+linux-kompatiblen Modem; in der vorliegenden Fassung wird
+f&uuml;r eine automatische Installation des Programms
+(unter Beantwortung einiger R&uuml;ckfragen) ein US
+Robotics Modem USR5637 und eine der untenstehenden
+Linuxversionen ben&ouml;tigt. Im Fall der Verwendung von
+Fritzcard plus einem Modem kann das Programm beide Faxwege
+alternativ nutzen, um die &Uuml;bertragungssicherheit zu
+erh&ouml;hen. <b><br>
 Software</b>: Das Programm wurde auf eine Installation von
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
-Mint &gt;= 18 oder Fedora &gt;= 24 mit den Standardoptionen
-abgestimmt. System D muss installiert sein bzw. systemctl
-muss laufen. <br>
-Der Computer sollte mit einem linux-kompatiblen Modem
-oder/und einer Fritzkarte 2.0 oder 2.1 ausgestattet sein. Im
-Fall von beidem kann das Programm beide Faxwege alternativ
-nutzen, um die &Uuml;bertragungssicherheit zu
-erh&ouml;hen.</p>
+Mint &gt;= 18 oder Fedora &gt;= 24 mit jeweils
+Standardoptionen abgestimmt. System D muss installiert sein
+bzw. systemctl muss laufen.</p>
 
 <h2>AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE
 <a name="AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE_D"></a>
