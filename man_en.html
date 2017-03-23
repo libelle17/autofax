@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Thu Mar 23 15:06:44 2017 -->
+<!-- CreationDate: Thu Mar 23 15:25:33 2017 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -458,14 +458,6 @@ with a leading &rsquo;<b>#</b>&rsquo;.</p></td></tr>
 <td width="89%">
 
 
-<p style="margin-top: 1em">In case a Suse firewall is
-present, allow samba-server for &quot;external
-zone&quot;.</p> </td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
-
-
 <p style="margin-top: 1em">9) The program checks if all
 user-relevant directories (see 7) are being included in
 samba shares in <b>/etc/samba/smb.conf</b>; such are being
@@ -775,8 +767,22 @@ image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 </table>
 
 <p style="margin-left:15%;">in case You want to work on the
-source files with &rsquo;sh viall&rsquo;: vim <br>
-All those installations may include dependent programs. <br>
+source files with &rsquo;sh viall&rsquo;:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="4%">
+
+
+<p style="margin-top: 1em">vim</p></td>
+<td width="85%">
+</td></tr>
+</table>
+
+<p style="margin-left:15%;">All those installations may
+include dependent programs. <br>
 If You don&rsquo;t want one of those programs or want to
 keep an older version of one, You may not install autofax or
 use the respective program parts.</p>
@@ -945,7 +951,11 @@ periodic automatic program call in root&rsquo;s crontab</p></td></tr>
 sections for the directories mentioned under 8) in
 /etc/samba/smb.conf, if necessary insertion of the program
 user or (if root) the user chosen for the capisuite as samba
-user.</p> </td></tr>
+user. In case a Suse firewall is present, allow samba-server
+for &quot;external zone&quot;. After calling autofax, the
+directories mentioned in 8) should be readable via samba
+within a local network and the outgoing directory should
+also be writable.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

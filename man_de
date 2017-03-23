@@ -411,8 +411,8 @@ c) falls \fBselinux\fR aktiv ist (wie standardmäßig in fedora), dann behindert
 .LP
 .HP 3
 11) ggf. Einfügen von Abschnitten für die unter 8) genannten Verzeichnisse in /etc/samba/smb.conf, ggf. Einfügen/Passwortzuteilen des Programmbenutzers bzw. (falls root) des für die Capisuite gewählten Benutzers als Samba-Benutzer.
-.br
 Falls Suse-Firewall vorhanden, samba-Server fuer "externe Zone" eintragen.
+Nach Programmaufruf sollten die unter 8) genannten Verzeichnisse im Samba-Netzwerk sichtbar sein und Dateien (als Faxe) im Faxausgangsverzeichnis erstellt werden können.
 .LP
 .HP 3
 12) ggf. Einfügen einer Datenbank für die Faxe in mariadb unter einem bestimmbaren Namen, Anlage und Veränderung mehrerer Tabellen und einer Prozedur in dieser Datenbank, ggf. Einfügen eines Benutzers mit bestimmbarem Namen in mariadb zur Datenpflege in diesen Tabellen 

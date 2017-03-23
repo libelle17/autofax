@@ -255,8 +255,6 @@ b) with the command '\fBstty -F\fR' for a fax modem.
 .LP
 .HP 3 
 8) The program inserts itsself if wanted and necessary in \fBcrontab\fR in order to be called in adjustable intervals. To avoid this, either '\fBcronminut\fR' can be set to \fB0\fR, or the already generated autofax entry can be commented out with a leading '\fB#\fR'.
-.br
-In case a Suse firewall is present, allow samba-server for "external zone".
 .LP
 .HP 3 
 9) The program checks if all user-relevant directories (see 7) are being included in samba shares in \fB/etc/samba/smb.conf\fR; such are being added if needed.
@@ -352,8 +350,9 @@ in case \fBocr\fR shall be used:
 ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmypdf, python3-devel, python3-pip, python3-setuptools, rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper, and via 'python3 pip': cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.
 .br
 in case You want to work on the source files with 'sh viall':
+.LP
+.HP 3
 vim
-.br
 .br
 All those installations may include dependent programs.
 .br
@@ -404,6 +403,8 @@ c) In case \fBselinux\fR is active (as per default in fedora), it impedes per de
 .LP
 .HP 3
 11) if necessary insertion of sections for the directories mentioned under 8) in /etc/samba/smb.conf, if necessary insertion of the program user or (if root) the user chosen for the capisuite as samba user.
+In case a Suse firewall is present, allow samba-server for "external zone".
+After calling autofax, the directories mentioned in 8) should be readable via samba within a local network and the outgoing directory should also be writable. 
 .LP
 .HP 3
 12) if necessary insertion of a database in mariadb with a configurable name, creation and modification of several tables and a procedure in this database, if necessary insertion of a user with a configurable name in mariadb for the management of those tables.
