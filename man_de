@@ -326,7 +326,8 @@ Im Fall der Verwendung von Fritzcard plus einem Modem kann das Programm beide Fa
 
 .SH AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE
 .br
-(hierzu wird je nach Distribution zypper, apt-get, dnf oder yum verwendet).
+(hierzu wird je nach Distribution zypper, apt(-get), dnf oder yum verwendet).
+.br
 \fBmakefile:\fR
 .LP
 .HP 3
@@ -338,17 +339,17 @@ gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Ve
 .HP 3
 boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoffice-base, mariadb-server, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp, (in debian-derivates, für mariadb, zusätzlich: apt-transport-https)
 .br
-falls capisuite benutzt werden soll:
+falls \fBcapisuite\fR benutzt werden soll:
 .LP
 .HP 3
 capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source (linux-source), libcapi20-2, libcapi20-3, libxslt-tools, linux-headers-$(uname -r), python-devel, (in fedora, zusätzlich: kernel-modules-extra), 
 .br
-falls hylafax benutzt werden soll:
+falls \fBhylafax\fR benutzt werden soll:
 .LP
 .HP 3
-hylafax+, hylafax+-client, sendmail, tiff (im Fall von Vers. 4.0.7 mit leichter Modifikation, s. Makefile)
+hylafax+, hylafax+-client, sendmail, tiff (im Fall von Vers. 4.0.7 mit kleiner Modifikation, s. Makefile)
 .br
-falls ocr benutzt werden soll:
+falls \fBocr\fR benutzt werden soll:
 .LP
 .HP 3
 ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmypdf, python3-devel, python3-pip, python3-setuptools, rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper, and via 'python3 pip': cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.
@@ -368,9 +369,9 @@ Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:
 .br
 2) Sudo (fehlt anfangs bei Standardinstallation in Debian) wird ggf. installiert. 
 .br
-Der Benutzer beim Installationsvorgang wird, falls nicht schon enthalten, in eine Administrator-Gruppe eingetragen, die in /etc/sudoers genannt wird), da er "sudo" ausführen muß.
+Der Benutzer beim Installationsvorgang wird, falls nicht schon enthalten, in eine Administrator-Gruppe eingetragen, die in /etc/sudoers genannt wird, da er "sudo" ausführen muß.
 .br
-3) 'GNU make' wird benötigt, was durch Aufruf von ./install.sh ggf. installiert werden kann.
+3) 'GNU make' wird, falls nicht vorhanden, durch Aufruf von 'sh ./install.sh' bzw. 'configure' automatisch installiert.
 .LP
 .HP 3
 4) Installieren von \fBHylafax+\fR, falls ein Modem angeschlossen ist und Hylafax+ nicht installiert ist. Ggf. Konfiguration von Hylafax+ durch Aufruf von '\fBfaxsetup -nointeracitve\fR', durch Editieren der Konfigurationsdateien \fBconfig\fR und \fBconfig.*\fR (z.B. \fBconfig.ttyACM0\fR) im hylafax-Konfigurationsverzeichnis (Vorgabe z.B.: \fB/var/spool/hylafax/etc/\fR)
@@ -404,10 +405,10 @@ c) falls \fBselinux\fR aktiv ist (wie standardmäßig in fedora), dann behindert
 9) ggf. Erstellen und Verändern der Konfigurationsdatei autofax.conf in dem Verzeichnis, in dem auch es selbst steht (Vorgabe: /usr/local/sbin/autofax).
 .LP
 .HP 3
-10) ggf. Einfügen einer Zeile zum Aufruf des Programms in das crontab (von root)
+10) ggf. Einfügen einer Zeile zum automatischen periodischen Aufruf des Programms in das crontab (von root)
 .LP
 .HP 3
-11) ggf. Einfügen von Abschnitten für die unter 3) genannten Verzeichnisse in /etc/samba/smb.conf, ggf. Einfügen/Passwortzuteilen des Programmbenutzers bzw. (falls root) des für die Capisuite gewählten Benutzers als Samba-Bentzer.
+11) ggf. Einfügen von Abschnitten für die unter 8) genannten Verzeichnisse in /etc/samba/smb.conf, ggf. Einfügen/Passwortzuteilen des Programmbenutzers bzw. (falls root) des für die Capisuite gewählten Benutzers als Samba-Benutzer.
 .br
 Falls Suse-Firewall vorhanden, samba-Server fuer "externe Zone" eintragen.
 .LP
@@ -421,8 +422,10 @@ a) in hylafax: durch Aufruf von 'faxrm'
 .br
 b) in capisuite: durch Löschen der Dateien wie /var/spool/capisuite/users/<user>/sendq/*.txt und ~/*.sff.
 In capisuite kann auch eine verwaiste Lock-Datei (/var/spool/capisuite/users/<user>/sendq/*.lock) gelöscht werden.
-
-
+.LP
+.HP 3
+14) mit einer Befehlszeilenoption kann ein früher empfangenes Fax erneut in eine pdf-Datei umgewandelt werden.
+.br
 .SH FEHLER
 Fehler bitte mit u.a. dem Wort 'autofax' in der Ueberschrift melden. 
 .br

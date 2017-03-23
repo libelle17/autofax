@@ -317,13 +317,13 @@ Optionally, the received faxes are subjected to ocr via a call of ocrmypdf.
 19) The configuration file is being written, if necessary.
 .LP
 .SH PRECONDITIONS
-\fBHardware\fR: Computer with a fritzcard 2.0 or 2.1 or/and a linux compatible fax modem; in the current version, a US Robotics modem USR5637 and one of the below mentioned linux distributions are needed for an automatic installation (by answering some questions).
+\fBHardware\fR: Computer with a fritzcard 2.0 or 2.1 or/and a linux compatible fax modem; in the current version, a US Robotics modem USR5637 and one of the below mentioned linux distributions are needed for an automatic installation (by answering some questions). In case of a concurrent use of a fritzcard and a modem, the program can optimize the security of transmission of a fax.
 .br
 \fBSoftware\fR: The program was adjusted to an installation of Opensuse >= 42.1, Debian >= 8.60, Ubuntu >= 16.04, Mint >= 18 or Fedora >= 24 with standard options. System D has to be installed, i.e., "systemctl" has to run. 
 .br
-\fSoftware\fR: The program 
-\fBSoftware\fR: Das Programm wurde auf eine Installation von Opensuse >= 42.1, Debian >= 8.60, Ubuntu >= 16.04, Mint >= 18 oder Fedora >= 24 mit jeweils Standardoptionen abgestimmt. System D muss installiert sein bzw. systemctl muss laufen.
 .SH AUTOMATICALLY INSTALLED SOFTWARE PACKAGES 
+.br
+(for this purpose, depending on the distribution, zypper, apt(-get), dnf or yum are used).
 .LP
 \fBmakefile:\fR
 .LP
@@ -336,20 +336,24 @@ gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el) (in case of ver
 .HP 3
 boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoffice-base, mariadb-server, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp, (in debian-derivates, for mariadb, additionally: apt-transport-https)
 .br
-in case capisuite shall be used:
+in case \fBcapisuite\fR shall be used:
 .LP
 .HP 3
 capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source (linux-source), libcapi20-2, libcapi20-3, libxslt-tools, linux-headers-$(uname -r), python-devel, (in fedora, additionally: kernel-modules-extra), 
 .br
-in case hylafax shall be used:
+in case \fBhylafax\fR shall be used:
 .LP
 .HP 3
 hylafax+, hylafax+-client, sendmail, tiff (in case of version 4.0.7 with a slight modification, see Makefile)
 .br
-in case ocr shall be used:
+in case \fBocr\fR shall be used:
 .LP
 .HP 3
 ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmypdf, python3-devel, python3-pip, python3-setuptools, rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper, and via 'python3 pip': cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.
+.br
+in case You want to work on the source files with 'sh viall':
+vim
+.br
 .br
 All those installations may include dependent programs.
 .br
@@ -359,13 +363,21 @@ If You don't want one of those programs or want to keep an older version of one,
 The program has to take the following measures for its neat function:
 .LP
 .HP 3
-1) Installation of \fBhylafax+\fR, in case a modem is connected and hylafax+ is not installed. If necessary configuration of hylafax+ by calling '\fBfaxsetup -nointeracitve\fR', by editing the configuration files \fBconfig\fR and \fBconfig.*\fR (e.g. \fBconfig.ttyACM0\fR) in the hylafax configuration directory (default e.g. \fB/var/spool/hylafax/etc\fR).   
+1) In debian, in the file /etc/apt/sources.list a dvd-entry can be moved behind the standard online repositories.
+.br
+2) Sudo (is missing per default in debian) will be installed if needed.
+.br
+The current linux user, if not already contained, will be entered into an administrator group mentioned in /etc/sudoers, because he has to call "sudo".
+.br
+3) 'GNU make' will be installed if not present, automatically by calling 'sh install.sh' or 'configure'.
+.br
+4) Installation of \fBhylafax+\fR, in case a modem is connected and hylafax+ is not installed. If necessary configuration of hylafax+ by calling '\fBfaxsetup -nointeracitve\fR', by editing the configuration files \fBconfig\fR and \fBconfig.*\fR (e.g. \fBconfig.ttyACM0\fR) in the hylafax configuration directory (default e.g. \fB/var/spool/hylafax/etc\fR).   
 .LP
 .HP 3
-2) Installation of \fBcapisuite\fR, in case a fritzcard is inserted and capisuite is not installed. If necessary configuration of \fB/etc/capisuite/capisuite.conf\fR and \fB/etc/capisuite/fax.conf\fR. If necessary edition of the python-script for received faxes (default e.g. \fB/usr/lib64/capisuite/incoming.py\fR) in order to determine the rings before answer, creation and edition of the files '\fB/etc/udev/rules.d/46-FKN_isdn_capi.rules\fR', '\fB/etc/modprobe.d/50-blacklist.conf\fR'.
+5) Installation of \fBcapisuite\fR, in case a fritzcard is inserted and capisuite is not installed. If necessary configuration of \fB/etc/capisuite/capisuite.conf\fR and \fB/etc/capisuite/fax.conf\fR. If necessary edition of the python-script for received faxes (default e.g. \fB/usr/lib64/capisuite/incoming.py\fR) in order to determine the rings before answer, creation and edition of the files '\fB/etc/udev/rules.d/46-FKN_isdn_capi.rules\fR', '\fB/etc/modprobe.d/50-blacklist.conf\fR'.
 .LP
 .HP 3
-3) Installation of services: 
+6) Installation of services: 
 .br
 a) in systemd (in the directory /usr/lib/systemd/system or /lib/systemd/system), especially:
 .br
@@ -373,36 +385,39 @@ a) in systemd (in the directory /usr/lib/systemd/system or /lib/systemd/system),
 .br
 \fBcapisuite.service\fR,
 .br
-b) Moving of existing service files from the directory /etc/init.d to a newly created directory /etc/ausrangiert:
+b) Moving of existing service files from the directory /etc/init.d to a newly created directory /etc/ausrangiert ("discarded"):
 \fBhylafax\fR, \fBcapisuite\fR
 .br
-c) In case \fBselinux\fR is active (as per default in fedora), it impedes per default \fRhylafax\fR; in this case, a module for selinux is silently arranged in order to allow running hylafax-hfaxd. Furtheron, up to the possible construction of a better fitting solution, the domain 'getty' has to be deactivated with the command '\fBsemanage permissive -a getty_t\fR' in order to receive faxes.  
+c) In case \fBselinux\fR is active (as per default in fedora), it impedes per default \fRhylafax\fR; in this case, a module for selinux is silently arranged in order to allow running hylafax-hfaxd. Furtheron, up to the possible construction of a better fitting solution, the domain 'getty' has to be deactivated with the command '\fBsemanage permissive -a getty_t\fR' in order to be able to receive faxes.  
 .LP
 .HP 3
-4) Creation of a logfile, per default \fB/var/log/autofax.log\fR.
+7) Creation of a logfile, per default \fB/var/log/autofax.log\fR.
 .LP
 .HP 3
-5) if necessary creation and making accessible of the configurable \fBdirectories\fR for faxes to be sent, waiting, finished and failed.
+8) if necessary creation and making accessible of the configurable \fBdirectories\fR for faxes to be sent, waiting, finished and failed.
 .LP
 .HP 3
-6) if necessary creation and making accessible of the configuration file \fBautofax.conf\fR in the same directory where the program is located by itsself (default: \fB/usr/local/sbin/autofax\fR).
+9) if necessary creation and making accessible of the configuration file \fBautofax.conf\fR in the same directory where the program is located by itsself (default: \fB/usr/local/sbin/autofax\fR).
 .LP
 .HP 3
-7) Insertion of a line for the program in crontab (of root)
+10) Insertion of a line for the periodic automatic program call in root's crontab
 .LP
 .HP 3
-8) if necessary insertion of sections for the directories mentioned under 3) in /etc/samba/smb.conf, if necessary insertion of the program user or (if root) the user chosen for the capisuite as samba user.
+11) if necessary insertion of sections for the directories mentioned under 8) in /etc/samba/smb.conf, if necessary insertion of the program user or (if root) the user chosen for the capisuite as samba user.
 .LP
 .HP 3
-9) if necessary insertion of a database in mariadb with a configurable name, creation and modification of several tables and a procedure in this database, if necessary insertion of a user with a configurable name in mariadb for the data management within those tables.
+12) if necessary insertion of a database in mariadb with a configurable name, creation and modification of several tables and a procedure in this database, if necessary insertion of a user with a configurable name in mariadb for the management of those tables.
 .LP
 .HP 3
-10) With specific command line options for autofax, faxes can be deleted, especially:
+13) With specific command line options for autofax, faxes can be deleted, especially:
 .br
 a) in hylafax by callinng 'faxrm'
 .br
 b) in capisuite: by deleting files like /var/spool/capisuite/users/<user>/sendq/*.txt und ~/*.sff. In capisuite, an orphaned lock file (/var/spool/capisuite/users/<user>/sendq/*.lock) can be deleted, too.
-
+.LP
+.HP 3
+14) With a specific command line option for autofax, an old received fax can be converted to a pdf-File again.
+.br
 .SH ERRORS
 Please report any errors with the word 'autofax' included in the headline. 
 .br

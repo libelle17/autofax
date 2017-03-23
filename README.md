@@ -656,22 +656,23 @@ Computer with a fritzcard 2.0 or 2.1 or/and a linux
 compatible fax modem; in the current version, a US Robotics
 modem USR5637 and one of the below mentioned linux
 distributions are needed for an automatic installation (by
-answering some questions). <b><br>
+answering some questions). In case of a concurrent use of a
+fritzcard and a modem, the program can optimize the security
+of transmission of a fax. <b><br>
 Software</b>: The program was adjusted to an installation of
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
 Mint &gt;= 18 or Fedora &gt;= 24 with standard options.
 System D has to be installed, i.e., &quot;systemctl&quot;
-has to run. <br>
-oftware: The program <b>Software</b>: Das Programm wurde auf
-eine Installation von Opensuse &gt;= 42.1, Debian &gt;=
-8.60, Ubuntu &gt;= 16.04, Mint &gt;= 18 oder Fedora &gt;= 24
-mit jeweils Standardoptionen abgestimmt. System D muss
-installiert sein bzw. systemctl muss laufen.</p>
+has to run.</p>
 
 <h2>AUTOMATICALLY INSTALLED SOFTWARE PACKAGES
 <a name="AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_E"></a>
 </h2>
 
+
+<p style="margin-left:11%; margin-top: 1em">(for this
+purpose, depending on the distribution, zypper, apt(-get),
+dnf or yum are used).</p>
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>makefile:</b></p>
@@ -705,8 +706,8 @@ sfftobmp, (in debian-derivates, for mariadb, additionally:
 apt-transport-https)</p> </td></tr>
 </table>
 
-<p style="margin-left:15%;">in case capisuite shall be
-used:</p>
+<p style="margin-left:15%;">in case <b>capisuite</b> shall
+be used:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -722,7 +723,7 @@ linux-headers-$(uname -r), python-devel, (in fedora,
 additionally: kernel-modules-extra),</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">in case hylafax shall be
+<p style="margin-left:15%;">in case <b>hylafax</b> shall be
 used:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
@@ -737,7 +738,8 @@ sendmail, tiff (in case of version 4.0.7 with a slight
 modification, see Makefile)</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">in case ocr shall be used:</p>
+<p style="margin-left:15%;">in case <b>ocr</b> shall be
+used:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -754,8 +756,9 @@ and via &rsquo;python3 pip&rsquo;: cryptography, cffi,
 image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">All those installations may
-include dependent programs. <br>
+<p style="margin-left:15%;">in case You want to work on the
+source files with &rsquo;sh viall&rsquo;: vim <br>
+All those installations may include dependent programs. <br>
 If You don&rsquo;t want one of those programs or want to
 keep an older version of one, You may not install autofax or
 use the respective program parts.</p>
@@ -775,7 +778,39 @@ to take the following measures for its neat function:</p>
 <td width="89%">
 
 
-<p style="margin-top: 1em">1) Installation of
+<p style="margin-top: 1em">1) In debian, in the file
+/etc/apt/sources.list a dvd-entry can be moved behind the
+standard online repositories.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">2) Sudo (is missing per default
+in debian) will be installed if needed.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">The current linux user, if not
+already contained, will be entered into an administrator
+group mentioned in /etc/sudoers, because he has to call
+&quot;sudo&quot;.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">3) &rsquo;GNU make&rsquo; will
+be installed if not present, automatically by calling
+&rsquo;sh install.sh&rsquo; or &rsquo;configure&rsquo;.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">4) Installation of
 <b>hylafax+</b>, in case a modem is connected and hylafax+
 is not installed. If necessary configuration of hylafax+ by
 calling &rsquo;<b>faxsetup -nointeracitve</b>&rsquo;, by
@@ -788,7 +823,7 @@ configuration directory (default e.g.
 <td width="89%">
 
 
-<p style="margin-top: 1em">2) Installation of
+<p style="margin-top: 1em">5) Installation of
 <b>capisuite</b>, in case a fritzcard is inserted and
 capisuite is not installed. If necessary configuration of
 <b>/etc/capisuite/capisuite.conf</b> and
@@ -804,7 +839,7 @@ the files
 <td width="89%">
 
 
-<p style="margin-top: 1em">3) Installation of services:</p></td></tr>
+<p style="margin-top: 1em">6) Installation of services:</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -835,8 +870,8 @@ especially:</p> </td></tr>
 
 <p style="margin-top: 1em">b) Moving of existing service
 files from the directory /etc/init.d to a newly created
-directory /etc/ausrangiert: <b>hylafax</b>,
-<b>capisuite</b></p> </td></tr>
+directory /etc/ausrangiert (&quot;discarded&quot;):
+<b>hylafax</b>, <b>capisuite</b></p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -849,20 +884,21 @@ arranged in order to allow running hylafax-hfaxd. Furtheron,
 up to the possible construction of a better fitting
 solution, the domain &rsquo;getty&rsquo; has to be
 deactivated with the command &rsquo;<b>semanage permissive
--a getty_t</b>&rsquo; in order to receive faxes.</p></td></tr>
+-a getty_t</b>&rsquo; in order to be able to receive
+faxes.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-<p style="margin-top: 1em">4) Creation of a logfile, per
+<p style="margin-top: 1em">7) Creation of a logfile, per
 default <b>/var/log/autofax.log</b>.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-<p style="margin-top: 1em">5) if necessary creation and
+<p style="margin-top: 1em">8) if necessary creation and
 making accessible of the configurable <b>directories</b> for
 faxes to be sent, waiting, finished and failed.</p></td></tr>
 <tr valign="top" align="left">
@@ -870,7 +906,7 @@ faxes to be sent, waiting, finished and failed.</p></td></tr>
 <td width="89%">
 
 
-<p style="margin-top: 1em">6) if necessary creation and
+<p style="margin-top: 1em">9) if necessary creation and
 making accessible of the configuration file
 <b>autofax.conf</b> in the same directory where the program
 is located by itsself (default:
@@ -880,15 +916,15 @@ is located by itsself (default:
 <td width="89%">
 
 
-<p style="margin-top: 1em">7) Insertion of a line for the
-program in crontab (of root)</p></td></tr>
+<p style="margin-top: 1em">10) Insertion of a line for the
+periodic automatic program call in root&rsquo;s crontab</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-<p style="margin-top: 1em">8) if necessary insertion of
-sections for the directories mentioned under 3) in
+<p style="margin-top: 1em">11) if necessary insertion of
+sections for the directories mentioned under 8) in
 /etc/samba/smb.conf, if necessary insertion of the program
 user or (if root) the user chosen for the capisuite as samba
 user.</p> </td></tr>
@@ -897,18 +933,18 @@ user.</p> </td></tr>
 <td width="89%">
 
 
-<p style="margin-top: 1em">9) if necessary insertion of a
+<p style="margin-top: 1em">12) if necessary insertion of a
 database in mariadb with a configurable name, creation and
 modification of several tables and a procedure in this
 database, if necessary insertion of a user with a
-configurable name in mariadb for the data management within
-those tables.</p></td></tr>
+configurable name in mariadb for the management of those
+tables.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-<p style="margin-top: 1em">10) With specific command line
+<p style="margin-top: 1em">13) With specific command line
 options for autofax, faxes can be deleted, especially:</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
@@ -928,6 +964,14 @@ files like
 ~/*.sff. In capisuite, an orphaned lock file
 (/var/spool/capisuite/users/&lt;user&gt;/sendq/*.lock) can
 be deleted, too.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">14) With a specific command line
+option for autofax, an old received fax can be converted to
+a pdf-File again.</p></td></tr>
 </table>
 
 <h2>ERRORS
@@ -1663,8 +1707,9 @@ bzw. systemctl muss laufen.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">(hierzu wird je
-nach Distribution zypper, apt-get, dnf oder yum verwendet).
-<b>makefile:</b></p>
+nach Distribution zypper, apt(-get), dnf oder yum
+verwendet). <b><br>
+makefile:</b></p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -1695,8 +1740,8 @@ sfftobmp, (in debian-derivates, f&uuml;r mariadb,
 zus&auml;tzlich: apt-transport-https)</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">falls capisuite benutzt werden
-soll:</p>
+<p style="margin-left:15%;">falls <b>capisuite</b> benutzt
+werden soll:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -1712,8 +1757,8 @@ linux-headers-$(uname -r), python-devel, (in fedora,
 zus&auml;tzlich: kernel-modules-extra),</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">falls hylafax benutzt werden
-soll:</p>
+<p style="margin-left:15%;">falls <b>hylafax</b> benutzt
+werden soll:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -1723,11 +1768,11 @@ soll:</p>
 
 
 <p style="margin-top: 1em">hylafax+, hylafax+-client,
-sendmail, tiff (im Fall von Vers. 4.0.7 mit leichter
+sendmail, tiff (im Fall von Vers. 4.0.7 mit kleiner
 Modifikation, s. Makefile)</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">falls ocr benutzt werden
+<p style="margin-left:15%;">falls <b>ocr</b> benutzt werden
 soll:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
@@ -1788,16 +1833,17 @@ Standardinstallation in Debian) wird ggf. installiert.</p></td></tr>
 <p style="margin-top: 1em">Der Benutzer beim
 Installationsvorgang wird, falls nicht schon enthalten, in
 eine Administrator-Gruppe eingetragen, die in /etc/sudoers
-genannt wird), da er &quot;sudo&quot; ausf&uuml;hren
+genannt wird, da er &quot;sudo&quot; ausf&uuml;hren
 mu&szlig;.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-<p style="margin-top: 1em">3) &rsquo;GNU make&rsquo; wird
-ben&ouml;tigt, was durch Aufruf von ./install.sh ggf.
-installiert werden kann.</p></td></tr>
+<p style="margin-top: 1em">3) &rsquo;GNU make&rsquo; wird,
+falls nicht vorhanden, durch Aufruf von &rsquo;sh
+./install.sh&rsquo; bzw. &rsquo;configure&rsquo; automatisch
+installiert.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -1914,18 +1960,19 @@ dem Verzeichnis, in dem auch es selbst steht (Vorgabe:
 
 
 <p style="margin-top: 1em">10) ggf. Einf&uuml;gen einer
-Zeile zum Aufruf des Programms in das crontab (von root)</p></td></tr>
+Zeile zum automatischen periodischen Aufruf des Programms in
+das crontab (von root)</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
 <p style="margin-top: 1em">11) ggf. Einf&uuml;gen von
-Abschnitten f&uuml;r die unter 3) genannten
+Abschnitten f&uuml;r die unter 8) genannten
 Verzeichnisse in /etc/samba/smb.conf, ggf.
 Einf&uuml;gen/Passwortzuteilen des Programmbenutzers
 bzw. (falls root) des f&uuml;r die Capisuite
-gew&auml;hlten Benutzers als Samba-Bentzer.</p></td></tr>
+gew&auml;hlten Benutzers als Samba-Benutzer.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -1971,6 +2018,14 @@ L&ouml;schen der Dateien wie
 ~/*.sff. In capisuite kann auch eine verwaiste Lock-Datei
 (/var/spool/capisuite/users/&lt;user&gt;/sendq/*.lock)
 gel&ouml;scht werden.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">14) mit einer
+Befehlszeilenoption kann ein fr&uuml;her empfangenes Fax
+erneut in eine pdf-Datei umgewandelt werden.</p></td></tr>
 </table>
 
 <h2>FEHLER

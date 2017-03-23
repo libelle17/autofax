@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Thu Mar 23 13:54:49 2017 -->
+<!-- CreationDate: Thu Mar 23 15:06:44 2017 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -718,8 +718,9 @@ bzw. systemctl muss laufen.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">(hierzu wird je
-nach Distribution zypper, apt-get, dnf oder yum verwendet).
-<b>makefile:</b></p>
+nach Distribution zypper, apt(-get), dnf oder yum
+verwendet). <b><br>
+makefile:</b></p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -750,8 +751,8 @@ sfftobmp, (in debian-derivates, f&uuml;r mariadb,
 zus&auml;tzlich: apt-transport-https)</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">falls capisuite benutzt werden
-soll:</p>
+<p style="margin-left:15%;">falls <b>capisuite</b> benutzt
+werden soll:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -767,8 +768,8 @@ linux-headers-$(uname -r), python-devel, (in fedora,
 zus&auml;tzlich: kernel-modules-extra),</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">falls hylafax benutzt werden
-soll:</p>
+<p style="margin-left:15%;">falls <b>hylafax</b> benutzt
+werden soll:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -778,11 +779,11 @@ soll:</p>
 
 
 <p style="margin-top: 1em">hylafax+, hylafax+-client,
-sendmail, tiff (im Fall von Vers. 4.0.7 mit leichter
+sendmail, tiff (im Fall von Vers. 4.0.7 mit kleiner
 Modifikation, s. Makefile)</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">falls ocr benutzt werden
+<p style="margin-left:15%;">falls <b>ocr</b> benutzt werden
 soll:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
@@ -843,16 +844,17 @@ Standardinstallation in Debian) wird ggf. installiert.</p></td></tr>
 <p style="margin-top: 1em">Der Benutzer beim
 Installationsvorgang wird, falls nicht schon enthalten, in
 eine Administrator-Gruppe eingetragen, die in /etc/sudoers
-genannt wird), da er &quot;sudo&quot; ausf&uuml;hren
+genannt wird, da er &quot;sudo&quot; ausf&uuml;hren
 mu&szlig;.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-<p style="margin-top: 1em">3) &rsquo;GNU make&rsquo; wird
-ben&ouml;tigt, was durch Aufruf von ./install.sh ggf.
-installiert werden kann.</p></td></tr>
+<p style="margin-top: 1em">3) &rsquo;GNU make&rsquo; wird,
+falls nicht vorhanden, durch Aufruf von &rsquo;sh
+./install.sh&rsquo; bzw. &rsquo;configure&rsquo; automatisch
+installiert.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -969,18 +971,19 @@ dem Verzeichnis, in dem auch es selbst steht (Vorgabe:
 
 
 <p style="margin-top: 1em">10) ggf. Einf&uuml;gen einer
-Zeile zum Aufruf des Programms in das crontab (von root)</p></td></tr>
+Zeile zum automatischen periodischen Aufruf des Programms in
+das crontab (von root)</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
 <p style="margin-top: 1em">11) ggf. Einf&uuml;gen von
-Abschnitten f&uuml;r die unter 3) genannten
+Abschnitten f&uuml;r die unter 8) genannten
 Verzeichnisse in /etc/samba/smb.conf, ggf.
 Einf&uuml;gen/Passwortzuteilen des Programmbenutzers
 bzw. (falls root) des f&uuml;r die Capisuite
-gew&auml;hlten Benutzers als Samba-Bentzer.</p></td></tr>
+gew&auml;hlten Benutzers als Samba-Benutzer.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -1026,6 +1029,14 @@ L&ouml;schen der Dateien wie
 ~/*.sff. In capisuite kann auch eine verwaiste Lock-Datei
 (/var/spool/capisuite/users/&lt;user&gt;/sendq/*.lock)
 gel&ouml;scht werden.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em">14) mit einer
+Befehlszeilenoption kann ein fr&uuml;her empfangenes Fax
+erneut in eine pdf-Datei umgewandelt werden.</p></td></tr>
 </table>
 
 <h2>FEHLER
