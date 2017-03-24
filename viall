@@ -4,7 +4,6 @@
 ZD=viaufruf # speichere die Zahl der Aufrufe in Datei dieses Namens
 FREQUENZ=5 # rufe gtags jedes 5. Mal auf
 
-getIPR
 exportvars
 #{ PR=ctags;PK=$CTAGS;which $PR >$DN||{ getIPR;${IPR}$PK;grep -q " $PK" $UNF||{ T=${UPR}$PK;printf "$T\nprintf \"%%b$T%%b\\\n\" \"\\033[1;34m\" \"\\033[0m\"">>$UNF;};};}
 einricht ctags "$CTAGS"

@@ -22,7 +22,7 @@ getIPR() {
   COMP="gcc gcc-c++ \$(CCInst)";
 	LT=${_LT}-${dev};
 	} }||
-	{ still which apt-get &&{ IdPR="apt-get --assume-yes install ";IP_R="sudo $IdPR";
+	{ still which apt-get &&{ IdPR="apt-get --assume-yes install --reinstall ";IP_R="sudo $IdPR";
 	                                    UPR="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
 																			dev=dev;
 																			COMP="build-essential linux-headers-\$(shell uname -r)";
@@ -79,6 +79,9 @@ fi
 P=autofax
 mkdir -p $HOME/$P
 AUNF=$HOME/$P/$UNF
+_LT="libtiff"
+LT5="${_LT}5"
+getIPR;
 # diese Datei wird wegen obigem in viall gesourct, deshalb dort der Rest zu uebergehen
 if test "$ICH" = configure -o "$ICH" = install.sh -o "$ICH" = autofax_inst.sh; then
 rot="\033[1;31m"
@@ -90,9 +93,6 @@ reset="\033[0m"
 SUG="admin\|root\|sudo\|wheel\|ntadmin";
 
 # hier geht's los
-_LT="libtiff"
-LT5="${_LT}5"
-getIPR;
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
 still which sudo||{
 	printf "Must install 'sudo'. "
@@ -116,5 +116,6 @@ a=$(sudo -n -v 2>&1);test -z "$a" || echo $a|grep -q "assw" ||{
 # falls make fehlt, dann installieren ...
 einricht make make
 # $SPR make >$DN 2>&1 ||{ echo Installing/ Installiere 'make' ....; id su >$DN 2>&1 && { su -c "$IPR make;";true;} || sudo $IPR make; grep -q make $AUNF||printf "${UPR}make\necho \"${UPR}make\"\n">>$AUNF; }
+printf "vor exportvars\n"
 exportvars;
 fi
