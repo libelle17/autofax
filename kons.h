@@ -698,6 +698,7 @@ class servc {
     servc(const string& vsname,const string& vename): sname((vsname.empty()?vename:vsname)),ename(vename) {}
     servc(const string& vsname,const string& vename,int obverb, int oblog);
     // int obda(int obverb,int oblog);
+		int startbar();
 		int obsvfeh(int obverb=0,int oblog=0); // ob service einrichtungs fehler
 		uchar spruef(const string& sbez,uchar obfork,const string& parent, const string& sexec, const string& CondPath, const string& After, 
                  int obverb=0,int oblog=0, uchar mitstarten=1);

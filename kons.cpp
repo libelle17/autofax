@@ -2892,6 +2892,11 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 	return !svfeh;
 } // void servc::spruef() 
 
+int servc::startbar()
+{
+ return !svfeh||svfeh==7||svfeh==8;
+}
+
 int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs fehler
 	// svfeh=1: Dienst inexistent, 2: Dienst 'disabled' 3: Dienstdatei nicht ermittelbar, 4: Dienst laeuft noch, aber Dienstdatei inexistent
 	// svfeh=5: Exe-Datei nicht ermittelbar, 6: Exe-Datei fehlt, 7: activating 8: Dienst kann gestartet werden, 9: Sonstiges
