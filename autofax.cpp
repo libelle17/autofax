@@ -4322,6 +4322,10 @@ void paramcl::pruefsamba()
     } // if (!nrzf)
 	caus<<violett<<"Stelle 5"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
     if (smbrestart) {
+		caus<<"smb.svfeh: "<<(int)smb.svfeh<<endl;
+		caus<<"smbd.svfeh: "<<(int)smbd.svfeh<<endl;
+		caus<<"nmb.svfeh: "<<(int)nmb.svfeh<<endl;
+		caus<<"nmbd.svfeh: "<<(int)nmbd.svfeh<<endl;
       if (smb.svfeh!=1) smb.restart(obverb-1,oblog);
       else if (smbd.svfeh!=1) smbd.restart(obverb-1,oblog);
       if (nmb.svfeh!=1) nmb.restart(obverb-1,oblog);
