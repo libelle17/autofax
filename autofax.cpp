@@ -4169,6 +4169,7 @@ void paramcl::pruefsamba()
   const string quelle="/usr/share/samba/smb.conf";
   uchar obinst=0; // ob Samba installiert werden soll bzw. die smb.conf bearbeitet
   uchar obfw=0; // ob SuSEfirewall bearbeitet werden soll
+	caus<<violett<<"Stelle 0"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
 	int obsfehlt=linst.obfehlt("samba",obverb,oblog);
 	if (obsfehlt) {
 		if (!nrzf) {
