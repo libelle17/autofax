@@ -10,11 +10,11 @@ nPWD=${PWD##*/}
 }||{
 # ... sonst moegliche alte Quelldateiverzeichnisse $P umbenennen, aktuelle Version neu herunterladen ...
 	printf "Downloading/ Lade runter ${P} ...\n"
-	cd ~; 
+		cd ~; 
 	T=$P.tar.gz;
 	HOSTER=github.com
-	ACC=libelle17
-	wget https://$HOSTER/$ACC/$P/archive/master.tar.gz -O "$T" && 
+		ACC=libelle17
+		wget https://$HOSTER/$ACC/$P/archive/master.tar.gz -O "$T" && 
 		tar xpvf $T && 
 		rm -f $T && {
 			VORIGE=$(ls -d ~/${P}_* 2>/dev/null| cut -d"_" -f2 | sort -nr);
@@ -28,8 +28,8 @@ nPWD=${PWD##*/}
 				test -e $P && mv $P ${P}_1; 
 				mv $P-master $P &&{
 					cd $P; 
-				  . ./configure
-				  Q=../${P}_1/$UNF; test -f $Q && cp -ai $Q .||true
+					. ./configure
+						Q=../${P}_1/$UNF; test -f $Q && cp -a $Q .||true
 				}
 		}|| exit;
 }

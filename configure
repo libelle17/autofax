@@ -116,7 +116,5 @@ a=$(sudo -n -v 2>&1);test -z "$a" || echo $a|grep -q "assw" ||{
 # falls make fehlt, dann installieren ...
 einricht make make
 # $SPR make >$DN 2>&1 ||{ echo Installing/ Installiere 'make' ....; id su >$DN 2>&1 && { su -c "$IPR make;";true;} || sudo $IPR make; grep -q make $AUNF||printf "${UPR}make\necho \"${UPR}make\"\n">>$AUNF; }
-printf "vor exportvars\n"
 exportvars;
-printf "nach exportvars\n"
 fi
