@@ -2996,7 +2996,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 					} else {// 				if (lstat(srueExe.c_str(),&lst))
 						svfeh=8; // Sonstiges
 					} // 						if (lstat(srueExe[0].c_str(),&lst)) else
-				}
+				} // 				if (execf.empty())
 			} // 			if ((svfeh=lstat(systemd.c_str(),&svst))) 
 		} // if (sdatei.empty()) else
 	} // if (svfeh)

@@ -4160,6 +4160,8 @@ void paramcl::pruefcron()
 // wird aufgerufen in: main
 void paramcl::pruefsamba()
 {
+  int altobverb=obverb;
+	obverb=2;
   Log(violetts+Tx[T_pruefsamba]);
   const char* const smbdatei="/etc/samba/smb.conf";
   int sgest=0, ngest=0;
@@ -4188,9 +4190,11 @@ void paramcl::pruefsamba()
   servc smbd("smbd","smbd");
   servc nmb("nmb","nmbd");
   servc nmbd("nmbd","nmbd");
+	caus<<violett<<"Stelle 1"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
   if (smb.obsvfeh(obverb-1,oblog)) if (smbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
   if (nmb.obsvfeh(obverb-1,oblog)) if (nmbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
   //  <<rot<<"dienstzahl: "<<dienstzahl<<endl;
+	caus<<violett<<"Stelle 2"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
 	if (dienstzahl<2||conffehlt) {
 		for(int aru=0;aru<2;aru++) {
 			if (!smb.svfeh||!smbd.svfeh) {
@@ -4219,6 +4223,7 @@ void paramcl::pruefsamba()
 		} // for(int aru=0;aru<2;aru++) 
 		//    if (gestartet==2) smbrestart=0;
 	} // if (dienstzahl<2 || conffehlt) 
+	caus<<violett<<"Stelle 3"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
 	struct stat sstat={0};
 	if (!(conffehlt=lstat(smbdatei,&sstat))) {
     confdat smbcf(smbdatei,obverb);
@@ -4299,6 +4304,7 @@ void paramcl::pruefsamba()
 			if (!suchstr.empty())
 				anfgggf(unindt,"sudo sed -i.vorautofax '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdatei);
 		} // if (sapp.is_open()) 
+	caus<<violett<<"Stelle 4"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
 		if (!nrzf) {
 			if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
 				string pw1, pw2;
@@ -4313,6 +4319,7 @@ void paramcl::pruefsamba()
 				systemrueck("(echo "+pw1+"; echo "+pw2+") | sudo smbpasswd -s "+cuser,obverb,oblog);
       } // if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) 
     } // if (!nrzf)
+	caus<<violett<<"Stelle 5"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
     if (smbrestart) {
       if (smb.svfeh!=1) smb.restart(obverb-1,oblog);
       else if (smbd.svfeh!=1) smbd.restart(obverb-1,oblog);
@@ -4320,12 +4327,15 @@ void paramcl::pruefsamba()
       else if (nmbd.svfeh!=1) nmbd.restart(obverb-1,oblog);
     } // if (smbrestart) 
 		// VFS
+	caus<<violett<<"Stelle 6"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
 		if (linst.pruefipr()==apt) linst.doggfinst("samba-vfs-modules",obverb,oblog);
 		// Firewall(s)
 		uchar obslaeuft=0;
 		svec rueckr;
 		systemrueck("systemctl list-units|grep firewall|grep -v init",obverb,oblog,&rueckr);
+	caus<<violett<<"Stelle 7"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
 		if (rueckr.size()) if (rueckr[0].find("active running")!=string::npos ||rueckr[0].find("active exited")!=string::npos) obslaeuft=1;
+	caus<<violett<<"Stelle 8"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
 		if (obslaeuft) {
 			// firewall-ports, geht in SUSE und Fedora
 			uchar obzu=0;
@@ -4345,6 +4355,7 @@ void paramcl::pruefsamba()
 				obzu=1;
 				break;
 			} // 		for(size_t i=0;i<ports.size();i++) 
+	caus<<violett<<"Stelle 9"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
 			if (obzu) {
 				lsysen system=lsys.getsys(obverb,oblog);
 				if (system==fed) {
@@ -4381,6 +4392,8 @@ void paramcl::pruefsamba()
 			} // obzu
 		} // obslaeuft
   } //   if (!(conffehlt=lstat(smbdatei,&sstat)))
+	caus<<violett<<"Stelle 10"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
+  obverb=altobverb;
 } // pruefsamba
 
 // wird aufgerufen in: main

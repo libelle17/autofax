@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43007) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43008) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -255,9 +255,10 @@ clean them up <b><br>
 -info, --version</b>: shows the program version <b><br>
 -vi, --vi</b>: edit configuration file <b><br>
 -h, --help</b>: shows this screen <b><br>
-Options saved in the configuration file: (preceding
-&rsquo;1&rsquo;=don&rsquo;t save, &rsquo;no&rsquo;=contrary,
-e.g. &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
+Options which can be saved in the configuration file:
+(preceding &rsquo;1&rsquo;=don&rsquo;t save,
+&rsquo;no&rsquo;=contrary, e.g.
+&rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -lg, --language &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
 [<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;<b>e</b>&rsquo;
@@ -1016,7 +1017,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43007) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43008) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1292,7 +1293,8 @@ speichern, &rsquo;no&rsquo;=Gegenteil, z.B.
 &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -sp, --sprache &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
-[<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;&rsquo; <b><br>
+[<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;<b>d</b>&rsquo;
+<b><br>
 -lvz, --logvz &lt;pfad&gt;</b>: waehlt als Logverzeichnis
 &lt;pfad&gt;, derzeit &rsquo;<b>/var/log</b>&rsquo; <b><br>
 -ld, --logdname &lt;string&gt;</b>: logdatei &lt;string&gt;
