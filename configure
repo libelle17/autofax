@@ -111,15 +111,15 @@ SUG="admin\|root\|sudo\|wheel\|ntadmin";
 
 # hier geht's los
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
-P=sudo;still which $P||{
-	printf "Must install '$P'. "
+INSTP=sudo;still which $INSTP||{
+	printf "Must install '$INSTP'. "
 	printf "Please enter ${blau}root$reset's password at the next question:\n"
-	printf "Muss '$P' einrichten. "
+	printf "Muss '$INSTP' einrichten. "
 	printf "Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
 #	test -f $AUNF&&grep -q "[^;] sudo" $AUNF||printf "${UPR}sudo\nprintf \"\$blau%%s\$reset\\\n\" \"${UPR}sudo\"\n">>$AUNF;
 #	su -c "$IdPR sudo;";
-	 LOG=inst_$P.log;
-	 su -c "$IdPR $P"|tee "$LOG";
+	 LOG=inst_$INSTP.log;
+	 su -c "$IdPR $INSTP"|tee "$LOG";
 	 ausricht "$LOG";
 }
 # 0=sudo aufrufbar
