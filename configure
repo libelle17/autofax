@@ -51,12 +51,18 @@ einricht() {
  still which $1 ||{
    getIPR;
 	 printf "Installing/ Installiere $1 ...\n";
-	 ${IPR}$2|tee inst_$1.log;
-   test -f $AUNF&&grep -q " $2" $AUNF||{
-	  T=${UPR}$2;
-#		printf "$T\nprintf \"%%b$T%%b\\\n\" \"\\033[1;34m\" \"\\033[0m\"\n">>$AUNF;
-		printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
-	 }
+	 LOG=inst_$1.log;
+	 ${IPR}$2|tee $LOG && sed -in '/^\s/h;${x;p}'
+	 for P in $(cat $LOG); do
+		 test -f $AUNF&&grep -q " $2" $AUNF||{
+			T=${UDPR}$2;
+			printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
+		 }
+	 done;
+#	 test -f $AUNF&&grep -q " $2" $AUNF||{
+#	  T=${UPR}$2;
+#		printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
+#	 }
  }
 }
 
