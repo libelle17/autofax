@@ -47,13 +47,11 @@ exportvars() {
 	done;
 }
 
-tueinricht() {
-	 printf "Installing/ Installiere $1 ...\n";
-	 LOG=inst_$1.log;
-	 "$3""$2'"|tee $LOG && sed -in '/^\s/h;${x;p}'
-	 for P in $(cat $LOG); do
-		 test -f $AUNF&&grep -q "[^;] $2" $AUNF||{
-			T=${UDPR}$2;
+ausricht() {
+	 sed -in '/^\s/h;${x;p}' "$1"
+	 for P in $(cat $1); do
+		 test -f $AUNF&&grep -q "[^;] $P" $AUNF||{
+			T=${UDPR}$P;
 			printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
 		 }
 	 done;
@@ -66,7 +64,10 @@ tueinricht() {
 einricht() {
  still which $1 ||{
    getIPR;
-	 tueinricht "$1" "'$2" "${IPR}"
+	 printf "Installing/ Installiere $2 ...\n";
+	 LOG=inst_$1.log;
+	 ${IPR}"$2"|tee $LOG
+	 ausricht "$LOG"
  }
 }
 
@@ -111,9 +112,11 @@ still which sudo||{
 	printf "Please enter ${blau}root$reset's password at the next question:\n"
 	printf "Muss 'sudo' einrichten. "
 	printf "Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
-	tueinricht sudo sudo "su -c '$IdPR"
 #	test -f $AUNF&&grep -q "[^;] sudo" $AUNF||printf "${UPR}sudo\nprintf \"\$blau%%s\$reset\\\n\" \"${UPR}sudo\"\n">>$AUNF;
 #	su -c "$IdPR sudo;";
+	 LOG=inst_sudo.log;
+	 su -c "$IdPR sudo"|tee "LOG";
+	 ausricht sudo;
 }
 # 0=sudo aufrufbar
 a=$(sudo -n -v 2>&1);test -z "$a" || echo $a|grep -q "assw" ||{
