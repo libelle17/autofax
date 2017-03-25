@@ -49,11 +49,13 @@ exportvars() {
 }
 
 ausricht() {
+# in der letzten eingerückten Zeile der Bildschirmausgabe stehen die tatsächlich installierten Programme
 	 sed -ni '/^\s/h;${x;p}' "$1"
 	 for P in $(cat $1); do
 		 test -f $AUNF&&grep -q "[^;] $P" $AUNF||{
 			T=${UDPR}$P;
 			printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
+			[ $2 = "vim" ] &&{ printf "alias vi>$KR&&sudo unalias vi\necho \"alias vi>$KR&&sudo unalias vi\"\n">>$AUNF;}
 		 }
 	 done;
 #	 test -f $AUNF&&grep -q " $2" $AUNF||{
@@ -66,9 +68,10 @@ einricht() {
  still which $1 ||{
    getIPR;
 	 printf "Installing/ Installiere $2 ...\n";
+	 [ $1 = "vim" -a $fed = 1 ] &&{ sudo yum update vim-minimal;}
 	 LOG=inst_$1.log;
 	 ${IPR}"$2"|tee $LOG
-	 ausricht "$LOG"
+	 ausricht "$LOG" $1
  }
 }
 
