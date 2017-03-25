@@ -5,12 +5,10 @@ ZD=viaufruf # speichere die Zahl der Aufrufe in Datei dieses Namens
 FREQUENZ=5 # rufe gtags jedes 5. Mal auf
 
 exportvars
-#{ PR=ctags;PK=$CTAGS;which $PR >$DN||{ getIPR;${IPR}$PK;grep -q " $PK" $UNF||{ T=${UPR}$PK;printf "$T\nprintf \"%%b$T%%b\\\n\" \"\\033[1;34m\" \"\\033[0m\"">>$UNF;};};}
 einricht ctags "$CTAGS"
 ctags *.cpp *.h
 test -f $ZD || echo 1>$ZD; awk "BEGIN {print `cat $ZD`+1}">$ZD
-(($(cat $ZD)%$FREQUENZ)) ||einricht gtags global;
-# { PR=gtags;PK=global;which $PR >$DN||{ getIPR;${IPR}$PK;grep -q " $PK" $UNF||printf "${UPR}$PK\necho ${UPR}$PK\n">>$UNF;} &&$PR;} # in Fedora koennte gtags noch installiert werden muessen
+(($(cat $ZD)%$FREQUENZ)) ||einricht gtags global; # in Fedora koennte gtags noch installiert werden muessen
 PR=vim;PK=$PR;still which $PR ||{ getIPR;[ $fed = 1 ] &&{ sudo yum update vim-minimal;};${IP_R}$PK&&{ test -f $UNF&&grep -q " $PK" $UNF||\
 printf "${UPR}$PK\nprintf \"\$blau%%s\$reset\" \"${UPR}$PK\"\nalias vi>$KR&&sudo unalias vi\necho \"alias vi>$KR&&sudo unalias vi\"\n">>$UNF;};}
 # so waere es projektspezfisch

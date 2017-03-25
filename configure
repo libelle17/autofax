@@ -15,6 +15,7 @@ kf() {
 # Fedora:   libtiff       libtiff-devel
 # IdPR wird benötigt für: sudo
 # IPR wird verwendet in: einricht, dieses für: make, ctags, gtags
+# IP_R wird verwendet für: vim und in Makefile
 getIPR() {
   CTAGS=ctags;
 	{ still which zypper &&{ 
@@ -48,7 +49,7 @@ exportvars() {
 }
 
 ausricht() {
-	 sed -in '/^\s/h;${x;p}' "$1"
+	 sed -ni '/^\s/h;${x;p}' "$1"
 	 for P in $(cat $1); do
 		 test -f $AUNF&&grep -q "[^;] $P" $AUNF||{
 			T=${UDPR}$P;
