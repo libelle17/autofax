@@ -50,7 +50,7 @@ exportvars() {
 
 ausricht() {
 # im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
-# s. int linst_cl::doinst(
+# s. int linst_cl::doinst
 	 sed -ni '/^\s/{h;:a;n;/^\s/{H;ba};};${x;p}' "$1"
 	 for IP in $(cat $1); do
 		 test -f $AUNF&&grep -q "[^;] $IP" $AUNF||{
@@ -164,5 +164,5 @@ a=$(sudo -n -v 2>&1);test -z "$a" || echo $a|grep -q "assw" ||{
 einricht make make
 # $SPR make >$DN 2>&1 ||{ echo Installing/ Installiere 'make' ....; id su >$DN 2>&1 && { su -c "$IPR make;";true;} || sudo $IPR make; grep -q make $AUNF||printf "${UPR}make\necho \"${UPR}make\"\n">>$AUNF; }
 exportvars;
-$Mf=Makefile;$Mfr=$Mf.roh; test -f $Mfr && mv $Mfr $Mf
+Mf=Makefile;Mfr=$Mf.roh; test -f $Mfr && mv $Mfr $Mf
 fi
