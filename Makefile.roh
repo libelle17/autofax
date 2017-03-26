@@ -162,6 +162,7 @@ weiter: compiler $(EXEC) README.md fertig
 git:
 #	@git config --global user.name "Gerald Schade"
 #	@git config --global user.email "gerald.schade@gmx.de"
+	-@cp -au Makefile Makefile.roh
 	@git config --global push.default simple
 	@git add -u
 	@git commit -m "Version $$(cat version)"
@@ -385,7 +386,7 @@ uninstall: distclean
 version: dovers
 dovers:
 	@mkdir -p res
-	@cp -a $(DATEIEN) res
+	@cp -au $(DATEIEN) res
 	@git rm --cached --ignore-unmatch $(DATEIEN)
 	@git commit -m "nix"
 	@git add $(DATEIEN)

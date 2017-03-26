@@ -21,7 +21,7 @@ einricht vim vim
 if [ "$1" = "nv" ]; then
 # touch $DATEIEN
  mkdir -p res
- cp -a $DATEIEN res
+ cp -au $DATEIEN res
  git rm --cached $DATEIEN
  git commit -m "nix"
  git add $DATEIEN
