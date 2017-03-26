@@ -108,6 +108,16 @@ gruen:="\033[0;32m"
 blau:="\033[1;34m"
 reset:="\033[0m"
 
+# in der letzten eingerückten Zeile der Bildschirmausgabe stehen die tatsächlich installierten Programme
+
+#	 $(call ausricht,$$LOG,$1)
+PROGRAM=Aff
+.PHONY: htopi
+htopi:
+	echo $(PROGRAM)
+	echo ${PROGRAM}
+	./configure inst htop htop
+
 .PHONY: alles
 alles: anzeig weiter
 

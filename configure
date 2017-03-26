@@ -14,8 +14,8 @@ kf() {
 # Opensuse: libtiff-devel libtiff5
 # Fedora:   libtiff       libtiff-devel
 # IdPR wird benötigt für: sudo
-# IPR wird verwendet in: einricht, dieses für: make, ctags, gtags
-# IP_R wird verwendet für: vim und in Makefile
+# IPR wird verwendet in: einricht, dieses für: make, ctags, gtags, vim (in viall)
+# IP_R wird verwendet für: Makefile
 getIPR() {
   CTAGS=ctags;
 	{ still which zypper &&{ 
@@ -51,9 +51,9 @@ exportvars() {
 ausricht() {
 # in der letzten eingerückten Zeile der Bildschirmausgabe stehen die tatsächlich installierten Programme
 	 sed -ni '/^\s/h;${x;p}' "$1"
-	 for P in $(cat $1); do
-		 test -f $AUNF&&grep -q "[^;] $P" $AUNF||{
-			T=${UDPR}$P;
+	 for IP in $(cat $1); do
+		 test -f $AUNF&&grep -q "[^;] $IP" $AUNF||{
+			T=${UDPR}$IP;
 			printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
 			[ $2 = "vim" ] &&{ printf "alias vi>$KR&&sudo unalias vi\necho \"alias vi>$KR&&sudo unalias vi\"\n">>$AUNF;}
 		 }
@@ -63,8 +63,9 @@ ausricht() {
 #		printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
 #	 }
 }
-
 einricht() {
+# wenn $1 nicht aufrufbar, dann installiere $2
+ echo "1: " $1 "2: " $2
  still which $1 ||{
    getIPR;
 	 printf "Installing/ Installiere $2 ...\n";
@@ -93,12 +94,17 @@ if [ $ICH = -bash ]; then
  ICH=$(basename $ICHges)
 fi
 
-P=autofax
-mkdir -p $HOME/$P
-AUNF=$HOME/$P/$UNF
+PROG=autofax
+mkdir -p $HOME/$PROG
+AUNF=$HOME/$PROG/$UNF
 _LT="libtiff"
 LT5="${_LT}5"
 getIPR;
+if test "$1" = inst; then
+# um aus Makefile hier etwas installieren zu koennen
+  einricht "$2" "$3"
+  exit
+fi
 # diese Datei wird wegen obigem in viall gesourct, deshalb dort der Rest zu uebergehen
 if test "$ICH" = configure -o "$ICH" = install.sh -o "$ICH" = autofax_inst.sh; then
 rot="\033[1;31m"
