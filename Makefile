@@ -218,28 +218,28 @@ endif
 #	@which $(CCName)>$(KR)||{ $(REPOS)for P in $(COMP);do $(SPR)$$P||{ $(IP_R)$$P;grep -q "$$P" $(UNF)||\
 #	 printf '$(UPR)$$P;$(urepo)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$$P;$(urepo)"\n'>>$(UNF);};done;};
 #	@which $(CCName)>$(KR)||{ $(REPOS)$(foreach PG,$(COMP),$(call si_unins,$(PG),$(PG);$(urepo)))}
-	@./configure inst "$(CCName)" "$(COMP)" stumm
+	@./configure inst "$(CCName)" "$(COMP)"
 #	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(call iunins,$(libmcd))fi
 	-@test -f /usr/include/mysql/mysql.h>$(KR)&&\
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)|| \
-	./configure inst _ "$(libmcd)"
+	./configure inst _ "$(libmcd)" verbose
 #	$(call i1unin,$(libmcd))
 	-@test -f /usr/include/mysql/mysql.h>$(KR)&&\
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)|| \
-	./configure inst _ "$(libmc1d)"
+	./configure inst _ "$(libmc1d)" verbose
 # $(call i1unin,$(libmc1d))
 #	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\necho $(UPR)$(pgd)\n'>>$(UNF);$(slc);};
 #	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(call i1unin,$(pgd))$(slc);};
-	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ ./configure inst _ "$(pgd)";./configure inst _ "$(slc)";};
+	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ ./configure inst _ "$(pgd)" verbose;./configure inst _ "$(slc)" verbose;};
 #	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
 	-@find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)||\
-	./configure inst _ "$(LT)"
+	./configure inst _ "$(LT)" verbose
 #	{ $(UDPR)$(LT) $(KF);$(call i1unind,$(LT))}
 	-@if test -n "$(LT5)"; then { \
 	find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)||\
-	{ ./configure inst _ "$(LT5)";};}; else true; fi
+	{ ./configure inst _ "$(LT5)" verbose;};}; else true; fi
 #	{ $(call i1unind,$(LT5))};}; else true; fi
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                         \r" >$(BA)
@@ -311,7 +311,7 @@ ${MANPE}: $(CURDIR)/man_en
 	@printf " "
 	-sudo mv ${PROGRAM}.1.gz ${MANPE}
 ${MANPEH}: $(CURDIR)/man_en 
-	-@./configure inst groff "$(pgroff)" stumm
+	-@./configure inst groff "$(pgroff)"
 	-@rm -f man_en.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPLICATIONS/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - english<a name=\"english\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_E/g" > man_en.html
 	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "man_en.html" $(reset) $(blau) "man_en" $(reset)
@@ -329,7 +329,7 @@ ${MANPD}: $(CURDIR)/man_de
 	@printf " "
 	-sudo mv ${PROGRAM}.1.gz ${MANPD}
 ${MANPDH}: $(CURDIR)/man_de 
-	-@./configure inst groff "$(pgroff)" stumm
+	-@./configure inst groff "$(pgroff)"
 	-@rm -f man_de.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - deutsch<a name=\"deutsch\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > man_de.html
 #	-@rm -f README.md

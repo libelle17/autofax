@@ -4299,6 +4299,7 @@ void paramcl::pruefsamba()
 				} // if (!gef[k]) 
 			} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
 			if (!suchstr.empty())
+			// Abschnitt wieder löschen
 				anfgggf(unindt,"sudo sed -i.vorautofax '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdatei);
 		} // if (sapp.is_open()) 
 		if (!nrzf) {

@@ -2625,7 +2625,11 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
       default: break;
     } // switch (linst.pruefipr()) 
 		const uchar obyes=1;
-		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog))) {
+		svec srueck;
+		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog,&srueck))) {
+		  for(unsigned i=0;i<srueck.size();i++) {
+			 cout<<rot<<i<<": "<<violett<<srueck[i]<<endl;
+			}
 			if (ohneabh) {
 				anfgggf(unindt,udpr+eprog);
 			} else {
@@ -2652,7 +2656,7 @@ void anfgggf(const string datei, const string inhalt)
 			if (zeile.find(inhalt)!=string::npos) {
 				obda=1;
 				break;
-			} // 						if (zeile.find(upr+eprog)!=string::npos)
+			} // if (zeile.find(inhalt)!=string::npos)
 		} // 					while (getline(uni0,zeile))
 	} // 				if (uni0.is_open())
 	if (!obda) {
