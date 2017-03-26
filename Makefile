@@ -111,7 +111,6 @@ reset:="\033[0m"
 # in der letzten eingerückten Zeile der Bildschirmausgabe stehen die tatsächlich installierten Programme
 
 #	 $(call ausricht,$$LOG,$1)
-PROGRAM=Aff
 .PHONY: htopi
 htopi:
 	echo $(PROGRAM)

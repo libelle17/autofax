@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "26.03.17" "Version 0.43013" "\fBautofax\fR man page"
+.TH man 1 "26.03.17" "Version 0.43014" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -111,7 +111,7 @@ Depending on operating system, accessability and preferences the users thus coul
 .SH OPTIONS 
 With '\fBautofax -?\fR', all command line options can be seen. Some options (e.g. the sql commands) cannot bei set via the command line, but only via the configuration file, which can be edited directly or interactively by '\fBautofax -rf\fR'.
 .br
-\fBUsage: \fBAff [-<opt>|--<longopt> [<content>]] ...\fR
+\fBUsage: \fBautofax [-<opt>|--<longopt> [<content>]] ...\fR
 .br
 \fBFaxes files from directory <path>, which contain 'to fax <faxno>' and are convertible into pdf, 
 .br
@@ -121,11 +121,11 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -v, --verbose\fR: screen output more verbose
 .br
-\fB -l, --log\fR: put detailed logs in file '\fB/var/log/Aff.log\fR' (otherwise shorter)
+\fB -l, --log\fR: put detailed logs in file '\fB/var/log/autofax.log\fR' (otherwise shorter)
 .br
 \fB -lfn, --logfilenew\fR: delete log file afore
 .br
-\fB -cf, --conffile <string>\fR: uses configuration file <string> instead of '\fB/root/autofax/Aff.conf\fR'
+\fB -cf, --conffile <string>\fR: uses configuration file <string> instead of '\fB/root/autofax/autofax.conf\fR'
 .br
 \fB -sqlv, --sql-verbose\fR: screen output with SQL commands
 .br
@@ -171,7 +171,7 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -ldr, --logdir <path>\fR: choses <path> as log directory, currently '\fB/var/log\fR'
 .br
-\fB -lf, --logfilename <string>\fR: log file <string> (in path '\fB/var/log\fR') will be used instead of '\fBAff.log\fR'
+\fB -lf, --logfilename <string>\fR: log file <string> (in path '\fB/var/log\fR') will be used instead of '\fBautofax.log\fR'
 .br
 \fB -tdr, --tofaxdir <path>\fR: faxes the files from <path> instead of '\fB/DATA/Patientendokumente/zufaxen\fR'
 .br
@@ -181,7 +181,7 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -rdr, --receiveddir <path>\fR: directory for recieved faxes '\fB/DATA/Patientendokumente\fR'
 .br
-\fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBAff\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
+\fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
 .br
 \fB -capi, --takecapi\fR: use capisuite\fB or not\fR
 .br
