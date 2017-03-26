@@ -614,8 +614,8 @@ int kuerzelogdatei(const char* logdatei,int obverb);
 #ifdef notwendig
 void kopierm(string *quelle, string *ziel);
 #endif
-void aufSplit(vector<string> *tokens, const string *text, char sep, bool nichtmehrfach=1);
-void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach=1);
+void aufSplit(vector<string> *tokens, const string *text, char sep=' ', bool nichtmehrfach=1);
+void aufSplit(vector<string> *tokens, const char *text, char sep=' ', bool nichtmehrfach=1);
 void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach=1,int obverb=0,int oblog=0);
 void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtmehrfach=1);
 void getstammext(const string *const ganz, string *stamm, string *exten);

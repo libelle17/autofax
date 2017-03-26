@@ -1115,14 +1115,14 @@ int touch(const string& pfad,int obverb/*=0*/,int oblog/*=0*/)
 } // int touch(const std::string& pfad,int obverb/*=0*/,int oblog/*=*/)
 
 
-void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach)
+void aufSplit(vector<string> *tokens, const char *text, char sep/*=' '*/, bool nichtmehrfach/*=1*/)
 {
   const string texts=text;
   aufSplit(tokens,&texts,sep,nichtmehrfach);
 } // void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach)
 
 
-void aufSplit(vector<string> *tokens, const string *text, char sep,bool nichtmehrfach) 
+void aufSplit(vector<string> *tokens, const string *text, char sep/*=' '*/,bool nichtmehrfach/*=1*/) 
 {
   int start = 0, end = 0;
   tokens->clear();
@@ -1854,7 +1854,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
   string *czg=&hcmd;
 	if (obincron) {
     vector<string> tok;
-    aufSplit(&tok,czg,' ');
+    aufSplit(&tok,czg);
 		if (tok.size()>0) {
 		 if (obprogda(tok[0],obverb,oblog,czg)) {
 			for(unsigned j=1;j<tok.size();j++) {
@@ -2627,9 +2627,23 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		const uchar obyes=1;
 		svec srueck;
 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog,&srueck))) {
-		  for(unsigned i=0;i<srueck.size();i++) {
+		  svec ustring; uchar obanf=0;
+		  for(unsigned i=srueck.size();i;) {
+			 --i;
+			 if (srueck[i][0]==' '){ if (!obanf) obanf++;} else if (obanf==1) obanf++;
+			 if (obanf==1) {
+				 vector<string> tok;
+				 aufSplit(&tok,&srueck[i]);
+				 for(unsigned j=0;j<tok.size();j++) {
+				  ustring<<tok[j];
+				 }
+			 }
 			 cout<<rot<<i<<": "<<violett<<srueck[i]<<endl;
 			}
+			for(unsigned i=0;i<ustring.size();i++) {
+			 cout<<blau<<i<<": "<<rot<<ustring[i]<<schwarz<<endl;
+			}
+			
 			if (ohneabh) {
 				anfgggf(unindt,udpr+eprog);
 			} else {
