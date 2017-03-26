@@ -2627,23 +2627,25 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		const uchar obyes=1;
 		svec srueck;
 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog,&srueck))) {
-		  svec ustring; uchar obanf=0;
-		  for(unsigned i=srueck.size();i;) {
-			 --i;
-			 if (srueck[i][0]==' '){ if (!obanf) obanf++;} else if (obanf==1) obanf++;
-			 if (obanf==1) {
-				 vector<string> tok;
-				 aufSplit(&tok,&srueck[i]);
-				 for(unsigned j=0;j<tok.size();j++) {
-				  ustring<<tok[j];
-				 }
-			 }
-			 cout<<rot<<i<<": "<<violett<<srueck[i]<<endl;
+			svec ustring; uchar obanf=0;
+			for(unsigned i=srueck.size();i;) {
+				--i;
+				if (srueck[i][0]==' '){ if (!obanf) obanf++;} else if (obanf==1) obanf++;
+				if (obanf==1) {
+					vector<string> tok;
+					aufSplit(&tok,&srueck[i]);
+					for(unsigned j=0;j<tok.size();j++) {
+						gtrim(&tok[j]);
+						if (!tok[j].empty())
+							ustring<<tok[j];
+					}
+				}
+				cout<<rot<<i<<": "<<violett<<srueck[i]<<endl;
 			}
 			for(unsigned i=0;i<ustring.size();i++) {
-			 cout<<blau<<i<<": "<<rot<<ustring[i]<<schwarz<<endl;
+				cout<<blau<<i<<": "<<rot<<ustring[i]<<schwarz<<endl;
 			}
-			
+
 			if (ohneabh) {
 				anfgggf(unindt,udpr+eprog);
 			} else {

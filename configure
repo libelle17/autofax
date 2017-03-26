@@ -49,8 +49,8 @@ exportvars() {
 }
 
 ausricht() {
-# in der letzten eingerückten Zeile der Bildschirmausgabe stehen die tatsächlich installierten Programme
-	 sed -ni '/^\s/h;${x;p}' "$1"
+# im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
+	 sed -ni '/^\s/{h;:a;n;/^\s/{H;ba};};${x;p}' "$1"
 	 for IP in $(cat $1); do
 		 test -f $AUNF&&grep -q "[^;] $IP" $AUNF||{
 			T=${UDPR}$IP;
