@@ -55,7 +55,7 @@ ausricht() {
 		 test -f $AUNF&&grep -q "[^;] $IP" $AUNF||{
 			T=${UDPR}$IP;
 			printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
-			[ $2 = "vim" ] &&{ printf "alias vi>$KR&&sudo unalias vi\necho \"alias vi>$KR&&sudo unalias vi\"\n">>$AUNF;}
+			[ $2/ = "vim/" ] &&{ printf "alias vi>$KR&&sudo unalias vi\necho \"alias vi>$KR&&sudo unalias vi\"\n">>$AUNF;}
 		 }
 	 done;
 #	 test -f $AUNF&&grep -q " $2" $AUNF||{
@@ -64,16 +64,35 @@ ausricht() {
 #	 }
 }
 einricht() {
-# wenn $1 nicht aufrufbar, dann installiere $2
- echo "1: " $1 "2: " $2
- still which $1 ||{
+# wenn $1 nicht aufrufbar oder "_", dann installiere $2
+ if [ $1 != _ ]&& still which $1; then
+   if [ $3/ != stumm/ ]; then  \
+	 printf "$blau$1$reset installed/ schon da, $blau$2$reset not to be installed/ übersprungen\n"; fi
+ else
    getIPR;
-	 printf "Installing/ Installiere $2 ...\n";
+	 [ $1 = _ ]|| printf "$blau$1$reset not found/ nicht gefunden => "  
+	 printf "Installing/ Installiere $blau$2$reset ...\n";
 	 [ $1 = "vim" -a $fed = 1 ] &&{ sudo yum update vim-minimal;}
+	 rweg=0;
+	 [ $1 = "g++" -a -n $Z ] &&{
+		 sudo $Z lr|grep 'g++\|devel_gcc'>$KR ||{ 
+			 GREPO=http://download.opensuse.org/repositories/devel:/gcc/
+			 GREPO=${GREPO}`cat /etc/*-release|grep ^NAME= |cut -d\" -f2|sed 's/ /_/'`_
+			 GREPO=${GREPO}`cat /etc/*-release|grep ^VERSION_ID= |cut -d\" -f2`
+			 GREPO=${GREPO}/devel:gcc.repo;
+			 printf "Adding Repository/ Füge Repository hinzu: $blau$GREPO$reset\n";
+			 sudo $Z rr devel_gcc >$KR;
+			 sudo $Z ar $GREPO && rweg=1;
+		 }
+	 }
 	 LOG=inst_$1.log;
-	 ${IPR}"$2"|tee $LOG
+	 ${IPR}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff groff-base"
 	 ausricht "$LOG" $1
- }
+	 if [ $1 = "g++" -a -n "$Z" -a $rweg = 1 ]; then
+	 	 printf "Removing Repository/ Entferne Repository ${blau}devel_gcc$reset again/ wieder\n"
+		 sudo $Z rr devel_gcc;
+	 else true; fi
+ fi
 }
 
 UNROH=uninstall
@@ -86,6 +105,7 @@ dev=devel
 libmc=libmysqlclient
 libmc1=libmariadbclient
 fed=0
+Z=""
 CCInst=gcc6-c++
 
 ICH=$(basename $0)
@@ -100,17 +120,17 @@ AUNF=$HOME/$PROG/$UNF
 _LT="libtiff"
 LT5="${_LT}5"
 getIPR;
-if test "$1" = inst; then
-# um aus Makefile hier etwas installieren zu koennen
-  einricht "$2" "$3"
-  exit
-fi
 # diese Datei wird wegen obigem in viall gesourct, deshalb dort der Rest zu uebergehen
 if test "$ICH" = configure -o "$ICH" = install.sh -o "$ICH" = autofax_inst.sh; then
 rot="\033[1;31m"
 gruen="\033[1;32m"
 blau="\033[1;34m"
 reset="\033[0m"
+if test "$1" = inst; then
+# um aus Makefile hier etwas installieren zu koennen
+  einricht "$2" "$3" "$4"
+  exit
+fi
 
 # Gruppen, deren Mitglieder sudo aufrufen koennen; fuer Debian muss zuerst 'sudo' genannt werden, weil eine Zuordnung zu 'root' nichts hilft (s.u. tail)
 SUG="admin\|root\|sudo\|wheel\|ntadmin";
@@ -143,4 +163,5 @@ a=$(sudo -n -v 2>&1);test -z "$a" || echo $a|grep -q "assw" ||{
 einricht make make
 # $SPR make >$DN 2>&1 ||{ echo Installing/ Installiere 'make' ....; id su >$DN 2>&1 && { su -c "$IPR make;";true;} || sudo $IPR make; grep -q make $AUNF||printf "${UPR}make\necho \"${UPR}make\"\n">>$AUNF; }
 exportvars;
+$Mf=Makefile;$Mfr=$Mf.roh; test -f $Mfr && mv $Mfr $Mf
 fi

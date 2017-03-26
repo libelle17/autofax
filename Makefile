@@ -70,26 +70,26 @@ libmc1d:=$(libmc1)-$(dev)
 pgd:=postgresql-$(dev)
 slc:=sudo /sbin/ldconfig
 # deinstallieren und Ueberschrift vormerken
-uninst=printf '$(UPR)$(1)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$(1)"\n'>>$(UNF);
-uninstd=printf '$(UDPR)$(1)\nprintf "$$blau%%s$$reset\\n" "$(UDPR)$(1)"\n'>>$(UNF); # direkt
+# uninst=printf '$(UPR)$(1)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$(1)"\n'>>$(UNF);
+# uninstd=printf '$(UDPR)$(1)\nprintf "$$blau%%s$$reset\\n" "$(UDPR)$(1)"\n'>>$(UNF); # direkt
 # in Protokoll suchen und ...
-sunins=test -f $(UNF)&&grep -q '$(1)' $(UNF)||{ $(call uninst,$(2))};
-suninsd=test -f $(UNF)&&grep -q '$(1)' $(UNF)||{ $(call uninstd,$(2))}; # direkt
+# sunins=test -f $(UNF)&&grep -q '$(1)' $(UNF)||{ $(call uninst,$(2))};
+# suninsd=test -f $(UNF)&&grep -q '$(1)' $(UNF)||{ $(call uninstd,$(2))}; # direkt
 # installieren und ...
 # Selbes Wort in Protokoll suchen wie deinstallieren
-iunins=$(IPR)$(1) &&{ $(call sunins,$(1),$(2))};
-iuninsd=$(IPR)$(1) &&{ $(call suninsd,$(1),$(2))}; # direkt
-i1unin=$(call iunins,$(1),$(1))
-i1unind=$(call iuninsd,$(1),$(1)) # direkt
-i_unins=$(IP_R)$(1) &&{ $(call sunins,$(1),$(2))};
-i_uninsd=$(IP_R)$(1) &&{ $(call suninsd,$(1),$(2))}; # direkt
+# iunins=$(IPR)$(1) &&{ $(call sunins,$(1),$(2))};
+# iuninsd=$(IPR)$(1) &&{ $(call suninsd,$(1),$(2))}; # direkt
+# i1unin=$(call iunins,$(1),$(1))
+# i1unind=$(call iuninsd,$(1),$(1)) # direkt
+# i_unins=$(IP_R)$(1) &&{ $(call sunins,$(1),$(2))};
+# i_uninsd=$(IP_R)$(1) &&{ $(call suninsd,$(1),$(2))}; # direkt
 # Programm suchen, ggf. installieren und ...
-siunins= $(SPR)$(1)>$(KR)||{ $(call iunins,$(1),$(2))};
-siuninsd= $(SPR)$(1)>$(KR)||{ $(call iuninsd,$(1),$(2))}; # direkt
-i1siun=$(call siunins,$(1),$(1))
-i1siund=$(call siuninsd,$(1),$(1)) # direkt
-si_unins=$(SPR)$(1)>$(KR)||{ $(call i_unins,$(1),$(2))};
-GROFFCHECK:=$(call i1siund,$(pgroff))true
+# siunins= $(SPR)$(1)>$(KR)||{ $(call iunins,$(1),$(2))};
+# siuninsd= $(SPR)$(1)>$(KR)||{ $(call iuninsd,$(1),$(2))}; # direkt
+# i1siun=$(call siunins,$(1),$(1))
+# i1siund=$(call siuninsd,$(1),$(1)) # direkt
+# si_unins=$(SPR)$(1)>$(KR)||{ $(call i_unins,$(1),$(2))};
+# GROFFCHECK:=$(call i1siund,$(pgroff))true
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR)>$(KR))
@@ -107,15 +107,6 @@ gruen:="\033[0;32m"
 #blau="\033[0;34;1;47m"
 blau:="\033[1;34m"
 reset:="\033[0m"
-
-# in der letzten eingerückten Zeile der Bildschirmausgabe stehen die tatsächlich installierten Programme
-
-#	 $(call ausricht,$$LOG,$1)
-.PHONY: htopi
-htopi:
-	echo $(PROGRAM)
-	echo ${PROGRAM}
-	./configure inst htop htop
 
 .PHONY: alles
 alles: anzeig weiter
@@ -226,24 +217,30 @@ $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
 endif
 #	@which $(CCName)>$(KR)||{ $(REPOS)for P in $(COMP);do $(SPR)$$P||{ $(IP_R)$$P;grep -q "$$P" $(UNF)||\
 #	 printf '$(UPR)$$P;$(urepo)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$$P;$(urepo)"\n'>>$(UNF);};done;};
-	@which $(CCName)>$(KR)||{ $(REPOS)$(foreach PG,$(COMP),$(call si_unins,$(PG),$(PG);$(urepo)))}
+#	@which $(CCName)>$(KR)||{ $(REPOS)$(foreach PG,$(COMP),$(call si_unins,$(PG),$(PG);$(urepo)))}
+	@./configure inst "$(CCName)" "$(COMP)" stumm
 #	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(call iunins,$(libmcd))fi
 	-@test -f /usr/include/mysql/mysql.h>$(KR)&&\
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)|| \
-	$(call i1unin,$(libmcd))
+	./configure inst _ "$(libmcd)"
+#	$(call i1unin,$(libmcd))
 	-@test -f /usr/include/mysql/mysql.h>$(KR)&&\
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)|| \
-	$(call i1unin,$(libmc1d))
+	./configure inst _ "$(libmc1d)"
+# $(call i1unin,$(libmc1d))
 #	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\necho $(UPR)$(pgd)\n'>>$(UNF);$(slc);};
-	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(call i1unin,$(pgd))$(slc);};
+#	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(call i1unin,$(pgd))$(slc);};
+	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ ./configure inst _ "$(pgd)";./configure inst _ "$(slc)";};
 #	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
 	-@find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)||\
-	{ $(UDPR)$(LT) $(KF);$(call i1unind,$(LT))}
+	./configure inst _ "$(LT)"
+#	{ $(UDPR)$(LT) $(KF);$(call i1unind,$(LT))}
 	-@if test -n "$(LT5)"; then { \
 	find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)||\
-	{ $(call i1unind,$(LT5))};}; else true; fi
+	{ ./configure inst _ "$(LT5)";};}; else true; fi
+#	{ $(call i1unind,$(LT5))};}; else true; fi
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                         \r" >$(BA)
 
@@ -314,7 +311,7 @@ ${MANPE}: $(CURDIR)/man_en
 	@printf " "
 	-sudo mv ${PROGRAM}.1.gz ${MANPE}
 ${MANPEH}: $(CURDIR)/man_en 
-	-@$(GROFFCHECK)
+	-@./configure inst groff "$(pgroff)" stumm
 	-@rm -f man_en.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPLICATIONS/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - english<a name=\"english\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_E/g" > man_en.html
 	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "man_en.html" $(reset) $(blau) "man_en" $(reset)
@@ -332,7 +329,7 @@ ${MANPD}: $(CURDIR)/man_de
 	@printf " "
 	-sudo mv ${PROGRAM}.1.gz ${MANPD}
 ${MANPDH}: $(CURDIR)/man_de 
-	-@$(GROFFCHECK)
+	-@./configure inst groff "$(pgroff)" stumm
 	-@rm -f man_de.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - deutsch<a name=\"deutsch\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > man_de.html
 #	-@rm -f README.md
