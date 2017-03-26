@@ -163,8 +163,8 @@ git:
 #	@git config --global user.name "Gerald Schade"
 #	@git config --global user.email "gerald.schade@gmx.de"
 	-@cp -au Makefile Makefile.roh
-	@printf " Copying files from/ Kopiere Dateien von: %b%s%b (Version %s)-> git (%s)\n" $(blau) "$(PROGRAM)" $(reset) $$(cat version) \
-	"$$(cut -f2-< .git/FETCH_HEAD|sed 's/^\s*//')" >$(BA)
+	@printf " Copying files from/ Kopiere Dateien von: %b%s%b (Version %b%s%b)-> git (%b%s%b)\n" $(blau) "$(PROGRAM)" $(reset) $(blau) $$(cat version) \
+	$(reset) $(blau) "$$(cut -f2-< .git/FETCH_HEAD|sed 's/^\s*//')" $(reset) >$(BA) 
 	@git config --global push.default simple
 	@git add -u
 	@git commit -m "Version $$(cat version)"
