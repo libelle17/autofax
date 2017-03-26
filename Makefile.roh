@@ -163,6 +163,7 @@ git:
 #	@git config --global user.name "Gerald Schade"
 #	@git config --global user.email "gerald.schade@gmx.de"
 	-@cp -au Makefile Makefile.roh
+	@printf " Copying program/ Kopiere Programmdatei: %b%s%b (V.%s)-> git" $(blau) "$(EXEC)" $(reset) $$(cat version) >$(BA)
 	@git config --global push.default simple
 	@git add -u
 	@git commit -m "Version $$(cat version)"
@@ -291,7 +292,7 @@ installstumm: stumm install
 install: $(INSTEXEC) ${MANPE} ${MANPD} 
 
 $(INSTEXEC): $(EXEC)
-	@printf " Kopiere Programmdatei: %b%s%b -> %b%s%b\n" $(blau) "$(EXEC)" $(reset) $(blau) "$(INSTEXEC)" $(reset) >$(BA)
+	@printf " Copying program/ Kopiere Programmdatei: %b%s%b -> %b%s%b\n" $(blau) "$(EXEC)" $(reset) $(blau) "$(INSTEXEC)" $(reset) >$(BA)
 	-@sudo pkill $(EXEC) $(KF); sudo pkill -9 $(EXEC) $(KF); sudo cp -p "$(EXEC)" "$(INSTEXEC)"
 
 $(CURDIR)/man_en: $(EXEC)
