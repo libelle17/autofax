@@ -20,6 +20,7 @@ getIPR() {
   CTAGS=ctags;
 	{ still which zypper &&{ 
 		Z=zypper;g=--gpg-auto-import-keys;IdPR="$Z -n $g in ";IP_R="sudo $Z $g in ";UPR="sudo $Z rm -u ";pgroff=groff;
+		# die nächsten beiden Variablen dürften 26.3.17 unnötig werden
   REPOS="sudo $Z lr|grep 'g++\|devel_gcc'\>$KR||sudo $Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
   urepo="sudo $Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && sudo $Z rr devel_gcc;";
   COMP="gcc gcc-c++ \$(CCInst)";
@@ -51,14 +52,15 @@ exportvars() {
 ausricht() {
 # im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
 # s. int linst_cl::doinst
-	 sed -ni '/^\s/{h;:a;n;/^\s/{H;ba};};${x;p}' "$1"
-	 for IP in $(cat $1); do
+	 sed -ni '/^\s/{h;:a;n;/^\s/{H;ba};};${x;s/\n/ /g;p}' "$1"
+   IP=$(cat $1)
+#	 for IP in $(cat $1); do
 		 test -f $AUNF&&grep -q "[^;] $IP" $AUNF||{
 			T=${UDPR}$IP;
 			printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
 			[ $2/ = "vim/" ] &&{ printf "alias vi>$KR&&sudo unalias vi\necho \"alias vi>$KR&&sudo unalias vi\"\n">>$AUNF;}
 		 }
-	 done;
+#	 done;
 #	 test -f $AUNF&&grep -q " $2" $AUNF||{
 #	  T=${UPR}$2;
 #		printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;

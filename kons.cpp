@@ -1341,7 +1341,7 @@ instprog linst_cl::pruefipr(int obverb,int oblog)
 			instp="sudo apt-get install "; 
 			instyp="sudo apt-get -y --force-yes --reinstall install "; 
 			upr="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
-			udpr="sudo apt-get -f install; sudo sudo dpkg -r --force-depends ";
+			udpr="sudo apt-get -f install; sudo dpkg -r --force-depends ";
 			uypr="sudo apt-get -f install; sudo apt-get -y --auto-remove purge ";
 			compil="install build-essential linux-headers-`uname -r`";
 			dev="dev";
@@ -2627,13 +2627,16 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		const uchar obyes=1;
 		svec srueck;
 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog,&srueck))) {
-			svec ustring; uchar obanf=0;
+			/*svec*/ string ustring; uchar obanf=0;
 // im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
 // s. ausricht in configure
 			for(unsigned i=srueck.size();i;) {
 				--i;
 				if (srueck[i][0]==' '){ if (!obanf) obanf++;} else if (obanf==1) obanf++;
 				if (obanf==1) {
+				  gtrim(&srueck[i]);
+					ustring=srueck[i]+' '+ustring;
+/*
 					vector<string> tok;
 					aufSplit(&tok,&srueck[i]);
 					for(unsigned j=0;j<tok.size();j++) {
@@ -2641,11 +2644,15 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 						if (!tok[j].empty())
 							ustring<<tok[j];
 					} // 					for(unsigned j=0;j<tok.size();j++)
+				*/
 				} // 				if (obanf==1)
 			} // 			for(unsigned i=srueck.size();i;)
+      anfgggf(unindt,udpr+ustring);
+/*
 			for(unsigned i=0;i<ustring.size();i++) {
 				anfgggf(unindt,udpr+ustring[i]);
 			}
+*/
 			/*
 				 if (ohneabh) {
 				 anfgggf(unindt,udpr+eprog);
