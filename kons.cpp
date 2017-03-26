@@ -2603,31 +2603,33 @@ string linst_cl::ersetzeprog(const string& prog)
 // Problem: bei obyes erscheint die Rueckfrage dem Benutzer nicht, statt dessen wartet das Programm
 int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar ohneabh/*=0*/) // ,uchar obyes/*=1*/)
 {
-  // <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
-  int ret=2;
-  // eprog kann auch von aussen vor Programmaufruf gesetzt werden
-  if (eprog.empty()) eprog=ersetzeprog(prog);
-  if (!fallsnichtda.empty()) {
-    //    if (!systemrueck((alsroot?string("root "):string(""))+"which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) 
-    if (obprogda(fallsnichtda,obverb,oblog)) {
-      eprog.clear();
-      return 0;
-    } //     if (obprogda(fallsnichtda,obverb,oblog))
-  } // if (!fallsnichtda.empty()) 
-//	int iru;
-  if (!eprog.empty()) {
-    switch (linst.pruefipr()) {
-      case zypper:
-        if (obnmr) {
-          obnmr=0;
-          systemrueck("sudo zypper mr -k -all",obverb,oblog);
-        } //         if (obnmr)
-      default: break;
-    } // switch (linst.pruefipr()) 
+	// <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
+	int ret=2;
+	// eprog kann auch von aussen vor Programmaufruf gesetzt werden
+	if (eprog.empty()) eprog=ersetzeprog(prog);
+	if (!fallsnichtda.empty()) {
+		//    if (!systemrueck((alsroot?string("root "):string(""))+"which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) 
+		if (obprogda(fallsnichtda,obverb,oblog)) {
+			eprog.clear();
+			return 0;
+		} //     if (obprogda(fallsnichtda,obverb,oblog))
+	} // if (!fallsnichtda.empty()) 
+	//	int iru;
+	if (!eprog.empty()) {
+		switch (linst.pruefipr()) {
+			case zypper:
+				if (obnmr) {
+					obnmr=0;
+					systemrueck("sudo zypper mr -k -all",obverb,oblog);
+				} //         if (obnmr)
+			default: break;
+		} // switch (linst.pruefipr()) 
 		const uchar obyes=1;
 		svec srueck;
 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog,&srueck))) {
 			svec ustring; uchar obanf=0;
+// im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
+// s. ausricht in configure
 			for(unsigned i=srueck.size();i;) {
 				--i;
 				if (srueck[i][0]==' '){ if (!obanf) obanf++;} else if (obanf==1) obanf++;
@@ -2638,19 +2640,19 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 						gtrim(&tok[j]);
 						if (!tok[j].empty())
 							ustring<<tok[j];
-					}
-				}
-				cout<<rot<<i<<": "<<violett<<srueck[i]<<endl;
-			}
+					} // 					for(unsigned j=0;j<tok.size();j++)
+				} // 				if (obanf==1)
+			} // 			for(unsigned i=srueck.size();i;)
 			for(unsigned i=0;i<ustring.size();i++) {
-				cout<<blau<<i<<": "<<rot<<ustring[i]<<schwarz<<endl;
+				anfgggf(unindt,udpr+ustring[i]);
 			}
-
-			if (ohneabh) {
-				anfgggf(unindt,udpr+eprog);
-			} else {
-				anfgggf(unindt,upr+eprog);
-			} // 			if (ohneabh) else
+			/*
+				 if (ohneabh) {
+				 anfgggf(unindt,udpr+eprog);
+				 } else {
+				 anfgggf(unindt,upr+eprog);
+				 } // 			if (ohneabh) else
+			 */
 		} // 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog)))
 		//				for(iru=0;iru<2;iru++) KLA
 		//					if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
