@@ -164,7 +164,7 @@ git:
 #	@git config --global user.email "gerald.schade@gmx.de"
 	-@cp -au Makefile Makefile.roh
 	@printf " Copying files from/ Kopiere Dateien von: %b%s%b (Version %s)-> git (%s)\n" $(blau) "$(PROGRAM)" $(reset) $$(cat version) \
-	$(cut -f2-< .git/FETCH_HEAD) >$(BA)
+	$$(cut -f2-< .git/FETCH_HEAD) >$(BA)
 	@git config --global push.default simple
 	@git add -u
 	@git commit -m "Version $$(cat version)"
