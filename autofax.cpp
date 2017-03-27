@@ -4715,7 +4715,7 @@ void paramcl::anhalten()
   setztmpcron();
   const string befehl="sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";crontab "+tmpcron+";};true'";
   systemrueck(befehl,obverb,oblog);
-	Log(Tx[T_Cron_Aufruf_von]+mpfad+Tx[T_gestoppt],1,oblog);
+	::Log(Tx[T_Cron_Aufruf_von]+mpfad+Tx[T_gestoppt],1,oblog);
   // services
   // befehl="sudo systemctl stop capisuite hylafax-faxq hylafax-hfaxd hylafax-faxgetty-"+hmodem+" hylafax >/dev/null 2>&1; true";
 	// systemrueck(befehl,obverb,oblog);
@@ -4728,6 +4728,7 @@ void paramcl::anhalten()
   if (sfaxq) sfaxq->stopdis(obverb,oblog);
   if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb:0,oblog);
   if (scapis) scapis->stopdis(obverb,oblog);
+	usleep(1000);
 	zeigdienste();
 } // void paramcl::anhalten()
 
@@ -9181,7 +9182,8 @@ void paramcl::zeigdienste()
 			cout<<" "<<setw(25)<<svp[i]->sname<<": "<<blau<<Txk[sfeh[svp[i]->svfeh]]<<schwarz<<endl;
 		} // 		if (svp[i])
 	} // 	for(int i=0;i<4;i++)
-}
+} // void paramcl::zeigdienste()
+
 
 int main(int argc, char** argv) 
 {
