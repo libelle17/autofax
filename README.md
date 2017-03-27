@@ -113,9 +113,9 @@ fritzcard 2.0 or 2.1 is installed), if the fax number is
 integrated in the file name correctly. Furthermore, autofax
 holds the posted faxes in a mariadb database. <br>
 Additionally, received faxes from
-<b>hylafax</b>/<b>capisuite</b> can be named with the
-sender&rsquo;s name according to his fax number and
-stored.</p>
+<b>hylafax</b>/<b>capisuite</b> can be named automatically
+with the sender&rsquo;s name, according to his fax number,
+and stored.</p>
 
 <h2>INSTALLATION
 <a name="INSTALLATION_E"></a>
@@ -285,7 +285,7 @@ collected here and not in
 faxes &rsquo;<b>/DATA/Patientendokumente</b>&rsquo; <b><br>
 -cm, --cronminutes &lt;zahl&gt;</b>: every how many minutes
 shall <b>autofax</b> be called in crontab (0=not at all),
-instead of &rsquo;<b>0</b>&rsquo; <b><br>
+instead of &rsquo;<b>2</b>&rsquo; <b><br>
 -capi, --takecapi</b>: use capisuite <b>or not <br>
 -hyla, --takehyla</b>: use hylafax <b>or not <br>
 -fc, --firstcapi</b>: try to send faxes primarily via
@@ -1148,9 +1148,9 @@ angeschlossen ist) weiterleitet werden, wenn die Faxnummer
 im Dateinamen richtig eingetragen ist, weiterhin die
 versandten Faxe in einer MariaDB-Datenbank abspeichert. <br>
 Au&szlig;erdem k&ouml;nnen von
-<b>hylafax</b>/<b>capisuite</b> empfangene Faxe nach dem
-Sender anhand dessen Faxnummer benannt und abgespeichert
-werden.</p>
+<b>hylafax</b>/<b>capisuite</b> empfangene Faxe automatisch
+nach dem Sender anhand dessen Faxnummer benannt und
+abgespeichert werden.</p>
 
 <h2>INSTALLATION
 <a name="INSTALLATION_D"></a>
@@ -1336,7 +1336,7 @@ Faxempfang &rsquo;<b>/DATA/Patientendokumente</b>&rsquo;
 <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
-nicht), anstatt &rsquo;<b>0</b>&rsquo; <b><br>
+nicht), anstatt &rsquo;<b>2</b>&rsquo; <b><br>
 -capi, --obcapi</b>: Capisuite verwenden <b>oder nicht <br>
 -hyla, --obhyla</b>: Hylafax verwenden <b>oder nicht <br>
 -cz, --capizuerst</b>: versuche faxe zuerst ueber Capisuite
