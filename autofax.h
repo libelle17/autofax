@@ -402,6 +402,8 @@ class paramcl // Programmparameter
     void faxealle();
     void untersuchespool(uchar mitupd=1);
     void zeigweitere();
+    void zeigkonf();
+		void zeigdienste();
     void sammlecapi(vector<fsfcl> *fsfvp);
     void sammlehyla(vector<fsfcl> *fsfvp);
     void korrigierecapi(unsigned tage=90);
@@ -409,5 +411,4 @@ class paramcl // Programmparameter
     void empfarch();
     void schlussanzeige();
     void autofkonfschreib();
-    void zeigkonf();
 }; // class paramcl

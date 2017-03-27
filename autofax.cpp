@@ -699,6 +699,8 @@ enum T_
 	T_aktiviert,
 	T_inaktiv,
 	T_Dienste,
+	T_Cron_Aufruf_von,
+	T_gestoppt,
 	T_MAX
 };
 
@@ -2013,6 +2015,10 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{"inaktiv","inactive"},
 	// T_Dienste
 	{"Dienste: ","Services: "},
+	// T_Cron_Aufruf_von
+	{"Cron-Aufruf von '","cron call of '"},
+	// T_gestoppt
+	{"' gestoppt.","' stopped."},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -4709,11 +4715,10 @@ void paramcl::anhalten()
   setztmpcron();
   const string befehl="sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";crontab "+tmpcron+";};true'";
   systemrueck(befehl,obverb,oblog);
+	Log(Tx[T_Cron_Aufruf_von]+mpfad+Tx[T_gestoppt],1,oblog);
   // services
-  /*
-     befehl="sudo systemctl stop capisuite hylafax-faxq hylafax-hfaxd hylafax-faxgetty-"+hmodem+" hylafax >/dev/null 2>&1; true";
-     systemrueck(befehl,obverb,oblog);
-   */
+  // befehl="sudo systemctl stop capisuite hylafax-faxq hylafax-hfaxd hylafax-faxgetty-"+hmodem+" hylafax >/dev/null 2>&1; true";
+	// systemrueck(befehl,obverb,oblog);
 
   hylasv1();
   hylasv2(hysrc);
@@ -4723,6 +4728,7 @@ void paramcl::anhalten()
   if (sfaxq) sfaxq->stopdis(obverb,oblog);
   if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb:0,oblog);
   if (scapis) scapis->stopdis(obverb,oblog);
+	zeigdienste();
 } // void paramcl::anhalten()
 
 // wird aufgerufen in: main
@@ -9158,11 +9164,16 @@ void paramcl::zeigkonf()
   cout<<Tx[T_aktuelle_Einstellungen_aus]<<blau<<konfdatname<<schwarz<<"' ("<<buf<<"):"<<endl;
   for(unsigned i=0;i<cgconf.zahl;i++) {
     cout<<blau<<setw(20)<<cgconf[i].name<<schwarz<<": "<<cgconf[i].wert<<endl;
-  }
-	cout<<Tx[T_Dienste]<<endl;
+  } //   for(unsigned i=0;i<cgconf.zahl;i++)
 	capisv();
 	hylasv1();
-	hylasv2(hyppk);
+	hylasv2(hysrc);
+	zeigdienste();
+} // void paramcl::zeigkonf()
+
+void paramcl::zeigdienste()
+{
+	cout<<Tx[T_Dienste]<<endl;
 	servc *svp[4]={scapis,sfaxq,shfaxd,sfaxgetty};
 	for(int i=0;i<4;i++) {
 		if (svp[i]) {
@@ -9170,7 +9181,7 @@ void paramcl::zeigkonf()
 			cout<<" "<<setw(25)<<svp[i]->sname<<": "<<blau<<Txk[sfeh[svp[i]->svfeh]]<<schwarz<<endl;
 		} // 		if (svp[i])
 	} // 	for(int i=0;i<4;i++)
-} // void paramcl::zeigkonf()
+}
 
 int main(int argc, char** argv) 
 {

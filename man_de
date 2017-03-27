@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "27.03.17" "Version 0.43036" "Manual-Seite für autofax"
+.TH man 1 "27.03.17" "Version 0.43037" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -183,7 +183,7 @@ und traegt sie in MariaDB-Datenbank '\fBfaxeinp\fB' (Tabellen: `\fBouta\fB`,`\fB
 .br
 \fB -evz, --empfvz <pfad>\fR: Empfangsverzeichnis fuer Faxempfang '\fB/DATA/Patientendokumente\fR'
 .br
-\fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB2\fR'
+\fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB0\fR'
 .br
 \fB -capi, --obcapi\fR: Capisuite verwenden\fB oder nicht\fR
 .br

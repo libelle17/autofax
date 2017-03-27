@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43036) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43037) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -285,7 +285,7 @@ collected here and not in
 faxes &rsquo;<b>/DATA/Patientendokumente</b>&rsquo; <b><br>
 -cm, --cronminutes &lt;zahl&gt;</b>: every how many minutes
 shall <b>autofax</b> be called in crontab (0=not at all),
-instead of &rsquo;<b>2</b>&rsquo; <b><br>
+instead of &rsquo;<b>0</b>&rsquo; <b><br>
 -capi, --takecapi</b>: use capisuite <b>or not <br>
 -hyla, --takehyla</b>: use hylafax <b>or not <br>
 -fc, --firstcapi</b>: try to send faxes primarily via
@@ -1035,7 +1035,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43036) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43037) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1336,7 +1336,7 @@ Faxempfang &rsquo;<b>/DATA/Patientendokumente</b>&rsquo;
 <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
-nicht), anstatt &rsquo;<b>2</b>&rsquo; <b><br>
+nicht), anstatt &rsquo;<b>0</b>&rsquo; <b><br>
 -capi, --obcapi</b>: Capisuite verwenden <b>oder nicht <br>
 -hyla, --obhyla</b>: Hylafax verwenden <b>oder nicht <br>
 -cz, --capizuerst</b>: versuche faxe zuerst ueber Capisuite

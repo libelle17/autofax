@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "27.03.17" "Version 0.43036" "\fBautofax\fR man page"
+.TH man 1 "27.03.17" "Version 0.43037" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -181,7 +181,7 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -rdr, --receiveddir <path>\fR: directory for recieved faxes '\fB/DATA/Patientendokumente\fR'
 .br
-\fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
+\fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB0\fR'
 .br
 \fB -capi, --takecapi\fR: use capisuite\fB or not\fR
 .br
