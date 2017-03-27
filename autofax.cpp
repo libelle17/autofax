@@ -1753,7 +1753,7 @@ char const *autofax_T[T_MAX+1][Smax]={
 	// T_Name_des_Adressaten_aus_Faxnummer_ermittelt
   {"Name des Adressaten, aus Faxnummer ermittelt","Name of the receiver according to his fax number"},
 	// T_Aufrufintervall
-	{", Aufrufintervall: ",", (cron) call interval: "},
+	{"; Aufrufintervall: ","; (cron) call interval: "},
 	// T_kein_Aufruf
 	{"kein cron-Aufruf","no cron call"},
 	// T_Minute
@@ -9237,15 +9237,18 @@ int main(int argc, char** argv)
 			if (pm.obmodem) pm.obhyla=!pm.pruefhyla();
 			Log(Tx[T_Verwende]
 					+blaus+(pm.obcapi?"Capisuite":"")+schwarz
-					+(pm.scapis?" ("+dblaus+(pm.scapis->laeuft()?(pm.scapis->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz+")":"")
 					+(pm.obcapi&&pm.obhyla?", ":"")
 					+blau+(pm.obhyla?"Hylafax":"")+schwarz
-					+(pm.shfaxd&&pm.sfaxq&&pm.sfaxgetty?" ("+dblaus
-						+(pm.shfaxd->laeuft()&&pm.sfaxq->laeuft()&&pm.sfaxgetty->laeuft()?
-							(pm.shfaxd->lief()&&pm.sfaxq->lief()&&pm.sfaxgetty->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz+")":"")
 					+(!pm.obcapi&&!pm.obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):"")
+          +(pm.scapis||(pm.shfaxd&&pm.sfaxq&&pm.sfaxgetty)?"; ":"")
+					+(pm.scapis?dblaus+"Capisuite "+(pm.scapis->laeuft()?(pm.scapis->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz:"")
+          +(pm.scapis&&(pm.shfaxd&&pm.sfaxq&&pm.sfaxgetty)?"; ":"")
+					+(pm.shfaxd&&pm.sfaxq&&pm.sfaxgetty?dblaus+"Hylafax "
+						+(pm.shfaxd->laeuft()&&pm.sfaxq->laeuft()&&pm.sfaxgetty->laeuft()?
+							(pm.shfaxd->lief()&&pm.sfaxq->lief()&&pm.sfaxgetty->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz:"")
 					+Tx[T_Aufrufintervall]+blau
 					+(pm.cronminut=="0"?Tx[T_kein_Aufruf]+schwarzs:pm.cronminut+schwarz+(pm.cronminut=="1"?Tx[T_Minute]:Tx[T_Minuten])),1,pm.oblog);
+
 			if (pm.loef || pm.loew || pm.loea) {
 				if (pm.loef) pm.loeschefax();
 				if (pm.loew) pm.loeschewaise();
