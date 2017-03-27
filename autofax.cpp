@@ -4723,11 +4723,12 @@ void paramcl::anhalten()
   hylasv1();
   hylasv2(hysrc);
   capisv();
-  if (sfaxgetty) sfaxgetty->stopdis(obverb,oblog);
-  if (shfaxd) shfaxd->stopdis(obverb,oblog);
-  if (sfaxq) sfaxq->stopdis(obverb,oblog);
-  if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb:0,oblog);
-  if (scapis) scapis->stopdis(obverb,oblog);
+  if (sfaxgetty) sfaxgetty->stopdis(obverb+1,oblog);
+  if (shfaxd) shfaxd->stopdis(obverb+1,oblog);
+  if (sfaxq) sfaxq->stopdis(obverb+1,oblog);
+  if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb+1:1,oblog);
+  if (scapis) scapis->stopdis(obverb+1,oblog);
+	systemrueck("systemctl status capisuite",2);
 	usleep(10000000);
 	zeigdienste();
 } // void paramcl::anhalten()
