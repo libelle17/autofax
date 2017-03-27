@@ -9242,7 +9242,7 @@ int main(int argc, char** argv)
 					+(!pm.obcapi&&!pm.obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):"")
           +(pm.scapis||(pm.shfaxd&&pm.sfaxq&&pm.sfaxgetty)?"; ":"")
 					+(pm.scapis?dblaus+"Capisuite "+(pm.scapis->laeuft()?(pm.scapis->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz:"")
-          +(pm.scapis&&(pm.shfaxd&&pm.sfaxq&&pm.sfaxgetty)?"; ":"")
+          +(pm.scapis&&(pm.shfaxd&&pm.sfaxq&&pm.sfaxgetty)?", ":"")
 					+(pm.shfaxd&&pm.sfaxq&&pm.sfaxgetty?dblaus+"Hylafax "
 						+(pm.shfaxd->laeuft()&&pm.sfaxq->laeuft()&&pm.sfaxgetty->laeuft()?
 							(pm.shfaxd->lief()&&pm.sfaxq->lief()&&pm.sfaxgetty->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz:"")
