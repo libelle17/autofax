@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43022) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43027) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -207,7 +207,7 @@ file, which can be edited directly or interactively by
 Usage: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
 Faxes files from directory &lt;path&gt;, which contain
-&rsquo;to fax &lt;faxno&gt;&rsquo; and are convertible into
+&rsquo;an Fax &lt;faxno&gt;&rsquo; and are convertible into
 pdf, <br>
 and logs this in the the mariadb database
 &rsquo;faxeinp&rsquo; (tables:
@@ -293,7 +293,7 @@ capisuite <b>or not <br>
 -fh, --firsthyla</b>: try to send faxes primarily via
 hylafax <b>or not <br>
 -mod, --hmodem &lt;string&gt;</b>: Modem used for hylafax,
-instead of &rsquo;&rsquo; <b><br>
+instead of &rsquo;<b>ttyACM0</b>&rsquo; <b><br>
 -mc, --maxcapitries &lt;zahl&gt;</b>: try Hylafax after
 &lt;no&gt; tries of Capisuite instead of
 &rsquo;<b>3</b>&rsquo; <b><br>
@@ -302,7 +302,7 @@ instead of &rsquo;&rsquo; <b><br>
 &rsquo;<b>3</b>&rsquo; <b><br>
 -cuser, --cuser &lt;string&gt;</b>: takes the linux user
 &lt;string&gt; for capisuite and/or samba instead of
-&rsquo;&rsquo; <b><br>
+&rsquo;<b>schade</b>&rsquo; <b><br>
 -crct, --cringcount &lt;zahl&gt;</b>: No. of bell rings
 until Capisuite accepts the call, instead of
 &rsquo;<b>1</b>&rsquo; <b><br>
@@ -318,20 +318,20 @@ directory irrespective of faxing success <b>or not <br>
 -ocro, --ocro</b>: Text from sent pictures will be filtered
 <b>or not <br>
 -tfs, --tofaxstr &lt;string&gt;</b>: the fax number will be
-expected after &lt;string&gt; instead of &rsquo;<b>to
-fax</b>&rsquo; <b><br>
+expected after &lt;string&gt; instead of &rsquo;<b>an
+Fax</b>&rsquo; <b><br>
 -tcfs, --tocfaxstr &lt;string&gt;</b>: fax no.for fax with
 preference to capisuite is expected after &lt;string&gt;
-instead of &rsquo;<b>to cfax</b>&rsquo; <b><br>
+instead of &rsquo;<b>an cFax</b>&rsquo; <b><br>
 -thfs, --tohfaxstr &lt;string&gt;</b>: fax no.for fax with
 preference to hylafax is expected after &lt;string&gt;
-instead of &rsquo;<b>to hfax</b>&rsquo; <b><br>
+instead of &rsquo;<b>an hFax</b>&rsquo; <b><br>
 -ts, --tostr &lt;string&gt;</b>: name of addressee is
-expected after &lt;string&gt; instead of &rsquo; <b>to</b>
+expected after &lt;string&gt; instead of &rsquo; <b>an</b>
 &rsquo; <b><br>
 -ands, --andstr &lt;string&gt;</b>: separating string
 &lt;string&gt; for multiple addressees/tel&rsquo;numbers,
-instead of &rsquo;<b>and</b>&rsquo; <b><br>
+instead of &rsquo;<b>und</b>&rsquo; <b><br>
 -host, --host &lt;string&gt;</b>: takes the database on host
 &lt;string&gt; instead of &rsquo;<b>localhost</b>&rsquo;
 <b><br>
@@ -1035,7 +1035,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43022) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43027) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1344,7 +1344,7 @@ wegzuschicken <b>oder nicht <br>
 -hz, --hylazuerst</b>: versuche faxe zuerst ueber hylafax
 wegzuschicken <b>oder nicht <br>
 -mod, --hmodem &lt;string&gt;</b>: Fuer Hylafax verwendetes
-Modem, anstatt &rsquo;&rsquo; <b><br>
+Modem, anstatt &rsquo;<b>ttyACM0</b>&rsquo; <b><br>
 -mc, --maxcapiv &lt;zahl&gt;</b>: nach &lt;zahl&gt;
 Versuchen Capisuite wird Hylafax versucht, anstatt nach
 &rsquo;<b>3</b>&rsquo; <b><br>
@@ -1353,7 +1353,7 @@ Versuchen Hylafax wird Capisuite versucht, anstatt nach
 &rsquo;<b>3</b>&rsquo; <b><br>
 -cuser, --cuser &lt;string&gt;</b>: verwendet fuer Capisuite
 und/oder Samba den Linux-Benutzer &lt;string&gt; anstatt
-&rsquo;&rsquo; <b><br>
+&rsquo;<b>schade</b>&rsquo; <b><br>
 -ckzl, --cklingelzahl &lt;zahl&gt;</b>: Zahl der
 Klingeltoene, bis Capisuite den Anruf annimmt, anstatt
 &rsquo;<b>1</b>&rsquo; <b><br>

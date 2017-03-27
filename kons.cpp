@@ -2926,6 +2926,16 @@ int servc::startbar()
  return !svfeh||svfeh==7||svfeh==8;
 }
 
+int servc::laeuft()
+{
+ return !svfeh||svfeh==4;
+}
+
+int servc::lief()
+{
+ return !svf0||svf0==4;
+}
+
 int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs fehler
 	// svfeh=1: Dienst inexistent, 2: Dienst 'disabled' 3: Dienstdatei nicht ermittelbar, 4: Dienst laeuft noch, aber Dienstdatei inexistent
 	// svfeh=5: Exe-Datei nicht ermittelbar, 6: Exe-Datei fehlt, 7: activating 8: Dienst kann gestartet werden, 9: Sonstiges
@@ -2933,7 +2943,6 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 	Log(violetts+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz+", obverb: "+ltoan(obverb),obverb>0?obverb:0,oblog); // nicht die Loeschanzeige
 	string sdatei;
 	fehler=0;
-	svfeh=-1;
 	obenabled=1;
 	for(int iru=0;iru<2;iru++) {
 		svec statrueck;
@@ -3096,6 +3105,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 //	int aktobverb=(obverb>-1 && (obverb>0|| (svfeh && svfeh!=8))); // 26.2.17: beim Stoppen eines nicht vorhandenen Dienstes ueberfl. Meldung
 	Log(Txk[T_Ergebnis_Dienst]+blaus+sname+schwarz+": "+gruen+Txk[sfeh[svfeh]]+schwarz,/*akt*/obverb>0?obverb:0,oblog);
 //	Log(violetts+"Ende "+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
+  if (svf0==-1) svf0=svfeh; // Einstellung nach der ersten Untersuchung
 	return svfeh;
 } // int servc::obsvfeh(int obverb,int oblog)
 

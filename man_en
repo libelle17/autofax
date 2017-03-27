@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "27.03.17" "Version 0.43022" "\fBautofax\fR man page"
+.TH man 1 "27.03.17" "Version 0.43027" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -113,7 +113,7 @@ With '\fBautofax -?\fR', all command line options can be seen. Some options (e.g
 .br
 \fBUsage: \fBautofax [-<opt>|--<longopt> [<content>]] ...\fR
 .br
-\fBFaxes files from directory <path>, which contain 'to fax <faxno>' and are convertible into pdf, 
+\fBFaxes files from directory <path>, which contain 'an Fax <faxno>' and are convertible into pdf, 
 .br
 and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,`\fBspool\fB`).\fR
 .br
@@ -191,13 +191,13 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -fh, --firsthyla\fR: try to send faxes primarily via hylafax\fB or not\fR
 .br
-\fB -mod, --hmodem <string>\fR: Modem used for hylafax, instead of  '\fB\fR'
+\fB -mod, --hmodem <string>\fR: Modem used for hylafax, instead of  '\fBttyACM0\fR'
 .br
 \fB -mc, --maxcapitries <zahl>\fR: try Hylafax after <no> tries of Capisuite instead of '\fB3\fR'
 .br
 \fB -mh, --maxhylatries <zahl>\fR: try Capisuite after <no> tries of Hylafax instead of '\fB3\fR'
 .br
-\fB -cuser, --cuser <string>\fR: takes the linux user <string> for capisuite and/or samba instead of '\fB\fR'
+\fB -cuser, --cuser <string>\fR: takes the linux user <string> for capisuite and/or samba instead of '\fBschade\fR'
 .br
 \fB -crct, --cringcount <zahl>\fR: No. of bell rings until Capisuite accepts the call, instead of '\fB1\fR'
 .br
@@ -211,15 +211,15 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -ocro, --ocro\fR: Text from sent pictures will be filtered\fB or not\fR
 .br
-\fB -tfs, --tofaxstr <string>\fR: the fax number will be expected after <string> instead of '\fBto fax\fR'
+\fB -tfs, --tofaxstr <string>\fR: the fax number will be expected after <string> instead of '\fBan Fax\fR'
 .br
-\fB -tcfs, --tocfaxstr <string>\fR: fax no.for fax with preference to capisuite is expected after <string> instead of '\fBto cfax\fR'
+\fB -tcfs, --tocfaxstr <string>\fR: fax no.for fax with preference to capisuite is expected after <string> instead of '\fBan cFax\fR'
 .br
-\fB -thfs, --tohfaxstr <string>\fR: fax no.for fax with preference to hylafax is expected after <string> instead of '\fBto hfax\fR'
+\fB -thfs, --tohfaxstr <string>\fR: fax no.for fax with preference to hylafax is expected after <string> instead of '\fBan hFax\fR'
 .br
-\fB -ts, --tostr <string>\fR: name of addressee is expected after <string> instead of '\fB to \fR'
+\fB -ts, --tostr <string>\fR: name of addressee is expected after <string> instead of '\fB an \fR'
 .br
-\fB -ands, --andstr <string>\fR: separating string <string> for multiple addressees/tel'numbers, instead of '\fBand\fR'
+\fB -ands, --andstr <string>\fR: separating string <string> for multiple addressees/tel'numbers, instead of '\fBund\fR'
 .br
 \fB -host, --host <string>\fR: takes the database on host <string> instead of '\fBlocalhost\fR'
 .br

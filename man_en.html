@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Mon Mar 27 09:42:11 2017 -->
+<!-- CreationDate: Mon Mar 27 20:14:03 2017 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<h1 align="center">AUTOFAX (Version 0.43022) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43027) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -225,7 +225,7 @@ file, which can be edited directly or interactively by
 Usage: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
 Faxes files from directory &lt;path&gt;, which contain
-&rsquo;to fax &lt;faxno&gt;&rsquo; and are convertible into
+&rsquo;an Fax &lt;faxno&gt;&rsquo; and are convertible into
 pdf, <br>
 and logs this in the the mariadb database
 &rsquo;faxeinp&rsquo; (tables:
@@ -311,7 +311,7 @@ capisuite <b>or not <br>
 -fh, --firsthyla</b>: try to send faxes primarily via
 hylafax <b>or not <br>
 -mod, --hmodem &lt;string&gt;</b>: Modem used for hylafax,
-instead of &rsquo;&rsquo; <b><br>
+instead of &rsquo;<b>ttyACM0</b>&rsquo; <b><br>
 -mc, --maxcapitries &lt;zahl&gt;</b>: try Hylafax after
 &lt;no&gt; tries of Capisuite instead of
 &rsquo;<b>3</b>&rsquo; <b><br>
@@ -320,7 +320,7 @@ instead of &rsquo;&rsquo; <b><br>
 &rsquo;<b>3</b>&rsquo; <b><br>
 -cuser, --cuser &lt;string&gt;</b>: takes the linux user
 &lt;string&gt; for capisuite and/or samba instead of
-&rsquo;&rsquo; <b><br>
+&rsquo;<b>schade</b>&rsquo; <b><br>
 -crct, --cringcount &lt;zahl&gt;</b>: No. of bell rings
 until Capisuite accepts the call, instead of
 &rsquo;<b>1</b>&rsquo; <b><br>
@@ -336,20 +336,20 @@ directory irrespective of faxing success <b>or not <br>
 -ocro, --ocro</b>: Text from sent pictures will be filtered
 <b>or not <br>
 -tfs, --tofaxstr &lt;string&gt;</b>: the fax number will be
-expected after &lt;string&gt; instead of &rsquo;<b>to
-fax</b>&rsquo; <b><br>
+expected after &lt;string&gt; instead of &rsquo;<b>an
+Fax</b>&rsquo; <b><br>
 -tcfs, --tocfaxstr &lt;string&gt;</b>: fax no.for fax with
 preference to capisuite is expected after &lt;string&gt;
-instead of &rsquo;<b>to cfax</b>&rsquo; <b><br>
+instead of &rsquo;<b>an cFax</b>&rsquo; <b><br>
 -thfs, --tohfaxstr &lt;string&gt;</b>: fax no.for fax with
 preference to hylafax is expected after &lt;string&gt;
-instead of &rsquo;<b>to hfax</b>&rsquo; <b><br>
+instead of &rsquo;<b>an hFax</b>&rsquo; <b><br>
 -ts, --tostr &lt;string&gt;</b>: name of addressee is
-expected after &lt;string&gt; instead of &rsquo; <b>to</b>
+expected after &lt;string&gt; instead of &rsquo; <b>an</b>
 &rsquo; <b><br>
 -ands, --andstr &lt;string&gt;</b>: separating string
 &lt;string&gt; for multiple addressees/tel&rsquo;numbers,
-instead of &rsquo;<b>and</b>&rsquo; <b><br>
+instead of &rsquo;<b>und</b>&rsquo; <b><br>
 -host, --host &lt;string&gt;</b>: takes the database on host
 &lt;string&gt; instead of &rsquo;<b>localhost</b>&rsquo;
 <b><br>

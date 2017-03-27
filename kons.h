@@ -689,7 +689,8 @@ class linst_cl
 class servc {
 		string systemd; // Dienst-Datei
   public:
-    int svfeh=1; 
+    int svfeh=-1; // Ausgangseinstellung
+		int svf0=-1; // Einstellung nach erstem Ablauf von obsvfeh
 		int obenabled=0;
 	// svfeh=1: Dienst inexistent, 2: Dienst 'disabled' 3: Dienstdatei nicht ermittelbar, 4: Dienst laeuft noch, aber Dienstdatei inexistent
 	// svfeh=5: Exe-Datei nicht ermittelbar, 6: Exe-Datei fehlt, 7: activating 8: Dienst kann gestartet werden, 9: Sonstiges
@@ -699,6 +700,8 @@ class servc {
     servc(const string& vsname,const string& vename,int obverb, int oblog);
     // int obda(int obverb,int oblog);
 		int startbar();
+		int laeuft();
+		int lief();
 		int obsvfeh(int obverb=0,int oblog=0); // ob service einrichtungs fehler
 		uchar spruef(const string& sbez,uchar obfork,const string& parent, const string& sexec, const string& CondPath, const string& After, 
                  int obverb=0,int oblog=0, uchar mitstarten=1);

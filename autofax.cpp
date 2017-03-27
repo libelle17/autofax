@@ -695,6 +695,9 @@ enum T_
 	T_danach,
 	T_Bitte_Fax_5te_Spalte_aus_autofax_listi_eingeben,
 	T_mitversch,
+	T_aktiv,
+	T_aktiviert,
+	T_inaktiv,
 	T_MAX
 };
 
@@ -2001,6 +2004,12 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{"Bitte Fax (5. Spalte aus autofax -listi) eingeben: ","Please enter fax (5th column from autofax -listi): "},
 	// T_mitversch
 	{", mitversch: ",", withmove: "},
+	// T_aktiv
+	{"aktiv","active"},
+	// T_aktiviert
+	{"aktiviert","activated"},
+	// T_inaktiv
+	{"inaktiv","inactive"},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -2266,7 +2275,7 @@ paramcl::~paramcl()
   if (sfaxq) {delete sfaxq; sfaxq=0;}
   if (shfaxd) {delete shfaxd; shfaxd=0;}
   if (sfaxgetty) {delete sfaxgetty; sfaxgetty=0;}
-  if (scapisuite) {delete scapisuite; scapisuite=0;}
+  if (scapis) {delete scapis; scapis=0;}
   if (shylafaxd) {delete shylafaxd; shylafaxd=0;}
 } // paramcl::~paramcl()
 
@@ -4710,7 +4719,7 @@ void paramcl::anhalten()
   if (shfaxd) shfaxd->stopdis(obverb,oblog);
   if (sfaxq) sfaxq->stopdis(obverb,oblog);
   if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb:0,oblog);
-  if (scapisuite) scapisuite->stopdis(obverb,oblog);
+  if (scapis) scapis->stopdis(obverb,oblog);
 } // void paramcl::anhalten()
 
 // wird aufgerufen in: main
@@ -7086,13 +7095,13 @@ int paramcl::cservice()
   int erg=-1;
   string cspfad;
   if (obprogda("capisuite",obverb,oblog,&cspfad)) {
-    scapisuite->stopggf(obverb,oblog,1); 
+    scapis->stopggf(obverb,oblog,1); 
     erg=systemrueck(/*"sudo sh -c 'systemctl stop capisuite; pkill capisuite >/dev/null 2>&1; pkill -9 capisuite >/dev/null 2>&1; "*/
         "cd /etc/init.d"
         " && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
         " && { sudo mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true"/*'*/,obverb,oblog);
     // entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
-    csfehler+=!scapisuite->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","",obverb,oblog);
+    csfehler+=!scapis->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","",obverb,oblog);
     if (obverb) Log("csfehler: "+gruens+ltoan(csfehler)+schwarz);
     //    return csfehler;
   } // if (obprogda("capisuite",obverb,oblog,&cspfad)) 
@@ -7753,7 +7762,7 @@ int paramcl::kompiliere(const string& was,const string& endg, const string& vorc
 // wird aufgerufen in: pruefcapi(), anhalten()
 void paramcl::capisv()
 {
-  if (!scapisuite) scapisuite=new servc("","capisuite");
+  if (!scapis) scapis=new servc("","capisuite");
 } // void paramcl::capisv(obverb,oblog)
 
 // in empfarch() und pruefcapi()
@@ -7822,7 +7831,7 @@ int paramcl::pruefcapi()
 			// #  define IRQF_DISABLED 0x00
 			// #endif
 			//    capilaeuft=(PIDausName("capisuite")>=0);
-			capilaeuft=this->scapisuite->machfit(obverb?obverb-1:0,oblog,wahr)&&!ccapiconfdat.empty()&&!cfaxconfdat.empty();
+			capilaeuft=this->scapis->machfit(obverb?obverb-1:0,oblog,wahr)&&!ccapiconfdat.empty()&&!cfaxconfdat.empty();
 			Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz);
 			if (capilaeuft) {
 				capischonerfolgreichinstalliert=1;
@@ -8200,13 +8209,13 @@ int paramcl::pruefcapi()
 				}
 				if (/*obcapi && */(versuch>0 || this->capizukonf || rzf)) {
 					this->konfcapi();
-					scapisuite->restart(obverb-1,oblog);
+					scapis->restart(obverb-1,oblog);
 					capizukonf=0;
 				} //     if (versuch>0) KLA
 				// das folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
 				//    capilaeuft = !systemrueck("systemctl status capisuite | grep ' active (running)' >/dev/null 2>&1",0,obverb,oblog);
 				//     capilaeuft  = !systemrueck("systemctl is-active capisuite",0,obverb,oblog);
-				capilaeuft = !scapisuite->obsvfeh(obverb-1,oblog);
+				capilaeuft = !scapis->obsvfeh(obverb-1,oblog);
 				if (capilaeuft) {
 					break;
 				} else {
@@ -8214,8 +8223,8 @@ int paramcl::pruefcapi()
 					systemrueck("sudo systemctl stop isdn",obverb>0?obverb:-1,oblog,0,1);
 					//      systemrueck("sudo systemctl start isdn",obverb,oblog);
 					::Log(string(Tx[T_StarteCapisuite]),-1,oblog);
-					scapisuite->stop(-1,oblog);
-					capilaeuft=scapisuite->startundenable(-1,oblog);
+					scapis->stop(-1,oblog);
+					capilaeuft=scapis->startundenable(-1,oblog);
 					if (capilaeuft) {
 						::Log(Tx[T_Capisuite_gestartet],1,oblog);
 					} else {
@@ -8236,7 +8245,7 @@ int paramcl::pruefcapi()
 		} //   if (capilaeuft)
 	// if (obcapi)
 	} else {
-		if (scapisuite) scapisuite->stopdis(obverb,oblog);
+		if (scapis) scapis->stopdis(obverb,oblog);
 		erg=1;
 	} // 	if (obcapi) else
 	schluss: // sonst eine sonst sinnlose for-Schleife mehr oder return mitten aus der Funktion ...
@@ -9226,16 +9235,23 @@ int main(int argc, char** argv)
 			}
 			if (pm.obfcard) pm.obcapi=!pm.pruefcapi();
 			if (pm.obmodem) pm.obhyla=!pm.pruefhyla();
-			Log(Tx[T_Verwende]+blaus+(pm.obcapi?"Capisuite":"")+schwarz+(pm.obcapi&&pm.obhyla?", ":"")+blau+(pm.obhyla?"Hylafax":"")+schwarz+
-					(!pm.obcapi&&!pm.obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):"")+
-					Tx[T_Aufrufintervall]+blau+(pm.cronminut=="0"?Tx[T_kein_Aufruf]+schwarzs:pm.cronminut+schwarz+(pm.cronminut=="1"?Tx[T_Minute]:Tx[T_Minuten])),
-					1,pm.oblog);
+			Log(Tx[T_Verwende]
+					+blaus+(pm.obcapi?"Capisuite":"")+schwarz
+					+(pm.scapis?" ("+dblaus+(pm.scapis->laeuft()?(pm.scapis->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz+")":"")
+					+(pm.obcapi&&pm.obhyla?", ":"")
+					+blau+(pm.obhyla?"Hylafax":"")+schwarz
+					+(pm.shfaxd&&pm.sfaxq&&pm.sfaxgetty?" ("+dblaus
+						+(pm.shfaxd->laeuft()&&pm.sfaxq->laeuft()&&pm.sfaxgetty->laeuft()?
+							(pm.shfaxd->lief()&&pm.sfaxq->lief()&&pm.sfaxgetty->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz+")":"")
+					+(!pm.obcapi&&!pm.obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):"")
+					+Tx[T_Aufrufintervall]+blau
+					+(pm.cronminut=="0"?Tx[T_kein_Aufruf]+schwarzs:pm.cronminut+schwarz+(pm.cronminut=="1"?Tx[T_Minute]:Tx[T_Minuten])),1,pm.oblog);
 			if (pm.loef || pm.loew || pm.loea) {
 				if (pm.loef) pm.loeschefax();
 				if (pm.loew) pm.loeschewaise();
 				if (pm.loea) pm.loescheallewartende();
 			} else if (pm.erneut) {
-			   pm.empferneut();
+				pm.empferneut();
 			} else {
 				// hier stehen obcapi und obhyla fest
 				pm.faxealle();
