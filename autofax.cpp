@@ -6635,7 +6635,7 @@ void paramcl::empfcapi(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*
 
 void paramcl::zeigueberschrift()
 {
-	Log(Tx[T_Verwende]
+	::Log(Tx[T_Verwende]
 			+blaus+(obcapi?"Capisuite":"")+schwarz
 			+(obcapi&&obhyla?", ":"")
 			+blau+(obhyla?"Hylafax":"")+schwarz
