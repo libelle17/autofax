@@ -4728,8 +4728,8 @@ void paramcl::anhalten()
   if (sfaxq) sfaxq->stopdis(obverb+1,oblog);
   if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb+1:1,oblog);
   if (scapis) scapis->stopdis(obverb+1,oblog);
-	systemrueck("systemctl status capisuite",2);
-	usleep(10000000);
+	systemrueck("systemctl -n 0 status capisuite",2);
+	usleep(100);
 	zeigdienste();
 } // void paramcl::anhalten()
 
@@ -9179,7 +9179,9 @@ void paramcl::zeigdienste()
 	servc *svp[4]={scapis,sfaxq,shfaxd,sfaxgetty};
 	for(int i=0;i<4;i++) {
 		if (svp[i]) {
+		  cout<<rot<<svp[i]->sname<<":a) "<<(int)svp[i]->svfeh<<endl;
 			svp[i]->obsvfeh();
+		  cout<<rot<<svp[i]->sname<<":b) "<<(int)svp[i]->svfeh<<endl;
 			cout<<" "<<setw(25)<<svp[i]->sname<<": "<<blau<<Txk[sfeh[svp[i]->svfeh]]<<schwarz<<endl;
 		} // 		if (svp[i])
 	} // 	for(int i=0;i<4;i++)
