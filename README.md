@@ -12,6 +12,7 @@
 <a href="#PRECONDITIONS_E">PRECONDITIONS</a><br>
 <a href="#AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_E">AUTOMATICALLY INSTALLED SOFTWARE PACKAGES</a><br>
 <a href="#IMPLICATIONS_E">IMPLICATIONS</a><br>
+<a href="#UNINSTALLING_E">UNINSTALLING</a><br>
 <a href="#ERRORS_E">ERRORS</a><br>
 <a href="#LIABILITY_E">LIABILITY</a><br>
 <a href="#AUTHOR_E">AUTHOR</a><br>
@@ -983,6 +984,23 @@ be deleted, too.</p></td></tr>
 option for autofax, an old received fax can be converted to
 a pdf-File again.</p></td></tr>
 </table>
+
+<h2>UNINSTALLING
+<a name="UNINSTALLING_E"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Change in a
+terminal to the installation directory (for the same
+installed user, it&rsquo;s <b>cd ~/autofax</b>, otherwise it
+will be displayed by <b>autofax -info</b>). <br>
+Call <b>make uninstall</b>. <br>
+Then the installed <b>autofax</b> will be deleted and the
+script <b>uninstallinv</b> will be executed in reverse order
+which has been generated during the installation and
+execution of autofax. Thereby additionally installed program
+packets, permissions, samba shares and firewall exceptions
+are deleted.</p>
 
 <h2>ERRORS
 <a name="ERRORS_E"></a>
@@ -2058,8 +2076,8 @@ erneut in eine pdf-Datei umgewandelt werden.</p></td></tr>
 
 <p style="margin-left:11%; margin-top: 1em">Wechseln Sie in
 einem Terminal in das Installationsverzeichnis (beim selben
-eingeloggten Benutzer: <b>~/autofax</b>, ansonsten wird es
-&uuml;ber <b>autofax -info</b> angezeigt). <br>
+eingeloggten Benutzer: <b>cd ~/autofax</b>, ansonsten wird
+es &uuml;ber <b>autofax -info</b> angezeigt). <br>
 Rufen Sie dort <b>make uninstall</b> auf. <br>
 Dadurch wird das installierte <b>autofax</b>
 gel&ouml;scht und das Script <b>uninstallinv</b> in

@@ -419,6 +419,14 @@ b) in capisuite: by deleting files like /var/spool/capisuite/users/<user>/sendq/
 .HP 3
 14) With a specific command line option for autofax, an old received fax can be converted to a pdf-File again.
 .br
+.SH UNINSTALLING
+Change in a terminal to the installation directory (for the same installed user, it's \fBcd ~/autofax\fR, otherwise it will be displayed by \fBautofax -info\fR).
+.br
+Call \fBmake uninstall\fR. 
+.br
+Then the installed \fBautofax\fR will be deleted and the script \fBuninstallinv\fR will be executed in reverse order which has been generated during the installation and execution of autofax.
+Thereby additionally installed program packets, permissions, samba shares and firewall exceptions are deleted.  
+
 .SH ERRORS
 Please report any errors with the word 'autofax' included in the headline. 
 .br

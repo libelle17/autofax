@@ -429,7 +429,7 @@ In capisuite kann auch eine verwaiste Lock-Datei (/var/spool/capisuite/users/<us
 14) mit einer Befehlszeilenoption kann ein früher empfangenes Fax erneut in eine pdf-Datei umgewandelt werden.
 .br
 .SH DEINSTALLATION
-Wechseln Sie in einem Terminal in das Installationsverzeichnis (beim selben eingeloggten Benutzer: \fB~/autofax\fR, ansonsten wird es über \fBautofax -info\fR angezeigt).
+Wechseln Sie in einem Terminal in das Installationsverzeichnis (beim selben eingeloggten Benutzer: \fBcd ~/autofax\fR, ansonsten wird es über \fBautofax -info\fR angezeigt).
 .br
 Rufen Sie dort \fBmake uninstall\fR auf.
 .br
