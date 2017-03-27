@@ -1305,8 +1305,9 @@ Datensaetze = &lt;zahl&gt; statt &rsquo;<b>30</b>&rsquo;
 -info, --version</b>: Zeigt die Programmversion an <b><br>
 -vi, --vi</b>: Konfigurationsdatei editieren <b><br>
 -h, --hilfe</b>: Zeigt diesen Bildschirm an <b><br>
-Optionen, die in der Konfigurationsdatei gespeichert werden
-(vorausgehendes &rsquo;1&rsquo;=doch nicht speichern,
+Optionen, die standardm&auml;&szlig;ig in der
+Konfigurationsdatei gespeichert werden .br <br>
+(vorausgehendes &rsquo;1&rsquo;=aktuell nicht speichern,
 &rsquo;no&rsquo;=Gegenteil, z.B.
 &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -sp, --sprache &lt;string&gt;</b>:
