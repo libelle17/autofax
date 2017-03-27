@@ -308,12 +308,14 @@ class paramcl // Programmparameter
     string cmd; // string fuer command fuer Betriebssystembefehle
     vector<optioncl> opts;
 		uchar keineverarbeitung=0;
+		uchar cmeingegeben=0;
 		vector<argcl> argcmv; // class member vector
     servc *sfaxq=0, *shfaxd=0, *shylafaxd=0, *sfaxgetty=0, *scapis=0;
     string modconfdat; // hylafax-Konfigurationsdatei, z.B. /var/spool/hylafax/etc/config.ttyACM0
     confdat *cfaxcp=0; // Zeiger auf ausgelesene /etc/capisuite/fax.conf
 		string virtvz; //	instvz+"/ocrv";
 	  string ocrmp; //	virtvz+"/bin/ocrmypdf";
+		string vorcm; // Vor-Cron-Minuten
 
   private:
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
@@ -409,6 +411,7 @@ class paramcl // Programmparameter
     void korrigierecapi(unsigned tage=90);
     void korrigierehyla(unsigned tage=90);
     void empfarch();
-    void schlussanzeige();
+		void zeigueberschrift();
+		void schlussanzeige();
     void autofkonfschreib();
 }; // class paramcl

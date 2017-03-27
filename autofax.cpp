@@ -698,7 +698,7 @@ enum T_
 	T_aktiv,
 	T_aktiviert,
 	T_inaktiv,
-	T_Dienste,
+	T_Zustand_der_Dienste,
 	T_Cron_Aufruf_von,
 	T_gestoppt,
 	T_MAX
@@ -2013,8 +2013,8 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{"aktiviert","activated"},
 	// T_inaktiv
 	{"inaktiv","inactive"},
-	// T_Dienste
-	{"Dienste: ","Services: "},
+	// T_Zustand_der_Dienste
+	{"Zustand der Dienste: ","State of the services: "},
 	// T_Cron_Aufruf_von
 	{"Cron-Aufruf von '","cron call of '"},
 	// T_gestoppt
@@ -3234,6 +3234,7 @@ int paramcl::getcommandline()
       if (opts[optslsz].pruefpar(&argcmv,&i,&hilfe,Tx.lgn)) {
 			  if (opts[optslsz].kurzi==T_cm_k) { // cronminuten
 					keineverarbeitung=1;
+					cmeingegeben=1;
 				}
 				if (opts[optslsz].kurzi==T_mpwd_k) {
 					string pwdstr=XOR(mpwd,pk);
@@ -4086,93 +4087,94 @@ void paramcl::setztmpcron()
 // wird aufgerufen in: main
 void paramcl::pruefcron()
 {
-  //  svec rueck;
-  int cronda=0;
-  int cronzuplanen = (cronminut!="0");
-  Log(violetts+Tx[T_pruefcron]+schwarz+Tx[T_cronzuplanen]+violetts+ltoan(cronzuplanen)+schwarz);
-		for (uchar runde=0;runde<2;runde++) {
-			cronda=obprogda("crontab",obverb-1,0);
-			if (cronda) break;
-			// systemrueck("which zypper 2>/dev/null && zypper -n in cron || 
-			//              KLA which apt-get 2>/dev/null && apt-get -y install cron; KLZ",1,1);
-			linst.doinst("cron",1,1);
-			//  int obionice=!systemrueck("which ionice > /dev/null 2>&1",0,0);
-		} //   for (uchar runde=0;runde<2;runde++) 
-		if (cronda) {
-			int nochkeincron = systemrueck("sudo crontab -l",obverb-1,0,0,2);
-			setztmpcron();
-			const string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 "+vaufr;// "date >/home/schade/zeit";
-			const string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
-			const string czt=" \\* \\* \\* \\*";
-			string vorcm;
-			if (!nochkeincron) {
-				cmd="bash -c 'grep \"\\*/.*"+czt+cb0+"\" <(sudo crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
-				svec cmrueck;
-				systemrueck(cmd,obverb,oblog,&cmrueck);
-				if (cmrueck.size()) vorcm=cmrueck[0];
-			} // 		if (!nochkeincron) 
-			if (vorcm.empty() && !cronzuplanen) {
-				if (obverb) ::Log(Tx[T_Kein_cron_gesetzt_nicht_zu_setzen],1,oblog);
+	//  svec rueck;
+	int cronda=0;
+	int cronzuplanen = (cronminut!="0");
+	Log(violetts+Tx[T_pruefcron]+schwarz+Tx[T_cronzuplanen]+violetts+ltoan(cronzuplanen)+schwarz);
+	for (uchar runde=0;runde<2;runde++) {
+		cronda=obprogda("crontab",obverb-1,0);
+		if (cronda) break;
+		// systemrueck("which zypper 2>/dev/null && zypper -n in cron || 
+		//              KLA which apt-get 2>/dev/null && apt-get -y install cron; KLZ",1,1);
+		linst.doinst("cron",1,1);
+		//  int obionice=!systemrueck("which ionice > /dev/null 2>&1",0,0);
+	} //   for (uchar runde=0;runde<2;runde++) 
+	if (cronda) {
+		int nochkeincron = systemrueck("sudo crontab -l",obverb-1,0,0,2);
+		setztmpcron();
+		const string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 "+vaufr;// "date >/home/schade/zeit";
+		const string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
+		const string czt=" \\* \\* \\* \\*";
+//		string vorcm; // Vor-Cron-Minuten
+		if (!nochkeincron) {
+			cmd="bash -c 'grep \"\\*/.*"+czt+cb0+"\" <(sudo crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
+			svec cmrueck;
+			systemrueck(cmd,obverb,oblog,&cmrueck);
+			if (cmrueck.size()) vorcm=cmrueck[0];
+		} // 		if (!nochkeincron) 
+		if (vorcm.empty() && !cronzuplanen) {
+			if (obverb) ::Log(Tx[T_Kein_cron_gesetzt_nicht_zu_setzen],1,oblog);
+		} else {
+			if (cronminut==vorcm) {
+				if (cmeingegeben) ::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+Tx[T_unveraendert]+
+						+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
 			} else {
-				if (cronminut==vorcm) {
-					if (obverb) ::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+Tx[T_unveraendert]+
-							+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
-				} else {
-					string unicmd="rm -f "+tmpcron+";";
+				string unicmd="rm -f "+tmpcron+";";
+				cmd=unicmd;
+				string dazu="crontab -l|sed '\\''/"+zsaufr+"/d'\\''>"+tmpcron+";";
+				unicmd+=dazu;	
+				if (!nochkeincron) {
+					//					cmd=dazu; // 26.2.17: Debian: nach Deinstallation rootscrontab mit root-Berechtigungen, die Programm hier aufhielten
 					cmd=unicmd;
-					string dazu="crontab -l|sed '\\''/"+zsaufr+"/d'\\''>"+tmpcron+";";
-					unicmd+=dazu;	
-					if (!nochkeincron) {
-						//					cmd=dazu; // 26.2.17: Debian: nach Deinstallation rootscrontab mit root-Berechtigungen, die Programm hier aufhielten
-						cmd=unicmd;
-					}
-					if (cronzuplanen) {
-						cmd+=" echo \""+cbef+"\">>"+tmpcron+";";
-					}
-					dazu=" crontab "+tmpcron+";";
-					unicmd+=dazu;
-					cmd+=dazu;
-					systemrueck("sudo sh -c '"+cmd+"'",obverb,oblog);
-				  ersetzAlle(unicmd,"'\\''","'");
-					anfgggf(unindt,unicmd);
-					::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronzuplanen?Tx[T_alle]+cronminut+Tx[T_Minuten]:Tx[T_gar_nicht])+schwarz+Tx[T_statt]+
-							+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
-				} // 				if (cronminut==vorcm) else
-			} // 		if (vorcm.empty() && cronminut=="0")
+				}
+				if (cronzuplanen) {
+					cmd+=" echo \""+cbef+"\">>"+tmpcron+";";
+				}
+				dazu=" crontab "+tmpcron+";";
+				unicmd+=dazu;
+				cmd+=dazu;
+				systemrueck("sudo sh -c '"+cmd+"'",obverb,oblog);
+				ersetzAlle(unicmd,"'\\''","'");
+				anfgggf(unindt,unicmd);
+				if (cmeingegeben)
+				::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronzuplanen?Tx[T_alle]+cronminut+Tx[T_Minuten]:Tx[T_gar_nicht])+schwarz+Tx[T_statt]+
+						+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
+			} // 				if (cronminut==vorcm) else
+		} // 		if (vorcm.empty() && cronminut=="0")
 #ifdef stumm
 #define uebersichtlich
 #ifdef uebersichtlich
-			string befehl;
-			if (!cronzuplanen) {
-				if (nochkeincron) {
-				} else {
-					befehl="sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";"
-						"crontab "+tmpcron+";}||true'";
-				}
+		string befehl;
+		if (!cronzuplanen) {
+			if (nochkeincron) {
 			} else {
-				if (nochkeincron) {
-					befehl="rm -f "+tmpcron+";";
-				} else {
-					befehl="sudo bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(crontab -l)||{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";";
-				}
-				befehl+="echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+"";
-				if (!nochkeincron)
-					befehl+=";}'";
-			} // 			if (!cronzuplanen)
+				befehl="sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";"
+					"crontab "+tmpcron+";}||true'";
+			}
+		} else {
+			if (nochkeincron) {
+				befehl="rm -f "+tmpcron+";";
+			} else {
+				befehl="sudo bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(crontab -l)||{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";";
+			}
+			befehl+="echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+"";
+			if (!nochkeincron)
+				befehl+=";}'";
+		} // 			if (!cronzuplanen)
 #else
-			const string befehl=cronzuplanen?
-				(nochkeincron?"rm -f "+tmpcron+";":
-				 "sudo bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+"; ")+
-				"echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+(nochkeincron?"":";}'")
-				:
-				(nochkeincron?"":"sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+";"
-				 "sudo crontab "+tmpcron+";}||true'")
-				;
+		const string befehl=cronzuplanen?
+			(nochkeincron?"rm -f "+tmpcron+";":
+			 "sudo bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+"; ")+
+			"echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+(nochkeincron?"":";}'")
+			:
+			(nochkeincron?"":"sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+";"
+			 "sudo crontab "+tmpcron+";}||true'")
+			;
 #endif      
-			systemrueck(befehl,obverb,oblog);
+		systemrueck(befehl,obverb,oblog);
 #endif
-		} //   if (cronda) 
-  //  systemrueck(string("mv -i '")+mpfad+"' /root/bin",1,0);
+	} //   if (cronda) 
+	//  systemrueck(string("mv -i '")+mpfad+"' /root/bin",1,0);
 } // pruefcron
 
 // wird aufgerufen in: main
@@ -4706,7 +4708,7 @@ void paramcl::bereinigewv()
   } // for(unsigned runde=0;runde<3;runde++) 
 } // bereinigewv
 
-// Parameter -anhl
+// Parameter -st / --stop
 // wird aufgerufen in: main
 void paramcl::anhalten()
 {
@@ -4715,11 +4717,10 @@ void paramcl::anhalten()
   setztmpcron();
   const string befehl="sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";crontab "+tmpcron+";};true'";
   systemrueck(befehl,obverb,oblog);
-	::Log(Tx[T_Cron_Aufruf_von]+mpfad+Tx[T_gestoppt],1,oblog);
+	::Log(blaus+Tx[T_Cron_Aufruf_von]+schwarz+mpfad+blau+Tx[T_gestoppt]+schwarz,1,oblog);
   // services
   // befehl="sudo systemctl stop capisuite hylafax-faxq hylafax-hfaxd hylafax-faxgetty-"+hmodem+" hylafax >/dev/null 2>&1; true";
 	// systemrueck(befehl,obverb,oblog);
-
   hylasv1();
   hylasv2(hysrc);
   capisv();
@@ -6631,6 +6632,25 @@ void paramcl::empfcapi(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*
 		} // for(int runde=0;runde<2;runde++) 
 	} // if (indb)
 }// void paramcl::empfcapi()
+
+void paramcl::zeigueberschrift()
+{
+	Log(Tx[T_Verwende]
+			+blaus+(obcapi?"Capisuite":"")+schwarz
+			+(obcapi&&obhyla?", ":"")
+			+blau+(obhyla?"Hylafax":"")+schwarz
+			+(!obcapi&&!obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):"")
+			+(scapis||(shfaxd&&sfaxq&&sfaxgetty)?"; ":"")
+			+(scapis?dblaus+"Capisuite "+(scapis->laeuft()?(scapis->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz:"")
+			+(scapis&&(shfaxd&&sfaxq&&sfaxgetty)?", ":"")
+			+(shfaxd&&sfaxq&&sfaxgetty?dblaus+"Hylafax "
+				+(shfaxd->laeuft()&&sfaxq->laeuft()&&sfaxgetty->laeuft()?
+					(shfaxd->lief()&&sfaxq->lief()&&sfaxgetty->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz:"")
+			+Tx[T_Aufrufintervall]+blau
+			+(vorcm!=cronminut&&!(vorcm.empty()&&cronminut=="0")?((vorcm.empty()?Tx[T_gar_nicht]:vorcm)+" -> "):"")
+			+(cronminut=="0"?Tx[T_kein_Aufruf]+schwarzs:cronminut+schwarz+(cronminut=="1"?Tx[T_Minute]:Tx[T_Minuten])),1,oblog);
+} // void paramcl::zeigueberschrift()
+
 
 // wird aufgerufen in: main
 void paramcl::schlussanzeige()
@@ -9173,7 +9193,7 @@ void paramcl::zeigkonf()
 
 void paramcl::zeigdienste()
 {
-	cout<<Tx[T_Dienste]<<endl;
+	cout<<Tx[T_Zustand_der_Dienste]<<endl;
 	servc *svp[4]={scapis,sfaxq,shfaxd,sfaxgetty};
 	for(int i=0;i<4;i++) {
 		if (svp[i]) {
@@ -9250,6 +9270,7 @@ int main(int argc, char** argv)
   } else if (!pm.suchstr.empty()) {
     pm.suchestr();
   } else {
+    pm.pruefcron(); // soll vor Log(Tx[T_Verwende ... stehen
 		if (!pm.keineverarbeitung) {
 			pruefstdfaxnr(pm.My,pm.muser,pm.host,pm.obverb,pm.oblog);
 			prueffuncgettel3(pm.My,pm.muser,pm.host,pm.obverb,pm.oblog);
@@ -9261,20 +9282,7 @@ int main(int argc, char** argv)
 			}
 			if (pm.obfcard) pm.obcapi=!pm.pruefcapi();
 			if (pm.obmodem) pm.obhyla=!pm.pruefhyla();
-			Log(Tx[T_Verwende]
-					+blaus+(pm.obcapi?"Capisuite":"")+schwarz
-					+(pm.obcapi&&pm.obhyla?", ":"")
-					+blau+(pm.obhyla?"Hylafax":"")+schwarz
-					+(!pm.obcapi&&!pm.obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):"")
-          +(pm.scapis||(pm.shfaxd&&pm.sfaxq&&pm.sfaxgetty)?"; ":"")
-					+(pm.scapis?dblaus+"Capisuite "+(pm.scapis->laeuft()?(pm.scapis->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz:"")
-          +(pm.scapis&&(pm.shfaxd&&pm.sfaxq&&pm.sfaxgetty)?", ":"")
-					+(pm.shfaxd&&pm.sfaxq&&pm.sfaxgetty?dblaus+"Hylafax "
-						+(pm.shfaxd->laeuft()&&pm.sfaxq->laeuft()&&pm.sfaxgetty->laeuft()?
-							(pm.shfaxd->lief()&&pm.sfaxq->lief()&&pm.sfaxgetty->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz:"")
-					+Tx[T_Aufrufintervall]+blau
-					+(pm.cronminut=="0"?Tx[T_kein_Aufruf]+schwarzs:pm.cronminut+schwarz+(pm.cronminut=="1"?Tx[T_Minute]:Tx[T_Minuten])),1,pm.oblog);
-
+			pm.zeigueberschrift();
 			if (pm.loef || pm.loew || pm.loea) {
 				if (pm.loef) pm.loeschefax();
 				if (pm.loew) pm.loeschewaise();
@@ -9292,7 +9300,6 @@ int main(int argc, char** argv)
 				pm.schlussanzeige();
 			} // if (pm.loef || pm.loew || pm.loea) else
 		} // 		if (!pm.keineverarbeitung)
-    pm.pruefcron();
   } // if (pm.kez) else else else
   pm.autofkonfschreib();
   return 0;
