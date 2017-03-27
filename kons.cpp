@@ -2945,6 +2945,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 	Log(violetts+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz+", obverb: "+ltoan(obverb),obverb>0?obverb:0,oblog); // nicht die Loeschanzeige
 	string sdatei;
 	fehler=0;
+	svfeh=-1;
 	obenabled=1;
 	for(int iru=0;iru<2;iru++) {
 		svec statrueck;
