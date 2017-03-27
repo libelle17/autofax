@@ -998,9 +998,9 @@ Call <b>make uninstall</b>. <br>
 Then the installed <b>autofax</b> will be deleted and the
 script <b>uninstallinv</b> will be executed in reverse order
 which has been generated during the installation and
-execution of autofax. Thereby additionally installed program
-packets, permissions, samba shares and firewall exceptions
-are deleted.</p>
+execution of autofax. <br>
+Thereby additionally installed program packets, permissions,
+samba shares and firewall exceptions are deleted.</p>
 
 <h2>ERRORS
 <a name="ERRORS_E"></a>
