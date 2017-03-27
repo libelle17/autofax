@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sun Mar 26 21:28:42 2017 -->
+<!-- CreationDate: Mon Mar 27 08:09:03 2017 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -30,6 +30,7 @@
 <a href="#VORAUSSETZUNGEN_D">VORAUSSETZUNGEN</a><br>
 <a href="#AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE_D">AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE</a><br>
 <a href="#AUSWIRKUNGEN DES PROGRAMMABLAUFS_D">AUSWIRKUNGEN DES PROGRAMMABLAUFS</a><br>
+<a href="#DEINSTALLATION_D">DEINSTALLATION</a><br>
 <a href="#FEHLER_D">FEHLER</a><br>
 <a href="#HAFTUNG_D">HAFTUNG</a><br>
 <a href="#AUTOR_D">AUTOR</a><br>
@@ -294,8 +295,7 @@ speichern, &rsquo;no&rsquo;=Gegenteil, z.B.
 &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -sp, --sprache &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
-[<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;<b>d</b>&rsquo;
-<b><br>
+[<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;&rsquo; <b><br>
 -lvz, --logvz &lt;pfad&gt;</b>: waehlt als Logverzeichnis
 &lt;pfad&gt;, derzeit &rsquo;<b>/var/log</b>&rsquo; <b><br>
 -ld, --logdname &lt;string&gt;</b>: logdatei &lt;string&gt;
@@ -1051,6 +1051,26 @@ gel&ouml;scht werden.</p></td></tr>
 Befehlszeilenoption kann ein fr&uuml;her empfangenes Fax
 erneut in eine pdf-Datei umgewandelt werden.</p></td></tr>
 </table>
+
+<h2>DEINSTALLATION
+<a name="DEINSTALLATION_D"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Wechseln Sie in
+einem Terminal in das Installationsverzeichnis (beim selben
+eingeloggten Benutzer: <b>~/autofax</b>, ansonsten wird es
+&uuml;ber <b>autofax -info</b> angezeigt). <br>
+Rufen Sie dort <b>make uninstall</b> auf. <br>
+Dadurch wird das installierte <b>autofax</b>
+gel&ouml;scht und das Script <b>uninstallinv</b> in
+umgekehrter Reihenfolge abgearbeitet, das bei der
+Installation und beim Aufruf von autofax erstellt wurde.
+<br>
+Dadurch werden zus&auml;tzlich installierte
+Programmpakete, zus&auml;tzlich erteilte Berechtigungen,
+f&uuml;r autofax eingerichtete Sambafreigaben und
+Firewallausnahmen wieder gel&ouml;scht.</p>
 
 <h2>FEHLER
 <a name="FEHLER_D"></a>
