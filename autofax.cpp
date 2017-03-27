@@ -698,6 +698,7 @@ enum T_
 	T_aktiv,
 	T_aktiviert,
 	T_inaktiv,
+	T_Dienste,
 	T_MAX
 };
 
@@ -2010,6 +2011,8 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{"aktiviert","activated"},
 	// T_inaktiv
 	{"inaktiv","inactive"},
+	// T_Dienste
+	{"Dienste: ","Services: "},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -9156,6 +9159,17 @@ void paramcl::zeigkonf()
   for(unsigned i=0;i<cgconf.zahl;i++) {
     cout<<blau<<setw(20)<<cgconf[i].name<<schwarz<<": "<<cgconf[i].wert<<endl;
   }
+	cout<<Tx[T_Dienste]<<endl;
+	capisv();
+	hylasv1();
+	hylasv2(hyppk);
+	servc *svp[4]={scapis,sfaxq,shfaxd,sfaxgetty};
+	for(int i=0;i<4;i++) {
+		if (svp[i]) {
+			svp[i]->obsvfeh();
+			cout<<" "<<setw(25)<<svp[i]->sname<<": "<<blau<<Txk[sfeh[svp[i]->svfeh]]<<schwarz<<endl;
+		} // 		if (svp[i])
+	} // 	for(int i=0;i<4;i++)
 } // void paramcl::zeigkonf()
 
 int main(int argc, char** argv) 

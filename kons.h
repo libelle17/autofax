@@ -35,6 +35,7 @@
 using namespace std;
 extern const string& instvz; // z.B. /root/autofax
 extern const string& unindt; // instvz+"uninstallinv"
+extern const int sfeh[];
 string* loeschefarbenaus(string *zwi);
 int Log(const string& text,short screen=1,short file=1,bool oberr=0,short klobverb=0);
 void anfgggf(const string datei, const string inhalt);
