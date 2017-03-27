@@ -4728,7 +4728,7 @@ void paramcl::anhalten()
   if (sfaxq) sfaxq->stopdis(obverb,oblog);
   if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb:0,oblog);
   if (scapis) scapis->stopdis(obverb,oblog);
-	usleep(100000);
+	usleep(1000000);
 	zeigdienste();
 } // void paramcl::anhalten()
 
