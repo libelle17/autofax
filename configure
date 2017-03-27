@@ -1,0 +1,170 @@
+#!/bin/sh
+still() {
+	"$@" >/dev/null 2>&1
+}
+
+#kf kein Fehler
+kf() {
+	"$@" 2>/dev/null
+}
+
+# Installationsprogramm ermitteln
+# inhaltlich parallel linst_cl::pruefipr( in kons.cpp
+# Ubuntu:   libtiff-dev   libtiff5
+# Opensuse: libtiff-devel libtiff5
+# Fedora:   libtiff       libtiff-devel
+# IdPR wird benötigt für: sudo
+# IPR wird verwendet in: einricht, dieses für: make, ctags, gtags, vim (in viall)
+# IP_R wird verwendet für: Makefile
+getIPR() {
+  CTAGS=ctags;
+	{ still which zypper &&{ 
+		Z=zypper;g=--gpg-auto-import-keys;IdPR="$Z -n $g in ";IP_R="sudo $Z $g in ";UPR="sudo $Z rm -u ";pgroff=groff;
+		# die nächsten beiden Variablen dürften 26.3.17 unnötig werden
+  REPOS="sudo $Z lr|grep 'g++\|devel_gcc'\>$KR||sudo $Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
+  urepo="sudo $Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && sudo $Z rr devel_gcc;";
+  COMP="gcc gcc-c++ \$(CCInst)";
+	LT=${_LT}-${dev};
+	} }||
+	{ still which apt-get &&{ IdPR="apt-get --assume-yes install --reinstall ";IP_R="sudo $IdPR";
+	                                    UPR="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
+																			dev=dev;
+																			COMP="build-essential linux-headers-\$(shell uname -r)";
+																			LT=${_LT}-${dev};
+																			CTAGS=exuberant-ctags;} }||
+	{ still which dnf &&{ fed=1;IdPR="dnf -y install ";UPR="sudo dnf remove ";} }||
+	{ still which yum &&{ fed=1;IdPR="yum -y install ";UPR="sudo yum remove ";} }
+	[ $fed = 1 ] &&{ libmc=mysql;libmc1=mariadb;COMP="make automake gcc-c++ kernel-devel";IP_R="sudo $IdPR";LT="${_LT} ${_LT}-${dev}";LT5="";}
+	{ still which rpm &&{ SPR="rpm -q ";UDPR="sudo rpm -e --nodeps ";};}||
+	{ still which dpkg &&{ SPR="dpkg -s ";UDPR="sudo apt-get -f install; sudo dpkg -r --force-depends ";};}
+	IPR="sudo $IdPR";
+	DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall .exrc $UNF"
+}
+
+exportvars() {
+	rm -f vars;
+	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF pgroff LT LT5 dev libmc libmc1 REPOS urepo COMP DATEIEN; do
+	  eval nv=\$$v; 
+		printf "$v:=$nv\n">>vars; 
+	done;
+}
+
+ausricht() {
+# im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
+# s. int linst_cl::doinst
+	 sed -ni '/^\s/{h;:a;n;/^\s/{H;ba};};${x;s/\n/ /g;p}' "$1"
+   IP=$(cat $1)
+#	 for IP in $(cat $1); do
+		 test -f $AUNF&&grep -q "[^;] $IP" $AUNF||{
+			T=${UDPR}$IP;
+			printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
+			[ $2/ = "vim/" ] &&{ printf "alias vi>$KR&&sudo unalias vi\necho \"alias vi>$KR&&sudo unalias vi\"\n">>$AUNF;}
+		 }
+#	 done;
+#	 test -f $AUNF&&grep -q " $2" $AUNF||{
+#	  T=${UPR}$2;
+#		printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
+#	 }
+}
+einricht() {
+# wenn $1 nicht aufrufbar oder "_", dann installiere $2
+ if [ $1 != _ ]&& still which $1; then
+   if [ $3/ = verbose/ ]; then  \
+	 printf "$blau$1$reset installed/ schon da, $blau$2$reset not to be installed/ übersprungen\n"; fi
+ else
+   getIPR;
+	 [ $1 = _ ]|| printf "$blau$1$reset not found/ nicht gefunden => "  
+	 printf "Installing/ Installiere $blau$2$reset ...\n";
+	 [ $1 = "vim" -a $fed = 1 ] &&{ sudo yum update vim-minimal;}
+	 rweg=0;
+	 [ $1 = "g++" -a -n $Z ] &&{
+		 sudo $Z lr|grep 'g++\|devel_gcc'>$KR ||{ 
+			 GREPO=http://download.opensuse.org/repositories/devel:/gcc/
+			 GREPO=${GREPO}`cat /etc/*-release|grep ^NAME= |cut -d\" -f2|sed 's/ /_/'`_
+			 GREPO=${GREPO}`cat /etc/*-release|grep ^VERSION_ID= |cut -d\" -f2`
+			 GREPO=${GREPO}/devel:gcc.repo;
+			 printf "Adding Repository/ Füge Repository hinzu: $blau$GREPO$reset\n";
+			 sudo $Z rr devel_gcc >$KR;
+			 sudo $Z ar $GREPO && rweg=1;
+		 }
+	 }
+	 LOG=inst_$1.log;
+	 ${IPR}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff groff-base"
+	 ausricht "$LOG" $1
+	 if [ $1 = "g++" -a -n "$Z" -a $rweg = 1 ]; then
+	 	 printf "Removing Repository/ Entferne Repository ${blau}devel_gcc$reset again/ wieder\n"
+		 sudo $Z rr devel_gcc;
+	 else true; fi
+ fi
+}
+
+UNROH=uninstall
+UNF=${UNROH}inv # Name muss identisch sein mit Ende von uindt in kons.cpp 
+DN=/dev/null
+KR="$DN 2>&1" # keine Rueckmeldung
+KF=" 2>$DN" # keine Fehlermeldung
+pgroff="groff groff-base"
+dev=devel
+libmc=libmysqlclient
+libmc1=libmariadbclient
+fed=0
+Z=""
+CCInst=gcc6-c++
+
+ICH=$(basename $0)
+if [ $ICH = -bash ]; then 
+ declare -r ICHges=$(readlink -f ${BASH_SOURCE[0]})
+ ICH=$(basename $ICHges)
+fi
+
+PROG=autofax
+mkdir -p $HOME/$PROG
+AUNF=$HOME/$PROG/$UNF
+_LT="libtiff"
+LT5="${_LT}5"
+getIPR;
+# diese Datei wird wegen obigem in viall gesourct, deshalb dort der Rest zu uebergehen
+if test "$ICH" = configure -o "$ICH" = install.sh -o "$ICH" = autofax_inst.sh; then
+rot="\033[1;31m"
+gruen="\033[1;32m"
+blau="\033[1;34m"
+reset="\033[0m"
+if test "$1" = inst; then
+# um aus Makefile hier etwas installieren zu koennen
+  einricht "$2" "$3" "$4"
+  exit
+fi
+
+# Gruppen, deren Mitglieder sudo aufrufen koennen; fuer Debian muss zuerst 'sudo' genannt werden, weil eine Zuordnung zu 'root' nichts hilft (s.u. tail)
+SUG="admin\|root\|sudo\|wheel\|ntadmin";
+
+# hier geht's los
+# falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
+INSTP=sudo;still which $INSTP||{
+	printf "Must install '$INSTP'. "
+	printf "Please enter ${blau}root$reset's password at the next question:\n"
+	printf "Muss '$INSTP' einrichten. "
+	printf "Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
+#	test -f $AUNF&&grep -q "[^;] sudo" $AUNF||printf "${UPR}sudo\nprintf \"\$blau%%s\$reset\\\n\" \"${UPR}sudo\"\n">>$AUNF;
+#	su -c "$IdPR sudo;";
+	 LOG=inst_$INSTP.log;
+	 su -c "$IdPR $INSTP"|tee "$LOG";
+	 ausricht "$LOG";
+}
+# 0=sudo aufrufbar
+a=$(sudo -n -v 2>&1);test -z "$a" || echo $a|grep -q "assw" ||{
+	printf "Must allow '$blau$USER$reset' to call '${blau}sudo$reset'."
+	printf "Please enter ${blau}root$reset's password at the next question:\n"
+	printf "Then please log out and in again, change to the directory '$blau$PWD$reset' and then call '${blau}sh install.sh$reset'!\n"
+	printf "Muss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. "
+	printf "Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
+	printf "Danach loggen Sie sich bitte aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh install.sh$reset' auf!\n";
+	su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";" && exit
+}
+# which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
+# falls make fehlt, dann installieren ...
+einricht make make
+# $SPR make >$DN 2>&1 ||{ echo Installing/ Installiere 'make' ....; id su >$DN 2>&1 && { su -c "$IPR make;";true;} || sudo $IPR make; grep -q make $AUNF||printf "${UPR}make\necho \"${UPR}make\"\n">>$AUNF; }
+exportvars;
+Mf=Makefile;Mfr=$Mf.roh; test -f $Mfr && mv $Mfr $Mf
+fi
