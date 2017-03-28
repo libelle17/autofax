@@ -26,7 +26,7 @@ getIPR() {
   COMP="gcc gcc-c++ \$(CCInst)";
 	LT=${_LT}-${dev};
 	} }||
-	{ still which apt-get &&{ IdPR="apt-get --assume-yes install --reinstall ";IP_R="sudo $IdPR";
+	{ still which apt-get &&{ deb=1;IdPR="apt-get --assume-yes install --reinstall ";IP_R="sudo $IdPR";
 	                                    UPR="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
 																			dev=dev;
 																			COMP="build-essential linux-headers-\$(shell uname -r)";
@@ -52,8 +52,14 @@ exportvars() {
 ausricht() {
 # im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
 # s. int linst_cl::doinst
-	 sed -ni '/^\s/{h;:a;n;/^\s/{H;ba};};${x;s/\n/ /g;p}' "$1"
-   IP=$(cat $1)
+	[ $deb = 1 ] &&
+		sed -ni.bak '/^\s/{h;:a;n;/^\s/{H;ba};};${x;s/\n/ /g;p}' "$1"
+# Beispiel für dnf:	 
+#	 V=Verifying;sed -n '/'$V'/{s/[ ]*'$V'[ ]*:[ ]*\([^ ]*\).*/\1/;H};${x;s/\n/ /g;p}' /DATA/down/inst_vim_orig
+# in Fedora: nach dem Programm kommt mit einem Leerzeichen eine Versionsnr., die unnötig ist für die Deninstallation
+	[ $fed = 1 ] &&
+		sed -ni.bak '/^\s/{s/\([^ ]\+\)[ ][^ ]\+/ \1/g;s/\s\+/ /g;h;:a;n;/^\s/{s/\([^ ]\+\)[ ][^ ]\+/ \1/g;s/\s\+/ /g;H;ba};};${x;s/\n/ /g;p}' "$1";
+	IP=$(cat $1)
 #	 for IP in $(cat $1); do
 		 test -f $AUNF&&grep -q "[^;] $IP" $AUNF||{
 			T=${UDPR}$IP;

@@ -1305,10 +1305,9 @@ Datensaetze = &lt;zahl&gt; statt &rsquo;<b>30</b>&rsquo;
 -info, --version</b>: Zeigt die Programmversion an <b><br>
 -vi, --vi</b>: Konfigurationsdatei editieren <b><br>
 -h, --hilfe</b>: Zeigt diesen Bildschirm an <b><br>
-Optionen, die standardm&auml;&szlig;ig in der
-Konfigurationsdatei gespeichert werden <br>
-(vorausgehendes &rsquo;1&rsquo;=aktuell nicht speichern,
-&rsquo;no&rsquo;=Gegenteil, z.B.
+Optionen, die in der Konfigurationsdatei gespeichert werden
+koennen (vorausgehendes &rsquo;1&rsquo;=doch nicht
+speichern, &rsquo;no&rsquo;=Gegenteil, z.B.
 &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -sp, --sprache &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
@@ -1336,7 +1335,7 @@ Faxempfang &rsquo;<b>/DATA/Patientendokumente</b>&rsquo;
 <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
-nicht), anstatt &rsquo;<b>2</b>&rsquo; <b><br>
+nicht), anstatt &rsquo;<b>0</b>&rsquo; <b><br>
 -capi, --obcapi</b>: Capisuite verwenden <b>oder nicht <br>
 -hyla, --obhyla</b>: Hylafax verwenden <b>oder nicht <br>
 -cz, --capizuerst</b>: versuche faxe zuerst ueber Capisuite
