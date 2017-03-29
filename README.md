@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43099) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.431) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -506,7 +506,10 @@ configuration the functionaliy of <b>hylafax</b> and/or
 <b>capisuite</b> is being checked and if necessary and
 possible restored (including by installation of those
 programs; in case of a fritzcard 2.0 or a fax modem USR5637
-an additional automatic configuration can/will be done).</p></td></tr>
+an additional automatic configuration can/will be done).
+Kernel modules for hylafax and/or capisuite are
+automatically generated, also in case of a kernel
+update.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -1035,7 +1038,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43099) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.431) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1569,12 +1572,14 @@ Protokollierungen mit allen durchgef&uuml;hrt.</p></td></tr>
 
 <p style="margin-top: 1em">13) Je nach Konfiguration wird
 die Funktionsf&auml;higkeit von <b>hylafax</b> und/oder
-<b>capisuite</b> &uuml;berpr&uuml;ft und ggf.
-versucht herzustellen (falls n&ouml;tig und
+<b>capisuite</b> &uuml;berpr&uuml;ft und ggf. nach
+M&ouml;glichkeit hergestellt (falls n&ouml;tig und
 m&ouml;glich auch mit Installation dieser Programme;
 f&uuml;r eine Fritzcard 2.0 sowie f&uuml;r ein
 Faxmodem USR5637 kann/wird auch eine automatische
-Konfiguration erfolgen).</p></td></tr>
+Konfiguration erfolgen). Kernelmodule f&uuml;r hylafax
+bzw. capisuite werden f&uuml;r die aktuelle
+Kernelversion erstellt, auch bei etwaigen Kernelupdates.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
