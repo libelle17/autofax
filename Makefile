@@ -350,8 +350,8 @@ clean: hierclean distclean
 .PHONY: hierclean
 hierclean: 
 	@printf " Bereinige ...\r" >$(BA)
-	@$(shell rm -f $(EXEC) $(OBJ) .d/* $(KF))
-	@$(shell sudo rm -f ${MANPEH} ${MANPDH} $(KF))
+	@rm -f $(EXEC) $(OBJ) .d/* $(KF)
+	@sudo rm -f ${MANPEH} ${MANPDH} $(KF)
 	@printf " %b%s,%s,%s,%s%b geloescht!\n" $(blau) "$(EXEC)" "$(OBJ)" "$(MANPEH)" "$(MANPDH)" $(reset)
 
 .PHONY: distclean

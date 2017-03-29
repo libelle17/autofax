@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43054) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43099) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -256,9 +256,10 @@ clean them up <b><br>
 -info, --version</b>: shows the program version <b><br>
 -vi, --vi</b>: edit configuration file <b><br>
 -h, --help</b>: shows this screen <b><br>
-Options to be saved in the configuration file: (preceding
-&rsquo;1&rsquo;=don&rsquo;t save, &rsquo;no&rsquo;=contrary,
-e.g. &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
+Options which can be saved in the configuration file:
+(preceding &rsquo;1&rsquo;=don&rsquo;t save,
+&rsquo;no&rsquo;=contrary, e.g.
+&rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -lg, --language &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
 [<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;<b>e</b>&rsquo;
@@ -284,7 +285,7 @@ collected here and not in
 faxes &rsquo;<b>/DATA/Patientendokumente</b>&rsquo; <b><br>
 -cm, --cronminutes &lt;zahl&gt;</b>: every how many minutes
 shall <b>autofax</b> be called in crontab (0=not at all),
-instead of &rsquo;<b>2</b>&rsquo; <b><br>
+instead of &rsquo;<b>0</b>&rsquo; <b><br>
 -capi, --takecapi</b>: use capisuite <b>or not <br>
 -hyla, --takehyla</b>: use hylafax <b>or not <br>
 -fc, --firstcapi</b>: try to send faxes primarily via
@@ -1034,7 +1035,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43054) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43099) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>

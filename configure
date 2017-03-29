@@ -83,7 +83,7 @@ einricht() {
 	 printf "Installing/ Installiere $blau$2$reset ...\n";
 	 [ $1 = "vim" -a $fed = 1 ] &&{ sudo yum update vim-minimal;}
 	 rweg=0;
-	 [ $1 = "g++" -a -n $Z ] &&{
+	 [ $1 = "g++" -a -n "$Z" ] &&{
 		 sudo $Z lr|grep 'g++\|devel_gcc'>$KR ||{ 
 			 GREPO=http://download.opensuse.org/repositories/devel:/gcc/
 			 GREPO=${GREPO}`cat /etc/*-release|grep ^NAME= |cut -d\" -f2|sed 's/ /_/'`_

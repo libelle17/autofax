@@ -2042,6 +2042,7 @@ string tmpcron; // fuer crontab
 
 #define autofaxcpp
 #include "autofax.h"
+
 constexpr const char *paramcl::moeglhvz[2];
 // wird nur in VorgbSpeziell gebraucht:
 
@@ -5248,7 +5249,7 @@ void paramcl::unpaperfuercron()
 // in Dateinherricht und empfarch (2x)
 int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/, const int obocr/*=1*/, const int loeschen/*=1*/) // 0=Erfolg
 {
-	Log(violetts+Tx[T_zupdf]+schwarz+" '"+blau+*quellp+schwarz+"' '"+blau+ziel+schwarz+"'");
+	Log(violetts+Tx[T_zupdf]+schwarz+" '"+blau+*quellp+schwarz+"' '"+blau+ziel+schwarz+"', obocr: "+(obocr?"1":"0")+", loeschen: "+(loeschen?"1":"0"));
 	int erg=1;
 	string stamm,exten; // , *quellp=&quell;
 	getstammext(quellp,&stamm,&exten);
@@ -9206,6 +9207,10 @@ void paramcl::zeigdienste()
 
 int main(int argc, char** argv) 
 {
+    if (argc<3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
+		// Testcode
+	}
+
 	string prog;
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler

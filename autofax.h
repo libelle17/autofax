@@ -1,5 +1,3 @@
-#include <regex.h> // regex_t, regex, regcomp, regexec
-
 enum FaxTyp:uchar {capi=1,hyla};
 enum FxStat:uchar {init/*0*/,gestrichen,schwebend,wartend/*3*/,blockiert/*4*/,bereit/*5*/,verarb/*6*/,gesandt/*7*/,gescheitert/*8*/,fehlend,woasined};
 enum hyinst {keineh,hysrc,hypak,hyppk}; // hyla source, hyla Paket, hylaplus Paket

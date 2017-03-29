@@ -92,6 +92,7 @@ extern const char *_rot, *_hrot, *_schwarz, *_blau, *_gelb, *_tuerkis, *_hgrau;
 #endif
 #include <fstream> // kopiere
 #include <algorithm>    // std::transform
+#include <regex.h> // regex_t, regex, regcomp, regexec
 
 #define caus cout // nur zum Debuggen
 size_t irfind(const string& wo, const string& was);
@@ -212,6 +213,7 @@ enum Tkons_
 	T_Exitcode,
 	T_trenne,
 	T_bei,
+	T_Konnte_regulaeren_Ausdruck_nicht_kompilieren,
 	T_konsMAX,
 };
 
