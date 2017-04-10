@@ -2676,56 +2676,53 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				*/
 				} // 				if (obanf==1)
 			} // 			for(unsigned i=srueck.size();i;)
+			cout<<violett<<udpr+ustring<<schwarz<<endl;
       anfgggf(unindt,udpr+ustring);
 
 
-		// Testcode
-		svec srueck;
-		string zudeinst;
-		if (!(systemrueck("cat /DATA/down/inst_vim_orig",2,0,&srueck))) {
-			string ustring; uchar obanf=0;
-// im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
-// s. ausricht in configure
-			for(unsigned i=srueck.size();i;) {
-				--i;
-				if (srueck[i][0]==' '){ if (!obanf) obanf++;} else if (obanf==1) obanf++;
-				if (obanf==1) {
-				  gtrim(&srueck[i]);
-					const string source=srueck[i].c_str();
-					size_t maxGroups=2;
-					regex_t rCmp;
-					regmatch_t groupArray[maxGroups];
-					while(1) {
-						string regex=string(".{")+ltoan(groupArray[0].rm_eo)+"}([^ ]+)[ ][^ ]+";
-						groupArray[0].rm_eo=0;
-						if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) {
-						  Log(Txk[T_Konnte_regulaeren_Ausdruck_nicht_kompilieren]+blaus+regex+schwarz,1,1);
-						} else if (regexec(&rCmp, source.c_str(), maxGroups, groupArray, groupArray[0].rm_eo) == 0) {
-							for (unsigned g=1;g<maxGroups;g++) {
-								if (groupArray[g].rm_so == (signed)(size_t)-1)
-									break;  // No more groups
-                zudeinst+=" ";
-								zudeinst+=source.substr(groupArray[g].rm_so,groupArray[g].rm_eo-groupArray[g].rm_so);
+			if (0) {
+				exit(92);
+				// Testcode
+				svec srueck;
+				string zudeinst;
+				if (!(systemrueck("cat /DATA/down/inst_vim_orig",2,0,&srueck))) {
+					string ustring; uchar obanf=0;
+					// im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
+					// s. ausricht in configure
+					for(unsigned i=srueck.size();i;) {
+						--i;
+						if (srueck[i][0]==' '){ if (!obanf) obanf++;} else if (obanf==1) obanf++;
+						if (obanf==1) {
+							gtrim(&srueck[i]);
+							const string source=srueck[i].c_str();
+							size_t maxGroups=2;
+							regex_t rCmp;
+							regmatch_t groupArray[maxGroups];
+							while(1) {
+								string regex=string(".{")+ltoan(groupArray[0].rm_eo)+"}([^ ]+)[ ][^ ]+";
+								groupArray[0].rm_eo=0;
+								if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) {
+									Log(Txk[T_Konnte_regulaeren_Ausdruck_nicht_kompilieren]+blaus+regex+schwarz,1,1);
+								} else if (regexec(&rCmp, source.c_str(), maxGroups, groupArray, groupArray[0].rm_eo) == 0) {
+									for (unsigned g=1;g<maxGroups;g++) {
+										if (groupArray[g].rm_so == (signed)(size_t)-1)
+											break;  // No more groups
+										zudeinst+=" ";
+										zudeinst+=source.substr(groupArray[g].rm_so,groupArray[g].rm_eo-groupArray[g].rm_so);
+									}
+								} else {
+									break;
+								}
 							}
-						} else {
-						 break;
-						}
-					}
-					regfree(&rCmp);
-				} // 				if (obanf==1)
-			} // 			for(unsigned i=srueck.size();i;)
-			cout<<violett<<zudeinst<<schwarz<<endl;
-//      anfgggf(unindt,udpr+ustring);
-	    exit(91);
-	 }
-  exit(90);
-
-
-
-
-
-
-
+							regfree(&rCmp);
+						} // 				if (obanf==1)
+					} // 			for(unsigned i=srueck.size();i;)
+					cout<<violett<<zudeinst<<schwarz<<endl;
+					//      anfgggf(unindt,udpr+ustring);
+					exit(91);
+				}
+				exit(90);
+			}
 
 
 /*
