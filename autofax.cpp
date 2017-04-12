@@ -7870,6 +7870,8 @@ int paramcl::pruefcapi()
 				uchar fcpcida=0, capida=0, capidrvda=0;
 				vector<string> rueck;
 				systemrueck("lsmod",obverb,oblog,&rueck);
+				systemrueck("lsmod",obverb,oblog,&rueck);
+				systemrueck("lsmod",obverb,oblog,&rueck);
 				for(size_t i=0;i<rueck.size();i++){
 					if (!fcpcida) {if (!rueck[i].find("fcpci")) {fcpcida=1;continue;}}
 					if (!capidrvda) {if (!rueck[i].find("capidrv")) {capidrvda=1;continue;}}

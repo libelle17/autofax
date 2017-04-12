@@ -245,6 +245,10 @@ const char *kons_T[T_konsMAX+1][Smax]=
 	{" bei: "," at: "},
 	// T_Konnte_regulaeren_Ausdruck_nicht_kompilieren
 	{"Konnte regulären Ausdruck nicht kompilieren: ","Could not compile regular expression: "},
+	// T_doinst
+	{"doinst()","doinst()"},
+	// T_Ins_Deinstallationsprogramm_wird_eingetragen
+	{"Ins Deinstallationsprogramm wird eingetragen: ","Entered into the uninstall program: "},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 
@@ -2608,6 +2612,7 @@ string linst_cl::ersetzeprog(const string& prog)
 int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar ohneabh/*=0*/) // ,uchar obyes/*=1*/)
 {
 	// <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
+	Log(violetts+Txk[T_doinst]+schwarz+" prog: "+violett+prog+schwarz+", fallsnichtda: "+violett+fallsnichtda+schwarz+" ohneabh: "+violett+(ohneabh?"1":"0"),obverb,oblog);
 	int ret=2;
 	// eprog kann auch von aussen vor Programmaufruf gesetzt werden
 	if (eprog.empty()) eprog=ersetzeprog(prog);
@@ -2644,27 +2649,33 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 					size_t maxGroups=2;
 					regex_t rCmp;
 					regmatch_t groupArray[maxGroups];
-					while(1) {
-						string regex=string(".{")+ltoan(groupArray[0].rm_eo)+"}([^ ]+)[ ][^ ]+";
-						groupArray[0].rm_eo=0;
-						if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) {
-						  Log(Txk[T_Konnte_regulaeren_Ausdruck_nicht_kompilieren]+blaus+regex+schwarz,1,1);
-						} else if (regexec(&rCmp, source.c_str(), maxGroups, groupArray, groupArray[0].rm_eo) == 0) {
-						  string zudeinst;
-							for (unsigned g=1;g<maxGroups;g++) {
-								if (groupArray[g].rm_so == (signed)(size_t)-1)
-									break;  // No more groups
-                if (!zudeinst.empty()) zudeinst+=" ";
-								zudeinst+=source.substr(groupArray[g].rm_so,groupArray[g].rm_eo-groupArray[g].rm_so);
-							}
-							ustring=zudeinst+" "+ustring;
-						} else {
-						 break;
-						}
+					switch (linst.pruefipr()) {
+						case dnf: case yum:
+							while(1) {
+								string regex=string(".{")+ltoan(groupArray[0].rm_eo)+"}([^ ]+)[ ][^ ]+";
+								groupArray[0].rm_eo=0;
+								if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) {
+									Log(Txk[T_Konnte_regulaeren_Ausdruck_nicht_kompilieren]+blaus+regex+schwarz,1,1);
+								} else if (regexec(&rCmp, source.c_str(), maxGroups, groupArray, groupArray[0].rm_eo) == 0) {
+									string zudeinst;
+									for (unsigned g=1;g<maxGroups;g++) {
+										if (groupArray[g].rm_so == (signed)(size_t)-1)
+											break;  // No more groups
+										if (!zudeinst.empty()) zudeinst+=" ";
+										zudeinst+=source.substr(groupArray[g].rm_so,groupArray[g].rm_eo-groupArray[g].rm_so);
+									}
+									ustring=zudeinst+" "+ustring;
+								} else {
+									break;
+								} // 						if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) else else
+							} // while (1)
+							regfree(&rCmp);
+							break;
+							// Folgende Zeile fuer Debian und OpenSuse gut
+						case apt: case zypper:
+							ustring=srueck[i]+' '+ustring;
+						default: break;
 					}
-					regfree(&rCmp);
-// Folgende Zeile fuer Debian gut
-//					ustring=srueck[i]+' '+ustring;
 /*
 					vector<string> tok;
 					aufSplit(&tok,&srueck[i]);
@@ -2676,10 +2687,10 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				*/
 				} // 				if (obanf==1)
 			} // 			for(unsigned i=srueck.size();i;)
-			cout<<violett<<udpr+ustring<<schwarz<<endl;
+			Log(Txk[T_Ins_Deinstallationsprogramm_wird_eingetragen]+violetts+udpr+ustring+schwarz,obverb,oblog);
       anfgggf(unindt,udpr+ustring);
 
-
+/*
 			if (0) {
 				exit(92);
 				// Testcode
@@ -2723,6 +2734,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				}
 				exit(90);
 			}
+*/
 
 
 /*
@@ -2765,7 +2777,11 @@ void anfgggf(const string datei, const string inhalt)
 		mdatei uniff(datei,ios::app,0);
 		if (uniff.is_open()) {
 //			uniff<<inhalt<<"\n"<<"printf \"%b"<<ersetzAllezu(inhalt,"\"","\\\"")<<"%b\\n\" \"\\033[1;34m\" \"\\033[0m\""<<endl;
-			uniff<<inhalt<<"\n"<<"printf \"$blau%s$reset\\n\" \""<<ersetzAllezu(inhalt,"\"","\\\"")<<"\""<<endl;
+			time_t rohz=time(0);
+      struct tm *zeiti=localtime(&rohz);
+			char buf[80];
+      strftime(buf,sizeof buf,"%F %T",zeiti);
+			uniff<<inhalt<<"\n"<<"printf \"(Inst: "<<buf<<"): $blau%s$reset\\n\" \""<<ersetzAllezu(inhalt,"\"","\\\"")<<"\""<<endl;
 		} else {
 			perror((string("\n")+Txk[T_Kann_Datei]+datei+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
 		} // 			if (uniff.is_open())
