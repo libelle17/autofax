@@ -56,6 +56,7 @@ ausricht() {
 # s. int linst_cl::doinst
 	if [ $fed = 0 ]; then
 		sed -ni.bak '/^\s/{h;:a;n;/^\s/{H;ba};};${x;s/\n/ /g;p}' "$1";
+	  sed -i 's/ libgcc[^ ]*/ /g' "$1"; # die Deinstallation von libgcc.x86_64 wirkte sich irgendwie ungünstig auf das System aus ...
 # Beispiel für dnf:	 
 #	 V=Verifying;sed -n '/'$V'/{s/[ ]*'$V'[ ]*:[ ]*\([^ ]*\).*/\1/;H};${x;s/\n/ /g;p}' /DATA/down/inst_vim_orig
 # in Fedora: nach dem Programm kommt mit einem Leerzeichen eine Versionsnr., die unnötig ist für die Deninstallation
