@@ -2049,8 +2049,9 @@ constexpr const char *paramcl::moeglhvz[2];
 void useruucp(const string& huser, int obverb,int oblog)
 {
 	if (systemrueck("sudo getent passwd "+huser,obverb,oblog)) {
-		systemrueck("sudo useradd -b /etc -c \"Unix-to-Unix CoPy\" -U -r "+huser,obverb,oblog);
-		anfgggf(unindt,"sudo userdel "+huser);
+		const string bef="sudo useradd -b /etc -c \"Unix-to-Unix CoPy\" -U -r "+huser;
+		systemrueck(bef,obverb,oblog);
+		anfgggf(unindt,"sudo userdel "+huser,bef);
 	} // 	if (systemrueck("sudo getent "+huser,obverb,oblog))
 } // void useruucp(const string& huser, int obverb,int oblog)
 
@@ -2248,7 +2249,7 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
   return 1;
 } // int fsfcl::loeschehyla()
 
-int paramcl::Log(const string& text,bool oberr/*=0*/,short klobverb/*=0*/)
+int paramcl::Log(const string& text,const bool oberr/*=0*/,const short klobverb/*=0*/)
 {
 	return ::Log(text,obverb,oblog,oberr,klobverb);
 } // int paramcl::Log(const string& text,bool oberr/*=0*/,short klobverb/*=0*/)
@@ -4134,9 +4135,10 @@ void paramcl::pruefcron()
 				dazu=" crontab "+tmpcron+";";
 				unicmd+=dazu;
 				cmd+=dazu;
-				systemrueck("sudo sh -c '"+cmd+"'",obverb,oblog);
+				const string bef="sudo sh -c '"+cmd+"'";
+				systemrueck(bef,obverb,oblog);
 				ersetzAlle(unicmd,"'\\''","'");
-				anfgggf(unindt,unicmd);
+				anfgggf(unindt,unicmd,bef);
 				if (cmeingegeben)
 				::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronzuplanen?Tx[T_alle]+cronminut+Tx[T_Minuten]:Tx[T_gar_nicht])+schwarz+Tx[T_statt]+
 						+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
@@ -4321,7 +4323,7 @@ void paramcl::pruefsamba()
 			} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
 			if (!suchstr.empty())
 			// Abschnitt wieder löschen
-				anfgggf(unindt,"sudo sed -i.vorautofax '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdatei);
+				anfgggf(unindt,"sudo sed -i.vorautofax '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdatei,"smb.conf: ["+suchstr+"]");
 		} // if (sapp.is_open()) 
 		if (!nrzf) {
 			if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
@@ -4375,8 +4377,9 @@ void paramcl::pruefsamba()
 				if (system==fed) {
 					// fedora:
 					// firewall-cmd --state
-					systemrueck("sudo firewall-cmd --permanent --add-service=samba && sudo firewall-cmd --reload",obverb,oblog);
-					anfgggf(unindt,"sudo firewall-cmd --permanent --remove-service=samba && sudo firewall-cmd --reload");
+					const string bef="sudo firewall-cmd --permanent --add-service=samba && sudo firewall-cmd --reload";
+					systemrueck(bef,obverb,oblog);
+					anfgggf(unindt,"sudo firewall-cmd --permanent --remove-service=samba && sudo firewall-cmd --reload",bef);
 					// selinux: // offenbar unnoetig
 				} else {
 					// Suse-Firewall
@@ -4394,10 +4397,11 @@ void paramcl::pruefsamba()
 							  string bak="bak_"+meinname+ltoan(i);
 								struct stat lbak={0};
 								int fehlt=lstat((susefw+"."+bak).c_str(),&lbak);
-								systemrueck("sudo sed -i"+(fehlt?"."+bak:"")+
+								const string bef="sudo sed -i"+(fehlt?"."+bak:"")+
 								" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
-										" && sudo systemctl restart SuSEfirewall2 smb nmb",obverb,oblog); 
-								anfgggf(unindt,"sudo sh -c 'cp -a \""+susefw+"."+bak+"\" \""+susefw+"\"'&&systemctl restart SuSEfirewall2 smb nmb");
+										" && sudo systemctl restart SuSEfirewall2 smb nmb";
+								systemrueck(bef,obverb,oblog); 
+								anfgggf(unindt,"sudo sh -c 'cp -a \""+susefw+"."+bak+"\" \""+susefw+"\"'&&systemctl restart SuSEfirewall2 smb nmb",bef);
 							} // 					if (nichtfrei && obfw)
 							part="client";
 						} // for(int i=1;i<3;i++) 
@@ -5149,15 +5153,16 @@ int paramcl::pruefocr()
 					if (obprogda(virtualenv,obverb,oblog,&vprog)) break;
 					systemrueck("sudo -H pip3 install "+virtualenv,obverb,oblog);
 				}
+				string bef;
 				if (!vprog.empty()) {
-					systemrueck("sudo -H sh -c '"+vprog+" \""+virtvz+"\";"
+				  bef="sudo -H sh -c '"+vprog+" \""+virtvz+"\";"
 							". \""+virtvz+"/bin/activate\";"
 							"pip3 install requests;"
 							"pip3 install --upgrade ocrmypdf;"
 							"deactivate;"
-							"'",obverb,oblog);
+							"'";
 				} else {
-					systemrueck("sudo -H sh -c 'python3 -m venv \""+virtvz+"\";"
+				  bef="sudo -H sh -c 'python3 -m venv \""+virtvz+"\";"
 							"python3 -m venv --upgrade \""+virtvz+"\";"
 							". \""+virtvz+"/bin/activate\";"
 							"pip3 install --upgrade pip;"
@@ -5166,14 +5171,15 @@ int paramcl::pruefocr()
 //						"grep \"sudo rm -rf \\\""+virtvz+"\\\"\" \""+unindt+"\"||printf \"sudo rm -rf \\\""+virtvz+"\\\"\\n\">>\""+unindt+"\";"
 //						"grep ocrmypdf \""+unindt+"\"||printf \"sudo pip3 uninstall --yes ocrmypdf\\n\">>\""+unindt+"\";"
 //						"||sed -i \"/ python3/isudo pip3 uninstall --yes ocrmypdf\" \""+unindt+"\""
-						"'",obverb,oblog);
-				}
-						anfgggf(unindt,"sudo rm -rf \""+virtvz+"\"");
-						anfgggf(unindt,
+						"'";
+				} // if (!vprog.empty()) else
+				systemrueck(bef,obverb,oblog);
+				anfgggf(unindt,"sudo rm -rf \""+virtvz+"\"","");
+				anfgggf(unindt,
 						"sudo sh -c '. \""+virtvz+"/bin/activate\";"
 						"sudo -H pip3 uninstall --yes ocrmypdf;"
-						"deactivate;'");
-						
+						"deactivate;'",bef);
+
 				// sudo pip3 uninstall --yes ocrmypdf
 				// sudo dnf install ./ghostscript-9.16-4.fc24.i686.rpm
 				//// sudo dnf -y install ghostscript // ghostscript 9.20 geht nicht mit pdf/a und overwrite
@@ -7263,7 +7269,7 @@ int paramcl::pruefhyla()
 			const string proj="tiff_copy";
 		  holvomnetz(proj);
 			kompilbase(proj,s_gz);
-			const string befehl="sh -c 'cd \""+instvz+vtz+proj+"\""
+			const string bef="sh -c 'cd \""+instvz+vtz+proj+"\""
 				"&& rm -f CMakeCache.txt"
 				"&& sed -i.bak s\"/uint16 Param;/uint32 Param;/\" libtiff/tif_fax3.h"
 				"&& cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . "
@@ -7273,10 +7279,10 @@ int paramcl::pruefhyla()
 //				"|| printf \"cd \\\""+instvz+vtz+proj+"\\\" && cat install_manifest.txt|sudo xargs rm; "
 //				  "cd \\\""+instvz+"\\\"\\nsudo rm -f \\\""+nachw+"\\\"\\n\" >> \""+unindt+"\";} "
         ";true'";
-			systemrueck(befehl,obverb,oblog);
-			anfgggf(unindt,"cd \""+instvz+vtz+proj+"\" && cat install_manifest.txt|sudo xargs rm; cd \""+instvz+"\"");
+			systemrueck(bef,obverb,oblog);
+			anfgggf(unindt,"cd \""+instvz+vtz+proj+"\" && cat install_manifest.txt|sudo xargs rm; cd \""+instvz+"\"",bef);
 			if (!touch(nachw,obverb,oblog))
-				anfgggf(unindt,"sudo rm -f \""+nachw+"\"");
+				anfgggf(unindt,"sudo rm -f \""+nachw+"\"","");
 		 } // 		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh))
 
 		for(unsigned versuch=0;versuch<3;versuch++) {
@@ -7718,11 +7724,12 @@ void paramcl::pruefmodcron()
   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++) {
 		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'",obverb,oblog)) {
     svec rueck;
-     if (!systemrueck("sudo sh -c 'crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";crontab "+tmpcron+"'",obverb,oblog,&rueck)) {
+		const string bef="sudo sh -c 'crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";crontab "+tmpcron+"'";
+     if (!systemrueck(bef,obverb,oblog,&rueck)) {
 //    for(size_t znr=0;znr<rueck.size();znr++) { ::Log(rueck[znr],1+obverb,oblog); } //     for(size_t znr=0;znr<rueck.size();znr++)
 			const string befehl="sudo bash -c 'grep \""+mps[ru]+"\" -q <(crontab -l 2>/dev/null)&&"
 				"{ crontab -l 2>/dev/null|sed \"/"+ersetzAllezu(mps[ru],"/","\\/")+"/d\">"+tmpcron+";crontab "+tmpcron+";};true'";
-			anfgggf(unindt,befehl);
+			anfgggf(unindt,befehl,bef);
 		 } //if (!systemrueck("(sudo crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";sudo crontab "+tmpcron+")",obverb,oblog,&rueck))
 		} // 		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'",obverb,oblog))
   } //   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++)
@@ -7766,19 +7773,21 @@ int paramcl::kompilbase(const string& was, const string& endg)
 
 int paramcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 {
-		if (!pruefinstv()) {
-    return systemrueck("sh -c 'cd \""+instvz+vtz+was+"\"&&"+(vorcfg.empty()?s_true:vorcfg)+(ohneconf?nix:"&& ./configure ")+cfgbismake+
-				" make && echo $? = "+Tx[T_Ergebnis_nach_make]+" && sudo make install && echo $? = "+Tx[T_Ergebnis_nach_make_install]+
-//				"&&{ grep -q \"P="+was+"\" \""+unindt+"\""
-//						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P="+was+";cd \\\"\\$A/\\$P\\\" 2>/dev/null"
-//						"||cd \\$(find \\\"\\$H\\\" -name \\$P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2) "
-//						"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
-						"'",obverb,oblog);
-			anfgggf(unindt,"H="+gethome()+";A=$H/"+meinname+";P=i"+was+";cd \"$A/$P\" 2>/dev/null"
-			"|| cd $(find \"$H\" -name $P -printf \"%T@ %p\n\" 2>/dev/null|sort -rn|head -n1|cut -d\" \" -f2)"
-			"&& sudo make uninstall; cd \"$H\"");
-	  } // 		if (!pruefinstv())
-		return 1;
+	int ret=1;
+	if (!pruefinstv()) {
+		const string bef="sh -c 'cd \""+instvz+vtz+was+"\"&&"+(vorcfg.empty()?s_true:vorcfg)+(ohneconf?nix:"&& ./configure ")+cfgbismake+
+			" make && echo $? = "+Tx[T_Ergebnis_nach_make]+" && sudo make install && echo $? = "+Tx[T_Ergebnis_nach_make_install]+
+			//				"&&{ grep -q \"P="+was+"\" \""+unindt+"\""
+			//						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P="+was+";cd \\\"\\$A/\\$P\\\" 2>/dev/null"
+			//						"||cd \\$(find \\\"\\$H\\\" -name \\$P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2) "
+			//						"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
+			"'";
+		ret=systemrueck(bef,obverb,oblog);
+		anfgggf(unindt,"H="+gethome()+";A=$H/"+meinname+";P=i"+was+";cd \"$A/$P\" 2>/dev/null"
+				"|| cd $(find \"$H\" -name $P -printf \"%T@ %p\n\" 2>/dev/null|sort -rn|head -n1|cut -d\" \" -f2)"
+				"&& sudo make uninstall; cd \"$H\"",bef);
+	} // 		if (!pruefinstv())
+	return ret;
 } // int paramcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 
 int paramcl::kompiliere(const string& was,const string& endg, const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/)

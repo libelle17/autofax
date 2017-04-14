@@ -62,11 +62,12 @@ ausricht() {
   else
 		sed -ni.bak '/^\s/{s/\([^ ]\+\)[ ][^ ]\+/ \1/g;s/\s\+/ /g;h;:a;n;/^\s/{s/\([^ ]\+\)[ ][^ ]\+/ \1/g;s/\s\+/ /g;H;ba};};${x;s/\n/ /g;p}' "$1";
 	fi;
+# s. anfgggf(const string datei, const string inhalt) in kons.cpp
 	IP=$(cat $1)
 #	 for IP in $(cat $1); do
 		 test -f $AUNF&&grep -q "[^;] $IP" $AUNF||{
 			T=${UDPR}$IP;
-			printf "$T\nprintf \"(Inst: $(date +%F\ %T)): \$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
+			printf "$T\n# $3\nprintf \"(Inst: $(date +%F\ %T)): \$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
 			[ $2/ = "vim/" ] &&{ printf "alias vi>$KR&&sudo unalias vi\necho \"alias vi>$KR&&sudo unalias vi\"\n">>$AUNF;}
 		 }
 #	 done;
@@ -99,7 +100,7 @@ einricht() {
 	 }
 	 LOG=inst_$1.log;
 	 ${IPR}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff groff-base"
-	 ausricht "$LOG" $1
+	 ausricht "$LOG" $1 "${IPR}$2"
 	 if [ $1 = "g++" -a -n "$Z" -a $rweg = 1 ]; then
 	 	 printf "Removing Repository/ Entferne Repository ${blau}devel_gcc$reset again/ wieder\n"
 		 sudo $Z rr devel_gcc;

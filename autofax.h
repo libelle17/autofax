@@ -347,7 +347,7 @@ class paramcl // Programmparameter
 		void empfhyla(const string& ganz,uchar indb=1,uchar mitversch=1);
 		void empfcapi(const string& stamm,uchar indb=1,uchar mitversch=1);
 	public:
-		int Log(const string& text,bool oberr=0,short klobverb=0);
+		int Log(const string& text,const bool oberr=0,const short klobverb=0);
     paramcl(int argc,char** argv);
     ~paramcl();
     void pruefggfmehrfach();

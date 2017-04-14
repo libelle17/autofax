@@ -856,7 +856,7 @@ string* loeschefarbenaus(string *zwi)
   return zwi;
 } // void loeschefarbenaus(string *zwi)
 
-int Log(const string& text, short screen, short file, bool oberr, short klobverb)
+int Log(const string& text, const short screen, const short file, const bool oberr, const short klobverb)
 {
   static unsigned int cols=0;
   static bool letztesmaloZ;
@@ -2057,8 +2057,9 @@ int setfaclggf(const string& datei,const binaer obunter,const int mod/*=4*/,ucha
           if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
 					if (faclbak) {
 						string sich=base_name(datei)+"."+base_name(meinpfad())+".perm";
-						systemrueck("sudo sh -c 'cd \""+dir_name(datei)+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(datei)+"\">\""+sich+"\"'",obverb,oblog);
-						anfgggf(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'");
+						const string bef="sudo sh -c 'cd \""+dir_name(datei)+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(datei)+"\">\""+sich+"\"'";
+						systemrueck(bef,obverb,oblog);
+						anfgggf(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'",bef);
 					} // 					if (faclbak)
 					systemrueck(string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'",obverb,oblog);
           if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
@@ -2101,8 +2102,9 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 			} // 			  caus<<aktv<<endl;
 		} // if (fehler)
 		if (fehler) {
-			fehler=systemrueck("mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'",obverb,oblog);
-			anfgggf(unindt,"sudo rmdir '"+verz+"'");
+		  const string bef="mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'";
+			fehler=systemrueck(bef,obverb,oblog);
+			anfgggf(unindt,"sudo rmdir '"+verz+"'",bef);
 		} //     if (fehler)
 		//    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
 		if (obmitfacl) setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
@@ -2635,7 +2637,8 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		} // switch (linst.pruefipr()) 
 		const uchar obyes=1;
 		svec srueck;
-		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog,&srueck))) {
+		const string bef=(obyes?instyp:instp)+eprog;
+		if (!(ret=systemrueck(bef,obverb+1,oblog,&srueck))) {
 			/*svec*/ string ustring; uchar obanf=0;
 // im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
 // s. ausricht in configure
@@ -2688,7 +2691,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				} // 				if (obanf==1)
 			} // 			for(unsigned i=srueck.size();i;)
 			Log(Txk[T_Ins_Deinstallationsprogramm_wird_eingetragen]+violetts+udpr+ustring+schwarz,obverb,oblog);
-      anfgggf(unindt,udpr+ustring);
+      anfgggf(unindt,udpr+ustring,bef);
 
 /*
 			if (0) {
@@ -2760,7 +2763,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 } // uchar linst_cl::doinst(const string& prog,int obverb,int oblog) 
 
 // fuege an, wenn noch nicht enthalten
-void anfgggf(const string datei, const string inhalt)
+void anfgggf(const string& datei, const string& inhalt, const string& comment)
 {
 	uchar obda=0;
 	mdatei uni0(datei,ios::in,0);
@@ -2777,11 +2780,12 @@ void anfgggf(const string datei, const string inhalt)
 		mdatei uniff(datei,ios::app,0);
 		if (uniff.is_open()) {
 //			uniff<<inhalt<<"\n"<<"printf \"%b"<<ersetzAllezu(inhalt,"\"","\\\"")<<"%b\\n\" \"\\033[1;34m\" \"\\033[0m\""<<endl;
+// s. ausricht() in configure
 			time_t rohz=time(0);
       struct tm *zeiti=localtime(&rohz);
 			char buf[80];
       strftime(buf,sizeof buf,"%F %T",zeiti);
-			uniff<<inhalt<<"\n"<<"printf \"(Inst: "<<buf<<"): $blau%s$reset\\n\" \""<<ersetzAllezu(inhalt,"\"","\\\"")<<"\""<<endl;
+			uniff<<inhalt<<"\n# "<<comment<<"\nprintf \"(Inst: "<<buf<<"): $blau%s$reset\\n\" \""<<ersetzAllezu(inhalt,"\"","\\\"")<<"\""<<endl;
 		} else {
 			perror((string("\n")+Txk[T_Kann_Datei]+datei+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
 		} // 			if (uniff.is_open())
@@ -2893,8 +2897,9 @@ void servc::semodpruef(int obverb/*=0*/,int oblog/*=0*/)
 			const string mod=instvz+vtz+selocal+".pp";
 			if (!lstat(mod.c_str(),&sstat)) {
 				linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
-				systemrueck("sudo semodule -i \""+mod+"\"",obverb,oblog);
-				anfgggf(unindt,"sudo semodule -r \""+mod+"\"");
+				const string bef="sudo semodule -i \""+mod+"\"";
+				systemrueck(bef,obverb,oblog);
+				anfgggf(unindt,"sudo semodule -r \""+mod+"\"",bef);
 			} // 					if (!lstat((instvz+vtz+selocal+".pp").c_str(),&sstat)
 		}  // if (obse)
 	} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
@@ -2906,8 +2911,9 @@ void servc::semanpruef(int obverb/*=0*/,int oblog/*=0*/,const string& mod/*="get
 	string sepfad;
 	if (ename.find("faxgetty")!=string::npos) {
 		if (obprogda("sestatus",obverb,oblog,&sepfad)) {
-			systemrueck("sudo semodule -l|grep permissive_"+mod+" >/dev/null||sudo semanage permissive -a "+mod,obverb,oblog);
-			anfgggf(unindt,"sudo semanage permissive -d "+mod);
+		  const string bef="sudo semodule -l|grep permissive_"+mod+" >/dev/null||sudo semanage permissive -a "+mod;
+			systemrueck(bef,obverb,oblog);
+			anfgggf(unindt,"sudo semanage permissive -d "+mod,bef);
 		} // 	if (obprogda("sestatus",obverb,oblog,&sepfad))
 	} // 		if (ename.find("faxgetty")!=string::npos)
 } // int servc::semanpruef(const string& mod/*="getty_t*/, int obverb/*=0*/,int oblog/*=0*/)
@@ -2999,7 +3005,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst<<"WantedBy=multi-user.target "<<endl;
 				syst.close();
 				daemon_reload(obverb-1,oblog);
-				anfgggf(unindt,"N="+sname+";C=\"sudo systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-reload;$C reset-failed;");
+				anfgggf(unindt,"N="+sname+";C=\"sudo systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-reload;$C reset-failed;",systemd);
 				syst.close();
 				restart(obverb-1,oblog);
 				obsvfeh(obverb-1,oblog);
