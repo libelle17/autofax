@@ -357,7 +357,7 @@ hierclean:
 .PHONY: distclean
 distclean:
 	-@$(shell sudo rm -f $(INSTEXEC) ${MANPD} ${MANPE} $(KF))
-	-@printf "%b%s%b geloescht!\n" $(blau) "$(INSTEXEC)" $(reset)
+	-@printf "%b%s,%s,%s,%b geloescht!\n" $(blau) "$(INSTEXEC)" "$(MANPD)" "${MANPE}" $(reset)
 
 .PHONY: confclean
 confclean:
