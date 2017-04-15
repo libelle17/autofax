@@ -519,7 +519,7 @@ void ersetzAlle(string *quelle, const string& alt, const string& neu)
 
 
 // ergibt die Zahl der Vorkommen von *was in *str
-size_t zahlin(string *str, const char* was) 
+size_t zahlin(const string *str, const char* was) 
 {
   size_t erg=0,pos=0;
   if (*was) {
@@ -920,7 +920,7 @@ int Log(const string& text, const short screen, const short file, const bool obe
           cerr<<"\nLog: "<<Txk[T_Kann_Datei]<<logdt<<Txk[T_nicht_mit_fopen_zum_Anhaengen_oeffnen]<<strerror(errno)<<endl;
           return 1;
         } else {
-          fputs(string(string(tbuf)+zwi).c_str(),logf);
+          fputs((string(tbuf)+zwi).c_str(),logf);
           fputs("\n",logf);
           fclose(logf);
         } // if (!erolg) else
@@ -1058,7 +1058,7 @@ char* ltoa_(long value, char* result, int base=10)
   return result;
 } // ltoa_(long value, char* result, int base)
 
-double verszuzahl(string vers)
+double verszuzahl(const string vers)
 {
  string vneu;
  uchar obkomma=0;
@@ -1089,12 +1089,12 @@ double progvers(const string& prog,int obverb, int oblog)
 } // double progvers(string prog,int obverb, int oblog)
 
 #ifdef notwendig
-void kopierm(string *quelle, string *ziel)
+void kopierm(const string *quelle, const string *ziel)
 {
   mdatei fileIn(quelle->c_str(),ios::in|ios::binary,0);
   mdatei fileOut(ziel->c_str(),ios::out | ios::trunc | ios::binary,0);
   fileOut<<fileIn.rdbuf();
-} // void kopierm(string *quelle, string *ziel)
+} // void kopierm(const string *quelle, const string *ziel)
 #endif
 
 // von http://chris-sharpe.blogspot.de/2013/05/better-than-systemtouch.html
@@ -1468,7 +1468,7 @@ void confdat::auswert(schlArr *sA, int obverb, char tz)
       } // if (pos!=string::npos)
       ltrim(zeile);
       if (!zeile->empty()) {
-        if (obverb>1) Log(string(Txk[T_stern_zeile])+*zeile,obverb);
+        if (obverb>1) Log(Txk[T_stern_zeile]+*zeile,obverb);
         pos=zeile->find(tz);
         if (pos!=string::npos && pos>0) { 
           size_t ii=sA->zahl,gef;
@@ -1966,7 +1966,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 		}  // if (errm)
 		if (ergebnis.empty()) {
 			if (obfind) {
-				ergebnis=gruens+ltoan(erg)+blau+string(Txk[T_Zeilen]);
+				ergebnis=gruens+ltoan(erg)+blau+Txk[T_Zeilen];
 			} else {
 				if (ob0heissterfolg) {
 					if (erg) {
@@ -2056,7 +2056,7 @@ int setfaclggf(const string& datei,const binaer obunter,const int mod/*=4*/,ucha
        if (obimmer) {
           if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
 					if (faclbak) {
-						string sich=base_name(datei)+"."+base_name(meinpfad())+".perm";
+						const string sich=base_name(datei)+"."+base_name(meinpfad())+".perm";
 						const string bef="sudo sh -c 'cd \""+dir_name(datei)+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(datei)+"\">\""+sich+"\"'";
 						systemrueck(bef,obverb,oblog);
 						anfgggf(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'",bef);
@@ -2132,7 +2132,7 @@ string aktprogverz()
   int bytes = MIN(readlink(szTmp, pBuf, sizeof pBuf), sizeof pBuf - 1);
   if(bytes >= 0) pBuf[bytes] = 0;
 #endif
-  return string(pBuf);
+  return pBuf;
 } // string aktprogverz()
 
 char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
@@ -2146,7 +2146,7 @@ char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], co
       if (berkl) cout<<" = "<<blau<<berkl[i]<<schwarz;
       if (i<moegl.length()-1) cout<<", ";
     }
-    cout<<")"<<(!vorgabe?"":string("['")+tuerkis+vorgabe+schwarz+"']")<<"?: ";
+    cout<<")"<<(!vorgabe?"":"['"+tuerkiss+vorgabe+schwarz+"']")<<"?: ";
     input="";
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
@@ -2166,7 +2166,7 @@ uchar Tippob(const string& frage,const char *vorgabe)
 } // uchar Tippob(const string& frage,const char *vorgabe) 
 
 // bisher nicht verwendet, 15.12.15
-string Tippstrings(const char *frage, char* moegl[], char *vorgabe/*=0*/)
+string Tippstrs(const char *frage, char* moegl[], char *vorgabe/*=0*/)
   // das letzte Element von moegl muss 0 sein
 {
   string input;
@@ -2177,7 +2177,7 @@ string Tippstrings(const char *frage, char* moegl[], char *vorgabe/*=0*/)
       if (i) cout<<", ";
       cout<<"'"<<drot<<moegl[i]<<schwarz<<"'";
     }
-    cout<<")"<<(vorgabe?"":string("['")+tuerkis+vorgabe+schwarz+"']")<<"?: ";
+    cout<<")"<<(vorgabe?"":"['"+tuerkiss+vorgabe+schwarz+"']")<<"?: ";
     input.clear();
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
@@ -2191,9 +2191,9 @@ string Tippstrings(const char *frage, char* moegl[], char *vorgabe/*=0*/)
     if (passt) break; 
   } //   while(1)
   return input;
-} // Tippstrings
+} // Tippstrs
 
-string Tippstrings(const char *frage, vector<string> *moegl, string *vorgabe/*=0*/)
+string Tippstrs(const char *frage, vector<string> *moegl, string *vorgabe/*=0*/)
 {
   string input;
   while(1) {
@@ -2204,7 +2204,7 @@ string Tippstrings(const char *frage, vector<string> *moegl, string *vorgabe/*=0
       //      cout<<"'"<<drot<<moegl->at(i)<<schwarz<<"'";
       cout<<drot<<moegl->at(i)<<schwarz;
     } //     for(unsigned i=0;i<moegl->size();i++)
-    cout<<")"<<(vorgabe->empty()?"":string("['")+tuerkis+*vorgabe+schwarz+"']")<<"?: ";
+    cout<<")"<<(vorgabe->empty()?"":"['"+tuerkiss+*vorgabe+schwarz+"']")<<"?: ";
 		input.clear();
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
@@ -2218,14 +2218,14 @@ string Tippstrings(const char *frage, vector<string> *moegl, string *vorgabe/*=0
     if (passt) break; 
   } //   while(1)
   return input;
-} // Tippstrings
+} // Tippstrs
 
 
 string Tippzahl(const char *frage, const char *vorgabe) 
 {
   string input;
   while(1) {
-    cout<<blau<<frage<<schwarz<<(!vorgabe?"":string(" [")+tuerkis+vorgabe+schwarz+"]")<<"? ";
+    cout<<blau<<frage<<schwarz<<(!vorgabe?"":" ["+tuerkiss+vorgabe+schwarz+"]")<<"? ";
     input="";
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
@@ -2235,33 +2235,33 @@ string Tippzahl(const char *frage, const char *vorgabe)
   return input;
 } // Tippzahl
 
-string Tippzahl(const char *frage, string *vorgabe) 
+string Tippzahl(const char *frage, const string *vorgabe) 
 {
   return Tippzahl(frage,(vorgabe?vorgabe->c_str():0)); 
 }
-string Tippzahl(const string& frage, string *vorgabe)
+string Tippzahl(const string& frage, const string *vorgabe)
 {
  return Tippzahl(frage.c_str(),(vorgabe?vorgabe->c_str():0));
 }
 
 char* Tippcstring(const char *frage, char* buf, unsigned long buflen, const char* vorgabe) 
 {
-  const string vstr=string(vorgabe);
-  strncpy(buf,Tippstring(string(frage),&vstr).c_str(),buflen-1);
+  const string vstr=vorgabe;
+  strncpy(buf,Tippstr(frage,&vstr).c_str(),buflen-1);
   buf[buflen-1]=0;
   return buf;
 } // Tippcstring
 
-string Tippstring(const char *frage, const string *vorgabe) 
+string Tippstr(const char *frage, const string *vorgabe) 
 {
-  return Tippstring(string(frage), vorgabe);
-} // Tippstring
+  return Tippstr(frage, vorgabe);
+} // Tippstr
 
-string Tippstring(const string& frage, const string *vorgabe) 
+string Tippstr(const string& frage, const string *vorgabe) 
 {
   string input;
   while(1) {
-    cout<<blau<<frage<<schwarz<<(!vorgabe || vorgabe->empty()?"":string(" [\"")+tuerkis+*vorgabe+schwarz+"\"]")<<"? ";
+    cout<<blau<<frage<<schwarz<<(!vorgabe || vorgabe->empty()?"":" [\""+tuerkiss+*vorgabe+schwarz+"\"]")<<"? ";
     input.clear();
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
@@ -2272,13 +2272,13 @@ string Tippstring(const string& frage, const string *vorgabe)
     break;
   } //   while(1)
   return input;
-} // Tippstring
+} // Tippstr
 
-string Tippverz(const char *frage,string *vorgabe) 
+string Tippverz(const char *frage,const string *vorgabe) 
 {
   string input, vg2="n"; uchar fertig=0;
   while(1) {
-    cout<<blau<<frage<<schwarz<<(!vorgabe || vorgabe->empty()?"":string(" [\"")+tuerkis+*vorgabe+schwarz+"\"]")<<"? ";
+    cout<<blau<<frage<<schwarz<<(!vorgabe || vorgabe->empty()?"":" [\""+tuerkiss+*vorgabe+schwarz+"\"]")<<"? ";
     input="";
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
@@ -2293,7 +2293,7 @@ string Tippverz(const char *frage,string *vorgabe)
         } else {
           cout<<"'"<<rot<<input<<schwarz<<Txk[T_kein_Verzeichnis_nochmal];
           break;
-        }
+        } //         if(S_ISDIR(st.st_mode)) else
       } else {
         string inpi;
         cout<<" '"<<rot<<input<<schwarz<<Txk[T_nicht_gefunden_soll_ich_es_erstellen]<<drot<<Txk[T_j_k]<<schwarz;
@@ -2655,7 +2655,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 					switch (linst.pruefipr()) {
 						case dnf: case yum:
 							while(1) {
-								string regex=string(".{")+ltoan(groupArray[0].rm_eo)+"}([^ ]+)[ ][^ ]+";
+								const string regex=string(".{")+ltoan(groupArray[0].rm_eo)+"}([^ ]+)[ ][^ ]+";
 								groupArray[0].rm_eo=0;
 								if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) {
 									Log(Txk[T_Konnte_regulaeren_Ausdruck_nicht_kompilieren]+blaus+regex+schwarz,1,1);
@@ -3229,7 +3229,7 @@ int servc::restart(int obverb/*=0*/,int oblog/*=0*/)
 
 void servc::start(int obverb/*=0*/,int oblog/*=0*/)
 {
-  systemrueck(string("sudo systemctl start '")+sname+"'",obverb,oblog,0,2);
+  systemrueck("sudo systemctl start '"+sname+"'",obverb,oblog,0,2);
 } // int servc::start(int obverb,int oblog)
 
 int servc::startundenable(int obverb/*=0*/,int oblog/*=0*/)
@@ -3258,17 +3258,17 @@ void servc::stopggf(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill/*=0*/)
 
 void servc::stopdis(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill)
 {
-    Log(violetts+string(Txk[T_stopdis_sname])+schwarz+sname,obverb,oblog);
+    Log(violetts+Txk[T_stopdis_sname]+schwarzs+sname,obverb,oblog);
 	if (!obsvfeh(obverb,oblog)) {
 		stop(obverb,oblog);
 	} // 	if (!obsvfeh(obverb,oblog))
 	if (svfeh!=1&&obenabled)
-		systemrueck(string("sudo systemctl disable '")+sname+"'",obverb,oblog,0,2);
+		systemrueck("sudo systemctl disable '"+sname+"'",obverb,oblog,0,2);
 } // int servc::stop(int obverb,int oblog)
 
 int servc::enableggf(int obverb/*=0*/,int oblog/*=0*/)
 {
-    Log(violetts+string(Txk[T_enableggf])+schwarz+": "+sname,obverb,oblog);
+    Log(violetts+Txk[T_enableggf]+schwarzs+": "+sname,obverb,oblog);
     vector<errmsgcl> errv;
     const string froh=schwarzs+Txk[T_Dienst]+blau+sname+schwarz;
     const string f0=froh+Txk[T_ermoeglicht];
@@ -3276,7 +3276,7 @@ int servc::enableggf(int obverb/*=0*/,int oblog/*=0*/)
     errv.push_back(errmsgcl(0,f0));
     errv.push_back(errmsgcl(1,f1));
     errv.push_back(errmsgcl(6,f1));
- return systemrueck(string("systemctl is-enabled '")+sname+"' >/dev/null 2>&1 || sudo systemctl enable '"+sname+"'",obverb,oblog,0,2,wahr,"",&errv);
+ return systemrueck("systemctl is-enabled '"+sname+"' >/dev/null 2>&1 || sudo systemctl enable '"+sname+"'",obverb,oblog,0,2,wahr,"",&errv);
 } // int servc::enableggf(int obverb,int oblog)
 
 
@@ -3292,7 +3292,7 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
 //  Log(violetts+Tx[T_tuloeschen]+schwarz,obverb,oblog);
   struct stat entryzuloe={0};
   if (!lstat(zuloe.c_str(),&entryzuloe)) {
-    Log(string(Txk[T_Loesche_Ausrufezeichen])+gruen+zuloe+schwarz,obverb,oblog);
+    Log(Txk[T_Loesche_Ausrufezeichen]+gruens+zuloe+schwarz,obverb,oblog);
     int erg=-1;
     for(uchar iru=1;iru<3;iru++) {
       if ((erg=remove(zuloe.c_str()))) {
@@ -3301,7 +3301,7 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
           setfaclggf(zuloe, falsch, 6, falsch,obverb,oblog,0);
         } else {
           if (errno) if (errno!=13) perror((string(Txk[T_Fehler_beim_Loeschen])+" "+ltoan(errno)).c_str()); // Permission denied
-          const string cmd=string("sudo rm -rf \"")+zuloe+"\"";
+          const string cmd="sudo rm -rf \""+zuloe+"\"";
           erg=systemrueck(cmd,obverb+1,1);
         } // if(iru) else
       } else {
@@ -3325,28 +3325,27 @@ void optioncl::setzebem(schlArr *cp,const char *pname)
   }
 } // void optioncl::setzebem(TxB *TxBp,schlArr *cp,const char *pname)
 
-// /*2*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), zptr(zptr), art(art),cp(cp),pname(pname),obschreibp(obschreibp) { setzebem(cp,pname); }
+// /*2*/optioncl::optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),wi(wi),zptr(zptr),art(art),cp(cp),pname(pname),obschreibp(obschreibp) { setzebem(cp,pname); }
 
-/*2a*/optioncl::optioncl(int kurzi, int langi, TxB *TxBp, long Txi, string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : 
-  kurzi(kurzi), langi(langi), TxBp(TxBp), Txi(Txi), zptr(zptr), art(art),cp(cp),pname(pname),obschreibp(obschreibp) 
+/*2a*/optioncl::optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,string *zptr,par_t art,schlArr *cp,const char *pname,uchar* obschreibp) : 
+  kurzi(kurzi), langi(langi), TxBp(TxBp), Txi(Txi), wi(wi), zptr(zptr), art(art), cp(cp), pname(pname), obschreibp(obschreibp) 
 {
   setzebem(cp,pname);
 }
 
-// /*3*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, const string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), zptr(zptr), art(art), cp(cp),pname(pname),obschreibp(obschreibp) { setzebem(cp,pname); }
+// /*3*/optioncl::optioncl(string kurz, string lang, TxB *TxBp,long Txi,uchar wi,const string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),wi(wi),rottxt(rottxt),Txi2(Txi2),zptr(zptr),art(art),cp(cp),pname(pname),obschreibp(obschreibp) { setzebem(cp,pname); }
 
-/*3a*/optioncl::optioncl(int kurzi, int langi, TxB *TxBp, long Txi, const string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp, 
+/*3a*/optioncl::optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,const string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cp, 
     const char *pname,uchar* obschreibp) : 
-  kurzi(kurzi), langi(langi), TxBp(TxBp), Txi(Txi), rottxt(rottxt), Txi2(Txi2), zptr(zptr), art(art),
-  cp(cp),pname(pname),obschreibp(obschreibp) 
+  kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),rottxt(rottxt),Txi2(Txi2),zptr(zptr),art(art),cp(cp),pname(pname),obschreibp(obschreibp) 
 {
   setzebem(cp,pname);
 }
 
-// /*4*/optioncl::optioncl(string kurz, string lang, TxB *TxBp, long Txi, uchar *pptr, int wert,schlArr *cp, const char *pname,uchar* obschreibp) : kurz(kurz), lang(lang), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0) { setzebem(cp,pname); }
+// /*4*/optioncl::optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,uchar *pptr, int wert,schlArr *cp,const char *pname,uchar* obschreibp) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),pptr(pptr),wert(wert),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0) { setzebem(cp,pname); }
 
-/*4a*/optioncl::optioncl(int kurzi, int langi, TxB *TxBp, long Txi, uchar *pptr, int wert,schlArr *cp, const char *pname,uchar* obschreibp) :
-  kurzi(kurzi), langi(langi), TxBp(TxBp), Txi(Txi), pptr(pptr), wert(wert),art(psons),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0)
+/*4a*/optioncl::optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,uchar *pptr,int wert,schlArr *cp, const char *pname,uchar* obschreibp) :
+  kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),pptr(pptr),wert(wert),art(psons),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0)
 {
   setzebem(cp,pname);
 }
@@ -3356,20 +3355,20 @@ int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
 {
   struct stat statgm={0};
   if (lstat(gemaess.c_str(),&statgm)) {
-    Log(string(rots+Txk[T_Fehler_bei_lstat])+schwarz+gemaess,obverb,oblog);
+    Log(rots+Txk[T_Fehler_bei_lstat]+schwarz+gemaess,obverb,oblog);
     return 1;
-  }
+  } //   if (lstat(gemaess.c_str(),&statgm))
   struct stat statzu={0};
   if (lstat(zu.c_str(),&statzu)) {
-    Log(string(rots+Txk[T_Fehler_bei_lstat])+schwarz+zu,obverb,oblog);
+    Log(rots+Txk[T_Fehler_bei_lstat]+schwarz+zu,obverb,oblog);
     return 1;
-  }
+  } //   if (lstat(zu.c_str(),&statzu))
   if (chmod(zu.c_str(),statgm.st_mode)) {
    systemrueck("sudo chmod --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog);
-  }
+  } //   if (chmod(zu.c_str(),statgm.st_mode))
   if (chown(zu.c_str(),statgm.st_uid,statgm.st_gid)) {
    systemrueck("sudo chown --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog);
-  }
+  } //   if (chown(zu.c_str(),statgm.st_uid,statgm.st_gid))
   struct utimbuf ubuf={0};
   ubuf.actime=ubuf.modtime=statgm.st_mtime;
   if (utime(zu.c_str(),&ubuf)) {
@@ -3381,7 +3380,7 @@ int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
     //          exit(0);
   } //   if (memcmp(&statgm.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime))
   return 0;
-} // int attrangleich(string& zu, string& gemaess,int obverb, int oblog)
+} // int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
 
 // liefert 0, wenn Erfolg
 int kopier(const string& quel, const string& ziel, int obverb, int oblog)
@@ -3418,4 +3417,4 @@ int kopier(const string& quel, const string& ziel, int obverb, int oblog)
   if (fehler)
     return systemrueck("sudo test -f \""+quel+"\" && sudo sh -c 'cp -a \""+quel+"\" \""+ziel+"\"'",obverb,oblog);
   return 0;
-} // int kopier(string& quel, string& ziel, int obverb, int oblog)
+} // int kopier(const string& quel, const string& ziel, int obverb, int oblog)

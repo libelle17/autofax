@@ -127,7 +127,7 @@ class fsfcl : public fxfcl // Faxsendfile
     /*4*/fsfcl(const string& hylanr): hylanr(hylanr) {}
     /*5*/fsfcl(const string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
     void setzcapistat(paramcl *pmp, struct stat *entrysendp);
-    void capiausgeb(stringstream *ausgp, string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,unsigned long faxord=0);
+    void capiausgeb(stringstream *ausgp, const string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,unsigned long faxord=0);
     void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
     int holcapiprot(int obverb);
 }; // class fsfcl
@@ -344,7 +344,7 @@ class paramcl // Programmparameter
 		void pruefmodcron();
 		void pruefunpaper();
     int pruefocr();
-		void unpaperfuercron();
+		void unpaperfuercron(const string& ocrprog);
 		void empfhyla(const string& ganz,uchar indb=1,uchar mitversch=1);
 		void empfcapi(const string& stamm,uchar indb=1,uchar mitversch=1);
 	public:

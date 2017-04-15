@@ -359,7 +359,7 @@ char* charersetze(char *u, const char alt, const char neu);
 void chersetze(const string& u, string *z, const string& alt, const char neu);
 string ersetzefuerdatei(const string& u);
 void fuersamba(string& roh);
-size_t zahlin(string *str, const char* was);
+size_t zahlin(const string *str, const char* was);
 long cmpmem( char* feld, const char* search, int len_feld); // , int len_search
 // fuer lies (Konfigurationsdatei lesen)
 char* ltoan(long value, int base=10, uchar obtz=0, uchar minstel=0); 
@@ -566,6 +566,7 @@ class optioncl
 		const int langi=0;
     TxB *TxBp=0;
     const long Txi=0;
+		uchar wi=0; // 1=wichtige Option, wird auch ohne -v/-w unter -h angezeigt
     const string *rottxt=0; // ggf rot zu markierender Text zwischen Txi und Txi2
     long Txi2=-1;
 //    string oerkl;
@@ -583,27 +584,27 @@ class optioncl
   private:
     void setzebem(schlArr *cp,const char *pname);
   public:
-///*1*/optioncl(string kurz,string lang,TxB *TxBp,long Txi) : 
-//               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi) {}
-// /*2*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *zptr,par_t art,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
-/*2a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,string *zptr,par_t art,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
-// /*3*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,const string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cp=0, const char *pname=0,uchar* obschreibp=0);
-/*3a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,const string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cp=0,
+///*1*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi) : 
+//               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),wi(wi) {}
+// /*2*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,string *zptr,par_t art,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
+/*2a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,string *zptr,par_t art,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
+// /*3*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,const string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cp=0, const char *pname=0,uchar* obschreibp=0);
+/*3a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,const string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cp=0,
               const char *pname=0,uchar* obschreibp=0);
-// /*4*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar *pptr,int wert,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
-/*4a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar *pptr,int wert,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
-///*5*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *rottxt,long Txi2,uchar *pptr,int wert) : 
-//               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),rottxt(rottxt),Txi2(Txi2),pptr(pptr),wert(wert) {}
-// /*6*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,const string *rottxt,long Txi2,uchar *pptr,int wert) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),rottxt((string*)rottxt),Txi2(Txi2),pptr(pptr),wert(wert) {}
-/*6a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,const string *rottxt,long Txi2,uchar *pptr,int wert) : 
-               kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),rottxt((string*)rottxt),Txi2(Txi2),pptr(pptr),wert(wert),art(psons) {}
-///*7*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,binaer *pptr,int wert) : 
-//               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),pptr((uchar*)pptr),wert(wert) {}
-///*8*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,int *pptr,int wert) : 
-//               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),pptr((uchar*)pptr),wert(wert) {}
-// /*9*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,string *rottxt,long Txi2,int *pptr,int wert) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),rottxt(rottxt),Txi2(Txi2),pptr((uchar*)pptr),wert(wert) {}
-/*9a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,string *rottxt,long Txi2,int *pptr,int wert) : 
-               kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),rottxt(rottxt),Txi2(Txi2),pptr((uchar*)pptr),wert(wert),art(psons) {}
+// /*4*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,uchar *pptr,int wert,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
+/*4a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,uchar *pptr,int wert,schlArr *cp=0,const char *pname=0,uchar* obschreibp=0);
+///*5*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,string *rottxt,long Txi2,uchar *pptr,int wert) : 
+//               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),wi(wi),rottxt(rottxt),Txi2(Txi2),pptr(pptr),wert(wert) {}
+// /*6*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,const string *rottxt,long Txi2,uchar *pptr,int wert) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),wi(wi),rottxt((string*)rottxt),Txi2(Txi2),pptr(pptr),wert(wert) {}
+/*6a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,const string *rottxt,long Txi2,uchar *pptr,int wert) : 
+               kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),rottxt((string*)rottxt),Txi2(Txi2),pptr(pptr),wert(wert),art(psons) {}
+///*7*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,binaer *pptr,int wert) : 
+//               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),wi(wi),pptr((uchar*)pptr),wert(wert) {}
+///*8*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,int *pptr,int wert) : 
+//               kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),wi(wi),pptr((uchar*)pptr),wert(wert) {}
+// /*9*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,string *rottxt,long Txi2,int *pptr,int wert) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),wi(wi),rottxt(rottxt),Txi2(Txi2),pptr((uchar*)pptr),wert(wert) {}
+/*9a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,string *rottxt,long Txi2,int *pptr,int wert) : 
+               kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),rottxt(rottxt),Txi2(Txi2),pptr((uchar*)pptr),wert(wert),art(psons) {}
     int pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprache lg); // 1 = das war der Parameter, 0 = nicht
     string& machbemerkung(Sprache lg,binaer obfarbe=wahr);
     void hilfezeile(Sprache lg);
@@ -617,7 +618,7 @@ int kuerzelogdatei(const char* logdatei,int obverb);
 
 // #define notwendig
 #ifdef notwendig
-void kopierm(string *quelle, string *ziel);
+void kopierm(const string *quelle, const string *ziel);
 #endif
 void aufSplit(vector<string> *tokens, const string *text, char sep=' ', bool nichtmehrfach=1);
 void aufSplit(vector<string> *tokens, const char *text, char sep=' ', bool nichtmehrfach=1);
@@ -644,15 +645,15 @@ string aktprogverz();
 char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
 // vorgabe fur vorgabe = T_j_k; alternativ='n'
 uchar Tippob(const string& frage,const char *vorgabe=Txk[T_j_k]);
-string Tippstrings(const char *frage, char* moegl[], char *vorgabe=0); // das letzte Element von moegl muss 0 sein
-string Tippstrings(const char *frage, vector<string> *moegl, string *vorgabe=0); 
+string Tippstrs(const char *frage, char* moegl[], char *vorgabe=0); // das letzte Element von moegl muss 0 sein
+string Tippstrs(const char *frage, vector<string> *moegl, string *vorgabe=0); 
 string Tippzahl(const char *frage, const char *vorgabe=0);
-string Tippzahl(const char *frage, string *vorgabe);
-string Tippzahl(const string& frage, string *vorgabe);
-string Tippstring(const char *frage, const string *vorgabe=0);
+string Tippzahl(const char *frage, const string *vorgabe);
+string Tippzahl(const string& frage, const string *vorgabe);
+string Tippstr(const char *frage, const string *vorgabe=0);
 char* Tippcstring(const char *frage, char* buf, unsigned long buflen, const char* vorgabe="");
-string Tippstring(const string& frage, const string *vorgabe=0);
-string Tippverz(const char *frage,string *vorgabe=0);
+string Tippstr(const string& frage, const string *vorgabe=0);
+string Tippverz(const char *frage,const string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
 int tuloeschen(const string& zuloe,const string& cuser="",int obverb=0, int oblog=0);
 int attrangleich(const string& zu, const string& gemaess,int obverb=0, int oblog=0);

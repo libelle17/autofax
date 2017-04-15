@@ -227,7 +227,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 	DBS = nDBS;
 	fehnr=0;
 	string Frage;
-	Log(string(Txd[T_DB_wird_initialisiert]),obverb>1,oblog);
+	Log(Txd[T_DB_wird_initialisiert],obverb>1,oblog);
 	host=phost;
 	user=puser;
 	passwd=ppasswd;
@@ -352,7 +352,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 							case 1698: // dasselbe auf Ubuntu
 								for(unsigned aru=0;aru<1;aru++) {
 									for(unsigned iru=0;iru<2;iru++) {
-										cmd=string("sudo mysql -uroot -h'")+host+"' "+(rootpwd.empty()?"":string("-p")+rootpwd)+" -e \"GRANT ALL ON "+uedb+".* TO '"+
+										cmd="sudo mysql -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"GRANT ALL ON "+uedb+".* TO '"+
 											user+"'@'"+myloghost+"' IDENTIFIED BY '"+ersetze(passwd.c_str(),"\"","\\\"")+"' WITH GRANT OPTION\" 2>&1";
 										if (iru) break;
 										pruefrpw(cmd, versuchzahl);
@@ -362,14 +362,14 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 									miterror=1;
 									if (!myr.size()) miterror=0; else if (!strcasestr(myr[0].c_str(),"error")) miterror=0;
 									else {
-										Log(string(Txd[T_Fehler_dp])+rot+myr[0]+schwarz+Txd[T_bei_Befehl]+blau+cmd+schwarz,1,1);
+										Log(Txd[T_Fehler_dp]+rots+myr[0]+schwarz+Txd[T_bei_Befehl]+blau+cmd+schwarz,1,1);
 									}
 									if (!miterror) break;
 								} // while (1)
 								break;
 							case 2002:
 								if (!strcasecmp(host.c_str(),"localhost")) {
-									Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_mysql_zu_starten],1,1);
+									Log(Txd[T_Fehler_db]+drots+mysql_error(conn)+schwarz+Txd[T_Versuche_mysql_zu_starten],1,1);
 #ifdef linux
 									dbsv->enableggf(1,1);
 									svec gstat;
@@ -388,7 +388,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 								break;
 							case 1049:
 								if (ggferstellen) {
-									Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz+Txd[T_Versuche_Datenbank]+drot+uedb+schwarz+Txd[T_zu_erstellen],1,1);
+									Log(Txd[T_Fehler_db]+drots+mysql_error(conn)+schwarz+Txd[T_Versuche_Datenbank]+drot+uedb+schwarz+Txd[T_zu_erstellen],1,1);
 									mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), 0, port, unix_socket, client_flag);
 									fehnr=mysql_errno(conn);
 									if (!fehnr) {
@@ -407,19 +407,19 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 									} //                   if (!fehnr) 
 									// if (ggferstellen)
 								} else {
-									Log(string(Txd[T_Fehler_db])+drot+mysql_error(conn)+schwarz,obverb,oblog);
+									Log(Txd[T_Fehler_db]+drots+mysql_error(conn)+schwarz,obverb,oblog);
 								} // if (ggferstellen)
 								break;
 							case 0:
 								break;
 							default:
-								Log(string(Txd[T_Fehler_db])+drot+ltoan(mysql_errno(conn))+schwarz+" "+blau+mysql_error(conn)+schwarz,1,1);
+								Log(Txd[T_Fehler_db]+drots+ltoan(mysql_errno(conn))+schwarz+" "+blau+mysql_error(conn)+schwarz,1,1);
 						} //             switch ((fehnr=mysql_errno(conn))) 
 						if (!fehnr) break;
 					} //           if (mysql_real_connect(conn, host.c_str(), user.c_str(), passwd.c_str(), uedb, port, unix_socket, client_flag))  else 
 				} //         for(unsigned versuch=0;versuch<versuchzahl;versuch++) 
 				if (!fehnr && conn) {
-					Log(string(Txd[T_Erfolg_beim_Initialisieren_der_Verbindung_zu_mysql]),obverb>1,oblog);
+					Log(Txd[T_Erfolg_beim_Initialisieren_der_Verbindung_zu_mysql],obverb>1,oblog);
 					this->ConnError=NULL;
 				} else {
 					//			printf("Fehler %u beim Verbinden mit MySQL: %s\n", mysql_errno(conn), *erg= mysql_error(conn));
@@ -462,13 +462,13 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 			} // 			if (!dbsv)
 			const string ip_a="127.0.0.1";
 			port=5432;
-			const string constr =string("user='")+puser+"' password='"+ppasswd+"' dbname='" + uedb + "' hostaddr='"+ip_a+"' port='"+ltoan(port)+"'";
+			const string constr ="user='"+puser+"' password='"+ppasswd+"' dbname='" + uedb + "' hostaddr='"+ip_a+"' port='"+ltoan(port)+"'";
 			caus<<constr<<endl;
 			do {
 				pconn = PQconnectdb(constr.c_str()); //192.168.178.21 port=5432
 				if ((fehnr=PQstatus(pconn)) != CONNECTION_OK) {
 					while (rootpwd.empty()) {
-						rootpwd=Tippstring(string("")+Txd[T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein],&rootpwd);
+						rootpwd=Tippstr(nix+Txd[T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein],&rootpwd);
 					}
 					const string mconstr ="user='postgres' password='"+rootpwd+/*"' dbname='" + uedb */+ "' hostaddr='"+ip_a+"' port='"+ltoan(port)+"'";
 					pmconn = PQconnectdb(mconstr.c_str()); 
@@ -481,10 +481,10 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 					caus<<"jetzt Benutzererstellung"<<endl<<endl;
 		      PGconn *zwi=pconn;
 					pconn=pmconn;
-			    RS p1(this,string("CREATE USER ")+puser+" CREATEDB CREATEUSER INHERIT REPLICATION PASSWORD '"+ppasswd+"'",obverb);
-//					PQexec(pmconn, (string("CREATE USER ")+puser+" CREATEDB CREATEUSER INHERIT REPLICATION PASSWORD '"+ppasswd+"'").c_str());
-			    RS p2(this,string("CREATE DATABASE \"") + uedb + "\" ENCODING 'LATIN1' TEMPLATE template0 LC_CTYPE 'de_DE.ISO88591' LC_COLLATE 'de_DE.ISO88591'",obverb);
-//					PQexec(pmconn, (string("CREATE DATABASE \"") + uedb + "\" ENCODING 'LATIN1' TEMPLATE template0 LC_CTYPE 'de_DE.ISO88591' LC_COLLATE 'de_DE.ISO88591'").c_str());
+			    RS p1(this,"CREATE USER "+puser+" CREATEDB CREATEUSER INHERIT REPLICATION PASSWORD '"+ppasswd+"'",obverb);
+//					PQexec(pmconn, ("CREATE USER "+puser+" CREATEDB CREATEUSER INHERIT REPLICATION PASSWORD '"+ppasswd+"'").c_str());
+			    RS p2(this,string("CREATE DATABASE \"")+uedb+"\" ENCODING 'LATIN1' TEMPLATE template0 LC_CTYPE 'de_DE.ISO88591' LC_COLLATE 'de_DE.ISO88591'",obverb);
+//					PQexec(pmconn, (string("CREATE DATABASE \"")+uedb+"\" ENCODING 'LATIN1' TEMPLATE template0 LC_CTYPE 'de_DE.ISO88591' LC_COLLATE 'de_DE.ISO88591'").c_str());
           pconn=zwi;
 				} else {
 					Log(Txd[T_Verbindung_zu]+blaus+uedb+schwarz+Txd[T_gelungen]+blau+user+schwarz+"', host: '"+blau+ip_a+schwarz+"', port: '"+blau+ltoan(port)+schwarz+"'",obverb,oblog);
@@ -517,17 +517,17 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
 {
   myloghost=!strcasecmp(host.c_str(),"localhost")||!strcmp(host.c_str(),"127.0.0.1")||!strcmp(host.c_str(),"::1")?"localhost":"%";
   for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
-    cmd=string("sudo mysql -uroot -h'")+host+"' "+(rootpwd.empty()?"":string("-p")+rootpwd)+" -e \"show variables like 'gibts wirklich nicht'\" 2>&1";
+    cmd="sudo mysql -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"show variables like 'gibts wirklich nicht'\" 2>&1";
     myr.clear();
     systemrueck(cmd,-1,0,&myr);
     miterror=1;
     if (!myr.size()) miterror=0; else if (!strcasestr(myr[0].c_str(),"error")) miterror=0;
     else {
-      //      Log(string(Txd[T_Fehler_dp])+rot+myr[0]+schwarz+Txd[T_bei_Befehl]+blau+cmd+schwarz,1,1);
+      //      Log(Txd[T_Fehler_dp]+rots+myr[0]+schwarz+Txd[T_bei_Befehl]+blau+cmd+schwarz,1,1);
     }
     if (miterror) {
       if (!nrzf) {
-				rootpwd=Tippstring(string(Txd[T_MySQL_Passwort])+Txd[T_fuer_Benutzer]+dblau+"root"+schwarz+
+				rootpwd=Tippstr(string(Txd[T_MySQL_Passwort])+Txd[T_fuer_Benutzer]+dblau+"root"+schwarz+
 				                          Txd[T_wird_benoetigt_fuer_Befehl]+"\n"+tuerkis+wofuer+schwarz+")",0);
         //                    if (rootpwd.empty()) return; // while (1)
         if (user=="root") passwd=rootpwd;
@@ -548,24 +548,24 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 				if (Tippob(Txd[T_MySQL_Passwort]+(Txd[T_fuer_Benutzer]+dblaus)+"root"+schwarz+Txd[T_ist_leer_Wollen_Sie_eines_festlegen])) {
 					while (1) {
 						do {
-							rootpwd=Tippstring(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
+							rootpwd=Tippstr(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
 						} while (rootpwd.empty());	
-						rootpw2=Tippstring(string("")+Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein]+" ("+Txk[T_erneute_Eingabe]+")",&rootpw2);
+						rootpw2=Tippstr(nix+Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein]+" ("+Txk[T_erneute_Eingabe]+")",&rootpw2);
 						if (rootpw2==rootpwd) break;
 					} //         while (1)
-					const string cmd=string("sudo mysql -uroot -h'")+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
+					const string cmd="sudo mysql -uroot -h'"+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
 						"' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
-					Log(string(Txd[T_Fuehre_aus_db])+blau+cmd+schwarz,1,1);
+					Log(Txd[T_Fuehre_aus_db]+blaus+cmd+schwarz,1,1);
 					int erg __attribute__((unused))=system(cmd.c_str());
 				} // if (Tippob(Txd[T_Das_MySQL_Passwort_fuer_Benutzer_root_ist_leer_Wollen_Sie_eines_festlegen])) 
 				break;
 			case Postgres:
 				while (1) {
 					do {
-						rootpwd=Tippstring(string("")+Txd[T_PostgreSQL_musste_neu_eingerichtet_werden]+
+						rootpwd=Tippstr(nix+Txd[T_PostgreSQL_musste_neu_eingerichtet_werden]+
 								Txd[T_Welches_Passwort_soll_der_Benutzer_postgres_haben]+": ",&rootpwd);
 					} while (rootpwd.empty());
-					rootpw2=Tippstring(string("")+Txd[T_Welches_Passwort_soll_der_Benutzer_postgres_haben]+" ("+Txk[T_erneute_Eingabe]+"): ",&rootpw2);
+					rootpw2=Tippstr(nix+Txd[T_Welches_Passwort_soll_der_Benutzer_postgres_haben]+" ("+Txk[T_erneute_Eingabe]+"): ",&rootpw2);
 					if (rootpw2==rootpwd) break;
 				} // while (1)
 				uchar geht=0;
@@ -576,8 +576,8 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 					 if (irueck[zeile].find("template0")!=string::npos) {
 					  geht=1;
 						break;
-					 }
-					}
+					 } // 					 if (irueck[zeile].find("template0")!=string::npos)
+					} // 					for(unsigned zeile=0;zeile<irueck.size();zeile++)
 					if (geht) break;
 					linst.doinst("passwd",obverb,oblog,"chpasswd"); 
 					systemrueck("sh -c 'echo \"postgres:"+rootpwd+"\"|sudo chpasswd'",obverb,oblog);
@@ -653,9 +653,9 @@ void DB::lesespalten(Tabelle *ltab,int obverb/*=0*/,int oblog/*=0*/)
   delete spalt;
   //  spalt=new RS(this,string("SELECT column_name,character_maximum_length FROM information_schema.columns WHERE table_name = '")+ltab->name
   //      +"' and table_schema = '"+db+"' order by ordinal_position"); // geht nicht fuer Zahlen
-  spalt=new RS(this,string("SELECT column_name p0,"
+  spalt=new RS(this,"SELECT column_name p0,"
         "MID(column_type,INSTR(column_type,'(')+1,INSTR(column_type,')')-INSTR(column_type,'(')-1) p1, column_type p2 "
-        "FROM information_schema.columns WHERE table_name = '")+ltab->name+"' AND table_schema = '"+db+"' ORDER BY ordinal_position");
+        "FROM information_schema.columns WHERE table_name = '"+ltab->name+"' AND table_schema = '"+db+"' ORDER BY ordinal_position");
   if (!spalt->obfehl) {
     delete[] spnamen;
     spnamen= new char*[spalt->num_rows];
@@ -739,19 +739,19 @@ int DB::prueftab(Tabelle *ptab,int obverb/*=0*/,int oblog/*=0*/)
           fstr[i]= "`" + ptab->felder[i].name + "` "+
             ptab->felder[i].typ+
             ((ptab->felder[i].lenge==""||ptab->felder[i].lenge=="0")?"":
-             (string("(")+ptab->felder[i].lenge+
+             ("("+ptab->felder[i].lenge+
               ((ptab->felder[i].prec=="")?"":
-               (string(",")+ptab->felder[i].prec))
+               (","+ptab->felder[i].prec))
               +")"))
 						+(ptab->felder[i].unsig  ?  " UNSIGNED ":"")
             +(ptab->felder[i].nnull  ?  " NOT NULL ":"")
-            +(ptab->felder[i].defa.empty()&&!ptab->felder[i].nnull?"":string(" DEFAULT '")+ptab->felder[i].defa+"'")
+            +(ptab->felder[i].defa.empty()&&!ptab->felder[i].nnull?"":" DEFAULT '"+ptab->felder[i].defa+"'")
             +(ptab->felder[i].obauto?" AUTO_INCREMENT":" ")
             +(ptab->felder[i].obind && ptab->felder[i].obauto?" PRIMARY KEY":" ")
             +((ptab->felder[i].comment.empty())?"":
-                (string(" COMMENT '")+ptab->felder[i].comment+"'"));
+                (" COMMENT '"+ptab->felder[i].comment+"'"));
           if (ptab->felder[i].obind && !ptab->felder[i].obauto) {
-            istr[i]=string(", ADD INDEX `")+ptab->felder[i].name+"`(`"+ptab->felder[i].name+"`)";
+            istr[i]=", ADD INDEX `"+ptab->felder[i].name+"`(`"+ptab->felder[i].name+"`)";
           }
         } // for(int i=0;i<ptab->feldzahl;i++)
         MYSQL_RES *dbres = mysql_list_tables(conn,ptab->name.c_str());
@@ -871,7 +871,7 @@ int DB::prueftab(Tabelle *ptab,int obverb/*=0*/,int oblog/*=0*/)
 								}
 							} //               if (!obneu)    // Wenn zu viele Zeilen da sind, auch loeschen
 							if (obneu) {
-								RS rloesch(this,string("DROP INDEX `")+ptab->indices[i].name +"` ON `"+ptab->name+"`");
+								RS rloesch(this,"DROP INDEX `"+ptab->indices[i].name +"` ON `"+ptab->name+"`");
 							}
 						} //             if (!rind.result->row_count) else
 					} // if (obneu) 
@@ -932,7 +932,7 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,uchar 
       if (*(*cerg+0)) {
         lenge=*(*cerg+0);
         if (atol(lenge.c_str())<wlength) {
-          Log(string(Txd[T_Erweitere_Feld])+tabs+"."+feld+Txd[T_von]+lenge.c_str()+Txd[T_auf]+ltoan(wlength),1,1);
+          Log(Txd[T_Erweitere_Feld]+tabs+"."+feld+Txd[T_von]+lenge.c_str()+Txd[T_auf]+ltoan(wlength),1,1);
           korr.str(std::string()); korr.clear();
           if (*(*cerg+1) && *(*cerg+2)) {
             korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<*(*cerg+1)/*data_type*/<<"("<<wlength<<") "<<
@@ -953,7 +953,7 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,uchar 
               else if (!strcasecmp(*(*cerg+1),"mediumtext")) neufeld="longtext";
               else if (!strcasecmp(*(*cerg+1),"mediumblob")) neufeld="longblob";
               if (!neufeld.empty()) {
-                Log(string(Txd[T_Aendere_Feld])+tabs+"."+feld+" von: "+*(*cerg+1)+" auf: "+neufeld,1,1);
+                Log(Txd[T_Aendere_Feld]+tabs+"."+feld+" von: "+*(*cerg+1)+" auf: "+neufeld,1,1);
                 korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<neufeld/*data_type*/<<" "<<
                   (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(*(*cerg+3)?string("DEFAULT '")+*(*cerg+3)+"'":"")<<
                   " COMMENT '"<<ersetzAllezu(*(*cerg+4),"'","\\'")<<"'";
@@ -1392,7 +1392,7 @@ int RS::doAbfrage(uchar obverb/*=0*/,uchar asy/*=0*/,int oblog/*=0*/)
       //      if (sql=="select column_name from information_schema.columns where table_schema='emails' and table_name = 'lmailbody' and extra = 'auto_increment'") {mysql_commit(db->conn);} // sql="select 'ID'";
       // <<"sql.c_str(): "<<sql.c_str()<<endl;
       if (obverb==255)
-        Log(string("SQL: ")+drot+sql+schwarz,1,1);
+        Log("SQL: "+drots+sql+schwarz,1,1);
       if (!db->conn) {
        fnr=9999;
        fehler=Txd[T_Datenbank_nicht_zu_oeffnen];
@@ -1417,7 +1417,7 @@ int RS::doAbfrage(uchar obverb/*=0*/,uchar asy/*=0*/,int oblog/*=0*/)
             } // if ((!lsql.find("ALTER TABLE") || !lsql.find("CREATE TABLE")) && lsql.find("NOT NULL")!=string::npos) 
           } // if (fnr==1138)
           obfehl=1;
-          Log(string(Txd[T_Fehler_db])+drot+ltoan(fnr)+schwarz+" (\""+fehler+"\") in doAbfrage, sql: "+
+          Log(Txd[T_Fehler_db]+drots+ltoan(fnr)+schwarz+" (\""+fehler+"\") in doAbfrage, sql: "+
               tuerkis+sql+schwarz,(fnr!=1406 && obverb!=2) || (fnr==1406 && obverb==255),1);
           if (!fehler.find("Disk full"))
           exit(115);
@@ -1489,7 +1489,7 @@ RS::RS(DB* pdb,const char* const psql,uchar obverb)
 
 RS::RS(DB* pdb,stringstream psqls,uchar obverb) 
 {
-  const string ueber= psqls.str();
+  const string ueber=psqls.str();
   weisezu(pdb);
   Abfrage(ueber, obverb);
 }
@@ -1523,7 +1523,7 @@ void RS::update(const string& utab, vector< instyp > einf,uchar obverb, const st
 
   switch (db->DBS) {
     case MySQL:
-      isql=string("UPDATE ")+db->dnb+utab+db->dne+" SET ";
+      isql=string("UPDATE ")+db->dnb+utab+db->dne+" SET ";// string( hier nicht streichen!
       for(uint i = 0;i<einf.size();i++) {
         isql+=db->dnb+einf[i].feld+db->dne;
         isql+=" = ";
@@ -1565,7 +1565,7 @@ void RS::update(const string& utab, vector< instyp > einf,uchar obverb, const st
           if (!obfehl) {
             break;
           }  else {
-            Log(string(tuerkis)+string("SQL: ")+schwarz+isql,(fnr!=1406 && obverb!=2) || (fnr==1406 && obverb==255),1);
+            Log(tuerkiss+"SQL: "+schwarz+isql,(fnr!=1406 && obverb!=2) || (fnr==1406 && obverb==255),1);
             const string fmeld=mysql_error(db->conn);
             Log(mysql_error(db->conn),(fnr!=1406 && obverb!=2) || (fnr==1406 && obverb==255),1);
             if (fnr==1406){
@@ -1585,7 +1585,7 @@ void RS::update(const string& utab, vector< instyp > einf,uchar obverb, const st
           } //   if (!obfehl) else
         } //  for (int iru=0;iru<2;iru++) 
         if (!altsqlm.empty()) 
-          Abfrage(string("SET sql_mode = '")+altsqlm+"'",obverb);
+          Abfrage("SET sql_mode = '"+altsqlm+"'",obverb);
         // nach Gebrauch loeschen
         isql.clear();
       } // case
@@ -1695,7 +1695,7 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
   if (anfangen) {
     switch (db->DBS) {
       case MySQL:
-        isql=string("INSERT INTO ")+db->dnb+itab+db->dne+'(';
+        isql=string("INSERT INTO ")+db->dnb+itab+db->dne+'('; // string( hier nicht streichen!
         for(uint i = 0;i<einf.size();i++) {
           if (i) isql+=',';
           isql+=db->dnb+einf[i].feld+db->dne;
@@ -1714,24 +1714,24 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
       case MySQL:
         //				isql.reserve(isql.length()+2);
         if (!anfangen) if (isql.empty()) {
-          Log(string(drot)+Txd[T_Programmfehler]+schwarz+Txd[T_nicht_anfangen_bei_isql_empty_Aufruf_von_RS_insert_beim_ersten_Mal_ohn_anfangen_bei]
+          Log(drots+Txd[T_Programmfehler]+schwarz+Txd[T_nicht_anfangen_bei_isql_empty_Aufruf_von_RS_insert_beim_ersten_Mal_ohn_anfangen_bei]
               +drot+db->dnb+itab+db->dne+schwarz+", einf.size(): "+ltoan(einf.size()),1,1);
           for(uint i=0;i<einf.size();i++){
             Log(string("einf[")+ltoan(i)+"].feld: "+blau+einf[i].feld+schwarz,1,1);
             Log(string("einf[")+ltoan(i)+"].wert: "+tuerkis+einf[i].wert+schwarz,1,1);
           }
           exit(114);
-        }
+        } //         if (!anfangen) if (isql.empty())
         if (zaehler>1) isql+=",(";
         for(uint i = 0;i<einf.size();i++) {
           if (i) {
             //						isql.reserve(isql.length()+1);
             isql+=',';
-          }
+          } //           if (i)
           //					isql.reserve(isql.length()+2+strlen(einf[i].wert.c_str()));
 //          if (einf[i].feld=="EML") { isql+="_utf8"; }
           isql+=(einf[i].wert);
-        }
+        } //         for(uint i = 0;i<einf.size();i++)
         //				isql.reserve(isql.length()+2);
         isql+=")";
         break;
@@ -1764,7 +1764,7 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
             if (!obfehl) {
               break;
             }  else {
-              Log(string(tuerkis)+string("SQL: ")+schwarz+isql,(fnr!=1406 && obverb!=2) || (fnr==1406 && obverb==255),1);
+              Log(tuerkiss+"SQL: "+schwarz+isql,(fnr!=1406 && obverb!=2) || (fnr==1406 && obverb==255),1);
               const string fmeld=mysql_error(db->conn);
               Log(fmeld,(fnr!=1406 && obverb!=2) || (fnr==1406 && obverb==255),1);
               if (fnr==1406){
@@ -1785,7 +1785,7 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar anfangen,uchar s
             }
           } //  for (int iru=0;iru<2;iru++) 
           if (!altsqlm.empty()) 
-            Abfrage(string("SET sql_mode = '")+altsqlm+"'",obverb);
+            Abfrage("SET sql_mode = '"+altsqlm+"'",obverb);
           // nach Gebrauch loeschen
           isql.clear();
         }
@@ -1807,7 +1807,7 @@ void DB::prueffunc(const string& pname, const string& body, const string& para, 
 {
   Log(violetts+Txd[T_prueffunc]+schwarz+" "+pname,obverb,oblog);
   const string mhost = host=="localhost"?host:"%";
-  const string owner=string("`")+user+"`@`"+mhost+"`";
+  const string owner="`"+user+"`@`"+mhost+"`";
   for(uchar runde=0;runde<2;runde++) {
     uchar fehlt=1;
 		RS rs0(this,"SHOW FUNCTION STATUS WHERE db='"+db+"' AND name='"+pname+"';",obverb);
@@ -1826,7 +1826,7 @@ void DB::prueffunc(const string& pname, const string& body, const string& para, 
 				} // 				while (cerg=rs.HolZeile(),cerg?*cerg:0)
 			} // 			if (rs0.result->row_count)
 		} // 		if (!rs0.obfehl)
-    //   RS rs(this,string("select definer from mysql.proc where definer like '`")+user+"`@`"+mhost+"`'",ZDB);
+    //   RS rs(this,"select definer from mysql.proc where definer like '`"+user+"`@`"+mhost+"`'",ZDB);
     if (fehlt) {
       DB *aktMyp;
       if (!runde) aktMyp=this; else {
