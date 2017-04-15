@@ -1653,8 +1653,8 @@ char const *autofax_T[T_MAX+1][Smax]={
   // T_Optionen_die_nicht_gespeichert_werden
   {"Optionen, die nicht gespeichert werden: ","Options which are not saved: "},
   // T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden,
-  {"Optionen, die in der Konfigurationsdatei gespeichert werden koennen (vorausgehendes '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):",
-   "Options which can be saved in the configuration file: (preceding '1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):"},
+  {"Optionen z.Speich. i.Konfigur'datei (vorausg. '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):",
+   "Options to be saved in the configuration file: (preced. '1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):"},
   // T_ob_ein_Modem_drinstak
   {"ob ein Modem drinstak, als diese Konfigurationsdatei geschrieben wurde","if a modem was present, when this configuration file was written"},
   // T_or
