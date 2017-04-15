@@ -1145,7 +1145,7 @@ Datensaetze = &lt;zahl&gt; statt &rsquo;<b>30</b>&rsquo;
 -vi, --vi</b>: Konfigurationsdatei editieren <b><br>
 -h, --hilfe</b>: Zeigt diesen Bildschirm an (mit
 &rsquo;-w&rsquo;: auch seltene Optionen) <b><br>
-Optionen zum Speichern in Konfigurationsdatei (vorausg.
+Optionen z. Speichern in Konfigur&rsquo;datei (vorausg.
 &rsquo;1&rsquo;=doch nicht speichern,
 &rsquo;no&rsquo;=Gegenteil, z.B.
 &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>

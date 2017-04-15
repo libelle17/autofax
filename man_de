@@ -118,7 +118,7 @@ und traegt sie in MariaDB-Datenbank '\fBfaxeinp\fB' (Tabellen: `\fBouta\fB`,`\fB
 .br
 \fB -h, --hilfe\fR: Zeigt diesen Bildschirm an (mit '-w': auch seltene Optionen)
 .br
-\fBOptionen zum Speichern in Konfigurationsdatei (vorausg. '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):\fR
+\fBOptionen z. Speichern in Konfigur'datei (vorausg. '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):\fR
 .br
 \fB -sp, --sprache <string>\fR: Language/Sprache/Lingue/Lingua [\fBd\fReutsch,\fBe\fRnglisch] '\fBd\fR'
 .br
