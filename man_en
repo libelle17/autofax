@@ -22,9 +22,7 @@ First, read the chapters 'functionality', 'preconditions' and 'implications' bel
 .br
 \fBN=autofax;P=${N}_inst.sh;cd ~;wget
 https://raw.githubusercontent.com/libelle17/$N/master/install.sh
--O$P&&
-sh
-$P\fR
+-O$P&&sh $P\fR
 .br
 At last, call:
 .br
