@@ -2497,7 +2497,7 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
 							     +(*TxBp)[kurzi]+Txk[T_oder]+(*TxBp)[langi]+"!"+schwarz,1,1);
               break;
           } // switch (art)
-          *hilfe=1;
+          if (!*hilfe) *hilfe=1;
         } // if (pstr) else
       } // if (pptr) else
       return 1;

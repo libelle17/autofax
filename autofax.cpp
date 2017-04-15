@@ -283,7 +283,8 @@ enum T_
   T_pruefen_und_verschieben,
   T_listet_Datensaetze_aus,
   T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,
-  T_Zeigt_diesen_Bildschirm_an,
+	T_Erklaerung_haeufiger_Optionen,
+	T_Erklaerung_aller_Optionen,
   T_Fertig_mit_Parsen_der_Befehlszeile,
   T_Gebrauch,
   T_Faxt_Dateien_aus_Verzeichnis_pfad_die,
@@ -676,7 +677,9 @@ enum T_
 	T_vi_k,
 	T_vi_l,
 	T_h_k,
+	T_lh_k,
 	T_hilfe_l,
+	T_lhilfe_l,
 	T_fgz_k,
 	T_fgz_l,
 	T_lg_k,
@@ -1172,8 +1175,10 @@ char const *autofax_T[T_MAX+1][Smax]={
   {"listet Datensaetze aus `","lists entries from `"},
   // T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt
   {"Zahl der aufzulistenden Datensaetze = <zahl> statt","No. of listed entries = <no> instead of"},
-  // T_Zeigt_diesen_Bildschirm_an
-  {"Zeigt diesen Bildschirm an (mit '-w': auch seltene Optionen)","shows this screen (with '-v': also rare options)"},
+	// 	T_Erklaerung_haeufiger_Optionen
+	{"Erklärung häufiger Optionen","Explanation of frequent options"},
+	// T_Erklaerung_aller_Optionen
+	{"Erklärung aller Optionen","Explanation of all options"},
   // T_Fertig_mit_Parsen_der_Befehlszeile
   {"Fertig mit Parsen der Befehlszeile, Konfiguration zu schreiben: ","Parsing the command line finished, about to write configuration: "},
   // T_Gebrauch
@@ -1979,8 +1984,12 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{"vi","vi"},
 	// T_h_k
 	{"h","h"},
+	// T_lh_k
+	{"lh","lh"},
 	// T_hilfe_l
 	{"hilfe","help"},
+	// T_lhilfe_l
+	{"langhilfe","longhelp"},
 	// T_fgz_k
 	{"?","?"},
 	// T_fgz_l,
@@ -3260,7 +3269,8 @@ int paramcl::getcommandline()
   opts.push_back(/*2*/optioncl(T_n_k,T_dszahl_l, &Tx, T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt, 1, &dszahl,pzahl));
   opts.push_back(/*4*/optioncl(T_info_k,T_version_l, &Tx, T_Zeigt_die_Programmversion_an, 1, &zeigvers,1));
   opts.push_back(/*4*/optioncl(T_vi_k,T_vi_l, &Tx, T_Konfigurationsdatei_editieren, 1, &obvi,1));
-  opts.push_back(/*4*/optioncl(T_h_k,T_hilfe_l, &Tx, T_Zeigt_diesen_Bildschirm_an, 1, &hilfe,1));
+  opts.push_back(/*4*/optioncl(T_h_k,T_hilfe_l, &Tx, T_Erklaerung_haeufiger_Optionen, 1, &hilfe,1));
+  opts.push_back(/*4*/optioncl(T_lh_k,T_lhilfe_l, &Tx, T_Erklaerung_aller_Optionen, 1, &hilfe,2));
   opts.push_back(/*4*/optioncl(T_fgz_k,T_fgz_l, &Tx, -1, 1, &hilfe,1));
 
   //   string altlogdname(logdname);
@@ -3287,7 +3297,7 @@ int paramcl::getcommandline()
   for(size_t i=0;i<argcmv.size();i++) {
     if (!argcmv[i].agef) {
       ::Log(rots+"Parameter: "+gruen+argcmv[i].argcs+rot+Tx[T_nicht_erkannt]+schwarz,1,1);
-      hilfe=1;
+      if (!hilfe) hilfe=1;
     } //     if (!argcmv[i].agef)
   } //   for(size_t i=0;i<argcmv.size();i++)
   if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
@@ -3327,12 +3337,12 @@ int paramcl::getcommandline()
       <<drot<<dbq<<blau<<Tx[T_Tabellen]<<drot<<touta<<blau<<"`,`"<<drot<<spooltab<<blau<<Tx[T_aein]<<schwarz<<endl;
     cout<<blau<<Tx[T_Optionen_die_nicht_gespeichert_werden]<<schwarz<<endl;
     for(size_t j=0;j<opts.size();j++) {
-      if (!opts[j].obschreibp && (obverb || opts[j].wi))
+      if (!opts[j].obschreibp && (hilfe>1 || opts[j].wi))
         opts[j].hilfezeile(Tx.lgn);
     } //     for(size_t j=0;j<opts.size();j++)
     cout<<blau<<Tx[T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden]<<schwarz<<endl;
     for(size_t j=0;j<opts.size();j++) {
-      if (opts[j].obschreibp && (obverb || opts[j].wi))
+      if (opts[j].obschreibp && (hilfe>1 || opts[j].wi))
         opts[j].hilfezeile(Tx.lgn);
     } //     for(size_t j=0;j<opts.size();j++)
     return 0;

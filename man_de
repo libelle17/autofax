@@ -2,7 +2,7 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "15.04.17" "Version 0.43243" "Manual-Seite für autofax"
+.TH man 1 "15.04.17" "Version 0.43244" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -108,12 +108,6 @@ und traegt sie in MariaDB-Datenbank '\fBfaxeinp\fB' (Tabellen: `\fBouta\fB`,`\fB
 .br
 \fB -w, --wortreich\fR: Bildschirmausgabe gespraechiger
 .br
-\fB -l, --log\fR: protokolliert ausfuehrlich in Datei '\fB/var/log/autofax.log\fR' (sonst knapper)
-.br
-\fB -ldn, --logdateineu\fR: logdatei vorher loeschen
-.br
-\fB -kd, --konfdatei <string>\fR: verwendet Konfigurationsdatei <string> anstatt '\fB/root/autofax/autofax.conf\fR'
-.br
 \fB -sqlw, --sql-wortreich\fR: Bildschirmausgabe mit SQL-Befehlen
 .br
 \fB -rf, --rueckfragen\fR: alle Parameter werden abgefragt (darunter einige hier nicht gezeigten)
@@ -129,8 +123,6 @@ und traegt sie in MariaDB-Datenbank '\fBfaxeinp\fB' (Tabellen: `\fBouta\fB`,`\fB
 \fB -erneut, --erneutempf\fR: empfangenes Fax erneut bereitstellen
 .br
 \fB -uml, --umleiten\fR: ausgehendes Fax vorzeitig auf zweitem Weg schicken
-.br
-\fB -kez, --korrerfolgszeichen\fR: in der Datenbanktabelle `\fBouta\fR` wird das Erfolgszeichen korrigiert
 .br
 \fB -bwv, --bereinigewv\fR: Dateien aus Warteverzeichnis gegen `\fBouta\fR` pruefen und ggf. verschieben
 .br
@@ -152,23 +144,13 @@ und traegt sie in MariaDB-Datenbank '\fBfaxeinp\fB' (Tabellen: `\fBouta\fB`,`\fB
 .br
 \fB -vi, --vi\fR: Konfigurationsdatei editieren
 .br
-\fB -h, --hilfe\fR: Zeigt diesen Bildschirm an (mit '-w': auch seltene Optionen)
+\fB -h, --hilfe\fR: Erklärung häufiger Optionen
+.br
+\fB -lh, --langhilfe\fR: Erklärung aller Optionen
 .br
 \fBOptionen z.Speich. i.Konfigur'datei (vorausg. '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):\fR
 .br
 \fB -sp, --sprache <string>\fR: Language/Sprache/Lingue/Lingua [\fBd\fReutsch,\fBe\fRnglisch] '\fBd\fR'
-.br
-\fB -lvz, --logvz <pfad>\fR: waehlt als Logverzeichnis <pfad>, derzeit '\fB/var/log\fR'
-.br
-\fB -ld, --logdname <string>\fR: logdatei <string> (im Pfad '\fB/var/log\fR') wird verwendet anstatt '\fBautofax.log\fR'
-.br
-\fB -zvz, --zufaxenvz <pfad>\fR: faxt die Dateien aus <pfad> anstatt '\fB/DATA/Patientendokumente/zufaxen\fR'
-.br
-\fB -wvz, --wartevz <pfad>\fR: Dateien warten in <pfad> anstatt '\fB/DATA/Patientendokumente/warteauffax\fR'
-.br
-\fB -nvz, --nichtgefaxtvz <pfad>\fR: Gescheiterte Faxe werden hier gesammelt anstatt in '\fB/DATA/Patientendokumente/nichtgefaxt\fR'
-.br
-\fB -evz, --empfvz <pfad>\fR: Empfangsverzeichnis fuer Faxempfang '\fB/DATA/Patientendokumente\fR'
 .br
 \fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB0\fR'
 .br
@@ -180,13 +162,9 @@ und traegt sie in MariaDB-Datenbank '\fBfaxeinp\fB' (Tabellen: `\fBouta\fB`,`\fB
 .br
 \fB -hz, --hylazuerst\fR: versuche faxe zuerst ueber hylafax wegzuschicken\fB oder nicht\fR
 .br
-\fB -mod, --hmodem <string>\fR: Fuer Hylafax verwendetes Modem, anstatt  '\fBttyACM0\fR'
-.br
 \fB -mc, --maxcapiv <zahl>\fR: nach <zahl> Versuchen Capisuite wird Hylafax versucht, anstatt nach '\fB3\fR'
 .br
 \fB -mh, --maxhylav <zahl>\fR: nach <zahl> Versuchen Hylafax wird Capisuite versucht, anstatt nach '\fB3\fR'
-.br
-\fB -cuser, --cuser <string>\fR: verwendet fuer Capisuite und/oder Samba den Linux-Benutzer <string> anstatt '\fBschade\fR'
 .br
 \fB -ckzl, --cklingelzahl <zahl>\fR: Zahl der Klingeltoene, bis Capisuite den Anruf annimmt, anstatt '\fB1\fR'
 .br
@@ -199,24 +177,6 @@ und traegt sie in MariaDB-Datenbank '\fBfaxeinp\fB' (Tabellen: `\fBouta\fB`,`\fB
 \fB -ocre, --ocre\fR: Text aus empfangenen Faxen wird ermittelt\fB oder nicht\fR
 .br
 \fB -ocra, --ocra\fR: Text aus gesandten Bildern wird ermittelt\fB oder nicht\fR
-.br
-\fB -afs, --anfaxstr <string>\fR: faxnr wird hinter <string> erwartet statt hinter '\fBan Fax\fR'
-.br
-\fB -acfs, --ancfaxstr <string>\fR: faxnr fuer primaer Capisuite wird hinter <string> erwartet statt hinter '\fBan cFax\fR'
-.br
-\fB -ahfs, --anhfaxstr <string>\fR: faxnr fuer primaer hylafax wird hinter <string> erwartet statt hinter '\fBan hFax\fR'
-.br
-\fB -as, --anstr <string>\fR: Adressatenname wird hinter <string> erwartet statt hinter '\fB an \fR'
-.br
-\fB -us, --undstr <string>\fR: Trennstring <string> fuer mehrere Adressaten/Telefonnummern statt '\fBund\fR'
-.br
-\fB -host, --host <string>\fR: verwendet die Datenbank auf Host <string> anstatt auf '\fBlocalhost\fR'
-.br
-\fB -muser, --muser <string>\fR: verwendet fuer MySQL/MariaDB den Benutzer <string> anstatt '\fBpraxis\fR'
-.br
-\fB -mpwd, --mpwd <string>\fR: verwendet fuer MySQL/MariaDB das Passwort <string>
-.br
-\fB -db, --datenbank <string>\fR: verwendet die Datenbank <string> anstatt '\fBfaxeinp\fR'
 .SH FUNKTIONSWEISE
 .HP 3 
 1) Die aktuelle Hardware wird überprüft:
