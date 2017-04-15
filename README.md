@@ -37,17 +37,8 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
 </h2>
 
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="12%">
-
-
-<p style="margin-top: 1em"><b>autofax&nbsp;</b></p></td>
-<td width="77%">
-</td></tr>
-</table>
+<p style="margin-left:11%; margin-top: 1em">autofax
+[&lt;option&gt; ...]</p>
 
 <h2>SHORT DESCRIPTION
 <a name="SHORT DESCRIPTION_E"></a>
