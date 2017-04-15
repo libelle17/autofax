@@ -1059,9 +1059,9 @@ lesen Sie bitte die Kapitel &rsquo;Funktionsweise&rsquo;,
 &rsquo;Auswirkungen&rsquo;. A <br>
 Anschlie&szlig;end verbinden Sie den Rechner falls
 n&ouml;tig mit dem Internet und rufen Sie auf: <b><br>
-N=autofax;P=${N}_inst.sh;cd ~; wget
-https://raw.githubusercontent.com/
-libelle17/$N/master/install.sh -O$P&&sh $P</b> <br>
+N=autofax;P=${N}_inst.sh;cd ~;wget
+https://raw.githubusercontent.com/libelle17/$N/master/
+install.sh -O$P&&sh $P</b> <br>
 Zuletzt rufen Sie auf: <b><br>
 autofax</b> <br>
 (einige Rueckfragen des Programms beantworten) <br>
