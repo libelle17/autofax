@@ -47,19 +47,10 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
 <p style="margin-top: 1em"><b>autofax</b></p></td>
 <td width="1%"></td>
 <td width="77%">
-</td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="11%">
 
 
-<p><b>autofax</b></p></td>
-<td width="1%"></td>
-<td width="77%">
-
-
-<p>[<b>&minus;v|--verbose</b>] [<b>&minus;l|--log</b>]
-[<b>&minus;lfn|--logfilenew</b>]
+<p style="margin-top: 1em">[<b>&minus;v|--verbose</b>]
+[<b>&minus;l|--log</b>] [<b>&minus;lfn|--logfilenew</b>]
 [<b>&minus;cf|--conffile&nbsp;</b><i>&lt;string&gt;</i>]
 [<b>&minus;sqlv|--sql-verbose</b>]
 [<b>&minus;ia|--interactive</b>]
