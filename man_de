@@ -261,7 +261,10 @@ In Intervallen werden sie in die Autofax-Datenbank integriert (ohne die fehlende
 Solche SQL-Befehle sollen zwei Ergebnisfelder liefern, deren Inhalt dann, durch ein Komma getrennt, zur Benennung eines empfangenen Faxes verwendet werden. Bei der Anwendung des SQL-Befehls wird die Zeichenfolge '&&faxnr&&' zur aktuellen Faxnummer erweitert. Beispiel fuer einen solchen SQL-Befehl:
 .br
 .br
-select concat(haname,', ',ort,', ',kvnu) name, zulg, fax1k from kvaerzte.hae where concat(if(mid(fax1k,1,1)='0','','08131'),                         replace(replace(replace(replace(fax1k,' ',''),'-',''),'/',''),'\'','')) = '&&faxnr&&'
+select concat(haname,', ',ort,', ',kvnu) name, zulg, fax1k from kvaerzte.hae 
+where concat(if(mid(fax1k,1,1)='0','','08131'),
+replace(replace(replace(replace(
+fax1k,' ',''),'-',''),'/',''),'\'','')) = '&&faxnr&&'
 .br
 .br
 Wenn mehrere SQL-Befehle angegeben werden, so wird der jeweils naechste angewandt, wenn einer kein Ergebnis liefert.
@@ -335,7 +338,9 @@ Der Benutzer beim Installationsvorgang wird, falls nicht schon enthalten, in ein
 .HP 3
 5) Installieren von \fBcapisuite\fR, falls eine Fritzkarte eingebaut ist und capisuite nicht installiert ist.
 Ggf. Bearbeitung der Konfigurationsdateien \fB/etc/capisuite/capisuite.conf\fR und \fB/etc/capisuite/fax.conf\fR.
-Ggf. Bearbeitung des Python-Scripts für ankommende Faxe (Vorgabe z.B.: \fB/usr/lib64/capisuite/incoming.py\fR) zur Bestimmung der Zahl der Klingeltöne bis zur Faxannahme, Erstellung bzw. Bearbeitung der Dateien '\fB/etc/udev/rules.d/46-FKN_isdn_capi.rules\fR', '\fB/etc/modprobe.d/50-blacklist.conf\fR'.
+Ggf. Bearbeitung des Python-Scripts für ankommende Faxe (Vorgabe z.B.: \fB/usr/lib64/capisuite/incoming.py\fR) zur Bestimmung der Zahl der Klingeltöne 
+bis zur Faxannahme, Erstellung bzw. Bearbeitung der Dateien 
+'\fB/etc/udev/rules.d/46-FKN_isdn_capi.rules\fR', '\fB/etc/modprobe.d/50-blacklist.conf\fR'.
 .LP
 .HP 3
 6) Einrichten von Diensten: 
