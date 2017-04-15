@@ -62,7 +62,43 @@ Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präf
 .SH OPTIONEN 
 Mit '\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Optionen (z.B. SQL-Befehle) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum direkt editiert oder auch über '\fBautofax -rf\fR' interaktiv gepflegt werden kann.
 .br
-\fBGebrauch: \fRautofax [-<opt>|--<longopt> [<content>]] ...
+\fBVorgbAllg()\fR
+.br
+\fBliescapiconf()\fR
+.br
+\fBLese Konfiguration aus '\fB/etc/capisuite/fax.conf\fB':\fR
+.br
+confdat::lies(fname...), fname: \fB/etc/capisuite/fax.conf\fR
+.br
+confdat::lies fertig 0
+.br
+\fBLese Konfiguration aus '\fB/etc/capisuite/capisuite.conf\fB':\fR
+.br
+confdat::lies(fname...), fname: \fB/etc/capisuite/capisuite.conf\fR
+.br
+confdat::lies fertig 0
+.br
+\fBVorgbSpeziell_Ueberlad()\fR
+.br
+\fBlieskonfein()\fR
+.br
+\fBLese Konfiguration aus '\fB/root/autofax/autofax.conf\fB':\fR
+.br
+confdat::lies(fname...), fname: \fB/root/autofax/autofax.conf\fR
+.br
+confdat::lies fertig 0
+.br
+\fBLese Konfiguration aus '\fB/root/autofax/autofax.conf.zaehl\fB':\fR
+.br
+confdat::lies(fname...), fname: \fB/root/autofax/autofax.conf.zaehl\fR
+.br
+confdat::lies fertig 0
+.br
+\fBgetcommandline()\fR
+.br
+Fertig mit Parsen der Befehlszeile, Konfiguration zu schreiben: nein
+.br
+\fBGebrauch: \fBautofax [-<opt>|--<longopt> [<content>]] ...\fR
 .br
 \fBFaxt Dateien aus Verzeichns <pfad>, die 'an Fax <faxnr>' enthalten und durch soffice in pdf konvertierbar sind 
 .br
@@ -118,7 +154,7 @@ und traegt sie in MariaDB-Datenbank '\fBfaxeinp\fB' (Tabellen: `\fBouta\fB`,`\fB
 .br
 \fB -h, --hilfe\fR: Zeigt diesen Bildschirm an (mit '-w': auch seltene Optionen)
 .br
-\fBOptionen z. Speichern in Konfigur'datei (vorausg. '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):\fR
+\fBOptionen, die in der Konfigurationsdatei gespeichert werden koennen (vorausgehendes '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):\fR
 .br
 \fB -sp, --sprache <string>\fR: Language/Sprache/Lingue/Lingua [\fBd\fReutsch,\fBe\fRnglisch] '\fBd\fR'
 .br

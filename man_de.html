@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sat Apr 15 16:08:09 2017 -->
+<!-- CreationDate: Sat Apr 15 16:13:17 2017 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -180,8 +180,35 @@ Befehlszeile, sondern nur &uuml;ber die
 Konfigurationsdatei eingegeben werden, die wiederum direkt
 editiert oder auch &uuml;ber &rsquo;<b>autofax
 -rf</b>&rsquo; interaktiv gepflegt werden kann. <b><br>
-Gebrauch:</b> autofax [-&lt;opt&gt;|--&lt;longopt&gt;
-[&lt;content&gt;]] ... <b><br>
+VorgbAllg() <br>
+liescapiconf() <br>
+Lese Konfiguration aus
+&rsquo;/etc/capisuite/fax.conf&rsquo;:</b> <br>
+confdat::lies(fname...), fname:
+<b>/etc/capisuite/fax.conf</b> <br>
+confdat::lies fertig 0 <b><br>
+Lese Konfiguration aus
+&rsquo;/etc/capisuite/capisuite.conf&rsquo;:</b> <br>
+confdat::lies(fname...), fname:
+<b>/etc/capisuite/capisuite.conf</b> <br>
+confdat::lies fertig 0 <b><br>
+VorgbSpeziell_Ueberlad() <br>
+lieskonfein() <br>
+Lese Konfiguration aus
+&rsquo;/root/autofax/autofax.conf&rsquo;:</b> <br>
+confdat::lies(fname...), fname:
+<b>/root/autofax/autofax.conf</b> <br>
+confdat::lies fertig 0 <b><br>
+Lese Konfiguration aus
+&rsquo;/root/autofax/autofax.conf.zaehl&rsquo;:</b> <br>
+confdat::lies(fname...), fname:
+<b>/root/autofax/autofax.conf.zaehl</b> <br>
+confdat::lies fertig 0 <b><br>
+getcommandline()</b> <br>
+Fertig mit Parsen der Befehlszeile, Konfiguration zu
+schreiben: nein <b><br>
+Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
+[&lt;content&gt;]] ... <br>
 Faxt Dateien aus Verzeichns &lt;pfad&gt;, die &rsquo;an Fax
 &lt;faxnr&gt;&rsquo; enthalten und durch soffice in pdf
 konvertierbar sind <br>
@@ -238,9 +265,9 @@ Datensaetze = &lt;zahl&gt; statt &rsquo;<b>30</b>&rsquo;
 -vi, --vi</b>: Konfigurationsdatei editieren <b><br>
 -h, --hilfe</b>: Zeigt diesen Bildschirm an (mit
 &rsquo;-w&rsquo;: auch seltene Optionen) <b><br>
-Optionen z. Speichern in Konfigur&rsquo;datei (vorausg.
-&rsquo;1&rsquo;=doch nicht speichern,
-&rsquo;no&rsquo;=Gegenteil, z.B.
+Optionen, die in der Konfigurationsdatei gespeichert werden
+koennen (vorausgehendes &rsquo;1&rsquo;=doch nicht
+speichern, &rsquo;no&rsquo;=Gegenteil, z.B.
 &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -sp, --sprache &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
