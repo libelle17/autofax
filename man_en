@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "16.04.17" "Version 0.43246" "\fBautofax\fR man page"
+.TH man 1 "16.04.17" "Version 0.43247" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -59,6 +59,8 @@ Further on, incoming faxes via \fBhylafax\fR or \fBCapisuite\fR are being transm
 Depending on operating system, accessability and preferences the users thus could look up the status of their faxes in the above mentioned directories, in the database tables or by calling '\fBautofax\fB', '\fBautofax -lista\fR', '\fBautofax -listf\fR' or '\fBautofax -listi\fR'. 
 .SH OPTIONS 
 With '\fBautofax -?\fR', all command line options can be seen. Some options (e.g. the sql commands) cannot bei set via the command line, but only via the configuration file, which can be edited directly or interactively by '\fBautofax -rf\fR'.
+.br
+Schmarrn
 .br
 \fBUsage: \fBautofax [-<opt>|--<longopt> [<content>]] ...\fR
 .br

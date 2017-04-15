@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43246) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43247) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -147,7 +147,8 @@ by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
 can be seen. Some options (e.g. the sql commands) cannot bei
 set via the command line, but only via the configuration
 file, which can be edited directly or interactively by
-&rsquo;<b>autofax -rf</b>&rsquo;. <b><br>
+&rsquo;<b>autofax -rf</b>&rsquo;. <br>
+Schmarrn <b><br>
 Usage: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
 Faxes files from directory &lt;path&gt;, which contain
@@ -984,7 +985,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43246) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43247) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1145,7 +1146,8 @@ SQL-Befehle) k&ouml;nnen nicht &uuml;ber die
 Befehlszeile, sondern nur &uuml;ber die
 Konfigurationsdatei eingegeben werden, die wiederum direkt
 editiert oder auch &uuml;ber &rsquo;<b>autofax
--rf</b>&rsquo; interaktiv gepflegt werden kann. <b><br>
+-rf</b>&rsquo; interaktiv gepflegt werden kann. <br>
+Schmarrn <b><br>
 Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
 Faxt Dateien aus Verzeichns &lt;pfad&gt;, die &rsquo;an Fax
