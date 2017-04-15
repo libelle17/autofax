@@ -9,59 +9,6 @@
 (manpage-Hilfe in deutsch verfügbar: 'man autofax' oder 'man -Lde autofax')
 .SH SYNOPSIS
 .SY autofax \[<option> ...\]
-.OP \-v|--verbose
-.OP \-l|--log
-.OP \-lfn|--logfilenew
-.OP \-cf|--conffile <string>
-.OP \-sqlv|--sql-verbose
-.OP \-ia|--interactive
-.OP \-noia|--nointeraction
-.OP \-delf|--deletefax
-.OP \-delo|--deleteorphans
-.OP \-dela|--deleteallwaiting
-.OP \-csf|--correctsuccessflag
-.OP \-rwd|--revisewaitdir
-.OP \-st|--stop
-.OP \-listo|--listoutg
-.OP \-listf|--listfailed
-.OP \-listi|--listinca
-.OP \-listw|--listwaiting
-.OP \-s|--search <string>
-.OP \-n|--reccount <number>
-.OP \-info|--version
-.OP \-vi|--vi 
-.OP \-h|-help|-?|-hilfe
-.OP \-lg|--language <d|e>
-.OP \-ldr|--logdir <path>
-.OP \-lf|--logfilename <string>
-.OP \-tdr|--tofaxdir <path>
-.OP \-wdr|--waitdir <path>
-.OP \-ndr|--notfaxeddir <path>
-.OP \-rdr|--receiveddir <path>
-.OP \-cm|--cronminutes <number>
-.OP \-capi|--takecapi
-.OP \-hyla|--takehyla
-.OP \-fc|--firstcapi
-.OP \-fh|--firsthyla
-.OP \-mod|--hmodem <string>
-.OP \-mc|--maxcapitries <number>
-.OP \-mh|--maxhylatries <number>
-.OP \-cuser|--cuser <string>
-.OP \-crct|--cringcount <number>
-.OP \-hrct|--hringcount <number>
-.OP \-hmd|--hmaxdials <number>
-.OP \-it|--immediatelytarget
-.OP \-ocri|--ocri
-.OP \-ocro|--ocro
-.OP \-tfs|--tofaxstr <string>
-.OP \-tcfs|--tocfaxstr <string>
-.OP \-thfs|--tohfaxstr <string>
-.OP \-ts|--tostr <string>
-.OP \-ands|--andstr <string>
-.OP \-host|--host <string>
-.OP \-muser|--muser <string>
-.OP \-mpwd|--mpwd <string>
-.OP \-db|--database <string>
 .SH SHORT DESCRIPTION 
 \fBautofax\fR offers quasi the functionality of fax server, which can be useful for some also behind a fast data line.
 .br
