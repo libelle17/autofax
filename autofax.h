@@ -398,9 +398,9 @@ class paramcl // Programmparameter
     int pruefhyla();
 		int  aenderefax(const int aktion=0); // 0=loeschen, 1=umleiten
 		int  empferneut();
-    int  loeschewaise();
-    int  loescheallewartende();
-    void faxealle();
+    size_t  loeschewaise();
+		size_t loescheallewartende();
+		void faxealle();
     void untersuchespool(uchar mitupd=1);
     void zeigweitere();
     void zeigkonf();

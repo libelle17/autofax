@@ -709,6 +709,8 @@ enum T_
 	T_Sollen_wirklich_alle,
 	T_wartenden_Faxe_geloescht_werden,
 	T_Keine_wartenden_Faxe_zum_Loeschen_da,
+	T_waisen_Faxe_geloescht_werden,
+	T_Keine_waisen_Faxe_zum_Loeschen_da,
 	T_MAX
 };
 
@@ -2043,6 +2045,10 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{" wartenden Faxe geloescht werden?"," waiting faxes really be deleted?"},
 	// T_Keine_wartenden_Faxe_zum_Loeschen_da
 	{"Keine wartenden Faxe zum Loeschen da.","No waiting faxes to be deleted."},
+	// T_waisen_Faxe_geloescht_werden
+	{" waisen Faxe geloescht werden?"," orphan faxes really be deleted?"},
+	// T_Keine_waisen_Faxe_zum_Loeschen_da
+	{"Keine waisen Faxe zum Loeschen da.","No orphan faxes to be deleted."},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -4894,7 +4900,7 @@ int paramcl::empferneut()
 } // int paramcl::empferneut()
 
 // wird aufgerufen in: main
-int paramcl::loeschewaise()
+size_t paramcl::loeschewaise()
 {
 	Log(blaus+Tx[T_loeschewaise]+schwarz);
 	vector<string> allec;
@@ -4910,14 +4916,20 @@ int paramcl::loeschewaise()
 			if (*(*cerg+3)) ids.push_back(*(*cerg+3));
 		} // if (*(*cerg+0)) 
 	} // while (cerg=su.HolZeile(),cerg?*cerg:0) 
-	for(size_t i=0;i<ids.size();i++) {
-		RS loe(My,"DELETE FROM `"+spooltab+"` WHERE id="+ids[i]);
+	if (ids.size()) {
+		if (Tippob(Tx[T_Sollen_wirklich_alle]+gruens+ltoan(ids.size())+schwarz+Tx[T_waisen_Faxe_geloescht_werden],"n")) {
+			for(size_t i=0;i<ids.size();i++) {
+				RS loe(My,"DELETE FROM `"+spooltab+"` WHERE id="+ids[i]);
+			} // 			for(size_t i=0;i<ids.size();i++) 
+		} // 		if (Tippob(Tx[T_Sollen_wirklich_alle]+gruens+ltoan(ids.size())+schwarz+Tx[T_waisen_Faxe_geloescht_werden],"n"))
+	} else {
+	  ::Log(Tx[T_Keine_waisen_Faxe_zum_Loeschen_da],1,oblog);
 	}
-	return 0;
+	return ids.size();
 } // int paramcl::loeschewaise()
 
 // wird aufgerufen in: main
-int paramcl::loescheallewartende()
+size_t paramcl::loescheallewartende()
 {
 	Log(blaus+Tx[T_loescheallewartenden]+schwarz);
 	size_t erg=0;
@@ -4955,7 +4967,7 @@ int paramcl::loescheallewartende()
 			} // for(size_t i=0;i<alled.size();i++) 
 		} // 		if (Tippob(Tx[T_Sollen_wirklich_alle]+gruens+ltoan(erg)+schwarz+Tx[T_wartenden_Faxe_geloescht_werden],"n"))
 	} else {
-	  Log(Tx[T_Keine_wartenden_Faxe_zum_Loeschen_da],1,oblog);
+	  ::Log(Tx[T_Keine_wartenden_Faxe_zum_Loeschen_da],1,oblog);
 	} // if (erg)
 	return erg;
 } // int paramcl::loescheallewartende()
@@ -8888,7 +8900,7 @@ void fsfcl::capiausgeb(stringstream *ausgp, const string& maxcdials, uchar fuerl
   if (faxord) *ausgp<<faxord<<")";
   else *ausgp<<"  ";
   *ausgp<<"Capi: "<<schwarz;
-	*ausgp<<(capistat==fehlend?hgrau:(capistat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<FxStatS(&capistat)<<schwarz;
+	*ausgp<<(capistat==fehlend?hgrau:(capistat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<setw(7)<<FxStatS(&capistat)<<schwarz;
 	/*
   if (capistat==wartend) {
     *ausgp<<schwarz<<" "<<Tx[T_wartend]<<schwarz;
@@ -9163,7 +9175,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
   else *ausgp<<"  ";
   *ausgp<<"Hyla: "<<schwarz;
 	*ausgp<<(hylastat==fehlend?hgrau:(hylastat>=static_cast<FxStat>(gesandt)?blau:schwarz))
-	      <<FxStatS(&hylastat)<<(hgerg.empty()?"":" ("+hgerg+")")<<schwarz;
+	      <<setw(7)<<FxStatS(&hylastat)<<(hgerg.empty()?"":" ("+hgerg+")")<<schwarz;
 	/*
   if (obsfehlt) KLA
     // wenn also die Datenbankdatei weder im Spool noch bei den Erledigten nachweisbar ist

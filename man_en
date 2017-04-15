@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "15.04.17" "Version 0.4323" "\fBautofax\fR man page"
+.TH man 1 "15.04.17" "Version 0.43239" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -63,6 +63,8 @@
 .OP \-mpwd|--mpwd <string>
 .OP \-db|--database <string>
 .SH SHORT DESCRIPTION 
+autofax offers quasi the functionality of fax server, which can be useful for some also behind a fast data line.
+.br
 autofax is a command line programme to remit files of a certain directory automatically to \fBhylafax\fR (in case a linux-compatible modem is installed) and/or \fBcapisuite\fR (in case a fritzcard 2.0 or 2.1 is installed), if the fax number is integrated in the file name correctly.
 Furthermore, autofax holds the posted faxes in a mariadb database.
 .br

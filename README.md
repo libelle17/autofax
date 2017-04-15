@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.4323) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43239) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -105,13 +105,16 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">autofax is a
-command line programme to remit files of a certain directory
-automatically to <b>hylafax</b> (in case a linux-compatible
-modem is installed) and/or <b>capisuite</b> (in case a
-fritzcard 2.0 or 2.1 is installed), if the fax number is
-integrated in the file name correctly. Furthermore, autofax
-holds the posted faxes in a mariadb database. <br>
+<p style="margin-left:11%; margin-top: 1em">autofax offers
+quasi the functionality of fax server, which can be useful
+for some also behind a fast data line. <br>
+autofax is a command line programme to remit files of a
+certain directory automatically to <b>hylafax</b> (in case a
+linux-compatible modem is installed) and/or <b>capisuite</b>
+(in case a fritzcard 2.0 or 2.1 is installed), if the fax
+number is integrated in the file name correctly.
+Furthermore, autofax holds the posted faxes in a mariadb
+database. <br>
 Additionally, received faxes from
 <b>hylafax</b>/<b>capisuite</b> can be named automatically
 with the sender&rsquo;s name, according to his fax number,
@@ -982,7 +985,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.4323) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43239) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1086,11 +1089,14 @@ Faxe und Protokollierung aller Faxe in einer Datenbank <br>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">autofax ist ein
-Befehlszeilenprogramm, mit dem Dateien in einem bestimmten
-Verzeichnis automatisch an <b>hylafax</b> (falls ein
-linux-kompatibles Fax-Modem angeschlossen ist) und/oder
-<b>capisuite</b> (falls eine Fritzcard 2.0 oder 2.1
+<p style="margin-left:11%; margin-top: 1em">autofax bietet
+quasi die Funktionalit&auml;t eines Faxservers, welcher
+f&uuml;r manche auch hinter einer schnellen Datenleitung
+sinnvoll sein kann. <br>
+autofax ist ein Befehlszeilenprogramm, mit dem Dateien in
+einem bestimmten Verzeichnis automatisch an <b>hylafax</b>
+(falls ein linux-kompatibles Fax-Modem angeschlossen ist)
+und/oder <b>capisuite</b> (falls eine Fritzcard 2.0 oder 2.1
 angeschlossen ist) weiterleitet werden, wenn die Faxnummer
 im Dateinamen richtig eingetragen ist, weiterhin die
 versandten Faxe in einer MariaDB-Datenbank abspeichert. <br>
@@ -1207,12 +1213,19 @@ und traegt sie in MariaDB-Datenbank &rsquo;faxeinp&rsquo;
 (Tabellen: &lsquo;outa&lsquo;,&lsquo;spool&lsquo;) ein. <br>
 Optionen, die nicht gespeichert werden: <br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger <b><br>
+-l, --log</b>: protokolliert ausfuehrlich in Datei
+&rsquo;<b>/var/log/autofax.log</b>&rsquo; (sonst knapper)
+<b><br>
+-ldn, --logdateineu</b>: logdatei vorher loeschen <b><br>
+-kd, --konfdatei &lt;string&gt;</b>: verwendet
+Konfigurationsdatei &lt;string&gt; anstatt
+&rsquo;<b>/root/autofax/autofax.conf</b>&rsquo; <b><br>
 -sqlw, --sql-wortreich</b>: Bildschirmausgabe mit
 SQL-Befehlen <b><br>
 -rf, --rueckfragen</b>: alle Parameter werden abgefragt
-(darunter einige hier nicht gezeigten) <b><br>
--krf, --keinerueckfragen</b>: keine Rueckfragen, z.B.
-f&uuml;r Aufruf aus cron <b><br>
+(darunter einige hier nicht gezeigte) <b><br>
+-krf, --keinerueckfragen</b>: keine Rueckfragen, z.B. aus
+cron <b><br>
 -loef, --loeschefax</b>: ein Fax nach Rueckfrage loeschen
 <b><br>
 -loew, --loeschewaise</b>: Eintraege aus
@@ -1223,8 +1236,9 @@ zugehoerige Eintraege aus &lsquo;<b>spool</b>&lsquo;
 loeschen <b><br>
 -erneut, --erneutempf</b>: empfangenes Fax erneut
 bereitstellen <b><br>
--uml, --umleiten</b>: ausgehendes Fax vorzeitig auf zweitem
-Weg schicken <b><br>
+-kez, --korrerfolgszeichen</b>: in der Datenbanktabelle
+&lsquo;<b>outa</b>&lsquo; wird das Erfolgszeichen korrigiert
+<b><br>
 -bwv, --bereinigewv</b>: Dateien aus Warteverzeichnis gegen
 &lsquo;<b>outa</b>&lsquo; pruefen und ggf. verschieben
 <b><br>
@@ -1244,8 +1258,7 @@ Datensaetze = &lt;zahl&gt; statt &rsquo;<b>30</b>&rsquo;
 <b><br>
 -info, --version</b>: Zeigt die Programmversion an <b><br>
 -vi, --vi</b>: Konfigurationsdatei editieren <b><br>
--h, --hilfe</b>: Zeigt diesen Bildschirm an (mit
-&rsquo;-w&rsquo;: auch seltene Optionen) <b><br>
+-h, --hilfe</b>: Zeigt diesen Bildschirm an <b><br>
 Optionen, die in der Konfigurationsdatei gespeichert werden
 koennen (vorausgehendes &rsquo;1&rsquo;=doch nicht
 speichern, &rsquo;no&rsquo;=Gegenteil, z.B.
@@ -1253,6 +1266,26 @@ speichern, &rsquo;no&rsquo;=Gegenteil, z.B.
 -sp, --sprache &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
 [<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;<b>d</b>&rsquo;
+<b><br>
+-lvz, --logvz &lt;pfad&gt;</b>: waehlt als Logverzeichnis
+&lt;pfad&gt;, derzeit &rsquo;<b>/var/log</b>&rsquo; <b><br>
+-ld, --logdname &lt;string&gt;</b>: logdatei &lt;string&gt;
+(im Pfad &rsquo;<b>/var/log</b>&rsquo;) wird verwendet
+anstatt &rsquo;<b>autofax.log</b>&rsquo; <b><br>
+-zvz, --zufaxenvz &lt;pfad&gt;</b>: faxt die Dateien aus
+&lt;pfad&gt; anstatt
+&rsquo;<b>/DATA/Patientendokumente/zufaxen</b>&rsquo;
+<b><br>
+-wvz, --wartevz &lt;pfad&gt;</b>: Dateien warten in
+&lt;pfad&gt; anstatt
+&rsquo;<b>/DATA/Patientendokumente/warteauffax</b>&rsquo;
+<b><br>
+-nvz, --nichtgefaxtvz &lt;pfad&gt;</b>: Gescheiterte Faxe
+werden hier gesammelt anstatt in
+&rsquo;<b>/DATA/Patientendokumente/nichtgefaxt</b>&rsquo;
+<b><br>
+-evz, --empfvz &lt;pfad&gt;</b>: Empfangsverzeichnis fuer
+Faxempfang &rsquo;<b>/DATA/Patientendokumente</b>&rsquo;
 <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
@@ -1263,12 +1296,17 @@ nicht), anstatt &rsquo;<b>0</b>&rsquo; <b><br>
 wegzuschicken <b>oder nicht <br>
 -hz, --hylazuerst</b>: versuche faxe zuerst ueber hylafax
 wegzuschicken <b>oder nicht <br>
+-mod, --hmodem &lt;string&gt;</b>: Fuer Hylafax verwendetes
+Modem, anstatt &rsquo;<b>ttyACM0</b>&rsquo; <b><br>
 -mc, --maxcapiv &lt;zahl&gt;</b>: nach &lt;zahl&gt;
 Versuchen Capisuite wird Hylafax versucht, anstatt nach
 &rsquo;<b>3</b>&rsquo; <b><br>
 -mh, --maxhylav &lt;zahl&gt;</b>: nach &lt;zahl&gt;
 Versuchen Hylafax wird Capisuite versucht, anstatt nach
 &rsquo;<b>3</b>&rsquo; <b><br>
+-cuser, --cuser &lt;string&gt;</b>: verwendet fuer Capisuite
+und/oder Samba den Linux-Benutzer &lt;string&gt; anstatt
+&rsquo;<b>schade</b>&rsquo; <b><br>
 -ckzl, --cklingelzahl &lt;zahl&gt;</b>: Zahl der
 Klingeltoene, bis Capisuite den Anruf annimmt, anstatt
 &rsquo;<b>1</b>&rsquo; <b><br>
@@ -1282,7 +1320,32 @@ Zielverzeichnis kopiert <b>oder nicht <br>
 -ocre, --ocre</b>: Text aus empfangenen Faxen wird ermittelt
 <b>oder nicht <br>
 -ocra, --ocra</b>: Text aus gesandten Bildern wird ermittelt
-<b>oder nicht</b></p>
+<b>oder nicht <br>
+-afs, --anfaxstr &lt;string&gt;</b>: faxnr wird hinter
+&lt;string&gt; erwartet statt hinter &rsquo;<b>an
+Fax</b>&rsquo; <b><br>
+-acfs, --ancfaxstr &lt;string&gt;</b>: faxnr fuer primaer
+Capisuite wird hinter &lt;string&gt; erwartet statt hinter
+&rsquo;<b>an cFax</b>&rsquo; <b><br>
+-ahfs, --anhfaxstr &lt;string&gt;</b>: faxnr fuer primaer
+hylafax wird hinter &lt;string&gt; erwartet statt hinter
+&rsquo;<b>an hFax</b>&rsquo; <b><br>
+-as, --anstr &lt;string&gt;</b>: Adressatenname wird hinter
+&lt;string&gt; erwartet statt hinter &rsquo; <b>an</b>
+&rsquo; <b><br>
+-us, --undstr &lt;string&gt;</b>: Trennstring &lt;string&gt;
+fuer mehrere Adressaten/Telefonnummern statt
+&rsquo;<b>und</b>&rsquo; <b><br>
+-host, --host &lt;string&gt;</b>: verwendet die Datenbank
+auf Host &lt;string&gt; anstatt auf
+&rsquo;<b>localhost</b>&rsquo; <b><br>
+-muser, --muser &lt;string&gt;</b>: verwendet fuer
+MySQL/MariaDB den Benutzer &lt;string&gt; anstatt
+&rsquo;<b>praxis</b>&rsquo; <b><br>
+-mpwd, --mpwd &lt;string&gt;</b>: verwendet fuer
+MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
+-db, --datenbank &lt;string&gt;</b>: verwendet die Datenbank
+&lt;string&gt; anstatt &rsquo;<b>faxeinp</b>&rsquo;</p>
 
 <h2>FUNKTIONSWEISE
 <a name="FUNKTIONSWEISE_D"></a>
