@@ -20,8 +20,7 @@ Additionally, received faxes from \fBhylafax\fR/\fBcapisuite\fR can be named aut
 .br
 First, read the chapters 'functionality', 'preconditions' and 'implications' below. Then, if connected to the internet, call:
 .br
-\fBN=autofax;P=${N}_inst.sh;cd ~;wget https://raw.githubusercontent.com/libelle17/$N/master/
-install.sh -O$P&&sh $P\fR
+\fBN=autofax;P=${N}_inst.sh;cd ~;wget https://raw.githubusercontent.com/libelle17/$N/master/install.sh -O$P&&sh $P\fR
 .br
 At last, call:
 .br

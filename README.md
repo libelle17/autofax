@@ -71,8 +71,8 @@ chapters &rsquo;functionality&rsquo;,
 &rsquo;preconditions&rsquo; and &rsquo;implications&rsquo;
 below. Then, if connected to the internet, call: <b><br>
 N=autofax;P=${N}_inst.sh;cd ~;wget
-https://raw.githubusercontent.com/libelle17/$N/master/
-install.sh -O$P&&sh $P</b> <br>
+https://raw.githubusercontent.com/libelle17/$N/master/install.sh
+-O$P&&sh $P</b> <br>
 At last, call: <b><br>
 autofax</b> <br>
 (answer some questions of the program) <br>
@@ -1058,8 +1058,8 @@ lesen Sie bitte die Kapitel &rsquo;Funktionsweise&rsquo;,
 Anschlie&szlig;end verbinden Sie den Rechner falls
 n&ouml;tig mit dem Internet und rufen Sie auf: <b><br>
 N=autofax;P=${N}_inst.sh;cd ~;wget
-https://raw.githubusercontent.com/libelle17/$N/master/
-install.sh -O$P&&sh $P</b> <br>
+https://raw.githubusercontent.com/libelle17/$N/master/install.sh
+-O$P&&sh $P</b> <br>
 Zuletzt rufen Sie auf: <b><br>
 autofax</b> <br>
 (einige Rueckfragen des Programms beantworten) <br>
