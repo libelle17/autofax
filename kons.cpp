@@ -2243,18 +2243,18 @@ string Tippzahl(const string& frage, const string *vorgabe)
 {
  return Tippzahl(frage.c_str(),(vorgabe?vorgabe->c_str():0));
 }
-
-char* Tippcstring(const char *frage, char* buf, unsigned long buflen, const char* vorgabe) 
+/*
+char* Tippcstr(const char *frage, char* buf, unsigned long buflen, const char* vorgabe) 
 {
   const string vstr=vorgabe;
   strncpy(buf,Tippstr(frage,&vstr).c_str(),buflen-1);
   buf[buflen-1]=0;
   return buf;
-} // Tippcstring
-
+} // Tippcstr
+*/
 string Tippstr(const char *frage, const string *vorgabe) 
 {
-  return Tippstr(frage, vorgabe);
+  return Tippstr(string(frage), vorgabe);
 } // Tippstr
 
 string Tippstr(const string& frage, const string *vorgabe) 

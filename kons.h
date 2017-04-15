@@ -651,7 +651,7 @@ string Tippzahl(const char *frage, const char *vorgabe=0);
 string Tippzahl(const char *frage, const string *vorgabe);
 string Tippzahl(const string& frage, const string *vorgabe);
 string Tippstr(const char *frage, const string *vorgabe=0);
-char* Tippcstring(const char *frage, char* buf, unsigned long buflen, const char* vorgabe="");
+// char* Tippcstr(const char *frage, char* buf, unsigned long buflen, const char* vorgabe="");
 string Tippstr(const string& frage, const string *vorgabe=0);
 string Tippverz(const char *frage,const string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
