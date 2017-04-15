@@ -105,10 +105,10 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">autofax offers
-quasi the functionality of fax server, which can be useful
-for some also behind a fast data line. <br>
-autofax is a command line programme to remit files of a
+<p style="margin-left:11%; margin-top: 1em"><b>autofax</b>
+offers quasi the functionality of fax server, which can be
+useful for some also behind a fast data line. <b><br>
+autofax</b> is a command line programme to remit files of a
 certain directory automatically to <b>hylafax</b> (in case a
 linux-compatible modem is installed) and/or <b>capisuite</b>
 (in case a fritzcard 2.0 or 2.1 is installed), if the fax
@@ -1089,17 +1089,18 @@ Faxe und Protokollierung aller Faxe in einer Datenbank <br>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">autofax bietet
-quasi die Funktionalit&auml;t eines Faxservers, welcher
-f&uuml;r manche auch hinter einer schnellen Datenleitung
-sinnvoll sein kann. <br>
-autofax ist ein Befehlszeilenprogramm, mit dem Dateien in
-einem bestimmten Verzeichnis automatisch an <b>hylafax</b>
-(falls ein linux-kompatibles Fax-Modem angeschlossen ist)
-und/oder <b>capisuite</b> (falls eine Fritzcard 2.0 oder 2.1
-angeschlossen ist) weiterleitet werden, wenn die Faxnummer
-im Dateinamen richtig eingetragen ist, weiterhin die
-versandten Faxe in einer MariaDB-Datenbank abspeichert. <br>
+<p style="margin-left:11%; margin-top: 1em"><b>autofax</b>
+bietet quasi die Funktionalit&auml;t eines Faxservers,
+welcher f&uuml;r manche auch hinter einer schnellen
+Datenleitung sinnvoll sein kann. <b><br>
+autofax</b> ist ein Befehlszeilenprogramm, mit dem Dateien
+in einem bestimmten Verzeichnis automatisch an
+<b>hylafax</b> (falls ein linux-kompatibles Fax-Modem
+angeschlossen ist) und/oder <b>capisuite</b> (falls eine
+Fritzcard 2.0 oder 2.1 angeschlossen ist) weiterleitet
+werden, wenn die Faxnummer im Dateinamen richtig eingetragen
+ist, weiterhin die versandten Faxe in einer
+MariaDB-Datenbank abspeichert. <br>
 Au&szlig;erdem k&ouml;nnen von
 <b>hylafax</b>/<b>capisuite</b> empfangene Faxe automatisch
 nach dem Sender anhand dessen Faxnummer benannt und
