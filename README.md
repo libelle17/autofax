@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43239) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4324) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -207,6 +207,33 @@ can be seen. Some options (e.g. the sql commands) cannot bei
 set via the command line, but only via the configuration
 file, which can be edited directly or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <b><br>
+generalprefs() <br>
+readcapiconf() <br>
+Reading configuration from
+&rsquo;/etc/capisuite/fax.conf&rsquo;:</b> <br>
+confdat::lies(fname...), fname:
+<b>/etc/capisuite/fax.conf</b> <br>
+confdat::lies fertig 0 <b><br>
+Reading configuration from
+&rsquo;/etc/capisuite/capisuite.conf&rsquo;:</b> <br>
+confdat::lies(fname...), fname:
+<b>/etc/capisuite/capisuite.conf</b> <br>
+confdat::lies fertig 0 <b><br>
+VorgbSpeziell_Ueberlad() <br>
+readconf() <br>
+Reading configuration from
+&rsquo;/root/autofax/autofax.conf&rsquo;:</b> <br>
+confdat::lies(fname...), fname:
+<b>/root/autofax/autofax.conf</b> <br>
+confdat::lies fertig 0 <b><br>
+Reading configuration from
+&rsquo;/root/autofax/autofax.conf.zaehl&rsquo;:</b> <br>
+confdat::lies(fname...), fname:
+<b>/root/autofax/autofax.conf.zaehl</b> <br>
+confdat::lies fertig 0 <b><br>
+getcommandline()</b> <br>
+Parsing the command line finished, about to write
+configuration: no <b><br>
 Usage: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
 Faxes files from directory &lt;path&gt;, which contain
@@ -217,6 +244,13 @@ and logs this in the the mariadb database
 &lsquo;outa&lsquo;,&lsquo;spool&lsquo;). <br>
 Options which are not saved: <br>
 -v, --verbose</b>: screen output more verbose <b><br>
+-l, --log</b>: put detailed logs in file
+&rsquo;<b>/var/log/autofax.log</b>&rsquo; (otherwise
+shorter) <b><br>
+-lfn, --logfilenew</b>: delete log file afore <b><br>
+-cf, --conffile &lt;string&gt;</b>: uses configuration file
+&lt;string&gt; instead of
+&rsquo;<b>/root/autofax/autofax.conf</b>&rsquo; <b><br>
 -sqlv, --sql-verbose</b>: screen output with SQL commands
 <b><br>
 -ia, --interactive</b>: all parameters will be prompted
@@ -233,6 +267,9 @@ associated entries from &lsquo;<b>spool</b>&lsquo; <b><br>
 <b><br>
 -red, --redirect</b>: redirect outgoing fax ahead by the
 other channel <b><br>
+-csf, --correctsuccessflag</b>: in the database table
+&lsquo;<b>outa</b>&lsquo; the success flag is being
+corrected <b><br>
 -rwd, --revisewaitdir</b>: Examine files in waiting
 directory against the tables &lsquo;<b>outa</b>&lsquo; and
 clean them up <b><br>
@@ -260,6 +297,25 @@ Options which can be saved in the configuration file:
 Language/Sprache/Lingue/Lingua
 [<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;<b>e</b>&rsquo;
 <b><br>
+-ldr, --logdir &lt;path&gt;</b>: choses &lt;path&gt; as log
+directory, currently &rsquo;<b>/var/log</b>&rsquo; <b><br>
+-lf, --logfilename &lt;string&gt;</b>: log file
+&lt;string&gt; (in path &rsquo;<b>/var/log</b>&rsquo;) will
+be used instead of &rsquo;<b>autofax.log</b>&rsquo; <b><br>
+-tdr, --tofaxdir &lt;path&gt;</b>: faxes the files from
+&lt;path&gt; instead of
+&rsquo;<b>/DATA/Patientendokumente/zufaxen</b>&rsquo;
+<b><br>
+-wdr, --waitdir &lt;path&gt;</b>: files are waiting in
+&lt;path&gt; instead of
+&rsquo;<b>/DATA/Patientendokumente/warteauffax</b>&rsquo;
+<b><br>
+-ndr, --notfaxeddir &lt;path&gt;</b>: Failed Faxes are
+collected here and not in
+&rsquo;<b>/DATA/Patientendokumente/nichtgefaxt</b>&rsquo;
+<b><br>
+-rdr, --receiveddir &lt;path&gt;</b>: directory for recieved
+faxes &rsquo;<b>/DATA/Patientendokumente</b>&rsquo; <b><br>
 -cm, --cronminutes &lt;zahl&gt;</b>: every how many minutes
 shall <b>autofax</b> be called in crontab (0=not at all),
 instead of &rsquo;<b>0</b>&rsquo; <b><br>
@@ -269,12 +325,17 @@ instead of &rsquo;<b>0</b>&rsquo; <b><br>
 capisuite <b>or not <br>
 -fh, --firsthyla</b>: try to send faxes primarily via
 hylafax <b>or not <br>
+-mod, --hmodem &lt;string&gt;</b>: Modem used for hylafax,
+instead of &rsquo;<b>ttyACM0</b>&rsquo; <b><br>
 -mc, --maxcapitries &lt;zahl&gt;</b>: try Hylafax after
 &lt;no&gt; tries of Capisuite instead of
 &rsquo;<b>3</b>&rsquo; <b><br>
 -mh, --maxhylatries &lt;zahl&gt;</b>: try Capisuite after
 &lt;no&gt; tries of Hylafax instead of
 &rsquo;<b>3</b>&rsquo; <b><br>
+-cuser, --cuser &lt;string&gt;</b>: takes the linux user
+&lt;string&gt; for capisuite and/or samba instead of
+&rsquo;<b>schade</b>&rsquo; <b><br>
 -crct, --cringcount &lt;zahl&gt;</b>: No. of bell rings
 until Capisuite accepts the call, instead of
 &rsquo;<b>1</b>&rsquo; <b><br>
@@ -288,7 +349,32 @@ directory irrespective of faxing success <b>or not <br>
 -ocri, --ocri</b>: Text from received faxes will be filtered
 <b>or not <br>
 -ocro, --ocro</b>: Text from sent pictures will be filtered
-<b>or not</b></p>
+<b>or not <br>
+-tfs, --tofaxstr &lt;string&gt;</b>: the fax number will be
+expected after &lt;string&gt; instead of &rsquo;<b>an
+Fax</b>&rsquo; <b><br>
+-tcfs, --tocfaxstr &lt;string&gt;</b>: fax no.for fax with
+preference to capisuite is expected after &lt;string&gt;
+instead of &rsquo;<b>an cFax</b>&rsquo; <b><br>
+-thfs, --tohfaxstr &lt;string&gt;</b>: fax no.for fax with
+preference to hylafax is expected after &lt;string&gt;
+instead of &rsquo;<b>an hFax</b>&rsquo; <b><br>
+-ts, --tostr &lt;string&gt;</b>: name of addressee is
+expected after &lt;string&gt; instead of &rsquo; <b>an</b>
+&rsquo; <b><br>
+-ands, --andstr &lt;string&gt;</b>: separating string
+&lt;string&gt; for multiple addressees/tel&rsquo;numbers,
+instead of &rsquo;<b>und</b>&rsquo; <b><br>
+-host, --host &lt;string&gt;</b>: takes the database on host
+&lt;string&gt; instead of &rsquo;<b>localhost</b>&rsquo;
+<b><br>
+-muser, --muser &lt;string&gt;</b>: takes the user
+&lt;string&gt; for MySQL/MariaDB instead of
+&rsquo;<b>praxis</b>&rsquo; <b><br>
+-mpwd, --mpwd &lt;string&gt;</b>: takes the password
+&lt;string&gt; for MySQL/MariaDB <b><br>
+-db, --database &lt;string&gt;</b>: uses the database
+&lt;string&gt; instead of &rsquo;<b>faxeinp</b>&rsquo;</p>
 
 <h2>FUNCTIONALITY
 <a name="FUNCTIONALITY_E"></a>
@@ -985,7 +1071,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43239) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4324) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1205,6 +1291,33 @@ Befehlszeile, sondern nur &uuml;ber die
 Konfigurationsdatei eingegeben werden, die wiederum direkt
 editiert oder auch &uuml;ber &rsquo;<b>autofax
 -rf</b>&rsquo; interaktiv gepflegt werden kann. <b><br>
+VorgbAllg() <br>
+liescapiconf() <br>
+Lese Konfiguration aus
+&rsquo;/etc/capisuite/fax.conf&rsquo;:</b> <br>
+confdat::lies(fname...), fname:
+<b>/etc/capisuite/fax.conf</b> <br>
+confdat::lies fertig 0 <b><br>
+Lese Konfiguration aus
+&rsquo;/etc/capisuite/capisuite.conf&rsquo;:</b> <br>
+confdat::lies(fname...), fname:
+<b>/etc/capisuite/capisuite.conf</b> <br>
+confdat::lies fertig 0 <b><br>
+VorgbSpeziell_Ueberlad() <br>
+lieskonfein() <br>
+Lese Konfiguration aus
+&rsquo;/root/autofax/autofax.conf&rsquo;:</b> <br>
+confdat::lies(fname...), fname:
+<b>/root/autofax/autofax.conf</b> <br>
+confdat::lies fertig 0 <b><br>
+Lese Konfiguration aus
+&rsquo;/root/autofax/autofax.conf.zaehl&rsquo;:</b> <br>
+confdat::lies(fname...), fname:
+<b>/root/autofax/autofax.conf.zaehl</b> <br>
+confdat::lies fertig 0 <b><br>
+getcommandline()</b> <br>
+Fertig mit Parsen der Befehlszeile, Konfiguration zu
+schreiben: nein <b><br>
 Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
 Faxt Dateien aus Verzeichns &lt;pfad&gt;, die &rsquo;an Fax
@@ -1224,9 +1337,9 @@ Konfigurationsdatei &lt;string&gt; anstatt
 -sqlw, --sql-wortreich</b>: Bildschirmausgabe mit
 SQL-Befehlen <b><br>
 -rf, --rueckfragen</b>: alle Parameter werden abgefragt
-(darunter einige hier nicht gezeigte) <b><br>
--krf, --keinerueckfragen</b>: keine Rueckfragen, z.B. aus
-cron <b><br>
+(darunter einige hier nicht gezeigten) <b><br>
+-krf, --keinerueckfragen</b>: keine Rueckfragen, z.B.
+f&uuml;r Aufruf aus cron <b><br>
 -loef, --loeschefax</b>: ein Fax nach Rueckfrage loeschen
 <b><br>
 -loew, --loeschewaise</b>: Eintraege aus
@@ -1237,6 +1350,8 @@ zugehoerige Eintraege aus &lsquo;<b>spool</b>&lsquo;
 loeschen <b><br>
 -erneut, --erneutempf</b>: empfangenes Fax erneut
 bereitstellen <b><br>
+-uml, --umleiten</b>: ausgehendes Fax vorzeitig auf zweitem
+Weg schicken <b><br>
 -kez, --korrerfolgszeichen</b>: in der Datenbanktabelle
 &lsquo;<b>outa</b>&lsquo; wird das Erfolgszeichen korrigiert
 <b><br>
@@ -1259,7 +1374,8 @@ Datensaetze = &lt;zahl&gt; statt &rsquo;<b>30</b>&rsquo;
 <b><br>
 -info, --version</b>: Zeigt die Programmversion an <b><br>
 -vi, --vi</b>: Konfigurationsdatei editieren <b><br>
--h, --hilfe</b>: Zeigt diesen Bildschirm an <b><br>
+-h, --hilfe</b>: Zeigt diesen Bildschirm an (mit
+&rsquo;-w&rsquo;: auch seltene Optionen) <b><br>
 Optionen, die in der Konfigurationsdatei gespeichert werden
 koennen (vorausgehendes &rsquo;1&rsquo;=doch nicht
 speichern, &rsquo;no&rsquo;=Gegenteil, z.B.
