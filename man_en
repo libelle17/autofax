@@ -9,7 +9,7 @@
 (manpage-Hilfe in deutsch verfügbar: 'man autofax' oder 'man -Lde autofax')
 .SH SYNOPSIS
 .SY autofax [-<option>]
-.SY autofax [<option> ...]
+.SY autofax \[<option> ...\]
 .OP \-v|--verbose
 .OP \-l|--log
 .OP \-lfn|--logfilenew
