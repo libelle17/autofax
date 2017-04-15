@@ -556,7 +556,7 @@ will be replaced by the current fax number. Example:</p></td></tr>
 &rsquo;,ort,&rsquo;, &rsquo;,kvnu) name, zulg, fax1k from
 kvaerzte.hae where
 concat(if(mid(fax1k,1,1)=&rsquo;0&rsquo;,&rsquo;&rsquo;,&rsquo;08131&rsquo;),
-replace(replace(replace(replace( fax1k,&rsquo;
+replace(replace(replace(replace(fax1k,&rsquo;
 &rsquo;,&rsquo;&rsquo;),&rsquo;-&rsquo;,&rsquo;&rsquo;),&rsquo;/&rsquo;,&rsquo;&rsquo;),&rsquo;&acute;&rsquo;,&rsquo;&rsquo;))
 = &rsquo;&&faxnr&&&rsquo;</p></td></tr>
 <tr valign="top" align="left">
@@ -787,7 +787,9 @@ capisuite is not installed. If necessary configuration of
 python-script for received faxes (default e.g.
 <b>/usr/lib64/capisuite/incoming.py</b>) in order to
 determine the rings before answer, creation and edition of
-the files</p></td></tr>
+the files
+&rsquo;<b>/etc/udev/rules.d/46-FKN_isdn_capi.rules</b>&rsquo;,
+&rsquo;<b>/etc/modprobe.d/50-blacklist.conf</b>&rsquo;.</p> </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -1577,7 +1579,7 @@ SQL-Befehl:</p> </td></tr>
 &rsquo;,ort,&rsquo;, &rsquo;,kvnu) name, zulg, fax1k from
 kvaerzte.hae where
 concat(if(mid(fax1k,1,1)=&rsquo;0&rsquo;,&rsquo;&rsquo;,&rsquo;08131&rsquo;),
-replace(replace(replace(replace( fax1k,&rsquo;
+replace(replace(replace(replace(fax1k,&rsquo;
 &rsquo;,&rsquo;&rsquo;),&rsquo;-&rsquo;,&rsquo;&rsquo;),&rsquo;/&rsquo;,&rsquo;&rsquo;),&rsquo;&acute;&rsquo;,&rsquo;&rsquo;))
 = &rsquo;&&faxnr&&&rsquo;</p></td></tr>
 <tr valign="top" align="left">

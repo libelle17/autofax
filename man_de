@@ -260,10 +260,7 @@ In Intervallen werden sie in die Autofax-Datenbank integriert (ohne die fehlende
 Solche SQL-Befehle sollen zwei Ergebnisfelder liefern, deren Inhalt dann, durch ein Komma getrennt, zur Benennung eines empfangenen Faxes verwendet werden. Bei der Anwendung des SQL-Befehls wird die Zeichenfolge '&&faxnr&&' zur aktuellen Faxnummer erweitert. Beispiel fuer einen solchen SQL-Befehl:
 .br
 .br
-select concat(haname,', ',ort,', ',kvnu) name, zulg, fax1k from kvaerzte.hae 
-where concat(if(mid(fax1k,1,1)='0','','08131'),
-replace(replace(replace(replace(
-fax1k,' ',''),'-',''),'/',''),'\'','')) = '&&faxnr&&'
+select concat(haname,', ',ort,', ',kvnu) name, zulg, fax1k from kvaerzte.hae where concat(if(mid(fax1k,1,1)='0','','08131'), replace(replace(replace(replace(fax1k,' ',''),'-',''),'/',''),'\'','')) = '&&faxnr&&'
 .br
 .br
 Wenn mehrere SQL-Befehle angegeben werden, so wird der jeweils naechste angewandt, wenn einer kein Ergebnis liefert.

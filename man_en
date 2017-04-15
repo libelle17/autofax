@@ -257,10 +257,7 @@ In intervals they will be integrated into the autofax database (without the not 
 Such sql commands shall deliver 2 fields, whose contents, separated by a comma, will be used to name to received faxes. When applied, within the sql commands the string '&&faxnr&&' will be replaced by the current fax number. Example:
 .br
 .br
-select concat(haname,', ',ort,', ',kvnu) name, zulg, fax1k from kvaerzte.hae 
-where concat(if(mid(fax1k,1,1)='0','','08131'),
-replace(replace(replace(replace(
-fax1k,' ',''),'-',''),'/',''),'\'','')) = '&&faxnr&&'
+select concat(haname,', ',ort,', ',kvnu) name, zulg, fax1k from kvaerzte.hae where concat(if(mid(fax1k,1,1)='0','','08131'), replace(replace(replace(replace(fax1k,' ',''),'-',''),'/',''),'\'','')) = '&&faxnr&&'
 .br
 .br
 If more sql commands are specified and one of them does not give a result, the next one will be tried.
@@ -329,10 +326,7 @@ The current linux user, if not already contained, will be entered into an admini
 4) Installation of \fBhylafax+\fR, in case a modem is connected and hylafax+ is not installed. If necessary configuration of hylafax+ by calling '\fBfaxsetup -nointeracitve\fR', by editing the configuration files \fBconfig\fR and \fBconfig.*\fR (e.g. \fBconfig.ttyACM0\fR) in the hylafax configuration directory (default e.g. \fB/var/spool/hylafax/etc\fR).   
 .LP
 .HP 3
-5) Installation of \fBcapisuite\fR, in case a fritzcard is inserted and capisuite is not installed. If necessary configuration of \fB/etc/capisuite/capisuite.conf\fR and \fB/etc/capisuite/fax.conf\fR. 
-If necessary edition of the python-script for received faxes (default e.g. \fB/usr/lib64/capisuite/incoming.py\fR) 
-in order to determine the rings before answer, creation and edition of the files 
-'\fB/etc/udev/rules.d/46-FKN_isdn_capi.rules\fR', '\fB/etc/modprobe.d/50-blacklist.conf\fR'.
+5) Installation of \fBcapisuite\fR, in case a fritzcard is inserted and capisuite is not installed. If necessary configuration of \fB/etc/capisuite/capisuite.conf\fR and \fB/etc/capisuite/fax.conf\fR. If necessary edition of the python-script for received faxes (default e.g. \fB/usr/lib64/capisuite/incoming.py\fR) in order to determine the rings before answer, creation and edition of the files '\fB/etc/udev/rules.d/46-FKN_isdn_capi.rules\fR', '\fB/etc/modprobe.d/50-blacklist.conf\fR'.
 .LP
 .HP 3
 6) Installation of services: 
