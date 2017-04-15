@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43114) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43127) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -235,6 +235,8 @@ waiting directory or capisuite fax or hylafax <b><br>
 associated entries from &lsquo;<b>spool</b>&lsquo; <b><br>
 -again, --receiveagain</b>: present a received fax again
 <b><br>
+-red, --redirect</b>: redirect outgoing fax ahead by the
+other channel <b><br>
 -csf, --correctsuccessflag</b>: in the database table
 &lsquo;<b>outa</b>&lsquo; the success flag is being
 corrected <b><br>
@@ -1038,7 +1040,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43114) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43127) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1286,6 +1288,8 @@ zugehoerige Eintraege aus &lsquo;<b>spool</b>&lsquo;
 loeschen <b><br>
 -erneut, --erneutempf</b>: empfangenes Fax erneut
 bereitstellen <b><br>
+-uml, --umleiten</b>: ausgehendes Fax vorzeitig auf zweitem
+Weg schicken <b><br>
 -kez, --korrerfolgszeichen</b>: in der Datenbanktabelle
 &lsquo;<b>outa</b>&lsquo; wird das Erfolgszeichen korrigiert
 <b><br>

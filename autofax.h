@@ -119,9 +119,9 @@ class fsfcl : public fxfcl // Faxsendfile
     int loeschecapi(int obverb, int oblog);
     int loeschehyla(paramcl *pmp,int obverb, int oblog);
     /*1*/fsfcl(const string id, const string npdf, const string spdf, const string telnr, unsigned prio, const string capisd, int capids, 
-		           const string hylanr, int hdialsn, uchar obcapi, uchar obhyla, const string adressat, ulong pseiten, string idalt):
+		           const string hylanr, int hdialsn, uchar fobcapi, uchar fobhyla, const string adressat, ulong pseiten, string idalt):
          fxfcl(prio,npdf,spdf,pseiten), id(id), telnr(telnr), capisd(capisd), capids(capids), 
-         hylanr(hylanr), hdialsn(hdialsn), fobcapi(obcapi), fobhyla(obhyla), adressat(adressat),idalt(idalt) {}
+         hylanr(hylanr), hdialsn(hdialsn), fobcapi(fobcapi), fobhyla(fobhyla), adressat(adressat),idalt(idalt) {}
     /*2*/fsfcl(const string id,const string original): id(id), original(original) {}
     /*3*/fsfcl(const string id, const string capisd, const string hylanr, string const cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
     /*4*/fsfcl(const string& hylanr): hylanr(hylanr) {}
@@ -174,6 +174,7 @@ class paramcl // Programmparameter
     uchar loea=0; // loesche alle wartenden Faxe und zugehoerige Dateieintraege
     uchar loee=0; // empfangene Dateien loeschen, die nicht verarbeitet werden koennen
 		uchar erneut=0;  // empfangenes Fax erneut bereitstellen
+		uchar uml=0; // umleiten: vorzeitig den zweiten Weg aktivieren
     uchar kez=0;    // korrigiere Erfolgskennzeichen
     uchar bwv=0;    // bereinige Warteverzeichnis
     uchar anhl=0;    // autofax anhalten
@@ -395,7 +396,7 @@ class paramcl // Programmparameter
     void hylasv2(hyinst hyinstart);
 //    int hservice_faxgetty();
     int pruefhyla();
-    int  loeschefax();
+		int  aenderefax(const int aktion=0); // 0=loeschen, 1=umleiten
 		int  empferneut();
     int  loeschewaise();
     int  loescheallewartende();
