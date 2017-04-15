@@ -708,6 +708,7 @@ enum T_
 	T_gestoppt,
 	T_Sollen_wirklich_alle,
 	T_wartenden_Faxe_geloescht_werden,
+	T_Keine_wartenden_Faxe_zum_Loeschen_da,
 	T_MAX
 };
 
@@ -2040,6 +2041,8 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{"Sollen wirklich alle ","Shall all "},
 	// T_wartenden_Faxe_geloescht_werden
 	{" wartenden Faxe geloescht werden?"," waiting faxes really be deleted?"},
+	// T_Keine_wartenden_Faxe_zum_Loeschen_da
+	{"Keine wartenden Faxe zum Loeschen da.","No waiting faxes to be deleted."},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -4951,6 +4954,8 @@ int paramcl::loescheallewartende()
 				} // 				if (!zuloe.loeschehyla(this,obverb,oblog))
 			} // for(size_t i=0;i<alled.size();i++) 
 		} // 		if (Tippob(Tx[T_Sollen_wirklich_alle]+gruens+ltoan(erg)+schwarz+Tx[T_wartenden_Faxe_geloescht_werden],"n"))
+	} else {
+	  Log(Tx[T_Keine_wartenden_Faxe_zum_Loeschen_da],1,oblog);
 	} // if (erg)
 	return erg;
 } // int paramcl::loescheallewartende()
