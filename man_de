@@ -2,66 +2,13 @@
 .\" Manual-Seite für autofax
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "15.04.17" "Version 0.4324" "Manual-Seite für autofax"
+.TH man 1 "15.04.17" "Version 0.43242" "Manual-Seite für autofax"
 .SH NAME
 \fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
 (manpage available in english: 'man autofax' or 'man -Len autofax')
 .SH SYNOPSIS
-.SY autofax [-<option>]
-.OP \-w|--wortreich
-.OP \-l|--log
-.OP \-ldn|--logdateineu
-.OP \-kd|--konfdatei <string>
-.OP \-sqlw|--sql-wortreich
-.OP \-rf|--rueckfragen
-.OP \-norf|--keinerueckfragen
-.OP \-loef|--loeschefax
-.OP \-loew|--loeschewaise
-.OP \-loea|--loescheallew
-.OP \-kez|--korrerfolgszeichen
-.OP \-bwv|--bereinigewv
-.OP \-st|--stop
-.OP \-lista|--listausg
-.OP \-listf|--listfehlgeschl
-.OP \-liste|--listeing
-.OP \-listw|--listwartende
-.OP \-s|--suche <string>
-.OP \-n|--dszahl <zahl>
-.OP \-info|--version
-.OP \-vi|--vi 
-.OP \-h|-help|-?|-hilfe
-.OP \-sp|--sprache <d|e>
-.OP \-lvz|--logvz <pfad>
-.OP \-ld|--logdname <string>
-.OP \-zvz|--zufaxenvz <pfad>
-.OP \-wvz|--wartevz <pfad>
-.OP \-nvz|--nichtgefaxtvz <pfad>
-.OP \-evz|--empfvz <pfad>
-.OP \-cm|--cronminuten <zahl>
-.OP \-capi|--obcapi
-.OP \-hyla|--obhyla
-.OP \-cz|--capizuerst
-.OP \-hz|--hylazuerst
-.OP \-mod|--hmodem <string>
-.OP \-mc|--maxcapiv <zahl>
-.OP \-mh|--maxhylav <zahl>
-.OP \-cuser|--cuser <string>
-.OP \-ckzl|--capiklingelzahl <zahl>
-.OP \-hkzl|--hylaklingelzahl <zahl>
-.OP \-hmv|--hmaxwahlvers <zahl>
-.OP \-gz|--gleichziel
-.OP \-ocre|--ocre
-.OP \-ocra|--ocra
-.OP \-afs|--anfaxstr <string>
-.OP \-acfs|--ancfaxstr <string>
-.OP \-ahfs|--anhfaxstr <string>
-.OP \-as|--anstr <string>
-.OP \-us|--undstr <string>
-.OP \-host|--host <string>
-.OP \-muser|--muser <string>
-.OP \-mpwd|--mpwd <string>
-.OP \-db|--datenbank <string>
+\fBautofax [-<opt>|--<longopt> [<content>]] ...\fR
 .SH KURZBESCHREIBUNG
 \fBautofax\fR bietet quasi die Funktionalität eines Faxservers, welcher für manche auch hinter einer schnellen Datenleitung sinnvoll sein kann.
 .br
