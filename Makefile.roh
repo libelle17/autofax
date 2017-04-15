@@ -48,8 +48,8 @@ endif
 PROGRAM=$(shell basename $(CURDIR))
 PROGGROSS=`echo $(PROGRAM) | tr a-z A-Z`
 #EXPFAD=/usr/local/sbin
-EXPFAD := $(shell echo ${PATH} | tr -s ':' '\n' | grep /usr/ | head -n 1)
-EXPFAD := $(shell echo ${PATH} | tr -s ':' '\n' | grep /usr/ | awk '{ print length, $$0 }' | sort -n -s | cut -d" " -f2- | head -n1)
+EXPFAD := $(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | head -n 1)
+EXPFAD := $(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | awk '{ print length, $$0 }' | sort -n -s | cut -d" " -f2- | head -n1)
 EXEC=$(PROGRAM)
 INSTEXEC=$(EXPFAD)/$(EXEC)
 
@@ -98,8 +98,8 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 # POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d 2>/dev/null
 
 MANP=/usr/share/man
-MANPD=${MANP}/de/man1/${PROGRAM}.1.gz
-MANPE=${MANP}/man1/${PROGRAM}.1.gz
+MANPD=$(MANP)/de/man1/$(PROGRAM).1.gz
+MANPE=$(MANP)/man1/$(PROGRAM).1.gz
 MANPDH=$(CURDIR)/man_de.html
 MANPEH=$(CURDIR)/man_en.html
 rot:="\033[1;31m"
@@ -249,7 +249,7 @@ endif
 
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
-README.md: ${MANPEH} ${MANPDH} 
+README.md: $(MANPEH) $(MANPDH) 
 	-@rm -f README.md
 	-@echo "<h3>Manual: 1) <a href=\"#english_E\">english</a>, 2) <a href=\"#deutsch_D\">deutsch (unten anschließend)</a></h3>" > README.md
 	-@sed -n '20,$$p' man_en.html >> README.md 
@@ -257,19 +257,19 @@ README.md: ${MANPEH} ${MANPDH}
 	@printf " %b%s%b neu aus %b%s%b und %b%s%b erstellt\n" $(blau) "README.md" $(reset) $(blau) "man_en" $(reset) $(blau) "man_de" $(reset)
 
 else
-README.md: ${MANPDH}
+README.md: $(MANPDH)
 	-@rm -f README.md
 	-@sed -n '20,$$p' man_de.html >> README.md 
 	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "README.md" $(reset) $(blau) "man_de" $(reset)
-install: $(INSTEXEC) ${MANPD}
+install: $(INSTEXEC) $(MANPD)
 endif
 else
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
-README.md: ${MANPEH}
+README.md: $(MANPEH)
 	-@rm -f README.md
 	-@sed -n '20,$$p' man_en.html >> README.md 
 	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "README.md" $(reset) $(blau) "man_en" $(reset)
-install: $(INSTEXEC) ${MANPE} 
+install: $(INSTEXEC) $(MANPE) 
 else
 README.md: 
 install: $(INSTEXEC)
@@ -290,7 +290,7 @@ stumm: alles
 installstumm: stumm install
 
 .PHONY: install
-install: $(INSTEXEC) ${MANPE} ${MANPD} 
+install: $(INSTEXEC) $(MANPE) $(MANPD) 
 
 $(INSTEXEC): $(EXEC)
 	@printf " Copying program/ Kopiere Programmdatei: %b%s%b -> %b%s%b\n" $(blau) "$(EXEC)" $(reset) $(blau) "$(INSTEXEC)" $(reset) >$(BA)
@@ -306,32 +306,32 @@ $(CURDIR)/man_de: $(EXEC)
 	von=".SH OPTIONEN"; bis=".SH FUNKTIONSWEISE"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" man_de
 
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
-${MANPE}: $(CURDIR)/man_en
+$(MANPE): $(CURDIR)/man_en
 	@printf " "
 	-sudo mkdir -p $(MANP)/man1
 	@printf " "
-	-sudo gzip -c $(CURDIR)/man_en >${PROGRAM}.1.gz
+	-sudo gzip -c $(CURDIR)/man_en >$(PROGRAM).1.gz
 	@printf " "
-	-sudo mv ${PROGRAM}.1.gz ${MANPE}
-${MANPEH}: $(CURDIR)/man_en 
+	-sudo mv $(PROGRAM).1.gz $(MANPE)
+$(MANPEH): $(CURDIR)/man_en 
 	-@./configure inst groff "$(pgroff)"
 	-@rm -f man_en.html
-	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPLICATIONS/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - english<a name=\"english\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_E/g" > man_en.html
+	-sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPLICATIONS/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - english<a name=\"english\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_E/g" > man_en.html
 	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "man_en.html" $(reset) $(blau) "man_en" $(reset)
 endif
 
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
-${MANPD}: $(CURDIR)/man_de 
+$(MANPD): $(CURDIR)/man_de 
 	@printf " "
 	-sudo mkdir -p $(MANP)/de/man1
 	@printf " "
-	-sudo gzip -c $(CURDIR)/man_de >${PROGRAM}.1.gz
+	-sudo gzip -c $(CURDIR)/man_de >$(PROGRAM).1.gz
 	@printf " "
-	-sudo mv ${PROGRAM}.1.gz ${MANPD}
-${MANPDH}: $(CURDIR)/man_de 
+	-sudo mv $(PROGRAM).1.gz $(MANPD)
+$(MANPDH): $(CURDIR)/man_de 
 	-@./configure inst groff "$(pgroff)"
 	-@rm -f man_de.html
-	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - deutsch<a name=\"deutsch\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > man_de.html
+	-sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml | sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - deutsch<a name=\"deutsch\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > man_de.html
 #	-@rm -f README.md
 	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "man_de.html" $(reset) $(blau) "man_de" $(reset)
 endif
@@ -348,13 +348,13 @@ clean: hierclean distclean
 hierclean: 
 	@printf " Bereinige ...\r" >$(BA)
 	@rm -f $(EXEC) $(OBJ) .d/* $(KF)
-	@sudo rm -f ${MANPEH} ${MANPDH} $(KF)
+	@sudo rm -f $(MANPEH) $(MANPDH) $(KF)
 	@printf " %b%s,%s,%s,%s%b geloescht!\n" $(blau) "$(EXEC)" "$(OBJ)" "$(MANPEH)" "$(MANPDH)" $(reset)
 
 .PHONY: distclean
 distclean:
-	-@$(shell sudo rm -f $(INSTEXEC) ${MANPD} ${MANPE} $(KF))
-	-@printf "%b%s,%s,%s,%b geloescht!\n" $(blau) "$(INSTEXEC)" "$(MANPD)" "${MANPE}" $(reset)
+	-@$(shell sudo rm -f $(INSTEXEC) $(MANPD) $(MANPE) $(KF))
+	-@printf "%b%s,%s,%s,%b geloescht!\n" $(blau) "$(INSTEXEC)" "$(MANPD)" "$(MANPE)" $(reset)
 
 .PHONY: confclean
 confclean:
@@ -398,7 +398,7 @@ dovers:
 	make opts && sudo make install && make git
 
 zussetz:
-	-@TMP=tmp_opt;./$(EXEC) -h -v -lg d|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
+	-@TMP=tmp_opt;./$(EXEC) -lh -lg d|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
 	nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
 	von=".SH OPTIONEN"; bis=".SH FUNKTIONSWEISE"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" man_de
 
