@@ -41,11 +41,11 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="11%">
+<td width="12%">
 
 
-<p style="margin-top: 1em"><b>autofax</b></p></td>
-<td width="78%">
+<p style="margin-top: 1em"><b>autofax&nbsp;</b></p></td>
+<td width="77%">
 </td></tr>
 </table>
 
