@@ -216,6 +216,8 @@ enum Tkons_
 	T_Konnte_regulaeren_Ausdruck_nicht_kompilieren,
 	T_doinst,
 	T_Ins_Deinstallationsprogramm_wird_eingetragen,
+	T_fallsnichtda,
+	T_ohneabh,
 	T_konsMAX,
 };
 

@@ -249,6 +249,10 @@ const char *kons_T[T_konsMAX+1][Smax]=
 	{"doinst()","doinst()"},
 	// T_Ins_Deinstallationsprogramm_wird_eingetragen
 	{"Ins Deinstallationsprogramm wird eingetragen: ","Entered into the uninstall program: "},
+	// T_fallsnichtda
+	{", fallsnichtda: ",", ifnotthere: "},
+	// T_ohneabh
+	{" ohneabh: "," withoutdep: "},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 
@@ -2614,7 +2618,7 @@ string linst_cl::ersetzeprog(const string& prog)
 int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar ohneabh/*=0*/) // ,uchar obyes/*=1*/)
 {
 	// <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
-	Log(violetts+Txk[T_doinst]+schwarz+" prog: "+violett+prog+schwarz+", fallsnichtda: "+violett+fallsnichtda+schwarz+" ohneabh: "+violett+(ohneabh?"1":"0"),obverb,oblog);
+	Log(violetts+Txk[T_doinst]+schwarz+" prog: "+violett+prog+schwarz+Txk[T_fallsnichtda]+violett+fallsnichtda+schwarz+Txk[T_ohneabh]+violett+(ohneabh?"1":"0"),obverb,oblog);
 	int ret=2;
 	// eprog kann auch von aussen vor Programmaufruf gesetzt werden
 	if (eprog.empty()) eprog=ersetzeprog(prog);
@@ -2678,6 +2682,15 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 						case apt: case zypper:
 							ustring=srueck[i]+' '+ustring;
 						default: break;
+					}
+					size_t p1,p2;
+					if ((p1=ustring.find(" libgcc"))!=string::npos) {
+					 p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
+					 ustring.erase(p1,p2-p1);
+					}
+					if ((p1=ustring.find(" libselinux"))!=string::npos) {
+					 p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
+					 ustring.erase(p1,p2-p1);
 					}
 /*
 					vector<string> tok;
@@ -2786,7 +2799,7 @@ void anfgggf(const string& datei, const string& inhalt, const string& comment)
 			char buf[80];
       strftime(buf,sizeof buf,"%F %T",zeiti);
 			uniff<<inhalt<<"\n# "<<comment<<"\nprintf \"(Inst: "<<buf<<"): $blau%s$reset\\n\" \""<<
-			       ersetzAllezu(ersetzAllezu(inhalt,"\"","\\\""),"\n","\\\n")<<"\""<<endl;
+			       ersetzAllezu(inhalt,"\"","\\\"")<<"\""<<endl;
 		} else {
 			perror((string("\n")+Txk[T_Kann_Datei]+datei+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
 		} // 			if (uniff.is_open())

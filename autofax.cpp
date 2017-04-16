@@ -7843,8 +7843,8 @@ int paramcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const st
 			//						"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
 			"'";
 		ret=systemrueck(bef,obverb,oblog);
-		anfgggf(unindt,"H="+gethome()+";A=$H/"+meinname+";P=i"+was+";cd \"$A/$P\" 2>/dev/null"
-				"|| cd $(find \"$H\" -name $P -printf \"%T@ %p\n\" 2>/dev/null|sort -rn|head -n1|cut -d\" \" -f2)"
+		anfgggf(unindt,"H="+gethome()+";A=$H/"+meinname+";P="+was+";cd \"$A/$P\" 2>/dev/null"
+				"|| cd $(find \"$H\" -name $P -printf \"%T@ %p\\n\" 2>/dev/null|sort -rn|head -n1|cut -d\" \" -f2)"
 				"&& sudo make uninstall; cd \"$H\"",bef);
 	} // 		if (!pruefinstv())
 	return ret;
@@ -9278,10 +9278,13 @@ void paramcl::zeigdienste()
 
 int main(int argc, char** argv) 
 {
-    if (argc<3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
-		// Testcode
+/*
+	if (argc<3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
+		if (argc>1) {
+		// Testcode mit argv[1]
+		}
 	}
-
+*/
 	string prog;
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
