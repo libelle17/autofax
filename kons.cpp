@@ -2604,6 +2604,7 @@ string linst_cl::ersetzeprog(const string& prog)
       if (prog=="tesseract-ocr-traineddata-german") return "tesseract-langpack-deu tesseract-langpack-deu_frak";
       if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-osd";
       if (prog=="poppler-tools") return "poppler-utils";
+      if (prog=="libwbclient0") return "libwbclient";
       break;
 	  case zypper:
 		  if (prog=="redhat-rpm-config") return "";

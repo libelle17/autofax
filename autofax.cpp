@@ -4237,6 +4237,7 @@ void paramcl::pruefsamba()
   uchar obinst=0; // ob Samba installiert werden soll bzw. die smb.conf bearbeitet
   uchar obfw=0; // ob SuSEfirewall bearbeitet werden soll
 	// <<violett<<"Stelle 0"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
+	linst.doggfinst("libwbclient0",obverb,oblog);
 	int obsfehlt=linst.obfehlt("samba",obverb,oblog);
 	if (obsfehlt) {
 		if (!nrzf) {
@@ -7841,7 +7842,7 @@ int paramcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const st
 			//						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P="+was+";cd \\\"\\$A/\\$P\\\" 2>/dev/null"
 			//						"||cd \\$(find \\\"\\$H\\\" -name \\$P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2) "
 			//						"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
-			"'";
+			"; sudo ldconfig "+lsys.getlib64()+";'";
 		ret=systemrueck(bef,obverb,oblog);
 		anfgggf(unindt,"H="+gethome()+";A=$H/"+meinname+";P="+was+";cd \"$A/$P\" 2>/dev/null"
 				"|| cd $(find \"$H\" -name $P -printf \"%T@ %p\\n\" 2>/dev/null|sort -rn|head -n1|cut -d\" \" -f2)"
