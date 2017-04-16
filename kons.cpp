@@ -2785,7 +2785,8 @@ void anfgggf(const string& datei, const string& inhalt, const string& comment)
       struct tm *zeiti=localtime(&rohz);
 			char buf[80];
       strftime(buf,sizeof buf,"%F %T",zeiti);
-			uniff<<inhalt<<"\n# "<<comment<<"\nprintf \"(Inst: "<<buf<<"): $blau%s$reset\\n\" \""<<ersetzAllezu(inhalt,"\"","\\\"")<<"\""<<endl;
+			uniff<<inhalt<<"\n# "<<comment<<"\nprintf \"(Inst: "<<buf<<"): $blau%s$reset\\n\" \""<<
+			       ersetzAllezu(ersetzAllezu(inhalt,"\"","\\\""),"\n","\\\n")<<"\""<<endl;
 		} else {
 			perror((string("\n")+Txk[T_Kann_Datei]+datei+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
 		} // 			if (uniff.is_open())
