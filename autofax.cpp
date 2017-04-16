@@ -562,6 +562,7 @@ enum T_
 	T_pruefocr,
 	T_zupdf,
 	T_Lade_Capi_Module,
+	T_Module_geladen,
 	T_sammlecapi,
 	T_bereinigecapi,
 	T_sammlehyla,
@@ -1749,7 +1750,9 @@ char const *autofax_T[T_MAX+1][Smax]={
 	// T_zupdf
 	{"zupdf()","topdf()"},
 	// T_Lade_Capi_Module
-	{"Lade Capi-Module ...","Loading capi-modules ..."},
+	{", lade Capi-Module ...",", loading capi-modules ..."},
+	// T_Module_geladen
+	{"Module geladen:","Modules loaded:"},
 	// T_sammlecapi
 	{"sammlecapi()","collectcapi()"},
 	// T_bereinigecapi
@@ -7940,17 +7943,16 @@ int paramcl::pruefcapi()
 				uchar fcpcida=0, capida=0, capidrvda=0;
 				vector<string> rueck;
 				systemrueck("lsmod",obverb,oblog,&rueck);
-				systemrueck("lsmod",obverb,oblog,&rueck);
-				systemrueck("lsmod",obverb,oblog,&rueck);
 				for(size_t i=0;i<rueck.size();i++){
-					if (!fcpcida) {if (!rueck[i].find("fcpci")) {fcpcida=1;continue;}}
-					if (!capidrvda) {if (!rueck[i].find("capidrv")) {capidrvda=1;continue;}}
-					if (!capida) {if (!rueck[i].find("capi")) {capida=1;continue;}}
+					if (!fcpcida) {if (!rueck[i].find("fcpci ")) {fcpcida=1;continue;}}
+					if (!capidrvda) {if (!rueck[i].find("capidrv ")) {capidrvda=1;continue;}}
+					if (!capida) {if (!rueck[i].find("capi ")) {capida=1;continue;}}
 					if (fcpcida && capida && capidrvda) break;
 				} // for(size_t i=0;i<rueck.size();i++)
 				lsysen system=lsys.getsys(obverb,oblog);
 				if (!fcpcida || !capida || !capidrvda) {
-					::Log(Tx[T_Lade_Capi_Module],-1,0);
+					::Log(blaus+Tx[T_Module_geladen]+" fcpci: "+(fcpcida?"1":"0")+", capi: "+(capida?"1":"0")+", capidrv: "+(capidrvda?"1":"0")+
+					      Tx[T_Lade_Capi_Module],-1,0);
 					systemrueck("sudo modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog,0,1);
 					for(uchar ivers=0;ivers<2;ivers++) {
 						if (!fcpcida)
