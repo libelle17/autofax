@@ -2684,15 +2684,6 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 							ustring=srueck[i]+' '+ustring;
 						default: break;
 					}
-					size_t p1,p2;
-					if ((p1=ustring.find(" libgcc"))!=string::npos) {
-					 p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
-					 ustring.erase(p1,p2-p1);
-					}
-					if ((p1=ustring.find(" libselinux"))!=string::npos) {
-					 p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
-					 ustring.erase(p1,p2-p1);
-					}
 /*
 					vector<string> tok;
 					aufSplit(&tok,&srueck[i]);
@@ -2704,10 +2695,19 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				*/
 				} // 				if (obanf==1)
 			} // 			for(unsigned i=srueck.size();i;)
+			size_t p1,p2;
+			if ((p1=ustring.find(" libgcc"))!=string::npos) {
+				p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
+				ustring.erase(p1,p2-p1);
+			}
+			if ((p1=ustring.find(" libselinux"))!=string::npos) {
+				p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
+				ustring.erase(p1,p2-p1);
+			}
 			Log(Txk[T_Ins_Deinstallationsprogramm_wird_eingetragen]+violetts+udpr+ustring+schwarz,obverb,oblog);
-      anfgggf(unindt,udpr+ustring,bef);
+			anfgggf(unindt,udpr+ustring,bef);
 
-/*
+			/*
 			if (0) {
 				exit(92);
 				// Testcode
