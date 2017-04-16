@@ -60,7 +60,7 @@ Weiterhin werden über \fBhylafax\fR oder \fBCapisuite\fR angekommene Faxe in ei
 .br
 Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präferenz in den genannten Verzeichnissen, in den Datenbanktabellen oder durch Aufruf von z.B. '\fBautofax\fB', '\fBautofax -lista\fR', '\fBautofax -listf\fR' oder '\fBautofax -listi\fR' den Stand des Faxens überprüfen. 
 .SH OPTIONEN 
-Mit '\fBautofax -?\fR' werden alle Befehlszeilenoptionen sichtbar. Einige Optionen (z.B. SQL-Befehle) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum direkt editiert oder auch über '\fBautofax -rf\fR' interaktiv gepflegt werden kann.
+Mit '\fBautofax -?\fR' oder '\fBautofax -h\fR' werden die wichtigen und mit '\fBautofax -lh\fR' alle Befehlszeilenoptionen sichtbar. Einige Optionen (z.B. SQL-Befehle) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum direkt editiert oder auch über '\fBautofax -rf\fR' interaktiv gepflegt werden kann.
 .br
 \fBGebrauch: \fBautofax [-<opt>|--<longopt> [<content>]] ...\fR
 .br

@@ -143,11 +143,13 @@ by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
 
 
 <p style="margin-left:11%; margin-top: 1em">With
-&rsquo;<b>autofax -?</b>&rsquo;, all command line options
-can be seen. Some options (e.g. the sql commands) cannot bei
-set via the command line, but only via the configuration
-file, which can be edited directly or interactively by
-&rsquo;<b>autofax -rf</b>&rsquo;. <b><br>
+&rsquo;<b>autofax -?</b>&rsquo; or &rsquo;<b>autofax
+-h</b>&rsquo;, the important and with &rsquo;<b>autofax
+-lh</b>&rsquo;, all command line options can be seen. Some
+options (e.g. the sql commands) cannot bei set via the
+command line, but only via the configuration file, which can
+be edited directly or interactively by &rsquo;<b>autofax
+-rf</b>&rsquo;. <b><br>
 Usage: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
 Faxes files from directory &lt;path&gt;, which contain
@@ -1143,12 +1145,13 @@ den Stand des Faxens &uuml;berpr&uuml;fen.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">Mit
-&rsquo;<b>autofax -?</b>&rsquo; werden alle
-Befehlszeilenoptionen sichtbar. Einige Optionen (z.B.
-SQL-Befehle) k&ouml;nnen nicht &uuml;ber die
-Befehlszeile, sondern nur &uuml;ber die
-Konfigurationsdatei eingegeben werden, die wiederum direkt
-editiert oder auch &uuml;ber &rsquo;<b>autofax
+&rsquo;<b>autofax -?</b>&rsquo; oder &rsquo;<b>autofax
+-h</b>&rsquo; werden die wichtigen und mit &rsquo;<b>autofax
+-lh</b>&rsquo; alle Befehlszeilenoptionen sichtbar. Einige
+Optionen (z.B. SQL-Befehle) k&ouml;nnen nicht
+&uuml;ber die Befehlszeile, sondern nur &uuml;ber
+die Konfigurationsdatei eingegeben werden, die wiederum
+direkt editiert oder auch &uuml;ber &rsquo;<b>autofax
 -rf</b>&rsquo; interaktiv gepflegt werden kann. <b><br>
 Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
