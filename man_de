@@ -16,11 +16,13 @@
 weiterhin die versandten Faxe in einer MariaDB-Datenbank abspeichert. 
 .br
 Außerdem können von \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe automatisch nach dem Sender anhand dessen Faxnummer benannt und abgespeichert werden.
+.br
+Die Netzwerkintegration (z.B. auch in ein Windows-Netzwerk mit nur einem Linuxrechner) geschieht durch automatischen Eintrag der für autofax relevanten Verzeichnisse in einen Samba-Server. Sie könnte ergänzt werden durch eine Maske für die mariadb-Datenbank.
 .SH INSTALLATION
 .br
-Zunächst lesen Sie bitte die Kapitel 'Funktionsweise', 'Voraussetzungen' und 'Auswirkungen'. A
+Zunächst lesen Sie bitte die untenstehenden Kapitel 'Funktionsweise','Voraussetzungen','Automatisch installierte Programmpakete' und 'Auswirkungen des Programmablaufs'.
 .br
-Anschließend verbinden Sie den Rechner falls nötig mit dem Internet und rufen Sie auf:
+Anschließend verbinden Sie den Rechner falls nötig mit dem Internet und rufen Sie auf (z.B. durch Kopieren der Zeile in die Zwischenablage und Einfügen in einem Terminal):
 .br
 \fBN=autofax;P=${N}_inst.sh;cd ~;wget https://raw.githubusercontent.com/libelle17/$N/master/install.sh -O$P&&sh $P\fR
 .br
@@ -28,11 +30,9 @@ Zuletzt rufen Sie auf:
 .br
  \fBautofax\fR
 .br
-(einige Rueckfragen des Programms beantworten)
+und beantworten einige Rueckfragen des Programms.
 .br
-Der erste Programmaufruf und die erste Faxverarbeitung mit Hylafax/Capsiuite können jeweils etwas dauern und ein paar zusätzliche Eingaben erfordern.
-.br
-Voraussetzungen s.u.
+Der erste Programmaufruf und die erste Faxverarbeitung eines gesandten/empfangenen Faxes mit Hylafax/Capsiuite können jeweils etwas dauern und ein paar zusätzliche Eingaben erfordern.
 .SH GEBRAUCH
 Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft.
 .br
@@ -210,7 +210,7 @@ b) mit dem Befehl '\fBstty -F\fR' bezüglich eines Fax-Modems.
 7) Von Benutzern verwendete Verzeichnisse für zu verschickende, wartende, versandte und gescheiterte und empfangene Fax-Dateien werden überprüft und ggf. erstellt. Dabei können in der Konfiguration angegebene Dateinamensmuster berücksichtigt werden, um erfolgreich versandte Faxe je nach Dateinamen in verschiedenen Verzeichnissen zu speichern.
 .LP
 .HP 3 
-8) Das Programm trägt sich ggf. in \fBcrontab\fR ein, um auf Wunsch in (einstellbaren) Abständen aufgerufen zu werden. Um dies zu verhindern, kann entweder '\fBcronminut\fR' auf \fB0\fR eingestellt werden oder der bereits erstellte autofax-Eintrag mit \fBcrontab -e\fR mit einem vorangestellten '\fB#\fR' auskommentiert werden.
+8) Das Programm trägt sich ggf. in \fBcrontab\fR (des Benutzers root) ein, um auf Wunsch in (einstellbaren) Abständen aufgerufen zu werden. Um dies zu verhindern, kann entweder '\fBcronminut\fR' auf \fB0\fR eingestellt werden oder der bereits erstellte autofax-Eintrag mit \fBcrontab -e\fR mit einem vorangestellten '\fB#\fR' auskommentiert werden.
 .LP
 .HP 3 
 9) Das Programm überprüft, ob alle benutzerreleventen Verzeichnisse (s. 7) von Sambafreigaben in \fR/etc/samba/smb.conf\fB erfasst werden, solche werden nötigenfalls ergänzt.

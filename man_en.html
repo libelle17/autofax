@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sun Apr 16 02:07:22 2017 -->
+<!-- CreationDate: Sun Apr 16 02:38:54 2017 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -77,27 +77,34 @@ database. <br>
 Additionally, received faxes from
 <b>hylafax</b>/<b>capisuite</b> can be named automatically
 with the sender&rsquo;s name, according to his fax number,
-and stored.</p>
+and stored. <br>
+The usability within a network (may also be a windows
+network with only one linux machine) is being accomplished
+by automatic integration of all relevant directories into a
+samba server. It could be complemented by a frontend for the
+mariadb database.</p>
 
 <h2>INSTALLATION
 <a name="INSTALLATION_E"></a>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">First, read the
-chapters &rsquo;functionality&rsquo;,
-&rsquo;preconditions&rsquo; and &rsquo;implications&rsquo;
-below. Then, if connected to the internet, call: <b><br>
+<p style="margin-left:11%; margin-top: 1em">First, please
+read the chapters &rsquo;functionality&rsquo;,
+&rsquo;preconditions&rsquo;,&rsquo;automatically installed
+software packages&rsquo; and &rsquo;implications&rsquo;
+below. Then, if connected to the internet, call (e.g. by
+coying the line and pasting it into a terminal): <b><br>
 N=autofax;P=${N}_inst.sh;cd ~;wget
 https://raw.githubusercontent.com/libelle17/$N/master/install.sh
 -O$P&&sh $P</b> <br>
 At last, call: <b><br>
 autofax</b> <br>
-(answer some questions of the program) <br>
-The first execution and the first processing of a fax with
-each of hylafax and/or capisuite may take some time and need
-some additional input, respectively. <br>
-Preconditions see below.</p>
+and answer some questions of the program. <br>
+The first execution and the first processing of a
+sent/received fax with each of hylafax and/or capisuite may
+take some time and need some additional input,
+respectively.</p>
 
 <h2>USAGE
 <a name="USAGE_E"></a>
@@ -397,11 +404,11 @@ sent faxes in different directories.</p></td></tr>
 
 
 <p style="margin-top: 1em">8) The program inserts itsself
-if wanted and necessary in <b>crontab</b> in order to be
-called in adjustable intervals. To avoid this, either
-&rsquo;<b>cronminut</b>&rsquo; can be set to <b>0</b>, or
-the already generated autofax entry can be commented out
-with a leading &rsquo;<b>#</b>&rsquo;.</p></td></tr>
+if wanted and necessary in root&rsquo;s <b>crontab</b> in
+order to be called in adjustable intervals. To avoid this,
+either &rsquo;<b>cronminut</b>&rsquo; can be set to
+<b>0</b>, or the already generated autofax entry can be
+commented out with a leading &rsquo;<b>#</b>&rsquo;.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">

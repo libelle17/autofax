@@ -59,27 +59,34 @@ database. <br>
 Additionally, received faxes from
 <b>hylafax</b>/<b>capisuite</b> can be named automatically
 with the sender&rsquo;s name, according to his fax number,
-and stored.</p>
+and stored. <br>
+The usability within a network (may also be a windows
+network with only one linux machine) is being accomplished
+by automatic integration of all relevant directories into a
+samba server. It could be complemented by a frontend for the
+mariadb database.</p>
 
 <h2>INSTALLATION
 <a name="INSTALLATION_E"></a>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">First, read the
-chapters &rsquo;functionality&rsquo;,
-&rsquo;preconditions&rsquo; and &rsquo;implications&rsquo;
-below. Then, if connected to the internet, call: <b><br>
+<p style="margin-left:11%; margin-top: 1em">First, please
+read the chapters &rsquo;functionality&rsquo;,
+&rsquo;preconditions&rsquo;,&rsquo;automatically installed
+software packages&rsquo; and &rsquo;implications&rsquo;
+below. Then, if connected to the internet, call (e.g. by
+coying the line and pasting it into a terminal): <b><br>
 N=autofax;P=${N}_inst.sh;cd ~;wget
 https://raw.githubusercontent.com/libelle17/$N/master/install.sh
 -O$P&&sh $P</b> <br>
 At last, call: <b><br>
 autofax</b> <br>
-(answer some questions of the program) <br>
-The first execution and the first processing of a fax with
-each of hylafax and/or capisuite may take some time and need
-some additional input, respectively. <br>
-Preconditions see below.</p>
+and answer some questions of the program. <br>
+The first execution and the first processing of a
+sent/received fax with each of hylafax and/or capisuite may
+take some time and need some additional input,
+respectively.</p>
 
 <h2>USAGE
 <a name="USAGE_E"></a>
@@ -379,11 +386,11 @@ sent faxes in different directories.</p></td></tr>
 
 
 <p style="margin-top: 1em">8) The program inserts itsself
-if wanted and necessary in <b>crontab</b> in order to be
-called in adjustable intervals. To avoid this, either
-&rsquo;<b>cronminut</b>&rsquo; can be set to <b>0</b>, or
-the already generated autofax entry can be commented out
-with a leading &rsquo;<b>#</b>&rsquo;.</p></td></tr>
+if wanted and necessary in root&rsquo;s <b>crontab</b> in
+order to be called in adjustable intervals. To avoid this,
+either &rsquo;<b>cronminut</b>&rsquo; can be set to
+<b>0</b>, or the already generated autofax entry can be
+commented out with a leading &rsquo;<b>#</b>&rsquo;.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -1051,7 +1058,13 @@ MariaDB-Datenbank abspeichert. <br>
 Au&szlig;erdem k&ouml;nnen von
 <b>hylafax</b>/<b>capisuite</b> empfangene Faxe automatisch
 nach dem Sender anhand dessen Faxnummer benannt und
-abgespeichert werden.</p>
+abgespeichert werden. <br>
+Die Netzwerkintegration (z.B. auch in ein Windows-Netzwerk
+mit nur einem Linuxrechner) geschieht durch automatischen
+Eintrag der f&uuml;r autofax relevanten Verzeichnisse in
+einen Samba-Server. Sie k&ouml;nnte erg&auml;nzt
+werden durch eine Maske f&uuml;r die
+mariadb-Datenbank.</p>
 
 <h2>INSTALLATION
 <a name="INSTALLATION_D"></a>
@@ -1060,21 +1073,24 @@ abgespeichert werden.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">Zun&auml;chst
-lesen Sie bitte die Kapitel &rsquo;Funktionsweise&rsquo;,
-&rsquo;Voraussetzungen&rsquo; und
-&rsquo;Auswirkungen&rsquo;. A <br>
+lesen Sie bitte die untenstehenden Kapitel
+&rsquo;Funktionsweise&rsquo;,&rsquo;Voraussetzungen&rsquo;,&rsquo;Automatisch
+installierte Programmpakete&rsquo; und &rsquo;Auswirkungen
+des Programmablaufs&rsquo;. <br>
 Anschlie&szlig;end verbinden Sie den Rechner falls
-n&ouml;tig mit dem Internet und rufen Sie auf: <b><br>
+n&ouml;tig mit dem Internet und rufen Sie auf (z.B.
+durch Kopieren der Zeile in die Zwischenablage und
+Einf&uuml;gen in einem Terminal): <b><br>
 N=autofax;P=${N}_inst.sh;cd ~;wget
 https://raw.githubusercontent.com/libelle17/$N/master/install.sh
 -O$P&&sh $P</b> <br>
 Zuletzt rufen Sie auf: <b><br>
 autofax</b> <br>
-(einige Rueckfragen des Programms beantworten) <br>
-Der erste Programmaufruf und die erste Faxverarbeitung mit
-Hylafax/Capsiuite k&ouml;nnen jeweils etwas dauern und
-ein paar zus&auml;tzliche Eingaben erfordern. <br>
-Voraussetzungen s.u.</p>
+und beantworten einige Rueckfragen des Programms. <br>
+Der erste Programmaufruf und die erste Faxverarbeitung eines
+gesandten/empfangenen Faxes mit Hylafax/Capsiuite
+k&ouml;nnen jeweils etwas dauern und ein paar
+zus&auml;tzliche Eingaben erfordern.</p>
 
 <h2>GEBRAUCH
 <a name="GEBRAUCH_D"></a>
@@ -1397,9 +1413,9 @@ verschiedenen Verzeichnissen zu speichern.</p></td></tr>
 
 
 <p style="margin-top: 1em">8) Das Programm tr&auml;gt
-sich ggf. in <b>crontab</b> ein, um auf Wunsch in
-(einstellbaren) Abst&auml;nden aufgerufen zu werden. Um
-dies zu verhindern, kann entweder
+sich ggf. in <b>crontab</b> (des Benutzers root) ein, um auf
+Wunsch in (einstellbaren) Abst&auml;nden aufgerufen zu
+werden. Um dies zu verhindern, kann entweder
 &rsquo;<b>cronminut</b>&rsquo; auf <b>0</b> eingestellt
 werden oder der bereits erstellte autofax-Eintrag mit
 <b>crontab -e</b> mit einem vorangestellten
