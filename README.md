@@ -539,8 +539,9 @@ another until the fax number is found.</p></td></tr>
 
 
 <p style="margin-top: 1em">Such sql commands shall deliver
-2 fields, whose contents, separated by a comma, will be used
-to name to received faxes. When applied, within the sql
+(at least) 2 fields (with a user defined sense), whose
+contents, separated by a comma, will be used by autofax to
+name the received faxes. Before applied, within the sql
 commands the string &rsquo;&&faxnr&&&rsquo;
 will be replaced by the current fax number. Example:</p></td></tr>
 <tr valign="top" align="left">
@@ -553,7 +554,7 @@ will be replaced by the current fax number. Example:</p></td></tr>
 
 
 <p style="margin-top: 1em">select concat(haname,&rsquo;,
-&rsquo;,ort,&rsquo;, &rsquo;,kvnu) name, zulg, fax1k from
+&rsquo;,ort,&rsquo;, &rsquo;,kvnu) name, zulg from
 kvaerzte.hae where
 concat(if(mid(fax1k,1,1)=&rsquo;0&rsquo;,&rsquo;&rsquo;,&rsquo;08131&rsquo;),
 replace(replace(replace(replace(fax1k,&rsquo;
@@ -605,7 +606,10 @@ Software</b>: The program was adjusted to an installation of
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
 Mint &gt;= 18 or Fedora &gt;= 24 with standard options.
 System D has to be installed, i.e., &quot;systemctl&quot;
-has to run.</p>
+has to run. One of the packet managers rpm or dpkg and apt,
+dnf, yum or zypper has to be installed, respectively, as is
+the case per default in the mentioned linux
+distributions.</p>
 
 <h2>AUTOMATICALLY INSTALLED SOFTWARE PACKAGES
 <a name="AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_E"></a>
@@ -958,7 +962,7 @@ samba shares and firewall exceptions are deleted.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Please report
 any errors with the word &rsquo;autofax&rsquo; included in
-the headline. <br>
+the email headline. <br>
 Please report as well, if different hard- or software yields
 a requirement for a program modification.</p>
 
@@ -1559,10 +1563,11 @@ Empfangsverzeichnis gestellt.</p></td></tr>
 <td width="89%">
 
 
-<p style="margin-top: 1em">Solche SQL-Befehle sollen zwei
-Ergebnisfelder liefern, deren Inhalt dann, durch ein Komma
-getrennt, zur Benennung eines empfangenen Faxes verwendet
-werden. Bei der Anwendung des SQL-Befehls wird die
+<p style="margin-top: 1em">Solche SQL-Befehle sollen
+(mindestens) zwei Ergebnisfelder (mit benutzerdefinierter
+Bedeutung) liefern, deren Inhalt dann, durch ein Komma
+getrennt, von autofax zur Benennung eines empfangenen Faxes
+verwendet werden. Vor der Anwendung des SQL-Befehls wird die
 Zeichenfolge &rsquo;&&faxnr&&&rsquo; zur
 aktuellen Faxnummer erweitert. Beispiel fuer einen solchen
 SQL-Befehl:</p> </td></tr>
@@ -1576,7 +1581,7 @@ SQL-Befehl:</p> </td></tr>
 
 
 <p style="margin-top: 1em">select concat(haname,&rsquo;,
-&rsquo;,ort,&rsquo;, &rsquo;,kvnu) name, zulg, fax1k from
+&rsquo;,ort,&rsquo;, &rsquo;,kvnu) name, zulg from
 kvaerzte.hae where
 concat(if(mid(fax1k,1,1)=&rsquo;0&rsquo;,&rsquo;&rsquo;,&rsquo;08131&rsquo;),
 replace(replace(replace(replace(fax1k,&rsquo;
@@ -1631,7 +1636,10 @@ Software</b>: Das Programm wurde auf eine Installation von
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
 Mint &gt;= 18 oder Fedora &gt;= 24 mit jeweils
 Standardoptionen abgestimmt. System D muss installiert sein
-bzw. systemctl muss laufen.</p>
+bzw. systemctl muss laufen. Jeweils einer der Paktmanager
+rpm oder dpkg sowie apt, dnf, yum oder zypper muss
+installiert sein, wie in den genannten Linuxdistributionen
+standardm&auml;&szlig;ig der Fall.</p>
 
 <h2>AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE
 <a name="AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE_D"></a>
@@ -1996,8 +2004,8 @@ Firewallausnahmen wieder gel&ouml;scht.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">Fehler bitte
-mit u.a. dem Wort &rsquo;autofax&rsquo; in der Ueberschrift
-melden. <br>
+mit u.a. dem Wort &rsquo;autofax&rsquo; in der
+Email-Ueberschrift melden. <br>
 Bitte auch melden, wenn sich &Auml;nderungsbedarf durch
 andere Hard- bzw. Software ergeben.</p>
 

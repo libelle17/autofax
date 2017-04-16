@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sun Apr 16 01:31:04 2017 -->
+<!-- CreationDate: Sun Apr 16 01:58:27 2017 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -557,8 +557,9 @@ another until the fax number is found.</p></td></tr>
 
 
 <p style="margin-top: 1em">Such sql commands shall deliver
-2 fields, whose contents, separated by a comma, will be used
-to name to received faxes. When applied, within the sql
+(at least) 2 fields (with a user defined sense), whose
+contents, separated by a comma, will be used by autofax to
+name the received faxes. Before applied, within the sql
 commands the string &rsquo;&&faxnr&&&rsquo;
 will be replaced by the current fax number. Example:</p></td></tr>
 <tr valign="top" align="left">
@@ -571,7 +572,7 @@ will be replaced by the current fax number. Example:</p></td></tr>
 
 
 <p style="margin-top: 1em">select concat(haname,&rsquo;,
-&rsquo;,ort,&rsquo;, &rsquo;,kvnu) name, zulg, fax1k from
+&rsquo;,ort,&rsquo;, &rsquo;,kvnu) name, zulg from
 kvaerzte.hae where
 concat(if(mid(fax1k,1,1)=&rsquo;0&rsquo;,&rsquo;&rsquo;,&rsquo;08131&rsquo;),
 replace(replace(replace(replace(fax1k,&rsquo;
@@ -623,7 +624,10 @@ Software</b>: The program was adjusted to an installation of
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
 Mint &gt;= 18 or Fedora &gt;= 24 with standard options.
 System D has to be installed, i.e., &quot;systemctl&quot;
-has to run.</p>
+has to run. One of the packet managers rpm or dpkg and apt,
+dnf, yum or zypper has to be installed, respectively, as is
+the case per default in the mentioned linux
+distributions.</p>
 
 <h2>AUTOMATICALLY INSTALLED SOFTWARE PACKAGES
 <a name="AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_E"></a>
@@ -976,7 +980,7 @@ samba shares and firewall exceptions are deleted.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Please report
 any errors with the word &rsquo;autofax&rsquo; included in
-the headline. <br>
+the email headline. <br>
 Please report as well, if different hard- or software yields
 a requirement for a program modification.</p>
 
