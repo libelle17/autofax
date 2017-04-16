@@ -2903,6 +2903,7 @@ void servc::semodpruef(int obverb/*=0*/,int oblog/*=0*/)
 		}
 		if (obse) {
 			linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
+			// falls "Nothing to do" zurueckgemeldet wird muesste sudo dnf -y reinstall p.. aufgerufen werden fuer das Deinstallationsprogramm
 			systemrueck("sudo setenforce 0",obverb,oblog);
 			restart(obverb,oblog);
 			const string selocal=sname+"_selocal";
