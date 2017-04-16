@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "16.04.17" "Version 0.43256" "\fBautofax\fR man page"
+.TH man 1 "17.04.17" "Version 0.43257" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -380,6 +380,10 @@ Call \fBmake uninstall\fR.
 Then the installed \fBautofax\fR will be deleted and the script \fBuninstallinv\fR will be executed in reverse order which has been generated during the installation and execution of autofax.
 .br
 Thereby additionally installed program packets, permissions, samba shares and firewall exceptions are deleted.  
+.br
+Configuration files, data, and system relevant programs like libgcc and selinux will not be deleted.
+.br
+Error messages originate mostly in efforts to delete a program already missing and can then be ignored.
 
 .SH ERRORS
 Please report any errors with the word 'autofax' included in the email headline. 

@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43256) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43257) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -963,7 +963,11 @@ script <b>uninstallinv</b> will be executed in reverse order
 which has been generated during the installation and
 execution of autofax. <br>
 Thereby additionally installed program packets, permissions,
-samba shares and firewall exceptions are deleted.</p>
+samba shares and firewall exceptions are deleted. <br>
+Configuration files, data, and system relevant programs like
+libgcc and selinux will not be deleted. <br>
+Error messages originate mostly in efforts to delete a
+program already missing and can then be ignored.</p>
 
 <h2>ERRORS
 <a name="ERRORS_E"></a>
@@ -998,7 +1002,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43256) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43257) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -2016,7 +2020,13 @@ Installation und beim Aufruf von autofax erstellt wurde.
 Dadurch werden zus&auml;tzlich installierte
 Programmpakete, zus&auml;tzlich erteilte Berechtigungen,
 f&uuml;r autofax eingerichtete Sambafreigaben und
-Firewallausnahmen wieder gel&ouml;scht.</p>
+Firewallausnahmen wieder gel&ouml;scht. <br>
+Auf die Deinstallation der Konfigurationsdateien, der
+angesammelten Daten und systemrelevanter Programme wie
+libgcc und selinux wird dabei verzichtet. <br>
+Etwaige Fehlermeldungen beziehen sich meist auf einen
+Deinstallationsversuch bereits entfernter Programme und
+k&ouml;nnen ignoriert werden.</p>
 
 <h2>FEHLER
 <a name="FEHLER_D"></a>

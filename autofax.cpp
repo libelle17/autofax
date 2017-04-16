@@ -4241,30 +4241,37 @@ void paramcl::pruefsamba()
   uchar obfw=0; // ob SuSEfirewall bearbeitet werden soll
 	// <<violett<<"Stelle 0"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
 	linst.doggfinst("libwbclient0",obverb,oblog);
-	int obsfehlt=linst.obfehlt("samba",obverb,oblog);
-	if (obsfehlt) {
-		if (!nrzf) {
-			obinst=Tippob(Tx[T_Samba_muesste_installiert_werden_soll_ich],Tx[T_j_af]);
-			if (obinst)
-				linst.doinst("samba",obverb,oblog);
-			//        smbrestart=0;
-		} // if (!nrzf) 
-	} // 	if (obsfehlt)
-  for(uchar iru=0;iru<2;iru++) {
-		struct stat sstat={0};
-		if (!(conffehlt=lstat(smbdatei,&sstat))) break;
-    if (iru) break;
-    pruefverz("/etc/samba",obverb,oblog,0,0);
-    kopier(quelle,smbdatei,obverb,oblog);
-  } //   for(uchar iru=0;iru<2;iru++)
-  int dienstzahl=2;
   servc smb("smb","smbd");
   servc smbd("smbd","smbd");
   servc nmb("nmb","nmbd");
   servc nmbd("nmbd","nmbd");
-  if (smb.obsvfeh(obverb-1,oblog)) if (smbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
-  if (nmb.obsvfeh(obverb-1,oblog)) if (nmbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
-  //  <<rot<<"dienstzahl: "<<dienstzahl<<endl;
+  int dienstzahl=2;
+	int obsfehlt=linst.obfehlt("samba",obverb,oblog);
+	for(int iru=0;iru<2;iru++) {
+		if (obsfehlt) {
+			if (!nrzf) {
+				obinst=Tippob(Tx[T_Samba_muesste_installiert_werden_soll_ich],Tx[T_j_af]);
+				if (obinst)
+					linst.doinst("samba",obverb,oblog);
+				//        smbrestart=0;
+			} // if (!nrzf) 
+		} // 	if (obsfehlt)
+		for(uchar iru=0;iru<2;iru++) {
+			struct stat sstat={0};
+			if (!(conffehlt=lstat(smbdatei,&sstat))) break;
+			if (iru) break;
+			pruefverz("/etc/samba",obverb,oblog,0,0);
+			kopier(quelle,smbdatei,obverb,oblog);
+		} //   for(uchar iru=0;iru<2;iru++)
+		if (smb.obsvfeh(obverb-1,oblog)) if (smbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
+		if (nmb.obsvfeh(obverb-1,oblog)) if (nmbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
+		if (dienstzahl==2 ||(smb.svfeh!=6 && smbd.svfeh!=6 && nmb.svfeh!=6 && nmbd.svfeh!=6)) { // wenn keine exec-Datei fehlt
+		  break;
+		} else {
+		  obsfehlt=1;
+		} // if (dienstzahl==2 || ...
+		//  <<rot<<"Dienstzahl: "<<dienstzahl<<endl;
+	} // 	for(int iru=0;iru<2;iru++)
 	if (dienstzahl<2||conffehlt) {
 		for(int aru=0;aru<2;aru++) {
 			if (!smb.svfeh||!smbd.svfeh) {
