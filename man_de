@@ -36,7 +36,7 @@ Der erste Programmaufruf und die erste Faxverarbeitung eines gesandten/empfangen
 .SH GEBRAUCH
 Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft.
 .br
-Es existiert dann ein Verzeichnis z.B. '\fBzufaxen\fR', in das z.B. Benutzer im Netzwerk (z.B. über eine Samba-Freigabe) zu faxende Dateien stellen können wie z.B. 
+Es existiert dann ein Verzeichnis z.B. '\fBzufaxen\fR', in das z.B. Benutzer im Netzwerk (z.B. über die o.g. Samba-Freigabe) zu faxende Dateien stellen können wie z.B. 
 .br
 "\fBArztbericht zu Franz Krank an Dr. Gesund und Franz Krank an Fax 099 987654321 und 088 887654321.doc\fR" (es könnte auch z.B. eine *.xls, eine *.jpg, eine *.tif, eine *.txt oder eine *.pdf-Datei sein; die Passage 'an Dr. Gesund und Franz Krank ' ist optional für die spätere Zordnung der Faxnummer(n) in der Datenbank, sie darf auch fehlen).
 .br
@@ -54,7 +54,7 @@ Diese werden dann automatisch an \fBhylafax\fR oder \fBCapisuite\fR weitergeleit
 .br
 Gleichzeitig werden sie aus '\fBzufaxen\fR' in das Warteverzeichnis, z.B. '\fBwarteauffax\fR' verschoben und in die Spooltabelle \fBspooltab\fR eingetragen.
 .br
-Bei jedem Aufruf überprüft autofax den Status von \fBhylafax\fR und/oder \fBCapisuite\fR. Der Abschluss des Faxvorgangs dort hat zur Folge, dass autofax die Quelldateien (also hier die o.g. .doc- und .pdf-Dateien) aus dem Warteverzeichnis in ein oder mehrere alternative Archivverzeichnisse oder ein Verzeichnis für gescheiteterte Faxe ablegt und den Datenbankeintrag von '\fBspooltab\fR' in die Archivtabelle '\fBouta\fR' verschiebt.
+Bei jedem Aufruf überprüft autofax den Status von \fBhylafax\fR und/oder \fBCapisuite\fR. Der Abschluss eines Faxvorgangs dort hat zur Folge, dass autofax die Quelldateien (also hier die o.g. .doc- und .pdf-Dateien) aus dem Warteverzeichnis in ein oder mehrere alternative Archivverzeichnisse oder ein Verzeichnis für gescheiteterte Faxe ablegt und den Datenbankeintrag von '\fBspooltab\fR' in die Archivtabelle '\fBouta\fR' verschiebt.
 .br
 Weiterhin werden über \fBhylafax\fR oder \fBCapisuite\fR angekommene Faxe in ein Empfangsverzeichnis kopiert und ggf. nach dem Sender benannt. Hierzu werden, falls angegeben, konfigurierbare SQL-Befehle verwendet, die in frei festlegbarer Zahl der Reihe nach so lange aufgerufen werden, bis einer einen Datensatz zu der Faxnummer findet.
 .br

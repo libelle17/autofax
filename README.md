@@ -97,8 +97,9 @@ respectively.</p>
 program should have installed itsself after a single call
 (see above) in a self-running way. <br>
 Then a directory e.g. &rsquo;<b>tobefaxed</b>&rsquo; exists,
-in which e.g. users in a network (e.g. via a samba share)
-can deposit files to be faxed, e.g. <br>
+in which e.g. users in a network (e.g. via the above
+mentioned samba share) can deposit files to be faxed, e.g.
+<br>
 &quot;<b>Medical report on Frank Ill to Dr. Healthy and
 Frank Ill to fax 099 987654321 and 088
 887654321.doc</b>&quot; (it could also be e.g. an *.xls, a
@@ -1103,8 +1104,8 @@ eingerichtet haben, dass es von selbst weiter
 l&auml;uft. <br>
 Es existiert dann ein Verzeichnis z.B.
 &rsquo;<b>zufaxen</b>&rsquo;, in das z.B. Benutzer im
-Netzwerk (z.B. &uuml;ber eine Samba-Freigabe) zu faxende
-Dateien stellen k&ouml;nnen wie z.B. <br>
+Netzwerk (z.B. &uuml;ber die o.g. Samba-Freigabe) zu
+faxende Dateien stellen k&ouml;nnen wie z.B. <br>
 &quot;<b>Arztbericht zu Franz Krank an Dr. Gesund und Franz
 Krank an Fax 099 987654321 und 088 887654321.doc</b>&quot;
 (es k&ouml;nnte auch z.B. eine *.xls, eine *.jpg, eine
@@ -1133,7 +1134,7 @@ verschoben und in die Spooltabelle <b>spooltab</b>
 eingetragen. <br>
 Bei jedem Aufruf &uuml;berpr&uuml;ft autofax den
 Status von <b>hylafax</b> und/oder <b>Capisuite</b>. Der
-Abschluss des Faxvorgangs dort hat zur Folge, dass autofax
+Abschluss eines Faxvorgangs dort hat zur Folge, dass autofax
 die Quelldateien (also hier die o.g. .doc- und .pdf-Dateien)
 aus dem Warteverzeichnis in ein oder mehrere alternative
 Archivverzeichnisse oder ein Verzeichnis f&uuml;r

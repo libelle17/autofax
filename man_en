@@ -34,7 +34,7 @@ The first execution and the first processing of a sent/received fax with each of
 .SH USAGE
 Ideally, the program should have installed itsself after a single call (see above) in a self-running way.
 .br
-Then a directory e.g. '\fBtobefaxed\fR' exists, in which e.g. users in a network (e.g. via a samba share) can deposit files to be faxed, e.g. 
+Then a directory e.g. '\fBtobefaxed\fR' exists, in which e.g. users in a network (e.g. via the above mentioned samba share) can deposit files to be faxed, e.g. 
 .br
 "\fBMedical report on Frank Ill to Dr. Healthy and Frank Ill to fax 099 987654321 and 088 887654321.doc\fR" (it could also be e.g. an *.xls, a *.jpg, a *.tif, a *.txt, a *pdf file; the section ' to Dr. Healthy and Frank Ill' is optional for the later allocation of the fax number(s) in the database, it may also be obmitted).
 .br
