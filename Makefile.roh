@@ -223,13 +223,11 @@ endif
 #	@which $(CCName)>$(KR)||{ $(REPOS)$(foreach PG,$(COMP),$(call si_unins,$(PG),$(PG);$(urepo)))}
 	@./configure inst "$(CCName)" "$(COMP)"
 #	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(call iunins,$(libmcd))fi
-	-@test -f /usr/include/mysql/mysql.h>$(KR)&&\
-	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)|| \
-	./configure inst _ "$(libmcd)" verbose
 #	$(call i1unin,$(libmcd))
-	-@test -f /usr/include/mysql/mysql.h>$(KR)&&\
-	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)|| \
-	./configure inst _ "$(libmc1d)" verbose
+	-@for r in 1 2;do [ $$r = 1 ]&&{ lc="$(libmcd)";true;}||lc="$(libmc1d)";\
+	[ -f /usr/include/mysql/mysql.h>$(KR) ]&&\
+	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
+	./configure inst _ "$$lc" verbose; done
 # $(call i1unin,$(libmc1d))
 #	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\necho $(UPR)$(pgd)\n'>>$(UNF);$(slc);};
 #	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(call i1unin,$(pgd))$(slc);};
