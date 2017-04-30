@@ -38,7 +38,6 @@ extern const string& unindt; // instvz+"uninstallinv"
 extern const int sfeh[];
 string* loeschefarbenaus(string *zwi);
 int Log(const string& text,const short screen=1,const short file=1,const bool oberr=0,const short klobverb=0);
-void anfgggf(const string& datei, const string& inhalt, const string& comment);
 
 #ifdef _MSC_VER
 #define fileno _fileno // sonst Warnung posix deprecated
@@ -366,6 +365,7 @@ long cmpmem( char* feld, const char* search, int len_feld); // , int len_search
 // fuer lies (Konfigurationsdatei lesen)
 char* ltoan(long value, int base=10, uchar obtz=0, uchar minstel=0); 
 char* ltoa_(long value, char* result, int base); 
+void anfgggf(const string& datei, const string& inhalt, const string& comment, uchar obeinzeln=0, int obverb=0, int oblog=0);
 
 double progvers(const string& prog,int obverb, int oblog);
 int touch(const std::string& pathname,int obverb=0,int oblog=0);
@@ -622,10 +622,10 @@ int kuerzelogdatei(const char* logdatei,int obverb);
 #ifdef notwendig
 void kopierm(const string *quelle, const string *ziel);
 #endif
-void aufSplit(vector<string> *tokens, const string *text, char sep=' ', bool nichtmehrfach=1);
+void aufSplit(vector<string> *tokens, const string& text, char sep=' ', bool nichtmehrfach=1);
 void aufSplit(vector<string> *tokens, const char *text, char sep=' ', bool nichtmehrfach=1);
-void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach=1,int obverb=0,int oblog=0);
-void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtmehrfach=1);
+void aufiSplit(vector<string> *tokens, const string& text, const char* sep,bool nichtmehrfach=1,int obverb=0,int oblog=0);
+void aufSplit(vector<string> *tokens, const string& text, char* sep,bool nichtmehrfach=1);
 void getstammext(const string *const ganz, string *stamm, string *exten);
 // int cpplies(string fname,cppSchluess *conf,size_t csize,vector<string> *rest=0,char tz='=',short obverb=0);
 string XOR(const string& value, const string& key);

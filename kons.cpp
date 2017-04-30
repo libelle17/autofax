@@ -1130,20 +1130,20 @@ int touch(const string& pfad,int obverb/*=0*/,int oblog/*=0*/)
 void aufSplit(vector<string> *tokens, const char *text, char sep/*=' '*/, bool nichtmehrfach/*=1*/)
 {
   const string texts=text;
-  aufSplit(tokens,&texts,sep,nichtmehrfach);
+  aufSplit(tokens,texts,sep,nichtmehrfach);
 } // void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach)
 
 
-void aufSplit(vector<string> *tokens, const string *text, char sep/*=' '*/,bool nichtmehrfach/*=1*/) 
+void aufSplit(vector<string> *tokens, const string& text, char sep/*=' '*/,bool nichtmehrfach/*=1*/) 
 {
   int start = 0, end = 0;
   tokens->clear();
-  while ((end = text->find(sep, start)) != (int)string::npos) {
-    if (nichtmehrfach || end!=start) tokens->push_back(text->substr(start, end - start));
+  while ((end = text.find(sep, start)) != (int)string::npos) {
+    if (nichtmehrfach || end!=start) tokens->push_back(text.substr(start, end - start));
     start = end + 1;
   }
-  tokens->push_back(text->substr(start));
-} // void aufSplit(vector<string> *tokens, const string *text, char sep,bool nichtmehrfach) 
+  tokens->push_back(text.substr(start));
+} // void aufSplit(vector<string> *tokens, const string& text, char sep,bool nichtmehrfach) 
 
 size_t irfind(const string& wo, const string& was)
 {
@@ -1153,22 +1153,22 @@ size_t irfind(const string& wo, const string& was)
  return wou.rfind(wasu);
 }
 
-void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach/*=1*/,int obverb/*=0*/,int oblog/*=0*/) 
+void aufiSplit(vector<string> *tokens, const string& text, const char* sep,bool nichtmehrfach/*=1*/,int obverb/*=0*/,int oblog/*=0*/) 
 {
 	size_t start=0, end=0,len=strlen(sep),k=0,l2;
 	char* usep = new char[len];
 	if (obverb)
-		::Log(string(Txk[T_trenne])+"'"+blaus+*text+schwarz+"'"+Txk[T_bei]+"'"+blau+sep+schwarz+"':",obverb,oblog);
+		::Log(string(Txk[T_trenne])+"'"+blaus+text+schwarz+"'"+Txk[T_bei]+"'"+blau+sep+schwarz+"':",obverb,oblog);
 	strcpy(usep,sep);
 	for (char *p=usep ; *p; ++p) *p = toupper(*p);
 	string utext;
-	transform(text->begin(),text->end(),std::back_inserter(utext),::toupper);
+	transform(text.begin(),text.end(),std::back_inserter(utext),::toupper);
 	tokens->clear();
 	while (1) {
 		end=utext.find(usep,start);
 		if (end!=string::npos) l2=end-start; else l2=string::npos;
 		if (end==string::npos || nichtmehrfach || l2) {
-			tokens->push_back(text->substr(start,l2));
+			tokens->push_back(text.substr(start,l2));
 			if (obverb)	
 				::Log(tuerkiss+" tok["+ltoan(k)+"]: "+tokens->at(k)+schwarz,obverb,oblog);
 			k++;
@@ -1179,20 +1179,20 @@ void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool 
 		start=end+len;
 	} // 	while (1)
 	delete usep;
-} // void aufiSplit(vector<string> *tokens, const string *text, const char* sep,bool nichtmehrfach) 
+} // void aufiSplit(vector<string> *tokens, const string& text, const char* sep,bool nichtmehrfach) 
 
 
-void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtmehrfach) 
+void aufSplit(vector<string> *tokens, const string& text, char* sep,bool nichtmehrfach) 
 {
   int start = 0, end = 0;
   int len = strlen(sep);
   tokens->clear();
-  while ((end = text->find(sep, start)) != (int)string::npos) {
-    if (nichtmehrfach || end!=start) tokens->push_back(text->substr(start, end - start));
+  while ((end = text.find(sep, start)) != (int)string::npos) {
+    if (nichtmehrfach || end!=start) tokens->push_back(text.substr(start, end - start));
     start = end + len;
   }
-  tokens->push_back(text->substr(start));
-} // void aufSplit(vector<string> *tokens, const string *text, char* sep,bool nichtmehrfach) 
+  tokens->push_back(text.substr(start));
+} // void aufSplit(vector<string> *tokens, const string& text, char* sep,bool nichtmehrfach) 
 
 // Anfuehrungszeichen weg
 string* anfzweg(string& quel) {
@@ -1863,20 +1863,19 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
     if (obverb<=1)
       hcmd+=" >/dev/null 2>&1";
   } //   if (verbergen==1 || (obfind && (obverb<1 || strcmp(curruser(),"root")))) else iff
-  string *czg=&hcmd;
 	if (obincron) {
     vector<string> tok;
-    aufSplit(&tok,czg);
+    aufSplit(&tok,hcmd);
 		if (tok.size()>0) {
-		 if (obprogda(tok[0],obverb,oblog,czg)) {
+		 if (obprogda(tok[0],obverb,oblog,&hcmd)) {
 			for(unsigned j=1;j<tok.size();j++) {
-			 *czg+=' ';
-			 *czg+=tok[j];
+			 hcmd+=' ';
+			 hcmd+=tok[j];
 			} // 			for(unsigned j=1;j<tok.size();j++)
-		 } // 		 if (obprogda(tok[0],obverb,oblog,czg))
+		 } // 		 if (obprogda(tok[0],obverb,oblog,&hcmd))
 		} // 		if (tok.size()>0)
 	} // 	if (obincron)
-  // "obfind: "<<(int)obfind<<", obverb: "<<(int)obverb<<", curruser(): "<<curruser()<<", '"<<violett<<*czg<<schwarz<<"'"<<endl;
+  // "obfind: "<<(int)obfind<<", obverb: "<<(int)obverb<<", curruser(): "<<curruser()<<", '"<<violett<<hcmd<<schwarz<<"'"<<endl;
   string meld(Txk[T_Rueckmeldung]);
   string aktues;
   if (ueberschr.empty()) { 
@@ -1889,14 +1888,14 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
   } else {
     aktues=ueberschr;
   } //   if (ueberschr.empty())
-  Log(aktues+": "+blau+czg->substr(0,getcols()-7-aktues.length())+schwarz+" ...",obverb>0?-1:0,oblog);
+  Log(aktues+": "+blau+hcmd.substr(0,getcols()-7-aktues.length())+schwarz+" ...",obverb>0?-1:0,oblog);
   if (!rueck) if (obergebnisanzeig) {neurueck=1;rueck=new vector<string>;}
   // #define systemrueckprofiler
 #ifdef systemrueckprofiler
   perfcl prf("systemrueck");
 #endif
   if (rueck) {
-    if (FILE* pipe = popen(czg->c_str(), "r")) {
+    if (FILE* pipe = popen(hcmd.c_str(), "r")) {
 #ifdef systemrueckprofiler
       prf.ausgeb();
 #endif
@@ -1937,7 +1936,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
       }
 #ifdef systemrueckprofiler
       Log(rots+"Rueck.size: "+ltoan(rueck->size())+", obergebnisanzeig: "+(obergebnisanzeig?"ja":"nein"),1,oblog);
-      Log(*czg,1,oblog)
+      Log(hcmd,1,oblog)
         prf.ausgab1000("vor pclose");
 #endif
       if (obfind) {
@@ -1948,11 +1947,11 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
       prf.ausgab1000("nach pclose");
 #endif
     } else {
-      perror((string("popen() ")+Txk[T_fehlgeschlagen_bei]+*czg).c_str());
+      perror((string("popen() ")+Txk[T_fehlgeschlagen_bei]+hcmd).c_str());
       erg=1;
-    } //     if (FILE* pipe = popen(czg->c_str(), "r"))  else 
+    } //     if (FILE* pipe = popen(hcmd.c_str(), "r"))  else 
   } else {
-    erg= system(czg->c_str());
+    erg= system(hcmd.c_str());
   } // if (rueck) else
 #ifdef systemrueckprofiler
   prf.ausgab1000("vor weiter");
@@ -2000,7 +1999,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 #ifdef systemrueckprofiler
     prf.ausgab1000("vor log");
 #endif
-    Log(aktues+": "+blau+*czg+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz,obverb>0?obverb:0,oblog);
+    Log(aktues+": "+blau+hcmd+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz,obverb>0?obverb:0,oblog);
   } // if (obverb>0 || oblog)
   if (obergebnisanzeig) if (rueck->size()) 
     Log(meld,obverb>1||(ob0heissterfolg && erg && obergebnisanzeig>1),oblog);
@@ -2063,7 +2062,7 @@ int setfaclggf(const string& datei,const binaer obunter,const int mod/*=4*/,ucha
 						const string sich=base_name(datei)+"."+base_name(meinpfad())+".perm";
 						const string bef="sudo sh -c 'cd \""+dir_name(datei)+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(datei)+"\">\""+sich+"\"'";
 						systemrueck(bef,obverb,oblog);
-						anfgggf(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'",bef);
+						anfgggf(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'",bef,0,obverb,oblog);
 					} // 					if (faclbak)
 					systemrueck(string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'",obverb,oblog);
           if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
@@ -2108,7 +2107,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 		if (fehler) {
 		  const string bef="mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'";
 			fehler=systemrueck(bef,obverb,oblog);
-			anfgggf(unindt,"sudo rmdir '"+verz+"'",bef);
+			anfgggf(unindt,"sudo rmdir '"+verz+"'",bef,0,obverb,oblog);
 		} //     if (fehler)
 		//    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
 		if (obmitfacl) setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
@@ -2705,7 +2704,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				ustring.erase(p1,p2-p1);
 			}
 			Log(Txk[T_Ins_Deinstallationsprogramm_wird_eingetragen]+violetts+udpr+ustring+schwarz,obverb,oblog);
-			anfgggf(unindt,udpr+ustring,bef);
+			anfgggf(unindt,udpr+ustring,bef,1,obverb,oblog);
 
 			/*
 			if (0) {
@@ -2777,17 +2776,36 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 } // uchar linst_cl::doinst(const string& prog,int obverb,int oblog) 
 
 // fuege an, wenn noch nicht enthalten
-void anfgggf(const string& datei, const string& inhalt, const string& comment)
+void anfgggf(const string& datei, const string& inhalt, const string& comment,uchar obeinzeln/*=0*/, int obverb/*=0*/, int oblog/*=0*/)
 {
+	Log(violetts+"anfgggf: '"+inhalt+"'",obverb,oblog);
+	svec wvec;
 	uchar obda=0;
+	if (obeinzeln){
+		aufSplit(&wvec,inhalt); 
+		for(size_t wind=0;wind<wvec.size();wind++) {
+			wvec[wind]=" "+wvec[wind]+" ";
+		}
+	}
 	mdatei uni0(datei,ios::in,0);
 	if (uni0.is_open()) {
 		string zeile;
 		while (getline(uni0,zeile)) {
-			if (zeile.find(inhalt)!=string::npos) {
+			if (obeinzeln){
 				obda=1;
-				break;
-			} // if (zeile.find(inhalt)!=string::npos)
+				for(size_t wind=0;wind<wvec.size();wind++) {
+					if (zeile.find(wvec[wind])==string::npos) {
+						obda=0;
+						break;
+					}
+				}
+				if (obda) break;
+			} else {
+				if (zeile.find(inhalt)!=string::npos) {
+					obda=1;
+					break;
+				} // if (zeile.find(inhalt)!=string::npos)
+			} // if (obeinzeln) else
 		} // 					while (getline(uni0,zeile))
 	} // 				if (uni0.is_open())
 	if (!obda) {
@@ -2916,7 +2934,7 @@ void servc::semodpruef(int obverb/*=0*/,int oblog/*=0*/)
 				linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
 				const string bef="sudo semodule -i \""+mod+"\"";
 				systemrueck(bef,obverb,oblog);
-				anfgggf(unindt,"sudo semodule -r \""+mod+"\"",bef);
+				anfgggf(unindt,"sudo semodule -r \""+mod+"\"",bef,0,obverb,oblog);
 			} // 					if (!lstat((instvz+vtz+selocal+".pp").c_str(),&sstat)
 		}  // if (obse)
 	} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
@@ -2930,7 +2948,7 @@ void servc::semanpruef(int obverb/*=0*/,int oblog/*=0*/,const string& mod/*="get
 		if (obprogda("sestatus",obverb,oblog,&sepfad)) {
 		  const string bef="sudo semodule -l|grep permissive_"+mod+" >/dev/null||sudo semanage permissive -a "+mod;
 			systemrueck(bef,obverb,oblog);
-			anfgggf(unindt,"sudo semanage permissive -d "+mod,bef);
+			anfgggf(unindt,"sudo semanage permissive -d "+mod,bef,0,obverb,oblog);
 		} // 	if (obprogda("sestatus",obverb,oblog,&sepfad))
 	} // 		if (ename.find("faxgetty")!=string::npos)
 } // int servc::semanpruef(const string& mod/*="getty_t*/, int obverb/*=0*/,int oblog/*=0*/)
@@ -3022,7 +3040,8 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst<<"WantedBy=multi-user.target "<<endl;
 				syst.close();
 				daemon_reload(obverb-1,oblog);
-				anfgggf(unindt,"N="+sname+";C=\"sudo systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-reload;$C reset-failed;",systemd);
+				anfgggf(unindt,"N="+sname+";C=\"sudo systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-reload;$C reset-failed;",systemd,
+				        1,obverb,oblog);
 				syst.close();
 				restart(obverb-1,oblog);
 				obsvfeh(obverb-1,oblog);

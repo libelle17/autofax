@@ -2093,7 +2093,7 @@ void useruucp(const string& huser, int obverb,int oblog)
 	if (systemrueck("sudo getent passwd "+huser,obverb,oblog)) {
 		const string bef="sudo useradd -b /etc -c \"Unix-to-Unix CoPy\" -U -r "+huser;
 		systemrueck(bef,obverb,oblog);
-		anfgggf(unindt,"sudo userdel "+huser,bef);
+		anfgggf(unindt,"sudo userdel "+huser,bef,0,obverb,oblog);
 	} // 	if (systemrueck("sudo getent "+huser,obverb,oblog))
 } // void useruucp(const string& huser, int obverb,int oblog)
 
@@ -3950,7 +3950,7 @@ void paramcl::konfcapi()
           &capiconf[6].wert);
     }
     vector<string> tok;
-    aufSplit(&tok,&capiconf[6].wert,' ');
+    aufSplit(&tok,capiconf[6].wert,' ');
     // outgoing_MSN
     capiconf[4].wert=msn;
     if (capiconf[4].wert.empty() || isneun(capiconf[4].wert)) capiconf[4].wert=tok[tok.size()-1].c_str();
@@ -4186,7 +4186,7 @@ void paramcl::pruefcron()
 				const string bef="sudo sh -c '"+cmd+"'";
 				systemrueck(bef,obverb,oblog);
 				ersetzAlle(unicmd,"'\\''","'");
-				anfgggf(unindt,unicmd,bef);
+				anfgggf(unindt,unicmd,bef,0,obverb,oblog);
 				if (cmeingegeben)
 				::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronzuplanen?Tx[T_alle]+cronminut+Tx[T_Minuten]:Tx[T_gar_nicht])+schwarz+Tx[T_statt]+
 						+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
@@ -4380,7 +4380,7 @@ void paramcl::pruefsamba()
 			} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
 			if (!suchstr.empty())
 			// Abschnitt wieder löschen
-				anfgggf(unindt,"sudo sed -i.vorautofax '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdatei,"smb.conf: ["+suchstr+"]");
+				anfgggf(unindt,"sudo sed -i.vorautofax '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdatei,"smb.conf: ["+suchstr+"]",0,obverb,oblog);
 		} // if (sapp.is_open()) 
 		if (!nrzf) {
 			if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
@@ -4436,7 +4436,7 @@ void paramcl::pruefsamba()
 					// firewall-cmd --state
 					const string bef="sudo firewall-cmd --permanent --add-service=samba && sudo firewall-cmd --reload";
 					systemrueck(bef,obverb,oblog);
-					anfgggf(unindt,"sudo firewall-cmd --permanent --remove-service=samba && sudo firewall-cmd --reload",bef);
+					anfgggf(unindt,"sudo firewall-cmd --permanent --remove-service=samba && sudo firewall-cmd --reload",bef,0,obverb,oblog);
 					// selinux: // offenbar unnoetig
 				} else {
 					// Suse-Firewall
@@ -4458,7 +4458,7 @@ void paramcl::pruefsamba()
 								" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
 										" && sudo systemctl restart SuSEfirewall2 smb nmb";
 								systemrueck(bef,obverb,oblog); 
-								anfgggf(unindt,"sudo sh -c 'cp -a \""+susefw+"."+bak+"\" \""+susefw+"\"'&&systemctl restart SuSEfirewall2 smb nmb",bef);
+								anfgggf(unindt,"sudo sh -c 'cp -a \""+susefw+"."+bak+"\" \""+susefw+"\"'&&systemctl restart SuSEfirewall2 smb nmb",bef,0,obverb,oblog);
 							} // 					if (nichtfrei && obfw)
 							part="client";
 						} // for(int i=1;i<3;i++) 
@@ -4560,7 +4560,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 								// <<"txtf: "<<txtf<<endl;
 								string ursp=base_name(rueck[cru][ruecki]);
 								vector<string> tok; 
-								aufSplit(&tok,&ursp,'-');
+								aufSplit(&tok,ursp,'-');
 								ursp.clear(); for(size_t j=1;j<tok.size();j++){ursp+=tok[j];if (j<tok.size()-1) ursp+="-";}
 								// <<"ursp: "<<ursp<<endl;
 								inse+="('"+ursp+"','"+teln+"','"+zp+"',"+tries+","+ltoan(size)+","+(cru?"1":"0")+"),";
@@ -5247,11 +5247,11 @@ int paramcl::pruefocr()
 						"'";
 				} // if (!vprog.empty()) else
 				systemrueck(bef,obverb,oblog);
-				anfgggf(unindt,"sudo rm -rf \""+virtvz+"\"","");
+				anfgggf(unindt,"sudo rm -rf \""+virtvz+"\"","",0,obverb,oblog);
 				anfgggf(unindt,
 						"sudo sh -c '. \""+virtvz+"/bin/activate\";"
 						"sudo -H pip3 uninstall --yes ocrmypdf;"
-						"deactivate;'",bef);
+						"deactivate;'",bef,0,obverb,oblog);
 
 				// sudo pip3 uninstall --yes ocrmypdf
 				// sudo dnf install ./ghostscript-9.16-4.fc24.i686.rpm
@@ -5498,12 +5498,12 @@ void paramcl::DateienHerricht()
 						const string nach=stamm.substr(pos0+anfxstrvec.at(iprio).length());
 						::Log(Tx[T_danach]+blaus+nach+schwarz,obverb>1,oblog);
 						// die Faxnummern auseinanderfieseln
-						aufiSplit(&toknr,&nach,undstr.c_str(),1,obverb>1,oblog);
+						aufiSplit(&toknr,nach,undstr.c_str(),1,obverb>1,oblog);
 						// ggf. die Adressatennamen suchen ...
-						aufiSplit(&toktxt,&vor,anstr.c_str(),1,obverb>1,oblog);
+						aufiSplit(&toktxt,vor,anstr.c_str(),1,obverb>1,oblog);
 						// und ggf. aufffieseln
 						if (toktxt.size()>1) {
-							aufiSplit(&tokname,&toktxt[1],undstr.c_str(),1,obverb>1,oblog);
+							aufiSplit(&tokname,toktxt[1],undstr.c_str(),1,obverb>1,oblog);
 						} //         if (toktxt.size()>1)
 						// ::Log("toknr.size(): "+blaus+ltoan(toknr.size())+schwarz,obverb>0,oblog);
 						for(unsigned j=0;j<toknr.size();j++) { // alle bis auf die letzte Adresse
@@ -6198,7 +6198,7 @@ void paramcl::korrigierehyla(unsigned tage/*=90*/)
 			string auswe="(", auswm="(", inse;
 			for(size_t i=0;i<qrueck.size();i++) {
 				vector<string> tok; 
-				aufSplit(&tok,&qrueck[i],'\t');
+				aufSplit(&tok,qrueck[i],'\t');
 				if (tok.size()>5) {
 					// <<tok[0]<<'|'<<tok[1]<<'|'<<tok[2]<<'|'<<tok[3]<<'|'<<tok[4]<<'|'<<tok[5]<<'|'<<tok[6]<<endl;
 					uchar erfolg=0;
@@ -6466,7 +6466,7 @@ void paramcl::empfhyla(const string& ganz,uchar indb/*=1*/,uchar mitversch/*=1*/
 		systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null |grep -am 1 \""+base_name(ganz)+"\" |cut -f8,9",obverb,oblog,&trueck); 
 		if (trueck.size()) {
 			vector<string> tok; 
-			aufSplit(&tok,&trueck[0],'\t');
+			aufSplit(&tok,trueck[0],'\t');
 			if (tok.size()) {
 				// <<gruen<<"tok[0] d: "<<schwarz<<tok[0]<<endl; // Tel'nr z.B. 49.8131.1234567
 				callerid=tok[0];
@@ -7352,9 +7352,9 @@ int paramcl::pruefhyla()
 //				  "cd \\\""+instvz+"\\\"\\nsudo rm -f \\\""+nachw+"\\\"\\n\" >> \""+unindt+"\";} "
         ";true'";
 			systemrueck(bef,obverb,oblog);
-			anfgggf(unindt,"cd \""+instvz+vtz+proj+"\" && cat install_manifest.txt|sudo xargs rm; cd \""+instvz+"\"",bef);
+			anfgggf(unindt,"cd \""+instvz+vtz+proj+"\" && cat install_manifest.txt|sudo xargs rm; cd \""+instvz+"\"",bef,0,obverb,oblog);
 			if (!touch(nachw,obverb,oblog))
-				anfgggf(unindt,"sudo rm -f \""+nachw+"\"","");
+				anfgggf(unindt,"sudo rm -f \""+nachw+"\"","",0,obverb,oblog);
 		 } // 		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh))
 
 		for(unsigned versuch=0;versuch<3;versuch++) {
@@ -7801,7 +7801,7 @@ void paramcl::pruefmodcron()
 //    for(size_t znr=0;znr<rueck.size();znr++) { ::Log(rueck[znr],1+obverb,oblog); } //     for(size_t znr=0;znr<rueck.size();znr++)
 			const string befehl="sudo bash -c 'grep \""+mps[ru]+"\" -q <(crontab -l 2>/dev/null)&&"
 				"{ crontab -l 2>/dev/null|sed \"/"+ersetzAllezu(mps[ru],"/","\\/")+"/d\">"+tmpcron+";crontab "+tmpcron+";};true'";
-			anfgggf(unindt,befehl,bef);
+			anfgggf(unindt,befehl,bef,0,obverb,oblog);
 		 } //if (!systemrueck("(sudo crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";sudo crontab "+tmpcron+")",obverb,oblog,&rueck))
 		} // 		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'",obverb,oblog))
   } //   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++)
@@ -7857,7 +7857,7 @@ int paramcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const st
 		ret=systemrueck(bef,obverb,oblog);
 		anfgggf(unindt,"H="+gethome()+";A=$H/"+meinname+";P="+was+";cd \"$A/$P\" 2>/dev/null"
 				"|| cd $(find \"$H\" -name $P -printf \"%T@ %p\\n\" 2>/dev/null|sort -rn|head -n1|cut -d\" \" -f2)"
-				"&& sudo make uninstall; cd \"$H\"",bef);
+				"&& sudo make uninstall; cd \"$H\"",bef,0,obverb,oblog);
 	} // 		if (!pruefinstv())
 	return ret;
 } // int paramcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
@@ -8982,7 +8982,7 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
   if (grueck.size()) {
     gefunden=1;
     vector<string> tok;
-    aufSplit(&tok,&grueck[0],sep);
+    aufSplit(&tok,grueck[0],sep);
 		if (tok.size()<=2) fsfp->hgerg=grueck[0];
 		if (tok.size()) {
 			struct tm tm={0};
@@ -9027,7 +9027,7 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 					} //         switch (aktion)
 					if (tok.size()>3) {
 						vector<string> toi;
-						aufSplit(&toi,&tok[3],'/');
+						aufSplit(&toi,tok[3],'/');
 						if (toi.size()) {
 							if (totpages) *totpages=toi[0];
 							if (toi.size()>1) {
@@ -9163,7 +9163,7 @@ void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, i
 		fsf->number=hylconf[6].wert;
     vector<string> tok;
     const string pdf=this->hylconf[4].wert.empty()?this->hylconf[8].wert:this->hylconf[4].wert;
-    aufiSplit(&tok,&pdf,":",1,obverb>1,oblog);
+    aufiSplit(&tok,pdf,":",1,obverb>1,oblog);
     fsf->sendqgespfad=this->varsphylavz+vtz+tok[tok.size()-1];
     if (est) lstat(fsf->sendqgespfad.c_str(),est); 
 		fsf->hylastat=static_cast<FxStat>(atol(hylconf[0].wert.c_str()));
