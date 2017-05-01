@@ -2614,6 +2614,22 @@ string linst_cl::ersetzeprog(const string& prog)
   return prog;
 } // string linst_cl::ersetzeprog(const string& prog) 
 
+std::string string_to_hex(const std::string& input)
+{
+	static const char* const lut = "0123456789ABCDEF";
+	size_t len = input.length();
+
+	std::string output;
+	output.reserve(2 * len);
+	for (size_t i = 0; i < len; ++i)
+	{
+		const unsigned char c = input[i];
+		output.push_back(lut[c >> 4]);
+		output.push_back(lut[c & 15]);
+	}
+	return output;
+}
+
 // Problem: bei obyes erscheint die Rueckfrage dem Benutzer nicht, statt dessen wartet das Programm
 int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar ohneabh/*=0*/) // ,uchar obyes/*=1*/)
 {
@@ -2671,7 +2687,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 										if (!zudeinst.empty()) zudeinst+=" ";
 										zudeinst+=source.substr(groupArray[g].rm_so,groupArray[g].rm_eo-groupArray[g].rm_so);
 									}
-									ustring=zudeinst+" "+ustring;
+									ustring=" "+zudeinst+ustring;
 								} else {
 									break;
 								} // 						if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) else else
@@ -2680,7 +2696,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 							break;
 							// Folgende Zeile fuer Debian und OpenSuse gut
 						case apt: case zypper:
-							ustring=srueck[i]+' '+ustring;
+							ustring=" "+srueck[i]+ustring;
 						default: break;
 					}
 /*
@@ -2694,15 +2710,27 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				*/
 				} // 				if (obanf==1)
 			} // 			for(unsigned i=srueck.size();i;)
+
+		// s. ausricht() in configure
+			mdatei uniff("inst_log",ios::app,0);
+			if (uniff.is_open()) {
+				uniff<<endl<<"Rueckmeldung zu: '"<<bef<<"':"<<endl;
+				for(unsigned i=srueck.size();i;) {
+					uniff<<srueck[i]<<endl;
+				}
+				uniff<<"ustring: '"<<ustring<<"'"<<endl;
+				uniff<<"ustring: '"<<string_to_hex(ustring)<<"'"<<endl;
+			}
 			size_t p1,p2;
 			caus<<violett<<"ustring vor Pruefung: "<<rot<<ustring<<schwarz<<endl;
-			const char* const weg[2]={"libgcc","libselinux"};
+			caus<<violett<<"ustring vor Pruefung: "<<rot<<string_to_hex(ustring)<<schwarz<<endl;
+			const char* const weg[7]={"libgcc","libselinux.","libselinux-utils","libselinux-python3","libsepol","libsemanage","libstdc++"};
 			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++) {
 				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' ')) {
 					p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
 					ustring.erase(p1,p2-p1);
-				}
-			}
+				} // 				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' '))
+			} // 			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++)
 			caus<<violett<<"ustring nach Pruefung: "<<rot<<ustring<<schwarz<<endl;
 			if (!ustring.empty()) {
 				Log(Txk[T_Ins_Deinstallationsprogramm_wird_eingetragen]+violetts+udpr+ustring+schwarz,obverb,oblog);

@@ -9286,13 +9286,26 @@ void paramcl::zeigdienste()
 	} // 	for(int i=0;i<4;i++)
 } // void paramcl::zeigdienste()
 
-
 int main(int argc, char** argv) 
 {
 /*
 	if (argc<3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		if (argc>1) {
 		// Testcode mit argv[1]
+			size_t p1,p2;
+			string ustring(argv[1]);
+			caus<<violett<<"ustring vor Pruefung: "<<rot<<ustring<<schwarz<<endl;
+			caus<<violett<<"ustring vor Pruefung: "<<rot<<string_to_hex(ustring)<<schwarz<<endl;
+
+			const char* const weg[6]={"libgcc","libselinux-utils","libselinux-python3","libsepol","libsemanage","libstdc++"};
+			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++) {
+				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' ')) {
+					p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
+					ustring.erase(p1,p2-p1);
+				} // 				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' '))
+			} // 			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++)
+			caus<<violett<<"ustring nach Pruefung: "<<rot<<ustring<<schwarz<<endl;
+			exit(27);
 		}
 	}
 */

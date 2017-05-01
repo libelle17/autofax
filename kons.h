@@ -371,6 +371,7 @@ void doanfg(const string& datei, const string& inhalt, const string& comment);
 
 double progvers(const string& prog,int obverb, int oblog);
 int touch(const std::string& pathname,int obverb=0,int oblog=0);
+std::string string_to_hex(const std::string& input);
 
 #ifdef notcpp
 class Schluessel {
