@@ -2094,7 +2094,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 				stack<<aktv;
 				aktv=dir_name(aktv);
 			} // 			while (1)
-			while (1) {
+			while(1) {
 				if (!stack.size()) {
 					fehler=0;
 					break;
@@ -2102,7 +2102,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 				if (mkdir(stack[stack.size()-1].c_str(),S_IRWXU)) 
 					break;
 				stack.erase(stack.end());
-			} // 			  caus<<aktv<<endl;
+			} // while(1)
 		} // if (fehler)
 		if (fehler) {
 		  const string bef="mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'";
@@ -2722,8 +2722,8 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				uniff<<"ustring: '"<<string_to_hex(ustring)<<"'"<<endl;
 			} // 			if (uniff.is_open())
 			size_t p1,p2;
-			caus<<violett<<"ustring vor Pruefung: "<<rot<<ustring<<schwarz<<endl;
-			caus<<violett<<"ustring vor Pruefung: "<<rot<<string_to_hex(ustring)<<schwarz<<endl;
+			// <<violett<<"ustring vor Pruefung: "<<rot<<ustring<<schwarz<<endl;
+			// <<violett<<"ustring vor Pruefung: "<<rot<<string_to_hex(ustring)<<schwarz<<endl;
 			const char* const weg[7]={"libgcc","libselinux.","libselinux-utils","libselinux-python3","libsepol","libsemanage","libstdc++"};
 			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++) {
 				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' ')) {
@@ -2731,7 +2731,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 					ustring.erase(p1,p2-p1);
 				} // 				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' '))
 			} // 			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++)
-			caus<<violett<<"ustring nach Pruefung: "<<rot<<ustring<<schwarz<<endl;
+			// <<violett<<"ustring nach Pruefung: "<<rot<<ustring<<schwarz<<endl;
 			if (!ustring.empty()) {
 				Log(Txk[T_Ins_Deinstallationsprogramm_wird_eingetragen]+violetts+udpr+ustring+schwarz,obverb,oblog);
 				anfgw(unindt,udpr,ustring,bef,obverb,oblog);
@@ -2815,7 +2815,8 @@ void anfgw(const string& datei, const string& udpr, const string& inhalt, const 
 	uchar obda=0;
 	aufSplit(&wvec,inhalt); 
 	for(size_t wind=0;wind<wvec.size();wind++) {
-		wvec[wind]=" "+wvec[wind]+" ";
+		if (wvec[wind].length()) wvec[wind]=" "+wvec[wind];
+		// <<violett<<"wvec["<<rot<<wind<<violett<<"]: "<<rot<<wvec[wind]<<schwarz<<endl;
 	} // 	for(size_t wind=0;wind<wvec.size();wind++)
 	mdatei uni0(datei,ios::in,0);
 	if (uni0.is_open()) {
@@ -2823,9 +2824,15 @@ void anfgw(const string& datei, const string& udpr, const string& inhalt, const 
 		while (getline(uni0,zeile)) {
 			obda=1;
 			for(size_t wind=0;wind<wvec.size();wind++) {
-				if (zeile.find(wvec[wind])==string::npos) {
-					obda=0;
-					break;
+				if (wvec[wind].length()) {
+					if (zeile.find(wvec[wind])==string::npos) {
+						obda=0;
+						break;
+					} else {
+						// <<wvec[wind]<<blau<<" gefunden in "<<blau<<zeile<<schwarz<<endl;
+					}
+				} else {
+					obda=1;
 				} // 				if (zeile.find(wvec[wind])==string::npos)
 			} // 			for(size_t wind=0;wind<wvec.size();wind++)
 			if (obda) break;
