@@ -2695,6 +2695,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				} // 				if (obanf==1)
 			} // 			for(unsigned i=srueck.size();i;)
 			size_t p1,p2;
+			caus<<violett<<"ustring vor Pruefung: "<<rot<<ustring<<schwarz<<endl;
 			if ((p1=ustring.find(" libgcc"))!=string::npos) {
 				p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
 				ustring.erase(p1,p2-p1);
@@ -2703,8 +2704,11 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
 				ustring.erase(p1,p2-p1);
 			}
-			Log(Txk[T_Ins_Deinstallationsprogramm_wird_eingetragen]+violetts+udpr+ustring+schwarz,obverb,oblog);
-			anfgw(unindt,udpr,ustring,bef,obverb,oblog);
+			caus<<violett<<"ustring nach Pruefung: "<<rot<<ustring<<schwarz<<endl;
+			if (!ustring.empty()) {
+				Log(Txk[T_Ins_Deinstallationsprogramm_wird_eingetragen]+violetts+udpr+ustring+schwarz,obverb,oblog);
+				anfgw(unindt,udpr,ustring,bef,obverb,oblog);
+			}
 
 			/*
 			if (0) {
