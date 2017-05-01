@@ -2093,7 +2093,7 @@ void useruucp(const string& huser, int obverb,int oblog)
 	if (systemrueck("sudo getent passwd "+huser,obverb,oblog)) {
 		const string bef="sudo useradd -b /etc -c \"Unix-to-Unix CoPy\" -U -r "+huser;
 		systemrueck(bef,obverb,oblog);
-		anfgggf(unindt,"sudo userdel "+huser,bef,0,obverb,oblog);
+		anfgg(unindt,"sudo userdel "+huser,bef,obverb,oblog);
 	} // 	if (systemrueck("sudo getent "+huser,obverb,oblog))
 } // void useruucp(const string& huser, int obverb,int oblog)
 
@@ -4186,7 +4186,7 @@ void paramcl::pruefcron()
 				const string bef="sudo sh -c '"+cmd+"'";
 				systemrueck(bef,obverb,oblog);
 				ersetzAlle(unicmd,"'\\''","'");
-				anfgggf(unindt,unicmd,bef,0,obverb,oblog);
+				anfgg(unindt,unicmd,bef,obverb,oblog);
 				if (cmeingegeben)
 				::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronzuplanen?Tx[T_alle]+cronminut+Tx[T_Minuten]:Tx[T_gar_nicht])+schwarz+Tx[T_statt]+
 						+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
@@ -4380,7 +4380,7 @@ void paramcl::pruefsamba()
 			} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
 			if (!suchstr.empty())
 			// Abschnitt wieder löschen
-				anfgggf(unindt,"sudo sed -i.vorautofax '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdatei,"smb.conf: ["+suchstr+"]",0,obverb,oblog);
+				anfgg(unindt,"sudo sed -i.vorautofax '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdatei,"smb.conf: ["+suchstr+"]",obverb,oblog);
 		} // if (sapp.is_open()) 
 		if (!nrzf) {
 			if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
@@ -4436,7 +4436,7 @@ void paramcl::pruefsamba()
 					// firewall-cmd --state
 					const string bef="sudo firewall-cmd --permanent --add-service=samba && sudo firewall-cmd --reload";
 					systemrueck(bef,obverb,oblog);
-					anfgggf(unindt,"sudo firewall-cmd --permanent --remove-service=samba && sudo firewall-cmd --reload",bef,0,obverb,oblog);
+					anfgg(unindt,"sudo firewall-cmd --permanent --remove-service=samba && sudo firewall-cmd --reload",bef,obverb,oblog);
 					// selinux: // offenbar unnoetig
 				} else {
 					// Suse-Firewall
@@ -4458,7 +4458,7 @@ void paramcl::pruefsamba()
 								" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
 										" && sudo systemctl restart SuSEfirewall2 smb nmb";
 								systemrueck(bef,obverb,oblog); 
-								anfgggf(unindt,"sudo sh -c 'cp -a \""+susefw+"."+bak+"\" \""+susefw+"\"'&&systemctl restart SuSEfirewall2 smb nmb",bef,0,obverb,oblog);
+								anfgg(unindt,"sudo sh -c 'cp -a \""+susefw+"."+bak+"\" \""+susefw+"\"'&&systemctl restart SuSEfirewall2 smb nmb",bef,obverb,oblog);
 							} // 					if (nichtfrei && obfw)
 							part="client";
 						} // for(int i=1;i<3;i++) 
@@ -5247,11 +5247,11 @@ int paramcl::pruefocr()
 						"'";
 				} // if (!vprog.empty()) else
 				systemrueck(bef,obverb,oblog);
-				anfgggf(unindt,"sudo rm -rf \""+virtvz+"\"","",0,obverb,oblog);
-				anfgggf(unindt,
+				anfgg(unindt,"sudo rm -rf \""+virtvz+"\"","",obverb,oblog);
+				anfgg(unindt,
 						"sudo sh -c '. \""+virtvz+"/bin/activate\";"
 						"sudo -H pip3 uninstall --yes ocrmypdf;"
-						"deactivate;'",bef,0,obverb,oblog);
+						"deactivate;'",bef,obverb,oblog);
 
 				// sudo pip3 uninstall --yes ocrmypdf
 				// sudo dnf install ./ghostscript-9.16-4.fc24.i686.rpm
@@ -7352,9 +7352,9 @@ int paramcl::pruefhyla()
 //				  "cd \\\""+instvz+"\\\"\\nsudo rm -f \\\""+nachw+"\\\"\\n\" >> \""+unindt+"\";} "
         ";true'";
 			systemrueck(bef,obverb,oblog);
-			anfgggf(unindt,"cd \""+instvz+vtz+proj+"\" && cat install_manifest.txt|sudo xargs rm; cd \""+instvz+"\"",bef,0,obverb,oblog);
+			anfgg(unindt,"cd \""+instvz+vtz+proj+"\" && cat install_manifest.txt|sudo xargs rm; cd \""+instvz+"\"",bef,obverb,oblog);
 			if (!touch(nachw,obverb,oblog))
-				anfgggf(unindt,"sudo rm -f \""+nachw+"\"","",0,obverb,oblog);
+				anfgg(unindt,"sudo rm -f \""+nachw+"\"","",obverb,oblog);
 		 } // 		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh))
 
 		for(unsigned versuch=0;versuch<3;versuch++) {
@@ -7801,7 +7801,7 @@ void paramcl::pruefmodcron()
 //    for(size_t znr=0;znr<rueck.size();znr++) { ::Log(rueck[znr],1+obverb,oblog); } //     for(size_t znr=0;znr<rueck.size();znr++)
 			const string befehl="sudo bash -c 'grep \""+mps[ru]+"\" -q <(crontab -l 2>/dev/null)&&"
 				"{ crontab -l 2>/dev/null|sed \"/"+ersetzAllezu(mps[ru],"/","\\/")+"/d\">"+tmpcron+";crontab "+tmpcron+";};true'";
-			anfgggf(unindt,befehl,bef,0,obverb,oblog);
+			anfgg(unindt,befehl,bef,obverb,oblog);
 		 } //if (!systemrueck("(sudo crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";sudo crontab "+tmpcron+")",obverb,oblog,&rueck))
 		} // 		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <(sudo crontab -l 2>/dev/null)'",obverb,oblog))
   } //   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++)
@@ -7855,9 +7855,9 @@ int paramcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const st
 			//						"&& sudo make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
 			"; sudo ldconfig "+lsys.getlib64()+";'";
 		ret=systemrueck(bef,obverb,oblog);
-		anfgggf(unindt,"H="+gethome()+";A=$H/"+meinname+";P="+was+";cd \"$A/$P\" 2>/dev/null"
+		anfgg(unindt,"H="+gethome()+";A=$H/"+meinname+";P="+was+";cd \"$A/$P\" 2>/dev/null"
 				"|| cd $(find \"$H\" -name $P -printf \"%T@ %p\\n\" 2>/dev/null|sort -rn|head -n1|cut -d\" \" -f2)"
-				"&& sudo make uninstall; cd \"$H\"",bef,0,obverb,oblog);
+				"&& sudo make uninstall; cd \"$H\"",bef,obverb,oblog);
 	} // 		if (!pruefinstv())
 	return ret;
 } // int paramcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)

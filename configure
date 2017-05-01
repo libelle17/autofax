@@ -65,7 +65,7 @@ ausricht() {
 	sed -i 's/ libgcc[^ ]*/ /g;s/ libselinux[^ ]*/ /g' "$1"; 
 	# die Deinstallation von libgcc.x86_64 wirkte sich irgendwie ungünstig auf das System aus ...
 	# noch ungünstiger die von libselinux ...
-# s. anfgggf(const string datei, const string inhalt) in kons.cpp
+# s. doanfg(string& datei, string& inhalt, string& comment) in kons.cpp
 	IP=$(cat $1)
 #	 for IP in $(cat $1); do
 # wenn $AUNF fehlt oder eine der in $1 erwähnten Programm dort nicht aufgeführt ist, dann zuinstallieren=ja; "; vi ..." nicht zu werten

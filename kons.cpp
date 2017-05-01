@@ -2062,7 +2062,7 @@ int setfaclggf(const string& datei,const binaer obunter,const int mod/*=4*/,ucha
 						const string sich=base_name(datei)+"."+base_name(meinpfad())+".perm";
 						const string bef="sudo sh -c 'cd \""+dir_name(datei)+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(datei)+"\">\""+sich+"\"'";
 						systemrueck(bef,obverb,oblog);
-						anfgggf(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'",bef,0,obverb,oblog);
+						anfgg(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'",bef,obverb,oblog);
 					} // 					if (faclbak)
 					systemrueck(string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'",obverb,oblog);
           if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
@@ -2107,7 +2107,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 		if (fehler) {
 		  const string bef="mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'";
 			fehler=systemrueck(bef,obverb,oblog);
-			anfgggf(unindt,"sudo rmdir '"+verz+"'",bef,0,obverb,oblog);
+			anfgg(unindt,"sudo rmdir '"+verz+"'",bef,obverb,oblog);
 		} //     if (fehler)
 		//    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
 		if (obmitfacl) setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
@@ -2704,7 +2704,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				ustring.erase(p1,p2-p1);
 			}
 			Log(Txk[T_Ins_Deinstallationsprogramm_wird_eingetragen]+violetts+udpr+ustring+schwarz,obverb,oblog);
-			anfgggf(unindt,udpr+ustring,bef,1,obverb,oblog);
+			anfgw(unindt,udpr,ustring,bef,obverb,oblog);
 
 			/*
 			if (0) {
@@ -2776,54 +2776,71 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 } // uchar linst_cl::doinst(const string& prog,int obverb,int oblog) 
 
 // fuege an, wenn noch nicht enthalten
-void anfgggf(const string& datei, const string& inhalt, const string& comment,uchar obeinzeln/*=0*/, int obverb/*=0*/, int oblog/*=0*/)
+// anfuegen nach wortweiser Pruefung, ob schon enthalten
+void anfgw(const string& datei, const string& udpr, const string& inhalt, const string& comment, int obverb/*=0*/, int oblog/*=0*/)
 {
-	Log(violetts+"anfgggf: '"+inhalt+"'",obverb,oblog);
+	Log(violetts+"anfgw: '"+udpr+blau+inhalt+"'",obverb,oblog);
 	svec wvec;
 	uchar obda=0;
-	if (obeinzeln){
-		aufSplit(&wvec,inhalt); 
-		for(size_t wind=0;wind<wvec.size();wind++) {
-			wvec[wind]=" "+wvec[wind]+" ";
-		}
-	}
+	aufSplit(&wvec,inhalt); 
+	for(size_t wind=0;wind<wvec.size();wind++) {
+		wvec[wind]=" "+wvec[wind]+" ";
+	} // 	for(size_t wind=0;wind<wvec.size();wind++)
 	mdatei uni0(datei,ios::in,0);
 	if (uni0.is_open()) {
 		string zeile;
 		while (getline(uni0,zeile)) {
-			if (obeinzeln){
-				obda=1;
-				for(size_t wind=0;wind<wvec.size();wind++) {
-					if (zeile.find(wvec[wind])==string::npos) {
-						obda=0;
-						break;
-					}
-				}
-				if (obda) break;
-			} else {
-				if (zeile.find(inhalt)!=string::npos) {
-					obda=1;
+			obda=1;
+			for(size_t wind=0;wind<wvec.size();wind++) {
+				if (zeile.find(wvec[wind])==string::npos) {
+					obda=0;
 					break;
-				} // if (zeile.find(inhalt)!=string::npos)
-			} // if (obeinzeln) else
+				} // 				if (zeile.find(wvec[wind])==string::npos)
+			} // 			for(size_t wind=0;wind<wvec.size();wind++)
+			if (obda) break;
 		} // 					while (getline(uni0,zeile))
 	} // 				if (uni0.is_open())
 	if (!obda) {
-		mdatei uniff(datei,ios::app,0);
-		if (uniff.is_open()) {
-//			uniff<<inhalt<<"\n"<<"printf \"%b"<<ersetzAllezu(inhalt,"\"","\\\"")<<"%b\\n\" \"\\033[1;34m\" \"\\033[0m\""<<endl;
-// s. ausricht() in configure
-			time_t rohz=time(0);
-      struct tm *zeiti=localtime(&rohz);
-			char buf[80];
-      strftime(buf,sizeof buf,"%F %T",zeiti);
-			uniff<<inhalt<<"\n# "<<comment<<"\nprintf \"(Inst: "<<buf<<"): $blau%s$reset\\n\" \""<<
-			       ersetzAllezu(inhalt,"\"","\\\"")<<"\""<<endl;
-		} else {
-			perror((string("\n")+Txk[T_Kann_Datei]+datei+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
-		} // 			if (uniff.is_open())
+	 doanfg(datei,udpr+inhalt,comment);
 	} // 			if (!obda)
 } // void anfgggf(string datei, string inhalt)
+
+// anfuegen nach gemeinsamer Pruefung, ob schon enthalten
+void anfgg(const string& datei, const string& inhalt, const string& comment, int obverb/*=0*/, int oblog/*=0*/)
+{
+	Log(violetts+"anfgg: '"+inhalt+"'",obverb,oblog);
+	uchar obda=0;
+	mdatei uni0(datei,ios::in,0);
+	if (uni0.is_open()) {
+		string zeile;
+		while (getline(uni0,zeile)) {
+			if (zeile.find(inhalt)!=string::npos) {
+				obda=1;
+				break;
+			} // if (zeile.find(inhalt)!=string::npos)
+		} // 					while (getline(uni0,zeile))
+	} // 				if (uni0.is_open())
+	if (!obda) {
+	 doanfg(datei,inhalt,comment);
+	} // 			if (!obda)
+} // void anfgggf(string datei, string inhalt)
+
+void doanfg(const string& datei, const string& inhalt, const string& comment)
+{
+	mdatei uniff(datei,ios::app,0);
+	if (uniff.is_open()) {
+		//			uniff<<inhalt<<"\n"<<"printf \"%b"<<ersetzAllezu(inhalt,"\"","\\\"")<<"%b\\n\" \"\\033[1;34m\" \"\\033[0m\""<<endl;
+		// s. ausricht() in configure
+		time_t rohz=time(0);
+		struct tm *zeiti=localtime(&rohz);
+		char buf[80];
+		strftime(buf,sizeof buf,"%F %T",zeiti);
+		uniff<<inhalt<<"\n# "<<comment<<"\nprintf \"(Inst: "<<buf<<"): $blau%s$reset\\n\" \""<<
+			ersetzAllezu(inhalt,"\"","\\\"")<<"\""<<endl;
+	} else {
+		perror((string("\n")+Txk[T_Kann_Datei]+datei+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
+	} // 			if (uniff.is_open())
+}
 
 int linst_cl::doggfinst(const string& prog,int obverb,int oblog,uchar ohneabh/*=0*/)
 {
@@ -2934,7 +2951,7 @@ void servc::semodpruef(int obverb/*=0*/,int oblog/*=0*/)
 				linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
 				const string bef="sudo semodule -i \""+mod+"\"";
 				systemrueck(bef,obverb,oblog);
-				anfgggf(unindt,"sudo semodule -r \""+mod+"\"",bef,0,obverb,oblog);
+				anfgg(unindt,"sudo semodule -r \""+mod+"\"",bef,obverb,oblog);
 			} // 					if (!lstat((instvz+vtz+selocal+".pp").c_str(),&sstat)
 		}  // if (obse)
 	} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
@@ -2948,7 +2965,7 @@ void servc::semanpruef(int obverb/*=0*/,int oblog/*=0*/,const string& mod/*="get
 		if (obprogda("sestatus",obverb,oblog,&sepfad)) {
 		  const string bef="sudo semodule -l|grep permissive_"+mod+" >/dev/null||sudo semanage permissive -a "+mod;
 			systemrueck(bef,obverb,oblog);
-			anfgggf(unindt,"sudo semanage permissive -d "+mod,bef,0,obverb,oblog);
+			anfgg(unindt,"sudo semanage permissive -d "+mod,bef,obverb,oblog);
 		} // 	if (obprogda("sestatus",obverb,oblog,&sepfad))
 	} // 		if (ename.find("faxgetty")!=string::npos)
 } // int servc::semanpruef(const string& mod/*="getty_t*/, int obverb/*=0*/,int oblog/*=0*/)
@@ -3040,8 +3057,8 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst<<"WantedBy=multi-user.target "<<endl;
 				syst.close();
 				daemon_reload(obverb-1,oblog);
-				anfgggf(unindt,"N="+sname+";C=\"sudo systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-reload;$C reset-failed;",systemd,
-				        1,obverb,oblog);
+				anfgg(unindt,"N="+sname+";C=\"sudo systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-reload;$C reset-failed;",systemd,
+				        obverb,oblog);
 				syst.close();
 				restart(obverb-1,oblog);
 				obsvfeh(obverb-1,oblog);

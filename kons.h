@@ -365,7 +365,9 @@ long cmpmem( char* feld, const char* search, int len_feld); // , int len_search
 // fuer lies (Konfigurationsdatei lesen)
 char* ltoan(long value, int base=10, uchar obtz=0, uchar minstel=0); 
 char* ltoa_(long value, char* result, int base); 
-void anfgggf(const string& datei, const string& inhalt, const string& comment, uchar obeinzeln=0, int obverb=0, int oblog=0);
+void anfgw(const string& datei, const string& udpr, const string& inhalt, const string& comment, int obverb/*=0*/, int oblog/*=0*/);
+void anfgg(const string& datei, const string& inhalt, const string& comment, int obverb/*=0*/, int oblog/*=0*/);
+void doanfg(const string& datei, const string& inhalt, const string& comment);
 
 double progvers(const string& prog,int obverb, int oblog);
 int touch(const std::string& pathname,int obverb=0,int oblog=0);
