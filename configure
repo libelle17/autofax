@@ -59,9 +59,11 @@ ausricht() {
 		sed -ni.bak '/^\s/{h;:a;n;/^\s/{H;ba};};${x;s/\n/ /g;p}' "$1";
 # Beispiel für dnf:	 
 #	 V=Verifying;sed -n '/'$V'/{s/[ ]*'$V'[ ]*:[ ]*\([^ ]*\).*/\1/;H};${x;s/\n/ /g;p}' /DATA/down/inst_vim_orig
-# in Fedora: nach dem Programm kommt mit einem Leerzeichen eine Versionsnr., die unnötig ist für die Deninstallation
   else
-		sed -ni.bak '/^\s/{s/\([^ ]\+\)[ ][^ ]\+/ \1/g;s/\s\+/ /g;h;:a;n;/^\s/{s/\([^ ]\+\)[ ][^ ]\+/ \1/g;s/\s\+/ /g;H;ba};};${x;s/\n/ /g;p}' "$1";
+# in Fedora: nach dem Programm kommt mit einem Leerzeichen eine Versionsnr., die unnötig ist für die Deninstallation
+#		sed -ni.bak '/^\s/{s/\([^ ]\+\)[ ][^ ]\+/ \1/g;s/\s\+/ /g;h;:a;n;/^\s/{s/\([^ ]\+\)[ ][^ ]\+/ \1/g;s/\s\+/ /g;H;ba};};${x;s/\n/ /g;p}' "$1";
+# ausserdem: nicht der letzte eingerueckte Block, sondern der hinter "Installed:" (vielleicht auch "Installiert:")
+   sed -ni.bak '/Install[^: dt]*[dt]:/,/^$/!d;//d;{s/\([^ ]\+\)[ ][^ ]\+/\1/g};p' "$1";
 	fi;
 	sed -i 's/ libgcc[^ ]*/ /g;s/ libselinux[^ ]*/ /g' "$1"; 
 	# die Deinstallation von libgcc.x86_64 wirkte sich irgendwie ungünstig auf das System aus ...
@@ -112,7 +114,7 @@ einricht() {
 	 }
 	 LOG=inst_$1.log;
 	 ${IPR}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff groff-base"
-	 printf "\nRueckmeldung bei einricht $1:\n">>$INSTLOG
+	 printf "\nRueckmeldung bei einricht $2:\n">>$INSTLOG
 	 ausricht "$LOG" $1 "${IPR}$2"
 	 if [ $1 = "g++" -a -n "$Z" -a $rweg = 1 ]; then
 	 	 printf "Removing Repository/ Entferne Repository ${blau}devel_gcc$reset again/ wieder\n"

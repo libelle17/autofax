@@ -2660,20 +2660,19 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		const string bef=(obyes?instyp:instp)+eprog;
 		if (!(ret=systemrueck(bef,obverb+1,oblog,&srueck))) {
 			/*svec*/ string ustring; uchar obanf=0;
-// im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
 // s. ausricht in configure
-			for(unsigned i=srueck.size();i;) {
-				--i;
-				if (srueck[i][0]==' '){ if (!obanf) obanf++;} else if (obanf==1) obanf++;
-				if (obanf==1) {
-				  gtrim(&srueck[i]);
+			switch (linst.pruefipr()) {
+				case dnf: case yum:
 // Folgendes sollte u.a. fuer Fedora gehen
-					const string source=srueck[i].c_str();
-					size_t maxGroups=2;
-					regex_t rCmp;
-					regmatch_t groupArray[maxGroups];
-					switch (linst.pruefipr()) {
-						case dnf: case yum:
+					for(unsigned i=0;i<srueck.size();++i) {
+						if (obanf==1) obanf=2;
+						if (!srueck[i].find("Installed:")||!srueck[i].find("Installiert:")) obanf=1;
+						if (!srueck[i].length()) obanf=0;
+						if (obanf==2) {
+							const string source=srueck[i].c_str();
+							const size_t maxGroups=2;
+							regex_t rCmp;
+							regmatch_t groupArray[maxGroups];
 							while(1) {
 								const string regex=string(".{")+ltoan(groupArray[0].rm_eo)+"}([^ ]+)[ ][^ ]+";
 								groupArray[0].rm_eo=0;
@@ -2689,29 +2688,30 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 									}
 									ustring=" "+zudeinst+ustring;
 								} else {
-									break;
+									break; // while(1)
 								} // 						if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) else else
-							} // while (1)
+							} // while(1)
 							regfree(&rCmp);
-							break;
+						} // 						if (obanf==2)
+					} // 					for(unsigned i=0;i<srueck.size();++i;)
+					break;
+// Folgende Zeile fuer Debian und OpenSuse gut
+				case apt: case zypper:
+// im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
+					for(unsigned i=srueck.size();i;) {
+						--i;
+						if (srueck[i][0]==' '){ if (!obanf) obanf++;} else if (obanf==1) obanf++;
+						if (obanf==1) {
+							gtrim(&srueck[i]);
 							// Folgende Zeile fuer Debian und OpenSuse gut
-						case apt: case zypper:
 							ustring=" "+srueck[i]+ustring;
-						default: break;
-					}
-/*
-					vector<string> tok;
-					aufSplit(&tok,&srueck[i]);
-					for(unsigned j=0;j<tok.size();j++) {
-						gtrim(&tok[j]);
-						if (!tok[j].empty())
-							ustring<<tok[j];
-					} // 					for(unsigned j=0;j<tok.size();j++)
-				*/
-				} // 				if (obanf==1)
-			} // 			for(unsigned i=srueck.size();i;)
+						} // 				if (obanf==1)
+					} // 					for(unsigned i=srueck.size();i;)
+					break;
+				default: break;
+			} // 			switch (linst.pruefipr())
 
-		// s. ausricht() in configure
+					// s. ausricht() in configure
 			mdatei uniff(instvz+"/inst_log",ios::app,0);
 			if (uniff.is_open()) {
 				uniff<<endl<<"Rueckmeldung zu: '"<<bef<<"':"<<endl;
