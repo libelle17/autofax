@@ -2696,11 +2696,11 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 			} // 			for(unsigned i=srueck.size();i;)
 			size_t p1,p2;
 			caus<<violett<<"ustring vor Pruefung: "<<rot<<ustring<<schwarz<<endl;
-			if ((p1=ustring.find(" libgcc"))!=string::npos) {
+			while ((p1=ustring.find("libgcc"))!=string::npos && (!p1||ustring[p1-1]==' ')) {
 				p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
 				ustring.erase(p1,p2-p1);
 			}
-			if ((p1=ustring.find(" libselinux"))!=string::npos) {
+			while ((p1=ustring.find("libselinux"))!=string::npos && (!p1||ustring[p1-1]==' ')) {
 				p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
 				ustring.erase(p1,p2-p1);
 			}
