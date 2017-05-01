@@ -63,7 +63,9 @@ ausricht() {
 # in Fedora: nach dem Programm kommt mit einem Leerzeichen eine Versionsnr., die unnötig ist für die Deninstallation
 #		sed -ni.bak '/^\s/{s/\([^ ]\+\)[ ][^ ]\+/ \1/g;s/\s\+/ /g;h;:a;n;/^\s/{s/\([^ ]\+\)[ ][^ ]\+/ \1/g;s/\s\+/ /g;H;ba};};${x;s/\n/ /g;p}' "$1";
 # ausserdem: nicht der letzte eingerueckte Block, sondern der hinter "Installed:" (vielleicht auch "Installiert:")
-   sed -ni.bak '/Install[^: dt]*[dt]:/,/^$/!d;//d;{s/\([^ ]\+\)[ ][^ ]\+/\1/g};p' "$1";
+# am Schluss hole hold-Register, entferne Zeilenumbrueche, fasse Leerzeichen zusammen; wenn nicht zwischen Install und leerer Zeile, loesche Zeile;
+# loesche auch die letzten Suchmusterzeilen (Install und leere Zeile); uebertrage nur den ersten von zwei Textbloecken; haenge ans Hold-Register an;
+   sed -ni.bak '${g;s/\n//g;s/\s\+/ /g;p};/Install[^: dt]*[dt]:/,/^$/!d;//d;{s/\([^ ]\+\)[ ][^ ]\+/\1/g};H' "$1";
 	fi;
 	sed -i 's/ libgcc[^ ]*/ /g;s/ libselinux[^ ]*/ /g' "$1"; 
 	# die Deinstallation von libgcc.x86_64 wirkte sich irgendwie ungünstig auf das System aus ...
