@@ -698,8 +698,8 @@ class linst_cl
 
 // Service aus SystemD
 class servc {
-		string systemd; // Dienst-Datei
   public:
+		string systemd; // Dienst-Datei
     int svfeh=-1; // Ausgangseinstellung
 		int svf0=-1; // Einstellung nach erstem Ablauf von obsvfeh
 		int obenabled=0;

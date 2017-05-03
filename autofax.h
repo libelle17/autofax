@@ -169,6 +169,8 @@ class paramcl // Programmparameter
     int obverb=0; // verbose
     int oblog=0;  // mehr Protokollieren
     uchar obvi=0;   // ob Konfigurationsdatei editiert werden soll
+    uchar obvc=0;   // ob Capisuite-Konfigurationsdateien betrachtet werden sollen
+		uchar obvh=0;   // ob Hylafax-Konfigurations- und Logdateindatei betrachtet werden sollen
     uchar loef=0;   // loesche eine Fax-Datei
     uchar loew=0;  // loeschewaise in der Datenbank, aber nicht mehr real nachweisbare Dateien in der Datenbank loeschen
     uchar loea=0; // loesche alle wartenden Faxe und zugehoerige Dateieintraege
@@ -216,6 +218,7 @@ class paramcl // Programmparameter
     const string touta="outa"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tudoc="udoc"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tinca="inca"; // MariaDB-Tabelle fuer empfangene Faxe
+		static const string edit, tty;
     string cfaxconfdat; // /etc/capisuite/fax.conf oder /usr/local/etc/capisuite/fax.conf laut Handbuch
     string ccapiconfdat; // /etc/capisuite/capisuite.conf oder /usr/local/etc/capisuite/capisuite.conf laut Handbuch
     // Parameter aus /etc/capisuite/fax.conf:
@@ -306,7 +309,7 @@ class paramcl // Programmparameter
     string undstr;  //  'und'
     string cmd; // string fuer command fuer Betriebssystembefehle
     vector<optioncl> opts;
-		uchar keineverarbeitung=0;
+		uchar keineverarbeitung=0; // wenn cronminuten geaendert werden sollen, vorher abkuerzen
 		uchar cmeingegeben=0;
 		vector<argcl> argcmv; // class member vector
     servc *sfaxq=0, *shfaxd=0, *shylafaxd=0, *sfaxgetty=0, *scapis=0;
@@ -413,4 +416,6 @@ class paramcl // Programmparameter
 		void zeigueberschrift();
 		void schlussanzeige();
     void autofkonfschreib();
+		void dovc();
+		void dovh();
 }; // class paramcl

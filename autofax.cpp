@@ -470,7 +470,9 @@ enum T_
   T_Capisuite_verwenden,
   T_hylafax_verwenden,
   T_pruefcvz,
-  T_Konfigurationsdatei_editieren,
+  T_Konfigurations_u_Logdatei_bearbeiten_sehen,
+	T_Capisuite_Konfigurationdateien_bearbeiten,
+	T_Hylafax_Modem_Konfigurationsdatei_bearbeiten,
   T_zufaxen,
   T_warteauffax,
   T_nichtgefaxt,
@@ -677,6 +679,10 @@ enum T_
 	T_version_l,
 	T_vi_k,
 	T_vi_l,
+	T_vc_k,
+	T_vc_l,
+	T_vh_k,
+	T_vh_l,
 	T_h_k,
 	T_lh_k,
 	T_hilfe_l,
@@ -1559,8 +1565,12 @@ char const *autofax_T[T_MAX+1][Smax]={
   {"Hylafax verwenden","use hylafax"},
   // T_pruefcvz
   {"pruefcvz()","checkcdirs()"},
-  // T_Konfigurationsdatei_editieren
-  {"Konfigurationsdatei editieren","edit configuration file"},
+  // T_Konfigurations_u_Logdatei_bearbeiten_sehen
+  {"Konfigurations- u.Logdatei bearbeiten/sehen","edit/view configuration and log file"},
+	// T_Capisuite_Konfigurationdateien_bearbeiten
+	{"Capisuite-Konfigurationsdateien bearbeiten","edit capisuite log files"},
+	// T_Hylafax_Modem_Konfigurationsdatei_bearbeiten
+	{"Hylafax-Modem-Konfigurationsdatei bearbeiten","edit hylafax modem configuration file"},
   // T_zufaxen
   {"zufaxen","tobefaxed"},
   // T_warteauffax,
@@ -1985,6 +1995,14 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{"vi","vi"},
 	// T_vi_l
 	{"vi","vi"},
+	// T_vc_k
+	{"vc","vc"},
+	// T_vc_l
+	{"vc","vc"},
+	// T_vh_k
+	{"vh","vh"},
+	// T_vh_l
+	{"vh","vh"},
 	// T_h_k
 	{"h","h"},
 	// T_lh_k
@@ -2317,7 +2335,8 @@ paramcl::paramcl(int argc, char** argv)
 
 void paramcl::pruefggfmehrfach()
 {
-  if (!hilfe && !obvi && !zeigvers && !lista && !listf && !listi && !listw && suchstr.empty() &&!loef &&!loew &&!loea &&!anhl &&!erneut &&!uml) {
+  if (!hilfe &&!obvi &&!obvc &&!obvh
+	    &&!zeigvers &&!lista &&!listf &&!listi &&!listw && suchstr.empty() &&!loef &&!loew &&!loea &&!anhl &&!erneut &&!uml) {
     pruefmehrfach(meinname,nrzf);
   }
 } // void paramcl::pruefggfmehrfach()
@@ -2911,13 +2930,13 @@ void paramcl::liescapiconf()
     } // if (!lstat(ccapiconfdat.c_str(),&cstat)) 
     if (obneuer || !cconf.zahl) {
       if (!cconf.zahl) {
-        cconf.init(3,"incoming_script","log_file","log_error");
+        cconf.init(4,"incoming_script","log_file","log_error","idle_script");
       } else {
         cconf.reset();
       } //       if (!cconf.zahl) else
       confdat ccapic(ccapiconfdat,&cconf,obverb);
       if (!cuser.empty()) {
-        for(size_t j=1;j<3;j++) {
+        for(size_t j=0;j<cconf.zahl;j++) {
           if (!cconf[j].wert.empty()) {
             struct stat statdat={0};
             if (!lstat(cconf[j].wert.c_str(),&statdat)) {
@@ -3271,7 +3290,9 @@ int paramcl::getcommandline()
   opts.push_back(/*3*/optioncl(T_s_k,T_suche_l,&Tx, T_suche_in_verarbeiteten_Faxen_nach, 1, &nix,T_MAX,&suchstr,psons));
   opts.push_back(/*2*/optioncl(T_n_k,T_dszahl_l, &Tx, T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt, 1, &dszahl,pzahl));
   opts.push_back(/*4*/optioncl(T_info_k,T_version_l, &Tx, T_Zeigt_die_Programmversion_an, 1, &zeigvers,1));
-  opts.push_back(/*4*/optioncl(T_vi_k,T_vi_l, &Tx, T_Konfigurationsdatei_editieren, 1, &obvi,1));
+  opts.push_back(/*4*/optioncl(T_vi_k,T_vi_l, &Tx, T_Konfigurations_u_Logdatei_bearbeiten_sehen, 1, &obvi,1));
+  opts.push_back(/*4*/optioncl(T_vc_k,T_vc_l, &Tx, T_Capisuite_Konfigurationdateien_bearbeiten, 0, &obvc,1));
+  opts.push_back(/*4*/optioncl(T_vh_k,T_vh_l, &Tx, T_Hylafax_Modem_Konfigurationsdatei_bearbeiten, 0, &obvh,1));
   opts.push_back(/*4*/optioncl(T_h_k,T_hilfe_l, &Tx, T_Erklaerung_haeufiger_Optionen, 1, &hilfe,1));
   opts.push_back(/*4*/optioncl(T_lh_k,T_lhilfe_l, &Tx, T_Erklaerung_aller_Optionen, 1, &hilfe,2));
   opts.push_back(/*4*/optioncl(T_fgz_k,T_fgz_l, &Tx, -1, 1, &hilfe,1));
@@ -7068,10 +7089,11 @@ void hconfig(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
 	Log(violetts+Tx[T_Ende]+"hconfig()"+schwarz,obverb,oblog);
 } // void hconfig(paramcl *pmp,int obverb, int oblog)
 
+// in hliesconf() und hconfigtty()
 void paramcl::setzmodconfd()
 {
   modconfdat=this->varsphylavz+"/etc/config"+"."+this->hmodem; 
-}
+} // void paramcl::setzmodconfd()
 
 void paramcl::hliesconf()
 {
@@ -7512,6 +7534,7 @@ int paramcl::pruefhyla()
 				// wenn sich faxsend findet ...
 				if (obprogda("faxsend",obverb,oblog)) {
 					// und ein hylafax-Verzeichnis da ist ...
+					caus<<"Stelle 1"<<endl;
 					if (this->setzhylavz()) {
 						this->obhyla=0;
 						ret=1;
@@ -9286,26 +9309,42 @@ void paramcl::zeigdienste()
 	} // 	for(int i=0;i<4;i++)
 } // void paramcl::zeigdienste()
 
+const string paramcl::edit="$(which vim 2>/dev/null || which vi) ",
+			//	             view="$(which view 2>/dev/null || which vi) + ",
+							 paramcl::tty=" >/dev/tty";
+
+void paramcl::dovc()
+{
+	pruefcapi();
+	cmd=edit+cfaxconfdat+" "+ccapiconfdat+" ";
+	string erg;
+	if (scapis) cmd+=scapis->systemd+" ";
+	if (cconf.zahl>0) cmd+=cconf[0].wert+" "; // incoming_script
+	if (cconf.zahl>3) cmd+=cconf[3].wert+" "; // idle_script
+	if (cconf.zahl>1) erg+="tablast|tab sview "+cconf[1].wert+"|silent $|"; // log_file
+	if (cconf.zahl>2) erg+="tablast|tab sview "+cconf[2].wert+"|silent $|"; // log_error
+	erg+="tabfirst";
+	exit(systemrueck(cmd+" +'"+erg+"' -p"+tty));
+} // void paramcl::dovc()
+
+void paramcl::dovh()
+{
+	// muss nach setzhylavz kommen
+	pruefhyla();
+	cmd=edit+modconfdat+" "+varsphylavz+"/etc/config"+" ";
+	if (sfaxgetty) cmd+=sfaxgetty->systemd+" ";
+	if (shfaxd) cmd+=shfaxd->systemd+" ";
+	if (sfaxq) cmd+=sfaxq->systemd+" ";
+	if (shylafaxd) cmd+=shylafaxd->systemd+" ";
+	exit(systemrueck(cmd+ " +'tabn|tab sview "+xferfaxlog+"|silent $|tabfirst|1' -p"+tty));
+} // void paramcl::dovh()
+
 int main(int argc, char** argv) 
 {
 /*
 	if (argc<3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		if (argc>1) {
 		// Testcode mit argv[1]
-			size_t p1,p2;
-			string ustring(argv[1]);
-			caus<<violett<<"ustring vor Pruefung: "<<rot<<ustring<<schwarz<<endl;
-			caus<<violett<<"ustring vor Pruefung: "<<rot<<string_to_hex(ustring)<<schwarz<<endl;
-
-			const char* const weg[6]={"libgcc","libselinux-utils","libselinux-python3","libsepol","libsemanage","libstdc++"};
-			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++) {
-				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' ')) {
-					p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
-					ustring.erase(p1,p2-p1);
-				} // 				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' '))
-			} // 			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++)
-			caus<<violett<<"ustring nach Pruefung: "<<rot<<ustring<<schwarz<<endl;
-			exit(27);
 		}
 	}
 */
@@ -9321,9 +9360,10 @@ int main(int argc, char** argv)
 
   if (!pm.getcommandline()) 
     exit(40);
-  if (pm.obvi) {
-		exit(systemrueck("$(which vim 2>/dev/null || which vi) "+pm.konfdatname+" >/dev/tty"));
-  } //   if (pm.obvi)
+  if (pm.obvi) exit(systemrueck(pm.edit+pm.konfdatname+" +'tab sview "+logdt+"|$|tabn' -p"+pm.tty));
+	if (pm.obvc) {
+	  pm.dovc();
+	} // 	if (pm.obvc)
   if (pm.zeigvers) {
    zeigversion(pm.meinname,pm.mpfad);
    pm.zeigkonf();
@@ -9335,6 +9375,9 @@ int main(int argc, char** argv)
 		pm.rueckfragen();
 		pm.pruefggfmehrfach();
 		pm.setzhylavz();
+		if (pm.obvh) {
+		  pm.dovh();
+		} // 		if (pm.obvh)
 		pm.verzeichnisse();
 		pm.pruefsamba();
 		// Rueckfragen koennen auftauchen in: rueckfragen, konfcapi (<- pruefcapi), aenderefax, pruefsamba
