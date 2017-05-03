@@ -3292,26 +3292,42 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 	KLZ // 	if (!(svfeh=srueck.empty())) 
 	KLZ // 		if (!(obenabled=(srueck[0].find("enabled")!=string::npos))) else
 	 */
-//	const int sfeh[]={ T_Dienst_laeuft,T_Dienst_inexistent, T_Dienst_disabled, T_Dienstdateiname_nicht_ermittelbar, T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent, T_Exec_Dateiname_nicht_ermittelbar, T_Exec_Datei_fehlt, T_activating, T_Dienst_kann_gestartet_werden, T_Sonstiges};
-//	int aktobverb=(obverb>-1 && (obverb>0|| (svfeh && svfeh!=8))); // 26.2.17: beim Stoppen eines nicht vorhandenen Dienstes ueberfl. Meldung
+	//	const int sfeh[]={ T_Dienst_laeuft,T_Dienst_inexistent, T_Dienst_disabled, T_Dienstdateiname_nicht_ermittelbar, T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent, T_Exec_Dateiname_nicht_ermittelbar, T_Exec_Datei_fehlt, T_activating, T_Dienst_kann_gestartet_werden, T_Sonstiges};
+	//	int aktobverb=(obverb>-1 && (obverb>0|| (svfeh && svfeh!=8))); // 26.2.17: beim Stoppen eines nicht vorhandenen Dienstes ueberfl. Meldung
 	Log(Txk[T_Ergebnis_Dienst]+blaus+sname+schwarz+": "+gruen+Txk[sfeh[svfeh]]+schwarz,/*akt*/obverb>0?obverb:0,oblog);
-//	Log(violetts+"Ende "+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
-  if (svf0==-1) svf0=svfeh; // Einstellung nach der ersten Untersuchung
+	//	Log(violetts+"Ende "+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
+	if (svf0==-1) svf0=svfeh; // Einstellung nach der ersten Untersuchung
 	return svfeh;
 } // int servc::obsvfeh(int obverb,int oblog)
 
 void servc::pkill(int obverb/*=0*/,int oblog/*=0*/)
 {
-    systemrueck(("sudo pkill '")+ename+"'",obverb-1,oblog,0,1);
-}
+	systemrueck(("sudo pkill '")+ename+"'",obverb-1,oblog,0,1);
+} // void servc::pkill(int obverb/*=0*/,int oblog/*=0*/)
 
 int servc::restart(int obverb/*=0*/,int oblog/*=0*/)
 {
-  for(int i=0;i<2;i++) {
+	for(int i=0;i<2;i++) {
+		uchar obbreak=0;
 		daemon_reload(obverb,oblog);
-    systemrueck("sudo systemctl restart '"+sname+"'",obverb,oblog,0,2);
-	  // <<violett<<"restart, i: "<<gruen<<i<<schwarz<<" sname: "<<sname<<endl;
-    if (!obsvfeh(obverb,oblog)) break;
+		systemrueck("sudo systemctl restart '"+sname+"'",obverb,oblog,0,2);
+		// <<violett<<"restart, i: "<<gruen<<i<<schwarz<<" sname: "<<sname<<endl;
+		obsvfeh(obverb,oblog);
+		switch (sfeh[svfeh]) {
+			case T_Dienst_laeuft: 
+			case T_Dienst_inexistent: 
+			case T_Dienstdateiname_nicht_ermittelbar:
+			case T_Exec_Dateiname_nicht_ermittelbar: 
+			case T_Exec_Datei_fehlt:
+			 obbreak=1; break;
+			case T_Dienst_disabled: 
+			case T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent: 
+			case T_activating:
+			case T_Dienst_kann_gestartet_werden:
+			case T_Sonstiges:
+			default: break;
+		}
+		if (obbreak) break;
     if (i) break;
     pkill(obverb,oblog);
   } //   for(int i=0;i<2;i++)
