@@ -2662,11 +2662,12 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 			/*svec*/ string ustring; uchar obanf=0;
 // s. ausricht in configure
 			switch (linst.pruefipr()) {
-				case dnf: case yum:
+				case dnf: case yum: case zypper:
 // Folgendes sollte u.a. fuer Fedora gehen
 					for(unsigned i=0;i<srueck.size();++i) {
 						if (obanf==1) obanf=2;
-						if (!srueck[i].find("Installed:")||!srueck[i].find("Installiert:")) obanf=1;
+						if ((linst.pruefipr()==zypper && srueck[i].find("NEW package")!=string::npos) ||
+						    ((linst.pruefipr()==dnf||linst.pruefipr()==yum)&&(!srueck[i].find("Installed:")||!srueck[i].find("Installiert:")))) obanf=1;
 						if (!srueck[i].length()) obanf=0;
 						if (obanf==2) {
 							const string source=srueck[i].c_str();
@@ -2695,8 +2696,8 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 						} // 						if (obanf==2)
 					} // 					for(unsigned i=0;i<srueck.size();++i;)
 					break;
-// Folgende Zeile fuer Debian und OpenSuse gut
-				case apt: case zypper:
+// Folgende Zeile fuer Debian gut
+				case apt: 
 // im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
 					for(unsigned i=srueck.size();i;) {
 						--i;
@@ -2878,7 +2879,7 @@ void doanfg(const string& datei, const string& inhalt, const string& comment)
 	} else {
 		perror((string("\n")+Txk[T_Kann_Datei]+datei+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
 	} // 			if (uniff.is_open())
-}
+} // void doanfg(const string& datei, const string& inhalt, const string& comment)
 
 int linst_cl::doggfinst(const string& prog,int obverb,int oblog,uchar ohneabh/*=0*/)
 {

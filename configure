@@ -18,9 +18,11 @@ kf() {
 # IP_R wird verwendet für: Makefile
 getIPR() {
   CTAGS=ctags;
+	sus=0;
 	deb=0;
 	fed=0;
 	{ still which zypper &&{ 
+	  sus=1;
 		Z=zypper;g=--gpg-auto-import-keys;IdPR="$Z -n $g in ";IP_R="sudo $Z $g in ";UPR="sudo $Z rm -u ";pgroff=groff;
 		# die nächsten beiden Variablen dürften 26.3.17 unnötig werden
   REPOS="sudo $Z lr|grep 'g++\|devel_gcc'\>$KR||sudo $Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
@@ -55,17 +57,19 @@ ausricht() {
 # im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
 # s. int linst_cl::doinst
   cat "$1" >> $INSTLOG
-	if [ $fed = 0 ]; then
-		sed -ni.bak '/^\s/{h;:a;n;/^\s/{H;ba};};${x;s/\n/ /g;p}' "$1";
+	if [ $sus = 1 ]; then
+   sed -ni.bak '${g;s/\n//g;s/\s\+/ /g;p};/NEW package/,/^$/!d;//d;{s/\([^ ]\+\)[ ][^ ]\+/\1/g};H' "$1";
+	elif [ $fed = 1 ]; then
 # Beispiel für dnf:	 
 #	 V=Verifying;sed -n '/'$V'/{s/[ ]*'$V'[ ]*:[ ]*\([^ ]*\).*/\1/;H};${x;s/\n/ /g;p}' /DATA/down/inst_vim_orig
-  else
 # in Fedora: nach dem Programm kommt mit einem Leerzeichen eine Versionsnr., die unnötig ist für die Deninstallation
 #		sed -ni.bak '/^\s/{s/\([^ ]\+\)[ ][^ ]\+/ \1/g;s/\s\+/ /g;h;:a;n;/^\s/{s/\([^ ]\+\)[ ][^ ]\+/ \1/g;s/\s\+/ /g;H;ba};};${x;s/\n/ /g;p}' "$1";
 # ausserdem: nicht der letzte eingerueckte Block, sondern der hinter "Installed:" (vielleicht auch "Installiert:")
 # am Schluss hole hold-Register, entferne Zeilenumbrueche, fasse Leerzeichen zusammen; wenn nicht zwischen Install und leerer Zeile, loesche Zeile;
 # loesche auch die letzten Suchmusterzeilen (Install und leere Zeile); uebertrage nur den ersten von zwei Textbloecken; haenge ans Hold-Register an;
    sed -ni.bak '${g;s/\n//g;s/\s\+/ /g;p};/Install[^: dt]*[dt]:/,/^$/!d;//d;{s/\([^ ]\+\)[ ][^ ]\+/\1/g};H' "$1";
+	else # apt
+		sed -ni.bak '/^\s/{h;:a;n;/^\s/{H;ba};};${x;s/\n/ /g;p}' "$1";
 	fi;
 	sed -i 's/ libgcc[^ ]*/ /g;s/ libselinux[^ ]*/ /g' "$1"; 
 	# die Deinstallation von libgcc.x86_64 wirkte sich irgendwie ungünstig auf das System aus ...
@@ -92,6 +96,7 @@ ausricht() {
 #		printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
 #	 }
 }
+
 einricht() {
 # wenn $1 nicht aufrufbar oder "_", dann installiere $2
  if [ $1 != _ ]&& still which $1; then
@@ -103,7 +108,9 @@ einricht() {
 	 printf "Installing/ Installiere $blau$2$reset ...\n";
 	 [ $1 = "vim" -a $fed = 1 ] &&{ sudo yum update vim-minimal;}
 	 rweg=0;
+   CMD=${IPR};
 	 [ $1 = "g++" -a -n "$Z" ] &&{
+		 CMD=${IP_R};
 		 sudo $Z lr|grep 'g++\|devel_gcc'>$KR ||{ 
 			 GREPO=http://download.opensuse.org/repositories/devel:/gcc/
 			 GREPO=${GREPO}`cat /etc/*-release|grep ^NAME= |cut -d\" -f2|sed 's/ /_/'`_
@@ -115,7 +122,7 @@ einricht() {
 		 }
 	 }
 	 LOG=inst_$1.log;
-	 ${IPR}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff groff-base"
+	 ${CMD}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff groff-base"
 	 printf "\nRueckmeldung bei einricht $2:\n">>$INSTLOG
 	 ausricht "$LOG" $1 "${IPR}$2"
 	 if [ $1 = "g++" -a -n "$Z" -a $rweg = 1 ]; then
