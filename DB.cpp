@@ -367,7 +367,8 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 									if (!miterror) break;
 								} // while (1)
 								break;
-							case 2002:
+							case 2006: // Server has gone away
+							case 2002: // Can't connect to local MySQL server through socket '/var/lib/mysql/mysql.sock' (2 "No such file or directory"):
 								if (!strcasecmp(host.c_str(),"localhost")) {
 									Log(Txd[T_Fehler_db]+drots+mysql_error(conn)+schwarz+Txd[T_Versuche_mysql_zu_starten],1,1);
 #ifdef linux
@@ -378,13 +379,14 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 										systemrueck("sudo setfacl -Rm 'u:mysql:7' '"+datadir+"'",obverb,oblog);
 									}
 									Log(blaus+Txd[T_Vor_restart]+Txd[T_Versuch_Nr]+schwarz+ltoan(versuch),1,oblog);
-									if (dbsv->restart(1,1)) {
-									  fehnr=0;
-										Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
-										continue;
-									} else /*if (versuch) */ {
-										instmaria(obverb, oblog);
-									} // 									if (dbsv->restart(1,1)) else
+									for(int iiru=0;iiru<2;iiru++) {
+									 if (dbsv->restart(1,1)) {
+										 Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
+										 break;
+									 } // 									 if (dbsv-restart(1,1))
+									 instmaria(obverb,oblog);
+									} // 									for(int iiru=0;iiru<2;iiru++)
+									continue;
 #endif
 								} //                 if (!strcasecmp(host.c_str(),"localhost")) 
 								break;
