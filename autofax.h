@@ -171,6 +171,7 @@ class paramcl // Programmparameter
     uchar obvi=0;   // ob Konfigurationsdatei editiert werden soll
     uchar obvc=0;   // ob Capisuite-Konfigurationsdateien betrachtet werden sollen
 		uchar obvh=0;   // ob Hylafax-Konfigurations- und Logdateindatei betrachtet werden sollen
+		uchar obvs=0;   // ob Quelldateien bearbeitet werden sollen
     uchar loef=0;   // loesche eine Fax-Datei
     uchar loew=0;  // loeschewaise in der Datenbank, aber nicht mehr real nachweisbare Dateien in der Datenbank loeschen
     uchar loea=0; // loesche alle wartenden Faxe und zugehoerige Dateieintraege

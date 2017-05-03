@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "03.05.17" "Version 0.43322" "\fBautofax\fR man page"
+.TH man 1 "03.05.17" "Version 0.43327" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -112,11 +112,13 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -info, --version\fR: shows the program version
 .br
-\fB -vi, --vi\fR: edit/view configuration and log file
+\fB -vi, --vi\fR: edit/view configuration and log file (finish with ':qa')
 .br
-\fB -vc, --vc\fR: edit capisuite log files
+\fB -vc, --vc\fR: edit capisuite log files (finish with ':qa')
 .br
-\fB -vh, --vh\fR: edit hylafax modem configuration file
+\fB -vh, --vh\fR: edit hylafax modem configuration file (finish with ':qa')
+.br
+\fB -vs, --vs\fR: edit source files (finish with ':qa')
 .br
 \fB -h, --help\fR: Explanation of frequent options
 .br

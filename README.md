@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43322) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43327) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -210,9 +210,14 @@ clean them up <b><br>
 -n, --reccount &lt;zahl&gt;</b>: No. of listed entries =
 &lt;no&gt; instead of &rsquo;<b>30</b>&rsquo; <b><br>
 -info, --version</b>: shows the program version <b><br>
--vi, --vi</b>: edit/view configuration and log file <b><br>
--vc, --vc</b>: edit capisuite log files <b><br>
--vh, --vh</b>: edit hylafax modem configuration file <b><br>
+-vi, --vi</b>: edit/view configuration and log file (finish
+with &rsquo;:qa&rsquo;) <b><br>
+-vc, --vc</b>: edit capisuite log files (finish with
+&rsquo;:qa&rsquo;) <b><br>
+-vh, --vh</b>: edit hylafax modem configuration file (finish
+with &rsquo;:qa&rsquo;) <b><br>
+-vs, --vs</b>: edit source files (finish with
+&rsquo;:qa&rsquo;) <b><br>
 -h, --help</b>: Explanation of frequent options <b><br>
 -lh, --longhelp</b>: Explanation of all options <b><br>
 Options to be saved in the configuration file: (preced.
@@ -1004,7 +1009,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43322) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43327) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1232,11 +1237,13 @@ Datensaetze = &lt;zahl&gt; statt &rsquo;<b>30</b>&rsquo;
 <b><br>
 -info, --version</b>: Zeigt die Programmversion an <b><br>
 -vi, --vi</b>: Konfigurations- u.Logdatei bearbeiten/sehen
-<b><br>
+(beenden mit &rsquo;:qa&rsquo;) <b><br>
 -vc, --vc</b>: Capisuite-Konfigurationsdateien bearbeiten
-<b><br>
+(beenden mit &rsquo;:qa&rsquo;) <b><br>
 -vh, --vh</b>: Hylafax-Modem-Konfigurationsdatei bearbeiten
-<b><br>
+(beenden mit &rsquo;:qa&rsquo;) <b><br>
+-vs, --vs</b>: Quelldateien bearbeiten (beenden mit
+&rsquo;:qa&rsquo;) <b><br>
 -h, --hilfe</b>: Erkl&auml;rung h&auml;ufiger
 Optionen <b><br>
 -lh, --langhilfe</b>: Erkl&auml;rung aller Optionen

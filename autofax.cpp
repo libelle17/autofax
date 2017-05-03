@@ -473,6 +473,7 @@ enum T_
   T_Konfigurations_u_Logdatei_bearbeiten_sehen,
 	T_Capisuite_Konfigurationdateien_bearbeiten,
 	T_Hylafax_Modem_Konfigurationsdatei_bearbeiten,
+	T_Quelldateien_bearbeiten,
   T_zufaxen,
   T_warteauffax,
   T_nichtgefaxt,
@@ -683,6 +684,8 @@ enum T_
 	T_vc_l,
 	T_vh_k,
 	T_vh_l,
+	T_vs_k,
+	T_vs_l,
 	T_h_k,
 	T_lh_k,
 	T_hilfe_l,
@@ -1566,11 +1569,13 @@ char const *autofax_T[T_MAX+1][Smax]={
   // T_pruefcvz
   {"pruefcvz()","checkcdirs()"},
   // T_Konfigurations_u_Logdatei_bearbeiten_sehen
-  {"Konfigurations- u.Logdatei bearbeiten/sehen","edit/view configuration and log file"},
+  {"Konfigurations- u.Logdatei bearbeiten/sehen (beenden mit ':qa')","edit/view configuration and log file (finish with ':qa')"},
 	// T_Capisuite_Konfigurationdateien_bearbeiten
-	{"Capisuite-Konfigurationsdateien bearbeiten","edit capisuite log files"},
+	{"Capisuite-Konfigurationsdateien bearbeiten (beenden mit ':qa')","edit capisuite log files (finish with ':qa')"},
 	// T_Hylafax_Modem_Konfigurationsdatei_bearbeiten
-	{"Hylafax-Modem-Konfigurationsdatei bearbeiten","edit hylafax modem configuration file"},
+	{"Hylafax-Modem-Konfigurationsdatei bearbeiten (beenden mit ':qa')","edit hylafax modem configuration file (finish with ':qa')"},
+	// T_Quelldateien_bearbeiten
+	{"Quelldateien bearbeiten (beenden mit ':qa')","edit source files (finish with ':qa')"},
   // T_zufaxen
   {"zufaxen","tobefaxed"},
   // T_warteauffax,
@@ -2003,6 +2008,10 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{"vh","vh"},
 	// T_vh_l
 	{"vh","vh"},
+	// T_vs_k
+	{"vs","vs"},
+	// T_vs_l
+	{"vs","vs"},
 	// T_h_k
 	{"h","h"},
 	// T_lh_k
@@ -2335,7 +2344,7 @@ paramcl::paramcl(int argc, char** argv)
 
 void paramcl::pruefggfmehrfach()
 {
-  if (!hilfe &&!obvi &&!obvc &&!obvh
+  if (!hilfe &&!obvi &&!obvc &&!obvh &&!obvs
 	    &&!zeigvers &&!lista &&!listf &&!listi &&!listw && suchstr.empty() &&!loef &&!loew &&!loea &&!anhl &&!erneut &&!uml) {
     pruefmehrfach(meinname,nrzf);
   }
@@ -3004,7 +3013,6 @@ void paramcl::pruefcvz()
   cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
   // <<violett<<"cfaxuserrcvz: "<<cfaxuserrcvz<<schwarz<<endl;
   pruefverz(cfaxuserrcvz,obverb,oblog);
-
 } // paramcl::pruefcvz
 
 // wird aufgerufen in lieskonfein
@@ -3033,13 +3041,13 @@ void paramcl::setzzielmuster(confdat& afconf)
   for(size_t i=0;i<(zmzn<zmvzn?zmzn:zmvzn);i++) {
     zmp[i].setzemuster(zmvp[i].holmuster());
     zmp[i].ziel=zmvp[i].ziel;
-  }
+  } //   for(size_t i=0;i<(zmzn<zmvzn?zmzn:zmvzn);i++)
   for (size_t i=0;i<zmzn;i++) {
     zmconf[2*i].name=string("ZMMuster_")+ltoan(i+1);
     zmconf[2*i].setze(&zmp[i].holmuster());
     zmconf[2*i+1].name=string("ZMZiel_")+ltoan(i+1);
     zmconf[2*i+1].setze(&zmp[i].ziel);
-  }
+  } //   for (size_t i=0;i<zmzn;i++)
   if (zmda) {
     // jetzt stehen die Variablen fuer die Zielverzeichnisse zur Verfuegung
     afconf.auswert(&zmconf,obverb);
@@ -3047,8 +3055,8 @@ void paramcl::setzzielmuster(confdat& afconf)
       if (i==zmzn-1) zmconf[2*i].wert.clear(); // das letzte Muster muss "" sein, damit jedes Fax beruecksichtigt wird
       zmp[i].setzemuster(zmconf[2*i].wert);
       zmp[i].ziel=zmconf[2*i+1].wert;
-    }
-  }
+    } //     for(size_t i=0;i<zmzn;i++)
+  } //   if (zmda)
 } // void paramcl::setzzielmuster()
 
 // wird aufgerufen in lieskonfein
@@ -3074,7 +3082,7 @@ void paramcl::setzsql(confdat& afconf)
   //        <<"akt: "<<hviolett<<akt<<schwarz<<", sqlconf["<<akt<<"]: "<<blau<<sqlconf[akt].name<<schwarz<<endl;
   //       <<"akt: "<<violett<<akt<<schwarz<<", sqlconf["<<akt<<"]: "<<dblau<<sqlconf[akt].wert<<schwarz<<endl;
   //      KLZ
-}
+} // void paramcl::setzsql(confdat& afconf)
 
 
 // wird aufgerufen in: main
@@ -3293,6 +3301,7 @@ int paramcl::getcommandline()
   opts.push_back(/*4*/optioncl(T_vi_k,T_vi_l, &Tx, T_Konfigurations_u_Logdatei_bearbeiten_sehen, 1, &obvi,1));
   opts.push_back(/*4*/optioncl(T_vc_k,T_vc_l, &Tx, T_Capisuite_Konfigurationdateien_bearbeiten, 0, &obvc,1));
   opts.push_back(/*4*/optioncl(T_vh_k,T_vh_l, &Tx, T_Hylafax_Modem_Konfigurationsdatei_bearbeiten, 0, &obvh,1));
+  opts.push_back(/*4*/optioncl(T_vs_k,T_vs_l, &Tx, T_Quelldateien_bearbeiten, 0, &obvs,1));
   opts.push_back(/*4*/optioncl(T_h_k,T_hilfe_l, &Tx, T_Erklaerung_haeufiger_Optionen, 1, &hilfe,1));
   opts.push_back(/*4*/optioncl(T_lh_k,T_lhilfe_l, &Tx, T_Erklaerung_aller_Optionen, 1, &hilfe,2));
   opts.push_back(/*4*/optioncl(T_fgz_k,T_fgz_l, &Tx, -1, 1, &hilfe,1));
@@ -9360,10 +9369,9 @@ int main(int argc, char** argv)
 
   if (!pm.getcommandline()) 
     exit(40);
-  if (pm.obvi) exit(systemrueck(pm.edit+pm.konfdatname+" +'tab sview "+logdt+"|$|tabn' -p"+pm.tty));
-	if (pm.obvc) {
-	  pm.dovc();
-	} // 	if (pm.obvc)
+  if (pm.obvi) exit(systemrueck(pm.edit+pm.konfdatname+" +'tab sview "+logdt+"|silent $|tabn' -p"+pm.tty));
+	if (pm.obvc) pm.dovc();
+	if (pm.obvs) exit(systemrueck("cd \""+instvz+"\"; sh viall"+pm.tty));
   if (pm.zeigvers) {
    zeigversion(pm.meinname,pm.mpfad);
    pm.zeigkonf();
