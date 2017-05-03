@@ -379,10 +379,12 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 									}
 									Log(blaus+Txd[T_Vor_restart]+Txd[T_Versuch_Nr]+schwarz+ltoan(versuch),1,oblog);
 									if (dbsv->restart(1,1)) {
+									  fehnr=0;
 										Log(Txd[T_MySQL_erfolgreich_gestartet],1,1);
-									} else if (versuch) {
+										continue;
+									} else /*if (versuch) */ {
 										instmaria(obverb, oblog);
-									}
+									} // 									if (dbsv->restart(1,1)) else
 #endif
 								} //                 if (!strcasecmp(host.c_str(),"localhost")) 
 								break;
