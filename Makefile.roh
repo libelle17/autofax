@@ -224,6 +224,7 @@ endif
 	@./configure inst "$(CCName)" "$(COMP)"
 #	@if { $(slc);! $(slc) -p|grep -q "libmysqlclient.so ";}||! test -f /usr/include/mysql/mysql.h;then $(call iunins,$(libmcd))fi
 #	$(call i1unin,$(libmcd))
+# 3.5.17: auch libmysqlclient18 hat gefehlt
 	-@for r in 1 2;do [ $$r = 1 ]&&{ lc="$(libmcd)";true;}||lc="$(libmc1d)";\
 	[ -f /usr/include/mysql/mysql.h>$(KR) ]&&\
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
@@ -233,6 +234,7 @@ endif
 #	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(call i1unin,$(pgd))$(slc);};
 	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ ./configure inst _ "$(pgd)" verbose;./configure inst _ "$(slc)" verbose;};
 #	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
+	# 3.5.17: auch libtiff5 hat gefehlt
 	-@find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)||\
 	./configure inst _ "$(LT)" verbose
