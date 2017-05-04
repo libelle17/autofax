@@ -2713,7 +2713,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 			} // 			switch (linst.pruefipr())
 
 					// s. ausricht() in configure
-			mdatei uniff(instvz+"/inst_log",ios::app,0);
+			mdatei uniff(instvz+"/inst.log",ios::app,0);
 			if (uniff.is_open()) {
 				uniff<<endl<<"Rueckmeldung zu: '"<<bef<<"':"<<endl;
 				for(unsigned i=0;i<srueck.size();i++) {

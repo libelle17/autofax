@@ -58,7 +58,9 @@ ausricht() {
 # s. int linst_cl::doinst
   cat "$1" >> $INSTLOG
 	if [ $sus = 1 ]; then
-   sed -ni.bak '${g;s/\n//g;s/\s\+/ /g;p};/NEW package/,/^$/!d;//d;{s/\([^ ]\+\)[ ][^ ]\+/\1/g};H' "$1";
+# am Schluss hole hold-Register, entferne Zeilenumbrueche, fasse Leerzeichen zusammen; wenn nicht zwischen NEW package und leerer Zeile, loesche Zeile;
+# loesche auch die letzten Suchmusterzeilen (NEW package und leere Zeile); haenge ans Hold-Register an;
+   sed -ni.bak '${g;s/\n//g;s/\s\+/ /g;p};/NEW package/,/^$/!d;//d;H' "$1";
 	elif [ $fed = 1 ]; then
 # Beispiel für dnf:	 
 #	 V=Verifying;sed -n '/'$V'/{s/[ ]*'$V'[ ]*:[ ]*\([^ ]*\).*/\1/;H};${x;s/\n/ /g;p}' /DATA/down/inst_vim_orig
@@ -71,7 +73,7 @@ ausricht() {
 	else # apt
 		sed -ni.bak '/^\s/{h;:a;n;/^\s/{H;ba};};${x;s/\n/ /g;p}' "$1";
 	fi;
-	sed -i 's/ libstdc[^g ]*gcc[^ ]*/ /g;s/ libgcc[^ ]*/ /g;s/ libselinux[^ ]*/ /g' "$1"; 
+	sed -i.baksed 's/ libstdc[^g ]*gcc[^ ]*/ /g;s/ libgcc[^ ]*/ /g;s/ libselinux[^ ]*/ /g' "$1"; 
 	# die Deinstallation von libgcc.x86_64 wirkte sich irgendwie ungünstig auf das System aus ...
 	# noch ungünstiger die von libselinux ...
 # s. doanfg(string& datei, string& inhalt, string& comment) in kons.cpp
@@ -81,7 +83,7 @@ ausricht() {
 # wenn $AUNF fehlt oder eine der in $1 erwähnten Programm dort nicht aufgeführt ist, dann zuinstallieren=ja; "; vi ..." nicht zu werten
      [ ! -f $AUNF ]&&zuinst=ja||{
       for E in $IP; do
-       grep -q "[^;] $E " $AUNF||{ zuinst=ja;break;}
+       grep -q "[^;] $E" $AUNF||{ zuinst=ja;break;}
       done;				
       [ -n "$zuinst" ]&&break;
      }
@@ -121,7 +123,7 @@ einricht() {
 			 sudo $Z ar $GREPO && rweg=1;
 		 }
 	 }
-	 LOG=inst_$1.log;
+	 LOG=inst_$2.log;
 	 ${CMD}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff groff-base"
 	 printf "\nRueckmeldung bei einricht $2:\n">>$INSTLOG
 	 ausricht "$LOG" $1 "${IPR}$2"
@@ -152,7 +154,7 @@ if [ $ICH = -bash ]; then
 fi
 
 PROG=autofax
-INSTLOG=$HOME/$PROG/inst_log
+INSTLOG=$HOME/$PROG/inst.log
 mkdir -p $HOME/$PROG
 AUNF=$HOME/$PROG/$UNF
 _LT="libtiff"
