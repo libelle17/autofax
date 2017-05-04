@@ -71,7 +71,7 @@ ausricht() {
 	else # apt
 		sed -ni.bak '/^\s/{h;:a;n;/^\s/{H;ba};};${x;s/\n/ /g;p}' "$1";
 	fi;
-	sed -i 's/ libgcc[^ ]*/ /g;s/ libselinux[^ ]*/ /g' "$1"; 
+	sed -i 's/ libstdc[^g ]*gcc[^ ]*/ /g;s/ libgcc[^ ]*/ /g;s/ libselinux[^ ]*/ /g' "$1"; 
 	# die Deinstallation von libgcc.x86_64 wirkte sich irgendwie ungünstig auf das System aus ...
 	# noch ungünstiger die von libselinux ...
 # s. doanfg(string& datei, string& inhalt, string& comment) in kons.cpp
