@@ -98,7 +98,8 @@ ausricht() {
 #		printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
 #	 }
 }
-
+# wird aufgerufen im Hauptprogramm configure, wenn 1. Parameter 'inst', dieses in Makefile mit: $(COMP), $$lc, $(pgd), $(slc), $(LT), $(LT5), $(pgroff)
+# sonst mit 'make', aus viall mit 'ctags', 'gtags' und 'vim'
 einricht() {
 # wenn $1 nicht aufrufbar oder "_", dann installiere $2
  if [ $1 != _ ]&& still which $1; then
@@ -123,7 +124,7 @@ einricht() {
 			 sudo $Z ar $GREPO && rweg=1;
 		 }
 	 }
-	 LOG=inst_$2.log;
+	 LOG=inst_${$2// /_}.log; # Leerzeichen entfernen
 	 ${CMD}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff groff-base"
 	 printf "\nRueckmeldung bei einricht $2:\n">>$INSTLOG
 	 ausricht "$LOG" $1 "${IPR}$2"
