@@ -111,13 +111,13 @@ einricht() {
    CMD=${IPR};
 	 [ $1 = "g++" -a -n "$Z" ] &&{
 		 CMD=${IP_R};
-		 sudo $Z lr|grep 'g++\|devel_gcc'>$KR ||{ 
+		 sudo $Z lr|grep 'g++\|devel_gcc'>/dev/null 2>&1 ||{ 
 			 GREPO=http://download.opensuse.org/repositories/devel:/gcc/
 			 GREPO=${GREPO}`cat /etc/*-release|grep ^NAME= |cut -d\" -f2|sed 's/ /_/'`_
 			 GREPO=${GREPO}`cat /etc/*-release|grep ^VERSION_ID= |cut -d\" -f2`
 			 GREPO=${GREPO}/devel:gcc.repo;
 			 printf "Adding Repository/ Füge Repository hinzu: $blau$GREPO$reset\n";
-			 sudo $Z rr devel_gcc >$KR;
+			 sudo $Z rr devel_gcc >/dev/null 2>&1;
 			 sudo $Z ar $GREPO && rweg=1;
 		 }
 	 }
