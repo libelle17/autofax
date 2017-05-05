@@ -235,15 +235,13 @@ endif
 	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ ./configure inst _ "$(pgd)" verbose;./configure inst _ "$(slc)" verbose;};
 #	@test -f /usr/include/tiff.h&&test -f /usr/lib64/libtiff.so||{ $(UPR)$(LT) $(KF);$(IPR)$(LT);grep -q '$(LT)' $(UNF)||printf '$(UPR)$(LT)\n echo $(UPR)$(LT)\n'>>$(UNF);}
 # 3.5.17: auch libtiff5 hat gefehlt
-	-@find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
-	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)||\
-	./configure inst _ "$(LT)" verbose
-#	{ $(UDPR)$(LT) $(KF);$(call i1unind,$(LT))}
-	-@if test -n "$(LT5)"; then { \
+	-@for r in 1 2;do \
+	[ $$r = 1 ]&& LTakt="$(LT)" ||{ [ -z "$(LT5)" ]&&break;LTakt="$(LT5)";};\
 	find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
-	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)||\
-	{ ./configure inst _ "$(LT5)" verbose;};}; else true; fi
-#	{ $(call i1unind,$(LT5))};}; else true; fi
+	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -type l -xtype f -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
+	./configure inst _ "$$LTakt" verbose;\
+	done; true;
+# { $(UDPR)$(LT) $(KF);$(call i1unind,$(LT))}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                         \r" >$(BA)
 
@@ -362,7 +360,7 @@ confclean:
 
 .PHONY: uninstall
 uninstall: distclean
-	-@tac $(UNF)>tmp_$(UNROH)&& sudo blau=$(blau) reset=$(reset) bash tmp_$(UNROH) # uninstallinv von hinten nach vorne abarbeiten
+	-@tac $(UNF)>tmp_$(UNROH)&& sudo blau=$(blau) reset=$(reset) bash tmp_$(UNROH);true # uninstallinv von hinten nach vorne abarbeiten
 	-@printf "Fertig mit uninstall!\n"
 
 #rufe:
