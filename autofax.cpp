@@ -2338,8 +2338,8 @@ paramcl::paramcl(int argc, char** argv)
   vaufr=mpfad+" -noia >/dev/null 2>&1"; // /usr/bin/autofax -noia
   saufr=base_name(vaufr); // autofax -noia
 	zsaufr=ersetzAllezu(saufr,"/","\\/");
-	// time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff;
-  tstart=clock();
+	/* time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff; */
+	tstart=clock();
 	//  konfdatname.clear();
 } // paramcl::paramcl()
 
@@ -6630,7 +6630,7 @@ void paramcl::empfcapi(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*
 	const string base=base_name(stamm);
 	size_t hpos=base.find_last_of('-')+1; // u.a.: string::npos+1=0
 	const string fnr=base.substr(hpos);
-	tm.tm_isdst=-1; // sonst wird ab und zu eine Stunde abgezogen
+	tm.tm_isdst=-1; // sonst wird zufaellig ab und zu eine Stunde abgezogen
 	time_t modz=mktime(&tm);
 	string getname,bsname;
 	getSender(this,umst[1].wert,&getname,&bsname,obverb,oblog);
@@ -8996,43 +8996,44 @@ void fsfcl::capiausgeb(stringstream *ausgp, const string& maxcdials, uchar fuerl
 // wird aufgerufen in: setzhylastat
 int paramcl::xferlog(fsfcl *fsfp,string *totpages,string *ntries,string *totdials,string *tottries,string *maxtries)
 {
-  // mit grep braucht er fuer eine 400 kb Datei ca. 170 clock()-Einheiten (vorne und hinten)
-  // rueckwaerts braucht er fuer eine 400 kb Datei bis zum letzten Satz 93 clock()-Einheiten, bis zum ersten 220000.
-  // vorwaerts braucht er fuer diese Datei ca. 9000 clock()-Einheiten
-  // #define profiler
+	// mit grep braucht er fuer eine 400 kb Datei ca. 170 clock()-Einheiten (vorne und hinten)
+	// rueckwaerts braucht er fuer eine 400 kb Datei bis zum letzten Satz 93 clock()-Einheiten, bis zum ersten 220000.
+	// vorwaerts braucht er fuer diese Datei ca. 9000 clock()-Einheiten
+	// #define profiler
 #ifdef profiler
-  perfcl prf("xferlog");
+	perfcl prf("xferlog");
 #endif
-  int gefunden=0;
+	int gefunden=0;
 #define mitgrep
 #ifdef mitgrep
-  svec grueck;
+	svec grueck;
 #define direkt
 #ifdef direkt
-  // ggf. broken pipe error; schadet aber experimentell dem Ergebnis nicht, deshalb Fehler unsichtbar
-//  systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null | grep -m 1 \""+this->hmodem+sep+jobid+sep+"\" | cut -f 14",obverb,oblog,&grueck); 
-int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
-//  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"tty[^"+sep+"]*"+sep+fsfp->hylanr+sep+"\" | cut -f1,2,14,20",obverb,oblog,&grueck); 
-// 2.3.17 in Eintraegen UNSENT und SUBMIT kann tty... auch fehlen
-  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -am 1 \"^[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+
-	            sep+fsfp->hylanr+sep+"\" | cut -f1,2,14,20,4,7",obverb,oblog,&grueck); 
-  if (grueck.size()) {
-    gefunden=1;
-    vector<string> tok;
-    aufSplit(&tok,grueck[0],sep);
+	// ggf. broken pipe error; schadet aber experimentell dem Ergebnis nicht, deshalb Fehler unsichtbar
+	//  systemrueck(string("tac \"")+xferfaxlog+"\" 2>/dev/null | grep -m 1 \""+this->hmodem+sep+jobid+sep+"\" | cut -f 14",obverb,oblog,&grueck); 
+	int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
+	//  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"tty[^"+sep+"]*"+sep+fsfp->hylanr+sep+"\" | cut -f1,2,14,20",obverb,oblog,&grueck); 
+	// 2.3.17 in Eintraegen UNSENT und SUBMIT kann tty... auch fehlen
+	systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -am 1 \"^[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+
+			sep+fsfp->hylanr+sep+"\" | cut -f1,2,8,14,20",obverb,oblog,&grueck); 
+	fsfp->sendqgespfad.clear();
+	if (grueck.size()) {
+		gefunden=1;
+		vector<string> tok;
+		aufSplit(&tok,grueck[0],sep);
 		if (tok.size()<=2) fsfp->hgerg=grueck[0];
 		if (tok.size()) {
-			struct tm tm={0};
-// a) fuehrt (zumindest hier) zu grottenfalschen Daten
-//			if (strptime(tok[0].c_str(),"%m/%d/%y %H:%M",&tm)) {
-// b) get_time ist (zumindest hier) noch nicht in <iomanip>
-//       istringstream iss(tok[0]);
-//			 iss>>get_time(&tm,"%m/%d/%y %H:%M");
-//			 if (!iss.fail()) {
-// c) das geht:
+			// a) fuehrt (zumindest hier) zu grottenfalschen Daten
+			//			if (strptime(tok[0].c_str(),"%m/%d/%y %H:%M",&tm))
+			// b) get_time ist (zumindest hier) noch nicht in <iomanip>
+			//       istringstream iss(tok[0]);
+			//			 iss>>get_time(&tm,"%m/%d/%y %H:%M");
+			//			 if (!iss.fail()) 
+			// c) das geht:
 			int y=0,M=0,d=0,h=0,m=0;
 			if (sscanf(tok[0].c_str(), "%d/%d/%d %d:%d", &M, &d, &y, &h, &m)==5) {
-			  tm.tm_year=y+(y<100?100:-1900);
+				struct tm tm={0};
+				tm.tm_year=y+(y<100?100:-1900);
 				tm.tm_mon=M-1;
 				tm.tm_mday=d;
 				tm.tm_hour=h;
@@ -9046,115 +9047,113 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 				if (tok[1]=="SEND") aktion=1;
 				else if (tok[1]=="UNSENT") aktion=2;
 				if (tok.size()>2) {
-					fsfp->hgerg=tok[2];
-					anfzweg(fsfp->hgerg); // Anfuehrungszeichen entfernen
-					switch (aktion) {
-						case 2: 
-							fsfp->hylastat=gescheitert;
-							fsfp->hstate="8"; 
-							break;
-						case 1: 
-							if (fsfp->hgerg.empty()) {
-								fsfp->hylastat=gesandt;
-								fsfp->hstate="7"; 
-							} else {
-								fsfp->hylastat=verarb;
-								fsfp->hstate="6";
-							}
-							break;
-					} //         switch (aktion)
-					if (tok.size()>3) {
-						vector<string> toi;
-						aufSplit(&toi,tok[3],'/');
-						if (toi.size()) {
-						  fsfp->hpages=toi[0];
-							if (totpages) *totpages=toi[0];
-							if (toi.size()>1) {
-								if (ntries) *ntries=toi[1];
-								if (toi.size()>2) {
-									if (toi.size()>3) {
-										fsfp->hdials=toi[3];
-										if (totdials) *totdials=toi[3];
-										if (toi.size()>4) {
-											fsfp->maxdials=toi[4];
-											if (toi.size()>5) {
-												if (tottries) *tottries=toi[5];
-												if (toi.size()>6) {
-													if (maxtries) *maxtries=toi[6];
-												} //                       if (toi.size()>6)
-											} //                       if (toi.size()>5)
-										} //                     if (toi.size()>4)
-									} //                   if (toi.size()>3)
-								} //                 if (toi.size()>2)
-							} //               if (toi.size()>1) 
-						} //             if (toi.size()) 
-					  if (tok.size()>4) {
-							fsfp->sendqgespfad=this->varsphylavz+vtz+'q'+tok[4];
-							if (tok.size()>5) {
-						  fsfp->number=tok[5];
-						 }
-						}
+						fsfp->number=tok[2];
+						anfzweg(fsfp->number);// Telefonnummer; Anfuehrungszeichen entfernen
+						if (tok.size()>3) {
+							fsfp->hgerg=tok[3];
+							anfzweg(fsfp->hgerg); // Anfuehrungszeichen entfernen
+							switch (aktion) {
+								case 2: 
+									fsfp->hylastat=gescheitert;
+									fsfp->hstate="8"; 
+									break;
+								case 1: 
+									if (fsfp->hgerg.empty()) {
+										fsfp->hylastat=gesandt;
+										fsfp->hstate="7"; 
+									} else {
+										fsfp->hylastat=verarb;
+										fsfp->hstate="6";
+									} // 									if (fsfp->hgerg.empty()) else
+									break;
+							} //         switch (aktion)
+							if (tok.size()>4) {
+								vector<string> toi;
+								aufSplit(&toi,tok[4],'/');
+								if (toi.size()) {
+									fsfp->hpages=toi[0];
+									if (totpages) *totpages=toi[0];
+									if (toi.size()>1) {
+										if (ntries) *ntries=toi[1];
+										if (toi.size()>2) {
+											if (toi.size()>3) {
+												fsfp->hdials=toi[3];
+												if (totdials) *totdials=toi[3];
+												if (toi.size()>4) {
+													fsfp->maxdials=toi[4];
+													if (toi.size()>5) {
+														if (tottries) *tottries=toi[5];
+														if (toi.size()>6) {
+															if (maxtries) *maxtries=toi[6];
+														} //                       if (toi.size()>6)
+													} //                       if (toi.size()>5)
+												} //                     if (toi.size()>4)
+											} //                   if (toi.size()>3)
+										} //                 if (toi.size()>2)
+									} //               if (toi.size()>1) 
+								} //             if (toi.size()) 
+							} // 							if (tok.size()>4)
 					} //           if (tok.size()>3) 
 				} //         if (tok.size()>2) 
 			} //       if (tok.size()>1)
-		} //     if (tok.size()) else
+		} //     if (tok.size())
 #else
-    systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null|grep -am 1 \""+this->hmodem+sep+fsfp->hylanr+sep+"\"",obverb,oblog,&grueck); // ggf. broken pipe error
-    if (grueck.size()) KLA
-      vector<string> tok;
-    aufSplit(&tok,&grueck[grueck.size()-1],sep);
+		systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null|grep -am 1 \""+this->hmodem+sep+fsfp->hylanr+sep+"\"",obverb,oblog,&grueck); // ggf. broken pipe error
+		if (grueck.size()) KLA
+			vector<string> tok;
+		aufSplit(&tok,&grueck[grueck.size()-1],sep);
 #endif // direkt else
 #else // mitgrep else
-    mdatei f(xferfaxlog.c_str(),ios::in|ios::binary); 
-    string zeile;
+		mdatei f(xferfaxlog.c_str(),ios::in|ios::binary); 
+		string zeile;
 #define rueckwaerts
 #ifdef rueckwaerts
-    char ch;
-    string rzeile;
-    if (f.is_open()) KLA
-      f.seekg(-1,ios::end); 
-    for(;f.get(ch);f.seekg(-2,ios::cur)) KLA
-      if (ch==10) KLA
-        zeile.clear();
-    for(size_t index=rzeile.length()-1;index!=string::npos;index--) KLA
-      zeile+=rzeile[index];
-    KLZ
+		char ch;
+		string rzeile;
+		if (f.is_open()) KLA
+			f.seekg(-1,ios::end); 
+		for(;f.get(ch);f.seekg(-2,ios::cur)) KLA
+			if (ch==10) KLA
+				zeile.clear();
+		for(size_t index=rzeile.length()-1;index!=string::npos;index--) KLA
+			zeile+=rzeile[index];
+		KLZ
 #else // rueckwaerts
-      while(getline(f,zeile)) KLA
+			while(getline(f,zeile)) KLA
 #endif // rueckwaerts
-        vector<string> tok;
-    aufSplit(&tok,&zeile,sep);
+				vector<string> tok;
+		aufSplit(&tok,&zeile,sep);
 #endif // mitgrep else
 #ifndef direkt
-    if (tok.size()>15) KLA
-      if (tok[4]==fsfp->hylanr) KLA
-        gefunden=1;
-    fsfp->herg=tok[13];
-    if ((fsfp->herg)=="\"\"") fsfp->herg.clear();
-    //            if (erg->length()>1) if ((*erg)[0]=='"' && (*erg)[erg->length()-1]=='"') *erg=erg->substr(1,erg->length()-2);
-    if (obverb) KLA
-      Log(blaus+"tok[13]: "+schwarz+fsfp->herg);
-    KLZ
+		if (tok.size()>15) KLA
+			if (tok[4]==fsfp->hylanr) KLA
+				gefunden=1;
+		fsfp->herg=tok[13];
+		if ((fsfp->herg)=="\"\"") fsfp->herg.clear();
+		//            if (erg->length()>1) if ((*erg)[0]=='"' && (*erg)[erg->length()-1]=='"') *erg=erg->substr(1,erg->length()-2);
+		if (obverb) KLA
+			Log(blaus+"tok[13]: "+schwarz+fsfp->herg);
+		KLZ
 #ifndef mitgrep
 #ifdef rueckwaerts
-      break;
-    KLZ // if (tok[4]==fsfp->hylanr) KLA
-      KLZ // if (tok.size()>15)
-      rzeile.clear();
-    KLZ else KLA
-      rzeile+=ch;
+			break;
+		KLZ // if (tok[4]==fsfp->hylanr) KLA
+			KLZ // if (tok.size()>15)
+			rzeile.clear();
+		KLZ else KLA
+			rzeile+=ch;
 #endif // rueckwaerts
 #endif // not mitgrep
-    KLZ // 
-      KLZ // if (ch==10)
+		KLZ // 
+			KLZ // if (ch==10)
 #endif  // not direkt
-  } else {
-      fsfp->hylastat=fehlend;
-  } // if f.is_open() oder (grueck.size()
+	} else {
+		fsfp->hylastat=fehlend;
+	} // if f.is_open() oder (grueck.size()
 #ifdef profiler
-  prf.ausgeb();
+	prf.ausgeb();
 #endif
-  return gefunden;
+	return gefunden;
 } // void xferlog(string varsphylavz, string jobid, string *erg)
 
 
@@ -9176,26 +9175,27 @@ void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, i
     fsf->protdakt=rueck[0];
     obsfehlt=lstat(fsf->protdakt.c_str(), &entryprot);
     *hyla_uverz_nrp=(rueck.at(0).find("/doneq")==string::npos && rueck.at(0).find("/archive")==string::npos);
-  }
+  } //   if (rueck.size())
   if (obverb) {
     Log(schwarzs+"obsfehlt: "+blau+(obsfehlt?"1":"0")+schwarz+", hyla_uverz_nr: "+blau+(*hyla_uverz_nrp?"1":"0")+schwarz);
   }
   if (obsfehltp) *obsfehltp=obsfehlt;
-  if (obsfehlt) {
-//    this->hconfp=0;
-    // wenn also die Datenbankdatei weder im Spool noch bei den Erledigten nachweisbar ist
-		if (est) memset(est,0,sizeof *est);
-    this->xferlog(fsf);
-    fsf->sendqgespfad.clear();
-  //   if (obsfehlt)
-	} else {
+	if (!obsfehlt) {
 		if (hylconf.zahl==9) {
 			hylconf.reset();
 		} else { 
 			hylconf.init(10,"state","totdials","status","statuscode","!pdf","tts","number","maxdials","pdf","killtime");
 		}
 		confdat hylc(fsf->protdakt,&hylconf,obverb,':');
-		hgelesen= hylc.obgelesen;
+		hgelesen=hylc.obgelesen;
+	} // 	if (!obsfehlt)
+  if (obsfehlt||!hgelesen) {
+//    this->hconfp=0;
+    // wenn also die Datenbankdatei weder im Spool noch bei den Erledigten nachweisbar ist
+		if (est) memset(est,0,sizeof *est);
+    this->xferlog(fsf);
+  //   if (obsfehlt)
+	} else {
     //  if (cpplies(fsf->protdakt,hconf,cs,0,':')) KLA
     fsf->hstate=this->hylconf[0].wert;
     fsf->hdials=this->hylconf[1].wert;
@@ -9258,7 +9258,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
   // wenn eine Protokolldatei auslesbar war
 //  if (pmp->hconfp) KLA
         // modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
-  if (pmp->hgelesen && hylastat!=fehlend) {
+  if ((pmp->hgelesen && hylastat!=fehlend)||(!pmp->hgelesen&&hylastat==7)) {
     *ausgp<<",";
     char buf[100]={0};
     int hversuzahl=atol(hdials.c_str()); // totdials
@@ -9271,6 +9271,9 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
     //              if (hversuzahl>12) ausg<<", zu spaet";
     *ausgp<<",T.:"<<blau<<setw(12)<<number<<schwarz;
     *ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
+	} else {
+	  *ausgp<<" pmp->hgelesen: "<<ltoan((int)pmp->hgelesen);
+	  *ausgp<<"      hylastat: "<<ltoan((int)hylastat)<<endl;
   } //   if (pmp->hgelesen && hylastat!=fehlend)
 	if (protdakt.empty()) {
 		*ausgp<<dgrau<<", hylanr: "<<schwarz<<hylanr;
@@ -9363,13 +9366,13 @@ void paramcl::dovh()
 
 int main(int argc, char** argv) 
 {
-/*
+	/*
 	if (argc<3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		if (argc>1) {
 		// Testcode mit argv[1]
 		}
 	}
-*/
+	*/
 	string prog;
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
