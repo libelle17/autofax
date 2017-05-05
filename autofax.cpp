@@ -8994,7 +8994,7 @@ void fsfcl::capiausgeb(stringstream *ausgp, const string& maxcdials, uchar fuerl
 
 
 // wird aufgerufen in: setzhylastat
-int paramcl::xferlog(fsfcl *fsfp,string *totpages,string *ntries,string *totdials,string *tottries,string *maxtries)
+int paramcl::xferlog(fsfcl *fsfp/*,string *totpages,string *ntries,string *totdials,string *tottries,string *maxtries*/)
 {
 	// mit grep braucht er fuer eine 400 kb Datei ca. 170 clock()-Einheiten (vorne und hinten)
 	// rueckwaerts braucht er fuer eine 400 kb Datei bis zum letzten Satz 93 clock()-Einheiten, bis zum ersten 220000.
@@ -9072,20 +9072,21 @@ int paramcl::xferlog(fsfcl *fsfp,string *totpages,string *ntries,string *totdial
 								aufSplit(&toi,tok[4],'/');
 								if (toi.size()) {
 									fsfp->hpages=toi[0];
-									if (totpages) *totpages=toi[0];
 									if (toi.size()>1) {
-										if (ntries) *ntries=toi[1];
+//										if (ntries) *ntries=toi[1];
 										if (toi.size()>2) {
 											if (toi.size()>3) {
 												fsfp->hdials=toi[3];
-												if (totdials) *totdials=toi[3];
+//											if (totdials) *totdials=toi[3];
 												if (toi.size()>4) {
 													fsfp->maxdials=toi[4];
 													if (toi.size()>5) {
-														if (tottries) *tottries=toi[5];
-														if (toi.size()>6) {
+//														if (tottries) *tottries=toi[5];
+/*
+														if (toi.size()>6) KLA
 															if (maxtries) *maxtries=toi[6];
-														} //                       if (toi.size()>6)
+														KLZ //                       if (toi.size()>6)
+														*/
 													} //                       if (toi.size()>5)
 												} //                     if (toi.size()>4)
 											} //                   if (toi.size()>3)

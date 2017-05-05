@@ -335,7 +335,7 @@ class paramcl // Programmparameter
     void setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr,int *obsfehltp=0, 
 				struct stat *est=0);
 		void konfcapi();
-    int xferlog(fsfcl *fsfp, string *totpages=0, string *ntries=0, string *totdials=0, string *tottries=0, string *maxtries=0);
+    int xferlog(fsfcl *fsfp/*, string *totpages=0, string *ntries=0, string *totdials=0, string *tottries=0, string *maxtries=0*/);
     void richtcapiher();
     void setzmodconfd();
     void setzzielmuster(confdat& afconf);
