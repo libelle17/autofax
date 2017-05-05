@@ -2338,6 +2338,7 @@ paramcl::paramcl(int argc, char** argv)
   vaufr=mpfad+" -noia >/dev/null 2>&1"; // /usr/bin/autofax -noia
   saufr=base_name(vaufr); // autofax -noia
 	zsaufr=ersetzAllezu(saufr,"/","\\/");
+	// time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff;
   tstart=clock();
 	//  konfdatname.clear();
 } // paramcl::paramcl()
@@ -2836,6 +2837,10 @@ int paramcl::setzhylavz()
   kuerzevtz(&varsphylavz);
   hsendqvz=varsphylavz+"/sendq";
   pruefverz(hsendqvz,obverb,oblog);
+  hdoneqvz=varsphylavz+"/doneq";
+  pruefverz(hdoneqvz,obverb,oblog);
+  harchivevz=varsphylavz+"/archive";
+  pruefverz(harchivevz,obverb,oblog);
   xferfaxlog=varsphylavz+"/etc/xferfaxlog"; 
 	hempfavz=varsphylavz+"/autofaxarch";
   return 0;
@@ -6625,7 +6630,7 @@ void paramcl::empfcapi(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*
 	const string base=base_name(stamm);
 	size_t hpos=base.find_last_of('-')+1; // u.a.: string::npos+1=0
 	const string fnr=base.substr(hpos);
-	tm.tm_isdst=-1; // sonst wird zufaellig ab und zu eine Stunde abgezogen
+	tm.tm_isdst=-1; // sonst wird ab und zu eine Stunde abgezogen
 	time_t modz=mktime(&tm);
 	string getname,bsname;
 	getSender(this,umst[1].wert,&getname,&bsname,obverb,oblog);
@@ -9010,7 +9015,7 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 //  systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -m 1 \"tty[^"+sep+"]*"+sep+fsfp->hylanr+sep+"\" | cut -f1,2,14,20",obverb,oblog,&grueck); 
 // 2.3.17 in Eintraegen UNSENT und SUBMIT kann tty... auch fehlen
   systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -am 1 \"^[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+
-	            sep+fsfp->hylanr+sep+"\" | cut -f1,2,14,20",obverb,oblog,&grueck); 
+	            sep+fsfp->hylanr+sep+"\" | cut -f1,2,14,20,4,7",obverb,oblog,&grueck); 
   if (grueck.size()) {
     gefunden=1;
     vector<string> tok;
@@ -9033,6 +9038,7 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 				tm.tm_hour=h;
 				tm.tm_min=m;
 				tm.tm_sec=0;
+				tm.tm_isdst=-1;
 				fsfp->tts=mktime(&tm);
 			} // 			if (sscanf(tok[0].c_str(), "%d/%d/%d %d:%d", &M, &d, &y, &h, &m)==5)
 			if (tok.size()>1) {
@@ -9061,12 +9067,13 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 						vector<string> toi;
 						aufSplit(&toi,tok[3],'/');
 						if (toi.size()) {
+						  fsfp->hpages=toi[0];
 							if (totpages) *totpages=toi[0];
 							if (toi.size()>1) {
 								if (ntries) *ntries=toi[1];
 								if (toi.size()>2) {
-									fsfp->hdials=toi[2];
 									if (toi.size()>3) {
+										fsfp->hdials=toi[3];
 										if (totdials) *totdials=toi[3];
 										if (toi.size()>4) {
 											fsfp->maxdials=toi[4];
@@ -9081,6 +9088,12 @@ int aktion=0; // 0=andere, 1='SEND', 2='UNSENT'
 								} //                 if (toi.size()>2)
 							} //               if (toi.size()>1) 
 						} //             if (toi.size()) 
+					  if (tok.size()>4) {
+							fsfp->sendqgespfad=this->varsphylavz+vtz+'q'+tok[4];
+							if (tok.size()>5) {
+						  fsfp->number=tok[5];
+						 }
+						}
 					} //           if (tok.size()>3) 
 				} //         if (tok.size()>2) 
 			} //       if (tok.size()>1)
@@ -9156,7 +9169,7 @@ void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, i
   // wenn in *hyla_uverz_nrp '1' uebergeben wird, nur in sendq suchen
   // Rueckgabe: 0 = in doneq oder archive gefunden
   struct stat entryprot={0};
-  const string cmd="sudo find "+hsendqvz+" "+(*hyla_uverz_nrp?"":varsphylavz+"/doneq "+varsphylavz+"/archive ")+" -name 'q"+fsf->hylanr+"'";
+  const string cmd="sudo find "+hsendqvz+" "+(*hyla_uverz_nrp?"":hdoneqvz+" "+harchivevz+" ")+" -name 'q"+fsf->hylanr+"'";
   svec rueck;
   systemrueck(cmd,obverb,oblog,&rueck);
   if (rueck.size()) {

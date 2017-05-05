@@ -86,6 +86,7 @@ class fsfcl : public fxfcl // Faxsendfile
     string hylanr; // hylanr
 		string protdakt; // z.B. /var/spool/hylafax/doneq/q9902
     int hdialsn; // hyladials
+		string hpages; // Seitenzahl
     uchar fobcapi; // ob es jetzt mit Capi weggefaxt werden muss
     uchar fobhyla; // ob es jetzt mit Hyla weggefaxt werden muss
     string adressat; // Name des Adressaten aus Faxdatei
@@ -104,7 +105,7 @@ class fsfcl : public fxfcl // Faxsendfile
     string hstatuscode; // in xferfaxlog nicht gefunden
 		time_t tts=0;
 		time_t killtime=0;
-		string number;
+		string number;   // Telefonnummer
     string hdials;   // hyladials
 		string maxdials; // maxdials (hylafax)
     string hdd;      // hdateidatum
@@ -145,6 +146,7 @@ class paramcl // Programmparameter
     svec modems;       // gefundene Modems
     size_t optslsz=0; // last opts.size()
     uchar modemgeaendert=0; // hmodem neu gesetzt
+//		long gmtoff; // Sekunden Abstand zur UTC-Zeit einschließlich Sommerzeit
   public:
 	  string cl; // comanndline
     string mpfad;  // meinpfad()
@@ -254,6 +256,8 @@ class paramcl // Programmparameter
 		string faxqpfad,hfaxdpfad; // /usr/local/sbin/faxq, /usr/local/sbin/hfaxq
 		string faxgtpfad;   // /usr/lib/fax/faxgetty oder /usr/local/sbin/faxgetty
     string hsendqvz; // /var/spool/hylafax/sendq
+    string hdoneqvz; // /var/spool/hylafax/doneq
+    string harchivevz; // /var/spool/hylafax/archive
 		unsigned long aufrufe=0; // Zahl der bisherigen Programmaufrufe
 		struct tm laufrtag={0}; // Tag des letztes Aufrufs
 		unsigned long tagesaufr=0; // Zahl der bisherigen Programmaufrufe heute

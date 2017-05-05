@@ -776,7 +776,7 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 									atm->tm_mon--;
 									atm->tm_year+=100; // 2000-1900
 									//	  <<atm->tm_mday<<"."<<atm->tm_mon+1<<"."<<atm->tm_year<<"."<<atm->tm_hour<<"."<<atm->tm_min<<"."<<atm->tm_sec<<endl;
-									atm->tm_isdst=-1; // sonst wird zufällig ab und zu eine Stunde abgezogen
+									atm->tm_isdst=-1; // sonst wird ab und zu eine Stunde abgezogen
 								} else if (verwertbar) verwertbar=0;
 								break;
 							case 1:
