@@ -5197,7 +5197,13 @@ void paramcl::pruefunpaper()
 			linst.doinst("ffmpeg-devel",obverb,oblog);
 			linst.doinst("ffmpeg-compat",obverb,oblog);
 		} else {
-			linst.doggfinst("libavformat-devel",obverb+1,oblog);
+			svec rueck;
+			systemrueck("find "+linst.libs+"-xtype f -name libswresample.so",obverb,oblog,&rueck);
+			if (rueck.size()) {
+				linst.doggfinst("libavformat-devel",obverb+1,oblog);
+			} else {
+				linst.doinst("libavformat-devel",obverb+1,oblog);
+			}
 			if (linst.pruefipr()==apt) {
 				linst.doggfinst("pkg-config",obverb+1,oblog);
 			}

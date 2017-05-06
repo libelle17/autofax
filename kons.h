@@ -687,6 +687,7 @@ class linst_cl
  string repos; // Befehl zum Hinzufuegen des Repositories fuer den Compiler
  string compil; // Paketnamen fuer den Compiler
  string dev; // Anhaengsel fuer die development-Versionen ("-dev" oder "-devel")
+ string libs; // alle lib-Verzeichnisse, fuer find ..
  instprog pruefipr(int obverb=0, int oblog=0);
     uchar obnmr=1;
     string eprog; // ersetztes Programm

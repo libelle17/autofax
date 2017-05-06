@@ -1364,6 +1364,9 @@ instprog linst_cl::pruefipr(int obverb,int oblog)
 		} else {
 			cerr<<Txk[T_Weder_zypper_noch_apt_get_noch_dnf_noch_yum_als_Installationspgrogramm_gefunden]<<endl;
 		} // 		if (obprogda("rpm",obverb-1,oblog))
+    svec lrueck;
+    systemrueck("find /usr -maxdepth 1 -type d -name 'lib*'",obverb,oblog,&lrueck);
+		for(size_t iru=0;iru<lrueck.size();iru++) libs+=lrueck[iru]+" ";
 	} //   if (ipr==keinp)
 	return ipr;
 } // instprog linst_cl::pruefipr(int obverb,int oblog)
