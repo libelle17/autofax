@@ -226,8 +226,8 @@ endif
 #	$(call i1unin,$(libmcd))
 # 3.5.17: auch libmysqlclient18 hat gefehlt
 	-@for r in 1 2;do [ $$r = 1 ]&&{ lc="$(libmcd)";true;}||lc="$(libmc1d)";\
-	[ -f /usr/include/mysql/mysql.h>$(KR) ]&&\
-	find $$(find /usr -maxdepth 1 type d -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
+	[ -f /usr/include/mysql/mysql.h>$(KR) ]&& \
+	find $$(find /usr -maxdepth 1 -type d -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
 	./configure inst _ "$$lc" verbose; done
 # $(call i1unin,$(libmc1d))
 #	@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ $(IPR)$(pgd);grep -q '$(pgc)' $(UNF)||printf '$(UPR)$(pgd)\necho $(UPR)$(pgd)\n'>>$(UNF);$(slc);};
