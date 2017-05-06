@@ -5199,11 +5199,10 @@ void paramcl::pruefunpaper()
 		} else {
 			svec rueck;
 			systemrueck("find "+linst.libs+"-xtype f -name libswresample.so",obverb,oblog,&rueck);
-			if (rueck.size()) {
-				linst.doggfinst("libavformat-devel",obverb+1,oblog);
-			} else {
-				linst.doinst("libavformat-devel",obverb+1,oblog);
+			if (!rueck.size()) {
+				linst.doinst("ffmpeg-"+linst.dev,obverb+1,oblog);
 			}
+			linst.doggfinst("libavformat-"+linst.dev,obverb+1,oblog);
 			if (linst.pruefipr()==apt) {
 				linst.doggfinst("pkg-config",obverb+1,oblog);
 			}
