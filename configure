@@ -42,12 +42,12 @@ getIPR() {
 	{ still which rpm &&{ SPR="rpm -q ";UDPR="sudo rpm -e --nodeps ";};}||
 	{ still which dpkg &&{ SPR="dpkg -s ";UDPR="sudo apt-get -f install; sudo dpkg -r --force-depends ";};}
 	IPR="sudo $IdPR";
-	DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall .exrc $UNF"
+	DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall .exrc $UNF $INSTLOG"
 }
 
 exportvars() {
 	rm -f vars;
-	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF pgroff LT LT5 LM18 dev libmc libmc1 REPOS urepo COMP DATEIEN; do
+	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF INSTLOG pgroff LT LT5 LM18 dev libmc libmc1 REPOS urepo COMP DATEIEN; do
 	  eval nv=\$$v; 
 		printf "$v:=$nv\n">>vars; 
 	done;
