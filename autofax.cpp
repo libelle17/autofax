@@ -34,8 +34,13 @@
 #include <termios.h> // fuer tcgetattr
 
 #include <set>
+// aktuelle Programmversion
 const double& versnr=
 #include "versdt"
+;
+// Sitz auf Github
+const string& sitzv=
+#include "sitzdt"
 ;
 // Bestandteile der Ueberpruefung auf Funktionsfaehigkeit von hylafax: 
 // faxmodem
@@ -7865,7 +7870,7 @@ int paramcl::pruefinstv()
 	return erg;
 } // void paramcl::pruefinstv()
 
-const string defvors="https://github.com/libelle17/";
+const string defvors="https://github.com/"+sitzv+"/";
 const string defnachs="/archive/master.tar.gz";
 int paramcl::holvomnetz(const string& datei,const string& vors/*=defvors*/,const string& nachs/*=defnachs*/)
 {
@@ -9425,13 +9430,13 @@ void paramcl::dovh()
 
 int main(int argc, char** argv) 
 {
-/*
 	if (argc<3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		if (argc>1) {
 		// Testcode mit argv[1]
+		 caus<<sitzv<<endl;
+		 exit(0);
 		}
 	}
-*/
 	string prog;
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler

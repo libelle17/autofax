@@ -1,5 +1,7 @@
 #!/bin/sh
 PROG=autofax;
+HOSTER=github.com
+SITZV=libelle17
 # aPWD=`pwd`
 nPWD=${PWD##*/}
 # wenn $PROG schon das aktuelle Verzeichnis ist und wenn es dort einige notwendige Dateien gibt, dann nicht mehr neu runterladen ...
@@ -12,9 +14,7 @@ nPWD=${PWD##*/}
 	printf "Downloading/ Lade runter $PROG ...\n"
 		cd ~; 
 	T=$PROG.tar.gz;
-	HOSTER=github.com
-		ACC=libelle17
-		wget https://$HOSTER/$ACC/$PROG/archive/master.tar.gz -O "$T" && 
+		wget https://$HOSTER/$SITZV/$PROG/archive/master.tar.gz -O "$T" && 
 		tar xpvf $T && 
 		rm -f $T && {
 			VORIGE=$(ls -d ~/${PROG}_* 2>/dev/null| cut -d"_" -f2 | sort -nr);

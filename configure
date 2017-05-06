@@ -175,6 +175,7 @@ if test "$1" = inst; then
   exit
 fi
 
+echo \"$SITZV\">sitzdt
 # Gruppen, deren Mitglieder sudo aufrufen koennen; fuer Debian muss zuerst 'sudo' genannt werden, weil eine Zuordnung zu 'root' nichts hilft (s.u. tail)
 SUG="admin\|root\|sudo\|wheel\|ntadmin";
 

@@ -201,7 +201,7 @@ endif
 #	-@if ! test -f instvz; then printf \"$$(getent passwd $$(logname)|cut -d: -f6)\">instvz; fi;
 	-@if ! test -f instvz; then printf \"$$(pwd)\">instvz; fi;
 	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< $(BFA)
-	-@sed -i 's/version //g' $(DEPDIR)/*.Td
+	-@sed -i 's/versdt //g;s/sitzdt //g' $(DEPDIR)/*.Td
 	-@if test -s fehler.txt; then vi +0/error fehler.txt; else rm -f fehler.txt; fi;
 #	-@$(shell $(POSTCOMPILE))
 	@if test -s fehler.txt; then false; fi;
