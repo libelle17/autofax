@@ -1319,7 +1319,7 @@ instprog linst_cl::pruefipr(int obverb,int oblog)
 				// heruntergeladene Dateien behalten
 				ipr=zypper;
 				instp="sudo zypper -n --gpg-auto-import-keys in ";
-				instyp=instp+"-y ";
+				instyp=instp+"-y -f ";
 				upr="sudo zypper -n rm -u ";
 				uypr=upr+"-y ";
 				upd="sudo zypper patch";
