@@ -56,7 +56,7 @@ exportvars() {
 ausricht() {
 # im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
 # s. int linst_cl::doinst
-  cat "$1" >> $INSTLOG
+  cat "$1" >> $GINSTLOG
 	if [ $sus = 1 ]; then
 # am Schluss hole hold-Register, entferne Zeilenumbrueche, fasse Leerzeichen zusammen; wenn nicht zwischen NEW package und leerer Zeile, loesche Zeile;
 # loesche auch die letzten Suchmusterzeilen (NEW package und leere Zeile); haenge ans Hold-Register an;
@@ -78,7 +78,7 @@ ausricht() {
 	# noch ungünstiger die von libselinux ...
 # s. doanfg(string& datei, string& inhalt, string& comment) in kons.cpp
 	IP=$(cat $1)
-	printf "IP: '"$IP"'\n">>$INSTLOG
+	printf "IP: '"$IP"'\n">>$GINSTLOG
 #	 for IP in $(cat $1); do
 # wenn $AUNF fehlt oder eine der in $1 erwähnten Programm dort nicht aufgeführt ist, dann zuinstallieren=ja; "; vi ..." nicht zu werten
      [ ! -f $AUNF ]&&zuinst=ja||{
@@ -126,7 +126,7 @@ einricht() {
 	 }
 	 LOG=inst_${2// /_}.log; # Leerzeichen entfernen
 	 ${CMD}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff groff-base"
-	 printf "\nRueckmeldung bei einricht $2:\n">>$INSTLOG
+	 printf "\nRueckmeldung bei einricht $2:\n">>$GINSTLOG
 	 ausricht "$LOG" $1 "${IPR}$2"
 	 if [ $1 = "g++" -a -n "$Z" -a $rweg = 1 ]; then
 	 	 printf "Removing Repository/ Entferne Repository ${blau}devel_gcc$reset again/ wieder\n"
@@ -155,7 +155,8 @@ if [ $ICH = -bash ]; then
 fi
 
 PROG=autofax
-INSTLOG=$HOME/$PROG/inst.log
+INSTLOG=inst.log
+GINSTLOG=$HOME/$PROG/$INSTLOG
 mkdir -p $HOME/$PROG
 AUNF=$HOME/$PROG/$UNF
 _LT="libtiff"
@@ -190,7 +191,7 @@ INSTP=sudo;still which $INSTP||{
 #	su -c "$IdPR sudo;";
 	 LOG=inst_$INSTP.log;
 	 su -c "$IdPR $INSTP"|tee "$LOG";
-	 printf "\nRueckmeldung su -c \"$IdPR $INSTP\":\n">>$INSTLOG
+	 printf "\nRueckmeldung su -c \"$IdPR $INSTP\":\n">>$GINSTLOG
 	 ausricht "$LOG";
 }
 # 0=sudo aufrufbar
