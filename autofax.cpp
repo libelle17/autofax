@@ -2100,8 +2100,8 @@ char const *autofax_T[T_MAX+1][Smax]={
 class TxB Tx((const char* const* const* const*)autofax_T);
 
 const string& pk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax";
-// const string& ccapiconfdat="/etc/capisuite/capisuite.conf";
-// const string& cfaxconfdat="/etc/capisuite/fax.conf";
+// const string& ccapiconfdt="/etc/capisuite/capisuite.conf";
+// const string& cfaxconfdt="/etc/capisuite/fax.conf";
 
 
 extern class lsyscl lsys;
@@ -2739,7 +2739,7 @@ void paramcl::pruefisdn()
 	cgconf.setzbemv("obfcard",&Tx,T_ob_eine_Fritzcard_drinstak);
 } // void paramcl::pruefisdn()
 
-const string paramcl::hylacdat="/etc/init.d/hylafax";
+const string paramcl::hylacdt="/etc/init.d/hylafax";
 
 // wird aufgerufen in: main, pruefhyla
 // koennte auch im Fall eines entfernten Modems oder hylafax-Programms benoetigt werden
@@ -2773,12 +2773,12 @@ int paramcl::setzhylavz()
 //    size_t cs=sizeof hylaconf/sizeof*hylaconf;
     schlArr hyconf; hyconf.init(2,"SPOOL","HYLAFAX_HOME");
     struct stat hstat={0};
-    if (!lstat(hylacdat.c_str(),&hstat)) {
-		  hylacdat_gibts=1;
-      confdat hylac(hylacdat,&hyconf,obverb);
-    } //     if (!lstat(hylacdat.c_str(),&hstat))
+    if (!lstat(hylacdt.c_str(),&hstat)) {
+		  hylacdt_gibts=1;
+      confdat hylac(hylacdt,&hyconf,obverb);
+    } //     if (!lstat(hylacdt.c_str(),&hstat))
     if (!hyconf[1].wert.empty()) {
-      //  if (cpplies(hylacdat,hylaconf,cs)) KLA
+      //  if (cpplies(hylacdt,hylaconf,cs)) KLA
       varsphylavz=hyconf[1].wert;
       fundart=2;
     } else if (!hyconf[0].wert.empty()) {
@@ -2882,14 +2882,14 @@ void paramcl::liescapiconf()
   svec rueck;
 	const string moegl="find /etc/capisuite /usr/local/etc/capisuite -type f -name ";
   systemrueck(moegl+"fax.conf",obverb-2,oblog,&rueck);
-  if (rueck.size()) cfaxconfdat=rueck[0];
+  if (rueck.size()) cfaxconfdt=rueck[0];
 
   capiconf.init(10,"spool_dir","fax_user_dir","send_tries","send_delays","outgoing_MSN",
       "dial_prefix","fax_stationID","fax_headline","fax_email_from","outgoing_timeout");
-  if (!cfaxconfdat.empty()) {
-    pruefverz(dir_name(cfaxconfdat),obverb,oblog,0);
-    //  confdat cfaxconf(cfaxconfdat,capiconf,ccs,obverb);
-    static confdat cfaxconf(cfaxconfdat,&capiconf,obverb);
+  if (!cfaxconfdt.empty()) {
+    pruefverz(dir_name(cfaxconfdt),obverb,oblog,0);
+    //  confdat cfaxconf(cfaxconfdt,capiconf,ccs,obverb);
+    static confdat cfaxconf(cfaxconfdt,&capiconf,obverb);
     cfaxcp=&cfaxconf;
     cfaxcp->Abschn_auswert(obverb);
     // wenn sich cuser in cfaxconf findet, dann so lassen
@@ -2924,7 +2924,7 @@ void paramcl::liescapiconf()
   if (capiconf[0].wert.empty()) {
     spoolcapivz="/var/spool/capisuite";
   }  else {           
-    //  if (cpplies(cfaxconfdat,capiconf,ccs,&rest)) KLA
+    //  if (cpplies(cfaxconfdt,capiconf,ccs,&rest)) KLA
     spoolcapivz=capiconf[0].wert;
 		kuerzevtz(&spoolcapivz);
 		cfaxuservz=capiconf[1].wert;
@@ -2936,27 +2936,27 @@ void paramcl::liescapiconf()
   rueck.clear();
   systemrueck(moegl+"capisuite.conf",obverb-2,oblog,&rueck);
   if (rueck.size()) {
-    ccapiconfdat=rueck[0];
+    ccapiconfdt=rueck[0];
   }
-  if (!ccapiconfdat.empty()) {
+  if (!ccapiconfdt.empty()) {
     uchar obneuer=0;
     struct stat cstat={0};
-    static time_t lgelzeit=0; // Aenderungszeitpunkt der evtl. zuletzt eingelesenen ccapiconfdat
+    static time_t lgelzeit=0; // Aenderungszeitpunkt der evtl. zuletzt eingelesenen ccapiconfdt
     time_t aktgelzeit;
-    if (!lstat(ccapiconfdat.c_str(),&cstat)) { // <<rot<<ccapiconfdat<<" existiert!"<<schwarz<<endl;
+    if (!lstat(ccapiconfdt.c_str(),&cstat)) { // <<rot<<ccapiconfdt<<" existiert!"<<schwarz<<endl;
       aktgelzeit=cstat.st_mtime;
       if (aktgelzeit>lgelzeit) {
         lgelzeit=aktgelzeit;
         obneuer=1;
       } //       if (aktgelzeit>lgelzeit)
-    } // if (!lstat(ccapiconfdat.c_str(),&cstat)) 
+    } // if (!lstat(ccapiconfdt.c_str(),&cstat)) 
     if (obneuer || !cconf.zahl) {
       if (!cconf.zahl) {
         cconf.init(4,"incoming_script","log_file","log_error","idle_script");
       } else {
         cconf.reset();
       } //       if (!cconf.zahl) else
-      confdat ccapic(ccapiconfdat,&cconf,obverb);
+      confdat ccapic(ccapiconfdt,&cconf,obverb);
       if (!cuser.empty()) {
         for(size_t j=0;j<cconf.zahl;j++) {
           if (!cconf[j].wert.empty()) {
@@ -2968,7 +2968,7 @@ void paramcl::liescapiconf()
         } // for(size_t j=1;j<3;j++) 
       } // if (!cuser.empty()) 
     } // if (obneuer || !cconf.zahl) 
-  } // if (!ccapiconfdat.empty())
+  } // if (!ccapiconfdt.empty())
 
   if (!spoolcapivz.empty()) {
     cdonevz = mitvtz(spoolcapivz)+"done";
@@ -3531,7 +3531,7 @@ void paramcl::rueckfragen()
     if (cgconf[++lfd].wert.empty() || rzf) {
       //        string bliste, tmpcuser;
       vector<string> benutzer;
-      cmd="cat "+passwd+" | grep /home/ | cut -d':' -f 1";
+      cmd="cat "+passwddt+" | grep /home/ | cut -d':' -f 1";
       systemrueck(cmd,obverb,oblog,&benutzer);
 			if (benutzer.size()>1) for(size_t i=benutzer.size();i;) {
 				--i;
@@ -3893,7 +3893,7 @@ void paramcl::clieskonf()
     }
   } //   if (cfaxcp)
   svec ckzlrueck;
-  systemrueck("grep connect_faxG3 `grep incoming_script= "+ccapiconfdat+" 2>/dev/null|cut -d'\"' -f2 2>/dev/null`"
+  systemrueck("grep connect_faxG3 `grep incoming_script= "+ccapiconfdt+" 2>/dev/null|cut -d'\"' -f2 2>/dev/null`"
       "|sed 's/.*headline//;s/^,//;s/).*//'",obverb,oblog,&ckzlrueck,1);
   if (ckzlrueck.size()) {
     if (cklingelzahl!=ckzlrueck[0]) {
@@ -3909,7 +3909,7 @@ void paramcl::clieskonf()
 // wird  aufgerufen in: pruefcapi
 void paramcl::konfcapi()
 {
-  Log(violetts+Tx[T_konfcapi]+schwarz+", ccapiconfdat: "+violett+ccapiconfdat+schwarz);
+  Log(violetts+Tx[T_konfcapi]+schwarz+", ccapiconfdt: "+violett+ccapiconfdt+schwarz);
   // Zahl der Klingeltoene in capisuite einstellen
   /*
      cppSchluess cconf[]={{"incoming_script"}};
@@ -3920,7 +3920,7 @@ void paramcl::konfcapi()
     systemrueck("sudo sed -i$(test -f "+cconf[0].wert+".orig||echo '.orig') "
         "'s/\\(^.*connect_faxG3.*headline\\).*\\().*$\\)/\\1,"+cklingelzahl+"\\2/' "+cconf[0].wert,obverb,oblog);
   }
-  //    if (cpplies(ccapiconfdat,cconf,cs)) KLA
+  //    if (cpplies(ccapiconfdt,cconf,cs)) KLA
   /*
      mdatei f(cconf[0].wert,ios::in); // /usr/lib64/capisuite/incoming.py
      if (f.is_open()) KLA
@@ -3970,7 +3970,7 @@ void paramcl::konfcapi()
   KLZ // if ((nkz=strstr(zeile,searchstr))) 
   KLZ // while(getline(f,zeile)) 
   KLZ // if (f.is_open()) 
-  KLZ // if (cpplies(ccapiconfdat,cconf,cs)) 
+  KLZ // if (cpplies(ccapiconfdt,cconf,cs)) 
    */
   //  static cppSchluess capiconf[]=KLA KLA"spool_dir"KLZ,KLA"fax_user_dir"KLZ,KLA"send_tries"KLZ,KLA"send_delays"KLZ,
   //         KLA"outgoing_MSN"KLZ,KLA"dial_prefix"KLZ,KLA"fax_stationID"KLZ,KLA"fax_headline"KLZ,KLA"fax_email_from"KLZ KLZ;
@@ -3980,9 +3980,9 @@ void paramcl::konfcapi()
   if (capiconf[6].wert.find("000 0000")!=string::npos || capiconf[6].wert.empty()) {
     //    if (cfax_stationID.find("000 0000")!=string::npos) 
     //    ::Log(string("Capisuite ist offenbar noch nicht konfiguriert(")+blau+"fax_stationID"+schwarz+" enthaelt '000 0000').\n"
-    //        "Die Einstellung koennen spaeter in "+blau+cfaxconfdat+schwarz+" geaendert werden.",1,0);
+    //        "Die Einstellung koennen spaeter in "+blau+cfaxconfdt+schwarz+" geaendert werden.",1,0);
     ::Log(Tx[T_Capisuite_ist_offenbar_noch_nicht_richtig_konfiguriert]+blaus+"'fax_stationID'"+schwarz+Tx[T_ist_Apostroph]+blau+
-        capiconf[6].wert+schwarz+"')."+ Tx[T_Die_Einstellungen_koennen_spaeter_in]+blau+cfaxconfdat+schwarz+Tx[T_geaendert_werden],1,1);
+        capiconf[6].wert+schwarz+"')."+ Tx[T_Die_Einstellungen_koennen_spaeter_in]+blau+cfaxconfdt+schwarz+Tx[T_geaendert_werden],1,1);
     // fax_stationID
     capicffehlt=1;
   } // if (capiconf[6].wert.find("000 0000")!=string::npos || capiconf[6].wert.empty()) 
@@ -4036,10 +4036,10 @@ void paramcl::konfcapi()
   // iru=0 => pruefen, ob Datei geaendert werden muss; iru=1 => aendern
   for(uchar iru=0;iru<2;iru++) {
     mdatei *fneu=0;
-    mdatei f(cfaxconfdat,ios::in); // /etc/capisuite/fax.conf
+    mdatei f(cfaxconfdt,ios::in); // /etc/capisuite/fax.conf
     if (f.is_open()) {
       if (iru) {
-        neudatei=cfaxconfdat+"_neu";
+        neudatei=cfaxconfdt+"_neu";
         fneu=new mdatei(neudatei,ios::out,0);
         if (!fneu->is_open()) break;
       } // if (iru)
@@ -4100,15 +4100,15 @@ void paramcl::konfcapi()
           *fneu<<"fax_action=\"MailAndSave\""<<endl;
         } // if (!cuserda)
         if (fneu) delete fneu;
-        setfaclggf(cfaxconfdat, falsch, 6, falsch,obverb,oblog);
-        const string origdatei=cfaxconfdat+"_orig";
+        setfaclggf(cfaxconfdt, falsch, 6, falsch,obverb,oblog);
+        const string origdatei=cfaxconfdt+"_orig";
         struct stat entryorig={0};
         if (lstat(origdatei.c_str(),&entryorig)) {
-          dorename(cfaxconfdat,origdatei,cuser,0,obverb,oblog);
+          dorename(cfaxconfdt,origdatei,cuser,0,obverb,oblog);
         } else {
-          tuloeschen(cfaxconfdat,cuser,obverb,oblog);
+          tuloeschen(cfaxconfdt,cuser,obverb,oblog);
         }
-        dorename(neudatei,cfaxconfdat,cuser,0,obverb,oblog);
+        dorename(neudatei,cfaxconfdt,cuser,0,obverb,oblog);
       } // if (iru)
       if (!capiconf[1].wert.empty()) cfaxuservz=capiconf[1].wert;
       // <<rot<<"cfaxuservz konfcapi: "<<cfaxuservz<<schwarz<<endl;
@@ -4116,7 +4116,7 @@ void paramcl::konfcapi()
   } // for(uchar iru=0;iru<2;iru++) 
   pruefcvz();
   nextnum();
-  Log(violetts+Tx[T_Ende]+Tx[T_konfcapi]+schwarz+"ccapiconfdat: "+violett+ccapiconfdat+schwarz);
+  Log(violetts+Tx[T_Ende]+Tx[T_konfcapi]+schwarz+"ccapiconfdt: "+violett+ccapiconfdt+schwarz);
 } // void paramcl::konfcapi()
 
 // in konfcapi und faxemitC (da konfacpi aus pruefcapi nicht unbedingt aufgerufen wird)
@@ -7117,7 +7117,7 @@ void hconfig(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
 // in hliesconf() und hconfigtty()
 void paramcl::setzmodconfd()
 {
-  modconfdat=this->varsphylavz+"/etc/config"+"."+this->hmodem; 
+  modconfdt=this->varsphylavz+"/etc/config"+"."+this->hmodem; 
 } // void paramcl::setzmodconfd()
 
 void paramcl::hliesconf()
@@ -7126,17 +7126,17 @@ void paramcl::hliesconf()
                               "RingsBeforeAnswer","LocalIdentifier","MaxDials");
   setzmodconfd();
   struct stat mstat={0};
-  if (lstat(modconfdat.c_str(),&mstat)) {
+  if (lstat(modconfdt.c_str(),&mstat)) {
     hylazukonf=1;
   } else {
-    confdat haltconf(modconfdat,&hyalt,obverb,':');
+    confdat haltconf(modconfdt,&hyalt,obverb,':');
     if (hyalt.schl[0].wert!=countrycode || hyalt.schl[1].wert!=citycode || hyalt.schl[2].wert!=countrycode+"."+citycode+"."+msn 
         || hyalt.schl[3].wert!=LongDistancePrefix || hyalt.schl[4].wert!=InternationalPrefix 
         || hyalt.schl[5].wert!=hklingelzahl || hyalt.schl[6].wert!=LocalIdentifier|| hyalt.schl[7].wert!=maxhdials /*|| hyalt.schl[7].wert!=maxdials */
        ) {
       hylazukonf=1;
     } // if (hyalt.shl[0].wert ...
-  } //   if (lstat(modconfdat.c_str(),&mstat)) else
+  } //   if (lstat(modconfdt.c_str(),&mstat)) else
   // hyalt.ausgeb();
 } // void paramcl::hliesconf()
 
@@ -7147,13 +7147,13 @@ void paramcl::hconfigtty()
   Log(violetts+"hconfigtty()"+schwarz);
   setzmodconfd();
   struct stat bakstat={0};
-  if (lstat((modconfdat+".bak").c_str(),&bakstat)) {
-   kopier(modconfdat,modconfdat+".bak",obverb,oblog);
+  if (lstat((modconfdt+".bak").c_str(),&bakstat)) {
+   kopier(modconfdt,modconfdt+".bak",obverb,oblog);
   }
-//  systemrueck("test -f '"+modconfdat+"' && test -f '"+modconfdat+".bak' || sudo cp -a '"+modconfdat+"' '"+modconfdat+".bak'",obverb,oblog);
-  // <<rot<<modconfdat<<schwarz<<endl;
+//  systemrueck("test -f '"+modconfdt+"' && test -f '"+modconfdt+".bak' || sudo cp -a '"+modconfdt+"' '"+modconfdt+".bak'",obverb,oblog);
+  // <<rot<<modconfdt<<schwarz<<endl;
   // z.B. /var/spool/hylafax/etc/config.ttyACM0
-  mdatei hci(modconfdat,ios::out);
+  mdatei hci(modconfdt,ios::out);
   if (hci.is_open()) {
     // <<rot<<" ist offen"<<schwarz<<endl;
     time_t tim=time(0);
@@ -7234,7 +7234,7 @@ void paramcl::hconfigtty()
     hci<<"Class1SwitchingCmd: \"<delay\0727>\""<<endl;
     hci<<"# FaxRcvdCmd: ./schreibe.sh"<<endl;
   } else {
-    cerr<<Tx[T_Datei]<<modconfdat<<Tx[T_nichtbeschreibbar]<<endl;
+    cerr<<Tx[T_Datei]<<modconfdt<<Tx[T_nichtbeschreibbar]<<endl;
     // <<rot<<" nicht offen"<<schwarz<<endl;
     exit(30);
   }
@@ -7989,7 +7989,7 @@ int paramcl::pruefcapi()
 			// #  define IRQF_DISABLED 0x00
 			// #endif
 			//    capilaeuft=(PIDausName("capisuite")>=0);
-			capilaeuft=this->scapis->machfit(obverb?obverb-1:0,oblog,wahr)&&!ccapiconfdat.empty()&&!cfaxconfdat.empty();
+			capilaeuft=this->scapis->machfit(obverb?obverb-1:0,oblog,wahr)&&!ccapiconfdt.empty()&&!cfaxconfdt.empty();
 			Log(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz);
 			if (capilaeuft) {
 				capischonerfolgreichinstalliert=1;
@@ -8327,7 +8327,7 @@ int paramcl::pruefcapi()
 					} // if (!capischonerfolgreichinstalliert) 
 					liescapiconf();
 					if (mitcservice) {
-						capischonerfolgreichinstalliert=!cservice() && !ccapiconfdat.empty() && !cfaxconfdat.empty();
+						capischonerfolgreichinstalliert=!cservice() && !ccapiconfdt.empty() && !cfaxconfdt.empty();
 					}
 					// capisuite unter Kernel 4: 
 					// zypper in sfftobmp libcapi20-2
@@ -9345,15 +9345,16 @@ void paramcl::zeigdienste()
 	} // 	for(int i=0;i<4;i++)
 } // void paramcl::zeigdienste()
 
+const string devtty=" >/dev/tty";
 const string paramcl::edit="$(which vim 2>/dev/null || which vi) ",
 			//	             view="$(which view 2>/dev/null || which vi) + ",
-							 paramcl::tty=" >/dev/tty",
-							 paramcl::passwd="/etc/passwd",
-							 paramcl::group="/etc/group",
-							 paramcl::sudoers="/etc/sudoers";
+							 paramcl::passwddt="/etc/passwd",
+							 paramcl::groupdt="/etc/group",
+							 paramcl::sudoersdt="/etc/sudoers";
 
-void viadd(string *cmd,const string& datei,const uchar ro=0,const uchar hinten=0, const uchar unten=0)
+void viadd(string *cmd,const string& datei,const uchar ro/*=0*/,const uchar hinten/*=0*/, const uchar unten/*=0*/)
 {
+	// if (!stat(sudoers.c_str(),&sstat)) KLA // if (sstat.st_mode & S_IRUSR) // lieferte falsch wahr
  ifstream is(datei);
  if (is.good()) {
   if (ro) {
@@ -9362,56 +9363,64 @@ void viadd(string *cmd,const string& datei,const uchar ro=0,const uchar hinten=0
 	 if (unten) *cmd+="silent $|";
 	} else {
 	 *cmd=*cmd+datei+" "; 
-	}
+	} //   if (ro) else
  } //  if (is.good())
 } // void viadd(string *cmd,string datei)
+
+void vischluss(string& cmd,string& erg)
+{
+	erg+="tabfirst' -p";
+	string exdt=instvz+"/.exrc";
+	{ifstream is(exdt);if (is.good()) erg+="Nu "+exdt;}
+	exit(systemrueck(cmd+" +'"+erg+" "+devtty));
+} // void vischluss(string& cmd,string& erg)
 
 void paramcl::dovi()
 {
   cmd=edit;
-	viadd(&cmd,konfdt,0);
-	viadd(&cmd,smbdt,0);
+	viadd(&cmd,konfdt);
+	viadd(&cmd,smbdt);
 	string erg;
 	viadd(&erg,logdt,1,0,1);
 	viadd(&erg,zaehlerdt,1,0,0);
-	viadd(&erg,passwd,1,1,0);
-	viadd(&erg,group,1,1,0);
-	viadd(&erg,sudoers,1,1,0);
-	// if (!stat(sudoers.c_str(),&sstat)) KLA // if (sstat.st_mode & S_IRUSR) // lieferte falsch wahr
-	erg+="tabfirst' -p";
-	string exdt=instvz+"/.exrc";
-	{ifstream is(exdt);if (is.good()) erg+="Nu "+exdt;}
-	exit(systemrueck(cmd+" +'"+erg+" "+tty));
+	viadd(&erg,passwddt,1,1,0);
+	viadd(&erg,groupdt,1,1,0);
+	viadd(&erg,sudoersdt,1,1,0);
+	vischluss(cmd,erg);
 } // void paramcl::dovi()
 
 void paramcl::dovc()
 {
 	pruefcapi();
   cmd=edit;
-	{ifstream is(cfaxconfdat); if (is.good())    cmd=cmd+cfaxconfdat+" ";}
-	{ifstream is(ccapiconfdat); if (is.good())    cmd=cmd+ccapiconfdat+" ";}
-	{ifstream is(rulesdt); if (is.good())    cmd=cmd+rulesdt+" ";}
-	{ifstream is(blackdt); if (is.good())    cmd=cmd+blackdt+" ";}
+	viadd(&cmd,cfaxconfdt);
+	viadd(&cmd,ccapiconfdt);
+	viadd(&cmd,rulesdt);
+	viadd(&cmd,blackdt);
+	if (scapis) viadd(&cmd,scapis->systemd);
+	if (cconf.zahl>0) viadd(&cmd,cconf[0].wert); // incoming_script
+	if (cconf.zahl>3) viadd(&cmd,cconf[3].wert); // idle_script
 	string erg;
-	if (scapis) {ifstream is(scapis->systemd); if (is.good()) cmd=cmd+scapis->systemd+" ";}
-	if (cconf.zahl>0) cmd+=cconf[0].wert+" "; // incoming_script
-	if (cconf.zahl>3) cmd+=cconf[3].wert+" "; // idle_script
-	if (cconf.zahl>1) erg+="tablast|tab sview "+cconf[1].wert+"|silent $|"; // log_file
-	if (cconf.zahl>2) erg+="tablast|tab sview "+cconf[2].wert+"|silent $|"; // log_error
-	exit(systemrueck(cmd+" +'"+erg+"tabfirst' -pNu "+instvz+"/.exrc "+tty));
+	if (cconf.zahl>1) viadd(&erg,cconf[1].wert,1,1,1); // log_file
+	if (cconf.zahl>2) viadd(&erg,cconf[2].wert,1,1,1); // log_error
+	vischluss(cmd,erg);
 } // void paramcl::dovc()
 
 void paramcl::dovh()
 {
 	// muss nach setzhylavz kommen
 	pruefhyla();
-	cmd=edit+modconfdat+" "+varsphylavz+"/etc/config"+" ";
-	if (sfaxgetty) cmd+=sfaxgetty->systemd+" ";
-	if (shfaxd) cmd+=shfaxd->systemd+" ";
-	if (sfaxq) cmd+=sfaxq->systemd+" ";
-	if (shylafaxd) cmd+=shylafaxd->systemd+" ";
-	if (hylacdat_gibts) cmd+=hylacdat+" ";
-	exit(systemrueck(cmd+ " +'tabn|tab sview "+xferfaxlog+"|silent $|tabfirst|1' -pNu "+instvz+"/.exrc "+tty));
+	cmd=edit;
+	viadd(&cmd,modconfdt);
+	viadd(&cmd,varsphylavz+"/etc/config");
+	if (sfaxgetty) viadd(&cmd,sfaxgetty->systemd);
+	if (shfaxd) viadd(&cmd,shfaxd->systemd);
+	if (sfaxq) viadd(&cmd,sfaxq->systemd);
+	if (shylafaxd) viadd(&cmd,shylafaxd->systemd);
+	if (hylacdt_gibts) viadd(&cmd,hylacdt);
+	string erg;
+	viadd(&erg,xferfaxlog,1,0,1);
+	vischluss(cmd,erg);
 } // void paramcl::dovh()
 
 int main(int argc, char** argv) 
@@ -9437,7 +9446,7 @@ int main(int argc, char** argv)
     exit(40);
   if (pm.obvi) pm.dovi(); 
 	if (pm.obvc) pm.dovc();
-	if (pm.obvs) exit(systemrueck("cd \""+instvz+"\"; sh viall"+pm.tty));
+	if (pm.obvs) exit(systemrueck("cd \""+instvz+"\"; sh viall"+devtty));
   if (pm.zeigvers) {
    zeigversion(pm.meinname,pm.mpfad);
    pm.zeigkonf();

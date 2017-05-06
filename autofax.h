@@ -32,6 +32,7 @@ void kuerzevtz(string *vzp);
 void pruefrules(int obverb, int oblog);
 void pruefblack(int obverb, int oblog);
 void pruefmodcron(int obverb, int oblog);
+void viadd(string *cmd,const string& datei,const uchar ro=0,const uchar hinten=0, const uchar unten=0);
 
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster
 class zielmustercl 
@@ -222,12 +223,12 @@ class paramcl // Programmparameter
     const string touta="outa"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tudoc="udoc"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tinca="inca"; // MariaDB-Tabelle fuer empfangene Faxe
-		static const string edit, tty;
-		static const string passwd,group,sudoers;
-		static const string hylacdat; // /etc/init.d/hylafax
-		uchar hylacdat_gibts=0; // Datei hylacdat existiert
-    string cfaxconfdat; // /etc/capisuite/fax.conf oder /usr/local/etc/capisuite/fax.conf laut Handbuch
-    string ccapiconfdat; // /etc/capisuite/capisuite.conf oder /usr/local/etc/capisuite/capisuite.conf laut Handbuch
+		static const string edit;
+		static const string passwddt,groupdt,sudoersdt;
+		static const string hylacdt; // /etc/init.d/hylafax
+		uchar hylacdt_gibts=0; // Datei hylacdt existiert
+    string cfaxconfdt; // /etc/capisuite/fax.conf oder /usr/local/etc/capisuite/fax.conf laut Handbuch
+    string ccapiconfdt; // /etc/capisuite/capisuite.conf oder /usr/local/etc/capisuite/capisuite.conf laut Handbuch
     // Parameter aus /etc/capisuite/fax.conf:
     string spoolcapivz; // Verzeichnis der Capi-Spool-Dateien /var/spool/capisuite/
 		string cempfavz; //  /var/spool/capisuite/autofaxarch/
@@ -323,7 +324,7 @@ class paramcl // Programmparameter
 		uchar cmeingegeben=0;
 		vector<argcl> argcmv; // class member vector
     servc *sfaxq=0, *shfaxd=0, *shylafaxd=0, *sfaxgetty=0, *scapis=0;
-    string modconfdat; // hylafax-Konfigurationsdatei, z.B. /var/spool/hylafax/etc/config.ttyACM0
+    string modconfdt; // hylafax-Konfigurationsdatei, z.B. /var/spool/hylafax/etc/config.ttyACM0
     confdat *cfaxcp=0; // Zeiger auf ausgelesene /etc/capisuite/fax.conf
 		string virtvz; //	instvz+"/ocrv";
 	  string ocrmp; //	virtvz+"/bin/ocrmypdf";
