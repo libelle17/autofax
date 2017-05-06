@@ -9363,8 +9363,9 @@ void paramcl::dovi()
 	erg+="tab sview "+zaehlerdt+"|";
 	erg+="tablast|tab sview "+passwd+"|";
 	erg+="tablast|tab sview "+group+"|";
-	if (!stat("/etc/sudoers",&sstat)) { 
-		erg+="tablast|tab sview "+sudoers+"|";
+	if (!stat(sudoers.c_str(),&sstat)) { 
+		if (sstat.st_mode & S_IRUSR)
+			erg+="tablast|tab sview "+sudoers+"|";
 	}
   exit(systemrueck(cmd+" +'"+erg+"tabfirst' -pNu "+instvz+"/.exrc "+tty));
 } // void paramcl::dovi()
