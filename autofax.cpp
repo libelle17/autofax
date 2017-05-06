@@ -9274,7 +9274,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
   // wenn eine Protokolldatei auslesbar war
 //  if (pmp->hconfp) KLA
         // modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
-  if ((pmp->hgelesen && hylastat!=fehlend)||(!pmp->hgelesen&&hylastat==7)) {
+  if ((pmp->hgelesen && hylastat!=fehlend)) {
     *ausgp<<",";
     char buf[100]={0};
     int hversuzahl=atol(hdials.c_str()); // totdials
@@ -9287,9 +9287,6 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
     //              if (hversuzahl>12) ausg<<", zu spaet";
     *ausgp<<",T.:"<<blau<<setw(12)<<number<<schwarz;
     *ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
-	} else {
-	  *ausgp<<" pmp->hgelesen: "<<ltoan((int)pmp->hgelesen);
-	  *ausgp<<"      hylastat: "<<ltoan((int)hylastat)<<endl;
   } //   if (pmp->hgelesen && hylastat!=fehlend)
 	if (protdakt.empty()) {
 		*ausgp<<dgrau<<", hylanr: "<<schwarz<<hylanr;
@@ -9430,13 +9427,13 @@ void paramcl::dovh()
 
 int main(int argc, char** argv) 
 {
+	/*
 	if (argc<3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		if (argc>1) {
 		// Testcode mit argv[1]
-		 caus<<sitzv<<endl;
-		 exit(0);
 		}
 	}
+	*/
 	string prog;
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
