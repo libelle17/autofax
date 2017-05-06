@@ -29,6 +29,7 @@ nPWD=${PWD##*/}
 				mv $PROG-master $PROG &&{
 					cd $PROG; 
 					. ./configure
+						Q=../${PROG}_1/$INSTLOG; test -f $Q && cp -a $Q .||true
 						Q=../${PROG}_1/$UNF; test -f $Q && cp -a $Q .||true
 				}
 		}|| exit;
