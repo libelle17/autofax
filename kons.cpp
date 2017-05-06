@@ -2667,14 +2667,13 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		const string bef=(obyes?instyp:instp)+eprog;
 		if (!(ret=systemrueck(bef,obverb+1,oblog,&srueck))) {
 			/*svec*/ string ustring; uchar obanf=0;
-// s. ausricht in configure
+			// s. ausricht in configure
 			switch (linst.pruefipr()) {
-				case dnf: case yum: case zypper:
-// Folgendes sollte u.a. fuer Fedora gehen
+				case dnf: case yum:
+					// Folgendes sollte u.a. fuer Fedora gehen
 					for(unsigned i=0;i<srueck.size();++i) {
 						if (obanf==1) obanf=2;
-						if ((linst.pruefipr()==zypper && srueck[i].find("NEW package")!=string::npos) ||
-						    ((linst.pruefipr()==dnf||linst.pruefipr()==yum)&&(!srueck[i].find("Installed:")||!srueck[i].find("Installiert:")))) obanf=1;
+						if (!srueck[i].find("Installed:")||!srueck[i].find("Installiert:")) obanf=1;
 						if (!srueck[i].length()) obanf=0;
 						if (obanf==2) {
 							const string source=srueck[i].c_str();
@@ -2682,6 +2681,8 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 							regex_t rCmp;
 							regmatch_t groupArray[maxGroups];
 							while(1) {
+								// jeden zweiten String verwerfen = (das letzte [^ ]+ ohne die runden Klammern)
+								// rm_eo = Ende des Fundes, rm_es = Beginn
 								const string regex=string(".{")+ltoan(groupArray[0].rm_eo)+"}([^ ]+)[ ][^ ]+";
 								groupArray[0].rm_eo=0;
 								if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) {
@@ -2693,19 +2694,31 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 											break;  // No more groups
 										if (!zudeinst.empty()) zudeinst+=" ";
 										zudeinst+=source.substr(groupArray[g].rm_so,groupArray[g].rm_eo-groupArray[g].rm_so);
-									}
+									} // 									for (unsigned g=1;g<maxGroups;g++)
 									ustring=" "+zudeinst+ustring;
 								} else {
 									break; // while(1)
-								} // 						if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) else else
+								} //            if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) else else
 							} // while(1)
 							regfree(&rCmp);
-						} // 						if (obanf==2)
-					} // 					for(unsigned i=0;i<srueck.size();++i;)
+						} //            if (obanf==2)
+					} //          for(unsigned i=0;i<srueck.size();++i;)
 					break;
-// Folgende Zeile fuer Debian gut
-				case apt: 
-// im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
+				case zypper:
+					for(unsigned i=0;i<srueck.size();++i) {
+						if (obanf==1) obanf=2;
+						if (srueck[i].find("NEW package")!=string::npos ||
+								srueck[i].find("reinstalled:")!=string::npos) obanf=1;
+						if (!srueck[i].length()) obanf=0;
+						if (obanf==2) {
+							gtrim(&srueck[i]);
+							ustring=" "+srueck[i]+ustring;
+						} // 						if (obanf==2)
+					} // 					for(unsigned i=0;i<srueck.size();++i)
+					break;
+					// Folgende Zeile fuer Debian gut
+				case apt:
+					// im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
 					for(unsigned i=srueck.size();i;) {
 						--i;
 						if (srueck[i][0]==' '){ if (!obanf) obanf++;} else if (obanf==1) obanf++;
@@ -2713,13 +2726,13 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 							gtrim(&srueck[i]);
 							// Folgende Zeile fuer Debian und OpenSuse gut
 							ustring=" "+srueck[i]+ustring;
-						} // 				if (obanf==1)
-					} // 					for(unsigned i=srueck.size();i;)
+						} //        if (obanf==1)
+					} //          for(unsigned i=srueck.size();i;)
 					break;
 				default: break;
-			} // 			switch (linst.pruefipr())
+			} //      switch (linst.pruefipr())
 
-					// s. ausricht() in configure
+			// s. ausricht() in configure
 			mdatei uniff(instvz+"/inst.log",ios::app,0);
 			if (uniff.is_open()) {
 				uniff<<endl<<"Rueckmeldung zu: '"<<bef<<"':"<<endl;
