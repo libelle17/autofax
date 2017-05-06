@@ -9359,17 +9359,13 @@ void paramcl::dovi()
 	struct stat sstat={0};
 	if (!lstat(smbdatei,&sstat)) {cmd+=smbdatei;cmd+=" ";}
 	string erg;
-	erg+="tab sview ";erg+=logdt;erg+="|silent $|";
-	erg+="tab sview "+zaehlerdt+"|";
-	erg+="tablast|tab sview "+passwd+"|";
-	erg+="tablast|tab sview "+group+"|";
-	if (!stat(sudoers.c_str(),&sstat)) { 
-		//		if (sstat.st_mode & S_IRUSR) // lieferte falsch wahr
-		ifstream sud(sudoers);
-		if (sud.good())
-			erg+="tablast|tab sview "+sudoers+"|";
-	}
-  exit(systemrueck(cmd+" +'"+erg+"tabfirst' -pNu "+instvz+"/.exrc "+tty));
+	ifstream ld(logdt); if (ld.good())     erg+="tab sview ";erg+=logdt;erg+="|silent $|";
+	ifstream zd(zaehlerdt); if (zd.good()) erg+="tab sview "+zaehlerdt+"|";
+	ifstream pw(passwd); if (pw.good())    erg+="tablast|tab sview "+passwd+"|";
+	ifstream gr(group); if (gr.good())     erg+="tablast|tab sview "+group+"|";
+	// if (!stat(sudoers.c_str(),&sstat)) KLA // if (sstat.st_mode & S_IRUSR) // lieferte falsch wahr
+	ifstream sd(sudoers); if (sd.good())   erg+="tablast|tab sview "+sudoers+"|";
+	exit(systemrueck(cmd+" +'"+erg+"tabfirst' -pNu "+instvz+"/.exrcn "+tty));
 } // void paramcl::dovi()
 
 void paramcl::dovc()
