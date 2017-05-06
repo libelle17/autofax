@@ -369,7 +369,7 @@ void anfgw(const string& datei, const string& udpr, const string& inhalt, const 
 void anfgg(const string& datei, const string& inhalt, const string& comment, int obverb/*=0*/, int oblog/*=0*/);
 void doanfg(const string& datei, const string& inhalt, const string& comment);
 
-double progvers(const string& prog,int obverb, int oblog);
+double progvers(const string& prog,int obverb=0, int oblog=0);
 int touch(const std::string& pathname,int obverb=0,int oblog=0);
 std::string string_to_hex(const std::string& input);
 
@@ -683,6 +683,7 @@ class linst_cl
  string upr;   // Befehl zum Deinstallieren ueber das Installationssystem
  string udpr;   // Befehl zum direkten Deinstallieren
  string uypr;   // Befehl zum Deinstallieren ueber das Installationssystem ohne Rueckfrage
+ string upd;    // Befehl zum Systemupdate
  string repos; // Befehl zum Hinzufuegen des Repositories fuer den Compiler
  string compil; // Paketnamen fuer den Compiler
  string dev; // Anhaengsel fuer die development-Versionen ("-dev" oder "-devel")

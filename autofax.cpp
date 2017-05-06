@@ -46,7 +46,6 @@ const double& version=
 // const char lgs logdatei_a[PATH_MAX+1] ="/var/log/log_vmparse.txt";
 // const char *logdatei = logdatei_a;
 
-// const char* logdatname;
 uchar ZDB=0; // G.Schade 22.4.14 fuer Zusatz-Debugging (SQL): ZDB 255, sonst: 0
 const char sep = 9; // geht auch: "[[:blank:]]"
 
@@ -724,6 +723,8 @@ enum T_
 	T_Keine_wartenden_Faxe_zum_Loeschen_da,
 	T_waisen_Faxe_geloescht_werden,
 	T_Keine_waisen_Faxe_zum_Loeschen_da,
+	T_Ihre_Python3_Version_koennte_mit,
+	T_veraltet_sein_Wenn_Sie_Ihre_Faxe_OCR_unterziehen_wollen_dann_fuehren_Sie_bitte_ein_Systemupdate_durch_mit,
 	T_MAX
 };
 
@@ -2088,6 +2089,11 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{" waisen Faxe geloescht werden?"," orphan faxes really be deleted?"},
 	// T_Keine_waisen_Faxe_zum_Loeschen_da
 	{"Keine waisen Faxe zum Loeschen da.","No orphan faxes to be deleted."},
+	// T_Ihre_Python3_Version_koennte_mit
+	{"Ihre Python3-Version koennte mit ","Your python3 version is "},
+	// T_veraltet_sein_Wenn_Sie_Ihre_Faxe_OCR_unterziehen_wollen_dann_fuehren_Sie_bitte_ein_Systemupdate_durch_mit
+	{" veraltet sein. Wenn Sie Ihre Faxe OCR unterziehen wollen, dann fuehren Sie bitte einen Systemupdate durch mit ",
+	 " and could be obsolete. If You want to treat Your faxes with OCR, please update Your system with "},
   {"",""}
 }; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
 
@@ -2340,7 +2346,7 @@ paramcl::paramcl(int argc, char** argv)
 	zsaufr=ersetzAllezu(saufr,"/","\\/");
 	/* time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff; */
 	tstart=clock();
-	//  konfdatname.clear();
+	//  konfdt.clear();
 } // paramcl::paramcl()
 
 void paramcl::pruefggfmehrfach()
@@ -2536,7 +2542,7 @@ void paramcl::getcommandl0()
         opts.push_back(/*4*/optioncl(T_ldn_k,T_logdateineu_l, &Tx, T_logdatei_vorher_loeschen, 0, &logdateineu, 1));
         break;
       case 2:
-        opts.push_back(/*2*/optioncl(T_kd_k,T_konfdatei_l, &Tx, T_verwendet_Kofigurationsdatei_string_anstatt,0,&konfdatname,pfile));
+        opts.push_back(/*2*/optioncl(T_kd_k,T_konfdatei_l, &Tx, T_verwendet_Kofigurationsdatei_string_anstatt,0,&konfdt,pfile));
         break;
     } //     switch (iru)
     // hier wird die Befehlszeile ueberprueft:
@@ -2733,6 +2739,8 @@ void paramcl::pruefisdn()
 	cgconf.setzbemv("obfcard",&Tx,T_ob_eine_Fritzcard_drinstak);
 } // void paramcl::pruefisdn()
 
+const string paramcl::hylacdat="/etc/init.d/hylafax";
+
 // wird aufgerufen in: main, pruefhyla
 // koennte auch im Fall eines entfernten Modems oder hylafax-Programms benoetigt werden
 // sucht das Hylaverzeichnis und setzt varsphylavz darauf, return 0, wenn nicht gefunden dann varsphylavz="", return 1
@@ -2764,11 +2772,11 @@ int paramcl::setzhylavz()
 //    cppSchluess hylaconf[]={{"SPOOL"},{"HYLAFAX_HOME"}};
 //    size_t cs=sizeof hylaconf/sizeof*hylaconf;
     schlArr hyconf; hyconf.init(2,"SPOOL","HYLAFAX_HOME");
-    const string hylacdat="/etc/init.d/hylafax";
     struct stat hstat={0};
     if (!lstat(hylacdat.c_str(),&hstat)) {
+		  hylacdat_gibts=1;
       confdat hylac(hylacdat,&hyconf,obverb);
-    }
+    } //     if (!lstat(hylacdat.c_str(),&hstat))
     if (!hyconf[1].wert.empty()) {
       //  if (cpplies(hylacdat,hylaconf,cs)) KLA
       varsphylavz=hyconf[1].wert;
@@ -3094,7 +3102,7 @@ void paramcl::setzsql(confdat& afconf)
 void paramcl::lieskonfein()
 {
   Log(violetts+Tx[T_lieskonfein]+schwarz);
-  if (konfdatname.empty()) konfdatname = aktprogverz()+".conf";
+  if (konfdt.empty()) konfdt=aktprogverz()+".conf";
   /*
      static cppSchluess gconf[]={{"langu"},{"obcapi"},{"obhyla"},{"hylazuerst"},{"maxcapiv"},{"maxhylav"},{"cuser"},
      {"countrycode"},{"citycode"},{"msn"},{"LongDistancePrefix"},{"InternationalPrefix"},{"LocalIdentifier"},
@@ -3106,12 +3114,12 @@ void paramcl::lieskonfein()
    */
   // cgconf.init muss spaetetens am Anfang von getcommandl0 kommen
   if (1) {
-    //  if (cpplies(konfdatname,gconf,gcs)) KLA
+    //  if (cpplies(konfdt,gconf,gcs)) KLA
     // sodann werden die Daten aus gconf den einzelenen Klassenmitgliedsvariablen zugewiesen 
     // die Reihenfolge muss der in cgconf.init (in getcommandl0) sowie der in rueckfragen entsprechen
     rzf=0;
     unsigned lfd=0;
-    confdat afconf(konfdatname,&cgconf,obverb); // hier werden die Daten aus der Datei eingelesen
+    confdat afconf(konfdt,&cgconf,obverb); // hier werden die Daten aus der Datei eingelesen
     // wenn die Sprache noch nicht in der Kommandozeile zugewiesen wurde
     if (langu.empty()) {
       // und in der Konfigurationsdatei enthalten war 
@@ -3189,10 +3197,10 @@ void paramcl::lieskonfein()
   if (nrzf) rzf=0;
 	// Aufrufstatistik, um in zeigweitere die Dateien korrigieren zu koennen:
 	// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 3 Monate und des Monats unbefristet
-	const string zaehlerdatei=konfdatname+".zaehl";
+	zaehlerdt=konfdt+".zaehl";
   schlArr zschl; // Zaehlkonfiguration
 	zschl.init(4,"aufrufe","lDatum","tagesaufr","monatsaufr");
-	confdat zconf(zaehlerdatei,&zschl,obverb); // hier werden die Daten aus der Datei eingelesen
+	confdat zconf(zaehlerdt,&zschl,obverb); // hier werden die Daten aus der Datei eingelesen
 	if (zschl[0].gelesen) zschl[0].hole(&aufrufe);
 	aufrufe++;
   zschl[0].setze(&aufrufe);
@@ -3212,7 +3220,7 @@ void paramcl::lieskonfein()
   zschl[2].setze(&tagesaufr);
 	monatsaufr++;
   zschl[3].setze(&monatsaufr);
-  mdatei f(zaehlerdatei,ios::out,0);
+  mdatei f(zaehlerdt,ios::out,0);
 	if (f.is_open()) {
      zschl.aschreib(&f);
 	}
@@ -3523,7 +3531,7 @@ void paramcl::rueckfragen()
     if (cgconf[++lfd].wert.empty() || rzf) {
       //        string bliste, tmpcuser;
       vector<string> benutzer;
-      cmd="cat /etc/passwd | grep /home/ | cut -d':' -f 1";
+      cmd="cat "+passwd+" | grep /home/ | cut -d':' -f 1";
       systemrueck(cmd,obverb,oblog,&benutzer);
 			if (benutzer.size()>1) for(size_t i=benutzer.size();i;) {
 				--i;
@@ -3847,10 +3855,10 @@ void paramcl::autofkonfschreib()
     schlArr *schlp[3]={&cgconf,&sqlconf,&zmconf};
     //    size_t groe[sizeof schlp/sizeof *schlp]={gcs,sqlzn,zmzn+zmzn};
     //    for(size_t i=0;i<sqlzn;i++) KLA _out<<"i: "<<i<<sqlconfp[i].name<<endl; KLZ
-    //    multicppschreib(konfdatname, schlp, groe, sizeof schlp/sizeof *schlp);
-    multischlschreib(konfdatname, schlp, sizeof schlp/sizeof *schlp, mpfad);
+    //    multicppschreib(konfdt, schlp, groe, sizeof schlp/sizeof *schlp);
+    multischlschreib(konfdt, schlp, sizeof schlp/sizeof *schlp, mpfad);
   } // if (rzf||obkschreib) 
-  //    ::cppschreib(konfdatname, cgconfp, gcs);
+  //    ::cppschreib(konfdt, cgconfp, gcs);
 } // void paramcl::autofkonfschreib()
 
 
@@ -4154,8 +4162,8 @@ void paramcl::verzeichnisse()
   } //   for(zielmustercl *zmakt=zmp;1;zmakt++)
   for(uint imu=0;imu<this->zmzn;imu++) {
     const string imus = ltoan(imu);
-    ::Log(Tx[T_Muster]+imus+": '"+rot+this->zmp[imu].holmuster()+schwarz+"'",this->obverb>1,this->oblog);
-    ::Log(Tx[T_Ziel]+imus+":   '"+rot+this->zmp[imu].ziel+schwarz+"'",this->obverb>1,this->oblog);
+    ::Log(Tx[T_Muster]+imus+": '"+blau+this->zmp[imu].holmuster()+schwarz+"'",this->obverb>1,this->oblog);
+    ::Log(Tx[T_Ziel]+imus+":   '"+blau+this->zmp[imu].ziel+schwarz+"'",this->obverb>1,this->oblog);
   } //   for(uint imu=0;imu<this->zmzn;imu++)
 } // paramcl:: verzeichnisse()
 
@@ -4263,12 +4271,13 @@ void paramcl::pruefcron()
 	//  systemrueck(string("mv -i '")+mpfad+"' /root/bin",1,0);
 } // pruefcron
 
+const char* const paramcl::smbdatei="/etc/samba/smb.conf";
+
 // wird aufgerufen in: main
 void paramcl::pruefsamba()
 {
 //  int altobverb=obverb; obverb=2;
   Log(violetts+Tx[T_pruefsamba]);
-  const char* const smbdatei="/etc/samba/smb.conf";
   int sgest=0, ngest=0;
   uchar conffehlt=1;
   const string quelle="/usr/share/samba/smb.conf";
@@ -5249,12 +5258,14 @@ int paramcl::pruefocr()
 				if (linst.pruefipr()==dnf||linst.pruefipr()==yum) 
 					linst.doggfinst("redhat-rpm-config",obverb+1,oblog);
 				linst.doinst("ghostscript",obverb+1,oblog,"gs");
-				systemrueck("sudo -H python3 -m pip install --upgrade setuptools pip");
+				if (systemrueck("sudo -H python3 -m pip install --upgrade setuptools pip",obverb+1,oblog)) {
+         if (double pyv=progvers("python3")<=3.41) {
+				  Log(rots+Tx[T_Ihre_Python3_Version_koennte_mit]+blau+ltoan(pyv)+rot+
+					Tx[T_veraltet_sein_Wenn_Sie_Ihre_Faxe_OCR_unterziehen_wollen_dann_fuehren_Sie_bitte_ein_Systemupdate_durch_mit]+blau+linst.upd+schwarz
+					,1,1);
+				 } //          if (double pyv=progvers("python3")<=3.41)
+				} // 				if (systemrueck("sudo -H python3 -m pip install --upgrade setuptools pip",obverb+1,oblog))
 //				systemrueck("sudo python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
-				// python3 -m venv ocrvenv
-				// python3 -m venv --upgrade ocrvenv
-				// source ocrvenv/bin/activate
-				// sudo pip3 install ocrmypdf
 				string vprog;
 				for(int iru=0;iru<2;iru++) {
 					const string virtualenv="virtualenv";
@@ -7771,30 +7782,30 @@ void kuerzevtz(string *vzp)
 } // kuerzevtz
 
 // von fkn-systems
+const char * const rulesdt="/etc/udev/rules.d/46-FKN_isdn_capi.rules";
 // wird aufgerufen in: paramcl::pruefcapi
 void pruefrules(int obverb, int oblog) 
 {
   Log(violetts+Tx[T_pruefrules]+schwarz,obverb?obverb-1:0,oblog);
-  const char *rulesd="/etc/udev/rules.d/46-FKN_isdn_capi.rules";
   struct stat entrybuf={0};
-  if (lstat(rulesd, &entrybuf)) { 
-    mdatei rules(rulesd,ios::out);
+  if (lstat(rulesdt, &entrybuf)) { 
+    mdatei rules(rulesdt,ios::out);
     if (rules.is_open()) {
       rules<<"# Symlink (capi20 -> capi) zu"<<endl;
       rules<<"# Kompatibilitaetszwecken erstellen"<<endl;
       rules<<"KERNEL==\"capi\", SYMLINK=\"capi20\""<<endl;
     } //     if (rules.is_open())
-  } //   if (lstat(rulesd, &entrybuf))
+  } //   if (lstat(rulesdt, &entrybuf))
 } // void pruefrules() {
 
+const string blackdt="/etc/modprobe.d/50-blacklist.conf";
 // wird aufgerufen in: pruefcapi
 void pruefblack(int obverb, int oblog) 
 {
   Log(violetts+Tx[T_pruefblack]+schwarz,obverb?obverb-1:0,oblog);
-  const string blackd="/etc/modprobe.d/50-blacklist.conf";
   const char* vgl[]={"blacklist avmfritz", "blacklist mISDNipac"};
   uchar obda[]={0}, obeinsfehlt=0;
-  mdatei blacki(blackd,ios::in);
+  mdatei blacki(blackdt,ios::in);
   if (blacki.is_open()) {
     string zeile;
     while(getline(blacki,zeile)) {
@@ -7807,11 +7818,11 @@ void pruefblack(int obverb, int oblog)
       if (!obda[i]) {obeinsfehlt=1;break;}
     } //     for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++)
     if (obeinsfehlt) {
-      mdatei blacka(blackd,ios::out|ios::app);
+      mdatei blacka(blackdt,ios::out|ios::app);
       if (blacka.is_open()) {
         for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++) {
           if (!obda[i]) {
-            Log(Tx[T_haengean]+blaus+blackd+schwarz+Tx[T_an_mdpp]+gruen+vgl[i]+schwarz,obverb,oblog);
+            Log(Tx[T_haengean]+blaus+blackdt+schwarz+Tx[T_an_mdpp]+gruen+vgl[i]+schwarz,obverb,oblog);
             blacka<<vgl[i]<<endl;
           }
         } // for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++) 
@@ -9308,12 +9319,12 @@ void paramcl::zeigkonf()
 {
   struct stat kstat={0};
   char buf[100]={0};
-  if (!lstat(konfdatname.c_str(),&kstat)) {
+  if (!lstat(konfdt.c_str(),&kstat)) {
     struct tm tm={0};
     memcpy(&tm, localtime(&kstat.st_mtime),sizeof(tm));
     strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", &tm);
-  } //   if (!lstat(konfdatname.c_str(),&kstat))
-  cout<<Tx[T_aktuelle_Einstellungen_aus]<<blau<<konfdatname<<schwarz<<"' ("<<buf<<"):"<<endl;
+  } //   if (!lstat(konfdt.c_str(),&kstat))
+  cout<<Tx[T_aktuelle_Einstellungen_aus]<<blau<<konfdt<<schwarz<<"' ("<<buf<<"):"<<endl;
   for(unsigned i=0;i<cgconf.zahl;i++) {
     cout<<blau<<setw(20)<<cgconf[i].name<<schwarz<<": "<<cgconf[i].wert<<endl;
   } //   for(unsigned i=0;i<cgconf.zahl;i++)
@@ -9337,20 +9348,37 @@ void paramcl::zeigdienste()
 
 const string paramcl::edit="$(which vim 2>/dev/null || which vi) ",
 			//	             view="$(which view 2>/dev/null || which vi) + ",
-							 paramcl::tty=" >/dev/tty";
+							 paramcl::tty=" >/dev/tty",
+							 paramcl::passwd="/etc/passwd",
+							 paramcl::group="/etc/group",
+							 paramcl::sudoers="/etc/sudoers";
+
+void paramcl::dovi()
+{
+  cmd=edit+konfdt+" ";
+	struct stat sstat={0};
+	if (!lstat(smbdatei,&sstat)) {cmd+=smbdatei;cmd+=" ";}
+	string erg;
+	erg+="tab sview ";erg+=logdt;erg+="|silent $|";
+	erg+="tab sview "+zaehlerdt+"|";
+	erg+="tablast|tab sview "+passwd+"|";
+	erg+="tablast|tab sview "+group+"|";
+	if (!lstat("/etc/sudoers",&sstat)) 
+		erg+="tablast|tab sview "+sudoers+"|";
+  exit(systemrueck(cmd+" +'"+erg+"tabfirst' -p"+tty));
+} // void paramcl::dovi()
 
 void paramcl::dovc()
 {
 	pruefcapi();
-	cmd=edit+cfaxconfdat+" "+ccapiconfdat+" ";
+	cmd=edit+cfaxconfdat+" "+ccapiconfdat+" "+rulesdt+" "+blackdt+" ";
 	string erg;
 	if (scapis) cmd+=scapis->systemd+" ";
 	if (cconf.zahl>0) cmd+=cconf[0].wert+" "; // incoming_script
 	if (cconf.zahl>3) cmd+=cconf[3].wert+" "; // idle_script
 	if (cconf.zahl>1) erg+="tablast|tab sview "+cconf[1].wert+"|silent $|"; // log_file
 	if (cconf.zahl>2) erg+="tablast|tab sview "+cconf[2].wert+"|silent $|"; // log_error
-	erg+="tabfirst";
-	exit(systemrueck(cmd+" +'"+erg+"' -p"+tty));
+	exit(systemrueck(cmd+" +'"+erg+"tabfirst' -p"+tty));
 } // void paramcl::dovc()
 
 void paramcl::dovh()
@@ -9362,18 +9390,19 @@ void paramcl::dovh()
 	if (shfaxd) cmd+=shfaxd->systemd+" ";
 	if (sfaxq) cmd+=sfaxq->systemd+" ";
 	if (shylafaxd) cmd+=shylafaxd->systemd+" ";
+	if (hylacdat_gibts) cmd+=hylacdat+" ";
 	exit(systemrueck(cmd+ " +'tabn|tab sview "+xferfaxlog+"|silent $|tabfirst|1' -p"+tty));
 } // void paramcl::dovh()
 
 int main(int argc, char** argv) 
 {
-	/*
+/*
 	if (argc<3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		if (argc>1) {
 		// Testcode mit argv[1]
 		}
 	}
-	*/
+*/
 	string prog;
   paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
@@ -9386,7 +9415,7 @@ int main(int argc, char** argv)
 
   if (!pm.getcommandline()) 
     exit(40);
-  if (pm.obvi) exit(systemrueck(pm.edit+pm.konfdatname+" +'tab sview "+logdt+"|silent $|tabn' -p"+pm.tty));
+  if (pm.obvi) pm.dovi(); 
 	if (pm.obvc) pm.dovc();
 	if (pm.obvs) exit(systemrueck("cd \""+instvz+"\"; sh viall"+pm.tty));
   if (pm.zeigvers) {
@@ -9400,9 +9429,7 @@ int main(int argc, char** argv)
 		pm.rueckfragen();
 		pm.pruefggfmehrfach();
 		pm.setzhylavz();
-		if (pm.obvh) {
-		  pm.dovh();
-		} // 		if (pm.obvh)
+		if (pm.obvh) pm.dovh();
 		pm.verzeichnisse();
 		pm.pruefsamba();
 		// Rueckfragen koennen auftauchen in: rueckfragen, konfcapi (<- pruefcapi), aenderefax, pruefsamba

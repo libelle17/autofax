@@ -214,7 +214,8 @@ class paramcl // Programmparameter
     uchar hylazuerst;  // ob ein Fax zuerst ueber Hylafax versucht werden soll zu faxen
     uchar rzf=0; // rueckzufragen
     string dbq; // Datenbank
-    string cuser; // Linux-Benutzer fuer Capisuite, Samba
+		static const char* const smbdatei;// "/etc/samba/smb.conf"
+		string cuser; // Linux-Benutzer fuer Capisuite, Samba
     string muser; // Benutzer fuer Mysql/MariaDB
     string mpwd;  // Passwort fuer Mysql/MariaDB
     DB* My=0;
@@ -222,6 +223,9 @@ class paramcl // Programmparameter
     const string tudoc="udoc"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tinca="inca"; // MariaDB-Tabelle fuer empfangene Faxe
 		static const string edit, tty;
+		static const string passwd,group,sudoers;
+		static const string hylacdat; // /etc/init.d/hylafax
+		uchar hylacdat_gibts=0; // Datei hylacdat existiert
     string cfaxconfdat; // /etc/capisuite/fax.conf oder /usr/local/etc/capisuite/fax.conf laut Handbuch
     string ccapiconfdat; // /etc/capisuite/capisuite.conf oder /usr/local/etc/capisuite/capisuite.conf laut Handbuch
     // Parameter aus /etc/capisuite/fax.conf:
@@ -308,7 +312,8 @@ class paramcl // Programmparameter
     schlArr cconf;  // capisuite.conf
     schlArr capiconf; // Capi-Konfiguration (fax.conf)
 //    size_t ccs; // capiconf-confsize
-    string konfdatname; // name der Konfigurationsdatei
+    string konfdt; // name der Konfigurationsdatei
+		string zaehlerdt; // konfdt+".zaehl"
     string anfaxstr, ancfaxstr, anhfaxstr; // 'an Fax', "an cFax", "an hFax"
     string anstr; // ' an '
     string undstr;  //  'und'
@@ -421,6 +426,7 @@ class paramcl // Programmparameter
 		void zeigueberschrift();
 		void schlussanzeige();
     void autofkonfschreib();
+		void dovi();
 		void dovc();
 		void dovh();
 }; // class paramcl

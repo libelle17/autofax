@@ -1080,7 +1080,7 @@ double verszuzahl(const string vers)
 } // double verstozahl(string vers)
 
 // Programmversion, falls diese beim Programm mit " --version" abrufbar ist
-double progvers(const string& prog,int obverb, int oblog)
+double progvers(const string& prog,int obverb/*=0*/, int oblog/*=0*/)
 {
 	double vers=0;
 	string pfad;
@@ -1322,6 +1322,7 @@ instprog linst_cl::pruefipr(int obverb,int oblog)
 				instyp=instp+"-y ";
 				upr="sudo zypper -n rm -u ";
 				uypr=upr+"-y ";
+				upd="sudo zypper patch";
 				repos="sudo zypper lr | grep 'g++\\|devel_gcc'>/dev/null 2>&1 || "
 				      "sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release |"
 							"grep ^NAME= | cut -d'\"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'\"' -f2`/devel:gcc.repo;";
@@ -1333,12 +1334,14 @@ instprog linst_cl::pruefipr(int obverb,int oblog)
 					instyp="sudo dnf -y install ";
 					upr="sudo dnf remove ";
 					uypr="sudo dnf -y remove ";
+					upd="sudo dnf update";
 				} else if (obprogda("yum",obverb-1,oblog)) {
 					ipr=yum;
 					instp="sudo yum install ";
 					instyp="sudo yum -y install ";
 					upr="sudo yum remove ";
 					uypr="sudo yum -y remove ";
+					upd="sudo yum update";
 				} // 				if (obprogda("dnf",obverb-1,oblog))
 				compil="make automake gcc-c++ kernel-devel";
 			} // 			if (obprogda("zypper",obverb-1,oblog)) KLZ // opensuse
@@ -1355,6 +1358,7 @@ instprog linst_cl::pruefipr(int obverb,int oblog)
 			upr="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
 			udpr="sudo apt-get -f install; sudo dpkg -r --force-depends ";
 			uypr="sudo apt-get -f install; sudo apt-get -y --auto-remove purge ";
+			upd="sudo apt update; sudo apt upgrade;";
 			compil="install build-essential linux-headers-`uname -r`";
 			dev="dev";
 		} else {
