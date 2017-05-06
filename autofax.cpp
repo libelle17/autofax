@@ -9365,7 +9365,7 @@ void paramcl::dovi()
 	erg+="tablast|tab sview "+group+"|";
 	if (!lstat("/etc/sudoers",&sstat)) 
 		erg+="tablast|tab sview "+sudoers+"|";
-  exit(systemrueck(cmd+" +'"+erg+"tabfirst' -p"+tty));
+  exit(systemrueck(cmd+" +'"+erg+"tabfirst' -pNu "+instvz+"/.exrc "+tty));
 } // void paramcl::dovi()
 
 void paramcl::dovc()
@@ -9378,7 +9378,7 @@ void paramcl::dovc()
 	if (cconf.zahl>3) cmd+=cconf[3].wert+" "; // idle_script
 	if (cconf.zahl>1) erg+="tablast|tab sview "+cconf[1].wert+"|silent $|"; // log_file
 	if (cconf.zahl>2) erg+="tablast|tab sview "+cconf[2].wert+"|silent $|"; // log_error
-	exit(systemrueck(cmd+" +'"+erg+"tabfirst' -p"+tty));
+	exit(systemrueck(cmd+" +'"+erg+"tabfirst' -pNu "+instvz+"/.exrc "+tty));
 } // void paramcl::dovc()
 
 void paramcl::dovh()
@@ -9391,7 +9391,7 @@ void paramcl::dovh()
 	if (sfaxq) cmd+=sfaxq->systemd+" ";
 	if (shylafaxd) cmd+=shylafaxd->systemd+" ";
 	if (hylacdat_gibts) cmd+=hylacdat+" ";
-	exit(systemrueck(cmd+ " +'tabn|tab sview "+xferfaxlog+"|silent $|tabfirst|1' -p"+tty));
+	exit(systemrueck(cmd+ " +'tabn|tab sview "+xferfaxlog+"|silent $|tabfirst|1' -pNu "+instvz+"/.exrc "+tty));
 } // void paramcl::dovh()
 
 int main(int argc, char** argv) 
