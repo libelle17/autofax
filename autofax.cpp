@@ -4271,7 +4271,7 @@ void paramcl::pruefcron()
 	//  systemrueck(string("mv -i '")+mpfad+"' /root/bin",1,0);
 } // pruefcron
 
-const char* const paramcl::smbdatei="/etc/samba/smb.conf";
+const char* const paramcl::smbdt="/etc/samba/smb.conf";
 
 // wird aufgerufen in: main
 void paramcl::pruefsamba()
@@ -4303,10 +4303,10 @@ void paramcl::pruefsamba()
 		} // 	if (obsfehlt)
 		for(uchar iru=0;iru<2;iru++) {
 			struct stat sstat={0};
-			if (!(conffehlt=lstat(smbdatei,&sstat))) break;
+			if (!(conffehlt=lstat(smbdt,&sstat))) break;
 			if (iru) break;
 			pruefverz("/etc/samba",obverb,oblog,0,0);
-			kopier(quelle,smbdatei,obverb,oblog);
+			kopier(quelle,smbdt,obverb,oblog);
 		} //   for(uchar iru=0;iru<2;iru++)
 		if (smb.obsvfeh(obverb-1,oblog)) if (smbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
 		if (nmb.obsvfeh(obverb-1,oblog)) if (nmbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
@@ -4346,8 +4346,8 @@ void paramcl::pruefsamba()
 		//    if (gestartet==2) smbrestart=0;
 	} // if (dienstzahl<2 || conffehlt) 
 	struct stat sstat={0};
-	if (!(conffehlt=lstat(smbdatei,&sstat))) {
-    confdat smbcf(smbdatei,obverb);
+	if (!(conffehlt=lstat(smbdt,&sstat))) {
+    confdat smbcf(smbdt,obverb);
     smbcf.Abschn_auswert(obverb);
     vector<string*> vzn;
 		const int ISambaName[4]={T_Zufaxen,T_Warteauffax,T_Nichtgefaxt,T_Faxempfang}; 
@@ -4376,7 +4376,7 @@ void paramcl::pruefsamba()
       } // if (smbcf.abschv.aname!="global") 
     } // for(size_t i=0;i<smbcf.abschv.size();i++) 
 		uchar smbrestart=0;
-		mdatei sapp(smbdatei,ios::out|ios::app);
+		mdatei sapp(smbdt,ios::out|ios::app);
 		if (sapp.is_open()) {
 			string suchstr;
 			for(unsigned k=0;k<vzn.size();k++) {
@@ -4424,7 +4424,7 @@ void paramcl::pruefsamba()
 			} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
 			if (!suchstr.empty())
 			// Abschnitt wieder löschen
-				anfgg(unindt,"sudo sed -i.vorautofax '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdatei,"smb.conf: ["+suchstr+"]",obverb,oblog);
+				anfgg(unindt,"sudo sed -i.vorautofax '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdt,"smb.conf: ["+suchstr+"]",obverb,oblog);
 		} // if (sapp.is_open()) 
 		if (!nrzf) {
 			if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
@@ -4510,7 +4510,7 @@ void paramcl::pruefsamba()
 				} // 			  if (system==fed) else 
 			} // obzu
 		} // obslaeuft
-  } //   if (!(conffehlt=lstat(smbdatei,&sstat)))
+  } //   if (!(conffehlt=lstat(smbdt,&sstat)))
 //  obverb=altobverb;
 } // pruefsamba
 
@@ -7559,7 +7559,6 @@ int paramcl::pruefhyla()
 				// wenn sich faxsend findet ...
 				if (obprogda("faxsend",obverb,oblog)) {
 					// und ein hylafax-Verzeichnis da ist ...
-					caus<<"Stelle 1"<<endl;
 					if (this->setzhylavz()) {
 						this->obhyla=0;
 						ret=1;
@@ -9310,7 +9309,7 @@ void zeigversion(const string& prog,const string& mpfad)
   strptime((string(__DATE__)+" "+__TIME__).c_str(),"%b %d %Y %T", &tm);
   strftime(buf, sizeof(buf), "%d.%m.%Y %T", &tm);
   cout<<"              "<<Tx[T_Kompiliert]<<blau<<buf<<schwarz<<endl;
-  cout<<Tx[T_Quelle]<<blau<<"https://github.com/libelle17/"<<prog<<schwarz<<endl;
+  cout<<Tx[T_Quelle]<<blau<<defvors/*"https://github.com/libelle17/"*/<<prog<<schwarz<<endl;
 	cout<<Tx[T_Installationsverzeichnis]<<blau<<instvz<<schwarz<<endl;
   cout<<Tx[T_Hilfe]<<braun<<"man "<<base_name(mpfad)<<schwarz<<Tx[T_or]<<braun<<"man -Lde "<<base_name(mpfad)<<schwarz<<"'"<<endl;
 } // void zeigversion(const char* const prog)
@@ -9353,30 +9352,48 @@ const string paramcl::edit="$(which vim 2>/dev/null || which vi) ",
 							 paramcl::group="/etc/group",
 							 paramcl::sudoers="/etc/sudoers";
 
+void viadd(string *cmd,const string& datei,const uchar ro=0,const uchar hinten=0, const uchar unten=0)
+{
+ ifstream is(datei);
+ if (is.good()) {
+  if (ro) {
+	 if (hinten) *cmd+="tablast|";
+	 *cmd=*cmd+"tab sview "+datei+"|";
+	 if (unten) *cmd+="silent $|";
+	} else {
+	 *cmd=*cmd+datei+" "; 
+	}
+ } //  if (is.good())
+} // void viadd(string *cmd,string datei)
+
 void paramcl::dovi()
 {
-  cmd=edit+konfdt+" ";
-	struct stat sstat={0};
-	if (!lstat(smbdatei,&sstat)) {cmd+=smbdatei;cmd+=" ";}
+  cmd=edit;
+	viadd(&cmd,konfdt,0);
+	viadd(&cmd,smbdt,0);
 	string erg;
-	ifstream ld(logdt); if (ld.good())     erg+="tab sview ";erg+=logdt;erg+="|silent $|";
-	ifstream zd(zaehlerdt); if (zd.good()) erg+="tab sview "+zaehlerdt+"|";
-	ifstream pw(passwd); if (pw.good())    erg+="tablast|tab sview "+passwd+"|";
-	ifstream gr(group); if (gr.good())     erg+="tablast|tab sview "+group+"|";
+	viadd(&erg,logdt,1,0,1);
+	viadd(&erg,zaehlerdt,1,0,0);
+	viadd(&erg,passwd,1,1,0);
+	viadd(&erg,group,1,1,0);
+	viadd(&erg,sudoers,1,1,0);
 	// if (!stat(sudoers.c_str(),&sstat)) KLA // if (sstat.st_mode & S_IRUSR) // lieferte falsch wahr
-	ifstream sd(sudoers); if (sd.good())   erg+="tablast|tab sview "+sudoers+"|";
 	erg+="tabfirst' -p";
 	string exdt=instvz+"/.exrc";
-	ifstream ex(exdt);if (ex.good()) erg+="Nu "+exdt;
+	{ifstream is(exdt);if (is.good()) erg+="Nu "+exdt;}
 	exit(systemrueck(cmd+" +'"+erg+" "+tty));
 } // void paramcl::dovi()
 
 void paramcl::dovc()
 {
 	pruefcapi();
-	cmd=edit+cfaxconfdat+" "+ccapiconfdat+" "+rulesdt+" "+blackdt+" ";
+  cmd=edit;
+	{ifstream is(cfaxconfdat); if (is.good())    cmd=cmd+cfaxconfdat+" ";}
+	{ifstream is(ccapiconfdat); if (is.good())    cmd=cmd+ccapiconfdat+" ";}
+	{ifstream is(rulesdt); if (is.good())    cmd=cmd+rulesdt+" ";}
+	{ifstream is(blackdt); if (is.good())    cmd=cmd+blackdt+" ";}
 	string erg;
-	if (scapis) cmd+=scapis->systemd+" ";
+	if (scapis) {ifstream is(scapis->systemd); if (is.good()) cmd=cmd+scapis->systemd+" ";}
 	if (cconf.zahl>0) cmd+=cconf[0].wert+" "; // incoming_script
 	if (cconf.zahl>3) cmd+=cconf[3].wert+" "; // idle_script
 	if (cconf.zahl>1) erg+="tablast|tab sview "+cconf[1].wert+"|silent $|"; // log_file

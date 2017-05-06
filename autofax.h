@@ -214,7 +214,7 @@ class paramcl // Programmparameter
     uchar hylazuerst;  // ob ein Fax zuerst ueber Hylafax versucht werden soll zu faxen
     uchar rzf=0; // rueckzufragen
     string dbq; // Datenbank
-		static const char* const smbdatei;// "/etc/samba/smb.conf"
+		static const char* const smbdt;// "/etc/samba/smb.conf"
 		string cuser; // Linux-Benutzer fuer Capisuite, Samba
     string muser; // Benutzer fuer Mysql/MariaDB
     string mpwd;  // Passwort fuer Mysql/MariaDB
