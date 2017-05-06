@@ -1,9 +1,9 @@
 # kompiliert alle *.cpp-Dateien im aktuellen Verzeichnis
 # statt erstmaliger Verwendung bitte "./install.sh" aufrufen, dort wird das hier eingeschlossene "vars" erstellt und  ggf. 'make' installiert
-# nach "touch entwickeln" wird eine Datei 'version' erstellt, deren Inhalt, eine Versionsnummer, bei jedem Kompiliervorgang um 0.0001 erhoeht wird
+# nach "touch entwickeln" wird eine Datei 'versdt' erstellt, deren Inhalt, eine Versionsnummer, bei jedem Kompiliervorgang um 0.0001 erhoeht wird
 # und die in die man_de und man_en-Datei eingebaut wird sowie ueber
-#  const double& version=
-#  #include version
+#  const double& versnr=
+#  #include versdt
 #  ;
 # auch in den c(++)-Quellcode eingebaut werden kann
 
@@ -164,10 +164,10 @@ git:
 #	@git config --global user.email "gerald.schade@gmx.de"
 	-@cp -au Makefile Makefile.roh
 	@printf " Copying files from/ Kopiere Dateien von: %b%s%b (Version %b%s%b) -> git (%b%s%b)\n" $(blau) "$(PROGRAM)" $(reset) \
-	 $(blau) $$(cat version) $(reset) $(blau) "$$(cut -f2-< .git/FETCH_HEAD|sed 's/^\s*//')" $(reset) >$(BA) 
+	 $(blau) $$(cat versdt) $(reset) $(blau) "$$(cut -f2-< .git/FETCH_HEAD|sed 's/^\s*//')" $(reset) >$(BA) 
 	@git config --global push.default simple
 	@git add -u
-	@git commit -m "Version $$(cat version)"
+	@git commit -m "Version $$(cat versdt)"
 	@git push
 
 anzeig:
@@ -180,17 +180,17 @@ anzeig:
 	-@$(shell rm -f fehler.txt $(KF))
 
 $(EXEC): $(OBJ)
-	-@test -f version || echo 0.1>version; if test -f entwickeln; then awk "BEGIN {print `cat version`+0.00001}">version;\
+	-@test -f versdt || echo 0.1>versdt; if test -f entwickeln; then awk "BEGIN {print `cat versdt`+0.00001}">versdt;\
 	else eval "printf \" Datei 'entwickeln' fehlt, lasse die Version gleich\n\" >$(BA)"; fi;
 	-@printf " verlinke %s zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset) >$(BA)
 	-@df --output=ipcent / |tail -n1|grep - && sudo pkill postdrop; true
 ifneq ("$(wildcard $(CURDIR)/man_en)","")
-	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_en)
+	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat versdt)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_en)
 endif
 ifneq ("$(wildcard $(CURDIR)/man_de)","")
-	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat version)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_de)
+	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat versdt)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_de)
 endif
-	-@printf " (Version: %b%s%s%b\n " $(blau) "$$(cat version)" ")" $(reset) >$(BA)
+	-@printf " (Version: %b%s%s%b\n " $(blau) "$$(cat versdt)" ")" $(reset) >$(BA)
 	$(CC) $^ -o $@ $(LDFLAGS)
 	-@ls .d/*.Td >$(KR) &&{ for datei in .d/*.Td; do mv -f $${datei} $${datei%.Td}.d; done;};true
 	$(shell touch *.o $${EXEC})
@@ -314,7 +314,7 @@ $(MANPE): $(CURDIR)/man_en
 $(MANPEH): $(CURDIR)/man_en 
 	-@./configure inst groff "$(pgroff)"
 	-@rm -f man_en.html
-	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPLICATIONS/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml -W break| sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - english<a name=\"english\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_E/g" > man_en.html
+	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPLICATIONS/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml -W break| sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat versdt)) - english<a name=\"english\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_E/g" > man_en.html
 	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "man_en.html" $(reset) $(blau) "man_en" $(reset)
 endif
 
@@ -329,7 +329,7 @@ $(MANPD): $(CURDIR)/man_de
 $(MANPDH): $(CURDIR)/man_de 
 	-@./configure inst groff "$(pgroff)"
 	-@rm -f man_de.html
-	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml -W break| sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat version)) - deutsch<a name=\"deutsch\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > man_de.html
+	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml -W break| sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat versdt)) - deutsch<a name=\"deutsch\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > man_de.html
 #	-@rm -f README.md
 	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "man_de.html" $(reset) $(blau) "man_de" $(reset)
 endif

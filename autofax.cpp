@@ -34,8 +34,8 @@
 #include <termios.h> // fuer tcgetattr
 
 #include <set>
-const double& version=
-#include "version"
+const double& versnr=
+#include "versdt"
 ;
 // Bestandteile der Ueberpruefung auf Funktionsfaehigkeit von hylafax: 
 // faxmodem
@@ -9300,7 +9300,7 @@ void zeigversion(const string& prog,const string& mpfad)
   char buf[100]={0};
   cout<<endl<<Tx[T_Programm]<<violett<<mpfad<<schwarz<<endl;
   cout<<"Copyright: "<<blau<<Tx[T_Freie_Software]<<schwarz<<Tx[T_Verfasser]<<blau<<"Gerald Schade"<<schwarz<<endl;
-  cout<<"Version: "<<blau<<version<<schwarz<<endl;
+  cout<<"Version: "<<blau<<versnr<<schwarz<<endl;
   strptime(__TIMESTAMP__,"%c", &tm);
   //<<tm.tm_sec<<" "<<tm.tm_min<<" "<<tm.tm_hour<<" "<<tm.tm_mday<<" "<<tm.tm_mon<<" "<<tm.tm_year<<" "<<tm.tm_wday<<" "<<tm.tm_yday<<" "<<tm.tm_isdst<<endl;
   strftime(buf, sizeof(buf), "%d.%m.%Y %T", &tm);
