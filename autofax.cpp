@@ -9364,7 +9364,9 @@ void paramcl::dovi()
 	erg+="tablast|tab sview "+passwd+"|";
 	erg+="tablast|tab sview "+group+"|";
 	if (!stat(sudoers.c_str(),&sstat)) { 
-		if (sstat.st_mode & S_IRUSR)
+		//		if (sstat.st_mode & S_IRUSR) // lieferte falsch wahr
+		ifstream sud(sudoers);
+		if (sud.good())
 			erg+="tablast|tab sview "+sudoers+"|";
 	}
   exit(systemrueck(cmd+" +'"+erg+"tabfirst' -pNu "+instvz+"/.exrc "+tty));
