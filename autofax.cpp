@@ -9365,7 +9365,10 @@ void paramcl::dovi()
 	ifstream gr(group); if (gr.good())     erg+="tablast|tab sview "+group+"|";
 	// if (!stat(sudoers.c_str(),&sstat)) KLA // if (sstat.st_mode & S_IRUSR) // lieferte falsch wahr
 	ifstream sd(sudoers); if (sd.good())   erg+="tablast|tab sview "+sudoers+"|";
-	exit(systemrueck(cmd+" +'"+erg+"tabfirst' -pNu "+instvz+"/.exrcn "+tty));
+	erg+="tabfirst' -p";
+	string exdt=instvz+"/.exrc";
+	ifstream ex(exdt);if (ex.good()) erg+="Nu "+exdt;
+	exit(systemrueck(cmd+" +'"+erg+" "+tty));
 } // void paramcl::dovi()
 
 void paramcl::dovc()
