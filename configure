@@ -78,7 +78,7 @@ ausricht() {
 	# noch ungünstiger die von libselinux ...
 # s. doanfg(string& datei, string& inhalt, string& comment) in kons.cpp
 	IP=$(cat $1)
-	printf "IP: '"$IP"'\n">>$GINSTLOG
+	printf "IP: '$IP'\n">>$GINSTLOG
 #	 for IP in $(cat $1); do
 # wenn $AUNF fehlt oder eine der in $1 erwähnten Programm dort nicht aufgeführt ist, dann zuinstallieren=ja; "; vi ..." nicht zu werten
      [ ! -f $AUNF ]&&zuinst=ja||{
