@@ -5269,6 +5269,12 @@ int paramcl::pruefocr()
 				ocrzuinst=0;
 		if (ocrzuinst) {
 			if (linstp->ipr==dnf||linstp->ipr==yum||linstp->ipr==zypper||linstp->ipr==apt) {
+				/* // das Folgende hilft nix; im Internet hatte einer das gleiche Problem 8/15, Loesung aber nicht gefunden, nur update s.u.
+				if (double pyv=progvers("python3")<=3.41) {
+					linstp->doinst("python3",obverb+1,oblog);
+					linstp->doinst("python3"+linstp->dev,obverb+1,oblog);
+				} // 				if (double pyv=progvers("python3")<=3.41)
+				*/
 				// in fedora pip statt pip3
 				linstp->doinst("python3-pip",obverb+1,oblog,"pip3");
 				linstp->doinst("python3-devel",obverb+1,oblog,"/usr/bin/python3-config");
@@ -5277,13 +5283,13 @@ int paramcl::pruefocr()
 				if (lstat("/usr/lib64/libffi.so",&lffi)) {
 					if (linstp->obfehlt("libffi48-devel",obverb+1,oblog))
 						linstp->doggfinst("libffi-devel",obverb+1,oblog);
-				}
+				} // 				if (lstat("/usr/lib64/libffi.so",&lffi))
 				if (linstp->ipr==dnf||linstp->ipr==yum) 
 					linstp->doggfinst("redhat-rpm-config",obverb+1,oblog);
 				linstp->doinst("ghostscript",obverb+1,oblog,"gs");
 				if (systemrueck("sudo -H python3 -m pip install --upgrade setuptools pip",obverb+1,oblog)) {
          if (double pyv=progvers("python3")<=3.41) {
-				  Log(rots+Tx[T_Ihre_Python3_Version_koennte_mit]+blau+ltoan(pyv)+rot+
+				  ::Log(rots+Tx[T_Ihre_Python3_Version_koennte_mit]+blau+ltoan(pyv)+rot+
 					Tx[T_veraltet_sein_Wenn_Sie_Ihre_Faxe_OCR_unterziehen_wollen_dann_fuehren_Sie_bitte_ein_Systemupdate_durch_mit]+blau+linstp->upd+schwarz
 					,1,1);
 				 } //          if (double pyv=progvers("python3")<=3.41)
@@ -5294,7 +5300,8 @@ int paramcl::pruefocr()
 					const string virtualenv="virtualenv";
 					if (obprogda(virtualenv,obverb,oblog,&vprog)) break;
 					systemrueck("sudo -H pip3 install "+virtualenv,obverb,oblog);
-				}
+				} // 				for(int iru=0;iru<2;iru++)
+
 				string bef;
 				if (!vprog.empty()) {
 				  bef="sudo -H sh -c '"+vprog+" \""+virtvz+"\";"
