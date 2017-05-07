@@ -191,7 +191,7 @@ class paramcl // Programmparameter
     string suchstr;  // Wortteil, nach dem in alten Faxen gesucht werden soll
     string dszahl="30"; // Datensatzzahl fuer Tabellenausgaben
     uchar logdateineu=0; // logdt vorher loeschen
-    uchar hilfe=0;      // Hilfe anzeigen
+    uchar obhilfe=0;      // Hilfe anzeigen
     uchar zeigvers=0;  // Version anzeigen
 		size_t faxord; // Ordinalzahl des Faxes unter allen anstehenden Faxen
 		unsigned long geszahl=0;
@@ -375,6 +375,7 @@ class paramcl // Programmparameter
 		void pruefisdn();
     void liescapiconf();
     void VorgbAllg(); // allgemeine Vorgaben
+		void MusterVorgb();
     #ifdef autofaxcpp
     void VorgbSpeziell() __attribute__((weak)); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vorgaben.cpp)
     #else

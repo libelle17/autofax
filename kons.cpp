@@ -1903,6 +1903,12 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 #endif
   if (rueck) {
     if (FILE* pipe = popen(hcmd.c_str(), "r")) {
+		/*
+		int fd=fileno(pipe);
+		int flags=fcntl(fd, F_GETFL, 0);
+		flags|=O_NONBLOCK;
+		fcntl(fd, F_SETFL, flags);
+		*/
 #ifdef systemrueckprofiler
       prf.ausgeb();
 #endif
@@ -1924,13 +1930,16 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
         //        zeile++;
         char buffer[1280];
         // in der folgenden Zeile werden auch ggf. sterr-Meldungen ausgegeben/weitergeleitet
-        if (fgets(buffer, sizeof buffer, pipe)) {
+			  // <<violett<<endl<<"Stelle 6"<<schwarz<<endl;
+				// hier braucht er lang, wenn das System langsam ist
+        if (fgets(buffer, sizeof buffer, pipe)) { 
+			  // <<violett<<endl<<"Stelle 7"<<schwarz<<endl;
           size_t posi;
           if (buffer[posi=strlen(buffer)-1]==10) buffer[posi]=0;
           rueck->push_back(string(buffer));
         } // if(fgets(buffer, sizeof buffer, pipe) != NULL)
         if (feof(pipe)) break;
-      } // while(!feof(pipe)) 
+      } // while(1) 
 #ifdef systemrueckprofiler
       prf.ausgab1000("nach while");
 #endif
@@ -1946,10 +1955,11 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
       Log(hcmd,1,oblog)
         prf.ausgab1000("vor pclose");
 #endif
-      if (obfind) {
+			erg = pclose(pipe);
+			if (obfind) {
         erg=rueck->size();
-      } else
-        erg = pclose(pipe)/256;
+      } else 
+			  erg/=256;
 #ifdef systemrueckprofiler
       prf.ausgab1000("nach pclose");
 #endif
@@ -3470,9 +3480,9 @@ void optioncl::setzebem(schlArr *cp,const char *pname)
   setzebem(cp,pname);
 }
 
-// /*4*/optioncl::optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,uchar *pptr, int wert,schlArr *cp,const char *pname,uchar* obschreibp) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),pptr(pptr),wert(wert),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0) { setzebem(cp,pname); }
+// /*4a*/optioncl::optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,uchar *pptr, int wert,schlArr *cp,const char *pname,uchar* obschreibp) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),pptr(pptr),wert(wert),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0) { setzebem(cp,pname); }
 
-/*4a*/optioncl::optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,uchar *pptr,int wert,schlArr *cp, const char *pname,uchar* obschreibp) :
+/*4*/optioncl::optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,uchar *pptr,int wert,schlArr *cp, const char *pname,uchar* obschreibp) :
   kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),pptr(pptr),wert(wert),art(psons),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0)
 {
   setzebem(cp,pname);

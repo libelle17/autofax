@@ -437,6 +437,7 @@ enum T_
   T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt,
   T_zufaxenvz,
   T_VorgbSpeziell,
+	T_MusterVorgb,
   T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben,
   T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr,
   T_faxnr_wird_ersetzt_mit_der_Faxnr,
@@ -696,6 +697,8 @@ enum T_
 	T_lhilfe_l,
 	T_fgz_k,
 	T_fgz_l,
+	T_sh,
+	T_standardhilfe,
 	T_lg_k,
 	T_language_l,
 	T_lang_k,
@@ -1495,6 +1498,8 @@ char const *autofax_T[T_MAX+1][Smax]={
   {"zufaxenvz: '","outgoing dir: '"},
   // T_VorgbSpeziell
   {"VorgbSpeziell()","specificprefs()"},
+	// T_MusterVorgb
+	{"MusterVorgb()","sampleprefs()"},
   // "Wollen Sie noch einen SQL-Befehl eingeben?"
   {"Wollen Sie noch einen SQL-Befehl eingeben?","Do You want to enter another sql command?"},
   // T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr
@@ -2030,6 +2035,10 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{"?","?"},
 	// T_fgz_l,
 	{"??","??"},
+	// T_sh
+	{"sh","sh"},
+	// T_standardhilfe
+	{"standardhilfe","standardhelp"},
 	// T_lg_k
 	{"sp","lg"},
 	// T_language_l
@@ -2354,9 +2363,10 @@ paramcl::paramcl(int argc, char** argv)
 	//  konfdt.clear();
 } // paramcl::paramcl()
 
+// wird aufgerufen in: main
 void paramcl::pruefggfmehrfach()
 {
-  if (!hilfe &&!obvi &&!obvc &&!obvh &&!obvs
+  if (!obhilfe &&!obvi &&!obvc &&!obvh &&!obvs
 	    &&!zeigvers &&!lista &&!listf &&!listi &&!listw && suchstr.empty() &&!loef &&!loew &&!loea &&!anhl &&!erneut &&!uml) {
     pruefmehrfach(meinname,nrzf);
   }
@@ -2548,17 +2558,18 @@ void paramcl::getcommandl0()
         break;
       case 2:
         opts.push_back(/*2*/optioncl(T_kd_k,T_konfdatei_l, &Tx, T_verwendet_Kofigurationsdatei_string_anstatt,0,&konfdt,pfile));
-        break;
+				opts.push_back(/*4*/optioncl(T_sh,T_standardhilfe, &Tx, -1, -1, &obhilfe,3));
+				break;
     } //     switch (iru)
     // hier wird die Befehlszeile ueberprueft:
     for(;optslsz<opts.size();optslsz++) {
       for(size_t i=0;i<argcmv.size();i++) {
-        if (opts[optslsz].pruefpar(&argcmv,&i,&hilfe,Tx.lgn)) {
+        if (opts[optslsz].pruefpar(&argcmv,&i,&obhilfe,Tx.lgn)) {
           if (iru==1) {
             if (plusverb) {obverb++;plusverb=0;}
           } //           if (iru==1)
           if (opts[optslsz].kurzi!=T_v_k) break;
-        } // if (opts[optslsz].pruefpar(&argcmv,&i,&hilfe))
+        } // if (opts[optslsz].pruefpar(&argcmv,&i,&obhilfe))
       } // for(size_t i=0;i<argcmv.size();i++) 
     } //     for(;optslsz<opts.size();optslsz++)
     optslsz=opts.size();
@@ -2859,10 +2870,9 @@ int paramcl::setzhylavz()
   return 0;
 } // int paramcl::setzhylavz()
 
-// Musterfunktion, die von einer Funktion in gesonderter,fakultativer Datei 'vorgaben.cpp' ueberschrieben werden kann
-void paramcl::VorgbSpeziell() 
+void paramcl::MusterVorgb()
 {
-  Log(violetts+Tx[T_VorgbSpeziell]+schwarz);
+  Log(violetts+Tx[T_MusterVorgb]+schwarz);
   dbq="autofax";
   muser="user";
   citycode="8131";
@@ -2878,6 +2888,12 @@ void paramcl::VorgbSpeziell()
   static zielmustercl zmi[]={zielmustercl("[Ss]pamfax","/var/autofax/spam"),zielmustercl("","/var/autofax/gesandt")}; // nur als Beispiel
   zmvp=zmi;
   zmvzn=sizeof zmi/sizeof *zmi;
+}
+// Musterfunktion, die von einer Funktion in gesonderter,fakultativer Datei,z.B. 'vgb.cpp' ueberschrieben werden kann
+void paramcl::VorgbSpeziell() 
+{
+  Log(violetts+Tx[T_VorgbSpeziell]+schwarz);
+	MusterVorgb();
 } // void paramcl::VorgbSpeziell() 
 
 // in VorgbAllg, pruefcapi
@@ -3320,9 +3336,9 @@ int paramcl::getcommandline()
   opts.push_back(/*4*/optioncl(T_vc_k,T_vc_l, &Tx, T_Capisuite_Konfigurationdateien_bearbeiten, 0, &obvc,1));
   opts.push_back(/*4*/optioncl(T_vh_k,T_vh_l, &Tx, T_Hylafax_Modem_Konfigurationsdatei_bearbeiten, 0, &obvh,1));
   opts.push_back(/*4*/optioncl(T_vs_k,T_vs_l, &Tx, T_Quelldateien_bearbeiten, 0, &obvs,1));
-  opts.push_back(/*4*/optioncl(T_h_k,T_hilfe_l, &Tx, T_Erklaerung_haeufiger_Optionen, 1, &hilfe,1));
-  opts.push_back(/*4*/optioncl(T_lh_k,T_lhilfe_l, &Tx, T_Erklaerung_aller_Optionen, 1, &hilfe,2));
-  opts.push_back(/*4*/optioncl(T_fgz_k,T_fgz_l, &Tx, -1, 1, &hilfe,1));
+  opts.push_back(/*4*/optioncl(T_h_k,T_hilfe_l, &Tx, T_Erklaerung_haeufiger_Optionen, 1, &obhilfe,1));
+  opts.push_back(/*4*/optioncl(T_lh_k,T_lhilfe_l, &Tx, T_Erklaerung_aller_Optionen, 1, &obhilfe,2));
+  opts.push_back(/*4*/optioncl(T_fgz_k,T_fgz_l, &Tx, -1, 1, &obhilfe,1));
 
   //   string altlogdname(logdname);
   //  string altckzl(cklingelzahl);
@@ -3331,7 +3347,7 @@ int paramcl::getcommandline()
   // hier wird die Befehlszeile ueberprueft:
   for(;optslsz<opts.size();optslsz++) {
     for(size_t i=0;i<argcmv.size();i++) {
-      if (opts[optslsz].pruefpar(&argcmv,&i,&hilfe,Tx.lgn)) {
+      if (opts[optslsz].pruefpar(&argcmv,&i,&obhilfe,Tx.lgn)) {
 			  if (opts[optslsz].kurzi==T_cm_k) { // cronminuten
 					keineverarbeitung=1;
 					cmeingegeben=1;
@@ -3341,14 +3357,14 @@ int paramcl::getcommandline()
 					cgconf.setze(string(Tx[T_mpwd_k]),pwdstr);
 				} // 				if (opts[optslsz].kurzi==T_mpwd_k)
         break;
-      } //       if (opts[optslsz].pruefpar(&argcmv,&i,&hilfe,Tx.lgn))
+      } //       if (opts[optslsz].pruefpar(&argcmv,&i,&obhilfe,Tx.lgn))
     } // for(size_t i=0;i<argcmv.size();i++) 
   } //   for(;optslsz<opts.size();optslsz++)
-  if (nrzf) rzf=0;
+  if (nrzf||obhilfe==3) rzf=0;
   for(size_t i=0;i<argcmv.size();i++) {
     if (!argcmv[i].agef) {
       ::Log(rots+"Parameter: "+gruen+argcmv[i].argcs+rot+Tx[T_nicht_erkannt]+schwarz,1,1);
-      if (!hilfe) hilfe=1;
+      if (!obhilfe) obhilfe=1;
     } //     if (!argcmv[i].agef)
   } //   for(size_t i=0;i<argcmv.size();i++)
   if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
@@ -3381,23 +3397,23 @@ int paramcl::getcommandline()
 
   Log(string(Tx[T_Fertig_mit_Parsen_der_Befehlszeile])+(obkschreib?Tx[T_ja]:Tx[T_nein]));
   // Ausgabe der Hilfe
-  if (hilfe) {
+  if (obhilfe) {
     cout<<blau<<Tx[T_Gebrauch]<<drot<<meinname<<" [-<opt>|--<longopt> [<content>]] ..."<<schwarz<<endl; 
     cout<<blau<<Tx[T_Faxt_Dateien_aus_Verzeichnis_pfad_die]<<anfaxstr<<
       Tx[T_faxnr_enthalten_und_durch_soffice_in_pdf_konvertierbar_sind_und_traegt_sie]
       <<drot<<dbq<<blau<<Tx[T_Tabellen]<<drot<<touta<<blau<<"`,`"<<drot<<spooltab<<blau<<Tx[T_aein]<<schwarz<<endl;
     cout<<blau<<Tx[T_Optionen_die_nicht_gespeichert_werden]<<schwarz<<endl;
     for(size_t j=0;j<opts.size();j++) {
-      if (!opts[j].obschreibp && (hilfe>1 || opts[j].wi))
+      if (!opts[j].obschreibp && (obhilfe>1 || opts[j].wi))
         opts[j].hilfezeile(Tx.lgn);
     } //     for(size_t j=0;j<opts.size();j++)
     cout<<blau<<Tx[T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden]<<schwarz<<endl;
     for(size_t j=0;j<opts.size();j++) {
-      if (opts[j].obschreibp && (hilfe>1 || opts[j].wi))
+      if (opts[j].obschreibp && (obhilfe>1 || opts[j].wi))
         opts[j].hilfezeile(Tx.lgn);
     } //     for(size_t j=0;j<opts.size();j++)
     return 0;
-  } // if (hilfe)
+  } // if (obhilfe)
   return 1;
 } // int paramcl::getcommandline(int argc, char** argv)
 
@@ -4844,7 +4860,7 @@ void paramcl::anhalten()
 } // void paramcl::anhalten()
 
 // wird aufgerufen in: main
-// aktion: 0=loeschen, 1=umleiten
+// aktion: 0=loeschen, 1=umleiten (von capi auf hyla o.u.)
 int paramcl::aenderefax(const int aktion/*=0*/)
 {
 	Log(violetts+Tx[T_aendere_fax]+"("+(aktion?"1":"0")+")"+schwarz);
@@ -9445,9 +9461,14 @@ int main(int argc, char** argv)
   pm.logvorgaben();
 	// Log("main(): "+pm.cl,0,1);
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
+
   pm.VorgbAllg();
-  pm.VorgbSpeziell(); // die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion "void paramcl::VorgbSpeziell()" ueberladbar sind
-  pm.lieskonfein();
+	if (pm.obhilfe==3) { // Standardausgabe gewaehrleisten
+	  pm.MusterVorgb();
+	} else {
+		pm.VorgbSpeziell();//die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion "void paramcl::VorgbSpeziell()" ueberladbar sind
+		pm.lieskonfein();
+	}
 
   if (!pm.getcommandline()) 
     exit(40);
@@ -9462,15 +9483,14 @@ int main(int argc, char** argv)
 	if (!pm.keineverarbeitung) {
 		if (pm.obhyla) pm.pruefmodem();
 		if (pm.obcapi) pm.pruefisdn();
+		// Rueckfragen koennen auftauchen in: rueckfragen, konfcapi (<- pruefcapi), aenderefax, pruefsamba
 		pm.rueckfragen();
+		// als Kompromiss blockieren wir hier
 		pm.pruefggfmehrfach();
 		pm.setzhylavz();
 		if (pm.obvh) pm.dovh();
 		pm.verzeichnisse();
 		pm.pruefsamba();
-		// Rueckfragen koennen auftauchen in: rueckfragen, konfcapi (<- pruefcapi), aenderefax, pruefsamba
-		// als Kompromiss blockieren wir hier
-		pm.pruefggfmehrfach();
 
 		if (pm.logdateineu) tuloeschen(logdt,"",pm.obverb,pm.oblog);
 		pm.Log(Tx[T_zufaxenvz]+drots+pm.zufaxenvz+schwarz+"'");
