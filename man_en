@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "07.05.17" "Version 0.4341" "\fBautofax\fR man page"
+.TH man 1 "07.05.17" "Version 0.43411" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -62,9 +62,9 @@ With '\fBautofax -?\fR' or '\fBautofax -h\fR', the important and with '\fBautofa
 .br
 \fBUsage: \fBautofax [-<opt>|--<longopt> [<content>]] ...\fR
 .br
-\fBFaxes files from directory <path>, which contain 'an Fax <faxno>' and are convertible into pdf, 
+\fBFaxes files from directory <path>, which contain 'to fax <faxno>' and are convertible into pdf, 
 .br
-and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,`\fBspool\fB`).\fR
+and logs this in the the mariadb database '\fBautofax\fB' (tables: `\fBouta\fB`,`\fBspool\fB`).\fR
 .br
 \fBOptions which are not saved: \fR
 .br
@@ -74,7 +74,7 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -lfn, --logfilenew\fR: delete log file afore
 .br
-\fB -cf, --conffile <string>\fR: uses configuration file <string> instead of '\fB/root/autofax/autofax.conf\fR'
+\fB -cf, --conffile <string>\fR: uses configuration file <string> instead of '\fB\fR'
 .br
 \fB -sqlv, --sql-verbose\fR: screen output with SQL commands
 .br
@@ -132,15 +132,15 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -lf, --logfilename <string>\fR: log file <string> (in path '\fB/var/log\fR') will be used instead of '\fBautofax.log\fR'
 .br
-\fB -tdr, --tofaxdir <path>\fR: faxes the files from <path> instead of '\fB/DATA/Patientendokumente/zufaxen\fR'
+\fB -tdr, --tofaxdir <path>\fR: faxes the files from <path> instead of '\fB/var/autofax/tobefaxed\fR'
 .br
-\fB -wdr, --waitdir <path>\fR: files are waiting in <path> instead of '\fB/DATA/Patientendokumente/warteauffax\fR'
+\fB -wdr, --waitdir <path>\fR: files are waiting in <path> instead of '\fB/var/autofax/waitingfaxes\fR'
 .br
-\fB -ndr, --notfaxeddir <path>\fR: Failed Faxes are collected here and not in '\fB/DATA/Patientendokumente/nichtgefaxt\fR'
+\fB -ndr, --notfaxeddir <path>\fR: Failed Faxes are collected here and not in '\fB/var/autofax/notfaxed\fR'
 .br
-\fB -rdr, --receiveddir <path>\fR: directory for recieved faxes '\fB/DATA/Patientendokumente\fR'
+\fB -rdr, --receiveddir <path>\fR: directory for recieved faxes '\fB/var/autofax/recvdir\fR'
 .br
-\fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB0\fR'
+\fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
 .br
 \fB -capi, --takecapi\fR: use capisuite\fB or not\fR
 .br
@@ -150,13 +150,13 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -fh, --firsthyla\fR: try to send faxes primarily via hylafax\fB or not\fR
 .br
-\fB -mod, --hmodem <string>\fR: Modem used for hylafax, instead of  '\fBttyACM0\fR'
+\fB -mod, --hmodem <string>\fR: Modem used for hylafax, instead of  '\fB\fR'
 .br
 \fB -mc, --maxcapitries <zahl>\fR: try Hylafax after <no> tries of Capisuite instead of '\fB3\fR'
 .br
 \fB -mh, --maxhylatries <zahl>\fR: try Capisuite after <no> tries of Hylafax instead of '\fB3\fR'
 .br
-\fB -cuser, --cuser <string>\fR: takes the linux user <string> for capisuite and/or samba instead of '\fBschade\fR'
+\fB -cuser, --cuser <string>\fR: takes the linux user <string> for capisuite and/or samba instead of '\fB\fR'
 .br
 \fB -crct, --cringcount <zahl>\fR: No. of bell rings until Capisuite accepts the call, instead of '\fB1\fR'
 .br
@@ -170,23 +170,23 @@ and logs this in the the mariadb database '\fBfaxeinp\fB' (tables: `\fBouta\fB`,
 .br
 \fB -ocro, --ocro\fR: Text from sent pictures will be filtered\fB or not\fR
 .br
-\fB -tfs, --tofaxstr <string>\fR: the fax number will be expected after <string> instead of '\fBan Fax\fR'
+\fB -tfs, --tofaxstr <string>\fR: the fax number will be expected after <string> instead of '\fBto fax\fR'
 .br
-\fB -tcfs, --tocfaxstr <string>\fR: fax no.for fax with preference to capisuite is expected after <string> instead of '\fBan cFax\fR'
+\fB -tcfs, --tocfaxstr <string>\fR: fax no.for fax with preference to capisuite is expected after <string> instead of '\fBto cfax\fR'
 .br
-\fB -thfs, --tohfaxstr <string>\fR: fax no.for fax with preference to hylafax is expected after <string> instead of '\fBan hFax\fR'
+\fB -thfs, --tohfaxstr <string>\fR: fax no.for fax with preference to hylafax is expected after <string> instead of '\fBto hfax\fR'
 .br
-\fB -ts, --tostr <string>\fR: name of addressee is expected after <string> instead of '\fB an \fR'
+\fB -ts, --tostr <string>\fR: name of addressee is expected after <string> instead of '\fB to \fR'
 .br
-\fB -ands, --andstr <string>\fR: separating string <string> for multiple addressees/tel'numbers, instead of '\fBund\fR'
+\fB -ands, --andstr <string>\fR: separating string <string> for multiple addressees/tel'numbers, instead of '\fBand\fR'
 .br
 \fB -host, --host <string>\fR: takes the database on host <string> instead of '\fBlocalhost\fR'
 .br
-\fB -muser, --muser <string>\fR: takes the user <string> for MySQL/MariaDB instead of '\fBpraxis\fR'
+\fB -muser, --muser <string>\fR: takes the user <string> for MySQL/MariaDB instead of '\fBuser\fR'
 .br
 \fB -mpwd, --mpwd <string>\fR: takes the password <string> for MySQL/MariaDB
 .br
-\fB -db, --database <string>\fR: uses the database <string> instead of '\fBfaxeinp\fR'
+\fB -db, --database <string>\fR: uses the database <string> instead of '\fBautofax\fR'
 .SH FUNCTIONALITY
 .HP 3 
 1) The current hardware is being checked.

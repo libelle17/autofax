@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.4341) - english<a name="english_E"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43411) - english<a name="english_E"></a></h1>
 
 <a href="#NAME_E">NAME</a><br>
 <a href="#SYNOPSIS_E">SYNOPSIS</a><br>
@@ -161,10 +161,10 @@ be edited directly or interactively by &rsquo;<b>autofax
 Usage: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
 Faxes files from directory &lt;path&gt;, which contain
-&rsquo;an Fax &lt;faxno&gt;&rsquo; and are convertible into
+&rsquo;to fax &lt;faxno&gt;&rsquo; and are convertible into
 pdf, <br>
 and logs this in the the mariadb database
-&rsquo;faxeinp&rsquo; (tables:
+&rsquo;autofax&rsquo; (tables:
 &lsquo;outa&lsquo;,&lsquo;spool&lsquo;). <br>
 Options which are not saved: <br>
 -v, --verbose</b>: screen output more verbose <b><br>
@@ -173,8 +173,7 @@ Options which are not saved: <br>
 shorter) <b><br>
 -lfn, --logfilenew</b>: delete log file afore <b><br>
 -cf, --conffile &lt;string&gt;</b>: uses configuration file
-&lt;string&gt; instead of
-&rsquo;<b>/root/autofax/autofax.conf</b>&rsquo; <b><br>
+&lt;string&gt; instead of &rsquo;&rsquo; <b><br>
 -sqlv, --sql-verbose</b>: screen output with SQL commands
 <b><br>
 -ia, --interactive</b>: all parameters will be prompted
@@ -234,21 +233,18 @@ directory, currently &rsquo;<b>/var/log</b>&rsquo; <b><br>
 be used instead of &rsquo;<b>autofax.log</b>&rsquo; <b><br>
 -tdr, --tofaxdir &lt;path&gt;</b>: faxes the files from
 &lt;path&gt; instead of
-&rsquo;<b>/DATA/Patientendokumente/zufaxen</b>&rsquo;
-<b><br>
+&rsquo;<b>/var/autofax/tobefaxed</b>&rsquo; <b><br>
 -wdr, --waitdir &lt;path&gt;</b>: files are waiting in
 &lt;path&gt; instead of
-&rsquo;<b>/DATA/Patientendokumente/warteauffax</b>&rsquo;
-<b><br>
+&rsquo;<b>/var/autofax/waitingfaxes</b>&rsquo; <b><br>
 -ndr, --notfaxeddir &lt;path&gt;</b>: Failed Faxes are
 collected here and not in
-&rsquo;<b>/DATA/Patientendokumente/nichtgefaxt</b>&rsquo;
-<b><br>
+&rsquo;<b>/var/autofax/notfaxed</b>&rsquo; <b><br>
 -rdr, --receiveddir &lt;path&gt;</b>: directory for recieved
-faxes &rsquo;<b>/DATA/Patientendokumente</b>&rsquo; <b><br>
+faxes &rsquo;<b>/var/autofax/recvdir</b>&rsquo; <b><br>
 -cm, --cronminutes &lt;zahl&gt;</b>: every how many minutes
 shall <b>autofax</b> be called in crontab (0=not at all),
-instead of &rsquo;<b>0</b>&rsquo; <b><br>
+instead of &rsquo;<b>2</b>&rsquo; <b><br>
 -capi, --takecapi</b>: use capisuite <b>or not <br>
 -hyla, --takehyla</b>: use hylafax <b>or not <br>
 -fc, --firstcapi</b>: try to send faxes primarily via
@@ -256,7 +252,7 @@ capisuite <b>or not <br>
 -fh, --firsthyla</b>: try to send faxes primarily via
 hylafax <b>or not <br>
 -mod, --hmodem &lt;string&gt;</b>: Modem used for hylafax,
-instead of &rsquo;<b>ttyACM0</b>&rsquo; <b><br>
+instead of &rsquo;&rsquo; <b><br>
 -mc, --maxcapitries &lt;zahl&gt;</b>: try Hylafax after
 &lt;no&gt; tries of Capisuite instead of
 &rsquo;<b>3</b>&rsquo; <b><br>
@@ -265,7 +261,7 @@ instead of &rsquo;<b>ttyACM0</b>&rsquo; <b><br>
 &rsquo;<b>3</b>&rsquo; <b><br>
 -cuser, --cuser &lt;string&gt;</b>: takes the linux user
 &lt;string&gt; for capisuite and/or samba instead of
-&rsquo;<b>schade</b>&rsquo; <b><br>
+&rsquo;&rsquo; <b><br>
 -crct, --cringcount &lt;zahl&gt;</b>: No. of bell rings
 until Capisuite accepts the call, instead of
 &rsquo;<b>1</b>&rsquo; <b><br>
@@ -281,30 +277,30 @@ directory irrespective of faxing success <b>or not <br>
 -ocro, --ocro</b>: Text from sent pictures will be filtered
 <b>or not <br>
 -tfs, --tofaxstr &lt;string&gt;</b>: the fax number will be
-expected after &lt;string&gt; instead of &rsquo;<b>an
-Fax</b>&rsquo; <b><br>
+expected after &lt;string&gt; instead of &rsquo;<b>to
+fax</b>&rsquo; <b><br>
 -tcfs, --tocfaxstr &lt;string&gt;</b>: fax no.for fax with
 preference to capisuite is expected after &lt;string&gt;
-instead of &rsquo;<b>an cFax</b>&rsquo; <b><br>
+instead of &rsquo;<b>to cfax</b>&rsquo; <b><br>
 -thfs, --tohfaxstr &lt;string&gt;</b>: fax no.for fax with
 preference to hylafax is expected after &lt;string&gt;
-instead of &rsquo;<b>an hFax</b>&rsquo; <b><br>
+instead of &rsquo;<b>to hfax</b>&rsquo; <b><br>
 -ts, --tostr &lt;string&gt;</b>: name of addressee is
-expected after &lt;string&gt; instead of &rsquo; <b>an</b>
+expected after &lt;string&gt; instead of &rsquo; <b>to</b>
 &rsquo; <b><br>
 -ands, --andstr &lt;string&gt;</b>: separating string
 &lt;string&gt; for multiple addressees/tel&rsquo;numbers,
-instead of &rsquo;<b>und</b>&rsquo; <b><br>
+instead of &rsquo;<b>and</b>&rsquo; <b><br>
 -host, --host &lt;string&gt;</b>: takes the database on host
 &lt;string&gt; instead of &rsquo;<b>localhost</b>&rsquo;
 <b><br>
 -muser, --muser &lt;string&gt;</b>: takes the user
 &lt;string&gt; for MySQL/MariaDB instead of
-&rsquo;<b>praxis</b>&rsquo; <b><br>
+&rsquo;<b>user</b>&rsquo; <b><br>
 -mpwd, --mpwd &lt;string&gt;</b>: takes the password
 &lt;string&gt; for MySQL/MariaDB <b><br>
 -db, --database &lt;string&gt;</b>: uses the database
-&lt;string&gt; instead of &rsquo;<b>faxeinp</b>&rsquo;</p>
+&lt;string&gt; instead of &rsquo;<b>autofax</b>&rsquo;</p>
 
 <h2>FUNCTIONALITY
 <a name="FUNCTIONALITY_E"></a>
@@ -1009,7 +1005,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.4341) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43411) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1186,7 +1182,7 @@ Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 Faxt Dateien aus Verzeichns &lt;pfad&gt;, die &rsquo;an Fax
 &lt;faxnr&gt;&rsquo; enthalten und durch soffice in pdf
 konvertierbar sind <br>
-und traegt sie in MariaDB-Datenbank &rsquo;faxeinp&rsquo;
+und traegt sie in MariaDB-Datenbank &rsquo;autofax&rsquo;
 (Tabellen: &lsquo;outa&lsquo;,&lsquo;spool&lsquo;) ein. <br>
 Optionen, die nicht gespeichert werden: <br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger <b><br>
@@ -1195,8 +1191,8 @@ Optionen, die nicht gespeichert werden: <br>
 <b><br>
 -ldn, --logdateineu</b>: logdatei vorher loeschen <b><br>
 -kd, --konfdatei &lt;string&gt;</b>: verwendet
-Konfigurationsdatei &lt;string&gt; anstatt
-&rsquo;<b>/root/autofax/autofax.conf</b>&rsquo; <b><br>
+Konfigurationsdatei &lt;string&gt; anstatt &rsquo;&rsquo;
+<b><br>
 -sqlw, --sql-wortreich</b>: Bildschirmausgabe mit
 SQL-Befehlen <b><br>
 -rf, --rueckfragen</b>: alle Parameter werden abgefragt
@@ -1263,22 +1259,18 @@ Language/Sprache/Lingue/Lingua
 anstatt &rsquo;<b>autofax.log</b>&rsquo; <b><br>
 -zvz, --zufaxenvz &lt;pfad&gt;</b>: faxt die Dateien aus
 &lt;pfad&gt; anstatt
-&rsquo;<b>/DATA/Patientendokumente/zufaxen</b>&rsquo;
-<b><br>
+&rsquo;<b>/var/autofax/zufaxen</b>&rsquo; <b><br>
 -wvz, --wartevz &lt;pfad&gt;</b>: Dateien warten in
 &lt;pfad&gt; anstatt
-&rsquo;<b>/DATA/Patientendokumente/warteauffax</b>&rsquo;
-<b><br>
+&rsquo;<b>/var/autofax/warteauffax</b>&rsquo; <b><br>
 -nvz, --nichtgefaxtvz &lt;pfad&gt;</b>: Gescheiterte Faxe
 werden hier gesammelt anstatt in
-&rsquo;<b>/DATA/Patientendokumente/nichtgefaxt</b>&rsquo;
-<b><br>
+&rsquo;<b>/var/autofax/nichtgefaxt</b>&rsquo; <b><br>
 -evz, --empfvz &lt;pfad&gt;</b>: Empfangsverzeichnis fuer
-Faxempfang &rsquo;<b>/DATA/Patientendokumente</b>&rsquo;
-<b><br>
+Faxempfang &rsquo;<b>/var/autofax/empfvz</b>&rsquo; <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
-nicht), anstatt &rsquo;<b>0</b>&rsquo; <b><br>
+nicht), anstatt &rsquo;<b>2</b>&rsquo; <b><br>
 -capi, --obcapi</b>: Capisuite verwenden <b>oder nicht <br>
 -hyla, --obhyla</b>: Hylafax verwenden <b>oder nicht <br>
 -cz, --capizuerst</b>: versuche faxe zuerst ueber Capisuite
@@ -1286,7 +1278,7 @@ wegzuschicken <b>oder nicht <br>
 -hz, --hylazuerst</b>: versuche faxe zuerst ueber hylafax
 wegzuschicken <b>oder nicht <br>
 -mod, --hmodem &lt;string&gt;</b>: Fuer Hylafax verwendetes
-Modem, anstatt &rsquo;<b>ttyACM0</b>&rsquo; <b><br>
+Modem, anstatt &rsquo;&rsquo; <b><br>
 -mc, --maxcapiv &lt;zahl&gt;</b>: nach &lt;zahl&gt;
 Versuchen Capisuite wird Hylafax versucht, anstatt nach
 &rsquo;<b>3</b>&rsquo; <b><br>
@@ -1295,7 +1287,7 @@ Versuchen Hylafax wird Capisuite versucht, anstatt nach
 &rsquo;<b>3</b>&rsquo; <b><br>
 -cuser, --cuser &lt;string&gt;</b>: verwendet fuer Capisuite
 und/oder Samba den Linux-Benutzer &lt;string&gt; anstatt
-&rsquo;<b>schade</b>&rsquo; <b><br>
+&rsquo;&rsquo; <b><br>
 -ckzl, --cklingelzahl &lt;zahl&gt;</b>: Zahl der
 Klingeltoene, bis Capisuite den Anruf annimmt, anstatt
 &rsquo;<b>1</b>&rsquo; <b><br>
@@ -1330,11 +1322,11 @@ auf Host &lt;string&gt; anstatt auf
 &rsquo;<b>localhost</b>&rsquo; <b><br>
 -muser, --muser &lt;string&gt;</b>: verwendet fuer
 MySQL/MariaDB den Benutzer &lt;string&gt; anstatt
-&rsquo;<b>praxis</b>&rsquo; <b><br>
+&rsquo;<b>user</b>&rsquo; <b><br>
 -mpwd, --mpwd &lt;string&gt;</b>: verwendet fuer
 MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 -db, --datenbank &lt;string&gt;</b>: verwendet die Datenbank
-&lt;string&gt; anstatt &rsquo;<b>faxeinp</b>&rsquo;</p>
+&lt;string&gt; anstatt &rsquo;<b>autofax</b>&rsquo;</p>
 
 <h2>FUNKTIONSWEISE
 <a name="FUNKTIONSWEISE_D"></a>

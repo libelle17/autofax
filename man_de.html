@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Sun May  7 15:09:57 2017 -->
+<!-- CreationDate: Sun May  7 15:14:19 2017 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<h1 align="center">AUTOFAX (Version 0.4341) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43411) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -195,7 +195,7 @@ Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 Faxt Dateien aus Verzeichns &lt;pfad&gt;, die &rsquo;an Fax
 &lt;faxnr&gt;&rsquo; enthalten und durch soffice in pdf
 konvertierbar sind <br>
-und traegt sie in MariaDB-Datenbank &rsquo;faxeinp&rsquo;
+und traegt sie in MariaDB-Datenbank &rsquo;autofax&rsquo;
 (Tabellen: &lsquo;outa&lsquo;,&lsquo;spool&lsquo;) ein. <br>
 Optionen, die nicht gespeichert werden: <br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger <b><br>
@@ -204,8 +204,8 @@ Optionen, die nicht gespeichert werden: <br>
 <b><br>
 -ldn, --logdateineu</b>: logdatei vorher loeschen <b><br>
 -kd, --konfdatei &lt;string&gt;</b>: verwendet
-Konfigurationsdatei &lt;string&gt; anstatt
-&rsquo;<b>/root/autofax/autofax.conf</b>&rsquo; <b><br>
+Konfigurationsdatei &lt;string&gt; anstatt &rsquo;&rsquo;
+<b><br>
 -sqlw, --sql-wortreich</b>: Bildschirmausgabe mit
 SQL-Befehlen <b><br>
 -rf, --rueckfragen</b>: alle Parameter werden abgefragt
@@ -272,22 +272,18 @@ Language/Sprache/Lingue/Lingua
 anstatt &rsquo;<b>autofax.log</b>&rsquo; <b><br>
 -zvz, --zufaxenvz &lt;pfad&gt;</b>: faxt die Dateien aus
 &lt;pfad&gt; anstatt
-&rsquo;<b>/DATA/Patientendokumente/zufaxen</b>&rsquo;
-<b><br>
+&rsquo;<b>/var/autofax/zufaxen</b>&rsquo; <b><br>
 -wvz, --wartevz &lt;pfad&gt;</b>: Dateien warten in
 &lt;pfad&gt; anstatt
-&rsquo;<b>/DATA/Patientendokumente/warteauffax</b>&rsquo;
-<b><br>
+&rsquo;<b>/var/autofax/warteauffax</b>&rsquo; <b><br>
 -nvz, --nichtgefaxtvz &lt;pfad&gt;</b>: Gescheiterte Faxe
 werden hier gesammelt anstatt in
-&rsquo;<b>/DATA/Patientendokumente/nichtgefaxt</b>&rsquo;
-<b><br>
+&rsquo;<b>/var/autofax/nichtgefaxt</b>&rsquo; <b><br>
 -evz, --empfvz &lt;pfad&gt;</b>: Empfangsverzeichnis fuer
-Faxempfang &rsquo;<b>/DATA/Patientendokumente</b>&rsquo;
-<b><br>
+Faxempfang &rsquo;<b>/var/autofax/empfvz</b>&rsquo; <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
-nicht), anstatt &rsquo;<b>0</b>&rsquo; <b><br>
+nicht), anstatt &rsquo;<b>2</b>&rsquo; <b><br>
 -capi, --obcapi</b>: Capisuite verwenden <b>oder nicht <br>
 -hyla, --obhyla</b>: Hylafax verwenden <b>oder nicht <br>
 -cz, --capizuerst</b>: versuche faxe zuerst ueber Capisuite
@@ -295,7 +291,7 @@ wegzuschicken <b>oder nicht <br>
 -hz, --hylazuerst</b>: versuche faxe zuerst ueber hylafax
 wegzuschicken <b>oder nicht <br>
 -mod, --hmodem &lt;string&gt;</b>: Fuer Hylafax verwendetes
-Modem, anstatt &rsquo;<b>ttyACM0</b>&rsquo; <b><br>
+Modem, anstatt &rsquo;&rsquo; <b><br>
 -mc, --maxcapiv &lt;zahl&gt;</b>: nach &lt;zahl&gt;
 Versuchen Capisuite wird Hylafax versucht, anstatt nach
 &rsquo;<b>3</b>&rsquo; <b><br>
@@ -304,7 +300,7 @@ Versuchen Hylafax wird Capisuite versucht, anstatt nach
 &rsquo;<b>3</b>&rsquo; <b><br>
 -cuser, --cuser &lt;string&gt;</b>: verwendet fuer Capisuite
 und/oder Samba den Linux-Benutzer &lt;string&gt; anstatt
-&rsquo;<b>schade</b>&rsquo; <b><br>
+&rsquo;&rsquo; <b><br>
 -ckzl, --cklingelzahl &lt;zahl&gt;</b>: Zahl der
 Klingeltoene, bis Capisuite den Anruf annimmt, anstatt
 &rsquo;<b>1</b>&rsquo; <b><br>
@@ -339,11 +335,11 @@ auf Host &lt;string&gt; anstatt auf
 &rsquo;<b>localhost</b>&rsquo; <b><br>
 -muser, --muser &lt;string&gt;</b>: verwendet fuer
 MySQL/MariaDB den Benutzer &lt;string&gt; anstatt
-&rsquo;<b>praxis</b>&rsquo; <b><br>
+&rsquo;<b>user</b>&rsquo; <b><br>
 -mpwd, --mpwd &lt;string&gt;</b>: verwendet fuer
 MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 -db, --datenbank &lt;string&gt;</b>: verwendet die Datenbank
-&lt;string&gt; anstatt &rsquo;<b>faxeinp</b>&rsquo;</p>
+&lt;string&gt; anstatt &rsquo;<b>autofax</b>&rsquo;</p>
 
 <h2>FUNKTIONSWEISE
 <a name="FUNKTIONSWEISE_D"></a>
