@@ -1,7 +1,6 @@
 #include "kons.h"
 #include "DB.h"
 #define caus cout // nur zum Debuggen
-extern class linst_cl linst;
 
 //const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
 const char *DB_T[T_dbMAX+1][Smax]={
@@ -185,27 +184,28 @@ Index::Index(const string& name, Feld *felder, int feldzahl) :
 // statische Variable, 1= mariadb=geprueft
 uchar DB::oisok=0;
 
-DB::DB() 
+DB::DB(linst_cl *linstp):linstp(linstp)
 {
 }
 
-DB::DB(DBSTyp nDBS, const string& phost, const string& puser, const string& ppasswd, const string& uedb, unsigned int port, 
+DB::DB(DBSTyp nDBS, linst_cl *linstp, const string& phost, const string& puser, const string& ppasswd, const string& uedb, unsigned int port, 
        const char *const unix_socket, unsigned long client_flag,
-    int obverb,int oblog,int versuchzahl, uchar ggferstellen)
+    int obverb,int oblog,int versuchzahl, uchar ggferstellen):linstp(linstp)
 {
   init(nDBS,phost.c_str(),puser.c_str(),ppasswd.c_str(),uedb.c_str(),port,unix_socket,client_flag,obverb,oblog,versuchzahl,
   ggferstellen);
 }
 
-DB::DB(DBSTyp nDBS, const char* const phost, const char* const puser,const char* const ppasswd, const char* const prootpwd,
+DB::DB(DBSTyp nDBS, linst_cl *linstp, const char* const phost, const char* const puser,const char* const ppasswd, const char* const prootpwd,
        const char* const uedb, unsigned int port, const char *const unix_socket, unsigned long client_flag,int obverb,int oblog,
-       int versuchzahl, uchar ggferstellen): rootpwd(prootpwd)
+       int versuchzahl, uchar ggferstellen): linstp(linstp),rootpwd(prootpwd)
 {
   init(nDBS,phost,puser,ppasswd,uedb,port,unix_socket,client_flag,obverb,oblog,versuchzahl,ggferstellen);
 }
 
-DB::DB(DBSTyp nDBS, const char* const phost, const char* const puser,const char* const ppasswd, const char* const uedb, 
+DB::DB(DBSTyp nDBS, linst_cl *linstp, const char* const phost, const char* const puser,const char* const ppasswd, const char* const uedb, 
        unsigned int port, const char *const unix_socket, unsigned long client_flag,int obverb,int oblog,int versuchzahl,uchar ggferstellen)
+			 :linstp(linstp)
 {
   init(nDBS,phost,puser,ppasswd,uedb,port,unix_socket,client_flag,obverb,oblog,versuchzahl,ggferstellen);
 }
@@ -213,11 +213,11 @@ DB::DB(DBSTyp nDBS, const char* const phost, const char* const puser,const char*
 // 2 x in DB::init
 void DB::instmaria(int obverb, int oblog)
 {
-	if (linst.pruefipr()==apt) {
+	if (linstp->ipr==apt) {
 		systemrueck("sudo sh -c 'apt-get -y install apt-transport-https; apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
 	} else {
-		linst.doinst("mariadb",obverb,oblog);
-	} // 					if (linst.pruefipr()==apt) else
+		linstp->doinst("mariadb",obverb,oblog);
+	} // 					if (ipr==apt) else
 } // void DB::instmaria()
 
 void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,const char* const ppasswd, const char* const uedb, 
@@ -237,7 +237,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 	switch (DBS) {
 		case MySQL:
 #ifdef linux
-			switch (linst.pruefipr()) {
+			switch (linstp->ipr) {
 				case zypper: case apt:
 					db_systemctl_name="mysql";
 					break;
@@ -245,7 +245,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 					db_systemctl_name="mariadb";
 					break;
 				default: break;
-			} //       switch (linst.pruefipr())
+			} //       switch (ipr)
 			if (!dbsv) dbsv=new servc(db_systemctl_name,mysqld,obverb,oblog);
 			if (!oisok) {
 				// schauen, ob die Exe-Datei da ist 
@@ -445,7 +445,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 				  caus<<"Programm postgres nicht da"<<endl;
 					systemrueck("V0=/usr/bin/postgres; V1=${V0}_alt; V2=${V0}_uralt; test -d $V0 &&{ test -d $V1 && sudo mv $V1 $V2; sudo mv $V0 $V1;}; true;",
 					            obverb,oblog);
-					linst.doinst("postgresql-server",obverb,oblog);// postgresql-contrib
+					linstp->doinst("postgresql-server",obverb,oblog);// postgresql-contrib
 					neu=1;
 				} // 				if (!obprogda("postgres",obverb,oblog))
 				dbsv=new servc("postgresql","postgres",obverb,oblog);
@@ -583,7 +583,7 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 					 } // 					 if (irueck[zeile].find("template0")!=string::npos)
 					} // 					for(unsigned zeile=0;zeile<irueck.size();zeile++)
 					if (geht) break;
-					linst.doinst("passwd",obverb,oblog,"chpasswd"); 
+					linstp->doinst("passwd",obverb,oblog,"chpasswd"); 
 					systemrueck("sh -c 'echo \"postgres:"+rootpwd+"\"|sudo chpasswd'",obverb,oblog);
 					svec rueck;
 					systemrueck("ps aux|grep postgres|grep -- -D|rev|cut -d' ' -f1|rev",obverb,oblog,&rueck);
@@ -1834,7 +1834,7 @@ void DB::prueffunc(const string& pname, const string& body, const string& para, 
     if (fehlt) {
       DB *aktMyp;
       if (!runde) aktMyp=this; else {
-        DB MySup(DBS,this->host.c_str(),"root",this->rootpwd.c_str(),this->db.c_str(),0,0,0,obverb,oblog);
+        DB MySup(DBS,this->linstp,this->host.c_str(),"root",this->rootpwd.c_str(),this->db.c_str(),0,0,0,obverb,oblog);
         aktMyp=&MySup;
       }
       string proc= "DROP FUNCTION IF EXISTS `"+pname+"`";

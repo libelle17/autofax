@@ -265,6 +265,7 @@ class DB
     string db_systemctl_name; // mysql, mariadb je nach System
     servc *dbsv=0;
     MYSQL *conn;
+		linst_cl *linstp=0;
 #ifdef mitpostgres 
 		PGconn *pconn,*pmconn;
 #endif
@@ -307,20 +308,20 @@ class DB
 		uchar tuerweitern(const string& tab, const string& feld,long wlength,uchar obverb);
     int machbinaer(const string& tabs, const string& fmeld,uchar obverb);
     //	DB(DBSTyp DBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag);
-    DB();
-    DB(DBSTyp nDBS, const char* const phost, const char* const user,const char* const ppasswd, const char* const uedb="", unsigned int port=0, 
-       const char *const unix_socket=NULL, unsigned long client_flag=0,
+		DB(linst_cl *linstp);
+		DB(DBSTyp nDBS, linst_cl *linstp, const char* const phost, const char* const user,const char* const ppasswd, const char* const uedb="", 
+		   unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=0,
 			 int obverb=0,int oblog=0,int versuchzahl=3,uchar ggferstellen=1);
-    DB(DBSTyp nDBS, const char* const phost, const char* const user, const char* const ppasswd, const char* const prootpwd, const char* const uedb="", 
-       unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=0,
+    DB(DBSTyp nDBS, linst_cl *linstp, const char* const phost, const char* const user, const char* const ppasswd, const char* const prootpwd, 
+		   const char* const uedb="", unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=0,
 			 int obverb=0,int oblog=0,int versuchzahl=3,
        uchar ggferstellen=1);
-    DB(DBSTyp nDBS, const string& phost, const string& puser, const string& ppasswd, const string& uedb, unsigned int port, const char* 
-       const unix_socket, unsigned long client_flag=0,
+    DB(DBSTyp nDBS, linst_cl *linstp, const string& phost, const string& puser, const string& ppasswd, const string& uedb, unsigned int port, 
+		   const char* const unix_socket, unsigned long client_flag=0,
        int obverb=0,int oblog=0,int versuchzahl=3,uchar ggferstellen=1);
-    void init(DBSTyp nDBS, const char* const phost, const char* const user,const char* const ppasswd, const char* const uedb="", unsigned int port=0, 
-              const char *const unix_socket=NULL, unsigned long client_flag=0,int obverb=0,int oblog=0,unsigned versuchzahl=3,
-              uchar ggferstellen=1);
+    void init(DBSTyp nDBS, const char* const phost, const char* const user,const char* const ppasswd, const char* const uedb="",
+				unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=0,int obverb=0,int oblog=0,unsigned versuchzahl=3,
+				uchar ggferstellen=1);
     ~DB(void);
     /*
        int Abfrage(const char* sql,const char** erg=(const char**)&"", uchar obverb=1);

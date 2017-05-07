@@ -329,6 +329,7 @@ class paramcl // Programmparameter
 		string virtvz; //	instvz+"/ocrv";
 	  string ocrmp; //	virtvz+"/bin/ocrmypdf";
 		string vorcm; // Vor-Cron-Minuten
+		linst_cl* linstp=0;
 
   private:
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen

@@ -675,8 +675,8 @@ oeffne(const string& datei, uchar art, uchar* erfolg,uchar faclbak=1,int obverb=
 
 class linst_cl
 {
- instprog ipr=keinp; // installiertes Program
  public:
+ instprog ipr=keinp; // installiertes Program
  string schau; // Befehl zum Pruefen auf Vorhandensein ueber das Installationssystem
  string instp; // Befehl zum Installieren ueber das Installationnssystem
  string instyp; // Befehl zum Installieren ueber das Installationnssystem mit automatischem yes auf Rueckfragen
@@ -688,14 +688,14 @@ class linst_cl
  string compil; // Paketnamen fuer den Compiler
  string dev; // Anhaengsel fuer die development-Versionen ("-dev" oder "-devel")
  string libs; // alle lib-Verzeichnisse, fuer find ..
- instprog pruefipr(int obverb=0, int oblog=0);
-    uchar obnmr=1;
-    string eprog; // ersetztes Programm
-    string ersetzeprog(const string& prog);
-    int doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda=nix,uchar ohneabh=0);// ,uchar obyes=1);
-    int doggfinst(const string& prog,int obverb=0,int oblog=0,uchar ohneabh=0);
-    int douninst(const string& prog,int obverb=0,int oblog=0,uchar obyes=1);
-    int obfehlt(const string& prog,int obverb=0,int oblog=0);
+ linst_cl(int obverb=0, int oblog=0);
+ uchar obnmr=1;
+ string eprog; // ersetztes Programm
+ string ersetzeprog(const string& prog);
+ int doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda=nix,uchar ohneabh=0);// ,uchar obyes=1);
+ int doggfinst(const string& prog,int obverb=0,int oblog=0,uchar ohneabh=0);
+ int douninst(const string& prog,int obverb=0,int oblog=0,uchar obyes=1);
+ int obfehlt(const string& prog,int obverb=0,int oblog=0);
 };
 
 // Service aus SystemD
@@ -717,7 +717,7 @@ class servc {
 		int lief();
 		int obsvfeh(int obverb=0,int oblog=0); // ob service einrichtungs fehler
 		uchar spruef(const string& sbez,uchar obfork,const string& parent, const string& sexec, const string& CondPath, const string& After, 
-                 int obverb=0,int oblog=0, uchar mitstarten=1);
+                 linst_cl *linstp, int obverb=0,int oblog=0, uchar mitstarten=1);
     int restart(int obverb=0, int oblog=0);
     void start(int obverb=0, int oblog=0);
     int startundenable(int obverb=0, int oblog=0);
@@ -727,7 +727,7 @@ class servc {
     void pkill(int obverb=0,int oblog=0);
     int enableggf(int obverb=0,int oblog=0);
     int machfit(int obverb=0, int oblog=0, binaer nureinmal=falsch);
-		void semodpruef(int obverb=0,int oblog=0);
+		void semodpruef(linst_cl *linstp,int obverb=0,int oblog=0);
 		void semanpruef(int obverb=0,int oblog=0,const string& mod="getty_t");
 		static void daemon_reload(int obverb=0, int oblog=0);
 };

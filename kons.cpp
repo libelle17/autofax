@@ -44,7 +44,6 @@ const string& instvz=
 ;
 const string& unindt=instvz+"/uninstallinv"; // # Name muss identisch sein mit Variabler UNF in install.sh
 const string nix;
-class linst_cl linst;
 
 // const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
 const char *kons_T[T_konsMAX+1][Smax]=
@@ -1307,10 +1306,9 @@ int obprogda(const string& prog,int obverb, int oblog, string *pfad/*=0*/)
   return 0; 
 } // string obprogda(string prog,int obverb, int oblog)
 
-// inhaltlich parallel getIPR() in install.sh
-instprog linst_cl::pruefipr(int obverb,int oblog)
+linst_cl::linst_cl(int obverb,int oblog)
 {
-	if (ipr==keinp) {
+// inhaltlich parallel getIPR() in install.sh
 		if (obprogda("rpm",obverb-1,oblog)) {
 			dev="devel";
 			schau="rpm -q";
@@ -1367,9 +1365,7 @@ instprog linst_cl::pruefipr(int obverb,int oblog)
     svec lrueck;
     systemrueck("find /usr -maxdepth 1 -type d -name 'lib*'",obverb,oblog,&lrueck);
 		for(size_t iru=0;iru<lrueck.size();iru++) libs+=lrueck[iru]+" ";
-	} //   if (ipr==keinp)
-	return ipr;
-} // instprog linst_cl::pruefipr(int obverb,int oblog)
+}
 
 const string& absch::suche(const char* const sname)
 {
@@ -2581,7 +2577,7 @@ linsten linstcl::checkinst(int obverb, int oblog)
 
 string linst_cl::ersetzeprog(const string& prog) 
 {
-  switch(linst.pruefipr()) {
+  switch(ipr) {
     case apt:
       if (prog=="mariadb") return "mariadb-server";
       if (prog=="hylafax") return "hylafax-server";
@@ -2664,7 +2660,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 	} // if (!fallsnichtda.empty()) 
 	//	int iru;
 	if (!eprog.empty()) {
-		switch (linst.pruefipr()) {
+		switch (ipr) {
 			case zypper:
 				if (obnmr) {
 					obnmr=0;
@@ -2678,7 +2674,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		if (!(ret=systemrueck(bef,obverb+1,oblog,&srueck))) {
 			/*svec*/ string ustring; uchar obanf=0;
 			// s. ausricht in configure
-			switch (linst.pruefipr()) {
+			switch (ipr) {
 				case dnf: case yum:
 					// Folgendes sollte u.a. fuer Fedora gehen
 					for(unsigned i=0;i<srueck.size();++i) {
@@ -2937,7 +2933,7 @@ int linst_cl::douninst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,uchar
 int linst_cl::obfehlt(const string& prog,int obverb,int oblog)
 {
  // <<violett<<"linst::obfehlt: "<<schwarz<<prog<<endl;
-  switch (linst.pruefipr()) {
+  switch (ipr) {
     case zypper: case dnf: case yum: 
       return systemrueck("rpm -q "+prog+" 2>/dev/null",obverb,oblog);
     case apt:
@@ -2987,7 +2983,7 @@ servc::servc(const string& vsname,const string& vename,int obverb, int oblog): s
   machfit(obverb,oblog);
 } // servc::servc(const string& vsname,const string& vename,int obverb, int oblog): sname((vsname.empty()?vename:vsname)),ename(vename)
 
-void servc::semodpruef(int obverb/*=0*/,int oblog/*=0*/)
+void servc::semodpruef(linst_cl *linstp,int obverb/*=0*/,int oblog/*=0*/)
 {
   static uchar obse=2;
 	Log(violetts+Txk[T_semodpruef]+schwarz+sname,obverb,oblog);
@@ -3006,7 +3002,7 @@ void servc::semodpruef(int obverb/*=0*/,int oblog/*=0*/)
 			} //       for(size_t j=0;j<sr2.size();j++)
 		}
 		if (obse) {
-			linst.doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
+			linstp->doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
 			// falls "Nothing to do" zurueckgemeldet wird, muesste sudo dnf -y reinstall p... aufgerufen werden fuer das Deinstallationsprogramm
 			// => wird der perfekten Version vorbehalten
 			systemrueck("sudo setenforce 0",obverb,oblog);
@@ -3017,7 +3013,7 @@ void servc::semodpruef(int obverb/*=0*/,int oblog/*=0*/)
 			struct stat sstat={0};
 			const string mod=instvz+vtz+selocal+".pp";
 			if (!lstat(mod.c_str(),&sstat)) {
-				linst.doinst("policycoreutils",obverb+1,oblog,"semodule");
+				linstp->doinst("policycoreutils",obverb+1,oblog,"semodule");
 				const string bef="sudo semodule -i \""+mod+"\"";
 				systemrueck(bef,obverb,oblog);
 				anfgg(unindt,"sudo semodule -r \""+mod+"\"",bef,obverb,oblog);
@@ -3041,8 +3037,6 @@ void servc::semanpruef(int obverb/*=0*/,int oblog/*=0*/,const string& mod/*="get
 
 int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/)
 {
-  int altobverb=obverb;
-	if (sname=="nmbd") obverb=3;
 	Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, obverb,oblog);
 	// ueberpruefen, ob in systemctl status service Datei nach ExecStart existiert
 	for(int iru=0;iru<2;iru++) {
@@ -3069,13 +3063,12 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 	if (!svfeh&&!obenabled)
 		enableggf(obverb,oblog);
 	Log(violetts+"Ende "+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, obverb,oblog);
-	obverb=altobverb;
 	return !svfeh;
 } // int servc::machfit(int obverb,int oblog)
 
 // wird aufgerufen in: hservice_faxq_hfaxd, hservice_faxgetty
 uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, const string& sexec, const string& CondPath, const string& After, 
-                    int obverb/*=0*/,int oblog/*=0*/, uchar mitstarten/*=1*/)
+                    linst_cl *linstp,int obverb/*=0*/,int oblog/*=0*/, uchar mitstarten/*=1*/)
 {
 	Log(violetts+Txk[T_spruef_sname]+schwarz+sname,obverb,oblog);
 	if (!obsvfeh(obverb-1,oblog)) {
@@ -3131,7 +3124,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst.close();
 				restart(obverb-1,oblog);
 				obsvfeh(obverb-1,oblog);
-				semodpruef(obverb,oblog);
+				semodpruef(linstp,obverb,oblog);
 				semanpruef(obverb,oblog);
 			} // if (syst.is_open()) 
 		} // if (!svgibts || !obslaeuft(obverb,oblog)) 

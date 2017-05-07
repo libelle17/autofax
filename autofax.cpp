@@ -2119,7 +2119,6 @@ const string& pk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax";
 
 
 extern class lsyscl lsys;
-extern class linst_cl linst;
 
 using namespace std;
 #ifdef mitpostgres 
@@ -4210,7 +4209,7 @@ void paramcl::pruefcron()
 		if (cronda) break;
 		// systemrueck("which zypper 2>/dev/null && zypper -n in cron || 
 		//              KLA which apt-get 2>/dev/null && apt-get -y install cron; KLZ",1,1);
-		linst.doinst("cron",1,1);
+		linstp->doinst("cron",1,1);
 		//  int obionice=!systemrueck("which ionice > /dev/null 2>&1",0,0);
 	} //   for (uchar runde=0;runde<2;runde++) 
 	if (cronda) {
@@ -4297,7 +4296,6 @@ const char* const paramcl::smbdt="/etc/samba/smb.conf";
 // wird aufgerufen in: main
 void paramcl::pruefsamba()
 {
-//  int altobverb=obverb; obverb=2;
   Log(violetts+Tx[T_pruefsamba]);
   int sgest=0, ngest=0;
   uchar conffehlt=1;
@@ -4305,20 +4303,20 @@ void paramcl::pruefsamba()
   uchar obinst=0; // ob Samba installiert werden soll bzw. die smb.conf bearbeitet
   uchar obfw=0; // ob SuSEfirewall bearbeitet werden soll
 	// <<violett<<"Stelle 0"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
-	linst.doggfinst("libwbclient0",obverb,oblog);
+	linstp->doggfinst("libwbclient0",obverb,oblog);
 	// bei dieser Initialisierung werden nur die Namen zugewiesen
   servc smb("smb","smbd");
   servc smbd("smbd","smbd");
   servc nmb("nmb","nmbd");
   servc nmbd("nmbd","nmbd");
   int dienstzahl=2;
-	int obsfehlt=linst.obfehlt("samba",obverb,oblog);
+	int obsfehlt=linstp->obfehlt("samba",obverb,oblog);
 	for(int iru=0;iru<2;iru++) {
 		if (obsfehlt) {
 			if (!nrzf) {
 				obinst=Tippob(Tx[T_Samba_muesste_installiert_werden_soll_ich],Tx[T_j_af]);
 				if (obinst)
-					linst.doinst("samba",obverb,oblog);
+					linstp->doinst("samba",obverb,oblog);
 				//        smbrestart=0;
 			} // if (!nrzf) 
 		} // 	if (obsfehlt)
@@ -4469,7 +4467,7 @@ void paramcl::pruefsamba()
       else if (nmbd.startbar()) nmbd.restart(obverb-1,oblog);
     } // if (smbrestart) 
 		// VFS
-		if (linst.pruefipr()==apt) linst.doggfinst("samba-vfs-modules",obverb,oblog);
+		if (linstp->ipr==apt) linstp->doggfinst("samba-vfs-modules",obverb,oblog);
 		// Firewall(s)
 		uchar obslaeuft=0;
 		svec rueckr;
@@ -4532,14 +4530,13 @@ void paramcl::pruefsamba()
 			} // obzu
 		} // obslaeuft
   } //   if (!(conffehlt=lstat(smbdt,&sstat)))
-//  obverb=altobverb;
 } // pruefsamba
 
 // wird aufgerufen in: main
 int paramcl::initDB()
 {
   Log(violetts+"initDB()"+schwarz);
-  My = new DB(myDBS,host,muser,mpwd,dbq,0,0,0,obverb,oblog);
+  My = new DB(myDBS,linstp,host,muser,mpwd,dbq,0,0,0,obverb,oblog);
   if (My->fehnr) {
     ::Log(rots+Tx[Verbindung_zur_Datenbank_nicht_herstellbar]+schwarz+ltoan(My->fehnr)+rot+Tx[T_Breche_ab]+schwarz,1,1);
     return 1;
@@ -4550,7 +4547,7 @@ int paramcl::initDB()
 int paramcl::pruefDB(const string& db)
 {
   Log(violetts+Tx[T_pruefDB]+db+")"+schwarz);
-  My = new DB(myDBS,host,muser,mpwd,db,0,0,0,obverb,oblog,3,0);
+  My = new DB(myDBS,linstp,host,muser,mpwd,db,0,0,0,obverb,oblog,3,0);
   return (My->fehnr); 
 } // pruefDB
 
@@ -5171,8 +5168,8 @@ int paramcl::pruefsoffice(uchar mitloe/*=0*/)
 	if (mitloe || !sofficegeprueft) {
 		//              systemrueck("which zypper 2>/dev/null && zypper -n in soffice || "
 		//                          "{ which apt-get 2>/dev/null && apt-get -y install soffice; }",obverb,oblog);
-		if (mitloe) linst.douninst("libreoffice-base",obverb,oblog);
-		sofficeda=!linst.doinst("libreoffice-base",obverb,oblog,"soffice");
+		if (mitloe) linstp->douninst("libreoffice-base",obverb,oblog);
+		sofficeda=!linstp->doinst("libreoffice-base",obverb,oblog,"soffice");
 		sofficegeprueft=1;
 	} //   if (!sofficegeprueft)
 	return sofficeda;
@@ -5187,7 +5184,7 @@ int paramcl::pruefconvert()
 	if (!convertgeprueft) {
 		//              systemrueck("which zypper 2>/dev/null && zypper -n in convert || "
 		//                          "{ which apt-get 2>/dev/null && apt-get -y install convert; }",obverb,oblog);
-		convertda=!linst.doinst("imagemagick",obverb,oblog,"convert");
+		convertda=!linstp->doinst("imagemagick",obverb,oblog,"convert");
 		convertgeprueft=1;
 	} //   if (!convertgeprueft)
 	return convertda;
@@ -5199,8 +5196,8 @@ void paramcl::pruefunpaper()
 	Log(violetts+Tx[T_pruefunpaper]+schwarz);
 	double vers=progvers("unpaper",obverb,oblog);
 	if (vers<6.1) {
-		linst.doinst("libxslt-tools",obverb,oblog,"xsltproc");
-		if (linst.pruefipr()==dnf||linst.pruefipr()==yum) {
+		linstp->doinst("libxslt-tools",obverb,oblog,"xsltproc");
+		if (linstp->ipr==dnf||linstp->ipr==yum) {
 			// sudo rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm 
 			//               http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
 			// systemrueck("sudo rpm -Uvh https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-free-release-stable.noarch.rpm "
@@ -5209,21 +5206,21 @@ void paramcl::pruefunpaper()
 			holvomnetz(rpf);
 			kompilbase(rpf,s_gz);
 			systemrueck("sh -c 'cd \""+instvz+vtz+rpf+"\"&& sudo rpm -Uvh ./rpmfusion*rpm'",obverb+1,oblog);
-			linst.doinst("ffmpeg",obverb,oblog);
-			linst.doinst("ffmpeg-devel",obverb,oblog);
-			linst.doinst("ffmpeg-compat",obverb,oblog);
+			linstp->doinst("ffmpeg",obverb,oblog);
+			linstp->doinst("ffmpeg-devel",obverb,oblog);
+			linstp->doinst("ffmpeg-compat",obverb,oblog);
 		} else {
 			svec rueck;
-			systemrueck("find "+linst.libs+"-xtype f -name libswresample.so",obverb,oblog,&rueck);
+			systemrueck("find "+linstp->libs+"-xtype f -name libswresample.so",obverb,oblog,&rueck);
 			if (!rueck.size()) {
-				linst.doinst("ffmpeg-"+linst.dev,obverb+1,oblog);
+				linstp->doinst("ffmpeg-"+linstp->dev,obverb+1,oblog);
 			}
-			linst.doggfinst("libavformat-"+linst.dev,obverb+1,oblog);
-			if (linst.pruefipr()==apt) {
-				linst.doggfinst("pkg-config",obverb+1,oblog);
+			linstp->doggfinst("libavformat-"+linstp->dev,obverb+1,oblog);
+			if (linstp->ipr==apt) {
+				linstp->doggfinst("pkg-config",obverb+1,oblog);
 			}
-		} // 		if (linst.pruefipr()==dnf||linst.pruefipr()==yum)
-		/*if (linst.pruefipr()==apt||linst.pruefipr()==dnf||linst.pruefipr()==yum)*/ 
+		} // 		if (linstp->ipr==dnf||linstp->ipr==yum)
+		/*if (linstp->ipr==apt||linstp->ipr==dnf||linstp->ipr==yum)*/ 
 		holvomnetz("unpaper_copy");
 		if (vers) systemrueck("which unpaper && rm $(which unpaper) && hash -r",obverb,oblog);
 		kompiliere("unpaper_copy",s_gz);
@@ -5245,7 +5242,7 @@ int paramcl::pruefocr()
 			if (!rueck.size()) tda=0; else if (rueck[0].find("List of available")) tda=0;
 		}
 		if (!tda) {
-			linst.doinst("tesseract-ocr",obverb,oblog);
+			linstp->doinst("tesseract-ocr",obverb,oblog);
 			systemrueck("sudo ldconfig "+lsys.getlib64(),obverb,oblog);
 		} else {
 			for(size_t i=1;i<rueck.size();i++) {
@@ -5254,12 +5251,12 @@ int paramcl::pruefocr()
 				else if (rueck[i]=="osd") osdda=1;
 			} //       for(size_t i=1;i<rueck.size();i++)
 		} //     if (!tda)
-		if (!deuda) linst.doinst("tesseract-ocr-traineddata-german",obverb,oblog);
-		if (!engda) linst.doinst("tesseract-ocr-traineddata-english",obverb,oblog);
-		if (!osdda) linst.doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
+		if (!deuda) linstp->doinst("tesseract-ocr-traineddata-german",obverb,oblog);
+		if (!engda) linstp->doinst("tesseract-ocr-traineddata-english",obverb,oblog);
+		if (!osdda) linstp->doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
 
 		pruefunpaper();
-		linst.doggfinst("qpdf");
+		linstp->doggfinst("qpdf");
 		// uchar alt=0;
 		uchar ocrzuinst=1;
 		// zu tun: pruefen statt dessen ~/autofax/ocrv/bin/ocrmypdf
@@ -5271,23 +5268,23 @@ int paramcl::pruefocr()
 			if (progvers(ocrmp,obverb,oblog)>4.40) 
 				ocrzuinst=0;
 		if (ocrzuinst) {
-			if (linst.pruefipr()==dnf||linst.pruefipr()==yum||linst.pruefipr()==zypper||linst.pruefipr()==apt) {
+			if (linstp->ipr==dnf||linstp->ipr==yum||linstp->ipr==zypper||linstp->ipr==apt) {
 				// in fedora pip statt pip3
-				linst.doinst("python3-pip",obverb+1,oblog,"pip3");
-				linst.doinst("python3-devel",obverb+1,oblog,"/usr/bin/python3-config");
-				linst.doggfinst("gcc");
+				linstp->doinst("python3-pip",obverb+1,oblog,"pip3");
+				linstp->doinst("python3-devel",obverb+1,oblog,"/usr/bin/python3-config");
+				linstp->doggfinst("gcc");
 				struct stat lffi={0};
 				if (lstat("/usr/lib64/libffi.so",&lffi)) {
-					if (linst.obfehlt("libffi48-devel",obverb+1,oblog))
-						linst.doggfinst("libffi-devel",obverb+1,oblog);
+					if (linstp->obfehlt("libffi48-devel",obverb+1,oblog))
+						linstp->doggfinst("libffi-devel",obverb+1,oblog);
 				}
-				if (linst.pruefipr()==dnf||linst.pruefipr()==yum) 
-					linst.doggfinst("redhat-rpm-config",obverb+1,oblog);
-				linst.doinst("ghostscript",obverb+1,oblog,"gs");
+				if (linstp->ipr==dnf||linstp->ipr==yum) 
+					linstp->doggfinst("redhat-rpm-config",obverb+1,oblog);
+				linstp->doinst("ghostscript",obverb+1,oblog,"gs");
 				if (systemrueck("sudo -H python3 -m pip install --upgrade setuptools pip",obverb+1,oblog)) {
          if (double pyv=progvers("python3")<=3.41) {
 				  Log(rots+Tx[T_Ihre_Python3_Version_koennte_mit]+blau+ltoan(pyv)+rot+
-					Tx[T_veraltet_sein_Wenn_Sie_Ihre_Faxe_OCR_unterziehen_wollen_dann_fuehren_Sie_bitte_ein_Systemupdate_durch_mit]+blau+linst.upd+schwarz
+					Tx[T_veraltet_sein_Wenn_Sie_Ihre_Faxe_OCR_unterziehen_wollen_dann_fuehren_Sie_bitte_ein_Systemupdate_durch_mit]+blau+linstp->upd+schwarz
 					,1,1);
 				 } //          if (double pyv=progvers("python3")<=3.41)
 				} // 				if (systemrueck("sudo -H python3 -m pip install --upgrade setuptools pip",obverb+1,oblog))
@@ -5330,14 +5327,14 @@ int paramcl::pruefocr()
 				//// sudo dnf -y install ghostscript // ghostscript 9.20 geht nicht mit pdf/a und overwrite
 #ifdef sonstige
 			} else {
-				if (!linst.doggfinst("python3-devel",obverb+1,oblog)) {
-					if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3")) {
+				if (!linstp->doggfinst("python3-devel",obverb+1,oblog)) {
+					if (!linstp->doinst("python3-pip",obverb+1,oblog,"pip3")) {
 						lsysen system=lsys.getsys(obverb,oblog);
 						if (system==deb) {
-							linst.doggfinst("pkg-config",obverb+1,oblog);
-							linst.doggfinst("python3-setuptools",obverb+1,oblog);
-							linst.doggfinst("libffi-dev",obverb+1,oblog,1);
-							linst.doggfinst("libssl-dev",obverb+1,oblog);
+							linstp->doggfinst("pkg-config",obverb+1,oblog);
+							linstp->doggfinst("python3-setuptools",obverb+1,oblog);
+							linstp->doggfinst("libffi-dev",obverb+1,oblog,1);
+							linstp->doggfinst("libssl-dev",obverb+1,oblog);
 						}
 						const string proj="ocrmypdf_copy";
 						const string srcvz=instvz+vtz+proj+".tar.gz";
@@ -5367,12 +5364,12 @@ int paramcl::pruefocr()
 							pruefunpaper();
 							systemrueck("sh -c 'cd \""+instvz+vtz+proj+
 									"\" && sudo -H python3 -m pip install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf'", obverb,oblog);
-							linst.doinst("unpaper",obverb,oblog);
+							linstp->doinst("unpaper",obverb,oblog);
 						} //    if (!kompilbase(was,endg))
-					} //       if (!linst.doinst("python3-pip",obverb+1,oblog,"pip3"))
-				} //     if (!linst.doggfinst("python-devel",obverb+1,oblog))
+					} //       if (!linstp->doinst("python3-pip",obverb+1,oblog,"pip3"))
+				} //     if (!linstp->doggfinst("python-devel",obverb+1,oblog))
 #endif
-			} // if (linst.pruefipr()==dnf)
+			} // if (linstp->ipr==dnf)
 		} //     		if (ocrzuinst)
 		string prog;
 		if (obprogda(ocrmp,obverb,oblog,&prog)) {
@@ -5490,7 +5487,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 		svec rueck;
 		if (pseitenp) {
 			// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
-			linst.doinst("poppler-tools",obverb,oblog,"pdfinfo");
+			linstp->doinst("poppler-tools",obverb,oblog,"pdfinfo");
 			systemrueck("pdfinfo \""+ziel+"\"|grep -a Pages|sed 's/[^ ]*[ ]*\\(.*\\)/\\1/'",obverb,oblog,&rueck);
 			if (rueck.size()) {
 				Log("PDF: "+blaus+ziel+": "+gruen+rueck[0]+schwarz+Tx[T_Seiten]);
@@ -7282,7 +7279,7 @@ int paramcl::cservice()
         " && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
         " && { sudo mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true"/*'*/,obverb,oblog);
     // entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
-    csfehler+=!scapis->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","",obverb,oblog);
+    csfehler+=!scapis->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","",linstp,obverb,oblog);
     if (obverb) Log("csfehler: "+gruens+ltoan(csfehler)+schwarz);
     //    return csfehler;
   } // if (obprogda("capisuite",obverb,oblog,&cspfad)) 
@@ -7298,12 +7295,12 @@ int paramcl::hservice_faxq_hfaxd()
   Log(violetts+"hservice_faxq_hfaxd()"+schwarz);
 	struct stat hstat={0}, fstat={0};
 	if (hfaxdpfad.empty()||lstat(hfaxdpfad.c_str(),&hstat)) { obprogda("hfaxd",obverb,oblog,&hfaxdpfad); }
-  hylafehler+=!shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/, varsphylavz+"/etc/setup.cache", "",obverb,oblog);
+  hylafehler+=!shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/, varsphylavz+"/etc/setup.cache", "",linstp,obverb,oblog);
   this->shfaxd->machfit(obverb,oblog);
 	if (faxqpfad.empty()||lstat(faxqpfad.c_str(),&fstat)) { obprogda("faxq",obverb,oblog,&faxqpfad); }
-  hylafehler+=!sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D", varsphylavz+"/etc/setup.cache", shfaxd->sname+".service", obverb,oblog);
+  hylafehler+=!sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D", varsphylavz+"/etc/setup.cache", shfaxd->sname+".service",linstp,obverb,oblog);
 	setzfaxgtpfad();
-	hylafehler+=!this->sfaxgetty->spruef("HylaFAX faxgetty for "+this->hmodem,0,meinname,faxgtpfad+" "+this->hmodem,"","",obverb,oblog,0);
+	hylafehler+=!this->sfaxgetty->spruef("HylaFAX faxgetty for "+this->hmodem,0,meinname,faxgtpfad+" "+this->hmodem,"","",linstp,obverb,oblog,0);
   return hylafehler;
 } // void hservice_faxq_hfaxd()
 
@@ -7381,10 +7378,9 @@ int paramcl::pruefhyla()
 			Log("Modem '"+blaus+"/dev/"+this->hmodem+schwarz+Tx[T_mit_Baudrate]+gruen+brs+schwarz+Tx[T_wird_verwendet]);
 		} //   if (br<=0) else
 		// ein Fehler in der Version 4.0.7 von libtiff verhindert die Zusammenarbeit mit hylafax
-		linst.pruefipr();
 		/*
 		const string befehl="sh -c \"NACHWEIS="+lsys.getlib64()+"/sclibtiff;! test -f /usr/include/tiff.h ||! test -f \\$NACHWEIS"
-		    "&&{ "+linst.schau+" cmake||"+linst.instyp+" cmake;true"
+		    "&&{ "+linstp->schau+" cmake||"+linstp->instyp+" cmake;true"
 				"&& P=tiff_copy; T=\\$P.tar.gz; Z=tiff-4.0.7"
 				"; wget https://github.com/libelle17/\\$P/archive/master.tar.gz -O \\$T"
 				"&& tar xpvf \\$T && mv \\${P}-master \\$Z && cd \\$Z"
@@ -7410,7 +7406,7 @@ int paramcl::pruefhyla()
 		 struct stat lnachw={0}, ltiffh={0};
 		 const string nachw=lsys.getlib64()+"/sclibtiff";
 		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh)) {
-		  linst.doggfinst("cmake",obverb,oblog); 
+		  linstp->doggfinst("cmake",obverb,oblog); 
 			const string proj="tiff_copy";
 		  holvomnetz(proj);
 			kompilbase(proj,s_gz);
@@ -7477,10 +7473,10 @@ int paramcl::pruefhyla()
 				// 3) ggf. neu installieren
 				::Log(violetts+Tx[T_Muss_Hylafax_installieren]+schwarz,1,1);
 				// a) von der source
-				linst.doinst("ghostscript",obverb+1,oblog,"gs");
-				linst.doinst("tiff",obverb+1,oblog,"tiff2ps");
-				linst.doinst("tiff",obverb+1,oblog,"fax2ps");
-				linst.doinst("sendmail",obverb+1,oblog,"sendmail");
+				linstp->doinst("ghostscript",obverb+1,oblog,"gs");
+				linstp->doinst("tiff",obverb+1,oblog,"tiff2ps");
+				linstp->doinst("tiff",obverb+1,oblog,"fax2ps");
+				linstp->doinst("sendmail",obverb+1,oblog,"sendmail");
 				if (obverb) ::Log(violetts+"hyinstart: "+schwarz+ltoan(hyinstart),1,1);
 				hyinstart=hysrc; // spaeter zu loeschen
 				if (hyinstart==hysrc) {
@@ -7535,13 +7531,13 @@ int paramcl::pruefhyla()
 				} else {
 					::Log(violetts+Tx[T_ueber_das_Installationspaket]+schwarz,1,1);
 					// b) mit dem Installationspaket
-					if (!linst.obfehlt(hff) || !linst.obfehlt(hfcf)) {
+					if (!linstp->obfehlt(hff) || !linstp->obfehlt(hfcf)) {
 						::Log(hfftext,-1,1);
-						linst.douninst(string(hff)+" "+hfcf,obverb,oblog);
+						linstp->douninst(string(hff)+" "+hfcf,obverb,oblog);
 						falscheshyla=1;
 					}
 					// <<"hfr: "<<violett<<hfr<<schwarz<<" hfcr: "<<violett<<hfcr<<schwarz<<" obverb: "<<(int)obverb<<endl;
-					hylafehlt=linst.obfehlt(hfr,obverb,oblog) || linst.obfehlt(hfcr,obverb,oblog) || 
+					hylafehlt=linstp->obfehlt(hfr,obverb,oblog) || linstp->obfehlt(hfcr,obverb,oblog) || 
 						!obprogda("faxq",obverb,oblog) || !obprogda("hfaxd",obverb,oblog) || !obprogda("faxgetty",obverb,oblog);
 					const string vstring=ltoan(versuch);
 					Log(gruens+Tx[T_hylafehlt]+schwarz+ltoan(hylafehlt)+gruen+Txk[T_Versuch]+schwarz+vstring);
@@ -7578,7 +7574,7 @@ int paramcl::pruefhyla()
 							} // if (0)
 						} // if falscheshyla
 						// b2) richtiges Hylafax installieren
-						hylafehlt=linst.doinst(string(hfr)+" "+string(hfcr),obverb,oblog);
+						hylafehlt=linstp->doinst(string(hfr)+" "+string(hfcr),obverb,oblog);
 					} // if (hylafehlt)
 				} // if (hyinstart==hysrc)  else
 
@@ -7956,7 +7952,7 @@ void paramcl::pruefsfftobmp()
 	lsysen system=lsys.getsys(obverb,oblog);
 	if (system==fed) {
 		// P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
-		uchar obboostda=!linst.doggfinst("boost-devel",obverb,oblog);
+		uchar obboostda=!linstp->doggfinst("boost-devel",obverb,oblog);
 		if (!obprogda("sfftobmp",obverb,oblog)) {
 			uchar obfrei= obprogda("jpegtran",obverb,oblog) && obprogda("cjpeg",obverb,oblog) && obprogda("djpeg",obverb,oblog);
 			if (!obfrei) {
@@ -7972,7 +7968,7 @@ void paramcl::pruefsfftobmp()
 						obverb,oblog,&brueck);
 				uchar obboostda=brueck.size();
 				if (!obboostda) KLA
-					obboostda = !linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog);
+					obboostda = !linstp->doggfinst("boost",obverb,oblog) && !linstp->doggfinst("boost-devel",obverb,oblog);
 				KLZ
 				*/
 				if (obboostda) {
@@ -7988,11 +7984,11 @@ void paramcl::pruefsfftobmp()
 							"&& sed -i.bak -e \"s/\\(-lboost_filesystem\\)/-lboost_system \\1/g\" src/Makefile.in ";
 						kompiliere(sff,s_gz,vorcfg);
 					} // if (!systemrueck("sudo grep
-				} // if (!linst.doggfinst("boost",obverb,oblog) && !linst.doggfinst("boost-devel",obverb,oblog)) 
+				} // if (!linstp->doggfinst("boost",obverb,oblog) && !linstp->doggfinst("boost-devel",obverb,oblog)) 
 			} // if (!systemrueck(befehl,obverb,oblog)) 
 		} // if (!obprogda("sfftobmp",obverb,oblog)) 
 	} else {
-		linst.doggfinst("sfftobmp",obverb+1,oblog);
+		linstp->doggfinst("sfftobmp",obverb+1,oblog);
 	} // if (system==fed) else
 } // pruefsfftobmp
 
@@ -8050,7 +8046,7 @@ int paramcl::pruefcapi()
 								const string fcpciko=string("/lib/modules/")+unbuf.release+"/kernel/extras/fcpci.ko";
 								if (lstat(fcpciko.c_str(), &entryfc)) {
 									::Log(Tx[T_Datei]+blaus+fcpciko+schwarz+Tx[T_nichtgefFcpciMfdKinstallierwerden],obverb,1);
-									linst.doinst("kernel-source-$(uname -r)",1+obverb,oblog);
+									linstp->doinst("kernel-source-$(uname -r)",1+obverb,oblog);
 									/*              
 																	const string qvz="/usr/src";
 																	const string versi="fcpci-3.10.0";
@@ -8095,8 +8091,8 @@ int paramcl::pruefcapi()
 													obdown=1;
 													// systemrueck("sudo cp \""+gccpfad+"\" \""+gccpfad+".bak\" && " "sudo cp \""+gpppfad+"\" \""+gpppfad+".bak\"",obverb,oblog);
 													if (!kopier(gccpfad,gccpfad+".bak",obverb,oblog)) kopier(gpppfad,gpppfad+".bak",obverb,oblog);
-													linst.doinst("gcc-4.8",1+obverb,oblog);
-													linst.doinst("g++-4.8",1+obverb,oblog);
+													linstp->doinst("gcc-4.8",1+obverb,oblog);
+													linstp->doinst("g++-4.8",1+obverb,oblog);
 													systemrueck("sudo ln -sf \""+gccpfad+"-4.8\" \""+gccpfad+"\" && "
 															"sudo ln -sf \""+gpppfad+"-4.8\" \""+gpppfad+"\"",obverb,oblog);
 												} // if (!obprogda("gcc",obverb,oblog,&gccpfad) && !obprogda("g++",obverb,oblog,&gpppfad)) 
@@ -8163,17 +8159,16 @@ int paramcl::pruefcapi()
 #ifdef brauchtsaano // am 19.3.17 braucht's es ned
 							//            exit(1);
 							// nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
-							// int altobverb=obverb;obverb=2;
 							//         systemrueck("sudo dnf -y install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
-							linst.doggfinst("fedpkg",obverb+1,oblog);
-							linst.doinst("fedora-packager",obverb+1,oblog,"fedora-cert");
-							linst.doinst("rpmdevtools",obverb+1,oblog,"rpmdev-setuptree");
+							linstp->doggfinst("fedpkg",obverb+1,oblog);
+							linstp->doinst("fedora-packager",obverb+1,oblog,"fedora-cert");
+							linstp->doinst("rpmdevtools",obverb+1,oblog,"rpmdev-setuptree");
 							struct stat nstat={0};
 							if (lstat("/usr/include/numa.h",&nstat))
-							 linst.doinst("numactl-devel",obverb+1,oblog);
+							 linstp->doinst("numactl-devel",obverb+1,oblog);
 							if (lstat("/usr/include/curses.h",&nstat))
-							 linst.doinst("ncurses-devel",obverb+1,oblog);
-							linst.doggfinst("pesign",obverb+1,oblog);
+							 linstp->doinst("ncurses-devel",obverb+1,oblog);
+							linstp->doggfinst("pesign",obverb+1,oblog);
 							systemrueck("sudo rpmdev-setuptree",obverb,oblog);
 							svec krue;
 							systemrueck("find "+instvz+" -name kernel-$(uname -r|rev|cut -d. -f2-|rev).src.rpm",obverb,oblog,&krue);
@@ -8223,7 +8218,6 @@ int paramcl::pruefcapi()
 								// cd ~/rpmbuild/BUILD/kernel<version>/linux<version>
 								// make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules
 							} // if (rueck.size()) 
-							// obverb=altobverb;
 #endif					
 						} // if (system==fed) 
 					} // if (systemrueck("sudo modprobe capi",obverb,oblog))
@@ -8231,7 +8225,7 @@ int paramcl::pruefcapi()
 				} // if (!fcpcida || !capida || !capidrvda) 
 				pruefrules(obverb,oblog);
 				pruefblack(obverb,oblog);
-				capischonerfolgreichinstalliert=!linst.obfehlt("capisuite capi4linux i4l-isdnlog");
+				capischonerfolgreichinstalliert=!linstp->obfehlt("capisuite capi4linux i4l-isdnlog");
 				// <<violett<<"capischonerfolgreichinstalliert: "<<schwarz<<(int)capischonerfolgreichinstalliert<<endl;
 				if (capischonerfolgreichinstalliert) {
 					struct stat d1={0}, d2={0};
@@ -8241,11 +8235,11 @@ int paramcl::pruefcapi()
 				// <<rot<<"capischonerfolgreichinstalliert 0: "<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
 				if (!capischonerfolgreichinstalliert) {
 					::Log(Tx[T_Konnte]+blaus+"capisuite"+schwarz+Tx[T_nichtstarten],1,oblog);
-					linst.doinst("ghostscript",obverb+1,oblog,"gs");
+					linstp->doinst("ghostscript",obverb+1,oblog,"gs");
 					// if (systemrueck("which zypper",-1,-1)) KLA
-					//        if (linst.checkinst(-1,-1)!=zyp) KLA
+					//        if (linstp->checkinst(-1,-1)!=zyp) KLA
 					/*
-						 if (linst.pruefipr()!=zypper) {
+						 if (linstp->ipr!=zypper) {
 						 ::Log(rots+Tx[T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht],1,1);
 						 this->obcapi=0;
 						 erg=1;
@@ -8253,24 +8247,24 @@ int paramcl::pruefcapi()
 						 }
 					 */
 					if (system!=sus)
-						linst.doggfinst("capiutils",obverb+1,oblog);
+						linstp->doggfinst("capiutils",obverb+1,oblog);
 					pruefsfftobmp();
-					linst.doggfinst("libcapi20-2",obverb+1,oblog);
-					linst.doggfinst("libcapi20-3",obverb+1,oblog);
-					linst.doggfinst("python-devel",obverb+1,oblog);
-					linst.doinst("libxslt-tools",obverb+1,oblog,"xsltproc");
+					linstp->doggfinst("libcapi20-2",obverb+1,oblog);
+					linstp->doggfinst("libcapi20-3",obverb+1,oblog);
+					linstp->doggfinst("python-devel",obverb+1,oblog);
+					linstp->doinst("libxslt-tools",obverb+1,oblog,"xsltproc");
 					uchar mitcservice=0;
 					// 25.11.16 nicht mehr auf Repo
 					/*
 						 if (system==sus) {
-						 linst.doggfinst("capi4linux i4l-isdnlog",obverb+1,oblog);
+						 linstp->doggfinst("capi4linux i4l-isdnlog",obverb+1,oblog);
 						 systemrueck("zypper lr | grep 'kkeil factory development project' || "
 						 "sudo zypper ar -f http://download.opensuse.org/repositories/home:/kkeil:/Factory/openSUSE_Factory/home:kkeil:Factory.repo",
 						 1,1);
 					// i4l-isdnlog scheint nicht wirklich noetig zu sein
 					//   capischonerfolgreichinstalliert=!systemrueck("zypper -n --gpg-auto-import-keys in capisuite capi4linux i4l-isdnlog", 1+obverb,oblog); 
 					// i4l-base geloescht
-					capischonerfolgreichinstalliert=!linst.doinst("-f capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
+					capischonerfolgreichinstalliert=!linstp->doinst("-f capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
 					} // if (lsys.getsys(obverb,oblog)==sus) 
 					 */
 					if (!capischonerfolgreichinstalliert) {
@@ -8291,7 +8285,6 @@ int paramcl::pruefcapi()
 							//            svec rueck;
 							//            systemrueck("find /usr -name capi20.h 2>/dev/null",obverb,oblog,&rueck); 
 							systemrueck("sh -c 'cd "+instvz+" &&{ cd capisuite 2>/dev/null &&{ test -f Makefile && make clean;};}'",obverb-1,oblog);
-							uchar altobverb=obverb;
 							obverb++;
 							svec rueck;
 							string pyvz;
@@ -8326,7 +8319,6 @@ int paramcl::pruefcapi()
 										"sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp && ")) {
 											mitcservice=1;
 										}
-							obverb=altobverb;
 							//            string befehl="sh -c 'P=capisuite; T=$P.tar.gz; M=$P-master; cd "+instvz+""
 							//                  " && tar xpvf $T && rm -rf $P ; mv $M $P && cd $P"
 							//                  " && sed -i.bak \"s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/\" configure"
@@ -9461,14 +9453,15 @@ int main(int argc, char** argv)
   pm.logvorgaben();
 	// Log("main(): "+pm.cl,0,1);
   pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
-
+	linst_cl linst(pm.obverb,pm.oblog);
+  pm.linstp=&linst;
   pm.VorgbAllg();
 	if (pm.obhilfe==3) { // Standardausgabe gewaehrleisten
 	  pm.MusterVorgb();
 	} else {
 		pm.VorgbSpeziell();//die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion "void paramcl::VorgbSpeziell()" ueberladbar sind
 		pm.lieskonfein();
-	}
+	} // 	if (pm.obhilfe==3) { // Standardausgabe gewaehrleisten
 
   if (!pm.getcommandline()) 
     exit(40);
