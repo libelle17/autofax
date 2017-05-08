@@ -132,6 +132,7 @@ enum T_
   T_haengean,
   T_an_mdpp,
   T_KannFcpciNInstVerwCapiNicht,
+	T_eine_neuere_Version_als_die_des_aktuellen_Kernels_installiert_worden_sein_dann_bitte_erneutes_Systemupdate,
   T_Kernelversion,
   T_nichtgefFcpciMfdKinstallierwerden,
   T_Konnte,
@@ -873,7 +874,11 @@ char const *autofax_T[T_MAX+1][Smax]={
   // T_an_mdpp
   {" an: ",": "},
   // T_KannFcpciNInstVerwCapiNicht
-  {"Kann Fritz-Modul fcpci nicht installieren, verwende capi nicht.","Cannot install module fcpci for the fritz card, not utilizing capi."},
+  {"Kann Fritz-Modul fcpci nicht installieren, verwende capi nicht.\nZ.B.koennte mit ",
+	 "Cannot install module fcpci for the fritz card, not utilizing capi. For example, with "},
+	// T_eine_neuere_Version_als_die_des_aktuellen_Kernels_installiert_worden_sein_dann_bitte_erneutes_Systemupdate
+	{" eine neuere Version als die des aktuellen Kernels installiert worden sein, dann bitte erneutes Systemupdate",
+	 ", a newer version than the current kernel could have been installed, in this case please do another system update"},
   // T_Kernelversion
   {"Kernelversion: ","Kernel version: "},
   // T_nichtgefFcpciMfdKinstallierwerden
@@ -8042,7 +8047,8 @@ int paramcl::pruefcapi()
 						if (!fcpcida)
 							if (systemrueck("sudo modprobe -v fcpci 2>/dev/null",obverb-1,oblog)) {
 								if (ivers) {
-									::Log(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+schwarz,1,1);
+									::Log(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+blau+linstp->ersetzeprog("kernel-source-$(uname -r)")+rots+
+									Tx[T_eine_neuere_Version_als_die_des_aktuellen_Kernels_installiert_worden_sein_dann_bitte_erneutes_Systemupdate]+schwarz,1,1);
 									erg=1;
 									goto schluss;
 								} // if (ivers)
