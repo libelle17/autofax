@@ -23,7 +23,7 @@ getIPR() {
 	fed=0;
 	{ still which zypper &&{ 
 	  sus=1;
-		Z=zypper;g=--gpg-auto-import-keys;IdPR="$Z -n $g in ";IP_R="sudo $Z $g in ";UPR="sudo $Z rm -u ";pgroff=groff;
+		Z=zypper;g=--gpg-auto-import-keys;IdPR="$Z -n $g in -f ";IP_R="sudo $Z $g in ";UPR="sudo $Z rm -u ";pgroff=groff;
 		# die nächsten beiden Variablen dürften 26.3.17 unnötig werden
   REPOS="sudo $Z lr|grep 'g++\|devel_gcc'\>$KR||sudo $Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
   urepo="sudo $Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && sudo $Z rr devel_gcc;";
@@ -125,6 +125,7 @@ einricht() {
 		 }
 	 }
 	 LOG=inst_${2// /_}.log; # Leerzeichen entfernen
+	 echo ${CMD}$2
 	 ${CMD}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff groff-base"
 	 printf "\nRueckmeldung bei einricht $2:\n">>$GINSTLOG
 	 ausricht "$LOG" $1 "${IPR}$2"
