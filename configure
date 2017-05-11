@@ -55,7 +55,7 @@ exportvars() {
 
 ausricht() {
 # im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
-# s. int linst_cl::doinst
+# siehe int linst_cl::doinst
   cat "$1" >> $GINSTLOG
 	if [ $sus = 1 ]; then
 # am Schluss hole hold-Register, entferne Zeilenumbrueche, fasse Leerzeichen zusammen; wenn nicht zwischen NEW package und leerer Zeile, loesche Zeile;

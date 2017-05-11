@@ -2673,7 +2673,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		const string bef=(obyes?instyp:instp)+eprog;
 		if (!(ret=systemrueck(bef,obverb+1,oblog,&srueck))) {
 			/*svec*/ string ustring; uchar obanf=0;
-			// s. ausricht in configure
+			// siehe ausricht in configure
 			switch (ipr) {
 				case dnf: case yum:
 					// Folgendes sollte u.a. fuer Fedora gehen
