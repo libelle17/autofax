@@ -55,7 +55,7 @@ exportvars() {
 
 ausricht() {
 # im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
-# siehe int linst_cl::doinst
+# siehe int linst_cl::doinst(kons.cpp)
   cat "$1" >> $GINSTLOG
 	if [ $sus = 1 ]; then
 # am Schluss hole hold-Register, entferne Zeilenumbrueche, fasse Leerzeichen zusammen; wenn nicht zwischen NEW package und leerer Zeile, loesche Zeile;
@@ -71,7 +71,9 @@ ausricht() {
 # loesche auch die letzten Suchmusterzeilen (Install und leere Zeile); uebertrage nur den ersten von zwei Textbloecken; haenge ans Hold-Register an;
    sed -ni.bak '${g;s/\n//g;s/\s\+/ /g;p};/Install[^: dt]*[dt]:/,/^$/!d;//d;{s/\([^ ]\+\)[ ][^ ]\+/\1/g};H' "$1";
 	else # apt
-		sed -ni.bak '/^\s/{h;:a;n;/^\s/{H;ba};};${x;s/\n/ /g;p}' "$1";
+# am Schluss hole hold-Register, entferne Zeilenumbrueche, fasse Leerzeichen zusammen; wenn nicht zwischen NEW package und vor anfangende Zeile, 
+# loesche Zeile; loesche auch die letzten Suchmusterzeilen (NEW package und leere Zeile); haenge ans Hold-Register an;
+	  sed -ni.bak '${g;s/\n//g;s/\s\+/ /g;p};/NEW package\|NEUEN Pakete/,/^[^ ]/!d;//d;H' "$1";
 	fi;
 	sed -i.baksed 's/ libstdc[^g ]*gcc[^ ]*/ /g;s/ libgcc[^ ]*/ /g;s/ libselinux[^ ]*/ /g' "$1"; 
 	# die Deinstallation von libgcc.x86_64 wirkte sich irgendwie ungünstig auf das System aus ...

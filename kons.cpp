@@ -2714,6 +2714,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 					for(unsigned i=0;i<srueck.size();++i) {
 						if (obanf==1) obanf=2;
 						if (srueck[i].find("NEW package")!=string::npos ||
+						    srueck[i].find("NEUEN Pakete")!=string::npos ||
 								srueck[i].find("reinstalled:")!=string::npos) obanf=1;
 						if (!srueck[i].length()) obanf=0;
 						if (obanf==2) {
@@ -2724,6 +2725,17 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 					break;
 					// Folgende Zeile fuer Debian gut
 				case apt:
+					for(unsigned i=0;i<srueck.size();++i) {
+						if (obanf==1) obanf=2;
+						if (srueck[i].find("NEW package")!=string::npos ||
+								srueck[i].find("NEUEN Pakete")!=string::npos) obanf=1;
+						if (srueck[i][0]==' ') obanf=0;
+						if (obanf==2) {
+							gtrim(&srueck[i]);
+							ustring=" "+srueck[i]+ustring;
+						} // 						if (obanf==2)
+					} // 					for(unsigned i=0;i<srueck.size();++i)
+				/*
 					// im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
 					for(unsigned i=srueck.size();i;) {
 						--i;
@@ -2734,6 +2746,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 							ustring=" "+srueck[i]+ustring;
 						} //        if (obanf==1)
 					} //          for(unsigned i=srueck.size();i;)
+				*/
 					break;
 				default: break;
 			} //      switch (linst.pruefipr())
