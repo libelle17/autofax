@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+[ -z "$BASH_SOURCE" ]&&{ bash "$0";}
 PROG=autofax;
 HOSTER=github.com
 SITZV=libelle17

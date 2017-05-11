@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 still() {
 	"$@" >/dev/null 2>&1
 }
@@ -126,7 +126,7 @@ einricht() {
 	 }
 	 LOG=inst_${2// /_}.log; # Leerzeichen entfernen
 	 echo ${CMD}$2
-	 ${CMD}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff groff-base"
+	 ${CMD}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff-base groff"
 	 printf "\nRueckmeldung bei einricht $2:\n">>$GINSTLOG
 	 ausricht "$LOG" $1 "${IPR}$2"
 	 if [ $1 = "g++" -a -n "$Z" -a $rweg = 1 ]; then
@@ -141,7 +141,7 @@ UNF=${UNROH}inv # Name muss identisch sein mit Ende von uindt in kons.cpp
 DN=/dev/null
 KR="$DN 2>&1" # keine Rueckmeldung
 KF=" 2>$DN" # keine Fehlermeldung
-pgroff="groff groff-base"
+pgroff="groff-base groff"
 dev=devel
 libmc=libmysqlclient
 libmc1=libmariadbclient

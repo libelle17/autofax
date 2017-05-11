@@ -312,7 +312,7 @@ $(MANPE): $(CURDIR)/man_en
 	@printf " "
 	-sudo mv $(PROGRAM).1.gz $(MANPE)
 $(MANPEH): $(CURDIR)/man_en 
-	-@for p in $(pgroff); do $(SPR) $$p>$(KR)||{ ./configure inst _ $$p verbose;}; done;
+	-@for p in $(pgroff); do { ! which groff>$(KR) || ! $(SPR) $$p>$(KR);}&&{ ./configure inst _ $$p verbose;}; done;
 	-@rm -f man_en.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPLICATIONS/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml -W break| sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat versdt)) - english<a name=\"english\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_E/g" > man_en.html
 	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "man_en.html" $(reset) $(blau) "man_en" $(reset)
@@ -327,7 +327,7 @@ $(MANPD): $(CURDIR)/man_de
 	@printf " "
 	-sudo mv $(PROGRAM).1.gz $(MANPD)
 $(MANPDH): $(CURDIR)/man_de 
-	-@for p in $(pgroff); do $(SPR) $$p>$(KR)||{ ./configure inst _ $$p verbose;}; done;
+	-@for p in $(pgroff); do { ! which groff>$(KR) || ! $(SPR) $$p>$(KR);}&&{ ./configure inst _ $$p verbose;}; done;
 	-@rm -f man_de.html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml -W break| sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat versdt)) - deutsch<a name=\"deutsch\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > man_de.html
 #	-@rm -f README.md
