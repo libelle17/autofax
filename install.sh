@@ -1,5 +1,6 @@
 #!/bin/bash
-[ -z "$BASH_SOURCE" ]&&{ bash "$0";}
+# string substitution geht nur in bash, nicht in dash, was auf deb-Systemen standardmaessig hinter sh steht
+[ -z "$BASH_SOURCE" ]&&{ bash "$0";exit;}
 PROG=autofax;
 HOSTER=github.com
 SITZV=libelle17
