@@ -85,7 +85,6 @@ ausricht() {
       for E in $IP; do
        grep -q "[^;] $E" $AUNF||{ zuinst=ja;break;}
       done;				
-      [ -n "$zuinst" ]&&break;
      }
      [ -n "$zuinst" ]&&{
 			T=${UDPR}$IP;
