@@ -9456,12 +9456,24 @@ int main(int argc, char** argv)
 	/*
 	if (argc<3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		if (argc>1) {
-		// Testcode mit argv[1]
+			// Testcode mit argv[1]
+			linst_cl linst(0,0);
+			svec inh;string ustring;
+			mdatei uni0("/home/schade/autofax/inst.log",ios::in,0);
+			if (uni0.is_open()) {
+				string zeile;
+				while (getline(uni0,zeile)) {
+				 inh<<zeile;
+				}
+			}
+			linst.ziehraus(inh,&ustring);
+			caus<<blau<<"ustring: "<<gruen<<ustring<<schwarz<<endl;
+			exit(29);
 		}
 	}
 	*/
 	string prog;
-  paramcl pm(argc,argv); // Programmparameter
+	paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
   pm.logvorgaben();
 	// Log("main(): "+pm.cl,0,1);

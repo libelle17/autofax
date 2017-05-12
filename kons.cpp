@@ -2627,6 +2627,7 @@ string linst_cl::ersetzeprog(const string& prog)
   return prog;
 } // string linst_cl::ersetzeprog(const string& prog) 
 
+// wird aufgerufen in int linst_cl::doinst
 std::string string_to_hex(const std::string& input)
 {
 	static const char* const lut = "0123456789ABCDEF";
@@ -2641,7 +2642,108 @@ std::string string_to_hex(const std::string& input)
 		output.push_back(lut[c & 15]);
 	}
 	return output;
-}
+} // std::string string_to_hex(const std::string& input)
+
+// wird aufgerufen in: linst_cl::doinst
+// kann getestet werden in main mit:
+			/*
+			linst_cl linst(0,0);
+			svec inh;string ustring;
+			mdatei uni0("/home/schade/autofax/inst.log",ios::in,0);
+			if (uni0.is_open()) {
+				string zeile;
+				while (getline(uni0,zeile)) {
+				 inh<<zeile;
+				}
+			}
+			linst.ziehraus(inh,&ustring);
+			caus<<blau<<"ustring: "<<gruen<<ustring<<schwarz<<endl;
+			exit(29);
+			*/
+void linst_cl::ziehraus(svec srueck, string *ustringp)
+{
+	uchar obanf=0;
+	// siehe ausricht in configure
+	switch (ipr) {
+		case dnf: case yum:
+			// Folgendes sollte u.a. fuer Fedora gehen
+			for(unsigned i=0;i<srueck.size();++i) {
+				if (obanf==1) obanf=2;
+				if (!srueck[i].find("Installed:")||!srueck[i].find("Installiert:")) obanf=1;
+				if (!srueck[i].length()) obanf=0;
+				if (obanf==2) {
+					const string source=srueck[i].c_str();
+					const size_t maxGroups=2;
+					regex_t rCmp;
+					regmatch_t groupArray[maxGroups];
+					while(1) {
+						// jeden zweiten String verwerfen = (das letzte [^ ]+ ohne die runden Klammern)
+						// rm_eo = Ende des Fundes, rm_es = Beginn
+						const string regex=string(".{")+ltoan(groupArray[0].rm_eo)+"}([^ ]+)[ ][^ ]+";
+						groupArray[0].rm_eo=0;
+						if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) {
+							Log(Txk[T_Konnte_regulaeren_Ausdruck_nicht_kompilieren]+blaus+regex+schwarz,1,1);
+						} else if (regexec(&rCmp, source.c_str(), maxGroups, groupArray, groupArray[0].rm_eo) == 0) {
+							string zudeinst;
+							for (unsigned g=1;g<maxGroups;g++) {
+								if (groupArray[g].rm_so == (signed)(size_t)-1)
+									break;  // No more groups
+								if (!zudeinst.empty()) zudeinst+=" ";
+								zudeinst+=source.substr(groupArray[g].rm_so,groupArray[g].rm_eo-groupArray[g].rm_so);
+							} // 									for (unsigned g=1;g<maxGroups;g++)
+							*ustringp=" "+zudeinst+*ustringp;
+						} else {
+							break; // while(1)
+						} //            if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) else else
+					} // while(1)
+					regfree(&rCmp);
+				} //            if (obanf==2)
+			} //          for(unsigned i=0;i<srueck.size();++i;)
+			break;
+		case zypper:
+			for(unsigned i=0;i<srueck.size();++i) {
+				if (obanf==1) obanf=2;
+				if (srueck[i].find("NEW package")!=string::npos ||
+						srueck[i].find("NEUEN Pakete")!=string::npos ||
+						srueck[i].find("reinstalled:")!=string::npos) obanf=1;
+				if (!srueck[i].length()) obanf=0;
+				if (obanf==2) {
+					gtrim(&srueck[i]);
+					*ustringp=" "+srueck[i]+*ustringp;
+				} // 						if (obanf==2)
+			} // 					for(unsigned i=0;i<srueck.size();++i)
+			break;
+			// Folgende Zeile fuer Debian gut
+		case apt:
+			for(unsigned i=0;i<srueck.size();++i) {
+				caus<<violett<<i<<": "<<gruen<<srueck[i]<<schwarz<<endl;
+				if (obanf==1) obanf=2;
+				if (srueck[i].find("NEW package")!=string::npos ||
+						srueck[i].find("NEUEN Pakete")!=string::npos) obanf=1;
+				if (obanf==2) {
+					if (srueck[i][0]!=' ') obanf=0;
+					else {
+						gtrim(&srueck[i]);
+						*ustringp=" "+srueck[i]+*ustringp;
+					}
+				} // 						if (obanf==2)
+			} // 					for(unsigned i=0;i<srueck.size();++i)
+			/*
+			// im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
+			for(unsigned i=srueck.size();i;) KLA
+				--i;
+				if (srueck[i][0]==' ')KLA if (!obanf) obanf++;KLZ else if (obanf==1) obanf++;
+				if (obanf==1) KLA
+					gtrim(&srueck[i]);
+					// Folgende Zeile fuer Debian und OpenSuse gut
+					ustring=" "+srueck[i]+ustring;
+				KLZ //        if (obanf==1)
+			KLZ //          for(unsigned i=srueck.size();i;)
+			*/
+			break;
+		default: break;
+	} //      switch (linst.pruefipr())
+} // void linst_cl::ziehraus(svec srueck, string *ustringp)
 
 // Problem: bei obyes erscheint die Rueckfrage dem Benutzer nicht, statt dessen wartet das Programm
 int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar ohneabh/*=0*/) // ,uchar obyes/*=1*/)
@@ -2672,84 +2774,8 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		svec srueck;
 		const string bef=(obyes?instyp:instp)+eprog;
 		if (!(ret=systemrueck(bef,obverb+1,oblog,&srueck))) {
-			/*svec*/ string ustring; uchar obanf=0;
-			// siehe ausricht in configure
-			switch (ipr) {
-				case dnf: case yum:
-					// Folgendes sollte u.a. fuer Fedora gehen
-					for(unsigned i=0;i<srueck.size();++i) {
-						if (obanf==1) obanf=2;
-						if (!srueck[i].find("Installed:")||!srueck[i].find("Installiert:")) obanf=1;
-						if (!srueck[i].length()) obanf=0;
-						if (obanf==2) {
-							const string source=srueck[i].c_str();
-							const size_t maxGroups=2;
-							regex_t rCmp;
-							regmatch_t groupArray[maxGroups];
-							while(1) {
-								// jeden zweiten String verwerfen = (das letzte [^ ]+ ohne die runden Klammern)
-								// rm_eo = Ende des Fundes, rm_es = Beginn
-								const string regex=string(".{")+ltoan(groupArray[0].rm_eo)+"}([^ ]+)[ ][^ ]+";
-								groupArray[0].rm_eo=0;
-								if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) {
-									Log(Txk[T_Konnte_regulaeren_Ausdruck_nicht_kompilieren]+blaus+regex+schwarz,1,1);
-								} else if (regexec(&rCmp, source.c_str(), maxGroups, groupArray, groupArray[0].rm_eo) == 0) {
-									string zudeinst;
-									for (unsigned g=1;g<maxGroups;g++) {
-										if (groupArray[g].rm_so == (signed)(size_t)-1)
-											break;  // No more groups
-										if (!zudeinst.empty()) zudeinst+=" ";
-										zudeinst+=source.substr(groupArray[g].rm_so,groupArray[g].rm_eo-groupArray[g].rm_so);
-									} // 									for (unsigned g=1;g<maxGroups;g++)
-									ustring=" "+zudeinst+ustring;
-								} else {
-									break; // while(1)
-								} //            if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) else else
-							} // while(1)
-							regfree(&rCmp);
-						} //            if (obanf==2)
-					} //          for(unsigned i=0;i<srueck.size();++i;)
-					break;
-				case zypper:
-					for(unsigned i=0;i<srueck.size();++i) {
-						if (obanf==1) obanf=2;
-						if (srueck[i].find("NEW package")!=string::npos ||
-						    srueck[i].find("NEUEN Pakete")!=string::npos ||
-								srueck[i].find("reinstalled:")!=string::npos) obanf=1;
-						if (!srueck[i].length()) obanf=0;
-						if (obanf==2) {
-							gtrim(&srueck[i]);
-							ustring=" "+srueck[i]+ustring;
-						} // 						if (obanf==2)
-					} // 					for(unsigned i=0;i<srueck.size();++i)
-					break;
-					// Folgende Zeile fuer Debian gut
-				case apt:
-					for(unsigned i=0;i<srueck.size();++i) {
-						if (obanf==1) obanf=2;
-						if (srueck[i].find("NEW package")!=string::npos ||
-								srueck[i].find("NEUEN Pakete")!=string::npos) obanf=1;
-						if (srueck[i][0]==' ') obanf=0;
-						if (obanf==2) {
-							gtrim(&srueck[i]);
-							ustring=" "+srueck[i]+ustring;
-						} // 						if (obanf==2)
-					} // 					for(unsigned i=0;i<srueck.size();++i)
-				/*
-					// im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
-					for(unsigned i=srueck.size();i;) {
-						--i;
-						if (srueck[i][0]==' '){ if (!obanf) obanf++;} else if (obanf==1) obanf++;
-						if (obanf==1) {
-							gtrim(&srueck[i]);
-							// Folgende Zeile fuer Debian und OpenSuse gut
-							ustring=" "+srueck[i]+ustring;
-						} //        if (obanf==1)
-					} //          for(unsigned i=srueck.size();i;)
-				*/
-					break;
-				default: break;
-			} //      switch (linst.pruefipr())
+			/*svec*/ string ustring; 
+		  ziehraus(srueck,&ustring);
 
 			// s. ausricht() in configure
 			mdatei uniff(instvz+"/inst.log",ios::app,0);

@@ -692,6 +692,7 @@ class linst_cl
  uchar obnmr=1;
  string eprog; // ersetztes Programm
  string ersetzeprog(const string& prog);
+ void ziehraus(svec srueck, string* ustringp);
  int doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda=nix,uchar ohneabh=0);// ,uchar obyes=1);
  int doggfinst(const string& prog,int obverb=0,int oblog=0,uchar ohneabh=0);
  int douninst(const string& prog,int obverb=0,int oblog=0,uchar obyes=1);
