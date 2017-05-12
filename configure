@@ -71,7 +71,7 @@ ausricht() {
 # loesche auch die letzten Suchmusterzeilen (Install und leere Zeile); uebertrage nur den ersten von zwei Textbloecken; haenge ans Hold-Register an;
    sed -ni.bak '${g;s/\n//g;s/\s\+/ /g;p};/Install[^: dt]*[dt]:/,/^$/!d;//d;{s/\([^ ]\+\)[ ][^ ]\+/\1/g};H' "$1";
 	else # apt
-# am Schluss hole hold-Register, entferne Zeilenumbrueche, fasse Leerzeichen zusammen; wenn nicht zwischen NEW package und vor anfangende Zeile, 
+# am Schluss hole hold-Register, entferne Zeilenumbrueche, fasse Leerzeichen zusammen; wenn nicht zwischen NEW package und vorn anfangender Zeile, 
 # loesche Zeile; loesche auch die letzten Suchmusterzeilen (NEW package und leere Zeile); haenge ans Hold-Register an;
 	  sed -ni.bak '${g;s/\n//g;s/\s\+/ /g;p};/NEW package\|NEUEN Pakete/,/^[^ ]/!d;//d;H' "$1";
 	fi;

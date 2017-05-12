@@ -14,26 +14,26 @@ nPWD=${PWD##*/}
 }||{
 # ... sonst moegliche alte Quelldateiverzeichnisse $PROG umbenennen, aktuelle Version neu herunterladen ...
 	printf "Downloading/ Lade runter $PROG ...\n"
-		cd ~; 
+	cd ~; 
 	T=$PROG.tar.gz;
 		wget https://$HOSTER/$SITZV/$PROG/archive/master.tar.gz -O "$T" && 
 		tar xpvf $T && 
 		rm -f $T && {
 			VORIGE=$(ls -d ~/${PROG}_* 2>/dev/null| cut -d"_" -f2 | sort -nr);
 			for i in $VORIGE; do 
-			case $i in ""|*[!0-9]*);; *) 
-				j=$((i+1)); 
-				echo mv ${PROG}_$i ${PROG}_$j; 
-				mv ${PROG}_$i ${PROG}_$j; 
+				case $i in ""|*[!0-9]*);; *) 
+					j=$((i+1)); 
+					echo mv ${PROG}_$i ${PROG}_$j; 
+					mv ${PROG}_$i ${PROG}_$j; 
 				esac; 
-				done; 
-				test -e $PROG && mv $PROG ${PROG}_1; 
-				mv $PROG-master $PROG &&{
-					cd $PROG; 
-					. ./configure
-						Q=../${PROG}_1/$INSTLOG; test -f $Q && cp -a $Q .||true
-						Q=../${PROG}_1/$UNF; test -f $Q && cp -a $Q .||true
-				}
+			done; 
+			test -e $PROG && mv $PROG ${PROG}_1; 
+			mv $PROG-master $PROG &&{
+				cd $PROG; 
+				. ./configure
+				Q=../${PROG}_1/$INSTLOG; test -f $Q && cp -a $Q .||true
+				Q=../${PROG}_1/$UNF; test -f $Q && cp -a $Q .||true
+			}
 		}|| exit;
 }
 $SPR make >/dev/null ||{ echo GNU make missing/fehlt; exit;}
