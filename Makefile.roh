@@ -306,7 +306,7 @@ define priv_html
 	for p in $(pgroff); do { [ $$EXC -gt 1 ]|| ! which groff>$(KR)|| ! $(SPR) $$p>$(KR);}&&{ ./configure inst _ $$p verbose;}; done; true;
 	-@rm -f $(1).html
 	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH $(FKT)/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH $(AWI)/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' $(1) | groff -mandoc -Thtml -W break| sed "s/&amp;/\&/g;s@<h1 align=\"right\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat versdt)) - $(LGL)<a name=\"$(LGL)\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > $(1).html
-	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "$(1).html" $(reset) $(blau) "$(1)" $(reset)
+	@printf "%b%s%b neu aus %b%s%b erstellt\n" $(blau) "$(1).html" $(reset) $(blau) "$(1)" $(reset)
 endef
 
 define manges
