@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.2 -->
-<!-- CreationDate: Fri May 12 15:48:20 2017 -->
+<!-- CreationDate: Mon May 15 00:26:55 2017 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -18,28 +18,28 @@
 </head>
 <body>
 
-<h1 align="center">AUTOFAX (Version 0.43419) - english<a name="english_E"></a></h1>
+<h1 align="center">man</h1>
 
-<a href="#NAME_E">NAME</a><br>
-<a href="#SYNOPSIS_E">SYNOPSIS</a><br>
-<a href="#SHORT DESCRIPTION_E">SHORT DESCRIPTION</a><br>
-<a href="#INSTALLATION_E">INSTALLATION</a><br>
-<a href="#USAGE_E">USAGE</a><br>
-<a href="#OPTIONS_E">OPTIONS</a><br>
-<a href="#FUNCTIONALITY_E">FUNCTIONALITY</a><br>
-<a href="#PRECONDITIONS_E">PRECONDITIONS</a><br>
-<a href="#AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_E">AUTOMATICALLY INSTALLED SOFTWARE PACKAGES</a><br>
-<a href="#IMPLICATIONS_E">IMPLICATIONS</a><br>
-<a href="#UNINSTALLING_E">UNINSTALLING</a><br>
-<a href="#ERRORS_E">ERRORS</a><br>
-<a href="#LIABILITY_E">LIABILITY</a><br>
-<a href="#AUTHOR_E">AUTHOR</a><br>
+<a href="#NAME_D">NAME</a><br>
+<a href="#SYNOPSIS_D">SYNOPSIS</a><br>
+<a href="#SHORT DESCRIPTION_D">SHORT DESCRIPTION</a><br>
+<a href="#INSTALLATION_D">INSTALLATION</a><br>
+<a href="#USAGE_D">USAGE</a><br>
+<a href="#OPTIONS_D">OPTIONS</a><br>
+<a href="#FUNCTIONALITY_D">FUNCTIONALITY</a><br>
+<a href="#PRECONDITIONS_D">PRECONDITIONS</a><br>
+<a href="#AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_D">AUTOMATICALLY INSTALLED SOFTWARE PACKAGES</a><br>
+<a href="#IMPLICATIONS_D">IMPLICATIONS</a><br>
+<a href="#UNINSTALLING_D">UNINSTALLING</a><br>
+<a href="#ERRORS_D">ERRORS</a><br>
+<a href="#LIABILITY_D">LIABILITY</a><br>
+<a href="#AUTHOR_D">AUTHOR</a><br>
 
 <hr>
 
 
 <h2>NAME
-<a name="NAME_E"></a>
+<a name="NAME_D"></a>
 </h2>
 
 
@@ -51,7 +51,7 @@ of all of them in a database <br>
 autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
 
 <h2>SYNOPSIS
-<a name="SYNOPSIS_E"></a>
+<a name="SYNOPSIS_D"></a>
 </h2>
 
 
@@ -60,7 +60,7 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
 ...</b></p>
 
 <h2>SHORT DESCRIPTION
-<a name="SHORT DESCRIPTION_E"></a>
+<a name="SHORT DESCRIPTION_D"></a>
 </h2>
 
 
@@ -85,7 +85,7 @@ samba server. It could be complemented by a frontend for the
 mariadb database.</p>
 
 <h2>INSTALLATION
-<a name="INSTALLATION_E"></a>
+<a name="INSTALLATION_D"></a>
 </h2>
 
 
@@ -107,7 +107,7 @@ take some time and need some additional input,
 respectively.</p>
 
 <h2>USAGE
-<a name="USAGE_E"></a>
+<a name="USAGE_D"></a>
 </h2>
 
 
@@ -164,7 +164,7 @@ by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
 &rsquo;<b>autofax -listi</b>&rsquo;.</p>
 
 <h2>OPTIONS
-<a name="OPTIONS_E"></a>
+<a name="OPTIONS_D"></a>
 </h2>
 
 
@@ -176,152 +176,160 @@ options (e.g. the sql commands) cannot bei set via the
 command line, but only via the configuration file, which can
 be edited directly or interactively by &rsquo;<b>autofax
 -rf</b>&rsquo;. <b><br>
-Usage: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
+Fehlender Parameter &lt;string&gt; zu -sp oder --sprache!
+<br>
+Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
-Faxes files from directory &lt;path&gt;, which contain
-&rsquo;to fax &lt;faxno&gt;&rsquo; and are convertible into
-pdf, <br>
-and logs this in the the mariadb database
-&rsquo;autofax&rsquo; (tables:
-&lsquo;outa&lsquo;,&lsquo;spool&lsquo;). <br>
-Options which are not saved: <br>
--v, --verbose</b>: screen output more verbose <b><br>
--l, --log</b>: put detailed logs in file
-&rsquo;<b>/var/log/autofax.log</b>&rsquo; (otherwise
-shorter) <b><br>
--lfn, --logfilenew</b>: delete log file afore <b><br>
--cf, --conffile &lt;string&gt;</b>: uses configuration file
-&lt;string&gt; instead of &rsquo;&rsquo; <b><br>
--sqlv, --sql-verbose</b>: screen output with SQL commands
+Faxt Dateien aus Verzeichns &lt;pfad&gt;, die &rsquo;an Fax
+&lt;faxnr&gt;&rsquo; enthalten und durch soffice in pdf
+konvertierbar sind <br>
+und traegt sie in MariaDB-Datenbank &rsquo;autofax&rsquo;
+(Tabellen: &lsquo;outa&lsquo;,&lsquo;spool&lsquo;) ein. <br>
+Optionen, die nicht gespeichert werden: <br>
+-w, --wortreich</b>: Bildschirmausgabe gespraechiger <b><br>
+-l, --log</b>: protokolliert ausfuehrlich in Datei
+&rsquo;<b>/var/log/autofax.log</b>&rsquo; (sonst knapper)
 <b><br>
--ia, --interactive</b>: all parameters will be prompted
-(some of them not shown here) <b><br>
--noia, --nointeraction</b>: no questions, e.g. for a call of
-autofax within cron <b><br>
--delf, --deletefax</b>: delete a fax with query <b><br>
--delo, --deleteorphans</b>: delete entries from
-&lsquo;<b>spool</b>&lsquo; without detection of file in
-waiting directory or capisuite fax or hylafax <b><br>
--dela, --deleteallwaiting</b>: delete all waiting faxes and
-associated entries from &lsquo;<b>spool</b>&lsquo; <b><br>
--again, --receiveagain</b>: present a received fax again
+-ldn, --logdateineu</b>: logdatei vorher loeschen <b><br>
+-kd, --konfdatei &lt;string&gt;</b>: verwendet
+Konfigurationsdatei &lt;string&gt; anstatt &rsquo;&rsquo;
 <b><br>
--red, --redirect</b>: redirect outgoing fax ahead by the
-other channel <b><br>
--csf, --correctsuccessflag</b>: in the database table
-&lsquo;<b>outa</b>&lsquo; the success flag is being
-corrected <b><br>
--rwd, --revisewaitdir</b>: Examine files in waiting
-directory against the tables &lsquo;<b>outa</b>&lsquo; and
-clean them up <b><br>
--st, --stop</b>: stop autofax <b><br>
--listo, --listoutg</b>: lists entries from
-&lsquo;<b>outa</b>&lsquo; with success flag <b><br>
--listf, --listfailed</b>: lists entries from
-&lsquo;<b>outa</b>&lsquo; without success flag <b><br>
--listi, --listinca</b>: lists entries from
-&lsquo;<b>inca</b>&lsquo; <b><br>
--listw, --listwaiting</b>: lists waiting faxes <b><br>
--s, --search &lt;string&gt;</b>: Look in processed faxes for
-&lt;string&gt;: &rsquo;&rsquo; <b><br>
--n, --reccount &lt;zahl&gt;</b>: No. of listed entries =
-&lt;no&gt; instead of &rsquo;<b>30</b>&rsquo; <b><br>
--info, --version</b>: shows the program version <b><br>
--vi, --vi</b>: edit/view configuration and log file (finish
-with &rsquo;:qa&rsquo;) <b><br>
--vc, --vc</b>: edit capisuite log files (finish with
+-sqlw, --sql-wortreich</b>: Bildschirmausgabe mit
+SQL-Befehlen <b><br>
+-rf, --rueckfragen</b>: alle Parameter werden abgefragt
+(darunter einige hier nicht gezeigten) <b><br>
+-krf, --keinerueckfragen</b>: keine Rueckfragen, z.B.
+f&uuml;r Aufruf aus cron <b><br>
+-loef, --loeschefax</b>: ein Fax nach Rueckfrage loeschen
+<b><br>
+-loew, --loeschewaise</b>: Eintraege aus
+&lsquo;<b>spool</b>&lsquo; loeschen, zu denen keine Datei im
+Wartevz.und kein Capi- oder Hylafax nachweisbar ist <b><br>
+-loea, --loescheallew</b>: alle wartenden Faxe und
+zugehoerige Eintraege aus &lsquo;<b>spool</b>&lsquo;
+loeschen <b><br>
+-erneut, --erneutempf</b>: empfangenes Fax erneut
+bereitstellen <b><br>
+-uml, --umleiten</b>: ausgehendes Fax vorzeitig auf zweitem
+Weg schicken <b><br>
+-kez, --korrerfolgszeichen</b>: in der Datenbanktabelle
+&lsquo;<b>outa</b>&lsquo; wird das Erfolgszeichen korrigiert
+<b><br>
+-bwv, --bereinigewv</b>: Dateien aus Warteverzeichnis gegen
+&lsquo;<b>outa</b>&lsquo; pruefen und ggf. verschieben
+<b><br>
+-st, --stop</b>: autofax anhalten <b><br>
+-lista, --listausg</b>: listet Datensaetze aus
+&lsquo;<b>outa</b>&lsquo; mit Erfolgskennzeichen auf <b><br>
+-listf, --listfehlgeschl</b>: listet Datensaetze aus
+&lsquo;<b>outa</b>&lsquo; ohne Erfolgskennzeichen auf
+<b><br>
+-liste, --listeing</b>: listet Datensaetze aus
+&lsquo;<b>inca</b>&lsquo; auf <b><br>
+-listw, --listwartende</b>: listet wartende Faxe auf <b><br>
+-s, --suche &lt;string&gt;</b>: Suche in verarbeiteten Faxen
+nach &lt;string&gt;: &rsquo;&rsquo; <b><br>
+-n, --dszahl &lt;zahl&gt;</b>: Zahl der aufzulistenden
+Datensaetze = &lt;zahl&gt; statt &rsquo;<b>30</b>&rsquo;
+<b><br>
+-info, --version</b>: Zeigt die Programmversion an <b><br>
+-vi, --vi</b>: Konfigurations- u.Logdatei bearbeiten/sehen
+(beenden mit &rsquo;:qa&rsquo;) <b><br>
+-vc, --vc</b>: Capisuite-Konfigurationsdateien bearbeiten
+(beenden mit &rsquo;:qa&rsquo;) <b><br>
+-vh, --vh</b>: Hylafax-Modem-Konfigurationsdatei bearbeiten
+(beenden mit &rsquo;:qa&rsquo;) <b><br>
+-vs, --vs</b>: Quelldateien bearbeiten (beenden mit
 &rsquo;:qa&rsquo;) <b><br>
--vh, --vh</b>: edit hylafax modem configuration file (finish
-with &rsquo;:qa&rsquo;) <b><br>
--vs, --vs</b>: edit source files (finish with
-&rsquo;:qa&rsquo;) <b><br>
--h, --help</b>: Explanation of frequent options <b><br>
--lh, --longhelp</b>: Explanation of all options <b><br>
-Options to be saved in the configuration file: (preced.
-&rsquo;1&rsquo;=don&rsquo;t save, &rsquo;no&rsquo;=contrary,
-e.g. &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
--lg, --language &lt;string&gt;</b>:
+-h, --hilfe</b>: Erkl&auml;rung h&auml;ufiger
+Optionen <b><br>
+-lh, --langhilfe</b>: Erkl&auml;rung aller Optionen
+<b><br>
+Optionen z.Speich. i.Konfigur&rsquo;datei (vorausg.
+&rsquo;1&rsquo;=doch nicht speichern,
+&rsquo;no&rsquo;=Gegenteil, z.B.
+&rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
+-sp, --sprache &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
-[<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;<b>e</b>&rsquo;
-<b><br>
--ldr, --logdir &lt;path&gt;</b>: choses &lt;path&gt; as log
-directory, currently &rsquo;<b>/var/log</b>&rsquo; <b><br>
--lf, --logfilename &lt;string&gt;</b>: log file
-&lt;string&gt; (in path &rsquo;<b>/var/log</b>&rsquo;) will
-be used instead of &rsquo;<b>autofax.log</b>&rsquo; <b><br>
--tdr, --tofaxdir &lt;path&gt;</b>: faxes the files from
-&lt;path&gt; instead of
-&rsquo;<b>/var/autofax/tobefaxed</b>&rsquo; <b><br>
--wdr, --waitdir &lt;path&gt;</b>: files are waiting in
-&lt;path&gt; instead of
-&rsquo;<b>/var/autofax/waitingfaxes</b>&rsquo; <b><br>
--ndr, --notfaxeddir &lt;path&gt;</b>: Failed Faxes are
-collected here and not in
-&rsquo;<b>/var/autofax/notfaxed</b>&rsquo; <b><br>
--rdr, --receiveddir &lt;path&gt;</b>: directory for recieved
-faxes &rsquo;<b>/var/autofax/recvdir</b>&rsquo; <b><br>
--cm, --cronminutes &lt;zahl&gt;</b>: every how many minutes
-shall <b>autofax</b> be called in crontab (0=not at all),
-instead of &rsquo;<b>2</b>&rsquo; <b><br>
--capi, --takecapi</b>: use capisuite <b>or not <br>
--hyla, --takehyla</b>: use hylafax <b>or not <br>
--fc, --firstcapi</b>: try to send faxes primarily via
-capisuite <b>or not <br>
--fh, --firsthyla</b>: try to send faxes primarily via
-hylafax <b>or not <br>
--mod, --hmodem &lt;string&gt;</b>: Modem used for hylafax,
-instead of &rsquo;&rsquo; <b><br>
--mc, --maxcapitries &lt;zahl&gt;</b>: try Hylafax after
-&lt;no&gt; tries of Capisuite instead of
+[<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;&rsquo; <b><br>
+-lvz, --logvz &lt;pfad&gt;</b>: waehlt als Logverzeichnis
+&lt;pfad&gt;, derzeit &rsquo;<b>/var/log</b>&rsquo; <b><br>
+-ld, --logdname &lt;string&gt;</b>: logdatei &lt;string&gt;
+(im Pfad &rsquo;<b>/var/log</b>&rsquo;) wird verwendet
+anstatt &rsquo;<b>autofax.log</b>&rsquo; <b><br>
+-zvz, --zufaxenvz &lt;pfad&gt;</b>: faxt die Dateien aus
+&lt;pfad&gt; anstatt
+&rsquo;<b>/var/autofax/zufaxen</b>&rsquo; <b><br>
+-wvz, --wartevz &lt;pfad&gt;</b>: Dateien warten in
+&lt;pfad&gt; anstatt
+&rsquo;<b>/var/autofax/warteauffax</b>&rsquo; <b><br>
+-nvz, --nichtgefaxtvz &lt;pfad&gt;</b>: Gescheiterte Faxe
+werden hier gesammelt anstatt in
+&rsquo;<b>/var/autofax/nichtgefaxt</b>&rsquo; <b><br>
+-evz, --empfvz &lt;pfad&gt;</b>: Empfangsverzeichnis fuer
+Faxempfang &rsquo;<b>/var/autofax/empfvz</b>&rsquo; <b><br>
+-cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
+soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
+nicht), anstatt &rsquo;<b>2</b>&rsquo; <b><br>
+-capi, --obcapi</b>: Capisuite verwenden <b>oder nicht <br>
+-hyla, --obhyla</b>: Hylafax verwenden <b>oder nicht <br>
+-cz, --capizuerst</b>: versuche faxe zuerst ueber Capisuite
+wegzuschicken <b>oder nicht <br>
+-hz, --hylazuerst</b>: versuche faxe zuerst ueber hylafax
+wegzuschicken <b>oder nicht <br>
+-mod, --hmodem &lt;string&gt;</b>: Fuer Hylafax verwendetes
+Modem, anstatt &rsquo;&rsquo; <b><br>
+-mc, --maxcapiv &lt;zahl&gt;</b>: nach &lt;zahl&gt;
+Versuchen Capisuite wird Hylafax versucht, anstatt nach
 &rsquo;<b>3</b>&rsquo; <b><br>
--mh, --maxhylatries &lt;zahl&gt;</b>: try Capisuite after
-&lt;no&gt; tries of Hylafax instead of
+-mh, --maxhylav &lt;zahl&gt;</b>: nach &lt;zahl&gt;
+Versuchen Hylafax wird Capisuite versucht, anstatt nach
 &rsquo;<b>3</b>&rsquo; <b><br>
--cuser, --cuser &lt;string&gt;</b>: takes the linux user
-&lt;string&gt; for capisuite and/or samba instead of
+-cuser, --cuser &lt;string&gt;</b>: verwendet fuer Capisuite
+und/oder Samba den Linux-Benutzer &lt;string&gt; anstatt
 &rsquo;&rsquo; <b><br>
--crct, --cringcount &lt;zahl&gt;</b>: No. of bell rings
-until Capisuite accepts the call, instead of
+-ckzl, --cklingelzahl &lt;zahl&gt;</b>: Zahl der
+Klingeltoene, bis Capisuite den Anruf annimmt, anstatt
 &rsquo;<b>1</b>&rsquo; <b><br>
--hrct, --hringcount &lt;zahl&gt;</b>: No. of bell rings
-until hylafaxs accepts the call, instead of
+-hkzl, --hklingelzahl &lt;zahl&gt;</b>: Zahl der
+Klingeltoene, bis Hylafax den Anruf annimmt, anstatt
 &rsquo;<b>2</b>&rsquo; <b><br>
--hmd, --hmaxdials &lt;zahl&gt;</b>: No of dialing retries in
-hylafax, instead of &rsquo;<b>11</b>&rsquo; <b><br>
--it, --immediatelytarget</b>: copy faxes into target
-directory irrespective of faxing success <b>or not <br>
--ocri, --ocri</b>: Text from received faxes will be filtered
-<b>or not <br>
--ocro, --ocro</b>: Text from sent pictures will be filtered
-<b>or not <br>
--tfs, --tofaxstr &lt;string&gt;</b>: the fax number will be
-expected after &lt;string&gt; instead of &rsquo;<b>to
-fax</b>&rsquo; <b><br>
--tcfs, --tocfaxstr &lt;string&gt;</b>: fax no.for fax with
-preference to capisuite is expected after &lt;string&gt;
-instead of &rsquo;<b>to cfax</b>&rsquo; <b><br>
--thfs, --tohfaxstr &lt;string&gt;</b>: fax no.for fax with
-preference to hylafax is expected after &lt;string&gt;
-instead of &rsquo;<b>to hfax</b>&rsquo; <b><br>
--ts, --tostr &lt;string&gt;</b>: name of addressee is
-expected after &lt;string&gt; instead of &rsquo; <b>to</b>
+-hmw, --hmaxwahlvers &lt;zahl&gt;</b>: Zahl der Wahlversuche
+in Hylafax, anstatt &rsquo;<b>11</b>&rsquo; <b><br>
+-gz, --gleichziel</b>: Faxe werden auch ohne Faxerfolg ins
+Zielverzeichnis kopiert <b>oder nicht <br>
+-ocre, --ocre</b>: Text aus empfangenen Faxen wird ermittelt
+<b>oder nicht <br>
+-ocra, --ocra</b>: Text aus gesandten Bildern wird ermittelt
+<b>oder nicht <br>
+-afs, --anfaxstr &lt;string&gt;</b>: faxnr wird hinter
+&lt;string&gt; erwartet statt hinter &rsquo;<b>an
+Fax</b>&rsquo; <b><br>
+-acfs, --ancfaxstr &lt;string&gt;</b>: faxnr fuer primaer
+Capisuite wird hinter &lt;string&gt; erwartet statt hinter
+&rsquo;<b>an cFax</b>&rsquo; <b><br>
+-ahfs, --anhfaxstr &lt;string&gt;</b>: faxnr fuer primaer
+hylafax wird hinter &lt;string&gt; erwartet statt hinter
+&rsquo;<b>an hFax</b>&rsquo; <b><br>
+-as, --anstr &lt;string&gt;</b>: Adressatenname wird hinter
+&lt;string&gt; erwartet statt hinter &rsquo; <b>an</b>
 &rsquo; <b><br>
--ands, --andstr &lt;string&gt;</b>: separating string
-&lt;string&gt; for multiple addressees/tel&rsquo;numbers,
-instead of &rsquo;<b>and</b>&rsquo; <b><br>
--host, --host &lt;string&gt;</b>: takes the database on host
-&lt;string&gt; instead of &rsquo;<b>localhost</b>&rsquo;
-<b><br>
--muser, --muser &lt;string&gt;</b>: takes the user
-&lt;string&gt; for MySQL/MariaDB instead of
+-us, --undstr &lt;string&gt;</b>: Trennstring &lt;string&gt;
+fuer mehrere Adressaten/Telefonnummern statt
+&rsquo;<b>und</b>&rsquo; <b><br>
+-host, --host &lt;string&gt;</b>: verwendet die Datenbank
+auf Host &lt;string&gt; anstatt auf
+&rsquo;<b>localhost</b>&rsquo; <b><br>
+-muser, --muser &lt;string&gt;</b>: verwendet fuer
+MySQL/MariaDB den Benutzer &lt;string&gt; anstatt
 &rsquo;<b>user</b>&rsquo; <b><br>
--mpwd, --mpwd &lt;string&gt;</b>: takes the password
-&lt;string&gt; for MySQL/MariaDB <b><br>
--db, --database &lt;string&gt;</b>: uses the database
-&lt;string&gt; instead of &rsquo;<b>autofax</b>&rsquo;</p>
+-mpwd, --mpwd &lt;string&gt;</b>: verwendet fuer
+MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
+-db, --datenbank &lt;string&gt;</b>: verwendet die Datenbank
+&lt;string&gt; anstatt &rsquo;<b>autofax</b>&rsquo;</p>
 
 <h2>FUNCTIONALITY
-<a name="FUNCTIONALITY_E"></a>
+<a name="FUNCTIONALITY_D"></a>
 </h2>
 
 
@@ -620,7 +628,7 @@ being written, if necessary.</p></td></tr>
 </table>
 
 <h2>PRECONDITIONS
-<a name="PRECONDITIONS_E"></a>
+<a name="PRECONDITIONS_D"></a>
 </h2>
 
 
@@ -643,7 +651,7 @@ the case per default in the mentioned linux
 distributions.</p>
 
 <h2>AUTOMATICALLY INSTALLED SOFTWARE PACKAGES
-<a name="AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_E"></a>
+<a name="AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_D"></a>
 </h2>
 
 
@@ -755,7 +763,7 @@ keep an older version of one, You may not install autofax or
 use the respective program parts.</p>
 
 <h2>IMPLICATIONS
-<a name="IMPLICATIONS_E"></a>
+<a name="IMPLICATIONS_D"></a>
 </h2>
 
 
@@ -970,7 +978,7 @@ a pdf-File again.</p></td></tr>
 </table>
 
 <h2>UNINSTALLING
-<a name="UNINSTALLING_E"></a>
+<a name="UNINSTALLING_D"></a>
 </h2>
 
 
@@ -991,7 +999,7 @@ Error messages originate mostly in efforts to delete a
 program already missing and can then be ignored.</p>
 
 <h2>ERRORS
-<a name="ERRORS_E"></a>
+<a name="ERRORS_D"></a>
 </h2>
 
 
@@ -1002,7 +1010,7 @@ Please report as well, if different hard- or software yields
 a requirement for a program modification.</p>
 
 <h2>LIABILITY
-<a name="LIABILITY_E"></a>
+<a name="LIABILITY_D"></a>
 </h2>
 
 
@@ -1013,7 +1021,7 @@ Nevertheless the author cannot be liable for any damage
 caused by the program.</p>
 
 <h2>AUTHOR
-<a name="AUTHOR_E"></a>
+<a name="AUTHOR_D"></a>
 </h2>
 
 

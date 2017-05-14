@@ -24,14 +24,14 @@
 # "make anzeig" => zeige Informationen zu Programm, Quelldateien und Compiler an
 # "make install => installiere die erstellte Datei in den kuerzesten Pfad aus $PATH, der '/usr/' enthaelt,
 #                  installiert man-Seiten aus man_de und man_en, ferner *.html-Dateien und eine README.md-Datei fuer den git-Server
-# "make stumm und make installstum: zum Aufruf aus vim"
+# "make stumm und make stumminst: zum Aufruf aus vim"
 # "make git => aktualisiert die Datei auf dem zugeordneten git-Server
 
 ICH := $(firstword $(MAKEFILE_LIST))
 SRCS = $(wildcard *.cpp)
 OBJ = $(SRCS:.cpp=.o)
 CFLAGSr=-c -Wall `mysql_config --cflags`
-LDFLAGSr=`mysql_config --libs` -ltiff
+LDFLAGSr=`mysql_config --libs` -ltiff 
 ifdef mitpg
  CFLAGS=$(CFLAGSr) -I/usr/include/pgsql -Dmitpostgres
  LDFLAGS=$(LDFLAGSr) -lpq
@@ -45,12 +45,12 @@ BFA:=2>>fehler.txt
 ifdef ausvi
  BA:=/dev/null
 endif
-PROGRAM=$(shell basename $(CURDIR))
+PROGRAM::=$(shell basename $(CURDIR))
 PROGGROSS=`echo $(PROGRAM) | tr a-z A-Z`
 #EXPFAD=/usr/local/sbin
-EXPFAD := $(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | head -n 1)
-EXPFAD := $(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | awk '{ print length, $$0 }' | sort -n -s | cut -d" " -f2- | head -n1)
-EXEC=$(PROGRAM)
+EXPFAD::=$(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | head -n 1)
+EXPFAD::=$(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | awk '{ print length, $$0 }' | sort -n -s | cut -d" " -f2- | head -n1)
+EXEC::=$(PROGRAM)
 INSTEXEC=$(EXPFAD)/$(EXEC)
 
 CCInst=gcc6-c++
@@ -97,22 +97,29 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
 # POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d 2>/dev/null
 
-MANP=/usr/share/man
-MANPD=$(MANP)/de/man1/$(PROGRAM).1.gz
-MANPE=$(MANP)/man1/$(PROGRAM).1.gz
-MANPDH=$(CURDIR)/man_de.html
-MANPEH=$(CURDIR)/man_en.html
 rot:="\033[1;31m"
 gruen:="\033[0;32m"
 #blau="\033[0;34;1;47m"
 blau:="\033[1;34m"
 reset:="\033[0m"
 
+MANV::=/usr/share/man
+INSTenMAN::=$(MANV)/man1/$(PROGRAM).1.gz
+_MAN::=$(subst man_en,,$(wildcard man_??))
+FLANGS::=$(patsubst man_%,%,$(_MAN))
+INST_MAN::=$(patsubst man_%,$(MANV)/%/man1/$(PROGRAM).1.gz,$(_MAN))
+$(foreach lang,$(FLANGS), $(eval INST$(lang)MAN=$(filter $(MANV)/$(lang)/%,$(INST_MAN))))
+MANS::=$(wildcard man_en)
+MANS+=$(_MAN)
+HTMLS::=$(patsubst %,%.html,$(MANS))
+GZS::=$(patsubst %,%.gz,$(MANS))
+
+
 .PHONY: alles
 alles: anzeig weiter
 
 .PHONY: glei
-glei: anzeig $(EXEC) README.md fertig
+glei: anzeig $(EXEC) $(GZS) 
 
 .PHONY: opt
 opt: CFLAGS += -O
@@ -149,7 +156,7 @@ new: neu
 neu: anzeig hierclean weiter
 
 .PHONY: weiter
-weiter: compiler $(EXEC) README.md fertig
+weiter: compiler $(EXEC) $(GZS) 
 
 # davor:
 # git clone ssh://git@github.com/<user>/<reponame>.git
@@ -159,7 +166,7 @@ weiter: compiler $(EXEC) README.md fertig
 # ssh-add ~/.ssh/id_rsa_git
 # xclip -sel clip < ~/.ssh/id_rsa_git.pub
 # auf http://github.com -> view profile and more -> settings -> SSH and GPG keys -> New SSH key <Titel> <key> einfuegen
-git:
+git: README.md
 #	@git config --global user.name "Gerald Schade"
 #	@git config --global user.email "gerald.schade@gmx.de"
 	-@cp -au Makefile Makefile.roh
@@ -173,27 +180,30 @@ git:
 anzeig:
 # 'echo -e' geht nicht z.B. in ubuntu
 	@printf " %bGNU Make%b, Zieldatei: %b%s%b, vorher:                                      \n" $(gruen) $(reset) $(rot) "$(EXEC)" $(reset) >$(BA)
-	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC) $(KF))" $(reset) >$(BA)
+	@printf " '%b%s%b'\n" $(blau) "$$(ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC) $(KF))" $(reset) >$(BA)
 	@printf " Quelldateien: %b%s%b\n" $(blau) "$(SRCS)" $(reset) >$(BA)
 	@printf " Compiler: %b%s%b, installiert als: %b%s%b; Zielpfad fuer '%bmake install%b': %b%s%b\n"\
 	  $(blau) "$(CCName)" $(reset) $(blau) "$(CCInst)" $(reset) $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset) >$(BA)
-	-@$(shell rm -f fehler.txt $(KF))
+	-@rm -f fehler.txt $(KF)
 
 $(EXEC): $(OBJ)
 	-@test -f versdt || echo 0.1>versdt; if test -f entwickeln; then awk "BEGIN {print `cat versdt`+0.00001}">versdt;\
 	else eval "printf \" Datei 'entwickeln' fehlt, lasse die Version gleich\n\" >$(BA)"; fi;
 	-@printf " verlinke %s zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset) >$(BA)
 	-@df --output=ipcent / |tail -n1|grep - && sudo pkill postdrop; true
-ifneq ("$(wildcard $(CURDIR)/man_en)","")
+	-@man>$(KR);[ $$? -gt 1 ]&&{ ./configure inst _ man verbose;}||true;
+ifneq ("$(wildcard man_en)","")
 	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat versdt)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_en)
 endif
-ifneq ("$(wildcard $(CURDIR)/man_de)","")
+ifneq ("$(wildcard man_de)","")
 	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat versdt)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" man_de)
 endif
 	-@printf " (Version: %b%s%s%b\n " $(blau) "$$(cat versdt)" ")" $(reset) >$(BA)
 	$(CC) $^ -o $@ $(LDFLAGS)
 	-@ls .d/*.Td >$(KR) &&{ for datei in .d/*.Td; do mv -f $${datei} $${datei%.Td}.d; done;};true
 	$(shell touch *.o $${EXEC})
+	-@printf " Fertig mit/Finished with %b$(ICH)%b, Target: %b$@%b:, nachher/afterwords:\n" $(blau) $(reset) $(blau) $(reset)
+	-@printf " '%b%s%b'\n" $(blau) "$$(ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC))" $(reset)
 
 %.o : %.cpp
 %.o : %.cpp $(DEPDIR)/%.d
@@ -211,7 +221,7 @@ $(DEPDIR)/%.d: ;
 
 .PHONY: compiler
 compiler:
-	@printf " Untersuche Compiler ...\r" >$(BA)
+	@printf " Untersuche/Examining Compiler ...\r" >$(BA)
 #	@printf " CCName: %b%s%b                  \n" $(blau) "${CCName}" $(reset)
 #	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
 ifeq ('$(SPR)','')
@@ -243,116 +253,90 @@ endif
 	done; true;
 # { $(UDPR)$(LT) $(KF);$(call i1unind,$(LT))}
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
-	@printf "                         \r" >$(BA)
+	@printf "                                  \r" >$(BA)
 
-ifneq ("$(wildcard $(CURDIR)/man_de)","")
-ifneq ("$(wildcard $(CURDIR)/man_en)","")
-README.md: $(MANPEH) $(MANPDH) 
-	-@rm -f README.md
-	-@echo "<h3>Manual: 1) <a href=\"#english_E\">english</a>, 2) <a href=\"#deutsch_D\">deutsch (unten anschließend)</a></h3>" > README.md
-	-@sed -n '20,$$p' man_en.html >> README.md 
-	-@sed -n '20,$$p' man_de.html >> README.md 
-	@printf " %b%s%b neu aus %b%s%b und %b%s%b erstellt\n" $(blau) "README.md" $(reset) $(blau) "man_en" $(reset) $(blau) "man_de" $(reset)
-
-else
-README.md: $(MANPDH)
-	-@rm -f README.md
-	-@sed -n '20,$$p' man_de.html >> README.md 
-	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "README.md" $(reset) $(blau) "man_de" $(reset)
-install: $(INSTEXEC) $(MANPD)
-endif
-else
-ifneq ("$(wildcard $(CURDIR)/man_en)","")
-README.md: $(MANPEH)
-	-@rm -f README.md
-	-@sed -n '20,$$p' man_en.html >> README.md 
-	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "README.md" $(reset) $(blau) "man_en" $(reset)
-install: $(INSTEXEC) $(MANPE) 
-else
-README.md: 
-install: $(INSTEXEC)
-endif
-endif
-
+.PHONY: stumminst
 .PHONY: stumm
-stumm: BA:=/dev/null
-stumm: BFA:=
-# die folgenden Farbenzuweisungen wirken nicht
-stumm: rot:=""
-stumm: blau:=""
-stumm: gruen:=""
-stumm: reset:=""
+stumm stumminst: BA:=/dev/null
+stumm stumminst: BFA:=
+stumm stumminst: rot:=""
+stumm stumminst: blau:=""
+stumm stumminst: gruen:=""
+stumm stumminst: reset:=""
+
 stumm: alles
 
-.PHONY: installstumm
-installstumm: stumm install
-
-.PHONY: install
-install: $(INSTEXEC) $(MANPE) $(MANPD) 
+stumminst: install
 
 $(INSTEXEC): $(EXEC)
 	@printf " Copying program/ Kopiere Programmdatei: %b%s%b -> %b%s%b\n" $(blau) "$(EXEC)" $(reset) $(blau) "$(INSTEXEC)" $(reset) >$(BA)
 	-@sudo pkill $(EXEC) $(KF); sudo pkill -9 $(EXEC) $(KF); sudo cp -p "$(EXEC)" "$(INSTEXEC)"
 
-$(CURDIR)/man_en: $(EXEC)
-	-@TMP=tmp_opt_e;./$(EXEC) -1lg e -sh|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
-	nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
-	von=".SH OPTIONS"; bis=".SH FUNCTIONALITY"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" man_en
-$(CURDIR)/man_de: $(EXEC)
-	-@TMP=tmp_opt_d;./$(EXEC) -1lg d -sh|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
-	nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
-	von=".SH OPTIONEN"; bis=".SH FUNKTIONSWEISE"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" man_de
+man_de.html: LGL=deutsch
+man_de.gz man_de.html: FKT=FUNKTIONSWEISE
+man_de.html: AWI=AUSWIRKUNGEN
+man_de.gz: OPN=OPTIONEN
 
-ifneq ("$(wildcard $(CURDIR)/man_en)","")
-$(MANPE): $(CURDIR)/man_en
-	@printf " "
-	-sudo mkdir -p $(MANP)/man1
-	@printf " "
-	-sudo gzip -c $(CURDIR)/man_en >$(PROGRAM).1.gz
-	@printf " "
-	-sudo mv $(PROGRAM).1.gz $(MANPE)
-$(MANPEH): $(CURDIR)/man_en 
-	-@for p in $(pgroff); do { ! which groff>$(KR) || ! $(SPR) $$p>$(KR);}&&{ ./configure inst _ $$p verbose;}; done; true;
-	-@rm -f man_en.html
-	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNCTIONALITY/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH IMPLICATIONS/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_en | groff -mandoc -Thtml -W break| sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat versdt)) - english<a name=\"english\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_E/g" > man_en.html
-	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "man_en.html" $(reset) $(blau) "man_en" $(reset)
-endif
+man_en.html: LGL=english
+man_en.gz man_en.html: FKT=FUNCTIONALITY
+man_en.html: AWI=IMPLICATIONS
+man_en.gz: OPN=OPTIONS
 
-ifneq ("$(wildcard $(CURDIR)/man_de)","")
-$(MANPD): $(CURDIR)/man_de 
-	@printf " "
-	-sudo mkdir -p $(MANP)/de/man1
-	@printf " "
-	-sudo gzip -c $(CURDIR)/man_de >$(PROGRAM).1.gz
-	@printf " "
-	-sudo mv $(PROGRAM).1.gz $(MANPD)
-$(MANPDH): $(CURDIR)/man_de 
-	-@for p in $(pgroff); do { ! which groff>$(KR) || ! $(SPR) $$p>$(KR);}&&{ ./configure inst _ $$p verbose;}; done; true;
-	-@rm -f man_de.html
-	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH FUNKTIONSWEISE/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH AUSWIRKUNGEN/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' man_de | groff -mandoc -Thtml -W break| sed "s/&amp;/\&/g;s@<h1 align=\"center\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat versdt)) - deutsch<a name=\"deutsch\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > man_de.html
-#	-@rm -f README.md
-	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "man_de.html" $(reset) $(blau) "man_de" $(reset)
+.PHONY: install
+install: $(INSTEXEC) $(INSTenMAN) $(INST_MAN) 
+
+README.md: $(HTMLS)
+	-@rm -f README.md
+ifeq ("$(wildcard man_de)$(wildcard man_en)","man_deman_en")
+	-@echo "<h3>Manual: 1) <a href=\"#english_E\">english</a>, 2) <a href=\"#deutsch_D\">deutsch (unten anschließend)</a></h3>" > README.md
 endif
+	@for d in $(MANS); do sed -n '20,$$p' $$d.html >> $@; [ -z $$A ]||A=$$A", ";A=$$A$(blau)$$d$(reset); done; \
+	printf " %b$@%b neu erstellt aus $$A\n" $(blau) $(reset)
+
+define priv_man_umw
+	-@printf " aktualisiere/updating %b$(1)%b\n" $(blau) $(reset)
+	-@L=$(echo $(1)|head -c1);TMP=tmp_opt_$$L;./$(EXEC) -1lg $$L -sh|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
+	nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
+	von=".SH $(OPN)"; bis=".SH $(FKT)"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" $(1);
+endef
+
+define priv_html
+	-@printf " erstelle/generating:%b$(1)%b\r" $(blau) $(reset)
+	-@groff -mandoc -Thtml -v >$(KR);EXC=$$?; \
+	for p in $(pgroff); do { [ $$EXC -gt 1 ]|| ! which groff>$(KR)|| ! $(SPR) $$p>$(KR);}&&{ ./configure inst _ $$p verbose;}; done; true;
+	-@rm -f $(1).html
+	-@sed -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH $(FKT)/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH $(AWI)/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' $(1) | groff -mandoc -Thtml -W break| sed "s/&amp;/\&/g;s@<h1 align=\"right\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat versdt)) - $(LGL)<a name=\"$(LGL)\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > $(1).html
+	@printf " %b%s%b neu aus %b%s%b erstellt\n" $(blau) "$(1).html" $(reset) $(blau) "$(1)" $(reset)
+endef
+
+define manges
+$(1).html: $(EXEC) $(1)
+	$$(call priv_html, $(1))
+$(1).gz: $(EXEC) $(1) 
+	$$(call priv_man_umw,$(1))
+	@gzip -c $(1) >$$@
+$(INST$(patsubst man_%,%,$(1))MAN): $(1).gz
+	@sudo mkdir -p $$(dir $$@)
+	@sudo cp -a $(1).gz $$@
+endef
+$(foreach prog,$(wildcard man_??),$(eval $(call manges,$(prog))))
 
 .PHONY: fertig
 fertig:
-	@printf " Fertig mit %s, nachher:\n" "$(ICH)"
-	@printf " '%b%s%b'\n" $(blau) "$(shell ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC))" $(reset)
 
 .PHONY: clean
 clean: hierclean distclean
 
 .PHONY: hierclean
 hierclean: 
-	@printf " Bereinige ...\r" >$(BA)
-	@rm -f $(EXEC) $(OBJ) .d/* $(KF)
-	@sudo rm -f $(MANPEH) $(MANPDH) $(KF)
-	@printf " %b%s,%s,%s,%s%b geloescht!\n" $(blau) "$(EXEC)" "$(OBJ)" "$(MANPEH)" "$(MANPDH)" $(reset)
+	@printf " Bereinige/Cleaning ...\r" >$(BA)
+	@ZUL="$(EXEC) $(OBJ) .d/* $(HTMLS)";GEL=$$(ls -1 $$ZUL $(KF)|tr '\n' ' '); rm -f $$ZUL $(KF); \
+	[ -z "$$(echo $$GEL|sed 's/ *$$//')" ]&&GEL="Hier/here: Nichts/nothing";printf " %b$$GEL%b geloescht/deleted!\n" $(blau) $(reset); 
 
 .PHONY: distclean
 distclean:
-	-@$(shell sudo rm -f $(INSTEXEC) $(MANPD) $(MANPE) $(KF))
-	-@printf "%b%s,%s,%s,%b geloescht!\n" $(blau) "$(INSTEXEC)" "$(MANPD)" "$(MANPE)" $(reset)
+	@ZUL="$(INSTEXEC) $(INSTenMAN) $(INST_MAN)";GEL=$$(sudo ls -1 $$ZUL $(KF)|tr '\n' ' '); sudo rm -f $$ZUL $(KF); \
+	[ -z "$$(echo $$GEL|sed 's/ *$$//')" ]&&GEL="System: Nichts/nothing";printf " %b$$GEL%b geloescht/deleted!\n" $(blau) $(reset); 
 
 .PHONY: confclean
 confclean:
