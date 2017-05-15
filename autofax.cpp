@@ -8047,7 +8047,7 @@ int paramcl::pruefcapi()
 						if (!fcpcida)
 							if (systemrueck("sudo modprobe -v fcpci 2>/dev/null",obverb-1,oblog)) {
 								if (ivers) {
-									::Log(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+blau+linstp->ersetzeprog("kernel-source-$(uname -r)")+rots+
+									::Log(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+blau+linstp->ersetzeprog("kernel-source")+rots+
 									Tx[T_eine_neuere_Version_als_die_des_aktuellen_Kernels_installiert_worden_sein_dann_bitte_erneutes_Systemupdate]+schwarz,1,1);
 									erg=1;
 									goto schluss;
@@ -8059,7 +8059,7 @@ int paramcl::pruefcapi()
 								const string fcpciko=string("/lib/modules/")+unbuf.release+"/kernel/extras/fcpci.ko";
 								if (lstat(fcpciko.c_str(), &entryfc)) {
 									::Log(Tx[T_Datei]+blaus+fcpciko+schwarz+Tx[T_nichtgefFcpciMfdKinstallierwerden],obverb,1);
-									linstp->doinst("kernel-source-$(uname -r)",1+obverb,oblog);
+									linstp->doinst("kernel-source",1+obverb,oblog);
 									/*              
 																	const string qvz="/usr/src";
 																	const string versi="fcpci-3.10.0";
