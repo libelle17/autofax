@@ -7099,12 +7099,12 @@ void hfaxsetup(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
     // mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
     Log(blaus+Tx[T_Fertig_mit]+schwarz+faxsu,1,oblog);
     //    systemrueck("sudo systemctl daemon-reload",0,1);
-
 #endif
   } //   if (!lstat(faxsu, &entrybuf)) KLA
   pmp->setzfaxgtpfad();
 } // hfaxsetup
 
+// aufgerufen in: hservice_faxq_hfaxd und hfaxsetup
 void paramcl::setzfaxgtpfad()
 {
   struct stat entryfaxgt={0};
@@ -7116,13 +7116,14 @@ void paramcl::setzfaxgtpfad()
 		if (faxgtpfad.empty() || lstat(faxgtpfad.c_str(),&entryfaxgt)) {
 			svec rueckf;
 			faxgtpfad.clear();
-			systemrueck("sudo find /usr/lib/fax /usr/sbin /usr/bin /root/bin /sbin /usr/local/sbin /usr/local/bin -perm /111 -name faxgetty",obverb-1,oblog,&rueckf);
+			systemrueck("sudo find /usr/lib/fax /usr/sbin /usr/bin /root/bin /sbin /usr/local/sbin /usr/local/bin -perm /111 -name faxgetty",
+			            obverb-1,oblog,&rueckf);
 			if (rueckf.size()) 
 				faxgtpfad=rueckf[0];
-		}
-	}
+		} // 		if (faxgtpfad.empty() || lstat(faxgtpfad.c_str(),&entryfaxgt))
+	} // 	if (lstat(faxgtpfad.c_str(),&entryfaxgt))
   // violett<<"faxgtpfad 4: "<<faxgtpfad<<schwarz<<endl;
-}
+} // void paramcl::setzfaxgtpfad()
 
 // wird aufgerufen in: pruefhyla
 void hconfig(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
