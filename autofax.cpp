@@ -375,6 +375,7 @@ enum T_
   T_zielname,
   T_PIDausName,
   T_pruefhyla,
+	T_uebertif,
   T_pruefrules,
   T_pruefblack,
   T_pruefmodcron,
@@ -1375,6 +1376,8 @@ char const *autofax_T[T_MAX+1][Smax]={
   {"PIDAausName()","PIDfromName()"},
   // T_pruefhyla
   {"pruefhyla()","checkhyla()"},
+	// T_uebertif
+	{"uebertif()","overtif()"},
   // T_pruefrules
   {"pruefrules()","checkrules()"},
   // T_pruefblack
@@ -6704,9 +6707,18 @@ void paramcl::empfcapi(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*
 				pruefsfftobmp();
 				sffgeprueft=1;
 			} // 			if (!sffgeprueft)
-			svec sfferg;
-			cmd="sfftobmp -f -d -t "+sffdatei+" -o \""+tifpfad+"\"";
-			erg=systemrueck(cmd,obverb,oblog,0,0,wahr,"",0,1);
+			cmd="sfftobmp -f -d -t "+sffdatei+" -o \""+tifpfad+"\" 2>&1";
+			for(int iru=0;iru<2;iru++) {
+				svec srueck;
+				obverb=2;
+				erg=systemrueck(cmd,obverb,oblog,&srueck,0,wahr,"",0,1);
+				if (srueck.size())
+				// wenn Fehlermeldung "no version information available, dann source-code-Version von libtiff5 nochmal installieren
+					if (srueck[0].find("no version information")==string::npos)
+						break;
+				uebertif();
+			} // 			for(int iru=0;iru<2;iru++)
+			obverb=0;
 			if (!erg) {
 				attrangleich(tifpfad,empfvz,obverb,oblog);
 				// bereits hier, da weder convert noch soffice noch ocrmypdf eine *.sff-Datei lesen kann, convert auch keine tiff-Datei
@@ -7345,6 +7357,24 @@ KLA
 
 KLZ // void hservice_faxgetty()
 */
+// aufgerufen in: pruefhyla, empfcapi
+void paramcl::uebertif()
+{
+	Log(violetts+Tx[T_uebertif]+schwarz);
+	linstp->doggfinst("cmake",obverb,oblog); 
+	const string proj="tiff_copy";
+	holvomnetz(proj);
+	kompilbase(proj,s_gz);
+	const string bef="sh -c 'cd \""+instvz+vtz+proj+"\""
+		"&& rm -f CMakeCache.txt"
+		"&& sed -i.bak s\"/uint16 Param;/uint32 Param;/\" libtiff/tif_fax3.h"
+		"&& cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . "
+		"&& make"
+		"&& sudo make install"
+		";true'";
+	systemrueck(bef,obverb,oblog);
+	anfgg(unindt,"cd \""+instvz+vtz+proj+"\" && cat install_manifest.txt|sudo xargs rm; cd \""+instvz+"\"",bef,obverb,oblog);
+} // void paramcl::uebertif()
 
 // wird aufgerufen in main
 int paramcl::pruefhyla()
@@ -7418,22 +7448,7 @@ int paramcl::pruefhyla()
 		 struct stat lnachw={0}, ltiffh={0};
 		 const string nachw=lsys.getlib64()+"/sclibtiff";
 		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh)) {
-		  linstp->doggfinst("cmake",obverb,oblog); 
-			const string proj="tiff_copy";
-		  holvomnetz(proj);
-			kompilbase(proj,s_gz);
-			const string bef="sh -c 'cd \""+instvz+vtz+proj+"\""
-				"&& rm -f CMakeCache.txt"
-				"&& sed -i.bak s\"/uint16 Param;/uint32 Param;/\" libtiff/tif_fax3.h"
-				"&& cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . "
-				"&& make"
-				"&& sudo make install"
-//				"&&{ grep -q \"cd \\\""+instvz+vtz+proj+"\\\"\" \""+unindt+"\""
-//				"|| printf \"cd \\\""+instvz+vtz+proj+"\\\" && cat install_manifest.txt|sudo xargs rm; "
-//				  "cd \\\""+instvz+"\\\"\\nsudo rm -f \\\""+nachw+"\\\"\\n\" >> \""+unindt+"\";} "
-        ";true'";
-			systemrueck(bef,obverb,oblog);
-			anfgg(unindt,"cd \""+instvz+vtz+proj+"\" && cat install_manifest.txt|sudo xargs rm; cd \""+instvz+"\"",bef,obverb,oblog);
+		  uebertif();
 			if (!touch(nachw,obverb,oblog))
 				anfgg(unindt,"sudo rm -f \""+nachw+"\"","",obverb,oblog);
 		 } // 		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh))
@@ -7957,7 +7972,7 @@ void paramcl::capisv()
   if (!scapis) scapis=new servc("","capisuite");
 } // void paramcl::capisv(obverb,oblog)
 
-// in empfarch() und pruefcapi()
+// in empfcapi() und pruefcapi()
 void paramcl::pruefsfftobmp()
 {
 	Log(violetts+Tx[T_pruefsfftobmp]+schwarz);

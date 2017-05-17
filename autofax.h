@@ -362,6 +362,7 @@ class paramcl // Programmparameter
 		void unpaperfuercron(const string& ocrprog);
 		void empfhyla(const string& ganz,uchar indb=1,uchar mitversch=1);
 		void empfcapi(const string& stamm,uchar indb=1,uchar mitversch=1);
+		void uebertif();
 	public:
 		int Log(const string& text,const bool oberr=0,const short klobverb=0);
     paramcl(int argc,char** argv);
