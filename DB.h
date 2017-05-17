@@ -9,10 +9,10 @@
 // -I"C:\Programme\MySQL\Connector C 6.0.2\include"
 #ifndef DB_H_DRIN
 #define DB_H_DRIN
-#include <vector>
-#include <string>
-#include <iostream> // fuer cout ggf.
-#include <sstream>
+// #include <vector>
+// #include <string>
+// #include <iostream> // fuer cout ggf.
+#include <sstream> // stringstream, basic_stringstream
 // Project->Properties->C/C++ ->General->Additional Include Directories->"$(ProjectDir)\..\..\..\MySQL Connector C 6.0.2\include"
 #include <mysql.h> 
 // sudo dnf install postgresql-devel
@@ -28,7 +28,7 @@ typedef unsigned char	uchar;	/* Short for unsigned char */
 // #include <my_global.h> 
 using namespace std;
 #ifdef linux
-#include <string.h>
+// #include <string.h>
 #endif
 // Project->Properties->Linker->general->(mitte)->additional library directories:
 // C:\Programme\MySQL\Connector C 6.0.2\lib\opt
@@ -86,13 +86,13 @@ enum Txdb_
 };
 
 // extern class Txdbcl Txd;
-extern const char *DB_T[T_dbMAX+1][Smax];
+extern const char *DB_T[T_dbMAX+1][SprachZahl];
 extern class TxB Txd;
 /*
 class Txdbcl: public TxB
 {
   public:
-    static const char *TextC[][Smax];
+    static const char *TextC[][SprachZahl];
     Txdbcl();
 };
 */

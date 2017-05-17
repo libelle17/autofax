@@ -45,8 +45,8 @@ const string& instvz=
 const string& unindt=instvz+"/uninstallinv"; // # Name muss identisch sein mit Variabler UNF in install.sh
 const string nix;
 
-// const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
-const char *kons_T[T_konsMAX+1][Smax]=
+// const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
+const char *kons_T[T_konsMAX+1][SprachZahl]=
 {
   //TCtp Txkonscl::TextC=KLA
   // T_pfad,
@@ -253,7 +253,7 @@ const char *kons_T[T_konsMAX+1][Smax]=
 	// T_ohneabh
 	{" ohneabh: "," withoutdep: "},
   {"",""}
-}; // const char *Txkonscl::TextC[T_konsMAX+1][Smax]=
+}; // const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 
 const int sfeh[]={ T_Dienst_laeuft,T_Dienst_inexistent, T_Dienst_disabled, T_Dienstdateiname_nicht_ermittelbar, T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent, T_Exec_Dateiname_nicht_ermittelbar, T_Exec_Datei_fehlt, T_activating, T_Dienst_kann_gestartet_werden, T_Sonstiges};
 
@@ -838,6 +838,7 @@ return 0;
 //************************************
 }	 // int kuerzelogdatei(const char* logdatei,int obverb)
 
+// aufgerufen in Log, setzbemv, aschreib
 string* loeschefarbenaus(string *zwi)
 {
   loeschealleaus(zwi,schwarz);
@@ -1686,12 +1687,12 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
     vp=fertige;
 	} else {
 	  Sprache altSpr=TxBp->lgn;
-		for(int akts=0;akts<Smax;akts++) {
+		for(int akts=0;akts<SprachZahl;akts++) {
 			TxBp->lgn=(Sprache)akts;
 			bemst=(*TxBp)[Tind];
 			if (obfarbe) loeschefarbenaus(&bemst);
 			bemv<<bemst;
-		} //         for(int akts=0;akts<Smax;akts++)
+		} //         for(int akts=0;akts<SprachZahl;akts++)
 		TxBp->lgn=altSpr;
 		vp=&bemv;
 	} // if fertige else
@@ -1702,12 +1703,12 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
        gefunden=1;
      else {
        const string bv=schl[ind].bemerk.substr(2);
-       for(int aktsp=0;aktsp<Smax;aktsp++) {
+       for(int aktsp=0;aktsp<SprachZahl;aktsp++) {
          if (bv==(*vp)[aktsp]) {
            gefunden=(aktsp!=TxBp->lgn); // wenn aktuelle Sprache, nichts tun
            break;
          } // if (bv==bemv[aktsp]) 
-       } // for(int aktsp=0;aktsp<Smax;aktsp++) 
+       } // for(int aktsp=0;aktsp<SprachZahl;aktsp++) 
      } // (schl[ind].bemerk.empty) else
      if (gefunden) {
       schl[ind].bemerk="# "+(*vp)[TxBp->lgn];
@@ -2374,12 +2375,12 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
         }
 				if (langi) {
 					Sprache altSpr=TxBp->lgn;
-					for(int akts=0;akts<Smax;akts++) {
+					for(int akts=0;akts<SprachZahl;akts++) {
 						TxBp->lgn=(Sprache)akts;
 						if (!strcmp(acstr,(*TxBp)[langi])) {
 							argcvm->at(*akt).agef=1;
 						}
-					} //         for(int akts=0;akts<Smax;akts++)
+					} //         for(int akts=0;akts<SprachZahl;akts++)
 					TxBp->lgn=altSpr;
 					/*
 				KLZ else KLA
@@ -2403,12 +2404,12 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
         }
 				if (kurzi) {
 					Sprache altSpr=TxBp->lgn;
-					for(int akts=0;akts<Smax;akts++) {
+					for(int akts=0;akts<SprachZahl;akts++) {
 						TxBp->lgn=(Sprache)akts;
 						if (!strcmp(acstr,(*TxBp)[kurzi])) {
 							argcvm->at(*akt).agef=1;
 						}
-					} //         for(int akts=0;akts<Smax;akts++)
+					} //         for(int akts=0;akts<SprachZahl;akts++)
 					TxBp->lgn=altSpr;
 				/*
 				KLZ else KLA
@@ -3490,9 +3491,9 @@ void optioncl::setzebem(schlArr *cp,const char *pname)
 {
   if (cp && pname) {
     svec bems;
-    for(int akts=0;akts<Smax;akts++) bems<<machbemerkung((Sprache)akts,falsch);
+    for(int akts=0;akts<SprachZahl;akts++) bems<<machbemerkung((Sprache)akts,falsch);
     cp->setzbemv(pname,&Txk,0,0,&bems);
-  }
+  } //   if (cp && pname)
 } // void optioncl::setzebem(TxB *TxBp,schlArr *cp,const char *pname)
 
 // /*2*/optioncl::optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),wi(wi),zptr(zptr),art(art),cp(cp),pname(pname),obschreibp(obschreibp) { setzebem(cp,pname); }

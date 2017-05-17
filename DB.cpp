@@ -2,8 +2,8 @@
 #include "DB.h"
 #define caus cout // nur zum Debuggen
 
-//const char *Txdbcl::TextC[T_dbMAX+1][Smax]={
-const char *DB_T[T_dbMAX+1][Smax]={
+//const char *Txdbcl::TextC[T_dbMAX+1][SprachZahl]={
+const char *DB_T[T_dbMAX+1][SprachZahl]={
   // T_DB_wird_initialisiert
   {"DB wird initialisiert","DB is being initialized"},
   // T_Fehler_db

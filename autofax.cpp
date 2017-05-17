@@ -1,5 +1,6 @@
-// Aenderung in linux3
-// Namenskonvention: erste Praeferenz wurde darauf gelegt, dass mit der Editor-Suchfunktion moeglichst alle gleichen Bezeichner gefunden werden koennen, zweite Praeferenz darauf, dass deutsche und englische Namenbestandteile moeglichst gut gemischt werden
+// Namenskonvention: 
+// erste Praeferenz wurde darauf gelegt, dass mit der Editor-Suchfunktion moeglichst alle gleichen Bezeichner gefunden werden koennen, 
+// zweite Praeferenz darauf, dass deutsche und englische Namenbestandteile moeglichst gut gemischt werden
 #ifdef linux
 // #include <pgsql/libpq-fe.h> // PGconn
 #include <utime.h> // utime(
@@ -741,8 +742,8 @@ enum T_
 const string sprachstr=string("Language/Sprache/Lingue/Lingua [")+blau+'d'+schwarz+"eutsch,"+blau+'e'+schwarz+"nglisch]"+"";
 const char* sprachcstr=&sprachstr.front();
 
-// char const *Txautofaxcl::TextC[T_MAX+1][Smax]={
-char const *autofax_T[T_MAX+1][Smax]={
+// char const *Txautofaxcl::TextC[T_MAX+1][SprachZahl]={
+char const *autofax_T[T_MAX+1][SprachZahl]={
   // T_sprachstr
   {sprachcstr,sprachcstr},
   // T_j_af,
@@ -2117,7 +2118,7 @@ char const *autofax_T[T_MAX+1][Smax]={
 	{" veraltet sein. Wenn Sie Ihre Faxe OCR unterziehen wollen, dann fuehren Sie bitte einen Systemupdate durch mit ",
 	 " and could be obsolete. If You want to treat Your faxes with OCR, please update Your system with "},
   {"",""}
-}; // char const *Txautofaxcl::TextC[T_MAX+1][Smax]=
+}; // char const *Txautofaxcl::TextC[T_MAX+1][SprachZahl]=
 
 class TxB Tx((const char* const* const* const*)autofax_T);
 
@@ -2752,11 +2753,11 @@ void paramcl::pruefisdn()
   string bemst; 
   svec bemv;
 	Sprache altSpr=Tx.lgn;
-	for(int akts=0;akts<Smax;akts++) KLA
+	for(int akts=0;akts<SprachZahl;akts++) KLA
 		Tx.lgn=(Sprache)akts;
 		bemst=Tx[T_ob_ein_Modem_drinstak];
     bemv<<bemst;
-  KLZ //         for(int akts=0;akts<Smax;akts++)
+  KLZ //         for(int akts=0;akts<SprachZahl;akts++)
 	Tx.lgn=altSpr;
 	*/
 	cgconf.setzbemv("obfcard",&Tx,T_ob_eine_Fritzcard_drinstak);
@@ -4418,21 +4419,21 @@ void paramcl::pruefsamba()
 					if (k<4) {
 						abschnitt=Tx[ISambaName[k]];
 							Sprache altSpr=Tx.lgn;
-							for(int akts=0;akts<Smax;akts++) {
+							for(int akts=0;akts<SprachZahl;akts++) {
 								Tx.lgn=(Sprache)akts;
 								suchstr=suchstr+"\\["+Tx[ISambaName[k]]+"\\]";
-								if (k<vzn.size()-1||akts<Smax-1) suchstr+="\\|";
-							} //         for(int akts=0;akts<Smax;akts++)
+								if (k<vzn.size()-1||akts<SprachZahl-1) suchstr+="\\|";
+							} //         for(int akts=0;akts<SprachZahl;akts++)
 							Tx.lgn=altSpr;
 					} else {
 						abschnitt=string(Tx[T_Gefaxt])+"_"+ltoan(k-4);
 						if (k==4) {
 							Sprache altSpr=Tx.lgn;
-							for(int akts=0;akts<Smax;akts++) {
+							for(int akts=0;akts<SprachZahl;akts++) {
 								Tx.lgn=(Sprache)akts;
 								suchstr=suchstr+"\\["+Tx[T_Gefaxt]+"_";
-								if (akts<Smax-1) suchstr+="\\|";
-							} //         for(int akts=0;akts<Smax;akts++)
+								if (akts<SprachZahl-1) suchstr+="\\|";
+							} //         for(int akts=0;akts<SprachZahl;akts++)
 							Tx.lgn=altSpr;
 						} // 						if (k==4)
 					} // 					if (k<4) else

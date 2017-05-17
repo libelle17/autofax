@@ -9,15 +9,15 @@
 #include <io.h> // fuer isatty und _isatty
 #endif
 
-#include <iostream>
-//#define obfstream
-#ifdef obfstream
-#include <fstream> // fstream
-#endif  
-
+#include <iostream> // fuer cout, cin, cerr, clog, #include <string> // string
 #ifdef _MSC_VER
 #include <string>
 #endif
+
+//#define obfstream
+#ifdef obfstream
+// #include <fstream> // fstream
+#endif  
 
 #ifdef linux
 #define vtz '/' // Verzeichnistrennzeichen
@@ -28,14 +28,14 @@
 #endif
 
 #ifndef vector_incl
-#include <vector>
+// #include <vector>
 #define vector_incl
 #endif
 
 using namespace std;
 extern const string& instvz; // z.B. /root/autofax
 extern const string& unindt; // instvz+"uninstallinv"
-extern const int sfeh[];
+extern const int sfeh[]; // T_Dienst_laeuft, T_Dienst_inexistent, ...
 string* loeschefarbenaus(string *zwi);
 int Log(const string& text,const short screen=1,const short file=1,const bool oberr=0,const short klobverb=0);
 
@@ -55,14 +55,14 @@ int Log(const string& text,const short screen=1,const short file=1,const bool ob
 #define lstat stat
 
 #elif linux
-#include <string.h> // strcpy, strtok_r, strerror, memcmp, strcmp, strstr, 
+#include <string.h> // strchr, strcpy, strtok_r, strerror, memcmp, strcmp, strstr, strlen
 #include <errno.h> // errno, ENOENT
 #include <pwd.h>   // getuid, getpwuid
 #include <sys/param.h>  // MAXHOSTNAMELEN
 #include <sys/ioctl.h> // winsize, TIOCGWINST, w, ioctl
-#include <stdlib.h>
+// #include <stdlib.h>
 #include <dirent.h> // DIR, dirHandle, opendir, readdir, PATH_MAX
-#include <unistd.h>
+#include <unistd.h> // dup2, close, STDIN_FILENO, gethostname
 #endif
 
 #ifndef _MSC_VER
@@ -73,12 +73,11 @@ int Log(const string& text,const short screen=1,const short file=1,const bool ob
 
 #include <sys/stat.h> // stat, lstat, S_IFMT, S_IFDIR ...
 // #include <boost/algorithm/string.hpp> // clock, numeric_limits
-#include <time.h>
-#include <limits>
+// #include <limits>
 
-typedef unsigned char uchar;
+typedef unsigned char uchar; // 1 Byte
 enum binaer:uchar {falsch,wahr};
-enum Sprache {deutsch,englisch,Smax};
+enum Sprache {deutsch,englisch,SprachZahl};
 extern const char *dir;
 extern const char *tmmoegl[2];
 //extern const string datei;
@@ -97,8 +96,8 @@ extern const char *_rot, *_hrot, *_schwarz, *_blau, *_gelb, *_tuerkis, *_hgrau;
 size_t irfind(const string& wo, const string& was);
 
 extern const string nix;
-// typedef const char *TCtp[][Smax];
-typedef const char * const * const TCtp[Smax];
+// typedef const char *TCtp[][SprachZahl];
+typedef const char * const * const TCtp[SprachZahl];
 class TxB // Text-Basisklasse
 {
  public:
@@ -226,7 +225,7 @@ extern class Txkonscl Txk;
 class Txkonscl : public TxB
 {
   public:
-    static const char *TextC[T_konsMAX+1][Smax];
+    static const char *TextC[T_konsMAX+1][SprachZahl];
     Txkonscl();
 //    inline const char* operator[](Tkons_ const& nr) const { return TextC[nr][lgn]; }
 };

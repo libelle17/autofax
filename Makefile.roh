@@ -179,15 +179,15 @@ git: README.md
 
 anzeig:
 # 'echo -e' geht nicht z.B. in ubuntu
-	@printf " %bGNU Make%b, Zieldatei: %b%s%b, vorher:                                      \n" $(gruen) $(reset) $(rot) "$(EXEC)" $(reset) >$(BA)
+	@printf " %bGNU Make%b, Target file/Zieldatei: %b%s%b, before/vorher:                        \n" $(gruen) $(reset) $(rot) "$(EXEC)" $(reset) >$(BA)
 	@printf " '%b%s%b'\n" $(blau) "$$(ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC) $(KF))" $(reset) >$(BA)
-	@printf " Quelldateien: %b%s%b\n" $(blau) "$(SRCS)" $(reset) >$(BA)
-	@printf " Compiler: %b%s%b, installiert als: %b%s%b; Zielpfad fuer '%bmake install%b': %b%s%b\n"\
+	@printf " Source files/Quelldateien: %b%s%b\n" $(blau) "$(SRCS)" $(reset) >$(BA)
+	@printf " Compiler: %b%s%b, installed as/installiert als: %b%s%b; target path for/Zielpfad fuer '%bmake install%b': %b%s%b\n"\
 	  $(blau) "$(CCName)" $(reset) $(blau) "$(CCInst)" $(reset) $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset) >$(BA)
 	-@rm -f fehler.txt $(KF)
 
 $(EXEC): $(OBJ)
-	-@printf " verlinke %s zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset) >$(BA)
+	-@printf " linking/verlinke %s to/zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset) >$(BA)
 	-@df --output=ipcent / |tail -n1|grep - && sudo pkill postdrop; true
 	-@man>$(KR);[ $$? -gt 1 ]&&{ ./configure inst _ man verbose;}||true;
 	-@printf " (Version: %b%s%s%b\n " $(blau) "$$(cat versdt)" ")" $(reset) >$(BA)
@@ -199,12 +199,13 @@ $(EXEC): $(OBJ)
 
 %.o : %.cpp
 %.o : %.cpp $(DEPDIR)/%.d
-	@printf " kompiliere %b%s%b: " $(blau) "$<" $(reset) >$(BA)
+	@[ $@ = $(PROGRAM).o ]&&{ test -f versdt || echo 0.1>versdt; if test -f entwickeln; then awk "BEGIN {print `cat versdt`+0.00001}">versdt;\
+	else printf " %bFile '%bentwickeln%b' missing, keeping the version number stable/ Datei '%bentwickeln%b' fehlt, lasse die Version gleich%b\n" \
+	$(blau) $(gruen) $(blau) $(gruen) $(blau) $(reset) >$(BA); fi;}; true;
+	@printf " kompiliere %b%s%b: " $(blau) "$<" $(reset) >$(BA);
 #	-@if ! test -f instvz; then printf \"$$(getent passwd $$(logname)|cut -d: -f6)\">instvz; fi;
-	-@if ! test -f instvz; then printf \"$$(pwd)\">instvz; fi;
-	-@[ $@ = $(PROGRAM).o ]&&{ test -f versdt || echo 0.1>versdt; if test -f entwickeln; then awk "BEGIN {print `cat versdt`+0.00001}">versdt;\
-	else eval "printf \" Datei 'entwickeln' fehlt, lasse die Version gleich\n\" >$(BA)"; fi;}
-	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< $(BFA)
+	-@if ! test -f instvz; then printf \"$$(pwd)\">instvz; fi; # wird in kons.cpp verwendet
+	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< $(BFA);
 	-@sed -i 's/versdt //g;s/sitzdt //g' $(DEPDIR)/*.Td
 	-@if test -s fehler.txt; then vi +0/error fehler.txt; else rm -f fehler.txt; fi;
 #	-@$(shell $(POSTCOMPILE))
