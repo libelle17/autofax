@@ -21,33 +21,71 @@ getIPR() {
 	sus=0;
 	deb=0;
 	fed=0;
-	{ still which zypper &&{ 
-	  sus=1;
-		Z=zypper;g=--gpg-auto-import-keys;IdPR="$Z -n $g in -f ";IP_R="sudo $Z $g in ";UPR="sudo $Z rm -u ";pgroff=groff;
+	mag=0;
+	maj=0;
+	{ still which zypper &&{ sus=1;
+		Z=zypper;
+		g=--gpg-auto-import-keys;
+		IdPR="$Z -n $g in -f ";
+		IP_R="sudo $Z $g in ";
+		UPR="sudo $Z rm -u ";
+		pgroff=groff;
 		# die nächsten beiden Variablen dürften 26.3.17 unnötig werden
-  REPOS="sudo $Z lr|grep 'g++\|devel_gcc'\>$KR||sudo $Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
-  urepo="sudo $Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && sudo $Z rr devel_gcc;";
-  COMP="gcc gcc-c++ \$(CCInst)";
-	LT=${_LT}-${dev};
+    REPOS="sudo $Z lr|grep 'g++\|devel_gcc'\>$KR||sudo $Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
+    urepo="sudo $Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && sudo $Z rr devel_gcc;";
+    COMP="gcc gcc-c++ \$(CCInst)";
+  	LT=${_LT}-${dev};
 	} }||
-	{ still which apt-get &&{ deb=1;IdPR="apt-get --assume-yes install --reinstall ";IP_R="sudo $IdPR";
-	                                    UPR="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
-																			dev=dev;
-																			COMP="build-essential linux-headers-\$(shell uname -r)";
-																			LT=${_LT}-${dev};
-																			CTAGS=exuberant-ctags;} }||
-	{ still which dnf &&{ fed=1;IdPR="dnf -y install ";UPR="sudo dnf remove ";} }||
-	{ still which yum &&{ fed=1;IdPR="yum -y install ";UPR="sudo yum remove ";} }
-	[ $fed = 1 ] &&{ libmc=mysql;libmc1=mariadb;COMP="make automake gcc-c++ kernel-devel";IP_R="sudo $IdPR";LT="${_LT} ${_LT}-${dev}";LT5="";}
-	{ still which rpm &&{ SPR="rpm -q ";UDPR="sudo rpm -e --nodeps ";};}||
-	{ still which dpkg &&{ SPR="dpkg -s ";UDPR="sudo apt-get -f install; sudo dpkg -r --force-depends ";};}
-	IPR="sudo $IdPR";
-	DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall .exrc $UNF $INSTLOG"
+	{ still which apt-get &&{ deb=1;
+		IdPR="apt-get --assume-yes install --reinstall ";
+		IP_R="sudo $IdPR";
+	  UPR="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
+		dev=dev;
+		COMP="build-essential linux-headers-\$(shell uname -r)";
+		LT=${_LT}-${dev};
+		CTAGS=exuberant-ctags;} }||
+	{ still which dnf &&{ fed=1;
+	  IdPR="dnf -y install ";
+		UPR="sudo dnf remove ";} }||
+	{ still which yum &&{ fed=1;
+	  IdPR="yum -y install ";
+		UPR="sudo yum remove ";} }||
+	{ still which urpmi &&{ mag=1;
+	  IdPR="urpmi --auto --force ";
+		IP_R="sudo $IdPR";
+		UPR="sudo urpme ";
+		dev=devel;
+		LT=${_LT}-${dev};
+		COMP="make automake gcc-c++ kernel-devel";} }||
+	{ still which pacman &&{ maj=1; 
+	  IdPR="pacman -S ";
+		IP_R="sudo $IdPR";
+		dev=devel;
+		LT=${_LT}-${dev};
+		COMP="make automake gcc-c++ kernel-devel";
+	  UPR="sudo pacman -R ";
+		UDPR="sudo pacman -Rd ";};}
+		SPR="pacman -Qi ";
+	[ $fed = 1 ] &&{ 
+	  libmc=mysql;
+		libmc1=mariadb;
+		COMP="make automake gcc-c++ kernel-devel";
+		IP_R="sudo $IdPR";
+		LT="${_LT} ${_LT}-${dev}";
+		LT5="";}
+	{ still which rpm &&{ 
+	  SPR="rpm -q ";
+		UDPR="sudo rpm -e --nodeps ";};}||
+	{ still which dpkg &&{ 
+	  SPR="dpkg -s ";
+		UDPR="sudo apt-get -f install; sudo dpkg -r --force-depends ";};}
+ 	IPR="sudo $IdPR";
+  DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall .exrc $UNF $INSTLOG"
 }
 
 exportvars() {
 	rm -f vars;
-	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF INSTLOG pgroff LT LT5 LM18 dev libmc libmc1 REPOS urepo COMP DATEIEN; do
+	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF INSTLOG pgroff LT LT5 LM18 dev libmc libmc1 REPOS urepo COMP SITZV DATEIEN; do
 	  eval nv=\$$v; 
 		printf "$v:=$nv\n">>vars; 
 	done;

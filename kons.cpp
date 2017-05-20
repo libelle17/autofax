@@ -2717,7 +2717,6 @@ void linst_cl::ziehraus(svec srueck, string *ustringp)
 			// Folgende Zeile fuer Debian gut
 		case apt:
 			for(unsigned i=0;i<srueck.size();++i) {
-				caus<<violett<<i<<": "<<gruen<<srueck[i]<<schwarz<<endl;
 				if (obanf==1) obanf=2;
 				if (srueck[i].find("NEW package")!=string::npos ||
 						srueck[i].find("NEUEN Pakete")!=string::npos) obanf=1;
@@ -2726,7 +2725,7 @@ void linst_cl::ziehraus(svec srueck, string *ustringp)
 					else {
 						gtrim(&srueck[i]);
 						*ustringp=" "+srueck[i]+*ustringp;
-					}
+					} // 					if (srueck[i][0]!=' ') obanf=0; else
 				} // 						if (obanf==2)
 			} // 					for(unsigned i=0;i<srueck.size();++i)
 			/*
@@ -2750,7 +2749,8 @@ void linst_cl::ziehraus(svec srueck, string *ustringp)
 int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar ohneabh/*=0*/) // ,uchar obyes/*=1*/)
 {
 	// <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
-	Log(violetts+Txk[T_doinst]+schwarz+" prog: "+violett+prog+schwarz+Txk[T_fallsnichtda]+violett+fallsnichtda+schwarz+Txk[T_ohneabh]+violett+(ohneabh?"1":"0")+schwarz,obverb,oblog);
+	Log(violetts+Txk[T_doinst]+schwarz+" prog: "+violett+prog+schwarz+Txk[T_fallsnichtda]+violett+fallsnichtda+schwarz+Txk[T_ohneabh]+
+	    violett+(ohneabh?"1":"0")+schwarz,obverb,oblog);
 	int ret=2;
 	// eprog kann auch von aussen vor Programmaufruf gesetzt werden
 	if (eprog.empty()) eprog=ersetzeprog(prog);

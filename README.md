@@ -78,7 +78,7 @@ software packages&rsquo; and &rsquo;implications&rsquo;
 below. Then, if connected to the internet, call (e.g. by
 coying the line and pasting it into a terminal): <b><br>
 N=autofax;P=${N}_inst.sh;cd ~;wget
-https://raw.githubusercontent.com/libelle17/$N/master/install.sh
+https://raw.githubusercontent.com/&&sitz&&/$N/master/install.sh
 -O$P&&sh $P</b> <br>
 At last, call: <b><br>
 autofax</b> <br>
@@ -523,8 +523,9 @@ forwarded to the second of the two programs.</p></td></tr>
 finished (with/without success), the file is being moved
 from the waiting directory to the respective directory for
 sent faxes or for failed faxes, optionally modified by ocr
-via ocrmypdf, and the database entry is being transferred
-from <b>spooltab</b> to <b>outa</b>.</p></td></tr>
+via ocrmypdf (if a young enough python3 &gt; 3.5 is
+installed), and the database entry is being transferred from
+<b>spooltab</b> to <b>outa</b>.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
@@ -1098,7 +1099,7 @@ n&ouml;tig mit dem Internet und rufen Sie auf (z.B.
 durch Kopieren der Zeile in die Zwischenablage und
 Einf&uuml;gen in einem Terminal): <b><br>
 N=autofax;P=${N}_inst.sh;cd ~;wget
-https://raw.githubusercontent.com/libelle17/$N/master/install.sh
+https://raw.githubusercontent.com/&&sitz&&/$N/master/install.sh
 -O$P&&sh $P</b> <br>
 Zuletzt rufen Sie auf: <b><br>
 autofax</b> <br>
@@ -1566,8 +1567,9 @@ an das jeweils andere Programm weitergeleiet.</p></td></tr>
 (erfolgreich oder erfolglos) beendet ist, wird die Datei aus
 dem Warteverzeichnis in die Verzeichnisse f&uuml;r
 fertige bzw. gescheiterte Faxe verschoben, optional mit
-ocrmypdf einer Texterkennung unterzogen, und der
-Datenbankeintrag aus <b>spooltab</b> in die Tabelle
+ocrmypdf einer Texterkennung unterzogen (falls ein
+ausreichend junges Python3 &gt; 3.5 installiert ist), und
+der Datenbankeintrag aus <b>spooltab</b> in die Tabelle
 <b>outa</b> verschoben.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>

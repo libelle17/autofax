@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "18.05.17" "Version 0.43487" "\fBautofax\fR man page"
+.TH man 1 "20.05.17" "Version 0.43489" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -22,7 +22,7 @@ The usability within a network (may also be a windows network with only one linu
 .br
 First, please read the chapters 'functionality', 'preconditions','automatically installed software packages' and 'implications' below. Then, if connected to the internet, call (e.g. by coying the line and pasting it into a terminal):
 .br
-\fBN=autofax;P=${N}_inst.sh;cd ~;wget https://raw.githubusercontent.com/libelle17/$N/master/install.sh -O$P&&sh $P\fR
+\fBN=autofax;P=${N}_inst.sh;cd ~;wget https://raw.githubusercontent.com/&&sitz&&/$N/master/install.sh -O$P&&sh $P\fR
 .br
 At last, call:
 .br
@@ -250,7 +250,7 @@ If more files have been generated, the successive movements and recordings are b
 .br
 If hylafax and capisuite are working simultaneously and a prespecified number of send tries has been reached without success in the programs of the first preference of those two, the fax is additionally forwarded to the second of the two programs.
 .br
-If the fax transmission is finished (with/without success), the file is being moved from the waiting directory to the respective directory for sent faxes or for failed faxes, optionally modified by ocr via ocrmypdf, and the database entry is being transferred from \fBspooltab\fR to \fBouta\fR.
+If the fax transmission is finished (with/without success), the file is being moved from the waiting directory to the respective directory for sent faxes or for failed faxes, optionally modified by ocr via ocrmypdf (if a young enough python3 > 3.5 is installed), and the database entry is being transferred from \fBspooltab\fR to \fBouta\fR.
 .br
 The status of the mentioned faxes is being displayed.
 .\" untersuchespool()
