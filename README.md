@@ -630,8 +630,11 @@ Mint &gt;= 18 or Fedora &gt;= 24 with standard options.
 System D has to be installed, i.e., &quot;systemctl&quot;
 has to run. One of the packet managers rpm or dpkg and apt,
 dnf, yum or zypper has to be installed, respectively, as is
-the case per default in the mentioned linux
-distributions.</p>
+the case per default in the mentioned linux distributions.
+<br>
+In Manjaro, before installation, the commands &rsquo;sudo
+pacman -S wget vi&rsquo; and &rsquo;sudo pacman -Syu&rsquo;
+can be necessary.</p>
 
 <h2>AUTOMATICALLY INSTALLED SOFTWARE PACKAGES
 <a name="AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_D"></a>
@@ -1680,7 +1683,10 @@ Standardoptionen abgestimmt. System D muss installiert sein
 bzw. systemctl muss laufen. Jeweils einer der Paktmanager
 rpm oder dpkg sowie apt, dnf, yum oder zypper muss
 installiert sein, wie in den genannten Linuxdistributionen
-standardm&auml;&szlig;ig der Fall.</p>
+standardm&auml;&szlig;ig der Fall. <br>
+In Manjaro k&ouml;nnen vor Installation noch die
+Befehle: &rsquo;sudo pacman -S wget vi&rsquo; und
+&rsquo;sudo pacman -Syu&rsquo; n&ouml;tigt werden.</p>
 
 <h2>AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE
 <a name="AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE_D"></a>

@@ -1326,7 +1326,7 @@ linst_cl::linst_cl(int obverb,int oblog)
 				      "sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release |"
 							"grep ^NAME= | cut -d'\"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'\"' -f2`/devel:gcc.repo;";
 				compil="gcc gcc-c++ gcc6-c++";
-			} else { // dann fedora
+			} else { // dann fedora oder mageia
 				if (obprogda("dnf",obverb-1,oblog)) {
 					ipr=dnf;
 					instp="sudo dnf install ";
@@ -1341,6 +1341,13 @@ linst_cl::linst_cl(int obverb,int oblog)
 					upr="sudo yum remove ";
 					uypr="sudo yum -y remove ";
 					upd="sudo yum update";
+				} else if (obprogda("urpmi.update",obverb-1,oblog)) {
+					ipr=urp;
+					instp="urpmi --auto ";
+					instyp="urpmi --auto --force ";
+					upr="sudo urpme ";
+					uypr="sudo urpme --auto --force ";
+					upd="sudo urpmi.update -a";
 				} // 				if (obprogda("dnf",obverb-1,oblog))
 				compil="make automake gcc-c++ kernel-devel";
 			} // 			if (obprogda("zypper",obverb-1,oblog)) KLZ // opensuse
@@ -1360,6 +1367,16 @@ linst_cl::linst_cl(int obverb,int oblog)
 			upd="sudo apt update; sudo apt upgrade;";
 			compil="install build-essential linux-headers-`uname -r`";
 			dev="dev";
+		} else if (obprogda("pacman",obverb-1,oblog)) {
+			ipr=pac;
+			schau="pacman -Qi";
+			instp="sudo pacman -S ";
+			instyp="sudo pacman -S --noconfirm ";
+			upr="sudo pacman -R -s ";
+			udpr="sudo pacman -R -d -d ";
+			uypr="sudo pacman -R -s --noconfirm "; 
+			upd="sudo pacman -Syu";
+			compil="gcc linux-headers-`uname -r`";
 		} else {
 			cerr<<Txk[T_Weder_zypper_noch_apt_get_noch_dnf_noch_yum_als_Installationspgrogramm_gefunden]<<endl;
 		} // 		if (obprogda("rpm",obverb-1,oblog))

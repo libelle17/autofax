@@ -50,12 +50,13 @@ getIPR() {
 	{ still which yum &&{ fed=1;
 	  IdPR="yum -y install ";
 		UPR="sudo yum remove ";} }||
-	{ still which urpmi &&{ mag=1;
+	{ still which urpmi.update &&{ mag=1;
 	  IdPR="urpmi --auto --force ";
 		IP_R="sudo $IdPR";
 		UPR="sudo urpme ";
 		dev=devel;
 		LT=${_LT}-${dev};
+		libmc1=lib64mariadb;
 		COMP="make automake gcc-c++ kernel-devel";} }||
 	{ still which pacman &&{ maj=1; 
 	  IdPR="pacman -S ";
@@ -64,8 +65,9 @@ getIPR() {
 		LT=${_LT}-${dev};
 		COMP="make automake gcc-c++ kernel-devel";
 	  UPR="sudo pacman -R ";
-		UDPR="sudo pacman -Rd ";};}
 		SPR="pacman -Qi ";
+		libmc1="libmysqlclient libmysqlclient"
+		UDPR="sudo pacman -Rd ";};}
 	[ $fed = 1 ] &&{ 
 	  libmc=mysql;
 		libmc1=mariadb;

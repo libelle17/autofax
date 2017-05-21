@@ -28,7 +28,7 @@
 #endif
 
 #ifndef vector_incl
-// #include <vector>
+#include <vector> // wird in Manjaro hier nochmal extra benötigt
 #define vector_incl
 #endif
 
@@ -472,7 +472,7 @@ class lsyscl
 // enum betrsys {keins,suse,ubuntu,fedora};
 // betrsys pruefos();
 int obprogda(const string& prog,int obverb, int oblog, string *pfad=0);
-enum instprog {keinp,zypper,apt,dnf,yum};
+enum instprog {keinp,zypper,apt,dnf,yum,urp,pac};
 string gethome();
 
 
