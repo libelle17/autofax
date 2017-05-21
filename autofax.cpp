@@ -5214,7 +5214,9 @@ void paramcl::pruefunpaper()
 			const string rpf="rpmfusion_copy";
 			holvomnetz(rpf);
 			kompilbase(rpf,s_gz);
-			systemrueck("sh -c 'cd \""+instvz+vtz+rpf+"\"&& sudo rpm -Uvh ./rpmfusion*rpm'",obverb+1,oblog);
+			if (!pruefinstv()) {
+				systemrueck("sh -c 'cd \""+instvz+vtz+rpf+"\"&& sudo rpm -Uvh ./rpmfusion*rpm'",obverb+1,oblog);
+			} //   if (!pruefinstv())
 			linstp->doinst("ffmpeg",obverb,oblog);
 			linstp->doinst("ffmpeg-devel",obverb,oblog);
 			linstp->doinst("ffmpeg-compat",obverb,oblog);
@@ -7905,7 +7907,7 @@ void paramcl::pruefmodcron()
   } //   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++)
 } // void pruefmodcron(int obverb, int oblog)
 
-// wird aufgerufen in paramcl::paramcl
+// wird aufgerufen in paramcl::paramcl, pruefunpaper, holvomnetz, kompilbase, kompilfort
 int paramcl::pruefinstv()
 {
 	int erg=0;

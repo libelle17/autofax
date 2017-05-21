@@ -627,8 +627,8 @@ mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_b
       break;
     }
     //    int erg __attribute__((unused));
-    if (name!=unindt)  // sonst vielleicht Endlosschleife
-		  pruefverz(dir_name(name),0,0,0,0);
+		//    if (name!=unindt)  // sonst vielleicht Endlosschleife
+		pruefverz(dir_name(name),0,0,0,0);
 //    if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) KLA
 		if (!touch(name,obverb,oblog)) {
       setfaclggf(name,falsch,modus&ios::out||modus&ios::app?6:4,falsch,obverb,oblog,faclbak);
@@ -2138,7 +2138,8 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 		if (fehler) {
 		  const string bef="mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'";
 			fehler=systemrueck(bef,obverb,oblog);
-			anfgg(unindt,"sudo rmdir '"+verz+"'",bef,obverb,oblog);
+			if (unindt.find(verz)) // wenn der Anfang nicht identisch ist, also nicht das Verzeichnis von unindt geprueft werden soll
+				anfgg(unindt,"sudo rmdir '"+verz+"'",bef,obverb,oblog);
 		} //     if (fehler)
 		//    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
 		if (obmitfacl) setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
@@ -2800,15 +2801,17 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		  ziehraus(srueck,&ustring);
 
 			// s. ausricht() in configure
-			mdatei uniff(instvz+"/inst.log",ios::app,0);
-			if (uniff.is_open()) {
-				uniff<<endl<<"Rueckmeldung zu: '"<<bef<<"':"<<endl;
-				for(unsigned i=0;i<srueck.size();i++) {
-					uniff<<srueck[i]<<endl;
-				}
-				uniff<<"ustring: '"<<ustring<<"'"<<endl;
-				uniff<<"ustring: '"<<string_to_hex(ustring)<<"'"<<endl;
-			} // 			if (uniff.is_open())
+			if (!pruefverz(instvz,obverb,oblog)) {
+				mdatei uniff(instvz+"/inst.log",ios::app,0);
+				if (uniff.is_open()) {
+					uniff<<endl<<"Rueckmeldung zu: '"<<bef<<"':"<<endl;
+					for(unsigned i=0;i<srueck.size();i++) {
+						uniff<<srueck[i]<<endl;
+					}
+					uniff<<"ustring: '"<<ustring<<"'"<<endl;
+					uniff<<"ustring: '"<<string_to_hex(ustring)<<"'"<<endl;
+				} // 			if (uniff.is_open())
+			} // 		  if (!pruefverz(instvz,obverb,oblog))
 			size_t p1,p2;
 			// <<violett<<"ustring vor Pruefung: "<<rot<<ustring<<schwarz<<endl;
 			// <<violett<<"ustring vor Pruefung: "<<rot<<string_to_hex(ustring)<<schwarz<<endl;
