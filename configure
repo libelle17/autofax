@@ -196,7 +196,10 @@ if [ $ICH = -bash ]; then
  ICH=$(basename $ICHges)
 fi
 
+# die naechsten zwei Variablen aehnlich in install.sh festgelegt
 PROG=autofax
+[ -z $SITZV ]&& [ -f sitzdt ]&& SITZV=$(sed 's/"//g' sitzdt);
+[ -z $SITZV ]&& SITZV=$([ -f .git/config ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' .git/config);
 INSTLOG=inst.log
 GINSTLOG=$HOME/$PROG/$INSTLOG
 mkdir -p $HOME/$PROG

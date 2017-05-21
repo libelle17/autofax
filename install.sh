@@ -1,14 +1,15 @@
 #!/bin/bash
 #// string substitution geht nur in bash, nicht in dash, was auf deb-Systemen standardmaessig hinter sh steht
 [ -z "$BASH_SOURCE" ]&&{ bash "$0";exit;}
-PROG=autofax;
 HOSTER=github.com
+# die naechsten zwei Variablen aehnlich in install.sh festgelegt
+PROG=autofax;
 # in .git/config steht z.B. "        url = ssh://git@github.com/libelle17/autofax.git"
 SITZV=$([ -f .git/config ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' .git/config);
 # wenn nicht vorhanden, dann schauen, ob sitzdt existiert
 [ -z $SITZV ]&& [ -f sitzdt ]&& SITZV=$(sed 's/"//g' sitzdt);
 [ -z $SITZV ]&& SITZV=libelle17;
-# aPWD=`pwd` # hier Schmarrn
+# aPWD=`pwd` 
 nPWD=${PWD##*/}
 # wenn $PROG schon das aktuelle Verzeichnis ist und wenn es dort einige notwendige Dateien gibt, dann nicht mehr neu runterladen ...
 [ $nPWD = $PROG -a -f Makefile -a -f $PROG.cpp -a -f configure ]&&{
