@@ -2640,6 +2640,10 @@ string linst_cl::ersetzeprog(const string& prog)
 		  if (prog=="redhat-rpm-config") return "";
 			if (prog=="libffi-devel") return "libffi$(gcc --version|head -n1|sed \"s/.*) \\(.\\).\\(.\\).*/\\1\\2/\")-devel";
       if (prog=="kernel-source") return "kernel-devel";
+			break;
+		case pac:
+			if (prog=="libwbclient0") return "libwbclient";
+			break;
     default: break;
   } //   switch(linst.pruefipr())
   return prog;

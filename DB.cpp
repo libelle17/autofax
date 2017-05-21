@@ -217,6 +217,8 @@ void DB::instmaria(int obverb, int oblog)
 		systemrueck("sudo sh -c 'apt-get -y install apt-transport-https; apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
 	} else {
 		linstp->doinst("mariadb",obverb,oblog);
+		if (linstp->ipr==pac)
+		 systemrueck("sudo mysql_install_db --user=mysql --basedir=/usr/ --ldata=/var/lib/mysql",obverb,oblog);
 	} // 					if (ipr==apt) else
 } // void DB::instmaria()
 
