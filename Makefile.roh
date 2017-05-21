@@ -201,7 +201,7 @@ $(EXEC): $(OBJ)
 %.o : %.cpp $(DEPDIR)/%.d
 	@[ $@ = $(PROGRAM).o ]&&{ test -f versdt || echo 0.1>versdt; if test -f entwickeln; then awk "BEGIN {print `cat versdt`+0.00001}">versdt;\
 	else printf " %bFile '%bentwickeln%b' missing, keeping the version number stable/ Datei '%bentwickeln%b' fehlt, lasse die Version gleich%b\n" \
-	$(blau) $(gruen) $(blau) $(gruen) $(blau) $(reset) >$(BA); fi;}; true;
+	$(schwarz) $(grau) $(schwarz) $(grau) $(schwarz) $(reset) >$(BA); fi;}; true;
 	@printf " kompiliere %b%s%b: " $(blau) "$<" $(reset) >$(BA);
 #	-@if ! test -f instvz; then printf \"$$(getent passwd $$(logname)|cut -d: -f6)\">instvz; fi;
 	-@if ! test -f instvz; then printf \"$$(pwd)\">instvz; fi; # wird in kons.cpp verwendet
