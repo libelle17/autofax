@@ -1,5 +1,5 @@
 #!/bin/bash
-# string substitution geht nur in bash, nicht in dash, was auf deb-Systemen standardmaessig hinter sh steht
+#// string substitution geht nur in bash, nicht in dash, was auf deb-Systemen standardmaessig hinter sh steht
 [ -z "$BASH_SOURCE" ]&&{ bash "$0";exit;}
 PROG=autofax;
 HOSTER=github.com
@@ -8,7 +8,7 @@ SITZV=$([ -f .git/config ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' .
 # wenn nicht vorhanden, dann schauen, ob sitzdt existiert
 [ -z $SITZV ]&& [ -f sitzdt ]&& SITZV=$(sed 's/"//g' sitzdt);
 [ -z $SITZV ]&& SITZV=libelle17;
-# aPWD=`pwd`
+# aPWD=`pwd` # hier Schmarrn
 nPWD=${PWD##*/}
 # wenn $PROG schon das aktuelle Verzeichnis ist und wenn es dort einige notwendige Dateien gibt, dann nicht mehr neu runterladen ...
 [ $nPWD = $PROG -a -f Makefile -a -f $PROG.cpp -a -f configure ]&&{

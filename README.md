@@ -78,7 +78,7 @@ software packages&rsquo; and &rsquo;implications&rsquo;
 below. Then, if connected to the internet, call (e.g. by
 coying the line and pasting it into a terminal): <b><br>
 N=autofax;P=${N}_inst.sh;cd ~;wget
-https://raw.githubusercontent.com/libelle17/$N/master/install.sh
+https://raw.githubusercontent.com//$N/master/install.sh
 -O$P&&sh $P</b> <br>
 At last, call: <b><br>
 autofax</b> <br>
@@ -631,10 +631,9 @@ System D has to be installed, i.e., &quot;systemctl&quot;
 has to run. One of the packet managers rpm or dpkg and apt,
 dnf, yum or zypper has to be installed, respectively, as is
 the case per default in the mentioned linux distributions.
-<br>
-In Manjaro, before installation, the commands &rsquo;sudo
-pacman -S wget vi&rsquo; and &rsquo;sudo pacman -Syu&rsquo;
-can be necessary.</p>
+Uninstalling of the programs added by autofax by <b>make
+uninstall</b> works currently only with the english and the
+german versions of the packet manager.</p>
 
 <h2>AUTOMATICALLY INSTALLED SOFTWARE PACKAGES
 <a name="AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_D"></a>
@@ -1102,7 +1101,7 @@ n&ouml;tig mit dem Internet und rufen Sie auf (z.B.
 durch Kopieren der Zeile in die Zwischenablage und
 Einf&uuml;gen in einem Terminal): <b><br>
 N=autofax;P=${N}_inst.sh;cd ~;wget
-https://raw.githubusercontent.com/libelle17/$N/master/install.sh
+https://raw.githubusercontent.com//$N/master/install.sh
 -O$P&&sh $P</b> <br>
 Zuletzt rufen Sie auf: <b><br>
 autofax</b> <br>
@@ -1680,10 +1679,14 @@ Software</b>: Das Programm wurde auf eine Installation von
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
 Mint &gt;= 18 oder Fedora &gt;= 24 mit jeweils
 Standardoptionen abgestimmt. System D muss installiert sein
-bzw. systemctl muss laufen. Jeweils einer der Paktmanager
+bzw. systemctl muss laufen. Jeweils einer der Paketmanager
 rpm oder dpkg sowie apt, dnf, yum oder zypper muss
 installiert sein, wie in den genannten Linuxdistributionen
-standardm&auml;&szlig;ig der Fall.</p>
+standardm&auml;&szlig;ig der Fall. Die
+Deinstallation der durch autofax hinzugef&uuml;gten
+Programme mit <b>make uninstall</b> ist gegenw&auml;rtig
+nur f&uuml;r englische und deutsche Versionen der
+Paketmanager eingerichtet.</p>
 
 <h2>AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE
 <a name="AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE_D"></a>
