@@ -615,6 +615,7 @@ string holsystemsprache(int obverb/*=0*/)
 {
 	schlArr cglang; // Systemsprach-Konfiguration
 	string ret;
+	// OpenSuse, Fedora, Debian
 	const char* const langdt[]={"/etc/sysconfig/language","/etc/locale.conf","/etc/default/locale","/etc/sysconfig/i18n"};
 	const char* const langvr[]={"RC_LANG","LANG","LANG","LANG"};
 	for (size_t lind=0;lind<sizeof langdt/sizeof *langdt;lind++) {

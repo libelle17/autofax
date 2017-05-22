@@ -235,6 +235,7 @@ INSTP=sudo;still which $INSTP||{
 #	test -f $AUNF&&grep -q "[^;] sudo" $AUNF||printf "${UPR}sudo\nprintf \"\$blau%%s\$reset\\\n\" \"${UPR}sudo\"\n">>$AUNF;
 #	su -c "$IdPR sudo;";
 	 LOG=inst_$INSTP.log;
+	 printf "%bsu -c \"$IdPR $INSTP\"|tee \"$LOG\";%b\n" ${blau} ${reset}
 	 su -c "$IdPR $INSTP"|tee "$LOG";
 	 printf "\nRueckmeldung su -c \"$IdPR $INSTP\":\n">>$GINSTLOG
 	 ausricht "$LOG";
