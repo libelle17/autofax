@@ -615,8 +615,8 @@ string holsystemsprache(int obverb/*=0*/)
 {
 	schlArr cglang; // Systemsprach-Konfiguration
 	string ret;
-	const char* const langdt[]={"/etc/sysconfig/language","/etc/locale.conf","/etc/sysconfig/i18n"};
-	const char* const langvr[]={"RC_LANG","LANG","LANG"};
+	const char* const langdt[]={"/etc/sysconfig/language","/etc/locale.conf","/etc/default/locale","/etc/sysconfig/i18n"};
+	const char* const langvr[]={"RC_LANG","LANG","LANG","LANG"};
 	for (size_t lind=0;lind<sizeof langdt/sizeof *langdt;lind++) {
 		struct stat langstat;
 		if (!lstat(langdt[lind],&langstat)) {
