@@ -2894,10 +2894,11 @@ void paramcl::MusterVorgb()
   wvz="/var/"+meinname+vtz+Tx[T_warteauffax];
   nvz="/var/"+meinname+vtz+Tx[T_nichtgefaxt];
   empfvz="/var/"+meinname+vtz+Tx[T_empfvz];
-  static zielmustercl zmi[]={zielmustercl("[Ss]pamfax","/var/"+meinname+"/spam"),zielmustercl("","/var/"+meinname+Tx[T_gesandt])}; // nur als Beispiel
+  static zielmustercl zmi[]={zielmustercl("[Ss]pamfax","/var/"+meinname+"/spam"),zielmustercl("","/var/"+meinname+vtz+Tx[T_gesandt])};//= nur Beispiel
   zmvp=zmi;
   zmvzn=sizeof zmi/sizeof *zmi;
-}
+} // void paramcl::MusterVorgb()
+
 // Musterfunktion, die von einer Funktion in gesonderter,fakultativer Datei,z.B. 'vgb.cpp' ueberschrieben werden kann
 void paramcl::VorgbSpeziell() 
 {
@@ -2967,7 +2968,7 @@ void paramcl::liescapiconf()
   systemrueck(moegl+"capisuite.conf",obverb-2,oblog,&rueck);
   if (rueck.size()) {
     ccapiconfdt=rueck[0];
-  }
+  } //   if (rueck.size())
   if (!ccapiconfdt.empty()) {
     uchar obneuer=0;
     struct stat cstat={0};
@@ -3837,7 +3838,7 @@ void paramcl::rueckfragen()
   if (obverb) {
     const string obmodems=ltoan(obmodem); 
     Log(blaus+"obfcard: "+schwarz+ltoan(obfcard)+blau+", obmodem: "+schwarz+obmodems);
-  }
+  } //   if (obverb)
 
   // die Verzeichnisnamen standardisieren
   kuerzevtz(&spoolcapivz);
@@ -3914,13 +3915,13 @@ void paramcl::clieskonf()
           else if (cfaxcp->abschv[i].av[j].name=="fax_stationID") {if (cfaxcp->abschv[i].av[j].wert==capiconf[6].wert) richtige++;}
           else if (cfaxcp->abschv[i].av[j].name=="fax_headline") {if (cfaxcp->abschv[i].av[j].wert==capiconf[7].wert) richtige++;}
           else if (cfaxcp->abschv[i].av[j].name=="fax_email_from") {if (cfaxcp->abschv[i].av[j].wert==capiconf[8].wert) richtige++;}
-        }
+        } //         for(size_t j=0;j<cfaxcp->abschv[i].av.size();j++)
         break;
       } //       if (cfaxcp->abschv[i].aname==cuser)
     } //     for(size_t i=0;i<cfaxcp->abschv.size();i++)
     if (richtige!=4) {
       capizukonf=1;
-    }
+    } //     if (richtige!=4)
   } //   if (cfaxcp)
   svec ckzlrueck;
   systemrueck("grep connect_faxG3 `grep incoming_script= "+ccapiconfdt+" 2>/dev/null|cut -d'\"' -f2 2>/dev/null`"
