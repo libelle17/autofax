@@ -2894,7 +2894,7 @@ void paramcl::MusterVorgb()
   wvz="/var/"+meinname+vtz+Tx[T_warteauffax];
   nvz="/var/"+meinname+vtz+Tx[T_nichtgefaxt];
   empfvz="/var/"+meinname+vtz+Tx[T_empfvz];
-  static zielmustercl zmi[]={zielmustercl("[Ss]pamfax","/var/autofax/spam"),zielmustercl("","/var/autofax/gesandt")}; // nur als Beispiel
+  static zielmustercl zmi[]={zielmustercl("[Ss]pamfax","/var/"+meinname+"/spam"),zielmustercl("","/var/"+meinname+Tx[T_gesandt])}; // nur als Beispiel
   zmvp=zmi;
   zmvzn=sizeof zmi/sizeof *zmi;
 }
