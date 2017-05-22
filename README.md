@@ -233,7 +233,8 @@ Optionen z.Speich. i.Konfigur&rsquo;datei (vorausg.
 &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -sp, --sprache &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
-[<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;&rsquo; <b><br>
+[<b>d</b>eutsch,<b>e</b>nglisch]
+&rsquo;<b>de_DE.UTF-8</b>&rsquo; <b><br>
 -lvz, --logvz &lt;pfad&gt;</b>: waehlt als Logverzeichnis
 &lt;pfad&gt;, derzeit &rsquo;<b>/var/log</b>&rsquo; <b><br>
 -ld, --logdname &lt;string&gt;</b>: logdatei &lt;string&gt;
@@ -1263,7 +1264,8 @@ Optionen z.Speich. i.Konfigur&rsquo;datei (vorausg.
 &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -sp, --sprache &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
-[<b>d</b>eutsch,<b>e</b>nglisch] &rsquo;&rsquo; <b><br>
+[<b>d</b>eutsch,<b>e</b>nglisch]
+&rsquo;<b>de_DE.UTF-8</b>&rsquo; <b><br>
 -lvz, --logvz &lt;pfad&gt;</b>: waehlt als Logverzeichnis
 &lt;pfad&gt;, derzeit &rsquo;<b>/var/log</b>&rsquo; <b><br>
 -ld, --logdname &lt;string&gt;</b>: logdatei &lt;string&gt;

@@ -2368,25 +2368,39 @@ paramcl::paramcl(int argc, char** argv)
 	zsaufr=ersetzAllezu(saufr,"/","\\/");
 	/* time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff; */
 	tstart=clock();
+	cglang.init(1, "RC_LANG");
+	const char* const langdt[]={"/etc/sysconfig/language"};
+	for (size_t lind=0;lind<sizeof langdt/sizeof *langdt;lind++) {
+		struct stat langstat;
+		if (!lstat(langdt[lind],&langstat)) {
+			confdat langcd(langdt[lind],&cglang,obverb);
+			if (!cglang[0].wert.empty()) {
+			 langu=cglang[0].wert;
+			 break;
+			} // 			if (!cglang[0].wert.empty())
+		} //     if (!lstat(hylacdt.c_str(),&hstat))
+		//  if (cpplies(hylacdt,hylaconf,cs)) KLA
+	} // 	for(size_t lind=0;lind<langdt.size())
+
 	//  konfdt.clear();
 } // paramcl::paramcl()
 
 // wird aufgerufen in: main
 void paramcl::pruefggfmehrfach()
 {
-  if (!obhilfe &&!obvi &&!obvc &&!obvh &&!obvs
-	    &&!zeigvers &&!lista &&!listf &&!listi &&!listw && suchstr.empty() &&!loef &&!loew &&!loea &&!anhl &&!erneut &&!uml) {
-    pruefmehrfach(meinname,nrzf);
-  }
+	if (!obhilfe &&!obvi &&!obvc &&!obvh &&!obvs
+			&&!zeigvers &&!lista &&!listf &&!listi &&!listw && suchstr.empty() &&!loef &&!loew &&!loea &&!anhl &&!erneut &&!uml) {
+		pruefmehrfach(meinname,nrzf);
+	}
 } // void paramcl::pruefggfmehrfach()
 
 paramcl::~paramcl()
 {
-  if (My) {delete My; My=0;}
-  if (sfaxq) {delete sfaxq; sfaxq=0;}
-  if (shfaxd) {delete shfaxd; shfaxd=0;}
-  if (sfaxgetty) {delete sfaxgetty; sfaxgetty=0;}
-  if (scapis) {delete scapis; scapis=0;}
+	if (My) {delete My; My=0;}
+	if (sfaxq) {delete sfaxq; sfaxq=0;}
+	if (shfaxd) {delete shfaxd; shfaxd=0;}
+	if (sfaxgetty) {delete sfaxgetty; sfaxgetty=0;}
+	if (scapis) {delete scapis; scapis=0;}
   if (shylafaxd) {delete shylafaxd; shylafaxd=0;}
 } // paramcl::~paramcl()
 
@@ -2417,14 +2431,14 @@ string paramcl::neuerdateiname(const string& qpfad)
       dateiname=zielname(dateiname,wvz,1,(string*)0,obverb,oblog);
       dateiname=zielname(dateiname,nvz,1,(string*)0,obverb,oblog);
       dateiname=zielname(dateiname,zmp,1,(string*)0,obverb,oblog);
-    }
+    } //     for(unsigned aru=0;1;aru++)
     getstammext(&dateiname,&stamm,&exten);
     if (!runde) extu=exten; 
     else break;
     const string pdf=stamm+".pdf";
     if (pdf==dateiname) break;
     else dateiname=pdf;
-  }
+  } //   for(unsigned runde=0;runde<2;runde++)
   return base_name(stamm+"."+extu);
 } // neuerdateiname
 
