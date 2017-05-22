@@ -290,7 +290,6 @@ class paramcl // Programmparameter
 
 //    cppSchluess *cgconfp; // Gesamtkonfiguration
     schlArr cgconf; // Gesamtkonfiguration
-    schlArr cglang; // Systemsprach-Konfiguration
     //    size_t gcs; // dessen Groesse
     string sqlvz;  // Zahl der SQL-Befehle aus Vorgaben
     size_t sqlvzn=0; // Zahl der SQL-Befehle aus Vorgaben numerisch

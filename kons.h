@@ -264,6 +264,7 @@ class perfcl
  int oberreicht(unsigned long sek);
 };
 
+string holsystemsprache(int obverb=0);
 char* curruser();
 
 class mdatei: public fstream

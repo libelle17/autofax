@@ -2368,21 +2368,7 @@ paramcl::paramcl(int argc, char** argv)
 	zsaufr=ersetzAllezu(saufr,"/","\\/");
 	/* time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff; */
 	tstart=clock();
-	const char* const langdt[]={"/etc/sysconfig/language","/etc/sysconfig/i18n"};
-	const char* const langvr[]={"RC_LANG","LANG"};
-	for (size_t lind=0;lind<sizeof langdt/sizeof *langdt;lind++) {
-		struct stat langstat;
-		if (!lstat(langdt[lind],&langstat)) {
-			cglang.init(1, langvr[lind]);
-			confdat langcd(langdt[lind],&cglang,obverb);
-			if (!cglang[0].wert.empty()) {
-			 langu=cglang[0].wert[0];
-			 break;
-			} // 			if (!cglang[0].wert.empty())
-		} //     if (!lstat(hylacdt.c_str(),&hstat))
-		//  if (cpplies(hylacdt,hylaconf,cs)) KLA
-	} // 	for(size_t lind=0;lind<langdt.size())
-
+	langu=holsystemsprache(obverb);
 	//  konfdt.clear();
 } // paramcl::paramcl()
 
