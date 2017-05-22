@@ -221,11 +221,15 @@ if test "$1" = inst; then
   exit
 fi
 
-echo \"$SITZV\">sitzdt
 # Gruppen, deren Mitglieder sudo aufrufen koennen; fuer Debian muss zuerst 'sudo' genannt werden, weil eine Zuordnung zu 'root' nichts hilft (s.u. tail)
 SUG="admin\|root\|sudo\|wheel\|ntadmin";
 
 # hier geht's los
+			su -c "S=/etc/apt/sources.list;grep -q -m 1 '^[^#]*cdrom' $S && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' $S | \
+					cut -d: -f1) > 0$(grep -n -m 1 '^[^#]*cdrom' $S | cut -d: -f1) && \
+					ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/^[^#]*cdrom/d' $S"
+exit
+echo \"$SITZV\">sitzdt
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
 INSTP=sudo;still which $INSTP||{
 	printf "Must install '$INSTP'. "
@@ -234,9 +238,10 @@ INSTP=sudo;still which $INSTP||{
 	printf "Bitte geben Sie bei Fragen das Passwort von '${blau}root$reset' ein:\n";
 #	test -f $AUNF&&grep -q "[^;] sudo" $AUNF||printf "${UPR}sudo\nprintf \"\$blau%%s\$reset\\\n\" \"${UPR}sudo\"\n">>$AUNF;
 #	su -c "$IdPR sudo;";
-			su -c "grep -q -m 1 '^[^#]*cdrom' /etc/apt/sources.list && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' /etc/apt/sources.list | \
-					cut -d: -f1) > 0$(grep -n -m 1 '^[^#]*cdrom' /etc/apt/sources.list | cut -d: -f1) && \
-					ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/^[^#]*cdrom/d' /etc/apt/sources.list"
+# genauso in: linst_cl::linst_cl(int obverb,int oblog)
+			su -c "S=/etc/apt/sources.list;grep -q -m 1 '^[^#]*cdrom' $S && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' $S | \
+					cut -d: -f1) > 0$(grep -n -m 1 '^[^#]*cdrom' $S | cut -d: -f1) && \
+					ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/^[^#]*cdrom/d' $S"
 	 LOG=inst_$INSTP.log;
 	 printf "%bsu -c \"$IdPR $INSTP\"|tee \"$LOG\";%b\n" ${blau} ${reset}
 	 su -c "$IdPR $INSTP"|tee "$LOG";
