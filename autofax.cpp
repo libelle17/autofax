@@ -9474,25 +9474,15 @@ void paramcl::dovh()
 
 int main(int argc, char** argv) 
 {
-	/*
 	if (argc<3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		if (argc>1) {
 			// Testcode mit argv[1]
-			linst_cl linst(0,0);
-			svec inh;string ustring;
-			mdatei uni0("/home/schade/autofax/inst.log",ios::in,0);
-			if (uni0.is_open()) {
-				string zeile;
-				while (getline(uni0,zeile)) {
-				 inh<<zeile;
-				}
-			}
-			linst.ziehraus(inh,&ustring);
-			caus<<blau<<"ustring: "<<gruen<<ustring<<schwarz<<endl;
+			systemrueck("sudo sh -c \"S=/etc/apt/sources.list;F='^[^#]*cdrom:';grep -qm1 \\$F \\$S && "
+			    "test 0\\$(sed -n '/^[^#]*ftp.*debian/{=;q}' \\$S) -gt 0\\$(sed -n '/'\\$F'/{=;q}' \\$S) && "
+					"ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/'\\$F'/{H;d};\\${p;x}' \\$S\"",1,1);
 			exit(29);
 		}
 	}
-	*/
 	string prog;
 	paramcl pm(argc,argv); // Programmparameter
   pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler

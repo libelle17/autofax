@@ -1377,9 +1377,9 @@ linst_cl::linst_cl(int obverb,int oblog)
 		} else if (obprogda("apt-get",obverb-1,oblog)) {
 			// Repositories: Frage nach cdrom ausschalten
 			// genauso in: configure
-			systemrueck("sudo sh -c \"grep -q -m 1 '^[^#]*cdrom' /etc/apt/sources.list && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' /etc/apt/sources.list |"
-					"cut -d: -f1) \\> 0$(grep -n -m 1 '^[^#]*cdrom' /etc/apt/sources.list | cut -d: -f1) && "
-					"ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/^[^#]*cdrom/d' /etc/apt/sources.list\"",obverb,oblog);
+			systemrueck("sudo sh -c \"S=/etc/apt/sources.list;F='^[^#]*cdrom:';grep -qm1 \\$F \\$S && "
+			    "test 0\\$(sed -n '/^[^#]*ftp.*debian/{=;q}' \\$S) -gt 0\\$(sed -n '/'\\$F'/{=;q}' \\$S) && "
+					"ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/'\\$F'/{H;d};\\${p;x}' \\$S\"",obverb,oblog);
 			// hier werden die Dateien vorgabemaessig behalten
 			ipr=apt;
 			schau="dpkg -s";

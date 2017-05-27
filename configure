@@ -225,10 +225,6 @@ fi
 SUG="admin\|root\|sudo\|wheel\|ntadmin";
 
 # hier geht's los
-			su -c "S=/etc/apt/sources.list;grep -q -m 1 '^[^#]*cdrom' $S && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' $S | \
-					cut -d: -f1) > 0$(grep -n -m 1 '^[^#]*cdrom' $S | cut -d: -f1) && \
-					ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/^[^#]*cdrom/d' $S"
-exit
 echo \"$SITZV\">sitzdt
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
 INSTP=sudo;still which $INSTP||{
@@ -239,9 +235,9 @@ INSTP=sudo;still which $INSTP||{
 #	test -f $AUNF&&grep -q "[^;] sudo" $AUNF||printf "${UPR}sudo\nprintf \"\$blau%%s\$reset\\\n\" \"${UPR}sudo\"\n">>$AUNF;
 #	su -c "$IdPR sudo;";
 # genauso in: linst_cl::linst_cl(int obverb,int oblog)
-			su -c "S=/etc/apt/sources.list;grep -q -m 1 '^[^#]*cdrom' $S && test 0$(grep -n -m 1 '^[^#]*ftp.*debian' $S | \
-					cut -d: -f1) > 0$(grep -n -m 1 '^[^#]*cdrom' $S | cut -d: -f1) && \
-					ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/^[^#]*cdrom/d' $S"
+			su -c "S=/etc/apt/sources.list;F='^[^#]*cdrom:';grep -qm1 \$F \$S && \
+			    test 0\$(sed -n '/^[^#]*ftp.*debian/{=;q}' \$S) -gt 0\$(sed -n '/'\$F'/{=;q}' \$S) && \
+					ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/'\$F'/{H;d};\${p;x}' \$S"
 	 LOG=inst_$INSTP.log;
 	 printf "%bsu -c \"$IdPR $INSTP\"|tee \"$LOG\";%b\n" ${blau} ${reset}
 	 su -c "$IdPR $INSTP"|tee "$LOG";
