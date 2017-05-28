@@ -363,6 +363,7 @@ class paramcl // Programmparameter
 		void empfhyla(const string& ganz,uchar indb=1,uchar mitversch=1);
 		void empfcapi(const string& stamm,uchar indb=1,uchar mitversch=1);
 		void uebertif();
+		void zeigdienste();
 	public:
 		int Log(const string& text,const bool oberr=0,const short klobverb=0);
     paramcl(int argc,char** argv);
@@ -421,7 +422,6 @@ class paramcl // Programmparameter
     void untersuchespool(uchar mitupd=1);
     void zeigweitere();
     void zeigkonf();
-		void zeigdienste();
     void sammlecapi(vector<fsfcl> *fsfvp);
     void sammlehyla(vector<fsfcl> *fsfvp);
     void korrigierecapi(unsigned tage=90);

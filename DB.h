@@ -88,7 +88,7 @@ enum Txdb_
 // extern class Txdbcl Txd;
 extern const char *DB_T[T_dbMAX+1][SprachZahl];
 extern class TxB Txd;
-/*
+/*//
 class Txdbcl: public TxB
 {
   public:
@@ -98,18 +98,17 @@ class Txdbcl: public TxB
 */
 svec holdbaussql(string sql);
 
-//
 enum DBSTyp {MySQL, Postgres};
 
 class sqlft: public string 
 {
   private:
-    //	char dbuf[21];
+    ////	char dbuf[21];
     string *ersetze(const char* alt, const char* neu);
     string *sersetze( string *src, string const& target, string const& repl);
     void druckeein(DBSTyp eDBS, tm *zt);
   public:
-    //	string feld;
+    ////	string feld;
     sqlft(DBSTyp eDBS, const string& vwert);
     sqlft(DBSTyp eDBS, const string* vwert);
     sqlft(DBSTyp eDBS, char* vwert,char* zs);
@@ -137,39 +136,33 @@ class instyp
     string wert;
     unsigned char obkeinwert; // bei update wird <wert> nicht als Wert, sondern ohne Anf'z.(z.B.als Feld) verwendet (z.B. update xy set altdatum = datum)
   private:
-    //	char dbuf[21];
+    ////	char dbuf[21];
     inline string ersetze(const char *u, const char* alt, const char* neu);
     inline string *sersetze( string *src, string const& target, string const& repl);
   public:
     /*1*/template <typename tC> explicit instyp (DBSTyp eDBS, char* const feld, tC vwert): feld(feld) {
-//      feld=feld;
       wert=sqlft(eDBS,vwert);
       obkeinwert=0;
     }
     /*2*/template <typename tC> explicit instyp (DBSTyp eDBS, const char* feld, tC vwert):feld(feld) {
-//      feld=feld;
       wert=sqlft(eDBS,vwert);
       obkeinwert=0;
     }
-//    void init(){feld="";wert="";obkeinwert=0;}
+////    void init(){feld="";wert="";obkeinwert=0;}
 
     /*3*/instyp (DBSTyp eDBS, char* feld, char *vwert):feld(feld) {
-//      feld=feld;
       wert=sqlft(eDBS,vwert,false);
       obkeinwert=0;
     }
     /*4*/instyp (DBSTyp eDBS, char* feld, char *vwert,char* zs):feld(feld) {
-//      feld=feld;
       wert=sqlft(eDBS,vwert,zs);
       obkeinwert=0;
     }
     /*5*/instyp (DBSTyp eDBS, char* feld, char *vwert,bool obzahl):feld(feld) {
-//      feld=feld;
       wert=sqlft(eDBS,vwert,obzahl);
       obkeinwert=0;
     }
     /*6*/instyp (DBSTyp eDBS, const char* feld, const char *vwert,unsigned char vobkeinwert):feld(feld) {
-//      feld=feld;
       wert=vwert;
       obkeinwert=vobkeinwert;
     }
@@ -269,19 +262,19 @@ class DB
 #ifdef mitpostgres 
 		PGconn *pconn,*pmconn;
 #endif
-    //	MYSQL_RES *result;
-    //	MYSQL_ROW row;
+    ////	MYSQL_RES *result;
+    ////	MYSQL_ROW row;
     DBSTyp DBS;
     char dnb; // delimiter name begin
     char dne; // delimiter name end
     char dvb; // delimiter value begin
     char dve; // delimiter value end
-    //	char* ConStr;
-    //  const char* db;
+    ////	char* ConStr;
+    ////  const char* db;
     string db;
-    //  const char* host;
+    ////  const char* host;
     string host;
-    //  const char* user;
+    ////  const char* user;
     string user;
     string passwd;
     string myloghost; // einheitliche Benennung von 'localhost' bzw. '%'
@@ -307,7 +300,7 @@ class DB
 		void erweitern(const string& tab, vector<instyp> einf,uchar obverb,uchar obsammeln=0, const unsigned long *maxl=0);
 		uchar tuerweitern(const string& tab, const string& feld,long wlength,uchar obverb);
     int machbinaer(const string& tabs, const string& fmeld,uchar obverb);
-    //	DB(DBSTyp DBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag);
+    ////	DB(DBSTyp DBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag);
 		DB(linst_cl *linstp);
 		DB(DBSTyp nDBS, linst_cl *linstp, const char* const phost, const char* const user,const char* const ppasswd, const char* const uedb="", 
 		   unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=0,
@@ -323,18 +316,18 @@ class DB
 				unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=0,int obverb=0,int oblog=0,unsigned versuchzahl=3,
 				uchar ggferstellen=1);
     ~DB(void);
-    /*
+    /*//
        int Abfrage(const char* sql,const char** erg=(const char**)&"", uchar obverb=1);
        int Abfrage(string sql,const char** erg=(const char**)&"", uchar obverb=1);
        int AbfragemE(const char* sql,const char** erg=(const char**)&"", uchar obverb=1); // mit Ende
        int AbfragemE(string sql,const char** erg=(const char**)&"", uchar obverb=1);      // mit Ende
      */
-    //	int insert(const char* tab, vector<instyp> einf, const char** erg=(const char**)&"",uchar anfangen=1,uchar sammeln=0);
-    //	void AbfrageEnde();
+    ////	int insert(const char* tab, vector<instyp> einf, const char** erg=(const char**)&"",uchar anfangen=1,uchar sammeln=0);
+    ////	void AbfrageEnde();
     void LetzteID(string* erg);
     char* tmtosql(tm *tmh,char* buf);
     char* tmtosqlmZ(tm *tmh,char* buf);
-    //	char** HolZeile();
+    ////	char** HolZeile();
     my_ulonglong affrows(); // unsigned __int64
     void lesespalten(Tabelle *tab,int obverb=0,int oblog=0);
     int prueftab(Tabelle *tab,int obverb=0,int oblog=0);
@@ -389,5 +382,5 @@ class RS
     int doAbfrage(uchar obverb=0,uchar asy=0,int oblog=0);
 };
 
-//string ersetze(const char *u, const char* alt, const char* neu);
+////string ersetze(const char *u, const char* alt, const char* neu);
 #endif // DB_H_DRIN
