@@ -57,11 +57,6 @@ const string s_dampand="&&";
 const string s_gz="gz";
 //// const char *tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
 
-const char *logdt="/var/log/autofaxvorgabe.log";// darauf wird in kons.h verwiesen; muss dann auf lgp zeigen
-const unsigned ktage=1; // kurzes Intervall fuer Faxtabellenkorrektur, 1 Tag
-const unsigned mtage=30; // mittleres Intervall fuer Faxtabellenkorrektur, 1 Monat
-const unsigned ltage=73000; // langes Intervall fuer Faxtabellenkorrektur, 200 Jahre
-
 enum T_ 
 {/*{{{*/
 	T_sprachstr,
@@ -2119,7 +2114,7 @@ char const *autofax_T[T_MAX+1][SprachZahl]={
 
 class TxB Tx((const char* const* const* const*)autofax_T);
 
-const string& pk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax";
+const string& pk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax"; // fuer Antlitzaenderung
 
 extern class lsyscl lsys;
 
@@ -2131,8 +2126,14 @@ const DBSTyp myDBS=MySQL;
 #endif
 string tmpcron; // fuer crontab
 
+const char *logdt="/var/log/autofaxvorgabe.log";// darauf wird in kons.h verwiesen; muss dann auf lgp zeigen
+
 #define autofaxcpp
 #include "autofax.h"
+
+const unsigned ktage=1; // kurzes Intervall fuer Faxtabellenkorrektur, 1 Tag
+const unsigned mtage=30; // mittleres Intervall fuer Faxtabellenkorrektur, 1 Monat
+const unsigned ltage=73000; // langes Intervall fuer Faxtabellenkorrektur, 200 Jahre
 
 constexpr const char *paramcl::moeglhvz[2];
 // wird nur in VorgbSpeziell gebraucht:
