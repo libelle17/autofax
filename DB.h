@@ -63,8 +63,6 @@ enum Txdb_
   T_mit,
   T_bei_Abfrage,
   T_Fehler_beim_Pruefen_auf_Vorhandensein_des_Datensatzes,
-  T_Programmfehler,
-  T_nicht_anfangen_bei_isql_empty_Aufruf_von_RS_insert_beim_ersten_Mal_ohn_anfangen_bei,
   T_Datenbank_nicht_zu_oeffnen,
   T_Erweitere_Feld,
   T_von,
@@ -218,14 +216,16 @@ class Feld
     bool nnull;
     string defa;
 		bool unsig;
+		Feld();
     Feld(const string& name, string typ="", const string& lenge="", const string& prec="", 
          const string& comment="", bool obind=0, bool obauto=0, bool nnull=0, const string& defa="", bool unsig=0);
+//		Feld(Feld const& copy);
 };
 
 class Index 
 {
-  public:
-    const string name;
+	public:
+		const string name;
     int feldzahl;
     Feld *felder;
     Index(const string& vname, Feld *vfelder, int vfeldzahl);
@@ -297,9 +297,9 @@ class DB
 		void prueffunc(const string& pname, const string& body, const string& para, int obverb, int oblog);
 		my_ulonglong arows;
 		vector< vector<instyp> > ins;
-		void erweitern(const string& tab, vector<instyp> einf,uchar obverb,uchar obsammeln=0, const unsigned long *maxl=0);
-		uchar tuerweitern(const string& tab, const string& feld,long wlength,uchar obverb);
-    int machbinaer(const string& tabs, const string& fmeld,uchar obverb);
+		void erweitern(const string& tab, vector<instyp> einf,int obverb,uchar obsammeln=0, const unsigned long *maxl=0);
+		uchar tuerweitern(const string& tab, const string& feld,long wlength,int obverb);
+    int machbinaer(const string& tabs, const string& fmeld,int obverb);
     ////	DB(DBSTyp DBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag);
 		DB(linst_cl *linstp);
 		DB(DBSTyp nDBS, linst_cl *linstp, const char* const phost, const char* const user,const char* const ppasswd, const char* const uedb="", 
@@ -317,12 +317,12 @@ class DB
 				uchar ggferstellen=1);
     ~DB(void);
     /*//
-       int Abfrage(const char* sql,const char** erg=(const char**)&"", uchar obverb=1);
-       int Abfrage(string sql,const char** erg=(const char**)&"", uchar obverb=1);
-       int AbfragemE(const char* sql,const char** erg=(const char**)&"", uchar obverb=1); // mit Ende
-       int AbfragemE(string sql,const char** erg=(const char**)&"", uchar obverb=1);      // mit Ende
+       int Abfrage(const char* sql,const char** erg=(const char**)&"", int obverb=1);
+       int Abfrage(string sql,const char** erg=(const char**)&"", int obverb=1);
+       int AbfragemE(const char* sql,const char** erg=(const char**)&"", int obverb=1); // mit Ende
+       int AbfragemE(string sql,const char** erg=(const char**)&"", int obverb=1);      // mit Ende
      */
-    ////	int insert(const char* tab, vector<instyp> einf, const char** erg=(const char**)&"",uchar anfangen=1,uchar sammeln=0);
+    ////	int insert(const char* tab, vector<instyp> einf, const char** erg=(const char**)&"",uchar sammeln=0);
     ////	void AbfrageEnde();
     void LetzteID(string* erg);
     char* tmtosql(tm *tmh,char* buf);
@@ -363,23 +363,24 @@ class RS
     void weisezu(DB* pdb);
     void clear();
     template<typename sT> 
-      int Abfrage(sT psql,uchar obverb=1,uchar asy=0,int oblog=0){
+      int Abfrage(sT psql,int obverb=1,uchar asy=0,int oblog=0){
         int erg=-1;
         this->sql=psql;
         if (!sql.empty()) {
           erg = doAbfrage(obverb,asy,oblog);
-        }
+        } //         if (!sql.empty())
         return erg;
-      } //       int Abfrage(sT psql,uchar obverb=1,uchar asy=0)
+      } //       int Abfrage(sT psql,int obverb=1,uchar asy=0)
 
-    RS(DB* pdb,const char* const psql, uchar obverb=1);
-    RS(DB* pdb,const string& psql, uchar obverb=1);
-    RS(DB* pdb,stringstream psqls, uchar obverb=1);
+    RS(DB* pdb,const char* const psql, int obverb=1);
+    RS(DB* pdb,const string& psql, int obverb=1);
+    RS(DB* pdb,stringstream psqls, int obverb=1);
     ~RS();
-    void update(const string& tab,vector<instyp> einf,uchar obverb, const string& bedingung, uchar asy=0);
-    void insert(const string& tab,vector<instyp> einf,uchar anfangen=1,uchar sammeln=0,uchar obverb=1,string *id=0,uchar eindeutig=0,uchar asy=0);
+    void update(const string& tab,vector<instyp> einf,int obverb, const string& bedingung, uchar asy=0);
+    void insert(const string& tab,vector<instyp> einf,uchar sammeln=0,int obverb=1,string *id=0,uchar eindeutig=0,uchar asy=0,
+		            svec *csets=0);
   private:
-    int doAbfrage(uchar obverb=0,uchar asy=0,int oblog=0);
+    int doAbfrage(int obverb=0,uchar asy=0,int oblog=0);
 };
 
 ////string ersetze(const char *u, const char* alt, const char* neu);

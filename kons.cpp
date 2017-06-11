@@ -16,26 +16,26 @@ const char *tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
 
 #ifdef linux
 #include <iomanip> // setprecision
-// const char *rot="\e[1;31m", *weinrot="\e[31m", *schwarz="\e[0m", *blau="\e[34m", *gelb="\e[33m"; // muss spaeter kompilerunabhaengig 
+//// const char *rot="\e[1;31m", *weinrot="\e[31m", *schwarz="\e[0m", *blau="\e[34m", *gelb="\e[33m"; // muss spaeter kompilerunabhaengig 
 const char *schwarz="\e[0m", *dgrau="\e[1;30m", *drot="\e[0;31m", *rot="\e[1;31m", *gruen="\e[0;32m", *hgruen="\e[1;32m",
       *braun="\e[0;33m",   *gelb="\e[1;33m",     *dblau="\e[0;34;1;47m",  *blau="\e[1;34m", *violett="\e[0;35m", *hviolett="\e[1;35m",
       *tuerkis="\e[0;36m", *htuerkis="\e[1;36m", *hgrau="\e[0;37m", *weiss="\e[1;37m", *umgek="\e[7m";
 const char *_drot=drot, *_rot=rot, *_schwarz=schwarz, *_blau=blau, *_gelb=gelb, *_tuerkis=tuerkis, *_hgrau=hgrau;
-// char logdatei[PATH_MAX+1]="/DATA/down/log_termine.txt";
+//// char logdatei[PATH_MAX+1]="/DATA/down/log_termine.txt";
 #define _access access
 #include <sys/time.h>  // für gettimeofday()
 #elif defined _WIN32
 const char *drot="", *rot="", *schwarz="", *blau="", *gelb="", *tuerkis="", *hgrau="";
-//offen: bei den Farben muss unterschieden werden zwischen cout (-> _drot) und 
+////ffen: bei den Farben muss unterschieden werden zwischen cout (-> _drot) und 
 printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTextAttribute-Aufrufe ersetzen)
-  // char logdatei[PATH_MAX+1]="v:\log_termine.txt";
+  ////char logdatei[PATH_MAX+1]="v:\log_termine.txt";
   template <class _Elem, class _Traits>
   std::basic_ostream<_Elem,_Traits>& operator<<(std::basic_ostream<_Elem,_Traits>& i, color& c){
     HANDLE hStdout=GetStdHandle(STD_OUTPUT_HANDLE); 
     SetConsoleTextAttribute(hStdout,c.m_color);
     return i;
   }
-//char logdatei[PATH_MAX+1]="v:\\log_termine.txt";
+////har logdatei[PATH_MAX+1]="v:\\log_termine.txt";
 #endif
 
 // z.B. "/root/autofax"
@@ -45,10 +45,10 @@ const string& instvz=
 const string& unindt=instvz+"/uninstallinv"; // # Name muss identisch sein mit Variabler UNF in install.sh
 const string nix;
 
-// const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
+////const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 const char *kons_T[T_konsMAX+1][SprachZahl]=
 {
-  //TCtp Txkonscl::TextC=KLA
+  ////Ctp Txkonscl::TextC=KLA
   // T_pfad,
   {"pfad","path"},
   // T_kuerze_logdatei,
@@ -258,7 +258,7 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 const int sfeh[]={ T_Dienst_laeuft,T_Dienst_inexistent, T_Dienst_disabled, T_Dienstdateiname_nicht_ermittelbar, T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent, T_Exec_Dateiname_nicht_ermittelbar, T_Exec_Datei_fehlt, T_activating, T_Dienst_kann_gestartet_werden, T_Sonstiges};
 
 
-/*
+/*//
 Txkonscl::Txkonscl() 
 {
   TCp=(const char* const * const * const *)&TextC;
@@ -266,7 +266,7 @@ Txkonscl::Txkonscl()
 */
 class TxB Txk((const char* const* const* const*)kons_T);
 
-// class Txkonscl Txk;
+////class Txkonscl Txk;
 
 uchar nrzf=0; // nicht rueckzufragen, fuer Aufruf aus Cron
 
@@ -311,7 +311,7 @@ void perfcl::ausgab1000(const string& stelle)
 int perfcl::oberreicht(unsigned long sek)
 {
  zp1=clock();
-// <<"zp1-zp0: "<<(zp1-zp0)<<", sek: "<<(long)(sek*CLOCKS_PER_SEC)*0.1<<endl;
+////<<"zp1-zp0: "<<(zp1-zp0)<<", sek: "<<(long)(sek*CLOCKS_PER_SEC)*0.1<<endl;
  return ((zp1-zp0)>(long)sek*CLOCKS_PER_SEC*0.1);
 } // int perfcl::oberreicht(unsigned long sek)
 
@@ -333,7 +333,7 @@ char* charersetze(char *u, char alt, char neu)
   return u;
 } // charersetze(char *u, const char* alt, const char* neu)
 
-/*
+/*//
 // macht Speicherfehler
 wstring ersetze(const wstring& u, const wchar_t* alt, const wchar_t* neu) 
 {
@@ -381,7 +381,7 @@ string caseersetze(const string& u, const char* alt, const char* neu)
   if (alt[0]==0 || !strcmp(alt,neu)) {
     erg=u;
   } else {
-    //    for(char* p=(char*)u.c_str();*p;p++)  KLA
+    ////   for(char* p=(char*)u.c_str();*p;p++)  KLA
     for(char* p=(char*)u.c_str();p<(char*)u.c_str()+u.length();p++)  {
       char *pi = (char*)alt;
       int i=0,gleich=1;
@@ -536,7 +536,7 @@ size_t zahlin(const string *str, const char* was)
 
 void chersetze(string str, string *wsRet, const string& from, const char to) 
 {
-  //  wsRet->reserve(str.length());
+  //// wsRet->reserve(str.length());
   wsRet->clear();
   size_t start_pos = 0, pos;
   while((pos = str.find_first_of(from, start_pos)) != string::npos) {
@@ -598,7 +598,7 @@ void getstammext(const string *const ganz, string *stamm, string *exten)
 #if defined(__MINGW32__) || defined(_MSC_VER)
 int getcols() 
 {
-  CONSOLE_SCREEN_BUFFER_INFO info; //Schrecklicher Name ;)
+  CONSOLE_SCREEN_BUFFER_INFO info; ////Schrecklicher Name ;)
   GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&info);
   return info.dwSize.X;
 } // int getcols() 
@@ -628,7 +628,6 @@ string holsystemsprache(int obverb/*=0*/)
 				break;
 			} // 			if (!cglang[0].wert.empty())
 		} //     if (!lstat(hylacdt.c_str(),&hstat))
-		//  if (cpplies(hylacdt,hylaconf,cs)) KLA
 	} // 	for(size_t lind=0;lind<langdt.size())
 	return ret;
 } // string holsystemsprache()
@@ -643,20 +642,23 @@ char* curruser()
 // Achtung: Wegen der Notwendigkeit der Existenz der Datei zum Aufruf von setfacl kann die Datei erstellt werden!
 mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_base::out*/,uchar faclbak/*=1*/,int obverb/*=0*/, int oblog/*=0*/)
 {
+  uchar mehralslesen=(modus&ios_base::out||modus&ios_base::app||modus&ios_base::trunc||modus&ios_base::app);
   for(int iru=0;iru<3;iru++) {
     open(name,modus);
     if (is_open()) {
       oboffen=1;
       break;
-    }
-    //    int erg __attribute__((unused));
-		//    if (name!=unindt)  // sonst vielleicht Endlosschleife
-		pruefverz(dir_name(name),0,0,0,0);
-//    if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) KLA
-		if (!touch(name,obverb,oblog)) {
-      setfaclggf(name,falsch,modus&ios::out||modus&ios::app?6:4,falsch,obverb,oblog,faclbak);
-    } // if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) 
-  } // for(int iru=0;iru<3;iru++) 
+    } //     if (is_open())
+    ////    int erg __attribute__((unused));
+		////    if (name!=unindt)  // sonst vielleicht Endlosschleife
+		if (mehralslesen) {
+			pruefverz(dir_name(name),0,0,0,0);
+			////    if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) KLA
+			if (!touch(name,obverb,oblog)) {
+				setfaclggf(name,falsch,modus&ios::out||modus&ios::app?6:4,falsch,obverb,oblog,faclbak);
+			} // if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) 
+		} // 		if (mehralslesen)
+	} // for(int iru=0;iru<3;iru++) 
 } // mdatei::mdatei (const string& name, ios_base::openmode modus)
 
 
@@ -699,7 +701,7 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 				} 
 				if (!*erfolg) {
 					int erg __attribute__((unused))=
-//                                        systemrueck("sudo touch '"+datei+"'",obverb,oblog);
+////                                        systemrueck("sudo touch '"+datei+"'",obverb,oblog);
 					touch(datei,obverb,oblog);
 				}
 			} // oeffne
@@ -714,15 +716,15 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 #ifdef false
 	uchar erfolg=0;
 #endif
-	// zutun: nicht erst in Vektor einlesen, sondern gleich in die tmp-Datei schreiben 10.6.12
+	//// zutun: nicht erst in Vektor einlesen, sondern gleich in die tmp-Datei schreiben 10.6.12
 
-	//	vector<string> Zeilen;   //Der Vektor Zeilen enthält String-Elemente
+	////	vector<string> Zeilen;   //Der Vektor Zeilen enthält String-Elemente
 	char Zeile[256]; //Die maximale Zeilenlänge beträgt 255 Zeichen, weil ein String mit einer Null endet
 	if (obverb>1) {
 		cout<<"obverb: "<<(int)obverb<<Txk[T_kuerze_logdatei]<<drot<<logdatei<<schwarz<<endl;
 	}
-	//  Log(string("kuerzelogdatei: ") + drot + logdatei + schwarz,obverb,0);
-	// ersetze(logdatei,"\\","\\\\")
+	////  Log(string("kuerzelogdatei: ") + drot + logdatei + schwarz,obverb,0);
+	//// ersetze(logdatei,"\\","\\\\")
 	struct stat stat={0};
 	if (lstat(logdatei,&stat)){
 		if (obverb>1) {
@@ -760,7 +762,7 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 			return 1;
 		}
 		while (logf->getline (Zeile, sizeof(Zeile))) {
-			//		Zeilen.push_back(Zeile); //hängt einfach den Inhalt der Zeile als Vektorelement an das Ende des Vektors
+			////		Zeilen.push_back(Zeile); //hängt einfach den Inhalt der Zeile als Vektorelement an das Ende des Vektors
 #else	
 			FILE *outfile=oeffne(ofil,2,&erfolg);
 			if (!erfolg) {
@@ -773,13 +775,13 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 				return 1;
 			}
 			while (fgets(Zeile, sizeof Zeile, logf)) {
-				//	 Zeilen.push_back(Zeile);
+				////	 Zeilen.push_back(Zeile);
 #endif	
 #endif	
 				if (!abhier) {
 					tm *atm = new tm; // int aktz;
-					//	for(aktz=Zeilen.size()-1;aktz>=0;aktz--) KLA
-					//         Log(string("aktz=") + ltoa_(aktz,buffer,10),obverb,0);
+					////	for(aktz=Zeilen.size()-1;aktz>=0;aktz--) KLA
+					////         Log(string("aktz=") + ltoa_(aktz,buffer,10),obverb,0);
 					int verwertbar=0, index;
 					for(unsigned j=0;j<2;j++) {
 						if (verwertbar) {
@@ -797,7 +799,7 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 									}
 									atm->tm_mon--;
 									atm->tm_year+=100; // 2000-1900
-									//	  <<atm->tm_mday<<"."<<atm->tm_mon+1<<"."<<atm->tm_year<<"."<<atm->tm_hour<<"."<<atm->tm_min<<"."<<atm->tm_sec<<endl;
+									////	  <<atm->tm_mday<<"."<<atm->tm_mon+1<<"."<<atm->tm_year<<"."<<atm->tm_hour<<"."<<atm->tm_min<<"."<<atm->tm_sec<<endl;
 									atm->tm_isdst=-1; // sonst wird ab und zu eine Stunde abgezogen
 								} else if (verwertbar) verwertbar=0;
 								break;
@@ -812,15 +814,15 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 					} //           for(unsigned j=0;j<2;j++)
 					if (verwertbar) {
 						time_t gesz=mktime(atm);
-						//          	  char tbuf[20];
-						//              strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
-						//              <<"Datum: "<<tbuf<<endl;
+						////          	  char tbuf[20];
+						////              strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
+						////              <<"Datum: "<<tbuf<<endl;
 						time_t jetzt=time(0);
 						long sekunden=(long)(jetzt-gesz);
 						if (sekunden<1209600) {// jünger als zwei Wochen => behalten
 							abhier=1;
 						}
-						//	  <<jetzt<<"- "<<gesz<<"="<<sekunden<<endl;
+						////	  <<jetzt<<"- "<<gesz<<"="<<sekunden<<endl;
 					} // if (sscanf(Zeile
 					delete[] atm;
 				} // (!abhier)
@@ -838,7 +840,7 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 	outfile->close();
 #else
 	fputs(Zeile,outfile);
-	//          fputs("\n",outfile);
+	////          fputs("\n",outfile);
 } // (abhier)
 } // while (fgets(Zeile
 fclose(logf);
@@ -852,13 +854,14 @@ if (abhier) {
 	remove(ofil.c_str());
 }
 return 0;
-//  << "Alle Zeilen:" << endl;
-// unsigned int ii; //unsigned, weil ansonsten Vergleich von signed- und unsigned-Werten. signed=vorzeichenbehaftet
-// for(ii=0; ii < Zeilen.size(); ii++ddddddddds) KLA
-//  << Zeilen[ii] << endl;
-// KLZ
-//  << endl;
-//************************************
+/*//
+  << "Alle Zeilen:" << endl;
+ unsigned int ii; //unsigned, weil ansonsten Vergleich von signed- und unsigned-Werten.
+ for(ii=0; ii < Zeilen.size(); ii++) KLA
+  << Zeilen[ii] << endl;
+ KLZ
+  << endl;
+*/
 }	 // int kuerzelogdatei(const char* logdatei,int obverb)
 
 // aufgerufen in Log, setzbemv, aschreib
@@ -892,7 +895,7 @@ int Log(const string& text, const short screen, const short file, const bool obe
   uchar erfolg=0;
 #endif  
   // screen=0 = schreibt nicht auf den Bildschirm, 1 = schreibt, -1 = schreibt ohne Zeilenwechsel, -2 = schreibt bleibend ohne Zeilenwechsel
-  // <<"Log: "<<text<<", screen: "<<screen<<", file: "<<file<<endl;
+  //// <<"Log: "<<text<<", screen: "<<screen<<", file: "<<file<<endl;
   if (file || screen) {
     if (screen) {
       if (!cols) cols=getcols();
@@ -902,7 +905,7 @@ int Log(const string& text, const short screen, const short file, const bool obe
       }	
       if (screen==-2); else if (screen==-1 && !naechstezeile) 
 			  {cout<<"\r";cout.flush();} 
-//      <<"\n\n"<<text<<"\nHier kein Zeilenumbruch\n\n";
+////      <<"\n\n"<<text<<"\nHier kein Zeilenumbruch\n\n";
 			else cout<<endl; 
       letztesmaloZ = (screen==-1);
     } // if (screen) 
@@ -919,7 +922,7 @@ int Log(const string& text, const short screen, const short file, const bool obe
 
         if (erstaufruf) {
           kuerzelogdatei(logdt,klobverb); // screen
-          //          Log("nach kuerzelogdatei",screen,0);
+          ////          Log("nach kuerzelogdatei",screen,0);
           erstaufruf=0;
         }	  
         mdatei logf(logdt,ios::out|ios::app,0);
@@ -943,7 +946,7 @@ int Log(const string& text, const short screen, const short file, const bool obe
 #else	
         FILE *logf=oeffne(logdt,2,&erfolg);
         if (!erfolg) {
-          //perror((string("\nLog: Kann Datei '")+logdt+"' nicht mit fopen zum Anhaengen oeffnen.").c_str()); // ergebnisgleich wie:
+          ////perror((string("\nLog: Kann Datei '")+logdt+"' nicht mit fopen zum Anhaengen oeffnen.").c_str()); // ergebnisgleich wie:
           cerr<<"\nLog: "<<Txk[T_Kann_Datei]<<logdt<<Txk[T_nicht_mit_fopen_zum_Anhaengen_oeffnen]<<strerror(errno)<<endl;
           return 1;
         } else {
@@ -956,17 +959,17 @@ int Log(const string& text, const short screen, const short file, const bool obe
 
       } // if (!logdt || !*logdt) _gKLA_ _gKLZ_ else _gKLA_
       if (oberr) {
-        //      string hstrerror=strerror(errno); // da errno trotz richtiger Fallunterscheidung bei isatty(fileno(stdout)) gesetzt wird
+        ////      string hstrerror=strerror(errno); // da errno trotz richtiger Fallunterscheidung bei isatty(fileno(stdout)) gesetzt wird
         // wenn cerr woanders hingeht als cout oder die Meldung gar nicht an screen gerichtet ist, hier ohne Berücks.v.screen==-1
         if (isatty(fileno(stdout))!=isatty(fileno(stderr)) || !screen) {
-          cerr<<text<<endl; // <<": "<<hstrerror<<endl;
+          cerr<<text<<endl; //// <<": "<<hstrerror<<endl;
         }
         errno=0;
       } //       if (oberr)
     } // (file)
   } // if (file || screen) 
-  // <<"Screen: "<<screen<<"letztesmaloZ: "<<letztesmaloZ;
-  // <<"und dann: "<<letztesmaloZ<<endl;
+  //// <<"Screen: "<<screen<<"letztesmaloZ: "<<letztesmaloZ;
+  //// <<"und dann: "<<letztesmaloZ<<endl;
   return 0;
 } // Log(string text)
 
@@ -975,9 +978,8 @@ int Log(const string& text, const short screen, const short file, const bool obe
 inline void wait () 
 {
   cout<<Txk[T_Bitte_mit]<<_drot<<"return"<<_schwarz<<Txk[T_beenden];
-  // Löscht etwaige Fehlerzustände die das Einlesen verhindern könnten
+  // Löscht etwaige Fehlerzustände, die das Einlesen verhindern könnten
   cin.clear();
-  // Ignoriert soviele Zeichen im Puffer wie im Puffer vorhanden sind
   // (= ignoriert alle Zeichen die derzeit im Puffer sind)
   cin.ignore(cin.rdbuf()->in_avail());
   // Füge alle eingelesenen Zeichen in den Puffer bis ein Enter gedrückt wird
@@ -987,12 +989,12 @@ inline void wait ()
 #endif
 
 // braucht nur 1/300 von FindStringInBuffer
-long cmpmem( char* feld, const char* search, int len_feld) // , int len_search
+long cmpmem( char* feld, const char* search, int len_feld) //// , int len_search
 {
-  /*#ifdef _DEBUG
+/*//#ifdef _DEBUG
     gettimeofday(&perfStart, 0); 
 #endif
-   */
+*/
   long i=0;
   int j=-1;
   int len_search=strlen(search);
@@ -1001,7 +1003,7 @@ long cmpmem( char* feld, const char* search, int len_feld) // , int len_search
     if (!j) 
       break;
   }
-  /*
+/*//
 #ifdef _DEBUG
 gettimeofday(&perfEnd, 0); 
 #endif
@@ -1012,10 +1014,9 @@ perf2= (((double)(perfEnd-perfStart))/((double)freq));
 perf2= static_cast<double> (perfEnd.tv_sec * 1000000 + perfEnd.tv_usec- perfStart.tv_sec * 1000000 - perfStart.tv_usec) / 1000000;
 #endif
 #endif
-   */
+*/
   return !j?i:-1;
-  //    return (i == len_feld-len_search)?0:feld;  
-
+////    return (i == len_feld-len_search)?0:feld;  
 }    // long cmpmem( char* feld, const char* search, int len_feld) // , int len_search
 
 
@@ -1150,31 +1151,39 @@ int touch(const string& pfad,int obverb/*=0*/,int oblog/*=0*/)
 } // int touch(const std::string& pfad,int obverb/*=0*/,int oblog/*=*/)
 
 
-void aufSplit(vector<string> *tokens, const char *text, char sep/*=' '*/, bool nichtmehrfach/*=1*/)
+void aufSplit(vector<string> *tokens, const char* const text, char sep/*=' '*/,bool auchleer/*=1*/)
 {
-  const string texts=text;
-  aufSplit(tokens,texts,sep,nichtmehrfach);
-} // void aufSplit(vector<string> *tokens, const char *text, char sep, bool nichtmehrfach)
+  aufSplit(tokens,string(text),sep,auchleer);
+} // void aufSplit(vector<string> *tokens, const char *text, char sep/*=' '*/, bool auchler/*=1*/)
 
-
-void aufSplit(vector<string> *tokens, const string& text, char sep/*=' '*/,bool nichtmehrfach/*=1*/) 
+void aufSplit(vector<string> *tokens, const string& text, char sep/*=' '*/,bool auchleer/*=1*/)
 {
-  int start = 0, end = 0;
+	size_t start = 0, end = 0;
+	tokens->clear();
+	while ((end = text.find(sep, start)) != string::npos) {
+		if (end!=start || auchleer) {
+			tokens->push_back(text.substr(start,end-start));
+		} // 		if (!akttok.empty() || auchleer)
+		start = end + 1;
+	} //   while ((end = text.find(sep, start)) != (int)string::npos)
+	if (text.length() !=start || auchleer)
+		tokens->push_back(text.substr(start));
+} // void aufSplit(vector<string> *tokens, const string& text, char sep,bool auchleer/*=1*/)
+
+void aufSplit(vector<string> *tokens, const string& text, char* sep, bool auchleer/*=1*/)
+{
+  const size_t len=strlen(sep);
+  size_t start=0, end=0;
   tokens->clear();
-  while ((end = text.find(sep, start)) != (int)string::npos) {
-    if (nichtmehrfach || end!=start) tokens->push_back(text.substr(start, end - start));
-    start = end + 1;
-  }
-  tokens->push_back(text.substr(start));
-} // void aufSplit(vector<string> *tokens, const string& text, char sep,bool nichtmehrfach) 
-
-size_t irfind(const string& wo, const string& was)
-{
- string wou, wasu;
- transform(wo.begin(),wo.end(),std::back_inserter(wou),::toupper);
- transform(was.begin(),was.end(),std::back_inserter(wasu),::toupper);
- return wou.rfind(wasu);
-}
+  while ((end = text.find(sep, start)) != string::npos) {
+		if (end!=start || auchleer) {
+				tokens->push_back(text.substr(start,end-start));
+		} // 		if (!akttok.empty() || auchleer)
+    start=end+len;
+  } //   while ((end = text.find(sep, start)) != (int)string::npos)
+	if (text.length()!=start || auchleer)
+		tokens->push_back(text.substr(start));
+} // void aufSplit(vector<string> *tokens, const string& text, char* sep,bool auchleer/*=1*/)
 
 void aufiSplit(vector<string> *tokens, const string& text, const char* sep,bool nichtmehrfach/*=1*/,int obverb/*=0*/,int oblog/*=0*/) 
 {
@@ -1204,26 +1213,23 @@ void aufiSplit(vector<string> *tokens, const string& text, const char* sep,bool 
 	delete usep;
 } // void aufiSplit(vector<string> *tokens, const string& text, const char* sep,bool nichtmehrfach) 
 
-
-void aufSplit(vector<string> *tokens, const string& text, char* sep,bool nichtmehrfach) 
+size_t irfind(const string& wo, const string& was)
 {
-  int start = 0, end = 0;
-  int len = strlen(sep);
-  tokens->clear();
-  while ((end = text.find(sep, start)) != (int)string::npos) {
-    if (nichtmehrfach || end!=start) tokens->push_back(text.substr(start, end - start));
-    start = end + len;
-  }
-  tokens->push_back(text.substr(start));
-} // void aufSplit(vector<string> *tokens, const string& text, char* sep,bool nichtmehrfach) 
+	string wou, wasu;
+	transform(wo.begin(),wo.end(),std::back_inserter(wou),::toupper);
+	transform(was.begin(),was.end(),std::back_inserter(wasu),::toupper);
+	return wou.rfind(wasu);
+} // size_t irfind(const string& wo, const string& was)
 
 // Anfuehrungszeichen weg
 string* anfzweg(string& quel) {
-  if (quel.length()>1) {if (quel[0]==quel[quel.length()-1] && strchr("\"'",quel[0])) {
-    quel.erase(quel.length()-1,1);
-    quel.erase(0,1);
-  }}
-  return &quel;
+	if (quel.length()>1) {
+		if (quel[0]==quel[quel.length()-1] && strchr("\"'",quel[0])) {
+			quel.erase(quel.length()-1,1);
+			quel.erase(0,1);
+		}
+	} // 	if (quel.length()>1)
+	return &quel;
 } // string* anfzweg(
 
 char ers(char roh)
@@ -1271,7 +1277,7 @@ string& lsyscl::getlib64(int obverb/*=0*/,int oblog/*=0*/)
 
 class lsyscl lsys;
 
-/*
+/*//
 betrsys pruefos()
 {
  static betrsys aktbs=keins;
@@ -1487,11 +1493,13 @@ void confdat::Abschn_auswert(int obverb, char tz)
   if (!abp.aname.empty() && abp.av.size()) {
     abschv.push_back(abp);
   }
-//  for(size_t i=0;i<abschv.size();i++) KLA
-//   <<violett<<"aname: '"<<abschv[i].aname<<"'"<<endl;
-//   for(size_t j=0;j<abschv[i].av.size();j++) 
-//    <<j<<": "<<abschv[i].av[j].name<<": "<<abschv[i].av[j].wert<<endl;
-//  KLZ
+/*//
+  for(size_t i=0;i<abschv.size();i++) KLA
+   <<violett<<"aname: '"<<abschv[i].aname<<"'"<<endl;
+   for(size_t j=0;j<abschv[i].av.size();j++) 
+    <<j<<": "<<abschv[i].av[j].name<<": "<<abschv[i].av[j].wert<<endl;
+  KLZ
+*/
 } // void confdat::Abschn_auswert(int obverb, char tz)
 
 // aufgerufen in: confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fname)
@@ -1532,8 +1540,8 @@ void confdat::auswert(schlArr *sA, int obverb, char tz)
                 gtrim(&(*sA)[ii].wert); // Leerzeichen entfernen
                 // Anfuehrungszeichen entfernen
                 anfzweg((*sA)[ii].wert);
-//      if (name.find("autofax")!=string::npos)
-// <<" name: "<<schwarz<<(*sA)[ii].name<<violett<<" wert: '"<<schwarz<<(*sA)[ii].wert<<"'"<<violett<<" bemerk: '"<<ibemerk<<"'"<<schwarz<<endl;
+////      if (name.find("autofax")!=string::npos)
+//// <<" name: "<<schwarz<<(*sA)[ii].name<<violett<<" wert: '"<<schwarz<<(*sA)[ii].wert<<"'"<<violett<<" bemerk: '"<<ibemerk<<"'"<<schwarz<<endl;
                 (*sA)[ii].bemerk=ibemerk;
                 ibemerk.clear();
               } // if (strchr((string(" ")+(char)9+tz).c_str(),gef+(*sA)[ii].name.length())) 
@@ -1546,14 +1554,16 @@ void confdat::auswert(schlArr *sA, int obverb, char tz)
       } // if (!zeile->empty()) 
     } // for(size_t i=0;i<zn.size();i++) 
   } // if (obgelesen) 
-//  if (name.find("config.tty")!=string::npos) KLA
-//    for(size_t ii=0;ii<sA->zahl;ii++) KLA
-// <<" name: "<<schwarz<<(*sA)[ii].name<<violett<<" wert: '"<<schwarz<<(*sA)[ii].wert<<"'"<<violett<<" bemerk: '"<<(*sA)[ii].bemerk<<"'"<<schwarz<<endl;
-//    KLZ
-//  KLZ
+/*//	
+  if (name.find("config.tty")!=string::npos) KLA
+    for(size_t ii=0;ii<sA->zahl;ii++) KLA
+ <<" name: "<<schwarz<<(*sA)[ii].name<<violett<<" wert: '"<<schwarz<<(*sA)[ii].wert<<"'"<<violett<<" bemerk: '"<<(*sA)[ii].bemerk<<"'"<<schwarz<<endl;
+    KLZ
+  KLZ
+*/
 } // void sAdat::auswert(cppSchluess *sA, size_t csize, int obverb, char tz)
 
-/*
+/*//
 void confdat::auswert(cppSchluess *conf, size_t csize, int obverb, char tz)
 {
   richtige=0;
@@ -1601,7 +1611,6 @@ confdat::confdat(const string& fname,int obverb):name(fname)
   lies(fname,obverb);
 } // confdat::confdat(const string& fname,int obverb):name(fname)
 
-
 confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fname)
 {
   if (obverb>0) 
@@ -1612,8 +1621,7 @@ confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fna
   } //   if (!fname.empty())
 } // confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fname)
 
-
-/*
+/*//
 confdat::confdat(const string& fname, cppSchluess *conf, size_t csize, int obverb, char tz)
 {
   if (obverb>0) cout<<violett<<Txk[T_Lese_Konfiguration_aus]<<blau<<fname<<schwarz<<endl;
@@ -1621,13 +1629,13 @@ confdat::confdat(const string& fname, cppSchluess *conf, size_t csize, int obver
   auswert(conf,csize,obverb,tz);
 }
 */
+
 void schlArr::ausgeb()
 {
   for(size_t i=0;i<zahl;i++) {
    cout<<"i: "<<gruen<<i<<schwarz<<" Name: "<<blau<<schl[i].name<<schwarz<<Txk[T_Wert]<<blau<<schl[i].wert<<schwarz<<endl;
   }
 } // void schlArr::ausgeb()
-
 
 void schlArr::reset()
 {
@@ -1636,7 +1644,6 @@ void schlArr::reset()
     schl[i].gelesen=0;
   }
 } // void schlArr::reset()
-
 
 schlArr::schlArr()
 {
@@ -1680,7 +1687,7 @@ void schlArr::init(size_t vzahl, ...)
  schl = new cppSchluess[zahl];
  for(size_t i=0;i<zahl;i++) {
   schl[i].name=va_arg(list,const char*);
-// <<rot<<"schl["<<i<<"].name: "<<schwarz<<schl[i].name<<endl;
+//// <<rot<<"schl["<<i<<"].name: "<<schwarz<<schl[i].name<<endl;
  }
  va_end(list);
 } // void schlArr::init(size_t vzahl, ...)
@@ -1691,7 +1698,7 @@ int schlArr::setze(const string& name, const string& wert/*, const string& bem*/
 	for(size_t ind=0;ind<zahl;ind++) {
     if (schl[ind].name==name) {
       schl[ind].wert=wert;
-//      if (!bem.empty()) schl[ind].bemerk=bem;
+////      if (!bem.empty()) schl[ind].bemerk=bem;
       return 0;
     } //     if (schl[ind].name==name)
   } //   for(size_t ind=0;ind<zahl;ind++)
@@ -1714,7 +1721,7 @@ void cppSchluess::hole (struct tm *tmp) {
 		for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
 			if (strptime(wert.c_str(), tmmoegl[im], tmp)) break;
 		}
-		//		strptime(wert.c_str(), "%d.%m.%y %T", tmp);
+		////		strptime(wert.c_str(), "%d.%m.%y %T", tmp);
 	} // 	if (!wert.empty())
 } // void cppSchluess::hole (struct tm *tmp)
 
@@ -1803,7 +1810,6 @@ int multischlschreib(const string& fname, schlArr **confs, size_t cszahl,string 
   return 1;
 } // int multischlschreib(const string& fname, schlArr **confs, size_t cszahl)
 
-
 string XOR(const string& value, const string& key)
 {
   string retval(value);
@@ -1814,7 +1820,6 @@ string XOR(const string& value, const string& key)
   } //   for(v=0;v<vlen;v++)
   return retval;
 } // string XOR(const string& value, const string& key)
-
 
 int cppschreib(const string& fname, cppSchluess *conf, size_t csize)
 {
@@ -1828,7 +1833,7 @@ int cppschreib(const string& fname, cppSchluess *conf, size_t csize)
   return 1;
 } // int cppschreib(const string& fname, cppSchluess *conf, size_t csize)
 
-/*
+/*//
 int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, size_t cszahl)
 {
   mdatei f(fname,ios::out);
@@ -1872,7 +1877,7 @@ int Schschreib(const char *fname, Schluessel *conf, size_t csize)
 #endif
 #endif	
   return 0;
-} // int Schschreib(const char *fname, Schluessel *conf, size_t csize)
+} //// int Schschreib(const char *fname, Schluessel *conf, size_t csize)
 #endif
 
 // Dateiname ohne Pfad
@@ -1884,7 +1889,9 @@ std::string base_name(const std::string& path)
 // Pfadname einer Datei
 std::string dir_name(const std::string& path)
 {
-  return path.substr(0,path.find_last_of("/\\"));
+  size_t letzt=path.find_last_of("/\\");
+	if (letzt==string::npos) return "";
+  return path.substr(0,letzt);
 } // std::string dir_name(std::string const & path)
 
 // soll fuer den Fall eines uebergebenen 'rueck'-Zeigers den Rueckgabewert der aufgerufenen Funktion zuruckliefern,
@@ -1921,7 +1928,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 		 } // 		 if (obprogda(tok[0],obverb,oblog,&hcmd))
 		} // 		if (tok.size()>0)
 	} // 	if (obincron)
-  // "obfind: "<<(int)obfind<<", obverb: "<<(int)obverb<<", curruser(): "<<curruser()<<", '"<<violett<<hcmd<<schwarz<<"'"<<endl;
+  //// "obfind: "<<(int)obfind<<", obverb: "<<(int)obverb<<", curruser(): "<<curruser()<<", '"<<violett<<hcmd<<schwarz<<"'"<<endl;
   string meld(Txk[T_Rueckmeldung]);
   string aktues;
   if (ueberschr.empty()) { 
@@ -1942,7 +1949,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 #endif
   if (rueck) {
     if (FILE* pipe = popen(hcmd.c_str(), "r")) {
-		/*
+		/*//
 		int fd=fileno(pipe);
 		int flags=fcntl(fd, F_GETFL, 0);
 		flags|=O_NONBLOCK;
@@ -1951,28 +1958,27 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 #ifdef systemrueckprofiler
       prf.ausgeb();
 #endif
-      //    setvbuf ( pipe, NULL, _IOFBF, 2048);
-      /*
+      ////    setvbuf ( pipe, NULL, _IOFBF, 2048);
+      /*//
          int fd = fileno(pipe);
-
          int flags;
          flags = fcntl(fd, F_GETFL, 0);
          flags |= O_NONBLOCK;
          fcntl(fd, F_SETFL, flags);
        */
-      //      unsigned int zeile=0;
+      ////      unsigned int zeile=0;
       while(1) {
 #ifdef systemrueckprofiler
         prf.ausgab1000("in while");
 #endif
         if (feof(pipe)) break;
-        //        zeile++;
+        ////        zeile++;
         char buffer[1280];
-        // in der folgenden Zeile werden auch ggf. sterr-Meldungen ausgegeben/weitergeleitet
-			  // <<violett<<endl<<"Stelle 6"<<schwarz<<endl;
+        //// in der folgenden Zeile werden auch ggf. sterr-Meldungen ausgegeben/weitergeleitet
+			  //// <<violett<<endl<<"Stelle 6"<<schwarz<<endl;
 				// hier braucht er lang, wenn das System langsam ist
         if (fgets(buffer, sizeof buffer, pipe)) { 
-			  // <<violett<<endl<<"Stelle 7"<<schwarz<<endl;
+			  //// <<violett<<endl<<"Stelle 7"<<schwarz<<endl;
           size_t posi;
           if (buffer[posi=strlen(buffer)-1]==10) buffer[posi]=0;
           rueck->push_back(string(buffer));
@@ -2085,7 +2091,7 @@ void pruefmehrfach(const string& wen,uchar obstumm/*=0*/)
 		cout<<Txk[T_Program]<<blau<<iwen<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
     exit(98);
   } //   if (rueck.size()>1) {
-  /*
+  /*//
   for(size_t j=0;j<rueck.size();j++) KLA
    // <<violett<<"rueck["<<j<<"]: "<<rot<<rueck[j]<<schwarz<<endl;
   KLZ
@@ -2166,9 +2172,9 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 			if (unindt.find(verz)) // wenn der Anfang nicht identisch ist, also nicht das Verzeichnis von unindt geprueft werden soll
 				anfgg(unindt,"sudo rmdir '"+verz+"'",bef,obverb,oblog);
 		} //     if (fehler)
-		//    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
+		////    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
 		if (obmitfacl) setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
-		// <<violett<<verz<<schwarz<<endl;
+		//// <<violett<<verz<<schwarz<<endl;
 		if (obmitcon) {
 			if (obselinux==-1) 
 				obselinux=obprogda("sestatus",obverb,oblog);
@@ -2214,7 +2220,7 @@ char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], co
     if (input[0]) if (strchr(erlaubt,(int)input[0])) break;
   } //   while(1)
   return input[0];
-  //  return Tippbuchst(frage.c_str(), moegl.c_str(), berkl, erlaubt, vorgabe);
+  ////  return Tippbuchst(frage.c_str(), moegl.c_str(), berkl, erlaubt, vorgabe);
 } // char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
 
 
@@ -2241,7 +2247,7 @@ string Tippstrs(const char *frage, char* moegl[], char *vorgabe/*=0*/)
     input.clear();
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
-    // <<rot<<"input: '"<<input<<"', vorgabe: '"<<vorgabe<<"'"<<endl<<schwarz;
+    //// <<rot<<"input: '"<<input<<"', vorgabe: '"<<vorgabe<<"'"<<endl<<schwarz;
     if (input=="" && vorgabe) {input=vorgabe;break;}
     if (input[0]) {
       for(unsigned i=0;moegl[i];i++) {
@@ -2261,14 +2267,14 @@ string Tippstrs(const char *frage, vector<string> *moegl, string *vorgabe/*=0*/)
     cout<<blau<<frage<<schwarz<<" (";
     for(unsigned i=0;i<moegl->size();i++) {
       if (i) cout<<",";
-      //      cout<<"'"<<drot<<moegl->at(i)<<schwarz<<"'";
+      ////      cout<<"'"<<drot<<moegl->at(i)<<schwarz<<"'";
       cout<<drot<<moegl->at(i)<<schwarz;
     } //     for(unsigned i=0;i<moegl->size();i++)
     cout<<")"<<(vorgabe->empty()?"":"['"+tuerkiss+*vorgabe+schwarz+"']")<<"?: ";
 		input.clear();
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
-    // <<rot<<"input: '"<<input<<"', vorgabe: '"<<*vorgabe<<"'"<<endl<<schwarz;
+    //// <<rot<<"input: '"<<input<<"', vorgabe: '"<<*vorgabe<<"'"<<endl<<schwarz;
     if (input.empty() && !vorgabe->empty()) {input=*vorgabe;break;}
     if (input[0]) {
       for(unsigned i=0;i<moegl->size();i++) {
@@ -2303,7 +2309,7 @@ string Tippzahl(const string& frage, const string *vorgabe)
 {
  return Tippzahl(frage.c_str(),(vorgabe?vorgabe->c_str():0));
 }
-/*
+/*//
 char* Tippcstr(const char *frage, char* buf, unsigned long buflen, const char* vorgabe) 
 {
   const string vstr=vorgabe;
@@ -2344,7 +2350,7 @@ string Tippverz(const char *frage,const string *vorgabe)
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
     if (input=="" && vorgabe) {input=*vorgabe;}
     struct stat st={0};
-    //    <<"input: '"<<rot<<input<<schwarz<<"'"<<endl;
+    ////    <<"input: '"<<rot<<input<<schwarz<<"'"<<endl;
     while (1) {
       if (!lstat(input.c_str(), &st)) {
         if(S_ISDIR(st.st_mode)) {
@@ -2363,7 +2369,7 @@ string Tippverz(const char *frage,const string *vorgabe)
         if (inpi=="") {inpi=vg2;break;}
         if (strchr("jyJY",inpi[0])) {
           pruefverz(input);
-          /*
+          /*//
           int erg __attribute__((unused));
           erg=system((string("sudo mkdir -p ")+input).c_str());
           */
@@ -2394,13 +2400,13 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
 // vorangestellte "1" => opschreibp auf 0 setzen
 // vorangestelltes "un" => bei binaeren Operatoren nicht
 {
-//  Log(violetts+Txk[T_pruefpar]+schwarz+" "+ltoan(*akt),1,0);
+////  Log(violetts+Txk[T_pruefpar]+schwarz+" "+ltoan(*akt),1,0);
   uchar nichtspeichern=0;
   uchar gegenteil=0;
 // wenn der Index noch im Bereich und der zugehoerige Kommandozeilenparameter noch nicht unter den Programmparametern gefunden wurde ...
   if (*akt<argcvm->size()) if (!argcvm->at(*akt).agef) {
     char *acstr=argcvm->at(*akt).argcs;
-//    <<rot<<"acstr: "<<schwarz<<acstr<<endl;
+////    <<rot<<"acstr: "<<schwarz<<acstr<<endl;
     int aclen=strlen(acstr);
     if (aclen>1) {
       if (aclen>2 && acstr[0]=='-'&&acstr[1]=='-') {
@@ -2425,7 +2431,7 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
 						}
 					} //         for(int akts=0;akts<SprachZahl;akts++)
 					TxBp->lgn=altSpr;
-					/*
+					/*//
 				KLZ else KLA
         if (!strcmp(acstr,lang.c_str())) KLA
           argcvm->at(*akt).agef=1;
@@ -2454,7 +2460,7 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
 						}
 					} //         for(int akts=0;akts<SprachZahl;akts++)
 					TxBp->lgn=altSpr;
-				/*
+				/*//
 				KLZ else KLA
 					if (!strcmp(acstr,kurz.c_str())) KLA 
 						argcvm->at(*akt).agef=1;
@@ -2577,7 +2583,7 @@ string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
         bemerkung= (const char*)hilf[Txi][lg];
         if (rottxt) bemerkung+=(obfarbe?blaus:nix)+*rottxt+(obfarbe?schwarz:nix);
         if (Txi2!=-1) bemerkung+=(const char*)hilf[Txi2][lg]; 
-//        if (zptr && !strstr(pname,"pwd")) bemerkung+=" '"+(obfarbe?blaus:nix)+*zptr+(obfarbe?schwarz:nix)+"'"; // pname==0
+////        if (zptr && !strstr(pname,"pwd")) bemerkung+=" '"+(obfarbe?blaus:nix)+*zptr+(obfarbe?schwarz:nix)+"'"; // pname==0
         if (zptr && bemerkung.find("assw")==string::npos) bemerkung+=" '"+(obfarbe?blaus:nix)+*zptr+(obfarbe?schwarz:nix)+"'";
         if (obno) bemerkung+=(obfarbe?violetts:nix)+Txk[T_oder_nicht]+(obfarbe?schwarz:nix);
       } // if (TxBp->TCp[Txi][lg])
@@ -2599,7 +2605,7 @@ void optioncl::hilfezeile(Sprache lg)
   } // if (TxBp)
 } // hilfezeile
 
-/*
+/*//
 linsten linstcl::checkinst(int obverb, int oblog) 
 {
   if (inst==uinst) {
@@ -2617,7 +2623,6 @@ linsten linstcl::checkinst(int obverb, int oblog)
   return inst;
 } // linsten linstcl::checkinst(int obverb, int oblog) 
 */
-
 
 string linst_cl::ersetzeprog(const string& prog) 
 {
@@ -2650,7 +2655,7 @@ string linst_cl::ersetzeprog(const string& prog)
       if (prog=="tiff") return "libtiff-tools";
       if (prog=="libcapi20-2") return "isdn4k-utils";
       if (prog=="libcapi20-3") return "";
-//      if (prog=="python-devel") return "python3-devel"; // bei capisuite_copy falsch; dann bei ocrmypdf fuer apt noch zu pruefen
+////      if (prog=="python-devel") return "python3-devel"; // bei capisuite_copy falsch; dann bei ocrmypdf fuer apt noch zu pruefen
       if (prog=="capiutils") return "";
       if (prog=="imagemagick") return "ImageMagick ImageMagick-doc";
       if (prog=="libxslt-tools") return "libxslt";
@@ -2680,21 +2685,19 @@ std::string string_to_hex(const std::string& input)
 {
 	static const char* const lut = "0123456789ABCDEF";
 	size_t len = input.length();
-
-	std::string output;
+	string output;
 	output.reserve(2 * len);
-	for (size_t i = 0; i < len; ++i)
-	{
+	for (size_t i = 0; i < len; ++i) {
 		const unsigned char c = input[i];
 		output.push_back(lut[c >> 4]);
 		output.push_back(lut[c & 15]);
-	}
+	} // 	for (size_t i = 0; i < len; ++i)
 	return output;
 } // std::string string_to_hex(const std::string& input)
 
 // wird aufgerufen in: linst_cl::doinst
-// kann getestet werden in main mit:
-			/*
+//// kann getestet werden in main mit:
+			/*//
 			linst_cl linst(0,0);
 			svec inh;string ustring;
 			mdatei uni0("/home/schade/autofax/inst.log",ios::in,0);
@@ -2775,7 +2778,7 @@ void linst_cl::ziehraus(svec srueck, string *ustringp)
 					} // 					if (srueck[i][0]!=' ') obanf=0; else
 				} // 						if (obanf==2)
 			} // 					for(unsigned i=0;i<srueck.size();++i)
-			/*
+			/*//
 			// im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
 			for(unsigned i=srueck.size();i;) KLA
 				--i;
@@ -2793,22 +2796,22 @@ void linst_cl::ziehraus(svec srueck, string *ustringp)
 } // void linst_cl::ziehraus(svec srueck, string *ustringp)
 
 // Problem: bei obyes erscheint die Rueckfrage dem Benutzer nicht, statt dessen wartet das Programm
-int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar ohneabh/*=0*/) // ,uchar obyes/*=1*/)
+int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar ohneabh/*=0*/)////,uchar obyes/*=1*/)
 {
-	// <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
+	//// <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
 	Log(violetts+Txk[T_doinst]+schwarz+" prog: "+violett+prog+schwarz+Txk[T_fallsnichtda]+violett+fallsnichtda+schwarz+Txk[T_ohneabh]+
 	    violett+(ohneabh?"1":"0")+schwarz,obverb,oblog);
 	int ret=2;
 	// eprog kann auch von aussen vor Programmaufruf gesetzt werden
 	if (eprog.empty()) eprog=ersetzeprog(prog);
 	if (!fallsnichtda.empty()) {
-		//    if (!systemrueck((alsroot?string("root "):string(""))+"which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) 
+		////    if (!systemrueck((alsroot?string("root "):string(""))+"which '"+fallsnichtda+"' >/dev/null 2>&1",obverb,oblog)) 
 		if (obprogda(fallsnichtda,obverb,oblog)) {
 			eprog.clear();
 			return 0;
 		} //     if (obprogda(fallsnichtda,obverb,oblog))
 	} // if (!fallsnichtda.empty()) 
-	//	int iru;
+	////	int iru;
 	if (!eprog.empty()) {
 		switch (ipr) {
 			case zypper:
@@ -2822,7 +2825,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		svec srueck;
 		const string bef=(obyes?instyp:instp)+eprog;
 		if (!(ret=systemrueck(bef,obverb+1,oblog,&srueck))) {
-			/*svec*/ string ustring; 
+			/*//svec*/ string ustring; 
 		  ziehraus(srueck,&ustring);
 
 			// s. ausricht() in configure
@@ -2838,8 +2841,8 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				} // 			if (uniff.is_open())
 			} // 		  if (!pruefverz(instvz,obverb,oblog))
 			size_t p1,p2;
-			// <<violett<<"ustring vor Pruefung: "<<rot<<ustring<<schwarz<<endl;
-			// <<violett<<"ustring vor Pruefung: "<<rot<<string_to_hex(ustring)<<schwarz<<endl;
+			//// <<violett<<"ustring vor Pruefung: "<<rot<<ustring<<schwarz<<endl;
+			//// <<violett<<"ustring vor Pruefung: "<<rot<<string_to_hex(ustring)<<schwarz<<endl;
 			const char* const weg[7]={"libgcc","libselinux.","libselinux-utils","libselinux-python3","libsepol","libsemanage","libstdc++"};
 			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++) {
 				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' ')) {
@@ -2847,13 +2850,13 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 					ustring.erase(p1,p2-p1);
 				} // 				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' '))
 			} // 			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++)
-			// <<violett<<"ustring nach Pruefung: "<<rot<<ustring<<schwarz<<endl;
+			//// <<violett<<"ustring nach Pruefung: "<<rot<<ustring<<schwarz<<endl;
 			if (!ustring.empty()) {
 				Log(Txk[T_Ins_Deinstallationsprogramm_wird_eingetragen]+violetts+udpr+ustring+schwarz,obverb,oblog);
 				anfgw(unindt,udpr,ustring,bef,obverb,oblog);
 			} // 			if (!ustring.empty())
 
-			/*
+			/*//
 			if (0) {
 				exit(92);
 				// Testcode
@@ -2900,12 +2903,12 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 */
 
 
-/*
+/*//
 			for(unsigned i=0;i<ustring.size();i++) {
 				anfgggf(unindt,udpr+ustring[i]);
 			}
 */
-			/*
+			/*//
 				 if (ohneabh) {
 				 anfgggf(unindt,udpr+eprog);
 				 } else {
@@ -2913,10 +2916,12 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 				 } // 			if (ohneabh) else
 			 */
 		} // 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog)))
-		//				for(iru=0;iru<2;iru++) KLA
-		//					if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
-		//					systemrueck("sudo dpkg --configure -a",obverb+1,oblog);
-		//				KLZ
+		/*//
+						for(iru=0;iru<2;iru++) KLA
+							if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
+							systemrueck("sudo dpkg --configure -a",obverb+1,oblog);
+						KLZ
+	  */
 		eprog.clear();
 	} // if (!eprog.empty()) 
 	return ret;
@@ -2932,7 +2937,7 @@ void anfgw(const string& datei, const string& udpr, const string& inhalt, const 
 	aufSplit(&wvec,inhalt); 
 	for(size_t wind=0;wind<wvec.size();wind++) {
 		if (wvec[wind].length()) wvec[wind]=" "+wvec[wind];
-		// <<violett<<"wvec["<<rot<<wind<<violett<<"]: "<<rot<<wvec[wind]<<schwarz<<endl;
+		//// <<violett<<"wvec["<<rot<<wind<<violett<<"]: "<<rot<<wvec[wind]<<schwarz<<endl;
 	} // 	for(size_t wind=0;wind<wvec.size();wind++)
 	mdatei uni0(datei,ios::in,0);
 	if (uni0.is_open()) {
@@ -2945,7 +2950,7 @@ void anfgw(const string& datei, const string& udpr, const string& inhalt, const 
 						obda=0;
 						break;
 					} else {
-						// <<wvec[wind]<<blau<<" gefunden in "<<blau<<zeile<<schwarz<<endl;
+						//// <<wvec[wind]<<blau<<" gefunden in "<<blau<<zeile<<schwarz<<endl;
 					}
 				} else {
 					obda=1;
@@ -2983,7 +2988,7 @@ void doanfg(const string& datei, const string& inhalt, const string& comment)
 {
 	mdatei uniff(datei,ios::app,0);
 	if (uniff.is_open()) {
-		//			uniff<<inhalt<<"\n"<<"printf \"%b"<<ersetzAllezu(inhalt,"\"","\\\"")<<"%b\\n\" \"\\033[1;34m\" \"\\033[0m\""<<endl;
+		////			uniff<<inhalt<<"\n"<<"printf \"%b"<<ersetzAllezu(inhalt,"\"","\\\"")<<"%b\\n\" \"\\033[1;34m\" \"\\033[0m\""<<endl;
 		// s. ausricht() in configure
 		time_t rohz=time(0);
 		struct tm *zeiti=localtime(&rohz);
@@ -3021,7 +3026,7 @@ int linst_cl::douninst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,uchar
 
 int linst_cl::obfehlt(const string& prog,int obverb,int oblog)
 {
- // <<violett<<"linst::obfehlt: "<<schwarz<<prog<<endl;
+ //// <<violett<<"linst::obfehlt: "<<schwarz<<prog<<endl;
   switch (ipr) {
     case zypper: case dnf: case yum: 
       return systemrueck("rpm -q "+prog+" 2>/dev/null",obverb,oblog);
@@ -3056,7 +3061,7 @@ string gethome()
 		} else {
 		  erg=instvz; // sollte nicht vorkommen
 		}
-   /*
+   /*//
    svec srueck;
    systemrueck("echo $HOME",0,0,&srueck);
    if (srueck.size()) {
@@ -3089,7 +3094,7 @@ void servc::semodpruef(linst_cl *linstp,int obverb/*=0*/,int oblog/*=0*/)
 						break;
 					} // 				if (sr2[j].find("enforcing")!=string::npos)
 			} //       for(size_t j=0;j<sr2.size();j++)
-		}
+		} // 		if (obse==2)
 		if (obse) {
 			linstp->doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
 			// falls "Nothing to do" zurueckgemeldet wird, muesste sudo dnf -y reinstall p... aufgerufen werden fuer das Deinstallationsprogramm
@@ -3129,7 +3134,7 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 	Log(violetts+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, obverb,oblog);
 	// ueberpruefen, ob in systemctl status service Datei nach ExecStart existiert
 	for(int iru=0;iru<2;iru++) {
-	  // <<violett<<"machfit "<<blau<<sname<<violett<<", iru: "<<gruen<<iru<<schwarz<<endl;
+	  //// <<violett<<"machfit "<<blau<<sname<<violett<<", iru: "<<gruen<<iru<<schwarz<<endl;
 		obsvfeh(obverb,oblog);
 		// wenn restart nicht gebraucht wird oder nichts bringt, also alles außer activating und nicht gestartet ...
 		if (!svfeh||svfeh==1||svfeh==3||svfeh==4||svfeh==5||svfeh==6) {
@@ -3138,17 +3143,19 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 			restart(obverb,oblog);
 			if (!svfeh) break;
 		}
-//		if (!iru && svfeh>5) KLA
-		  // <<"machfit, svfeh: "<<gruen<<svfeh<<schwarz<<endl;
-//			exit(108);
-			//      svec sr1;
-			//      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
-			//      if (sr1.size()) KLA
-			//       if (sr1[0].find("permission")!=string::npos) KLA
-//			semodpruef(obverb,oblog);
-		// KLZ // 		if (!iru && svfeh>5)
+/*//
+		if (!iru && svfeh>5) KLA
+		   <<"machfit, svfeh: "<<gruen<<svfeh<<schwarz<<endl;
+			exit(108);
+			      svec sr1;
+			      systemrueck("journalctl -xen 1 \"$(systemctl show '"+sname+"' | awk -F'={ path=| ;' '/ExecStart=/{print $2}')\" | tail -n 1",2,0,&sr1);
+			      if (sr1.size()) KLA
+			       if (sr1[0].find("permission")!=string::npos) KLA
+			semodpruef(obverb,oblog);
+		 KLZ // 		if (!iru && svfeh>5)
+		 */
 	} // for(int iru=0;iru<2;iru++) 
-	//  if (servicelaeuft)
+	////  if (servicelaeuft)
 	if (!svfeh&&!obenabled)
 		enableggf(obverb,oblog);
 	Log(violetts+"Ende "+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, obverb,oblog);
@@ -3163,7 +3170,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 	if (!obsvfeh(obverb-1,oblog)) {
 		Log(("Service ")+blaus+sname+schwarz+Txk[T_lief_schon],obverb,oblog);
 	} else {
-		/*
+		/*//
 			 char pBuf[300];
 			 int bytes = MIN(readlink("/bin/systemd", pBuf, sizeof pBuf), sizeof pBuf - 1);
 			 if(bytes >= 1) pBuf[bytes-1] = 0; // ../system statt /systemd
@@ -3177,9 +3184,9 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				Log(("Service ")+blaus+sname+schwarz+Txk[T_laeuft_jetzt],obverb,oblog);
 				break;
 			} // 			if (!svfeh)
-			//          <<dblau<<"svfeh else: "<<schwarz<<sname<<endl;
-			//  if (systemrueck("systemctl list-units faxq.service --no-legend | grep 'active running'",obverb-1,oblog)) KLA
-			// string systemd="/usr/lib/systemd/system/"+sname+".service"; // außerhalb Opensuse: /lib/systemd/system/ ...
+			////          <<dblau<<"svfeh else: "<<schwarz<<sname<<endl;
+			////  if (systemrueck("systemctl list-units faxq.service --no-legend | grep 'active running'",obverb-1,oblog)) KLA
+			//// string systemd="/usr/lib/systemd/system/"+sname+".service"; // außerhalb Opensuse: /lib/systemd/system/ ...
 			Log(blaus+systemd+Txk[T_nicht_gefunden_versuche_ihn_einzurichten]+schwarz,1,0);
 			mdatei syst(systemd,ios::out);
 			if (syst.is_open()) {
@@ -3201,7 +3208,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst<<"Group=root"<<endl;
 				syst<<"Restart=always"<<endl;
 				syst<<"RestartSec=30"<<endl;
-				// if (!spre.empty()) syst<<"ExecStartPre=source "<<spre<<endl;
+				//// if (!spre.empty()) syst<<"ExecStartPre=source "<<spre<<endl;
 				syst<<"ExecStart="<<sexec<<endl;
 				syst<<endl;
 				syst<<"[Install]"<<endl;
@@ -3261,7 +3268,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 					if (systemd.empty()) systemd=sdatei;
 				}
 				if (sp->find("disabled")!=string::npos) {
-					// svfeh=2; // stoert bei if (!svfeh) enableggf(
+					//// svfeh=2; // stoert bei if (!svfeh) enableggf(
 					obenabled=0;
 				} else if (sp->find("not-found")!=string::npos) {
 					svfeh=1;
@@ -3304,7 +3311,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 			// Dienst existent, Dienstdatei bekannt
 			struct stat svst={0};
 			if ((svfeh=lstat(systemd.c_str(),&svst))) { 
-				svfeh=4; // // Dienst laeuft evtl. noch, aber Dienstdatei inexistent
+				svfeh=4; // Dienst laeuft evtl. noch, aber Dienstdatei inexistent
 			} else {
 			  string execf;
 				svec srueExe;
@@ -3323,7 +3330,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 						} // 						if (p1!=string::npos)
 					 } // 					 for(size_t z=0;z<srueExe.size();z++)
 					} else {
-						svfeh=4;// // Dienst laeuft evtl. noch, aber Dienstdatei leer
+						svfeh=4;// Dienst laeuft evtl. noch, aber Dienstdatei leer
 					} // 					if (srueExe.size()) else
 				} else {
 					// Dienst existent, Dienstdatei bekannt und existent
@@ -3347,7 +3354,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 			} // 			if ((svfeh=lstat(systemd.c_str(),&svst))) 
 		} // if (sdatei.empty()) else
 	} // if (svfeh)
-	/*
+	/*//
 		 svec srueck;
 		 systemrueck("systemctl list-unit-files|grep "+sname+".service",obverb,oblog,&srueck);  // 
 		 if (!srueck.size()) KLA
@@ -3389,7 +3396,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 	KLZ // 			if (systemd.empty()) else
 	 */
 
-	/* Folgendes wird vielleicht nicht benoetigt, da es bei disabled eh nicht angezeigt wird
+	/*// Folgendes wird vielleicht nicht benoetigt, da es bei disabled eh nicht angezeigt wird
 		 srueck.clear;
 		 systemrueck("systemctl -a --no-legend list-units '"+sname+".service'",obverb,oblog,&srueck);  // bei list-units return value immer 0
 		 if (!srueck.empty()) KLA // svfeh=1 => Dienst inexistent
@@ -3406,7 +3413,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 	KLZ // 		if (!(obenabled=(srueck[0].find("enabled")!=string::npos))) else
 	 */
 	//	const int sfeh[]={ T_Dienst_laeuft,T_Dienst_inexistent, T_Dienst_disabled, T_Dienstdateiname_nicht_ermittelbar, T_Dienst_laeuft_noch_aber_Dienstdatei_inexistent, T_Exec_Dateiname_nicht_ermittelbar, T_Exec_Datei_fehlt, T_activating, T_Dienst_kann_gestartet_werden, T_Sonstiges};
-	//	int aktobverb=(obverb>-1 && (obverb>0|| (svfeh && svfeh!=8))); // 26.2.17: beim Stoppen eines nicht vorhandenen Dienstes ueberfl. Meldung
+	////	int aktobverb=(obverb>-1 && (obverb>0|| (svfeh && svfeh!=8))); // 26.2.17: beim Stoppen eines nicht vorhandenen Dienstes ueberfl. Meldung
 	Log(Txk[T_Ergebnis_Dienst]+blaus+sname+schwarz+": "+gruen+Txk[sfeh[svfeh]]+schwarz,/*akt*/obverb>0?obverb:0,oblog);
 	//	Log(violetts+"Ende "+Txk[T_obsfveh]+schwarz+" sname: "+violett+sname+schwarz,obverb,oblog);
 	if (svf0==-1) svf0=svfeh; // Einstellung nach der ersten Untersuchung
@@ -3424,7 +3431,7 @@ int servc::restart(int obverb/*=0*/,int oblog/*=0*/)
 		uchar obbreak=0;
 		daemon_reload(obverb,oblog);
 		systemrueck("sudo systemctl restart '"+sname+"'",obverb,oblog,0,2);
-		// <<violett<<"restart, i: "<<gruen<<i<<schwarz<<" sname: "<<sname<<endl;
+		//// <<violett<<"restart, i: "<<gruen<<i<<schwarz<<" sname: "<<sname<<endl;
 		obsvfeh(obverb,oblog);
 		switch (sfeh[svfeh]) {
 			case T_Dienst_laeuft: 
@@ -3456,7 +3463,7 @@ int servc::startundenable(int obverb/*=0*/,int oblog/*=0*/)
 {
   start(obverb,oblog);
   enableggf(obverb,oblog);
-	  // <<violett<<"startundeable, sname: "<<schwarz<<sname<<endl;
+	  //// <<violett<<"startundeable, sname: "<<schwarz<<sname<<endl;
   return !obsvfeh(obverb,oblog);
 } // int servc::start(int obverb,int oblog)
 
@@ -3509,7 +3516,7 @@ void servc::daemon_reload(int obverb/*=0*/, int oblog/*=0*/)
 // wird aufgerufen in: loeschecapi, untersuchespool
 int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
 {
-//  Log(violetts+Tx[T_tuloeschen]+schwarz,obverb,oblog);
+////  Log(violetts+Tx[T_tuloeschen]+schwarz,obverb,oblog);
   struct stat entryzuloe={0};
   if (!lstat(zuloe.c_str(),&entryzuloe)) {
     Log(Txk[T_Loesche_Ausrufezeichen]+gruens+zuloe+schwarz,obverb,oblog);
@@ -3597,7 +3604,7 @@ int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
   lstat(zu.c_str(),&statzu);
   if (memcmp(&statgm.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime)) {
     Log(rots+Txk[T_Datum_nicht_gesetzt_bei]+schwarz+zu+rot+"'"+schwarz,1,1);
-    //          exit(0);
+    ////          exit(0);
   } //   if (memcmp(&statgm.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime))
   return 0;
 } // int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
@@ -3609,14 +3616,14 @@ int kopier(const string& quel, const string& ziel, int obverb, int oblog)
   int fehler=1;
   int source=open(quel.c_str(),O_RDONLY,0);
   if (source==-1) {
-//    Log(Txk[T_Konnte_Datei]+rots+quel+schwarz+Txk[T_nicht_zum_Lesen_oeffnen],obverb,oblog);
+////    Log(Txk[T_Konnte_Datei]+rots+quel+schwarz+Txk[T_nicht_zum_Lesen_oeffnen],obverb,oblog);
   } else {
     struct stat statq={0};
     if (!fstat(source,&statq)) {
       int dest=open(ziel.c_str(),O_WRONLY|O_CREAT,statq.st_mode);
       if (dest==-1) {
         fehler=2;
-//        Log(Txk[T_Konnte_Datei]+rots+ziel+schwarz+Txk[T_nicht_zum_Schreiben_oeffnen],obverb,oblog);
+////        Log(Txk[T_Konnte_Datei]+rots+ziel+schwarz+Txk[T_nicht_zum_Schreiben_oeffnen],obverb,oblog);
       } else {
         erg=sendfile64(dest,source,0,statq.st_size);
         close(dest);

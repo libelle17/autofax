@@ -2260,7 +2260,7 @@ void fsfcl::archiviere(DB *My, paramcl *pmp, struct stat *entryp, uchar obgesche
 		if (!adressat.empty()) einf.push_back(/*2*/instyp(My->DBS,"adressat",&adressat));
 		einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
 		einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
-		rins.insert(pmp->touta,einf, 1,0,ZDB?ZDB:!runde);  // einfuegen
+		rins.insert(pmp->touta,einf, 0,ZDB?ZDB:!runde);  // einfuegen
 		if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
 		if (!rins.fnr) break;
 		if (runde==1) {
@@ -2439,7 +2439,7 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
 			vector<instyp> einf; // fuer alle Datenbankeinfuegungen
 			if (fxvp->at(nachrnr).spdf!=fxvp->at(nachrnr).ur||fxvp->at(nachrnr).npdf!=fxvp->at(nachrnr).ur) {
 				einf.push_back(/*2*/instyp(My->DBS,"udocname",fxvp->at(nachrnr).ur));
-				rins.insert(udoctab,einf,1,0,ZDB?ZDB:!runde,&udocid);
+				rins.insert(udoctab,einf,0,ZDB?ZDB:!runde,&udocid);
 				rins.clear();
 				einf.clear();
 			}
@@ -2470,8 +2470,8 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
 			if (fxvp->at(nachrnr).prio>0 || hylazuerst) fxvp->at(nachrnr).prio++;
 			einf.push_back(/*2*/instyp(My->DBS,"prio",fxvp->at(nachrnr).prio));
 			einf.push_back(/*2*/instyp(My->DBS,"pages",fxvp->at(nachrnr).pseiten));
-			rins.insert(altspool,einf, 1,0,ZDB?ZDB:!runde); // ,&spoolid);
-			rins.insert(spooltab,einf, 1,0,ZDB?ZDB:!runde,&spoolid);
+			rins.insert(altspool,einf, 0,ZDB?ZDB:!runde); // ,&spoolid);
+			rins.insert(spooltab,einf, 0,ZDB?ZDB:!runde,&spoolid);
 			if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
 			if (spoolid!="null") break;
 			if (runde==1) {
@@ -4540,7 +4540,7 @@ void paramcl::pruefsamba()
 int paramcl::initDB()
 {
 	Log(violetts+"initDB()"+schwarz);
-	My = new DB(myDBS,linstp,host,muser,mpwd,dbq,0,0,0,obverb,oblog);
+	My=new DB(myDBS,linstp,host,muser,mpwd,dbq,0,0,0,obverb,oblog);
 	if (My->fehnr) {
 		::Log(rots+Tx[Verbindung_zur_Datenbank_nicht_herstellbar]+schwarz+ltoan(My->fehnr)+rot+Tx[T_Breche_ab]+schwarz,1,1);
 		return 1;
@@ -4551,7 +4551,7 @@ int paramcl::initDB()
 int paramcl::pruefDB(const string& db)
 {
 	Log(violetts+Tx[T_pruefDB]+db+")"+schwarz);
-	My = new DB(myDBS,linstp,host,muser,mpwd,db,0,0,0,obverb,oblog,3,0);
+	My=new DB(myDBS,linstp,host,muser,mpwd,db,0,0,0,obverb,oblog,3,0);
 	return (My->fehnr); 
 } // pruefDB
 
@@ -6644,7 +6644,7 @@ void paramcl::empfhyla(const string& ganz,uchar indb/*=1*/,uchar mitversch/*=1*/
 				einf.push_back(/*2*/instyp(My->DBS,"devname",&devname));
 				einf.push_back(/*2*/instyp(My->DBS,"id",&base));
 				einf.push_back(/*2*/instyp(My->DBS,"transe",&tm));
-				rins.insert(tinca,einf, 1,0,ZDB?ZDB:!runde); 
+				rins.insert(tinca,einf, 0,ZDB?ZDB:!runde); 
 				if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
 				if (!rins.fnr) break;
 				if (runde==1) {
@@ -6800,7 +6800,7 @@ void paramcl::empfcapi(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*
 			einf.push_back(/*2*/instyp(My->DBS,"fsize",entrysff.st_size));
 			einf.push_back(/*2*/instyp(My->DBS,"csid",&umst[2].wert));
 			einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
-			rins.insert(tinca,einf, 1,0,ZDB?ZDB:!runde); 
+			rins.insert(tinca,einf, 0,ZDB?ZDB:!runde); 
 			if (runde==1) zs.Abfrage("SET NAMES 'utf8'");
 			if (!rins.fnr) break;
 			if (runde==1) {

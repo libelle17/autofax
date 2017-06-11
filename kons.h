@@ -93,7 +93,6 @@ extern const char *_rot, *_hrot, *_schwarz, *_blau, *_gelb, *_tuerkis, *_hgrau;
 #include <regex.h> // regex_t, regex, regcomp, regexec
 
 #define caus cout // nur zum Debuggen
-size_t irfind(const string& wo, const string& was);
 
 extern const string nix;
 // typedef const char *TCtp[][SprachZahl];
@@ -625,10 +624,11 @@ int kuerzelogdatei(const char* logdatei,int obverb);
 #ifdef notwendig
 void kopierm(const string *quelle, const string *ziel);
 #endif
-void aufSplit(vector<string> *tokens, const string& text, char sep=' ', bool nichtmehrfach=1);
-void aufSplit(vector<string> *tokens, const char *text, char sep=' ', bool nichtmehrfach=1);
+void aufSplit(vector<string> *tokens, const char* const text, char sep=' ',bool auchleer=1);
+void aufSplit(vector<string> *tokens, const string& text, char sep=' ',bool auchleer=1);
 void aufiSplit(vector<string> *tokens, const string& text, const char* sep,bool nichtmehrfach=1,int obverb=0,int oblog=0);
-void aufSplit(vector<string> *tokens, const string& text, char* sep,bool nichtmehrfach=1);
+void aufSplit(vector<string> *tokens, const string& text, char* sep, bool auchleer=1);
+size_t irfind(const string& wo, const string& was); // suche von hinten und ignoriere Gross- und Kleinschreibung
 void getstammext(const string *const ganz, string *stamm, string *exten);
 // int cpplies(string fname,cppSchluess *conf,size_t csize,vector<string> *rest=0,char tz='=',short obverb=0);
 string XOR(const string& value, const string& key);
