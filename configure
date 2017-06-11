@@ -82,7 +82,7 @@ getIPR() {
 	  SPR="dpkg -s ";
 		UDPR="sudo apt-get -f install; sudo dpkg -r --force-depends ";};}
  	IPR="sudo $IdPR";
-  DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall .exrc $UNF $INSTLOG"
+  DATEIEN="`find . -maxdepth 1 -name ${PWD##*/}.cpp -printf '%f '``find . -maxdepth 1 -name ${PWD##*/}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -path "*${PWD##*/}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall modziel.sh .exrc $UNF $INSTLOG"
 }
 
 exportvars() {
