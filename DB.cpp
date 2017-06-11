@@ -709,13 +709,85 @@ void DB::lesespalten(Tabelle *ltab,int obverb/*=0*/,int oblog/*=0*/)
   Log(violetts+"Ende "+Txd[T_Lesespalten]+blau+": "+ltab->name+"'"+schwarz,obverb,oblog);
 } // lesespalten
 
+int DB::machind(const string& tname, Index* indx,int obverb/*=0*/, int oblog/*=0*/)
+{
+	// steht aus: Namen nicht beruecksichtigen, nur Feldreihenfolge und ggf. -laenge
+	uchar obneu=0;
+	RS rind(this,"SHOW INDEX FROM `"+tname+"` WHERE KEY_NAME = '"+indx->name+"'");
+	if (rind.obfehl) {
+		obneu=1;
+	} else {
+		if (!rind.result->row_count){
+			obneu=1;
+		} else {
+			for(int j=0;j<indx->feldzahl;j++) {
+				char*** erg= rind.HolZeile();
+				if (!*erg) {
+					obneu=1;break;
+				} else if (strcasecmp(indx->felder[j].name.c_str(),*(*erg+4))) { 
+					// 0 = Tabelle, 1 = non_unique (0,1), 2 = Key_name, 3 = seq_in_index, 4 = column_name, 5 = Collation ('A','D'), 6=Cardinality(0,1), 
+					// 7= sub_part(NULL,<ziffer>), 8=packed(null), 9=NULL("Yes"),10=index_type("BTREE"),11=comment(""),12=index_comment("")
+					obneu=1;break;
+				} else if (indx->felder[j].lenge!="" && *(*erg+7)) {
+					if (indx->felder[j].lenge!=*(*erg+7)) { 
+						obneu=1;break;
+					}
+				} //                 if (!*erg) else ...
+			} //               for(int j=0;j<indx->feldzahl;j++)
+			if (!obneu) {    // Wenn zu viele Zeilen da sind, auch loeschen
+				char*** erg= rind.HolZeile();
+				if (*erg) {
+					obneu=1;
+				}
+			} //               if (!obneu)    // Wenn zu viele Zeilen da sind, auch loeschen
+			if (obneu) {
+				RS rloesch(this,"DROP INDEX `"+indx->name +"` ON `"+tname+"`");
+			}
+		} //             if (!rind.result->row_count) else
+	} // if (obneu) 
+	if (obneu) {
+		RS rindins(this);
+		//sql.str(std::string()); sql.clear();
+		std::stringstream sql;
+		sql<<"CREATE INDEX `"<<indx->name<<"` ON `"<<tname<<"`(";
+		for(int j=0;j<indx->feldzahl;j++) {
+			sql<<"`"<<indx->felder[j].name<<"`";
+			for(unsigned spnr=0;spnr<spalt->num_rows;spnr++) { // reale Spalten
+				if (!strcasecmp(indx->felder[j].name.c_str(),spnamen[spnr])) { // Feldnamen identisch
+					long numsplen=atol(splenge[spnr]);
+					long numinlen=indx->felder[j].lenge.empty()?0:atol(indx->felder[j].lenge.c_str());
+					if (!numinlen || !numsplen) { // numsplen ist 0 z.B. bei varbinary
+						// das sollte reichen
+						if (numsplen>50 || !numsplen) indx->felder[j].lenge="50"; 
+					} else if (numinlen>numsplen) {
+						// laenger darf ein MariadB-Index z.Zt. nicht sein
+						if (numsplen>767) indx->felder[j].lenge="767";
+						else indx->felder[j].lenge=splenge[spnr];
+					}
+				}
+			}
+			//// <<gruen<<"ptab->indices["<<i<<"].name["<<j<<"].name: "<<schwarz<<indx->felder[j].name<<endl;
+			//// <<gruen<<"ptab->indices["<<i<<"].felder["<<j<<"].lenge: "<<schwarz<<indx->felder[j].lenge<<endl;
+			if (indx->felder[j].lenge!="0" && indx->felder[j].lenge!="") {
+				sql<<"("<<indx->felder[j].lenge<<")";
+			}
+			if (j<indx->feldzahl-1) {
+				sql<<",";
+			}
+		} // for(int j=0;j<indx->feldzahl;j++) 
+		sql<<")";
+		rindins.Abfrage(sql.str(),obverb?-1:1);
+	} // if (!rind.obfehl) 
+	return 0;
+}
+
 int DB::prueftab(Tabelle *ptab,int obverb/*=0*/,int oblog/*=0*/) 
 {
   Log(violetts+Txd[T_Pruefe_Tabelle]+blau+ptab->name+"'"+schwarz,obverb,oblog);
   int gesfehlr=0;
   RS rs(this);
   std::stringstream sql;
-  // eine Indexfeldlaenge groesser als die Feldlaenge fuehrt zu Fehler (zumindex bei MariaDB)
+  // eine Indexfeldlaenge groesser als die Feldlaenge fuehrt zu Fehler (zumindest bei MariaDB)
   for(int i=0;i<ptab->indexzahl;i++){
     for(int j=0;j<ptab->indices[i].feldzahl;j++){
       for(int k=0;k<ptab->feldzahl;k++){
@@ -860,72 +932,7 @@ int DB::prueftab(Tabelle *ptab,int obverb/*=0*/,int oblog/*=0*/)
           } // if (verschieb || aendere)
         } // for(int gspn=0;gspn<ptab->feldzahl;gspn++) 
 				for(int i=0;i<ptab->indexzahl;i++) {
-					// steht aus: Namen nicht beruecksichtigen, nur Feldreihenfolge und ggf. -laenge
-					uchar obneu=0;
-					RS rind(this,"SHOW INDEX FROM `"+ptab->name+"` WHERE KEY_NAME = '"+ptab->indices[i].name+"'");
-					if (rind.obfehl) {
-						obneu=1;
-					} else {
-						if (!rind.result->row_count){
-							obneu=1;
-						} else {
-							for(int j=0;j<ptab->indices[i].feldzahl;j++) {
-								char*** erg= rind.HolZeile();
-								if (!*erg) {
-									obneu=1;break;
-								} else if (strcasecmp(ptab->indices[i].felder[j].name.c_str(),*(*erg+4))) { 
-									// 0 = Tabelle, 1 = non_unique (0,1), 2 = Key_name, 3 = seq_in_index, 4 = column_name, 5 = Collation ('A','D'), 6=Cardinality(0,1), 
-									// 7= sub_part(NULL,<ziffer>), 8=packed(null), 9=NULL("Yes"),10=index_type("BTREE"),11=comment(""),12=index_comment("")
-									obneu=1;break;
-								} else if (ptab->indices[i].felder[j].lenge!="" && *(*erg+7)) {
-									if (ptab->indices[i].felder[j].lenge!=*(*erg+7)) { 
-										obneu=1;break;
-									}
-								} //                 if (!*erg) else ...
-							} //               for(int j=0;j<ptab->indices[i].feldzahl;j++)
-							if (!obneu) {    // Wenn zu viele Zeilen da sind, auch loeschen
-								char*** erg= rind.HolZeile();
-								if (*erg) {
-									obneu=1;
-								}
-							} //               if (!obneu)    // Wenn zu viele Zeilen da sind, auch loeschen
-							if (obneu) {
-								RS rloesch(this,"DROP INDEX `"+ptab->indices[i].name +"` ON `"+ptab->name+"`");
-							}
-						} //             if (!rind.result->row_count) else
-					} // if (obneu) 
-					if (obneu) {
-						RS rindins(this);
-						sql.str(std::string()); sql.clear();
-						sql<<"CREATE INDEX `"<<ptab->indices[i].name<<"` ON `"<<ptab->name<<"`(";
-						for(int j=0;j<ptab->indices[i].feldzahl;j++) {
-							sql<<"`"<<ptab->indices[i].felder[j].name<<"`";
-							for(unsigned spnr=0;spnr<spalt->num_rows;spnr++) { // reale Spalten
-								if (!strcasecmp(ptab->indices[i].felder[j].name.c_str(),spnamen[spnr])) { // Feldnamen identisch
-									long numsplen=atol(splenge[spnr]);
-									long numinlen=ptab->indices[i].felder[j].lenge.empty()?0:atol(ptab->indices[i].felder[j].lenge.c_str());
-									if (!numinlen || !numsplen) { // numsplen ist 0 z.B. bei varbinary
-										// das sollte reichen
-										if (numsplen>50 || !numsplen) ptab->indices[i].felder[j].lenge="50"; 
-									} else if (numinlen>numsplen) {
-										// laenger darf ein MariadB-Index z.Zt. nicht sein
-										if (numsplen>767) ptab->indices[i].felder[j].lenge="767";
-										else ptab->indices[i].felder[j].lenge=splenge[spnr];
-									}
-								}
-							}
-							//// <<gruen<<"ptab->indices["<<i<<"].name["<<j<<"].name: "<<schwarz<<ptab->indices[i].felder[j].name<<endl;
-							//// <<gruen<<"ptab->indices["<<i<<"].felder["<<j<<"].lenge: "<<schwarz<<ptab->indices[i].felder[j].lenge<<endl;
-							if (ptab->indices[i].felder[j].lenge!="0" && ptab->indices[i].felder[j].lenge!="") {
-								sql<<"("<<ptab->indices[i].felder[j].lenge<<")";
-							}
-							if (j<ptab->indices[i].feldzahl-1) {
-								sql<<",";
-							}
-						} // for(int j=0;j<ptab->indices[i].feldzahl;j++) 
-						sql<<")";
-						rindins.Abfrage(sql.str(),obverb?-1:1);
-					} // if (!rind.obfehl) 
+				  machind(ptab->name,&ptab->indices[i],obverb,oblog);
 				} // for(int i=0;i<ptab->indexzahl;i++)
       } // case Mysql
       break;
@@ -1654,7 +1661,7 @@ void RS::insert(const string& itab, vector< instyp > einf,uchar sammeln/*=0*/,
   if (anfangen) {
     if (maxl) {
       delete[] maxl; maxl=0;
-    } //     if (maxl)
+    }
   } //   if (anfangen)
   if (!maxl) {
     maxl= new unsigned long[einf.size()];

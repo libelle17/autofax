@@ -331,6 +331,7 @@ class DB
     my_ulonglong affrows(); // unsigned __int64
     void lesespalten(Tabelle *tab,int obverb=0,int oblog=0);
     int prueftab(Tabelle *tab,int obverb=0,int oblog=0);
+		int machind(const string& tname,Index *indx,int obverb=0, int oblog=0);
 };
 
 
