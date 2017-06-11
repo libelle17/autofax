@@ -12,7 +12,7 @@ for D in $(find . -maxdepth 1 -name "*.cpp" -or -name "*.h"); do
  chmod --reference=$D $1/$D;
  chown --reference=$D $1/$D;
 done
-for D in .exrc Makefile install.sh man_?? versdt viall modziel.sh; do
+for D in .exrc Makefile install.sh man_?? versdt viall modziel.sh configure; do
  [ -f $D ]&& sed '/^#\/\/.*/d;s_#//.*__g' $D>$1/$D;
  chmod --reference=$D $1/$D;
  chown --reference=$D $1/$D;
