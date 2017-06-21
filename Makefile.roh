@@ -45,16 +45,16 @@ BFA:=2>>fehler.txt
 ifdef ausvi
  BA::=/dev/null
 endif
-PROGRAM::=$(shell basename $(CURDIR))
-PROGGROSS=`echo $(PROGRAM) | tr a-z A-Z`
+#PROGRAM::=$(shell basename $(CURDIR))
 #EXPFAD=/usr/local/sbin
 EXPFAD::=$(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | head -n 1)
 EXPFAD::=$(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | awk '{ print length, $$0 }' | sort -n -s | cut -d" " -f2- | head -n1)
-EXEC::=$(PROGRAM)
-INSTEXEC=$(EXPFAD)/$(EXEC)
 
 CCInst=gcc6-c++
 -include vars # wird durch install.sh generiert
+PROGGROSS=`echo $(DPROG) | tr a-z A-Z`
+EXEC::=$(DPROG)
+INSTEXEC=$(EXPFAD)/$(EXEC)
 ifneq ($(shell g++-6 --version >$(KR)),0)
  CCName=g++
 # CC=sudo $(CCName)
@@ -104,10 +104,10 @@ blau:="\033[1;34m"
 reset:="\033[0m"
 
 MANV::=/usr/share/man
-INSTenMAN::=$(MANV)/man1/$(PROGRAM).1.gz
+INSTenMAN::=$(MANV)/man1/$(DPROG).1.gz
 _MAN::=$(subst man_en,,$(wildcard man_??))
 FLANGS::=$(patsubst man_%,%,$(_MAN))
-INST_MAN::=$(patsubst man_%,$(MANV)/%/man1/$(PROGRAM).1.gz,$(_MAN))
+INST_MAN::=$(patsubst man_%,$(MANV)/%/man1/$(DPROG).1.gz,$(_MAN))
 $(foreach lang,$(FLANGS), $(eval INST$(lang)MAN=$(filter $(MANV)/$(lang)/%,$(INST_MAN))))
 MANS::=$(wildcard man_en)
 MANS+=$(_MAN)
@@ -170,7 +170,7 @@ git: README.md
 #	@git config --global user.name "Gerald Schade"
 #	@git config --global user.email "gerald.schade@gmx.de"
 	-@cp -au Makefile Makefile.roh
-	@printf " Copying files from/ Kopiere Dateien von: %b%s%b (Version %b%s%b) -> git (%b%s%b)\n" $(blau) "$(PROGRAM)" $(reset) \
+	@printf " Copying files from/ Kopiere Dateien von: %b%s%b (Version %b%s%b) -> git (%b%s%b)\n" $(blau) "$(DPROG)" $(reset) \
 	 $(blau) $$(cat versdt) $(reset) $(blau) "$$(cut -f2-< .git/FETCH_HEAD|sed 's/^\s*//')" $(reset) >$(BA) 
 	@git config --global push.default simple
 	@git add -u
@@ -199,7 +199,7 @@ $(EXEC): $(OBJ)
 
 %.o : %.cpp
 %.o : %.cpp $(DEPDIR)/%.d
-	@[ $@ = $(PROGRAM).o ]&&{ test -f versdt || echo 0.1>versdt; if test -f entwickeln; then awk "BEGIN {print `cat versdt`+0.00001}">versdt;\
+	@[ $@ = $(DPROG).o ]&&{ test -f versdt || echo 0.1>versdt; if test -f entwickeln; then awk "BEGIN {print `cat versdt`+0.00001}">versdt;\
 	else printf " %bFile '%bentwickeln%b' missing, keeping the version number stable/ Datei '%bentwickeln%b' fehlt, lasse die Version gleich%b\n" \
 	$(schwarz) $(grau) $(schwarz) $(grau) $(schwarz) $(reset) >$(BA); fi;}; true;
 	@printf " kompiliere %b%s%b: " $(blau) "$<" $(reset) >$(BA);

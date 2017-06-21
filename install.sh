@@ -18,7 +18,7 @@ GITV=$([ -f .git/config ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' .g
 [ -z $GITV ]&& GITV=libelle17;
 #echo vor Entscheidung,DPROG: $DPROG, GITV: $GITV
 # diese Datei wird wegen obigem in configure und indirekt in viall gesourct, soll dann hier abbrechen
-if test "$ICH" != configure -a "$ICH" != viall -a $AUFRUFE -lt 2; then
+if test "$ICH" != configure -a "$ICH" != viall -a "$ICH" != modziel.sh -a $AUFRUFE -lt 2; then
 	#echo nach Entscheidung,DPROG: $DPROG, GITV: $GITV
 	# aPWD=`pwd` 
 	nPWD=${PWD##*/}
