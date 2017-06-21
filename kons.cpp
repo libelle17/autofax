@@ -1303,7 +1303,7 @@ int obprogda(const string& prog,int obverb, int oblog, string *pfad/*=0*/)
   for(int iru=0;iru<maxz;iru++) {
     struct stat fstat={0};
     string verz;
-		if (prog[0]=='/') iru=maxz; // z.B. /root/autofax/ocrv/bin/ocrmypdf
+		if (prog[0]=='/') iru=maxz; // z.B. <instvz>/ocrv/bin/ocrmypdf
     switch (iru) {
       case 0: verz="/usr/local/bin/"; break;
       case 1: verz="/usr/bin/"; break;
@@ -1540,7 +1540,7 @@ void confdat::auswert(schlArr *sA, int obverb, char tz)
                 gtrim(&(*sA)[ii].wert); // Leerzeichen entfernen
                 // Anfuehrungszeichen entfernen
                 anfzweg((*sA)[ii].wert);
-////      if (name.find("autofax")!=string::npos)
+////      if (name.find(<DPROG>)!=string::npos)
 //// <<" name: "<<schwarz<<(*sA)[ii].name<<violett<<" wert: '"<<schwarz<<(*sA)[ii].wert<<"'"<<violett<<" bemerk: '"<<ibemerk<<"'"<<schwarz<<endl;
                 (*sA)[ii].bemerk=ibemerk;
                 ibemerk.clear();
@@ -2700,7 +2700,7 @@ std::string string_to_hex(const std::string& input)
 			/*//
 			linst_cl linst(0,0);
 			svec inh;string ustring;
-			mdatei uni0("/home/schade/autofax/inst.log",ios::in,0);
+			mdatei uni0(instvz+"/inst.log",ios::in,0);
 			if (uni0.is_open()) {
 				string zeile;
 				while (getline(uni0,zeile)) {

@@ -151,11 +151,10 @@ class paramcl // Programmparameter
   public:
 	  string cl; // comanndline
     string mpfad;  // meinpfad()
-    string meinname; // base_name(meinpfad()) // argv[0] // 'autofax'
-    string vaufr; // (vollaufruf) z.B. '/usr/bin/autofax -norf'
-    string saufr; // (stummaufruf) 'autofax -norf'
+    string meinname; // base_name(meinpfad()) // argv[0] // <DPROG>
+    string vaufr; // (vollaufruf) z.B. '/usr/bin/<DPROG> -norf'
+    string saufr; // (stummaufruf) '<DPROG> -norf'
 		string zsaufr; // zitiert saufr (in sed)
-//    string instvz; // $HOME/autofax
 //    cppSchluess *hconfp=0;
     schlArr hylconf;
     uchar hgelesen=0; // Protokolldatei war auslesbar
@@ -183,7 +182,7 @@ class paramcl // Programmparameter
 		uchar uml=0; // umleiten: vorzeitig den zweiten Weg aktivieren
     uchar kez=0;    // korrigiere Erfolgskennzeichen
     uchar bwv=0;    // bereinige Warteverzeichnis
-    uchar anhl=0;    // autofax anhalten
+    uchar anhl=0;    // <DPROG> anhalten
     uchar lista=0;   // liste Archiv auf
     uchar listf=0;   // liste gescheiterte auf
     uchar listi=0;   // liste Eingegangene auf
@@ -231,7 +230,7 @@ class paramcl // Programmparameter
     string ccapiconfdt; // /etc/capisuite/capisuite.conf oder /usr/local/etc/capisuite/capisuite.conf laut Handbuch
     // Parameter aus /etc/capisuite/fax.conf:
     string spoolcapivz; // Verzeichnis der Capi-Spool-Dateien /var/spool/capisuite/
-		string cempfavz; //  /var/spool/capisuite/autofaxarch/
+		string cempfavz; //  /var/spool/capisuite/" DPROG "arch/
     string cfaxuservz;    // /var/spool/capisuite/users/
     string cfaxusersqvz;    // /var/spool/capisuite/users/<user>/sendq
     string nextdatei;  // /var/spool/capisuite/users/<user>/sendq/fax-nextnr
@@ -256,7 +255,7 @@ class paramcl // Programmparameter
     uchar logdneu=0;    // Logdatei geaendert
     uchar logvneu=0;    // Logverzeichnis geaendert
     string varsphylavz; // Verzeichnis der Hyla-Spool-Dateien /var/spool/hylafax oder /var/spool/fax
-		string hempfavz;    // var/spool/(hyla)fax/autofaxarch
+		string hempfavz;    // var/spool/(hyla)fax/" DPROG "arch
 		string xferfaxlog; // varsphylavz + "/etc/xferfaxlog"; 
 		string faxqpfad,hfaxdpfad; // /usr/local/sbin/faxq, /usr/local/sbin/hfaxq
 		string faxgtpfad;   // /usr/lib/fax/faxgetty oder /usr/local/sbin/faxgetty
@@ -275,7 +274,7 @@ class paramcl // Programmparameter
     size_t cptlen;
 #endif
     string host="localhost";  // fuer MySQL/MariaDB
-    string logdname; // Logdatei-Name ohne Pfad autofax.log
+    string logdname; // Logdatei-Name ohne Pfad <DPROG>.log
     string logvz; // nur das Verzeichnis /var/log
     string loggespfad; // Gesamtpfad, auf den dann die in kons.h verwiesene und oben definierte Variable logdt zeigt
                        // bei jeder Aenderung muss auch logdt neu gesetzt werden!
@@ -379,10 +378,10 @@ class paramcl // Programmparameter
     void liescapiconf();
     void VorgbAllg(); // allgemeine Vorgaben
 		void MusterVorgb();
-    #ifdef autofaxcpp
-    void VorgbSpeziell() __attribute__((weak)); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vorgaben.cpp)
+    #ifdef DPROGcpp
+    void VorgbSpeziell() __attribute__((weak)); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vgb.cpp)
     #else
-    void VorgbSpeziell(); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vorgaben.cpp)
+    void VorgbSpeziell(); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vgb.cpp)
     #endif
     void lieskonfein();
     int  getcommandline();

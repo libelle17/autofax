@@ -1,34 +1,34 @@
 .\" t -*- coding: UTF-8 -*-
-.\" Manual-Seite für autofax
+.\" Manual-Seite für &&dprog&&
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "21.06.17" "Version 0.43529" "Manual-Seite für autofax"
+.TH man 1 "21.06.17" "Version 0.43577" "Manual-Seite für &&dprog&&"
 .SH NAME
-\fBautofax\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
+\fB&&dprog&&\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
-(manpage available in english: 'man autofax' or 'man -Len autofax')
+(manpage available in english: 'man &&dprog&&' or 'man -Len &&dprog&&')
 .SH SYNOPSIS
-\fBautofax [-<kurzopt>|--<langopt> [<ergänzung>]] ...\fR
+\fB&&dprog&& [-<kurzopt>|--<langopt> [<ergänzung>]] ...\fR
 .SH KURZBESCHREIBUNG
-\fBautofax\fR bietet quasi die Funktionalität eines Faxservers, welcher für manche auch hinter einer schnellen Datenleitung sinnvoll sein kann.
+\fB&&dprog&&\fR bietet quasi die Funktionalität eines Faxservers, welcher für manche auch hinter einer schnellen Datenleitung sinnvoll sein kann.
 .br
-\fBautofax\fR ist ein Befehlszeilenprogramm, mit dem Dateien in einem bestimmten Verzeichnis automatisch an \fBhylafax\fR (falls ein linux-kompatibles Fax-Modem angeschlossen ist) und/oder \fBcapisuite\fR (falls eine Fritzcard 2.0 oder 2.1 angeschlossen ist) weiterleitet werden, wenn die Faxnummer im Dateinamen richtig eingetragen ist,
+\fB&&dprog&&\fR ist ein Befehlszeilenprogramm, mit dem Dateien in einem bestimmten Verzeichnis automatisch an \fBhylafax\fR (falls ein linux-kompatibles Fax-Modem angeschlossen ist) und/oder \fBcapisuite\fR (falls eine Fritzcard 2.0 oder 2.1 angeschlossen ist) weiterleitet werden, wenn die Faxnummer im Dateinamen richtig eingetragen ist,
 weiterhin die versandten Faxe in einer MariaDB-Datenbank abspeichert. 
 .br
 Außerdem können von \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe automatisch nach dem Sender anhand dessen Faxnummer benannt und abgespeichert werden.
 .br
-Die Netzwerkintegration (z.B. auch in ein Windows-Netzwerk mit nur einem Linuxrechner) geschieht durch automatischen Eintrag der für autofax relevanten Verzeichnisse in einen Samba-Server. Sie könnte ergänzt werden durch eine Maske für die mariadb-Datenbank.
+Die Netzwerkintegration (z.B. auch in ein Windows-Netzwerk mit nur einem Linuxrechner) geschieht durch automatischen Eintrag der für &&dprog&& relevanten Verzeichnisse in einen Samba-Server. Sie könnte ergänzt werden durch eine Maske für die mariadb-Datenbank.
 .SH INSTALLATION
 .br
 Zunächst lesen Sie bitte die untenstehenden Kapitel 'Funktionsweise','Voraussetzungen','Automatisch installierte Programmpakete' und 'Auswirkungen des Programmablaufs'.
 .br
 Anschließend verbinden Sie den Rechner falls nötig mit dem Internet und rufen Sie auf (z.B. durch Kopieren der Zeile in die Zwischenablage und Einfügen in einem Terminal):
 .br
-\fBN=autofax;P=${N}_inst.sh;cd ~;wget https://raw.githubusercontent.com/&&gitv&&/$N/master/install.sh -O$P&&sh $P\fR
+\fBN=&&dprog&&;P=${N}_inst.sh;cd ~;wget https://raw.githubusercontent.com/&&gitv&&/$N/master/install.sh -O$P&&sh $P\fR
 .br
 Zuletzt rufen Sie auf:
 .br
- \fBautofax\fR
+ \fB&&dprog&&\fR
 .br
 und beantworten einige Rueckfragen des Programms.
 .br
@@ -40,7 +40,7 @@ Es existiert dann ein Verzeichnis z.B. '\fBzufaxen\fR', in das z.B. Benutzer im 
 .br
 "\fBArztbericht zu Franz Krank an Dr. Gesund und Franz Krank an Fax 099 987654321 und 088 887654321.doc\fR" (es könnte auch z.B. eine *.xls, eine *.jpg, eine *.tif, eine *.txt oder eine *.pdf-Datei sein; die Passage 'an Dr. Gesund und Franz Krank ' ist optional für die spätere Zordnung der Faxnummer(n) in der Datenbank, sie darf auch fehlen).
 .br
-Wenn \fBautofax\fR beim nächsten Mal automatisch aufgerufen wird (standardmäßig alle 2 Minuten), wird die o.g. Beispieldatei zunächst kopiert und umbenannt in 
+Wenn \fB&&dprog&&\fR beim nächsten Mal automatisch aufgerufen wird (standardmäßig alle 2 Minuten), wird die o.g. Beispieldatei zunächst kopiert und umbenannt in 
 .br
 "\fBArztbericht zu Franz Krank an Dr. Gesund an Fax 099 987654321.doc\fR" und 
 .br
@@ -54,13 +54,13 @@ Diese werden dann automatisch an \fBhylafax\fR oder \fBCapisuite\fR weitergeleit
 .br
 Gleichzeitig werden sie aus '\fBzufaxen\fR' in das Warteverzeichnis, z.B. '\fBwarteauffax\fR' verschoben und in die Spooltabelle \fBspooltab\fR eingetragen.
 .br
-Bei jedem Aufruf überprüft autofax den Status von \fBhylafax\fR und/oder \fBCapisuite\fR. Der Abschluss eines Faxvorgangs dort hat zur Folge, dass autofax die Quelldateien (also hier die o.g. .doc- und .pdf-Dateien) aus dem Warteverzeichnis in ein oder mehrere alternative Archivverzeichnisse oder ein Verzeichnis für gescheiteterte Faxe ablegt und den Datenbankeintrag von '\fBspooltab\fR' in die Archivtabelle '\fBouta\fR' verschiebt.
+Bei jedem Aufruf überprüft &&dprog&& den Status von \fBhylafax\fR und/oder \fBCapisuite\fR. Der Abschluss eines Faxvorgangs dort hat zur Folge, dass &&dprog&& die Quelldateien (also hier die o.g. .doc- und .pdf-Dateien) aus dem Warteverzeichnis in ein oder mehrere alternative Archivverzeichnisse oder ein Verzeichnis für gescheiteterte Faxe ablegt und den Datenbankeintrag von '\fBspooltab\fR' in die Archivtabelle '\fBouta\fR' verschiebt.
 .br
 Weiterhin werden über \fBhylafax\fR oder \fBCapisuite\fR angekommene Faxe in ein Empfangsverzeichnis kopiert und ggf. nach dem Sender benannt. Hierzu werden, falls angegeben, konfigurierbare SQL-Befehle verwendet, die in frei festlegbarer Zahl der Reihe nach so lange aufgerufen werden, bis einer einen Datensatz zu der Faxnummer findet.
 .br
-Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präferenz in den genannten Verzeichnissen, in den Datenbanktabellen oder durch Aufruf von z.B. '\fBautofax\fB', '\fBautofax -lista\fR', '\fBautofax -listf\fR' oder '\fBautofax -listi\fR' den Stand des Faxens überprüfen. 
+Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präferenz in den genannten Verzeichnissen, in den Datenbanktabellen oder durch Aufruf von z.B. '\fB&&dprog&&\fB', '\fB&&dprog&& -lista\fR', '\fB&&dprog&& -listf\fR' oder '\fB&&dprog&& -listi\fR' den Stand des Faxens überprüfen. 
 .SH OPTIONEN 
-Mit '\fBautofax -?\fR' oder '\fBautofax -h\fR' werden die wichtigen und mit '\fBautofax -lh\fR' alle Befehlszeilenoptionen sichtbar. Einige Optionen (z.B. SQL-Befehle) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum direkt editiert oder auch über '\fBautofax -rf\fR' interaktiv gepflegt werden kann.
+Mit '\fB&&dprog&& -?\fR' oder '\fB&&dprog&& -h\fR' werden die wichtigen und mit '\fB&&dprog&& -lh\fR' alle Befehlszeilenoptionen sichtbar. Einige Optionen (z.B. SQL-Befehle) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum direkt editiert oder auch über '\fB&&dprog&& -rf\fR' interaktiv gepflegt werden kann.
 .br
 \fBFehlender Parameter <string> zu -sp oder --sprache!\fR
 .br
@@ -100,7 +100,7 @@ und traegt sie in MariaDB-Datenbank '\fBautofax\fB' (Tabellen: `\fBouta\fB`,`\fB
 .br
 \fB -bwv, --bereinigewv\fR: Dateien aus Warteverzeichnis gegen `\fBouta\fR` pruefen und ggf. verschieben
 .br
-\fB -st, --stop\fR: autofax anhalten
+\fB -st, --stop\fR: autofaxanhalten
 .br
 \fB -lista, --listausg\fR: listet Datensaetze aus `\fBouta\fR` mit Erfolgskennzeichen auf
 .br
@@ -203,10 +203,10 @@ b) mit dem Befehl '\fBstty -F\fR' bezüglich eines Fax-Modems.
 2) Die Fax-Konfigurationsdatei \fBfax.conf\fR der Capisuite wird eingelesen, falls es sie gibt
 .LP
 .HP 3 
-3) Weitere Vorgaben aus dem Programmcode werden zugewiesen, die durch die autofax-Konfigurationsdatei (siehe 4), Kommandozeilenargumente oder Antworten auf Rückfragen (siehe 5) überdeckt werden können.
+3) Weitere Vorgaben aus dem Programmcode werden zugewiesen, die durch die &&dprog&&-Konfigurationsdatei (siehe 4), Kommandozeilenargumente oder Antworten auf Rückfragen (siehe 5) überdeckt werden können.
 .LP
 .HP 3 
-4) Vorgaben werden geladen aus der Konfigurationsdatei, falls existent (standardmäßig \fBautofax.conf\fR im selben Verzeichnis wie \fBautofax\fR, standardmäßig \fB/usr/local/sbin/autofax\fR)) 
+4) Vorgaben werden geladen aus der Konfigurationsdatei, falls existent (standardmäßig \fB&&dprog&&.conf\fR im selben Verzeichnis wie \fB&&dprog&&\fR, standardmäßig \fB/usr/local/sbin/&&dprog&&\fR)) 
 .LP
 .HP 3 
 5) Rückfragen werden gestellt, falls in der Konfigurationsdatei Werte fehlen oder falls eine Kommandozeilenoption Interaktivität verlangt.
@@ -218,7 +218,7 @@ b) mit dem Befehl '\fBstty -F\fR' bezüglich eines Fax-Modems.
 7) Von Benutzern verwendete Verzeichnisse für zu verschickende, wartende, versandte und gescheiterte und empfangene Fax-Dateien werden überprüft und ggf. erstellt. Dabei können in der Konfiguration angegebene Dateinamensmuster berücksichtigt werden, um erfolgreich versandte Faxe je nach Dateinamen in verschiedenen Verzeichnissen zu speichern.
 .LP
 .HP 3 
-8) Das Programm trägt sich ggf. in \fBcrontab\fR (des Benutzers root) ein, um auf Wunsch in (einstellbaren) Abständen aufgerufen zu werden. Um dies zu verhindern, kann entweder '\fBcronminut\fR' auf \fB0\fR eingestellt werden oder der bereits erstellte autofax-Eintrag mit \fBcrontab -e\fR mit einem vorangestellten '\fB#\fR' auskommentiert werden.
+8) Das Programm trägt sich ggf. in \fBcrontab\fR (des Benutzers root) ein, um auf Wunsch in (einstellbaren) Abständen aufgerufen zu werden. Um dies zu verhindern, kann entweder '\fBcronminut\fR' auf \fB0\fR eingestellt werden oder der bereits erstellte &&dprog&&-Eintrag mit \fBcrontab -e\fR mit einem vorangestellten '\fB#\fR' auskommentiert werden.
 .LP
 .HP 3 
 9) Das Programm überprüft, ob alle benutzerreleventen Verzeichnisse (s. 7) von Sambafreigaben in \fR/etc/samba/smb.conf\fB erfasst werden, solche werden nötigenfalls ergänzt.
@@ -259,13 +259,13 @@ Der Status der genannten Faxe wird angezeigt.
 .\" untersuchespool()
 .LP
 .HP 3 
-17) Weitere in der Warteschleife von hylafax/capisuite befindliche, nicht über autofax erstellte Faxe werden ggf. angezeigt.
-In Intervallen werden sie in die Autofax-Datenbank integriert (ohne die fehlende Information über den ursprünglichen Dateinamen)
+17) Weitere in der Warteschleife von hylafax/capisuite befindliche, nicht über &&dprog&& erstellte Faxe werden ggf. angezeigt.
+In Intervallen werden sie in die &&dprog&&-Datenbank integriert (ohne die fehlende Information über den ursprünglichen Dateinamen)
 .LP
 .HP 3 
 18) Über \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe werden ggf. mit Hilfe der Faxnummer anhand voreingestellter SQL-Befehle nach dem Namen des Absenders benannt und in ein Empfangsverzeichnis gestellt.
 .br
-Solche SQL-Befehle sollen (mindestens) zwei Ergebnisfelder (mit benutzerdefinierter Bedeutung) liefern, deren Inhalt dann, durch ein Komma getrennt, von autofax zur Benennung eines empfangenen Faxes verwendet werden. Vor der Anwendung des SQL-Befehls wird die Zeichenfolge '&&faxnr&&' zur aktuellen Faxnummer erweitert. Beispiel fuer einen solchen SQL-Befehl:
+Solche SQL-Befehle sollen (mindestens) zwei Ergebnisfelder (mit benutzerdefinierter Bedeutung) liefern, deren Inhalt dann, durch ein Komma getrennt, von &&dprog&& zur Benennung eines empfangenen Faxes verwendet werden. Vor der Anwendung des SQL-Befehls wird die Zeichenfolge '&&faxnr&&' zur aktuellen Faxnummer erweitert. Beispiel fuer einen solchen SQL-Befehl:
 .br
 .br
 select concat(haname,', ',ort,', ',kvnu) name, zulg from kvaerzte.hae where concat(if(mid(fax1k,1,1)='0','','08131'), replace(replace(replace(replace(fax1k,' ',''),'-',''),'/',''),'\'','')) = '&&faxnr&&'
@@ -276,14 +276,14 @@ Wenn mehrere SQL-Befehle angegeben werden, so wird der jeweils naechste angewand
 Optional werden die empfangenen Dateien mit Hilfe von ocrmypdf einer Texterkennung unterzogen.
 .LP
 .HP 3 
-19) Die Konfigurationsdatei \fBautofax.conf\fR wird ggf. geschrieben.
+19) Die Konfigurationsdatei \fB&&dprog&&.conf\fR wird ggf. geschrieben.
 .LP
 
 .SH VORAUSSETZUNGEN
 \fBHardware\fR: Computer mit einer Fritzcard 2.0 oder 2.1 und/oder einem linux-kompatiblen Modem; in der vorliegenden Fassung wird für eine automatische Installation des Programms (unter Beantwortung einiger Rückfragen) ein US Robotics Modem USR5637 und eine der untenstehenden Linuxversionen benötigt.
 Im Fall der Verwendung von Fritzcard plus einem Modem kann das Programm beide Faxwege alternativ nutzen, um die Übertragungssicherheit zu erhöhen. 
 .br
-\fBSoftware\fR: Das Programm wurde auf eine Installation von Opensuse >= 42.1, Debian >= 8.60, Ubuntu >= 16.04, Mint >= 18 oder Fedora >= 24 mit jeweils Standardoptionen abgestimmt. System D muss installiert sein bzw. systemctl muss laufen. Jeweils einer der Paketmanager rpm oder dpkg sowie apt, dnf, yum oder zypper muss installiert sein, wie in den genannten Linuxdistributionen standardmäßig der Fall. Die Deinstallation der durch autofax hinzugefügten Programme mit \fBmake uninstall\fR ist gegenwärtig nur für englische und deutsche Versionen der Paketmanager eingerichtet.
+\fBSoftware\fR: Das Programm wurde auf eine Installation von Opensuse >= 42.1, Debian >= 8.60, Ubuntu >= 16.04, Mint >= 18 oder Fedora >= 24 mit jeweils Standardoptionen abgestimmt. System D muss installiert sein bzw. systemctl muss laufen. Jeweils einer der Paketmanager rpm oder dpkg sowie apt, dnf, yum oder zypper muss installiert sein, wie in den genannten Linuxdistributionen standardmäßig der Fall. Die Deinstallation der durch &&dprog&& hinzugefügten Programme mit \fBmake uninstall\fR ist gegenwärtig nur für englische und deutsche Versionen der Paketmanager eingerichtet.
 .br
 .\"In Manjaro können vor Installation noch die Befehle: 'sudo pacman -S wget vi' und 'sudo pacman -Syu' nötigt werden.
 .SH AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE
@@ -296,7 +296,7 @@ Im Fall der Verwendung von Fritzcard plus einem Modem kann das Programm beide Fa
 gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Vers. 4.0.7 mit leichter Modifikation, s. Makefile)
 .br
 .br
-\fBautofax:\fR
+\fB&&dprog&&:\fR
 .LP
 .HP 3
 boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoffice-base, mariadb-server, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp, (in debian-derivates, für mariadb, zusätzlich: apt-transport-https)
@@ -323,7 +323,7 @@ vim
 .br
 All diese Installationen können abhängige Programme einschließen.
 .br
-Falls Sie eines dieser Programme nicht wollen bzw. nicht aktualisieren wollen, dann dürfen Sie autofax oder die entsprechenden Programmteile nicht auf diesem Computer verwenden.
+Falls Sie eines dieser Programme nicht wollen bzw. nicht aktualisieren wollen, dann dürfen Sie &&dprog&& oder die entsprechenden Programmteile nicht auf diesem Computer verwenden.
 
 .SH AUSWIRKUNGEN DES PROGRAMMABLAUFS
 Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:
@@ -362,13 +362,13 @@ b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neu eingerich
 c) falls \fBselinux\fR aktiv ist (wie standardmäßig in fedora), dann behindert es standardmäßig \fBhylafax\fR; in diesem Fall wird im Hintergrund ein Modul für selinux eingerichtet, um den Betrieb von hylafax-hfaxd wieder zu erlauben. Ferner muss (bis zur eventuellen Erstellung einer maßgeschneiderteren Lösung) die Domäne 'getty' mit dem Befehl '\fBsemanage permissive -a getty_t\fR' in selinux entschärft werden, um faxe über hylafax empfangen zu können.
 .LP
 .HP 3
-7) Erstellen einer Protokolldatei, standardmäßig \fB/var/log/autofax.log\fR.
+7) Erstellen einer Protokolldatei, standardmäßig \fB/var/log/&&dprog&&.log\fR.
 .LP
 .HP 3
 8) ggf. Erstellen und Zugreifbarmachen der bestimmbaren \fBVerzeichnisse\fR für zu sendende, wartende, abgearbeitete und empfangene Faxe.
 .LP
 .HP 3
-9) ggf. Erstellen und Verändern der Konfigurationsdatei autofax.conf in dem Verzeichnis, in dem auch es selbst steht (Vorgabe: /usr/local/sbin/autofax).
+9) ggf. Erstellen und Verändern der Konfigurationsdatei &&dprog&&.conf in dem Verzeichnis, in dem auch es selbst steht (Vorgabe: /usr/local/sbin/&&dprog&&).
 .LP
 .HP 3
 10) ggf. Einfügen einer Zeile zum automatischen periodischen Aufruf des Programms in das crontab (von root)
@@ -382,7 +382,7 @@ Nach Programmaufruf sollten die unter 8) genannten Verzeichnisse im Samba-Netzwe
 12) ggf. Einfügen einer Datenbank für die Faxe in mariadb unter einem bestimmbaren Namen, Anlage und Veränderung mehrerer Tabellen und einer Prozedur in dieser Datenbank, ggf. Einfügen eines Benutzers mit bestimmbarem Namen in mariadb zur Datenpflege in diesen Tabellen 
 .LP
 .HP 3
-13) durch entsprechende Befehlszeilenoptionen von autofax können innerhalb von hylafax und capisuite Faxe gelöscht werden, insbesondere:
+13) durch entsprechende Befehlszeilenoptionen von &&dprog&& können innerhalb von hylafax und capisuite Faxe gelöscht werden, insbesondere:
 .br
 a) in hylafax: durch Aufruf von 'faxrm'
 .br
@@ -393,20 +393,20 @@ In capisuite kann auch eine verwaiste Lock-Datei (/var/spool/capisuite/users/<us
 14) mit einer Befehlszeilenoption kann ein früher empfangenes Fax erneut in eine pdf-Datei umgewandelt werden.
 .br
 .SH DEINSTALLATION
-Wechseln Sie in einem Terminal in das Installationsverzeichnis (beim selben eingeloggten Benutzer: \fBcd ~/autofax\fR, ansonsten wird es über \fBautofax -info\fR angezeigt).
+Wechseln Sie in einem Terminal in das Installationsverzeichnis (beim selben eingeloggten Benutzer: \fBcd ~/&&dprog&&\fR, ansonsten wird es über \fB&&dprog&& -info\fR angezeigt).
 .br
 Rufen Sie dort \fBmake uninstall\fR auf.
 .br
-Dadurch wird das installierte \fBautofax\fR gelöscht und das Script \fBuninstallinv\fR in umgekehrter Reihenfolge abgearbeitet, das bei der Installation und beim Aufruf von autofax erstellt wurde. 
+Dadurch wird das installierte \fB&&dprog&&\fR gelöscht und das Script \fBuninstallinv\fR in umgekehrter Reihenfolge abgearbeitet, das bei der Installation und beim Aufruf von &&dprog&& erstellt wurde. 
 .br
-Dadurch werden zusätzlich installierte Programmpakete, zusätzlich erteilte Berechtigungen, für autofax eingerichtete Sambafreigaben und Firewallausnahmen wieder gelöscht. 
+Dadurch werden zusätzlich installierte Programmpakete, zusätzlich erteilte Berechtigungen, für &&dprog&& eingerichtete Sambafreigaben und Firewallausnahmen wieder gelöscht. 
 .br
 Auf die Deinstallation der Konfigurationsdateien, der angesammelten Daten und systemrelevanter Programme wie libgcc und selinux wird dabei verzichtet.
 .br
 Etwaige Fehlermeldungen beziehen sich meist auf einen Deinstallationsversuch bereits entfernter Programme und können ignoriert werden.
 .br
 .SH FEHLER
-Fehler bitte mit u.a. dem Wort 'autofax' in der Email-Ueberschrift melden. 
+Fehler bitte mit u.a. dem Wort '&&dprog&&' in der Email-Ueberschrift melden. 
 .br
 Bitte auch melden, wenn sich Änderungsbedarf durch andere Hard- bzw. Software ergeben.
 

@@ -43,7 +43,8 @@ const double& versnr=
 const string& gitv=
 #include "gitvdt"
 ;
-
+// "dieses Programm", hier definiert, waehrend "meinname" sich durch umbenennen aendert
+#define DPROG "autofax"
 //// const char *logvz; // das reine Verzeichnis
 //// string logpfad; // zusammengesetzt aus Verzeichnis und name
 //// const char lgs logdatei_a[PATH_MAX+1] ="/var/log/log_vmparse.txt";
@@ -494,7 +495,7 @@ enum T_
 	T_aktuelle_Einstellungen_aus,
 	T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,
 	T_Muss_falsches_hylafax_loeschen,
-	T_autofax_anhalten,
+	T_DPROG_anhalten,
 	T_Zielmuster_Nr,
 	T_Zielverzeichnis_Nr,
 	T_ueber_den_Quellcode,
@@ -713,7 +714,7 @@ enum T_
 	T_passt_nicht_zu,
 	T_vor,
 	T_danach,
-	T_Bitte_Fax_5te_Spalte_aus_autofax_listi_eingeben,
+	T_Bitte_Fax_5te_Spalte_aus_DPROG_listi_eingeben,
 	T_mitversch,
 	T_aktiv,
 	T_aktiviert,
@@ -733,9 +734,9 @@ enum T_
 
 const string sprachstr=string("Language/Sprache/Lingue/Lingua [")+blau+'d'+schwarz+"eutsch,"+blau+'e'+schwarz+"nglisch]"+"";
 const char* sprachcstr=&sprachstr.front();
-#define prog autofax
-//// char const *Txautofaxcl::TextC[T_MAX+1][SprachZahl]={
-char const *autofax_T[T_MAX+1][SprachZahl]={
+
+//// char const *TxDPROGcl::TextC[T_MAX+1][SprachZahl]={
+char const *DPROG_T[T_MAX+1][SprachZahl]={
 	// T_sprachstr
 	{sprachcstr,sprachcstr},
 	// T_j_af,
@@ -1504,8 +1505,8 @@ char const *autofax_T[T_MAX+1][SprachZahl]={
 	// "Wollen Sie noch einen SQL-Befehl eingeben?"
 	{"Wollen Sie noch einen SQL-Befehl eingeben?","Do You want to enter another sql command?"},
 	// T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr
-	{" ('-'=SQL-Befehl loeschen, 2 Ergebnisfelder, '&&faxnr&&' wird ersetzt mit der Faxnr, s.man -Lde autofax)",
-		" ('-'=delete this sql command, 2 result fields, '&&faxnr&&' will be replaces with the fax-no., see man autofax)"},
+	{" ('-'=SQL-Befehl loeschen, 2 Ergebnisfelder, '&&faxnr&&' wird ersetzt mit der Faxnr, s.man -Lde " DPROG ")",
+		" ('-'=delete this sql command, 2 result fields, '&&faxnr&&' will be replaces with the fax-no., see man " DPROG ")"},
 	// T_faxnr_wird_ersetzt_mit_der_Faxnr
 	{" (2 Ergebnisfelder, '&&faxnr&&' wird ersetzt mit der Faxnr)",
 		" (2 result fields, '&&faxnr&&' will be replaces with the fax-no.)"},
@@ -1615,7 +1616,7 @@ char const *autofax_T[T_MAX+1][SprachZahl]={
 	// T_pruefisdn
 	{"T_pruefisdn()","checkisdn()"},
 	// T_keine_Rueckfragen_zB_aus_Cron
-	{"keine Rueckfragen, z.B. für Aufruf aus cron","no questions, e.g. for a call of autofax within cron"},
+	{"keine Rueckfragen, z.B. für Aufruf aus cron","no questions, e.g. for a call of " DPROG " within cron"},
 	// T_Samba_muesste_installiert_werden_soll_ich
 	{"Samba muesste installiert werden, soll ich?","samba needs to be installed, shall I?"},
 	// T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden
@@ -1629,8 +1630,8 @@ char const *autofax_T[T_MAX+1][SprachZahl]={
 	{"Gescheiterte Faxe werden hier gesammelt anstatt in","Failed Faxes are collected here and not in"}, 
 	// T_Muss_falsches_hylafax_loeschen
 	{"Muss falsches hylafax loeschen!!!","Have to delete the wrong hylafax!!!"},
-	// T_autofax_anhalten
-	{"autofax anhalten","stop autofax"},
+	// T_DPROG_anhalten
+	{DPROG "anhalten","stop " DPROG},
 	// T_Zielmuster_Nr
 	{"Zielmuster Nr. ","Target pattern no. "},
 	// T_Zielverzeichnis_Nr
@@ -2078,8 +2079,8 @@ char const *autofax_T[T_MAX+1][SprachZahl]={
 	{" Vor: "," Before: "},
 	// T_danach
 	{" Nach: "," After: "},
-	// T_Bitte_Fax_5te_Spalte_aus_autofax_listi_eingeben
-	{"Bitte Fax (5. Spalte aus autofax -listi) eingeben: ","Please enter fax (5th column from autofax -listi): "},
+	// T_Bitte_Fax_5te_Spalte_aus_DPROG_listi_eingeben
+	{"Bitte Fax (5. Spalte aus " DPROG " -listi) eingeben: ","Please enter fax (5th column from " DPROG " -listi): "},
 	// T_mitversch
 	{", mitversch: ",", withmove: "},
 	// T_aktiv
@@ -2110,9 +2111,9 @@ char const *autofax_T[T_MAX+1][SprachZahl]={
 	{" veraltet sein. Wenn Sie Ihre Faxe OCR unterziehen wollen, dann fuehren Sie bitte einen Systemupdate durch mit ",
 		" and could be obsolete. If You want to treat Your faxes with OCR, please update Your system with "},
 	{"",""}
-}; // char const *Txautofaxcl::TextC[T_MAX+1][SprachZahl]=
+}; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
-class TxB Tx((const char* const* const* const*)autofax_T);
+class TxB Tx((const char* const* const* const*)DPROG_T);
 
 const string& pk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax"; // fuer Antlitzaenderung
 
@@ -2126,9 +2127,9 @@ const DBSTyp myDBS=MySQL;
 #endif
 string tmpcron; // fuer crontab
 
-const char *logdt="/var/log/autofaxvorgabe.log";// darauf wird in kons.h verwiesen; muss dann auf lgp zeigen
+const char *logdt="/var/log/" DPROG "vorgabe.log";// darauf wird in kons.h verwiesen; muss dann auf lgp zeigen
 
-#define autofaxcpp
+#define DPROGcpp
 #include "autofax.h"
 
 const unsigned ktage=1; // kurzes Intervall fuer Faxtabellenkorrektur, 1 Tag
@@ -2357,8 +2358,8 @@ paramcl::paramcl(int argc, char** argv)
 	mpfad=meinpfad();
 	meinname=base_name(mpfad); // argv[0];
 	pruefinstv();
-	vaufr=mpfad+" -noia >/dev/null 2>&1"; // /usr/bin/autofax -noia
-	saufr=base_name(vaufr); // autofax -noia
+	vaufr=mpfad+" -noia >/dev/null 2>&1"; // /usr/bin/<DPROG> -noia
+	saufr=base_name(vaufr); // <DPROG> -noia
 	zsaufr=ersetzAllezu(saufr,"/","\\/");
 	/*// time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff; */
 	tstart=clock();
@@ -2638,7 +2639,7 @@ void paramcl::pruefmodem()
 	svec rueck;
 	//// <<"pruefmodem 1 nach obcapi: "<<(int)obcapi<<endl;
 	// 19.2.17: evtl. besser mit: dmesg|grep '[^t]*tty[^] 0\t:.$]'|sed 's/[^t]*\(tty[^] \t:.$]*\).*/\1/'
-	// 25.2.17: geht leider nicht nach "autofax -nohyla"
+	// 25.2.17: geht leider nicht nach "<DPROG> -nohyla"
 	//#define mitdmesg
 #ifdef mitdmesg
 	systemrueck("dmesg|grep tty",obverb,oblog,&rueck);
@@ -2869,14 +2870,14 @@ int paramcl::setzhylavz()
 	harchivevz=varsphylavz+"/archive";
 	pruefverz(harchivevz,obverb,oblog);
 	xferfaxlog=varsphylavz+"/etc/xferfaxlog"; 
-	hempfavz=varsphylavz+"/autofaxarch";
+	hempfavz=varsphylavz+"/" DPROG "arch";
 	return 0;
 } // int paramcl::setzhylavz()
 
 void paramcl::MusterVorgb()
 {
 	Log(violetts+Tx[T_MusterVorgb]+schwarz);
-	dbq="autofax";
+	dbq=DPROG;
 	muser="user";
 	citycode="8131";
 	msn="999999";
@@ -2952,7 +2953,7 @@ void paramcl::liescapiconf()
 		kuerzevtz(&spoolcapivz);
 		cfaxuservz=capiconf[1].wert;
 	} // if (capiconf[0].wert.empty()) else
-	cempfavz=spoolcapivz+"/autofaxarch";
+	cempfavz=spoolcapivz+"/" DPROG "arch";
 	if (cfaxuservz.empty())
 		cfaxuservz=spoolcapivz+"/users";
 	//// <<rot<<"cfaxuservz in Vorgallg: "<<cfaxuservz<<schwarz<<endl;
@@ -3328,7 +3329,7 @@ int paramcl::getcommandline()
 	////  opts.push_back(optioncl("loee","loescheempf", &Tx, T_empfangene_Dateien_loeschen_die_nicht_verarbeitet_werden_koennen,1,&loee,1));
 	opts.push_back(/*6*/optioncl(T_kez_k,T_korrerfolgszeichen_l, &Tx, T_in_der_Datenbanktabelle,0,&touta,T_wird_das_Erfolgszeichen_korrigiert, &kez,1));
 	opts.push_back(/*6*/optioncl(T_bwv_k,T_bereinigewv_l, &Tx, T_Dateien_aus_Warteverzeichnis_gegen,1,&touta, T_pruefen_und_verschieben, &bwv,1));
-	opts.push_back(/*4*/optioncl(T_st_k,T_stop_l, &Tx, T_autofax_anhalten,1,&anhl,1));
+	opts.push_back(/*4*/optioncl(T_st_k,T_stop_l, &Tx, T_DPROG_anhalten,1,&anhl,1));
 	opts.push_back(/*6*/optioncl(T_lista_k,T_listausg_l, &Tx, T_listet_Datensaetze_aus, 1, &touta, T_mit_Erfolgskennzeichen_auf, &lista,1));
 	opts.push_back(/*6*/optioncl(T_listf_k,T_listfailed_l, &Tx, T_listet_Datensaetze_aus, 1, &touta, T_ohne_Erfolgskennzeichen_auf, &listf,1));
 	opts.push_back(/*6*/optioncl(T_listi_i,T_listinca_l, &Tx, T_listet_Datensaetze_aus, 1, &tinca, T__auf, &listi,1));
@@ -3384,7 +3385,7 @@ int paramcl::getcommandline()
 	 */
 	/*//
 		if (altckzl!=cklingelzahl || rzf) {
-		cgconf.setze("cklingelzahl",cklingelzahl); // zum Schreiben in die /usr/local/sbin/autofax.conf in autokonfschreib
+		cgconf.setze("cklingelzahl",cklingelzahl); // zum Schreiben in die /usr/local/sbin/<DPROG>.conf in autokonfschreib
 		capizukonf=1;
 		obkschreib=1;
 		}
@@ -4447,7 +4448,7 @@ void paramcl::pruefsamba()
 			} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
 			if (!suchstr.empty())
 				// Abschnitt wieder löschen
-				anfgg(unindt,"sudo sed -i.vorautofax '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdt,"smb.conf: ["+suchstr+"]",obverb,oblog);
+				anfgg(unindt,"sudo sed -i.vor" DPROG " '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdt,"smb.conf: ["+suchstr+"]",obverb,oblog);
 		} // if (sapp.is_open()) 
 		if (!nrzf) {
 			if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
@@ -4972,7 +4973,7 @@ int paramcl::aenderefax(const int aktion/*=0*/)
 int paramcl::empferneut()
 {
 	Log(violetts+Tx[T_empferneut]+schwarz);
-	const string fnr=Tippstr(Tx[T_Bitte_Fax_5te_Spalte_aus_autofax_listi_eingeben], 0);
+	const string fnr=Tippstr(Tx[T_Bitte_Fax_5te_Spalte_aus_DPROG_listi_eingeben], 0);
 	struct stat cstat={0};
 	if (fnr.find('-')!=string::npos) {
 		const string txtd=cempfavz+vtz+cuser+'-'+fnr;
@@ -5265,7 +5266,7 @@ int paramcl::pruefocr()
 		linstp->doggfinst("qpdf");
 		// uchar alt=0;
 		uchar ocrzuinst=1;
-		// zu tun: pruefen statt dessen ~/autofax/ocrv/bin/ocrmypdf
+		// zu tun: pruefen statt dessen instvz + "/ocrv/bin/ocrmypdf
 		struct stat ostat={0};
 		virtvz=instvz+"/ocrv";
 		ocrmp=virtvz+"/bin/ocrmypdf";
@@ -5367,11 +5368,11 @@ int paramcl::pruefocr()
 							// .. pip3 install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf
 							//  pip install --upgrade pip
 							// pip3 install --upgrade git+https://github.com/jbarlow83/OCRmyPDF.git
-							// /home/schade/autofax/venv/bin/pip3 install --upgrade git+https://github.com/jbarlow83/OCRmyPDF.git
+							// instvz+"/venv/bin/pip3 install --upgrade git+https://github.com/jbarlow83/OCRmyPDF.git
 							// sudo python3 -m pip install ocrmypdf
 							// dnf install python3-devel (fuer Python.h)
 							// sudo dnf -y install libffi libffi-devel (fuer ffi.h)
-							// CFLAGS=-I/usr/include/libffi/include ./autofax/venv/bin/pip3 install pyOpenSSL
+							// CFLAGS=-I/usr/include/libffi/include ./"+instvz+"/venv/bin/pip3 install pyOpenSSL
 							// sudo python3 -m pip install ocrmypdf
 							// sudo dnf -y install qpdf
               */
@@ -6998,9 +6999,9 @@ void hfaxsetup(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
 	string faxsu;
 	////  const char *faxsu="/usr/sbin/faxsetup";
 	if (obprogda("faxsetup",obverb,oblog,&faxsu)) {
-#ifdef autofaxsetup
-		// das Skript faxsetup soll leicht veraendert als 'autofaxsetup' abgespeichert und dann aufgerufen werden
-		const char *afaxsu="/usr/local/sbin/autofaxsetup";
+#ifdef DPROGsetup
+		// das Skript faxsetup soll leicht veraendert als '" <DPROG> "setup' abgespeichert und dann aufgerufen werden
+		const char *afaxsu="/usr/local/sbin/" DPROG "setup";
 		mdatei alt(faxsu,ios::in);
 		if (alt.is_open()) {
 			mdatei neu(afaxsu,ios::out);
@@ -7070,7 +7071,7 @@ void hfaxsetup(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
 				pmp->sfaxgetty->restart(obverb,oblog);
 				pmp->shfaxd->restart(obverb,oblog);
 				pmp->sfaxq->restart(obverb,oblog);
-				//// systemrueck(". "+afaxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
+				//// systemrueck(". "+afaxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht mit unbuffer, unbuffer /usr/local/sbin/" DPROG "setup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
 				Log(blaus+Tx[T_Fertig_mit]+schwarz+afaxsu,1,oblog);
 				servc::daemon_reload();
 				////        systemrueck("rm "+afaxsu,1,1);
@@ -7103,7 +7104,7 @@ void hfaxsetup(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
 		pmp->sfaxq->start(obverb,oblog);
 		pruefplatte();
 		// systemrueck(". "+faxsu+(obverb?" -verbose":""),obverb,oblog,0,falsch); // haengt am Schluss, geht nicht 
-		// mit unbuffer, unbuffer /usr/local/sbin/autofaxsetup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
+		// mit unbuffer, unbuffer /usr/local/sbin/" DPROG "setup -verbose, loeschen von exit 0 am schluss, exec, stty -echo -onlcr usw., nohup,
 		Log(blaus+Tx[T_Fertig_mit]+schwarz+faxsu,1,oblog);
 		////    systemrueck("sudo systemctl daemon-reload",0,1);
 #endif
@@ -8409,8 +8410,8 @@ int paramcl::pruefcapi()
 					// in ubuntu: ./configure HAVE_NEW_CAPI4LINUX 0
 					//            make
 					//            sudo make install
-					// sudo cp -ai /home/schade/autofax/capisuite/src/capisuite.conf /etc/capisuite/
-					// sudo cp -ai /home/schade/autofax/capisuite/scripts/fax.conf /etc/capisuite/
+					// sudo cp -ai "+instvz+"/capisuite/src/capisuite.conf /etc/capisuite/
+					// sudo cp -ai "+instvz+"/capisuite/scripts/fax.conf /etc/capisuite/
 					// sudo chmod 777 /usr/local/var/log
 					// ln -s /usr/lib64/libcapi20.so.3.0.6 libcapi20.so
 					// in ./src/application/pythonscript.cpp Zeile 104: (Py_ssize_t*)&length statt &length
@@ -9497,7 +9498,7 @@ int main(int argc, char** argv)
 	// Testcode mit argv[1]
 	linst_cl linst(0,0);
 	svec inh;string ustring;
-	mdatei uni0("/home/schade/autofax/inst.log",ios::in,0);
+	mdatei uni0(instvz+"/inst.log",ios::in,0);
 	if (uni0.is_open()) {
 	string zeile;
 	while (getline(uni0,zeile)) {

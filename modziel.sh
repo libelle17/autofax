@@ -4,6 +4,7 @@ Start=1;
 if [ $Start = 0 ]; then
  echo Kopiert Dateien eines github-Repositorys abzüglich Kommentaren ins Reine
  echo Synatax: $0 \<zielverzeichnis\>
+ echo Das Zielverzeichnis muss vorher schon da sein.
  exit 1
 fi
 for D in $(find . -maxdepth 1 -name "*.cpp" -or -name "*.h"); do
@@ -13,8 +14,9 @@ for D in $(find . -maxdepth 1 -name "*.cpp" -or -name "*.h"); do
  chown --reference=$D $1/$D;
 done
 for D in .exrc Makefile install.sh man_?? versdt viall modziel.sh configure; do
- [ -f $D ]&& sed '/^#\/\/.*/d;s_#//.*__g' $D>$1/$D;
+ [ -f $D ]&&{ sed '/^#\/\/.*/d;s_#//.*__g' $D>$1/$D;((DAT+=1)); echo $D nach $1 kopiert; }
  chmod --reference=$D $1/$D;
  chown --reference=$D $1/$D;
- [ "$D" = "Makefile" ]&& mv $1/$D $1/$D.roh
+ [ "$D" = "Makefile" ]&&{ ROH=$D.roh; mv $1/$D $1/$ROH; echo $1/$D in $1/$ROH umbenannt; }
 done
+echo Insgesamt $DAT Dateien kopiert

@@ -26,7 +26,7 @@
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>autofax</b>
-&minus; fax server functionality: induces automatic fax
+&minus; Fax server functionality: induces automatic fax
 transmission of files, naming of received faxes and logging
 of all of them in a database <br>
 (manpage-Hilfe in deutsch verf&uuml;gbar: &rsquo;man
@@ -78,7 +78,7 @@ software packages&rsquo; and &rsquo;implications&rsquo;
 below. Then, if connected to the internet, call (e.g. by
 coying the line and pasting it into a terminal): <b><br>
 N=autofax;P=${N}_inst.sh;cd ~;wget
-https://raw.githubusercontent.com//$N/master/install.sh
+https://raw.githubusercontent.com/libelle17/$N/master/install.sh
 -O$P&&sh $P</b> <br>
 At last, call: <b><br>
 autofax</b> <br>
@@ -200,7 +200,7 @@ Weg schicken <b><br>
 -bwv, --bereinigewv</b>: Dateien aus Warteverzeichnis gegen
 &lsquo;<b>outa</b>&lsquo; pruefen und ggf. verschieben
 <b><br>
--st, --stop</b>: autofax anhalten <b><br>
+-st, --stop</b>: autofaxanhalten <b><br>
 -lista, --listausg</b>: listet Datensaetze aus
 &lsquo;<b>outa</b>&lsquo; mit Erfolgskennzeichen auf <b><br>
 -listf, --listfehlgeschl</b>: listet Datensaetze aus
@@ -1102,7 +1102,7 @@ n&ouml;tig mit dem Internet und rufen Sie auf (z.B.
 durch Kopieren der Zeile in die Zwischenablage und
 Einf&uuml;gen in einem Terminal): <b><br>
 N=autofax;P=${N}_inst.sh;cd ~;wget
-https://raw.githubusercontent.com//$N/master/install.sh
+https://raw.githubusercontent.com/libelle17/$N/master/install.sh
 -O$P&&sh $P</b> <br>
 Zuletzt rufen Sie auf: <b><br>
 autofax</b> <br>
@@ -1231,7 +1231,7 @@ Weg schicken <b><br>
 -bwv, --bereinigewv</b>: Dateien aus Warteverzeichnis gegen
 &lsquo;<b>outa</b>&lsquo; pruefen und ggf. verschieben
 <b><br>
--st, --stop</b>: autofax anhalten <b><br>
+-st, --stop</b>: autofaxanhalten <b><br>
 -lista, --listausg</b>: listet Datensaetze aus
 &lsquo;<b>outa</b>&lsquo; mit Erfolgskennzeichen auf <b><br>
 -listf, --listfehlgeschl</b>: listet Datensaetze aus
@@ -1590,7 +1590,7 @@ wird angezeigt.</p></td></tr>
 <p style="margin-top: 1em">17) Weitere in der Warteschleife
 von hylafax/capisuite befindliche, nicht &uuml;ber
 autofax erstellte Faxe werden ggf. angezeigt. In Intervallen
-werden sie in die Autofax-Datenbank integriert (ohne die
+werden sie in die autofax-Datenbank integriert (ohne die
 fehlende Information &uuml;ber den
 urspr&uuml;nglichen Dateinamen)</p></td></tr>
 <tr valign="top" align="left">
