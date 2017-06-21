@@ -206,7 +206,7 @@ $(EXEC): $(OBJ)
 #	-@if ! test -f instvz; then printf \"$$(getent passwd $$(logname)|cut -d: -f6)\">instvz; fi;
 	-@if ! test -f instvz; then printf \"$$(pwd)\">instvz; fi; # wird in kons.cpp verwendet
 	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< $(BFA);
-	-@sed -i 's/versdt //g;s/sitzdt //g' $(DEPDIR)/*.Td
+	-@sed -i 's/versdt //g;s/gitvdt //g' $(DEPDIR)/*.Td
 	-@if test -s fehler.txt; then vi +0/error fehler.txt; else rm -f fehler.txt; fi;
 #	-@$(shell $(POSTCOMPILE))
 	@if test -s fehler.txt; then false; fi;
@@ -288,7 +288,7 @@ define priv_html
 	-@groff -mandoc -Thtml -v >$(KR);EXC=$$?; \
 	for p in $(pgroff); do { [ $$EXC -gt 1 ]|| ! which groff>$(KR)|| ! $(SPR) $$p>$(KR);}&&{ ./configure inst _ $$p verbose;}; done; true;
 	-@rm -f $(1).html
-	-@sed -e 's/&&sitz&&/$(SITZV)/g;s/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH $(FKT)/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH $(AWI)/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' $(1) | \
+	-@sed -e 's/&&gitv&&/$(GITV)/g;s/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH $(FKT)/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH $(AWI)/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' $(1) | \
 	groff -mandoc -Thtml -W break| sed "s/&amp;/\&/g;s@<h1 align=\"right\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat versdt)) - $(LGL)<a name=\"$(LGL)\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > $(1).html
 	@printf "%b%s%b neu aus %b%s%b erstellt\n" $(blau) "$(1).html" $(reset) $(blau) "$(1)" $(reset)
 endef
@@ -298,7 +298,7 @@ $(1).html: $(EXEC) $(1)
 	$$(call priv_html, $(1))
 $(1).gz: $(EXEC) $(1) 
 	$$(call priv_man_umw,$(1))
-	@sed 's/&&sitz&&/$(SITZV)/g' $(1)|gzip -c >$$@
+	@sed 's/&&gitv&&/$(GITV)/g' $(1)|gzip -c >$$@
 $(INST$(patsubst man_%,%,$(1))MAN): $(1).gz
 	@sudo mkdir -p $$(dir $$@)
 	@printf " Copying Manual/ Kopiere Hilfedatei: %b%s%b -> %b%s%b\n" $(blau) "$(1)" $(reset) $(blau) "$$@" $(reset) >$(BA)

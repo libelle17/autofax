@@ -87,7 +87,7 @@ getIPR() {
 
 exportvars() {
 	rm -f vars;
-	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF INSTLOG pgroff LT LT5 LM18 dev libmc libmc1 REPOS urepo COMP SITZV DATEIEN; do
+	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF INSTLOG pgroff LT LT5 LM18 dev libmc libmc1 REPOS urepo COMP GITV DATEIEN; do
 	  eval nv=\$$v; 
 		printf "$v:=$nv\n">>vars; 
 	done;
@@ -198,8 +198,8 @@ fi
 
 # die naechsten zwei Variablen aehnlich in install.sh festgelegt
 PROG=autofax
-[ -z $SITZV ]&& [ -f sitzdt ]&& SITZV=$(sed 's/"//g' sitzdt);
-[ -z $SITZV ]&& SITZV=$([ -f .git/config ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' .git/config);
+[ -z $GITV ]&& [ -f gitvdt ]&& GITV=$(sed 's/"//g' gitvdt);
+[ -z $GITV ]&& GITV=$([ -f .git/config ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' .git/config);
 INSTLOG=inst.log
 GINSTLOG=$HOME/$PROG/$INSTLOG
 mkdir -p $HOME/$PROG
@@ -210,7 +210,7 @@ LM18=libmysqlclient18
 
 getIPR;
 # diese Datei wird wegen obigem in viall gesourct, deshalb dort der Rest zu uebergehen
-if test "$ICH" = configure -o "$ICH" = install.sh -o "$ICH" = autofax_inst.sh; then
+if test "$ICH" = configure -o "$ICH" = install.sh -o "$ICH" = ${PROG}_inst.sh; then
 rot="\033[1;31m"
 gruen="\033[1;32m"
 blau="\033[1;34m"
@@ -225,7 +225,7 @@ fi
 SUG="admin\|root\|sudo\|wheel\|ntadmin";
 
 # hier geht's los
-echo \"$SITZV\">sitzdt
+echo \"$GITV\">gitvdt
 # falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
 INSTP=sudo;still which $INSTP||{
 	printf "Must install '$INSTP'. "

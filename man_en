@@ -2,7 +2,7 @@
 .\" manual page for autofax
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "12.06.17" "Version 0.43528" "\fBautofax\fR man page"
+.TH man 1 "21.06.17" "Version 0.43529" "\fBautofax\fR man page"
 .SH NAME
 \fBautofax\fR \- fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -22,7 +22,7 @@ The usability within a network (may also be a windows network with only one linu
 .br
 First, please read the chapters 'functionality', 'preconditions','automatically installed software packages' and 'implications' below. Then, if connected to the internet, call (e.g. by coying the line and pasting it into a terminal):
 .br
-\fBN=autofax;P=${N}_inst.sh;cd ~;wget https://raw.githubusercontent.com/&&sitz&&/$N/master/install.sh -O$P&&sh $P\fR
+\fBN=autofax;P=${N}_inst.sh;cd ~;wget https://raw.githubusercontent.com/&&gitv&&/$N/master/install.sh -O$P&&sh $P\fR
 .br
 At last, call:
 .br

@@ -1,14 +1,14 @@
 #!/bin/bash
-#// string substitution geht nur in bash, nicht in dash, was auf deb-Systemen standardmaessig hinter sh steht
+#// string substitution geht nur in bash, nicht in dash, was auf deb-Systemen standardmaessig durch sh aufgerufen wird
 [ -z "$BASH_SOURCE" ]&&{ bash "$0";exit;}
 HOSTER=github.com
-# die naechsten zwei Variablen aehnlich in install.sh festgelegt
+# die naechsten zwei Variablen aehnlich in configure festgelegt
 PROG=autofax;
 # in .git/config steht z.B. "        url = ssh://git@github.com/libelle17/autofax.git"
-SITZV=$([ -f .git/config ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' .git/config);
-# wenn nicht vorhanden, dann schauen, ob sitzdt existiert
-[ -z $SITZV ]&& [ -f sitzdt ]&& SITZV=$(sed 's/"//g' sitzdt);
-[ -z $SITZV ]&& SITZV=libelle17;
+GITV=$([ -f .git/config ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' .git/config);
+# wenn nicht vorhanden, dann schauen, ob gitvdt existiert
+[ -z $GITV ]&& [ -f gitvdt ]&& GITV=$(sed 's/"//g' gitvdt);
+[ -z $GITV ]&& GITV=libelle17;
 # aPWD=`pwd` 
 nPWD=${PWD##*/}
 # wenn $PROG schon das aktuelle Verzeichnis ist und wenn es dort einige notwendige Dateien gibt, dann nicht mehr neu runterladen ...
@@ -21,7 +21,7 @@ nPWD=${PWD##*/}
 	printf "Downloading/ Lade runter $PROG ...\n"
 	cd ~; 
 	T=$PROG.tar.gz;
-		wget https://$HOSTER/$SITZV/$PROG/archive/master.tar.gz -O "$T" && 
+		wget https://$HOSTER/$GITV/$PROG/archive/master.tar.gz -O "$T" && 
 		tar xpvf $T && 
 		rm -f $T && {
 			VORIGE=$(ls -d ~/${PROG}_* 2>/dev/null| cut -d"_" -f2 | sort -nr);

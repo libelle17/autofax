@@ -39,9 +39,9 @@
 const double& versnr=
 #include "versdt"
 ;
-// Sitz auf Github
-const string& sitzv=
-#include "sitzdt"
+// Verzeichnis auf Github
+const string& gitv=
+#include "gitvdt"
 ;
 
 //// const char *logvz; // das reine Verzeichnis
@@ -733,7 +733,7 @@ enum T_
 
 const string sprachstr=string("Language/Sprache/Lingue/Lingua [")+blau+'d'+schwarz+"eutsch,"+blau+'e'+schwarz+"nglisch]"+"";
 const char* sprachcstr=&sprachstr.front();
-
+#define prog autofax
 //// char const *Txautofaxcl::TextC[T_MAX+1][SprachZahl]={
 char const *autofax_T[T_MAX+1][SprachZahl]={
 	// T_sprachstr
@@ -7923,7 +7923,7 @@ int paramcl::pruefinstv()
 	return erg;
 } // void paramcl::pruefinstv()
 
-const string defvors="https://github.com/"+sitzv+"/";
+const string defvors="https://github.com/"+gitv+"/";
 const string defnachs="/archive/master.tar.gz";
 int paramcl::holvomnetz(const string& datei,const string& vors/*=defvors*/,const string& nachs/*=defnachs*/)
 {
