@@ -9547,6 +9547,7 @@ int main(int argc, char** argv)
 		pm.setzhylavz();
 		if (pm.obvh) pm.dovh();
 		pm.verzeichnisse();
+    if (pm.suchstr.empty())
 		pm.pruefsamba();
 
 		if (pm.logdateineu) tuloeschen(logdt,"",pm.obverb,pm.oblog);
