@@ -42,8 +42,11 @@ printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTe
 const string& instvz=
 #include "instvz" // wird in Makefile erstellt
 ;
+uchar findv=3; // find-Version 1=system, 2=intern mit readdir, 3=intern mit nftw
 const string& unindt=instvz+"/uninstallinv"; // # Name muss identisch sein mit Variabler UNF in install.sh
 const string nix;
+el2set::iterator it2;
+set<elem3>::iterator it3;
 
 ////const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 const char *kons_T[T_konsMAX+1][SprachZahl]=
@@ -252,6 +255,22 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{", fallsnichtda: ",", ifnotthere: "},
 	// T_ohneabh
 	{" ohneabh: "," withoutdep: "},
+	// T_Tiefe
+	{", Tiefe: ",", depth: "},
+	// T_Linkverzeichnis
+	{"Linkverzeichnis: ","link directory: "},
+  // T_Suche_in
+	{"Suche in '","Seeking in '"},
+  // T_nach
+	{"' nach '","' for '"},
+	// T_Typbit
+	{"', Typbit: '","', typebit: '"},
+	// T_Folge
+	{"', Folge: '","', follow: '"},
+	// T_Ergebnis
+	{"', Ergebnis: ","', result: "},
+	// T_Fehler_beim_Deferenzieren_von
+	{"Fehler beim Dereferenzieren von: ","Error dereferencing: "},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 
@@ -1411,14 +1430,16 @@ linst_cl::linst_cl(int obverb,int oblog)
 		} else {
 			cerr<<Txk[T_Weder_zypper_noch_apt_get_noch_dnf_noch_yum_als_Installationspgrogramm_gefunden]<<endl;
 		} // 		if (obprogda("rpm",obverb-1,oblog))
-    svec lrueck;
-    systemrueck("find /usr -maxdepth 1 -type d -name 'lib*'",obverb,oblog,&lrueck);
-		for(size_t iru=0;iru<lrueck.size();iru++) libs+=lrueck[iru]+" ";
-}
+    svec qrueck;
+		if (findv==1) {
+			systemrueck("find /usr -maxdepth 1 -type d -name 'lib*'",obverb,oblog,&qrueck);
+		} findfile(&qrueck,findv,obverb,oblog,0,"/usr","lib[^/]*$",1,34,1);
+		for(size_t iru=0;iru<qrueck.size();iru++) libs+=qrueck[iru]+" ";
+} // linst_cl::linst_cl(int obverb,int oblog)
 
 const string& absch::suche(const char* const sname)
 {
-  static const string nix;
+	static const string nix;
   for (size_t i=0;i<av.size();i++) {
     if (av[i].name==sname) {
       return av[i].wert;
@@ -2195,7 +2216,7 @@ string aktprogverz()
 #elif linux
   char szTmp[32];
   sprintf(szTmp, "/proc/%d/exe", getpid());
-  int bytes = MIN(readlink(szTmp, pBuf, sizeof pBuf), sizeof pBuf - 1);
+  ssize_t bytes = MIN(readlink(szTmp, pBuf, sizeof pBuf), sizeof pBuf - 1);
   if(bytes >= 0) pBuf[bytes] = 0;
 #endif
   return pBuf;
@@ -2574,22 +2595,22 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
 
 string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
 {
- static const string nix; // =""
- bemerkung.clear();
-  if (TxBp) {
-    if (Txi!=-1) {
-      if (TxBp->TCp[Txi][lg]) {
-        TCtp *hilf = reinterpret_cast<TCtp*>(TxBp->TCp);
-        bemerkung= (const char*)hilf[Txi][lg];
-        if (rottxt) bemerkung+=(obfarbe?blaus:nix)+*rottxt+(obfarbe?schwarz:nix);
-        if (Txi2!=-1) bemerkung+=(const char*)hilf[Txi2][lg]; 
-////        if (zptr && !strstr(pname,"pwd")) bemerkung+=" '"+(obfarbe?blaus:nix)+*zptr+(obfarbe?schwarz:nix)+"'"; // pname==0
-        if (zptr && bemerkung.find("assw")==string::npos) bemerkung+=" '"+(obfarbe?blaus:nix)+*zptr+(obfarbe?schwarz:nix)+"'";
-        if (obno) bemerkung+=(obfarbe?violetts:nix)+Txk[T_oder_nicht]+(obfarbe?schwarz:nix);
-      } // if (TxBp->TCp[Txi][lg])
-    } // if (Txi!=-1)
-  } // if (TxBp)
-  return bemerkung;
+	static const string nix; // =""
+	bemerkung.clear();
+	if (TxBp) {
+		if (Txi!=-1) {
+			if (TxBp->TCp[Txi][lg]) {
+				TCtp *hilf = reinterpret_cast<TCtp*>(TxBp->TCp);
+				bemerkung= (const char*)hilf[Txi][lg];
+				if (rottxt) bemerkung+=(obfarbe?blaus:nix)+*rottxt+(obfarbe?schwarz:nix);
+				if (Txi2!=-1) bemerkung+=(const char*)hilf[Txi2][lg]; 
+				////        if (zptr && !strstr(pname,"pwd")) bemerkung+=" '"+(obfarbe?blaus:nix)+*zptr+(obfarbe?schwarz:nix)+"'"; // pname==0
+				if (zptr && bemerkung.find("assw")==string::npos) bemerkung+=" '"+(obfarbe?blaus:nix)+*zptr+(obfarbe?schwarz:nix)+"'";
+				if (obno) bemerkung+=(obfarbe?violetts:nix)+Txk[T_oder_nicht]+(obfarbe?schwarz:nix);
+			} // if (TxBp->TCp[Txi][lg])
+		} // if (Txi!=-1)
+	} // if (TxBp)
+	return bemerkung;
 } // string& optioncl::machbemerkung(Sprache lg,binaer obfarbe)
 
 void optioncl::hilfezeile(Sprache lg)
@@ -3645,3 +3666,448 @@ int kopier(const string& quel, const string& ziel, int obverb, int oblog)
     return systemrueck("sudo test -f \""+quel+"\" && sudo sh -c 'cp -a \""+quel+"\" \""+ziel+"\"'",obverb,oblog);
   return 0;
 } // int kopier(const string& quel, const string& ziel, int obverb, int oblog)
+
+#ifdef altfind
+// Binaerausgabe, fuer Debugging
+void printBits(size_t const size, void const * const ptr)
+{
+  uchar *b = (uchar*) ptr;
+  uchar byte;
+  int i, j;
+  puts("\r");
+  for (i=size-1;i>=0;i--) {
+    for (j=7;j>=0;j--) {
+      byte = (b[i] >> j) & 1;
+      printf("%u", byte);
+    } //     for (j=7;j>=0;j--)
+  } //   for (i=size-1;i>=0;i--)
+} // void printBits(size_t const size, void const * const ptr)
+
+
+const bool elem2::operator<(const elem2& el) const {return (this->pfad<el.pfad);}
+
+elem2::elem2(const string& mutter,const string& name) 
+{
+  init(mutter,name);
+}
+
+void elem2::init(const string& vmutter, const string& name) {
+  pfad=(name[0]=='/'||vmutter.empty()?"":vmutter+(vmutter[vmutter.length()-1]=='/'?"":"/"))+name;
+  sterg=0;
+  if (name[0]=='.') {
+    if (char* actp=realpath(pfad.c_str(),NULL)) {
+      pfad=actp;
+      free(actp);
+    } else {
+      sterg=REALPATHFEHLER;
+    }
+  }
+  if (!sterg) sterg=lstat(pfad.c_str(), &dst);
+}
+
+find2cl::find2cl(int _obverb/*=0*/,int _oblog/*=0*/,find2cl *stamm/*=0*/):obverb(_obverb),oblog(_oblog)
+{
+  if (stamm) {
+    ergp=stamm->ergp;
+    vznp=stamm->vznp;
+    nrp=stamm->nrp;
+    zuloeschen=0;
+  } else {
+    weiszu();
+  }
+} // find2cl::find2cl(find2cl *stamm/*=0*/)
+
+find2cl::~find2cl()
+{
+  if (zuloeschen && 0) {
+    if (ergp){ delete ergp;ergp=0;}
+    if (vznp) {delete vznp;vznp=0;}
+    if (nrp) {delete nrp;nrp=0;}
+  }
+}
+
+void find2cl::weiszu()
+{
+  if (!ergp) ergp=new el2set;
+  if (!vznp) vznp=new set<string>;
+  if (!nrp) nrp=new ull;
+}
+
+void find2cl::init(const string& mutter, const string& name, regex_t *reg, const int folge,const long maxdepth, const int& typbit,
+    vector<string> stack,time_t ab, time_t bis)
+{
+  dir=0;
+  eingefuegt=0;
+  verzneu=0;
+  weiszu();
+  elem2::init(mutter,name);
+  elem2* letztel=(elem2*)this, *aktel=(elem2*)this;
+  elem2 neuel;
+//  cout<<"hier init,mutter: '"<<blau<<mutter<<schwarz<<"', name: '"<<blau<<name<<schwarz<<"', letztel->sterg: "<<letztel->sterg<<endl;
+  while (!letztel->sterg && S_ISLNK(letztel->dst.st_mode)) {
+    ssize_t r;
+//    cout <<pfad<<" "<<sterg<<" "<<dst.st_size<<endl;
+    char linkname[letztel->dst.st_size?letztel->dst.st_size:FILENAME_MAX+1];
+		r=readlink(letztel->pfad.c_str(),linkname,sizeof linkname);
+		if (r>0) {
+			if ((size_t)r<=sizeof linkname)
+				linkname[r]='\0';
+//      cout<<rot<<letztel->pfad<<schwarz<<","<<linkname<<" ("<<letztel->dst.st_size<<")"<<schwarz<<endl;
+    } else {
+			Log(rots+Txk[T_Fehler_beim_Deferenzieren_von]+schwarz+pfad,1,1);
+      break;
+    }
+//    cout<<"letztel->pfad: "<<letztel->pfad<<" linkname: "<<linkname<<endl;
+    string link=linkname;
+    if (link==letztel->pfad) exit(0);
+    neuel.init(dir_name(letztel->pfad),linkname);
+    //if (0)
+    for(size_t j=0;j<stack.size();j++) {
+      // <<"j: "<<j<<" "<<stack[j]<<endl;
+      if (neuel.pfad==stack[j]) {
+        return;
+      }
+    }
+    if (neuel.pfad==letztel->pfad) break;
+    letztel=&neuel;
+  }
+//  cout<<" -> "<<blau<<letztel->pfad<<schwarz<<" sterg: "<<sterg<<" "<<endl;
+  if (!letztel->sterg && S_ISDIR(letztel->dst.st_mode)) {
+    if (!(dir = opendir(letztel->pfad.c_str()))) {
+      letztel->sterg=DIRFEHLER;
+    }
+  }
+
+  if (!sterg) {
+    if (
+        (typbit&B_Datei && S_ISREG(dst.st_mode)) ||
+        (typbit&B_Verzn && S_ISDIR(dst.st_mode)) ||
+        (typbit&B_Chdev && S_ISCHR(dst.st_mode)) ||
+        (typbit&B_Block && S_ISBLK(dst.st_mode)) ||
+        (typbit&B_FIFO && S_ISFIFO(dst.st_mode)) ||
+        (typbit&B_Link && S_ISLNK(dst.st_mode)) ||
+        (typbit&B_Sock && S_ISSOCK(dst.st_mode))) {
+      /*
+         cout<<" tb1 ";
+         printf("%i ",ltypbit);
+         printBits(2,&ltypbit);
+         printBits(2,&letztel->dst.st_mode);
+         printf(" letztel->sterg: %i",letztel->sterg);
+         cout<<"S_ISREG: "<<S_ISREG(letztel->dst.st_mode)<<endl;
+         cout<<"S_ISDIR: "<<S_ISDIR(letztel->dst.st_mode)<<endl;
+         cout<<"S_ISCHR: "<<S_ISCHR(letztel->dst.st_mode)<<endl;
+         cout<<"S_ISBLK: "<<S_ISBLK(letztel->dst.st_mode)<<endl;
+         cout<<"S_ISFIFO: "<<S_ISFIFO(letztel->dst.st_mode)<<endl;
+         cout<<"S_ISLNK: "<<S_ISLNK(letztel->dst.st_mode)<<endl;
+         cout<<"S_ISSOCK: "<<S_ISSOCK(letztel->dst.st_mode)<<endl;
+       */
+      if (letztel==(elem2*)this ||(!letztel->sterg &&(
+              (typbit&B_Datei && S_ISREG(letztel->dst.st_mode)) ||
+              (typbit&B_Verzn && S_ISDIR(letztel->dst.st_mode)) ||
+              (typbit&B_Chdev && S_ISCHR(letztel->dst.st_mode)) ||
+              (typbit&B_Block && S_ISBLK(letztel->dst.st_mode)) ||
+              (typbit&B_FIFO && S_ISFIFO(letztel->dst.st_mode)) ||
+              (typbit&B_Link && S_ISLNK(letztel->dst.st_mode)) ||
+              (typbit&B_Sock && S_ISSOCK(letztel->dst.st_mode))))) {
+
+        if (folge & Fol_Mus) aktel=letztel; else aktel=(elem2*)this;
+				if ((!ab||aktel->dst.st_mtime>=ab)&&(!bis||aktel->dst.st_mtime<=bis))
+					//        cout<<"Prüfe Muster: "<<blau<<aktel->pfad<<schwarz<<endl;
+					if (!regexec(reg, aktel->pfad.c_str(), 0, 0, 0)) {
+						if (folge & Fol_Dat) aktel=letztel; else aktel=(elem2*)this;
+						//          cout<<"gefunden: "<<rot<<aktel->pfad<<schwarz<<endl;
+#ifdef mitset
+						eingefuegt=(ergp->insert(*aktel).second==true);
+#else
+						eingefuegt=(ergp->insert(make_pair(*aktel,nr)).second==true);
+#endif
+					}
+			}
+		}
+	}
+	//    cout<<endl;
+	if (0) {
+		(*nrp)++;
+		cout<<"Tiefe: "<<stack.size()<<" Zahl: "<<*nrp<<", Pfad: "<<blau<<pfad<<schwarz;
+		if (letztel->pfad!=pfad) {
+			cout<<" -> "<<rot<<letztel->pfad<<schwarz;
+		}
+		cout<<endl;
+		//        cout<<"letztel->pfad: "<<blau<<letztel->pfad<<schwarz<<endl;
+		//        cout<<"aktel->pfad: "<<blau<<aktel->pfad<<schwarz<<endl;
+	}
+	//  cout<<"Stelle 1, dir?: "<<(!!dir)<<" maxdepth: "<<maxdepth<<endl;
+	if (dir&&maxdepth) {
+		//    cout<<"Stelle 2, folge: "<<folge<<" !S_ISLNK(dst.st_mode): "<<!S_ISLNK(dst.st_mode)<<endl;
+		if ((folge & Fol_Ver) || !S_ISLNK(dst.st_mode)) {
+			// Extra-Vergleichsliste der bisher eingelesenen Verzeichnisse
+			if ((verzneu=(vznp->insert(letztel->pfad).second)==true)) { 
+				stack.push_back(letztel->pfad);
+				while ((dent = readdir(dir))) {
+					if (strcmp(dent->d_name, ".") && strcmp(dent->d_name, "..")) {
+						//            cout<<"Stelle 5: dent->d_name: "<<blau<<dent->d_name<<schwarz<<endl;
+						find2cl tochter(obverb,oblog,this);
+						tochter.init(letztel->pfad,dent->d_name,reg,folge,maxdepth-1,typbit,stack,ab,bis);
+						//            cout<<"nach tochter.init"<<endl;
+					}
+				}
+			}
+		}
+		closedir(dir);
+	}
+} //   if (dname.length() < FILENAME_MAX - 1)
+
+void find2cl::ausgeb()
+{
+	if (ergp) {
+		el2set::iterator it=ergp->begin();
+		ull nr=0;
+		while (it!=ergp->end()) {
+#ifdef mitset
+			//string tue="bash -c \"test -z \\\"$(sed -n '\\$"+it->pfad+"\\$${p;q;}' /root/alle)\\\"&&echo '"+it->pfad+"'\"";cout<<tue<<endl;system(tue.c_str());
+			cout<<blau<<++nr<<": "<<rot<<setprecision(9)<<setw(11)<<it->sterg<<schwarz<<" "<<it->pfad<<endl;
+#else
+			cout<<blau<<it->second<<": "<<rot<<setprecision(9)<<setw(11)<<(int)it->first.sterg<<schwarz<<" "<<(string)it->first.pfad<<endl;
+#endif
+			it++;
+		}
+	}
+}
+
+int find2cl::finde(string wo/*="."*/,string muster/*=""*/,const long tiefe/*=-1*/,int typbit/*=B_Alle*/,int folge/*=Fol_Dat*/,
+		time_t ab/*=0*/, time_t bis/*=0*/,int obicase/*=0*/)
+{
+	vector<string> verzn;
+	aufSplit(&verzn, wo);
+	regex_t reg;
+	if (regcomp(&reg, muster.c_str(), REG_EXTENDED | REG_NOSUB|(obicase?REG_ICASE:0))) 
+		return REGFEHLER;
+	vector<string> stack;
+	for(size_t iv=0;iv<verzn.size();iv++) {
+		init("",verzn[iv], &reg, folge, tiefe, typbit,stack,ab,bis);
+		//    cout<<"nach finde.init, wo: "<<blau<<wo<<schwarz<<endl;
+	} //   for(size_t iv=0;iv<verzn.size();iv++)
+	if (obverb|oblog) {
+		string tiefestr=ltoan(tiefe);
+		string typbitstr=ltoan(typbit);
+		string folgestr=ltoan(folge);
+		string ergzl=ltoan(ergp->size());
+		Log(Txk[T_Suche_in]+blaus+wo+schwarz+Txk[T_nach]+blau+muster+schwarz+"'"+(obicase?"(ic)":"")+Txk[T_Tiefe]+"'"+blau+tiefestr+schwarz+Txk[T_Typbit]+blau+typbitstr+schwarz+Txk[T_Folge]+blau+folgestr+schwarz+Txk[T_Ergebnis]+gruen+ergzl+schwarz,obverb,oblog);
+		}
+	if (obverb>1) ausgeb();
+	return 0;
+}
+
+void find2cl::zuvec(svec *zu,uchar anteil/*=0*/)
+{
+	for(set<elem2>::iterator jt=ergp->begin();jt!=ergp->end();jt++) {
+		if (anteil)
+			zu->push_back(base_name(jt->pfad));
+		else
+			zu->push_back(jt->pfad);
+	}
+}
+#endif
+
+#ifdef neufind
+const bool elem3::operator<(const elem3& el) const {return (this->pfad<el.pfad);}
+const bool wele::operator<(const wele& el) const {return (this->pfad<el.pfad);}
+
+set<wele>::iterator find3cl::it;
+set<wele> *find3cl::wurzp;
+set<elem3> *find3cl::ergp;
+long *find3cl::maxdepthp;
+int *find3cl::folgep;
+regex_t *find3cl::regp;
+int *find3cl::typbitp;
+time_t *find3cl::mabp,*find3cl::mbisp;
+int *find3cl::obverbp, *find3cl::oblogp;
+
+int find3cl::verarbeit(const char *fpath, const struct stat *sb, int tflag, struct FTW *ftwbuf)
+{
+	if (
+			(*typbitp&B_Datei && S_ISREG(sb->st_mode)) ||
+			(*typbitp&B_Verzn && S_ISDIR(sb->st_mode)) ||
+			(*typbitp&B_Chdev && S_ISCHR(sb->st_mode)) ||
+			(*typbitp&B_Block && S_ISBLK(sb->st_mode)) ||
+			(*typbitp&B_FIFO && S_ISFIFO(sb->st_mode)) ||
+			(*typbitp&B_Link && S_ISLNK(sb->st_mode)) ||
+			(*typbitp&B_Sock && S_ISSOCK(sb->st_mode))) {
+		string pfad;
+		char buff[FILENAME_MAX];
+		buff[0]=0;
+		struct stat lst={0};
+		if (tflag==FTW_SL) {
+			ssize_t len = readlink(fpath, buff, sizeof(buff)-1);
+			if (len==-1) {
+				//          pfad=fpath;
+			} else {
+				buff[len] = '\0';
+				if (char* actp=realpath(((buff[0]=='/'?"":dir_name(fpath)+'/')+buff).c_str(),NULL)) {
+					pfad=actp;
+					free(actp);
+					if (!lstat(pfad.c_str(),&lst)) {
+						if (S_ISDIR(lst.st_mode)) {
+							if (*folgep&Fol_Ver) {
+								if (*obverbp>2) Log(blaus+Txk[T_Linkverzeichnis]+schwarz+pfad,*obverbp,*oblogp);
+								wurzp->insert(wele(pfad,it->maxd-ftwbuf->level));
+							} //               if (*folgep&Fol_Ver)
+						} //             if (S_ISDIR(lst.st_mode))
+					} //           if (!lstat(pfad.c_str(),&lst))
+				} //         if (char* actp=realpath(((buff[0]=='/'?"":dir_name(fpath)+'/')+buff).c_str(),NULL))
+			} //       if (len==-1)
+			if (pfad.empty()) pfad="?????";
+		} //     if (tflag==FTW_SL)
+		const char *vgl=(tflag==FTW_SL&&*folgep&Fol_Mus)?pfad.c_str():fpath;
+		if (!regexec(regp, vgl, 0, 0, 0)) {
+			if ( tflag!=FTW_SL ||
+					(*typbitp&B_Datei && S_ISREG(lst.st_mode)) ||
+					(*typbitp&B_Verzn && S_ISDIR(lst.st_mode)) ||
+					(*typbitp&B_Chdev && S_ISCHR(lst.st_mode)) ||
+					(*typbitp&B_Block && S_ISBLK(lst.st_mode)) ||
+					(*typbitp&B_FIFO && S_ISFIFO(lst.st_mode)) ||
+					(*typbitp&B_Link && S_ISLNK(lst.st_mode)) ||
+					(*typbitp&B_Sock && S_ISSOCK(lst.st_mode))) {
+				const int obt=*folgep&Fol_Dat&&!pfad.empty()?1:0;
+				const struct stat *sp=obt?&lst:sb;
+				if ((!*mabp||sp->st_mtime>=*mabp)&&(!*mbisp||sp->st_mtime<=*mbisp))
+					ergp->insert(elem3(obt?pfad:fpath,sp,tflag,ftwbuf,obt?fpath:pfad,obt?*sb:lst));
+			} //       if ( tflag!=FTW_SL || ...
+		} //     if (!regexec(regp, vgl, 0, 0, 0))
+	} //   if ( .. ||.. (*typbitp&B_Datei && S_ISREG(sb->st_mode)) ||
+	if (*maxdepthp>=0 && ftwbuf->level>=it->maxd) {
+		return FTW_SKIP_SUBTREE;
+	}
+	if (*obverbp>2||*oblogp>2) Log("fpath: "+blaus+fpath+schwarz,*obverbp,*oblogp);
+	return FTW_CONTINUE;
+} //     static int verarbeit(const char *fpath, const struct stat *sb, int tflag, struct FTW *ftwbuf)
+
+find3cl::find3cl(int _obverb/*=0*/,int _oblog/*=0*/):obverb(_obverb),oblog(_oblog)
+{
+	obverbp=&obverb;
+	oblogp=&oblog;
+}
+
+int find3cl::dofind()
+{
+	// aeussere Schleife so lange durchlaufen, bis in der inneren Schleife nichts mehr zu tun ist; dort wird ggf. wurz erweitert
+	while (1) {
+		int gearbeitet=0;
+		for(it=wurz.begin();it!=wurz.end();it++) {
+			if (fertige.find(*it)!=fertige.end()) continue;
+			if (it->pfad.empty()) continue;
+			gearbeitet=1;
+			if (obverb>2||oblog>1) Log("Iterator: "+blaus+it->pfad+schwarz+Txk[T_Tiefe]+blau+ltoan(it->maxd)+schwarz,obverb,oblog);
+			if (nftw(it->pfad.c_str(), this->verarbeit, 20, flags) == -1) {
+				perror((rots+Txk[T_Fehler]+"nftw ('"+it->pfad+"')"+schwarz).c_str());
+//				exit(EXIT_FAILURE);
+			} //       if (nftw(it->pfad.c_str(), this->verarbeit, 20, flags) == -1)
+			fertige.insert(*it);
+		} //     for(it=wurz.begin();it!=wurz.end();it++)
+		if (!gearbeitet) break;
+	} //   while (1)
+	return 0;
+} //     int dofind()
+
+int find3cl::ausgeb()
+{
+	size_t j=0;
+	for(set<elem3>::iterator jt=erg.begin();jt!=erg.end();jt++) {
+		j++;
+		printf("%7ld) %-3s %2d ",j,
+				(jt->tflag == FTW_D) ?   "d"   : (jt->tflag == FTW_DNR) ? "dnr" :
+				(jt->tflag == FTW_DP) ?  "dp"  : (jt->tflag == FTW_F) ?   "f" :
+				(jt->tflag == FTW_NS) ?  "ns"  : (jt->tflag == FTW_SL) ?  "sl" :
+				(jt->tflag == FTW_SLN) ? "sln" : "???", jt->ftw.level);
+
+		if (jt->tflag == FTW_NS)
+			printf("-------");
+		else
+			printf(" %7jd",(intmax_t) jt->sb.st_size);
+		struct tm *tm=localtime(&jt->sb.st_mtime);
+		char buf[80];
+		strftime(buf, sizeof buf,"%F %X",tm);
+		//        printf(" %s %-40s %5d %s",buf, jt->pfad.c_str(), jt->ftw.base, jt->pfad.c_str()+jt->ftw.base);
+		printf(" %s %-40s",buf, jt->pfad.c_str());
+		if (jt->tflag==FTW_SL) {
+			tm=localtime(&jt->lst.st_mtime);
+			strftime(buf, sizeof buf,"%F %X",tm);
+			printf(" %s %s %s",folge&Fol_Dat?"<-":"->",buf,jt->lnk.c_str());
+		}
+		printf("\n");
+	} //       for(set<elem3>::iterator jt=erg.begin();jt!=erg.end();jt++)
+	return 0;
+} //     int ausgeb()
+
+int find3cl::finde(const string wo/*="."*/,const string muster/*=""*/,long tiefe/*=-1*/,
+		int _typbit/*=B_Alle*/,int _folge/*=Fol_Dat*/,time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/)
+{
+	int ret=0;
+	maxdepthp=&maxdepth;
+	*maxdepthp=tiefe;
+	vector<string> verzn;
+	aufSplit(&verzn, wo);
+	for(size_t iv=0;iv<verzn.size();iv++) {
+		if (char* actp=realpath(verzn[iv].c_str(),NULL)) {
+			const string pfad=actp;
+			free(actp);
+			wurz.insert(wele(pfad,maxdepth));
+		} else {
+			wurz.insert(wele(verzn[iv],maxdepth));
+		} //     if (char* actp=realpath(verzn[iv].c_str(),NULL)) else
+	} //   for(size_t iv=0;iv<verzn.size();iv++)
+	wurzp=&wurz;
+	ergp=&erg;
+	regp=&reg;
+	folgep=&folge;
+	*folgep=_folge;
+	typbitp=&typbit;
+	*typbitp=_typbit;
+	mabp=&mab;
+	*mabp=_mab;
+	mbisp=&mbis;
+	*mbisp=_mbis;
+	// if (argc > 2 && strchr(argv[2], 'd') != NULL) f.flags |= FTW_DEPTH; // erst Unterverzeichnisse, dann aktuelles Verzeichnis
+	// if (argc > 2 && strchr(argv[2], 'p') != NULL)
+	flags |= FTW_ACTIONRETVAL;
+	flags |= FTW_PHYS;
+	if (regcomp(&reg, muster.c_str(), REG_EXTENDED | REG_NOSUB|(obicase?REG_ICASE:0))) 
+		return REGFEHLER;
+	ret=dofind();
+	if (obverb|oblog) {
+		string tiefestr=ltoan(tiefe);
+		string typbitstr=ltoan(typbit);
+		string folgestr=ltoan(folge);
+		string ergzl=ltoan(ergp->size());
+		Log(Txk[T_Suche_in]+blaus+wo+schwarz+Txk[T_nach]+blau+muster+schwarz+"'"+(obicase?"(ic)":"")+Txk[T_Tiefe]+"'"+blau+tiefestr+schwarz+Txk[T_Typbit]+blau+typbitstr+schwarz+Txk[T_Folge]+blau+folgestr+schwarz+Txk[T_Ergebnis]+gruen+ergzl+schwarz,obverb,oblog);
+	}
+	if (obverb>1) ausgeb();
+	return ret;
+} // int find3cl::finde(
+
+void find3cl::zuvec(svec *zu,uchar anteil/*=0*/)
+{
+	for(set<elem3>::iterator jt=erg.begin();jt!=erg.end();jt++) {
+		if (anteil)
+			zu->push_back(base_name(jt->pfad));
+		else
+			zu->push_back(jt->pfad);
+	}
+}
+#endif
+#if defined(altfind) && defined(neufind)
+void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar anteil/*=0*/,
+	const string& wo/*="."*/,const string& muster/*=""*/,long tiefe/*=-1*/,int _typbit/*=B_Alle*/,
+	int _folge/*=Fol_Dat*/, time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/)
+{
+		if (findv==2) {
+			find2cl f(obverb,oblog);
+			f.finde(wo,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase);
+			f.zuvec(qrueckp,anteil);
+		} else if (findv==3) {
+			find3cl f(obverb,oblog);
+			f.finde(wo,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase);
+			f.zuvec(qrueckp,anteil);
+		}
+}
+#endif

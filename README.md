@@ -8,7 +8,6 @@
 <a href="#INSTALLATION_D">INSTALLATION</a><br>
 <a href="#USAGE_D">USAGE</a><br>
 <a href="#OPTIONS_D">OPTIONS</a><br>
-<a href="#FUNCTIONALITY_D">FUNCTIONALITY</a><br>
 <a href="#PRECONDITIONS_D">PRECONDITIONS</a><br>
 <a href="#AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_D">AUTOMATICALLY INSTALLED SOFTWARE PACKAGES</a><br>
 <a href="#IMPLICATIONS_D">IMPLICATIONS</a><br>
@@ -157,9 +156,12 @@ by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
 options (e.g. the sql commands) cannot bei set via the
 command line, but only via the configuration file, which can
 be edited directly or interactively by &rsquo;<b>autofax
--rf</b>&rsquo;. <b><br>
-Fehlender Parameter &lt;string&gt; zu -sp oder --sprache!
-<br>
+-rf</b>&rsquo;. <br>
+findv 1: 3 <b><br>
+Fehlender Parameter &lt;string&gt; zu -sp oder
+--sprache!</b> <br>
+findv 2: 3 <br>
+findv 3: 3 <b><br>
 Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
 Faxt Dateien aus Verzeichns &lt;pfad&gt;, die &rsquo;an Fax
@@ -309,12 +311,13 @@ MySQL/MariaDB den Benutzer &lt;string&gt; anstatt
 -mpwd, --mpwd &lt;string&gt;</b>: verwendet fuer
 MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 -db, --datenbank &lt;string&gt;</b>: verwendet die Datenbank
-&lt;string&gt; anstatt &rsquo;<b>autofax</b>&rsquo;</p>
-
-<h2>FUNCTIONALITY
-<a name="FUNCTIONALITY_D"></a>
-</h2>
-
+&lt;string&gt; anstatt &rsquo;<b>autofax</b>&rsquo; <b><br>
+-fd, --finde &lt;zahl&gt;</b>: Version 1,2 oder 3
+-Dateisuche anstatt &rsquo;<b>3</b>&rsquo; <b><br>
+-cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
+soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
+nicht), anstatt &rsquo;<b>2</b>&rsquo; langi: .SH
+FUNCTIONALITY</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -1025,7 +1028,6 @@ caused by the program.</p>
 <a href="#INSTALLATION_D">INSTALLATION</a><br>
 <a href="#GEBRAUCH_D">GEBRAUCH</a><br>
 <a href="#OPTIONEN_D">OPTIONEN</a><br>
-<a href="#FUNKTIONSWEISE_D">FUNKTIONSWEISE</a><br>
 <a href="#VORAUSSETZUNGEN_D">VORAUSSETZUNGEN</a><br>
 <a href="#AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE_D">AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE</a><br>
 <a href="#AUSWIRKUNGEN DES PROGRAMMABLAUFS_D">AUSWIRKUNGEN DES PROGRAMMABLAUFS</a><br>
@@ -1188,9 +1190,12 @@ Optionen (z.B. SQL-Befehle) k&ouml;nnen nicht
 &uuml;ber die Befehlszeile, sondern nur &uuml;ber
 die Konfigurationsdatei eingegeben werden, die wiederum
 direkt editiert oder auch &uuml;ber &rsquo;<b>autofax
--rf</b>&rsquo; interaktiv gepflegt werden kann. <b><br>
-Fehlender Parameter &lt;string&gt; zu -sp oder --sprache!
-<br>
+-rf</b>&rsquo; interaktiv gepflegt werden kann. <br>
+findv 1: 3 <b><br>
+Fehlender Parameter &lt;string&gt; zu -sp oder
+--sprache!</b> <br>
+findv 2: 3 <br>
+findv 3: 3 <b><br>
 Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
 Faxt Dateien aus Verzeichns &lt;pfad&gt;, die &rsquo;an Fax
@@ -1340,12 +1345,13 @@ MySQL/MariaDB den Benutzer &lt;string&gt; anstatt
 -mpwd, --mpwd &lt;string&gt;</b>: verwendet fuer
 MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 -db, --datenbank &lt;string&gt;</b>: verwendet die Datenbank
-&lt;string&gt; anstatt &rsquo;<b>autofax</b>&rsquo;</p>
-
-<h2>FUNKTIONSWEISE
-<a name="FUNKTIONSWEISE_D"></a>
-</h2>
-
+&lt;string&gt; anstatt &rsquo;<b>autofax</b>&rsquo; <b><br>
+-fd, --finde &lt;zahl&gt;</b>: Version 1,2 oder 3
+-Dateisuche anstatt &rsquo;<b>3</b>&rsquo; <b><br>
+-cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
+soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
+nicht), anstatt &rsquo;<b>2</b>&rsquo; langi: .SH
+FUNKTIONSWEISE</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">

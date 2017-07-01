@@ -214,6 +214,8 @@ class paramcl // Programmparameter
     uchar hylazuerst;  // ob ein Fax zuerst ueber Hylafax versucht werden soll zu faxen
     uchar rzf=0; // rueckzufragen
     string dbq; // Datenbank
+		string findvers; // find-Version (1=linux fund 2=intern mit readdir, 3=intern mit nftw 
+		int ifindv; // integer-Variante der find-Version
 		static const char* const smbdt;// "/etc/samba/smb.conf"
 		string cuser; // Linux-Benutzer fuer Capisuite, Samba
     string muser; // Benutzer fuer Mysql/MariaDB

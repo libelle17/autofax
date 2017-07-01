@@ -92,7 +92,46 @@ extern const char *_rot, *_hrot, *_schwarz, *_blau, *_gelb, *_tuerkis, *_hgrau;
 #include <algorithm>    // std::transform
 #include <regex.h> // regex_t, regex, regcomp, regexec
 
+#define neufind
+#define altfind
+#if defined(neufind) || defined(altfind)
+#define mitset
+#ifdef mitset
+#include <set>
+#else
+#include <map>
+#endif
+#define B_Datei 1
+#define B_Verzn 2
+#define B_Chdev 4
+#define B_Block 8
+#define B_FIFO 16
+#define B_Link 32
+#define B_Sock 64
+#define B_Alle 127 
+#define Fol_Dat 1 // folge Datei: liefere Ziel eines Links anstatt der Link-Datei
+#define Fol_Ver 2 // folge Verzeichnis: suche auch in Verzeichnis, auf das ein gefundener Link zeigt, egal wo es liegt
+#define Fol_Mus 4 // folge Vergleiche das Muster mit Ziel eines Links anstatt der Link-Datei
+enum {
+  REGFEHLER=997,
+  DIRFEHLER=998, 
+  REALPATHFEHLER=999
+};
+#endif
+
 #define caus cout // nur zum Debuggen
+
+typedef unsigned long long ull;
+extern uchar findv/*=3*/; // find-Version 1=system, 2=intern mit readdir, 3=intern mit nftw
+class elem2;
+#ifdef mitset
+typedef set<elem2> el2set;
+#else
+typedef map<elem2,ull> el2set;
+#endif
+extern el2set::iterator it2;
+class elem3;
+extern set<elem3>::iterator it3;
 
 extern const string nix;
 // typedef const char *TCtp[][SprachZahl];
@@ -215,7 +254,15 @@ enum Tkons_
 	T_Ins_Deinstallationsprogramm_wird_eingetragen,
 	T_fallsnichtda,
 	T_ohneabh,
-	T_konsMAX,
+	T_Tiefe,
+	T_Linkverzeichnis,
+	T_Suche_in,
+	T_nach,
+	T_Typbit,
+	T_Folge,
+	T_Ergebnis,
+	T_Fehler_beim_Deferenzieren_von,
+	T_konsMAX
 };
 
 /*
@@ -733,3 +780,105 @@ class servc {
 		static void daemon_reload(int obverb=0, int oblog=0);
 };
 
+void printBits(size_t const size, void const * const ptr); // Binaerausgabe, fuer Debugging
+
+#ifdef altfind
+class elem2
+{
+  public:
+    string pfad;
+    struct stat dst;
+    int sterg;
+    elem2(){};
+    elem2(const string& mutter,const string& name);
+    void init(const string& vmutter, const string& name);
+    const bool operator<(const elem2& el) const;
+}; // class elem2
+
+class find2cl: elem2
+{
+  string typ;
+  vector<string> stack;
+  DIR *dir;
+  struct dirent *dent;
+  public:
+  el2set *ergp=0;
+  set<string> *vznp=0; 
+  ull *nrp=0;
+  int zuloeschen=1;
+  int eingefuegt, verzneu;
+	int obverb,oblog;
+	find2cl(int _obverb=0, int _oblog=0, find2cl *stamm=0);
+  ~find2cl();
+  void weiszu();
+  void init(const string& mutter, const string& name, regex_t *reg, const int folge,const long maxdepth, const int& typbit,
+      vector<string> stack,time_t ab, time_t bis);
+  void ausgeb();
+  int finde(string wo=".",string muster="",const long tiefe=-1,int typbit=B_Alle,int folge=Fol_Dat,time_t ab=0, time_t bis=0,int obicase=0);
+	void zuvec(svec *zu,uchar anteil=0);
+};
+#endif
+
+#ifdef neufind
+#include <ftw.h>
+// Fundelement
+class elem3
+{
+  public:
+    string pfad;
+    const struct stat sb;
+    int tflag;
+    const struct FTW ftw;
+    const string lnk;
+    const struct stat lst;
+    elem3(string pfad, const struct stat *sbp, int& tflag, const struct FTW *ftwp, string lnk,const struct stat& lst):
+          pfad(pfad),sb(*sbp),tflag(tflag),ftw(*ftwp),lnk(lnk),lst(lst){}
+    const bool operator<(const elem3& el) const;
+};
+
+// Wurzelelement
+class wele
+{
+  public:
+    const string pfad;
+    const long maxd;
+    wele(const string pfad="", const long& maxd=-1):pfad(pfad),maxd(maxd){}
+    const bool operator<(const wele& el) const;
+//    bool operator()(const wele& el3) const {return (this->pfad<el3.pf);}
+};
+
+// nur eine Instanz der Klasse kann gleichzeitig gefuellt werden wegen der statischen Elemente
+class find3cl
+{
+  public:
+    int flags = 0;
+    long maxdepth=-1;
+    static long *maxdepthp;
+    int folge=0;
+    static int *folgep;
+    set<wele> wurz,fertige;
+    set<elem3> erg;
+    static set<wele>::iterator it;
+    static set<wele> *wurzp;
+    static set<elem3> *ergp;
+    regex_t reg;
+    static regex_t *regp;
+    int typbit;
+    static int *typbitp;
+    time_t mab,mbis;
+    static time_t *mabp,*mbisp;
+		int obverb=0, oblog=0;
+		static int *obverbp, *oblogp;
+		find3cl(int obverb=0,int oblog=0);
+    static int verarbeit(const char *fpath, const struct stat *sb, int tflag, struct FTW *ftwbuf);
+    int dofind();
+    int ausgeb();
+    int finde(const string wo=".",const string muster="",long tiefe=-1,int _typbit=B_Alle,int _folge=Fol_Dat,
+		           time_t _mab=0,time_t _mbis=0,int obicase=0);
+		void zuvec(svec *zu,uchar anteil=0);
+}; // class find3cl
+#endif
+#if defined(altfind) && defined(neufind)
+void findfile(svec *qrueck,uchar findv,int obverb=0,int oblog=0,uchar anteil=0,
+		const string& wo=".",const string& muster="",long tiefe=-1,int _typbit=B_Alle,int _folge=Fol_Dat, time_t _mab=0,time_t _mbis=0,int obicase=0);
+#endif
