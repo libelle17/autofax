@@ -1433,7 +1433,7 @@ linst_cl::linst_cl(int obverb,int oblog)
     svec qrueck;
 		if (findv==1) {
 			systemrueck("find /usr -maxdepth 1 -type d -name 'lib*'",obverb,oblog,&qrueck);
-		} findfile(&qrueck,findv,obverb,oblog,0,"/usr","lib[^/]*$",1,34,1);
+		} else findfile(&qrueck,findv,obverb,oblog,0,"/usr","lib[^/]*$",1,34,1);
 		for(size_t iru=0;iru<qrueck.size();iru++) libs+=qrueck[iru]+" ";
 } // linst_cl::linst_cl(int obverb,int oblog)
 
@@ -3734,7 +3734,7 @@ void find2cl::weiszu()
 }
 
 void find2cl::init(const string& mutter, const string& name, regex_t *reg, const int folge,const long maxdepth, const int& typbit,
-    vector<string> stack,time_t ab, time_t bis)
+    vector<string> stack,time_t ab, time_t bis,int nurexec)
 {
   dir=0;
   eingefuegt=0;
@@ -3813,6 +3813,7 @@ void find2cl::init(const string& mutter, const string& name, regex_t *reg, const
         if (folge & Fol_Mus) aktel=letztel; else aktel=(elem2*)this;
 				if ((!ab||aktel->dst.st_mtime>=ab)&&(!bis||aktel->dst.st_mtime<=bis))
 					//        cout<<"Prüfe Muster: "<<blau<<aktel->pfad<<schwarz<<endl;
+				 if (!nurexec || (aktel->dst.st_mode & S_IXUSR || aktel->dst.st_mode & S_IXGRP || aktel->dst.st_mode & S_IXOTH))
 					if (!regexec(reg, aktel->pfad.c_str(), 0, 0, 0)) {
 						if (folge & Fol_Dat) aktel=letztel; else aktel=(elem2*)this;
 						//          cout<<"gefunden: "<<rot<<aktel->pfad<<schwarz<<endl;
@@ -3847,7 +3848,7 @@ void find2cl::init(const string& mutter, const string& name, regex_t *reg, const
 					if (strcmp(dent->d_name, ".") && strcmp(dent->d_name, "..")) {
 						//            cout<<"Stelle 5: dent->d_name: "<<blau<<dent->d_name<<schwarz<<endl;
 						find2cl tochter(obverb,oblog,this);
-						tochter.init(letztel->pfad,dent->d_name,reg,folge,maxdepth-1,typbit,stack,ab,bis);
+						tochter.init(letztel->pfad,dent->d_name,reg,folge,maxdepth-1,typbit,stack,ab,bis,nurexec);
 						//            cout<<"nach tochter.init"<<endl;
 					}
 				}
@@ -3875,7 +3876,7 @@ void find2cl::ausgeb()
 }
 
 int find2cl::finde(string wo/*="."*/,string muster/*=""*/,const long tiefe/*=-1*/,int typbit/*=B_Alle*/,int folge/*=Fol_Dat*/,
-		time_t ab/*=0*/, time_t bis/*=0*/,int obicase/*=0*/)
+		time_t ab/*=0*/, time_t bis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/)
 {
 	vector<string> verzn;
 	aufSplit(&verzn, wo);
@@ -3884,7 +3885,7 @@ int find2cl::finde(string wo/*="."*/,string muster/*=""*/,const long tiefe/*=-1*
 		return REGFEHLER;
 	vector<string> stack;
 	for(size_t iv=0;iv<verzn.size();iv++) {
-		init("",verzn[iv], &reg, folge, tiefe, typbit,stack,ab,bis);
+		init("",verzn[iv], &reg, folge, tiefe, typbit,stack,ab,bis,nurexec);
 		//    cout<<"nach finde.init, wo: "<<blau<<wo<<schwarz<<endl;
 	} //   for(size_t iv=0;iv<verzn.size();iv++)
 	if (obverb|oblog) {
@@ -3922,6 +3923,7 @@ regex_t *find3cl::regp;
 int *find3cl::typbitp;
 time_t *find3cl::mabp,*find3cl::mbisp;
 int *find3cl::obverbp, *find3cl::oblogp;
+int *find3cl::nurexecp;
 
 int find3cl::verarbeit(const char *fpath, const struct stat *sb, int tflag, struct FTW *ftwbuf)
 {
@@ -3971,6 +3973,7 @@ int find3cl::verarbeit(const char *fpath, const struct stat *sb, int tflag, stru
 				const int obt=*folgep&Fol_Dat&&!pfad.empty()?1:0;
 				const struct stat *sp=obt?&lst:sb;
 				if ((!*mabp||sp->st_mtime>=*mabp)&&(!*mbisp||sp->st_mtime<=*mbisp))
+				 if (!*nurexecp || (sp->st_mode & S_IXUSR || sp->st_mode & S_IXGRP || sp->st_mode & S_IXOTH))
 					ergp->insert(elem3(obt?pfad:fpath,sp,tflag,ftwbuf,obt?fpath:pfad,obt?*sb:lst));
 			} //       if ( tflag!=FTW_SL || ...
 		} //     if (!regexec(regp, vgl, 0, 0, 0))
@@ -4040,7 +4043,7 @@ int find3cl::ausgeb()
 } //     int ausgeb()
 
 int find3cl::finde(const string wo/*="."*/,const string muster/*=""*/,long tiefe/*=-1*/,
-		int _typbit/*=B_Alle*/,int _folge/*=Fol_Dat*/,time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/)
+		int _typbit/*=B_Alle*/,int _folge/*=Fol_Dat*/,time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/,int _nurexec/*=0*/)
 {
 	int ret=0;
 	maxdepthp=&maxdepth;
@@ -4067,6 +4070,8 @@ int find3cl::finde(const string wo/*="."*/,const string muster/*=""*/,long tiefe
 	*mabp=_mab;
 	mbisp=&mbis;
 	*mbisp=_mbis;
+	nurexec=_nurexec;
+	nurexecp=&nurexec;
 	// if (argc > 2 && strchr(argv[2], 'd') != NULL) f.flags |= FTW_DEPTH; // erst Unterverzeichnisse, dann aktuelles Verzeichnis
 	// if (argc > 2 && strchr(argv[2], 'p') != NULL)
 	flags |= FTW_ACTIONRETVAL;
@@ -4098,15 +4103,15 @@ void find3cl::zuvec(svec *zu,uchar anteil/*=0*/)
 #if defined(altfind) && defined(neufind)
 void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar anteil/*=0*/,
 	const string& wo/*="."*/,const string& muster/*=""*/,long tiefe/*=-1*/,int _typbit/*=B_Alle*/,
-	int _folge/*=Fol_Dat*/, time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/)
+	int _folge/*=Fol_Dat*/, time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/)
 {
 		if (findv==2) {
 			find2cl f(obverb,oblog);
-			f.finde(wo,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase);
+			f.finde(wo,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase,nurexec);
 			f.zuvec(qrueckp,anteil);
 		} else if (findv==3) {
 			find3cl f(obverb,oblog);
-			f.finde(wo,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase);
+			f.finde(wo,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase,nurexec);
 			f.zuvec(qrueckp,anteil);
 		}
 }

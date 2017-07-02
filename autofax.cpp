@@ -2308,29 +2308,17 @@ int fsfcl::loeschehyla(paramcl *pmp,int obverb, int oblog)
 {
 	Log(violetts+Tx[T_loeschehyla]+schwarz,obverb,oblog);
 	if (hylanr!="0" && !hylanr.empty()) {
-		const uchar vmax=5;
-		if (pmp->ifindv==1) {
-			svec findrueck;
+		svec qrueck;
+		if (findv==1) {
 			// wenn Datei nicht mehr in sendq, sondern in doneq, sei es gelungen oder gescheitert, dann ist Loeschen sinnlos
-			systemrueck(("sudo find '")+pmp->hsendqvz+"' -name q"+hylanr,obverb,oblog,&findrueck);
-			if (!findrueck.size()) {
-				return 0;
-			}
-		} else if (pmp->ifindv==2) {
-			find2cl datei;
-			datei.finde(pmp->hsendqvz,"/q"+hylanr+"$");
-			if (!datei.ergp->size()) {
-				return 0;
-			}
-		} else if (pmp->ifindv==3) {
-			find3cl f(obverb,oblog);
-			f.finde(pmp->hsendqvz,"/q"+hylanr+"$");
-			if (!f.ergp->size()) {
-				return 0;
-			}
+			systemrueck(("sudo find '")+pmp->hsendqvz+"' -name q"+hylanr,obverb,oblog,&qrueck);
+		} else findfile(&qrueck,findv,obverb,oblog,0,pmp->hsendqvz,"/q"+hylanr+"$");
+		if (!qrueck.size()) {
+			return 0;
 		}
 		pmp->hylasv1();
 		pmp->hylasv2(hysrc);
+		const uchar vmax=5;
 		for(uchar iru=0;iru<vmax;iru++) {
 			if (iru) {
 				if (pmp->sfaxgetty) pmp->sfaxgetty->restart(obverb+1,oblog);
@@ -2659,27 +2647,37 @@ void paramcl::pruefmodem()
 	Log(violetts+Tx[T_pruefmodem]+schwarz);
 	obmodem=0;
 	const string svz="/sys/class/tty/";
-	svec rueck;
+	svec qrueck;
 	//// <<"pruefmodem 1 nach obcapi: "<<(int)obcapi<<endl;
 	// 19.2.17: evtl. besser mit: dmesg|grep '[^t]*tty[^] 0\t:.$]'|sed 's/[^t]*\(tty[^] \t:.$]*\).*/\1/'
 	// 25.2.17: geht leider nicht nach "<DPROG> -nohyla"
 	//#define mitdmesg
 #ifdef mitdmesg
-	systemrueck("dmesg|grep tty",obverb,oblog,&rueck);
-	for(size_t i=0;i<rueck.size();i++) {
-		size_t pos=rueck[i].find("tty");
+	systemrueck("dmesg|grep tty",obverb,oblog,&qrueck);
+	for(size_t i=0;i<qrueck.size();i++) {
+		size_t pos=qrueck[i].find("tty");
 		if (pos==string::npos) continue;
-		size_t p2=rueck[i].find_first_of("] \t:.,;-",pos);
+		size_t p2=qrueck[i].find_first_of("] \t:.,;-",pos);
 		if (p2==string::npos) continue;
-		const string tty=rueck[i].substr(pos,p2-pos);
+		const string tty=qrueck[i].substr(pos,p2-pos);
 		if (tty=="tty"||tty=="tty0") continue;
 		////	modem=svz+modem;
 		//// <<rot<<svz+modem<<schwarz<<endl;
 		//}
 #else
-		systemrueck("sh -c 'cd "+svz+";find */device/driver'", obverb,oblog,&rueck);
-		for(size_t i=0;i<rueck.size();i++) {
-			const string tty=rueck[i].substr(0,rueck[i].find('/'));
+		if (findv==1) {
+			systemrueck("sh -c 'cd "+svz+";find */device/driver'", obverb,oblog,&qrueck);
+		} else {
+			findfile(&qrueck,findv,obverb,oblog,0,svz,"",1,127,0);
+			for(ssize_t i=qrueck.size()-1;i>=0;i--) {
+				struct stat st;
+				if (lstat((qrueck[i]+"/device/driver").c_str(),&st)) {
+					qrueck.erase(qrueck.begin()+i);
+				}
+			}
+		}
+		for(size_t i=0;i<qrueck.size();i++) {
+			const string tty=findv==1?qrueck[i].substr(0,qrueck[i].find('/')):base_name(qrueck[i]);
 			////			struct stat entrydriv={0};
 			////			if (!lstat((modem+"/device/driver").c_str(),&entrydriv)) KLA
 			////				const string tty=base_name(modem);
@@ -2704,8 +2702,8 @@ void paramcl::pruefmodem()
 					Log("Modem: "+blaus+tty+schwarz+Tx[T_gefunden]);
 				} // if (!systemrueck("sudo stty -F /dev/"+tty+" >/dev/null 2>&1",obverb,oblog,&rue2)) 
 			} // if (tty!="ttyS0") 
-			// KLA // if (!lstat(((rueck[i])+"/device/driver").c_str(),&entrydriv)) 
-		} // for(size_t i=0;i<rueck.size();i++) 
+			// KLA // if (!lstat(((qrueck[i])+"/device/driver").c_str(),&entrydriv)) 
+		} // for(size_t i=0;i<qrueck.size();i++) 
 		////  uchar modemsumgesteckt=0;
 		uchar schonda=0;
 		if (!hmodem.empty()) {
@@ -6210,15 +6208,7 @@ void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
 		if (findv==1) {
 			cmd="sudo find '"+cfaxuservz+"' -path \"*/sendq/fax*\" -type f -iname 'fax*.sff'"; ////  -printf '%f\\n'";
 			systemrueck(cmd,obverb,oblog,&qrueck);
-		} else if (findv==2) {
-			find2cl f(obverb,oblog);
-			f.finde(cfaxuservz,"/sendq/fax.*\\.sff$",-1,1,0,0,0,1);
-			for(it2=f.ergp->begin();it2!=f.ergp->end();it2++) qrueck<<it2->pfad;
-		} else if (findv==3) {
-			find3cl f(obverb,oblog);
-			f.finde(cfaxuservz,"/sendq/fax.*\\.sff$",-1,1,0,0,0,1);
-			for(it3=f.ergp->begin();it3!=f.ergp->end();it3++) qrueck<<it3->pfad;
-		}
+		} else findfile(&qrueck,findv,obverb,oblog,0,cfaxuservz,"/sendq/fax.*\\.sff$",-1,1,0,0,0,1);
 		for(size_t i=0;i<qrueck.size();i++) {
 			uchar indb=0;
 			char ***cerg;
@@ -6240,22 +6230,14 @@ void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
 // in sammlecapi
 void paramcl::bereinigecapi()
 {
+	struct stat entryvz={0};
 	svec qrueck;
 	Log(violetts+Tx[T_bereinigecapi]+schwarz);
 	if (findv==1) {
 		// 7.2.16: alte *.lock-Dateien loeschen
 		cmd="sudo find '"+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.lock'"; ////  -printf '%f\\n'";
 		systemrueck(cmd,obverb,oblog,&qrueck);
-	} else if (findv==2) {
-		find2cl f(obverb,oblog);
-		f.finde(cfaxusersqvz,"/fax.*\\.lock$",1,1,0);
-		for(it2=f.ergp->begin();it2!=f.ergp->end();it2++) qrueck<<it2->pfad;
-	} else if (findv==3) {
-		find3cl f(obverb,oblog);
-		f.finde(cfaxusersqvz,"/fax.*\\.lock$",1,1,0);
-		for(it3=f.ergp->begin();it3!=f.ergp->end();it3++) qrueck<<it3->pfad;
-	}
-	struct stat entryvz={0};
+	} else findfile(&qrueck,findv,obverb,oblog,0,cfaxusersqvz,"/fax.*\\.lock$",1,1,0);
 	for(size_t i=0;i<qrueck.size();i++) {
 		string stamm,exten;
 		getstammext(&qrueck[i],&stamm,&exten);
@@ -6269,15 +6251,7 @@ void paramcl::bereinigecapi()
 		// 20.1.16: wenn dort eine .txt-steht ohne zugehoerige .sff-Datei, dann haelt sie den ganzen Betrieb auf
 		cmd="sudo find '"+cfaxusersqvz+"' -maxdepth 1 -type f -iname 'fax*.txt'"; ////  -printf '%f\\n'";
 		systemrueck(cmd,obverb,oblog,&qrueck);
-	} else if (findv==2) {
-		find2cl f(obverb,oblog);
-		f.finde(cfaxusersqvz,"/fax.*\\.txt$",1,1,0);
-		for(it2=f.ergp->begin();it2!=f.ergp->end();it2++) qrueck<<it2->pfad;
-	} else if (findv==3) {
-		find3cl f(obverb,oblog);
-		f.finde(cfaxusersqvz,"/fax.*\\.txt$",1,1,0);
-		for(it3=f.ergp->begin();it3!=f.ergp->end();it3++) qrueck<<it3->pfad;
-	}
+	} else findfile(&qrueck,findv,obverb,oblog,0,cfaxusersqvz,"/fax.*\\.txt$",1,1,0);
 	for(size_t i=0;i<qrueck.size();i++) {
 		string stamm,exten;
 		getstammext(&qrueck[i],&stamm,&exten);
@@ -6312,15 +6286,7 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
 		if (findv==1) {
 			cmd="sudo find '"+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";
 			systemrueck(cmd,obverb,oblog,&qrueck);
-		} else if (findv==2) {
-			find2cl f(obverb,oblog);
-			f.finde(hsendqvz,"/q[0123456789]+$",1,1,0,0,0,1);
-			for(it2=f.ergp->begin();it2!=f.ergp->end();it2++) qrueck<<base_name(it2->pfad);
-		} else if (findv==3) {
-			find3cl f(obverb,oblog);
-			f.finde(hsendqvz,"/q[0123456789]+$",1,1,0,0,0,1);
-			for(it3=f.ergp->begin();it3!=f.ergp->end();it3++) qrueck<<base_name(it3->pfad);
-		}
+		} else findfile(&qrueck,findv,obverb,oblog,1,hsendqvz,"/q[0123456789]+$",1,1,0,0,0,1);
 		for(size_t i=0;i<qrueck.size();i++) {
 			uchar indb=0;
 			const string hylanr=qrueck[i].substr(1);
@@ -6587,15 +6553,7 @@ void paramcl::empfarch()
 		// Faxe in der Empfangswarteschlange auflisten, ...
 		cmd="sudo find \""+varsphylavz+"/recvq\" -name \"fax*.tif\"";
 		systemrueck(cmd,obverb,oblog, &qrueck);
-	} else if (findv==2) {
-		find2cl f(obverb,oblog);
-		f.finde(varsphylavz+"/recvq","/fax.*\\.tif$",-1,1,0);
-		for(it2=f.ergp->begin();it2!=f.ergp->end();it2++) qrueck<<it2->pfad;
-	} else if (findv==3) {
-		find3cl f(obverb,oblog);
-		f.finde(varsphylavz+"/recvq","/fax.*\\.tif$",-1,1,0);
-		for(it3=f.ergp->begin();it3!=f.ergp->end();it3++) qrueck<<it3->pfad;
-	}
+	} else findfile(&qrueck,findv,obverb,oblog,0,varsphylavz+"/recvq","/fax.*\\.tif$",-1,1,0);
 	for(size_t i=0;i<qrueck.size();i++) {
 		// ..., Informationen darueber einsammeln, ...
 		empfhyla(qrueck[i]);
@@ -6609,15 +6567,17 @@ void paramcl::empfarch()
 	struct stat entryvz={0};
 	////  cfaxuserrcvz="/var/spool/capisuite/users/schade/received";
 	if (!lstat(cfaxuserrcvz.c_str(),&entryvz)) /* /var/spool/capisuite/users/~/received */ {
-		// Faxe in der Empfangswarteschlange auflisten, ...
-		cmd="sudo find \""+cfaxuserrcvz+"\" -maxdepth 1 -type f -iname \"*.txt\"";
-		svec rueck;
-		systemrueck(cmd,obverb,oblog, &rueck);
-		for(size_t i=0;i<rueck.size();i++) {
+		svec qrueck;
+		if (findv==1) {
+			// Faxe in der Empfangswarteschlange auflisten, ...
+			cmd="sudo find \""+cfaxuserrcvz+"\" -maxdepth 1 -type f -iname \"*.txt\"";
+			systemrueck(cmd,obverb,oblog, &qrueck);
+		} else findfile(&qrueck,findv,obverb,oblog,0,cfaxuserrcvz,"\\.txt$",1,1,Fol_Dat,0,0,1);
+		for(size_t i=0;i<qrueck.size();i++) {
 			ankzahl++;
 			// ..., Informationen darueber einsammeln, ...
 			string stamm,exten;
-			getstammext(&(rueck[i]),&stamm,&exten);
+			getstammext(&(qrueck[i]),&stamm,&exten);
 			empfcapi(stamm);
 		} // for(size_t i=0;i<rueck.size();i++) 
 	} // if (!lstat(cfaxuserrcvz.c_str(),&entryvz)) /* /var/spool/capisuite/users/~/received */ 
@@ -7211,12 +7171,14 @@ void paramcl::setzfaxgtpfad()
 		//    faxgtpfad="/usr/sbin/faxgetty";
 		obprogda("faxgetty",obverb,oblog,&faxgtpfad);
 		if (faxgtpfad.empty() || lstat(faxgtpfad.c_str(),&entryfaxgt)) {
-			svec rueckf;
 			faxgtpfad.clear();
-			systemrueck("sudo find /usr/lib/fax /usr/sbin /usr/bin /root/bin /sbin /usr/local/sbin /usr/local/bin -perm /111 -name faxgetty",
-					obverb-1,oblog,&rueckf);
-			if (rueckf.size()) 
-				faxgtpfad=rueckf[0];
+			svec qrueck;
+			const string wo="/usr/lib/fax /usr/sbin /usr/bin /root/bin /sbin /usr/local/sbin /usr/local/bin";
+			if (findv==1) {
+				systemrueck("sudo find "+wo+" -perm /111 -name faxgetty", obverb-1,oblog,&qrueck);
+			} else findfile(&qrueck,findv,obverb,oblog,0,wo,"faxgetty$",-1,1,Fol_Dat,0,0,0,1);
+			if (qrueck.size()) 
+				faxgtpfad=qrueck[0];
 		} // 		if (faxgtpfad.empty() || lstat(faxgtpfad.c_str(),&entryfaxgt))
 	} // 	if (lstat(faxgtpfad.c_str(),&entryfaxgt))
 	// violett<<"faxgtpfad 4: "<<faxgtpfad<<schwarz<<endl;
