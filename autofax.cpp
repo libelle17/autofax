@@ -2674,9 +2674,9 @@ void paramcl::pruefmodem()
 				struct stat st;
 				if (lstat((qrueck[i]+"/device/driver").c_str(),&st)) {
 					qrueck.erase(qrueck.begin()+i);
-				}
-			}
-		}
+				} // 				if (lstat((qrueck[i]+"/device/driver").c_str(),&st))
+			} // 			for(ssize_t i=qrueck.size()-1;i>=0;i--)
+		} // 		if (findv==1)
 		for(size_t i=0;i<qrueck.size();i++) {
 			const string tty=findv==1?qrueck[i].substr(0,qrueck[i].find('/')):base_name(qrueck[i]);
 			////			struct stat entrydriv={0};
@@ -4775,11 +4775,13 @@ void paramcl::bereinigewv()
 	set<string> fdn; // Fax-Dateien
 	set<string>::iterator fit; // Iterator dafuer
 	////  cmd="find \""+wvz+"\" -maxdepth 1 -type f -iname \"*.pdf\" -printf '%f\n'";
-	cmd="sudo find \""+wvz+"\" -maxdepth 1 -type f -printf '%f\n'";
-	vector<string> rueck;
-	systemrueck(cmd,obverb,oblog,&rueck);
-	for(size_t i=0;i<rueck.size();i++) {
-		fdn.insert(rueck[i]);
+	svec qrueck;
+	if (findv==1) {
+		cmd="sudo find \""+wvz+"\" -maxdepth 1 -type f -printf '%f\n'";
+		systemrueck(cmd,obverb,oblog,&qrueck);
+	} else findfile(&qrueck,findv,obverb,oblog,1,wvz,"",1,1,Fol_Dat);
+	for(size_t i=0;i<qrueck.size();i++) {
+		fdn.insert(qrueck[i]);
 	} 
 	//  for(fit=fdn.begin();fit!=fdn.end();++fit) _out<<blau<<*fit<<schwarz<<endl;
 	const string vgl="Beispiel 997.doc"; // nicht existente Datei
@@ -5041,17 +5043,21 @@ size_t paramcl::loescheallewartende()
 {
 	Log(blaus+Tx[T_loescheallewartenden]+schwarz);
 	size_t erg=0;
-	vector<string> allec, alled;
+	svec allec, alled;
 	struct stat entryvz={0};
 	if (!lstat(cfaxusersqvz.c_str(),&entryvz)) {
+		if (findv==1) {
 		cmd="sudo find '"+cfaxusersqvz+"/' -maxdepth 1 -type f -iname 'fax-*.*'";
 		systemrueck(cmd,obverb,oblog,&allec);
+		} else findfile(&allec,findv,obverb,oblog,0,cfaxusersqvz,"fax-[^.]*\\..*",1,1,Fol_Dat,0,0,1);
 		erg+=allec.size();
 	} // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
 	//  cmd=string("rm ")+cfaxuservz+vtz+cuser+vtz+"sendq"+vtz+"fax-*.*"; //  "/var/spool/capisuite/users/<user>/sendq";
 	if (!lstat(hsendqvz.c_str(),&entryvz)) {
-		cmd="sudo find '"+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";
-		systemrueck(cmd,obverb,oblog, &alled);
+		if (findv==1) {
+			cmd="sudo find '"+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";
+			systemrueck(cmd,obverb,oblog, &alled);
+		} else findfile(&alled,findv,obverb,oblog,1,hsendqvz,"/q[^/]*",1,1,Fol_Dat,0,0,1);
 		erg+=alled.size();
 	} // if (!lstat(hsendqvz.c_str(),&entryvz)) 
 	if (erg) {
@@ -5236,9 +5242,12 @@ void paramcl::pruefunpaper()
 			linstp->doinst("ffmpeg-devel",obverb,oblog);
 			linstp->doinst("ffmpeg-compat",obverb,oblog);
 		} else {
-			svec rueck;
-			systemrueck("find "+linstp->libs+"-xtype f -name libswresample.so",obverb,oblog,&rueck);
-			if (!rueck.size()) {
+			svec qrueck;
+			const string dname="libswresample.so";
+			if (findv==1) {
+				systemrueck("find "+linstp->libs+"-xtype f -name "+dname,obverb,oblog,&qrueck);
+			} else findfile(&qrueck,findv,obverb,oblog,0,linstp->libs,dname+"$",33,1,7);
+			if (!qrueck.size()) {
 				linstp->doinst("ffmpeg-"+linstp->dev,obverb+1,oblog);
 			}
 			linstp->doggfinst("libavformat-"+linstp->dev,obverb+1,oblog);
@@ -7411,10 +7420,20 @@ int paramcl::cservice()
 	string cspfad;
 	if (obprogda("capisuite",obverb,oblog,&cspfad)) {
 		scapis->stopggf(obverb,oblog,1); 
-		erg=systemrueck(/*//"sudo sh -c 'systemctl stop capisuite; pkill capisuite >/dev/null 2>&1; pkill -9 capisuite >/dev/null 2>&1; "*/
-				"cd /etc/init.d"
-				" && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
-				" && { sudo mkdir -p /etc/ausrangiert && sudo mv -f /etc/init.d/capisuite /etc/ausrangiert; } || true"/*'*/,obverb,oblog);
+		const string vz="/etc/init.d",datei="/capisuite",ziel="/etc/ausrangiert";
+		if (findv==1) {
+			erg=systemrueck(/*//"sudo sh -c 'systemctl stop capisuite; pkill capisuite >/dev/null 2>&1; pkill -9 capisuite >/dev/null 2>&1; "*/
+					"cd "+vz+
+					" && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
+					" && { sudo mkdir -p "+ziel+" && sudo mv -f "+vz+datei+" "+ziel+"; } || true"/*'*/,obverb,oblog);
+		} else {
+			svec qrueck;
+			findfile(&qrueck,findv,obverb,oblog,0,vz,datei+"$",1,1,Fol_Dat);
+			if (qrueck.size()) {
+				pruefverz(ziel,obverb,oblog);
+				systemrueck("sudo mv -f "+vz+datei+" "+ziel,obverb,oblog);
+			}
+		}
 		// entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
 		csfehler+=!scapis->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","",linstp,obverb,oblog);
 		if (obverb) Log("csfehler: "+gruens+ltoan(csfehler)+schwarz);
@@ -7469,9 +7488,9 @@ Log(violetts+"hservice_faxgetty()"+schwarz);
 return !this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0, meinname,this->faxgtpfad+" "+this->hmodem,"","","",this->obverb,this->oblog);
 // /etc/inittab werde von systemd nicht gelesen
  *//*//,"cat /etc/inittab 2>/dev/null | grep -E '^[^#].*respawn.*faxgetty' >/dev/null 2>&1"*/
- /*//
-   KLZ // void hservice_faxgetty()
-	*/
+/*//
+	KLZ // void hservice_faxgetty()
+ */
 // aufgerufen in: pruefhyla, empfcapi
 void paramcl::uebertif()
 {
@@ -7495,8 +7514,8 @@ void paramcl::uebertif()
 int paramcl::pruefhyla()
 {
 	Log(violetts+Tx[T_pruefhyla]+schwarz);
-	int ret=0;
-	hylasv1();
+		int ret=0;
+		hylasv1();
 	lsysen system=lsys.getsys(obverb,oblog);
 	hyinst hyinstart; // hyla source, hyla Paket, hylaplus Paket
 	if (system==deb /*// || system==fed*/) {
