@@ -5566,9 +5566,9 @@ void paramcl::DateienHerricht()
 	if (!anhfaxstr.empty()) anfxstrvec.push_back(anhfaxstr);
 	vector <urfxcl> urfx; // urspruenglicher Dateiname
 	svec qrueck;
-		if (findv==1) {
-	systemrueck("sudo find \""+zufaxenvz+"\" -maxdepth 1 -type f",obverb,oblog,&qrueck);
-		} else findfile(&qrueck,findv,obverb,oblog,0,zufaxenvz,"",1,1,Fol_Dat);
+	if (findv==1) {
+		systemrueck("sudo find \""+zufaxenvz+"\" -maxdepth 1 -type f",obverb,oblog,&qrueck);
+	} else findfile(&qrueck,findv,obverb,oblog,0,zufaxenvz,"",1,1,Fol_Dat);
 	zielmustercl mu[anfxstrvec.size()];
 	for(uchar iprio=0;iprio<anfxstrvec.size();iprio++) {
 		// der regex-flavor posix_basic (ed) erlaubt keinen Abzug aus 
@@ -5580,14 +5580,14 @@ void paramcl::DateienHerricht()
 			// 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 			if (!qrueck.at(iakt).empty()) {
 				if (!regexec(&mu[iprio].regex,qrueck[iakt].c_str(),0,NULL,0)) {
-				  /*//
+					/*//
 					// for(uchar iprio=0;iprio<anfxstrvec.size();iprio++)
 					//    // 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 					//    cmd=string("sudo find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\"";
 					//    vector<string> qrueck;
 					//    systemrueck(cmd,obverb,oblog, &qrueck);
 					//    for(size_t i=0;i<qrueck.size();i++) KLA
-					*/
+					 */
 					string stamm,exten,urname=qrueck.at(iakt);
 					getstammext(&(qrueck.at(iakt)),&stamm,&exten);
 					::Log(string(Tx[T_Endung])+tuerkis+exten+schwarz,obverb>1,oblog);
@@ -5769,7 +5769,7 @@ void paramcl::DateienHerricht()
 				cmd="sudo find \""+zufaxenvz+"\" -maxdepth 1 -type f -regextype ed -iregex \""+reg+"\"";
 				//			    " [- ,/;:\\\\\\.\\+]*[0-9][- ,/;:\\\\\\.\\+0-9]*[_]*[0-9]*[\\.]{0,1}pdf*$\" -iname \"*.pdf\"";
 				systemrueck(cmd,obverb, oblog, &qrueck);
-			} else findfile(&qrueck,findv,2,oblog,0,zufaxenvz,reg,1,1,Fol_Dat,0,0,1,0,1);
+			} else findfile(&qrueck,findv,obverb,oblog,0,zufaxenvz,reg,1,1,Fol_Dat,0,0,1,0,1);
 			for(size_t i=0;i<qrueck.size();i++) {
 				if (obocra) {
 					struct stat spdfstat={0};
