@@ -267,6 +267,8 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"', Typbit: '","', typebit: '"},
 	// T_Folge
 	{"', Folge: '","', follow: '"},
+	// T_noext
+	{"', regnoext: '","', regnoext: '"},
 	// T_Ergebnis
 	{"', Ergebnis: ","', result: "},
 	// T_Fehler_beim_Deferenzieren_von
@@ -3876,12 +3878,12 @@ void find2cl::ausgeb()
 }
 
 int find2cl::finde(string wo/*="."*/,string muster/*=""*/,const long tiefe/*=-1*/,int typbit/*=B_Alle*/,int folge/*=Fol_Dat*/,
-		time_t ab/*=0*/, time_t bis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/)
+		time_t ab/*=0*/, time_t bis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/,int obnoext/*=0*/)
 {
 	vector<string> verzn;
 	aufSplit(&verzn, wo);
 	regex_t reg;
-	if (regcomp(&reg, muster.c_str(), REG_EXTENDED | REG_NOSUB|(obicase?REG_ICASE:0))) 
+	if (regcomp(&reg, muster.c_str(),(obnoext?0:REG_EXTENDED)|REG_NOSUB|(obicase?REG_ICASE:0))) 
 		return REGFEHLER;
 	vector<string> stack;
 	for(size_t iv=0;iv<verzn.size();iv++) {
@@ -3889,11 +3891,12 @@ int find2cl::finde(string wo/*="."*/,string muster/*=""*/,const long tiefe/*=-1*
 		//    cout<<"nach finde.init, wo: "<<blau<<wo<<schwarz<<endl;
 	} //   for(size_t iv=0;iv<verzn.size();iv++)
 	if (obverb|oblog) {
-		string tiefestr=ltoan(tiefe);
-		string typbitstr=ltoan(typbit);
-		string folgestr=ltoan(folge);
-		string ergzl=ltoan(ergp->size());
-		Log(Txk[T_Suche_in]+blaus+wo+schwarz+Txk[T_nach]+blau+muster+schwarz+"'"+(obicase?"(ic)":"")+Txk[T_Tiefe]+"'"+blau+tiefestr+schwarz+Txk[T_Typbit]+blau+typbitstr+schwarz+Txk[T_Folge]+blau+folgestr+schwarz+Txk[T_Ergebnis]+gruen+ergzl+schwarz,obverb,oblog);
+		const string tiefestr=ltoan(tiefe);
+		const string typbitstr=ltoan(typbit);
+		const string folgestr=ltoan(folge);
+		const string ergzl=ltoan(ergp->size());
+		const string obnoexts=ltoan(obnoext);
+		Log(Txk[T_Suche_in]+blaus+wo+schwarz+Txk[T_nach]+blau+muster+schwarz+"'"+(obicase?"(ic)":"")+Txk[T_Tiefe]+"'"+blau+tiefestr+schwarz+Txk[T_Typbit]+blau+typbitstr+schwarz+Txk[T_Folge]+blau+folgestr+schwarz+Txk[T_noext]+blau+obnoexts+schwarz+Txk[T_Ergebnis]+gruen+ergzl+schwarz,obverb,oblog);
 		}
 	if (obverb>1) ausgeb();
 	return 0;
@@ -3999,6 +4002,8 @@ int find3cl::dofind()
 		for(it=wurz.begin();it!=wurz.end();it++) {
 			if (fertige.find(*it)!=fertige.end()) continue;
 			if (it->pfad.empty()) continue;
+			struct stat st;
+			if (lstat(it->pfad.c_str(),&st)) continue;
 			gearbeitet=1;
 			if (obverb>2||oblog>1) Log("Iterator: "+blaus+it->pfad+schwarz+Txk[T_Tiefe]+blau+ltoan(it->maxd)+schwarz,obverb,oblog);
 			if (nftw(it->pfad.c_str(), this->verarbeit, 20, flags) == -1) {
@@ -4043,7 +4048,7 @@ int find3cl::ausgeb()
 } //     int ausgeb()
 
 int find3cl::finde(const string wo/*="."*/,const string muster/*=""*/,long tiefe/*=-1*/,
-		int _typbit/*=B_Alle*/,int _folge/*=Fol_Dat*/,time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/,int _nurexec/*=0*/)
+		int _typbit/*=B_Alle*/,int _folge/*=Fol_Dat*/,time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/,int _nurexec/*=0*/,int obnoext/*=0*/)
 {
 	int ret=0;
 	maxdepthp=&maxdepth;
@@ -4076,15 +4081,16 @@ int find3cl::finde(const string wo/*="."*/,const string muster/*=""*/,long tiefe
 	// if (argc > 2 && strchr(argv[2], 'p') != NULL)
 	flags |= FTW_ACTIONRETVAL;
 	flags |= FTW_PHYS;
-	if (regcomp(&reg, muster.c_str(), REG_EXTENDED | REG_NOSUB|(obicase?REG_ICASE:0))) 
+	if (regcomp(&reg, muster.c_str(),(obnoext?0:REG_EXTENDED)|REG_NOSUB|(obicase?REG_ICASE:0))) 
 		return REGFEHLER;
 	ret=dofind();
 	if (obverb|oblog) {
-		string tiefestr=ltoan(tiefe);
-		string typbitstr=ltoan(typbit);
-		string folgestr=ltoan(folge);
-		string ergzl=ltoan(ergp->size());
-		Log(Txk[T_Suche_in]+blaus+wo+schwarz+Txk[T_nach]+blau+muster+schwarz+"'"+(obicase?"(ic)":"")+Txk[T_Tiefe]+"'"+blau+tiefestr+schwarz+Txk[T_Typbit]+blau+typbitstr+schwarz+Txk[T_Folge]+blau+folgestr+schwarz+Txk[T_Ergebnis]+gruen+ergzl+schwarz,obverb,oblog);
+		const string tiefestr=ltoan(tiefe);
+		const string typbitstr=ltoan(typbit);
+		const string folgestr=ltoan(folge);
+		const string ergzl=ltoan(ergp->size());
+		const string obnoexts=ltoan(obnoext);
+		Log(Txk[T_Suche_in]+blaus+wo+schwarz+Txk[T_nach]+blau+muster+schwarz+"'"+(obicase?"(ic)":"")+Txk[T_Tiefe]+"'"+blau+tiefestr+schwarz+Txk[T_Typbit]+blau+typbitstr+schwarz+Txk[T_Folge]+blau+folgestr+schwarz+Txk[T_noext]+blau+obnoexts+schwarz+Txk[T_Ergebnis]+gruen+ergzl+schwarz,obverb,oblog);
 	}
 	if (obverb>1) ausgeb();
 	return ret;
@@ -4103,15 +4109,15 @@ void find3cl::zuvec(svec *zu,uchar anteil/*=0*/)
 #if defined(altfind) && defined(neufind)
 void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar anteil/*=0*/,
 	const string& wo/*="."*/,const string& muster/*=""*/,long tiefe/*=-1*/,int _typbit/*=B_Alle*/,
-	int _folge/*=Fol_Dat*/, time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/)
+	int _folge/*=Fol_Dat*/, time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/,int obnoext/*=0*/)
 {
 		if (findv==2) {
 			find2cl f(obverb,oblog);
-			f.finde(wo,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase,nurexec);
+			f.finde(wo,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase,nurexec,obnoext);
 			f.zuvec(qrueckp,anteil);
 		} else if (findv==3) {
 			find3cl f(obverb,oblog);
-			f.finde(wo,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase,nurexec);
+			f.finde(wo,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase,nurexec,obnoext);
 			f.zuvec(qrueckp,anteil);
 		}
 }

@@ -260,6 +260,7 @@ enum Tkons_
 	T_nach,
 	T_Typbit,
 	T_Folge,
+	T_noext,
 	T_Ergebnis,
 	T_Fehler_beim_Deferenzieren_von,
 	T_konsMAX
@@ -815,7 +816,7 @@ class find2cl: elem2
       vector<string> stack,time_t ab, time_t bis,int nurexec);
   void ausgeb();
   int finde(string wo=".",string muster="",const long tiefe=-1,int typbit=B_Alle,int folge=Fol_Dat,
-	          time_t ab=0, time_t bis=0,int obicase=0,int nurexec=0);
+	          time_t ab=0, time_t bis=0,int obicase=0,int nurexec=0,int obnoext=0);
 	void zuvec(svec *zu,uchar anteil=0);
 };
 #endif
@@ -877,12 +878,12 @@ class find3cl
     int dofind();
     int ausgeb();
     int finde(const string wo=".",const string muster="",long tiefe=-1,int _typbit=B_Alle,int _folge=Fol_Dat,
-		           time_t _mab=0,time_t _mbis=0,int obicase=0,int nurexec=0);
+		           time_t _mab=0,time_t _mbis=0,int obicase=0,int nurexec=0,int obnoext=0);
 		void zuvec(svec *zu,uchar anteil=0);
 }; // class find3cl
 #endif
 #if defined(altfind) && defined(neufind)
 void findfile(svec *qrueck,uchar findv,int obverb=0,int oblog=0,uchar anteil=0,
 		const string& wo=".",const string& muster="",long tiefe=-1,int _typbit=B_Alle,int _folge=Fol_Dat, 
-		time_t _mab=0,time_t _mbis=0,int obicase=0,int nurexec=0);
+		time_t _mab=0,time_t _mbis=0,int obicase=0,int nurexec=0,int obnoext=0);
 #endif

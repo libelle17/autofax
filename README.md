@@ -156,12 +156,9 @@ by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
 options (e.g. the sql commands) cannot bei set via the
 command line, but only via the configuration file, which can
 be edited directly or interactively by &rsquo;<b>autofax
--rf</b>&rsquo;. <br>
-findv 1: 3 <b><br>
-Fehlender Parameter &lt;string&gt; zu -sp oder
---sprache!</b> <br>
-findv 2: 3 <br>
-findv 3: 3 <b><br>
+-rf</b>&rsquo;. <b><br>
+Fehlender Parameter &lt;string&gt; zu -sp oder --sprache!
+<br>
 Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
 Faxt Dateien aus Verzeichns &lt;pfad&gt;, die &rsquo;an Fax
@@ -1190,12 +1187,9 @@ Optionen (z.B. SQL-Befehle) k&ouml;nnen nicht
 &uuml;ber die Befehlszeile, sondern nur &uuml;ber
 die Konfigurationsdatei eingegeben werden, die wiederum
 direkt editiert oder auch &uuml;ber &rsquo;<b>autofax
--rf</b>&rsquo; interaktiv gepflegt werden kann. <br>
-findv 1: 3 <b><br>
-Fehlender Parameter &lt;string&gt; zu -sp oder
---sprache!</b> <br>
-findv 2: 3 <br>
-findv 3: 3 <b><br>
+-rf</b>&rsquo; interaktiv gepflegt werden kann. <b><br>
+Fehlender Parameter &lt;string&gt; zu -sp oder --sprache!
+<br>
 Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
 [&lt;content&gt;]] ... <br>
 Faxt Dateien aus Verzeichns &lt;pfad&gt;, die &rsquo;an Fax
