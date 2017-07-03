@@ -733,6 +733,10 @@ enum T_
 	T_Keine_waisen_Faxe_zum_Loeschen_da,
 	T_Ihre_Python3_Version_koennte_mit,
 	T_veraltet_sein_Wenn_Sie_Ihre_Faxe_OCR_unterziehen_wollen_dann_fuehren_Sie_bitte_ein_Systemupdate_durch_mit,
+	T_Fehler_zu_faxende_Datei,
+	T_nicht_gefunden_Eintrag_ggf_loeschen_mit_autofax_loew,
+	T_zu_loeschen,
+	T_Aus,
 	T_MAX
 };
 
@@ -2120,6 +2124,14 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	// T_veraltet_sein_Wenn_Sie_Ihre_Faxe_OCR_unterziehen_wollen_dann_fuehren_Sie_bitte_ein_Systemupdate_durch_mit
 	{" veraltet sein. Wenn Sie Ihre Faxe OCR unterziehen wollen, dann fuehren Sie bitte einen Systemupdate durch mit ",
 		" and could be obsolete. If You want to treat Your faxes with OCR, please update Your system with "},
+	// T_Fehler_zu_faxende_Datei
+	{"Fehler: zu faxende Datei '","Error: scheduled fax file '"},
+	// T_nicht_gefunden_Eintrag_ggf_loeschen_mit_autofax_loew
+	{"' nicht gefunden. Eintrag ggf. loeschen mit 'autofax -loew'","' not found. Optionally delete entry with 'autofax -delo"},
+	// T_zu_loeschen
+	{" zu loeschen: ",": "},
+	// T_Aus
+	{"Aus ","To delete from "},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -4189,6 +4201,7 @@ void paramcl::konfcapi()
 } // void paramcl::konfcapi()
 
 // in konfcapi und faxemitC (da konfacpi aus pruefcapi nicht unbedingt aufgerufen wird)
+// Datei /fax-nextnr ggf. richtigstellen
 void paramcl::nextnum()
 {
 	//// dieser Abschnitt war zuvor richtcapiher
@@ -5020,10 +5033,19 @@ size_t paramcl::loeschewaise()
 	while (cerg=su.HolZeile(),cerg?*cerg:0) {
 		if (*(*cerg+0)) {
 			struct stat entryo={0};
+			//// <<"Überprüfe: "<<gruen<<wvz+vtz+*(*cerg+0)<<schwarz<<endl;
 			if (!lstat((wvz+vtz+*(*cerg+0)).c_str(),&entryo)) continue; // Wenn es die Datei im Warteverzeichnis gibt
-			if (*(*cerg+1)) if (!lstat((cfaxusersqvz+vtz+*(*cerg+1)).c_str(),&entryo)) continue; // wenn eine Capispooldatei drinsteht und es sie gibt
-			if (*(*cerg+2)) if (!lstat((hsendqvz+"/q"+*(*cerg+2)).c_str(),&entryo)) continue; // wenn eine Hylaspooldatei drinsteht und es sie gibt
-			if (*(*cerg+3)) ids.push_back(*(*cerg+3));
+			//// <<"'"<<*(*cerg+1)<<"'"<<endl;
+			//// <<"Capispooldatei: "<<gruen<<cfaxusersqvz+vtz+*(*cerg+1)<<schwarz<<endl;
+			if (*(*cerg+1)) if (**(*cerg+1)) 
+				if (!lstat((cfaxusersqvz+vtz+*(*cerg+1)).c_str(),&entryo)) continue; // wenn eine Capispooldatei drinsteht und es sie gibt
+			//// <<"hsendqvz: "<<gruen<<hsendqvz+"/q"+*(*cerg+2)<<schwarz<<endl;
+			if (*(*cerg+2)) if (**(*cerg+2)) if (memcmp("0",*(*cerg+2),2)) // hylanr hat in der Datenbank Vorgabewert 0
+				if (!lstat((hsendqvz+"/q"+*(*cerg+2)).c_str(),&entryo)) continue; // wenn eine Hylaspooldatei drinsteht und es sie gibt
+			if (*(*cerg+3)) {
+			 ::Log(rots+Tx[T_Aus]+"'"+blau+spooltab+rot+"'"+Tx[T_zu_loeschen]+schwarz+"'"+blau+*(*cerg+0)+schwarz+"', id: "+blau+*(*cerg+3)+schwarz,1,1);
+			 ids.push_back(*(*cerg+3));
+			}
 		} // if (*(*cerg+0)) 
 	} // while (cerg=su.HolZeile(),cerg?*cerg:0) 
 	if (ids.size()) {
@@ -5902,8 +5924,14 @@ void paramcl::faxealle()
 			Log(" i: "+blaus+ltoan(i)+schwarz+Tx[T_PDFDatei]+blau+fsfv[i].spdf+schwarz+
 					" ."+Tx[T_obcapimitDoppelpunkt]+blau+(fsfv[i].fobcapi?Tx[T_ja]:Tx[T_nein])+schwarz+
 					" ."+Tx[T_obhylamitDoppelpunkt]+blau+(fsfv[i].fobhyla?Tx[T_ja]:Tx[T_nein])+schwarz);
-			if (fsfv[i].fobcapi) if (obcapi) faxemitC(My, spooltab, altspool, &fsfv[i],this,obverb,oblog);  
-			if (fsfv[i].fobhyla) if (obhyla) faxemitH(My, spooltab, altspool, &fsfv[i],this,obverb,oblog);  
+			const string ff=wvz+vtz+fsfv[i].spdf;
+			struct stat st;
+			if (lstat(ff.c_str(),&st)) {
+				::Log(Tx[T_Fehler_zu_faxende_Datei]+rots+ff+schwarz+Tx[T_nicht_gefunden_Eintrag_ggf_loeschen_mit_autofax_loew],1,oblog);
+			} else {
+				if (fsfv[i].fobcapi) if (obcapi) faxemitC(My, spooltab, altspool, &fsfv[i],this,ff,obverb,oblog);  
+				if (fsfv[i].fobhyla) if (obhyla) faxemitH(My, spooltab, altspool, &fsfv[i],this,ff,obverb,oblog);  
+			}
 			////      _out<<fsfv[i].id<<" "<<rot<<fsfv[i].npdf<<" "<<schwarz<<(int)fsfv[i].obcapi<<" "<<(int)fsfv[i].obhyla<<endl;
 		} // for(unsigned i=0;i<fsfv.size();i++) 
 	} // if (r0.obfehl) else  
@@ -8672,7 +8700,7 @@ void inDbc(DB *My, const string& spooltab, const string& altspool, const string&
 } // inDbc
 
 // wird aufgerufen in: faxealle
-void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog)
+void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, const string& ff, int obverb, int oblog)
 	// 3. wartende Dateien bestimmen
 	// 4. falls welche gefunden, capisuite pruefen
 	// 5. wegfaxen
@@ -8686,7 +8714,6 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 	} else {
 		Log(Tx[T_DieFaxnrvon]+drots+fsfp->spdf+schwarz+Tx[T_ist]+blau+fsfp->telnr+schwarz,obverb,oblog);
 		struct stat entryff={0};
-		const string ff=pmp->wvz+vtz+fsfp->spdf;
 		if (lstat(ff.c_str(), &entryff)) {
 			Log(rots+Tx[T_faxemitCFehler]+schwarz+Tx[T_Faxdatei]+blau+ff+rot+ Tx[T_fehlt]+schwarz,1,1);
 			// archiviere
@@ -8696,7 +8723,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 			// capisuitefax mit Userangabe nur fuer root erlaubt
 			pmp->nextnum();
 			string csfpfad;
-			const string cmd="capisuitefax -n "+(strcmp("root",curruser())?"":"-u"+pmp->cuser)+" -d "+fsfp->telnr+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
+			const string cmd="capisuitefax -n "+(strcmp("root",curruser())?"":"-u"+pmp->cuser)+" -d "+fsfp->telnr+" \""+ff+"\" 2>&1";
 			vector<string> faxerg;
 			systemrueck(cmd,1,1,&faxerg,0,wahr,Tx[T_Faxbefehl],0,1);
 			if (faxerg.size()) {
@@ -8717,7 +8744,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 					// if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
 				} else if (faxerg.at(0).find("can't open")==0) {
 					// Fax nicht in capisuite-spool gestellt, da Datei nicht zu oeffnen, also auch wieder aus Tabelle loeschen
-					Log(rots+Tx[T_Datei]+blau+pmp->wvz+vtz+fsfp->spdf+rot+"' (id: "+blau+fsfp->id+rot+
+					Log(rots+Tx[T_Datei]+blau+ff+rot+"' (id: "+blau+fsfp->id+rot+
 							Tx[T_nichtgefundenloeschesieausDB]+schwarz,1,1);
 					RS rsloe(My,"DELETE FROM `"+spooltab+"` WHERE id = "+fsfp->id,ZDB);
 				} //         if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
@@ -8773,7 +8800,7 @@ void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp,
 } // inDBh
 
 // wird aufgerufen in: faxealle
-void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog)
+void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, const string& ff,int obverb, int oblog)
 {
 	// wenn in capi maxversuch ueberschritten, dann mit hylafax wegfaxen und wenn erfolgreich im spool, dann in Datenbank aktualisieren
 	// 3. wartende Dateien bestimmen
@@ -8788,7 +8815,7 @@ void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 		if (!*pt || *pt=='_') break; // '_' ist wegen Ausweichzielen mit Unterstrichen
 		if (strchr("0123456789",*pt)) tel+=*pt;
 		else if (*pt=='+') tel+=pmp->InternationalPrefix;
-	}
+	} // 	for(;pt;pt++)
 	if (tel.empty()) {
 		Log(Tx[T_DieFaxnrvon]+drots+fsfp->spdf+schwarz+Tx[T_istleerfaxeesdahernicht],1,1);
 	} else {
@@ -8809,7 +8836,7 @@ void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 		string sendfax;
 		////    systemrueck("sudo sh -c 'which sendfax'",obverb,1,&rueck);
 		if (obprogda("sendfax",obverb,oblog,&sendfax)) {
-			const string cmd=sendfax+" -n -A "+(isnumeric(pmp->maxhdials)?"-T "+pmp->maxhdials:"")+" -d "+tel+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
+			const string cmd=sendfax+" -n -A "+(isnumeric(pmp->maxhdials)?"-T "+pmp->maxhdials:"")+" -d "+tel+" \""+ff+"\" 2>&1";
 			svec faxerg;
 			//// <<rot<<"Achtung: faxemith: "<<endl<<schwarz<<cmd<<endl;
 			if (!systemrueck(cmd,1,1,&faxerg,0,wahr,Tx[T_HylafaxBefehl])) {
@@ -8825,7 +8852,7 @@ void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 						}   // if (char *z2=strstr(z1,tz2)) 
 						break;
 					} // if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
-				} // string cmd=sendfax+" -n -A -d "+tel+" \""+pmp->wvz+vtz+fsfp->spdf+"\" 2>&1";
+				} // string cmd=sendfax+" -n -A -d "+tel+" \""+ff+"\" 2>&1";
 			} // if (!systemrueck(cmd,1,1,&faxerg,wahr,wahr,Tx[T_HylafaxBefehl]))
 		} // if (rueck.size()) 
 	} // tel.empty() else

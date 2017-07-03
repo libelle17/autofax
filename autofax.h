@@ -16,8 +16,8 @@ string kopiere(const string& qdatei, const string& zieldp, uint *kfehler, uchar 
 string kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
 void prueffuncgettel3(DB *Myp, const string& usr, const string& host, int obverb, int oblog);
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, int obverb, int oblog);
-void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog);
-void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, int obverb, int oblog);
+void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, const string& ff, int obverb, int oblog);
+void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, const string& ff, int obverb, int oblog);
 int pruefcapi(paramcl *pmp, int obverb, int oblog);
 void kuerzevtz(string *vzp);
 pid_t PIDausName(const char* PName, uchar klgr, uchar exakt, int obverb, int oblog);
