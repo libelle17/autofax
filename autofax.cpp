@@ -1162,7 +1162,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	// T_verwendet_die_Datenbank_string_anstatt
 	{"verwendet die Datenbank <string> anstatt","uses the database <string> instead of"},
 	// T_Version_1_2_oder_3_Dateisuche_anstatt
-	{"Version 1,2 oder 3 -Dateisuche anstatt","version 1,2 or 3 of filefind instead of"},
+	{"Version 1,2 oder 3 -Dateisuche (variable Performanceunterschiede) anstatt",
+	 "version 1,2 or 3 of filefind (variable performance differences instead of"},
 	// T_protokolliert_ausfuehrlich_in_Datei
 	{"protokolliert ausfuehrlich in Datei '","put detailed logs in file '"},
 	// T_sonst_knapper

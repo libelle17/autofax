@@ -311,7 +311,8 @@ MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 -db, --datenbank &lt;string&gt;</b>: verwendet die Datenbank
 &lt;string&gt; anstatt &rsquo;<b>autofax</b>&rsquo; <b><br>
 -fd, --finde &lt;zahl&gt;</b>: Version 1,2 oder 3
--Dateisuche anstatt &rsquo;<b>3</b>&rsquo; <b><br>
+-Dateisuche (variable Performanceunterschiede) anstatt
+&rsquo;<b>3</b>&rsquo; <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
 nicht), anstatt &rsquo;<b>2</b>&rsquo;</p>
@@ -1347,7 +1348,8 @@ MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 -db, --datenbank &lt;string&gt;</b>: verwendet die Datenbank
 &lt;string&gt; anstatt &rsquo;<b>autofax</b>&rsquo; <b><br>
 -fd, --finde &lt;zahl&gt;</b>: Version 1,2 oder 3
--Dateisuche anstatt &rsquo;<b>3</b>&rsquo; <b><br>
+-Dateisuche (variable Performanceunterschiede) anstatt
+&rsquo;<b>3</b>&rsquo; <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
 nicht), anstatt &rsquo;<b>2</b>&rsquo;</p>
