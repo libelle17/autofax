@@ -2,7 +2,7 @@
 .\" manual page for &&dprog&&
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "03.07.17" "Version 0.43807" "\fB&&dprog&&\fR man page"
+.TH man 1 "04.07.17" "Version 0.43807" "\fB&&dprog&&\fR man page"
 .SH NAME
 \fB&&dprog&&\fR \- Fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -193,7 +193,7 @@ und traegt sie in MariaDB-Datenbank '\fBautofax\fB' (Tabellen: `\fBouta\fB`,`\fB
 \fB -fd, --finde <zahl>\fR: Version 1,2 oder 3 -Dateisuche anstatt '\fB3\fR'
 .br
 \fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB2\fR'
-langi: .SH FUNCTIONALITY
+.SH FUNCTIONALITY
 .HP 3 
 1) The current hardware is being checked.
 .br

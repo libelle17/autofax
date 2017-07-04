@@ -8,6 +8,7 @@
 <a href="#INSTALLATION_D">INSTALLATION</a><br>
 <a href="#USAGE_D">USAGE</a><br>
 <a href="#OPTIONS_D">OPTIONS</a><br>
+<a href="#FUNCTIONALITY_D">FUNCTIONALITY</a><br>
 <a href="#PRECONDITIONS_D">PRECONDITIONS</a><br>
 <a href="#AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_D">AUTOMATICALLY INSTALLED SOFTWARE PACKAGES</a><br>
 <a href="#IMPLICATIONS_D">IMPLICATIONS</a><br>
@@ -313,8 +314,12 @@ MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 -Dateisuche anstatt &rsquo;<b>3</b>&rsquo; <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
-nicht), anstatt &rsquo;<b>2</b>&rsquo; langi: .SH
-FUNCTIONALITY</p>
+nicht), anstatt &rsquo;<b>2</b>&rsquo;</p>
+
+<h2>FUNCTIONALITY
+<a name="FUNCTIONALITY_D"></a>
+</h2>
+
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -1025,6 +1030,7 @@ caused by the program.</p>
 <a href="#INSTALLATION_D">INSTALLATION</a><br>
 <a href="#GEBRAUCH_D">GEBRAUCH</a><br>
 <a href="#OPTIONEN_D">OPTIONEN</a><br>
+<a href="#FUNKTIONSWEISE_D">FUNKTIONSWEISE</a><br>
 <a href="#VORAUSSETZUNGEN_D">VORAUSSETZUNGEN</a><br>
 <a href="#AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE_D">AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE</a><br>
 <a href="#AUSWIRKUNGEN DES PROGRAMMABLAUFS_D">AUSWIRKUNGEN DES PROGRAMMABLAUFS</a><br>
@@ -1344,8 +1350,12 @@ MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 -Dateisuche anstatt &rsquo;<b>3</b>&rsquo; <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
-nicht), anstatt &rsquo;<b>2</b>&rsquo; langi: .SH
-FUNKTIONSWEISE</p>
+nicht), anstatt &rsquo;<b>2</b>&rsquo;</p>
+
+<h2>FUNKTIONSWEISE
+<a name="FUNKTIONSWEISE_D"></a>
+</h2>
+
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
