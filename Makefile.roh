@@ -278,7 +278,7 @@ endif
 define priv_man_umw
 	-@printf " aktualisiere/updating %b$(1)%b\n" $(blau) $(reset)
 	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat versdt)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" $(1))
-	-@L=$(echo $(1)|head -c1);TMP=tmp_opt_$$L;./$(EXEC) -1lg $$L -sh|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
+	-@L=$(shell echo $(1)|cut -d_ -f2|head -c1);TMP=tmp_opt_$$L;./$(EXEC) -1lg $$L -sh|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
 	nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
 	von=".SH $(OPN)"; bis=".SH $(FKT)"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" $(1);
 endef
