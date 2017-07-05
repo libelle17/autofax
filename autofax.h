@@ -59,7 +59,7 @@ class urfxcl // urspruengliche Dateidaten vor Aufteilung an verschiedene Faxadre
     string teil;
     string ur;
     unsigned prio; // Prioritaet der Fax-Programme: 0 = capi und 0 = hyla per Konfigurationsdatei, 1= capi und 2= hyla per Faxdateiname
-    urfxcl(const string& teil, string& ur,unsigned prio): teil(teil), ur(ur), prio(prio) {}
+    urfxcl(const string& teil, const string& ur,unsigned prio): teil(teil), ur(ur), prio(prio) {}
 };
 
 class fxfcl // Faxfile
@@ -365,6 +365,7 @@ class paramcl // Programmparameter
 		void empfcapi(const string& stamm,uchar indb=1,uchar mitversch=1);
 		void uebertif();
 		void zeigdienste();
+		void wandle(const string& udatei,const string& urname,const uchar iprio,svec& toktxt,svec& toknr,svec& tokname,const string& anfxstr,const string& exten,vector<urfxcl> *urfxp);
 	public:
 		int Log(const string& text,const bool oberr=0,const short klobverb=0);
     paramcl(int argc,char** argv);

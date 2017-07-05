@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "05.07.17" "Version 0.43815" "Manual-Seite für ²DPROG²"
+.TH man 1 "05.07.17" "Version 0.43841" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG²\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -38,7 +38,7 @@ Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerich
 .br
 Es existiert dann ein Verzeichnis z.B. '\fBzufaxen\fR', in das z.B. Benutzer im Netzwerk (z.B. über die o.g. Samba-Freigabe) zu faxende Dateien stellen können wie z.B. 
 .br
-"\fBArztbericht zu Franz Krank an Dr. Gesund und Franz Krank an Fax 099 987654321 und 088 887654321.doc\fR" (es könnte auch z.B. eine *.xls, eine *.jpg, eine *.tif, eine *.txt oder eine *.pdf-Datei sein; die Passage 'an Dr. Gesund und Franz Krank ' ist optional für die spätere Zordnung der Faxnummer(n) in der Datenbank, sie darf auch fehlen).
+"\fBArztbericht zu Franz Krank an Dr. Gesund und Franz Krank an Fax 099 987654321 und 088 887654321.doc\fR" (es könnte auch z.B. eine *.xls, eine *.jpg, eine *.tif, eine *.txt oder eine *.pdf-Datei sein; die Passage 'an Dr. Gesund und Franz Krank ' ist optional für die spätere Zordnung der Faxnummer(n) in der Datenbank, sie darf auch fehlen; auf der anderen Seite darf für den Fall, dass das Programm die letzten (1-)3 Faxe zu einem Adressaten eindeutig einer Faxnummer zuordnen kann, letztere auch fehlen).
 .br
 Wenn \fB²DPROG²\fR beim nächsten Mal automatisch aufgerufen wird (standardmäßig alle 2 Minuten), wird die o.g. Beispieldatei zunächst kopiert und umbenannt in 
 .br

@@ -1234,6 +1234,7 @@ void aufiSplit(vector<string> *tokens, const string& text, const char* sep,bool 
 	delete usep;
 } // void aufiSplit(vector<string> *tokens, const string& text, const char* sep,bool nichtmehrfach) 
 
+// suche in einem String von hinten ohne Groﬂ- und Klein-Unterscheidung
 size_t irfind(const string& wo, const string& was)
 {
 	string wou, wasu;

@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "05.07.17" "Version 0.43815" "\fB²DPROG²\fR man page"
+.TH man 1 "05.07.17" "Version 0.43841" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG²\fR \- Fax server functionality: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -36,7 +36,7 @@ Ideally, the program should have installed itsself after a single call (see abov
 .br
 Then a directory e.g. '\fBtobefaxed\fR' exists, in which e.g. users in a network (e.g. via the above mentioned samba share) can deposit files to be faxed, e.g. 
 .br
-"\fBMedical report on Frank Ill to Dr. Healthy and Frank Ill to fax 099 987654321 and 088 887654321.doc\fR" (it could also be e.g. an *.xls, a *.jpg, a *.tif, a *.txt, a *pdf file; the section ' to Dr. Healthy and Frank Ill' is optional for the later allocation of the fax number(s) in the database, it may also be obmitted).
+"\fBMedical report on Frank Ill to Dr. Healthy and Frank Ill to fax 099 987654321 and 088 887654321.doc\fR" (it could also be e.g. an *.xls, a *.jpg, a *.tif, a *.txt, a *pdf file; the section ' to Dr. Healthy and Frank Ill' is optional for the later allocation of the fax number(s) in the database, it may also be obmitted; on the other hand, if the program can assign the last (1-)3 faxes to a certain addressee clearly, the fax number may be obmitted).
 .br
 When \fB²DPROG²\fR is called for the next time (per default 2 minutes), the above mentioned example file will initially be copied and renamed into 
 .br

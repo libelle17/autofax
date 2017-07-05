@@ -106,7 +106,9 @@ Frank Ill to fax 099 987654321 and 088
 *.jpg, a *.tif, a *.txt, a *pdf file; the section &rsquo; to
 Dr. Healthy and Frank Ill&rsquo; is optional for the later
 allocation of the fax number(s) in the database, it may also
-be obmitted). <br>
+be obmitted; on the other hand, if the program can assign
+the last (1-)3 faxes to a certain addressee clearly, the fax
+number may be obmitted). <br>
 When <b>autofax</b> is called for the next time (per default
 2 minutes), the above mentioned example file will initially
 be copied and renamed into <br>
@@ -1129,7 +1131,10 @@ Krank an Fax 099 987654321 und 088 887654321.doc</b>&quot;
 *.tif, eine *.txt oder eine *.pdf-Datei sein; die Passage
 &rsquo;an Dr. Gesund und Franz Krank &rsquo; ist optional
 f&uuml;r die sp&auml;tere Zordnung der Faxnummer(n)
-in der Datenbank, sie darf auch fehlen). <br>
+in der Datenbank, sie darf auch fehlen; auf der anderen
+Seite darf f&uuml;r den Fall, dass das Programm die
+letzten (1-)3 Faxe zu einem Adressaten eindeutig einer
+Faxnummer zuordnen kann, letztere auch fehlen). <br>
 Wenn <b>autofax</b> beim n&auml;chsten Mal automatisch
 aufgerufen wird (standardm&auml;&szlig;ig alle 2
 Minuten), wird die o.g. Beispieldatei zun&auml;chst

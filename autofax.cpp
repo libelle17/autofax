@@ -737,6 +737,7 @@ enum T_
 	T_nicht_gefunden_Eintrag_ggf_loeschen_mit_autofax_loew,
 	T_zu_loeschen,
 	T_Aus,
+	T_Fehler_beim_Analysieren_des_Musters,
 	T_MAX
 };
 
@@ -2133,6 +2134,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{" zu loeschen: ",": "},
 	// T_Aus
 	{"Aus ","To delete from "},
+	// T_Fehler_beim_Analysieren_des_Musters
+	{"Fehler beim Analysieren des Musters ","Error while analyzing the pattern "},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -5579,6 +5582,46 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 	return erg; 
 } // int paramcl::zupdf(string von, string zielvz, int obocr)
 
+// wird aufgerufen in Dateienherricht
+void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio,
+		svec& toktxt,svec& toknr, svec& tokname,const string& anfxstr, const string& exten, vector<urfxcl> *urfxp)
+{
+	for(unsigned j=0;j<toknr.size();j++) { 
+		string tmp;
+		gtrim(&toknr[j]);
+		gtrim(&toktxt[0]);
+		if (toktxt.size()==1) {                          // keine Arztliste
+			tmp= string(toktxt[0]+" "+anfxstr+" "+toknr[j]+'.'+exten);
+		} else if (tokname.size()!=toknr.size()) {         // Arztliste nicht gleich lang wie Faxnummernliste
+			gtrim(&(toktxt[1]));
+			tmp= string(toktxt[0]+anstr+toktxt[1]+" "+anfxstr+" "+toknr[j]+'.'+exten);
+		} else {                                       // alles optimal
+			gtrim(&(tokname[j]));
+			tmp= string(toktxt[0]+anstr+tokname[j]+" "+anfxstr+" "+toknr[j]+'.'+exten);
+		}
+		::Log("toknr["+blaus+ltoan(j)+"]:"+tuerkis+toknr[j]+schwarz,obverb>1,oblog);
+		uint kfehler=0;
+		// alle bis auf die letzte Adresse
+		if (j<toknr.size()-1) {
+			const string kopiert=kopiere(udatei,tmp,&kfehler,1);
+			if (kfehler) continue;
+			urfxp->push_back(urfxcl(kopiert,urname,iprio));
+			::Log(Tx[T_ErstelledurchKopieren]+rots+tmp+schwarz,1,oblog);
+		} else {
+			if (udatei!=tmp) {
+				uint vfehler=0;
+				dorename((udatei),tmp,cuser,&vfehler,obverb,oblog);
+				if (vfehler)
+					::Log(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz,1,1);
+				else {
+					::Log(Tx[T_ErstelledurchBenennen]+rots+tmp+schwarz,1,oblog);
+				} // 				if (vfehler)
+			} // if (udatei!=tmp) 
+			urfxp->push_back(urfxcl(tmp,urname,iprio));
+		} // if (j<toknr.size()-1) 
+	} // for(unsigned j=0;j<toknr.size();j++) 
+} // void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio, ...
+
 // zufaxenvz = zufaxen-Verzeichnis
 // 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 // 1b. die Nicht-PDF-Dateien in dem Verzeichnis zum PDF-Druck ermitteln, in Warteverzeichnis verschieben und in die PDF-Liste spdf eintragen ...
@@ -5605,8 +5648,10 @@ void paramcl::DateienHerricht()
 	for(uchar iprio=0;iprio<anfxstrvec.size();iprio++) {
 		// der regex-flavor posix_basic (ed) erlaubt keinen Abzug aus 
 		const string mstr=anfxstrvec.at(iprio)+filter+".*"; // z.B. "an Fax +49"
-		if (mu[iprio].setzemuster(mstr,0)) 
+		if (mu[iprio].setzemuster(mstr,0)) {
+			Log(Tx[T_Fehler_beim_Analysieren_des_Musters]+mstr,1,1);
 			exit(21);
+		}
 		// der Reihe nach nach Dateien suchen, die das jeweilige Trennzeichen enthalten
 		for(size_t iakt=0;iakt<qrueck.size();iakt++) {
 			// 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
@@ -5624,7 +5669,7 @@ void paramcl::DateienHerricht()
 					getstammext(&(qrueck.at(iakt)),&stamm,&exten);
 					::Log(string(Tx[T_Endung])+tuerkis+exten+schwarz,obverb>1,oblog);
 					::Log(string(Tx[T_Stamm])+tuerkis+stamm+schwarz,obverb>1,oblog);
-					vector<string> tok, toknr, toktxt, tokname;
+					svec toktxt/*Spaltung an anstr*/, toknr/*Spaltung an undstr*/, tokname/*Spaltung an undstr*/;
 					::Log(string(Tx[T_trennenach])+blau+anfxstrvec.at(iprio)+schwarz+"'",obverb>1,oblog);
 					size_t pos0=0;
 					if ((pos0=irfind(stamm,anfxstrvec.at(iprio)))!=string::npos) {
@@ -5645,39 +5690,7 @@ void paramcl::DateienHerricht()
 							aufiSplit(&tokname,toktxt[1],undstr.c_str(),1,obverb>1,oblog);
 						} //         if (toktxt.size()>1)
 						//// ::Log("toknr.size(): "+blaus+ltoan(toknr.size())+schwarz,obverb>0,oblog);
-						for(unsigned j=0;j<toknr.size();j++) { // alle bis auf die letzte Adresse
-							string tmp;
-							gtrim(&toknr[j]);
-							gtrim(&toktxt[0]);
-							if (toktxt.size()==1) {                          // keine Arztliste
-								tmp= string(toktxt[0]+" "+anfxstrvec.at(iprio)+" "+toknr[j]+'.'+exten);
-							} else if (tokname.size()!=toknr.size()) {         // Arztliste nicht gleich lang wie Faxnummernliste
-								gtrim(&(toktxt[1]));
-								tmp= string(toktxt[0]+anstr+toktxt[1]+" "+anfxstrvec.at(iprio)+" "+toknr[j]+'.'+exten);
-							} else {                                       // alles optimal
-								gtrim(&(tokname[j]));
-								tmp= string(toktxt[0]+anstr+tokname[j]+" "+anfxstrvec.at(iprio)+" "+toknr[j]+'.'+exten);
-							}
-							::Log("toknr["+blaus+ltoan(j)+"]:"+tuerkis+toknr[j]+schwarz,obverb>1,oblog);
-							uint kfehler=0;
-							if (j<toknr.size()-1) {
-								const string kopiert=kopiere(qrueck.at(iakt),tmp,&kfehler,1);
-								if (kfehler) continue;
-								urfx.push_back(urfxcl(kopiert,urname,iprio));
-								::Log(Tx[T_ErstelledurchKopieren]+rots+tmp+schwarz,1,oblog);
-							} else {
-								if (qrueck.at(iakt)!=tmp) {
-									uint vfehler=0;
-									dorename((qrueck.at(iakt)),tmp,cuser,&vfehler,obverb,oblog);
-									if (vfehler)
-										::Log(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz,1,1);
-									else {
-										::Log(Tx[T_ErstelledurchBenennen]+rots+tmp+schwarz,1,oblog);
-									}
-								} // if (qrueck.at(iakt)!=tmp) 
-								urfx.push_back(urfxcl(tmp,urname,iprio));
-							} // if (j<toknr.size()-1) 
-						} // for(unsigned j=0;j<toknr.size();j++) 
+		        wandle(qrueck.at(iakt),urname,iprio,toktxt,toknr,tokname,anfxstrvec.at(iprio),exten,&urfx);
 					} // 				if ((pos0=stamm.rfind(anfxstrvec.at(iprio).c_str()))!=string::npos)
 					qrueck[iakt].clear(); // Datei nach Gebrauch loeschen, um dann die restlichen zu sehen
 				} else {
@@ -5689,6 +5702,65 @@ void paramcl::DateienHerricht()
 			////		KLZ
 		} // for(size_t iakt=0;iakt<qrueck.size();iakt++)
 	} // 	for(uchar iprio=0;iprio<anfxstrvec.size();iprio++)
+
+	// 2. falls keine Faxnummer, aber der Name angegeben, in der Datenbank schauen, ob die letzen bis zu 3 Faxe an diesen Namen an die gleiche Faxnummer
+	//    gingen; falls ja, können es dorthin geschickt werden
+	for(size_t iakt=0;iakt<qrueck.size();iakt++) {
+		string stamm,exten,urname=qrueck.at(iakt);
+		getstammext(&(qrueck.at(iakt)),&stamm,&exten);
+		svec toktxt, toknr/*Spaltung an undstr*/, tokname/*Spaltung an undstr*/;
+		::Log(string(Tx[T_trennenach])+blau+anstr+schwarz+"'",obverb>1,oblog);
+		size_t pos0=0;
+		if ((pos0=irfind(stamm,anstr))!=string::npos) {
+			string vor=stamm.substr(0,pos0);
+			size_t pos1=0;
+			while ((pos1=irfind(vor,anstr))!=string::npos) { // wenn der Trennstring versehentlich doppelt eingegeben wurde
+				vor.erase(pos1,string::npos);
+			}
+			::Log(Tx[T_vor]+blaus+vor+schwarz,obverb>1,oblog);
+			const string nach=stamm.substr(pos0+anstr.length());
+			::Log(Tx[T_danach]+blaus+nach+schwarz,obverb>1,oblog);
+			// ggf. die Adressatennamen suchen ...
+			aufiSplit(&tokname,nach,undstr.c_str(),1,obverb>1,oblog);
+			for(unsigned j=0;j<tokname.size();j++) {
+				uchar fehler=1;
+				if (!tokname[j].empty()) {
+					string tn; // Leerzeichen, auch in der Mitte, entfernen
+					for(string::iterator k=tokname[j].begin();k<tokname[j].end();k++) if (*k!=' ') tn+=*k;
+					char ***cerg;
+					RS rs(My,"SELECT COUNT(DISTINCT o.rcfax),COUNT(o.rcfax), o.rcfax FROM outa o "
+							"INNER JOIN "
+							"(SELECT eind FROM outa WHERE REPLACE(adressat,' ','') = '"+tn+"' AND erfolg=1 ORDER BY eind DESC LIMIT 7) o2 "
+							"ON o.eind=o2.eind "
+							"WHERE REPLACE(adressat,' ','') = '"+tn+"'",ZDB);
+					if (!rs.obfehl) {
+						while (cerg=rs.HolZeile(),cerg?*cerg:0) {
+							if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2)) { 
+								toknr<<*(*cerg+2);
+								fehler=0;
+								caus<<"NR: "<<*(*cerg+2)<<endl;
+							} // 							if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2))
+						} // 						while (cerg=rs.HolZeile(),cerg?*cerg:0)
+					} // 					if (!rs.obfehl)
+				} // 				if (!tokname[j].empty())
+				if (fehler) toknr<<"";
+			} // 			for(unsigned j=0;j<tokname.size();j++) { 
+			for(unsigned j=tokname.size()-1;;j--) { // alle bis auf die letzte Adresse
+				if (tokname[j].empty() && toknr[j].empty()) {
+					tokname.erase(tokname.begin()+j);
+					toknr.erase(tokname.begin()+j);
+				}
+				if (!j) break;
+			}
+			if (toknr.size()) {
+				toktxt<<vor;
+				toktxt<<"-";
+		        wandle(qrueck.at(iakt),urname,0,toktxt,toknr,tokname,anfxstrvec.at(0),exten,&urfx);
+					qrueck[iakt].clear(); // Datei nach Gebrauch loeschen, um dann die restlichen zu sehen
+						
+			} // 			if (toknr.size())
+		} // 		if ((pos0=irfind(stamm,anstr))!=string::npos)
+	} // 	for(size_t iakt=0;iakt<qrueck.size();iakt++)
 
 	// nicht faxbare
 	for(size_t i=0;i<qrueck.size();i++) {
