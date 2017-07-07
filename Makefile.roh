@@ -53,6 +53,8 @@ EXPFAD::=$(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | awk '{ print lengt
 
 CCInst::=gcc6-c++
 -include vars # wird durch install.sh generiert
+GDAT::=$(DATEIEN:inst.log=)
+GDAT::=$(GDAT:uninstallinv=)
 PROGGROSS::=`echo $(DPROG) | tr a-z A-Z`
 EXEC::=$(DPROG)
 INSTEXEC::=$(EXPFAD)/$(EXEC)
@@ -355,13 +357,11 @@ testr:
 
 version: dovers
 dovers:
-	@mkdir -p res
-	@cp -au $(DATEIEN) res
-	@mv res/Makefile res/Makefile.roh
-	@git rm --cached --ignore-unmatch $(DATEIEN:Makefile=Makefile.roh) gitvdt README.md
+	@R=res;MF=Makefile;mkdir -p $$R; cp -au $(GDAT) $$R; echo $(GDAT); mv $$R/$$MF $$RES/$$MF.roh
+	@git rm --cached --ignore-unmatch $(GDAT:Makefile=Makefile.roh) gitvdt versdt README.md
 	@git commit -m "nix"
-	@git add $(DATEIEN:Makefile=Makefile.roh) gitvdt README.md
-	@git rm --cached vgb.cpp uninstallinv
+	@git add $(GDAT:Makefile=Makefile.roh) gitvdt README.md
+	@git rm --cached vgb.cpp
 	make opts && sudo make install && make git
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
