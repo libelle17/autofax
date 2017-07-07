@@ -1,0 +1,188 @@
+
+Rueckmeldung bei einricht libmysqlclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmysqlclient-devel' is already installed.
+No update candidate for 'libmysqlclient-devel-10.0.29-18.1.x86_64'. The highest available version is already installed.
+Resolving package dependencies...
+
+Nothing to do.
+IP: ''
+
+Rueckmeldung bei einricht libmariadbclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmariadbclient-devel' not found in package names. Trying capabilities.
+IP: ''
+
+Rueckmeldung bei einricht libmysqlclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmysqlclient-devel' is already installed.
+No update candidate for 'libmysqlclient-devel-10.0.29-18.1.x86_64'. The highest available version is already installed.
+Resolving package dependencies...
+
+Nothing to do.
+IP: ''
+
+Rueckmeldung bei einricht libmariadbclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmariadbclient-devel' not found in package names. Trying capabilities.
+IP: ''
+
+Rueckmeldung bei einricht libmysqlclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmysqlclient-devel' is already installed.
+No update candidate for 'libmysqlclient-devel-10.0.29-18.1.x86_64'. The highest available version is already installed.
+Resolving package dependencies...
+
+Nothing to do.
+IP: ''
+
+Rueckmeldung bei einricht libmariadbclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmariadbclient-devel' not found in package names. Trying capabilities.
+IP: ''
+
+Rueckmeldung bei einricht libmysqlclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmysqlclient-devel' is already installed.
+No update candidate for 'libmysqlclient-devel-10.0.29-18.1.x86_64'. The highest available version is already installed.
+Resolving package dependencies...
+
+Nothing to do.
+IP: ''
+
+Rueckmeldung bei einricht libmariadbclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmariadbclient-devel' not found in package names. Trying capabilities.
+IP: ''
+
+Rueckmeldung bei einricht libmysqlclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmysqlclient-devel' is already installed.
+No update candidate for 'libmysqlclient-devel-10.0.29-18.1.x86_64'. The highest available version is already installed.
+Resolving package dependencies...
+
+Nothing to do.
+IP: ''
+
+Rueckmeldung bei einricht libmariadbclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmariadbclient-devel' not found in package names. Trying capabilities.
+IP: ''
+
+Rueckmeldung bei einricht libmysqlclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmysqlclient-devel' is already installed.
+No update candidate for 'libmysqlclient-devel-10.0.29-18.1.x86_64'. The highest available version is already installed.
+Resolving package dependencies...
+
+Nothing to do.
+IP: ''
+
+Rueckmeldung bei einricht libmariadbclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmariadbclient-devel' not found in package names. Trying capabilities.
+IP: ''
+
+Rueckmeldung bei einricht libmysqlclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmysqlclient-devel' is already installed.
+No update candidate for 'libmysqlclient-devel-10.0.29-18.1.x86_64'. The highest available version is already installed.
+Resolving package dependencies...
+
+Nothing to do.
+IP: ''
+
+Rueckmeldung bei einricht libmariadbclient-devel:
+Loading repository data...
+Reading installed packages...
+'libmariadbclient-devel' not found in package names. Trying capabilities.
+IP: ''
+
+Rueckmeldung zu: 'sudo zypper -n --gpg-auto-import-keys in -y -f kernel-devel':
+Loading repository data...
+Reading installed packages...
+Forcing installation of 'kernel-devel-4.4.62-18.6.1.noarch' from repository 'Hauptaktualisierungs-Repository'.
+Resolving package dependencies...
+
+The following package is going to be reinstalled:
+kernel-devel-4.4.62-18.6.1
+
+1 package to reinstall.
+Overall download size: 0 B. Already cached: 11.4 MiB. No additional space will be used or freed after the operation.
+Continue? [y/n/...? shows all options] (y): y
+In cache kernel-devel-4.4.62-18.6.1.noarch.rpm (1/1),  11.4 MiB ( 51.7 MiB unpacked)
+Checking for file conflicts: [........done]
+(1/1) Installing: kernel-devel-4.4.62-18.6.1.noarch [........done]
+ustring: ' kernel-devel-4.4.62-18.6.1'
+ustring: '206B65726E656C2D646576656C2D342E342E36322D31382E362E31'
+
+Rueckmeldung zu: 'sudo zypper -n --gpg-auto-import-keys in -y -f kernel-devel':
+Retrieving repository 'Aktualisierungs-Repository (DEBUG)' metadata [......done]
+Building repository 'Aktualisierungs-Repository (DEBUG)' cache [....done]
+Retrieving repository 'Hauptaktualisierungs-Repository' metadata [............done]
+Building repository 'Hauptaktualisierungs-Repository' cache [....done]
+Loading repository data...
+Reading installed packages...
+Forcing installation of 'kernel-devel-4.4.70-18.9.1.noarch' from repository 'Hauptaktualisierungs-Repository'.
+Resolving package dependencies...
+
+The following package is going to be reinstalled:
+  kernel-devel-4.4.70-18.9.1
+
+1 package to reinstall.
+Overall download size: 0 B. Already cached: 11.5 MiB. No additional space will be used or freed after the operation.
+Continue? [y/n/...? shows all options] (y): y
+In cache kernel-devel-4.4.70-18.9.1.noarch.rpm (1/1),  11.5 MiB ( 51.7 MiB unpacked)
+Checking for file conflicts: [........done]
+(1/1) Installing: kernel-devel-4.4.70-18.9.1.noarch [........done]
+ustring: ' kernel-devel-4.4.70-18.9.1'
+ustring: '206B65726E656C2D646576656C2D342E342E37302D31382E392E31'
+
+Rueckmeldung zu: 'sudo zypper -n --gpg-auto-import-keys in -y -f kernel-devel':
+Loading repository data...
+Reading installed packages...
+Forcing installation of 'kernel-devel-4.4.72-18.12.1.noarch' from repository 'Hauptaktualisierungs-Repository'.
+Resolving package dependencies...
+
+The following package is going to be reinstalled:
+  kernel-devel-4.4.72-18.12.1
+
+1 package to reinstall.
+Overall download size: 0 B. Already cached: 11.5 MiB. No additional space will be used or freed after the operation.
+Continue? [y/n/...? shows all options] (y): y
+In cache kernel-devel-4.4.72-18.12.1.noarch.rpm (1/1),  11.5 MiB ( 51.7 MiB unpacked)
+Checking for file conflicts: [..........done]
+(1/1) Installing: kernel-devel-4.4.72-18.12.1.noarch [.......done]
+ustring: ' kernel-devel-4.4.72-18.12.1'
+ustring: '206B65726E656C2D646576656C2D342E342E37322D31382E31322E31'
+
+Rueckmeldung zu: 'sudo zypper -n --gpg-auto-import-keys in -y -f kernel-devel':
+Loading repository data...
+Reading installed packages...
+Forcing installation of 'kernel-devel-4.4.73-18.17.1.noarch' from repository 'Hauptaktualisierungs-Repository'.
+Resolving package dependencies...
+
+The following package is going to be reinstalled:
+  kernel-devel-4.4.73-18.17.1
+
+1 package to reinstall.
+Overall download size: 0 B. Already cached: 11.5 MiB. No additional space will be used or freed after the operation.
+Continue? [y/n/...? shows all options] (y): y
+In cache kernel-devel-4.4.73-18.17.1.noarch.rpm (1/1),  11.5 MiB ( 51.7 MiB unpacked)
+Checking for file conflicts: [.........done]
+(1/1) Installing: kernel-devel-4.4.73-18.17.1.noarch [........done]
+ustring: ' kernel-devel-4.4.73-18.17.1'
+ustring: '206B65726E656C2D646576656C2D342E342E37332D31382E31372E31'
