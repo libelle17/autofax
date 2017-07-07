@@ -566,6 +566,11 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 						rootpw2=Tippstr(nix+Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein]+" ("+Txk[T_erneute_Eingabe]+")",&rootpw2);
 						if (rootpw2==rootpwd) break;
 					} //         while (1)
+					// 7.7.17: neuer Fehler "ERROR 1819 (HY000) at line 1: Your password does not satisfy the current policy requirements" auf fedora
+				  const string vcmd="F=/etc/my.cnf.d/cracklib_password_check.cnf;"
+					"test -f $F&&{ ls -l $F;cat $F;sed -i.bak 's/^\\(plugin-load-add=cracklib_password_check.so\\)/;\\1/g' $F;diff $F $F.bak||{ "
+					"sudo systemctl restart "+db_systemctl_name+";};rm -f $F.bak;}";
+          system(vcmd.c_str());
 					const string cmd="sudo mysql -uroot -h'"+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
 						"' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
 					Log(Txd[T_Fuehre_aus_db]+blaus+cmd+schwarz,1,1);
