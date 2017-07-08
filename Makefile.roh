@@ -354,8 +354,11 @@ uninstall: distclean
 testr:
 	echo $(DATEIEN)
 	echo $(DATEIEN:Makefile=Makefile.roh)
+	echo $(GDAT:Makefile=Makefile.roh)
 
+.PHONY: version
 version: dovers
+.PHONY: dovers
 dovers:
 	@R=res;MF=Makefile;mkdir -p $$R; cp -au $(GDAT) $$R; echo $(GDAT); mv $$R/$$MF $$RES/$$MF.roh
 	-@M=Makefile;Mr=$$M.roh;mv $$M $$Mr;git rm --cached --ignore-unmatch $(GDAT:Makefile=Makefile.roh) gitvdt versdt README.md;mv $$Mr $$M
@@ -363,5 +366,16 @@ dovers:
 	-@M=Makefile;Mr=$$M.roh;mv $$M $$Mr;git add $(GDAT:Makefile=Makefile.roh) gitvdt versdt README.md; mv $$Mr $$M
 	-@git rm --cached  --ignore-unmatch vgb.cpp uninstallinv inst.log
 	make opts && sudo make install && make git
+
+FERTIG=$(error Fertig mit Transfer!)
+TRS=transfer
+.PHONY: $(TRS)
+$(TRS): dotrans
+	; $(FERTIG)
+.PHONY: dotrans
+dotrans:
+	@echo Transfer nach $(filter-out $(TRS),$(MAKECMDGOALS))
+	@./modziel.sh $(filter-out $(TRS),$(MAKECMDGOALS))
+
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
