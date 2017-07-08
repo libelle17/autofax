@@ -82,7 +82,7 @@ getIPR() {
 	  SPR="dpkg -s ";
 		UDPR="sudo apt-get -f install; sudo dpkg -r --force-depends ";};}
  	IPR="sudo $IdPR";
-  DATEIEN="`find . -maxdepth 1 -name ${DPROG}.cpp -printf '%f '``find . -maxdepth 1 -name ${DPROG}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -name "${DPROG}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall modziel.sh .exrc $UNF $INSTLOG"
+  DATEIEN="`find . -maxdepth 1 -name ${DPROG}.cpp -printf '%f '``find . -maxdepth 1 -name ${DPROG}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -name "${DPROG}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall .exrc $UNF $INSTLOG"
 }
 
 exportvars() {
@@ -194,7 +194,7 @@ libmc1=libmariadbclient
 fed=0
 Z=""
 CCInst=gcc6-c++
-if test "$ICH" != install.sh -a "$ICH" != ${DPROG}_inst.sh; then
+if test "$ICH" != install.sh -a "$ICH" != ${DPROG}_inst.sh -a "$ICH" != transfer; then
  . ./install.sh
 fi
 #echo nach sourcen von ./install.sh,DPROG: $DPROG, GITV: $GITV

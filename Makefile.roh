@@ -22,11 +22,12 @@
 # "make confclean" => loescht die Konfigurationsdatei $(INSTEXEC).conf nach Rueckfrage, falls vorhanden
 # "make altc" => kompiliere mit -std=gnu++11
 # "make anzeig" => zeige Informationen zu Programm, Quelldateien und Compiler an
-# "make install => installiere die erstellte Datei in den kuerzesten Pfad aus $PATH, der '/usr/' enthaelt,
-#                  installiert man-Seiten aus man_de und man_en, ferner *.html-Dateien und eine README.md-Datei fuer den git-Server
-# "make stumm und make stumminst: zum Aufruf aus vim"
-# "make git => aktualisiert die Datei auf dem zugeordneten git-Server
-# "make version => kompilieren mit opts, installieren und aktualisieren auf git-Server mit einheitlicher Dateiversion
+# "make install" => installiere die erstellte Datei in den kuerzesten Pfad aus $PATH, der '/usr/' enthaelt,
+#                   installiert man-Seiten aus man_de und man_en, ferner *.html-Dateien und eine README.md-Datei fuer den git-Server
+# "make stumm und make stumminst" => zum Aufruf aus vim
+# "make git" => aktualisiert die Datei auf dem zugeordneten git-Server
+# "make version" => kompilieren mit opts, installieren und aktualisieren auf git-Server mit einheitlicher Dateiversion
+# "make transfer <zielvz>" => kopieren der Programmdateien abzüglich bestimmter Kommentare in Zielverzeichnis <zielvz>
 
 ICH::=$(firstword $(MAKEFILE_LIST))
 SRCS::=$(wildcard *.cpp)
@@ -184,7 +185,8 @@ anzeig:
 	@printf " %bGNU Make%b, Target file/Zieldatei: %b%s%b, before/vorher:                        \n" $(gruen) $(reset) $(rot) "$(EXEC)" $(reset) >$(BA)
 	@printf " '%b%s%b'\n" $(blau) "$$(ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC) $(KF))" $(reset) >$(BA)
 	@printf " Source files/Quelldateien: %b%s%b\n" $(blau) "$(SRCS)" $(reset) >$(BA)
-	@printf " Compiler: %b%s%b, installed as/installiert als: %b%s%b; Compiler Parameter: %b%s%b\n" $(blau) "$(CCName)" $(reset) $(blau) "$(CCInst)" $(reset) $(blau) "$(CFLAGS)" $(reset)
+	@printf " Compiler: %b%s%b, installed as/installiert als: %b%s%b; Compiler Parameter: %b%s%b\n"\
+	        $(blau) "$(CCName)" $(reset) $(blau) "$(CCInst)" $(reset) $(blau) "$(CFLAGS)" $(reset)
 	@printf " Target path for/Zielpfad fuer '%bmake install%b': %b%s%b\n" $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset) >$(BA)
 	-@rm -f fehler.txt $(KF)
 
@@ -280,9 +282,10 @@ endif
 define priv_man_umw
 	-@printf " aktualisiere/updating %b$(1)%b\n" $(blau) $(reset)
 	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat versdt)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" $(1))
-	-@L=$(shell echo $(1)|cut -d_ -f2|head -c1);TMP=tmp_opt_$$L;./$(EXEC) -1lg $$L -sh|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
-	nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
-	von=".SH $(OPN)"; bis=".SH $(FKT)"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" $(1);
+	-@L=$(shell echo $(1)|cut -d_ -f2|head -c1);\
+	 TMP=tmp_opt_$$L;./$(EXEC) -1lg $$L -sh|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
+	 nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
+	 von=".SH $(OPN)"; bis=".SH $(FKT)"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" $(1);
 endef
 
 define priv_html
@@ -290,8 +293,12 @@ define priv_html
 	-@groff -mandoc -Thtml -v >$(KR);EXC=$$?; \
 	for p in $(pgroff); do { [ $$EXC -gt 1 ]|| ! which groff>$(KR)|| ! $(SPR) $$p>$(KR);}&&{ ./configure inst _ $$p verbose;}; done; true;
 	-@rm -f $(1).html
-	-@sed -e 's/²gitv²/$(GITV)/g;s/²DPROG²/$(DPROG)/g;s/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;/\.SH $(FKT)/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH $(AWI)/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' $(1) | \
-	groff -mandoc -Thtml -W break| sed "s/&amp;/\&/g;s@<h1 align=\".*\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat versdt)) - $(LGL)<a name=\"$(LGL)\"></a>@g;s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > $(1).html
+	-@sed -e 's/²gitv²/$(GITV)/g;s/²DPROG²/$(DPROG)/g;'\
+	 -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;'\
+	 -e '/\.SH $(FKT)/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH $(AWI)/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' $(1) | \
+ 	 groff -mandoc -Thtml -W break| \
+	 sed -e "s/&amp;/\&/g;s@<h1 align=\".*\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$(cat versdt)) - $(LGL)<a name=\"$(LGL)\"></a>@g;"\
+	  -e "s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g" > $(1).html
 	@printf "%b%s%b neu aus %b%s%b erstellt\n" $(blau) "$(1).html" $(reset) $(blau) "$(1)" $(reset)
 endef
 
@@ -327,7 +334,9 @@ distclean:
 
 .PHONY: confclean
 confclean:
-	-@sh -c 'D=$(INSTEXEC).conf;test -f $$D &&{ printf "Wollen Sie \"%b$$D%b\" wirklich loeschen (j/n)?" $(blau) $(reset); read answer; if echo "$$answer"|grep -iq "^j\|^y";then rm -r "$$D">$(KR)&&printf \"%b%s%b\" geloescht!\n" $(blau) "$(INSTEXEC).conf" $(reset); fi;true;} ||{ printf "Konfigurationsdatei \"%b$$D%b\" fehlt.\n" $(blau) $(reset);}'
+	-@sh -c 'D=$(INSTEXEC).conf;test -f $$D &&{ printf "Wollen Sie \"%b$$D%b\" wirklich loeschen (j/n)?" $(blau) $(reset); read answer;\
+	if echo "$$answer"|grep -iq "^j\|^y";then rm -r "$$D">$(KR)&&printf \"%b%s%b\" geloescht!\n" $(blau) "$(INSTEXEC).conf" $(reset); fi;true;} ||{\
+	printf "Konfigurationsdatei \"%b$$D%b\" fehlt.\n" $(blau) $(reset);}'
 
 .PHONY: uninstall
 uninstall: distclean
@@ -371,11 +380,54 @@ FERTIG=$(error Fertig mit Transfer!)
 TRS=transfer
 .PHONY: $(TRS)
 $(TRS): dotrans
-	; $(FERTIG)
+	$(FERTIG)
 .PHONY: dotrans
 dotrans:
-	@echo Transfer nach $(filter-out $(TRS),$(MAKECMDGOALS))
-	@./modziel.sh $(filter-out $(TRS),$(MAKECMDGOALS))
+	@# sed-Befehl: loesche alles zwischen /*// und */ (loesche einzeilige Muster(-zeilen), suche solche Abschnitte, loesche sonst leere erste und letzte Zeilen daraus, loesche Zwischenzeilen daraus, loesche Text vor und nach den Grenzen), loesche Zeilen mit //// am Anfang, loesche alles hinter ////
+	@Ziel=$(filter-out $(TRS),$(MAKECMDGOALS));\
+	printf "Transfer nach %b$$Ziel%b\n" $(blau) $(reset);\
+	Start=1;\
+	[ ! -d "$$Ziel" ]&&{\
+	 printf "Shall the directory %b$$Ziel%b be created?/Soll das Verzeichnis %b$$Ziel%b erstellt werden (y/j/n)? " $(blau) $(reset) $(blau) $(reset);\
+	 read Antwort;\
+	 [ $$Antwort = "y" -o $$Antwort = "j" ]&& mkdir -p $$Ziel;\
+	};\
+	[ -z "$$Ziel" ]&&{ Start=0;true;}||[ ! -d "$$Ziel" ]&& Start=0;\
+	if [ $$Start = 0 ]; then\
+	 echo Makes a fair copy of the files of a github repository/ Kopiert Dateien eines github-Repositorys abzüglich mancher Kommentare ins Reine;\
+	 printf "Synatax: %bmake $(TRS) \<zielverzeichnis\>%b\n" $(blau) $(reset);\
+	 printf "Directory/Verzeichnis "%b$$Ziel%b" nicht gefunden.\n" $(blau) $(reset);\
+	 exit 0;\
+	else\
+	 ICH=transfer;\
+	 . ./configure;\
+	 for D in $$(find . -maxdepth 1 -name "*.cpp" -or -name "*.h"); do\
+	  sed -e '/^[[:space:]]*\/\*\/\/.*\*\/[[:space:]]*$$/d;'\
+		-e 's_/\*//[^*]*\*/__g;/\/\*\/\//,/\*\//{/^[[:space:]]*\/\*\/\//d;/\*\/[[:space:]]*$$/d;'\
+		-e '/\/\*\/\//!{/\*\//!d};s_/\*//.*__;s_.*\*/__};/^[[:space:]]*\/\/\/\/.*/d;s_////.*__;s/\r$$//' $$D>$$Ziel/$$D;\
+		((DAT++));\
+	  printf "$$blau$$D$$reset nach $$blau$$Ziel/$$reset kopiert\n";\
+	  chmod --reference=$$D $$Ziel/$$D;\
+	  chown --reference=$$D $$Ziel/$$D;\
+	 done;\
+	 for D in .exrc Makefile install.sh man_?? versdt viall configure; do\
+	  [ -f $$D ]&&{ sed '/^#\/\/.*/d;s_#//.*__g' $$D>$$Ziel/$$D;((DAT++));\
+	   printf "$$blau$$D$$reset nach $$blau$$Ziel/$$reset kopiert\n"; };\
+	   chmod --reference=$$D $$Ziel/$$D;\
+	   chown --reference=$$D $$Ziel/$$D;\
+	  [ "$$D" = "Makefile" ]&&{\
+	   ROH=$$D.roh; mv $$Ziel/$$D $$Ziel/$$ROH;\
+	   printf "%b$$Ziel/$$D%b in %b$$Ziel/$$ROH/%b umbenannt\n" $(blau) $(reset) $(blau) $(reset);\
+	  };\
+	 done;\
+	 printf "Insgesamt $$blau$$DAT$$reset Dateien kopiert\n";\
+	 sh -c "cd $$Ziel;./configure; " && printf "%b./configure%b in %b$$Ziel%b aufgerufen\n" $(blau) $(reset) $(blau) $(reset);\
+	fi;
 
+.PHONY: test
+test:
+	A=$$(sed -e 's/2/7/g'\
+	-e 's/7/8/g' a);\
+	echo $$A
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))

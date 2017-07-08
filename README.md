@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.4387) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43873) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1017,7 +1017,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.4387) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43873) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1071,10 +1071,10 @@ autofax</b> ist ein Befehlszeilenprogramm, mit dem Dateien
 in einem bestimmten Verzeichnis automatisch an
 <b>hylafax</b> (falls ein linux-kompatibles Fax-Modem
 angeschlossen ist) und/oder <b>capisuite</b> (falls eine
-Fritzcard 2.0 oder 2.1 angeschlossen ist) weiterleitet
-werden, wenn die Faxnummer im Dateinamen richtig eingetragen
-ist, weiterhin die versandten Faxe in einer
-MariaDB-Datenbank abspeichert. <br>
+<i>Fritzcard</i> 2.0 oder 2.1 angeschlossen ist)
+weiterleitet werden, wenn die Faxnummer im Dateinamen
+richtig eingetragen ist, weiterhin die versandten Faxe in
+einer MariaDB-Datenbank abspeichert. <br>
 Au&szlig;erdem k&ouml;nnen von
 <b>hylafax</b>/<b>capisuite</b> empfangene Faxe automatisch
 nach dem Sender anhand dessen Faxnummer benannt und
