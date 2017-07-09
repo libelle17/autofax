@@ -172,9 +172,10 @@ weiter: compiler $(EXEC) $(GZS)
 git: README.md
 #	@git config --global user.name "Gerald Schade"
 #	@git config --global user.email "gerald.schade@gmx.de"
-	-@cp -au Makefile Makefile.roh
 	@printf " Copying files from/ Kopiere Dateien von: %b%s%b (Version %b%s%b) -> git (%b%s%b)\n" $(blau) "$(DPROG)" $(reset) \
 	 $(blau) $$(cat versdt) $(reset) $(blau) "$$(cut -f2-< .git/FETCH_HEAD|sed 's/^\s*//')" $(reset) >$(BA) 
+	-@cp -au Makefile Makefile.roh
+	$(call setz_gitv,".")
 	@git config --global push.default simple
 	@git add -u
 	@git commit -m "Version $$(cat versdt)"
@@ -279,15 +280,6 @@ endif
 	@for d in $(MANS); do sed -n '20,$$p' $$d.html >> $@; [ -z $$A ]||A=$$A", ";A=$$A$(blau)$$d$(reset); done; \
 	printf " %b$@%b neu erstellt aus: $$A\n" $(blau) $(reset)
 
-define priv_man_umw
-	-@printf " aktualisiere/updating %b$(1)%b\n" $(blau) $(reset)
-	-@$$(sed -i "s/\(Version \)[^\"]*/\1$$(cat versdt)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$(date +'%d.%m.%y')/" $(1))
-	-@L=$(shell echo $(1)|cut -d_ -f2|head -c1);\
-	 TMP=tmp_opt_$$L;./$(EXEC) -1lg $$L -sh|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$!ba'>$$TMP; \
-	 nlinit=`echo 'nl="'; echo '"'`; eval "$$nlinit"; \
-	 von=".SH $(OPN)"; bis=".SH $(FKT)"; sed -i.bak "/$$von/,/$$bis/{/$$von/{n;p;r $$TMP$${nl}};/$$bis/p;d}" $(1);
-endef
-
 define priv_html
 	-@printf " erstelle/generating:%b$(1)%b\r" $(blau) $(reset)
 	-@groff -mandoc -Thtml -v >$(KR);EXC=$$?; \
@@ -304,12 +296,17 @@ endef
 
 define manges
 $(1).html: $(EXEC) $(1)
-	$$(call priv_html, $(1))
+	$(call priv_html, $(1))
 $(1).gz: $(EXEC) $(1) 
-	$$(call priv_man_umw,$(1))
+	-@printf " aktualisiere/updating %b$(1)%b\n" $(blau) $(reset)
+	-@sed -i "s/\(Version \)[^\"]*/\1$$$$(cat versdt)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$$$(date +'%d.%m.%y')/" $(1)
+	-@Lang=$(shell echo $(1)|cut -d_ -f2|head -c1);\
+	 TMP=tmp_opt_$$$$Lang;./$(EXEC) -1lg $$$$Lang -sh|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$$$$!ba'>$$$$TMP; \
+	 nlinit=`echo 'nl="'; echo '"'`; eval "$$$$nlinit"; \
+	 von=".SH $$(OPN)"; bis=".SH $$(FKT)"; sed -i.bak "/$$$$von/,/$$$$bis/{/$$$$von/{n;p;r $$$$TMP$$$$nl};/$$$$bis/p;d}" $(1);
 	@sed 's/²gitv²/$(GITV)/g;s/²DPROG²/$(DPROG)/g;s/\\fB/\\fI/g' $(1)|gzip -c >$$@
 $(INST$(patsubst man_%,%,$(1))MAN): $(1).gz
-	@sudo mkdir -p $$(dir $$@)
+	@sudo mkdir -p $$$$(dirname $$@)
 	@printf " Copying Manual/ Kopiere Hilfedatei: %b%s%b -> %b%s%b\n" $(blau) "$(1)" $(reset) $(blau) "$$@" $(reset) >$(BA)
 	@sudo cp -a $(1).gz $$@
 endef
@@ -372,64 +369,69 @@ dovers:
 	@R=res;MF=Makefile;mkdir -p $$R; cp -au $(GDAT) $$R; echo $(GDAT); mv $$R/$$MF $$RES/$$MF.roh
 	-@M=Makefile;Mr=$$M.roh;mv $$M $$Mr;git rm --cached --ignore-unmatch $(GDAT:Makefile=Makefile.roh) gitvdt versdt README.md;mv $$Mr $$M
 	-@git commit -m "nix"
-	-@M=Makefile;Mr=$$M.roh;mv $$M $$Mr;git add $(GDAT:Makefile=Makefile.roh) gitvdt versdt README.md; mv $$Mr $$M
+	-@M=Makefile;Mr=$$M.roh;mv $$M $$Mr;git add $(GDAT:Makefile=Makefile.roh) versdt README.md; mv $$Mr $$M
 	-@git rm --cached  --ignore-unmatch vgb.cpp uninstallinv inst.log
 	make opts && sudo make install && make git
 
 FERTIG=$(error Fertig mit Transfer!)
-TRS=transfer
+TRS::=transfer
+Ziel::=$(filter-out $(TRS),$(MAKECMDGOALS))
 .PHONY: $(TRS)
 $(TRS): dotrans
 	$(FERTIG)
 .PHONY: dotrans
 dotrans:
 	@# sed-Befehl: loesche alles zwischen /*// und */ (loesche einzeilige Muster(-zeilen), suche solche Abschnitte, loesche sonst leere erste und letzte Zeilen daraus, loesche Zwischenzeilen daraus, loesche Text vor und nach den Grenzen), loesche Zeilen mit //// am Anfang, loesche alles hinter ////
-	@Ziel=$(filter-out $(TRS),$(MAKECMDGOALS));\
-	printf "Transfer nach %b$$Ziel%b\n" $(blau) $(reset);\
+	@printf "Transfer nach %b$(Ziel)%b\n" $(blau) $(reset);\
 	Start=1;\
-	[ ! -d "$$Ziel" ]&&{\
-	 printf "Shall the directory %b$$Ziel%b be created?/Soll das Verzeichnis %b$$Ziel%b erstellt werden (y/j/n)? " $(blau) $(reset) $(blau) $(reset);\
+	[ ! -d "$(Ziel)" ]&&{\
+	 printf "Shall the directory %b$(Ziel)%b be created?/Soll das Verzeichnis %b$(Ziel)%b erstellt werden (y/j/n)? " $(blau) $(reset) $(blau) $(reset);\
 	 read Antwort;\
-	 [ $$Antwort = "y" -o $$Antwort = "j" ]&& mkdir -p $$Ziel;\
+	 [ $$Antwort = "y" -o $$Antwort = "j" ]&& mkdir -p $(Ziel);\
 	};\
-	[ -z "$$Ziel" ]&&{ Start=0;true;}||[ ! -d "$$Ziel" ]&& Start=0;\
+	[ -z "$(Ziel)" ]&&{ Start=0;true;}||[ ! -d "$(Ziel)" ]&& Start=0;\
 	if [ $$Start = 0 ]; then\
 	 echo Makes a fair copy of the files of a github repository/ Kopiert Dateien eines github-Repositorys abzüglich mancher Kommentare ins Reine;\
 	 printf "Synatax: %bmake $(TRS) \<zielverzeichnis\>%b\n" $(blau) $(reset);\
-	 printf "Directory/Verzeichnis "%b$$Ziel%b" nicht gefunden.\n" $(blau) $(reset);\
-	 exit 0;\
+	 printf "Directory/Verzeichnis "%b$(Ziel)%b" nicht gefunden.\n" $(blau) $(reset);\
+	 exit 1;\
 	else\
 	 ICH=transfer;\
 	 . ./configure;\
 	 for D in $$(find . -maxdepth 1 -name "*.cpp" -or -name "*.h"); do\
 	  sed -e '/^[[:space:]]*\/\*\/\/.*\*\/[[:space:]]*$$/d;'\
 		-e 's_/\*//[^*]*\*/__g;/\/\*\/\//,/\*\//{/^[[:space:]]*\/\*\/\//d;/\*\/[[:space:]]*$$/d;'\
-		-e '/\/\*\/\//!{/\*\//!d};s_/\*//.*__;s_.*\*/__};/^[[:space:]]*\/\/\/\/.*/d;s_////.*__;s/\r$$//' $$D>$$Ziel/$$D;\
+		-e '/\/\*\/\//!{/\*\//!d};s_/\*//.*__;s_.*\*/__};/^[[:space:]]*\/\/\/\/.*/d;s_////.*__;s/\r$$//' $$D>$(Ziel)/$$D;\
 		((DAT++));\
-	  printf "$$blau$$D$$reset nach $$blau$$Ziel/$$reset kopiert\n";\
-	  chmod --reference=$$D $$Ziel/$$D;\
-	  chown --reference=$$D $$Ziel/$$D;\
+	  printf "$$blau$$D$$reset nach $$blau$(Ziel)/$$reset kopiert\n";\
+	  chmod --reference=$$D $(Ziel)/$$D;\
+	  chown --reference=$$D $(Ziel)/$$D;\
 	 done;\
 	 for D in .exrc Makefile install.sh man_?? versdt viall configure; do\
-	  [ -f $$D ]&&{ sed '/^#\/\/.*/d;s_#//.*__g' $$D>$$Ziel/$$D;((DAT++));\
-	   printf "$$blau$$D$$reset nach $$blau$$Ziel/$$reset kopiert\n"; };\
-	   chmod --reference=$$D $$Ziel/$$D;\
-	   chown --reference=$$D $$Ziel/$$D;\
+	  [ -f $$D ]&&{ sed '/^#\/\/.*/d;s_#//.*__g' $$D>$(Ziel)/$$D;((DAT++));\
+	   printf "$$blau$$D$$reset nach $$blau$(Ziel)/$$reset kopiert\n"; };\
+	   chmod --reference=$$D $(Ziel)/$$D;\
+	   chown --reference=$$D $(Ziel)/$$D;\
 	  [ "$$D" = "Makefile" ]&&{\
-	   ROH=$$D.roh; mv $$Ziel/$$D $$Ziel/$$ROH;\
-	   printf "%b$$Ziel/$$D%b in %b$$Ziel/$$ROH/%b umbenannt\n" $(blau) $(reset) $(blau) $(reset);\
+	   ROH=$$D.roh; mv $(Ziel)/$$D $(Ziel)/$$ROH;\
+	   printf "%b$(Ziel)/$$D%b in %b$(Ziel)/$$ROH/%b umbenannt\n" $(blau) $(reset) $(blau) $(reset);\
 	  };\
 	 done;\
-	 D=$$Ziel/.git/config; GITV=$$([ -f $$D ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' $$D);\
-	 sed -i 's/^\(\[ -z .* \]&& GITV=\).*;/\1'$$GITV';/g' $$Ziel/install.sh;\
 	 printf "Insgesamt $$blau$$DAT$$reset Dateien kopiert\n";\
-	 sh -c "cd $$Ziel;./configure; " && printf "%b./configure%b in %b$$Ziel%b aufgerufen\n" $(blau) $(reset) $(blau) $(reset);\
 	fi;
+	@$(call setz_gitv,$(Ziel))
+	@sh -c "cd $(Ziel);./configure; " && printf "%b./configure%b in %b$(Ziel)%b aufgerufen\n" $(blau) $(reset) $(blau) $(reset);\
+
+define setz_gitv
+	 @D=$(1)/.git/config; GITV=$$([ -f $$D ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' $$D);\
+	 sed -i 's/^\(\[ -z .* \]&& GITV=\).*;/\1'$$GITV';/g' $(1)/install.sh;\
+	 [ $$GITV = $(sed 's/"//g' $(1)/gitvdt) ]|| echo \"$$GITV\">$(1)/gitvdt;true;
+endef
 
 .PHONY: test
 test:
-	 Ziel=../autofaxrein;D=$$Ziel/.git/config; GITV=$$([ -f $$D ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' $$D);\
-	 sed -i 's/^\(\[ -z .* \]&& GITV=\).*;/\1'$$GITV';/g' $$Ziel/install.sh;\
+	 Ziel=../autofaxrein;D=$(Ziel)/.git/config; GITV=$$([ -f $$D ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' $$D);\
+	 sed -i 's/^\(\[ -z .* \]&& GITV=\).*;/\1'$$GITV';/g' $(Ziel)/install.sh;\
  	
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))

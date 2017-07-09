@@ -2,9 +2,9 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "08.07.17" "Version 0.43876" "Manual-Seite für ²DPROG²"
+.TH man 1 "09.07.17" "Version 0.43881" "Manual-Seite für ²DPROG²"
 .SH NAME
-\fB²DPROG²\fR \- FaxServer-Funktionalität: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
+\fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
 (manpage available in english: 'man ²DPROG²' or 'man -Len ²DPROG²')
 .SH SYNOPSIS

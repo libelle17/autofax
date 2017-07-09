@@ -13,8 +13,9 @@ fi
 DPROG=autofax;
 # in .git/config steht z.B. "        url = ssh://git@github.com/libelle17/autofax.git"
 GITV=$([ -f .git/config ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' .git/config);
-# wenn nicht vorhanden, dann schauen, ob gitvdt existiert
-[ -z $GITV ]&& [ -f gitvdt ]&& GITV=$(sed 's/"//g' gitvdt);
+#// wenn nicht vorhanden, dann schauen, ob gitvdt existiert
+#// [ -z $GITV ]&& [ -f gitvdt ]&& GITV=$(sed 's/"//g' gitvdt);
+# die naechste Zeile wird im Makefile in transfer: und git: editiert
 [ -z $GITV ]&& GITV=libelle17;
 #echo vor Entscheidung,DPROG: $DPROG, GITV: $GITV
 # diese Datei wird wegen obigem in configure und indirekt in viall gesourct, soll dann hier abbrechen
