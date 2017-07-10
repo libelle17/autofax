@@ -8206,8 +8206,11 @@ int paramcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const st
 {
 	int ret=1;
 	if (!pruefinstv()) {
-		const string bef="sh -c 'cd \""+instvz+vtz+was+"\"&&"+(vorcfg.empty()?s_true:vorcfg)+(ohneconf?nix:"&& ./configure ")+cfgbismake+
-			" make && echo $? = "+Tx[T_Ergebnis_nach_make]+" && sudo make install && echo $? = "+Tx[T_Ergebnis_nach_make_install]+
+		const string bef="sh -c 'cd \""+instvz+vtz+was+"\"&&"+
+		   (vorcfg.empty()?s_true:vorcfg)+(ohneconf?nix:"&& ./configure ")+cfgbismake+" make "
+		// bei capi20_copy ging das mit distclean 9.7.17
+			 "||{ make distclean && ./configure && make;}"
+			 "&& echo $? = "+Tx[T_Ergebnis_nach_make]+" && sudo make install && echo $? = "+Tx[T_Ergebnis_nach_make_install]+
 			////				"&&{ grep -q \"P="+was+"\" \""+unindt+"\""
 			////						"||printf \"H="+gethome()+";A=\\$H/"+meinname+";P="+was+";cd \\\"\\$A/\\$P\\\" 2>/dev/null"
 			////						"||cd \\$(find \\\"\\$H\\\" -name \\$P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2) "
@@ -8569,7 +8572,7 @@ int paramcl::pruefcapi()
 								holvomnetz("capi20_copy");
 								kompiliere("capi20_copy",s_gz);
 								systemrueck("sh -c 'cd "+instvz+" && L="+lsys.getlib64()+"/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "
-										"ln -s $L3 $L; test -f $L;'",obverb,oblog);
+										"sudo ln -s $L3 $L; test -f $L;'",obverb,oblog);
 							}
 							/*//
 							//            systemrueck("sh -c 'P=capi20_copy;T=$P.tar.bz2;M=$P-master;cd "+instvz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
