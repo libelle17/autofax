@@ -287,7 +287,7 @@ define priv_html
 	-@rm -f $(1).html
 	-@sed -e 's/²gitv²/$(GITV)/g;s/²DPROG²/$(DPROG)/g;'\
 	 -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;'\
-	 -e '/\.SH $(FKT)/,/^\.SH/ {s/\.br/.LP\n\.HP 3/g};/\.SH $(AWI)/,/^\.SH/ {s/\.br/\.LP\n\.HP 3/g}' $(1) | \
+	  $(1) | \
  	 groff -mandoc -Thtml -W break| \
 	 sed -e "s/&amp;/\&/g;s@<h1 align=\".*\">man@<h1 align=\"center\">$(PROGGROSS) (Version $$$$(cat versdt)) - $$(LGL)<a name=\"$$(LGL)\"></a>@g;"\
 	  -e "s/\(<a \(href\|name\)=\"[^\"]*\)/\1_D/g;/^<td width=/d;" > $(1).html

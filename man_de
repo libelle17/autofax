@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "12.07.17" "Version 0.43896" "Manual-Seite für ²DPROG²"
+.TH man 1 "12.07.17" "Version 0.43897" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -59,6 +59,7 @@ Bei jedem Aufruf überprüft ²DPROG² den Status von \fBhylafax\fR und/oder \fB
 Weiterhin werden über \fBhylafax\fR oder \fBCapisuite\fR angekommene Faxe in ein Empfangsverzeichnis kopiert und ggf. nach dem Sender benannt. Hierzu werden, falls angegeben, konfigurierbare SQL-Befehle verwendet, die in frei festlegbarer Zahl der Reihe nach so lange aufgerufen werden, bis einer einen Datensatz zu der Faxnummer findet.
 .br
 Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präferenz in den genannten Verzeichnissen, in den Datenbanktabellen oder durch Aufruf von z.B. '\fB²DPROG²\fB', '\fB²DPROG² -lista\fR', '\fB²DPROG² -listf\fR' oder '\fB²DPROG² -listi\fR' den Stand des Faxens überprüfen. 
+
 .SH OPTIONEN 
 Mit '\fB²DPROG² -?\fR' oder '\fB²DPROG² -h\fR' werden die wichtigen und mit '\fB²DPROG² -lh\fR' alle Befehlszeilenoptionen sichtbar. Einige Optionen (z.B. SQL-Befehle) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum direkt editiert oder auch über '\fB²DPROG² -rf\fR' interaktiv gepflegt werden kann.
 .br
