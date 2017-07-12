@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43895) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43896) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -211,6 +211,39 @@ directories, in the database tables or by calling
 &rsquo;<b>autofax&rsquo;, &rsquo;autofax -lista</b>&rsquo;,
 &rsquo;<b>autofax -listf</b>&rsquo; or &rsquo;<b>autofax
 -listi</b>&rsquo;.</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em"><b>Hardware</b>: Computer with a
+fritzcard 2.0 or 2.1 or/and a linux compatible fax modem; in
+the current version, a US Robotics modem USR5637 and one of
+the below mentioned linux distributions are needed for an
+automatic installation (by answering some questions). In
+case of a concurrent use of a fritzcard and a modem, the
+program can optimize the security of transmission of a
+fax.</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em"><b>Software</b>: The program was
+adjusted to an installation of Opensuse &gt;= 42.1, Debian
+&gt;= 8.60, Ubuntu &gt;= 16.04, Mint &gt;= 18 or Fedora
+&gt;= 24 with standard options. System D has to be
+installed, i.e., &quot;systemctl&quot; has to run. One of
+the packet managers rpm or dpkg and apt, dnf, yum or zypper
+has to be installed, respectively, as is the case per
+default in the mentioned linux distributions. Uninstalling
+of the programs added by autofax by <b>make uninstall</b>
+works currently only with the english and the german
+versions of the packet manager. &quot;<b>Medical report on
+Frank Ill to Dr. Healthy and Frank Ill to fax 099 987654321
+and 088 887654321.doc</b>&quot; (it could also be e.g. an
+*.xls, a *.jpg, a *.tif, a *.txt, a *pdf file; the section
+&rsquo; to Dr. Healthy and Frank Ill&rsquo; is optional for
+the later allocation of the fax number(s) in the database,
+it may also be obmitted; on the other hand, if the program
+can assign the last (1-)3 faxes to a certain addressee
+clearly, the fax number may be obmitted).</p></td></tr>
 </table>
 
 <h2>OPTIONS
@@ -972,7 +1005,7 @@ be liable for any damage caused by the program.</p></td></tr>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43895) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43896) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>

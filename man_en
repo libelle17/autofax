@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "12.07.17" "Version 0.43895" "\fB²DPROG²\fR man page"
+.TH man 1 "12.07.17" "Version 0.43896" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -57,6 +57,13 @@ At each call, ²DPROG² checks the status of \fBhylafax\fR and/or \fBCapisuite\f
 Further on, incoming faxes via \fBhylafax\fR or \fBCapisuite\fR are being transmitted to an incoming directory and if applicable named including the sender's name. To this purpose, customizeable sql commands are being used, if specified.
 .br
 Depending on operating system, accessability and preferences the users thus could look up the status of their faxes in the above mentioned directories, in the database tables or by calling '\fB²DPROG²\fB', '\fB²DPROG² -lista\fR', '\fB²DPROG² -listf\fR' or '\fB²DPROG² -listi\fR'. 
+.br
+\fBHardware\fR: Computer with a fritzcard 2.0 or 2.1 or/and a linux compatible fax modem; in the current version, a US Robotics modem USR5637 and one of the below mentioned linux distributions are needed for an automatic installation (by answering some questions). In case of a concurrent use of a fritzcard and a modem, the program can optimize the security of transmission of a fax.
+.br
+\fBSoftware\fR: The program was adjusted to an installation of Opensuse >= 42.1, Debian >= 8.60, Ubuntu >= 16.04, Mint >= 18 or Fedora >= 24 with standard options. System D has to be installed, i.e., "systemctl" has to run. One of the packet managers rpm or dpkg and apt, dnf, yum or zypper has to be installed, respectively, as is the case per default in the mentioned linux distributions. Uninstalling of the programs added by ²DPROG² by \fBmake uninstall\fR works currently only with the english and the german versions of the packet manager.
+"\fBMedical report on Frank Ill to Dr. Healthy and Frank Ill to fax 099 987654321 and 088 887654321.doc\fR" (it could also be e.g. an *.xls, a *.jpg, a *.tif, a *.txt, a *pdf file; the section ' to Dr. Healthy and Frank Ill' is optional for the later allocation of the fax number(s) in the database, it may also be obmitted; on the other hand, if the program can assign the last (1-)3 faxes to a certain addressee clearly, the fax number may be obmitted).
+.br
+
 .SH OPTIONS 
 With '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR', the important and with '\fB²DPROG² -lh\fR', all command line options can be seen. Some options (e.g. the sql commands) cannot bei set via the command line, but only via the configuration file, which can be edited directly or interactively by '\fB²DPROG² -rf\fR'.
 .br
