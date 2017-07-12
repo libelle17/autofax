@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "12.07.17" "Version 0.43909" "Manual-Seite für ²DPROG²"
+.TH man 1 "12.07.17" "Version 0.4391" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -216,7 +216,6 @@ b) mit dem Befehl '\fBstty -F\fR' bezüglich eines Fax-Modems.
 .LP
 8) Das Programm trägt sich ggf. in \fBcrontab\fR (des Benutzers root) ein, um auf Wunsch in (einstellbaren) Abständen aufgerufen zu werden. Um dies zu verhindern, kann entweder '\fBcronminut\fR' auf \fB0\fR eingestellt werden oder der bereits erstellte ²DPROG²-Eintrag mit \fBcrontab -e\fR mit einem vorangestellten '\fB#\fR' auskommentiert werden.
 .LP
-.HP 3 
 9) Das Programm überprüft, ob alle benutzerreleventen Verzeichnisse (s. 7) von Sambafreigaben in \fB/etc/samba/smb.conf\fR erfasst werden, solche werden nötigenfalls ergänzt.
 .LP
 10) Der Betrieb von MariaDB wird überprüft, ggf. wird es (installiert und) in Betrieb gesetzt, die Datenbanktabellen \fBspooltab\fR (für gerade laufende Faxe), \fBouta\fR (für gesandte und gescheiterte Faxe) und \fBinca\fR (für angekommene Faxe) werden überprüft und ggf. erstellt oder erweitert.
@@ -307,7 +306,6 @@ Falls Sie eines dieser Programme nicht wollen bzw. nicht aktualisieren wollen, d
 .SH AUSWIRKUNGEN DES PROGRAMMABLAUFS
 Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:
 .LP
-.HP 3
 1) In Debian kann in der Datei /etc/apt/sources.list ein DVD-Eintrag hinter die Standard-Online-Repositories verschoben werden.
 .br
 2) Sudo (fehlt anfangs bei Standardinstallation in Debian) wird ggf. installiert. 
@@ -316,10 +314,8 @@ Der Benutzer beim Installationsvorgang wird, falls nicht schon enthalten, in ein
 .LP
 3) 'GNU make' wird, falls nicht vorhanden, durch Aufruf von 'sh ./install.sh' bzw. 'configure' automatisch installiert.
 .LP
-.HP 3
 4) Installieren von \fBHylafax+\fR, falls ein Modem angeschlossen ist und Hylafax+ nicht installiert ist. Ggf. Konfiguration von Hylafax+ durch Aufruf von '\fBfaxsetup -nointeracitve\fR', durch Editieren der Konfigurationsdateien \fBconfig\fR und \fBconfig.*\fR (z.B. \fBconfig.ttyACM0\fR) im hylafax-Konfigurationsverzeichnis (Vorgabe z.B.: \fB/var/spool/hylafax/etc/\fR)
 .LP
-.HP 3
 5) Installieren von \fBcapisuite\fR, falls eine Fritzkarte eingebaut ist und capisuite nicht installiert ist.
 Ggf. Bearbeitung der Konfigurationsdateien \fB/etc/capisuite/capisuite.conf\fR und \fB/etc/capisuite/fax.conf\fR.
 Ggf. Bearbeitung des Python-Scripts für ankommende Faxe (Vorgabe z.B.: \fB/usr/lib64/capisuite/incoming.py\fR) zur Bestimmung der Zahl der Klingeltöne 
@@ -339,24 +335,18 @@ b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neu eingerich
 .br
 c) falls \fBselinux\fR aktiv ist (wie standardmäßig in fedora), dann behindert es standardmäßig \fBhylafax\fR; in diesem Fall wird im Hintergrund ein Modul für selinux eingerichtet, um den Betrieb von hylafax-hfaxd wieder zu erlauben. Ferner muss (bis zur eventuellen Erstellung einer maßgeschneiderteren Lösung) die Domäne 'getty' mit dem Befehl '\fBsemanage permissive -a getty_t\fR' in selinux entschärft werden, um faxe über hylafax empfangen zu können.
 .LP
-.HP 3
 7) Erstellen einer Protokolldatei, standardmäßig \fB/var/log/²DPROG².log\fR.
 .LP
-.HP 3
 8) ggf. Erstellen und Zugreifbarmachen der bestimmbaren \fBVerzeichnisse\fR für zu sendende, wartende, abgearbeitete und empfangene Faxe.
 .LP
-.HP 3
 9) ggf. Erstellen und Verändern der Konfigurationsdatei ²DPROG².conf in dem Verzeichnis, in dem auch es selbst steht (Vorgabe: /usr/local/sbin/²DPROG²).
 .LP
-.HP 3
 10) ggf. Einfügen einer Zeile zum automatischen periodischen Aufruf des Programms in das crontab (von root)
 .LP
-.HP 3
 11) ggf. Einfügen von Abschnitten für die unter 8) genannten Verzeichnisse in /etc/samba/smb.conf, ggf. Einfügen/Passwortzuteilen des Programmbenutzers bzw. (falls root) des für die Capisuite gewählten Benutzers als Samba-Benutzer.
 Falls Suse-Firewall vorhanden, samba-Server fuer "externe Zone" eintragen.
 Nach Programmaufruf sollten die unter 8) genannten Verzeichnisse im Samba-Netzwerk sichtbar sein und Dateien im Verzeichnis für zu sendende Faxe erstellt werden können.
 .LP
-.HP 3
 12) ggf. Einfügen einer Datenbank für die Faxe in mariadb unter einem bestimmbaren Namen, Anlage und Veränderung mehrerer Tabellen und einer Prozedur in dieser Datenbank, ggf. Einfügen eines Benutzers mit bestimmbarem Namen in mariadb zur Datenpflege in diesen Tabellen 
 .LP
 13) durch entsprechende Befehlszeilenoptionen von ²DPROG² können innerhalb von hylafax und capisuite Faxe gelöscht werden, insbesondere:

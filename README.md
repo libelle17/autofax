@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43909) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4391) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -327,16 +327,10 @@ modem.</p>
 configuration file <b>fax.conf</b> of capisuite is read, if
 it exists</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">3) Further defaults from the
-program code are assigned which can be overloaded by the
-autofax configuration file (see 4), command line arguments
-or anwers to questions (see 5).</p></td></tr>
-</table>
+<p style="margin-left:11%; margin-top: 1em">3) Further
+defaults from the program code are assigned which can be
+overloaded by the autofax configuration file (see 4),
+command line arguments or anwers to questions (see 5).</p>
 
 <p style="margin-left:11%; margin-top: 1em">4) Defaults are
 loaded from the configuration file, if it exists (per
@@ -471,14 +465,8 @@ give a result, the next one will be tried. <br>
 Optionally, the received faxes are subjected to ocr via a
 call of ocrmypdf.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">19) The configuration file is
-being written, if necessary.</p></td></tr>
-</table>
+<p style="margin-left:11%; margin-top: 1em">19) The
+configuration file is being written, if necessary.</p>
 
 <h2>PRECONDITIONS
 <a name="PRECONDITIONS_D"></a>
@@ -571,18 +559,11 @@ use the respective program parts.</p>
 <p style="margin-left:11%; margin-top: 1em">The program has
 to take the following measures for its neat function:</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">1) In debian, in the file
-/etc/apt/sources.list a dvd-entry can be moved behind the
-standard online repositories.</p></td></tr>
-</table>
-
-<p style="margin-left:15%;">2) Sudo (is missing per default
-in debian) will be installed if needed. <br>
+<p style="margin-left:11%; margin-top: 1em">1) In debian,
+in the file /etc/apt/sources.list a dvd-entry can be moved
+behind the standard online repositories. <br>
+2) Sudo (is missing per default in debian) will be installed
+if needed. <br>
 The current linux user, if not already contained, will be
 entered into an administrator group mentioned in
 /etc/sudoers, because he has to call &quot;sudo&quot;. <br>
@@ -733,7 +714,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43909) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4391) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1125,17 +1106,11 @@ autofax-Eintrag mit <b>crontab -e</b> mit einem
 vorangestellten &rsquo;<b>#</b>&rsquo; auskommentiert
 werden.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">9) Das Programm
+<p style="margin-left:11%; margin-top: 1em">9) Das Programm
 &uuml;berpr&uuml;ft, ob alle benutzerreleventen
 Verzeichnisse (s. 7) von Sambafreigaben in
 <b>/etc/samba/smb.conf</b> erfasst werden, solche werden
-n&ouml;tigenfalls erg&auml;nzt.</p></td></tr>
-</table>
+n&ouml;tigenfalls erg&auml;nzt.</p>
 
 <p style="margin-left:11%; margin-top: 1em">10) Der Betrieb
 von MariaDB wird &uuml;berpr&uuml;ft, ggf. wird es
@@ -1346,18 +1321,12 @@ verwenden.</p>
 muss zum ordentlichen Funktionieren folgende
 Ma&szlig;nahmen ergreifen:</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">1) In Debian kann in der Datei
-/etc/apt/sources.list ein DVD-Eintrag hinter die
-Standard-Online-Repositories verschoben werden.</p></td></tr>
-</table>
-
-<p style="margin-left:15%;">2) Sudo (fehlt anfangs bei
-Standardinstallation in Debian) wird ggf. installiert. <br>
+<p style="margin-left:11%; margin-top: 1em">1) In Debian
+kann in der Datei /etc/apt/sources.list ein DVD-Eintrag
+hinter die Standard-Online-Repositories verschoben werden.
+<br>
+2) Sudo (fehlt anfangs bei Standardinstallation in Debian)
+wird ggf. installiert. <br>
 Der Benutzer beim Installationsvorgang wird, falls nicht
 schon enthalten, in eine Administrator-Gruppe eingetragen,
 die in /etc/sudoers genannt wird, da er &quot;sudo&quot;
@@ -1368,33 +1337,25 @@ make&rsquo; wird, falls nicht vorhanden, durch Aufruf von
 &rsquo;sh ./install.sh&rsquo; bzw. &rsquo;configure&rsquo;
 automatisch installiert.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">4) Installieren von
-<b>Hylafax+</b>, falls ein Modem angeschlossen ist und
+<p style="margin-left:11%; margin-top: 1em">4) Installieren
+von <b>Hylafax+</b>, falls ein Modem angeschlossen ist und
 Hylafax+ nicht installiert ist. Ggf. Konfiguration von
 Hylafax+ durch Aufruf von &rsquo;<b>faxsetup
 -nointeracitve</b>&rsquo;, durch Editieren der
 Konfigurationsdateien <b>config</b> und <b>config.*</b>
 (z.B. <b>config.ttyACM0</b>) im
 hylafax-Konfigurationsverzeichnis (Vorgabe z.B.:
-<b>/var/spool/hylafax/etc/</b>)</p> </td></tr>
-<tr valign="top" align="left">
+<b>/var/spool/hylafax/etc/</b>)</p>
 
-
-<p style="margin-top: 1em">5) Installieren von
-<b>capisuite</b>, falls eine Fritzkarte eingebaut ist und
-capisuite nicht installiert ist. Ggf. Bearbeitung der
+<p style="margin-left:11%; margin-top: 1em">5) Installieren
+von <b>capisuite</b>, falls eine Fritzkarte eingebaut ist
+und capisuite nicht installiert ist. Ggf. Bearbeitung der
 Konfigurationsdateien <b>/etc/capisuite/capisuite.conf</b>
 und <b>/etc/capisuite/fax.conf</b>. Ggf. Bearbeitung des
 Python-Scripts f&uuml;r ankommende Faxe (Vorgabe z.B.:
 <b>/usr/lib64/capisuite/incoming.py</b>) zur Bestimmung der
 Zahl der Klingelt&ouml;ne bis zur Faxannahme, Erstellung
-bzw. Bearbeitung der Dateien</p></td></tr>
-</table>
+bzw. Bearbeitung der Dateien</p>
 
 <p style="margin-left:11%; margin-top: 1em">6) Einrichten
 von Diensten: <br>
@@ -1419,40 +1380,27 @@ dem Befehl &rsquo;<b>semanage permissive -a
 getty_t</b>&rsquo; in selinux entsch&auml;rft werden, um
 faxe &uuml;ber hylafax empfangen zu k&ouml;nnen.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
+<p style="margin-left:11%; margin-top: 1em">7) Erstellen
+einer Protokolldatei, standardm&auml;&szlig;ig
+<b>/var/log/autofax.log</b>.</p>
 
+<p style="margin-left:11%; margin-top: 1em">8) ggf.
+Erstellen und Zugreifbarmachen der bestimmbaren
+<b>Verzeichnisse</b> f&uuml;r zu sendende, wartende,
+abgearbeitete und empfangene Faxe.</p>
 
-<p style="margin-top: 1em">7) Erstellen einer
-Protokolldatei, standardm&auml;&szlig;ig
-<b>/var/log/autofax.log</b>.</p> </td></tr>
-<tr valign="top" align="left">
+<p style="margin-left:11%; margin-top: 1em">9) ggf.
+Erstellen und Ver&auml;ndern der Konfigurationsdatei
+autofax.conf in dem Verzeichnis, in dem auch es selbst steht
+(Vorgabe: /usr/local/sbin/autofax).</p>
 
+<p style="margin-left:11%; margin-top: 1em">10) ggf.
+Einf&uuml;gen einer Zeile zum automatischen periodischen
+Aufruf des Programms in das crontab (von root)</p>
 
-<p style="margin-top: 1em">8) ggf. Erstellen und
-Zugreifbarmachen der bestimmbaren <b>Verzeichnisse</b>
-f&uuml;r zu sendende, wartende, abgearbeitete und
-empfangene Faxe.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">9) ggf. Erstellen und
-Ver&auml;ndern der Konfigurationsdatei autofax.conf in
-dem Verzeichnis, in dem auch es selbst steht (Vorgabe:
-/usr/local/sbin/autofax).</p> </td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">10) ggf. Einf&uuml;gen einer
-Zeile zum automatischen periodischen Aufruf des Programms in
-das crontab (von root)</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">11) ggf. Einf&uuml;gen von
-Abschnitten f&uuml;r die unter 8) genannten
-Verzeichnisse in /etc/samba/smb.conf, ggf.
+<p style="margin-left:11%; margin-top: 1em">11) ggf.
+Einf&uuml;gen von Abschnitten f&uuml;r die unter 8)
+genannten Verzeichnisse in /etc/samba/smb.conf, ggf.
 Einf&uuml;gen/Passwortzuteilen des Programmbenutzers
 bzw. (falls root) des f&uuml;r die Capisuite
 gew&auml;hlten Benutzers als Samba-Benutzer. Falls
@@ -1460,17 +1408,15 @@ Suse-Firewall vorhanden, samba-Server fuer &quot;externe
 Zone&quot; eintragen. Nach Programmaufruf sollten die unter
 8) genannten Verzeichnisse im Samba-Netzwerk sichtbar sein
 und Dateien im Verzeichnis f&uuml;r zu sendende Faxe
-erstellt werden k&ouml;nnen.</p></td></tr>
-<tr valign="top" align="left">
+erstellt werden k&ouml;nnen.</p>
 
-
-<p style="margin-top: 1em">12) ggf. Einf&uuml;gen einer
-Datenbank f&uuml;r die Faxe in mariadb unter einem
-bestimmbaren Namen, Anlage und Ver&auml;nderung mehrerer
-Tabellen und einer Prozedur in dieser Datenbank, ggf.
-Einf&uuml;gen eines Benutzers mit bestimmbarem Namen in
-mariadb zur Datenpflege in diesen Tabellen</p></td></tr>
-</table>
+<p style="margin-left:11%; margin-top: 1em">12) ggf.
+Einf&uuml;gen einer Datenbank f&uuml;r die Faxe in
+mariadb unter einem bestimmbaren Namen, Anlage und
+Ver&auml;nderung mehrerer Tabellen und einer Prozedur in
+dieser Datenbank, ggf. Einf&uuml;gen eines Benutzers mit
+bestimmbarem Namen in mariadb zur Datenpflege in diesen
+Tabellen</p>
 
 <p style="margin-left:11%; margin-top: 1em">13) durch
 entsprechende Befehlszeilenoptionen von autofax

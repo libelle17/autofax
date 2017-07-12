@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "12.07.17" "Version 0.43909" "\fB²DPROG²\fR man page"
+.TH man 1 "12.07.17" "Version 0.4391" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -201,7 +201,7 @@ a) with the command '\fBlspci | grep -i isdn\fR' for a fritz card.
 b) with the command '\fBstty -F\fR' for a fax modem.
 .LP
 2) The fax configuration file \fBfax.conf\fR of capisuite is read, if it exists 
-.HP 3 
+.LP
 3) Further defaults from the program code are assigned which can be overloaded by the ²DPROG² configuration file (see 4), command line arguments or anwers to questions (see 5).   
 .LP
 4) Defaults are loaded from the configuration file, if it exists (per default \fB²DPROG².conf\fR in the same directory as \fB²DPROG²\fR, per default \fB/usr/local/sbin/²DPROG²\fR)) 
@@ -259,7 +259,6 @@ If more sql commands are specified and one of them does not give a result, the n
 .br
 Optionally, the received faxes are subjected to ocr via a call of ocrmypdf.
 .LP
-.HP 3 
 19) The configuration file is being written, if necessary.
 .LP
 .SH PRECONDITIONS
@@ -303,7 +302,6 @@ If You don't want one of those programs or want to keep an older version of one,
 .SH IMPLICATIONS
 The program has to take the following measures for its neat function:
 .LP
-.HP 3
 1) In debian, in the file /etc/apt/sources.list a dvd-entry can be moved behind the standard online repositories.
 .br
 2) Sudo (is missing per default in debian) will be installed if needed.
