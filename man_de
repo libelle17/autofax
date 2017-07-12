@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "12.07.17" "Version 0.43904" "Manual-Seite für ²DPROG²"
+.TH man 1 "12.07.17" "Version 0.43905" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -292,38 +292,31 @@ Im Fall der Verwendung von Fritzcard plus einem Modem kann das Programm beide Fa
 .SH AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE
 .br
 (hierzu wird je nach Distribution zypper, apt(-get), dnf oder yum verwendet).
-.br
-\fBmakefile:\fR
 .LP
-.HP 3
+\fI\fBmakefile:\fR
+.br
 gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Vers. 4.0.7 mit leichter Modifikation, s. Makefile)
-.br
-.br
-\fB²DPROG²:\fR
 .LP
-.HP 3
+\fI\fB²DPROG²:\fR
+.br
 boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoffice-base, mariadb-server, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp, (in debian-derivates, für mariadb, zusätzlich: apt-transport-https)
-.br
-falls \fBcapisuite\fR benutzt werden soll:
 .LP
-.HP 3
+\fIfalls \fBcapisuite\fR \fIbenutzt werden soll\fR:
+.br
 capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source (linux-source), libcapi20-2, libcapi20-3, libxslt-tools, linux-headers-$(uname -r), python-devel, (in fedora, zusätzlich: kernel-modules-extra), 
-.br
-falls \fBhylafax\fR benutzt werden soll:
 .LP
-.HP 3
+\fIfalls \fBhylafax\fR \fIbenutzt werden soll\fR:
+.br
 hylafax+, hylafax+-client, sendmail, tiff (im Fall von Vers. 4.0.7 mit kleiner Modifikation, s. Makefile)
-.br
-falls \fBocr\fR benutzt werden soll:
 .LP
-.HP 3
+\fIfalls \fBocr\fR \fIbenutzt werden soll\fR:
+.br
 ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmypdf, python3-devel, python3-pip, python3-setuptools, rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper, and via 'python3 pip': cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.
-.br
-falls Sie die Quelldateien mit 'sh viall' bearbeiten wollen:
 .LP
-.HP 3
-vim
+\fIfalls Sie die Quelldateien mit 'sh viall' bearbeiten wollen\fR:
 .br
+vim
+.LP
 All diese Installationen können abhängige Programme einschließen.
 .br
 Falls Sie eines dieser Programme nicht wollen bzw. nicht aktualisieren wollen, dann dürfen Sie ²DPROG² oder die entsprechenden Programmteile nicht auf diesem Computer verwenden.

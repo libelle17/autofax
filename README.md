@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43904) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43905) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -577,7 +577,7 @@ poppler-tools, samba, sfftobmp, (in debian-derivates, for
 mariadb, additionally: apt-transport-https)</p>
 
 <p style="margin-left:11%; margin-top: 1em"><i>in case</i>
-<b>capisuite</b> shall be used: <br>
+<b>capisuite</b> <i>shall be used</i>: <br>
 capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8,
 g++-4.8, kernel-source (linux-source), libcapi20-2,
 libcapi20-3, libxslt-tools, linux-headers-$(uname -r),
@@ -585,12 +585,12 @@ python-devel, (in fedora, additionally:
 kernel-modules-extra),</p>
 
 <p style="margin-left:11%; margin-top: 1em"><i>in case</i>
-<b>hylafax</b> shall be used: <br>
+<b>hylafax</b> <i>shall be used</i>: <br>
 hylafax+, hylafax+-client, sendmail, tiff (in case of
 version 4.0.7 with a slight modification, see Makefile)</p>
 
 <p style="margin-left:11%; margin-top: 1em"><i>in case</i>
-<b>ocr</b> shall be used: <br>
+<b>ocr</b> <i>shall be used</i>: <br>
 ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel,
 libffi-devel, ocrmypdf, python3-devel, python3-pip,
 python3-setuptools, rpmfusion, qpdf, redhat-rpm-config,
@@ -811,7 +811,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43904) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43905) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1414,92 +1414,54 @@ Paketmanager eingerichtet.</p>
 
 <p style="margin-left:11%; margin-top: 1em">(hierzu wird je
 nach Distribution zypper, apt(-get), dnf oder yum
-verwendet). <b><br>
-makefile:</b></p>
-
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
+verwendet).</p>
 
 
-<p style="margin-top: 1em">gcc V.6, g++ V.6, groff,
-libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Vers.
-4.0.7 mit leichter Modifikation, s. Makefile)</p></td></tr>
-</table>
-
-<p style="margin-left:15%;"><b>autofax:</b></p>
-
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
+<p style="margin-left:11%; margin-top: 1em"><b>makefile:</b>
+<br>
+gcc V.6, g++ V.6, groff, libmysqlclient-dev(el),
+libtiff-dev(el) (im Fall von Vers. 4.0.7 mit leichter
+Modifikation, s. Makefile)</p>
 
 
-<p style="margin-top: 1em">boost, boost-devel, cron,
-ghostscript, imagemagick, libreoffice-common,
-libreoffice-base, mariadb-server, policycoreutils,
-policycoreutils-python-utils, poppler-tools, samba,
-sfftobmp, (in debian-derivates, f&uuml;r mariadb,
-zus&auml;tzlich: apt-transport-https)</p></td></tr>
-</table>
+<p style="margin-left:11%; margin-top: 1em"><b>autofax:</b>
+<br>
+boost, boost-devel, cron, ghostscript, imagemagick,
+libreoffice-common, libreoffice-base, mariadb-server,
+policycoreutils, policycoreutils-python-utils,
+poppler-tools, samba, sfftobmp, (in debian-derivates,
+f&uuml;r mariadb, zus&auml;tzlich:
+apt-transport-https)</p>
 
-<p style="margin-left:15%;">falls <b>capisuite</b> benutzt
-werden soll:</p>
+<p style="margin-left:11%; margin-top: 1em"><i>falls</i>
+<b>capisuite</b> <i>benutzt werden soll</i>: <br>
+capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8,
+g++-4.8, kernel-source (linux-source), libcapi20-2,
+libcapi20-3, libxslt-tools, linux-headers-$(uname -r),
+python-devel, (in fedora, zus&auml;tzlich:
+kernel-modules-extra),</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
+<p style="margin-left:11%; margin-top: 1em"><i>falls</i>
+<b>hylafax</b> <i>benutzt werden soll</i>: <br>
+hylafax+, hylafax+-client, sendmail, tiff (im Fall von Vers.
+4.0.7 mit kleiner Modifikation, s. Makefile)</p>
 
+<p style="margin-left:11%; margin-top: 1em"><i>falls</i>
+<b>ocr</b> <i>benutzt werden soll</i>: <br>
+ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel,
+libffi-devel, ocrmypdf, python3-devel, python3-pip,
+python3-setuptools, rpmfusion, qpdf, redhat-rpm-config,
+tesseract-ocr, unpaper, and via &rsquo;python3 pip&rsquo;:
+cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2,
+reportlab, ruffus.</p>
 
-<p style="margin-top: 1em">capisuite, capiutils,
-capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source
-(linux-source), libcapi20-2, libcapi20-3, libxslt-tools,
-linux-headers-$(uname -r), python-devel, (in fedora,
-zus&auml;tzlich: kernel-modules-extra),</p></td></tr>
-</table>
+<p style="margin-left:11%; margin-top: 1em"><i>falls Sie
+die Quelldateien mit &rsquo;sh viall&rsquo; bearbeiten
+wollen</i>: <br>
+vim</p>
 
-<p style="margin-left:15%;">falls <b>hylafax</b> benutzt
-werden soll:</p>
-
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">hylafax+, hylafax+-client,
-sendmail, tiff (im Fall von Vers. 4.0.7 mit kleiner
-Modifikation, s. Makefile)</p></td></tr>
-</table>
-
-<p style="margin-left:15%;">falls <b>ocr</b> benutzt werden
-soll:</p>
-
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">ffmpeg, ffmpeg-devel,
-ffmpeg-compat, gcc, libavformat-devel, libffi-devel,
-ocrmypdf, python3-devel, python3-pip, python3-setuptools,
-rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper,
-and via &rsquo;python3 pip&rsquo;: cryptography, cffi,
-image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
-</table>
-
-<p style="margin-left:15%;">falls Sie die Quelldateien mit
-&rsquo;sh viall&rsquo; bearbeiten wollen:</p>
-
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">vim</p></td>
-</td></tr>
-</table>
-
-<p style="margin-left:15%;">All diese Installationen
-k&ouml;nnen abh&auml;ngige Programme
+<p style="margin-left:11%; margin-top: 1em">All diese
+Installationen k&ouml;nnen abh&auml;ngige Programme
 einschlie&szlig;en. <br>
 Falls Sie eines dieser Programme nicht wollen bzw. nicht
 aktualisieren wollen, dann d&uuml;rfen Sie autofax oder
