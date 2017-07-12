@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43905) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43906) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -811,7 +811,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43905) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43906) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1492,10 +1492,12 @@ Standardinstallation in Debian) wird ggf. installiert. <br>
 Der Benutzer beim Installationsvorgang wird, falls nicht
 schon enthalten, in eine Administrator-Gruppe eingetragen,
 die in /etc/sudoers genannt wird, da er &quot;sudo&quot;
-ausf&uuml;hren mu&szlig;. <br>
-3) &rsquo;GNU make&rsquo; wird, falls nicht vorhanden, durch
-Aufruf von &rsquo;sh ./install.sh&rsquo; bzw.
-&rsquo;configure&rsquo; automatisch installiert.</p>
+ausf&uuml;hren mu&szlig;.</p>
+
+<p style="margin-left:11%; margin-top: 1em">3) &rsquo;GNU
+make&rsquo; wird, falls nicht vorhanden, durch Aufruf von
+&rsquo;sh ./install.sh&rsquo; bzw. &rsquo;configure&rsquo;
+automatisch installiert.</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -1523,15 +1525,12 @@ Python-Scripts f&uuml;r ankommende Faxe (Vorgabe z.B.:
 <b>/usr/lib64/capisuite/incoming.py</b>) zur Bestimmung der
 Zahl der Klingelt&ouml;ne bis zur Faxannahme, Erstellung
 bzw. Bearbeitung der Dateien</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">6) Einrichten von Diensten:</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">a) in systemd (im Verzeichnis
-/usr/lib/systemd/system oder /lib/systemd/system),
-insbesondere: <b><br>
+<p style="margin-left:11%; margin-top: 1em">6) Einrichten
+von Diensten: <br>
+a) in systemd (im Verzeichnis /usr/lib/systemd/system oder
+/lib/systemd/system), insbesondere: <b><br>
 hylafax-faxq.service</b>, <b>hylafax-hfaxd.service</b>,
 <b>hylafax-faxgetty-....service</b> (z.B.
 <b>hylafax-faxgetty-ttyACM0</b>), <br>

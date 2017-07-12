@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "12.07.17" "Version 0.43905" "Manual-Seite für ²DPROG²"
+.TH man 1 "12.07.17" "Version 0.43906" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -330,7 +330,7 @@ Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:
 2) Sudo (fehlt anfangs bei Standardinstallation in Debian) wird ggf. installiert. 
 .br
 Der Benutzer beim Installationsvorgang wird, falls nicht schon enthalten, in eine Administrator-Gruppe eingetragen, die in /etc/sudoers genannt wird, da er "sudo" ausführen muß.
-.br
+.LP
 3) 'GNU make' wird, falls nicht vorhanden, durch Aufruf von 'sh ./install.sh' bzw. 'configure' automatisch installiert.
 .LP
 .HP 3
@@ -343,7 +343,6 @@ Ggf. Bearbeitung des Python-Scripts für ankommende Faxe (Vorgabe z.B.: \fB/usr/
 bis zur Faxannahme, Erstellung bzw. Bearbeitung der Dateien 
 '\fB/etc/udev/rules.d/46-FKN_isdn_capi.rules\fR', '\fB/etc/modprobe.d/50-blacklist.conf\fR'.
 .LP
-.HP 3
 6) Einrichten von Diensten: 
 .br
 a) in systemd (im Verzeichnis /usr/lib/systemd/system oder /lib/systemd/system), insbesondere:
