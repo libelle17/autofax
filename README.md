@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43906) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43907) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -643,13 +643,8 @@ files <b>config</b> and <b>config.*</b> (e.g.
 <b>config.ttyACM0</b>) in the hylafax configuration
 directory (default e.g. <b>/var/spool/hylafax/etc</b>).</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">5) Installation of
-<b>capisuite</b>, in case a fritzcard is inserted and
+<p style="margin-left:11%; margin-top: 1em">5) Installation
+of <b>capisuite</b>, in case a fritzcard is inserted and
 capisuite is not installed. If necessary configuration of
 <b>/etc/capisuite/capisuite.conf</b> and
 <b>/etc/capisuite/fax.conf</b>. If necessary edition of the
@@ -658,16 +653,12 @@ python-script for received faxes (default e.g.
 determine the rings before answer, creation and edition of
 the files
 &rsquo;<b>/etc/udev/rules.d/46-FKN_isdn_capi.rules</b>&rsquo;,
-&rsquo;<b>/etc/modprobe.d/50-blacklist.conf</b>&rsquo;.</p> </td></tr>
-<tr valign="top" align="left">
+&rsquo;<b>/etc/modprobe.d/50-blacklist.conf</b>&rsquo;.</p>
 
-
-<p style="margin-top: 1em">6) Installation of services:</p></td></tr>
-</table>
-
-<p style="margin-left:15%;">a) in systemd (in the directory
-/usr/lib/systemd/system or /lib/systemd/system), especially:
-<b><br>
+<p style="margin-left:11%; margin-top: 1em">6) Installation
+of services: <br>
+a) in systemd (in the directory /usr/lib/systemd/system or
+/lib/systemd/system), especially: <b><br>
 hylafax-faxq.service</b>, <b>hylafax-hfaxd.service</b>,
 <b>hylafax-faxgetty-....service</b> (e.g.
 <b>hylafax-faxgetty-ttyACM0</b>), <b><br>
@@ -685,77 +676,54 @@ construction of a better fitting solution, the domain
 &rsquo;<b>semanage permissive -a getty_t</b>&rsquo; in order
 to be able to receive faxes.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
+<p style="margin-left:11%; margin-top: 1em">7) Creation of
+a logfile, per default <b>/var/log/autofax.log</b>.</p>
 
+<p style="margin-left:11%; margin-top: 1em">8) if necessary
+creation and making accessible of the configurable
+<b>directories</b> for faxes to be sent, waiting, finished
+and failed.</p>
 
-<p style="margin-top: 1em">7) Creation of a logfile, per
-default <b>/var/log/autofax.log</b>.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">8) if necessary creation and
-making accessible of the configurable <b>directories</b> for
-faxes to be sent, waiting, finished and failed.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">9) if necessary creation and
-making accessible of the configuration file
+<p style="margin-left:11%; margin-top: 1em">9) if necessary
+creation and making accessible of the configuration file
 <b>autofax.conf</b> in the same directory where the program
 is located by itsself (default:
-<b>/usr/local/sbin/autofax</b>).</p> </td></tr>
-<tr valign="top" align="left">
+<b>/usr/local/sbin/autofax</b>).</p>
 
+<p style="margin-left:11%; margin-top: 1em">10) Insertion
+of a line for the periodic automatic program call in
+root&rsquo;s crontab</p>
 
-<p style="margin-top: 1em">10) Insertion of a line for the
-periodic automatic program call in root&rsquo;s crontab</p></td></tr>
-<tr valign="top" align="left">
+<p style="margin-left:11%; margin-top: 1em">11) if
+necessary insertion of sections for the directories
+mentioned under 8) in /etc/samba/smb.conf, if necessary
+insertion of the program user or (if root) the user chosen
+for the capisuite as samba user. In case a Suse firewall is
+present, allow samba-server for &quot;external zone&quot;.
+After calling autofax, the directories mentioned in 8)
+should be readable via samba within a local network and the
+directory for faxes to be sent should also be writable.</p>
 
+<p style="margin-left:11%; margin-top: 1em">12) if
+necessary insertion of a database in mariadb with a
+configurable name, creation and modification of several
+tables and a procedure in this database, if necessary
+insertion of a user with a configurable name in mariadb for
+the management of those tables.</p>
 
-<p style="margin-top: 1em">11) if necessary insertion of
-sections for the directories mentioned under 8) in
-/etc/samba/smb.conf, if necessary insertion of the program
-user or (if root) the user chosen for the capisuite as samba
-user. In case a Suse firewall is present, allow samba-server
-for &quot;external zone&quot;. After calling autofax, the
-directories mentioned in 8) should be readable via samba
-within a local network and the directory for faxes to be
-sent should also be writable.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">12) if necessary insertion of a
-database in mariadb with a configurable name, creation and
-modification of several tables and a procedure in this
-database, if necessary insertion of a user with a
-configurable name in mariadb for the management of those
-tables.</p> </td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">13) With specific command line
-options for autofax, faxes can be deleted, especially:</p></td></tr>
-</table>
-
-<p style="margin-left:15%;">a) in hylafax by callinng
-&rsquo;faxrm&rsquo; <br>
+<p style="margin-left:11%; margin-top: 1em">13) With
+specific command line options for autofax, faxes can be
+deleted, especially: <br>
+a) in hylafax by callinng &rsquo;faxrm&rsquo; <br>
 b) in capisuite: by deleting files like
 /var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und
 ~/*.sff. In capisuite, an orphaned lock file
 (/var/spool/capisuite/users/&lt;user&gt;/sendq/*.lock) can
 be deleted, too.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">14) With a specific command line
-option for autofax, an old received fax can be converted to
-a pdf-File again.</p></td></tr>
-</table>
+<p style="margin-left:11%; margin-top: 1em">14) With a
+specific command line option for autofax, an old received
+fax can be converted to a pdf-File again.</p>
 
 <h2>UNINSTALLING
 <a name="UNINSTALLING_D"></a>
@@ -811,7 +779,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43906) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43907) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1601,32 +1569,22 @@ bestimmbaren Namen, Anlage und Ver&auml;nderung mehrerer
 Tabellen und einer Prozedur in dieser Datenbank, ggf.
 Einf&uuml;gen eines Benutzers mit bestimmbarem Namen in
 mariadb zur Datenpflege in diesen Tabellen</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">13) durch entsprechende
-Befehlszeilenoptionen von autofax k&ouml;nnen innerhalb
-von hylafax und capisuite Faxe gel&ouml;scht werden,
-insbesondere:</p> </td></tr>
 </table>
 
-<p style="margin-left:15%;">a) in hylafax: durch Aufruf von
-&rsquo;faxrm&rsquo; <br>
+<p style="margin-left:11%; margin-top: 1em">13) durch
+entsprechende Befehlszeilenoptionen von autofax
+k&ouml;nnen innerhalb von hylafax und capisuite Faxe
+gel&ouml;scht werden, insbesondere: <br>
+a) in hylafax: durch Aufruf von &rsquo;faxrm&rsquo; <br>
 b) in capisuite: durch L&ouml;schen der Dateien wie
 /var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und
 ~/*.sff. In capisuite kann auch eine verwaiste Lock-Datei
 (/var/spool/capisuite/users/&lt;user&gt;/sendq/*.lock)
 gel&ouml;scht werden.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">14) mit einer
+<p style="margin-left:11%; margin-top: 1em">14) mit einer
 Befehlszeilenoption kann ein fr&uuml;her empfangenes Fax
-erneut in eine pdf-Datei umgewandelt werden.</p></td></tr>
-</table>
+erneut in eine pdf-Datei umgewandelt werden.</p>
 
 <h2>DEINSTALLATION
 <a name="DEINSTALLATION_D"></a>

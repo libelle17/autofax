@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "12.07.17" "Version 0.43906" "Manual-Seite für ²DPROG²"
+.TH man 1 "12.07.17" "Version 0.43907" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -376,7 +376,6 @@ Nach Programmaufruf sollten die unter 8) genannten Verzeichnisse im Samba-Netzwe
 .HP 3
 12) ggf. Einfügen einer Datenbank für die Faxe in mariadb unter einem bestimmbaren Namen, Anlage und Veränderung mehrerer Tabellen und einer Prozedur in dieser Datenbank, ggf. Einfügen eines Benutzers mit bestimmbarem Namen in mariadb zur Datenpflege in diesen Tabellen 
 .LP
-.HP 3
 13) durch entsprechende Befehlszeilenoptionen von ²DPROG² können innerhalb von hylafax und capisuite Faxe gelöscht werden, insbesondere:
 .br
 a) in hylafax: durch Aufruf von 'faxrm'
@@ -384,7 +383,6 @@ a) in hylafax: durch Aufruf von 'faxrm'
 b) in capisuite: durch Löschen der Dateien wie /var/spool/capisuite/users/<user>/sendq/*.txt und ~/*.sff.
 In capisuite kann auch eine verwaiste Lock-Datei (/var/spool/capisuite/users/<user>/sendq/*.lock) gelöscht werden.
 .LP
-.HP 3
 14) mit einer Befehlszeilenoption kann ein früher empfangenes Fax erneut in eine pdf-Datei umgewandelt werden.
 .br
 .SH DEINSTALLATION

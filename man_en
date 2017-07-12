@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "12.07.17" "Version 0.43906" "\fB²DPROG²\fR man page"
+.TH man 1 "12.07.17" "Version 0.43907" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -330,10 +330,8 @@ The current linux user, if not already contained, will be entered into an admini
 .br
 4) Installation of \fBhylafax+\fR, in case a modem is connected and hylafax+ is not installed. If necessary configuration of hylafax+ by calling '\fBfaxsetup -nointeracitve\fR', by editing the configuration files \fBconfig\fR and \fBconfig.*\fR (e.g. \fBconfig.ttyACM0\fR) in the hylafax configuration directory (default e.g. \fB/var/spool/hylafax/etc\fR).   
 .LP
-.HP 3
 5) Installation of \fBcapisuite\fR, in case a fritzcard is inserted and capisuite is not installed. If necessary configuration of \fB/etc/capisuite/capisuite.conf\fR and \fB/etc/capisuite/fax.conf\fR. If necessary edition of the python-script for received faxes (default e.g. \fB/usr/lib64/capisuite/incoming.py\fR) in order to determine the rings before answer, creation and edition of the files '\fB/etc/udev/rules.d/46-FKN_isdn_capi.rules\fR', '\fB/etc/modprobe.d/50-blacklist.conf\fR'.
 .LP
-.HP 3
 6) Installation of services: 
 .br
 a) in systemd (in the directory /usr/lib/systemd/system or /lib/systemd/system), especially:
@@ -347,34 +345,26 @@ b) Moving of existing service files from the directory /etc/init.d to a newly cr
 .br
 c) In case \fBselinux\fR is active (as per default in fedora), it impedes per default \fRhylafax\fR; in this case, a module for selinux is silently arranged in order to allow running hylafax-hfaxd. Furtheron, up to the possible construction of a better fitting solution, the domain 'getty' has to be deactivated with the command '\fBsemanage permissive -a getty_t\fR' in order to be able to receive faxes.  
 .LP
-.HP 3
 7) Creation of a logfile, per default \fB/var/log/²DPROG².log\fR.
 .LP
-.HP 3
 8) if necessary creation and making accessible of the configurable \fBdirectories\fR for faxes to be sent, waiting, finished and failed.
 .LP
-.HP 3
 9) if necessary creation and making accessible of the configuration file \fB²DPROG².conf\fR in the same directory where the program is located by itsself (default: \fB/usr/local/sbin/²DPROG²\fR).
 .LP
-.HP 3
 10) Insertion of a line for the periodic automatic program call in root's crontab
 .LP
-.HP 3
 11) if necessary insertion of sections for the directories mentioned under 8) in /etc/samba/smb.conf, if necessary insertion of the program user or (if root) the user chosen for the capisuite as samba user.
 In case a Suse firewall is present, allow samba-server for "external zone".
 After calling ²DPROG², the directories mentioned in 8) should be readable via samba within a local network and the directory for faxes to be sent should also be writable. 
 .LP
-.HP 3
 12) if necessary insertion of a database in mariadb with a configurable name, creation and modification of several tables and a procedure in this database, if necessary insertion of a user with a configurable name in mariadb for the management of those tables.
 .LP
-.HP 3
 13) With specific command line options for ²DPROG², faxes can be deleted, especially:
 .br
 a) in hylafax by callinng 'faxrm'
 .br
 b) in capisuite: by deleting files like /var/spool/capisuite/users/<user>/sendq/*.txt und ~/*.sff. In capisuite, an orphaned lock file (/var/spool/capisuite/users/<user>/sendq/*.lock) can be deleted, too.
 .LP
-.HP 3
 14) With a specific command line option for ²DPROG², an old received fax can be converted to a pdf-File again.
 .br
 .SH UNINSTALLING
