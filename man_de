@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "12.07.17" "Version 0.43907" "Manual-Seite für ²DPROG²"
+.TH man 1 "12.07.17" "Version 0.43908" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -261,17 +261,15 @@ Falls der Faxvorgang (erfolgreich oder erfolglos) beendet ist, wird die Datei au
 Der Status der genannten Faxe wird angezeigt.
 .\" untersuchespool()
 .LP
-.HP 3 
 17) Weitere in der Warteschleife von hylafax/capisuite befindliche, nicht über ²DPROG² erstellte Faxe werden ggf. angezeigt.
 In Intervallen werden sie in die ²DPROG²-Datenbank integriert (ohne die fehlende Information über den ursprünglichen Dateinamen)
 .LP
-.HP 3 
 18) Über \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe werden ggf. mit Hilfe der Faxnummer anhand voreingestellter SQL-Befehle nach dem Namen des Absenders benannt und in ein Empfangsverzeichnis gestellt.
 .br
 Solche SQL-Befehle sollen (mindestens) zwei Ergebnisfelder (mit benutzerdefinierter Bedeutung) liefern, deren Inhalt dann, durch ein Komma getrennt, von ²DPROG² zur Benennung eines empfangenen Faxes verwendet werden. Vor der Anwendung des SQL-Befehls wird die Zeichenfolge '&&faxnr&&' zur aktuellen Faxnummer erweitert. Beispiel fuer einen solchen SQL-Befehl:
 .br
 .br
-select concat(haname,', ',ort,', ',kvnu) name, zulg from kvaerzte.hae where concat(if(mid(fax1k,1,1)='0','','08131'), replace(replace(replace(replace(fax1k,' ',''),'-',''),'/',''),'\'','')) = '&&faxnr&&'
+\fIselect concat(haname,', ',ort,', ',kvnu) name, zulg from kvaerzte.hae where concat(if(mid(fax1k,1,1)='0','','08131'), replace(replace(replace(replace(fax1k,' ',''),'-',''),'/',''),'\'','')) = '&&faxnr&&'\fR
 .br
 .br
 Wenn mehrere SQL-Befehle angegeben werden, so wird der jeweils naechste angewandt, wenn einer kein Ergebnis liefert.

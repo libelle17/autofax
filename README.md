@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43907) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43908) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -478,40 +478,32 @@ python3 &gt; 3.5 is installed), and the database entry is
 being transferred from <b>spooltab</b> to <b>outa</b>. <br>
 The status of the mentioned faxes is being displayed.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
+<p style="margin-left:11%; margin-top: 1em">17) If
+additional faxes in the spool of hylafax/capisuite are
+detected which are not created via autofax, they are
+displayed. In intervals they will be integrated into the
+autofax database (without the not available information on
+the original file name).</p>
 
-
-<p style="margin-top: 1em">17) If additional faxes in the
-spool of hylafax/capisuite are detected which are not
-created via autofax, they are displayed. In intervals they
-will be integrated into the autofax database (without the
-not available information on the original file name).</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">18) Via
+<p style="margin-left:11%; margin-top: 1em">18) Via
 <b>hylafax</b>/<b>capisuite</b> received faxes are copied to
 a receiving directory and there named with the name of the
 sender, if possible, by means of their fax number which is
 being looked up using a predefineable number of
 predefineable sql commands, which are applied one after
-another until the fax number is found.</p></td></tr>
-</table>
-
-<p style="margin-left:15%;">Such sql commands shall deliver
-(at least) 2 fields (with a user defined sense), whose
-contents, separated by a comma, will be used by autofax to
-name the received faxes. Before applied, within the sql
-commands the string &rsquo;&&faxnr&&&rsquo;
-will be replaced by the current fax number. Example: <br>
+another until the fax number is found. <br>
+Such sql commands shall deliver (at least) 2 fields (with a
+user defined sense), whose contents, separated by a comma,
+will be used by autofax to name the received faxes. Before
+applied, within the sql commands the string
+&rsquo;&&faxnr&&&rsquo; will be replaced by
+the current fax number. Example: <i><br>
 select concat(haname,&rsquo;, &rsquo;,ort,&rsquo;,
 &rsquo;,kvnu) name, zulg from kvaerzte.hae where
 concat(if(mid(fax1k,1,1)=&rsquo;0&rsquo;,&rsquo;&rsquo;,&rsquo;08131&rsquo;),
 replace(replace(replace(replace(fax1k,&rsquo;
 &rsquo;,&rsquo;&rsquo;),&rsquo;-&rsquo;,&rsquo;&rsquo;),&rsquo;/&rsquo;,&rsquo;&rsquo;),&rsquo;&acute;&rsquo;,&rsquo;&rsquo;))
-= &rsquo;&&faxnr&&&rsquo; <br>
+= &rsquo;&&faxnr&&&rsquo;</i> <br>
 If more sql commands are specified and one of them does not
 give a result, the next one will be tried. <br>
 Optionally, the received faxes are subjected to ocr via a
@@ -779,7 +771,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43907) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43908) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1296,41 +1288,32 @@ installiert ist), und der Datenbankeintrag aus
 <b>spooltab</b> in die Tabelle <b>outa</b> verschoben. <br>
 Der Status der genannten Faxe wird angezeigt.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
+<p style="margin-left:11%; margin-top: 1em">17) Weitere in
+der Warteschleife von hylafax/capisuite befindliche, nicht
+&uuml;ber autofax erstellte Faxe werden ggf. angezeigt.
+In Intervallen werden sie in die autofax-Datenbank
+integriert (ohne die fehlende Information &uuml;ber den
+urspr&uuml;nglichen Dateinamen)</p>
 
-
-<p style="margin-top: 1em">17) Weitere in der Warteschleife
-von hylafax/capisuite befindliche, nicht &uuml;ber
-autofax erstellte Faxe werden ggf. angezeigt. In Intervallen
-werden sie in die autofax-Datenbank integriert (ohne die
-fehlende Information &uuml;ber den
-urspr&uuml;nglichen Dateinamen)</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">18) &Uuml;ber
-<b>hylafax</b>/<b>capisuite</b> empfangene Faxe werden ggf.
-mit Hilfe der Faxnummer anhand voreingestellter SQL-Befehle
-nach dem Namen des Absenders benannt und in ein
-Empfangsverzeichnis gestellt.</p></td></tr>
-</table>
-
-<p style="margin-left:15%;">Solche SQL-Befehle sollen
-(mindestens) zwei Ergebnisfelder (mit benutzerdefinierter
-Bedeutung) liefern, deren Inhalt dann, durch ein Komma
-getrennt, von autofax zur Benennung eines empfangenen Faxes
-verwendet werden. Vor der Anwendung des SQL-Befehls wird die
-Zeichenfolge &rsquo;&&faxnr&&&rsquo; zur
-aktuellen Faxnummer erweitert. Beispiel fuer einen solchen
-SQL-Befehl: <br>
+<p style="margin-left:11%; margin-top: 1em">18)
+&Uuml;ber <b>hylafax</b>/<b>capisuite</b> empfangene
+Faxe werden ggf. mit Hilfe der Faxnummer anhand
+voreingestellter SQL-Befehle nach dem Namen des Absenders
+benannt und in ein Empfangsverzeichnis gestellt. <br>
+Solche SQL-Befehle sollen (mindestens) zwei Ergebnisfelder
+(mit benutzerdefinierter Bedeutung) liefern, deren Inhalt
+dann, durch ein Komma getrennt, von autofax zur Benennung
+eines empfangenen Faxes verwendet werden. Vor der Anwendung
+des SQL-Befehls wird die Zeichenfolge
+&rsquo;&&faxnr&&&rsquo; zur aktuellen
+Faxnummer erweitert. Beispiel fuer einen solchen SQL-Befehl:
+<i><br>
 select concat(haname,&rsquo;, &rsquo;,ort,&rsquo;,
 &rsquo;,kvnu) name, zulg from kvaerzte.hae where
 concat(if(mid(fax1k,1,1)=&rsquo;0&rsquo;,&rsquo;&rsquo;,&rsquo;08131&rsquo;),
 replace(replace(replace(replace(fax1k,&rsquo;
 &rsquo;,&rsquo;&rsquo;),&rsquo;-&rsquo;,&rsquo;&rsquo;),&rsquo;/&rsquo;,&rsquo;&rsquo;),&rsquo;&acute;&rsquo;,&rsquo;&rsquo;))
-= &rsquo;&&faxnr&&&rsquo; <br>
+= &rsquo;&&faxnr&&&rsquo;</i> <br>
 Wenn mehrere SQL-Befehle angegeben werden, so wird der
 jeweils naechste angewandt, wenn einer kein Ergebnis
 liefert. <br>
