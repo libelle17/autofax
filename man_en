@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "12.07.17" "Version 0.43902" "\fB²DPROG²\fR man page"
+.TH man 1 "12.07.17" "Version 0.43903" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -308,7 +308,7 @@ in case \fBocr\fR shall be used:
 .br
 ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmypdf, python3-devel, python3-pip, python3-setuptools, rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper, and via 'python3 pip': cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.
 .LP
-in case You want to work on the source files with 'sh viall':
+\fIin case You want to work on the source files with 'sh viall'\fR:
 .br
 vim
 .LP

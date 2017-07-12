@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43902) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43903) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -598,9 +598,9 @@ tesseract-ocr, unpaper, and via &rsquo;python3 pip&rsquo;:
 cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2,
 reportlab, ruffus.</p>
 
-<p style="margin-left:11%; margin-top: 1em">in case You
+<p style="margin-left:11%; margin-top: 1em"><i>in case You
 want to work on the source files with &rsquo;sh
-viall&rsquo;: <br>
+viall&rsquo;</i>: <br>
 vim</p>
 
 <p style="margin-left:11%; margin-top: 1em">All those
@@ -811,7 +811,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43902) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43903) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
