@@ -63,7 +63,6 @@ useful for some also behind a fast data line.</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="89%">
 
 
 <p style="margin-top: 1em"><b>autofax</b> is a command line
