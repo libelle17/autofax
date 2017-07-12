@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43897) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43898) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -28,9 +28,17 @@
 <p style="margin-left:11%; margin-top: 1em"><b>autofax
 &minus; Fax server functionality</b>: induces automatic fax
 transmission of files, naming of received faxes and logging
-of all of them in a database <br>
-(manpage-Hilfe in deutsch verf&uuml;gbar: &rsquo;man
-autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
+of all of them in a database</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">(manpage-Hilfe in deutsch
+verf&uuml;gbar: &rsquo;man autofax&rsquo; oder
+&rsquo;man -Lde autofax&rsquo;)</p></td></tr>
+</table>
 
 <h2>SYNOPSIS
 <a name="SYNOPSIS_D"></a>
@@ -48,23 +56,36 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
 
 <p style="margin-left:11%; margin-top: 1em"><b>autofax</b>
 offers quasi the functionality of fax server, which can be
-useful for some also behind a fast data line. <b><br>
-autofax</b> is a command line program to remit files of a
-certain directory automatically to <b>hylafax</b> (in case a
-linux-compatible modem is installed) and/or <b>capisuite</b>
-(in case a fritzcard 2.0 or 2.1 is installed), if the fax
-number is integrated in the file name correctly.
-Furthermore, autofax holds the posted faxes in a mariadb
-database. <br>
-Additionally, received faxes from
-<b>hylafax</b>/<b>capisuite</b> can be named automatically
-with the sender&rsquo;s name, according to his fax number,
-and stored. <br>
-The usability within a network (may also be a windows
-network with only one linux machine) is being accomplished
-by automatic integration of all relevant directories into a
-samba server. It could be complemented by a frontend for the
-mariadb database.</p>
+useful for some also behind a fast data line.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em"><b>autofax</b> is a command line
+program to remit files of a certain directory automatically
+to <b>hylafax</b> (in case a linux-compatible modem is
+installed) and/or <b>capisuite</b> (in case a fritzcard 2.0
+or 2.1 is installed), if the fax number is integrated in the
+file name correctly. Furthermore, autofax holds the posted
+faxes in a mariadb database.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Additionally, received faxes
+from <b>hylafax</b>/<b>capisuite</b> can be named
+automatically with the sender&rsquo;s name, according to his
+fax number, and stored.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">The usability within a network
+(may also be a windows network with only one linux machine)
+is being accomplished by automatic integration of all
+relevant directories into a samba server. It could be
+complemented by a frontend for the mariadb database.</p></td></tr>
+</table>
 
 <h2>INSTALLATION
 <a name="INSTALLATION_D"></a>
@@ -95,57 +116,102 @@ respectively.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Ideally, the
 program should have installed itsself after a single call
-(see above) in a self-running way. <br>
-Then a directory e.g. &rsquo;<b>tobefaxed</b>&rsquo; exists,
-in which e.g. users in a network (e.g. via the above
-mentioned samba share) can deposit files to be faxed, e.g.
-<br>
-&quot;<b>Medical report on Frank Ill to Dr. Healthy and
-Frank Ill to fax 099 987654321 and 088
-887654321.doc</b>&quot; (it could also be e.g. an *.xls, a
-*.jpg, a *.tif, a *.txt, a *pdf file; the section &rsquo; to
-Dr. Healthy and Frank Ill&rsquo; is optional for the later
-allocation of the fax number(s) in the database, it may also
-be obmitted; on the other hand, if the program can assign
-the last (1-)3 faxes to a certain addressee clearly, the fax
-number may be obmitted). <br>
-When <b>autofax</b> is called for the next time (per default
-2 minutes), the above mentioned example file will initially
-be copied and renamed into <br>
-&quot;<b>Medical report on Frank Ill to Dr. Healthy to fax
-099 987654321.doc</b>&quot; and <br>
-&quot;<b>Medical report on Frank Ill to Frank Ill to fax 088
-887654321.doc</b>&quot; and converted into the pdf-files
-<br>
-&quot;<b>Medical report on Frank Ill to Dr. Healthy to fax
-099 987654321.pdf</b>&quot; and <br>
-&quot;<b>Medical report on Frank Ill to Frank Ill to fax 088
-887654321.pdf</b>&quot;. <br>
-Those are subsequently being relayed to <b>hylafax</b> or
-<b>Capisuite</b> and from there sent. <br>
-Simultaneously they are being moved from
-&rsquo;<b>tobefaxed</b>&rsquo; to the waiting directory,
-e.g. &rsquo;<b>waitingfaxes</b>&rsquo; and recorded in the
-spool table <b>spooltab</b>. <br>
-At each call, autofax checks the status of <b>hylafax</b>
-and/or <b>Capisuite</b>. The Finishing of a fax process
-there causes autofax to move the source files (here the
-above mentioned .doc- and .pdf-files) from the waiting
-directory to one or several archive directories or a
-directory for failed faxes and to move their database record
-from &rsquo;<b>spooltab</b>&rsquo; to the archive table
-&rsquo;<b>outa</b>&rsquo;. <br>
-Further on, incoming faxes via <b>hylafax</b> or
-<b>Capisuite</b> are being transmitted to an incoming
-directory and if applicable named including the
+(see above) in a self-running way.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Then a directory e.g.
+&rsquo;<b>tobefaxed</b>&rsquo; exists, in which e.g. users
+in a network (e.g. via the above mentioned samba share) can
+deposit files to be faxed, e.g.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">&quot;<b>Medical report on Frank
+Ill to Dr. Healthy and Frank Ill to fax 099 987654321 and
+088 887654321.doc</b>&quot; (it could also be e.g. an *.xls,
+a *.jpg, a *.tif, a *.txt, a *pdf file; the section &rsquo;
+to Dr. Healthy and Frank Ill&rsquo; is optional for the
+later allocation of the fax number(s) in the database, it
+may also be obmitted; on the other hand, if the program can
+assign the last (1-)3 faxes to a certain addressee clearly,
+the fax number may be obmitted).</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">When <b>autofax</b> is called
+for the next time (per default 2 minutes), the above
+mentioned example file will initially be copied and renamed
+into</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">&quot;<b>Medical report on Frank
+Ill to Dr. Healthy to fax 099 987654321.doc</b>&quot;
+and</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">&quot;<b>Medical report on Frank
+Ill to Frank Ill to fax 088 887654321.doc</b>&quot; and
+converted into the pdf-files</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">&quot;<b>Medical report on Frank
+Ill to Dr. Healthy to fax 099 987654321.pdf</b>&quot;
+and</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">&quot;<b>Medical report on Frank
+Ill to Frank Ill to fax 088 887654321.pdf</b>&quot;.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Those are subsequently being
+relayed to <b>hylafax</b> or <b>Capisuite</b> and from there
+sent.</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Simultaneously they are being
+moved from &rsquo;<b>tobefaxed</b>&rsquo; to the waiting
+directory, e.g. &rsquo;<b>waitingfaxes</b>&rsquo; and
+recorded in the spool table <b>spooltab</b>.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">At each call, autofax checks the
+status of <b>hylafax</b> and/or <b>Capisuite</b>. The
+Finishing of a fax process there causes autofax to move the
+source files (here the above mentioned .doc- and .pdf-files)
+from the waiting directory to one or several archive
+directories or a directory for failed faxes and to move
+their database record from &rsquo;<b>spooltab</b>&rsquo; to
+the archive table &rsquo;<b>outa</b>&rsquo;.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Further on, incoming faxes via
+<b>hylafax</b> or <b>Capisuite</b> are being transmitted to
+an incoming directory and if applicable named including the
 sender&rsquo;s name. To this purpose, customizeable sql
-commands are being used, if specified. <br>
-Depending on operating system, accessability and preferences
-the users thus could look up the status of their faxes in
-the above mentioned directories, in the database tables or
-by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
--lista</b>&rsquo;, &rsquo;<b>autofax -listf</b>&rsquo; or
-&rsquo;<b>autofax -listi</b>&rsquo;.</p>
+commands are being used, if specified.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Depending on operating system,
+accessability and preferences the users thus could look up
+the status of their faxes in the above mentioned
+directories, in the database tables or by calling
+&rsquo;<b>autofax&rsquo;, &rsquo;autofax -lista</b>&rsquo;,
+&rsquo;<b>autofax -listf</b>&rsquo; or &rsquo;<b>autofax
+-listi</b>&rsquo;.</p> </td></tr>
+</table>
 
 <h2>OPTIONS
 <a name="OPTIONS_D"></a>
@@ -322,18 +388,18 @@ instead of &rsquo;<b>2</b>&rsquo;</p>
 
 
 <p style="margin-top: 1em">1) The current hardware is being
-checked.</p> </td>
-</td></tr>
-</table>
+checked.</p> </td></tr>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">a) with the command
-&rsquo;<b>lspci | grep -i isdn</b>&rsquo; for a fritz card.
-<br>
-b) with the command &rsquo;<b>stty -F</b>&rsquo; for a fax
-modem.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+<p style="margin-top: 1em">a) with the command
+&rsquo;<b>lspci | grep -i isdn</b>&rsquo; for a fritz
+card.</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">b) with the command
+&rsquo;<b>stty -F</b>&rsquo; for a fax modem.</p></td></tr>
 <tr valign="top" align="left">
 
 
@@ -416,20 +482,22 @@ outgoing directory are being analysed. Each file with some
 identifiable fax number(s) within its file name which is or
 can be converted in/into pdf format will be moved to to
 waiting directory and recorded in <b>spooltab</b>.</p></td></tr>
-</table>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">If a file contains more than
-one recepients and/or a conversion to pdf is necessary,
+
+<p style="margin-top: 1em">If a file contains more than one
+recepients and/or a conversion to pdf is necessary,
 additional files are generated and the original file may be
 renamed. If necessary, additional numbers near the end of
 the file name(s) may be added in order not to conflict with
 any other file name in one of the directories mentioned in
-7). <br>
-If more files have been generated, the successive movements
-and recordings are being carried out with all of them.</p>
+7).</p> </td></tr>
+<tr valign="top" align="left">
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+
+<p style="margin-top: 1em">If more files have been
+generated, the successive movements and recordings are being
+carried out with all of them.</p></td></tr>
 <tr valign="top" align="left">
 
 
@@ -463,23 +531,29 @@ in <b>spooltab</b> as waiting are being checked in
 <b>hylafax</b>/<b>capisuite</b> as to their status which is
 being updated in <b>spooltab</b> (number of tries
 hitherto).</p> </td></tr>
-</table>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">If hylafax and capisuite are
+
+<p style="margin-top: 1em">If hylafax and capisuite are
 working simultaneously and a prespecified number of send
 tries has been reached without success in the programs of
 the first preference of those two, the fax is additionally
-forwarded to the second of the two programs. <br>
-If the fax transmission is finished (with/without success),
-the file is being moved from the waiting directory to the
-respective directory for sent faxes or for failed faxes,
-optionally modified by ocr via ocrmypdf (if a young enough
-python3 &gt; 3.5 is installed), and the database entry is
-being transferred from <b>spooltab</b> to <b>outa</b>. <br>
-The status of the mentioned faxes is being displayed.</p>
+forwarded to the second of the two programs.</p></td></tr>
+<tr valign="top" align="left">
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+
+<p style="margin-top: 1em">If the fax transmission is
+finished (with/without success), the file is being moved
+from the waiting directory to the respective directory for
+sent faxes or for failed faxes, optionally modified by ocr
+via ocrmypdf (if a young enough python3 &gt; 3.5 is
+installed), and the database entry is being transferred from
+<b>spooltab</b> to <b>outa</b>.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">The status of the mentioned
+faxes is being displayed.</p></td></tr>
 <tr valign="top" align="left">
 
 
@@ -498,27 +572,40 @@ sender, if possible, by means of their fax number which is
 being looked up using a predefineable number of
 predefineable sql commands, which are applied one after
 another until the fax number is found.</p></td></tr>
-</table>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">Such sql commands shall deliver
+
+<p style="margin-top: 1em">Such sql commands shall deliver
 (at least) 2 fields (with a user defined sense), whose
 contents, separated by a comma, will be used by autofax to
 name the received faxes. Before applied, within the sql
 commands the string &rsquo;&&faxnr&&&rsquo;
-will be replaced by the current fax number. Example: <br>
-select concat(haname,&rsquo;, &rsquo;,ort,&rsquo;,
-&rsquo;,kvnu) name, zulg from kvaerzte.hae where
+will be replaced by the current fax number. Example:</p></td></tr>
+<tr valign="top" align="left">
+</td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">select concat(haname,&rsquo;,
+&rsquo;,ort,&rsquo;, &rsquo;,kvnu) name, zulg from
+kvaerzte.hae where
 concat(if(mid(fax1k,1,1)=&rsquo;0&rsquo;,&rsquo;&rsquo;,&rsquo;08131&rsquo;),
 replace(replace(replace(replace(fax1k,&rsquo;
 &rsquo;,&rsquo;&rsquo;),&rsquo;-&rsquo;,&rsquo;&rsquo;),&rsquo;/&rsquo;,&rsquo;&rsquo;),&rsquo;&acute;&rsquo;,&rsquo;&rsquo;))
-= &rsquo;&&faxnr&&&rsquo; <br>
-If more sql commands are specified and one of them does not
-give a result, the next one will be tried. <br>
-Optionally, the received faxes are subjected to ocr via a
-call of ocrmypdf.</p>
+= &rsquo;&&faxnr&&&rsquo;</p></td></tr>
+<tr valign="top" align="left">
+</td></tr>
+<tr valign="top" align="left">
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+
+<p style="margin-top: 1em">If more sql commands are
+specified and one of them does not give a result, the next
+one will be tried.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Optionally, the received faxes
+are subjected to ocr via a call of ocrmypdf.</p></td></tr>
 <tr valign="top" align="left">
 
 
@@ -556,9 +643,15 @@ german versions of the packet manager.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">(for this
-purpose, depending on the distribution, zypper, apt(-get),
-dnf or yum are used).</p>
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">(for this purpose, depending on
+the distribution, zypper, apt(-get), dnf or yum are
+used).</p> </td></tr>
+</table>
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>makefile:</b></p>
@@ -571,12 +664,12 @@ dnf or yum are used).</p>
 <p style="margin-top: 1em">gcc V.6, g++ V.6, groff,
 libmysqlclient-dev(el), libtiff-dev(el) (in case of version
 4.0.7 with a slight modification, see Makefile)</p></td></tr>
-</table>
+<tr valign="top" align="left">
+</td></tr>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;"><b>autofax:</b></p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+<p style="margin-top: 1em"><b>autofax:</b></p></td></tr>
 <tr valign="top" align="left">
 
 
@@ -586,13 +679,11 @@ libreoffice-base, mariadb-server, policycoreutils,
 policycoreutils-python-utils, poppler-tools, samba,
 sfftobmp, (in debian-derivates, for mariadb, additionally:
 apt-transport-https)</p> </td></tr>
-</table>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">in case <b>capisuite</b> shall
-be used:</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+<p style="margin-top: 1em">in case <b>capisuite</b> shall
+be used:</p></td></tr>
 <tr valign="top" align="left">
 
 
@@ -601,26 +692,22 @@ capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source
 (linux-source), libcapi20-2, libcapi20-3, libxslt-tools,
 linux-headers-$(uname -r), python-devel, (in fedora,
 additionally: kernel-modules-extra),</p></td></tr>
-</table>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">in case <b>hylafax</b> shall be
-used:</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+<p style="margin-top: 1em">in case <b>hylafax</b> shall be
+used:</p> </td></tr>
 <tr valign="top" align="left">
 
 
 <p style="margin-top: 1em">hylafax+, hylafax+-client,
 sendmail, tiff (in case of version 4.0.7 with a slight
 modification, see Makefile)</p></td></tr>
-</table>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">in case <b>ocr</b> shall be
-used:</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+<p style="margin-top: 1em">in case <b>ocr</b> shall be
+used:</p> </td></tr>
 <tr valign="top" align="left">
 
 
@@ -630,25 +717,28 @@ ocrmypdf, python3-devel, python3-pip, python3-setuptools,
 rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper,
 and via &rsquo;python3 pip&rsquo;: cryptography, cffi,
 image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
-</table>
-
-<p style="margin-left:15%;">in case You want to work on the
-source files with &rsquo;sh viall&rsquo;:</p>
-
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 
 
-<p style="margin-top: 1em">vim</p></td>
-</td></tr>
-</table>
+<p style="margin-top: 1em">in case You want to work on the
+source files with &rsquo;sh viall&rsquo;:</p></td></tr>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">All those installations may
-include dependent programs. <br>
-If You don&rsquo;t want one of those programs or want to
-keep an older version of one, You may not install autofax or
-use the respective program parts.</p>
+
+<p style="margin-top: 1em">vim</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">All those installations may
+include dependent programs.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">If You don&rsquo;t want one of
+those programs or want to keep an older version of one, You
+may not install autofax or use the respective program
+parts.</p> </td></tr>
+</table>
 
 <h2>IMPLICATIONS
 <a name="IMPLICATIONS_D"></a>
@@ -806,18 +896,41 @@ a pdf-File again.</p></td></tr>
 <p style="margin-left:11%; margin-top: 1em">Change in a
 terminal to the installation directory (for the same
 installed user, it&rsquo;s <b>cd ~/autofax</b>, otherwise it
-will be displayed by <b>autofax -info</b>). <br>
-Call <b>make uninstall</b>. <br>
-Then the installed <b>autofax</b> will be deleted and the
-script <b>uninstallinv</b> will be executed in reverse order
-which has been generated during the installation and
-execution of autofax. <br>
-Thereby additionally installed program packets, permissions,
-samba shares and firewall exceptions are deleted. <br>
-Configuration files, data, and system relevant programs like
-libgcc and selinux will not be deleted. <br>
-Error messages originate mostly in efforts to delete a
-program already missing and can then be ignored.</p>
+will be displayed by <b>autofax -info</b>).</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Call <b>make uninstall</b>.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Then the installed
+<b>autofax</b> will be deleted and the script
+<b>uninstallinv</b> will be executed in reverse order which
+has been generated during the installation and execution of
+autofax.</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Thereby additionally installed
+program packets, permissions, samba shares and firewall
+exceptions are deleted.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Configuration files, data, and
+system relevant programs like libgcc and selinux will not be
+deleted.</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Error messages originate mostly
+in efforts to delete a program already missing and can then
+be ignored.</p></td></tr>
+</table>
 
 <h2>ERRORS
 <a name="ERRORS_D"></a>
@@ -837,9 +950,16 @@ a requirement for a program modification.</p>
 
 <p style="margin-left:11%; margin-top: 1em">The program has
 been written with the best aim and has been tested by the
-author. <br>
-Nevertheless the author cannot be liable for any damage
-caused by the program.</p>
+author.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Nevertheless the author cannot
+be liable for any damage caused by the program.</p></td></tr>
+</table>
 
 <h2>AUTHOR
 <a name="AUTHOR_D"></a>
@@ -852,7 +972,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43897) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43898) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -880,9 +1000,17 @@ caused by the program.</p>
 <p style="margin-left:11%; margin-top: 1em"><b>autofax
 &minus; FaxServer-Funktionalit&auml;t</b>: veranlasst
 automatischen Faxversand von Dateien, Benennung empfangener
-Faxe und Protokollierung aller Faxe in einer Datenbank <br>
-(manpage available in english: &rsquo;man autofax&rsquo; or
-&rsquo;man -Len autofax&rsquo;)</p>
+Faxe und Protokollierung aller Faxe in einer Datenbank</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">(manpage available in english:
+&rsquo;man autofax&rsquo; or &rsquo;man -Len
+autofax&rsquo;)</p> </td></tr>
+</table>
 
 <h2>SYNOPSIS
 <a name="SYNOPSIS_D"></a>
@@ -901,25 +1029,38 @@ Faxe und Protokollierung aller Faxe in einer Datenbank <br>
 <p style="margin-left:11%; margin-top: 1em"><b>autofax</b>
 bietet quasi die Funktionalit&auml;t eines Faxservers,
 welcher f&uuml;r manche auch hinter einer schnellen
-Datenleitung sinnvoll sein kann. <b><br>
-autofax</b> ist ein Befehlszeilenprogramm, mit dem Dateien
-in einem bestimmten Verzeichnis automatisch an
-<b>hylafax</b> (falls ein linux-kompatibles Fax-Modem
-angeschlossen ist) und/oder <b>capisuite</b> (falls eine
-Fritzcard 2.0 oder 2.1 angeschlossen ist) weiterleitet
-werden, wenn die Faxnummer im Dateinamen richtig eingetragen
-ist, weiterhin die versandten Faxe in einer
-MariaDB-Datenbank abspeichert. <br>
-Au&szlig;erdem k&ouml;nnen von
-<b>hylafax</b>/<b>capisuite</b> empfangene Faxe automatisch
-nach dem Sender anhand dessen Faxnummer benannt und
-abgespeichert werden. <br>
-Die Netzwerkintegration (z.B. auch in ein Windows-Netzwerk
-mit nur einem Linuxrechner) geschieht durch automatischen
-Eintrag der f&uuml;r autofax relevanten Verzeichnisse in
-einen Samba-Server. Sie k&ouml;nnte erg&auml;nzt
-werden durch eine Maske f&uuml;r die
-mariadb-Datenbank.</p>
+Datenleitung sinnvoll sein kann.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em"><b>autofax</b> ist ein
+Befehlszeilenprogramm, mit dem Dateien in einem bestimmten
+Verzeichnis automatisch an <b>hylafax</b> (falls ein
+linux-kompatibles Fax-Modem angeschlossen ist) und/oder
+<b>capisuite</b> (falls eine Fritzcard 2.0 oder 2.1
+angeschlossen ist) weiterleitet werden, wenn die Faxnummer
+im Dateinamen richtig eingetragen ist, weiterhin die
+versandten Faxe in einer MariaDB-Datenbank abspeichert.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Au&szlig;erdem
+k&ouml;nnen von <b>hylafax</b>/<b>capisuite</b>
+empfangene Faxe automatisch nach dem Sender anhand dessen
+Faxnummer benannt und abgespeichert werden.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Die Netzwerkintegration (z.B.
+auch in ein Windows-Netzwerk mit nur einem Linuxrechner)
+geschieht durch automatischen Eintrag der f&uuml;r
+autofax relevanten Verzeichnisse in einen Samba-Server. Sie
+k&ouml;nnte erg&auml;nzt werden durch eine Maske
+f&uuml;r die mariadb-Datenbank.</p></td></tr>
+</table>
 
 <h2>INSTALLATION
 <a name="INSTALLATION_D"></a>
@@ -955,63 +1096,112 @@ zus&auml;tzliche Eingaben erfordern.</p>
 <p style="margin-left:11%; margin-top: 1em">Im Idealfall
 sollte sich das Programm nach einmaligem Aufruf (s.o.) so
 eingerichtet haben, dass es von selbst weiter
-l&auml;uft. <br>
-Es existiert dann ein Verzeichnis z.B.
-&rsquo;<b>zufaxen</b>&rsquo;, in das z.B. Benutzer im
-Netzwerk (z.B. &uuml;ber die o.g. Samba-Freigabe) zu
-faxende Dateien stellen k&ouml;nnen wie z.B. <br>
-&quot;<b>Arztbericht zu Franz Krank an Dr. Gesund und Franz
-Krank an Fax 099 987654321 und 088 887654321.doc</b>&quot;
-(es k&ouml;nnte auch z.B. eine *.xls, eine *.jpg, eine
-*.tif, eine *.txt oder eine *.pdf-Datei sein; die Passage
-&rsquo;an Dr. Gesund und Franz Krank &rsquo; ist optional
-f&uuml;r die sp&auml;tere Zordnung der Faxnummer(n)
-in der Datenbank, sie darf auch fehlen; auf der anderen
-Seite darf f&uuml;r den Fall, dass das Programm die
-letzten (1-)3 Faxe zu einem Adressaten eindeutig einer
-Faxnummer zuordnen kann, letztere auch fehlen). <br>
-Wenn <b>autofax</b> beim n&auml;chsten Mal automatisch
-aufgerufen wird (standardm&auml;&szlig;ig alle 2
-Minuten), wird die o.g. Beispieldatei zun&auml;chst
-kopiert und umbenannt in <br>
-&quot;<b>Arztbericht zu Franz Krank an Dr. Gesund an Fax 099
-987654321.doc</b>&quot; und <br>
-&quot;<b>Arztbericht zu Franz Krank an Franz Krank an Fax
-088 887654321.doc</b>&quot; und in die PDF-Dateien <br>
-&quot;<b>Arztbericht zu Franz Krank an Dr. Gesund an Fax 099
-987654321.pdf</b>&quot; und <br>
-&quot;<b>Arztbericht zu Franz Krank an Franz Krank an Fax
-088 887654321.pdf</b>&quot; umgewandelt. <br>
-Diese werden dann automatisch an <b>hylafax</b> oder
-<b>Capisuite</b> weitergeleitet und von dort aus verschickt.
-<br>
-Gleichzeitig werden sie aus &rsquo;<b>zufaxen</b>&rsquo; in
-das Warteverzeichnis, z.B. &rsquo;<b>warteauffax</b>&rsquo;
-verschoben und in die Spooltabelle <b>spooltab</b>
-eingetragen. <br>
-Bei jedem Aufruf &uuml;berpr&uuml;ft autofax den
-Status von <b>hylafax</b> und/oder <b>Capisuite</b>. Der
-Abschluss eines Faxvorgangs dort hat zur Folge, dass autofax
-die Quelldateien (also hier die o.g. .doc- und .pdf-Dateien)
-aus dem Warteverzeichnis in ein oder mehrere alternative
+l&auml;uft.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Es existiert dann ein
+Verzeichnis z.B. &rsquo;<b>zufaxen</b>&rsquo;, in das z.B.
+Benutzer im Netzwerk (z.B. &uuml;ber die o.g.
+Samba-Freigabe) zu faxende Dateien stellen k&ouml;nnen
+wie z.B.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">&quot;<b>Arztbericht zu Franz
+Krank an Dr. Gesund und Franz Krank an Fax 099 987654321 und
+088 887654321.doc</b>&quot; (es k&ouml;nnte auch z.B.
+eine *.xls, eine *.jpg, eine *.tif, eine *.txt oder eine
+*.pdf-Datei sein; die Passage &rsquo;an Dr. Gesund und Franz
+Krank &rsquo; ist optional f&uuml;r die sp&auml;tere
+Zordnung der Faxnummer(n) in der Datenbank, sie darf auch
+fehlen; auf der anderen Seite darf f&uuml;r den Fall,
+dass das Programm die letzten (1-)3 Faxe zu einem Adressaten
+eindeutig einer Faxnummer zuordnen kann, letztere auch
+fehlen).</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Wenn <b>autofax</b> beim
+n&auml;chsten Mal automatisch aufgerufen wird
+(standardm&auml;&szlig;ig alle 2 Minuten), wird die
+o.g. Beispieldatei zun&auml;chst kopiert und umbenannt
+in</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">&quot;<b>Arztbericht zu Franz
+Krank an Dr. Gesund an Fax 099 987654321.doc</b>&quot;
+und</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">&quot;<b>Arztbericht zu Franz
+Krank an Franz Krank an Fax 088 887654321.doc</b>&quot; und
+in die PDF-Dateien</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">&quot;<b>Arztbericht zu Franz
+Krank an Dr. Gesund an Fax 099 987654321.pdf</b>&quot;
+und</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">&quot;<b>Arztbericht zu Franz
+Krank an Franz Krank an Fax 088 887654321.pdf</b>&quot;
+umgewandelt.</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Diese werden dann automatisch an
+<b>hylafax</b> oder <b>Capisuite</b> weitergeleitet und von
+dort aus verschickt.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Gleichzeitig werden sie aus
+&rsquo;<b>zufaxen</b>&rsquo; in das Warteverzeichnis, z.B.
+&rsquo;<b>warteauffax</b>&rsquo; verschoben und in die
+Spooltabelle <b>spooltab</b> eingetragen.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Bei jedem Aufruf
+&uuml;berpr&uuml;ft autofax den Status von
+<b>hylafax</b> und/oder <b>Capisuite</b>. Der Abschluss
+eines Faxvorgangs dort hat zur Folge, dass autofax die
+Quelldateien (also hier die o.g. .doc- und .pdf-Dateien) aus
+dem Warteverzeichnis in ein oder mehrere alternative
 Archivverzeichnisse oder ein Verzeichnis f&uuml;r
 gescheiteterte Faxe ablegt und den Datenbankeintrag von
 &rsquo;<b>spooltab</b>&rsquo; in die Archivtabelle
-&rsquo;<b>outa</b>&rsquo; verschiebt. <br>
-Weiterhin werden &uuml;ber <b>hylafax</b> oder
-<b>Capisuite</b> angekommene Faxe in ein Empfangsverzeichnis
-kopiert und ggf. nach dem Sender benannt. Hierzu werden,
-falls angegeben, konfigurierbare SQL-Befehle verwendet, die
-in frei festlegbarer Zahl der Reihe nach so lange aufgerufen
-werden, bis einer einen Datensatz zu der Faxnummer findet.
-<br>
-Der Benutzer k&ouml;nnte also je nach Betriebssystem,
-Zugriffsm&ouml;glichkeit und Pr&auml;ferenz in den
-genannten Verzeichnissen, in den Datenbanktabellen oder
-durch Aufruf von z.B. &rsquo;<b>autofax&rsquo;,
-&rsquo;autofax -lista</b>&rsquo;, &rsquo;<b>autofax
--listf</b>&rsquo; oder &rsquo;<b>autofax -listi</b>&rsquo;
-den Stand des Faxens &uuml;berpr&uuml;fen.</p>
+&rsquo;<b>outa</b>&rsquo; verschiebt.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Weiterhin werden &uuml;ber
+<b>hylafax</b> oder <b>Capisuite</b> angekommene Faxe in ein
+Empfangsverzeichnis kopiert und ggf. nach dem Sender
+benannt. Hierzu werden, falls angegeben, konfigurierbare
+SQL-Befehle verwendet, die in frei festlegbarer Zahl der
+Reihe nach so lange aufgerufen werden, bis einer einen
+Datensatz zu der Faxnummer findet.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Der Benutzer k&ouml;nnte
+also je nach Betriebssystem, Zugriffsm&ouml;glichkeit
+und Pr&auml;ferenz in den genannten Verzeichnissen, in
+den Datenbanktabellen oder durch Aufruf von z.B.
+&rsquo;<b>autofax&rsquo;, &rsquo;autofax -lista</b>&rsquo;,
+&rsquo;<b>autofax -listf</b>&rsquo; oder &rsquo;<b>autofax
+-listi</b>&rsquo; den Stand des Faxens
+&uuml;berpr&uuml;fen.</p> </td></tr>
+</table>
 
 <h2>OPTIONEN
 <a name="OPTIONEN_D"></a>
@@ -1195,18 +1385,18 @@ nicht), anstatt &rsquo;<b>2</b>&rsquo;</p>
 
 
 <p style="margin-top: 1em">1) Die aktuelle Hardware wird
-&uuml;berpr&uuml;ft:</p> </td>
-</td></tr>
-</table>
+&uuml;berpr&uuml;ft:</p> </td></tr>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">a) mit dem Befehl
+
+<p style="margin-top: 1em">a) mit dem Befehl
 &rsquo;<b>lspci | grep -i isdn</b>&rsquo; bez&uuml;glich
-einer ISDN-Karte <br>
-b) mit dem Befehl &rsquo;<b>stty -F</b>&rsquo;
-bez&uuml;glich eines Fax-Modems.</p>
+einer ISDN-Karte</p></td></tr>
+<tr valign="top" align="left">
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+
+<p style="margin-top: 1em">b) mit dem Befehl &rsquo;<b>stty
+-F</b>&rsquo; bez&uuml;glich eines Fax-Modems.</p></td></tr>
 <tr valign="top" align="left">
 
 
@@ -1303,22 +1493,23 @@ im Dateinamen enthaltene Faxnummer(n) ermittelbar ist/sind
 und die in eine PDF-Datei umwandelbar ist (oder schon so
 vorliegt), wird ins Warteverzeichnis verschoben und in
 <b>spooltab</b> eingetragen.</p></td></tr>
-</table>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">Falls eine Datei mehrere
+
+<p style="margin-top: 1em">Falls eine Datei mehrere
 Faxnummern enth&auml;lt und/oder eine PDF-Umwandlung
 n&ouml;tig ist, werden zus&auml;tzliche Dateien
 erstellt und die urspr&uuml;ngliche Datei ggf.
 umbenannt. Falls n&ouml;tig, k&ouml;nnen die Dateien
 zus&auml;tzliche Zifferm nahe ihrem Namensende bekommen,
 so dass die Namen mit keinem anderen der unter 7) genannten
-Verzeichnisse in Konflikt steht. <br>
-Falls neue Dateien erstellt wurden, werden die nachfolgenden
-Verschiebungen und Protokollierungen mit allen
-durchgef&uuml;hrt.</p>
+Verzeichnisse in Konflikt steht.</p></td></tr>
+<tr valign="top" align="left">
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+
+<p style="margin-top: 1em">Falls neue Dateien erstellt
+wurden, werden die nachfolgenden Verschiebungen und
+Protokollierungen mit allen durchgef&uuml;hrt.</p></td></tr>
 <tr valign="top" align="left">
 
 
@@ -1353,24 +1544,30 @@ wartend stehenden Faxe werden in
 <b>hylafax</b>/<b>capisuite</b> auf ihren Status
 &uuml;berpr&uuml;ft, dieser wird in <b>spooltab</b>
 aktualisiert (Zahl der bisherigen Faxversuche).</p></td></tr>
-</table>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">Falls sowohl hylafax als auch
+
+<p style="margin-top: 1em">Falls sowohl hylafax als auch
 capisuite aktiv sind und eine voreingestellte Zahl an
 Anwahlversuchen im Programm der ersten Pr&auml;ferenz
 dieser beiden erfolglos erreicht ist, wird das Fax auch noch
-an das jeweils andere Programm weitergeleiet. <br>
-Falls der Faxvorgang (erfolgreich oder erfolglos) beendet
-ist, wird die Datei aus dem Warteverzeichnis in die
-Verzeichnisse f&uuml;r fertige bzw. gescheiterte Faxe
-verschoben, optional mit ocrmypdf einer Texterkennung
-unterzogen (falls ein ausreichend junges Python3 &gt; 3.5
-installiert ist), und der Datenbankeintrag aus
-<b>spooltab</b> in die Tabelle <b>outa</b> verschoben. <br>
-Der Status der genannten Faxe wird angezeigt.</p>
+an das jeweils andere Programm weitergeleiet.</p></td></tr>
+<tr valign="top" align="left">
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+
+<p style="margin-top: 1em">Falls der Faxvorgang
+(erfolgreich oder erfolglos) beendet ist, wird die Datei aus
+dem Warteverzeichnis in die Verzeichnisse f&uuml;r
+fertige bzw. gescheiterte Faxe verschoben, optional mit
+ocrmypdf einer Texterkennung unterzogen (falls ein
+ausreichend junges Python3 &gt; 3.5 installiert ist), und
+der Datenbankeintrag aus <b>spooltab</b> in die Tabelle
+<b>outa</b> verschoben.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Der Status der genannten Faxe
+wird angezeigt.</p></td></tr>
 <tr valign="top" align="left">
 
 
@@ -1388,30 +1585,43 @@ urspr&uuml;nglichen Dateinamen)</p></td></tr>
 mit Hilfe der Faxnummer anhand voreingestellter SQL-Befehle
 nach dem Namen des Absenders benannt und in ein
 Empfangsverzeichnis gestellt.</p></td></tr>
-</table>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">Solche SQL-Befehle sollen
+
+<p style="margin-top: 1em">Solche SQL-Befehle sollen
 (mindestens) zwei Ergebnisfelder (mit benutzerdefinierter
 Bedeutung) liefern, deren Inhalt dann, durch ein Komma
 getrennt, von autofax zur Benennung eines empfangenen Faxes
 verwendet werden. Vor der Anwendung des SQL-Befehls wird die
 Zeichenfolge &rsquo;&&faxnr&&&rsquo; zur
 aktuellen Faxnummer erweitert. Beispiel fuer einen solchen
-SQL-Befehl: <br>
-select concat(haname,&rsquo;, &rsquo;,ort,&rsquo;,
-&rsquo;,kvnu) name, zulg from kvaerzte.hae where
+SQL-Befehl:</p> </td></tr>
+<tr valign="top" align="left">
+</td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">select concat(haname,&rsquo;,
+&rsquo;,ort,&rsquo;, &rsquo;,kvnu) name, zulg from
+kvaerzte.hae where
 concat(if(mid(fax1k,1,1)=&rsquo;0&rsquo;,&rsquo;&rsquo;,&rsquo;08131&rsquo;),
 replace(replace(replace(replace(fax1k,&rsquo;
 &rsquo;,&rsquo;&rsquo;),&rsquo;-&rsquo;,&rsquo;&rsquo;),&rsquo;/&rsquo;,&rsquo;&rsquo;),&rsquo;&acute;&rsquo;,&rsquo;&rsquo;))
-= &rsquo;&&faxnr&&&rsquo; <br>
-Wenn mehrere SQL-Befehle angegeben werden, so wird der
-jeweils naechste angewandt, wenn einer kein Ergebnis
-liefert. <br>
-Optional werden die empfangenen Dateien mit Hilfe von
-ocrmypdf einer Texterkennung unterzogen.</p>
+= &rsquo;&&faxnr&&&rsquo;</p></td></tr>
+<tr valign="top" align="left">
+</td></tr>
+<tr valign="top" align="left">
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+
+<p style="margin-top: 1em">Wenn mehrere SQL-Befehle
+angegeben werden, so wird der jeweils naechste angewandt,
+wenn einer kein Ergebnis liefert.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Optional werden die empfangenen
+Dateien mit Hilfe von ocrmypdf einer Texterkennung
+unterzogen.</p> </td></tr>
 <tr valign="top" align="left">
 
 
@@ -1453,25 +1663,29 @@ Paketmanager eingerichtet.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">(hierzu wird je
-nach Distribution zypper, apt(-get), dnf oder yum
-verwendet). <b><br>
-makefile:</b></p>
-
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">(hierzu wird je nach
+Distribution zypper, apt(-get), dnf oder yum verwendet).</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em"><b>makefile:</b></p></td></tr>
 <tr valign="top" align="left">
 
 
 <p style="margin-top: 1em">gcc V.6, g++ V.6, groff,
 libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Vers.
 4.0.7 mit leichter Modifikation, s. Makefile)</p></td></tr>
-</table>
+<tr valign="top" align="left">
+</td></tr>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;"><b>autofax:</b></p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+<p style="margin-top: 1em"><b>autofax:</b></p></td></tr>
 <tr valign="top" align="left">
 
 
@@ -1481,13 +1695,11 @@ libreoffice-base, mariadb-server, policycoreutils,
 policycoreutils-python-utils, poppler-tools, samba,
 sfftobmp, (in debian-derivates, f&uuml;r mariadb,
 zus&auml;tzlich: apt-transport-https)</p></td></tr>
-</table>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">falls <b>capisuite</b> benutzt
-werden soll:</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+<p style="margin-top: 1em">falls <b>capisuite</b> benutzt
+werden soll:</p></td></tr>
 <tr valign="top" align="left">
 
 
@@ -1496,26 +1708,22 @@ capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source
 (linux-source), libcapi20-2, libcapi20-3, libxslt-tools,
 linux-headers-$(uname -r), python-devel, (in fedora,
 zus&auml;tzlich: kernel-modules-extra),</p></td></tr>
-</table>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">falls <b>hylafax</b> benutzt
-werden soll:</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+<p style="margin-top: 1em">falls <b>hylafax</b> benutzt
+werden soll:</p></td></tr>
 <tr valign="top" align="left">
 
 
 <p style="margin-top: 1em">hylafax+, hylafax+-client,
 sendmail, tiff (im Fall von Vers. 4.0.7 mit kleiner
 Modifikation, s. Makefile)</p></td></tr>
-</table>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">falls <b>ocr</b> benutzt werden
-soll:</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
+<p style="margin-top: 1em">falls <b>ocr</b> benutzt werden
+soll:</p> </td></tr>
 <tr valign="top" align="left">
 
 
@@ -1525,27 +1733,29 @@ ocrmypdf, python3-devel, python3-pip, python3-setuptools,
 rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper,
 and via &rsquo;python3 pip&rsquo;: cryptography, cffi,
 image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
-</table>
-
-<p style="margin-left:15%;">falls Sie die Quelldateien mit
-&rsquo;sh viall&rsquo; bearbeiten wollen:</p>
-
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 
 
-<p style="margin-top: 1em">vim</p></td>
-</td></tr>
-</table>
+<p style="margin-top: 1em">falls Sie die Quelldateien mit
+&rsquo;sh viall&rsquo; bearbeiten wollen:</p></td></tr>
+<tr valign="top" align="left">
 
-<p style="margin-left:15%;">All diese Installationen
+
+<p style="margin-top: 1em">vim</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">All diese Installationen
 k&ouml;nnen abh&auml;ngige Programme
-einschlie&szlig;en. <br>
-Falls Sie eines dieser Programme nicht wollen bzw. nicht
-aktualisieren wollen, dann d&uuml;rfen Sie autofax oder
-die entsprechenden Programmteile nicht auf diesem Computer
-verwenden.</p>
+einschlie&szlig;en.</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Falls Sie eines dieser Programme
+nicht wollen bzw. nicht aktualisieren wollen, dann
+d&uuml;rfen Sie autofax oder die entsprechenden
+Programmteile nicht auf diesem Computer verwenden.</p></td></tr>
+</table>
 
 <h2>AUSWIRKUNGEN DES PROGRAMMABLAUFS
 <a name="AUSWIRKUNGEN DES PROGRAMMABLAUFS_D"></a>
@@ -1716,23 +1926,46 @@ erneut in eine pdf-Datei umgewandelt werden.</p></td></tr>
 <p style="margin-left:11%; margin-top: 1em">Wechseln Sie in
 einem Terminal in das Installationsverzeichnis (beim selben
 eingeloggten Benutzer: <b>cd ~/autofax</b>, ansonsten wird
-es &uuml;ber <b>autofax -info</b> angezeigt). <br>
-Rufen Sie dort <b>make uninstall</b> auf. <br>
-Dadurch wird das installierte <b>autofax</b>
-gel&ouml;scht und das Script <b>uninstallinv</b> in
-umgekehrter Reihenfolge abgearbeitet, das bei der
-Installation und beim Aufruf von autofax erstellt wurde.
-<br>
-Dadurch werden zus&auml;tzlich installierte
-Programmpakete, zus&auml;tzlich erteilte Berechtigungen,
-f&uuml;r autofax eingerichtete Sambafreigaben und
-Firewallausnahmen wieder gel&ouml;scht. <br>
-Auf die Deinstallation der Konfigurationsdateien, der
-angesammelten Daten und systemrelevanter Programme wie
-libgcc und selinux wird dabei verzichtet. <br>
-Etwaige Fehlermeldungen beziehen sich meist auf einen
-Deinstallationsversuch bereits entfernter Programme und
-k&ouml;nnen ignoriert werden.</p>
+es &uuml;ber <b>autofax -info</b> angezeigt).</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Rufen Sie dort <b>make
+uninstall</b> auf.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Dadurch wird das installierte
+<b>autofax</b> gel&ouml;scht und das Script
+<b>uninstallinv</b> in umgekehrter Reihenfolge abgearbeitet,
+das bei der Installation und beim Aufruf von autofax
+erstellt wurde.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Dadurch werden
+zus&auml;tzlich installierte Programmpakete,
+zus&auml;tzlich erteilte Berechtigungen, f&uuml;r
+autofax eingerichtete Sambafreigaben und Firewallausnahmen
+wieder gel&ouml;scht.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Auf die Deinstallation der
+Konfigurationsdateien, der angesammelten Daten und
+systemrelevanter Programme wie libgcc und selinux wird dabei
+verzichtet.</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Etwaige Fehlermeldungen beziehen
+sich meist auf einen Deinstallationsversuch bereits
+entfernter Programme und k&ouml;nnen ignoriert
+werden.</p> </td></tr>
+</table>
 
 <h2>FEHLER
 <a name="FEHLER_D"></a>
@@ -1752,10 +1985,17 @@ andere Hard- bzw. Software ergeben.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Das Programm
 wurde mit bester Absicht entwickelt und durch den Autor
-getestet. <br>
-Trotzdem kann der Autor f&uuml;r keine Sch&auml;den
-haften, die durch das Programm entstehen
-k&ouml;nnten</p>
+getestet.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em">Trotzdem kann der Autor
+f&uuml;r keine Sch&auml;den haften, die durch das
+Programm entstehen k&ouml;nnten</p></td></tr>
+</table>
 
 <h2>AUTOR
 <a name="AUTOR_D"></a>
