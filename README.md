@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.439) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43901) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -574,27 +574,37 @@ boost, boost-devel, cron, ghostscript, imagemagick,
 libreoffice-common, libreoffice-base, mariadb-server,
 policycoreutils, policycoreutils-python-utils,
 poppler-tools, samba, sfftobmp, (in debian-derivates, for
-mariadb, additionally: apt-transport-https) <br>
-in case <b>capisuite</b> shall be used: <br>
+mariadb, additionally: apt-transport-https)</p>
+
+<p style="margin-left:11%; margin-top: 1em">in case
+<b>capisuite</b> shall be used: <br>
 capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8,
 g++-4.8, kernel-source (linux-source), libcapi20-2,
 libcapi20-3, libxslt-tools, linux-headers-$(uname -r),
 python-devel, (in fedora, additionally:
-kernel-modules-extra), <br>
-in case <b>hylafax</b> shall be used: <br>
+kernel-modules-extra),</p>
+
+<p style="margin-left:11%; margin-top: 1em">in case
+<b>hylafax</b> shall be used: <br>
 hylafax+, hylafax+-client, sendmail, tiff (in case of
-version 4.0.7 with a slight modification, see Makefile) <br>
-in case <b>ocr</b> shall be used: <br>
+version 4.0.7 with a slight modification, see Makefile)</p>
+
+<p style="margin-left:11%; margin-top: 1em">in case
+<b>ocr</b> shall be used: <br>
 ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel,
 libffi-devel, ocrmypdf, python3-devel, python3-pip,
 python3-setuptools, rpmfusion, qpdf, redhat-rpm-config,
 tesseract-ocr, unpaper, and via &rsquo;python3 pip&rsquo;:
 cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2,
-reportlab, ruffus. <br>
-in case You want to work on the source files with &rsquo;sh
+reportlab, ruffus.</p>
+
+<p style="margin-left:11%; margin-top: 1em">in case You
+want to work on the source files with &rsquo;sh
 viall&rsquo;: <br>
-vim <br>
-All those installations may include dependent programs. <br>
+vim</p>
+
+<p style="margin-left:11%; margin-top: 1em">All those
+installations may include dependent programs. <br>
 If You don&rsquo;t want one of those programs or want to
 keep an older version of one, You may not install autofax or
 use the respective program parts.</p>
@@ -801,7 +811,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.439) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43901) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
