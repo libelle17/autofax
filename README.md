@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43893) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43894) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -127,6 +127,31 @@ program should have installed itsself after a single call
 &rsquo;<b>tobefaxed</b>&rsquo; exists, in which e.g. users
 in a network (e.g. via the above mentioned samba share) can
 deposit files to be faxed, e.g.</p></td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em"><b>Hardware</b>: Computer with a
+fritzcard 2.0 or 2.1 or/and a linux compatible fax modem; in
+the current version, a US Robotics modem USR5637 and one of
+the below mentioned linux distributions are needed for an
+automatic installation (by answering some questions). In
+case of a concurrent use of a fritzcard and a modem, the
+program can optimize the security of transmission of a
+fax.</p> </td></tr>
+<tr valign="top" align="left">
+
+
+<p style="margin-top: 1em"><b>Software</b>: The program was
+adjusted to an installation of Opensuse &gt;= 42.1, Debian
+&gt;= 8.60, Ubuntu &gt;= 16.04, Mint &gt;= 18 or Fedora
+&gt;= 24 with standard options. System D has to be
+installed, i.e., &quot;systemctl&quot; has to run. One of
+the packet managers rpm or dpkg and apt, dnf, yum or zypper
+has to be installed, respectively, as is the case per
+default in the mentioned linux distributions. Uninstalling
+of the programs added by autofax by <b>make uninstall</b>
+works currently only with the english and the german
+versions of the packet manager.</p></td></tr>
 <tr valign="top" align="left">
 
 
@@ -972,7 +997,7 @@ be liable for any damage caused by the program.</p></td></tr>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43893) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43894) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
