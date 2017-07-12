@@ -145,7 +145,7 @@ the fax number may be obmitted).</p></td></tr>
 <p style="margin-top: -2em">When <b>autofax</b> is called
 for the next time (per default 2 minutes), the above
 mentioned example file will initially be copied and renamed
-into<br><br><br>
+into<br>
 &quot;<b>Medical report on Frank
 Ill to Dr. Healthy to fax 099 987654321.doc</b>&quot;
 and</p> </td></tr>
