@@ -152,8 +152,8 @@ class paramcl // Programmparameter
 	  string cl; // comanndline
     string mpfad;  // meinpfad()
     string meinname; // base_name(meinpfad()) // argv[0] // <DPROG>
-    string vaufr; // (vollaufruf) z.B. '/usr/bin/<DPROG> -norf'
-    string saufr; // (stummaufruf) '<DPROG> -norf'
+    string vaufr; // (vollaufruf) z.B. '/usr/bin/<DPROG> -noia >/dev/null 2>&1'
+    string saufr; // (stummaufruf) '<DPROG> -noia >/dev/null 2>&1'
 		string zsaufr; // zitiert saufr (in sed)
 //    cppSchluess *hconfp=0;
     schlArr hylconf;

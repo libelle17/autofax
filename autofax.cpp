@@ -2743,8 +2743,8 @@ void paramcl::pruefmodem()
 		} // if (hmodem.empty()) 
 		obmdgeprueft=1;
 		if (!obmodem) {
+			::Log(rots+Tx[T_Kein_Modem_gefunden]+schwarz,obhyla?1:obverb,oblog);
 			obhyla=0;
-			Log(rots+Tx[T_Kein_Modem_gefunden]+schwarz);
 		}
 		// wenn zum Konfigurationszeitpunkt kein Modem drinsteckte, aber jetzt, dann rueckfragen
 		if (obmodem && cgconf.hole("obmodem")=="0") {
@@ -4299,12 +4299,13 @@ void paramcl::pruefcron()
 	if (cronda) {
 		int nochkeincron = systemrueck("sudo crontab -l",obverb-1,0,0,2);
 		setztmpcron();
-		const string cb0 = " /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 "+vaufr;// "date >/home/schade/zeit";
-		const string cbef  =string("*/")+cronminut+" * * * *"+cb0; // "-"-Zeichen nur als cron
+		const string vorsaetze=" /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 ";
+		const string cabfr = vorsaetze+".*"+saufr;// "date >/home/schade/zeit"; // Befehl zum Abfragen der Cronminuten aus aktuellem Cron-Script
+		const string cbef  =string("*/")+cronminut+" * * * *"+vorsaetze+vaufr; // "-"-Zeichen nur als cron
 		const string czt=" \\* \\* \\* \\*";
 		////		string vorcm; // Vor-Cron-Minuten
 		if (!nochkeincron) {
-			cmd="bash -c 'grep \"\\*/.*"+czt+cb0+"\" <(sudo crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
+			cmd="bash -c 'grep \"\\*/.*"+czt+cabfr+"\" <(sudo crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
 			svec cmrueck;
 			systemrueck(cmd,obverb,oblog,&cmrueck);
 			if (cmrueck.size()) vorcm=cmrueck[0];
@@ -4353,7 +4354,7 @@ void paramcl::pruefcron()
 			if (nochkeincron) {
 				befehl="rm -f "+tmpcron+";";
 			} else {
-				befehl="sudo bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(crontab -l)||{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";";
+				befehl="sudo bash -c 'grep \"\\*/"+cronminut+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";";
 			}
 			befehl+="echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+"";
 			if (!nochkeincron)
@@ -4362,7 +4363,7 @@ void paramcl::pruefcron()
 #else
 		const string befehl=cronzuplanen?
 			(nochkeincron?"rm -f "+tmpcron+";":
-			 "sudo bash -c 'grep \"\\*/"+cronminut+czt+cb0+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+"; ")+
+			 "sudo bash -c 'grep \"\\*/"+cronminut+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+"; ")+
 			"echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+(nochkeincron?"":";}'")
 			:
 			(nochkeincron?"":"sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+";"

@@ -907,7 +907,7 @@ string* loeschefarbenaus(string *zwi)
   return zwi;
 } // void loeschefarbenaus(string *zwi)
 
-int Log(const string& text, const short screen, const short file, const bool oberr, const short klobverb)
+int Log(const string& text, const short screen/*=1*/, const short file/*=1*/, const bool oberr/*=0*/, const short klobverb/*=0*/)
 {
   static unsigned int cols=0;
   static bool letztesmaloZ;
