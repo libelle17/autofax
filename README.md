@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43903) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43904) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -576,7 +576,7 @@ policycoreutils, policycoreutils-python-utils,
 poppler-tools, samba, sfftobmp, (in debian-derivates, for
 mariadb, additionally: apt-transport-https)</p>
 
-<p style="margin-left:11%; margin-top: 1em">in case
+<p style="margin-left:11%; margin-top: 1em"><i>in case</i>
 <b>capisuite</b> shall be used: <br>
 capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8,
 g++-4.8, kernel-source (linux-source), libcapi20-2,
@@ -584,12 +584,12 @@ libcapi20-3, libxslt-tools, linux-headers-$(uname -r),
 python-devel, (in fedora, additionally:
 kernel-modules-extra),</p>
 
-<p style="margin-left:11%; margin-top: 1em">in case
+<p style="margin-left:11%; margin-top: 1em"><i>in case</i>
 <b>hylafax</b> shall be used: <br>
 hylafax+, hylafax+-client, sendmail, tiff (in case of
 version 4.0.7 with a slight modification, see Makefile)</p>
 
-<p style="margin-left:11%; margin-top: 1em">in case
+<p style="margin-left:11%; margin-top: 1em"><i>in case</i>
 <b>ocr</b> shall be used: <br>
 ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel,
 libffi-devel, ocrmypdf, python3-devel, python3-pip,
@@ -811,7 +811,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43903) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43904) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>

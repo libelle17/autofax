@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "12.07.17" "Version 0.43903" "\fB²DPROG²\fR man page"
+.TH man 1 "12.07.17" "Version 0.43904" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -288,23 +288,23 @@ Optionally, the received faxes are subjected to ocr via a call of ocrmypdf.
 .br
 (for this purpose, depending on the distribution, zypper, apt(-get), dnf or yum are used).
 .LP
-\fBmakefile:\fR
+\fI\fBmakefile:\fR
 .br
 gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el) (in case of version 4.0.7 with a slight modification, see Makefile)
 .LP
-\fB²DPROG²:\fR
+\fI\fB²DPROG²:\fR
 .br
 boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoffice-base, mariadb-server, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp, (in debian-derivates, for mariadb, additionally: apt-transport-https)
 .LP
-in case \fBcapisuite\fR shall be used:
+\fIin case \fBcapisuite\fR shall be used:
 .br
 capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source (linux-source), libcapi20-2, libcapi20-3, libxslt-tools, linux-headers-$(uname -r), python-devel, (in fedora, additionally: kernel-modules-extra), 
 .LP
-in case \fBhylafax\fR shall be used:
+\fIin case \fBhylafax\fR shall be used:
 .br
 hylafax+, hylafax+-client, sendmail, tiff (in case of version 4.0.7 with a slight modification, see Makefile)
 .LP
-in case \fBocr\fR shall be used:
+\fIin case \fBocr\fR shall be used:
 .br
 ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel, libffi-devel, ocrmypdf, python3-devel, python3-pip, python3-setuptools, rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper, and via 'python3 pip': cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.
 .LP
