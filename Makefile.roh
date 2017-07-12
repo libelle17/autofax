@@ -277,7 +277,7 @@ README.md: $(HTMLS)
 ifeq ("$(wildcard man_de)$(wildcard man_en)","man_deman_en")
 	-@echo "<h3>Manual: 1) <a href=\"#english_E\">english</a>, 2) <a href=\"#deutsch_D\">deutsch (unten anschließend)</a></h3>" > README.md
 endif
-	@for d in $(MANS); do sed -n '20,$$p' $$d.html >> $@; [ -z $$A ]||A=$$A", ";A=$$A$(blau)$$d$(reset); done; \
+	@for d in $(MANS); do sed -n '20,$$p;/^<td width=/d;' $$d.html >> $@; [ -z $$A ]||A=$$A", ";A=$$A$(blau)$$d$(reset); done; \
 	printf " %b$@%b neu erstellt aus: $$A\n" $(blau) $(reset)
 
 define priv_html
