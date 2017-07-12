@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.43908) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43909) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -316,29 +316,19 @@ instead of &rsquo;<b>2</b>&rsquo;</p>
 </h2>
 
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">1) The current hardware is being
-checked.</p> </td>
-</td></tr>
-</table>
-
-<p style="margin-left:15%;">a) with the command
-&rsquo;<b>lspci | grep -i isdn</b>&rsquo; for a fritz card.
-<br>
+<p style="margin-left:11%; margin-top: 1em">1) The current
+hardware is being checked. <br>
+a) with the command &rsquo;<b>lspci | grep -i
+isdn</b>&rsquo; for a fritz card. <br>
 b) with the command &rsquo;<b>stty -F</b>&rsquo; for a fax
 modem.</p>
 
+<p style="margin-left:11%; margin-top: 1em">2) The fax
+configuration file <b>fax.conf</b> of capisuite is read, if
+it exists</p>
+
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">2) The fax configuration file
-<b>fax.conf</b> of capisuite is read, if it exists</p></td></tr>
 <tr valign="top" align="left">
 
 
@@ -346,130 +336,102 @@ modem.</p>
 program code are assigned which can be overloaded by the
 autofax configuration file (see 4), command line arguments
 or anwers to questions (see 5).</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">4) Defaults are loaded from the
-configuration file, if it exists (per default
-<b>autofax.conf</b> in the same directory as <b>autofax</b>,
-per default <b>/usr/local/sbin/autofax</b>))</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">5) Questions are asked, if
-values are missing from the configuration file (see 4) or if
-a command line option demands interacitivity.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">6) The directory of
-<b>hylafax</b> is beeing determined
-(<b>/var/spool/hylafax</b> or <b>/var/spool/fax</b>), if
-hylafax is installed.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">7) Directories used by the users
-for fax files to be sent, for waiting faxes, for fax files
-already sent, for failed faxes and for received faxes are
-being checked and created if needed. Thereby user defined
-file name patterns can be respected to store successfully
-sent faxes in different directories.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">8) The program inserts itsself
-if wanted and necessary in root&rsquo;s <b>crontab</b> in
-order to be called in adjustable intervals. To avoid this,
-either &rsquo;<b>cronminut</b>&rsquo; can be set to
-<b>0</b>, or the already generated autofax entry can be
-commented out with a leading &rsquo;<b>#</b>&rsquo;.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">9) The program checks if all
-user-relevant directories (see 7) are being included in
-samba shares in <b>/etc/samba/smb.conf</b>; such are being
-added if needed.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">10) Working of MariaDB is being
-checked, if necessary it is being (installed and) started,
-the database tables <b>spooltab</b> (for faxes just in
-spool), <b>outa</b> (for sent and failed faxes) and
-<b>inca</b> (for received faxes) are being checked and if
-necessary created or amended.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">11) In case of the respective
-command line options corrections in the contents of the
-waiting directory or of the database tables are being
-commited or their contents is being listed and then the
-program is being finished.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">12) Otherwise, file in the
-outgoing directory are being analysed. Each file with some
-identifiable fax number(s) within its file name which is or
-can be converted in/into pdf format will be moved to to
-waiting directory and recorded in <b>spooltab</b>.</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">If a file contains more than
-one recepients and/or a conversion to pdf is necessary,
-additional files are generated and the original file may be
-renamed. If necessary, additional numbers near the end of
-the file name(s) may be added in order not to conflict with
-any other file name in one of the directories mentioned in
-7). <br>
+<p style="margin-left:11%; margin-top: 1em">4) Defaults are
+loaded from the configuration file, if it exists (per
+default <b>autofax.conf</b> in the same directory as
+<b>autofax</b>, per default
+<b>/usr/local/sbin/autofax</b>))</p>
+
+<p style="margin-left:11%; margin-top: 1em">5) Questions
+are asked, if values are missing from the configuration file
+(see 4) or if a command line option demands
+interacitivity.</p>
+
+<p style="margin-left:11%; margin-top: 1em">6) The
+directory of <b>hylafax</b> is beeing determined
+(<b>/var/spool/hylafax</b> or <b>/var/spool/fax</b>), if
+hylafax is installed.</p>
+
+<p style="margin-left:11%; margin-top: 1em">7) Directories
+used by the users for fax files to be sent, for waiting
+faxes, for fax files already sent, for failed faxes and for
+received faxes are being checked and created if needed.
+Thereby user defined file name patterns can be respected to
+store successfully sent faxes in different directories.</p>
+
+<p style="margin-left:11%; margin-top: 1em">8) The program
+inserts itsself if wanted and necessary in root&rsquo;s
+<b>crontab</b> in order to be called in adjustable
+intervals. To avoid this, either
+&rsquo;<b>cronminut</b>&rsquo; can be set to <b>0</b>, or
+the already generated autofax entry can be commented out
+with a leading &rsquo;<b>#</b>&rsquo;.</p>
+
+<p style="margin-left:11%; margin-top: 1em">9) The program
+checks if all user-relevant directories (see 7) are being
+included in samba shares in <b>/etc/samba/smb.conf</b>; such
+are being added if needed.</p>
+
+<p style="margin-left:11%; margin-top: 1em">10) Working of
+MariaDB is being checked, if necessary it is being
+(installed and) started, the database tables <b>spooltab</b>
+(for faxes just in spool), <b>outa</b> (for sent and failed
+faxes) and <b>inca</b> (for received faxes) are being
+checked and if necessary created or amended.</p>
+
+<p style="margin-left:11%; margin-top: 1em">11) In case of
+the respective command line options corrections in the
+contents of the waiting directory or of the database tables
+are being commited or their contents is being listed and
+then the program is being finished.</p>
+
+<p style="margin-left:11%; margin-top: 1em">12) Otherwise,
+file in the outgoing directory are being analysed. Each file
+with some identifiable fax number(s) within its file name
+which is or can be converted in/into pdf format will be
+moved to to waiting directory and recorded in
+<b>spooltab</b>. <br>
+If a file contains more than one recepients and/or a
+conversion to pdf is necessary, additional files are
+generated and the original file may be renamed. If
+necessary, additional numbers near the end of the file
+name(s) may be added in order not to conflict with any other
+file name in one of the directories mentioned in 7). <br>
 If more files have been generated, the successive movements
 and recordings are being carried out with all of them.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">13) Depending on the
-configuration the functionaliy of <b>hylafax</b> and/or
-<b>capisuite</b> is being checked and if necessary and
-possible restored (including by installation of those
+<p style="margin-left:11%; margin-top: 1em">13) Depending
+on the configuration the functionaliy of <b>hylafax</b>
+and/or <b>capisuite</b> is being checked and if necessary
+and possible restored (including by installation of those
 programs; in case of a fritzcard 2.0 or a fax modem USR5637
 an additional automatic configuration can/will be done).
 Kernel modules for hylafax and/or capisuite are
 automatically generated, also in case of a kernel
-update.</p> </td></tr>
-<tr valign="top" align="left">
+update.</p>
 
+<p style="margin-left:11%; margin-top: 1em">14) In case of
+respective command line options faxes are being deleted and
+the program is finished.</p>
 
-<p style="margin-top: 1em">14) In case of respective
-command line options faxes are being deleted and the program
-is finished.</p></td></tr>
-<tr valign="top" align="left">
+<p style="margin-left:11%; margin-top: 1em">15) Otherwise
+the files which have been recorded under 12) in
+<b>spooltab</b> are being forwarded to <b>hylafax</b> or
+<b>capisuite</b> and this is being protocolled in
+<b>spooltab</b>.</p>
 
-
-<p style="margin-top: 1em">15) Otherwise the files which
-have been recorded under 12) in <b>spooltab</b> are being
-forwarded to <b>hylafax</b> or <b>capisuite</b> and this is
-being protocolled in <b>spooltab</b>.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">16) All faxes which are recorded
-in <b>spooltab</b> as waiting are being checked in
-<b>hylafax</b>/<b>capisuite</b> as to their status which is
-being updated in <b>spooltab</b> (number of tries
-hitherto).</p> </td></tr>
-</table>
-
-<p style="margin-left:15%;">If hylafax and capisuite are
-working simultaneously and a prespecified number of send
-tries has been reached without success in the programs of
-the first preference of those two, the fax is additionally
-forwarded to the second of the two programs. <br>
+<p style="margin-left:11%; margin-top: 1em">16) All faxes
+which are recorded in <b>spooltab</b> as waiting are being
+checked in <b>hylafax</b>/<b>capisuite</b> as to their
+status which is being updated in <b>spooltab</b> (number of
+tries hitherto). <br>
+If hylafax and capisuite are working simultaneously and a
+prespecified number of send tries has been reached without
+success in the programs of the first preference of those
+two, the fax is additionally forwarded to the second of the
+two programs. <br>
 If the fax transmission is finished (with/without success),
 the file is being moved from the waiting directory to the
 respective directory for sent faxes or for failed faxes,
@@ -771,7 +733,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.43908) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.43909) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1108,84 +1070,63 @@ nicht), anstatt &rsquo;<b>2</b>&rsquo;</p>
 </h2>
 
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">1) Die aktuelle Hardware wird
-&uuml;berpr&uuml;ft:</p> </td>
-</td></tr>
-</table>
-
-<p style="margin-left:15%;">a) mit dem Befehl
-&rsquo;<b>lspci | grep -i isdn</b>&rsquo; bez&uuml;glich
-einer ISDN-Karte <br>
+<p style="margin-left:11%; margin-top: 1em">1) Die aktuelle
+Hardware wird &uuml;berpr&uuml;ft: <br>
+a) mit dem Befehl &rsquo;<b>lspci | grep -i isdn</b>&rsquo;
+bez&uuml;glich einer ISDN-Karte <br>
 b) mit dem Befehl &rsquo;<b>stty -F</b>&rsquo;
 bez&uuml;glich eines Fax-Modems.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
+<p style="margin-left:11%; margin-top: 1em">2) Die
+Fax-Konfigurationsdatei <b>fax.conf</b> der Capisuite wird
+eingelesen, falls es sie gibt</p>
 
-
-<p style="margin-top: 1em">2) Die Fax-Konfigurationsdatei
-<b>fax.conf</b> der Capisuite wird eingelesen, falls es sie
-gibt</p> </td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">3) Weitere Vorgaben aus dem
-Programmcode werden zugewiesen, die durch die
-autofax-Konfigurationsdatei (siehe 4),
+<p style="margin-left:11%; margin-top: 1em">3) Weitere
+Vorgaben aus dem Programmcode werden zugewiesen, die durch
+die autofax-Konfigurationsdatei (siehe 4),
 Kommandozeilenargumente oder Antworten auf
 R&uuml;ckfragen (siehe 5) &uuml;berdeckt werden
-k&ouml;nnen.</p> </td></tr>
-<tr valign="top" align="left">
+k&ouml;nnen.</p>
 
-
-<p style="margin-top: 1em">4) Vorgaben werden geladen aus
-der Konfigurationsdatei, falls existent
+<p style="margin-left:11%; margin-top: 1em">4) Vorgaben
+werden geladen aus der Konfigurationsdatei, falls existent
 (standardm&auml;&szlig;ig <b>autofax.conf</b> im
 selben Verzeichnis wie <b>autofax</b>,
 standardm&auml;&szlig;ig
-<b>/usr/local/sbin/autofax</b>))</p> </td></tr>
-<tr valign="top" align="left">
+<b>/usr/local/sbin/autofax</b>))</p>
 
+<p style="margin-left:11%; margin-top: 1em">5)
+R&uuml;ckfragen werden gestellt, falls in der
+Konfigurationsdatei Werte fehlen oder falls eine
+Kommandozeilenoption Interaktivit&auml;t verlangt.</p>
 
-<p style="margin-top: 1em">5) R&uuml;ckfragen werden
-gestellt, falls in der Konfigurationsdatei Werte fehlen oder
-falls eine Kommandozeilenoption Interaktivit&auml;t
-verlangt.</p> </td></tr>
-<tr valign="top" align="left">
+<p style="margin-left:11%; margin-top: 1em">6) Das
+Verzeichnis von <b>hylafax</b> wird ermittelt
+(<b>/var/spool/hylafax</b> oder <b>/var/spool/fax</b>),
+falls hylafax installiert ist.</p>
 
+<p style="margin-left:11%; margin-top: 1em">7) Von
+Benutzern verwendete Verzeichnisse f&uuml;r zu
+verschickende, wartende, versandte und gescheiterte und
+empfangene Fax-Dateien werden &uuml;berpr&uuml;ft
+und ggf. erstellt. Dabei k&ouml;nnen in der
+Konfiguration angegebene Dateinamensmuster
+ber&uuml;cksichtigt werden, um erfolgreich versandte
+Faxe je nach Dateinamen in verschiedenen Verzeichnissen zu
+speichern.</p>
 
-<p style="margin-top: 1em">6) Das Verzeichnis von
-<b>hylafax</b> wird ermittelt (<b>/var/spool/hylafax</b>
-oder <b>/var/spool/fax</b>), falls hylafax installiert
-ist.</p> </td></tr>
-<tr valign="top" align="left">
+<p style="margin-left:11%; margin-top: 1em">8) Das Programm
+tr&auml;gt sich ggf. in <b>crontab</b> (des Benutzers
+root) ein, um auf Wunsch in (einstellbaren)
+Abst&auml;nden aufgerufen zu werden. Um dies zu
+verhindern, kann entweder &rsquo;<b>cronminut</b>&rsquo; auf
+<b>0</b> eingestellt werden oder der bereits erstellte
+autofax-Eintrag mit <b>crontab -e</b> mit einem
+vorangestellten &rsquo;<b>#</b>&rsquo; auskommentiert
+werden.</p>
 
-
-<p style="margin-top: 1em">7) Von Benutzern verwendete
-Verzeichnisse f&uuml;r zu verschickende, wartende,
-versandte und gescheiterte und empfangene Fax-Dateien werden
-&uuml;berpr&uuml;ft und ggf. erstellt. Dabei
-k&ouml;nnen in der Konfiguration angegebene
-Dateinamensmuster ber&uuml;cksichtigt werden, um
-erfolgreich versandte Faxe je nach Dateinamen in
-verschiedenen Verzeichnissen zu speichern.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">8) Das Programm tr&auml;gt
-sich ggf. in <b>crontab</b> (des Benutzers root) ein, um auf
-Wunsch in (einstellbaren) Abst&auml;nden aufgerufen zu
-werden. Um dies zu verhindern, kann entweder
-&rsquo;<b>cronminut</b>&rsquo; auf <b>0</b> eingestellt
-werden oder der bereits erstellte autofax-Eintrag mit
-<b>crontab -e</b> mit einem vorangestellten
-&rsquo;<b>#</b>&rsquo; auskommentiert werden.</p></td></tr>
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 
 
@@ -1194,41 +1135,34 @@ werden oder der bereits erstellte autofax-Eintrag mit
 Verzeichnisse (s. 7) von Sambafreigaben in
 <b>/etc/samba/smb.conf</b> erfasst werden, solche werden
 n&ouml;tigenfalls erg&auml;nzt.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">10) Der Betrieb von MariaDB wird
-&uuml;berpr&uuml;ft, ggf. wird es (installiert und)
-in Betrieb gesetzt, die Datenbanktabellen <b>spooltab</b>
-(f&uuml;r gerade laufende Faxe), <b>outa</b>
-(f&uuml;r gesandte und gescheiterte Faxe) und
-<b>inca</b> (f&uuml;r angekommene Faxe) werden
-&uuml;berpr&uuml;ft und ggf. erstellt oder
-erweitert.</p> </td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">11) Im Fall der entsprechenden
-Kommandozeilenoptionen werden Korrekturen bei Dateien im
-Warteverzeichnis oder den Protokolltabellen
-durchgef&uuml;hrt oder deren Inhalt aufgelistet und das
-Programm dann beendet.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">12) Andernfalls werden Dateien
-im <b>Zufaxenverzeichnis</b> analysiert. Jede Datei, deren
-im Dateinamen enthaltene Faxnummer(n) ermittelbar ist/sind
-und die in eine PDF-Datei umwandelbar ist (oder schon so
-vorliegt), wird ins Warteverzeichnis verschoben und in
-<b>spooltab</b> eingetragen.</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">Falls eine Datei mehrere
-Faxnummern enth&auml;lt und/oder eine PDF-Umwandlung
-n&ouml;tig ist, werden zus&auml;tzliche Dateien
-erstellt und die urspr&uuml;ngliche Datei ggf.
-umbenannt. Falls n&ouml;tig, k&ouml;nnen die Dateien
+<p style="margin-left:11%; margin-top: 1em">10) Der Betrieb
+von MariaDB wird &uuml;berpr&uuml;ft, ggf. wird es
+(installiert und) in Betrieb gesetzt, die Datenbanktabellen
+<b>spooltab</b> (f&uuml;r gerade laufende Faxe),
+<b>outa</b> (f&uuml;r gesandte und gescheiterte Faxe)
+und <b>inca</b> (f&uuml;r angekommene Faxe) werden
+&uuml;berpr&uuml;ft und ggf. erstellt oder
+erweitert.</p>
+
+<p style="margin-left:11%; margin-top: 1em">11) Im Fall der
+entsprechenden Kommandozeilenoptionen werden Korrekturen bei
+Dateien im Warteverzeichnis oder den Protokolltabellen
+durchgef&uuml;hrt oder deren Inhalt aufgelistet und das
+Programm dann beendet.</p>
+
+<p style="margin-left:11%; margin-top: 1em">12) Andernfalls
+werden Dateien im <b>Zufaxenverzeichnis</b> analysiert. Jede
+Datei, deren im Dateinamen enthaltene Faxnummer(n)
+ermittelbar ist/sind und die in eine PDF-Datei umwandelbar
+ist (oder schon so vorliegt), wird ins Warteverzeichnis
+verschoben und in <b>spooltab</b> eingetragen. <br>
+Falls eine Datei mehrere Faxnummern enth&auml;lt
+und/oder eine PDF-Umwandlung n&ouml;tig ist, werden
+zus&auml;tzliche Dateien erstellt und die
+urspr&uuml;ngliche Datei ggf. umbenannt. Falls
+n&ouml;tig, k&ouml;nnen die Dateien
 zus&auml;tzliche Zifferm nahe ihrem Namensende bekommen,
 so dass die Namen mit keinem anderen der unter 7) genannten
 Verzeichnisse in Konflikt steht. <br>
@@ -1236,49 +1170,38 @@ Falls neue Dateien erstellt wurden, werden die nachfolgenden
 Verschiebungen und Protokollierungen mit allen
 durchgef&uuml;hrt.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">13) Je nach Konfiguration wird
-die Funktionsf&auml;higkeit von <b>hylafax</b> und/oder
-<b>capisuite</b> &uuml;berpr&uuml;ft und ggf. nach
+<p style="margin-left:11%; margin-top: 1em">13) Je nach
+Konfiguration wird die Funktionsf&auml;higkeit von
+<b>hylafax</b> und/oder <b>capisuite</b>
+&uuml;berpr&uuml;ft und ggf. nach
 M&ouml;glichkeit hergestellt (falls n&ouml;tig und
 m&ouml;glich auch mit Installation dieser Programme;
 f&uuml;r eine Fritzcard 2.0 sowie f&uuml;r ein
 Faxmodem USR5637 kann/wird auch eine automatische
 Konfiguration erfolgen). Kernelmodule f&uuml;r hylafax
 bzw. capisuite werden f&uuml;r die aktuelle
-Kernelversion erstellt, auch bei etwaigen Kernelupdates.</p></td></tr>
-<tr valign="top" align="left">
+Kernelversion erstellt, auch bei etwaigen Kernelupdates.</p>
 
+<p style="margin-left:11%; margin-top: 1em">14) Im Fall
+entsprechender Kommandozeilenoptionen werden Faxe
+gel&ouml;scht und das Programm dann beendet.</p>
 
-<p style="margin-top: 1em">14) Im Fall entsprechender
-Kommandozeilenoptionen werden Faxe gel&ouml;scht und das
-Programm dann beendet.</p></td></tr>
-<tr valign="top" align="left">
+<p style="margin-left:11%; margin-top: 1em">15) Andernfalls
+werden die unter 12) in <b>spooltab</b> eingetragenen
+Dateien an <b>hylafax</b> oder <b>capisuite</b>
+weitergeleitet und dies in <b>spooltab</b>
+protokolliert.</p>
 
-
-<p style="margin-top: 1em">15) Andernfalls werden die unter
-12) in <b>spooltab</b> eingetragenen Dateien an
-<b>hylafax</b> oder <b>capisuite</b> weitergeleitet und dies
-in <b>spooltab</b> protokolliert.</p></td></tr>
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">16) Alle in <b>spooltab</b> als
-wartend stehenden Faxe werden in
+<p style="margin-left:11%; margin-top: 1em">16) Alle in
+<b>spooltab</b> als wartend stehenden Faxe werden in
 <b>hylafax</b>/<b>capisuite</b> auf ihren Status
 &uuml;berpr&uuml;ft, dieser wird in <b>spooltab</b>
-aktualisiert (Zahl der bisherigen Faxversuche).</p></td></tr>
-</table>
-
-<p style="margin-left:15%;">Falls sowohl hylafax als auch
-capisuite aktiv sind und eine voreingestellte Zahl an
-Anwahlversuchen im Programm der ersten Pr&auml;ferenz
-dieser beiden erfolglos erreicht ist, wird das Fax auch noch
-an das jeweils andere Programm weitergeleiet. <br>
+aktualisiert (Zahl der bisherigen Faxversuche). <br>
+Falls sowohl hylafax als auch capisuite aktiv sind und eine
+voreingestellte Zahl an Anwahlversuchen im Programm der
+ersten Pr&auml;ferenz dieser beiden erfolglos erreicht
+ist, wird das Fax auch noch an das jeweils andere Programm
+weitergeleiet. <br>
 Falls der Faxvorgang (erfolgreich oder erfolglos) beendet
 ist, wird die Datei aus dem Warteverzeichnis in die
 Verzeichnisse f&uuml;r fertige bzw. gescheiterte Faxe
@@ -1320,14 +1243,9 @@ liefert. <br>
 Optional werden die empfangenen Dateien mit Hilfe von
 ocrmypdf einer Texterkennung unterzogen.</p>
 
-<table width="100%" border="0" rules="none" frame="void"
-       cellspacing="0" cellpadding="0">
-<tr valign="top" align="left">
-
-
-<p style="margin-top: 1em">19) Die Konfigurationsdatei
-<b>autofax.conf</b> wird ggf. geschrieben.</p></td></tr>
-</table>
+<p style="margin-left:11%; margin-top: 1em">19) Die
+Konfigurationsdatei <b>autofax.conf</b> wird ggf.
+geschrieben.</p>
 
 <h2>VORAUSSETZUNGEN
 <a name="VORAUSSETZUNGEN_D"></a>

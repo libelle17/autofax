@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "12.07.17" "Version 0.43908" "\fB²DPROG²\fR man page"
+.TH man 1 "12.07.17" "Version 0.43909" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -193,43 +193,33 @@ and logs this in the the mariadb database '\fBautofax\fB' (tables: `\fBouta\fB`,
 .br
 \fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
 .SH FUNCTIONALITY
-.HP 3 
+.LP
 1) The current hardware is being checked.
 .br
 a) with the command '\fBlspci | grep -i isdn\fR' for a fritz card. 
 .br
 b) with the command '\fBstty -F\fR' for a fax modem.
 .LP
-.HP 3 
 2) The fax configuration file \fBfax.conf\fR of capisuite is read, if it exists 
 .HP 3 
 3) Further defaults from the program code are assigned which can be overloaded by the ²DPROG² configuration file (see 4), command line arguments or anwers to questions (see 5).   
 .LP
-.HP 3 
 4) Defaults are loaded from the configuration file, if it exists (per default \fB²DPROG².conf\fR in the same directory as \fB²DPROG²\fR, per default \fB/usr/local/sbin/²DPROG²\fR)) 
 .LP
-.HP 3 
 5) Questions are asked, if values are missing from the configuration file (see 4) or if a command line option demands interacitivity. 
 .LP
-.HP 3 
 6) The directory of \fBhylafax\fR is beeing determined (\fB/var/spool/hylafax\fR or \fB/var/spool/fax\fR), if hylafax is installed.
 .LP
-.HP 3 
 7) Directories used by the users for fax files to be sent, for waiting faxes, for fax files already sent, for failed faxes and for received faxes are being checked and created if needed. Thereby user defined file name patterns can be respected to store successfully sent faxes in different directories. 
 .LP
-.HP 3 
 8) The program inserts itsself if wanted and necessary in root's \fBcrontab\fR in order to be called in adjustable intervals. To avoid this, either '\fBcronminut\fR' can be set to \fB0\fR, or the already generated ²DPROG² entry can be commented out with a leading '\fB#\fR'.
 .LP
-.HP 3 
 9) The program checks if all user-relevant directories (see 7) are being included in samba shares in \fB/etc/samba/smb.conf\fR; such are being added if needed.
 .LP
-.HP 3 
 10) Working of MariaDB is being checked, if necessary it is being (installed and) started, the database tables \fBspooltab\fR (for faxes just in spool), \fBouta\fR (for sent and failed faxes) and \fBinca\fR (for received faxes) are being checked and if necessary created or amended.
 .LP
-.HP 3 
 11) In case of the respective command line options corrections in the contents of the waiting directory or of the database tables are being commited or their contents is being listed and then the program is being finished. 
 .LP
-.HP 3 
 12) Otherwise, file in the outgoing directory are being analysed. Each file with some identifiable fax number(s) within its file name which is or can be converted in/into pdf format will be moved to to waiting directory and recorded in \fBspooltab\fR.
 .br
 If a file contains more than one recepients and/or a conversion to pdf is necessary, additional files are generated and the original file may be renamed.
@@ -238,17 +228,13 @@ If necessary, additional numbers near the end of the file name(s) may be added i
 If more files have been generated, the successive movements and recordings are being carried out with all of them. 
 .\" DateienHerricht(), WVZinDatenbank()
 .LP
-.HP 3 
 13) Depending on the configuration the functionaliy of \fBhylafax\fR and/or \fBcapisuite\fR is being checked and if necessary and possible restored (including by installation of those programs; in case of a fritzcard 2.0 or a fax modem USR5637 an additional automatic configuration can/will be done). Kernel modules for hylafax and/or capisuite are automatically generated, also in case of a kernel update.
 .LP
-.HP 3 
 14) In case of respective command line options faxes are being deleted and the program is finished.
 .LP
-.HP 3 
 15) Otherwise the files which have been recorded under 12) in \fBspooltab\fR are being forwarded to \fBhylafax\fR or \fBcapisuite\fR and this is being protocolled in \fBspooltab\fR.
 .\" faxealle()
 .LP
-.HP 3 
 16) All faxes which are recorded in \fBspooltab\fR as waiting are being checked in \fBhylafax\fR/\fBcapisuite\fR as to their status which is being updated in \fBspooltab\fR (number of tries hitherto).
 .br
 If hylafax and capisuite are working simultaneously and a prespecified number of send tries has been reached without success in the programs of the first preference of those two, the fax is additionally forwarded to the second of the two programs.
