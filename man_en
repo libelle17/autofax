@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "12.07.17" "Version 0.43898" "\fB²DPROG²\fR man page"
+.TH man 1 "12.07.17" "Version 0.43899" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -294,8 +294,7 @@ gcc V.6, g++ V.6, groff, libmysqlclient-dev(el), libtiff-dev(el) (in case of ver
 .br
 .br
 \fB²DPROG²:\fR
-.LP
-.HP 3
+.br
 boost, boost-devel, cron, ghostscript, imagemagick, libreoffice-common, libreoffice-base, mariadb-server, policycoreutils, policycoreutils-python-utils, poppler-tools, samba, sfftobmp, (in debian-derivates, for mariadb, additionally: apt-transport-https)
 .br
 in case \fBcapisuite\fR shall be used:
