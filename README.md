@@ -33,8 +33,6 @@ of all of them in a database</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">(manpage-Hilfe in deutsch
@@ -73,8 +71,6 @@ or 2.1 is installed), if the fax number is integrated in the
 file name correctly. Furthermore, autofax holds the posted
 faxes in a mariadb database.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Additionally, received faxes
@@ -82,8 +78,6 @@ from <b>hylafax</b>/<b>capisuite</b> can be named
 automatically with the sender&rsquo;s name, according to his
 fax number, and stored.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">The usability within a network
@@ -127,8 +121,6 @@ program should have installed itsself after a single call
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Then a directory e.g.
@@ -136,8 +128,6 @@ program should have installed itsself after a single call
 in a network (e.g. via the above mentioned samba share) can
 deposit files to be faxed, e.g.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">&quot;<b>Medical report on Frank
@@ -150,8 +140,6 @@ may also be obmitted; on the other hand, if the program can
 assign the last (1-)3 faxes to a certain addressee clearly,
 the fax number may be obmitted).</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">When <b>autofax</b> is called
@@ -159,47 +147,35 @@ for the next time (per default 2 minutes), the above
 mentioned example file will initially be copied and renamed
 into</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">&quot;<b>Medical report on Frank
 Ill to Dr. Healthy to fax 099 987654321.doc</b>&quot;
 and</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">&quot;<b>Medical report on Frank
 Ill to Frank Ill to fax 088 887654321.doc</b>&quot; and
 converted into the pdf-files</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">&quot;<b>Medical report on Frank
 Ill to Dr. Healthy to fax 099 987654321.pdf</b>&quot;
 and</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">&quot;<b>Medical report on Frank
 Ill to Frank Ill to fax 088 887654321.pdf</b>&quot;.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Those are subsequently being
 relayed to <b>hylafax</b> or <b>Capisuite</b> and from there
 sent.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Simultaneously they are being
@@ -207,8 +183,6 @@ moved from &rsquo;<b>tobefaxed</b>&rsquo; to the waiting
 directory, e.g. &rsquo;<b>waitingfaxes</b>&rsquo; and
 recorded in the spool table <b>spooltab</b>.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">At each call, autofax checks the
@@ -220,8 +194,6 @@ directories or a directory for failed faxes and to move
 their database record from &rsquo;<b>spooltab</b>&rsquo; to
 the archive table &rsquo;<b>outa</b>&rsquo;.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Further on, incoming faxes via
@@ -230,8 +202,6 @@ an incoming directory and if applicable named including the
 sender&rsquo;s name. To this purpose, customizeable sql
 commands are being used, if specified.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Depending on operating system,
@@ -415,37 +385,27 @@ instead of &rsquo;<b>2</b>&rsquo;</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">1) The current hardware is being
 checked.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">a) with the command
 &rsquo;<b>lspci | grep -i isdn</b>&rsquo; for a fritz
 card.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">b) with the command
 &rsquo;<b>stty -F</b>&rsquo; for a fax modem.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">2) The fax configuration file
 <b>fax.conf</b> of capisuite is read, if it exists</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">3) Further defaults from the
@@ -453,8 +413,6 @@ program code are assigned which can be overloaded by the
 autofax configuration file (see 4), command line arguments
 or anwers to questions (see 5).</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">4) Defaults are loaded from the
@@ -462,16 +420,12 @@ configuration file, if it exists (per default
 <b>autofax.conf</b> in the same directory as <b>autofax</b>,
 per default <b>/usr/local/sbin/autofax</b>))</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">5) Questions are asked, if
 values are missing from the configuration file (see 4) or if
 a command line option demands interacitivity.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">6) The directory of
@@ -479,8 +433,6 @@ a command line option demands interacitivity.</p></td></tr>
 (<b>/var/spool/hylafax</b> or <b>/var/spool/fax</b>), if
 hylafax is installed.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">7) Directories used by the users
@@ -490,8 +442,6 @@ being checked and created if needed. Thereby user defined
 file name patterns can be respected to store successfully
 sent faxes in different directories.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">8) The program inserts itsself
@@ -501,8 +451,6 @@ either &rsquo;<b>cronminut</b>&rsquo; can be set to
 <b>0</b>, or the already generated autofax entry can be
 commented out with a leading &rsquo;<b>#</b>&rsquo;.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">9) The program checks if all
@@ -510,8 +458,6 @@ user-relevant directories (see 7) are being included in
 samba shares in <b>/etc/samba/smb.conf</b>; such are being
 added if needed.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">10) Working of MariaDB is being
@@ -521,8 +467,6 @@ spool), <b>outa</b> (for sent and failed faxes) and
 <b>inca</b> (for received faxes) are being checked and if
 necessary created or amended.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">11) In case of the respective
@@ -531,8 +475,6 @@ waiting directory or of the database tables are being
 commited or their contents is being listed and then the
 program is being finished.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">12) Otherwise, file in the
@@ -541,8 +483,6 @@ identifiable fax number(s) within its file name which is or
 can be converted in/into pdf format will be moved to to
 waiting directory and recorded in <b>spooltab</b>.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">If a file contains more than one
@@ -553,16 +493,12 @@ the file name(s) may be added in order not to conflict with
 any other file name in one of the directories mentioned in
 7).</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">If more files have been
 generated, the successive movements and recordings are being
 carried out with all of them.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">13) Depending on the
@@ -575,16 +511,12 @@ Kernel modules for hylafax and/or capisuite are
 automatically generated, also in case of a kernel
 update.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">14) In case of respective
 command line options faxes are being deleted and the program
 is finished.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">15) Otherwise the files which
@@ -592,8 +524,6 @@ have been recorded under 12) in <b>spooltab</b> are being
 forwarded to <b>hylafax</b> or <b>capisuite</b> and this is
 being protocolled in <b>spooltab</b>.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">16) All faxes which are recorded
@@ -602,8 +532,6 @@ in <b>spooltab</b> as waiting are being checked in
 being updated in <b>spooltab</b> (number of tries
 hitherto).</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">If hylafax and capisuite are
@@ -612,8 +540,6 @@ tries has been reached without success in the programs of
 the first preference of those two, the fax is additionally
 forwarded to the second of the two programs.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">If the fax transmission is
@@ -624,15 +550,11 @@ via ocrmypdf (if a young enough python3 &gt; 3.5 is
 installed), and the database entry is being transferred from
 <b>spooltab</b> to <b>outa</b>.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">The status of the mentioned
 faxes is being displayed.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">17) If additional faxes in the
@@ -641,8 +563,6 @@ created via autofax, they are displayed. In intervals they
 will be integrated into the autofax database (without the
 not available information on the original file name).</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">18) Via
@@ -653,8 +573,6 @@ being looked up using a predefineable number of
 predefineable sql commands, which are applied one after
 another until the fax number is found.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Such sql commands shall deliver
@@ -664,12 +582,8 @@ name the received faxes. Before applied, within the sql
 commands the string &rsquo;&&faxnr&&&rsquo;
 will be replaced by the current fax number. Example:</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">select concat(haname,&rsquo;,
@@ -680,27 +594,19 @@ replace(replace(replace(replace(fax1k,&rsquo;
 &rsquo;,&rsquo;&rsquo;),&rsquo;-&rsquo;,&rsquo;&rsquo;),&rsquo;/&rsquo;,&rsquo;&rsquo;),&rsquo;&acute;&rsquo;,&rsquo;&rsquo;))
 = &rsquo;&&faxnr&&&rsquo;</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">If more sql commands are
 specified and one of them does not give a result, the next
 one will be tried.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Optionally, the received faxes
 are subjected to ocr via a call of ocrmypdf.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">19) The configuration file is
@@ -740,8 +646,6 @@ german versions of the packet manager.</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">(for this purpose, depending on
@@ -755,26 +659,18 @@ used).</p> </td></tr>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">gcc V.6, g++ V.6, groff,
 libmysqlclient-dev(el), libtiff-dev(el) (in case of version
 4.0.7 with a slight modification, see Makefile)</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em"><b>autofax:</b></p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">boost, boost-devel, cron,
@@ -784,15 +680,11 @@ policycoreutils-python-utils, poppler-tools, samba,
 sfftobmp, (in debian-derivates, for mariadb, additionally:
 apt-transport-https)</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">in case <b>capisuite</b> shall
 be used:</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">capisuite, capiutils,
@@ -801,30 +693,22 @@ capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source
 linux-headers-$(uname -r), python-devel, (in fedora,
 additionally: kernel-modules-extra),</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">in case <b>hylafax</b> shall be
 used:</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">hylafax+, hylafax+-client,
 sendmail, tiff (in case of version 4.0.7 with a slight
 modification, see Makefile)</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">in case <b>ocr</b> shall be
 used:</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">ffmpeg, ffmpeg-devel,
@@ -834,28 +718,20 @@ rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper,
 and via &rsquo;python3 pip&rsquo;: cryptography, cffi,
 image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">in case You want to work on the
 source files with &rsquo;sh viall&rsquo;:</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">vim</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">All those installations may
 include dependent programs.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">If You don&rsquo;t want one of
@@ -875,8 +751,6 @@ to take the following measures for its neat function:</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">1) In debian, in the file
@@ -903,8 +777,6 @@ directory (default e.g. <b>/var/spool/hylafax/etc</b>).</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">5) Installation of
@@ -919,8 +791,6 @@ the files
 &rsquo;<b>/etc/udev/rules.d/46-FKN_isdn_capi.rules</b>&rsquo;,
 &rsquo;<b>/etc/modprobe.d/50-blacklist.conf</b>&rsquo;.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">6) Installation of services:</p></td></tr>
@@ -949,23 +819,17 @@ to be able to receive faxes.</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">7) Creation of a logfile, per
 default <b>/var/log/autofax.log</b>.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">8) if necessary creation and
 making accessible of the configurable <b>directories</b> for
 faxes to be sent, waiting, finished and failed.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">9) if necessary creation and
@@ -974,15 +838,11 @@ making accessible of the configuration file
 is located by itsself (default:
 <b>/usr/local/sbin/autofax</b>).</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">10) Insertion of a line for the
 periodic automatic program call in root&rsquo;s crontab</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">11) if necessary insertion of
@@ -995,8 +855,6 @@ directories mentioned in 8) should be readable via samba
 within a local network and the directory for faxes to be
 sent should also be writable.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">12) if necessary insertion of a
@@ -1006,8 +864,6 @@ database, if necessary insertion of a user with a
 configurable name in mariadb for the management of those
 tables.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">13) With specific command line
@@ -1025,8 +881,6 @@ be deleted, too.</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">14) With a specific command line
@@ -1047,14 +901,10 @@ will be displayed by <b>autofax -info</b>).</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Call <b>make uninstall</b>.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Then the installed
@@ -1063,24 +913,18 @@ will be displayed by <b>autofax -info</b>).</p>
 has been generated during the installation and execution of
 autofax.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Thereby additionally installed
 program packets, permissions, samba shares and firewall
 exceptions are deleted.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Configuration files, data, and
 system relevant programs like libgcc and selinux will not be
 deleted.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Error messages originate mostly
@@ -1111,8 +955,6 @@ author.</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Nevertheless the author cannot
@@ -1163,8 +1005,6 @@ Faxe und Protokollierung aller Faxe in einer Datenbank</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">(manpage available in english:
@@ -1194,8 +1034,6 @@ Datenleitung sinnvoll sein kann.</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em"><b>autofax</b> ist ein
@@ -1207,8 +1045,6 @@ angeschlossen ist) weiterleitet werden, wenn die Faxnummer
 im Dateinamen richtig eingetragen ist, weiterhin die
 versandten Faxe in einer MariaDB-Datenbank abspeichert.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Au&szlig;erdem
@@ -1216,8 +1052,6 @@ k&ouml;nnen von <b>hylafax</b>/<b>capisuite</b>
 empfangene Faxe automatisch nach dem Sender anhand dessen
 Faxnummer benannt und abgespeichert werden.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Die Netzwerkintegration (z.B.
@@ -1267,8 +1101,6 @@ l&auml;uft.</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Es existiert dann ein
@@ -1277,8 +1109,6 @@ Benutzer im Netzwerk (z.B. &uuml;ber die o.g.
 Samba-Freigabe) zu faxende Dateien stellen k&ouml;nnen
 wie z.B.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">&quot;<b>Arztbericht zu Franz
@@ -1293,8 +1123,6 @@ dass das Programm die letzten (1-)3 Faxe zu einem Adressaten
 eindeutig einer Faxnummer zuordnen kann, letztere auch
 fehlen).</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Wenn <b>autofax</b> beim
@@ -1303,48 +1131,36 @@ n&auml;chsten Mal automatisch aufgerufen wird
 o.g. Beispieldatei zun&auml;chst kopiert und umbenannt
 in</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">&quot;<b>Arztbericht zu Franz
 Krank an Dr. Gesund an Fax 099 987654321.doc</b>&quot;
 und</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">&quot;<b>Arztbericht zu Franz
 Krank an Franz Krank an Fax 088 887654321.doc</b>&quot; und
 in die PDF-Dateien</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">&quot;<b>Arztbericht zu Franz
 Krank an Dr. Gesund an Fax 099 987654321.pdf</b>&quot;
 und</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">&quot;<b>Arztbericht zu Franz
 Krank an Franz Krank an Fax 088 887654321.pdf</b>&quot;
 umgewandelt.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Diese werden dann automatisch an
 <b>hylafax</b> oder <b>Capisuite</b> weitergeleitet und von
 dort aus verschickt.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Gleichzeitig werden sie aus
@@ -1352,8 +1168,6 @@ dort aus verschickt.</p></td></tr>
 &rsquo;<b>warteauffax</b>&rsquo; verschoben und in die
 Spooltabelle <b>spooltab</b> eingetragen.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Bei jedem Aufruf
@@ -1367,8 +1181,6 @@ gescheiteterte Faxe ablegt und den Datenbankeintrag von
 &rsquo;<b>spooltab</b>&rsquo; in die Archivtabelle
 &rsquo;<b>outa</b>&rsquo; verschiebt.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Weiterhin werden &uuml;ber
@@ -1379,8 +1191,6 @@ SQL-Befehle verwendet, die in frei festlegbarer Zahl der
 Reihe nach so lange aufgerufen werden, bis einer einen
 Datensatz zu der Faxnummer findet.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Der Benutzer k&ouml;nnte
@@ -1572,38 +1382,28 @@ nicht), anstatt &rsquo;<b>2</b>&rsquo;</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">1) Die aktuelle Hardware wird
 &uuml;berpr&uuml;ft:</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">a) mit dem Befehl
 &rsquo;<b>lspci | grep -i isdn</b>&rsquo; bez&uuml;glich
 einer ISDN-Karte</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">b) mit dem Befehl &rsquo;<b>stty
 -F</b>&rsquo; bez&uuml;glich eines Fax-Modems.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">2) Die Fax-Konfigurationsdatei
 <b>fax.conf</b> der Capisuite wird eingelesen, falls es sie
 gibt</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">3) Weitere Vorgaben aus dem
@@ -1613,8 +1413,6 @@ Kommandozeilenargumente oder Antworten auf
 R&uuml;ckfragen (siehe 5) &uuml;berdeckt werden
 k&ouml;nnen.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">4) Vorgaben werden geladen aus
@@ -1624,8 +1422,6 @@ selben Verzeichnis wie <b>autofax</b>,
 standardm&auml;&szlig;ig
 <b>/usr/local/sbin/autofax</b>))</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">5) R&uuml;ckfragen werden
@@ -1633,8 +1429,6 @@ gestellt, falls in der Konfigurationsdatei Werte fehlen oder
 falls eine Kommandozeilenoption Interaktivit&auml;t
 verlangt.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">6) Das Verzeichnis von
@@ -1642,8 +1436,6 @@ verlangt.</p> </td></tr>
 oder <b>/var/spool/fax</b>), falls hylafax installiert
 ist.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">7) Von Benutzern verwendete
@@ -1655,8 +1447,6 @@ Dateinamensmuster ber&uuml;cksichtigt werden, um
 erfolgreich versandte Faxe je nach Dateinamen in
 verschiedenen Verzeichnissen zu speichern.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">8) Das Programm tr&auml;gt
@@ -1668,8 +1458,6 @@ werden oder der bereits erstellte autofax-Eintrag mit
 <b>crontab -e</b> mit einem vorangestellten
 &rsquo;<b>#</b>&rsquo; auskommentiert werden.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">9) Das Programm
@@ -1678,8 +1466,6 @@ Verzeichnisse (s. 7) von Sambafreigaben in
 <b>/etc/samba/smb.conf</b> erfasst werden, solche werden
 n&ouml;tigenfalls erg&auml;nzt.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">10) Der Betrieb von MariaDB wird
@@ -1691,8 +1477,6 @@ in Betrieb gesetzt, die Datenbanktabellen <b>spooltab</b>
 &uuml;berpr&uuml;ft und ggf. erstellt oder
 erweitert.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">11) Im Fall der entsprechenden
@@ -1701,8 +1485,6 @@ Warteverzeichnis oder den Protokolltabellen
 durchgef&uuml;hrt oder deren Inhalt aufgelistet und das
 Programm dann beendet.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">12) Andernfalls werden Dateien
@@ -1712,8 +1494,6 @@ und die in eine PDF-Datei umwandelbar ist (oder schon so
 vorliegt), wird ins Warteverzeichnis verschoben und in
 <b>spooltab</b> eingetragen.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Falls eine Datei mehrere
@@ -1725,16 +1505,12 @@ zus&auml;tzliche Zifferm nahe ihrem Namensende bekommen,
 so dass die Namen mit keinem anderen der unter 7) genannten
 Verzeichnisse in Konflikt steht.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Falls neue Dateien erstellt
 wurden, werden die nachfolgenden Verschiebungen und
 Protokollierungen mit allen durchgef&uuml;hrt.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">13) Je nach Konfiguration wird
@@ -1748,16 +1524,12 @@ Konfiguration erfolgen). Kernelmodule f&uuml;r hylafax
 bzw. capisuite werden f&uuml;r die aktuelle
 Kernelversion erstellt, auch bei etwaigen Kernelupdates.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">14) Im Fall entsprechender
 Kommandozeilenoptionen werden Faxe gel&ouml;scht und das
 Programm dann beendet.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">15) Andernfalls werden die unter
@@ -1765,8 +1537,6 @@ Programm dann beendet.</p></td></tr>
 <b>hylafax</b> oder <b>capisuite</b> weitergeleitet und dies
 in <b>spooltab</b> protokolliert.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">16) Alle in <b>spooltab</b> als
@@ -1775,8 +1545,6 @@ wartend stehenden Faxe werden in
 &uuml;berpr&uuml;ft, dieser wird in <b>spooltab</b>
 aktualisiert (Zahl der bisherigen Faxversuche).</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Falls sowohl hylafax als auch
@@ -1785,8 +1553,6 @@ Anwahlversuchen im Programm der ersten Pr&auml;ferenz
 dieser beiden erfolglos erreicht ist, wird das Fax auch noch
 an das jeweils andere Programm weitergeleiet.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Falls der Faxvorgang
@@ -1798,15 +1564,11 @@ ausreichend junges Python3 &gt; 3.5 installiert ist), und
 der Datenbankeintrag aus <b>spooltab</b> in die Tabelle
 <b>outa</b> verschoben.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Der Status der genannten Faxe
 wird angezeigt.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">17) Weitere in der Warteschleife
@@ -1816,8 +1578,6 @@ werden sie in die autofax-Datenbank integriert (ohne die
 fehlende Information &uuml;ber den
 urspr&uuml;nglichen Dateinamen)</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">18) &Uuml;ber
@@ -1826,8 +1586,6 @@ mit Hilfe der Faxnummer anhand voreingestellter SQL-Befehle
 nach dem Namen des Absenders benannt und in ein
 Empfangsverzeichnis gestellt.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Solche SQL-Befehle sollen
@@ -1839,12 +1597,8 @@ Zeichenfolge &rsquo;&&faxnr&&&rsquo; zur
 aktuellen Faxnummer erweitert. Beispiel fuer einen solchen
 SQL-Befehl:</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">select concat(haname,&rsquo;,
@@ -1855,28 +1609,20 @@ replace(replace(replace(replace(fax1k,&rsquo;
 &rsquo;,&rsquo;&rsquo;),&rsquo;-&rsquo;,&rsquo;&rsquo;),&rsquo;/&rsquo;,&rsquo;&rsquo;),&rsquo;&acute;&rsquo;,&rsquo;&rsquo;))
 = &rsquo;&&faxnr&&&rsquo;</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Wenn mehrere SQL-Befehle
 angegeben werden, so wird der jeweils naechste angewandt,
 wenn einer kein Ergebnis liefert.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Optional werden die empfangenen
 Dateien mit Hilfe von ocrmypdf einer Texterkennung
 unterzogen.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">19) Die Konfigurationsdatei
@@ -1920,39 +1666,27 @@ Paketmanager eingerichtet.</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">(hierzu wird je nach
 Distribution zypper, apt(-get), dnf oder yum verwendet).</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em"><b>makefile:</b></p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">gcc V.6, g++ V.6, groff,
 libmysqlclient-dev(el), libtiff-dev(el) (im Fall von Vers.
 4.0.7 mit leichter Modifikation, s. Makefile)</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em"><b>autofax:</b></p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">boost, boost-devel, cron,
@@ -1962,15 +1696,11 @@ policycoreutils-python-utils, poppler-tools, samba,
 sfftobmp, (in debian-derivates, f&uuml;r mariadb,
 zus&auml;tzlich: apt-transport-https)</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">falls <b>capisuite</b> benutzt
 werden soll:</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">capisuite, capiutils,
@@ -1979,30 +1709,22 @@ capi4linux, fcpci-3.10.0, gcc-4.8, g++-4.8, kernel-source
 linux-headers-$(uname -r), python-devel, (in fedora,
 zus&auml;tzlich: kernel-modules-extra),</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">falls <b>hylafax</b> benutzt
 werden soll:</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">hylafax+, hylafax+-client,
 sendmail, tiff (im Fall von Vers. 4.0.7 mit kleiner
 Modifikation, s. Makefile)</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">falls <b>ocr</b> benutzt werden
 soll:</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">ffmpeg, ffmpeg-devel,
@@ -2012,29 +1734,21 @@ rpmfusion, qpdf, redhat-rpm-config, tesseract-ocr, unpaper,
 and via &rsquo;python3 pip&rsquo;: cryptography, cffi,
 image, M2Crypto, ocrmypdf, PyPDF2, reportlab, ruffus.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">falls Sie die Quelldateien mit
 &rsquo;sh viall&rsquo; bearbeiten wollen:</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">vim</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">All diese Installationen
 k&ouml;nnen abh&auml;ngige Programme
 einschlie&szlig;en.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Falls Sie eines dieser Programme
@@ -2055,8 +1769,6 @@ Ma&szlig;nahmen ergreifen:</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">1) In Debian kann in der Datei
@@ -2077,8 +1789,6 @@ Aufruf von &rsquo;sh ./install.sh&rsquo; bzw.
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">4) Installieren von
@@ -2091,8 +1801,6 @@ Konfigurationsdateien <b>config</b> und <b>config.*</b>
 hylafax-Konfigurationsverzeichnis (Vorgabe z.B.:
 <b>/var/spool/hylafax/etc/</b>)</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">5) Installieren von
@@ -2105,8 +1813,6 @@ Python-Scripts f&uuml;r ankommende Faxe (Vorgabe z.B.:
 Zahl der Klingelt&ouml;ne bis zur Faxannahme, Erstellung
 bzw. Bearbeitung der Dateien</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">6) Einrichten von Diensten:</p></td></tr>
@@ -2137,16 +1843,12 @@ faxe &uuml;ber hylafax empfangen zu k&ouml;nnen.</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">7) Erstellen einer
 Protokolldatei, standardm&auml;&szlig;ig
 <b>/var/log/autofax.log</b>.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">8) ggf. Erstellen und
@@ -2154,8 +1856,6 @@ Zugreifbarmachen der bestimmbaren <b>Verzeichnisse</b>
 f&uuml;r zu sendende, wartende, abgearbeitete und
 empfangene Faxe.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">9) ggf. Erstellen und
@@ -2163,16 +1863,12 @@ Ver&auml;ndern der Konfigurationsdatei autofax.conf in
 dem Verzeichnis, in dem auch es selbst steht (Vorgabe:
 /usr/local/sbin/autofax).</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">10) ggf. Einf&uuml;gen einer
 Zeile zum automatischen periodischen Aufruf des Programms in
 das crontab (von root)</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">11) ggf. Einf&uuml;gen von
@@ -2187,8 +1883,6 @@ Zone&quot; eintragen. Nach Programmaufruf sollten die unter
 und Dateien im Verzeichnis f&uuml;r zu sendende Faxe
 erstellt werden k&ouml;nnen.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">12) ggf. Einf&uuml;gen einer
@@ -2198,8 +1892,6 @@ Tabellen und einer Prozedur in dieser Datenbank, ggf.
 Einf&uuml;gen eines Benutzers mit bestimmbarem Namen in
 mariadb zur Datenpflege in diesen Tabellen</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">13) durch entsprechende
@@ -2219,8 +1911,6 @@ gel&ouml;scht werden.</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">14) mit einer
@@ -2241,15 +1931,11 @@ es &uuml;ber <b>autofax -info</b> angezeigt).</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Rufen Sie dort <b>make
 uninstall</b> auf.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Dadurch wird das installierte
@@ -2258,8 +1944,6 @@ uninstall</b> auf.</p></td></tr>
 das bei der Installation und beim Aufruf von autofax
 erstellt wurde.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Dadurch werden
@@ -2268,8 +1952,6 @@ zus&auml;tzlich erteilte Berechtigungen, f&uuml;r
 autofax eingerichtete Sambafreigaben und Firewallausnahmen
 wieder gel&ouml;scht.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Auf die Deinstallation der
@@ -2277,8 +1959,6 @@ Konfigurationsdateien, der angesammelten Daten und
 systemrelevanter Programme wie libgcc und selinux wird dabei
 verzichtet.</p> </td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Etwaige Fehlermeldungen beziehen
@@ -2310,8 +1990,6 @@ getestet.</p>
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
-<td width="89%">
 
 
 <p style="margin-top: 1em">Trotzdem kann der Autor
