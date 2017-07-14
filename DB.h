@@ -271,7 +271,7 @@ class DB
     char dve; // delimiter value end
     ////	char* ConStr;
     ////  const char* db;
-    const string mysqlbef="mysql", mysqlben="mysql";
+    string mysqlbef="mysql", mysqlben="mysql"; // mysql-Befehl, mysql-Benutzer
     string db;
     ////  const char* host;
     string host;

@@ -9876,21 +9876,15 @@ int main(int argc, char** argv)
 	} else if (!pm.suchstr.empty()) {
 		pm.suchestr();
 	} else {
-			caus<<"Stelle -1"<<endl;
 		pm.pruefcron(); // soll vor Log(Tx[T_Verwende ... stehen
 		if (!pm.keineverarbeitung) {
-			caus<<"Stelle 0"<<endl;
 			pruefstdfaxnr(pm.My,pm.muser,pm.host,pm.obverb,pm.oblog);
-			caus<<"Stelle 1"<<endl;
 			prueffuncgettel3(pm.My,pm.muser,pm.host,pm.obverb,pm.oblog);
-			caus<<"Stelle 2"<<endl;
 			////  int qerg = mysql_query(My.conn,proc.c_str());
 			// 1) nicht-pdf-Dateien in pdf umwandeln, 2) pdf-Dateien wegfaxen, 3) alle in warte-Verzeichnis kopieren, 4) in Spool-Tabelle eintragen
 			////  vector<string> npdf, spdf;
 			if (!(pm.loef||pm.loew||pm.loea||pm.erneut||pm.uml)) {
-			caus<<"Stelle 3"<<endl;
 				pm.DateienHerricht();  
-			caus<<"Stelle 4"<<endl;
 			}
 			if (pm.obfcard) pm.obcapi=!pm.pruefcapi();
 			if (pm.obmodem) pm.obhyla=!pm.pruefhyla();
