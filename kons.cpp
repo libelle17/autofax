@@ -676,7 +676,7 @@ mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_b
 			pruefverz(dir_name(name),0,0,0,0);
 			////    if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) KLA
 			if (!touch(name,obverb,oblog)) {
-				setfaclggf(name,falsch,modus&ios::out||modus&ios::app?6:4,falsch,obverb,oblog,faclbak);
+				setfaclggf(name,obverb,oblog,falsch,modus&ios::out||modus&ios::app?6:4,falsch,faclbak);
 			} // if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) 
 		} // 		if (mehralslesen)
 	} // for(int iru=0;iru<3;iru++) 
@@ -717,7 +717,7 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 				if ((sdat= fopen(datei.c_str(),mode))) {
 #endif
 					*erfolg=1;
-					setfaclggf(datei,falsch,art?6:4,falsch,obverb,oblog,faclbak);
+					setfaclggf(datei,obverb,oblog,falsch,art?6:4,falsch,faclbak);
 					break;
 				} 
 				if (!*erfolg) {
@@ -2125,25 +2125,28 @@ void pruefmehrfach(const string& wen,uchar obstumm/*=0*/)
 // <datei> kann auch Verzeichnis sein
 // obunter = mit allen Unterverzeichnissen
 // obimmer = immer setzen, sonst nur, falls mit getfacl fuer datei Berechtigung fehlt (wichtig fuer Unterverzeichnisse)
-int setfaclggf(const string& datei,const binaer obunter,const int mod/*=4*/,uchar obimmer/*=0*/,int obverb/*=0*/,int oblog/*=0*/,uchar faclbak/*=1*/)
+void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binaer obunter,const int mod/*=4*/,uchar obimmer/*=0*/,
+               uchar faclbak/*=1*/,uchar wennda/*=0*/,const string& user/*=nix*/)
 {
-  static const string cuser=curruser(); 
-  if (cuser!="root") {
-      static int obsetfacl=obprogda("setfacl",obverb-1,0);
-      if (obsetfacl) {
-       const char* modbuch;
-       switch (mod) {
-        case 4: modbuch="r"; break;
-        case 6: modbuch="rw"; break;
-        default: modbuch="rwx";  // 7
-       } //        switch (mod)
-       if (!obimmer) {
-        svec gstat;
-        systemrueck("getfacl -e -t '"+datei+"' 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*"+modbuch+"' || true",obverb,oblog,&gstat);
-        if (!gstat.size()) obimmer=wahr; // wenn keine Berechtigung gefunden => erstellen
-       } //        if (!obimmer)
-       if (obimmer) {
-          if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
+  struct stat st={0};
+	if (!wennda || !lstat(datei.c_str(),&st)) {
+		static const string cuser=user.empty()?curruser():user; 
+		if (cuser!="root") {
+			static int obsetfacl=obprogda("setfacl",obverb-1,0);
+			if (obsetfacl) {
+				const char* modbuch;
+				switch (mod) {
+					case 4: modbuch="r"; break;
+					case 6: modbuch="rw"; break;
+					default: modbuch="rwx";  // 7
+				} //        switch (mod)
+				if (!obimmer) {
+					svec gstat;
+					systemrueck("getfacl -e -t '"+datei+"' 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*"+modbuch+"' || true",obverb,oblog,&gstat);
+					if (!gstat.size()) obimmer=wahr; // wenn keine Berechtigung gefunden => erstellen
+				} //        if (!obimmer)
+				if (obimmer) {
+					if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
 					if (faclbak) {
 						const string sich=base_name(datei)+"."+base_name(meinpfad())+".perm";
 						const string bef="sudo sh -c 'cd \""+dir_name(datei)+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(datei)+"\">\""+sich+"\"'";
@@ -2151,11 +2154,11 @@ int setfaclggf(const string& datei,const binaer obunter,const int mod/*=4*/,ucha
 						anfgg(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'",bef,obverb,oblog);
 					} // 					if (faclbak)
 					systemrueck(string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'",obverb,oblog);
-          if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
-       } //        if (obimmer)
-      } //       if (obsetfacl)
-  } //   if (cuser!="root")
-  return 0;
+					if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
+				} //        if (obimmer)
+			} //       if (obsetfacl)
+		} //   if (cuser!="root")
+	} // 	if (!wennda || !lstat(datei.c_str(),&st))
 } // int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer obimmer,int obverb, int oblog)
 
 
@@ -2197,7 +2200,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 				anfgg(unindt,"sudo rmdir '"+verz+"'",bef,obverb,oblog);
 		} //     if (fehler)
 		////    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
-		if (obmitfacl) setfaclggf(verz, wahr, 7, (obmitfacl>1),obverb,oblog);
+		if (obmitfacl) setfaclggf(verz,obverb,oblog, wahr, 7, (obmitfacl>1));
 		//// <<violett<<verz<<schwarz<<endl;
 		if (obmitcon) {
 			if (obselinux==-1) 
@@ -3549,7 +3552,7 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
       if ((erg=remove(zuloe.c_str()))) {
         if(cuser.empty()) iru++;
         if(iru==1) {
-          setfaclggf(zuloe, falsch, 6, falsch,obverb,oblog,0);
+          setfaclggf(zuloe,obverb,oblog, falsch, 6, falsch,0);
         } else {
           if (errno) if (errno!=13) perror((string(Txk[T_Fehler_beim_Loeschen])+" "+ltoan(errno)).c_str()); // Permission denied
           const string cmd="sudo rm -rf \""+zuloe+"\"";

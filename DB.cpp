@@ -223,7 +223,7 @@ void DB::instmaria(int obverb, int oblog)
 	} else {
 		linstp->doinst("mariadb",obverb,oblog);
 		if (linstp->ipr==pac)
-		 systemrueck("sudo mysql_install_db --user=mysql --basedir=/usr/ --ldata=/var/lib/mysql",obverb,oblog);
+		 systemrueck("sudo mysql_install_db --user="+mysqlben+" --basedir=/usr/ --ldata=/var/lib/mysql",obverb,oblog);
 	} // 					if (ipr==apt) else
 } // void DB::instmaria()
 
@@ -240,7 +240,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 	passwd=ppasswd;
 	uchar installiert=0;
 	uchar datadirda=0;
-	const string mysql="mysql", mysqld="mysqld";
+	const string mysqld="mysqld";
 	switch (DBS) {
 		case MySQL:
 #ifdef linux
@@ -268,11 +268,11 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 							installiert=0;
 					} //           if (!obprogda("mysqld",obverb,oblog))
 					if (installiert) {
-						if (!obprogda(mysql,obverb,oblog))
+						if (!obprogda(mysqlbef,obverb,oblog))
 							installiert=0;
-						else if (systemrueck("grep \"^"+mysql+":\" /etc/passwd",obverb,oblog))
+						else if (systemrueck("grep \"^"+mysqlben+":\" /etc/passwd",obverb,oblog))
 							installiert=0;
-						else if (systemrueck(mysql+" -V",obverb,oblog))
+						else if (systemrueck(mysqlbef+" -V",obverb,oblog))
 							installiert=0;
 					} //           if (installiert)
 					if (installiert) break;
@@ -282,7 +282,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 				// Datenverzeichnis suchen und pruefen
 				if (installiert) {
 					svec zrueck;
-					if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/{n;p}'` 2>/dev/null "
+					if (!systemrueck("sed 's/#.*$//g' `"+mysqlbef+" --help | sed -n '/Default options/{n;p}'` 2>/dev/null "
 								"| grep datadir | cut -d'=' -f2",obverb,oblog,&zrueck)) {
 						if (zrueck.size()) {
 							datadir=zrueck[zrueck.size()-1];  
@@ -315,7 +315,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 								} // for(size_t i=0;i<zzruck.size();i++) 
 							} // if(zzruck.size()) 
 						} // if (zrueck.size()) else
-					} // if (!systemrueck("sed 's/#.*$//g' `mysql --help | sed -n '/Default options/KLAn;pKLZ'` 2>/dev/null " ...
+					} // if (!systemrueck("sed 's/#.*$//g' `"+mysqlbef+"--help | sed -n '/Default options/KLAn;pKLZ'` 2>/dev/null " ...
 					gtrim(&datadir);
 					//// <<rot<<datadir<<schwarz<<endl;
 					if (datadir.empty()) {
@@ -359,7 +359,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 							case 1698: // dasselbe auf Ubuntu
 								for(unsigned aru=0;aru<1;aru++) {
 									for(unsigned iru=0;iru<2;iru++) {
-										cmd="sudo mysql -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"GRANT ALL ON "+uedb+".* TO '"+
+										cmd="sudo "+mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"GRANT ALL ON "+uedb+".* TO '"+
 											user+"'@'"+myloghost+"' IDENTIFIED BY '"+ersetze(passwd.c_str(),"\"","\\\"")+"' WITH GRANT OPTION\" 2>&1";
 										if (iru) break;
 										pruefrpw(cmd, versuchzahl);
@@ -380,11 +380,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 									Log(Txd[T_Fehler_db]+drots+mysql_error(conn)+schwarz+Txd[T_Versuche_mysql_zu_starten],1,1);
 #ifdef linux
 									dbsv->enableggf(1,1);
-									svec gstat;
-									systemrueck("getfacl -e -t "+datadir+" 2>/dev/null | grep 'user[ \t]*"+"mysql"+"[ \t]*rwx' || true",obverb,oblog,&gstat);
-									if (!gstat.size()) {
-										systemrueck("sudo setfacl -Rm 'u:mysql:7' '"+datadir+"'",obverb,oblog);
-									}
+                  setfaclggf(datadir,obverb,oblog,wahr,7,0,0,0,mysqlben);
 									Log(blaus+Txd[T_Vor_restart]+Txd[T_Versuch_Nr]+schwarz+ltoan(versuch),1,oblog);
 									for(int iiru=0;iiru<2;iiru++) {
 									 if (dbsv->restart(1,1)) {
@@ -529,7 +525,7 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
 {
   myloghost=!strcasecmp(host.c_str(),"localhost")||!strcmp(host.c_str(),"127.0.0.1")||!strcmp(host.c_str(),"::1")?"localhost":"%";
   for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
-    cmd="sudo mysql -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"show variables like 'gibts wirklich nicht'\" 2>&1";
+    cmd="sudo "+mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"show variables like 'gibts wirklich nicht'\" 2>&1";
     myr.clear();
     systemrueck(cmd,-1,0,&myr);
     miterror=1;
@@ -591,7 +587,7 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 						 anfgg(unindt,rcmd,cmd,obverb,oblog);
 						} // 						if (gef)
 					} // 					if (!lstat(verbot.c_str(),&st))
-					const string cmd="sudo mysql -uroot -h'"+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
+					const string cmd="sudo "+mysqlbef+" -uroot -h'"+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
 						"' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
 					Log(Txd[T_Fuehre_aus_db]+blaus+cmd+schwarz,1,1);
 					int erg __attribute__((unused))=system(cmd.c_str());

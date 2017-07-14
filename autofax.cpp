@@ -3031,7 +3031,7 @@ void paramcl::liescapiconf()
 					if (!cconf[j].wert.empty()) {
 						struct stat statdat={0};
 						if (!lstat(cconf[j].wert.c_str(),&statdat)) {
-							setfaclggf(cconf[j].wert, falsch, 6, falsch,obverb,oblog);
+							setfaclggf(cconf[j].wert,obverb,oblog,falsch,6,falsch);
 						} //             if (!lstat(cconf[j].wert.c_str(),&statdat))
 					} // if (!cconf[j].wert.empty()) 
 				} // for(size_t j=1;j<3;j++) 
@@ -4185,14 +4185,14 @@ void paramcl::konfcapi()
 					*fneu<<"fax_action=\"MailAndSave\""<<endl;
 				} // if (!cuserda)
 				if (fneu) delete fneu;
-				setfaclggf(cfaxconfdt, falsch, 6, falsch,obverb,oblog);
+				setfaclggf(cfaxconfdt,obverb,oblog,falsch,6,falsch);
 				const string origdatei=cfaxconfdt+"_orig";
 				struct stat entryorig={0};
 				if (lstat(origdatei.c_str(),&entryorig)) {
 					dorename(cfaxconfdt,origdatei,cuser,0,obverb,oblog);
 				} else {
 					tuloeschen(cfaxconfdt,cuser,obverb,oblog);
-				}
+				} // 				if (lstat(origdatei.c_str(),&entryorig))
 				dorename(neudatei,cfaxconfdt,cuser,0,obverb,oblog);
 			} // if (iru)
 			if (!capiconf[1].wert.empty()) cfaxuservz=capiconf[1].wert;
@@ -4225,7 +4225,7 @@ void paramcl::nextnum()
 	} // if (!lstat(cfaxusersqvz.c_str(),&entrynextnr))
 	if (!nextnr) {
 		pruefverz(cfaxuservz,obverb,oblog,2);
-		setfaclggf(spoolcapivz,wahr,7,wahr,obverb,oblog);
+		setfaclggf(spoolcapivz,obverb,oblog,wahr,7,wahr);
 		if (findv==1) {
 			cmd=" sudo echo $(( `find "+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
 				"| cut -d '-' -f3 | cut -d '.' -f1 | sort -rn | head -n1` + 1 )) > '"+nextdatei+"'";
@@ -4248,7 +4248,7 @@ void paramcl::nextnum()
 			} // 			if (nextstr.is_open())
 		} // 		if (findv==1) else
 	} // 	if (!nextnr)
-	setfaclggf(nextdatei,falsch,6,falsch,obverb,oblog);
+	setfaclggf(nextdatei,obverb,oblog,falsch,6,falsch);
 } // void paramcl::nextnum()
 
 // wird aufgerufen in: main
@@ -5299,9 +5299,14 @@ void paramcl::pruefunpaper()
 			}
 		} // 		if (linstp->ipr==dnf||linstp->ipr==yum)
 		/*//if (linstp->ipr==apt||linstp->ipr==dnf||linstp->ipr==yum)*/ 
-		holvomnetz("unpaper_copy");
+		const string upc="unpaper_copy";
+		holvomnetz(upc);
 		if (vers) systemrueck("which unpaper && rm $(which unpaper) && hash -r",obverb,oblog);
-		kompiliere("unpaper_copy",s_gz);
+		kompiliere(upc,s_gz);
+		// unpaper: error while loading shared libraries: libavformat.so.56: cannot open shared object file: No such file or directory
+		if (systemrueck("unpaper",obverb,oblog)==127) {
+		  systemrueck("sh -c 'cd \""+instvz+vtz+upc+"\"&&make distclean;./configure;make;sudo make install'",obverb,oblog);
+		} // 		if (systemrueck("unpaper",obverb,oblog)==127)
 	} // 						if (!urueck.size()||vers<6.1)
 } // void paramcl::pruefunpaper()
 
@@ -5494,6 +5499,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 			if (obocr) {
 				if (!pruefocr()) {
 					svec rueck;
+					setfaclggf(ziel,obverb,oblog,falsch,7,falsch,0,1);
 					const string cmd=ocrmp+" -rcsl "+(langu=="d"?"deu":"eng")+" \""+*lqp+"\" \""+ziel+"\" 2>&1";
 					int zerg=systemrueck(cmd,obverb,oblog,&rueck,0,wahr,"",0,1);
 					if (zerg==5) zerg=systemrueck("sudo "+cmd,obverb,oblog,&rueck,0,wahr,"",0,1); // kein Schreibrecht im Verzeichnis
@@ -5898,6 +5904,7 @@ void paramcl::DateienHerricht()
 						struct utimbuf ubuf={0};
 						ubuf.actime=ubuf.modtime=spdfstat.st_mtime;
 						if (!pruefocr()) {
+							setfaclggf(qrueck.at(i),obverb,oblog,falsch,7,falsch,0,1);
 							const string cmd=string(ocrmp+" -rcsl ")+(langu=="d"?"deu":"eng")+" \""+qrueck.at(i)+"\" \""+qrueck.at(i)+"\""
 								" && chmod +r \""+qrueck.at(i)+"\"";
 							int zerg=systemrueck(cmd,obverb,oblog);
@@ -6657,8 +6664,8 @@ int paramcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct sta
 			} //     if (!lstat(datei.c_str(),elogp)) 
 		} // if (elogp)
 	} // if (tmp)
-	setfaclggf(dir_name(datei),falsch,7,falsch,obverb,oblog);
-	setfaclggf(datei,falsch,4,falsch,obverb,oblog,0);
+	setfaclggf(dir_name(datei),obverb,oblog,falsch,7,falsch);
+	setfaclggf(datei,obverb,oblog,falsch,4,falsch,0);
 	if (TIFF* tif = TIFFOpen(datei.c_str(), "r")) {
 		erg=0;
 		char *rdesc=0;
@@ -6943,7 +6950,6 @@ void paramcl::empfcapi(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*
 			cmd="sfftobmp -f -d -t "+sffdatei+" -o \""+tifpfad+"\" 2>&1";
 			for(int iru=0;iru<2;iru++) {
 				svec srueck;
-				obverb=2;
 				erg=systemrueck(cmd,obverb,oblog,&srueck,0,wahr,"",0,1);
 				if (srueck.size())
 					// wenn Fehlermeldung "no version information available, dann source-code-Version von libtiff5 nochmal installieren
@@ -6951,7 +6957,6 @@ void paramcl::empfcapi(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*
 						break;
 				uebertif();
 			} // 			for(int iru=0;iru<2;iru++)
-			obverb=0;
 			if (!erg) {
 				attrangleich(tifpfad,empfvz,obverb,oblog);
 				// bereits hier, da weder convert noch soffice noch ocrmypdf eine *.sff-Datei lesen kann, convert auch keine tiff-Datei
@@ -7156,7 +7161,7 @@ void dorename(const string& quelle, const string& ziel, const string& cuser, uin
 		if (renerg) {
 			if(cuser.empty()) iru++;
 			if(iru==1) {
-				setfaclggf(dir_name(quelle), wahr, 7, wahr,obverb,oblog);
+				setfaclggf(dir_name(quelle),obverb,oblog,wahr,7,wahr);
 			} else {
 				perror(Tx[T_Fehler_beim_Verschieben]);
 				const string cmd="sudo mv \""+quelle+"\" \""+*zielp+"\"";
