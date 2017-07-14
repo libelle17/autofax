@@ -1967,7 +1967,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
   } //   if (ueberschr.empty())
   Log(aktues+": "+blau+hcmd.substr(0,getcols()-7-aktues.length())+schwarz+" ...",obverb>0?-1:0,oblog);
   if (!rueck) if (obergebnisanzeig) {neurueck=1;rueck=new vector<string>;}
-  // #define systemrueckprofiler
+// #define systemrueckprofiler
 #ifdef systemrueckprofiler
   perfcl prf("systemrueck");
 #endif
@@ -2017,12 +2017,12 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 #ifdef systemrueckprofiler
 #endif
           meld=meld+"\n"+tuerkis+rueck->at(i)+schwarz;
-        }
-      }
+        } //         for(unsigned i=0;i<rueck->size();i++)
+      } //       if (obverb>1 || oblog || obergebnisanzeig) if (rueck->size())
 #ifdef systemrueckprofiler
       Log(rots+"Rueck.size: "+ltoan(rueck->size())+", obergebnisanzeig: "+(obergebnisanzeig?"ja":"nein"),1,oblog);
-      Log(hcmd,1,oblog)
-        prf.ausgab1000("vor pclose");
+      Log(hcmd,1,oblog);
+			prf.ausgab1000("vor pclose");
 #endif
 			erg = pclose(pipe);
 			if (obfind) {

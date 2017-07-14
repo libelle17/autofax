@@ -4531,7 +4531,23 @@ void paramcl::pruefsamba()
 				anfgg(unindt,"sudo sed -i.vor" DPROG " '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdt,"smb.conf: ["+suchstr+"]",obverb,oblog);
 		} // if (sapp.is_open()) 
 		if (!nrzf) {
-			if (systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog)) {
+		  uchar cuserda=0;
+			if (/*findv==*/1) {
+			 cuserda= !systemrueck("sudo pdbedit -L | grep "+cuser+":",obverb,oblog);
+			 /*
+			} else {
+			 svec rueck;
+			 systemrueck("sudo pdbedit -L",obverb,oblog,&rueck);
+			 const string such=cuser+":";
+			 for(size_t j=0;j<rueck.size();j++) {
+			  if (rueck[j].find(such)!=string::npos) {
+				 cuserda=1;
+				 break;
+				} // 			  if (rueck[j].find(such)!=string::npos)
+			 } // 			 for(size_t j=0;j<rueck.size();j++)
+			*/
+			} // 			if (findv==1) else
+			if (!cuserda) {
 				string pw1, pw2;
 				while (1) {
 					do {
@@ -9855,15 +9871,21 @@ int main(int argc, char** argv)
 	} else if (!pm.suchstr.empty()) {
 		pm.suchestr();
 	} else {
+			caus<<"Stelle -1"<<endl;
 		pm.pruefcron(); // soll vor Log(Tx[T_Verwende ... stehen
 		if (!pm.keineverarbeitung) {
+			caus<<"Stelle 0"<<endl;
 			pruefstdfaxnr(pm.My,pm.muser,pm.host,pm.obverb,pm.oblog);
+			caus<<"Stelle 1"<<endl;
 			prueffuncgettel3(pm.My,pm.muser,pm.host,pm.obverb,pm.oblog);
+			caus<<"Stelle 2"<<endl;
 			////  int qerg = mysql_query(My.conn,proc.c_str());
 			// 1) nicht-pdf-Dateien in pdf umwandeln, 2) pdf-Dateien wegfaxen, 3) alle in warte-Verzeichnis kopieren, 4) in Spool-Tabelle eintragen
 			////  vector<string> npdf, spdf;
 			if (!(pm.loef||pm.loew||pm.loea||pm.erneut||pm.uml)) {
+			caus<<"Stelle 3"<<endl;
 				pm.DateienHerricht();  
+			caus<<"Stelle 4"<<endl;
 			}
 			if (pm.obfcard) pm.obcapi=!pm.pruefcapi();
 			if (pm.obmodem) pm.obhyla=!pm.pruefhyla();
