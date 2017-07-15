@@ -4126,7 +4126,7 @@ void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar a
 	switch (findv) {
 		case 2: case 3:
 			aufSplit(&wov, wo);
-			setfaclggf(wov[wov.size()-1],obverb,oblog,wahr,4,falsch,1,1);
+			setfaclggf(wov[wov.size()-1],obverb,oblog,wahr,4,falsch,1,1,"",1);
 			break;
 	}
 	if (findv==2) {
