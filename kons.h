@@ -693,7 +693,7 @@ int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *r
 void pruefplatte();
 void pruefmehrfach(const string& wen=nix,uchar obstumm=0);
 void setfaclggf(const string& datei,int obverb=0,int oblog=0,const binaer obunter=falsch,const int mod=4,uchar obimmer=0,
-                uchar faclbak=0,uchar wennda=0,const string& user=nix);
+                uchar faclbak=0,uchar wennda=0,const string& user=nix,uchar fake=0);
 int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=1, uchar obmitcon=1);
 string aktprogverz();
 char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);

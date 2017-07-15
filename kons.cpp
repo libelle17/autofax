@@ -2126,8 +2126,10 @@ void pruefmehrfach(const string& wen,uchar obstumm/*=0*/)
 // obunter = mit allen Unterverzeichnissen
 // obimmer = immer setzen, sonst nur, falls mit getfacl fuer datei Berechtigung fehlt (wichtig fuer Unterverzeichnisse)
 void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binaer obunter,const int mod/*=4*/,uchar obimmer/*=0*/,
-               uchar faclbak/*=1*/,uchar wennda/*=0*/,const string& user/*=nix*/)
+               uchar faclbak/*=1*/,uchar wennda/*=0*/,const string& user/*=nix*/,uchar fake/*=0*/)
 {
+	int altobv=obverb;
+  if (fake) obverb=2;
   struct stat st={0};
 	if (!wennda || !lstat(datei.c_str(),&st)) {
 		static const string cuser=user.empty()?curruser():user; 
@@ -2153,12 +2155,15 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 						systemrueck(bef,obverb,oblog);
 						anfgg(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'",bef,obverb,oblog);
 					} // 					if (faclbak)
-					systemrueck(string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'",obverb,oblog);
+					const string cmd=string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'";
+					if (fake) Log(rots+cmd+schwarz,obverb,oblog);
+					else systemrueck(cmd,obverb,oblog);
 					if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
 				} //        if (obimmer)
 			} //       if (obsetfacl)
 		} //   if (cuser!="root")
 	} // 	if (!wennda || !lstat(datei.c_str(),&st))
+  if (fake) obverb=altobv;
 } // int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer obimmer,int obverb, int oblog)
 
 
