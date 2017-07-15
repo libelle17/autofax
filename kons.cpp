@@ -3881,30 +3881,32 @@ void find2cl::ausgeb()
 	}
 }
 
-int find2cl::finde(string wo/*="."*/,string muster/*=""*/,const long tiefe/*=-1*/,int typbit/*=B_Alle*/,int folge/*=Fol_Dat*/,
+int find2cl::finde(svec *wovp,const string& muster/*=""*/,const long tiefe/*=-1*/,int typbit/*=B_Alle*/,int folge/*=Fol_Dat*/,
 		time_t ab/*=0*/, time_t bis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/,int obnoext/*=0*/)
 {
-	vector<string> verzn;
-	aufSplit(&verzn, wo);
 	regex_t reg;
 	if (regcomp(&reg, muster.c_str(),(obnoext?0:REG_EXTENDED)|REG_NOSUB|(obicase?REG_ICASE:0))) 
 		return REGFEHLER;
 	vector<string> stack;
-	for(size_t iv=0;iv<verzn.size();iv++) {
-		init("",verzn[iv], &reg, folge, tiefe, typbit,stack,ab,bis,nurexec);
+	string wo;
+	for(size_t iv=0;iv<wovp->size();iv++) {
+	  wo+=(*wovp)[iv];wo+=" ";
+		init("",(*wovp)[iv], &reg, folge, tiefe, typbit,stack,ab,bis,nurexec);
 		//    cout<<"nach finde.init, wo: "<<blau<<wo<<schwarz<<endl;
-	} //   for(size_t iv=0;iv<verzn.size();iv++)
+	} //   for(size_t iv=0;iv<*wovp.size();iv++)
 	if (obverb|oblog) {
 		const string tiefestr=ltoan(tiefe);
 		const string typbitstr=ltoan(typbit);
 		const string folgestr=ltoan(folge);
 		const string ergzl=ltoan(ergp->size());
 		const string obnoexts=ltoan(obnoext);
-		Log(Txk[T_Suche_in]+blaus+wo+schwarz+Txk[T_nach]+blau+muster+schwarz+"'"+(obicase?"(ic)":"")+Txk[T_Tiefe]+"'"+blau+tiefestr+schwarz+Txk[T_Typbit]+blau+typbitstr+schwarz+Txk[T_Folge]+blau+folgestr+schwarz+Txk[T_noext]+blau+obnoexts+schwarz+Txk[T_Ergebnis]+gruen+ergzl+schwarz,obverb,oblog);
-		}
+		Log(Txk[T_Suche_in]+blaus+wo+schwarz+Txk[T_nach]+blau+muster+schwarz+"'"+(obicase?"(ic)":"")+Txk[T_Tiefe]+"'"+blau+tiefestr+schwarz+ \
+				Txk[T_Typbit]+blau+typbitstr+schwarz+Txk[T_Folge]+blau+folgestr+schwarz+Txk[T_noext]+blau+obnoexts+schwarz+Txk[T_Ergebnis]+ \
+				gruen+ergzl+schwarz,obverb,oblog);
+	}
 	if (obverb>1) ausgeb();
 	return 0;
-}
+} // int find2cl::finde(svec *wovp,string muster/*=""*/,const long tiefe/*=-1*/,int typbit/*=B_Alle*/,int folge/*=Fol_Dat*/,
 
 void find2cl::zuvec(svec *zu,uchar anteil/*=0*/)
 {
@@ -3913,8 +3915,8 @@ void find2cl::zuvec(svec *zu,uchar anteil/*=0*/)
 			zu->push_back(base_name(jt->pfad));
 		else
 			zu->push_back(jt->pfad);
-	}
-}
+	} // 	for(set<elem2>::iterator jt=ergp->begin();jt!=ergp->end();jt++)
+} // void find2cl::zuvec(svec *zu,uchar anteil/*=0*/)
 #endif
 
 #ifdef neufind
@@ -4051,23 +4053,23 @@ int find3cl::ausgeb()
 	return 0;
 } //     int ausgeb()
 
-int find3cl::finde(const string wo/*="."*/,const string muster/*=""*/,long tiefe/*=-1*/,
+int find3cl::finde(svec *wovp,const string& muster/*=""*/,long tiefe/*=-1*/,
 		int _typbit/*=B_Alle*/,int _folge/*=Fol_Dat*/,time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/,int _nurexec/*=0*/,int obnoext/*=0*/)
 {
 	int ret=0;
 	maxdepthp=&maxdepth;
 	*maxdepthp=tiefe;
-	vector<string> verzn;
-	aufSplit(&verzn, wo);
-	for(size_t iv=0;iv<verzn.size();iv++) {
-		if (char* actp=realpath(verzn[iv].c_str(),NULL)) {
+	string wo;
+	for(size_t iv=0;iv<wovp->size();iv++) {
+	  wo+=(*wovp)[iv];wo+=" ";
+		if (char* actp=realpath((*wovp)[iv].c_str(),NULL)) {
 			const string pfad=actp;
 			free(actp);
 			wurz.insert(wele(pfad,maxdepth));
 		} else {
-			wurz.insert(wele(verzn[iv],maxdepth));
-		} //     if (char* actp=realpath(verzn[iv].c_str(),NULL)) else
-	} //   for(size_t iv=0;iv<verzn.size();iv++)
+			wurz.insert(wele((*wovp)[iv],maxdepth));
+		} //     if (char* actp=realpath(*wovp[iv].c_str(),NULL)) else
+	} //   for(size_t iv=0;iv<*wovp.size();iv++)
 	wurzp=&wurz;
 	ergp=&erg;
 	regp=&reg;
@@ -4115,14 +4117,21 @@ void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar a
 	const string& wo/*="."*/,const string& muster/*=""*/,long tiefe/*=-1*/,int _typbit/*=B_Alle*/,
 	int _folge/*=Fol_Dat*/, time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/,int obnoext/*=0*/)
 {
-		if (findv==2) {
-			find2cl f(obverb,oblog);
-			f.finde(wo,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase,nurexec,obnoext);
-			f.zuvec(qrueckp,anteil);
-		} else if (findv==3) {
-			find3cl f(obverb,oblog);
-			f.finde(wo,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase,nurexec,obnoext);
-			f.zuvec(qrueckp,anteil);
-		}
+	svec wov;
+	switch (findv) {
+		case 2: case 3:
+			aufSplit(&wov, wo);
+			setfaclggf(wov[wov.size()-1],obverb,oblog,wahr,4,falsch,1,1);
+			break;
+	}
+	if (findv==2) {
+		find2cl f(obverb,oblog);
+		f.finde(&wov,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase,nurexec,obnoext);
+		f.zuvec(qrueckp,anteil);
+	} else if (findv==3) {
+		find3cl f(obverb,oblog);
+		f.finde(&wov,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase,nurexec,obnoext);
+		f.zuvec(qrueckp,anteil);
+	}
 }
 #endif

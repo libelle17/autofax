@@ -816,7 +816,7 @@ class find2cl: elem2
   void init(const string& mutter, const string& name, regex_t *reg, const int folge,const long maxdepth, const int& typbit,
       vector<string> stack,time_t ab, time_t bis,int nurexec);
   void ausgeb();
-  int finde(string wo=".",string muster="",const long tiefe=-1,int typbit=B_Alle,int folge=Fol_Dat,
+  int finde(svec *wovp, const string& muster="",const long tiefe=-1,int typbit=B_Alle,int folge=Fol_Dat,
 	          time_t ab=0, time_t bis=0,int obicase=0,int nurexec=0,int obnoext=0);
 	void zuvec(svec *zu,uchar anteil=0);
 };
@@ -878,7 +878,7 @@ class find3cl
     static int verarbeit(const char *fpath, const struct stat *sb, int tflag, struct FTW *ftwbuf);
     int dofind();
     int ausgeb();
-    int finde(const string wo=".",const string muster="",long tiefe=-1,int _typbit=B_Alle,int _folge=Fol_Dat,
+    int finde(svec *wovp,const string& muster="",long tiefe=-1,int _typbit=B_Alle,int _folge=Fol_Dat,
 		           time_t _mab=0,time_t _mbis=0,int obicase=0,int nurexec=0,int obnoext=0);
 		void zuvec(svec *zu,uchar anteil=0);
 }; // class find3cl
