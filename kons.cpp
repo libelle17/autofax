@@ -3788,10 +3788,10 @@ void elem2::init(const string& vmutter, const string& name) {
       free(actp);
     } else {
       sterg=REALPATHFEHLER;
-    }
-  }
+    } //     if (char* actp=realpath(pfad.c_str(),NULL)) else
+  } //   if (name[0]=='.')
   if (!sterg) sterg=lstat(pfad.c_str(), &dst);
-}
+} // void elem2::init(const string& vmutter, const string& name)
 
 find2cl::find2cl(int _obverb/*=0*/,int _oblog/*=0*/,find2cl *stamm/*=0*/):obverb(_obverb),oblog(_oblog)
 {
@@ -3802,7 +3802,7 @@ find2cl::find2cl(int _obverb/*=0*/,int _oblog/*=0*/,find2cl *stamm/*=0*/):obverb
     zuloeschen=0;
   } else {
     weiszu();
-  }
+  } // if (stamm) else
 } // find2cl::find2cl(find2cl *stamm/*=0*/)
 
 find2cl::~find2cl()
@@ -3812,14 +3812,14 @@ find2cl::~find2cl()
     if (vznp) {delete vznp;vznp=0;}
     if (nrp) {delete nrp;nrp=0;}
   }
-}
+} // find2cl::~find2cl()
 
 void find2cl::weiszu()
 {
   if (!ergp) ergp=new el2set;
   if (!vznp) vznp=new set<string>;
   if (!nrp) nrp=new ull;
-}
+} // void find2cl::weiszu()
 
 void find2cl::init(const string& mutter, const string& name, regex_t *reg, const int folge,const long maxdepth, const int& typbit,
     vector<string> stack,time_t ab, time_t bis,int nurexec)
@@ -3854,8 +3854,8 @@ void find2cl::init(const string& mutter, const string& name, regex_t *reg, const
       // <<"j: "<<j<<" "<<stack[j]<<endl;
       if (neuel.pfad==stack[j]) {
         return;
-      }
-    }
+      } //       if (neuel.pfad==stack[j])
+    } //     for(size_t j=0;j<stack.size();j++)
     if (neuel.pfad==letztel->pfad) break;
     letztel=&neuel;
   }
@@ -3910,10 +3910,10 @@ void find2cl::init(const string& mutter, const string& name, regex_t *reg, const
 #else
 						eingefuegt=(ergp->insert(make_pair(*aktel,nr)).second==true);
 #endif
-					}
-			}
-		}
-	}
+					} // 					if (!regexec(reg, aktel->pfad.c_str(), 0, 0, 0))
+			} //       if (letztel==(elem2*)this ||(!letztel->sterg &&( ...
+		} // if (      (typbit&B_Datei && S_ISREG(dst.st_mode)) || ..
+	} //   if (!sterg) 
 	//    cout<<endl;
 	if (0) {
 		(*nrp)++;
@@ -3930,7 +3930,7 @@ void find2cl::init(const string& mutter, const string& name, regex_t *reg, const
 		//    cout<<"Stelle 2, folge: "<<folge<<" !S_ISLNK(dst.st_mode): "<<!S_ISLNK(dst.st_mode)<<endl;
 		if ((folge & Fol_Ver) || !S_ISLNK(dst.st_mode)) {
 			// Extra-Vergleichsliste der bisher eingelesenen Verzeichnisse
-			if ((verzneu=(vznp->insert(letztel->pfad).second)==true)) { 
+			if ((verzneu=(vznp->insert(letztel->pfad).second)==true)) {
 				stack.push_back(letztel->pfad);
 				while ((dent = readdir(dir))) {
 					if (strcmp(dent->d_name, ".") && strcmp(dent->d_name, "..")) {
@@ -3938,13 +3938,13 @@ void find2cl::init(const string& mutter, const string& name, regex_t *reg, const
 						find2cl tochter(obverb,oblog,this);
 						tochter.init(letztel->pfad,dent->d_name,reg,folge,maxdepth-1,typbit,stack,ab,bis,nurexec);
 						//            cout<<"nach tochter.init"<<endl;
-					}
-				}
-			}
-		}
+					} // 					if (strcmp(dent->d_name, ".") && strcmp(dent->d_name, ".."))
+				} // 				while ((dent = readdir(dir)))
+			} // 			if ((verzneu=(vznp->insert(letztel->pfad).second)==true))
+		} // 		if ((folge & Fol_Ver) || !S_ISLNK(dst.st_mode))
 		closedir(dir);
 	}
-} //   if (dname.length() < FILENAME_MAX - 1)
+} // void find2cl::init(const string& mutter, const string& name, regex_t *reg, const int folge,const long maxdepth, const int& typbit, ...
 
 void find2cl::ausgeb()
 {
@@ -3959,9 +3959,9 @@ void find2cl::ausgeb()
 			cout<<blau<<it->second<<": "<<rot<<setprecision(9)<<setw(11)<<(int)it->first.sterg<<schwarz<<" "<<(string)it->first.pfad<<endl;
 #endif
 			it++;
-		}
-	}
-}
+		} // 		while (it!=ergp->end())
+	} // 	if (ergp)
+} // void find2cl::ausgeb()
 
 int find2cl::finde(svec *wovp,const string& muster/*=""*/,const long tiefe/*=-1*/,int typbit/*=B_Alle*/,int folge/*=Fol_Dat*/,
 		time_t ab/*=0*/, time_t bis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/,int obnoext/*=0*/)
@@ -4191,9 +4191,10 @@ void find3cl::zuvec(svec *zu,uchar anteil/*=0*/)
 			zu->push_back(base_name(jt->pfad));
 		else
 			zu->push_back(jt->pfad);
-	}
-}
+	} // 	for(set<elem3>::iterator jt=erg.begin();jt!=erg.end();jt++)
+} // void find3cl::zuvec(svec *zu,uchar anteil/*=0*/)
 #endif
+
 #if defined(altfind) && defined(neufind)
 void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar anteil/*=0*/,
 	const string& wo/*="."*/,const string& muster/*=""*/,long tiefe/*=-1*/,int _typbit/*=B_Alle*/,
@@ -4203,9 +4204,9 @@ void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar a
 	switch (findv) {
 		case 2: case 3:
 			aufSplit(&wov, wo);
-			setfaclggf(wov[wov.size()-1],obverb,oblog,wahr,4,falsch,1,"",1);
+			setfaclggf(wov[wov.size()-1],obverb,oblog,wahr,4,falsch,1,"");
 			break;
-	}
+	} // 	switch (findv)
 	if (findv==2) {
 		find2cl f(obverb,oblog);
 		f.finde(&wov,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase,nurexec,obnoext);
@@ -4214,6 +4215,6 @@ void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar a
 		find3cl f(obverb,oblog);
 		f.finde(&wov,muster,tiefe,_typbit,_folge,_mab,_mbis,obicase,nurexec,obnoext);
 		f.zuvec(qrueckp,anteil);
-	}
-}
+	} // 	if (findv==2) else if (findv==3)
+} // void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar anteil/*=0* ...
 #endif
