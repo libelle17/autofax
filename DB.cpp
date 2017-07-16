@@ -380,7 +380,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 									Log(Txd[T_Fehler_db]+drots+mysql_error(conn)+schwarz+Txd[T_Versuche_mysql_zu_starten],1,1);
 #ifdef linux
 									dbsv->enableggf(1,1);
-                  setfaclggf(datadir,obverb,oblog,wahr,7,0,0,0,mysqlben);
+                  setfaclggf(datadir,obverb,oblog,wahr,7,0,0,mysqlben);
 									Log(blaus+Txd[T_Vor_restart]+Txd[T_Versuch_Nr]+schwarz+ltoan(versuch),1,oblog);
 									for(int iiru=0;iiru<2;iiru++) {
 									 if (dbsv->restart(1,1)) {

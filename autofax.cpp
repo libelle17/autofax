@@ -5499,7 +5499,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 			if (obocr) {
 				if (!pruefocr()) {
 					svec rueck;
-					setfaclggf(ziel,obverb,oblog,falsch,7,falsch,0,1);
+					setfaclggf(ziel,obverb,oblog,falsch,7,falsch,0);
 					const string cmd=ocrmp+" -rcsl "+(langu=="d"?"deu":"eng")+" \""+*lqp+"\" \""+ziel+"\" 2>&1";
 					int zerg=systemrueck(cmd,obverb,oblog,&rueck,0,wahr,"",0,1);
 					if (zerg==5) zerg=systemrueck("sudo "+cmd,obverb,oblog,&rueck,0,wahr,"",0,1); // kein Schreibrecht im Verzeichnis
@@ -5904,7 +5904,7 @@ void paramcl::DateienHerricht()
 						struct utimbuf ubuf={0};
 						ubuf.actime=ubuf.modtime=spdfstat.st_mtime;
 						if (!pruefocr()) {
-							setfaclggf(qrueck.at(i),obverb,oblog,falsch,7,falsch,0,1);
+							setfaclggf(qrueck.at(i),obverb,oblog,falsch,7,falsch,0);
 							const string cmd=string(ocrmp+" -rcsl ")+(langu=="d"?"deu":"eng")+" \""+qrueck.at(i)+"\" \""+qrueck.at(i)+"\""
 								" && chmod +r \""+qrueck.at(i)+"\"";
 							int zerg=systemrueck(cmd,obverb,oblog);
@@ -7534,7 +7534,8 @@ void paramcl::hconfigtty()
 } // void paramcl::hconfigtty()
 
 // wird aufgerufen in: pruefcapi
-// lieftert 0, wenn die Dienstdatei gespeichert werden konnte (erg), nicht wenn der Dienst laeuft (csfehler)
+// lieftert 0, wenn die Dienstdatei da (erg)
+// setzt csfehler, wenn Dienst nicht laeuft
 int paramcl::cservice()
 {
 	Log(violetts+"cservice()"+schwarz);
@@ -7542,21 +7543,22 @@ int paramcl::cservice()
 	int erg=-1;
 	string cspfad;
 	if (obprogda("capisuite",obverb,oblog,&cspfad)) {
+	  erg=0;
 		scapis->stopggf(obverb,oblog,1); 
 		const string vz="/etc/init.d",datei="/capisuite",ziel="/etc/ausrangiert";
 		if (findv==1) {
 			erg=systemrueck(/*//"sudo sh -c 'systemctl stop capisuite; pkill capisuite >/dev/null 2>&1; pkill -9 capisuite >/dev/null 2>&1; "*/
 					"cd "+vz+
 					" && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
-					" && { sudo mkdir -p "+ziel+" && sudo mv -f "+vz+datei+" "+ziel+"; } || true"/*'*/,obverb,oblog);
+					" && { sudo mkdir -p "+ziel+" && sudo mv -f "+vz+datei+" "+ziel+"; } || true"/*//'*/,obverb,oblog);
 		} else {
 			svec qrueck;
 			findfile(&qrueck,findv,obverb,oblog,0,vz,datei+"$",1,1,Fol_Dat);
 			if (qrueck.size()) {
 				pruefverz(ziel,obverb,oblog);
 				systemrueck("sudo mv -f "+vz+datei+" "+ziel,obverb,oblog);
-			}
-		}
+			} // 			if (qrueck.size())
+		} // 		if (findv==1)
 		// entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
 		csfehler+=!scapis->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","",linstp,obverb,oblog);
 		if (obverb) Log("csfehler: "+gruens+ltoan(csfehler)+schwarz);
@@ -8716,7 +8718,7 @@ int paramcl::pruefcapi()
 				// das Folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
 				//    capilaeuft = !systemrueck("systemctl status capisuite | grep ' active (running)' >/dev/null 2>&1",0,obverb,oblog);
 				//     capilaeuft  = !systemrueck("systemctl is-active capisuite",0,obverb,oblog);
-				capilaeuft = !scapis->obsvfeh(obverb-1,oblog);
+				capilaeuft=!scapis->obsvfeh(obverb-1,oblog);
 				if (capilaeuft) {
 					break;
 				} else {

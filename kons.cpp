@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <sys/statvfs.h> // fuer statfs
+#include <sys/stat.h>
 #include <utime.h>
 #include <sys/sendfile.h> // fuer sendfile64
 #define caus cout // nur zum Debuggen
@@ -654,9 +655,12 @@ string holsystemsprache(int obverb/*=0*/)
 } // string holsystemsprache()
 
 
-char* curruser() 
+char* curruser(__uid_t *uidp/*=0*/,__gid_t *gidp/*=0*/) 
 {
-  static struct passwd *passwd = getpwuid(getuid());
+  uid_t uid=getuid();
+  static struct passwd *passwd = getpwuid(uid);
+	if (uidp) *uidp=uid;
+	if (gidp) *gidp=passwd->pw_gid;
   return passwd->pw_name;
 } // curruser()
 
@@ -1348,7 +1352,10 @@ int obprogda(const string& prog,int obverb, int oblog, string *pfad/*=0*/)
     if (pfad) *pfad=rueck[0];
     return 2;
   } // if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck))
-  if (strcmp(curruser(),"root")) {
+	__uid_t uid;
+	curruser(&uid);
+	// wenn nicht root
+  if (!uid) {
     if (!systemrueck("sudo which \""+prog+"\" 2>/dev/null || sudo env \"PATH=$PATH\" which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck)) {
       if (pfad) *pfad=rueck[0];
       return 3;
@@ -2122,48 +2129,118 @@ void pruefmehrfach(const string& wen,uchar obstumm/*=0*/)
   */
 } // void pruefmehrfach(char* ich)
 
+int untersuser(string uname,__uid_t *uidp/*=0*/, __gid_t *gidp/*=0*/)
+{
+	struct passwd pwd;
+	struct passwd *result;
+	char *buf;
+	ssize_t bufsize;
+	int erg=1;
+	if ((bufsize = sysconf(_SC_GETPW_R_SIZE_MAX))==-1) bufsize=16384;
+	if ((buf = (char*)malloc(bufsize))) {
+		/*//int s = */getpwnam_r(uname.c_str(), &pwd, buf, bufsize, &result);
+		if (result) {
+			if (uidp) *uidp=pwd.pw_uid;
+			if (gidp) *gidp=pwd.pw_gid;
+			////	KLZ else KLA if (!s) printf("Not found\n"); else KLA errno = s; perror("getpwnam_r"); KLZ
+		}	
+		free(buf);
+	} else {
+		erg=1;
+		perror("malloc");
+	} // 	if ((buf = (char*)malloc(bufsize))) else 
+	return erg;
+} // int untersuser(string uname,__uid_t *uid/*=0*/, __gid_t *gid/*=0*/)
+
+
 // <datei> kann auch Verzeichnis sein
 // obunter = mit allen Unterverzeichnissen
 // obimmer = immer setzen, sonst nur, falls mit getfacl fuer datei Berechtigung fehlt (wichtig fuer Unterverzeichnisse)
 void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binaer obunter,const int mod/*=4*/,uchar obimmer/*=0*/,
-               uchar faclbak/*=1*/,uchar wennda/*=0*/,const string& user/*=nix*/,uchar fake/*=0*/)
+               uchar faclbak/*=1*/,const string& user/*=nix*/,uchar fake/*=0*/)
 {
 	int altobv=obverb;
-  if (fake) obverb=2;
-  struct stat st={0};
-	if (!wennda || !lstat(datei.c_str(),&st)) {
-		static const string cuser=user.empty()?curruser():user; 
-		if (cuser!="root") {
-			static int obsetfacl=obprogda("setfacl",obverb-1,0);
-			if (obsetfacl) {
-				const char* modbuch;
-				switch (mod) {
-					case 4: modbuch="r"; break;
-					case 6: modbuch="rw"; break;
-					default: modbuch="rwx";  // 7
-				} //        switch (mod)
-				if (!obimmer) {
-					svec gstat;
-					systemrueck("getfacl -e -t '"+datei+"' 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*"+modbuch+"' || true",obverb,oblog,&gstat);
-					if (!gstat.size()) obimmer=wahr; // wenn keine Berechtigung gefunden => erstellen
-				} //        if (!obimmer)
-				if (obimmer) {
-					if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
-					if (faclbak) {
-						const string sich=base_name(datei)+"."+base_name(meinpfad())+".perm";
-						const string bef="sudo sh -c 'cd \""+dir_name(datei)+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(datei)+"\">\""+sich+"\"'";
-						systemrueck(bef,obverb,oblog);
-						anfgg(unindt,"sudo sh -c 'cd \""+dir_name(datei)+"\";setfacl --restore=\""+sich+"\"'",bef,obverb,oblog);
-					} // 					if (faclbak)
-					const string cmd=string("sudo setfacl -")+(obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(mod)+"' '"+datei+"'";
-					if (fake) Log(rots+cmd+schwarz,obverb,oblog);
-					else systemrueck(cmd,obverb,oblog);
-					if (obverb) systemrueck("sudo sh -c 'ls -ld \""+datei+"\"'",2,0);
-				} //        if (obimmer)
-			} //       if (obsetfacl)
-		} //   if (cuser!="root")
-	} // 	if (!wennda || !lstat(datei.c_str(),&st))
-  if (fake) obverb=altobv;
+	if (fake) obverb=2;
+	static __uid_t curruid;
+	static __gid_t currgid;
+	static const string curru=curruser(&curruid,&currgid);
+	__uid_t cuid;
+	__gid_t cgid;
+	string cuser;
+	if (user.empty()) {
+		cuser=curru;
+		cuid=curruid;
+		cgid=currgid;
+	} else {
+		cuser=user;
+		untersuser(cuser.c_str(),&cuid,&cgid);
+	} // 	if (user.empty())
+	// fuer root braucht's es ned
+	if (cuid) {
+		static int obsetfacl=obprogda("setfacl",obverb-1,0);
+		if (obsetfacl) {
+			string aktdat=datei;
+			svec pfade;
+			do {
+				pfade<<aktdat;
+				aktdat=dir_name(aktdat);
+			} while (!aktdat.empty());
+			for(ssize_t i=pfade.size()-1;i>-1;--i) {
+				struct stat st={0};
+				int ergmod=0;
+				uchar obhier=obimmer;
+				if (lstat(pfade[i].c_str(),&st)) 
+					break;
+				if (i) {
+					if (!((st.st_mode&S_IXOTH)||((st.st_gid==cgid)&&(st.st_mode&S_IXGRP))||((st.st_uid==cuid)&&(st.st_mode&S_IXUSR)))) {
+						// erteile Ausfuehr-Rechte fuer Verzeichnis, sonst geht darunter nichts
+						ergmod=1;
+					} // if (!((st.st_mode ...
+				} else {
+					if (((mod&1) &&
+								(!((st.st_mode&S_IXOTH)||((st.st_gid==cgid)&&(st.st_mode&S_IXGRP))||((st.st_uid==cuid)&&(st.st_mode&S_IXUSR))))
+							) || ((mod&2) &&
+								(!((st.st_mode&S_IWOTH)||((st.st_gid==cgid)&&(st.st_mode&S_IWGRP))||((st.st_uid==cuid)&&(st.st_mode&S_IWUSR))))
+								) || ((mod&4) &&
+									(!((st.st_mode&S_IROTH)||((st.st_gid==cgid)&&(st.st_mode&S_IRGRP))||((st.st_uid==cuid)&&(st.st_mode&S_IRUSR))))
+									) ) {
+						ergmod=mod;
+					} // if (((mod&1 ...
+				} // if (i) else
+				if (ergmod) {
+					string modbuch;
+					if (ergmod&4) modbuch+="r"; else modbuch+=" ";
+					if (ergmod&2) modbuch+="w"; else modbuch+=" ";
+					if (ergmod&1) modbuch+="x"; else modbuch+=" ";
+					// bei hinfuehrenden Verzeichnissen fehlende Rechte immer ueberpruefen
+					if (i||!obhier) {
+						svec gstat;
+						systemrueck("getfacl -e -t '"+pfade[i]+"' 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*"+modbuch+"'||:",obverb,oblog,&gstat);
+						obhier = !gstat.size();// wenn keine Berechtigung gefunden => erstellen
+					} //        if (i||!obhier)
+					if (obhier) {
+						if (obverb) systemrueck("sudo sh -c 'ls -ld \""+pfade[i]+"\"'",2,0);
+						if (faclbak) {
+							const string sich=base_name(pfade[i])+"."+base_name(meinpfad())+".perm";
+							const string bef="sudo sh -c 'cd \""+dir_name(pfade[i])+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(pfade[i])+"\">\""+sich+"\"'";
+							systemrueck(bef,obverb,oblog);
+							struct stat st={0};
+							string para="setfacl --restore=\""+sich+"\"";
+							if (lstat(sich.c_str(),&st) || !st.st_size) {
+								para=string("sudo setfacl -")+(!i && obunter?"R":"")+"b \""+pfade[i]+"\"";
+							}
+							anfgg(unindt,"sudo sh -c 'cd \""+dir_name(pfade[i])+"\";"+para+"'",bef,obverb,oblog);
+						} // 					if (faclbak)
+						const string cmd=string("sudo setfacl -")+(!i && obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(ergmod)+"' '"+pfade[i]+"'";
+						if (fake) Log(rots+cmd+schwarz,obverb,oblog);
+						else systemrueck(cmd,obverb,oblog);
+						if (obverb) systemrueck("sudo sh -c 'ls -ld \""+pfade[i]+"\"'",2,0);
+					} //        if (obhier)
+				} // 				if (ergmod)
+			} // 			for(size_t i=pfade.size()-1;i>-1;--i)
+		} // 			if (obsetfacl)
+	} // 	if (cuid)
+	if (fake) obverb=altobv;
 } // int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer obimmer,int obverb, int oblog)
 
 
@@ -3194,7 +3271,7 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 	return !svfeh;
 } // int servc::machfit(int obverb,int oblog)
 
-// wird aufgerufen in: hservice_faxq_hfaxd, hservice_faxgetty
+// wird aufgerufen in: hservice_faxq_hfaxd, hservice_faxgetty, cservice
 uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, const string& sexec, const string& CondPath, const string& After, 
                     linst_cl *linstp,int obverb/*=0*/,int oblog/*=0*/, uchar mitstarten/*=1*/)
 {
@@ -3213,7 +3290,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 			if (mitstarten && svfeh>5)
 				restart(obverb,oblog); // svfeh wird hier auch gesetzt
 			if (!svfeh) {
-				Log(("Service ")+blaus+sname+schwarz+Txk[T_laeuft_jetzt],obverb,oblog);
+				Log(("Service ")+blaus+sname+schwarz+" "+Txk[T_laeuft_jetzt],obverb,oblog);
 				break;
 			} // 			if (!svfeh)
 			////          <<dblau<<"svfeh else: "<<schwarz<<sname<<endl;
@@ -4126,7 +4203,7 @@ void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar a
 	switch (findv) {
 		case 2: case 3:
 			aufSplit(&wov, wo);
-			setfaclggf(wov[wov.size()-1],obverb,oblog,wahr,4,falsch,1,1,"",1);
+			setfaclggf(wov[wov.size()-1],obverb,oblog,wahr,4,falsch,1,"",1);
 			break;
 	}
 	if (findv==2) {
