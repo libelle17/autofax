@@ -8330,6 +8330,7 @@ int paramcl::pruefcapi()
 	int capilaeuft=0;
 	int erg=0;
 	unsigned versuch=0;
+	uchar schonkonfiguriert=0;
 	capisv();
 	if (obcapi) {
 		for(;versuch<2;versuch++) {
@@ -8720,10 +8721,11 @@ int paramcl::pruefcapi()
 				if (!capizukonf) {
 					clieskonf();
 				}
-				if (/*//obcapi && */(versuch>0 || this->capizukonf || rzf)) {
+				if (/*//obcapi && */!schonkonfiguriert && (versuch>0 || this->capizukonf || rzf)) {
 					this->konfcapi();
 					scapis->restart(obverb-1,oblog);
 					capizukonf=0;
+					schonkonfiguriert=1;
 				} //     if (versuch>0) KLA
 				// das Folgende verhindert zwar den Programmabbruch bei active (exit), das nuetzt aber nichts. In dem Fall fcpci aktualisieren! 23.5.14
 				//    capilaeuft = !systemrueck("systemctl status capisuite | grep ' active (running)' >/dev/null 2>&1",0,obverb,oblog);
