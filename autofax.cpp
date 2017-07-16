@@ -328,7 +328,6 @@ enum T_
 	T_Ziel,
 	T_Logpfad,
 	T_oblog,
-	T_Ende,
 	T_Fax_von,
 	T_an,
 	T_vom,
@@ -1296,8 +1295,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Logpfad: '","Log path: '"},
 	// T_oblog,
 	{"' (oblog: ","' (with logging: "},
-	// T_Ende,
-	{"-Ende-","-End-"},
 	// T_Fax_von
 	{"Fax von ","Fax from "},
 	// T_an,
@@ -4201,8 +4198,8 @@ void paramcl::konfcapi()
 	} // for(uchar iru=0;iru<2;iru++) 
 	pruefcvz();
 	nextnum();
-	Log(violetts+Tx[T_Ende]+Tx[T_konfcapi]+schwarz+"ccapiconfdt: "+violett+ccapiconfdt+schwarz);
-} // void paramcl::konfcapi()
+	Log(violetts+Txk[T_Ende]+Tx[T_konfcapi]+schwarz+"ccapiconfdt: "+violett+ccapiconfdt+schwarz);
+} // void paramcl::konfcapi
 
 // in konfcapi und faxemitC (da konfacpi aus pruefcapi nicht unbedingt aufgerufen wird)
 // Datei /fax-nextnr ggf. richtigstellen
@@ -4484,47 +4481,49 @@ void paramcl::pruefsamba()
 		if (sapp.is_open()) {
 			string suchstr;
 			for(unsigned k=0;k<vzn.size();k++) {
-				if (!gef[k]) {
-					smbrestart=1;
-					if (!obinst) {
-						obinst=Tippob(Tx[T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden],Tx[T_j_af]);
-						if (!obinst) break;
-					} // 					if (!obinst)
-					::Log(gruens+Tx[T_Verzeichnis]+blau+*vzn[k]+gruen+Tx[T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt]+schwarz,1,oblog);
-					string abschnitt;
-					if (k<4) {
-						abschnitt=Tx[ISambaName[k]];
-						Sprache altSpr=Tx.lgn;
-						for(int akts=0;akts<SprachZahl;akts++) {
-							Tx.lgn=(Sprache)akts;
-							suchstr=suchstr+"\\["+Tx[ISambaName[k]]+"\\]";
-							if (k<vzn.size()-1||akts<SprachZahl-1) suchstr+="\\|";
-						} //         for(int akts=0;akts<SprachZahl;akts++)
-						Tx.lgn=altSpr;
-					} else {
-						abschnitt=string(Tx[T_Gefaxt])+"_"+ltoan(k-4);
-						if (k==4) {
+				if (!vzn[k]->empty()) {
+					if (!gef[k]) {
+						smbrestart=1;
+						if (!obinst) {
+							obinst=Tippob(Tx[T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden],Tx[T_j_af]);
+							if (!obinst) break;
+						} // 					if (!obinst)
+						::Log(gruens+Tx[T_Verzeichnis]+blau+*vzn[k]+gruen+Tx[T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt]+schwarz,1,oblog);
+						string abschnitt;
+						if (k<4) {
+							abschnitt=Tx[ISambaName[k]];
 							Sprache altSpr=Tx.lgn;
 							for(int akts=0;akts<SprachZahl;akts++) {
 								Tx.lgn=(Sprache)akts;
-								suchstr=suchstr+"\\["+Tx[T_Gefaxt]+"_";
-								if (akts<SprachZahl-1) suchstr+="\\|";
+								suchstr=suchstr+"\\["+Tx[ISambaName[k]]+"\\]";
+								if (k<vzn.size()-1||akts<SprachZahl-1) suchstr+="\\|";
 							} //         for(int akts=0;akts<SprachZahl;akts++)
 							Tx.lgn=altSpr;
-						} // 						if (k==4)
-					} // 					if (k<4) else
-					sapp<<"["<<abschnitt<<"]"<<endl;
-					sapp<<"  comment = "<<meinname<<" "<<abschnitt<<endl;
-					sapp<<"  path = "<<*vzn[k]<<endl;
-					sapp<<"  directory mask = 0660"<<endl;
-					sapp<<"  browseable = Yes"<<endl;
-					if (!k)
-						sapp<<"  read only = no"<<endl; // zufaxenvz soll beschreibbar sein
-					sapp<<"  vfs objects = recycle"<<endl;
-					sapp<<"  recycle:versions = Yes"<<endl;
-					sapp<<"  recycle:keeptree = Yes"<<endl;
-					sapp<<"  recycle:repository = Papierkorb"<<endl;
-				} // if (!gef[k]) 
+						} else {
+							abschnitt=string(Tx[T_Gefaxt])+"_"+ltoan(k-4);
+							if (k==4) {
+								Sprache altSpr=Tx.lgn;
+								for(int akts=0;akts<SprachZahl;akts++) {
+									Tx.lgn=(Sprache)akts;
+									suchstr=suchstr+"\\["+Tx[T_Gefaxt]+"_";
+									if (akts<SprachZahl-1) suchstr+="\\|";
+								} //         for(int akts=0;akts<SprachZahl;akts++)
+								Tx.lgn=altSpr;
+							} // 						if (k==4)
+						} // 					if (k<4) else
+						sapp<<"["<<abschnitt<<"]"<<endl;
+						sapp<<"  comment = "<<meinname<<" "<<abschnitt<<endl;
+						sapp<<"  path = "<<*vzn[k]<<endl;
+						sapp<<"  directory mask = 0660"<<endl;
+						sapp<<"  browseable = Yes"<<endl;
+						if (!k)
+							sapp<<"  read only = no"<<endl; // zufaxenvz soll beschreibbar sein
+						sapp<<"  vfs objects = recycle"<<endl;
+						sapp<<"  recycle:versions = Yes"<<endl;
+						sapp<<"  recycle:keeptree = Yes"<<endl;
+						sapp<<"  recycle:repository = Papierkorb"<<endl;
+					} // if (!gef[k]) 
+				} // 		    if (!vzn[k]->empty())
 			} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
 			if (!suchstr.empty())
 				// Abschnitt wieder löschen
@@ -4636,10 +4635,16 @@ void paramcl::pruefsamba()
 // wird aufgerufen in: main
 int paramcl::initDB()
 {
-	Log(violetts+"initDB()"+schwarz);
-	My=new DB(myDBS,linstp,host,muser,mpwd,dbq,0,0,0,obverb,oblog);
-	if (My->fehnr) {
-		::Log(rots+Tx[Verbindung_zur_Datenbank_nicht_herstellbar]+schwarz+ltoan(My->fehnr)+rot+Tx[T_Breche_ab]+schwarz,1,1);
+	Log(violetts+"initDB(), db: "+blau+dbq+schwarz);
+	unsigned int fehler=0;
+	if (dbq.empty()) {
+		fehler=1046;
+	} else {
+		My=new DB(myDBS,linstp,host,muser,mpwd,dbq,0,0,0,obverb,oblog);
+		fehler=My->fehnr;
+	}
+	if (fehler) {
+		::Log(rots+Tx[Verbindung_zur_Datenbank_nicht_herstellbar]+schwarz+ltoan(fehler)+rot+Tx[T_Breche_ab]+schwarz,1,1);
 		return 1;
 	} //   if (My->fehnr)
 	return 0;
@@ -4798,7 +4803,7 @@ void paramcl::korrigierecapi(unsigned tage/*=90*/)
 			"LEFT JOIN outa o2 ON o2.submid=a.capispooldatei AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
 		 */
 	} // 							if (rueck[0].size()||rueck[1].size()) 
-	Log(violetts+"Ende "+Tx[T_korrigierecapi]+schwarz);
+	Log(violetts+Txk[T_Ende]+Tx[T_korrigierecapi]+schwarz);
 } // korrigierecapi
 
 // Parameter -bwv
@@ -6723,7 +6728,7 @@ int paramcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct sta
 		} // if (calleridp->empty()) 
 		TIFFClose(tif);
 	} // if (TIFF* tif = TIFFOpen(datei.c_str(), "r")) 
-	Log(violetts+Tx[T_Ende]+Tx[T_holtif]+schwarz);
+	Log(violetts+Txk[T_Ende]+Tx[T_holtif]+schwarz);
 	return erg;
 } // int paramcl::holtif(string& datei,struct tm *tmp,ulong *seitenp,string *calleridp,string *devnamep)
 
@@ -7403,7 +7408,7 @@ void hconfig(paramcl *pmp,int obverb/*=0*/, int oblog/*=0*/)
 		cerr<<"hconfig(): "<<Tx[T_Datei]<<confd<<Tx[T_nichtbeschreibbar]<<endl;
 		exit(28);
 	} //   if (conf.is_open())
-	Log(violetts+Tx[T_Ende]+"hconfig()"+schwarz,obverb,oblog);
+	Log(violetts+Txk[T_Ende]+"hconfig()"+schwarz,obverb,oblog);
 } // void hconfig(paramcl *pmp,int obverb, int oblog)
 
 // in hliesconf() und hconfigtty()
@@ -7530,7 +7535,7 @@ void paramcl::hconfigtty()
 		// <<rot<<" nicht offen"<<schwarz<<endl;
 		exit(30);
 	}
-	Log(violetts+Tx[T_Ende]+"hconfigtty()"+schwarz);
+	Log(violetts+Txk[T_Ende]+"hconfigtty()"+schwarz);
 } // void paramcl::hconfigtty()
 
 // wird aufgerufen in: pruefcapi
@@ -8086,7 +8091,7 @@ int paramcl::pruefhyla()
 			if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb:0,oblog);
 			ret=1;
 		} // (obhyla) else
-		Log(violetts+Tx[T_Ende]+" "+Tx[T_pruefhyla]+schwarz);
+		Log(violetts+Txk[T_Ende]+Tx[T_pruefhyla]+schwarz);
 	} // 	if (hmodem.empty()) else
 	return ret;
 } // int paramcl::pruefhyla()
@@ -8735,9 +8740,10 @@ int paramcl::pruefcapi()
 					capilaeuft=scapis->startundenable(-1,oblog);
 					if (capilaeuft) {
 						::Log(Tx[T_Capisuite_gestartet],1,oblog);
+						break;
 					} else {
 						////       ::Log("Capisuite konnte nicht gestartet werden.",1,1);
-					}
+					} // 					if (capilaeuft)
 				} //       if (capilaeuft) else
 			} // if (capischonerfolgreichinstalliert) 
 		} //  for(unsigned versuch=0;1;versuch++) (3.)
@@ -8745,7 +8751,7 @@ int paramcl::pruefcapi()
 			if (!capiloggekuerzt) {
 				kuerzelogdatei("/var/log/capisuite.log",obverb); // screen
 				capiloggekuerzt=1;
-			}
+			} // 			if (!capiloggekuerzt) 
 			if (!kez&& !bwv && !anhl && !lista && !listi && !listw && suchstr.empty())
 				/*//if (this->obcapi) */pruefmodcron();
 		} else {
@@ -8758,6 +8764,7 @@ int paramcl::pruefcapi()
 		erg=1;
 	} // 	if (obcapi) else
 schluss: // sonst eine sonst sinnlose for-Schleife mehr oder return mitten aus der Funktion ...
+	Log(violetts+Txk[T_Ende]+Tx[T_pruefcapi]+schwarz+" obcapi: "+(obcapi?"1":"0"));
 	return erg;
 } // pruefcapi()
 
@@ -9604,7 +9611,7 @@ void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, i
 			 */
 		} // if (obsfehlt) else
 	} // 	if (fsf->hylanr!="0") 
-	Log(violetts+Tx[T_Ende]+" "+Tx[T_setzhylastat]+", hylastat: "+blau+FxStatS(&fsf->hylastat)+schwarz);
+	Log(violetts+Txk[T_Ende]+Tx[T_setzhylastat]+", hylastat: "+blau+FxStatS(&fsf->hylastat)+schwarz);
 } // setzhylastat
 
 // wird aufgerufen in untersuchespool und zeigweitere
@@ -9878,7 +9885,7 @@ int main(int argc, char** argv)
 	} else if (pm.listw) {
 		pm.untersuchespool(0);
 		pm.zeigweitere();
-		pm.Log(blaus+Tx[T_Ende]+schwarz);
+		pm.Log(blaus+Txk[T_Ende]+schwarz);
 		pm.schlussanzeige();
 	} else if (!pm.suchstr.empty()) {
 		pm.suchestr();
@@ -9911,7 +9918,7 @@ int main(int argc, char** argv)
 				pm.untersuchespool();
 				pm.zeigweitere();
 				pm.empfarch();
-				pm.Log(blaus+Tx[T_Ende]+schwarz);
+				pm.Log(blaus+Txk[T_Ende]+schwarz);
 				pm.schlussanzeige();
 			} // if (pm.loef || pm.loew || pm.loea) else if else if
 		} // 		if (!pm.keineverarbeitung)

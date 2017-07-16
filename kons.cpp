@@ -274,6 +274,10 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"', Ergebnis: ","', result: "},
 	// T_Fehler_beim_Deferenzieren_von
 	{"Fehler beim Dereferenzieren von: ","Error dereferencing: "},
+	// T_Ende
+	{"-Ende- ","-End- "},
+	// T_startundenable
+	{"startundenable()","startandenable()"},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 
@@ -935,7 +939,7 @@ int Log(const string& text, const short screen/*=1*/, const short file/*=1*/, co
       letztesmaloZ = (screen==-1);
     } // if (screen) 
     if (file) {
-      if (!logdt || !*logdt) {
+      if (!logdt || !*logdt|| !strcmp(logdt,"/")) {
         cerr<<rot<<Txk[T_Variable_logdatei_leer]<<schwarz<<endl;
       } else {
         static bool erstaufruf=1;
@@ -3570,7 +3574,8 @@ void servc::start(int obverb/*=0*/,int oblog/*=0*/)
 
 int servc::startundenable(int obverb/*=0*/,int oblog/*=0*/)
 {
-  start(obverb,oblog);
+	Log(violetts+Txk[T_startundenable]+schwarzs+sname,obverb,oblog);
+	start(obverb,oblog);
   enableggf(obverb,oblog);
 	  //// <<violett<<"startundeable, sname: "<<schwarz<<sname<<endl;
   return !obsvfeh(obverb,oblog);

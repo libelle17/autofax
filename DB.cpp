@@ -727,7 +727,7 @@ void DB::lesespalten(Tabelle *ltab,int obverb/*=0*/,int oblog/*=0*/)
 	} else if (obverb||oblog) {
     Log(blaus+"spalt->obfehl: "+ltoan(int(spalt->obfehl)),obverb,oblog);
   }
-  Log(violetts+"Ende "+Txd[T_Lesespalten]+blau+": "+ltab->name+"'"+schwarz,obverb,oblog);
+  Log(violetts+Txk[T_Ende]+Txd[T_Lesespalten]+blau+": "+ltab->name+"'"+schwarz,obverb,oblog);
 } // lesespalten
 
 int DB::machind(const string& tname, Index* indx,int obverb/*=0*/, int oblog/*=0*/)
@@ -867,7 +867,7 @@ int DB::prueftab(Tabelle *ptab,int obverb/*=0*/,int oblog/*=0*/)
           }
         } // for(int i=0;i<ptab->feldzahl;i++)
         MYSQL_RES *dbres = mysql_list_tables(conn,ptab->name.c_str());
-        if (!dbres->row_count) {
+        if (dbres && !dbres->row_count) {
           /*ptab->comment=**/sersetze(&ptab->comment,string("'"),string("\\'"));
           sql<<"CREATE TABLE `"<<ptab->name.c_str();
           sql<<"` ("<<fstr[0]<<istr[0]<<") COMMENT='";

@@ -263,6 +263,8 @@ enum Tkons_
 	T_noext,
 	T_Ergebnis,
 	T_Fehler_beim_Deferenzieren_von,
+	T_Ende,
+	T_startundenable,
 	T_konsMAX
 };
 
