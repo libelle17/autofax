@@ -85,7 +85,7 @@ class fsfcl : public fxfcl // Faxsendfile
     string capisd; // capispooldatei
     int capids;  //capidials
     string hylanr; // hylanr
-		string protdakt; // z.B. /var/spool/hylafax/doneq/q9902
+		string hqdt; // z.B. /var/spool/hylafax/doneq/q9902
     int hdialsn; // hyladials
 		string hpages; // Seitenzahl
     uchar fobcapi; // ob es jetzt mit Capi weggefaxt werden muss
@@ -155,8 +155,7 @@ class paramcl // Programmparameter
     string vaufr; // (vollaufruf) z.B. '/usr/bin/<DPROG> -noia >/dev/null 2>&1'
     string saufr; // (stummaufruf) '<DPROG> -noia >/dev/null 2>&1'
 		string zsaufr; // zitiert saufr (in sed)
-//    cppSchluess *hconfp=0;
-    schlArr hylconf;
+    schlArr hylcnfA; // fuer q1234 o.ae.
     uchar hgelesen=0; // Protokolldatei war auslesbar
     static constexpr const char *moeglhvz[2]={"/var/spool/fax","var/spool/hylafax"};
 		string huser="uucp"; // "uucp" oder "fax"
@@ -226,8 +225,8 @@ class paramcl // Programmparameter
     const string tinca="inca"; // MariaDB-Tabelle fuer empfangene Faxe
 		static const string edit;
 		static const string passwddt,groupdt,sudoersdt;
-		static const string hylacdt; // /etc/init.d/hylafax
-		uchar hylacdt_gibts=0; // Datei hylacdt existiert
+		static const string initdhyladt; // /etc/init.d/hylafax
+		uchar initdhyladt_gibts=0; // Datei initdhyladt existiert
     string cfaxconfdt; // /etc/capisuite/fax.conf oder /usr/local/etc/capisuite/fax.conf laut Handbuch
     string ccapiconfdt; // /etc/capisuite/capisuite.conf oder /usr/local/etc/capisuite/capisuite.conf laut Handbuch
     // Parameter aus /etc/capisuite/fax.conf:
@@ -289,33 +288,26 @@ class paramcl // Programmparameter
     string maxhylav; // maixmale Versuchsnr in Hylafax, bis Capi versucht wird
     string langu; // Sprache (Anfangsbuchstabe)
 
-//    cppSchluess *cgconfp; // Gesamtkonfiguration
-    schlArr cgconf; // Gesamtkonfiguration
-    //    size_t gcs; // dessen Groesse
+    schlArr agcnfA; // Gesamtkonfiguration
     string sqlvz;  // Zahl der SQL-Befehle aus Vorgaben
     size_t sqlvzn=0; // Zahl der SQL-Befehle aus Vorgaben numerisch
-//    cppSchluess *sqlconfvp=0; // SQL-Pointer aus Vorgaben
-    schlArr sqlconfv;
+    schlArr sqlVcnfA; // SQL-Array
     string sqlz;  // Zahl der SQL-Befehle
     size_t sqlzn=0; // Zahl der SQL-Befehle numerisch
-//    cppSchluess *sqlconfp; // SQL-Pointer
-    schlArr sqlconf; // SQL-Array
+    schlArr sqlcnfA; // SQL-Array
 
     zielmustercl *zmp; // Zielmusterzeiger
-//    cppSchluess *zmconfp; // dessen Serialisierung
-    schlArr zmconf; // dessen Serialisierung
+    schlArr zmcnfA; // dessen Serialisierung
     string zmz; // Zielmusterzahl
     size_t zmzn; // Zielmusterzahl numerisch
     zielmustercl *zmvp; // Zielmusterzeiger aus Vorgaben
     string zmvz; // Zielmusterzahl aus Vorgaben
     size_t zmvzn=0; // Zielmusterzahl numerisch aus Vorgaben
 
-//    cppSchluess *capiconfp; // Capi-Konfiguration (fax.conf)
-    schlArr cconf;  // capisuite.conf
-    schlArr capiconf; // Capi-Konfiguration (fax.conf)
-//    size_t ccs; // capiconf-confsize
-    string konfdt; // name der Konfigurationsdatei
-		string zaehlerdt; // konfdt+".zaehl"
+    schlArr cccnfA;  // capisuite.conf
+    schlArr cfcnfA; // Capi-Konfiguration (fax.conf)
+    string akonfdt; // name der Konfigurationsdatei
+		string azaehlerdt; // akonfdt+".zaehl"
     string anfaxstr, ancfaxstr, anhfaxstr; // 'an Fax', "an cFax", "an hFax"
     string anstr; // ' an '
     string undstr;  //  'und'
@@ -326,7 +318,7 @@ class paramcl // Programmparameter
 		vector<argcl> argcmv; // class member vector
     servc *sfaxq=0, *shfaxd=0, *shylafaxd=0, *sfaxgetty=0, *scapis=0;
     string modconfdt; // hylafax-Konfigurationsdatei, z.B. /var/spool/hylafax/etc/config.ttyACM0
-    confdat *cfaxcp=0; // Zeiger auf ausgelesene /etc/capisuite/fax.conf
+    confdat *cfaxcdtp=0; // Zeiger auf ausgelesene /etc/capisuite/fax.conf
 		string virtvz; //	instvz+"/ocrv";
 	  string ocrmp; //	virtvz+"/bin/ocrmypdf";
 		string vorcm; // Vor-Cron-Minuten
@@ -346,8 +338,8 @@ class paramcl // Programmparameter
     int xferlog(fsfcl *fsfp/*, string *totpages=0, string *ntries=0, string *totdials=0, string *tottries=0, string *maxtries=0*/);
     void richtcapiher();
     void setzmodconfd();
-    void setzzielmuster(confdat& afconf);
-    void setzsql(confdat& afconf);
+    void setzzielmuster(confdat& afcd);
+    void setzsql(confdat& afcd);
     int pruefinstv();
     int kompilbase(const string& was,const string& endg);
     int kompiliere(const string& was,const string& endg,const string& vorcfg=nix,const string& cfgbismake=s_dampand);

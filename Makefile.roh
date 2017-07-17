@@ -333,7 +333,7 @@ distclean:
 .PHONY: confclean
 confclean:
 	-@sh -c 'D=$(INSTEXEC).conf;test -f $$D &&{ printf "Wollen Sie \"%b$$D%b\" wirklich loeschen (j/n)?" $(blau) $(reset); read answer;\
-	if echo "$$answer"|grep -iq "^j\|^y";then rm -r "$$D">$(KR)&&printf \"%b%s%b\" geloescht!\n" $(blau) "$(INSTEXEC).conf" $(reset); fi;true;} ||{\
+	if echo "$$answer"|grep -iq "^j\|^y";then rm -r "$$D">$(KR)&&printf "\"%b%s%b\" geloescht!\n" $(blau) "$(INSTEXEC).conf" $(reset); fi;true;} ||{\
 	printf "Konfigurationsdatei \"%b$$D%b\" fehlt.\n" $(blau) $(reset);}'
 
 .PHONY: uninstall

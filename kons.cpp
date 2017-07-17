@@ -73,6 +73,8 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
   {"' nicht mit fopen zum Lesen oeffnen.","' with fopen for reading."},
   // T_Variable_logdatei_leer
   {"Variable 'logdatei' leer!","Variable 'logdatei' empty!"},
+	// T_Variable_logdatei_Verzeichnis
+	{"'logdatei' ist Verzeichnis!","'logdatei' is a directory!"},
   // T_nicht_als_fstream_zum_Anhaengen_oeffnen
   {"' nicht als fstream zum Anhaengen oeffnen.","' as fstream for appending."},
 	// T_nicht_mit_open_zum_Anhaengen_oeffnen
@@ -639,7 +641,7 @@ int getcols()
 
 string holsystemsprache(int obverb/*=0*/)
 {
-	schlArr cglang; // Systemsprach-Konfiguration
+	schlArr cglangA; // Systemsprach-Konfiguration
 	string ret;
 	// OpenSuse, Fedora, Debian
 	const char* const langdt[]={"/etc/sysconfig/language","/etc/locale.conf","/etc/default/locale","/etc/sysconfig/i18n"};
@@ -647,12 +649,12 @@ string holsystemsprache(int obverb/*=0*/)
 	for (size_t lind=0;lind<sizeof langdt/sizeof *langdt;lind++) {
 		struct stat langstat;
 		if (!lstat(langdt[lind],&langstat)) {
-			cglang.init(1, langvr[lind]);
-			confdat langcd(langdt[lind],&cglang,obverb);
-			if (!cglang[0].wert.empty()) {
-				ret= cglang[0].wert[0];
+			cglangA.init(1, langvr[lind]);
+			confdat langcd(langdt[lind],&cglangA,obverb);
+			if (!cglangA[0].wert.empty()) {
+				ret= cglangA[0].wert[0];
 				break;
-			} // 			if (!cglang[0].wert.empty())
+			} // 			if (!cglangA[0].wert.empty())
 		} //     if (!lstat(hylacdt.c_str(),&hstat))
 	} // 	for(size_t lind=0;lind<langdt.size())
 	return ret;
@@ -737,7 +739,6 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 			return sdat;
 		} // 		if (sdat)
 #endif	
-
 
 
 int kuerzelogdatei(const char* logdatei,int obverb)
@@ -863,8 +864,8 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 #ifdef false
 #ifdef obfstream
 			*outfile<<Zeile<<endl;
-		}
-	}
+		} // 		while (logf->getline (Zeile, sizeof(Zeile)))
+	} // 	while (logf.getline (Zeile, sizeof(Zeile)))
 	logf->close();
 	outfile->close();
 #else
@@ -881,7 +882,7 @@ if (abhier) {
 	rename(ofil.c_str(),logdatei);
 }else{
 	remove(ofil.c_str());
-}
+} // if (abhier) else
 return 0;
 /*//
   << "Alle Zeilen:" << endl;
@@ -941,6 +942,10 @@ int Log(const string& text, const short screen/*=1*/, const short file/*=1*/, co
     if (file) {
       if (!logdt || !*logdt|| !strcmp(logdt,"/")) {
         cerr<<rot<<Txk[T_Variable_logdatei_leer]<<schwarz<<endl;
+			}
+			struct stat logst={0};
+			if (!lstat(logdt,&logst) && S_ISDIR(logst.st_mode)) {
+        cerr<<rot<<Txk[T_Variable_logdatei_Verzeichnis]<<schwarz<<endl;
       } else {
         static bool erstaufruf=1;
         char tbuf[20];
@@ -1825,7 +1830,7 @@ schlArr::~schlArr()
   if (schl) delete[] schl;
 }
 
-int multischlschreib(const string& fname, schlArr **confs, size_t cszahl,string mpfad)
+int multischlschreib(const string& fname, schlArr **mcnfApp, size_t cszahl,string mpfad)
 {
   mdatei f(fname,ios::out);
   if (f.is_open()) {
@@ -1838,12 +1843,12 @@ int multischlschreib(const string& fname, schlArr **confs, size_t cszahl,string 
       if (!ueberschr.empty()) f<<ueberschr<<endl;
     } //     if (!mpfad.empty())
     for (size_t j=0;j<cszahl;j++) {
-     confs[j]->aschreib(&f);
+     mcnfApp[j]->aschreib(&f);
     }
     return 0;
   } //   if (f.is_open())
   return 1;
-} // int multischlschreib(const string& fname, schlArr **confs, size_t cszahl)
+} // int multischlschreib(const string& fname, schlArr **mcnfApp, size_t cszahl)
 
 string XOR(const string& value, const string& key)
 {
@@ -2596,10 +2601,10 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
           if (!nichtspeichern) {
             if (obschreibp) *obschreibp=1;
             // ... und wenn ein Konfigurationsarray uebergeben wurde und ein Elementname dazu ...
-            if (cp && pname) {
+            if (cpA && pname) {
               // ... dann diesen auch auf den Wert setzen
-              cp->setze(pname,ltoan(wert));
-            } //             if (cp && pname)
+              cpA->setze(pname,ltoan(wert));
+            } //             if (cpA && pname)
           } // if (!nichtspeichern)
         } // if (*pptr!=wert) 
         // wenn also kein binaerer Parameter hinterlegt (=> Textparameter)
@@ -2653,10 +2658,10 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
             if (!nichtspeichern) {
               if (obschreibp) *obschreibp=1;
               // wenn Konfigurationsarray und ein Indexname dort uebergeben ... 
-              if (cp && pname) {
+              if (cpA && pname) {
                 // dann Inhalt dort zuweisen
-                cp->setze(pname,pstr);
-              } // if (cp && pname)
+                cpA->setze(pname,pstr);
+              } // if (cpA && pname)
             } // if (!nichtspeichern)
           } // if (*zptr!=pstr) 
           argcvm->at(++(*akt)).agef=1;
@@ -3657,38 +3662,38 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
 } // int tuloeschen(string zuloe,int obverb, int oblog)
 
 // in optioncl::optioncl
-void optioncl::setzebem(schlArr *cp,const char *pname)
+void optioncl::setzebem(schlArr *cpA,const char *pname)
 {
-  if (cp && pname) {
+  if (cpA && pname) {
     svec bems;
     for(int akts=0;akts<SprachZahl;akts++) bems<<machbemerkung((Sprache)akts,falsch);
-    cp->setzbemv(pname,&Txk,0,0,&bems);
-  } //   if (cp && pname)
-} // void optioncl::setzebem(TxB *TxBp,schlArr *cp,const char *pname)
+    cpA->setzbemv(pname,&Txk,0,0,&bems);
+  } //   if (cpA && pname)
+} // void optioncl::setzebem(TxB *TxBp,schlArr *cpA,const char *pname)
 
-// /*2*/optioncl::optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),wi(wi),zptr(zptr),art(art),cp(cp),pname(pname),obschreibp(obschreibp) { setzebem(cp,pname); }
+// /*2*/optioncl::optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,string *zptr, par_t art,schlArr *cpA, const char *pname,uchar* obschreibp) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),wi(wi),zptr(zptr),art(art),cpA(cpA),pname(pname),obschreibp(obschreibp) { setzebem(cpA,pname); }
 
-/*2a*/optioncl::optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,string *zptr,par_t art,schlArr *cp,const char *pname,uchar* obschreibp) : 
-  kurzi(kurzi), langi(langi), TxBp(TxBp), Txi(Txi), wi(wi), zptr(zptr), art(art), cp(cp), pname(pname), obschreibp(obschreibp) 
+/*2a*/optioncl::optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,string *zptr,par_t art,schlArr *cpA,const char *pname,uchar* obschreibp) : 
+  kurzi(kurzi), langi(langi), TxBp(TxBp), Txi(Txi), wi(wi), zptr(zptr), art(art), cpA(cpA), pname(pname), obschreibp(obschreibp) 
 {
-  setzebem(cp,pname);
+  setzebem(cpA,pname);
 }
 
-// /*3*/optioncl::optioncl(string kurz, string lang, TxB *TxBp,long Txi,uchar wi,const string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cp, const char *pname,uchar* obschreibp) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),wi(wi),rottxt(rottxt),Txi2(Txi2),zptr(zptr),art(art),cp(cp),pname(pname),obschreibp(obschreibp) { setzebem(cp,pname); }
+// /*3*/optioncl::optioncl(string kurz, string lang, TxB *TxBp,long Txi,uchar wi,const string *rottxt, long Txi2, string *zptr, par_t art,schlArr *cpA, const char *pname,uchar* obschreibp) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),wi(wi),rottxt(rottxt),Txi2(Txi2),zptr(zptr),art(art),cpA(cpA),pname(pname),obschreibp(obschreibp) { setzebem(cpA,pname); }
 
-/*3a*/optioncl::optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,const string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cp, 
+/*3a*/optioncl::optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,const string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cpA, 
     const char *pname,uchar* obschreibp) : 
-  kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),rottxt(rottxt),Txi2(Txi2),zptr(zptr),art(art),cp(cp),pname(pname),obschreibp(obschreibp) 
+  kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),rottxt(rottxt),Txi2(Txi2),zptr(zptr),art(art),cpA(cpA),pname(pname),obschreibp(obschreibp) 
 {
-  setzebem(cp,pname);
+  setzebem(cpA,pname);
 }
 
-// /*4a*/optioncl::optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,uchar *pptr, int wert,schlArr *cp,const char *pname,uchar* obschreibp) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),pptr(pptr),wert(wert),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0) { setzebem(cp,pname); }
+// /*4a*/optioncl::optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,uchar *pptr, int wert,schlArr *cpA,const char *pname,uchar* obschreibp) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),pptr(pptr),wert(wert),cpA(cpA),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0) { setzebem(cpA,pname); }
 
-/*4*/optioncl::optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,uchar *pptr,int wert,schlArr *cp, const char *pname,uchar* obschreibp) :
-  kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),pptr(pptr),wert(wert),art(psons),cp(cp),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0)
+/*4*/optioncl::optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,uchar *pptr,int wert,schlArr *cpA, const char *pname,uchar* obschreibp) :
+  kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),pptr(pptr),wert(wert),art(psons),cpA(cpA),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0)
 {
-  setzebem(cp,pname);
+  setzebem(cpA,pname);
 }
 
 // gleicht das Datum von <zu> an <gemaess> an, aehnlich touch
