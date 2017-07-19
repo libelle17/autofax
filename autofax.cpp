@@ -4042,7 +4042,7 @@ void paramcl::konfcapi()
 		cfcnfA[9].wert=Tippstr(string("outgoing_timeout: ")+Tx[T_Geduld_bis_zum_Verbindungsaufbau_in_s],&cfcnfA[9].wert);
 		if (obverb>0) {
 			for(unsigned snr=0;snr<cfcnfA.zahl;snr++) {
-				Log("snr: "+blaus+ltoan(snr)+schwarz+" "+cfcnfA[snr].wert+", "+cfcnfA[snr].wert);
+				Log("snr: "+blaus+ltoan(snr)+schwarz+" "+cfcnfA[snr].name+", "+cfcnfA[snr].wert);
 			}
 		} // if (obverb>0)
 	} // if (rzf || (capicffehlt && !nrzf))
@@ -4118,7 +4118,11 @@ void paramcl::konfcapi()
 					*fneu<<"fax_email_from=\""<<cfcnfA[8].wert<<"\""<<endl;
 					*fneu<<"fax_action=\"MailAndSave\""<<endl;
 				} // if (!cuserda)
-				if (fneu) delete fneu;
+				if (fneu) {
+					fneu->close();
+					delete fneu;
+					fneu=0;
+				} // 				if (fneu)
 				setfaclggf(cfaxconfdt,obverb,oblog,falsch,6,falsch);
 				const string origdatei=cfaxconfdt+"_orig";
 				struct stat entryorig={0};
