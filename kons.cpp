@@ -298,7 +298,7 @@ class TxB Txk((const char* const* const* const*)kons_T);
 
 uchar nrzf=0; // nicht rueckzufragen, fuer Aufruf aus Cron
 
-argcl::argcl(int i,char** argv) 
+argcl::argcl(const int i,const char *const *const argv):argcs(argv[i])
 {
   argcs=argv[i];
 }
@@ -2511,7 +2511,7 @@ uchar VerzeichnisGibts(const char* vname)
   return 0;
 } // VerzeichnisGibts
 
-int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprache lg) // 1 = das war der Parameter, 0 = nicht
+int optioncl::pruefpar(vector<argcl> *const argcvm , size_t *const akt, uchar *hilfe, Sprache lg) // 1 = das war der Parameter, 0 = nicht
 // argcvm = Vektor der Kommandozeilenparameter
 // *akt = Index auf aktuell zu untersuchenden
 // *hilfe = Aussage, ob Hilfe aufgerufen werden muss
@@ -2523,7 +2523,7 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
   uchar gegenteil=0;
 // wenn der Index noch im Bereich und der zugehoerige Kommandozeilenparameter noch nicht unter den Programmparametern gefunden wurde ...
   if (*akt<argcvm->size()) if (!argcvm->at(*akt).agef) {
-    char *acstr=argcvm->at(*akt).argcs;
+    const char *acstr=argcvm->at(*akt).argcs;
 ////    <<rot<<"acstr: "<<schwarz<<acstr<<endl;
     int aclen=strlen(acstr);
     if (aclen>1) {
@@ -2609,11 +2609,11 @@ int optioncl::pruefpar(vector<argcl> *argcvm , size_t *akt, uchar *hilfe, Sprach
         } // if (*pptr!=wert) 
         // wenn also kein binaerer Parameter hinterlegt (=> Textparameter)
       } else {
-        char *pstr=0;
+        const char *pstr=0;
         uchar wiefalsch=0;
         // und hinter dem aktuellen Parameter noch einer kommt ...
         if (*akt<argcvm->size()-1) {
-          char *nacstr=argcvm->at(*akt+1).argcs;
+          const char *nacstr=argcvm->at(*akt+1).argcs;
           struct stat entryarg={0};
           switch (art) {
               // und das ein "sonstiger Parameter" ist, ...
@@ -2826,7 +2826,7 @@ std::string string_to_hex(const std::string& input)
 				}
 			}
 			linst.ziehraus(inh,&ustring);
-			caus<<blau<<"ustring: "<<gruen<<ustring<<schwarz<<endl;
+			//<<blau<<"ustring: "<<gruen<<ustring<<schwarz<<endl;
 			exit(29);
 			*/
 void linst_cl::ziehraus(svec srueck, string *ustringp)
