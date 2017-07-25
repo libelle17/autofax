@@ -46,6 +46,7 @@ const string& instvz=
 uchar findv=3; // find-Version 1=system, 2=intern mit readdir, 3=intern mit nftw
 const string& unindt=instvz+"/uninstallinv"; // # Name muss identisch sein mit Variabler UNF in install.sh
 const string nix;
+const string eins="1";
 el2set::iterator it2;
 set<elem3>::iterator it3;
 

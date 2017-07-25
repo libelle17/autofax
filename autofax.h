@@ -71,7 +71,7 @@ class fxfcl // Faxfile
     unsigned prio; // Prioritaet der Fax-Programme: 0 = capi und 0 = hyla per Konfigurationsdatei, 1= capi und 2= hyla per Faxdateiname
 		ulong pseiten; // PDF-Seitenzahl
     fxfcl(const string& npdf,const string& spdf,const string& ur,unsigned prio): npdf(npdf),spdf(spdf),ur(ur),prio(prio),pseiten(0) {}
-    // nur fuer Initialisierung in fsfcl, Konstruktur /*1*/, nur fuer faxealle
+    // nur fuer Initialisierung in fsfcl, Konstruktur /*1*/, nur fuer wegfaxen
     fxfcl(unsigned prio, const string& npdf,const string& spdf,ulong pseiten): npdf(npdf),spdf(spdf),prio(prio),pseiten(pseiten) {}
     fxfcl(const string& spdf,const string& ur,unsigned prio): npdf(""),spdf(spdf),prio(prio),pseiten(0) {}
     fxfcl() {}
@@ -130,7 +130,7 @@ class fsfcl : public fxfcl // Faxsendfile
     /*4*/fsfcl(const string& hylanr): hylanr(hylanr) {}
     /*5*/fsfcl(const string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
     void setzcapistat(paramcl *pmp, struct stat *entrysendp);
-    void capiausgeb(stringstream *ausgp, const string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,unsigned long faxord=0);
+    void capiausgeb(stringstream *ausgp, const string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,ulong faxord=0);
     void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
     int holcapiprot(int obverb);
 }; // class fsfcl
@@ -193,14 +193,14 @@ class paramcl // Programmparameter
     uchar obhilfe=0;      // Hilfe anzeigen
     uchar zeigvers=0;  // Version anzeigen
 		size_t faxord; // Ordinalzahl des Faxes unter allen anstehenden Faxen
-		unsigned long geszahl=0;
-    unsigned long ankzahl=0; // Zahl der angekommenen Faxe
-    unsigned long dbzahl=0; // Zahl der ueberprueften Datenbankeintraege
-    unsigned long wzahl=0;
-    unsigned long ezahl=0;
-    unsigned long gzahl=0;
-    unsigned long fzahl=0;
-    unsigned long weizahl=0; // Zahl der weiteren wartenden Faxe, die nicht in der Spooltabelle dieses Programms eingetragen sind
+		ulong geszahl=0;
+    ulong ankzahl=0; // Zahl der angekommenen Faxe
+    ulong dbzahl=0; // Zahl der ueberprueften Datenbankeintraege
+    ulong wzahl=0;
+    ulong ezahl=0;
+    ulong gzahl=0;
+    ulong fzahl=0;
+    ulong weizahl=0; // Zahl der weiteren wartenden Faxe, die nicht in der Spooltabelle dieses Programms eingetragen sind
     uchar gleichziel; // faxe auch ohne Fax-Erfolg auf Zielverzeichnis abspeichern
     uchar obocri; // empfangene Faxe OCR unterziehen
     uchar obocra; // gesandte Bilder OCR unterziehen
@@ -221,8 +221,8 @@ class paramcl // Programmparameter
     string muser; // Benutzer fuer Mysql/MariaDB
     string mpwd;  // Passwort fuer Mysql/MariaDB
     DB* My=0;
-		const size_t forkzahl=12; // 0=Schluss, 1=korrigierecapi aus main, 2=korrigierehyla aus main, 3=Dateienherricht, 4=zeigweitere, 5=empfarch,
-		//                          6=faxemitC, 7=faxealle, 8=untersuchespool,9=korrigierecapi aus zeigweitere, 10=korrigierehyla aus zeigweitere,
+		const size_t forkzahl=12; // 0=Schluss, 1=korrigierecapi aus main, 2=korrigierehyla aus main, 3=wegfaxen, 4=zeigweitere, 5=empfarch,
+		//                          6=faxemitC, 7=faxemitH, 9=korrigierecapi aus zeigweitere, 10=korrigierehyla aus zeigweitere,
     //													11=test
     const string touta="outa"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tudoc="udoc"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
@@ -267,10 +267,10 @@ class paramcl // Programmparameter
     string hsendqvz; // /var/spool/hylafax/sendq
     string hdoneqvz; // /var/spool/hylafax/doneq
     string harchivevz; // /var/spool/hylafax/archive
-		unsigned long aufrufe=0; // Zahl der bisherigen Programmaufrufe
+		ulong aufrufe=0; // Zahl der bisherigen Programmaufrufe
 		struct tm laufrtag={0}; // Tag des letztes Aufrufs
-		unsigned long tagesaufr=0; // Zahl der bisherigen Programmaufrufe heute
-		unsigned long monatsaufr=0; // Zahl der bisherigen Programmaufrufe heute
+		ulong tagesaufr=0; // Zahl der bisherigen Programmaufrufe heute
+		ulong monatsaufr=0; // Zahl der bisherigen Programmaufrufe heute
 #ifdef _WIN32
     char cpt[255];
     DWORD dcpt;
@@ -332,8 +332,8 @@ class paramcl // Programmparameter
 
   private:
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
-    string neuerdateiname(const string& qpfad); // in DateienHerricht
-    void WVZinDatenbank(vector<fxfcl> *fxvp); // in DateienHerricht
+    string neuerdateiname(const string& qpfad); // in wegfaxen
+    void WVZinDatenbank(vector<fxfcl> *fxvp); // in wegfaxen
     string getzielvz(const string& datei); // in bereinigewv
     int setzegcp(const string& name, string *wert);
     void pruefcvz();
@@ -385,7 +385,7 @@ class paramcl // Programmparameter
     void VorgbSpeziell(); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vgb.cpp)
     #endif
     void lieskonfein();
-		void lieszaehlerein();
+		void lieszaehlerein(ulong *arp=0,ulong *tap=0,ulong *map=0,struct tm *lap=0, string *obempfp=0,string *obgesap=0);
 		int  getcommandline();
     void rueckfragen();
     int setzhylavz(); // sucht das Hylaverzeichnis und setzt varsphylavz darauf, return 0, wenn nicht gefunden dann varsphylavz="", return 1
@@ -402,7 +402,6 @@ class paramcl // Programmparameter
     void suchestr();
     int pruefsoffice(uchar mitloe=0);
     int pruefconvert();
-    void DateienHerricht();
     void clieskonf();
     void capisv();
     int pruefcapi();
@@ -419,8 +418,8 @@ class paramcl // Programmparameter
 		void empferneut();
     size_t  loeschewaise();
 		size_t loescheallewartende();
-		void faxealle();
-    void untersuchespool(uchar mitupd=1);
+		void wegfaxen();
+		void untersuchespool(uchar mitupd=1,const size_t aktc=8); // faxart 0=capi, 1=hyla 
 		void bestimmtage();
     void zeigweitere();
     void zeigkonf();
@@ -430,7 +429,8 @@ class paramcl // Programmparameter
     void korrigierehyla(const unsigned tage=90,const size_t aktc=2);
     void empfarch();
 		void zeigueberschrift();
-		void schreibzaehler();
+		void setzzaehler();
+		void schreibzaehler(const string* obempfp=0, const string* obgesap=0);
 		void schlussanzeige();
     void autofkonfschreib();
 		void dovi();
