@@ -14,20 +14,20 @@ string verschiebe(const string& qdatei, const string& zielvz, const string& cuse
 void verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser=nix, uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0, int oblog=0);
 string kopiere(const string& qdatei, const string& zieldp, uint *kfehler, uchar wieweiterzaehl, int obverb=0,int oblog=0);
 string kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
-void prueffuncgettel3(DB *Myp, const string& usr, const string& host, int obverb, int oblog);
-void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, int obverb, int oblog);
+void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, int obverb, int oblog);
+void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, const int obverb, const int oblog);
 void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, const string& ff, int obverb, int oblog);
 void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, const string& ff, int obverb, int oblog);
 int pruefcapi(paramcl *pmp, int obverb, int oblog);
 void kuerzevtz(string *vzp);
 pid_t PIDausName(const char* PName, uchar klgr, uchar exakt, int obverb, int oblog);
-void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,const size_t aktc,int obverb=0,int oblog=0);
+void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,const size_t aktc,const int obverb=0,const int oblog=0);
 void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0);
 int hconfig(const paramcl *const pmp,const int obverb=0, const int oblog=0);
-const string& pruefspool(DB *My,const string& spooltab, const string& altspool, int obverb, int oblog, uchar direkt=0);
-void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direkt=0);
-void pruefudoc(DB *My, const string& tudoc, int obverb, int oblog, uchar direkt=0);
-void pruefinctab(DB *My, const string& tinca, int obverb, int oblog, uchar direkt=0);
+const string& pruefspool(DB *My,const string& spooltab, const string& altspool, const int obverb, const int oblog, uchar direkt=0);
+void pruefouttab(DB *My, const string& touta, const int obverb, const int oblog, const uchar direkt=0);
+void pruefudoc(DB *My, const string& tudoc, const int obverb, const int oblog, const uchar direkt=0);
+void pruefinctab(DB *My, const string& tinca, const int obverb, const int oblog, const uchar direkt=0);
 void kuerzevtz(string *vzp);
 void pruefrules(int obverb, int oblog);
 void pruefblack(int obverb, int oblog);
@@ -222,7 +222,9 @@ class paramcl // Programmparameter
     string muser; // Benutzer fuer Mysql/MariaDB
     string mpwd;  // Passwort fuer Mysql/MariaDB
     DB* My=0;
-		const size_t forkzahl=12; // 0=Schluss, 1=korrigierecapi aus main, 2=korrigierehyla aus main, 3=wegfaxen, 4=zeigweitere, 5=empfarch,
+		const size_t maxconz=12;//aktc: 0=pruefspool,pruefouttab,pruefudoc,pruefinctab,prueffuncgettel3,pruefstdfaxnr,aenderefax,rueckfragen 
+		// bereinigewv,loeschewaise,loescheallewartende,tu_lista,tu_listi,suchestr,Schluss, 1=korrigierecapi aus main, 
+		//                          2=korrigierehyla aus main, 3=wegfaxen, untersuchespool, WVZinDatenbank,4=zeigweitere, 5=empfarch,
 		//                          6=faxemitC, 7=faxemitH, 9=korrigierecapi aus zeigweitere, 10=korrigierehyla aus zeigweitere,
     //													11=test
     const string touta="outa"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
@@ -334,7 +336,7 @@ class paramcl // Programmparameter
   private:
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
     string neuerdateiname(const string& qpfad); // in wegfaxen
-    void WVZinDatenbank(vector<fxfcl> *fxvp); // in wegfaxen
+    void WVZinDatenbank(vector<fxfcl> *const fxvp); // in wegfaxen
     string getzielvz(const string& datei); // in bereinigewv
     int setzegcp(const string& name, string *wert);
     void pruefcvz();
@@ -420,7 +422,7 @@ class paramcl // Programmparameter
     size_t  loeschewaise();
 		size_t loescheallewartende();
 		void wegfaxen();
-		void untersuchespool(uchar mitupd=1,const size_t aktc=8); // faxart 0=capi, 1=hyla 
+		void untersuchespool(uchar mitupd=1,const size_t aktc=3); // faxart 0=capi, 1=hyla 
 		void bestimmtage();
     void zeigweitere();
     void zeigkonf();

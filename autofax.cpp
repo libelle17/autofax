@@ -2484,7 +2484,7 @@ string paramcl::neuerdateiname(const string& qpfad)
 
 // wird aufgerufen von DateienHerricht
 // die frisch ins Warteverzeichnis verschobenen Dateien werden in spooltab eingetragen
-void paramcl::WVZinDatenbank(vector<fxfcl> *fxvp)
+void paramcl::WVZinDatenbank(vector<fxfcl> *const fxvp)
 {
 	Log(violetts+Tx[T_WVZinDatenbank]+schwarz);
 	const size_t aktc=3;
@@ -4642,7 +4642,7 @@ int paramcl::initDB()
 		fehler=1046;
 	} else {
 		if (!My) {
-			My=new DB(myDBS,linstp,host,muser,mpwd,forkzahl,dbq,0,0,0,obverb,oblog);
+			My=new DB(myDBS,linstp,host,muser,mpwd,maxconz,dbq,0,0,0,obverb,oblog);
 			if (My->ConnError) {
 				delete My;
 				My=0;
@@ -4664,7 +4664,7 @@ int paramcl::pruefDB(const string& db)
 {
 	Log(violetts+Tx[T_pruefDB]+db+")"+schwarz);
 	if (!My) {
-		My=new DB(myDBS,linstp,host,muser,mpwd,forkzahl,db,0,0,0,obverb,oblog,3,0);
+		My=new DB(myDBS,linstp,host,muser,mpwd,maxconz,db,0,0,0,obverb,oblog,3,0);
 		if (My->ConnError) {
 			delete My;
 			My=0;
@@ -5049,8 +5049,9 @@ int paramcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 						////<<"fsfav[nr].capistat: "<<(int)fsfav[nr].capistat<<", fehlend: "<<(int)fehlend<<endl;
 						////<<"fsfav[nr].hylastat: "<<(int)fsfav[nr].hylastat<<", fehlend: "<<(int)fehlend<<endl;
             ////<<"fsfav[nr].id.empty(): "<<fsfav[nr].id.empty()<<endl;
-						if ((!zdng || ((fsfav[nr].capistat==fehlend||fsfav[nr].capistat==init) && 
-						               (fsfav[nr].hylastat==fehlend||fsfav[nr].hylastat==init))) && !fsfav[nr].id.empty()) {
+						if ((!zdng|| ((fsfav[nr].capistat==fehlend||fsfav[nr].capistat==init)&&
+						              (fsfav[nr].hylastat==fehlend||fsfav[nr].hylastat==init))) && 
+  						     !fsfav[nr].id.empty()) {
 						  ////<<rot<<"loesche!!!!!!!"<<endl;
 							RS loe(My,"DELETE FROM `"+spooltab+"` WHERE id="+fsfav[nr].id,aktc,-obverb);
 						}
@@ -6175,7 +6176,7 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
 
 // Dateien in Spool-Tabelle nach inzwischen verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
 // wird aufgerufen in: main (2x)
-void paramcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=8*/) // faxart 0=capi, 1=hyla 
+void paramcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart 0=capi, 1=hyla 
 {
 	// Schaue nach, welche der gespoolten schon weggeschickt sind, Anpassung der Primaerdateien und des Datenbankeintrags
 	Log(violetts+Tx[T_untersuchespool]+schwarz);
@@ -6643,7 +6644,8 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 				char ***cerg;
 				size_t cergz=0;
 				if (auswe.size()>2) {
-					RS rs1(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=0 AND submid IN "+auswe,aktc,ZDB);////"` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+					RS rs1(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=0 AND submid IN "+auswe,aktc,ZDB);
+					                                   ////"` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 					string auswmf="(";  // fuer die Ausgabe
 					while (cerg=rs1.HolZeile(),cerg?*cerg:0) {
 						if (!cergz++)
@@ -6660,7 +6662,8 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 					} // 				if (cergz) 
 				} // 		if (auswe.size()>1)
 				if (auswm.size()>2) {
-					RS rs2(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=1 AND submid IN "+auswm,aktc,ZDB); // "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
+					RS rs2(My,"SELECT submid FROM `"+touta+"` WHERE erfolg=1 AND submid IN "+auswm,aktc,ZDB);
+																							// "` where concat('q',hylanr)='"+rueck[i]+"'",ZDB);
 					cergz=0;
 					string auswef="("; // zur Ausgabe
 					while (cerg=rs2.HolZeile(),cerg?*cerg:0) {
@@ -8903,10 +8906,10 @@ schluss: // sonst eine sonst sinnlose for-Schleife mehr oder return mitten aus d
 
 
 // wird aufgerufen in: faxemitC
-void inDbc(DB *My, const string& spooltab, const string& altspool, const string& spoolg, fsfcl *fsfp, char* telnr, int obverb, int oblog)
+void inDbc(DB *My, const string& spooltab, const string& altspool, const string& spoolg, const fsfcl *const fsfp, 
+									 const char* telnr, const size_t aktc, const int obverb, const int oblog)
 {
 	Log(violetts+Tx[T_inDbc]+schwarz,obverb/*?obverb-1:0*/,oblog);
-	const size_t aktc=6;
 	string spooldir, spoolfil;
 	spooldir=dir_name(spoolg);
 	spoolfil=base_name(spoolg);
@@ -8989,7 +8992,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 							sprintf(buf,"%.3lu",atol(nr.c_str()));
 							spoolg=pmp->cfaxusersqvz+vtz+"fax-"+buf+".sff";
 						} //             if (!spoolg.find("job "))
-						inDbc(My, spooltab, altspool, spoolg, fsfp, z2+strlen(tz2), obverb, oblog);
+						inDbc(My, spooltab, altspool, spoolg, fsfp, z2+strlen(tz2), aktc, obverb, oblog);
 					}   // if (char *z2=strstr(z1,tz2)) 
 					// if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
 				} else if (faxerg.at(0).find("can't open")==0) {
@@ -9006,10 +9009,10 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 } // faxemitC
 
 // wird aufgerufen in faxemitH
-void inDBh(DB *My, const string& spooltab, const string& altspool, paramcl *pmp, const string& hylaid, fsfcl *fsfp,string *tel, int obverb, int oblog)
+void inDBh(DB *My, const string& spooltab, const string& altspool, const paramcl *const pmp, const string& hylaid, 
+           const fsfcl *const fsfp,const string *tel, const size_t aktc)
 {
-	Log(violetts+Tx[T_inDBh]+schwarz,obverb/*?obverb-1:0*/,oblog);
-	const size_t aktc=7;
+	Log(violetts+Tx[T_inDBh]+schwarz,pmp->obverb/*?pmp->obverb-1:0*/,pmp->oblog);
 	const string spoolfil="q"+hylaid;
 	const string spoolg= pmp->hsendqvz+vtz+spoolfil;
 	uint affr=0;
@@ -9057,7 +9060,7 @@ void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 	// wenn in capi maxversuch ueberschritten, dann mit hylafax faxen und wenn erfolgreich im spool, dann in Datenbank aktualisieren
 	// 3. wartende Dateien bestimmen
 	Log(violetts+Tx[T_faxemitH]+schwarz,obverb,oblog);
-	// const size_t aktc=7 => inDBh
+	const size_t aktc=7;
 	// 5. faxen und wenn erfolgreich im spool, dann in Datenbank eintragen
 	string tel;
 	char* pt=strcasestr((char*)fsfp->spdf.c_str(),(char*)pmp->anfaxstr.c_str());
@@ -9100,7 +9103,7 @@ void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 							const string hylaid(z1+strlen(tz1),z2-z1-strlen(tz1));
 							if (isnumeric(hylaid)) {
 								////            inDatenbankh(My, pmp->hsendqvz, &hylaid, idsp, npdfp, spdfp, nachrnr, &tel, obverb, oblog);
-								inDBh(My, spooltab, altspool, pmp, hylaid, fsfp,&tel,obverb,oblog);
+								inDBh(My, spooltab, altspool, pmp, hylaid, fsfp,&tel, aktc);
 							} // if (isnumeric(hylaid)) 
 						}   // if (char *z2=strstr(z1,tz2)) 
 						break;
@@ -9149,7 +9152,7 @@ string paramcl::stdfaxnr(const string& faxnr)
 
 
 // wird aufgerufen in: archiviere, empfhyla, empfcapi
-void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,const size_t aktc,int obverb,int oblog) 
+void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,const size_t aktc,const int obverb/*=0*/,const int oblog/*=0*/) 
 {
 	Log(violetts+"getSender("+"..,"+faxnr+")"+schwarz,obverb,oblog);
 	if (!faxnr.empty()) {
@@ -9195,7 +9198,7 @@ void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnam
 } // void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,int obverb,int oblog) 
 
 // wird aufgerufen in: main
-const string& pruefspool(DB *My,const string& spooltab, const string& altspool, int obverb, int oblog, uchar direkt/*=0*/)
+const string& pruefspool(DB *My,const string& spooltab, const string& altspool, const int obverb, const int oblog, uchar direkt/*=0*/)
 {
 	Log(violetts+Tx[T_pruefspool]+schwarz+", direkt: "+(direkt?"1":"0"),obverb,oblog);
 	const size_t aktc=0;
@@ -9247,7 +9250,7 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
 } // const char* pruefspool(DB *My,const char* spooltab, int obverb, int oblog, uchar direkt=0)
 
 // wird aufgerufen in: main
-void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direkt/*=0*/)
+void pruefouttab(DB *My, const string& touta, const int obverb, const int oblog, const uchar direkt/*=0*/)
 {
 	Log(violetts+Tx[T_pruefouta]+schwarz,obverb,oblog);
 	const size_t aktc=0;
@@ -9295,7 +9298,7 @@ void pruefouttab(DB *My, const string& touta, int obverb, int oblog, uchar direk
 } // int pruefouttab(DB *My, string touta, int obverb, int oblog, uchar direkt=0)
 
 // wird aufgerufen in: main
-void pruefudoc(DB *My, const string& tudoc, int obverb, int oblog, uchar direkt/*=0*/)
+void pruefudoc(DB *My, const string& tudoc, const int obverb, const int oblog, const uchar direkt/*=0*/)
 {
 	Log(violetts+Tx[T_pruefudoc]+schwarz,obverb,oblog);
 	const size_t aktc=0;
@@ -9316,7 +9319,7 @@ void pruefudoc(DB *My, const string& tudoc, int obverb, int oblog, uchar direkt/
 } // int pruefudoc(DB *My, string tudoc, int obverb, int oblog, uchar direkt=0)
 
 // wird aufgerufen in: main
-void pruefinctab(DB *My, const string& tinca, int obverb, int oblog, uchar direkt/*=0*/)
+void pruefinctab(DB *My, const string& tinca, const int obverb, const int oblog, const uchar direkt/*=0*/)
 {
 	Log(violetts+Tx[T_pruefinca]+schwarz,obverb,oblog);
 	const size_t aktc=0;
@@ -9363,7 +9366,7 @@ void pruefinctab(DB *My, const string& tinca, int obverb, int oblog, uchar direk
 
 
 // wird aufgerufen in: main
-void prueffuncgettel3(DB *Myp, const string& usr, const string& host, const int obverb, const int oblog)
+void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, const int obverb, const int oblog)
 {
 	Log(violetts+Tx[T_prueffuncgettel3]+schwarz,obverb,oblog);
 	const size_t aktc=0;
@@ -9409,7 +9412,7 @@ void prueffuncgettel3(DB *Myp, const string& usr, const string& host, const int 
 
 
 // wird aufgerufen in: main
-void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, int obverb, int oblog)
+void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, const int obverb, const int oblog)
 {
 	Log(violetts+Tx[T_pruefstdfaxnr]+schwarz,obverb,oblog);
 	const size_t aktc=0;
