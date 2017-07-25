@@ -9970,7 +9970,7 @@ int main(int argc, char** argv)
 	if (pm.zeigvers) {
 		zeigversion(pm.meinname,pm.mpfad);
 		pm.zeigkonf();
-		Log(violetts+Txk[T_Ende]+"zeigvers"+schwarz);
+		Log(violetts+Txk[T_Ende]+"zeigvers"+schwarz,pm.obverb,pm.oblog);
 		exit(7);
 	} //   if (pm.zeigvers)
 	if (!pm.keineverarbeitung) {
