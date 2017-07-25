@@ -10049,6 +10049,11 @@ int main(int argc, char** argv)
 					pm.wegfaxen();
 				// Dateien in Spool-Tabelle nach inzwischen verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
 					pm.untersuchespool(/*mitupd=*/1,/*aktc=*/3);
+					if (pm.obcapi || pm.obhyla) {
+						pm.bestimmtage();
+						if (pm.obcapi) { if (pm.tage) pm.korrigierecapi(pm.tage,9); } // 					if (pm.obcapi)
+						if (pm.obhyla) { if (pm.tage) pm.korrigierehyla(pm.tage,10);} // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
+					}
 					_exit(0);
 				} else if (pid<0) {
 					Log(rots+Tx[T_Gabelung_zu_wegfaxen_misslungen]+schwarz);
@@ -10058,10 +10063,6 @@ int main(int argc, char** argv)
 				pids<<"wegfaxen";
 
 				if (pm.obcapi || pm.obhyla) {
-					pm.bestimmtage();
-					if (pm.obcapi) { if (pm.tage) pm.korrigierecapi(pm.tage,9); } // 					if (pm.obcapi)
-					if (pm.obhyla) { if (pm.tage) pm.korrigierehyla(pm.tage,10);} // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
-
 					pid=fork();
 					if (!pid) {
 						pm.zeigweitere();
