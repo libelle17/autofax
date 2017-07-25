@@ -59,7 +59,8 @@ const string s_true="true";
 const string s_dampand="&&";
 const string s_gz="gz";
 //// const char *tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
-vector<pid_t> pidv;
+vector<pid_t> pidv; // Sammelvektor fuer alles, was vom Hauptstrang abzweigt
+vector<pid_t> pidw; // Sammelvektor fuer alles, was aus wegfaxen abzweigt
 svec pids;
 
 enum T_ 
@@ -3291,7 +3292,7 @@ void paramcl::lieskonfein()
 	// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 3 Monate und des Monats unbefristet
 } // void paramcl::lieskonfein()
 
-//wird aufgerufen in main()
+//wird aufgerufen in main
 void paramcl::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/, struct tm *lap/*=0*/,
                              string *obempfp/*=0*/,string *obgesap/*=0*/)
 {
@@ -4680,7 +4681,7 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 {
 	pid_t pid=fork();
 	if (pid>=0) {
-		pidv.push_back(pid);
+		pidw.push_back(pid);
 		pids<<"korrigierecapi";
 	}
 	if (!pid) {
@@ -5693,7 +5694,6 @@ void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio
 void paramcl::wegfaxen()
 {
 	pid_t pid=0; // fuer Capi abzweigen
-	vector<pid_t> pidw; // Sammelvektor fuer alles, was aus diesem Programm abzweigt
 	Log(violetts+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Tx[T_ja]:Tx[T_nein])+", "
 			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Tx[T_ja]:Tx[T_nein]));
 	const size_t aktc=3; 
@@ -6103,14 +6103,8 @@ void paramcl::wegfaxen()
 					(obcapi?Tx[T_ja]:Tx[T_nein])+", "+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Tx[T_ja]:Tx[T_nein]));
 			_exit(0);
 		} // 		if (wasichbin)
-		// nur wegfaxen-Hauptprogramm
-		while (pidw.size()) {
-			for(size_t i=0;i<pidw.size();i++) {
-				int status;
-				pid_t erg=waitpid(pidw[i],&status,WNOHANG);
-				if (erg>0) pidw.erase(pidw.begin()+i);
-			}
-		}
+		// 1. warte auf faxemitC und faxemitH
+		wartaufpids(&pidw);
 		// nur wegfaxen mit abgeschlossenen Unterprogrammen
 		ulong kaufrufe=0;
 		do {
@@ -6534,7 +6528,7 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 {
 	pid_t pid=fork();
 	if (pid>=0) {
-		pidv.push_back(pid);
+		pidw.push_back(pid);
 		pids<<"korrigierehyla";
 	}
 	if (!pid) {
@@ -9938,6 +9932,17 @@ void paramcl::dovh()
 	vischluss(cmd,erg);
 } // void paramcl::dovh()
 
+void wartaufpids(vector<pid_t> *pidv)
+{
+	while (pidv->size()) {
+		for(size_t i=0;i<pidv->size();i++) {
+			int status;
+			pid_t erg=waitpid(pidv->at(i),&status,WNOHANG);
+			if (erg>0) pidv->erase(pidv->begin()+i);
+		}
+	}
+} // void wartaufpids(vector<pid_t> *pidv)
+
 int main(int argc, char** argv) 
 {
 	string prog;
@@ -10054,6 +10059,8 @@ int main(int argc, char** argv)
 						if (pm.obcapi) { if (pm.tage) pm.korrigierecapi(pm.tage,9); } // 					if (pm.obcapi)
 						if (pm.obhyla) { if (pm.tage) pm.korrigierehyla(pm.tage,10);} // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
 					}
+					// 2. warte auf korrigierecapi und korrigierehyla
+					wartaufpids(&pidw);
 					_exit(0);
 				} else if (pid<0) {
 					Log(rots+Tx[T_Gabelung_zu_wegfaxen_misslungen]+schwarz);
@@ -10084,13 +10091,8 @@ int main(int argc, char** argv)
 	// damit das Endeprompt nicht vorprescht
 	//// <<violett<<", pidv.size(): "<<pidv.size()<<schwarz<<endl;
 	//// for(size_t j=0;j<pids.size();j++) { //<<gruen<<j<<violett<<", pids[j]: "<<pids[j]<<schwarz<<endl; }
-	while (pidv.size()) {
-		for(size_t i=0;i<pidv.size();i++) {
-			int status;
-			pid_t erg=waitpid(pidv[i],&status,WNOHANG);
-			if (erg>0) pidv.erase(pidv.begin()+i);
-		}
-	}
+	// warte auf empfarch, faxealle usw.
+	wartaufpids(&pidv);
 	Log(violetts+Txk[T_Ende]+schwarz,pm.obverb,pm.oblog);
 	return 0;
 } // int main(int argc, char** argv) 

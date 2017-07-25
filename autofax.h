@@ -32,6 +32,7 @@ void kuerzevtz(string *vzp);
 void pruefrules(int obverb, int oblog);
 void pruefblack(int obverb, int oblog);
 void pruefmodcron(int obverb, int oblog);
+void wartaufpids(vector<pid_t> *pidv);
 void viadd(string *cmd,const string& datei,const uchar ro=0,const uchar hinten=0, const uchar unten=0);
 
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster
