@@ -591,7 +591,7 @@ enum T_
 	T_Installationsverzeichnis,
 	T_Ergebnis_nach_make,
 	T_Ergebnis_nach_make_install,
-	T_loef_k,
+	T_loef,
 	T_uml_k,
 	T_loeschefax_l,
 	T_umleiten_l,
@@ -736,7 +736,7 @@ enum T_
 	T_Ihre_Python3_Version_koennte_mit,
 	T_veraltet_sein_Wenn_Sie_Ihre_Faxe_OCR_unterziehen_wollen_dann_fuehren_Sie_bitte_ein_Systemupdate_durch_mit,
 	T_Fehler_zu_faxende_Datei,
-	T_nicht_gefunden_Eintrag_ggf_loeschen_mit_autofax_loew,
+	T_nicht_gefunden_Eintrag_ggf_loeschen_mit_,
 	T_zu_loeschen,
 	T_Aus,
 	T_Fehler_beim_Analysieren_des_Musters,
@@ -1846,7 +1846,7 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Ergebnis nach make","Result of make"},
 	// T_Ergebnis_nach_make_install
 	{"Ergebnis nach make install","result after make install"},
-	// T_loef_k
+	// T_loef
 	{"loef","delf"},
 	// T_uml_k
 	{"uml","red"},
@@ -2137,8 +2137,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 		" and could be obsolete. If You want to treat Your faxes with OCR, please update Your system with "},
 	// T_Fehler_zu_faxende_Datei
 	{"Fehler: zu faxende Datei '","Error: scheduled fax file '"},
-	// T_nicht_gefunden_Eintrag_ggf_loeschen_mit_autofax_loew
-	{"' nicht gefunden. Eintrag ggf. loeschen mit 'autofax -loew'","' not found. Optionally delete entry with 'autofax -delo"},
+	// T_nicht_gefunden_Eintrag_ggf_loeschen_mit_
+	{"' nicht gefunden.\n Eintrag ggf. loeschen mit '","' not found.\n Optionally delete entry with '"},
 	// T_zu_loeschen
 	{" zu loeschen: ",": "},
 	// T_Aus
@@ -3412,7 +3412,7 @@ int paramcl::getcommandline()
 	opts.push_back(/*4*/optioncl(T_sqlv_k,T_sql_verbose_l, &Tx, T_Bildschirmausgabe_mit_SQL_Befehlen,1,&ZDB,1));
 	opts.push_back(/*4*/optioncl(T_rf_k,T_rueckfragen_l, &Tx, T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigten,1,&rzf,1));
 	opts.push_back(/*4*/optioncl(T_krf_k,T_keinerueckfragen_l, &Tx, T_keine_Rueckfragen_zB_aus_Cron,1,&nrzf,1));
-	opts.push_back(/*4a*/optioncl(T_loef_k,T_loeschefax_l, &Tx, T_ein_Fax_nach_Rueckfrage_loeschen,1,&loef,1));
+	opts.push_back(/*4a*/optioncl(T_loef,T_loeschefax_l, &Tx, T_ein_Fax_nach_Rueckfrage_loeschen,1,&loef,1));
 	opts.push_back(/*6*/optioncl(T_loew,T_loeschewaise_l, &Tx, T_Eintraege_aus, 1, &spooltab, 
 				T_loeschen_zu_denen_kein_Datei_im_Wartevz_und_kein_Capi_oder_Hylafax_nachweisbar_ist, &loew,1));
 	opts.push_back(/*4*/optioncl(T_loea_k,T_loescheallew_l, &Tx, T_alle_wartenden_Faxe_und_zugehoerige_Eintraege_aus, 1, &spooltab, T_loeschen, &loea,1));
@@ -5045,7 +5045,13 @@ int paramcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 						uchar hyla_uverz_nr=1;
 						/*fsfav[nr].*/setzhylastat(&fsfav[nr], &hyla_uverz_nr, 0, 0, 0); // hyla_uverz_nr, obsfehlt
 						Log(violetts+"capistat: "+schwarz+FxStatS(&fsfav[nr].capistat)+violett+", hylastat: "+schwarz+FxStatS(&fsfav[nr].hylastat));
-						if ((!zdng || (fsfav[nr].capistat==fehlend && fsfav[nr].hylastat==fehlend)) && !fsfav[nr].id.empty()) {
+						////<<"zdng: "<<zdng<<endl;
+						////<<"fsfav[nr].capistat: "<<(int)fsfav[nr].capistat<<", fehlend: "<<(int)fehlend<<endl;
+						////<<"fsfav[nr].hylastat: "<<(int)fsfav[nr].hylastat<<", fehlend: "<<(int)fehlend<<endl;
+            ////<<"fsfav[nr].id.empty(): "<<fsfav[nr].id.empty()<<endl;
+						if ((!zdng || ((fsfav[nr].capistat==fehlend||fsfav[nr].capistat==init) && 
+						               (fsfav[nr].hylastat==fehlend||fsfav[nr].hylastat==init))) && !fsfav[nr].id.empty()) {
+						  ////<<rot<<"loesche!!!!!!!"<<endl;
 							RS loe(My,"DELETE FROM `"+spooltab+"` WHERE id="+fsfav[nr].id,aktc,-obverb);
 						}
 					} // if (aktion) else
@@ -5091,13 +5097,14 @@ size_t paramcl::loeschewaise()
 			struct stat entryo={0};
 			//// <<"Überprüfe: "<<gruen<<wvz+vtz+*(*cerg+0)<<schwarz<<endl;
 			if (!lstat((wvz+vtz+*(*cerg+0)).c_str(),&entryo)) continue; // Wenn es die Datei im Warteverzeichnis gibt
-			//// <<"'"<<*(*cerg+1)<<"'"<<endl;
 			//// <<"Capispooldatei: "<<gruen<<cfaxusersqvz+vtz+*(*cerg+1)<<schwarz<<endl;
-			if (*(*cerg+1)) if (**(*cerg+1)) 
+			if (*(*cerg+1)) if (**(*cerg+1)) {
 				if (!lstat((cfaxusersqvz+vtz+*(*cerg+1)).c_str(),&entryo)) continue; // wenn eine Capispooldatei drinsteht und es sie gibt
+			}
 			//// <<"hsendqvz: "<<gruen<<hsendqvz+"/q"+*(*cerg+2)<<schwarz<<endl;
-			if (*(*cerg+2)) if (**(*cerg+2)) if (memcmp("0",*(*cerg+2),2)) // hylanr hat in der Datenbank Vorgabewert 0
+			if (*(*cerg+2)) if (**(*cerg+2)) if (memcmp("0",*(*cerg+2),2)) { // hylanr hat in der Datenbank Vorgabewert 0
 				if (!lstat((hsendqvz+"/q"+*(*cerg+2)).c_str(),&entryo)) continue; // wenn eine Hylaspooldatei drinsteht und es sie gibt
+			}
 			if (*(*cerg+3)) {
 				::Log(rots+Tx[T_Aus]+"'"+blau+spooltab+rot+"'"+Tx[T_zu_loeschen]+schwarz+"'"+blau+*(*cerg+0)+schwarz+"', id: "+blau+*(*cerg+3)+schwarz,1,1);
 				ids.push_back(*(*cerg+3));
@@ -6091,8 +6098,10 @@ void paramcl::wegfaxen()
 						" ."+Tx[T_obhylamitDoppelpunkt]+blau+(fsfv[i].fobhyla?Tx[T_ja]:Tx[T_nein])+schwarz);
 				const string ff=wvz+vtz+fsfv[i].spdf;
 				struct stat st={0};
-				if (lstat(ff.c_str(),&st)) {
-					::Log(Tx[T_Fehler_zu_faxende_Datei]+rots+ff+schwarz+Tx[T_nicht_gefunden_Eintrag_ggf_loeschen_mit_autofax_loew],1,oblog);
+				if (/*wasichbin==1 einmal reicht hier schon &&*/ lstat(ff.c_str(),&st)) {
+					::Log(Tx[T_Fehler_zu_faxende_Datei]+rots+ff+schwarz+Tx[T_nicht_gefunden_Eintrag_ggf_loeschen_mit_]+
+				   blau+base_name(aktprogverz())+" -"+Tx[T_loew]+schwarz+"' bzw. '"+blau+base_name(aktprogverz())+" -"+Tx[T_loef]+schwarz+"'"
+					,1,oblog);
 				} else {
 					if (wasichbin==1) if (fsfv[i].fobcapi) if (obcapi) faxemitC(My, spooltab, altspool, &fsfv[i],this,ff,obverb,oblog);  
 					if (wasichbin==2) if (fsfv[i].fobhyla) if (obhyla) faxemitH(My, spooltab, altspool, &fsfv[i],this,ff,obverb,oblog);  
@@ -10120,3 +10129,6 @@ int main(int argc, char** argv)
 // cd OCRmyPDF
 // pip3 install ocrmypdf
  */
+ // warteauffax aufraeumen
+ // gefaxt aufraeumen
+ // senden und empfangen aufeinander warten
