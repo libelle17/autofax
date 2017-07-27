@@ -855,7 +855,7 @@ das Warteverzeichnis, z.B. &rsquo;<b>warteauffax</b>&rsquo;
 verschoben und in die Spooltabelle <b>spooltab</b>
 eingetragen. <br>
 Faxe, die in &rsquo;<b>zufaxen/2200</b>&rsquo;
-bereitgestellten, werden ab 22:00 Uhr bearbeitet. <br>
+bereitgestellt werden, werden ab 22:00 Uhr bearbeitet. <br>
 Bei jedem Aufruf &uuml;berpr&uuml;ft autofax den
 Status von <b>hylafax</b> und/oder <b>Capisuite</b>. Der
 Abschluss eines Faxvorgangs dort hat zur Folge, dass autofax
