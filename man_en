@@ -52,7 +52,7 @@ Those are subsequently being relayed to \fBhylafax\fR or \fBCapisuite\fR and fro
 .br
 Simultaneously they are being moved from '\fBtobefaxed\fR' to the waiting directory, e.g. '\fBwaitingfaxes\fR' and recorded in the spool table \fBspooltab\fR.
 .br
-Faxes which are placed in the directory '\fBtobefaxed/2200\fR' will be handled starting at 10 p.m..
+Faxes which are placed in the directory '\fBtobefaxed/2200\fR' will be handled starting at 10 p.m., if autofax is running.
 .br
 At each call, ²DPROG² checks the status of \fBhylafax\fR and/or \fBCapisuite\fR. The Finishing of a fax process there causes ²DPROG² to move the source files (here the above mentioned .doc- and .pdf-files) from the waiting directory to one or several archive directories or a directory for failed faxes and to move their database record from  '\fBspooltab\fR' to the archive table '\fBouta\fR'.
 .br
@@ -214,7 +214,7 @@ b) with the command '\fBstty -F\fR' for a fax modem.
 .LP
 7) Directories used by the users for fax files to be sent, for waiting faxes, for fax files already sent, for failed faxes and for received faxes are being checked and created if needed. Thereby user defined file name patterns can be respected to store successfully sent faxes in different directories. 
 .LP
-8) The program inserts itsself if wanted and necessary in root's \fBcrontab\fR in order to be called in adjustable intervals. To avoid this, either '\fBcronminut\fR' can be set to \fB0\fR, or the already generated ²DPROG² entry can be commented out with a leading '\fB#\fR'.
+8) The program inserts itsself if wanted and necessary in root's \fBcrontab\fR in order to be called in adjustable intervals. To avoid this, either '\fBcronminut\fR' can be set to \fB0\fR, or the already generated ²DPROG² entries can be commented out with a leading '\fB#\fR'.
 .LP
 9) The program checks if all user-relevant directories (see 7) are being included in samba shares in \fB/etc/samba/smb.conf\fR; such are being added if needed.
 .LP

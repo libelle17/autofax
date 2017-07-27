@@ -129,7 +129,7 @@ e.g. &rsquo;<b>waitingfaxes</b>&rsquo; and recorded in the
 spool table <b>spooltab</b>. <br>
 Faxes which are placed in the directory
 &rsquo;<b>tobefaxed/2200</b>&rsquo; will be handled starting
-at 10 p.m.. <br>
+at 10 p.m., if autofax is running. <br>
 At each call, autofax checks the status of <b>hylafax</b>
 and/or <b>Capisuite</b>. The Finishing of a fax process
 there causes autofax to move the source files (here the
@@ -363,7 +363,7 @@ inserts itsself if wanted and necessary in root&rsquo;s
 <b>crontab</b> in order to be called in adjustable
 intervals. To avoid this, either
 &rsquo;<b>cronminut</b>&rsquo; can be set to <b>0</b>, or
-the already generated autofax entry can be commented out
+the already generated autofax entries can be commented out
 with a leading &rsquo;<b>#</b>&rsquo;.</p>
 
 <p style="margin-left:11%; margin-top: 1em">9) The program
@@ -855,7 +855,8 @@ das Warteverzeichnis, z.B. &rsquo;<b>warteauffax</b>&rsquo;
 verschoben und in die Spooltabelle <b>spooltab</b>
 eingetragen. <br>
 Faxe, die in &rsquo;<b>zufaxen/2200</b>&rsquo;
-bereitgestellt werden, werden ab 22:00 Uhr bearbeitet. <br>
+bereitgestellt werden, werden ab 22:00 Uhr bearbeitet, wenn
+autofax l&auml;uft. <br>
 Bei jedem Aufruf &uuml;berpr&uuml;ft autofax den
 Status von <b>hylafax</b> und/oder <b>Capisuite</b>. Der
 Abschluss eines Faxvorgangs dort hat zur Folge, dass autofax
@@ -1106,8 +1107,8 @@ tr&auml;gt sich ggf. in <b>crontab</b> (des Benutzers
 root) ein, um auf Wunsch in (einstellbaren)
 Abst&auml;nden aufgerufen zu werden. Um dies zu
 verhindern, kann entweder &rsquo;<b>cronminut</b>&rsquo; auf
-<b>0</b> eingestellt werden oder der bereits erstellte
-autofax-Eintrag mit <b>crontab -e</b> mit einem
+<b>0</b> eingestellt werden oder die bereits erstellten
+autofax-Eintr&auml;ge mit <b>crontab -e</b> mit einem
 vorangestellten &rsquo;<b>#</b>&rsquo; auskommentiert
 werden.</p>
 
