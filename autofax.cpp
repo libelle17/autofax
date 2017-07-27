@@ -750,6 +750,7 @@ enum T_
 	T_Gabelung_zu_wegfaxen_misslungen,
 	T_Fehler_in_pruefhyla,
 	T_Fehler_in_commandline,
+	T_um_22_Uhr,
 	T_MAX
 };
 
@@ -2165,6 +2166,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Fehler in pruefhyla()!","Error in checkhyla()!"},
 	// T_Fehler_in_commandline
 	{"Fehler in commandline()","Error in commandline()"},
+	// T_um_22_Uhr
+	{"um 22 Uhr","at 10 p.m."},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -2173,6 +2176,7 @@ class TxB Tx((const char* const* const* const*)DPROG_T);
 const string& pk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax"; // fuer Antlitzaenderung
 
 extern class lsyscl lsys;
+extern class cuscl cus;
 
 using namespace std;
 #ifdef mitpostgres 
@@ -2194,6 +2198,7 @@ const unsigned ltage=73000; // langes Intervall fuer Faxtabellenkorrektur, 200 J
 constexpr const char *paramcl::moeglhvz[2];
 // wird nur in VorgbSpeziell gebraucht:
 
+// aufgerufen in faxemitH, pruefhyla
 void useruucp(const string& huser, const int obverb, const int oblog)
 {
 	if (systemrueck("sudo getent passwd "+huser,obverb,oblog)) {
@@ -2416,9 +2421,11 @@ paramcl::paramcl(const int argc, const char *const *const argv)
 	mpfad=meinpfad();
 	meinname=base_name(mpfad); // argv[0];
 	pruefinstv();
-	vaufr=mpfad+" -noia >/dev/null 2>&1"; // /usr/bin/<DPROG> -noia
-	saufr=base_name(vaufr); // <DPROG> -noia
-	zsaufr=ersetzAllezu(saufr,"/","\\/");
+	vaufr[0]=mpfad+" -noia >/dev/null 2>&1"; // /usr/bin/<DPROG> -noia
+	saufr[0]=base_name(vaufr[0]); // <DPROG> -noia
+	zsaufr[0]=ersetzAllezu(saufr[0],"/","\\/");
+	saufr[1]=s1+".*"+ersetzAllezu(s2,"*","\\*")+".*";//Befehl zum Abfragen der Cronminuten aus aktuellem Cron-Script
+	zsaufr[1]=ersetzAllezu(saufr[1],"/","\\/");
 	/*// time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff; */
 	tstart=clock();
 	langu=holsystemsprache(obverb);
@@ -2734,7 +2741,7 @@ void paramcl::pruefmodem()
 			// ttyS0 erscheint auf Opensuse und Ubuntu konfiguriert, auch wenn kein Modem da ist
 			if (tty!="ttyS0") {
 				int terg;
-				if (strcmp(curruser(),"root")) {
+				if (cus.cuid) {
 					svec rue2;
 					vector<errmsgcl> errv;
 					const string f0=schwarzs+"Modem "+blau+tty+schwarz+Tx[T_gibts];
@@ -2744,7 +2751,7 @@ void paramcl::pruefmodem()
 					terg=!systemrueck("sudo stty -F /dev/"+tty+" time 10",obverb,oblog,&rue2,2,wahr,"",&errv);
 				} else {
 					terg=ttytest(tty);
-				} // 				if (curruser()=="root") else
+				} // 				if (curruser()!="root") else
 				if (terg) {
 					obmodem=1;
 					modems<<tty;
@@ -2934,11 +2941,11 @@ int paramcl::setzhylavz()
 	} // if (obverb)
 	kuerzevtz(&varsphylavz);
 	hsendqvz=varsphylavz+"/sendq";
-	pruefverz(hsendqvz,obverb,oblog);
+	pruefverz(hsendqvz,obverb,oblog,1,1,huser,cuser);
 	hdoneqvz=varsphylavz+"/doneq";
-	pruefverz(hdoneqvz,obverb,oblog);
+	pruefverz(hdoneqvz,obverb,oblog,1,1,huser,cuser);
 	harchivevz=varsphylavz+"/archive";
-	pruefverz(harchivevz,obverb,oblog);
+	pruefverz(harchivevz,obverb,oblog,1,1,huser,cuser);
 	xferfaxlog=varsphylavz+"/etc/xferfaxlog"; 
 	hempfavz=varsphylavz+"/" DPROG "arch";
 	return 0;
@@ -2988,7 +2995,7 @@ void paramcl::liescapiconf()
 	cfcnfA.init(10,"spool_dir","fax_user_dir","send_tries","send_delays","outgoing_MSN",
 			"dial_prefix","fax_stationID","fax_headline","fax_email_from","outgoing_timeout");
 	if (!cfaxconfdt.empty()) {
-		pruefverz(dir_name(cfaxconfdt),obverb,oblog,0);
+		pruefverz(dir_name(cfaxconfdt),obverb,oblog);
 		static confdat cfaxcd(cfaxconfdt,&cfcnfA,obverb);
 		cfaxcdtp=&cfaxcd;
 		cfaxcdtp->Abschn_auswert(obverb);
@@ -3014,9 +3021,8 @@ void paramcl::liescapiconf()
 		if (cuser.empty()) 
 			cuser=ncuser;
 		if (cuser.empty()) {
-			const string benutzer=curruser();
-			if (benutzer!="root")
-				cuser=benutzer;
+			if (cus.cuid)
+				cuser=cus.cusstr;
 			hylazuerst=1;
 		} //     if (cuser.empty())
 	} //   if (!cfaxconfdt.empty())
@@ -3121,12 +3127,12 @@ void paramcl::pruefcvz()
 	//// <<rot<<"cfaxuservz in pruefcvz: "<<cfaxuservz<<schwarz<<endl;
 	Log(violetts+Tx[T_pruefcvz]+schwarz+"ccfaxuservz: "+violett+cfaxuservz+schwarz);
 	kuerzevtz(&cfaxuservz);
-	pruefverz(cfaxuservz,obverb,oblog);
+	pruefverz(cfaxuservz,obverb,oblog,1,1,nix,cuser);
 	cfaxusersqvz=cfaxuservz+vtz+cuser+"/sendq"; //  "/var/spool/capisuite/users/<user>/sendq";
-	pruefverz(cfaxusersqvz,obverb,oblog);
+	pruefverz(cfaxusersqvz,obverb,oblog,1,1,nix,cuser);
 	cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
 	//// <<violett<<"cfaxuserrcvz: "<<cfaxuserrcvz<<schwarz<<endl;
-	pruefverz(cfaxuserrcvz,obverb,oblog);
+	pruefverz(cfaxuserrcvz,obverb,oblog,1,1,nix,cuser);
 } // paramcl::pruefcvz
 
 // wird aufgerufen in lieskonfein
@@ -4222,7 +4228,7 @@ void paramcl::nextnum()
 		} // if (nextstr.is_open()) 
 	} // if (!lstat(cfaxusersqvz.c_str(),&entrynextnr))
 	if (!nextnr) {
-		pruefverz(cfaxuservz,obverb,oblog,2);
+		pruefverz(cfaxuservz,obverb,oblog,2,1,nix,cuser);
 		setfaclggf(spoolcapivz,obverb,oblog,wahr,7,wahr);
 		if (findv==1) {
 			cmd=" sudo echo $(( `find "+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
@@ -4254,12 +4260,13 @@ void paramcl::verzeichnisse()
 {
 	Log(violetts+Tx[T_verzeichnisse]);
 	pruefcvz(); 
-	pruefverz(zufaxenvz,obverb,oblog,2); // dahin soll man schreiben koennen
-	pruefverz(wvz,obverb,oblog);
-	pruefverz(nvz,obverb,oblog);
-	pruefverz(empfvz,obverb,oblog);
+	pruefverz(zufaxenvz,obverb,oblog,2,1,cuser,nix); // dahin soll man schreiben koennen
+	pruefverz(zufaxenvz+"/2200",obverb,oblog,0,0,cuser,nix); // dahin soll man schreiben koennen
+	pruefverz(wvz,obverb,oblog,1,1,cuser,nix);
+	pruefverz(nvz,obverb,oblog,1,1,cuser,nix);
+	pruefverz(empfvz,obverb,oblog,1,1,cuser,nix);
 	for(zielmustercl *zmakt=zmp;1;zmakt++){
-		pruefverz(zmakt->ziel,obverb,oblog);
+		pruefverz(zmakt->ziel,obverb,oblog,1,1,cuser,nix);
 		if (zmakt->obmusterleer()) break;
 	} //   for(zielmustercl *zmakt=zmp;1;zmakt++)
 	for(uint imu=0;imu<this->zmzn;imu++) {
@@ -4278,14 +4285,37 @@ void paramcl::setztmpcron()
 	} //   if (tmpcron.empty())
 } // void setztmpcron()
 
+// wird aufgerufen in pruefcron (2x)
+void paramcl::tucronschreib(const string& zsauf,const uchar nochkeincron,const uchar cronzuplanen,const string& cbef)
+{
+	string unicmd="rm -f "+tmpcron+";";
+	string cmd=unicmd;
+	string dazu="crontab -l|sed '\\''/"+zsauf+"/d'\\''>"+tmpcron+";";
+	unicmd+=dazu;	
+	if (!nochkeincron) {
+		// cmd=dazu; // 26.2.17: Debian: nach Deinstallation rootscrontab mit root-Berechtigungen, die Programm hier aufhielten
+		cmd=unicmd;
+	}
+	if (cronzuplanen) {
+		cmd+=" echo \""+cbef+"\">>"+tmpcron+";";
+	}
+	dazu=" crontab "+tmpcron+";";
+	unicmd+=dazu;
+	cmd+=dazu;
+	const string bef="sudo sh -c '"+cmd+"'";
+	systemrueck(bef,obverb,oblog);
+	ersetzAlle(unicmd,"'\\''","'");
+	anfgg(unindt,unicmd,bef,obverb,oblog);
+}
 
 // wird aufgerufen in: main
 void paramcl::pruefcron()
 {
+	uchar obschreib=0;
 	//  svec rueck;
 	int cronda=0;
-	int cronzuplanen = (cronminut!="0");
-	Log(violetts+Tx[T_pruefcron]+schwarz+Tx[T_cronzuplanen]+violetts+ltoan(cronzuplanen)+schwarz);
+	uchar cronzuplanen=(cronminut!="0");
+	Log(violetts+Tx[T_pruefcron]+schwarz+Tx[T_cronzuplanen]+violetts+(cronzuplanen?"1":"0")+schwarz);
 	for (uchar runde=0;runde<2;runde++) {
 		cronda=obprogda("crontab",obverb-1,0);
 		if (cronda) break;
@@ -4295,11 +4325,12 @@ void paramcl::pruefcron()
 		////  int obionice=!systemrueck("which ionice > /dev/null 2>&1",0,0);
 	} //   for (uchar runde=0;runde<2;runde++) 
 	if (cronda) {
-		int nochkeincron = systemrueck("sudo crontab -l",obverb-1,0,0,2);
+		////		string vorcm; // Vor-Cron-Minuten
+		uchar nochkeincron = systemrueck("sudo crontab -l",obverb-1,0,0,2);
 		setztmpcron();
 		const string vorsaetze=" /usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 ";
-		const string cabfr = vorsaetze+".*"+saufr;// "date >/home/schade/zeit"; // Befehl zum Abfragen der Cronminuten aus aktuellem Cron-Script
-		const string cbef  =string("*/")+cronminut+" * * * *"+vorsaetze+vaufr; // "-"-Zeichen nur als cron
+		const string cabfr=vorsaetze+".*"+saufr[0];// "date >/home/schade/zeit"; // Befehl zum Abfragen der Cronminuten aus aktuellem Cron-Script
+		const string cbef=string("*/")+cronminut+" * * * *"+vorsaetze+vaufr[0]; // "-"-Zeichen nur als cron
 		const string czt=" \\* \\* \\* \\*";
 		////		string vorcm; // Vor-Cron-Minuten
 		if (!nochkeincron) {
@@ -4312,29 +4343,23 @@ void paramcl::pruefcron()
 			if (obverb) ::Log(Tx[T_Kein_cron_gesetzt_nicht_zu_setzen],1,oblog);
 		} else {
 			if (cronminut==vorcm) {
-				if (cmeingegeben) ::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+Tx[T_unveraendert]+
+				if (cmeingegeben) ::Log(blaus+"'"+saufr[0]+"'"+schwarz+Tx[T_wird]+Tx[T_unveraendert]+
 						+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
 			} else {
-				string unicmd="rm -f "+tmpcron+";";
-				cmd=unicmd;
-				string dazu="crontab -l|sed '\\''/"+zsaufr+"/d'\\''>"+tmpcron+";";
-				unicmd+=dazu;	
-				if (!nochkeincron) {
-					// cmd=dazu; // 26.2.17: Debian: nach Deinstallation rootscrontab mit root-Berechtigungen, die Programm hier aufhielten
-					cmd=unicmd;
-				}
-				if (cronzuplanen) {
-					cmd+=" echo \""+cbef+"\">>"+tmpcron+";";
-				}
-				dazu=" crontab "+tmpcron+";";
-				unicmd+=dazu;
-				cmd+=dazu;
-				const string bef="sudo sh -c '"+cmd+"'";
-				systemrueck(bef,obverb,oblog);
-				ersetzAlle(unicmd,"'\\''","'");
-				anfgg(unindt,unicmd,bef,obverb,oblog);
+				obschreib=1;
+				if (obschreib) {
+					// 2. um 22 Uhr vorgeplante Dateien faxen
+					vaufr[1]=s1+zufaxenvz+s2+zufaxenvz+vtz+" 2>/dev/null";
+					const string vorsaetze="";
+					const string cbef="0 22 * * * "+vorsaetze+vaufr[1]; // "-"-Zeichen nur als cron
+					tucronschreib(zsaufr[1],nochkeincron,cronzuplanen,cbef);
+					if (cmeingegeben) if (cronzuplanen==vorcm.empty())
+						::Log(blaus+"'"+vaufr[1]+"'"+schwarz+Tx[T_wird]+blau+(cronzuplanen?Tx[T_um_22_Uhr]:Tx[T_gar_nicht])+schwarz+Tx[T_statt]+
+								+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_um_22_Uhr])+schwarz+Tx[T_aufgerufen],1,oblog);
+				} // 				if (cronminut==vorcm) else
+				tucronschreib(zsaufr[0],nochkeincron,cronzuplanen,cbef);
 				if (cmeingegeben)
-					::Log(blaus+"'"+saufr+"'"+schwarz+Tx[T_wird]+blau+(cronzuplanen?Tx[T_alle]+cronminut+Tx[T_Minuten]:Tx[T_gar_nicht])+schwarz+Tx[T_statt]+
+					::Log(blaus+"'"+saufr[0]+"'"+schwarz+Tx[T_wird]+blau+(cronzuplanen?Tx[T_alle]+cronminut+Tx[T_Minuten]:Tx[T_gar_nicht])+schwarz+Tx[T_statt]+
 							+blau+(vorcm.empty()?Tx[T_gar_nicht]:Tx[T_alle]+vorcm+Tx[T_Minuten])+schwarz+Tx[T_aufgerufen],1,oblog);
 			} // 				if (cronminut==vorcm) else
 		} // 		if (vorcm.empty() && cronminut=="0")
@@ -4345,14 +4370,14 @@ void paramcl::pruefcron()
 		if (!cronzuplanen) {
 			if (nochkeincron) {
 			} else {
-				befehl="sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";"
+				befehl="sudo bash -c 'grep \""+saufr[0]+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";"
 					"crontab "+tmpcron+";}||true'";
 			}
 		} else {
 			if (nochkeincron) {
 				befehl="rm -f "+tmpcron+";";
 			} else {
-				befehl="sudo bash -c 'grep \"\\*/"+cronminut+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";";
+				befehl="sudo bash -c 'grep \"\\*/"+cronminut+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l|sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";";
 			}
 			befehl+="echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+"";
 			if (!nochkeincron)
@@ -4361,16 +4386,17 @@ void paramcl::pruefcron()
 #else
 		const string befehl=cronzuplanen?
 			(nochkeincron?"rm -f "+tmpcron+";":
-			 "sudo bash -c 'grep \"\\*/"+cronminut+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+"; ")+
+			 "sudo bash -c 'grep \"\\*/"+cronminut+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr[0]+"/d\">"+tmpcron+"; ")+
 			"echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+(nochkeincron?"":";}'")
 			:
-			(nochkeincron?"":"sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l | sed \"/"+zsaufr+"/d\">"+tmpcron+";"
+			(nochkeincron?"":"sudo bash -c 'grep \""+saufr[0]+"\" -q <(crontab -l)&&{ crontab -l | sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";"
 			 "sudo crontab "+tmpcron+";}||true'")
 			;
 #endif      
 		systemrueck(befehl,obverb,oblog);
 #endif
 	} //   if (cronda) 
+
 	//  systemrueck(string("mv -i '")+mpfad+"' /root/bin",1,0);
 } // pruefcron
 
@@ -4407,7 +4433,7 @@ void paramcl::pruefsamba()
 			struct stat sstat={0};
 			if (!(conffehlt=lstat(smbdt,&sstat))) break;
 			if (iru) break;
-			pruefverz("/etc/samba",obverb,oblog,0,0);
+			pruefverz("/etc/samba",obverb,oblog);
 			kopier(quelle,smbdt,obverb,oblog);
 		} //   for(uchar iru=0;iru<2;iru++)
 		if (smb.obsvfeh(obverb-1,oblog)) if (smbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
@@ -4932,8 +4958,11 @@ void paramcl::anhalten()
 	Log(violetts+Tx[T_anhalten]+schwarz);
 	// crontab
 	setztmpcron();
-	const string befehl="sudo bash -c 'grep \""+saufr+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr+"/d\">"+tmpcron+";crontab "+tmpcron+";};true'";
-	systemrueck(befehl,obverb,oblog);
+	for(int iru=0;iru<2;iru++) {
+		const string befehl=
+			"sudo bash -c 'grep \""+saufr[iru]+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr[iru]+"/d\">"+tmpcron+";crontab "+tmpcron+";};:'";
+		systemrueck(befehl,obverb,oblog);
+	}
 	::Log(blaus+Tx[T_Cron_Aufruf_von]+schwarz+mpfad+blau+Tx[T_gestoppt]+schwarz,1,oblog);
 	// services
 	//// befehl="sudo systemctl stop capisuite hylafax-faxq hylafax-hfaxd hylafax-faxgetty-"+hmodem+" hylafax >/dev/null 2>&1; true";
@@ -6100,9 +6129,9 @@ void paramcl::wegfaxen()
 				const string ff=wvz+vtz+fsfv[i].spdf;
 				struct stat st={0};
 				if (/*wasichbin==1 einmal reicht hier schon &&*/ lstat(ff.c_str(),&st)) {
-					::Log(Tx[T_Fehler_zu_faxende_Datei]+rots+ff+schwarz+Tx[T_nicht_gefunden_Eintrag_ggf_loeschen_mit_]+
-				   blau+base_name(aktprogverz())+" -"+Tx[T_loew]+schwarz+"' bzw. '"+blau+base_name(aktprogverz())+" -"+Tx[T_loef]+schwarz+"'"
-					,1,oblog);
+					::Log(rots+(wasichbin==1?"Capi: ":"Hyla: ")+schwarz+Tx[T_Fehler_zu_faxende_Datei]+rots+ff+schwarz+
+					  Tx[T_nicht_gefunden_Eintrag_ggf_loeschen_mit_]+blau+base_name(aktprogverz())+" -"+Tx[T_loew]+schwarz+
+						"' bzw. '"+blau+base_name(aktprogverz())+" -"+Tx[T_loef]+schwarz+"'",1,oblog);
 				} else {
 					if (wasichbin==1) if (fsfv[i].fobcapi) if (obcapi) faxemitC(My, spooltab, altspool, &fsfv[i],this,ff,obverb,oblog);  
 					if (wasichbin==2) if (fsfv[i].fobhyla) if (obhyla) faxemitH(My, spooltab, altspool, &fsfv[i],this,ff,obverb,oblog);  
@@ -6495,7 +6524,7 @@ void paramcl::bereinigecapi(const size_t aktc)
 			} else {
 				// 31.1.16: ... und wenn diese sich nicht in outa findet ...
 				const string waisen = cfaxusersqvz+"/waisen";
-				pruefverz(waisen,obverb,oblog);
+				pruefverz(waisen,obverb,oblog,1,1,nix,cuser);
 				uint vfehler=0;
 				verschiebe(qrueck[i],waisen,cuser,&vfehler,1,obverb,oblog);
 			} // if (inouta.num_rows) else 
@@ -6988,7 +7017,7 @@ void paramcl::empfhyla(const string& ganz,const size_t aktc, uchar indb/*=1*/,uc
 			//// cmd=string("sudo mv \"")+ganz+"\" \""+hempfavz+"\""; systemrueck(cmd,obverb,oblog);
 			static uchar hempfgeprueft=0;
 			if (!hempfgeprueft) {
-				pruefverz(hempfavz,obverb,oblog);
+				pruefverz(hempfavz,obverb,oblog,1,1,huser,cuser);
 				hempfgeprueft=1;
 			} // 			if (!hempfgeprueft)
 			dorename(ganz,hempfavz,cuser,0,obverb,oblog);
@@ -7130,7 +7159,7 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,uchar indb/*=1*/,uc
 			const string falsche = cfaxuserrcvz+"/falsche";
 			static uchar falschegeprueft=0;
 			if (!falschegeprueft) {
-				pruefverz(falsche,obverb,oblog);
+				pruefverz(falsche,obverb,oblog,1,1,nix,cuser);
 				falschegeprueft=1;
 			} // 			if (!falschegeprueft)
 			verschiebe(ctxdt,falsche,cuser,&vfehler,1,obverb,oblog);
@@ -7144,7 +7173,7 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,uchar indb/*=1*/,uc
 		} else {
 			static uchar cempfavzgeprueft=0;
 			if (!cempfavzgeprueft) {
-				pruefverz(cempfavz,obverb,oblog);
+				pruefverz(cempfavz,obverb,oblog,1,1,nix,cuser);
 				cempfavzgeprueft=1;
 			} // 			if (!cempfavzgeprueft)
 			dorename(sffdatei,cempfavz+vtz+cuser+"-"+base+".sff",cuser,&vfehler,obverb,oblog);
@@ -7686,7 +7715,7 @@ int paramcl::cservice()
 			svec qrueck;
 			findfile(&qrueck,findv,obverb,oblog,0,vz,datei+"$",1,1,Fol_Dat);
 			if (qrueck.size()) {
-				pruefverz(ziel,obverb,oblog);
+				pruefverz(ziel,obverb,oblog,1,1,nix,cuser);
 				systemrueck("sudo mv -f "+vz+datei+" "+ziel,obverb,oblog);
 			} // 			if (qrueck.size())
 		} // 		if (findv==1)
@@ -8976,7 +9005,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 			// capisuitefax mit Userangabe nur fuer root erlaubt
 			pmp->nextnum();
 			string csfpfad;
-			const string cmd="capisuitefax -n "+(strcmp("root",curruser())?"":"-u"+pmp->cuser)+" -d "+fsfp->telnr+" \""+ff+"\" 2>&1";
+			const string cmd="capisuitefax -n "+(cus.cuid?"":"-u"+pmp->cuser)+" -d "+fsfp->telnr+" \""+ff+"\" 2>&1";
 			vector<string> faxerg;
 			systemrueck(cmd,1,1,&faxerg,0,wahr,Tx[T_Faxbefehl],0,1);
 			if (faxerg.size()) {
@@ -9693,6 +9722,7 @@ void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, i
 	// wenn in *hyla_uverz_nrp '1' uebergeben wird, nur in sendq suchen
 	// Rueckgabe: 0 = in doneq oder archive gefunden
 	struct stat entryprot={0};
+	fsf->sendqgespfad.clear();
 	if (fsf->hylanr!="0") {
 		svec qrueck;
 		const string wo=hsendqvz+" "+(*hyla_uverz_nrp?"":hdoneqvz+" "+harchivevz);
@@ -9707,14 +9737,14 @@ void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, i
 		} //   if (qrueck.size())
 		if (obverb) {
 			Log(schwarzs+"obsfehlt: "+blau+(obsfehlt?"1":"0")+schwarz+", hyla_uverz_nr: "+blau+(*hyla_uverz_nrp?"1":"0")+schwarz);
-		}
+		} // 		if (obverb)
 		if (obsfehltp) *obsfehltp=obsfehlt;
 		if (!obsfehlt) {
 			if (hylcnfA.zahl==9) {
 				hylcnfA.reset();
 			} else { 
 				hylcnfA.init(10,"state","totdials","status","statuscode","!pdf","tts","number","maxdials","pdf","killtime");
-			}
+			} // 			if (hylcnfA.zahl==9) else
 			confdat hylcd(fsf->hqdt,&hylcnfA,obverb,':');
 			hgelesen=hylcd.obgelesen;
 		} // 	if (!obsfehlt)
@@ -9786,7 +9816,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
 	 */
 	//// wenn eine Protokolldatei auslesbar war
 	//// modemlaeuftnicht=systemrueck(("sudo faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
-	if ((pmp->hgelesen && hylastat!=fehlend)) {
+	if ((pmp->hgelesen && hylastat!=fehlend && hylastat!=init)) {
 		*ausgp<<",";
 		char buf[100]={0};
 		int hversuzahl=atol(hdials.c_str()); // totdials

@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.44257) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4431) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -127,6 +127,9 @@ Simultaneously they are being moved from
 &rsquo;<b>tobefaxed</b>&rsquo; to the waiting directory,
 e.g. &rsquo;<b>waitingfaxes</b>&rsquo; and recorded in the
 spool table <b>spooltab</b>. <br>
+Faxes which are placed in the directory
+&rsquo;<b>tobefaxed/2200</b>&rsquo; will be handled starting
+at 10 p.m.. <br>
 At each call, autofax checks the status of <b>hylafax</b>
 and/or <b>Capisuite</b>. The Finishing of a fax process
 there causes autofax to move the source files (here the
@@ -714,7 +717,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.44257) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4431) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -851,6 +854,8 @@ Gleichzeitig werden sie aus &rsquo;<b>zufaxen</b>&rsquo; in
 das Warteverzeichnis, z.B. &rsquo;<b>warteauffax</b>&rsquo;
 verschoben und in die Spooltabelle <b>spooltab</b>
 eingetragen. <br>
+Faxe, die in &rsquo;<b>zufaxen/2200</b>&rsquo;
+bereitgestellten, werden ab 22:00 Uhr bearbeitet. <br>
 Bei jedem Aufruf &uuml;berpr&uuml;ft autofax den
 Status von <b>hylafax</b> und/oder <b>Capisuite</b>. Der
 Abschluss eines Faxvorgangs dort hat zur Folge, dass autofax

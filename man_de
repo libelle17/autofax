@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "26.07.17" "Version 0.44257" "Manual-Seite für ²DPROG²"
+.TH man 1 "27.07.17" "Version 0.4431" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -53,6 +53,8 @@ Wenn \fB²DPROG²\fR beim nächsten Mal automatisch aufgerufen wird (standardmä
 Diese werden dann automatisch an \fBhylafax\fR oder \fBCapisuite\fR weitergeleitet und von dort aus verschickt.
 .br
 Gleichzeitig werden sie aus '\fBzufaxen\fR' in das Warteverzeichnis, z.B. '\fBwarteauffax\fR' verschoben und in die Spooltabelle \fBspooltab\fR eingetragen.
+.br
+Faxe, die in '\fBzufaxen/2200\fR' bereitgestellten, werden ab 22:00 Uhr bearbeitet.
 .br
 Bei jedem Aufruf überprüft ²DPROG² den Status von \fBhylafax\fR und/oder \fBCapisuite\fR. Der Abschluss eines Faxvorgangs dort hat zur Folge, dass ²DPROG² die Quelldateien (also hier die o.g. .doc- und .pdf-Dateien) aus dem Warteverzeichnis in ein oder mehrere alternative Archivverzeichnisse oder ein Verzeichnis für gescheiteterte Faxe ablegt und den Datenbankeintrag von '\fBspooltab\fR' in die Archivtabelle '\fBouta\fR' verschiebt.
 .br

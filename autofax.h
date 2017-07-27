@@ -154,9 +154,10 @@ class paramcl // Programmparameter
 	  string cl; // comanndline
     string mpfad;  // meinpfad()
     string meinname; // base_name(meinpfad()) // argv[0] // <DPROG>
-    string vaufr; // (vollaufruf) z.B. '/usr/bin/<DPROG> -noia >/dev/null 2>&1'
-    string saufr; // (stummaufruf) '<DPROG> -noia >/dev/null 2>&1'
-		string zsaufr; // zitiert saufr (in sed)
+		const string s1="mv -n ", s2="/2200/* ";
+		string vaufr[2]; // (vollaufruf) z.B. '/usr/bin/<DPROG> -noia >/dev/null 2>&1'
+    string saufr[2]; // (stummaufruf) '<DPROG> -noia >/dev/null 2>&1'
+		string zsaufr[2]; // zitiert saufr (in sed)
     schlArr hylcnfA; // fuer q1234 o.ae.
     uchar hgelesen=0; // Protokolldatei war auslesbar
     static constexpr const char *moeglhvz[2]={"/var/spool/fax","var/spool/hylafax"};
@@ -224,7 +225,7 @@ class paramcl // Programmparameter
     DB* My=0;
 		const size_t maxconz=12;//aktc: 0=pruefspool,pruefouttab,pruefudoc,pruefinctab,prueffuncgettel3,pruefstdfaxnr,aenderefax,rueckfragen 
 		// bereinigewv,loeschewaise,loescheallewartende,tu_lista,tu_listi,suchestr,Schluss, 1=korrigierecapi aus main, 
-		//                          2=korrigierehyla aus main, 3=wegfaxen, untersuchespool, WVZinDatenbank,4=zeigweitere, 5=empfarch,
+		//                          2=korrigierehyla aus main, 3=wegfaxen, untersuchespool, WVZinDatenbank, 4=zeigweitere, 5=empfarch,
 		//                          6=faxemitC, 7=faxemitH, 9=korrigierecapi aus zeigweitere, 10=korrigierehyla aus zeigweitere,
     //													11=test
     const string touta="outa"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
@@ -367,6 +368,7 @@ class paramcl // Programmparameter
 		void uebertif();
 		void zeigdienste();
 		void wandle(const string& udatei,const string& urname,const uchar iprio,svec& toktxt,svec& toknr,svec& tokname,const string& anfxstr,const string& exten,vector<urfxcl> *urfxp);
+		void tucronschreib(const string& zsauf,const uchar nochkeincron,const uchar cronzuplanen,const string& cbef);
 	public:
 		int Log(const string& text,const bool oberr=0,const short klobverb=0);
     paramcl(const int argc, const char *const *const argv);
@@ -393,7 +395,7 @@ class paramcl // Programmparameter
     void rueckfragen();
     int setzhylavz(); // sucht das Hylaverzeichnis und setzt varsphylavz darauf, return 0, wenn nicht gefunden dann varsphylavz="", return 1
     void verzeichnisse();
-    void pruefcron();
+		void pruefcron();
     void pruefsamba();
     int  initDB();
     int  pruefDB(const string& db);

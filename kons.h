@@ -58,6 +58,7 @@ int Log(const string& text,const short screen=1,const short file=1,const bool ob
 #include <string.h> // strchr, strcpy, strtok_r, strerror, memcmp, strcmp, strstr, strlen
 #include <errno.h> // errno, ENOENT
 #include <pwd.h>   // getuid, getpwuid
+#include <grp.h>   // getgrouplist
 #include <sys/param.h>  // MAXHOSTNAMELEN
 #include <sys/ioctl.h> // winsize, TIOCGWINST, w, ioctl
 // #include <stdlib.h>
@@ -292,6 +293,17 @@ public:
  string msg;
  errmsgcl(int errnr,const string& msg):errnr(errnr),msg(msg){}
 };
+// aktueller Benutzer
+class cuscl
+{
+ private:
+ struct passwd *passwd;
+ public:
+ string cusstr;
+ uid_t cuid;
+ gid_t cgid;
+ cuscl();
+};
 
 // arg-Class
 class argcl
@@ -316,7 +328,6 @@ class perfcl
 };
 
 string holsystemsprache(int obverb=0);
-char* curruser(__uid_t *uidp=0,__gid_t *gidp=0);
 int untersuser(string uname,__uid_t *uidp=0, __gid_t *gidp=0);
 
 class mdatei: public fstream
@@ -699,7 +710,8 @@ void pruefplatte();
 void pruefmehrfach(const string& wen=nix,uchar obstumm=0);
 void setfaclggf(const string& datei,int obverb=0,int oblog=0,const binaer obunter=falsch,const int mod=4,uchar obimmer=0,
                 uchar faclbak=0,const string& user=nix,uchar fake=0);
-int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=1, uchar obmitcon=1);
+int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=0, uchar obmitcon=0,
+              const string& besitzer=nix, const string& benutzer=nix);
 string aktprogverz();
 char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
 // vorgabe fur vorgabe = T_j_k; alternativ='n'

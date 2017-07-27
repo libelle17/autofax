@@ -50,6 +50,15 @@ const string eins="1";
 el2set::iterator it2;
 set<elem3>::iterator it3;
 
+cuscl::cuscl()
+{
+ cuid=getuid();
+ passwd=getpwuid(cuid);
+ cgid=passwd->pw_gid;
+ cusstr=passwd->pw_name;
+} // cuscl::cuscl()
+cuscl cus;
+
 ////const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 const char *kons_T[T_konsMAX+1][SprachZahl]=
 {
@@ -662,15 +671,6 @@ string holsystemsprache(int obverb/*=0*/)
 } // string holsystemsprache()
 
 
-char* curruser(__uid_t *uidp/*=0*/,__gid_t *gidp/*=0*/) 
-{
-  uid_t uid=getuid();
-  static struct passwd *passwd = getpwuid(uid);
-	if (uidp) *uidp=uid;
-	if (gidp) *gidp=passwd->pw_gid;
-  return passwd->pw_name;
-} // curruser()
-
 // Achtung: Wegen der Notwendigkeit der Existenz der Datei zum Aufruf von setfacl kann die Datei erstellt werden!
 mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_base::out*/,uchar faclbak/*=1*/,int obverb/*=0*/, int oblog/*=0*/)
 {
@@ -684,7 +684,7 @@ mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_b
     ////    int erg __attribute__((unused));
 		////    if (name!=unindt)  // sonst vielleicht Endlosschleife
 		if (mehralslesen) {
-			pruefverz(dir_name(name),0,0,0,0);
+			pruefverz(dir_name(name),0,0);
 			////    if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) KLA
 			if (!touch(name,obverb,oblog)) {
 				setfaclggf(name,obverb,oblog,falsch,modus&ios::out||modus&ios::app?6:4,falsch,faclbak);
@@ -1362,15 +1362,13 @@ int obprogda(const string& prog,int obverb, int oblog, string *pfad/*=0*/)
     if (pfad) *pfad=rueck[0];
     return 2;
   } // if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck))
-	__uid_t uid;
-	curruser(&uid);
 	// wenn nicht root
-  if (!uid) {
+  if (!cus.cuid) {
     if (!systemrueck("sudo which \""+prog+"\" 2>/dev/null || sudo env \"PATH=$PATH\" which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck)) {
       if (pfad) *pfad=rueck[0];
       return 3;
     }
-  } // if (strcmp(curruser(),"root")) 
+	} // if (!cus.cuid)
   if (pfad) pfad->clear();
   return 0; 
 } // string obprogda(string prog,int obverb, int oblog)
@@ -1950,7 +1948,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
   int erg=-111;
   string hcmd=cmd;
   uchar obfind=(cmd.substr(0,4)=="find" || cmd.substr(0,9)=="sudo find");
-  if (verbergen==1 || (obfind && (obverb<1 || strcmp(curruser(),"root")))) {
+  if (verbergen==1 || (obfind && (obverb<1 || cus.cuid))) {
     if (obverb<=1) 
       hcmd+=" 2>/dev/null; true";
   } else if (verbergen==2) {
@@ -2151,7 +2149,22 @@ int untersuser(string uname,__uid_t *uidp/*=0*/, __gid_t *gidp/*=0*/)
 		/*//int s = */getpwnam_r(uname.c_str(), &pwd, buf, bufsize, &result);
 		if (result) {
 			if (uidp) *uidp=pwd.pw_uid;
-			if (gidp) *gidp=pwd.pw_gid;
+			//if (gidp) *gidp=pwd.pw_gid;
+			if (gidp) {
+			 *gidp=pwd.pw_gid;
+			  int ngroups=20;
+				gid_t *groups;
+				for(uchar iru=0;iru<2;iru++) {
+					groups=(gid_t*)malloc(ngroups*sizeof *groups);
+					if (getgrouplist(uname.c_str(), pwd.pw_uid, groups, &ngroups)!=-1) break;
+					free(groups);
+				}
+			  // die Gruppe mit der groessten Nummer verwenden	
+        for(int iru=0;iru<ngroups;iru++) {
+				  if (groups[iru]>*gidp) *gidp=groups[iru];
+				}
+				free(groups);
+			}
 			////	KLZ else KLA if (!s) printf("Not found\n"); else KLA errno = s; perror("getpwnam_r"); KLZ
 		}	
 		free(buf);
@@ -2171,16 +2184,13 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 {
 	int altobv=obverb;
 	if (fake) obverb=2;
-	static __uid_t curruid;
-	static __gid_t currgid;
-	static const string curru=curruser(&curruid,&currgid);
-	__uid_t cuid;
-	__gid_t cgid;
+	uid_t cuid;
+	gid_t cgid;
 	string cuser;
 	if (user.empty()) {
-		cuser=curru;
-		cuid=curruid;
-		cgid=currgid;
+		cuser=cus.cusstr;
+		cuid=cus.cuid;
+		cgid=cus.cgid;
 	} else {
 		cuser=user;
 		untersuser(cuser.c_str(),&cuid,&cgid);
@@ -2255,11 +2265,18 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 
 
 // obmitfacl: 1= setzen, falls noetig, >1= immer setzen
-int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfacl/*=1*/,uchar obmitcon/*=1*/)
+// falls Benutzer root
+int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfacl/*=0*/,uchar obmitcon/*=0*/,
+              const string& besitzer/*=nix*/, const string& benutzer/*=nix*/)
 {
 	static int obselinux=-1;
 	struct stat sverz={0};
 	int fehler=1;
+	// wenn nicht root
+	mode_t altmod=022;
+	if(!besitzer.empty()){
+		altmod=umask(0);
+	} // 	if(!besitzer.empty())
 	if (!verz.empty()) {
 		if (!lstat(verz.c_str(), &sverz)) {
 			if(S_ISDIR(sverz.st_mode)) {
@@ -2280,19 +2297,32 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 					fehler=0;
 					break;
 				} // 				if (!stack.size())
-				if (mkdir(stack[stack.size()-1].c_str(),S_IRWXU)) 
+				mode_t mod=S_IRWXU;
+				if (!besitzer.empty()) mod=0777;
+				if (mkdir(stack[stack.size()-1].c_str(),mod)) 
 					break;
 				stack.erase(stack.end());
 			} // while(1)
 		} // if (fehler)
+		if (!besitzer.empty()) {
+			uid_t uid;
+			gid_t gid;
+			untersuser(besitzer,&uid,&gid);
+			chown(verz.c_str(),uid,gid);
+			umask(altmod);
+		} // 		if (!besitzer.empty())
 		if (fehler) {
-		  const string bef="mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'";
+			string bef="mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'";
+			if (!besitzer.empty()) bef+="&&chmod 777 '"+verz+"'";
 			fehler=systemrueck(bef,obverb,oblog);
 			if (unindt.find(verz)) // wenn der Anfang nicht identisch ist, also nicht das Verzeichnis von unindt geprueft werden soll
 				anfgg(unindt,"sudo rmdir '"+verz+"'",bef,obverb,oblog);
 		} //     if (fehler)
 		////    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
-		if (obmitfacl) setfaclggf(verz,obverb,oblog, wahr, 7, (obmitfacl>1));
+
+		if (obmitfacl) {
+			setfaclggf(verz,obverb,oblog, wahr, 7, (obmitfacl>1),1,benutzer);
+		}
 		//// <<violett<<verz<<schwarz<<endl;
 		if (obmitcon) {
 			if (obselinux==-1) 
