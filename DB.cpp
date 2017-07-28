@@ -219,11 +219,11 @@ DB::DB(DBSTyp nDBS, linst_cl *linstp, const char* const phost, const char* const
 void DB::instmaria(int obverb, int oblog)
 {
 	if (linstp->ipr==apt) {
-		systemrueck("sudo sh -c 'apt-get -y install apt-transport-https; apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
+		systemrueck((cus.cuid?sudoc:nix)+"sh -c 'apt-get -y install apt-transport-https; apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
 	} else {
 		linstp->doinst("mariadb",obverb,oblog);
 		if (linstp->ipr==pac)
-		 systemrueck("sudo mysql_install_db --user="+mysqlben+" --basedir=/usr/ --ldata=/var/lib/mysql",obverb,oblog);
+		 systemrueck((cus.cuid?sudoc:nix)+"mysql_install_db --user="+mysqlben+" --basedir=/usr/ --ldata=/var/lib/mysql",obverb,oblog);
 	} // 					if (ipr==apt) else
 } // void DB::instmaria()
 
@@ -292,11 +292,11 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 							if (!zzruck.size())
 								systemrueck("find "+gethome()+" -name .my.cnf -printf '%p\\n' -quit",obverb,oblog,&zzruck);
 							if (zzruck.size()) {
-								systemrueck("sudo cat "+zzruck[0]+" | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", 
+								systemrueck((cus.cuid?sudoc:nix)+"cat "+zzruck[0]+" | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", 
 										obverb,oblog,&zincldir); 
 								for(size_t i=0;i<zincldir.size();i++) {
 									svec zzruck2;
-									systemrueck("sudo find "+zincldir[i]+" -not -type d",obverb,oblog,&zzruck2); // auch links
+									systemrueck((cus.cuid?sudoc:nix)+"find "+zincldir[i]+" -not -type d",obverb,oblog,&zzruck2); // auch links
 									for(size_t i=0;i<zzruck2.size();i++) {
 										zzruck<<zzruck2[i];
 									}
@@ -305,7 +305,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 							if(zzruck.size()) {
 								for(size_t i=0;i<zzruck.size();i++) {
 									svec zrueck;
-									if (!systemrueck(("sudo sed 's/#.*$//g' '")+zzruck[i]+"' | grep datadir | cut -d'=' -f2",
+									if (!systemrueck(((cus.cuid?sudoc:nix)+"sed 's/#.*$//g' '")+zzruck[i]+"' | grep datadir | cut -d'=' -f2",
 												obverb,oblog,&zrueck)) {
 										if (zrueck.size()) {
 											datadir=zrueck[zrueck.size()-1];  
@@ -327,11 +327,11 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 						if(S_ISDIR(datadst.st_mode)) {
 							datadirda=1;
 						} else {
-							systemrueck("sudo rm -f '"+datadir+"'",1,1);
+							systemrueck((cus.cuid?sudoc:nix)+"rm -f '"+datadir+"'",1,1);
 						}
 					} //           if (!lstat(datadir.c_str(), &datadst))
 					if (!datadirda) {
-						systemrueck("sudo `find /usr/local /usr/bin /usr/sbin -name mysql_install_db"+string(obverb?"":" 2>/dev/null")+"`",1,1);
+						systemrueck((cus.cuid?sudoc:nix)+"`find /usr/local /usr/bin /usr/sbin -name mysql_install_db"+string(obverb?"":" 2>/dev/null")+"`",1,1);
 						dbsv->start(obverb,oblog);
 					}
 					oisok=1;
@@ -362,7 +362,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 								case 1698: // dasselbe auf Ubuntu
 									for(unsigned aru=0;aru<1;aru++) {
 										for(unsigned iru=0;iru<2;iru++) {
-											cmd="sudo "+mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"GRANT ALL ON "+uedb+".* TO '"+
+											cmd=(cus.cuid?sudoc:nix)+mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"GRANT ALL ON "+uedb+".* TO '"+
 												user+"'@'"+myloghost+"' IDENTIFIED BY '"+ersetze(passwd.c_str(),"\"","\\\"")+"' WITH GRANT OPTION\" 2>&1";
 											if (iru) break;
 											pruefrpw(cmd, versuchzahl);
@@ -449,7 +449,8 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 			if (!dbsv) { 
 				if (!obprogda("postgres",obverb,oblog)) {
 				  caup<<"Programm postgres nicht da"<<endl;
-					systemrueck("V0=/usr/bin/postgres; V1=${V0}_alt; V2=${V0}_uralt; test -d $V0 &&{ test -d $V1 && sudo mv $V1 $V2; sudo mv $V0 $V1;}; true;",
+					systemrueck("V0=/usr/bin/postgres; V1=${V0}_alt; V2=${V0}_uralt; test -d $V0 &&{ test -d $V1 && "+(cus.cuid?sudoc:nix)+
+					            "mv $V1 $V2; "+(cus.cuid?sudoc:nix)+"mv $V0 $V1;}; true;",
 					            obverb,oblog);
 					linstp->doinst("postgresql-server",obverb,oblog);// postgresql-contrib
 					neu=1;
@@ -464,7 +465,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 				}
 				if (!dbsv->obslaeuft(obverb,oblog)) {
 				  systemrueck("journalctl -xe --no-pager -n 9",2,2);
-					//// sudo systemctl start postgresql
+					//// (sudo) systemctl start postgresql
 					//// oisok=1;
 					Log(Txd[T_Ende_Gelaende],obverb,oblog);
 					exit(21);
@@ -528,7 +529,7 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
 {
   myloghost=!strcasecmp(host.c_str(),"localhost")||!strcmp(host.c_str(),"127.0.0.1")||!strcmp(host.c_str(),"::1")?"localhost":"%";
   for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
-    cmd="sudo "+mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"show variables like 'gibts wirklich nicht'\" 2>&1";
+    cmd=(cus.cuid?sudoc:nix)+mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"show variables like 'gibts wirklich nicht'\" 2>&1";
     myr.clear();
     systemrueck(cmd,-1,0,&myr);
     miterror=1;
@@ -583,14 +584,14 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 							f.close();
 						} // 						if (f.is_open())
 						if (gef) {
-						 cmd="sudo sed -i 's/^\\("+plugin+"\\)/;\\1/g' "+verbot+";";
+						 cmd=(cus.cuid?sudoc:nix)+"sed -i 's/^\\("+plugin+"\\)/;\\1/g' "+verbot+";";
 						 systemrueck(cmd.c_str(),obverb,oblog);
 						 dbsv->restart(obverb,oblog);
-						 const string rcmd="sudo sed -i 's/^;\\("+plugin+"\\)/\\1/g' "+verbot+";";
+						 const string rcmd=(cus.cuid?sudoc:nix)+"sed -i 's/^;\\("+plugin+"\\)/\\1/g' "+verbot+";";
 						 anfgg(unindt,rcmd,cmd,obverb,oblog);
 						} // 						if (gef)
 					} // 					if (!lstat(verbot.c_str(),&st))
-					const string cmd="sudo "+mysqlbef+" -uroot -h'"+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
+					const string cmd=(cus.cuid?sudoc:nix)+mysqlbef+" -uroot -h'"+host+"' -e \"GRANT ALL ON *.* TO 'root'@'"+myloghost+
 						"' IDENTIFIED BY '"+ersetzAllezu(rootpwd,"\"","\\\"")+"' WITH GRANT OPTION\"";
 					Log(Txd[T_Fuehre_aus_db]+blaus+cmd+schwarz,1,1);
 					int erg __attribute__((unused))=system(cmd.c_str());
@@ -617,7 +618,7 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 					} // 					for(unsigned zeile=0;zeile<irueck.size();zeile++)
 					if (geht) break;
 					linstp->doinst("passwd",obverb,oblog,"chpasswd"); 
-					systemrueck("sh -c 'echo \"postgres:"+rootpwd+"\"|sudo chpasswd'",obverb,oblog);
+					systemrueck("sh -c 'echo \"postgres:"+rootpwd+"\"|"+(cus.cuid?sudoc:nix)+"chpasswd'",obverb,oblog);
 					svec rueck;
 					systemrueck("ps aux|grep postgres|grep -- -D|rev|cut -d' ' -f1|rev",obverb,oblog,&rueck);
 					if (rueck.size()) {

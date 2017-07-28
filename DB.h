@@ -15,7 +15,7 @@
 #include <sstream> // stringstream, basic_stringstream
 // Project->Properties->C/C++ ->General->Additional Include Directories->"$(ProjectDir)\..\..\..\MySQL Connector C 6.0.2\include"
 #include <mysql.h> 
-// sudo dnf install postgresql-devel
+// (sudo) dnf install postgresql-devel
 //#define mitpostgres
 #ifdef mitpostgres 
 #include <libpq-fe.h> // PGconn
@@ -36,6 +36,7 @@ using namespace std;
 #ifdef _MSC_VER
 //#pragma comment(lib, "libmysql.lib")
 #endif
+extern class cuscl cus;
 
 enum Txdb_ 
 {

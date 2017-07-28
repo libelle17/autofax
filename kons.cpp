@@ -46,6 +46,8 @@ const string& instvz=
 uchar findv=3; // find-Version 1=system, 2=intern mit readdir, 3=intern mit nftw
 const string& unindt=instvz+"/uninstallinv"; // # Name muss identisch sein mit Variabler UNF in install.sh
 const string nix;
+const string sudoc="sudo ";
+const string sudohc="sudo -H ";
 const string eins="1";
 el2set::iterator it2;
 set<elem3>::iterator it3;
@@ -685,10 +687,10 @@ mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_b
 		////    if (name!=unindt)  // sonst vielleicht Endlosschleife
 		if (mehralslesen) {
 			pruefverz(dir_name(name),0,0);
-			////    if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) KLA
+			////    if (!systemrueck((cus.cuid?sudoc:nix)+"test -f '"+name+"' || "+(cus.cuid?sudoc:nix)+"touch '"+name+"'",obverb,oblog)) KLA
 			if (!touch(name,obverb,oblog)) {
 				setfaclggf(name,obverb,oblog,falsch,modus&ios::out||modus&ios::app?6:4,falsch,faclbak);
-			} // if (!systemrueck("sudo test -f '"+name+"' || sudo touch '"+name+"'",obverb,oblog)) 
+			} // if (!systemrueck((cus.cuid?sudoc:nix)+"test -f '"+name+"' || "+(cus.cuid?sudoc:nix)+"touch '"+name+"'",obverb,oblog)) 
 		} // 		if (mehralslesen)
 	} // for(int iru=0;iru<3;iru++) 
 } // mdatei::mdatei (const string& name, ios_base::openmode modus)
@@ -733,7 +735,7 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 				} 
 				if (!*erfolg) {
 					int erg __attribute__((unused))=
-////                                        systemrueck("sudo touch '"+datei+"'",obverb,oblog);
+////                                        systemrueck((cus.cuid?sudoc:nix)+"touch '"+datei+"'",obverb,oblog);
 					touch(datei,obverb,oblog);
 				}
 			} // oeffne
@@ -1180,7 +1182,7 @@ int touch(const string& pfad,int obverb/*=0*/,int oblog/*=0*/)
 			} // 			if (rc) else
 		} // 		if (fd<0) else
 		if (fehler)
-			fehler=systemrueck("sudo touch '"+pfad+"'",obverb,oblog);
+			fehler=systemrueck((cus.cuid?sudoc:nix)+"touch '"+pfad+"'",obverb,oblog);
 	} // 	if (fehler)
 	return fehler;
 } // int touch(const std::string& pfad,int obverb/*=0*/,int oblog/*=*/)
@@ -1363,8 +1365,8 @@ int obprogda(const string& prog,int obverb, int oblog, string *pfad/*=0*/)
     return 2;
   } // if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck))
 	// wenn nicht root
-  if (!cus.cuid) {
-    if (!systemrueck("sudo which \""+prog+"\" 2>/dev/null || sudo env \"PATH=$PATH\" which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck)) {
+  if (cus.cuid) {
+    if (!systemrueck((cus.cuid?sudoc:nix)+"which \""+prog+"\" 2>/dev/null ||"+(cus.cuid?sudoc:nix)+"env \"PATH=$PATH\" which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck)) {
       if (pfad) *pfad=rueck[0];
       return 3;
     }
@@ -1379,41 +1381,41 @@ linst_cl::linst_cl(int obverb,int oblog)
 		if (obprogda("rpm",obverb-1,oblog)) {
 			dev="devel";
 			schau="rpm -q";
-			udpr="sudo rpm -e --nodeps ";
+			udpr=(cus.cuid?sudoc:nix)+"rpm -e --nodeps ";
 			if (obprogda("zypper",obverb-1,oblog)) { // opensuse
 				// heruntergeladene Dateien behalten
 				ipr=zypper;
-				instp="sudo zypper -n --gpg-auto-import-keys in ";
+				instp=(cus.cuid?sudoc:nix)+"zypper -n --gpg-auto-import-keys in ";
 				instyp=instp+"-y -f ";
-				upr="sudo zypper -n rm -u ";
+				upr=(cus.cuid?sudoc:nix)+"zypper -n rm -u ";
 				uypr=upr+"-y ";
-				upd="sudo zypper patch";
-				repos="sudo zypper lr | grep 'g++\\|devel_gcc'>/dev/null 2>&1 || "
-				      "sudo zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release |"
+				upd=(cus.cuid?sudoc:nix)+"zypper patch";
+				repos=(cus.cuid?sudoc:nix)+"zypper lr | grep 'g++\\|devel_gcc'>/dev/null 2>&1 || "+
+				      (cus.cuid?sudoc:nix)+"zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release |"
 							"grep ^NAME= | cut -d'\"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'\"' -f2`/devel:gcc.repo;";
 				compil="gcc gcc-c++ gcc6-c++";
 			} else { // dann fedora oder mageia
 				if (obprogda("dnf",obverb-1,oblog)) {
 					ipr=dnf;
-					instp="sudo dnf install ";
-					instyp="sudo dnf -y install ";
-					upr="sudo dnf remove ";
-					uypr="sudo dnf -y remove ";
-					upd="sudo dnf update";
+					instp=(cus.cuid?sudoc:nix)+"dnf install ";
+					instyp=(cus.cuid?sudoc:nix)+"dnf -y install ";
+					upr=(cus.cuid?sudoc:nix)+"dnf remove ";
+					uypr=(cus.cuid?sudoc:nix)+"dnf -y remove ";
+					upd=(cus.cuid?sudoc:nix)+"dnf update";
 				} else if (obprogda("yum",obverb-1,oblog)) {
 					ipr=yum;
-					instp="sudo yum install ";
-					instyp="sudo yum -y install ";
-					upr="sudo yum remove ";
-					uypr="sudo yum -y remove ";
-					upd="sudo yum update";
+					instp=(cus.cuid?sudoc:nix)+"yum install ";
+					instyp=(cus.cuid?sudoc:nix)+"yum -y install ";
+					upr=(cus.cuid?sudoc:nix)+"yum remove ";
+					uypr=(cus.cuid?sudoc:nix)+"yum -y remove ";
+					upd=(cus.cuid?sudoc:nix)+"yum update";
 				} else if (obprogda("urpmi.update",obverb-1,oblog)) {
 					ipr=urp;
 					instp="urpmi --auto ";
 					instyp="urpmi --auto --force ";
-					upr="sudo urpme ";
-					uypr="sudo urpme --auto --force ";
-					upd="sudo urpmi.update -a";
+					upr=(cus.cuid?sudoc:nix)+"urpme ";
+					uypr=(cus.cuid?sudoc:nix)+"urpme --auto --force ";
+					upd=(cus.cuid?sudoc:nix)+"urpmi.update -a";
 				} // 				if (obprogda("dnf",obverb-1,oblog))
 				compil="make automake gcc-c++ kernel-devel";
 			} // 			if (obprogda("zypper",obverb-1,oblog)) KLZ // opensuse
@@ -1421,29 +1423,29 @@ linst_cl::linst_cl(int obverb,int oblog)
 			// Repositories: Frage nach cdrom ausschalten
 			// genauso in: configure
 			// wenn cdrom-Zeile vorkommt, vor ftp.-debian-Zeile steht und www.debian.org erreichbar ist, dann alle cdrom-Zeilen hinten anhängen
-			systemrueck("sudo sh -c \"S=/etc/apt/sources.list;F='^[^#]*cdrom:';grep -qm1 \\$F \\$S && "
+			systemrueck((cus.cuid?sudoc:nix)+"sh -c \"S=/etc/apt/sources.list;F='^[^#]*cdrom:';grep -qm1 \\$F \\$S && "
 			    "test 0\\$(sed -n '/^[^#]*ftp.*debian/{=;q}' \\$S) -gt 0\\$(sed -n '/'\\$F'/{=;q}' \\$S) && "
 					"ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/'\\$F'/{H;d};\\${p;x}' \\$S;true\"",obverb,oblog);
 			// hier werden die Dateien vorgabemaessig behalten
 			ipr=apt;
 			schau="dpkg -s";
-			instp="sudo apt-get install "; 
-			instyp="sudo apt-get -y --force-yes --reinstall install "; 
-			upr="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
-			udpr="sudo apt-get -f install; sudo dpkg -r --force-depends ";
-			uypr="sudo apt-get -f install; sudo apt-get -y --auto-remove purge ";
-			upd="sudo apt update; sudo apt upgrade;";
+			instp=(cus.cuid?sudoc:nix)+"apt-get install "; 
+			instyp=(cus.cuid?sudoc:nix)+"apt-get -y --force-yes --reinstall install "; 
+			upr=(cus.cuid?sudoc:nix)+"apt-get -f install;"+(cus.cuid?sudoc:nix)+"apt-get --auto-remove purge ";
+			udpr=(cus.cuid?sudoc:nix)+"apt-get -f install;"+(cus.cuid?sudoc:nix)+"dpkg -r --force-depends ";
+			uypr=(cus.cuid?sudoc:nix)+"apt-get -f install;"+(cus.cuid?sudoc:nix)+"apt-get -y --auto-remove purge ";
+			upd=(cus.cuid?sudoc:nix)+"apt update;"+(cus.cuid?sudoc:nix)+"apt upgrade;";
 			compil="install build-essential linux-headers-`uname -r`";
 			dev="dev";
 		} else if (obprogda("pacman",obverb-1,oblog)) {
 			ipr=pac;
 			schau="pacman -Qi";
-			instp="sudo pacman -S ";
-			instyp="sudo pacman -S --noconfirm ";
-			upr="sudo pacman -R -s ";
-			udpr="sudo pacman -R -d -d ";
-			uypr="sudo pacman -R -s --noconfirm "; 
-			upd="sudo pacman -Syu";
+			instp=(cus.cuid?sudoc:nix)+"pacman -S ";
+			instyp=(cus.cuid?sudoc:nix)+"pacman -S --noconfirm ";
+			upr=(cus.cuid?sudoc:nix)+"pacman -R -s ";
+			udpr=(cus.cuid?sudoc:nix)+"pacman -R -d -d ";
+			uypr=(cus.cuid?sudoc:nix)+"pacman -R -s --noconfirm "; 
+			upd=(cus.cuid?sudoc:nix)+"pacman -Syu";
 			compil="gcc linux-headers-`uname -r`";
 		} else {
 			cerr<<Txk[T_Weder_zypper_noch_apt_get_noch_dnf_noch_yum_als_Installationspgrogramm_gefunden]<<endl;
@@ -1947,7 +1949,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
   uchar weiter=0;
   int erg=-111;
   string hcmd=cmd;
-  uchar obfind=(cmd.substr(0,4)=="find" || cmd.substr(0,9)=="sudo find");
+  uchar obfind=(cmd.substr(0,4)=="find" || cmd.substr(0,9)==(cus.cuid?sudoc:nix)+"find");
   if (verbergen==1 || (obfind && (obverb<1 || cus.cuid))) {
     if (obverb<=1) 
       hcmd+=" 2>/dev/null; true";
@@ -2075,14 +2077,14 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 				if (ob0heissterfolg) {
 					if (erg) {
 						if (cmd.substr(0,6)=="rpm -q" || cmd.substr(0,7)=="dpkg -s" || 
-						    cmd.substr(0,5)=="which" || cmd.substr(0,10)=="sudo which" || cmd.substr(0,16)=="sudo iptables -L" ||
-								(cmd.find("grep")!=string::npos && cmd.find(" -q <(sudo crontab -l")!=string::npos) ||
-							  cmd.substr(0,7)=="test -f" || cmd.substr(0,12)=="sudo test -f" ||
-								cmd.substr(0,20)=="systemctl list-units" || cmd.substr(0,15)=="sudo pdbedit -L" ||
+						    cmd.substr(0,5)=="which" || cmd.substr(0,10)==(cus.cuid?sudoc:nix)+"which" || cmd.substr(0,16)==(cus.cuid?sudoc:nix)+"iptables -L" ||
+								(cmd.find("grep")!=string::npos && cmd.find(" -q <("+(cus.cuid?sudoc:nix)+"crontab -l")!=string::npos) ||
+							  cmd.substr(0,7)=="test -f" || cmd.substr(0,12)==(cus.cuid?sudoc:nix)+"test -f" ||
+								cmd.substr(0,20)=="systemctl list-units" || cmd.substr(0,15)==(cus.cuid?sudoc:nix)+"pdbedit -L" ||
                 cmd.find("faxstat|grep")!=string::npos
 								) {
 							ergebnis=gruens+Txk[T_nicht_gefunden];
-						} else if (cmd.substr(0,14)=="sudo modprobe ") {
+						} else if (cmd.substr(0,14)==(cus.cuid?sudoc:nix)+"modprobe ") {
 						  ergebnis=gruens+Txk[T_nicht_einfuegbar];
 						} else {
 							ergebnis=rots+Txk[T_Exitcode]+ltoan(erg);
@@ -2114,7 +2116,7 @@ void pruefplatte()
   const string platte="/";
   statvfs(platte.c_str(),&fp);   
   if (fp.f_bsize * fp.f_bfree < 100000) { // wenn weniger als 100 MB frei sind ...
-    systemrueck("sudo pkill postdrop");
+    systemrueck((cus.cuid?sudoc:nix)+"pkill postdrop");
   }
 } // pruefplatte
 
@@ -2239,22 +2241,22 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 						obhier = !gstat.size();// wenn keine Berechtigung gefunden => erstellen
 					} //        if (i||!obhier)
 					if (obhier) {
-						if (obverb) systemrueck("sudo sh -c 'ls -ld \""+pfade[i]+"\"'",2,0);
+						if (obverb) systemrueck((cus.cuid?sudoc:nix)+"sh -c 'ls -ld \""+pfade[i]+"\"'",2,0);
 						if (faclbak) {
 							const string sich=base_name(pfade[i])+"."+base_name(meinpfad())+".perm";
-							const string bef="sudo sh -c 'cd \""+dir_name(pfade[i])+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(pfade[i])+"\">\""+sich+"\"'";
+							const string bef=(cus.cuid?sudoc:nix)+"sh -c 'cd \""+dir_name(pfade[i])+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(pfade[i])+"\">\""+sich+"\"'";
 							systemrueck(bef,obverb,oblog);
 							struct stat st={0};
 							string para="setfacl --restore=\""+sich+"\"";
 							if (lstat(sich.c_str(),&st) || !st.st_size) {
-								para=string("sudo setfacl -")+(!i && obunter?"R":"")+"b \""+pfade[i]+"\"";
+								para=string((cus.cuid?sudoc:nix)+"setfacl -")+(!i && obunter?"R":"")+"b \""+pfade[i]+"\"";
 							}
-							anfgg(unindt,"sudo sh -c 'cd \""+dir_name(pfade[i])+"\";"+para+"'",bef,obverb,oblog);
+							anfgg(unindt,(cus.cuid?sudoc:nix)+"sh -c 'cd \""+dir_name(pfade[i])+"\";"+para+"'",bef,obverb,oblog);
 						} // 					if (faclbak)
-						const string cmd=string("sudo setfacl -")+(!i && obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(ergmod)+"' '"+pfade[i]+"'";
+						const string cmd=string((cus.cuid?sudoc:nix)+"setfacl -")+(!i && obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(ergmod)+"' '"+pfade[i]+"'";
 						if (fake) Log(rots+cmd+schwarz,obverb,oblog);
 						else systemrueck(cmd,obverb,oblog);
-						if (obverb) systemrueck("sudo sh -c 'ls -ld \""+pfade[i]+"\"'",2,0);
+						if (obverb) systemrueck((cus.cuid?sudoc:nix)+"sh -c 'ls -ld \""+pfade[i]+"\"'",2,0);
 					} //        if (obhier)
 				} // 				if (ergmod)
 			} // 			for(size_t i=pfade.size()-1;i>-1;--i)
@@ -2312,13 +2314,13 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 			umask(altmod);
 		} // 		if (!besitzer.empty())
 		if (fehler) {
-			string bef="mkdir -p '"+verz+"' 2>/dev/null||sudo mkdir -p '"+verz+"'";
+			string bef="mkdir -p '"+verz+"' 2>/dev/null||"+(cus.cuid?sudoc:nix)+"mkdir -p '"+verz+"'";
 			if (!besitzer.empty()) bef+="&&chmod 777 '"+verz+"'";
 			fehler=systemrueck(bef,obverb,oblog);
 			if (unindt.find(verz)) // wenn der Anfang nicht identisch ist, also nicht das Verzeichnis von unindt geprueft werden soll
-				anfgg(unindt,"sudo rmdir '"+verz+"'",bef,obverb,oblog);
+				anfgg(unindt,(cus.cuid?sudoc:nix)+"rmdir '"+verz+"'",bef,obverb,oblog);
 		} //     if (fehler)
-		////    if (fehler) fehler=systemrueck("sudo mkdir -p '"+verz+"'",obverb,oblog);
+		////    if (fehler) fehler=systemrueck((cus.cuid?sudoc:nix)+"mkdir -p '"+verz+"'",obverb,oblog);
 
 		if (obmitfacl) {
 			setfaclggf(verz,obverb,oblog, wahr, 7, (obmitfacl>1),1,benutzer);
@@ -2328,7 +2330,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 			if (obselinux==-1) 
 				obselinux=obprogda("sestatus",obverb,oblog);
 			if (obselinux)
-				systemrueck("sudo chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
+				systemrueck((cus.cuid?sudoc:nix)+"chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
 		} // 		if (obmitcon)
 	} // if (!verz.empty())
 	return fehler;
@@ -2520,7 +2522,7 @@ string Tippverz(const char *frage,const string *vorgabe)
           pruefverz(input);
           /*//
           int erg __attribute__((unused));
-          erg=system((string("sudo mkdir -p ")+input).c_str());
+          erg=system((string((cus.cuid?sudoc:nix)+"mkdir -p ")+input).c_str());
           */
         } else {
           break;
@@ -2966,7 +2968,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 			case zypper:
 				if (obnmr) {
 					obnmr=0;
-					systemrueck("sudo zypper mr -k -all",obverb,oblog);
+					systemrueck((cus.cuid?sudoc:nix)+"zypper mr -k -all",obverb,oblog);
 				} //         if (obnmr)
 			default: break;
 		} // switch (linst.pruefipr()) 
@@ -3067,8 +3069,8 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		} // 		if (!(ret=systemrueck((obyes?instyp:instp)+eprog,obverb+1,oblog)))
 		/*//
 						for(iru=0;iru<2;iru++) KLA
-							if ((ret=systemrueck("sudo apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
-							systemrueck("sudo dpkg --configure -a",obverb+1,oblog);
+							if ((ret=systemrueck((cus.cuid?sudoc:nix)+"apt-get -y install "+eprog,obverb+1,oblog))!=100) break;
+							systemrueck((cus.cuid?sudoc:nix)+"dpkg --configure -a",obverb+1,oblog);
 						KLZ
 	  */
 		eprog.clear();
@@ -3246,20 +3248,20 @@ void servc::semodpruef(linst_cl *linstp,int obverb/*=0*/,int oblog/*=0*/)
 		} // 		if (obse==2)
 		if (obse) {
 			linstp->doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
-			// falls "Nothing to do" zurueckgemeldet wird, muesste sudo dnf -y reinstall p... aufgerufen werden fuer das Deinstallationsprogramm
+			// falls "Nothing to do" zurueckgemeldet wird, muesste (sudo) dnf -y reinstall p... aufgerufen werden fuer das Deinstallationsprogramm
 			// => wird der perfekten Version vorbehalten
-			systemrueck("sudo setenforce 0",obverb,oblog);
+			systemrueck((cus.cuid?sudoc:nix)+"setenforce 0",obverb,oblog);
 			restart(obverb,oblog);
 			const string selocal=sname+"_selocal";
-			systemrueck("sudo grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M "+selocal,obverb,oblog);
-			systemrueck("sudo setenforce 1",obverb,oblog);
+			systemrueck((cus.cuid?sudoc:nix)+"grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M "+selocal,obverb,oblog);
+			systemrueck((cus.cuid?sudoc:nix)+"setenforce 1",obverb,oblog);
 			struct stat sstat={0};
 			const string mod=instvz+vtz+selocal+".pp";
 			if (!lstat(mod.c_str(),&sstat)) {
 				linstp->doinst("policycoreutils",obverb+1,oblog,"semodule");
-				const string bef="sudo semodule -i \""+mod+"\"";
+				const string bef=(cus.cuid?sudoc:nix)+"semodule -i \""+mod+"\"";
 				systemrueck(bef,obverb,oblog);
-				anfgg(unindt,"sudo semodule -r \""+mod+"\"",bef,obverb,oblog);
+				anfgg(unindt,(cus.cuid?sudoc:nix)+"semodule -r \""+mod+"\"",bef,obverb,oblog);
 			} // 					if (!lstat((instvz+vtz+selocal+".pp").c_str(),&sstat)
 		}  // if (obse)
 	} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
@@ -3271,9 +3273,9 @@ void servc::semanpruef(int obverb/*=0*/,int oblog/*=0*/,const string& mod/*="get
 	string sepfad;
 	if (ename.find("faxgetty")!=string::npos) {
 		if (obprogda("sestatus",obverb,oblog,&sepfad)) {
-		  const string bef="sudo semodule -l|grep permissive_"+mod+" >/dev/null||sudo semanage permissive -a "+mod;
+		  const string bef=(cus.cuid?sudoc:nix)+"semodule -l|grep permissive_"+mod+" >/dev/null||"+(cus.cuid?sudoc:nix)+"semanage permissive -a "+mod;
 			systemrueck(bef,obverb,oblog);
-			anfgg(unindt,"sudo semanage permissive -d "+mod,bef,obverb,oblog);
+			anfgg(unindt,(cus.cuid?sudoc:nix)+"semanage permissive -d "+mod,bef,obverb,oblog);
 		} // 	if (obprogda("sestatus",obverb,oblog,&sepfad))
 	} // 		if (ename.find("faxgetty")!=string::npos)
 } // int servc::semanpruef(const string& mod/*="getty_t*/, int obverb/*=0*/,int oblog/*=0*/)
@@ -3364,7 +3366,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst<<"WantedBy=multi-user.target "<<endl;
 				syst.close();
 				daemon_reload(obverb-1,oblog);
-				anfgg(unindt,"N="+sname+";C=\"sudo systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-reload;$C reset-failed;",systemd,
+				anfgg(unindt,"N="+sname+";C=\""+(cus.cuid?sudoc:nix)+"systemctl\";$C stop $N;$C disable $N;rm -r '"+systemd+"';$C daemon-reload;$C reset-failed;",systemd,
 				        obverb,oblog);
 				syst.close();
 				restart(obverb-1,oblog);
@@ -3465,7 +3467,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 			  string execf;
 				svec srueExe;
 				if (systemd.find("init.d")!=string::npos) {
-				  systemrueck("sudo cat '"+systemd+"'",obverb,oblog,&srueExe);
+				  systemrueck((cus.cuid?sudoc:nix)+"cat '"+systemd+"'",obverb,oblog,&srueExe);
 					if (srueExe.size()) {
 					 // z.B.:  if ! start-stop-daemon --start --quiet --oknodo --exec /usr/sbin/smbd -- -D; then
 					 for(size_t z=0;z<srueExe.size();z++) {
@@ -3483,7 +3485,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 					} // 					if (srueExe.size()) else
 				} else {
 					// Dienst existent, Dienstdatei bekannt und existent
-					systemrueck("sudo cat '"+systemd+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe);
+					systemrueck((cus.cuid?sudoc:nix)+"cat '"+systemd+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe);
 					if (srueExe.size()) {
 						execf=srueExe[0];
 					} // 			if (!srueExe.size()) else
@@ -3529,7 +3531,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 	svec srueExe;
 	systemrueck("systemctl -n 0 status '"+sname+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe);
 	if (!srueExe.size())
-	systemrueck("sudo cat '"+systemd+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe);
+	systemrueck((cus.cuid?sudoc:nix)+"cat '"+systemd+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe);
 	if (!srueExe.size()) KLA
 	svfeh=5; // Exec-Datei nicht ermittelbar
 	KLZ else KLA
@@ -3571,7 +3573,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 
 void servc::pkill(int obverb/*=0*/,int oblog/*=0*/)
 {
-	systemrueck(("sudo pkill '")+ename+"'",obverb-1,oblog,0,1);
+	systemrueck(((cus.cuid?sudoc:nix)+"pkill '")+ename+"'",obverb-1,oblog,0,1);
 } // void servc::pkill(int obverb/*=0*/,int oblog/*=0*/)
 
 int servc::restart(int obverb/*=0*/,int oblog/*=0*/)
@@ -3579,7 +3581,7 @@ int servc::restart(int obverb/*=0*/,int oblog/*=0*/)
 	for(int i=0;i<2;i++) {
 		uchar obbreak=0;
 		daemon_reload(obverb,oblog);
-		systemrueck("sudo systemctl restart '"+sname+"'",obverb,oblog,0,2);
+		systemrueck((cus.cuid?sudoc:nix)+"systemctl restart '"+sname+"'",obverb,oblog,0,2);
 		//// <<violett<<"restart, i: "<<gruen<<i<<schwarz<<" sname: "<<sname<<endl;
 		obsvfeh(obverb,oblog);
 		switch (sfeh[svfeh]) {
@@ -3605,7 +3607,7 @@ int servc::restart(int obverb/*=0*/,int oblog/*=0*/)
 
 void servc::start(int obverb/*=0*/,int oblog/*=0*/)
 {
-  systemrueck("sudo systemctl start '"+sname+"'",obverb,oblog,0,2);
+  systemrueck((cus.cuid?sudoc:nix)+"systemctl start '"+sname+"'",obverb,oblog,0,2);
 } // int servc::start(int obverb,int oblog)
 
 int servc::startundenable(int obverb/*=0*/,int oblog/*=0*/)
@@ -3619,7 +3621,7 @@ int servc::startundenable(int obverb/*=0*/,int oblog/*=0*/)
 
 void servc::stop(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill/*=0*/)
 {
-  systemrueck("sudo systemctl stop '"+sname+"'",obverb,oblog,0,2);
+  systemrueck((cus.cuid?sudoc:nix)+"systemctl stop '"+sname+"'",obverb,oblog,0,2);
   if (mitpkill) {
     pkill(obverb,oblog);
   } //   if (mitpkill)
@@ -3640,7 +3642,7 @@ void servc::stopdis(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill)
 		stop(obverb,oblog);
 	} // 	if (!obsvfeh(obverb,oblog))
 	if (svfeh!=1&&obenabled)
-		systemrueck("sudo systemctl disable '"+sname+"'",obverb,oblog,0,2);
+		systemrueck((cus.cuid?sudoc:nix)+"systemctl disable '"+sname+"'",obverb,oblog,0,2);
 } // int servc::stop(int obverb,int oblog)
 
 int servc::enableggf(int obverb/*=0*/,int oblog/*=0*/)
@@ -3653,13 +3655,13 @@ int servc::enableggf(int obverb/*=0*/,int oblog/*=0*/)
     errv.push_back(errmsgcl(0,f0));
     errv.push_back(errmsgcl(1,f1));
     errv.push_back(errmsgcl(6,f1));
- return systemrueck("systemctl is-enabled '"+sname+"' >/dev/null 2>&1 || sudo systemctl enable '"+sname+"'",obverb,oblog,0,2,wahr,"",&errv);
+ return systemrueck("systemctl is-enabled '"+sname+"' >/dev/null 2>&1 ||"+(cus.cuid?sudoc:nix)+"systemctl enable '"+sname+"'",obverb,oblog,0,2,wahr,"",&errv);
 } // int servc::enableggf(int obverb,int oblog)
 
 
 void servc::daemon_reload(int obverb/*=0*/, int oblog/*=0*/)
 {
- systemrueck("sudo systemctl daemon-reload",obverb,oblog);
+ systemrueck((cus.cuid?sudoc:nix)+"systemctl daemon-reload",obverb,oblog);
 }
 
 // Rueckgabe: Zahl der nicht Geloeschten
@@ -3678,7 +3680,7 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
           setfaclggf(zuloe,obverb,oblog, falsch, 6, falsch,0);
         } else {
           if (errno) if (errno!=13) perror((string(Txk[T_Fehler_beim_Loeschen])+" "+ltoan(errno)).c_str()); // Permission denied
-          const string cmd="sudo rm -rf \""+zuloe+"\"";
+          const string cmd=(cus.cuid?sudoc:nix)+"rm -rf \""+zuloe+"\"";
           erg=systemrueck(cmd,obverb+1,1);
         } // if(iru) else
       } else {
@@ -3741,15 +3743,15 @@ int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
     return 1;
   } //   if (lstat(zu.c_str(),&statzu))
   if (chmod(zu.c_str(),statgm.st_mode)) {
-   systemrueck("sudo chmod --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog);
+   systemrueck((cus.cuid?sudoc:nix)+"chmod --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog);
   } //   if (chmod(zu.c_str(),statgm.st_mode))
   if (chown(zu.c_str(),statgm.st_uid,statgm.st_gid)) {
-   systemrueck("sudo chown --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog);
+   systemrueck((cus.cuid?sudoc:nix)+"chown --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog);
   } //   if (chown(zu.c_str(),statgm.st_uid,statgm.st_gid))
   struct utimbuf ubuf={0};
   ubuf.actime=ubuf.modtime=statgm.st_mtime;
   if (utime(zu.c_str(),&ubuf)) {
-   systemrueck("sudo touch -r \""+gemaess+"\" \""+zu+"\"",obverb,oblog);
+   systemrueck((cus.cuid?sudoc:nix)+"touch -r \""+gemaess+"\" \""+zu+"\"",obverb,oblog);
   } //   if (utime(zu.c_str(),&ubuf))
   lstat(zu.c_str(),&statzu);
   if (memcmp(&statgm.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime)) {
@@ -3792,7 +3794,7 @@ int kopier(const string& quel, const string& ziel, int obverb, int oblog)
     } // if (!fstat(source,&statq)) 
   } // if (source==-1) else 
   if (fehler)
-    return systemrueck("sudo test -f \""+quel+"\" && sudo sh -c 'cp -a \""+quel+"\" \""+ziel+"\"'",obverb,oblog);
+    return systemrueck((cus.cuid?sudoc:nix)+"test -f \""+quel+"\" &&"+(cus.cuid?sudoc:nix)+"sh -c 'cp -a \""+quel+"\" \""+ziel+"\"'",obverb,oblog);
   return 0;
 } // int kopier(const string& quel, const string& ziel, int obverb, int oblog)
 

@@ -135,6 +135,8 @@ class elem3;
 extern set<elem3>::iterator it3;
 
 extern const string nix/*=""*/;
+extern const string sudoc/*="sudo "*/;
+extern const string sudohc/*="sudo -H "*/;
 extern const string eins/*="1"*/;
 // typedef const char *TCtp[][SprachZahl];
 typedef const char * const * const TCtp[SprachZahl];
