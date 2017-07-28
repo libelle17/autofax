@@ -27,61 +27,61 @@ getIPR() {
 		Z=zypper;
 		g=--gpg-auto-import-keys;
 		IdPR="$Z -n $g in -f ";
-		IP_R="sudo $Z $g in ";
-		UPR="sudo $Z rm -u ";
+		IP_R="${SUDC}$Z $g in ";
+		UPR="${SUDC}$Z rm -u ";
 		pgroff=groff;
 		# die nächsten beiden Variablen dürften 26.3.17 unnötig werden
-    REPOS="sudo $Z lr|grep 'g++\|devel_gcc'\>$KR||sudo $Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
-    urepo="sudo $Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && sudo $Z rr devel_gcc;";
+    REPOS="${SUDC}$Z lr|grep 'g++\|devel_gcc'\>$KR||${SUDC}$Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
+    urepo="${SUDC}$Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && ${SUDC}$Z rr devel_gcc;";
     COMP="gcc gcc-c++ \$(CCInst)";
   	LT=${_LT}-${dev};
 	} }||
 	{ still which apt-get &&{ deb=1;
 		IdPR="apt-get --assume-yes install --reinstall ";
-		IP_R="sudo $IdPR";
-	  UPR="sudo apt-get -f install; sudo apt-get --auto-remove purge ";
+		IP_R="${SUDC}$IdPR";
+	  UPR="${SUDC}apt-get -f install; ${SUDC}apt-get --auto-remove purge ";
 		dev=dev;
 		COMP="build-essential linux-headers-\$(shell uname -r)";
 		LT=${_LT}-${dev};
 		CTAGS=exuberant-ctags;} }||
 	{ still which dnf &&{ fed=1;
 	  IdPR="dnf -y install ";
-		UPR="sudo dnf remove ";} }||
+		UPR="${SUDC}dnf remove ";} }||
 	{ still which yum &&{ fed=1;
 	  IdPR="yum -y install ";
-		UPR="sudo yum remove ";} }||
+		UPR="${SUDC}yum remove ";} }||
 	{ still which urpmi.update &&{ mag=1;
 	  IdPR="urpmi --auto --force ";
-		IP_R="sudo $IdPR";
-		UPR="sudo urpme ";
+		IP_R="${SUDC}$IdPR";
+		UPR="${SUDC}urpme ";
 		dev=devel;
 		LT=${_LT}-${dev};
 		libmc1=lib64mariadb;
 		COMP="make automake gcc-c++ kernel-devel";} }||
 	{ still which pacman &&{ maj=1; 
 	  IdPR="pacman -S ";
-		IP_R="sudo $IdPR";
+		IP_R="${SUDC}$IdPR";
 		dev=devel;
 		LT=${_LT}-${dev};
 		COMP="make automake gcc-c++ kernel-devel";
-	  UPR="sudo pacman -R ";
+	  UPR="${SUDC}pacman -R ";
 		SPR="pacman -Qi ";
 		libmc1="libmysqlclient libmysqlclient"
-		UDPR="sudo pacman -Rd ";};}
+		UDPR="${SUDC}pacman -Rd ";};}
 	[ $fed = 1 ] &&{ 
 	  libmc=mysql;
 		libmc1=mariadb;
 		COMP="make automake gcc-c++ kernel-devel";
-		IP_R="sudo $IdPR";
+		IP_R="${SUDC}$IdPR";
 		LT="${_LT} ${_LT}-${dev}";
 		LT5="";}
 	{ still which rpm &&{ 
 	  SPR="rpm -q ";
-		UDPR="sudo rpm -e --nodeps ";};}||
+		UDPR="${SUDC}rpm -e --nodeps ";};}||
 	{ still which dpkg &&{ 
 	  SPR="dpkg -s ";
-		UDPR="sudo apt-get -f install; sudo dpkg -r --force-depends ";};}
- 	IPR="sudo $IdPR";
+		UDPR="${SUDC}apt-get -f install; ${SUDC}dpkg -r --force-depends ";};}
+ 	IPR="${SUDC}$IdPR";
   DATEIEN="`find . -maxdepth 1 -name ${DPROG}.cpp -printf '%f '``find . -maxdepth 1 -name ${DPROG}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -name "${DPROG}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall .exrc $UNF $INSTLOG"
 }
 
@@ -131,7 +131,7 @@ ausricht() {
      [ -n "$zuinst" ]&&{
 			T=${UDPR}$IP;
 			printf "$T\n# $3\nprintf \"(Inst: $(date +%F\ %T)): \$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
-			[ $2/ = "vim/" ] &&{ printf "alias vi>$KR&&sudo unalias vi\necho \"alias vi>$KR&&sudo unalias vi\"\n">>$AUNF;}
+			[ $2/ = "vim/" ] &&{ printf "alias vi>$KR&&${SUDC}unalias vi\necho \"alias vi>$KR&&${SUDC}unalias vi\"\n">>$AUNF;}
 		 }
 #	 done;
 #	 test -f $AUNF&&grep -q " $2" $AUNF||{
@@ -150,19 +150,19 @@ einricht() {
    getIPR;
 	 [ $1 = _ ]|| printf "$blau$1$reset not found/ nicht gefunden => "  
 	 printf "Installing/ Installiere $blau$2$reset ...\n";
-	 [ $1 = "vim" -a $fed = 1 ] &&{ sudo yum update vim-minimal;}
+	 [ $1 = "vim" -a $fed = 1 ] &&{ ${SUDC}yum update vim-minimal;}
 	 rweg=0;
    CMD=${IPR};
 	 [ $1 = "g++" -a -n "$Z" ] &&{
 		 CMD=${IP_R};
-		 sudo $Z lr|grep 'g++\|devel_gcc'>/dev/null 2>&1 ||{ 
+		 ${SUDC}$Z lr|grep 'g++\|devel_gcc'>/dev/null 2>&1 ||{ 
 			 GREPO=http://download.opensuse.org/repositories/devel:/gcc/
 			 GREPO=${GREPO}`cat /etc/*-release|grep ^NAME= |cut -d\" -f2|sed 's/ /_/'`_
 			 GREPO=${GREPO}`cat /etc/*-release|grep ^VERSION_ID= |cut -d\" -f2`
 			 GREPO=${GREPO}/devel:gcc.repo;
 			 printf "Adding Repository/ Füge Repository hinzu: $blau$GREPO$reset\n";
-			 sudo $Z rr devel_gcc >/dev/null 2>&1;
-			 sudo $Z ar $GREPO && rweg=1;
+			 ${SUDC}$Z rr devel_gcc >/dev/null 2>&1;
+			 ${SUDC}$Z ar $GREPO && rweg=1;
 		 }
 	 }
 	 LOG=inst_${2// /_}.log; # Leerzeichen entfernen
@@ -172,8 +172,8 @@ einricht() {
 	 ausricht "$LOG" $1 "${IPR}$2"
 	 if [ $1 = "g++" -a -n "$Z" -a $rweg = 1 ]; then
 	 	 printf "Removing Repository/ Entferne Repository ${blau}devel_gcc$reset again/ wieder\n"
-		 sudo $Z rr devel_gcc;
-	 else true; fi
+		 ${SUDC}$Z rr devel_gcc;
+	 else :; fi
  fi
 }
 
@@ -194,6 +194,8 @@ libmc1=libmariadbclient
 fed=0
 Z=""
 CCInst=gcc6-c++
+[ "$EUID" -ne "0" ]&&SUDC="sudo "
+
 if test "$ICH" != install.sh -a "$ICH" != ${DPROG}_inst.sh -a "$ICH" != transfer; then
  . ./install.sh
 fi
@@ -237,7 +239,7 @@ INSTP=sudo;still which $INSTP||{
 # wenn cdrom-Zeile vorkommt, vor ftp.-debian-Zeile steht und www.debian.org erreichbar ist, dann alle cdrom-Zeilen hinten anhängen
 			su -c "S=/etc/apt/sources.list;F='^[^#]*cdrom:';grep -qm1 \$F \$S && \
 			    test 0\$(sed -n '/^[^#]*ftp.*debian/{=;q}' \$S) -gt 0\$(sed -n '/'\$F'/{=;q}' \$S) && \
-					ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/'\$F'/{H;d};\${p;x}' \$S;true"
+					ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/'\$F'/{H;d};\${p;x}' \$S;:"
 	 LOG=inst_$INSTP.log;
 	 printf "%bsu -c \"$IdPR $INSTP\"|tee \"$LOG\";%b\n" ${blau} ${reset}
 	 su -c "$IdPR $INSTP"|tee "$LOG";
@@ -257,7 +259,7 @@ a=$(sudo -n -v 2>&1);test -z "$a" || echo $a|grep -q "assw" ||{
 # which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
 # falls make fehlt, dann installieren ...
 einricht make make
-# $SPR make >$DN 2>&1 ||{ echo Installing/ Installiere 'make' ....; id su >$DN 2>&1 && { su -c "$IPR make;";true;} || sudo $IPR make; grep -q make $AUNF||printf "${UPR}make\necho \"${UPR}make\"\n">>$AUNF; }
+# $SPR make >$DN 2>&1 ||{ echo Installing/ Installiere 'make' ....; id su >$DN 2>&1 && { su -c "$IPR make;";:;} || ${SUDC}$IPR make; grep -q make $AUNF||printf "${UPR}make\necho \"${UPR}make\"\n">>$AUNF; }
 exportvars;
 Mf=Makefile;Mfr=$Mf.roh; test -f $Mfr && mv $Mfr $Mf
 fi

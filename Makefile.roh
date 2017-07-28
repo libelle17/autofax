@@ -16,8 +16,11 @@
 # "make opts" => optimiere mit -Os, nach Groesse; kompiliere alles neu
 # "make optfast" => optimiere mit -Ofast, nach Ausfuerungsgeschwindigkeit; kompiliere alles neu
 # "make optg" => optimiere mit -Og, zum Debuggen; kompiliere alles neu
+# "make debug" => erstelle mit -g;
+# "make debugnew" oder "make debugneu" => erstelle alles neu mit -g;
 # "make new" oder "make neu" => kompiliere alles neu
-# "make hierclean" => loesche Objekt- und ausfuehrbare Dateien im Kompilierverzeichnis
+# "make distclean" => loesche Objekt- und ausfuehrbare Dateien im Kompilierverzeichnis
+# "make fernclean" => loesche installierte Objekt- und ausfuehrbare Dateien
 # "make clean" => loesche Objekt- und ausfuehrbare Dateien einschliesslich installierter Version
 # "make confclean" => loescht die Konfigurationsdatei $(INSTEXEC).conf nach Rueckfrage, falls vorhanden
 # "make altc" => kompiliere mit -std=gnu++11
@@ -66,11 +69,15 @@ ifneq ($(shell g++-6 --version >$(KR); echo $$?),0)
 else
  CCName::=g++-6
 endif
-CC::=$(CCName) # CC=sudo $(CCName)
+CC::=$(CCName) # CC=$(SUDC)$(CCName)
 libmcd::=$(libmc)-$(dev)
 libmc1d::=$(libmc1)-$(dev)
 pgd::=postgresql-$(dev)
-slc::=sudo /sbin/ldconfig
+SUDC::=""
+ifneq ($(shell echo $$EUID),0)
+ SUDC::="sudo "
+endif
+slc::=$(SUDC)/sbin/ldconfig
 # deinstallieren und Ueberschrift vormerken
 # uninst=printf '$(UPR)$(1)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$(1)"\n'>>$(UNF);
 # uninstd=printf '$(UDPR)$(1)\nprintf "$$blau%%s$$reset\\n" "$(UDPR)$(1)"\n'>>$(UNF); # direkt
@@ -91,7 +98,7 @@ slc::=sudo /sbin/ldconfig
 # i1siun=$(call siunins,$(1),$(1))
 # i1siund=$(call siuninsd,$(1),$(1)) # direkt
 # si_unins=$(SPR)$(1)>$(KR)||{ $(call i_unins,$(1),$(2))};
-# GROFFCHECK::=$(call i1siund,$(pgroff))true
+# GROFFCHECK::=$(call i1siund,$(pgroff)):
 
 DEPDIR ::= .d
 $(shell mkdir -p $(DEPDIR)>$(KR))
@@ -117,8 +124,8 @@ HTMLS::=$(patsubst %,%.html,$(MANS))
 GZS::=$(patsubst %,%.gz,$(MANS))
 
 
-.PHONY: alles
-alles: anzeig weiter
+.PHONY: all
+all: anzeig weiter
 
 .PHONY: glei
 glei: anzeig $(EXEC) $(GZS) 
@@ -151,13 +158,13 @@ optg: neu
 altc: CFLAGS+= -std=gnu++11
 altc: CCInst::=gcc-c++
 altc: CCName::=g++
-altc: CC::=$(CCName) # CC=sudo $(CCName)
+altc: CC::=$(CCName) # CC=$(SUDC)$(CCName)
 altc: opts
 
 .PHONY: new
 new: neu
 .PHONY: neu
-neu: anzeig hierclean weiter
+neu: anzeig distclean weiter
 
 .PHONY: weiter
 weiter: compiler $(EXEC) $(GZS) 
@@ -192,13 +199,17 @@ anzeig:
 	@printf " Target path for/Zielpfad fuer '%bmake install%b': %b%s%b\n" $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset) >$(BA)
 	-@rm -f fehler.txt $(KF)
 
+debug debugnew debugneu: DEBUG=-g 
+debug: all
+debugneu debugnew: neu
+
 $(EXEC): $(OBJ)
 	-@printf " linking/verlinke %s to/zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset) >$(BA)
-	-@df --output=ipcent / |tail -n1|grep - && sudo pkill postdrop; true
-	-@man>$(KR);[ $$? -gt 1 ]&&{ ./configure inst _ man verbose;}||true;
+	-@df --output=ipcent / |tail -n1|grep - && $(SUDC)pkill postdrop;:
+	-@man>$(KR);[ $$? -gt 1 ]&&{ ./configure inst _ man verbose;}||:;
 	-@printf " (Version: %b%s%s%b\n " $(blau) "$$(cat versdt)" ")" $(reset) >$(BA)
-	$(CC) $^ -o $@ $(LDFLAGS)
-	-@ls .d/*.Td >$(KR) &&{ for datei in .d/*.Td; do mv -f $${datei} $${datei%.Td}.d; done;};true
+	$(CC) $^ $(DEBUG)-o $@ $(LDFLAGS)
+	-@ls .d/*.Td >$(KR) &&{ for datei in .d/*.Td; do mv -f $${datei} $${datei%.Td}.d; done;};:
 	$(shell touch *.o $${EXEC})
 	-@printf " Fertig mit/Finished with %b$(ICH)%b, Target: %b$@%b:, nachher/afterwords:\n" $(blau) $(reset) $(blau) $(reset)
 	-@printf " '%b%s%b'\n" $(blau) "$$(ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC))" $(reset)
@@ -207,11 +218,11 @@ $(EXEC): $(OBJ)
 %.o : %.cpp $(DEPDIR)/%.d
 	@[ $@ = $(DPROG).o ]&&{ test -f versdt || echo 0.1>versdt; if test -f entwickeln; then awk "BEGIN {print `cat versdt`+0.00001}">versdt;\
 	else printf " %bFile '%bentwickeln%b' missing, keeping the version number stable/ Datei '%bentwickeln%b' fehlt, lasse die Version gleich%b\n" \
-	$(schwarz) $(grau) $(schwarz) $(grau) $(schwarz) $(reset) >$(BA); fi;}; true;
+	$(schwarz) $(grau) $(schwarz) $(grau) $(schwarz) $(reset) >$(BA); fi;}; :;
 	@printf " kompiliere %b%s%b: " $(blau) "$<" $(reset) >$(BA);
 #	-@if ! test -f instvz; then printf \"$$(getent passwd $$(logname)|cut -d: -f6)\">instvz; fi;
 	-@if ! test -f instvz; then printf \"$$(pwd)\">instvz; fi; # wird in kons.cpp verwendet
-	-$(CC) $(DEPFLAGS) $(CFLAGS) -c $< $(BFA);
+	-$(CC) $(DEBUG)$(DEPFLAGS) $(CFLAGS) -c $< $(BFA);
 	-@sed -i 's/versdt //g;s/gitvdt //g' $(DEPDIR)/*.Td
 	-@if test -s fehler.txt; then vi +0/error fehler.txt; else rm -f fehler.txt; fi;
 #	-@$(shell $(POSTCOMPILE))
@@ -228,7 +239,7 @@ $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
 endif
 	@./configure inst "$(CCName)" "$(COMP)"
-	-@for r in 1 2;do [ $$r = 1 ]&&{ lc="$(libmcd)";true;}||lc="$(libmc1d)";\
+	-@for r in 1 2;do [ $$r = 1 ]&&{ lc="$(libmcd)";:;}||lc="$(libmc1d)";\
 	[ -f /usr/include/mysql/mysql.h>$(KR) ]&& \
 	find $$(find /usr -maxdepth 1 -type d -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
 	./configure inst _ "$$lc" verbose; done
@@ -239,7 +250,7 @@ endif
 	find /usr/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -type l -xtype f -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
 	./configure inst _ "$$LTakt" verbose;\
-	done; true;
+	done; :;
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                                  \r" >$(BA)
 
@@ -258,7 +269,7 @@ stumminst: install
 
 $(INSTEXEC): $(EXEC)
 	@printf " Copying program/ Kopiere Programmdatei: %b%s%b -> %b%s%b\n" $(blau) "$(EXEC)" $(reset) $(blau) "$(INSTEXEC)" $(reset) >$(BA)
-	-@sudo pkill $(EXEC) $(KF); sudo pkill -9 $(EXEC) $(KF); sudo cp -p "$(EXEC)" "$(INSTEXEC)"
+	-@$(SUDC)pkill $(EXEC) $(KF); $(SUDC)pkill -9 $(EXEC) $(KF); $(SUDC)cp -p "$(EXEC)" "$(INSTEXEC)"
 
 man_de.html: LGL::=deutsch
 man_de.gz man_de.html: FKT::=FUNKTIONSWEISE
@@ -284,7 +295,7 @@ endif
 define priv_html
 	-@printf " erstelle/generating:%b$(1)%b\r" $(blau) $(reset)
 	-@groff -mandoc -Thtml -v >$(KR);EXC=$$?; \
-	for p in $(pgroff); do { [ $$EXC -gt 1 ]|| ! which groff>$(KR)|| ! $(SPR) $$p>$(KR);}&&{ ./configure inst _ $$p verbose;}; done; true;
+	for p in $(pgroff); do { [ $$EXC -gt 1 ]|| ! which groff>$(KR)|| ! $(SPR) $$p>$(KR);}&&{ ./configure inst _ $$p verbose;}; done; :;
 	-@rm -f $(1).html
 	-@sed -e 's/²gitv²/$(GITV)/g;s/²DPROG²/$(DPROG)/g;'\
 	 -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;'\
@@ -307,9 +318,9 @@ $(1).gz: $(EXEC) $(1)
 	 von=".SH $$(OPN)"; bis=".SH $$(FKT)"; sed -i.bak "/$$$$von/,/$$$$bis/{/$$$$von/{n;p;r $$$$TMP$$$$nl};/$$$$bis/p;d}" $(1);
 	@sed 's/²gitv²/$(GITV)/g;s/²DPROG²/$(DPROG)/g;s/\\fB/\\fI/g' $(1)|gzip -c >$$@
 $(INST$(patsubst man_%,%,$(1))MAN): $(1).gz
-	@sudo mkdir -p $$$$(dirname $$@)
+	@$(SUDC)mkdir -p $$$$(dirname $$@)
 	@printf " Copying Manual/ Kopiere Hilfedatei: %b%s%b -> %b%s%b\n" $(blau) "$(1)" $(reset) $(blau) "$$@" $(reset) >$(BA)
-	@sudo cp -a $(1).gz $$@
+	@$(SUDC)cp -a $(1).gz $$@
 endef
 $(foreach prog,$(wildcard man_??),$(eval $(call manges,$(prog))))
 
@@ -317,33 +328,33 @@ $(foreach prog,$(wildcard man_??),$(eval $(call manges,$(prog))))
 fertig:
 
 .PHONY: clean
-clean: hierclean distclean
+clean: distclean fernclean
 
-.PHONY: hierclean
-hierclean: 
+.PHONY: distclean
+distclean: 
 	@printf " Bereinige/Cleaning ...\r" >$(BA)
 	@ZUL="$(EXEC) $(OBJ) .d/* $(HTMLS)";GEL=$$(ls -1 $$ZUL $(KF)|tr '\n' ' '); rm -f $$ZUL $(KF); \
 	[ -z "$$(echo $$GEL|sed 's/ *$$//')" ]&&GEL="Hier/here: Nichts/nothing";printf " %b$$GEL%b geloescht/deleted!\n" $(blau) $(reset); 
 
-.PHONY: distclean
-distclean:
-	@ZUL="$(INSTEXEC) $(INSTenMAN) $(INST_MAN)";GEL=$$(sudo ls -1 $$ZUL $(KF)|tr '\n' ' '); sudo rm -f $$ZUL $(KF); \
+.PHONY: fernclean
+fernclean:
+	@ZUL="$(INSTEXEC) $(INSTenMAN) $(INST_MAN)";GEL=$$($(SUDC)ls -1 $$ZUL $(KF)|tr '\n' ' '); $(SUDC)rm -f $$ZUL $(KF); \
 	[ -z "$$(echo $$GEL|sed 's/ *$$//')" ]&&GEL="System: Nichts/nothing";printf " %b$$GEL%b geloescht/deleted!\n" $(blau) $(reset); 
 
 .PHONY: confclean
 confclean:
 	-@sh -c 'D=$(INSTEXEC).conf;test -f $$D &&{ printf "Wollen Sie \"%b$$D%b\" wirklich loeschen (j/n)?" $(blau) $(reset); read answer;\
-	if echo "$$answer"|grep -iq "^j\|^y";then rm -r "$$D">$(KR)&&printf "\"%b%s%b\" geloescht!\n" $(blau) "$(INSTEXEC).conf" $(reset); fi;true;} ||{\
+	if echo "$$answer"|grep -iq "^j\|^y";then rm -r "$$D">$(KR)&&printf "\"%b%s%b\" geloescht!\n" $(blau) "$(INSTEXEC).conf" $(reset); fi;:;} ||{\
 	printf "Konfigurationsdatei \"%b$$D%b\" fehlt.\n" $(blau) $(reset);}'
 
 .PHONY: uninstall
-uninstall: distclean
-	-@tac $(UNF)>tmp_$(UNROH)&& sudo blau=$(blau) reset=$(reset) bash tmp_$(UNROH);true # uninstallinv von hinten nach vorne abarbeiten
+uninstall: fernclean
+	-@tac $(UNF)>tmp_$(UNROH)&& $(SUDC)blau=$(blau) reset=$(reset) bash tmp_$(UNROH);: # uninstallinv von hinten nach vorne abarbeiten
 	-@printf "Fertig mit uninstall!\n"
 
 #rufe:
 #	printf '$(UPR)$(pgroff)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$(pgroff)"\n'>>gtest
-#	-@sudo blau=$(blau) reset=$(reset) sh gerufen
+#	-@$(SUDC)blau=$(blau) reset=$(reset) sh gerufen
 
 #teste:
 #	sh -c 'VAR="lange\
@@ -357,7 +368,7 @@ uninstall: distclean
 #	 @$(foreach VAR,$(COMP),$(call sunins,$(VAR),$(VAR)))
 #	$(foreach PG,$(COMP),$(call si_unins,$(PG),$(PG);$(urepo)))
 #	 echo $(call uninst,$(COMP))
-#	sudo blau=$(blau) reset=$(reset) sh gtest
+#	$(SUDC)blau=$(blau) reset=$(reset) sh gtest
 
 .PHONY: version
 version: dovers
@@ -391,7 +402,7 @@ dotrans:
 	 read Antwort;\
 	 [ $$Antwort = "y" -o $$Antwort = "j" ]&& mkdir -p $(Ziel);\
 	};\
-	[ -z "$(Ziel)" ]&&{ Start=0;true;}||[ ! -d "$(Ziel)" ]&& Start=0;\
+	[ -z "$(Ziel)" ]&&{ Start=0;:;}||[ ! -d "$(Ziel)" ]&& Start=0;\
 	if [ $$Start = 0 ]; then\
 	 echo Makes a fair copy of the files of a github repository/ Kopiert Dateien eines github-Repositorys abzüglich mancher Kommentare ins Reine;\
 	 printf "Synatax: %bmake $(TRS) \<zielverzeichnis\>%b\n" $(blau) $(reset);\
@@ -427,7 +438,7 @@ dotrans:
 define setz_gitv
 	 @D=$(1)/.git/config; GITV=$$([ -f $$D ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' $$D);\
 	 sed -i 's/^\(\[ -z .* \]&& GITV=\).*;/\1'$$GITV';/g' $(1)/install.sh;\
-	 [ "$$GITV" = "$(sed 's/"//g' $(1)/gitvdt)" ]|| echo \"$$GITV\">$(1)/gitvdt;true;
+	 [ "$$GITV" = "$(sed 's/"//g' $(1)/gitvdt)" ]|| echo \"$$GITV\">$(1)/gitvdt;:;
 endef
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))

@@ -28,8 +28,7 @@ if test "$ICH" != configure -a "$ICH" != viall -a "$ICH" != modziel.sh -a $AUFRU
 	[ -f Makefile -o -f Makefile.roh ]&&[ -f $DPROG.cpp -a -f configure ]&& ERF=1;
 	[ $ERF = 1 ]&&{
 		. ./configure;
-		printf "${blau}Installing/ Installiere $rot$DPROG$reset ...\n";
-		true;
+		printf "${blau}Installing/ Installiere $rot$DPROG$reset ...\n";:;
 	}||{
 	# ... sonst moegliche alte Quelldateiverzeichnisse $DPROG umbenennen, aktuelle Version neu herunterladen ...
 		printf "Downloading/ Lade runter $DPROG ...\n"
@@ -51,15 +50,15 @@ if test "$ICH" != configure -a "$ICH" != viall -a "$ICH" != modziel.sh -a $AUFRU
 			mv $DPROG-master $DPROG &&{
 				cd $DPROG; 
 				. ./configure
-				Q=../${DPROG}_1/$INSTLOG; test -f $Q && cp -a $Q .||true
-				Q=../${DPROG}_1/$UNF; test -f $Q && cp -a $Q .||true
+				Q=../${DPROG}_1/$INSTLOG; test -f $Q && cp -a $Q .||:
+				Q=../${DPROG}_1/$UNF; test -f $Q && cp -a $Q .||:
 			}
 		}|| exit;
 	}
 	$SPR make >/dev/null ||{ echo GNU make missing/fehlt; exit;}
 	# ... und dann kompilieren und installieren
 	make opts &&
-	sudo make install; erg=$?
+	${SUDC}make install; erg=$?
 	[ $erg = 0 ] && farbe=$blau || farbe=$rot;
 	printf "Result code/ Ergebniscode: ${farbe}$erg${reset}\n"
 fi
