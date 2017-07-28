@@ -295,7 +295,7 @@ endif
 define priv_html
 	-@printf " erstelle/generating:%b$(1)%b\r" $(blau) $(reset)
 	-@groff -mandoc -Thtml -v >$(KR);EXC="$$$$?"; \
-	for p in $(pgroff); do { [ $$$${EXC} -gt 1 ]|| ! which groff>$(KR)|| ! $(SPR) $$p>$(KR);}&&{ ./configure inst _ $$p verbose;}; done; :;
+	for p in $(pgroff); do { [ $$$${EXC} -gt 1 ]&&{ echo M0;}||{ echo M1;! which groff>$(KR);}|| ! $(SPR) $$p>$(KR);}&&{ ./configure inst _ $$p verbose;}; done; :;
 	-@rm -f $(1).html
 	-@sed -e 's/²gitv²/$(GITV)/g;s/²DPROG²/$(DPROG)/g;'\
 	 -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;'\
