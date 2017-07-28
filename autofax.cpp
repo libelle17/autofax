@@ -10008,7 +10008,7 @@ int main(int argc, char** argv)
 	} else {
 		pm.VorgbSpeziell();//die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion "void paramcl::VorgbSpeziell()" ueberladbar sind
 		pm.lieskonfein();
-	} // 	if (pm.obhilfe==3) // Standardausgabe gewaehrleisten
+	} // 	if (pm.obhilfe==3) else // Standardausgabe gewaehrleisten
 	pm.lieszaehlerein(&pm.aufrufe,&pm.tagesaufr,&pm.monatsaufr,&pm.laufrtag);
 
 	if (pm.getcommandline()) 
