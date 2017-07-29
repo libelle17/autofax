@@ -4113,6 +4113,7 @@ void paramcl::konfcapi()
 		} // if (obverb>0)
 	} // if (rzf || (capicffehlt && !nrzf))
 	const string suchcuser="["+cuser+"]";
+	caus<<gruen<<"suchcuser: "<<violett<<suchcuser<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<schwarz<<endl;
 	// es gibt zwei moegliche Gruende zum Neuschreiben der Datei: 1) Parameter diffierieren, 2) noch kein User angelegt
 	uchar cuserda=0, paramdiff=0, neuschreiben=0;
 	string zeile, neudatei;
@@ -4175,11 +4176,13 @@ void paramcl::konfcapi()
 				if (!cuserda) neuschreiben=1;
 				if (!neuschreiben) break; // dann fertig
 			} else { // if (iru)
+			caus<<gruen<<"cuserda: "<<violett<<(int)cuserda<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<schwarz<<endl;
 				if (!cuserda)  {
 					// schreibe Konfiguration fuer Benutzer in fax.conf
 					*fneu<<suchcuser<<endl;
 					*fneu<<"fax_numbers=\""<<cfcnfA[4].wert<<"\""<<endl;
 					*fneu<<"fax_stationID=\""<<cfcnfA[6].wert<<"\""<<endl;
+					caus<<gruen<<"fax_stationID: "<<cfcnfA[6].wert<<violett<<"!!!!!!!!!!!!!!!!!!!!!!!"<<schwarz<<endl;
 					*fneu<<"fax_headline=\""<<cfcnfA[7].wert<<"\""<<endl;
 					*fneu<<"fax_email_from=\""<<cfcnfA[8].wert<<"\""<<endl;
 					*fneu<<"fax_action=\"MailAndSave\""<<endl;
@@ -4189,6 +4192,7 @@ void paramcl::konfcapi()
 					delete fneu;
 					fneu=0;
 				} // 				if (fneu)
+				f.close();
 				setfaclggf(cfaxconfdt,obverb,oblog,falsch,6,falsch);
 				const string origdatei=cfaxconfdt+"_orig";
 				struct stat entryorig={0};
@@ -4196,7 +4200,7 @@ void paramcl::konfcapi()
 					dorename(cfaxconfdt,origdatei,cuser,0,obverb,oblog);
 				} else {
 					tuloeschen(cfaxconfdt,cuser,obverb,oblog);
-				} // 				if (lstat(origdatei.c_str(),&entryorig))
+				} // 				if (lstat(origdatei.c_str(),&entryorig)) else
 				dorename(neudatei,cfaxconfdt,cuser,0,obverb,oblog);
 			} // if (iru)
 			if (!cfcnfA[1].wert.empty()) cfaxuservz=cfcnfA[1].wert;

@@ -2315,7 +2315,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 		} // 		if (!besitzer.empty())
 		if (fehler) {
 			string bef="mkdir -p '"+verz+"' 2>/dev/null||"+sudc+"mkdir -p '"+verz+"'";
-			if (!besitzer.empty()) bef+="&&chmod 777 '"+verz+"'";
+			if (!besitzer.empty()) bef+="&&chmod 777 '"+verz+"' 2>/dev/null||"+sudc+"chmod 777 '"+verz+"'";
 			fehler=systemrueck(bef,obverb,oblog);
 			if (unindt.find(verz)) // wenn der Anfang nicht identisch ist, also nicht das Verzeichnis von unindt geprueft werden soll
 				anfgg(unindt,sudc+"rmdir '"+verz+"'",bef,obverb,oblog);
