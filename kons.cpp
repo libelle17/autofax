@@ -395,7 +395,7 @@ return erg;
 
 string fersetze(const string& u, const char* alt, const char* neu) 
 {
-string erg="";
+string erg;
 if (alt[0]==0 || !strcmp(alt,neu)) {
 erg=u;
 } else {
@@ -630,7 +630,7 @@ void getstammext(const string *const ganz, string *stamm, string *exten)
     *exten=ganz->substr(posp+1);
     *stamm=ganz->substr(0,posp);
   } else {
-    *exten="";
+    *exten=nix;
     *stamm=string(*ganz);
   } //   if (posp!=std::string::npos) else
 } // void getstammext(string *ganz, string *stamm, string *exten) 
@@ -686,7 +686,7 @@ mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_b
     ////    int erg __attribute__((unused));
 		////    if (name!=unindt)  // sonst vielleicht Endlosschleife
 		if (mehralslesen) {
-			pruefverz(dir_name(name),0,0);
+			pruefverz(dir_name(name),obverb,oblog,1,0);
 			////    if (!systemrueck(sudc+"test -f '"+name+"' || "+sudc+"touch '"+name+"'",obverb,oblog)) KLA
 			if (!touch(name,obverb,oblog)) {
 				setfaclggf(name,obverb,oblog,falsch,modus&ios::out||modus&ios::app?6:4,falsch,faclbak);
@@ -1808,7 +1808,7 @@ void schlArr::setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe,sv
 } // void schlArr::setzbemv(const string& name,const string& bem)
 
 
-void schlArr::aschreib(mdatei *f)
+void schlArr::aschreib(mdatei *const f)
 {
   for (size_t i = 0;i<zahl;i++) {
     if (!schl[i].bemerk.empty()) *f<<(schl[i].bemerk[0]=='#'?"":"# ")<<*loeschefarbenaus(&schl[i].bemerk)<<endl;
@@ -1831,7 +1831,7 @@ schlArr::~schlArr()
   if (schl) delete[] schl;
 }
 
-int multischlschreib(const string& fname, schlArr **mcnfApp, size_t cszahl,string mpfad)
+int multischlschreib(const string& fname, schlArr *const *const mcnfApp, const size_t cszahl,const string& mpfad)
 {
   mdatei f(fname,ios::out);
   if (f.is_open()) {
@@ -1868,9 +1868,9 @@ int cppschreib(const string& fname, cppSchluess *conf, size_t csize)
   if (f.is_open()) {
     for (size_t i = 0;i<csize;i++) {
       f<<conf[i].name<<" = \""<<conf[i].wert<<"\""<<endl;
-    }
+    } //     for (size_t i = 0;i<csize;i++)
     return 0;
-  }
+  } //   if (f.is_open())
   return 1;
 } // int cppschreib(const string& fname, cppSchluess *conf, size_t csize)
 
@@ -1941,7 +1941,7 @@ std::string dir_name(const std::string& path)
 // obverb: 1 = Befehl anzeigen, 2 = auch Rueckgabezeilen anzeigen
 // obergebnisanzeig: 1=falls Fehler und obverb>1, >1=falls Fehler
 int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<string> *rueck/*=0*/, 
-    int verbergen/*=0*/, int obergebnisanzeig/*wahr*/, const string& ueberschr/*=""*/,vector<errmsgcl> *errm/*=0*/,uchar obincron/*=0*/)
+    int verbergen/*=0*/, int obergebnisanzeig/*wahr*/, const string& ueberschr/*=nix*/,vector<errmsgcl> *errm/*=0*/,uchar obincron/*=0*/)
 {
 // verbergen: 0 = nichts, 1= '2>/dev/null' anhaengen + true zurueckliefern, 2='>/dev/null 2>&1' anhaengen + Ergebnis zurueckliefern
   binaer ob0heissterfolg=wahr;
@@ -2269,11 +2269,11 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 // obmitfacl: 1= setzen, falls noetig, >1= immer setzen
 // falls Benutzer root
 int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfacl/*=0*/,uchar obmitcon/*=0*/,
-              const string& besitzer/*=nix*/, const string& benutzer/*=nix*/)
+              const string& besitzer/*=nix*/, const string& benutzer/*=nix*/,const uchar obmachen/*=1*/)
 {
 	static int obselinux=-1;
 	struct stat sverz={0};
-	int fehler=1;
+	int fehlt=1;
 	// wenn nicht root
 	mode_t altmod=022;
 	if(!besitzer.empty()){
@@ -2282,58 +2282,61 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 	if (!verz.empty()) {
 		if (!lstat(verz.c_str(), &sverz)) {
 			if(S_ISDIR(sverz.st_mode)) {
-				fehler=0;
+				fehlt=0;
 			} // 			if(S_ISDIR(sverz.st_mode))
 		} //     if (!lstat(verz.c_str(), &sverz))
-		if (fehler) {
-			string aktv=verz;
-			svec stack;
-			while (1) {
-				if (aktv.empty()) break;
-				if (!lstat(aktv.c_str(),&sverz)) break;
-				stack<<aktv;
-				aktv=dir_name(aktv);
-			} // 			while (1)
-			while(1) {
-				if (!stack.size()) {
-					fehler=0;
-					break;
-				} // 				if (!stack.size())
-				mode_t mod=S_IRWXU;
-				if (!besitzer.empty()) mod=0777;
-				if (mkdir(stack[stack.size()-1].c_str(),mod)) 
-					break;
-				stack.erase(stack.end());
-			} // while(1)
-		} // if (fehler)
-		if (!besitzer.empty()) {
-			uid_t uid;
-			gid_t gid;
-			untersuser(besitzer,&uid,&gid);
-			chown(verz.c_str(),uid,gid);
-			umask(altmod);
-		} // 		if (!besitzer.empty())
-		if (fehler) {
-			string bef="mkdir -p '"+verz+"' 2>/dev/null||"+sudc+"mkdir -p '"+verz+"'";
-			if (!besitzer.empty()) bef+="&&chmod 777 '"+verz+"' 2>/dev/null||"+sudc+"chmod 777 '"+verz+"'";
-			fehler=systemrueck(bef,obverb,oblog);
-			if (unindt.find(verz)) // wenn der Anfang nicht identisch ist, also nicht das Verzeichnis von unindt geprueft werden soll
-				anfgg(unindt,sudc+"rmdir '"+verz+"'",bef,obverb,oblog);
-		} //     if (fehler)
-		////    if (fehler) fehler=systemrueck(sudc+"mkdir -p '"+verz+"'",obverb,oblog);
-
-		if (obmitfacl) {
-			setfaclggf(verz,obverb,oblog, wahr, 7, (obmitfacl>1),1,benutzer);
-		}
-		//// <<violett<<verz<<schwarz<<endl;
-		if (obmitcon) {
-			if (obselinux==-1) 
-				obselinux=obprogda("sestatus",obverb,oblog);
-			if (obselinux)
-				systemrueck(sudc+"chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
-		} // 		if (obmitcon)
+		if (obmachen) {
+			if (fehlt) {
+				string aktv=verz;
+				svec stack;
+				while (1) {
+					if (aktv.empty()) break;
+					if (!lstat(aktv.c_str(),&sverz)) break;
+					stack<<aktv;
+					aktv=dir_name(aktv);
+				} // 			while (1)
+				while(1) {
+					if (!stack.size()) {
+						fehlt=0;
+						break;
+					} // 				if (!stack.size())
+					mode_t mod=S_IRWXU;
+					if (!besitzer.empty()) mod=0777;
+					if (mkdir(stack[stack.size()-1].c_str(),mod)) 
+						break;
+					stack.erase(stack.end());
+				} // while(1)
+			} // if (fehlt)
+			if (fehlt) {
+				string bef="mkdir -p '"+verz+"' 2>/dev/null||"+sudc+"mkdir -p '"+verz+"'";
+				if (!besitzer.empty()) bef+="&&chmod 777 '"+verz+"' 2>/dev/null||"+sudc+"chmod 777 '"+verz+"'";
+				fehlt=systemrueck(bef,obverb,oblog);
+				if (unindt.find(verz)) // wenn der Anfang nicht identisch ist, also nicht das Verzeichnis von unindt geprueft werden soll
+					anfgg(unindt,sudc+"rmdir '"+verz+"'",bef,obverb,oblog);
+			} //     if (fehlt)
+		} // obmachen
+		////    if (fehlt) fehlt=systemrueck(sudc+"mkdir -p '"+verz+"'",obverb,oblog);
+		if (!fehlt) {
+			if (!besitzer.empty()) {
+				uid_t uid;
+				gid_t gid;
+				untersuser(besitzer,&uid,&gid);
+				chown(verz.c_str(),uid,gid);
+				umask(altmod);
+			} // 		if (!besitzer.empty())
+			if (obmitfacl) {
+				setfaclggf(verz,obverb,oblog, wahr, 7, (obmitfacl>1),1,benutzer);
+			}
+			//// <<violett<<verz<<schwarz<<endl;
+			if (obmitcon) {
+				if (obselinux==-1) 
+					obselinux=obprogda("sestatus",obverb,oblog);
+				if (obselinux)
+					systemrueck(sudc+"chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
+			} // 		if (obmitcon)
+		} // 		if (!fehlt)
 	} // if (!verz.empty())
-	return fehler;
+	return fehlt;
 } // void pruefverz(const string& verz,int obverb,int oblog)
 
 
@@ -2364,10 +2367,10 @@ char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], co
       if (i<moegl.length()-1) cout<<", ";
     }
     cout<<")"<<(!vorgabe?"":"['"+tuerkiss+vorgabe+schwarz+"']")<<"?: ";
-    input="";
+    input.clear();
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
-    if (input=="" && vorgabe) {input=vorgabe;break;}
+    if (input.empty() && vorgabe) {input=vorgabe;break;}
     if (input[0]) if (strchr(erlaubt,(int)input[0])) break;
   } //   while(1)
   return input[0];
@@ -2399,7 +2402,7 @@ string Tippstrs(const char *frage, char* moegl[], char *vorgabe/*=0*/)
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
     //// <<rot<<"input: '"<<input<<"', vorgabe: '"<<vorgabe<<"'"<<endl<<schwarz;
-    if (input=="" && vorgabe) {input=vorgabe;break;}
+    if (input.empty() && vorgabe) {input=vorgabe;break;}
     if (input[0]) {
       for(unsigned i=0;moegl[i];i++) {
         if (!strcmp(moegl[i],input.c_str())) {passt=1;break;}
@@ -2443,12 +2446,12 @@ string Tippzahl(const char *frage, const char *vorgabe)
   string input;
   while(1) {
     cout<<blau<<frage<<schwarz<<(!vorgabe?"":" ["+tuerkiss+vorgabe+schwarz+"]")<<"? ";
-    input="";
+    input.clear();
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
-    if (input=="" && vorgabe) {input=vorgabe;break;}
+    if (input.empty() && vorgabe) {input=vorgabe;break;}
     if (isnumeric(input)) break;
-  }
+  } //   while(1)
   return input;
 } // Tippzahl
 
@@ -2485,7 +2488,7 @@ string Tippstr(const string& frage, const string *vorgabe)
     if (input.empty() && vorgabe) {
      input=*vorgabe;
      break;
-    } //     if (input=="" && vorgabe)
+    } //     if (input.empty() && vorgabe)
     break;
   } //   while(1)
   return input;
@@ -2496,10 +2499,10 @@ string Tippverz(const char *frage,const string *vorgabe)
   string input, vg2="n"; uchar fertig=0;
   while(1) {
     cout<<blau<<frage<<schwarz<<(!vorgabe || vorgabe->empty()?"":" [\""+tuerkiss+*vorgabe+schwarz+"\"]")<<"? ";
-    input="";
+    input.clear();
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
-    if (input=="" && vorgabe) {input=*vorgabe;}
+    if (input.empty() && vorgabe) {input=*vorgabe;}
     struct stat st={0};
     ////    <<"input: '"<<rot<<input<<schwarz<<"'"<<endl;
     while (1) {
@@ -2517,9 +2520,9 @@ string Tippverz(const char *frage,const string *vorgabe)
         cout<<"/"<<drot<<"n"<<schwarz<<")(\""<<tuerkis<<vg2<<schwarz<<"\")?";
         getline(cin,inpi);
         if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
-        if (inpi=="") {inpi=vg2;break;}
+        if (inpi.empty()) {inpi=vg2;break;}
         if (strchr("jyJY",inpi[0])) {
-          pruefverz(input);
+          pruefverz(input,0,0,1,1);
           /*//
           int erg __attribute__((unused));
           erg=system((string(sudc+"mkdir -p ")+input).c_str());
@@ -2540,7 +2543,7 @@ uchar VerzeichnisGibts(const char* vname)
   if ((verz=opendir(vname))){
     closedir(verz);
     return 1;
-  }
+  } //   if ((verz=opendir(vname)))
   return 0;
 } // VerzeichnisGibts
 
@@ -2980,7 +2983,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		  ziehraus(srueck,&ustring);
 
 			// s. ausricht() in configure
-			if (!pruefverz(instvz,obverb,oblog)) {
+			if (!pruefverz(instvz,obverb,oblog,1,0)) {
 				mdatei uniff(instvz+"/inst.log",ios::app,0);
 				if (uniff.is_open()) {
 					uniff<<endl<<"Rueckmeldung zu: '"<<bef<<"':"<<endl;
@@ -4006,7 +4009,7 @@ void find2cl::ausgeb()
 	} // 	if (ergp)
 } // void find2cl::ausgeb()
 
-int find2cl::finde(svec *wovp,const string& muster/*=""*/,const long tiefe/*=-1*/,int typbit/*=B_Alle*/,int folge/*=Fol_Dat*/,
+int find2cl::finde(svec *wovp,const string& muster/*=nix*/,const long tiefe/*=-1*/,int typbit/*=B_Alle*/,int folge/*=Fol_Dat*/,
 		time_t ab/*=0*/, time_t bis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/,int obnoext/*=0*/)
 {
 	regex_t reg;
@@ -4028,10 +4031,10 @@ int find2cl::finde(svec *wovp,const string& muster/*=""*/,const long tiefe/*=-1*
 		Log(Txk[T_Suche_in]+blaus+wo+schwarz+Txk[T_nach]+blau+muster+schwarz+"'"+(obicase?"(ic)":"")+Txk[T_Tiefe]+"'"+blau+tiefestr+schwarz+ \
 				Txk[T_Typbit]+blau+typbitstr+schwarz+Txk[T_Folge]+blau+folgestr+schwarz+Txk[T_noext]+blau+obnoexts+schwarz+Txk[T_Ergebnis]+ \
 				gruen+ergzl+schwarz,obverb,oblog);
-	}
+	} // 	if (obverb|oblog)
 	if (obverb>1) ausgeb();
 	return 0;
-} // int find2cl::finde(svec *wovp,string muster/*=""*/,const long tiefe/*=-1*/,int typbit/*=B_Alle*/,int folge/*=Fol_Dat*/,
+} // int find2cl::finde(svec *wovp,string& muster/*=nix*/,const long tiefe/*=-1*/,int typbit/*=B_Alle*/,int folge/*=Fol_Dat*/,
 
 void find2cl::zuvec(svec *zu,uchar anteil/*=0*/)
 {
@@ -4178,7 +4181,7 @@ int find3cl::ausgeb()
 	return 0;
 } //     int ausgeb()
 
-int find3cl::finde(svec *wovp,const string& muster/*=""*/,long tiefe/*=-1*/,
+int find3cl::finde(svec *wovp,const string& muster/*=nix*/,long tiefe/*=-1*/,
 		int _typbit/*=B_Alle*/,int _folge/*=Fol_Dat*/,time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/,int _nurexec/*=0*/,int obnoext/*=0*/)
 {
 	int ret=0;
@@ -4240,7 +4243,7 @@ void find3cl::zuvec(svec *zu,uchar anteil/*=0*/)
 
 #if defined(altfind) && defined(neufind)
 void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar anteil/*=0*/,
-	const string& wo/*="."*/,const string& muster/*=""*/,long tiefe/*=-1*/,int _typbit/*=B_Alle*/,
+	const string& wo/*="."*/,const string& muster/*=nix*/,long tiefe/*=-1*/,int _typbit/*=B_Alle*/,
 	int _folge/*=Fol_Dat*/, time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/,int obnoext/*=0*/)
 {
 	svec wov;

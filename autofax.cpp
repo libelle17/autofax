@@ -2355,7 +2355,7 @@ int fsfcl::loeschecapi(const int obverb, const int oblog)
 } // void fsfcl::loeschecapi(int obverb, int oblog)
 
 // Rueckgabe: Zahl der nicht geloeschten Eintraege
-// wird aufgerufen in: aenderefax, loescheallewartende, untersuchespool,
+// wird aufgerufen in: aenderefax, loescheallewartenden, untersuchespool,
 int fsfcl::loeschehyla(paramcl *const pmp, const int obverb, const int oblog)
 {
 	Log(violetts+Tx[T_loeschehyla]+schwarz,obverb,oblog);
@@ -2848,7 +2848,7 @@ int paramcl::setzhylavz()
 	Log(violetts+Tx[T_setzhylavz]+schwarz);
 	// wird fruehestens in korrigierecapi benoetigt
 	// varsphylavz wird benoetigt in: korrigierecapi, untersuchespool, hfaxsetup(pruefhyla), pruefhyla, hylaausgeb(untersuchespool,zeigweitere)
-	// hsendqvz wird benoetigt in: loescheallewartende, loeschewaise, zeigweitere, inDBh(faxemitH)
+	// hsendqvz wird benoetigt in: loescheallewartenden, loeschewaise, zeigweitere, inDBh(faxemitH)
 	const char* testcmd="/bin/faxrcvd";
 	int fundart=0;
 	uchar weiterpruefen=0; 
@@ -2941,11 +2941,11 @@ int paramcl::setzhylavz()
 	} // if (obverb)
 	kuerzevtz(&varsphylavz);
 	hsendqvz=varsphylavz+"/sendq";
-	pruefverz(hsendqvz,obverb,oblog,1,1,huser,cuser);
+	pruefverz(hsendqvz,obverb,oblog,1,0,huser,cuser,0);
 	hdoneqvz=varsphylavz+"/doneq";
-	pruefverz(hdoneqvz,obverb,oblog,1,1,huser,cuser);
+	pruefverz(hdoneqvz,obverb,oblog,1,0,huser,cuser,0);
 	harchivevz=varsphylavz+"/archive";
-	pruefverz(harchivevz,obverb,oblog,1,1,huser,cuser);
+	pruefverz(harchivevz,obverb,oblog,1,0,huser,cuser,0);
 	xferfaxlog=varsphylavz+"/etc/xferfaxlog"; 
 	hempfavz=varsphylavz+"/" DPROG "arch";
 	return 0;
@@ -2995,7 +2995,7 @@ void paramcl::liescapiconf()
 	cfcnfA.init(10,"spool_dir","fax_user_dir","send_tries","send_delays","outgoing_MSN",
 			"dial_prefix","fax_stationID","fax_headline","fax_email_from","outgoing_timeout");
 	if (!cfaxconfdt.empty()) {
-		pruefverz(dir_name(cfaxconfdt),obverb,oblog);
+		pruefverz(dir_name(cfaxconfdt),obverb,oblog,1,0);
 		static confdat cfaxcd(cfaxconfdt,&cfcnfA,obverb);
 		cfaxcdtp=&cfaxcd;
 		cfaxcdtp->Abschn_auswert(obverb);
@@ -3121,18 +3121,18 @@ void paramcl::VorgbAllg()
 	////  pruefcvz(); // 1.7.16 zu frueh
 } // void paramcl::VorgbAllg
 
-// wird aufgerufen in: konfcapi, VorgbAllg
+// wird aufgerufen in: konfcapi, verzeichnisse
 void paramcl::pruefcvz()
 {
 	//// <<rot<<"cfaxuservz in pruefcvz: "<<cfaxuservz<<schwarz<<endl;
 	Log(violetts+Tx[T_pruefcvz]+schwarz+"ccfaxuservz: "+violett+cfaxuservz+schwarz);
 	kuerzevtz(&cfaxuservz);
-	pruefverz(cfaxuservz,obverb,oblog,1,1,nix,cuser);
+	pruefverz(cfaxuservz,obverb,oblog,1,0,{},cuser,0);
 	cfaxusersqvz=cfaxuservz+vtz+cuser+"/sendq"; //  "/var/spool/capisuite/users/<user>/sendq";
-	pruefverz(cfaxusersqvz,obverb,oblog,1,1,nix,cuser);
+	pruefverz(cfaxusersqvz,obverb,oblog,1,0,{},cuser,0);
 	cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
 	//// <<violett<<"cfaxuserrcvz: "<<cfaxuserrcvz<<schwarz<<endl;
-	pruefverz(cfaxuserrcvz,obverb,oblog,1,1,nix,cuser);
+	pruefverz(cfaxuserrcvz,obverb,oblog,1,0,{},cuser,0);
 } // paramcl::pruefcvz
 
 // wird aufgerufen in lieskonfein
@@ -3141,7 +3141,7 @@ void paramcl::setzzielmuster(confdat& afcd)
 	if (!zmvzn || !zmvp) {
 		zmvp= new zielmustercl{"","/var/"+meinname+"/ziel"};
 		zmvzn=1;
-	}
+	} // 	if (!zmvzn || !zmvp)
 	zmvz=ltoan(zmvzn); // aus VorgbSpeziell
 
 	uchar zmda=0; // 1= Zielmuster in der Konfigurationsdatei schon festgelegt
@@ -3300,11 +3300,11 @@ void paramcl::lieskonfein()
 
 //wird aufgerufen in main
 void paramcl::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/, struct tm *lap/*=0*/,
-                             string *obempfp/*=0*/,string *obgesap/*=0*/)
+                             string *obempfp/*=0*/,string *obgesap/*=0*/,const uchar obstumm/*=0*/)
 {
 	azaehlerdt=aktprogverz()+".zaehl";
 	zcnfA.init(6,"aufrufe","lDatum","tagesaufr","monatsaufr","empfangen","gesandt");
-	confdat zcd(azaehlerdt,&zcnfA,obverb); // hier werden die Daten aus der Datei eingelesen
+	confdat zcd(azaehlerdt,&zcnfA,obstumm?0:obverb); // hier werden die Daten aus der Datei eingelesen
 	if (arp) if (zcnfA[0].gelesen) zcnfA[0].hole(arp);
 	if (tap) if (zcnfA[2].gelesen) zcnfA[2].hole(tap);
 	if (map) if (zcnfA[3].gelesen) zcnfA[3].hole(map);
@@ -4232,7 +4232,7 @@ void paramcl::nextnum()
 		} // if (nextstr.is_open()) 
 	} // if (!lstat(cfaxusersqvz.c_str(),&entrynextnr))
 	if (!nextnr) {
-		pruefverz(cfaxuservz,obverb,oblog,2,1,nix,cuser);
+		pruefverz(cfaxuservz,obverb,oblog,2,0,{},cuser);
 		setfaclggf(spoolcapivz,obverb,oblog,wahr,7,wahr);
 		if (findv==1) {
 			cmd=sudc+"echo $(( `find "+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
@@ -4264,13 +4264,13 @@ void paramcl::verzeichnisse()
 {
 	Log(violetts+Tx[T_verzeichnisse]);
 	pruefcvz(); 
-	pruefverz(zufaxenvz,obverb,oblog,2,1,cuser,nix); // dahin soll man schreiben koennen
-	pruefverz(zufaxenvz+"/2200",obverb,oblog,0,0,cuser,nix); // dahin soll man schreiben koennen
-	pruefverz(wvz,obverb,oblog,1,1,cuser,nix);
-	pruefverz(nvz,obverb,oblog,1,1,cuser,nix);
-	pruefverz(empfvz,obverb,oblog,1,1,cuser,nix);
+	pruefverz(zufaxenvz,obverb,oblog,2,1,cuser); // dahin soll man schreiben koennen
+	pruefverz(zufaxenvz+"/2200",obverb,oblog,0,0,cuser); // dahin soll man schreiben koennen
+	pruefverz(wvz,obverb,oblog,1,1,cuser);
+	pruefverz(nvz,obverb,oblog,1,1,cuser);
+	pruefverz(empfvz,obverb,oblog,1,1,cuser);
 	for(zielmustercl *zmakt=zmp;1;zmakt++){
-		pruefverz(zmakt->ziel,obverb,oblog,1,1,cuser,nix);
+		pruefverz(zmakt->ziel,obverb,oblog,1,1,cuser);
 		if (zmakt->obmusterleer()) break;
 	} //   for(zielmustercl *zmakt=zmp;1;zmakt++)
 	for(uint imu=0;imu<this->zmzn;imu++) {
@@ -4354,7 +4354,7 @@ void paramcl::pruefcron()
 				if (obschreib) {
 					// 2. um 22 Uhr vorgeplante Dateien faxen
 					vaufr[1]=s1+zufaxenvz+s2+zufaxenvz+vtz+" 2>/dev/null";
-					const string vorsaetze="";
+					const string vorsaetze;
 					const string cbef="0 22 * * * "+vorsaetze+vaufr[1]; // "-"-Zeichen nur als cron
 					tucronschreib(zsaufr[1],nochkeincron,cronzuplanen,cbef);
 					if (cmeingegeben) if (cronzuplanen==vorcm.empty())
@@ -4437,7 +4437,7 @@ void paramcl::pruefsamba()
 			struct stat sstat={0};
 			if (!(conffehlt=lstat(smbdt,&sstat))) break;
 			if (iru) break;
-			pruefverz("/etc/samba",obverb,oblog);
+			pruefverz("/etc/samba",obverb,oblog,1,0,{},{},0);
 			kopier(quelle,smbdt,obverb,oblog);
 		} //   for(uchar iru=0;iru<2;iru++)
 		if (smb.obsvfeh(obverb-1,oblog)) if (smbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
@@ -5159,7 +5159,7 @@ size_t paramcl::loeschewaise()
 } // int paramcl::loeschewaise()
 
 // wird aufgerufen in: main
-size_t paramcl::loescheallewartende()
+size_t paramcl::loescheallewartenden()
 {
 	Log(blaus+Tx[T_loescheallewartenden]+schwarz);
 	const size_t aktc=0;
@@ -5205,7 +5205,7 @@ size_t paramcl::loescheallewartende()
 		::Log(Tx[T_Keine_wartenden_Faxe_zum_Loeschen_da],1,oblog);
 	} // if (erg)
 	return erg;
-} // int paramcl::loescheallewartende()
+} // int paramcl::loescheallewartenden()
 
 // wird aufgerufen in: main (2x)
 void paramcl::tu_lista(const string& oberfolg, const string& submids)
@@ -5458,7 +5458,7 @@ int paramcl::pruefocr()
 								blau+linstp->upd+schwarz,1,1);
 					} //          if (double pyv=progvers("python3")<=3.41)
 				} // 				if (systemrueck(sudhc+"python3 -m pip install --upgrade setuptools pip",obverb+1,oblog))
-				//				systemrueck((cus.cuid?sudo:nix)+"python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
+				//				systemrueck((cus.cuid?sudo:{})+"python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
 				string vprog;
 				for(int iru=0;iru<2;iru++) {
 					const string virtualenv="virtualenv";
@@ -6153,7 +6153,7 @@ void paramcl::wegfaxen()
 		ulong kaufrufe=0;
 		do {
 			string altobsendC;
-			lieszaehlerein(&kaufrufe,0,0,0,0,&altobsendC);
+			lieszaehlerein(&kaufrufe,0,0,0,/*obempfp=*/0,&altobsendC,/*obstumm=*/1);
 			//// <<rot<<"kaufrufe: "<<kaufrufe<<" aufrufe: "<<aufrufe<<endl;
 			//// <<"altobsendC: '"<<altobsendC<<"', aufrufe: "<<aufrufe<<", kaufrufe: "<<kaufrufe<<endl;
 			if (aufrufe!=kaufrufe && altobsendC!="1") {
@@ -6529,7 +6529,7 @@ void paramcl::bereinigecapi(const size_t aktc)
 			} else {
 				// 31.1.16: ... und wenn diese sich nicht in outa findet ...
 				const string waisen = cfaxusersqvz+"/waisen";
-				pruefverz(waisen,obverb,oblog,1,1,nix,cuser);
+				pruefverz(waisen,obverb,oblog,1,1,{},cuser);
 				uint vfehler=0;
 				verschiebe(qrueck[i],waisen,cuser,&vfehler,1,obverb,oblog);
 			} // if (inouta.num_rows) else 
@@ -6924,7 +6924,7 @@ void paramcl::empfarch()
 	ulong jaufrufe=0;
 	do {
 	  string altobempf;
-		lieszaehlerein(&jaufrufe,0,0,0,&altobempf);
+		lieszaehlerein(&jaufrufe,0,0,0,&altobempf,/*obgesap=*/0,/*obstumm=*/1);
 		//// <<"jaufrufe: "<<jaufrufe<<" aufrufe: "<<aufrufe<<endl;
 		if (aufrufe!=jaufrufe && altobempf!="1") {
 			schreibzaehler(&eins);
@@ -7164,7 +7164,7 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,uchar indb/*=1*/,uc
 			const string falsche = cfaxuserrcvz+"/falsche";
 			static uchar falschegeprueft=0;
 			if (!falschegeprueft) {
-				pruefverz(falsche,obverb,oblog,1,1,nix,cuser);
+				pruefverz(falsche,obverb,oblog,1,1,{},cuser);
 				falschegeprueft=1;
 			} // 			if (!falschegeprueft)
 			verschiebe(ctxdt,falsche,cuser,&vfehler,1,obverb,oblog);
@@ -7178,7 +7178,7 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,uchar indb/*=1*/,uc
 		} else {
 			static uchar cempfavzgeprueft=0;
 			if (!cempfavzgeprueft) {
-				pruefverz(cempfavz,obverb,oblog,1,1,nix,cuser);
+				pruefverz(cempfavz,obverb,oblog,1,1,{},cuser);
 				cempfavzgeprueft=1;
 			} // 			if (!cempfavzgeprueft)
 			dorename(sffdatei,cempfavz+vtz+cuser+"-"+base+".sff",cuser,&vfehler,obverb,oblog);
@@ -7720,7 +7720,7 @@ int paramcl::cservice()
 			svec qrueck;
 			findfile(&qrueck,findv,obverb,oblog,0,vz,datei+"$",1,1,Fol_Dat);
 			if (qrueck.size()) {
-				pruefverz(ziel,obverb,oblog,1,1,nix,cuser);
+				pruefverz(ziel,obverb,oblog,1,1,{},cuser);
 				systemrueck(sudc+"mv -f "+vz+datei+" "+ziel,obverb,oblog);
 			} // 			if (qrueck.size())
 		} // 		if (findv==1)
@@ -7959,7 +7959,7 @@ int paramcl::pruefhyla()
 									"$(grep LIBEXEC defs | cut -d'\\''='\\'' -f2 | sed '\\''s/^[[:space:]]*//;s/[[:space:]]*$//'\\'')/faxgetty'\\''.g\" config.cache"
 									"&& echo $? = Ergebnis nach sed"
 									"&&"+sudc;
-								if (!kompilfort(was,nix,cfgbismake)) {
+								if (!kompilfort(was,{},cfgbismake)) {
 									const string nachcfg=
 										"sh -c '"+sudc+"systemctl daemon-reload &&"+sudc+"systemctl stop hylafax 2>/dev/null"
 										"&& test -f /etc/init.d/hylafax &&{ "+sudc+"mkdir -p /etc/ausrangiert"
@@ -7984,7 +7984,7 @@ int paramcl::pruefhyla()
 										} // 								while(getline(confc,zeile))
 										confc.close();
 									} // 							if (confc.is_open())
-								} // 						if (!kompilfort(was,nix,cfgbismake))
+								} // 						if (!kompilfort(was,{},cfgbismake))
 							} // !was.empty()
 							// 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
 							////					systemrueck("sh -c 'cd $("+sudc+"tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
@@ -8410,7 +8410,7 @@ int paramcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const st
 	int ret=1;
 	if (!pruefinstv()) {
 		const string bef="sh -c 'cd \""+instvz+vtz+was+"\"&&"+
-			(vorcfg.empty()?s_true:vorcfg)+(ohneconf?nix:"&& ./configure ")+cfgbismake+" make"
+			(vorcfg.empty()?s_true:vorcfg)+(ohneconf?"":"&& ./configure ")+cfgbismake+" make"
 			"&& echo $? = "+Tx[T_Ergebnis_nach_make]+" &&"+sudc+"make install "
 			// bei capi20_copy ging das mit distclean am 10.7.17 auf fedora 24
 			"||{ make distclean; ./configure; make &&"+sudc+"make install;}"
@@ -8700,8 +8700,8 @@ int paramcl::pruefcapi()
 								systemrueck("cd "+instvz+" && rpm -ivh "+kstring,obverb,oblog);  // mit sudo wird kernel.spec nicht erstellt
 								// warning: group/user mockbuild does not exist - using root
 								const string grund=gethome()+"/rpmbuild",specs=grund+"/SPECS",build=grund+"/BUILD";
-								pruefverz(specs);
-								pruefverz(build);
+								pruefverz(specs,obverb,oblog);
+								pruefverz(build,obverb,oblog);
 								for(unsigned iru=0;iru<2;iru++) {
 									if (!systemrueck("cd '"+gethome()+"/rpmbuild/SPECS' &&"+sudc+"rpmbuild -bp --target=$(uname -m) kernel.spec",
 									    obverb,oblog)) {
@@ -8841,11 +8841,11 @@ int paramcl::pruefcapi()
 							//                  " && "+sudc+"systemctl daemon-reload; "
 							//                  "'";
 							//            if (!systemrueck(befehl,obverb,oblog)) {
-							//              //        pruefverz("/etc/capisuite",obverb,oblog,wahr);
+							//              //        pruefverz("/etc/capisuite",obverb,oblog,1,0);
 							//              //        systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instvz+"/capisuite/src/capisuite.conf /etc/capisuite");
 							//              //        systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instvz+"/capisuite/scripts/fax.conf /etc/capisuite");
-							////              pruefverz("/usr/local/var/log",obverb,oblog,wahr);
-							//              //         pruefverz("/usr/local/var/log");
+							////              pruefverz("/usr/local/var/log",obverb,oblog,1,0);
+							//              //         pruefverz("/usr/local/var/log",obverb,oblog,1,0);
 							//              mitcservice=1;
 							//            } // if (!systemrueck(sh -c ...
 							 */
@@ -10084,7 +10084,7 @@ int main(int argc, char** argv)
 			if (pm.loef || pm.loew || pm.loea) {
 				if (pm.loef) pm.aenderefax(/*aktion=*/0,/*aktc=*/0);
 				if (pm.loew) pm.loeschewaise();
-				if (pm.loea) pm.loescheallewartende();
+				if (pm.loea) pm.loescheallewartenden();
 			} else if (pm.erneut) {
 				pm.empferneut();
 			} else if (pm.uml) {

@@ -479,7 +479,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 				pconn = PQconnectdb(constr.c_str()); ////192.168.178.21 port=5432
 				if ((fehnr=PQstatus(pconn)) != CONNECTION_OK) {
 					while (rootpwd.empty()) {
-						rootpwd=Tippstr(nix+Txd[T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein],&rootpwd);
+						rootpwd=Tippstr({}+Txd[T_Bitte_geben_Sie_ein_Passwort_fuer_Benutzer_postgres_ein],&rootpwd);
 					}
 					const string mconstr ="user='postgres' password='"+rootpwd+/*"' dbname='" + uedb */+ "' hostaddr='"+ip_a+"' port='"+ltoan(port)+"'";
 					pmconn = PQconnectdb(mconstr.c_str()); 
@@ -563,7 +563,7 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 						do {
 							rootpwd=Tippstr(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
 						} while (rootpwd.empty());	
-						rootpw2=Tippstr(nix+Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein]+" ("+Txk[T_erneute_Eingabe]+")",&rootpw2);
+						rootpw2=Tippstr(string(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein])+" ("+Txk[T_erneute_Eingabe]+")",&rootpw2);
 						if (rootpw2==rootpwd) break;
 					} //         while (1)
 					// 7.7.17: neuer Fehler "ERROR 1819 (HY000) at line 1: Your password does not satisfy the current policy requirements" auf fedora
@@ -600,10 +600,10 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 			case Postgres:
 				while (1) {
 					do {
-						rootpwd=Tippstr(nix+Txd[T_PostgreSQL_musste_neu_eingerichtet_werden]+
+						rootpwd=Tippstr(string(Txd[T_PostgreSQL_musste_neu_eingerichtet_werden])+
 								Txd[T_Welches_Passwort_soll_der_Benutzer_postgres_haben]+": ",&rootpwd);
 					} while (rootpwd.empty());
-					rootpw2=Tippstr(nix+Txd[T_Welches_Passwort_soll_der_Benutzer_postgres_haben]+" ("+Txk[T_erneute_Eingabe]+"): ",&rootpw2);
+					rootpw2=Tippstr(string(Txd[T_Welches_Passwort_soll_der_Benutzer_postgres_haben])+" ("+Txk[T_erneute_Eingabe]+"): ",&rootpw2);
 					if (rootpw2==rootpwd) break;
 				} // while (1)
 				uchar geht=0;

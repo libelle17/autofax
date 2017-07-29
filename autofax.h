@@ -224,7 +224,7 @@ class paramcl // Programmparameter
     string mpwd;  // Passwort fuer Mysql/MariaDB
     DB* My=0;
 		const size_t maxconz=12;//aktc: 0=pruefspool,pruefouttab,pruefudoc,pruefinctab,prueffuncgettel3,pruefstdfaxnr,aenderefax,rueckfragen 
-		// bereinigewv,loeschewaise,loescheallewartende,tu_lista,tu_listi,suchestr,Schluss, 1=korrigierecapi aus main, 
+		// bereinigewv,loeschewaise,loescheallewartenden,tu_lista,tu_listi,suchestr,Schluss, 1=korrigierecapi aus main, 
 		//                          2=korrigierehyla aus main, 3=wegfaxen, untersuchespool, WVZinDatenbank, 4=zeigweitere, 5=empfarch,
 		//                          6=faxemitC, 7=faxemitH, 9=korrigierecapi aus zeigweitere, 10=korrigierehyla aus zeigweitere,
     //													11=test
@@ -390,7 +390,7 @@ class paramcl // Programmparameter
     void VorgbSpeziell(); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vgb.cpp)
     #endif
     void lieskonfein();
-		void lieszaehlerein(ulong *arp=0,ulong *tap=0,ulong *map=0,struct tm *lap=0, string *obempfp=0,string *obgesap=0);
+		void lieszaehlerein(ulong *arp=0,ulong *tap=0,ulong *map=0,struct tm *lap=0, string *obempfp=0,string *obgesap=0,const uchar obstumm=0);
 		int  getcommandline();
     void rueckfragen();
     int setzhylavz(); // sucht das Hylaverzeichnis und setzt varsphylavz darauf, return 0, wenn nicht gefunden dann varsphylavz="", return 1
@@ -422,7 +422,7 @@ class paramcl // Programmparameter
 		int aenderefax(const int aktion=0,const size_t aktc=0); // aktion: 0=loeschen, 1=umleiten
 		void empferneut();
     size_t  loeschewaise();
-		size_t loescheallewartende();
+		size_t loescheallewartenden();
 		void wegfaxen();
 		void untersuchespool(uchar mitupd=1,const size_t aktc=3); // faxart 0=capi, 1=hyla 
 		void bestimmtage();

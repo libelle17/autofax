@@ -324,8 +324,8 @@ class perfcl
  time_t t0=0, t1;
  unsigned long nr=0;
  perfcl(const string& vvonwo);
- void ausgeb(const string& stelle="",uchar obdauer=0);
- void ausgab1000(const string& stelle="");
+ void ausgeb(const string& stelle=nix,uchar obdauer=0);
+ void ausgab1000(const string& stelle=nix);
  int oberreicht(unsigned long sek);
 };
 
@@ -507,22 +507,22 @@ class schlArr {
  void init(size_t vzahl, ...);
  void init(vector<cppSchluess*> *sqlvp);
  inline /*const*/ cppSchluess& operator[](size_t const& nr) const { return schl[nr]; }
- int setze(const string& name, const string& wert/*, const string& bem=""*/);
+ int setze(const string& name, const string& wert/*, const string& bem=nix*/);
  const string& hole(const string& name);
  void setzbemv(const string& name,TxB *TxBp,size_t Tind,uchar obfarbe=0,svec *fertige=0);
- void aschreib(mdatei *f);
+ void aschreib(mdatei *const f);
  int fschreib(const string& fname);
  void ausgeb();
  void reset();
  ~schlArr();
-};
+}; // class schlArr
 
 class abSchl {
  public:
    string name;
    string wert;
    abSchl(string& vname, string& vwert):name(vname),wert(vwert) {}
-};
+}; // class abSchl
 
 // Linux-System-Enum
 enum lsysen:uchar {usys,sus,deb,fed};
@@ -533,7 +533,7 @@ class lsyscl
   public:
     lsysen getsys(int obverb=0,int oblog=0);
 		string& getlib64(int obverb=0,int oblog=0);
-};
+}; // class lsyscl
 
 // enum betrsys {keins,suse,ubuntu,fedora};
 // betrsys pruefos();
@@ -703,17 +703,17 @@ int Schschreib(const char *fname, Schluessel *conf, size_t csize);
 #endif
 int cppschreib(const string& fname, cppSchluess *conf, size_t csize);
 // int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, size_t cszahl);
-int multischlschreib(const string& fname, schlArr **confs, size_t cszahl,string mpfad="");
+int multischlschreib(const string& fname, schlArr *const *const confs, const size_t cszahl,const string& mpfad=nix);
 std::string base_name(const std::string& path); // Dateiname ohne Pfad
 std::string dir_name(const std::string& path);  // Pfadname einer Datei
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
-                int verbergen=0, int obergebnisanzeig=wahr, const string& ueberschr="",vector<errmsgcl> *errm=0,uchar obincron=0);
+                int verbergen=0, int obergebnisanzeig=wahr, const string& ueberschr=nix,vector<errmsgcl> *errm=0,uchar obincron=0);
 void pruefplatte();
 void pruefmehrfach(const string& wen=nix,uchar obstumm=0);
 void setfaclggf(const string& datei,int obverb=0,int oblog=0,const binaer obunter=falsch,const int mod=4,uchar obimmer=0,
                 uchar faclbak=0,const string& user=nix,uchar fake=0);
 int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=0, uchar obmitcon=0,
-              const string& besitzer=nix, const string& benutzer=nix);
+              const string& besitzer=nix, const string& benutzer=nix, const uchar obmachen=1);
 string aktprogverz();
 char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
 // vorgabe fur vorgabe = T_j_k; alternativ='n'
@@ -724,11 +724,11 @@ string Tippzahl(const char *frage, const char *vorgabe=0);
 string Tippzahl(const char *frage, const string *vorgabe);
 string Tippzahl(const string& frage, const string *vorgabe);
 string Tippstr(const char *frage, const string *vorgabe=0);
-// char* Tippcstr(const char *frage, char* buf, unsigned long buflen, const char* vorgabe="");
+// char* Tippcstr(const char *frage, char* buf, unsigned long buflen, const char* vorgabe=nix);
 string Tippstr(const string& frage, const string *vorgabe=0);
 string Tippverz(const char *frage,const string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
-int tuloeschen(const string& zuloe,const string& cuser="",int obverb=0, int oblog=0);
+int tuloeschen(const string& zuloe,const string& cuser=nix,int obverb=0, int oblog=0);
 int attrangleich(const string& zu, const string& gemaess,int obverb=0, int oblog=0);
 int kopier(const string& quel, const string& ziel, int obverb=0, int oblog=0);
 #ifdef falsch
@@ -835,7 +835,7 @@ class find2cl: elem2
   void init(const string& mutter, const string& name, regex_t *reg, const int folge,const long maxdepth, const int& typbit,
       vector<string> stack,time_t ab, time_t bis,int nurexec);
   void ausgeb();
-  int finde(svec *wovp, const string& muster="",const long tiefe=-1,int typbit=B_Alle,int folge=Fol_Dat,
+  int finde(svec *wovp, const string& muster=nix,const long tiefe=-1,int typbit=B_Alle,int folge=Fol_Dat,
 	          time_t ab=0, time_t bis=0,int obicase=0,int nurexec=0,int obnoext=0);
 	void zuvec(svec *zu,uchar anteil=0);
 };
@@ -864,10 +864,10 @@ class wele
   public:
     const string pfad;
     const long maxd;
-    wele(const string pfad="", const long& maxd=-1):pfad(pfad),maxd(maxd){}
+    wele(const string& pfad=nix, const long& maxd=-1):pfad(pfad),maxd(maxd){}
     const bool operator<(const wele& el) const;
 //    bool operator()(const wele& el3) const {return (this->pfad<el3.pf);}
-};
+}; // class wele
 
 // nur eine Instanz der Klasse kann gleichzeitig gefuellt werden wegen der statischen Elemente
 class find3cl
@@ -897,13 +897,13 @@ class find3cl
     static int verarbeit(const char *fpath, const struct stat *sb, int tflag, struct FTW *ftwbuf);
     int dofind();
     int ausgeb();
-    int finde(svec *wovp,const string& muster="",long tiefe=-1,int _typbit=B_Alle,int _folge=Fol_Dat,
+    int finde(svec *wovp,const string& muster=nix,long tiefe=-1,int _typbit=B_Alle,int _folge=Fol_Dat,
 		           time_t _mab=0,time_t _mbis=0,int obicase=0,int nurexec=0,int obnoext=0);
 		void zuvec(svec *zu,uchar anteil=0);
 }; // class find3cl
 #endif
 #if defined(altfind) && defined(neufind)
 void findfile(svec *qrueck,uchar findv,int obverb=0,int oblog=0,uchar anteil=0,
-		const string& wo=".",const string& muster="",long tiefe=-1,int _typbit=B_Alle,int _folge=Fol_Dat, 
+		const string& wo=".",const string& muster=nix,long tiefe=-1,int _typbit=B_Alle,int _folge=Fol_Dat, 
 		time_t _mab=0,time_t _mbis=0,int obicase=0,int nurexec=0,int obnoext=0);
 #endif
