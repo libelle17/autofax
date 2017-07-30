@@ -922,7 +922,7 @@ string* loeschefarbenaus(string *zwi)
 
 int Log(const short screen,const short file, const bool oberr,const short klobverb, const char *format, ...)
 {
-  int erg;
+  int erg=0;
 	if (screen||file) {
 		va_list args;
 		va_start(args,format);
