@@ -6,6 +6,7 @@ class zielmustercl; // fuer die Verteilung der erfolgreich gefaxten Dateien auf 
 class fxfcl; // Faxfile
 class fsfcl; // Faxsendfile
 class paramcl; // Programmparameter
+class pidvec; // Vector von pid- und string-Pärchen
 void useruucp(const string& huser, const int obverb, const int oblog);
 string zielname(const string& qdatei, const string& zielvz,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0);
 string zielname(const string& qdatei, zielmustercl *zmp,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0);
@@ -32,8 +33,25 @@ void kuerzevtz(string *vzp);
 void pruefrules(int obverb, int oblog);
 void pruefblack(int obverb, int oblog);
 void pruefmodcron(int obverb, int oblog);
-void wartaufpids(vector<pid_t> *pidv);
+int wartaufpids(pidvec *pidv,const ulong runden=0,const int obverb=0,const string& wo=nix);
 void viadd(string *cmd,const string& datei,const uchar ro=0,const uchar hinten=0, const uchar unten=0);
+
+class pidcl
+{
+ public:
+ pid_t pid;
+ string name;
+ pidcl(const pid_t pid,const string& name):pid(pid),name(name){}
+}; // pidcl
+
+class pidvec: public vector<pidcl>
+{
+ public:
+ inline pidvec& operator<<(const pidcl& pd) {
+	 this->push_back(pd);
+	 return *this;
+ }
+}; // pidvec
 
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster
 class zielmustercl 

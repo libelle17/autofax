@@ -35,6 +35,8 @@
 #include <termios.h> // fuer tcgetattr
 #include <regex>
 #include <sys/wait.h> // fuer waitpid
+#include <chrono> // fuer sleep_for 
+#include <thread> // fuer sleep_for
 
 #include <set>
 // aktuelle Programmversion
@@ -59,9 +61,6 @@ const string s_true="true";
 const string s_dampand="&&";
 const string s_gz="gz";
 //// const char *tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
-vector<pid_t> pidv; // Sammelvektor fuer alles, was vom Hauptstrang abzweigt
-vector<pid_t> pidw; // Sammelvektor fuer alles, was aus wegfaxen abzweigt
-svec pids;
 
 enum T_ 
 {/*{{{*/
@@ -751,6 +750,12 @@ enum T_
 	T_Fehler_in_pruefhyla,
 	T_Fehler_in_commandline,
 	T_um_22_Uhr,
+	T_eigene,
+	T_warte,
+	T_entfernen,
+	T_belassen,
+	T_in_main_pidv_am_Schluss,
+	T_in_wegfaxen,
 	T_MAX
 };
 
@@ -2168,6 +2173,18 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Fehler in commandline()","Error in commandline()"},
 	// T_um_22_Uhr
 	{"um 22 Uhr","at 10 p.m."},
+	// T_eigene
+	{"eigene","own"},
+	// T_warte
+	{"warte","waiting"},
+	// T_entfernen
+	{"entfernen","remove"},
+	// T_belassen
+	{"belassen","keep"},
+	// T_in_main_pidv_am_Schluss
+	{"in main, pidv, am Schluss","in main, pidv, at the end"},
+	// T_in_wegfaxen
+	{"in wegfaxen, pidw","in faxingall, pidw"},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -2190,6 +2207,10 @@ const char *logdt="/var/log/" DPROG "vorgabe.log";// darauf wird in kons.h verwi
 
 #define DPROGcpp
 #include "autofax.h"
+pidvec pidv, pidw;
+// vector<pid_t> pidv; // Sammelvektor fuer alles, was vom Hauptstrang abzweigt
+// vector<pid_t> pidw; // Sammelvektor fuer alles, was aus wegfaxen abzweigt
+// svec pids;
 
 const unsigned ktage=1; // kurzes Intervall fuer Faxtabellenkorrektur, 1 Tag
 const unsigned mtage=30; // mittleres Intervall fuer Faxtabellenkorrektur, 1 Monat
@@ -2292,20 +2313,20 @@ void fsfcl::archiviere(DB *const My, paramcl *const pmp, const struct stat *cons
 		if (capi) {if (cdd.empty()) cdd="0000-00-00";} else {if (hdd.empty()) hdd="0000-00-00";}
 		einf.push_back(/*2*/instyp(My->DBS,"submt",ftyp==capi?&cdd:&hdd));
 		einf.push_back(/*2*/instyp(My->DBS,"submid",ftyp==capi?&capisd:&hylanr));
-		string pid;
+		string patid;
 		if (!original.empty()) {
 			const char* ocstr=original.c_str(); // da c_str() fluechtig sein koennte
-			char* pidp = (char*)strcasestr(ocstr,"pid ");
-			if (pidp) {
-				if (pidp==ocstr || (pidp>ocstr && (strchr(" .,;",*(pidp-1))))){
-					for(pidp+=4;*pidp && *pidp!=' ';pidp++) {
-						if (strchr("0123456789",*pidp)) pid+=*pidp;
-					}  //           for(pidp+=4;*pidp && *pidp!=' ';pidp++)
-				} //         if (pidp==ocstr || (pidp>ocstr && (strchr(" .,;",*(pidp-1)))))
-			} //       if (pidp)
+			char* patidp = (char*)strcasestr(ocstr,"pid ");
+			if (patidp) {
+				if (patidp==ocstr || (patidp>ocstr && (strchr(" .,;",*(patidp-1))))){
+					for(patidp+=4;*patidp && *patidp!=' ';patidp++) {
+						if (strchr("0123456789",*patidp)) patid+=*patidp;
+					}  //           for(patidp+=4;*patidp && *patidp!=' ';patidp++)
+				} //         if (patidp==ocstr || (patidp>ocstr && (strchr(" .,;",*(patidp-1)))))
+			} //       if (patidp)
 		} //     if (!original.empty())
-		if (pid.empty()) pid="0";
-		einf.push_back(/*2*/instyp(My->DBS,"pid",&pid));
+		if (patid.empty()) patid="0";
+		einf.push_back(/*2*/instyp(My->DBS,"pid",&patid));
 		einf.push_back(/*2*/instyp(My->DBS,"Erfolg",(int)!obgescheitert));
 		einf.push_back(/*2*/instyp(My->DBS,"docname",&original));
 		Log("original (docname): "+blaus+original+schwarz,obverb,oblog);
@@ -2813,7 +2834,7 @@ void paramcl::pruefisdn()
 		Log(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_aauf]+schwarz+"0.");
 		obcapi=obfcard=0;
 	}
-	if (obverb) Log("obfcard: "+blaus+ltoan(obfcard));
+	if (obverb) Log("obfcard: "+blaus+ltoan(obfcard)+schwarz);
 	obfcgeprueft=1;
 	// wenn zum Konfigurationszeitpunkt keine Fritzcard drinstak, aber jetzt, dann rueckfragen
 	if (obfcard && agcnfA.hole("obfcard")=="0") {
@@ -3894,8 +3915,7 @@ void paramcl::rueckfragen()
 
 	// hier wurde falls noetig ermittelt, ob Fritzcard/Modem vorhanden
 	if (obverb) {
-		const string obmodems=ltoan(obmodem); 
-		Log(blaus+"obfcard: "+schwarz+ltoan(obfcard)+blau+", obmodem: "+schwarz+obmodems);
+		::Log(obverb,oblog,0,0,"%s%s%s%d%s%s%s%d%s",schwarz,"obfcard: ",blau,obfcard,schwarz,", obmodem: ",blau,obmodem,schwarz);
 	} //   if (obverb)
 
 	// die Verzeichnisnamen standardisieren
@@ -4158,7 +4178,9 @@ void paramcl::konfcapi()
 											neuschreiben=1;
 											paramdiff=1;
 										} else {
-											*fneu<<cfcnfA[snr].name<<" = \""<<cfcnfA[snr].wert<<"\""<<endl;
+										  string zschr=cfcnfA[snr].name+" = \""+cfcnfA[snr].wert+"\"";
+											caus<<gruen<<zschr<<endl<<schwarz;
+											*fneu<<zschr<<endl;
 											geschrieben=1;
 										} //                   if (!iru) else
 									} //                 if (cfcnfA[snr].wert!=altwert)
@@ -4194,6 +4216,8 @@ void paramcl::konfcapi()
 				} // 				if (fneu)
 				f.close();
 				setfaclggf(cfaxconfdt,obverb,oblog,falsch,6,falsch);
+				systemrueck("ls -l '"+cfaxconfdt+"'",2);
+				systemrueck("cat '"+cfaxconfdt+"'",2);
 				const string origdatei=cfaxconfdt+"_orig";
 				struct stat entryorig={0};
 				if (lstat(origdatei.c_str(),&entryorig)) {
@@ -4712,8 +4736,9 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 {
 	pid_t pid=fork();
 	if (pid>=0) {
-		pidw.push_back(pid);
-		pids<<"korrigierecapi";
+		pidcl phier(pid,"korrigierecapi");
+	  pidw<<phier;
+	  pidv<<phier;
 	}
 	if (!pid) {
 		Log(violetts+Tx[T_korrigierecapi]+schwarz);
@@ -4888,7 +4913,7 @@ void paramcl::bereinigewv()
 	for(fit=fdn.begin();fit!=fdn.end();++fit) {
 		if (*fit==vgl) {
 			::Log(blaus+*fit+schwarz,1,1);
-		}
+		} // 		if (*fit==vgl)
 	} //   for(fit=fdn.begin();fit!=fdn.end();++fit)
 	for(unsigned runde=0;runde<2;runde++) {
 		string sql;
@@ -5932,7 +5957,7 @@ void paramcl::wegfaxen()
 	for(unsigned i=0;i<fxv.size();i++) {
 		Log("npdf["+rots+ltoan(i)+schwarz+"]: "+rot+fxv[i].npdf+schwarz);
 		Log("spdf["+rots+ltoan(i)+schwarz+"]: "+rot+fxv[i].spdf+schwarz);
-		Log("prio["+rots+ltoan(i)+schwarz+"]: "+rot+ltoan(fxv[i].prio)+schwarz);
+		::Log(obverb,oblog,0,0,"prio[%s%u%s]: %s%d%s",rot,i,schwarz,rot,fxv[i].prio,schwarz);
 	} // for(unsigned i=0;i<fxv.size();i++)
 	// zufaxenvz = zufaxen-Verzeichnis
 	::Log(Tx[T_aus]+drots+zufaxenvz+schwarz+vtz+Tx[T_verarbeitete_Nicht_PDF_Dateien]+drot+ltoan(fxv.size())+schwarz,1,oblog);
@@ -6105,9 +6130,9 @@ void paramcl::wegfaxen()
 			} else if (!pid) {
 				wasichbin=1;
 			} else {
-				pidv.push_back(pid);
-				pidw.push_back(pid);
-				pids<<"faxemitC";
+			  pidcl phier(pid,"faxemitC");
+				pidv<<phier;
+				pidw<<phier;
 			}  // 			if (!pid) else else
 		} // 		if (obcapi)
 		// alle Abzweigungen muessen vom Hauptzweig ausgehen, sonst gehen dort Eintraege in pidv verloren
@@ -6120,9 +6145,9 @@ void paramcl::wegfaxen()
 				} else if (!pid) {
 					wasichbin=2;
 				} else {
-					pidv.push_back(pid);
-					pidw.push_back(pid);
-					pids<<"faxemitH";
+					pidcl phier(pid,"faxemitH");
+					pidv<<phier;
+					pidw<<phier;
 				} // 				if (pid<0) else else
 			} // 			if (obhyla)
 		} // 		if (pid>0)
@@ -6135,7 +6160,7 @@ void paramcl::wegfaxen()
 				struct stat st={0};
 				if (/*wasichbin==1 einmal reicht hier schon &&*/ lstat(ff.c_str(),&st)) {
 					::Log(rots+(wasichbin==1?"Capi: ":"Hyla: ")+schwarz+Tx[T_Fehler_zu_faxende_Datei]+rots+ff+schwarz+
-					  Tx[T_nicht_gefunden_Eintrag_ggf_loeschen_mit_]+blau+base_name(aktprogverz())+" -"+Tx[T_loew]+schwarz+
+							Tx[T_nicht_gefunden_Eintrag_ggf_loeschen_mit_]+blau+base_name(aktprogverz())+" -"+Tx[T_loew]+schwarz+
 						"' bzw. '"+blau+base_name(aktprogverz())+" -"+Tx[T_loef]+schwarz+"'",1,oblog);
 				} else {
 					if (wasichbin==1) if (fsfv[i].fobcapi) if (obcapi) faxemitC(My, spooltab, altspool, &fsfv[i],this,ff,obverb,oblog);  
@@ -6148,8 +6173,9 @@ void paramcl::wegfaxen()
 			_exit(0);
 		} // 		if (wasichbin)
 		// 1. warte auf faxemitC und faxemitH
-		wartaufpids(&pidw);
+		wartaufpids(&pidw,0,obverb,Tx[T_in_wegfaxen]);
 		// nur wegfaxen mit abgeschlossenen Unterprogrammen
+#ifdef immerwart
 		ulong kaufrufe=0;
 		do {
 			string altobsendC;
@@ -6162,6 +6188,7 @@ void paramcl::wegfaxen()
 				//// <<"zcnfA[5] nachher: "<<violett<<zcnfA[5].wert<<schwarz<<endl;
 			} // 			if (aufrufe!=kaufrufe && altobsendC!="1")
 		} while (kaufrufe==aufrufe);
+#endif
 	} // 	if (r0.obfehl) else
 } // void paramcl::wegfaxen()
 
@@ -6572,8 +6599,9 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 {
 	pid_t pid=fork();
 	if (pid>=0) {
-		pidw.push_back(pid);
-		pids<<"korrigierehyla";
+		pidcl phier(pid,"korrigierehyla");
+	  pidw<<phier;
+	  pidv<<phier;
 	}
 	if (!pid) {
 		Log(violetts+Tx[T_sammlefertigehyla]+schwarz);
@@ -6921,6 +6949,7 @@ void paramcl::empfarch()
 			empfcapi(stamm,aktc);
 		} // for(size_t i=0;i<rueck.size();i++) 
 	} // if (!lstat(cfaxuserrcvz.c_str(),&entryvz)) /* /var/spool/capisuite/users/~/received */ 
+#ifdef immerwart
 	ulong jaufrufe=0;
 	do {
 	  string altobempf;
@@ -6930,6 +6959,7 @@ void paramcl::empfarch()
 			schreibzaehler(&eins);
 		}
 	} while (jaufrufe==aufrufe);
+#endif
 	::Log(Tx[T_Zahl_der_empfangenen_Faxe]+drots+ltoan(ankzahl)+schwarz,1,oblog);
 	Log(violetts+Txk[T_Ende]+Tx[T_empfarch]+schwarz);
 } // void paramcl::empfarch()
@@ -8001,8 +8031,7 @@ int paramcl::pruefhyla()
 							//// <<"hfr: "<<violett<<hfr<<schwarz<<" hfcr: "<<violett<<hfcr<<schwarz<<" obverb: "<<(int)obverb<<endl;
 							hylafehlt=linstp->obfehlt(hfr,obverb,oblog) || linstp->obfehlt(hfcr,obverb,oblog) || 
 								!obprogda("faxq",obverb,oblog) || !obprogda("hfaxd",obverb,oblog) || !obprogda("faxgetty",obverb,oblog);
-							const string vstring=ltoan(versuch);
-							Log(gruens+Tx[T_hylafehlt]+schwarz+ltoan(hylafehlt)+gruen+Txk[T_Versuch]+schwarz+vstring);
+							::Log(obverb,oblog,0,0,"%s%s%s%d%s%s%s%d",gruen,Tx[T_hylafehlt],schwarz,hylafehlt,gruen,Txk[T_Versuch],schwarz,versuch);
 							// b1) falsches Hylafax loeschen
 							if (hylafehlt) {
 								if (falscheshyla) {
@@ -8237,12 +8266,12 @@ int paramcl::pruefhyla()
 									} else {
 										if (!regexec(&reg, zeile.c_str(), 0, 0, 0)) {gef=1;break;}
 									}
-								}
+								} // 								while(getline(qr,zeile))
 								qr.close();
 								if (!gef) qrueck.erase(qrueck.begin()+i);
-							}
-						}
-					}
+							} // 							if (qr.is_open())
+						} // 						for(ssize_t i=qrueck.size()-1;i>=0;i--)
+					} // 					if (findv==1) else
 					for(size_t i=0;i<qrueck.size();i++) {
 						systemrueck(sudc+"sh -c \"sed -i 's/"+fc+" *$/"+fc+" -a -A/g' "+qrueck[i]+"||true;\"",obverb,oblog);
 					}
@@ -8983,11 +9012,11 @@ void inDbc(DB *My, const string& spooltab, const string& altspool, const string&
 			affr=My->affrows(aktc);
 			if (affr>0) break;
 			if (runde==ruz-1) {
-				Log(Tx[T_Fehler_af]+drots+ltoan(rupd.fnr)+schwarz+Txk[T_bei]+tuerkis+rupd.sql+schwarz+": "+blau+rupd.fehler+schwarz,1,1);
+				::Log(1,1,0,0,"%s%s%d%s%s%s%s%s%s%s%s%s",Tx[T_Fehler_af],drot,rupd.fnr,schwarz,Txk[T_bei],tuerkis,rupd.sql,schwarz,": ",
+				      blau,rupd.fehler,schwarz);
 			} //       if (runde==1)
 		}   // for(int runde=0;runde<2;runde++)
-		string aktcs=ltoan(aktc);
-		Log(drots+"  affected_rows("+aktcs+"): "+schwarz+ltoan(affr),obverb,oblog);
+		::Log(obverb,oblog,1,1,"%s  affected_rows(%s%d%s): %s%d",drot,blau,aktc,drot,schwarz,affr);
 	}   // if (!lstat((*spoolgp->c_str()), &entryspool)) 
 } // inDbc
 
@@ -9087,8 +9116,7 @@ void inDBh(DB *My, const string& spooltab, const string& altspool, const paramcl
 				Log(Tx[T_Fehler_af]+drots+ltoan(rupd.fnr)+schwarz+Txk[T_bei]+tuerkis+rupd.sql+schwarz+": "+blau+rupd.fehler+schwarz,1,pmp->oblog);
 			} //       if (runde==1)
 		}   // for(int runde=0;runde<2;runde++)
-		string aktcs=ltoan(aktc);
-		Log(drots+"  affected_rows("+aktcs+"): "+schwarz+ltoan(affr),pmp->obverb,pmp->oblog);
+		::Log(pmp->obverb,pmp->oblog,1,1,"%s%s%s%d%s%s%s%d",drot,"  affected_rows(",blau,aktc,drot,"): ",schwarz,affr);
 	} else {
 		Log(drots+Tx[T_SpoolDatei]+spoolg+Tx[T_nicht_gefunden_kein_Datenbankeintrag],1,1);
 	}   // if (!lstat((*spoolgp->c_str()), &entryspool)) 
@@ -9727,9 +9755,8 @@ void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, i
 {
 	Log(violetts+Tx[T_setzhylastat]+schwarz);
 	uchar obsfehlt=1;
-	const string startvznrs = ltoan(startvznr);
-	Log(violetts+"hylanr: "+schwarz+fsf->hylanr+violetts+" "+Tx[T_setzhylastat]+schwarz+
-			" hyla_uverz_nrp: "+blau+ltoan(*hyla_uverz_nrp)+schwarz+" startvznr: "+blau+startvznrs+schwarz);
+	::Log(obverb,oblog,0,0,"%shylanr: %s%s%s %s%s hyla_uverz_nrp: %s%lu%s startverzn: %s%lu%s",violett,schwarz,fsf->hylanr,violett,
+	   Tx[T_setzhylastat],schwarz,blau,*hyla_uverz_nrp,schwarz,blau,startvznr,schwarz);
 	// wenn in *hyla_uverz_nrp '1' uebergeben wird, nur in sendq suchen
 	// Rueckgabe: 0 = in doneq oder archive gefunden
 	struct stat entryprot={0};
@@ -9985,15 +10012,45 @@ void paramcl::dovh()
 	vischluss(cmd,erg);
 } // void paramcl::dovh()
 
-void wartaufpids(vector<pid_t> *pidv)
+int wartaufpids(pidvec *pidv,const ulong runden/*=0*/,const int obverb/*=0*/,const string& wo/*=nix*/)
 {
-	while (pidv->size()) {
-		for(size_t i=0;i<pidv->size();i++) {
-			int status;
-			pid_t erg=waitpid(pidv->at(i),&status,WNOHANG);
-			if (erg>0) pidv->erase(pidv->begin()+i);
-		}
-	}
+	ulong aktru=0; 
+	Log(obverb,0,0,0,"%s%s()%s, %s, %s%s pid: %s%lu%s, pidv->size(): %s%zu%s",
+			violett,__FUNCTION__,blau,wo.c_str(),schwarz,Tx[T_eigene],blau,getpid(),schwarz,blau,pidv->size(),schwarz);
+	for(size_t i=0;i<pidv->size();i++) {
+		Log(obverb,0,0,0," i: %s%zu%s, pid: %s%lu%s, name: %s%s%s",
+				blau,i,schwarz,blau,pidv->at(i).pid,schwarz,blau,pidv->at(i).name.c_str(),schwarz);
+	} // 	for(size_t i=0;i<pidv->size();i++)
+	while (1) {
+		Log(obverb,0,0,0," %s%s%s, while (1), pidv->size(): %s%zu%s",blau,wo.c_str(),schwarz,blau,pidv->size(),schwarz);
+		for(ssize_t i=pidv->size()-1;i>=0;i--) {
+			int res=kill(pidv->at(i).pid,0);
+			uchar zuloeschen=0;
+			if (res==-1 && errno==ESRCH) zuloeschen=1;
+			else {
+				int status; pid_t erg=waitpid(pidv->at(i).pid,&status,WNOHANG); if (erg>0) zuloeschen=1;
+			} // 			if (res==-1 && errno==ESRCH)
+			Log(obverb,0,0,0," %s%s%s, i: %s%zu%s, pidv->at(i).pid: %s%lu%s, name: %s%s%s, %s%s%s",blau,wo.c_str(),schwarz,blau,i,schwarz,blau,
+					pidv->at(i).pid,schwarz,blau,pidv->at(i).name.c_str(),schwarz,(zuloeschen?blau:""),(zuloeschen?Tx[T_entfernen]:Tx[T_belassen]),schwarz);
+			if (zuloeschen) {
+				//      if (getpgid(pidv->at(i).pid)<0)
+				pidv->erase(pidv->begin()+i);
+			}
+		} // 		for(size_t i=0;i<pidv->size();i++)
+		if (!pidv->size()) {
+			Log(violetts+__FUNCTION__+", "+blau+wo+", return 0 (1)",obverb,0);
+			return 0;
+		} // 		if (!pidv->size())
+		const int wz3=50;
+		this_thread::sleep_for(chrono::milliseconds(wz3));
+		Log(obverb,0,0,0,"in %s(): %s%s: %s%d%s ms",__FUNCTION__,rot,Tx[T_warte],blau,wz3,schwarz);
+		if (++aktru==runden) {
+			Log(violetts+__FUNCTION__+", "+blau+wo+", return 1",obverb,0);
+			return 1;
+		} // 		if (++aktru==runden)
+	} // 	while (1)
+	Log(violetts+__FUNCTION__+", "+blau+wo+", return 0 (2)",obverb,0);
+	return 0;
 } // void wartaufpids(vector<pid_t> *pidv)
 
 int main(int argc, char** argv) 
@@ -10090,62 +10147,136 @@ int main(int argc, char** argv)
 			} else if (pm.uml) {
 				pm.aenderefax(/*aktion=*/1,/*aktc=*/0);
 			} else {
-					// hier stehen obcapi und obhyla fest
-				pid_t pid=fork();
-				if (!pid) {
-					pm.empfarch();
-					_exit(0);
-				} else if (pid<0) {
-					Log(rots+Tx[T_Gabelung_zu_empfarch_misslungen]+schwarz);
-					exit(17);
-				} // 					if (!pid)
-				pidv.push_back(pid);
-				pids<<"empfarch";
-				
-				pid=fork();
-				if (!pid) {
-					pm.wegfaxen();
-				// Dateien in Spool-Tabelle nach inzwischen verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
-					pm.untersuchespool(/*mitupd=*/1,/*aktc=*/3);
-					if (pm.obcapi || pm.obhyla) {
-						pm.bestimmtage();
-						if (pm.obcapi) { if (pm.tage) pm.korrigierecapi(pm.tage,9); } // 					if (pm.obcapi)
-						if (pm.obhyla) { if (pm.tage) pm.korrigierehyla(pm.tage,10);} // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
+				// hier stehen obcapi und obhyla fest
+				ulong ezahl=0, szahl=0, zzahl=0;
+				uchar elaeuft=0, slaeuft=0, zlaeuft=0;
+				uchar zaehlergeschrieben=0;
+				pid_t pide=-1, pids=-1, pidz=-1;
+				while (1) {
+					uchar efertig,sfertig,zfertig;
+					if (!elaeuft) {
+						pide=fork();
+						if (!pide) {
+							pm.empfarch();
+							_exit(0);
+						} else if (pide<0) {
+							Log(rots+Tx[T_Gabelung_zu_empfarch_misslungen]+schwarz);
+							exit(17);
+						} // 					if (!pide)
+						while(1) {
+							if (kill(pide,0)!=-1 || errno!=ESRCH) {
+								ezahl++;	
+								elaeuft=1;
+								break;
+							}
+						}
+						pidv<<pidcl(pide,"empfarch");
 					}
-					// 2. warte auf korrigierecapi und korrigierehyla
-					wartaufpids(&pidw);
-					_exit(0);
-				} else if (pid<0) {
-					Log(rots+Tx[T_Gabelung_zu_wegfaxen_misslungen]+schwarz);
-					exit(17);
-				} // 					if (!pid)
-				pidv.push_back(pid);
-				pids<<"wegfaxen";
 
-				if (pm.obcapi || pm.obhyla) {
-					pid=fork();
-					if (!pid) {
-						pm.zeigweitere();
-						_exit(0);
-					} else if (pid<0) {
-						Log(rots+Tx[T_Gabelung_zu_zeigweitere_misslungen]+schwarz);
-						exit(17);
-					} // 					if (!pid)
-					pidv.push_back(pid);
-					pids<<"zeigweitere";
-				} // 				if (obcapi || obhyla)
-				pm.schlussanzeige();
+					if (!slaeuft) {
+						pids=fork();
+						if (!pids) {
+							pm.wegfaxen();
+							// Dateien in Spool-Tabelle nach inzwischen Verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
+							pm.untersuchespool(/*mitupd=*/1,/*aktc=*/3);
+							if (pm.obcapi || pm.obhyla) {
+								pm.bestimmtage();
+								if (pm.obcapi) { if (pm.tage) pm.korrigierecapi(pm.tage,9); } // 					if (pm.obcapi)
+								if (pm.obhyla) { if (pm.tage) pm.korrigierehyla(pm.tage,10);} // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
+							}
+							// 2. warte auf korrigierecapi und korrigierehyla
+							wartaufpids(&pidw,0,pm.obverb,"in main, pidw");
+							_exit(0);
+						} else if (pids<0) {
+							Log(rots+Tx[T_Gabelung_zu_wegfaxen_misslungen]+schwarz);
+							exit(17);
+						} // 					if (!pids)
+						while(1) {
+							if (kill(pids,0)!=-1 || errno!=ESRCH) {
+								szahl++;	
+								slaeuft=1;
+								break;
+							}
+						}
+						pidv<<pidcl(pids,"wegfaxen");
+					}
+
+					if (!zlaeuft) {
+						if (pm.obcapi || pm.obhyla) {
+							pidz=fork();
+							if (!pidz) {
+								pm.zeigweitere();
+								_exit(0);
+							} else if (pidz<0) {
+								Log(rots+Tx[T_Gabelung_zu_zeigweitere_misslungen]+schwarz);
+								exit(17);
+							} // 					if (!pidz)
+							while(1) {
+								if (kill(pidz,0)!=-1 || errno!=ESRCH) {
+									zzahl++;	
+									zlaeuft=1;
+									break;
+								}
+							}
+							pidv<<pidcl(pidz,"zeigweitere");
+						} // 				if (obcapi || obhyla)
+					}
+					if (!zaehlergeschrieben) {
+						pm.setzzaehler();
+						pm.schreibzaehler();
+						zaehlergeschrieben=1;
+					}
+					const ssize_t wz1=100, wz2=250;
+					const int sz=240; // so oft ueberpruefen undd wz2 ms auf den letzten thread warten, ehe die anderen nochmal gestartet werden
+					for(int ru=0;ru<sz;ru++) {
+						// warten, bis ein thread nicht mehr laeuft
+						while (1) {
+							for(ssize_t i=pidv.size()-1;i>=0;i--) {
+								int res=kill(pidv.at(i).pid,0);
+								uchar zuloeschen=0;
+								if (res==-1 && errno==ESRCH) zuloeschen=1;
+								else {
+									int status; pid_t erg=waitpid(pidv.at(i).pid,&status,WNOHANG); if (erg>0) zuloeschen=1;
+								}
+								Log(pm.obverb,pm.oblog,0,0," i: %s%zu%s, pid: %s%ld%s, name: %s%s%s, beendet: %s%d%s",
+									         blau,i,schwarz,blau,(long)pidv.at(i).pid,schwarz,blau,pidv.at(i).name.c_str(),schwarz,blau,zuloeschen,schwarz);
+								if (zuloeschen) {
+									//// <<"pidv.at(i).pid: "<<pidv.at(i).pid<<" pide: "<<pide<<" pids: "<<pids<<" pidz: "<<pidz<<endl;
+									if (pidv.at(i).pid==pide) elaeuft=0;
+									else if (pidv.at(i).pid==pids) slaeuft=0;
+									else if (pidv.at(i).pid==pidz) zlaeuft=0;
+									pidv.erase(pidv.begin()+i);
+								}
+							} // 		for(size_t i=0;i<pidv.size();i++)
+							//// <<"pidv.size(): "<<pidv.size()<<endl;
+							Log(pm.obverb,pm.oblog,0,0,"elaueft: %s%d%s, ezahl: %s%d%s",blau,elaeuft,schwarz,blau,ezahl,schwarz);
+							Log(pm.obverb,pm.oblog,0,0,"slaueft: %s%d%s, szahl: %s%d%s",blau,slaeuft,schwarz,blau,szahl,schwarz);
+							Log(pm.obverb,pm.oblog,0,0,"zlaueft: %s%d%s, zzahl: %s%d%s",blau,zlaeuft,schwarz,blau,zzahl,schwarz);
+							if (!elaeuft || !slaeuft || !zlaeuft) break;
+							this_thread::sleep_for(chrono::milliseconds(wz1));
+							Log(pm.obverb,0,0,0,"in %s(): %s%s: %s%d%s ms",__FUNCTION__,rot,Tx[T_warte],blau,wz1,schwarz);
+						} // 	while (1)
+						// wenn nicht der thread, der noch haengt, zum ersten Mal aufgerufen wurde, dann abbrechen 
+						efertig=(ezahl>1||(ezahl==1&&!elaeuft));
+						sfertig=(szahl>1||(szahl==1&&!slaeuft));
+						zfertig=(zzahl>1||(zzahl==1&&!zlaeuft));
+						if (efertig&&sfertig&&zfertig) break;
+						if (!ezahl||!szahl||!zzahl) break; // wenn eins noch nicht angefangen hat, dann nicht wz2*sz ms lang warten
+						this_thread::sleep_for(chrono::milliseconds(wz2));
+							Log(pm.obverb,0,0,0,"in %s(): %s%s: %s%d%s ms",__FUNCTION__,rot,Tx[T_warte],blau,wz2,schwarz);
+					} // 					for(int i=0;i<sz;i++)
+					if (efertig&&sfertig&&zfertig) break;
+				} // 				while (1)
 			} // if (pm.loef || pm.loew || pm.loea) else if else if
 		} // 		if (!pm.keineverarbeitung)
 	} // if (pm.kez) else else else
 	pm.autofkonfschreib();
-	pm.setzzaehler();
-	pm.schreibzaehler();
 	// damit das Endeprompt nicht vorprescht
 	//// <<violett<<", pidv.size(): "<<pidv.size()<<schwarz<<endl;
-	//// for(size_t j=0;j<pids.size();j++) { //<<gruen<<j<<violett<<", pids[j]: "<<pids[j]<<schwarz<<endl; }
+	//// for(size_t j=0;j<pids.size();j++) KLA //<<gruen<<j<<violett<<", pids[j]: "<<pids[j]<<schwarz<<endl; KLZ
 	// warte auf empfarch, faxealle usw.
-	wartaufpids(&pidv);
+	wartaufpids(&pidv,0,pm.obverb,Tx[T_in_main_pidv_am_Schluss]);
+	pm.schlussanzeige();
 	Log(violetts+Txk[T_Ende]+schwarz,pm.obverb,pm.oblog);
 	return 0;
 } // int main(int argc, char** argv) 

@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include <utime.h>
 #include <sys/sendfile.h> // fuer sendfile64
+//#include <typeinfo>
 #define caus cout // nur zum Debuggen
 
 #ifdef _WIN32
@@ -919,13 +920,40 @@ string* loeschefarbenaus(string *zwi)
   return zwi;
 } // void loeschefarbenaus(string *zwi)
 
+int Log(const short screen,const short file, const bool oberr,const short klobverb, const char *format, ...)
+{
+  int erg;
+	if (screen||file) {
+		va_list args;
+		va_start(args,format);
+//#define vagenau
+#ifdef vagenau		
+		va_list a2;
+		va_copy(a2,args);
+		auto groe=vsnprintf(0,0,format,a2)+1;
+////		caus<<"groe: "<<groe<<endl;
+		char *buf=new char[groe];
+#else
+		int groe=256; 
+		char buf[groe];
+#endif
+		vsnprintf(buf,groe,format,args);
+		erg=Log(buf,1,1);
+#ifdef vagenau		
+		delete buf;
+#endif
+		va_end(args);
+	} // 	if (screen||file)
+	return erg;
+} // int Log(const short screen,const short file, const bool oberr,const short klobverb, const char *format, ...)
+
 int Log(const string& text, const short screen/*=1*/, const short file/*=1*/, const bool oberr/*=0*/, const short klobverb/*=0*/)
 {
-  static unsigned int cols=0;
-  static bool letztesmaloZ;
-  const bool naechstezeile=0;
+	static unsigned int cols=0;
+	static bool letztesmaloZ;
+	const bool naechstezeile=0;
 #ifdef false
-  uchar erfolg=0;
+	uchar erfolg=0;
 #endif  
   // screen=0 = schreibt nicht auf den Bildschirm, 1 = schreibt, -1 = schreibt ohne Zeilenwechsel, -2 = schreibt bleibend ohne Zeilenwechsel
   //// <<"Log: "<<text<<", screen: "<<screen<<", file: "<<file<<endl;
@@ -1089,7 +1117,7 @@ char* ltoan(long value, int base, uchar obtz, uchar minstel)
     tmp_char = *ptr;
     *ptr--= *ptr1;
     *ptr1++ = tmp_char;
-  }
+  } //   while(ptr1 < ptr)
   return result;
 } // ltoan(long value, char* result, int base)
 
@@ -2365,7 +2393,7 @@ char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], co
       cout<<"'"<<drot<<moegl[i]<<schwarz<<"'";
       if (berkl) cout<<" = "<<blau<<berkl[i]<<schwarz;
       if (i<moegl.length()-1) cout<<", ";
-    }
+    } //     for(unsigned i=0;i<moegl.length();i++)
     cout<<")"<<(!vorgabe?"":"['"+tuerkiss+vorgabe+schwarz+"']")<<"?: ";
     input.clear();
     getline(cin,input);
@@ -4023,14 +4051,10 @@ int find2cl::finde(svec *wovp,const string& muster/*=nix*/,const long tiefe/*=-1
 		//    cout<<"nach finde.init, wo: "<<blau<<wo<<schwarz<<endl;
 	} //   for(size_t iv=0;iv<*wovp.size();iv++)
 	if (obverb|oblog) {
-		const string tiefestr=ltoan(tiefe);
-		const string typbitstr=ltoan(typbit);
-		const string folgestr=ltoan(folge);
-		const string ergzl=ltoan(ergp->size());
-		const string obnoexts=ltoan(obnoext);
-		Log(Txk[T_Suche_in]+blaus+wo+schwarz+Txk[T_nach]+blau+muster+schwarz+"'"+(obicase?"(ic)":"")+Txk[T_Tiefe]+"'"+blau+tiefestr+schwarz+ \
-				Txk[T_Typbit]+blau+typbitstr+schwarz+Txk[T_Folge]+blau+folgestr+schwarz+Txk[T_noext]+blau+obnoexts+schwarz+Txk[T_Ergebnis]+ \
-				gruen+ergzl+schwarz,obverb,oblog);
+		Log(obverb,oblog,0,0,"%s%s%s%s%s%s%s%s'%s%s'%s%lu%s%s%s%d%s%s%s%d%s%s%s%d%s%s%s%zu%s",
+		Txk[T_Suche_in],blau,wo.c_str(),schwarz,Txk[T_nach],blau,muster.c_str(),schwarz,obicase?"(ic)":"",Txk[T_Tiefe],blau,tiefe,schwarz,
+		Txk[T_Typbit],blau,typbit,schwarz,Txk[T_Folge],blau,folge,schwarz,Txk[T_noext],blau,obnoext,schwarz,Txk[T_Ergebnis],
+		gruen,ergp->size(),schwarz);
 	} // 	if (obverb|oblog)
 	if (obverb>1) ausgeb();
 	return 0;
@@ -4219,13 +4243,11 @@ int find3cl::finde(svec *wovp,const string& muster/*=nix*/,long tiefe/*=-1*/,
 		return REGFEHLER;
 	ret=dofind();
 	if (obverb|oblog) {
-		const string tiefestr=ltoan(tiefe);
-		const string typbitstr=ltoan(typbit);
-		const string folgestr=ltoan(folge);
-		const string ergzl=ltoan(ergp->size());
-		const string obnoexts=ltoan(obnoext);
-		Log(Txk[T_Suche_in]+blaus+wo+schwarz+Txk[T_nach]+blau+muster+schwarz+"'"+(obicase?"(ic)":"")+Txk[T_Tiefe]+"'"+blau+tiefestr+schwarz+Txk[T_Typbit]+blau+typbitstr+schwarz+Txk[T_Folge]+blau+folgestr+schwarz+Txk[T_noext]+blau+obnoexts+schwarz+Txk[T_Ergebnis]+gruen+ergzl+schwarz,obverb,oblog);
-	}
+		Log(obverb,oblog,0,0,"%s%s%s%s%s%s%s%s'%s%s'%s%lu%s%s%s%d%s%s%s%d%s%s%s%d%s%s%s%zu%s",
+		Txk[T_Suche_in],blau,wo.c_str(),schwarz,Txk[T_nach],blau,muster.c_str(),schwarz,obicase?"(ic)":"",Txk[T_Tiefe],blau,tiefe,schwarz,
+		Txk[T_Typbit],blau,typbit,schwarz,Txk[T_Folge],blau,folge,schwarz,Txk[T_noext],blau,obnoext,schwarz,Txk[T_Ergebnis],
+		gruen,ergp->size(),schwarz);
+	} // 	if (obverb|oblog)
 	if (obverb>1) ausgeb();
 	return ret;
 } // int find3cl::finde(

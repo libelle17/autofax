@@ -1055,7 +1055,7 @@ void DB::erweitern(const string& tabs, vector<instyp> einf,const size_t aktc,int
 // in: RS::insert() und RS::update
 int DB::machbinaer(const string& tabs, const size_t aktc,const string& fmeld,int obverb)
 {
-  Log(violetts+"machbinaer()"+schwarz+" tabs. "+blau+tabs+schwarz+" fmeld: "+blau+fmeld+schwarz+" obverb: "+ltoan(obverb),obverb);
+  Log(violetts+__FUNCTION__+"()"+schwarz+" tabs. "+blau+tabs+schwarz+" fmeld: "+blau+fmeld+schwarz+" obverb: "+ltoan(obverb),obverb);
   size_t p1,p2,p3,p4;
   p1=fmeld.find("'")+1;
   if (p1==string::npos) return 1;
@@ -1243,7 +1243,7 @@ sqlft::sqlft(DBSTyp eDBS, time_t *tm): string(21,0)
   struct tm zt={0};
   memcpy(&zt,localtime(tm),sizeof zt);
   druckeein(eDBS,&zt);
-}
+} // sqlft::sqlft(DBSTyp eDBS, time_t *tm): string(21,0)
 
 void stmax(int *zahl,int stellen=2)
 {
@@ -1251,7 +1251,7 @@ void stmax(int *zahl,int stellen=2)
  for(int ui=0;ui<stellen;ui++) grenze*=10;
  grenze-=1;
  while (*zahl>grenze) (*zahl)/=10;
-}
+} // void stmax(int *zahl,int stellen=2)
 
 void sqlft::druckeein(DBSTyp eDBS, tm *zt) 
 {
@@ -1262,13 +1262,13 @@ void sqlft::druckeein(DBSTyp eDBS, tm *zt)
 	stmax(&zt->tm_min);
 	stmax(&zt->tm_sec);
   sprintf((char*)c_str(),"%c%.4d-%.2d-%.2d %.2d:%.2d:%.2d%c",dvb(eDBS),zt->tm_year+1900,zt->tm_mon+1,zt->tm_mday,zt->tm_hour,zt->tm_min,zt->tm_sec,dve(eDBS));
-}
+} // void sqlft::druckeein(DBSTyp eDBS, tm *zt)
 
 sqlft::sqlft(DBSTyp eDBS, tm *zt):
   string(21,0) 
 {
   druckeein(eDBS,zt);
-}
+} // sqlft::sqlft(DBSTyp eDBS, tm *zt):
 
 sqlft::sqlft(DBSTyp eDBS, uchar c):
   string(1,0) 

@@ -37,6 +37,7 @@ extern const string& instvz; // in kons.cpp, z.B. /root/autofax
 extern const string& unindt; // instvz+"uninstallinv"
 extern const int sfeh[]; // T_Dienst_laeuft, T_Dienst_inexistent, ...
 string* loeschefarbenaus(string *zwi);
+int Log(const short screen,const short file, const bool oberr,const short klobverb, const char *format, ...);
 int Log(const string& text,const short screen=1,const short file=1,const bool oberr=0,const short klobverb=0);
 
 #ifdef _MSC_VER
@@ -579,7 +580,8 @@ struct color {
 };
 
 #endif
-class svec: public vector<std::string> {
+class svec: public vector<std::string>
+{
   public:
     inline svec& operator<<(const std::string& str) {
       this->push_back(str);
@@ -588,26 +590,30 @@ class svec: public vector<std::string> {
 };
 //svec& operator<<(svec& v, const std::string& str);
 template<class T>
-class tsvec: public vector<T> {
+class tsvec: public vector<T>
+{
   public:
     inline tsvec<T>& operator<<(const T& str) {
       this->push_back(str);
       ((T&)str).init();
       return *this;
     } // inline tsvec
-};
+}; // template<class T> class tsvec: public vector<T>
+
 
 // Abschnitt einer Konfigurationsdatei
-class absch {
+class absch
+{
  public:
  string aname;
  vector<abSchl> av;
  const string& suche(const char* const sname);
  const string& suche(const string& sname);
  void clear();
-};
+}; // class absch
 
-class confdat {
+class confdat
+{
   public:
     uchar obgelesen=0;
     svec zn;
@@ -621,7 +627,7 @@ class confdat {
     void auswert(schlArr *sA, int obverb=0, char tz='=');
 //    void auswert(cppSchluess *conf, size_t csize, int obverb=0, char tz='=');
     void Abschn_auswert(int obverb=0, char tz='=');
-};
+}; // class confdat
 
 // fuer Commandline-Optionen
 enum par_t:uchar {psons,pverz,pfile,pzahl}; // Parameterart: Sonstiges, Verzeichnis, Zahl
@@ -678,7 +684,7 @@ class optioncl
     int pruefpar(vector<argcl> *const argcvm , size_t *const akt, uchar *hilfe, Sprache lg); // 1 = das war der Parameter, 0 = nicht
     string& machbemerkung(Sprache lg,binaer obfarbe=wahr);
     void hilfezeile(Sprache lg);
-};
+}; // class optioncl
 
 #endif // kons_H_DRIN
 
