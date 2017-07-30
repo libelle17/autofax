@@ -3320,18 +3320,33 @@ void paramcl::lieskonfein()
 } // void paramcl::lieskonfein()
 
 //wird aufgerufen in main
+
 void paramcl::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/, struct tm *lap/*=0*/,
-                             string *obempfp/*=0*/,string *obgesap/*=0*/,const uchar obstumm/*=0*/)
+#ifdef immerwart
+                                      string *obempfp/*=0*/,string *obgesap/*=0*/,
+#endif
+				                                                     										 const uchar obstumm/*=0*/)
 {
 	azaehlerdt=aktprogverz()+".zaehl";
-	zcnfA.init(6,"aufrufe","lDatum","tagesaufr","monatsaufr","empfangen","gesandt");
+#ifdef immerwart
+   const int z=6;
+#else
+   const int z=4;
+#endif
+	zcnfA.init(z,"aufrufe","lDatum","tagesaufr","monatsaufr"
+#ifdef immerwart
+                                                  	,"empfangen","gesandt"
+#endif
+                                                               );
 	confdat zcd(azaehlerdt,&zcnfA,obstumm?0:obverb); // hier werden die Daten aus der Datei eingelesen
 	if (arp) if (zcnfA[0].gelesen) zcnfA[0].hole(arp);
 	if (tap) if (zcnfA[2].gelesen) zcnfA[2].hole(tap);
 	if (map) if (zcnfA[3].gelesen) zcnfA[3].hole(map);
 	if (lap) if (zcnfA[1].gelesen) zcnfA[1].hole(lap);
+#ifdef immerwart
 	if (obempfp) if (zcnfA[4].gelesen) zcnfA[4].hole(obempfp);
 	if (obgesap) if (zcnfA[5].gelesen) zcnfA[5].hole(obgesap);
+#endif
 } // void paramcl::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/,ulong *lap/*=0*/)
 
 // wird aufgerufen in main vom Hauptthread
@@ -3353,8 +3368,10 @@ void paramcl::setzzaehler()
 	zcnfA[2].setze(&tagesaufr);
 	monatsaufr++;
 	zcnfA[3].setze(&monatsaufr);
+#ifdef immerwart
 	zcnfA[4].setze(&nix);
 	zcnfA[5].setze(&nix);
+#endif
 } // void paramcl::setzzaehler()
 
 // wird aufgerufen in main vom Hauptthread
@@ -10169,9 +10186,9 @@ int main(int argc, char** argv)
 								elaeuft=1;
 								break;
 							}
-						}
+						} // 						while(1)
 						pidv<<pidcl(pide,"empfarch");
-					}
+					} //					if (!elaeuft)
 
 					if (!slaeuft) {
 						pids=fork();
@@ -10197,9 +10214,9 @@ int main(int argc, char** argv)
 								slaeuft=1;
 								break;
 							}
-						}
+						} // 						while(1)
 						pidv<<pidcl(pids,"wegfaxen");
-					}
+					} // 					if (!slaeuft)
 
 					if (!zlaeuft) {
 						if (pm.obcapi || pm.obhyla) {
@@ -10217,10 +10234,10 @@ int main(int argc, char** argv)
 									zlaeuft=1;
 									break;
 								}
-							}
+							} // 							while(1)
 							pidv<<pidcl(pidz,"zeigweitere");
 						} // 				if (obcapi || obhyla)
-					}
+					} // 					if (!zlaeuft) 
 					if (!zaehlergeschrieben) {
 						pm.setzzaehler();
 						pm.schreibzaehler();
