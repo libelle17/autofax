@@ -9755,7 +9755,7 @@ void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, i
 {
 	Log(violetts+Tx[T_setzhylastat]+schwarz);
 	uchar obsfehlt=1;
-	::Log(obverb,oblog,0,0,"%shylanr: %s%s%s %s%s hyla_uverz_nrp: %s%lu%s startverzn: %s%lu%s",violett,schwarz,fsf->hylanr,violett,
+	::Log(obverb,oblog,0,0,"%shylanr: %s%s%s %s%s hyla_uverz_nrp: %s%lu%s startverzn: %s%lu%s",violett,schwarz,fsf->hylanr.c_str(),violett,
 	   Tx[T_setzhylastat],schwarz,blau,*hyla_uverz_nrp,schwarz,blau,startvznr,schwarz);
 	// wenn in *hyla_uverz_nrp '1' uebergeben wird, nur in sendq suchen
 	// Rueckgabe: 0 = in doneq oder archive gefunden
@@ -10249,9 +10249,9 @@ int main(int argc, char** argv)
 								}
 							} // 		for(size_t i=0;i<pidv.size();i++)
 							//// <<"pidv.size(): "<<pidv.size()<<endl;
-							Log(pm.obverb,pm.oblog,0,0,"elaueft: %s%d%s, ezahl: %s%d%s",blau,elaeuft,schwarz,blau,ezahl,schwarz);
-							Log(pm.obverb,pm.oblog,0,0,"slaueft: %s%d%s, szahl: %s%d%s",blau,slaeuft,schwarz,blau,szahl,schwarz);
-							Log(pm.obverb,pm.oblog,0,0,"zlaueft: %s%d%s, zzahl: %s%d%s",blau,zlaeuft,schwarz,blau,zzahl,schwarz);
+							Log(pm.obverb>1,pm.oblog>1,0,0,"elaueft: %s%d%s, ezahl: %s%d%s",blau,elaeuft,schwarz,blau,ezahl,schwarz);
+							Log(pm.obverb>1,pm.oblog>1,0,0,"slaueft: %s%d%s, szahl: %s%d%s",blau,slaeuft,schwarz,blau,szahl,schwarz);
+							Log(pm.obverb>1,pm.oblog>1,0,0,"zlaueft: %s%d%s, zzahl: %s%d%s",blau,zlaeuft,schwarz,blau,zzahl,schwarz);
 							if (!elaeuft || !slaeuft || !zlaeuft) break;
 							this_thread::sleep_for(chrono::milliseconds(wz1));
 							Log(pm.obverb,0,0,0,"in %s(): %s%s: %s%d%s ms",__FUNCTION__,rot,Tx[T_warte],blau,wz1,schwarz);
