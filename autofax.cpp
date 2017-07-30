@@ -4155,6 +4155,7 @@ void paramcl::konfcapi()
 	uchar cuserda=0, paramdiff=0, neuschreiben=0;
 	string zeile, neudatei;
 	// iru=0 => pruefen, ob Datei geaendert werden muss; iru=1 => aendern
+	uchar tuumben=0;
 	for(uchar iru=0;iru<2;iru++) {
 		mdatei *fneu=0;
 		mdatei f(cfaxconfdt,ios::in); // /etc/capisuite/fax.conf
@@ -4232,22 +4233,25 @@ void paramcl::konfcapi()
 					fneu=0;
 				} // 				if (fneu)
 				f.close();
-				setfaclggf(cfaxconfdt,obverb,oblog,falsch,6,falsch);
-				systemrueck("ls -l '"+cfaxconfdt+"'",2);
-				systemrueck("cat '"+cfaxconfdt+"'",2);
-				const string origdatei=cfaxconfdt+"_orig";
-				struct stat entryorig={0};
-				if (lstat(origdatei.c_str(),&entryorig)) {
-					dorename(cfaxconfdt,origdatei,cuser,0,obverb,oblog);
-				} else {
-					tuloeschen(cfaxconfdt,cuser,obverb,oblog);
-				} // 				if (lstat(origdatei.c_str(),&entryorig)) else
-				dorename(neudatei,cfaxconfdt,cuser,0,obverb,oblog);
+        tuumben=1;
 			} // if (iru)
 			if (!cfcnfA[1].wert.empty()) cfaxuservz=cfcnfA[1].wert;
 			//// <<rot<<"cfaxuservz konfcapi: "<<cfaxuservz<<schwarz<<endl;
 		} // if (f.is_open())
 	} // for(uchar iru=0;iru<2;iru++) 
+	if (tuumben) {
+		setfaclggf(cfaxconfdt,obverb,oblog,falsch,6,falsch);
+		systemrueck("ls -l '"+neudatei+"'",2);
+		systemrueck("cat '"+neudatei+"'",2);
+		const string origdatei=cfaxconfdt+"_orig";
+		struct stat entryorig={0};
+		if (lstat(origdatei.c_str(),&entryorig)) {
+			dorename(cfaxconfdt,origdatei,cuser,0,obverb,oblog);
+		} else {
+			tuloeschen(cfaxconfdt,cuser,obverb,oblog);
+		} // 				if (lstat(origdatei.c_str(),&entryorig)) else
+		dorename(neudatei,cfaxconfdt,cuser,0,obverb,oblog);
+	} // 	if (tuumben)
 	pruefcvz();
 	nextnum();
 	Log(violetts+Txk[T_Ende]+Tx[T_konfcapi]+schwarz+"ccapiconfdt: "+violett+ccapiconfdt+schwarz);
