@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.4455) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.44624) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -717,7 +717,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.4455) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.44624) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -981,7 +981,7 @@ anstatt &rsquo;<b>autofax.log</b>&rsquo; <b><br>
 -wvz, --wartevz &lt;pfad&gt;</b>: Dateien warten in
 &lt;pfad&gt; anstatt
 &rsquo;<b>/var/autofax/warteauffax</b>&rsquo; <b><br>
--nvz, --nichtgefaxtvz &lt;pfad&gt;</b>: Gescheiterte Faxe
+-ngvz, --nichtgefaxtvz &lt;pfad&gt;</b>: Gescheiterte Faxe
 werden hier gesammelt anstatt in
 &rsquo;<b>/var/autofax/nichtgefaxt</b>&rsquo; <b><br>
 -evz, --empfvz &lt;pfad&gt;</b>: Empfangsverzeichnis fuer

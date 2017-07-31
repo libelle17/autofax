@@ -814,7 +814,7 @@ class elem2
 {
   public:
     string pfad;
-    struct stat dst;
+    struct stat dst={0};
     int sterg;
     elem2(){};
     elem2(const string& mutter,const string& name);
@@ -854,11 +854,11 @@ class elem3
 {
   public:
     string pfad;
-    const struct stat sb;
+    const struct stat sb={0};
     int tflag;
-    const struct FTW ftw;
+    const struct FTW ftw={0};
     const string lnk;
-    const struct stat lst;
+    const struct stat lst={0};
     elem3(string pfad, const struct stat *sbp, int& tflag, const struct FTW *ftwp, string lnk,const struct stat& lst):
           pfad(pfad),sb(*sbp),tflag(tflag),ftw(*ftwp),lnk(lnk),lst(lst){}
     const bool operator<(const elem3& el) const;

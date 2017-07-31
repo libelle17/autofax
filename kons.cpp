@@ -660,7 +660,7 @@ string holsystemsprache(int obverb/*=0*/)
 	const char* const langdt[]={"/etc/sysconfig/language","/etc/locale.conf","/etc/default/locale","/etc/sysconfig/i18n"};
 	const char* const langvr[]={"RC_LANG","LANG","LANG","LANG"};
 	for (size_t lind=0;lind<sizeof langdt/sizeof *langdt;lind++) {
-		struct stat langstat;
+		struct stat langstat={0};
 		if (!lstat(langdt[lind],&langstat)) {
 			cglangA.init(1, langvr[lind]);
 			confdat langcd(langdt[lind],&cglangA,obverb);
@@ -1193,7 +1193,7 @@ void kopierm(const string *quelle, const string *ziel)
 // von http://chris-sharpe.blogspot.de/2013/05/better-than-systemtouch.html
 int touch(const string& pfad,int obverb/*=0*/,int oblog/*=0*/)
 {
-	struct stat tstat;
+	struct stat tstat={0};
   int fehler=lstat(pfad.c_str(),&tstat);
 	if (fehler) {
 		int fd = open(pfad.c_str(), O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, 0666);
@@ -2169,7 +2169,7 @@ void pruefmehrfach(const string& wen,uchar obstumm/*=0*/)
 
 int untersuser(string uname,__uid_t *uidp/*=0*/, __gid_t *gidp/*=0*/)
 {
-	struct passwd pwd;
+	struct passwd pwd={0};
 	struct passwd *result;
 	char *buf;
 	ssize_t bufsize;
@@ -4160,7 +4160,7 @@ int find3cl::dofind()
 		for(it=wurz.begin();it!=wurz.end();it++) {
 			if (fertige.find(*it)!=fertige.end()) continue;
 			if (it->pfad.empty()) continue;
-			struct stat st;
+			struct stat st={0};
 			if (lstat(it->pfad.c_str(),&st)) continue;
 			gearbeitet=1;
 			if (obverb>2||oblog>1) Log("Iterator: "+blaus+it->pfad+schwarz+Txk[T_Tiefe]+blau+ltoan(it->maxd)+schwarz,obverb,oblog);

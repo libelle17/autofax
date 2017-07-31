@@ -148,10 +148,12 @@ class fsfcl : public fxfcl // Faxsendfile
     /*3*/fsfcl(const string id, const string capisd, const string hylanr, string const cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
     /*4*/fsfcl(const string& hylanr): hylanr(hylanr) {}
     /*5*/fsfcl(const string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
+		/*6*/fsfcl(const string& original, const string& origvu,uchar cnr): original(original), origvu(origvu) {}
     void setzcapistat(paramcl *pmp, struct stat *entrysendp);
     void capiausgeb(stringstream *ausgp, const string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,ulong faxord=0);
     void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
     int holcapiprot(int obverb);
+		void scheitere(const string& wvz, const string& ngvz, const string& cuser, const int obverb=0, const int oblog=0);
 }; // class fsfcl
 
 extern const string s_true; // ="true";
@@ -307,7 +309,7 @@ class paramcl // Programmparameter
                        // bei jeder Aenderung muss auch logdt neu gesetzt werden!
     string zufaxenvz;
     string wvz; // Warteverzeichnis
-    string nvz; // Gescheitertenverzeichnis
+    string ngvz; // Nichtgefaxt-Verzeichnis (Gescheiterte)
     string empfvz; // Empfangsverzeichnis
     string cronminut; // Minuten fuer crontab; 0 = kein Crontab-Eintrag
     string maxcapiv; // maximale Versuchnr in Capi, bis Hyla versucht wird

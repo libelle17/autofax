@@ -569,7 +569,7 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 					// 7.7.17: neuer Fehler "ERROR 1819 (HY000) at line 1: Your password does not satisfy the current policy requirements" auf fedora
 					const string verbot="/etc/my.cnf.d/cracklib_password_check.cnf",
 					             plugin="plugin-load-add=cracklib_password_check.so";
-					struct stat st;
+					struct stat st={0};
 					uchar gef=0;
 					if (!lstat(verbot.c_str(),&st)) {
 						mdatei f(verbot,ios::in,0);
