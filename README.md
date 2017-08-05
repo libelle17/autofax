@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.44624) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.44955) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -198,9 +198,9 @@ other channel <b><br>
 -csf, --correctsuccessflag</b>: in the database table
 &lsquo;<b>outa</b>&lsquo; the success flag is being
 corrected <b><br>
--rwd, --revisewaitdir</b>: Examine files in waiting
-directory against the tables &lsquo;<b>outa</b>&lsquo; and
-clean them up <b><br>
+-rwd, --cleanwaitdir</b>: Examine files in waiting directory
+against the tables &lsquo;<b>outa</b>&lsquo; and clean them
+up <b><br>
 -st, --stop</b>: stop autofax <b><br>
 -listo, --listoutg</b>: lists entries from
 &lsquo;<b>outa</b>&lsquo; with success flag <b><br>
@@ -717,7 +717,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.44624) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.44955) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>

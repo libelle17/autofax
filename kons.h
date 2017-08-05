@@ -93,6 +93,8 @@ extern const char *_rot, *_hrot, *_schwarz, *_blau, *_gelb, *_tuerkis, *_hgrau;
 #include <fstream> // kopiere
 #include <algorithm>    // std::transform
 #include <regex.h> // regex_t, regex, regcomp, regexec
+#include <chrono> // fuer sleep_for 
+#include <thread> // fuer sleep_for
 
 #define neufind
 #define altfind
@@ -122,6 +124,7 @@ enum {
 #endif
 
 #define caus cout // nur zum Debuggen
+extern pthread_mutex_t printf_mutex;
 
 typedef unsigned long long ull;
 extern uchar findv/*=3*/; // find-Version 1=system, 2=intern mit readdir, 3=intern mit nftw
@@ -713,7 +716,8 @@ int multischlschreib(const string& fname, schlArr *const *const confs, const siz
 std::string base_name(const std::string& path); // Dateiname ohne Pfad
 std::string dir_name(const std::string& path);  // Pfadname einer Datei
 int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
-                int verbergen=0, int obergebnisanzeig=wahr, const string& ueberschr=nix,vector<errmsgcl> *errm=0,uchar obincron=0);
+                int verbergen=0, int obergebnisanzeig=wahr, const string& ueberschr=nix,vector<errmsgcl> *errm=0,uchar obincron=0,
+								stringstream *ausgp=0);
 void pruefplatte();
 void pruefmehrfach(const string& wen=nix,uchar obstumm=0);
 void setfaclggf(const string& datei,int obverb=0,int oblog=0,const binaer obunter=falsch,const int mod=4,uchar obimmer=0,
@@ -762,6 +766,12 @@ class linst_cl
  string compil; // Paketnamen fuer den Compiler
  string dev; // Anhaengsel fuer die development-Versionen ("-dev" oder "-devel")
  string libs; // alle lib-Verzeichnisse, fuer find ..
+ string shpf; // Pfad zu sh
+ string xargspf; // Pfad zu xargs
+ string ionicepf; // Pfad zu ionice
+ string nicepf; // Pfad zu nice
+ string p3cpf; // Pfad zu python3-config
+
  linst_cl(int obverb=0, int oblog=0);
  uchar obnmr=1;
  string eprog; // ersetztes Programm

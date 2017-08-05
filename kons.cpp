@@ -15,6 +15,7 @@ const char *dir = "dir ";
 const char *dir = "ls -l ";
 #endif
 const char *tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
+pthread_mutex_t printf_mutex;
 
 #ifdef linux
 #include <iomanip> // setprecision
@@ -926,19 +927,23 @@ int Log(const short screen,const short file, const bool oberr,const short klobve
 	if (screen||file) {
 		va_list args;
 		va_start(args,format);
-//#define vagenau
+#define vagenau
 #ifdef vagenau		
 		va_list a2;
 		va_copy(a2,args);
+		pthread_mutex_lock(&printf_mutex);
 		auto groe=vsnprintf(0,0,format,a2)+1;
-////		caus<<"groe: "<<groe<<endl;
+		pthread_mutex_unlock(&printf_mutex);
+		//<<"groe: "<<groe<<endl;
 		char *buf=new char[groe];
 #else
-		int groe=256; 
+		int groe=512; 
 		char buf[groe];
 #endif
+		pthread_mutex_lock(&printf_mutex);
 		vsnprintf(buf,groe,format,args);
-		erg=Log(buf,1,1);
+		pthread_mutex_unlock(&printf_mutex);
+		erg=Log(buf,screen,file);
 #ifdef vagenau		
 		delete buf;
 #endif
@@ -1483,6 +1488,10 @@ linst_cl::linst_cl(int obverb,int oblog)
 			systemrueck("find /usr -maxdepth 1 -type d -name 'lib*'",obverb,oblog,&qrueck);
 		} else findfile(&qrueck,findv,obverb,oblog,0,"/usr","lib[^/]*$",1,34,1);
 		for(size_t iru=0;iru<qrueck.size();iru++) libs+=qrueck[iru]+" ";
+		obprogda("sh",obverb,oblog,&shpf);// Pfad zu sh
+		obprogda("xargs",obverb,oblog,&xargspf);// Pfad zu xargs
+		obprogda("ionice",obverb,oblog,&ionicepf);// Pfad zu ionice
+		obprogda("nice",obverb,oblog,&nicepf);// Pfad zu nice
 } // linst_cl::linst_cl(int obverb,int oblog)
 
 const string& absch::suche(const char* const sname)
@@ -1940,7 +1949,9 @@ int Schschreib(const char *fname, Schluessel *conf, size_t csize)
   FILE *f=oeffne(fname,3,&erfolg);
   if (!erfolg) return 1;
   for (size_t i = 0;i<csize;i++) {
+		pthread_mutex_lock(&printf_mutex);
     fprintf(f,"%s = \"%s\"\n",conf[i].key,conf[i].val);
+		pthread_mutex_unlock(&printf_mutex);
   }
   fclose(f);
 #endif
@@ -1969,7 +1980,8 @@ std::string dir_name(const std::string& path)
 // obverb: 1 = Befehl anzeigen, 2 = auch Rueckgabezeilen anzeigen
 // obergebnisanzeig: 1=falls Fehler und obverb>1, >1=falls Fehler
 int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<string> *rueck/*=0*/, 
-    int verbergen/*=0*/, int obergebnisanzeig/*wahr*/, const string& ueberschr/*=nix*/,vector<errmsgcl> *errm/*=0*/,uchar obincron/*=0*/)
+    int verbergen/*=0*/, int obergebnisanzeig/*wahr*/, const string& ueberschr/*=nix*/,vector<errmsgcl> *errm/*=0*/,uchar obincron/*=0*/,
+		stringstream *ausgp/*=0*/)
 {
 // verbergen: 0 = nichts, 1= '2>/dev/null' anhaengen + true zurueckliefern, 2='>/dev/null 2>&1' anhaengen + Ergebnis zurueckliefern
   binaer ob0heissterfolg=wahr;
@@ -2010,13 +2022,18 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
   } else {
     aktues=ueberschr;
   } //   if (ueberschr.empty())
-  Log(aktues+": "+blau+hcmd.substr(0,getcols()-7-aktues.length())+schwarz+" ...",obverb>0?-1:0,oblog);
-  if (!rueck) if (obergebnisanzeig) {neurueck=1;rueck=new vector<string>;}
-// #define systemrueckprofiler
+	string hsubs=hcmd.substr(0,getcols()-7-aktues.length());
+	if (ausgp) {
+		*ausgp<<aktues<<": "<<blau<<hsubs<<schwarz<<" ..."<<endl;
+	} else {
+		Log(aktues+": "+blau+hsubs+schwarz+" ...",obverb>0?-1:0,oblog);
+	}
+	if (!rueck) if (obergebnisanzeig) {neurueck=1;rueck=new vector<string>;}
+	// #define systemrueckprofiler
 #ifdef systemrueckprofiler
-  perfcl prf("systemrueck");
+	perfcl prf("systemrueck");
 #endif
-  if (rueck) {
+	if (rueck) {
     if (FILE* pipe = popen(hcmd.c_str(), "r")) {
 		/*//
 		int fd=fileno(pipe);
@@ -2066,7 +2083,11 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
       } //       if (obverb>1 || oblog || obergebnisanzeig) if (rueck->size())
 #ifdef systemrueckprofiler
       Log(rots+"Rueck.size: "+ltoan(rueck->size())+", obergebnisanzeig: "+(obergebnisanzeig?"ja":"nein"),1,oblog);
-      Log(hcmd,1,oblog);
+			if (ausgp) {
+			  *ausp<<hcmd<<endl;
+			} else {
+				Log(hcmd,1,oblog);
+			}
 			prf.ausgab1000("vor pclose");
 #endif
 			erg = pclose(pipe);
@@ -2130,11 +2151,22 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 #ifdef systemrueckprofiler
     prf.ausgab1000("vor log");
 #endif
-    Log(aktues+": "+blau+hcmd+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz,obverb>0?obverb:0,oblog);
-  } // if (obverb>0 || oblog)
-  if (obergebnisanzeig) if (rueck->size()) 
-    Log(meld,obverb>1||(ob0heissterfolg && erg && obergebnisanzeig>1),oblog);
-  if (neurueck) delete rueck;
+		if (ausgp) {
+		  if (obverb)
+			*ausgp<<": "<<blau<<hcmd<<schwarz<<Txk[T_komma_Ergebnis]<<blau<<ergebnis<<schwarz<<endl;
+		} else {
+			Log(aktues+": "+blau+hcmd+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz,obverb>0?obverb:0,oblog);
+		}
+	} // if (obverb>0 || oblog)
+	if (obergebnisanzeig && rueck->size()) {
+		if (ausgp) {
+		  if (obverb)
+			*ausgp<<meld<<endl;
+		} else {
+			Log(meld,obverb>1||(ob0heissterfolg && erg && obergebnisanzeig>1),oblog);
+		}
+	} // 	if (obergebnisanzeig && rueck->size())
+	if (neurueck) delete rueck;
   return erg; 
 } // int systemrueck(const string& cmd, char obverb, int oblog, vector<string> *rueck, binaer ...
 
@@ -2332,7 +2364,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 					if (!besitzer.empty()) mod=0777;
 					if (mkdir(stack[stack.size()-1].c_str(),mod)) 
 						break;
-					stack.erase(stack.end());
+					stack.erase(stack.end()-1);
 				} // while(1)
 			} // if (fehlt)
 			if (fehlt) {
@@ -2376,7 +2408,9 @@ string aktprogverz()
   if(bytes == 0) pBuf[0]=0;
 #elif linux
   char szTmp[32];
+		pthread_mutex_lock(&printf_mutex);
   sprintf(szTmp, "/proc/%d/exe", getpid());
+		pthread_mutex_unlock(&printf_mutex);
   ssize_t bytes = MIN(readlink(szTmp, pBuf, sizeof pBuf), sizeof pBuf - 1);
   if(bytes >= 0) pBuf[bytes] = 0;
 #endif
@@ -3840,8 +3874,10 @@ void printBits(size_t const size, void const * const ptr)
   for (i=size-1;i>=0;i--) {
     for (j=7;j>=0;j--) {
       byte = (b[i] >> j) & 1;
-      printf("%u", byte);
-    } //     for (j=7;j>=0;j--)
+			pthread_mutex_lock(&printf_mutex);
+			printf("%u", byte);
+			pthread_mutex_unlock(&printf_mutex);
+		} //     for (j=7;j>=0;j--)
   } //   for (i=size-1;i>=0;i--)
 } // void printBits(size_t const size, void const * const ptr)
 
@@ -4178,6 +4214,7 @@ int find3cl::dofind()
 int find3cl::ausgeb()
 {
 	size_t j=0;
+	pthread_mutex_lock(&printf_mutex);
 	for(set<elem3>::iterator jt=erg.begin();jt!=erg.end();jt++) {
 		j++;
 		printf("%7ld) %-3s %2d ",j,
@@ -4202,6 +4239,7 @@ int find3cl::ausgeb()
 		}
 		printf("\n");
 	} //       for(set<elem3>::iterator jt=erg.begin();jt!=erg.end();jt++)
+	pthread_mutex_unlock(&printf_mutex);
 	return 0;
 } //     int ausgeb()
 

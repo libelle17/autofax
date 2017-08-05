@@ -672,7 +672,9 @@ if (0) {
 	if (mysql_query(conn,sql)) 
  *erg=mysql_error(conn);
  if (obverb)
+		pthread_mutex_lock(&printf_mutex);
  printf("Fehler %u: %s\n", mysql_errno(conn), *erg);
+		pthread_mutex_unlock(&printf_mutex);
  return 1;
 
  result = mysql_store_result(conn);
@@ -1144,7 +1146,9 @@ KLZ // instyp::instyp(char* vfeld,char* vwert)
 
 instyp::instyp(DBSTyp eDBS, char* vfeld,time_t zt) KLA
 feld=vfeld;
+		//pthread_mutex_lock(&printf_mutex);
 //	sprintf(dbuf,"%d-%d-%d %d:%d:%d",zt.tm_year+1900,zt.tm_mon+1,zt.tm_mday,zt.tm_hour,zt.tm_min,zt.tm_sec);
+		//pthread_mutex_unlock(&printf_mutex);
 //	wert=dbuf;
 wert=sqlft(eDBS,&zt);
 KLZ // instyp::instyp(char* vfeld,struct tm zt) KLA
@@ -1234,7 +1238,9 @@ string *sqlft::sersetze( string *src, string const& target, string const& repl)
    string(21,0) {
    struct tm zt={0};
    memcpy(&zt,localtime(tm),sizeof zt);
+		pthread_mutex_lock(&printf_mutex);
    sprintf((char*)c_str(),"%c%.4d-%.2d-%.2d %.2d:%.2d:%.2d%c",dvb(eDBS),zt.tm_year+1900,zt.tm_mon+1,zt.tm_mday,zt.tm_hour,zt.tm_min,zt.tm_sec,dve(eDBS));
+		pthread_mutex_unlock(&printf_mutex);
    }
  */
 
@@ -1261,7 +1267,9 @@ void sqlft::druckeein(DBSTyp eDBS, tm *zt)
 	stmax(&zt->tm_hour);
 	stmax(&zt->tm_min);
 	stmax(&zt->tm_sec);
+		pthread_mutex_lock(&printf_mutex);
   sprintf((char*)c_str(),"%c%.4d-%.2d-%.2d %.2d:%.2d:%.2d%c",dvb(eDBS),zt->tm_year+1900,zt->tm_mon+1,zt->tm_mday,zt->tm_hour,zt->tm_min,zt->tm_sec,dve(eDBS));
+		pthread_mutex_unlock(&printf_mutex);
 } // void sqlft::druckeein(DBSTyp eDBS, tm *zt)
 
 sqlft::sqlft(DBSTyp eDBS, tm *zt):
@@ -1273,47 +1281,61 @@ sqlft::sqlft(DBSTyp eDBS, tm *zt):
 sqlft::sqlft(DBSTyp eDBS, uchar c):
   string(1,0) 
 {
+		pthread_mutex_lock(&printf_mutex);
   sprintf((char*)c_str(),"%d",c);
+		pthread_mutex_unlock(&printf_mutex);
 }
 
 sqlft::sqlft(DBSTyp eDBS, char c):
   string(1,0) 
 {
+		pthread_mutex_lock(&printf_mutex);
   sprintf((char*)c_str(),"%d",c);
+		pthread_mutex_unlock(&printf_mutex);
 }
 
 sqlft::sqlft(DBSTyp eDBS, int i):
   string(21,0) 
 {
+		pthread_mutex_lock(&printf_mutex);
   sprintf((char*)c_str(),"%i",i);
+		pthread_mutex_unlock(&printf_mutex);
   resize(strlen(c_str()));
 }
 
 sqlft::sqlft(DBSTyp eDBS, long int i):
   string(21,0) 
 {
+		pthread_mutex_lock(&printf_mutex);
   sprintf((char*)c_str(),"%li",i);
+		pthread_mutex_unlock(&printf_mutex);
   resize(strlen(c_str()));
 }
 
 sqlft::sqlft(DBSTyp eDBS, unsigned int i):
   string(21,0) 
 {
+		pthread_mutex_lock(&printf_mutex);
   sprintf((char*)c_str(),"%u",i);
+		pthread_mutex_unlock(&printf_mutex);
   resize(strlen(c_str()));
 }
 
 sqlft::sqlft(DBSTyp eDBS, unsigned long int i):
   string(21,0) 
 {
+		pthread_mutex_lock(&printf_mutex);
   sprintf((char*)c_str(),"%lu",i);
+		pthread_mutex_unlock(&printf_mutex);
   resize(strlen(c_str()));
 }
 
 sqlft::sqlft(DBSTyp eDBS, long long int i):
   string(21,0) 
 {
+		pthread_mutex_lock(&printf_mutex);
   sprintf((char*)c_str(),"%llu",i);
+		pthread_mutex_unlock(&printf_mutex);
   resize(strlen(c_str()));
 } // sqlft::sqlft(DBSTyp eDBS, long long int i)
 
@@ -1342,7 +1364,9 @@ char* DB::tmtosql(tm *tmh,char* buf)
 			stmax(&tmh->tm_year,4);
 			stmax(&tmh->tm_mon);
 			stmax(&tmh->tm_mday);
+		pthread_mutex_lock(&printf_mutex);
       sprintf(buf,"%.4d%.2d%.2d",tmh->tm_year+1900,tmh->tm_mon+1,tmh->tm_mday);
+		pthread_mutex_unlock(&printf_mutex);
       break;
     case Postgres:
 		  caup<<"hier tmtosql"<<endl;
@@ -1363,7 +1387,9 @@ char* DB::tmtosqlmZ(tm *tmh,char* buf)
 			stmax(&tmh->tm_hour);
 			stmax(&tmh->tm_min);
 			stmax(&tmh->tm_sec);
+		pthread_mutex_lock(&printf_mutex);
       sprintf(buf,"%.4d%.2d%.2d%.2d%.2d%.2d",tmh->tm_year+1900,tmh->tm_mon+1,tmh->tm_mday,tmh->tm_hour,tmh->tm_min,tmh->tm_sec);
+		pthread_mutex_unlock(&printf_mutex);
       break;
     case Postgres:
 		  caup<<"hier tmtosql"<<endl;
@@ -1498,7 +1524,9 @@ erfolg:
         } // if (mysql_real_query(db->conn[aktc],sql.c_str(),sql.length())) else  
       } // if (!db->conn[aktc]) else
 			if (obfehl) if ((fnr!=1406 && obverb && obverb!=-2) || (fnr==1406 && obverb==1)) {
-				//		printf("Fehler %u: %s\n", fnr, fehler);
+				//// pthread_mutex_lock(&printf_mutex);
+				////	printf("Fehler %u: %s\n", fnr, fehler);
+				//// pthread_mutex_unlock(&printf_mutex);
 				cerr<<Txd[T_Fehler_db]<<drot<<fnr<<schwarz<<Txd[T_bei_Abfrage]<<blau<<sql<<schwarz<<": "<<endl<<drot<<fehler<<schwarz<<endl;
 			}
       break;

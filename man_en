@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "31.07.17" "Version 0.44624" "\fB²DPROG²\fR man page"
+.TH man 1 "05.08.17" "Version 0.44955" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -97,7 +97,7 @@ and logs this in the the mariadb database '\fBautofax\fB' (tables: `\fBouta\fB`,
 .br
 \fB -csf, --correctsuccessflag\fR: in the database table `\fBouta\fR` the success flag is being corrected
 .br
-\fB -rwd, --revisewaitdir\fR: Examine files in waiting directory against the tables `\fBouta\fR` and clean them up
+\fB -rwd, --cleanwaitdir\fR: Examine files in waiting directory against the tables `\fBouta\fR` and clean them up
 .br
 \fB -st, --stop\fR: stop autofax
 .br

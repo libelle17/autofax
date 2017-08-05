@@ -8,11 +8,16 @@ class fsfcl; // Faxsendfile
 class paramcl; // Programmparameter
 class pidvec; // Vector von pid- und string-Pärchen
 void useruucp(const string& huser, const int obverb, const int oblog);
-string zielname(const string& qdatei, const string& zielvz,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0);
-string zielname(const string& qdatei, zielmustercl *zmp,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0);
-void dorename(const string& quelle, const string& ziel, const string& cuser=nix, uint *vfehler=0, int obverb=0, int oblog=0);
-string verschiebe(const string& qdatei, const string& zielvz, const string& cuser=nix,uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0,int oblog=0);
-void verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser=nix, uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0, int oblog=0);
+string zielname(const string& qdatei, const string& zielvz,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0,
+                  stringstream *ausgp=0);
+string zielname(const string& qdatei, zielmustercl *zmp,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0,
+                  stringstream *ausgp=0);
+void dorename(const string& quelle, const string& ziel, const string& cuser=nix, uint *vfehler=0, int obverb=0, int oblog=0,
+                  stringstream *ausgp=0);
+string verschiebe(const string& qdatei, const string& zielvz, const string& cuser=nix,uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0,int oblog=0,
+                  stringstream *ausgp=0);
+string verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser=nix, uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0, int oblog=0,
+                  stringstream *ausgp=0);
 string kopiere(const string& qdatei, const string& zieldp, uint *kfehler, uchar wieweiterzaehl, int obverb=0,int oblog=0);
 string kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
 void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, int obverb, int oblog);
@@ -148,12 +153,12 @@ class fsfcl : public fxfcl // Faxsendfile
     /*3*/fsfcl(const string id, const string capisd, const string hylanr, string const cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
     /*4*/fsfcl(const string& hylanr): hylanr(hylanr) {}
     /*5*/fsfcl(const string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
-		/*6*/fsfcl(const string& original, const string& origvu,uchar cnr): original(original), origvu(origvu) {}
+		/*6*/fsfcl(const string& original, const string& origvu, uchar cnr): original(original), origvu(origvu) {}
     void setzcapistat(paramcl *pmp, struct stat *entrysendp);
     void capiausgeb(stringstream *ausgp, const string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,ulong faxord=0);
     void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
     int holcapiprot(int obverb);
-		void scheitere(const string& wvz, const string& ngvz, const string& cuser, const int obverb=0, const int oblog=0);
+		void scheitere(const string& wvz, const string& ngvz, const string& cuser, const string* const ziel=0, const int obverb=0, const int oblog=0);
 }; // class fsfcl
 
 extern const string s_true; // ="true";
@@ -243,11 +248,11 @@ class paramcl // Programmparameter
     string muser; // Benutzer fuer Mysql/MariaDB
     string mpwd;  // Passwort fuer Mysql/MariaDB
     DB* My=0;
-		const size_t maxconz=12;//aktc: 0=pruefspool,pruefouttab,pruefudoc,pruefinctab,prueffuncgettel3,pruefstdfaxnr,aenderefax,rueckfragen 
+		const size_t maxconz=13;//aktc: 0=pruefspool,pruefouttab,pruefudoc,pruefinctab,prueffuncgettel3,pruefstdfaxnr,aenderefax,rueckfragen 
 		// bereinigewv,loeschewaise,loescheallewartenden,tu_lista,tu_listi,suchestr,Schluss, 1=korrigierecapi aus main, 
 		//                          2=korrigierehyla aus main, 3=wegfaxen, untersuchespool, WVZinDatenbank, 4=zeigweitere, 5=empfarch,
 		//                          6=faxemitC, 7=faxemitH, 9=korrigierecapi aus zeigweitere, 10=korrigierehyla aus zeigweitere,
-    //													11=test
+    //													11=bereinigewv, 12=raeumgefaxtauf
     const string touta="outa"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tudoc="udoc"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tinca="inca"; // MariaDB-Tabelle fuer empfangene Faxe
@@ -424,8 +429,10 @@ class paramcl // Programmparameter
     int  initDB();
     int  pruefDB(const string& db);
 
-    void bereinigewv();
-    void anhalten();
+    void bereinigewv(const size_t aktc/*=0*/);
+		void dober(const string& wvz, set<string>& fdn,uchar aucherfolg,stringstream *ausgp,const size_t aktc);
+		void raeumgefaxtauf(const size_t aktc/*=0*/);
+		void anhalten();
     void tu_lista(const string& oberfolg,const string& submids=nix);
     void tu_listi();
     void suchestr();
