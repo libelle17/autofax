@@ -14,6 +14,7 @@
 <a href="#IMPLICATIONS_D">IMPLICATIONS</a><br>
 <a href="#UNINSTALLING_D">UNINSTALLING</a><br>
 <a href="#ERRORS_D">ERRORS</a><br>
+<a href="#PROGRAM MODIFICATION_D">PROGRAM MODIFICATION</a><br>
 <a href="#LIABILITY_D">LIABILITY</a><br>
 <a href="#AUTHOR_D">AUTHOR</a><br>
 
@@ -498,7 +499,8 @@ Software</b>: The program was adjusted to an installation of
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
 Mint &gt;= 18 or Fedora &gt;= 24 with standard options.
 System D has to be installed, i.e., &quot;systemctl&quot;
-has to run. One of the packet managers rpm or dpkg and apt,
+has to run, which is the case in the mentioned program
+versions. One of the packet managers rpm or dpkg and apt,
 dnf, yum or zypper has to be installed, respectively, as is
 the case per default in the mentioned linux distributions.
 Uninstalling of the programs added by autofax by <b>make
@@ -704,6 +706,17 @@ the email headline. <br>
 Please report as well, if different hard- or software yields
 a requirement for a program modification.</p>
 
+<h2>PROGRAM MODIFICATION
+<a name="PROGRAM MODIFICATION_D"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">By calling
+&rsquo;<b>sh viall</b>&rsquo;, followed by
+&rsquo;<b>make</b>&rsquo; and &rsquo;<b>make
+install</b>&rsquo; from the installation directory
+(&rsquo;<b>~/autofax</b>), You may alter the program.</p>
+
 <h2>LIABILITY
 <a name="LIABILITY_D"></a>
 </h2>
@@ -740,6 +753,7 @@ caused by the program.</p>
 <a href="#AUSWIRKUNGEN DES PROGRAMMABLAUFS_D">AUSWIRKUNGEN DES PROGRAMMABLAUFS</a><br>
 <a href="#DEINSTALLATION_D">DEINSTALLATION</a><br>
 <a href="#FEHLER_D">FEHLER</a><br>
+<a href="#PROGRAMM&Auml;NDERUNG_D">PROGRAMM&Auml;NDERUNG</a><br>
 <a href="#HAFTUNG_D">HAFTUNG</a><br>
 <a href="#AUTOR_D">AUTOR</a><br>
 
@@ -1269,14 +1283,15 @@ Software</b>: Das Programm wurde auf eine Installation von
 Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
 Mint &gt;= 18 oder Fedora &gt;= 24 mit jeweils
 Standardoptionen abgestimmt. System D muss installiert sein
-bzw. systemctl muss laufen. Jeweils einer der Paketmanager
-rpm oder dpkg sowie apt, dnf, yum oder zypper muss
-installiert sein, wie in den genannten Linuxdistributionen
-standardm&auml;&szlig;ig der Fall. Die
-Deinstallation der durch autofax hinzugef&uuml;gten
-Programme mit <b>make uninstall</b> ist gegenw&auml;rtig
-nur f&uuml;r englische und deutsche Versionen der
-Paketmanager eingerichtet.</p>
+bzw. systemctl muss laufen, was in den genannten
+Programmversionen der Fall ist. Jeweils einer der
+Paketmanager rpm oder dpkg sowie apt, dnf, yum oder zypper
+muss installiert sein, wie in den genannten
+Linuxdistributionen standardm&auml;&szlig;ig der
+Fall. Die Deinstallation der durch autofax
+hinzugef&uuml;gten Programme mit <b>make uninstall</b>
+ist gegenw&auml;rtig nur f&uuml;r englische und
+deutsche Versionen der Paketmanager eingerichtet.</p>
 
 <h2>AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE
 <a name="AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE_D"></a>
@@ -1496,6 +1511,18 @@ mit u.a. dem Wort &rsquo;autofax&rsquo; in der
 Email-Ueberschrift melden. <br>
 Bitte auch melden, wenn sich &Auml;nderungsbedarf durch
 andere Hard- bzw. Software ergeben.</p>
+
+<h2>PROGRAMM&Auml;NDERUNG
+<a name="PROGRAMM&Auml;NDERUNG_D"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Durch Aufruf
+von &rsquo;<b>sh viall</b>&rsquo;, gefolgt von
+&rsquo;<b>make</b>&rsquo; und &rsquo;<b>make
+install</b>&rsquo; vom Installationsverzeichnis
+(&rsquo;<b>~/autofax</b>) aus, k&ouml;nnen Sie das
+Programm &auml;ndern.</p>
 
 <h2>HAFTUNG
 <a name="HAFTUNG_D"></a>
