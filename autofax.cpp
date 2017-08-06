@@ -280,8 +280,8 @@ enum T_
 	T_empfangenes_Fax_erneut_bereitstellen,
 	T_ausgehendes_Fax_vorzeitig_auf_zweitem_Weg_schicken,
 	T_loeschen,
-	T_Dateien_aus_Warteverzeichnis_gegen,
-	T_pruefen_und_verschieben,
+	T_Dateien_aus_Warteverzeichnis_Gescheitertenvz_und_Gefaxtvz_gegen,
+	T_pruefen_und_aufraeumen,
 	T_listet_Datensaetze_aus,
 	T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,
 	T_Erklaerung_haeufiger_Optionen,
@@ -759,7 +759,6 @@ enum T_
 	T_Nicht_gefaxt,
 	T_Bereinige_Verzeichnis,
 	T_gefunden_in_Tabelle,
-	T_raeumgefaxtauf,
 	T_Aus2,
 	T_wurden_in_Unterverzeichnisse_verschoben,
 	T_kommaFaxerfolg,
@@ -1223,10 +1222,10 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"ausgehendes Fax vorzeitig auf zweitem Weg schicken","redirect outgoing fax ahead by the other channel"},
 	// T_loeschen
 	{"` loeschen","`"},
-	// T_Dateien_aus_Warteverzeichnis_gegen
-	{"Dateien aus Warteverzeichnis gegen `","Examine files in waiting directory against the tables `"},
-	// T_pruefen_und_verschieben
-	{"` pruefen und ggf. verschieben","` and clean them up"},
+	// T_Dateien_aus_Warteverzeichnis_Gescheitertenvz_und_Gefaxtvz_gegen
+	{"Dateien aus Wartevz.,Gescheitertenvz.u.Gefaxtvz.gegen `","Examine files in waiting,failed a.faxed directory against the tables `"},
+	// T_pruefen_und_aufraeumen
+	{"` pruefen und ggf. aufraeumen","` and put them to order"},
 	// T_listet_Datensaetze_aus
 	{"listet Datensaetze aus `","lists entries from `"},
 	// T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt
@@ -3496,7 +3495,7 @@ int paramcl::getcommandline()
 	opts.push_back(/*4*/optioncl(T_uml_k,T_umleiten_l, &Tx, T_ausgehendes_Fax_vorzeitig_auf_zweitem_Weg_schicken, 1, &uml,1));
 	////  opts.push_back(optioncl("loee","loescheempf", &Tx, T_empfangene_Dateien_loeschen_die_nicht_verarbeitet_werden_koennen,1,&loee,1));
 	opts.push_back(/*6*/optioncl(T_kez_k,T_korrerfolgszeichen_l, &Tx, T_in_der_Datenbanktabelle,0,&touta,T_wird_das_Erfolgszeichen_korrigiert, &kez,1));
-	opts.push_back(/*6*/optioncl(T_bvz_k,T_bereinigevz_l, &Tx, T_Dateien_aus_Warteverzeichnis_gegen,1,&touta, T_pruefen_und_verschieben, &bvz,1));
+	opts.push_back(/*6*/optioncl(T_bvz_k,T_bereinigevz_l, &Tx, T_Dateien_aus_Warteverzeichnis_Gescheitertenvz_und_Gefaxtvz_gegen,1,&touta, T_pruefen_und_aufraeumen, &bvz,1));
 	opts.push_back(/*4*/optioncl(T_st_k,T_stop_l, &Tx, T_DPROG_anhalten,1,&anhl,1));
 	opts.push_back(/*6*/optioncl(T_lista_k,T_listausg_l, &Tx, T_listet_Datensaetze_aus, 1, &touta, T_mit_Erfolgskennzeichen_auf, &lista,1));
 	opts.push_back(/*6*/optioncl(T_listf_k,T_listfailed_l, &Tx, T_listet_Datensaetze_aus, 1, &touta, T_ohne_Erfolgskennzeichen_auf, &listf,1));
@@ -10617,7 +10616,7 @@ int main(int argc, char** argv)
 								ezahl++;	
 								elaeuft=1;
 								break;
-							}
+							} // 							if (kill(pide,0)!=-1 || errno!=ESRCH)
 						} // 						while(1)
 						pidv<<pidcl(pide,"empfarch");
 					} //					if (!elaeuft)
@@ -10666,7 +10665,7 @@ int main(int argc, char** argv)
 									zzahl++;	
 									zlaeuft=1;
 									break;
-								}
+								} // 								if (kill(pidz,0)!=-1 || errno!=ESRCH)
 							} // 							while(1)
 							pidv<<pidcl(pidz,"zeigweitere");
 						} // 				if (obcapi || obhyla)
@@ -10676,7 +10675,7 @@ int main(int argc, char** argv)
 						pm.setzzaehler();
 						pm.schreibzaehler();
 						zaehlergeschrieben=1;
-					}
+					} // 					if (!zaehlergeschrieben)
 					const ssize_t wz1=100, wz2=250;
 					const int sz=240; // so oft ueberpruefen undd wz2 ms auf den letzten thread warten, ehe die anderen nochmal gestartet werden
 					for(int ru=0;ru<sz;ru++) {
