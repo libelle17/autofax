@@ -10594,7 +10594,7 @@ int main(int argc, char** argv)
 						exit(17);
 					} // 					if (!pidb)
 					pidv<<pidcl(pidb,"bereinigevz");
-				} // 				if (aufrufe % 100 )
+				} // 				if (aufrufe % 1000 )
 				// hier stehen obcapi und obhyla fest
 				ulong ezahl=0, szahl=0, zzahl=0;
 				uchar elaeuft=0, slaeuft=0, zlaeuft=0;

@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.45062) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45063) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -474,9 +474,12 @@ configuration file is being written, if necessary.</p>
 <p style="margin-left:11%; margin-top: 1em">Some program
 parts are executed simultaneously, which may influence the
 display of the result. <br>
-Sending and receiving ars started every minute, until the
-other part has finished for the first time,
-respectively.</p>
+Sending and receiving are started every minute, until the
+other part has finished for the first time, respectively.
+<br>
+Check and possibly correction of possibly falsely stored
+files (e.g. by a deliberate program cancelling) will be done
+in intervals.</p>
 
 <h2>PRECONDITIONS
 <a name="PRECONDITIONS_D"></a>
@@ -724,7 +727,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.45062) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45063) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1241,7 +1244,11 @@ Programmteile laufen parallel, dies kann sich auf die
 Ergebnisanzeige auswirken. <br>
 Senden und Empfangen wiederholen sich ggf.
 min&uuml;tlich, bis der jeweils andere Teil zum ersten
-Mal fertig ist.</p>
+Mal fertig ist. <br>
+&Uuml;berpr&uuml;fung und ggf. Korrektur evtl.
+falsch abgelegter Dateien (z.B. infolge eines
+willk&uuml;rlichen Programmabbruchs von au&szlig;en)
+werden in Abst&auml;nden durchgef&uuml;hrt.</p>
 
 <h2>VORAUSSETZUNGEN
 <a name="VORAUSSETZUNGEN_D"></a>
