@@ -712,7 +712,8 @@ a requirement for a program modification.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">By calling
-&rsquo;<b>sh viall</b>&rsquo;, followed by
+&rsquo;<b>sh viall</b>&rsquo; and application of the usual
+&rsquo;<b>vim</b>&rsquo;-commands, followed by
 &rsquo;<b>make</b>&rsquo; and &rsquo;<b>make
 install</b>&rsquo; from the installation directory
 (&rsquo;<b>~/autofax</b>), You may alter the program.</p>
@@ -1518,7 +1519,8 @@ andere Hard- bzw. Software ergeben.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">Durch Aufruf
-von &rsquo;<b>sh viall</b>&rsquo;, gefolgt von
+von &rsquo;<b>sh viall</b>&rsquo; mit den &uuml;blichen
+&rsquo;<b>vim</b>&rsquo;-Befehlen, gefolgt von
 &rsquo;<b>make</b>&rsquo; und &rsquo;<b>make
 install</b>&rsquo; vom Installationsverzeichnis
 (&rsquo;<b>~/autofax</b>) aus k&ouml;nnen Sie das

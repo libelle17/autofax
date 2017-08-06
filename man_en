@@ -374,7 +374,7 @@ Please report any errors with the word '²DPROG²' included in the email headlin
 .br
 Please report as well, if different hard- or software yields a requirement for a program modification.
 .SH PROGRAM MODIFICATION
-By calling '\fBsh viall\fR', followed by '\fBmake\fR' and '\fBmake install\fR' from the installation directory ('\fB~/²DPROG²\fR), You may alter the program.
+By calling '\fBsh viall\fR' and application of the usual '\fBvim\fR'-commands, followed by '\fBmake\fR' and '\fBmake install\fR' from the installation directory ('\fB~/²DPROG²\fR), You may alter the program.
 .SH LIABILITY
 The program has been written with the best aim and has been tested by the author.
 .br
