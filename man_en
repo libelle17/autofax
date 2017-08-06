@@ -265,7 +265,7 @@ Optionally, the received faxes are subjected to ocr via a call of ocrmypdf.
 .LP
 Some program parts are executed simultaneously, which may influence the display of the result.
 .br
-Sending and receiving are started every minute, until the other part has finished for the first time, respectively.
+Sending and receiving are started every minute, until the respective other part has finished for the first time.
 .br
 Check and possibly correction of possibly falsely stored files (e.g. by a deliberate program cancelling) will be done in intervals.
 .SH PRECONDITIONS

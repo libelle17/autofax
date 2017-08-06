@@ -475,8 +475,7 @@ configuration file is being written, if necessary.</p>
 parts are executed simultaneously, which may influence the
 display of the result. <br>
 Sending and receiving are started every minute, until the
-other part has finished for the first time, respectively.
-<br>
+respective other part has finished for the first time. <br>
 Check and possibly correction of possibly falsely stored
 files (e.g. by a deliberate program cancelling) will be done
 in intervals.</p>
