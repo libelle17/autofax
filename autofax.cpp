@@ -5210,14 +5210,14 @@ void paramcl::bereinigevz(const size_t aktc/*=0*/)
 	}
 	// b) Hylafaxdateien
 	rueck.clear();
-	systemrueck("find "+varsphylavz+" -type f -regex '.*q[0-9]+' -print0 "+(obverb?"":"2>/dev/null")+"|"+linstp->xargspf+" -0 grep -l ^state:8 ",
+	systemrueck("find "+varsphylavz+" -type f -regex '.*/q[0-9]+' -print0 "+(obverb?"":"2>/dev/null")+"|"+linstp->xargspf+" -0 grep -l ^state:8 ",
 			aktc?0:obverb,oblog,&rueck,0,wahr,nix,0,0,&ausg); // gescheitert
 	for(size_t i=0;i<rueck.size();i++) {
 		size_t pos=rueck[i].rfind("q");
 		if (pos!=string::npos) hmissl.insert(rueck[i].substr(pos+1));
 	}
 	rueck.clear();
-	systemrueck("find "+varsphylavz+" -type f -regex '.*q[0-9]+' -print0 "+(obverb?"":"2>/dev/null")+"|"+linstp->xargspf+" -0 grep -l ^state:7 ",
+	systemrueck("find "+varsphylavz+" -type f -regex '.*/q[0-9]+' -print0 "+(obverb?"":"2>/dev/null")+"|"+linstp->xargspf+" -0 grep -l ^state:7 ",
 			aktc?0:obverb,oblog,&rueck,0,wahr,nix,0,0,&ausg); // gelungen
 	for(size_t i=0;i<rueck.size();i++) {
 		size_t pos=rueck[i].rfind("q");
@@ -5490,7 +5490,7 @@ size_t paramcl::loescheallewartenden()
 	//  cmd=string("rm ")+cfaxuservz+vtz+cuser+vtz+"sendq"+vtz+"fax-*.*"; //  "/var/spool/capisuite/users/<user>/sendq";
 	if (!lstat(hsendqvz.c_str(),&entryvz)) {
 		if (findv==1) {
-			cmd=sudc+"find '"+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";
+			cmd=sudc+"find '"+hsendqvz+"' -maxdepth 1 -type f -regex '.*/q[0-9]+' -printf '%f\\n'";
 			systemrueck(cmd,obverb,oblog, &alled);
 		} else findfile(&alled,findv,obverb,oblog,1,hsendqvz,"/q[^/]*",1,1,Fol_Dat,0,0,1);
 		erg+=alled.size();
@@ -6876,7 +6876,7 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp,const size_t aktc)
 	if (!lstat(hsendqvz.c_str(),&entryvz)) {
 		svec qrueck;
 		if (findv==1) {
-			cmd=sudc+"find '"+hsendqvz+"' -maxdepth 1 -type f -iname 'q*' -printf '%f\\n'";
+			cmd=sudc+"find '"+hsendqvz+"' -maxdepth 1 -type f -regex '.*/q[0-9]+' -printf '%f\\n'";
 			systemrueck(cmd,obverb,oblog,&qrueck);
 		} else findfile(&qrueck,findv,obverb,oblog,1,hsendqvz,"/q[0123456789]+$",1,1,0,0,0,1);
 		for(size_t i=0;i<qrueck.size();i++) {
@@ -6913,7 +6913,7 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 			struct stat entryvz={0};
 			if (!lstat(xferfaxlog.c_str(),&entryvz)) {
 				////			gehtmitxfer=1;
-				//// cmd=string(sudc+"find '")+varsphylavz+"' -type f -regex '.*/q[0123456789]+'";
+				//// cmd=string(sudc+"find '")+varsphylavz+"' -type f -regex '.*/q[0-9]+'";
 				//// string hylanr=qrueck[i].substr(qrueck[i].rfind('q')+1);
 				//// ausw+=hylanr;
 				//// ausw+=",";
@@ -7067,11 +7067,11 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 			set<string> fdn; // Fax-Dateien
 			svec qrueck;
 			if (findv==1) {
-			cmd=sudc+"find "+varsphylavz+" -name 'q*' -print0 "+(obverb?"":"2>/dev/null")+"| /usr/bin/xargs -0 grep -l ^state:7 "; // gesandt
+			cmd=sudc+"find "+varsphylavz+" -regex '.*q[0-9]+' -print0 "+(obverb?"":"2>/dev/null")+"| /usr/bin/xargs -0 grep -l ^state:7 "; // gesandt
 			qrueck.clear();
 			systemrueck(cmd,obverb,oblog,&qrueck);
 			} else {
-			findfile(&qrueck,findv,obverb,oblog,0,varsphylavz,"q[0123456789]+$",-1,1,0,0,0,1);
+			findfile(&qrueck,findv,obverb,oblog,0,varsphylavz,"/q[0123456789]+$",-1,1,0,0,0,1);
 			for (ssize_t i=qrueck.size()-1;i>=0;i--) {
 			uchar gef=0;
 			mdatei qr(qrueck[i],ios::in);
@@ -10467,9 +10467,13 @@ int wartaufpids(pidvec *pidv,const ulong runden/*=0*/,const int obverb/*=0*/,con
 
 int main(int argc, char** argv) 
 {
-	/*//
+/*//
 	if (argc==2) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		// Testcode mit argv[1]
+		perfcl perf("main");
+		systemrueck("find /var/spool/hylafax -type f -regex '.*q[0-9]+'");
+		perf.ausgeb();
+		exit(29);
 		string d1=string("/root/autofax/")+argv[1],
 					 d2=string("/root/")+argv[1];
 		caus<<dateivgl(d1,d2,1)<<endl;
@@ -10755,7 +10759,3 @@ int main(int argc, char** argv)
 // cd OCRmyPDF
 // pip3 install ocrmypdf
  */
- // warteauffax aufraeumen
- // beim Loeschen die Ursprungsdateien auf gescheitert verschieben
- // gefaxt aufraeumen
- // q* durch -regex '.*q[0-9]+' ersetzen
