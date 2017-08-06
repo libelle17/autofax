@@ -1521,7 +1521,7 @@ andere Hard- bzw. Software ergeben.</p>
 von &rsquo;<b>sh viall</b>&rsquo;, gefolgt von
 &rsquo;<b>make</b>&rsquo; und &rsquo;<b>make
 install</b>&rsquo; vom Installationsverzeichnis
-(&rsquo;<b>~/autofax</b>) aus, k&ouml;nnen Sie das
+(&rsquo;<b>~/autofax</b>) aus k&ouml;nnen Sie das
 Programm &auml;ndern.</p>
 
 <h2>HAFTUNG

@@ -384,7 +384,7 @@ Fehler bitte mit u.a. dem Wort '²DPROG²' in der Email-Ueberschrift melden.
 Bitte auch melden, wenn sich Änderungsbedarf durch andere Hard- bzw. Software ergeben.
 .br
 .SH PROGRAMMÄNDERUNG
-Durch Aufruf von '\fBsh viall\fR', gefolgt von '\fBmake\fR' und '\fBmake install\fR' vom Installationsverzeichnis ('\fB~/²DPROG²\fR) aus, können Sie das Programm ändern.
+Durch Aufruf von '\fBsh viall\fR', gefolgt von '\fBmake\fR' und '\fBmake install\fR' vom Installationsverzeichnis ('\fB~/²DPROG²\fR) aus können Sie das Programm ändern.
 
 .SH HAFTUNG
 Das Programm wurde mit bester Absicht entwickelt und durch den Autor getestet.
