@@ -441,6 +441,7 @@ void doanfg(const string& datei, const string& inhalt, const string& comment);
 double progvers(const string& prog,int obverb=0, int oblog=0);
 int touch(const std::string& pathname,int obverb=0,int oblog=0);
 std::string string_to_hex(const std::string& input);
+int dateivgl(const string& d1, const string& d2,uchar obzeit=0);
 
 #ifdef notcpp
 class Schluessel {
@@ -721,7 +722,7 @@ int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *r
 void pruefplatte();
 void pruefmehrfach(const string& wen=nix,uchar obstumm=0);
 void setfaclggf(const string& datei,int obverb=0,int oblog=0,const binaer obunter=falsch,const int mod=4,uchar obimmer=0,
-                uchar faclbak=0,const string& user=nix,uchar fake=0);
+                uchar faclbak=0,const string& user=nix,uchar fake=0,stringstream *ausgp=0);
 int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=0, uchar obmitcon=0,
               const string& besitzer=nix, const string& benutzer=nix, const uchar obmachen=1);
 string aktprogverz();
@@ -738,7 +739,7 @@ string Tippstr(const char *frage, const string *vorgabe=0);
 string Tippstr(const string& frage, const string *vorgabe=0);
 string Tippverz(const char *frage,const string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
-int tuloeschen(const string& zuloe,const string& cuser=nix,int obverb=0, int oblog=0);
+int tuloeschen(const string& zuloe,const string& cuser=nix,int obverb=0, int oblog=0,stringstream *ausgp=0);
 int attrangleich(const string& zu, const string& gemaess,int obverb=0, int oblog=0);
 int kopier(const string& quel, const string& ziel, int obverb=0, int oblog=0);
 #ifdef falsch

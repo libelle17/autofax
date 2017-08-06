@@ -8,11 +8,11 @@ class fsfcl; // Faxsendfile
 class paramcl; // Programmparameter
 class pidvec; // Vector von pid- und string-Pärchen
 void useruucp(const string& huser, const int obverb, const int oblog);
-string zielname(const string& qdatei, const string& zielvz,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0,
+string zielname(const string& qdatei, const string& zielvz,uchar wieweiterzaehl=0, string* zieldatei=0, uchar* obgleichp=0, int obverb=0, int oblog=0,
                   stringstream *ausgp=0);
-string zielname(const string& qdatei, zielmustercl *zmp,uchar wieweiterzaehl=0, string* zieldatei=0, int obverb=0, int oblog=0,
+string zielname(const string& qdatei, zielmustercl *zmp,uchar wieweiterzaehl=0, string* zieldatei=0, uchar* obgleichp=0, int obverb=0, int oblog=0,
                   stringstream *ausgp=0);
-void dorename(const string& quelle, const string& ziel, const string& cuser=nix, uint *vfehler=0, int obverb=0, int oblog=0,
+void dorename(const string& quelle, const string& ziel, const string& cuser=nix, uint *vfehler=0, uchar schonda=0, int obverb=0, int oblog=0,
                   stringstream *ausgp=0);
 string verschiebe(const string& qdatei, const string& zielvz, const string& cuser=nix,uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0,int oblog=0,
                   stringstream *ausgp=0);
@@ -208,7 +208,7 @@ class paramcl // Programmparameter
 		uchar erneut=0;  // empfangenes Fax erneut bereitstellen
 		uchar uml=0; // umleiten: vorzeitig den zweiten Weg aktivieren
     uchar kez=0;    // korrigiere Erfolgskennzeichen
-    uchar bwv=0;    // bereinige Warteverzeichnis
+    uchar bvz=0;    // bereinige Gescheitertenverzeichnis, letztes Gefaxtverzeichnis und Warteverzeichnis
     uchar anhl=0;    // <DPROG> anhalten
     uchar lista=0;   // liste Archiv auf
     uchar listf=0;   // liste gescheiterte auf
@@ -248,11 +248,11 @@ class paramcl // Programmparameter
     string muser; // Benutzer fuer Mysql/MariaDB
     string mpwd;  // Passwort fuer Mysql/MariaDB
     DB* My=0;
-		const size_t maxconz=13;//aktc: 0=pruefspool,pruefouttab,pruefudoc,pruefinctab,prueffuncgettel3,pruefstdfaxnr,aenderefax,rueckfragen 
-		// bereinigewv,loeschewaise,loescheallewartenden,tu_lista,tu_listi,suchestr,Schluss, 1=korrigierecapi aus main, 
+		const size_t maxconz=12;//aktc: 0=pruefspool,pruefouttab,pruefudoc,pruefinctab,prueffuncgettel3,pruefstdfaxnr,aenderefax,rueckfragen 
+		// bereinigevz,loeschewaise,loescheallewartenden,tu_lista,tu_listi,suchestr,Schluss, 1=korrigierecapi aus main, 
 		//                          2=korrigierehyla aus main, 3=wegfaxen, untersuchespool, WVZinDatenbank, 4=zeigweitere, 5=empfarch,
 		//                          6=faxemitC, 7=faxemitH, 9=korrigierecapi aus zeigweitere, 10=korrigierehyla aus zeigweitere,
-    //													11=bereinigewv, 12=raeumgefaxtauf
+    //													11=bereinigevz
     const string touta="outa"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tudoc="udoc"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tinca="inca"; // MariaDB-Tabelle fuer empfangene Faxe
@@ -363,7 +363,7 @@ class paramcl // Programmparameter
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
     string neuerdateiname(const string& qpfad); // in wegfaxen
     void WVZinDatenbank(vector<fxfcl> *const fxvp); // in wegfaxen
-    string getzielvz(const string& datei); // in bereinigewv
+    string getzielvz(const string& datei); // in bereinigevz
     int setzegcp(const string& name, string *wert);
     void pruefcvz();
     void pruefsfftobmp();
@@ -429,9 +429,9 @@ class paramcl // Programmparameter
     int  initDB();
     int  pruefDB(const string& db);
 
-    void bereinigewv(const size_t aktc/*=0*/);
-		void dober(const string& wvz, set<string>& fdn,uchar aucherfolg,stringstream *ausgp,const size_t aktc);
-		void raeumgefaxtauf(const size_t aktc/*=0*/);
+    void bereinigevz(const size_t aktc/*=0*/);
+		void dober(const string& wvz, set<string>& fdn,uchar aucherfolg,stringstream *ausgp,const size_t aktc,
+				set<string> *cmisslp,set<string> *cgelup,set<string> *hmisslp,set<string> *hgelup);
 		void anhalten();
     void tu_lista(const string& oberfolg,const string& submids=nix);
     void tu_listi();

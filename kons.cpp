@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include <utime.h>
 #include <sys/sendfile.h> // fuer sendfile64
+#include <boost/iostreams/device/mapped_file.hpp> // fuer dateivgl
 //#include <typeinfo>
 #define caus cout // nur zum Debuggen
 
@@ -691,7 +692,7 @@ mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_b
 			pruefverz(dir_name(name),obverb,oblog,1,0);
 			////    if (!systemrueck(sudc+"test -f '"+name+"' || "+sudc+"touch '"+name+"'",obverb,oblog)) KLA
 			if (!touch(name,obverb,oblog)) {
-				setfaclggf(name,obverb,oblog,falsch,modus&ios::out||modus&ios::app?6:4,falsch,faclbak);
+				setfaclggf(name,obverb,oblog,/*obunter=*/falsch,/*mod=*/modus&ios::out||modus&ios::app?6:4,/*obimmer=*/falsch,faclbak);
 			} // if (!systemrueck(sudc+"test -f '"+name+"' || "+sudc+"touch '"+name+"'",obverb,oblog)) 
 		} // 		if (mehralslesen)
 	} // for(int iru=0;iru<3;iru++) 
@@ -732,7 +733,7 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 				if ((sdat= fopen(datei.c_str(),mode))) {
 #endif
 					*erfolg=1;
-					setfaclggf(datei,obverb,oblog,falsch,art?6:4,falsch,faclbak);
+					setfaclggf(datei,obverb,oblog,/*obunter=*/falsch,/*mod=*/art?6:4,/*obimmer=*/0,faclbak);
 					break;
 				} 
 				if (!*erfolg) {
@@ -2010,7 +2011,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 		} // 		if (tok.size()>0)
 	} // 	if (obincron)
   //// "obfind: "<<(int)obfind<<", obverb: "<<(int)obverb<<", curruser(): "<<curruser()<<", '"<<violett<<hcmd<<schwarz<<"'"<<endl;
-  string meld(Txk[T_Rueckmeldung]);
+  string smeld(Txk[T_Rueckmeldung]);
   string aktues;
   if (ueberschr.empty()) { 
     if (obfind) {
@@ -2023,11 +2024,8 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
     aktues=ueberschr;
   } //   if (ueberschr.empty())
 	string hsubs=hcmd.substr(0,getcols()-7-aktues.length());
-	if (ausgp) {
-		*ausgp<<aktues<<": "<<blau<<hsubs<<schwarz<<" ..."<<endl;
-	} else {
-		Log(aktues+": "+blau+hsubs+schwarz+" ...",obverb>0?-1:0,oblog);
-	}
+	string meld=aktues+": "+blau+hsubs+schwarz+" ...";
+	if (ausgp&&obverb) *ausgp<<meld<<endl; else Log(meld,obverb>0?-1:0,oblog);
 	if (!rueck) if (obergebnisanzeig) {neurueck=1;rueck=new vector<string>;}
 	// #define systemrueckprofiler
 #ifdef systemrueckprofiler
@@ -2078,16 +2076,12 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
         for(unsigned i=0;i<rueck->size();i++) {
 #ifdef systemrueckprofiler
 #endif
-          meld=meld+"\n"+tuerkis+rueck->at(i)+schwarz;
+          smeld=smeld+"\n"+tuerkis+rueck->at(i)+schwarz;
         } //         for(unsigned i=0;i<rueck->size();i++)
       } //       if (obverb>1 || oblog || obergebnisanzeig) if (rueck->size())
 #ifdef systemrueckprofiler
       Log(rots+"Rueck.size: "+ltoan(rueck->size())+", obergebnisanzeig: "+(obergebnisanzeig?"ja":"nein"),1,oblog);
-			if (ausgp) {
-			  *ausp<<hcmd<<endl;
-			} else {
-				Log(hcmd,1,oblog);
-			}
+			if (ausgp) *ausp<<hcmd<<endl; else Log(hcmd,1,oblog);
 			prf.ausgab1000("vor pclose");
 #endif
 			erg = pclose(pipe);
@@ -2151,20 +2145,11 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 #ifdef systemrueckprofiler
     prf.ausgab1000("vor log");
 #endif
-		if (ausgp) {
-		  if (obverb)
-			*ausgp<<": "<<blau<<hcmd<<schwarz<<Txk[T_komma_Ergebnis]<<blau<<ergebnis<<schwarz<<endl;
-		} else {
-			Log(aktues+": "+blau+hcmd+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz,obverb>0?obverb:0,oblog);
-		}
+		meld=aktues+": "+blau+hcmd+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz;
+		if (ausgp&&obverb) *ausgp<<meld<<endl; else Log(meld,obverb>0?obverb:0,oblog);
 	} // if (obverb>0 || oblog)
 	if (obergebnisanzeig && rueck->size()) {
-		if (ausgp) {
-		  if (obverb)
-			*ausgp<<meld<<endl;
-		} else {
-			Log(meld,obverb>1||(ob0heissterfolg && erg && obergebnisanzeig>1),oblog);
-		}
+		if (ausgp&&obverb) *ausgp<<smeld<<endl; else Log(smeld,obverb>1||(ob0heissterfolg && erg && obergebnisanzeig>1),oblog);
 	} // 	if (obergebnisanzeig && rueck->size())
 	if (neurueck) delete rueck;
   return erg; 
@@ -2241,8 +2226,8 @@ int untersuser(string uname,__uid_t *uidp/*=0*/, __gid_t *gidp/*=0*/)
 // <datei> kann auch Verzeichnis sein
 // obunter = mit allen Unterverzeichnissen
 // obimmer = immer setzen, sonst nur, falls mit getfacl fuer datei Berechtigung fehlt (wichtig fuer Unterverzeichnisse)
-void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binaer obunter,const int mod/*=4*/,uchar obimmer/*=0*/,
-               uchar faclbak/*=1*/,const string& user/*=nix*/,uchar fake/*=0*/)
+void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binaer obunter/*=falsch*/,const int mod/*=4*/,uchar obimmer/*=0*/,
+               uchar faclbak/*=1*/,const string& user/*=nix*/,uchar fake/*=0*/,stringstream *ausgp/*=0*/)
 {
 	int altobv=obverb;
 	if (fake) obverb=2;
@@ -2385,7 +2370,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 				umask(altmod);
 			} // 		if (!besitzer.empty())
 			if (obmitfacl) {
-				setfaclggf(verz,obverb,oblog, wahr, 7, (obmitfacl>1),1,benutzer);
+				setfaclggf(verz,obverb,oblog, /*obunter=*/wahr, /*mod=*/7, /*obimmer=*/(obmitfacl>1),/*faclbak=*/1,/*user=*/benutzer);
 			}
 			//// <<violett<<verz<<schwarz<<endl;
 			if (obmitcon) {
@@ -3731,18 +3716,20 @@ void servc::daemon_reload(int obverb/*=0*/, int oblog/*=0*/)
 
 // Rueckgabe: Zahl der nicht Geloeschten
 // wird aufgerufen in: loeschecapi, untersuchespool
-int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
+int tuloeschen(const string& zuloe,const string& cuser/*=nix*/, int obverb/*=0*/, int oblog/*=0*/,stringstream *ausgp)
 {
 ////  Log(violetts+Tx[T_tuloeschen]+schwarz,obverb,oblog);
+	string meld;
   struct stat entryzuloe={0};
   if (!lstat(zuloe.c_str(),&entryzuloe)) {
-    Log(Txk[T_Loesche_Ausrufezeichen]+gruens+zuloe+schwarz,obverb,oblog);
+	  meld=Txk[T_Loesche_Ausrufezeichen]+gruens+zuloe+schwarz;
+		if (ausgp&&obverb) *ausgp<<meld<<endl; else Log(meld,obverb,oblog);
     int erg=-1;
     for(uchar iru=1;iru<3;iru++) {
       if ((erg=remove(zuloe.c_str()))) {
         if(cuser.empty()) iru++;
         if(iru==1) {
-          setfaclggf(zuloe,obverb,oblog, falsch, 6, falsch,0);
+          setfaclggf(zuloe,obverb,oblog,/*obunter=*/falsch,/*mod=*/6,/*obimmer=*/falsch,/*faclbak=*/0,/*user=*/nix,/*fake=*/0,ausgp);
         } else {
           if (errno) if (errno!=13) perror((string(Txk[T_Fehler_beim_Loeschen])+" "+ltoan(errno)).c_str()); // Permission denied
           const string cmd=sudc+"rm -rf \""+zuloe+"\"";
@@ -3755,7 +3742,8 @@ int tuloeschen(const string& zuloe,const string& cuser, int obverb, int oblog)
     } // for(uchar iru=1;iru>-1;iru--)
     return erg;
   } // if (!lstat(zuloe.c_str(),&entryzuloe)) 
-  Log(rot+zuloe+schwarz+Txk[T_nicht_geloescht_war_eh_nicht_mehr_da],obverb,oblog);
+	meld=rot+zuloe+schwarz+Txk[T_nicht_geloescht_war_eh_nicht_mehr_da];
+  if (ausgp&&obverb) *ausgp<<meld<<endl; else Log(meld,obverb,oblog);
   return 0;
 } // int tuloeschen(string zuloe,int obverb, int oblog)
 
@@ -4310,7 +4298,7 @@ void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar a
 	switch (findv) {
 		case 2: case 3:
 			aufSplit(&wov, wo);
-			setfaclggf(wov[wov.size()-1],obverb,oblog,wahr,4,falsch,1,"");
+			setfaclggf(wov[wov.size()-1],obverb,oblog,/*obunter=*/wahr,/*mod=*/4);
 			break;
 	} // 	switch (findv)
 	if (findv==2) {
@@ -4324,3 +4312,34 @@ void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar a
 	} // 	if (findv==2) else if (findv==3)
 } // void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar anteil/*=0* ...
 #endif
+
+// 1= Dateien unterschiedlich, 0 = gleich
+int dateivgl(const string& d1, const string& d2,uchar obzeit/*=0*/)
+{
+	int erg=0;
+	// wenn ein Unterschied am Anfang der Dateien war oder die Größe < 300 kB lag, war boost schneller; 'cmp' war nie schneller als 'diff'.
+	////	perfcl prf("vgl");
+	struct stat st1={0},st2={0};
+	int lst1=lstat(d1.c_str(),&st1),
+			lst2=lstat(d2.c_str(),&st2);
+	if (lst1 || lst2) {
+		erg=1;
+	} else if (obzeit) {
+		if (st1.st_mtime!=st2.st_mtime && st1.st_mtime+3600!=st2.st_mtime && st1.st_mtime-3600!=st2.st_mtime)
+			erg=1;
+	} // 	if (lst1 || lst2)
+	if (!erg) {
+		if (lst1||st1.st_size>1000000) {
+			erg=systemrueck("diff -q "/*"cmp --silent "*/+d1+" "+d2);
+		} else {
+		// http://www.cplusplus.com/forum/general/94032/
+			boost::iostreams::mapped_file_source f1(d1);
+			boost::iostreams::mapped_file_source f2(d2);
+			if(f1.size()==f2.size() && equal(f1.data(),f1.data()+f1.size(),f2.data())) ;
+			else erg=1;
+		} // 		if (lst1||st1.st_size>1000000) else
+	} // 	if (!erg)
+	////	prf.ausgeb();
+	return erg;
+} // int dateivgl(const string& d1, const string& d2)
+

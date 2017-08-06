@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "05.08.17" "Version 0.44955" "\fB²DPROG²\fR man page"
+.TH man 1 "06.08.17" "Version 0.45055" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -97,7 +97,7 @@ and logs this in the the mariadb database '\fBautofax\fB' (tables: `\fBouta\fB`,
 .br
 \fB -csf, --correctsuccessflag\fR: in the database table `\fBouta\fR` the success flag is being corrected
 .br
-\fB -rwd, --cleanwaitdir\fR: Examine files in waiting directory against the tables `\fBouta\fR` and clean them up
+\fB -rod, --reorderdir\fR: Examine files in waiting directory against the tables `\fBouta\fR` and clean them up
 .br
 \fB -st, --stop\fR: stop autofax
 .br
@@ -108,92 +108,6 @@ and logs this in the the mariadb database '\fBautofax\fB' (tables: `\fBouta\fB`,
 \fB -listi, --listinca\fR: lists entries from `\fBinca\fR`
 .br
 \fB -listw, --listwaiting\fR: lists waiting faxes
-.br
-\fB -s, --search <string>\fR: Look in processed faxes for <string>: \fB\fR '\fB\fR'
-.br
-\fB -n, --reccount <zahl>\fR: No. of listed entries = <no> instead of '\fB30\fR'
-.br
-\fB -info, --version\fR: shows the program version
-.br
-\fB -vi, --vi\fR: edit/view configuration and log file (finish with ':qa')
-.br
-\fB -vc, --vc\fR: edit capisuite log files (finish with ':qa')
-.br
-\fB -vh, --vh\fR: edit hylafax modem configuration file (finish with ':qa')
-.br
-\fB -vs, --vs\fR: edit source files (finish with ':qa')
-.br
-\fB -h, --help\fR: Explanation of frequent options
-.br
-\fB -lh, --longhelp\fR: Explanation of all options
-.br
-\fBOptions to be saved in the configuration file: (preced. '1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):\fR
-.br
-\fB -lg, --language <string>\fR: Language/Sprache/Lingue/Lingua [\fBd\fReutsch,\fBe\fRnglisch] '\fBe\fR'
-.br
-\fB -ldr, --logdir <path>\fR: choses <path> as log directory, currently '\fB/var/log\fR'
-.br
-\fB -lf, --logfilename <string>\fR: log file <string> (in path '\fB/var/log\fR') will be used instead of '\fBautofax.log\fR'
-.br
-\fB -tdr, --tofaxdir <path>\fR: faxes the files from <path> instead of '\fB/var/autofax/tobefaxed\fR'
-.br
-\fB -wdr, --waitdir <path>\fR: files are waiting in <path> instead of '\fB/var/autofax/waitingfaxes\fR'
-.br
-\fB -ndr, --notfaxeddir <path>\fR: Failed Faxes are collected here and not in '\fB/var/autofax/notfaxed\fR'
-.br
-\fB -rdr, --receiveddir <path>\fR: directory for recieved faxes '\fB/var/autofax/recvdir\fR'
-.br
-\fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
-.br
-\fB -capi, --takecapi\fR: use capisuite\fB or not\fR
-.br
-\fB -hyla, --takehyla\fR: use hylafax\fB or not\fR
-.br
-\fB -fc, --firstcapi\fR: try to send faxes primarily via capisuite\fB or not\fR
-.br
-\fB -fh, --firsthyla\fR: try to send faxes primarily via hylafax\fB or not\fR
-.br
-\fB -mod, --hmodem <string>\fR: Modem used for hylafax, instead of  '\fB\fR'
-.br
-\fB -mc, --maxcapitries <zahl>\fR: try Hylafax after <no> tries of Capisuite instead of '\fB3\fR'
-.br
-\fB -mh, --maxhylatries <zahl>\fR: try Capisuite after <no> tries of Hylafax instead of '\fB3\fR'
-.br
-\fB -cuser, --cuser <string>\fR: takes the linux user <string> for capisuite and/or samba instead of '\fB\fR'
-.br
-\fB -crct, --cringcount <zahl>\fR: No. of bell rings until Capisuite accepts the call, instead of '\fB1\fR'
-.br
-\fB -hrct, --hringcount <zahl>\fR: No. of bell rings until hylafaxs accepts the call, instead of '\fB2\fR'
-.br
-\fB -hmd, --hmaxdials <zahl>\fR: No of dialing retries in hylafax, instead of   '\fB11\fR'
-.br
-\fB -it, --immediatelytarget\fR: copy faxes into target directory irrespective of faxing success\fB or not\fR
-.br
-\fB -ocri, --ocri\fR: Text from received faxes will be filtered\fB or not\fR
-.br
-\fB -ocro, --ocro\fR: Text from sent pictures will be filtered\fB or not\fR
-.br
-\fB -tfs, --tofaxstr <string>\fR: the fax number will be expected after <string> instead of '\fBto fax\fR'
-.br
-\fB -tcfs, --tocfaxstr <string>\fR: fax no.for fax with preference to capisuite is expected after <string> instead of '\fBto cfax\fR'
-.br
-\fB -thfs, --tohfaxstr <string>\fR: fax no.for fax with preference to hylafax is expected after <string> instead of '\fBto hfax\fR'
-.br
-\fB -ts, --tostr <string>\fR: name of addressee is expected after <string> instead of '\fB to \fR'
-.br
-\fB -ands, --andstr <string>\fR: separating string <string> for multiple addressees/tel'numbers, instead of '\fBand\fR'
-.br
-\fB -host, --host <string>\fR: takes the database on host <string> instead of '\fBlocalhost\fR'
-.br
-\fB -muser, --muser <string>\fR: takes the user <string> for MySQL/MariaDB instead of '\fBuser\fR'
-.br
-\fB -mpwd, --mpwd <string>\fR: takes the password <string> for MySQL/MariaDB
-.br
-\fB -db, --database <string>\fR: uses the database <string> instead of '\fBautofax\fR'
-.br
-\fB -fd, --find <zahl>\fR: version 1,2 or 3 of filefind (variable performance differences instead of '\fB3\fR'
-.br
-\fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
 .SH FUNCTIONALITY
 .LP
 1) The current hardware is being checked.

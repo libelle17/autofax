@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "05.08.17" "Version 0.44955" "Manual-Seite für ²DPROG²"
+.TH man 1 "06.08.17" "Version 0.45055" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -99,7 +99,7 @@ und traegt sie in MariaDB-Datenbank '\fBautofax\fB' (Tabellen: `\fBouta\fB`,`\fB
 .br
 \fB -kez, --korrerfolgszeichen\fR: in der Datenbanktabelle `\fBouta\fR` wird das Erfolgszeichen korrigiert
 .br
-\fB -bwv, --bereinigewv\fR: Dateien aus Warteverzeichnis gegen `\fBouta\fR` pruefen und ggf. verschieben
+\fB -bvz, --bereinigevz\fR: Dateien aus Warteverzeichnis gegen `\fBouta\fR` pruefen und ggf. verschieben
 .br
 \fB -st, --stop\fR: autofaxanhalten
 .br
@@ -110,92 +110,6 @@ und traegt sie in MariaDB-Datenbank '\fBautofax\fB' (Tabellen: `\fBouta\fB`,`\fB
 \fB -liste, --listeing\fR: listet Datensaetze aus `\fBinca\fR` auf
 .br
 \fB -listw, --listwartende\fR: listet wartende Faxe auf
-.br
-\fB -s, --suche <string>\fR: Suche in verarbeiteten Faxen nach <string>: \fB\fR '\fB\fR'
-.br
-\fB -n, --dszahl <zahl>\fR: Zahl der aufzulistenden Datensaetze = <zahl> statt '\fB30\fR'
-.br
-\fB -info, --version\fR: Zeigt die Programmversion an
-.br
-\fB -vi, --vi\fR: Konfigurations- u.Logdatei bearbeiten/sehen (beenden mit ':qa')
-.br
-\fB -vc, --vc\fR: Capisuite-Konfigurationsdateien bearbeiten (beenden mit ':qa')
-.br
-\fB -vh, --vh\fR: Hylafax-Modem-Konfigurationsdatei bearbeiten (beenden mit ':qa')
-.br
-\fB -vs, --vs\fR: Quelldateien bearbeiten (beenden mit ':qa')
-.br
-\fB -h, --hilfe\fR: Erklärung häufiger Optionen
-.br
-\fB -lh, --langhilfe\fR: Erklärung aller Optionen
-.br
-\fBOptionen z.Speich. i.Konfigur'datei (vorausg. '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):\fR
-.br
-\fB -sp, --sprache <string>\fR: Language/Sprache/Lingue/Lingua [\fBd\fReutsch,\fBe\fRnglisch] '\fBd\fR'
-.br
-\fB -lvz, --logvz <pfad>\fR: waehlt als Logverzeichnis <pfad>, derzeit '\fB/var/log\fR'
-.br
-\fB -ld, --logdname <string>\fR: logdatei <string> (im Pfad '\fB/var/log\fR') wird verwendet anstatt '\fBautofax.log\fR'
-.br
-\fB -zvz, --zufaxenvz <pfad>\fR: faxt die Dateien aus <pfad> anstatt '\fB/var/autofax/zufaxen\fR'
-.br
-\fB -wvz, --wartevz <pfad>\fR: Dateien warten in <pfad> anstatt '\fB/var/autofax/warteauffax\fR'
-.br
-\fB -ngvz, --nichtgefaxtvz <pfad>\fR: Gescheiterte Faxe werden hier gesammelt anstatt in '\fB/var/autofax/nichtgefaxt\fR'
-.br
-\fB -evz, --empfvz <pfad>\fR: Empfangsverzeichnis fuer Faxempfang '\fB/var/autofax/empfvz\fR'
-.br
-\fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB2\fR'
-.br
-\fB -capi, --obcapi\fR: Capisuite verwenden\fB oder nicht\fR
-.br
-\fB -hyla, --obhyla\fR: Hylafax verwenden\fB oder nicht\fR
-.br
-\fB -cz, --capizuerst\fR: versuche faxe zuerst ueber Capisuite wegzuschicken\fB oder nicht\fR
-.br
-\fB -hz, --hylazuerst\fR: versuche faxe zuerst ueber hylafax wegzuschicken\fB oder nicht\fR
-.br
-\fB -mod, --hmodem <string>\fR: Fuer Hylafax verwendetes Modem, anstatt  '\fB\fR'
-.br
-\fB -mc, --maxcapiv <zahl>\fR: nach <zahl> Versuchen Capisuite wird Hylafax versucht, anstatt nach '\fB3\fR'
-.br
-\fB -mh, --maxhylav <zahl>\fR: nach <zahl> Versuchen Hylafax wird Capisuite versucht, anstatt nach '\fB3\fR'
-.br
-\fB -cuser, --cuser <string>\fR: verwendet fuer Capisuite und/oder Samba den Linux-Benutzer <string> anstatt '\fB\fR'
-.br
-\fB -ckzl, --cklingelzahl <zahl>\fR: Zahl der Klingeltoene, bis Capisuite den Anruf annimmt, anstatt '\fB1\fR'
-.br
-\fB -hkzl, --hklingelzahl <zahl>\fR: Zahl der Klingeltoene, bis Hylafax den Anruf annimmt, anstatt '\fB2\fR'
-.br
-\fB -hmw, --hmaxwahlvers <zahl>\fR: Zahl der Wahlversuche in Hylafax, anstatt  '\fB11\fR'
-.br
-\fB -gz, --gleichziel\fR: Faxe werden auch ohne Faxerfolg ins Zielverzeichnis kopiert\fB oder nicht\fR
-.br
-\fB -ocre, --ocre\fR: Text aus empfangenen Faxen wird ermittelt\fB oder nicht\fR
-.br
-\fB -ocra, --ocra\fR: Text aus gesandten Bildern wird ermittelt\fB oder nicht\fR
-.br
-\fB -afs, --anfaxstr <string>\fR: faxnr wird hinter <string> erwartet statt hinter '\fBan Fax\fR'
-.br
-\fB -acfs, --ancfaxstr <string>\fR: faxnr fuer primaer Capisuite wird hinter <string> erwartet statt hinter '\fBan cFax\fR'
-.br
-\fB -ahfs, --anhfaxstr <string>\fR: faxnr fuer primaer hylafax wird hinter <string> erwartet statt hinter '\fBan hFax\fR'
-.br
-\fB -as, --anstr <string>\fR: Adressatenname wird hinter <string> erwartet statt hinter '\fB an \fR'
-.br
-\fB -us, --undstr <string>\fR: Trennstring <string> fuer mehrere Adressaten/Telefonnummern statt '\fBund\fR'
-.br
-\fB -host, --host <string>\fR: verwendet die Datenbank auf Host <string> anstatt auf '\fBlocalhost\fR'
-.br
-\fB -muser, --muser <string>\fR: verwendet fuer MySQL/MariaDB den Benutzer <string> anstatt '\fBuser\fR'
-.br
-\fB -mpwd, --mpwd <string>\fR: verwendet fuer MySQL/MariaDB das Passwort <string>
-.br
-\fB -db, --datenbank <string>\fR: verwendet die Datenbank <string> anstatt '\fBautofax\fR'
-.br
-\fB -fd, --finde <zahl>\fR: Version 1,2 oder 3 -Dateisuche (variable Performanceunterschiede) anstatt '\fB3\fR'
-.br
-\fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB2\fR'
 .SH FUNKTIONSWEISE
 .LP
 1) Die aktuelle Hardware wird überprüft:
