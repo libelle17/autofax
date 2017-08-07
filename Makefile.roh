@@ -65,7 +65,7 @@ EXEC::=$(DPROG)
 INSTEXEC::=$(EXPFAD)/$(EXEC)
 ifneq ($(shell g++-6 --version >$(KR); echo $$?),0)
  CCName::=g++
- CFLAGS::=$(CFLAGS) -std=gnu++11
+# CFLAGS::=$(CFLAGS) -std=gnu++11
 else
  CCName::=g++-6
 endif
