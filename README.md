@@ -48,7 +48,7 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>autofax</b>
-offers quasi the functionality of fax server, which can be
+offers quasi the functionality of a fax server, which can be
 useful for some also behind a fast data line. <b><br>
 autofax</b> is a command line program to remit files of a
 certain directory automatically to <b>hylafax</b> (in case a

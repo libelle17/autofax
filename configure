@@ -77,9 +77,11 @@ getIPR() {
 		LT5="";}
 	{ still which rpm &&{ 
 	  SPR="rpm -q ";
+		LBOOST=boost-${dev};
 		UDPR="${SUDC}rpm -e --nodeps ";};}||
 	{ still which dpkg &&{ 
 	  SPR="dpkg -s ";
+		LBOOST=libboost-${dev};
 		UDPR="${SUDC}apt-get -f install; ${SUDC}dpkg -r --force-depends ";};}
  	IPR="${SUDC}$IdPR";
   DATEIEN="`find . -maxdepth 1 -name ${DPROG}.cpp -printf '%f '``find . -maxdepth 1 -name ${DPROG}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -name "${DPROG}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall .exrc $UNF $INSTLOG"
@@ -87,7 +89,7 @@ getIPR() {
 
 exportvars() {
 	rm -f vars;
-	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF INSTLOG pgroff LT LT5 LM18 dev libmc libmc1 REPOS urepo COMP GITV DATEIEN DPROG; do
+	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF INSTLOG pgroff LT LT5 LBOOST LM18 dev libmc libmc1 REPOS urepo COMP GITV DATEIEN DPROG; do
 	  eval nv=\$$v; 
 		printf "$v::=$nv\n">>vars; 
 	done;
