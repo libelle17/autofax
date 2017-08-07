@@ -4194,7 +4194,8 @@ void paramcl::konfcapi()
 		mdatei f(cfaxconfdt,ios::in); // /etc/capisuite/fax.conf
 		if (f.is_open()) {
 			if (iru) {
-				neudatei=cfaxconfdt+"_neu";
+//				neudatei=cfaxconfdt+"_neu";
+				neudatei=instvz+vtz+"cfaxconfdt_neu";
 				fneu=new mdatei(neudatei,ios::out,0);
 				if (!fneu->is_open()) break;
 			} // if (iru)
