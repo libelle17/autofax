@@ -251,7 +251,7 @@ endif
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -type l -xtype f -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
 	./configure inst _ "$$LTakt" verbose;\
 	done; :;
-	-@[ -f /usr/include/boost/iostreams/device/mapped_file.hpp ]|| ./configure inst _ "$$LBOOST" verbose;
+	-@[ -f /usr/include/boost/iostreams/device/mapped_file.hpp ]|| ./configure inst _ "$(LBOOST)" verbose;
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                                  \r" >$(BA)
 

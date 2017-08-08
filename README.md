@@ -128,7 +128,7 @@ Simultaneously they are being moved from
 &rsquo;<b>tobefaxed</b>&rsquo; to the waiting directory,
 e.g. &rsquo;<b>waitingfaxes</b>&rsquo; and recorded in the
 spool table <b>spooltab</b>. <br>
-Faxes which are placed in the directory
+Faxes which are placed by a user in the directory
 &rsquo;<b>tobefaxed/2200</b>&rsquo; will be handled starting
 at 10 p.m., if autofax is running. <br>
 At each call, autofax checks the status of <b>hylafax</b>
@@ -878,9 +878,10 @@ Gleichzeitig werden sie aus &rsquo;<b>zufaxen</b>&rsquo; in
 das Warteverzeichnis, z.B. &rsquo;<b>warteauffax</b>&rsquo;
 verschoben und in die Spooltabelle <b>spooltab</b>
 eingetragen. <br>
-Faxe, die in &rsquo;<b>zufaxen/2200</b>&rsquo;
-bereitgestellt werden, werden ab 22:00 Uhr bearbeitet, wenn
-autofax l&auml;uft. <br>
+Faxe, die durch einen Benutzer in
+&rsquo;<b>zufaxen/2200</b>&rsquo; bereitgestellt werden,
+werden ab 22:00 Uhr bearbeitet, wenn autofax l&auml;uft.
+<br>
 Bei jedem Aufruf &uuml;berpr&uuml;ft autofax den
 Status von <b>hylafax</b> und/oder <b>Capisuite</b>. Der
 Abschluss eines Faxvorgangs dort hat zur Folge, dass autofax

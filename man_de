@@ -54,7 +54,7 @@ Diese werden dann automatisch an \fBhylafax\fR oder \fBCapisuite\fR weitergeleit
 .br
 Gleichzeitig werden sie aus '\fBzufaxen\fR' in das Warteverzeichnis, z.B. '\fBwarteauffax\fR' verschoben und in die Spooltabelle \fBspooltab\fR eingetragen.
 .br
-Faxe, die in '\fBzufaxen/2200\fR' bereitgestellt werden, werden ab 22:00 Uhr bearbeitet, wenn autofax läuft.
+Faxe, die durch einen Benutzer in '\fBzufaxen/2200\fR' bereitgestellt werden, werden ab 22:00 Uhr bearbeitet, wenn autofax läuft.
 .br
 Bei jedem Aufruf überprüft ²DPROG² den Status von \fBhylafax\fR und/oder \fBCapisuite\fR. Der Abschluss eines Faxvorgangs dort hat zur Folge, dass ²DPROG² die Quelldateien (also hier die o.g. .doc- und .pdf-Dateien) aus dem Warteverzeichnis in ein oder mehrere alternative Archivverzeichnisse oder ein Verzeichnis für gescheiteterte Faxe ablegt und den Datenbankeintrag von '\fBspooltab\fR' in die Archivtabelle '\fBouta\fR' verschiebt.
 .br
