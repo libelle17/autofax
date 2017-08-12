@@ -1296,7 +1296,7 @@ size_t irfind(const string& wo, const string& was)
 // Anfuehrungszeichen weg
 string* anfzweg(string& quel) {
 	if (quel.length()>1) {
-		if (quel[0]==quel[quel.length()-1] && strchr("\"'",quel[0])) {
+		if (quel[0]==quel[quel.length()-1] && strchr("\"'`",quel[0])) {
 			quel.erase(quel.length()-1,1);
 			quel.erase(0,1);
 		}
@@ -2165,7 +2165,7 @@ void pruefplatte()
   }
 } // pruefplatte
 
-// ob das aktuelle Programm mehrfach laeuft
+// ob das aktuelle Programm mehrfach laeuft; bei obstumm Exit-Code 0
 void pruefmehrfach(const string& wen,uchar obstumm/*=0*/)
 {
   svec rueck;
@@ -4313,7 +4313,7 @@ void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar a
 } // void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar anteil/*=0* ...
 #endif
 
-// 1= Dateien unterschiedlich, 0 = gleich
+// 1= Dateien unterschiedlich, 0 = gleich; obzeit => vergleiche auch die letzte Änderungszeit
 int dateivgl(const string& d1, const string& d2,uchar obzeit/*=0*/)
 {
 	int erg=0;

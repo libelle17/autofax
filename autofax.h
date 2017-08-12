@@ -8,18 +8,16 @@ class fsfcl; // Faxsendfile
 class paramcl; // Programmparameter
 class pidvec; // Vector von pid- und string-Pärchen
 void useruucp(const string& huser, const int obverb, const int oblog);
-string zielname(const string& qdatei, const string& zielvz,uchar wieweiterzaehl=0, string* zieldatei=0, uchar* obgleichp=0, int obverb=0, int oblog=0,
+string zielname(const string& qdatei, const string& zielvz,uchar wieweiterzaehl=0, string* zieldatei=0, uchar* obgleichp=0, 
+                int obverb=0, int oblog=0, stringstream *ausgp=0);
+string zielname(const string& qdatei, const zielmustercl& zmp,uchar wieweiterzaehl=0, string* zieldatei=0, uchar* obgleichp=0, int obverb=0, 
+                int oblog=0, stringstream *ausgp=0);
+void dorename(const string& quelle, const string& ziel, const string& cuser=nix, uint *vfehlerp=0, uchar schonda=0, int obverb=0, int oblog=0,
                   stringstream *ausgp=0);
-string zielname(const string& qdatei, zielmustercl *zmp,uchar wieweiterzaehl=0, string* zieldatei=0, uchar* obgleichp=0, int obverb=0, int oblog=0,
-                  stringstream *ausgp=0);
-void dorename(const string& quelle, const string& ziel, const string& cuser=nix, uint *vfehler=0, uchar schonda=0, int obverb=0, int oblog=0,
-                  stringstream *ausgp=0);
-string verschiebe(const string& qdatei, const string& zielvz, const string& cuser=nix,uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0,int oblog=0,
-                  stringstream *ausgp=0);
-string verschiebe(const string& qdatei, zielmustercl *zmp, const string& cuser=nix, uint *vfehler=0, uchar wieweiterzaehl=0, int obverb=0, int oblog=0,
-                  stringstream *ausgp=0);
-string kopiere(const string& qdatei, const string& zieldp, uint *kfehler, uchar wieweiterzaehl, int obverb=0,int oblog=0);
-string kopiere(const string& qdatei, zielmustercl *zmp, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
+string verschiebe(const string& qdatei, const auto/*string,zielmustercl*/& zielvz, const string& cuser, 
+                  uint *vfehlerp, uchar wieweiterzaehl, int obverb,int oblog, stringstream *ausgp=0);
+string kopiere(const string& qdatei, const string& zield, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
+string kopiere(const string& qdatei, const zielmustercl& zmp, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
 void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, int obverb, int oblog);
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, const int obverb, const int oblog);
 void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, const string& ff, int obverb, int oblog);
@@ -73,8 +71,8 @@ class zielmustercl
     zielmustercl();
     int kompilier(const uchar obext=1);
     int setzemuster(const string& vmuster,const uchar obext=1);
-    const string& holmuster();
-    int obmusterleer();
+    const string& holmuster() const;
+    int obmusterleer() const;
 }; // class zielmustercl
 
 class urfxcl // urspruengliche Dateidaten vor Aufteilung an verschiedene Faxadressaten
@@ -219,7 +217,7 @@ class paramcl // Programmparameter
     uchar logdateineu=0; // logdt vorher loeschen
     uchar obhilfe=0;      // Hilfe anzeigen
     uchar zeigvers=0;  // Version anzeigen
-		size_t faxord; // Ordinalzahl des Faxes unter allen anstehenden Faxen
+		size_t faxord=0; // Ordinalzahl des Faxes unter allen anstehenden Faxen
 		ulong geszahl=0;
     ulong ankzahl=0; // Zahl der angekommenen Faxe
     ulong dbzahl=0; // Zahl der ueberprueften Datenbankeintraege
@@ -261,6 +259,7 @@ class paramcl // Programmparameter
 		static const string initdhyladt; // /etc/init.d/hylafax
 		uchar initdhyladt_gibts=0; // Datei initdhyladt existiert
     string cfaxconfdt; // /etc/capisuite/fax.conf oder /usr/local/etc/capisuite/fax.conf laut Handbuch
+		string cfaxconfeigdt; // ~/autofax/cfaxconfdt
     string ccapiconfdt; // /etc/capisuite/capisuite.conf oder /usr/local/etc/capisuite/capisuite.conf laut Handbuch
     // Parameter aus /etc/capisuite/fax.conf:
     string spoolcapivz; // Verzeichnis der Capi-Spool-Dateien /var/spool/capisuite/

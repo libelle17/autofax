@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.45076) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4522) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -473,7 +473,7 @@ call of ocrmypdf.</p>
 configuration file is being written, if necessary.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Some program
-parts are executed simultaneously, which may influence the
+parts are executed simultaneously, which may loosen up the
 display of the result. <br>
 Sending and receiving are started every minute, until the
 respective other part has finished for the first time. <br>
@@ -740,7 +740,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.45076) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4522) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1255,8 +1255,8 @@ Konfigurationsdatei <b>autofax.conf</b> wird ggf.
 geschrieben.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Einige
-Programmteile laufen parallel, dies kann sich auf die
-Ergebnisanzeige auswirken. <br>
+Programmteile laufen parallel, dies kann sich die
+Reihenfolge der Ergebnisanzeige auflockern. <br>
 Senden und Empfangen wiederholen sich ggf.
 min&uuml;tlich, bis der jeweils andere Teil zum ersten
 Mal fertig ist. <br>

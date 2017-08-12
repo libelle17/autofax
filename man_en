@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "08.08.17" "Version 0.45076" "\fB²DPROG²\fR man page"
+.TH man 1 "12.08.17" "Version 0.4522" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -263,7 +263,7 @@ Optionally, the received faxes are subjected to ocr via a call of ocrmypdf.
 .LP
 19) The configuration file is being written, if necessary.
 .LP
-Some program parts are executed simultaneously, which may influence the display of the result.
+Some program parts are executed simultaneously, which may loosen up the display of the result.
 .br
 Sending and receiving are started every minute, until the respective other part has finished for the first time.
 .br

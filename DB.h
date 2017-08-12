@@ -238,24 +238,34 @@ class Index
     Index(const string& vname, Feld *vfelder, int vfeldzahl);
 }; // class Index 
 
+class RS;
+class DB;
+
 class Tabelle 
 {
   public:
-    const string name;
-    string comment;
+		const DB* dbp;
+    const string tbname;
+    string comment; // wird geaendert
+		const string dbname;
+    RS *spalt=nullptr;
+		char **spnamen=nullptr,**splenge=nullptr,**sptyp=nullptr;
     Feld *felder;
     int feldzahl;
     Index *indices;
-    int indexzahl;
+    unsigned indexzahl;
     const string engine;
     const string charset;
     const string collate;
     const string rowformat;
-    Tabelle(const string& name, Feld *felder, int feldzahl, Index *indices, int vindexzahl, string comment="",
+    Tabelle(const DB* dbp,const string& tbname, Feld *felder, int feldzahl, Index *indices, unsigned vindexzahl, string comment="",
         const string& engine="InnoDB", const string& charset="latin1", const string& collate="latin1_german2_ci", const string& rowformat="DYNAMIC");
+		Tabelle(const DB* dbp,const string& name,const size_t aktc/*=0*/,int obverb/*=0*/,int oblog/*=0*/);
+		void lesespalten(const size_t aktc/*=0*/,int obverb/*=0*/,int oblog/*=0*/);
+		int machind(const size_t aktc,int obverb=0, int oblog=0);
+    int prueftab(const size_t aktc,int obverb=0,int oblog=0);
 }; // class Tabelle 
 
-class RS;
 
 class DB 
 {
@@ -269,8 +279,6 @@ class DB
 #ifdef mitpostgres 
 		PGconn *pconn,*pmconn;
 #endif
-    ////	MYSQL_RES *result;
-    ////	MYSQL_ROW row;
     DBSTyp DBS;
     char dnb; // delimiter name begin
     char dne; // delimiter name end
@@ -279,7 +287,7 @@ class DB
     ////	char* ConStr;
     ////  const char* db;
     string mysqlbef="mysql", mysqlben="mysql"; // mysql-Befehl, mysql-Benutzer
-    string db;
+    string dbname;
     ////  const char* host;
     string host;
     ////  const char* user;
@@ -295,8 +303,6 @@ class DB
     string cmd;
     string datadir;
 		uchar lassoffen=0;
-    RS *spalt=nullptr;
-		char **spnamen=nullptr,**splenge=nullptr,**sptyp=nullptr;
 	private:
 		void instmaria(int obverb, int oblog);
 	public:
@@ -306,9 +312,9 @@ class DB
 		void prueffunc(const string& pname, const string& body, const string& para, const size_t aktc, int obverb, int oblog);
 		my_ulonglong arows;
 		vector< vector<instyp> > ins;
-		void erweitern(const string& tab, vector<instyp> einf,const size_t aktc,int obverb,uchar obsammeln=0, const unsigned long *maxl=0);
-		uchar tuerweitern(const string& tab, const string& feld,long wlength,const size_t aktc,int obverb);
-    int machbinaer(const string& tabs, const size_t aktc, const string& fmeld,int obverb);
+		void erweitern(const string& tab, vector<instyp> einf,const size_t aktc,int obverb,uchar obsammeln=0, const unsigned long *maxl=0) const;
+		uchar tuerweitern(const string& tab, const string& feld,long wlength,const size_t aktc,int obverb) const;
+    int machbinaer(const string& tabs, const size_t aktc, const string& fmeld,int obverb) const;
     ////	DB(DBSTyp DBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag);
 		DB(linst_cl *linstp);
 		DB(DBSTyp nDBS, linst_cl *linstp, const char* const phost, const char* const user,const char* const ppasswd, 
@@ -337,16 +343,13 @@ class DB
     char* tmtosqlmZ(tm *tmh,char* buf);
     ////	char** HolZeile();
     my_ulonglong affrows(const size_t aktc); // unsigned __int64
-    void lesespalten(Tabelle *tab,const size_t aktc,int obverb=0,int oblog=0);
-    int prueftab(Tabelle *tab,const size_t aktc,int obverb=0,int oblog=0);
-		int machind(const string& tname,Index *indx,const size_t aktc,int obverb=0, int oblog=0);
 }; // class DB 
 
 
 class RS 
 {
   public:
-    DB* db;
+    const DB* dbp;
     string sql;
     string isql; // insert-sql
     uchar obfehl;
@@ -367,29 +370,31 @@ class RS
     vector<long> lenge;
     vector<long> prec;
     vector<string> kommentar;
-    RS(DB* pdb);
+    RS(const DB* pdb);
     char*** HolZeile();
-    void weisezu(DB* pdb);
+    void weisezu(const DB* pdb);
     void clear();
     template<typename sT> 
-      int Abfrage(sT psql,const size_t aktc/*=0*/,int obverb=0,uchar asy=0,int oblog=0){
+      int Abfrage(sT psql,const size_t aktc/*=0*/,int obverb=0,uchar asy=0,int oblog=0,string *idp=0){
         int erg=-1;
         this->sql=psql;
         if (!sql.empty()) {
-          erg = doAbfrage(aktc,obverb,asy,oblog);
+          erg = doAbfrage(aktc,obverb,asy,oblog,idp);
         } //         if (!sql.empty())
         return erg;
       } //       int Abfrage(sT psql,int obverb=1,uchar asy=0)
 
-    RS(DB* pdb,const char* const psql, const size_t aktc, int obverb/*=1*/);
-    RS(DB* pdb,const string& psql, const size_t aktc, int obverb/*=1*/);
-    RS(DB* pdb,stringstream psqls, const size_t aktc, int obverb/*=1*/);
+    RS(const DB* pdb,const char* const psql, const size_t aktc, int obverb/*=1*/);
+    RS(const DB* pdb,const string& psql, const size_t aktc, int obverb/*=1*/);
+    RS(const DB* pdb,stringstream psqls, const size_t aktc, int obverb/*=1*/);
     ~RS();
     void update(const string& tab,vector<instyp> einf,int obverb, const string& bedingung, const size_t aktc/*=0*/, uchar asy=0);
     void insert(const string& tab,vector<instyp> einf,const size_t aktc=0,uchar sammeln=0,int obverb=0,string *id=0,uchar eindeutig=0,uchar asy=0,
 		            svec *csets=0);
+		void machstrikt(string& altmode,const size_t aktc=0);
+		void striktzurueck(string& altmode,const size_t aktc=0);
   private:
-    int doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int oblog/*=0*/);
+    int doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int oblog/*=0*/,string *idp/*=0*/);
 }; // class RS
 
 ////string ersetze(const char *u, const char* alt, const char* neu);

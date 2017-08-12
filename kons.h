@@ -124,6 +124,7 @@ enum {
 #endif
 
 #define caus cout // nur zum Debuggen
+#define exitt exit // fuer threads
 extern pthread_mutex_t printf_mutex;
 
 typedef unsigned long long ull;
