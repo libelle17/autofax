@@ -376,6 +376,7 @@ class RS
     void clear();
     template<typename sT> 
       int Abfrage(sT psql,const size_t aktc/*=0*/,int obverb=0,uchar asy=0,int oblog=0,string *idp=0){
+			  caus<<"Abfrage: "<<blau<<"obverb: "<<schwarz<<obverb<<endl;
         int erg=-1;
         this->sql=psql;
         if (!sql.empty()) {

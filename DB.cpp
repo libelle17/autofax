@@ -1010,7 +1010,7 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,const 
             korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<*(*cerg+1)/*data_type*/<<"("<<wlength<<") "<<
               (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(*(*cerg+3)?string("DEFAULT '")+*(*cerg+3)+"'":"")<<
               " COMMENT '"<<ersetzAllezu(*(*cerg+4),"'","\\'")<<"'";
-            RS spaltaend(this,korr.str(),aktc,-1/*obverb*/);
+            RS spaltaend(this,korr.str(),aktc,obverb);
             if (spaltaend.fnr==1074) {
               korr.str(std::string()); korr.clear();
               string neufeld;
@@ -1029,7 +1029,7 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,const 
                 korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<neufeld/*data_type*/<<" "<<
                   (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(*(*cerg+3)?string("DEFAULT '")+*(*cerg+3)+"'":"")<<
                   " COMMENT '"<<ersetzAllezu(*(*cerg+4),"'","\\'")<<"'";
-                RS spaltaend2(this,korr.str(),aktc,-1/*obverb*/);
+                RS spaltaend2(this,korr.str(),aktc,obverb);
               }
             } // if (fnr==1074) 
           }
@@ -1571,14 +1571,14 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 					obfehl=1;
 					string aktcs=ltoan(aktc);
 					Log("aktc: "+drots+aktcs+": "+schwarz+Txd[T_Fehler_db]+drots+ltoan(fnr)+schwarz+" (\""+fehler+"\") in doAbfrage, sql: "+
-							tuerkis+sql+schwarz,(fnr!=1406 && obverb!=-2) || (fnr==1406 && obverb==1),1);
+							tuerkis+sql+schwarz,1,1);
 					if (!fehler.find("Disk full"))
 						hoerauf=115;
 				} // if (mysql_real_query(db->conn[aktc],sql.c_str(),sql.length())) else  
 				striktzurueck(altsqlm,aktc);
 				if (hoerauf) exit(hoerauf);
 			} // if (!db->conn[aktc]) else
-			if (obfehl) if ((fnr!=1406 && obverb && obverb!=-2) || (fnr==1406 && obverb==1)) {
+			if (obfehl) {
 				//// pthread_mutex_lock(&printf_mutex);
 				////	printf("Fehler %u: %s\n", fnr, fehler);
 				//// pthread_mutex_unlock(&printf_mutex);
@@ -1588,7 +1588,7 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 		case Postgres:
 #ifdef mitpostgres 
 			const string ausfstr= "Ausfuehr: "+sql;
-			Log(ausfstr+" ...",obverb?-1:0,0);
+			Log(ausfstr+" ...",obverb?1:0,0);
 			pres = PQexec(db->pconn, sql.c_str());
 			fnr=PQresultStatus(pres);
 			if (fnr == PGRES_COMMAND_OK){
@@ -1735,9 +1735,9 @@ void RS::update(const string& utab, vector< instyp > einf,int obverb, const stri
 						isql.clear();
 						break;
           }  else {
-            Log(tuerkiss+"SQL: "+schwarz+isql,(fnr!=1406 && obverb!=-2) || (fnr==1406 && obverb==-1),1);
+            Log(tuerkiss+"SQL: "+schwarz+isql,iru||(fnr!=1406&&fnr!=1213&&fnr!=1366),1);
             const string fmeld=mysql_error(dbp->conn[aktc]);
-            Log(mysql_error(dbp->conn[aktc]),(fnr!=1406 && obverb!=-2) || (fnr==1406 && obverb==-1),1);
+            Log(mysql_error(dbp->conn[aktc]),iru||(fnr!=1406&&fnr!=1213&&fnr!=1366),1);
             if (fnr==1406) {
               dbp->erweitern(utab,einf,aktc,obverb,0);
               ////              if (obfehl) break; 16.1.15, sonst wirkt die aktuelle Abfrage nicht mehr
@@ -1912,19 +1912,19 @@ void RS::insert(const string& itab, vector< instyp > einf,const size_t aktc/*=0*
           for (int iru=0;iru<2;iru++) {
 						for(size_t iiru=0;iiru<(csets?csets->size():1);iiru++) {
 						  if (csets)
-								RS zs(dbp,"SET NAMES '"+csets->at(iiru)+"'",aktc,/*obverb=*/1);
+								RS zs(dbp,"SET NAMES '"+csets->at(iiru)+"'",aktc,obverb);
 							Abfrage(isql,aktc,obverb,asy,/*oblog*/0,idp);
 							if (csets) if (iiru)
-								RS zs(dbp,"SET NAMES '"+csets->at(0)+"'",aktc,/*obverb=*/1);
+								RS zs(dbp,"SET NAMES '"+csets->at(0)+"'",aktc,obverb);
 							if (!fnr) break;
 						} // 						for(size_t iiru=0;iiru<(csets?csets->size():1);iiru++)
 						/*
-						caus<<violett<<"vor idp"<<schwarz<<endl;
+						//<<violett<<"vor idp"<<schwarz<<endl;
             if (idp) {
-						caus<<violett<<"in idp"<<schwarz<<", aktc: "<<aktc<<endl;
+						//<<violett<<"in idp"<<schwarz<<", aktc: "<<aktc<<endl;
               if (obfehl) *idp="null";
               else *idp=ltoan(mysql_insert_id(dbp->conn[aktc]));
-							caus<<"idp: "<<*idp<<endl;
+							//<<"idp: "<<*idp<<endl;
             } // if (idp)
 						*/
             if (!obfehl) {
@@ -1932,9 +1932,9 @@ void RS::insert(const string& itab, vector< instyp > einf,const size_t aktc/*=0*
 							isql.clear();
 							break;
             }  else {
-							Log(tuerkiss+"SQL: "+schwarz+isql,(fnr!=1406 && obverb!=-2) || (fnr==1406 && obverb==-1),1);
+							Log(tuerkiss+"SQL: "+schwarz+isql,iru||(fnr!=1406&&fnr!=1213&&fnr!=1366),0);
               const string fmeld=mysql_error(dbp->conn[aktc]);
-              Log(fmeld,(fnr!=1406 && obverb!=-2) || (fnr==1406 && obverb==-1),1);
+              Log(fmeld,iru||(fnr!=1406&&fnr!=1213&&fnr!=1366),0);
               if (fnr==1406){
                 dbp->erweitern(itab,einf,aktc,obverb, sammeln || (!sammeln && !anfangen),maxl);
                 ////                if (obfehl) break; // 16.1.16, sonst wirkt die aktuelle Abfrage nicht mehr
