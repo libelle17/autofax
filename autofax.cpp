@@ -6278,9 +6278,15 @@ void paramcl::wegfaxen()
 							} // 							if (toknr[j].empty() && !tokname[j].empty()) elseif umgekehrt
 						} // 						for(size_t j=0;j<toknr.size();j++)
 						::Log(Tx[T_Bearbeite]+rots+qrueck[iakt]+schwarz,1,oblog);
-						Log(rots+"toktxt:"); for(uint j=0;j<toktxt.size();j++) ::Log(1,0,0,0," %s%u%s) %s%s%s",blau,j,schwarz,blau,toktxt[j].c_str(),schwarz);
-						Log(rots+"toknr:"); for(uint j=0;j<toknr.size();j++) ::Log(1,0,0,0," %s%u%s) %s%s%s",blau,j,schwarz,blau,toknr[j].c_str(),schwarz);
-						Log(rots+"tokname:"); for(uint j=0;j<tokname.size();j++) ::Log(1,0,0,0, "%s%u%s) %s%s%s",blau,j,schwarz,blau,tokname[j].c_str(),schwarz);
+						Log(rots+"toktxt:"); 
+						for(uint j=0;j<toktxt.size();j++) 
+							::Log(obverb,oblog,0,0," %s%u%s) %s%s%s",blau,j,schwarz,blau,toktxt[j].c_str(),schwarz);
+						Log(rots+"toknr:"); 
+						for(uint j=0;j<toknr.size();j++) 
+							::Log(obverb,oblog,0,0," %s%u%s) %s%s%s",blau,j,schwarz,blau,toknr[j].c_str(),schwarz);
+						Log(rots+"tokname:"); 
+						for(uint j=0;j<tokname.size();j++) 
+							::Log(obverb,oblog,0,0, "%s%u%s) %s%s%s",blau,j,schwarz,blau,tokname[j].c_str(),schwarz);
 						if (toknr.size()) {
               string benenn;
 							for(unsigned j=0;j<toknr.size();j++) { 
