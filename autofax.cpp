@@ -5622,7 +5622,7 @@ size_t paramcl::loescheallewartenden()
 			for(size_t nr=0;nr<fsfav.size();nr++) {
 				fsfav[nr].scheitere(wvz,ngvz,cuser,0,obverb,oblog);
 			} // 			for(size_t i=0;i<fsfav.size();i++)
-			RS loe(My,"DELETE FROM `"+spooltab+"` WHERE telnr=''",aktc,ZDB);
+			RS loe(My,"DELETE FROM `"+spooltab+"`"/* WHERE telnr=''*/,aktc,ZDB);
 		} // 		if (Tippob(Tx[T_Sollen_wirklich_alle]+gruens+ltoan(erg)+schwarz+Tx[T_wartenden_Faxe_geloescht_werden],"n"))
 	} else {
 		::Log(Tx[T_Keine_wartenden_Faxe_zum_Loeschen_da],1,oblog);
