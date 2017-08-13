@@ -700,17 +700,21 @@ program already missing and can then be ignored.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">0: Normal
-return code 7: The info screen (<b>autofax -info</b>) has
-been displayed 8: The help has been displayed 9: To start
-the just installed capi module the computer has to be
-restarted 17: Fork to another thread failed 98: Program
-stopped because it is already running once 99: A search
-command at a link failed while using <b>autofax -fd 2</b>
+return code <br>
+7: The info screen (<b>autofax -info</b>) has been displayed
+<br>
+8: The help has been displayed <br>
+9: To start the just installed capi module the computer has
+to be restarted <br>
+17: Fork to another thread failed <br>
+98: Program stopped because it is already running once <br>
+99: A search command at a link failed while using <b>autofax
+-fd 2</b> <br>
 113: An sql command for the mariadb database failed with a
-miscellaneous error 115: A database entry failed because of
-a full disk After calling <b>autofax -vi</b> or <b>autofax
--vs</b> the return code of <b>vi</b>/<b>vim</b> will be
-passed</p>
+miscellaneous error <br>
+115: A database entry failed because of a full disk <br>
+After calling <b>autofax -vi</b> or <b>autofax -vs</b> the
+return code of <b>vi</b>/<b>vim</b> will be passed</p>
 
 <h2>ERRORS
 <a name="ERRORS_D"></a>
@@ -1520,18 +1524,24 @@ k&ouml;nnen ignoriert werden.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">0: Normaler
-R&uuml;ckgabewert 7: Der Infobildschirm (<b>autofax
--info</b>) wurde angezeigt 8: Die Hilfe wurde angezeigt 9:
-Zur Inbetriebnahme des gerade eingerichteten Capi-Moduls
-muss der Rechner neu gestartet werden 17: Gabelung zu
-weiterem thread misslungen 98: Programmaufruf abgebrochen,
-da es bereits einmal l&auml;uft 99: Suchbefehl mit
-<b>autofax -fd 2</b> bei Dateilink misslungen 113: Ein
-SQL-Befehl f&uuml;r die Mariadb-Datenbank scheiterte an
-sonstigem Fehler 115: Eine Datenbankeintragung scheiterte an
-voller Festplatte Nach Aufruf von <b>autofax -vi</b> oder
-<b>autofax -vs</b> wird ggf. der R&uuml;ckgabewert von
-<b>vi</b>/<b>vim</b> weitergeleitet</p>
+R&uuml;ckgabewert <br>
+7: Der Infobildschirm (<b>autofax -info</b>) wurde angezeigt
+<br>
+8: Die Hilfe wurde angezeigt <br>
+9: Zur Inbetriebnahme des gerade eingerichteten Capi-Moduls
+muss der Rechner neu gestartet werden <br>
+17: Gabelung zu weiterem thread misslungen <br>
+98: Programmaufruf abgebrochen, da es bereits einmal
+l&auml;uft <br>
+99: Suchbefehl mit <b>autofax -fd 2</b> bei Dateilink
+misslungen <br>
+113: Ein SQL-Befehl f&uuml;r die Mariadb-Datenbank
+scheiterte an sonstigem Fehler <br>
+115: Eine Datenbankeintragung scheiterte an voller
+Festplatte <br>
+Nach Aufruf von <b>autofax -vi</b> oder <b>autofax -vs</b>
+wird ggf. der R&uuml;ckgabewert von <b>vi</b>/<b>vim</b>
+weitergeleitet</p>
 
 <h2>FEHLER
 <a name="FEHLER_D"></a>

@@ -374,14 +374,23 @@ Etwaige Fehlermeldungen beziehen sich meist auf einen Deinstallationsversuch ber
 .br
 .SH RUECKGABEWERTE
 0: Normaler Rückgabewert
+.br
 7: Der Infobildschirm (\fB²DPROG² -info\fR) wurde angezeigt 
+.br
 8: Die Hilfe wurde angezeigt
+.br
 9: Zur Inbetriebnahme des gerade eingerichteten Capi-Moduls muss der Rechner neu gestartet werden
+.br
 17: Gabelung zu weiterem thread misslungen
+.br
 98: Programmaufruf abgebrochen, da es bereits einmal läuft
+.br
 99: Suchbefehl mit \fB²DPROG² -fd 2\fR bei Dateilink misslungen
+.br
 113: Ein SQL-Befehl für die Mariadb-Datenbank scheiterte an sonstigem Fehler
+.br
 115: Eine Datenbankeintragung scheiterte an voller Festplatte
+.br
 Nach Aufruf von \fB²DPROG² -vi\fR oder \fB²DPROG² -vs\fR wird ggf. der Rückgabewert von \fBvi\fR/\fBvim\fR weitergeleitet
 .SH FEHLER
 Fehler bitte mit u.a. dem Wort '²DPROG²' in der Email-Ueberschrift melden. 
