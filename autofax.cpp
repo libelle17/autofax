@@ -6235,6 +6235,7 @@ void paramcl::wegfaxen()
 						 for(size_t p=0;p<toknr[i].length();p++) {
 						  if (toknr[i][p]=='+') neunr+="00";
 							else if (strchr("0123456789",toknr[i][p])) neunr+=toknr[i][p];
+							else if (toknr[i][p]=='_') break;
 						 }
 						 toknr[i]=neunr;
 						}
