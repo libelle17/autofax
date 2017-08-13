@@ -822,7 +822,7 @@ int Tabelle::machind(const size_t aktc, int obverb/*=0*/, int oblog/*=0*/)
 				}
 			} // for(int j=0;j<indx->feldzahl;j++) 
 			sql<<")";
-			rindins.Abfrage(sql.str(),aktc,obverb?-1:1);
+			rindins.Abfrage(sql.str(),aktc,obverb);
 		} // if (!rind.obfehl) 
 	}
 	return 0;
@@ -871,7 +871,7 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
 
           fstr.resize(fstr.size()+1);
           istr.resize(istr.size()+1);
-          ersetzAlle(felder[i].comment,"'","\\'");
+          ersetzAlle(felder[i].comment,"'","´"); // 13.8.17: \\' geht auf Fedora nicht mehr, \' auch nicht
           ////<<"felder[i].comment: "<<felder[i].comment<<endl;
           fstr[i]= "`" + felder[i].name + "` "+
             felder[i].typ+
@@ -907,7 +907,7 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
             <<(collate==""?(charset!=""?"":def_collate):collate);
           sql<<" ROW_FORMAT="
             <<(rowformat==""?def_rowformat:rowformat);
-          rs.Abfrage(sql.str(),aktc,obverb?-1:1); // falls obverb, dann sql-String ausgeben
+          rs.Abfrage(sql.str(),aktc,obverb); // falls obverb, dann sql-String ausgeben
           gesfehlr+=rs.obfehl;
           if (gesfehlr) Log(string("gesfehlr 1: ")+ltoan(gesfehlr),1,1);
           lesespalten(aktc,obverb>0?obverb-1:0,oblog);
@@ -929,7 +929,7 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
             if (gspn) sql<<" AFTER `"<<felder[gspn-1].name<<"`";
             else sql<<" FIRST";
             sql<<istr[gspn];
-            /*int erg=*/rs.Abfrage(sql.str(),aktc,obverb?-1:1);
+            /*int erg=*/rs.Abfrage(sql.str(),aktc,obverb);
             gesfehlr+=rs.obfehl;
             if (gesfehlr) Log(string("gesfehlr 2: ")+ltoan(gesfehlr),1,1);
           } //           if (!gefunden)
@@ -964,7 +964,7 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
             sql<<"ALTER TABLE `"<<tbname<<"` MODIFY "<<fstr[gspn];
             if (gspn) sql<<" AFTER `"<<felder[gspn-1].name<<"`";
             else sql<<" FIRST";
-            /*int erg=*/rs.Abfrage(sql.str(),aktc,obverb?-1:1);
+            /*int erg=*/rs.Abfrage(sql.str(),aktc,obverb);
             gesfehlr+=rs.obfehl;
             if (gesfehlr) Log(string("gesfehlr 3: ")+ltoan(gesfehlr),1,1);
             if (verschieb) 
@@ -974,7 +974,7 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
                 RS rloesch(dbp,string("DROP INDEX `")+felder[gspn].name +"` ON `"+tbname+"`",aktc,obverb);
                 sql.str(std::string()); sql.clear();
                 sql<<"ALTER TABLE `"<<tbname<<"`"<<istr[gspn].substr(1);
-                rs.Abfrage(sql.str(),aktc,obverb?-1:1);
+                rs.Abfrage(sql.str(),aktc,obverb);
               } // if (!istr[gspn].empty()) 
             } // if (aendere) 
           } // if (verschieb || aendere)
@@ -1538,7 +1538,7 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 												Tabelle aktt(dbp,tbl,aktc,obverb,oblog);
 												for(unsigned spnr=0;spnr<aktt.spalt->num_rows;spnr++) { // reale Spalten
 													if (aktt.spnamen[spnr]==col) {
-														dbp->tuerweitern(tbl,col,atol(aktt.splenge[spnr])+5,aktc,1);
+														dbp->tuerweitern(tbl,col,atol(aktt.splenge[spnr])+5,aktc,obverb);
 														neuerversuch=1;
 														break;
 													} // 													if (aktt.spnamen[spnr]==col)
