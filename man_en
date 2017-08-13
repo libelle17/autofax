@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "13.08.17" "Version 0.45321" "\fB²DPROG²\fR man page"
+.TH man 1 "13.08.17" "Version 0.45322" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -194,7 +194,7 @@ and logs this in the the mariadb database '\fBautofax\fB' (tables: `\fBouta\fB`,
 \fB -fd, --find <zahl>\fR: version 1,2 or 3 of filefind (variable performance differences instead of '\fB3\fR'
 .br
 \fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
-static_cast<unsigned char>(tolower(static_cast<char>('Ä')) ) = �äUßERST.SH FUNCTIONALITY
+static_cast<unsigned char>(tolower(static_cast<char>('Ä')) ) = ?äUßERST.SH FUNCTIONALITY
 .LP
 1) The current hardware is being checked.
 .br
@@ -369,6 +369,18 @@ Configuration files, data, and system relevant programs like libgcc and selinux 
 .br
 Error messages originate mostly in efforts to delete a program already missing and can then be ignored.
 
+.SH RUECKGABEWERTE
+.SH RETURN CODES
+0: Normal return code
+7: The info screen (\fB²DPROG² -info\fR) has been displayed
+8: The help has been displayed
+9: To start the just installed capi module the computer has to be restarted
+17: Fork to another thread failed
+98: Program stopped because it is already running once
+99: A search command at a link failed while using \fB²DPROG² -fd 2\fR
+113: An sql command for the mariadb database failed with a miscellaneous error
+115: A database entry failed because of a full disk
+After calling \fB²DPROG² -vi\fR or \fB²DPROG² -vs\fR the return code of \fBvi\fR/\fBvim\fR will be passed
 .SH ERRORS
 Please report any errors with the word '²DPROG²' included in the email headline. 
 .br

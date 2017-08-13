@@ -350,7 +350,7 @@ void perfcl::ausgab1000(const string& stelle)
     cout<<gruen<<vonwo<<" "<<stelle<<" "<<nr<<Txk[T_Dauer]<<setprecision(7)<<setw(9)<<(long)(zp1-zp0)<<" = "
       <<fixed<<((zp1-zp0)/CLOCKS_PER_SEC)<<schwarz<<setprecision(0)<<" s"<<endl;
     exit(102);
-  }
+  } //   if (zp1-zp0>10000)
 } // void perfcl::ausgab1000(const string& stelle)
 
 int perfcl::oberreicht(unsigned long sek)
@@ -3951,7 +3951,7 @@ void find2cl::init(const string& mutter, const string& name, regex_t *reg, const
     }
 //    cout<<"letztel->pfad: "<<letztel->pfad<<" linkname: "<<linkname<<endl;
     string link=linkname;
-    if (link==letztel->pfad) exit(0);
+    if (link==letztel->pfad) exit(97);
     neuel.init(dir_name(letztel->pfad),linkname);
     //if (0)
     for(size_t j=0;j<stack.size();j++) {

@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.45321) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45322) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -12,6 +12,8 @@
 <a href="#AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_D">AUTOMATICALLY INSTALLED SOFTWARE PACKAGES</a><br>
 <a href="#IMPLICATIONS_D">IMPLICATIONS</a><br>
 <a href="#UNINSTALLING_D">UNINSTALLING</a><br>
+<a href="#RUECKGABEWERTE_D">RUECKGABEWERTE</a><br>
+<a href="#RETURN CODES_D">RETURN CODES</a><br>
 <a href="#ERRORS_D">ERRORS</a><br>
 <a href="#PROGRAM MODIFICATION_D">PROGRAM MODIFICATION</a><br>
 <a href="#LIABILITY_D">LIABILITY</a><br>
@@ -314,7 +316,7 @@ instead of &rsquo;<b>and</b>&rsquo; <b><br>
 shall <b>autofax</b> be called in crontab (0=not at all),
 instead of &rsquo;<b>2</b>&rsquo; static_cast&lt;unsigned
 char&gt;(tolower(static_cast&lt;char&gt;(&rsquo;&Auml;&rsquo;))
-) = &atilde;&auml;U&szlig;ERST.SH FUNCTIONALITY</p>
+) = ?&auml;U&szlig;ERST.SH FUNCTIONALITY</p>
 
 <p style="margin-left:11%; margin-top: 1em">1) The current
 hardware is being checked. <br>
@@ -691,6 +693,29 @@ libgcc and selinux will not be deleted. <br>
 Error messages originate mostly in efforts to delete a
 program already missing and can then be ignored.</p>
 
+<h2>RUECKGABEWERTE
+<a name="RUECKGABEWERTE_D"></a>
+</h2>
+
+
+<h2>RETURN CODES
+<a name="RETURN CODES_D"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">0: Normal
+return code 7: The info screen (<b>autofax -info</b>) has
+been displayed 8: The help has been displayed 9: To start
+the just installed capi module the computer has to be
+restarted 17: Fork to another thread failed 98: Program
+stopped because it is already running once 99: A search
+command at a link failed while using <b>autofax -fd 2</b>
+113: An sql command for the mariadb database failed with a
+miscellaneous error 115: A database entry failed because of
+a full disk After calling <b>autofax -vi</b> or <b>autofax
+-vs</b> the return code of <b>vi</b>/<b>vim</b> will be
+passed</p>
+
 <h2>ERRORS
 <a name="ERRORS_D"></a>
 </h2>
@@ -736,7 +761,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.45321) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45322) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -748,6 +773,7 @@ caused by the program.</p>
 <a href="#AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE_D">AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE</a><br>
 <a href="#AUSWIRKUNGEN DES PROGRAMMABLAUFS_D">AUSWIRKUNGEN DES PROGRAMMABLAUFS</a><br>
 <a href="#DEINSTALLATION_D">DEINSTALLATION</a><br>
+<a href="#RUECKGABEWERTE_D">RUECKGABEWERTE</a><br>
 <a href="#FEHLER_D">FEHLER</a><br>
 <a href="#PROGRAMM&Auml;NDERUNG_D">PROGRAMM&Auml;NDERUNG</a><br>
 <a href="#HAFTUNG_D">HAFTUNG</a><br>
@@ -1072,9 +1098,7 @@ MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
 nicht), anstatt &rsquo;<b>2</b>&rsquo;
-static_cast&lt;unsigned
-char&gt;(tolower(static_cast&lt;char&gt;(&rsquo;&Auml;&rsquo;))
-) = &atilde;&auml;U&szlig;ERST.SH FUNKTIONSWEISE</p>
+&auml;U&szlig;ERST.SH FUNKTIONSWEISE</p>
 
 <p style="margin-left:11%; margin-top: 1em">1) Die aktuelle
 Hardware wird &uuml;berpr&uuml;ft: <br>
@@ -1495,6 +1519,25 @@ libgcc und selinux wird dabei verzichtet. <br>
 Etwaige Fehlermeldungen beziehen sich meist auf einen
 Deinstallationsversuch bereits entfernter Programme und
 k&ouml;nnen ignoriert werden.</p>
+
+<h2>RUECKGABEWERTE
+<a name="RUECKGABEWERTE_D"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">0: Normaler
+R&uuml;ckgabewert 7: Der Infobildschirm (<b>autofax
+-info</b>) wurde angezeigt 8: Die Hilfe wurde angezeigt 9:
+Zur Inbetriebnahme des gerade eingerichteten Capi-Moduls
+muss der Rechner neu gestartet werden 17: Gabelung zu
+weiterem thread misslungen 98: Programmaufruf abgebrochen,
+da es bereits einmal l&auml;uft 99: Suchbefehl mit
+<b>autofax -fd 2</b> bei Dateilink misslungen 113: Ein
+SQL-Befehl f&uuml;r die Mariadb-Datenbank scheiterte an
+sonstigem Fehler 115: Eine Datenbankeintragung scheiterte an
+voller Festplatte Nach Aufruf von <b>autofax -vi</b> oder
+<b>autofax -vs</b> wird ggf. der R&uuml;ckgabewert von
+<b>vi</b>/<b>vim</b> weitergeleitet</p>
 
 <h2>FEHLER
 <a name="FEHLER_D"></a>

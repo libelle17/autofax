@@ -9298,7 +9298,6 @@ int paramcl::pruefcapi()
 								exit(9);
 							} // if (v1!=v2) 
 #ifdef brauchtsaano // am 19.3.17 braucht's es ned
-							////            exit(1);
 							//// nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
 							////         systemrueck(sudc+"dnf -y install @\"Development Tools\" rpmdevtools yum-utils ncurses-devel",obverb,oblog);
 							linstp->doggfinst("fedpkg",obverb+1,oblog);
