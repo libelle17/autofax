@@ -192,33 +192,33 @@ Mit '\fB²DPROG² -?\fR' oder '\fB²DPROG² -h\fR' werden die wichtigen und mit 
 \fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB2\fR'
 .SH FUNKTIONSWEISE
 .LP
-1) Die aktuelle Hardware wird überprüft:
+\fB1)\fR Die aktuelle Hardware wird überprüft:
 .br
-a) mit dem Befehl '\fBlspci | grep -i isdn\fR' bezüglich einer ISDN-Karte
+\fBa)\fR mit dem Befehl '\fBlspci | grep -i isdn\fR' bezüglich einer ISDN-Karte
 .br
-b) mit dem Befehl '\fBstty -F\fR' bezüglich eines Fax-Modems.
+\fBb)\fR mit dem Befehl '\fBstty -F\fR' bezüglich eines Fax-Modems.
 .LP
-2) Die Fax-Konfigurationsdatei \fBfax.conf\fR der Capisuite wird eingelesen, falls es sie gibt
+\fB2)\fR Die Fax-Konfigurationsdatei \fBfax.conf\fR der Capisuite wird eingelesen, falls es sie gibt
 .LP
-3) Weitere Vorgaben aus dem Programmcode werden zugewiesen, die durch die ²DPROG²-Konfigurationsdatei (siehe 4), Kommandozeilenargumente oder Antworten auf Rückfragen (siehe 5) überdeckt werden können.
+\fB3)\fR Weitere Vorgaben aus dem Programmcode werden zugewiesen, die durch die ²DPROG²-Konfigurationsdatei (siehe 4), Kommandozeilenargumente oder Antworten auf Rückfragen (siehe 5) überdeckt werden können.
 .LP
-4) Vorgaben werden geladen aus der Konfigurationsdatei, falls existent (standardmäßig \fB²DPROG².conf\fR im selben Verzeichnis wie \fB²DPROG²\fR, standardmäßig \fB/usr/local/sbin/²DPROG²\fR)) 
+\fB4)\fR Vorgaben werden geladen aus der Konfigurationsdatei, falls existent (standardmäßig \fB²DPROG².conf\fR im selben Verzeichnis wie \fB²DPROG²\fR, standardmäßig \fB/usr/local/sbin/²DPROG²\fR)) 
 .LP
-5) Rückfragen werden gestellt, falls in der Konfigurationsdatei Werte fehlen oder falls eine Kommandozeilenoption Interaktivität verlangt.
+\fB5)\fR Rückfragen werden gestellt, falls in der Konfigurationsdatei Werte fehlen oder falls eine Kommandozeilenoption Interaktivität verlangt.
 .LP
-6) Das Verzeichnis von \fBhylafax\fR wird ermittelt (\fB/var/spool/hylafax\fR oder \fB/var/spool/fax\fR), falls hylafax installiert ist.
+\fB6)\fR Das Verzeichnis von \fBhylafax\fR wird ermittelt (\fB/var/spool/hylafax\fR oder \fB/var/spool/fax\fR), falls hylafax installiert ist.
 .LP
-7) Von Benutzern verwendete Verzeichnisse für zu verschickende, wartende, versandte und gescheiterte und empfangene Fax-Dateien werden überprüft und ggf. erstellt. Dabei können in der Konfiguration angegebene Dateinamensmuster berücksichtigt werden, um erfolgreich versandte Faxe je nach Dateinamen in verschiedenen Verzeichnissen zu speichern.
+\fB7)\fR Von Benutzern verwendete Verzeichnisse für zu verschickende, wartende, versandte und gescheiterte und empfangene Fax-Dateien werden überprüft und ggf. erstellt. Dabei können in der Konfiguration angegebene Dateinamensmuster berücksichtigt werden, um erfolgreich versandte Faxe je nach Dateinamen in verschiedenen Verzeichnissen zu speichern.
 .LP
-8) Das Programm trägt sich ggf. in \fBcrontab\fR (des Benutzers root) ein, um auf Wunsch in (einstellbaren) Abständen aufgerufen zu werden. Um dies zu verhindern, kann entweder '\fBcronminut\fR' auf \fB0\fR eingestellt werden oder die bereits erstellten ²DPROG²-Einträge mit \fBcrontab -e\fR mit einem vorangestellten '\fB#\fR' auskommentiert werden.
+\fB8)\fR Das Programm trägt sich ggf. in \fBcrontab\fR (des Benutzers root) ein, um auf Wunsch in (einstellbaren) Abständen aufgerufen zu werden. Um dies zu verhindern, kann entweder '\fBcronminut\fR' auf \fB0\fR eingestellt werden oder die bereits erstellten ²DPROG²-Einträge mit \fBcrontab -e\fR mit einem vorangestellten '\fB#\fR' auskommentiert werden.
 .LP
-9) Das Programm überprüft, ob alle benutzerreleventen Verzeichnisse (s. 7) von Sambafreigaben in \fB/etc/samba/smb.conf\fR erfasst werden, solche werden nötigenfalls ergänzt.
+\fB9)\fR Das Programm überprüft, ob alle benutzerreleventen Verzeichnisse (s. 7) von Sambafreigaben in \fB/etc/samba/smb.conf\fR erfasst werden, solche werden nötigenfalls ergänzt.
 .LP
-10) Der Betrieb von MariaDB wird überprüft, ggf. wird es (installiert und) in Betrieb gesetzt, die Datenbanktabellen \fBspooltab\fR (für gerade laufende Faxe), \fBouta\fR (für gesandte und gescheiterte Faxe) und \fBinca\fR (für angekommene Faxe) werden überprüft und ggf. erstellt oder erweitert.
+\fB10)\fR Der Betrieb von MariaDB wird überprüft, ggf. wird es (installiert und) in Betrieb gesetzt, die Datenbanktabellen \fBspooltab\fR (für gerade laufende Faxe), \fBouta\fR (für gesandte und gescheiterte Faxe) und \fBinca\fR (für angekommene Faxe) werden überprüft und ggf. erstellt oder erweitert.
 .LP
-11) Im Fall der entsprechenden Kommandozeilenoptionen werden Korrekturen bei Dateien im Warteverzeichnis oder den Protokolltabellen durchgeführt oder deren Inhalt aufgelistet und das Programm dann beendet.
+\fB11)\fR Im Fall der entsprechenden Kommandozeilenoptionen werden Korrekturen bei Dateien im Warteverzeichnis oder den Protokolltabellen durchgeführt oder deren Inhalt aufgelistet und das Programm dann beendet.
 .LP
-12) Andernfalls werden Dateien im \fBZufaxenverzeichnis\fR analysiert. Jede Datei, deren im Dateinamen enthaltene Faxnummer(n) ermittelbar ist/sind und die in eine PDF-Datei umwandelbar ist (oder schon so vorliegt), wird ins Warteverzeichnis verschoben und in \fBspooltab\fR eingetragen.
+\fB12)\fR Andernfalls werden Dateien im \fBZufaxenverzeichnis\fR analysiert. Jede Datei, deren im Dateinamen enthaltene Faxnummer(n) ermittelbar ist/sind und die in eine PDF-Datei umwandelbar ist (oder schon so vorliegt), wird ins Warteverzeichnis verschoben und in \fBspooltab\fR eingetragen.
 .br
 Falls eine Datei mehrere Faxnummern enthält und/oder eine PDF-Umwandlung nötig ist, werden zusätzliche Dateien erstellt und die ursprüngliche Datei ggf. umbenannt.
 Falls nötig, können die Dateien zusätzliche Zifferm nahe ihrem Namensende bekommen, so dass die Namen mit keinem anderen der unter 7) genannten Verzeichnisse in Konflikt steht.
@@ -226,14 +226,14 @@ Falls nötig, können die Dateien zusätzliche Zifferm nahe ihrem Namensende bek
 Falls neue Dateien erstellt wurden, werden die nachfolgenden Verschiebungen und Protokollierungen mit allen durchgeführt.
 .\" DateienHerricht(), WVZinDatenbank()
 .LP
-13) Je nach Konfiguration wird die Funktionsfähigkeit von \fBhylafax\fR und/oder \fBcapisuite\fR überprüft und ggf. nach Möglichkeit hergestellt (falls nötig und möglich auch mit Installation dieser Programme; für eine Fritzcard 2.0 sowie für ein Faxmodem USR5637 kann/wird auch eine automatische Konfiguration erfolgen). Kernelmodule für hylafax bzw. capisuite werden für die aktuelle Kernelversion erstellt, auch bei etwaigen Kernelupdates.
+\fB13)\fR Je nach Konfiguration wird die Funktionsfähigkeit von \fBhylafax\fR und/oder \fBcapisuite\fR überprüft und ggf. nach Möglichkeit hergestellt (falls nötig und möglich auch mit Installation dieser Programme; für eine Fritzcard 2.0 sowie für ein Faxmodem USR5637 kann/wird auch eine automatische Konfiguration erfolgen). Kernelmodule für hylafax bzw. capisuite werden für die aktuelle Kernelversion erstellt, auch bei etwaigen Kernelupdates.
 .LP
-14) Im Fall entsprechender Kommandozeilenoptionen werden Faxe gelöscht und das Programm dann beendet.
+\fB14)\fR Im Fall entsprechender Kommandozeilenoptionen werden Faxe gelöscht und das Programm dann beendet.
 .LP
-15) Andernfalls werden die unter 12) in \fBspooltab\fR eingetragenen Dateien an \fBhylafax\fR oder \fBcapisuite\fR weitergeleitet und dies in \fBspooltab\fR protokolliert.
+\fB15)\fR Andernfalls werden die unter 12) in \fBspooltab\fR eingetragenen Dateien an \fBhylafax\fR oder \fBcapisuite\fR weitergeleitet und dies in \fBspooltab\fR protokolliert.
 .\" faxealle()
 .LP
-16) Alle in \fBspooltab\fR als wartend stehenden Faxe werden in \fBhylafax\fR/\fBcapisuite\fR auf ihren Status überprüft, dieser wird in \fBspooltab\fR aktualisiert (Zahl der bisherigen Faxversuche).
+\fB16)\fR Alle in \fBspooltab\fR als wartend stehenden Faxe werden in \fBhylafax\fR/\fBcapisuite\fR auf ihren Status überprüft, dieser wird in \fBspooltab\fR aktualisiert (Zahl der bisherigen Faxversuche).
 .br
 Falls sowohl hylafax als auch capisuite aktiv sind und eine voreingestellte Zahl an Anwahlversuchen im Programm der ersten Präferenz dieser beiden erfolglos erreicht ist, wird das Fax auch noch an das jeweils andere Programm weitergeleiet.
 .br
@@ -242,10 +242,10 @@ Falls der Faxvorgang (erfolgreich oder erfolglos) beendet ist, wird die Datei au
 Der Status der genannten Faxe wird angezeigt.
 .\" untersuchespool()
 .LP
-17) Weitere in der Warteschleife von hylafax/capisuite befindliche, nicht über ²DPROG² erstellte Faxe werden ggf. angezeigt.
+\fB17)\fR Weitere in der Warteschleife von hylafax/capisuite befindliche, nicht über ²DPROG² erstellte Faxe werden ggf. angezeigt.
 In Intervallen werden sie in die ²DPROG²-Datenbank integriert (ohne die fehlende Information über den ursprünglichen Dateinamen)
 .LP
-18) Über \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe werden ggf. mit Hilfe der Faxnummer anhand voreingestellter SQL-Befehle nach dem Namen des Absenders benannt und in ein Empfangsverzeichnis gestellt.
+\fB18)\fR Über \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe werden ggf. mit Hilfe der Faxnummer anhand voreingestellter SQL-Befehle nach dem Namen des Absenders benannt und in ein Empfangsverzeichnis gestellt.
 .br
 Solche SQL-Befehle sollen (mindestens) zwei Ergebnisfelder (mit benutzerdefinierter Bedeutung) liefern, deren Inhalt dann, durch ein Komma getrennt, von ²DPROG² zur Benennung eines empfangenen Faxes verwendet werden. Vor der Anwendung des SQL-Befehls wird die Zeichenfolge '&&faxnr&&' zur aktuellen Faxnummer erweitert. Beispiel fuer einen solchen SQL-Befehl:
 .br
@@ -257,7 +257,7 @@ Wenn mehrere SQL-Befehle angegeben werden, so wird der jeweils naechste angewand
 .br
 Optional werden die empfangenen Dateien mit Hilfe von ocrmypdf einer Texterkennung unterzogen.
 .LP
-19) Die Konfigurationsdatei \fB²DPROG².conf\fR wird ggf. geschrieben.
+\fB19)\fR Die Konfigurationsdatei \fB²DPROG².conf\fR wird ggf. geschrieben.
 .LP
 Einige Programmteile laufen parallel, dies kann sich die Reihenfolge der Ergebnisanzeige auflockern. 
 .br
@@ -307,57 +307,57 @@ Falls Sie eines dieser Programme nicht wollen bzw. nicht aktualisieren wollen, d
 .SH AUSWIRKUNGEN DES PROGRAMMABLAUFS
 Das Programm muss zum ordentlichen Funktionieren folgende Maßnahmen ergreifen:
 .LP
-1) In Debian kann in der Datei /etc/apt/sources.list ein DVD-Eintrag hinter die Standard-Online-Repositories verschoben werden.
+\fB1)\fR In Debian kann in der Datei /etc/apt/sources.list ein DVD-Eintrag hinter die Standard-Online-Repositories verschoben werden.
 .br
-2) Sudo (fehlt anfangs bei Standardinstallation in Debian) wird ggf. installiert. 
+\fB2)\fR Sudo (fehlt anfangs bei Standardinstallation in Debian) wird ggf. installiert. 
 .br
 Der Benutzer beim Installationsvorgang wird, falls nicht schon enthalten, in eine Administrator-Gruppe eingetragen, die in /etc/sudoers genannt wird, da er "sudo" ausführen muß.
 .LP
-3) 'GNU make' wird, falls nicht vorhanden, durch Aufruf von 'sh ./install.sh' bzw. 'configure' automatisch installiert.
+\fB3)\fR 'GNU make' wird, falls nicht vorhanden, durch Aufruf von 'sh ./install.sh' bzw. 'configure' automatisch installiert.
 .LP
-4) Installieren von \fBHylafax+\fR, falls ein Modem angeschlossen ist und Hylafax+ nicht installiert ist. Ggf. Konfiguration von Hylafax+ durch Aufruf von '\fBfaxsetup -nointeracitve\fR', durch Editieren der Konfigurationsdateien \fBconfig\fR und \fBconfig.*\fR (z.B. \fBconfig.ttyACM0\fR) im hylafax-Konfigurationsverzeichnis (Vorgabe z.B.: \fB/var/spool/hylafax/etc/\fR)
+\fB4)\fR Installieren von \fBHylafax+\fR, falls ein Modem angeschlossen ist und Hylafax+ nicht installiert ist. Ggf. Konfiguration von Hylafax+ durch Aufruf von '\fBfaxsetup -nointeracitve\fR', durch Editieren der Konfigurationsdateien \fBconfig\fR und \fBconfig.*\fR (z.B. \fBconfig.ttyACM0\fR) im hylafax-Konfigurationsverzeichnis (Vorgabe z.B.: \fB/var/spool/hylafax/etc/\fR)
 .LP
-5) Installieren von \fBcapisuite\fR, falls eine Fritzkarte eingebaut ist und capisuite nicht installiert ist.
+\fB5)\fR Installieren von \fBcapisuite\fR, falls eine Fritzkarte eingebaut ist und capisuite nicht installiert ist.
 Ggf. Bearbeitung der Konfigurationsdateien \fB/etc/capisuite/capisuite.conf\fR und \fB/etc/capisuite/fax.conf\fR.
 Ggf. Bearbeitung des Python-Scripts für ankommende Faxe (Vorgabe z.B.: \fB/usr/lib64/capisuite/incoming.py\fR) zur Bestimmung der Zahl der Klingeltöne 
 bis zur Faxannahme, Erstellung bzw. Bearbeitung der Dateien 
 '\fB/etc/udev/rules.d/46-FKN_isdn_capi.rules\fR', '\fB/etc/modprobe.d/50-blacklist.conf\fR'.
 .LP
-6) Einrichten von Diensten: 
+\fB6)\fR Einrichten von Diensten: 
 .br
-a) in systemd (im Verzeichnis /usr/lib/systemd/system oder /lib/systemd/system), insbesondere:
+\fBa)\fR in systemd (im Verzeichnis /usr/lib/systemd/system oder /lib/systemd/system), insbesondere:
 .br
 \fBhylafax-faxq.service\fR, \fBhylafax-hfaxd.service\fR, \fBhylafax-faxgetty-....service\fR (z.B. \fBhylafax-faxgetty-ttyACM0\fR),
 .br
 capisuite.service,
 .br
-b) Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neu eingerichtes Verzeichnis /etc/ausrangiert:
+\fBb)\fR Verschieben von Diensten aus dem Verzeichnis /etc/init.d in ein neu eingerichtes Verzeichnis /etc/ausrangiert:
 \fBhylafax\fR, \fBcapisuite\fR
 .br
-c) falls \fBselinux\fR aktiv ist (wie standardmäßig in fedora), dann behindert es standardmäßig \fBhylafax\fR; in diesem Fall wird im Hintergrund ein Modul für selinux eingerichtet, um den Betrieb von hylafax-hfaxd wieder zu erlauben. Ferner muss (bis zur eventuellen Erstellung einer maßgeschneiderteren Lösung) die Domäne 'getty' mit dem Befehl '\fBsemanage permissive -a getty_t\fR' in selinux entschärft werden, um faxe über hylafax empfangen zu können.
+\fBc)\fR falls \fBselinux\fR aktiv ist (wie standardmäßig in fedora), dann behindert es standardmäßig \fBhylafax\fR; in diesem Fall wird im Hintergrund ein Modul für selinux eingerichtet, um den Betrieb von hylafax-hfaxd wieder zu erlauben. Ferner muss (bis zur eventuellen Erstellung einer maßgeschneiderteren Lösung) die Domäne 'getty' mit dem Befehl '\fBsemanage permissive -a getty_t\fR' in selinux entschärft werden, um faxe über hylafax empfangen zu können.
 .LP
-7) Erstellen einer Protokolldatei, standardmäßig \fB/var/log/²DPROG².log\fR.
+\fB7)\fR Erstellen einer Protokolldatei, standardmäßig \fB/var/log/²DPROG².log\fR.
 .LP
-8) ggf. Erstellen und Zugreifbarmachen der bestimmbaren \fBVerzeichnisse\fR für zu sendende, wartende, abgearbeitete und empfangene Faxe.
+\fB8)\fR ggf. Erstellen und Zugreifbarmachen der bestimmbaren \fBVerzeichnisse\fR für zu sendende, wartende, abgearbeitete und empfangene Faxe.
 .LP
-9) ggf. Erstellen und Verändern der Konfigurationsdatei ²DPROG².conf in dem Verzeichnis, in dem auch es selbst steht (Vorgabe: /usr/local/sbin/²DPROG²).
+\fB9)\fR ggf. Erstellen und Verändern der Konfigurationsdatei ²DPROG².conf in dem Verzeichnis, in dem auch es selbst steht (Vorgabe: /usr/local/sbin/²DPROG²).
 .LP
-10) ggf. Einfügen einer Zeile zum automatischen periodischen Aufruf des Programms in das crontab (von root)
+\fB10)\fR ggf. Einfügen einer Zeile zum automatischen periodischen Aufruf des Programms in das crontab (von root)
 .LP
-11) ggf. Einfügen von Abschnitten für die unter 8) genannten Verzeichnisse in /etc/samba/smb.conf, ggf. Einfügen/Passwortzuteilen des Programmbenutzers bzw. (falls root) des für die Capisuite gewählten Benutzers als Samba-Benutzer.
+\fB11)\fR ggf. Einfügen von Abschnitten für die unter 8) genannten Verzeichnisse in /etc/samba/smb.conf, ggf. Einfügen/Passwortzuteilen des Programmbenutzers bzw. (falls root) des für die Capisuite gewählten Benutzers als Samba-Benutzer.
 Falls Suse-Firewall vorhanden, samba-Server fuer "externe Zone" eintragen.
 Nach Programmaufruf sollten die unter 8) genannten Verzeichnisse im Samba-Netzwerk sichtbar sein und Dateien im Verzeichnis für zu sendende Faxe erstellt werden können.
 .LP
-12) ggf. Einfügen einer Datenbank für die Faxe in mariadb unter einem bestimmbaren Namen, Anlage und Veränderung mehrerer Tabellen und einer Prozedur in dieser Datenbank, ggf. Einfügen eines Benutzers mit bestimmbarem Namen in mariadb zur Datenpflege in diesen Tabellen 
+\fB12)\fR ggf. Einfügen einer Datenbank für die Faxe in mariadb unter einem bestimmbaren Namen, Anlage und Veränderung mehrerer Tabellen und einer Prozedur in dieser Datenbank, ggf. Einfügen eines Benutzers mit bestimmbarem Namen in mariadb zur Datenpflege in diesen Tabellen 
 .LP
-13) durch entsprechende Befehlszeilenoptionen von ²DPROG² können innerhalb von hylafax und capisuite Faxe gelöscht werden, insbesondere:
+\fB13)\fR durch entsprechende Befehlszeilenoptionen von ²DPROG² können innerhalb von hylafax und capisuite Faxe gelöscht werden, insbesondere:
 .br
-a) in hylafax: durch Aufruf von 'faxrm'
+\fBa)\fR in hylafax: durch Aufruf von 'faxrm'
 .br
-b) in capisuite: durch Löschen der Dateien wie /var/spool/capisuite/users/<user>/sendq/*.txt und ~/*.sff.
+\fBb)\fR in capisuite: durch Löschen der Dateien wie /var/spool/capisuite/users/<user>/sendq/*.txt und ~/*.sff.
 In capisuite kann auch eine verwaiste Lock-Datei (/var/spool/capisuite/users/<user>/sendq/*.lock) gelöscht werden.
 .LP
-14) mit einer Befehlszeilenoption kann ein früher empfangenes Fax erneut in eine pdf-Datei umgewandelt werden.
+\fB14)\fR mit einer Befehlszeilenoption kann ein früher empfangenes Fax erneut in eine pdf-Datei umgewandelt werden.
 .br
 .SH DEINSTALLATION
 Wechseln Sie in einem Terminal in das Installationsverzeichnis (beim selben eingeloggten Benutzer: \fBcd ~/²DPROG²\fR, ansonsten wird es über \fB²DPROG² -info\fR angezeigt).
