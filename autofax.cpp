@@ -2605,10 +2605,9 @@ string paramcl::neuerdateiname(const string& qpfad)
 
 // wird aufgerufen von DateienHerricht
 // die frisch ins Warteverzeichnis verschobenen Dateien werden in spooltab eingetragen
-void paramcl::WVZinDatenbank(vector<fxfcl> *const fxvp)
+void paramcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 {
 	Log(violetts+Tx[T_WVZinDatenbank]+schwarz);
-	const size_t aktc=3; // mysql-connection, je nach thread
 	RS rins(My); 
 	RS zs(My);
 	string spoolid,udocid;
@@ -5549,7 +5548,7 @@ size_t paramcl::loescheallewartenden()
 	Log(blaus+Tx[T_loescheallewartenden]+schwarz);
 	const size_t aktc=0;
 	size_t erg=0;
-	svec allec, alled;
+	svec allec, alled, allew;
 	struct stat entryvz={0};
 	if (!lstat(cfaxusersqvz.c_str(),&entryvz)) {
 		if (findv==1) {
@@ -5592,8 +5591,9 @@ size_t paramcl::loescheallewartenden()
 			::Log(blaus+ltoan(++j)+schwarz+": "+alled[i]+blau+schwarz,1,oblog);
 		}
 	} // 			for(size_t i=0;i<alled.size();i++)
+
 	char ***cerg;
-	RS zl(My,"SELECT original,origvu FROM `"+spooltab+"` WHERE telnr=''",aktc,ZDB);
+	RS zl(My,"SELECT original,origvu FROM `"+spooltab+"`"/* WHERE telnr=''*/,aktc,ZDB);
 	while (cerg=zl.HolZeile(),cerg?*cerg:0) {
 		::Log(blaus+ltoan(++j)+schwarz+": '"+blau+*(*cerg+0)+schwarz+"'",1,oblog);
 		++erg;
@@ -6618,7 +6618,7 @@ void paramcl::wegfaxen()
 	geszahl=fxv.size();
 	Log(Tx[T_aus]+drots+zufaxenvz+schwarz+vtz+Tx[T_verarbeitete_PDF_Dateien]+drot+ltoan(geszahl)+schwarz);
 	// 3) in spooltab eintragen
-	WVZinDatenbank(&fxv);
+	WVZinDatenbank(&fxv,aktc);
 
 	vector<fsfcl> fsfv;
 	char ***cerg;

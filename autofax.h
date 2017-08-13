@@ -361,7 +361,7 @@ class paramcl // Programmparameter
   private:
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
     string neuerdateiname(const string& qpfad); // in wegfaxen
-    void WVZinDatenbank(vector<fxfcl> *const fxvp); // in wegfaxen
+    void WVZinDatenbank(vector<fxfcl> *const fxvp, size_t aktc); // in wegfaxen
     string getzielvz(const string& datei); // in bereinigevz
     int setzegcp(const string& name, string *wert);
     void pruefcvz();
