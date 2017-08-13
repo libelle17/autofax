@@ -1,36 +1,36 @@
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
-#endif
+#endif // _MSC_VER
 
 #ifndef kons_H_DRIN
 #define kons_H_DRIN
 #ifdef _WIN32
 #include <winsock2.h> // entfaellt bei mysql
 #include <io.h> // fuer isatty und _isatty
-#endif
+#endif // _WIN32
 
 #include <iostream> // fuer cout, cin, cerr, clog, #include <string> // string
 #ifdef _MSC_VER
 #include <string>
-#endif
+#endif // _MSC_VER
 
 //#define obfstream
 #ifdef obfstream
 // #include <fstream> // fstream
-#endif  
+#endif  // obfstream
 
 #ifdef linux
 #define vtz '/' // Verzeichnistrennzeichen
 #define vtzs "/" // Verzeichnistrennzeichenstring
-#elif __MINGW32__ || _MSC_VER
+#elif __MINGW32__ || _MSC_VER // linux
 #define vtz '\\' // Verzeichnistrennzeichen
 #define vtzs "\\" // Verzeichnistrennzeichen
-#endif
+#endif // linux elif __MINGW32__ || _MSC_VER
 
 #ifndef vector_incl
 #include <vector> // wird in Manjaro hier nochmal extra benötigt
 #define vector_incl
-#endif
+#endif // vector_incl
 
 using namespace std;
 extern const string& instvz; // in kons.cpp, z.B. /root/autofax
@@ -43,11 +43,11 @@ int Log(const string& text,const short screen=1,const short file=1,const bool ob
 #ifdef _MSC_VER
 #define fileno _fileno // sonst Warnung posix deprecated
 #define isatty _isatty // sonst Warnung posix deprecated
-#endif
+#endif // _MSC_VER
 
 #ifdef __MINGW32__
 #undef PATH_MAX
-#endif
+#endif // __MINGW32__
 
 #ifdef _WIN32
 #define PATH_MAX MAX_PATH
@@ -55,7 +55,7 @@ int Log(const string& text,const short screen=1,const short file=1,const bool ob
 #include <time.h> // fuer mktime und time in kuerzelogdatei
 #define lstat stat
 
-#elif linux
+#elif linux // _WIN32
 #include <string.h> // strchr, strcpy, strtok_r, strerror, memcmp, strcmp, strstr, strlen
 #include <errno.h> // errno, ENOENT
 #include <pwd.h>   // getuid, getpwuid
@@ -65,7 +65,7 @@ int Log(const string& text,const short screen=1,const short file=1,const bool ob
 // #include <stdlib.h>
 #include <dirent.h> // DIR, dirHandle, opendir, readdir, PATH_MAX
 #include <unistd.h> // dup2, close, STDIN_FILENO, gethostname
-#endif
+#endif // _WIN32 elif linux
 
 #ifndef _MSC_VER
 #include <stdio.h> // fuer fopen, perror, fgets, sscanf, fputs, fclose, stdout, fileno, stderr
@@ -75,7 +75,10 @@ int Log(const string& text,const short screen=1,const short file=1,const bool ob
 
 #include <sys/stat.h> // stat, lstat, S_IFMT, S_IFDIR ...
 // #include <boost/algorithm/string.hpp> // clock, numeric_limits
+#include <boost/locale.hpp> // fuer to_upper und to_lower
 // #include <limits>
+extern boost::locale::generator gen; // fuer to_upper, to_lower
+extern std::locale loc;
 
 typedef unsigned char uchar; // 1 Byte
 enum binaer:uchar {falsch,wahr};
@@ -89,7 +92,7 @@ extern const char *schwarz, *dgrau, *drot, *rot, *gruen, *hgruen, *braun, *gelb,
 extern const string drots,rots,schwarzs,blaus,dblaus,gelbs,tuerkiss,hgraus,violetts,gruens;
 #ifdef linux
 extern const char *_rot, *_hrot, *_schwarz, *_blau, *_gelb, *_tuerkis, *_hgrau;
-#endif
+#endif // linux
 #include <fstream> // kopiere
 #include <algorithm>    // std::transform
 #include <regex.h> // regex_t, regex, regcomp, regexec
@@ -102,9 +105,9 @@ extern const char *_rot, *_hrot, *_schwarz, *_blau, *_gelb, *_tuerkis, *_hgrau;
 #define mitset
 #ifdef mitset
 #include <set>
-#else
+#else // mitset
 #include <map>
-#endif
+#endif // mitset else
 #define B_Datei 1
 #define B_Verzn 2
 #define B_Chdev 4
@@ -132,9 +135,9 @@ extern uchar findv/*=3*/; // find-Version 1=system, 2=intern mit readdir, 3=inte
 class elem2;
 #ifdef mitset
 typedef set<elem2> el2set;
-#else
+#else // mitset
 typedef map<elem2,ull> el2set;
-#endif
+#endif // mitset else
 extern el2set::iterator it2;
 class elem3;
 extern set<elem3>::iterator it3;
@@ -459,7 +462,7 @@ template <> inline void Schluessel::hole < binaer > (binaer *var) { *var = (bina
 template <> inline void Schluessel::setze < char* > (char** var) { strncpy(val,*var,sizeof val-1);val[sizeof val-1]=0; }
 template <> inline void Schluessel::setze < const char* > (const char** var) { strncpy(val,*var,sizeof val-1);val[sizeof val-1]=0; }
 template <> inline void Schluessel::setze < string > (string *var) { strncpy(val,var->c_str(),sizeof val-1);val[sizeof val-1]=0;}
-#endif
+#endif // notcpp
 
 class cppSchluess {
   public:
@@ -550,9 +553,9 @@ string gethome();
 
 #ifdef _MSC_VER
 extern inline void wait();
-#else
+#else // _MSC_VER
 // #define wait();
-#endif
+#endif // _MSC_VER
 
 #ifdef _WIN32
 extern const char *drot, *rot, *schwarz, *blau, *gelb, *tuerkis, *hgrau;
@@ -584,7 +587,7 @@ struct color {
   WORD m_color;
 };
 
-#endif
+#endif // _WIN32
 class svec: public vector<std::string>
 {
   public:
@@ -700,10 +703,10 @@ int kuerzelogdatei(const char* logdatei,int obverb);
 // #define notwendig
 #ifdef notwendig
 void kopierm(const string *quelle, const string *ziel);
-#endif
+#endif // notwendig
 void aufSplit(vector<string> *tokens, const char* const text, char sep=' ',bool auchleer=1);
 void aufSplit(vector<string> *tokens, const string& text, char sep=' ',bool auchleer=1);
-void aufiSplit(vector<string> *tokens, const string& text, const char* sep,bool nichtmehrfach=1,int obverb=0,int oblog=0);
+void aufiSplit(vector<string> *tokens, const string& text, const string& sep,bool nichtmehrfach=1,int obverb=0,int oblog=0);
 void aufSplit(vector<string> *tokens, const string& text, char* sep, bool auchleer=1);
 size_t irfind(const string& wo, const string& was); // suche von hinten und ignoriere Gross- und Kleinschreibung
 void getstammext(const string *const ganz, string *stamm, string *exten);
@@ -711,7 +714,7 @@ void getstammext(const string *const ganz, string *stamm, string *exten);
 string XOR(const string& value, const string& key);
 #ifdef notcpp
 int Schschreib(const char *fname, Schluessel *conf, size_t csize);
-#endif
+#endif // notcpp
 int cppschreib(const string& fname, cppSchluess *conf, size_t csize);
 // int multicppschreib(const string& fname, cppSchluess **conf, size_t *csizes, size_t cszahl);
 int multischlschreib(const string& fname, schlArr *const *const confs, const size_t cszahl,const string& mpfad=nix);
@@ -747,11 +750,11 @@ int kopier(const string& quel, const string& ziel, int obverb=0, int oblog=0);
 #define obfstream
 #ifdef obfstream
 fstream*
-#else
+#else // obfstream
 FILE*
-#endif
+#endif // obfstream else
 oeffne(const string& datei, uchar art, uchar* erfolg,uchar faclbak=1,int obverb=0, int oblog=0);
-#endif
+#endif // falsch
 
 class linst_cl
 {
@@ -857,7 +860,7 @@ class find2cl: elem2
 	          time_t ab=0, time_t bis=0,int obicase=0,int nurexec=0,int obnoext=0);
 	void zuvec(svec *zu,uchar anteil=0);
 };
-#endif
+#endif // altfind
 
 #ifdef neufind
 #include <ftw.h>
@@ -919,7 +922,7 @@ class find3cl
 		           time_t _mab=0,time_t _mbis=0,int obicase=0,int nurexec=0,int obnoext=0);
 		void zuvec(svec *zu,uchar anteil=0);
 }; // class find3cl
-#endif
+#endif // neufind
 #if defined(altfind) && defined(neufind)
 void findfile(svec *qrueck,uchar findv,int obverb=0,int oblog=0,uchar anteil=0,
 		const string& wo=".",const string& muster=nix,long tiefe=-1,int _typbit=B_Alle,int _folge=Fol_Dat, 

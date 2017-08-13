@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "12.08.17" "Version 0.4522" "Manual-Seite für ²DPROG²"
+.TH man 1 "13.08.17" "Version 0.45316" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -196,7 +196,7 @@ und traegt sie in MariaDB-Datenbank '\fBautofax\fB' (Tabellen: `\fBouta\fB`,`\fB
 \fB -fd, --finde <zahl>\fR: Version 1,2 oder 3 -Dateisuche (variable Performanceunterschiede) anstatt '\fB3\fR'
 .br
 \fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB2\fR'
-.SH FUNKTIONSWEISE
+static_cast<unsigned char>(tolower(static_cast<char>('Ä')) ) = �äUßERST.SH FUNKTIONSWEISE
 .LP
 1) Die aktuelle Hardware wird überprüft:
 .br

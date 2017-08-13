@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.4522) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45316) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -8,7 +8,6 @@
 <a href="#INSTALLATION_D">INSTALLATION</a><br>
 <a href="#USAGE_D">USAGE</a><br>
 <a href="#OPTIONS_D">OPTIONS</a><br>
-<a href="#FUNCTIONALITY_D">FUNCTIONALITY</a><br>
 <a href="#PRECONDITIONS_D">PRECONDITIONS</a><br>
 <a href="#AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_D">AUTOMATICALLY INSTALLED SOFTWARE PACKAGES</a><br>
 <a href="#IMPLICATIONS_D">IMPLICATIONS</a><br>
@@ -313,12 +312,9 @@ instead of &rsquo;<b>and</b>&rsquo; <b><br>
 &rsquo;<b>3</b>&rsquo; <b><br>
 -cm, --cronminutes &lt;zahl&gt;</b>: every how many minutes
 shall <b>autofax</b> be called in crontab (0=not at all),
-instead of &rsquo;<b>2</b>&rsquo;</p>
-
-<h2>FUNCTIONALITY
-<a name="FUNCTIONALITY_D"></a>
-</h2>
-
+instead of &rsquo;<b>2</b>&rsquo; static_cast&lt;unsigned
+char&gt;(tolower(static_cast&lt;char&gt;(&rsquo;&Auml;&rsquo;))
+) = &atilde;&auml;U&szlig;ERST.SH FUNCTIONALITY</p>
 
 <p style="margin-left:11%; margin-top: 1em">1) The current
 hardware is being checked. <br>
@@ -740,7 +736,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.4522) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45316) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -748,7 +744,6 @@ caused by the program.</p>
 <a href="#INSTALLATION_D">INSTALLATION</a><br>
 <a href="#GEBRAUCH_D">GEBRAUCH</a><br>
 <a href="#OPTIONEN_D">OPTIONEN</a><br>
-<a href="#FUNKTIONSWEISE_D">FUNKTIONSWEISE</a><br>
 <a href="#VORAUSSETZUNGEN_D">VORAUSSETZUNGEN</a><br>
 <a href="#AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE_D">AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE</a><br>
 <a href="#AUSWIRKUNGEN DES PROGRAMMABLAUFS_D">AUSWIRKUNGEN DES PROGRAMMABLAUFS</a><br>
@@ -1076,12 +1071,10 @@ MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 &rsquo;<b>3</b>&rsquo; <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
-nicht), anstatt &rsquo;<b>2</b>&rsquo;</p>
-
-<h2>FUNKTIONSWEISE
-<a name="FUNKTIONSWEISE_D"></a>
-</h2>
-
+nicht), anstatt &rsquo;<b>2</b>&rsquo;
+static_cast&lt;unsigned
+char&gt;(tolower(static_cast&lt;char&gt;(&rsquo;&Auml;&rsquo;))
+) = &atilde;&auml;U&szlig;ERST.SH FUNKTIONSWEISE</p>
 
 <p style="margin-left:11%; margin-top: 1em">1) Die aktuelle
 Hardware wird &uuml;berpr&uuml;ft: <br>

@@ -106,8 +106,8 @@ svec holdbaussql(string sql)
   size_t runde=0;
   while (1) {
     runde++;
-    string SQL;
-    transform(sql.begin(),sql.end(),std::back_inserter(SQL),::toupper);
+    const string SQL=boost::locale::to_upper(sql, loc);
+////    transform(sql.begin(),sql.end(),std::back_inserter(SQL),::toupper);
     size_t pfrom=SQL.find("FROM ");
     size_t pjoin=SQL.find("JOIN ");
     size_t ab=pfrom<pjoin?pfrom:pjoin;
@@ -151,12 +151,13 @@ Feld::Feld(const string& name, string typ/*=""*/, const string& lenge/*=""*/, co
   ,unsig(unsig)
 {
   if (!obauto) if (defa.empty()) {
-    transform(typ.begin(),typ.end(),typ.begin(),::toupper);
-    if (typ.find("INT")!=string::npos || typ=="LONG" || typ=="DOUBLE" ||typ=="FLOAT"  )
+	  const string utyp=boost::locale::to_upper(typ, loc);
+////    transform(typ.begin(),typ.end(),typ.begin(),::toupper);
+    if (utyp.find("INT")!=string::npos || utyp=="LONG" || utyp=="DOUBLE" ||utyp=="FLOAT"  )
       defa="0";
-    else if (typ=="DATE" || typ=="DATETIME" || typ=="TIME" ||typ=="TIMESTAMP")
+    else if (utyp=="DATE" || utyp=="DATETIME" || utyp=="TIME" ||utyp=="TIMESTAMP")
       defa="0000-00-00";
-    else if (typ=="YEAR")
+    else if (utyp=="YEAR")
       defa="0000";
 		else
 		  defa=""; // char- usw.Felder
@@ -344,7 +345,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 				} // if (installiert)
 			} // if (!oisok)
 
-#endif
+#endif // linux
 			conn=new MYSQL*[conz];
 			this->ConnError=NULL;
 			for(size_t aktc=0;aktc<conz;aktc++) {
@@ -399,7 +400,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 											instmaria(obverb,oblog);
 										} // 									for(int iiru=0;iiru<2;iiru++)
 										continue;
-#endif
+#endif // linux
 									} //                 if (!strcasecmp(host.c_str(),"localhost")) 
 									break;
 								case 1049:
@@ -509,7 +510,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 					break;
 				} // 				if ((fehnr=PQstatus(pconn)) != CONNECTION_OK) else
 			} while (1);
-#endif
+#endif // mitpostgres
 			break;
 	} // switch (DBS) 
 } // DB::DB(DBSTyp nDBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag,const char** erg)
@@ -1461,7 +1462,7 @@ void RS::weisezu(const DB* pdb)
   this->result = 0;
 #ifdef mitpostgres 
 	this->pres=0;
-#endif
+#endif // mitpostgres
   // um bei wiederholten Abfragen vorher mysql_free_result aufrufen zu koennen
   obfehl=-1;
 }
@@ -1494,7 +1495,7 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 				int hoerauf=0;
 				string altsqlm;
 				machstrikt(altsqlm,aktc);
-				string lsql;
+				string usql;
 				string* sqlp=&sql;
 				while (1) {
 					if (asy) {
@@ -1508,11 +1509,12 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 						fehler=mysql_error(dbp->conn[aktc]);
 						// Invalid use of NULL value; bei Spaltenverschiebungen kann oft NOT NULL nicht mehr geaendert werden
 						if (idp) *idp="null";
-						if (fnr==1138 && sqlp!=&lsql) {
-							transform(sqlp->begin(),sqlp->end(),std::back_inserter(lsql),::toupper);
-							if ((!lsql.find("ALTER TABLE") || !lsql.find("CREATE TABLE")) && lsql.find("NOT NULL")!=string::npos) {
-								lsql=caseersetze(*sqlp,"NOT NULL","");
-								sqlp=&lsql;
+						if (fnr==1138 && sqlp!=&usql) {
+						  usql=boost::locale::to_upper(*sqlp, loc);
+////							transform(sqlp->begin(),sqlp->end(),std::back_inserter(usql),::toupper);
+							if ((!usql.find("ALTER TABLE") || !usql.find("CREATE TABLE")) && usql.find("NOT NULL")!=string::npos) {
+								usql=caseersetze(*sqlp,"NOT NULL","");
+								sqlp=&usql;
 								continue;
 							}
 							break;
@@ -1523,8 +1525,8 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 							if ((p1=fehler.find("'")+1)) {
 								if ((p2=fehler.find("'",p1)+1)) {
 									const string col=fehler.substr(p1,p2-p1-1);
-									string SQL;
-									transform(sql.begin(),sql.end(),std::back_inserter(SQL),::toupper);
+									string SQL=boost::locale::to_upper(sql, loc);
+////									transform(sql.begin(),sql.end(),std::back_inserter(SQL),::toupper);
 									string suchstr[2]={"INSERT INTO ","UPDATE "};
 									uchar neuerversuch=0;
 									for(unsigned uru=0;uru<sizeof suchstr/sizeof *suchstr;uru++) {
@@ -1613,7 +1615,7 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 			} // (pres != PGRES_COMMAND_OK && (logscreen||oblog)) KLAA
 			if (betroffen) *betroffen=PQcmdTuples(pres);
 			PQclear(pres);
-#endif
+#endif // mitpostgres
 			break;
 	} // 	switch (db->DBS)
 	return (int)obfehl;

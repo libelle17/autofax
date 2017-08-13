@@ -1,6 +1,6 @@
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
-#endif
+#endif // _MSC_VER
 //#pragma once
 // Visual c++:
 // Project->Properties->C++->general->additional include directories
@@ -19,7 +19,7 @@
 //#define mitpostgres
 #ifdef mitpostgres 
 #include <libpq-fe.h> // PGconn
-#endif
+#endif // mitpostgres
 // G.Schade 26.1.14: Den Rest aus der Datei braucht man scheinbar nicht; sonst Konflikt mit bitset unter -std=gnu++11
 #ifndef HAVE_UCHAR
 typedef unsigned char	uchar;	/* Short for unsigned char */
@@ -27,15 +27,15 @@ typedef unsigned char	uchar;	/* Short for unsigned char */
 // #include "/usr/include/mysql/my_global.h"
 // #include <my_global.h> 
 using namespace std;
-#ifdef linux
+// #ifdef linux
 // #include <string.h>
-#endif
+// #endif // linux
 // Project->Properties->Linker->general->(mitte)->additional library directories:
 // C:\Programme\MySQL\Connector C 6.0.2\lib\opt
 // weiterhin: libmysql.dll ins Verzeichnis der Exe stellen
-#ifdef _MSC_VER
+// #ifdef _MSC_VER
 //#pragma comment(lib, "libmysql.lib")
-#endif
+// #endif // MSC_VER
 extern class cuscl cus;
 
 enum Txdb_ 
@@ -278,7 +278,7 @@ class DB
 		linst_cl *linstp=0;
 #ifdef mitpostgres 
 		PGconn *pconn,*pmconn;
-#endif
+#endif // mitpostgres
     DBSTyp DBS;
     char dnb; // delimiter name begin
     char dne; // delimiter name end
@@ -359,7 +359,7 @@ class RS
     MYSQL_RES *result;
 #ifdef mitpostgres 
 		PGresult *pres;
-#endif
+#endif // mitpostgres
 		unsigned long *lengths;
     MYSQL_ROW row;
     unsigned int num_fields;

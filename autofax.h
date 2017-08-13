@@ -302,10 +302,10 @@ class paramcl // Programmparameter
 #ifdef _WIN32
     char cpt[255];
     DWORD dcpt;
-#elif linux
+#elif linux // _WIN32
     char cpt[MAXHOSTNAMELEN]; 
     size_t cptlen;
-#endif
+#endif // _WIN32 else
     string host="localhost";  // fuer MySQL/MariaDB
     string logdname; // Logdatei-Name ohne Pfad <DPROG>.log
     string logvz; // nur das Verzeichnis /var/log
@@ -410,15 +410,15 @@ class paramcl // Programmparameter
 		void MusterVorgb();
     #ifdef DPROGcpp
     void VorgbSpeziell() __attribute__((weak)); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vgb.cpp)
-    #else
+    #else // DPROGcpp
     void VorgbSpeziell(); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vgb.cpp)
-    #endif
+    #endif // DPROGcpp else
     void lieskonfein();
 		#ifdef immerwart
 		void lieszaehlerein(ulong *arp=0,ulong *tap=0,ulong *map=0,struct tm *lap=0, string *obempfp=0,string *obgesap=0,const uchar obstumm=0);
-		#else
+		#else // immerwart
 		void lieszaehlerein(ulong *arp=0,ulong *tap=0,ulong *map=0,struct tm *lap=0, const uchar obstumm=0);
-		#endif
+		#endif // immerwart
 		int  getcommandline();
     void rueckfragen();
     int setzhylavz(); // sucht das Hylaverzeichnis und setzt varsphylavz darauf, return 0, wenn nicht gefunden dann varsphylavz="", return 1

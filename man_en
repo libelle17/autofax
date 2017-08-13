@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "12.08.17" "Version 0.4522" "\fB²DPROG²\fR man page"
+.TH man 1 "13.08.17" "Version 0.45316" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -194,7 +194,7 @@ and logs this in the the mariadb database '\fBautofax\fB' (tables: `\fBouta\fB`,
 \fB -fd, --find <zahl>\fR: version 1,2 or 3 of filefind (variable performance differences instead of '\fB3\fR'
 .br
 \fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
-.SH FUNCTIONALITY
+static_cast<unsigned char>(tolower(static_cast<char>('Ä')) ) = �äUßERST.SH FUNCTIONALITY
 .LP
 1) The current hardware is being checked.
 .br

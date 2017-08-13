@@ -36,7 +36,7 @@ ICH::=$(firstword $(MAKEFILE_LIST))
 SRCS::=$(wildcard *.cpp)
 OBJ::=$(SRCS:.cpp=.o)
 CFLAGSr::=-c -Wall `mysql_config --cflags`
-LDFLAGSr::=`mysql_config --libs` -ltiff -lboost_iostreams
+LDFLAGSr::=`mysql_config --libs` -ltiff -lboost_iostreams -lboost_locale
 ifdef mitpg
  CFLAGS::=$(CFLAGSr) -I/usr/include/pgsql -Dmitpostgres
  LDFLAGS::=$(LDFLAGSr) -lpq

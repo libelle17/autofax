@@ -28,7 +28,7 @@ const char *_drot=drot, *_rot=rot, *_schwarz=schwarz, *_blau=blau, *_gelb=gelb, 
 //// char logdatei[PATH_MAX+1]="/DATA/down/log_termine.txt";
 #define _access access
 #include <sys/time.h>  // für gettimeofday()
-#elif defined _WIN32
+#elif defined _WIN32 // linux
 const char *drot="", *rot="", *schwarz="", *blau="", *gelb="", *tuerkis="", *hgrau="";
 ////ffen: bei den Farben muss unterschieden werden zwischen cout (-> _drot) und 
 printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTextAttribute-Aufrufe ersetzen)
@@ -40,7 +40,9 @@ printf(drot, unter windows escape-Sequenzen rausfielselen und durch SetConsoleTe
     return i;
   }
 ////har logdatei[PATH_MAX+1]="v:\\log_termine.txt";
-#endif
+#endif // linux elif defined _WIN32
+boost::locale::generator gen;
+std::locale loc = gen("en_US.UTF-8");
 
 // z.B. "/root/autofax"
 const string& instvz=
@@ -418,6 +420,7 @@ return erg;
 } // ersetze(char *u, const char* alt, const char* neu)
  */
 
+// geht nicht fuer Umlaute
 string caseersetze(const string& u, const char* alt, const char* neu) 
 {
   string erg;
@@ -702,12 +705,12 @@ mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_b
 #ifdef falsch
 #ifdef obfstream
 fstream*
-#else
+#else // obfstream
 FILE*
-#endif
+#endif // obfstream 
 oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog/*=0*/,uchar faclbak/*=1*/)
 {
-#ifdef obfstream	
+#ifdef obfstream
 	ios_base::openmode mode;
 	switch (art) {
 		case 0: mode=ios_base::in; break;
@@ -720,7 +723,7 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 		sdat = new fstream(datei,mode);
 		if (sdat) if (!sdat->is_open()) sdat=0;
 		if (sdat) {
-#else
+#else // obfstream
 			const char *mode;
 			switch (art) {
 				case 0: mode="r"; break;
@@ -731,7 +734,7 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 			FILE *sdat;
 			for(int iru=0;iru<2;iru++) {
 				if ((sdat= fopen(datei.c_str(),mode))) {
-#endif
+#endif // obfstream else
 					*erfolg=1;
 					setfaclggf(datei,obverb,oblog,/*obunter=*/falsch,/*mod=*/art?6:4,/*obimmer=*/0,faclbak);
 					break;
@@ -744,14 +747,14 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 			} // oeffne
 			return sdat;
 		} // 		if (sdat)
-#endif	
+#endif	 // falsch
 
 
 int kuerzelogdatei(const char* logdatei,int obverb)
 {
 #ifdef false
 	uchar erfolg=0;
-#endif
+#endif // false
 	//// zutun: nicht erst in Vektor einlesen, sondern gleich in die tmp-Datei schreiben 10.6.12
 
 	////	vector<string> Zeilen;   //Der Vektor Zeilen enthält String-Elemente
@@ -799,7 +802,7 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 		}
 		while (logf->getline (Zeile, sizeof(Zeile))) {
 			////		Zeilen.push_back(Zeile); //hängt einfach den Inhalt der Zeile als Vektorelement an das Ende des Vektors
-#else	
+#else	 // obfstream
 			FILE *outfile=oeffne(ofil,2,&erfolg);
 			if (!erfolg) {
 				perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_mit_fopen_zum_Schreiben_oeffnen]).c_str());
@@ -812,8 +815,8 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 			}
 			while (fgets(Zeile, sizeof Zeile, logf)) {
 				////	 Zeilen.push_back(Zeile);
-#endif	
-#endif	
+#endif	 // obfstream else
+#endif	 // false
 				if (!abhier) {
 					tm *atm = new tm; // int aktz;
 					////	for(aktz=Zeilen.size()-1;aktz>=0;aktz--) KLA
@@ -874,15 +877,15 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 	} // 	while (logf.getline (Zeile, sizeof(Zeile)))
 	logf->close();
 	outfile->close();
-#else
+#else // obfstream
 	fputs(Zeile,outfile);
 	////          fputs("\n",outfile);
 } // (abhier)
 } // while (fgets(Zeile
 fclose(logf);
 fclose(outfile);
-#endif
-#endif
+#endif // obfstream else
+#endif // false
 if (abhier) {
 	remove(logdatei);
 	rename(ofil.c_str(),logdatei);
@@ -937,17 +940,17 @@ int Log(const short screen,const short file, const bool oberr,const short klobve
 		pthread_mutex_unlock(&printf_mutex);
 		//<<"groe: "<<groe<<endl;
 		char *buf=new char[groe];
-#else
+#else // vagenau
 		int groe=512; 
 		char buf[groe];
-#endif
+#endif // vagenau	else
 		pthread_mutex_lock(&printf_mutex);
 		vsnprintf(buf,groe,format,args);
 		pthread_mutex_unlock(&printf_mutex);
 		erg=Log(buf,screen,file);
-#ifdef vagenau		
+#ifdef vagenau
 		delete buf;
-#endif
+#endif // vagenau
 		va_end(args);
 	} // 	if (screen||file)
 	return erg;
@@ -960,7 +963,7 @@ int Log(const string& text, const short screen/*=1*/, const short file/*=1*/, co
 	const bool naechstezeile=0;
 #ifdef false
 	uchar erfolg=0;
-#endif  
+#endif   // false
   // screen=0 = schreibt nicht auf den Bildschirm, 1 = schreibt, -1 = schreibt ohne Zeilenwechsel, -2 = schreibt bleibend ohne Zeilenwechsel
   //// <<"Log: "<<text<<", screen: "<<screen<<", file: "<<file<<endl;
   if (file || screen) {
@@ -1014,7 +1017,7 @@ int Log(const string& text, const short screen/*=1*/, const short file/*=1*/, co
           *logf<<zwi<<endl; 
           logf->close();
         }
-#else	
+#else	 // obfstream
         FILE *logf=oeffne(logdt,2,&erfolg);
         if (!erfolg) {
           ////perror((string("\nLog: Kann Datei '")+logdt+"' nicht mit fopen zum Anhaengen oeffnen.").c_str()); // ergebnisgleich wie:
@@ -1025,8 +1028,8 @@ int Log(const string& text, const short screen/*=1*/, const short file/*=1*/, co
           fputs("\n",logf);
           fclose(logf);
         } // if (!erolg) else
-#endif
-#endif
+#endif // obfstream else
+#endif // false
 
       } // if (!logdt || !*logdt) _gKLA_ _gKLZ_ else _gKLA_
       if (oberr) {
@@ -1057,7 +1060,7 @@ inline void wait ()
   // cin.get() liefert dann das erste Zeichen aus dem Puffer zurück, welches wir aber ignorieren (interessiert uns ja nicht)
   cin.get();
 }  // inline void wait () 
-#endif
+#endif // _MSC_VER
 
 // braucht nur 1/300 von FindStringInBuffer
 long cmpmem( char* feld, const char* search, int len_feld) //// , int len_search
@@ -1194,7 +1197,7 @@ void kopierm(const string *quelle, const string *ziel)
   mdatei fileOut(ziel->c_str(),ios::out | ios::trunc | ios::binary,0);
   fileOut<<fileIn.rdbuf();
 } // void kopierm(const string *quelle, const string *ziel)
-#endif
+#endif // notwendig
 
 // von http://chris-sharpe.blogspot.de/2013/05/better-than-systemtouch.html
 int touch(const string& pfad,int obverb/*=0*/,int oblog/*=0*/)
@@ -1256,16 +1259,18 @@ void aufSplit(vector<string> *tokens, const string& text, char* sep, bool auchle
 		tokens->push_back(text.substr(start));
 } // void aufSplit(vector<string> *tokens, const string& text, char* sep,bool auchleer/*=1*/)
 
-void aufiSplit(vector<string> *tokens, const string& text, const char* sep,bool nichtmehrfach/*=1*/,int obverb/*=0*/,int oblog/*=0*/) 
+void aufiSplit(vector<string> *tokens, const string& text, const string& sep,bool nichtmehrfach/*=1*/,int obverb/*=0*/,int oblog/*=0*/) 
 {
-	size_t start=0, end=0,len=strlen(sep),k=0,l2;
-	char* usep = new char[len];
+	size_t start=0, end=0,k=0,l2;
 	if (obverb)
 		::Log(string(Txk[T_trenne])+"'"+blaus+text+schwarz+"'"+Txk[T_bei]+"'"+blau+sep+schwarz+"':",obverb,oblog);
-	strcpy(usep,sep);
-	for (char *p=usep ; *p; ++p) *p = toupper(*p);
-	string utext;
-	transform(text.begin(),text.end(),std::back_inserter(utext),::toupper);
+//	for (char *p=(char*)sep.c_str() ; *p; ++p) *p = toupper(*p);
+	string utext,usep;
+////	transform(text.begin(),text.end(),std::back_inserter(utext),::toupper);
+////	transform(sep.begin(),sep.end(),std::back_inserter(usep),::toupper);
+	utext=boost::locale::to_upper(text, loc);
+	usep=boost::locale::to_upper(sep, loc);
+
 	tokens->clear();
 	while (1) {
 		end=utext.find(usep,start);
@@ -1279,18 +1284,19 @@ void aufiSplit(vector<string> *tokens, const string& text, const char* sep,bool 
 				break;
 			} // 		 if (end==string::npos)
 		} // 	 if (l2==string::npos || nichtmehrfach || l2)
-		start=end+len;
+		start=end+usep.length();
 	} // 	while (1)
-	delete usep;
-} // void aufiSplit(vector<string> *tokens, const string& text, const char* sep,bool nichtmehrfach) 
+} // void aufiSplit(vector<string> *tokens, const string& text, const string sep,bool nichtmehrfach/*=1*/,int obverb/*=0*/,int oblog/*=0*/) 
 
 // suche in einem String von hinten ohne Groß- und Klein-Unterscheidung
 size_t irfind(const string& wo, const string& was)
 {
-	string wou, wasu;
-	transform(wo.begin(),wo.end(),std::back_inserter(wou),::toupper);
-	transform(was.begin(),was.end(),std::back_inserter(wasu),::toupper);
-	return wou.rfind(wasu);
+	string uwo, uwas;
+////	transform(wo.begin(),wo.end(),std::back_inserter(wou),::toupper);
+////	transform(was.begin(),was.end(),std::back_inserter(wasu),::toupper);
+	uwo=boost::locale::to_upper(wo, loc);
+	uwas=boost::locale::to_upper(was, loc);
+	return uwo.rfind(uwas);
 } // size_t irfind(const string& wo, const string& was)
 
 // Anfuehrungszeichen weg
@@ -1933,7 +1939,7 @@ int Schschreib(const char *fname, Schluessel *conf, size_t csize)
 {
 #ifdef false
   uchar erfolg=0;
-#endif
+#endif // false
   mdatei f(fname,ios::out);
   if (!f.is_open()) { return 1; }
   for(size_t i=0;i<csize;i++) {
@@ -1946,7 +1952,7 @@ int Schschreib(const char *fname, Schluessel *conf, size_t csize)
   for(size_t i=0;i<csize;i++) {
     *f<<conf[i].key<<" = \""<<conf[i].val<<"\""<<endl;
   }
-#else
+#else // obfstream 
   FILE *f=oeffne(fname,3,&erfolg);
   if (!erfolg) return 1;
   for (size_t i = 0;i<csize;i++) {
@@ -1955,11 +1961,11 @@ int Schschreib(const char *fname, Schluessel *conf, size_t csize)
 		pthread_mutex_unlock(&printf_mutex);
   }
   fclose(f);
-#endif
-#endif	
+#endif // obfstream else
+#endif	 // false
   return 0;
 } //// int Schschreib(const char *fname, Schluessel *conf, size_t csize)
-#endif
+#endif // notcpp
 
 // Dateiname ohne Pfad
 std::string base_name(const std::string& path)
@@ -2030,7 +2036,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 	// #define systemrueckprofiler
 #ifdef systemrueckprofiler
 	perfcl prf("systemrueck");
-#endif
+#endif // systemrueckprofiler
 	if (rueck) {
     if (FILE* pipe = popen(hcmd.c_str(), "r")) {
 		/*//
@@ -4093,7 +4099,7 @@ void find2cl::zuvec(svec *zu,uchar anteil/*=0*/)
 			zu->push_back(jt->pfad);
 	} // 	for(set<elem2>::iterator jt=ergp->begin();jt!=ergp->end();jt++)
 } // void find2cl::zuvec(svec *zu,uchar anteil/*=0*/)
-#endif
+#endif // altfind
 
 #ifdef neufind
 const bool elem3::operator<(const elem3& el) const {return (this->pfad<el.pfad);}
@@ -4287,7 +4293,7 @@ void find3cl::zuvec(svec *zu,uchar anteil/*=0*/)
 			zu->push_back(jt->pfad);
 	} // 	for(set<elem3>::iterator jt=erg.begin();jt!=erg.end();jt++)
 } // void find3cl::zuvec(svec *zu,uchar anteil/*=0*/)
-#endif
+#endif // neufind
 
 #if defined(altfind) && defined(neufind)
 void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar anteil/*=0*/,
@@ -4311,7 +4317,7 @@ void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar a
 		f.zuvec(qrueckp,anteil);
 	} // 	if (findv==2) else if (findv==3)
 } // void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar anteil/*=0* ...
-#endif
+#endif // #if defined(altfind) && defined(neufind)
 
 // 1= Dateien unterschiedlich, 0 = gleich; obzeit => vergleiche auch die letzte Änderungszeit
 int dateivgl(const string& d1, const string& d2,uchar obzeit/*=0*/)

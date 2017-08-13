@@ -19,7 +19,6 @@
 // #include <fstream> // jetzt in kons.h
 // #include <sstream>
 // #include <dirent.h> // DIR, dirent, opendir, readdir, PATH_MAX
-// #include <boost/algorithm/string.hpp> // clock // jetzt in kons.h
 //// #include "vmime/vmime.hpp"
 //// #include "vmime/platforms/posix/posixHandler.hpp"
 #include "kons.h"
@@ -158,6 +157,7 @@ enum T_
 	T_ErstelledurchKopieren,
 	T_FehlerbeimUmbenennen,
 	T_ErstelledurchBenennen,
+	T_Bearbeite,
 	T_abgebrochen,
 	T_FehlerbeimUmbenennenbei,
 	T_aus,
@@ -809,6 +809,10 @@ enum T_
 	T_wurden_in_Unterverzeichnisse_verschoben,
 	T_kommaFaxerfolg,
 	T_Quelle_und_Ziel_gleich,
+	T_Faxnummer_zu,
+	T_gefunden_dp,
+	T_Name_zu,
+	T_Anfangsteil,
 	T_MAX
 };
 
@@ -920,6 +924,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Fehler beim Umbenennen!","Error while renaming!"},
 	// T_ErstelledurchBenennen
 	{"Erstelle durch Benennen: ","Providing by naming: "},
+	// T_Bearbeite
+	{"Bearbeite: ","Processing: "},
 	// T_abgebrochen
 	{"abgebrochen! ","aborted! "},
 	// T_FehlerbeimUmbenennenbei
@@ -2258,6 +2264,14 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{", Faxerfolg: ",", fax success: "},
 	// T_Quelle_und_Ziel_gleich
 	{", Quelle und Ziel gleich",", source and target identical"},
+	// T_Faxnummer_zu
+	{"Faxnummer zu ","Fax number of "},
+	// T_gefunden_dp
+	{" gefunden: "," found: "},
+	// T_Name_zu
+	{"Name zu ","Name of "},
+	// T_Anfangsteil
+	{"Anfangsteil: ","Beginning: "},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -2271,9 +2285,9 @@ extern class cuscl cus;
 using namespace std;
 #ifdef mitpostgres 
 const DBSTyp myDBS=Postgres;
-#else
+#else // mitpostgre
 const DBSTyp myDBS=MySQL;
-#endif
+#endif // mitpostgres else
 string tmpcron; // fuer crontab
 
 const char *logdt="/var/log/" DPROG "vorgabe.log";// darauf wird in kons.h verwiesen; muss dann auf lgp zeigen
@@ -2826,7 +2840,7 @@ void paramcl::pruefmodem()
 		////	modem=svz+modem;
 		//// <<rot<<svz+modem<<schwarz<<endl;
 		//}
-#else
+#else // mitdmesg
 		if (findv==1) {
 			systemrueck("sh -c 'cd "+svz+";find */device/driver'", obverb,oblog,&qrueck);
 		} else {
@@ -2843,7 +2857,7 @@ void paramcl::pruefmodem()
 			////			struct stat entrydriv={0};
 			////			if (!lstat((modem+"/device/driver").c_str(),&entrydriv)) KLA
 			////				const string tty=base_name(modem);
-#endif
+#endif // mitdmesg else
 			// ttyS0 erscheint auf Opensuse und Ubuntu konfiguriert, auch wenn kein Modem da ist
 			if (tty!="ttyS0") {
 				int terg;
@@ -3218,11 +3232,11 @@ void paramcl::VorgbAllg()
 	//// char lpszUsername[255]; DWORD dUsername = sizeof(lpszUsername); GetUserName(lpszUsername, &dUsername);
 	dcpt = sizeof(cpt);
 	GetComputerName(cpt,&dcpt);
-#elif linux
+#elif linux // WIN32
 	//// uid_t userId = getuid(); passwd* pw = getpwuid(userId); pw->pw_name<<endl;
 	cptlen = MAXHOSTNAMELEN;
 	gethostname(cpt, cptlen);
-#endif
+#endif // WIN32 else
 	cronminut="2";
 	////  pruefcvz(); // 1.7.16 zu frueh
 } // void paramcl::VorgbAllg
@@ -3409,19 +3423,19 @@ void paramcl::lieskonfein()
 void paramcl::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/, struct tm *lap/*=0*/,
 #ifdef immerwart
                                       string *obempfp/*=0*/,string *obgesap/*=0*/,
-#endif
+#endif // immerwart
 				                                                     										 const uchar obstumm/*=0*/)
 {
 	azaehlerdt=aktprogverz()+".zaehl";
 #ifdef immerwart
    const int z=6;
-#else
+#else // immerwart
    const int z=4;
-#endif
+#endif // immerwart else
 	zcnfA.init(z,"aufrufe","lDatum","tagesaufr","monatsaufr"
 #ifdef immerwart
                                                   	,"empfangen","gesandt"
-#endif
+#endif // immerwart
                                                                );
 	confdat zcd(azaehlerdt,&zcnfA,obstumm?0:obverb); // hier werden die Daten aus der Datei eingelesen
 	if (arp) if (zcnfA[0].gelesen) zcnfA[0].hole(arp);
@@ -3431,7 +3445,7 @@ void paramcl::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/,
 #ifdef immerwart
 	if (obempfp) if (zcnfA[4].gelesen) zcnfA[4].hole(obempfp);
 	if (obgesap) if (zcnfA[5].gelesen) zcnfA[5].hole(obgesap);
-#endif
+#endif // immerwart
 } // void paramcl::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/,ulong *lap/*=0*/)
 
 // wird aufgerufen in main vom Hauptthread
@@ -3456,7 +3470,7 @@ void paramcl::setzzaehler()
 #ifdef immerwart
 	zcnfA[4].setze(&nix);
 	zcnfA[5].setze(&nix);
-#endif
+#endif // immerwart
 } // void paramcl::setzzaehler()
 
 // wird aufgerufen in main vom Hauptthread
@@ -4513,7 +4527,7 @@ void paramcl::pruefcron()
 			if (!nochkeincron)
 				befehl+=";}'";
 		} // 			if (!cronzuplanen)
-#else
+#else // uebersichtlich
 		const string befehl=cronzuplanen?
 			(nochkeincron?"rm -f "+tmpcron+";":
 			 sudc+"bash -c 'grep \"\\*/"+cronminut+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr[0]+"/d\">"+tmpcron+"; ")+
@@ -4522,9 +4536,9 @@ void paramcl::pruefcron()
 			(nochkeincron?"":sudc+"bash -c 'grep \""+saufr[0]+"\" -q <(crontab -l)&&{ crontab -l | sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";"
 			 sudc+"crontab "+tmpcron+";}||true'")
 			;
-#endif      
+#endif   // uebersichtlich else
 		systemrueck(befehl,obverb,oblog);
-#endif
+#endif // stumm
 	} //   if (cronda) 
 
 	//  systemrueck(string("mv -i '")+mpfad+"' /root/bin",1,0);
@@ -5117,8 +5131,9 @@ void paramcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream
 			--fit;
 			fitnr++;
 			const string qdt=quvz+vtz+*fit;
-			string gross,sql;   
-			transform(fit->begin(),fit->end(),std::back_inserter(gross),::toupper);
+			string sql;   
+////			transform(fit->begin(),fit->end(),std::back_inserter(gross),::toupper);
+			const string gross=boost::locale::to_upper(*fit, loc);
 			if (gross.find(".PDF")==gross.length()-4) {
 				sql=sqlr+"original = '"+*fit+"'";
 			} else {
@@ -5949,7 +5964,7 @@ int paramcl::pruefocr()
 						} //    if (!kompilbase(was,endg))
 					} //       if (!linstp->doinst("python3-pip",obverb+1,oblog,"pip3"))
 				} //     if (!linstp->doggfinst("python-devel",obverb+1,oblog))
-#endif
+#endif // sonstige
 			} // if (linstp->ipr==dnf)
 		} //     		if (ocrzuinst)
 		string prog;
@@ -6095,6 +6110,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 	return erg; 
 } // int paramcl::zupdf(string von, string zielvz, int obocr)
 
+#ifdef alt
 // wird aufgerufen 2 x in wegfaxen
 void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio,
 		svec& toktxt,svec& toknr, svec& tokname,const string& anfxstr, const string& exten, vector<urfxcl> *urfxp)
@@ -6141,6 +6157,7 @@ void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio
 	} // for(unsigned j=0;j<toknr.size();j++) 
 	Log(violetts+Txk[T_Ende]+Tx[T_wandle]+schwarz+", udatei: "+blau+udatei+schwarz+", urname: "+blau+urname+schwarz+", iprio: "+ltoan(iprio));
 } // void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio, ...
+#endif // alt
 
 // zufaxenvz = zufaxen-Verzeichnis
 // 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
@@ -6172,52 +6189,140 @@ void paramcl::wegfaxen()
 
 	// 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 	for(uchar iprio=anfxstrvec.size()-1;; iprio--) {
-		// der regex-flavor posix_basic (ed) erlaubt keinen Abzug aus 
-		/*
-		const string mstr=anfxstrvec.at(iprio)+filter+".*"; // z.B. "an Fax +49"
-		if (mu[iprio].setzemuster(mstr,0)) {
-			::Log(Tx[T_Fehler_beim_Analysieren_des_Musters]+mstr,1,1);
-			continue;
-		} // 		if (mu[iprio].setzemuster(mstr,0))
-		*/
+		if (!anfxstrvec[iprio].empty()) {
+			// der regex-flavor posix_basic (ed) erlaubt keinen Abzug aus 
+			/*
+				 const string mstr=anfxstrvec.at(iprio)+filter+".*"; // z.B. "an Fax +49"
+				 if (mu[iprio].setzemuster(mstr,0)) {
+				 ::Log(Tx[T_Fehler_beim_Analysieren_des_Musters]+mstr,1,1);
+				 continue;
+				 } // 		if (mu[iprio].setzemuster(mstr,0))
+			 */
 
-		// der Reihe nach nach Dateien suchen, die das jeweilige Trennzeichen enthalten
-		for(size_t iakt=0;iakt<qrueck.size();iakt++) {
-			if (!qrueck.at(iakt).empty()) {
-					string stamm,exten,urname=qrueck.at(iakt);
+			// der Reihe nach nach Dateien suchen, die das jeweilige Trennzeichen enthalten
+			for(size_t iakt=0;iakt<qrueck.size();iakt++) {
+				if (!qrueck.at(iakt).empty()) {
+					string stamm,exten,vor,urname=qrueck[iakt];
 					getstammext(&(qrueck.at(iakt)),&stamm,&exten);
 					::Log(string(Tx[T_Endung])+tuerkis+exten+schwarz,obverb>1,oblog);
 					::Log(string(Tx[T_Stamm])+tuerkis+stamm+schwarz,obverb>1,oblog);
 					svec toktxt/*Spaltung an anstr*/, tokname/*Spaltung an undstr*/, toknr/*Spaltung an undstr*/;
-// 1) Aufteilung in 1a) alles vor dem ersten anFaxString und 1b) alles nach dem letzten anFaxString
-// 2) Aufteilung von 1a) in 2a) alles vor dem und 2b) alles nach dem letzten anString
-// 3) Aufteilung von 2b) an jedem undString
-// 4) Aufteilung von 1b) an jedem undString
-// 5) Zahl der Faxe = max(3,4)
-// 6) Suche fehlender Faxnummern
-					aufiSplit(&toktxt,stamm,anfxstrvec[iprio].c_str(),/*nichtmehrfach=*/0,obverb,oblog);
-					if (toktxt.size()>1) {
-						caus<<"anfxstrev["<<iprio<<"]: "<<anfxstrvec[iprio]<<endl;
-						size_t p1;
-						caus<<"anstr: "<<anstr<<endl;
-						if ((p1=irfind(toktxt[0],anstr))!=string::npos) {
-							string vor=toktxt[0].substr(0,p1), nach=toktxt[0].substr(p1+undstr.length());
-							caus<<violett<<"vor: "<<vor<<endl;
-							caus<<violett<<"nach: "<<nach<<endl;
-							aufiSplit(&tokname,nach,undstr.c_str(),/*nichtmehrfach=*/1,obverb,oblog);
-						}
-						aufiSplit(&toknr,toktxt[toktxt.size()-1],undstr.c_str(),/*nichtmehrfach=*/1,obverb,oblog);
-		obverb=1;
-		Log(rots+"2 toktxt:"); for(unsigned j=0;j<toktxt.size();j++) ::Log(1,0,0,0," %s%u%s) %s%s%s",blau,j,schwarz,blau,toktxt[j].c_str(),schwarz);
-		Log(rots+"2 toknr:"); for(unsigned j=0;j<toknr.size();j++) ::Log(1,0,0,0," %s%u%s) %s%s%s",blau,j,schwarz,blau,toknr[j].c_str(),schwarz);
-		Log(rots+"2 tokname:"); for(unsigned j=0;j<tokname.size();j++) ::Log(1,0,0,0, "%s%u%s) %s%s%s",blau,j,schwarz,blau,tokname[j].c_str(),schwarz);
-		obverb=0;
-					}
-			} // 			if (!qrueck.at(iakt) 
-		} // for(size_t iakt=0;iakt<qrueck.size();iakt++)
-		if (!iprio) break;
-	}
+					// 5) Zahl der Faxe = max(3,4)
+					// 6) Suche fehlender Faxnummern
 
+          // Datei ist faxbar, wenn mindestens eine Faxnr gefunden. 
+					// 1) Aufteilung in 1a) alles vor dem ersten anFaxString und 1b) alles nach dem letzten anFaxString
+					aufiSplit(&toktxt,stamm,anfxstrvec[iprio],/*nichtmehrfach=*/0,obverb,oblog);
+					if (toktxt.size()>1||(!iprio&&toktxt.size())) {
+						size_t p1;
+					// 2) Aufteilung von 1a) in 2a) alles vor dem und 2b) alles nach dem letzten anString
+						if ((p1=irfind(toktxt[0],anstr))!=string::npos) {
+							vor=toktxt[0].substr(0,p1);
+							string nach=toktxt[0].substr(p1+undstr.length());
+					// 3) Aufteilung von 2b) an jedem undString
+							aufiSplit(&tokname,nach,undstr,/*nichtmehrfach=*/1,obverb,oblog);
+						} else {
+					   vor=toktxt[0];
+						}
+						gtrim(&vor);
+						Log(Tx[T_Anfangsteil]+blaus+vor+schwarz);
+						if (toktxt.size()>1) { 
+					// 4) Aufteilung von 1b) an jedem undString
+							aufiSplit(&toknr,toktxt[toktxt.size()-1],undstr,/*nichtmehrfach=*/1,obverb,oblog);
+						}
+						for(size_t i=0;i<toknr.size();i++) {
+						 string neunr;
+						 for(size_t p=0;p<toknr[i].length();p++) {
+						  if (toknr[i][p]=='+') neunr+="00";
+							else if (strchr("0123456789",toknr[i][p])) neunr+=toknr[i][p];
+						 }
+						 toknr[i]=neunr;
+						}
+						for(size_t i=0;i<tokname.size();i++) gtrim(&tokname[i]);
+						for(size_t i=toknr.size();i<tokname.size();i++) toknr<<""; // Fehlende auffuellen
+						for(size_t i=tokname.size();i<toknr.size();i++) tokname<<""; // ... oder umgekehrt
+						for(size_t j=0;j<toknr.size();j++) {
+							if (toknr[j].empty() && !tokname[j].empty()) {
+									string tn; // Leerzeichen, auch in der Mitte, entfernen
+									for(string::iterator k=tokname[j].begin();k<tokname[j].end();k++) if (*k!=' ') tn+=*k;
+									char ***cerg;
+									RS rs(My,"SELECT COUNT(DISTINCT o.rcfax),COUNT(o.rcfax), o.rcfax FROM outa o "
+											"INNER JOIN "
+											"(SELECT eind FROM outa WHERE REPLACE(adressat,' ','') = '"+tn+"' AND erfolg=1 ORDER BY eind DESC LIMIT 7) o2 "
+											"ON o.eind=o2.eind "
+											"WHERE REPLACE(adressat,' ','') = '"+tn+"'",aktc,ZDB);
+									if (!rs.obfehl) {
+										while (cerg=rs.HolZeile(),cerg?*cerg:0) {
+											if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2)) { 
+												toknr[j]=*(*cerg+2);
+												::Log(Tx[T_Faxnummer_zu]+blaus+tokname[j]+schwarz+Tx[T_gefunden_dp]+gruen+*(*cerg+2)+schwarz,1,oblog);
+											} // 							if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2))
+										} // 						while (cerg=rs.HolZeile(),cerg?*cerg:0)
+									} // 					if (!rs.obfehl)
+							} else if (!toknr[j].empty() && tokname[j].empty()) {
+									char ***cerg;
+									RS rs(My,"SELECT COUNT(DISTINCT o.adressat),COUNT(o.adressat), o.adressat FROM outa o "
+											"INNER JOIN "
+											"(SELECT eind FROM outa WHERE REPLACE(REPLACE(rcfax,' ',''),'+','00')='"+stdfaxnr(toknr[j])+"' "
+											"   AND erfolg=1 AND ADRESSAT<>'' ORDER BY eind DESC LIMIT 7) o2 "
+											"ON o.eind=o2.eind "
+											"WHERE REPLACE(REPLACE(rcfax,' ',''),'+','00') = '"+stdfaxnr(toknr[j])+"'",aktc,ZDB);
+									if (!rs.obfehl) {
+										while (cerg=rs.HolZeile(),cerg?*cerg:0) {
+											if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2)) { 
+												tokname[j]=*(*cerg+2);
+												::Log(Tx[T_Name_zu]+blaus+toknr[j]+schwarz+Tx[T_gefunden_dp]+gruen+*(*cerg+2)+schwarz,1,oblog);
+											} // 							if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2))
+										} // 						while (cerg=rs.HolZeile(),cerg?*cerg:0)
+									} // 					if (!rs.obfehl)
+							} // 							if (toknr[j].empty() && !tokname[j].empty()) elseif umgekehrt
+						} // 						for(size_t j=0;j<toknr.size();j++)
+						::Log(Tx[T_Bearbeite]+rots+qrueck[iakt]+schwarz,1,oblog);
+						Log(rots+"toktxt:"); for(uint j=0;j<toktxt.size();j++) ::Log(1,0,0,0," %s%u%s) %s%s%s",blau,j,schwarz,blau,toktxt[j].c_str(),schwarz);
+						Log(rots+"toknr:"); for(uint j=0;j<toknr.size();j++) ::Log(1,0,0,0," %s%u%s) %s%s%s",blau,j,schwarz,blau,toknr[j].c_str(),schwarz);
+						Log(rots+"tokname:"); for(uint j=0;j<tokname.size();j++) ::Log(1,0,0,0, "%s%u%s) %s%s%s",blau,j,schwarz,blau,tokname[j].c_str(),schwarz);
+						if (toknr.size()) {
+              string benenn;
+							for(unsigned j=0;j<toknr.size();j++) { 
+								if (!toknr[j].empty()) {
+									string kopier,*zielp;
+									if (benenn.empty()) zielp=&benenn; else zielp=&kopier;
+									*zielp=vor+(tokname[j].empty()?" ":anstr+tokname[j]+" ")+anfxstrvec[iprio]+" "+toknr[j]+'.'+exten;
+									::Log("toknr["+blaus+ltoan(j)+"]:"+tuerkis+toknr[j]+schwarz,(obverb>0?obverb-1:obverb),oblog);
+									uint kfehler=0;
+									// die erste Zieldatei
+									if (zielp==&benenn) {
+										if (qrueck[iakt]!=benenn) {
+											uint vfehler=0;
+											dorename((qrueck[iakt]),benenn,cuser,&vfehler,/*schonda*/!dateivgl(qrueck[iakt],benenn),obverb,oblog);
+											if (vfehler) {
+												::Log(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz+"("+qrueck[iakt]+" -> "+benenn+")",1,1);
+												continue;
+											}
+											::Log(Tx[T_ErstelledurchBenennen]+rots+benenn+schwarz,1,oblog);
+										} // if (qrueck[iakt]!=tmp) 
+
+										// alle weiteren
+									} else {
+										const string kopiert=kopiere(benenn,kopier,&kfehler,1);
+										if (kfehler) {
+												::Log(rots+Tx[T_Fehler_beim_Kopieren]+ltoan(kfehler)+schwarz+"("+benenn+" -> "+kopier+")",1,1);
+										  continue;
+										}
+										::Log(Tx[T_ErstelledurchKopieren]+rots+kopier+schwarz,1,oblog);
+									}
+									urfx.push_back(urfxcl(*zielp,urname,iprio));
+									qrueck[iakt].clear(); // Datei nach Gebrauch loeschen, um dann die restlichen zu sehen
+								} // 	 if (!toknr[j].empty())
+							} // for(unsigned j=0;j<toknr.size();j++) 
+						}
+					} // 					if (toktxt.size()>1||(!iprio&&toktxt.size()))
+				} // 			if (!qrueck.at(iakt) 
+			} // for(size_t iakt=0;iakt<qrueck.size();iakt++)
+		} // 	  if (!:anfxstrvec[iprio]vec[iprio].empty())
+		if (!iprio) break;
+	} // 	for(uchar iprio=anfxstrvec[iprio]vec.size()-1;; iprio--)
+#ifdef alt
 	for(uchar iprio=0;iprio<anfxstrvec.size();iprio++) {
 		// der regex-flavor posix_basic (ed) erlaubt keinen Abzug aus 
 		const string mstr=anfxstrvec.at(iprio)+filter+".*"; // z.B. "an Fax +49"
@@ -6255,12 +6360,12 @@ void paramcl::wegfaxen()
 						const string nach=stamm.substr(pos0+anfxstrvec.at(iprio).length());
 						::Log(Tx[T_danach]+blaus+nach+schwarz,obverb>1,oblog);
 						// die Faxnummern auseinanderfieseln
-						aufiSplit(&toknr,nach,undstr.c_str(),1,obverb>0?obverb-1:0,oblog);
+						aufiSplit(&toknr,nach,undstr,1,obverb>0?obverb-1:0,oblog);
 						// ggf. die Adressatennamen suchen ...
-						aufiSplit(&toktxt,vor,anstr.c_str(),1,obverb>0?obverb-1:0,oblog);
+						aufiSplit(&toktxt,vor,anstr,1,obverb>0?obverb-1:0,oblog);
 						// und ggf. aufffieseln
 						if (toktxt.size()>1) {
-							aufiSplit(&tokname,toktxt[1],undstr.c_str(),1,obverb>0?obverb-1:0,oblog);
+							aufiSplit(&tokname,toktxt[1],undstr,1,obverb>0?obverb-1:0,oblog);
 						} //         if (toktxt.size()>1)
 						//// ::Log("toknr.size(): "+blaus+ltoan(toknr.size())+schwarz,obverb>0,oblog);
 	if (obverb) {
@@ -6300,7 +6405,7 @@ void paramcl::wegfaxen()
 			const string nach=stamm.substr(pos0+anstr.length());
 			::Log(Tx[T_danach]+blaus+nach+schwarz,obverb>1,oblog);
 			// ggf. die Adressatennamen suchen ...
-			aufiSplit(&tokname,nach,undstr.c_str(),1,obverb>0?obverb-1:0,oblog);
+			aufiSplit(&tokname,nach,undstr,1,obverb>0?obverb-1:0,oblog);
 			for(unsigned j=0;j<tokname.size();j++) {
 				uchar fehler=1;
 				if (!tokname[j].empty()) {
@@ -6317,7 +6422,7 @@ void paramcl::wegfaxen()
 							if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2)) { 
 								toknr<<*(*cerg+2);
 								fehler=0;
-								caus<<"NR: "<<*(*cerg+2)<<endl;
+								//// <<"NR: "<<*(*cerg+2)<<endl;
 							} // 							if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2))
 						} // 						while (cerg=rs.HolZeile(),cerg?*cerg:0)
 					} // 					if (!rs.obfehl)
@@ -6340,7 +6445,7 @@ void paramcl::wegfaxen()
 			} // 			if (toknr.size())
 		} // 		if ((pos0=irfind(stamm,anstr))!=string::npos)
 	} // 	for(size_t iakt=0;iakt<qrueck.size();iakt++)
-
+#endif // alt
 	// nicht faxbare
 	for(size_t i=0;i<qrueck.size();i++) {
 		if (!qrueck[i].empty()) {
@@ -6628,7 +6733,7 @@ void paramcl::wegfaxen()
 				//// <<"zcnfA[5] nachher: "<<violett<<zcnfA[5].wert<<schwarz<<endl;
 			} // 			if (aufrufe!=kaufrufe && altobsendC!="1")
 		} while (kaufrufe==aufrufe);
-#endif
+#endif // immerwart
 	} // 	if (r0.obfehl) else
 	Log(violetts+Txk[T_Ende]+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Tx[T_ja]:Tx[T_nein])+", "
 			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Tx[T_ja]:Tx[T_nein]));
@@ -7391,7 +7496,7 @@ void paramcl::empfarch()
 			schreibzaehler(&eins);
 		}
 	} while (jaufrufe==aufrufe);
-#endif
+#endif // immerwart
 	::Log(Tx[T_Zahl_der_empfangenen_Faxe]+drots+ltoan(ankzahl)+schwarz,1,oblog);
 	Log(violetts+Txk[T_Ende]+Tx[T_empfarch]+schwarz);
 } // void paramcl::empfarch()
@@ -10399,7 +10504,7 @@ void fsfcl::scheitere(const string& wvz, const string& ngvz, const string& cuser
 			struct stat zstat={0};
 			uint vfehler;
 			if (!lstat(zuloe.c_str(),&zstat)) {
-				verschiebe(zuloe, ngvz, cuser,&vfehler, /*wieweiterzaehl=*/1, obverb, oblog);
+				verschiebe(zuloe, ngvz, cuser,&vfehler, /*wieweiterzaehl=*/1, /*obverb=*/1, oblog);
 				if (ziel)
 					touch(*ziel+vtz+Tx[T_nichtgefaxt]+" `"+base_name(zuloe)+"`.nix",obverb,oblog);
 			}
@@ -10587,7 +10692,7 @@ int wartaufpids(pidvec *pidv,const ulong runden/*=0*/,const int obverb/*=0*/,con
 
 int main(int argc, char** argv) 
 {
-/*//
+	/*//
 	if (argc==2) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		// Testcode mit argv[1]
 		perfcl perf("main");
@@ -10596,7 +10701,7 @@ int main(int argc, char** argv)
 		exit(29);
 		string d1=string("/root/autofax/")+argv[1],
 					 d2=string("/root/")+argv[1];
-		caus<<dateivgl(d1,d2,1)<<endl;
+		//<<dateivgl(d1,d2,1)<<endl;
 		exit(0);
 		linst_cl linst(0,0);
 		//	dorename(argv[1],"/root/autofax/xyz");
@@ -10610,7 +10715,7 @@ int main(int argc, char** argv)
 			}
 		}
 		linst.ziehraus(inh,&ustring);
-		caus<<blau<<"ustring: "<<gruen<<ustring<<schwarz<<endl;
+		//<<blau<<"ustring: "<<gruen<<ustring<<schwarz<<endl;
 		exit(29);
 	} // (argc==2)
 	*/
