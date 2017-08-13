@@ -363,25 +363,24 @@ Configuration files, data, and system relevant programs like libgcc and selinux 
 .br
 Error messages originate mostly in efforts to delete a program already missing and can then be ignored.
 
-.SH RUECKGABEWERTE
 .SH RETURN CODES
-0: Normal return code
+\fB0\fR: Normal return code
 .br
-7: The info screen (\fB²DPROG² -info\fR) has been displayed
+\fB7\fR: The info screen (\fB²DPROG² -info\fR) has been displayed
 .br
-8: The help has been displayed
+\fB8\fR: The help has been displayed
 .br
-9: To start the just installed capi module the computer has to be restarted
+\fB9\fR: To start the just installed capi module the computer has to be restarted
 .br
-17: Fork to another thread failed
+\fB17\fR: Fork to another thread failed
 .br
-98: Program stopped because it is already running once
+\fB98\fR: Program stopped because it is already running once
 .br
-99: A search command at a link failed while using \fB²DPROG² -fd 2\fR
+\fB99\fR: A search command at a link failed while using \fB²DPROG² -fd 2\fR
 .br
-113: An sql command for the mariadb database failed with a miscellaneous error
+\fB113\fR: An sql command for the mariadb database failed with a miscellaneous error
 .br
-115: A database entry failed because of a full disk
+\fB115\fR: A database entry failed because of a full disk
 .br
 After calling \fB²DPROG² -vi\fR or \fB²DPROG² -vs\fR the return code of \fBvi\fR/\fBvim\fR will be passed
 .SH ERRORS

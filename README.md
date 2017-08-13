@@ -13,7 +13,6 @@
 <a href="#AUTOMATICALLY INSTALLED SOFTWARE PACKAGES_D">AUTOMATICALLY INSTALLED SOFTWARE PACKAGES</a><br>
 <a href="#IMPLICATIONS_D">IMPLICATIONS</a><br>
 <a href="#UNINSTALLING_D">UNINSTALLING</a><br>
-<a href="#RUECKGABEWERTE_D">RUECKGABEWERTE</a><br>
 <a href="#RETURN CODES_D">RETURN CODES</a><br>
 <a href="#ERRORS_D">ERRORS</a><br>
 <a href="#PROGRAM MODIFICATION_D">PROGRAM MODIFICATION</a><br>
@@ -689,30 +688,26 @@ libgcc and selinux will not be deleted. <br>
 Error messages originate mostly in efforts to delete a
 program already missing and can then be ignored.</p>
 
-<h2>RUECKGABEWERTE
-<a name="RUECKGABEWERTE_D"></a>
-</h2>
-
-
 <h2>RETURN CODES
 <a name="RETURN CODES_D"></a>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">0: Normal
-return code <br>
-7: The info screen (<b>autofax -info</b>) has been displayed
-<br>
-8: The help has been displayed <br>
-9: To start the just installed capi module the computer has
-to be restarted <br>
-17: Fork to another thread failed <br>
-98: Program stopped because it is already running once <br>
-99: A search command at a link failed while using <b>autofax
--fd 2</b> <br>
-113: An sql command for the mariadb database failed with a
-miscellaneous error <br>
-115: A database entry failed because of a full disk <br>
+<p style="margin-left:11%; margin-top: 1em"><b>0</b>:
+Normal return code <b><br>
+7</b>: The info screen (<b>autofax -info</b>) has been
+displayed <b><br>
+8</b>: The help has been displayed <b><br>
+9</b>: To start the just installed capi module the computer
+has to be restarted <b><br>
+17</b>: Fork to another thread failed <b><br>
+98</b>: Program stopped because it is already running once
+<b><br>
+99</b>: A search command at a link failed while using
+<b>autofax -fd 2 <br>
+113</b>: An sql command for the mariadb database failed with
+a miscellaneous error <b><br>
+115</b>: A database entry failed because of a full disk <br>
 After calling <b>autofax -vi</b> or <b>autofax -vs</b> the
 return code of <b>vi</b>/<b>vim</b> will be passed</p>
 
@@ -1523,21 +1518,21 @@ k&ouml;nnen ignoriert werden.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">0: Normaler
-R&uuml;ckgabewert <br>
-7: Der Infobildschirm (<b>autofax -info</b>) wurde angezeigt
-<br>
-8: Die Hilfe wurde angezeigt <br>
-9: Zur Inbetriebnahme des gerade eingerichteten Capi-Moduls
-muss der Rechner neu gestartet werden <br>
-17: Gabelung zu weiterem thread misslungen <br>
-98: Programmaufruf abgebrochen, da es bereits einmal
-l&auml;uft <br>
-99: Suchbefehl mit <b>autofax -fd 2</b> bei Dateilink
-misslungen <br>
-113: Ein SQL-Befehl f&uuml;r die Mariadb-Datenbank
-scheiterte an sonstigem Fehler <br>
-115: Eine Datenbankeintragung scheiterte an voller
+<p style="margin-left:11%; margin-top: 1em"><b>0</b>:
+Normaler R&uuml;ckgabewert <b><br>
+7</b>: Der Infobildschirm (<b>autofax -info</b>) wurde
+angezeigt <b><br>
+8</b>: Die Hilfe wurde angezeigt <b><br>
+9</b>: Zur Inbetriebnahme des gerade eingerichteten
+Capi-Moduls muss der Rechner neu gestartet werden <b><br>
+17</b>: Gabelung zu weiterem thread misslungen <b><br>
+98</b>: Programmaufruf abgebrochen, da es bereits einmal
+l&auml;uft <b><br>
+99</b>: Suchbefehl mit <b>autofax -fd 2</b> bei Dateilink
+misslungen <b><br>
+113</b>: Ein SQL-Befehl f&uuml;r die Mariadb-Datenbank
+scheiterte an sonstigem Fehler <b><br>
+115</b>: Eine Datenbankeintragung scheiterte an voller
 Festplatte <br>
 Nach Aufruf von <b>autofax -vi</b> oder <b>autofax -vs</b>
 wird ggf. der R&uuml;ckgabewert von <b>vi</b>/<b>vim</b>
