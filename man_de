@@ -196,7 +196,7 @@ und traegt sie in MariaDB-Datenbank '\fBautofax\fB' (Tabellen: `\fBouta\fB`,`\fB
 \fB -fd, --finde <zahl>\fR: Version 1,2 oder 3 -Dateisuche (variable Performanceunterschiede) anstatt '\fB3\fR'
 .br
 \fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB2\fR'
-äUßERST.SH FUNKTIONSWEISE
+.SH FUNKTIONSWEISE
 .LP
 1) Die aktuelle Hardware wird überprüft:
 .br

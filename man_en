@@ -194,7 +194,7 @@ and logs this in the the mariadb database '\fBautofax\fB' (tables: `\fBouta\fB`,
 \fB -fd, --find <zahl>\fR: version 1,2 or 3 of filefind (variable performance differences instead of '\fB3\fR'
 .br
 \fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
-static_cast<unsigned char>(tolower(static_cast<char>('Ä')) ) = ?äUßERST.SH FUNCTIONALITY
+.SH FUNCTIONALITY
 .LP
 1) The current hardware is being checked.
 .br
