@@ -307,6 +307,7 @@ define priv_html
 	@printf "%b%s%b neu aus %b%s%b erstellt\n" $(blau) "$(1).html" $(reset) $(blau) "$(1)" $(reset)
 endef
 
+# Aufruf des Programms mit -sh, um die Optionen in den manpages zu aktualisieren
 define manges
 $(1).html: $(EXEC) $(1)
 	$(call priv_html, $(1))

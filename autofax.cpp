@@ -2748,6 +2748,7 @@ void paramcl::getcommandl0()
 				break;
 			case 2:
 				opts.push_back(/*2*/optioncl(T_kd_k,T_konfdatei_l, &Tx, T_verwendet_Kofigurationsdatei_string_anstatt,0,&akonfdt,pfile));
+				// Hilfe zur Aktualisierung der manpages
 				opts.push_back(/*4*/optioncl(T_sh,T_standardhilfe, &Tx, -1, -1, &obhilfe,3));
 				break;
 		} //     switch (iru)
@@ -3639,10 +3640,12 @@ int paramcl::getcommandline()
 	Log(string(Tx[T_Fertig_mit_Parsen_der_Befehlszeile])+(obkschreib?Tx[T_ja]:Tx[T_nein]));
 	// Ausgabe der Hilfe
 	if (obhilfe) {
+	  if (obhilfe<3) {
 		cout<<blau<<Tx[T_Gebrauch]<<drot<<meinname<<" [-<opt>|--<longopt> [<content>]] ..."<<schwarz<<endl; 
 		cout<<blau<<Tx[T_Faxt_Dateien_aus_Verzeichnis_pfad_die]<<anfaxstr<<
 			Tx[T_faxnr_enthalten_und_durch_soffice_in_pdf_konvertierbar_sind_und_traegt_sie]
 			<<drot<<dbq<<blau<<Tx[T_Tabellen]<<drot<<touta<<blau<<"`,`"<<drot<<spooltab<<blau<<Tx[T_aein]<<schwarz<<endl;
+		}
 		cout<<blau<<Tx[T_Optionen_die_nicht_gespeichert_werden]<<schwarz<<endl;
 		for(size_t j=0;j<opts.size();j++) {
 			if (!opts[j].obschreibp && (obhilfe>1 || opts[j].wi))

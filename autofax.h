@@ -215,7 +215,7 @@ class paramcl // Programmparameter
     string suchstr;  // Wortteil, nach dem in alten Faxen gesucht werden soll
     string dszahl="30"; // Datensatzzahl fuer Tabellenausgaben
     uchar logdateineu=0; // logdt vorher loeschen
-    uchar obhilfe=0;      // Hilfe anzeigen
+    uchar obhilfe=0;      // Hilfe anzeigen: 1=kurze Hilfe, 2=lange Hilfe, 3=Standardhilfe
     uchar zeigvers=0;  // Version anzeigen
 		size_t faxord=0; // Ordinalzahl des Faxes unter allen anstehenden Faxen
 		ulong geszahl=0;

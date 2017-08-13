@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.45322) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45323) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -166,14 +166,6 @@ options (e.g. the sql commands) cannot bei set via the
 command line, but only via the configuration file, which can
 be edited directly or interactively by &rsquo;<b>autofax
 -rf</b>&rsquo;. <b><br>
-Usage: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
-[&lt;content&gt;]] ... <br>
-Faxes files from directory &lt;path&gt;, which contain
-&rsquo;to fax &lt;faxno&gt;&rsquo; and are convertible into
-pdf, <br>
-and logs this in the the mariadb database
-&rsquo;autofax&rsquo; (tables:
-&lsquo;outa&lsquo;,&lsquo;spool&lsquo;). <br>
 Options which are not saved: <br>
 -v, --verbose</b>: screen output more verbose <b><br>
 -l, --log</b>: put detailed logs in file
@@ -765,7 +757,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.45322) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45323) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -946,13 +938,6 @@ Optionen (z.B. SQL-Befehle) k&ouml;nnen nicht
 die Konfigurationsdatei eingegeben werden, die wiederum
 direkt editiert oder auch &uuml;ber &rsquo;<b>autofax
 -rf</b>&rsquo; interaktiv gepflegt werden kann. <b><br>
-Gebrauch: autofax [-&lt;opt&gt;|--&lt;longopt&gt;
-[&lt;content&gt;]] ... <br>
-Faxt Dateien aus Verzeichns &lt;pfad&gt;, die &rsquo;an Fax
-&lt;faxnr&gt;&rsquo; enthalten und durch soffice in pdf
-konvertierbar sind <br>
-und traegt sie in MariaDB-Datenbank &rsquo;autofax&rsquo;
-(Tabellen: &lsquo;outa&lsquo;,&lsquo;spool&lsquo;) ein. <br>
 Optionen, die nicht gespeichert werden: <br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger <b><br>
 -l, --log</b>: protokolliert ausfuehrlich in Datei
