@@ -259,7 +259,7 @@ class Tabelle
     const string collate;
     const string rowformat;
     Tabelle(const DB* dbp,const string& tbname, Feld *felder, int feldzahl, Index *indices, unsigned vindexzahl, string comment="",
-        const string& engine="InnoDB", const string& charset="latin1", const string& collate="latin1_german2_ci", const string& rowformat="DYNAMIC");
+        const string& engine="InnoDB", const string& charset="utf8", const string& collate="utf8_unicode_ci", const string& rowformat="DYNAMIC");
 		Tabelle(const DB* dbp,const string& name,const size_t aktc/*=0*/,int obverb/*=0*/,int oblog/*=0*/);
 		void lesespalten(const size_t aktc/*=0*/,int obverb/*=0*/,int oblog/*=0*/);
 		int machind(const size_t aktc,int obverb=0, int oblog=0);

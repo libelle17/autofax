@@ -361,6 +361,9 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 						////   <<"versuch: "<<versuch<<", conn[aktc]: "<<conn[aktc]<<", host: "<<host<<", user: "<<user<<", passwd "<<passwd<<", uedb: "<<uedb<<", port: "<<port<<", client_flag: "<<client_flag<<", obverb: "<<obverb<<", oblog: "<<(int)oblog<<endl;
 						fehnr=0;
 						if (mysql_real_connect(conn[aktc], host.c_str(), user.c_str(), passwd.c_str(), uedb, port, unix_socket, client_flag)) {
+							// mysql_set_character_set(conn[aktc],"utf8");
+							cmd="SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'";
+							mysql_real_query(conn[aktc],cmd.c_str(),cmd.length());
 							break;
 						} else {
 							switch ((fehnr=mysql_errno(conn[aktc]))) {
@@ -850,8 +853,8 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
   vector<string> fstr;
   vector<string> istr;
   const char* def_engine="InnoDB";
-  const char* def_charset="latin1";
-  const char* def_collate="latin1_german2_ci";
+  const char* def_charset="utf8";
+  const char* def_collate="utf8_unicode_ci";
   const char* def_rowformat="DYNAMIC";
   switch (dbp->DBS){
     case MySQL:
