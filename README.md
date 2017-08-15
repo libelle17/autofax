@@ -472,9 +472,9 @@ parts are executed simultaneously, which may loosen up the
 display of the result. <br>
 Sending and receiving are started every minute, until the
 respective other part has finished for the first time. <br>
-Check and possibly correction of possibly falsely stored
-files (e.g. by a deliberate program cancelling) will be done
-in intervals.</p>
+Check and possibly correction of possibly falsely stored fax
+files (e.g. by a cancelling the program deliberately) will
+be done in intervals.</p>
 
 <h2>PRECONDITIONS
 <a name="PRECONDITIONS_D"></a>
@@ -1266,7 +1266,7 @@ Wenn mehrere SQL-Befehle angegeben werden, so wird der
 jeweils naechste angewandt, wenn einer kein Ergebnis
 liefert. <br>
 Optional werden die empfangenen Dateien mit Hilfe von
-ocrmypdf einer Texterkennung unterzogen.</p>
+<b>ocrmypdf</b> einer Texterkennung unterzogen.</p>
 
 <p style="margin-left:11%; margin-top: 1em"><b>19)</b> Die
 Konfigurationsdatei <b>autofax.conf</b> wird ggf.
@@ -1279,7 +1279,7 @@ Senden und Empfangen wiederholen sich ggf.
 min&uuml;tlich, bis der jeweils andere Teil zum ersten
 Mal fertig ist. <br>
 &Uuml;berpr&uuml;fung und ggf. Korrektur evtl.
-falsch abgelegter Dateien (z.B. infolge eines
+falsch abgelegter Fax-Dateien (z.B. infolge eines
 willk&uuml;rlichen Programmabbruchs von au&szlig;en)
 werden in Abst&auml;nden durchgef&uuml;hrt.</p>
 

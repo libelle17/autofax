@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "15.08.17" "Version 0.45398" "Manual-Seite für ²DPROG²"
+.TH man 1 "16.08.17" "Version 0.45398" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -255,7 +255,7 @@ Solche SQL-Befehle sollen (mindestens) zwei Ergebnisfelder (mit benutzerdefinier
 .br
 Wenn mehrere SQL-Befehle angegeben werden, so wird der jeweils naechste angewandt, wenn einer kein Ergebnis liefert.
 .br
-Optional werden die empfangenen Dateien mit Hilfe von ocrmypdf einer Texterkennung unterzogen.
+Optional werden die empfangenen Dateien mit Hilfe von \fBocrmypdf\fR einer Texterkennung unterzogen.
 .LP
 \fB19)\fR Die Konfigurationsdatei \fB²DPROG².conf\fR wird ggf. geschrieben.
 .LP
@@ -263,7 +263,7 @@ Einige Programmteile laufen parallel, dies kann sich die Reihenfolge der Ergebni
 .br
 Senden und Empfangen wiederholen sich ggf. minütlich, bis der jeweils andere Teil zum ersten Mal fertig ist.
 .br
-Überprüfung und ggf. Korrektur evtl. falsch abgelegter Dateien (z.B. infolge eines willkürlichen Programmabbruchs von außen) werden in Abständen durchgeführt.
+Überprüfung und ggf. Korrektur evtl. falsch abgelegter Fax-Dateien (z.B. infolge eines willkürlichen Programmabbruchs von außen) werden in Abständen durchgeführt.
 
 .SH VORAUSSETZUNGEN
 \fBHardware\fR: Computer mit einer Fritzcard 2.0 oder 2.1 und/oder einem linux-kompatiblen Modem; in der vorliegenden Fassung wird für eine automatische Installation des Programms (unter Beantwortung einiger Rückfragen) ein US Robotics Modem USR5637 und eine der untenstehenden Linuxversionen benötigt.
