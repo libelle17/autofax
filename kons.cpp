@@ -2232,11 +2232,12 @@ int untersuser(string uname,__uid_t *uidp/*=0*/, __gid_t *gidp/*=0*/)
 // <datei> kann auch Verzeichnis sein
 // obunter = mit allen Unterverzeichnissen
 // obimmer = immer setzen, sonst nur, falls mit getfacl fuer datei Berechtigung fehlt (wichtig fuer Unterverzeichnisse)
-void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binaer obunter/*=falsch*/,const int mod/*=4*/,uchar obimmer/*=0*/,
+void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binaer obunter/*=falsch*/,int mod/*=4*/,uchar obimmer/*=0*/,
                uchar faclbak/*=1*/,const string& user/*=nix*/,uchar fake/*=0*/,stringstream *ausgp/*=0*/)
 {
 	int altobv=obverb;
 	if (fake) obverb=2;
+	if (obunter) mod|=1; // Verzeichnisberechtigung noetig
 	uid_t cuid;
 	gid_t cgid;
 	string cuser;
@@ -2831,7 +2832,7 @@ linsten linstcl::checkinst(int obverb, int oblog)
 } // linsten linstcl::checkinst(int obverb, int oblog) 
 */
 
-string linst_cl::ersetzeprog(const string& prog) 
+const string linst_cl::ersetzeprog(const string& prog) const
 {
   switch(ipr) {
     case apt:
@@ -3003,7 +3004,8 @@ void linst_cl::ziehraus(svec srueck, string *ustringp)
 } // void linst_cl::ziehraus(svec srueck, string *ustringp)
 
 // Problem: bei obyes erscheint die Rueckfrage dem Benutzer nicht, statt dessen wartet das Programm
-int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar ohneabh/*=0*/)////,uchar obyes/*=1*/)
+int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const string& fallsnichtda/*=nix*/,uchar ohneabh/*=0*/)
+////,uchar obyes/*=1*/)
 {
 	//// <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
 	Log(violetts+Txk[T_doinst]+schwarz+" prog: "+violett+prog+schwarz+Txk[T_fallsnichtda]+violett+fallsnichtda+schwarz+Txk[T_ohneabh]+

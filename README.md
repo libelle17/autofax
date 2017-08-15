@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.45326) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45397) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -703,6 +703,10 @@ displayed <b><br>
 8</b>: The help has been displayed <b><br>
 9</b>: To start the just installed capi module the computer
 has to be restarted <b><br>
+10</b>: Initializing of the database failed and the program
+was stopped therefore <b><br>
+11</b>: Checking of a database table failed and the program
+was stopped therefore <b><br>
 17</b>: Fork to another thread failed <b><br>
 98</b>: Program stopped because it is already running once
 <b><br>
@@ -759,7 +763,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.45326) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45397) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1533,6 +1537,11 @@ angezeigt <b><br>
 8</b>: Die Hilfe wurde angezeigt <b><br>
 9</b>: Zur Inbetriebnahme des gerade eingerichteten
 Capi-Moduls muss der Rechner neu gestartet werden <b><br>
+10</b>: Die Initialisierung der Datenbank scheiterte und das
+Programm wurde deshalb beendet <b><br>
+11</b>: Die &Uuml;berpr&uuml;fung einer
+Datenbanktabelle scheiterte und das Programm wurde deshalb
+beendet <b><br>
 17</b>: Gabelung zu weiterem thread misslungen <b><br>
 98</b>: Programmaufruf abgebrochen, da es bereits einmal
 l&auml;uft <b><br>

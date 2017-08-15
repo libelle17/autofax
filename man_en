@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "14.08.17" "Version 0.45326" "\fB²DPROG²\fR man page"
+.TH man 1 "15.08.17" "Version 0.45397" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -371,6 +371,10 @@ Error messages originate mostly in efforts to delete a program already missing a
 \fB8\fR: The help has been displayed
 .br
 \fB9\fR: To start the just installed capi module the computer has to be restarted
+.br
+\fB10\fR: Initializing of the database failed and the program was stopped therefore
+.br
+\fB11\fR: Checking of a database table failed and the program was stopped therefore
 .br
 \fB17\fR: Fork to another thread failed
 .br

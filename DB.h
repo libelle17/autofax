@@ -239,32 +239,6 @@ class Index
 }; // class Index 
 
 class RS;
-class DB;
-
-class Tabelle 
-{
-  public:
-		const DB* dbp;
-    const string tbname;
-    string comment; // wird geaendert
-		const string dbname;
-    RS *spalt=nullptr;
-		char **spnamen=nullptr,**splenge=nullptr,**sptyp=nullptr;
-    Feld *felder;
-    int feldzahl;
-    Index *indices;
-    unsigned indexzahl;
-    const string engine;
-    const string charset;
-    const string collate;
-    const string rowformat;
-    Tabelle(const DB* dbp,const string& tbname, Feld *felder, int feldzahl, Index *indices, unsigned vindexzahl, string comment="",
-        const string& engine="InnoDB", const string& charset="utf8", const string& collate="utf8_unicode_ci", const string& rowformat="DYNAMIC");
-		Tabelle(const DB* dbp,const string& name,const size_t aktc/*=0*/,int obverb/*=0*/,int oblog/*=0*/);
-		void lesespalten(const size_t aktc/*=0*/,int obverb/*=0*/,int oblog/*=0*/);
-		int machind(const size_t aktc,int obverb=0, int oblog=0);
-    int prueftab(const size_t aktc,int obverb=0,int oblog=0);
-}; // class Tabelle 
 
 
 class DB 
@@ -275,26 +249,32 @@ class DB
     string db_systemctl_name; // mysql, mariadb je nach System
     servc *dbsv=0;
     MYSQL **conn;
-		linst_cl *linstp=0;
+		linst_cl *const linstp=0;
+		static const string defmyengine;
+		static const string defmycharset;
+		static const string defmycollat;
+		static const string defmyrowform;
 #ifdef mitpostgres 
 		PGconn *pconn,*pmconn;
 #endif // mitpostgres
-    DBSTyp DBS;
+    const DBSTyp DBS;
     char dnb; // delimiter name begin
     char dne; // delimiter name end
     char dvb; // delimiter value begin
     char dve; // delimiter value end
     ////	char* ConStr;
     ////  const char* db;
-    string mysqlbef="mysql", mysqlben="mysql"; // mysql-Befehl, mysql-Benutzer
-    string dbname;
+    const string mysqlbef="mysql", mysqlben="mysql"; // mysql-Befehl, mysql-Benutzer
     ////  const char* host;
-    string host;
+    const string host;
     ////  const char* user;
-    string user;
-    string passwd;
-    string myloghost; // einheitliche Benennung von 'localhost' bzw. '%'
-    string rootpwd; // root-Passwort
+		const string charset;
+		const string collate;
+    const string user;
+    string passwd; // kann in pruefrpw dem eingegebenen rootpw gleichgesetz werden, deshalb nicht const
+    const string dbname;
+    string myloghost; // einheitliche Benennung von 'localhost' bzw. '%', zu kompliziert, um in jedem DB::DB aufzufuehren, deshalb nicht const
+    string rootpwd; // root-Passwort // wird in pruefrpw geaendert, deshalb nicht const
 		size_t conz; // Zahl der Verbindungen (s.o., conn)
     unsigned int fehnr;
     const char* ConnError;
@@ -316,19 +296,21 @@ class DB
 		uchar tuerweitern(const string& tab, const string& feld,long wlength,const size_t aktc,int obverb) const;
     int machbinaer(const string& tabs, const size_t aktc, const string& fmeld,int obverb) const;
     ////	DB(DBSTyp DBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag);
-		DB(linst_cl *linstp);
-		DB(DBSTyp nDBS, linst_cl *linstp, const char* const phost, const char* const user,const char* const ppasswd, 
-		   size_t conz/*=1*/, const char* const uedb="", unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=0,
-			 int obverb=0,int oblog=0,int versuchzahl=3,uchar ggferstellen=1);
-    DB(DBSTyp nDBS, linst_cl *linstp, const char* const phost, const char* const user, const char* const ppasswd,
-		   const char* const prootpwd, size_t conz/*=1*/, const char* const uedb="", unsigned int port=0, const char *const unix_socket=NULL, 
-			 unsigned long client_flag=0, int obverb=0,int oblog=0,int versuchzahl=3, uchar ggferstellen=1);
-    DB(DBSTyp nDBS, linst_cl *linstp, const string& phost, const string& puser, const string& ppasswd, size_t conz/*=1*/, 
+		///*1*/DB(const linst_cl *const linstp);
+		/*2*/DB(const DBSTyp nDBS, linst_cl *const linstp, const char* const phost, const char* const user,const char* const ppasswd, 
+				const size_t conz/*=1*/, const char* const uedb="", unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=0,
+			 int obverb=0,int oblog=0,const string charset=defmycharset, const string collate=defmycollat, int versuchzahl=3,const uchar ggferstellen=1);
+    /*3*/DB(const DBSTyp nDBS, linst_cl *const linstp, const char* const phost, const char* const user, const char* const ppasswd,
+		   const char* const prootpwd, const size_t conz/*=1*/, const char* const uedb="", unsigned int port=0, const char *const unix_socket=NULL, 
+			 unsigned long client_flag=0, int obverb=0,int oblog=0,const string charset=defmycharset, const string collate=defmycollat, int versuchzahl=3, 
+			 const uchar ggferstellen=1);
+    /*4*/DB(const DBSTyp nDBS, linst_cl *const linstp, const string& phost, const string& puser, const string& ppasswd, 
+		const size_t conz/*=1*/, 
 		   const string& uedb="", unsigned int port=0, const char* const unix_socket=NULL, unsigned long client_flag=0,
-       int obverb=0,int oblog=0,int versuchzahl=3,uchar ggferstellen=1);
-    void init(DBSTyp nDBS, const char* const phost, const char* const user,const char* const ppasswd, size_t conz/*=1*/, const char* const uedb="",
+       int obverb=0,int oblog=0,const string charset=defmycharset, const string collate=defmycollat, int versuchzahl=3,const uchar ggferstellen=1);
+    void init(const string charset, const string collate,
 				unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=0,int obverb=0,int oblog=0,unsigned versuchzahl=3,
-				uchar ggferstellen=1);
+				const uchar ggferstellen=1);
     ~DB(void);
     /*//
        int Abfrage(const char* sql,const char** erg=(const char**)&"", int obverb=1);
@@ -344,6 +326,33 @@ class DB
     ////	char** HolZeile();
     my_ulonglong affrows(const size_t aktc); // unsigned __int64
 }; // class DB 
+
+class Tabelle 
+{
+  public:
+		const DB* dbp;
+    const string tbname;
+    string comment; // wird geaendert
+		const string dbname;
+    RS *spalt=nullptr;
+		char **spnamen=nullptr,**splenge=nullptr,**sptyp=nullptr;
+    Feld *felder;
+    int feldzahl;
+    Index *indices;
+    unsigned indexzahl;
+    const string engine;
+    const string charset;
+    const string collate;
+    const string rowformat;
+    Tabelle(const DB* dbp,const string& tbname, Feld *felder, int feldzahl, Index *indices, unsigned vindexzahl, string comment="",
+        const string& engine=DB::defmyengine, const string& charset=DB::defmycharset, const string& collate=DB::defmycollat, 
+				const string& rowformat=DB::defmyrowform);
+		Tabelle(const DB* dbp,const string& name,const size_t aktc/*=0*/,int obverb/*=0*/,int oblog/*=0*/);
+		void lesespalten(const size_t aktc/*=0*/,int obverb/*=0*/,int oblog/*=0*/);
+		int machind(const size_t aktc,int obverb=0, int oblog=0);
+    int prueftab(const size_t aktc,int obverb=0,int oblog=0);
+}; // class Tabelle 
+
 
 
 class RS 
@@ -388,9 +397,9 @@ class RS
     RS(const DB* pdb,const string& psql, const size_t aktc, int obverb/*=1*/);
     RS(const DB* pdb,stringstream psqls, const size_t aktc, int obverb/*=1*/);
     ~RS();
-    void update(const string& tab,vector<instyp> einf,int obverb, const string& bedingung, const size_t aktc/*=0*/, uchar asy=0);
-    void insert(const string& tab,vector<instyp> einf,const size_t aktc=0,uchar sammeln=0,int obverb=0,string *id=0,uchar eindeutig=0,uchar asy=0,
-		            svec *csets=0);
+    void tbupd(const string& tab,vector<instyp> einf,int obverb, const string& bedingung, const size_t aktc/*=0*/, uchar asy=0);
+    void tbins(const string& tab,vector<instyp> einf,const size_t aktc=0,uchar sammeln=0,int obverb=0,string *id=0,
+		     const uchar eindeutig=0,const string& eindfeld=nix,const uchar asy=0, svec *csets=0);
 		void machstrikt(string& altmode,const size_t aktc=0);
 		void striktzurueck(string& altmode,const size_t aktc=0);
   private:

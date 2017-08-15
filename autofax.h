@@ -357,7 +357,7 @@ class paramcl // Programmparameter
 		linst_cl* linstp=0;
 		unsigned tage=0; // fuer korrigierecapi und korrigierehyla 
 		schlArr zcnfA; // Zaehlkonfiguration
-
+    svec vinca;
   private:
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
     string neuerdateiname(const string& qpfad); // in wegfaxen
@@ -387,8 +387,8 @@ class paramcl // Programmparameter
 		void pruefunpaper();
     int pruefocr();
 		void unpaperfuercron(const string& ocrprog);
-		void empfhyla(const string& ganz,const size_t aktc,uchar indb=1,uchar mitversch=1);
-		void empfcapi(const string& stamm,const size_t aktc,uchar indb=1,uchar mitversch=1);
+		void empfhyla(const string& ganz,size_t aktc, const uchar was,const string& nr=nix);
+		void empfcapi(const string& stamm,size_t aktc, const uchar was,const string& nr=nix);
 		void uebertif();
 		void zeigdienste();
 		void wandle(const string& udatei,const string& urname,const uchar iprio,svec& toktxt,svec& toknr,svec& tokname,const string& anfxstr,const string& exten,vector<urfxcl> *urfxp);
@@ -433,8 +433,8 @@ class paramcl // Programmparameter
 				set<string> *cmisslp,set<string> *cgelup,set<string> *hmisslp,set<string> *hgelup);
 		void anhalten();
     void tu_lista(const string& oberfolg,const string& submids=nix);
-    void tu_listi();
-    void suchestr();
+		void tu_listi(const uchar zurauswahl=0);
+		void suchestr();
     int pruefsoffice(uchar mitloe=0);
     int pruefconvert();
     void clieskonf();
@@ -462,7 +462,7 @@ class paramcl // Programmparameter
     void sammlehyla(vector<fsfcl> *fsfvp,const size_t aktc);
     void korrigierecapi(const unsigned tage=90,const size_t aktc=1);
     void korrigierehyla(const unsigned tage=90,const size_t aktc=2);
-    void empfarch();
+    void empfarch(uchar obalte=0);
 		void zeigueberschrift();
 		void setzzaehler();
 		void schreibzaehler(const string* obempfp=0, const string* obgesap=0);

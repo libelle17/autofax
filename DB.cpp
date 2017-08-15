@@ -193,40 +193,48 @@ Tabelle::Tabelle(const DB* dbp,const string& tbname,const size_t aktc,int obverb
 	lesespalten(aktc,obverb,oblog);
 }
 
+const string DB::defmyengine="InnoDB";
+const string DB::defmycharset="utf8";
+const string DB::defmycollat="utf8_unicode_ci";
+const string DB::defmyrowform="DYNAMIC";
+
 // statische Variable, 1= mariadb=geprueft
 uchar DB::oisok=0;
 
-DB::DB(linst_cl *linstp):linstp(linstp)
-{
-}
+// /*1*/DB::DB(const linst_cl * const linstp):linstp(linstp) { }
 
-DB::DB(DBSTyp nDBS, linst_cl *linstp, const string& phost, const string& puser, const string& ppasswd, size_t conz, const string& uedb, 
+/*2*/DB::DB(const DBSTyp nDBS, linst_cl *const linstp, const string& phost, const string& puser, const string& ppasswd, 
+		const size_t conz/*=1*/, const string& uedb, 
        unsigned int port, const char *const unix_socket, unsigned long client_flag,
-    int obverb,int oblog,int versuchzahl, uchar ggferstellen):linstp(linstp),conz(conz)
+    int obverb,int oblog,const string charset, const string collate, int versuchzahl, const uchar ggferstellen):linstp(linstp),DBS(nDBS),
+		host(phost),user(puser),passwd(ppasswd),dbname(uedb), conz(conz)
 {
-  init(nDBS,phost.c_str(),puser.c_str(),ppasswd.c_str(),conz,uedb.c_str(),port,unix_socket,client_flag,obverb,oblog,versuchzahl,
-  ggferstellen);
+  init(charset,collate,port,unix_socket,client_flag,obverb,oblog,versuchzahl, ggferstellen);
 } // DB::DB(DBSTyp nDBS, linst_cl *linstp, const string& phost, const string& puser, const string& ppasswd, size_t conz, const string& uedb
 
-DB::DB(DBSTyp nDBS, linst_cl *linstp, const char* const phost, const char* const puser,const char* const ppasswd, 
-      const char* const prootpwd, size_t conz, const char* const uedb, unsigned int port, const char *const unix_socket, unsigned long client_flag,
-		  int obverb,int oblog, int versuchzahl, uchar ggferstellen): linstp(linstp),rootpwd(prootpwd),conz(conz)
+/*3*/DB::DB(const DBSTyp nDBS, linst_cl *const linstp, const char* const phost, const char* const puser,const char* const ppasswd, 
+      const char* const prootpwd, const size_t conz/*=1*/, 
+			const char* const uedb, unsigned int port, const char *const unix_socket, unsigned long client_flag,
+		  int obverb,int oblog, const string charset, const string collate, int versuchzahl, const uchar ggferstellen): linstp(linstp),DBS(nDBS),
+			host(phost),user(puser),passwd(ppasswd),dbname(uedb),rootpwd(prootpwd),conz(conz)
 {
-  init(nDBS,phost,puser,ppasswd,conz,uedb,port,unix_socket,client_flag,obverb,oblog,versuchzahl,ggferstellen);
+  init(charset,collate,port,unix_socket,client_flag,obverb,oblog,versuchzahl,ggferstellen);
 }
 
-DB::DB(DBSTyp nDBS, linst_cl *linstp, const char* const phost, const char* const puser,const char* const ppasswd, size_t conz, const char* const uedb, 
-       unsigned int port, const char *const unix_socket, unsigned long client_flag,int obverb,int oblog,int versuchzahl,uchar ggferstellen)
-			 :linstp(linstp),conz(conz)
+/*4*/DB::DB(const DBSTyp nDBS, linst_cl *const linstp, const char* const phost, const char* const puser,const char* const ppasswd, 
+		const size_t conz/*=1*/, const char* const uedb, unsigned int port, const char *const unix_socket, unsigned long client_flag, 
+		int obverb,int oblog,const string charset, const string collate, int versuchzahl, const uchar ggferstellen)
+			 :linstp(linstp),DBS(nDBS),host(phost),user(puser),passwd(ppasswd),dbname(uedb),conz(conz)
 {
-  init(nDBS,phost,puser,ppasswd,conz,uedb,port,unix_socket,client_flag,obverb,oblog,versuchzahl,ggferstellen);
+  init(charset,collate,port,unix_socket,client_flag,obverb,oblog,versuchzahl,ggferstellen);
 }
 
 // 2 x in DB::init
 void DB::instmaria(int obverb, int oblog)
 {
 	if (linstp->ipr==apt) {
-		systemrueck(sudc+"sh -c 'apt-get -y install apt-transport-https; apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
+		systemrueck(sudc+"sh -c 'apt-get -y install apt-transport-https;"
+		"apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
 	} else {
 		linstp->doinst("mariadb",obverb,oblog);
 		if (linstp->ipr==pac)
@@ -234,17 +242,14 @@ void DB::instmaria(int obverb, int oblog)
 	} // 					if (ipr==apt) else
 } // void DB::instmaria()
 
-void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,const char* const ppasswd, const size_t conz/*=1*/, 
-							const char* const uedb/*=""*/, unsigned int port/*=0*/, const char *const unix_socket/*=NULL*/, 
-							unsigned long client_flag/*=0*/,int obverb/*=0*/,int oblog/*=0*/,unsigned versuchzahl/*=3*/, uchar ggferstellen/*=1*/)
+void DB::init(
+		const string charset, const string collate, 
+		unsigned int port/*=0*/, const char *const unix_socket/*=NULL*/, 
+		unsigned long client_flag/*=0*/,int obverb/*=0*/,int oblog/*=0*/,unsigned versuchzahl/*=3*/, const uchar ggferstellen/*=1*/)
 {
-	DBS = nDBS;
 	fehnr=0;
 	string Frage;
 	Log(Txd[T_DB_wird_initialisiert],obverb>0?obverb-1:0,oblog);
-	host=phost;
-	user=puser;
-	passwd=ppasswd;
 	uchar installiert=0;
 	uchar datadirda=0;
 	const string mysqld="mysqld";
@@ -360,7 +365,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 					for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
 						////   <<"versuch: "<<versuch<<", conn[aktc]: "<<conn[aktc]<<", host: "<<host<<", user: "<<user<<", passwd "<<passwd<<", uedb: "<<uedb<<", port: "<<port<<", client_flag: "<<client_flag<<", obverb: "<<obverb<<", oblog: "<<(int)oblog<<endl;
 						fehnr=0;
-						if (mysql_real_connect(conn[aktc], host.c_str(), user.c_str(), passwd.c_str(), uedb, port, unix_socket, client_flag)) {
+						if (mysql_real_connect(conn[aktc], host.c_str(), user.c_str(), passwd.c_str(), dbname.c_str(), port, unix_socket, client_flag)) {
 							// mysql_set_character_set(conn[aktc],"utf8");
 							cmd="SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'";
 							mysql_real_query(conn[aktc],cmd.c_str(),cmd.length());
@@ -372,7 +377,7 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 								case 1698: // dasselbe auf Ubuntu
 									for(unsigned aru=0;aru<1;aru++) {
 										for(unsigned iru=0;iru<2;iru++) {
-											cmd=sudc+mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"GRANT ALL ON "+uedb+".* TO '"+
+											cmd=sudc+mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"GRANT ALL ON "+dbname+".* TO '"+
 												user+"'@'"+myloghost+"' IDENTIFIED BY '"+ersetze(passwd.c_str(),"\"","\\\"")+"' WITH GRANT OPTION\" 2>&1";
 											if (iru) break;
 											pruefrpw(cmd, versuchzahl);
@@ -408,15 +413,18 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 									break;
 								case 1049:
 									if (ggferstellen) {
-										Log(Txd[T_Fehler_db]+drots+mysql_error(conn[aktc])+schwarz+Txd[T_Versuche_Datenbank]+drot+uedb+schwarz+Txd[T_zu_erstellen],1,1);
+										Log(Txd[T_Fehler_db]+drots+mysql_error(conn[aktc])+schwarz+Txd[T_Versuche_Datenbank]+drot+dbname+schwarz+Txd[T_zu_erstellen],1,1);
 										mysql_real_connect(conn[aktc], host.c_str(), user.c_str(), passwd.c_str(), 0, port, unix_socket, client_flag);
 										fehnr=mysql_errno(conn[aktc]);
 										if (!fehnr) {
-											rs=new RS(this,string("CREATE DATABASE IF NOT EXISTS `")+uedb+"`",aktc,obverb);
+											rs=new RS(this,string("CREATE DATABASE IF NOT EXISTS `")+dbname+"`"+
+											         (charset.empty()?"":" CHARSET '"+charset+"'")+
+															 (collate.empty()?"":" COLLATE '"+collate+"'"),
+											       aktc,obverb);
 											fehnr=mysql_errno(conn[aktc]);
 											if (!fehnr) {
 												////                    rs->Abfrage(string("USE `")+uedb+"`");
-												usedb(uedb,aktc);
+												usedb(dbname,aktc);
 												fehnr=mysql_errno(conn[aktc]);
 												if (!fehnr) {
 													delete(rs);
@@ -451,7 +459,6 @@ void DB::init(DBSTyp nDBS, const char* const phost, const char* const puser,cons
 				} // if (!conn[aktc]) 
 			} // 			for(size_t aktc=0;aktc<conz;aktc++)
 			dnb = '`'; dne = '`'; dvb = '\''; dve = '\'';
-			dbname=uedb;
 			break;
 		case Postgres:
 #ifdef mitpostgres 
@@ -852,10 +859,6 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
   } //   for(int i=0;i<indexzahl;i++)
   vector<string> fstr;
   vector<string> istr;
-  const char* def_engine="InnoDB";
-  const char* def_charset="utf8";
-  const char* def_collate="utf8_unicode_ci";
-  const char* def_rowformat="DYNAMIC";
   switch (dbp->DBS){
     case MySQL:
       {
@@ -901,15 +904,19 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
         if (dbres && !dbres->row_count) {
           /*comment=**/sersetze(&comment,string("'"),string("\\'"));
           sql<<"CREATE TABLE `"<<tbname.c_str();
-          sql<<"` ("<<fstr[0]<<istr[0]<<") COMMENT='";
-          sql<<comment
-            <<"' ENGINE="<<(engine==""?def_engine:engine);
-          sql<<" DEFAULT CHARSET="
-            <<(charset==""?def_charset:charset);
-          sql<<((charset!=""&&collate=="")?"":" COLLATE=")
-            <<(collate==""?(charset!=""?"":def_collate):collate);
-          sql<<" ROW_FORMAT="
-            <<(rowformat==""?def_rowformat:rowformat);
+          sql<<"` ("<<fstr[0]<<istr[0]<<") COMMENT='"<<comment<<"'";
+					if (!engine.empty()) {
+					 sql<<" ENGINE='"<<engine<<"'";
+					}
+					if (!charset.empty()) {
+					 sql<<" CHARSET='"<<charset<<"'";
+					}
+					if (!collate.empty()) {
+					 sql<<" COLLATE='"<<collate<<"'";
+					}
+					if (!rowformat.empty()) {
+						sql<<" ROW_FORMAT="<<rowformat;
+					}
           rs.Abfrage(sql.str(),aktc,obverb); // falls obverb, dann sql-String ausgeben
           gesfehlr+=rs.obfehl;
           if (gesfehlr) Log(string("gesfehlr 1: ")+ltoan(gesfehlr),1,1);
@@ -1507,9 +1514,9 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 						obfalsch=mysql_real_query(dbp->conn[aktc],sqlp->c_str(),sqlp->length());
 					}
 					//// <<"aktc: "<<blau<<aktc<<schwarz<<" in doAbfrage, sql: "<<blau<<sql<<schwarz<<endl;
+					fnr=mysql_errno(dbp->conn[aktc]);
+					fehler=mysql_error(dbp->conn[aktc]);
 					if (obfalsch) {
-						fnr=mysql_errno(dbp->conn[aktc]);
-						fehler=mysql_error(dbp->conn[aktc]);
 						// Invalid use of NULL value; bei Spaltenverschiebungen kann oft NOT NULL nicht mehr geaendert werden
 						if (idp) *idp="null";
 						if (fnr==1138 && sqlp!=&usql) {
@@ -1696,7 +1703,7 @@ void RS::striktzurueck(string& altsqlm,const size_t aktc/*=0*/)
 }
 
 // fuer obverb gibt es die Stufen: -2 (zeige auch bei Fehlern nichts an), -1 (zeige SQL an), 0, 1
-void RS::update(const string& utab, vector< instyp > einf,int obverb, const string& bedingung,const size_t aktc/*=0*/,uchar asy/*=0*/) 
+void RS::tbupd(const string& utab, vector< instyp > einf,int obverb, const string& bedingung,const size_t aktc/*=0*/,uchar asy/*=0*/) 
 {
 	ulong locks=0;
 
@@ -1738,13 +1745,10 @@ void RS::update(const string& utab, vector< instyp > einf,int obverb, const stri
 						isql.clear();
 						break;
           }  else {
-            Log(tuerkiss+"SQL: "+schwarz+isql,iru||(fnr!=1406&&fnr!=1213&&fnr!=1366),1);
+            Log(tuerkiss+"SQL: "+schwarz+isql,iru||(fnr!=1213&&fnr!=1366),1);
             const string fmeld=mysql_error(dbp->conn[aktc]);
-            Log(mysql_error(dbp->conn[aktc]),iru||(fnr!=1406&&fnr!=1213&&fnr!=1366),1);
-            if (fnr==1406) {
-              dbp->erweitern(utab,einf,aktc,obverb,0);
-              ////              if (obfehl) break; 16.1.15, sonst wirkt die aktuelle Abfrage nicht mehr
-            }  else if (fnr==1213) { // Deadlock found
+            Log(mysql_error(dbp->conn[aktc]),iru||(fnr!=1213&&fnr!=1366),1);
+            if (fnr==1213) { // Deadlock found
               locks++;
               ////              "locks: "<<drot<<locks<<endl;
               mysql_commit(dbp->conn[aktc]);
@@ -1754,7 +1758,7 @@ void RS::update(const string& utab, vector< instyp > einf,int obverb, const stri
             } else {
               cout<<rot<<Txk[T_Fehler]<<schwarz<<fnr<<Txd[T_bei_sql_Befehl]<<isql<<endl;
               break; 
-            } //             if (fnr==1406) else else else 
+            } //             if (fnr==1213) else else
           } //   if (!obfehl) else
         } //  for (int iru=0;iru<2;iru++) 
 				striktzurueck(altsqlm,aktc);
@@ -1772,8 +1776,8 @@ void RS::update(const string& utab, vector< instyp > einf,int obverb, const stri
 	 sammeln=0 ohne Puffer/Puffer auf Datenbank schreiben
  */
 // fuer obverb gibt es die Stufen: -2 (zeige auch bei Fehlern nichts an), -1 (zeige SQL an), 0, 1
-void RS::insert(const string& itab, vector< instyp > einf,const size_t aktc/*=0*/,uchar sammeln/*=0*/,
-		int obverb/*=0*/,string *idp/*=0*/,uchar eindeutig/*=0*/,uchar asy/*=0*/,svec *csets/*=0*/) 
+void RS::tbins(const string& itab, vector<instyp>einf,const size_t aktc/*=0*/,uchar sammeln/*=0*/,
+		int obverb/*=0*/,string *idp/*=0*/,const uchar eindeutig/*=0*/,const string& eindfeld/*=nix*/,const uchar asy/*=0*/,svec *csets/*=0*/) 
 {
 	ulong locks=0;
 	uchar obhauptfehl=0;
@@ -1854,13 +1858,26 @@ void RS::insert(const string& itab, vector< instyp > einf,const size_t aktc/*=0*
         break;
     } // switch (dbp->DBS)
   } // eindeutig
-  if (obeinfuegen) {
-    if (einf.size()) zaehler+=1;
-    if (!anfangen && zaehler==maxzaehler) {
-      sammeln=0;
-      dochanfangen=1;
-    } //     if (!anfangen && zaehler==maxzaehler)
-  } //   if (obeinfuegen)
+	if (!eindfeld.empty()) {
+		for(uint i=0;i<einf.size();i++){
+			if (!strcasecmp(einf[i].feld.c_str(),eindfeld.c_str())) {
+				Abfrage("SELECT 1 FROM `"+itab+"` WHERE `"+einf[i].feld+"`="+einf[i].wert,aktc,obverb);
+				if (!obfehl) {
+					char*** erg=HolZeile();
+					if (*erg)
+						obeinfuegen=0;
+				} // 				if (!obfehl)
+				break;
+			} // 			if (!strcasecmp(einf[i].feld,eindfeld.c_str()))
+		} // 		for(uint i=0;i<einf.size();i++)
+	} // 	if (!eindfeld.empty())
+	if (obeinfuegen) {
+		if (einf.size()) zaehler+=1;
+		if (!anfangen && zaehler==maxzaehler) {
+			sammeln=0;
+			dochanfangen=1;
+		} //     if (!anfangen && zaehler==maxzaehler)
+	} //   if (obeinfuegen)
 
   if (anfangen) {
     switch (dbp->DBS) {
@@ -1935,13 +1952,10 @@ void RS::insert(const string& itab, vector< instyp > einf,const size_t aktc/*=0*
 							isql.clear();
 							break;
             }  else {
-							Log(tuerkiss+"SQL: "+schwarz+isql,iru||(fnr!=1406&&fnr!=1213&&fnr!=1366),0);
+							Log(tuerkiss+"SQL: "+schwarz+isql,iru||(fnr!=1213&&fnr!=1366),0);
               const string fmeld=mysql_error(dbp->conn[aktc]);
-              Log(fmeld,iru||(fnr!=1406&&fnr!=1213&&fnr!=1366),0);
-              if (fnr==1406){
-                dbp->erweitern(itab,einf,aktc,obverb, sammeln || (!sammeln && !anfangen),maxl);
-                ////                if (obfehl) break; // 16.1.16, sonst wirkt die aktuelle Abfrage nicht mehr
-              }  else if (fnr==1213){ // Deadlock found
+              Log(fmeld,iru||(fnr!=1213&&fnr!=1366),0);
+              if (fnr==1213){ // Deadlock found
                 locks++;
                 ////              "locks: "<<drot<<locks<<endl;
                 mysql_commit(dbp->conn[aktc]);
@@ -1952,7 +1966,7 @@ void RS::insert(const string& itab, vector< instyp > einf,const size_t aktc/*=0*
 								cerr<<rot<<Txk[T_Fehler]<<schwarz<<fnr<<Txd[T_bei_sql_Befehl]<<isql<<endl;
 								exit(113);
                 break; 
-              } // if (fnr==1406) else else else
+              } // if (fnr==1213) else else
             } //             if (idp) else else else
           } //  for (int iru=0;iru<2;iru++) 
 				striktzurueck(altsqlm,aktc);
@@ -1998,7 +2012,7 @@ void DB::prueffunc(const string& pname, const string& body, const string& para, 
     if (fehlt) {
       DB *aktMyp;
       if (!runde) aktMyp=this; else {
-        DB MySup(DBS,this->linstp,this->host.c_str(),"root",this->rootpwd.c_str(),0,this->dbname.c_str(),0,0,0,obverb,oblog);
+        /*2*/DB MySup(DBS,this->linstp,this->host.c_str(),"root",this->rootpwd.c_str(),1,this->dbname.c_str(),0,0,0,obverb,oblog);
         aktMyp=&MySup;
       }
       string proc= "DROP FUNCTION IF EXISTS `"+pname+"`";

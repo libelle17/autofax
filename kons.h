@@ -725,7 +725,7 @@ int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *r
 								stringstream *ausgp=0);
 void pruefplatte();
 void pruefmehrfach(const string& wen=nix,uchar obstumm=0);
-void setfaclggf(const string& datei,int obverb=0,int oblog=0,const binaer obunter=falsch,const int mod=4,uchar obimmer=0,
+void setfaclggf(const string& datei,int obverb=0,int oblog=0,const binaer obunter=falsch,int mod=4,uchar obimmer=0,
                 uchar faclbak=0,const string& user=nix,uchar fake=0,stringstream *ausgp=0);
 int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=0, uchar obmitcon=0,
               const string& besitzer=nix, const string& benutzer=nix, const uchar obmachen=1);
@@ -780,7 +780,7 @@ class linst_cl
  linst_cl(int obverb=0, int oblog=0);
  uchar obnmr=1;
  string eprog; // ersetztes Programm
- string ersetzeprog(const string& prog);
+ const string ersetzeprog(const string& prog) const;
  void ziehraus(svec srueck, string* ustringp);
  int doinst(const string& prog,int obverb=0,int oblog=0,const string& fallsnichtda=nix,uchar ohneabh=0);// ,uchar obyes=1);
  int doggfinst(const string& prog,int obverb=0,int oblog=0,uchar ohneabh=0);
