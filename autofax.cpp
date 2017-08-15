@@ -5497,7 +5497,7 @@ void paramcl::empferneut()
 		const string fnr=vinca[j];
 		struct stat cstat={0};
 		if (fnr.find('-')!=string::npos) {
-			const string txtd=cempfavz+vtz+cuser+'-'+fnr;
+			const string txtd=cempfavz+vtz+(fnr.find("fax-")?"":cuser+'-')+fnr;
 			if (!lstat((txtd+".txt").c_str(),&cstat)&&!lstat((txtd+".sff").c_str(),&cstat)) {
 				empfcapi(txtd,0,4,ltoan(j));
 			}
