@@ -1777,7 +1777,7 @@ void RS::tbupd(const string& utab, vector< instyp > einf,int obverb, const strin
  */
 // fuer obverb gibt es die Stufen: -2 (zeige auch bei Fehlern nichts an), -1 (zeige SQL an), 0, 1
 void RS::tbins(const string& itab, vector<instyp>einf,const size_t aktc/*=0*/,uchar sammeln/*=0*/,
-		int obverb/*=0*/,string *idp/*=0*/,const uchar eindeutig/*=0*/,const string& eindfeld/*=nix*/,const uchar asy/*=0*/,svec *csets/*=0*/) 
+		int obverb/*=0*/,string *idp/*=0*/,const uchar eindeutig/*=0*/,const svec& eindfeld/*=nix*/,const uchar asy/*=0*/,svec *csets/*=0*/) 
 {
 	ulong locks=0;
 	uchar obhauptfehl=0;
@@ -1858,19 +1858,31 @@ void RS::tbins(const string& itab, vector<instyp>einf,const size_t aktc/*=0*/,uc
         break;
     } // switch (dbp->DBS)
   } // eindeutig
-	if (!eindfeld.empty()) {
+	if (eindfeld.size()) {
+	  string abfr;
 		for(uint i=0;i<einf.size();i++){
-			if (!strcasecmp(einf[i].feld.c_str(),eindfeld.c_str())) {
-				Abfrage("SELECT 1 FROM `"+itab+"` WHERE `"+einf[i].feld+"`="+einf[i].wert,aktc,obverb);
-				if (!obfehl) {
-					char*** erg=HolZeile();
-					if (*erg)
-						obeinfuegen=0;
-				} // 				if (!obfehl)
-				break;
-			} // 			if (!strcasecmp(einf[i].feld,eindfeld.c_str()))
+			if (!strcasecmp(einf[i].feld.c_str(),eindfeld[0].c_str())) {
+			 abfr="SELECT 1 FROM `"+itab+"` WHERE `"+einf[i].feld+"`="+einf[i].wert;
+			 break;
+			} // 			if (!strcasecmp(einf[i].feld.c_str(),eindfeld[0].c_str()))
 		} // 		for(uint i=0;i<einf.size();i++)
-	} // 	if (!eindfeld.empty())
+		for(uint j=1;j<eindfeld.size();j++) {
+			for(uint i=0;i<einf.size();i++){
+				if (!strcasecmp(einf[i].feld.c_str(),eindfeld[j].c_str())) {
+					abfr+=" AND `"+einf[i].feld+"`="+einf[i].wert;
+					break;
+				} // 				if (!strcasecmp(einf[i].feld.c_str(),eindfeld[j].c_str()))
+			} // 			for(uint i=0;i<einf.size();i++)
+		} // 		for(uint j=1;j<eindfeld.size();j++)
+		if (!abfr.empty()) {
+			Abfrage(abfr,aktc,obverb);
+			if (!obfehl) {
+				char*** erg=HolZeile();
+				if (*erg)
+					obeinfuegen=0;
+			} // 				if (!obfehl)
+		} // 		if (!abfr.empty())
+	} // 	if (eindfeld.size())
 	if (obeinfuegen) {
 		if (einf.size()) zaehler+=1;
 		if (!anfangen && zaehler==maxzaehler) {

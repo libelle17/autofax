@@ -16,7 +16,7 @@ const char *dir = "dir ";
 const char *dir = "ls -l ";
 #endif
 const char *tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
-pthread_mutex_t printf_mutex;
+pthread_mutex_t printf_mutex,getmutex;
 
 #ifdef linux
 #include <iomanip> // setprecision
@@ -1051,7 +1051,8 @@ int Log(const string& text, const short screen/*=1*/, const short file/*=1*/, co
 #ifdef _MSC_VER
 inline void wait () 
 {
-  cout<<Txk[T_Bitte_mit]<<_drot<<"return"<<_schwarz<<Txk[T_beenden];
+	pthread_mutex_lock(&getmutex);
+	cout<<Txk[T_Bitte_mit]<<_drot<<"return"<<_schwarz<<Txk[T_beenden];
   // Löscht etwaige Fehlerzustände, die das Einlesen verhindern könnten
   cin.clear();
   // (= ignoriert alle Zeichen die derzeit im Puffer sind)
@@ -1059,6 +1060,7 @@ inline void wait ()
   // Füge alle eingelesenen Zeichen in den Puffer bis ein Enter gedrückt wird
   // cin.get() liefert dann das erste Zeichen aus dem Puffer zurück, welches wir aber ignorieren (interessiert uns ja nicht)
   cin.get();
+	pthread_mutex_unlock(&getmutex);
 }  // inline void wait () 
 #endif // _MSC_VER
 
@@ -1951,7 +1953,7 @@ int Schschreib(const char *fname, Schluessel *conf, size_t csize)
   if (!erfolg) return 1;
   for(size_t i=0;i<csize;i++) {
     *f<<conf[i].key<<" = \""<<conf[i].val<<"\""<<endl;
-  }
+  } //   for(size_t i=0;i<csize;i++)
 #else // obfstream 
   FILE *f=oeffne(fname,3,&erfolg);
   if (!erfolg) return 1;
@@ -1959,7 +1961,7 @@ int Schschreib(const char *fname, Schluessel *conf, size_t csize)
 		pthread_mutex_lock(&printf_mutex);
     fprintf(f,"%s = \"%s\"\n",conf[i].key,conf[i].val);
 		pthread_mutex_unlock(&printf_mutex);
-  }
+  } // 	for (size_t i = 0;i<csize;i++)
   fclose(f);
 #endif // obfstream else
 #endif	 // false
@@ -2401,7 +2403,7 @@ string aktprogverz()
 #elif linux
   char szTmp[32];
 		pthread_mutex_lock(&printf_mutex);
-  sprintf(szTmp, "/proc/%d/exe", getpid());
+		sprintf(szTmp, "/proc/%d/exe", getpid());
 		pthread_mutex_unlock(&printf_mutex);
   ssize_t bytes = MIN(readlink(szTmp, pBuf, sizeof pBuf), sizeof pBuf - 1);
   if(bytes >= 0) pBuf[bytes] = 0;
@@ -2413,7 +2415,8 @@ char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], co
 {
   string input;
   if (!erlaubt) erlaubt=moegl.c_str();
-  while(1) {
+	pthread_mutex_lock(&getmutex);
+	while(1) {
     cout<<blau<<frage<<schwarz<<" (";
     for(unsigned i=0;i<moegl.length();i++) {
       cout<<"'"<<drot<<moegl[i]<<schwarz<<"'";
@@ -2427,7 +2430,8 @@ char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], co
     if (input.empty() && vorgabe) {input=vorgabe;break;}
     if (input[0]) if (strchr(erlaubt,(int)input[0])) break;
   } //   while(1)
-  return input[0];
+	pthread_mutex_unlock(&getmutex);
+	return input[0];
   ////  return Tippbuchst(frage.c_str(), moegl.c_str(), berkl, erlaubt, vorgabe);
 } // char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
 
@@ -2444,7 +2448,8 @@ string Tippstrs(const char *frage, char* moegl[], char *vorgabe/*=0*/)
   // das letzte Element von moegl muss 0 sein
 {
   string input;
-  while(1) {
+	pthread_mutex_lock(&getmutex);
+	while(1) {
     char passt=0;
     cout<<blau<<frage<<schwarz<<" (";
     for(unsigned i=0;moegl[i];i++) {
@@ -2464,13 +2469,15 @@ string Tippstrs(const char *frage, char* moegl[], char *vorgabe/*=0*/)
     } //     if (input[0])
     if (passt) break; 
   } //   while(1)
-  return input;
+	pthread_mutex_unlock(&getmutex);
+	return input;
 } // Tippstrs
 
 string Tippstrs(const char *frage, vector<string> *moegl, string *vorgabe/*=0*/)
 {
   string input;
-  while(1) {
+	pthread_mutex_lock(&getmutex);
+	while(1) {
     char passt=0;
     cout<<blau<<frage<<schwarz<<" (";
     for(unsigned i=0;i<moegl->size();i++) {
@@ -2491,14 +2498,16 @@ string Tippstrs(const char *frage, vector<string> *moegl, string *vorgabe/*=0*/)
     } //     if (input[0])
     if (passt) break; 
   } //   while(1)
-  return input;
+	pthread_mutex_unlock(&getmutex);
+	return input;
 } // Tippstrs
 
 
 string Tippzahl(const char *frage, const char *vorgabe) 
 {
   string input;
-  while(1) {
+	pthread_mutex_lock(&getmutex);
+	while(1) {
     cout<<blau<<frage<<schwarz<<(!vorgabe?"":" ["+tuerkiss+vorgabe+schwarz+"]")<<"? ";
     input.clear();
     getline(cin,input);
@@ -2506,7 +2515,8 @@ string Tippzahl(const char *frage, const char *vorgabe)
     if (input.empty() && vorgabe) {input=vorgabe;break;}
     if (isnumeric(input)) break;
   } //   while(1)
-  return input;
+	pthread_mutex_unlock(&getmutex);
+	return input;
 } // Tippzahl
 
 string Tippzahl(const char *frage, const string *vorgabe) 
@@ -2534,7 +2544,8 @@ string Tippstr(const char *frage, const string *vorgabe)
 string Tippstr(const string& frage, const string *vorgabe) 
 {
   string input;
-  while(1) {
+	pthread_mutex_lock(&getmutex);
+	while(1) {
     cout<<blau<<frage<<schwarz<<(!vorgabe || vorgabe->empty()?"":" [\""+tuerkiss+*vorgabe+schwarz+"\"]")<<"? ";
     input.clear();
     getline(cin,input);
@@ -2545,20 +2556,24 @@ string Tippstr(const string& frage, const string *vorgabe)
     } //     if (input.empty() && vorgabe)
     break;
   } //   while(1)
-  return input;
+	pthread_mutex_unlock(&getmutex);
+	return input;
 } // Tippstr
 
 string Tippverz(const char *frage,const string *vorgabe) 
 {
   string input, vg2="n"; uchar fertig=0;
-  while(1) {
-    cout<<blau<<frage<<schwarz<<(!vorgabe || vorgabe->empty()?"":" [\""+tuerkiss+*vorgabe+schwarz+"\"]")<<"? ";
+	while(1) {
+		pthread_mutex_lock(&getmutex);
+		cout<<blau<<frage<<schwarz<<(!vorgabe || vorgabe->empty()?"":" [\""+tuerkiss+*vorgabe+schwarz+"\"]")<<"? ";
     input.clear();
     getline(cin,input);
     if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
     if (input.empty() && vorgabe) {input=*vorgabe;}
-    struct stat st={0};
+		pthread_mutex_unlock(&getmutex);
+		struct stat st={0};
     ////    <<"input: '"<<rot<<input<<schwarz<<"'"<<endl;
+		pthread_mutex_lock(&getmutex);
     while (1) {
       if (!lstat(input.c_str(), &st)) {
         if(S_ISDIR(st.st_mode)) {
@@ -2586,9 +2601,10 @@ string Tippverz(const char *frage,const string *vorgabe)
         } //         if (strchr("jyJY",inpi[0])) else
       } //       if (!lstat(input.c_str(), &st)) else
     } //     while (1)
+		pthread_mutex_unlock(&getmutex);
     if (fertig) break;
   } //   while(1)
-  return input;
+	return input;
 } // Tippverz
 
 uchar VerzeichnisGibts(const char* vname)

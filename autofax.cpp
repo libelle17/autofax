@@ -2435,7 +2435,8 @@ void fsfcl::archiviere(DB *const My, paramcl *const pmp, const struct stat *cons
 		if (!adressat.empty()) einf.push_back(/*2*/instyp(My->DBS,"adressat",&adressat));
 		einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
 		einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
-		rins.tbins(pmp->touta,einf,aktc,/*sammeln=*/0,/*oberb=*/ZDB);  // einfuegen
+		svec eindfeld; eindfeld<<"submt";eindfeld<<"submid";
+		rins.tbins(pmp->touta,einf,aktc,/*sammeln=*/0,/*oberb=*/ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld);  // einfuegen
 		if (rins.fnr) {
 			Log(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
 		} //     if (runde==ruz-1)
@@ -4885,7 +4886,8 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 		} // 					for(int cru=0;cru<2;cru++)
 		if (rueck[0].size()||rueck[1].size()) {
 			RS vgl1(My,"DROP TABLE IF EXISTS tmpcapi",aktc,ZDB);
-			RS vgl2(My,"CREATE TABLE tmpcapi(submid VARCHAR(25) KEY,teln VARCHAR(25),zp DATETIME, tries INT, size INT(15), erfolg INT);",aktc,ZDB);
+			RS vgl2(My,"CREATE TABLE tmpcapi(submid VARCHAR(40) KEY, titel VARCHAR(600), rcname VARCHAR(900),"
+					"teln VARCHAR(40),zp DATETIME, tries INT, size INT(15), erfolg INT);",aktc,ZDB);
 			for(int cru=0;cru<2;cru++) {
 				for(ruecki=0;ruecki<rueck[cru].size();ruecki++) {
 					teln.clear();zp.clear();tries.clear();user.clear();size=0;
@@ -4923,8 +4925,10 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 					vector<string> tok; 
 					aufSplit(&tok,ursp,'-');
 					ursp.clear(); for(size_t j=1;j<tok.size();j++){ursp+=tok[j];if (j<tok.size()-1) ursp+="-";}
+					string getname,bsname;
+					getSender(this,teln,&getname,&bsname,aktc);
 					//// <<"ursp: "<<ursp<<endl;
-					inse+="('"+ursp+"','"+teln+"','"+zp+"',"+tries+","+ltoan(size)+","+(cru?"1":"0")+"),";
+					inse+="('"+ursp+"','"+bsname+"','"+getname+"','"+teln+"','"+zp+"',"+tries+","+ltoan(size)+","+(cru?"1":"0")+"),";
 					if (!(ruecki % 100)||ruecki==rueck[cru].size()-1) {
 						inse[inse.size()-1]=';';
 						////		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
@@ -4974,8 +4978,8 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 						<<violett<<setw(5)<<*(*cerg+3)<<"|"<<blau<<setw(6)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+5)<<"|"
 						<<blau<<string(*(*cerg+6)).substr(0,55)<<schwarz<<endl;
 				} // while (cerg=kor3.HolZeile(),cerg?*cerg:0) 
-				RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,fsize,retries,rcfax,docname,idudoc,pages,adressat) "
-						"SELECT t.erfolg,t.zp,t.zp,t.submid,t.size,t.tries,t.teln,IF(ISNULL(asp.original),'',asp.original),"
+				RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,titel,rcname,fsize,retries,rcfax,docname,idudoc,pages,adressat) "
+						"SELECT t.erfolg,t.zp,t.zp,t.submid,t.titel,t.rcname,t.size,t.tries,t.teln,IF(ISNULL(asp.original),'',asp.original),"
 						"IF(ISNULL(asp.idudoc),0,asp.idudoc),IF(ISNULL(asp.pages),0,asp.pages),"
 						"IF(ISNULL(asp.adressat) OR asp.adressat=t.teln,'',asp.adressat) "
 						"FROM tmpcapi t "
@@ -5004,8 +5008,7 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 
 const char* chstandtxt(uchar stand)
 {
-	switch (stand)
-	{
+	switch (stand) {
 		case 0: return Tx[T_Fehlt];
 		case 1: return Tx[T_Nicht_gefaxt];
 						//	case 2: return Tx[T_gefaxt];
@@ -5016,8 +5019,7 @@ const char* chstandtxt(uchar stand)
 
 const char *const chfarbe(uchar stand)
 {
-	switch (stand)
-	{
+	switch (stand) {
 		case 0: return rot;
 		case 1: return violett;
 	}
@@ -6921,7 +6923,7 @@ void paramcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // fax
 						for(unsigned iru=0;iru<2;iru++) {
 							const string *datei=iru?&fsf.origvu:&fsf.original;
 							if (!datei->empty()) {
-								const string zuloe =wvz+vtz+*datei;
+								const string zuloe=wvz+vtz+*datei;
 								if (gleichziel) { 
 									tuloeschen(zuloe,cuser,obverb,oblog);
 								} else {
@@ -7642,7 +7644,8 @@ void paramcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,con
 		einf.push_back(/*2*/instyp(My->DBS,"devname",&devname));
 		einf.push_back(/*2*/instyp(My->DBS,"id",&base));
 		einf.push_back(/*2*/instyp(My->DBS,"transe",&tm));
-		rins.tbins(tinca,einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB,/*idp=*/0,/*eindeutig=*/0,/*eindfeld=*/"id"); 
+		svec eindfeld; eindfeld<<"id";
+		rins.tbins(tinca,einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld); 
 		if (rins.fnr) {
 			::Log(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
 		} //         if (runde==1)
@@ -7797,7 +7800,8 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 		einf.push_back(/*2*/instyp(My->DBS,"fsize",entrysff.st_size));
 		einf.push_back(/*2*/instyp(My->DBS,"csid",&umstcnfA[2].wert));
 		einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
-		rins.tbins(tinca,einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB,/*idp=*/0,/*eindeutig=*/0,/*eindfeld=*/"id"); 
+		svec eindfeld; eindfeld<<"id";
+		rins.tbins(tinca,einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld); 
 		if (rins.fnr) {
 			::Log(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
 		} //         if (runde==1)
@@ -9659,7 +9663,7 @@ void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsf
 		struct stat entryff={0};
 		if (lstat(ff.c_str(), &entryff)) {
 			Log(rots+Tx[T_faxemitCFehler]+schwarz+Tx[T_Faxdatei]+blau+ff+rot+ Tx[T_fehlt]+schwarz,1,1);
-			// archiviere
+			//// archiviere
 		} else if (!entryff.st_size) {
 			Log(rots+Tx[T_faxemitCFehler]+schwarz+Tx[T_Faxdatei]+blau+ff+rot+ Tx[T_hat0Bytes]+schwarz,1,1);
 		} else {

@@ -399,7 +399,7 @@ class RS
     ~RS();
     void tbupd(const string& tab,vector<instyp> einf,int obverb, const string& bedingung, const size_t aktc/*=0*/, uchar asy=0);
     void tbins(const string& tab,vector<instyp> einf,const size_t aktc=0,uchar sammeln=0,int obverb=0,string *id=0,
-		     const uchar eindeutig=0,const string& eindfeld=nix,const uchar asy=0, svec *csets=0);
+		     const uchar eindeutig=0,const svec& eindfeld=svec(),const uchar asy=0, svec *csets=0);
 		void machstrikt(string& altmode,const size_t aktc=0);
 		void striktzurueck(string& altmode,const size_t aktc=0);
   private:
