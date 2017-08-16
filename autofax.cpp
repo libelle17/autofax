@@ -7235,6 +7235,7 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 							"GROUP BY t.submid",aktc,ZDB);
 					char ***cerg;
 					//// size_t znr=0;
+					size_t zru=0;
 					while (cerg=ntr.HolZeile(),cerg?*cerg:0) {
 						////<<"znr: "<<rot<<++znr<<schwarz<<endl;
 						const string hylanr = *(*cerg+0);
@@ -7256,6 +7257,19 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 						if (*(*cerg+5)) fsf.idudoc=*(*cerg+5);
 						if (fsf.idudoc.empty()) fsf.idudoc="0";
 						if (*(*cerg+6)) fsf.pseiten=atol(*(*cerg+6));
+						if (!zru++) {
+							cout<<violett<<Tx[T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
+							cout<<schwarz<<setw(20)<<"submid"<<"|"<<setw(25)<<"tel'n."<<"|"<<setw(19)<<"zp"<<"|"
+								<<setw(19)<<"date"<<"|"<<setw(7)<<"seiten"<<schwarz<<"|"<<blau<<"docname"<<schwarz<<endl;
+						} // 							if (!zru++)
+						cout<<
+						setw(4)<<zru<<") "<<
+						blau<<setw(14)<<*(*cerg+0)<<schwarz<<"|"<<
+						violett<<setw(25)<<*(*cerg+1)<<schwarz<<"|"<<
+						blau<<setw(19)<<*(*cerg+3)<<"|"<<
+						violett<<setw(19)<<*(*cerg+4)<<"|"<<
+						violett<<setw(7)<<*(*cerg+6)<<"|"<<
+						blau<<string(*(*cerg+5)).substr(0,55)<<schwarz<<endl;
 						//// <<"vor archiviere, telnr: "<<fsf.telnr<<" tts: "<<fsf.tts<<" hdd: "<<fsf.hdd<<" original: "<<fsf.original<<
 						////                           " hdd: "<<fsf.hdd<<" idudoc: "<<fsf.idudoc<<endl;
 						fsf.archiviere(My,this,&entrys,0,hyla,0,3,obverb,oblog);
