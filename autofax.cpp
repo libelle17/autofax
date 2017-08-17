@@ -816,6 +816,12 @@ enum T_
 	T_Anfangsteil,
 	T_was,
 	T_Bilddatei,
+	T_telnr,
+	T_zp,
+	T_Dateidatum,
+	T_tries,
+	T_size,
+	T_docname,
 	T_MAX
 };
 
@@ -2280,6 +2286,18 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{", was: ",", what: "},
 	// T_Bilddatei
 	{"Bilddatei","Picture file"},
+	// T_telnr
+	{"Tel'nr.","tel.no."},
+	// T_zp
+	{"Zeitpunkt","timestamp"},
+	// T_Dateidatum
+	{"Dateidatum","file date"},
+	// T_tries
+	{"Versuche","tries"},
+	// T_size
+	{"Größe","size"},
+	// T_docname
+	{"Dateiname","docname"},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -4947,8 +4965,8 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 				while (cerg=kor1.HolZeile(),cerg?*cerg:0) {
 					if (!zru++) {
 						cout<<violett<<Tx[T_Folgende_Faxe_waren_mit_falschem_Erfolgskennzeichen_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
-						cout<<schwarz<<setw(19)<<"submid"<<"|"<<setw(15)<<Tx[T_Faxnr]<<"|"<<setw(19)<<"zp"<<"|"
-							<<setw(19)<<"submt"<<"|"<<setw(5)<<"tries"<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<"size"<<"|"<<"docname"<<schwarz<<endl;
+						cout<<schwarz<<setw(19)<<"submid"<<"|"<<setw(15)<<Tx[T_Faxnr]<<"|"<<setw(19)<<Tx[T_zp]<<"|"
+							<<setw(19)<<"submt"<<"|"<<setw(5)<<Tx[T_tries]<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<Tx[T_size]<<"|"<<Tx[T_docname]<<schwarz<<endl;
 					} // 								if (!zru++)
 					cout<<setw(3)<<zru<<") "<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(15)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"
 						<<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<setw(5)<<*(*cerg+4)<<"|"<<violett<<setw(6)<<*(*cerg+5)<<"|"
@@ -4971,8 +4989,8 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 				while (cerg=kor3.HolZeile(),cerg?*cerg:0) {
 					if (!zru++) {
 						cout<<violett<<Tx[T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
-						cout<<schwarz<<setw(20)<<"submid"<<"|"<<setw(25)<<"tel'n."<<"|"<<setw(19)<<"zp"<<"|"
-							<<setw(5)<<"tries"<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<"size"<<schwarz<<"|"<<blau<<"docname"<<schwarz<<endl;
+						cout<<schwarz<<setw(20)<<"submid"<<"|"<<setw(25)<<Tx[T_telnr]<<"|"<<setw(19)<<Tx[T_zp]<<"|"
+							<<setw(5)<<Tx[T_tries]<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<Tx[T_size]<<schwarz<<"|"<<blau<<Tx[T_docname]<<schwarz<<endl;
 					} // 							if (!zru++)
 					cout<<setw(4)<<zru<<") "<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(25)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"
 						<<violett<<setw(5)<<*(*cerg+3)<<"|"<<blau<<setw(6)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+5)<<"|"
@@ -7259,8 +7277,8 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 						if (*(*cerg+6)) fsf.pseiten=atol(*(*cerg+6));
 						if (!zru++) {
 							cout<<violett<<Tx[T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
-							cout<<schwarz<<setw(20)<<"submid"<<"|"<<setw(25)<<"tel'n."<<"|"<<setw(12)<<"zp"<<"|"
-								<<setw(19)<<"date"<<"|"<<setw(7)<<"seiten"<<schwarz<<"|"<<blau<<"docname"<<schwarz<<endl;
+							cout<<schwarz<<setw(20)<<"submid"<<"|"<<setw(25)<<Tx[T_telnr]<<"|"<<setw(12)<<Tx[T_zp]<<"|"
+								<<setw(19)<<Tx[T_Dateidatum]<<"|"<<setw(7)<<Tx[T_Seiten]<<schwarz<<"|"<<blau<<Tx[T_docname]<<schwarz<<endl;
 						} // 							if (!zru++)
 						cout<<
 						setw(4)<<zru<<") "<<
