@@ -822,6 +822,7 @@ enum T_
 	T_tries,
 	T_size,
 	T_docname,
+	T_pages,
 	T_MAX
 };
 
@@ -2298,6 +2299,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Größe","size"},
 	// T_docname
 	{"Dateiname","docname"},
+	// T_pages
+	{"Seiten","pages"},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -7278,7 +7281,7 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 						if (!zru++) {
 							cout<<violett<<Tx[T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
 							cout<<schwarz<<setw(20)<<"submid"<<"|"<<setw(25)<<Tx[T_telnr]<<"|"<<setw(12)<<Tx[T_zp]<<"|"
-								<<setw(19)<<Tx[T_Dateidatum]<<"|"<<setw(7)<<Tx[T_Seiten]<<schwarz<<"|"<<blau<<Tx[T_docname]<<schwarz<<endl;
+								<<setw(19)<<Tx[T_Dateidatum]<<"|"<<setw(7)<<Tx[T_pages]<<schwarz<<"|"<<blau<<Tx[T_docname]<<schwarz<<endl;
 						} // 							if (!zru++)
 						cout<<
 						setw(4)<<zru<<") "<<
