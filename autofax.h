@@ -268,6 +268,7 @@ class paramcl // Programmparameter
     string cfaxusersqvz;    // /var/spool/capisuite/users/<user>/sendq
     string nextdatei;  // /var/spool/capisuite/users/<user>/sendq/fax-nextnr
     string cfaxuserrcvz;    // /var/spool/capisuite/users/<user>/received
+		string cfaxuserrcfalschevz;  // /var/spool/capisuite/users/<user>/received/falsche
     string cdonevz; // Capisuite-Archiv: /var/spool/capisuite/done
     string cfailedvz; // Capisuite-Archiv der gescheiterten /var/spool/capisuite/failed
     string countrycode; // Landesvorwahl

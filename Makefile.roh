@@ -56,6 +56,7 @@ EXPFAD::=$(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | head -n 1)
 EXPFAD::=$(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | awk '{ print length, $$0 }' | sort -n -s | cut -d" " -f2- | head -n1)
 
 CCInst::=gcc6-c++
+
 -include vars # wird durch install.sh generiert
 GDAT::=$(DATEIEN:inst.log=)
 GDAT::=$(GDAT:uninstallinv=)
@@ -68,6 +69,10 @@ ifneq ($(shell g++-6 --version >$(KR); echo $$?),0)
 # CFLAGS::=$(CFLAGS) -std=gnu++11 # 7.8.17 nicht nötig für opensuse42, hinderlich für fedora
 else
  CCName::=g++-6
+endif
+GCCAB6::=$(shell expr `gcc -dumpversion|cut -f1 -d.` \>= 6)
+ifeq ('$(GCCAB6)','0')
+CCName=g++-6
 endif
 CC::=$(CCName) # CC=$(SUDC)$(CCName)
 libmcd::=$(libmc)-$(dev)
@@ -238,7 +243,8 @@ ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
 endif
-	@./configure inst "$(CCName)" "$(COMP)"
+	-@[ "$(GCCAB6)" = "0" ]&&{ ./configure inst "$(CCName)" "$(COMP)"; }
+#	@./configure inst "$(CCName)" "$(COMP)"
 	-@for r in 1 2;do [ $$r = 1 ]&&{ lc="$(libmcd)";:;}||lc="$(libmc1d)";\
 	[ -f /usr/include/mysql/mysql.h>$(KR) ]&& \
 	find $$(find /usr -maxdepth 1 -type d -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)&& break;\

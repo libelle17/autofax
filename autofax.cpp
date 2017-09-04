@@ -2416,48 +2416,48 @@ void fsfcl::archiviere(DB *const My, paramcl *const pmp, const struct stat *cons
 	RS zs(My);
 	string getname,bsname;
 	getSender(pmp,telnr,&getname,&bsname,aktc);
-		vector<instyp> einf;
-		einf.push_back(/*2*/instyp(My->DBS,"titel",&bsname));
-		einf.push_back(/*2*/instyp(My->DBS,"rcname",&getname));
-		if (capi) {if (cdd.empty()) cdd="0000-00-00";} else {if (hdd.empty()) hdd="0000-00-00";}
-		einf.push_back(/*2*/instyp(My->DBS,"submt",ftyp==capi?&cdd:&hdd));
-		einf.push_back(/*2*/instyp(My->DBS,"submid",ftyp==capi?&capisd:&hylanr));
-		string patid;
-		if (!original.empty()) {
-			const char* ocstr=original.c_str(); // da c_str() fluechtig sein koennte
-			char* patidp = (char*)strcasestr(ocstr,"pid ");
-			if (patidp) {
-				if (patidp==ocstr || (patidp>ocstr && (strchr(" .,;",*(patidp-1))))){
-					for(patidp+=4;*patidp && *patidp!=' ';patidp++) {
-						if (strchr("0123456789",*patidp)) patid+=*patidp;
-					}  //           for(patidp+=4;*patidp && *patidp!=' ';patidp++)
-				} //         if (patidp==ocstr || (patidp>ocstr && (strchr(" .,;",*(patidp-1)))))
-			} //       if (patidp)
-		} //     if (!original.empty())
-		if (patid.empty()) patid="0";
-		einf.push_back(/*2*/instyp(My->DBS,"pid",&patid));
-		einf.push_back(/*2*/instyp(My->DBS,"Erfolg",(int)!obgescheitert));
-		einf.push_back(/*2*/instyp(My->DBS,"docname",&original));
-		Log("original (docname): "+blaus+original+schwarz,obverb,oblog);
-		einf.push_back(/*2*/instyp(My->DBS,"idudoc",&idudoc));
-		if (!tts) tts=time(0);
-		////<<gruen<<"tts: "<<rot<<tts<<schwarz<<endl;
-		//// char buf[100];
-		//// strftime(buf, sizeof(buf), "%d.%m.%y %T", localtime(&tts));
-		//// <<"buf: "<<buf<<endl;
-		einf.push_back(/*2*/instyp(My->DBS,"transe",&tts));
-		if (!telnr.empty()) {
-			const string stdfax=pmp->stdfaxnr(telnr);
-			einf.push_back(/*2*/instyp(My->DBS,"rcfax",&stdfax));
-		} //     if (!telnr.empty())
-		if (!adressat.empty()) einf.push_back(/*2*/instyp(My->DBS,"adressat",&adressat));
-		einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
-		einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
-		svec eindfeld; eindfeld<<"submt";eindfeld<<"submid";
-		rins.tbins(pmp->touta,einf,aktc,/*sammeln=*/0,/*oberb=*/ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld);  // einfuegen
-		if (rins.fnr) {
-			Log(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
-		} //     if (runde==ruz-1)
+	vector<instyp> einf;
+	einf.push_back(/*2*/instyp(My->DBS,"titel",&bsname));
+	einf.push_back(/*2*/instyp(My->DBS,"rcname",&getname));
+	if (capi) {if (cdd.empty()) cdd="0000-00-00";} else {if (hdd.empty()) hdd="0000-00-00";}
+	einf.push_back(/*2*/instyp(My->DBS,"submt",ftyp==capi?&cdd:&hdd));
+	einf.push_back(/*2*/instyp(My->DBS,"submid",ftyp==capi?&capisd:&hylanr));
+	string patid;
+	if (!original.empty()) {
+		const char* ocstr=original.c_str(); // da c_str() fluechtig sein koennte
+		char* patidp = (char*)strcasestr(ocstr,"pid ");
+		if (patidp) {
+			if (patidp==ocstr || (patidp>ocstr && (strchr(" .,;",*(patidp-1))))){
+				for(patidp+=4;*patidp && *patidp!=' ';patidp++) {
+					if (strchr("0123456789",*patidp)) patid+=*patidp;
+				}  //           for(patidp+=4;*patidp && *patidp!=' ';patidp++)
+			} //         if (patidp==ocstr || (patidp>ocstr && (strchr(" .,;",*(patidp-1)))))
+		} //       if (patidp)
+	} //     if (!original.empty())
+	if (patid.empty()) patid="0";
+	einf.push_back(/*2*/instyp(My->DBS,"pid",&patid));
+	einf.push_back(/*2*/instyp(My->DBS,"Erfolg",(int)!obgescheitert));
+	einf.push_back(/*2*/instyp(My->DBS,"docname",&original));
+	Log("original (docname): "+blaus+original+schwarz,obverb,oblog);
+	einf.push_back(/*2*/instyp(My->DBS,"idudoc",&idudoc));
+	if (!tts) tts=time(0);
+	////<<gruen<<"tts: "<<rot<<tts<<schwarz<<endl;
+	//// char buf[100];
+	//// strftime(buf, sizeof(buf), "%d.%m.%y %T", localtime(&tts));
+	//// <<"buf: "<<buf<<endl;
+	einf.push_back(/*2*/instyp(My->DBS,"transe",&tts));
+	if (!telnr.empty()) {
+		const string stdfax=pmp->stdfaxnr(telnr);
+		einf.push_back(/*2*/instyp(My->DBS,"rcfax",&stdfax));
+	} //     if (!telnr.empty())
+	if (!adressat.empty()) einf.push_back(/*2*/instyp(My->DBS,"adressat",&adressat));
+	einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
+	einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
+	svec eindfeld; eindfeld<<"submt";eindfeld<<"submid";
+	rins.tbins(pmp->touta,einf,aktc,/*sammeln=*/0,/*oberb=*/ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld);  // einfuegen
+	if (rins.fnr) {
+		Log(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
+	} //     if (runde==ruz-1)
 	if (!rins.fnr && geloeschtp) { 
 		RS rsloe(My,"DELETE FROM `"+pmp->spooltab+"` WHERE id = \""+id+"\"",aktc,ZDB);
 		*geloeschtp=1;
@@ -3264,6 +3264,7 @@ void paramcl::pruefcvz()
 	cfaxusersqvz=cfaxuservz+vtz+cuser+"/sendq"; //  "/var/spool/capisuite/users/<user>/sendq";
 	pruefverz(cfaxusersqvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/{},/*benutzer=*/cuser,/*obmachen=*/0);
 	cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
+	cfaxuserrcfalschevz=cfaxuserrcvz+"/falsche";
 	//// <<violett<<"cfaxuserrcvz: "<<cfaxuserrcvz<<schwarz<<endl;
 	pruefverz(cfaxuserrcvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/{},/*benutzer=*/cuser,/*obmachen=*/0);
 } // paramcl::pruefcvz
@@ -5512,14 +5513,19 @@ void paramcl::empferneut()
 		 end=onr+1;
 		} // 		if (onr<vinca.size())
 	} // 	if (onrs=="a") else 
-	for(size_t j=beg;j<end;j++) {
+	for(size_t j=beg;j<end;) {
+		const string fnr=vinca[j++];
 	  Log(Tx[T_Bearbeite]+blaus+ltoan(j)+") ..."+schwarz,obverb,0);
-		const string fnr=vinca[j];
 		struct stat cstat={0};
 		if (fnr.find('-')!=string::npos) {
-			const string txtd=cempfavz+vtz+(fnr.find("fax-")?"":cuser+'-')+fnr;
+			string txtd=cempfavz+vtz+(fnr.find("fax-")?"":cuser+'-')+fnr;
 			if (!lstat((txtd+".txt").c_str(),&cstat)&&!lstat((txtd+".sff").c_str(),&cstat)) {
 				empfcapi(txtd,0,4,ltoan(j));
+			} else {
+				txtd=cfaxuserrcfalschevz+vtz+fnr;
+				if (!lstat((txtd+".txt").c_str(),&cstat)&&!lstat((txtd+".sff").c_str(),&cstat)) {
+					empfcapi(txtd,0,4,ltoan(j));
+				}
 			}
 		} else {
 			const string txtd=hempfavz+vtz+fnr+".tif";
@@ -7795,16 +7801,15 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 		if (was&2) { // sff-Datei verschieben
 			if (verschieb) {
 				////        if (loee) KLA
-				const string falsche = cfaxuserrcvz+"/falsche";
 				static uchar falschegeprueft=0;
 				if (!falschegeprueft) {
-					pruefverz(falsche,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/{},/*benutzer=*/cuser);
+					pruefverz(cfaxuserrcfalschevz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/{},/*benutzer=*/cuser);
 					falschegeprueft=1;
 				} // 			if (!falschegeprueft)
-				verschiebe(ctxdt,falsche,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+				verschiebe(ctxdt,cfaxuserrcfalschevz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 				if (verschieb==2) {
 					::Log(Tx[T_Dateien]+rots+stamm+".* "+schwarz+Tx[T_nicht_verarbeitbar_Verschiebe_sie_nach]+rot+"./falsche"+schwarz+".",1,1);
-					verschiebe(sffdatei,falsche,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+					verschiebe(sffdatei,cfaxuserrcfalschevz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 					// so, dass es jeder merkt
 				} // if (verschieb==2) 
 				//      KLZ // if (loee) 
@@ -9917,6 +9922,8 @@ void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnam
 			*getnamep=trimfaxnr;
 		}
 	} // if (!faxnr->empty()) 
+	ersetzAlle(*bsnamep,"/",";");
+	ersetzAlle(*bsnamep,":",";");
 } // void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,int obverb,int oblog) 
 
 // wird aufgerufen in: main
