@@ -278,6 +278,12 @@ enum Tkons_
 	T_Fehler_beim_Deferenzieren_von,
 	T_Ende,
 	T_startundenable,
+	T_pruefber,
+	T_Datei,
+	T_Erg,
+	T_Benutzer,
+	T_obunter,
+	T_datei,
 	T_konsMAX
 };
 
@@ -338,7 +344,8 @@ class perfcl
 };
 
 string holsystemsprache(int obverb=0);
-int untersuser(string uname,__uid_t *uidp=0, __gid_t *gidp=0);
+int pruefber(const string& datei,const string& benutzer,const mode_t mod=01,int obverb=0);
+int untersuser(const string& uname,__uid_t *uidp=0, __gid_t *gidp=0, vector<gid_t> *gids=0,struct passwd* ustr=0);
 
 class mdatei: public fstream
 {

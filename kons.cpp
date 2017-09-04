@@ -297,6 +297,18 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"-Ende- ","-End- "},
 	// T_startundenable
 	{"startundenable()","startandenable()"},
+	// T_pruefber
+	{"pruefber()","checkperm()"},
+	// T_Datei
+	{", Datei: "," file: "},
+	// T_Erg
+	{", erg: ",", res: "},
+	// T_Benutzer
+  {", Benutzer: ",", user: "},	
+	// T_obunter
+	{", obunter: ",", ifsub: "},
+	// T_datei
+	{"Datei: ","File: "},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 
@@ -692,7 +704,7 @@ mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_b
     ////    int erg __attribute__((unused));
 		////    if (name!=unindt)  // sonst vielleicht Endlosschleife
 		if (mehralslesen) {
-			pruefverz(dir_name(name),obverb,oblog,1,0);
+			pruefverz(dir_name(name),obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0);
 			////    if (!systemrueck(sudc+"test -f '"+name+"' || "+sudc+"touch '"+name+"'",obverb,oblog)) KLA
 			if (!touch(name,obverb,oblog)) {
 				setfaclggf(name,obverb,oblog,/*obunter=*/falsch,/*mod=*/modus&ios::out||modus&ios::app?6:4,/*obimmer=*/falsch,faclbak);
@@ -738,12 +750,12 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 					*erfolg=1;
 					setfaclggf(datei,obverb,oblog,/*obunter=*/falsch,/*mod=*/art?6:4,/*obimmer=*/0,faclbak);
 					break;
-				} 
+				}  // 				if ((sdat= fopen(datei.c_str(),mode)))
 				if (!*erfolg) {
 					int erg __attribute__((unused))=
 ////                                        systemrueck(sudc+"touch '"+datei+"'",obverb,oblog);
 					touch(datei,obverb,oblog);
-				}
+				} // 				if (!*erfolg)
 			} // oeffne
 			return sdat;
 		} // 		if (sdat)
@@ -2067,10 +2079,8 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
         ////        zeile++;
         char buffer[1280];
         //// in der folgenden Zeile werden auch ggf. sterr-Meldungen ausgegeben/weitergeleitet
-			  //// <<violett<<endl<<"Stelle 6"<<schwarz<<endl;
 				// hier braucht er lang, wenn das System langsam ist
         if (fgets(buffer, sizeof buffer, pipe)) { 
-			  //// <<violett<<endl<<"Stelle 7"<<schwarz<<endl;
           size_t posi;
           if (buffer[posi=strlen(buffer)-1]==10) buffer[posi]=0;
           rueck->push_back(string(buffer));
@@ -2192,17 +2202,19 @@ void pruefmehrfach(const string& wen,uchar obstumm/*=0*/)
   */
 } // void pruefmehrfach(char* ich)
 
-int untersuser(string uname,__uid_t *uidp/*=0*/, __gid_t *gidp/*=0*/)
+int untersuser(const string& uname,__uid_t *uidp/*=0*/, __gid_t *gidp/*=0*/,vector<gid_t> *gids/*=0*/,struct passwd* ustr/*=0*/)
 {
 	struct passwd pwd={0};
 	struct passwd *result;
 	char *buf;
 	ssize_t bufsize;
 	int erg=1;
+	if (gids) gids->clear();
 	if ((bufsize = sysconf(_SC_GETPW_R_SIZE_MAX))==-1) bufsize=16384;
 	if ((buf = (char*)malloc(bufsize))) {
 		/*//int s = */getpwnam_r(uname.c_str(), &pwd, buf, bufsize, &result);
 		if (result) {
+		  if (ustr) memcpy(ustr,&pwd,sizeof *ustr);
 			if (uidp) *uidp=pwd.pw_uid;
 			//if (gidp) *gidp=pwd.pw_gid;
 			if (gidp) {
@@ -2211,11 +2223,12 @@ int untersuser(string uname,__uid_t *uidp/*=0*/, __gid_t *gidp/*=0*/)
 				gid_t *groups=0;
 				for(uchar iru=0;iru<2;iru++) {
 					groups=(gid_t*)malloc(ngroups*sizeof *groups);
-					if (getgrouplist(uname.c_str(), pwd.pw_uid, groups, &ngroups)!=-1) break;
+					if (getgrouplist(uname.c_str(), pwd.pw_gid, groups, &ngroups)!=-1) break;
 					free(groups);
 				}
-			  // die Gruppe mit der groessten Nummer verwenden	
+				// die Gruppe mit der groessten Nummer verwenden	
         for(int iru=0;iru<ngroups;iru++) {
+					if (gids) gids->push_back(groups[iru]);
 				  if (groups[iru]>*gidp) *gidp=groups[iru];
 				}
 				free(groups);
@@ -2237,6 +2250,11 @@ int untersuser(string uname,__uid_t *uidp/*=0*/, __gid_t *gidp/*=0*/)
 void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binaer obunter/*=falsch*/,int mod/*=4*/,uchar obimmer/*=0*/,
                uchar faclbak/*=1*/,const string& user/*=nix*/,uchar fake/*=0*/,stringstream *ausgp/*=0*/)
 {
+  if (obverb && !ausgp) {
+	  Log(violetts+"setfaclggf()"+blau+Txk[T_Datei]+blau+datei+schwarz+Txk[T_obunter]+blau+(obunter?"1":"0")+schwarz+", mod: "+
+		blau+ltoan(mod)+schwarz+", obimmer: "+blau+(obimmer?"1":"0")+schwarz+", faclbak: "+blau+(faclbak?"1":"0")+schwarz+
+		Txk[T_Benutzer]+blau+user+schwarz+", fake: "+blau+(fake?"1":"0")+schwarz,obverb,oblog);
+	}
 	int altobv=obverb;
 	if (fake) obverb=2;
 	if (obunter) mod|=1; // Verzeichnisberechtigung noetig
@@ -2249,7 +2267,7 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 		cgid=cus.cgid;
 	} else {
 		cuser=user;
-		untersuser(cuser.c_str(),&cuid,&cgid);
+		untersuser(cuser,&cuid,&cgid);
 	} // 	if (user.empty())
 	// fuer root braucht's es ned
 	if (cuid) {
@@ -2290,9 +2308,10 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 					if (ergmod&1) modbuch+="x"; else modbuch+=" ";
 					// bei hinfuehrenden Verzeichnissen fehlende Rechte immer ueberpruefen
 					if (i||!obhier) {
-						svec gstat;
-						systemrueck("getfacl -e -t '"+pfade[i]+"' 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*"+modbuch+"'||:",obverb,oblog,&gstat);
-						obhier = !gstat.size();// wenn keine Berechtigung gefunden => erstellen
+////						svec gstat;
+////						systemrueck("getfacl -e -t '"+pfade[i]+"' 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*"+modbuch+"'||:",obverb,oblog,&gstat);
+////						obhier = !gstat.size();// wenn keine Berechtigung gefunden => erstellen
+						obhier=pruefber(pfade[i],cuser,ergmod);
 					} //        if (i||!obhier)
 					if (obhier) {
 						if (obverb) systemrueck(sudc+"sh -c 'ls -ld \""+pfade[i]+"\"'",2,0);
@@ -2307,6 +2326,8 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 							}
 							anfgg(unindt,sudc+"sh -c 'cd \""+dir_name(pfade[i])+"\";"+para+"'",bef,obverb,oblog);
 						} // 					if (faclbak)
+						if (obverb>1) systemrueck(sudc+"sh -c 'ls -ld \""+pfade[i]+"\"'",2,0);
+						if (pfade[i]=="uvz/uuvz/uuuvz") exit(20);
 						const string cmd=string(sudc+"setfacl -")+(!i && obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(ergmod)+"' '"+pfade[i]+"'";
 						if (fake) Log(rots+cmd+schwarz,obverb,oblog);
 						else systemrueck(cmd,obverb,oblog);
@@ -2317,165 +2338,300 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 		} // 			if (obsetfacl)
 	} // 	if (cuid)
 	if (fake) obverb=altobv;
+  if (obverb>1 && !ausgp) {
+	  Log(violetts+Txk[T_Ende]+" setfaclggf()"+blau+Txk[T_Datei]+blau+datei+schwarz+Txk[T_obunter]+blau+(obunter?"1":"0")+schwarz+", mod: "+
+		blau+ltoan(mod)+schwarz+", obimmer: "+blau+(obimmer?"1":"0")+schwarz+", faclbak: "+blau+(faclbak?"1":"0")+schwarz+
+		Txk[T_Benutzer]+blau+user+schwarz+", fake: "+blau+(fake?"1":"0")+schwarz,obverb,oblog);
+	}
 } // int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer obimmer,int obverb, int oblog)
 
+#include <acl/libacl.h>
+#include <sys/acl.h>
+
+// 0=Berechtigung vorhanden, 1= benutzer=Besitzer, 2= benutzer gehoert zur Besitzergruppe, 3= nichts davon
+int pruefber(const string& datei,const string& benutzer,const mode_t mod/*=01*/,int obverb/*=0*/)
+{
+	struct stat sdat={0};
+	const uid_t uid=getpwnam(benutzer.c_str())->pw_uid;
+	gid_t gid;
+	vector<gid_t> gids;
+	int bererg=0;
+	if (!benutzer.empty() && uid) {
+	  bererg=3;
+		if (!lstat(datei.c_str(),&sdat)) {
+			if ((~mod&4||sdat.st_mode & S_IROTH)&&
+					(~mod&2||sdat.st_mode & S_IWOTH)&&
+					(~mod&1||sdat.st_mode & S_IXOTH)) {
+						bererg=0;
+			} // 		if ((~mod&4||sdat.st_mode & S_IROTH)&&
+			if (uid==sdat.st_uid) {
+				bererg=1;
+				if ((~mod&4||sdat.st_mode & S_IRUSR)&&
+						(~mod&2||sdat.st_mode & S_IWUSR)&&
+						(~mod&1||sdat.st_mode & S_IXUSR)) {
+						bererg=0;
+				} // 			if ((~mod&4||sdat.st_mode & S_IRUSR)&&
+			} // 		if ((uid=getpwnam(benutzer.c_str())->pw_uid)==sdat.st_uid)
+			untersuser(benutzer,0,&gid,&gids);
+			for(unsigned i=0;i<gids.size();i++) {
+				if (gids[i]==sdat.st_gid) {
+					bererg=2;
+					if ((~mod&4||sdat.st_mode & S_IRGRP)&&
+							(~mod&2||sdat.st_mode & S_IWGRP)&&
+							(~mod&1||sdat.st_mode & S_IXGRP)) {
+						bererg=0;
+					} // 				if ((~mod&4||sdat.st_mode & S_IRGRP)&&
+				} // 			if (gids[i]==sdat.st_gid) 
+			} // 		for(unsigned i=0;i<gids.size();i++)
+			if (bererg) {
+				if (acl_t acl = acl_get_file(datei.c_str(), ACL_TYPE_ACCESS)) {
+					for (int entryId = ACL_FIRST_ENTRY; ; entryId = ACL_NEXT_ENTRY) {
+						acl_entry_t entry;
+						if (acl_get_entry(acl, entryId, &entry) != 1)
+							break;                      /* Exit on error or no more entries */
+						acl_tag_t tag;
+						if (acl_get_tag_type(entry, &tag) != -1) {
+							int aclpruef=0;
+							if (tag == ACL_USER) {
+								if (uid_t *uidp = (uid_t*)acl_get_qualifier(entry)) {
+									if (*uidp==uid) aclpruef=1;
+									acl_free(uidp);
+								} // 						if (uid_t *uidp = (uid_t*)acl_get_qualifier(entry))
+							} else if (tag == ACL_GROUP) {
+								if (gid_t *gidp = (gid_t*)acl_get_qualifier(entry)) {
+									for(unsigned i=0;i<gids.size();i++) {
+										if (gids[i]==*gidp) {
+											aclpruef=1;
+											break;
+										} // 								if (gids[i]==*gidp)
+									} // 							for(unsigned i=0;i<gids.size();i++)
+									acl_free(gidp);
+								} // 						if (gid_t *gidp = (gid_t*)acl_get_qualifier(entry))
+							} else {
+								continue;
+							} // 					if (tag == ACL_USER) else
+							if (aclpruef) {
+								acl_permset_t permset;
+								if (acl_get_permset(entry, &permset) != -1) {
+									if ((~mod&4||acl_get_perm(permset, ACL_READ)==1)&&
+											(~mod&2||acl_get_perm(permset, ACL_WRITE)==1)&&
+											(~mod&1||acl_get_perm(permset, ACL_EXECUTE)==1)) {
+										bererg=0;
+										break;
+									} // 							if ((~mod&4||acl_get_perm(permset, ACL_READ)==1)&&
+								} // 			if (acl_get_permset(entry, &permset) != -1)
+							} // 					if (aclpruef)
+						} // 		if (acl_get_tag_type(entry, &tag) != -1)
+					} // 	for (int entryId = ACL_FIRST_ENTRY; ; entryId = ACL_NEXT_ENTRY)
+					acl_free(acl);
+				} // 		if (acl_t acl = acl_get_file(datei.c_str(), ACL_TYPE_ACCESS))
+			} // 			if (bererg) 
+		} // 	if (!lstat(datei.c_str(),&sdat))
+	} // benutzer.empty()
+	if (obverb) {
+	 Log(violetts+Txk[T_pruefber]+schwarz+Txk[T_Datei]+blau+datei+schwarz+Txk[T_Benutzer]+blau+benutzer+schwarz+", mode: "+blau+ltoan(mod,8)+
+	     schwarz+Txk[T_Erg]+blau+(bererg==3?"3":bererg==2?"2":bererg==1?"1":"0")+schwarz,obverb,0);
+	}
+	return bererg;
+} // int pruefber(const string& datei,const string& benutzer,const mode_t mod/*=01*/)
 
 // obmitfacl: 1= setzen, falls noetig, >1= immer setzen
 // falls Benutzer root
+// wenn !besitzer.empty(), dann wird das letzte und alle neu zu erstellenden Verzeichnisse diesem zugeordnet 
 int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfacl/*=0*/,uchar obmitcon/*=0*/,
-              const string& besitzer/*=nix*/, const string& benutzer/*=nix*/,const uchar obmachen/*=1*/)
+		const string& besitzer/*=nix*/, const string& benutzer/*=nix*/,const uchar obmachen/*=1*/)
 {
-	static int obselinux=-1;
-	struct stat sverz={0};
+	static int obselinux=-1; // -1=ununtersucht, 0=kein Selinux da, 1=Selinux da
 	int fehlt=1;
-	// wenn nicht root
-	mode_t altmod=022;
-	if(!besitzer.empty()){
-		altmod=umask(0);
-	} // 	if(!besitzer.empty())
+	// wenn nicht root, dann alten Modus merken
+	string modstr="700";
+	mode_t altmod=022,mod=S_IRWXU;
+	string aktben=(benutzer.empty()?(getpwuid(getuid())->pw_name):benutzer);
 	if (!verz.empty()) {
-		if (!lstat(verz.c_str(), &sverz)) {
-			if(S_ISDIR(sverz.st_mode)) {
-				fehlt=0;
-			} // 			if(S_ISDIR(sverz.st_mode))
-		} //     if (!lstat(verz.c_str(), &sverz))
-		if (obmachen) {
+		uid_t uid;
+		gid_t gid;
+		if(!besitzer.empty()){
+			untersuser(besitzer,&uid,&gid);
+			altmod=umask(0); // => neue Dateien ohne Berechtigungseinschränkung
+		} // 	if(!besitzer.empty())
+		string aktv=verz;
+		svec stack;
+		do {
+			stack<<aktv;
+			aktv=dir_name(aktv);
+		} while (!aktv.empty());
+		for(int i=stack.size()-1;i>=0;i--) {
+			int fehlt=1;
+			struct stat sverz={0};
+			if (!lstat(stack[i].c_str(),&sverz)) {
+				if(S_ISDIR(sverz.st_mode)) {
+					fehlt=0;
+				} else {
+					if (obmachen) {
+						// falls Datei mit Namen eines benötigten Verzeichnisses und obmachen, dann löschen
+						tuloeschen(stack[i],nix,obverb,oblog);
+					}
+				}
+			} // 				if (!lstat(stack[i].c_str(),&sverz))
+			if (obmachen) {
+				if (fehlt) {
+					if (!besitzer.empty()) {
+						mod=(i?0100:0700);
+						modstr=(i?"0100":"0700");
+					}
+					string bef=sudc+"mkdir -m "+modstr+" '"+stack[i]+"'";
+					if (!besitzer.empty()) bef+=";chown -R "+besitzer+":"+ltoan(gid)+" '"+stack[i]+"'";
+					if (obverb) Log(blaus+"mkdir("+stack[i]+","+ltoan(mod,8)+")"+schwarz,obverb,oblog);
+					fehlt=mkdir(stack[i].c_str(),mod);
+					if (!fehlt && !besitzer.empty()) {
+						fehlt=chown(stack[i].c_str(),uid,gid);
+					}
+					if (fehlt) {
+						fehlt=systemrueck(bef,obverb,oblog);
+					}
+					if (!fehlt) {
+						if (unindt.find(stack[i])) // wenn der Anfang nicht identisch ist, also nicht das Verzeichnis von unindt geprueft werden soll
+							anfgg(unindt,sudc+"rmdir '"+stack[i]+"'",bef,obverb,oblog);
+					}
+				} // 					if (fehlt)
+				// folgendes mindestens notwendig fuer sverz.st_mode
+				fehlt=lstat(stack[i].c_str(),&sverz);
+				// wenn notwendige Rechte fehlen ...
+				if (int prueferg=pruefber(/*datei=*/stack[i],aktben,/*mod=*/i?1:7,obverb)) {
+					// .. und korrigiert werden sollen
+					if (obmitfacl) {
+						setfaclggf(stack[i],obverb,oblog, /*obunter=*/wahr, /*mod=*/i?1:7, /*obimmer=*/1,/*faclbak=*/1,/*user=*/aktben);
+					} else {
+						// dann Rechte in der notwendigen Spezifität erweitern
+						// 0=Berechtigung vorhanden, 1= benutzer=Besitzer, 2= benutzer gehoert zur Besitzergruppe, 3= nichts davon
+						const string altmod=ltoan(sverz.st_mode,8);
+						switch (prueferg) {
+							case 1:
+								sverz.st_mode|=(i?S_IXUSR:S_IRUSR+S_IWUSR+S_IXUSR);
+								modstr=i?"u+x":"u+rwx";
+								break;
+							case 2:
+								sverz.st_mode|=(i?S_IXGRP:S_IRGRP+S_IWGRP+S_IXGRP);
+								modstr=i?"g+x":"g+rwx";
+								break;
+							case 3:
+								sverz.st_mode|=(i?S_IXOTH:S_IROTH+S_IWOTH+S_IXOTH);
+								modstr=i?"o+x":"o+rwx";
+								break;
+						}
+						if (obverb) Log(Txk[T_datei]+blaus+stack[i].c_str()+schwarz+", mode: "+blau+altmod+schwarz+" -> "+blau+
+								ltoan(sverz.st_mode,8)+schwarz,obverb,oblog);
+						if (chmod(stack[i].c_str(),sverz.st_mode)) {
+							//             if (1) 
+							string bef=sudc+"chmod "+modstr+" '"+stack[i]+"'";
+							fehlt=systemrueck(bef,obverb,oblog);
+						}
+					}
+					if (obverb) systemrueck(sudc+"sh -c 'ls -ld \""+stack[i]+"\"'",2,0);
+				} // 					if (int prueferg=pruefber(/*datei=*/stack[i],aktben,/*mod=*/i?1:7))
+			} else {
+			} // 				if (obmachen)
 			if (fehlt) {
-				string aktv=verz;
-				svec stack;
-				while (1) {
-					if (aktv.empty()) break;
-					if (!lstat(aktv.c_str(),&sverz)) break;
-					stack<<aktv;
-					aktv=dir_name(aktv);
-				} // 			while (1)
-				while(1) {
-					if (!stack.size()) {
-						fehlt=0;
-						break;
-					} // 				if (!stack.size())
-					mode_t mod=S_IRWXU;
-					if (!besitzer.empty()) mod=0777;
-					if (mkdir(stack[stack.size()-1].c_str(),mod)) 
-						break;
-					stack.erase(stack.end()-1);
-				} // while(1)
-			} // if (fehlt)
-			if (fehlt) {
-				string bef="mkdir -p '"+verz+"' 2>/dev/null||"+sudc+"mkdir -p '"+verz+"'";
-				if (!besitzer.empty()) bef+="&&chmod 777 '"+verz+"' 2>/dev/null||"+sudc+"chmod 777 '"+verz+"'";
-				fehlt=systemrueck(bef,obverb,oblog);
-				if (unindt.find(verz)) // wenn der Anfang nicht identisch ist, also nicht das Verzeichnis von unindt geprueft werden soll
-					anfgg(unindt,sudc+"rmdir '"+verz+"'",bef,obverb,oblog);
-			} //     if (fehlt)
-		} // obmachen
-		////    if (fehlt) fehlt=systemrueck(sudc+"mkdir -p '"+verz+"'",obverb,oblog);
-		if (!fehlt) {
-			if (!besitzer.empty()) {
-				uid_t uid;
-				gid_t gid;
-				untersuser(besitzer,&uid,&gid);
-				chown(verz.c_str(),uid,gid);
-				umask(altmod);
-			} // 		if (!besitzer.empty())
-			if (obmitfacl) {
-				setfaclggf(verz,obverb,oblog, /*obunter=*/wahr, /*mod=*/7, /*obimmer=*/(obmitfacl>1),/*faclbak=*/1,/*user=*/benutzer);
+				// sonst Ende
+				break;
 			}
-			//// <<violett<<verz<<schwarz<<endl;
-			if (obmitcon) {
-				if (obselinux==-1) 
-					obselinux=obprogda("sestatus",obverb,oblog);
-				if (obselinux)
-					systemrueck(sudc+"chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
-			} // 		if (obmitcon)
-		} // 		if (!fehlt)
-	} // if (!verz.empty())
+		} // 		for(int i=stack.size()-1;i>=0;i--) 
+		if (!besitzer.empty())
+			umask(altmod);
+
+		if (obmitcon) {
+			if (obselinux==-1) 
+				obselinux=obprogda("sestatus",obverb,oblog);
+			if (obselinux)
+				systemrueck(sudc+"chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
+		} // 		if (obmitcon)
+	} // 	if (!verz.empty())
 	return fehlt;
 } // void pruefverz(const string& verz,int obverb,int oblog)
 
 
 string aktprogverz()
 {
-  char pBuf[300];
+	char pBuf[300];
 #if defined(__MINGW32__) || defined(_MSC_VER)
-  int bytes = GetModuleFileName(NULL, pBuf, sizeof pBuf);
-  if(bytes == 0) pBuf[0]=0;
+	int bytes = GetModuleFileName(NULL, pBuf, sizeof pBuf);
+	if(bytes == 0) pBuf[0]=0;
 #elif linux
-  char szTmp[32];
-		pthread_mutex_lock(&printf_mutex);
-		sprintf(szTmp, "/proc/%d/exe", getpid());
-		pthread_mutex_unlock(&printf_mutex);
-  ssize_t bytes = MIN(readlink(szTmp, pBuf, sizeof pBuf), sizeof pBuf - 1);
-  if(bytes >= 0) pBuf[bytes] = 0;
+	char szTmp[32];
+	pthread_mutex_lock(&printf_mutex);
+	sprintf(szTmp, "/proc/%d/exe", getpid());
+	pthread_mutex_unlock(&printf_mutex);
+	ssize_t bytes = MIN(readlink(szTmp, pBuf, sizeof pBuf), sizeof pBuf - 1);
+	if(bytes >= 0) pBuf[bytes] = 0;
 #endif
-  return pBuf;
+	return pBuf;
 } // string aktprogverz()
 
 char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
 {
-  string input;
-  if (!erlaubt) erlaubt=moegl.c_str();
+	string input;
+	if (!erlaubt) erlaubt=moegl.c_str();
 	pthread_mutex_lock(&getmutex);
 	while(1) {
-    cout<<blau<<frage<<schwarz<<" (";
-    for(unsigned i=0;i<moegl.length();i++) {
-      cout<<"'"<<drot<<moegl[i]<<schwarz<<"'";
-      if (berkl) cout<<" = "<<blau<<berkl[i]<<schwarz;
-      if (i<moegl.length()-1) cout<<", ";
-    } //     for(unsigned i=0;i<moegl.length();i++)
-    cout<<")"<<(!vorgabe?"":"['"+tuerkiss+vorgabe+schwarz+"']")<<"?: ";
-    input.clear();
-    getline(cin,input);
-    if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
-    if (input.empty() && vorgabe) {input=vorgabe;break;}
-    if (input[0]) if (strchr(erlaubt,(int)input[0])) break;
-  } //   while(1)
+		cout<<blau<<frage<<schwarz<<" (";
+		for(unsigned i=0;i<moegl.length();i++) {
+			cout<<"'"<<drot<<moegl[i]<<schwarz<<"'";
+			if (berkl) cout<<" = "<<blau<<berkl[i]<<schwarz;
+			if (i<moegl.length()-1) cout<<", ";
+		} //     for(unsigned i=0;i<moegl.length();i++)
+		cout<<")"<<(!vorgabe?"":"['"+tuerkiss+vorgabe+schwarz+"']")<<"?: ";
+		input.clear();
+		getline(cin,input);
+		if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
+		if (input.empty() && vorgabe) {input=vorgabe;break;}
+		if (input[0]) if (strchr(erlaubt,(int)input[0])) break;
+	} //   while(1)
 	pthread_mutex_unlock(&getmutex);
 	return input[0];
-  ////  return Tippbuchst(frage.c_str(), moegl.c_str(), berkl, erlaubt, vorgabe);
+	////  return Tippbuchst(frage.c_str(), moegl.c_str(), berkl, erlaubt, vorgabe);
 } // char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt, const char *vorgabe) 
 
 
 // vorgabe fur vorgabe = T_j_k; alternativ='n'
 uchar Tippob(const string& frage,const char *vorgabe) 
 {
-  char erg=Tippbuchst(frage, string(Txk[T_j_k])+"n",0,"jJyYoOsSnN",vorgabe);
-  return (!!strchr("jyJYoOsS",(int)erg));
+	char erg=Tippbuchst(frage, string(Txk[T_j_k])+"n",0,"jJyYoOsSnN",vorgabe);
+	return (!!strchr("jyJYoOsS",(int)erg));
 } // uchar Tippob(const string& frage,const char *vorgabe) 
 
 // bisher nicht verwendet, 15.12.15
 string Tippstrs(const char *frage, char* moegl[], char *vorgabe/*=0*/)
-  // das letzte Element von moegl muss 0 sein
+	// das letzte Element von moegl muss 0 sein
 {
-  string input;
+	string input;
 	pthread_mutex_lock(&getmutex);
 	while(1) {
-    char passt=0;
-    cout<<blau<<frage<<schwarz<<" (";
-    for(unsigned i=0;moegl[i];i++) {
-      if (i) cout<<", ";
-      cout<<"'"<<drot<<moegl[i]<<schwarz<<"'";
-    }
-    cout<<")"<<(vorgabe?"":"['"+tuerkiss+vorgabe+schwarz+"']")<<"?: ";
-    input.clear();
-    getline(cin,input);
-    if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
-    //// <<rot<<"input: '"<<input<<"', vorgabe: '"<<vorgabe<<"'"<<endl<<schwarz;
-    if (input.empty() && vorgabe) {input=vorgabe;break;}
-    if (input[0]) {
-      for(unsigned i=0;moegl[i];i++) {
-        if (!strcmp(moegl[i],input.c_str())) {passt=1;break;}
-      }
-    } //     if (input[0])
-    if (passt) break; 
-  } //   while(1)
+		char passt=0;
+		cout<<blau<<frage<<schwarz<<" (";
+		for(unsigned i=0;moegl[i];i++) {
+			if (i) cout<<", ";
+			cout<<"'"<<drot<<moegl[i]<<schwarz<<"'";
+		}
+		cout<<")"<<(vorgabe?"":"['"+tuerkiss+vorgabe+schwarz+"']")<<"?: ";
+		input.clear();
+		getline(cin,input);
+		if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
+		//// <<rot<<"input: '"<<input<<"', vorgabe: '"<<vorgabe<<"'"<<endl<<schwarz;
+		if (input.empty() && vorgabe) {input=vorgabe;break;}
+		if (input[0]) {
+			for(unsigned i=0;moegl[i];i++) {
+				if (!strcmp(moegl[i],input.c_str())) {passt=1;break;}
+			}
+		} //     if (input[0])
+		if (passt) break; 
+	} //   while(1)
 	pthread_mutex_unlock(&getmutex);
 	return input;
 } // Tippstrs
 
 string Tippstrs(const char *frage, vector<string> *moegl, string *vorgabe/*=0*/)
 {
-  string input;
+	string input;
 	pthread_mutex_lock(&getmutex);
 	while(1) {
     char passt=0;
@@ -2591,7 +2747,7 @@ string Tippverz(const char *frage,const string *vorgabe)
         if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
         if (inpi.empty()) {inpi=vg2;break;}
         if (strchr("jyJY",inpi[0])) {
-          pruefverz(input,0,0,1,1);
+          pruefverz(input,/*obverb=*/0,/*oblog=*/0,/*obmitfacl=*/1,/*obmitcon=*/1);
           /*//
           int erg __attribute__((unused));
           erg=system((string(sudc+"mkdir -p ")+input).c_str());
@@ -3054,7 +3210,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		  ziehraus(srueck,&ustring);
 
 			// s. ausricht() in configure
-			if (!pruefverz(instvz,obverb,oblog,1,0)) {
+			if (!pruefverz(instvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0)) {
 				mdatei uniff(instvz+"/inst.log",ios::app,0);
 				if (uniff.is_open()) {
 					uniff<<endl<<"Rueckmeldung zu: '"<<bef<<"':"<<endl;
@@ -3192,7 +3348,7 @@ void anfgw(const string& datei, const string& udpr, const string& inhalt, const 
 // anfuegen nach gemeinsamer Pruefung, ob schon enthalten
 void anfgg(const string& datei, const string& inhalt, const string& comment, int obverb/*=0*/, int oblog/*=0*/)
 {
-	Log(violetts+"anfgg: '"+inhalt+"'",obverb,oblog);
+	Log(violetts+"anfgg: '"+inhalt+"'"+schwarz,obverb,oblog);
 	uchar obda=0;
 	mdatei uni0(datei,ios::in,0);
 	if (uni0.is_open()) {
@@ -3736,11 +3892,11 @@ int servc::enableggf(int obverb/*=0*/,int oblog/*=0*/)
 void servc::daemon_reload(int obverb/*=0*/, int oblog/*=0*/)
 {
  systemrueck(sudc+"systemctl daemon-reload",obverb,oblog);
-}
+} // void servc::daemon_reload(int obverb/*=0*/, int oblog/*=0*/)
 
 // Rueckgabe: Zahl der nicht Geloeschten
 // wird aufgerufen in: loeschecapi, untersuchespool
-int tuloeschen(const string& zuloe,const string& cuser/*=nix*/, int obverb/*=0*/, int oblog/*=0*/,stringstream *ausgp)
+int tuloeschen(const string& zuloe,const string& cuser/*=nix*/, int obverb/*=0*/, int oblog/*=0*/,stringstream *ausgp/*=0*/)
 {
 ////  Log(violetts+Tx[T_tuloeschen]+schwarz,obverb,oblog);
 	string meld;
@@ -3753,7 +3909,7 @@ int tuloeschen(const string& zuloe,const string& cuser/*=nix*/, int obverb/*=0*/
       if ((erg=remove(zuloe.c_str()))) {
         if(cuser.empty()) iru++;
         if(iru==1) {
-          setfaclggf(zuloe,obverb,oblog,/*obunter=*/falsch,/*mod=*/6,/*obimmer=*/falsch,/*faclbak=*/0,/*user=*/nix,/*fake=*/0,ausgp);
+          setfaclggf(zuloe,obverb,oblog,/*obunter=*/falsch,/*mod=*/6,/*obimmer=*/falsch,/*faclbak=*/0,/*user=*/nix/*cuser*/,/*fake=*/0,ausgp);
         } else {
           if (errno) if (errno!=13) perror((string(Txk[T_Fehler_beim_Loeschen])+" "+ltoan(errno)).c_str()); // Permission denied
           const string cmd=sudc+"rm -rf \""+zuloe+"\"";
@@ -4047,16 +4203,13 @@ void find2cl::init(const string& mutter, const string& name, regex_t *reg, const
 		//        cout<<"letztel->pfad: "<<blau<<letztel->pfad<<schwarz<<endl;
 		//        cout<<"aktel->pfad: "<<blau<<aktel->pfad<<schwarz<<endl;
 	}
-	//  cout<<"Stelle 1, dir?: "<<(!!dir)<<" maxdepth: "<<maxdepth<<endl;
 	if (dir&&maxdepth) {
-		//    cout<<"Stelle 2, folge: "<<folge<<" !S_ISLNK(dst.st_mode): "<<!S_ISLNK(dst.st_mode)<<endl;
 		if ((folge & Fol_Ver) || !S_ISLNK(dst.st_mode)) {
 			// Extra-Vergleichsliste der bisher eingelesenen Verzeichnisse
 			if ((verzneu=(vznp->insert(letztel->pfad).second)==true)) {
 				stack.push_back(letztel->pfad);
 				while ((dent = readdir(dir))) {
 					if (strcmp(dent->d_name, ".") && strcmp(dent->d_name, "..")) {
-						//            cout<<"Stelle 5: dent->d_name: "<<blau<<dent->d_name<<schwarz<<endl;
 						find2cl tochter(obverb,oblog,this);
 						tochter.init(letztel->pfad,dent->d_name,reg,folge,maxdepth-1,typbit,stack,ab,bis,nurexec);
 						//            cout<<"nach tochter.init"<<endl;
