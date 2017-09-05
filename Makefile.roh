@@ -62,10 +62,8 @@ GDAT::=$(GDAT:Makefile=Makefile.roh)
 #//  CCName::=g++
 #//  CFLAGS::=$(CFLAGS) -std=gnu++11 # 7.8.17 nicht nötig für opensuse42, hinderlich für fedora; 5.9.17: geht nicht mehr (wg. auto)
 #// else
-# minimal erforderliche g++-Version
-MINGCC::=7
-CCName::=g++-$(MINGCC)
-CCInst::=gcc$(MINGCC) gcc$(MINGCC)-c++
+# minimal erforderliche g++-Hauptversion
+MINGCCNR::=6
 #// endif
 #// 0=Version fehlt, 1=Version ist da
 #// GCCAB6::=$(shell expr `g++-6 -dumpversion 2>/dev/null||g++-7 -dumpversion 2>/dev/null||echo 0` \>= 6) 
@@ -74,8 +72,19 @@ CCInst::=gcc$(MINGCC) gcc$(MINGCC)-c++
 #// endif
 # maximal verfügbare g++-Version, falls die Verknüpfungen in /usr/bin stehen und evtl. /usr/bin/g++ nicht auf die höchste verknüpft ist
 MAXGCC::=$(shell { ls /usr/bin/g++* 2>/dev/null||echo 0;}|tail -n1)
+# Hauptversionsnummer
+MAXGCCNR::=$(shell echo $(MAXGCC)|cut -d- -f2)
+#1=verfügbare Version höher als die minimal notwendige, 0=nicht
+GCCNEU::=$(shell expr $(MAXGCCNR) \> $(MINGCCNR))
 # 1=minimal notwendige Version verfügbar, 0=nicht
-GCCOK::=$(shell expr `echo $(MAXGCC)|cut -f2 -d-` \>= $(MINGCC))
+GCCOK::=$(shell expr $(MAXGCCNR) \>= $(MINGCCNR))
+ifeq ('$(GCCNEU)','1')
+CCName::=g++-$(MAXGCCNR)
+CCInst::=gcc$(MAXGCCNR) gcc$(MAXGCCNR)-c++
+else
+CCName::=g++-$(MINGCCNR)
+CCInst::=gcc$(MINGCCNR) gcc$(MINGCCNR)-c++
+endif
 -include vars # wird durch install.sh generiert; CCInst muss vorher definiert werden, DPROG darf nur nachher verwendet werden
 PROGGROSS::=`echo $(DPROG) | tr a-z A-Z`
 EXEC::=$(DPROG)
