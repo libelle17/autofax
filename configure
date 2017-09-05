@@ -147,21 +147,19 @@ ausricht() {
 # sonst mit 'make', aus viall mit 'ctags', 'global' und 'vim'
 einricht() {
 # wenn $1 nicht aufrufbar oder "_", dann installiere $2
- if [ $1 != _ ]&& still which $1; then
+ if [ "$1" != _ ]&& still which "$1"; then
    if [ $3/ = verbose/ ]; then  \
 	 printf "$blau$1$reset installed/ schon da, $blau$2$reset not to be installed/ übersprungen\n"; fi
  else
    getIPR;
-	 [ $1 = _ ]|| printf "$blau$1$reset not found/ nicht gefunden => "  
+	 [ "$1" = _ ]|| printf "$blau$1$reset not found/ nicht gefunden => "  
 	 printf "Installing/ Installiere $blau$2$reset ...\n";
-	 [ $1 = "vim" -a $fed = 1 ] &&{ ${SUDC}yum update vim-minimal;}
+	 [ "$1" = "vim" -a $fed = 1 ] &&{ ${SUDC}yum update vim-minimal;}
 	 rweg=0;
    CMD=${IPR};
-	 [ "$1" = "g++" -o "$1" = "g++-6" ]&&{
+	 [ _$(echo $1|cut -c1-3) = _"gcc" -o _$(echo $2|cut -c1-3) = _"gcc" ]&&{
 		 CMD=${IP_R};
-	 }
-	 [[ ( "$1" = "g++" || "$1" = "g++-6" ) && ! "$Z" ]] &&{
-		 CMD=${IP_R};
+		 if test -n "$Z"; then
 		 ${SUDC}$Z lr|grep 'g++\|devel_gcc'>/dev/null 2>&1 ||{ 
 			 GREPO=http://download.opensuse.org/repositories/devel:/gcc/
 			 GREPO=${GREPO}`cat /etc/*-release|grep ^NAME= |cut -d\" -f2|sed 's/ /_/'`_
@@ -171,13 +169,14 @@ einricht() {
 			 ${SUDC}$Z rr devel_gcc >/dev/null 2>&1;
 			 ${SUDC}$Z ar $GREPO && rweg=1;
 		 }
+		 fi
 	 }
 	 LOG=inst_${2// /_}.log; # Leerzeichen entfernen
 	 echo Befehl/Command: ${CMD}$2
 	 ${CMD}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff-base groff"
 	 printf "\nRueckmeldung bei einricht $2:\n">>$GINSTLOG
 	 ausricht "$LOG" $1 "${IPR}$2"
-	 if [ $1 = "g++" -a -n "$Z" -a $rweg = 1 ]; then
+	 if [ "$1" = "g++" -o "$1" = "g++-6" ]&& [ -n "$Z" ]&& [ $rweg = 1 ]; then
 	 	 printf "Removing Repository/ Entferne Repository ${blau}devel_gcc$reset again/ wieder\n"
 		 ${SUDC}$Z rr devel_gcc;
 	 else :; fi

@@ -55,25 +55,32 @@ endif
 EXPFAD::=$(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | head -n 1)
 EXPFAD::=$(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | awk '{ print length, $$0 }' | sort -n -s | cut -d" " -f2- | head -n1)
 
-CCInst::=gcc6-c++
-
--include vars # wird durch install.sh generiert
 GDAT::=$(DATEIEN:inst.log=)
 GDAT::=$(GDAT:uninstallinv=)
 GDAT::=$(GDAT:Makefile=Makefile.roh)
+#// ifneq ($(shell g++-6 --version >$(KR); echo $$?),0)
+#//  CCName::=g++
+#//  CFLAGS::=$(CFLAGS) -std=gnu++11 # 7.8.17 nicht nötig für opensuse42, hinderlich für fedora; 5.9.17: geht nicht mehr (wg. auto)
+#// else
+# minimal erforderliche g++-Version
+MINGCC::=7
+CCName::=g++-$(MINGCC)
+CCInst::=gcc$(MINGCC) gcc$(MINGCC)-c++
+#// endif
+#// 0=Version fehlt, 1=Version ist da
+#// GCCAB6::=$(shell expr `g++-6 -dumpversion 2>/dev/null||g++-7 -dumpversion 2>/dev/null||echo 0` \>= 6) 
+#// ifeq ('$(GCCAB6)','0')
+#// CCName=g++-6
+#// endif
+# maximal verfügbare g++-Version, falls die Verknüpfungen in /usr/bin stehen und evtl. /usr/bin/g++ nicht auf die höchste verknüpft ist
+MAXGCC::=$(shell { ls /usr/bin/g++* 2>/dev/null||echo 0;}|tail -n1)
+# 1=minimal notwendige Version verfügbar, 0=nicht
+GCCOK::=$(shell expr `echo $(MAXGCC)|cut -f2 -d-` \>= $(MINGCC))
+-include vars # wird durch install.sh generiert; CCInst muss vorher definiert werden, DPROG darf nur nachher verwendet werden
 PROGGROSS::=`echo $(DPROG) | tr a-z A-Z`
 EXEC::=$(DPROG)
 INSTEXEC::=$(EXPFAD)/$(EXEC)
-ifneq ($(shell g++-6 --version >$(KR); echo $$?),0)
- CCName::=g++
-# CFLAGS::=$(CFLAGS) -std=gnu++11 # 7.8.17 nicht nötig für opensuse42, hinderlich für fedora
-else
- CCName::=g++-6
-endif
-GCCAB6::=$(shell expr `gcc -dumpversion|cut -f1 -d.` \>= 6)
-ifeq ('$(GCCAB6)','0')
-CCName=g++-6
-endif
+
 CC::=$(CCName) # CC=$(SUDC)$(CCName)
 libmcd::=$(libmc)-$(dev)
 libmc1d::=$(libmc1)-$(dev)
@@ -127,7 +134,6 @@ MANS::=$(wildcard man_en)
 MANS+=$(_MAN)
 HTMLS::=$(patsubst %,%.html,$(MANS))
 GZS::=$(patsubst %,%.gz,$(MANS))
-
 
 .PHONY: all
 all: anzeig weiter
@@ -196,6 +202,8 @@ git: README.md
 
 anzeig:
 # 'echo -e' geht nicht z.B. in ubuntu
+	@[ "$(DPROG)" ]||{ printf "Datei/File %b'vars'%b fehlerhaft/faulty, bitte vorher/please call %b'./install.sh'%b aufrufen/before!\n" \
+	       $(blau) $(reset) $(blau) $(reset);let 0;}
 	@printf " %bGNU Make%b, Target file/Zieldatei: %b%s%b, before/vorher:                        \n" $(gruen) $(reset) $(rot) "$(EXEC)" $(reset) >$(BA)
 	@printf " '%b%s%b'\n" $(blau) "$$(ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC) $(KF))" $(reset) >$(BA)
 	@printf " Source files/Quelldateien: %b%s%b\n" $(blau) "$(SRCS)" $(reset) >$(BA)
@@ -243,8 +251,8 @@ ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
 endif
-	-@[ "$(GCCAB6)" = "0" ]&&{ ./configure inst "$(CCName)" "$(COMP)"; }
-#	@./configure inst "$(CCName)" "$(COMP)"
+#//	@[ "$(GCCOK)" = "1" ]||{ printf "Installiere/Installing Compiler ...\r" >$(BA);./configure inst "$(CCInst)" "$(COMP)";:; }
+	@[ "$(GCCOK)" = "1" ]||{ printf "Installiere/Installing Compiler ...\r" >$(BA);./configure inst _ "$(CCInst)";:; }
 	-@for r in 1 2;do [ $$r = 1 ]&&{ lc="$(libmcd)";:;}||lc="$(libmc1d)";\
 	[ -f /usr/include/mysql/mysql.h>$(KR) ]&& \
 	find $$(find /usr -maxdepth 1 -type d -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
