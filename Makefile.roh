@@ -55,9 +55,6 @@ endif
 EXPFAD::=$(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | head -n 1)
 EXPFAD::=$(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | awk '{ print length, $$0 }' | sort -n -s | cut -d" " -f2- | head -n1)
 
-GDAT::=$(DATEIEN:inst.log=)
-GDAT::=$(GDAT:uninstallinv=)
-GDAT::=$(GDAT:Makefile=Makefile.roh)
 #// ifneq ($(shell g++-6 --version >$(KR); echo $$?),0)
 #//  CCName::=g++
 #//  CFLAGS::=$(CFLAGS) -std=gnu++11 # 7.8.17 nicht nötig für opensuse42, hinderlich für fedora; 5.9.17: geht nicht mehr (wg. auto)
@@ -72,7 +69,7 @@ MINGCCNR::=6
 #// endif
 # maximal verfügbare g++-Version, falls die Verknüpfungen in /usr/bin stehen und evtl. /usr/bin/g++ nicht auf die höchste verknüpft ist
 MAXGCC::=$(shell { ls /usr/bin/g++* 2>/dev/null||echo 0;}|tail -n1)
-# Hauptversionsnummer
+# deren Hauptversionsnummer
 MAXGCCNR::=$(shell echo $(MAXGCC)|cut -d- -f2)
 #1=verfügbare Version höher als die minimal notwendige, 0=nicht
 GCCNEU::=$(shell expr $(MAXGCCNR) \> $(MINGCCNR))
@@ -85,10 +82,13 @@ else
 CCName::=g++-$(MINGCCNR)
 CCInst::=gcc$(MINGCCNR) gcc$(MINGCCNR)-c++
 endif
--include vars # wird durch install.sh generiert; CCInst muss vorher definiert werden, DPROG darf nur nachher verwendet werden
+-include vars # wird durch install.sh generiert; CCInst muss vorher definiert werden, DPROG und GDAT dürfen nur nachher verwendet werden
 PROGGROSS::=`echo $(DPROG) | tr a-z A-Z`
 EXEC::=$(DPROG)
 INSTEXEC::=$(EXPFAD)/$(EXEC)
+GDAT::=$(DATEIEN:inst.log=)
+GDAT::=$(GDAT:uninstallinv=)
+GDAT::=$(GDAT:Makefile=Makefile.roh)
 
 CC::=$(CCName) # CC=$(SUDC)$(CCName)
 libmcd::=$(libmc)-$(dev)

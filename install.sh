@@ -1,9 +1,10 @@
 #!/bin/bash
 #// string substitution geht nur in bash, nicht in dash, was auf deb-Systemen standardmaessig durch sh aufgerufen wird
 #// => in diesem Fall Aufruf in bash-Aufruf umwandeln
-[ -z "$BASH_SOURCE" ]&&{ bash "$0";exit;}
+#// [ -z "$BASH_SOURCE" ]&&{ bash "$0";exit;}
 # normalerweise redundant, nur nicht, falls diese Datei manuell umbenannt wird ...
-(( AUFRUFE += 1 ));
+#// (( AUFRUFE += 1 ));
+AUFRUFE=$(expr $AUFRUFE + 1)
 ICH=$(basename "$0")
 if [ $ICH = -bash ]; then 
  declare -r ICHges=$(readlink -f "${BASH_SOURCE[0]}")
