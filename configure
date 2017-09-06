@@ -63,7 +63,7 @@ getIPR() {
 		IP_R="${SUDC}$IdPR";
 		dev=devel;
 		LT=${_LT}-${dev};
-		COMP="make automake gcc-c++ kernel-devel";
+		COMP="make automake base-devel";
 	  UPR="${SUDC}pacman -R ";
 		SPR="pacman -Qi ";
 		libmc1="libmysqlclient libmysqlclient"
@@ -71,7 +71,8 @@ getIPR() {
 	[ $fed = 1 ] &&{ 
 	  libmc=mysql;
 		libmc1=mariadb;
-		COMP="make automake gcc-c++ kernel-devel";
+#		COMP="make automake gcc-c++ kernel-devel";
+		COMP="Development Tools" "Legacy Software Development"
 		IP_R="${SUDC}$IdPR";
 		LT="${_LT} ${_LT}-${dev}";
 		LT5="";}
@@ -199,7 +200,6 @@ libmc=libmysqlclient
 libmc1=libmariadbclient
 fed=0
 Z=""
-CCInst=gcc6-c++
 [ "$(id -u)" -ne "0" ]&&SUDC="sudo "
 
 if test "$ICH" != install.sh -a "$ICH" != ${DPROG}_inst.sh -a "$ICH" != transfer; then

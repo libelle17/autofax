@@ -75,12 +75,21 @@ MAXGCCNR::=$(shell echo $(MAXGCC)|cut -d- -f2)
 GCCNEU::=$(shell expr $(MAXGCCNR) \> $(MINGCCNR))
 # 1=minimal notwendige Version verfügbar, 0=nicht
 GCCOK::=$(shell expr $(MAXGCCNR) \>= $(MINGCCNR))
+OBAPT::=$(shell which apt>/dev/null 2>&1&&echo 0||echo 1)
+OBZYP::=$(shell which zypper>/dev/null 2>&1;echo 0||echo 1)
+OBFED::=$(shell which dnf>/dev/null 2>&1||which yum>/dev/null 2>&1;echo 0||echo 1)
+OBMAG::=$(shell which urpmi.update>/dev/null 2>&1;echo 0||echo 1)
+OBMAJ::=$(shell which pacman>/dev/null 2>&1;echo 0||echo 1)
 ifeq ('$(GCCNEU)','1')
-CCName::=g++-$(MAXGCCNR)
-CCInst::=gcc$(MAXGCCNR) gcc$(MAXGCCNR)-c++
-else
+MINGCCNR::=$(MAXGCCNR)
+endif
 CCName::=g++-$(MINGCCNR)
+ifeq (0,$(filter 0, $(OBZYP) $(OBFED)))
 CCInst::=gcc$(MINGCCNR) gcc$(MINGCCNR)-c++
+else
+ifeq ($(OBAPT),0)
+CCInst::=gcc-$(MINGCCNR) g++-$(MINGCCNR)
+endif
 endif
 -include vars # wird durch install.sh generiert; CCInst muss vorher definiert werden, DPROG und GDAT dürfen nur nachher verwendet werden
 PROGGROSS::=`echo $(DPROG) | tr a-z A-Z`
@@ -143,6 +152,7 @@ MANS::=$(wildcard man_en)
 MANS+=$(_MAN)
 HTMLS::=$(patsubst %,%.html,$(MANS))
 GZS::=$(patsubst %,%.gz,$(MANS))
+
 
 .PHONY: all
 all: anzeig weiter
@@ -260,8 +270,7 @@ ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
 endif
-#//	@[ "$(GCCOK)" = "1" ]||{ printf "Installiere/Installing Compiler ...\r" >$(BA);./configure inst "$(CCInst)" "$(COMP)";:; }
-	@[ "$(GCCOK)" = "1" ]||{ printf "Installiere/Installing Compiler ...\r" >$(BA);./configure inst _ "$(CCInst)";:; }
+	@[ "$(GCCOK)" = "1" ]||{ printf "Installiere/Installing Compiler ...\r" >$(BA);./configure inst "$(CCInst)" "$(COMP)";:; }
 	-@for r in 1 2;do [ $$r = 1 ]&&{ lc="$(libmcd)";:;}||lc="$(libmc1d)";\
 	[ -f /usr/include/mysql/mysql.h>$(KR) ]&& \
 	find $$(find /usr -maxdepth 1 -type d -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
