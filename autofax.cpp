@@ -10965,7 +10965,7 @@ int main(int argc, char** argv)
 					const int sz=240; // so oft ueberpruefen undd wz2 ms auf den letzten thread warten, ehe die anderen nochmal gestartet werden
 					for(int ru=0;ru<sz;ru++) {
 						// warten, bis ein thread nicht mehr laeuft
-						while (1) {
+						for (unsigned long long int iru=0;;iru++) {
 							for(ssize_t i=pidv.size()-1;i>=0;i--) {
 								int res=kill(pidv.at(i).pid,0);
 								uchar zuloeschen=0;
@@ -10985,9 +10985,12 @@ int main(int argc, char** argv)
 								}
 							} // 		for(size_t i=0;i<pidv.size();i++)
 							//// <<"pidv.size(): "<<pidv.size()<<endl;
+							int altoblog=pm.oblog;
+              if (!(iru%100)) pm.oblog=1;
 							Log(pm.obverb>1,pm.oblog>1,0,0,"elaueft: %s%d%s, ezahl: %s%d%s",blau,elaeuft,schwarz,blau,ezahl,schwarz);
 							Log(pm.obverb>1,pm.oblog>1,0,0,"slaueft: %s%d%s, szahl: %s%d%s",blau,slaeuft,schwarz,blau,szahl,schwarz);
 							Log(pm.obverb>1,pm.oblog>1,0,0,"zlaueft: %s%d%s, zzahl: %s%d%s",blau,zlaeuft,schwarz,blau,zzahl,schwarz);
+              if (!(iru%100)) pm.oblog=altoblog;
 							if (!elaeuft || !slaeuft || !zlaeuft) break;
 							this_thread::sleep_for(chrono::milliseconds(wz1));
 							Log(pm.obverb>1,0,0,0,"in %s(): %s%s: %s%d%s ms",__FUNCTION__,rot,Tx[T_warte],blau,wz1,schwarz);
@@ -10995,7 +10998,7 @@ int main(int argc, char** argv)
 						// wenn nicht der thread, der noch haengt, zum ersten Mal aufgerufen wurde, dann abbrechen 
 						efertig=(ezahl>1||(ezahl==1&&!elaeuft));
 						sfertig=(szahl>1||(szahl==1&&!slaeuft));
-						zfertig=(zzahl>1||(zzahl==1&&!zlaeuft));
+						zfertig=(zzahl>1||(zzahl==1&&!zlaeuft)||(!pm.obcapi&&!pm.obhyla));
 						if (efertig&&sfertig&&zfertig) break;
 						if (!ezahl||!szahl||!zzahl) break; // wenn eins noch nicht angefangen hat, dann nicht wz2*sz ms lang warten
 						this_thread::sleep_for(chrono::milliseconds(wz2));

@@ -29,15 +29,15 @@ getIPR() {
 		IdPR="$Z -n $g in -f ";
 		IP_R="${SUDC}$Z $g in ";
 		UPR="${SUDC}$Z rm -u ";
-		pgroff=groff;
+		PGROFF=groff;
 		# die nächsten beiden Variablen dürften 26.3.17 unnötig werden
     REPOS="${SUDC}$Z lr|grep 'g++\|devel_gcc'\>$KR||${SUDC}$Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
-    urepo="${SUDC}$Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && ${SUDC}$Z rr devel_gcc;";
+    UREPO="${SUDC}$Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\"\>$KR && ${SUDC}$Z rr devel_gcc;";
     COMP="gcc gcc-c++ \$(CCInst)";
   	LT=${_LT}-${dev};
 	} }||
 	{ still which apt-get &&{ deb=1;
-		IdPR="apt-get --assume-yes install --reinstall ";
+		IdPR="apt-get --assume-yes --allow-unauthenticated install --reinstall ";
 		IP_R="${SUDC}$IdPR";
 	  UPR="${SUDC}apt-get -f install; ${SUDC}apt-get --auto-remove purge ";
 		dev=dev;
@@ -71,9 +71,10 @@ getIPR() {
 	[ $fed = 1 ] &&{ 
 	  libmc=mysql;
 		libmc1=mariadb;
-#		COMP="make automake gcc-c++ kernel-devel";
-		COMP="Development Tools" "Legacy Software Development"
+		COMP="make automake gcc-c++ kernel-devel";
 		IP_R="${SUDC}$IdPR";
+		LBIO=boost-iostreams
+		LBLO=boost-locale
 		LT="${_LT} ${_LT}-${dev}";
 		LT5="";}
 	{ still which rpm &&{ 
@@ -84,15 +85,18 @@ getIPR() {
 	{ still which dpkg &&{ 
 	  SPR="dpkg -s ";
 		LBOOST=libboost-${dev};
+		LBIO=libboost-iostreams-${dev};
+		LBLO=libboost-locale-${dev};
+#   dpk -s libboost-dev, dpk -s libboost-iostream-dev, dpk -s libboost-locale-dev,   		
 		LACL=libacl1-${dev};
 		UDPR="${SUDC}apt-get -f install; ${SUDC}dpkg -r --force-depends ";};}
  	IPR="${SUDC}$IdPR";
-  DATEIEN="`find . -maxdepth 1 -name ${DPROG}.cpp -printf '%f '``find . -maxdepth 1 -name ${DPROG}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -name "${DPROG}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall .exrc $UNF $INSTLOG"
+  DTN="`find . -maxdepth 1 -name ${DPROG}.cpp -printf '%f '``find . -maxdepth 1 -name ${DPROG}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -name "${DPROG}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall .exrc $UNF $ILOG"
 }
 
 exportvars() {
 	rm -f vars;
-	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF INSTLOG pgroff LT LT5 LBOOST LACL LM18 dev libmc libmc1 REPOS urepo COMP GITV DATEIEN DPROG; do
+	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF ILOG PGROFF LT LT5 LBOOST LBIO LBLO LACL LM18 dev libmc libmc1 REPOS UREPO COMP GITV DTN DPROG; do
 	  eval nv=\$$v; 
 		printf "$v::=$nv\n">>vars; 
 	done;
@@ -101,7 +105,7 @@ exportvars() {
 ausricht() {
 # im der letzten eingerückten Block der Bildschirmausgabe stehen die tatsächlich installierten Programme
 # siehe int linst_cl::doinst(kons.cpp)
-  cat "$1" >> $GINSTLOG
+  cat "$1" >> $GILOG
 	if [ $sus = 1 ]; then
 # am Schluss hole hold-Register, entferne Zeilenumbrueche, fasse Leerzeichen zusammen; wenn nicht zwischen NEW package und leerer Zeile, loesche Zeile;
 # loesche auch die letzten Suchmusterzeilen (NEW package und leere Zeile); haenge ans Hold-Register an;
@@ -125,7 +129,7 @@ ausricht() {
 	# noch ungünstiger die von libselinux ...
 # s. doanfg(string& datei, string& inhalt, string& comment) in kons.cpp
 	IP=$(cat $1)
-	printf "IP: '$IP'\n">>$GINSTLOG
+	printf "IP: '$IP'\n">>$GILOG
 #	 for IP in $(cat $1); do
 # wenn $AUNF fehlt oder eine der in $1 erwähnten Programm dort nicht aufgeführt ist, dann zuinstallieren=ja; "; vi ..." nicht zu werten
      [ ! -f $AUNF ]&&zuinst=ja||{
@@ -144,7 +148,7 @@ ausricht() {
 #		printf "$T\nprintf \"\$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
 #	 }
 }
-# wird aufgerufen im Hauptprogramm configure, wenn 1. Parameter 'inst', dieses in Makefile mit: $(COMP), $$lc, $(pgd), $(slc), $(LT), $(LT5), $(pgroff)
+# wird aufgerufen im Hauptprogramm configure, wenn 1. Parameter 'inst', dieses in Makefile mit: $(COMP), $$lc, $(pgd), $(slc), $(LT), $(LT5), $(PGROFF)
 # sonst mit 'make', aus viall mit 'ctags', 'global' und 'vim'
 einricht() {
 # wenn $1 nicht aufrufbar oder "_", dann installiere $2
@@ -175,7 +179,7 @@ einricht() {
 	 LOG=inst_$(echo $2|sed 's/ //g').log; # Leerzeichen entfernen
 	 echo Befehl/Command: ${CMD}$2
 	 ${CMD}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff-base groff"
-	 printf "\nRueckmeldung bei einricht $2:\n">>$GINSTLOG
+	 printf "\nRueckmeldung bei einricht $2:\n">>$GILOG
 	 ausricht "$LOG" $1 "${IPR}$2"
 	 if [ "$1" = "g++" -o "$1" = "g++-6" ]&& [ -n "$Z" ]&& [ $rweg = 1 ]; then
 	 	 printf "Removing Repository/ Entferne Repository ${blau}devel_gcc$reset again/ wieder\n"
@@ -194,7 +198,7 @@ UNF=${UNROH}inv # Name muss identisch sein mit Ende von uindt in kons.cpp
 DN=/dev/null
 KR="$DN 2>&1" # keine Rueckmeldung
 KF=" 2>$DN" # keine Fehlermeldung
-pgroff="groff-base groff"
+PGROFF="groff-base groff"
 dev=devel
 libmc=libmysqlclient
 libmc1=libmariadbclient
@@ -207,8 +211,8 @@ if test "$ICH" != install.sh -a "$ICH" != ${DPROG}_inst.sh -a "$ICH" != transfer
 fi
 #echo nach sourcen von ./install.sh,DPROG: $DPROG, GITV: $GITV
 INSTVZ="$(dirname $(readlink -f "$0"))"
-INSTLOG=inst.log
-GINSTLOG=$INSTVZ/$INSTLOG
+ILOG=inst.log
+GILOG=$INSTVZ/$ILOG
 mkdir -p $INSTVZ
 AUNF=$INSTVZ/$UNF
 _LT="libtiff"
@@ -249,7 +253,7 @@ INSTP=sudo;still which $INSTP||{
 	 LOG=inst_$INSTP.log;
 	 printf "%bsu -c \"$IdPR $INSTP\"|tee \"$LOG\";%b\n" ${blau} ${reset}
 	 su -c "$IdPR $INSTP"|tee "$LOG";
-	 printf "\nRueckmeldung su -c \"$IdPR $INSTP\":\n">>$GINSTLOG
+	 printf "\nRueckmeldung su -c \"$IdPR $INSTP\":\n">>$GILOG
 	 ausricht "$LOG";
 }
 # 0=sudo aufrufbar

@@ -1018,7 +1018,7 @@ int Log(const string& text, const short screen/*=1*/, const short file/*=1*/, co
         } else {
           logf<<zwi<<endl; 
           logf.close();
-        }
+        } //         if (!logf.is_open()) else
 #ifdef false        
 #ifdef obfstream
         fstream *logf=oeffne(logdt,2,&erfolg);
@@ -2200,6 +2200,43 @@ void pruefmehrfach(const string& wen,uchar obstumm/*=0*/)
    // <<violett<<"rueck["<<j<<"]: "<<rot<<rueck[j]<<schwarz<<endl;
   KLZ
   */
+	/*
+	int fd;
+	char buff[128];
+	char *p;
+	unsigned long uptime;
+	struct timeval tv;
+	static time_t boottime;
+
+
+	if ((fd = open("/proc/uptime", 0)) != -1)
+	{
+		if (read(fd, buff, sizeof(buff)) > 0)
+		{
+			uptime = strtoul(buff, &p, 10);
+			gettimeofday(&tv, 0);
+			boottime = tv.tv_sec - uptime;
+
+		}
+		close(fd);
+	}
+
+
+	ifstream procFile;
+	procFile.open("/proc/[INSERT PID HERE]/stat");
+
+	char str[255];
+	procFile.getline(str, 255);  // delim defaults to '\n'
+
+
+	vector<string> tmp;
+	istringstream iss(str);
+	copy(istream_iterator<string>(iss),
+			istream_iterator<string>(),
+			back_inserter<vector<string> >(tmp));
+
+	process_time = (now - boottime) - (atof(tmp.at(21).c_str()))/HZ;
+	*/
 } // void pruefmehrfach(char* ich)
 
 int untersuser(const string& uname,__uid_t *uidp/*=0*/, __gid_t *gidp/*=0*/,vector<gid_t> *gids/*=0*/,struct passwd* ustr/*=0*/)
