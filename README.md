@@ -181,27 +181,27 @@ shorter) <b><br>
 autofax within cron <b><br>
 -delf, --deletefax</b>: delete a fax with query <b><br>
 -delo, --deleteorphans</b>: delete entries from
-&lsquo;<b>spool</b>&lsquo; without detection of file in
+&rsquo;<b>spool</b>&rsquo; without detection of file in
 waiting directory or capisuite fax or hylafax <b><br>
 -dela, --deleteallwaiting</b>: delete all waiting faxes and
-associated entries from &lsquo;<b>spool</b>&lsquo; <b><br>
+associated entries from &rsquo;<b>spool</b>&rsquo; <b><br>
 -again, --receiveagain</b>: present a received fax again
 <b><br>
 -red, --redirect</b>: redirect outgoing fax ahead by the
 other channel <b><br>
 -csf, --correctsuccessflag</b>: in the database table
-&lsquo;<b>outa</b>&lsquo; the success flag is being
+&rsquo;<b>outa</b>&rsquo; the success flag is being
 corrected <b><br>
 -rod, --reorderdir</b>: Examine files in waiting,failed
 a.faxed directory against the tables
-&lsquo;<b>outa</b>&lsquo; and put them to order <b><br>
+&rsquo;<b>outa</b>&rsquo; and put them to order <b><br>
 -st, --stop</b>: stop autofax <b><br>
 -listo, --listoutg</b>: lists entries from
-&lsquo;<b>outa</b>&lsquo; with success flag <b><br>
+&rsquo;<b>outa</b>&rsquo; with success flag <b><br>
 -listf, --listfailed</b>: lists entries from
-&lsquo;<b>outa</b>&lsquo; without success flag <b><br>
+&rsquo;<b>outa</b>&rsquo; without success flag <b><br>
 -listi, --listinca</b>: lists entries from
-&lsquo;<b>inca</b>&lsquo; <b><br>
+&rsquo;<b>inca</b>&rsquo; <b><br>
 -listw, --listwaiting</b>: lists waiting faxes <b><br>
 -s, --search &lt;string&gt;</b>: Look in processed faxes for
 &lt;string&gt;: &rsquo;&rsquo; <b><br>
@@ -260,7 +260,7 @@ instead of &rsquo;&rsquo; <b><br>
 &rsquo;<b>3</b>&rsquo; <b><br>
 -cuser, --cuser &lt;string&gt;</b>: takes the linux user
 &lt;string&gt; for capisuite and/or samba instead of
-&rsquo;&rsquo; <b><br>
+&rsquo;<b>gerald</b>&rsquo; <b><br>
 -crct, --cringcount &lt;zahl&gt;</b>: No. of bell rings
 until Capisuite accepts the call, instead of
 &rsquo;<b>1</b>&rsquo; <b><br>
@@ -963,30 +963,30 @@ f&uuml;r Aufruf aus cron <b><br>
 -loef, --loeschefax</b>: ein Fax nach Rueckfrage loeschen
 <b><br>
 -loew, --loeschewaise</b>: Eintraege aus
-&lsquo;<b>spool</b>&lsquo; loeschen, zu denen keine Datei im
+&rsquo;<b>spool</b>&rsquo; loeschen, zu denen keine Datei im
 Wartevz.und kein Capi- oder Hylafax nachweisbar ist <b><br>
 -loea, --loescheallew</b>: alle wartenden Faxe und
-zugehoerige Eintraege aus &lsquo;<b>spool</b>&lsquo;
+zugehoerige Eintraege aus &rsquo;<b>spool</b>&rsquo;
 loeschen <b><br>
 -erneut, --erneutempf</b>: empfangenes Fax erneut
 bereitstellen <b><br>
 -uml, --umleiten</b>: ausgehendes Fax vorzeitig auf zweitem
 Weg schicken <b><br>
 -kez, --korrerfolgszeichen</b>: in der Datenbanktabelle
-&lsquo;<b>outa</b>&lsquo; wird das Erfolgszeichen korrigiert
+&rsquo;<b>outa</b>&rsquo; wird das Erfolgszeichen korrigiert
 <b><br>
 -bvz, --bereinigevz</b>: Dateien aus
 Wartevz.,Gescheitertenvz.u.Gefaxtvz.gegen
-&lsquo;<b>outa</b>&lsquo; pruefen und ggf. aufraeumen
+&rsquo;<b>outa</b>&rsquo; pruefen und ggf. aufraeumen
 <b><br>
 -st, --stop</b>: autofaxanhalten <b><br>
 -lista, --listausg</b>: listet Datensaetze aus
-&lsquo;<b>outa</b>&lsquo; mit Erfolgskennzeichen auf <b><br>
+&rsquo;<b>outa</b>&rsquo; mit Erfolgskennzeichen auf <b><br>
 -listf, --listfehlgeschl</b>: listet Datensaetze aus
-&lsquo;<b>outa</b>&lsquo; ohne Erfolgskennzeichen auf
+&rsquo;<b>outa</b>&rsquo; ohne Erfolgskennzeichen auf
 <b><br>
 -liste, --listeing</b>: listet Datensaetze aus
-&lsquo;<b>inca</b>&lsquo; auf <b><br>
+&rsquo;<b>inca</b>&rsquo; auf <b><br>
 -listw, --listwartende</b>: listet wartende Faxe auf <b><br>
 -s, --suche &lt;string&gt;</b>: Suche in verarbeiteten Faxen
 nach &lt;string&gt;: &rsquo;&rsquo; <b><br>
@@ -1049,7 +1049,7 @@ Versuchen Hylafax wird Capisuite versucht, anstatt nach
 &rsquo;<b>3</b>&rsquo; <b><br>
 -cuser, --cuser &lt;string&gt;</b>: verwendet fuer Capisuite
 und/oder Samba den Linux-Benutzer &lt;string&gt; anstatt
-&rsquo;&rsquo; <b><br>
+&rsquo;<b>gerald</b>&rsquo; <b><br>
 -ckzl, --cklingelzahl &lt;zahl&gt;</b>: Zahl der
 Klingeltoene, bis Capisuite den Anruf annimmt, anstatt
 &rsquo;<b>1</b>&rsquo; <b><br>

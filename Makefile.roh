@@ -82,7 +82,7 @@ MINGCCNR::=$(MAXGCCNR)
 endif
 CCName::=g++-$(MINGCCNR)
 ifeq ($(DISTR),1)
-CCName::=g++
+CCName::=g++-$(MINGCCNR)
 CCInst::=gcc-$(MINGCCNR) g++-$(MINGCCNR)
 endif
 ifeq ($(DISTR),2)
@@ -102,7 +102,9 @@ INSTEXEC::=$(EXPFAD)/$(EXEC)
 GDAT::=$(DTN:inst.log=)
 GDAT::=$(GDAT:uninstallinv=)
 GDAT::=$(GDAT:Makefile=Makefile.roh)
-
+ifeq ($(DISTR),1)
+COMP::=$(COMP) $(CCInst)
+endif
 CC::=$(CCName) # CC=$(SUDC)$(CCName)
 libmcd::=$(libmc)-$(dev)
 libmc1d::=$(libmc1)-$(dev)
@@ -274,7 +276,7 @@ ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
 endif
-	@[ "$(DISTR)" = "1" ]&&{ $(SUDC)add-apt-repository ppa:ubuntu-toolchain-r/test;$(SUDC)apt-get update; };:
+	@[ "$(GCCOK)" = "1" ]||{ [ "$(DISTR)" = "1" ]&&{ $(SUDC)add-apt-repository ppa:ubuntu-toolchain-r/test;$(SUDC)apt-get update; };:;}
 	@[ "$(GCCOK)" = "1" ]||{ printf "Installiere/Installing Compiler ...\r" >$(BA);./configure inst "$(CCInst)" "$(COMP)";:; }
 	-@for r in 1 2;do [ $$r = 1 ]&&{ lc="$(libmcd)";:;}||lc="$(libmc1d)";\
 	[ -f /usr/include/mysql/mysql.h>$(KR) ]&& \
