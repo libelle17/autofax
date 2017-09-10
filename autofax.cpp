@@ -9226,7 +9226,7 @@ int paramcl::pruefcapi()
 					systemrueck(sudc+"modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog,0,1);
 					for(uchar ivers=0;ivers<2;ivers++) {
 						if (!fcpcida)
-							if (systemrueck(sudc+"modprobe -v fcpci 2>/dev/null",obverb-1,oblog)) {
+							if (systemrueck(sudc+"modprobe -v fcpci 2>/dev/null",obverb-1+ivers,oblog)) {
 								if (ivers) {
 									::Log(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+blau+linstp->ersetzeprog("kernel-source")+rots+
 											Tx[T_eine_neuere_Version_als_die_des_aktuellen_Kernels_installiert_worden_sein_dann_bitte_erneutes_Systemupdate]+schwarz,1,1);
@@ -9240,6 +9240,8 @@ int paramcl::pruefcapi()
 								const string fcpciko=string("/lib/modules/")+unbuf.release+"/kernel/extras/fcpci.ko";
 								if (lstat(fcpciko.c_str(), &entryfc)) {
 									::Log(Txk[T_datei]+blaus+fcpciko+schwarz+Tx[T_nichtgefFcpciMfdKinstallierwerden],obverb,1);
+									int altobverb=obverb;
+									obverb=obverb<2?2:obverb;
 									linstp->doinst("kernel-source",1+obverb,oblog);
 									/*// 
 										const string qvz="/usr/src";
@@ -9323,6 +9325,7 @@ int paramcl::pruefcapi()
 										systemrueck(sudc+"mv -f \""+gccpfad+".bak\" \""+gccpfad+"\" &&"+
 												sudc+"mv -f \""+gpppfad+".bak\" \""+gpppfad+"\"",obverb,oblog);
 									}
+								  obverb=altobverb;
 								} // if (lstat(fcpciko.c_str(), &entryfc)) 
 							} // if (systemrueck(sudc+"modprobe -v fcpci",obverb-1,oblog)) 
 					} // for(uchar ivers=0;ivers<2;ivers++) 

@@ -2498,7 +2498,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 			aktv=dir_name(aktv);
 		} while (!aktv.empty());
 		for(int i=stack.size()-1;i>=0;i--) {
-			int fehlt=1;
+			fehlt=1;
 			struct stat sverz={0};
 			if (!lstat(stack[i].c_str(),&sverz)) {
 				if(S_ISDIR(sverz.st_mode)) {
@@ -2566,7 +2566,6 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 					}
 					if (obverb) systemrueck(sudc+"sh -c 'ls -ld \""+stack[i]+"\"'",2,0);
 				} // 					if (int prueferg=pruefber(/*datei=*/stack[i],aktben,/*mod=*/i?1:7))
-			} else {
 			} // 				if (obmachen)
 			if (fehlt) {
 				// sonst Ende
@@ -2575,7 +2574,6 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 		} // 		for(int i=stack.size()-1;i>=0;i--) 
 		if (!besitzer.empty())
 			umask(altmod);
-
 		if (obmitcon) {
 			if (obselinux==-1) 
 				obselinux=obprogda("sestatus",obverb,oblog);

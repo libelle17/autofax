@@ -155,7 +155,7 @@ Mit '\fB²DPROG² -?\fR' oder '\fB²DPROG² -h\fR' werden die wichtigen und mit 
 .br
 \fB -mh, --maxhylav <zahl>\fR: nach <zahl> Versuchen Hylafax wird Capisuite versucht, anstatt nach '\fB3\fR'
 .br
-\fB -cuser, --cuser <string>\fR: verwendet fuer Capisuite und/oder Samba den Linux-Benutzer <string> anstatt '\fB\fR'
+\fB -cuser, --cuser <string>\fR: verwendet fuer Capisuite und/oder Samba den Linux-Benutzer <string> anstatt '\fBschade\fR'
 .br
 \fB -ckzl, --cklingelzahl <zahl>\fR: Zahl der Klingeltoene, bis Capisuite den Anruf annimmt, anstatt '\fB1\fR'
 .br
