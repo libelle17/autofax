@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "10.09.17" "Version 0.4546" "\fB²DPROG²\fR man page"
+.TH man 1 "10.09.17" "Version 0.45461" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -153,7 +153,7 @@ With '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR', the important and with '\fB²
 .br
 \fB -mh, --maxhylatries <zahl>\fR: try Capisuite after <no> tries of Hylafax instead of '\fB3\fR'
 .br
-\fB -cuser, --cuser <string>\fR: takes the linux user <string> for capisuite and/or samba instead of '\fBschade\fR'
+\fB -cuser, --cuser <string>\fR: takes the linux user <string> for capisuite and/or samba instead of '\fB\fR'
 .br
 \fB -crct, --cringcount <zahl>\fR: No. of bell rings until Capisuite accepts the call, instead of '\fB1\fR'
 .br
