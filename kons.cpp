@@ -3050,7 +3050,7 @@ const string linst_cl::ersetzeprog(const string& prog) const
       if (prog=="hylafax+") return "hylafax+-server";
       if (prog=="hylafax hylafax-client") return "hylafax-server hylafax-client";
       if (prog=="hylafax+ hylafax+-client") return "hylafax+-server hylafax+-client";
-      if (prog=="kernel-source") return "linux-source-$(uname -r|cut -d- -f1)";
+      if (prog=="kernel-source") return "linux-source-$(uname -r|cut -d. -f1,2)";
       if (prog=="tiff") return "libtiff-tools";
       if (prog=="libxslt-tools") return "xsltproc";
       if (prog=="imagemagick") return "imagemagick imagemagick-doc";
