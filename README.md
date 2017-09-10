@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.45461) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45462) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -764,7 +764,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.45461) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45462) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -979,7 +979,7 @@ Weg schicken <b><br>
 Wartevz.,Gescheitertenvz.u.Gefaxtvz.gegen
 &lsquo;<b>outa</b>&lsquo; pruefen und ggf. aufraeumen
 <b><br>
--st, --stop</b>: autofaxanhalten <b><br>
+-st, --stop</b>: autofax anhalten <b><br>
 -lista, --listausg</b>: listet Datensaetze aus
 &lsquo;<b>outa</b>&lsquo; mit Erfolgskennzeichen auf <b><br>
 -listf, --listfehlgeschl</b>: listet Datensaetze aus

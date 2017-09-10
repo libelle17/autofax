@@ -1726,7 +1726,7 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	// T_Muss_falsches_hylafax_loeschen
 	{"Muss falsches hylafax loeschen!!!","Have to delete the wrong hylafax!!!"},
 	// T_DPROG_anhalten
-	{DPROG "anhalten","stop " DPROG},
+	{DPROG " anhalten","stop " DPROG},
 	// T_Zielmuster_Nr
 	{"Zielmuster Nr. ","Target pattern no. "},
 	// T_Zielverzeichnis_Nr
@@ -3258,7 +3258,7 @@ void paramcl::VorgbAllg()
 void paramcl::pruefcvz()
 {
 	//// <<rot<<"cfaxuservz in pruefcvz: "<<cfaxuservz<<schwarz<<endl;
-	Log(violetts+Tx[T_pruefcvz]+schwarz+"ccfaxuservz: "+violett+cfaxuservz+schwarz);
+	Log(violetts+Tx[T_pruefcvz]+schwarz+" ccfaxuservz: "+violett+cfaxuservz+schwarz);
 	kuerzevtz(&cfaxuservz);
 	pruefverz(cfaxuservz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/{},/*benutzer=*/cuser,/*obmachen=*/0);
 	cfaxusersqvz=cfaxuservz+vtz+cuser+"/sendq"; //  "/var/spool/capisuite/users/<user>/sendq";
@@ -6616,10 +6616,10 @@ void paramcl::wegfaxen()
 						if (!pruefocr()) {
 							setfaclggf(qrueck.at(i),obverb,oblog,/*obunter=*/falsch,/*mod=*/7,/*obimmer=*/falsch,/*faclbak=*/0);
 							const string cmd=string(ocrmp+" -rcsl ")+(langu=="d"?"deu":"eng")+" \""+qrueck.at(i)+"\" \""+qrueck.at(i)+"\""
-								" && chmod +r \""+qrueck.at(i)+"\"";
+								" && chmod +r \""+qrueck.at(i)+"\" 2>/dev/null";
 							int zerg=systemrueck(cmd,obverb,oblog);
 							if (zerg==5) zerg=systemrueck(sudc+cmd,obverb,oblog); // kein Schreibrecht im Verzeichnis
-						}
+						} // 						if (!pruefocr())
 						utime(qrueck.at(i).c_str(),&ubuf);
 					} // if (!lstat(qrueck.at(i).c_str(),&spdfstat)) 
 				} // if (obocra) 

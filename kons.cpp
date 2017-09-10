@@ -2292,8 +2292,8 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 		blau+ltoan(mod)+schwarz+", obimmer: "+blau+(obimmer?"1":"0")+schwarz+", faclbak: "+blau+(faclbak?"1":"0")+schwarz+
 		Txk[T_Benutzer]+blau+user+schwarz+", fake: "+blau+(fake?"1":"0")+schwarz,obverb,oblog);
 	}
-	int altobv=obverb;
-	if (fake) obverb=2;
+////	int altobv=obverb;
+////	if (fake) obverb=2;
 	if (obunter) mod|=1; // Verzeichnisberechtigung noetig
 	uid_t cuid;
 	gid_t cgid;
@@ -2374,7 +2374,7 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 			} // 			for(size_t i=pfade.size()-1;i>-1;--i)
 		} // 			if (obsetfacl)
 	} // 	if (cuid)
-	if (fake) obverb=altobv;
+////	if (fake) obverb=altobv;
   if (obverb>1 && !ausgp) {
 	  Log(violetts+Txk[T_Ende]+" setfaclggf()"+blau+Txk[T_Datei]+blau+datei+schwarz+Txk[T_obunter]+blau+(obunter?"1":"0")+schwarz+", mod: "+
 		blau+ltoan(mod)+schwarz+", obimmer: "+blau+(obimmer?"1":"0")+schwarz+", faclbak: "+blau+(faclbak?"1":"0")+schwarz+
@@ -2517,7 +2517,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 						modstr=(i?"0100":"0700");
 					}
 					string bef=sudc+"mkdir -m "+modstr+" '"+stack[i]+"'";
-					if (!besitzer.empty()) bef+=";chown -R "+besitzer+":"+ltoan(gid)+" '"+stack[i]+"'";
+					if (!besitzer.empty()) bef+=";chown -R "+besitzer+":"+ltoan(gid)+" '"+stack[i]+"' 2>/dev/null";
 					if (obverb) Log(blaus+"mkdir("+stack[i]+","+ltoan(mod,8)+")"+schwarz,obverb,oblog);
 					fehlt=mkdir(stack[i].c_str(),mod);
 					if (!fehlt && !besitzer.empty()) {
