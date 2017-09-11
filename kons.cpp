@@ -4016,7 +4016,7 @@ int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
   if (chown(zu.c_str(),statgm.st_uid,statgm.st_gid)) {
    systemrueck(sudc+"chown --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog);
   } //   if (chown(zu.c_str(),statgm.st_uid,statgm.st_gid))
-	systemrueck(sudc+"sh -c 'getfacl \""+gemaess+"\"|setfacl --set-file=- \""+zu+"\"'",obverb,oblog);
+	systemrueck(sudc+"sh -c 'getfacl \""+gemaess+"\" 2>/dev/null|setfacl --set-file=- \""+zu+"\"'",obverb,oblog);
 	struct utimbuf ubuf={0};
   ubuf.actime=ubuf.modtime=statgm.st_mtime;
   if (utime(zu.c_str(),&ubuf)) {

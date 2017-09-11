@@ -1188,7 +1188,7 @@ sqlft::sqlft(DBSTyp eDBS, const string *vwert):
   append(1,dve(eDBS));
 } // sqlft::sqlft(DBSTyp eDBS, const string *vwert)
 
-sqlft::sqlft(DBSTyp eDBS, char* vwert,bool obzahl):
+sqlft::sqlft(DBSTyp eDBS, char* vwert,const bool obzahl):
   string(vwert) 
 {
   if (!obzahl) {
@@ -1260,7 +1260,7 @@ string *sqlft::sersetze( string *src, string const& target, string const& repl)
    }
  */
 
-sqlft::sqlft(DBSTyp eDBS, time_t *tm): string(21,0)
+sqlft::sqlft(DBSTyp eDBS, const time_t *tm): string(21,0)
 {
   struct tm zt={0};
   memcpy(&zt,localtime(tm),sizeof zt);
@@ -1275,7 +1275,7 @@ void stmax(int *zahl,int stellen=2)
  while (*zahl>grenze) (*zahl)/=10;
 } // void stmax(int *zahl,int stellen=2)
 
-void sqlft::druckeein(DBSTyp eDBS, tm *zt) 
+void sqlft::druckeein(DBSTyp eDBS, tm* const zt) 
 {
 	stmax(&zt->tm_year,4);
 	stmax(&zt->tm_mon);
@@ -1284,17 +1284,18 @@ void sqlft::druckeein(DBSTyp eDBS, tm *zt)
 	stmax(&zt->tm_min);
 	stmax(&zt->tm_sec);
 		pthread_mutex_lock(&printf_mutex);
-  sprintf((char*)c_str(),"%c%.4d-%.2d-%.2d %.2d:%.2d:%.2d%c",dvb(eDBS),zt->tm_year+1900,zt->tm_mon+1,zt->tm_mday,zt->tm_hour,zt->tm_min,zt->tm_sec,dve(eDBS));
+  sprintf((char*)c_str(),"%c%.4d-%.2d-%.2d %.2d:%.2d:%.2d%c",
+	        dvb(eDBS),zt->tm_year+1900,zt->tm_mon+1,zt->tm_mday,zt->tm_hour,zt->tm_min,zt->tm_sec,dve(eDBS));
 		pthread_mutex_unlock(&printf_mutex);
 } // void sqlft::druckeein(DBSTyp eDBS, tm *zt)
 
-sqlft::sqlft(DBSTyp eDBS, tm *zt):
+sqlft::sqlft(DBSTyp eDBS, tm* const zt):
   string(21,0) 
 {
   druckeein(eDBS,zt);
 } // sqlft::sqlft(DBSTyp eDBS, tm *zt):
 
-sqlft::sqlft(DBSTyp eDBS, uchar c):
+sqlft::sqlft(DBSTyp eDBS, const uchar c):
   string(1,0) 
 {
 		pthread_mutex_lock(&printf_mutex);
@@ -1302,7 +1303,7 @@ sqlft::sqlft(DBSTyp eDBS, uchar c):
 		pthread_mutex_unlock(&printf_mutex);
 }
 
-sqlft::sqlft(DBSTyp eDBS, char c):
+sqlft::sqlft(DBSTyp eDBS, const char c):
   string(1,0) 
 {
 		pthread_mutex_lock(&printf_mutex);
@@ -1310,7 +1311,7 @@ sqlft::sqlft(DBSTyp eDBS, char c):
 		pthread_mutex_unlock(&printf_mutex);
 }
 
-sqlft::sqlft(DBSTyp eDBS, int i):
+sqlft::sqlft(DBSTyp eDBS, const int i):
   string(21,0) 
 {
 		pthread_mutex_lock(&printf_mutex);
@@ -1319,7 +1320,7 @@ sqlft::sqlft(DBSTyp eDBS, int i):
   resize(strlen(c_str()));
 }
 
-sqlft::sqlft(DBSTyp eDBS, long int i):
+sqlft::sqlft(DBSTyp eDBS, const long int i):
   string(21,0) 
 {
 		pthread_mutex_lock(&printf_mutex);
@@ -1328,7 +1329,7 @@ sqlft::sqlft(DBSTyp eDBS, long int i):
   resize(strlen(c_str()));
 }
 
-sqlft::sqlft(DBSTyp eDBS, unsigned int i):
+sqlft::sqlft(DBSTyp eDBS, const unsigned int i):
   string(21,0) 
 {
 		pthread_mutex_lock(&printf_mutex);
@@ -1337,7 +1338,7 @@ sqlft::sqlft(DBSTyp eDBS, unsigned int i):
   resize(strlen(c_str()));
 }
 
-sqlft::sqlft(DBSTyp eDBS, unsigned long int i):
+sqlft::sqlft(DBSTyp eDBS, const unsigned long int i):
   string(21,0) 
 {
 		pthread_mutex_lock(&printf_mutex);
@@ -1346,7 +1347,7 @@ sqlft::sqlft(DBSTyp eDBS, unsigned long int i):
   resize(strlen(c_str()));
 }
 
-sqlft::sqlft(DBSTyp eDBS, long long int i):
+sqlft::sqlft(DBSTyp eDBS, const long long int i):
   string(21,0) 
 {
 		pthread_mutex_lock(&printf_mutex);

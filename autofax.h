@@ -390,7 +390,7 @@ class paramcl // Programmparameter
 		void unpaperfuercron(const string& ocrprog);
 		void empfhyla(const string& ganz,size_t aktc, const uchar was,const string& nr=nix);
 		void empfcapi(const string& stamm,size_t aktc, const uchar was,const string& nr=nix);
-		void uebertif();
+		void prueftif();
 		void zeigdienste();
 		void wandle(const string& udatei,const string& urname,const uchar iprio,svec& toktxt,svec& toknr,svec& tokname,const string& anfxstr,const string& exten,vector<urfxcl> *urfxp);
 		void tucronschreib(const string& zsauf,const uchar nochkeincron,const uchar cronzuplanen,const string& cbef);

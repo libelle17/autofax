@@ -416,7 +416,7 @@ enum T_
 	T_zielname,
 	T_PIDausName,
 	T_pruefhyla,
-	T_uebertif,
+	T_prueftif,
 	T_pruefrules,
 	T_pruefblack,
 	T_pruefmodcron,
@@ -1465,8 +1465,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"PIDAausName()","PIDfromName()"},
 	// T_pruefhyla
 	{"pruefhyla()","checkhyla()"},
-	// T_uebertif
-	{"uebertif()","overtif()"},
+	// T_prueftif
+	{"prueftif()","checktif()"},
 	// T_pruefrules
 	{"pruefrules()","checkrules()"},
 	// T_pruefblack
@@ -7720,10 +7720,10 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 		Log(schwarzs+"   "+umstcnfA[i].name+": "+tuerkis+(sptr?*sptr:""));
 	} // 			for(unsigned i=0;i<5;i++)
 	const string base=base_name(stamm);
-	size_t hpos=base.find_last_of('-')+1; // u.a.: string::npos+1=0
+	const size_t hpos=base.find_last_of('-')+1; // u.a.: string::npos+1=0
 	const string fnr=base.substr(hpos);
 	tm.tm_isdst=-1; // sonst wird zufaellig ab und zu eine Stunde abgezogen
-	time_t modz=mktime(&tm);
+	const time_t modz=mktime(&tm);
 	string getname,bsname;
 	getSender(this,umstcnfA[1].wert,&getname,&bsname,aktc,obverb,oblog);
 	getname+=", ";
@@ -7732,14 +7732,16 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 	if (getname.length()>70) getname.erase(70);
 	uint vfehler=0;
 	uchar verschieb=0;
-	uchar sfffehlt=lstat(sffdatei.c_str(),&entrysff);
+	const uchar sfffehlt=lstat(sffdatei.c_str(),&entrysff);
 	if (was&4) { // Bilddatei erstellen
+		// um das Datum dann anzugleichen
+		struct utimbuf usffbuf={0};
+		usffbuf.actime=usffbuf.modtime=entrysff.st_mtime;
 		const string tifrumpf="Fax c"+fnr+","+Tx[T_avon]+getname+", T."+stdfaxnr(umstcnfA[1].wert)+","+Tx[T_vom]+tbuf;
 		if (sfffehlt) {
 			// .txt nach falsche verschieben
 			verschieb=1;
 		} else {
-			uint kfehler=1;
 			int erg=-1;
 			if (entrysff.st_size) {
 				// -f == force, steht nicht in --help
@@ -7750,11 +7752,12 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 				} // 			if (!sffgeprueft)
 				// ..., die empfangene Datei in tifpfad kopieren ...
 				const string tifdatei=tifrumpf+".tif";
-				string tifpfad=empfvz+vtz+tifdatei; //// Tx[T_Fax_von]+umstcnfA[1].wert+Tx[T_an]+umstcnfA[2].wert+Tx[T_vom]+tbuf+".tif";
+				const string tifpfad=empfvz+vtz+tifdatei; //// Tx[T_Fax_von]+umstcnfA[1].wert+Tx[T_an]+umstcnfA[2].wert+Tx[T_vom]+tbuf+".tif";
 				::Log((nr.empty()?"":nr+")")+blaus+stamm+schwarz+" => "+gruen+tifdatei+schwarz,1,1);
 				cmd="sfftobmp -f -d -t "+sffdatei+" -o \""+tifpfad+"\" 2>&1";
 				for(int iru=0;iru<2;iru++) {
 				  struct stat st={0};
+					// nach evtl. Vorversuchen aufraeumen
 					if (!lstat(tifpfad.c_str(),&st)) 
 					  tuloeschen(tifpfad,cuser,obverb,oblog);
 					svec srueck;
@@ -7763,31 +7766,32 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 						// wenn Fehlermeldung "no version information available, dann source-code-Version von libtiff5 nochmal installieren
 						if (srueck[0].find("no version information")==string::npos)
 							break;
-					uebertif();
+					prueftif();
 				} // 			for(int iru=0;iru<2;iru++)
 				if (!erg) {
 					attrangleich(tifpfad,empfvz,obverb,oblog);
+					if (utime(tifpfad.c_str(),&usffbuf)) {
+						systemrueck(sudc+"touch -r \""+sffdatei+"\" \""+tifpfad+"\"",obverb,oblog);
+					} //   if (utime(zu.c_str(),&ubuf))
 					// bereits hier, da weder convert noch soffice noch ocrmypdf eine *.sff-Datei lesen kann, convert auch keine tiff-Datei
 					if (obocri) {
 						const string ziel=empfvz+vtz+tifrumpf+".pdf"; 
-						int obpdfda=!zupdf(&tifpfad, ziel, &pseiten, obocri, 1); // 0=Erfolg
-						struct stat entrynd={0};
-						if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) if (!kfehler) tuloeschen(tifpfad,cuser,obverb,oblog);
+						const int obpdfda=!zupdf(&tifpfad, ziel, &pseiten, obocri, 1); // 0=Erfolg
+						struct stat stziel={0};
+						if (obpdfda && !lstat(ziel.c_str(),&stziel)) {
+						   tuloeschen(tifpfad,cuser,obverb,oblog);
+						}
 					} // if ((erg=systemrueck(cmd,obverb,oblog))) else if (obocri)
-#ifdef ueberfluessig 
-					struct utimbuf ubuf={0};
-					ubuf.modtime = modz;
-					ubuf.actime = modz;
-					if (utime(tifpfad.c_str(),&ubuf)) {
-						::Log(rots+Tx[T_Fehler_beim_Datumsetzen_von]+tifpfad+rot+"'"+schwarz,1,1);
-					}
-#endif
 				} else {
 					verschieb=2;
+					uint kfehler=1;
 					const string sffneu=empfvz+vtz+tifrumpf+".sff";
 					kopiere(sffdatei,sffneu,&kfehler,/*wieweiterzaehl=*/2,obverb,oblog);
 					if (!kfehler) {
 						attrangleich(sffneu,empfvz,obverb,oblog);
+						if (utime(sffneu.c_str(),&usffbuf)) {
+							systemrueck(sudc+"touch -r \""+sffdatei+"\" \""+sffneu+"\"",obverb,oblog);
+						} //   if (utime(zu.c_str(),&ubuf))
 					} // if (!kfehler) else
 				} // if (!erg) else
 			} else {
@@ -7797,8 +7801,13 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 			// wenn sfftobmp funktioniert hat // oder die Datei verschoben wurde
 		} // if (lstat(sffdatei.c_str(),&entrysff)) else  
 		if (verschieb) {
-			touch(empfvz+vtz+Tx[T_nicht_angekommen]+tifrumpf+".nix",obverb,oblog);
-		}
+		  const string warndt=empfvz+vtz+Tx[T_nicht_angekommen]+tifrumpf+".nix";
+			touch(warndt,obverb,oblog);
+			attrangleich(warndt,empfvz,obverb,oblog);
+			if (utime(warndt.c_str(),&usffbuf)) {
+				systemrueck(sudc+"touch -r \""+sffdatei+"\" \""+warndt+"\"",obverb,oblog);
+			} //   if (utime(zu.c_str(),&ubuf))
+		} // 		if (verschieb)
 		if (was&2) { // sff-Datei verschieben
 			if (verschieb) {
 				////        if (loee) KLA
@@ -8478,9 +8487,9 @@ return !this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0, meinna
 	KLZ // void hservice_faxgetty()
  */
 // aufgerufen in: pruefhyla, empfcapi
-void paramcl::uebertif()
+void paramcl::prueftif()
 {
-	Log(violetts+Tx[T_uebertif]+schwarz);
+	Log(violetts+Tx[T_prueftif]+schwarz);
 	linstp->doggfinst("cmake",obverb,oblog); 
 	const string proj="tiff_copy";
 	holvomnetz(proj);
@@ -8494,7 +8503,7 @@ void paramcl::uebertif()
 		";:'";
 	systemrueck(bef,obverb,oblog);
 	anfgg(unindt,"cd \""+instvz+vtz+proj+"\" && cat install_manifest.txt|"+sudc+linstp->xargspf+" rm; cd \""+instvz+"\"",bef,obverb,oblog);
-} // void paramcl::uebertif()
+} // void paramcl::prueftif()
 
 // wird aufgerufen in main
 int paramcl::pruefhyla()
@@ -8576,7 +8585,7 @@ int paramcl::pruefhyla()
 				struct stat lnachw={0}, ltiffh={0};
 				const string nachw=lsys.getlib64()+"/sclibtiff";
 				if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh)) {
-					uebertif();
+					prueftif();
 					if (!touch(nachw,obverb,oblog))
 						anfgg(unindt,sudc+"rm -f \""+nachw+"\"","",obverb,oblog);
 				} // 		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh))

@@ -105,22 +105,22 @@ class sqlft: public string
     ////	char dbuf[21];
     string *ersetze(const char* alt, const char* neu);
     string *sersetze( string *src, string const& target, string const& repl);
-    void druckeein(DBSTyp eDBS, tm *zt);
+    void druckeein(DBSTyp eDBS, tm *const zt);
   public:
     ////	string feld;
     sqlft(DBSTyp eDBS, const string& vwert);
     sqlft(DBSTyp eDBS, const string* vwert);
     sqlft(DBSTyp eDBS, char* vwert,char* zs);
-    sqlft(DBSTyp eDBS, char* vwert,bool obzahl=0);
-    sqlft(DBSTyp eDBS, time_t *zt);
-    sqlft(DBSTyp eDBS, tm *zt);
-    sqlft(DBSTyp eDBS, char c);
-    sqlft(DBSTyp eDBS, uchar c);
-    sqlft(DBSTyp eDBS, int i);
-    sqlft(DBSTyp eDBS, long int i);
-    sqlft(DBSTyp eDBS, unsigned int i);
-    sqlft(DBSTyp eDBS, unsigned long int i);
-    sqlft(DBSTyp eDBS, long long int i);
+    sqlft(DBSTyp eDBS, char* vwert,const bool obzahl=0);
+    sqlft(DBSTyp eDBS, const time_t *zt);
+    sqlft(DBSTyp eDBS, tm *const zt);
+    sqlft(DBSTyp eDBS, const char c);
+    sqlft(DBSTyp eDBS, const uchar c);
+    sqlft(DBSTyp eDBS, const int i);
+    sqlft(DBSTyp eDBS, const long int i);
+    sqlft(DBSTyp eDBS, const unsigned int i);
+    sqlft(DBSTyp eDBS, const unsigned long int i);
+    sqlft(DBSTyp eDBS, const long long int i);
 }; // class sqlft: public string 
 
 
