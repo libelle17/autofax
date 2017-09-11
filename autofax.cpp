@@ -4361,7 +4361,7 @@ void paramcl::konfcapi()
 			tuloeschen(cfaxconfdt,cuser,obverb,oblog);
 		} // 				if (lstat(origdatei.c_str(),&entryorig)) else
 		uint vfehler=0;
-		kopiere(cfaxconfeigdt,cfaxconfdt,&vfehler,2);
+		kopiere(cfaxconfeigdt,cfaxconfdt,&vfehler,/*wieweiterzaehl=*/2);
 	} // 	if (tuumben)
 	pruefcvz();
 	nextnum();
@@ -6180,7 +6180,7 @@ void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio
 		uint kfehler=0;
 		// alle bis auf die letzte Adresse
 		if (j<toknr.size()-1) {
-			const string kopiert=kopiere(udatei,tmp,&kfehler,1);
+			const string kopiert=kopiere(udatei,tmp,&kfehler,/*wieweiterzaehl=*/1);
 			if (kfehler) continue;
 			urfxp->push_back(urfxcl(kopiert,urname,iprio));
 			::Log(Tx[T_ErstelledurchKopieren]+rots+tmp+schwarz,1,oblog);
@@ -6353,7 +6353,7 @@ void paramcl::wegfaxen()
 
 										// alle weiteren
 									} else {
-										const string kopiert=kopiere(benenn,kopier,&kfehler,1);
+										const string kopiert=kopiere(benenn,kopier,&kfehler,/*wieweiterzaehl=*/1);
 										if (kfehler) {
 											::Log(rots+Tx[T_Fehler_beim_Kopieren]+ltoan(kfehler)+schwarz+"("+benenn+" -> "+kopier+")",1,1);
 											continue;
@@ -6590,8 +6590,8 @@ void paramcl::wegfaxen()
 			// Erfolg
 			if (gleichziel) {
 				uint kfehler=0;
-				if (!nfehlt) kopiere(fxv[nachrnr].npdf, *zmp, &kfehler, 1, obverb, oblog);
-				/*string zield=*/kopiere(fxv[nachrnr].spdf, *zmp, &kfehler, 1, obverb, oblog);
+				if (!nfehlt) kopiere(fxv[nachrnr].npdf, *zmp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
+				/*string zield=*/kopiere(fxv[nachrnr].spdf, *zmp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
 			} // if (gleichziel)
 		} // 	  if (lstat((fxv[nachrnr].npdf.c_str()), &entrynpdf)) else
 	} // for (int nachrnr=npdfp->size()-1; nachrnr>=0; --nachrnr)  // 2.
@@ -6644,7 +6644,7 @@ void paramcl::wegfaxen()
 					fxv.push_back(fxfcl(wartedatei,qrueck.at(i),iprio));
 					if (gleichziel) {
 						uint kfehler=0;
-						/*string zield=*/kopiere(wartedatei, *zmp, &kfehler, 1, obverb, oblog);
+						/*string zield=*/kopiere(wartedatei, *zmp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
 					} //  if (gleichziel)
 				} //if (!vorhanden)
 			} // for(size_t i=0
@@ -7632,10 +7632,9 @@ void paramcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,con
 		::Log((nr.empty()?"":nr+")")+blaus+base+schwarz+" => "+gruen+hdatei+schwarz,1,1);
 		// ..., die empfangene Datei in hpfad kopieren ...
 		uint kfehler=0;
-		string vorsoffice=kopiere(ganz,hpfad,&kfehler,1,obverb,oblog);
+		string vorsoffice=kopiere(ganz,hpfad,&kfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 		if (!kfehler) {
-			systemrueck(sudc+"chown --reference=\""+empfvz+"\" \""+hpfad+"\"",obverb,oblog);
-			systemrueck(sudc+"chmod --reference=\""+empfvz+"\" \""+hpfad+"\"",obverb,oblog);
+			attrangleich(hpfad,empfvz,obverb,oblog);
 		} else {
 			vorsoffice=ganz;
 		} //     if (!kfehler) else
@@ -7647,8 +7646,10 @@ void paramcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,con
 				systemrueck(sudc+"chmod +r \""+hpfad+"\"",obverb,oblog);
 		if (obocri) {
 			ulong pseiten=0;
+			if (!lstat(ziel.c_str(),&entrynd)) tuloeschen(ziel,cuser,obverb,oblog);
 			obpdfda=!zupdf(&vorsoffice, ziel, &pseiten, obocri, 1); // 0=Erfolg
 			if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) {
+			  attrangleich(ziel,empfvz,obverb,oblog);
 				elog.st_size=entrynd.st_size;
 				if (!kfehler) 
 					tuloeschen(hpfad,cuser,obverb,oblog);
@@ -7715,7 +7716,7 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 			// tbuf und tm enthalten also z.B. die in /var/spool/capisuite/users/<user>/received/fax-999999.txt unter "time" stehende Zeit
 			s=tbuf;
 			sptr=&s;
-		}
+		} // 		if (i==3)
 		Log(schwarzs+"   "+umstcnfA[i].name+": "+tuerkis+(sptr?*sptr:""));
 	} // 			for(unsigned i=0;i<5;i++)
 	const string base=base_name(stamm);
@@ -7753,6 +7754,9 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 				::Log((nr.empty()?"":nr+")")+blaus+stamm+schwarz+" => "+gruen+tifdatei+schwarz,1,1);
 				cmd="sfftobmp -f -d -t "+sffdatei+" -o \""+tifpfad+"\" 2>&1";
 				for(int iru=0;iru<2;iru++) {
+				  struct stat st={0};
+					if (!lstat(tifpfad.c_str(),&st)) 
+					  tuloeschen(tifpfad,cuser,obverb,oblog);
 					svec srueck;
 					erg=systemrueck(cmd,obverb,oblog,&srueck,0,wahr,"",0,1);
 					if (srueck.size())
@@ -7780,13 +7784,10 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 #endif
 				} else {
 					verschieb=2;
-					tifpfad=empfvz+vtz+tifrumpf+".sff";
-					kopiere(sffdatei,tifpfad,&kfehler,1,obverb,oblog);
+					const string sffneu=empfvz+vtz+tifrumpf+".sff";
+					kopiere(sffdatei,sffneu,&kfehler,/*wieweiterzaehl=*/2,obverb,oblog);
 					if (!kfehler) {
-						systemrueck(sudc+"chown --reference=\""+empfvz+"\" \""+tifpfad+"\"",obverb,oblog);
-						systemrueck(sudc+"chmod --reference=\""+empfvz+"\" \""+tifpfad+"\"",obverb,oblog);
-					} else {
-						tifpfad=sffdatei;
+						attrangleich(sffneu,empfvz,obverb,oblog);
 					} // if (!kfehler) else
 				} // if (!erg) else
 			} else {
@@ -8043,7 +8044,7 @@ string verschiebe(const string& qdatei, const auto/*string,zielmustercl*/& zielv
 } // string verschiebe
 
 // aufgerufen in wegfaxen, main, kopiere (2), wandle, empfhyla, empfcapi
-string kopiere(const string& qdatei, const string& zield, uint *kfehler, uchar wieweiterzaehl, int obverb, int oblog)
+string kopiere(const string& qdatei, const string& zield, uint *kfehler, const uchar wieweiterzaehl, int obverb, int oblog)
 {
 	// wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
 	int fehler=0;
@@ -8070,7 +8071,7 @@ string kopiere(const string& qdatei, const string& zield, uint *kfehler, uchar w
 } // string kopiere
 
 // wird aufgerufen in wegfaxen
-string kopiere(const string& qdatei, const zielmustercl& zmp, uint *kfehler, uchar wieweiterzaehl, int obverb, int oblog) 
+string kopiere(const string& qdatei, const zielmustercl& zmp, uint *kfehler, const uchar wieweiterzaehl, int obverb, int oblog) 
 {
 	// wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
 	uchar obgleich=0;

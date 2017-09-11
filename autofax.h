@@ -16,8 +16,8 @@ void dorename(const string& quelle, const string& ziel, const string& cuser=nix,
                   stringstream *ausgp=0);
 string verschiebe(const string& qdatei, const auto/*string,zielmustercl*/& zielvz, const string& cuser, 
                   uint *vfehlerp, uchar wieweiterzaehl, int obverb,int oblog, stringstream *ausgp=0);
-string kopiere(const string& qdatei, const string& zield, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
-string kopiere(const string& qdatei, const zielmustercl& zmp, uint *kfehler, uchar wieweiterzaehl, int obverb=0, int oblog=0);
+string kopiere(const string& qdatei, const string& zield, uint *kfehler, const uchar wieweiterzaehl, int obverb=0, int oblog=0);
+string kopiere(const string& qdatei, const zielmustercl& zmp, uint *kfehler, const uchar wieweiterzaehl, int obverb=0, int oblog=0);
 void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, int obverb, int oblog);
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, const int obverb, const int oblog);
 void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, const string& ff, int obverb, int oblog);
