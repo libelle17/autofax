@@ -6064,8 +6064,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 						erg=lstat(ziel.c_str(),&lziel);
 					} // 					if (!erg)
 					if (!erg) {
-						if (chmod(ziel.c_str(),S_IRWXU|S_IRWXG|S_IRWXO)) 
-							systemrueck(sudc+"chmod +r \""+ziel+"\"",obverb,oblog);
+////						if (chmod(ziel.c_str(),S_IRWXU|S_IRWXG|S_IRWXO)) systemrueck(sudc+"chmod +r \""+ziel+"\"",obverb,oblog);
 						break;
 					} // 					if (!erg)
 				} // pruefocr()
@@ -6121,7 +6120,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 		} // (erg)
 	} // 	for(int aru=0;aru<2;aru++)
 	if (!erg) {
-		attrangleich(ziel,*quellp);
+		attrangleich(ziel,*quellp,0,obverb,oblog);
 		// falls !erg und Seitenzahl gleich, dann tif loeschen
 		svec rueck;
 		if (pseitenp) {
@@ -7572,123 +7571,125 @@ void paramcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,con
 	// uchar indb/*=1*/,uchar mitversch/*=1*/)
 	// was&4: Bilddateien erstellen, was&2 q-Datei verschieben, was&1: in Datenbank eintragen, 
 	Log(violetts+Tx[T_empfhyla]+schwarz+ganz+Tx[T_was]+(was&4?Tx[T_Bilddatei]:"")+(was&2?", q ":"")+(was&1?", Tab.":""));
-	string stamm,exten;
-	getstammext(&ganz,&stamm,&exten);
-	const string base=base_name(stamm);
-	string fnr=base.substr(3);
-	fnr=fnr.substr(fnr.find_first_not_of("0"));
-	struct tm tm={0};
-	struct stat elog={0};
-	ulong seiten=0;
-	string absdr,tsid,callerid,devname=hmodem;
-	if (!holtif(ganz,&seiten,&tm,&elog,&absdr,&tsid,&callerid,&devname))
-		ankzahl++;
-	string tabsdr; // transferierter Absender
-	if (callerid.empty()) {
-		svec trueck;
-		struct stat trst={0};
-		if (!lstat(xferfaxlog.c_str(),&trst)) {
-			systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null |grep -am 1 \""+base_name(ganz)+"\" |cut -f8,9",obverb,oblog,&trueck); 
-			if (trueck.size()) {
-				vector<string> tok; 
-				aufSplit(&tok,trueck[0],'\t');
-				if (tok.size()) {
-					//// <<gruen<<"tok[0] d: "<<schwarz<<tok[0]<<endl; // Tel'nr z.B. 49.8131.1234567
-					callerid=tok[0];
-					if (tok.size()>1) {
-						//// <<gruen<<"tok[1] d: "<<schwarz<<tok[1]<<endl; // Namen z.B. G.Schade
-						tabsdr=tok[1];
-						anfzweg(tabsdr); // Anfuehrungszeichen entfernen
-					} //           if (tok.size()>1)
-				} // if (tok.size()) 
-			} // if (trueck.size()) 
-		} // 	if (!lstat(xferfaxlog.c_str(),&trst))
-	} // if (callerid.empty()) 
-	// <<gruen<<"tsid: "<<schwarz<<tsid<<endl;
-	tsid=stdfaxnr(tsid.empty()?callerid:tsid);
-	if (absdr.empty()) {
-		string bsname;
-		getSender(this,tsid,&absdr,&bsname,aktc,obverb,oblog);
-		//// <<gruen<<"absdr("<<tsid<<"): "<<schwarz<<absdr<<" bsname: "<<bsname<<endl;
-		if (!bsname.empty()) {
-			absdr+=", ";
-			absdr+=bsname;
-		}
-		if (absdr.empty() || istelnr(absdr)) { // wenn Nr. nicht gefunden, kommt sie in absdr wieder zurueck
-			absdr=tabsdr;
-		} // 		if (absdr.empty() || istelnr(absdr))
-	} //     if (absdr.empty())
-	fuersamba(absdr);  
-	int obhpfadda=1, obpdfda=1; // wenn !(was&4), dann nicht behindern
-	if (was&4) {
-		char tbuf[100]={0};
-		strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
-		if (absdr.length()>187) absdr.erase(187);
-		if (absdr.length()>70) absdr.erase(70);
-		const string hrumpf="Fax h"+fnr+","+Tx[T_avon]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf;
-		const string hdatei=hrumpf+".tif";
-		const string hpfad=empfvz+vtz+hdatei;
-		const string ziel=empfvz+vtz+hrumpf+".pdf";
-		::Log((nr.empty()?"":nr+")")+blaus+base+schwarz+" => "+gruen+hdatei+schwarz,1,1);
-		// ..., die empfangene Datei in hpfad kopieren ...
-		uint kfehler=0;
-		string vorsoffice=kopiere(ganz,hpfad,&kfehler,/*wieweiterzaehl=*/1,obverb,oblog);
-		if (!kfehler) {
-			attrangleich(hpfad,empfvz,obverb,oblog);
-		} else {
-			vorsoffice=ganz;
-		} //     if (!kfehler) else
-		struct stat entrynd={0};
-		obpdfda=0;
-		obhpfadda=!lstat(hpfad.c_str(),&entrynd);
-		if (obhpfadda)
-			if (chmod(hpfad.c_str(),S_IRWXU|S_IRGRP|S_IROTH))
-				systemrueck(sudc+"chmod +r \""+hpfad+"\"",obverb,oblog);
-		if (obocri) {
+	struct stat stganz={0};
+	const uchar ganzfehlt=lstat(ganz.c_str(),&stganz); // muesste immer 0 sein
+	if (!ganzfehlt) {
+		string stamm,exten;
+		getstammext(&ganz,&stamm,&exten);
+		const string base=base_name(stamm);
+		string fnr=base.substr(3);
+		fnr=fnr.substr(fnr.find_first_not_of("0"));
+		struct tm tm={0};
+		struct stat elog={0};
+		ulong seiten=0;
+		string absdr,tsid,callerid,devname=hmodem;
+		if (!holtif(ganz,&seiten,&tm,&elog,&absdr,&tsid,&callerid,&devname)) // Tif-Informationen holen
+			ankzahl++;
+		string tabsdr; // transferierter Absender
+		if (callerid.empty()) {
+			svec trueck;
+			struct stat trst={0};
+			if (!lstat(xferfaxlog.c_str(),&trst)) {
+				systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null |grep -am 1 \""+base_name(ganz)+"\" |cut -f8,9",obverb,oblog,&trueck); 
+				if (trueck.size()) {
+					vector<string> tok; 
+					aufSplit(&tok,trueck[0],'\t');
+					if (tok.size()) {
+						//// <<gruen<<"tok[0] d: "<<schwarz<<tok[0]<<endl; // Tel'nr z.B. 49.8131.1234567
+						callerid=tok[0];
+						if (tok.size()>1) {
+							//// <<gruen<<"tok[1] d: "<<schwarz<<tok[1]<<endl; // Namen z.B. G.Schade
+							tabsdr=tok[1];
+							anfzweg(tabsdr); // Anfuehrungszeichen entfernen
+						} //           if (tok.size()>1)
+					} // if (tok.size()) 
+				} // if (trueck.size()) 
+			} // 	if (!lstat(xferfaxlog.c_str(),&trst))
+		} // if (callerid.empty()) 
+		// <<gruen<<"tsid: "<<schwarz<<tsid<<endl;
+		tsid=stdfaxnr(tsid.empty()?callerid:tsid);
+		if (absdr.empty()) {
+			string bsname;
+			getSender(this,tsid,&absdr,&bsname,aktc,obverb,oblog);
+			//// <<gruen<<"absdr("<<tsid<<"): "<<schwarz<<absdr<<" bsname: "<<bsname<<endl;
+			if (!bsname.empty()) {
+				absdr+=", ";
+				absdr+=bsname;
+			} // 			if (!bsname.empty())
+			if (absdr.empty() || istelnr(absdr)) { // wenn Nr. nicht gefunden, kommt sie in absdr wieder zurueck
+				absdr=tabsdr;
+			} // 		if (absdr.empty() || istelnr(absdr))
+		} //     if (absdr.empty())
+		fuersamba(absdr);  
+		int obhpfadda=1, obpdfda=1; // wenn !(was&4), dann nicht behindern
+		if (was&4) {
+			char tbuf[100]={0};
+			strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
+			if (absdr.length()>187) absdr.erase(187);
+			if (absdr.length()>70) absdr.erase(70);
+			const string hrumpf="Fax h"+fnr+","+Tx[T_avon]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf;
+			const string hdatei=hrumpf+".tif";
+			const string hpfad=empfvz+vtz+hdatei;
+			const string ziel=empfvz+vtz+hrumpf+".pdf";
+			::Log((nr.empty()?"":nr+")")+blaus+base+schwarz+" => "+gruen+hdatei+schwarz,1,1);
+			// ..., die empfangene Datei in hpfad kopieren ...
+			uint kfehler=0;
+			string vorsoffice=kopiere(ganz,hpfad,&kfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+			if (!kfehler) {
+				attrangleich(hpfad,empfvz,&ganz,obverb,oblog);
+			} else {
+				vorsoffice=ganz;
+			} //     if (!kfehler) else
+			struct stat entrynd={0};
+			obhpfadda=!lstat(hpfad.c_str(),&entrynd);
+			////		if (obhpfadda) if (chmod(hpfad.c_str(),S_IRWXU|S_IRGRP|S_IROTH)) systemrueck(sudc+"chmod +r \""+hpfad+"\"",obverb,oblog);
 			ulong pseiten=0;
-			if (!lstat(ziel.c_str(),&entrynd)) tuloeschen(ziel,cuser,obverb,oblog);
+			if (!lstat(ziel.c_str(),&entrynd)) 
+			    tuloeschen(ziel,cuser,obverb,oblog);
 			obpdfda=!zupdf(&vorsoffice, ziel, &pseiten, obocri, 1); // 0=Erfolg
-			if (obpdfda) if (!lstat(ziel.c_str(),&entrynd)) {
-			  attrangleich(ziel,empfvz,obverb,oblog);
+			if (obpdfda && !lstat(ziel.c_str(),&entrynd)) {
+				attrangleich(ziel,empfvz,&ganz,obverb,oblog);
 				elog.st_size=entrynd.st_size;
 				if (!kfehler) 
 					tuloeschen(hpfad,cuser,obverb,oblog);
 			} // 			if (obpdfda) if (!lstat(ziel.c_str(),&entrynd))
-		} // if (obocri) 
-		if (obhpfadda||obpdfda) {
-			if (was&2) {
-				//// cmd=string(sudc+"mv \"")+ganz+"\" \""+hempfavz+"\""; systemrueck(cmd,obverb,oblog);
-				static uchar hempfgeprueft=0;
-				if (!hempfgeprueft) {
-					pruefverz(hempfavz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/huser,/*benutzer=*/cuser);
-					hempfgeprueft=1;
-				} // 			if (!hempfgeprueft)
-				dorename(ganz,hempfavz,cuser,/*vfehlerp=*/0,/*schonda=*/0,obverb,oblog);
-			} // 	if (was&2)
-		} else {
-			touch(empfvz+vtz+Tx[T_nicht_angekommen]+hrumpf+".nix",obverb,oblog);
-		} // 		if (obhpfadda||obpdfda) else
-	} // 	if (was&4) 
-	// wenn was&4, dann obhpdfadda oder obpdfda zur Voraussetzung machen
-	if (was&1 &&(obhpfadda||obpdfda)) {
-		RS zs(My);
-		// ... und falls erfolgreich in der Datenbanktabelle inca eintragen
-		RS rins(My); 
-		vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-		einf.push_back(/*2*/instyp(My->DBS,"fsize",elog.st_size));
-		einf.push_back(/*2*/instyp(My->DBS,"pages",seiten));
-		einf.push_back(/*2*/instyp(My->DBS,"titel",&absdr));
-		einf.push_back(/*2*/instyp(My->DBS,"tsid",&tsid));
-		////        einf.push_back(instyp(My->DBS,"callerid",&callerid));
-		einf.push_back(/*2*/instyp(My->DBS,"devname",&devname));
-		einf.push_back(/*2*/instyp(My->DBS,"id",&base));
-		einf.push_back(/*2*/instyp(My->DBS,"transe",&tm));
-		svec eindfeld; eindfeld<<"id";
-		rins.tbins(tinca,einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld); 
-		if (rins.fnr) {
-			::Log(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
-		} //         if (runde==1)
-	} // 	if (was&1 &&(obhpfadda||obpdfda))
+			if (obhpfadda||obpdfda) {
+				if (was&2) {
+					//// cmd=string(sudc+"mv \"")+ganz+"\" \""+hempfavz+"\""; systemrueck(cmd,obverb,oblog);
+					static uchar hempfgeprueft=0;
+					if (!hempfgeprueft) {
+						pruefverz(hempfavz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/huser,/*benutzer=*/cuser);
+						hempfgeprueft=1;
+					} // 			if (!hempfgeprueft)
+					dorename(ganz,hempfavz,cuser,/*vfehlerp=*/0,/*schonda=*/0,obverb,oblog);
+				} // 	if (was&2)
+			} else {
+				const string warndt=empfvz+vtz+Tx[T_nicht_angekommen]+hrumpf+".nix";
+				touch(warndt,obverb,oblog);
+				attrangleich(warndt,empfvz,&ganz,obverb,oblog);
+			} // 		if (obhpfadda||obpdfda) else
+		} // 	if (was&4) 
+		// wenn was&4, dann obhpdfadda oder obpdfda zur Voraussetzung machen
+		if (was&1 &&(obhpfadda||obpdfda)) {
+			RS zs(My);
+			// ... und falls erfolgreich in der Datenbanktabelle inca eintragen
+			RS rins(My); 
+			vector<instyp> einf; // fuer alle Datenbankeinfuegungen
+			einf.push_back(/*2*/instyp(My->DBS,"fsize",elog.st_size));
+			einf.push_back(/*2*/instyp(My->DBS,"pages",seiten));
+			einf.push_back(/*2*/instyp(My->DBS,"titel",&absdr));
+			einf.push_back(/*2*/instyp(My->DBS,"tsid",&tsid));
+			////        einf.push_back(instyp(My->DBS,"callerid",&callerid));
+			einf.push_back(/*2*/instyp(My->DBS,"devname",&devname));
+			einf.push_back(/*2*/instyp(My->DBS,"id",&base));
+			einf.push_back(/*2*/instyp(My->DBS,"transe",&tm));
+			svec eindfeld; eindfeld<<"id";
+			rins.tbins(tinca,einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld); 
+			if (rins.fnr) {
+				::Log(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
+			} //         if (runde==1)
+		} // 	if (was&1 &&(obhpfadda||obpdfda))
+	} // 	if (!ganzfehlt)
 } // void paramcl::empfhyla(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*/)
 
 // wird aufgerufen in: empferneut(), empfarch()
@@ -7735,8 +7736,6 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 	const uchar sfffehlt=lstat(sffdatei.c_str(),&entrysff);
 	if (was&4) { // Bilddatei erstellen
 		// um das Datum dann anzugleichen
-		struct utimbuf usffbuf={0};
-		usffbuf.actime=usffbuf.modtime=entrysff.st_mtime;
 		const string tifrumpf="Fax c"+fnr+","+Tx[T_avon]+getname+", T."+stdfaxnr(umstcnfA[1].wert)+","+Tx[T_vom]+tbuf;
 		if (sfffehlt) {
 			// .txt nach falsche verschieben
@@ -7769,29 +7768,22 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 					prueftif();
 				} // 			for(int iru=0;iru<2;iru++)
 				if (!erg) {
-					attrangleich(tifpfad,empfvz,obverb,oblog);
-					if (utime(tifpfad.c_str(),&usffbuf)) {
-						systemrueck(sudc+"touch -r \""+sffdatei+"\" \""+tifpfad+"\"",obverb,oblog);
-					} //   if (utime(zu.c_str(),&ubuf))
+					attrangleich(tifpfad,empfvz,&sffdatei,obverb,oblog);
 					// bereits hier, da weder convert noch soffice noch ocrmypdf eine *.sff-Datei lesen kann, convert auch keine tiff-Datei
-					if (obocri) {
-						const string ziel=empfvz+vtz+tifrumpf+".pdf"; 
-						const int obpdfda=!zupdf(&tifpfad, ziel, &pseiten, obocri, 1); // 0=Erfolg
-						struct stat stziel={0};
-						if (obpdfda && !lstat(ziel.c_str(),&stziel)) {
-						   tuloeschen(tifpfad,cuser,obverb,oblog);
-						}
-					} // if ((erg=systemrueck(cmd,obverb,oblog))) else if (obocri)
+					const string ziel=empfvz+vtz+tifrumpf+".pdf"; 
+					const int obpdfda=!zupdf(&tifpfad, ziel, &pseiten, obocri, 1); // 0=Erfolg
+					struct stat stziel={0};
+					if (obpdfda && !lstat(ziel.c_str(),&stziel)) {
+						tuloeschen(tifpfad,cuser,obverb,oblog);
+					} // 					if (obpdfda && !lstat(ziel.c_str(),&stziel))
 				} else {
-					verschieb=2;
 					uint kfehler=1;
 					const string sffneu=empfvz+vtz+tifrumpf+".sff";
 					kopiere(sffdatei,sffneu,&kfehler,/*wieweiterzaehl=*/2,obverb,oblog);
-					if (!kfehler) {
-						attrangleich(sffneu,empfvz,obverb,oblog);
-						if (utime(sffneu.c_str(),&usffbuf)) {
-							systemrueck(sudc+"touch -r \""+sffdatei+"\" \""+sffneu+"\"",obverb,oblog);
-						} //   if (utime(zu.c_str(),&ubuf))
+					if (kfehler) {
+						verschieb=2;
+					} else {
+						attrangleich(sffneu,empfvz,&sffdatei,obverb,oblog);
 					} // if (!kfehler) else
 				} // if (!erg) else
 			} else {
@@ -7803,10 +7795,7 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 		if (verschieb) {
 		  const string warndt=empfvz+vtz+Tx[T_nicht_angekommen]+tifrumpf+".nix";
 			touch(warndt,obverb,oblog);
-			attrangleich(warndt,empfvz,obverb,oblog);
-			if (utime(warndt.c_str(),&usffbuf)) {
-				systemrueck(sudc+"touch -r \""+sffdatei+"\" \""+warndt+"\"",obverb,oblog);
-			} //   if (utime(zu.c_str(),&ubuf))
+			attrangleich(warndt,empfvz,&sffdatei,obverb,oblog);
 		} // 		if (verschieb)
 		if (was&2) { // sff-Datei verschieben
 			if (verschieb) {

@@ -751,7 +751,7 @@ string Tippstr(const string& frage, const string *vorgabe=0);
 string Tippverz(const char *frage,const string *vorgabe=0);
 uchar VerzeichnisGibts(const char* vname);
 int tuloeschen(const string& zuloe,const string& cuser=nix,int obverb=0, int oblog=0,stringstream *ausgp=0);
-int attrangleich(const string& zu, const string& gemaess,int obverb=0, int oblog=0);
+int attrangleich(const string& zu, const string& gemaess,const string* const zeitvondtp=0, int obverb=0, int oblog=0);
 int kopier(const string& quel, const string& ziel, int obverb=0, int oblog=0);
 #ifdef falsch
 #define obfstream

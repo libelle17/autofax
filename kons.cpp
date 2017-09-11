@@ -3998,7 +3998,7 @@ void optioncl::setzebem(schlArr *cpA,const char *pname)
 }
 
 // gleicht das Datum von <zu> an <gemaess> an, aehnlich touch
-int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
+int attrangleich(const string& zu, const string& gemaess,const string* const zeitvondtp/*=0*/, int obverb/*=0*/, int oblog/*=0*/)
 {
   struct stat statgm={0};
   if (lstat(gemaess.c_str(),&statgm)) {
@@ -4017,17 +4017,22 @@ int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
    systemrueck(sudc+"chown --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog);
   } //   if (chown(zu.c_str(),statgm.st_uid,statgm.st_gid))
 	systemrueck(sudc+"sh -c 'getfacl \""+gemaess+"\" 2>/dev/null|setfacl --set-file=- \""+zu+"\"'",obverb,oblog);
-	struct utimbuf ubuf={0};
-  ubuf.actime=ubuf.modtime=statgm.st_mtime;
-  if (utime(zu.c_str(),&ubuf)) {
-   systemrueck(sudc+"touch -r \""+gemaess+"\" \""+zu+"\"",obverb,oblog);
-  } //   if (utime(zu.c_str(),&ubuf))
-  lstat(zu.c_str(),&statzu);
-  if (memcmp(&statgm.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime)) {
-    Log(rots+Txk[T_Datum_nicht_gesetzt_bei]+schwarz+zu+rot+"'"+schwarz,1,1);
-    ////          exit(0);
-  } //   if (memcmp(&statgm.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime))
-  return 0;
+
+	const string* const zvdtp=(zeitvondtp?zeitvondtp:&gemaess);
+	struct stat stzvd={0};
+	if (!lstat(zvdtp->c_str(),&stzvd)) {
+		struct utimbuf ubuf={0};
+		ubuf.actime=ubuf.modtime=stzvd.st_mtime;
+		if (utime(zu.c_str(),&ubuf)) {
+			systemrueck(sudc+"touch -r \""+*zvdtp+"\" \""+zu+"\"",obverb,oblog);
+		} //   if (utime(zu.c_str(),&ubuf))
+	}
+	lstat(zu.c_str(),&statzu);
+	if (memcmp(&stzvd.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime)) {
+		Log(rots+Txk[T_Datum_nicht_gesetzt_bei]+schwarz+zu+rot+"'"+schwarz,1,1);
+		////          exit(0);
+	} //   if (memcmp(&statgm.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime))
+	return 0;
 } // int attrangleich(const string& zu, const string& gemaess,int obverb, int oblog)
 
 // liefert 0, wenn Erfolg
