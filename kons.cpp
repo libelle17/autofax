@@ -5251,7 +5251,7 @@ void haupt::update(const string& DPROG)
 	perfcl perf("main");
 	obverb++;
 	if (systemrueck("wget https://raw.githubusercontent.com/"+gitv+"/"+DPROG+"/master/versdt -qO"+instvz+"/versdtakt&&"
-	                "diff "+instvz+"/versdt "+instvz+"/versdtakt",obverb,oblog)) {
+	                "[ $(sed 's/\\.//' "+instvz+"/versdtakt) -gt $(sed 's/\\.//' "+instvz+"/versdt) ]",obverb,oblog)) {
 ////  struct stat entwst={0};
 		//// entwickeln muss genauso definiert sein wie in Makefile
 ////  const string ziel=instvz+(lstat((instvz+"/entwickeln").c_str(),&entwst)?nix:"/nvers");

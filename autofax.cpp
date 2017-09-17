@@ -3371,8 +3371,8 @@ int paramcl::getcommandline()
 	opts.push_back(/*2*/optioncl(T_us_k,T_undstr_l,&Tx, T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt,0,&undstr,psons,
 				&agcnfA,"undstr",&obkschreib));
 	opts.push_back(/*2*/optioncl(T_host_k,T_host_l,&Tx, T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf,0,&host,psons,&agcnfA,"host",&obkschreib));
-	opts.push_back(/*2*/optioncl(T_muser_k,T_muser_l,&Tx, T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt,0,&muser,psons,&agcnfA,"muser",      
-				&obkschreib));
+	opts.push_back(/*2*/optioncl(T_muser_k,T_muser_l,&Tx, T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt,0,&muser,psons,&agcnfA,
+	               "muser",&obkschreib));
 	opts.push_back(/*2*/optioncl(T_mpwd_k,T_mpwd_l,&Tx, T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string,0,&mpwd,psons,&agcnfA,"mpwd",&obkschreib));
 	opts.push_back(/*2*/optioncl(T_db_k,T_datenbank_l,&Tx, T_verwendet_die_Datenbank_string_anstatt,0,&dbq,psons,&agcnfA,"datenbank",&obkschreib));
 	opts.push_back(/*4*/optioncl(T_find_k,T_find_l,&Tx, T_Version_1_2_oder_3_Dateisuche_anstatt,0,&findvers,pzahl,&agcnfA,"findvers",&obkschreib));
