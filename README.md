@@ -1294,7 +1294,8 @@ die Option <b>-autoakt</b> bzw. <b>--autoaktual</b> aktiv
 ist, wird zuletzt bei jedem zweiten Aufruf jedes Tages die
 Versionsummer von <b>autofax</b> mit der der
 Installationsquelle verglichen und im Fall eines
-R&uuml;ckstands die neue Version 0.45651</p>
+R&uuml;ckstands eine Aktualisierung
+durchgef&uuml;hrt</p>
 
 <h2>VORAUSSETZUNGEN
 <a name="VORAUSSETZUNGEN_D"></a>
