@@ -6,7 +6,6 @@ class zielmustercl; // fuer die Verteilung der erfolgreich gefaxten Dateien auf 
 class fxfcl; // Faxfile
 class fsfcl; // Faxsendfile
 class paramcl; // Programmparameter
-class pidvec; // Vector von pid- und string-Pärchen
 void useruucp(const string& huser, const int obverb, const int oblog);
 string zielname(const string& qdatei, const string& zielvz,uchar wieweiterzaehl=0, string* zieldatei=0, uchar* obgleichp=0, 
                 int obverb=0, int oblog=0, stringstream *ausgp=0);
@@ -20,41 +19,17 @@ string kopiere(const string& qdatei, const string& zield, uint *kfehler, const u
 string kopiere(const string& qdatei, const zielmustercl& zmp, uint *kfehler, const uchar wieweiterzaehl, int obverb=0, int oblog=0);
 void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, int obverb, int oblog);
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, const int obverb, const int oblog);
-void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, const string& ff, int obverb, int oblog);
-void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, paramcl *pmp, const string& ff, int obverb, int oblog);
 int pruefcapi(paramcl *pmp, int obverb, int oblog);
-void kuerzevtz(string *vzp);
 pid_t PIDausName(const char* PName, uchar klgr, uchar exakt, int obverb, int oblog);
-void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,const size_t aktc,const int obverb=0,const int oblog=0);
 void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0);
 int hconfig(const paramcl *const pmp,const int obverb=0, const int oblog=0);
 const string& pruefspool(DB *My,const string& spooltab, const string& altspool, const int obverb, const int oblog, uchar direkt=0);
 void pruefouttab(DB *My, const string& touta, const int obverb, const int oblog, const uchar direkt=0);
 void pruefudoc(DB *My, const string& tudoc, const int obverb, const int oblog, const uchar direkt=0);
 void pruefinctab(DB *My, const string& tinca, const int obverb, const int oblog, const uchar direkt=0);
-void kuerzevtz(string *vzp);
 void pruefrules(int obverb, int oblog);
 void pruefblack(int obverb, int oblog);
 void pruefmodcron(int obverb, int oblog);
-int wartaufpids(pidvec *pidv,const ulong runden=0,const int obverb=0,const string& wo=nix);
-void viadd(string *cmd,const string& datei,const uchar ro=0,const uchar hinten=0, const uchar unten=0);
-
-class pidcl
-{
- public:
- pid_t pid;
- string name;
- pidcl(const pid_t pid,const string& name):pid(pid),name(name){}
-}; // pidcl
-
-class pidvec: public vector<pidcl>
-{
- public:
- inline pidvec& operator<<(const pidcl& pd) {
-	 this->push_back(pd);
-	 return *this;
- }
-}; // pidvec
 
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster
 class zielmustercl 
@@ -159,28 +134,15 @@ class fsfcl : public fxfcl // Faxsendfile
 		void scheitere(const string& wvz, const string& ngvz, const string& cuser, const string* const ziel=0, const int obverb=0, const int oblog=0);
 }; // class fsfcl
 
-extern const string s_true; // ="true";
-extern const string s_dampand; // =" && ";
-extern const string s_gz; // ="gz";
-extern const string defvors; // ="https://github.com/libelle17/"
-extern const string defnachs; // ="/archive/master.tar.gz"
 
-class paramcl // Programmparameter 
+class paramcl: public haupt // Programmparameter 
 {
   private:
-    double tstart, tende;
     svec modems;       // gefundene Modems
-    size_t optslsz=0; // last opts.size()
     uchar modemgeaendert=0; // hmodem neu gesetzt
 //		long gmtoff; // Sekunden Abstand zur UTC-Zeit einschließlich Sommerzeit
   public:
-	  string cl; // comanndline
-    string mpfad;  // meinpfad()
-    string meinname; // base_name(meinpfad()) // argv[0] // <DPROG>
 		const string s1="mv -n ", s2="/2200/* ";
-		string vaufr[2]; // (vollaufruf) z.B. '/usr/bin/<DPROG> -noia >/dev/null 2>&1'
-    string saufr[2]; // (stummaufruf) '<DPROG> -noia >/dev/null 2>&1'
-		string zsaufr[2]; // zitiert saufr (in sed)
     schlArr hylcnfA; // fuer q1234 o.ae.
     uchar hgelesen=0; // Protokolldatei war auslesbar
     static constexpr const char *moeglhvz[2]={"/var/spool/fax","var/spool/hylafax"};
@@ -193,8 +155,6 @@ class paramcl // Programmparameter
     const string spooltab="spool";
     const string altspool="altspool"; // Historie der Spooltabelle
     const string udoctab="udoc";
-    int obverb=0; // verbose
-    int oblog=0;  // mehr Protokollieren
     uchar obvi=0;   // ob Konfigurationsdatei editiert werden soll
     uchar obvc=0;   // ob Capisuite-Konfigurationsdateien betrachtet werden sollen
 		uchar obvh=0;   // ob Hylafax-Konfigurations- und Logdateindatei betrachtet werden sollen
@@ -214,9 +174,6 @@ class paramcl // Programmparameter
     uchar listw=0;   // liste wartende auf
     string suchstr;  // Wortteil, nach dem in alten Faxen gesucht werden soll
     string dszahl="30"; // Datensatzzahl fuer Tabellenausgaben
-    uchar logdateineu=0; // logdt vorher loeschen
-    uchar obhilfe=0;      // Hilfe anzeigen: 1=kurze Hilfe, 2=lange Hilfe, 3=Standardhilfe
-    uchar zeigvers=0;  // Version anzeigen
 		size_t faxord=0; // Ordinalzahl des Faxes unter allen anstehenden Faxen
 		ulong geszahl=0;
     ulong ankzahl=0; // Zahl der angekommenen Faxe
@@ -237,7 +194,6 @@ class paramcl // Programmparameter
     string hmodem;    // erkanntes und laufendes Modem ttyACM0
     //    string hmodname;  // ttyACM0
     uchar hylazuerst;  // ob ein Fax zuerst ueber Hylafax versucht werden soll zu faxen
-    uchar rzf=0; // rueckzufragen
     string dbq; // Datenbank
 		string findvers; // find-Version (1=linux fund 2=intern mit readdir, 3=intern mit nftw 
 		int ifindv; // integer-Variante der find-Version
@@ -254,7 +210,6 @@ class paramcl // Programmparameter
     const string touta="outa"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tudoc="udoc"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tinca="inca"; // MariaDB-Tabelle fuer empfangene Faxe
-		static const string edit;
 		static const string passwddt,groupdt,sudoersdt;
 		static const string initdhyladt; // /etc/init.d/hylafax
 		uchar initdhyladt_gibts=0; // Datei initdhyladt existiert
@@ -284,10 +239,6 @@ class paramcl // Programmparameter
 		string maxcdials;    // Zahl der Wahlversuche in Capisuite
     uchar capizukonf=0; // capi zu konfigurieren
     uchar hylazukonf=0; // hyla zu konfigurieren
-    uchar oblgschreib=0; // Konfigurationsdatei seitens der Sprache voraussichtlich schreiben
-    uchar obkschreib=0; // Konfigurationsdatei schreiben
-    uchar logdneu=0;    // Logdatei geaendert
-    uchar logvneu=0;    // Logverzeichnis geaendert
     string varsphylavz; // Verzeichnis der Hyla-Spool-Dateien /var/spool/hylafax oder /var/spool/fax
 		string hempfavz;    // var/spool/(hyla)fax/" DPROG "arch
 		string xferfaxlog; // varsphylavz + "/etc/xferfaxlog"; 
@@ -296,10 +247,6 @@ class paramcl // Programmparameter
     string hsendqvz; // /var/spool/hylafax/sendq
     string hdoneqvz; // /var/spool/hylafax/doneq
     string harchivevz; // /var/spool/hylafax/archive
-		ulong aufrufe=0; // Zahl der bisherigen Programmaufrufe
-		struct tm laufrtag={0}; // Tag des letztes Aufrufs
-		ulong tagesaufr=0; // Zahl der bisherigen Programmaufrufe heute
-		ulong monatsaufr=0; // Zahl der bisherigen Programmaufrufe heute
 #ifdef _WIN32
     char cpt[255];
     DWORD dcpt;
@@ -308,20 +255,14 @@ class paramcl // Programmparameter
     size_t cptlen;
 #endif // _WIN32 else
     string host="localhost";  // fuer MySQL/MariaDB
-    string logdname; // Logdatei-Name ohne Pfad <DPROG>.log
-    string logvz; // nur das Verzeichnis /var/log
-    string loggespfad; // Gesamtpfad, auf den dann die in kons.h verwiesene und oben definierte Variable logdt zeigt
-                       // bei jeder Aenderung muss auch logdt neu gesetzt werden!
+
     string zufaxenvz;
     string wvz; // Warteverzeichnis
     string ngvz; // Nichtgefaxt-Verzeichnis (Gescheiterte)
     string empfvz; // Empfangsverzeichnis
-    string cronminut; // Minuten fuer crontab; 0 = kein Crontab-Eintrag
     string maxcapiv; // maximale Versuchnr in Capi, bis Hyla versucht wird
     string maxhylav; // maixmale Versuchsnr in Hylafax, bis Capi versucht wird
-    string langu; // Sprache (Anfangsbuchstabe)
 
-    schlArr agcnfA; // Gesamtkonfiguration
     string sqlvz;  // Zahl der SQL-Befehle aus Vorgaben
     size_t sqlvzn=0; // Zahl der SQL-Befehle aus Vorgaben numerisch
     schlArr sqlVcnfA; // SQL-Array
@@ -339,25 +280,16 @@ class paramcl // Programmparameter
 
     schlArr cccnfA;  // capisuite.conf
     schlArr cfcnfA; // Capi-Konfiguration (fax.conf)
-    string akonfdt; // name der Konfigurationsdatei
-		string azaehlerdt; // akonfdt+".zaehl"
     string anfaxstr, ancfaxstr, anhfaxstr; // 'an Fax', "an cFax", "an hFax"
     string anstr; // ' an '
     string undstr;  //  'und'
-    string cmd; // string fuer command fuer Betriebssystembefehle
-    vector<optioncl> opts;
 		uchar keineverarbeitung=0; // wenn cronminuten geaendert werden sollen, vorher abkuerzen
-		uchar cmeingegeben=0;
-		vector<argcl> argcmv; // class member vector
     servc *sfaxq=0, *shfaxd=0, *shylafaxd=0, *sfaxgetty=0, *scapis=0;
     string modconfdt; // hylafax-Konfigurationsdatei, z.B. /var/spool/hylafax/etc/config.ttyACM0
     confdat *cfaxcdtp=0; // Zeiger auf ausgelesene /etc/capisuite/fax.conf
 		string virtvz; //	instvz+"/ocrv";
 	  string ocrmp; //	virtvz+"/bin/ocrmypdf";
-		string vorcm; // Vor-Cron-Minuten
-		linst_cl* linstp=0;
 		unsigned tage=0; // fuer korrigierecapi und korrigierehyla 
-		schlArr zcnfA; // Zaehlkonfiguration
     svec vinca;
   private:
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
@@ -375,15 +307,10 @@ class paramcl // Programmparameter
     void setzmodconfd();
     void setzzielmuster(confdat& afcd);
     void setzsql(confdat& afcd);
-    int pruefinstv();
-    int kompilbase(const string& was,const string& endg);
-    int kompiliere(const string& was,const string& endg,const string& vorcfg=nix,const string& cfgbismake=s_dampand);
-		int kompilfort(const string& was,const string& vorcfg=nix,const string& cfgbismake=s_dampand,uchar ohneconf=0);
     void bereinigecapi(const size_t aktc);
 	  int zupdf(const string* quell, const string& ziel, ulong *pseitenp=0, int obocr=1, int loeschen=1); // 0=Erfolg
 		int holtif(const string& datei,ulong *seitenp=0,struct tm *tmp=0,struct stat *elogp=0,
 		           string *absdrp=0,string *tsidp=0,string *calleridp=0,string *devnamep=0);
-		void setztmpcron();
 		void pruefmodcron();
 		void pruefunpaper();
     int pruefocr();
@@ -391,17 +318,22 @@ class paramcl // Programmparameter
 		void empfhyla(const string& ganz,size_t aktc, const uchar was,const string& nr=nix);
 		void empfcapi(const string& stamm,size_t aktc, const uchar was,const string& nr=nix);
 		void prueftif();
-		void zeigdienste();
-		void wandle(const string& udatei,const string& urname,const uchar iprio,svec& toktxt,svec& toknr,svec& tokname,const string& anfxstr,const string& exten,vector<urfxcl> *urfxp);
-		void tucronschreib(const string& zsauf,const uchar nochkeincron,const uchar cronzuplanen,const string& cbef);
+		void wandle(const string& udatei,const string& urname,const uchar iprio,svec& toktxt,svec& toknr,svec& tokname,
+		            const string& anfxstr,const string& exten,vector<urfxcl> *urfxp);
+		void inDbc(DB *My, const string& spooltab, const string& altspool, const string& spoolg, const fsfcl *const fsfp, 
+		           const char* telnr, const size_t aktc);
+		void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
+		void inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
+				const fsfcl *const fsfp,const string *tel, const size_t aktc);
+		void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
+		void hfaxsetup();
+		int hconfig() const;
 	public:
-		int Log(const string& text,const bool oberr=0,const short klobverb=0);
     paramcl(const int argc, const char *const *const argv);
     ~paramcl();
     void pruefggfmehrfach();
     void nextnum();
     string stdfaxnr(const string& faxnr);
-    void logvorgaben();
     void getcommandl0();
     void pruefmodem();
 		void setzfaxgtpfad();
@@ -415,11 +347,6 @@ class paramcl // Programmparameter
     void VorgbSpeziell(); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vgb.cpp)
     #endif // DPROGcpp else
     void lieskonfein();
-		#ifdef immerwart
-		void lieszaehlerein(ulong *arp=0,ulong *tap=0,ulong *map=0,struct tm *lap=0, string *obempfp=0,string *obgesap=0,const uchar obstumm=0);
-		#else // immerwart
-		void lieszaehlerein(ulong *arp=0,ulong *tap=0,ulong *map=0,struct tm *lap=0, const uchar obstumm=0);
-		#endif // immerwart
 		int  getcommandline();
     void rueckfragen();
     int setzhylavz(); // sucht das Hylaverzeichnis und setzt varsphylavz darauf, return 0, wenn nicht gefunden dann varsphylavz="", return 1
@@ -433,6 +360,7 @@ class paramcl // Programmparameter
 		void dober(const string& wvz, set<string>& fdn,uchar aucherfolg,stringstream *ausgp,const size_t aktc,
 				set<string> *cmisslp,set<string> *cgelup,set<string> *hmisslp,set<string> *hgelup);
 		void anhalten();
+		void getSender(const string& faxnr, string *getnamep, string *bsnamep,const size_t aktc);
     void tu_lista(const string& oberfolg,const string& submids=nix);
 		void tu_listi(const uchar zurauswahl=0);
 		void suchestr();
@@ -441,7 +369,6 @@ class paramcl // Programmparameter
     void clieskonf();
     void capisv();
     int pruefcapi();
-		int holvomnetz(const string& datei,const string& vors=defvors,const string& nachs=defnachs);
     void hliesconf();
     int hconfigtty();
     int cservice();
@@ -458,18 +385,15 @@ class paramcl // Programmparameter
 		void untersuchespool(uchar mitupd=1,const size_t aktc=3); // faxart 0=capi, 1=hyla 
 		void bestimmtage();
     void zeigweitere();
-    void zeigkonf();
     void sammlecapi(vector<fsfcl> *fsfvp,const size_t aktc);
     void sammlehyla(vector<fsfcl> *fsfvp,const size_t aktc);
     void korrigierecapi(const unsigned tage=90,const size_t aktc=1);
     void korrigierehyla(const unsigned tage=90,const size_t aktc=2);
     void empfarch(uchar obalte=0);
 		void zeigueberschrift();
-		void setzzaehler();
-		void schreibzaehler(const string* obempfp=0, const string* obgesap=0);
-		void schlussanzeige();
     void autofkonfschreib();
 		void dovi();
 		void dovc();
 		void dovh();
+		void zeigdienste();
 }; // class paramcl

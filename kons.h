@@ -31,6 +31,7 @@
 #include <vector> // wird in Manjaro hier nochmal extra benötigt
 #define vector_incl
 #endif // vector_incl
+#include <sys/wait.h> // fuer waitpid
 
 using namespace std;
 extern const string& instvz; // in kons.cpp, z.B. /root/autofax
@@ -129,6 +130,7 @@ enum {
 #define caus cout // nur zum Debuggen
 #define exitt exit // fuer threads
 extern pthread_mutex_t printf_mutex;
+extern const string devtty;
 
 typedef unsigned long long ull;
 extern uchar findv/*=3*/; // find-Version 1=system, 2=intern mit readdir, 3=intern mit nftw
@@ -284,9 +286,67 @@ enum Tkons_
 	T_Benutzer,
 	T_obunter,
 	T_datei,
+	T_Ergebnis_nach_make,
+	T_Ergebnis_nach_make_install,
+	T_Programm,
+	T_Freie_Software,
+	T_Verfasser,
+	T_Letzte_Programmaenderung,
+	T_Kompiliert,
+	T_Quelle,
+	T_Hilfe,
+	T_Installationsverzeichnis,
+	T_or,
+	T_aktuelle_Einstellungen_aus,
+	T_lg_k,
+	T_language_l,
+	T_lang_k,
+	T_lingue_l,
+	T_sprachstr,
+	T_v_k,
+	T_verbose_l,
+	T_lvz_k,
+	T_logvz_l,
+	T_ld_k,
+	T_logdname_l,
+	T_l_k,
+	T_log_l,
+	T_ldn_k,
+	T_logdateineu_l,
+	T_kd_k,
+	T_konfdatei_l,
+	T_Bildschirmausgabe_gespraechiger,
+	T_waehlt_als_Logverzeichnis_pfad_derzeit,
+	T_logdatei_string_im_Pfad,
+	T_sonst_knapper,
+	T_wird_verwendet_anstatt,
+	T_logdatei_vorher_loeschen,
+	T_verwendet_Konfigurationsdatei_string_anstatt,
+	T_standardhilfe,
+	T_protokolliert_ausfuehrlich_in_Datei,
+	T_sh,
+	T_lieskonfein,
+	T_pruefcron,
+	T_cronzuplanen,
+	T_Kein_cron_gesetzt_nicht_zu_setzen,
+	T_wird,
+	T_unveraendert,
+	T_alle,
+	T_Minuten,
+	T_gar_nicht,
+	T_aufgerufen,
+	T_statt,
+	T_schlussanzeige,
+	T_Zeit_Doppelpunkt,
+	T_Fertig_mit,
+	T_eigene,
+	T_entfernen,
+	T_belassen,
+	T_warte,
 	T_konsMAX
 };
 
+extern const string sprachstr;
 /*
 extern class Txkonscl Txk;
 
@@ -352,54 +412,63 @@ class mdatei: public fstream
   public:
   int oboffen=0;
   mdatei(const string& filename, ios_base::openmode mode=ios_base::in|ios_base::out, uchar faclbak=1, int obverb=0, int oblog=0);
-};
+}; // class mdatei: public fstream
 
-inline string zustr(int _Val) {
+inline string zustr(int _Val) 
+{
   char _Buf[2 * sizeof(long long)];
   snprintf(_Buf,2*sizeof(long long), "%d", _Val);
   return string(_Buf);
-}
-inline std::string right(std::string const& source, size_t const length) {
+} // inline string zustr(int _Val)
+
+inline std::string right(std::string const& source, size_t const length)
+{
   if (length >= source.size()) { return source; }
   return source.substr(source.size() - length);
-} // tail}
-inline std::string mitvtz(std::string const& vz) {
+} // inline std::string right(std::string const& source, size_t const length)
+
+inline std::string mitvtz(std::string const& vz)
+{
   if (right(vz,1)==string(1,vtz)) {
     return vz;
   } else {
     return vz+vtz;
   }
-}
-inline int istelnr(const std::string& str) {
+} // inline std::string mitvtz(std::string const& vz)
+
+inline int istelnr(const std::string& str)
+{
   if	(str.find_first_not_of("+ 0123456789.,")==string::npos && str.find_first_not_of(" ")!=string::npos) 
     return 1;
   return 0;
-}
+} // inline int istelnr(const std::string& str)
 
 inline int isnumeric(const std::string& str)
 {
   if	(str.find_first_not_of(" 0123456789.,")==string::npos && str.find_first_not_of(" ")!=string::npos) 
     return 1;
   return 0;
-}
+} // inline int isnumeric(const std::string& str)
 
 inline int isneun(const std::string& str)
 {
   if	(str.find_first_not_of(" 9")==string::npos && str.find_first_not_of(" ")!=string::npos) 
     return 1;
   return 0;
-}
+} // inline int isneun(const std::string& str)
 
-inline int isnumeric(char* str)
+
+inline int isnumeric(const char* str)
 {
   while (*str) {
     if(!strchr(" 0123456789.,",*str)) return 0;
     str++;
   }
   return 1;
-}
+} // inline int isnumeric(char* str)
  
 string* anfzweg(string& quel);
+char ers(const char roh);
 
 // Gesamt-Trim
 inline std::string *gtrim(std::string *str) {
@@ -411,18 +480,18 @@ inline std::string *gtrim(std::string *str) {
 inline std::string *ltrim(std::string *str) {
   str->erase(0, str->find_first_not_of("\t "));       //prefixing spaces
   return str;
-}
+} // inline std::string *ltrim(std::string *str)
 
 inline void rtrim(char* str,size_t size) {
   for (int nd=0,i=size-1;i;i--) {
     if (!str[i]) nd=1; 
     else if (nd && str[i]!=32 && str[i]!=9) break;
     str[i]=0;
-  }
-}
+  } //   for (int nd=0,i=size-1;i;i--)
+} // inline void rtrim(char* str,size_t size)
 
 string fersetze(const string& u, const char* alt, const char* neu);
-string caseersetze(const string& u, const char* alt, const char* neu); 
+string caseersetze(const string& u, const char* const alt, const char* const neu); 
 string *loeschealleaus(string *u, const char* alt);
 
 string ersetze(const char *const u, const char* const alt, const char* const neu);
@@ -440,7 +509,7 @@ char* charersetze(char *u, const char alt, const char neu);
 void chersetze(const string& u, string *z, const string& alt, const char neu);
 string ersetzefuerdatei(const string& u);
 void fuersamba(string& roh);
-size_t zahlin(const string *str, const char* was);
+size_t zahlin(const string *const str, const char* const was);
 long cmpmem( char* feld, const char* search, int len_feld); // , int len_search
 // fuer lies (Konfigurationsdatei lesen)
 char* ltoan(long value, int base=10, uchar obtz=0, uchar minstel=0); 
@@ -453,6 +522,7 @@ double progvers(const string& prog,int obverb=0, int oblog=0);
 int touch(const std::string& pathname,int obverb=0,int oblog=0);
 std::string string_to_hex(const std::string& input);
 int dateivgl(const string& d1, const string& d2,uchar obzeit=0);
+void kuerzevtz(string *vzp);
 
 #ifdef notcpp
 class Schluessel {
@@ -553,7 +623,7 @@ class lsyscl
 
 // enum betrsys {keins,suse,ubuntu,fedora};
 // betrsys pruefos();
-int obprogda(const string& prog,int obverb, int oblog, string *pfad=0);
+int obprogda(const string& prog, int obverb=0, int oblog=0, string *pfad=0);
 enum instprog {keinp,zypper,apt,dnf,yum,urp,pac};
 string gethome();
 
@@ -602,7 +672,8 @@ class svec: public vector<std::string>
       this->push_back(str);
       return *this;
     }
-};
+}; // class svec: public vector<std::string>
+
 //svec& operator<<(svec& v, const std::string& str);
 template<class T>
 class tsvec: public vector<T>
@@ -629,6 +700,7 @@ class absch
 
 class confdat
 {
+  private:
   public:
     uchar obgelesen=0;
     svec zn;
@@ -636,12 +708,14 @@ class confdat
     vector<absch> abschv;
     size_t richtige;
     confdat(const string& fname, int obverb);
-    confdat(const string& fname, schlArr *sA, int obverb=0, char tz='=');
-//    confdat(const string& fname,cppSchluess *conf, size_t csize, int obverb=0, char tz='=');
+    confdat(const string& fname, schlArr *sA, int obverb=0, const char tz='=');
+		confdat();
+		void init(const string& fname, schlArr *sA, int obverb=0, const char tz='=');
+////    confdat(const string& fname,cppSchluess *conf, size_t csize, int obverb=0, char tz='=');
     int lies(const string& fname,int obverb);
-    void auswert(schlArr *sA, int obverb=0, char tz='=');
-//    void auswert(cppSchluess *conf, size_t csize, int obverb=0, char tz='=');
-    void Abschn_auswert(int obverb=0, char tz='=');
+    void auswert(schlArr *sA, int obverb=0, const char tz='=');
+////    void auswert(cppSchluess *conf, size_t csize, int obverb=0, char tz='=');
+    void Abschn_auswert(int obverb=0, const char tz='=');
 }; // class confdat
 
 // fuer Commandline-Optionen
@@ -793,7 +867,7 @@ class linst_cl
  int doggfinst(const string& prog,int obverb=0,int oblog=0,uchar ohneabh=0);
  int douninst(const string& prog,int obverb=0,int oblog=0,uchar obyes=1);
  int obfehlt(const string& prog,int obverb=0,int oblog=0);
-};
+}; // class linst_cl
 
 // Service aus SystemD
 class servc {
@@ -935,3 +1009,110 @@ void findfile(svec *qrueck,uchar findv,int obverb=0,int oblog=0,uchar anteil=0,
 		const string& wo=".",const string& muster=nix,long tiefe=-1,int _typbit=B_Alle,int _folge=Fol_Dat, 
 		time_t _mab=0,time_t _mbis=0,int obicase=0,int nurexec=0,int obnoext=0);
 #endif
+
+class pidcl
+{
+ public:
+ pid_t pid;
+ string name;
+ pidcl(const pid_t pid,const string& name):pid(pid),name(name){}
+}; // pidcl
+
+//Vector von pid- und string-Pärchen
+class pidvec: public vector<pidcl>
+{
+ public:
+ inline pidvec& operator<<(const pidcl& pd) {
+	 this->push_back(pd);
+	 return *this;
+ } //  inline pidvec& operator<<(const pidcl& pd)
+}; // pidvec
+
+int wartaufpids(pidvec *pidv,const ulong runden=0,const int obverb=0,const string& wo=nix);
+
+extern const string s_true; // ="true";
+extern const string s_dampand; // =" && ";
+extern const string s_gz; // ="gz";
+extern const string defvors; // ="https://github.com/"+gitv+"/";
+extern const string defnachs; // ="/archive/master.tar.gz";
+void viadd(string *cmd,const string& datei,const uchar ro=0,const uchar hinten=0, const uchar unten=0);
+class haupt
+{
+	protected:
+    double tstart, tende;
+    size_t optslsz=0; // last opts.size()
+		unsigned lfd;
+    uchar rzf=0; // rueckzufragen
+		confdat afcd;
+		string vaufr[2]; // (vollaufruf) z.B. '/usr/bin/<DPROG> -noia >/dev/null 2>&1'
+		string tmpcron; // fuer crontab
+    string cronminut; // Minuten fuer crontab; 0 = kein Crontab-Eintrag
+		uchar nochkeincron;
+		uchar cronzuplanen;
+		uchar cmeingegeben=0;
+		static const string edit;
+	public:
+    int obverb=0; // verbose
+    int oblog=0;  // mehr Protokollieren
+    string langu; // Sprache (Anfangsbuchstabe)
+    string logdname; // Logdatei-Name ohne Pfad <DPROG>.log
+    string logvz; // nur das Verzeichnis /var/log
+    string loggespfad; // Gesamtpfad, auf den dann die in kons.h verwiesene und oben definierte Variable logdt zeigt
+                       // bei jeder Aenderung muss auch logdt neu gesetzt werden!
+    string cmd; // string fuer command fuer Betriebssystembefehle
+    vector<optioncl> opts;
+		vector<argcl> argcmv; // class member vector
+    uchar oblgschreib=0; // Konfigurationsdatei seitens der Sprache voraussichtlich schreiben
+    uchar obkschreib=0; // Konfigurationsdatei schreiben
+    uchar logdneu=0;    // Logdatei geaendert
+    uchar logvneu=0;    // Logverzeichnis geaendert
+    uchar logdateineu=0; // logdt vorher loeschen
+    uchar obhilfe=0;      // Hilfe anzeigen: 1=kurze Hilfe, 2=lange Hilfe, 3=Standardhilfe
+    uchar zeigvers=0;  // Version anzeigen
+		string cl; // comandline
+    string mpfad;  // meinpfad()
+    string meinname; // base_name(meinpfad()) // argv[0] // <DPROG>
+    string akonfdt; // name der Konfigurationsdatei
+    schlArr agcnfA; // Gesamtkonfiguration
+		string azaehlerdt; // akonfdt+".zaehl"
+		schlArr zcnfA; // Zaehlkonfiguration
+		ulong aufrufe=0; // Zahl der bisherigen Programmaufrufe
+		struct tm laufrtag={0}; // Tag des letztes Aufrufs
+		ulong tagesaufr=0; // Zahl der bisherigen Programmaufrufe heute
+		ulong monatsaufr=0; // Zahl der bisherigen Programmaufrufe heute
+    string saufr[2]; // (stummaufruf) '<DPROG> -noia >/dev/null 2>&1'
+		string zsaufr[2]; // zitiert saufr (in sed)
+		string vorcm; // Vor-Cron-Minuten
+		linst_cl* linstp=0;
+	protected:
+    void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
+		void setztmpcron();
+		void tucronschreib(const string& zsauf,const uchar cronzuplanen,const string& cbef);
+		void vischluss(string& erg);
+	public:
+		haupt();
+		int Log(const string& text,const bool oberr=0,const short klobverb=0) const;
+    void logvorgaben();
+    int pruefinstv();
+    void lieskonfein();
+		void setzlog();
+		#ifdef immerwart
+		void lieszaehlerein(ulong *arp=0,ulong *tap=0,ulong *map=0,struct tm *lap=0, string *obempfp=0,string *obgesap=0,const uchar obstumm=0);
+		void schreibzaehler(const string* obempfp=0, const string* obgesap=0);
+		#else // immerwart
+		void lieszaehlerein(ulong *arp=0,ulong *tap=0,ulong *map=0,struct tm *lap=0, const uchar obstumm=0);
+		void schreibzaehler();
+		#endif // immerwart
+		void setzzaehler();
+		int holvomnetz(const string& datei,const string& vors=defvors,const string& nachs=defnachs);
+    int kompilbase(const string& was,const string& endg);
+    int kompiliere(const string& was,const string& endg,const string& vorcfg=nix,const string& cfgbismake=s_dampand);
+		int kompilfort(const string& was,const string& vorcfg=nix,const string& cfgbismake=s_dampand,uchar ohneconf=0);
+		void zeigversion();
+    void zeigkonf();
+		void gcl0();
+		uchar pruefcron();
+		void dodovi(const svec d1,const svec d2);
+		void schlussanzeige();
+		void update();
+}; // class haupt

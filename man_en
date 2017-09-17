@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "12.09.17" "Version 0.45471" "\fB²DPROG²\fR man page"
+.TH man 1 "17.09.17" "Version 0.45634" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -63,131 +63,131 @@ Depending on operating system, accessability and preferences the users thus coul
 .SH OPTIONS 
 With '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR', the important and with '\fB²DPROG² -lh\fR', all command line options can be seen. Some options (e.g. the sql commands) cannot bei set via the command line, but only via the configuration file, which can be edited directly or interactively by '\fB²DPROG² -rf\fR'.
 .br
-\fBOptions which are not saved: \fR
+\fBOptionen, die nicht gespeichert werden: \fR
 .br
-\fB -v, --verbose\fR: screen output more verbose
+\fB -v, --verbose\fR: Bildschirmausgabe gespraechiger
 .br
-\fB -l, --log\fR: put detailed logs in file '\fB/var/log/autofax.log\fR' (otherwise shorter)
+\fB -l, --log\fR: protokolliert ausfuehrlich in Datei '\fB/var/log/autofax.log\fR' (sonst knapper)
 .br
-\fB -lfn, --logfilenew\fR: delete log file afore
+\fB -lfn, --logfilenew\fR: logdatei vorher loeschen
 .br
-\fB -cf, --conffile <string>\fR: uses configuration file <string> instead of '\fB\fR'
+\fB -cf, --conffile <string>\fR: verwendet Konfigurationsdatei <string> anstatt '\fB\fR'
 .br
-\fB -sqlv, --sql-verbose\fR: screen output with SQL commands
+\fB -sqlw, --sql-wortreich\fR: Bildschirmausgabe mit SQL-Befehlen
 .br
-\fB -ia, --interactive\fR: all parameters will be prompted (some of them not shown here)
+\fB -rf, --rueckfragen\fR: alle Parameter werden abgefragt (darunter einige hier nicht gezeigten)
 .br
-\fB -noia, --nointeraction\fR: no questions, e.g. for a call of autofax within cron
+\fB -krf, --keinerueckfragen\fR: keine Rueckfragen, z.B. für Aufruf aus cron
 .br
-\fB -delf, --deletefax\fR: delete a fax with query
+\fB -loef, --loeschefax\fR: ein Fax nach Rueckfrage loeschen
 .br
-\fB -delo, --deleteorphans\fR: delete entries from `\fBspool\fR` without detection of file in waiting directory or capisuite fax or hylafax
+\fB -loew, --loeschewaise\fR: Eintraege aus `\fBspool\fR` loeschen, zu denen keine Datei im Wartevz.und kein Capi- oder Hylafax nachweisbar ist
 .br
-\fB -dela, --deleteallwaiting\fR: delete all waiting faxes and associated entries from `\fBspool\fR`
+\fB -loea, --loescheallew\fR: alle wartenden Faxe und zugehoerige Eintraege aus `\fBspool\fR` loeschen
 .br
-\fB -again, --receiveagain\fR: present a received fax again
+\fB -erneut, --erneutempf\fR: empfangenes Fax erneut bereitstellen
 .br
-\fB -red, --redirect\fR: redirect outgoing fax ahead by the other channel
+\fB -uml, --umleiten\fR: ausgehendes Fax vorzeitig auf zweitem Weg schicken
 .br
-\fB -csf, --correctsuccessflag\fR: in the database table `\fBouta\fR` the success flag is being corrected
+\fB -kez, --korrerfolgszeichen\fR: in der Datenbanktabelle `\fBouta\fR` wird das Erfolgszeichen korrigiert
 .br
-\fB -rod, --reorderdir\fR: Examine files in waiting,failed a.faxed directory against the tables `\fBouta\fR` and put them to order
+\fB -bvz, --bereinigevz\fR: Dateien aus Wartevz.,Gescheitertenvz.u.Gefaxtvz.gegen `\fBouta\fR` pruefen und ggf. aufraeumen
 .br
-\fB -st, --stop\fR: stop autofax
+\fB -st, --stop\fR: autofax anhalten
 .br
-\fB -listo, --listoutg\fR: lists entries from `\fBouta\fR` with success flag
+\fB -lista, --listausg\fR: listet Datensaetze aus `\fBouta\fR` mit Erfolgskennzeichen auf
 .br
-\fB -listf, --listfailed\fR: lists entries from `\fBouta\fR` without success flag
+\fB -listf, --listfehlgeschl\fR: listet Datensaetze aus `\fBouta\fR` ohne Erfolgskennzeichen auf
 .br
-\fB -listi, --listinca\fR: lists entries from `\fBinca\fR`
+\fB -liste, --listeing\fR: listet Datensaetze aus `\fBinca\fR` auf
 .br
-\fB -listw, --listwaiting\fR: lists waiting faxes
+\fB -listw, --listwartende\fR: listet wartende Faxe auf
 .br
-\fB -s, --search <string>\fR: Look in processed faxes for <string>: \fB\fR '\fB\fR'
+\fB -s, --suche <string>\fR: Suche in verarbeiteten Faxen nach <string>: \fB\fR '\fB\fR'
 .br
-\fB -n, --reccount <zahl>\fR: No. of listed entries = <no> instead of '\fB30\fR'
+\fB -n, --dszahl <zahl>\fR: Zahl der aufzulistenden Datensaetze = <zahl> statt '\fB30\fR'
 .br
-\fB -info, --version\fR: shows the program version
+\fB -info, --version\fR: Zeigt die Programmversion an
 .br
-\fB -vi, --vi\fR: edit/view configuration and log file (finish with ':qa')
+\fB -vi, --vi\fR: Konfigurations- u.Logdatei bearbeiten/sehen (beenden mit ':qa')
 .br
-\fB -vc, --vc\fR: edit capisuite log files (finish with ':qa')
+\fB -vc, --vc\fR: Capisuite-Konfigurationsdateien bearbeiten (beenden mit ':qa')
 .br
-\fB -vh, --vh\fR: edit hylafax modem configuration file (finish with ':qa')
+\fB -vh, --vh\fR: Hylafax-Modem-Konfigurationsdatei bearbeiten (beenden mit ':qa')
 .br
-\fB -vs, --vs\fR: edit source files (finish with ':qa')
+\fB -vs, --vs\fR: Quelldateien bearbeiten (beenden mit ':qa')
 .br
-\fB -h, --help\fR: Explanation of frequent options
+\fB -h, --hilfe\fR: Erklärung häufiger Optionen
 .br
-\fB -lh, --longhelp\fR: Explanation of all options
+\fB -lh, --langhilfe\fR: Erklärung aller Optionen
 .br
-\fBOptions to be saved in the configuration file: (preced. '1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):\fR
+\fBOptionen z.Speich. i.Konfigur'datei (vorausg. '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):\fR
 .br
 \fB -lg, --language <string>\fR: Language/Sprache/Lingue/Lingua [\fBd\fReutsch,\fBe\fRnglisch] '\fBe\fR'
 .br
-\fB -ldr, --logdir <path>\fR: choses <path> as log directory, currently '\fB/var/log\fR'
+\fB -ldr, --logdir <path>\fR: waehlt als Logverzeichnis <pfad>, derzeit '\fB/var/log\fR'
 .br
-\fB -lf, --logfilename <string>\fR: log file <string> (in path '\fB/var/log\fR') will be used instead of '\fBautofax.log\fR'
+\fB -lf, --logfilename <string>\fR: logdatei <string> (im Pfad '\fB/var/log\fR') wird verwendet anstatt '\fBautofax.log\fR'
 .br
-\fB -tdr, --tofaxdir <path>\fR: faxes the files from <path> instead of '\fB/var/autofax/tobefaxed\fR'
+\fB -zvz, --zufaxenvz <path>\fR: faxt die Dateien aus <pfad> anstatt '\fB/var/autofax/zufaxen\fR'
 .br
-\fB -wdr, --waitdir <path>\fR: files are waiting in <path> instead of '\fB/var/autofax/waitingfaxes\fR'
+\fB -wvz, --wartevz <path>\fR: Dateien warten in <pfad> anstatt '\fB/var/autofax/warteauffax\fR'
 .br
-\fB -ndr, --notfaxeddir <path>\fR: Failed Faxes are collected here and not in '\fB/var/autofax/notfaxed\fR'
+\fB -ngvz, --nichtgefaxtvz <path>\fR: Gescheiterte Faxe werden hier gesammelt anstatt in '\fB/var/autofax/nichtgefaxt\fR'
 .br
-\fB -rdr, --receiveddir <path>\fR: directory for recieved faxes '\fB/var/autofax/recvdir\fR'
+\fB -evz, --empfvz <path>\fR: Empfangsverzeichnis fuer Faxempfang '\fB/var/autofax/empfvz\fR'
 .br
-\fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
+\fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB2\fR'
 .br
-\fB -capi, --takecapi\fR: use capisuite\fB or not\fR
+\fB -capi, --obcapi\fR: Capisuite verwenden\fB or not\fR
 .br
-\fB -hyla, --takehyla\fR: use hylafax\fB or not\fR
+\fB -hyla, --obhyla\fR: Hylafax verwenden\fB or not\fR
 .br
-\fB -fc, --firstcapi\fR: try to send faxes primarily via capisuite\fB or not\fR
+\fB -cz, --capizuerst\fR: versuche faxe zuerst ueber Capisuite wegzuschicken\fB or not\fR
 .br
-\fB -fh, --firsthyla\fR: try to send faxes primarily via hylafax\fB or not\fR
+\fB -hz, --hylazuerst\fR: versuche faxe zuerst ueber hylafax wegzuschicken\fB or not\fR
 .br
-\fB -mod, --hmodem <string>\fR: Modem used for hylafax, instead of  '\fB\fR'
+\fB -mod, --hmodem <string>\fR: Fuer Hylafax verwendetes Modem, anstatt  '\fB\fR'
 .br
-\fB -mc, --maxcapitries <zahl>\fR: try Hylafax after <no> tries of Capisuite instead of '\fB3\fR'
+\fB -mc, --maxcapiv <zahl>\fR: nach <zahl> Versuchen Capisuite wird Hylafax versucht, anstatt nach '\fB3\fR'
 .br
-\fB -mh, --maxhylatries <zahl>\fR: try Capisuite after <no> tries of Hylafax instead of '\fB3\fR'
+\fB -mh, --maxhylav <zahl>\fR: nach <zahl> Versuchen Hylafax wird Capisuite versucht, anstatt nach '\fB3\fR'
 .br
-\fB -cuser, --cuser <string>\fR: takes the linux user <string> for capisuite and/or samba instead of '\fB\fR'
+\fB -cuser, --cuser <string>\fR: verwendet fuer Capisuite und/oder Samba den Linux-Benutzer <string> anstatt '\fB\fR'
 .br
-\fB -crct, --cringcount <zahl>\fR: No. of bell rings until Capisuite accepts the call, instead of '\fB1\fR'
+\fB -ckzl, --cklingelzahl <zahl>\fR: Zahl der Klingeltoene, bis Capisuite den Anruf annimmt, anstatt '\fB1\fR'
 .br
-\fB -hrct, --hringcount <zahl>\fR: No. of bell rings until hylafaxs accepts the call, instead of '\fB2\fR'
+\fB -hkzl, --hklingelzahl <zahl>\fR: Zahl der Klingeltoene, bis Hylafax den Anruf annimmt, anstatt '\fB2\fR'
 .br
-\fB -hmd, --hmaxdials <zahl>\fR: No of dialing retries in hylafax, instead of   '\fB11\fR'
+\fB -hmw, --hmaxwahlvers <zahl>\fR: Zahl der Wahlversuche in Hylafax, anstatt  '\fB11\fR'
 .br
-\fB -it, --immediatelytarget\fR: copy faxes into target directory irrespective of faxing success\fB or not\fR
+\fB -gz, --gleichziel\fR: Faxe werden auch ohne Faxerfolg ins Zielverzeichnis kopiert\fB or not\fR
 .br
-\fB -ocri, --ocri\fR: Text from received faxes will be filtered\fB or not\fR
+\fB -ocre, --ocre\fR: Text aus empfangenen Faxen wird ermittelt\fB or not\fR
 .br
-\fB -ocro, --ocro\fR: Text from sent pictures will be filtered\fB or not\fR
+\fB -ocra, --ocra\fR: Text aus gesandten Bildern wird ermittelt\fB or not\fR
 .br
-\fB -tfs, --tofaxstr <string>\fR: the fax number will be expected after <string> instead of '\fBto fax\fR'
+\fB -afs, --anfaxstr <string>\fR: faxnr wird hinter <string> erwartet statt hinter '\fBan Fax\fR'
 .br
-\fB -tcfs, --tocfaxstr <string>\fR: fax no.for fax with preference to capisuite is expected after <string> instead of '\fBto cfax\fR'
+\fB -acfs, --ancfaxstr <string>\fR: faxnr fuer primaer Capisuite wird hinter <string> erwartet statt hinter '\fBan cFax\fR'
 .br
-\fB -thfs, --tohfaxstr <string>\fR: fax no.for fax with preference to hylafax is expected after <string> instead of '\fBto hfax\fR'
+\fB -ahfs, --anhfaxstr <string>\fR: faxnr fuer primaer hylafax wird hinter <string> erwartet statt hinter '\fBan hFax\fR'
 .br
-\fB -ts, --tostr <string>\fR: name of addressee is expected after <string> instead of '\fB to \fR'
+\fB -as, --anstr <string>\fR: Adressatenname wird hinter <string> erwartet statt hinter '\fB an \fR'
 .br
-\fB -ands, --andstr <string>\fR: separating string <string> for multiple addressees/tel'numbers, instead of '\fBand\fR'
+\fB -us, --undstr <string>\fR: Trennstring <string> fuer mehrere Adressaten/Telefonnummern statt '\fBund\fR'
 .br
-\fB -host, --host <string>\fR: takes the database on host <string> instead of '\fBlocalhost\fR'
+\fB -host, --host <string>\fR: verwendet die Datenbank auf Host <string> anstatt auf '\fBlocalhost\fR'
 .br
-\fB -muser, --muser <string>\fR: takes the user <string> for MySQL/MariaDB instead of '\fBuser\fR'
+\fB -muser, --muser <string>\fR: verwendet fuer MySQL/MariaDB den Benutzer <string> anstatt '\fBuser\fR'
 .br
-\fB -mpwd, --mpwd <string>\fR: takes the password <string> for MySQL/MariaDB
+\fB -mpwd, --mpwd <string>\fR: verwendet fuer MySQL/MariaDB das Passwort <string>
 .br
-\fB -db, --database <string>\fR: uses the database <string> instead of '\fBautofax\fR'
+\fB -db, --datenbank <string>\fR: verwendet die Datenbank <string> anstatt '\fBautofax\fR'
 .br
-\fB -fd, --find <zahl>\fR: version 1,2 or 3 of filefind (variable performance differences instead of '\fB3\fR'
+\fB -fd, --finde <zahl>\fR: Version 1,2 oder 3 -Dateisuche (variable Performanceunterschiede) anstatt '\fB3\fR'
 .br
-\fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
+\fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB2\fR'
 .SH FUNCTIONALITY
 .LP
 \fB1)\fR The current hardware is being checked.
