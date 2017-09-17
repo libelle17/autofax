@@ -1087,7 +1087,7 @@ class haupt
 		string vorcm; // Vor-Cron-Minuten
 		linst_cl* linstp=0;
 	protected:
-    void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
+    virtual void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
 		void setztmpcron();
 		void tucronschreib(const string& zsauf,const uchar cronzuplanen,const string& cbef);
 		void vischluss(string& erg);
