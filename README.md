@@ -475,6 +475,13 @@ Check and possibly correction of possibly falsely stored fax
 files (e.g. by a cancelling the program deliberately) will
 be done in intervals.</p>
 
+<p style="margin-left:11%; margin-top: 1em"><b>20)</b> If
+the option <b>-autoupd</b> (<b>--autoupdate</b>) is acitve,
+at last after the second call of every day the version
+number of <b>autofax</b> will be compared with that of the
+installation source und if necessary a new version will be
+installed.</p>
+
 <h2>PRECONDITIONS
 <a name="PRECONDITIONS_D"></a>
 </h2>
@@ -1281,6 +1288,13 @@ Mal fertig ist. <br>
 falsch abgelegter Fax-Dateien (z.B. infolge eines
 willk&uuml;rlichen Programmabbruchs von au&szlig;en)
 werden in Abst&auml;nden durchgef&uuml;hrt.</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>20)</b> Wenn
+die Option <b>-autoakt</b> bzw. <b>--autoaktual</b> aktiv
+ist, wird zuletzt bei jedem zweiten Aufruf jedes Tages die
+Versionsummer von <b>autofax</b> mit der der
+Installationsquelle verglichen und im Fall eines
+R&uuml;ckstands die neue Version 0.45651</p>
 
 <h2>VORAUSSETZUNGEN
 <a name="VORAUSSETZUNGEN_D"></a>

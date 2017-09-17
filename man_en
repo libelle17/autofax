@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "17.09.17" "Version 0.45651" "\fB²DPROG²\fR man page"
+.TH man 1 "18.09.17" "Version 0.45651" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -262,6 +262,8 @@ Some program parts are executed simultaneously, which may loosen up the display 
 Sending and receiving are started every minute, until the respective other part has finished for the first time.
 .br
 Check and possibly correction of possibly falsely stored fax files (e.g. by a cancelling the program deliberately) will be done in intervals.
+.LP
+\fB20)\fR If the option \fB-autoupd\fR (\fB--autoupdate\fR) is acitve, at last after the second call of every day the version number of \fB²DPROG²\fR will be compared with that of the installation source und if necessary a new version will be installed.
 .SH PRECONDITIONS
 \fBHardware\fR: Computer with a fritzcard 2.0 or 2.1 or/and a linux compatible fax modem; in the current version, a US Robotics modem USR5637 and one of the below mentioned linux distributions are needed for an automatic installation (by answering some questions). In case of a concurrent use of a fritzcard and a modem, the program can optimize the security of transmission of a fax.
 .br
