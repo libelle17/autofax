@@ -5252,14 +5252,14 @@ void haupt::update(const string& DPROG)
 	obverb++;
 	if (systemrueck("wget https://raw.githubusercontent.com/"+gitv+"/"+DPROG+"/master/versdt -qO"+instvz+"/versdtakt&&"
 	                "diff "+instvz+"/versdt "+instvz+"/versdtakt",obverb,oblog)) {
-////		struct stat entwst={0};
+struct stat entwst={0};
 		//// entwickeln muss genauso definiert sein wie in Makefile
-////	  const string ziel=instvz+(lstat((instvz+"/entwickeln").c_str(),&entwst)?nix:"/nvers");
-	  const string ziel=instvz;
+const string ziel=instvz+(lstat((instvz+"/entwickeln").c_str(),&entwst)?nix:"/nvers");
+//	  const string ziel=instvz;
 		pruefverz(ziel,obverb,oblog);
 		Log(violett+DPROG+blau+Txk[T_wird_aktualisiert_bitte_ggf_neu_starten]+schwarz);
-		systemrueck("sh -c 'wget "+defvors+DPROG+defnachs+" -O"+ziel+"/"+DPROG+".tar.gz;"
-				"cd "+ziel+";tar xpvf "+DPROG+".tar.gz;cd "+DPROG+"-master;./install.sh'",obverb,oblog);
+		systemrueck("sh -c 'M=master;wget "+defvors+DPROG+defnachs+" -O"+ziel+"/"+DPROG+".tar.gz;"
+				"cd "+ziel+";tar xpvf "+DPROG+".tar.gz;mv "+DPROG+"-$M/* .;mv "+DPROG+"-$M/.* .;rmdir "+DPROG+"-$M;./install.sh'",obverb,oblog);
 	} else {
 		Log(violetts+DPROG+blau+Txk[T_muss_nicht_aktualisiert_werden]+schwarz);
 	}
