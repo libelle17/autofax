@@ -61,5 +61,5 @@ if test "$ICH" != configure -a "$ICH" != viall -a "$ICH" != modziel.sh -a $AUFRU
 	make opts &&
 	${SUDC}make install; erg=$?
 	[ $erg = 0 ] && farbe=$blau || farbe=$rot;
-	printf "Result code/ Ergebniscode: ${farbe}$erg${reset}\n 2>/dev/null"
+	printf "Result code/ Ergebniscode: ${farbe}$erg${reset}\n" 2>/dev/null |tail -n +1
 fi
