@@ -10342,7 +10342,6 @@ int main(int argc, char** argv)
 		} // 		if (!pm.keineverarbeitung)
 	} // if (pm.kez) else else else
 	pm.autofkonfschreib();
-	pm.tagesaufr=2;
 	if (pm.autoupd && pm.tagesaufr==2) {
 	  pm.update(DPROG);
 	}
