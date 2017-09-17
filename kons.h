@@ -343,7 +343,6 @@ enum Tkons_
 	T_entfernen,
 	T_belassen,
 	T_warte,
-	T_Neue_Version_von,
 	T_wird_aktualisiert_bitte_ggf_neu_starten,
 	T_muss_nicht_aktualisiert_werden,
 	T_konsMAX

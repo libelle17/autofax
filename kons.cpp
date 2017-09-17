@@ -430,8 +430,6 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"belassen","keep"},
 	// T_warte
 	{"warte","waiting"},
-	// T_Neue_Version_von
-	{"Neue Version von ","New version of "},
 	// T_wird_aktualisiert_bitte_ggf_neu_starten
 	{" wird aktualisiert, bitte ggf. neu starten."," will be updated, please start it again if needed."},
 	// T_muss_nicht_aktualisiert_werden
@@ -5254,11 +5252,12 @@ void haupt::update(const string& DPROG)
 	obverb++;
 	if (systemrueck("wget https://raw.githubusercontent.com/"+gitv+"/"+DPROG+"/master/versdt -qO"+instvz+"/versdtakt&&"
 	                "diff "+instvz+"/versdt "+instvz+"/versdtakt",obverb,oblog)) {
-		struct stat entwst={0};
-		// entwickeln muss genauso definiert sein wie in Makefile
-	  const string ziel=instvz+(lstat((instvz+"/entwickeln").c_str(),&entwst)?nix:"/nvers");
+////		struct stat entwst={0};
+		//// entwickeln muss genauso definiert sein wie in Makefile
+////	  const string ziel=instvz+(lstat((instvz+"/entwickeln").c_str(),&entwst)?nix:"/nvers");
+	  const string ziel=instvz;
 		pruefverz(ziel,obverb,oblog);
-		Log(blaus+Txk[T_Neue_Version_von]+violett+DPROG+blau+Txk[T_wird_aktualisiert_bitte_ggf_neu_starten]+schwarz);
+		Log(violett+DPROG+blau+Txk[T_wird_aktualisiert_bitte_ggf_neu_starten]+schwarz);
 		systemrueck("sh -c 'wget "+defvors+DPROG+defnachs+" -O"+ziel+"/"+DPROG+".tar.gz;"
 				"cd "+ziel+";tar xpvf "+DPROG+".tar.gz;cd "+DPROG+"-master;./install.sh'",obverb,oblog);
 	} else {
