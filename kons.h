@@ -343,6 +343,9 @@ enum Tkons_
 	T_entfernen,
 	T_belassen,
 	T_warte,
+	T_Neue_Version_von,
+	T_installiert,
+	T_muss_nicht_aktualisiert_werden,
 	T_konsMAX
 };
 
