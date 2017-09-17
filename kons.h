@@ -1114,5 +1114,5 @@ class haupt
 		uchar pruefcron();
 		void dodovi(const svec d1,const svec d2);
 		void schlussanzeige();
-		void update();
+		void update(const string& DPROG);
 }; // class haupt

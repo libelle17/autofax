@@ -10057,7 +10057,7 @@ int main(int argc, char** argv)
 	paramcl pm(argc,argv); // Programmparameter
 	if (argc==3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		// Testcode mit argv[1]
-		pm.update();
+		pm.update(DPROG);
 	/*//
 		systemrueck("find /var/spool/hylafax -type f -regex '.*q[0-9]+'");
 		perf.ausgeb();

@@ -5242,13 +5242,13 @@ void haupt::dodovi(const svec d1,const svec d2)
 	vischluss(erg);
 } // void paramcl::dovi()
 
-void haupt::update()
+void haupt::update(const string& DPROG)
 {
 	perfcl perf("main");
 	int obverb=1,oblog=0;
-	if (systemrueck("wget https://raw.githubusercontent.com/"+gitv+"/DPROG/master/versdt -qO/root/"+gitv+"/versdtakt&&diff "+instvz+"/versdt "+instvz+"/versdtakt",obverb,oblog)) {
+	if (systemrueck("wget https://raw.githubusercontent.com/"+gitv+"/"+DPROG+"/master/versdt -qO/root/"+gitv+"/versdtakt&&diff "+instvz+"/versdt "+instvz+"/versdtakt",obverb,oblog)) {
 	  const string ziel="/root/af";
 		pruefverz(ziel,obverb,oblog);
-		systemrueck("sh -c 'wget "+defvors+"DPROG"+defnachs+" -O"+ziel+"/DPROG.tar.gz;cd "+ziel+";tar xpvf DPROG.tar.gz;cd DPROG-master;./install.sh'",obverb,oblog);
+		systemrueck("sh -c 'wget "+defvors+DPROG+defnachs+" -O"+ziel+"/"+DPROG+".tar.gz;cd "+ziel+";tar xpvf "+DPROG+".tar.gz;cd "+DPROG+"-master;./install.sh'",obverb,oblog);
 	}
 }
