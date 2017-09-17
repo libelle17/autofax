@@ -59,5 +59,7 @@ if test "$ICH" != configure -a "$ICH" != viall -a "$ICH" != modziel.sh -a $AUFRU
 	$SPR make >/dev/null ||{ echo GNU make missing/fehlt; exit;}
 	# ... und dann kompilieren und installieren
 	make opts &&
-	sh -c "${SUDC}make install; erg=$?;[ $erg = 0 ]&& farbe=$blau||farbe=$rot;printf \"Result code/ Ergebniscode: ${farbe}$erg${reset}\n\";"
+	${SUDC}make install; erg=$?;
+	[ $erg = 0 ]&& farbe=$blau||farbe=$rot;
+	printf "Result code/ Ergebniscode: ${farbe}$erg${reset}\n";
 fi
