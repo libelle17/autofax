@@ -3341,10 +3341,6 @@ int paramcl::getcommandline()
 	opts.push_back(/*2*/optioncl(T_ngvz_k,T_nichtgefaxtvz_l, &Tx, T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,0,&ngvz,pverz,
 				&agcnfA,"nichtgefaxtvz",&obkschreib));
 	opts.push_back(/*2*/optioncl(T_evz_k,T_empfvz_l, &Tx, T_Empfangsverzeichnis_fuer_Faxempfang,0,&empfvz,pverz,&agcnfA,"empfvz",&obkschreib));
-	/*
-	opts.push_back(*//*3*//*optioncl(T_cm_k,T_cronminuten_l,&Tx,T_Alle_wieviel_Minuten_soll,1,&meinname,T_aufgerufen_werden_0_ist_gar_nicht,&cronminut,
-				pzahl, &agcnfA,"cronminut",&obkschreib));
-	*/
 	opts.push_back(/*4*/optioncl(T_capi_k,T_obcapi_l, &Tx, T_Capisuite_verwenden ,1,&obcapi,1,&agcnfA,"obcapi",&obkschreib));
 	////  opts.push_back(/*4*/optioncl("nocapi","keincapi", &Tx, T_Capisuite_nicht_verwenden,1,&obcapi,0,&agcnfA,"obcapi",&obkschreib));
 	opts.push_back(/*4*/optioncl(T_hyla_k,T_obhyla_l, &Tx, T_hylafax_verwenden,1,&obhyla,1,&agcnfA,"obhyla",&obkschreib));
