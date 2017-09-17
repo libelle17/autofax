@@ -5246,9 +5246,9 @@ void haupt::update()
 {
 	perfcl perf("main");
 	int obverb=1,oblog=0;
-	if (systemrueck("wget https://raw.githubusercontent.com/autofax/DPROG/master/versdt -qO/root/autofax/versdtakt&&diff /root/autofax/versdt /root/autofax/versdtakt",obverb,oblog)) {
-		caus<<"zumachen"<<endl;
-		pruefverz("/root/af",obverb,oblog);
-		systemrueck("sh -c 'wget https://github.com/autofax/autofax/archive/master.tar.gz -O/root/af/autofax.tar.gz;cd /root/af;tar xpvf autofax.tar.gz;cd autofax-master;./install.sh'",obverb,oblog);
+	if (systemrueck("wget https://raw.githubusercontent.com/"+gitv+"/DPROG/master/versdt -qO/root/"+gitv+"/versdtakt&&diff "+instvz+"/versdt "+instvz+"/versdtakt",obverb,oblog)) {
+	  const string ziel="/root/af";
+		pruefverz(ziel,obverb,oblog);
+		systemrueck("sh -c 'wget "+defvors+"DPROG"+defnachs+" -O"+ziel+"/DPROG.tar.gz;cd "+ziel+";tar xpvf DPROG.tar.gz;cd DPROG-master;./install.sh'",obverb,oblog);
 	}
 }
