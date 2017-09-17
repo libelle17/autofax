@@ -259,13 +259,13 @@ Optional werden die empfangenen Dateien mit Hilfe von \fBocrmypdf\fR einer Texte
 .LP
 \fB19)\fR Die Konfigurationsdatei \fB²DPROG².conf\fR wird ggf. geschrieben.
 .LP
+\fB20)\fR Wenn die Option \fB-autoakt\fR bzw. \fB--autoaktual\fR aktiv ist, wird zuletzt bei jedem zweiten Aufruf jedes Tages die Versionsummer von \fB²DPROG²\fR mit der der Installationsquelle verglichen und im Fall eines Rückstands eine Aktualisierung durchgeführt
+.LP
 Einige Programmteile laufen parallel, dies kann sich die Reihenfolge der Ergebnisanzeige auflockern. 
 .br
 Senden und Empfangen wiederholen sich ggf. minütlich, bis der jeweils andere Teil zum ersten Mal fertig ist.
 .br
 Überprüfung und ggf. Korrektur evtl. falsch abgelegter Fax-Dateien (z.B. infolge eines willkürlichen Programmabbruchs von außen) werden in Abständen durchgeführt.
-.LP
-\fB20)\fR Wenn die Option \fB-autoakt\fR bzw. \fB--autoaktual\fR aktiv ist, wird zuletzt bei jedem zweiten Aufruf jedes Tages die Versionsummer von \fB²DPROG²\fR mit der der Installationsquelle verglichen und im Fall eines Rückstands eine Aktualisierung durchgeführt
 
 .SH VORAUSSETZUNGEN
 \fBHardware\fR: Computer mit einer Fritzcard 2.0 oder 2.1 und/oder einem linux-kompatiblen Modem; in der vorliegenden Fassung wird für eine automatische Installation des Programms (unter Beantwortung einiger Rückfragen) ein US Robotics Modem USR5637 und eine der untenstehenden Linuxversionen benötigt.

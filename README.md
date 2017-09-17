@@ -466,6 +466,13 @@ call of ocrmypdf.</p>
 <p style="margin-left:11%; margin-top: 1em"><b>19)</b> The
 configuration file is being written, if necessary.</p>
 
+<p style="margin-left:11%; margin-top: 1em"><b>20)</b> If
+the option <b>-autoupd</b> (<b>--autoupdate</b>) is acitve,
+at last after the second call of every day the version
+number of <b>autofax</b> will be compared with that of the
+installation source und if necessary a new version will be
+installed.</p>
+
 <p style="margin-left:11%; margin-top: 1em">Some program
 parts are executed simultaneously, which may loosen up the
 display of the result. <br>
@@ -474,13 +481,6 @@ respective other part has finished for the first time. <br>
 Check and possibly correction of possibly falsely stored fax
 files (e.g. by a cancelling the program deliberately) will
 be done in intervals.</p>
-
-<p style="margin-left:11%; margin-top: 1em"><b>20)</b> If
-the option <b>-autoupd</b> (<b>--autoupdate</b>) is acitve,
-at last after the second call of every day the version
-number of <b>autofax</b> will be compared with that of the
-installation source und if necessary a new version will be
-installed.</p>
 
 <h2>PRECONDITIONS
 <a name="PRECONDITIONS_D"></a>
@@ -1278,6 +1278,14 @@ Optional werden die empfangenen Dateien mit Hilfe von
 Konfigurationsdatei <b>autofax.conf</b> wird ggf.
 geschrieben.</p>
 
+<p style="margin-left:11%; margin-top: 1em"><b>20)</b> Wenn
+die Option <b>-autoakt</b> bzw. <b>--autoaktual</b> aktiv
+ist, wird zuletzt bei jedem zweiten Aufruf jedes Tages die
+Versionsummer von <b>autofax</b> mit der der
+Installationsquelle verglichen und im Fall eines
+R&uuml;ckstands eine Aktualisierung
+durchgef&uuml;hrt</p>
+
 <p style="margin-left:11%; margin-top: 1em">Einige
 Programmteile laufen parallel, dies kann sich die
 Reihenfolge der Ergebnisanzeige auflockern. <br>
@@ -1288,14 +1296,6 @@ Mal fertig ist. <br>
 falsch abgelegter Fax-Dateien (z.B. infolge eines
 willk&uuml;rlichen Programmabbruchs von au&szlig;en)
 werden in Abst&auml;nden durchgef&uuml;hrt.</p>
-
-<p style="margin-left:11%; margin-top: 1em"><b>20)</b> Wenn
-die Option <b>-autoakt</b> bzw. <b>--autoaktual</b> aktiv
-ist, wird zuletzt bei jedem zweiten Aufruf jedes Tages die
-Versionsummer von <b>autofax</b> mit der der
-Installationsquelle verglichen und im Fall eines
-R&uuml;ckstands eine Aktualisierung
-durchgef&uuml;hrt</p>
 
 <h2>VORAUSSETZUNGEN
 <a name="VORAUSSETZUNGEN_D"></a>
