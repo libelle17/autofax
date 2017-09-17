@@ -432,8 +432,8 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"warte","waiting"},
 	// T_Neue_Version_von
 	{"Neue Version von ","New version of "},
-	// T_installiert
-	{" installiert."," installed."},
+	// T_wird_aktualisiert_bitte_ggf_neu_starten
+	{" wird aktualisiert, bitte ggf. neu starten."," will be updated, please start it again if needed."},
 	// T_muss_nicht_aktualisiert_werden
 	{" muss nicht aktualisiert werden."," needs not to be updated."},
   {"",""}
@@ -5258,9 +5258,9 @@ void haupt::update(const string& DPROG)
 		// entwickeln muss genauso definiert sein wie in Makefile
 	  const string ziel=instvz+(lstat((instvz+"/entwickeln").c_str(),&entwst)?nix:"/nvers");
 		pruefverz(ziel,obverb,oblog);
+		Log(blaus+Txk[T_Neue_Version_von]+violett+DPROG+blau+Txk[T_wird_aktualisiert_bitte_ggf_neu_starten]+schwarz);
 		systemrueck("sh -c 'wget "+defvors+DPROG+defnachs+" -O"+ziel+"/"+DPROG+".tar.gz;"
 				"cd "+ziel+";tar xpvf "+DPROG+".tar.gz;cd "+DPROG+"-master;./install.sh'",obverb,oblog);
-		Log(blaus+Txk[T_Neue_Version_von]+violett+DPROG+blau+Txk[T_installiert]+schwarz);
 	} else {
 		Log(violetts+DPROG+blau+Txk[T_muss_nicht_aktualisiert_werden]+schwarz);
 	}
