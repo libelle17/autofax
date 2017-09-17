@@ -4935,7 +4935,7 @@ void haupt::gcl0()
 		} //     if (!logdname.empty())
 		obkschreib=1;
 	} // if (logvneu ||logdneu) 
-}
+} // void haupt::gcl0()
 
 // in lieskonfein, getcommandl0, getcommandline, rueckfragen
 void haupt::lgnzuw()
@@ -5249,9 +5249,9 @@ void haupt::dodovi(const svec d1,const svec d2)
 void haupt::update(const string& DPROG)
 {
 	perfcl perf("main");
-	obverb++;
 	if (systemrueck("wget https://raw.githubusercontent.com/"+gitv+"/"+DPROG+"/master/versdt -qO"+instvz+"/versdtakt&&"
-	                "[ $(sed 's/\\.//' "+instvz+"/versdtakt) -le $(sed 's/\\.//' "+instvz+"/versdt) ]",obverb,oblog)) {
+	                "[ $(sed 's/\\.//' "+instvz+"/versdtakt) -le $(sed 's/\\.//' "+instvz+"/versdt) ]",2,oblog)) {
+	obverb++;
 ////  struct stat entwst={0};
 		//// entwickeln muss genauso definiert sein wie in Makefile
 ////  const string ziel=instvz+(lstat((instvz+"/entwickeln").c_str(),&entwst)?nix:"/nvers");
