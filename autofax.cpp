@@ -753,6 +753,11 @@ enum T_
 	T_docname,
 	T_pages,
 	T_Zustand_der_Dienste,
+	T_autoupd_k,
+	T_autoupd_l,
+	T_Programm_automatisch_aktualisieren,
+	T_Sollen_neu_Programmversionen_von,
+	T_automatisch_installiert_werden,
 	T_MAX
 };
 
@@ -2113,6 +2118,16 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Seiten","pages"},
 	// T_Zustand_der_Dienste
 	{"Zustand der Dienste: ","State of the services: "},
+	// 	T_autoupd_k,
+	{"autoakt","autoupd"},
+	// 	T_autoupd_l,
+	{"autoaktual","autoupdate"},
+	// T_Programm_automatisch_aktualisieren
+	{"Programm automatisch aktualisieren","Update program automatically"},
+	// T_Sollen_neu_Programmversionen_von
+	{"Sollen neue Programmversionen von ","Shall new versions of "},
+	// T_automatisch_installiert_werden
+	{" automatisch installiert werden?"," be automatically installed?"},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -2698,11 +2713,11 @@ void paramcl::getcommandl0()
 {
 	Log(violetts+"getcommandl0()"+schwarz);
 	// Reihenfolge muss koordiniert werden mit lieskonfein und rueckfragen
-	agcnfA.init(42, "language","host","muser","mpwd","datenbank","findvers","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
+	agcnfA.init(43, "language","host","muser","mpwd","datenbank","findvers","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
 			"countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
 			"cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl","maxdials",
 			"gleichziel","ocri","ocra","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
-			"anstr","undstr","cronminut","logvz","logdname","obmodem","obfcard","sqlz","musterzahl");
+			"anstr","undstr","cronminut","autoupd","logvz","logdname","obmodem","obfcard","sqlz","musterzahl");
 	gcl0();
 	if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
 } // void paramcl::getcommandl0(int argc, char** argv)
@@ -3162,6 +3177,7 @@ void paramcl::VorgbAllg()
 	gethostname(cpt, cptlen);
 #endif // WIN32 else
 	cronminut="2";
+	autoupd=1;
 	////  pruefcvz(); // 1.7.16 zu frueh
 } // void paramcl::VorgbAllg
 
@@ -3293,6 +3309,7 @@ void paramcl::lieskonfein()
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&anstr); else rzf=1; lfd++;
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&undstr); else rzf=1; lfd++;
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&cronminut); else rzf=1; lfd++;
+	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&autoupd); else rzf=1; lfd++;
 	if (logvneu) agcnfA[lfd].setze(&logvz);
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&logvz); else rzf=1; lfd++;
 	if (logdneu) agcnfA[lfd].setze(&logdname);
@@ -3312,8 +3329,6 @@ void paramcl::lieskonfein()
 		KLA // (1) else
 	 */
 	if (nrzf) rzf=0;
-	// Aufrufstatistik, um in zeigweitere die Dateien korrigieren zu koennen:
-	// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 3 Monate und des Monats unbefristet
 } // void paramcl::lieskonfein()
 
 // wird aufgerufen in: main
@@ -3326,8 +3341,10 @@ int paramcl::getcommandline()
 	opts.push_back(/*2*/optioncl(T_ngvz_k,T_nichtgefaxtvz_l, &Tx, T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,0,&ngvz,pverz,
 				&agcnfA,"nichtgefaxtvz",&obkschreib));
 	opts.push_back(/*2*/optioncl(T_evz_k,T_empfvz_l, &Tx, T_Empfangsverzeichnis_fuer_Faxempfang,0,&empfvz,pverz,&agcnfA,"empfvz",&obkschreib));
-	opts.push_back(/*3*/optioncl(T_cm_k,T_cronminuten_l,&Tx,T_Alle_wieviel_Minuten_soll,1,&meinname,T_aufgerufen_werden_0_ist_gar_nicht,&cronminut,
+	/*
+	opts.push_back(*//*3*//*optioncl(T_cm_k,T_cronminuten_l,&Tx,T_Alle_wieviel_Minuten_soll,1,&meinname,T_aufgerufen_werden_0_ist_gar_nicht,&cronminut,
 				pzahl, &agcnfA,"cronminut",&obkschreib));
+	*/
 	opts.push_back(/*4*/optioncl(T_capi_k,T_obcapi_l, &Tx, T_Capisuite_verwenden ,1,&obcapi,1,&agcnfA,"obcapi",&obkschreib));
 	////  opts.push_back(/*4*/optioncl("nocapi","keincapi", &Tx, T_Capisuite_nicht_verwenden,1,&obcapi,0,&agcnfA,"obcapi",&obkschreib));
 	opts.push_back(/*4*/optioncl(T_hyla_k,T_obhyla_l, &Tx, T_hylafax_verwenden,1,&obhyla,1,&agcnfA,"obhyla",&obkschreib));
@@ -3378,6 +3395,7 @@ int paramcl::getcommandline()
 	opts.push_back(/*4*/optioncl(T_find_k,T_find_l,&Tx, T_Version_1_2_oder_3_Dateisuche_anstatt,0,&findvers,pzahl,&agcnfA,"findvers",&obkschreib));
 	opts.push_back(/*3*/optioncl(T_cm_k,T_cronminuten_l,&Tx,T_Alle_wieviel_Minuten_soll,1,&meinname,T_aufgerufen_werden_0_ist_gar_nicht,&cronminut,
 				pzahl, &agcnfA,"cronminut",&obkschreib));
+	opts.push_back(/*4*/optioncl(T_autoupd_k,T_autoupd_l, &Tx, T_Programm_automatisch_aktualisieren,1,&autoupd,1,&agcnfA,"autoupd",&obkschreib));
 	////  opts.push_back(optioncl("l","log", &Tx, T_protokolliert_ausfuehrlich_in_Datei+drot+loggespfad+schwarz+Tx[T_sonst_knapper],0,&oblog,1));
 	////  logdt=&loggespfad.front();
 	////  opts.push_back(optioncl("lvz","logvz",&Tx, T_waehlt_als_Logverzeichnis_pfad_anstatt,0,&logvz,pverz));
@@ -3744,6 +3762,10 @@ void paramcl::rueckfragen()
 		if (agcnfA[++lfd].wert.empty() || rzf) {
 			cronminut=Tippzahl(Tx[T_Alle_wieviel_Minuten_soll]+meinname+Tx[T_aufgerufen_werden_0_ist_gar_nicht],&cronminut);
 			agcnfA[lfd].setze(&cronminut);
+		}
+		if (agcnfA[++lfd].wert.empty() || rzf) {
+			autoupd=Tippob(Tx[T_Sollen_neu_Programmversionen_von]+meinname+Tx[T_automatisch_installiert_werden],autoupd?Tx[T_j_af]:"n");
+			agcnfA[lfd].setze(&autoupd);
 		}
 		if (agcnfA[++lfd].wert.empty() || rzf) {
 			logvz=Tippverz(Tx[T_Logverzeichnis],&logvz);
@@ -6690,6 +6712,8 @@ void paramcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // fax
 	Log(violetts+Txk[T_Ende]+Tx[T_untersuchespool]+schwarz);
 } // untersuchespool
 
+// Aufrufstatistik, um in zeigweitere die Dateien korrigieren zu koennen:
+// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 3 Monate und des Monats unbefristet
 void paramcl::bestimmtage()
 {
 	// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 30 Tage und des Monats 200 Jahre
@@ -10055,10 +10079,9 @@ int main(int argc, char** argv)
 {
 	pthread_mutex_init(&printf_mutex, NULL);
 	paramcl pm(argc,argv); // Programmparameter
+	/*//
 	if (argc==3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		// Testcode mit argv[1]
-		pm.update(DPROG);
-	/*//
 		systemrueck("find /var/spool/hylafax -type f -regex '.*q[0-9]+'");
 		perf.ausgeb();
 		exit(29);
@@ -10078,10 +10101,10 @@ int main(int argc, char** argv)
 			}
 		}
 		linst.ziehraus(inh,&ustring);
-	*/
 		//<<blau<<"ustring: "<<gruen<<ustring<<schwarz<<endl;
 		exit(29);
 	} // (argc==2)
+	*/
 	pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
 	pm.logvorgaben();
 	//// Log("main: "+pm.cl,0,1);
@@ -10319,6 +10342,10 @@ int main(int argc, char** argv)
 		} // 		if (!pm.keineverarbeitung)
 	} // if (pm.kez) else else else
 	pm.autofkonfschreib();
+	pm.tagesaufr=2;
+	if (pm.autoupd && pm.tagesaufr==2) {
+	  pm.update(DPROG);
+	}
 	// damit das Endeprompt nicht vorprescht
 	//// <<violett<<", pidv.size(): "<<pidv.size()<<schwarz<<endl;
 	//// for(size_t j=0;j<pids.size();j++) KLA //<<gruen<<j<<violett<<", pids[j]: "<<pids[j]<<schwarz<<endl; KLZ

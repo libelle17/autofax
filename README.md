@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.45644) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45646) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -250,9 +250,6 @@ werden hier gesammelt anstatt in
 &rsquo;<b>/var/autofax/nichtgefaxt</b>&rsquo; <b><br>
 -evz, --empfvz &lt;path&gt;</b>: Empfangsverzeichnis fuer
 Faxempfang &rsquo;<b>/var/autofax/empfvz</b>&rsquo; <b><br>
--cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
-soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
-nicht), anstatt &rsquo;<b>2</b>&rsquo; <b><br>
 -capi, --obcapi</b>: Capisuite verwenden <b>or not <br>
 -hyla, --obhyla</b>: Hylafax verwenden <b>or not <br>
 -cz, --capizuerst</b>: versuche faxe zuerst ueber Capisuite
@@ -314,7 +311,9 @@ MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 &rsquo;<b>3</b>&rsquo; <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
-nicht), anstatt &rsquo;<b>2</b>&rsquo;</p>
+nicht), anstatt &rsquo;<b>2</b>&rsquo; <b><br>
+-autoakt, --autoaktual</b>: Programm automatisch
+aktualisieren <b>or not</b></p>
 
 <h2>FUNCTIONALITY
 <a name="FUNCTIONALITY_D"></a>
@@ -772,7 +771,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.45644) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45646) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1038,9 +1037,6 @@ werden hier gesammelt anstatt in
 &rsquo;<b>/var/autofax/nichtgefaxt</b>&rsquo; <b><br>
 -evz, --empfvz &lt;pfad&gt;</b>: Empfangsverzeichnis fuer
 Faxempfang &rsquo;<b>/var/autofax/empfvz</b>&rsquo; <b><br>
--cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
-soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
-nicht), anstatt &rsquo;<b>2</b>&rsquo; <b><br>
 -capi, --obcapi</b>: Capisuite verwenden <b>oder nicht <br>
 -hyla, --obhyla</b>: Hylafax verwenden <b>oder nicht <br>
 -cz, --capizuerst</b>: versuche faxe zuerst ueber Capisuite
@@ -1102,7 +1098,9 @@ MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 &rsquo;<b>3</b>&rsquo; <b><br>
 -cm, --cronminuten &lt;zahl&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
-nicht), anstatt &rsquo;<b>2</b>&rsquo;</p>
+nicht), anstatt &rsquo;<b>2</b>&rsquo; <b><br>
+-autoakt, --autoaktual</b>: Programm automatisch
+aktualisieren <b>oder nicht</b></p>
 
 <h2>FUNKTIONSWEISE
 <a name="FUNKTIONSWEISE_D"></a>

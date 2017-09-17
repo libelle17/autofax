@@ -290,6 +290,7 @@ class paramcl: public haupt // Programmparameter
 		string virtvz; //	instvz+"/ocrv";
 	  string ocrmp; //	virtvz+"/bin/ocrmypdf";
 		unsigned tage=0; // fuer korrigierecapi und korrigierehyla 
+		uchar autoupd;  // 1=Programm automatisch updadaten
     svec vinca;
   private:
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen

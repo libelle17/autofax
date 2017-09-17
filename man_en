@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "17.09.17" "Version 0.45644" "\fB²DPROG²\fR man page"
+.TH man 1 "17.09.17" "Version 0.45646" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -137,8 +137,6 @@ With '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR', the important and with '\fB²
 .br
 \fB -evz, --empfvz <path>\fR: Empfangsverzeichnis fuer Faxempfang '\fB/var/autofax/empfvz\fR'
 .br
-\fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB2\fR'
-.br
 \fB -capi, --obcapi\fR: Capisuite verwenden\fB or not\fR
 .br
 \fB -hyla, --obhyla\fR: Hylafax verwenden\fB or not\fR
@@ -188,6 +186,8 @@ With '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR', the important and with '\fB²
 \fB -fd, --finde <zahl>\fR: Version 1,2 oder 3 -Dateisuche (variable Performanceunterschiede) anstatt '\fB3\fR'
 .br
 \fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB2\fR'
+.br
+\fB -autoakt, --autoaktual\fR: Programm automatisch aktualisieren\fB or not\fR
 .SH FUNCTIONALITY
 .LP
 \fB1)\fR The current hardware is being checked.
