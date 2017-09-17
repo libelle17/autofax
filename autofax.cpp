@@ -2701,7 +2701,7 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 	Log(violetts+Txk[T_Ende]+Tx[T_WVZinDatenbank]+schwarz);
 } // WVZinDatenbank
 
-// in lieskonfein, getcommandl0, getcommandline, rueckfragen
+// in rueckfragen sowie als virtuelle Funktion von haupt::gcl0() aufgerufen
 void paramcl::lgnzuw()
 {
   haupt::lgnzuw();
@@ -10338,7 +10338,7 @@ int main(int argc, char** argv)
 		} // 		if (!pm.keineverarbeitung)
 	} // if (pm.kez) else else else
 	pm.autofkonfschreib();
-	if (pm.autoupd && pm.tagesaufr==2) {
+	if (pm.autoupd && !(pm.tagesaufr % 4)) {
 	  pm.update(DPROG);
 	}
 	// damit das Endeprompt nicht vorprescht
