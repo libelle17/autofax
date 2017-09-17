@@ -5259,7 +5259,7 @@ const string ziel=instvz+(lstat((instvz+"/entwickeln").c_str(),&entwst)?nix:"/nv
 		pruefverz(ziel,obverb,oblog);
 		Log(violett+DPROG+blau+Txk[T_wird_aktualisiert_bitte_ggf_neu_starten]+schwarz);
 		systemrueck("sh -c 'M=master;wget "+defvors+DPROG+defnachs+" -O"+ziel+"/"+DPROG+".tar.gz;"
-				"cd "+ziel+";tar xpvf "+DPROG+".tar.gz;mv "+DPROG+"-$M/* .;./install.sh'",obverb,oblog);
+				"cd "+ziel+";tar xpvf "+DPROG+".tar.gz;cd "+DPROG+"-$M;mv * ..;mv .* ..;cd ..;rmdir "+DPROG+";./install.sh'",obverb,oblog);
 				// rmdir "+DPROG+"-$M;
 	} else {
 		Log(violetts+DPROG+blau+Txk[T_muss_nicht_aktualisiert_werden]+schwarz);
