@@ -10338,12 +10338,13 @@ int main(int argc, char** argv)
 		} // 		if (!pm.keineverarbeitung)
 	} // if (pm.kez) else else else
 	pm.autofkonfschreib();
-	if (pm.autoupd && !(pm.tagesaufr % 4)) {
+	// ggf. beim 2. Aufruf am Tag Update installieren
+	if (pm.autoupd && pm.tagesaufr == 2) {
 	  pm.update(DPROG);
-	}
-	// damit das Endeprompt nicht vorprescht
+	} // 	if (pm.autoupd && pm.tagesaufr == 2)
 	//// <<violett<<", pidv.size(): "<<pidv.size()<<schwarz<<endl;
 	//// for(size_t j=0;j<pids.size();j++) KLA //<<gruen<<j<<violett<<", pids[j]: "<<pids[j]<<schwarz<<endl; KLZ
+	// damit das Endeprompt nicht vorprescht
 	// warte auf empfarch, faxealle usw.
 	wartaufpids(&pidv,0,pm.obverb,Tx[T_in_main_pidv_am_Schluss]);
 	pm.schlussanzeige();
