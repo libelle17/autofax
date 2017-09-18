@@ -18,11 +18,10 @@ GITV=$([ -f .git/config ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' .g
 #// [ -z $GITV ]&& [ -f gitvdt ]&& GITV=$(sed 's/"//g' gitvdt);
 # die naechste Zeile wird im Makefile in transfer: und git: editiert
 [ -z $GITV ]&& GITV=libelle17;
-#echo vor Entscheidung,DPROG: $DPROG, GITV: $GITV
+#// echo vor Entscheidung,DPROG: $DPROG, GITV: $GITV
 # diese Datei wird wegen obigem in configure und indirekt in viall gesourct, soll dann hier abbrechen
-echo Ich: "$ICH"
 if test "$ICH" != configure -a "$ICH" != viall -a "$ICH" != modziel.sh -a $AUFRUFE -lt 2; then
-	#echo nach Entscheidung,DPROG: $DPROG, GITV: $GITV
+	#// echo nach Entscheidung,DPROG: $DPROG, GITV: $GITV
 	# aPWD=`pwd` 
 	nPWD=${PWD##*/}
 	# wenn $DPROG schon das aktuelle Verzeichnis ist und wenn es dort einige notwendige Dateien gibt, dann nicht mehr neu runterladen ...
@@ -44,7 +43,7 @@ if test "$ICH" != configure -a "$ICH" != viall -a "$ICH" != modziel.sh -a $AUFRU
 			for i in $VORIGE; do 
 				case $i in ""|*[!0-9]*);; *) 
 					j=$((i+1)); 
-					echo mv ${DPROG}_$i ${DPROG}_$j; 
+					printf "mv ${DPROG}_$i ${DPROG}_$j\n"; 
 					mv ${DPROG}_$i ${DPROG}_$j; 
 				esac; 
 			done; 
@@ -57,7 +56,7 @@ if test "$ICH" != configure -a "$ICH" != viall -a "$ICH" != modziel.sh -a $AUFRU
 			}
 		}|| exit;
 	}
-	$SPR make >/dev/null ||{ echo GNU make missing/fehlt; exit;}
+	$SPR make >/dev/null ||{ printf "GNU make missing/fehlt\n"; exit;}
 	# ... und dann kompilieren und installieren
 	make opts &&
 	${SUDC}make install; erg=$?;

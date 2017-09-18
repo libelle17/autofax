@@ -2325,6 +2325,9 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 							ergebnis=gruens+Txk[T_nicht_gefunden];
 						} else if (cmd.substr(0,14)==sudc+"modprobe ") {
 						  ergebnis=gruens+Txk[T_nicht_einfuegbar];
+							// das Ende einer awk-Berechnung reeller Zahlen:
+						} else if (cmd.find("|grep -q -")!=string::npos) {
+						  ergebnis=blaus+ltoan(erg);
 						} else {
 							ergebnis=rots+Txk[T_Exitcode]+ltoan(erg);
 						}
@@ -5250,7 +5253,8 @@ void haupt::update(const string& DPROG)
 {
 	perfcl perf("main");
 	if (systemrueck("wget https://raw.githubusercontent.com/"+gitv+"/"+DPROG+"/master/versdt -qO"+instvz+"/versdtakt&&"
-				"[ $(echo $(cat "+instvz+"/versdtakt)'>'$(cat "+instvz+"/versdt)|bc -l) -eq 0 ]",2,oblog)) {
+/*//				"[ $(echo $(cat "+instvz+"/versdtakt)'>'$(cat "+instvz+"/versdt)|bc -l) -eq 0 ]",2,oblog))*/
+				"awk \"BEGIN{print $(cat "+instvz+"/versdt)-$(cat "+instvz+"/versdtakt)}\"|grep -q -",2,oblog)) {
 		obverb++;
 		////  struct stat entwst={0};
 		//// entwickeln muss genauso definiert sein wie in Makefile
@@ -5259,9 +5263,9 @@ void haupt::update(const string& DPROG)
 		pruefverz(ziel,obverb,oblog);
 		Log(violett+DPROG+blau+Txk[T_wird_aktualisiert_bitte_ggf_neu_starten]+schwarz);
 		systemrueck("sh -c 'M="+DPROG+"-master;wget "+defvors+DPROG+defnachs+" -O"+ziel+"/"+DPROG+".tar.gz;"
-				"cd "+ziel+";rm -rf $M;tar xpvf "+DPROG+".tar.gz;cd $M;mv * ..;mv .* .. 2>/dev/null;cd ..;rmdir $M;./install.sh' 2>/dev/null",obverb,oblog);
+				"cd "+ziel+";rm -rf $M;tar xpvf "+DPROG+".tar.gz;cd $M;mv * ..;mv .* .. 2>/dev/null;cd ..;rmdir $M;./install.sh' 2>/dev/null",2,oblog);
 	} else {
 		Log(violetts+DPROG+blau+Txk[T_muss_nicht_aktualisiert_werden]+schwarz);
-	}
+	} // if (systemrueck ... else
 	obverb--;
 } // void haupt::update(const string& DPROG)

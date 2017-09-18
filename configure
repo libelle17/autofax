@@ -177,12 +177,12 @@ einricht() {
 		 fi
 	 }
 	 LOG=inst_$(echo $2|sed 's/ //g').log; # Leerzeichen entfernen
-	 echo Befehl/Command: ${CMD}$2
+	 printf "Befehl/Command: ${CMD}$2\n";
 	 ${CMD}$2|tee $LOG # "$2" geht bei mehreren Wörtern nicht, z.B. "groff-base groff"
-	 printf "\nRueckmeldung bei einricht $2:\n">>$GILOG
-	 ausricht "$LOG" $1 "${IPR}$2"
+	 printf "\nRueckmeldung bei einricht $2:\n">>$GILOG;
+	 ausricht "$LOG" $1 "${IPR}$2";
 	 if [ "$1" = "g++" -o "$1" = "g++-6" ]&& [ -n "$Z" ]&& [ $rweg = 1 ]; then
-	 	 printf "Removing Repository/ Entferne Repository ${blau}devel_gcc$reset again/ wieder\n"
+	 	 printf "Removing Repository/ Entferne Repository ${blau}devel_gcc$reset again/ wieder\n";
 		 ${SUDC}$Z rr devel_gcc;
 	 else :; fi
  fi
@@ -209,7 +209,7 @@ Z=""
 if test "$ICH" != install.sh -a "$ICH" != ${DPROG}_inst.sh -a "$ICH" != transfer; then
  . ./install.sh
 fi
-#echo nach sourcen von ./install.sh,DPROG: $DPROG, GITV: $GITV
+#// echo nach sourcen von ./install.sh,DPROG: $DPROG, GITV: $GITV
 INSTVZ="$(dirname $(readlink -f "$0"))"
 ILOG=inst.log
 GILOG=$INSTVZ/$ILOG
@@ -266,10 +266,10 @@ a=$(sudo -n -v 2>&1);test -z "$a" || echo $a|grep -q "assw" ||{
 	printf "Danach loggen Sie sich bitte aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh install.sh$reset' auf!\n";
 	su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";" && exit
 }
-# which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
+#// which sudo >/dev/null && id -Gzn $USER|grep -qw "$SUG";}||{ 
 # falls make fehlt, dann installieren ...
 einricht make make
-# $SPR make >$DN 2>&1 ||{ echo Installing/ Installiere 'make' ....; id su >$DN 2>&1 && { su -c "$IPR make;";:;} || ${SUDC}$IPR make; grep -q make $AUNF||printf "${UPR}make\necho \"${UPR}make\"\n">>$AUNF; }
+#// $SPR make >$DN 2>&1 ||{ echo Installing/ Installiere 'make' ....; id su >$DN 2>&1 && { su -c "$IPR make;";:;} || ${SUDC}$IPR make; grep -q make $AUNF||printf "${UPR}make\necho \"${UPR}make\"\n">>$AUNF; }
 exportvars;
 Mf=Makefile;Mfr=$Mf.roh; test -f $Mfr && mv $Mfr $Mf
 fi

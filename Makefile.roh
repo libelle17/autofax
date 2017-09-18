@@ -398,23 +398,23 @@ uninstall: fernclean
 	-@tac $(UNF)>tmp_$(UNROH)&& $(SUDC)blau=$(blau) reset=$(reset) bash tmp_$(UNROH);: # uninstallinv von hinten nach vorne abarbeiten
 	-@printf "Fertig mit uninstall!\n"
 
-#rufe:
-#	printf '$(UPR)$(PGROFF)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$(PGROFF)"\n'>>gtest
-#	-@$(SUDC)blau=$(blau) reset=$(reset) sh gerufen
+#//rufe:
+#//	printf '$(UPR)$(PGROFF)\nprintf "$$blau%%s$$reset\\n" "$(UPR)$(PGROFF)"\n'>>gtest
+#//	-@$(SUDC)blau=$(blau) reset=$(reset) sh gerufen
 
-#teste:
-#	sh -c 'VAR="lange\
-#	 Varible"; echo $$VAR'
-#	 echo $(GROFFCHECK)
-#	 @echo $(COMP)
-#	 @echo $(words $(COMP))
-#	 @printf "$$blau$(UREPO)$$reset\n"
-#	 for P in $(COMP); do echo $$P; VAR="$$P"; echo $$VAR; $(call uninst,$P) done
-#	 $(foreach VAR,$(COMP),echo $(VAR)\n)
-#	 @$(foreach VAR,$(COMP),$(call sunins,$(VAR),$(VAR)))
-#	$(foreach PG,$(COMP),$(call si_unins,$(PG),$(PG);$(UREPO)))
-#	 echo $(call uninst,$(COMP))
-#	$(SUDC)blau=$(blau) reset=$(reset) sh gtest
+#//teste:
+#//	sh -c 'VAR="lange\
+#//	 Varible"; echo $$VAR'
+#//	 echo $(GROFFCHECK)
+#//	 @echo $(COMP)
+#//	 @echo $(words $(COMP))
+#//	 @printf "$$blau$(UREPO)$$reset\n"
+#//	 for P in $(COMP); do echo $$P; VAR="$$P"; echo $$VAR; $(call uninst,$P) done
+#//	 $(foreach VAR,$(COMP),echo $(VAR)\n)
+#//	 @$(foreach VAR,$(COMP),$(call sunins,$(VAR),$(VAR)))
+#//	$(foreach PG,$(COMP),$(call si_unins,$(PG),$(PG);$(UREPO)))
+#//	 echo $(call uninst,$(COMP))
+#//	$(SUDC)blau=$(blau) reset=$(reset) sh gtest
 
 .PHONY: version
 version: dovers
@@ -450,7 +450,7 @@ dotrans:
 	};\
 	[ -z "$(Ziel)" ]&&{ Start=0;:;}||[ ! -d "$(Ziel)" ]&& Start=0;\
 	if [ $$Start = 0 ]; then\
-	 echo Makes a fair copy of the files of a github repository/ Kopiert Dateien eines github-Repositorys abzüglich mancher Kommentare ins Reine;\
+	 printf "Makes a fair copy of the files of a github repository/ Kopiert Dateien eines github-Repositorys abzüglich mancher Kommentare ins Reine\n";\
 	 printf "Synatax: %bmake $(TRS) \<zielverzeichnis\>%b\n" $(blau) $(reset);\
 	 printf "Directory/Verzeichnis "%b$(Ziel)%b" nicht gefunden.\n" $(blau) $(reset);\
 	 exit 1;\
