@@ -5254,6 +5254,7 @@ void haupt::update(const string& DPROG)
 	perfcl perf("main");
 	if (systemrueck("wget https://raw.githubusercontent.com/"+gitv+"/"+DPROG+"/master/versdt -qO"+instvz+"/versdtakt&&"
 /*//				"[ $(echo $(cat "+instvz+"/versdtakt)'>'$(cat "+instvz+"/versdt)|bc -l) -eq 0 ]",2,oblog))*/
+// Berechnung mit |bc -l schlecht, da z.B. auf Ubuntu bc nicht unbedingt standardm‰ﬂig installiert
 				"awk \"BEGIN{print $(cat "+instvz+"/versdt)-$(cat "+instvz+"/versdtakt)}\"|grep -q ^-",2,oblog)) {
 		Log(violetts+DPROG+blau+Txk[T_muss_nicht_aktualisiert_werden]+schwarz);
 	} else {
