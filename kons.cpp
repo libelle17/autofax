@@ -5250,18 +5250,18 @@ void haupt::update(const string& DPROG)
 {
 	perfcl perf("main");
 	if (systemrueck("wget https://raw.githubusercontent.com/"+gitv+"/"+DPROG+"/master/versdt -qO"+instvz+"/versdtakt&&"
-	                "[ $(echo $(cat "+instvz+"/versdtakt)'>'$(cat "+instvz+"/versdt)|bc -l) -eq 0 ]",2,oblog)) {
-	obverb++;
-////  struct stat entwst={0};
+				"[ $(echo $(cat "+instvz+"/versdtakt)'>'$(cat "+instvz+"/versdt)|bc -l) -eq 0 ]",2,oblog)) {
+		obverb++;
+		////  struct stat entwst={0};
 		//// entwickeln muss genauso definiert sein wie in Makefile
-////  const string ziel=instvz+(lstat((instvz+"/entwickeln").c_str(),&entwst)?nix:"/nvers");
-	  const string ziel=instvz;
+		////  const string ziel=instvz+(lstat((instvz+"/entwickeln").c_str(),&entwst)?nix:"/nvers");
+		const string ziel=instvz;
 		pruefverz(ziel,obverb,oblog);
 		Log(violett+DPROG+blau+Txk[T_wird_aktualisiert_bitte_ggf_neu_starten]+schwarz);
 		systemrueck("sh -c 'M="+DPROG+"-master;wget "+defvors+DPROG+defnachs+" -O"+ziel+"/"+DPROG+".tar.gz;"
-				"cd "+ziel+";rm -rf $M;tar xpvf "+DPROG+".tar.gz;cd $M;mv * ..;mv .* .. 2>/dev/null;cd ..;rmdir $M;sh ./install.sh'",2,oblog);
+				"cd "+ziel+";rm -rf $M;tar xpvf "+DPROG+".tar.gz;cd $M;mv * ..;mv .* .. 2>/dev/null;cd ..;rmdir $M;./install.sh 2>/dev/null'",2,oblog);
 	} else {
 		Log(violetts+DPROG+blau+Txk[T_muss_nicht_aktualisiert_werden]+schwarz);
 	}
 	obverb--;
-}
+} // void haupt::update(const string& DPROG)
