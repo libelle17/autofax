@@ -2325,8 +2325,8 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 							ergebnis=gruens+Txk[T_nicht_gefunden];
 						} else if (cmd.substr(0,14)==sudc+"modprobe ") {
 						  ergebnis=gruens+Txk[T_nicht_einfuegbar];
-							// das Ende einer awk-Berechnung reeller Zahlen:
-						} else if (cmd.find("|grep -q -")!=string::npos) {
+							// das Ende einer awk-Berechnung reeller Zahlen und Pruefung auf Negativität:
+						} else if (cmd.find("|grep -q ^-")!=string::npos) {
 						  ergebnis=blaus+ltoan(erg);
 						} else {
 							ergebnis=rots+Txk[T_Exitcode]+ltoan(erg);
@@ -5254,7 +5254,7 @@ void haupt::update(const string& DPROG)
 	perfcl perf("main");
 	if (systemrueck("wget https://raw.githubusercontent.com/"+gitv+"/"+DPROG+"/master/versdt -qO"+instvz+"/versdtakt&&"
 /*//				"[ $(echo $(cat "+instvz+"/versdtakt)'>'$(cat "+instvz+"/versdt)|bc -l) -eq 0 ]",2,oblog))*/
-				"awk \"BEGIN{print $(cat "+instvz+"/versdt)-$(cat "+instvz+"/versdtakt)}\"|grep -q -",2,oblog)) {
+				"awk \"BEGIN{print $(cat "+instvz+"/versdt)-$(cat "+instvz+"/versdtakt)}\"|grep -q ^-",2,oblog)) {
 		Log(violetts+DPROG+blau+Txk[T_muss_nicht_aktualisiert_werden]+schwarz);
 	} else {
 		obverb++;
