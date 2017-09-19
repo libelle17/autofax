@@ -3623,22 +3623,25 @@ int linst_cl::douninst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,uchar
 
 int linst_cl::obfehlt(const string& prog,int obverb,int oblog)
 {
- //// <<violett<<"linst::obfehlt: "<<schwarz<<prog<<endl;
-  switch (ipr) {
-    case zypper: case dnf: case yum: 
-      return systemrueck("rpm -q "+prog+" 2>/dev/null",obverb,oblog);
-    case apt:
-      return systemrueck("dpkg -s "+ersetzeprog(prog)+" 2>/dev/null",obverb,oblog);
-    default: break;
-  }
-  return 2;
+	//// <<violett<<"linst::obfehlt: "<<schwarz<<prog<<endl;
+	string ep;
+	switch (ipr) {
+		case zypper: case dnf: case yum: 
+			return systemrueck("rpm -q "+prog+" 2>/dev/null",obverb,oblog);
+		case apt:
+			ep=ersetzeprog(prog);
+			////      return systemrueck("dpkg -s "+ersetzeprog(prog)+" 2>/dev/null",obverb,oblog);
+			return systemrueck("[ $(dpkg -l '"+ep+"' 2>/dev/null|grep '"+ep+" '|cut -f1 -d' ') = 'ii' ]",obverb,oblog);
+		default: break;
+	}
+	return 2;
 } // uchar linst_cl::obfehlt(const string& prog,int obverb,int oblog)
 
 
 string meinpfad() {
-  char buff[PATH_MAX];
-  buff[0]=0;
-  ssize_t len = readlink("/proc/self/exe", buff, sizeof(buff)-1);
+	char buff[PATH_MAX];
+	buff[0]=0;
+	ssize_t len = readlink("/proc/self/exe", buff, sizeof(buff)-1);
   if (len != -1) {
     buff[len] = '\0';
   }
@@ -5265,6 +5268,6 @@ void haupt::update(const string& DPROG)
 		pruefverz(ziel,obverb,oblog);
 		Log(violett+DPROG+blau+Txk[T_wird_aktualisiert_bitte_ggf_neu_starten]+schwarz);
 		systemrueck("sh -c 'M="+DPROG+"-master;wget "+defvors+DPROG+defnachs+" -O"+ziel+"/"+DPROG+".tar.gz;"
-		"cd "+ziel+";rm -rf $M;tar xpvf "+DPROG+".tar.gz;cd $M;mv * ..;mv .* .. 2>/dev/null;cd ..;rmdir $M;./install.sh;echo \"\"' 2>/dev/null",2,oblog);
+				"cd "+ziel+";rm -rf $M;tar xpvf "+DPROG+".tar.gz;cd $M;mv * ..;mv .* .. 2>/dev/null;cd ..;rmdir $M;./install.sh;' 2>/dev/null",2,oblog);
 	} // if (systemrueck ... else
 } // void haupt::update(const string& DPROG)
