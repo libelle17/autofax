@@ -3631,7 +3631,7 @@ int linst_cl::obfehlt(const string& prog,int obverb,int oblog)
 		case apt:
 			ep=ersetzeprog(prog);
 			////      return systemrueck("dpkg -s "+ersetzeprog(prog)+" 2>/dev/null",obverb,oblog);
-			return systemrueck("[ $(dpkg -l '"+ep+"' 2>/dev/null|grep '"+ep+" '|cut -f1 -d' ') = 'ii' ]",obverb,oblog);
+			return systemrueck("[ $(dpkg -l '"+ep+"' 2>/dev/null|grep '"+ep+"[ :]'|cut -f1 -d' ') = 'ii' ]",obverb,oblog);
 		default: break;
 	}
 	return 2;
