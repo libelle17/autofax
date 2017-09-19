@@ -2808,6 +2808,7 @@ void paramcl::pruefmodem()
 				const string f1=f0+Tx[T_nicht];
 				errv.push_back(errmsgcl(0,f0));
 				errv.push_back(errmsgcl(1,f1));
+				//// aus coreutils; ' time 10 ' geht nicht, '{ { sudo stty -F /dev/ttyS1 1>&3;kill 0;}|{ sleep 10;kill 0;} } 3>&1' auch nicht
 				terg=!systemrueck("timeout 10 "+sudc+"stty -F /dev/"+tty/*//+" time 10"*/,obverb,oblog,&rue2,2,wahr,"",&errv);
 			} else {
 				terg=ttytest(tty);

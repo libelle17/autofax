@@ -300,7 +300,7 @@ void DB::init(
 							datadir=zrueck[zrueck.size()-1];  
 						} else {
 							svec zzruck, zincldir;
-							systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit", obverb,oblog,&zzruck);
+							systemrueck(sudc+"find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit", obverb,oblog,&zzruck);
 							if (!zzruck.size())
 								systemrueck("find "+gethome()+" -name .my.cnf -printf '%p\\n' -quit",obverb,oblog,&zzruck);
 							if (zzruck.size()) {

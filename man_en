@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "19.09.17" "Version 0.45665" "\fB²DPROG²\fR man page"
+.TH man 1 "19.09.17" "Version 0.45669" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -62,6 +62,14 @@ Depending on operating system, accessability and preferences the users thus coul
 
 .SH OPTIONS 
 With '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR', the important and with '\fB²DPROG² -lh\fR', all command line options can be seen. Some options (e.g. the sql commands) cannot bei set via the command line, but only via the configuration file, which can be edited directly or interactively by '\fB²DPROG² -rf\fR'.
+.br
+\fBpruefber()\fR, Datei: \fB/root\fR, Benutzer: \fBroot\fR, mode: \fB1\fR, erg: \fB0\fR
+.br
+\fBpruefber()\fR, Datei: \fB/root/autofax\fR, Benutzer: \fBroot\fR, mode: \fB7\fR, erg: \fB0\fR
+.br
+\fBcheckperm()\fR file: \fB/etc\fR, user: \fBroot\fR, mode: \fB1\fR, res: \fB0\fR
+.br
+\fBcheckperm()\fR file: \fB/etc/capisuite\fR, user: \fBroot\fR, mode: \fB7\fR, res: \fB0\fR
 .br
 \fBOptions which are not saved: \fR
 .br

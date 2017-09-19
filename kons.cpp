@@ -2546,7 +2546,7 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 						} // 					if (faclbak)
 						if (obverb>1) systemrueck(sudc+"sh -c 'ls -ld \""+pfade[i]+"\"'",2,0);
 						if (pfade[i]=="uvz/uuvz/uuuvz") exit(20);
-						const string cmd=string(sudc+"setfacl -")+(!i && obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(ergmod)+"' '"+pfade[i]+"'";
+						const string cmd=string(sudc+"setfacl --mask -")+(!i && obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(ergmod)+"' '"+pfade[i]+"'";
 						if (fake) Log(rots+cmd+schwarz,obverb,oblog);
 						else systemrueck(cmd,obverb,oblog);
 						if (obverb) systemrueck(sudc+"sh -c 'ls -ld \""+pfade[i]+"\"'",2,0);
@@ -2688,8 +2688,8 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 					if (obmachen) {
 						// falls Datei mit Namen eines benötigten Verzeichnisses und obmachen, dann löschen
 						tuloeschen(stack[i],nix,obverb,oblog);
-					}
-				}
+					} // 					if (obmachen)
+				} // 				if(S_ISDIR(sverz.st_mode)) else
 			} // 				if (!lstat(stack[i].c_str(),&sverz))
 			if (obmachen) {
 				if (fehlt) {
@@ -2715,7 +2715,9 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 				// folgendes mindestens notwendig fuer sverz.st_mode
 				fehlt=lstat(stack[i].c_str(),&sverz);
 				// wenn notwendige Rechte fehlen ...
+				obverb++;obverb++;
 				if (int prueferg=pruefber(/*datei=*/stack[i],aktben,/*mod=*/i?1:7,obverb)) {
+				obverb--; obverb--;
 					// .. und korrigiert werden sollen
 					if (obmitfacl) {
 						setfaclggf(stack[i],obverb,oblog, /*obunter=*/wahr, /*mod=*/i?1:7, /*obimmer=*/1,/*faclbak=*/1,/*user=*/aktben);
