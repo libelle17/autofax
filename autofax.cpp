@@ -9136,6 +9136,7 @@ int paramcl::pruefcapi()
 							//              mitcservice=1;
 							//            } // if (!systemrueck(sh -c ...
 							 */
+						  obverb--;
 						} // if (csrueck.size()) 
 						// aktuelles Verzeichnis
 					} // if (!capischonerfolgreichinstalliert) 

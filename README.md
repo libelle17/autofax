@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.45669) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4567) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -165,14 +165,6 @@ options (e.g. the sql commands) cannot bei set via the
 command line, but only via the configuration file, which can
 be edited directly or interactively by &rsquo;<b>autofax
 -rf</b>&rsquo;. <b><br>
-pruefber()</b>, Datei: <b>/root</b>, Benutzer: <b>root</b>,
-mode: <b>1</b>, erg: <b>0 <br>
-pruefber()</b>, Datei: <b>/root/autofax</b>, Benutzer:
-<b>root</b>, mode: <b>7</b>, erg: <b>0 <br>
-checkperm()</b> file: <b>/etc</b>, user: <b>root</b>, mode:
-<b>1</b>, res: <b>0 <br>
-checkperm()</b> file: <b>/etc/capisuite</b>, user:
-<b>root</b>, mode: <b>7</b>, res: <b>0 <br>
 Options which are not saved: <br>
 -v, --verbose</b>: screen output more verbose <b><br>
 -l, --log</b>: put detailed logs in file
@@ -778,7 +770,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.45669) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4567) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -959,14 +951,6 @@ Optionen (z.B. SQL-Befehle) k&ouml;nnen nicht
 die Konfigurationsdatei eingegeben werden, die wiederum
 direkt editiert oder auch &uuml;ber &rsquo;<b>autofax
 -rf</b>&rsquo; interaktiv gepflegt werden kann. <b><br>
-pruefber()</b>, Datei: <b>/root</b>, Benutzer: <b>root</b>,
-mode: <b>1</b>, erg: <b>0 <br>
-pruefber()</b>, Datei: <b>/root/autofax</b>, Benutzer:
-<b>root</b>, mode: <b>7</b>, erg: <b>0 <br>
-pruefber()</b>, Datei: <b>/etc</b>, Benutzer: <b>root</b>,
-mode: <b>1</b>, erg: <b>0 <br>
-pruefber()</b>, Datei: <b>/etc/capisuite</b>, Benutzer:
-<b>root</b>, mode: <b>7</b>, erg: <b>0 <br>
 Optionen, die nicht gespeichert werden: <br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger <b><br>
 -l, --log</b>: protokolliert ausfuehrlich in Datei

@@ -2715,9 +2715,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 				// folgendes mindestens notwendig fuer sverz.st_mode
 				fehlt=lstat(stack[i].c_str(),&sverz);
 				// wenn notwendige Rechte fehlen ...
-				obverb++;obverb++;
 				if (int prueferg=pruefber(/*datei=*/stack[i],aktben,/*mod=*/i?1:7,obverb)) {
-				obverb--; obverb--;
 					// .. und korrigiert werden sollen
 					if (obmitfacl) {
 						setfaclggf(stack[i],obverb,oblog, /*obunter=*/wahr, /*mod=*/i?1:7, /*obimmer=*/1,/*faclbak=*/1,/*user=*/aktben);
@@ -5260,7 +5258,6 @@ void haupt::update(const string& DPROG)
 				"awk \"BEGIN{print $(cat "+instvz+"/versdt)-$(cat "+instvz+"/versdtakt)}\"|grep -q ^-",2,oblog)) {
 		Log(violetts+DPROG+blau+Txk[T_muss_nicht_aktualisiert_werden]+schwarz);
 	} else {
-		obverb++;
 		////  struct stat entwst={0};
 		//// entwickeln muss genauso definiert sein wie in Makefile
 		////  const string ziel=instvz+(lstat((instvz+"/entwickeln").c_str(),&entwst)?nix:"/nvers");
@@ -5268,7 +5265,6 @@ void haupt::update(const string& DPROG)
 		pruefverz(ziel,obverb,oblog);
 		Log(violett+DPROG+blau+Txk[T_wird_aktualisiert_bitte_ggf_neu_starten]+schwarz);
 		systemrueck("sh -c 'M="+DPROG+"-master;wget "+defvors+DPROG+defnachs+" -O"+ziel+"/"+DPROG+".tar.gz;"
-				"cd "+ziel+";rm -rf $M;tar xpvf "+DPROG+".tar.gz;cd $M;mv * ..;mv .* .. 2>/dev/null;cd ..;rmdir $M;./install.sh' 2>/dev/null",2,oblog);
+		"cd "+ziel+";rm -rf $M;tar xpvf "+DPROG+".tar.gz;cd $M;mv * ..;mv .* .. 2>/dev/null;cd ..;rmdir $M;./install.sh;echo \"\"' 2>/dev/null",2,oblog);
 	} // if (systemrueck ... else
-	obverb--;
 } // void haupt::update(const string& DPROG)
