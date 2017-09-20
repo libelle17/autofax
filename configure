@@ -133,13 +133,7 @@ ausricht() {
 #	 for IP in $(cat $1); do
 # wenn $AUNF fehlt oder eine der in $1 erwähnten Programm dort nicht aufgeführt ist, dann zuinstallieren=ja; "; vi ..." nicht zu werten
      [ ! -f $AUNF ]&&zuinst=ja||{
-      for E in $IP; do
-       grep -q "[^;] $E" $AUNF||{ zuinst=ja;break;}
-      done;				
-     }
-     [ -n "$zuinst" ]&&{
-			T=${UDPR}$IP;
-			printf "$T\n# $3\nprintf \"(Inst: $(date +%F\ %T)): \$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
+      for E in $IP; do grep -q "[^;] $E" $AUNF||{ zuinst=ja;break;} done;				} [ -n "$zuinst" ]&&{ T=${UDPR}$IP; printf "$T\n# $3\nprintf \"(Inst: $(date +%F\ %T)): \$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
 			[ $2/ = "vim/" ] &&{ printf "alias vi>$KR&&${SUDC}unalias vi\necho \"alias vi>$KR&&${SUDC}unalias vi\"\n">>$AUNF;}
 		 }
 #	 done;
@@ -159,7 +153,14 @@ einricht() {
    getIPR;
 	 [ "$1" = _ ]|| printf "$blau$1$reset not found/ nicht gefunden => "  
 	 printf "Installing/ Installiere $blau$2$reset ...\n";
-	 [ "$1" = "vim" -a $fed = 1 ] &&{ ${SUDC}yum update vim-minimal;}
+	 [ "$1" = "vim" -a $fed = 1 ]&&{ ${SUDC}yum update vim-minimal;}
+	 [ $deb = 1 ]&&{
+			# wenn cdrom-Zeile vorkommt, vor ftp.-debian-Zeile steht und www.debian.org erreichbar ist, dann alle cdrom-Zeilen hinten anhängen
+			# gleichlautend in kons.cpp: linst_cl::linst_cl(int obverb,int oblog)
+			${SUDC} sh -c "S=/etc/apt/sources.list;F='^[^#]*cdrom:';grep -qm1 \$F \$S && \ 
+			    test 0\$(sed -n '/^[^#]*ftp.*debian/{=;q}' \$S) -gt 0\$(sed -n '/'\$F'/{=;q}' \$S) && \  
+					ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/'\$F'/{H;d};\${p;x}' \$S;:"
+	 }
 	 rweg=0;
    CMD=${IPR};
 	 [ _$(echo $1|cut -c1-3) = _"gcc" -o _$(echo $2|cut -c1-3) = _"gcc" ]&&{
