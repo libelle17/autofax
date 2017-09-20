@@ -5053,7 +5053,7 @@ void paramcl::bereinigevz(const size_t aktc/*=0*/)
 							hgelu.insert(toc[1]);
 						} else {
 							hmissl.insert(toc[1]);
-						}
+						} // 						if (toc[0]=="SEND" && toc[2]=="\"\"") else
 					} // 			for(size_t i=0;i<rueck.size();i++)
 				} // 		if (!lstat(xferfaxlog.c_str(),&entryvz))
 			} // 	if (!xferfaxlog.empty())
@@ -5339,7 +5339,7 @@ size_t paramcl::loescheallewartenden()
 				fsfav.push_back(/*6*/fsfcl(*(*cerg+0),*(*cerg+1),6));
 			} else {
 				::Log(blaus+ltoan(++j)+schwarz+": "+allec[i]+blau+schwarz,1,oblog);
-			}
+			} // 			if(cerg=zl.HolZeile(),cerg?*cerg:0) else
 		} // 				if (allec[i].find(".sff")!=string::npos)
 	} // 			for(size_t i=0;i<allec.size();i++)
 	for(size_t i=0;i<alled.size();i++) {
@@ -5352,7 +5352,7 @@ size_t paramcl::loescheallewartenden()
 			fsfav.push_back(/*6*/fsfcl(*(*cerg+0),*(*cerg+1),6));
 		} else {
 			::Log(blaus+ltoan(++j)+schwarz+": "+alled[i]+blau+schwarz,1,oblog);
-		}
+		} // 		if(cerg=zl.HolZeile(),cerg?*cerg:0)
 	} // 			for(size_t i=0;i<alled.size();i++)
 
 	char ***cerg;
