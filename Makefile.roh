@@ -271,14 +271,14 @@ $(DEPDIR)/%.d: ;
 
 .PHONY: compiler
 compiler:
-	@printf " Untersuche/Examining Compiler ...\r" >$(BA)
+	@printf " Untersuche/Examining Compiler ...\n" >$(BA)
 ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
 endif
 	@[ "$(GCCOK)" = "1" ]||{ \
 	[ "$(DISTR)" = "1" ]&&{ $(SUDC)add-apt-repository ppa:ubuntu-toolchain-r/test;$(SUDC)apt-get update;};:;\
-	{ printf "Installiere/Installing Compiler ...\r" >$(BA);./configure inst "$(CCInst)" "$(COMP)";:;};}
+	{ printf "Installiere/Installing Compiler ...\n" >$(BA);./configure inst "$(CCInst)" "$(COMP)";:;};}
 	-@for r in 1 2;do [ $$r = 1 ]&&{ lc="$(libmcd)";:;}||lc="$(libmc1d)";\
 	[ -f /usr/include/mysql/mysql.h>$(KR) ]&& \
 	find $$(find /usr -maxdepth 1 -type d -name "lib*" $(KF)|sort -r) -name "libmysqlclient.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
@@ -338,7 +338,7 @@ endif
 	printf " %b$@%b neu erstellt aus: $$A\n" $(blau) $(reset)
 
 define priv_html
-	-@printf " erstelle/generating:%b$(1)%b\r" $(blau) $(reset)
+	-@printf " erstelle/generating:%b$(1)%b\n" $(blau) $(reset)
 	-@groff -mandoc -Thtml -v >$(KR);EXC="$$$$?"; \
 	for p in $(PGROFF); do { [ $$$${EXC} -gt 1 ]|| ! which groff>$(KR)|| ! $(SPR) $$$$p>$(KR);}&&{ ./configure inst _ $$$$p verbose;}; done; :;
 	-@rm -f $(1).html
@@ -378,7 +378,7 @@ clean: distclean fernclean
 
 .PHONY: distclean
 distclean: 
-	@printf " Bereinige/Cleaning ...\r" >$(BA)
+	@printf " Bereinige/Cleaning ...\n" >$(BA)
 	@ZUL="$(EXEC) $(OBJ) .d/* $(HTMLS)";GEL=$$(ls -1 $$ZUL $(KF)|tr '\n' ' '); rm -f $$ZUL $(KF); \
 	[ -z "$$(echo $$GEL|sed 's/ *$$//')" ]&&GEL="Hier/here: Nichts/nothing";printf " %b$$GEL%b geloescht/deleted!\n" $(blau) $(reset); 
 
@@ -396,6 +396,7 @@ confclean:
 .PHONY: uninstall
 uninstall: fernclean
 	-@tac $(UNF)>tmp_$(UNROH)&& $(SUDC)blau=$(blau) reset=$(reset) bash tmp_$(UNROH);: # uninstallinv von hinten nach vorne abarbeiten
+	-@[ "$(DISTR)" = "1" ]&&{ $(SUDC)apt-get -f install;};:;
 	-@printf "Fertig mit uninstall!\n"
 
 #//rufe:
