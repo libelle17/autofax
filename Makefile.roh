@@ -481,6 +481,7 @@ dotrans:
 	   printf "%b$(Ziel)/$$D%b in %b$(Ziel)/$$ROH/%b umbenannt\n" $(blau) $(reset) $(blau) $(reset);\
 	  };\
 	 done;\
+	 echo $(DPROG)>$(Ziel)/pname;\
 	 printf "Insgesamt $$blau$$DAT$$reset Dateien kopiert\n";\
 	fi;
 	@$(call setz_gitv,$(Ziel))
