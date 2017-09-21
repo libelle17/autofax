@@ -419,7 +419,7 @@ uninstall: fernclean
 
 .PHONY: verschieb
 verschieb:
-	Z=../$(DPROG)rein;make all install&&{ make transfer $Z;{ cd $Z;make version; cd -;};}
+	Z=../$(DPROG)rein;make all install&&{ make transfer $$Z;{ cd $$Z;make version; cd -;};}
 
 .PHONY: version
 version: dovers
