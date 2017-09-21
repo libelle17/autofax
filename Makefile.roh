@@ -500,7 +500,7 @@ dotrans:
 define setz_gitv
 	 @D=$(1)/.git/config; GITV=$$([ -f $$D ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' $$D);\
 	 sed -i 's/^\(\[ -z .* \]&& GITV=\).*;/\1'$$GITV';/g' $(1)/install.sh;\
-	 [ -z "$$GITV" ]&& $$GITV=$(EXEC);\
+	 [ -z "$$GITV" ]&& GITV=$(EXEC);\
 	 [ "$$GITV" = "$(sed 's/"//g' $(1)/gitvdt)" ]|| echo \"$$GITV\">$(1)/gitvdt;:;
 endef
 
