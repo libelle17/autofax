@@ -1,5 +1,5 @@
 #!/bin/bash
-#// string substitution geht nur in bash, nicht in dash, was auf deb-Systemen standardmaessig durch sh aufgerufen wird
+#// string substitution geht nur in bash, nicht in dash, welches auf deb-Systemen standardmaessig durch sh aufgerufen wird
 #// => in diesem Fall Aufruf in bash-Aufruf umwandeln
 #// [ -z "$BASH_SOURCE" ]&&{ bash "$0";exit;}
 # normalerweise redundant, nur nicht, falls diese Datei manuell umbenannt wird ...
@@ -11,8 +11,9 @@ if [ $ICH = -bash ]; then
  ICH=$(basename $ICHges)
 fi
 # die naechsten zwei Variablen werden in configure gebraucht
-DPROG=autofax;
-# in .git/config steht z.B. "        url = ssh://git@github.com/libelle17/autofax.git"
+#// DPROG=autofax;
+[ -f pname ]&&DPROG=$(cat pname)||case $0 in *_*) DPROG=${0%%_*};; *) DPROG=${PWD##*/};; esac;
+# in .git/config steht z.B. "        url = ssh://git@github.com/<GITV>/<DPROG>.git"
 GITV=$([ -f .git/config ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' .git/config);
 #// wenn nicht vorhanden, dann schauen, ob gitvdt existiert
 #// [ -z $GITV ]&& [ -f gitvdt ]&& GITV=$(sed 's/"//g' gitvdt);
@@ -50,6 +51,7 @@ if test "$ICH" != configure -a "$ICH" != viall -a "$ICH" != modziel.sh -a $AUFRU
 			test -e $DPROG && mv $DPROG ${DPROG}_1; 
 			mv $DPROG-master $DPROG &&{
 				cd $DPROG; 
+			  echo $DPROG>$DPROG/pname
 				. ./configure
 				Q=../${DPROG}_1/$INSTLOG; test -f $Q && cp -a $Q .||:
 				Q=../${DPROG}_1/$UNF; test -f $Q && cp -a $Q .||:

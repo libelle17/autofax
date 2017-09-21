@@ -417,6 +417,10 @@ uninstall: fernclean
 #//	 echo $(call uninst,$(COMP))
 #//	$(SUDC)blau=$(blau) reset=$(reset) sh gtest
 
+.PHONY: verschieb
+verschieb:
+	Z=../$(DPROG)rein;make all install&&{ make transfer $Z;{ cd $Z;make version; cd -;};}
+
 .PHONY: version
 version: dovers
 .PHONY: dovers

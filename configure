@@ -133,7 +133,13 @@ ausricht() {
 #	 for IP in $(cat $1); do
 # wenn $AUNF fehlt oder eine der in $1 erwähnten Programm dort nicht aufgeführt ist, dann zuinstallieren=ja; "; vi ..." nicht zu werten
      [ ! -f $AUNF ]&&zuinst=ja||{
-      for E in $IP; do grep -q "[^;] $E" $AUNF||{ zuinst=ja;break;} done;				} [ -n "$zuinst" ]&&{ T=${UDPR}$IP; printf "$T\n# $3\nprintf \"(Inst: $(date +%F\ %T)): \$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
+      for E in $IP; do 
+       grep -q "[^;] $E" $AUNF||{ zuinst=ja;break;} 
+      done;				
+     } 
+     [ -n "$zuinst" ]&&{ 
+      T=${UDPR}$IP; 
+      printf "$T\n# $3\nprintf \"(Inst: $(date +%F\ %T)): \$blau%%s\$reset\\\n\" \"$T\"\n">>$AUNF;
 			[ $2/ = "vim/" ] &&{ printf "alias vi>$KR&&${SUDC}unalias vi\necho \"alias vi>$KR&&${SUDC}unalias vi\"\n">>$AUNF;}
 		 }
 #	 done;
@@ -160,6 +166,14 @@ einricht() {
 			${SUDC} sh -c "S=/etc/apt/sources.list;F='^[^#]*cdrom:';grep -qm1 \$F \$S && \ 
 			    test 0\$(sed -n '/^[^#]*ftp.*debian/{=;q}' \$S) -gt 0\$(sed -n '/'\$F'/{=;q}' \$S) && \  
 					ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/'\$F'/{H;d};\${p;x}' \$S;:"
+			# für jessie weitere evtl. notwendige Befehle
+			# in /etc/apt/sources.list einfügen: "deb http://ftp.de.debian.org/debian/ unstable main contrib non-free
+			#                                    "deb-src http://ftp.de.debian.org/debian/ unstable main contrib non-free"
+			# sudo apt-get -f install
+			# sudo apt-get update && sudo apt-get upgrade
+			# sudo apt-get autoremove
+			# sudo apt-get install gnome-tweak-tool
+			# sudo apt-get install libboost-filesystem-dev
 	 }
 	 rweg=0;
    CMD=${IPR};
