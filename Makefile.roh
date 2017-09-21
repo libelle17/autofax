@@ -481,7 +481,7 @@ dotrans:
 	  chmod --reference=$$D $(Ziel)/$$D;\
 	  chown --reference=$$D $(Ziel)/$$D;\
 	 done;\
-	 for D in .exrc Makefile install.sh man_?? versdt viall configure; do\
+	 for D in .exrc Makefile install.sh man_?? versdt gitvdt pname viall configure; do\
 	  [ -f $$D ]&&{ sed '/^#\/\/.*/d;s_#\/\/.*__g' $$D>$(Ziel)/$$D;((DAT++));\
 	   printf "$$blau$$D$$reset nach $$blau$(Ziel)/$$reset kopiert\n"; };\
 	   chmod --reference=$$D $(Ziel)/$$D;\
