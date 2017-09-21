@@ -31,6 +31,7 @@
 # "make git" => aktualisiert die Datei auf dem zugeordneten git-Server
 # "make version" => kompilieren mit opts, installieren und aktualisieren auf git-Server mit einheitlicher Dateiversion
 # "make transfer <zielvz>" => kopieren der Programmdateien abzüglich bestimmter Kommentare in Zielverzeichnis <zielvz>
+# "make verschieb" => wie transfer, mit ../<DPROG>rein als Zielverzeichnis
 
 ICH::=$(firstword $(MAKEFILE_LIST))
 SRCS::=$(wildcard *.cpp)
