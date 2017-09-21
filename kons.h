@@ -37,6 +37,7 @@ using namespace std;
 extern const string& instvz; // in kons.cpp, z.B. /root/autofax
 extern const string& unindt; // instvz+"uninstallinv"
 extern const int sfeh[]; // T_Dienst_laeuft, T_Dienst_inexistent, ...
+extern const double& versnr; // Programmversion
 string* loeschefarbenaus(string *zwi);
 int Log(const short screen,const short file, const bool oberr,const short klobverb, const char *format, ...);
 int Log(const string& text,const short screen=1,const short file=1,const bool oberr=0,const short klobverb=0);
@@ -1035,9 +1036,10 @@ int wartaufpids(pidvec *pidv,const ulong runden=0,const int obverb=0,const strin
 extern const string s_true; // ="true";
 extern const string s_dampand; // =" && ";
 extern const string s_gz; // ="gz";
-extern const string defvors; // ="https://github.com/"+gitv+"/";
-extern const string defnachs; // ="/archive/master.tar.gz";
+extern const string& defvors; // ="https://github.com/"+gitv+"/";
+extern const string& defnachs; // ="/archive/master.tar.gz";
 void viadd(string *cmd,const string& datei,const uchar ro=0,const uchar hinten=0, const uchar unten=0);
+
 class haupt
 {
 	protected:
@@ -1052,6 +1054,7 @@ class haupt
 		uchar nochkeincron;
 		uchar cronzuplanen;
 		uchar cmeingegeben=0;
+		uchar crongeprueft=0;
 		static const string edit;
 	public:
     int obverb=0; // verbose

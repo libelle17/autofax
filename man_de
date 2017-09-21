@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "21.09.17" "Version 0.45672" "Manual-Seite für ²DPROG²"
+.TH man 1 "21.09.17" "Version 0.45686" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -271,7 +271,7 @@ Senden und Empfangen wiederholen sich ggf. minütlich, bis der jeweils andere Te
 \fBHardware\fR: Computer mit einer Fritzcard 2.0 oder 2.1 und/oder einem linux-kompatiblen Modem; in der vorliegenden Fassung wird für eine automatische Installation des Programms (unter Beantwortung einiger Rückfragen) ein US Robotics Modem USR5637 und eine der untenstehenden Linuxversionen benötigt.
 Im Fall der Verwendung von Fritzcard plus einem Modem kann das Programm beide Faxwege alternativ nutzen, um die Übertragungssicherheit zu erhöhen. 
 .br
-\fBSoftware\fR: Das Programm wurde auf eine Installation von Opensuse >= 42.1, Debian >= 8.60, Ubuntu >= 16.04, Mint >= 18 oder Fedora >= 24 mit jeweils Standardoptionen abgestimmt. System D muss installiert sein bzw. systemctl muss laufen, was in den genannten Programmversionen der Fall ist. Jeweils einer der Paketmanager rpm oder dpkg sowie apt, dnf, yum oder zypper muss installiert sein, wie in den genannten Linuxdistributionen standardmäßig der Fall. Die Deinstallation der durch ²DPROG² hinzugefügten Programme mit \fBmake uninstall\fR ist gegenwärtig nur für englische und deutsche Versionen der Paketmanager eingerichtet.
+\fBSoftware\fR: Das Programm wurde auf eine Installation von Opensuse >= 42.1, Debian >= 9.10, Ubuntu >= 16.04, Mint >= 18 oder Fedora >= 24 mit jeweils Standardoptionen abgestimmt. System D muss installiert sein bzw. systemctl muss laufen, was in den genannten Programmversionen der Fall ist. Jeweils einer der Paketmanager rpm oder dpkg sowie apt, dnf, yum oder zypper muss installiert sein, wie in den genannten Linuxdistributionen standardmäßig der Fall. Die Deinstallation der durch ²DPROG² hinzugefügten Programme mit \fBmake uninstall\fR ist gegenwärtig nur für englische und deutsche Versionen der Paketmanager eingerichtet.
 .br
 .\"In Manjaro können vor Installation noch die Befehle: 'sudo pacman -S wget vi' und 'sudo pacman -Syu' nötigt werden.
 .SH AUTOMATISCH INSTALLIERTE PROGRAMMPAKETE

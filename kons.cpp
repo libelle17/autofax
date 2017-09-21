@@ -4766,8 +4766,8 @@ const string& gitv=
 const string s_true="true";
 const string s_dampand="&&";
 const string s_gz="gz";
-const string defvors="https://github.com/"+gitv+"/";
-const string defnachs="/archive/master.tar.gz";
+const string& defvors="https://github.com/"+gitv+"/";
+const string& defnachs="/archive/master.tar.gz";
 
 haupt::haupt()
 {
@@ -5114,11 +5114,12 @@ void haupt::tucronschreib(const string& zsauf,const uchar cronzuplanen,const str
 	systemrueck(bef,obverb,oblog);
 	ersetzAlle(unicmd,"'\\''","'");
 	anfgg(unindt,unicmd,bef,obverb,oblog);
-}
+} // void haupt::tucronschreib(const string& zsauf,const uchar cronzuplanen,const string& cbef)
 
 // wird aufgerufen in: main
 uchar haupt::pruefcron()
 {
+  crongeprueft=1;
 	uchar obschreib=0;
 	//  svec rueck;
 	int cronda=0;

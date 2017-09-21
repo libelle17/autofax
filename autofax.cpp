@@ -5432,7 +5432,7 @@ void paramcl::tu_listi(const uchar zurauswahl/*=0*/)
 	cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<Tx[T_empfangene_Faxe]<<schwarz<<endl;
 	size_t j=0;
 	while (cerg=listi.HolZeile(),cerg?*cerg:0) {
-		cout<<++j<<") "<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(85)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(17)<<*(*cerg+2)<<"|"
+		cout<<setw(3)<<++j<<") "<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(84)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(13)<<*(*cerg+2)<<"|"
 			<<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
     if (zurauswahl) vinca<<*(*cerg+4);
 	} // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
@@ -6555,7 +6555,7 @@ void paramcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // fax
 				//// <<"fsf.id: "<<violett<<fsf.id<<schwarz<<endl;
 				//// <<"fsf.idalt: "<<violett<<fsf.idalt<<schwarz<<endl;
 				::Log("id: "+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
-				ausg<<blau<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; // ab hier Neue-Zeile-Zeichen immer am Anfang der naechsten Zeile
+				ausg<<blau<<setw(2)<<faxord<<") "<<rot<<wvz<<vtz<<fsf.original<<schwarz<<": "; //ab hier Neue-Zeile-Zeichen immer am Anfang d.nae Zeile
 				// a) ueber capisuite
 				// den Status in Capi der aus spool geholten Zeile untersuchen, dort aktualisieren
 				//   und ggf. in hylafax stoppen
@@ -7534,8 +7534,11 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 // wird aufgerufen in: main
 void paramcl::zeigueberschrift()
 {
-	::Log(Tx[T_Verwende]
-			+blaus+(obcapi?"Capisuite":"")+schwarz
+	pthread_mutex_lock(&printf_mutex);
+	char buf[20]; snprintf(buf,sizeof buf-1,"%.5f",versnr);
+	pthread_mutex_unlock(&printf_mutex);
+	::Log(schwarzs+Txk[T_Programm]+blau+mpfad+schwarz+", V.: "+blau+buf+schwarz+", "+Tx[T_Verwende]
+			+blau+(obcapi?"Capisuite":"")+schwarz
 			+(obcapi&&obhyla?", ":"")
 			+blau+(obhyla?"Hylafax":"")+schwarz
 			+(!obcapi&&!obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):"")
@@ -7545,9 +7548,11 @@ void paramcl::zeigueberschrift()
 			+(shfaxd&&sfaxq&&sfaxgetty?dblaus+"Hylafax "
 				+(shfaxd->laeuft()&&sfaxq->laeuft()&&sfaxgetty->laeuft()?
 					(shfaxd->lief()&&sfaxq->lief()&&sfaxgetty->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz:"")
-			+Tx[T_Aufrufintervall]+blau
+			+(crongeprueft?
+			Tx[T_Aufrufintervall]+blaus
 			+(vorcm!=cronminut&&!(vorcm.empty()&&cronminut=="0")?((vorcm.empty()?Txk[T_gar_nicht]:vorcm)+" -> "):"")
-			+(cronminut=="0"?Tx[T_kein_Aufruf]+schwarzs:cronminut+schwarz+(cronminut=="1"?Tx[T_Minute]:Txk[T_Minuten])),1,oblog);
+			+(cronminut=="0"?Tx[T_kein_Aufruf]+schwarzs:cronminut+schwarz+(cronminut=="1"?Tx[T_Minute]:Txk[T_Minuten])):
+			  ""),1,oblog);
 } // void paramcl::zeigueberschrift()
 
 // ermittelt fuer eine in ein Zielverzeichnis zu kopierende Datei den dortigen Namen
@@ -10157,27 +10162,30 @@ int main(int argc, char** argv)
 		pruefudoc(pm.My,pm.tudoc, pm.obverb,pm.oblog);
 		pruefinctab(pm.My,pm.tinca, pm.obverb,pm.oblog);
 	} // 	if (!pm.keineverarbeitung)
-	if (pm.kez) {
-		if (pm.obcapi) pm.korrigierecapi(ltage);
-		if (pm.obhyla) pm.korrigierehyla(ltage);
-		pm.empfarch(/*obalte=*/1);
-	} else if (pm.bvz) {
-		pm.bereinigevz(/*aktc=*/0);
-	} else if (pm.anhl) {
-		pm.anhalten();
-	} else if (pm.lista) {
-		pm.tu_lista("1");
-	} else if (pm.listf) {
-		pm.tu_lista("0");
-	} else if (pm.listi) {
-		pm.tu_listi();
-	} else if (pm.listw) {
-		pm.untersuchespool(/*mitupd=*/0,/*aktc=*/3);
-		pm.zeigweitere();
-		pm.Log(blaus+Txk[T_Ende]+schwarz);
-		pm.schlussanzeige();
-	} else if (!pm.suchstr.empty()) {
-		pm.suchestr();
+	if (pm.kez||pm.bvz||pm.anhl||pm.lista||pm.listf||pm.listi||pm.listw||!pm.suchstr.empty()) {
+		pm.zeigueberschrift();
+		if (pm.kez) {
+			if (pm.obcapi) pm.korrigierecapi(ltage);
+			if (pm.obhyla) pm.korrigierehyla(ltage);
+			pm.empfarch(/*obalte=*/1);
+		} else if (pm.bvz) {
+			pm.bereinigevz(/*aktc=*/0);
+		} else if (pm.anhl) {
+			pm.anhalten();
+		} else if (pm.lista) {
+			pm.tu_lista("1");
+		} else if (pm.listf) {
+			pm.tu_lista("0");
+		} else if (pm.listi) {
+			pm.tu_listi();
+		} else if (pm.listw) {
+			pm.untersuchespool(/*mitupd=*/0,/*aktc=*/3);
+			pm.zeigweitere();
+			pm.Log(blaus+Txk[T_Ende]+schwarz);
+			pm.schlussanzeige();
+		} else if (!pm.suchstr.empty()) {
+			pm.suchestr();
+		} // 		if (pm.kez)
 	} else {
 		pm.pruefcron(); // soll vor Log(Tx[T_Verwende ... stehen
 		if (!pm.keineverarbeitung) {

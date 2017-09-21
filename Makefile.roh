@@ -32,6 +32,7 @@
 # "make version" => kompilieren mit opts, installieren und aktualisieren auf git-Server mit einheitlicher Dateiversion
 # "make transfer <zielvz>" => kopieren der Programmdateien abzüglich bestimmter Kommentare in Zielverzeichnis <zielvz>
 # "make verschieb" => wie transfer, mit ../<DPROG>rein als Zielverzeichnis
+# "make ruf" => ruft das Programm auf
 
 ICH::=$(firstword $(MAKEFILE_LIST))
 SRCS::=$(wildcard *.cpp)
@@ -422,6 +423,10 @@ uninstall: fernclean
 .PHONY: verschieb
 verschieb:
 	Z=../$(DPROG)rein;make all install&&{ make transfer $$Z;{ cd $$Z;make version; cd -;};}
+
+.PHONY: ruf
+ruf:
+	@$(EXPFAD)/$(EXEC)
 
 .PHONY: version
 version: dovers

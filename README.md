@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.45672) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45686) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -497,7 +497,7 @@ answering some questions). In case of a concurrent use of a
 fritzcard and a modem, the program can optimize the security
 of transmission of a fax. <b><br>
 Software</b>: The program was adjusted to an installation of
-Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
+Opensuse &gt;= 42.1, Debian &gt;= 9.10, Ubuntu &gt;= 16.04,
 Mint &gt;= 18 or Fedora &gt;= 24 with standard options.
 System D has to be installed, i.e., &quot;systemctl&quot;
 has to run, which is the case in the mentioned program
@@ -770,7 +770,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.45672) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45686) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1314,7 +1314,7 @@ Fritzcard plus einem Modem kann das Programm beide Faxwege
 alternativ nutzen, um die &Uuml;bertragungssicherheit zu
 erh&ouml;hen. <b><br>
 Software</b>: Das Programm wurde auf eine Installation von
-Opensuse &gt;= 42.1, Debian &gt;= 8.60, Ubuntu &gt;= 16.04,
+Opensuse &gt;= 42.1, Debian &gt;= 9.10, Ubuntu &gt;= 16.04,
 Mint &gt;= 18 oder Fedora &gt;= 24 mit jeweils
 Standardoptionen abgestimmt. System D muss installiert sein
 bzw. systemctl muss laufen, was in den genannten
