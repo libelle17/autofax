@@ -276,7 +276,7 @@ ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
 endif
-	[ "$(GCCOK)" = "1" ]||{ \
+	@[ "$(GCCOK)" = "1" ]||{ \
 	[ "$(DISTR)" = "1" ]&&{ $(SUDC)add-apt-repository ppa:ubuntu-toolchain-r/test;$(SUDC)apt-get update;};:;\
 	{ printf "Installiere/Installing Compiler ...\n" >$(BA);./configure inst "$(CCInst)" "$(COMP)";:;};}
 	-@for r in 1 2;do [ $$r = 1 ]&&{ lc="$(libmcd)";:;}||lc="$(libmc1d)";\
