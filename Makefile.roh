@@ -481,7 +481,7 @@ dotrans:
 	  chmod --reference=$$D $(Ziel)/$$D;\
 	  chown --reference=$$D $(Ziel)/$$D;\
 	 done;\
-	 for D in .exrc Makefile install.sh man_?? versdt gitvdt pname viall configure; do\
+	 for D in .exrc Makefile install.sh man_?? versdt pname viall configure; do\
 	  [ -f $$D ]&&{ sed '/^#\/\/.*/d;s_#\/\/.*__g' $$D>$(Ziel)/$$D;((DAT++));\
 	   printf "$$blau$$D$$reset nach $$blau$(Ziel)/$$reset kopiert\n"; };\
 	   chmod --reference=$$D $(Ziel)/$$D;\
@@ -500,6 +500,7 @@ dotrans:
 define setz_gitv
 	 @D=$(1)/.git/config; GITV=$$([ -f $$D ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' $$D);\
 	 sed -i 's/^\(\[ -z .* \]&& GITV=\).*;/\1'$$GITV';/g' $(1)/install.sh;\
+	 [ -z "$$GITV" ]&& $$GITV=$(EXEC);\
 	 [ "$$GITV" = "$(sed 's/"//g' $(1)/gitvdt)" ]|| echo \"$$GITV\">$(1)/gitvdt;:;
 endef
 
