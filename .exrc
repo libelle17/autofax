@@ -1,5 +1,8 @@
 set number
 set autoindent
+filetype indent on
+set smartindent
+" autocmd BufRead,BufWritePre *.sh normal gg=G
 set tabstop=2
 set autoread
 set history=700

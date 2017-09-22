@@ -444,7 +444,7 @@ dovers: README.md
 	@git commit -m "Vor Version $$(cat versdt)"
 	@git add $(GDAT:vgb.cpp=) versdt README.md 
 	@git commit -m "Version $$(cat versdt)"
-	@git push -u origin master
+	@git push
 
 FERTIG=$(error Fertig mit Transfer!)
 TRS::=transfer

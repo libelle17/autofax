@@ -7,8 +7,8 @@
 AUFRUFE=$(expr $AUFRUFE + 1)
 ICH=$(basename "$0")
 if [ $ICH = -bash ]; then 
- declare -r ICHges=$(readlink -f "${BASH_SOURCE[0]}")
- ICH=$(basename $ICHges)
+	declare -r ICHges=$(readlink -f "${BASH_SOURCE[0]}")
+	ICH=$(basename $ICHges)
 fi
 # die naechsten zwei Variablen werden in configure gebraucht
 #// DPROG=autofax;
@@ -26,42 +26,50 @@ if test "$ICH" != configure -a "$ICH" != viall -a "$ICH" != modziel.sh -a $AUFRU
 	# aPWD=`pwd` 
 	nPWD=${PWD##*/}
 	# wenn $DPROG schon das aktuelle Verzeichnis ist und wenn es dort einige notwendige Dateien gibt, dann nicht mehr neu runterladen ...
-  ERF=0;
+	ERF=0;
 	[ -f Makefile -o -f Makefile.roh ]&&[ -f $DPROG.cpp -a -f configure ]&& ERF=1;
-	[ $ERF = 1 ]&&{
+	[ $ERF = 1 ]&& 
+	{
 		. ./configure;
 		printf "${blau}Installing/ Installiere $rot$DPROG$reset ...\n";:;
-	}||{
-	# ... sonst moegliche alte Quelldateiverzeichnisse $DPROG umbenennen, aktuelle Version neu herunterladen ...
+	}|| 
+	{ # ... sonst moegliche alte Quelldateiverzeichnisse $DPROG umbenennen, aktuelle Version neu herunterladen ...
 		printf "Downloading/ Lade runter $DPROG ...\n"
 		cd ~; 
 		T=$DPROG.tar.gz;
 		HOSTER=github.com
-			wget https://$HOSTER/$GITV/$DPROG/archive/master.tar.gz -O "$T" && 
-			tar xpvf $T && 
-			rm -f $T && {
-			VORIGE=$(ls -d ~/${DPROG}_* 2>/dev/null| cut -d"_" -f2 | sort -nr);
-			for i in $VORIGE; do 
-				case $i in ""|*[!0-9]*);; *) 
-					j=$((i+1)); 
-					printf "mv ${DPROG}_$i ${DPROG}_$j\n"; 
-					mv ${DPROG}_$i ${DPROG}_$j; 
+		wget https://$HOSTER/$GITV/$DPROG/archive/master.tar.gz -O "$T" && 
+		tar xpvf $T && 
+		rm -f $T &&  
+		{ VORIGE=$(ls -d ~/${DPROG}_* 2>/dev/null| cut -d"_" -f2 | sort -nr);
+			for i in $VORIGE; do  
+				case $i in 
+					""|*[!0-9]*)
+						;; 
+					*) 
+						j=$((i+1)); 
+						printf "mv ${DPROG}_$i ${DPROG}_$j\n"; 
+						mv ${DPROG}_$i ${DPROG}_$j; 
 				esac; 
 			done; 
 			test -e $DPROG && mv $DPROG ${DPROG}_1; 
-			mv $DPROG-master $DPROG &&{
+			mv $DPROG-master $DPROG && 
+			{
 				cd $DPROG; 
-			  echo $DPROG>$DPROG/pname
+				echo $DPROG>$DPROG/pname
 				. ./configure
 				Q=../${DPROG}_1/$INSTLOG; test -f $Q && cp -a $Q .||:
 				Q=../${DPROG}_1/$UNF; test -f $Q && cp -a $Q .||:
 			}
-		}|| exit;
+		} || 
+		exit;
 	}
-	$SPR make >/dev/null ||{ printf "GNU make missing/fehlt\n"; exit;}
+	$SPR make >/dev/null ||  
+	{ printf "GNU make missing/fehlt\n"; exit;
+	}
 	# ... und dann kompilieren und installieren
-	make opts &&
-	${SUDC}make install; erg=$?;
+	make opts && ${SUDC}make install; 
+	erg=$?;
 	[ $erg = 0 ]&& farbe=$blau||farbe=$rot;
 	printf "Result code/ Ergebniscode: ${farbe}$erg${reset}\n";
 fi
