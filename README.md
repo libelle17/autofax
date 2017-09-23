@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.45688) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4569) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -172,8 +172,17 @@ by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>Options
-which are not saved: <br>
+
+<p style="margin-left:11%; margin-top: 1em">&rsquo;<b>autofax
+-?</b>&rsquo; or &rsquo;<b>autofax -h</b>&rsquo; shows the
+important command line options and &rsquo;<b>autofax
+-lh</b>&rsquo; all of them. Some options (e.g. the sql
+commands for finding an addressee from the fax number)
+cannot be set via the command line, but only via the
+configuration file, which can be edited directly by
+&rsquo;<b>autofax -vi</b>&rsquo; or interactively by
+&rsquo;<b>autofax -rf</b>&rsquo;. <b><br>
+Options which are not saved: <br>
 -v, --verbose</b>: screen output more verbose <b><br>
 -l, --log</b>: put detailed logs in file
 &rsquo;<b>/var/log/autofax.log</b>&rsquo; (otherwise
@@ -781,7 +790,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.45688) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4569) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -971,8 +980,19 @@ den Stand des Faxens &uuml;berpr&uuml;fen.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>Optionen,
-die nicht gespeichert werden: <br>
+
+<p style="margin-left:11%; margin-top: 1em">&rsquo;<b>autofax
+-?</b>&rsquo; oder &rsquo;<b>autofax -h</b>&rsquo; zeigt die
+wichtigen Befehlszeilenoptionen und &rsquo;<b>autofax
+-lh</b>&rsquo; alle. Einige Optionen (z.B. die SQL-Befehle
+zur Suche eines Adressaten aus der Faxnummer)
+k&ouml;nnen nicht &uuml;ber die Befehlszeile,
+sondern nur &uuml;ber die Konfigurationsdatei eingegeben
+werden, die wiederum &uuml;ber &rsquo;<b>autofax
+-vi</b>&rsquo; direkt editiert oder auch &uuml;ber
+&rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
+kann. <b><br>
+Optionen, die nicht gespeichert werden: <br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger <b><br>
 -l, --log</b>: protokolliert ausfuehrlich in Datei
 &rsquo;<b>/var/log/autofax.log</b>&rsquo; (sonst knapper)

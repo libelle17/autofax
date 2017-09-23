@@ -5875,6 +5875,7 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 	return erg; 
 } // int paramcl::zupdf(string von, string zielvz, int obocr)
 
+/*//
 #ifdef alt
 // wird aufgerufen 2 x in wegfaxen
 void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio,
@@ -5903,14 +5904,14 @@ void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio
 		uint kfehler=0;
 		// alle bis auf die letzte Adresse
 		if (j<toknr.size()-1) {
-			const string kopiert=kopiere(udatei,tmp,&kfehler,/*wieweiterzaehl=*/1);
+			const string kopiert=kopiere(udatei,tmp,&kfehler,1);
 			if (kfehler) continue;
 			urfxp->push_back(urfxcl(kopiert,urname,iprio));
 			::Log(Tx[T_ErstelledurchKopieren]+rots+tmp+schwarz,1,oblog);
 		} else {
 			if (udatei!=tmp) {
 				uint vfehler=0;
-				dorename((udatei),tmp,cuser,&vfehler,/*schonda*/!dateivgl(udatei,tmp),obverb,oblog);
+				dorename((udatei),tmp,cuser,&vfehler,!dateivgl(udatei,tmp),obverb,oblog);
 				if (vfehler)
 					::Log(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz,1,1);
 				else {
@@ -5923,6 +5924,7 @@ void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio
 	Log(violetts+Txk[T_Ende]+Tx[T_wandle]+schwarz+", udatei: "+blau+udatei+schwarz+", urname: "+blau+urname+schwarz+", iprio: "+ltoan(iprio));
 } // void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio, ...
 #endif // alt
+*/
 
 // wird aufgerufen in: main
 void paramcl::wegfaxen()
@@ -5950,18 +5952,23 @@ void paramcl::wegfaxen()
 	if (findv==1) {
 		systemrueck(sudc+"find \""+zufaxenvz+"\" -maxdepth 1 -type f",obverb,oblog,&qrueck);
 	} else findfile(&qrueck,findv,obverb,oblog,0,zufaxenvz,"",1,1,Fol_Dat);
+/*//	
+#ifdef alt
 	zielmustercl mu[anfxstrvec.size()];
-
+#endif
+*/
 	// 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 	for(uchar iprio=anfxstrvec.size()-1;; iprio--) {
 		if (!anfxstrvec[iprio].empty()) {
+			/*//			
+#ifdef alt
 			// der regex-flavor posix_basic (ed) erlaubt keinen Abzug aus 
-			/*
-				 const string mstr=anfxstrvec.at(iprio)+filter+".*"; // z.B. "an Fax +49"
-				 if (mu[iprio].setzemuster(mstr,0)) {
-				 ::Log(Tx[T_Fehler_beim_Analysieren_des_Musters]+mstr,1,1);
-				 continue;
-				 } // 		if (mu[iprio].setzemuster(mstr,0))
+			const string mstr=anfxstrvec.at(iprio)+filter+".*"; // z.B. "an Fax +49"
+			if (mu[iprio].setzemuster(mstr,0)) {
+			::Log(Tx[T_Fehler_beim_Analysieren_des_Musters]+mstr,1,1);
+			continue;
+			} // 		if (mu[iprio].setzemuster(mstr,0))
+#endif
 			 */
 
 			// der Reihe nach nach Dateien suchen, die das jeweilige Trennzeichen enthalten
@@ -5994,7 +6001,7 @@ void paramcl::wegfaxen()
 						if (toktxt.size()>1) { 
 							// 4) Aufteilung von 1b) an jedem undString
 							aufiSplit(&toknr,toktxt[toktxt.size()-1],undstr,/*nichtmehrfach=*/1,obverb,oblog);
-						}
+						} // 						if (toktxt.size()>1)
 						for(size_t i=0;i<toknr.size();i++) {
 							string neunr;
 							for(size_t p=0;p<toknr[i].length();p++) {
@@ -6003,7 +6010,7 @@ void paramcl::wegfaxen()
 								else if (toknr[i][p]=='_') break;
 							}
 							toknr[i]=neunr;
-						}
+						} // 						for(size_t i=0;i<toknr.size();i++)
 						for(size_t i=0;i<tokname.size();i++) gtrim(&tokname[i]);
 						for(size_t i=toknr.size();i<tokname.size();i++) toknr<<""; // Fehlende auffuellen
 						for(size_t i=tokname.size();i<toknr.size();i++) tokname<<""; // ... oder umgekehrt
@@ -6082,7 +6089,7 @@ void paramcl::wegfaxen()
 											continue;
 										}
 										::Log(Tx[T_ErstelledurchKopieren]+rots+kopier+schwarz,1,oblog);
-									}
+									} // 									if (zielp==&benenn)
 									urfx.push_back(urfxcl(*zielp,urname,iprio));
 									qrueck[iakt].clear(); // Datei nach Gebrauch loeschen, um dann die restlichen zu sehen
 								} // 	 if (!toknr[j].empty())
@@ -6094,6 +6101,7 @@ void paramcl::wegfaxen()
 		} // 	  if (!:anfxstrvec[iprio]vec[iprio].empty())
 		if (!iprio) break;
 	} // 	for(uchar iprio=anfxstrvec[iprio]vec.size()-1;; iprio--)
+/*//
 #ifdef alt
 	for(uchar iprio=0;iprio<anfxstrvec.size();iprio++) {
 		// der regex-flavor posix_basic (ed) erlaubt keinen Abzug aus 
@@ -6107,19 +6115,17 @@ void paramcl::wegfaxen()
 			// 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 			if (!qrueck.at(iakt).empty()) {
 				if (!regexec(&mu[iprio].regex,qrueck[iakt].c_str(),0,NULL,0)) {
-					/*//
-					// for(uchar iprio=0;iprio<anfxstrvec.size();iprio++)
-					//  // 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
-					//  cmd=string(sudc+"find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\"";
-					//  vector<string> qrueck;
-					//  systemrueck(cmd,obverb,oblog, &qrueck);
-					//  for(size_t i=0;i<qrueck.size();i++) KLA
-					 */
+					//// for(uchar iprio=0;iprio<anfxstrvec.size();iprio++)
+					////  // 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
+					//// cmd=string(sudc+"find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\"";
+					////  vector<string> qrueck;
+					////  systemrueck(cmd,obverb,oblog, &qrueck);
+					////  for(size_t i=0;i<qrueck.size();i++) KLA
 					string stamm,exten,urname=qrueck.at(iakt);
 					getstammext(&(qrueck.at(iakt)),&stamm,&exten);
 					::Log(string(Tx[T_Endung])+tuerkis+exten+schwarz,obverb>1,oblog);
 					::Log(string(Tx[T_Stamm])+tuerkis+stamm+schwarz,obverb>1,oblog);
-					svec toktxt/*Spaltung an anstr*/, toknr/*Spaltung an undstr*/, tokname/*Spaltung an undstr*/;
+					svec toktxt, toknr, tokname;
 					::Log(string(Tx[T_trennenach])+blau+anfxstrvec.at(iprio)+schwarz+"'",obverb>1,oblog);
 					size_t pos0=0;
 					if ((pos0=irfind(stamm,anfxstrvec.at(iprio)))!=string::npos) {
@@ -6164,7 +6170,7 @@ void paramcl::wegfaxen()
 	for(size_t iakt=0;iakt<qrueck.size();iakt++) {
 		string stamm,exten,urname=qrueck.at(iakt);
 		getstammext(&(qrueck.at(iakt)),&stamm,&exten);
-		svec toktxt, toknr/*Spaltung an undstr*/, tokname/*Spaltung an undstr*/;
+		svec toktxt, toknr, tokname;
 		::Log(string(Tx[T_trennenach])+blau+anstr+schwarz+"'",obverb>1,oblog);
 		size_t pos0=0;
 		if ((pos0=irfind(stamm,anstr))!=string::npos) {
@@ -6218,6 +6224,7 @@ void paramcl::wegfaxen()
 		} // 		if ((pos0=irfind(stamm,anstr))!=string::npos)
 	} // 	for(size_t iakt=0;iakt<qrueck.size();iakt++)
 #endif // alt
+*/
 	// nicht faxbare
 	for(size_t i=0;i<qrueck.size();i++) {
 		if (!qrueck[i].empty()) {
