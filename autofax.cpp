@@ -8714,7 +8714,7 @@ void paramcl::pruefmodcron()
 			if (!systemrueck(bef,obverb,oblog,&rueck)) {
 				////    for(size_t znr=0;znr<rueck.size();znr++) { ::Log(rueck[znr],1+obverb,oblog); } //     for(size_t znr=0;znr<rueck.size();znr++)
 				const string befehl=sudc+"bash -c 'grep \""+mps[ru]+"\" -q <(crontab -l 2>/dev/null)&&"
-					"{ crontab -l 2>/dev/null|sed \"/"+ersetzAllezu(mps[ru],"/","\\/")+"/d\">"+tmpcron+";crontab "+tmpcron+";};true'";
+					"{ crontab -l 2>/dev/null|sed \"/"+ersetzAllezu(mps[ru],"/","\\/")+"/d\">"+tmpcron+";crontab "+tmpcron+";};:'";
 				anfgg(unindt,befehl,bef,obverb,oblog);
 			} //if (!systemrueck("("+sudc+"crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";"+sudc+"crontab "+tmpcron+")",obverb,oblog,&rueck))
 		} // 		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <("+sudc+"crontab -l 2>/dev/null)'",obverb,oblog))
@@ -8812,23 +8812,29 @@ int paramcl::pruefcapi()
 				} // for(size_t i=0;i<rueck.size();i++)
 				lsysen system=lsys.getsys(obverb,oblog);
 				if (!fcpcida || !capida || !capidrvda) {
-					::Log(blaus+Tx[T_Module_geladen]+" fcpci: "+(fcpcida?"1":"0")+", capi: "+(capida?"1":"0")+", capidrv: "+(capidrvda?"1":"0")+
-							Tx[T_Lade_Capi_Module],-1,0);
+					::Log(blaus+Tx[T_Module_geladen]+schwarz+" fcpci: "+blau+(fcpcida?"1":"0")+schwarz+", capi: "+blau+(capida?"1":"0")+schwarz+
+							", capidrv: "+blau+(capidrvda?"1":"0")+schwarz+Tx[T_Lade_Capi_Module],obverb,0);
 					systemrueck(sudc+"modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog,0,1);
-					for(uchar ivers=0;ivers<2;ivers++) {
+					utsname unbuf;
+					if (!fcpcida) {
+						uname(&unbuf);
+						Log(Tx[T_Kernelversion]+blaus+unbuf.release+schwarz);
+					}
+					for(uchar ivers=0;ivers<3;ivers++) {
 						if (!fcpcida)
 							if (systemrueck(sudc+"modprobe -v fcpci 2>/dev/null",obverb-1+ivers,oblog)) {
-								if (ivers) {
-									::Log(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+blau+linstp->ersetzeprog("kernel-source")+rots+
-											Tx[T_eine_neuere_Version_als_die_des_aktuellen_Kernels_installiert_worden_sein_dann_bitte_erneutes_Systemupdate]+schwarz,1,1);
-									erg=1;
-									goto schluss;
-								} // if (ivers)
-								utsname unbuf;
-								uname(&unbuf);
-								Log(Tx[T_Kernelversion]+blaus+unbuf.release+schwarz);
-								struct stat entryfc={0};
 								const string fcpciko=string("/lib/modules/")+unbuf.release+"/kernel/extras/fcpci.ko";
+								switch (ivers) {
+									case 1:
+										tuloeschen(fcpciko,cuser,obverb,oblog);
+										break;
+									case 2:
+										::Log(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+blau+linstp->ersetzeprog("kernel-source")+rots+
+												Tx[T_eine_neuere_Version_als_die_des_aktuellen_Kernels_installiert_worden_sein_dann_bitte_erneutes_Systemupdate]+schwarz,1,1);
+										erg=1;
+										goto schluss;
+								} // 								switch (ivers)
+								struct stat entryfc={0};
 								if (lstat(fcpciko.c_str(), &entryfc)) {
 									::Log(Txk[T_datei]+blaus+fcpciko+schwarz+Tx[T_nichtgefFcpciMfdKinstallierwerden],obverb,1);
 									int altobverb=obverb;
