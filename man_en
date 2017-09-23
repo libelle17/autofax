@@ -32,7 +32,11 @@ and answer some questions of the program.
 .br
 The first execution and the first processing of a sent/received fax with each of hylafax and/or capisuite may take some time and need some additional input, respectively.
 .br
-For the automatic installation of the programs necessary to convert the fax files to pdf, ²DPROG² must be called visibly (at a console/ whithin a terminal), because when ²DPROG² is called by crontab, this installation fails. If faxes have been received before the first visible call of ²DPROG² and therefore are ill formed (e.g., tif-Files instead of pdf-files, or pdf-files with unreadable text), they can be repaired by calling \fB²DPROG² -again\fR, which simultaneously completes the necessary program installations for future fax receiving.
+For the automatic installation of the programs necessary to convert the fax files to pdf, ²DPROG² must be called visibly (at a console/ whithin a terminal), because when ²DPROG² is called by crontab, this installation fails. If faxes have been received before the first visible call of ²DPROG² and therefore are ill formed (e.g., tif-Files instead of pdf-files, or pdf-files with unreadable text), they can be repaired by calling 
+.br
+\fB²DPROG² -again\fR,
+.br
+which simultaneously completes the necessary program installations for future fax receiving.
 .SH USAGE
 Ideally, the program should have installed itsself after a single call (see above) in a self-running way.
 .br

@@ -96,9 +96,10 @@ called by crontab, this installation fails. If faxes have
 been received before the first visible call of autofax and
 therefore are ill formed (e.g., tif-Files instead of
 pdf-files, or pdf-files with unreadable text), they can be
-repaired by calling <b>autofax -again</b>, which
-simultaneously completes the necessary program installations
-for future fax receiving.</p>
+repaired by calling <b><br>
+autofax -again</b>, <br>
+which simultaneously completes the necessary program
+installations for future fax receiving.</p>
 
 <h2>USAGE
 <a name="USAGE_D"></a>
@@ -885,9 +886,11 @@ autofax Faxe empfangen worden sind und daher schlecht
 gestaltet sind (z.B. tif-Dateien anstatt pdf-Dateien oder
 pdf-Dateien mit unlesbarem Buchstabensalat), k&ouml;nnen
 diese nachtr&auml;glich korrigiert werden durch den
-Befehl autofax -erneut, durch welchen gleichzeitig die
-notwendige Programminstallation f&uuml;r
-k&uuml;nftige Faxe vervollst&auml;ndigt werden.</p>
+Befehl <br>
+autofax -erneut, <br>
+durch welchen gleichzeitig die notwendige
+Programminstallation f&uuml;r k&uuml;nftige Faxe
+vervollst&auml;ndigt werden.</p>
 
 <h2>GEBRAUCH
 <a name="GEBRAUCH_D"></a>

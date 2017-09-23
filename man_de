@@ -34,7 +34,11 @@ und beantworten einige Rueckfragen des Programms.
 .br
 Der erste Programmaufruf und die erste Faxverarbeitung eines gesandten/empfangenen Faxes mit Hylafax/Capsiuite können jeweils etwas dauern und ein paar zusätzliche Eingaben erfordern.
 .br
-Zur automatischen Installation notwendiger Konvertierungs-Programme zu pdf muss ²DPROG² sichtbar (am PC bzw. in einem Terminal) aufgerufen werden, denn beim Aufruf von ²DPROG² aus crontab schlüge deren Installation fehl. Falls bereits vor dem ersten sichtbaren Aufruf von ²DPROG² Faxe empfangen worden sind und daher schlecht gestaltet sind (z.B. tif-Dateien anstatt pdf-Dateien oder pdf-Dateien mit unlesbarem Buchstabensalat), können diese nachträglich korrigiert werden durch den Befehl \fR²DPROG² -erneut\fR, durch welchen gleichzeitig die notwendige Programminstallation für künftige Faxe vervollständigt werden.
+Zur automatischen Installation notwendiger Konvertierungs-Programme zu pdf muss ²DPROG² sichtbar (am PC bzw. in einem Terminal) aufgerufen werden, denn beim Aufruf von ²DPROG² aus crontab schlüge deren Installation fehl. Falls bereits vor dem ersten sichtbaren Aufruf von ²DPROG² Faxe empfangen worden sind und daher schlecht gestaltet sind (z.B. tif-Dateien anstatt pdf-Dateien oder pdf-Dateien mit unlesbarem Buchstabensalat), können diese nachträglich korrigiert werden durch den Befehl 
+.br
+\fR²DPROG² -erneut\fR,
+.br
+durch welchen gleichzeitig die notwendige Programminstallation für künftige Faxe vervollständigt werden.
 .SH GEBRAUCH
 Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft.
 .br
