@@ -172,15 +172,8 @@ by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">With
-&rsquo;<b>autofax -?</b>&rsquo; or &rsquo;<b>autofax
--h</b>&rsquo;, the important and with &rsquo;<b>autofax
--lh</b>&rsquo;, all command line options can be seen. Some
-options (e.g. the sql commands) cannot bei set via the
-command line, but only via the configuration file, which can
-be edited directly or interactively by &rsquo;<b>autofax
--rf</b>&rsquo;. <b><br>
-Options which are not saved: <br>
+<p style="margin-left:11%; margin-top: 1em"><b>Options
+which are not saved: <br>
 -v, --verbose</b>: screen output more verbose <b><br>
 -l, --log</b>: put detailed logs in file
 &rsquo;<b>/var/log/autofax.log</b>&rsquo; (otherwise
@@ -326,6 +319,9 @@ instead of &rsquo;<b>2</b>&rsquo; <b><br>
 <a name="FUNCTIONALITY_D"></a>
 </h2>
 
+
+<p style="margin-left:11%; margin-top: 1em">When called,
+&rsquo;<b>autofax</b>&rsquo; accomplishes the following:</p>
 
 <p style="margin-left:11%; margin-top: 1em"><b>1)</b> The
 current hardware is being checked. <b><br>
@@ -975,16 +971,8 @@ den Stand des Faxens &uuml;berpr&uuml;fen.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Mit
-&rsquo;<b>autofax -?</b>&rsquo; oder &rsquo;<b>autofax
--h</b>&rsquo; werden die wichtigen und mit &rsquo;<b>autofax
--lh</b>&rsquo; alle Befehlszeilenoptionen sichtbar. Einige
-Optionen (z.B. SQL-Befehle) k&ouml;nnen nicht
-&uuml;ber die Befehlszeile, sondern nur &uuml;ber
-die Konfigurationsdatei eingegeben werden, die wiederum
-direkt editiert oder auch &uuml;ber &rsquo;<b>autofax
--rf</b>&rsquo; interaktiv gepflegt werden kann. <b><br>
-Optionen, die nicht gespeichert werden: <br>
+<p style="margin-left:11%; margin-top: 1em"><b>Optionen,
+die nicht gespeichert werden: <br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger <b><br>
 -l, --log</b>: protokolliert ausfuehrlich in Datei
 &rsquo;<b>/var/log/autofax.log</b>&rsquo; (sonst knapper)
@@ -1138,6 +1126,9 @@ aktualisieren <b>oder nicht</b></p>
 <a name="FUNKTIONSWEISE_D"></a>
 </h2>
 
+
+<p style="margin-left:11%; margin-top: 1em">Beim Aufruf von
+&rsquo;<b>autofax</b>&rsquo; geschieht folgendes:</p>
 
 <p style="margin-left:11%; margin-top: 1em"><b>1)</b> Die
 aktuelle Hardware wird &uuml;berpr&uuml;ft: <b><br>

@@ -65,7 +65,7 @@ Further on, incoming faxes via \fBhylafax\fR or \fBCapisuite\fR are being transm
 Depending on operating system, accessability and preferences the users thus could look up the status of their faxes in the above mentioned directories, in the database tables or by calling '\fB²DPROG²\fB', '\fB²DPROG² -lista\fR', '\fB²DPROG² -listf\fR' or '\fB²DPROG² -listi\fR'. 
 
 .SH OPTIONS 
-With '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR', the important and with '\fB²DPROG² -lh\fR', all command line options can be seen. Some options (e.g. the sql commands) cannot bei set via the command line, but only via the configuration file, which can be edited directly or interactively by '\fB²DPROG² -rf\fR'.
+'\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR' shows the important command line options and '\fB²DPROG² -lh\fR' all of them. Some options (e.g. the sql commands for finding an addressee from the fax number) cannot be set via the command line, but only via the configuration file, which can be edited directly by '\fB²DPROG² -vi\fR' or interactively by '\fB²DPROG² -rf\fR'.
 .br
 \fBOptions which are not saved: \fR
 .br
@@ -193,6 +193,8 @@ With '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR', the important and with '\fB²
 .br
 \fB -autoupd, --autoupdate\fR: Update program automatically\fB or not\fR
 .SH FUNCTIONALITY
+.LP
+When called, '\fB²DPROG²\fR' accomplishes the following:
 .LP
 \fB1)\fR The current hardware is being checked.
 .br

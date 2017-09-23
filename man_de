@@ -67,7 +67,7 @@ Weiterhin werden über \fBhylafax\fR oder \fBCapisuite\fR angekommene Faxe in ei
 Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präferenz in den genannten Verzeichnissen, in den Datenbanktabellen oder durch Aufruf von z.B. '\fB²DPROG²\fB', '\fB²DPROG² -lista\fR', '\fB²DPROG² -listf\fR' oder '\fB²DPROG² -listi\fR' den Stand des Faxens überprüfen. 
 
 .SH OPTIONEN 
-Mit '\fB²DPROG² -?\fR' oder '\fB²DPROG² -h\fR' werden die wichtigen und mit '\fB²DPROG² -lh\fR' alle Befehlszeilenoptionen sichtbar. Einige Optionen (z.B. SQL-Befehle) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum direkt editiert oder auch über '\fB²DPROG² -rf\fR' interaktiv gepflegt werden kann.
+'\fB²DPROG² -?\fR' oder '\fB²DPROG² -h\fR' zeigt die wichtigen Befehlszeilenoptionen und '\fB²DPROG² -lh\fR' alle. Einige Optionen (z.B. die SQL-Befehle zur Suche eines Adressaten aus der Faxnummer) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum über '\fB²DPROG² -vi\fR' direkt editiert oder auch über '\fB²DPROG² -rf\fR' interaktiv gepflegt werden kann.
 .br
 \fBOptionen, die nicht gespeichert werden: \fR
 .br
@@ -195,6 +195,8 @@ Mit '\fB²DPROG² -?\fR' oder '\fB²DPROG² -h\fR' werden die wichtigen und mit 
 .br
 \fB -autoakt, --autoaktual\fR: Programm automatisch aktualisieren\fB oder nicht\fR
 .SH FUNKTIONSWEISE
+.LP
+Beim Aufruf von '\fB²DPROG²\fR' geschieht folgendes:
 .LP
 \fB1)\fR Die aktuelle Hardware wird überprüft:
 .br
