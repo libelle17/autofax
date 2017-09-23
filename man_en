@@ -66,6 +66,8 @@ Depending on operating system, accessability and preferences the users thus coul
 
 .SH OPTIONS 
 '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR' shows the important command line options and '\fB²DPROG² -lh\fR' all of them. Some options (e.g. the sql commands for finding an addressee from the fax number) cannot be set via the command line, but only via the configuration file, which can be edited directly by '\fB²DPROG² -vi\fR' or interactively by '\fB²DPROG² -rf\fR'.
+'\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR' shows the important command line options and '\fB²DPROG² -lh\fR' all of them. Some options (e.g. the sql commands for finding an addressee from the fax number) cannot be set via the command line, but only via the configuration file, which can be edited directly by '\fB²DPROG² -vi\fR' or interactively by '\fB²DPROG² -rf\fR'.
+.br
 .br
 \fBOptions which are not saved: \fR
 .br
