@@ -90,13 +90,13 @@ sent/received fax with each of hylafax and/or capisuite may
 take some time and need some additional input, respectively.
 <br>
 For the automatic installation of the programs necessary to
-convert the fax files to pdf, autofax must once be called
-visibly (at a console/ whithin a terminal), because when
-autofax is called by crontab, this installation fails. If
-faxes have been received before the first visible call of
-autofax and therefore are ill formed (e.g., tif-Files
-instead of pdf-files, or pdf-files with unreadable text),
-they can be repaired by calling <b><br>
+convert the fax files to pdf, <b>autofax</b> must once be
+called visibly (at a console/ whithin a terminal), because
+when <b>autofax</b> is called by crontab, this installation
+fails. If faxes have been received before the first visible
+call of <b>autofax</b> and therefore are ill formed (e.g.,
+tif-Files instead of pdf-files, or pdf-files with unreadable
+text), they can be repaired by calling <b><br>
 autofax -again</b> for each of then. Hereby the necessary
 program installations for future fax receiving will
 simultaneously be completed.</p>
@@ -121,8 +121,9 @@ Frank Ill to fax 099 987654321 and 088
 Dr. Healthy and Frank Ill&rsquo; is optional for the later
 allocation of the fax number(s) in the database, it may also
 be obmitted; on the other hand, if the program can assign
-the last (1-)3 faxes to a certain addressee clearly, the fax
-number may be obmitted). <br>
+the last (1-)3 faxes to a certain addressee clearly, the
+section &rsquo; to fax 099 987654321 and 088
+887654321&rsquo; may be obmitted). <br>
 When <b>autofax</b> is called for the next time (per default
 2 minutes), the above mentioned example file will initially
 be copied and renamed into <br>
@@ -879,14 +880,14 @@ gesandten/empfangenen Faxes mit Hylafax/Capsiuite
 k&ouml;nnen jeweils etwas dauern und ein paar
 zus&auml;tzliche Eingaben erfordern. <br>
 Zur automatischen Installation notwendiger
-Konvertierungs-Programme zu pdf muss autofax einmal sichtbar
-(am PC bzw. in einem Terminal) aufgerufen werden, denn beim
-Aufruf von autofax aus crontab schl&uuml;ge deren
-Installation fehl. Falls bereits vor dem ersten sichtbaren
-Aufruf von autofax Faxe empfangen worden sind und daher
-schlecht gestaltet sind (z.B. tif-Dateien anstatt
-pdf-Dateien oder pdf-Dateien mit unlesbarem
-Buchstabensalat), k&ouml;nnen diese
+Konvertierungs-Programme zu pdf muss <b>autofax</b> einmal
+sichtbar (am PC bzw. in einem Terminal) aufgerufen werden,
+denn beim Aufruf von <b>autofax</b> aus crontab
+schl&uuml;ge deren Installation fehl. Falls bereits vor
+dem ersten sichtbaren Aufruf von <b>autofax</b> Faxe
+empfangen worden sind und daher schlecht gestaltet sind
+(z.B. tif-Dateien anstatt pdf-Dateien oder pdf-Dateien mit
+unlesbarem Buchstabensalat), k&ouml;nnen diese
 nachtr&auml;glich korrigiert werden durch den Befehl
 <br>
 autofax -erneut f&uuml;r jedes von Ihnen. Hierdurch wird
@@ -917,7 +918,8 @@ f&uuml;r die sp&auml;tere Zordnung der Faxnummer(n)
 in der Datenbank, sie darf auch fehlen; auf der anderen
 Seite darf f&uuml;r den Fall, dass das Programm die
 letzten (1-)3 Faxe zu einem Adressaten eindeutig einer
-Faxnummer zuordnen kann, letztere auch fehlen). <br>
+Faxnummer zuordnen kann, die Passage &rsquo; an Fax 099
+987654321 und 088 887654321&rsquo; auch fehlen). <br>
 Wenn <b>autofax</b> beim n&auml;chsten Mal automatisch
 aufgerufen wird (standardm&auml;&szlig;ig alle 2
 Minuten), wird die o.g. Beispieldatei zun&auml;chst

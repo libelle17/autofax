@@ -32,7 +32,7 @@ and answer some questions of the program.
 .br
 The first execution and the first processing of a sent/received fax with each of hylafax and/or capisuite may take some time and need some additional input, respectively.
 .br
-For the automatic installation of the programs necessary to convert the fax files to pdf, ²DPROG² must once be called visibly (at a console/ whithin a terminal), because when ²DPROG² is called by crontab, this installation fails. If faxes have been received before the first visible call of ²DPROG² and therefore are ill formed (e.g., tif-Files instead of pdf-files, or pdf-files with unreadable text), they can be repaired by calling 
+For the automatic installation of the programs necessary to convert the fax files to pdf, \fB²DPROG²\fR must once be called visibly (at a console/ whithin a terminal), because when \fB²DPROG²\fR is called by crontab, this installation fails. If faxes have been received before the first visible call of \fB²DPROG²\fR and therefore are ill formed (e.g., tif-Files instead of pdf-files, or pdf-files with unreadable text), they can be repaired by calling 
 .br
 \fB²DPROG² -again\fR for each of then. Hereby  the necessary program installations for future fax receiving will simultaneously be completed.
 .SH USAGE
@@ -40,7 +40,7 @@ Ideally, the program should have installed itsself after the first call(s) (see 
 .br
 Then a directory e.g. '\fBtobefaxed\fR' exists, in which e.g. users in a network (e.g. via the above mentioned samba share) can deposit files to be faxed, e.g. 
 .br
-"\fBMedical report on Frank Ill to Dr. Healthy and Frank Ill to fax 099 987654321 and 088 887654321.doc\fR" (it could also be e.g. an *.xls, a *.jpg, a *.tif, a *.txt, a *pdf file; the section ' to Dr. Healthy and Frank Ill' is optional for the later allocation of the fax number(s) in the database, it may also be obmitted; on the other hand, if the program can assign the last (1-)3 faxes to a certain addressee clearly, the fax number may be obmitted).
+"\fBMedical report on Frank Ill to Dr. Healthy and Frank Ill to fax 099 987654321 and 088 887654321.doc\fR" (it could also be e.g. an *.xls, a *.jpg, a *.tif, a *.txt, a *pdf file; the section ' to Dr. Healthy and Frank Ill' is optional for the later allocation of the fax number(s) in the database, it may also be obmitted; on the other hand, if the program can assign the last (1-)3 faxes to a certain addressee clearly, the section ' to fax 099 987654321 and 088 887654321' may be obmitted).
 .br
 When \fB²DPROG²\fR is called for the next time (per default 2 minutes), the above mentioned example file will initially be copied and renamed into 
 .br

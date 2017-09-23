@@ -34,7 +34,7 @@ und beantworten einige Rueckfragen des Programms.
 .br
 Der erste Programmaufruf und die erste Faxverarbeitung eines gesandten/empfangenen Faxes mit Hylafax/Capsiuite können jeweils etwas dauern und ein paar zusätzliche Eingaben erfordern.
 .br
-Zur automatischen Installation notwendiger Konvertierungs-Programme zu pdf muss ²DPROG² einmal sichtbar (am PC bzw. in einem Terminal) aufgerufen werden, denn beim Aufruf von ²DPROG² aus crontab schlüge deren Installation fehl. Falls bereits vor dem ersten sichtbaren Aufruf von ²DPROG² Faxe empfangen worden sind und daher schlecht gestaltet sind (z.B. tif-Dateien anstatt pdf-Dateien oder pdf-Dateien mit unlesbarem Buchstabensalat), können diese nachträglich korrigiert werden durch den Befehl 
+Zur automatischen Installation notwendiger Konvertierungs-Programme zu pdf muss \fB²DPROG²\fR einmal sichtbar (am PC bzw. in einem Terminal) aufgerufen werden, denn beim Aufruf von \fB²DPROG²\fR aus crontab schlüge deren Installation fehl. Falls bereits vor dem ersten sichtbaren Aufruf von \fB²DPROG²\fR Faxe empfangen worden sind und daher schlecht gestaltet sind (z.B. tif-Dateien anstatt pdf-Dateien oder pdf-Dateien mit unlesbarem Buchstabensalat), können diese nachträglich korrigiert werden durch den Befehl 
 .br
 \fR²DPROG² -erneut\fR für jedes von Ihnen. Hierdurch wird gleichzeitig die notwendige Programminstallation für künftige Faxe vervollständigt.
 .SH GEBRAUCH
@@ -42,7 +42,7 @@ Im Idealfall sollte sich das Programm nach dem/n erstem/n Aufruf/en (s.o.) und B
 .br
 Es existiert dann ein Verzeichnis z.B. '\fBzufaxen\fR', in das z.B. Benutzer im Netzwerk (z.B. über die o.g. Samba-Freigabe) zu faxende Dateien stellen können wie z.B. 
 .br
-"\fBArztbericht zu Franz Krank an Dr. Gesund und Franz Krank an Fax 099 987654321 und 088 887654321.doc\fR" (es könnte auch z.B. eine *.xls, eine *.jpg, eine *.tif, eine *.txt oder eine *.pdf-Datei sein; die Passage 'an Dr. Gesund und Franz Krank ' ist optional für die spätere Zordnung der Faxnummer(n) in der Datenbank, sie darf auch fehlen; auf der anderen Seite darf für den Fall, dass das Programm die letzten (1-)3 Faxe zu einem Adressaten eindeutig einer Faxnummer zuordnen kann, letztere auch fehlen).
+"\fBArztbericht zu Franz Krank an Dr. Gesund und Franz Krank an Fax 099 987654321 und 088 887654321.doc\fR" (es könnte auch z.B. eine *.xls, eine *.jpg, eine *.tif, eine *.txt oder eine *.pdf-Datei sein; die Passage 'an Dr. Gesund und Franz Krank ' ist optional für die spätere Zordnung der Faxnummer(n) in der Datenbank, sie darf auch fehlen; auf der anderen Seite darf für den Fall, dass das Programm die letzten (1-)3 Faxe zu einem Adressaten eindeutig einer Faxnummer zuordnen kann, die Passage ' an Fax 099 987654321 und 088 887654321' auch fehlen).
 .br
 Wenn \fB²DPROG²\fR beim nächsten Mal automatisch aufgerufen wird (standardmäßig alle 2 Minuten), wird die o.g. Beispieldatei zunächst kopiert und umbenannt in 
 .br
