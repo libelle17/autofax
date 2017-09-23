@@ -90,13 +90,13 @@ sent/received fax with each of hylafax and/or capisuite may
 take some time and need some additional input, respectively.
 <br>
 For the automatic installation of the programs necessary to
-convert the fax files to pdf, autofax must be called visibly
-(at a console/ whithin a terminal), because when autofax is
-called by crontab, this installation fails. If faxes have
-been received before the first visible call of autofax and
-therefore are ill formed (e.g., tif-Files instead of
-pdf-files, or pdf-files with unreadable text), they can be
-repaired by calling <b><br>
+convert the fax files to pdf, autofax must once be called
+visibly (at a console/ whithin a terminal), because when
+autofax is called by crontab, this installation fails. If
+faxes have been received before the first visible call of
+autofax and therefore are ill formed (e.g., tif-Files
+instead of pdf-files, or pdf-files with unreadable text),
+they can be repaired by calling <b><br>
 autofax -again</b> for each of then. Hereby the necessary
 program installations for future fax receiving will
 simultaneously be completed.</p>
@@ -878,15 +878,16 @@ gesandten/empfangenen Faxes mit Hylafax/Capsiuite
 k&ouml;nnen jeweils etwas dauern und ein paar
 zus&auml;tzliche Eingaben erfordern. <br>
 Zur automatischen Installation notwendiger
-Konvertierungs-Programme zu pdf muss autofax sichtbar (am PC
-bzw. in einem Terminal) aufgerufen werden, denn beim Aufruf
-von autofax aus crontab schl&uuml;ge deren Installation
-fehl. Falls bereits vor dem ersten sichtbaren Aufruf von
-autofax Faxe empfangen worden sind und daher schlecht
-gestaltet sind (z.B. tif-Dateien anstatt pdf-Dateien oder
-pdf-Dateien mit unlesbarem Buchstabensalat), k&ouml;nnen
-diese nachtr&auml;glich korrigiert werden durch den
-Befehl <br>
+Konvertierungs-Programme zu pdf muss autofax einmal sichtbar
+(am PC bzw. in einem Terminal) aufgerufen werden, denn beim
+Aufruf von autofax aus crontab schl&uuml;ge deren
+Installation fehl. Falls bereits vor dem ersten sichtbaren
+Aufruf von autofax Faxe empfangen worden sind und daher
+schlecht gestaltet sind (z.B. tif-Dateien anstatt
+pdf-Dateien oder pdf-Dateien mit unlesbarem
+Buchstabensalat), k&ouml;nnen diese
+nachtr&auml;glich korrigiert werden durch den Befehl
+<br>
 autofax -erneut f&uuml;r jedes von Ihnen. Hierdurch wird
 gleichzeitig die notwendige Programminstallation
 f&uuml;r k&uuml;nftige Faxe
