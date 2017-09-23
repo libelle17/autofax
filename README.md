@@ -107,8 +107,9 @@ simultaneously be completed.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">Ideally, the
-program should have installed itsself after a single call
-(see above) in a self-running way. <br>
+program should have installed itsself after the first
+call(s) (see above) and one-time answering of some questions
+in a self-running way. <br>
 Then a directory e.g. &rsquo;<b>tobefaxed</b>&rsquo; exists,
 in which e.g. users in a network (e.g. via the above
 mentioned samba share) can deposit files to be faxed, e.g.
@@ -899,7 +900,8 @@ vervollst&auml;ndigt.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em">Im Idealfall
-sollte sich das Programm nach einmaligem Aufruf (s.o.) so
+sollte sich das Programm nach dem/n erstem/n Aufruf/en
+(s.o.) und Beantworten einmaliger R&uuml;ckfragen so
 eingerichtet haben, dass es von selbst weiter
 l&auml;uft. <br>
 Es existiert dann ein Verzeichnis z.B.

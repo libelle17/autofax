@@ -38,7 +38,7 @@ Zur automatischen Installation notwendiger Konvertierungs-Programme zu pdf muss 
 .br
 \fR²DPROG² -erneut\fR für jedes von Ihnen. Hierdurch wird gleichzeitig die notwendige Programminstallation für künftige Faxe vervollständigt.
 .SH GEBRAUCH
-Im Idealfall sollte sich das Programm nach einmaligem Aufruf (s.o.) so eingerichtet haben, dass es von selbst weiter läuft.
+Im Idealfall sollte sich das Programm nach dem/n erstem/n Aufruf/en (s.o.) und Beantworten einmaliger Rückfragen so eingerichtet haben, dass es von selbst weiter läuft.
 .br
 Es existiert dann ein Verzeichnis z.B. '\fBzufaxen\fR', in das z.B. Benutzer im Netzwerk (z.B. über die o.g. Samba-Freigabe) zu faxende Dateien stellen können wie z.B. 
 .br
