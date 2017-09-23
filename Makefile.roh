@@ -32,6 +32,7 @@
 # "make version" => kompilieren mit opts, installieren und aktualisieren auf git-Server mit einheitlicher Dateiversion
 # "make transfer <zielvz>" => kopieren der Programmdateien abzüglich bestimmter Kommentare in Zielverzeichnis <zielvz>
 # "make verschieb" => wie transfer, mit ../<DPROG>rein als Zielverzeichnis
+# "make verschieb" => wie verschieb, löscht vorher das als Zielverzeichnis
 # "make ruf" => ruft das Programm auf
 
 ICH::=$(firstword $(MAKEFILE_LIST))
@@ -313,7 +314,7 @@ stumm stumminst: blau::=""
 stumm stumminst: gruen::=""
 stumm stumminst: reset::=""
 
-stumm: alles
+stumm: all
 
 stumminst: install
 
@@ -424,7 +425,11 @@ uninstall: fernclean
 
 .PHONY: verschieb
 verschieb:
-	Z=../$(DPROG)rein;make all install&&{ make transfer $$Z;{ cd $$Z;[ -d .git ]||make git;make version; cd -;};}
+	Z=../$(DPROG)rein;[ "$(LOESCH)" = "1" ]&&rm -rf $Z;make all install&&{ make transfer $$Z;{ cd $$Z;[ -d .git ]||make git;make version; cd -;};}
+
+.PHONY: vsneu
+vsneu: LOESCH::=1
+vsneu: verschieb
 
 .PHONY: ruf
 ruf:
