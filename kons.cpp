@@ -838,8 +838,7 @@ mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_b
 	} // for(int iru=0;iru<3;iru++) 
 } // mdatei::mdatei (const string& name, ios_base::openmode modus)
 
-
-#ifdef falsch
+#ifdef oeffalsch
 #ifdef obfstream
 fstream*
 #else // obfstream
@@ -856,42 +855,44 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 		case 3: mode=ios_base::out; break; // text mode, default
 	} // 	switch (art)
 	fstream *sdat;
+#else // obfstream
+	const char *mode;
+	switch (art) {
+		case 0: mode="r"; break;
+		case 1: mode="w"; break;
+		case 2: mode="a"; break;
+		case 3: mode="wt"; break; // text mode, default
+	} // 			switch (art)
+	FILE *sdat;
+#endif // obfstream else
 	for(int iru=0;iru<2;iru++) {
+#ifdef obfstream
 		sdat = new fstream(datei,mode);
 		if (sdat) if (!sdat->is_open()) sdat=0;
-		if (sdat) {
 #else // obfstream
-			const char *mode;
-			switch (art) {
-				case 0: mode="r"; break;
-				case 1: mode="w"; break;
-				case 2: mode="a"; break;
-				case 3: mode="wt"; break; // text mode, default
-			} // 			switch (art)
-			FILE *sdat;
-			for(int iru=0;iru<2;iru++) {
-				if ((sdat= fopen(datei.c_str(),mode))) {
+		sdat= fopen(datei.c_str(),mode);
 #endif // obfstream else
-					*erfolg=1;
-					setfaclggf(datei,obverb,oblog,/*obunter=*/falsch,/*mod=*/art?6:4,/*obimmer=*/0,faclbak);
-					break;
-				}  // 				if ((sdat= fopen(datei.c_str(),mode)))
-				if (!*erfolg) {
-					int erg __attribute__((unused))=
-////                                        systemrueck(sudc+"touch '"+datei+"'",obverb,oblog);
-					touch(datei,obverb,oblog);
-				} // 				if (!*erfolg)
-			} // oeffne
-			return sdat;
-		} // 		if (sdat)
-#endif	 // falsch
+		if (sdat) {
+			*erfolg=1;
+			setfaclggf(datei,obverb,oblog,/*obunter=*/falsch,/*mod=*/art?6:4,/*obimmer=*/0,faclbak);
+			break;
+		}  // 				if ((sdat= fopen(datei.c_str(),mode)))
+		if (!*erfolg) {
+			int erg __attribute__((unused))=
+				////                                        systemrueck(sudc+"touch '"+datei+"'",obverb,oblog);
+				touch(datei,obverb,oblog);
+		} // 				if (!*erfolg)
+	} // oeffne
+	return sdat;
+} // 		if (sdat)
+#endif	 // oefalsch
 
 
 int kuerzelogdatei(const char* logdatei,int obverb)
 {
-#ifdef false
+#ifdef kfalsch
 	uchar erfolg=0;
-#endif // false
+#endif // kfalsch
 	//// zutun: nicht erst in Vektor einlesen, sondern gleich in die tmp-Datei schreiben 10.6.12
 
 	////	vector<string> Zeilen;   //Der Vektor Zeilen enthält String-Elemente
@@ -925,146 +926,102 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 		return 1;
 	}
 	while (logf.getline (Zeile, sizeof(Zeile))) {
-#ifdef false
-#ifdef obfstream	
-		fstream *outfile=oeffne(ofil,2,&erfolg);
-		if (!erfolg) {
-			perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_als_fstream_zum_Schreiben_oeffnen]).c_str());
-			return 1;
-		}
-		fstream *logf=oeffne(logdatei,0,&erfolg); //Die Zeilen dieser Datei sollen in einen Vektor geschrieben werden.
-		if (!erfolg) {
-			perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_als_fstream_zum_Lesen_oeffnen]).c_str());
-			return 1;
-		}
-		while (logf->getline (Zeile, sizeof(Zeile))) {
-			////		Zeilen.push_back(Zeile); //hängt einfach den Inhalt der Zeile als Vektorelement an das Ende des Vektors
-#else	 // obfstream
-			FILE *outfile=oeffne(ofil,2,&erfolg);
-			if (!erfolg) {
-				perror((string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+ofil+Txk[T_nicht_mit_fopen_zum_Schreiben_oeffnen]).c_str());
-				return 1;
-			}
-			FILE *logf=oeffne(logdatei,0,&erfolg);
-			if (!erfolg) {
-				Log(string("\nkuerzelogdatei: ")+Txk[T_Kann_Datei]+logdatei+Txk[T_nicht_mit_fopen_zum_Lesen_oeffnen],1,0);
-				return 1;
-			}
-			while (fgets(Zeile, sizeof Zeile, logf)) {
-				////	 Zeilen.push_back(Zeile);
-#endif	 // obfstream else
-#endif	 // false
-				if (!abhier) {
-					tm *atm = new tm; // int aktz;
-					////	for(aktz=Zeilen.size()-1;aktz>=0;aktz--) KLA
-					////         Log(string("aktz=") + ltoa_(aktz,buffer,10),obverb,0);
-					int verwertbar=0, index;
-					for(unsigned j=0;j<2;j++) {
-						if (verwertbar) {
-							index = verwertbar-1;
-							j=2;
-						} else {
-							index = j;
-						}
-						switch (index) {
-							case 0: 
-								if (sscanf(Zeile,"%2d.%2d.%2d %2d:%2d:%2d%*s",&atm->tm_mday,&atm->tm_mon,&atm->tm_year,&atm->tm_hour,&atm->tm_min,&atm->tm_sec)==6) {
-									if (!verwertbar) {
-										verwertbar=1;
-										j=2;
-									}
-									atm->tm_mon--;
-									atm->tm_year+=100; // 2000-1900
-									////	  <<atm->tm_mday<<"."<<atm->tm_mon+1<<"."<<atm->tm_year<<"."<<atm->tm_hour<<"."<<atm->tm_min<<"."<<atm->tm_sec<<endl;
-									atm->tm_isdst=-1; // sonst wird ab und zu eine Stunde abgezogen
-								} else if (verwertbar) verwertbar=0;
-								break;
-							case 1:
-								if (strptime(Zeile,"%a %b %d %T %Y", atm)) {
-									if (!verwertbar) {
-										verwertbar=2;
-										j=2;
-									} //                   if (!verwertbar)
-								} else if (verwertbar) verwertbar=0;
-						} //             switch (index)
-					} //           for(unsigned j=0;j<2;j++)
-					if (verwertbar) {
-						time_t gesz=mktime(atm);
-						////          	  char tbuf[20];
-						////              strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
-						////              <<"Datum: "<<tbuf<<endl;
-						time_t jetzt=time(0);
-						long sekunden=(long)(jetzt-gesz);
-						if (sekunden<1209600) {// jünger als zwei Wochen => behalten
-							abhier=1;
-						}
-						////	  <<jetzt<<"- "<<gesz<<"="<<sekunden<<endl;
-					} // if (sscanf(Zeile
-					delete[] atm;
-				} // (!abhier)
-				if (abhier) {
-					outfile<<Zeile<<endl;
-				} //         if (abhier)
-			} //         if (!abhier)
-			outfile.close();
-#ifdef false
-#ifdef obfstream
-			*outfile<<Zeile<<endl;
-		} // 		while (logf->getline (Zeile, sizeof(Zeile)))
-	} // 	while (logf.getline (Zeile, sizeof(Zeile)))
-	logf->close();
-	outfile->close();
-#else // obfstream
-	fputs(Zeile,outfile);
-	////          fputs("\n",outfile);
-} // (abhier)
-} // while (fgets(Zeile
-fclose(logf);
-fclose(outfile);
-#endif // obfstream else
-#endif // false
-if (abhier) {
-	remove(logdatei);
-	rename(ofil.c_str(),logdatei);
-}else{
-	remove(ofil.c_str());
-} // if (abhier) else
-return 0;
-/*//
-  << "Alle Zeilen:" << endl;
- unsigned int ii; //unsigned, weil ansonsten Vergleich von signed- und unsigned-Werten.
- for(ii=0; ii < Zeilen.size(); ii++) KLA
-  << Zeilen[ii] << endl;
- KLZ
-  << endl;
-*/
+		////		Zeilen.push_back(Zeile); //hängt einfach den Inhalt der Zeile als Vektorelement an das Ende des Vektors
+		if (!abhier) {
+			tm *atm = new tm; // int aktz;
+			////	for(aktz=Zeilen.size()-1;aktz>=0;aktz--) KLA
+			////         Log(string("aktz=") + ltoa_(aktz,buffer,10),obverb,0);
+			int verwertbar=0, index;
+			for(unsigned j=0;j<2;j++) {
+				if (verwertbar) {
+					index = verwertbar-1;
+					j=2;
+				} else {
+					index = j;
+				}
+				switch (index) {
+					case 0: 
+						if (sscanf(Zeile,"%2d.%2d.%2d %2d:%2d:%2d%*s",&atm->tm_mday,&atm->tm_mon,&atm->tm_year,&atm->tm_hour,&atm->tm_min,&atm->tm_sec)==6) {
+							if (!verwertbar) {
+								verwertbar=1;
+								j=2;
+							}
+							atm->tm_mon--;
+							atm->tm_year+=100; // 2000-1900
+							////	  <<atm->tm_mday<<"."<<atm->tm_mon+1<<"."<<atm->tm_year<<"."<<atm->tm_hour<<"."<<atm->tm_min<<"."<<atm->tm_sec<<endl;
+							atm->tm_isdst=-1; // sonst wird ab und zu eine Stunde abgezogen
+						} else if (verwertbar) verwertbar=0;
+						break;
+					case 1:
+						if (strptime(Zeile,"%a %b %d %T %Y", atm)) {
+							if (!verwertbar) {
+								verwertbar=2;
+								j=2;
+							} //                   if (!verwertbar)
+						} else if (verwertbar) verwertbar=0;
+				} //             switch (index)
+			} //           for(unsigned j=0;j<2;j++)
+			if (verwertbar) {
+				time_t gesz=mktime(atm);
+				////          	  char tbuf[20];
+				////              strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
+				////              <<"Datum: "<<tbuf<<endl;
+				time_t jetzt=time(0);
+				long sekunden=(long)(jetzt-gesz);
+				if (sekunden<1209600) {// jünger als zwei Wochen => behalten
+					abhier=1;
+				}
+				////	  <<jetzt<<"- "<<gesz<<"="<<sekunden<<endl;
+			} // if (sscanf(Zeile
+			delete[] atm;
+		} // (!abhier)
+		if (abhier) {
+			outfile<<Zeile<<endl;
+		} //         if (abhier)
+	} //         	while (logf.getline (Zeile, sizeof(Zeile)))
+	outfile.close();
+	if (abhier) {
+		remove(logdatei);
+		rename(ofil.c_str(),logdatei);
+	}else{
+		remove(ofil.c_str());
+	} // if (abhier) else
+	return 0;
+	/*//
+		<< "Alle Zeilen:" << endl;
+		unsigned int ii; //unsigned, weil ansonsten Vergleich von signed- und unsigned-Werten.
+		for(ii=0; ii < Zeilen.size(); ii++) KLA
+		<< Zeilen[ii] << endl;
+		KLZ
+		<< endl;
+	 */
 }	 // int kuerzelogdatei(const char* logdatei,int obverb)
 
 // aufgerufen in Log, setzbemv, aschreib
 string* loeschefarbenaus(string *zwi)
 {
-  loeschealleaus(zwi,schwarz);
-  loeschealleaus(zwi,dgrau); 
-  loeschealleaus(zwi,drot); 
-  loeschealleaus(zwi,rot); 
-  loeschealleaus(zwi,gruen); 
-  loeschealleaus(zwi,hgruen); 
-  loeschealleaus(zwi,braun); 
-  loeschealleaus(zwi,gelb); 
-  loeschealleaus(zwi,blau); 
-  loeschealleaus(zwi,dblau); 
-  loeschealleaus(zwi,violett); 
-  loeschealleaus(zwi,hviolett); 
-  loeschealleaus(zwi,tuerkis); 
-  loeschealleaus(zwi,htuerkis); 
-  loeschealleaus(zwi,hgrau); 
-  loeschealleaus(zwi,weiss); 
-  return zwi;
+	loeschealleaus(zwi,schwarz);
+	loeschealleaus(zwi,dgrau); 
+	loeschealleaus(zwi,drot); 
+	loeschealleaus(zwi,rot); 
+	loeschealleaus(zwi,gruen); 
+	loeschealleaus(zwi,hgruen); 
+	loeschealleaus(zwi,braun); 
+	loeschealleaus(zwi,gelb); 
+	loeschealleaus(zwi,blau); 
+	loeschealleaus(zwi,dblau); 
+	loeschealleaus(zwi,violett); 
+	loeschealleaus(zwi,hviolett); 
+	loeschealleaus(zwi,tuerkis); 
+	loeschealleaus(zwi,htuerkis); 
+	loeschealleaus(zwi,hgrau); 
+	loeschealleaus(zwi,weiss); 
+	return zwi;
 } // void loeschefarbenaus(string *zwi)
 
 int Log(const short screen,const short file, const bool oberr,const short klobverb, const char *format, ...)
 {
-  int erg=0;
+	int erg=0;
 	if (screen||file) {
 		va_list args;
 		va_start(args,format);
@@ -1101,87 +1058,87 @@ int Log(const string& text, const short screen/*=1*/, const short file/*=1*/, co
 #ifdef false
 	uchar erfolg=0;
 #endif   // false
-  // screen=0 = schreibt nicht auf den Bildschirm, 1 = schreibt, -1 = schreibt ohne Zeilenwechsel, -2 = schreibt bleibend ohne Zeilenwechsel
-  //// <<"Log: "<<text<<", screen: "<<screen<<", file: "<<file<<endl;
-  if (file || screen) {
-    if (screen) {
-      if (!cols) cols=getcols();
-      cout<<text;
-      if (letztesmaloZ && (cols>=text.length())) {
-        cout<<string(cols-text.length(),' ');
-      }	
-      if (screen==-2); else if (screen==-1 && !naechstezeile) 
-			  {cout<<"\r";cout.flush();} 
-////      <<"\n\n"<<text<<"\nHier kein Zeilenumbruch\n\n";
+	// screen=0 = schreibt nicht auf den Bildschirm, 1 = schreibt, -1 = schreibt ohne Zeilenwechsel, -2 = schreibt bleibend ohne Zeilenwechsel
+	//// <<"Log: "<<text<<", screen: "<<screen<<", file: "<<file<<endl;
+	if (file || screen) {
+		if (screen) {
+			if (!cols) cols=getcols();
+			cout<<text;
+			if (letztesmaloZ && (cols>=text.length())) {
+				cout<<string(cols-text.length(),' ');
+			}	
+			if (screen==-2); else if (screen==-1 && !naechstezeile) 
+			{cout<<"\r";cout.flush();} 
+			////      <<"\n\n"<<text<<"\nHier kein Zeilenumbruch\n\n";
 			else cout<<endl; 
-      letztesmaloZ = (screen==-1);
-    } // if (screen) 
-    if (file) {
-      if (!logdt || !*logdt|| !strcmp(logdt,"/")) {
-        cerr<<rot<<Txk[T_Variable_logdatei_leer]<<schwarz<<endl;
+			letztesmaloZ = (screen==-1);
+		} // if (screen) 
+		if (file) {
+			if (!logdt || !*logdt|| !strcmp(logdt,"/")) {
+				cerr<<rot<<Txk[T_Variable_logdatei_leer]<<schwarz<<endl;
 			}
 			struct stat logst={0};
 			if (!lstat(logdt,&logst) && S_ISDIR(logst.st_mode)) {
-        cerr<<rot<<Txk[T_Variable_logdatei_Verzeichnis]<<schwarz<<endl;
-      } else {
-        static bool erstaufruf=1;
-        char tbuf[20];
-        time_t jetzt=time(0);
-        strftime(tbuf,sizeof tbuf,"%d.%m.%y %X: ",localtime(&jetzt));
-        string zwi=tbuf+text; 
-        loeschefarbenaus(&zwi);
+				cerr<<rot<<Txk[T_Variable_logdatei_Verzeichnis]<<schwarz<<endl;
+			} else {
+				static bool erstaufruf=1;
+				char tbuf[20];
+				time_t jetzt=time(0);
+				strftime(tbuf,sizeof tbuf,"%d.%m.%y %X: ",localtime(&jetzt));
+				string zwi=tbuf+text; 
+				loeschefarbenaus(&zwi);
 
-        if (erstaufruf) {
-          kuerzelogdatei(logdt,klobverb); // screen
-          ////          Log("nach kuerzelogdatei",screen,0);
-          erstaufruf=0;
-        }	  
-        mdatei logf(logdt,ios::out|ios::app,0);
-        if (!logf.is_open()) {
-          perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
-          return 1;
-        } else {
-          logf<<zwi<<endl; 
-          logf.close();
-        } //         if (!logf.is_open()) else
+				if (erstaufruf) {
+					kuerzelogdatei(logdt,klobverb); // screen
+					////          Log("nach kuerzelogdatei",screen,0);
+					erstaufruf=0;
+				}	  
+				mdatei logf(logdt,ios::out|ios::app,0);
+				if (!logf.is_open()) {
+					perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
+					return 1;
+				} else {
+					logf<<zwi<<endl; 
+					logf.close();
+				} //         if (!logf.is_open()) else
 #ifdef false        
 #ifdef obfstream
-        fstream *logf=oeffne(logdt,2,&erfolg);
-        if (!erfolg) {
-          perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
-          return 1;
-        } else {
-          *logf<<zwi<<endl; 
-          logf->close();
-        }
+				fstream *logf=oeffne(logdt,2,&erfolg);
+				if (!erfolg) {
+					perror((string("\nLog: ")+Txk[T_Kann_Datei]+logdt+Txk[T_nicht_als_fstream_zum_Anhaengen_oeffnen]).c_str());
+					return 1;
+				} else {
+					*logf<<zwi<<endl; 
+					logf->close();
+				}
 #else	 // obfstream
-        FILE *logf=oeffne(logdt,2,&erfolg);
-        if (!erfolg) {
-          ////perror((string("\nLog: Kann Datei '")+logdt+"' nicht mit fopen zum Anhaengen oeffnen.").c_str()); // ergebnisgleich wie:
-          cerr<<"\nLog: "<<Txk[T_Kann_Datei]<<logdt<<Txk[T_nicht_mit_fopen_zum_Anhaengen_oeffnen]<<strerror(errno)<<endl;
-          return 1;
-        } else {
-          fputs((string(tbuf)+zwi).c_str(),logf);
-          fputs("\n",logf);
-          fclose(logf);
-        } // if (!erolg) else
+				FILE *logf=oeffne(logdt,2,&erfolg);
+				if (!erfolg) {
+					////perror((string("\nLog: Kann Datei '")+logdt+"' nicht mit fopen zum Anhaengen oeffnen.").c_str()); // ergebnisgleich wie:
+					cerr<<"\nLog: "<<Txk[T_Kann_Datei]<<logdt<<Txk[T_nicht_mit_fopen_zum_Anhaengen_oeffnen]<<strerror(errno)<<endl;
+					return 1;
+				} else {
+					fputs((string(tbuf)+zwi).c_str(),logf);
+					fputs("\n",logf);
+					fclose(logf);
+				} // if (!erolg) else
 #endif // obfstream else
 #endif // false
 
-      } // if (!logdt || !*logdt) _gKLA_ _gKLZ_ else _gKLA_
-      if (oberr) {
-        ////      string hstrerror=strerror(errno); // da errno trotz richtiger Fallunterscheidung bei isatty(fileno(stdout)) gesetzt wird
-        // wenn cerr woanders hingeht als cout oder die Meldung gar nicht an screen gerichtet ist, hier ohne Berücks.v.screen==-1
-        if (isatty(fileno(stdout))!=isatty(fileno(stderr)) || !screen) {
-          cerr<<text<<endl; //// <<": "<<hstrerror<<endl;
-        }
-        errno=0;
-      } //       if (oberr)
-    } // (file)
-  } // if (file || screen) 
-  //// <<"Screen: "<<screen<<"letztesmaloZ: "<<letztesmaloZ;
-  //// <<"und dann: "<<letztesmaloZ<<endl;
-  return 0;
+			} // if (!logdt || !*logdt) _gKLA_ _gKLZ_ else _gKLA_
+			if (oberr) {
+				////      string hstrerror=strerror(errno); // da errno trotz richtiger Fallunterscheidung bei isatty(fileno(stdout)) gesetzt wird
+				// wenn cerr woanders hingeht als cout oder die Meldung gar nicht an screen gerichtet ist, hier ohne Berücks.v.screen==-1
+				if (isatty(fileno(stdout))!=isatty(fileno(stderr)) || !screen) {
+					cerr<<text<<endl; //// <<": "<<hstrerror<<endl;
+				}
+				errno=0;
+			} //       if (oberr)
+		} // (file)
+	} // if (file || screen) 
+	//// <<"Screen: "<<screen<<"letztesmaloZ: "<<letztesmaloZ;
+	//// <<"und dann: "<<letztesmaloZ<<endl;
+	return 0;
 } // Log(string text)
 
 
@@ -1190,20 +1147,20 @@ inline void wait ()
 {
 	pthread_mutex_lock(&getmutex);
 	cout<<Txk[T_Bitte_mit]<<_drot<<"return"<<_schwarz<<Txk[T_beenden];
-  // Löscht etwaige Fehlerzustände, die das Einlesen verhindern könnten
-  cin.clear();
-  // (= ignoriert alle Zeichen die derzeit im Puffer sind)
-  cin.ignore(cin.rdbuf()->in_avail());
-  // Füge alle eingelesenen Zeichen in den Puffer bis ein Enter gedrückt wird
-  // cin.get() liefert dann das erste Zeichen aus dem Puffer zurück, welches wir aber ignorieren (interessiert uns ja nicht)
-  cin.get();
+	// Löscht etwaige Fehlerzustände, die das Einlesen verhindern könnten
+	cin.clear();
+	// (= ignoriert alle Zeichen die derzeit im Puffer sind)
+	cin.ignore(cin.rdbuf()->in_avail());
+	// Füge alle eingelesenen Zeichen in den Puffer bis ein Enter gedrückt wird
+	// cin.get() liefert dann das erste Zeichen aus dem Puffer zurück, welches wir aber ignorieren (interessiert uns ja nicht)
+	cin.get();
 	pthread_mutex_unlock(&getmutex);
 }  // inline void wait () 
 #endif // _MSC_VER
 
 int wartaufpids(pidvec *pidv,const ulong runden/*=0*/,const int obverb/*=0*/,const string& wo/*=nix*/)
 {
-////	int* ovp=(int*)&obverb; *ovp=0;
+	////	int* ovp=(int*)&obverb; *ovp=0;
 	ulong aktru=0; 
 	Log(obverb>1,1,0,0,"%s%s()%s, %s, %s%s pid: %s%lu%s, pidv->size(): %s%zu%s",
 			violett,__FUNCTION__,blau,wo.c_str(),schwarz,Txk[T_eigene],blau,getpid(),schwarz,blau,pidv->size(),schwarz);
@@ -1247,10 +1204,10 @@ int wartaufpids(pidvec *pidv,const ulong runden/*=0*/,const int obverb/*=0*/,con
 // braucht nur 1/300 von FindStringInBuffer
 long cmpmem( char* feld, const char* search, int len_feld) //// , int len_search
 {
-/*//#ifdef _DEBUG
-    gettimeofday(&perfStart, 0); 
+	/*//#ifdef _DEBUG
+		gettimeofday(&perfStart, 0); 
 #endif
-*/
+	 */
   long i=0;
   int j=-1;
   int len_search=strlen(search);
@@ -2657,8 +2614,8 @@ int pruefber(const string& datei,const string& benutzer,const mode_t mod/*=01*/,
 // obmitfacl: 1= setzen, falls noetig, >1= immer setzen
 // falls Benutzer root
 // wenn !besitzer.empty(), dann wird das letzte und alle neu zu erstellenden Verzeichnisse diesem zugeordnet 
-int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfacl/*=0*/,uchar obmitcon/*=0*/,
-		const string& besitzer/*=nix*/, const string& benutzer/*=nix*/,const uchar obmachen/*=1*/)
+
+int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfacl/*=0*/,uchar obmitcon/*=0*/, const string& besitzer/*=nix*/, const string& benutzer/*=nix*/,const uchar obmachen/*=1*/)
 {
 	static int obselinux=-1; // -1=ununtersucht, 0=kein Selinux da, 1=Selinux da
 	int fehlt=1;

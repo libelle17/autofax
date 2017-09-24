@@ -8,7 +8,7 @@ FREQUENZ=5 # rufe gtags jedes 5. Mal auf
 
 exportvars
 einricht ctags "$CTAGS"
-ctags *.cpp *.h
+ctags -V *.cpp *.h
 test -f $ZD || echo 1>$ZD; awk "BEGIN {print `cat $ZD`+1}">$ZD
 expr $(cat $ZD) % $FREQUENZ >/dev/null 2>&1||{ 
   printf "Calling/rufe auf: gtags - please wait / bitte warten ...\n";

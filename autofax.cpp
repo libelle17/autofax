@@ -2768,18 +2768,9 @@ void paramcl::pruefmodem()
 	//// <<"pruefmodem 1 nach obcapi: "<<(int)obcapi<<endl;
 	// 19.2.17: evtl. besser mit: dmesg|grep '[^t]*tty[^] 0\t:.$]'|sed 's/[^t]*\(tty[^] \t:.$]*\).*/\1/'
 	// 25.2.17: geht leider nicht nach "<DPROG> -nohyla"
-	//#define mitdmesg
+	// #define mitdmesg
 #ifdef mitdmesg
 	systemrueck("dmesg|grep tty",obverb,oblog,&qrueck);
-	for(size_t i=0;i<qrueck.size();i++) KLA
-		size_t pos=qrueck[i].find("tty");
-	if (pos==string::npos) continue;
-	size_t p2=qrueck[i].find_first_of("] \t:.,;-",pos);
-	if (p2==string::npos) continue;
-	const string tty=qrueck[i].substr(pos,p2-pos);
-	if (tty=="tty"||tty=="tty0") continue;
-	////	modem=svz+modem;
-	//// <<rot<<svz+modem<<schwarz<<endl;
 #else // mitdmesg
 	if (findv==1) {
 		systemrueck("sh -c 'cd "+svz+";find */device/driver'", obverb,oblog,&qrueck);
@@ -2792,7 +2783,18 @@ void paramcl::pruefmodem()
 			} // 				if (lstat((qrueck[i]+"/device/driver").c_str(),&st))
 		} // 			for(ssize_t i=qrueck.size()-1;i>=0;i--)
 	} // 		if (findv==1)
+#endif // mitdmesg else
 	for(size_t i=0;i<qrueck.size();i++) {
+#ifdef mitdmesg
+		size_t pos=qrueck[i].find("tty");
+		if (pos==string::npos) continue;
+		size_t p2=qrueck[i].find_first_of("] \t:.,;-",pos);
+		if (p2==string::npos) continue;
+		const string tty=qrueck[i].substr(pos,p2-pos);
+		if (tty=="tty"||tty=="tty0") continue;
+		////	modem=svz+modem;
+		//// <<rot<<svz+modem<<schwarz<<endl;
+#else // mitdmesg
 		const string tty=findv==1?qrueck[i].substr(0,qrueck[i].find('/')):base_name(qrueck[i]);
 		////			struct stat entrydriv=KLA 0 KLZ;
 		////			if (!lstat((modem+"/device/driver").c_str(),&entrydriv)) KLA
@@ -3900,6 +3902,20 @@ void paramcl::rueckfragen()
 		kuerzevtz(&zmakt->ziel);
 		if (zmakt->obmusterleer()) break;
 	} //   for(zielmustercl *zmakt=zmp;1;zmakt++)
+	if (rzf) {
+	if (obcapi||obhyla) {
+		if (!pruefsoffice())
+			pruefconvert();
+		if (obocri || obocra) {
+			pruefocr();
+		}
+		if (obcapi) {
+			pruefsfftobmp();
+			prueftif();
+		} // 		if (obcapi)
+	} // 	if (obcapi||obhyla)
+	} // 	if (rzf)
+
 } // void paramcl::rueckfragen()
 
 // wird aufgerufen in: main
@@ -5502,7 +5518,7 @@ void paramcl::suchestr()
 	} // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
 } // suchestr
 
-// verwendet in DateienHerricht(), empfarch()
+// verwendet in zupdf, rueckfragen
 int paramcl::pruefsoffice(uchar mitloe/*=0*/)
 {
 	Log(violetts+Tx[T_pruefsoffice]+schwarz);
@@ -5518,7 +5534,7 @@ int paramcl::pruefsoffice(uchar mitloe/*=0*/)
 	return sofficeda;
 } // int paramcl::pruefsoffice()
 
-// verwendet in DateienHerricht
+// verwendet in zupfd, rueckfragen
 int paramcl::pruefconvert()
 {
 	Log(violetts+Tx[T_pruefconvert]+schwarz);
@@ -7264,6 +7280,7 @@ void paramcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,con
 {
 	// uchar indb/*=1*/,uchar mitversch/*=1*/)
 	// was&4: Bilddateien erstellen, was&2 q-Datei verschieben, was&1: in Datenbank eintragen, 
+	// Dateien kommen als tif-Dateien an, z.B. /var/spool/hylafax/../fax000000572.tif
 	Log(violetts+Tx[T_empfhyla]+schwarz+ganz+Tx[T_was]+(was&4?Tx[T_Bilddatei]:"")+(was&2?", q ":"")+(was&1?", Tab.":""));
 	struct stat stganz={0};
 	const uchar ganzfehlt=lstat(ganz.c_str(),&stganz); // muesste immer 0 sein

@@ -32,7 +32,7 @@
 # "make version" => kompilieren mit opts, installieren und aktualisieren auf git-Server mit einheitlicher Dateiversion
 # "make transfer <zielvz>" => kopieren der Programmdateien abzüglich bestimmter Kommentare in Zielverzeichnis <zielvz>
 # "make verschieb" => wie transfer, mit ../<DPROG>rein als Zielverzeichnis
-# "make verschieb" => wie verschieb, löscht vorher das als Zielverzeichnis
+# "make vsneu" => wie verschieb, löscht vorher das als Zielverzeichnis (geht nur, wenn das github-Repository vorher gelöscht ist)
 # "make ruf" => ruft das Programm auf
 
 ICH::=$(firstword $(MAKEFILE_LIST))
@@ -425,9 +425,11 @@ uninstall: fernclean
 
 .PHONY: verschieb
 verschieb:
-	Z=../$(DPROG)rein;[ "$(LOESCH)" = "1" ]&&rm -rf $Z;make all install&&{ make transfer $$Z;{ cd $$Z;[ -d .git ]||make git;make version; cd -;};}
+	Z=../$(DPROG)rein;[ "$(LOESCH)" = "1" ]&&rm -rf $$Z;make all install&&\
+		{ make transfer $$Z;{ cd $$Z;[ -d .git ]||make git;./configure;make version; cd - >$(KR);};}
 
 .PHONY: vsneu
+# geht nur, wenn das github-Repository vorher gelöscht ist
 vsneu: LOESCH::=1
 vsneu: verschieb
 
