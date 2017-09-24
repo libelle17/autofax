@@ -3903,19 +3903,18 @@ void paramcl::rueckfragen()
 		if (zmakt->obmusterleer()) break;
 	} //   for(zielmustercl *zmakt=zmp;1;zmakt++)
 	if (rzf) {
-	if (obcapi||obhyla) {
-		if (!pruefsoffice())
-			pruefconvert();
-		if (obocri || obocra) {
-			pruefocr();
-		}
-		if (obcapi) {
-			pruefsfftobmp();
-			prueftif();
-		} // 		if (obcapi)
-	} // 	if (obcapi||obhyla)
+		if (obcapi||obhyla) {
+			if (!pruefsoffice())
+				pruefconvert();
+			if (obocri || obocra) {
+				pruefocr();
+			}
+			if (obcapi) {
+				pruefsfftobmp();
+				prueftif();
+			} // 		if (obcapi)
+		} // 	if (obcapi||obhyla)
 	} // 	if (rzf)
-
 } // void paramcl::rueckfragen()
 
 // wird aufgerufen in: main

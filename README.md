@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.45696) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45697) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -88,17 +88,7 @@ and answer some questions of the program. <br>
 The first execution and the first processing of a
 sent/received fax with each of hylafax and/or capisuite may
 take some time and need some additional input, respectively.
-<br>
-For the automatic installation of the programs necessary to
-convert the fax files to pdf, <b>autofax</b> must once be
-called visibly (at a console/ whithin a terminal) with
-incoming and outgoing faxes queued, because when
-<b>autofax</b> is called by crontab, the installation of
-those converting programs fails. If faxes have been received
-before the first visible call of <b>autofax</b> and
-therefore are ill formed (e.g., tif-Files instead of
-pdf-files, or pdf-files with unreadable text), they can be
-repaired by calling <b><br>
+<b><br>
 autofax -again</b> for each of then. Hereby the necessary
 program installations for future fax receiving will
 simultaneously be completed.</p>
@@ -790,7 +780,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.45696) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45697) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -886,18 +876,6 @@ Der erste Programmaufruf und die erste Faxverarbeitung eines
 gesandten/empfangenen Faxes mit Hylafax/Capsiuite
 k&ouml;nnen jeweils etwas dauern und ein paar
 zus&auml;tzliche Eingaben erfordern. <br>
-Zur automatischen Installation notwendiger
-Konvertierungs-Programme zu pdf muss <b>autofax</b> einmal
-mit wartenden ein- und ausgehenden Faxen sichtbar (am PC
-bzw. in einem Terminal) aufgerufen werden, denn beim Aufruf
-von <b>autofax</b> aus crontab schl&uuml;ge die
-Installation dieser Konvertierungs-Programme fehl. Falls
-bereits vor dem ersten sichtbaren Aufruf von <b>autofax</b>
-Faxe empfangen worden sind und daher schlecht gestaltet sind
-(z.B. tif-Dateien anstatt pdf-Dateien oder pdf-Dateien mit
-unlesbarem Buchstabensalat), k&ouml;nnen diese
-nachtr&auml;glich korrigiert werden durch den Befehl
-<br>
 autofax -erneut f&uuml;r jedes von Ihnen. Hierdurch wird
 gleichzeitig die notwendige Programminstallation
 f&uuml;r k&uuml;nftige Faxe

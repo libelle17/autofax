@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "24.09.17" "Version 0.45696" "Manual-Seite für ²DPROG²"
+.TH man 1 "24.09.17" "Version 0.45697" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -33,8 +33,6 @@ Zuletzt rufen Sie auf:
 und beantworten einige Rueckfragen des Programms.
 .br
 Der erste Programmaufruf und die erste Faxverarbeitung eines gesandten/empfangenen Faxes mit Hylafax/Capsiuite können jeweils etwas dauern und ein paar zusätzliche Eingaben erfordern.
-.br
-Zur automatischen Installation notwendiger Konvertierungs-Programme zu pdf muss \fB²DPROG²\fR einmal mit wartenden ein- und ausgehenden Faxen sichtbar (am PC bzw. in einem Terminal) aufgerufen werden, denn beim Aufruf von \fB²DPROG²\fR aus crontab schlüge die Installation dieser Konvertierungs-Programme fehl. Falls bereits vor dem ersten sichtbaren Aufruf von \fB²DPROG²\fR Faxe empfangen worden sind und daher schlecht gestaltet sind (z.B. tif-Dateien anstatt pdf-Dateien oder pdf-Dateien mit unlesbarem Buchstabensalat), können diese nachträglich korrigiert werden durch den Befehl 
 .br
 \fR²DPROG² -erneut\fR für jedes von Ihnen. Hierdurch wird gleichzeitig die notwendige Programminstallation für künftige Faxe vervollständigt.
 .SH GEBRAUCH

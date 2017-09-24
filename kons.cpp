@@ -2614,8 +2614,8 @@ int pruefber(const string& datei,const string& benutzer,const mode_t mod/*=01*/,
 // obmitfacl: 1= setzen, falls noetig, >1= immer setzen
 // falls Benutzer root
 // wenn !besitzer.empty(), dann wird das letzte und alle neu zu erstellenden Verzeichnisse diesem zugeordnet 
-
-int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfacl/*=0*/,uchar obmitcon/*=0*/, const string& besitzer/*=nix*/, const string& benutzer/*=nix*/,const uchar obmachen/*=1*/)
+int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfacl/*=0*/,uchar obmitcon/*=0*/, 
+		const string& besitzer/*=nix*/, const string& benutzer/*=nix*/,const uchar obmachen/*=1*/)
 {
 	static int obselinux=-1; // -1=ununtersucht, 0=kein Selinux da, 1=Selinux da
 	int fehlt=1;
