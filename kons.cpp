@@ -2724,6 +2724,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 } // void pruefverz(const string& verz,int obverb,int oblog)
 
 
+// verwendet in: lieskonfein
 string aktprogverz()
 {
 	char pBuf[300];
