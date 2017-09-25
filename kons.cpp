@@ -2188,7 +2188,8 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 	perfcl prf("systemrueck");
 #endif // systemrueckprofiler
 	if (rueck) {
-    if (FILE* pipe = popen(hcmd.c_str(), "r")) {
+		const string bef="env PATH='"+spath+"' "+"sh -c '"+ersetzAllezu(hcmd,"'","'\\''")+"'";
+    if (FILE* pipe = popen(bef.c_str(), "r")) {
 		/*//
 		int fd=fileno(pipe);
 		int flags=fcntl(fd, F_GETFL, 0);
@@ -4720,6 +4721,10 @@ const double& versnr=
 // Verzeichnis auf Github
 const string& gitv=
 #include "gitvdt"
+;
+// Pfad für Aufruf aus crontab
+const string& spath=
+#include "sudopath"
 ;
 const string s_true="true";
 const string s_dampand="&&";

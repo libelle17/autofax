@@ -38,6 +38,7 @@ extern const string& instvz; // in kons.cpp, z.B. /root/autofax
 extern const string& unindt; // instvz+"uninstallinv"
 extern const int sfeh[]; // T_Dienst_laeuft, T_Dienst_inexistent, ...
 extern const double& versnr; // Programmversion
+extern const string& spath; // PATH-Variable für root
 string* loeschefarbenaus(string *zwi);
 int Log(const short screen,const short file, const bool oberr,const short klobverb, const char *format, ...);
 int Log(const string& text,const short screen=1,const short file=1,const bool oberr=0,const short klobverb=0);
