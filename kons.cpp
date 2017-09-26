@@ -4780,9 +4780,9 @@ int haupt::kompilbase(const string& was, const string& endg)
 {
 	if (!pruefinstv()) {
 		int kerg=0;
-		if (systemrueck("P="+was+";T=$P.tar."+endg+";cd \""+instvz+"\" && tar xpvf $T&& rm -rf $P 2>/dev/null", obverb,oblog,/*rueck=*/0,/*obsudc=*/0))
-			kerg=systemrueck("P="+was+";rm -rf $P",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
-		if (!kerg) kerg=systemrueck("P="+was+";M=$P-master;mv $M $P",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
+		if (systemrueck("P="+was+";T=$P.tar."+endg+";cd \""+instvz+"\"&&tar xpvf $T&& rm -rf $P 2>/dev/null", obverb,oblog,/*rueck=*/0,/*obsudc=*/0))
+			kerg=systemrueck("P="+was+";cd \""+instvz+"\"&&rm -rf $P",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+		if (!kerg) kerg=systemrueck("P="+was+";M=$P-master;cd \""+instvz+"\"&&mv $M $P",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
 		return kerg;
 	} //   if (!pruefinstv())
 	return 1;
@@ -4809,7 +4809,7 @@ int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const stri
 		const string b1="cd \""+ivw+"\"&&"+(vorcfg.empty()?s_true:vorcfg)+(ohneconf?"":"&& ./configure ")+cfgbismake+" make";
 		const string b2="cd \""+ivw+"\"&& make install";
 		const string b3="cd \""+ivw+"\"&& make distclean; ./configure; make";
-		const string b4="ldconfig "+lsys.getlib64()+";'";
+		const string b4="ldconfig "+lsys.getlib64();
 		if (!systemrueck(b1,obverb,oblog,/*rueck=*/0,/*obsudc=*/0))
 		     systemrueck(b2,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		else if (!systemrueck(b3,obverb,oblog,/*rueck=*/0,/*obsudc=*/0))
