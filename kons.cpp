@@ -68,7 +68,7 @@ cuscl::cuscl()
 } // cuscl::cuscl()
 cuscl cus;
 const string sudc=(cus.cuid?"sudo ":nix);
-const string sudhc=(cus.cuid?"sudo -H ":nix);
+// const string sudhc=(cus.cuid?"sudo -H ":nix);
 
 const string sprachstr=string("Language/Sprache/Lingue/Lingua [")+blau+'d'+schwarz+"eutsch,"+blau+'e'+schwarz+"nglisch]"+"";
 const char* sprachcstr=&sprachstr.front();
@@ -1323,7 +1323,7 @@ double progvers(const string& prog,int obverb/*=0*/, int oblog/*=0*/)
 	string pfad;
 	if (obprogda(prog,obverb,oblog,&pfad)) {
 		svec urueck;
-		systemrueck(pfad+" --version",obverb,oblog,&urueck);
+		systemrueck(pfad+" --version",obverb,oblog,&urueck,/*obsudc=*/0);
 		if (urueck.size()) vers=verszuzahl(urueck[0].c_str());
 	} // 	if (obprogda(prog,obverb,oblog,&pfad))
 	return vers;
@@ -1358,7 +1358,7 @@ int touch(const string& pfad,int obverb/*=0*/,int oblog/*=0*/)
 			} // 			if (rc) else
 		} // 		if (fd<0) else
 		if (fehler)
-			fehler=systemrueck(sudc+"touch '"+pfad+"'",obverb,oblog);
+			fehler=systemrueck("touch '"+pfad+"'",obverb,oblog,/*obsudc=*/0);
 	} // 	if (fehler)
 	return fehler;
 } // int touch(const std::string& pfad,int obverb/*=0*/,int oblog/*=*/)
@@ -1473,9 +1473,9 @@ void fuersamba(string& roh)
 lsysen lsyscl::getsys(int obverb/*=0*/,int oblog/*=0*/)
 {
       if (sys==usys) {
-        if (!systemrueck("cat /proc/version | grep SUSE",obverb-2,oblog)) return sus;
-        if (!systemrueck("cat /proc/version | grep 'Ubuntu\\|ebian'",obverb-2,oblog)) return deb;
-        if (!systemrueck("cat /proc/version | grep edora",obverb-2,oblog)) return fed;
+        if (!systemrueck("cat /proc/version | grep SUSE",obverb-2,oblog,/*rueck=*/0,/*obsudc=*/0)) return sus;
+        if (!systemrueck("cat /proc/version | grep 'Ubuntu\\|ebian'",obverb-2,oblog,/*obsudc=*/0)) return deb;
+        if (!systemrueck("cat /proc/version | grep edora",obverb-2,oblog,/*rueck=*/0,/*obsudc=*/0)) return fed;
       } //       if (sys==usys)
       return usys;
 } // lsysen lsyscl::getsys(int obverb/*=0*/,int oblog/*=0*/)
@@ -1539,13 +1539,13 @@ int obprogda(const string& prog, int obverb/*=0*/, int oblog/*=0*/, string *pfad
     }
   } // for(int iru=0;iru<3;iru++) 
   svec rueck;
-  if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck)) {
+  if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck,/*obsudc=*/0)) {
     if (pfad) *pfad=rueck[0];
     return 2;
   } // if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck))
 	// wenn nicht root
   if (cus.cuid) {
-    if (!systemrueck(sudc+"which \""+prog+"\" 2>/dev/null ||"+sudc+"env \"PATH=$PATH\" which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck)) {
+    if (!systemrueck("which \""+prog+"\" 2>/dev/null ||env \"PATH=$PATH\" which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck,/*obsudc=*/1)) {
       if (pfad) *pfad=rueck[0];
       return 3;
     }
@@ -1566,7 +1566,7 @@ linst_cl::linst_cl(int obverb,int oblog)
 				ipr=zypper;
 				instp=sudc+"zypper -n --gpg-auto-import-keys in ";
 				instyp=instp+"-y -f ";
-				upr=sudc+"zypper -n rm -u ";
+				upr="zypper -n rm -u ";
 				uypr=upr+"-y ";
 				upd=sudc+"zypper patch";
 				repos=sudc+"zypper lr | grep 'g++\\|devel_gcc'>/dev/null 2>&1 || "+
@@ -1578,22 +1578,22 @@ linst_cl::linst_cl(int obverb,int oblog)
 					ipr=dnf;
 					instp=sudc+"dnf install ";
 					instyp=sudc+"dnf -y install ";
-					upr=sudc+"dnf remove ";
-					uypr=sudc+"dnf -y remove ";
+					upr="dnf remove ";
+					uypr="dnf -y remove ";
 					upd=sudc+"dnf update";
 				} else if (obprogda("yum",obverb-1,oblog)) {
 					ipr=yum;
 					instp=sudc+"yum install ";
 					instyp=sudc+"yum -y install ";
-					upr=sudc+"yum remove ";
-					uypr=sudc+"yum -y remove ";
+					upr="yum remove ";
+					uypr="yum -y remove ";
 					upd=sudc+"yum update";
 				} else if (obprogda("urpmi.update",obverb-1,oblog)) {
 					ipr=urp;
 					instp="urpmi --auto ";
 					instyp="urpmi --auto --force ";
-					upr=sudc+"urpme ";
-					uypr=sudc+"urpme --auto --force ";
+					upr="urpme ";
+					uypr="urpme --auto --force ";
 					upd=sudc+"urpmi.update -a";
 				} // 				if (obprogda("dnf",obverb-1,oblog))
 				compil="make automake gcc-c++ kernel-devel";
@@ -1603,17 +1603,17 @@ linst_cl::linst_cl(int obverb,int oblog)
 			// genauso in: configure
 			// wenn cdrom-Zeile vorkommt, vor ftp.-debian-Zeile steht und www.debian.org erreichbar ist, dann alle cdrom-Zeilen hinten anhängen
 			// gleichlautend in configure: einricht()
-			systemrueck(sudc+"sh -c \"S=/etc/apt/sources.list;F='^[^#]*cdrom:';grep -qm1 \\$F \\$S && "
+			systemrueck("S=/etc/apt/sources.list;F='^[^#]*cdrom:';grep -qm1 \\$F \\$S && "
 			    "test 0\\$(sed -n '/^[^#]*ftp.*debian/{=;q}' \\$S) -gt 0\\$(sed -n '/'\\$F'/{=;q}' \\$S) && "
-					"ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/'\\$F'/{H;d};\\${p;x}' \\$S;:\"",obverb,oblog);
+					"ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/'\\$F'/{H;d};\\${p;x}' \\$S;:",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			// hier werden die Dateien vorgabemaessig behalten
 			ipr=apt;
 			schau="dpkg -s";
 			instp=sudc+"apt-get install "; 
 			instyp=sudc+"apt-get -y --force-yes --reinstall install "; 
-			upr=sudc+"apt-get -f install;"+sudc+"apt-get --auto-remove purge ";
+			upr="apt-get -f install; apt-get --auto-remove purge ";
 			udpr=sudc+"apt-get -f install;"+sudc+"dpkg -r --force-depends ";
-			uypr=sudc+"apt-get -f install;"+sudc+"apt-get -y --auto-remove purge ";
+			uypr="apt-get -f install; apt-get -y --auto-remove purge ";
 			upd=sudc+"apt update;"+sudc+"apt upgrade;";
 			compil="install build-essential linux-headers-`uname -r`";
 			dev="dev";
@@ -1622,9 +1622,9 @@ linst_cl::linst_cl(int obverb,int oblog)
 			schau="pacman -Qi";
 			instp=sudc+"pacman -S ";
 			instyp=sudc+"pacman -S --noconfirm ";
-			upr=sudc+"pacman -R -s ";
+			upr="pacman -R -s ";
 			udpr=sudc+"pacman -R -d -d ";
-			uypr=sudc+"pacman -R -s --noconfirm "; 
+			uypr="pacman -R -s --noconfirm "; 
 			upd=sudc+"pacman -Syu";
 			compil="gcc linux-headers-`uname -r`";
 		} else {
@@ -1632,7 +1632,7 @@ linst_cl::linst_cl(int obverb,int oblog)
 		} // 		if (obprogda("rpm",obverb-1,oblog))
     svec qrueck;
 		if (findv==1) {
-			systemrueck("find /usr -maxdepth 1 -type d -name 'lib*'",obverb,oblog,&qrueck);
+			systemrueck("find /usr -maxdepth 1 -type d -name 'lib*'",obverb,oblog,&qrueck,/*obsudc=*/0);
 		} else findfile(&qrueck,findv,obverb,oblog,0,"/usr","lib[^/]*$",1,34,1);
 		for(size_t iru=0;iru<qrueck.size();iru++) libs+=qrueck[iru]+" ";
 		obprogda("sh",obverb,oblog,&shpf);// Pfad zu sh
@@ -2136,8 +2136,10 @@ std::string dir_name(const std::string& path)
 // bei rueck==0 liefert es das Ergebnis der system(..)-Funktion zurueck
 // obverb: 1 = Befehl anzeigen, 2 = auch Rueckgabezeilen anzeigen
 // obergebnisanzeig: 1=falls Fehler und obverb>1, >1=falls Fehler
-int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<string> *rueck/*=0*/, 
-    int verbergen/*=0*/, int obergebnisanzeig/*wahr*/, const string& ueberschr/*=nix*/,vector<errmsgcl> *errm/*=0*/,uchar obincron/*=0*/,
+// cmd soll kein "sudo " am Anfang enthalten, falls nötig soll obsudc gesetzt werden. Innenliegende sudo-Befehle dürfen für den Cron-Aufruf 
+//  nur den Pfad /usr/bin:/bin (fedora und ubuntu) bzw. /usr/bin:/usr/sbin:/sbin:/bin:/usr/lib/news/bin:/root/bin (opensuse) erwarten
+int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<string> *rueck/*=0*/, const uchar obsudc/*=0*/,
+    const int verbergen/*=0*/, int obergebnisanzeig/*wahr*/, const string& ueberschr/*=nix*/,vector<errmsgcl> *errm/*=0*/,uchar obincron/*=0*/,
 		stringstream *ausgp/*=0*/)
 {
 // verbergen: 0 = nichts, 1= '2>/dev/null' anhaengen + true zurueckliefern, 2='>/dev/null 2>&1' anhaengen + Ergebnis zurueckliefern
@@ -2146,10 +2148,10 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
   uchar weiter=0;
   int erg=-111;
   string hcmd=cmd;
-  uchar obfind=(cmd.substr(0,4)=="find" || cmd.substr(0,9)==sudc+"find");
+  uchar obfind=(cmd.substr(0,4)=="find");
   if (verbergen==1 || (obfind && (obverb<1 || cus.cuid))) {
     if (obverb<=1) 
-      hcmd+=" 2>/dev/null; true";
+      hcmd+=" 2>/dev/null;:";
   } else if (verbergen==2) {
     if (obverb<=1)
       hcmd+=" >/dev/null 2>&1";
@@ -2187,8 +2189,10 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 #ifdef systemrueckprofiler
 	perfcl prf("systemrueck");
 #endif // systemrueckprofiler
+	// obsudc==0 nichts, obsudc==1: "sudo ", obsudc==2: "sudo -H "
+	const string bef=(obsudc?sudc+(obsudc==2&&!sudc.empty()?"-H ":""):"")+"env PATH='"+spath+"' "+"sh -c '"+ersetzAllezu(hcmd,"'","'\\''")+"'";
 	if (rueck) {
-		const string bef="env PATH='"+spath+"' "+"sh -c '"+ersetzAllezu(hcmd,"'","'\\''")+"'";
+		//// <<gruen<<bef<<schwarz<<endl;
     if (FILE* pipe = popen(bef.c_str(), "r")) {
 		/*//
 		int fd=fileno(pipe);
@@ -2252,7 +2256,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
       erg=1;
     } //     if (FILE* pipe = popen(hcmd.c_str(), "r"))  else 
   } else {
-    erg= system(hcmd.c_str());
+    erg= system(bef.c_str());
   } // if (rueck) else
 #ifdef systemrueckprofiler
   prf.ausgab1000("vor weiter");
@@ -2275,14 +2279,14 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 				if (ob0heissterfolg) {
 					if (erg) {
 						if (cmd.substr(0,6)=="rpm -q" || cmd.substr(0,7)=="dpkg -s" || 
-						    cmd.substr(0,5)=="which" || cmd.substr(0,10)==sudc+"which" || cmd.substr(0,16)==sudc+"iptables -L" ||
+						    cmd.substr(0,5)=="which" || cmd.substr(0,11)=="iptables -L" ||
 								(cmd.find("grep")!=string::npos && cmd.find(" -q <("+sudc+"crontab -l")!=string::npos) ||
-							  cmd.substr(0,7)=="test -f" || cmd.substr(0,12)==sudc+"test -f" ||
-								cmd.substr(0,20)=="systemctl list-units" || cmd.substr(0,15)==sudc+"pdbedit -L" ||
+							  cmd.substr(0,7)=="test -f" ||
+								cmd.substr(0,20)=="systemctl list-units" || cmd.substr(0,10)=="pdbedit -L" ||
                 cmd.find("faxstat|grep")!=string::npos
 								) {
 							ergebnis=gruens+Txk[T_nicht_gefunden];
-						} else if (cmd.substr(0,14)==sudc+"modprobe ") {
+						} else if (cmd.substr(0,9)=="modprobe ") {
 						  ergebnis=gruens+Txk[T_nicht_einfuegbar];
 							// das Ende einer awk-Berechnung reeller Zahlen und Pruefung auf Negativität:
 						} else if (cmd.find("|grep -q ^-")!=string::npos) {
@@ -2319,7 +2323,7 @@ void pruefplatte()
   const string platte="/";
   statvfs(platte.c_str(),&fp);   
   if (fp.f_bsize * fp.f_bfree < 100000) { // wenn weniger als 100 MB frei sind ...
-    systemrueck(sudc+"pkill postdrop");
+    systemrueck("pkill postdrop",0,0,/*rueck=*/0,/*obsudc=*/1);
   }
 } // pruefplatte
 
@@ -2328,7 +2332,7 @@ void pruefmehrfach(const string& wen,uchar obstumm/*=0*/)
 {
   svec rueck;
 	const string iwen=wen.empty()?base_name(meinpfad()):wen;
-  systemrueck("ps -eo comm|grep '^"+iwen+"'",0,0,&rueck);
+  systemrueck("ps -eo comm|grep '^"+iwen+"'",0,0,&rueck,/*obsudc=*/0);
   if (rueck.size()>1) {
 	  if (obstumm)
 			exit(0);
@@ -2491,11 +2495,11 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 						obhier=pruefber(pfade[i],cuser,ergmod);
 					} //        if (i||!obhier)
 					if (obhier) {
-						if (obverb) systemrueck(sudc+"sh -c 'ls -ld \""+pfade[i]+"\"'",2,0);
+						if (obverb) systemrueck("ls -ld \""+pfade[i]+"\"",2,0,/*rueck=*/0,/*obsudc=*/1);
 						if (faclbak) {
 							const string sich=base_name(pfade[i])+"."+base_name(meinpfad())+".perm";
-							const string bef=sudc+"sh -c 'cd \""+dir_name(pfade[i])+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(pfade[i])+"\">\""+sich+"\"'";
-							systemrueck(bef,obverb,oblog);
+							const string bef="cd \""+dir_name(pfade[i])+"\";test -f \""+sich+"\"||getfacl -R \""+base_name(pfade[i])+"\">\""+sich+"\"";
+							systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 							struct stat st={0};
 							string para="setfacl --restore=\""+sich+"\"";
 							if (lstat(sich.c_str(),&st) || !st.st_size) {
@@ -2503,12 +2507,12 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 							}
 							anfgg(unindt,sudc+"sh -c 'cd \""+dir_name(pfade[i])+"\";"+para+"'",bef,obverb,oblog);
 						} // 					if (faclbak)
-						if (obverb>1) systemrueck(sudc+"sh -c 'ls -ld \""+pfade[i]+"\"'",2,0);
+						if (obverb>1) systemrueck("ls -ld \""+pfade[i]+"\"",2,0,/*rueck=*/0,/*obsudc=*/1);
 						if (pfade[i]=="uvz/uuvz/uuuvz") exit(20);
-						const string cmd=string(sudc+"setfacl --mask -")+(!i && obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(ergmod)+"' '"+pfade[i]+"'";
+						const string cmd=string("setfacl --mask -")+(!i && obunter?"R":"")+"m 'u:"+cuser+":"+ltoan(ergmod)+"' '"+pfade[i]+"'";
 						if (fake) Log(rots+cmd+schwarz,obverb,oblog);
-						else systemrueck(cmd,obverb,oblog);
-						if (obverb) systemrueck(sudc+"sh -c 'ls -ld \""+pfade[i]+"\"'",2,0);
+						else systemrueck(cmd,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+						if (obverb) systemrueck("ls -ld \""+pfade[i]+"\"",2,0,/*rueck=*/0,/*obsudc=*/1);
 					} //        if (obhier)
 				} // 				if (ergmod)
 			} // 			for(size_t i=pfade.size()-1;i>-1;--i)
@@ -2656,7 +2660,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 						mod=(i?0100:0700);
 						modstr=(i?"0100":"0700");
 					}
-					string bef=sudc+"mkdir -m "+modstr+" '"+stack[i]+"'";
+					string bef="mkdir -m "+modstr+" '"+stack[i]+"'";
 					if (!besitzer.empty()) bef+=";chown -R "+besitzer+":"+ltoan(gid)+" '"+stack[i]+"' 2>/dev/null";
 					if (obverb) Log(blaus+"mkdir("+stack[i]+","+ltoan(mod,8)+")"+schwarz,obverb,oblog);
 					fehlt=mkdir(stack[i].c_str(),mod);
@@ -2664,7 +2668,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 						fehlt=chown(stack[i].c_str(),uid,gid);
 					}
 					if (fehlt) {
-						fehlt=systemrueck(bef,obverb,oblog);
+						fehlt=systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 					}
 					if (!fehlt) {
 						if (unindt.find(stack[i])) // wenn der Anfang nicht identisch ist, also nicht das Verzeichnis von unindt geprueft werden soll
@@ -2700,11 +2704,11 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 								ltoan(sverz.st_mode,8)+schwarz,obverb,oblog);
 						if (chmod(stack[i].c_str(),sverz.st_mode)) {
 							//             if (1) 
-							string bef=sudc+"chmod "+modstr+" '"+stack[i]+"'";
-							fehlt=systemrueck(bef,obverb,oblog);
+							string bef="chmod "+modstr+" '"+stack[i]+"'";
+							fehlt=systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 						}
 					}
-					if (obverb) systemrueck(sudc+"sh -c 'ls -ld \""+stack[i]+"\"'",2,0);
+					if (obverb) systemrueck("ls -ld \""+stack[i]+"\"",2,0,/*rueck=*/0,/*obsudc=*/1);
 				} // 					if (int prueferg=pruefber(/*datei=*/stack[i],aktben,/*mod=*/i?1:7))
 			} // 				if (obmachen)
 			if (fehlt) {
@@ -2718,7 +2722,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 			if (obselinux==-1) 
 				obselinux=obprogda("sestatus",obverb,oblog);
 			if (obselinux)
-				systemrueck(sudc+"chcon -R -t samba_share_t '"+verz+"'",obverb,oblog);
+				systemrueck("chcon -R -t samba_share_t '"+verz+"'",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		} // 		if (obmitcon)
 	} // 	if (!verz.empty())
 	return fehlt;
@@ -3374,14 +3378,14 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 			case zypper:
 				if (obnmr) {
 					obnmr=0;
-					systemrueck(sudc+"zypper mr -k -all",obverb,oblog);
+					systemrueck("zypper mr -k -all",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 				} //         if (obnmr)
 			default: break;
 		} // switch (linst.pruefipr()) 
 		const uchar obyes=1;
 		svec srueck;
 		const string bef=(obyes?instyp:instp)+eprog;
-		if (!(ret=systemrueck(bef,obverb+1,oblog,&srueck))) {
+		if (!(ret=systemrueck(bef,obverb+1,oblog,&srueck,/*obsudc=*/0))) {
 			/*//svec*/ string ustring; 
 		  ziehraus(srueck,&ustring);
 
@@ -3574,9 +3578,9 @@ int linst_cl::douninst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,uchar
 	int ret=2;
 	if (eprog.empty()) eprog=ersetzeprog(prog);
 	if (!eprog.empty()) {
-		ret=systemrueck((obyes?uypr:upr)+prog,obverb,oblog);
+		ret=systemrueck((obyes?uypr:upr)+prog,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		eprog.clear();
-	}
+	} // 	if (!eprog.empty())
 	return ret;
 } // uchar linst_cl::douninst(const string& prog,int obverb,int oblog) 
 
@@ -3587,11 +3591,11 @@ int linst_cl::obfehlt(const string& prog,int obverb,int oblog)
 	string ep;
 	switch (ipr) {
 		case zypper: case dnf: case yum: 
-			return systemrueck("rpm -q "+prog+" 2>/dev/null",obverb,oblog);
+			return systemrueck("rpm -q "+prog+" 2>/dev/null",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
 		case apt:
 			ep=ersetzeprog(prog);
 			////      return systemrueck("dpkg -s "+ersetzeprog(prog)+" 2>/dev/null",obverb,oblog);
-			return systemrueck("[ $(dpkg -l '"+ep+"' 2>/dev/null|grep '"+ep+"[ :]'|cut -f1 -d' ')_ = 'ii_' ]",obverb,oblog);
+			return systemrueck("[ $(dpkg -l '"+ep+"' 2>/dev/null|grep '"+ep+"[ :]'|cut -f1 -d' ')_ = 'ii_' ]",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
 		default: break;
 	} // 	switch (ipr)
 	return 2;
@@ -3646,7 +3650,7 @@ void servc::semodpruef(linst_cl *linstp,int obverb/*=0*/,int oblog/*=0*/)
 		if (obse==2) {
 			obse=0;
 			svec sr2;
-			systemrueck("sestatus",obverb,oblog,&sr2);
+			systemrueck("sestatus",obverb,oblog,&sr2,/*obsudc=*/0);
 			for(size_t j=0;j<sr2.size();j++) {
 				if (!sr2[j].find("Current mode:"))
 					if (sr2[j].find("enforcing")!=string::npos) {
@@ -3659,17 +3663,17 @@ void servc::semodpruef(linst_cl *linstp,int obverb/*=0*/,int oblog/*=0*/)
 			linstp->doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
 			// falls "Nothing to do" zurueckgemeldet wird, muesste (sudo) dnf -y reinstall p... aufgerufen werden fuer das Deinstallationsprogramm
 			// => wird der perfekten Version vorbehalten
-			systemrueck(sudc+"setenforce 0",obverb,oblog);
+			systemrueck("setenforce 0",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			restart(obverb,oblog);
 			const string selocal=sname+"_selocal";
-			systemrueck(sudc+"grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M "+selocal,obverb,oblog);
-			systemrueck(sudc+"setenforce 1",obverb,oblog);
+			systemrueck("grep \""+ename+"\" /var/log/audit/audit.log | audit2allow -M "+selocal,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+			systemrueck("setenforce 1",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			struct stat sstat={0};
 			const string mod=instvz+vtz+selocal+".pp";
 			if (!lstat(mod.c_str(),&sstat)) {
 				linstp->doinst("policycoreutils",obverb+1,oblog,"semodule");
-				const string bef=sudc+"semodule -i \""+mod+"\"";
-				systemrueck(bef,obverb,oblog);
+				const string bef="semodule -i \""+mod+"\"";
+				systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 				anfgg(unindt,sudc+"semodule -r \""+mod+"\"",bef,obverb,oblog);
 			} // 					if (!lstat((instvz+vtz+selocal+".pp").c_str(),&sstat)
 		}  // if (obse)
@@ -3682,8 +3686,8 @@ void servc::semanpruef(int obverb/*=0*/,int oblog/*=0*/,const string& mod/*="get
 	string sepfad;
 	if (ename.find("faxgetty")!=string::npos) {
 		if (obprogda("sestatus",obverb,oblog,&sepfad)) {
-		  const string bef=sudc+"semodule -l|grep permissive_"+mod+" >/dev/null||"+sudc+"semanage permissive -a "+mod;
-			systemrueck(bef,obverb,oblog);
+		  const string bef="semodule -l|grep permissive_"+mod+" >/dev/null|| semanage permissive -a "+mod;
+			systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			anfgg(unindt,sudc+"semanage permissive -d "+mod,bef,obverb,oblog);
 		} // 	if (obprogda("sestatus",obverb,oblog,&sepfad))
 	} // 		if (ename.find("faxgetty")!=string::npos)
@@ -3876,7 +3880,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 			  string execf;
 				svec srueExe;
 				if (systemd.find("init.d")!=string::npos) {
-				  systemrueck(sudc+"cat '"+systemd+"'",obverb,oblog,&srueExe);
+				  systemrueck("cat '"+systemd+"'",obverb,oblog,&srueExe,/*obsudc=*/1);
 					if (srueExe.size()) {
 					 // z.B.:  if ! start-stop-daemon --start --quiet --oknodo --exec /usr/sbin/smbd -- -D; then
 					 for(size_t z=0;z<srueExe.size();z++) {
@@ -3894,7 +3898,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 					} // 					if (srueExe.size()) else
 				} else {
 					// Dienst existent, Dienstdatei bekannt und existent
-					systemrueck(sudc+"cat '"+systemd+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe);
+					systemrueck("cat '"+systemd+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe,/*obsudc=*/1);
 					if (srueExe.size()) {
 						execf=srueExe[0];
 					} // 			if (!srueExe.size()) else
@@ -3982,7 +3986,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 
 void servc::pkill(int obverb/*=0*/,int oblog/*=0*/)
 {
-	systemrueck((sudc+"pkill '")+ename+"'",obverb-1,oblog,0,1);
+	systemrueck("pkill '"+ename+"'",obverb-1,oblog,0,/*obsudc=*/1,1);
 } // void servc::pkill(int obverb/*=0*/,int oblog/*=0*/)
 
 int servc::restart(int obverb/*=0*/,int oblog/*=0*/)
@@ -3990,7 +3994,7 @@ int servc::restart(int obverb/*=0*/,int oblog/*=0*/)
 	for(int i=0;i<2;i++) {
 		uchar obbreak=0;
 		daemon_reload(obverb,oblog);
-		systemrueck(sudc+"systemctl restart '"+sname+"'",obverb,oblog,0,2);
+		systemrueck("systemctl restart '"+sname+"'",obverb,oblog,0,/*obsudc=*/1,2);
 		//// <<violett<<"restart, i: "<<gruen<<i<<schwarz<<" sname: "<<sname<<endl;
 		obsvfeh(obverb,oblog);
 		switch (sfeh[svfeh]) {
@@ -4016,7 +4020,7 @@ int servc::restart(int obverb/*=0*/,int oblog/*=0*/)
 
 void servc::start(int obverb/*=0*/,int oblog/*=0*/)
 {
-  systemrueck(sudc+"systemctl start '"+sname+"'",obverb,oblog,0,2);
+  systemrueck("systemctl start '"+sname+"'",obverb,oblog,0,/*obsudc=*/1,2);
 } // int servc::start(int obverb,int oblog)
 
 int servc::startundenable(int obverb/*=0*/,int oblog/*=0*/)
@@ -4030,7 +4034,7 @@ int servc::startundenable(int obverb/*=0*/,int oblog/*=0*/)
 
 void servc::stop(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill/*=0*/)
 {
-  systemrueck(sudc+"systemctl stop '"+sname+"'",obverb,oblog,0,2);
+  systemrueck("systemctl stop '"+sname+"'",obverb,oblog,0,/*obsudc=*/1,2);
   if (mitpkill) {
     pkill(obverb,oblog);
   } //   if (mitpkill)
@@ -4051,7 +4055,7 @@ void servc::stopdis(int obverb/*=0*/,int oblog/*=0*/,uchar mitpkill)
 		stop(obverb,oblog);
 	} // 	if (!obsvfeh(obverb,oblog))
 	if (svfeh!=1&&obenabled)
-		systemrueck(sudc+"systemctl disable '"+sname+"'",obverb,oblog,0,2);
+		systemrueck("systemctl disable '"+sname+"'",obverb,oblog,0,/*obsudc=*/1,2);
 } // int servc::stop(int obverb,int oblog)
 
 int servc::enableggf(int obverb/*=0*/,int oblog/*=0*/)
@@ -4064,13 +4068,13 @@ int servc::enableggf(int obverb/*=0*/,int oblog/*=0*/)
     errv.push_back(errmsgcl(0,f0));
     errv.push_back(errmsgcl(1,f1));
     errv.push_back(errmsgcl(6,f1));
- return systemrueck("systemctl is-enabled '"+sname+"' >/dev/null 2>&1 ||"+sudc+"systemctl enable '"+sname+"'",obverb,oblog,0,2,wahr,"",&errv);
+ return systemrueck("systemctl is-enabled '"+sname+"' >/dev/null 2>&1 ||systemctl enable '"+sname+"'",obverb,oblog,0,/*obsudc=*/1,2,wahr,"",&errv);
 } // int servc::enableggf(int obverb,int oblog)
 
 
 void servc::daemon_reload(int obverb/*=0*/, int oblog/*=0*/)
 {
- systemrueck(sudc+"systemctl daemon-reload",obverb,oblog);
+ systemrueck("systemctl daemon-reload",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 } // void servc::daemon_reload(int obverb/*=0*/, int oblog/*=0*/)
 
 // Rueckgabe: Zahl der nicht Geloeschten
@@ -4091,8 +4095,8 @@ int tuloeschen(const string& zuloe,const string& cuser/*=nix*/, int obverb/*=0*/
           setfaclggf(zuloe,obverb,oblog,/*obunter=*/falsch,/*mod=*/6,/*obimmer=*/falsch,/*faclbak=*/0,/*user=*/nix/*cuser*/,/*fake=*/0,ausgp);
         } else {
           if (errno) if (errno!=13) perror((string(Txk[T_Fehler_beim_Loeschen])+" "+ltoan(errno)).c_str()); // Permission denied
-          const string cmd=sudc+"rm -rf \""+zuloe+"\"";
-          erg=systemrueck(cmd,obverb+1,1);
+          const string cmd="rm -rf \""+zuloe+"\"";
+          erg=systemrueck(cmd,obverb+1,1,/*rueck=*/0,/*obsudc=*/1);
         } // if(iru) else
       } else {
         erg=0;
@@ -4155,12 +4159,12 @@ int attrangleich(const string& zu, const string& gemaess,const string* const zei
     return 1;
   } //   if (lstat(zu.c_str(),&statzu))
   if (chmod(zu.c_str(),statgm.st_mode)) {
-   systemrueck(sudc+"chmod --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog);
+   systemrueck("chmod --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
   } //   if (chmod(zu.c_str(),statgm.st_mode))
   if (chown(zu.c_str(),statgm.st_uid,statgm.st_gid)) {
-   systemrueck(sudc+"chown --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog);
+   systemrueck("chown --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
   } //   if (chown(zu.c_str(),statgm.st_uid,statgm.st_gid))
-	systemrueck(sudc+"sh -c 'getfacl \""+gemaess+"\" 2>/dev/null|setfacl --set-file=- \""+zu+"\"'",obverb,oblog);
+	systemrueck("sh -c 'getfacl \""+gemaess+"\" 2>/dev/null|setfacl --set-file=- \""+zu+"\"'",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 
 	const string* const zvdtp=(zeitvondtp?zeitvondtp:&gemaess);
 	struct stat stzvd={0};
@@ -4168,9 +4172,9 @@ int attrangleich(const string& zu, const string& gemaess,const string* const zei
 		struct utimbuf ubuf={0};
 		ubuf.actime=ubuf.modtime=stzvd.st_mtime;
 		if (utime(zu.c_str(),&ubuf)) {
-			systemrueck(sudc+"touch -r \""+*zvdtp+"\" \""+zu+"\"",obverb,oblog);
+			systemrueck("touch -r \""+*zvdtp+"\" \""+zu+"\"",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		} //   if (utime(zu.c_str(),&ubuf))
-	}
+	} // 	if (!lstat(zvdtp->c_str(),&stzvd))
 	lstat(zu.c_str(),&statzu);
 	if (memcmp(&stzvd.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime)) {
 		Log(rots+Txk[T_Datum_nicht_gesetzt_bei]+schwarz+zu+rot+"'"+schwarz,1,1);
@@ -4212,7 +4216,7 @@ int kopier(const string& quel, const string& ziel, int obverb, int oblog)
     } // if (!fstat(source,&statq)) 
   } // if (source==-1) else 
   if (fehler)
-    return systemrueck(sudc+"test -f \""+quel+"\" &&"+sudc+"sh -c 'cp -a \""+quel+"\" \""+ziel+"\"'",obverb,oblog);
+    return systemrueck("test -f \""+quel+"\" && sh -c 'cp -a \""+quel+"\" \""+ziel+"\"'",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
   return 0;
 } // int kopier(const string& quel, const string& ziel, int obverb, int oblog)
 
@@ -4692,7 +4696,7 @@ int dateivgl(const string& d1, const string& d2,uchar obzeit/*=0*/)
 	} // 	if (lst1 || lst2)
 	if (!erg) {
 		if (lst1||st1.st_size>1000000) {
-			erg=systemrueck("diff -q "/*"cmp --silent "*/+d1+" "+d2);
+			erg=systemrueck("diff -q "/*"cmp --silent "*/+d1+" "+d2,0,0,/*rueck=*/0,/*obsudc=*/0);
 		} else {
 		// http://www.cplusplus.com/forum/general/94032/
 			boost::iostreams::mapped_file_source f1(d1);
@@ -4758,7 +4762,7 @@ int haupt::holvomnetz(const string& datei,const string& vors/*=defvors*/,const s
 	if (!pruefinstv()) {
 		svec qrueck;
 		if (findv==1) {
-			systemrueck("find \""+instvz+"\" -mtime -1 -name "+datei+".tar.gz",obverb,oblog,&qrueck);
+			systemrueck("find \""+instvz+"\" -mtime -1 -name "+datei+".tar.gz",obverb,oblog,&qrueck,/*obsudc=*/0);
 		} else {
 			time_t ab=0;
 			ab=time(0)-(24*60*60);
@@ -4766,7 +4770,7 @@ int haupt::holvomnetz(const string& datei,const string& vors/*=defvors*/,const s
 		}
 		if (!qrueck.size()) {
 			////systemrueck("sh -c 'cd "+instvz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
-			erg=systemrueck("sh -c 'cd \""+instvz+"\";T="+datei+".tar.gz; wget "+vors+datei+nachs+" -O $T'", obverb,oblog);
+			erg=systemrueck("cd \""+instvz+"\";T="+datei+".tar.gz; wget "+vors+datei+nachs+" -O $T", obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
 		} //     if (!qrueck.size())
 	} // if (!pruefinstv())
 	return erg;
@@ -4775,8 +4779,11 @@ int haupt::holvomnetz(const string& datei,const string& vors/*=defvors*/,const s
 int haupt::kompilbase(const string& was, const string& endg)
 {
 	if (!pruefinstv()) {
-		return systemrueck("sh -c 'P="+was+";T=$P.tar."+endg+";M=$P-master;cd \""+instvz+"\" && tar xpvf $T"
-				"&& rm -rf $P 2>/dev/null||"+sudc+"rm -rf $P&& mv $M $P'",obverb,oblog);
+		int kerg=0;
+		if (systemrueck("P="+was+";T=$P.tar."+endg+";cd \""+instvz+"\" && tar xpvf $T&& rm -rf $P 2>/dev/null", obverb,oblog,/*rueck=*/0,/*obsudc=*/0))
+			kerg=systemrueck("P="+was+";rm -rf $P",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+		if (!kerg) kerg=systemrueck("P="+was+";M=$P-master;mv $M $P",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
+		return kerg;
 	} //   if (!pruefinstv())
 	return 1;
 } // int haupt::kompilbase(const string& was,const string& endg)
@@ -4785,7 +4792,9 @@ int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const stri
 {
 	int ret=1;
 	if (!pruefinstv()) {
-		const string bef="sh -c 'cd \""+instvz+vtz+was+"\"&&"+
+		string ivw=instvz+vtz+was;
+		/*//
+		const string bef="sh -c 'cd \""+ivw+"\"&&"+
 			(vorcfg.empty()?s_true:vorcfg)+(ohneconf?"":"&& ./configure ")+cfgbismake+" make"
 			"&& echo $? = "+Txk[T_Ergebnis_nach_make]+" &&"+sudc+"make install "
 			// bei capi20_copy ging das mit distclean am 10.7.17 auf fedora 24
@@ -4796,10 +4805,22 @@ int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const stri
 			////						"||cd \\$(find \\\"\\$H\\\" -name \\$P -printf \\\"%%T@ %%p\\\\\\\\n\\\" 2>/dev/null|sort -rn|head -n1|cut -d\\\" \\\" -f2) "
 			////						"&&"+sudc+"make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
 			";"+sudc+"ldconfig "+lsys.getlib64()+";'";
-		ret=systemrueck(bef,obverb,oblog);
+		*/
+		const string b1="cd \""+ivw+"\"&&"+(vorcfg.empty()?s_true:vorcfg)+(ohneconf?"":"&& ./configure ")+cfgbismake+" make";
+		const string b2="cd \""+ivw+"\"&& make install";
+		const string b3="cd \""+ivw+"\"&& make distclean; ./configure; make";
+		const string b4="ldconfig "+lsys.getlib64()+";'";
+		if (!systemrueck(b1,obverb,oblog,/*rueck=*/0,/*obsudc=*/0))
+		     systemrueck(b2,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+		else if (!systemrueck(b3,obverb,oblog,/*rueck=*/0,/*obsudc=*/0))
+		     systemrueck(b2,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+		systemrueck(b4,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+		Log(Txk[T_Ergebnis_nach_make]);
+		Log(Txk[T_Ergebnis_nach_make_install]);
+////		ret=systemrueck(bef,obverb,oblog);
 		anfgg(unindt,"H="+gethome()+";A=$H/"+meinname+";P="+was+";cd \"$A/$P\" 2>/dev/null"
 				"|| cd $(find \"$H\" -name $P -printf \"%T@ %p\\n\" 2>/dev/null|sort -rn|head -n1|cut -d\" \" -f2)"
-				"&&"+sudc+"make uninstall; cd \"$H\"",bef,obverb,oblog);
+				"&&"+sudc+"make uninstall; cd \"$H\"",b1+" && "+b2+" || "+b3,obverb,oblog);
 	} // 		if (!pruefinstv())
 	return ret;
 } // int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
@@ -5061,7 +5082,7 @@ void haupt::tucronschreib(const string& zsauf,const uchar cronzuplanen,const str
 {
 	string unicmd="rm -f "+tmpcron+";";
 	string cmd=unicmd;
-	string dazu="crontab -l|sed '\\''/"+zsauf+"/d'\\''>"+tmpcron+";";
+	string dazu="crontab -l|sed '/"+zsauf+"/d'>"+tmpcron+";";
 	unicmd+=dazu;	
 	if (!nochkeincron) {
 		// cmd=dazu; // 26.2.17: Debian: nach Deinstallation rootscrontab mit root-Berechtigungen, die Programm hier aufhielten
@@ -5073,9 +5094,9 @@ void haupt::tucronschreib(const string& zsauf,const uchar cronzuplanen,const str
 	dazu=" crontab "+tmpcron+";";
 	unicmd+=dazu;
 	cmd+=dazu;
+	systemrueck(cmd,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+	//// ersetzAlle(unicmd,"'\\''","'");
 	const string bef=sudc+"sh -c '"+cmd+"'";
-	systemrueck(bef,obverb,oblog);
-	ersetzAlle(unicmd,"'\\''","'");
 	anfgg(unindt,unicmd,bef,obverb,oblog);
 } // void haupt::tucronschreib(const string& zsauf,const uchar cronzuplanen,const string& cbef)
 
@@ -5098,7 +5119,7 @@ uchar haupt::pruefcron()
 	} //   for (uchar runde=0;runde<2;runde++) 
 	if (cronda) {
 		////		string vorcm; // Vor-Cron-Minuten
-		nochkeincron = systemrueck(sudc+"crontab -l",obverb-1,0,0,2);
+		nochkeincron = systemrueck("crontab -l",obverb-1,0,0,/*obsudc=*/1,2);
 		setztmpcron();
 		const string vorsaetze=" "+linstp->ionicepf+" -c2 -n7 "+linstp->nicepf+" -n19 ";
 		const string cabfr=vorsaetze+".*"+saufr[0];// "date >/home/schade/zeit"; // Befehl zum Abfragen der Cronminuten aus aktuellem Cron-Script
@@ -5106,9 +5127,9 @@ uchar haupt::pruefcron()
 		const string czt=" \\* \\* \\* \\*";
 		////		string vorcm; // Vor-Cron-Minuten
 		if (!nochkeincron) {
-			cmd="bash -c 'grep \"\\*/.*"+czt+cabfr+"\" <("+sudc+"crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
+			cmd="bash -c 'grep \"\\*/.*"+czt+cabfr+"\" <(crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
 			svec cmrueck;
-			systemrueck(cmd,obverb,oblog,&cmrueck);
+			systemrueck(cmd,obverb,oblog,&cmrueck,/*obsudc=*/1);
 			if (cmrueck.size()) vorcm=cmrueck[0];
 		} // 		if (!nochkeincron) 
 		if (vorcm.empty() && !cronzuplanen) {
@@ -5132,14 +5153,14 @@ uchar haupt::pruefcron()
 		if (!cronzuplanen) {
 			if (nochkeincron) {
 			} else {
-				befehl=sudc+"bash -c 'grep \""+saufr[0]+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";"
-					"crontab "+tmpcron+";}||true'";
+				befehl="bash -c 'grep \""+saufr[0]+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";"
+					"crontab "+tmpcron+";}||:'";
 			}
 		} else {
 			if (nochkeincron) {
 				befehl="rm -f "+tmpcron+";";
 			} else {
-				befehl=sudc+"bash -c 'grep \"\\*/"+cronminut+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l|sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";";
+				befehl="bash -c 'grep \"\\*/"+cronminut+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l|sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";";
 			}
 			befehl+="echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+"";
 			if (!nochkeincron)
@@ -5148,14 +5169,14 @@ uchar haupt::pruefcron()
 #else // uebersichtlich
 		const string befehl=cronzuplanen?
 			(nochkeincron?"rm -f "+tmpcron+";":
-			 sudc+"bash -c 'grep \"\\*/"+cronminut+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr[0]+"/d\">"+tmpcron+"; ")+
+			 "bash -c 'grep \"\\*/"+cronminut+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr[0]+"/d\">"+tmpcron+"; ")+
 			"echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+(nochkeincron?"":";}'")
 			:
-			(nochkeincron?"":sudc+"bash -c 'grep \""+saufr[0]+"\" -q <(crontab -l)&&{ crontab -l | sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";"
-			 sudc+"crontab "+tmpcron+";}||true'")
+			(nochkeincron?"":"bash -c 'grep \""+saufr[0]+"\" -q <(crontab -l)&&{ crontab -l | sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";"
+			 +"crontab "+tmpcron+";}||:'")
 			;
 #endif   // uebersichtlich else
-		systemrueck(befehl,obverb,oblog);
+		systemrueck(befehl,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 #endif // anders
 	} //   if (cronda) 
   return obschreib;
@@ -5197,7 +5218,7 @@ void haupt::vischluss(string& erg)
 	erg+="tabfirst' -p";
 	string exdt=instvz+"/.exrc";
 	{ifstream is(exdt);if (is.good()) erg+="Nu "+exdt;}
-	exit(systemrueck(cmd+" +'"+erg+" "+devtty));
+	exit(systemrueck(cmd+" +'"+erg+" "+devtty,0,0,/*rueck=*/0,/*obsudc=*/1));
 } // void vischluss(string& cmd,string& erg)
 
 // aufgerufen in: main
@@ -5223,7 +5244,7 @@ void haupt::update(const string& DPROG)
 	if (systemrueck("wget https://raw.githubusercontent.com/"+gitv+"/"+DPROG+"/master/versdt -qO"+instvz+"/versdtakt&&"
 /*//				"[ $(echo $(cat "+instvz+"/versdtakt)'>'$(cat "+instvz+"/versdt)|bc -l) -eq 0 ]",2,oblog))*/
 // Berechnung mit |bc -l schlecht, da z.B. auf Ubuntu bc nicht unbedingt standardmäßig installiert
-				"awk \"BEGIN{print $(cat "+instvz+"/versdt)-$(cat "+instvz+"/versdtakt)}\"|grep -q ^-",obverb,oblog)) {
+				"awk \"BEGIN{print $(cat "+instvz+"/versdt)-$(cat "+instvz+"/versdtakt)}\"|grep -q ^-",obverb,oblog,/*rueck=*/0,/*obsudc=*/0)) {
 		::Log(violetts+DPROG+blau+Txk[T_muss_nicht_aktualisiert_werden]+schwarz,1,oblog);
 	} else {
 		////  struct stat entwst={0};
@@ -5233,6 +5254,7 @@ void haupt::update(const string& DPROG)
 		pruefverz(ziel,obverb,oblog);
 		::Log(violett+DPROG+blau+Txk[T_wird_aktualisiert_bitte_ggf_neu_starten]+schwarz,1,oblog);
 		systemrueck("M="+DPROG+"-master;wget "+defvors+DPROG+defnachs+" -O"+ziel+"/"+DPROG+".tar.gz >/dev/null 2>&1;"
-				"cd "+ziel+";rm -rf $M;tar xpvf "+DPROG+".tar.gz;cd $M;mv * ..;mv .* .. 2>/dev/null;cd ..;rmdir $M;./install.sh 2>/dev/null;",1,oblog);
+				"cd "+ziel+";rm -rf $M;tar xpvf "+DPROG+".tar.gz;cd $M;mv * ..;mv .* .. 2>/dev/null;cd ..;rmdir $M;./install.sh 2>/dev/null;",
+				 1,oblog,/*rueck=*/0,/*obsudc=*/0);
 	} // if (systemrueck ... else
 } // void haupt::update(const string& DPROG)

@@ -805,8 +805,8 @@ int cppschreib(const string& fname, cppSchluess *conf, size_t csize);
 int multischlschreib(const string& fname, schlArr *const *const confs, const size_t cszahl,const string& mpfad=nix);
 std::string base_name(const std::string& path); // Dateiname ohne Pfad
 std::string dir_name(const std::string& path);  // Pfadname einer Datei
-int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, 
-                int verbergen=0, int obergebnisanzeig=wahr, const string& ueberschr=nix,vector<errmsgcl> *errm=0,uchar obincron=0,
+int systemrueck(const string& cmd, char obverb=0, int oblog=0, vector<string> *rueck=0, const uchar obsudc=0,
+                const int verbergen=0, int obergebnisanzeig=wahr, const string& ueberschr=nix,vector<errmsgcl> *errm=0,uchar obincron=0,
 								stringstream *ausgp=0);
 void pruefplatte();
 void pruefmehrfach(const string& wen=nix,uchar obstumm=0);

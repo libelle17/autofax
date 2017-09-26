@@ -233,12 +233,12 @@ uchar DB::oisok=0;
 void DB::instmaria(int obverb, int oblog)
 {
 	if (linstp->ipr==apt) {
-		systemrueck(sudc+"sh -c 'apt-get -y install apt-transport-https;"
-		"apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server'",1,1);
+		systemrueck("apt-get -y install apt-transport-https;"
+		"apt-get update && DEBIAN_FRONTEND=noninteractive apt-get --reinstall install -y mariadb-server",1,1,/*rueck=*/0,/*obsudc=*/1);
 	} else {
 		linstp->doinst("mariadb",obverb,oblog);
 		if (linstp->ipr==pac)
-		 systemrueck(sudc+"mysql_install_db --user="+mysqlben+" --basedir=/usr/ --ldata=/var/lib/mysql",obverb,oblog);
+		 systemrueck("mysql_install_db --user="+mysqlben+" --basedir=/usr/ --ldata=/var/lib/mysql",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 	} // 					if (ipr==apt) else
 } // void DB::instmaria()
 
@@ -274,7 +274,7 @@ void DB::init(
 					if (!obprogda(mysqld,obverb,oblog)) {
 						svec frueck;
 						// .. und auch hier nicht gefunden ...
-						systemrueck("find /usr/sbin /usr/bin /usr/libexec -executable -size +1M -name "+mysqld,obverb,oblog, &frueck);
+						systemrueck("find /usr/sbin /usr/bin /usr/libexec -executable -size +1M -name "+mysqld,obverb,oblog, &frueck,/*obsudc=*/0);
 						if (!frueck.size()) 
 							// .. dann wohl nicht installiert
 							installiert=0;
@@ -282,9 +282,9 @@ void DB::init(
 					if (installiert) {
 						if (!obprogda(mysqlbef,obverb,oblog))
 							installiert=0;
-						else if (systemrueck("grep \"^"+mysqlben+":\" /etc/passwd",obverb,oblog))
+						else if (systemrueck("grep \"^"+mysqlben+":\" /etc/passwd",obverb,oblog,/*rueck=*/0,/*obsudc=*/0))
 							installiert=0;
-						else if (systemrueck(mysqlbef+" -V",obverb,oblog))
+						else if (systemrueck(mysqlbef+" -V",obverb,oblog,/*rueck=*/0,/*obsudc=*/0))
 							installiert=0;
 					} //           if (installiert)
 					if (installiert) break;
@@ -295,20 +295,20 @@ void DB::init(
 				if (installiert) {
 					svec zrueck;
 					if (!systemrueck("sed 's/#.*$//g' `"+mysqlbef+" --help | sed -n '/Default options/{n;p}'` 2>/dev/null "
-								"| grep datadir | cut -d'=' -f2",obverb,oblog,&zrueck)) {
+								"| grep datadir | cut -d'=' -f2",obverb,oblog,&zrueck,/*obsudc=*/0)) {
 						if (zrueck.size()) {
 							datadir=zrueck[zrueck.size()-1];  
 						} else {
 							svec zzruck, zincldir;
-							systemrueck(sudc+"find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit", obverb,oblog,&zzruck);
+							systemrueck("find /etc /etc/mysql ${MYSQL_HOME} -name my.cnf -printf '%p\\n' -quit", obverb,oblog,&zzruck,/*obsudc=*/0);
 							if (!zzruck.size())
-								systemrueck("find "+gethome()+" -name .my.cnf -printf '%p\\n' -quit",obverb,oblog,&zzruck);
+								systemrueck("find "+gethome()+" -name .my.cnf -printf '%p\\n' -quit",obverb,oblog,&zzruck,/*obsudc=*/0);
 							if (zzruck.size()) {
-								systemrueck(sudc+"cat "+zzruck[0]+" | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", 
-										obverb,oblog,&zincldir); 
+								systemrueck("cat "+zzruck[0]+" | sed 's/#.*$//g' | grep '!includedir' | sed 's/^[ \t]//g' | cut -d' ' -f2-", 
+										obverb,oblog,&zincldir,/*obsudc=*/1); 
 								for(size_t i=0;i<zincldir.size();i++) {
 									svec zzruck2;
-									systemrueck(sudc+"find "+zincldir[i]+" -not -type d",obverb,oblog,&zzruck2); // auch links
+									systemrueck("find "+zincldir[i]+" -not -type d",obverb,oblog,&zzruck2,/*obsudc=*/1); // auch links
 									for(size_t i=0;i<zzruck2.size();i++) {
 										zzruck<<zzruck2[i];
 									}
@@ -317,8 +317,8 @@ void DB::init(
 							if(zzruck.size()) {
 								for(size_t i=0;i<zzruck.size();i++) {
 									svec zrueck;
-									if (!systemrueck((sudc+"sed 's/#.*$//g' '")+zzruck[i]+"' | grep datadir | cut -d'=' -f2",
-												obverb,oblog,&zrueck)) {
+									if (!systemrueck(("sed 's/#.*$//g' '")+zzruck[i]+"' | grep datadir | cut -d'=' -f2",
+												obverb,oblog,&zrueck,/*obsudc=*/1)) {
 										if (zrueck.size()) {
 											datadir=zrueck[zrueck.size()-1];  
 											break;
@@ -339,17 +339,16 @@ void DB::init(
 						if(S_ISDIR(datadst.st_mode)) {
 							datadirda=1;
 						} else {
-							systemrueck(sudc+"rm -f '"+datadir+"'",1,1);
-						}
+							systemrueck("rm -f '"+datadir+"'",1,1,/*rueck=*/0,/*obsudc=*/1);
+						} // 						if(S_ISDIR(datadst.st_mode)) else
 					} //           if (!lstat(datadir.c_str(), &datadst))
 					if (!datadirda) {
-						systemrueck(sudc+"`find /usr/local /usr/bin /usr/sbin -name mysql_install_db"+string(obverb?"":" 2>/dev/null")+"`",1,1);
+						systemrueck("`find /usr/local /usr/bin /usr/sbin -name mysql_install_db"+string(obverb?"":" 2>/dev/null")+"`",1,1,/*rueck=*/0,/*obsudc=*/1);
 						dbsv->start(obverb,oblog);
-					}
+					} // 					if (!datadirda)
 					oisok=1;
 				} // if (installiert)
 			} // if (!oisok)
-
 #endif // linux
 			conn=new MYSQL*[conz];
 			this->ConnError=NULL;
@@ -377,13 +376,13 @@ void DB::init(
 								case 1698: // dasselbe auf Ubuntu
 									for(unsigned aru=0;aru<1;aru++) {
 										for(unsigned iru=0;iru<2;iru++) {
-											cmd=sudc+mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"GRANT ALL ON "+dbname+".* TO '"+
+											cmd=mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"GRANT ALL ON "+dbname+".* TO '"+
 												user+"'@'"+myloghost+"' IDENTIFIED BY '"+ersetze(passwd.c_str(),"\"","\\\"")+"' WITH GRANT OPTION\" 2>&1";
 											if (iru) break;
 											pruefrpw(cmd, versuchzahl);
 										} //                   for(unsigned iru=0;iru<2;iru++) 
 										myr.clear();
-										systemrueck(cmd,1,1,&myr);
+										systemrueck(cmd,1,1,&myr,/*obsudc=*/1);
 										miterror=1;
 										if (!myr.size()) miterror=0; else if (!strcasestr(myr[0].c_str(),"error")) miterror=0;
 										else {
@@ -466,9 +465,9 @@ void DB::init(
 			if (!dbsv) { 
 				if (!obprogda("postgres",obverb,oblog)) {
 				  caup<<"Programm postgres nicht da"<<endl;
-					systemrueck("V0=/usr/bin/postgres; V1=${V0}_alt; V2=${V0}_uralt; test -d $V0 &&{ test -d $V1 && "+sudc+
-					            "mv $V1 $V2; "+sudc+"mv $V0 $V1;}; true;",
-					            obverb,oblog);
+					systemrueck("V0=/usr/bin/postgres; V1=${V0}_alt; V2=${V0}_uralt; test -d $V0 &&{ test -d $V1 && "+
+					            "mv $V1 $V2; mv $V0 $V1;};:",
+					            obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 					linstp->doinst("postgresql-server",obverb,oblog);// postgresql-contrib
 					neu=1;
 				} // 				if (!obprogda("postgres",obverb,oblog))
@@ -481,7 +480,7 @@ void DB::init(
 					}
 				}
 				if (!dbsv->obslaeuft(obverb,oblog)) {
-				  systemrueck("journalctl -xe --no-pager -n 9",2,2);
+				  systemrueck("journalctl -xe --no-pager -n 9",2,2,/*rueck=*/0,/*obsudc=*/0);
 					//// (sudo) systemctl start postgresql
 					//// oisok=1;
 					Log(Txd[T_Ende_Gelaende],obverb,oblog);
@@ -546,9 +545,9 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
 {
   myloghost=!strcasecmp(host.c_str(),"localhost")||!strcmp(host.c_str(),"127.0.0.1")||!strcmp(host.c_str(),"::1")?"localhost":"%";
   for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
-    cmd=sudc+mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"show variables like 'gibts wirklich nicht'\" 2>&1";
+    cmd=mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"show variables like 'gibts wirklich nicht'\" 2>&1";
     myr.clear();
-    systemrueck(cmd,-1,0,&myr);
+    systemrueck(cmd,-1,0,&myr,/*obsudc=*/1);
     miterror=1;
     if (!myr.size()) miterror=0; else if (!strcasestr(myr[0].c_str(),"error")) miterror=0;
     else {
@@ -564,7 +563,7 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
     } else {
       break; // naechster Versuch
     } // if (miterror) KLA KLZ else KLA
-  }
+  } //   for(unsigned versuch=0;versuch<versuchzahl;versuch++)
   if (rootpwd.empty()) setzrpw();
 } // pruefrpw
 
@@ -601,8 +600,8 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 							f.close();
 						} // 						if (f.is_open())
 						if (gef) {
-						 cmd=sudc+"sed -i 's/^\\("+plugin+"\\)/;\\1/g' "+verbot+";";
-						 systemrueck(cmd.c_str(),obverb,oblog);
+						 cmd="sed -i 's/^\\("+plugin+"\\)/;\\1/g' "+verbot+";";
+						 systemrueck(cmd,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 						 dbsv->restart(obverb,oblog);
 						 const string rcmd=sudc+"sed -i 's/^;\\("+plugin+"\\)/\\1/g' "+verbot+";";
 						 anfgg(unindt,rcmd,cmd,obverb,oblog);
@@ -626,7 +625,8 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 				uchar geht=0;
 				for(int iru=0;iru<2;iru++) {
 					svec irueck;
-					systemrueck("echo "+rootpwd+"|su - postgres -c \"psql -c 'select datname from pg_database order by datname'\"",obverb,oblog,&irueck);
+					systemrueck("echo "+rootpwd+"|su - postgres -c \"psql -c 'select datname from pg_database order by datname'\"",
+							        obverb,oblog,&irueck,/*obsudc=*/0);
 					for(unsigned zeile=0;zeile<irueck.size();zeile++) {
 						if (irueck[zeile].find("template0")!=string::npos) {
 							geht=1;
@@ -635,17 +635,17 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 					} // 					for(unsigned zeile=0;zeile<irueck.size();zeile++)
 					if (geht) break;
 					linstp->doinst("passwd",obverb,oblog,"chpasswd"); 
-					systemrueck("sh -c 'echo \"postgres:"+rootpwd+"\"|"+sudc+"chpasswd'",obverb,oblog);
+					systemrueck("echo \"postgres:"+rootpwd+"\"|chpasswd",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 					svec rueck;
-					systemrueck("ps aux|grep postgres|grep -- -D|rev|cut -d' ' -f1|rev",obverb,oblog,&rueck);
+					systemrueck("ps aux|grep postgres|grep -- -D|rev|cut -d' ' -f1|rev",obverb,oblog,&rueck,/*obsudc=*/0);
 					if (rueck.size()) {
 						datadir=rueck[0];
 						caup<<"Datadir: "<<datadir<<endl;
 					} else
 						datadir="/var/lib/pgsql/data";
-					systemrueck("sh -c 'V="+dir_name(datadir)+";mkdir -p $V;chown postgres:postgres -R $V'",obverb,oblog);
+					systemrueck("V="+dir_name(datadir)+";mkdir -p $V;chown postgres:postgres -R $V",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
 					rueck.clear();	
-					if (systemrueck("sh -c 'echo \""+rootpwd+"\"|su - postgres -c \"initdb -D "+datadir+"\" 2>&1'",obverb,oblog,&rueck,0,2)) {
+					if (systemrueck("echo \""+rootpwd+"\"|su - postgres -c \"initdb -D "+datadir+"\" 2>&1",obverb,oblog,&rueck,/*obsudc=*/1,0,2)) {
 						// dann laeuft es wahrscheinlich schon
 						Log(Txd[T_Ende_Gelaende],obverb,oblog);
 						exitp(23);

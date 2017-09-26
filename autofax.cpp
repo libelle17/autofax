@@ -2164,12 +2164,12 @@ constexpr const char *paramcl::moeglhvz[2];
 // aufgerufen in faxemitH, pruefhyla
 void useruucp(const string& huser, const int obverb, const int oblog)
 {
-	if (systemrueck(sudc+"getent passwd "+huser,obverb,oblog)) {
-		const string bef=sudc+"useradd -b /etc -c \"Unix-to-Unix CoPy\" -U -r "+huser;
-		systemrueck(bef,obverb,oblog);
+	if (systemrueck("getent passwd "+huser,obverb,oblog,/*rueck=*/0,/*obsudc=*/1)) {
+		const string bef="useradd -b /etc -c \"Unix-to-Unix CoPy\" -U -r "+huser;
+		systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		anfgg(unindt,sudc+"userdel "+huser,bef,obverb,oblog);
-	} // 	if (systemrueck(sudc+"getent "+huser,obverb,oblog))
-} // void useruucp(const string& huser, int obverb,int oblog)
+	} // 	if (systemrueck
+} // void useruucp
 
 zielmustercl::zielmustercl(const char * const vmuster,const char * const vziel):muster(vmuster),ziel(vziel)
 {
@@ -2323,7 +2323,7 @@ int fsfcl::loeschehyla(paramcl *const pmp, const int obverb, const int oblog)
 		svec qrueck;
 		if (findv==1) {
 			// wenn Datei nicht mehr in sendq, sondern in doneq, sei es gelungen oder gescheitert, dann ist Loeschen sinnlos
-			systemrueck((sudc+"find '")+pmp->hsendqvz+"' -name q"+hylanr,obverb,oblog,&qrueck);
+			systemrueck("find '"+pmp->hsendqvz+"' -name q"+hylanr,obverb,oblog,&qrueck,/*obsudc=*/1);
 		} else findfile(&qrueck,findv,obverb,oblog,0,pmp->hsendqvz,"/q"+hylanr+"$");
 		if (!qrueck.size()) {
 			return 0;
@@ -2336,24 +2336,25 @@ int fsfcl::loeschehyla(paramcl *const pmp, const int obverb, const int oblog)
 				if (pmp->sfaxgetty) pmp->sfaxgetty->restart(obverb+1,oblog);
 				if (pmp->shfaxd) pmp->shfaxd->restart(obverb+1,oblog);
 				if (pmp->sfaxq) pmp->sfaxq->restart(obverb+1,oblog);
-				//// systemrueck(string(sudc+"systemctl restart '")+pmp->sfaxgetty->sname+"' '"+pmp->shfaxd->sname+"' '"+pmp->sfaxq->sname+"'",obverb-1,oblog);
+				//// systemrueck("systemctl restart '"+pmp->sfaxgetty->sname+"' '"+pmp->shfaxd->sname+"' '"+pmp->sfaxq->sname+"'",
+				////  obverb-1,oblog,/*rueck=*/0,/*obsudc=*/1);
 			} // if (iru) 
 			svec rueck, rmerg;
 			string fuser;
 			struct stat trst={0};
 			if (!lstat(pmp->xferfaxlog.c_str(),&trst)) {
 				systemrueck("tac \""+pmp->xferfaxlog+"\" 2>/dev/null|grep -am 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;      s/\"$//'",
-						obverb, oblog,&rueck);
+						obverb, oblog,&rueck,/*obsudc=*/0);
 				Log(Tx[T_Loesche_Fax_hylanr]+hylanr+" ...",-1,0);
 				if (rueck.size() && rueck[0]!="root") {
 					fuser=rueck[0]; 
 					//// <<violett<<"fuser: "<<fuser<<schwarz<<endl;
-					systemrueck(sudc+"su -c \"faxrm "+hylanr+"\" "+fuser+" 2>&1",oblog,obverb,&rmerg);
+					systemrueck("su -c \"faxrm "+hylanr+"\" "+fuser+" 2>&1",oblog,obverb,&rmerg,/*obsudc=*/1);
 				} else {
-					systemrueck(sudc+"faxrm "+hylanr+" 2>&1",oblog,obverb,&rmerg);
+					systemrueck("faxrm "+hylanr+" 2>&1",oblog,obverb,&rmerg,/*obsudc=*/1);
 				}
 				// folgender Befehl kann einen tac: write error: Broken pipe -Fehler erzeugen
-				// systemrueck(sudc+"su -c \"faxrm "+hylanr+"\" $(tac \""+pmp->xferfaxlog+"\"|grep -am 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg);
+				// systemrueck("su -c \"faxrm "+hylanr+"\" $(tac \""+pmp->xferfaxlog+"\"|grep -am 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg,/*obsudc=*/1);
 				if (rmerg.size()) {
 					if (rmerg[0].find(" removed")!=string::npos || rmerg[0].find("job does not exist")!=string::npos) {
 						Log(blaus+Tx[T_erfolgreich_geloescht_fax_mit]+schwarz+hylanr,1,1);
@@ -2501,7 +2502,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
 	 KLZ // if (obsfehlt) else
 	 */
 	//// wenn eine Protokolldatei auslesbar war
-	//// modemlaeuftnicht=systemrueck((sudc+"faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
+	//// modemlaeuftnicht=systemrueck(("faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog,/*rueck=*/0,/*obsudc=*/1) + fglaeuftnicht;
 	if ((pmp->hgelesen && hylastat!=fehlend && hylastat!=init)) {
 		*ausgp<<",";
 		char buf[100]={0};
@@ -2770,10 +2771,10 @@ void paramcl::pruefmodem()
 	// 25.2.17: geht leider nicht nach "<DPROG> -nohyla"
 	// #define mitdmesg
 #ifdef mitdmesg
-	systemrueck("dmesg|grep tty",obverb,oblog,&qrueck);
+	systemrueck("dmesg|grep tty",obverb,oblog,&qrueck,/*obsudc=*/0);
 #else // mitdmesg
 	if (findv==1) {
-		systemrueck("sh -c 'cd "+svz+";find */device/driver'", obverb,oblog,&qrueck);
+		systemrueck("cd "+svz+";find */device/driver", obverb,oblog,&qrueck,/*obsudc=*/0);
 	} else {
 		findfile(&qrueck,findv,obverb,oblog,0,svz,"",1,127,0);
 		for(ssize_t i=qrueck.size()-1;i>=0;i--) {
@@ -2811,7 +2812,9 @@ void paramcl::pruefmodem()
 				errv.push_back(errmsgcl(0,f0));
 				errv.push_back(errmsgcl(1,f1));
 				//// aus coreutils; ' time 10 ' geht nicht, '{ { sudo stty -F /dev/ttyS1 1>&3;kill 0;}|{ sleep 10;kill 0;} } 3>&1' auch nicht
-				terg=!systemrueck("timeout 10 "+sudc+"stty -F /dev/"+tty/*//+" time 10"*/,obverb,oblog,&rue2,2,wahr,"",&errv);
+				// stty auch aus crontab aufrufbar (Pfad: /usr/bin:/bin)
+				terg=!systemrueck("timeout 10 "+sudc+"stty -F /dev/"+tty/*//+" time 10" wirkt nicht*/,
+						              obverb,oblog,&rue2,/*obsudc=*/0,/*verbergen=*/2,/*obergebnisanzeig=*/wahr,/*ueberschr=*/"",/*errm=*/&errv);
 			} else {
 				terg=ttytest(tty);
 			} // 				if (cus.cuid) else
@@ -2819,7 +2822,7 @@ void paramcl::pruefmodem()
 				obmodem=1;
 				modems<<tty;
 				Log("Modem: "+blaus+tty+schwarz+Tx[T_gefunden]);
-			} // if (!systemrueck(sudc+"stty -F /dev/"+tty+" >/dev/null 2>&1",obverb,oblog,&rue2)) 
+			} // if (terg)
 		} // if (tty!="ttyS0") 
 		// KLA // if (!lstat(((qrueck[i])+"/device/driver").c_str(),&entrydriv)) 
 	} // for(size_t i=0;i<qrueck.size();i++) 
@@ -2866,8 +2869,10 @@ void paramcl::pruefisdn()
 {
 	Log(violetts+Tx[T_pruefisdn]+schwarz);
 	svec rueck;
-	cmd="{ lspci 2>/dev/null || "+sudc+"lspci 2>/dev/null;}|grep -i 'isdn'";
-	systemrueck(cmd, obverb,oblog,&rueck);
+////	cmd="{ lspci 2>/dev/null || "+sudc+"lspci 2>/dev/null;}|grep -i 'isdn'"; systemrueck(cmd, obverb,oblog,&rueck);
+	for(int iru=0;iru<2;iru++) {
+		if (systemrueck("lspci 2>/dev/null|grep -i 'isdn'",obverb,oblog,&rueck,/*obsudc=*/iru)) break;
+	}
 	// <<"pruefmodem 1 vor  obcapi: "<<(int)obcapi<<endl;
 	if (rueck.size()) {
 		Log(blaus+Tx[T_ISDN_Karte_gefunden]+schwarz+rueck[0]+blau+Tx[T_Setze]+Tx[T_mitCapi]+schwarz+Tx[T_aauf]+blau+"1.");
@@ -2919,7 +2924,7 @@ int paramcl::setzhylavz()
 	svec hrueck;
 	// 1) hylafax-Dienst im systemd suchen, dort steht z.B. ConditionPathExists=/var/spool/hylafax/etc/setup.cache ...
 	systemrueck("grep /var $(dirname $(dirname $(which systemctl)))/lib/systemd/system/*fax*.service 2>/dev/null | "
-			"head -n 1 | cut -d'=' -f2 | awk -F'/etc' '{print $1}'", obverb,oblog,&hrueck);
+			"head -n 1 | cut -d'=' -f2 | awk -F'/etc' '{print $1}'", obverb,oblog,&hrueck,/*obsudc=*/0);
 	if (hrueck.size()) {
 		varsphylavz=hrueck[0];
 		fundart=1;
@@ -3050,7 +3055,7 @@ void paramcl::liescapiconf()
 	const string wo="/etc/capisuite /usr/local/etc/capisuite";
 	const string moegl="find "+wo+" -type f -name ";
 	if (findv==1) {
-		systemrueck(moegl+"fax.conf",obverb-2,oblog,&qrueck);
+		systemrueck(moegl+"fax.conf",obverb-2,oblog,&qrueck,/*obsudc=*/0);
 	} else findfile(&qrueck,findv,obverb,oblog,0,wo,"/fax\\.conf$");
 	if (qrueck.size()) cfaxconfdt=qrueck[0];
 
@@ -3102,7 +3107,7 @@ void paramcl::liescapiconf()
 	//// <<rot<<"cfaxuservz in Vorgallg: "<<cfaxuservz<<schwarz<<endl;
 	qrueck.clear();
 	if (findv==1) {
-		systemrueck(moegl+"capisuite.conf",obverb-2,oblog,&qrueck);
+		systemrueck(moegl+"capisuite.conf",obverb-2,oblog,&qrueck,/*obsudc=*/0);
 	} else findfile(&qrueck,findv,obverb,oblog,0,wo,"/capisuite\\.conf$");
 	if (qrueck.size()) {
 		ccapiconfdt=qrueck[0];
@@ -3612,7 +3617,7 @@ void paramcl::rueckfragen()
 			////        string bliste, tmpcuser;
 			vector<string> benutzer;
 			cmd="cat "+passwddt+" | grep /home/ | cut -d':' -f 1";
-			systemrueck(cmd,obverb,oblog,&benutzer);
+			systemrueck(cmd,obverb,oblog,&benutzer,/*obsudc=*/0);
 			if (benutzer.size()>1) for(size_t i=benutzer.size();i;) {
 				--i;
 				if (benutzer[i]=="syslog"||benutzer[i]=="ntp") {
@@ -3983,7 +3988,7 @@ void paramcl::clieskonf()
 	} //   if (cfaxcdtp)
 	svec ckzlrueck;
 	systemrueck("grep connect_faxG3 `grep incoming_script= "+ccapiconfdt+" 2>/dev/null|cut -d'\"' -f2 2>/dev/null`"
-			"|sed 's/.*headline//;s/^,//;s/).*//'",obverb,oblog,&ckzlrueck,1);
+			"|sed 's/.*headline//;s/^,//;s/).*//'",obverb,oblog,&ckzlrueck,/*obsudc=*/0,/*verbergen=*/1);
 	if (ckzlrueck.size()) {
 		if (cklingelzahl!=ckzlrueck[0]) {
 			//// <<", ckzlrueck[0]: '"<<ckzlrueck[0]<<"', cklingelzahl: '"<<cklingelzahl<<"'"<<endl;
@@ -4005,8 +4010,8 @@ void paramcl::konfcapi()
 	 */
 	//// <<"cccnfA[0].wert: "<<cccnfA[0].wert<<endl;
 	if (!cccnfA[0].wert.empty()) {
-		systemrueck(sudc+"sed -i$(test -f "+cccnfA[0].wert+".orig||echo '.orig') "
-				"'s/\\(^.*connect_faxG3.*headline\\).*\\().*$\\)/\\1,"+cklingelzahl+"\\2/' "+cccnfA[0].wert,obverb,oblog);
+		systemrueck("sed -i$(test -f "+cccnfA[0].wert+".orig||echo '.orig') "
+				"'s/\\(^.*connect_faxG3.*headline\\).*\\().*$\\)/\\1,"+cklingelzahl+"\\2/' "+cccnfA[0].wert,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 	}
 	////    if (cpplies(ccapiconfdt,cccnfA,cs)) KLA
 	/*//
@@ -4244,7 +4249,7 @@ void paramcl::nextnum()
 		if (findv==1) {
 			cmd=sudc+"echo $(( `find "+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
 				"| cut -d '-' -f3 | cut -d '.' -f1 | sort -rn | head -n1` + 1 )) > '"+nextdatei+"'";
-			systemrueck(cmd,obverb,oblog);
+			systemrueck(cmd,obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
 		} else {
 			svec qrueck;
 			findfile(&qrueck,findv,obverb,oblog,0,spoolcapivz,"-fax-.*\\.sff$");
@@ -4299,7 +4304,7 @@ void paramcl::pruefcron()
 		if (cmeingegeben) if (cronzuplanen==vorcm.empty())
 			::Log(blaus+"'"+vaufr[1]+"'"+schwarz+Txk[T_wird]+blau+(cronzuplanen?Tx[T_um_22_Uhr]:Txk[T_gar_nicht])+schwarz+Txk[T_statt]+
 					+blau+(vorcm.empty()?Txk[T_gar_nicht]:Tx[T_um_22_Uhr])+schwarz+Txk[T_aufgerufen],1,oblog);
-	}
+	} // 	if (haupt::pruefcron())
 } // pruefcron
 
 const char* const paramcl::smbdt="/etc/samba/smb.conf";
@@ -4312,7 +4317,7 @@ void paramcl::pruefsamba()
 	const string smbquelle="/usr/share/samba/smb.conf";
 	uchar obinst=0; // ob Samba installiert werden soll bzw. die smb.conf bearbeitet
 	uchar obfw=0; // ob SuSEfirewall bearbeitet werden soll
-	//// <<violett<<"Stelle 0"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog);
+	//// <<violett<<"Stelle 0"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
 	linstp->doggfinst("libwbclient0",obverb,oblog);
 	// bei dieser Initialisierung werden nur die Namen zugewiesen
 	servc smb("smb","smbd");
@@ -4460,7 +4465,7 @@ void paramcl::pruefsamba()
 		if (!nrzf) {
 			uchar suserda=0;
 			if (/*findv==*/1) {
-				suserda=!systemrueck(sudc+"pdbedit -L | grep "+cuser+":",obverb,oblog);
+				suserda=!systemrueck("pdbedit -L | grep "+cuser+":",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 				/*
 					 } else {
 					 svec rueck;
@@ -4483,9 +4488,10 @@ void paramcl::pruefsamba()
 					pw2=Tippstr(string(Tx[T_Passwort_fuer_samba])+Txd[T_fuer_Benutzer]+dblau+cuser+schwarz+"' ("+Txk[T_erneute_Eingabe]+")",&pw2);
 					if (pw1==pw2) break;
 				} //         while (1)
-				systemrueck(sudc+"smbpasswd -n -a "+cuser,obverb,oblog);
-				systemrueck("(echo "+pw1+";echo "+pw2+")|"+sudc+"smbpasswd -s "+cuser,obverb,oblog);
-			} // if (systemrueck(sudc+"pdbedit -L | grep "+cuser+":",obverb,oblog)) 
+				systemrueck("smbpasswd -n -a "+cuser,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+				// smbpasswd in /usr/bin, somit wohl aus crontab aufrufbar
+				systemrueck("(echo "+pw1+";echo "+pw2+")|"+sudc+"smbpasswd -s "+cuser,obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
+			} // if (!suserda) {
 		} // if (!nrzf)
 		if (smbrestart) {
 			////		<<"smb.svfeh: "<<(int)smb.svfeh<<endl;
@@ -4499,7 +4505,7 @@ void paramcl::pruefsamba()
 		// Firewall(s)
 		uchar obslaeuft=0;
 		svec rueckr;
-		systemrueck("systemctl list-units|grep firewall|grep -v init",obverb,oblog,&rueckr);
+		systemrueck("systemctl list-units|grep firewall|grep -v init",obverb,oblog,&rueckr,/*obsudc=*/0);
 		if (rueckr.size()) if (rueckr[0].find("active running")!=string::npos ||rueckr[0].find("active exited")!=string::npos) obslaeuft=1;
 		if (obslaeuft) {
 			// firewall-ports, geht in SUSE und Fedora
@@ -4508,7 +4514,7 @@ void paramcl::pruefsamba()
 			svec ports; ports<<"137"<<"138"<<"139"<<"445";
 			for(size_t i=0;i<ports.size();i++) {
 				svec rueck;
-				systemrueck(sudc+"iptables -L -n|grep "+ports[i],obverb,oblog,&rueck);
+				systemrueck("iptables -L -n|grep "+ports[i],obverb,oblog,&rueck,/*obsudc=*/1);
 				if (rueck.size()) {
 					if (obverb>1) ::Log(rueck[0],obverb-1,oblog);
 					if (rueck[0].substr(0,6)=="ACCEPT" || rueck[0].substr(0,3)=="LOG") {
@@ -4525,8 +4531,8 @@ void paramcl::pruefsamba()
 				if (system==fed) {
 					// fedora:
 					// firewall-cmd --state
-					const string bef=sudc+"firewall-cmd --permanent --add-service=samba&&"+sudc+"firewall-cmd --reload";
-					systemrueck(bef,obverb,oblog);
+					const string bef="firewall-cmd --permanent --add-service=samba&&"+sudc+"firewall-cmd --reload";
+					systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 					anfgg(unindt,sudc+"firewall-cmd --permanent --remove-service=samba&&"+sudc+"firewall-cmd --reload",
 							bef,obverb,oblog);
 					// selinux: // offenbar unnoetig
@@ -4537,7 +4543,7 @@ void paramcl::pruefsamba()
 					if (!lstat(susefw.c_str(),&fstat)) {
 						string part="server";
 						for(int i=1;i<3;i++) {
-							int nichtfrei=systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+part+"' "+susefw,obverb,oblog,0,2);
+							int nichtfrei=systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+part+"' "+susefw,obverb,oblog,0,/*obsudc=*/0,/*verbergen=*/2);
 							if (nichtfrei && !nrzf && !obfw) {
 								obfw=Tippob(Tx[T_Soll_die_SuSEfirewall_bearbeitet_werden],Tx[T_j_af]);
 								if (!obfw) break;
@@ -4546,10 +4552,10 @@ void paramcl::pruefsamba()
 								const string bak="bak_"+meinname+ltoan(i);
 								struct stat lbak={0};
 								int fehlt=lstat((susefw+"."+bak).c_str(),&lbak);
-								const string bef=sudc+"sed -i"+(fehlt?"."+bak:"")+
+								const string bef="sed -i"+(fehlt?"."+bak:"")+
 									" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
 									"&&"+sudc+"systemctl restart SuSEfirewall2 smb nmb";
-								systemrueck(bef,obverb,oblog); 
+								systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1); 
 								anfgg(unindt,sudc+"sh -c 'cp -a \""+susefw+"."+bak+"\" \""+susefw+"\"'&&systemctl restart SuSEfirewall2 smb nmb",bef,obverb,oblog);
 							} // 					if (nichtfrei && obfw)
 							part="client";
@@ -4636,8 +4642,8 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 		 */
 		for(int cru=0;cru<2;cru++) {
 			if (findv==1) {
-				cmd=sudc+"find '"+(cru?cdonevz:cfailedvz)+"' -maxdepth 1 "+(tage?string("-mtime -")+ltoan(tage):"")+" -iname '*-fax-*.sff'";////-printf '%f\\n'";
-				systemrueck(cmd,obverb,oblog,&rueck[cru]);
+				cmd="find '"+(cru?cdonevz:cfailedvz)+"' -maxdepth 1 "+(tage?string("-mtime -")+ltoan(tage):"")+" -iname '*-fax-*.sff'";////-printf '%f\\n'";
+				systemrueck(cmd,obverb,oblog,&rueck[cru],/*obsudc=*/1);
 			} else {
 				time_t ab=0;
 				if (tage) ab=time(0)-(tage*24*60*60);
@@ -5007,8 +5013,9 @@ void paramcl::bereinigevz(const size_t aktc/*=0*/)
 			string dsvz=*fit; // Dateiensuchverzeichnis
 			svec rueck;
 			if (findv==1) {
-				cmd=sudc+"find "+dsvz+" -maxdepth 1 -type f -printf '%f\\n'";
-				systemrueck(cmd,aktc?0:obverb,oblog,&rueck,/*verbergen=*/0,/*obergebnisanzeig=*/wahr,/*ueberschr=*/nix,/*errm=*/0,/*obincron=*/0,aktc?&ausg:0);
+				cmd="find "+dsvz+" -maxdepth 1 -type f -printf '%f\\n'";
+				systemrueck(cmd,aktc?0:obverb,oblog,&rueck,/*obsudc=*/1,/*verbergen=*/0,/*obergebnisanzeig=*/wahr,/*ueberschr=*/nix,/*errm=*/0,
+						        /*obincron=*/0,aktc?&ausg:0);
 			} else findfile(&rueck,findv,aktc?0:obverb,oblog,/*anteil=*/1,dsvz,/*muster=*/"",/*tiefe=*/1,/*_typbit=*/1,/*folge=*/Fol_Dat);
 			for(size_t dnr=0;dnr<rueck.size();dnr++) {
 				fdn.insert(rueck[dnr]);
@@ -5021,14 +5028,14 @@ void paramcl::bereinigevz(const size_t aktc/*=0*/)
 			//  a) Capisuite
 			set<string> cmissl,cgelu,hmissl,hgelu; // Fax-Dateien
 			rueck.clear();
-			systemrueck("find "+cfailedvz+" -type f -name '*.sff'",aktc?0:obverb,oblog,&rueck,/*verbergen=*/0,
+			systemrueck("find "+cfailedvz+" -type f -name '*.sff'",aktc?0:obverb,oblog,&rueck,/*obsudc=*/0,/*verbergen=*/0,
 					/*obergebnisanzeig=*/wahr,/*ueberschr=*/nix,/*errm=*/0,/*obincron=*/0,&ausg);
 			for(size_t i=0;i<rueck.size();i++) {
 				size_t pos=rueck[i].rfind("fax-");
 				if (pos!=string::npos) cmissl.insert(rueck[i].substr(pos));
 			}
 			rueck.clear();
-			systemrueck("find "+cdonevz+" -type f -name '*.sff'",aktc?0:obverb,oblog,&rueck,0,wahr,nix,0,0,&ausg);
+			systemrueck("find "+cdonevz+" -type f -name '*.sff'",aktc?0:obverb,oblog,&rueck,/*obsudc=*/0,/*verbergen=*/0,wahr,nix,0,0,&ausg);
 			for(size_t i=0;i<rueck.size();i++) {
 				size_t pos=rueck[i].rfind("fax-");
 				if (pos!=string::npos) cgelu.insert(rueck[i].substr(pos));
@@ -5036,14 +5043,14 @@ void paramcl::bereinigevz(const size_t aktc/*=0*/)
 			// b) Hylafaxdateien
 			rueck.clear();
 			systemrueck("find "+varsphylavz+" -type f -regex '.*/q[0-9]+' -print0 "+(obverb?"":"2>/dev/null")+"|"+linstp->xargspf+" -0 grep -l ^state:8 ",
-					aktc?0:obverb,oblog,&rueck,0,wahr,nix,0,0,&ausg); // gescheitert
+					aktc?0:obverb,oblog,&rueck,/*obsudc=*/0,/*verbergen=*/0,wahr,nix,0,0,&ausg); // gescheitert
 			for(size_t i=0;i<rueck.size();i++) {
 				size_t pos=rueck[i].rfind("q");
 				if (pos!=string::npos) hmissl.insert(rueck[i].substr(pos+1));
 			}
 			rueck.clear();
 			systemrueck("find "+varsphylavz+" -type f -regex '.*/q[0-9]+' -print0 "+(obverb?"":"2>/dev/null")+"|"+linstp->xargspf+" -0 grep -l ^state:7 ",
-					aktc?0:obverb,oblog,&rueck,0,wahr,nix,0,0,&ausg); // gelungen
+					aktc?0:obverb,oblog,&rueck,/*obsudc=*/0,/*verbergen=*/0,wahr,nix,0,0,&ausg); // gelungen
 			for(size_t i=0;i<rueck.size();i++) {
 				size_t pos=rueck[i].rfind("q");
 				if (pos!=string::npos) hgelu.insert(rueck[i].substr(pos+1));
@@ -5055,7 +5062,7 @@ void paramcl::bereinigevz(const size_t aktc/*=0*/)
 					rueck.clear();
 					// dort von jeder hylanr den jüngsten Eintrag nehmen mit "SEND" oder "UNSENT"; wenn Spalte 14 leer = gefaxt, sonst = nicht gefaxt
 					systemrueck("tac "+xferfaxlog+"|awk 'BEGIN{FS=\"\\t\";OFS=FS;arr[\"SEND\"];arr[\"UNSENT\"];};"
-							"$2 in arr&&!s[$5]++ {print $2,$5,$14}'",aktc?0:obverb,oblog,&rueck,0,wahr,nix,0,0,&ausg);
+							"$2 in arr&&!s[$5]++ {print $2,$5,$14}'",aktc?0:obverb,oblog,&rueck,/*obsudc=*/0,/*verbergen=*/0,wahr,nix,0,0,&ausg);
 					for(size_t i=0;i<rueck.size();i++) {
 						svec toc;
 						// fuer Thread-Sicherheit
@@ -5077,8 +5084,9 @@ void paramcl::bereinigevz(const size_t aktc/*=0*/)
 			// Zielverzeichnisse durch Verschieben alter Dateien in Jahres-Unterverzeichnisse gliedern
 			if (vru) {
 				rueck.clear();
-				cmd=sudc+"find "+dsvz+" -maxdepth 1 -mtime +365 -type f -printf '%TY\\t%T+\\t%p\\n'|sort -k2";
-				systemrueck(cmd,aktc?0:obverb,oblog,&rueck,/*verbergen=*/0,/*obergebnisanzeig=*/wahr,/*ueberschr=*/nix,/*errm=*/0,/*obincron=*/0,aktc?&ausg:0);
+				cmd="find "+dsvz+" -maxdepth 1 -mtime +365 -type f -printf '%TY\\t%T+\\t%p\\n'|sort -k2";
+				systemrueck(cmd,aktc?0:obverb,oblog,&rueck,/*obsudc=*/1,/*verbergen=*/0,/*obergebnisanzeig=*/wahr,
+						        /*ueberschr=*/nix,/*errm=*/0,/*obincron=*/0,aktc?&ausg:0);
 				for(size_t dnr=0;dnr<rueck.size();dnr++) {
 					vector<string> tok; 
 					aufSplit(&tok,rueck[dnr],'\t');
@@ -5110,13 +5118,13 @@ void paramcl::anhalten()
 	setztmpcron();
 	for(int iru=0;iru<2;iru++) {
 		const string befehl=
-			sudc+"bash -c 'grep \""+saufr[iru]+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr[iru]+"/d\">"+tmpcron+";crontab "+tmpcron+";};:'";
-		systemrueck(befehl,obverb,oblog);
-	}
+			"bash -c 'grep \""+saufr[iru]+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr[iru]+"/d\">"+tmpcron+";crontab "+tmpcron+";};:'";
+		systemrueck(befehl,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+	} // 	for(int iru=0;iru<2;iru++)
 	::Log(blaus+Tx[T_Cron_Aufruf_von]+schwarz+mpfad+blau+Tx[T_gestoppt]+schwarz,1,oblog);
 	// services
-	//// befehl=sudc+"systemctl stop capisuite hylafax-faxq hylafax-hfaxd hylafax-faxgetty-"+hmodem+" hylafax >/dev/null 2>&1; true";
-	//// systemrueck(befehl,obverb,oblog);
+	//// befehl="systemctl stop capisuite hylafax-faxq hylafax-hfaxd hylafax-faxgetty-"+hmodem+" hylafax >/dev/null 2>&1;:";
+	//// systemrueck(befehl,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 	hylasv1();
 	hylasv2(hysrc);
 	capisv();
@@ -5330,16 +5338,16 @@ size_t paramcl::loescheallewartenden()
 	struct stat entryvz={0};
 	if (!lstat(cfaxusersqvz.c_str(),&entryvz)) {
 		if (findv==1) {
-			cmd=sudc+"find '"+cfaxusersqvz+"/' -maxdepth 1 -type f -iname 'fax-*.*'";
-			systemrueck(cmd,obverb,oblog,&allec);
+			cmd="find '"+cfaxusersqvz+"/' -maxdepth 1 -type f -iname 'fax-*.*'";
+			systemrueck(cmd,obverb,oblog,&allec,/*obsudc=*/1);
 		} else findfile(&allec,findv,obverb,oblog,0,cfaxusersqvz,"fax-[^.]*\\..*",1,1,Fol_Dat,0,0,1);
 		erg+=(allec.size()>>1); // *.txt und *.sff
 	} // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
 	//  cmd=string("rm ")+cfaxuservz+vtz+cuser+vtz+"sendq"+vtz+"fax-*.*"; //  "/var/spool/capisuite/users/<user>/sendq";
 	if (!lstat(hsendqvz.c_str(),&entryvz)) {
 		if (findv==1) {
-			cmd=sudc+"find '"+hsendqvz+"' -maxdepth 1 -type f -regex '.*/q[0-9]+' -printf '%f\\n'";
-			systemrueck(cmd,obverb,oblog, &alled);
+			cmd="find '"+hsendqvz+"' -maxdepth 1 -type f -regex '.*/q[0-9]+' -printf '%f\\n'";
+			systemrueck(cmd,obverb,oblog, &alled,/*obsudc=*/1);
 		} else findfile(&alled,findv,obverb,oblog,1,hsendqvz,"/q[^/]*",1,1,Fol_Dat,0,0,1);
 		erg+=alled.size();
 	} // if (!lstat(hsendqvz.c_str(),&entryvz)) 
@@ -5540,8 +5548,8 @@ int paramcl::pruefconvert()
 	static uchar convertgeprueft=0;
 	static int convertda=0;
 	if (!convertgeprueft) {
-		//              systemrueck("which zypper 2>/dev/null && zypper -n in convert || "
-		//                          "{ which apt-get 2>/dev/null && apt-get -y install convert; }",obverb,oblog);
+		////              systemrueck("which zypper 2>/dev/null && zypper -n in convert || "
+		////                          "{ which apt-get 2>/dev/null && apt-get -y install convert; }",obverb,oblog);
 		convertda=!linstp->doinst("imagemagick",obverb,oblog,"convert");
 		convertgeprueft=1;
 	} //   if (!convertgeprueft)
@@ -5556,15 +5564,15 @@ void paramcl::pruefunpaper()
 	if (vers<6.1) {
 		linstp->doinst("libxslt-tools",obverb,oblog,"xsltproc");
 		if (linstp->ipr==dnf||linstp->ipr==yum) {
-			////sudc+"rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm 
-			////             http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
-			////systemrueck(sudc+"rpm -Uvh https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-free-release-stable.noarch.rpm "
-			////                    " https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-nonfree-release-stable.noarch.rpm",obverb,oblog);
+		////sudc+"rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm 
+		////             http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
+		////systemrueck("rpm -Uvh https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-free-release-stable.noarch.rpm "
+		////" https://github.com/libelle17/rpmfusion_copy/blob/master/rpmfusion-nonfree-release-stable.noarch.rpm",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			const string rpf="rpmfusion_copy";
 			holvomnetz(rpf);
 			kompilbase(rpf,s_gz);
 			if (!pruefinstv()) {
-				systemrueck("sh -c 'cd \""+instvz+vtz+rpf+"\"&&"+sudc+"rpm -Uvh ./rpmfusion*rpm'",obverb+1,oblog);
+				systemrueck("cd \""+instvz+vtz+rpf+"\"&&"+sudc+"rpm -Uvh ./rpmfusion*rpm",obverb+1,oblog,/*rueck=*/0,/*obsudc=*/0);
 			} //   if (!pruefinstv())
 			linstp->doinst("ffmpeg",obverb,oblog);
 			linstp->doinst("ffmpeg-devel",obverb,oblog);
@@ -5573,7 +5581,7 @@ void paramcl::pruefunpaper()
 			svec qrueck;
 			const string dname="libswresample.so";
 			if (findv==1) {
-				systemrueck("find "+linstp->libs+"-xtype f -name "+dname,obverb,oblog,&qrueck);
+				systemrueck("find "+linstp->libs+"-xtype f -name "+dname,obverb,oblog,&qrueck,/*obsudc=*/0);
 			} else findfile(&qrueck,findv,obverb,oblog,0,linstp->libs,dname+"$",33,1,7);
 			if (!qrueck.size()) {
 				linstp->doinst("ffmpeg-"+linstp->dev,obverb+1,oblog);
@@ -5586,12 +5594,15 @@ void paramcl::pruefunpaper()
 		/*//if (linstp->ipr==apt||linstp->ipr==dnf||linstp->ipr==yum)*/ 
 		const string upc="unpaper_copy";
 		holvomnetz(upc);
-		if (vers) systemrueck("which unpaper && rm $(which unpaper) && hash -r",obverb,oblog);
+		if (vers) systemrueck("which unpaper && rm $(which unpaper) && hash -r",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
 		kompiliere(upc,s_gz);
 		// unpaper: error while loading shared libraries: libavformat.so.56: cannot open shared object file: No such file or directory
-		if (systemrueck("unpaper",obverb,oblog)==127) {
-			systemrueck("sh -c 'cd \""+instvz+vtz+upc+"\"&&make distclean;./configure;make;"+sudc+"make install'",obverb,oblog);
-		} // 		if (systemrueck("unpaper",obverb,oblog)==127)
+		if (systemrueck("unpaper",obverb,oblog,/*rueck=*/0,/*obsudc=*/0)==127) {
+			// /usr/bin/make in Ubuntu und Opensuse, /bin/make in Fedora, somit aus crontab aufrufbar
+			string ivu=instvz+vtz+upc;
+			if (!(systemrueck("cd \""+ivu+"\"&&make distclean;./configure;make",obverb,oblog,/*rueck=*/0,/*obsudc=*/0)))
+				systemrueck("cd \""+ivu+"\"&& make install",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+		} // 		if (systemrueck
 	} // 						if (!urueck.size()||vers<6.1)
 } // void paramcl::pruefunpaper()
 
@@ -5601,17 +5612,17 @@ int paramcl::pruefocr()
 	Log(violetts+Tx[T_pruefocr]+schwarz);
 	if (!obocrgeprueft) {
 		uchar tda=0, deuda=0, engda=0, osdda=0;
-		systemrueck(sudc+"ldconfig "+lsys.getlib64(),obverb,oblog);
+		systemrueck("ldconfig "+lsys.getlib64(),obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		string tpfad;
 		svec rueck;
 		if (obprogda("tesseract",obverb,oblog,&tpfad)) {
 			tda=1;
-			systemrueck(tpfad+" --list-langs 2>&1",obverb,oblog,&rueck); // gibt das normale Ergebnis als Fehlermeldung aus!
+			systemrueck(tpfad+" --list-langs 2>&1",obverb,oblog,&rueck,/*obsudc=*/0); // gibt das normale Ergebnis als Fehlermeldung aus!
 			if (!rueck.size()) tda=0; else if (rueck[0].find("List of available")) tda=0;
 		}
 		if (!tda) {
 			linstp->doinst("tesseract-ocr",obverb,oblog);
-			systemrueck(sudc+"ldconfig "+lsys.getlib64(),obverb,oblog);
+			systemrueck("ldconfig "+lsys.getlib64(),obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		} else {
 			for(size_t i=1;i<rueck.size();i++) {
 				if (rueck[i]=="deu") deuda=1;
@@ -5656,7 +5667,7 @@ int paramcl::pruefocr()
 				if (linstp->ipr==dnf||linstp->ipr==yum) 
 					linstp->doggfinst("redhat-rpm-config",obverb+1,oblog);
 				linstp->doinst("ghostscript",obverb+1,oblog,"gs");
-				if (systemrueck(sudhc+"python3 -m pip install --upgrade setuptools pip",obverb+1,oblog)) {
+				if (systemrueck("python3 -m pip install --upgrade setuptools pip",obverb+1,oblog,/*rueck=*/0,/*obsudc=*/2)) {
 					if (double pyv=progvers("python3")<=3.41) {
 						::Log(rots+Tx[T_Ihre_Python3_Version_koennte_mit]+blau+ltoan(pyv)+rot+
 								Tx[T_veraltet_sein_Wenn_Sie_Ihre_Faxe_OCR_unterziehen_wollen_dann_fuehren_Sie_bitte_ein_Systemupdate_durch_mit]+
@@ -5668,19 +5679,19 @@ int paramcl::pruefocr()
 				for(int iru=0;iru<2;iru++) {
 					const string virtualenv="virtualenv";
 					if (obprogda(virtualenv,obverb,oblog,&vprog)) break;
-					systemrueck(sudhc+"pip3 install "+virtualenv,obverb,oblog);
+					systemrueck("pip3 install "+virtualenv,obverb,oblog,/*rueck=*/0,/*obsudc=*/2);
 				} // 				for(int iru=0;iru<2;iru++)
 
 				string bef;
 				if (!vprog.empty()) {
-					bef=sudhc+"sh -c '"+vprog+" \""+virtvz+"\";"
+					bef=vprog+" \""+virtvz+"\";"
 						". \""+virtvz+"/bin/activate\";"
 						"pip3 install requests;"
 						"pip3 install --upgrade ocrmypdf;"
 						"deactivate;"
 						"'";
 				} else {
-					bef=sudhc+"sh -c 'python3 -m venv \""+virtvz+"\";"
+					bef="python3 -m venv \""+virtvz+"\";"
 						"python3 -m venv --upgrade \""+virtvz+"\";"
 						". \""+virtvz+"/bin/activate\";"
 						"pip3 install --upgrade pip;"
@@ -5691,12 +5702,12 @@ int paramcl::pruefocr()
 						////		"||sed -i \"/ python3/isudc pip3 uninstall --yes ocrmypdf\" \""+unindt+"\""
 						"'";
 				} // if (!vprog.empty()) else
-				systemrueck(bef,obverb,oblog);
+				systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/2);
 				anfgg(unindt,sudc+"rm -rf \""+virtvz+"\"","",obverb,oblog);
 				anfgg(unindt,
-						sudc+"sh -c '. \""+virtvz+"/bin/activate\";"+
-						sudhc+"pip3 uninstall --yes ocrmypdf;"
-						"deactivate;'",bef,obverb,oblog);
+						sudc+". \""+virtvz+"/bin/activate\";"+
+						"pip3 uninstall --yes ocrmypdf;"
+						"deactivate;",bef,obverb,oblog);
 
 				//// sudc+"pip3 uninstall --yes ocrmypdf"
 				//// sudc+"dnf install ./ghostscript-9.16-4.fc24.i686.rpm"
@@ -5739,8 +5750,8 @@ int paramcl::pruefocr()
 							// sudo dnf -y install qpdf
 							 */
 							pruefunpaper();
-							systemrueck("sh -c 'cd \""+instvz+vtz+proj+"\" &&"+
-									sudhc+"python3 -m pip install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf'", obverb,oblog);
+							systemrueck("cd \""+instvz+vtz+proj+"\" &&python3 -m pip install image PyPDF2 ruffus reportlab M2Crypto cryptography cffi ocrmypdf", 
+									      obverb,oblog,/*rueck=*/0,/*obsudc=*/2);
 							linstp->doinst("unpaper",obverb,oblog);
 						} //    if (!kompilbase(was,endg))
 					} //       if (!linstp->doinst("python3-pip",obverb+1,oblog,"pip3"))
@@ -5787,8 +5798,8 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 					svec rueck;
 					setfaclggf(ziel,obverb,oblog,/*obunter=*/falsch,/*mod=*/7,/*obimmer=*/0,/*faclbak=*/0);
 					const string cmd=ocrmp+" -rcsl "+(langu=="d"?"deu":"eng")+" \""+*lqp+"\" \""+ziel+"\" 2>&1";
-					int zerg=systemrueck(cmd,obverb,oblog,&rueck,0,wahr,"",0,1);
-					if (zerg==5) zerg=systemrueck(sudc+cmd,obverb,oblog,&rueck,0,wahr,"",0,1); // kein Schreibrecht im Verzeichnis
+					int zerg=systemrueck(cmd,obverb,oblog,&rueck,/*obsudc=*/0,0,wahr,"",0,1);
+					if (zerg==5) zerg=systemrueck(cmd,obverb,oblog,&rueck,/*obsudc=*/1,0,wahr,"",0,1); // kein Schreibrecht im Verzeichnis
 					if (!zerg) {
 						erg=0; // nicht umgekehrt
 						for(unsigned uru=0;uru<rueck.size();uru++) {
@@ -7470,7 +7481,7 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 					if (!lstat(tifpfad.c_str(),&st)) 
 						tuloeschen(tifpfad,cuser,obverb,oblog);
 					svec srueck;
-					erg=systemrueck(cmd,obverb,oblog,&srueck,0,wahr,"",0,1);
+					erg=systemrueck(cmd,obverb,oblog,&srueck,/*obsudc=*/0,0,wahr,"",0,1);
 					if (srueck.size())
 						// wenn Fehlermeldung "no version information available, dann source-code-Version von libtiff5 nochmal installieren
 						if (srueck[0].find("no version information")==string::npos)
@@ -8107,13 +8118,13 @@ int paramcl::cservice()
 			erg=systemrueck(/*//sudc+"sh -c 'systemctl stop capisuite; pkill capisuite >/dev/null 2>&1; pkill -9 capisuite >/dev/null 2>&1; "*/
 					"cd "+vz+
 					" && [ $(find . -maxdepth 1 -name \"capisuite\" 2>/dev/null | wc -l) -ne 0 ]"
-					" &&{ "+sudc+"mkdir -p "+ziel+"&&"+sudc+"mv -f "+vz+datei+" "+ziel+"; }||:"/*//'*/,obverb,oblog);
+					" &&{ "+sudc+"mkdir -p "+ziel+"&&"+sudc+"mv -f "+vz+datei+" "+ziel+"; }||:"/*//'*/,obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
 		} else {
 			svec qrueck;
 			findfile(&qrueck,findv,obverb,oblog,0,vz,datei+"$",1,1,Fol_Dat);
 			if (qrueck.size()) {
 				pruefverz(ziel,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/{},/*benutzer=*/cuser);
-				systemrueck(sudc+"mv -f "+vz+datei+" "+ziel,obverb,oblog);
+				systemrueck("mv -f "+vz+datei+" "+ziel,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			} // 			if (qrueck.size())
 		} // 		if (findv==1)
 		// entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
@@ -8181,15 +8192,15 @@ void paramcl::prueftif()
 	const string proj="tiff_copy";
 	holvomnetz(proj);
 	kompilbase(proj,s_gz);
-	const string bef="sh -c 'cd \""+instvz+vtz+proj+"\""
+	string ivp=instvz+vtz+proj;
+	const string bef="cd \""+ivp+"\""
 		"&& rm -f CMakeCache.txt"
 		"&& sed -i.bak s\"/uint16 Param;/uint32 Param;/\" libtiff/tif_fax3.h"
 		"&& cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . "
-		"&& make"
-		"&& "+sudc+"make install"
-		";:'";
-	systemrueck(bef,obverb,oblog);
-	anfgg(unindt,"cd \""+instvz+vtz+proj+"\" && cat install_manifest.txt|"+sudc+linstp->xargspf+" rm; cd \""+instvz+"\"",bef,obverb,oblog);
+		"&& make";
+	if (!(systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/0)))
+		systemrueck("cd \""+ivp+"\" && make install",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+	anfgg(unindt,"cd \""+ivp+"\" && cat install_manifest.txt|"+sudc+linstp->xargspf+" rm; cd \""+instvz+"\"",bef,obverb,oblog);
 } // void paramcl::prueftif()
 
 // wird aufgerufen in main
@@ -8231,11 +8242,11 @@ int paramcl::pruefhyla()
 
 				// Baud rate ermitteln ...
 				svec ruecki;
-				systemrueck((sudc+"stty -F /dev/")+this->hmodem+"| head -n 1 | cut -f2 -d' '",obverb,oblog,&ruecki);
+				systemrueck(("stty -F /dev/")+this->hmodem+"| head -n 1 | cut -f2 -d' '",obverb,oblog,&ruecki,/*obsudc=*/1);
 				if (ruecki.size()) {
 					brs=ruecki[0];
 					br=atol(brs.c_str());
-				}
+				} // 				if (ruecki.size())
 				// .. und anzeigen
 				if (br<=0) {
 					::Log(Tx[T_Baudratevon]+blaus+"/dev/"+this->hmodem+schwarz+Tx[T_mit_af]+rot+brs+schwarz+Tx[T_zugeringVerwendeHylafaxnicht],1,1);
@@ -8337,7 +8348,7 @@ int paramcl::pruefhyla()
 							string was;
 							if (!holvomnetz("hylafax","https://sourceforge.net/projects/","/files/latest")) {
 								svec hrueck;
-								if (!systemrueck("sh -c 'cd \""+instvz+"\"&&"+sudc+"tar xvf hylafax.tar.gz'",obverb,oblog,&hrueck)) {
+								if (!systemrueck("cd \""+instvz+"\"&& tar xvf hylafax.tar.gz",obverb,oblog,&hrueck,/*obsudc=*/1)) {
 									if (hrueck.size()) {
 										was=hrueck[0].substr(0,hrueck[0].length()-1);
 									} // 							if (hrueck.size())
@@ -8353,14 +8364,14 @@ int paramcl::pruefhyla()
 									"&&"+sudc;
 								if (!kompilfort(was,{},cfgbismake)) {
 									const string nachcfg=
-										"sh -c '"+sudc+"systemctl daemon-reload &&"+sudc+"systemctl stop hylafax 2>/dev/null"
-										"&& test -f /etc/init.d/hylafax &&{ "+sudc+"mkdir -p /etc/ausrangiert"
-										"&& "+sudc+"mv -f /etc/init.d/hylafax /etc/ausrangiert;}"
-										"&& "+sudc+"pkill hfaxd faxq >/dev/null 2>&1 && "+sudc+"faxsetup -nointeractive >/dev/null 2>&1 "
+										"systemctl daemon-reload && systemctl stop hylafax 2>/dev/null"
+										"&& test -f /etc/init.d/hylafax &&{  mkdir -p /etc/ausrangiert"
+										"&& mv -f /etc/init.d/hylafax /etc/ausrangiert;}"
+										"&& pkill hfaxd faxq >/dev/null 2>&1 && faxsetup -nointeractive >/dev/null 2>&1 "
 										"&& echo $? = Ergebnis nach faxsetup -nointeractive"
-										"&&"+sudc+"pkill hfaxd faxq >/dev/null 2>&1"//wird von faxset -nointeractive gestartet + kollidiert mit dem service
-										"&& "+sudc+"systemctl daemon-reload &&echo $? = Ergebnis nach "+sudc+"systemctl daemon-reload;:;'";
-									systemrueck(nachcfg,obverb+1,oblog);
+										"&& pkill hfaxd faxq >/dev/null 2>&1"//wird von faxset -nointeractive gestartet + kollidiert mit dem service
+										"&& systemctl daemon-reload &&echo $? = Ergebnis nach systemctl daemon-reload;:;";
+									systemrueck(nachcfg,obverb+1,oblog,/*rueck=*/0,/*obsudc=*/1);
 									mdatei confc(instvz+vtz+was+vtz+"config.cache");
 									if (confc.is_open()) {
 										string zeile;
@@ -8399,30 +8410,31 @@ int paramcl::pruefhyla()
 								if (falscheshyla) {
 									::Log(rots+Tx[T_Muss_falsches_hylafax_loeschen]+schwarz,1,1);
 									if (0) {
-										systemrueck(sudc+"sh -c 'cd /etc/init.d"
+										systemrueck("cd /etc/init.d"
 												" && [ $(find . -maxdepth 1 -name \"*faxq*\" -or -name \"*hfaxd*\" -or -name \"hylafax*\" 2>/dev/null | wc -l) -ne 0 ]"
-												" && { mkdir -p /etc/ausrangiert && mv -f *faxq* *hfaxd* hylafax* /etc/ausrangiert; } || true'",-2,oblog);
-										systemrueck(sudc+"sh -c 'cd $(dirname $(dirname $(which systemctl)))/lib/systemd/system && "
-												"rm -f faxq.service hfaxd.service faxgetty*.service hylafax*.service;'",-2,oblog);
-										systemrueck(sudc+"sh -c 'cd /etc/systemd/system && rm -f faxq.service hfaxd.service faxgetty*.service;'",-2,oblog);
+												" && { mkdir -p /etc/ausrangiert && mv -f *faxq* *hfaxd* hylafax* /etc/ausrangiert;}||:",-2,oblog,/*rueck=*/0,/*obsudc=*/1);
+										systemrueck("cd $(dirname $(dirname $(which systemctl)))/lib/systemd/system && "
+												"rm -f faxq.service hfaxd.service faxgetty*.service hylafax*.service;",-2,oblog,/*rueck=*/0,/*obsudc=*/1);
+										systemrueck("cd /etc/systemd/system && rm -f faxq.service hfaxd.service faxgetty*.service;",-2,oblog,/*rueck=*/0,/*obsudc=*/1);
 										for(int iru=0;iru<2;iru++) {
 											string local;
 											if (iru) local="local/"; else local.clear();
-											systemrueck(sudc+"sh -c 'cd /usr/"+local+"bin 2>/dev/null && "
-													"rm -f faxalter faxcover faxmail faxrm faxstat sendfax sendpage;'",-2,oblog);
-											systemrueck(sudc+"sh -c 'cd /usr/"+local+"sbin 2>/dev/null && "
+											systemrueck("cd /usr/"+local+"bin 2>/dev/null && "
+													"rm -f faxalter faxcover faxmail faxrm faxstat sendfax sendpage;",-2,oblog,/*rueck=*/0,/*obsudc=*/1);
+											systemrueck("cd /usr/"+local+"sbin 2>/dev/null && "
 													"rm -f choptest cqtest dialtest edit-faxcover faxabort faxaddmodem "
 													"faxadduser faxanswer faxconfig faxcron faxdeluser faxinfo faxlock faxmodem faxmsg faxq faxqclean faxquit faxsetup "
 													"faxsetup.linux faxstate faxwatch probemodem rchylafax* recvstats tagtest tiffcheck tsitest typetest xferfaxstats "
-													"faxsetup.bsdi faxsetup.iri faxgetty faxsend hfaxd hylafax lockname ondelay pagesend textfmt;'",-2,oblog);
-											systemrueck(sudc+"sh -c 'rm -rf /usr/"+local+"/lib/fax",-2,oblog,0,1);
-											systemrueck(sudc+"sh -c 'rm -rf /usr/"+local+"/share/hylafax",-2,oblog,0,1);
-											systemrueck(sudc+"sh -c 'rm -rf /usr/"+local+"/lib/fax",-2,oblog,0,1);
-											systemrueck(sudc+"sh -c 'rm -rf /usr/"+local+"/lib/hylafax",-2,oblog,0,1);
-											systemrueck(sudc+"sh -c 'rm -rf /usr/"+local+"/lib/libfax*",-2,oblog,0,1);
-											systemrueck(sudc+"sh -c 'rm -rf /usr/"+local+"/lib/libhylafax*",-2,oblog,0,1);
+													"faxsetup.bsdi faxsetup.iri faxgetty faxsend hfaxd hylafax lockname ondelay pagesend textfmt;",
+													-2,oblog,/*rueck=*/0,/*obsudc=*/1);
+											systemrueck("rm -rf /usr/"+local+"/lib/fax",-2,oblog,/*rueck=*/0,/*obsudc=*/1,1);
+											systemrueck("rm -rf /usr/"+local+"/share/hylafax",-2,oblog,/*rueck=*/0,/*obsudc=*/1,1);
+											systemrueck("rm -rf /usr/"+local+"/lib/fax",-2,oblog,/*rueck=*/0,/*obsudc=*/1,1);
+											systemrueck("rm -rf /usr/"+local+"/lib/hylafax",-2,oblog,/*rueck=*/0,/*obsudc=*/1,1);
+											systemrueck("rm -rf /usr/"+local+"/lib/libfax*",-2,oblog,/*rueck=*/0,/*obsudc=*/1,1);
+											systemrueck("rm -rf /usr/"+local+"/lib/libhylafax*",-2,oblog,/*rueck=*/0,/*obsudc=*/1,1);
 										} //                 for(int iru=0;iru<2;iru++)
-										systemrueck(sudc+"sh -c 'rm -rf /etc/hylafax",-2,oblog,0,1);
+										systemrueck("rm -rf /etc/hylafax",-2,oblog,/*rueck=*/0,/*obsudc=*/1,1);
 										// es bleiben noch /var/log/hylafax und /var/spool/fax oder /var/spool/hylafax
 									} // if (0)
 								} // if falscheshyla
@@ -8480,8 +8492,8 @@ int paramcl::pruefhyla()
 								// bei hysrc ist das Folgende wohl eigentlich nicht noetig
 								// Berechtigungen korrigieren
 								useruucp(huser,obverb,oblog);
-								systemrueck(sudc+"chown "+huser+":uucp -R "+this->varsphylavz,obverb,oblog);
-							}
+								systemrueck("chown "+huser+":uucp -R "+this->varsphylavz,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+							} // 							if (this->setzhylavz())
 						} // if (obprogda("faxsend",obverb,oblog))
 						/*//
 							::Log(string(Tx[T_StarteHylafax]),1,oblog);
@@ -8510,7 +8522,7 @@ int paramcl::pruefhyla()
 						//// <<rot<<" fglaueftnicht: "<<fglaeuftnicht<<", hmodem: "<<hmodem<<schwarz<<endl;
 						string pfad;
 						if (obprogda("faxstat",obverb,oblog,&pfad)) {
-							modemlaeuftnicht=systemrueck(sudc+pfad+"|grep "+this->hmodem+" 2>&1",obverb,oblog) + fglaeuftnicht;
+							modemlaeuftnicht=systemrueck(pfad+"|grep "+this->hmodem+" 2>&1",obverb,oblog,/*rueck=*/0,/*obsudc=*/1)+fglaeuftnicht;
 						}
 						////        if (!modemlaeuftnicht) break;
 						////  <<rot<<" hyinstart: "<<(int)hyinstart<<", modemlaeuftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
@@ -8522,7 +8534,7 @@ int paramcl::pruefhyla()
 						////  <<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
 						if (!hylalaeuftnicht && !modemlaeuftnicht) break;
 						if (iru>1) {
-							systemrueck((sudc+"chmod 660 ")+this->varsphylavz+"/FIFO*",obverb,oblog);
+							systemrueck("chmod 660 "+this->varsphylavz+"/FIFO*",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 							if (hconfig()) continue;
 							hconfigtty();
 							frischkonfiguriert=1;
@@ -8597,10 +8609,11 @@ int paramcl::pruefhyla()
 					struct stat dstat={0};
 					if (lstat(dt.c_str(),&dstat)) {
 						useruucp(huser,obverb,oblog);
-						systemrueck(sudc+"touch "+dt+" &&"+sudc+"chown "+huser+":uucp "+dt,obverb,oblog);
+						systemrueck("touch "+dt+" && chown "+huser+":uucp "+dt,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 					} // 		 if (lstat(dt.c_str(),&dstat))
 				} // 		for (unsigned i=0;i<2;i++)
-				systemrueck(sudc+"sh -c \"V="+varsphylavz+";L=\\$V/log;R=\\$V/recvq;chmod 774 \\$L \\$R;chmod 660 \\$L/seqf \\$R/seqf\"",obverb,oblog);
+////				systemrueck("V="+varsphylavz+";L=\\$V/log;R=\\$V/recvq;chmod 774 \\$L \\$R;chmod 660 \\$L/seqf \\$R/seqf", obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+				systemrueck("V="+varsphylavz+";L=$V/log;R=$V/recvq;chmod 774 $L $R;chmod 660 $L/seqf $R/seqf", obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 				// Archivierung ggf. aktivieren
 				if (!hylalaeuftnicht) {
 					const string hour="/etc/cron.hourly", fc="faxqclean";
@@ -8611,7 +8624,7 @@ int paramcl::pruefhyla()
 					////} // 			if (!lstat(hour.c_str(),&hfstat))
 					svec qrueck;
 					if (findv==1) {
-						systemrueck(sudc+"sh -c 'find "+hour+" -type f -exec grep -l \""+fc+" *$\" {} \\; 2>/dev/null'", obverb,oblog,&qrueck);
+						systemrueck("find "+hour+" -type f -exec grep -l \""+fc+" *$\" {} \\; 2>/dev/null", obverb,oblog,&qrueck,/*obsudc=*/1);
 					} else {
 						findfile(&qrueck,findv,obverb,oblog,0,hour,"",-1,33,7);
 						regex_t reg;
@@ -8635,7 +8648,7 @@ int paramcl::pruefhyla()
 						} // 						for(ssize_t i=qrueck.size()-1;i>=0;i--)
 					} // 					if (findv==1) else
 					for(size_t i=0;i<qrueck.size();i++) {
-						systemrueck(sudc+"sh -c \"sed -i 's/"+fc+" *$/"+fc+" -a -A/g' "+qrueck[i]+"||true;\"",obverb,oblog);
+						systemrueck("sed -i 's/"+fc+" *$/"+fc+" -a -A/g' "+qrueck[i]+"||:;",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 					}
 					/*//
 						if (!lstat("/etc/cron.hourly/hylafax",&hfstat)) KLA
@@ -8731,10 +8744,10 @@ void paramcl::pruefmodcron()
 	const string mps[]={mp+"capi",mp+"fcpci"};
 	setztmpcron();
 	for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++) {
-		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <("+sudc+"crontab -l 2>/dev/null)'",obverb,oblog)) {
+		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <("+sudc+"crontab -l 2>/dev/null)'",obverb,oblog,/*rueck=*/0,/*obsudc=*/0)) {
 			svec rueck;
-			const string bef=sudc+"sh -c 'crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";crontab "+tmpcron+"'";
-			if (!systemrueck(bef,obverb,oblog,&rueck)) {
+			const string bef="crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";crontab "+tmpcron;
+			if (!systemrueck(bef,obverb,oblog,&rueck,/*obsudc=*/1)) {
 				////    for(size_t znr=0;znr<rueck.size();znr++) { ::Log(rueck[znr],1+obverb,oblog); } //     for(size_t znr=0;znr<rueck.size();znr++)
 				const string befehl=sudc+"bash -c 'grep \""+mps[ru]+"\" -q <(crontab -l 2>/dev/null)&&"
 					"{ crontab -l 2>/dev/null|sed \"/"+ersetzAllezu(mps[ru],"/","\\/")+"/d\">"+tmpcron+";crontab "+tmpcron+";};:'";
@@ -8777,8 +8790,12 @@ void paramcl::pruefsfftobmp()
 				KLZ
 				 */
 				if (obboostda) {
-					if (!systemrueck(sudc+"grep '/usr/local/lib' /etc/ld.so.conf||{ "+
-								sudc+"sh -c \"echo '/usr/local/lib' >> /etc/ld.so.conf\";"+sudc+"ldconfig;}", obverb,oblog)) {
+					int serg=0;
+					if (systemrueck("grep '/usr/local/lib' /etc/ld.so.conf",obverb,oblog,/*rueck=*/0,/*obsudc=*/1)) {
+            systemrueck("echo '/usr/local/lib' >> /etc/ld.so.conf",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
+						serg=systemrueck("ldconfig",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+					}
+					if (!serg) {
 						const string sff="sfftobmp_copy";
 						holvomnetz(sff);
 						const string vorcfg="sed -i.bak -e \"s/^[[:blank:]]*\\(char \\*shortopts.*\\)/const \\1/;"
@@ -8826,7 +8843,7 @@ int paramcl::pruefcapi()
 				////      pid_t pid = GetPIDbyName("capisuite") ; // If -1 = not found, if -2 = proc fs access error
 				uchar fcpcida=0, capida=0, capidrvda=0;
 				vector<string> rueck;
-				systemrueck("lsmod",obverb,oblog,&rueck);
+				systemrueck("lsmod",obverb,oblog,&rueck,/*obsudc=*/0);
 				for(size_t i=0;i<rueck.size();i++){
 					if (!fcpcida) {if (!rueck[i].find("fcpci ")) {fcpcida=1;continue;}}
 					if (!capidrvda) {if (!rueck[i].find("capidrv ")) {capidrvda=1;continue;}}
@@ -8837,7 +8854,7 @@ int paramcl::pruefcapi()
 				if (!fcpcida || !capida || !capidrvda) {
 					::Log(blaus+Tx[T_Module_geladen]+schwarz+" fcpci: "+blau+(fcpcida?"1":"0")+schwarz+", capi: "+blau+(capida?"1":"0")+schwarz+
 							", capidrv: "+blau+(capidrvda?"1":"0")+schwarz+Tx[T_Lade_Capi_Module],obverb,0);
-					systemrueck(sudc+"modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog,0,1);
+					systemrueck("modprobe -rf avmfritz mISDNipac hisax_fcpcipnp hisax_isac hisax",obverb,oblog,/*rueck=*/0,/*obsudc=*/1,1);
 					utsname unbuf;
 					if (!fcpcida) {
 						uname(&unbuf);
@@ -8845,7 +8862,7 @@ int paramcl::pruefcapi()
 					}
 					for(uchar ivers=0;ivers<3;ivers++) {
 						if (!fcpcida)
-							if (systemrueck(sudc+"modprobe -v fcpci 2>/dev/null",obverb-1+ivers,oblog)) {
+							if (systemrueck("modprobe -v fcpci 2>/dev/null",obverb-1+ivers,oblog,/*rueck=*/0,/*obsudc=*/1)) {
 								const string fcpciko=string("/lib/modules/")+unbuf.release+"/kernel/extras/fcpci.ko";
 								switch (ivers) {
 									case 1:
@@ -8911,21 +8928,21 @@ int paramcl::pruefcapi()
 													if (!kopier(gccpfad,gccpfad+".bak",obverb,oblog)) kopier(gpppfad,gpppfad+".bak",obverb,oblog);
 													linstp->doinst("gcc-4.8",1+obverb,oblog);
 													linstp->doinst("g++-4.8",1+obverb,oblog);
-													systemrueck(sudc+"ln -sf \""+gccpfad+"-4.8\" \""+gccpfad+"\" && "+
-															sudc+"ln -sf \""+gpppfad+"-4.8\" \""+gpppfad+"\"",obverb,oblog);
+													systemrueck("ln -sf \""+gccpfad+"-4.8\" \""+gccpfad+"\" && "+
+															"ln -sf \""+gpppfad+"-4.8\" \""+gpppfad+"\"",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 												} // if (!obprogda("gcc",obverb,oblog,&gccpfad) && !obprogda("g++",obverb,oblog,&gpppfad)) 
 											} // if (vers>0 && vers<3.14) 
 										} // if (p2!=string::npos) 
 									} // if (p1!=string::npos) 
-									if (systemrueck("ls /lib/modules/$(uname -r)/build",obverb,oblog)) {
+									if (systemrueck("ls /lib/modules/$(uname -r)/build",obverb,oblog,/*rueck=*/0,/*obsudc=*/0)) {
 										if (system==deb) {
-											systemrueck(sudc+"apt -y install linux-headers-$(uname -r)",obverb,oblog);
+											systemrueck("apt -y install linux-headers-$(uname -r)",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 										}
 									} // 									if (systemrueck("ls /lib/modules/$(uname -r)/build",obverb,oblog))
 									systemrueck("ls -l /lib/modules/$(uname -r)/build 2>/dev/null || "
 											"{ NEU=$(find /lib/modules -type l -name build -print0|"+linstp->xargspf+" -0 -r ls -l --time-style=full-iso|"
 											"sort -nk6,7|head -n1|cut -d' ' -f9); test -h $NEU &&"+sudc+"cp -a $NEU /lib/modules/$(uname -r)/build; }",
-											obverb,oblog);
+											obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
 									const string proj="fcpci_copy";
 									const string srcvz=instvz+vtz+proj+".tar.gz";
 									holvomnetz(proj);
@@ -8940,14 +8957,14 @@ int paramcl::pruefcapi()
 										sudc+"make clean";
 									const string cfgbismake=" 2>/dev/null;"+sudc;
 									kompiliere(proj,s_gz,vorcfg,cfgbismake);
-									systemrueck(sudc+"depmod",obverb,oblog);
+									systemrueck("depmod",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
 									if (obdown) {
-										systemrueck(sudc+"mv -f \""+gccpfad+".bak\" \""+gccpfad+"\" &&"+
-												sudc+"mv -f \""+gpppfad+".bak\" \""+gpppfad+"\"",obverb,oblog);
-									}
+										systemrueck("mv -f \""+gccpfad+".bak\" \""+gccpfad+"\" &&"+
+												"mv -f \""+gpppfad+".bak\" \""+gpppfad+"\"",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+									} // 									if (obdown)
 									obverb=altobverb;
 								} // if (lstat(fcpciko.c_str(), &entryfc)) 
-							} // if (systemrueck(sudc+"modprobe -v fcpci",obverb-1,oblog)) 
+							} // if (systemrueck
 					} // for(uchar ivers=0;ivers<2;ivers++) 
 
 					// Fedora:
@@ -8955,17 +8972,17 @@ int paramcl::pruefcapi()
 					// cd /usr/src/kernels/4.7.3-200.fc24.x86_64
 					// make olddefconfig
 					// dnf install elfutils-libelf-devel
-					if (systemrueck(sudc+"modprobe capi 2>/dev/null",obverb,oblog)) {
+					if (systemrueck("modprobe capi 2>/dev/null",obverb,oblog,/*rueck=*/0,/*obsudc=*/1)) {
 						if (system==fed) {
 							svec vrueck1,vrueck2;
 							string v1,v2;
 							const string getvmvers=sudc+"ls /boot/vmlinuz-* -r|head -n 1|cut -d- -f2,3,4,5";
-							systemrueck(getvmvers,obverb,oblog,&vrueck1);
+							systemrueck(getvmvers,obverb,oblog,&vrueck1,/*obsudc=*/1);
 							if (vrueck1.size()) v1=vrueck1[0];
-							systemrueck(sudc+"dnf -y install kernel-modules-extra-$(uname -r) && "
-									"{ lsmod | grep capidrv ||"+sudc+"modprobe capidrv 2>/dev/null; "
-									"lsmod | grep kernelcapi ||"+sudc+"modprobe kernelcapi 2>/dev/null;}",obverb,oblog);
-							systemrueck(getvmvers,obverb,oblog,&vrueck2);
+							systemrueck("dnf -y install kernel-modules-extra-$(uname -r) && "
+									"{ lsmod | grep capidrv ||modprobe capidrv 2>/dev/null; "
+									"lsmod | grep kernelcapi ||modprobe kernelcapi 2>/dev/null;}",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+							systemrueck(getvmvers,obverb,oblog,&vrueck2,/*obsudc=*/1);
 							if (vrueck2.size()) v2=vrueck2[0];
 							////            <<"vi: "<<v1<<"\n"<<"v2: "<<v2<<endl;
 							// sollte nach Korrektur von kernel-modules-extra zu kernel-modules-extra-$(uname -r) kaum mehr vorkommen
@@ -8988,16 +9005,16 @@ int paramcl::pruefcapi()
 							if (lstat("/usr/include/curses.h",&nstat))
 								linstp->doinst("ncurses-devel",obverb+1,oblog);
 							linstp->doggfinst("pesign",obverb+1,oblog);
-							systemrueck(sudc+"rpmdev-setuptree",obverb,oblog);
+							systemrueck("rpmdev-setuptree",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 							svec krue;
-							systemrueck("find "+instvz+" -name kernel-$(uname -r|rev|cut -d. -f2-|rev).src.rpm",obverb,oblog,&krue);
+							systemrueck("find "+instvz+" -name kernel-$(uname -r|rev|cut -d. -f2-|rev).src.rpm",obverb,oblog,&krue,/*obsudc=*/1);
 							if (!krue.size()) {
 								::Log(Tx[T_Moment_muss_Kernel_herunterladen],-1,oblog);
-								systemrueck("cd "+instvz+" &&"+sudc+"dnf download --source kernel-$(uname -r)",obverb,oblog);
-							}
+								systemrueck("cd "+instvz+" && dnf download --source kernel-$(uname -r)",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+							} // 							if (!krue.size())
 							svec rueck;
 							string kstring; // kernel-4.8.4-200.fc24.src.rpm
-							systemrueck("cd "+instvz+" && ls -t kernel*.rpm|head -n 1",obverb,oblog,&rueck);
+							systemrueck("cd "+instvz+" && ls -t kernel*.rpm|head -n 1",obverb,oblog,&rueck,/*obsudc=*/0);
 							if (rueck.size()) {
 								kstring=rueck[0]; // "kernel-4.8.4-200.fc24.src.rpm"
 								string kernel=kstring.substr(kstring.find('-')+1);
@@ -9012,24 +9029,24 @@ int paramcl::pruefcapi()
 											Tx[T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1,1);
 									exit(10);
 								} // 							if (kernel.find(relev))
-								systemrueck("cd "+instvz+" &&"+sudc+"dnf -y builddep "+kstring,obverb,oblog);
-								systemrueck("cd "+instvz+" && rpm -ivh "+kstring,obverb,oblog);  // mit sudo wird kernel.spec nicht erstellt
+								systemrueck("cd "+instvz+" && dnf -y builddep "+kstring,obverb,oblog,/*obsudc=*/1);
+								systemrueck("cd "+instvz+" && rpm -ivh "+kstring,obverb,oblog,/*obsudc=*/0);// mit sudo wird kernel.spec nicht erstellt
 								// warning: group/user mockbuild does not exist - using root
 								const string grund=gethome()+"/rpmbuild",specs=grund+"/SPECS",build=grund+"/BUILD";
 								pruefverz(specs,obverb,oblog);
 								pruefverz(build,obverb,oblog);
 								for(unsigned iru=0;iru<2;iru++) {
-									if (!systemrueck("cd '"+gethome()+"/rpmbuild/SPECS' &&"+sudc+"rpmbuild -bp --target=$(uname -m) kernel.spec",
-												obverb,oblog)) {
-										systemrueck(sudc+"dnf -y install kernel-devel-$(uname -r)",obverb,oblog);
+									if (!systemrueck("cd '"+gethome()+"/rpmbuild/SPECS' && rpmbuild -bp --target=$(uname -m) kernel.spec",
+												obverb,oblog,/*rueck=*/0,/*obsudc=*/1)) {
+										systemrueck("dnf -y install kernel-devel-$(uname -r)",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 										systemrueck("KSTRING="+kstring+" && cd "+gethome()+"/rpmbuild/BUILD/$(echo $KSTRING|cut -d. -f1,2,4)/linux-`uname -r` && "
-												"make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules",obverb,oblog);
+												"make -C /lib/modules/`uname -r`/build M=`pwd`/drivers/isdn/capi modules",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
 										break;
-									}
+									} // 									if (!systemrueck
 									if (iru) break;
-									systemrueck(sudc+"dnf -y install $(cd '"+gethome()+"/rpmbuild/SPECS' && "
+									systemrueck("dnf -y install $(cd '"+gethome()+"/rpmbuild/SPECS' && "
 											sudc+"rpmbuild -bp --target=$(uname -m) kernel.spec 2>&1 >/dev/null"
-											"| sed '/is needed by/!d;s/^[[:blank:]]*\\(.*\\) is needed by.*/\\1/')",obverb,oblog);
+											"| sed '/is needed by/!d;s/^[[:blank:]]*\\(.*\\) is needed by.*/\\1/')",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 									// dnf install audit-libs-devel binutils-devel bison elfutils-devel flex hmaccalc newt-devel numactl-devel 
 									//     pciutils-devel "perl(ExtUtils::Embed)" perl-devel xz-devel
 									// dann nochmal
@@ -9041,7 +9058,7 @@ int paramcl::pruefcapi()
 #endif					
 						} // if (system==fed) 
 					} // if (systemrueck(sudc+"modprobe capi",obverb,oblog))
-					systemrueck(sudc+"modprobe capidrv 2>/dev/null",obverb,oblog);
+					systemrueck("modprobe capidrv 2>/dev/null",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 				} // if (!fcpcida || !capida || !capidrvda) 
 				pruefrules(obverb,oblog);
 				pruefblack(obverb,oblog);
@@ -9091,38 +9108,40 @@ int paramcl::pruefcapi()
 						holvomnetz("capisuite_copy");
 						svec csrueck;
 						systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' "+string(obverb?"":"2>/dev/null")+"| sort -r",
-								obverb,oblog,&csrueck);
+								obverb,oblog,&csrueck,/*obsudc=*/0);
 						if (csrueck.size()) {
 							struct stat c20stat={0},c20hstat={0};
 							if (lstat((lsys.getlib64()+"/libcapi20.so").c_str(),&c20stat)||
 									lstat("/usr/include/capi20.h",&c20hstat)) {
 								holvomnetz("capi20_copy");
 								kompiliere("capi20_copy",s_gz);
-								systemrueck("sh -c 'cd "+instvz+" && L="+lsys.getlib64()+"/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "+
-										sudc+"ln -s $L3 $L; test -f $L;'",obverb,oblog);
-							}
+								// ln sollte er in crontab finden
+								systemrueck("cd "+instvz+" && L="+lsys.getlib64()+"/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "+
+										sudc+"ln -s $L3 $L; test -f $L;",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
+							} // 							if (lstat((lsys.getlib64()+"/libcapi20.so").c_str(),&c20stat)||
 							/*//
 							//            systemrueck("sh -c 'P=capi20_copy;T=$P.tar.bz2;M=$P-master;cd "+instvz+" && tar xpvf $T && rm -rf $P; mv $M $P && cd $P "
 							//                        " && ./configure && make &&"+sudc+"make install '",obverb,oblog);
 							//            svec rueck;
 							//            systemrueck("find /usr -name capi20.h 2>/dev/null",obverb,oblog,&rueck); 
 							 */
-							systemrueck("sh -c 'cd "+instvz+" &&{ cd capisuite 2>/dev/null &&{ test -f Makefile && make clean;};}'",obverb-1,oblog);
+							systemrueck("cd "+instvz+" &&{ cd capisuite 2>/dev/null &&{ test -f Makefile && make clean;};}",obverb-1,oblog,/*rueck=*/0,/*obsudc=*/0);
 							obverb++;
 							svec rueck;
 							string pyvz;
-							systemrueck("python -c \"import os; print os.path.dirname(os.__file__)\"",obverb,oblog,&rueck);
+							systemrueck("python -c \"import os; print os.path.dirname(os.__file__)\"",obverb,oblog,&rueck,/*obsudc=*/0);
 							if (rueck.size()) {
 								pyvz=*sersetze(&rueck[0],"/","\\/");
 							} else {
 								pyvz=ersetzAllezu(lsys.getlib64(),"/","\\/")+"\\/python2.7";
-							}
+							} // 							if (rueck.size()) else
 							if (!kompiliere("capisuite_copy",s_gz,
 										"sed -i.bak \""
 										// 20.11.16 diese Zeile scheint jetzt wieder in Fedora 24 unnoetig
 										//													 "s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/;"
 										// 20.11.16 pyexecdir und pythondir mussten in Fedora 24 so gesetzt werden
-										// 23.11.16: fuer openSUE muesste wohl --datarootdir=/usr/local/lib64 versucht werden, so wie es in capisuite.conf hier auch schon steht
+										// 23.11.16: für openSUSE müsste man wohl --datarootdir=/usr/local/lib64 versuchen, 
+										//           so wie es in capisuite.conf hier auch schon steht
 										"s/\\( pyexecdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
 										"print site.getsitepackages()[0]\\\"\\`/;"
 										"s/\\( pythondir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
@@ -9163,7 +9182,8 @@ int paramcl::pruefcapi()
 							//                  "'";
 							//            if (!systemrueck(befehl,obverb,oblog)) {
 							//              //        pruefverz("/etc/capisuite",obverb,oblog,1,0);
-							//              //        systemrueck("ls /etc/capisuite/capisuite.conf || cp -a "+instvz+"/capisuite/src/capisuite.conf /etc/capisuite");
+							//              //        systemrueck("ls /etc/capisuite/capisuite.conf "
+							//              //                    "|| cp -a "+instvz+"/capisuite/src/capisuite.conf /etc/capisuite");
 							//              //        systemrueck("ls /etc/capisuite/fax.conf || cp -a "+instvz+"/capisuite/scripts/fax.conf /etc/capisuite");
 							////              pruefverz("/usr/local/var/log",obverb,oblog,1,0);
 							//              //         pruefverz("/usr/local/var/log",obverb,oblog,1,0);
@@ -9231,7 +9251,7 @@ int paramcl::pruefcapi()
 					break;
 				} else {
 					servc::daemon_reload();
-					systemrueck(sudc+"systemctl stop isdn",obverb>0?obverb:-1,oblog,0,1);
+					systemrueck("systemctl stop isdn",obverb>0?obverb:-1,oblog,0,/*obsudc=*/1,1);
 					////      systemrueck(sudc+"systemctl start isdn",obverb,oblog);
 					::Log(Tx[T_StarteCapisuite],-1,oblog);
 					scapis->stop(-1,oblog);
@@ -9332,7 +9352,7 @@ void paramcl::faxemitC(DB *My, const string& spooltab, const string& altspool, f
 			string csfpfad;
 			const string cmd="capisuitefax -n "+(cus.cuid?"":"-u"+this->cuser)+" -d "+fsfp->telnr+" \""+ff+"\" 2>&1";
 			vector<string> faxerg;
-			systemrueck(cmd,1,1,&faxerg,0,wahr,Tx[T_Faxbefehl],0,1);
+			systemrueck(cmd,1,1,&faxerg,/*obsudc=*/0,0,wahr,Tx[T_Faxbefehl],0,1);
 			if (faxerg.size()) {
 				const char* tz1="uccessful enqueued as ", // muss sprachlich so falsch bleiben wie im python-Script
 							*tz2=" for ";
@@ -9429,15 +9449,16 @@ void paramcl::faxemitH(DB *My, const string& spooltab, const string& altspool, f
 		//// 27.3.16: Uebernacht wurden die Berechtigungen so eingeschraenkt, dass Faxsenden nicht mehr ging, evtl. durch faxqclean
 		useruucp(this->huser,obverb,oblog);
 		if (findv==1) {
-			systemrueck(sudc+"find "+this->varsphylavz+" -name seqf -exec chmod 660 {} \\;"" -exec chown "+this->huser+":uucp {} \\;",obverb,oblog);
+			systemrueck("find "+this->varsphylavz+" -name seqf -exec chmod 660 {} \\;"" -exec chown "+this->huser+":uucp {} \\;",
+					        obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		} else {
 			svec qrueck;
 			findfile(&qrueck,findv,obverb,oblog,0,this->varsphylavz,"/seqf$",-1,1,Fol_Dat);
 			for(size_t i=0;i<qrueck.size();i++) {
-				systemrueck(sudc+"chmod 660 '"+qrueck[i]+"'",obverb,oblog);
-				systemrueck(sudc+"chown "+this->huser+":uucp '"+qrueck[i]+"'",obverb,oblog);
+				systemrueck("chmod 660 '"+qrueck[i]+"'",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+				systemrueck("chown "+this->huser+":uucp '"+qrueck[i]+"'",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			}
-		}
+		} // 		if (findv==1)
 		const char* tz1="request id is ", *tz2=" (";
 		string sendfax;
 		////    systemrueck(sudc+"sh -c 'which sendfax'",obverb,1,&rueck);
@@ -9445,7 +9466,7 @@ void paramcl::faxemitH(DB *My, const string& spooltab, const string& altspool, f
 			const string cmd=sendfax+" -n -A "+(isnumeric(this->maxhdials)?"-T "+this->maxhdials:"")+" -d "+tel+" \""+ff+"\" 2>&1";
 			svec faxerg;
 			//// <<rot<<"Achtung: faxemith: "<<endl<<schwarz<<cmd<<endl;
-			if (!systemrueck(cmd,1,1,&faxerg,0,wahr,Tx[T_HylafaxBefehl])) {
+			if (!systemrueck(cmd,1,1,&faxerg,/*obsudc=*/0,0,wahr,Tx[T_HylafaxBefehl])) {
 				for(size_t i=0;i<faxerg.size();i++) {
 					::Log(string(Tx[T_RueckmlgZeile])+ltoan(i)+": "+faxerg.at(i),obverb-1,oblog);
 					if (char *z1=strstr((char*)faxerg.at(i).c_str(),tz1)) {
@@ -9823,7 +9844,7 @@ int paramcl::xferlog(fsfcl *fsfp/*,string *totpages,string *ntries,string *totdi
 	if (!lstat(xferfaxlog.c_str(),&trst)) {
 		// 2.3.17 in Eintraegen UNSENT und SUBMIT kann tty... auch fehlen
 		systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null | grep -am 1 \"^[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+sep+"[^"+sep+"]*"+
-				sep+fsfp->hylanr+sep+"\" | cut -f1,2,8,14,20",obverb,oblog,&grueck); 
+				sep+fsfp->hylanr+sep+"\" | cut -f1,2,8,14,20",obverb,oblog,&grueck,/*obsudc=*/0); 
 		fsfp->sendqgespfad.clear();
 		if (grueck.size()) {
 			gefunden=1;
@@ -9907,7 +9928,8 @@ int paramcl::xferlog(fsfcl *fsfp/*,string *totpages,string *ntries,string *totdi
 				} //       if (tok.size()>1)
 			} //     if (tok.size())
 #else
-			systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null|grep -am 1 \""+this->hmodem+sep+fsfp->hylanr+sep+"\"",obverb,oblog,&grueck); // ggf. broken pipe error
+			    // ggf. broken pipe error
+			systemrueck("tac \""+xferfaxlog+"\" 2>/dev/null|grep -am 1 \""+this->hmodem+sep+fsfp->hylanr+sep+"\"",obverb,oblog,&grueck,/*obsudc=*/0); 
 			if (grueck.size()) KLA
 				vector<string> tok;
 			aufSplit(&tok,&grueck[grueck.size()-1],sep);
@@ -9981,8 +10003,8 @@ void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, i
 		svec qrueck;
 		const string wo=hsendqvz+" "+(*hyla_uverz_nrp?"":hdoneqvz+" "+harchivevz);
 		if (findv==1) {
-			const string cmd=sudc+"find "+wo+" -name 'q"+fsf->hylanr+"'";
-			systemrueck(cmd,obverb,oblog,&qrueck);
+			const string cmd="find "+wo+" -name 'q"+fsf->hylanr+"'";
+			systemrueck(cmd,obverb,oblog,&qrueck,/*obsudc=*/1);
 		} else findfile(&qrueck,findv,obverb,oblog,0,wo,"/q"+fsf->hylanr+"$",-1,1,0,0,0,1);
 		if (qrueck.size()) {
 			fsf->hqdt=qrueck[0];
@@ -10156,7 +10178,7 @@ int main(int argc, char** argv)
 		exit(8); // Hilfe angezeigt
 	if (pm.obvi) pm.dovi(); 
 	if (pm.obvc) pm.dovc();
-	if (pm.obvs) exit(systemrueck("cd \""+instvz+"\"; sh viall"+devtty));
+	if (pm.obvs) exit(systemrueck("cd \""+instvz+"\"; sh viall"+devtty,/*obverb=*/0,/*oblog=*/0,/*rueck=*/0,/*obsudc=*/1));
 	if (pm.zeigvers) {
 		pm.zeigversion();
 		pm.zeigkonf();
