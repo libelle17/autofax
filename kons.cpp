@@ -2181,7 +2181,8 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
   } else {
     aktues=ueberschr;
   } //   if (ueberschr.empty())
-	string hsubs=hcmd.substr(0,getcols()-7-aktues.length());
+	const string bef=(obsudc?sudc+(obsudc==2&&!sudc.empty()?"-H ":""):"")+"env PATH='"+spath+"' "+"sh -c '"+ersetzAllezu(hcmd,"'","'\\''")+"'";
+	string hsubs=bef.substr(0,getcols()-7-aktues.length());
 	string meld=aktues+": "+blau+hsubs+schwarz+" ...";
 	if (ausgp&&obverb) *ausgp<<meld<<endl; else Log(meld,obverb>0?-1:0,oblog);
 	if (!rueck) if (obergebnisanzeig) {neurueck=1;rueck=new vector<string>;}
@@ -2190,7 +2191,6 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 	perfcl prf("systemrueck");
 #endif // systemrueckprofiler
 	// obsudc==0 nichts, obsudc==1: "sudo ", obsudc==2: "sudo -H "
-	const string bef=(obsudc?sudc+(obsudc==2&&!sudc.empty()?"-H ":""):"")+"env PATH='"+spath+"' "+"sh -c '"+ersetzAllezu(hcmd,"'","'\\''")+"'";
 	if (rueck) {
 		//// <<gruen<<bef<<schwarz<<endl;
     if (FILE* pipe = popen(bef.c_str(), "r")) {
@@ -2240,7 +2240,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
       } //       if (obverb>1 || oblog || obergebnisanzeig) if (rueck->size())
 #ifdef systemrueckprofiler
       Log(rots+"Rueck.size: "+ltoan(rueck->size())+", obergebnisanzeig: "+(obergebnisanzeig?"ja":"nein"),1,oblog);
-			if (ausgp) *ausp<<hcmd<<endl; else Log(hcmd,1,oblog);
+			if (ausgp) *ausp<<bef<<endl; else Log(bef,1,oblog);
 			prf.ausgab1000("vor pclose");
 #endif
 			erg = pclose(pipe);
@@ -2307,7 +2307,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 #ifdef systemrueckprofiler
     prf.ausgab1000("vor log");
 #endif
-		meld=aktues+": "+blau+hcmd+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz;
+		meld=aktues+": "+blau+bef+schwarz+Txk[T_komma_Ergebnis]+blau+ergebnis+schwarz;
 		if (ausgp&&obverb) *ausgp<<meld<<endl; else Log(meld,obverb>0?obverb:0,oblog);
 	} // if (obverb>0 || oblog)
 	if (obergebnisanzeig && rueck->size()) {
@@ -4810,13 +4810,14 @@ int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const stri
 		const string b2="cd \""+ivw+"\"&& make install";
 		const string b3="cd \""+ivw+"\"&& make distclean; ./configure; make";
 		const string b4="ldconfig "+lsys.getlib64();
-		if (!systemrueck(b1,obverb,oblog,/*rueck=*/0,/*obsudc=*/0))
-		     systemrueck(b2,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+		int erg1;
+		if (!(erg1=systemrueck(b1,obverb,oblog,/*rueck=*/0,/*obsudc=*/0)))
+		     ret=systemrueck(b2,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		else if (!systemrueck(b3,obverb,oblog,/*rueck=*/0,/*obsudc=*/0))
-		     systemrueck(b2,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+		     ret=systemrueck(b2,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		systemrueck(b4,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
-		Log(Txk[T_Ergebnis_nach_make]);
-		Log(Txk[T_Ergebnis_nach_make_install]);
+		Log(string(Txk[T_Ergebnis_nach_make])+" "+ltoan(erg1));
+		Log(string(Txk[T_Ergebnis_nach_make_install])+" "+ltoan(ret));
 ////		ret=systemrueck(bef,obverb,oblog);
 		anfgg(unindt,"H="+gethome()+";A=$H/"+meinname+";P="+was+";cd \"$A/$P\" 2>/dev/null"
 				"|| cd $(find \"$H\" -name $P -printf \"%T@ %p\\n\" 2>/dev/null|sort -rn|head -n1|cut -d\" \" -f2)"

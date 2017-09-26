@@ -5688,8 +5688,7 @@ int paramcl::pruefocr()
 						". \""+virtvz+"/bin/activate\";"
 						"pip3 install requests;"
 						"pip3 install --upgrade ocrmypdf;"
-						"deactivate;"
-						"'";
+						"deactivate;";
 				} else {
 					bef="python3 -m venv \""+virtvz+"\";"
 						"python3 -m venv --upgrade \""+virtvz+"\";"
@@ -7433,7 +7432,7 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 		if (i==3) {
 			for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
 				if (strptime(umstcnfA[i].wert.c_str(), tmmoegl[im], &tm)) break;
-			}
+			} // 			for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++)
 			strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
 			// tbuf und tm enthalten also z.B. die in /var/spool/capisuite/users/<user>/received/fax-999999.txt unter "time" stehende Zeit
 			s=tbuf;
