@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.45718) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4576) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -174,9 +174,6 @@ configuration file, which can be edited directly by
 &rsquo;<b>autofax -rf</b>&rsquo;. <b><br>
 Options which are not saved: <br>
 -v, --verbose</b>: screen output more verbose <b><br>
--l, --log</b>: put detailed logs in file
-&rsquo;<b>/var/log/autofax.log</b>&rsquo; (otherwise
-shorter) <b><br>
 -lfn, --logfilenew</b>: delete log file afore <b><br>
 -cf, --conffile &lt;string&gt;</b>: uses configuration file
 &lt;string&gt; instead of &rsquo;&rsquo; <b><br>
@@ -237,6 +234,9 @@ directory, currently &rsquo;<b>/var/log</b>&rsquo; <b><br>
 -lf, --logfilename &lt;string&gt;</b>: log file
 &lt;string&gt; (in path &rsquo;<b>/var/log</b>&rsquo;) will
 be used instead of &rsquo;<b>autofax.log</b>&rsquo; <b><br>
+-l, --log</b>: put detailed logs in file
+&rsquo;<b>/var/log/autofax.log</b>&rsquo; (otherwise
+shorter) <b><br>
 -tdr, --tofaxdir &lt;path&gt;</b>: faxes the files from
 &lt;path&gt; instead of
 &rsquo;<b>/var/autofax/tobefaxed</b>&rsquo; <b><br>
@@ -780,7 +780,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.45718) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4576) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -972,9 +972,6 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 kann. <b><br>
 Optionen, die nicht gespeichert werden: <br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger <b><br>
--l, --log</b>: protokolliert ausfuehrlich in Datei
-&rsquo;<b>/var/log/autofax.log</b>&rsquo; (sonst knapper)
-<b><br>
 -ldn, --logdateineu</b>: logdatei vorher loeschen <b><br>
 -kd, --konfdatei &lt;string&gt;</b>: verwendet
 Konfigurationsdatei &lt;string&gt; anstatt &rsquo;&rsquo;
@@ -1044,6 +1041,9 @@ Language/Sprache/Lingue/Lingua
 -ld, --logdname &lt;string&gt;</b>: logdatei &lt;string&gt;
 (im Pfad &rsquo;<b>/var/log</b>&rsquo;) wird verwendet
 anstatt &rsquo;<b>autofax.log</b>&rsquo; <b><br>
+-l, --log</b>: protokolliert ausfuehrlich in Datei
+&rsquo;<b>/var/log/autofax.log</b>&rsquo; (sonst knapper)
+<b><br>
 -zvz, --zufaxenvz &lt;pfad&gt;</b>: faxt die Dateien aus
 &lt;pfad&gt; anstatt
 &rsquo;<b>/var/autofax/zufaxen</b>&rsquo; <b><br>

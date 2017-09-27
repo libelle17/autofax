@@ -725,18 +725,18 @@ void Tabelle::lesespalten(size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
 				  aktc,obverb>0?obverb-1:0);
   if (!spalt->obfehl) {
     delete[] spnamen;
-    spnamen= new char*[spalt->num_rows];
+    spnamen=new char const*[spalt->num_rows];
     delete[] splenge;
-    splenge= new char*[spalt->num_rows];
+    splenge=new char const*[spalt->num_rows];
     delete[] sptyp;
-    sptyp= new char*[spalt->num_rows];
+    sptyp=new char const*[spalt->num_rows];
     int spnr=0;
     ////    <<violett<<"Schema: "<<schwarz<<db<<endl;
     ////    <<violett<<"Tabelle: "<<schwarz<<name<<endl;
     while (cerg=spalt->HolZeile(),cerg?*cerg:0) {
       spnamen[spnr]=*(*cerg);
-      splenge[spnr]=*(*cerg+1);
-      sptyp[spnr]=*(*cerg+2);
+      splenge[spnr]=cjj(cerg,1);
+      sptyp[spnr]=cjj(cerg,2);
       /*//
          MYSQL_RES *dbres;
          dbres = mysql_list_fields(conn,name.c_str(),ltab->felder[spnr].name.c_str());
@@ -1018,8 +1018,8 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,const 
           korr.str(std::string()); korr.clear();
           if (*(*cerg+1) && *(*cerg+2)) {
             korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<*(*cerg+1)/*data_type*/<<"("<<wlength<<") "<<
-              (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(*(*cerg+3)?string("DEFAULT '")+*(*cerg+3)+"'":"")<<
-              " COMMENT '"<<ersetzAllezu(*(*cerg+4),"'","\\'")<<"'";
+              (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(cjj(cerg,3)?string("DEFAULT '")+cjj(cerg,3)+"'":"")<<
+              " COMMENT '"<<ersetzAllezu(cjj(cerg,4),"'","\\'")<<"'";
             RS spaltaend(this,korr.str(),aktc,obverb);
             if (spaltaend.fnr==1074) {
               korr.str(std::string()); korr.clear();
@@ -1037,8 +1037,8 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,const 
               if (!neufeld.empty()) {
                 Log(Txd[T_Aendere_Feld]+tabs+"."+feld+" von: "+*(*cerg+1)+" auf: "+neufeld,1,1);
                 korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<neufeld/*data_type*/<<" "<<
-                  (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(*(*cerg+3)?string("DEFAULT '")+*(*cerg+3)+"'":"")<<
-                  " COMMENT '"<<ersetzAllezu(*(*cerg+4),"'","\\'")<<"'";
+                  (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(cjj(cerg,3)?string("DEFAULT '")+cjj(cerg,3)+"'":"")<<
+                  " COMMENT '"<<ersetzAllezu(cjj(cerg,4),"'","\\'")<<"'";
                 RS spaltaend2(this,korr.str(),aktc,obverb);
               }
             } // if (fnr==1074) 
@@ -1097,14 +1097,14 @@ int DB::machbinaer(const string& tabs, const size_t aktc,const string& fmeld,int
     while(cerg= spaltlen.HolZeile(),cerg?*cerg:0) {
       if (*(*cerg+0)) {
         lenge=*(*cerg+0);
-        if (!strcasecmp(*(*cerg+1),"CHAR")) neufeld="BINARY";
-        else if (!strcasecmp(*(*cerg+1),"VARCHAR")) neufeld="VARBINARY";
+        if (!strcasecmp(cjj(cerg,1),"CHAR")) neufeld="BINARY";
+        else if (!strcasecmp(cjj(cerg,1),"VARCHAR")) neufeld="VARBINARY";
         else continue;
         while(1) { 
           korr.str(std::string()); korr.clear();
           korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<neufeld/*data_type*/<<"("<<lenge<<") "<<
-            (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(*(*cerg+3)?string("DEFAULT '")+*(*cerg+3)+"'":"")<<
-            " COMMENT '"<<ersetzAllezu(*(*cerg+4),"'","\\'")<<"'";
+            (!strcasecmp(cjj(cerg,2),"yes")?"NULL":"NOT NULL")<<" "<<(cjj(cerg,3)?string("DEFAULT '")+cjj(cerg,3)+"'":"")<<
+            " COMMENT '"<<ersetzAllezu(cjj(cerg,4),"'","\\'")<<"'";
           RS spaltaend(this,korr.str(),aktc,-1/*obverb*/);
           if (mysql_errno(this->conn[aktc])!=1406) break;
           lenge=ltoan(atol(lenge.c_str())+10); 
@@ -1442,6 +1442,20 @@ my_ulonglong DB::affrows(const size_t aktc)
    } // char** DB::HolZeile() {
  */
 
+const char *cjj(const char * const* const* cerg, const int nr)
+{
+	if (*(*cerg+nr)) return *(*cerg+nr);
+	return "";
+}
+
+// das Ergebnis ist z.B. folgendermaßen zu prüfen:
+// char ***cerg=rs.HolZeile();
+// if (cerg) // 0, wenn Fehler im SQL-Befehl
+// if (*cerg) // 0, wenn keine Ergebniszeile
+// if (*(*cerg+4)) // 0, wenn 5.Spalte in Ergebniszeile NULL
+// if (*(*(*cerg+4))) // 0, wenn 5.Spalte in Ergebniszeile ""
+// zuvor muss der Programmierer pruefen, ob 5 Spalten ausgewaehlt wurden (andernfalls kein Fehler)
+// auch bei 0 Ergebniszeilen ist (cerg) wahr.
 char*** RS::HolZeile() 
 {
   switch (dbp->DBS) {

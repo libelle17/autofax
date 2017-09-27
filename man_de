@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "26.09.17" "Version 0.45718" "Manual-Seite für ²DPROG²"
+.TH man 1 "27.09.17" "Version 0.4576" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -71,8 +71,6 @@ Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präf
 .br
 \fB -w, --wortreich\fR: Bildschirmausgabe gespraechiger
 .br
-\fB -l, --log\fR: protokolliert ausfuehrlich in Datei '\fB/var/log/autofax.log\fR' (sonst knapper)
-.br
 \fB -ldn, --logdateineu\fR: logdatei vorher loeschen
 .br
 \fB -kd, --konfdatei <string>\fR: verwendet Konfigurationsdatei <string> anstatt '\fB\fR'
@@ -132,6 +130,8 @@ Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präf
 \fB -lvz, --logvz <pfad>\fR: waehlt als Logverzeichnis <pfad>, derzeit '\fB/var/log\fR'
 .br
 \fB -ld, --logdname <string>\fR: logdatei <string> (im Pfad '\fB/var/log\fR') wird verwendet anstatt '\fBautofax.log\fR'
+.br
+\fB -l, --log\fR: protokolliert ausfuehrlich in Datei '\fB/var/log/autofax.log\fR' (sonst knapper)
 .br
 \fB -zvz, --zufaxenvz <pfad>\fR: faxt die Dateien aus <pfad> anstatt '\fB/var/autofax/zufaxen\fR'
 .br

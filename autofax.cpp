@@ -350,6 +350,7 @@ enum T_
 	T_Ziel,
 	T_Logpfad,
 	T_oblog,
+	T_Oblog,
 	T_Fax_von,
 	T_an,
 	T_vom,
@@ -1291,6 +1292,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Logpfad: '","Log path: '"},
 	// T_oblog,
 	{"' (oblog: ","' (with logging: "},
+	// T_Oblog,
+	{"Oblog (ausführliche Protokollierung): ","Log (detailled logging): "},
 	// T_Fax_von
 	{"Fax von ","Fax from "},
 	// T_an,
@@ -2395,7 +2398,7 @@ void fsfcl::capiausgeb(stringstream *ausgp, const string& maxcdials, uchar fuerl
 	 */
 	if (capistat!=fehlend) {
 		////    if (cpplies(suchtxt,cccnfA,cs)) KLA
-		//// RS rmod(My,string("update spool set capidials=")+cccnfA[0].val+" where id = "+*(*cerg+0),ZDB);
+		//// RS rmod(My,string("update spool set capidials=")+cccnfA[0].val+" where id = "+cjj(cerg,0),ZDB);
 		char buf[100]={0};
 		int versuzahl=atol(ctries.c_str());
 		// fuer Thread-Sicherheit
@@ -2685,9 +2688,9 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 		RS tellen(My,string("SELECT MAX(LENGTH(gettel3(")+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"')))"
 				" FROM `" +spooltab+"`",aktc,ZDB);
 		while (cerg=tellen.HolZeile(),cerg?*cerg:0) {
-			if (*(*cerg+0)) {
-				My->tuerweitern(altspool,"telnr",atol(*(*cerg+0)),aktc,ZDB);
-				My->tuerweitern(spooltab,"telnr",atol(*(*cerg+0)),aktc,ZDB);
+			if (*(*cerg+0) && *(*(*cerg+0))) {
+				My->tuerweitern(altspool,"telnr",atol(cjj(cerg,0)),aktc,ZDB);
+				My->tuerweitern(spooltab,"telnr",atol(cjj(cerg,0)),aktc,ZDB);
 			} //       if (*(*cerg+0))
 			break;
 		} //     while (cerg=tellen.HolZeile(),cerg?*cerg:0)
@@ -2714,11 +2717,11 @@ void paramcl::getcommandl0()
 {
 	Log(violetts+"getcommandl0()"+schwarz);
 	// Reihenfolge muss koordiniert werden mit lieskonfein und rueckfragen
-	agcnfA.init(43, "language","host","muser","mpwd","datenbank","findvers","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
+	agcnfA.init(44, "language","host","muser","mpwd","datenbank","findvers","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
 			"countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
 			"cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl","maxdials",
 			"gleichziel","ocri","ocra","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
-			"anstr","undstr","cronminut","autoupd","logvz","logdname","obmodem","obfcard","sqlz","musterzahl");
+			"anstr","undstr","cronminut","autoupd","logvz","logdname","oblog","obmodem","obfcard","sqlz","musterzahl");
 	gcl0();
 	if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
 } // void paramcl::getcommandl0(int argc, char** argv)
@@ -3322,6 +3325,7 @@ void paramcl::lieskonfein()
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&logvz); else rzf=1; lfd++;
 	if (logdneu) agcnfA[lfd].setze(&logdname);
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&logdname); else rzf=1; lfd++;
+	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&oblog); else rzf=1; lfd++;
 	// obmodem
 	lfd++;
 	// obfcard
@@ -3343,6 +3347,7 @@ void paramcl::lieskonfein()
 int paramcl::getcommandline()
 {
 	Log(violetts+"getcommandline()"+schwarz);
+	// s.a. haupt::getcl0()
 	////  uchar plusverb=0;
 	opts.push_back(/*2a*/optioncl(T_zvz_k,T_zufaxenvz_l, &Tx, T_faxt_die_Dateien_aus_pfad_anstatt,0,&zufaxenvz,pverz,&agcnfA,"zufaxenvz",&obkschreib));
 	opts.push_back(/*2*/optioncl(T_wvz_k,T_wartevz_l, &Tx, T_Dateien_warten_in_pfad_anstatt,0,&wvz,pverz,&agcnfA,"wartevz",&obkschreib));
@@ -3781,6 +3786,10 @@ void paramcl::rueckfragen()
 		}
 		loggespfad=string(logvz)+vtz+logdname;
 		logdt=&loggespfad.front();
+		if (agcnfA[++lfd].wert.empty() || rzf) {
+			oblog=Tippzahl(Tx[T_Oblog],oblog);
+			agcnfA[lfd].setze(&oblog);
+		}
 
 		// obmodem
 		++lfd;
@@ -4716,9 +4725,9 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 						cout<<schwarz<<setw(19)<<"submid"<<"|"<<setw(15)<<Tx[T_Faxnr]<<"|"<<setw(19)<<Tx[T_zp]<<"|"
 							<<setw(19)<<"submt"<<"|"<<setw(5)<<Tx[T_tries]<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<Tx[T_size]<<"|"<<Tx[T_docname]<<schwarz<<endl;
 					} // 								if (!zru++)
-					cout<<setw(3)<<zru<<") "<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(15)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"
-						<<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<setw(5)<<*(*cerg+4)<<"|"<<violett<<setw(6)<<*(*cerg+5)<<"|"
-						<<blau<<setw(10)<<*(*cerg+6)<<"|"<<violett<<string(*(*cerg+7)).substr(0,55)<<endl;
+					cout<<setw(3)<<zru<<") "<<blau<<setw(14)<<cjj(cerg,0)<<"|"<<violett<<setw(15)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(19)<<cjj(cerg,2)<<"|"
+						<<schwarz<<setw(17)<<cjj(cerg,3)<<"|"<<blau<<setw(5)<<cjj(cerg,4)<<"|"<<violett<<setw(6)<<cjj(cerg,5)<<"|"
+						<<blau<<setw(10)<<cjj(cerg,6)<<"|"<<violett<<string(cjj(cerg,7)).substr(0,55)<<endl;
 				} // while (cerg=kor1.HolZeile(),cerg?*cerg:0) 
 				RS kor2(My,"UPDATE `"+touta+"` a RIGHT JOIN tmpcapi t ON t.submid=a.submid SET a.erfolg=t.erfolg where a.erfolg<>t.erfolg",aktc,ZDB);
 			} // 						if (!kor1.obfehl) 
@@ -4740,9 +4749,9 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 						cout<<schwarz<<setw(20)<<"submid"<<"|"<<setw(25)<<Tx[T_telnr]<<"|"<<setw(19)<<Tx[T_zp]<<"|"
 							<<setw(5)<<Tx[T_tries]<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<Tx[T_size]<<schwarz<<"|"<<blau<<Tx[T_docname]<<schwarz<<endl;
 					} // 							if (!zru++)
-					cout<<setw(4)<<zru<<") "<<blau<<setw(14)<<*(*cerg+0)<<"|"<<violett<<setw(25)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(19)<<*(*cerg+2)<<"|"
-						<<violett<<setw(5)<<*(*cerg+3)<<"|"<<blau<<setw(6)<<*(*cerg+4)<<"|"<<violett<<setw(10)<<*(*cerg+5)<<"|"
-						<<blau<<string(*(*cerg+6)).substr(0,55)<<schwarz<<endl;
+					cout<<setw(4)<<zru<<") "<<blau<<setw(14)<<cjj(cerg,0)<<"|"<<violett<<setw(25)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(19)<<cjj(cerg,2)<<"|"
+						<<violett<<setw(5)<<cjj(cerg,3)<<"|"<<blau<<setw(6)<<cjj(cerg,4)<<"|"<<violett<<setw(10)<<cjj(cerg,5)<<"|"
+						<<blau<<string(cjj(cerg,6)).substr(0,55)<<schwarz<<endl;
 				} // while (cerg=kor3.HolZeile(),cerg?*cerg:0) 
 				RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,titel,rcname,fsize,retries,rcfax,docname,idudoc,pages,adressat) "
 						"SELECT t.erfolg,t.zp,t.zp,t.submid,t.titel,t.rcname,t.size,t.tries,t.teln,IF(ISNULL(asp.original),'',asp.original),"
@@ -4842,9 +4851,9 @@ void paramcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream
 									string zlvz;
 									////                        if (runde==1) zlvz=getzielvz(qdt); else if (runde==2) zlvz=ngvz;
 									if (runde==1) {
-										if (**(*cerg+2)=='1') 
+										if (*cjj(cerg,2)=='1') 
 											zlvz=getzielvz(qdt); 
-										else if (**(*cerg+2)=='0') {
+										else if (*cjj(cerg,2)=='0') {
 											obgescheitert=1;
 											zlvz=ngvz; // Erfolgskennzeichen, Ziel, gescheitert
 										}
@@ -4866,12 +4875,12 @@ void paramcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream
 									fdn.erase(fit); // die in der Spool-Tabelle genannten Dateien nicht bearbeiten
 								} //    if (runde) else
 								meld=Tx[T_gefunden_in_Tabelle]+blaus+(runde?touta.c_str():spooltab.c_str())+schwarz+", "+(runde?"eind":"id")+": "
-									+blau+*(*cerg+0)+schwarz+" = Name: "+(runde?((*cerg+2)&&(**(*cerg+2)=='1')?blau:gruen):rot)+fdat.c_str()+schwarz
+									+blau+cjj(cerg,0)+schwarz+" = Name: "+(runde?((*cerg+2)&&(*cjj(cerg,2)=='1')?blau:gruen):rot)+fdat.c_str()+schwarz
 									+", Bytes: "+blau+ltoan(qst.st_size)+schwarz+Tx[T_kommaFaxerfolg]+blau+(obgescheitert?Tx[T_nein]:Tx[T_ja])+schwarz;
 								if (ausgp) *ausgp<<meld<<endl; else Log(meld,1,1);
 								////		::Log(1,1,0,0,"%s%s%s%s, %s: %s%s%s = Name: %s%s%s, Bytes: %s%zu%s",Tx[T_gefunden_in_Tabelle],
-								////		    blau,runde?touta.c_str():spooltab.c_str(),schwarz,runde?"eind":"id", blau,*(*cerg+0),schwarz,
-								////				(runde?((*cerg+2)&&(**(*cerg+2)=='1')?blau:gruen):rot), fdat.c_str(),schwarz, blau,qst.st_size,schwarz);
+								////		    blau,runde?touta.c_str():spooltab.c_str(),schwarz,runde?"eind":"id", blau,cjj(cerg,0),schwarz,
+								////				(runde?((*cerg+2)&&(*cjj(cerg,2)=='1')?blau:gruen):rot), fdat.c_str(),schwarz, blau,qst.st_size,schwarz);
 								//								if (runde) break;
 							} // if ((fit=fdn.find(dbdocname))!=fdn.end()) 
 							//	if (!runde) break;
@@ -4904,21 +4913,21 @@ void paramcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream
 			char ***cerg;
 			uchar cstand=0, hstand=0; // 0= nicht gefunden, 1=nicht gefaxt, 2=gefaxt
 			if (cerg=rsp.HolZeile(),cerg?*cerg:0) {
-				// <<blau<<*(*cerg+0)<<" "<<*(*cerg+1)<<schwarz<<" gefunden: "<<blau<<*fit<<schwarz<<endl;
-				if (**(*cerg+0)) {
-					if (cmisslp->find(*(*cerg+0))!=cmisslp->end()) { // wenn Datenbankeintrag in der sortierten Menge der Dateinamen enthalten
+				// <<blau<<cjj(cerg,0)<<" "<<cjj(cerg,1)<<schwarz<<" gefunden: "<<blau<<*fit<<schwarz<<endl;
+				if (*cjj(cerg,0)) {
+					if (cmisslp->find(cjj(cerg,0))!=cmisslp->end()) { // wenn Datenbankeintrag in der sortierten Menge der Dateinamen enthalten
 						cstand=1;
-					} else if (cgelup->find(*(*cerg+0))!=cgelup->end()) { // wenn Datenbankeintrag in der sortierten Menge der Dateinamen enthalten
+					} else if (cgelup->find(cjj(cerg,0))!=cgelup->end()) { // wenn Datenbankeintrag in der sortierten Menge der Dateinamen enthalten
 						cstand=2;
 					}
-				} // 				if (**(*cerg+0))
-				if (**(*cerg+1)) {
-					if (hmisslp->find(*(*cerg+1))!=hmisslp->end()) { // wenn Datenbankeintrag in der sortierten Menge der Dateinamen enthalten
+				} // 				if (*cjj(cerg,0))
+				if (*cjj(cerg,1)) {
+					if (hmisslp->find(cjj(cerg,1))!=hmisslp->end()) { // wenn Datenbankeintrag in der sortierten Menge der Dateinamen enthalten
 						hstand=1;
-					} else if (hgelup->find(*(*cerg+0))!=hgelup->end()) { // wenn Datenbankeintrag in der sortierten Menge der Dateinamen enthalten
+					} else if (hgelup->find(cjj(cerg,0))!=hgelup->end()) { // wenn Datenbankeintrag in der sortierten Menge der Dateinamen enthalten
 						hstand=2;
 					}
-				} // 				if (**(*cerg+1))
+				} // 				if (*cjj(cerg,1))
 			} else {
 				////		 <<"nicht gefunden: "<<blau<<*fit<<schwarz<<endl;
 			} // 			if (cerg=rsp.HolZeile(),cerg?*cerg:0)
@@ -4934,12 +4943,12 @@ void paramcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream
 				else if (hstand==2) farbe=dblau;
 				else if (cstand==1||hstand==1) farbe=violett;
 				else farbe=rot;
-				meld=string(ltoan(fitnr))+") Capi: "+chfarbe(cstand)+chstandtxt(cstand)+blau+"("+(cerg&&*cerg?*(*cerg+0):"")+")"+schwarz
-					+", Hyla: "+chfarbe(hstand)+chstandtxt(hstand)+blau+"("+(cerg&&*cerg?*(*cerg+1):"")+schwarz+"): "+farbe+*fit+schwarz;
+				meld=string(ltoan(fitnr))+") Capi: "+chfarbe(cstand)+chstandtxt(cstand)+blau+"("+(cerg&&*cerg?cjj(cerg,0):"")+")"+schwarz
+					+", Hyla: "+chfarbe(hstand)+chstandtxt(hstand)+blau+"("+(cerg&&*cerg?cjj(cerg,1):"")+schwarz+"): "+farbe+*fit+schwarz;
 				if (ausgp) *ausgp<<meld<<endl; else Log(meld,1,1);
 				////				::Log(1,1,0,0,"%zu) Capi: %s%s%s(%s)%s, Hyla: %s%s%s(%s)%s: %s%s%s",fitnr,chfarbe(cstand),chstandtxt(cstand),blau,
-				////						(cerg&&*cerg?*(*cerg+0):""),schwarz, chfarbe(hstand),chstandtxt(hstand),blau,
-				////						(cerg&&*cerg?*(*cerg+1):""),schwarz,farbe,fit->c_str(),schwarz);
+				////						(cerg&&*cerg?cjj(cerg,0):""),schwarz, chfarbe(hstand),chstandtxt(hstand),blau,
+				////						(cerg&&*cerg?cjj(cerg,1):""),schwarz,farbe,fit->c_str(),schwarz);
 			} // 		if (obverb)
 			// <<fitnr<<") "<<farbe<<*fit<<schwarz<<endl;
 			uint vfehler=0;
@@ -5169,10 +5178,10 @@ int paramcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 			"FROM `"+spooltab+"` ORDER BY id",aktc,ZDB);
 	while (cerg=zul.HolZeile(),cerg?*cerg:0) {
 		if (*(*cerg+0) && *(*cerg+1)) {
-			::Log("Fax "+blaus+ltoan(++faxord)+schwarz+": "+*(*cerg+0),1,1);
-			/*3*/fsfcl fsf(*(*cerg+1),*(*cerg+2),*(*cerg+4),*(*cerg+3));
-			if (*(*cerg+5)) fsf.original=*(*cerg+5);
-			if (*(*cerg+6)) fsf.origvu=*(*cerg+6);
+			::Log("Fax "+blaus+ltoan(++faxord)+schwarz+": "+cjj(cerg,0),1,1);
+			/*3*/fsfcl fsf(cjj(cerg,1),cjj(cerg,2),cjj(cerg,4),cjj(cerg,3));
+			if (*(*cerg+5)) fsf.original=cjj(cerg,5);
+			if (*(*cerg+6)) fsf.origvu=cjj(cerg,6);
 			fsfav.push_back(fsf);
 		} // if (*(*cerg+0) && *(*cerg+1)) 
 	} // while (cerg=zul.HolZeile(),cerg?*cerg:0) 
@@ -5297,19 +5306,19 @@ size_t paramcl::loeschewaise()
 	while (cerg=su.HolZeile(),cerg?*cerg:0) {
 		if (*(*cerg+0)) {
 			struct stat entryo={0};
-			//// <<"Überprüfe: "<<gruen<<wvz+vtz+*(*cerg+0)<<schwarz<<endl;
-			if (!lstat((wvz+vtz+*(*cerg+0)).c_str(),&entryo)) continue; // Wenn es die Datei im Warteverzeichnis gibt
-			//// <<"Capispooldatei: "<<gruen<<cfaxusersqvz+vtz+*(*cerg+1)<<schwarz<<endl;
-			if (*(*cerg+1)) if (**(*cerg+1)) {
-				if (!lstat((cfaxusersqvz+vtz+*(*cerg+1)).c_str(),&entryo)) continue; // wenn eine Capispooldatei drinsteht und es sie gibt
+			//// <<"Überprüfe: "<<gruen<<wvz+vtz+cjj(cerg,0)<<schwarz<<endl;
+			if (!lstat((wvz+vtz+cjj(cerg,0)).c_str(),&entryo)) continue; // Wenn es die Datei im Warteverzeichnis gibt
+			//// <<"Capispooldatei: "<<gruen<<cfaxusersqvz+vtz+cjj(cerg,1)<<schwarz<<endl;
+			if (*(*cerg+1)) if (*cjj(cerg,1)) {
+				if (!lstat((cfaxusersqvz+vtz+cjj(cerg,1)).c_str(),&entryo)) continue; // wenn eine Capispooldatei drinsteht und es sie gibt
 			}
-			//// <<"hsendqvz: "<<gruen<<hsendqvz+"/q"+*(*cerg+2)<<schwarz<<endl;
-			if (*(*cerg+2)) if (**(*cerg+2)) if (memcmp("0",*(*cerg+2),2)) { // hylanr hat in der Datenbank Vorgabewert 0
-				if (!lstat((hsendqvz+"/q"+*(*cerg+2)).c_str(),&entryo)) continue; // wenn eine Hylaspooldatei drinsteht und es sie gibt
+			//// <<"hsendqvz: "<<gruen<<hsendqvz+"/q"+cjj(cerg,2)<<schwarz<<endl;
+			if (*(*cerg+2)) if (*cjj(cerg,2)) if (memcmp("0",cjj(cerg,2),2)) { // hylanr hat in der Datenbank Vorgabewert 0
+				if (!lstat((hsendqvz+"/q"+cjj(cerg,2)).c_str(),&entryo)) continue; // wenn eine Hylaspooldatei drinsteht und es sie gibt
 			}
 			if (*(*cerg+3)) {
-				::Log(rots+Tx[T_Aus]+"'"+blau+spooltab+rot+"'"+Tx[T_zu_loeschen]+schwarz+"'"+blau+*(*cerg+0)+schwarz+"', id: "+blau+*(*cerg+3)+schwarz,1,1);
-				ids.push_back(*(*cerg+3));
+				::Log(rots+Tx[T_Aus]+"'"+blau+spooltab+rot+"'"+Tx[T_zu_loeschen]+schwarz+"'"+blau+cjj(cerg,0)+schwarz+"', id: "+blau+cjj(cerg,3)+schwarz,1,1);
+				ids.push_back(cjj(cerg,3));
 			}
 		} // if (*(*cerg+0)) 
 	} // while (cerg=su.HolZeile(),cerg?*cerg:0) 
@@ -5358,8 +5367,8 @@ size_t paramcl::loescheallewartenden()
 			char ***cerg;
 			RS zl(My,"SELECT original,origvu FROM `"+spooltab+"` WHERE capispooldatei='"+base_name(allec[i])+"'",aktc,ZDB);
 			if(cerg=zl.HolZeile(),cerg?*cerg:0) {
-				::Log(blaus+ltoan(++j)+schwarz+": '"+allec[i]+"' -> '"+blau+*(*cerg+0)+schwarz+"'",1,oblog);
-				fsfav.push_back(/*6*/fsfcl(*(*cerg+0),*(*cerg+1),6));
+				::Log(blaus+ltoan(++j)+schwarz+": '"+allec[i]+"' -> '"+blau+cjj(cerg,0)+schwarz+"'",1,oblog);
+				fsfav.push_back(/*6*/fsfcl(cjj(cerg,0),cjj(cerg,1),6));
 			} else {
 				::Log(blaus+ltoan(++j)+schwarz+": "+allec[i]+blau+schwarz,1,oblog);
 			} // 			if(cerg=zl.HolZeile(),cerg?*cerg:0) else
@@ -5371,8 +5380,8 @@ size_t paramcl::loescheallewartenden()
 		ersetzAlle(&transalle,"q","");  
 		RS zl(My,"SELECT original,origvu FROM `"+spooltab+"` WHERE hylanr="+transalle,aktc,ZDB);
 		if(cerg=zl.HolZeile(),cerg?*cerg:0) {
-			::Log(blaus+ltoan(++j)+schwarz+": '"+hsendqvz+vtz+alled[i]+"' -> '"+blau+*(*cerg+0)+schwarz+"'",1,oblog);
-			fsfav.push_back(/*6*/fsfcl(*(*cerg+0),*(*cerg+1),6));
+			::Log(blaus+ltoan(++j)+schwarz+": '"+hsendqvz+vtz+alled[i]+"' -> '"+blau+cjj(cerg,0)+schwarz+"'",1,oblog);
+			fsfav.push_back(/*6*/fsfcl(cjj(cerg,0),cjj(cerg,1),6));
 		} else {
 			::Log(blaus+ltoan(++j)+schwarz+": "+alled[i]+blau+schwarz,1,oblog);
 		} // 		if(cerg=zl.HolZeile(),cerg?*cerg:0)
@@ -5381,9 +5390,9 @@ size_t paramcl::loescheallewartenden()
 	char ***cerg;
 	RS zl(My,"SELECT original,origvu FROM `"+spooltab+"`"/* WHERE telnr=''*/,aktc,ZDB);
 	while (cerg=zl.HolZeile(),cerg?*cerg:0) {
-		::Log(blaus+ltoan(++j)+schwarz+": '"+blau+*(*cerg+0)+schwarz+"'",1,oblog);
+		::Log(blaus+ltoan(++j)+schwarz+": '"+blau+cjj(cerg,0)+schwarz+"'",1,oblog);
 		++erg;
-		fsfav.push_back(/*6*/fsfcl(*(*cerg+0),*(*cerg+1),6));
+		fsfav.push_back(/*6*/fsfcl(cjj(cerg,0),cjj(cerg,1),6));
 	}
 
 	if (erg) {
@@ -5434,8 +5443,8 @@ void paramcl::tu_lista(const string& oberfolg, const string& submids)
 	if (submids.length()<=2)
 		cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandte_Faxe]<<schwarz<<endl;
 	while (cerg=lista.HolZeile(),cerg?*cerg:0) {
-		cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(14)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(65)<<*(*cerg+2)<<"|"
-			<<schwarz<<setw(30)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
+		cout<<blau<<setw(17)<<cjj(cerg,0)<<"|"<<violett<<setw(14)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(65)<<cjj(cerg,2)<<"|"
+			<<schwarz<<setw(30)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
 	} // while (cerg=lista.HolZeile(),cerg?*cerg:0) 
 } // tu_lista
 
@@ -5455,9 +5464,9 @@ void paramcl::tu_listi(const uchar zurauswahl/*=0*/)
 	cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<Tx[T_empfangene_Faxe]<<schwarz<<endl;
 	size_t j=0;
 	while (cerg=listi.HolZeile(),cerg?*cerg:0) {
-		cout<<setw(3)<<++j<<") "<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(84)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(13)<<*(*cerg+2)<<"|"
-			<<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
-		if (zurauswahl) vinca<<*(*cerg+4);
+		cout<<setw(3)<<++j<<") "<<blau<<setw(17)<<cjj(cerg,0)<<"|"<<violett<<setw(84)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(13)<<cjj(cerg,2)<<"|"
+			<<schwarz<<setw(17)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
+		if (zurauswahl) vinca<<cjj(cerg,4);
 	} // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
 } // tu_listi
 
@@ -5484,8 +5493,8 @@ void paramcl::suchestr()
 				cout<<gruen<<Tx[T_Letzte]<<blau<<dszahl<<gruen<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandte_Faxe]<<
 					Tx[T_mitstr]<<blau<<suchstr<<"':"<<schwarz<<endl;
 			zeile++;
-			cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(14)<<*(*cerg+1)<<schwarz<<"|"<<(erf?blau:violett)<<setw(65)<<*(*cerg+2)<<"|"
-				<<schwarz<<setw(30)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
+			cout<<blau<<setw(17)<<cjj(cerg,0)<<"|"<<violett<<setw(14)<<cjj(cerg,1)<<schwarz<<"|"<<(erf?blau:violett)<<setw(65)<<cjj(cerg,2)<<"|"
+				<<schwarz<<setw(30)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
 		} // while (cerg=lista.HolZeile(),cerg?*cerg:0) 
 	} //   for(int erf=1;erf>=0;erf--) 
 
@@ -5502,8 +5511,8 @@ void paramcl::suchestr()
 		if (!zeile)
 			cout<<gruen<<Tx[T_Letzte]<<blau<<dszahl<<gruen<<Tx[T_empfangene_Faxe]<<Tx[T_mitstr]<<blau<<suchstr<<"':"<<schwarz<<endl;
 		zeile++;
-		cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(85)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(17)<<*(*cerg+2)<<"|"
-			<<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
+		cout<<blau<<setw(17)<<cjj(cerg,0)<<"|"<<violett<<setw(85)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(17)<<cjj(cerg,2)<<"|"
+			<<schwarz<<setw(17)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
 	} // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
 
 	RS spool(My,"SELECT p0, p1, p2, p3, p4 FROM ("
@@ -5520,8 +5529,8 @@ void paramcl::suchestr()
 		if (!zeile)
 			cout<<gruen<<Tx[T_Letzte]<<blau<<dszahl<<gruen<<Tx[T_wartende_Faxe]<<Tx[T_mitstr]<<blau<<suchstr<<"':"<<schwarz<<endl;
 		zeile++;
-		cout<<blau<<setw(17)<<*(*cerg+0)<<"|"<<violett<<setw(85)<<*(*cerg+1)<<schwarz<<"|"<<blau<<setw(17)<<*(*cerg+2)<<"|"
-			<<schwarz<<setw(17)<<*(*cerg+3)<<"|"<<blau<<*(*cerg+4)<<schwarz<<endl;
+		cout<<blau<<setw(17)<<cjj(cerg,0)<<"|"<<violett<<setw(85)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(17)<<cjj(cerg,2)<<"|"
+			<<schwarz<<setw(17)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
 	} // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
 } // suchestr
 
@@ -6315,7 +6324,7 @@ void paramcl::wegfaxen()
 		::Log(obverb,oblog,0,0,"prio[%s%u%s]: %s%d%s",rot,i,schwarz,rot,fxv[i].prio,schwarz);
 	} // for(unsigned i=0;i<fxv.size();i++)
 	// zufaxenvz = zufaxen-Verzeichnis
-	::Log(Tx[T_aus]+drots+zufaxenvz+schwarz+vtz+Tx[T_verarbeitete_Nicht_PDF_Dateien]+drot+ltoan(fxv.size())+schwarz,1,oblog);
+	::Log(Tx[T_aus]+drots+zufaxenvz+schwarz+vtz+Tx[T_verarbeitete_Nicht_PDF_Dateien]+drot+ltoan(fxv.size())+schwarz,1,1);
 	////  geszahl+=npdfp->size(); // 1b
 
 	// 2a. ... und im Warteverzeichnis in PDF umwandeln, falls erfolgreich und gleichziel => auch in ziel kopieren
@@ -6413,7 +6422,7 @@ void paramcl::wegfaxen()
 	} //   for(unsigned i=0;i<fxv.size();i++)
 
 	geszahl=fxv.size();
-	Log(Tx[T_aus]+drots+zufaxenvz+schwarz+vtz+Tx[T_verarbeitete_PDF_Dateien]+drot+ltoan(geszahl)+schwarz);
+	::Log(Tx[T_aus]+drots+zufaxenvz+schwarz+vtz+Tx[T_verarbeitete_PDF_Dateien]+drot+ltoan(geszahl)+schwarz,1,1);
 	// 3) in spooltab eintragen
 	WVZinDatenbank(&fxv,aktc);
 
@@ -6455,18 +6464,13 @@ void paramcl::wegfaxen()
 	} else {
 		while (cerg=r0.HolZeile(),cerg?*cerg:0) {
 			(dbszahl)++;
-			if (!*(*cerg+9)) *(*cerg+9)=(char*)"";
-			if (!*(*cerg+10)) *(*cerg+10)=(char*)"";
-			if (!*(*cerg+11)) *(*cerg+11)=(char*)"";
-			if (!*(*cerg+12)) *(*cerg+12)=(char*)"";
-			if (!*(*cerg+13)) *(*cerg+13)=(char*)"";
 			if (*(*cerg+0) && *(*cerg+1) && *(*cerg+2) && *(*cerg+3) && *(*cerg+4) && *(*cerg+5) && 
 					*(*cerg+6) && *(*cerg+7) && *(*cerg+8)) {
-				//// obcapi = *(*cerg+9), obhyla=*(*cerg+10)
-				fsfv.push_back(/*1*/fsfcl(*(*cerg+0)/*id*/, *(*cerg+1)/*npdf*/, *(*cerg+2)/*spdf*/, *(*cerg+3)/*telnr*/, 
-							atoi(*(*cerg+4))/*prio*/, *(*cerg+5)/*capisd*/, atoi(*(*cerg+6))/*capids*/, *(*cerg+7)/*hylanr*/, 
-							atoi(*(*cerg+8))/*hdialsn*/, (binaer)atoi(*(*cerg+9))/*fobcapi*/, (binaer)atoi(*(*cerg+10))/*fobhyla*/, *(*cerg+11)/*adressat*/,
-							atoi(*(*cerg+12)/*pages*/), *(*cerg+13)/*alts.id*/));
+				//// obcapi = cjj(cerg,9), obhyla=cjj(cerg,10)
+				fsfv.push_back(/*1*/fsfcl(cjj(cerg,0)/*id*/, cjj(cerg,1)/*npdf*/, cjj(cerg,2)/*spdf*/, cjj(cerg,3)/*telnr*/, 
+							atoi(cjj(cerg,4))/*prio*/, cjj(cerg,5)/*capisd*/, atoi(cjj(cerg,6))/*capids*/, cjj(cerg,7)/*hylanr*/, 
+							atoi(cjj(cerg,8))/*hdialsn*/, (binaer)atoi(cjj(cerg,9))/*fobcapi*/, (binaer)atoi(cjj(cerg,10))/*fobhyla*/, cjj(cerg,11)/*adressat*/,
+							atoi(cjj(cerg,12)/*pages*/), cjj(cerg,13)/*alts.id*/));
 			} // 			if (*(*cerg+0) && *(*cerg+1) && *(*cerg+2) && *(*cerg+3) && *(*cerg+4) && *(*cerg+5) &&  ...
 		} // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
 		Log(Tx[T_ZahldDSmwegzuschickendenFaxenin]+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz);
@@ -6522,7 +6526,7 @@ void paramcl::wegfaxen()
 			exitt(0);
 		} // 		if (wasichbin)
 		// 1. warte auf faxemitC und faxemitH
-		wartaufpids(&pidw,0,obverb,Tx[T_in_wegfaxen]);
+		wartaufpids(&pidw,0,obverb,oblog,Tx[T_in_wegfaxen]);
 		// nur wegfaxen mit abgeschlossenen Unterprogrammen
 #ifdef immerwart
 		ulong kaufrufe=0;
@@ -6980,7 +6984,7 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 					size_t zru=0;
 					while (cerg=ntr.HolZeile(),cerg?*cerg:0) {
 						////<<"znr: "<<rot<<++znr<<schwarz<<endl;
-						const string hylanr = *(*cerg+0);
+						const string hylanr = cjj(cerg,0);
 						/*4*/fsfcl fsf(hylanr); // hylanr
 						svec qrueck;
 						const string wo=varsphylavz+"/archive/"+hylanr;
@@ -7006,12 +7010,12 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 						} // 							if (!zru++)
 						cout<<
 							setw(4)<<zru<<") "<<
-							blau<<setw(14)<<*(*cerg+0)<<schwarz<<"|"<<
-							violett<<setw(25)<<*(*cerg+1)<<schwarz<<"|"<<
-							blau<<setw(12)<<*(*cerg+3)<<"|"<<
-							violett<<setw(19)<<*(*cerg+4)<<"|"<<
-							violett<<setw(7)<<*(*cerg+6)<<"|"<<
-							blau<<string(*(*cerg+2)).substr(0,55)<<schwarz<<endl;
+							blau<<setw(14)<<cjj(cerg,0)<<schwarz<<"|"<<
+							violett<<setw(25)<<cjj(cerg,1)<<schwarz<<"|"<<
+							blau<<setw(12)<<cjj(cerg,3)<<"|"<<
+							violett<<setw(19)<<cjj(cerg,4)<<"|"<<
+							violett<<setw(7)<<cjj(cerg,6)<<"|"<<
+							blau<<string(cjj(cerg,2)).substr(0,55)<<schwarz<<endl;
 						//// <<"vor archiviere, telnr: "<<fsf.telnr<<" tts: "<<fsf.tts<<" hdd: "<<fsf.hdd<<" original: "<<fsf.original<<
 						////                           " hdd: "<<fsf.hdd<<" idudoc: "<<fsf.idudoc<<endl;
 						fsf.archiviere(My,this,&entrys,0,hyla,0,3,obverb,oblog);
@@ -7031,9 +7035,9 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 						if (!cergz++)
 							::Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden],1,1);
 						auswmf+="'";
-						auswmf+=*(*cerg+0); 
+						auswmf+=cjj(cerg,0); 
 						auswmf+="',";
-						//// <<violett<<*(*cerg+0)<<schwarz<<endl; 
+						//// <<violett<<cjj(cerg,0)<<schwarz<<endl; 
 					} //// 				while (cerg=rs1.HolZeile(),cerg?*cerg:0)
 					if (cergz) {
 						auswmf[auswmf.size()-1]=')';
@@ -7050,9 +7054,9 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 						if (!cergz++)
 							::Log(Tx[T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden],1,1);
 						auswef+="'";
-						auswef+=*(*cerg+0); 
+						auswef+=cjj(cerg,0); 
 						auswef+="',";
-						//// <<rot<<*(*cerg+0)<<schwarz<<endl; 
+						//// <<rot<<cjj(cerg,0)<<schwarz<<endl; 
 					} // 			while (cerg=rs2.HolZeile(),cerg?*cerg:0)
 					if (cergz) {
 						auswef[auswef.size()-1]=')';
@@ -7124,11 +7128,11 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 			if (fit!=fdn.end()) {
 			ausg<<Tx[T_gefunden]<<": "<<(int)(fit!=fdn.end())<<" "<<
 			Tx[T_Falschals]<<(**(*cerg+21)=='0'?Tx[T_gescheitert]:Tx[T_gesandt])<<Tx[T_eingeordnet]<<farbe<<setw(14)<<
-		 *(*cerg+3)<<schwarz<<" "<<*(*cerg+2)<<" "<<blau<<*(*cerg+6)<<schwarz;
+		 cjj(cerg,3)<<schwarz<<" "<<cjj(cerg,2)<<" "<<blau<<cjj(cerg,6)<<schwarz;
 		 ::Log(ausg.str(),1,1);
-		//                RS vs(My,"UPDATE `"+touta+"` SET Erfolg= !Erfolg WHERE submid = '"+*(*cerg+3)+"'",aktc,ZDB);
+		//                RS vs(My,"UPDATE `"+touta+"` SET Erfolg= !Erfolg WHERE submid = '"+cjj(cerg,3)+"'",aktc,ZDB);
 		} //               if (fit!=fdn.end())
-		} // ((fit!=fdn.end()) != (**(*cerg+21)=='0')) else
+		} // ((fit!=fdn.end()) != (*cjj(cerg,21)=='0')) else
 		} // if (*(*cerg+3)) if (*(*cerg+20)) if (*(*cerg+21)) 
 		} // while (cerg=routa.HolZeile(),cerg?*cerg:0) 
 		} // if (!routa.obfehl) 
@@ -7280,7 +7284,7 @@ void paramcl::empfarch(uchar obalte/*=0*/)
 		}
 	} while (jaufrufe==aufrufe);
 #endif // immerwart
-	::Log(Tx[T_Zahl_der_empfangenen_Faxe]+drots+ltoan(ankzahl)+schwarz,1,oblog);
+	::Log(Tx[T_Zahl_der_empfangenen_Faxe]+drots+ltoan(ankzahl)+schwarz,1,1);
 	Log(violetts+Txk[T_Ende]+Tx[T_empfarch]+schwarz);
 } // void paramcl::empfarch()
 
@@ -7585,7 +7589,7 @@ void paramcl::zeigueberschrift()
 				Tx[T_Aufrufintervall]+blaus
 				+(vorcm!=cronminut&&!(vorcm.empty()&&cronminut=="0")?((vorcm.empty()?Txk[T_gar_nicht]:vorcm)+" -> "):"")
 				+(cronminut=="0"?Tx[T_kein_Aufruf]+schwarzs:cronminut+schwarz+(cronminut=="1"?Tx[T_Minute]:Txk[T_Minuten])):
-				""),1,oblog);
+				""),1,1);
 } // void paramcl::zeigueberschrift()
 
 // ermittelt fuer eine in ein Zielverzeichnis zu kopierende Datei den dortigen Namen
@@ -10306,7 +10310,7 @@ int main(int argc, char** argv)
 								if (pm.obhyla) { if (pm.tage) pm.korrigierehyla(pm.tage,10);} // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
 							}
 							// 2. warte auf korrigierecapi und korrigierehyla
-							wartaufpids(&pidw,0,pm.obverb,"in main, pidw");
+							wartaufpids(&pidw,0,pm.obverb,pm.oblog,"in main, pidw");
 							exitt(0);
 						} else if (pids<0) {
 							Log(rots+Tx[T_Gabelung_zu_wegfaxen_misslungen]+schwarz);
@@ -10406,7 +10410,7 @@ int main(int argc, char** argv)
 	//// for(size_t j=0;j<pids.size();j++) KLA //<<gruen<<j<<violett<<", pids[j]: "<<pids[j]<<schwarz<<endl; KLZ
 	// damit das Endeprompt nicht vorprescht
 	// warte auf empfarch, faxealle usw.
-	wartaufpids(&pidv,0,pm.obverb,Tx[T_in_main_pidv_am_Schluss]);
+	wartaufpids(&pidv,0,pm.obverb,pm.oblog,Tx[T_in_main_pidv_am_Schluss]);
 	pm.schlussanzeige();
 	Log(violetts+Txk[T_Ende]+schwarz,pm.obverb,pm.oblog);
 	return 0;

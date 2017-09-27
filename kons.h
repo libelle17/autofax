@@ -739,9 +739,9 @@ class optioncl
     const string *rottxt=0; // ggf rot zu markierender Text zwischen Txi und Txi2
     long Txi2=-1;
 //    string oerkl;
-    uchar *pptr=0; // Zeiger auf Parameter, der hier eingestellt werden kann
+    uchar *pptr=0; // Zeiger auf binären Parameter, der hier eingestellt werden kann
     int wert; // Wert, der pptr zugewiesen wird, falls dieser Parameter gewaehlt wird
-    string *zptr=0; // Zeiger auf Zusatzparameter, der hier eingegeben werden kann
+    string *zptr=0; // Zeiger auf Zusatzparameter, der hier eingegeben werden kann (z.B. Zahl der Zeilen nach -n (Zeilenzahl)
     const par_t art; // Parameterart
     schlArr *cpA=0; // Konfigurationsarray, das ggf. geschrieben werden muss
     const char *pname; // Name des Konfigurationsparameters
@@ -759,6 +759,8 @@ class optioncl
 /*2a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,string *zptr,par_t art,schlArr *cpA=0,const char *pname=0,uchar* obschreibp=0);
 // /*3*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,const string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cpA=0, const char *pname=0,uchar* obschreibp=0);
 /*3a*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,const string *rottxt,long Txi2,string *zptr,par_t art,schlArr *cpA=0,
+              const char *pname=0,uchar* obschreibp=0);
+/*3b*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,const string *rottxt,long Txi2,int *pptr,par_t art,schlArr *cpA=0,
               const char *pname=0,uchar* obschreibp=0);
 // /*4a*/optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,uchar *pptr,int wert,schlArr *cpA=0,const char *pname=0,uchar* obschreibp=0);
 /*4*/optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,uchar *pptr,int wert,schlArr *cpA=0,const char *pname=0,uchar* obschreibp=0);
@@ -823,6 +825,7 @@ string Tippstrs(const char *frage, vector<string> *moegl, string *vorgabe=0);
 string Tippzahl(const char *frage, const char *vorgabe=0);
 string Tippzahl(const char *frage, const string *vorgabe);
 string Tippzahl(const string& frage, const string *vorgabe);
+long Tippzahl(const string& frage,const long& vorgabe);
 string Tippstr(const char *frage, const string *vorgabe=0);
 // char* Tippcstr(const char *frage, char* buf, unsigned long buflen, const char* vorgabe=nix);
 string Tippstr(const string& frage, const string *vorgabe=0);
@@ -1032,7 +1035,7 @@ class pidvec: public vector<pidcl>
  } //  inline pidvec& operator<<(const pidcl& pd)
 }; // pidvec
 
-int wartaufpids(pidvec *pidv,const ulong runden=0,const int obverb=0,const string& wo=nix);
+int wartaufpids(pidvec *pidv,const ulong runden=0,const int obverb=0,const int oblog=0,const string& wo=nix);
 
 extern const string s_true; // ="true";
 extern const string s_dampand; // =" && ";

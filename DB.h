@@ -37,6 +37,7 @@ using namespace std;
 //#pragma comment(lib, "libmysql.lib")
 // #endif // MSC_VER
 extern class cuscl cus;
+const char *cjj(const char * const* const* cerg, const int nr);
 
 enum Txdb_ 
 {
@@ -335,7 +336,7 @@ class Tabelle
     string comment; // wird geaendert
 		const string dbname;
     RS *spalt=nullptr;
-		char **spnamen=nullptr,**splenge=nullptr,**sptyp=nullptr;
+		const char **spnamen=nullptr, **splenge=nullptr, **sptyp=nullptr;
     Feld *felder;
     int feldzahl;
     Index *indices;

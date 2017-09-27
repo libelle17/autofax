@@ -1158,14 +1158,14 @@ inline void wait ()
 }  // inline void wait () 
 #endif // _MSC_VER
 
-int wartaufpids(pidvec *pidv,const ulong runden/*=0*/,const int obverb/*=0*/,const string& wo/*=nix*/)
+int wartaufpids(pidvec *pidv,const ulong runden/*=0*/,const int obverb/*=0*/,const int oblog/*=0*/,const string& wo/*=nix*/)
 {
 	////	int* ovp=(int*)&obverb; *ovp=0;
 	ulong aktru=0; 
-	Log(obverb>1,1,0,0,"%s%s()%s, %s, %s%s pid: %s%lu%s, pidv->size(): %s%zu%s",
+	Log(obverb>1,oblog>1,0,0,"%s%s()%s, %s, %s%s pid: %s%lu%s, pidv->size(): %s%zu%s",
 			violett,__FUNCTION__,blau,wo.c_str(),schwarz,Txk[T_eigene],blau,getpid(),schwarz,blau,pidv->size(),schwarz);
 	for(size_t i=0;i<pidv->size();i++) {
-		Log(obverb>1,1,0,0," i: %s%zu%s, pid: %s%lu%s, name: %s%s%s",
+		Log(obverb>1,oblog>1,0,0," i: %s%zu%s, pid: %s%lu%s, name: %s%s%s",
 				blau,i,schwarz,blau,pidv->at(i).pid,schwarz,blau,pidv->at(i).name.c_str(),schwarz);
 	} // 	for(size_t i=0;i<pidv->size();i++)
 	while (1) {
@@ -2295,7 +2295,7 @@ int systemrueck(const string& cmd, char obverb/*=0*/, int oblog/*=0*/, vector<st
 							ergebnis=rots+Txk[T_Exitcode]+ltoan(erg);
 						}
 						if (obverb>=0) obergebnisanzeig=wahr;
-						obverb++;
+						if (obverb>0) obverb++;
 					} else {
 						ergebnis=Txk[T_Erfolg];
 					} // ob0heissterfolg else
@@ -2862,6 +2862,10 @@ string Tippzahl(const char *frage, const string *vorgabe)
 string Tippzahl(const string& frage, const string *vorgabe)
 {
  return Tippzahl(frage.c_str(),(vorgabe?vorgabe->c_str():0));
+}
+long Tippzahl(const string& frage,const long& vorgabe)
+{
+	return atol(Tippzahl(frage.c_str(),ltoan(vorgabe)).c_str());
 }
 /*//
 char* Tippcstr(const char *frage, char* buf, unsigned long buflen, const char* vorgabe) 
@@ -4137,6 +4141,13 @@ void optioncl::setzebem(schlArr *cpA,const char *pname)
   setzebem(cpA,pname);
 }
 
+/*3b*/optioncl::optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,const string *rottxt,long Txi2,int *pptr,par_t art,schlArr *cpA/*=0*/,
+              const char *pname/*=0*/,uchar* obschreibp/*=0*/):
+  kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),rottxt(rottxt),Txi2(Txi2),pptr((uchar*)pptr),art(art),cpA(cpA),pname(pname),obschreibp(obschreibp) 
+{
+  setzebem(cpA,pname);
+}
+
 // /*4a*/optioncl::optioncl(string kurz,string lang,TxB *TxBp,long Txi,uchar wi,uchar *pptr, int wert,schlArr *cpA,const char *pname,uchar* obschreibp) : kurz(kurz),lang(lang),TxBp(TxBp),Txi(Txi),pptr(pptr),wert(wert),cpA(cpA),pname(pname),obschreibp(obschreibp),obno(obschreibp?1:0) { setzebem(cpA,pname); }
 
 /*4*/optioncl::optioncl(int kurzi,int langi,TxB *TxBp,long Txi,uchar wi,uchar *pptr,int wert,schlArr *cpA, const char *pname,uchar* obschreibp) :
@@ -4889,9 +4900,10 @@ void haupt::gcl0()
 				loggespfad=logvz+vtz+logdname;
 				logdt=&loggespfad.front();
 				opts.push_back(/*2*/optioncl(T_lvz_k,T_logvz_l, &Txk, T_waehlt_als_Logverzeichnis_pfad_derzeit,0,&logvz, pverz,&agcnfA,"logvz",&logvneu));
-				opts.push_back(/*3*/optioncl(T_ld_k,T_logdname_l, &Txk, T_logdatei_string_im_Pfad, 0, &logvz, T_wird_verwendet_anstatt, &logdname, psons,
+				opts.push_back(/*3a*/optioncl(T_ld_k,T_logdname_l, &Txk, T_logdatei_string_im_Pfad, 0, &logvz, T_wird_verwendet_anstatt, &logdname, psons,
 							&agcnfA,"logdname",&logdneu));
-				opts.push_back(/*9*/optioncl(T_l_k,T_log_l,&Txk, T_protokolliert_ausfuehrlich_in_Datei, 0, &loggespfad, T_sonst_knapper, &oblog,1));
+				opts.push_back(/*3b*/optioncl(T_l_k,T_log_l,&Txk, T_protokolliert_ausfuehrlich_in_Datei, 1, &loggespfad, T_sonst_knapper, &oblog,pzahl,
+							&agcnfA,"oblog",&obkschreib));
 				logdt=&loggespfad.front();
 				opts.push_back(/*4*/optioncl(T_ldn_k,T_logdateineu_l, &Txk, T_logdatei_vorher_loeschen, 0, &logdateineu, 1));
 				break;
@@ -4987,14 +4999,14 @@ void haupt::lieskonfein()
 				obkschreib=1;
 		} // if (agcnfA[lfd].wert.compare(langu)) 
 	} //     if (langu.empty())  else
-}
+} // void haupt::lieskonfein()
 
 // wird aufgerufen von der von haupt abgeleiteten Klasse, dort lieskonfein()
 void haupt::setzlog()
 {
 	loggespfad=logvz+vtz+logdname;
 	logdt=&loggespfad.front();
-}
+} // void haupt::setzlog()
 
 //wird aufgerufen in main
 void haupt::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/, struct tm *lap/*=0*/,
