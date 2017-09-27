@@ -6294,6 +6294,7 @@ void paramcl::wegfaxen()
 					blau<<ndname<<schwarz<<endl;
 				continue;
 			} // if (vfehler) 
+			::Log(Tx[T_ErstelledurchBenennen]+rots+ndname+schwarz,1,oblog);
 			urfx.at(i).teil=ndname;
 		} // if (ndname!=urfx.at(i).teil) 
 		string wartedatei=verschiebe(urfx.at(i).teil,wvz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
@@ -6329,16 +6330,16 @@ void paramcl::wegfaxen()
 
 	// 2a. ... und im Warteverzeichnis in PDF umwandeln, falls erfolgreich und gleichziel => auch in ziel kopieren
 	for (int nachrnr=fxv.size()-1; nachrnr>=0; --nachrnr) {
-		int nfehlt=1;
+		int nfehlt=1,zupdffehler=0;
 		if (!fxv[nachrnr].npdf.empty()) {
 			if ((nfehlt=lstat((fxv[nachrnr].npdf.c_str()), &entrynpdf))) {
 				::Log(Tx[T_lstatfehlgeschlagen]+rots+strerror(errno)+schwarz+Tx[T_beiDatei]+ fxv[nachrnr].npdf,1,1,1);
 				continue;
 			} else {
-				/*//erg=*/zupdf(&fxv[nachrnr].npdf, fxv[nachrnr].spdf, &fxv[nachrnr].pseiten, obocra, 0); // 0=erfolg
+				zupdffehler=zupdf(&fxv[nachrnr].npdf, fxv[nachrnr].spdf, &fxv[nachrnr].pseiten, obocra, 0); // 0=erfolg
 			}
 		} // 	  if (!fxv[nachrnr].npdf.empty())
-		if (lstat((fxv[nachrnr].npdf.c_str()), &entrynpdf)) {
+		if (zupdffehler || lstat((fxv[nachrnr].npdf.c_str()), &entrynpdf)) {
 			// Misserfolg, zurueckverschieben und aus der Datenbank loeschen
 			uint wfehler=0;
 			//// <<violett<<"fxv["<<(int)nachrnr<<"].npdf: "<<fxv[nachrnr].npdf<<schwarz<<endl;
