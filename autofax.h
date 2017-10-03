@@ -179,7 +179,7 @@ class paramcl: public haupt // Programmparameter
     ulong ankzahl=0; // Zahl der angekommenen Faxe
     ulong dbzahl=0; // Zahl der ueberprueften Datenbankeintraege
     ulong wzahl=0;
-    ulong ezahl=0;
+    ulong ezahl=0; // Zahl der Erfolgreichen
     ulong gzahl=0;
     ulong fzahl=0;
     ulong weizahl=0; // Zahl der weiteren wartenden Faxe, die nicht in der Spooltabelle dieses Programms eingetragen sind

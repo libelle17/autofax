@@ -6660,24 +6660,26 @@ void paramcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // fax
 				} // if (obhyla)
 				////        KLZ // if (!obsfehlt) ... else
 
-				if (mitupd && (obcapi || obhyla)) {
+				if (obcapi || obhyla) {
 					// im Erfolgsfall zugrundeliegende Dateien verschieben
 					if (fsf.capistat==gesandt || fsf.hylastat==gesandt) {
 						(ezahl)++;
 
-						// Fax gelungen, Dateien in warteauffax nach zielmuster verschieben bzw. loeschen ...
-						for(unsigned iru=0;iru<2;iru++) {
-							const string *datei=iru?&fsf.origvu:&fsf.original;
-							if (!datei->empty()) {
-								const string zuloe=wvz+vtz+*datei;
-								if (gleichziel) { 
-									tuloeschen(zuloe,cuser,obverb,oblog);
-								} else {
-									uint vfehler=0;
-									verschiebe(zuloe, *zmp, cuser,&vfehler, /*wieweiterzaehl=*/1, obverb, oblog);
-								} // if (gleichziel) else 
-							} // if (!datei->empty()) 
-						} // for(unsigned iru=0;iru<2;iru++) 
+						if (mitupd) {
+							// Fax gelungen, Dateien in warteauffax nach zielmuster verschieben bzw. loeschen ...
+							for(unsigned iru=0;iru<2;iru++) {
+								const string *datei=iru?&fsf.origvu:&fsf.original;
+								if (!datei->empty()) {
+									const string zuloe=wvz+vtz+*datei;
+									if (gleichziel) { 
+										tuloeschen(zuloe,cuser,obverb,oblog);
+									} else {
+										uint vfehler=0;
+										verschiebe(zuloe, *zmp, cuser,&vfehler, /*wieweiterzaehl=*/1, obverb, oblog);
+									} // if (gleichziel) else 
+								} // if (!datei->empty()) 
+							} // for(unsigned iru=0;iru<2;iru++) 
+						} // if (mitupd)
 					} else if ((!obhyla && fsf.capistat==gescheitert) || (!obcapi && fsf.hylastat==gescheitert) || 
 							(fsf.capistat==gescheitert && fsf.hylastat==gescheitert)) {
 						(gzahl)++; 
@@ -6708,31 +6710,32 @@ void paramcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // fax
 							Log(blaus+"ogibts["+(iru?"1":"0")+"]: "+(ogibts[iru]?"1":"0"));
 						} // for(unsigned iru=0
 					} // if (nimmer)
-
-					if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) ) {
-						uchar geloescht=0;
-						/*//
-						// <<"\n"<<gruen<<"gesandt: "<<schwarz<<(int)gesandt<<endl;
-						// <<gruen<<"gescheitert: "<<schwarz<<(int)gescheitert<<endl;
-						// <<gruen<<"fehlend: "<<schwarz<<(int)fehlend<<endl;
-						// <<gruen<<"allegesch: "<<schwarz<<(int)allegesch<<endl;
-						// <<gruen<<"nimmer: "<<schwarz<<(int)nimmer<<endl;
-						// <<gruen<<"fsf.capistat: "<<schwarz<<(int)fsf.capistat<<endl;
-						// <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
-						// <<"obcapi: "<<(int)obcapi<<endl;
-						// <<"obhyla: "<<(int)obhyla<<endl;
-						// <<"fsf.capisd: '"<<fsf.capisd<<"'"<<endl;
-						// <<gruen<<"fsf.capisd.empty(): "<<schwarz<<(int)fsf.capisd.empty()<<endl;
-						 */
-						fsf.archiviere(My,this,&entrysend,allegesch||nimmer,
-								fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?hyla:capi,
-								&geloescht, 8, obverb, oblog);
-					} //           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) )
-					// wenn alle aktivierten Faxwege auf gescheitert oder fehlend stehen oder die Quelldatei fehlt ...
-					if (allegesch || (nimmer && !ogibts[0])) {
-						// Fax gescheitert, Dateien von warteauffax nach nichtgefaxt verschieben
-						fsf.scheitere(wvz,ngvz,cuser,&zmvp[0].ziel,obverb,oblog);
-					} // if (allegesch || (nimmer && !ogibts[0]))
+					if (mitupd) {
+						if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) ) {
+							uchar geloescht=0;
+							/*//
+							// <<"\n"<<gruen<<"gesandt: "<<schwarz<<(int)gesandt<<endl;
+							// <<gruen<<"gescheitert: "<<schwarz<<(int)gescheitert<<endl;
+							// <<gruen<<"fehlend: "<<schwarz<<(int)fehlend<<endl;
+							// <<gruen<<"allegesch: "<<schwarz<<(int)allegesch<<endl;
+							// <<gruen<<"nimmer: "<<schwarz<<(int)nimmer<<endl;
+							// <<gruen<<"fsf.capistat: "<<schwarz<<(int)fsf.capistat<<endl;
+							// <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
+							// <<"obcapi: "<<(int)obcapi<<endl;
+							// <<"obhyla: "<<(int)obhyla<<endl;
+							// <<"fsf.capisd: '"<<fsf.capisd<<"'"<<endl;
+							// <<gruen<<"fsf.capisd.empty(): "<<schwarz<<(int)fsf.capisd.empty()<<endl;
+							 */
+							fsf.archiviere(My,this,&entrysend,allegesch||nimmer,
+									fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?hyla:capi,
+									&geloescht, 8, obverb, oblog);
+						} //           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) )
+						// wenn alle aktivierten Faxwege auf gescheitert oder fehlend stehen oder die Quelldatei fehlt ...
+						if (allegesch || (nimmer && !ogibts[0])) {
+							// Fax gescheitert, Dateien von warteauffax nach nichtgefaxt verschieben
+							fsf.scheitere(wvz,ngvz,cuser,&zmvp[0].ziel,obverb,oblog);
+						} // if (allegesch || (nimmer && !ogibts[0]))
+					} // 						if (mitupd)
 				} // if (obcapi || obhyla)
 				::Log(ausg.str(),1,oblog);
 			} // if (*(*cerg+0)) if (*(*cerg+3))
@@ -10274,13 +10277,13 @@ int main(int argc, char** argv)
 					pidv<<pidcl(pidb,"bereinigevz");
 				} // 				if (aufrufe % 1000 )
 				// hier stehen obcapi und obhyla fest
-				ulong ezahl=0, szahl=0, zzahl=0;
-				uchar elaeuft=0, slaeuft=0, zlaeuft=0;
+				ulong rzahl=0, szahl=0, zzahl=0;
+				uchar rlaeuft=0, slaeuft=0, zlaeuft=0;
 				uchar zaehlergeschrieben=0;
 				pid_t pide=-1, pids=-1, pidz=-1;
 				while (1) {
 					uchar efertig,sfertig,zfertig;
-					if (!elaeuft) {
+					if (!rlaeuft) {
 						pide=fork();
 						if (!pide) {
 							pm.empfarch();
@@ -10291,13 +10294,13 @@ int main(int argc, char** argv)
 						} // 					if (!pide)
 						while(1) {
 							if (kill(pide,0)!=-1 || errno!=ESRCH) {
-								ezahl++;	
-								elaeuft=1;
+								rzahl++;	
+								rlaeuft=1;
 								break;
 							} // 							if (kill(pide,0)!=-1 || errno!=ESRCH)
 						} // 						while(1)
 						pidv<<pidcl(pide,"empfarch");
-					} //					if (!elaeuft)
+					} //					if (!rlaeuft)
 
 					if (!slaeuft) {
 						pids=fork();
@@ -10370,7 +10373,7 @@ int main(int argc, char** argv)
 										blau,i,schwarz,blau,(long)pidv.at(i).pid,schwarz,blau,pidv.at(i).name.c_str(),schwarz,blau,zuloeschen,schwarz);
 								if (zuloeschen) {
 									//// <<"pidv.at(i).pid: "<<pidv.at(i).pid<<" pide: "<<pide<<" pids: "<<pids<<" pidz: "<<pidz<<endl;
-									if (pidv.at(i).pid==pide) elaeuft=0;
+									if (pidv.at(i).pid==pide) rlaeuft=0;
 									else if (pidv.at(i).pid==pids) slaeuft=0;
 									else if (pidv.at(i).pid==pidz) zlaeuft=0;
 									////<<violett<<"loesche: "<<rot<<(pidv.begin()+i)->name<<endl;
@@ -10380,20 +10383,20 @@ int main(int argc, char** argv)
 							//// <<"pidv.size(): "<<pidv.size()<<endl;
 							int altoblog=pm.oblog;
 							if (!(iru%100)) pm.oblog=1;
-							Log(pm.obverb>1,pm.oblog>1,0,0,"elaueft: %s%d%s, ezahl: %s%d%s",blau,elaeuft,schwarz,blau,ezahl,schwarz);
+							Log(pm.obverb>1,pm.oblog>1,0,0,"elaueft: %s%d%s, rzahl: %s%d%s",blau,rlaeuft,schwarz,blau,rzahl,schwarz);
 							Log(pm.obverb>1,pm.oblog>1,0,0,"slaueft: %s%d%s, szahl: %s%d%s",blau,slaeuft,schwarz,blau,szahl,schwarz);
 							Log(pm.obverb>1,pm.oblog>1,0,0,"zlaueft: %s%d%s, zzahl: %s%d%s",blau,zlaeuft,schwarz,blau,zzahl,schwarz);
 							if (!(iru%100)) pm.oblog=altoblog;
-							if (!elaeuft || !slaeuft || !zlaeuft) break;
+							if (!rlaeuft || !slaeuft || !zlaeuft) break;
 							this_thread::sleep_for(chrono::milliseconds(wz1));
 							Log(pm.obverb>1,0,0,0,"in %s(): %s%s: %s%d%s ms",__FUNCTION__,rot,Txk[T_warte],blau,wz1,schwarz);
 						} // 	while (1)
 						// wenn nicht der thread, der noch haengt, zum ersten Mal aufgerufen wurde, dann abbrechen 
-						efertig=(ezahl>1||(ezahl==1&&!elaeuft));
+						efertig=(rzahl>1||(rzahl==1&&!rlaeuft));
 						sfertig=(szahl>1||(szahl==1&&!slaeuft));
 						zfertig=(zzahl>1||(zzahl==1&&!zlaeuft)||(!pm.obcapi&&!pm.obhyla));
 						if (efertig&&sfertig&&zfertig) break;
-						if (!ezahl||!szahl||!zzahl) break; // wenn eins noch nicht angefangen hat, dann nicht wz2*sz ms lang warten
+						if (!rzahl||!szahl||!zzahl) break; // wenn eins noch nicht angefangen hat, dann nicht wz2*sz ms lang warten
 						this_thread::sleep_for(chrono::milliseconds(wz2));
 						Log(pm.obverb>1,0,0,0,"in %s(): %s%s: %s%d%s ms",__FUNCTION__,rot,Txk[T_warte],blau,wz2,schwarz);
 					} // 					for(int i=0;i<sz;i++)
