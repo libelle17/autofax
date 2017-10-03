@@ -689,9 +689,7 @@ if (0) {
 	if (mysql_query(conn,sql)) 
  *erg=mysql_error(conn);
  if (obverb)
-		pthread_mutex_lock(&printf_mutex);
  printf("Fehler %u: %s\n", mysql_errno(conn), *erg);
-		pthread_mutex_unlock(&printf_mutex);
  return 1;
 
  result = mysql_store_result(conn);

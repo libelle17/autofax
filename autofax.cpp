@@ -2399,12 +2399,9 @@ void fsfcl::capiausgeb(stringstream *ausgp, const string& maxcdials, uchar fuerl
 	if (capistat!=fehlend) {
 		////    if (cpplies(suchtxt,cccnfA,cs)) KLA
 		//// RS rmod(My,string("update spool set capidials=")+cccnfA[0].val+" where id = "+cjj(cerg,0),ZDB);
-		char buf[100]={0};
+		char buf[100];
 		int versuzahl=atol(ctries.c_str());
-		// fuer Thread-Sicherheit
-		pthread_mutex_lock(&printf_mutex);
 		snprintf(buf,4,"%3d",versuzahl);
-		pthread_mutex_unlock(&printf_mutex);
 		*ausgp<<","<<blau<<buf<<"/"<<maxcdials<<schwarz<<(capistat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
 		////                      if (versuzahl>12) ausg<<"zu spaet, ";
 		struct tm tm={0};
@@ -2508,11 +2505,9 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
 	//// modemlaeuftnicht=systemrueck(("faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog,/*rueck=*/0,/*obsudc=*/1) + fglaeuftnicht;
 	if ((pmp->hgelesen && hylastat!=fehlend && hylastat!=init)) {
 		*ausgp<<",";
-		char buf[100]={0};
+		char buf[100];
 		int hversuzahl=atol(hdials.c_str()); // totdials
-		pthread_mutex_lock(&printf_mutex);
 		snprintf(buf,4,"%3d",hversuzahl);
-		pthread_mutex_unlock(&printf_mutex);
 		*ausgp<<blau<<buf<<"/"<<maxdials<<schwarz<<(hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
 		// hier muss noch JobReqBusy, JobReqNoAnswer, JobReqNoCarrier, JobReqNoFCon, JobReqOther, JobReqProto dazu gerechnet werden
 		//// time_t spoolbeg=(time_t)atol(tts.c_str());
@@ -3021,6 +3016,7 @@ int paramcl::setzhylavz()
 	return 0;
 } // int paramcl::setzhylavz()
 
+// wird aufgerufen in VorgbSpeziell, main, immer vor fork
 void paramcl::MusterVorgb()
 {
 	Log(violetts+Tx[T_MusterVorgb]+schwarz);
@@ -3039,6 +3035,7 @@ void paramcl::MusterVorgb()
 	ngvz="/var/"+meinname+vtz+Tx[T_nichtgefaxt];
 	empfvz="/var/"+meinname+vtz+Tx[T_empfvz];
 	static zielmustercl zmi[]={zielmustercl("[Ss]pamfax","/var/"+meinname+"/spam"),zielmustercl("","/var/"+meinname+vtz+Tx[T_gesandt])};//= nur Beispiel
+	// wird nur vor dem ersten fork bearbeitet
 	zmvp=zmi;
 	zmvzn=sizeof zmi/sizeof *zmi;
 } // void paramcl::MusterVorgb()
@@ -3211,6 +3208,7 @@ void paramcl::pruefcvz()
 void paramcl::setzzielmuster(confdat& afcd)
 {
 	if (!zmvzn || !zmvp) {
+		// wird nur vor dem ersten fork bearbeitet
 		zmvp= new zielmustercl{"","/var/"+meinname+"/ziel"};
 		zmvzn=1;
 	} // 	if (!zmvzn || !zmvp)
@@ -3528,7 +3526,7 @@ void paramcl::rueckfragen()
 	const size_t aktc=0; // mysql-connection, je nach thread
 	if (rzf) {
 		int lfd=-1;
-		char *locale = setlocale(LC_CTYPE,"");
+		const char *const locale = setlocale(LC_CTYPE,"");
 		if (langu.empty()) if (locale) if (strchr("defi",locale[0])) langu=locale[0];
 		vector<string> sprachen={"e","d"/*,"f","i"*/};
 		if (agcnfA[++lfd].wert.empty() || rzf) {
@@ -3939,8 +3937,6 @@ void paramcl::autofkonfschreib()
 		capizukonf und hylazukonf hier immer 0
 		char buf[200];
 		sprintf(buf,"rzf: %d, capizukonf: %d, hylazukonf: %d, obkschreib: %d",(int)rzf, (int)capizukonf, (int)hylazukonf, (int)obkschreib);
-		pthread_mutex_lock(&printf_mutex);
-		pthread_mutex_unlock(&printf_mutex);
 		Log(blaus+buf+schwarz);
 	 */
 	if (rzf||obkschreib) {
@@ -4637,7 +4633,6 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 		string inse;
 		string teln,zp,tries,user;
 		size_t size;
-		char buf[100]={0};
 		/*//
 		////			set<string> fdn; // Fax-Dateien
 		if (0) {
@@ -4667,6 +4662,7 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 				for(ruecki=0;ruecki<rueck[cru].size();ruecki++) {
 					teln.clear();zp.clear();tries.clear();user.clear();size=0;
 					struct stat sffstat={0};
+					char buf[100];
 					if (!lstat(rueck[cru][ruecki].c_str(),&sffstat)) {
 						size=sffstat.st_size;
 						struct tm *tmp=localtime(&sffstat.st_mtime);
@@ -5074,10 +5070,7 @@ void paramcl::bereinigevz(const size_t aktc/*=0*/)
 							"$2 in arr&&!s[$5]++ {print $2,$5,$14}'",aktc?0:obverb,oblog,&rueck,/*obsudc=*/0,/*verbergen=*/0,wahr,nix,0,0,&ausg);
 					for(size_t i=0;i<rueck.size();i++) {
 						svec toc;
-						// fuer Thread-Sicherheit
-						pthread_mutex_lock(&printf_mutex);
 						aufSplit(&toc,rueck[i],sep);
-						pthread_mutex_unlock(&printf_mutex);
 						string farbe;
 						anfzweg(toc[1]);
 						if (toc[0]=="SEND" && toc[2]=="\"\"") {
@@ -7351,7 +7344,7 @@ void paramcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,con
 		fuersamba(absdr);  
 		int obhpfadda=1, obpdfda=1; // wenn !(was&4), dann nicht behindern
 		if (was&4) {
-			char tbuf[100]={0};
+			char tbuf[100];
 			strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
 			if (absdr.length()>187) absdr.erase(187);
 			if (absdr.length()>70) absdr.erase(70);
@@ -7575,9 +7568,7 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 // wird aufgerufen in: main
 void paramcl::zeigueberschrift()
 {
-	pthread_mutex_lock(&printf_mutex);
-	char buf[20]; snprintf(buf,sizeof buf-1,"%.5f",versnr);
-	pthread_mutex_unlock(&printf_mutex);
+	char buf[20]; snprintf(buf,sizeof buf,"%.5f",versnr);
 	::Log(schwarzs+Txk[T_Programm]+blau+mpfad+schwarz+", V.: "+blau+buf+schwarz+", "+Tx[T_Verwende]
 			+blau+(obcapi?"Capisuite":"")+schwarz
 			+(obcapi&&obhyla?", ":"")
@@ -8024,7 +8015,7 @@ int paramcl::hconfigtty()
 		//// <<rot<<" ist offen"<<schwarz<<endl;
 		time_t tim=time(0);
 		struct tm *tm=localtime(&tim);
-		char buf[80]={0};
+		char buf[80];
 		strftime(buf, sizeof(buf), "%d.%m.%y %T", tm);
 		hci<<"# Konfiguration von hylafax durch "+meinname+" vom "<<buf<<endl;
 		hci<<"CountryCode:    "<<this->countrycode<<endl;
@@ -9369,11 +9360,8 @@ void paramcl::faxemitC(DB *My, const string& spooltab, const string& altspool, f
 						////            inDatenbankc(My, &spoolg, idsp, npdfp, spdfp, nachrnr, z2+strlen(tz2), obverb, oblog);
 						if (!spoolg.find("job ")) {
 							const string nr=spoolg.substr(4); 
-							char buf[20]={0};
-							// fuer Thread-Sicherheit
-							pthread_mutex_lock(&printf_mutex);
+							char buf[20];
 							sprintf(buf,"%.3lu",atol(nr.c_str()));
-							pthread_mutex_unlock(&printf_mutex);
 							spoolg=this->cfaxusersqvz+vtz+"fax-"+buf+".sff";
 						} //             if (!spoolg.find("job "))
 						inDbc(My, spooltab, altspool, spoolg, fsfp, z2+strlen(tz2), aktc);
@@ -10138,7 +10126,6 @@ void paramcl::zeigdienste()
 
 int main(int argc, char** argv) 
 {
-	pthread_mutex_init(&printf_mutex, NULL);
 	paramcl pm(argc,argv); // Programmparameter
 	/*//
 		if (argc==3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
@@ -10223,6 +10210,7 @@ int main(int argc, char** argv)
 	if (pm.kez||pm.bvz||pm.anhl||pm.lista||pm.listf||pm.listi||pm.listw||!pm.suchstr.empty()) {
 		pm.zeigueberschrift();
 		if (pm.kez) {
+			// hier ggf. erstes fork
 			if (pm.obcapi) pm.korrigierecapi(ltage);
 			if (pm.obhyla) pm.korrigierehyla(ltage);
 			pm.empfarch(/*obalte=*/1);
@@ -10266,6 +10254,7 @@ int main(int argc, char** argv)
 			} else {
 				// bei jedem 1000. Aufruf
 				if (!(pm.aufrufe % 1000 )) {
+					// hier ggf. erstes fork
 					pid_t pidb=fork();
 					if (!pidb) {
 						pm.bereinigevz(11);
@@ -10284,6 +10273,7 @@ int main(int argc, char** argv)
 				while (1) {
 					uchar efertig,sfertig,zfertig;
 					if (!rlaeuft) {
+						// hier ggf. erstes fork
 						pide=fork();
 						if (!pide) {
 							pm.empfarch();
@@ -10303,6 +10293,7 @@ int main(int argc, char** argv)
 					} //					if (!rlaeuft)
 
 					if (!slaeuft) {
+						// hier ggf. erstes fork
 						pids=fork();
 						if (!pids) {
 							pm.wegfaxen();
@@ -10332,6 +10323,7 @@ int main(int argc, char** argv)
 
 					if (!zlaeuft) {
 						if (pm.obcapi || pm.obhyla) {
+							// hier ggf. erstes fork
 							pidz=fork();
 							if (!pidz) {
 								pm.zeigweitere();
