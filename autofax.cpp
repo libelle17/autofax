@@ -3618,28 +3618,7 @@ void paramcl::rueckfragen()
 		} // if (obcapi) else
 		if (agcnfA[++lfd].wert.empty() || rzf) {
 			////        string bliste, tmpcuser;
-			vector<string> benutzer;
-			cmd="cat "+passwddt+" | grep /home/ | cut -d':' -f 1";
-			systemrueck(cmd,obverb,oblog,&benutzer,/*obsudc=*/0);
-			if (benutzer.size()>1) for(size_t i=benutzer.size();i;) {
-				--i;
-				if (benutzer[i]=="syslog"||benutzer[i]=="ntp") {
-					benutzer.erase(benutzer.begin()+i);
-				}
-			} // for(size_t i=benutzer.size();i;)
-			for(size_t i=0;i<benutzer.size();i++) {
-				////          bliste+=benutzer[i];
-				////          if (i<benutzer.size()-1) bliste+=",";
-				if (cuser.empty()) cuser=benutzer[i]; // Vorgabe
-			} // 			for(size_t i=0;i<benutzer.size();i++) 
-			/*//
-				const string Frage=string("Linux-Benutzer fuer Capisuite (")+bliste+"):";
-				do KLA
-				tmpcuser=Tippstr(Frage.c_str(),&cuser);
-				KLZ while (benutzer.size() && bliste.find(tmpcuser)==string::npos && 
-				tmpcuser.find(',')==string::npos); // nur vorhandene User akzeptieren
-				cuser=tmpcuser;
-			 */
+			setzbenutzer(&cuser);
 			cuser=Tippstrs(obcapi?Tx[T_Linux_Benutzer_fuer_Capisuite_Samba]:Tx[T_Linux_Benutzer_fuer_Samba],&benutzer,&cuser);
 			agcnfA[lfd].setze(&cuser);
 		} // if (agcnfA[++lfd].wert.empty() || rzf) 
@@ -10062,10 +10041,6 @@ void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, i
 	Log(violetts+Txk[T_Ende]+Tx[T_setzhylastat]+", hylastat: "+blau+FxStatS(&fsf->hylastat)+schwarz);
 } // setzhylastat
 
-const string	paramcl::passwddt="/etc/passwd",
-			paramcl::groupdt="/etc/group",
-			paramcl::sudoersdt="/etc/sudoers";
-
 void paramcl::dovi()
 {
 	svec d1, d2;
@@ -10153,8 +10128,6 @@ int main(int argc, char** argv)
 	exit(29);
 	} // (argc==2)
 	 */
-	pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
-	pm.logvorgaben();
 	//// Log("main: "+pm.cl,0,1);
 	pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
 	linst_cl linst(pm.obverb,pm.oblog);

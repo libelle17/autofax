@@ -210,7 +210,6 @@ class paramcl: public haupt // Programmparameter
     const string touta="outa"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tudoc="udoc"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
     const string tinca="inca"; // MariaDB-Tabelle fuer empfangene Faxe
-		static const string passwddt,groupdt,sudoersdt;
 		static const string initdhyladt; // /etc/init.d/hylafax
 		uchar initdhyladt_gibts=0; // Datei initdhyladt existiert
     string cfaxconfdt; // /etc/capisuite/fax.conf oder /usr/local/etc/capisuite/fax.conf laut Handbuch
