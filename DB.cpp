@@ -89,6 +89,8 @@ const char *DB_T[T_dbMAX+1][SprachZahl]={
 	{"' gelungen, user '","' succeeded, user '"},
 	// T_prueffunc
 	{"prueffunc()","checkfunc()"},
+	// T_Datenbankbenutzer_leer
+	{"Datenbankbenutzer leer!","database user empty!"},
 	{"",""}
 };
 // Txdbcl::Txdbcl() {TCp=(const char* const * const * const *)&TextC;}
@@ -246,7 +248,6 @@ void DB::init(
 		unsigned long client_flag/*=0*/,int obverb/*=0*/,int oblog/*=0*/,unsigned versuchzahl/*=3*/, const uchar ggferstellen/*=1*/)
 {
 	fehnr=0;
-	string Frage;
 	Log(Txd[T_DB_wird_initialisiert],obverb>0?obverb-1:0,oblog);
 	uchar installiert=0;
 	uchar datadirda=0;
@@ -358,6 +359,10 @@ void DB::init(
 					cerr<<Txd[T_Fehler_db]<<mysql_errno(conn[aktc])<<Txd[T_beim_Initialisieren_von_MySQL]<<this->ConnError<<endl;
 					////			throw "Fehler beim Erstellen einer MySQL-Verbindung";
 				} else {
+					if (user.empty()) {
+						cerr<<rot<<Txd[T_Datenbankbenutzer_leer]<<schwarz<<endl;
+						exit(13);
+          }
 					RS *rs;
 					for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
 						////   <<"versuch: "<<versuch<<", conn[aktc]: "<<conn[aktc]<<", host: "<<host<<", user: "<<user<<", passwd "<<passwd<<", uedb: "<<uedb<<", port: "<<port<<", client_flag: "<<client_flag<<", obverb: "<<obverb<<", oblog: "<<(int)oblog<<endl;
@@ -543,9 +548,6 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
 {
   myloghost=!strcasecmp(host.c_str(),"localhost")||!strcmp(host.c_str(),"127.0.0.1")||!strcmp(host.c_str(),"::1")?"localhost":"%";
   for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
-		caus<<"user: "<<user<<endl;
-		caus<<"rootpwd: "<<rootpwd<<endl;
-		caus<<"passwd: "<<passwd<<endl;
 		cmd=mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"show variables like 'gibts wirklich nicht'\" 2>&1";
     myr.clear();
     systemrueck(cmd,-1,0,&myr,/*obsudc=*/1);
@@ -1130,7 +1132,7 @@ inline string instyp::ersetze(const char *u, const char* alt, const char* neu)
         if (*(pi+i)!=*(p+i))
         {gleich=0;break;}
       if (gleich) {erg+=neu;p+=i-1;} else erg+=(*p);
-    }
+    } //     for(char* p=(char*)u;*p;p++)
   } //   if (alt[0]==0 || !strcmp(alt,neu)) else
   return erg;
 } // ersetze(char *u, const char* alt, const char* neu)
@@ -1145,9 +1147,9 @@ inline string *instyp::sersetze( string *src, string const& target, string const
         if (idx == string::npos)  break;
         src->replace( idx, target.length(), repl);
         idx += repl.length();
-      }
-    }
-  }
+      } //       for (;;)
+    } //     if (src->length())
+  } //   if (target.length())
   return src;
 } // sersetze( string src, string const& target, string const& repl)
 

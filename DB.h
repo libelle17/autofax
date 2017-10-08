@@ -81,6 +81,7 @@ enum Txdb_
 	T_Verbindung_zu,
 	T_gelungen,
 	T_prueffunc,
+	T_Datenbankbenutzer_leer,
 	T_dbMAX,
 }; // enum Txdb_ 
 
