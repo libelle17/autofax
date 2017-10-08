@@ -197,7 +197,6 @@ class paramcl: public haupt // Programmparameter
     string dbq; // Datenbank
 		string findvers; // find-Version (1=linux fund 2=intern mit readdir, 3=intern mit nftw 
 		int ifindv; // integer-Variante der find-Version
-		static const char* const smbdt;// "/etc/samba/smb.conf"
 		string cuser; // Linux-Benutzer fuer Capisuite, Samba
     string muser; // Benutzer fuer Mysql/MariaDB
     string mpwd;  // Passwort fuer Mysql/MariaDB
@@ -341,18 +340,18 @@ class paramcl: public haupt // Programmparameter
     void liescapiconf();
     void VorgbAllg(); // allgemeine Vorgaben
 		void MusterVorgb();
-    #ifdef DPROGcpp
-    void VorgbSpeziell() __attribute__((weak)); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vgb.cpp)
-    #else // DPROGcpp
-    void VorgbSpeziell(); // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vgb.cpp)
-    #endif // DPROGcpp else
-    void lieskonfein();
+		void VorgbSpeziell() 
+#ifdef DPROGcpp
+			__attribute__((weak)) // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vgb.cpp)
+#endif // DPROGcpp
+			;
+		void lieskonfein();
 		int  getcommandline();
-    void rueckfragen();
-    int setzhylavz(); // sucht das Hylaverzeichnis und setzt varsphylavz darauf, return 0, wenn nicht gefunden dann varsphylavz="", return 1
-    void verzeichnisse();
+		void rueckfragen();
+		int setzhylavz(); // sucht das Hylaverzeichnis und setzt varsphylavz darauf, return 0, wenn nicht gefunden dann varsphylavz="", return 1
+		void verzeichnisse();
 		void pruefcron();
-    void pruefsamba();
+    void rufpruefsamba();
     int  initDB();
     int  pruefDB(const string& db);
 
@@ -392,7 +391,6 @@ class paramcl: public haupt // Programmparameter
     void empfarch(uchar obalte=0);
 		void zeigueberschrift();
     void autofkonfschreib();
-		void dovi();
 		void dovc();
 		void dovh();
 		void zeigdienste();

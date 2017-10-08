@@ -30,8 +30,6 @@ const char *DB_T[T_dbMAX+1][SprachZahl]={
   {"Erfolg beim Initialisieren der Verbindung zu MySQL!","Success initializing the connection to MySQL!"},
 	// T_MySQL_Passwort
 	{"MySQL-Passwort","MySQL password"},
-	// T_fuer_Benutzer
-	{" fuer Benutzer '"," for user '"},
 	// T_wird_benoetigt_fuer_Befehl
 	{"' (wird benoetigt fuer Befehl: ","' (is needed for command: "},
   // T_ist_leer_Wollen_Sie_eines_festlegen
@@ -545,7 +543,10 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
 {
   myloghost=!strcasecmp(host.c_str(),"localhost")||!strcmp(host.c_str(),"127.0.0.1")||!strcmp(host.c_str(),"::1")?"localhost":"%";
   for(unsigned versuch=0;versuch<versuchzahl;versuch++) {
-    cmd=mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"show variables like 'gibts wirklich nicht'\" 2>&1";
+		caus<<"user: "<<user<<endl;
+		caus<<"rootpwd: "<<rootpwd<<endl;
+		caus<<"passwd: "<<passwd<<endl;
+		cmd=mysqlbef+" -uroot -h'"+host+"' "+(rootpwd.empty()?"":"-p"+rootpwd)+" -e \"show variables like 'gibts wirklich nicht'\" 2>&1";
     myr.clear();
     systemrueck(cmd,-1,0,&myr,/*obsudc=*/1);
     miterror=1;
@@ -555,7 +556,7 @@ void DB::pruefrpw(const string& wofuer, unsigned versuchzahl)
     }
     if (miterror) {
       if (!nrzf) {
-				rootpwd=Tippstr(string(Txd[T_MySQL_Passwort])+Txd[T_fuer_Benutzer]+dblau+"root"+schwarz+
+				rootpwd=Tippstr(string(Txd[T_MySQL_Passwort])+Txk[T_fuer_Benutzer]+dblau+"root"+schwarz+
 				                          Txd[T_wird_benoetigt_fuer_Befehl]+"\n"+tuerkis+wofuer+schwarz+")",0);
         ////                    if (rootpwd.empty()) return; // while (1)
         if (user=="root") passwd=rootpwd;
@@ -574,7 +575,7 @@ void DB::setzrpw(int obverb/*=0*/,int oblog/*=0*/) // Setze root-password
 		string rootpw2;
 		switch (DBS) {
 			case MySQL:
-				if (Tippob(Txd[T_MySQL_Passwort]+(Txd[T_fuer_Benutzer]+dblaus)+"root"+schwarz+Txd[T_ist_leer_Wollen_Sie_eines_festlegen])) {
+				if (Tippob(Txd[T_MySQL_Passwort]+(Txk[T_fuer_Benutzer]+dblaus)+"root"+schwarz+Txd[T_ist_leer_Wollen_Sie_eines_festlegen])) {
 					while (1) {
 						do {
 							rootpwd=Tippstr(Txd[T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein],&rootpwd);
@@ -676,7 +677,7 @@ if (0) {
 			exitp(24);
 			break;
 	} // 	switch (DBS)
-	if (dbsv) delete dbsv;
+	if (dbsv) {delete dbsv; dbsv=0;}
  }
 } // DB::~DB(void)
 /*//

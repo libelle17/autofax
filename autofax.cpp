@@ -94,7 +94,6 @@ return ss.str();
 
 enum T_ 
 {/*{{{*/
-	T_j_af,
 	T_verarbeitete_Nicht_PDF_Dateien,
 	T_verarbeitete_PDF_Dateien,
 	T_Soll_die_Capisuite_verwendet_werden,
@@ -442,7 +441,7 @@ enum T_
 	T_nicht_verarbeitbar_Verschiebe_sie_nach,
 	T_Fuehre_aus_Dp,
 	T_falls_es_hier_haengt_bitte_erneut_aufrufen,
-	T_pruefsamba,
+	T_rufpruefsamba,
 	T_Zufaxen,
 	T_Warteauffax,
 	T_Nichtgefaxt,
@@ -450,8 +449,6 @@ enum T_
 	T_Gefaxt,
 	T_zu_schreiben,
 	T_Zahl_der_Verzeichnisse_fuer_erfolgreich_verschickte_Faxe,
-	T_Verzeichnis,
-	T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt_in,
 	T_zufaxenvz,
 	T_VorgbSpeziell,
 	T_MusterVorgb,
@@ -481,7 +478,6 @@ enum T_
 	T_ermittelt,
 	T_hylafax_Verzeichnis,
 	T_Bezeichnung_des_Anrufers,
-	T_Passwort_fuer_samba,
 	T_Zeigt_die_Programmversion_an,
 	T_Capisuite_verwenden,
 	T_hylafax_verwenden,
@@ -504,9 +500,6 @@ enum T_
 	T_VorgbAllg,
 	T_pruefisdn,
 	T_keine_Rueckfragen_zB_aus_Cron,
-	T_Samba_muesste_installiert_werden_soll_ich,
-	T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden,
-	T_Soll_die_SuSEfirewall_bearbeitet_werden,
 	T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,
 	T_Muss_falsches_hylafax_loeschen,
 	T_DPROG_anhalten,
@@ -585,9 +578,6 @@ enum T_
 	T_Aufrufintervall,
 	T_kein_Aufruf,
 	T_Minute,
-	T_Firewallport,
-	T_offen,
-	T_zu,
 	T_loef,
 	T_uml_k,
 	T_loeschefax_l,
@@ -757,16 +747,15 @@ enum T_
 	T_autoupd_k,
 	T_autoupd_l,
 	T_Programm_automatisch_aktualisieren,
-	T_Sollen_neu_Programmversionen_von,
+	T_Sollen_neue_Programmversionen_von,
 	T_automatisch_installiert_werden,
+	T_zeigvers,
 	T_MAX
 };
 
 
 //// char const *TxDPROGcl::TextC[T_MAX+1][SprachZahl]={
 char const *DPROG_T[T_MAX+1][SprachZahl]={
-	// T_j_af,
-	{"j","y"},
 	// T_verarbeitete_Nicht_PDF_Dateien
 	{"' verarbeitete Nicht-PDF-Dateien: ","' processed Non-PDF-Files: "},
 	// T_verarbeitete_PDF_Dateien
@@ -1245,7 +1234,7 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Benutzer fuer MySQL/MariaDB:","user for mysql/mariadb:"},
 	// T_Passwort_fuer_MySQL_MariaDB,
 	{"Passwort fuer MySQL/MariaDB (Achtung: nur schwach verschluesselt!)","password for mysql/mariadb (caution: only weakly encrypted!)"},
-	// "Datenbankname fuer MySQL/MariaDB auf '"
+	// T_Datenbankname_fuer_MySQL_MariaDB_auf
 	{"Datenbankname fuer MySQL/MariaDB auf '","database name for mysql/mariabd on '"},
 	// T_Logverzeichnis
 	{"Logverzeichnis","log directory"},
@@ -1478,8 +1467,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	// T_falls_es_hier_haengt_bitte_erneut_aufrufen
 	{" (falls es hier haengt, insbes. laenger als 3 Wochen, dann bitte erneut aufrufen)",
 		" (if it hangs, especially more than 3 weeks, please invoke again)"},
-	// T_pruefsamba
-	{"pruefsamba()","checksamba()"},
+	// T_rufpruefsamba
+	{"rufpruefsamba()","callchecksamba()"},
 	// T_Zufaxen
 	{"Zufaxen","TobeFaxed"},
 	// T_Warteauffax
@@ -1494,10 +1483,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"zu schreiben: ","must write: "},
 	// T_Zahl_der_Verzeichnisse_fuer_erfolgreich_verschickte_Faxe
 	{"Zahl der Verzeichnisse fuer erfolgreich verschickte Faxe","No of directories for successfully sent faxes"},
-	// T_Verzeichnis
-	{"Verzeichnis '","Directory '"},
-	// T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt_in
-	{"' nicht als Sambafreigabe gefunden, wird ergaenzt in '","' not found as or under a samba share, amending it in '"},
 	// T_zufaxenvz
 	{"zufaxenvz: '","outgoing dir: '"},
 	// T_VorgbSpeziell
@@ -1561,8 +1546,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"hylafax-Verzeichnis: ","hylafax-directory: "},
 	// T_Bezeichnung_des_Anrufers
 	{"Bezeichnung des Anrufers","Labelling of the caller"},
-	// T_Passwort_fuer_samba
-	{"Passwort fuer samba ","Password for samba "},
 	// T_Zeigt_die_Programmversion_an
 	{"Zeigt die Programmversion an","shows the program version"},
 	// T_Capisuite_verwenden 
@@ -1607,13 +1590,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"T_pruefisdn()","checkisdn()"},
 	// T_keine_Rueckfragen_zB_aus_Cron
 	{"keine Rueckfragen, z.B. für Aufruf aus cron","no questions, e.g. for a call of " DPROG " within cron"},
-	// T_Samba_muesste_installiert_werden_soll_ich
-	{"Samba muesste installiert werden, soll ich?","samba needs to be installed, shall I?"},
-	// T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden
-	{"Sollen fehlende Sambafreigaben fuer die angegebenen Verzeichnisse ergaenzt werden?",
-		"Shall missing samba shares for the specified directories be added?"},
-	// T_Soll_die_SuSEfirewall_bearbeitet_werden
-	{"Soll die SuSEfirewall2 bearbeitet werden?","Shall the SuSEfirewall2 be edited?"},
 	// T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in
 	{"Gescheiterte Faxe werden hier gesammelt anstatt in","Failed Faxes are collected here and not in"}, 
 	// T_Muss_falsches_hylafax_loeschen
@@ -1781,12 +1757,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"kein cron-Aufruf","no cron call"},
 	// T_Minute
 	{" Minute"," minute"},
-	// T_Firewallport
-	{"Firewallport ","Firewall port "},
-	// T_offen
-	{" offen"," open"},
-	// T_zu
-	{" zu"," shut"},
 	// T_loef
 	{"loef","delf"},
 	// T_uml_k
@@ -2127,16 +2097,18 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"autoaktual","autoupdate"},
 	// T_Programm_automatisch_aktualisieren
 	{"Programm automatisch aktualisieren","Update program automatically"},
-	// T_Sollen_neu_Programmversionen_von
+	// T_Sollen_neue_Programmversionen_von
 	{"Sollen neue Programmversionen von ","Shall new versions of "},
 	// T_automatisch_installiert_werden
 	{" automatisch installiert werden?"," be automatically installed?"},
+	// T_zeigvers
+	{"zeigvers","showvers"},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
 class TxB Tx((const char* const* const* const*)DPROG_T);
 
-const string& pk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax"; // fuer Antlitzaenderung
+const string& pwk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax"; // fuer Antlitzaenderung
 
 extern class lsyscl lsys;
 extern class cuscl cus;
@@ -3273,14 +3245,14 @@ void paramcl::setzsql(confdat& afcd)
 } // void paramcl::setzsql(confdat& afcd)
 
 // wird aufgerufen in: main
-// liest die Konfiguration von autofax sowie der Zaehlerdatei ein
+// liest die Konfiguration von autofax ein
 void paramcl::lieskonfein()
 {
 	haupt::lieskonfein();
 	lfd++;
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&host); else rzf=1; lfd++;
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&muser); else rzf=1; lfd++;
-	if (agcnfA[lfd].gelesen) mpwd=XOR(string(agcnfA[lfd].wert),pk); else rzf=1; lfd++;
+	if (agcnfA[lfd].gelesen) mpwd=XOR(string(agcnfA[lfd].wert),pwk); else rzf=1; lfd++;
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&dbq); else rzf=1; lfd++;
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&findvers); else findvers="3"; lfd++;
 	ifindv=findv=atol(findvers.c_str());
@@ -3449,7 +3421,7 @@ int paramcl::getcommandline()
 					cmeingegeben=1;
 				}
 				else if (opts[optslsz].kurzi==T_mpwd_k) {
-					const string pwdstr=XOR(mpwd,pk);
+					const string pwdstr=XOR(mpwd,pwk);
 					agcnfA.setze(string(Tx[T_mpwd_k]),pwdstr);
 				} // 				if (opts[optslsz].kurzi==T_mpwd_k)
 				else if (opts[optslsz].kurzi==T_find_k) {
@@ -3546,19 +3518,15 @@ void paramcl::rueckfragen()
 		if (agcnfA[++lfd].wert.empty() || rzf) {
 			string mpw2;
 			mpwd.clear();
-			while (1) {
-				do {
-					mpwd=Tippstr(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Txd[T_fuer_Benutzer]+dblau+muser+schwarz+"'",&mpwd);
-				} while (mpwd.empty());
+			do {
+				mpwd=Tippstr(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Txd[T_fuer_Benutzer]+dblau+muser+schwarz+"'",&mpwd);
 				mpw2=Tippstr(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Txd[T_fuer_Benutzer]+dblau+muser+schwarz+"'"+" ("+Txk[T_erneute_Eingabe]+")",&mpw2);
-				if (mpwd==mpw2) break;
-			} //         while (1)
-			while (mpwd.empty());
-			const string pwdstr=XOR(mpwd,pk);
+			} while (mpwd!=mpw2);
+			const string pwdstr=XOR(mpwd,pwk);
 			agcnfA[lfd].setze(&pwdstr);
 		} // 		if (agcnfA[++lfd].wert.empty() || rzf)
 		if (agcnfA[++lfd].wert.empty() || rzf) {
-			dbq=Tippstr(string(Tx[T_Datenbankname_fuer_MySQL_MariaDB_auf])+host+"'",&dbq);
+			dbq=Tippstr(string(Tx[T_Datenbankname_fuer_MySQL_MariaDB_auf])+dblau+host+schwarz+"'",&dbq);
 			agcnfA[lfd].setze(&dbq);
 		} //     if (agcnfA[++lfd].wert.empty() || rzf)
 		if (agcnfA[++lfd].wert.empty() || rzf) {
@@ -3577,7 +3545,7 @@ void paramcl::rueckfragen()
 		if (agcnfA[++lfd].wert.empty() || rzf) {
 			if (!obfcgeprueft) pruefisdn();
 			if (obfcard) {
-				obcapi=Tippob(Tx[T_Soll_die_Capisuite_verwendet_werden],obcapi?Tx[T_j_af]:"n");
+				obcapi=Tippob(Tx[T_Soll_die_Capisuite_verwendet_werden],obcapi?Txk[T_j_af]:"n");
 			} else {
 				obcapi=0;
 			}
@@ -3587,7 +3555,7 @@ void paramcl::rueckfragen()
 		if (agcnfA[++lfd].wert.empty() || rzf) {
 			if (!obmdgeprueft) pruefmodem();
 			if (obmodem) {
-				obhyla=Tippob(Tx[T_Soll_Hylafax_verwendet_werden],obhyla?Tx[T_j_af]:"n");
+				obhyla=Tippob(Tx[T_Soll_Hylafax_verwendet_werden],obhyla?Txk[T_j_af]:"n");
 			} else {
 				obhyla=0;
 			}
@@ -3596,7 +3564,7 @@ void paramcl::rueckfragen()
 		if (obcapi) {
 			if (obhyla) {
 				if (agcnfA[++lfd].wert.empty() || rzf) {
-					hylazuerst=!Tippob(Tx[T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden],hylazuerst?"n":Tx[T_j_af]);
+					hylazuerst=!Tippob(Tx[T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden],hylazuerst?"n":Txk[T_j_af]);
 					agcnfA[lfd].setze(&hylazuerst);
 				}
 				if (agcnfA[++lfd].wert.empty() || rzf) {
@@ -3635,7 +3603,7 @@ void paramcl::rueckfragen()
 			if (agcnfA[++lfd].wert.empty() || rzf) {
 				do {
 					msn=Tippstr(Tx[T_Eigene_MSN_Faxnummer_ohne_Vorwahl],&msn);
-				} while (msn.empty()||!isnumeric(msn)||isneun(msn));
+				} while (!isnumeric(msn)||isneun(msn));
 				agcnfA[lfd].setze(&msn);
 			}
 		} else {
@@ -3692,15 +3660,15 @@ void paramcl::rueckfragen()
 		} //     if (obhyla) else
 
 		if (agcnfA[++lfd].wert.empty() || rzf) {
-			gleichziel=Tippob(Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden],gleichziel?Tx[T_j_af]:"n");
+			gleichziel=Tippob(Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden],gleichziel?Txk[T_j_af]:"n");
 			agcnfA[lfd].setze(&gleichziel);
 		}
 		if (agcnfA[++lfd].wert.empty() || rzf) {
-			obocri=Tippob(Tx[T_soll_Text_in_empfangenen_Faxen_mit_OCR_gesucht_werden],obocri?Tx[T_j_af]:"j");
+			obocri=Tippob(Tx[T_soll_Text_in_empfangenen_Faxen_mit_OCR_gesucht_werden],obocri?Txk[T_j_af]:"j");
 			agcnfA[lfd].setze(&obocri);
 		}
 		if (agcnfA[++lfd].wert.empty() || rzf) {
-			obocra=Tippob(Tx[T_soll_Text_in_gesandten_Bildern_mit_OCR_gesucht_werden],obocra?Tx[T_j_af]:"n");
+			obocra=Tippob(Tx[T_soll_Text_in_gesandten_Bildern_mit_OCR_gesucht_werden],obocra?Txk[T_j_af]:"n");
 			agcnfA[lfd].setze(&obocra);
 		}
 		if (agcnfA[++lfd].wert.empty() || rzf) {
@@ -3750,7 +3718,7 @@ void paramcl::rueckfragen()
 			agcnfA[lfd].setze(&cronminut);
 		}
 		if (agcnfA[++lfd].wert.empty() || rzf) {
-			autoupd=Tippob(Tx[T_Sollen_neu_Programmversionen_von]+meinname+Tx[T_automatisch_installiert_werden],autoupd?Tx[T_j_af]:"n");
+			autoupd=Tippob(Tx[T_Sollen_neue_Programmversionen_von]+meinname+Tx[T_automatisch_installiert_werden],autoupd?Txk[T_j_af]:"n");
 			agcnfA[lfd].setze(&autoupd);
 		}
 		if (agcnfA[++lfd].wert.empty() || rzf) {
@@ -3838,7 +3806,7 @@ void paramcl::rueckfragen()
 					nsqlzn++;
 				} // if (zwi.empty()) else
 				if (akt>=sqlzn && akt>=sqlvzn) {
-					if (!Tippob(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],Tx[T_j_af])) break;
+					if (!Tippob(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],Txk[T_j_af])) break;
 				}
 			} // for(size_t akt=0;;akt++) 
 			const string nsqlz=ltoan(nsqlzn);
@@ -4077,7 +4045,7 @@ void paramcl::konfcapi()
 		do {
 			cfcnfA[4].wert=Tippstr(string("outgoing_MSN: ")+
 					Tx[T_ausgehende_Multiple_Subscriber_Number_Faxnummer_ohne_Vorwahl],&cfcnfA[4].wert);
-		} while (cfcnfA[4].wert.empty() || !isnumeric(cfcnfA[4].wert) || isneun(cfcnfA[4].wert));
+		} while (!isnumeric(cfcnfA[4].wert) || isneun(cfcnfA[4].wert));
 		// dial_prefix
 		cfcnfA[5].wert=Tippstr(string("dial_prefix: ")+Tx[T_Amtsholung_ueblicherweise_kk_oder_0],&cfcnfA[5].wert);
 		// fax_headline
@@ -4090,13 +4058,13 @@ void paramcl::konfcapi()
 		if (!isnumeric(cfcnfA[2].wert)) cfcnfA[2].wert="15";
 		do {
 			cfcnfA[2].wert=Tippstr(string("send_tries: ")+Tx[T_Zahl_der_Sendeversuche],&cfcnfA[2].wert);
-		} while (cfcnfA[2].wert.empty() || !isnumeric(cfcnfA[2].wert));
+		} while (!isnumeric(cfcnfA[2].wert));
 		// send_delays
 		cfcnfA[3].wert="60,60,60,300,300,300,300,300,3600,3600,3600,3600,18000,36000";
 		do {
 			cfcnfA[3].wert=Tippstr(string("send_delays: ")+Tx[T_kommagetrennte_Liste_mit_Sekundenabstaenden_zwischen_Sendeversuchen],
 					&cfcnfA[3].wert);
-		} while (cfcnfA[3].wert.empty() || !isnumeric(cfcnfA[3].wert));
+		} while (!isnumeric(cfcnfA[3].wert));
 		// outgoing_timeout
 		cfcnfA[9].wert="60";
 		cfcnfA[9].wert=Tippstr(string("outgoing_timeout: ")+Tx[T_Geduld_bis_zum_Verbindungsaufbau_in_s],&cfcnfA[9].wert);
@@ -4291,264 +4259,46 @@ void paramcl::pruefcron()
 	} // 	if (haupt::pruefcron())
 } // pruefcron
 
-const char* const paramcl::smbdt="/etc/samba/smb.conf";
 // wird aufgerufen in: main
-void paramcl::pruefsamba()
+void paramcl::rufpruefsamba()
 {
-	Log(violetts+Tx[T_pruefsamba]);
-	int sgest=0, ngest=0;
-	uchar conffehlt=1;
-	const string smbquelle="/usr/share/samba/smb.conf";
-	uchar obinst=0; // ob Samba installiert werden soll bzw. die smb.conf bearbeitet
-	uchar obfw=0; // ob SuSEfirewall bearbeitet werden soll
-	//// <<violett<<"Stelle 0"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
-	linstp->doggfinst("libwbclient0",obverb,oblog);
-	// bei dieser Initialisierung werden nur die Namen zugewiesen
-	servc smb("smb","smbd");
-	servc smbd("smbd","smbd");
-	servc nmb("nmb","nmbd");
-	servc nmbd("nmbd","nmbd");
-	int dienstzahl=2;
-	int obsfehlt=linstp->obfehlt("samba",obverb,oblog);
-	for(int iru=0;iru<2;iru++) {
-		if (obsfehlt) {
-			if (!nrzf) {
-				obinst=Tippob(Tx[T_Samba_muesste_installiert_werden_soll_ich],Tx[T_j_af]);
-				if (obinst)
-					linstp->doinst("samba",obverb,oblog);
-				////        smbrestart=0;
-			} // if (!nrzf) 
-		} // 	if (obsfehlt)
-		for(uchar iru=0;iru<2;iru++) {
-			struct stat sstat={0};
-			if (!(conffehlt=lstat(smbdt,&sstat))) break;
-			if (iru) break;
-			pruefverz("/etc/samba",obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/{},/*benutzer=*/{},/*obmachen=*/0);
-			kopier(smbquelle,smbdt,obverb,oblog);
-		} //   for(uchar iru=0;iru<2;iru++)
-		if (smb.obsvfeh(obverb-1,oblog)) if (smbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
-		if (nmb.obsvfeh(obverb-1,oblog)) if (nmbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
-		if (dienstzahl==2 ||(smb.svfeh!=6 && smbd.svfeh!=6 && nmb.svfeh!=6 && nmbd.svfeh!=6)) { // wenn keine exec-Datei fehlt
-			break;
+	Log(violetts+Tx[T_rufpruefsamba]);
+	vector<const string*> vzn;
+	svec abschni,suchs;
+	const int ISambaName[4]={T_Zufaxen,T_Warteauffax,T_Nichtgefaxt,T_Faxempfang}; 
+	////={&zufaxenvz,&wvz,&nvz,&empfvz};
+	if (!zufaxenvz.empty()) vzn.push_back(&zufaxenvz);
+	if (!wvz.empty()) vzn.push_back(&wvz);
+	if (!ngvz.empty()) vzn.push_back(&ngvz);
+	if (!empfvz.empty()) vzn.push_back(&empfvz);
+	for(zielmustercl *zmakt=zmp;1;zmakt++){
+		if (!zmakt->ziel.empty()) vzn.push_back(&zmakt->ziel);
+		if (zmakt->obmusterleer()) break;
+	} //     for(zielmustercl *zmakt=zmp;1;zmakt++)
+	for(unsigned k=0;k<vzn.size();k++) {
+		string suchstr;
+		if (k<4) {
+			abschni<<Tx[ISambaName[k]];
+			Sprache altSpr=Tx.lgn;
+			for(int akts=0;akts<SprachZahl;akts++) {
+				Tx.lgn=(Sprache)akts;
+				suchstr=string("\\[")+Tx[ISambaName[k]]+"\\]\\|";
+			} //         for(int akts=0;akts<SprachZahl;akts++)
+			Tx.lgn=altSpr;
 		} else {
-			obsfehlt=1;
-		} // if (dienstzahl==2 || ...
-		////  <<rot<<"Dienstzahl: "<<dienstzahl<<endl;
-	} // 	for(int iru=0;iru<2;iru++)
-	if (dienstzahl<2||conffehlt) {
-		for(int aru=0;aru<2;aru++) {
-			if (!smb.svfeh||!smbd.svfeh) {
-				sgest=1;
-			} else {
-				if (smb.svfeh!=1) {
-					sgest=smb.machfit(obverb,oblog);
-				}
-				if (!sgest && smbd.svfeh!=1) {
-					sgest=smbd.machfit(obverb,oblog);
-				} //       if (!smb.svfeh)
-			} // 			if (!smb.svfeh||!smbd.svfeh)
-			if (!nmb.svfeh||!nmbd.svfeh) {
-				ngest=1;
-			} else {
-				if (nmb.svfeh!=1) {
-					ngest=nmb.machfit(obverb,oblog);
-				}
-				if (!ngest && nmbd.svfeh!=1) {
-					ngest=nmbd.machfit(obverb,oblog);
-				} //       if (!nmb.nvfeh)
-			} // 			if (!nmb.svfeh||!nmbd.svfeh)
-			if (sgest&&ngest) break;
-			//// if (!smb.svfeh) if (!smb.obsvfeh(obverb,oblog)) if (!nmb.svfeh) if (!nmb.obsvfeh(obverb,oblog)) break;
-			//// if (!smbd.svfeh) if (!smbd.obsvfeh(obverb,oblog)) if (!nmbd.svfeh) if (!nmbd.obsvfeh(obverb,oblog)) break;
-		} // for(int aru=0;aru<2;aru++) 
-		////    if (gestartet==2) smbrestart=0;
-	} // if (dienstzahl<2 || conffehlt) 
-	struct stat sstat={0};
-	if (!(conffehlt=lstat(smbdt,&sstat))) {
-		confdat smbcd(smbdt,obverb);
-		smbcd.Abschn_auswert(obverb);
-		vector<string*> vzn;
-		const int ISambaName[4]={T_Zufaxen,T_Warteauffax,T_Nichtgefaxt,T_Faxempfang}; 
-		////={&zufaxenvz,&wvz,&nvz,&empfvz};
-		vzn.push_back(&zufaxenvz);
-		vzn.push_back(&wvz);
-		vzn.push_back(&ngvz);
-		vzn.push_back(&empfvz);
-		for(zielmustercl *zmakt=zmp;1;zmakt++){
-			vzn.push_back(&zmakt->ziel);
-			if (zmakt->obmusterleer()) break;
-		} //     for(zielmustercl *zmakt=zmp;1;zmakt++)
-		uchar gef[vzn.size()]; memset(gef,0,vzn.size()*sizeof(uchar));
-		for(size_t i=0;i<smbcd.abschv.size();i++) {
-			if (smbcd.abschv[i].aname!="global") {
-				const string& pfad = smbcd.abschv[i].suche("path");
-				if (!pfad.empty()) {
-					for(unsigned k=0;k<vzn.size();k++) {
-						if (!gef[k]) if (!vzn[k]->empty()) {
-							if (!vzn[k]->find(pfad)) {
-								gef[k]=1;
-							}
-						} // if (!gef[k]) if (!vzn[k]->empty()) 
-					} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
-				} // if (!pfad.empty()) 
-			} // if (smbcd.abschv.aname!="global") 
-		} // for(size_t i=0;i<smbcd.abschv.size();i++) 
-		uchar smbrestart=0;
-		mdatei sapp(smbdt,ios::out|ios::app);
-		if (sapp.is_open()) {
-			string suchstr;
-			for(unsigned k=0;k<vzn.size();k++) {
-				if (!vzn[k]->empty()) {
-					if (!gef[k]) {
-						smbrestart=1;
-						if (!obinst) {
-							obinst=Tippob(Tx[T_Sollen_fehlende_Sambafreigaben_fuer_die_angegebenen_Verzeichnisse_ergaenzt_werden],Tx[T_j_af]);
-							if (!obinst) break;
-						} // 					if (!obinst)
-						::Log(gruens+Tx[T_Verzeichnis]+blau+*vzn[k]+gruen+Tx[T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt_in]+blau+smbdt+"'."+schwarz,1,oblog);
-						string abschnitt;
-						if (k<4) {
-							abschnitt=Tx[ISambaName[k]];
-							Sprache altSpr=Tx.lgn;
-							for(int akts=0;akts<SprachZahl;akts++) {
-								Tx.lgn=(Sprache)akts;
-								suchstr=suchstr+"\\["+Tx[ISambaName[k]]+"\\]";
-								if (k<vzn.size()-1||akts<SprachZahl-1) suchstr+="\\|";
-							} //         for(int akts=0;akts<SprachZahl;akts++)
-							Tx.lgn=altSpr;
-						} else {
-							abschnitt=string(Tx[T_Gefaxt])+"_"+ltoan(k-4);
-							if (k==4) {
-								Sprache altSpr=Tx.lgn;
-								for(int akts=0;akts<SprachZahl;akts++) {
-									Tx.lgn=(Sprache)akts;
-									suchstr=suchstr+"\\["+Tx[T_Gefaxt]+"_";
-									if (akts<SprachZahl-1) suchstr+="\\|";
-								} //         for(int akts=0;akts<SprachZahl;akts++)
-								Tx.lgn=altSpr;
-							} // 						if (k==4)
-						} // 					if (k<4) else
-						sapp<<"["<<abschnitt<<"]"<<endl;
-						sapp<<"  comment = "<<meinname<<" "<<abschnitt<<endl;
-						sapp<<"  path = "<<*vzn[k]<<endl;
-						sapp<<"  directory mask = 0660"<<endl;
-						sapp<<"  browseable = Yes"<<endl;
-						if (!k)
-							sapp<<"  read only = no"<<endl; // zufaxenvz soll beschreibbar sein
-						sapp<<"  vfs objects = recycle"<<endl;
-						sapp<<"  recycle:versions = Yes"<<endl;
-						sapp<<"  recycle:keeptree = Yes"<<endl;
-						sapp<<"  recycle:repository = Papierkorb"<<endl;
-					} // if (!gef[k]) 
-				} // 		    if (!vzn[k]->empty())
-			} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
-			if (!suchstr.empty())
-				// Abschnitt wieder löschen
-				anfgg(unindt,sudc+"sed -i.vor" DPROG " '/^[ \\t]/{H;$!d;};x;/"+suchstr+"/d;1d' "+smbdt,"smb.conf: ["+suchstr+"]",obverb,oblog);
-		} // if (sapp.is_open()) 
-		if (!nrzf) {
-			uchar suserda=0;
-			if (/*findv==*/1) {
-				suserda=!systemrueck("pdbedit -L | grep "+cuser+":",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
-				/*
-					 } else {
-					 svec rueck;
-					 systemrueck(sudc+"pdbedit -L",obverb,oblog,&rueck);
-					 const string such=cuser+":";
-					 for(size_t j=0;j<rueck.size();j++) {
-					 if (rueck[j].find(such)!=string::npos) {
-					 suserda=1;
-					 break;
-					 } // 			  if (rueck[j].find(such)!=string::npos)
-					 } // 			 for(size_t j=0;j<rueck.size();j++)
-				 */
-			} // 			if (findv==1) else
-			if (!suserda) {
-				string pw1, pw2;
-				while (1) {
-					do {
-						pw1=Tippstr(string(Tx[T_Passwort_fuer_samba])+Txd[T_fuer_Benutzer]+dblau+cuser+schwarz+"'",&pw1);
-					} while (pw1.empty());
-					pw2=Tippstr(string(Tx[T_Passwort_fuer_samba])+Txd[T_fuer_Benutzer]+dblau+cuser+schwarz+"' ("+Txk[T_erneute_Eingabe]+")",&pw2);
-					if (pw1==pw2) break;
-				} //         while (1)
-				systemrueck("smbpasswd -n -a "+cuser,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
-				// smbpasswd in /usr/bin, somit wohl aus crontab aufrufbar
-				systemrueck("(echo "+pw1+";echo "+pw2+")|"+sudc+"smbpasswd -s "+cuser,obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
-			} // if (!suserda) {
-		} // if (!nrzf)
-		if (smbrestart) {
-			////		<<"smb.svfeh: "<<(int)smb.svfeh<<endl;
-			if (smb.startbar()) smb.restart(obverb-1,oblog);
-			else if (smbd.startbar()) smbd.restart(obverb-1,oblog);
-			if (nmb.startbar()) nmb.restart(obverb-1,oblog);
-			else if (nmbd.startbar()) nmbd.restart(obverb-1,oblog);
-		} // if (smbrestart) 
-		// VFS
-		if (linstp->ipr==apt) linstp->doggfinst("samba-vfs-modules",obverb,oblog);
-		// Firewall(s)
-		uchar obslaeuft=0;
-		svec rueckr;
-		systemrueck("systemctl list-units|grep firewall|grep -v init",obverb,oblog,&rueckr,/*obsudc=*/0);
-		if (rueckr.size()) if (rueckr[0].find("active running")!=string::npos ||rueckr[0].find("active exited")!=string::npos) obslaeuft=1;
-		if (obslaeuft) {
-			// firewall-ports, geht in SUSE und Fedora
-			uchar obzu=0;
-			// udp, udp, tcp, tcp
-			svec ports; ports<<"137"<<"138"<<"139"<<"445";
-			for(size_t i=0;i<ports.size();i++) {
-				svec rueck;
-				systemrueck("iptables -L -n|grep "+ports[i],obverb,oblog,&rueck,/*obsudc=*/1);
-				if (rueck.size()) {
-					if (obverb>1) ::Log(rueck[0],obverb-1,oblog);
-					if (rueck[0].substr(0,6)=="ACCEPT" || rueck[0].substr(0,3)=="LOG") {
-						if (obverb) Log(Tx[T_Firewallport]+blaus+ports[i]+schwarz+Tx[T_offen]);
-						continue;
-					}
-				} // 			if (rueck.size())
-				if (obverb) Log(Tx[T_Firewallport]+blaus+ports[i]+schwarz+Tx[T_zu]);
-				obzu=1;
-				break;
-			} // 		for(size_t i=0;i<ports.size();i++) 
-			if (obzu) {
-				lsysen system=lsys.getsys(obverb,oblog);
-				if (system==fed) {
-					// fedora:
-					// firewall-cmd --state
-					const string bef="firewall-cmd --permanent --add-service=samba&&"+sudc+"firewall-cmd --reload";
-					systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
-					anfgg(unindt,sudc+"firewall-cmd --permanent --remove-service=samba&&"+sudc+"firewall-cmd --reload",
-							bef,obverb,oblog);
-					// selinux: // offenbar unnoetig
-				} else {
-					// Suse-Firewall
-					const string susefw="/etc/sysconfig/SuSEfirewall2";
-					struct stat fstat={0};
-					if (!lstat(susefw.c_str(),&fstat)) {
-						string part="server";
-						for(int i=1;i<3;i++) {
-							int nichtfrei=systemrueck("grep '^FW_CONFIGURATIONS_EXT=\\\".*samba-"+part+"' "+susefw,obverb,oblog,0,/*obsudc=*/0,/*verbergen=*/2);
-							if (nichtfrei && !nrzf && !obfw) {
-								obfw=Tippob(Tx[T_Soll_die_SuSEfirewall_bearbeitet_werden],Tx[T_j_af]);
-								if (!obfw) break;
-							} // 					if (nichtfrei && !nrzf && !obfw)
-							if (nichtfrei && obfw) {
-								const string bak="bak_"+meinname+ltoan(i);
-								struct stat lbak={0};
-								int fehlt=lstat((susefw+"."+bak).c_str(),&lbak);
-								const string bef="sed -i"+(fehlt?"."+bak:"")+
-									" 's/\\(FW_CONFIGURATIONS_EXT=\\\".*\\)\\(\\\".*$\\)/\\1 samba-"+part+"\\2/g' "+susefw+
-									"&&"+sudc+"systemctl restart SuSEfirewall2 smb nmb";
-								systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1); 
-								anfgg(unindt,sudc+"sh -c 'cp -a \""+susefw+"."+bak+"\" \""+susefw+"\"'&&systemctl restart SuSEfirewall2 smb nmb",bef,obverb,oblog);
-							} // 					if (nichtfrei && obfw)
-							part="client";
-						} // for(int i=1;i<3;i++) 
-					} // if (!lstat(susefw,&fstat)) 
-				} // 			  if (system==fed) else 
-			} // obzu
-		} // obslaeuft
-	} //   if (!(conffehlt=lstat(smbdt,&sstat)))
+			abschni<<string(Tx[T_Gefaxt])+"_"+ltoan(k-4);
+			if (k==4) {
+				Sprache altSpr=Tx.lgn;
+				for(int akts=0;akts<SprachZahl;akts++) {
+					Tx.lgn=(Sprache)akts;
+					suchstr=string("\\[")+Tx[T_Gefaxt]+"_\\|";
+				} //         for(int akts=0;akts<SprachZahl;akts++)
+				Tx.lgn=altSpr;
+			} // 						if (k==4)
+		} // 					if (k<4) else
+		suchs<<suchstr;
+	} // 	for(unsigned k=0;k<vzn.size();k++)
+	pruefsamba(vzn,abschni,suchs,DPROG,cuser);
 } // pruefsamba
 
 // wird aufgerufen in: main
@@ -10041,16 +9791,6 @@ void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, i
 	Log(violetts+Txk[T_Ende]+Tx[T_setzhylastat]+", hylastat: "+blau+FxStatS(&fsf->hylastat)+schwarz);
 } // setzhylastat
 
-void paramcl::dovi()
-{
-	svec d1, d2;
-	d1<<smbdt;
-	d2<<passwddt;
-	d2<<groupdt;
-	d2<<sudoersdt;
-	dodovi(d1,d2);
-} // void paramcl::dovi()
-
 // augerufen in:_main
 void paramcl::dovc()
 {
@@ -10130,8 +9870,6 @@ int main(int argc, char** argv)
 	 */
 	//// Log("main: "+pm.cl,0,1);
 	pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
-	linst_cl linst(pm.obverb,pm.oblog);
-	pm.linstp=&linst;
 	pm.VorgbAllg();
 	if (pm.obhilfe==3) { // Standardausgabe gewaehrleisten
 		pm.MusterVorgb();
@@ -10153,13 +9891,13 @@ int main(int argc, char** argv)
 		pm.hylasv1();
 		pm.hylasv2(hysrc);
 		pm.zeigdienste();
-		Log(violetts+Txk[T_Ende]+"zeigvers"+schwarz,pm.obverb,pm.oblog);
+		Log(violetts+Txk[T_Ende]+Tx[T_zeigvers]+schwarz,pm.obverb,pm.oblog);
 		exit(7);
 	} //   if (pm.zeigvers)
 	if (!pm.keineverarbeitung) {
 		if (pm.obhyla) pm.pruefmodem();
 		if (pm.obcapi) pm.pruefisdn();
-		// Rueckfragen koennen auftauchen in: rueckfragen, konfcapi (<- pruefcapi), aenderefax, pruefsamba
+		// Rueckfragen koennen auftauchen in: rueckfragen, konfcapi (<- pruefcapi), aenderefax, rufpruefsamba
 		pm.rueckfragen();
 		// als Kompromiss blockieren wir hier
 		pm.pruefggfmehrfach();
@@ -10167,7 +9905,7 @@ int main(int argc, char** argv)
 		if (pm.obvh) pm.dovh();
 		pm.verzeichnisse();
 		if (!pm.kez&& !pm.bvz && !pm.anhl && !pm.lista && !pm.listi && !pm.listw && pm.suchstr.empty())
-			pm.pruefsamba();
+			pm.rufpruefsamba();
 
 		if (pm.logdateineu) tuloeschen(logdt,"",pm.obverb,pm.oblog);
 		pm.Log(Tx[T_zufaxenvz]+drots+pm.zufaxenvz+schwarz+"'");
