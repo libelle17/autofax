@@ -3319,95 +3319,96 @@ int paramcl::getcommandline()
 	Log(violetts+"getcommandline()"+schwarz);
 	// s.a. haupt::getcl0()
 	////  uchar plusverb=0;
-	opts.push_back(/*2a*/optioncl(T_zvz_k,T_zufaxenvz_l, &Tx, T_faxt_die_Dateien_aus_pfad_anstatt,0,&zufaxenvz,pverz,&agcnfA,"zufaxenvz",&obkschreib));
-	opts.push_back(/*2*/optioncl(T_wvz_k,T_wartevz_l, &Tx, T_Dateien_warten_in_pfad_anstatt,0,&wvz,pverz,&agcnfA,"wartevz",&obkschreib));
-	opts.push_back(/*2*/optioncl(T_ngvz_k,T_nichtgefaxtvz_l, &Tx, T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,0,&ngvz,pverz,
+	opts.push_back(/*2a*/optioncl(T_zvz_k,T_zufaxenvz_l, &Tx, T_faxt_die_Dateien_aus_pfad_anstatt,/*wi=*/0,&zufaxenvz,pverz,&agcnfA,
+				"zufaxenvz",&obkschreib));
+	opts.push_back(/*2*/optioncl(T_wvz_k,T_wartevz_l, &Tx, T_Dateien_warten_in_pfad_anstatt,/*wi=*/0,&wvz,pverz,&agcnfA,"wartevz",&obkschreib));
+	opts.push_back(/*2*/optioncl(T_ngvz_k,T_nichtgefaxtvz_l, &Tx, T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,/*wi=*/0,&ngvz,pverz,
 				&agcnfA,"nichtgefaxtvz",&obkschreib));
-	opts.push_back(/*2*/optioncl(T_evz_k,T_empfvz_l, &Tx, T_Empfangsverzeichnis_fuer_Faxempfang,0,&empfvz,pverz,&agcnfA,"empfvz",&obkschreib));
-	opts.push_back(/*4*/optioncl(T_capi_k,T_obcapi_l, &Tx, T_Capisuite_verwenden ,1,&obcapi,1,&agcnfA,"obcapi",&obkschreib));
-	////  opts.push_back(/*4*/optioncl("nocapi","keincapi", &Tx, T_Capisuite_nicht_verwenden,1,&obcapi,0,&agcnfA,"obcapi",&obkschreib));
-	opts.push_back(/*4*/optioncl(T_hyla_k,T_obhyla_l, &Tx, T_hylafax_verwenden,1,&obhyla,1,&agcnfA,"obhyla",&obkschreib));
-	////  opts.push_back(/*4*/optioncl("nohyla","keinhyla", &Tx, T_hylafax_nicht_verwenden,1,&obhyla,0,&agcnfA,"obhyla",&obkschreib));
-	opts.push_back(/*4*/optioncl(T_cz_k,T_capizuerst_l,&Tx,T_versuche_faxe_zuerst_ueber_Capisuite_wegzuschicken,1,&hylazuerst,0,&agcnfA,"hylazuerst",
+	opts.push_back(/*2*/optioncl(T_evz_k,T_empfvz_l, &Tx, T_Empfangsverzeichnis_fuer_Faxempfang,/*wi=*/0,&empfvz,pverz,&agcnfA,"empfvz",&obkschreib));
+	opts.push_back(/*4*/optioncl(T_capi_k,T_obcapi_l, &Tx, T_Capisuite_verwenden ,/*wi=*/1,&obcapi,/*wert=*/1,&agcnfA,"obcapi",&obkschreib));
+	////  opts.push_back(/*4*/optioncl("nocapi","keincapi", &Tx, T_Capisuite_nicht_verwenden,/*wi=*/1,&obcapi,/*wert=*/0,&agcnfA,"obcapi",&obkschreib));
+	opts.push_back(/*4*/optioncl(T_hyla_k,T_obhyla_l, &Tx, T_hylafax_verwenden,/*wi=*/1,&obhyla,/*wert=*/1,&agcnfA,"obhyla",&obkschreib));
+	////  opts.push_back(/*4*/optioncl("nohyla","keinhyla", &Tx, T_hylafax_nicht_verwenden,/*wi=*/1,&obhyla,0,&agcnfA,"obhyla",&obkschreib));
+	opts.push_back(/*4*/optioncl(T_cz_k,T_capizuerst_l,&Tx,T_versuche_faxe_zuerst_ueber_Capisuite_wegzuschicken,/*wi=*/1,&hylazuerst,/*wert=*/0,&agcnfA,"hylazuerst",
 				&obkschreib));
-	opts.push_back(/*4*/optioncl(T_hz_k,T_hylazuerst_l, &Tx, T_versuche_faxe_zuerst_ueber_hylafax_wegzuschicken,1,&hylazuerst,1,&agcnfA,"hylazuerst",
+	opts.push_back(/*4*/optioncl(T_hz_k,T_hylazuerst_l, &Tx, T_versuche_faxe_zuerst_ueber_hylafax_wegzuschicken,/*wi=*/1,&hylazuerst,/*wert=*/1,&agcnfA,"hylazuerst",
 				&obkschreib));
-	////  opts.push_back(optioncl("hms","hylamodemstring",&Tx, T_sucht_nach_dev_tty_string_als_Modem_mit_string_anstatt,0,&hmodemstr,psons));
-	opts.push_back(/*2*/optioncl(T_mod_k,T_hmodem_l,&Tx, T_Fuer_Hylafax_verwendetes_Modem,0,&hmodem,psons,&agcnfA,"hmodem",&hylazukonf));
-	opts.push_back(/*2*/optioncl(T_mc_k,T_maxcapiv_l,&Tx, T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht,1,&maxcapiv,pzahl,&agcnfA,"maxcapiv",
+	////  opts.push_back(optioncl("hms","hylamodemstring",&Tx, T_sucht_nach_dev_tty_string_als_Modem_mit_string_anstatt,/*wi=*/0,&hmodemstr,psons));
+	opts.push_back(/*2*/optioncl(T_mod_k,T_hmodem_l,&Tx, T_Fuer_Hylafax_verwendetes_Modem,/*wi=*/0,&hmodem,psons,&agcnfA,"hmodem",&hylazukonf));
+	opts.push_back(/*2*/optioncl(T_mc_k,T_maxcapiv_l,&Tx, T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht,/*wi=*/1,&maxcapiv,pzahl,&agcnfA,"maxcapiv",
 				&obkschreib));
-	opts.push_back(/*2*/optioncl(T_mh_k,T_maxhylav_l,&Tx, T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet,1,&maxhylav,pzahl,&agcnfA,"maxhylav",
+	opts.push_back(/*2*/optioncl(T_mh_k,T_maxhylav_l,&Tx, T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet,/*wi=*/1,&maxhylav,pzahl,&agcnfA,"maxhylav",
 				&obkschreib));
-	opts.push_back(/*2*/optioncl(T_cuser_k,T_cuser_l,&Tx, T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt,0,&cuser,psons,
+	opts.push_back(/*2*/optioncl(T_cuser_k,T_cuser_l,&Tx, T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt,/*wi=*/0,&cuser,psons,
 				&agcnfA,"cuser",&capizukonf));
-	opts.push_back(/*2*/optioncl(T_ckzl_k,T_cklingelzahl_l,&Tx, T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,1,&cklingelzahl,pzahl,
+	opts.push_back(/*2*/optioncl(T_ckzl_k,T_cklingelzahl_l,&Tx, T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,/*wi=*/1,&cklingelzahl,pzahl,
 				&agcnfA,"cklingelzahl",&capizukonf));
-	opts.push_back(/*2*/optioncl(T_hkzl_k,T_hklingelzahl_l,&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,1,&hklingelzahl,pzahl,
+	opts.push_back(/*2*/optioncl(T_hkzl_k,T_hklingelzahl_l,&Tx, T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,/*wi=*/1,&hklingelzahl,pzahl,
 				&agcnfA,"hklingelzahl",&hylazukonf));
-	opts.push_back(/*2*/optioncl(T_md_k,T_maxdials_l,&Tx, T_Zahl_der_Wahlversuche_in_Hylafax,1,&maxhdials,pzahl,
+	opts.push_back(/*2*/optioncl(T_md_k,T_maxdials_l,&Tx, T_Zahl_der_Wahlversuche_in_Hylafax,/*wi=*/1,&maxhdials,pzahl,
 				&agcnfA,"maxdials",&hylazukonf));
-	opts.push_back(/*4*/optioncl(T_gz_k,T_gleichziel_l, &Tx, T_Faxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,1,&gleichziel,1,
+	opts.push_back(/*4*/optioncl(T_gz_k,T_gleichziel_l, &Tx, T_Faxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,/*wi=*/1,&gleichziel,/*wert=*/1,
 				&agcnfA,"gleichziel",&obkschreib));
-	opts.push_back(/*4*/optioncl(T_ocri_k,T_ocri_l, &Tx, T_Text_aus_empfangenen_Faxen_wird_ermittelt,1,&obocri,1, &agcnfA,"ocri",&obkschreib));
-	////  opts.push_back(/*4*/optioncl("noocri","noocri", &Tx, T_Text_aus_empfangenen_Faxen_wird_nicht_ermittelt,1,&obocri,0, &agcnfA,"ocri",&obkschreib));
-	opts.push_back(/*4*/optioncl(T_ocra_k,T_ocra_l, &Tx, T_Text_aus_gesandten_Bildern_wird_ermittelt,1,&obocra,0, &agcnfA,"ocra",&obkschreib));
-	////  opts.push_back(/*4*/optioncl("noocra","ocra", &Tx, T_Text_aus_gesandten_Bildern_wird_nicht_ermittelt,1,&obocra,0, &agcnfA,"ocra",&obkschreib));
-	////  opts.push_back(/*4*/optioncl("1ocri","1ocri", &Tx, T_Text_aus_empfangenen_Faxen_wird_bei_diesem_Aufruf_ermittelt,1,&obocri,1));
-	////  opts.push_back(/*4*/optioncl("1noocri","1noocri", &Tx, T_Text_aus_empfangenen_Faxen_wird_bei_diesem_Aufruf_nicht_ermittelt,1,&obocri,0));
-	////  opts.push_back(/*4*/optioncl("1ocra","1ocra", &Tx, T_Text_aus_gesandten_Bildern_wird_bei_diesem_Aufruf_ermittelt,1,&obocra,1));
-	////  opts.push_back(/*4*/optioncl("1noocra","1ocra", &Tx, T_Text_aus_gesandten_Bildern_wird_bei_diesem_Aufruf_nicht_ermittelt,1,&obocra,0));
-	opts.push_back(/*2*/optioncl(T_afs_k,T_anfaxstr_l,&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,0,&anfaxstr,psons,&agcnfA,"anfaxstr",
+	opts.push_back(/*4*/optioncl(T_ocri_k,T_ocri_l, &Tx, T_Text_aus_empfangenen_Faxen_wird_ermittelt,/*wi=*/1,&obocri,/*wert=*/1, &agcnfA,"ocri",&obkschreib));
+	////  opts.push_back(/*4*/optioncl("noocri","noocri", &Tx, T_Text_aus_empfangenen_Faxen_wird_nicht_ermittelt,/*wi=*/1,&obocri,0, &agcnfA,"ocri",&obkschreib));
+	opts.push_back(/*4*/optioncl(T_ocra_k,T_ocra_l, &Tx, T_Text_aus_gesandten_Bildern_wird_ermittelt,/*wi=*/1,&obocra,/*wert=*/0, &agcnfA,"ocra",&obkschreib));
+	////  opts.push_back(/*4*/optioncl("noocra","ocra", &Tx, T_Text_aus_gesandten_Bildern_wird_nicht_ermittelt,/*wi=*/1,&obocra,/*wert=*/0, &agcnfA,"ocra",&obkschreib));
+	////  opts.push_back(/*4*/optioncl("1ocri","1ocri", &Tx, T_Text_aus_empfangenen_Faxen_wird_bei_diesem_Aufruf_ermittelt,/*wi=*/1,&obocri,/*wert=*/1));
+	////  opts.push_back(/*4*/optioncl("1noocri","1noocri", &Tx, T_Text_aus_empfangenen_Faxen_wird_bei_diesem_Aufruf_nicht_ermittelt,/*wi=*/1,&obocri,/*wert=*/0));
+	////  opts.push_back(/*4*/optioncl("1ocra","1ocra", &Tx, T_Text_aus_gesandten_Bildern_wird_bei_diesem_Aufruf_ermittelt,/*wi=*/1,&obocra,/*wert=*/1));
+	////  opts.push_back(/*4*/optioncl("1noocra","1ocra", &Tx, T_Text_aus_gesandten_Bildern_wird_bei_diesem_Aufruf_nicht_ermittelt,/*wi=*/1,&obocra,/*wert=*/0));
+	opts.push_back(/*2*/optioncl(T_afs_k,T_anfaxstr_l,&Tx, T_faxnr_wird_hinter_string_erwartet_statt_hinter,/*wi=*/0,&anfaxstr,psons,&agcnfA,"anfaxstr",
 				&obkschreib));
-	opts.push_back(/*2*/optioncl(T_acfs_k,T_ancfaxstr,&Tx, T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,0,&ancfaxstr,psons,
+	opts.push_back(/*2*/optioncl(T_acfs_k,T_ancfaxstr,&Tx, T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,/*wi=*/0,&ancfaxstr,psons,
 				&agcnfA,"ancfaxstr",&obkschreib));
-	opts.push_back(/*2*/optioncl(T_ahfs_k,T_anhfaxstr_l,&Tx, T_faxnr_fuer_primaer_hylafax_wird_hinter_string_erwartet_statt_hinter,0,&anhfaxstr,psons,
+	opts.push_back(/*2*/optioncl(T_ahfs_k,T_anhfaxstr_l,&Tx, T_faxnr_fuer_primaer_hylafax_wird_hinter_string_erwartet_statt_hinter,/*wi=*/0,&anhfaxstr,psons,
 				&agcnfA,"anhfaxstr",&obkschreib));
-	opts.push_back(/*2*/optioncl(T_as_k,T_anstr_l,&Tx, T_Adressatenname_wird_hinter_string_erwartet_statt_hinter,0,&anstr,psons,&agcnfA,"anstr",
+	opts.push_back(/*2*/optioncl(T_as_k,T_anstr_l,&Tx, T_Adressatenname_wird_hinter_string_erwartet_statt_hinter,/*wi=*/0,&anstr,psons,&agcnfA,"anstr",
 				&obkschreib));
-	opts.push_back(/*2*/optioncl(T_us_k,T_undstr_l,&Tx, T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt,0,&undstr,psons,
+	opts.push_back(/*2*/optioncl(T_us_k,T_undstr_l,&Tx, T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt,/*wi=*/0,&undstr,psons,
 				&agcnfA,"undstr",&obkschreib));
-	opts.push_back(/*2*/optioncl(T_host_k,T_host_l,&Tx, T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf,0,&host,psons,&agcnfA,"host",&obkschreib));
-	opts.push_back(/*2*/optioncl(T_muser_k,T_muser_l,&Tx, T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt,0,&muser,psons,&agcnfA,
+	opts.push_back(/*2*/optioncl(T_host_k,T_host_l,&Tx, T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf,/*wi=*/0,&host,psons,&agcnfA,"host",&obkschreib));
+	opts.push_back(/*2*/optioncl(T_muser_k,T_muser_l,&Tx, T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt,/*wi=*/0,&muser,psons,&agcnfA,
 				"muser",&obkschreib));
-	opts.push_back(/*2*/optioncl(T_mpwd_k,T_mpwd_l,&Tx, T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string,0,&mpwd,psons,&agcnfA,"mpwd",&obkschreib));
-	opts.push_back(/*2*/optioncl(T_db_k,T_datenbank_l,&Tx, T_verwendet_die_Datenbank_string_anstatt,0,&dbq,psons,&agcnfA,"datenbank",&obkschreib));
-	opts.push_back(/*4*/optioncl(T_find_k,T_find_l,&Tx, T_Version_1_2_oder_3_Dateisuche_anstatt,0,&findvers,pzahl,&agcnfA,"findvers",&obkschreib));
-	opts.push_back(/*3*/optioncl(T_cm_k,T_cronminuten_l,&Tx,T_Alle_wieviel_Minuten_soll,1,&meinname,T_aufgerufen_werden_0_ist_gar_nicht,&cronminut,
+	opts.push_back(/*2*/optioncl(T_mpwd_k,T_mpwd_l,&Tx, T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string,/*wi=*/0,&mpwd,psons,&agcnfA,"mpwd",&obkschreib));
+	opts.push_back(/*2*/optioncl(T_db_k,T_datenbank_l,&Tx, T_verwendet_die_Datenbank_string_anstatt,/*wi=*/0,&dbq,psons,&agcnfA,"datenbank",&obkschreib));
+	opts.push_back(/*4*/optioncl(T_find_k,T_find_l,&Tx, T_Version_1_2_oder_3_Dateisuche_anstatt,/*wi=*/0,&findvers,pzahl,&agcnfA,"findvers",&obkschreib));
+	opts.push_back(/*3*/optioncl(T_cm_k,T_cronminuten_l,&Tx,T_Alle_wieviel_Minuten_soll,/*wi=*/1,&meinname,T_aufgerufen_werden_0_ist_gar_nicht,&cronminut,
 				pzahl, &agcnfA,"cronminut",&obkschreib));
-	opts.push_back(/*4*/optioncl(T_autoupd_k,T_autoupd_l, &Tx, T_Programm_automatisch_aktualisieren,1,&autoupd,1,&agcnfA,"autoupd",&obkschreib));
-	////  opts.push_back(optioncl("l","log", &Tx, T_protokolliert_ausfuehrlich_in_Datei+drot+loggespfad+schwarz+Tx[T_sonst_knapper],0,&oblog,1));
+	opts.push_back(/*4*/optioncl(T_autoupd_k,T_autoupd_l, &Tx, T_Programm_automatisch_aktualisieren,/*wi=*/1,&autoupd,/*wert=*/1,&agcnfA,"autoupd",&obkschreib));
+	////  opts.push_back(optioncl("l","log", &Tx, T_protokolliert_ausfuehrlich_in_Datei+drot+loggespfad+schwarz+Tx[T_sonst_knapper],/*wi=*/0,&oblog,/*wert=*/1));
 	////  logdt=&loggespfad.front();
-	////  opts.push_back(optioncl("lvz","logvz",&Tx, T_waehlt_als_Logverzeichnis_pfad_anstatt,0,&logvz,pverz));
-	////  opts.push_back(optioncl("ld","logdname",&Tx, T_logdatei_string_im_Pfad+drot+logvz+schwarz+Tx[T_wird_verwendet_anstatt],0,&logdname,psons));
-	////  opts.push_back(optioncl("ldn","logdateinew", &Tx, T_logdatei_vorher_loeschen,0,&logdateineu,1));
-	////  opts.push_back(optioncl("v","verbose", &Tx, T_Bildschirmausgabe_gespraechiger,1,&plusverb,1));
-	opts.push_back(/*4*/optioncl(T_sqlv_k,T_sql_verbose_l, &Tx, T_Bildschirmausgabe_mit_SQL_Befehlen,1,&ZDB,1));
-	opts.push_back(/*4*/optioncl(T_rf_k,T_rueckfragen_l, &Tx, T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigten,1,&rzf,1));
-	opts.push_back(/*4*/optioncl(T_krf_k,T_keinerueckfragen_l, &Tx, T_keine_Rueckfragen_zB_aus_Cron,1,&nrzf,1));
-	opts.push_back(/*4a*/optioncl(T_loef,T_loeschefax_l, &Tx, T_ein_Fax_nach_Rueckfrage_loeschen,1,&loef,1));
-	opts.push_back(/*6*/optioncl(T_loew,T_loeschewaise_l, &Tx, T_Eintraege_aus, 1, &spooltab, 
-				T_loeschen_zu_denen_kein_Datei_im_Wartevz_und_kein_Capi_oder_Hylafax_nachweisbar_ist, &loew,1));
-	opts.push_back(/*4*/optioncl(T_loea_k,T_loescheallew_l, &Tx, T_alle_wartenden_Faxe_und_zugehoerige_Eintraege_aus, 1, &spooltab, T_loeschen, &loea,1));
-	opts.push_back(/*4*/optioncl(T_erneut_k,T_erneutempf_l, &Tx, T_empfangenes_Fax_erneut_bereitstellen, 1, &erneut,1));
-	opts.push_back(/*4*/optioncl(T_uml_k,T_umleiten_l, &Tx, T_ausgehendes_Fax_vorzeitig_auf_zweitem_Weg_schicken, 1, &uml,1));
-	////  opts.push_back(optioncl("loee","loescheempf", &Tx, T_empfangene_Dateien_loeschen_die_nicht_verarbeitet_werden_koennen,1,&loee,1));
-	opts.push_back(/*6*/optioncl(T_kez_k,T_korrerfolgszeichen_l, &Tx, T_in_der_Datenbanktabelle,0,&touta,T_wird_das_Erfolgszeichen_korrigiert, &kez,1));
-	opts.push_back(/*6*/optioncl(T_bvz_k,T_bereinigevz_l, &Tx, T_Dateien_aus_Warteverzeichnis_Gescheitertenvz_und_Gefaxtvz_gegen,1,&touta, T_pruefen_und_aufraeumen, &bvz,1));
-	opts.push_back(/*4*/optioncl(T_st_k,T_stop_l, &Tx, T_DPROG_anhalten,1,&anhl,1));
-	opts.push_back(/*6*/optioncl(T_lista_k,T_listausg_l, &Tx, T_listet_Datensaetze_aus, 1, &touta, T_mit_Erfolgskennzeichen_auf, &lista,1));
-	opts.push_back(/*6*/optioncl(T_listf_k,T_listfailed_l, &Tx, T_listet_Datensaetze_aus, 1, &touta, T_ohne_Erfolgskennzeichen_auf, &listf,1));
-	opts.push_back(/*6*/optioncl(T_listi_i,T_listinca_l, &Tx, T_listet_Datensaetze_aus, 1, &tinca, T__auf, &listi,1));
-	opts.push_back(/*4*/optioncl(T_listw_k,T_listwart_l, &Tx, T_listet_wartende_Faxe_auf, 1, &listw,1));
-	opts.push_back(/*3*/optioncl(T_s_k,T_suche_l,&Tx, T_suche_in_verarbeiteten_Faxen_nach, 1, &nix,T_MAX,&suchstr,psons));
-	opts.push_back(/*2*/optioncl(T_n_k,T_dszahl_l, &Tx, T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt, 1, &dszahl,pzahl));
-	opts.push_back(/*4*/optioncl(T_info_k,T_version_l, &Tx, T_Zeigt_die_Programmversion_an, 1, &zeigvers,1));
-	opts.push_back(/*4*/optioncl(T_vi_k,T_vi_l, &Tx, T_Konfigurations_u_Logdatei_bearbeiten_sehen, 1, &obvi,1));
-	opts.push_back(/*4*/optioncl(T_vc_k,T_vc_l, &Tx, T_Capisuite_Konfigurationdateien_bearbeiten, 0, &obvc,1));
-	opts.push_back(/*4*/optioncl(T_vh_k,T_vh_l, &Tx, T_Hylafax_Modem_Konfigurationsdatei_bearbeiten, 0, &obvh,1));
-	opts.push_back(/*4*/optioncl(T_vs_k,T_vs_l, &Tx, T_Quelldateien_bearbeiten, 0, &obvs,1));
-	opts.push_back(/*4*/optioncl(T_h_k,T_hilfe_l, &Tx, T_Erklaerung_haeufiger_Optionen, 1, &obhilfe,1));
-	opts.push_back(/*4*/optioncl(T_lh_k,T_lhilfe_l, &Tx, T_Erklaerung_aller_Optionen, 1, &obhilfe,2));
-	opts.push_back(/*4*/optioncl(T_fgz_k,T_fgz_l, &Tx, -1, 1, &obhilfe,1));
+	////  opts.push_back(optioncl("lvz","logvz",&Tx, T_waehlt_als_Logverzeichnis_pfad_anstatt,/*wi=*/0,&logvz,pverz));
+	////  opts.push_back(optioncl("ld","logdname",&Tx, T_logdatei_string_im_Pfad+drot+logvz+schwarz+Tx[T_wird_verwendet_anstatt],/*wi=*/0,&logdname,psons));
+	////  opts.push_back(optioncl("ldn","logdateinew", &Tx, T_logdatei_vorher_loeschen,/*wi=*/0,&logdateineu,/*wert=*/1));
+	////  opts.push_back(optioncl("v","verbose", &Tx, T_Bildschirmausgabe_gespraechiger,/*wi=*/1,&plusverb,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_sqlv_k,T_sql_verbose_l, &Tx, T_Bildschirmausgabe_mit_SQL_Befehlen,/*wi=*/1,&ZDB,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_rf_k,T_rueckfragen_l, &Tx, T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigten,/*wi=*/1,&rzf,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_krf_k,T_keinerueckfragen_l, &Tx, T_keine_Rueckfragen_zB_aus_Cron,/*wi=*/1,&nrzf,/*wert=*/1));
+	opts.push_back(/*4a*/optioncl(T_loef,T_loeschefax_l, &Tx, T_ein_Fax_nach_Rueckfrage_loeschen,/*wi=*/1,&loef,/*wert=*/1));
+	opts.push_back(/*6*/optioncl(T_loew,T_loeschewaise_l, &Tx, T_Eintraege_aus, /*wi=*/1, &spooltab, 
+				T_loeschen_zu_denen_kein_Datei_im_Wartevz_und_kein_Capi_oder_Hylafax_nachweisbar_ist, &loew,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_loea_k,T_loescheallew_l, &Tx, T_alle_wartenden_Faxe_und_zugehoerige_Eintraege_aus, /*wi=*/1, &spooltab, T_loeschen, &loea,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_erneut_k,T_erneutempf_l, &Tx, T_empfangenes_Fax_erneut_bereitstellen, /*wi=*/1, &erneut,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_uml_k,T_umleiten_l, &Tx, T_ausgehendes_Fax_vorzeitig_auf_zweitem_Weg_schicken, /*wi=*/1, &uml,/*wert=*/1));
+	////  opts.push_back(optioncl("loee","loescheempf", &Tx, T_empfangene_Dateien_loeschen_die_nicht_verarbeitet_werden_koennen,/*wi=*/1,&loee,1));
+	opts.push_back(/*6*/optioncl(T_kez_k,T_korrerfolgszeichen_l, &Tx, T_in_der_Datenbanktabelle,/*wi=*/0,&touta,T_wird_das_Erfolgszeichen_korrigiert, &kez,/*wert=*/1));
+	opts.push_back(/*6*/optioncl(T_bvz_k,T_bereinigevz_l, &Tx, T_Dateien_aus_Warteverzeichnis_Gescheitertenvz_und_Gefaxtvz_gegen,/*wi=*/1,&touta, T_pruefen_und_aufraeumen, &bvz,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_st_k,T_stop_l, &Tx, T_DPROG_anhalten,/*wi=*/1,&anhl,/*wert=*/1));
+	opts.push_back(/*6*/optioncl(T_lista_k,T_listausg_l, &Tx, T_listet_Datensaetze_aus, /*wi=*/1, &touta, T_mit_Erfolgskennzeichen_auf, &lista,/*wert=*/1));
+	opts.push_back(/*6*/optioncl(T_listf_k,T_listfailed_l, &Tx, T_listet_Datensaetze_aus, /*wi=*/1, &touta, T_ohne_Erfolgskennzeichen_auf, &listf,/*wert=*/1));
+	opts.push_back(/*6*/optioncl(T_listi_i,T_listinca_l, &Tx, T_listet_Datensaetze_aus, /*wi=*/1, &tinca, T__auf, &listi,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_listw_k,T_listwart_l, &Tx, T_listet_wartende_Faxe_auf, /*wi=*/1, &listw,/*wert=*/1));
+	opts.push_back(/*3*/optioncl(T_s_k,T_suche_l,&Tx, T_suche_in_verarbeiteten_Faxen_nach, /*wi=*/1, &nix,T_MAX,&suchstr,psons));
+	opts.push_back(/*2*/optioncl(T_n_k,T_dszahl_l, &Tx, T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt, /*wi=*/1, &dszahl,pzahl));
+	opts.push_back(/*4*/optioncl(T_info_k,T_version_l, &Tx, T_Zeigt_die_Programmversion_an, /*wi=*/1, &zeigvers,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_vi_k,T_vi_l, &Tx, T_Konfigurations_u_Logdatei_bearbeiten_sehen, /*wi=*/1, &obvi,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_vc_k,T_vc_l, &Tx, T_Capisuite_Konfigurationdateien_bearbeiten, /*wi=*/0, &obvc,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_vh_k,T_vh_l, &Tx, T_Hylafax_Modem_Konfigurationsdatei_bearbeiten, /*wi=*/0, &obvh,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_vs_k,T_vs_l, &Tx, T_Quelldateien_bearbeiten, /*wi=*/0, &obvs,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_h_k,T_hilfe_l, &Tx, T_Erklaerung_haeufiger_Optionen, /*wi=*/1, &obhilfe,/*wert=*/1));
+	opts.push_back(/*4*/optioncl(T_lh_k,T_lhilfe_l, &Tx, T_Erklaerung_aller_Optionen, /*wi=*/1, &obhilfe,/*wert=*/2));
+	opts.push_back(/*4*/optioncl(T_fgz_k,T_fgz_l, &Tx, -1, /*wi=*/1, &obhilfe,/*wert=*/1));
 	////   string altlogdname(logdname);
 	////  string altckzl(cklingelzahl);
 	////  string althkzl(hklingelzahl);
