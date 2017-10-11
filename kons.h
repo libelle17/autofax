@@ -131,7 +131,7 @@ enum {
 
 #define caus cout // nur zum Debuggen
 #define exitt exit // fuer threads
-extern pthread_mutex_t getmutex, printf_mutex;
+extern pthread_mutex_t getmutex, printf_mutex, timemutex;
 extern const string devtty;
 
 typedef unsigned long long ull;
@@ -362,6 +362,7 @@ enum Tkons_
 	T_Verzeichnis,
 	T_nicht_als_Sambafreigabe_gefunden_wird_ergaenzt_in,
 	T_fuer_Benutzer,
+	T_prueftif,
 	T_konsMAX
 };
 
@@ -750,7 +751,7 @@ class optioncl
 		const int langi=0;
     TxB *TxBp=0;
     const long Txi=0;
-		uchar wi=0; // Wichtigkeit: 1= wird mit -lh oder -h, 0= nur mit -h, 255 (-1) = gar nicht angezeigt
+		uchar wi=0; // Wichtigkeit: 1= wird mit -lh oder -h, 0= nur mit -lh, 255 (-1) = gar nicht angezeigt
     const string *rottxt=0; // ggf rot zu markierender Text zwischen Txi und Txi2
     long Txi2=-1;
 //    string oerkl;
@@ -1136,6 +1137,7 @@ class haupt
 		int kompilbase(const string& was,const string& endg);
 		int kompiliere(const string& was,const string& endg,const string& vorcfg=nix,const string& cfgbismake=s_dampand);
 		int kompilfort(const string& was,const string& vorcfg=nix,const string& cfgbismake=s_dampand,uchar ohneconf=0);
+		void prueftif();
 		void zeigversion();
 		void zeigkonf();
 		void gcl0();

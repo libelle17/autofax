@@ -316,7 +316,6 @@ class paramcl: public haupt // Programmparameter
 		void unpaperfuercron(const string& ocrprog);
 		void empfhyla(const string& ganz,size_t aktc, const uchar was,const string& nr=nix);
 		void empfcapi(const string& stamm,size_t aktc, const uchar was,const string& nr=nix);
-		void prueftif();
 		void wandle(const string& udatei,const string& urname,const uchar iprio,svec& toktxt,svec& toknr,svec& tokname,
 		            const string& anfxstr,const string& exten,vector<urfxcl> *urfxp);
 		void inDbc(DB *My, const string& spooltab, const string& altspool, const string& spoolg, const fsfcl *const fsfp, 
