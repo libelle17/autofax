@@ -2514,23 +2514,14 @@ void fsfcl::scheitere(const string& wvz, const string& ngvz, const string& cuser
 	} // for(unsigned iru=0;iru<2;iru++) 
 } // fsfcl::scheitere(const string& wvz, const string ngvz, const int obverb, const int oblog)
 
-paramcl::paramcl(const int argc, const char *const *const argv)
+paramcl::paramcl(const int argc, const char *const *const argv):haupt(argc,argv)
 {
-	cl=argv[0];
-	for(int i=1;i<argc;i++)
-		if (argv[i][0]) {
-			argcmv.push_back(argcl(i,argv)); 
-			cl+=" ";
-			cl+=argv[i];
-		} //     if (argv[i][0])
 	vaufr[0]=mpfad+" -noia >/dev/null 2>&1"; // /usr/bin/<DPROG> -noia
 	saufr[0]=base_name(vaufr[0]); // <DPROG> -noia
 	zsaufr[0]=ersetzAllezu(saufr[0],"/","\\/");
 	saufr[1]=s1+".*"+ersetzAllezu(s2,"*","\\*")+".*";//Befehl zum Abfragen der Cronminuten aus aktuellem Cron-Script
 	zsaufr[1]=ersetzAllezu(saufr[1],"/","\\/");
 	/*// time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff; */
-	tstart=clock();
-	langu=holsystemsprache(obverb);
 	//  akonfdt.clear();
 } // paramcl::paramcl()
 
@@ -2681,7 +2672,10 @@ void paramcl::lgnzuw()
 // wird aufgerufen in: main
 void paramcl::getcommandl0()
 {
-	Log(violetts+"getcommandl0()"+schwarz);
+	if (obverb) {
+		cout<<violett<<"getCommandl0()"<<schwarz<<endl;
+		obverb=0;
+	}
 	// Reihenfolge muss koordiniert werden mit lieskonfein und rueckfragen
 	agcnfA.init(44, "language","host","muser","mpwd","datenbank","findvers","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
 			"countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
