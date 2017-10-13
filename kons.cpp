@@ -1363,7 +1363,12 @@ double progvers(const string& prog,int obverb/*=0*/, int oblog/*=0*/)
 	if (obprogda(prog,obverb,oblog,&pfad)) {
 		svec urueck;
 		systemrueck(pfad+" --version",obverb,oblog,&urueck,/*obsudc=*/0);
-		if (urueck.size()) vers=verszuzahl(urueck[0].c_str());
+		if (urueck.size()) {
+			string bas=base_name(pfad);
+			ulong pos=urueck[0].find(bas);
+			if (pos==string::npos) pos=0; else pos+=bas.length();
+			vers=verszuzahl(urueck[0].c_str()+pos);
+		}
 	} // 	if (obprogda(prog,obverb,oblog,&pfad))
 	return vers;
 } // double progvers(string prog,int obverb, int oblog)
