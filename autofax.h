@@ -288,7 +288,6 @@ class paramcl: public haupt // Programmparameter
 		string virtvz; //	instvz+"/ocrv";
 	  string ocrmp; //	virtvz+"/bin/ocrmypdf";
 		unsigned tage=0; // fuer korrigierecapi und korrigierehyla 
-		uchar autoupd;  // 1=Programm automatisch updadaten
     svec vinca;
   private:
     void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
@@ -298,7 +297,8 @@ class paramcl: public haupt // Programmparameter
     int setzegcp(const string& name, string *wert);
     void pruefcvz();
     void pruefsfftobmp();
-    void setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr,int *obsfehltp=0, 
+		void instsfftobmp();
+		void setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr,int *obsfehltp=0, 
 				struct stat *est=0);
 		void konfcapi();
     int xferlog(fsfcl *fsfp/*, string *totpages=0, string *ntries=0, string *totdials=0, string *tottries=0, string *maxtries=0*/);

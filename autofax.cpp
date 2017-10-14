@@ -749,6 +749,7 @@ enum T_
 	T_Sollen_neue_Programmversionen_von,
 	T_automatisch_installiert_werden,
 	T_zeigvers,
+	T_Installiere_ocrmypdf,
 	T_MAX
 };
 
@@ -2100,6 +2101,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{" automatisch installiert werden?"," be automatically installed?"},
 	// T_zeigvers
 	{"zeigvers","showvers"},
+	// T_Installiere_ocrmypdf
+	{"Installiere ocrmypdf ...","Installing ocrmypdf ..."},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -5286,7 +5289,7 @@ int paramcl::pruefconvert()
 void paramcl::pruefunpaper()
 {
 	Log(violetts+Tx[T_pruefunpaper]+schwarz);
-	double vers=progvers("unpaper",obverb,oblog);
+	double vers=progvers("unpaper");
 	if (vers<6.1) {
 		linstp->doinst("libxslt-tools",obverb,oblog,"xsltproc");
 		if (linstp->ipr==dnf||linstp->ipr==yum) {
@@ -5370,9 +5373,10 @@ int paramcl::pruefocr()
 		ocrmp=virtvz+"/bin/ocrmypdf";
 		if (!lstat(ocrmp.c_str(),&ostat))
 			//		if (obprogda("ocrmypdf",obverb,oblog)) 
-			if (progvers(ocrmp,obverb,oblog)>4.40) 
+			if (progvers(ocrmp)>4.40) 
 				ocrzuinst=0;
 		if (ocrzuinst) {
+			::Log(Tx[T_Installiere_ocrmypdf],-1);
 			if (linstp->ipr==dnf||linstp->ipr==yum||linstp->ipr==zypper||linstp->ipr==apt) {
 				/*// // das Folgende hilft nix; im Internet hatte einer das gleiche Problem 8/15, Loesung aber nicht gefunden, nur update s.u.
 					if (double pyv=progvers("python3")<=3.41) {
@@ -7207,15 +7211,16 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 					if (!lstat(tifpfad.c_str(),&st)) 
 						tuloeschen(tifpfad,cuser,obverb,oblog);
 					svec srueck;
+					caus<<cmd<<endl;
 					erg=systemrueck(cmd,obverb,oblog,&srueck,/*obsudc=*/0,0,wahr,"",0,1);
 					if (srueck.size()) {
-						// wenn Fehlermeldung "no version information available, dann source-code-Version von libtiff5 nochmal installieren
-						if (srueck[0].find("no version information")==string::npos)
-							break;
+						// wenn Fehlermeldung "no version information available, dann sfftobmp unter aktuellem libtiff5 nochmal installieren
+						if (srueck[0].find("libtiff")!=string::npos && srueck[0].find("no version information")!=string::npos) {
+							instsfftobmp();
+						}
 					} else {
 						break;
 					} // 					if (srueck.size()) else
-					prueftif();
 				} // 			for(int iru=0;iru<2;iru++)
 				if (!erg) {
 					attrangleich(tifpfad,empfvz,&sffdatei,obverb,oblog);
@@ -8474,7 +8479,7 @@ void paramcl::capisv()
 	if (!scapis) scapis=new servc("","capisuite");
 } // void paramcl::capisv(obverb,oblog)
 
-// in empfcapi() und pruefcapi()
+// in empfcapi() und pruefcapi(), rueckfragen()
 void paramcl::pruefsfftobmp()
 {
 	Log(violetts+Tx[T_pruefsfftobmp]+schwarz);
@@ -8507,16 +8512,7 @@ void paramcl::pruefsfftobmp()
 						serg=systemrueck("ldconfig",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 					}
 					if (!serg) {
-						const string sff="sfftobmp_copy";
-						holvomnetz(sff);
-						const string vorcfg="sed -i.bak -e \"s/^[[:blank:]]*\\(char \\*shortopts.*\\)/const \\1/;"
-							"s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );"
-							"/\" src/cmdline.cpp"
-							"&& sed -i.bak -e \"s/lboost_filesystem-mt/lboost_filesystem/g\" src/Makefile.in "
-							////                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
-							////                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
-							"&& sed -i.bak -e \"s/\\(-lboost_filesystem\\)/-lboost_system \\1/g\" src/Makefile.in ";
-						kompiliere(sff,s_gz,vorcfg);
+						instsfftobmp();
 					} // if (!systemrueck(sudc+"grep
 				} // if (!linstp->doggfinst("boost",obverb,oblog) && !linstp->doggfinst("boost-devel",obverb,oblog)) 
 			} // if (!systemrueck(befehl,obverb,oblog)) 
@@ -8525,6 +8521,21 @@ void paramcl::pruefsfftobmp()
 		linstp->doggfinst("sfftobmp",obverb+1,oblog);
 	} // if (system==fed) else
 } // pruefsfftobmp
+
+// wird aufgerufen in pruefsfftobmp und empfcapi
+void paramcl::instsfftobmp()
+{
+	const string sff="sfftobmp_copy";
+	holvomnetz(sff);
+	const string vorcfg="sed -i.bak -e \"s/^[[:blank:]]*\\(char \\*shortopts.*\\)/const \\1/;"
+		"s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );"
+		"/\" src/cmdline.cpp"
+		"&& sed -i.bak -e \"s/lboost_filesystem-mt/lboost_filesystem/g\" src/Makefile.in "
+		////                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
+		////                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
+		"&& sed -i.bak -e \"s/\\(-lboost_filesystem\\)/-lboost_system \\1/g\" src/Makefile.in ";
+	kompiliere(sff,s_gz,vorcfg);
+} // void instsfftobmp()
 
 // wird aufgerufen in: untersuchespool, main
 // rueckgabe: wie obcapi eingestellt sein sollte
@@ -9825,6 +9836,7 @@ void paramcl::zeigdienste()
 
 int main(int argc, char** argv) 
 {
+	//// <<TIFFGetVersion()<<endl;
 	paramcl pm(argc,argv); // Programmparameter
 	/*//
 		if (argc==3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
@@ -10094,9 +10106,7 @@ int main(int argc, char** argv)
 	} // if (pm.kez) else else else
 	pm.autofkonfschreib();
 	// ggf. beim 2. Aufruf am Tag Update installieren
-	if (pm.autoupd && pm.tagesaufr == 2) {
-		pm.update(DPROG);
-	} // 	if (pm.autoupd && pm.tagesaufr == 2)
+	pm.update(DPROG);
 	//// <<violett<<", pidv.size(): "<<pidv.size()<<schwarz<<endl;
 	//// for(size_t j=0;j<pids.size();j++) KLA //<<gruen<<j<<violett<<", pids[j]: "<<pids[j]<<schwarz<<endl; KLZ
 	// damit das Endeprompt nicht vorprescht
