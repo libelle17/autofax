@@ -5329,7 +5329,7 @@ void paramcl::pruefunpaper()
 		if (systemrueck("unpaper",obverb,oblog,/*rueck=*/0,/*obsudc=*/0)==127) {
 			// /usr/bin/make in Ubuntu und Opensuse, /bin/make in Fedora, somit aus crontab aufrufbar
 			string ivu=instvz+vtz+upc;
-			if (!(systemrueck("cd \""+ivu+"\"&&make distclean;./configure;make",obverb,oblog,/*rueck=*/0,/*obsudc=*/0)))
+			if (!(systemrueck("cd \""+ivu+"\"&&{ grep -q 'distclean:' Makefile&&make distclean||{grep -q 'clean:' Makefile&&make clean;};};[ -f configure ]&&./configure;make",obverb,oblog,/*rueck=*/0,/*obsudc=*/0)))
 				systemrueck("cd \""+ivu+"\"&& make install",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		} // 		if (systemrueck
 	} // 						if (!urueck.size()||vers<6.1)

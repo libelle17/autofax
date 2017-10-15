@@ -4918,9 +4918,9 @@ int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const stri
 			////						"&&"+sudc+"make uninstall; cd \\\"\\$H\\\"\\n\" >> \""+unindt+"\";} "
 			";"+sudc+"ldconfig "+lsys.getlib64()+";'";
 		*/
-		const string b1="cd \""+ivw+"\"&&"+(vorcfg.empty()?s_true:vorcfg)+(ohneconf?"":"&& ./configure ")+cfgbismake+" make";
+		const string b1="cd \""+ivw+"\"&&"+(vorcfg.empty()?s_true:vorcfg)+(ohneconf?"":"&& [ -f configure ]&&./configure ")+cfgbismake+" make";
 		const string b2="cd \""+ivw+"\"&& make install";
-		const string b3="cd \""+ivw+"\"&&{ grep -q 'distclean:' Makefile'&&make distclean||{grep -q 'clean:' Makefile&&make clean;};}; ./configure; make";
+		const string b3="cd \""+ivw+"\"&&{ grep -q 'distclean:' Makefile&&make distclean||{ grep -q 'clean:' Makefile&&make clean;};};[ -f configure ]&&./configure; make";
 		const string b4="ldconfig "+lsys.getlib64();
 		int erg1;
 		if (!(erg1=systemrueck(b1,obverb,oblog,/*rueck=*/0,/*obsudc=*/0))) {
