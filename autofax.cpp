@@ -4043,7 +4043,7 @@ void paramcl::konfcapi()
 					Tx[T_ausgehende_Multiple_Subscriber_Number_Faxnummer_ohne_Vorwahl],&cfcnfA[4].wert);
 		} while (!isnumeric(cfcnfA[4].wert) || isneun(cfcnfA[4].wert));
 		// dial_prefix
-		cfcnfA[5].wert=Tippstr(string("dial_prefix: ")+Tx[T_Amtsholung_ueblicherweise_kk_oder_0],&cfcnfA[5].wert);
+		cfcnfA[5].wert=Tippstr(string("dial_prefix: ")+Tx[T_Amtsholung_ueblicherweise_kk_oder_0],&cfcnfA[5].wert,/*obnichtleer=*/0);
 		// fax_headline
 		cfcnfA[7].wert=cFaxUeberschrift;
 		cfcnfA[7].wert=Tippstr(string("fax_headline: ")+Tx[T_Faxueberschrift],&cfcnfA[7].wert);
@@ -7211,7 +7211,6 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 					if (!lstat(tifpfad.c_str(),&st)) 
 						tuloeschen(tifpfad,cuser,obverb,oblog);
 					svec srueck;
-					caus<<cmd<<endl;
 					erg=systemrueck(cmd,obverb,oblog,&srueck,/*obsudc=*/0,0,wahr,"",0,1);
 					if (srueck.size()) {
 						// wenn Fehlermeldung "no version information available, dann sfftobmp unter aktuellem libtiff5 nochmal installieren
@@ -8670,9 +8669,9 @@ int paramcl::pruefcapi()
 									holvomnetz(proj);
 									const string vorcfg=sudc+"test -f driver.c.bak || sed -i.bak \"/request_irq/i#if \\!defined(IRQF_DISABLED)\\n"
 										"# define IRQF_DISABLED 0x00\\n#endif\" driver.c;"+
-										sudc+"sed -e '\\''/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>'\\'' "
-										"-e '\\''/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
-										"c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);'\\'' "
+										sudc+"sed -e '/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>' "
+										"-e '/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
+										"c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);' "
 										"main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"+
 										sudc+"sed -i.bak \"/install: / i .PHONY: uninstall\\nuninstall:\\n\\t\\t"+
 										sudc+"modprobe -r \\$\\(CARD\\).ko\\n\\t\\tsudo rm \\$\\(TARGETDIR\\)/\\$\\(CARD\\)\\n\" Makefile;"+
