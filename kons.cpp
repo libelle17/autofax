@@ -308,8 +308,8 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"-Ende- ","-End- "},
 	// T_startundenable
 	{"startundenable()","startandenable()"},
-	// T_pruefber
-	{"pruefber()","checkperm()"},
+	// T_pruefberecht
+	{"pruefberecht()","checkperm()"},
 	// T_Datei
 	{", Datei: "," file: "},
 	// T_Erg
@@ -2437,7 +2437,7 @@ void pruefmehrfach(const string& wen,uchar obstumm/*=0*/)
 	*/
 } // void pruefmehrfach(char* ich)
 
-// aufgerufen in: setfaclggf, pruefber, pruefverz
+// aufgerufen in: setfaclggf, pruefberecht, pruefverz
 int untersuser(const string& uname,__uid_t *uidp/*=0*/, __gid_t *gidp/*=0*/,vector<gid_t> *gids/*=0*/,struct passwd* ustr/*=0*/)
 {
 	struct passwd pwd={0};
@@ -2547,7 +2547,7 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 ////						svec gstat;
 ////						systemrueck("getfacl -e -t '"+pfade[i]+"' 2>/dev/null | grep 'user[ \t]*"+cuser+"[ \t]*"+modbuch+"'||:",obverb,oblog,&gstat);
 ////						obhier = !gstat.size();// wenn keine Berechtigung gefunden => erstellen
-						obhier=pruefber(pfade[i],cuser,ergmod);
+						obhier=pruefberecht(pfade[i],cuser,ergmod);
 					} //        if (i||!obhier)
 					if (obhier) {
 						if (obverb) systemrueck("ls -ld \""+pfade[i]+"\"",2,0,/*rueck=*/0,/*obsudc=*/1);
@@ -2585,7 +2585,7 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 #include <sys/acl.h>
 
 // 0=Berechtigung vorhanden, 1= benutzer=Besitzer, 2= benutzer gehoert zur Besitzergruppe, 3= nichts davon
-int pruefber(const string& datei,const string& benutzer,const mode_t mod/*=01*/,int obverb/*=0*/)
+int pruefberecht(const string& datei,const string& benutzer,const mode_t mod/*=01*/,int obverb/*=0*/)
 {
 	struct stat sdat={0};
 	const uid_t uid=getpwnam(benutzer.c_str())->pw_uid;
@@ -2665,11 +2665,11 @@ int pruefber(const string& datei,const string& benutzer,const mode_t mod/*=01*/,
 		} // 	if (!lstat(datei.c_str(),&sdat))
 	} // benutzer.empty()
 	if (obverb) {
-	 Log(violetts+Txk[T_pruefber]+schwarz+Txk[T_Datei]+blau+datei+schwarz+Txk[T_Benutzer]+blau+benutzer+schwarz+", mode: "+blau+ltoan(mod,8)+
+	 Log(violetts+Txk[T_pruefberecht]+schwarz+Txk[T_Datei]+blau+datei+schwarz+Txk[T_Benutzer]+blau+benutzer+schwarz+", mode: "+blau+ltoan(mod,8)+
 	     schwarz+Txk[T_Erg]+blau+(bererg==3?"3":bererg==2?"2":bererg==1?"1":"0")+schwarz,obverb,0);
 	}
 	return bererg;
-} // int pruefber(const string& datei,const string& benutzer,const mode_t mod/*=01*/)
+} // int pruefberecht(const string& datei,const string& benutzer,const mode_t mod/*=01*/)
 
 // obmitfacl: 1= setzen, falls noetig, >1= immer setzen
 // falls Benutzer root
@@ -2733,7 +2733,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 				// folgendes mindestens notwendig fuer sverz.st_mode
 				fehlt=lstat(stack[i].c_str(),&sverz);
 				// wenn notwendige Rechte fehlen ...
-				if (int prueferg=pruefber(/*datei=*/stack[i],aktben,/*mod=*/i?1:7,obverb)) {
+				if (int prueferg=pruefberecht(/*datei=*/stack[i],aktben,/*mod=*/i?1:7,obverb)) {
 					// .. und korrigiert werden sollen
 					if (obmitfacl) {
 						setfaclggf(stack[i],obverb,oblog, /*obunter=*/wahr, /*mod=*/i?1:7, /*obimmer=*/1,/*faclbak=*/1,/*user=*/aktben);
@@ -2764,7 +2764,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 						}
 					}
 					if (obverb) systemrueck("ls -ld \""+stack[i]+"\"",2,0,/*rueck=*/0,/*obsudc=*/1);
-				} // 					if (int prueferg=pruefber(/*datei=*/stack[i],aktben,/*mod=*/i?1:7))
+				} // 					if (int prueferg=pruefberecht(/*datei=*/stack[i],aktben,/*mod=*/i?1:7))
 			} // 				if (obmachen)
 			if (fehlt) {
 				// sonst Ende
