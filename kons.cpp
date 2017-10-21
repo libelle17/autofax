@@ -1339,7 +1339,7 @@ char* ltoa_(long value, char* result, int base=10)
   return result;
 } // ltoa_(long value, char* result, int base)
 
-double verszuzahl(const string vers)
+double verszuzahl(const string& vers)
 {
  string vneu;
  uchar obkomma=0;
@@ -1353,7 +1353,7 @@ double verszuzahl(const string vers)
 	 } // 	 if (!obkomma)
 	} //   if (strchr("0123456789",vers[i]))  else if ..
  } //  for(size_t i=0;i<vers.size();i++)
- if (vneu.empty()) return 0; else return atof(vneu.c_str());
+ if (vneu.empty()) return 0; else return strtold(vneu.c_str(),0);
 } // double verstozahl(string vers)
 
 // Programmversion, falls diese beim Programm mit " --version" abrufbar ist
@@ -4920,8 +4920,10 @@ int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const stri
 		*/
 		const string b1="cd \""+ivw+"\"&&"+(vorcfg.empty()?s_true:vorcfg)+(ohneconf?"":"&& [ -f configure ]&&./configure ")+cfgbismake+" make";
 		const string b2="cd \""+ivw+"\"&& make install";
-		const string b3="cd \""+ivw+"\"&&{ grep -q 'distclean:' Makefile&&make distclean||{ grep -q 'clean:' Makefile&&make clean;};};[ -f configure ]&&./configure; make";
-		const string b4="ldconfig "+lsys.getlib64();
+		const string b3="cd \""+ivw+"\"&&{ grep -q 'distclean:' Makefile&&make distclean||{ grep -q 'clean:' Makefile&&make clean;};};"
+		              	"[ -f configure ]&&./configure; make";
+////		const string b4="ldconfig "+lsys.getlib64();
+		const string b4="ldconfig /usr";
 		int erg1;
 		if (!(erg1=systemrueck(b1,obverb,oblog,/*rueck=*/0,/*obsudc=*/0))) {
 		////if (!(erg1=systemrueck(b1,obverb,oblog,/*rueck=*/0,/*obsudc=*/0,/*verbergen=*/0,/*obergebnisanzeig=*/wahr,/*ueberschr=*/nix,
@@ -4944,6 +4946,28 @@ int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const stri
 } // int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 
 // aufgerufen bei autofax in: pruefhyla, empfcapi, rueckfragen
+void haupt::prueftif(string aktvers)
+{
+
+	Log(violetts+Txk[T_prueftif]+schwarz+" "+aktvers);
+	const string vstr="4.08001";
+	const int altobverb=obverb;
+	size_t p1;
+	if ((p1=aktvers.find('\n'))!=string::npos) aktvers.erase(p1);
+	if ((p1=aktvers.rfind(' '))!=string::npos) aktvers.erase(0,p1+1);
+	const double tv=verszuzahl(aktvers);
+	if (tv<atof(vstr.c_str())) {
+		obverb=1;
+		linstp->doggfinst("cmake",obverb,oblog); 
+		const string proj="tiff_copy";
+		holvomnetz(proj);
+		kompiliere(proj,s_gz,"sed -i.bak s'/(thandle_t) client_data.fd);/(thandle_t) \\&client_data.fd);/' tools/fax2tiff.c &&"
+                  			 "sed -i.bak s'/Version 4.0.8\\\\n/Version "+vstr+"\\\\n/' libtiff/tiffvers.h");
+		obverb=altobverb;
+	} // 	if (dcmv<3.62)
+} // void paramcl::pruefdcmtk()
+
+/*//
 void haupt::prueftif()
 {
 	Log(violetts+Txk[T_prueftif]+schwarz);
@@ -4957,11 +4981,11 @@ void haupt::prueftif()
 		"&& sed -i.bak s\"/uint16 Param;/uint32 Param;/\" libtiff/tif_fax3.h"
 		"&& cmake -DCMAKE_INSTALL_PREFIX=/usr -DLIBTIFF_ALPHA_VERSION=1 . "
 		"&& make";
-	if (!(systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/0)))
-		systemrueck("cd \""+ivp+"\" && make install",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+	if (!(systemrueck(bef,obverb,oblog,0,0)))
+		systemrueck("cd \""+ivp+"\" && make install",obverb,oblog,0,1);
 	anfgg(unindt,"cd \""+ivp+"\" && cat install_manifest.txt|"+sudc+linstp->xargspf+" rm; cd \""+instvz+"\"",bef,obverb,oblog);
 } // void paramcl::prueftif()
-
+*/
 
 int haupt::kompiliere(const string& was,const string& endg, const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/)
 {

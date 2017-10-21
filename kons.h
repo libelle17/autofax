@@ -428,6 +428,7 @@ class perfcl
 string holsystemsprache(int obverb=0);
 int pruefberecht(const string& datei,const string& benutzer,const mode_t mod=01,int obverb=0);
 int untersuser(const string& uname,__uid_t *uidp=0, __gid_t *gidp=0, vector<gid_t> *gids=0,struct passwd* ustr=0);
+double verszuzahl(const string& vers);
 
 class mdatei: public fstream
 {
@@ -1140,7 +1141,7 @@ class haupt
 		int kompiliere(const string& was,const string& endg,const string& vorcfg=nix,const string& cfgbismake=s_dampand);
 		int kompilfort(const string& was,const string& vorcfg=nix,const string& cfgbismake=s_dampand,uchar ohneconf=0);
 		double progvers(const string& prog);
-		void prueftif();
+		void prueftif(string aktvers);
 		void zeigversion();
 		void zeigkonf();
 		void gcl0();

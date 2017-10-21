@@ -3866,7 +3866,8 @@ void paramcl::rueckfragen()
 			}
 			if (obcapi) {
 				pruefsfftobmp();
-				prueftif();
+				caus<<TIFFGetVersion()<<endl;
+				prueftif(TIFFGetVersion());
 			} // 		if (obcapi)
 		} // 	if (obcapi||obhyla)
 	} // 	if (rzf)
@@ -7998,7 +7999,7 @@ int paramcl::pruefhyla()
 				struct stat lnachw={0}, ltiffh={0};
 				const string nachw=lsys.getlib64()+"/sclibtiff";
 				if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh)) {
-					prueftif();
+					prueftif(TIFFGetVersion());
 					if (!touch(nachw,obverb,oblog))
 						anfgg(unindt,sudc+"rm -f \""+nachw+"\"","",obverb,oblog);
 				} // 		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh))
