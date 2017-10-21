@@ -473,6 +473,8 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"holsystemsprache()","fetchingsystemlanguage()"},
 	// T_haupt_haupt
 	{"haupt::haupt()","haupt::haupt()"},
+	// T_erfolgreich_fuer
+	{": erfolgreich fuer \"",": successful for \""},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 
@@ -1398,7 +1400,7 @@ int touch(const string& pfad,int obverb/*=0*/,int oblog/*=0*/)
 				if (obverb) std::cerr<<__PRETTY_FUNCTION__<<": Couldn't utimensat() path \""<<pfad<<"\"\n";
 			} else {
 			if (obverb||oblog) 
-			  std::clog<<violett<<__PRETTY_FUNCTION__<<schwarz<<": erfolgreich fuer \""<<blau<<pfad<<schwarz<<"\"\n";
+			  std::clog<<violett<<__PRETTY_FUNCTION__<<schwarz<<Txk[T_erfolgreich_fuer]<<blau<<pfad<<schwarz<<"\"\n";
 			 fehler=0;
 			} // 			if (rc) else
 		} // 		if (fd<0) else

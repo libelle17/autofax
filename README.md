@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.4589) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45893) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -171,112 +171,7 @@ commands for finding an addressee from the fax number)
 cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
-&rsquo;<b>autofax -rf</b>&rsquo;. <br>
-LIBTIFF, Version 4.0.8 <br>
-Copyright (c) 1988-1996 Sam Leffler <br>
-Copyright (c) 1991-1996 Silicon Graphics, Inc. <br>
-Fuehre aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;rpm -q cmake 2&gt;/dev/null&rsquo;</b>
-...Fuehrte aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;rpm -q cmake 2&gt;/dev/null&rsquo;</b>,
-Ergebnis: <b>Erfolg <br>
-pruefberecht()</b>, Datei: <b>/root</b>, Benutzer:
-<b>root</b>, mode: <b>1</b>, erg: <b>0 <br>
-pruefberecht()</b>, Datei: <b>/root/autofax</b>, Benutzer:
-<b>root</b>, mode: <b>7</b>, erg: <b>0 <br>
-setfaclggf(), Datei: /root/autofax</b>, obunter: <b>1</b>,
-mod: <b>4</b>, obimmer: <b>0</b>, faclbak: <b>0</b>,
-Benutzer: , fake: <b>0</b> <br>
-Suche in &rsquo;<b>/root/autofax</b> &rsquo; nach
-&rsquo;<b>tiff_copy.tar.gz$</b>&rsquo;, Tiefe:
-&rsquo;<b>1</b>&rsquo;, Typbit: &rsquo;<b>1</b>&rsquo;,
-Folge: &rsquo;<b>1</b>&rsquo;, regnoext:
-&rsquo;<b>0</b>&rsquo;, Ergebnis: <b>0</b> <br>
-Fuehre aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;cd
-&quot;/root/autofax&quot;;T=tiff_copy.tar.gz; wget
-https://github.com/libelle17/tiff_copy/archive/master.tar.gz
--O $T&rsquo;</b> ...Fuehrte aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;cd
-&quot;/root/autofax&quot;;T=tiff_copy.tar.gz; wget
-https://github.com/libelle17/tiff_copy/archive/master.tar.gz
--O $T&rsquo;</b>, Ergebnis: <b>Erfolg <br>
-pruefberecht()</b>, Datei: <b>/root</b>, Benutzer:
-<b>root</b>, mode: <b>1</b>, erg: <b>0 <br>
-pruefberecht()</b>, Datei: <b>/root/autofax</b>, Benutzer:
-<b>root</b>, mode: <b>7</b>, erg: <b>0</b> <br>
-Fuehre aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;P=tiff_copy;T=$P.tar.gz;cd
-&quot;/root/autofax&quot;&&tar xpvf $T&& rm
--rf $P 2&gt;/dev/null&rsquo;</b> ...Fuehrte aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;P=tiff_copy;T=$P.tar.gz;cd
-&quot;/root/autofax&quot;&&tar xpvf $T&& rm
--rf $P 2&gt;/dev/null&rsquo;</b>, Ergebnis: <b>Erfolg</b>
-<br>
-Fuehre aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;P=tiff_copy;M=$P-master;cd
-&quot;/root/autofax&quot;&&mv $M $P&rsquo;</b>
-...Fuehrte aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;P=tiff_copy;M=$P-master;cd
-&quot;/root/autofax&quot;&&mv $M $P&rsquo;</b>,
-Ergebnis: <b>Erfolg <br>
-pruefberecht()</b>, Datei: <b>/root</b>, Benutzer:
-<b>root</b>, mode: <b>1</b>, erg: <b>0 <br>
-pruefberecht()</b>, Datei: <b>/root/autofax</b>, Benutzer:
-<b>root</b>, mode: <b>7</b>, erg: <b>0</b> <br>
-Fuehre aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;cd
-&quot;/root/autofax/tiff_copy&quot;&&sed -i.bak
-s&rsquo;&acute;&rsquo;/(thandle_t)
-client_data.fd);/(thandle_t)
-client_data.fd);/&rsquo;&acute;&rsquo; tools/fax2tiff.c
-&&sed -i.bak s&rsquo;&acute;&rsquo;/Version
-4.0.8\n/Version 4.08001\n/&rsquo;&acute;&rsquo;
-libtiff/tiffvers.h&& [ -f configure
-]&&./configure && make&rsquo;</b> ...Fuehrte
-aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;cd
-&quot;/root/autofax/tiff_copy&quot;&&sed -i.bak
-s&rsquo;&acute;&rsquo;/(thandle_t)
-client_data.fd);/(thandle_t)
-client_data.fd);/&rsquo;&acute;&rsquo; tools/fax2tiff.c
-&&sed -i.bak s&rsquo;&acute;&rsquo;/Version
-4.0.8\n/Version 4.08001\n/&rsquo;&acute;&rsquo;
-libtiff/tiffvers.h&& [ -f configure
-]&&./configure && make&rsquo;</b>, Ergebnis:
-<b>Erfolg</b> <br>
-Fuehre aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;cd
-&quot;/root/autofax/tiff_copy&quot;&& make
-install&rsquo;</b> ...Fuehrte aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;cd
-&quot;/root/autofax/tiff_copy&quot;&& make
-install&rsquo;</b>, Ergebnis: <b>Erfolg</b> <br>
-Fuehre aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;ldconfig /usr&rsquo;</b> ...Fuehrte aus: <b>env
-PATH=&rsquo;/usr/local/ssl/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin&rsquo;
-sh -c &rsquo;ldconfig /usr&rsquo;</b>, Ergebnis:
-<b>Erfolg</b> <br>
-Ergebnis nach make 0 <br>
-Ergebnis nach make install 0 <b><br>
-anfgg: &rsquo;H=/root;A=$H/autofax;P=tiff_copy;cd
-&quot;$A/$P&quot; 2&gt;/dev/null|| cd $(find &quot;$H&quot;
--name $P -printf &quot;%T@ %p0 2&gt;/dev/null|sort -rn|head
--n1|cut -d&quot; &quot; -f2)&&make uninstall; cd
-&quot;$H&quot;&rsquo; <br>
+&rsquo;<b>autofax -rf</b>&rsquo;. <b><br>
 Options which are not saved: <br>
 -v, --verbose</b>: screen output more verbose <b><br>
 -lfn, --logfilenew</b>: delete log file afore <b><br>
@@ -885,7 +780,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.4589) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.45893) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1074,10 +969,7 @@ sondern nur &uuml;ber die Konfigurationsdatei eingegeben
 werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
-kann. <br>
-LIBTIFF, Version 4.08001 <br>
-Copyright (c) 1988-1996 Sam Leffler <br>
-Copyright (c) 1991-1996 Silicon Graphics, Inc. <b><br>
+kann. <b><br>
 Optionen, die nicht gespeichert werden: <br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger <b><br>
 -ldn, --logdateineu</b>: logdatei vorher loeschen <b><br>

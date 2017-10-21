@@ -365,6 +365,7 @@ enum Tkons_
 	T_prueftif,
 	T_holsystemsprache,
 	T_haupt_haupt,
+	T_erfolgreich_fuer,
 	T_konsMAX
 }; // Tkons_
 

@@ -5398,46 +5398,53 @@ int paramcl::pruefocr()
 				if (linstp->ipr==dnf||linstp->ipr==yum) 
 					linstp->doggfinst("redhat-rpm-config",obverb+1,oblog);
 				linstp->doinst("ghostscript",obverb+1,oblog,"gs");
-				if (systemrueck("python3 -m pip install --upgrade setuptools pip",obverb+1,oblog,/*rueck=*/0,/*obsudc=*/2)) {
-					if (double pyv=progvers("python3")<=3.41) {
-						::Log(rots+Tx[T_Ihre_Python3_Version_koennte_mit]+blau+ltoan(pyv)+rot+
-								Tx[T_veraltet_sein_Wenn_Sie_Ihre_Faxe_OCR_unterziehen_wollen_dann_fuehren_Sie_bitte_ein_Systemupdate_durch_mit]+
-								blau+linstp->upd+schwarz,1,1);
-					} //          if (double pyv=progvers("python3")<=3.41)
-				} // 				if (systemrueck(sudhc+"python3 -m pip install --upgrade setuptools pip",obverb+1,oblog))
-				//				systemrueck((cus.cuid?sudo:{})+"python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
-				string vprog;
-				for(int iru=0;iru<2;iru++) {
-					const string virtualenv="virtualenv";
-					if (obprogda(virtualenv,obverb,oblog,&vprog)) break;
-					systemrueck("pip3 install "+virtualenv,obverb,oblog,/*rueck=*/0,/*obsudc=*/2);
-				} // 				for(int iru=0;iru<2;iru++)
+				string ocrvers; // ocrmypdf-Version, falls die letzte mit Python nicht geht
+				for(int aru=0;aru<2;aru++) {
+					if (systemrueck("python3 -m pip install --upgrade setuptools pip",obverb+1,oblog,/*rueck=*/0,/*obsudc=*/2)) {
+						if (double pyv=progvers("python3")<=3.41) {
+							::Log(rots+Tx[T_Ihre_Python3_Version_koennte_mit]+blau+ltoan(pyv)+rot+
+									Tx[T_veraltet_sein_Wenn_Sie_Ihre_Faxe_OCR_unterziehen_wollen_dann_fuehren_Sie_bitte_ein_Systemupdate_durch_mit]+
+									blau+linstp->upd+schwarz,1,1);
+						} //          if (double pyv=progvers("python3")<=3.41)
+					} // 				if (systemrueck(sudhc+"python3 -m pip install --upgrade setuptools pip",obverb+1,oblog))
+					//				systemrueck((cus.cuid?sudo:{})+"python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
+					string vprog;
+					for(int iru=0;iru<2;iru++) {
+						const string virtualenv="virtualenv";
+						if (obprogda(virtualenv,obverb,oblog,&vprog)) break;
+						systemrueck("pip3 install "+virtualenv,obverb,oblog,/*rueck=*/0,/*obsudc=*/2);
+					} // 				for(int iru=0;iru<2;iru++)
 
-				string bef;
-				if (!vprog.empty()) {
-					bef=vprog+" \""+virtvz+"\";"
-						". \""+virtvz+"/bin/activate\";"
-						"pip3 install requests;"
-						"pip3 install --upgrade ocrmypdf;"
-						"deactivate;";
-				} else {
-					bef="python3 -m venv \""+virtvz+"\";"
-						"python3 -m venv --upgrade \""+virtvz+"\";"
-						". \""+virtvz+"/bin/activate\";"
-						"pip3 install --upgrade pip;"
-						"pip3 install ocrmypdf;"
-						"deactivate;"
-						////		"grep \""+sudc+"rm -rf \\\""+virtvz+"\\\"\" \""+unindt+"\"||printf \""+sudc+"rm -rf \\\""+virtvz+"\\\"\\n\">>\""+unindt+"\";"
-						////		"grep ocrmypdf \""+unindt+"\"||printf \""+sudc+"pip3 uninstall --yes ocrmypdf\\n\">>\""+unindt+"\";"
-						////		"||sed -i \"/ python3/isudc pip3 uninstall --yes ocrmypdf\" \""+unindt+"\""
-						"'";
-				} // if (!vprog.empty()) else
-				systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/2);
-				anfgg(unindt,sudc+"rm -rf \""+virtvz+"\"","",obverb,oblog);
-				anfgg(unindt,
-						sudc+". \""+virtvz+"/bin/activate\";"+
-						"pip3 uninstall --yes ocrmypdf;"
-						"deactivate;",bef,obverb,oblog);
+					string bef;
+					if (!vprog.empty()) {
+						bef=vprog+" \""+virtvz+"\";"
+							". \""+virtvz+"/bin/activate\";"
+							"pip3 install requests;"
+							"pip3 install --upgrade ocrmypdf;"
+							"deactivate;";
+					} else {
+						bef="python3 -m venv \""+virtvz+"\";"
+							"python3 -m venv --upgrade \""+virtvz+"\";"
+							". \""+virtvz+"/bin/activate\";"
+							"pip3 install --upgrade pip;"
+							"pip3 install ocrmypdf;"
+							"deactivate;";
+							////		"grep \""+sudc+"rm -rf \\\""+virtvz+"\\\"\" \""+unindt+"\"||printf \""+sudc+"rm -rf \\\""+virtvz+"\\\"\\n\">>\""+unindt+"\";"
+							////		"grep ocrmypdf \""+unindt+"\"||printf \""+sudc+"pip3 uninstall --yes ocrmypdf\\n\">>\""+unindt+"\";"
+							////		"||sed -i \"/ python3/isudc pip3 uninstall --yes ocrmypdf\" \""+unindt+"\""
+					} // if (!vprog.empty()) else
+					systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/2);
+					if (!lstat(ocrmp.c_str(),&ostat)) {
+						anfgg(unindt,sudc+"rm -rf \""+virtvz+"\"","",obverb,oblog);
+						anfgg(unindt,
+								sudc+". \""+virtvz+"/bin/activate\";"+
+								"pip3 uninstall --yes ocrmypdf;"
+								"deactivate;",bef,obverb,oblog);
+						break;
+					} // 					if (!lstat(ocrmp.c_str(),&ostat))
+					if (aru) break;
+					ocrvers="==4.5.6"; // neuere ocrmypdf erfordern python3 >= 3.5
+				} // 				for(int aru=0;aru<2;aru++)
 
 				//// sudc+"pip3 uninstall --yes ocrmypdf"
 				//// sudc+"dnf install ./ghostscript-9.16-4.fc24.i686.rpm"
