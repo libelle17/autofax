@@ -750,6 +750,7 @@ enum T_
 	T_automatisch_installiert_werden,
 	T_zeigvers,
 	T_Installiere_ocrmypdf,
+	T_Ergebnis_nach,
 	T_MAX
 };
 
@@ -2103,6 +2104,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"zeigvers","showvers"},
 	// T_Installiere_ocrmypdf
 	{"Installiere ocrmypdf ...","Installing ocrmypdf ..."},
+	// T_Ergebnis_nach
+	{"Ergebnis nach sed","result after sed"},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -8074,11 +8077,11 @@ int paramcl::pruefhyla()
 							} // 		if (!holvomnetz("hylafax","https://sourceforge.net/projects/","/files/latest"))
 							if (!was.empty()) {
 								useruucp(huser,obverb,oblog);
-								const string cfgbismake=" --nointeractive && echo $? = Ergebnis nach configure && "
-									"sed -i.bak \"s.PAGESIZE='\\''North American Letter'\\''.PAGESIZE='\\''ISO A4'\\''.g;"
-									"s.PATH_GETTY='\\''\\.*'\\''.PATH_GETTY='\\''"
-									"$(grep LIBEXEC defs | cut -d'\\''='\\'' -f2 | sed '\\''s/^[[:space:]]*//;s/[[:space:]]*$//'\\'')/faxgetty'\\''.g\" config.cache"
-									"&& echo $? = Ergebnis nach sed"
+								const string cfgbismake=nix+" --nointeractive && echo $? = Ergebnis nach configure && "
+									"sed -i.bak \"s.PAGESIZE='North American Letter'.PAGESIZE='ISO A4'.g;"
+									"s.PATH_GETTY='\\.*'.PATH_GETTY='"
+									"$(grep LIBEXEC defs | cut -d'=' -f2 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')/faxgetty'.g\" config.cache"
+									"&& echo $? = "+Tx[T_Ergebnis_nach]+" sed"
 									"&&"+sudc;
 								if (!kompilfort(was,{},cfgbismake)) {
 									const string nachcfg=
@@ -9883,7 +9886,7 @@ int main(int argc, char** argv)
 	if (pm.obvc) pm.dovc();
 	if (pm.obvs) exit(systemrueck("cd \""+instvz+"\"; sh viall"+devtty,/*obverb=*/0,/*oblog=*/0,/*rueck=*/0,/*obsudc=*/1));
 	if (pm.zeigvers) {
-		pm.zeigversion();
+		pm.zeigversion(TIFFGetVersion());
 		pm.zeigkonf();
 		pm.capisv();
 		pm.hylasv1();

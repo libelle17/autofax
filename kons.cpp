@@ -475,6 +475,8 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"haupt::haupt()","haupt::haupt()"},
 	// T_erfolgreich_fuer
 	{": erfolgreich fuer \"",": successful for \""},
+	// T_Libtiff_Version
+	{"Libtiff-Version: ","libtiff version: "},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 
@@ -5008,7 +5010,7 @@ int haupt::kompiliere(const string& was,const string& endg, const string& vorcfg
 } // int haupt::kompiliere(const string was,const string endg,const string nachtar, const string vorcfg,const string cfgbismake)
 
 // augerufen in: main
-void haupt::zeigversion()
+void haupt::zeigversion(const string& ltiffv/*=nix*/)
 {
 	struct tm tm={0};
 	char buf[100];
@@ -5025,6 +5027,8 @@ void haupt::zeigversion()
 	cout<<"              "<<Txk[T_Kompiliert]<<blau<<buf<<schwarz<<endl;
 	cout<<Txk[T_Quelle]<<blau<<defvors/*//"https://github.com/libelle17/"*/<<meinname<<schwarz<<endl;
 	cout<<Txk[T_Installationsverzeichnis]<<blau<<instvz<<schwarz<<endl;
+	if (!ltiffv.empty())
+		cout<<Txk[T_Libtiff_Version]<<blau<<ltiffv.substr(0,ltiffv.find("\n"))<<schwarz<<endl;
 	cout<<Txk[T_Hilfe]<<braun<<"man "<<base_name(mpfad)<<schwarz<<Txk[T_or]<<braun<<"man -Lde "<<base_name(mpfad)<<schwarz<<"'"<<endl;
 } // void haupt::zeigversion(const char* const prog)
 

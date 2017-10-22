@@ -366,6 +366,7 @@ enum Tkons_
 	T_holsystemsprache,
 	T_haupt_haupt,
 	T_erfolgreich_fuer,
+	T_Libtiff_Version,
 	T_konsMAX
 }; // Tkons_
 
@@ -1143,7 +1144,7 @@ class haupt
 		int kompilfort(const string& was,const string& vorcfg=nix,const string& cfgbismake=s_dampand,uchar ohneconf=0);
 		double progvers(const string& prog);
 		void prueftif(string aktvers);
-		void zeigversion();
+		void zeigversion(const string& ltiffv=nix);
 		void zeigkonf();
 		void gcl0();
 		uchar pruefcron();
