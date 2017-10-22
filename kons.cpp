@@ -4965,7 +4965,7 @@ void haupt::prueftif(string aktvers)
 	// Die Datei /usr/local/sclibtiff wird als Nachweis verwendet, dass die Installationskorrektur durchgefuert wurde
 	const string nachw="/usr/local/sclibtiff",ht1="/usr/include/tiff.h", ht2="/usr/local/include/tiff.h";
 	struct stat lnw={0}, lht1={0}, lht2={0};
-	if (tv==4.07||lstat(nachw.c_str(),&lnw)||(lstat(ht1.c_str(),&lht1)&&lstat(ht2.c_str(),&lht2))) {
+	if (((tv==4.07||tv==4.08)&&lstat(nachw.c_str(),&lnw))||(lstat(ht1.c_str(),&lht1)&&lstat(ht2.c_str(),&lht2))) {
 		obverb=1;
 		////		linstp->doggfinst("cmake",obverb,oblog); 
 		const string proj="tiff_copy";
