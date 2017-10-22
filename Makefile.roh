@@ -316,6 +316,9 @@ endif
 	find $$(find /usr -maxdepth 1 -name "lib*" $(KF)|sort -r) -type l -xtype f -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
 	./configure inst _ "$$LTakt" verbose;\
 	done; :;
+#	P=tiff_copy;T=$$P.tar.gz;M=$$P-master;wget https://github.com/$(GITV)/$$P/archive/master.tar.gz -O $$T&&{ rm -rf $$P;tar xpvf $$T;} &&\
+	mv $$M $$P&& cd $$P&&{ sed -i.bak s'/(thandle_t) client_data.fd);/(thandle_t) \&client_data.fd);/' tools/fax2tiff.c;\
+	./configure&& make&& sudo make install;sudo ldconfig;cd ..;};
 	-@[ "$(LACL)" ]&&{ [ -f /usr/include/sys/acl.h ]|| ./configure inst _ "$(LACL)" verbose;}||:
 	-@[ "$(LBOOST)" ]&&{ $(SPR) $(LBOOST)>$(KR)|| ./configure inst _ "$(LBOOST)" verbose;}||:
 	-@[ "$(LBIO)" ]&&{ $(SPR) "$(LBIO)">$(KR)||./configure inst _ "$(LBIO)" verbose;}||:

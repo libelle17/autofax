@@ -453,7 +453,7 @@ enum T_
 	T_MusterVorgb,
 	T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben,
 	T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr,
-	T_faxnr_wird_ersetzt_mit_der_Faxnr,
+	T_Strich_ist_kein_SQL_Befehl_faxnr_wird_ersetzt_mit_der_Faxnr,
 	T_Datenbank,
 	T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
 	T_In,
@@ -1492,9 +1492,9 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	// T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr
 	{" ('-'=SQL-Befehl loeschen, 2 Ergebnisfelder, '&&faxnr&&' wird ersetzt mit der Faxnr, s.man -Lde " DPROG ")",
 		" ('-'=delete this sql command, 2 result fields, '&&faxnr&&' will be replaces with the fax-no., see man " DPROG ")"},
-	// T_faxnr_wird_ersetzt_mit_der_Faxnr
-	{" (2 Ergebnisfelder, '&&faxnr&&' wird ersetzt mit der Faxnr)",
-		" (2 result fields, '&&faxnr&&' will be replaces with the fax-no.)"},
+	// T_Strich_ist_kein_SQL_Befehl_faxnr_wird_ersetzt_mit_der_Faxnr
+	{" ('-' = kein SQL-Befehl; ansonsten bitte SQL-Befehl mit 2 Ergebnisfeldern, '&&faxnr&&' wird ersetzt mit der Faxnr)",
+		" ('-' = no sql-command; otherwise type sql-command with 2 result fields, '&&faxnr&&' will be replaces with the fax-no.)"},
 	// T_Datenbank
 	{"Datenbank '","Database '"},
 	// T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben
@@ -3515,8 +3515,8 @@ void paramcl::rueckfragen()
 			string mpw2;
 			mpwd.clear();
 			do {
-				mpwd=Tippstr(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Txd[T_fuer_Benutzer]+dblau+muser+schwarz+"'",&mpwd);
-				mpw2=Tippstr(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Txd[T_fuer_Benutzer]+dblau+muser+schwarz+"'"+" ("+Txk[T_erneute_Eingabe]+")",&mpw2);
+				mpwd=Tippstr(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Txk[T_fuer_Benutzer]+dblau+muser+schwarz+"'",&mpwd);
+				mpw2=Tippstr(string(Tx[T_Passwort_fuer_MySQL_MariaDB])+Txk[T_fuer_Benutzer]+dblau+muser+schwarz+"'"+" ("+Txk[T_erneute_Eingabe]+")",&mpw2);
 			} while (mpwd!=mpw2);
 			const string pwdstr=XOR(mpwd,pwk);
 			agcnfA[lfd].setze(&pwdstr);
@@ -3751,7 +3751,7 @@ void paramcl::rueckfragen()
 				string zwi;
 				while (1) {
 					zwi=Tippstr(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt+1)+(vorgabe->empty()?
-								Tx[T_faxnr_wird_ersetzt_mit_der_Faxnr]:
+								Tx[T_Strich_ist_kein_SQL_Befehl_faxnr_wird_ersetzt_mit_der_Faxnr]:
 								Tx[T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr]),
 							vorgabe);
 					if (zwi=="-") zwi.clear();
@@ -8002,14 +8002,7 @@ int paramcl::pruefhyla()
 					"|| printf \"cd \"$(pwd)\" && make uninstall; cd \""+instvz+"\"\\n\" >> \""+unindt+"\";} "
 					"'"
 				 */
-				// Die Datei /usr/lib64/sclibtiff wird als Nachweis verwendet, dass die Installationskorrektur durchgefuert wurde
-				struct stat lnachw={0}, ltiffh={0};
-				const string nachw=lsys.getlib64()+"/sclibtiff";
-				if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh)) {
-					prueftif(TIFFGetVersion());
-					if (!touch(nachw,obverb,oblog))
-						anfgg(unindt,sudc+"rm -f \""+nachw+"\"","",obverb,oblog);
-				} // 		 if (lstat("/usr/include/tiff.h",&lnachw) || lstat(nachw.c_str(),&ltiffh))
+				prueftif(TIFFGetVersion());
 
 				for(unsigned versuch=0;versuch<3;versuch++) {
 					// 1) Dienst(e) hylafax, (hylafax-)hfaxd, (hylafax-)faxq identifizieren

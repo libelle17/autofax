@@ -4950,28 +4950,35 @@ int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const stri
 // aufgerufen bei autofax in: pruefhyla, empfcapi, rueckfragen
 void haupt::prueftif(string aktvers)
 {
-
 	Log(violetts+Txk[T_prueftif]+schwarz+" "+aktvers);
-	const string vstr="4.08001";
+	const string vstr="4.0.8"; //// "4.08001";
 	const int altobverb=obverb;
 	size_t p1;
 	if ((p1=aktvers.find('\n'))!=string::npos) aktvers.erase(p1);
 	if ((p1=aktvers.rfind(' '))!=string::npos) aktvers.erase(0,p1+1);
 	const double tv=verszuzahl(aktvers);
-	if (tv<atof(vstr.c_str())) {
+	// Die Datei /usr/local/sclibtiff wird als Nachweis verwendet, dass die Installationskorrektur durchgefuert wurde
+	const string nachw="/usr/local/sclibtiff",ht1="/usr/include/tiff.h", ht2="/usr/local/include/tiff.h";
+	struct stat lnw={0}, lht1={0}, lht2={0};
+	if (tv<atof(vstr.c_str())||lstat(nachw.c_str(),&lnw)||(lstat(ht1.c_str(),&lht1)&&lstat(ht2.c_str(),&lht2))) {
 		obverb=1;
-		linstp->doggfinst("cmake",obverb,oblog); 
+		////		linstp->doggfinst("cmake",obverb,oblog); 
 		const string proj="tiff_copy";
 		holvomnetz(proj);
-		kompiliere(proj,s_gz,"sed -i.bak s'/(thandle_t) client_data.fd);/(thandle_t) \\&client_data.fd);/' tools/fax2tiff.c &&"
-                  			 "sed -i.bak s'/Version 4.0.8\\\\n/Version "+vstr+"\\\\n/' libtiff/tiffvers.h");
+		if (!kompiliere(proj,s_gz,"sed -i.bak s'/(thandle_t) client_data.fd);/(thandle_t) \\&client_data.fd);/' tools/fax2tiff.c "
+					////                  			 "&& sed -i.bak s'/Version 4.0.8\\\\n/Version "+vstr+"\\\\n/' libtiff/tiffvers.h"
+					)) {
+			if (!touch(nachw,obverb,oblog)) {
+				anfgg(unindt,sudc+"rm -f \""+nachw+"\"","",obverb,oblog);
+			}
+		}
 		obverb=altobverb;
 	} // 	if (dcmv<3.62)
 } // void paramcl::pruefdcmtk()
 
 /*//
-void haupt::prueftif()
-{
+	void haupt::prueftif()
+	{
 	Log(violetts+Txk[T_prueftif]+schwarz);
 	linstp->doggfinst("cmake",obverb,oblog); 
 	const string proj="tiff_copy";
