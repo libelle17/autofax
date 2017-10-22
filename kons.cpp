@@ -1405,7 +1405,10 @@ int touch(const string& pfad,int obverb/*=0*/,int oblog/*=0*/)
 			} // 			if (rc) else
 		} // 		if (fd<0) else
 		if (fehler)
-			fehler=systemrueck("touch '"+pfad+"'",obverb,oblog,/*obsudc=*/0);
+			for(int iru=0;iru<2;iru++) {
+				if (!fehler) break;
+				fehler=systemrueck("touch '"+pfad+"'"+(iru?"":" 2>/dev/null"),obverb,oblog,/*rueck=*/0,/*obsudc=*/iru);
+			}
 	} // 	if (fehler)
 	return fehler;
 } // int touch(const std::string& pfad,int obverb/*=0*/,int oblog/*=*/)
@@ -1521,7 +1524,7 @@ lsysen lsyscl::getsys(int obverb/*=0*/,int oblog/*=0*/)
 {
       if (sys==usys) {
         if (!systemrueck("cat /proc/version | grep SUSE",obverb-2,oblog,/*rueck=*/0,/*obsudc=*/0)) return sus;
-        if (!systemrueck("cat /proc/version | grep 'Ubuntu\\|ebian'",obverb-2,oblog,/*obsudc=*/0)) return deb;
+        if (!systemrueck("cat /proc/version | grep 'Ubuntu\\|ebian'",obverb-2,oblog,/*rueck=*/0,/*obsudc=*/0)) return deb;
         if (!systemrueck("cat /proc/version | grep edora",obverb-2,oblog,/*rueck=*/0,/*obsudc=*/0)) return fed;
       } //       if (sys==usys)
       return usys;
@@ -4922,7 +4925,7 @@ int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const stri
 		*/
 		const string b1="cd \""+ivw+"\"&&"+(vorcfg.empty()?s_true:vorcfg)+(ohneconf?"":"&& [ -f configure ]&&./configure ")+cfgbismake+" make";
 		const string b2="cd \""+ivw+"\"&& make install";
-		const string b3="cd \""+ivw+"\"&&{ grep -q 'distclean:' Makefile&&make distclean||{ grep -q 'clean:' Makefile&&make clean;};};"
+		const string b3="cd \""+ivw+"\"&&{ M=Makefile;[ -f $M ]&&{ grep -q 'distclean:' $M&&make distclean||{ grep -q 'clean:' $M&&make clean;};};};"
 		              	"[ -f configure ]&&./configure; make";
 ////		const string b4="ldconfig "+lsys.getlib64();
 		const string b4="ldconfig /usr";
@@ -4951,7 +4954,7 @@ int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const stri
 void haupt::prueftif(string aktvers)
 {
 	Log(violetts+Txk[T_prueftif]+schwarz+" "+aktvers);
-	const string vstr="4.0.8"; //// "4.08001";
+//	const string vstr="4.0.8"; //// "4.08001";
 	const int altobverb=obverb;
 	size_t p1;
 	if ((p1=aktvers.find('\n'))!=string::npos) aktvers.erase(p1);
@@ -4960,7 +4963,7 @@ void haupt::prueftif(string aktvers)
 	// Die Datei /usr/local/sclibtiff wird als Nachweis verwendet, dass die Installationskorrektur durchgefuert wurde
 	const string nachw="/usr/local/sclibtiff",ht1="/usr/include/tiff.h", ht2="/usr/local/include/tiff.h";
 	struct stat lnw={0}, lht1={0}, lht2={0};
-	if (tv<atof(vstr.c_str())||lstat(nachw.c_str(),&lnw)||(lstat(ht1.c_str(),&lht1)&&lstat(ht2.c_str(),&lht2))) {
+	if (tv==4.07||lstat(nachw.c_str(),&lnw)||(lstat(ht1.c_str(),&lht1)&&lstat(ht2.c_str(),&lht2))) {
 		obverb=1;
 		////		linstp->doggfinst("cmake",obverb,oblog); 
 		const string proj="tiff_copy";

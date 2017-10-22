@@ -453,7 +453,7 @@ enum T_
 	T_MusterVorgb,
 	T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben,
 	T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr,
-	T_Strich_ist_kein_SQL_Befehl_faxnr_wird_ersetzt_mit_der_Faxnr,
+	T_faxnr_wird_ersetzt_mit_der_Faxnr,
 	T_Datenbank,
 	T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
 	T_In,
@@ -1492,9 +1492,9 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	// T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr
 	{" ('-'=SQL-Befehl loeschen, 2 Ergebnisfelder, '&&faxnr&&' wird ersetzt mit der Faxnr, s.man -Lde " DPROG ")",
 		" ('-'=delete this sql command, 2 result fields, '&&faxnr&&' will be replaces with the fax-no., see man " DPROG ")"},
-	// T_Strich_ist_kein_SQL_Befehl_faxnr_wird_ersetzt_mit_der_Faxnr
-	{" ('-' = kein SQL-Befehl; ansonsten bitte SQL-Befehl mit 2 Ergebnisfeldern, '&&faxnr&&' wird ersetzt mit der Faxnr)",
-		" ('-' = no sql-command; otherwise type sql-command with 2 result fields, '&&faxnr&&' will be replaces with the fax-no.)"},
+	// T_faxnr_wird_ersetzt_mit_der_Faxnr
+	{" (bitte ggf. SQL-Befehl mit 2 Ergebnisfeldern, '&&faxnr&&' wird ersetzt mit der Faxnr)",
+		" (if wanted type sql-command with 2 result fields, '&&faxnr&&' will be replaces with the fax-no.)"},
 	// T_Datenbank
 	{"Datenbank '","Database '"},
 	// T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben
@@ -1511,7 +1511,7 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"' keinmal '&&faxnr&&' gefunden. Wollen Sie den SQL-Befehl neu eingeben?",
 		"' no occurance of '&&faxnr&&' found. Do You want to reenter the sql command?"},
 	// T_beim_letzten_nichts_eingeben
-	{" (beim letzten '-' eingeben)"," (for the last one enter '-')"},
+	{" (beim letzten nichts eingeben)"," (for the last one enter nothing)"},
 	// T_Muss_Hylafax_installieren
 	{"Muss Hylafax installieren ...","Have to install hylafax ..."},
 	// T_pruefstdfaxnr
@@ -3751,9 +3751,9 @@ void paramcl::rueckfragen()
 				string zwi;
 				while (1) {
 					zwi=Tippstr(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt+1)+(vorgabe->empty()?
-								Tx[T_Strich_ist_kein_SQL_Befehl_faxnr_wird_ersetzt_mit_der_Faxnr]:
+								Tx[T_faxnr_wird_ersetzt_mit_der_Faxnr]:
 								Tx[T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr]),
-							vorgabe);
+							vorgabe,/*obnichtleer=*/0);
 					if (zwi=="-") zwi.clear();
 					if (zwi.empty()) {
 						break;
@@ -3823,8 +3823,9 @@ void paramcl::rueckfragen()
 		for(;;akt++) {
 			cppSchluess* neuS=new cppSchluess;
 			neuS->name=string("ZMMuster_")+ltoan(akt+1);
-			neuS->wert=Tippstr(string(Tx[T_Zielmuster_Nr])+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],(akt<zmzn)?&zmp[akt].holmuster():&nix);
-			if (neuS->wert=="-") neuS->wert.clear();
+			neuS->wert=Tippstr(string(Tx[T_Zielmuster_Nr])+ltoan(akt+1)+Tx[T_beim_letzten_nichts_eingeben],
+					(akt<zmzn)?&zmp[akt].holmuster():&nix,/*obnichtleer=*/0);
+////			if (neuS->wert=="-") neuS->wert.clear();
 			uchar obabbrech=(neuS->wert.empty()); // das letzte Muster muss leer sein, damit jede Datei irgendwo hinkommt
 			zmv.push_back(neuS);
 			neuS=new cppSchluess;
@@ -5324,13 +5325,14 @@ void paramcl::pruefunpaper()
 		/*//if (linstp->ipr==apt||linstp->ipr==dnf||linstp->ipr==yum)*/ 
 		const string upc="unpaper_copy";
 		holvomnetz(upc);
-		if (vers) systemrueck("which unpaper && rm $(which unpaper) && hash -r",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
+		if (vers) systemrueck("which unpaper &&"+sudc+"rm $(which unpaper) && hash -r",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
 		kompiliere(upc,s_gz);
 		// unpaper: error while loading shared libraries: libavformat.so.56: cannot open shared object file: No such file or directory
 		if (systemrueck("unpaper",obverb,oblog,/*rueck=*/0,/*obsudc=*/0)==127) {
 			// /usr/bin/make in Ubuntu und Opensuse, /bin/make in Fedora, somit aus crontab aufrufbar
 			string ivu=instvz+vtz+upc;
-			if (!(systemrueck("cd \""+ivu+"\"&&{ grep -q 'distclean:' Makefile&&make distclean||{grep -q 'clean:' Makefile&&make clean;};};[ -f configure ]&&./configure;make",obverb,oblog,/*rueck=*/0,/*obsudc=*/0)))
+			if (!(systemrueck("cd \""+ivu+"\"&&{ M=Makefile;[ -f $M ]&&{ grep -q 'distclean:' $M&&make distclean||{ grep -q 'clean:' $M&&make clean;};};};"
+							"[ -f configure ]&&./configure;make",obverb,oblog,/*rueck=*/0,/*obsudc=*/0)))
 				systemrueck("cd \""+ivu+"\"&& make install",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		} // 		if (systemrueck
 	} // 						if (!urueck.size()||vers<6.1)
@@ -8518,7 +8520,7 @@ void paramcl::pruefsfftobmp()
 			} // if (!systemrueck(befehl,obverb,oblog)) 
 		} // if (!obprogda("sfftobmp",obverb,oblog)) 
 	} else {
-		linstp->doggfinst("sfftobmp",obverb+1,oblog);
+		linstp->doggfinst("sfftobmp",obverb,oblog);
 	} // if (system==fed) else
 } // pruefsfftobmp
 
@@ -8751,8 +8753,8 @@ int paramcl::pruefcapi()
 											Tx[T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1,1);
 									exit(10);
 								} // 							if (kernel.find(relev))
-								systemrueck("cd "+instvz+" && dnf -y builddep "+kstring,obverb,oblog,/*obsudc=*/1);
-								systemrueck("cd "+instvz+" && rpm -ivh "+kstring,obverb,oblog,/*obsudc=*/0);// mit sudo wird kernel.spec nicht erstellt
+								systemrueck("cd "+instvz+" && dnf -y builddep "+kstring,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+								systemrueck("cd "+instvz+" && rpm -ivh "+kstring,obverb,oblog,/*rueck=*/0,/*obsudc=*/0);// mit sudo wird kernel.spec nicht erstellt
 								// warning: group/user mockbuild does not exist - using root
 								const string grund=gethome()+"/rpmbuild",specs=grund+"/SPECS",build=grund+"/BUILD";
 								pruefverz(specs,obverb,oblog);
