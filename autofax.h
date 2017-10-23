@@ -319,7 +319,7 @@ class paramcl: public haupt // Programmparameter
 		void wandle(const string& udatei,const string& urname,const uchar iprio,svec& toktxt,svec& toknr,svec& tokname,
 		            const string& anfxstr,const string& exten,vector<urfxcl> *urfxp);
 		void inDbc(DB *My, const string& spooltab, const string& altspool, const string& spoolg, const fsfcl *const fsfp, 
-		           const char* telnr, const size_t aktc);
+		           const string& telnr, const size_t aktc);
 		void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
 				const fsfcl *const fsfp,const string *tel, const size_t aktc);

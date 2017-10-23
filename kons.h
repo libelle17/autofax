@@ -1077,7 +1077,7 @@ class haupt
     string cronminut; // Minuten fuer crontab; 0 = kein Crontab-Eintrag
 		uchar nochkeincron;
 		uchar cronzuplanen;
-		uchar cmeingegeben=0;
+		uchar cmeingegeben=0; // cron-Minuten eingegeben
 		uchar crongeprueft=0;
 		static const string edit;
 		static const string passwddt, groupdt, sudoersdt;

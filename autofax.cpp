@@ -4254,9 +4254,10 @@ void paramcl::pruefcron()
 		const string vorsaetze;
 		const string cbef="0 22 * * * "+vorsaetze+vaufr[1]; // "-"-Zeichen nur als cron
 		tucronschreib(zsaufr[1],cronzuplanen,cbef);
-		if (cmeingegeben) if (cronzuplanen==vorcm.empty())
+		if (cmeingegeben) {/*if (cronzuplanen==vorcm.empty())*/
 			::Log(blaus+"'"+vaufr[1]+"'"+schwarz+Txk[T_wird]+blau+(cronzuplanen?Tx[T_um_22_Uhr]:Txk[T_gar_nicht])+schwarz+Txk[T_statt]+
 					+blau+(vorcm.empty()?Txk[T_gar_nicht]:Tx[T_um_22_Uhr])+schwarz+Txk[T_aufgerufen],1,oblog);
+		}
 	} // 	if (haupt::pruefcron())
 } // pruefcron
 
@@ -9015,7 +9016,7 @@ schluss: // sonst eine sonst sinnlose for-Schleife mehr oder return mitten aus d
 
 // wird aufgerufen in: faxemitC
 void paramcl::inDbc(DB *My, const string& spooltab, const string& altspool, const string& spoolg, const fsfcl *const fsfp, 
-		const char* telnr, const size_t aktc)
+		const string& telnr, const size_t aktc)
 {
 	Log(violetts+Tx[T_inDbc]+schwarz,obverb/*?obverb-1:0*/,oblog);
 	string spooldir, spoolfil;
@@ -9035,7 +9036,7 @@ void paramcl::inDbc(DB *My, const string& spooltab, const string& altspool, cons
 		einf.push_back(/*2*/instyp(My->DBS,"capispooldatei",&spoolfil));
 		einf.push_back(/*2*/instyp(My->DBS,"cdateidatum",&entryspool.st_mtime));
 		einf.push_back(/*2*/instyp(My->DBS,"cdateizeit",entryspool.st_mtime));
-		einf.push_back(/*2*/instyp(My->DBS,"telnr",telnr));
+		einf.push_back(/*2*/instyp(My->DBS,"telnr",&telnr));
 		if (!fsfp->idalt.empty()) {
 			const string bedc="id="+fsfp->idalt;
 			rupd.tbupd(altspool,einf,ZDB,bedc,aktc);
@@ -9078,30 +9079,29 @@ void paramcl::faxemitC(DB *My, const string& spooltab, const string& altspool, f
 			this->nextnum();
 			string csfpfad;
 			const string cmd="capisuitefax -n "+(cus.cuid?"":"-u"+this->cuser)+" -d "+fsfp->telnr+" \""+ff+"\" 2>&1";
-			vector<string> faxerg;
+			svec faxerg;
 			systemrueck(cmd,1,1,&faxerg,/*obsudc=*/0,0,wahr,Tx[T_Faxbefehl],0,1);
 			if (faxerg.size()) {
-				const char* tz1="uccessful enqueued as ", // muss sprachlich so falsch bleiben wie im python-Script
-							*tz2=" for ";
-				if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1)) {
-					if (char *z2=strstr(z1,tz2)) {
-						string spoolg(z1+strlen(tz1),z2-z1-strlen(tz1));
-						////            inDatenbankc(My, &spoolg, idsp, npdfp, spdfp, nachrnr, z2+strlen(tz2), obverb, oblog);
-						if (!spoolg.find("job ")) {
-							const string nr=spoolg.substr(4); 
-							char buf[20];
-							sprintf(buf,"%.3lu",atol(nr.c_str()));
-							spoolg=this->cfaxusersqvz+vtz+"fax-"+buf+".sff";
-						} //             if (!spoolg.find("job "))
-						inDbc(My, spooltab, altspool, spoolg, fsfp, z2+strlen(tz2), aktc);
-					}   // if (char *z2=strstr(z1,tz2)) 
-					// if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
-				} else if (faxerg.at(0).find("can't open")==0) {
-					// Fax nicht in capisuite-spool gestellt, da Datei nicht zu oeffnen, also auch wieder aus Tabelle loeschen
-					::Log(rots+Txk[T_datei]+blau+ff+rot+"' (id: "+blau+fsfp->id+rot+
-							Tx[T_nichtgefundenloeschesieausDB]+schwarz,1,1);
-					RS rsloe(My,"DELETE FROM `"+spooltab+"` WHERE id = "+fsfp->id,aktc,ZDB);
-				} //         if (char *z1=strstr((char*)faxerg.at(0).c_str(),tz1))
+				const string tzs1("uccessful enqueued as job "), // muss sprachlich so falsch bleiben wie im python-Script
+							tzs2(" for ");
+				for(size_t fnr=0;fnr<faxerg.size();fnr++) {
+					size_t p1,p2;
+					if ((p1=faxerg[fnr].find(tzs1))!=string::npos) {
+						p1+=tzs1.length();
+						if ((p2=faxerg[fnr].find(tzs2,p1))!=string::npos) {
+							stringstream sg;
+							sg<<this->cfaxusersqvz<<vtz<<"fax-"<<setw(3)<<setfill('0')<<faxerg[fnr].substr(p1,p2-p1)<<".sff"<<setfill(' ');
+							inDbc(My, spooltab, altspool, sg.str(), fsfp, faxerg[fnr].substr(p2+tzs2.length()), aktc);
+						}
+						break;
+					} else if (!(p1=faxerg[fnr].find("can't open"))) {
+						// Fax nicht in capisuite-spool gestellt, da Datei nicht zu oeffnen, also auch wieder aus Tabelle loeschen
+						::Log(rots+Txk[T_datei]+blau+ff+rot+"' (id: "+blau+fsfp->id+rot+
+								Tx[T_nichtgefundenloeschesieausDB]+schwarz,1,1);
+						RS rsloe(My,"DELETE FROM `"+spooltab+"` WHERE id = "+fsfp->id,aktc,ZDB);
+						break;
+					}
+				}
 			} else {
 				cerr<<rot<<"capisuitefax "<<Txk[T_nicht_gefunden]<<schwarz<<endl;
 			} // 	if (obprogda(prog,obverb,oblog,&csfpfad)) else

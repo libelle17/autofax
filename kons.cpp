@@ -5528,7 +5528,8 @@ uchar haupt::pruefcron()
 			if (cmrueck.size()) vorcm=cmrueck[0];
 		} // 		if (!nochkeincron) 
 		if (vorcm.empty() && !cronzuplanen) {
-			if (obverb) ::Log(Txk[T_Kein_cron_gesetzt_nicht_zu_setzen],1,oblog);
+			if (obverb||cmeingegeben) 
+				::Log(Txk[T_Kein_cron_gesetzt_nicht_zu_setzen],1,oblog);
 		} else {
 			if (cronminut==vorcm) {
 				if (cmeingegeben) ::Log(blaus+"'"+saufr[0]+"'"+schwarz+Txk[T_wird]+Txk[T_unveraendert]+
