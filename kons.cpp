@@ -394,6 +394,8 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"verwendet Konfigurationsdatei <string> anstatt","uses configuration file <string> instead of"},
 	// T_standardhilfe
 	{"standardhilfe","standardhelp"},
+	// T_libtest
+	{"libtest","libtest"},
 	// T_protokolliert_ausfuehrlich_in_Datei
 	{"protokolliert ausfuehrlich in Datei '","put detailed logs in file '"},
 	// T_sh
@@ -477,6 +479,21 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{": erfolgreich fuer \"",": successful for \""},
 	// T_Libtiff_Version
 	{"Libtiff-Version: ","libtiff version: "},
+	// T_Fertig_mit_Parsen_der_Befehlszeile
+	{"Fertig mit Parsen der Befehlszeile, Konfiguration zu schreiben: ","Parsing the command line finished, about to write configuration: "},
+	// T_ja
+	{"ja","yes"},
+	// T_nein
+	{"nein","no"},
+	// T_Testaufruf_wegen_Programmbibliotheken
+	{"Testauruf wegen Programmbibliotheken","test call for program libraries"},
+	// T_Gebrauch
+	{"Gebrauch: ","Usage: "},
+	// T_Optionen_die_nicht_gespeichert_werden
+	{"Optionen, die nicht gespeichert werden: ","Options which are not saved: "},
+	// T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden,
+	{"Optionen z.Speich. i.Konfigur'datei (vorausg. '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):",
+		"Options to be saved in the configuration file: (preced. '1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):"},
   {"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 
@@ -5079,7 +5096,9 @@ void haupt::gcl0()
 			case 2:
 				opts.push_back(/*2*/optioncl(T_kd_k,T_konfdatei_l, &Txk, T_verwendet_Konfigurationsdatei_string_anstatt,/*wi=*/0,&akonfdt,pfile));
 				// Hilfe zur Aktualisierung der manpages
-				opts.push_back(/*4*/optioncl(T_sh,T_standardhilfe, &Txk, -1, /*wi=*/-1, &obhilfe,/*wert=*/3));
+				opts.push_back(/*4*/optioncl(T_sh,T_standardhilfe, &Txk, /*Txi=*/-1, /*wi=*/-1, &obhilfe,/*wert=*/3));
+				// Auruf zur Prüfung der library-Fehlerung "no version information" (falls lib-Datei nachträglich geändert wurde)
+				opts.push_back(/*4*/optioncl(T_libtest,T_libtest, &Txk, /*Txi=*/-1, /*wi=*/-1, &obhilfe,/*wert=*/4));
 				break;
 		} //     switch (iru)
 		// hier wird die Befehlszeile ueberprueft:
@@ -5388,6 +5407,36 @@ void haupt::setzlog()
 	logdt=&loggespfad.front();
 } // void haupt::setzlog()
 
+int haupt::zeighilfe(const stringstream *const erkl)
+{
+	Log(string(Txk[T_Fertig_mit_Parsen_der_Befehlszeile])+(obkschreib?Txk[T_ja]:Txk[T_nein]));
+	// Ausgabe der Hilfe
+	if (obhilfe) {
+		// libtest
+		if (obhilfe==4) { 
+			cout<<meinname<<": "<<blau<<Txk[T_Testaufruf_wegen_Programmbibliotheken]<<schwarz<<endl;
+		} else {
+			// nicht standardhilfe
+		if (obhilfe<3) {
+			cout<<blau<<Txk[T_Gebrauch]<<drot<<meinname<<" [-<opt>|--<longopt> [<content>]] ..."<<schwarz<<endl; 
+			cout<<erkl->str()<<endl;
+		}
+		cout<<blau<<Txk[T_Optionen_die_nicht_gespeichert_werden]<<schwarz<<endl;
+		for(size_t j=0;j<opts.size();j++) {
+			if (!opts[j].obschreibp && (obhilfe>1 || opts[j].wi))
+				opts[j].hilfezeile(Txk.lgn);
+		} //     for(size_t j=0;j<opts.size();j++)
+		cout<<blau<<Txk[T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden]<<schwarz<<endl;
+		for(size_t j=0;j<opts.size();j++) {
+			if (opts[j].obschreibp && (obhilfe>1 || opts[j].wi))
+				opts[j].hilfezeile(Txk.lgn);
+		} //     for(size_t j=0;j<opts.size();j++)
+		} // if (obhilfe==4) else
+		return 1;
+	} // if (obhilfe)
+	return 0;
+} // int haupt::zeighilfe(const stringstream *const erkl)
+
 //wird aufgerufen in main
 void haupt::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/, struct tm *lap/*=0*/,
 #ifdef immerwart
@@ -5657,10 +5706,19 @@ void haupt::update(const string& DPROG)
 			} // if (systemrueck ... else
 	} else if (!(tagesaufr % 5)) { // 	if (pm.autoupd && pm.tagesaufr == 2)
 		svec srueck;
-		systemrueck(mpfad+" -h 2>&1",obverb,oblog,&srueck);
+		systemrueck(mpfad+" -libtest 2>&1",obverb,oblog,&srueck);
 		if (srueck.size()) {
 			// wenn durch Systemupdate z.B. neue libtiff-Version eingespielt, dann wg.d.Fehlermeldung das aktuelle Programm nochmal dafür kompilieren
 			if (srueck[0].find("no version information")!=string::npos) {
+				if (!srueck[0].find(meinname+":")) {
+					 if (srueck[0].find("libtiff")!=string::npos) {
+						 svec qrueck;
+						 if (!systemrueck("find /usr -maxdepth 1 -type f -name 'libtiff*' 2>/dev/null|grep ''",obverb,oblog,&qrueck,/*obsudc=*/0) &&
+						     !systemrueck("find /usr/local -maxdepth 1 -type f -name 'libtiff*' 2>/dev/null|grep ''",obverb,oblog,&qrueck,/*obsudc=*/0)) {
+							 systemrueck("find /usr -maxdepth 1 -type f -name 'libtiff*' -delete 2>/dev/null",obverb,oblog,&qrueck,/*obsudc=*/1);
+						 }
+					 }
+				}
         systemrueck("cd '"+instvz+"';make neu install 2>/dev/null;",obverb,oblog);
 			}
 		} // 		if (srueck.size())

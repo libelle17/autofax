@@ -326,6 +326,7 @@ enum Tkons_
 	T_logdatei_vorher_loeschen,
 	T_verwendet_Konfigurationsdatei_string_anstatt,
 	T_standardhilfe,
+	T_libtest,
 	T_protokolliert_ausfuehrlich_in_Datei,
 	T_sh,
 	T_lieskonfein,
@@ -367,6 +368,13 @@ enum Tkons_
 	T_haupt_haupt,
 	T_erfolgreich_fuer,
 	T_Libtiff_Version,
+	T_Fertig_mit_Parsen_der_Befehlszeile,
+	T_ja,
+	T_nein,
+	T_Testaufruf_wegen_Programmbibliotheken,
+	T_Gebrauch,
+	T_Optionen_die_nicht_gespeichert_werden,
+	T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden,
 	T_konsMAX
 }; // Tkons_
 
@@ -1129,6 +1137,7 @@ class haupt
     int pruefinstv();
     void lieskonfein();
 		void setzlog();
+		int zeighilfe(const stringstream *const erkl);
 		void pruefsamba(const vector<const string*>& vzn,const svec& abschni,const svec& suchs,const char* DPROG,const string& cuser);
 #ifdef immerwart
 		void lieszaehlerein(ulong *arp=0,ulong *tap=0,ulong *map=0,struct tm *lap=0, string *obempfp=0,string *obgesap=0,const uchar obstumm=0);

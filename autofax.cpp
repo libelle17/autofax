@@ -132,8 +132,6 @@ enum T_
 	T_Dateiname,
 	T_schlechtgeformt,
 	T_Fehler_af,
-	T_ja,
-	T_nein,
 	T_obcapimitDoppelpunkt,
 	T_obhylamitDoppelpunkt,
 	T_Endung,
@@ -308,8 +306,6 @@ enum T_
 	T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,
 	T_Erklaerung_haeufiger_Optionen,
 	T_Erklaerung_aller_Optionen,
-	T_Fertig_mit_Parsen_der_Befehlszeile,
-	T_Gebrauch,
 	T_Faxt_Dateien_aus_Verzeichnis_pfad_die,
 	T_faxnr_enthalten_und_durch_soffice_in_pdf_konvertierbar_sind_und_traegt_sie,
 	T_Tabellen,
@@ -525,8 +521,6 @@ enum T_
 	T_soll_Text_in_empfangenen_Faxen_mit_OCR_gesucht_werden,
 	T_soll_Text_in_gesandten_Bildern_mit_OCR_gesucht_werden,
 	T_nicht_angekommen,
-	T_Optionen_die_nicht_gespeichert_werden,
-	T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden,
 	T_ob_ein_Modem_drinstak,
 	T_ob_eine_Fritzcard_drinstak,
 	T_Zahl_der_angegebenen_sql_Befehle_zur_Suche_nach_Absendern,
@@ -834,10 +828,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{" schlecht geformt!","malformed!"},
 	// T_Fehler_af,
 	{"Fehler ","Errror "},
-	// T_ja
-	{"ja","yes"},
-	// T_nein
-	{"nein","no"},
 	// T_obcapimitDoppelpunkt,
 	{"mitCapi: ","withCapi: "},
 	// T_obhylamitDoppelpunkt
@@ -1198,10 +1188,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Erklärung häufiger Optionen","Explanation of frequent options"},
 	// T_Erklaerung_aller_Optionen
 	{"Erklärung aller Optionen","Explanation of all options"},
-	// T_Fertig_mit_Parsen_der_Befehlszeile
-	{"Fertig mit Parsen der Befehlszeile, Konfiguration zu schreiben: ","Parsing the command line finished, about to write configuration: "},
-	// T_Gebrauch
-	{"Gebrauch: ","Usage: "},
 	// T_Faxt_Dateien_aus_Verzeichnis_pfad_die
 	{"Faxt Dateien aus Verzeichns <pfad>, die '","Faxes files from directory <path>, which contain '"},
 	// T_faxnr_enthalten_und_durch_soffice_in_pdf_konvertierbar_sind_und_traegt_sie
@@ -1647,11 +1633,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 		"Shall text from sent pictures be searched (with \"ocr\")?"},
 	// T_nicht_angekommen
 	{"nicht angekommen ","not arrived "},
-	// T_Optionen_die_nicht_gespeichert_werden
-	{"Optionen, die nicht gespeichert werden: ","Options which are not saved: "},
-	// T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden,
-	{"Optionen z.Speich. i.Konfigur'datei (vorausg. '1'=doch nicht speichern, 'no'=Gegenteil, z.B. '-noocra','-1noocri'):",
-		"Options to be saved in the configuration file: (preced. '1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):"},
 	// T_ob_ein_Modem_drinstak
 	{"ob ein Modem drinstak, als diese Konfigurationsdatei geschrieben wurde","if a modem was present, when this configuration file was written"},
 	// T_ob_eine_Fritzcard_drinstak
@@ -3430,7 +3411,7 @@ int paramcl::getcommandline()
 			} //       if (opts[optslsz].pruefpar(&argcmv,&i,&obhilfe,Tx.lgn))
 		} // for(size_t i=0;i<argcmv.size();i++) 
 	} //   for(;optslsz<opts.size();optslsz++)
-	if (nrzf||obhilfe==3) rzf=0;
+	if (nrzf||obhilfe>2) rzf=0; // 3 oder 4
 	for(size_t i=0;i<argcmv.size();i++) {
 		if (!argcmv[i].agef) {
 			::Log(rots+"Parameter: "+gruen+argcmv[i].argcs+rot+Tx[T_nicht_erkannt]+schwarz,1,1);
@@ -3465,27 +3446,12 @@ int paramcl::getcommandline()
 	if (capizukonf || hylazukonf)
 		obkschreib=1;
 
-	Log(string(Tx[T_Fertig_mit_Parsen_der_Befehlszeile])+(obkschreib?Tx[T_ja]:Tx[T_nein]));
-	// Ausgabe der Hilfe
-	if (obhilfe) {
-		if (obhilfe<3) {
-			cout<<blau<<Tx[T_Gebrauch]<<drot<<meinname<<" [-<opt>|--<longopt> [<content>]] ..."<<schwarz<<endl; 
-			cout<<blau<<Tx[T_Faxt_Dateien_aus_Verzeichnis_pfad_die]<<anfaxstr<<
-				Tx[T_faxnr_enthalten_und_durch_soffice_in_pdf_konvertierbar_sind_und_traegt_sie]
-				<<drot<<dbq<<blau<<Tx[T_Tabellen]<<drot<<touta<<blau<<"`,`"<<drot<<spooltab<<blau<<Tx[T_aein]<<schwarz<<endl;
-		}
-		cout<<blau<<Tx[T_Optionen_die_nicht_gespeichert_werden]<<schwarz<<endl;
-		for(size_t j=0;j<opts.size();j++) {
-			if (!opts[j].obschreibp && (obhilfe>1 || opts[j].wi))
-				opts[j].hilfezeile(Tx.lgn);
-		} //     for(size_t j=0;j<opts.size();j++)
-		cout<<blau<<Tx[T_Optionen_die_in_der_Konfigurationsdatei_gespeichert_werden]<<schwarz<<endl;
-		for(size_t j=0;j<opts.size();j++) {
-			if (opts[j].obschreibp && (obhilfe>1 || opts[j].wi))
-				opts[j].hilfezeile(Tx.lgn);
-		} //     for(size_t j=0;j<opts.size();j++)
+	stringstream erkl;
+	erkl<<blau<<Tx[T_Faxt_Dateien_aus_Verzeichnis_pfad_die]<<anfaxstr<<
+		Tx[T_faxnr_enthalten_und_durch_soffice_in_pdf_konvertierbar_sind_und_traegt_sie]
+		<<drot<<dbq<<blau<<Tx[T_Tabellen]<<drot<<touta<<blau<<"`,`"<<drot<<spooltab<<blau<<Tx[T_aein]<<schwarz;
+	if (zeighilfe(&erkl)) 
 		return 1;
-	} // if (obhilfe)
 	Log(violetts+Txk[T_Ende]+"getcommandline()"+schwarz);
 	return 0;
 } // int paramcl::getcommandline(int argc, char** argv)
@@ -3880,7 +3846,7 @@ void paramcl::rueckfragen()
 // wird aufgerufen in: main
 void paramcl::autofkonfschreib()
 {
-	Log(violetts+Tx[T_autokonfschreib]+schwarz+", "+Tx[T_zu_schreiben]+((rzf||obkschreib)?Tx[T_ja]:Tx[T_nein]));
+	Log(violetts+Tx[T_autokonfschreib]+schwarz+", "+Tx[T_zu_schreiben]+((rzf||obkschreib)?Txk[T_ja]:Txk[T_nein]));
 	/*//
 		capizukonf und hylazukonf hier immer 0
 		char buf[200];
@@ -4605,7 +4571,7 @@ void paramcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream
 								} //    if (runde) else
 								meld=Tx[T_gefunden_in_Tabelle]+blaus+(runde?touta.c_str():spooltab.c_str())+schwarz+", "+(runde?"eind":"id")+": "
 									+blau+cjj(cerg,0)+schwarz+" = Name: "+(runde?((*cerg+2)&&(*cjj(cerg,2)=='1')?blau:gruen):rot)+fdat.c_str()+schwarz
-									+", Bytes: "+blau+ltoan(qst.st_size)+schwarz+Tx[T_kommaFaxerfolg]+blau+(obgescheitert?Tx[T_nein]:Tx[T_ja])+schwarz;
+									+", Bytes: "+blau+ltoan(qst.st_size)+schwarz+Tx[T_kommaFaxerfolg]+blau+(obgescheitert?Txk[T_nein]:Txk[T_ja])+schwarz;
 								if (ausgp) *ausgp<<meld<<endl; else Log(meld,1,1);
 								////		::Log(1,1,0,0,"%s%s%s%s, %s: %s%s%s = Name: %s%s%s, Bytes: %s%zu%s",Tx[T_gefunden_in_Tabelle],
 								////		    blau,runde?touta.c_str():spooltab.c_str(),schwarz,runde?"eind":"id", blau,cjj(cerg,0),schwarz,
@@ -5705,8 +5671,8 @@ void paramcl::wegfaxen()
 	// 2b. Die originalen PDF-Dateien ins Warteverzeichnis verschieben, falls erfolgreich, nicht schon registriert und gleichziel => auch in ziel kopieren
 	// 3. wegfaxen
 	pid_t pid=0; // fuer Capi abzweigen
-	Log(violetts+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Tx[T_ja]:Tx[T_nein])+", "
-			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Tx[T_ja]:Tx[T_nein]));
+	Log(violetts+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Txk[T_ja]:Txk[T_nein])+", "
+			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Txk[T_ja]:Txk[T_nein]));
 	const size_t aktc=3; 
 	const string filter=" [[:space:][:punct:]]*[0-9][0-9[:space:][:punct:]]*[_]\\?.*\\.";// statt ?.* zuvor ?[0-9]*, aber vielleicht unnoetig
 	struct stat entrynpdf={0};
@@ -6243,8 +6209,8 @@ void paramcl::wegfaxen()
 		if (wasichbin) {
 			for(unsigned i=0;i<fsfv.size();i++) {
 				Log(" i: "+blaus+ltoan(i)+schwarz+Tx[T_PDFDatei]+blau+fsfv[i].spdf+schwarz+
-						" ."+Tx[T_obcapimitDoppelpunkt]+blau+(fsfv[i].fobcapi?Tx[T_ja]:Tx[T_nein])+schwarz+
-						" ."+Tx[T_obhylamitDoppelpunkt]+blau+(fsfv[i].fobhyla?Tx[T_ja]:Tx[T_nein])+schwarz);
+						" ."+Tx[T_obcapimitDoppelpunkt]+blau+(fsfv[i].fobcapi?Txk[T_ja]:Txk[T_nein])+schwarz+
+						" ."+Tx[T_obhylamitDoppelpunkt]+blau+(fsfv[i].fobhyla?Txk[T_ja]:Txk[T_nein])+schwarz);
 				const string ff=wvz+vtz+fsfv[i].spdf;
 				struct stat st={0};
 				if (/*wasichbin==1 einmal reicht hier schon &&*/ lstat(ff.c_str(),&st)) {
@@ -6258,7 +6224,7 @@ void paramcl::wegfaxen()
 				////      _out<<fsfv[i].id<<" "<<rot<<fsfv[i].npdf<<" "<<schwarz<<(int)fsfv[i].obcapi<<" "<<(int)fsfv[i].obhyla<<endl;
 			} // for(unsigned i=0;i<fsfv.size();i++) 
 			Log(violetts+"Pid "+blau+ltoan(pid)+violett+" "+Txk[T_Ende]+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+
-					(obcapi?Tx[T_ja]:Tx[T_nein])+", "+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Tx[T_ja]:Tx[T_nein]));
+					(obcapi?Txk[T_ja]:Txk[T_nein])+", "+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Txk[T_ja]:Txk[T_nein]));
 			exitt(0);
 		} // 		if (wasichbin)
 		// 1. warte auf faxemitC und faxemitH
@@ -6279,8 +6245,8 @@ void paramcl::wegfaxen()
 		} while (kaufrufe==aufrufe);
 #endif // immerwart
 	} // 	if (r0.obfehl) else
-	Log(violetts+Txk[T_Ende]+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Tx[T_ja]:Tx[T_nein])+", "
-			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Tx[T_ja]:Tx[T_nein]));
+	Log(violetts+Txk[T_Ende]+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Txk[T_ja]:Txk[T_nein])+", "
+			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Txk[T_ja]:Txk[T_nein]));
 } // void paramcl::wegfaxen()
 
 // hylafax: bei zu faxenden Dateien stehen die Steuerdateien in /var/spool/fax/sendq/q105, benannt nach /var/spool/fax/etc/xferfaxlog, dort steht in der 6. Spalte die hyla-Index-Nummer z.B. 105, die als Rueckmeldung von sendfax erscheint ("request id is 105 (group id 105) for host localhost (1 file)")
