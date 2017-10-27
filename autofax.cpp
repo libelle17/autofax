@@ -8528,17 +8528,20 @@ void paramcl::pruefsfftobmp()
 // wird aufgerufen in pruefsfftobmp und empfcapi
 void paramcl::instsfftobmp()
 {
-	const string sff="sfftobmp_copy";
-	holvomnetz(sff);
-	const string vorcfg="sed -i.bak -e \"s/^[[:blank:]]*\\(char \\*shortopts.*\\)/const \\1/;"
-		"s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );"
-		"/\" src/cmdline.cpp"
-		"&& sed -i.bak -e \"s/lboost_filesystem-mt/lboost_filesystem/g\" src/Makefile.in "
-		////                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
-		////                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
-		"&& sed -i.bak -e \"s/\\(-lboost_filesystem\\)/-lboost_system \\1/g\" src/Makefile.in ";
-	kompiliere(sff,s_gz,vorcfg);
-} // void instsfftobmp()
+	uchar obboostda=!linstp->doggfinst("boost-devel",obverb,oblog);
+	if (obboostda) {
+		const string sff="sfftobmp_copy";
+		holvomnetz(sff);
+		const string vorcfg="sed -i.bak -e \"s/^[[:blank:]]*\\(char \\*shortopts.*\\)/const \\1/;"
+			"s/m_vFiles.push_back( fs::path(m_argv\\[n\\].*/m_vFiles.push_back( fs::path(string(m_argv[n])\\/*, fs::native*\\/) );"
+			"/\" src/cmdline.cpp"
+			"&& sed -i.bak -e \"s/lboost_filesystem-mt/lboost_filesystem/g\" src/Makefile.in "
+			////                      " && sed -i.bak -e 's/-${am__api_version}//g' aclocal.m4 "
+			////                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
+			"&& sed -i.bak -e \"s/\\(-lboost_filesystem\\)/-lboost_system \\1/g\" src/Makefile.in ";
+		kompiliere(sff,s_gz,vorcfg);
+	}
+} // void instsfftobmp
 
 // wird aufgerufen in: untersuchespool, main
 // rueckgabe: wie obcapi eingestellt sein sollte
