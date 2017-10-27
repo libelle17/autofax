@@ -1161,5 +1161,6 @@ class haupt
 		void dovi();
 		virtual void schlussanzeige();
 		void update(const string& DPROG);
+		void reduzierlibtiff();
 		void setzbenutzer(string *user);
 }; // class haupt

@@ -4896,6 +4896,7 @@ int haupt::holvomnetz(const string& datei,const string& vors/*=defvors*/,const s
 {
 	int erg=1;
 	if (!pruefinstv()) {
+		erg=0;
 		svec qrueck;
 		if (findv==1) {
 			systemrueck("find \""+instvz+"\" -mtime -1 -name "+datei+".tar.gz",obverb,oblog,&qrueck,/*obsudc=*/0);
@@ -4969,6 +4970,8 @@ int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const stri
 	return ret;
 } // int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 
+const string tiffmark="/usr/local/sclibtiff";
+
 // aufgerufen bei autofax in: pruefhyla, empfcapi, rueckfragen
 void haupt::prueftif(string aktvers)
 {
@@ -4979,10 +4982,11 @@ void haupt::prueftif(string aktvers)
 	if ((p1=aktvers.find('\n'))!=string::npos) aktvers.erase(p1);
 	if ((p1=aktvers.rfind(' '))!=string::npos) aktvers.erase(0,p1+1);
 	const double tv=verszuzahl(aktvers);
+	caus<<gruen<<tv<<schwarz<<endl;
 	// Die Datei /usr/local/sclibtiff wird als Nachweis verwendet, dass die Installationskorrektur durchgefuert wurde
-	const string nachw="/usr/local/sclibtiff",ht1="/usr/include/tiff.h", ht2="/usr/local/include/tiff.h";
+	const string ht1="/usr/include/tiff.h", ht2="/usr/local/include/tiff.h";
 	struct stat lnw={0}, lht1={0}, lht2={0};
-	if (((tv==4.07||tv==4.08)&&lstat(nachw.c_str(),&lnw))||(lstat(ht1.c_str(),&lht1)&&lstat(ht2.c_str(),&lht2))) {
+	if ((/*(tv==4.07||tv==4.08)&&*/lstat(tiffmark.c_str(),&lnw))||(lstat(ht1.c_str(),&lht1)&&lstat(ht2.c_str(),&lht2))) {
 		obverb=1;
 		////		linstp->doggfinst("cmake",obverb,oblog); 
 		const string proj="tiff_copy";
@@ -4990,10 +4994,10 @@ void haupt::prueftif(string aktvers)
 		if (!kompiliere(proj,s_gz,"sed -i.bak s'/(thandle_t) client_data.fd);/(thandle_t) \\&client_data.fd);/' tools/fax2tiff.c "
 					////                  			 "&& sed -i.bak s'/Version 4.0.8\\\\n/Version "+vstr+"\\\\n/' libtiff/tiffvers.h"
 					)) {
-			if (!touch(nachw,obverb,oblog)) {
-				anfgg(unindt,sudc+"rm -f \""+nachw+"\"","",obverb,oblog);
+			if (!touch(tiffmark,obverb,oblog)) {
+				anfgg(unindt,sudc+"rm -f \""+tiffmark+"\"","",obverb,oblog);
 			}
-		}
+		} // if (!kompiliere(
 		obverb=altobverb;
 	} // 	if (dcmv<3.62)
 } // void paramcl::pruefdcmtk()
@@ -5710,21 +5714,28 @@ void haupt::update(const string& DPROG)
 		if (srueck.size()) {
 			// wenn durch Systemupdate z.B. neue libtiff-Version eingespielt, dann wg.d.Fehlermeldung das aktuelle Programm nochmal dafür kompilieren
 			if (srueck[0].find("no version information")!=string::npos) {
-				if (!srueck[0].find(meinname+":")) {
+				// falls mehrere libtiff installiert sind, die eigene bevorzugen
 					 if (srueck[0].find("libtiff")!=string::npos) {
-						 svec qrueck;
-						 if (!systemrueck("find /usr -maxdepth 1 -type f -name 'libtiff*' 2>/dev/null|grep ''",obverb,oblog,&qrueck,/*obsudc=*/0) &&
-						     !systemrueck("find /usr/local -maxdepth 1 -type f -name 'libtiff*' 2>/dev/null|grep ''",obverb,oblog,&qrueck,/*obsudc=*/0)) {
-							 systemrueck("find /usr -maxdepth 1 -type f -name 'libtiff*' -delete 2>/dev/null",obverb,oblog,&qrueck,/*obsudc=*/1);
-						 }
-					 }
-				}
-        systemrueck("cd '"+instvz+"';make neu install 2>/dev/null;",obverb,oblog);
+						 reduzierlibtiff();
+					 } // 					 if (srueck[0].find("libtiff")!=string::npos)
+				systemrueck("cd '"+instvz+"';make neu;"+sudc+" make install;",obverb,oblog);
 			}
 		} // 		if (srueck.size())
 	} // 	else if (tagesaufr % 5)  // 	if (pm.autoupd && pm.tagesaufr == 2)
 	//// <<"Tagesaufr: "<<tagesaufr<<endl;
 } // void haupt::update(const string& DPROG)
+
+
+void haupt::reduzierlibtiff()
+{
+	svec qrueck;
+	if (!systemrueck("find /usr/lib /usr/lib64 -maxdepth 1 -type f -name 'libtiff*'",obverb,oblog,&qrueck,/*obsudc=*/0) &&
+			!systemrueck("find /usr/local -type f -name 'libtiff*'",obverb,oblog,&qrueck,/*obsudc=*/0)) {
+		tuloeschen(tiffmark,"",obverb,oblog);
+		systemrueck("find /usr/lib /usr/lib64 \\( -type f -o -type d \\) -name 'libtiff*' -delete 2>/dev/null",obverb,oblog,&qrueck,/*obsudc=*/1);
+		systemrueck("ldconfig /usr",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+	}
+} // void haupt::reduzierlibtiff()
 
 const string	haupt::passwddt="/etc/passwd",
 			haupt::groupdt="/etc/group",
