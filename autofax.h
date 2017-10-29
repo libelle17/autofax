@@ -13,8 +13,8 @@ string zielname(const string& qdatei, const zielmustercl& zmp,uchar wieweiterzae
                 int oblog=0, stringstream *ausgp=0);
 void dorename(const string& quelle, const string& ziel, const string& cuser=nix, uint *vfehlerp=0, uchar schonda=0, int obverb=0, int oblog=0,
                   stringstream *ausgp=0);
-string verschiebe(const string& qdatei, const auto/*string,zielmustercl*/& zielvz, const string& cuser, 
-                  uint *vfehlerp, uchar wieweiterzaehl, int obverb,int oblog, stringstream *ausgp=0);
+string verschiebe(const string& qdatei, const auto/*string,zielmustercl*/& zielvz, const string& cuser=nix, 
+                  uint *vfehlerp=0, const uchar wieweiterzaehl=1, int obverb=0,int oblog=0, stringstream *ausgp=0,const uchar auchgleiche=0);
 string kopiere(const string& qdatei, const string& zield, uint *kfehler, const uchar wieweiterzaehl, int obverb=0, int oblog=0);
 string kopiere(const string& qdatei, const zielmustercl& zmp, uint *kfehler, const uchar wieweiterzaehl, int obverb=0, int oblog=0);
 void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, int obverb, int oblog);

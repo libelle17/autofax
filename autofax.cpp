@@ -2493,7 +2493,7 @@ void fsfcl::scheitere(const string& wvz, const string& ngvz, const string& cuser
 			struct stat zstat={0};
 			uint vfehler;
 			if (!lstat(zuloe.c_str(),&zstat)) {
-				verschiebe(zuloe, ngvz, cuser,&vfehler, /*wieweiterzaehl=*/1, /*obverb=*/1, oblog);
+				verschiebe(zuloe, ngvz, cuser, &vfehler, /*wieweiterzaehl=*/1, /*obverb=*/1, oblog);
 				if (ziel)
 					touch(*ziel+vtz+Tx[T_nichtgefaxt]+" `"+base_name(zuloe)+"`.nix",obverb,oblog);
 			}
@@ -5412,6 +5412,8 @@ int paramcl::pruefocr()
 							////		"||sed -i \"/ python3/isudc pip3 uninstall --yes ocrmypdf\" \""+unindt+"\""
 					} // if (!vprog.empty()) else
 					systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/2);
+					// der ocrmypdf-Aufruf wuerde mit 'match' scheitern, wenn 'tesseract --version' als erste Zeile einen Warnhinweis auf eine geaenderte
+					// libtiff-Bibliothek liefert, nicht hingegen mit 'search'
 					systemrueck("find "+virtvz+" -name tesseract.py -exec sed -i.bak 's/re.match/re.search/g' {} \\;",obverb,oblog,0,/*obsudc=*/1);
 					if (!lstat(ocrmp.c_str(),&ostat)) {
 						anfgg(unindt,sudc+"rm -rf \""+virtvz+"\"","",obverb,oblog);
@@ -5508,6 +5510,11 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 	getstammext(quellp,&stamm,&exten);
 	const int keinbild= (exten=="doc"||exten=="xls"||exten=="txt"||exten=="odf"||exten=="ppt"||exten=="docx"||exten=="htm"||exten=="html");
 	const string* lqp=quellp; // laufender quell-pointer
+	struct stat st={0};
+	if (!lstat(ziel.c_str(),&st)) {
+		uint vfehler=0;
+		verschiebe(ziel,dir_name(ziel),cuser,&vfehler,/*wieweiterzaehlt=*/1,obverb,oblog,/*ausgp=*/0,/*auchgleiche=*/1);
+	} // 	if (!lstat(ziel.c_str(),&st))
 	for(int aru=0;aru<2;aru++) {
 		if (/*aru||*/!keinbild) {
 			if (obocr) {
@@ -5593,7 +5600,8 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 		if (pseitenp) {
 			// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
 			linstp->doinst("poppler-tools",obverb,oblog,"pdfinfo");
-			systemrueck("pdfinfo \""+ziel+"\"|grep -a Pages|sed 's/[^ ]*[ ]*\\(.*\\)/\\1/'",obverb,oblog,&rueck);
+			// falls libtiff geaendert, die zugehoerige Warnung ausblenden
+			systemrueck("pdfinfo \""+ziel+"\" 2>/dev/null|grep -a Pages|sed 's/[^ ]*[ ]*\\(.*\\)/\\1/'",obverb,oblog,&rueck);
 			if (rueck.size()) {
 				Log("PDF: "+blaus+ziel+": "+gruen+rueck[0]+schwarz+Tx[T_Seiten]);
 				*pseitenp=atol(rueck[0].c_str());
@@ -7446,13 +7454,13 @@ void dorename(const string& quelle, const string& ziel, const string& cuser/*=ni
 } // dorename
 
 // wird aufgerufen von wegfaxen und untersuchespool; Vorsicht, wenn qdateip ein Verzeichnisname ist!
-string verschiebe(const string& qdatei, const auto/*string,zielmustercl*/& zielvz, const string& cuser, 
-		uint *vfehlerp, uchar wieweiterzaehl, int obverb,int oblog, stringstream *ausgp/*=0*/)
+string verschiebe(const string& qdatei, const auto/*string,zielmustercl*/& zielvz, const string& cuser/*=nix*/, 
+		uint *vfehlerp/*=0*/, const uchar wieweiterzaehl/*=1*/, int obverb/*=0*/,int oblog/*=0*/, stringstream *ausgp/*=0*/,const uchar auchgleiche/*=0*/)
 {
 	// wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
 	uchar obgleich=0;
 	uint fehler=0;
-	const string ziel=zielname(qdatei,zielvz,wieweiterzaehl,/*zieldatei=*/0,&obgleich,obverb-1,oblog,ausgp);
+	const string ziel=zielname(qdatei,zielvz,wieweiterzaehl,/*zieldatei=*/0,(auchgleiche?0:&obgleich),obverb-1,oblog,ausgp);
 	// wenn wieweiterzaehl==2 und Zieldatei schon vorhanden und nicht 0 Bytes, dann nicht ueberschreiben und Fehler melden
 	while (!ziel.empty()) { // while nur fuer break
 		if (!obgleich && wieweiterzaehl==2) {
