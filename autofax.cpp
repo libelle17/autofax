@@ -5317,24 +5317,31 @@ int paramcl::pruefocr()
 		systemrueck("ldconfig "+lsys.getlib64(),obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		string tpfad;
 		svec rueck;
-		if (obprogda("tesseract",obverb,oblog,&tpfad)) {
-			tda=1;
-			systemrueck(tpfad+" --list-langs 2>&1",obverb,oblog,&rueck,/*obsudc=*/0); // gibt das normale Ergebnis als Fehlermeldung aus!
-			if (!rueck.size()) tda=0; else if (rueck[0].find("List of available")) tda=0;
-		}
-		if (!tda) {
-			linstp->doinst("tesseract-ocr",obverb,oblog);
-			systemrueck("ldconfig "+lsys.getlib64(),obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
-		} else {
+		for(int aru=0;aru<2;aru++) {
+			if (obprogda("tesseract",obverb,oblog,&tpfad)) {
+				systemrueck(tpfad+" --list-langs 2>&1",obverb,oblog,&rueck,/*obsudc=*/0); // gibt das normale Ergebnis als Fehlermeldung aus!
+				for(size_t iru=0;iru<rueck.size();iru++) {
+					if (rueck[iru].find("List of available")!=string::npos) {
+             tda=1;
+						 break;
+					} // 					if (rueck[iru].find("List of available")!=string::npos)
+				} // 				for(size_t iru=0;iru<rueck.size();iru++)
+				if (tda) break;
+			} else {
+				reduzierlibtiff();
+				linstp->doinst("tesseract-ocr",obverb,oblog);
+				systemrueck("ldconfig "+lsys.getlib64(),obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+			} // 			if (obprogda("tesseract",obverb,oblog,&tpfad))
+		} // 		for(int aru=0;aru<2;aru++)
+	  if (tda) {	
 			for(size_t i=1;i<rueck.size();i++) {
 				if (rueck[i]=="deu") deuda=1;
 				else if (rueck[i]=="eng") engda=1;
 				else if (rueck[i]=="osd") osdda=1;
 			} //       for(size_t i=1;i<rueck.size();i++)
-		} //     if (!tda)
-		if (!deuda) linstp->doinst("tesseract-ocr-traineddata-german",obverb,oblog);
-		if (!engda) linstp->doinst("tesseract-ocr-traineddata-english",obverb,oblog);
-		if (!osdda) linstp->doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
+			if (!deuda) linstp->doinst("tesseract-ocr-traineddata-german",obverb,oblog);
+			if (!engda) linstp->doinst("tesseract-ocr-traineddata-english",obverb,oblog);
+			if (!osdda) linstp->doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
 
 		pruefunpaper();
 		linstp->doggfinst("qpdf");
@@ -5362,8 +5369,7 @@ int paramcl::pruefocr()
 				obprogda("python3-config",obverb,oblog,&linstp->p3cpf); // "/usr/bin/python3-config"
 				linstp->doinst("python3-devel",obverb+1,oblog,linstp->p3cpf);
 				linstp->doggfinst("gcc");
-				struct stat lffi={0};
-				if (lstat("/usr/lib64/libffi.so",&lffi)) {
+				if (!systemrueck("find /usr/lib /usr/lib64 \\( -type f -o -type l \\) -name libffi.so")) {
 					if (linstp->obfehlt("libffi48-devel",obverb+1,oblog))
 						linstp->doggfinst("libffi-devel",obverb+1,oblog);
 				} // 				if (lstat("/usr/lib64/libffi.so",&lffi))
@@ -5406,6 +5412,7 @@ int paramcl::pruefocr()
 							////		"||sed -i \"/ python3/isudc pip3 uninstall --yes ocrmypdf\" \""+unindt+"\""
 					} // if (!vprog.empty()) else
 					systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/2);
+					systemrueck("find "+virtvz+" -name tesseract.py -exec sed -i.bak 's/re.match/re.search/g' {} \\;",obverb,oblog,0,/*obsudc=*/1);
 					if (!lstat(ocrmp.c_str(),&ostat)) {
 						anfgg(unindt,sudc+"rm -rf \""+virtvz+"\"","",obverb,oblog);
 						anfgg(unindt,
@@ -5473,6 +5480,7 @@ int paramcl::pruefocr()
 			unpaperfuercron(prog);
 		} //  if (obprogda(ocr,obverb,oblog,&prog))
 		obocrgeprueft=1;
+		} //     if (!tda)
 	} // if (!obocrgeprueft) 
 	return 0;
 } // int paramcl::pruefocr()
@@ -7573,6 +7581,7 @@ void paramcl::hfaxsetup()
 					systemrueck(sudc+"pkill "+this->sfaxgetty->ename+" "+this->shfaxd->ename+" "+this->sfaxq->ename,obverb,oblog);
 				 */
 				::Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+afaxsu+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
+				obverb=0; // dann haengt's immer
 				system((shpf+" "+afaxsu+(obverb?" -verbose":"")+" >/dev/null 2>&1").c_str());  
 				this->sfaxgetty->restart(obverb,oblog);
 				this->shfaxd->restart(obverb,oblog);
@@ -8020,7 +8029,7 @@ int paramcl::pruefhyla()
 						//// <<"hylafehlt nicht!"<<endl;
 					} //     if (hylafehlt) else
 					int nochmal;
-					for(int iru=0;iru<2;iru++) {
+					for(int aru=0;aru<2;aru++) {
 						nochmal=0;
 						//// <<violett <<"Versuch: "<<(int)versuch<<" hylafehlt: "<<(int)hylafehlt<<" hylalaeuftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
 						if (hylafehlt) {
@@ -8040,7 +8049,7 @@ int paramcl::pruefhyla()
 								for(int iru=0;iru<2;iru++) {
 									if (!holvomnetz("hylafax","https://sourceforge.net/projects/","/files/latest")) {
 										svec hrueck;
-										if (!systemrueck("cd \""+instvz+"\"&& tar xvf hylafax.tar.gz",obverb,oblog,&hrueck,/*obsudc=*/1)) {
+										if (systemrueck("cd \""+instvz+"\"&& tar xvf hylafax.tar.gz",obverb,oblog,&hrueck,/*obsudc=*/1)) {
 											tuloeschen("hylafax.tar.gz",cuser,obverb,oblog);
 											continue;
 										} else {
@@ -8212,32 +8221,32 @@ int paramcl::pruefhyla()
 						int fglaeuftnicht=0;
 						for (uchar iru=0;iru<3;iru++) {
 							//// <<violett<<"pruefhyla 2"<<schwarz<<endl;
-							caus<<"Stelle 1"<<endl;
 							if ((fglaeuftnicht=sfaxgetty->obsvfeh(obverb,oblog))) {
 								// falls nein, dann schauen, ob startbar
 								if (sfaxgetty->machfit(obverb,oblog)) fglaeuftnicht=0;
 							}
-							caus<<"Stelle 2"<<endl;
 							//// <<rot<<" fglaueftnicht: "<<fglaeuftnicht<<", hmodem: "<<hmodem<<schwarz<<endl;
 							string pfad;
 							if (obprogda("faxstat",obverb,oblog,&pfad)) {
 								modemlaeuftnicht=1+fglaeuftnicht;
 								svec rueck;
 								systemrueck(pfad+" 2>&1",obverb,oblog,&rueck,/*obsudc=*/1);
-								for(size_t iru=0;iru<rueck.size();iru++) {
-									if (!iru && rueck[0].find("no version information")!=string::npos) {
-										nochmal=1;
-										caus<<violett<<rueck[0]<<schwarz<<endl;
-										reduzierlibtiff();
-										hylafehlt=1;
-										break;
-									}
-									if (rueck[iru].find(this->hmodem)!=string::npos) {
+								for(size_t ruei=0;ruei<rueck.size();ruei++) {
+									if (!aru) {
+										if (!ruei && rueck[0].find("no version information")!=string::npos) {
+											nochmal=1;
+											caus<<violett<<rueck[0]<<schwarz<<endl;
+											reduzierlibtiff();
+											hylafehlt=1;
+											break;
+										}
+									} // 									if (!aru)
+									if (rueck[ruei].find(this->hmodem)!=string::npos) {
 										modemlaeuftnicht--;
 										break;
 									}
 ////								modemlaeuftnicht=systemrueck(pfad+"|grep "+this->hmodem+" 2>&1",obverb,oblog,/*rueck=*/0,/*obsudc=*/1)+fglaeuftnicht;
-								} // 								for(size_t iru=0;iru<rueck.size();iru++)
+								} // 								for(size_t ruei=0;ruei<rueck.size();ruei++)
 								if (nochmal) break;
 							} // 							if (obprogda("faxstat",obverb,oblog,&pfad))
 							////        if (!modemlaeuftnicht) break;
@@ -8540,7 +8549,7 @@ void paramcl::instsfftobmp()
 			////                      " && sed -i.bak -e 's/-${am__api_version}//g' configure "
 			"&& sed -i.bak -e \"s/\\(-lboost_filesystem\\)/-lboost_system \\1/g\" src/Makefile.in ";
 		kompiliere(sff,s_gz,vorcfg);
-	}
+	} // 	if (obboostda)
 } // void instsfftobmp
 
 // wird aufgerufen in: untersuchespool, main

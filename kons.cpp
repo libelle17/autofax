@@ -3290,7 +3290,7 @@ const string linst_cl::ersetzeprog(const string& prog) const
       if (prog=="libavformat-devel") return "libavformat-dev";
       if (prog=="poppler-tools") return "poppler-utils";
 			if (prog=="libffi-devel") return "libffi-dev";
-			if (prog=="boost-devel") return "libboost-dev";
+			if (prog=="boost-devel") return "libboost-dev libboost-system-dev libboost-filesystem-dev";
       break;
     case dnf: case yum:
       if (prog=="mariadb") return "mariadb-server";
@@ -5000,6 +5000,7 @@ void haupt::prueftif(string aktvers)
 		} // if (!kompiliere(
 		obverb=altobverb;
 	} // 	if (dcmv<3.62)
+	reduzierlibtiff();
 } // void paramcl::pruefdcmtk()
 
 /*//
@@ -5729,10 +5730,10 @@ void haupt::update(const string& DPROG)
 void haupt::reduzierlibtiff()
 {
 	svec qrueck;
-	if (!systemrueck("find /usr/lib /usr/lib64 -maxdepth 1 -type f -name 'libtiff*'",obverb,oblog,&qrueck,/*obsudc=*/0) &&
-			!systemrueck("find /usr/local -type f -name 'libtiff*'",obverb,oblog,&qrueck,/*obsudc=*/0)) {
+	if (systemrueck("find /usr/lib /usr/lib64 \\( -type f -o -type l \\) -name 'libtiff*'",obverb,oblog,&qrueck,/*obsudc=*/0) &&
+			systemrueck("find /usr/local -type f -name 'libtiff*'",obverb,oblog,&qrueck,/*obsudc=*/0)) {
 		tuloeschen(tiffmark,"",obverb,oblog);
-		systemrueck("find /usr/lib /usr/lib64 \\( -type f -o -type d \\) -name 'libtiff*' -delete 2>/dev/null",obverb,oblog,&qrueck,/*obsudc=*/1);
+		systemrueck("find /usr/lib /usr/lib64 \\( -type f -o -type l \\) -name 'libtiff*' -delete 2>/dev/null",obverb,oblog,&qrueck,/*obsudc=*/1);
 		systemrueck("ldconfig /usr",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 	}
 } // void haupt::reduzierlibtiff()
