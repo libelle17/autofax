@@ -542,6 +542,7 @@ string *loeschealleaus(string *u, const char* alt);
 string ersetze(const char *const u, const char* const alt, const char* const neu);
 string *sersetze(string *src, string const& target, string const& repl);
 // wstring ersetze(const wstring& u, const wchar_t* alt, const wchar_t* neu); 
+string nersetze(const string& quelle,string was, string durch);
 
 string ersetzAllezu(const string& quelle, const string& alt, const string& neu);
 void ersetzAlle(string& quelle, const string& alt, const string& neu);
@@ -1137,6 +1138,7 @@ class haupt
 		string vorcm; // Vor-Cron-Minuten
 		linst_cl* linstp=0;
 		vector<string> benutzer; // Benutzer aus /etc/passwd, bearbeitet durch setzbenutzer(&user)
+		uchar obsotiff=0; // 1 = tiff wird von der source verwendet
 	protected:
     virtual void lgnzuw(); // in vorgaben, lieskonfein, getcommandl0, getcommandline, rueckfragen
 		void setztmpcron();

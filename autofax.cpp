@@ -9874,32 +9874,35 @@ int main(int argc, char** argv)
 {
 	//// <<TIFFGetVersion()<<endl;
 	paramcl pm(argc,argv); // Programmparameter
+
 	/*//
-		if (argc==3) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
-	// Testcode mit argv[1]
-	systemrueck("find /var/spool/hylafax -type f -regex '.*q[0-9]+'");
-	perf.ausgeb();
-	exit(29);
-	string d1=string("/root/autofax/")+argv[1],
-	d2=string("/root/")+argv[1];
-	//<<dateivgl(d1,d2,1)<<endl;
-	exit(0);
-	linst_cl linst(0,0);
-	//	dorename(argv[1],"/root/autofax/xyz");
-	exit(0);
-	svec inh;string ustring;
-	mdatei uni0(instvz+"/inst.log",ios::in,0);
-	if (uni0.is_open()) {
-	string zeile;
-	while (getline(uni0,zeile)) {
-	inh<<zeile;
-	}
-	}
-	linst.ziehraus(inh,&ustring);
-	//<<blau<<"ustring: "<<gruen<<ustring<<schwarz<<endl;
-	exit(29);
+	if (argc>1) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
+		// Testcode mit argv[1]
+		systemrueck("find /var/spool/hylafax -type f -regex '.*q[0-9]+'");
+		perfcl perf("test");
+		perf.ausgeb();
+		exit(29);
+		string d1=string("/root/autofax/")+argv[1],
+					 d2=string("/root/")+argv[1];
+		//<<dateivgl(d1,d2,1)<<endl;
+		exit(0);
+		linst_cl linst(0,0);
+		//	dorename(argv[1],"/root/autofax/xyz");
+		exit(0);
+		svec inh;string ustring;
+		mdatei uni0(instvz+"/inst.log",ios::in,0);
+		if (uni0.is_open()) {
+			string zeile;
+			while (getline(uni0,zeile)) {
+				inh<<zeile;
+			}
+		}
+		linst.ziehraus(inh,&ustring);
+		//<<blau<<"ustring: "<<gruen<<ustring<<schwarz<<endl;
+		exit(29);
 	} // (argc==2)
-	 */
+	*/
+
 	//// Log("main: "+pm.cl,0,1);
 	pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
 	pm.VorgbAllg();

@@ -836,6 +836,21 @@ string *sersetze(string* src, string const& target, string const& repl)
   return src;
 } // sersetze( string src, string const& target, string const& repl)
 
+string nersetze(const string& quelle,string was, string durch)
+{
+	string erg,*ep=(string*)&quelle;
+	size_t n=0;
+	while((n=ep->find(was,n))!=string::npos) {
+		if (ep==&quelle) {
+			erg=quelle;
+			ep=&erg;
+		} // 		if (ep==&quelle)
+		ep->replace(n,was.size(),durch);
+		n+=durch.size();
+	}
+	return *ep;
+} // string nersetze(const string& quelle,string was, string durch)
+
 void getstammext(const string *const ganz, string *stamm, string *exten) 
 {
   size_t posp = ganz->rfind('.');
@@ -3290,48 +3305,51 @@ const string linst_cl::ersetzeprog(const string& prog) const
   switch(ipr) {
     case apt:
       if (prog=="mariadb") return "mariadb-server";
-      if (prog=="hylafax") return "hylafax-server";
-      if (prog=="hylafax+") return "hylafax+-server";
-      if (prog=="hylafax hylafax-client") return "hylafax-server hylafax-client";
-      if (prog=="hylafax+ hylafax+-client") return "hylafax+-server hylafax+-client";
-      if (prog=="kernel-source") return "linux-source-$(uname -r|cut -d. -f1,2)";
-      if (prog=="tiff") return "libtiff-tools";
-      if (prog=="libxslt-tools") return "xsltproc";
-      if (prog=="imagemagick") return "imagemagick imagemagick-doc";
-      if (prog=="libreoffice-base") return "libreoffice-common libreoffice-base";
-      if (prog=="libcapi20-2") return "libcapi20-dev";
-      if (prog=="python-devel") return "python-dev";
-      if (prog=="python3-devel") return "python3-dev";
-      if (prog=="tesseract-ocr-traineddata-english") return "tesseract-ocr-eng";
-      if (prog=="tesseract-ocr-traineddata-german") return "tesseract-ocr-deu";
-      if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-ocr-osd";
-      if (prog=="libavformat-devel") return "libavformat-dev";
-      if (prog=="poppler-tools") return "poppler-utils";
-			if (prog=="libffi-devel") return "libffi-dev";
-			if (prog=="boost-devel") return "libboost-dev libboost-system-dev libboost-filesystem-dev";
+      else if (prog=="hylafax") return "hylafax-server";
+      else if (prog=="hylafax+") return "hylafax+-server";
+      else if (prog=="hylafax hylafax-client") return "hylafax-server hylafax-client";
+      else if (prog=="hylafax+ hylafax+-client") return "hylafax+-server hylafax+-client";
+      else if (prog=="kernel-source") return "linux-source-$(uname -r|cut -d. -f1,2)";
+      else if (prog=="tiff") return "libtiff-tools";
+      else if (prog=="libxslt-tools") return "xsltproc";
+      else if (prog=="imagemagick") return "imagemagick imagemagick-doc";
+      else if (prog=="libreoffice-base") return "libreoffice-common libreoffice-base";
+      else if (prog=="libcapi20-2") return "libcapi20-dev";
+//      else if (prog=="python-devel") return "python-dev";
+//      else if (prog=="python3-devel") return "python3-dev";
+      else if (prog=="tesseract-ocr-traineddata-english") return "tesseract-ocr-eng";
+      else if (prog=="tesseract-ocr-traineddata-german") return "tesseract-ocr-deu";
+      else if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-ocr-osd";
+//      else if (prog=="libavformat-devel") return "libavformat-dev";
+      else if (prog=="poppler-tools") return "poppler-utils";
+//			else if (prog=="libffi-devel") return "libffi-dev";
+			else if (prog=="boost-devel") return "libboost-dev libboost-system-dev libboost-filesystem-dev";
+//      else if (prog=="libtiff-devel") return "libtiff-dev";
+			else if (prog.find("-devel")!=string::npos) return nersetze(prog,"-devel","-dev");
       break;
     case dnf: case yum:
       if (prog=="mariadb") return "mariadb-server";
-      if (prog=="kernel-source") return "kernel-devel-$(uname -r)";
-      if (prog=="tiff") return "libtiff-tools";
-      if (prog=="libcapi20-2") return "isdn4k-utils";
-      if (prog=="libcapi20-3") return "";
-////      if (prog=="python-devel") return "python3-devel"; // bei capisuite_copy falsch; dann bei ocrmypdf fuer apt noch zu pruefen
-      if (prog=="capiutils") return "";
-      if (prog=="imagemagick") return "ImageMagick ImageMagick-doc";
-      if (prog=="libxslt-tools") return "libxslt";
-      if (prog=="libreoffice-base") return "libreoffice-filters libreoffice-langpack-de";
-      if (prog=="tesseract-ocr") return "tesseract";
-      if (prog=="tesseract-ocr-traineddata-english") return "";
-      if (prog=="tesseract-ocr-traineddata-german") return "tesseract-langpack-deu tesseract-langpack-deu_frak";
-      if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-osd";
-      if (prog=="poppler-tools") return "poppler-utils";
-      if (prog=="libwbclient0") return "libwbclient";
+      else if (prog=="kernel-source") return "kernel-devel-$(uname -r)";
+      else if (prog=="tiff") return "libtiff-tools";
+      else if (prog=="libcapi20-2") return "isdn4k-utils";
+      else if (prog=="libcapi20-3") return "";
+////      else if (prog=="python-devel") return "python3-devel"; // bei capisuite_copy falsch; dann bei ocrmypdf fuer apt noch zu pruefen
+      else if (prog=="capiutils") return "";
+      else if (prog=="imagemagick") return "ImageMagick ImageMagick-doc";
+      else if (prog=="libxslt-tools") return "libxslt";
+      else if (prog=="libreoffice-base") return "libreoffice-filters libreoffice-langpack-de";
+      else if (prog=="tesseract-ocr") return "tesseract";
+      else if (prog=="tesseract-ocr-traineddata-english") return "";
+      else if (prog=="tesseract-ocr-traineddata-german") return "tesseract-langpack-deu tesseract-langpack-deu_frak";
+      else if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-osd";
+      else if (prog=="poppler-tools") return "poppler-utils";
+      else if (prog=="libwbclient0") return "libwbclient";
+      else if (prog=="libtiff5") return "libtiff";
       break;
 	  case zypper:
 		  if (prog=="redhat-rpm-config") return "";
-			if (prog=="libffi-devel") return "libffi$(gcc --version|head -n1|sed \"s/.*) \\(.\\).\\(.\\).*/\\1\\2/\")-devel";
-      if (prog=="kernel-source") return "kernel-devel";
+			else if (prog=="libffi-devel") return "libffi$(gcc --version|head -n1|sed \"s/.*) \\(.\\).\\(.\\).*/\\1\\2/\")-devel";
+      else if (prog=="kernel-source") return "kernel-devel";
 			break;
 		case pac:
 			if (prog=="libwbclient0") return "libwbclient";
@@ -5002,23 +5020,36 @@ void haupt::prueftif(string aktvers)
 	if ((p1=aktvers.rfind(' '))!=string::npos) aktvers.erase(0,p1+1);
 	const double tv=verszuzahl(aktvers);
 	caus<<gruen<<tv<<schwarz<<endl;
-	// Die Datei /usr/local/sclibtiff wird als Nachweis verwendet, dass die Installationskorrektur durchgefuert wurde
+	// fehlerhafte Version
+	if (tv==4.07) {
+		obsotiff=1; // ob source-tiff
+	}
 	const string ht1="/usr/include/tiff.h", ht2="/usr/local/include/tiff.h";
-	struct stat lnw={0}, lht1={0}, lht2={0};
-	if ((/*(tv==4.07||tv==4.08)&&*/lstat(tiffmark.c_str(),&lnw))||(lstat(ht1.c_str(),&lht1)&&lstat(ht2.c_str(),&lht2))) {
-		obverb=1;
-		////		linstp->doggfinst("cmake",obverb,oblog); 
-		const string proj="tiff_copy";
-		holvomnetz(proj);
-		if (!kompiliere(proj,s_gz,"sed -i.bak s'/(thandle_t) client_data.fd);/(thandle_t) \\&client_data.fd);/' tools/fax2tiff.c "
-					////                  			 "&& sed -i.bak s'/Version 4.0.8\\\\n/Version "+vstr+"\\\\n/' libtiff/tiffvers.h"
-					)) {
-			if (!touch(tiffmark,obverb,oblog)) {
-				anfgg(unindt,sudc+"rm -f \""+tiffmark+"\"","",obverb,oblog);
-			}
-		} // if (!kompiliere(
-		obverb=altobverb;
-	} // 	if (dcmv<3.62)
+	struct stat lht1={0}, lht2={0};
+  const uchar incfehlt= lstat(ht1.c_str(),&lht1) && lstat(ht2.c_str(),&lht2);
+	if (obsotiff) {
+		// Die Datei /usr/local/sclibtiff wird als Nachweis verwendet, dass die Installationskorrektur durchgefuert wurde
+		struct stat lnw={0};
+		if ((/*(tv==4.07||tv==4.08)&&*/lstat(tiffmark.c_str(),&lnw))||incfehlt) {
+			obverb=1;
+			////		linstp->doggfinst("cmake",obverb,oblog); 
+			const string proj="tiff_copy";
+			holvomnetz(proj);
+			if (!kompiliere(proj,s_gz,"sed -i.bak s'/(thandle_t) client_data.fd);/(thandle_t) \\&client_data.fd);/' tools/fax2tiff.c "
+						////                  			 "&& sed -i.bak s'/Version 4.0.8\\\\n/Version "+vstr+"\\\\n/' libtiff/tiffvers.h"
+						)) {
+				if (!touch(tiffmark,obverb,oblog)) {
+					anfgg(unindt,sudc+"rm -f \""+tiffmark+"\"","",obverb,oblog);
+				}
+			} // if (!kompiliere(
+			obverb=altobverb;
+		} // 	if (dcmv<3.62)
+	} else {
+		if (incfehlt|| !systemrueck("find /usr/lib64 /usr/lib -maxdepth 2 -type l -xtype f -name libtiff.so -print -quit 2>/dev/null",obverb,oblog)) {
+				linstp->doggfinst("libtiff5",obverb,oblog);
+				linstp->doggfinst("libtiff-devel",obverb,oblog);
+		}
+	} // 	if (obsotiff)
 	reduzierlibtiff();
 } // void paramcl::pruefdcmtk()
 
@@ -5753,10 +5784,15 @@ void haupt::update(const string& DPROG)
 void haupt::reduzierlibtiff()
 {
 	svec qrueck;
-	if (systemrueck("find /usr/lib /usr/lib64 \\( -type f -o -type l \\) -name 'libtiff*'",obverb,oblog,&qrueck,/*obsudc=*/0) &&
-			systemrueck("find /usr/local -type f -name 'libtiff*'",obverb,oblog,&qrueck,/*obsudc=*/0)) {
-		tuloeschen(tiffmark,"",obverb,oblog);
-		systemrueck("find /usr/lib /usr/lib64 \\( -type f -o -type l \\) -name 'libtiff*' -delete 2>/dev/null",obverb,oblog,&qrueck,/*obsudc=*/1);
+	const string lcrep="/usr/lib64 /usr/lib ",lcsou="/usr/local/lib64 /usr/local/lib ",tykr="\\( -type f -o -type l \\) ",namkr="-name 'libtiff*' ";
+	if (systemrueck("find "+lcrep+tykr+" -maxdepth 2 "+namkr+"-print -quit",obverb,oblog,&qrueck,/*obsudc=*/0) &&
+			systemrueck("find "+lcsou+tykr+" -maxdepth 2 "+namkr+"-print -quit",obverb,oblog,&qrueck, /*obsudc=*/0)) {
+		if (obsotiff) {
+			systemrueck("find "+lcrep+tykr+namkr+"-delete",obverb,oblog,&qrueck,/*obsudc=*/1);
+		} else {
+			systemrueck("find "+lcsou+tykr+namkr+"-delete",obverb,oblog,&qrueck, /*obsudc=*/1);
+			tuloeschen(tiffmark,"",obverb,oblog);
+		}
 		systemrueck("ldconfig /usr",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 	}
 } // void haupt::reduzierlibtiff()

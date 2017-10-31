@@ -313,7 +313,7 @@ endif
 	-@[ "$(LT)" ]&& for r in 1 2;do \
 	[ $$r = 1 ]&& LTakt="$(LT)" ||{ [ -z "$(LT5)" ]&&break;LTakt="$(LT5)";};\
 	find /usr/include /usr/local/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
-	find $$(find /usr /usr/local -maxdepth 1 -name "lib*" $(KF)|sort -r) -type l -xtype f -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
+	find /usr/lib64 /usr/lib /usr/local/lib64 /usr/local/lib -maxdepth 2 -type l -xtype f -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
 	./configure inst _ "$$LTakt" verbose;\
 	done; :;
 #	P=tiff_copy;T=$$P.tar.gz;M=$$P-master;wget https://github.com/$(GITV)/$$P/archive/master.tar.gz -O $$T&&{ rm -rf $$P;tar xpvf $$T;} &&\

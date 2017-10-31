@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "31.10.17" "Version 0.45963" "Manual-Seite für ²DPROG²"
+.TH man 1 "31.10.17" "Version 0.45973" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -192,7 +192,7 @@ Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präf
 \fB -cm, --cronminuten <zahl>\fR: alle wieviel Minuten soll \fBautofax\fR ueber crontab aufgerufen werden (0=gar nicht), anstatt  '\fB2\fR'
 .br
 \fB -autoakt, --autoaktual\fR: Programm automatisch aktualisieren\fB oder nicht\fR
-.SH FUNKTIONSWEISE
+-1lg.SH FUNKTIONSWEISE
 .LP
 Beim Aufruf von '\fB²DPROG²\fR' geschieht folgendes:
 .LP

@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "31.10.17" "Version 0.45963" "\fB²DPROG²\fR man page"
+.TH man 1 "31.10.17" "Version 0.45973" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -190,7 +190,7 @@ Depending on operating system, accessability and preferences the users thus coul
 \fB -cm, --cronminutes <zahl>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  '\fB2\fR'
 .br
 \fB -autoupd, --autoupdate\fR: Update program automatically\fB or not\fR
-.SH FUNCTIONALITY
+-1lg.SH FUNCTIONALITY
 .LP
 When called, '\fB²DPROG²\fR' accomplishes the following:
 .LP
