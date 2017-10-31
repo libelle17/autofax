@@ -7624,7 +7624,7 @@ void paramcl::hfaxsetup()
 		::Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+sudc+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
 		pruefplatte();
 		// -nointeracitve -verbose fuehrt zum Stehenbleiben
-		if (!systemrueck(sudc+faxsu+" -nointeractive"/*+(obverb?" -verbose":"")*/,obverb,oblog,0,2)) {
+		if (!systemrueck(sudc+faxsu+" -nointeractive"/*+(obverb?" -verbose":"")*/,obverb<1?obverb:1,oblog,0,2)) {
 			this->shfaxd->stop(obverb,oblog,1);
 			this->sfaxq->stop(obverb,oblog,1);
 			servc::daemon_reload();
@@ -8058,8 +8058,10 @@ int paramcl::pruefhyla()
 							::Log(violetts+Tx[T_Muss_Hylafax_installieren]+schwarz,1,1);
 							// a) von der source
 							linstp->doinst("ghostscript",obverb+1,oblog,nochmal?nix:"gs");
-							//// linstp->doinst("tiff",obverb+1,oblog,"tiff2ps");
-							//// linstp->doinst("tiff",obverb+1,oblog,"fax2ps");
+              if (!obsotiff) {
+							 linstp->doinst("tiff",obverb+1,oblog,"tiff2ps");
+							 linstp->doinst("tiff",obverb+1,oblog,"fax2ps");
+							} //               if (!obsotiff)
 							prueftif(TIFFGetVersion());
 							linstp->doinst("sendmail",obverb+1,oblog,"sendmail");
 							if (obverb) ::Log(violetts+"hyinstart: "+schwarz+ltoan(hyinstart),1,1);
@@ -8098,7 +8100,7 @@ int paramcl::pruefhyla()
 											"&& echo $? = Ergebnis nach faxsetup -nointeractive"
 											"&& pkill hfaxd faxq >/dev/null 2>&1"//wird von faxset -nointeractive gestartet + kollidiert mit dem service
 											"&& systemctl daemon-reload &&echo $? = Ergebnis nach systemctl daemon-reload;:;";
-										systemrueck(nachcfg,obverb+1,oblog,/*rueck=*/0,/*obsudc=*/1);
+										systemrueck(nachcfg,obverb<1?obverb:1,oblog,/*rueck=*/0,/*obsudc=*/1);
 										mdatei confc(instvz+vtz+was+vtz+"config.cache");
 										if (confc.is_open()) {
 											string zeile;
