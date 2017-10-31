@@ -7603,7 +7603,7 @@ void paramcl::hfaxsetup()
 				 */
 				::Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+afaxsu+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
 				obverb=0; // dann haengt's immer
-				system((shpf+" "+afaxsu+(obverb?" -verbose":"")+" >/dev/null 2>&1").c_str());  
+				system((sudc+"pkill hfaxd;"+shpf+" "+afaxsu+(obverb?" -verbose":"")+" >/dev/null 2>&1").c_str());  
 				this->sfaxgetty->restart(obverb,oblog);
 				this->shfaxd->restart(obverb,oblog);
 				this->sfaxq->restart(obverb,oblog);
@@ -7624,7 +7624,7 @@ void paramcl::hfaxsetup()
 		::Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+sudc+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
 		pruefplatte();
 		// -nointeracitve -verbose fuehrt zum Stehenbleiben
-		if (!systemrueck(sudc+faxsu+" -nointeractive"/*+(obverb?" -verbose":"")*/,obverb<1?obverb:1,oblog,0,2)) {
+		if (!systemrueck(sudc+"pkill hfaxd;"+sudc+faxsu+" -nointeractive"+(obverb?" -verbose":""),obverb,oblog,0,2)) {
 			this->shfaxd->stop(obverb,oblog,1);
 			this->sfaxq->stop(obverb,oblog,1);
 			servc::daemon_reload();
