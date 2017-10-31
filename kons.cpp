@@ -525,6 +525,17 @@ perfcl::perfcl(const string& vvonwo): vonwo(vvonwo)
   t0=time(NULL);
 } // perfcl::perfcl(const string& vvonwo): vonwo(vvonwo)
 
+ostream &ztacl::operator()(std::ostream& out) const {
+	pthread_mutex_lock(&timemutex);
+	out<<put_time(localtime(&zt),fmt);
+	pthread_mutex_unlock(&timemutex);
+	return out;
+}
+
+ostream &operator<<(ostream &out,ztacl ztaus) {
+	return ztaus(out);
+}
+
 void perfcl::ausgeb(const string& stelle,uchar obdauer)
 {
   zp1alt=zp1;
@@ -1140,12 +1151,15 @@ int Log(const string& text, const short screen/*=1*/, const short file/*=1*/, co
 				cerr<<rot<<Txk[T_Variable_logdatei_Verzeichnis]<<schwarz<<endl;
 			} else {
 				static bool erstaufruf=1;
-				char tbuf[20];
+				//// char tbuf[20];
 				time_t jetzt=time(0);
-				pthread_mutex_lock(&timemutex);
-				strftime(tbuf,sizeof tbuf,"%d.%m.%y %X: ",localtime(&jetzt));
-				pthread_mutex_unlock(&timemutex);
-				string zwi=tbuf+text; 
+				stringstream strs;
+				strs<<ztacl(jetzt,"%d.%m.%y %X: ")<<text;
+				//// pthread_mutex_lock(&timemutex);
+				//// strftime(tbuf,sizeof tbuf,"%d.%m.%y %X: ",localtime(&jetzt));
+				//// pthread_mutex_unlock(&timemutex);
+				//// string zwi=tbuf+text; 
+				string zwi=strs.str();
 				loeschefarbenaus(&zwi);
 
 				if (erstaufruf) {
@@ -1230,7 +1244,8 @@ int wartaufpids(pidvec *pidv,const ulong runden/*=0*/,const int obverb/*=0*/,con
 	} // 	for(size_t i=0;i<pidv->size();i++)
 	while (1) {
 		Log(obverb>1,0,0,0," %s%s%s, while (1), pidv->size(): %s%zu%s",blau,wo.c_str(),schwarz,blau,pidv->size(),schwarz);
-		for(ssize_t i=pidv->size()-1;i>=0;i--) {
+		for(size_t i=pidv->size();i;) {
+			i--;
 			int res=kill(pidv->at(i).pid,0);
 			uchar zuloeschen=0;
 			if (res==-1 && errno==ESRCH) zuloeschen=1;
@@ -2107,14 +2122,16 @@ int multischlschreib(const string& fname, schlArr *const *const mcnfApp, const s
   mdatei f(fname,ios::out);
   if (f.is_open()) {
     if (!mpfad.empty()) {
-      char buf[30];
+      //// char buf[30];
       time_t jetzt=time(0);
-			pthread_mutex_lock(&timemutex);
-			tm *ltm = localtime(&jetzt);
-			strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", ltm);
-			pthread_mutex_unlock(&timemutex);
-			const string ueberschr=Txk[T_Konfiguration_fuer]+mpfad+Txk[T_erstellt_automatisch_durch_dieses_am]+buf;
-			if (!ueberschr.empty()) f<<ueberschr<<endl;
+			f<<Txk[T_Konfiguration_fuer]<<mpfad<<Txk[T_erstellt_automatisch_durch_dieses_am]<<ztacl(jetzt,"%d.%m.%Y %H.%M.%S")<<endl;
+			//// pthread_mutex_lock(&timemutex);
+			//// tm *ltm = localtime(&jetzt);
+			//// strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", ltm);
+			//// f<<put_time(localtime(&jetzt),"%d.%m.%Y %H.%M.%S")<<endl;
+			//// pthread_mutex_unlock(&timemutex);
+			//// const string ueberschr=Txk[T_Konfiguration_fuer]+mpfad+Txk[T_erstellt_automatisch_durch_dieses_am]+buf;
+			//// if (!ueberschr.empty()) f<<ueberschr<<endl;
     } //     if (!mpfad.empty())
     for (size_t j=0;j<cszahl;j++) {
      mcnfApp[j]->aschreib(&f);
@@ -2539,7 +2556,8 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 				pfade<<aktdat;
 				aktdat=dir_name(aktdat);
 			} while (!aktdat.empty());
-			for(ssize_t i=pfade.size()-1;i>-1;--i) {
+			for(size_t i=pfade.size();i;) {
+				i--;
 				struct stat st={0};
 				int ergmod=0;
 				uchar obhier=obimmer;
@@ -3579,8 +3597,13 @@ void anfgw(const string& datei, const string& udpr, const string& inhalt, const 
 	svec wvec;
 	uchar obda=0;
 	aufSplit(&wvec,inhalt); 
-	for(size_t wind=0;wind<wvec.size();wind++) {
-		if (wvec[wind].length()) wvec[wind]=" "+wvec[wind];
+	for(size_t wind=wvec.size();wind;) {
+		wind--;
+		if (wvec[wind].length()) {
+			wvec[wind]=" "+wvec[wind];
+		} else {
+			wvec.erase(wvec.begin()+wind);
+		}
 		//// <<violett<<"wvec["<<rot<<wind<<violett<<"]: "<<rot<<wvec[wind]<<schwarz<<endl;
 	} // 	for(size_t wind=0;wind<wvec.size();wind++)
 	mdatei uni0(datei,ios::in,0);
@@ -3589,16 +3612,12 @@ void anfgw(const string& datei, const string& udpr, const string& inhalt, const 
 		while (getline(uni0,zeile)) {
 			obda=1;
 			for(size_t wind=0;wind<wvec.size();wind++) {
-				if (wvec[wind].length()) {
-					if (zeile.find(wvec[wind])==string::npos) {
-						obda=0;
-						break;
-					} else {
-						//// <<wvec[wind]<<blau<<" gefunden in "<<blau<<zeile<<schwarz<<endl;
-					}
+				if (zeile.find(wvec[wind])==string::npos) {
+					obda=0;
+					break;
 				} else {
-					obda=1;
-				} // 				if (zeile.find(wvec[wind])==string::npos)
+					//// <<wvec[wind]<<blau<<" gefunden in "<<blau<<zeile<<schwarz<<endl;
+				}
 			} // 			for(size_t wind=0;wind<wvec.size();wind++)
 			if (obda) break;
 		} // 					while (getline(uni0,zeile))
@@ -3635,13 +3654,13 @@ void doanfg(const string& datei, const string& inhalt, const string& comment)
 		////			uniff<<inhalt<<"\n"<<"printf \"%b"<<ersetzAllezu(inhalt,"\"","\\\"")<<"%b\\n\" \"\\033[1;34m\" \"\\033[0m\""<<endl;
 		// s. ausricht() in configure
 		time_t rohz=time(0);
-		pthread_mutex_lock(&timemutex);
-		struct tm *zeiti=localtime(&rohz);
-		char buf[80];
-		strftime(buf,sizeof buf,"%F %T",zeiti);
-		pthread_mutex_unlock(&timemutex);
-		uniff<<inhalt<<"\n# "<<comment<<"\nprintf \"(Inst: "<<buf<<"): $blau%s$reset\\n\" \""<<
-			ersetzAllezu(inhalt,"\"","\\\"")<<"\""<<endl;
+		uniff<<inhalt<<"\n# "<<comment<<"\nprintf \"(Inst: "<<ztacl(rohz,"%F %T")<<"): $blau%s$reset\\n\" \""<<ersetzAllezu(inhalt,"\"","\\\"")<<"\""<<endl;
+		//// pthread_mutex_lock(&timemutex);
+		//// struct tm *zeiti=localtime(&rohz);
+		//// char buf[80];
+		//// strftime(buf,sizeof buf,"%F %T",zeiti);
+		//// uniff<<put_time(localtime(&rohz),"%F %T");
+		//// pthread_mutex_unlock(&timemutex);
 	} else {
 		perror((string("\n")+Txk[T_Kann_Datei]+datei+Txk[T_nicht_mit_open_zum_Anhaengen_oeffnen]).c_str());
 	} // 			if (uniff.is_open())
@@ -3840,13 +3859,14 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 			mdatei syst(systemd,ios::out);
 			if (syst.is_open()) {
 				syst<<"[Unit]"<<endl;
-				char buf[80];
 				time_t jetzt = time(0);
-				pthread_mutex_lock(&timemutex);
-				struct tm *tmp = localtime(&jetzt);
-				strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", tmp);
-				pthread_mutex_unlock(&timemutex);
-				syst<<"Description="<<sbez<<Txk[T_als_Dienst_eingerichtet_von]<<parent<<Txk[T_am]<<buf<<endl;
+				syst<<"Description="<<sbez<<Txk[T_als_Dienst_eingerichtet_von]<<parent<<Txk[T_am]<<ztacl(jetzt,"%d.%m.%y %H:%M:%S")<<endl;
+				//// char buf[80];
+				//// pthread_mutex_lock(&timemutex);
+				//// struct tm *tmp = localtime(&jetzt);
+				//// strftime(buf, sizeof(buf), "%d.%m.%y %H:%M:%S", tmp);
+				//// syst<<put_time(localtime(&jetzt),"%d.%m.%y %H:%M:%S")<<endl;
+				//// pthread_mutex_unlock(&timemutex);
 				if (!CondPath.empty()) 
 					syst<<"ConditionPathExists="<<CondPath<<endl;
 				if (!After.empty())
@@ -4392,10 +4412,9 @@ void find2cl::init(const string& mutter, const string& name, regex_t *reg, const
   elem2 neuel;
 //  cout<<"hier init,mutter: '"<<blau<<mutter<<schwarz<<"', name: '"<<blau<<name<<schwarz<<"', letztel->sterg: "<<letztel->sterg<<endl;
   while (!letztel->sterg && S_ISLNK(letztel->dst.st_mode)) {
-    ssize_t r;
 //    cout <<pfad<<" "<<sterg<<" "<<dst.st_size<<endl;
     char linkname[letztel->dst.st_size?letztel->dst.st_size:FILENAME_MAX+1];
-		r=readlink(letztel->pfad.c_str(),linkname,sizeof linkname);
+		ssize_t r=readlink(letztel->pfad.c_str(),linkname,sizeof linkname);
 		if (r>0) {
 			if ((size_t)r<=sizeof linkname)
 				linkname[r]='\0';
@@ -5035,18 +5054,20 @@ int haupt::kompiliere(const string& was,const string& endg, const string& vorcfg
 void haupt::zeigversion(const string& ltiffv/*=nix*/)
 {
 	struct tm tm={0};
-	char buf[100];
+	//// char buf[100];
 	cout<<endl<<Txk[T_Programm]<<violett<<mpfad<<schwarz<<endl;
 	cout<<"Copyright: "<<blau<<Txk[T_Freie_Software]<<schwarz<<Txk[T_Verfasser]<<blau<<"Gerald Schade"<<schwarz<<endl;
 	cout<<"Version: "<<blau<<versnr<<schwarz<<endl;
 	strptime(__TIMESTAMP__,"%c", &tm);
-	////<<tm.tm_sec<<" "<<tm.tm_min<<" "<<tm.tm_hour<<" "<<tm.tm_mday<<" "<<tm.tm_mon<<" "<<tm.tm_year<<" "<<tm.tm_wday<<" "<<tm.tm_yday<<" "<<tm.tm_isdst<<endl;
-	strftime(buf, sizeof(buf), "%d.%m.%Y %T", &tm);
-	cout<<Txk[T_Letzte_Programmaenderung]<<blau<<buf<<schwarz<<endl;
+	//// // <<tm.tm_sec<<" "<<tm.tm_min<<" "<<tm.tm_hour<<" "<<tm.tm_mday<<" "<<tm.tm_mon<<" "<<tm.tm_year<<" "<<tm.tm_wday<<" "<<tm.tm_yday<<" "<<tm.tm_isdst<<endl;
+	//// strftime(buf, sizeof(buf), "%d.%m.%Y %T", &tm);
+	//// cout<<Txk[T_Letzte_Programmaenderung]<<blau<<buf<<schwarz<<endl;
+	cout<<Txk[T_Letzte_Programmaenderung]<<blau<<put_time(&tm,"%d.%m.%Y %T")<<schwarz<<endl;
 	memset(&tm, 0, sizeof(struct tm));
 	strptime((string(__DATE__)+" "+__TIME__).c_str(),"%b %d %Y %T", &tm);
-	strftime(buf, sizeof(buf), "%d.%m.%Y %T", &tm);
-	cout<<"              "<<Txk[T_Kompiliert]<<blau<<buf<<schwarz<<endl;
+	//// strftime(buf, sizeof(buf), "%d.%m.%Y %T", &tm);
+	//// cout<<"              "<<Txk[T_Kompiliert]<<blau<<buf<<schwarz<<endl;
+	cout<<"              "<<Txk[T_Kompiliert]<<blau<<put_time(&tm,"%d.%m.%Y %T")<<schwarz<<endl;
 	cout<<Txk[T_Quelle]<<blau<<defvors/*//"https://github.com/libelle17/"*/<<meinname<<schwarz<<endl;
 	cout<<Txk[T_Installationsverzeichnis]<<blau<<instvz<<schwarz<<endl;
 	if (!ltiffv.empty())
@@ -5058,15 +5079,17 @@ void haupt::zeigversion(const string& ltiffv/*=nix*/)
 void haupt::zeigkonf()
 {
 	struct stat kstat={0};
-	char buf[100]={0};
+	cout<<Txk[T_aktuelle_Einstellungen_aus]<<blau<<akonfdt<<schwarz<<"' (";
+	//// char buf[100]={0};
 	if (!lstat(akonfdt.c_str(),&kstat)) {
-		struct tm tm={0};
-		pthread_mutex_lock(&timemutex);
-		memcpy(&tm, localtime(&kstat.st_mtime),sizeof(tm));
-		pthread_mutex_unlock(&timemutex);
-		strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", &tm);
+		//// struct tm tm={0};
+		//// pthread_mutex_lock(&timemutex);
+		//// memcpy(&tm, localtime(&kstat.st_mtime),sizeof(tm));
+		cout<<ztacl(kstat.st_mtime,"%d.%m.%Y %H.%M.%S");
+		//// pthread_mutex_unlock(&timemutex);
+		//// strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", &tm);
 	} //   if (!lstat(akonfdt.c_str(),&kstat))
-	cout<<Txk[T_aktuelle_Einstellungen_aus]<<blau<<akonfdt<<schwarz<<"' ("<<buf<<"):"<<endl;
+	cout<<"):"<<endl;
 	for(unsigned i=0;i<agcnfA.zahl;i++) {
 		cout<<blau<<setw(20)<<agcnfA[i].name<<schwarz<<": "<<agcnfA[i].wert<<endl;
 	} //   for(unsigned i=0;i<agcnfA.zahl;i++)

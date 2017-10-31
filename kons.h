@@ -447,6 +447,18 @@ class mdatei: public fstream
   mdatei(const string& filename, ios_base::openmode mode=ios_base::in|ios_base::out, uchar faclbak=1, int obverb=0, int oblog=0);
 }; // class mdatei: public fstream
 
+// Zeitausgabeklasse, um time_t-Variablen formatiert in ostream-Objekte ausgeben zu koennen, z.B. <<ztacl(zt,"%F %T")<<
+class ztacl {
+	private:
+		const time_t zt;
+		const char* fmt;
+	public:
+		explicit ztacl(time_t &pzt,const char* pfmt):zt(pzt),fmt(pfmt) {
+		}
+		std::ostream &operator()(std::ostream& out) const;
+}; // ztacl
+ostream &operator<<(ostream &out,ztacl ztaus);
+
 inline string zustr(int _Val) 
 {
   char _Buf[2 * sizeof(long long)];

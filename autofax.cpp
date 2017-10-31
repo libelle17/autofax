@@ -745,6 +745,8 @@ enum T_
 	T_zeigvers,
 	T_Installiere_ocrmypdf,
 	T_Ergebnis_nach,
+	T_Konfiguration_von_hylafax_durch,
+	T_muss_mindestens_2_sein_zur_Uebergabe_der_Nr_des_Anrufenden,
 	T_MAX
 };
 
@@ -2087,6 +2089,10 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Installiere ocrmypdf ...","Installing ocrmypdf ..."},
 	// T_Ergebnis_nach
 	{"Ergebnis nach sed","result after sed"},
+	// T_Konfiguration_von_hylafax_durch
+	{"# Konfiguration von hylafax durch ","# Configuration of hylafax by "},
+	// T_muss_mindestens_2_sein_zur_Uebergabe_der_Nr_des_Anrufenden
+	{" #muss mindestens 2 sein zur Uebergabe der Nummer des Anrufenden"," #must be at least 2 to transfer the no of the caller"},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -2355,17 +2361,16 @@ void fsfcl::capiausgeb(stringstream *ausgp, const string& maxcdials, uchar fuerl
 	if (capistat!=fehlend) {
 		////    if (cpplies(suchtxt,cccnfA,cs)) KLA
 		//// RS rmod(My,string("update spool set capidials=")+cccnfA[0].val+" where id = "+cjj(cerg,0),ZDB);
-		char buf[100];
-		int versuzahl=atol(ctries.c_str());
-		snprintf(buf,4,"%3d",versuzahl);
-		*ausgp<<","<<blau<<buf<<"/"<<maxcdials<<schwarz<<(capistat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
+		*ausgp<<","<<blau<<setw(3)<<ctries<<"/"<<maxcdials<<schwarz<<(capistat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
 		////                      if (versuzahl>12) ausg<<"zu spaet, ";
 		struct tm tm={0};
 		for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
 			if (strptime(starttime.c_str(), tmmoegl[im], &tm)) break;
 		}
-		strftime(buf, sizeof(buf), "%d.%m.%y %T", &tm);
-		*ausgp<<blau<<buf<<schwarz; 
+		//// char buf[100];
+		//// strftime(buf, sizeof(buf), "%d.%m.%y %T", &tm);
+		//// *ausgp<<blau<<buf<<schwarz; 
+		*ausgp<<blau<<put_time(&tm,"%d.%m.%y %T")<<schwarz;
 		*ausgp<<",T.:"<<blau<<setw(12)<<dialstring<<schwarz; 
 		*ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
 		*ausgp<<Tx[T_bzw]<<blau<<"*.txt"<<schwarz;
@@ -2461,16 +2466,16 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
 	//// modemlaeuftnicht=systemrueck(("faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog,/*rueck=*/0,/*obsudc=*/1) + fglaeuftnicht;
 	if ((pmp->hgelesen && hylastat!=fehlend && hylastat!=init)) {
 		*ausgp<<",";
-		char buf[100];
-		int hversuzahl=atol(hdials.c_str()); // totdials
-		snprintf(buf,4,"%3d",hversuzahl);
-		*ausgp<<blau<<buf<<"/"<<maxdials<<schwarz<<(hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
+		//// char buf[100]; int hversuzahl=atol(hdials.c_str()); snprintf(buf,4,"%3d",hversuzahl);
+		*ausgp<<blau<<setw(3)<<hdials<<"/"<<maxdials<<schwarz<<(hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz; // totdials
 		// hier muss noch JobReqBusy, JobReqNoAnswer, JobReqNoCarrier, JobReqNoFCon, JobReqOther, JobReqProto dazu gerechnet werden
 		//// time_t spoolbeg=(time_t)atol(tts.c_str());
-		pthread_mutex_lock(&timemutex);
-		strftime(buf, sizeof(buf), "%d.%m.%y %T", localtime(&tts));
-		pthread_mutex_unlock(&timemutex);
-		*ausgp<<blau<<buf<<schwarz; 
+		//// pthread_mutex_lock(&timemutex);
+		//// char buf[100];
+		//// strftime(buf, sizeof(buf), "%d.%m.%y %T", localtime(&tts));
+		//// *ausgp<<blau<<buf<<schwarz; 
+		//// pthread_mutex_unlock(&timemutex);
+		*ausgp<<blau<<ztacl(tts,"%d.%m.%y %T")<<schwarz;
 		////              if (hversuzahl>12) ausg<<", zu spaet";
 		*ausgp<<",T.:"<<blau<<setw(12)<<number<<schwarz;
 		*ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
@@ -2727,12 +2732,13 @@ void paramcl::pruefmodem()
 		systemrueck("cd "+svz+";find */device/driver", obverb,oblog,&qrueck,/*obsudc=*/0);
 	} else {
 		findfile(&qrueck,findv,obverb,oblog,0,svz,"",1,127,0);
-		for(ssize_t i=qrueck.size()-1;i>=0;i--) {
+		for(size_t i=qrueck.size();i;) {
+			i--;
 			struct stat st={0};
 			if (lstat((qrueck[i]+"/device/driver").c_str(),&st)) {
 				qrueck.erase(qrueck.begin()+i);
 			} // 				if (lstat((qrueck[i]+"/device/driver").c_str(),&st))
-		} // 			for(ssize_t i=qrueck.size()-1;i>=0;i--)
+		} // 			for(size_t i=qrueck.size();i;)
 	} // 		if (findv==1)
 #endif // mitdmesg else
 	for(size_t i=0;i<qrueck.size();i++) {
@@ -4359,14 +4365,17 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 				for(ruecki=0;ruecki<rueck[cru].size();ruecki++) {
 					teln.clear();zp.clear();tries.clear();user.clear();size=0;
 					struct stat sffstat={0};
-					char buf[100];
 					if (!lstat(rueck[cru][ruecki].c_str(),&sffstat)) {
 						size=sffstat.st_size;
-						pthread_mutex_lock(&timemutex);
-						struct tm *tmp=localtime(&sffstat.st_mtime);
-						strftime(buf, sizeof(buf), "%F %T", tmp);
-						pthread_mutex_unlock(&timemutex);
-						zp=buf;
+						//// pthread_mutex_lock(&timemutex);
+						//// struct tm *tmp=localtime(&sffstat.st_mtime);
+						//// char buf[100];
+						//// strftime(buf, sizeof(buf), "%F %T", tmp);
+						//// pthread_mutex_unlock(&timemutex);
+						stringstream zpstr;
+						zpstr<<ztacl(sffstat.st_mtime,"%F %T");
+						//// zp=buf;
+						zp=zpstr.str();
 					}
 					string stamm,exten;
 					getstammext(&rueck[cru][ruecki],&stamm,&exten);
@@ -6812,7 +6821,8 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 			systemrueck(cmd,obverb,oblog,&qrueck);
 			} else {
 			findfile(&qrueck,findv,obverb,oblog,0,varsphylavz,"/q[0123456789]+$",-1,1,0,0,0,1);
-			for (ssize_t i=qrueck.size()-1;i>=0;i--) {
+			for (size_t i=qrueck.size();i;) {
+			i--;
 			uchar gef=0;
 			mdatei qr(qrueck[i],ios::in);
 			if (qr.is_open()) {
@@ -6884,11 +6894,9 @@ int paramcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct sta
 				pthread_mutex_lock(&timemutex);
 				memcpy(tmp, localtime(&elogp->st_mtime),sizeof(*tmp));
 				pthread_mutex_unlock(&timemutex);
-				/*//
-					char buf[100];
-					strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", tmp);
-				// <<"Buf: "<<buf<<endl;
-				 */
+				//// char buf[100];
+				//// strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", tmp);
+				//// <<"Buf: "<<buf<<endl;
 			} //     if (!lstat(datei.c_str(),elogp)) 
 		} // if (elogp)
 	} // if (tmp)
@@ -6901,11 +6909,9 @@ int paramcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct sta
 			if (TIFFGetField(tif, TIFFTAG_DATETIME, &rdesc)) {
 				//// <<"Datetime: \n"<<rdesc<<endl;
 				strptime(rdesc,"%Y:%m:%d %T",tmp);
-				/*//
-					char buf[100];
-					strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", tmp);
-					<<"Buf (2): "<<buf<<endl;
-				 */
+				//// char buf[100];
+				//// strftime(buf, sizeof(buf), "%d.%m.%Y %H.%M.%S", tmp);
+				//// <<"Buf (2): "<<buf<<endl;
 			} // if (TIFFGetField(tif, TIFFTAG_DATETIME, &rdesc))
 		} // if (tmp)
 		if (seitenp) *seitenp=TIFFNumberOfDirectories(tif);
@@ -7070,11 +7076,14 @@ void paramcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,con
 		fuersamba(absdr);  
 		int obhpfadda=1, obpdfda=1; // wenn !(was&4), dann nicht behindern
 		if (was&4) {
-			char tbuf[100];
-			strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
+			//// char tbuf[100];
+			//// strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
 			if (absdr.length()>187) absdr.erase(187);
 			if (absdr.length()>70) absdr.erase(70);
-			const string hrumpf="Fax h"+fnr+","+Tx[T_avon]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf;
+			//// const string hrumpf="Fax h"+fnr+","+Tx[T_avon]+absdr+", T."+tsid+", "+Tx[T_vom]+tbuf;
+			stringstream hrstr;
+			hrstr<<"Fax h"<<fnr<<","<<Tx[T_avon]<<absdr<<", T."<<tsid<<", "<<Tx[T_vom]<<put_time(&tm,"%d.%m.%Y %H.%M.%S");
+			const string hrumpf=hrstr.str();
 			const string hdatei=hrumpf+".tif";
 			const string hpfad=empfvz+vtz+hdatei;
 			const string ziel=empfvz+vtz+hrumpf+".pdf";
@@ -7152,18 +7161,22 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 	confdat empfcd(ctxdt,&umstcnfA,obverb);
 	////    if (cpplies(rueck[i],umstcnfA,cs)) KLA
 	struct tm tm={0};
-	char tbuf[100]={0};
+	//// char tbuf[100]={0};
+	string zeits;
 	for(unsigned i=0;i<5;i++) {
 		const string *sptr=&umstcnfA[i].wert;
-		string s;
 		if (i==3) {
 			for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
 				if (strptime(umstcnfA[i].wert.c_str(), tmmoegl[im], &tm)) break;
 			} // 			for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++)
-			strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
-			// tbuf und tm enthalten also z.B. die in /var/spool/capisuite/users/<user>/received/fax-999999.txt unter "time" stehende Zeit
-			s=tbuf;
-			sptr=&s;
+			//// strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
+			stringstream sptrstr;
+			sptrstr<<put_time(&tm,"%d.%m.%Y %H.%M.%S");
+			// tm enthaelt also z.B. die in /var/spool/capisuite/users/<user>/received/fax-999999.txt unter "time" stehende Zeit
+			//// s=tbuf;
+			//// sptr=&s;
+			zeits=sptrstr.str();
+			sptr=&zeits;
 		} // 		if (i==3)
 		Log(schwarzs+"   "+umstcnfA[i].name+": "+tuerkis+(sptr?*sptr:""));
 	} // 			for(unsigned i=0;i<5;i++)
@@ -7183,7 +7196,7 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 	const uchar sfffehlt=lstat(sffdatei.c_str(),&entrysff);
 	if (was&4) { // Bilddatei erstellen
 		// um das Datum dann anzugleichen
-		const string tifrumpf="Fax c"+fnr+","+Tx[T_avon]+getname+", T."+stdfaxnr(umstcnfA[1].wert)+","+Tx[T_vom]+tbuf;
+		const string tifrumpf="Fax c"+fnr+","+Tx[T_avon]+getname+", T."+stdfaxnr(umstcnfA[1].wert)+","+Tx[T_vom]+zeits;
 		if (sfffehlt) {
 			// .txt nach falsche verschieben
 			verschieb=1;
@@ -7743,13 +7756,13 @@ int paramcl::hconfigtty()
 	mdatei hci(modconfdt,ios::out);
 	if (hci.is_open()) {
 		//// <<rot<<" ist offen"<<schwarz<<endl;
-		time_t tim=time(0);
-		pthread_mutex_lock(&timemutex);
-		struct tm *tm=localtime(&tim);
-		char buf[80];
-		strftime(buf, sizeof(buf), "%d.%m.%y %T", tm);
-		pthread_mutex_unlock(&timemutex);
-		hci<<"# Konfiguration von hylafax durch "+meinname+" vom "<<buf<<endl;
+		time_t jetzt=time(0);
+		hci<<Tx[T_Konfiguration_von_hylafax_durch]+meinname+Tx[T_vom]<<ztacl(jetzt,"%d.%m.%y %T")<<endl;
+		//// pthread_mutex_lock(&timemutex);
+		//// struct tm *tm=localtime(&&jetzt);
+		//// char buf[80];
+		//// strftime(buf, sizeof(buf), "%d.%m.%y %T", tm);
+		//// pthread_mutex_unlock(&timemutex);
 		hci<<"CountryCode:    "<<this->countrycode<<endl;
 		hci<<"AreaCode:   "<<this->citycode<<endl;
 		hci<<"FAXNumber:    \""<<this->countrycode<<"."<<this->citycode<<"."<<this->msn<<"\""<<endl;
@@ -7761,7 +7774,7 @@ int paramcl::hconfigtty()
 		hci<<"RecvFileMode:   0600"<<endl;
 		hci<<"LogFileMode:    0600"<<endl;
 		hci<<"DeviceMode:   0600"<<endl;
-		hci<<"RingsBeforeAnswer:  "<<this->hklingelzahl<<" #muss mindestens 2 sein zur Uebergabe der Nummer des Anrufenden"<<endl;
+		hci<<"RingsBeforeAnswer:  "<<this->hklingelzahl<<Tx[T_muss_mindestens_2_sein_zur_Uebergabe_der_Nr_des_Anrufenden]<<endl;
 		hci<<"MaxDials: "<<this->maxhdials<<endl;
 		hci<<"MaxTries: "<<this->maxhdials<<endl;
 		hci<<"CIDNumber: NMBR="<<endl;
@@ -8366,7 +8379,8 @@ int paramcl::pruefhyla()
 						regex_t reg;
 						uchar noreg=0;
 						if (regcomp(&reg, (fc+" *$").c_str(), REG_EXTENDED | REG_NOSUB)) noreg=1;
-						for(ssize_t i=qrueck.size()-1;i>=0;i--) {
+						for(size_t i=qrueck.size();i;) {
+							i--;
 							uchar gef=0;
 							mdatei qr(qrueck[i],ios::in);
 							if (qr.is_open()) {
@@ -8381,7 +8395,7 @@ int paramcl::pruefhyla()
 								qr.close();
 								if (!gef) qrueck.erase(qrueck.begin()+i);
 							} // 							if (qr.is_open())
-						} // 						for(ssize_t i=qrueck.size()-1;i>=0;i--)
+						} // 						for(size_t i=qrueck.size();i;)
 					} // 					if (findv==1) else
 					for(size_t i=0;i<qrueck.size();i++) {
 						systemrueck("sed -i 's/"+fc+" *$/"+fc+" -a -A/g' "+qrueck[i]+"||:;",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
@@ -10083,7 +10097,8 @@ int main(int argc, char** argv)
 					for(int ru=0;ru<sz;ru++) {
 						// warten, bis ein thread nicht mehr laeuft
 						for (unsigned long long int iru=0;;iru++) {
-							for(ssize_t i=pidv.size()-1;i>=0;i--) {
+							for(size_t i=pidv.size();i;) {
+								i--;
 								int res=kill(pidv.at(i).pid,0);
 								uchar zuloeschen=0;
 								if (res==-1 && errno==ESRCH) zuloeschen=1;
