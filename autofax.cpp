@@ -7623,8 +7623,8 @@ void paramcl::hfaxsetup()
 		 */
 		::Log(blaus+Tx[T_Fuehre_aus_Dp]+schwarz+sudc+faxsu+" -nointeractive"+blau+Tx[T_falls_es_hier_haengt_bitte_erneut_aufrufen]+schwarz,1,oblog);
 		pruefplatte();
-		// -nointeracitve -verbose fuehrt zum Stehenbleiben
-		if (!systemrueck(sudc+"pkill hfaxd;"+sudc+faxsu+" -nointeractive"+(obverb?" -verbose":""),obverb,oblog,0,2)) {
+		// Stehenbleiben konnte ich nur durch pkill verhindern, Prozess des Bash-Gabelprogramms nicht gefunden
+		if (!systemrueck("( (sleep 20; pkill " DPROG ") & exec "+faxsu+" -nointeractive"+(obverb?" -verbose":"")+" )",obverb,oblog,0,1)) {
 			this->shfaxd->stop(obverb,oblog,1);
 			this->sfaxq->stop(obverb,oblog,1);
 			servc::daemon_reload();
@@ -8085,13 +8085,15 @@ int paramcl::pruefhyla()
 								} // 								for(int iru=0;iru<2;iru++)
 								if (!was.empty()) {
 									useruucp(huser,obverb,oblog);
+									// Fehlermeldung faxgetty nicht gefunden verbergen
+									const string vorcfg="sed -i.bak 's_\\(ls -lL \\$1$\\)_\\1 2>/dev/null_g' configure";
 									const string cfgbismake=nix+" --nointeractive && echo $? = Ergebnis nach configure && "
 										"sed -i.bak \"s.PAGESIZE='North American Letter'.PAGESIZE='ISO A4'.g;"
 										"s.PATH_GETTY='\\.*'.PATH_GETTY='"
 										"$(grep LIBEXEC defs | cut -d'=' -f2 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')/faxgetty'.g\" config.cache"
 										"&& echo $? = "+Tx[T_Ergebnis_nach]+" sed"
 										"&&"+sudc;
-									if (!kompilfort(was,{},cfgbismake)) {
+									if (!kompilfort(was,vorcfg,cfgbismake)) {
 										const string nachcfg=
 											"systemctl daemon-reload && systemctl stop hylafax 2>/dev/null"
 											"&& test -f /etc/init.d/hylafax &&{  mkdir -p /etc/ausrangiert"

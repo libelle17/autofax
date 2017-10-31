@@ -5019,14 +5019,12 @@ void haupt::prueftif(string aktvers)
 	if ((p1=aktvers.find('\n'))!=string::npos) aktvers.erase(p1);
 	if ((p1=aktvers.rfind(' '))!=string::npos) aktvers.erase(0,p1+1);
 	const double tv=verszuzahl(aktvers);
-	caus<<gruen<<tv<<schwarz<<endl;
-	// fehlerhafte Version
+	//// <<gruen<<tv<<schwarz<<endl;
+	// 4.07 = fehlerhafte Version
 	if (tv==4.07) {
 		obsotiff=1; // ob source-tiff
 	}
-	const string ht1="/usr/include/tiff.h", ht2="/usr/local/include/tiff.h";
-	struct stat lht1={0}, lht2={0};
-  const uchar incfehlt= lstat(ht1.c_str(),&lht1) && lstat(ht2.c_str(),&lht2);
+	const uchar incfehlt=!systemrueck("find /usr/include /usr/local/include -name tiff.h -print -quit 2>/dev/null",obverb,oblog,0,1);
 	if (obsotiff) {
 		// Die Datei /usr/local/sclibtiff wird als Nachweis verwendet, dass die Installationskorrektur durchgefuert wurde
 		struct stat lnw={0};
@@ -5780,7 +5778,7 @@ void haupt::update(const string& DPROG)
 	//// <<"Tagesaufr: "<<tagesaufr<<endl;
 } // void haupt::update(const string& DPROG)
 
-
+// in pruefhyla, pruefocr, prueftif und update
 void haupt::reduzierlibtiff()
 {
 	svec qrueck;

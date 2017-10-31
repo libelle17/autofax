@@ -201,7 +201,7 @@ einricht() {
 			# für jessie weitere evtl. notwendige Befehle
 			# in /etc/apt/sources.list einfügen: "deb http://ftp.de.debian.org/debian/ unstable main contrib non-free
 			#                                    "deb-src http://ftp.de.debian.org/debian/ unstable main contrib non-free"
-			# sudo apt-get -f install
+			sudo apt-get -f install
 			# sudo apt-get update && sudo apt-get upgrade
 			# sudo apt-get autoremove
 			# sudo apt-get install gnome-tweak-tool

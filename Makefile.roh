@@ -36,7 +36,7 @@
 # "make vsneu" => wie verschieb, löscht vorher das als Zielverzeichnis (geht nur, wenn das github-Repository vorher gelöscht ist)
 # "make ruf" => ruft das Programm auf
 # "make uninstall" => deinstalliert alles, frägt noch manchmal rücke
-# "make allesweg" => deinstalliert alles, beantwortet die ersten 30 Rückfragen mit 'y'
+# "make allesweg" => deinstalliert alles, beantwortet Rückfragen mit 'y'
 
 ICH::=$(firstword $(MAKEFILE_LIST))
 SRCS::=$(wildcard *.cpp)
@@ -434,49 +434,8 @@ uninstall: fernclean
 
 .PHONY: allesweg
 allesweg: fernclean
-	-@tac $(UNF)>tmp_$(UNROH)&& $(SUDC)blau=$(blau) reset=$(reset) bash tmp_$(UNROH) <<-EOF \
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		y\
-		EOF;: # uninstallinv von hinten nach vorne abarbeiten
-	-@[ "$(DISTR)" = "1" ]&&{ $(SUDC)apt-get -f install;};:;
+	-@tac $(UNF)>tmp_$(UNROH)&& $(SUDC)blau=$(blau) reset=$(reset) bash tmp_$(UNROH) <<-EOF $'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n' EOF;: # uninstallinv von hinten nach vorne abarbeiten
+	-@[ "$(DISTR)" = "1" ]&&{ $(SUDC)apt-get -f install<<EOF $'\n'$'\n' EOF;};:;
 	-@printf "Fertig mit uninstall!\n"
 
 #//rufe:
