@@ -3842,7 +3842,7 @@ void paramcl::rueckfragen()
 			}
 			if (obcapi) {
 				pruefsfftobmp();
-				caus<<TIFFGetVersion()<<endl;
+				//// <<TIFFGetVersion()<<endl;
 				prueftif(TIFFGetVersion());
 			} // 		if (obcapi)
 		} // 	if (obcapi||obhyla)
@@ -5695,7 +5695,6 @@ void paramcl::wegfaxen()
 	// 2a. ... und in im Warteverzeichnis in PDF umwandeln, falls erfolgreich und gleichziel => auch in ziel kopieren
 	// 2b. Die originalen PDF-Dateien ins Warteverzeichnis verschieben, falls erfolgreich, nicht schon registriert und gleichziel => auch in ziel kopieren
 	// 3. wegfaxen
-	pid_t pid=0; // fuer Capi abzweigen
 	Log(violetts+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Txk[T_ja]:Txk[T_nein])+", "
 			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Txk[T_ja]:Txk[T_nein]));
 	const size_t aktc=3; 
@@ -6202,6 +6201,7 @@ void paramcl::wegfaxen()
 		} // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
 		Log(Tx[T_ZahldDSmwegzuschickendenFaxenin]+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz);
 		uchar wasichbin=0; //1=capi,2=hyla
+		pid_t pid=1; // fuer Capi und Hyla abzweigen
 		if (obcapi) {
 			pid=fork();
 			if (pid<0) {
@@ -6232,6 +6232,7 @@ void paramcl::wegfaxen()
 			} // 			if (obhyla)
 		} // 		if (pid>0)
 		if (wasichbin) {
+			// hier Fork zu Capi und Hyla, nicht der Hauptzweig
 			for(unsigned i=0;i<fsfv.size();i++) {
 				Log(" i: "+blaus+ltoan(i)+schwarz+Tx[T_PDFDatei]+blau+fsfv[i].spdf+schwarz+
 						" ."+Tx[T_obcapimitDoppelpunkt]+blau+(fsfv[i].fobcapi?Txk[T_ja]:Txk[T_nein])+schwarz+
@@ -8260,7 +8261,7 @@ int paramcl::pruefhyla()
 									if (!aru) {
 										if (!ruei && rueck[0].find("no version information")!=string::npos) {
 											nochmal=1;
-											caus<<violett<<rueck[0]<<schwarz<<endl;
+											//// <<violett<<rueck[0]<<schwarz<<endl;
 											reduzierlibtiff();
 											hylafehlt=1;
 											break;
