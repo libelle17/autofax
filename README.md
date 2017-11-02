@@ -508,6 +508,7 @@ has to run, which is the case in the mentioned program
 versions. One of the packet managers rpm or dpkg and apt,
 dnf, yum or zypper has to be installed, respectively, as is
 the case per default in the mentioned linux distributions.
+The program &rsquo;<b>wget</b>&rsquo; must be installed.
 Uninstalling of the programs added by autofax by <b>make
 uninstall</b> works currently only with the english and the
 german versions of the packet manager.</p>
@@ -1332,7 +1333,8 @@ Programmversionen der Fall ist. Jeweils einer der
 Paketmanager rpm oder dpkg sowie apt, dnf, yum oder zypper
 muss installiert sein, wie in den genannten
 Linuxdistributionen standardm&auml;&szlig;ig der
-Fall. Die Deinstallation der durch autofax
+Fall. Das Programm &rsquo;<b>wget</b>&rsquo; wird
+vorausgesetzt. Die Deinstallation der durch autofax
 hinzugef&uuml;gten Programme mit <b>make uninstall</b>
 ist gegenw&auml;rtig nur f&uuml;r englische und
 deutsche Versionen der Paketmanager eingerichtet.</p>
