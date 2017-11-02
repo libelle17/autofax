@@ -8526,7 +8526,7 @@ void paramcl::pruefsfftobmp()
 	if (system==fed) {
 		//// P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
 		uchar obboostda=!linstp->doggfinst("boost-devel",obverb,oblog);
-		if (!obprogda("sfftobmp",obverb,oblog)) {
+		if (!obprogda("sfftobmp",obverb,oblog) || systemrueck("sfftobmp --version 2>/dev/null")) {
 			uchar obfrei= obprogda("jpegtran",obverb,oblog) && obprogda("cjpeg",obverb,oblog) && obprogda("djpeg",obverb,oblog);
 			if (!obfrei) {
 				const string jpeg="jpegsrc_copy";
@@ -8547,7 +8547,7 @@ void paramcl::pruefsfftobmp()
 				if (obboostda) {
 					int serg=0;
 					if (systemrueck("grep '/usr/local/lib' /etc/ld.so.conf",obverb,oblog,/*rueck=*/0,/*obsudc=*/1)) {
-            systemrueck("echo '/usr/local/lib' >> /etc/ld.so.conf",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
+            systemrueck("echo '/usr/local/lib' >> /etc/ld.so.conf",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 						serg=systemrueck("ldconfig",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 					}
 					if (!serg) {
@@ -8559,6 +8559,7 @@ void paramcl::pruefsfftobmp()
 	} else {
 		linstp->doggfinst("sfftobmp",obverb,oblog);
 	} // if (system==fed) else
+	Log(violetts+Txk[T_Ende]+Tx[T_pruefsfftobmp]+schwarz);
 } // pruefsfftobmp
 
 // wird aufgerufen in pruefsfftobmp und empfcapi
@@ -8721,7 +8722,7 @@ int paramcl::pruefcapi()
 										sudc+"make clean";
 									const string cfgbismake=" 2>/dev/null;"+sudc;
 									kompiliere(proj,s_gz,vorcfg,cfgbismake);
-									systemrueck("depmod",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
+									systemrueck("depmod",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 									if (obdown) {
 										systemrueck("mv -f \""+gccpfad+".bak\" \""+gccpfad+"\" &&"+
 												"mv -f \""+gpppfad+".bak\" \""+gpppfad+"\"",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);

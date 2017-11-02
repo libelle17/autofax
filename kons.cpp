@@ -3479,7 +3479,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 ////,uchar obyes/*=1*/)
 {
 	//// <<rot<<"doinst 1: "<<violett<<prog<<schwarz<<" obverb: "<<(int)obverb<<endl;
-	Log(violetts+Txk[T_doinst]+schwarz+" prog: "+violett+prog+schwarz+Txk[T_fallsnichtda]+violett+fallsnichtda+schwarz+Txk[T_ohneabh]+
+	Log(violetts+Txk[T_doinst]+schwarz+" prog: "+violett+prog+schwarz+Txk[T_fallsnichtda]+violett+"'"+fallsnichtda+"'"+schwarz+Txk[T_ohneabh]+
 	    violett+(ohneabh?"1":"0")+schwarz,obverb,oblog);
 	int ret=2;
 	// eprog kann auch von aussen vor Programmaufruf gesetzt werden
