@@ -4861,8 +4861,9 @@ const string& gitv=
 #include "gitvdt"
 ;
 // Pfad für Aufruf aus crontab
+// Datei wird erstellt in configure
 const string& spath=
-#include "sudopath"
+#include "spath"
 ;
 const string s_true="true";
 const string s_dampand="&&";

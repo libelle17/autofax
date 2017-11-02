@@ -319,8 +319,9 @@ if test "$ICH" = configure -o "$ICH" = install.sh -o "$ICH" = ${DPROG}_inst.sh -
 		# falls make fehlt, dann installieren ...
 		einricht make make
 		#// $SPR make >$DN 2>&1 ||{ echo Installing/ Installiere 'make' ....; id su >$DN 2>&1 && { su -c "$IPR make;";:;} || ${SUDC}$IPR make; grep -q make $AUNF||printf "${UPR}make\necho \"${UPR}make\"\n">>$AUNF; }
+		# in kons.cpp steht gleichnamig spath=\n#include spath\n;\n
 		# sfftobmp, vom source code in /usr/local/bin installiert, wurde unter Fedora 14 LX nicht bei der source-code-Installation von capisuite gefunden
-		${SUDC}sh -c 'echo \"$PATH$(D=/usr/local/bin;[ "${PATH#*$D}" == "$PATH" -a -d $D ]&&echo :$D||echo "")$(D=/usr/local/sbin;[ "${PATH#*$D}" == "$PATH" -a -d $D ]&&echo :$D||echo "")\"'>sudopath
+		${SUDC}sh -c 'echo \"$PATH$(D=/usr/local/bin;[ "${PATH#*$D}" == "$PATH" -a -d $D ]&&echo :$D||echo "")$(D=/usr/local/sbin;[ "${PATH#*$D}" == "$PATH" -a -d $D ]&&echo :$D||echo "")\"'>spath
 		exportvars;
 		Mf=Makefile;Mfr=$Mf.roh; test -f $Mfr && mv $Mfr $Mf
 	fi
