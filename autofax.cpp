@@ -2559,7 +2559,7 @@ string paramcl::getzielvz(const string& qdatei)
 			return zmakt->ziel;
 		if (zmakt->obmusterleer()) break;
 	}
-	return "";
+	return {};
 } // getzielvz
 
 // passt einen Dateinamen gemaess der vorhandenen Dateien in allen moeglichen Zielverzeichnissen so an
@@ -3168,13 +3168,13 @@ void paramcl::pruefcvz()
 	//// <<rot<<"cfaxuservz in pruefcvz: "<<cfaxuservz<<schwarz<<endl;
 	Log(violetts+Tx[T_pruefcvz]+schwarz+" ccfaxuservz: "+violett+cfaxuservz+schwarz);
 	kuerzevtz(&cfaxuservz);
-	pruefverz(cfaxuservz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/{},/*benutzer=*/cuser,/*obmachen=*/0);
+	pruefverz(cfaxuservz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/"",/*benutzer=*/cuser,/*obmachen=*/0);
 	cfaxusersqvz=cfaxuservz+vtz+cuser+"/sendq"; //  "/var/spool/capisuite/users/<user>/sendq";
-	pruefverz(cfaxusersqvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/{},/*benutzer=*/cuser,/*obmachen=*/0);
+	pruefverz(cfaxusersqvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/"",/*benutzer=*/cuser,/*obmachen=*/0);
 	cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
 	cfaxuserrcfalschevz=cfaxuserrcvz+"/falsche";
 	//// <<violett<<"cfaxuserrcvz: "<<cfaxuserrcvz<<schwarz<<endl;
-	pruefverz(cfaxuserrcvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/{},/*benutzer=*/cuser,/*obmachen=*/0);
+	pruefverz(cfaxuserrcvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/"",/*benutzer=*/cuser,/*obmachen=*/0);
 } // paramcl::pruefcvz
 
 // wird aufgerufen in lieskonfein
@@ -4184,7 +4184,7 @@ void paramcl::nextnum()
 		} // if (nextstr.is_open()) 
 	} // if (!lstat(cfaxusersqvz.c_str(),&entrynextnr))
 	if (!nextnr) {
-		pruefverz(cfaxuservz,obverb,oblog,/*obmitfacl=*/2,/*obmitcon=*/0,/*besitzer=*/{},/*benutzer=*/cuser);
+		pruefverz(cfaxuservz,obverb,oblog,/*obmitfacl=*/2,/*obmitcon=*/0,/*besitzer=*/"",/*benutzer=*/cuser);
 		setfaclggf(spoolcapivz,obverb,oblog,/*obunter=*/wahr,/*mod=*/7,/*obimmer=*/wahr);
 		if (findv==1) {
 			cmd=sudc+"echo $(( `find "+spoolcapivz+ " -type f -name '*-fax-*.sff' 2>/dev/null "
@@ -5411,7 +5411,7 @@ int paramcl::pruefocr()
 									blau+linstp->upd+schwarz,1,1);
 						} //          if (double pyv=progvers("python3")<=3.41)
 					} // 				if (systemrueck(sudhc+"python3 -m pip install --upgrade setuptools pip",obverb+1,oblog))
-					//				systemrueck((cus.cuid?sudo:{})+"python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
+					//				systemrueck((cus.cuid?sudo:"")+"python3 -m pip install --upgrade ocrmypdf");  // http://www.uhlme.ch/pdf_ocr
 					string vprog;
 					for(int iru=0;iru<2;iru++) {
 						const string virtualenv="virtualenv";
@@ -5792,7 +5792,10 @@ void paramcl::wegfaxen()
 				} // 				for(size_t iiru=0;iiru<zfuda.size();iiru++)
 				// wenn Verzeichnis Datum enthielt, schon vorbei ist und leer ist, dann loeschen
 				if (auchtag && !zfuda.size()) {
-					tuloeschen(zfvz[iakt],{},1,oblog);
+					// wenn wirklich gar nichts drin ist
+					if (!systemrueck(sudc+"find \""+zfvz[iakt]+"\" -mindepth 1 -ls -quit",obverb,oblog)) {
+						tuloeschen(zfvz[iakt],"",1,oblog);
+					}
 				} // 				if (!auchtag && !zfuda.size())
 			} // 			if (obvorbei(uvz,&auchtag))
 		} // 		if (zfvz[iakt]!=zufaxenvz)
@@ -6683,7 +6686,7 @@ void paramcl::bereinigecapi(const size_t aktc)
 			} else {
 				// 31.1.16: ... und wenn diese sich nicht in outa findet ...
 				const string waisen = cfaxusersqvz+"/waisen";
-				pruefverz(waisen,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/{},/*benutzer=*/cuser);
+				pruefverz(waisen,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/"",/*benutzer=*/cuser);
 				uint vfehler=0;
 				verschiebe(qrueck[i],waisen,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 			} // if (inouta.num_rows) else 
@@ -7353,7 +7356,7 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 				////        if (loee) KLA
 				static uchar falschegeprueft=0;
 				if (!falschegeprueft) {
-					pruefverz(cfaxuserrcfalschevz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/{},/*benutzer=*/cuser);
+					pruefverz(cfaxuserrcfalschevz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/"",/*benutzer=*/cuser);
 					falschegeprueft=1;
 				} // 			if (!falschegeprueft)
 				verschiebe(ctxdt,cfaxuserrcfalschevz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
@@ -7366,7 +7369,7 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 			} else {
 				static uchar cempfavzgeprueft=0;
 				if (!cempfavzgeprueft) {
-					pruefverz(cempfavz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/{},/*benutzer=*/cuser);
+					pruefverz(cempfavz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/"",/*benutzer=*/cuser);
 					cempfavzgeprueft=1;
 				} // 			if (!cempfavzgeprueft)
 				string zdt=cempfavz+vtz+cuser+"-"+base+".sff";
@@ -7492,7 +7495,7 @@ string zielname(const string& qdatei, const zielmustercl& zmp, uchar wieweiterza
 		} //     if (!reti)
 		if (zmakt->obmusterleer()) break;
 	} //   for(zielmustercl *zmakt=zmp;1;zmakt++)
-	return "";
+	return {};
 } // zielname
 
 
@@ -7954,7 +7957,7 @@ int paramcl::cservice()
 			svec qrueck;
 			findfile(&qrueck,findv,obverb,oblog,0,vz,datei+"$",1,1,Fol_Dat);
 			if (qrueck.size()) {
-				pruefverz(ziel,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/{},/*benutzer=*/cuser);
+				pruefverz(ziel,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/"",/*benutzer=*/cuser);
 				systemrueck("mv -f "+vz+datei+" "+ziel,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			} // 			if (qrueck.size())
 		} // 		if (findv==1)
@@ -8206,7 +8209,7 @@ int paramcl::pruefhyla()
 											} // 								while(getline(confc,zeile))
 											confc.close();
 										} // 							if (confc.is_open())
-									} // 						if (!kompilfort(was,{},cfgbismake))
+									} // 						if (!kompilfort(was,"",cfgbismake))
 								} // !was.empty()
 								// 2>/dev/null wegen tar:Schreibfehler (=> Schreibversuch durch von head geschlossene pipe)
 								////					systemrueck("sh -c 'cd $("+sudc+"tar --list -f hylafax+ 2>/dev/null | head -n 1) && "
@@ -9963,12 +9966,11 @@ void paramcl::zeigdienste()
 	} // 	for(int i=0;i<4;i++)
 } // void paramcl::zeigdienste()
 
+
 int main(int argc, char** argv) 
 {
 	//// <<TIFFGetVersion()<<endl;
 	paramcl pm(argc,argv); // Programmparameter
-	if (argc>1) {
-	}
 	/*//
 	if (argc>1) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		// Testcode mit argv[1]
@@ -10041,7 +10043,7 @@ int main(int argc, char** argv)
 		pm.Log(Tx[T_Logpfad]+drots+pm.loggespfad+schwarz+Tx[T_oblog]+drot+ltoan((int)pm.oblog)+schwarz+")");
 		if (pm.initDB())
 			return 10;
-		// pruefe Tabelle <spooltab> und stelle sie ggf. her
+		// pruefe Tabelle <spooltab> und erstelle sie ggf.
 		pruefspool(pm.My,pm.spooltab, pm.altspool, pm.obverb,pm.oblog);
 		pruefouttab(pm.My,pm.touta, pm.obverb,pm.oblog);
 		pruefudoc(pm.My,pm.tudoc, pm.obverb,pm.oblog);

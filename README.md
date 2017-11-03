@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.4606) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.46081) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -136,6 +136,11 @@ spool table <b>spooltab</b>. <br>
 Faxes which are placed by a user in the directory
 &rsquo;<b>tobefaxed/2200</b>&rsquo; will be handled starting
 at 10 p.m., if autofax is running. <br>
+If subdirectories in &rsquo;<b>tobefaxedfR&rsquo; are found
+named with a date or time (e.g. &rsquo;20180101
+0800</b>&rsquo; or &rsquo;<b>2200</b>&rsquo;), the contained
+faxes will be processed after that time an in the first case
+the subdirectory will then be deleted if empty. <br>
 At each call, autofax checks the status of <b>hylafax</b>
 and/or <b>Capisuite</b>. The Finishing of a fax process
 there causes autofax to move the source files (here the
@@ -775,7 +780,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.4606) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.46081) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -919,10 +924,12 @@ Gleichzeitig werden sie aus &rsquo;<b>zufaxen</b>&rsquo; in
 das Warteverzeichnis, z.B. &rsquo;<b>warteauffax</b>&rsquo;
 verschoben und in die Spooltabelle <b>spooltab</b>
 eingetragen. <br>
-Faxe, die durch einen Benutzer in
-&rsquo;<b>zufaxen/2200</b>&rsquo; bereitgestellt werden,
-werden ab 22:00 Uhr bearbeitet, wenn autofax l&auml;uft.
-<br>
+Gibt es in &rsquo;<b>zufaxenfR&rsquo; Unterverzeichnisse,
+deren Namen aus einem Datum oder Uhrzeit bestehen (z.B.
+&rsquo;20180101 0800</b>&rsquo; oder
+&rsquo;<b>2200</b>&rsquo;), so werden darin enthaltene Faxe
+erst nach diesem Zeitpunkt verarbeitet und im ersteren Fall
+das Unterverzeichnis nach Leerung geloescht. <br>
 Bei jedem Aufruf &uuml;berpr&uuml;ft autofax den
 Status von <b>hylafax</b> und/oder <b>Capisuite</b>. Der
 Abschluss eines Faxvorgangs dort hat zur Folge, dass autofax

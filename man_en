@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "03.11.17" "Version 0.4606" "\fB²DPROG²\fR man page"
+.TH man 1 "03.11.17" "Version 0.46081" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -55,6 +55,8 @@ Those are subsequently being relayed to \fBhylafax\fR or \fBCapisuite\fR and fro
 Simultaneously they are being moved from '\fBtobefaxed\fR' to the waiting directory, e.g. '\fBwaitingfaxes\fR' and recorded in the spool table \fBspooltab\fR.
 .br
 Faxes which are placed by a user in the directory '\fBtobefaxed/2200\fR' will be handled starting at 10 p.m., if ²DPROG² is running.
+.br
+If subdirectories in '\fBtobefaxedfR' are found named with a date or time (e.g. '\fB20180101 0800\fR' or '\fB2200\fR'), the contained faxes will be processed after that time an in the first case the subdirectory will then be deleted if empty.
 .br
 At each call, ²DPROG² checks the status of \fBhylafax\fR and/or \fBCapisuite\fR. The Finishing of a fax process there causes ²DPROG² to move the source files (here the above mentioned .doc- and .pdf-files) from the waiting directory to one or several archive directories or a directory for failed faxes and to move their database record from  '\fBspooltab\fR' to the archive table '\fBouta\fR'.
 .br

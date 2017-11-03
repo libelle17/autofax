@@ -2236,7 +2236,7 @@ std::string base_name(const std::string& path)
 std::string dir_name(const std::string& path)
 {
   size_t letzt=path.find_last_of("/\\");
-	if (letzt==string::npos) return "";
+	if (letzt==string::npos) return {};
   return path.substr(0,letzt);
 } // std::string dir_name(std::string const & path)
 
@@ -3332,14 +3332,14 @@ const string linst_cl::ersetzeprog(const string& prog) const
       else if (prog=="kernel-source") return "kernel-devel-$(uname -r)";
       else if (prog=="tiff") return "libtiff-tools";
       else if (prog=="libcapi20-2") return "isdn4k-utils";
-      else if (prog=="libcapi20-3") return "";
+      else if (prog=="libcapi20-3") return {};
 ////      else if (prog=="python-devel") return "python3-devel"; // bei capisuite_copy falsch; dann bei ocrmypdf fuer apt noch zu pruefen
-      else if (prog=="capiutils") return "";
+      else if (prog=="capiutils") return {};
       else if (prog=="imagemagick") return "ImageMagick ImageMagick-doc";
       else if (prog=="libxslt-tools") return "libxslt";
       else if (prog=="libreoffice-base") return "libreoffice-filters libreoffice-langpack-de";
       else if (prog=="tesseract-ocr") return "tesseract";
-      else if (prog=="tesseract-ocr-traineddata-english") return "";
+      else if (prog=="tesseract-ocr-traineddata-english") return {};
       else if (prog=="tesseract-ocr-traineddata-german") return "tesseract-langpack-deu tesseract-langpack-deu_frak";
       else if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-osd";
       else if (prog=="poppler-tools") return "poppler-utils";
@@ -3347,7 +3347,7 @@ const string linst_cl::ersetzeprog(const string& prog) const
       else if (prog=="libtiff5") return "libtiff";
       break;
 	  case zypper:
-		  if (prog=="redhat-rpm-config") return "";
+		  if (prog=="redhat-rpm-config") return {};
 			else if (prog=="libffi-devel") return "libffi$(gcc --version|head -n1|sed \"s/.*) \\(.\\).\\(.\\).*/\\1\\2/\")-devel";
       else if (prog=="kernel-source") return "kernel-devel";
 			break;
@@ -5246,7 +5246,7 @@ void haupt::pruefsamba(const vector<const string*>& vzn,const svec& abschni,cons
 			struct stat sstat={0};
 			if (!(conffehlt=lstat(smbdt,&sstat))) break;
 			if (iru) break;
-			pruefverz("/etc/samba",obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/{},/*benutzer=*/{},/*obmachen=*/0);
+			pruefverz("/etc/samba",obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/"",/*benutzer=*/"",/*obmachen=*/0);
 			kopier(smbquelle,smbdt,obverb,oblog);
 		} //   for(uchar iru=0;iru<2;iru++)
 		if (smb.obsvfeh(obverb-1,oblog)) if (smbd.obsvfeh(obverb-1,oblog)) dienstzahl--;
