@@ -1093,7 +1093,9 @@ class haupt
 		unsigned lfd;
     uchar rzf=0; // rueckzufragen
 		confdat afcd;
-		string vaufr[2]; // (vollaufruf) z.B. '/usr/bin/<DPROG> -noia >/dev/null 2>&1'
+		string vaufr[1]; // (vollaufruf) z.B. '/usr/bin/<DPROG> -noia >/dev/null 2>&1'
+    string saufr[1]; // (stummaufruf) '<DPROG> -noia >/dev/null 2>&1'
+		string zsaufr[1]; // zitiert saufr (in sed)
 		string tmpcron; // fuer crontab
     string cronminut; // Minuten fuer crontab; 0 = kein Crontab-Eintrag
 		uchar nochkeincron;
@@ -1133,8 +1135,6 @@ class haupt
     schlArr agcnfA; // Gesamtkonfiguration
 		string azaehlerdt; // akonfdt+".zaehl"
 		schlArr zcnfA; // Zaehlkonfiguration
-    string saufr[2]; // (stummaufruf) '<DPROG> -noia >/dev/null 2>&1'
-		string zsaufr[2]; // zitiert saufr (in sed)
 		string vorcm; // Vor-Cron-Minuten
 		linst_cl* linstp=0;
 		vector<string> benutzer; // Benutzer aus /etc/passwd, bearbeitet durch setzbenutzer(&user)

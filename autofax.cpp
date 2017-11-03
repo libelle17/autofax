@@ -711,7 +711,7 @@ enum T_
 	T_Gabelung_zu_bereinigevz_misslungen,
 	T_Fehler_in_pruefhyla,
 	T_Fehler_in_commandline,
-	T_um_22_Uhr,
+	// T_um_22_Uhr,
 	T_in_main_pidv_am_Schluss,
 	T_in_wegfaxen,
 	T_Nicht_losgefaxt,
@@ -747,6 +747,11 @@ enum T_
 	T_Ergebnis_nach,
 	T_Konfiguration_von_hylafax_durch,
 	T_muss_mindestens_2_sein_zur_Uebergabe_der_Nr_des_Anrufenden,
+	T_Unterverzeichnis,
+	T_passt_zu_Muster,
+	T_passt_zu_keinem_Muster,
+	T_war_schon,
+	T_kommt_noch,
 	T_MAX
 };
 
@@ -2022,7 +2027,7 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	// T_Fehler_in_commandline
 	{"Fehler in commandline()","Error in commandline()"},
 	// T_um_22_Uhr
-	{"um 22 Uhr","at 10 p.m."},
+	// {"um 22 Uhr","at 10 p.m."},
 	// T_in_main_pidv_am_Schluss
 	{"in main, pidv, am Schluss","in main, pidv, at the end"},
 	// T_in_wegfaxen
@@ -2093,6 +2098,16 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"# Konfiguration von hylafax durch ","# Configuration of hylafax by "},
 	// T_muss_mindestens_2_sein_zur_Uebergabe_der_Nr_des_Anrufenden
 	{" #muss mindestens 2 sein zur Uebergabe der Nummer des Anrufenden"," #must be at least 2 to transfer the no of the caller"},
+	// T_Unterverzeichnis
+	{"Unterverzeichnis '","Subdirectory '"},
+	// T_passt_zu_Muster
+	{"' passt zu Muster '","' fits to pattern '"},
+	// T_passt_zu_keinem_Muster
+	{"' passt zu keinem Muster","' fits to no pattern"},
+	// T_war_schon
+	{"', war schon: ","', passed: "},
+	// T_kommt_noch
+	{"', kommt noch: ","', will come: "},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -2511,8 +2526,8 @@ paramcl::paramcl(const int argc, const char *const *const argv):haupt(argc,argv)
 	vaufr[0]=mpfad+" -noia >/dev/null 2>&1"; // /usr/bin/<DPROG> -noia
 	saufr[0]=base_name(vaufr[0]); // <DPROG> -noia
 	zsaufr[0]=ersetzAllezu(saufr[0],"/","\\/");
-	saufr[1]=s1+".*"+ersetzAllezu(s2,"*","\\*")+".*";//Befehl zum Abfragen der Cronminuten aus aktuellem Cron-Script
-	zsaufr[1]=ersetzAllezu(saufr[1],"/","\\/");
+//	saufr[1]=s1+".*"+ersetzAllezu(s2,"*","\\*")+".*";//Befehl zum Abfragen der Cronminuten aus aktuellem Cron-Script
+//	zsaufr[1]=ersetzAllezu(saufr[1],"/","\\/");
 	/*// time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff; */
 	//  akonfdt.clear();
 } // paramcl::paramcl()
@@ -4202,7 +4217,7 @@ void paramcl::verzeichnisse()
 	Log(violetts+Tx[T_verzeichnisse]);
 	pruefcvz(); 
 	pruefverz(zufaxenvz,obverb,oblog,/*obmitfacl=*/2,/*obmitcon=*/1,/*besitzer=*/cuser); // dahin soll man schreiben koennen
-	pruefverz(zufaxenvz+"/2200",obverb,oblog,/*obmitfacl=*/0,/*obmitcon=*/0,/*besitzer=*/cuser); // dahin soll man schreiben koennen
+//	pruefverz(zufaxenvz+"/2200",obverb,oblog,/*obmitfacl=*/2,/*obmitcon=*/1,/*besitzer=*/cuser); // dahin soll man schreiben koennen
 	pruefverz(wvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/cuser);
 	pruefverz(ngvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/cuser);
 	pruefverz(empfvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/cuser);
@@ -4221,15 +4236,17 @@ void paramcl::verzeichnisse()
 void paramcl::pruefcron()
 {
 	if (haupt::pruefcron()) {
+		/*
 		// 2. um 22 Uhr vorgeplante Dateien faxen
 		vaufr[1]=s1+zufaxenvz+s2+zufaxenvz+vtz+" 2>/dev/null";
 		const string vorsaetze;
 		const string cbef="0 22 * * * "+vorsaetze+vaufr[1]; // "-"-Zeichen nur als cron
 		tucronschreib(zsaufr[1],cronzuplanen,cbef);
-		if (cmeingegeben) {/*if (cronzuplanen==vorcm.empty())*/
-			::Log(blaus+"'"+vaufr[1]+"'"+schwarz+Txk[T_wird]+blau+(cronzuplanen?Tx[T_um_22_Uhr]:Txk[T_gar_nicht])+schwarz+Txk[T_statt]+
-					+blau+(vorcm.empty()?Txk[T_gar_nicht]:Tx[T_um_22_Uhr])+schwarz+Txk[T_aufgerufen],1,oblog);
+		if (cmeingegeben) {
+		::Log(blaus+"'"+vaufr[1]+"'"+schwarz+Txk[T_wird]+blau+(cronzuplanen?Tx[T_um_22_Uhr]:Txk[T_gar_nicht])+schwarz+Txk[T_statt]+
+		+blau+(vorcm.empty()?Txk[T_gar_nicht]:Tx[T_um_22_Uhr])+schwarz+Txk[T_aufgerufen],1,oblog);
 		}
+		 */
 	} // 	if (haupt::pruefcron())
 } // pruefcron
 
@@ -4826,7 +4843,7 @@ void paramcl::anhalten()
 	Log(violetts+Tx[T_anhalten]+schwarz);
 	// crontab
 	setztmpcron();
-	for(int iru=0;iru<2;iru++) {
+	for(int iru=0;iru<1;iru++) {
 		const string befehl=
 			"bash -c 'grep \""+saufr[iru]+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr[iru]+"/d\">"+tmpcron+";crontab "+tmpcron+";};:'";
 		systemrueck(befehl,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
@@ -5686,6 +5703,50 @@ void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio
 #endif // alt
 */
 
+// wird aufgerufen in wegfaxen
+// ermittelt in Dateinamen steckendes Datum und gibt zurueck, ob dieses schon vorbei ist
+int paramcl::obvorbei(const string& vzname,uchar *auchtag)
+{
+	tm ht({0});
+	time_t jetzt=time(0);// / (24*60*60) *24*60*60 ;
+	time_t heute= jetzt-jetzt%86400;
+	time_t par;
+	//// <<"jetzt: "<<jetzt<<endl;
+	//// <<"heute: "<<heute<<endl;
+	//// <<"jetzt: "<<put_time(gmtime(&jetzt),"%c")<<endl;
+	uchar geht=0;
+	const char *mus[]={"%d.%m.%y %H.%M","%d.%m.%Y %H.%M","%d.%m.%y","%d.%m.%Y","%H.%M"
+		,"%y-%m-%d %H.%M","%Y-%m-%d %H.%M","%y-%m-%d","%Y-%m-%d"
+			,"%y%m%d%H%M","%Y%m%d%H%M","%H%M"
+			,"%y%m%d","%Y%m%d"
+	};
+	unsigned iru=0;
+	for(;iru<sizeof mus/sizeof *mus;iru++) {
+		memcpy(&ht,gmtime(&heute),sizeof ht);
+		//// <<"iru: "<<iru<<": "<<mus[iru]<<endl;
+		if (strptime(vzname.c_str(),mus[iru],&ht)) {
+			//// <<iru<<": "<<put_time(&ht,"%c")<<endl;
+			geht=1;
+			if (strchr(mus[iru],'d'))
+				if (auchtag) *auchtag=1;
+			break;
+		} // 		if (strptime(vzname.c_str(),mus[iru],&ht))
+	} // 	for(unsigned iru=0;iru<sizeof mus/sizeof *mus;iru++)
+	if (geht) {
+		//// <<"Parameter: "<<put_time(&ht,"%Y-%m-%d %H:%M:%S")<<endl;
+		if ((par=mktime(&ht))==-1) {
+			return -1;
+		} // 		if ((par=mktime(&ht))==-1)
+	} // 	if (geht)
+	if (obverb||oblog) {
+		stringstream sts;
+    sts<<put_time(&ht,"%Y-%m-%d %H:%M:%S");
+		Log(Tx[T_Unterverzeichnis]+blaus+vzname+schwarz+(geht?Tx[T_passt_zu_Muster]+blaus+mus[iru]+schwarz+
+					(par<jetzt?Tx[T_war_schon]:Tx[T_kommt_noch])+blau+sts.str()+schwarz:Tx[T_passt_zu_keinem_Muster]));
+	} // 	if (obverb||oblog)
+	return par<jetzt;
+} // int obvorbei(string vzname)
+
 // wird aufgerufen in: main
 void paramcl::wegfaxen()
 {
@@ -5707,10 +5768,36 @@ void paramcl::wegfaxen()
 	if (!ancfaxstr.empty()) anfxstrvec.push_back(ancfaxstr);
 	if (!anhfaxstr.empty()) anfxstrvec.push_back(anhfaxstr);
 	vector <urfxcl> urfx; // urspruenglicher Dateiname
-	svec qrueck;
+	svec zfda,zfvz; // Zufaxen-Datei, Warteverzeichnis-Verzeichnis
 	if (findv==1) {
-		systemrueck(sudc+"find \""+zufaxenvz+"\" -maxdepth 1 -type f",obverb,oblog,&qrueck);
-	} else findfile(&qrueck,findv,obverb,oblog,0,zufaxenvz,"",1,1,Fol_Dat);
+		systemrueck(sudc+"find \""+zufaxenvz+"\" -maxdepth 1 -type f",obverb,oblog,&zfda);
+	} else findfile(&zfda,findv,obverb,oblog,/*anteil=*/0,zufaxenvz,"",/*tiefe=*/1,/*typbit=*/B_Datei,/*folge=*/Fol_Dat);
+	// Unterverzeichnisse für Faxe mit Zeitsteuerung suchen
+	if (findv==1) {
+		systemrueck(sudc+"find \""+zufaxenvz+"\" -maxdepth 1 -type d",obverb,oblog,&zfvz);
+	} else findfile(&zfvz,findv,obverb,oblog,/*anteil=*/0,zufaxenvz,"",/*tiefe=*/1,/*typbit=*/B_Verzn,/*folge=*/Fol_Dat);
+	for(size_t iakt=0;iakt<zfvz.size();iakt++) {
+		if (zfvz[iakt]!=zufaxenvz) {
+			string uvz=base_name(zfvz[iakt]);
+			uchar auchtag=0;
+			if (obvorbei(uvz,&auchtag)) {
+				svec zfuda; // Zufaxen-Datei im Unterverzeichnis
+				// Dateien im Unterverzeichnis suchen
+				if (findv==1) {
+					systemrueck(sudc+"find \""+zfvz[iakt]+"\" -maxdepth 1 -type f",obverb,oblog,&zfuda);
+				} else findfile(&zfuda,findv,obverb,oblog,/*anteil=*/0,zfvz[iakt],"",/*tiefe=*/1,/*typbit=*/B_Datei,/*folge=*/Fol_Dat);
+				// wenn Datum oder Uhrzeit schon vorbei ist, dann beinhaltete Fax-Datein verarbeiten
+				for(size_t iiru=0;iiru<zfuda.size();iiru++) {
+					zfda<<zfuda[iiru];
+				} // 				for(size_t iiru=0;iiru<zfuda.size();iiru++)
+				// wenn Verzeichnis Datum enthielt, schon vorbei ist und leer ist, dann loeschen
+				if (auchtag && !zfuda.size()) {
+					tuloeschen(zfvz[iakt],{},1,oblog);
+				} // 				if (!auchtag && !zfuda.size())
+			} // 			if (obvorbei(uvz,&auchtag))
+		} // 		if (zfvz[iakt]!=zufaxenvz)
+	} // 	for(size_t iakt=0;iakt<zfvz.size();iakt++)
+	
 /*//	
 #ifdef alt
 	zielmustercl mu[anfxstrvec.size()];
@@ -5731,10 +5818,10 @@ void paramcl::wegfaxen()
 			 */
 
 			// der Reihe nach nach Dateien suchen, die das jeweilige Trennzeichen enthalten
-			for(size_t iakt=0;iakt<qrueck.size();iakt++) {
-				if (!qrueck.at(iakt).empty()) {
-					string stamm,exten,vor,urname=qrueck[iakt];
-					getstammext(&(qrueck.at(iakt)),&stamm,&exten);
+			for(size_t iakt=0;iakt<zfda.size();iakt++) {
+				if (!zfda.at(iakt).empty()) {
+					string stamm,exten,vor,urname=zfda[iakt];
+					getstammext(&(zfda.at(iakt)),&stamm,&exten);
 					::Log(string(Tx[T_Endung])+tuerkis+exten+schwarz,obverb>1,oblog);
 					::Log(string(Tx[T_Stamm])+tuerkis+stamm+schwarz,obverb>1,oblog);
 					svec toktxt/*Spaltung an anstr*/, tokname/*Spaltung an undstr*/, toknr/*Spaltung an undstr*/;
@@ -5809,7 +5896,7 @@ void paramcl::wegfaxen()
 								} // 					if (!rs.obfehl)
 							} // 							if (toknr[j].empty() && !tokname[j].empty()) elseif umgekehrt
 						} // 						for(size_t j=0;j<toknr.size();j++)
-						::Log(Tx[T_Bearbeite]+rots+qrueck[iakt]+schwarz,1,oblog);
+						::Log(Tx[T_Bearbeite]+rots+zfda[iakt]+schwarz,1,oblog);
 						Log(rots+"toktxt:"); 
 						for(uint j=0;j<toktxt.size();j++) 
 							::Log(obverb,oblog,0,0," %s%u%s) %s%s%s",blau,j,schwarz,blau,toktxt[j].c_str(),schwarz);
@@ -5830,15 +5917,15 @@ void paramcl::wegfaxen()
 									uint kfehler=0;
 									// die erste Zieldatei
 									if (zielp==&benenn) {
-										if (qrueck[iakt]!=benenn) {
+										if (zfda[iakt]!=benenn) {
 											uint vfehler=0;
-											dorename((qrueck[iakt]),benenn,cuser,&vfehler,/*schonda*/!dateivgl(qrueck[iakt],benenn),obverb,oblog);
+											dorename((zfda[iakt]),benenn,cuser,&vfehler,/*schonda*/!dateivgl(zfda[iakt],benenn),obverb,oblog);
 											if (vfehler) {
-												::Log(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz+"("+qrueck[iakt]+" -> "+benenn+")",1,1);
+												::Log(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz+"("+zfda[iakt]+" -> "+benenn+")",1,1);
 												continue;
 											}
 											::Log(Tx[T_ErstelledurchBenennen]+rots+benenn+schwarz,1,oblog);
-										} // if (qrueck[iakt]!=tmp) 
+										} // if (zfda[iakt]!=tmp) 
 
 										// alle weiteren
 									} else {
@@ -5850,13 +5937,13 @@ void paramcl::wegfaxen()
 										::Log(Tx[T_ErstelledurchKopieren]+rots+kopier+schwarz,1,oblog);
 									} // 									if (zielp==&benenn)
 									urfx.push_back(urfxcl(*zielp,urname,iprio));
-									qrueck[iakt].clear(); // Datei nach Gebrauch loeschen, um dann die restlichen zu sehen
+									zfda[iakt].clear(); // Datei nach Gebrauch loeschen, um dann die restlichen zu sehen
 								} // 	 if (!toknr[j].empty())
 							} // for(unsigned j=0;j<toknr.size();j++) 
 						}
 					} // 					if (toktxt.size()>1||(!iprio&&toktxt.size()))
-				} // 			if (!qrueck.at(iakt) 
-			} // for(size_t iakt=0;iakt<qrueck.size();iakt++)
+				} // 			if (!zfda.at(iakt) 
+			} // for(size_t iakt=0;iakt<zfda.size();iakt++)
 		} // 	  if (!:anfxstrvec[iprio]vec[iprio].empty())
 		if (!iprio) break;
 	} // 	for(uchar iprio=anfxstrvec[iprio]vec.size()-1;; iprio--)
@@ -5870,18 +5957,18 @@ void paramcl::wegfaxen()
 			continue;
 		}
 		// der Reihe nach nach Dateien suchen, die das jeweilige Trennzeichen enthalten
-		for(size_t iakt=0;iakt<qrueck.size();iakt++) {
+		for(size_t iakt=0;iakt<zfda.size();iakt++) {
 			// 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
-			if (!qrueck.at(iakt).empty()) {
-				if (!regexec(&mu[iprio].regex,qrueck[iakt].c_str(),0,NULL,0)) {
+			if (!zfda.at(iakt).empty()) {
+				if (!regexec(&mu[iprio].regex,zfda[iakt].c_str(),0,NULL,0)) {
 					//// for(uchar iprio=0;iprio<anfxstrvec.size();iprio++)
 					////  // 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
 					//// cmd=string(sudc+"find \"")+zufaxenvz+"\" -maxdepth 1 -type f -iregex \".*"+anfxstrvec.at(iprio)+" [ -,/;:\\\\\\.\\+]*[0123456789]+.*\"";
-					////  vector<string> qrueck;
-					////  systemrueck(cmd,obverb,oblog, &qrueck);
-					////  for(size_t i=0;i<qrueck.size();i++) KLA
-					string stamm,exten,urname=qrueck.at(iakt);
-					getstammext(&(qrueck.at(iakt)),&stamm,&exten);
+					////  vector<string> zfda;
+					////  systemrueck(cmd,obverb,oblog, &zfda);
+					////  for(size_t i=0;i<zfda.size();i++) KLA
+					string stamm,exten,urname=zfda.at(iakt);
+					getstammext(&(zfda.at(iakt)),&stamm,&exten);
 					::Log(string(Tx[T_Endung])+tuerkis+exten+schwarz,obverb>1,oblog);
 					::Log(string(Tx[T_Stamm])+tuerkis+stamm+schwarz,obverb>1,oblog);
 					svec toktxt, toknr, tokname;
@@ -5910,25 +5997,25 @@ void paramcl::wegfaxen()
 							Log(rots+"1 toknr:"); for(unsigned j=0;j<toknr.size();j++) ::Log(1,0,0,0," %s%u%s) %s%s%s",blau,j,schwarz,blau,toknr[j].c_str(),schwarz);
 							Log(rots+"1 tokname:"); for(unsigned j=0;j<tokname.size();j++) ::Log(1,0,0,0, "%s%u%s) %s%s%s",blau,j,schwarz,blau,tokname[j].c_str(),schwarz);
 						}
-						wandle(qrueck.at(iakt),urname,iprio,toktxt,toknr,tokname,anfxstrvec.at(iprio),exten,&urfx);
+						wandle(zfda.at(iakt),urname,iprio,toktxt,toknr,tokname,anfxstrvec.at(iprio),exten,&urfx);
 					} // 				if ((pos0=stamm.rfind(anfxstrvec.at(iprio).c_str()))!=string::npos)
-					qrueck[iakt].clear(); // Datei nach Gebrauch loeschen, um dann die restlichen zu sehen
+					zfda[iakt].clear(); // Datei nach Gebrauch loeschen, um dann die restlichen zu sehen
 				} else {
-					Log(qrueck[iakt]+rots+Tx[T_passt_nicht_zu]+schwarz+anfxstrvec[iprio],obverb,oblog);
-				} // 		if (!regexec(&mu[0].regex,qrueck[iakt].c_str(),0,NULL,0))
-			} // 			if (!qrueck.at(iakt) 
+					Log(zfda[iakt]+rots+Tx[T_passt_nicht_zu]+schwarz+anfxstrvec[iprio],obverb,oblog);
+				} // 		if (!regexec(&mu[0].regex,zfda[iakt].c_str(),0,NULL,0))
+			} // 			if (!zfda.at(iakt) 
 			////		  else KLA
-			////		   <<gruen<<"keine Uebereinstimmung: "<<mu[iprio].holmuster()<<" mit "<<qrueck[iakt]<<schwarz<<endl;
+			////		   <<gruen<<"keine Uebereinstimmung: "<<mu[iprio].holmuster()<<" mit "<<zfda[iakt]<<schwarz<<endl;
 			////		KLZ
-		} // for(size_t iakt=0;iakt<qrueck.size();iakt++)
+		} // for(size_t iakt=0;iakt<zfda.size();iakt++)
 	} // 	for(uchar iprio=0;iprio<anfxstrvec.size();iprio++)
 
 
 	// 2. falls keine Faxnummer, aber der Name angegeben, in der Datenbank schauen, ob die letzen bis zu 3 Faxe an diesen Namen an die gleiche Faxnummer
 	//    gingen; falls ja, können es dorthin geschickt werden
-	for(size_t iakt=0;iakt<qrueck.size();iakt++) {
-		string stamm,exten,urname=qrueck.at(iakt);
-		getstammext(&(qrueck.at(iakt)),&stamm,&exten);
+	for(size_t iakt=0;iakt<zfda.size();iakt++) {
+		string stamm,exten,urname=zfda.at(iakt);
+		getstammext(&(zfda.at(iakt)),&stamm,&exten);
 		svec toktxt, toknr, tokname;
 		::Log(string(Tx[T_trennenach])+blau+anstr+schwarz+"'",obverb>1,oblog);
 		size_t pos0=0;
@@ -5976,18 +6063,18 @@ void paramcl::wegfaxen()
 			if (toknr.size()) {
 				toktxt<<vor;
 				toktxt<<"-";
-				wandle(qrueck.at(iakt),urname,0,toktxt,toknr,tokname,anfxstrvec.at(0),exten,&urfx);
-				qrueck[iakt].clear(); // Datei nach Gebrauch loeschen, um dann die restlichen zu sehen
+				wandle(zfda.at(iakt),urname,0,toktxt,toknr,tokname,anfxstrvec.at(0),exten,&urfx);
+				zfda[iakt].clear(); // Datei nach Gebrauch loeschen, um dann die restlichen zu sehen
 
 			} // 			if (toknr.size())
 		} // 		if ((pos0=irfind(stamm,anstr))!=string::npos)
-	} // 	for(size_t iakt=0;iakt<qrueck.size();iakt++)
+	} // 	for(size_t iakt=0;iakt<zfda.size();iakt++)
 #endif // alt
 */
 	// nicht faxbare
-	for(size_t i=0;i<qrueck.size();i++) {
-		if (!qrueck[i].empty()) {
-			touch(zmvp[0].ziel+vtz+Tx[T_nichtfaxbar]+" `"+base_name(qrueck[i])+"`.nix",obverb,oblog);
+	for(size_t i=0;i<zfda.size();i++) {
+		if (!zfda[i].empty()) {
+			touch(zmvp[0].ziel+vtz+Tx[T_nichtfaxbar]+" `"+base_name(zfda[i])+"`.nix",obverb,oblog);
 		}
 	} // 	for(size_t i=0;i<iprid.size();i++) 
 
@@ -6090,48 +6177,48 @@ void paramcl::wegfaxen()
 	//      => auch in ziel kopieren
 	for(unsigned iprio=0;iprio<anfxstrvec.size();iprio++) {
 		if (!anfxstrvec.at(iprio).empty()) {
-			svec qrueck;
+			svec zfda;
 			const string reg=".*"+anfxstrvec.at(iprio)+filter+"pdf";
 			if (findv==1) {
 				cmd=sudc+"find \""+zufaxenvz+"\" -maxdepth 1 -type f -regextype ed -iregex \""+reg+"\"";
 				//			    " [- ,/;:\\\\\\.\\+]*[0-9][- ,/;:\\\\\\.\\+0-9]*[_]*[0-9]*[\\.]{0,1}pdf*$\" -iname \"*.pdf\"";
-				systemrueck(cmd,obverb, oblog, &qrueck);
-			} else findfile(&qrueck,findv,obverb,oblog,0,zufaxenvz,reg,1,1,Fol_Dat,0,0,1,0,1);
-			for(size_t i=0;i<qrueck.size();i++) {
+				systemrueck(cmd,obverb, oblog, &zfda);
+			} else findfile(&zfda,findv,obverb,oblog,0,zufaxenvz,reg,1,1,Fol_Dat,0,0,1,0,1);
+			for(size_t i=0;i<zfda.size();i++) {
 				if (obocra) {
 					struct stat spdfstat={0};
-					if (!lstat(qrueck.at(i).c_str(),&spdfstat)) {
+					if (!lstat(zfda.at(i).c_str(),&spdfstat)) {
 						struct utimbuf ubuf={0};
 						ubuf.actime=ubuf.modtime=spdfstat.st_mtime;
 						if (!pruefocr()) {
-							setfaclggf(qrueck.at(i),obverb,oblog,/*obunter=*/falsch,/*mod=*/7,/*obimmer=*/falsch,/*faclbak=*/0);
-							const string cmd=string(ocrmp+" -rcsl ")+(langu=="d"?"deu":"eng")+" \""+qrueck.at(i)+"\" \""+qrueck.at(i)+"\""
-								" && chmod +r \""+qrueck.at(i)+"\" 2>/dev/null";
+							setfaclggf(zfda.at(i),obverb,oblog,/*obunter=*/falsch,/*mod=*/7,/*obimmer=*/falsch,/*faclbak=*/0);
+							const string cmd=string(ocrmp+" -rcsl ")+(langu=="d"?"deu":"eng")+" \""+zfda.at(i)+"\" \""+zfda.at(i)+"\""
+								" && chmod +r \""+zfda.at(i)+"\" 2>/dev/null";
 							int zerg=systemrueck(cmd,obverb,oblog);
 							if (zerg==5) zerg=systemrueck(sudc+cmd,obverb,oblog); // kein Schreibrecht im Verzeichnis
 						} // 						if (!pruefocr())
-						utime(qrueck.at(i).c_str(),&ubuf);
-					} // if (!lstat(qrueck.at(i).c_str(),&spdfstat)) 
+						utime(zfda.at(i).c_str(),&ubuf);
+					} // if (!lstat(zfda.at(i).c_str(),&spdfstat)) 
 				} // if (obocra) 
-				const string ndname=zufaxenvz+vtz+neuerdateiname(qrueck.at(i));
+				const string ndname=zufaxenvz+vtz+neuerdateiname(zfda.at(i));
 				uint vfehler=0;
-				if (ndname!=qrueck.at(i)) {
-					dorename(qrueck.at(i),ndname,cuser,&vfehler,/*schonda=*/!dateivgl(qrueck.at(i),ndname),obverb,oblog);
+				if (ndname!=zfda.at(i)) {
+					dorename(zfda.at(i),ndname,cuser,&vfehler,/*schonda=*/!dateivgl(zfda.at(i),ndname),obverb,oblog);
 					if (vfehler) {
 						continue;
 					} // if (vfehler) 
-					////            qrueck.at(i)=ndname;
-				} // if (ndname!=qrueck.at(i))
+					////            zfda.at(i)=ndname;
+				} // if (ndname!=zfda.at(i))
 				const string wartedatei=verschiebe(ndname,wvz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 				if (vfehler) {
 					continue; 
 				}
 				uchar vorhanden=0; // 1= Datei schon zuvor als nicht-PDF-Datei eingetragen
-				for(size_t ii=0;ii<fxv.size()&&ii<qrueck.size();ii++) {
+				for(size_t ii=0;ii<fxv.size()&&ii<zfda.size();ii++) {
 					if (fxv[ii].spdf==ndname) {vorhanden=1;break;} 
 				}
 				if (!vorhanden) {
-					fxv.push_back(fxfcl(wartedatei,qrueck.at(i),iprio));
+					fxv.push_back(fxfcl(wartedatei,zfda.at(i),iprio));
 					if (gleichziel) {
 						uint kfehler=0;
 						/*string zield=*/kopiere(wartedatei, *zmp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
@@ -8879,7 +8966,7 @@ int paramcl::pruefcapi()
 							if (lstat((lsys.getlib64()+"/libcapi20.so").c_str(),&c20stat)||
 									lstat("/usr/include/capi20.h",&c20hstat)) {
 								holvomnetz("capi20_copy");
-								kompiliere("capi20_copy",s_gz);
+								kompiliere("capi20_copy",s_gz,"make clean");
 								// ln sollte er in crontab finden
 								systemrueck("cd "+instvz+" && L="+lsys.getlib64()+"/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "+
 										sudc+"ln -s $L3 $L; test -f $L;",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
@@ -9880,7 +9967,8 @@ int main(int argc, char** argv)
 {
 	//// <<TIFFGetVersion()<<endl;
 	paramcl pm(argc,argv); // Programmparameter
-
+	if (argc>1) {
+	}
 	/*//
 	if (argc>1) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		// Testcode mit argv[1]

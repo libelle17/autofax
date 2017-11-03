@@ -142,10 +142,11 @@ class paramcl: public haupt // Programmparameter
     uchar modemgeaendert=0; // hmodem neu gesetzt
 //		long gmtoff; // Sekunden Abstand zur UTC-Zeit einschließlich Sommerzeit
   public:
-		const string s1="mv -n ", s2="/2200/* ";
-    schlArr hylcnfA; // fuer q1234 o.ae.
-    uchar hgelesen=0; // Protokolldatei war auslesbar
-    static constexpr const char *moeglhvz[2]={"/var/spool/fax","var/spool/hylafax"};
+		const string s1="mv -n ";
+		//		const string s2="/2200/* ";
+		schlArr hylcnfA; // fuer q1234 o.ae.
+		uchar hgelesen=0; // Protokolldatei war auslesbar
+		static constexpr const char *moeglhvz[2]={"/var/spool/fax","var/spool/hylafax"};
 		string huser="uucp"; // "uucp" oder "fax"
     uchar obfcard=1;    // ob Fritzcard eingesteckt
     uchar obfcgeprueft=0; // ob schon geprueft, ob Fritzcard eingesteckt
@@ -326,6 +327,7 @@ class paramcl: public haupt // Programmparameter
 		void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void hfaxsetup();
 		int hconfig() const;
+		int obvorbei(const string& vzname,uchar *auchtag);
 	public:
     paramcl(const int argc, const char *const *const argv);
     ~paramcl();
