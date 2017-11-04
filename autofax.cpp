@@ -5710,7 +5710,7 @@ int paramcl::obvorbei(const string& vzname,uchar *auchtag)
 	tm ht({0});
 	time_t jetzt=time(0);// / (24*60*60) *24*60*60 ;
 	time_t heute= jetzt-jetzt%86400;
-	time_t par;
+	time_t par(jetzt);
 	//// <<"jetzt: "<<jetzt<<endl;
 	//// <<"heute: "<<heute<<endl;
 	//// <<"jetzt: "<<put_time(gmtime(&jetzt),"%c")<<endl;
@@ -10276,3 +10276,122 @@ int main(int argc, char** argv)
 // cd OCRmyPDF
 // pip3 install ocrmypdf
  */
+
+/*//
+	Programme für Roger-Router:
+spandsp-devel-0.0.6-3.fc24.x86_64             Sat Nov  4 13:15:06 2017
+libtool-2.4.6-13.fc24.x86_64                  Sat Nov  4 13:14:32 2017
+libpeas-devel-1.18.0-1.fc24.x86_64            Sat Nov  4 13:14:32 2017
+libpeas-1.18.0-1.fc24.x86_64                  Sat Nov  4 13:14:32 2017
+gobject-introspection-devel-1.48.0-1.fc24.x86_64 Sat Nov  4 13:14:32 2017
+python2-pyasn1-0.1.9-6.fc24.1.noarch          Sat Nov  4 13:14:31 2017
+python2-paste-2.0.3-1.fc24.noarch             Sat Nov  4 13:14:31 2017
+python2-cryptography-1.5.3-3.fc24.x86_64      Sat Nov  4 13:14:31 2017
+python2-cffi-1.5.2-1.fc24.x86_64              Sat Nov  4 13:14:31 2017
+python-tempita-0.5.1-12.fc24.noarch           Sat Nov  4 13:14:31 2017
+python-markupsafe-0.23-9.fc24.x86_64          Sat Nov  4 13:14:31 2017
+python-mako-1.0.3-2.fc24.noarch               Sat Nov  4 13:14:31 2017
+python-ipaddress-1.0.16-2.fc24.noarch         Sat Nov  4 13:14:31 2017
+python-enum34-1.0.4-5.fc24.noarch             Sat Nov  4 13:14:31 2017
+python-beaker-1.5.4-13.fc24.noarch            Sat Nov  4 13:14:31 2017
+pycryptopp-0.6.0.1206569328141510525648634803928199668821045408958-9.fc24.x86_64 Sat Nov  4 13:14:31 2017
+pyOpenSSL-16.2.0-1.fc24.noarch                Sat Nov  4 13:14:31 2017
+cryptopp-5.6.3-4.fc24.x86_64                  Sat Nov  4 13:14:31 2017
+python2-ply-3.8-1.fc24.noarch                 Sat Nov  4 13:14:30 2017
+python2-idna-2.5-1.fc24.noarch                Sat Nov  4 13:14:30 2017
+python-six-1.10.0-2.fc24.noarch               Sat Nov  4 13:14:30 2017
+python-pycparser-2.14-6.fc24.noarch           Sat Nov  4 13:14:30 2017
+gtk3-devel-3.20.10-1.fc24.x86_64              Sat Nov  4 13:13:40 2017
+wayland-protocols-devel-1.4-1.fc24.noarch     Sat Nov  4 13:13:39 2017
+pango-devel-1.40.1-1.fc24.x86_64              Sat Nov  4 13:13:39 2017
+libxkbcommon-devel-0.5.0-4.fc24.x86_64        Sat Nov  4 13:13:39 2017
+libepoxy-devel-1.3.1-2.fc24.x86_64            Sat Nov  4 13:13:39 2017
+libXinerama-devel-1.1.3-6.fc24.x86_64         Sat Nov  4 13:13:39 2017
+libXft-devel-2.3.2-4.fc24.x86_64              Sat Nov  4 13:13:39 2017
+libXcomposite-devel-0.4.4-8.fc24.x86_64       Sat Nov  4 13:13:39 2017
+harfbuzz-devel-1.2.7-1.fc24.x86_64            Sat Nov  4 13:13:39 2017
+graphite2-devel-1.3.6-1.fc24.x86_64           Sat Nov  4 13:13:39 2017
+freetype-devel-2.6.3-2.fc24.x86_64            Sat Nov  4 13:13:39 2017
+fontconfig-devel-2.11.94-6.fc24.x86_64        Sat Nov  4 13:13:39 2017
+cairo-gobject-devel-1.14.6-1.fc24.x86_64      Sat Nov  4 13:13:39 2017
+cairo-devel-1.14.6-1.fc24.x86_64              Sat Nov  4 13:13:39 2017
+bzip2-devel-1.0.6-20.fc24.x86_64              Sat Nov  4 13:13:39 2017
+atk-devel-2.20.0-1.fc24.x86_64                Sat Nov  4 13:13:39 2017
+pixman-devel-0.34.0-2.fc24.x86_64             Sat Nov  4 13:13:38 2017
+mesa-libGL-devel-11.2.1-1.20160501.fc24.x86_64 Sat Nov  4 13:13:38 2017
+gtk3-3.20.10-1.fc24.x86_64                    Sat Nov  4 13:13:38 2017
+gl-manpages-1.1-11.20140424.fc24.noarch       Sat Nov  4 13:13:38 2017
+expat-devel-2.1.1-1.fc24.x86_64               Sat Nov  4 13:13:38 2017
+dbus-devel-1.11.2-1.fc24.x86_64               Sat Nov  4 13:13:38 2017
+at-spi2-core-devel-2.20.2-1.fc24.x86_64       Sat Nov  4 13:13:38 2017
+at-spi2-atk-devel-2.20.1-1.fc24.x86_64        Sat Nov  4 13:13:38 2017
+wayland-devel-1.10.0-1.fc24.x86_64            Sat Nov  4 13:13:37 2017
+mesa-libwayland-egl-devel-11.2.1-1.20160501.fc24.x86_64 Sat Nov  4 13:13:37 2017
+mesa-libEGL-devel-11.2.1-1.20160501.fc24.x86_64 Sat Nov  4 13:13:37 2017
+libwayland-cursor-devel-1.10.0-1.fc24.x86_64  Sat Nov  4 13:13:37 2017
+libwayland-client-devel-1.10.0-1.fc24.x86_64  Sat Nov  4 13:13:37 2017
+libpng-devel-1.6.21-2.fc24.x86_64             Sat Nov  4 13:13:37 2017
+libdrm-devel-2.4.68-1.fc24.x86_64             Sat Nov  4 13:13:37 2017
+libXxf86vm-devel-1.1.4-3.fc24.x86_64          Sat Nov  4 13:13:37 2017
+libXrender-devel-0.9.9-3.fc24.x86_64          Sat Nov  4 13:13:37 2017
+libXrandr-devel-1.5.0-3.fc24.x86_64           Sat Nov  4 13:13:37 2017
+libXdamage-devel-1.1.4-8.fc24.x86_64          Sat Nov  4 13:13:37 2017
+libXcursor-devel-1.1.14-6.fc24.x86_64         Sat Nov  4 13:13:37 2017
+gdk-pixbuf2-devel-2.34.0-1.fc24.x86_64        Sat Nov  4 13:13:37 2017
+libxcb-devel-1.11.1-2.fc24.x86_64             Sat Nov  4 13:07:56 2017
+libXt-devel-1.1.5-3.fc24.x86_64               Sat Nov  4 13:07:56 2017
+libXi-devel-1.7.6-2.fc24.x86_64               Sat Nov  4 13:07:56 2017
+libXfixes-devel-5.0.2-2.fc24.x86_64           Sat Nov  4 13:07:56 2017
+libXext-devel-1.3.3-4.fc24.x86_64             Sat Nov  4 13:07:56 2017
+libX11-devel-1.6.3-3.fc24.x86_64              Sat Nov  4 13:07:56 2017
+gtk+-devel-1.2.10-82.fc24.x86_64              Sat Nov  4 13:07:56 2017
+xorg-x11-proto-devel-7.7-19.fc24.noarch       Sat Nov  4 13:07:55 2017
+libXau-devel-1.0.8-6.fc24.x86_64              Sat Nov  4 13:07:55 2017
+libSM-devel-1.2.2-4.fc24.x86_64               Sat Nov  4 13:07:55 2017
+libICE-devel-1.0.9-5.fc24.x86_64              Sat Nov  4 13:07:55 2017
+gtk+-1.2.10-82.fc24.x86_64                    Sat Nov  4 13:07:55 2017
+glib-devel-1.2.10-47.fc24.x86_64              Sat Nov  4 13:07:55 2017
+glib-1.2.10-47.fc24.x86_64                    Sat Nov  4 13:07:55 2017
+speexdsp-devel-1.2-0.9.rc3.fc24.x86_64        Sat Nov  4 13:07:20 2017
+speex-devel-1.2-0.25.rc2.fc24.x86_64          Sat Nov  4 13:07:20 2017
+libxml-devel-1.8.17-36.fc24.x86_64            Sat Nov  4 13:07:20 2017
+libuuid-devel-2.28-2.fc24.x86_64              Sat Nov  4 13:07:20 2017
+libsoup-devel-2.54.1-1.fc24.x86_64            Sat Nov  4 13:07:20 2017
+json-glib-devel-1.2.6-1.fc24.x86_64           Sat Nov  4 13:07:20 2017
+gupnp-devel-0.20.18-1.fc24.x86_64             Sat Nov  4 13:07:20 2017
+gssdp-devel-0.14.16-1.fc24.x86_64             Sat Nov  4 13:07:20 2017
+xz-devel-5.2.2-2.fc24.x86_64                  Sat Nov  4 13:07:19 2017
+libxml2-devel-2.9.3-3.fc24.x86_64             Sat Nov  4 13:07:19 2017
+json-glib-1.2.6-1.fc24.x86_64                 Sat Nov  4 13:07:19 2017
+gupnp-0.20.18-1.fc24.x86_64                   Sat Nov  4 13:07:19 2017
+gssdp-0.14.16-1.fc24.x86_64                   Sat Nov  4 13:07:19 2017
+libsndfile-devel-1.0.28-3.fc24.x86_64         Sat Nov  4 12:58:06 2017
+libsndfile-1.0.28-3.fc24.x86_64               Sat Nov  4 12:58:06 2017
+libxml-1.8.17-36.fc24.x86_64                  Sat Nov  4 12:57:26 2017
+intltool-0.51.0-7.fc24.noarch                 Sat Nov  4 12:55:59 2017
+perl-XML-Parser-2.44-4.fc24.x86_64            Sat Nov  4 12:55:58 2017
+patch-2.7.5-3.fc24.x86_64                     Sat Nov  4 12:55:58 2017
+gettext-devel-0.19.7-4.fc24.x86_64            Sat Nov  4 12:55:58 2017
+gettext-common-devel-0.19.7-4.fc24.noarch     Sat Nov  4 12:55:58 2017
+glib2-devel-2.48.2-1.fc24.x86_64              Sat Nov  4 12:54:59 2017
+glib2-2.48.2-1.fc24.x86_64                    Sat Nov  4 12:54:58 2017
+cmake-3.9.0-8.fc24.x86_64                     Sat Nov  4 12:52:46 2017
+cmake-data-3.9.0-8.fc24.noarch                Sat Nov  4 12:52:45 2017
+rhash-1.3.4-2.fc24.x86_64                     Sat Nov  4 12:52:44 2017
+libuv-1.7.5-2.fc24.x86_64                     Sat Nov  4 12:52:44 2017
+jsoncpp-1.7.2-3.fc24.x86_64                   Sat Nov  4 12:52:44 2017
+cmake-filesystem-3.9.0-8.fc24.x86_64          Sat Nov  4 12:52:44 2017
+spandsp-0.0.6-3.fc24.x86_64                   Sat Nov  4 09:33:22 2017
+ffgtk-0.8.6-18.fc24.x86_64                    Sat Nov  4 09:33:22 2017
+*/
+/*// nach roger veraenderte Dateien:
+/home/schade/.cache/routermanager/fritzbox-06_35-query.html
+/home/schade/.cache/routermanager/reverselookup
+/home/schade/.cache/routermanager/fritzbox-06_35-get-dial-port.html
+/home/schade/.local/share/routermanager
+/home/schade/.config
+/home/schade/.config/routermanager/rogermanager.keys
+/home/schade/.config/dconf/user
+/var/spool
+/var/spool/roger
+*/
