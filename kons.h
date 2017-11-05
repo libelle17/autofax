@@ -638,6 +638,7 @@ class schlArr {
  void neu(size_t vzahl=0);
  void init(size_t vzahl, ...);
  void init(vector<cppSchluess*> *sqlvp);
+ void initd(const char* const* sarr,size_t vzahl);
  inline /*const*/ cppSchluess& operator[](size_t const& nr) const { return schl[nr]; }
  int setze(const string& name, const string& wert/*, const string& bem=nix*/);
  const string& hole(const string& name);

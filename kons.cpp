@@ -2018,14 +2018,19 @@ void schlArr::init(vector<cppSchluess*> *sqlvp)
   }
 } // void schlArr::init
 
-
-schlArr::schlArr(const char* const* sarr,size_t vzahl):zahl(vzahl)
+void schlArr::initd(const char* const* sarr,size_t vzahl)
 {
+	zahl=vzahl;
 	if (schl) delete[] schl;
 	schl = new cppSchluess[zahl];
 	for(size_t i=0;i<zahl;i++) {
 		schl[i].name=sarr[i];
 	}
+} // schlArr::initd(const char* const* sarr,size_t vzahl)
+
+schlArr::schlArr(const char* const* sarr,size_t vzahl)
+{
+	initd(sarr,vzahl);
 } // void schlArr:init
 
 void schlArr::init(size_t vzahl, ...)
@@ -5729,7 +5734,6 @@ void hcl::vischluss(string& erg)
 	erg+="tabfirst' -p";
 	string exdt=instvz+"/.exrc";
 	{ifstream is(exdt);if (is.good()) erg+="Nu "+exdt;}
-	caus<<cmd+" +'"+erg+" "+devtty<<endl;
 //	exit(systemrueck(cmd+" +'"+erg+" "+devtty,0,0,/*rueck=*/0,/*obsudc=*/1));
 } // void vischluss(string& cmd,string& erg)
 

@@ -2682,7 +2682,7 @@ void hhcl::getcommandl0()
 		"cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl","maxdials",
 		"gleichziel","ocri","ocra","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
 		"anstr","undstr","cronminut","autoupd","logvz","logdname","oblog","obmodem","obfcard","sqlz","musterzahl"};
-	schlArr agcnfA(sarr,sizeof sarr/sizeof *sarr);
+	agcnfA.initd(sarr,sizeof sarr/sizeof *sarr);
 	gcl0();
 	if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
 } // void hhcl::getcommandl0(int argc, char** argv)
