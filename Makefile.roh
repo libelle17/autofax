@@ -37,7 +37,7 @@
 # "make ruf" => ruft das Programm auf
 # "make uninstall" => deinstalliert alles, frägt noch manchmal rücke
 # "make allesweg" => deinstalliert alles, beantwortet Rückfragen mit 'y'
-# "make neuproj" => kopiert Dateien für neues Projekt in Verzeichnis ../neuproj
+# "make neuproj" => kopiert Dateien für neues Projekt in Verzeichnis fuer neues Projekt
 
 ICH::=$(firstword $(MAKEFILE_LIST))
 SRCS::=$(wildcard *.cpp)
@@ -539,8 +539,16 @@ dotrans:
 
 .PHONY: neuproj
 neuproj:
-	@Z=../neuproj;mkdir -p $$Z;cp -ai kons.cpp kons.h DB.cpp DB.h Makefile .exrc configure install.sh man_?? viall $$Z;\
-		echo 0.1>$$Z/versdt; touch $$Z/entwickeln; echo $$Z>$$Z/pname; 
+	@Z=;while [ -z "$$Z" -o -d ../"$$Z" ]; do echo Programmname/program name?; read Z;done;mkdir -p ../"$$Z";cp -ai kons.cpp kons.h DB.cpp DB.h Makefile .exrc configure install.sh man_?? viall* ../"$$Z";\
+		cd ../"$$Z";\
+		echo 0.1>versdt; touch entwickeln; echo $$Z>pname;\
+		L="\"/var/log/\" DPROG \"vorgabe.log\"";\
+		printf "#include \"kons.h\"\\n#include \"DB.h\"\\n#define VOMHAUPTCODE\\n#include \"$$Z.h\"\\n\\nenum T_\\n{\\n	T_MAX\\n}; // enum T_\\n\\nchar const *DPROG_T[T_MAX+1][SprachZahl]={\\n	{\"\",\"\"}\\n}; // char const *DPROG_T[T_MAX+1][SprachZahl]=\\n\\nclass TxB Tx((const char* const* const* const*)DPROG_T);\\n\\nuchar ZDB=0; // fuer Zusatz-Debugging (SQL): ZDB 1, sonst: 0\\nconst char *logdt=$$L;//darauf wird in kons.h verwiesen; muss dann auf lgp zeigen;\\n\\nusing namespace std;\\n\\nhhcl::hhcl(const int argc, const char *const *const argv):hcl(argc,argv)\\n{\\n}\\n\\nhhcl::~hhcl()\\n{\\n}\\n\\n\\nint main(int argc,char** argv)\\n{\\n hhcl hhi(argc,argv);\\n}\\n">"$$Z".cpp;\
+		printf "#define DPROG \"$$Z\"\\nclass hhcl:public hcl\\n{\\n private:\\n public:\\n private:\\n public:\\n  hhcl(const int argc, const char *const *const argv);\\n  ~hhcl();\\n void getcommandl0();\\n void VorgbAllg();\\n void VorgbSpeziell()\\n#ifdef VOMHAUPTCODE\\n __attribute__((weak)) // implementationsspezifische Vorgaben, Modul vgb.cpp)\\n#endif\\n ;\\n void lieskonfein();\\n int getcommandline();\\n void rueckfragen();\\n int zeigeueberschrift();\\n}; // class hhcl\\n">"$$Z".h;\
+		sh configure;\
+		sed -i.bak '/\$DTN [^'\'']/s/\$DTN /\$DTN +'\''tabfirst|tab sview ..\/$(DPROG)\/$(DPROG).cpp|tabnext|tab sview ..\/$(DPROG)\/$(DPROG).h|tabfirst'\'' /' viall;\
+		sh viall;\
+		echo Weiter mit/Go on with: \"cd ../"$$Z"\";
 
 
 

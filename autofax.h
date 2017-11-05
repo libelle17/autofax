@@ -1,3 +1,10 @@
+// "dieses Programm", hier definiert, waehrend "meinname" sich durch umbenennen aendert
+#define DPROG "autofax"
+//// const char *logvz; // das reine Verzeichnis
+//// string logpfad; // zusammengesetzt aus Verzeichnis und name
+//// const char lgs logdatei_a[PATH_MAX+1] ="/var/log/log_vmparse.txt";
+//// const char *logdatei = logdatei_a;
+
 enum FaxTyp:uchar {capi=1,hyla};
 enum FxStat:uchar {init/*0*/,gestrichen,schwebend,wartend/*3*/,blockiert/*4*/,bereit/*5*/,verarb/*6*/,gesandt/*7*/,gescheitert/*8*/,fehlend,woasined};
 enum hyinst {keineh,hysrc,hypak,hyppk}; // hyla source, hyla Paket, hylaplus Paket
@@ -5,7 +12,7 @@ enum hyinst {keineh,hysrc,hypak,hyppk}; // hyla source, hyla Paket, hylaplus Pak
 class zielmustercl; // fuer die Verteilung der erfolgreich gefaxten Dateien auf verschiedene Dateien
 class fxfcl; // Faxfile
 class fsfcl; // Faxsendfile
-class paramcl; // Programmparameter
+class hhcl; // Programmparameter
 void useruucp(const string& huser, const int obverb, const int oblog);
 string zielname(const string& qdatei, const string& zielvz,uchar wieweiterzaehl=0, string* zieldatei=0, uchar* obgleichp=0, 
                 int obverb=0, int oblog=0, stringstream *ausgp=0);
@@ -19,10 +26,10 @@ string kopiere(const string& qdatei, const string& zield, uint *kfehler, const u
 string kopiere(const string& qdatei, const zielmustercl& zmp, uint *kfehler, const uchar wieweiterzaehl, int obverb=0, int oblog=0);
 void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, int obverb, int oblog);
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, const int obverb, const int oblog);
-int pruefcapi(paramcl *pmp, int obverb, int oblog);
+int pruefcapi(hhcl *hhip, int obverb, int oblog);
 pid_t PIDausName(const char* PName, uchar klgr, uchar exakt, int obverb, int oblog);
-void hfaxsetup(paramcl *pmp,int obverb=0, int oblog=0);
-int hconfig(const paramcl *const pmp,const int obverb=0, const int oblog=0);
+void hfaxsetup(hhcl *hhip,int obverb=0, int oblog=0);
+int hconfig(const hhcl *const hhip,const int obverb=0, const int oblog=0);
 const string& pruefspool(DB *My,const string& spooltab, const string& altspool, const int obverb, const int oblog, uchar direkt=0);
 void pruefouttab(DB *My, const string& touta, const int obverb, const int oblog, const uchar direkt=0);
 void pruefudoc(DB *My, const string& tudoc, const int obverb, const int oblog, const uchar direkt=0);
@@ -114,10 +121,10 @@ class fsfcl : public fxfcl // Faxsendfile
     FxStat hylastat=init;// 1=wartend, 2=gesandt, 3=gescheitert, 4=fehlend (in spool keine hyla-Datei eingetragen oder die eingetragene gibts nicht)
   private:
   public:
-		void archiviere(DB *const My, paramcl *const pmp, const struct stat *const entryp,const uchar obgescheitert, const FaxTyp ftyp, 
+		void archiviere(DB *const My, hhcl *const hhip, const struct stat *const entryp,const uchar obgescheitert, const FaxTyp ftyp, 
 		                uchar *gel, const size_t aktc, const int obverb, const int oblog);
 		int loeschecapi(const int obverb, const int oblog);
-    int loeschehyla(paramcl *const pmp, const int obverb, const int oblog);
+    int loeschehyla(hhcl *const hhip, const int obverb, const int oblog);
     /*1*/fsfcl(const string id, const string npdf, const string spdf, const string telnr, unsigned prio, const string capisd, int capids, 
 		           const string hylanr, int hdialsn, uchar fobcapi, uchar fobhyla, const string adressat, ulong pseiten, string idalt):
          fxfcl(prio,npdf,spdf,pseiten), id(id), telnr(telnr), capisd(capisd), capids(capids), 
@@ -127,15 +134,15 @@ class fsfcl : public fxfcl // Faxsendfile
     /*4*/fsfcl(const string& hylanr): hylanr(hylanr) {}
     /*5*/fsfcl(const string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
 		/*6*/fsfcl(const string& original, const string& origvu, uchar cnr): original(original), origvu(origvu) {}
-    void setzcapistat(paramcl *pmp, struct stat *entrysendp);
+    void setzcapistat(hhcl *hhip, struct stat *entrysendp);
     void capiausgeb(stringstream *ausgp, const string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,ulong faxord=0);
-    void hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
+    void hylaausgeb(stringstream *ausgp, hhcl *hhip, int obsfehlt, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
     int holcapiprot(int obverb);
 		void scheitere(const string& wvz, const string& ngvz, const string& cuser, const string* const ziel=0, const int obverb=0, const int oblog=0);
 }; // class fsfcl
 
-
-class paramcl: public haupt // Programmparameter 
+// hiesige Hauptklasse
+class hhcl: public hcl
 {
   private:
     svec modems;       // gefundene Modems
@@ -329,8 +336,8 @@ class paramcl: public haupt // Programmparameter
 		int hconfig() const;
 		int obvorbei(const string& vzname,uchar *auchtag);
 	public:
-    paramcl(const int argc, const char *const *const argv);
-    ~paramcl();
+    hhcl(const int argc, const char *const *const argv);
+    ~hhcl();
     void pruefggfmehrfach();
     void nextnum();
     string stdfaxnr(const string& faxnr);
@@ -342,9 +349,9 @@ class paramcl: public haupt // Programmparameter
     void VorgbAllg(); // allgemeine Vorgaben
 		void MusterVorgb();
 		void VorgbSpeziell() 
-#ifdef DPROGcpp
+#ifdef VOMHAUPTCODE
 			__attribute__((weak)) // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vgb.cpp)
-#endif // DPROGcpp
+#endif // VOMHAUPTCODE
 			;
 		void lieskonfein();
 		int  getcommandline();
@@ -395,4 +402,4 @@ class paramcl: public haupt // Programmparameter
 		void dovc();
 		void dovh();
 		void zeigdienste();
-}; // class paramcl
+}; // class hhcl

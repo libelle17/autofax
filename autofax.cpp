@@ -33,17 +33,10 @@
 #include <fcntl.h> // fuer fd_reopen usw.
 #include <termios.h> // fuer tcgetattr
 #include <regex>
-
 #include <set>
-// "dieses Programm", hier definiert, waehrend "meinname" sich durch umbenennen aendert
-#define DPROG "autofax"
-//// const char *logvz; // das reine Verzeichnis
-//// string logpfad; // zusammengesetzt aus Verzeichnis und name
-//// const char lgs logdatei_a[PATH_MAX+1] ="/var/log/log_vmparse.txt";
-//// const char *logdatei = logdatei_a;
 
-uchar ZDB=0; // fuer Zusatz-Debugging (SQL): ZDB 1, sonst: 0
-const char sep = 9; // geht auch: "[[:blank:]]"
+#define VOMHAUPTCODE 
+#include "autofax.h"
 
 //// const char *tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
 /*//
@@ -93,7 +86,7 @@ return ss.str();
  */
 
 enum T_ 
-{/*{{{*/
+{
 	T_verarbeitete_Nicht_PDF_Dateien,
 	T_verarbeitete_PDF_Dateien,
 	T_Soll_die_Capisuite_verwendet_werden,
@@ -753,10 +746,9 @@ enum T_
 	T_war_schon,
 	T_kommt_noch,
 	T_MAX
-};
+}; // enum T_
 
 
-//// char const *TxDPROGcl::TextC[T_MAX+1][SprachZahl]={
 char const *DPROG_T[T_MAX+1][SprachZahl]={
 	// T_verarbeitete_Nicht_PDF_Dateien
 	{"' verarbeitete Nicht-PDF-Dateien: ","' processed Non-PDF-Files: "},
@@ -2125,10 +2117,10 @@ const DBSTyp myDBS=Postgres;
 const DBSTyp myDBS=MySQL;
 #endif // mitpostgres else
 
+uchar ZDB=0; // fuer Zusatz-Debugging (SQL): ZDB 1, sonst: 0
+const char sep = 9; // geht auch: "[[:blank:]]"
 const char *logdt="/var/log/" DPROG "vorgabe.log";// darauf wird in kons.h verwiesen; muss dann auf lgp zeigen
 
-#define DPROGcpp
-#include "autofax.h"
 pidvec pidv, pidw;
 // vector<pid_t> pidv; // Sammelvektor fuer alles, was vom Hauptstrang abzweigt
 // vector<pid_t> pidw; // Sammelvektor fuer alles, was aus wegfaxen abzweigt
@@ -2138,7 +2130,7 @@ const unsigned ktage=1; // kurzes Intervall fuer Faxtabellenkorrektur, 1 Tag
 const unsigned mtage=30; // mittleres Intervall fuer Faxtabellenkorrektur, 1 Monat
 const unsigned ltage=73000; // langes Intervall fuer Faxtabellenkorrektur, 200 Jahre
 
-constexpr const char *paramcl::moeglhvz[2];
+constexpr const char *hhcl::moeglhvz[2];
 // wird nur in VorgbSpeziell gebraucht:
 
 // aufgerufen in faxemitH, pruefhyla
@@ -2218,7 +2210,7 @@ inline const char* FxStatS(const FxStat *const i)
 
 //archiviert den Datensatz
 // wird aufgerufen in: untersuchespool, korrigierehyla
-void fsfcl::archiviere(DB *const My, paramcl *const pmp, const struct stat *const entryp, const uchar obgescheitert, const FaxTyp ftyp, 
+void fsfcl::archiviere(DB *const My, hhcl *const hhip, const struct stat *const entryp, const uchar obgescheitert, const FaxTyp ftyp, 
 		uchar *geloeschtp, const size_t aktc, const int obverb, const int oblog)
 {
 	//  string nob=ltoan((int)!obgescheitert);
@@ -2227,7 +2219,7 @@ void fsfcl::archiviere(DB *const My, paramcl *const pmp, const struct stat *cons
 	RS rins(My); 
 	RS zs(My);
 	string getname,bsname;
-	pmp->getSender(telnr,&getname,&bsname,aktc);
+	hhip->getSender(telnr,&getname,&bsname,aktc);
 	vector<instyp> einf;
 	einf.push_back(/*2*/instyp(My->DBS,"titel",&bsname));
 	einf.push_back(/*2*/instyp(My->DBS,"rcname",&getname));
@@ -2259,19 +2251,19 @@ void fsfcl::archiviere(DB *const My, paramcl *const pmp, const struct stat *cons
 	//// <<"buf: "<<buf<<endl;
 	einf.push_back(/*2*/instyp(My->DBS,"transe",&tts));
 	if (!telnr.empty()) {
-		const string stdfax=pmp->stdfaxnr(telnr);
+		const string stdfax=hhip->stdfaxnr(telnr);
 		einf.push_back(/*2*/instyp(My->DBS,"rcfax",&stdfax));
 	} //     if (!telnr.empty())
 	if (!adressat.empty()) einf.push_back(/*2*/instyp(My->DBS,"adressat",&adressat));
 	einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
 	einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
 	svec eindfeld; eindfeld<<"submt";eindfeld<<"submid";
-	rins.tbins(pmp->touta,einf,aktc,/*sammeln=*/0,/*oberb=*/ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld);  // einfuegen
+	rins.tbins(hhip->touta,einf,aktc,/*sammeln=*/0,/*oberb=*/ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld);  // einfuegen
 	if (rins.fnr) {
 		Log(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
 	} //     if (runde==ruz-1)
 	if (!rins.fnr && geloeschtp) { 
-		RS rsloe(My,"DELETE FROM `"+pmp->spooltab+"` WHERE id = \""+id+"\"",aktc,ZDB);
+		RS rsloe(My,"DELETE FROM `"+hhip->spooltab+"` WHERE id = \""+id+"\"",aktc,ZDB);
 		*geloeschtp=1;
 	} // if (!rins.fnr) 
 } // archiviere
@@ -2296,34 +2288,34 @@ int fsfcl::loeschecapi(const int obverb, const int oblog)
 
 // Rueckgabe: Zahl der nicht geloeschten Eintraege
 // wird aufgerufen in: aenderefax, loescheallewartenden, untersuchespool,
-int fsfcl::loeschehyla(paramcl *const pmp, const int obverb, const int oblog)
+int fsfcl::loeschehyla(hhcl *const hhip, const int obverb, const int oblog)
 {
 	Log(violetts+Tx[T_loeschehyla]+schwarz,obverb,oblog);
 	if (hylanr!="0" && !hylanr.empty()) {
 		svec qrueck;
 		if (findv==1) {
 			// wenn Datei nicht mehr in sendq, sondern in doneq, sei es gelungen oder gescheitert, dann ist Loeschen sinnlos
-			systemrueck("find '"+pmp->hsendqvz+"' -name q"+hylanr,obverb,oblog,&qrueck,/*obsudc=*/1);
-		} else findfile(&qrueck,findv,obverb,oblog,0,pmp->hsendqvz,"/q"+hylanr+"$");
+			systemrueck("find '"+hhip->hsendqvz+"' -name q"+hylanr,obverb,oblog,&qrueck,/*obsudc=*/1);
+		} else findfile(&qrueck,findv,obverb,oblog,0,hhip->hsendqvz,"/q"+hylanr+"$");
 		if (!qrueck.size()) {
 			return 0;
 		}
-		pmp->hylasv1();
-		pmp->hylasv2(hysrc);
+		hhip->hylasv1();
+		hhip->hylasv2(hysrc);
 		const uchar vmax=5;
 		for(uchar iru=0;iru<vmax;iru++) {
 			if (iru) {
-				if (pmp->sfaxgetty) pmp->sfaxgetty->restart(obverb+1,oblog);
-				if (pmp->shfaxd) pmp->shfaxd->restart(obverb+1,oblog);
-				if (pmp->sfaxq) pmp->sfaxq->restart(obverb+1,oblog);
-				//// systemrueck("systemctl restart '"+pmp->sfaxgetty->sname+"' '"+pmp->shfaxd->sname+"' '"+pmp->sfaxq->sname+"'",
+				if (hhip->sfaxgetty) hhip->sfaxgetty->restart(obverb+1,oblog);
+				if (hhip->shfaxd) hhip->shfaxd->restart(obverb+1,oblog);
+				if (hhip->sfaxq) hhip->sfaxq->restart(obverb+1,oblog);
+				//// systemrueck("systemctl restart '"+hhip->sfaxgetty->sname+"' '"+hhip->shfaxd->sname+"' '"+hhip->sfaxq->sname+"'",
 				////  obverb-1,oblog,/*rueck=*/0,/*obsudc=*/1);
 			} // if (iru) 
 			svec rueck, rmerg;
 			string fuser;
 			struct stat trst={0};
-			if (!lstat(pmp->xferfaxlog.c_str(),&trst)) {
-				systemrueck("tac \""+pmp->xferfaxlog+"\" 2>/dev/null|grep -am 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;      s/\"$//'",
+			if (!lstat(hhip->xferfaxlog.c_str(),&trst)) {
+				systemrueck("tac \""+hhip->xferfaxlog+"\" 2>/dev/null|grep -am 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;      s/\"$//'",
 						obverb, oblog,&rueck,/*obsudc=*/0);
 				Log(Tx[T_Loesche_Fax_hylanr]+hylanr+" ...",-1,0);
 				if (rueck.size() && rueck[0]!="root") {
@@ -2334,7 +2326,7 @@ int fsfcl::loeschehyla(paramcl *const pmp, const int obverb, const int oblog)
 					systemrueck("faxrm "+hylanr+" 2>&1",oblog,obverb,&rmerg,/*obsudc=*/1);
 				}
 				// folgender Befehl kann einen tac: write error: Broken pipe -Fehler erzeugen
-				// systemrueck("su -c \"faxrm "+hylanr+"\" $(tac \""+pmp->xferfaxlog+"\"|grep -am 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg,/*obsudc=*/1);
+				// systemrueck("su -c \"faxrm "+hylanr+"\" $(tac \""+hhip->xferfaxlog+"\"|grep -am 1 \"SUBMIT"+sep+sep+sep+hylanr+"\"|cut -f18|sed -e 's/^\"//;s/\"$//') 2>&1",2,oblog,&rmerg,/*obsudc=*/1);
 				if (rmerg.size()) {
 					if (rmerg[0].find(" removed")!=string::npos || rmerg[0].find("job does not exist")!=string::npos) {
 						Log(blaus+Tx[T_erfolgreich_geloescht_fax_mit]+schwarz+hylanr,1,1);
@@ -2344,7 +2336,7 @@ int fsfcl::loeschehyla(paramcl *const pmp, const int obverb, const int oblog)
 				} // if (rmerg.size()) 
 			} else {
 				break;
-			} // 	if (!lstat(pmp->xferfaxlog.c_str(),&trst))
+			} // 	if (!lstat(hhip->xferfaxlog.c_str(),&trst))
 		} // for(uchar iru=0;iru<vmax;iru++) 
 	} // if (hylanr!="0" && !hylanr.empty()) 
 	return 1;
@@ -2394,7 +2386,7 @@ void fsfcl::capiausgeb(stringstream *ausgp, const string& maxcdials, uchar fuerl
 } // void fsfcl::capiausgeb(stringstream *ausgp, int obverb, string *ctriesp, int oblog,ulong faxord)
 
 // wird aufgerufen in: untersuchespool, aenderefax
-void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
+void fsfcl::setzcapistat(hhcl *hhip, struct stat *entrysendp)
 {
 	int dateifehlt=0;
 	int protpos=0;
@@ -2410,14 +2402,14 @@ void fsfcl::setzcapistat(paramcl *pmp, struct stat *entrysendp)
 				// gesandte und gescheiterte Faxe wurden von capisuite entsprechend umbenannt
 				for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1)) { 
 					// entspr. gefaxte/gescheiterte Datei in capisuite
-					sendqgespfad=(capistat==gescheitert?pmp->cfailedvz:pmp->cdonevz)+vtz+aktuser+"-"+capisd; 
-					Log(string("capistat: ")+ltoan((int)capistat)+" "+blau+sendqgespfad+schwarz,pmp->obverb,pmp->oblog);
+					sendqgespfad=(capistat==gescheitert?hhip->cfailedvz:hhip->cdonevz)+vtz+aktuser+"-"+capisd; 
+					Log(string("capistat: ")+ltoan((int)capistat)+" "+blau+sendqgespfad+schwarz,hhip->obverb,hhip->oblog);
 					if (!(dateifehlt=lstat((sendqgespfad.c_str()), entrysendp))) break; 
 				}  //         for(capistat=gesandt;capistat<=gescheitert;capistat=static_cast<FxStat>(capistat+1))
 				// hier koennte capistat auch fehlend sein
 			}
 			if (!dateifehlt) {	
-				if ((protpos=holcapiprot(pmp->obverb)<0)) {
+				if ((protpos=holcapiprot(hhip->obverb)<0)) {
 					capistat=fehlend;
 				} else if (capistat!=gesandt && capistat!=gescheitert) {
 					struct stat statlock={0};
@@ -2438,7 +2430,8 @@ int fsfcl::holcapiprot(int obverb)
 	size_t p1=sendqgespfad.rfind('.');
 	if (p1!=string::npos) {
 		const string sdgstxtdt=sendqgespfad.substr(0,p1)+".txt";
-		schlArr sdcnfA; sdcnfA.init(3,"tries","starttime","dialstring");
+		const char* const sarr[]={"tries","starttime","dialstring"};
+		schlArr sdcnfA(sarr,sizeof sarr/sizeof *sarr);
 		struct stat cstat={0};
 		if (lstat(sdgstxtdt.c_str(),&cstat)) {
 			return -2; // .txt-Datei fehlt
@@ -2455,11 +2448,11 @@ int fsfcl::holcapiprot(int obverb)
 
 
 // wird aufgerufen in untersuchespool und zeigweitere
-void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fuerlog, int obverb, uchar obzaehl, int oblog)
+void fsfcl::hylaausgeb(stringstream *ausgp, hhcl *hhip, int obsfehlt, uchar fuerlog, int obverb, uchar obzaehl, int oblog)
 {
 	Log(violetts+Tx[T_hylaausgeb]+schwarz+"  hylastat: "+blau+FxStatS(&hylastat)+schwarz,obverb,oblog);
 	if (!fuerlog) *ausgp<<blau<<endl;
-	if (obzaehl) *ausgp<<++pmp->faxord<<")";
+	if (obzaehl) *ausgp<<++hhip->faxord<<")";
 	else *ausgp<<"  ";
 	*ausgp<<"Hyla: "<<schwarz;
 	*ausgp<<(hylastat==fehlend?hgrau:(hylastat>=static_cast<FxStat>(gesandt)?blau:schwarz))
@@ -2479,7 +2472,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
 	 */
 	//// wenn eine Protokolldatei auslesbar war
 	//// modemlaeuftnicht=systemrueck(("faxstat | grep ")+this->hmodem+" 2>&1",obverb,oblog,/*rueck=*/0,/*obsudc=*/1) + fglaeuftnicht;
-	if ((pmp->hgelesen && hylastat!=fehlend && hylastat!=init)) {
+	if ((hhip->hgelesen && hylastat!=fehlend && hylastat!=init)) {
 		*ausgp<<",";
 		//// char buf[100]; int hversuzahl=atol(hdials.c_str()); snprintf(buf,4,"%3d",hversuzahl);
 		*ausgp<<blau<<setw(3)<<hdials<<"/"<<maxdials<<schwarz<<(hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz; // totdials
@@ -2494,13 +2487,13 @@ void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, uchar fu
 		////              if (hversuzahl>12) ausg<<", zu spaet";
 		*ausgp<<",T.:"<<blau<<setw(12)<<number<<schwarz;
 		*ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
-	} //   if (pmp->hgelesen && hylastat!=fehlend)
+	} //   if (hhip->hgelesen && hylastat!=fehlend)
 	if (hqdt.empty()) {
 		*ausgp<<dgrau<<", hylanr: "<<schwarz<<hylanr;
 	} else {
 		*ausgp<<Tx[T_bzw]<<blau<<hqdt<<schwarz;
 	} // 	if (hqdt.empty())
-} // void fsfcl::hylaausgeb(stringstream *ausgp, paramcl *pmp, int obsfehlt, int obverb, uchar obzaehl, int oblog)
+} // void fsfcl::hylaausgeb(stringstream *ausgp, hhcl *hhip, int obsfehlt, int obverb, uchar obzaehl, int oblog)
 
 // aufgerufen in: aenderefax(/*aktion=*/0 ...), untersuchespool, loescheallewartenden;  in bereinigevz leicht modifizierte Verschiebung
 void fsfcl::scheitere(const string& wvz, const string& ngvz, const string& cuser, const string* const ziel/*=0*/,
@@ -2521,7 +2514,7 @@ void fsfcl::scheitere(const string& wvz, const string& ngvz, const string& cuser
 	} // for(unsigned iru=0;iru<2;iru++) 
 } // fsfcl::scheitere(const string& wvz, const string ngvz, const int obverb, const int oblog)
 
-paramcl::paramcl(const int argc, const char *const *const argv):haupt(argc,argv)
+hhcl::hhcl(const int argc, const char *const *const argv):hcl(argc,argv)
 {
 	vaufr[0]=mpfad+" -noia >/dev/null 2>&1"; // /usr/bin/<DPROG> -noia
 	saufr[0]=base_name(vaufr[0]); // <DPROG> -noia
@@ -2530,18 +2523,18 @@ paramcl::paramcl(const int argc, const char *const *const argv):haupt(argc,argv)
 //	zsaufr[1]=ersetzAllezu(saufr[1],"/","\\/");
 	/*// time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff; */
 	//  akonfdt.clear();
-} // paramcl::paramcl()
+} // hhcl::hhcl()
 
 // wird aufgerufen in: main
-void paramcl::pruefggfmehrfach()
+void hhcl::pruefggfmehrfach()
 {
 	if (!obhilfe &&!obvi &&!obvc &&!obvh &&!obvs
 			&&!zeigvers &&!lista &&!listf &&!listi &&!listw && suchstr.empty() &&!loef &&!loew &&!loea &&!anhl &&!erneut &&!uml) {
 		pruefmehrfach(meinname,nrzf);
 	}
-} // void paramcl::pruefggfmehrfach()
+} // void hhcl::pruefggfmehrfach()
 
-paramcl::~paramcl()
+hhcl::~hhcl()
 {
 	//	if (My) {/*delete My; */My=0;}
 	if (sfaxq) {delete sfaxq; sfaxq=0;}
@@ -2549,10 +2542,10 @@ paramcl::~paramcl()
 	if (sfaxgetty) {delete sfaxgetty; sfaxgetty=0;}
 	if (scapis) {delete scapis; scapis=0;}
 	if (shylafaxd) {delete shylafaxd; shylafaxd=0;}
-} // paramcl::~paramcl()
+} // hhcl::~hhcl()
 
 // wird aufgerufen in: bereinigevz
-string paramcl::getzielvz(const string& qdatei)
+string hhcl::getzielvz(const string& qdatei)
 {
 	for(zielmustercl *zmakt=zmp;1;zmakt++){
 		if (!regexec(&(zmakt->regex),qdatei.c_str(),0,NULL,0))
@@ -2565,7 +2558,7 @@ string paramcl::getzielvz(const string& qdatei)
 // passt einen Dateinamen gemaess der vorhandenen Dateien in allen moeglichen Zielverzeichnissen so an
 // dass er beim Umwandeln in PDF und Verschieben als erfolgreiches oder nicht erfolgreiches Fax sich nicht ueberschneidet
 // wird aufgerufen in: DateienHerricht
-string paramcl::neuerdateiname(const string& qpfad)
+string hhcl::neuerdateiname(const string& qpfad)
 {
 	string dateiname=qpfad, altdname, stamm, exten, extu;
 	loeschealleaus(&dateiname,"'");
@@ -2592,7 +2585,7 @@ string paramcl::neuerdateiname(const string& qpfad)
 
 // wird aufgerufen von DateienHerricht
 // die frisch ins Warteverzeichnis verschobenen Dateien werden in spooltab eingetragen
-void paramcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
+void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 {
 	Log(violetts+Tx[T_WVZinDatenbank]+schwarz);
 	RS rins(My); 
@@ -2669,29 +2662,30 @@ void paramcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 	Log(violetts+Txk[T_Ende]+Tx[T_WVZinDatenbank]+schwarz);
 } // WVZinDatenbank
 
-// in rueckfragen sowie als virtuelle Funktion von haupt::gcl0() aufgerufen
-void paramcl::lgnzuw()
+// in rueckfragen sowie als virtuelle Funktion von hcl::gcl0() aufgerufen
+void hhcl::lgnzuw()
 {
-	haupt::lgnzuw();
+	hcl::lgnzuw();
 	Txd.lgn=Tx.lgn=Txk.lgn;
-} // void paramcl::lgnzuw()
+} // void hhcl::lgnzuw()
 
 // wird aufgerufen in: main
-void paramcl::getcommandl0()
+void hhcl::getcommandl0()
 {
 	if (obverb) {
 		cout<<violett<<"getCommandl0()"<<schwarz<<endl;
 		obverb=0;
 	}
 	// Reihenfolge muss koordiniert werden mit lieskonfein und rueckfragen
-	agcnfA.init(44, "language","host","muser","mpwd","datenbank","findvers","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
-			"countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
-			"cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl","maxdials",
-			"gleichziel","ocri","ocra","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
-			"anstr","undstr","cronminut","autoupd","logvz","logdname","oblog","obmodem","obfcard","sqlz","musterzahl");
+	const char* const sarr[]={"language","host","muser","mpwd","datenbank","findvers","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
+		"countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
+		"cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl","maxdials",
+		"gleichziel","ocri","ocra","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
+		"anstr","undstr","cronminut","autoupd","logvz","logdname","oblog","obmodem","obfcard","sqlz","musterzahl"};
+	schlArr agcnfA(sarr,sizeof sarr/sizeof *sarr);
 	gcl0();
 	if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
-} // void paramcl::getcommandl0(int argc, char** argv)
+} // void hhcl::getcommandl0(int argc, char** argv)
 
 // aus: coreutils
 int fd_reopen(int desired_fd, char const *file, int flags, mode_t mode)
@@ -2730,7 +2724,7 @@ int ttytest(const string& tty)
 } // int ttytest(const string& tty)
 
 // wird aufgerufen in: main, rueckfragen
-void paramcl::pruefmodem()
+void hhcl::pruefmodem()
 {
 	Log(violetts+Tx[T_pruefmodem]+schwarz);
 	obmodem=0;
@@ -2833,10 +2827,10 @@ void paramcl::pruefmodem()
 	agcnfA.setzbemv("obmodem",&Tx,T_ob_ein_Modem_drinstak);
 	Log(violetts+Tx[T_pruefmodem]+" Ende"+schwarz);
 	// wvdialconf oder schneller: setserial -a /dev/tty*, mit baud_base: <!=0>  als Kriterium
-} // void paramcl::pruefmodem()
+} // void hhcl::pruefmodem()
 
 // wird aufgerufen in: rueckfragen, main
-void paramcl::pruefisdn()
+void hhcl::pruefisdn()
 {
 	Log(violetts+Tx[T_pruefisdn]+schwarz);
 	svec rueck;
@@ -2874,11 +2868,11 @@ void paramcl::pruefisdn()
 		Tx.lgn=altSpr;
 	 */
 	agcnfA.setzbemv("obfcard",&Tx,T_ob_eine_Fritzcard_drinstak);
-} // void paramcl::pruefisdn()
+} // void hhcl::pruefisdn()
 
-const string paramcl::initdhyladt="/etc/init.d/hylafax";
+const string hhcl::initdhyladt="/etc/init.d/hylafax";
 // wird aufgerufen in: pruefhyla, main
-int paramcl::setzhylavz()
+int hhcl::setzhylavz()
 {
 	// koennte auch im Fall eines entfernten Modems oder hylafax-Programms benoetigt werden
 	// sucht das Hylaverzeichnis und setzt varsphylavz darauf, return 0, wenn nicht gefunden dann varsphylavz="", return 1
@@ -2906,7 +2900,8 @@ int paramcl::setzhylavz()
 
 		////    cppSchluess hylaconf[]={{"SPOOL"},{"HYLAFAX_HOME"}};
 		////    size_t cs=sizeof hylaconf/sizeof*hylaconf;
-		schlArr hycnfA; hycnfA.init(2,"SPOOL","HYLAFAX_HOME");
+		const char* const sarr[]={"SPOOL","HYLAFAX_HOME"};
+		schlArr hycnfA(sarr,sizeof sarr/sizeof *sarr);
 		struct stat hstat={0};
 		if (!lstat(initdhyladt.c_str(),&hstat)) {
 			initdhyladt_gibts=1;
@@ -2987,10 +2982,10 @@ int paramcl::setzhylavz()
 	xferfaxlog=varsphylavz+"/etc/xferfaxlog"; 
 	hempfavz=varsphylavz+"/" DPROG "arch";
 	return 0;
-} // int paramcl::setzhylavz()
+} // int hhcl::setzhylavz()
 
 // wird aufgerufen in VorgbSpeziell, main, immer vor fork
-void paramcl::MusterVorgb()
+void hhcl::MusterVorgb()
 {
 	Log(violetts+Tx[T_MusterVorgb]+schwarz);
 	dbq=DPROG;
@@ -3011,17 +3006,17 @@ void paramcl::MusterVorgb()
 	// wird nur vor dem ersten fork bearbeitet
 	zmvp=zmi;
 	zmvzn=sizeof zmi/sizeof *zmi;
-} // void paramcl::MusterVorgb()
+} // void hhcl::MusterVorgb()
 
 // Musterfunktion, die von einer Funktion in gesonderter,fakultativer Datei,z.B. 'vgb.cpp' ueberschrieben werden kann
-void paramcl::VorgbSpeziell() 
+void hhcl::VorgbSpeziell() 
 {
 	Log(violetts+Tx[T_VorgbSpeziell]+schwarz);
 	MusterVorgb();
-} // void paramcl::VorgbSpeziell() 
+} // void hhcl::VorgbSpeziell() 
 
 // in VorgbAllg, pruefcapi
-void paramcl::liescapiconf()
+void hhcl::liescapiconf()
 {
 	Log(violetts+Tx[T_liescapiconf]+schwarz);
 	svec qrueck;
@@ -3121,11 +3116,11 @@ void paramcl::liescapiconf()
 		cdonevz = mitvtz(spoolcapivz)+"done";
 		cfailedvz = mitvtz(spoolcapivz)+"failed";
 	} //   if (!spoolcapivz.empty())
-} // void paramcl::liescapiconf()
+} // void hhcl::liescapiconf()
 
 // wird aufgerufen in: main
 // allgemeine Vorgaben, fuer Deutschland
-void paramcl::VorgbAllg()
+void hhcl::VorgbAllg()
 {
 	Log(violetts+Tx[T_VorgbAllg]+schwarz);
 	liescapiconf();
@@ -3160,10 +3155,10 @@ void paramcl::VorgbAllg()
 	cronminut="2";
 	autoupd=1;
 	////  pruefcvz(); // 1.7.16 zu frueh
-} // void paramcl::VorgbAllg
+} // void hhcl::VorgbAllg
 
 // wird aufgerufen in: konfcapi, verzeichnisse
-void paramcl::pruefcvz()
+void hhcl::pruefcvz()
 {
 	//// <<rot<<"cfaxuservz in pruefcvz: "<<cfaxuservz<<schwarz<<endl;
 	Log(violetts+Tx[T_pruefcvz]+schwarz+" ccfaxuservz: "+violett+cfaxuservz+schwarz);
@@ -3175,10 +3170,10 @@ void paramcl::pruefcvz()
 	cfaxuserrcfalschevz=cfaxuserrcvz+"/falsche";
 	//// <<violett<<"cfaxuserrcvz: "<<cfaxuserrcvz<<schwarz<<endl;
 	pruefverz(cfaxuserrcvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/"",/*benutzer=*/cuser,/*obmachen=*/0);
-} // paramcl::pruefcvz
+} // hhcl::pruefcvz
 
 // wird aufgerufen in lieskonfein
-void paramcl::setzzielmuster(confdat& afcd)
+void hhcl::setzzielmuster(confdat& afcd)
 {
 	if (!zmvzn || !zmvp) {
 		// wird nur vor dem ersten fork bearbeitet
@@ -3219,10 +3214,10 @@ void paramcl::setzzielmuster(confdat& afcd)
 			zmp[i].ziel=zmcnfA[2*i+1].wert;
 		} //     for(size_t i=0;i<zmzn;i++)
 	} //   if (zmda)
-} // void paramcl::setzzielmuster()
+} // void hhcl::setzzielmuster()
 
 // wird aufgerufen in lieskonfein
-void paramcl::setzsql(confdat& afcd)
+void hhcl::setzsql(confdat& afcd)
 {
 	sqlzn=atol(sqlz.c_str());
 	// Vorgaben uebernehmen
@@ -3243,13 +3238,13 @@ void paramcl::setzsql(confdat& afcd)
 	////        <<"akt: "<<hviolett<<akt<<schwarz<<", sqlcnfA["<<akt<<"]: "<<blau<<sqlcnfA[akt].name<<schwarz<<endl;
 	////       <<"akt: "<<violett<<akt<<schwarz<<", sqlcnfA["<<akt<<"]: "<<dblau<<sqlcnfA[akt].wert<<schwarz<<endl;
 	////      KLZ
-} // void paramcl::setzsql(confdat& afcd)
+} // void hhcl::setzsql(confdat& afcd)
 
 // wird aufgerufen in: main
 // liest die Konfiguration von autofax ein
-void paramcl::lieskonfein()
+void hhcl::lieskonfein()
 {
-	haupt::lieskonfein();
+	hcl::lieskonfein();
 	lfd++;
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&host); else rzf=1; lfd++;
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&muser); else rzf=1; lfd++;
@@ -3312,13 +3307,13 @@ void paramcl::lieskonfein()
 		KLA // (1) else
 	 */
 	if (nrzf) rzf=0;
-} // void paramcl::lieskonfein()
+} // void hhcl::lieskonfein()
 
 // wird aufgerufen in: main
-int paramcl::getcommandline()
+int hhcl::getcommandline()
 {
 	Log(violetts+"getcommandline()"+schwarz);
-	// s.a. haupt::getcl0()
+	// s.a. hcl::getcl0()
 	////  uchar plusverb=0;
 	opts.push_back(/*2a*/optioncl(T_zvz_k,T_zufaxenvz_l, &Tx, T_faxt_die_Dateien_aus_pfad_anstatt,0,&zufaxenvz,pverz,&agcnfA,"zufaxenvz",&obkschreib));
 	opts.push_back(/*2*/optioncl(T_wvz_k,T_wartevz_l, &Tx, T_Dateien_warten_in_pfad_anstatt,0,&wvz,pverz,&agcnfA,"wartevz",&obkschreib));
@@ -3475,10 +3470,10 @@ int paramcl::getcommandline()
 		return 1;
 	Log(violetts+Txk[T_Ende]+"getcommandline()"+schwarz);
 	return 0;
-} // int paramcl::getcommandline(int argc, char** argv)
+} // int hhcl::getcommandline(int argc, char** argv)
 
 // wird aufgerufen in: main
-void paramcl::rueckfragen()
+void hhcl::rueckfragen()
 {
 	Log(violetts+Tx[T_rueckfragen]+schwarz);
 	const size_t aktc=0; // mysql-connection, je nach thread
@@ -3862,10 +3857,10 @@ void paramcl::rueckfragen()
 			} // 		if (obcapi)
 		} // 	if (obcapi||obhyla)
 	} // 	if (rzf)
-} // void paramcl::rueckfragen()
+} // void hhcl::rueckfragen()
 
 // wird aufgerufen in: main
-void paramcl::autofkonfschreib()
+void hhcl::autofkonfschreib()
 {
 	Log(violetts+Tx[T_autokonfschreib]+schwarz+", "+Tx[T_zu_schreiben]+((rzf||obkschreib)?Txk[T_ja]:Txk[T_nein]));
 	/*//
@@ -3894,10 +3889,10 @@ void paramcl::autofkonfschreib()
 		schlArr *ggcnfAp[3]={&agcnfA,&sqlcnfA,&zmcnfA};
 		multischlschreib(akonfdt, ggcnfAp, sizeof ggcnfAp/sizeof *ggcnfAp, mpfad);
 	} // if (rzf||obkschreib) 
-} // void paramcl::autofkonfschreib()
+} // void hhcl::autofkonfschreib()
 
 // in pruefcapi
-void paramcl::clieskonf()
+void hhcl::clieskonf()
 {
 	Log(violetts+Tx[T_clieskonf]+schwarz+", cfaxcdtp->name: "+violett+(cfaxcdtp?cfaxcdtp->name:"0")+schwarz);
 	if (cfcnfA[6].wert!="+"+countrycode+" "+citycode+" "+msn  
@@ -3937,10 +3932,10 @@ void paramcl::clieskonf()
 	} else {
 		capizukonf=1;
 	} // 	if (ckzlrueck.size()) else
-} // void paramcl::clieskonf()
+} // void hhcl::clieskonf()
 
 // wird  aufgerufen in: pruefcapi
-void paramcl::konfcapi()
+void hhcl::konfcapi()
 {
 	Log(violetts+Tx[T_konfcapi]+schwarz+", ccapiconfdt: "+violett+ccapiconfdt+schwarz);
 	// Zahl der Klingeltoene in capisuite einstellen
@@ -4162,11 +4157,11 @@ void paramcl::konfcapi()
 	pruefcvz();
 	nextnum();
 	Log(violetts+Txk[T_Ende]+Tx[T_konfcapi]+schwarz+"ccapiconfdt: "+violett+ccapiconfdt+schwarz);
-} // void paramcl::konfcapi
+} // void hhcl::konfcapi
 
 // in konfcapi und faxemitC (da konfacpi aus pruefcapi nicht unbedingt aufgerufen wird)
 // Datei /fax-nextnr ggf. richtigstellen
-void paramcl::nextnum()
+void hhcl::nextnum()
 {
 	//// dieser Abschnitt war zuvor richtcapiher
 	ulong nextnr=0;
@@ -4209,10 +4204,10 @@ void paramcl::nextnum()
 		} // 		if (findv==1) else
 	} // 	if (!nextnr)
 	setfaclggf(nextdatei,obverb,oblog,/*obunter=*/falsch,/*mod=*/6);
-} // void paramcl::nextnum()
+} // void hhcl::nextnum()
 
 // wird aufgerufen in: main
-void paramcl::verzeichnisse()
+void hhcl::verzeichnisse()
 {
 	Log(violetts+Tx[T_verzeichnisse]);
 	pruefcvz(); 
@@ -4230,12 +4225,12 @@ void paramcl::verzeichnisse()
 		::Log(Tx[T_Muster]+imus+": '"+blau+this->zmp[imu].holmuster()+schwarz+"'",this->obverb>1,this->oblog);
 		::Log(Tx[T_Ziel]+imus+":   '"+blau+this->zmp[imu].ziel+schwarz+"'",this->obverb>1,this->oblog);
 	} //   for(uint imu=0;imu<this->zmzn;imu++)
-} // paramcl:: verzeichnisse()
+} // hhcl:: verzeichnisse()
 
 // wird aufgerufen in: main
-void paramcl::pruefcron()
+void hhcl::pruefcron()
 {
-	if (haupt::pruefcron()) {
+	if (hcl::pruefcron()) {
 		/*
 		// 2. um 22 Uhr vorgeplante Dateien faxen
 		vaufr[1]=s1+zufaxenvz+s2+zufaxenvz+vtz+" 2>/dev/null";
@@ -4247,11 +4242,11 @@ void paramcl::pruefcron()
 		+blau+(vorcm.empty()?Txk[T_gar_nicht]:Tx[T_um_22_Uhr])+schwarz+Txk[T_aufgerufen],1,oblog);
 		}
 		 */
-	} // 	if (haupt::pruefcron())
+	} // 	if (hcl::pruefcron())
 } // pruefcron
 
 // wird aufgerufen in: main
-void paramcl::rufpruefsamba()
+void hhcl::rufpruefsamba()
 {
 	Log(violetts+Tx[T_rufpruefsamba]);
 	vector<const string*> vzn;
@@ -4293,7 +4288,7 @@ void paramcl::rufpruefsamba()
 } // pruefsamba
 
 // wird aufgerufen in: main
-int paramcl::initDB()
+int hhcl::initDB()
 {
 	Log(violetts+"initDB(), db: "+blau+dbq+schwarz);
 	unsigned int fehler=0;
@@ -4319,7 +4314,7 @@ int paramcl::initDB()
 } // initDB
 
 // wird aufgerufen in rueckfragen
-int paramcl::pruefDB(const string& db)
+int hhcl::pruefDB(const string& db)
 {
 	Log(violetts+Tx[T_pruefDB]+db+")"+schwarz);
 	if (!My) {
@@ -4336,7 +4331,7 @@ int paramcl::pruefDB(const string& db)
 
 // Parameter -kez
 // wird aufgerufen in: main, zeigweitere
-void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
+void hhcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 {
 	pid_t pid=fork();
 	if (pid>=0) {
@@ -4399,8 +4394,8 @@ void paramcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 					const string txtdt=stamm+".txt";
 					struct stat txtstat={0};
 					if (!lstat(txtdt.c_str(),&txtstat)) {
-						schlArr txtcnfA; 
-						txtcnfA.init(6,"dialstring","starttime","tries","user","addressee","subject");
+						const char* const sarr[]={"dialstring","starttime","tries","user","addressee","subject"};
+						schlArr txtcnfA(sarr,sizeof sarr/sizeof *sarr);
 						confdat txtcd(txtdt,&txtcnfA,obverb,'='); // static wertet nichts aus
 						teln=stdfaxnr(txtcnfA[0].wert);
 						/*// // liegt in der Zukunft!
@@ -4525,7 +4520,7 @@ const char *const chfarbe(const uchar stand)
 // verschiebt Dateien je nach Eintrag in outa, altspool und den Faxsystem
 // in das Gescheitertenverzeichnis und im ersten Fall auch das Zielverzeichnis
 // wann&1 = erfolgreiche Faxe verschieben, wann&2 = erfolglose Faxe verschieben
-void paramcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *ausgp,const size_t aktc,
+void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *ausgp,const size_t aktc,
 		set<string> *cmisslp,set<string> *cgelup,set<string> *hmisslp,set<string> *hgelup)
 {
 	string meld;
@@ -4701,11 +4696,11 @@ void paramcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream
 			if (fit==fdn.begin()) break;
 		} //  if (0)
 	} // 	if (fdn.size())
-} // void paramcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *ausgp)
+} // void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *ausgp)
 
 // Parameter -bvz
 // wird aufgerufen in: main
-void paramcl::bereinigevz(const size_t aktc/*=0*/)
+void hhcl::bereinigevz(const size_t aktc/*=0*/)
 {
 	// laeuft das Programm uanufgefordert parallel, dann ist aktc>0; dann sollen die Programmmeldungen gesammelt ausgegeben werden (ueber ausg)
 	stringstream ausg;
@@ -4838,7 +4833,7 @@ void paramcl::bereinigevz(const size_t aktc/*=0*/)
 
 // Parameter -st / --stop
 // wird aufgerufen in: main
-void paramcl::anhalten()
+void hhcl::anhalten()
 {
 	Log(violetts+Tx[T_anhalten]+schwarz);
 	// crontab
@@ -4861,11 +4856,11 @@ void paramcl::anhalten()
 	if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb:0,oblog);
 	if (scapis) scapis->stopdis(obverb,oblog);
 	zeigdienste();
-} // void paramcl::anhalten()
+} // void hhcl::anhalten()
 
 // wird aufgerufen in: main
 // aktion: 0=loeschen, 1=umleiten (von capi auf hyla o.u.)
-int paramcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
+int hhcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 {
 	Log(violetts+Tx[T_aendere_fax]+"("+(aktion?"1":"0")+")"+schwarz);
 	vector<fsfcl> fsfav;
@@ -4968,10 +4963,10 @@ int paramcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 		} // if (fsfav.size()) 
 	} // !nrzf
 	return 1;
-} // int paramcl::aenderefax()
+} // int hhcl::aenderefax()
 
 // wird aufgerufen in: main
-void paramcl::empferneut()
+void hhcl::empferneut()
 {
 	Log(violetts+Tx[T_empferneut]+schwarz);
 	tu_listi(/*zurauswahl=*/1);
@@ -5009,11 +5004,11 @@ void paramcl::empferneut()
 		} // 	if (fnr.find('-')!=string::npos)
 	} // 	for(j=beg;j<end;j++)
 	::Log(violetts+Txk[T_Ende]+Tx[T_empferneut]+schwarz,1,0);
-} // int paramcl::empferneut()
+} // int hhcl::empferneut()
 
 // wird aufgerufen in: main
 // loesche die Eintraege in spooltab, deren Dateien nicht im Warteverzeichnis nicht im Capi- und nicht im Hylasystem stehen
-size_t paramcl::loeschewaise()
+size_t hhcl::loeschewaise()
 {
 	Log(blaus+Tx[T_loeschewaise]+schwarz);
 	const size_t aktc=0;
@@ -5053,10 +5048,10 @@ size_t paramcl::loeschewaise()
 		::Log(Tx[T_Keine_waisen_Faxe_zum_Loeschen_da],1,oblog);
 	} // 	if (ids.size()) else
 	return ids.size();
-} // int paramcl::loeschewaise()
+} // int hhcl::loeschewaise()
 
 // wird aufgerufen in: main
-size_t paramcl::loescheallewartenden()
+size_t hhcl::loescheallewartenden()
 {
 	Log(blaus+Tx[T_loescheallewartenden]+schwarz);
 	const size_t aktc=0;
@@ -5141,10 +5136,10 @@ size_t paramcl::loescheallewartenden()
 		::Log(Tx[T_Keine_wartenden_Faxe_zum_Loeschen_da],1,oblog);
 	} // if (erg)
 	return erg;
-} // int paramcl::loescheallewartenden()
+} // int hhcl::loescheallewartenden()
 
 // wird aufgerufen in: main (2x)
-void paramcl::tu_lista(const string& oberfolg, const string& submids)
+void hhcl::tu_lista(const string& oberfolg, const string& submids)
 {
 	// "... submid id ()" wuerde zu Mysql-Fehler fuehren
 	Log(violetts+Tx[T_tu_lista]+schwarz);
@@ -5167,7 +5162,7 @@ void paramcl::tu_lista(const string& oberfolg, const string& submids)
 } // tu_lista
 
 // wird aufgerufen in: main
-void paramcl::tu_listi(const uchar zurauswahl/*=0*/)
+void hhcl::tu_listi(const uchar zurauswahl/*=0*/)
 {
 	Log(violetts+Tx[T_tu_listi]+schwarz);
 	const size_t aktc=0;
@@ -5189,7 +5184,7 @@ void paramcl::tu_listi(const uchar zurauswahl/*=0*/)
 } // tu_listi
 
 // wird aufgerufen in: main
-void paramcl::suchestr()
+void hhcl::suchestr()
 {
 	Log(violetts+Tx[T_suchestr]+schwarz);
 	const size_t aktc=0;
@@ -5253,7 +5248,7 @@ void paramcl::suchestr()
 } // suchestr
 
 // verwendet in zupdf, rueckfragen
-int paramcl::pruefsoffice(uchar mitloe/*=0*/)
+int hhcl::pruefsoffice(uchar mitloe/*=0*/)
 {
 	Log(violetts+Tx[T_pruefsoffice]+schwarz);
 	static uchar sofficegeprueft=0;
@@ -5266,10 +5261,10 @@ int paramcl::pruefsoffice(uchar mitloe/*=0*/)
 		sofficegeprueft=1;
 	} //   if (!sofficegeprueft)
 	return sofficeda;
-} // int paramcl::pruefsoffice()
+} // int hhcl::pruefsoffice()
 
 // verwendet in zupfd, rueckfragen
-int paramcl::pruefconvert()
+int hhcl::pruefconvert()
 {
 	Log(violetts+Tx[T_pruefconvert]+schwarz);
 	static uchar convertgeprueft=0;
@@ -5281,10 +5276,10 @@ int paramcl::pruefconvert()
 		convertgeprueft=1;
 	} //   if (!convertgeprueft)
 	return convertda;
-} // int paramcl::pruefconvert()
+} // int hhcl::pruefconvert()
 
 // aufgerufen in pruefocr()
-void paramcl::pruefunpaper()
+void hhcl::pruefunpaper()
 {
 	Log(violetts+Tx[T_pruefunpaper]+schwarz);
 	double vers=progvers("unpaper");
@@ -5332,10 +5327,10 @@ void paramcl::pruefunpaper()
 				systemrueck("cd \""+ivu+"\"&& make install",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 		} // 		if (systemrueck
 	} // 						if (!urueck.size()||vers<6.1)
-} // void paramcl::pruefunpaper()
+} // void hhcl::pruefunpaper()
 
 // verwendet in empfarch() (2x) und DateienHerricht() (2x)
-int paramcl::pruefocr()
+int hhcl::pruefocr()
 {
 	Log(violetts+Tx[T_pruefocr]+schwarz);
 	if (!obocrgeprueft) {
@@ -5511,10 +5506,10 @@ int paramcl::pruefocr()
 		} //     if (!tda)
 	} // if (!obocrgeprueft) 
 	return 0;
-} // int paramcl::pruefocr()
+} // int hhcl::pruefocr()
 
 // ocrmypdf laueft z.T. nicht aus einem Programm, das aus cron aufgerufen wird, wenn sich nicht im selben Verzeichnis unpaper findet
-void paramcl::unpaperfuercron(const string& ocrprog)
+void hhcl::unpaperfuercron(const string& ocrprog)
 {
 	const string unp="unpaper";
 	const string uppfad=dir_name(ocrprog)+"/"+unp;
@@ -5525,10 +5520,10 @@ void paramcl::unpaperfuercron(const string& ocrprog)
 			systemrueck(sudc+"ln -s '"+prog+"' '"+uppfad+"'",obverb,oblog);
 		} // 	 if (obprogda(unp,obverb,oblog,&prog))
 	} // 	if (lstat(uppfad.c_str(),&lst))
-} // void paramcl::unpaperfuercron()
+} // void hhcl::unpaperfuercron()
 
 // in wegfaxen und empfarch (2x)
-int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/, const int obocr/*=1*/, const int loeschen/*=1*/) // 0=Erfolg
+int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/, const int obocr/*=1*/, const int loeschen/*=1*/) // 0=Erfolg
 {
 	Log(violetts+Tx[T_zupdf]+schwarz+" '"+blau+*quellp+schwarz+"' '"+blau+ziel+schwarz+"', obocr: "+(obocr?"1":"0")+", loeschen: "+(loeschen?"1":"0"));
 	int erg=1;
@@ -5650,12 +5645,12 @@ int paramcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0
 		} // 		if (loeschen && exten=="tif")
 	} // 	if (!erg)
 	return erg; 
-} // int paramcl::zupdf(string von, string zielvz, int obocr)
+} // int hhcl::zupdf(string von, string zielvz, int obocr)
 
 /*//
 #ifdef alt
 // wird aufgerufen 2 x in wegfaxen
-void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio,
+void hhcl::wandle(const string& udatei,const string& urname,const uchar iprio,
 		svec& toktxt,svec& toknr, svec& tokname,const string& anfxstr, const string& exten, vector<urfxcl> *urfxp)
 {
 	Log(violetts+Tx[T_wandle]+schwarz+", udatei: "+blau+udatei+schwarz+", urname: "+blau+urname+schwarz+", iprio: "+ltoan(iprio));
@@ -5699,13 +5694,13 @@ void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio
 		} // if (j<toknr.size()-1) 
 	} // for(unsigned j=0;j<toknr.size();j++) 
 	Log(violetts+Txk[T_Ende]+Tx[T_wandle]+schwarz+", udatei: "+blau+udatei+schwarz+", urname: "+blau+urname+schwarz+", iprio: "+ltoan(iprio));
-} // void paramcl::wandle(const string& udatei,const string& urname,const uchar iprio, ...
+} // void hhcl::wandle(const string& udatei,const string& urname,const uchar iprio, ...
 #endif // alt
 */
 
 // wird aufgerufen in wegfaxen
 // ermittelt in Dateinamen steckendes Datum und gibt zurueck, ob dieses schon vorbei ist
-int paramcl::obvorbei(const string& vzname,uchar *auchtag)
+int hhcl::obvorbei(const string& vzname,uchar *auchtag)
 {
 	tm ht({0});
 	time_t jetzt=time(0);// / (24*60*60) *24*60*60 ;
@@ -5748,7 +5743,7 @@ int paramcl::obvorbei(const string& vzname,uchar *auchtag)
 } // int obvorbei(string vzname)
 
 // wird aufgerufen in: main
-void paramcl::wegfaxen()
+void hhcl::wegfaxen()
 {
 	// zufaxenvz = zufaxen-Verzeichnis
 	// 1a. die (Nicht-PDF- und PDF-) Dateien in dem Verzeichnis ermitteln und im Fall mehrerer Zielfaxnummern aufteilen ...
@@ -6363,7 +6358,7 @@ void paramcl::wegfaxen()
 	} // 	if (r0.obfehl) else
 	Log(violetts+Txk[T_Ende]+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Txk[T_ja]:Txk[T_nein])+", "
 			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Txk[T_ja]:Txk[T_nein]));
-} // void paramcl::wegfaxen()
+} // void hhcl::wegfaxen()
 
 // hylafax: bei zu faxenden Dateien stehen die Steuerdateien in /var/spool/fax/sendq/q105, benannt nach /var/spool/fax/etc/xferfaxlog, dort steht in der 6. Spalte die hyla-Index-Nummer z.B. 105, die als Rueckmeldung von sendfax erscheint ("request id is 105 (group id 105) for host localhost (1 file)")
 // in der 4. Spalte steht dazu die Dokumentnummer 00000133, mit der das Dokument im Spool in /var/spool/fax/docq/doc133.pdf wartet
@@ -6372,7 +6367,7 @@ void paramcl::wegfaxen()
 
 // Dateien in Spool-Tabelle nach inzwischen verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
 // wird aufgerufen in: main (2x)
-void paramcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart 0=capi, 1=hyla 
+void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart 0=capi, 1=hyla 
 {
 	// Schaue nach, welche der gespoolten schon weggeschickt sind, Anpassung der Primaerdateien und des Datenbankeintrags
 	Log(violetts+Tx[T_untersuchespool]+schwarz);
@@ -6568,7 +6563,7 @@ void paramcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // fax
 
 // Aufrufstatistik, um in zeigweitere die Dateien korrigieren zu koennen:
 // bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 3 Monate und des Monats unbefristet
-void paramcl::bestimmtage()
+void hhcl::bestimmtage()
 {
 	// bei jedem 3. Aufruf einen Tag, bei jedem 3. Aufruf des Tages 30 Tage und des Monats 200 Jahre
 	if (monatsaufr==3) {
@@ -6578,11 +6573,11 @@ void paramcl::bestimmtage()
 	}	else if (!(tagesaufr % 3)) {
 		tage=ktage; // 1
 	} // 		if (monatsaufr==3) else if else if
-} // void paramcl::bestimmtage()
+} // void hhcl::bestimmtage()
 
 // Zeige Dateien im Spool an, die nicht in der Spool-Tabelle stehen
 // wird aufgerufen in: main
-void paramcl::zeigweitere()
+void hhcl::zeigweitere()
 {
 	Log(violetts+Tx[T_zeigweitere]+schwarz);
 	const size_t aktc=4;
@@ -6613,10 +6608,10 @@ void paramcl::zeigweitere()
 	} // if (obhyla) 
 	if (obtitel) ::Log(ausg.str(),1,oblog);
 	Log(violetts+Txk[T_Ende]+Tx[T_zeigweitere]+schwarz);
-} // void paramcl::zeigweitere()
+} // void hhcl::zeigweitere()
 
 // aufgerufen in aenderefax, zeigweitere
-void paramcl::sammlecapi(vector<fsfcl> *fsfvp,const size_t aktc)
+void hhcl::sammlecapi(vector<fsfcl> *fsfvp,const size_t aktc)
 {
 	Log(violetts+Tx[T_sammlecapi]+schwarz);
 	struct stat entryvz={0};
@@ -6644,10 +6639,10 @@ void paramcl::sammlecapi(vector<fsfcl> *fsfvp,const size_t aktc)
 			} // if (!indb) 
 		} // for(size_t i=0
 	} // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
-} // void paramcl::sammlecapi(vector<fsfcl> *fsfvp)
+} // void hhcl::sammlecapi(vector<fsfcl> *fsfvp)
 
 // in sammlecapi
-void paramcl::bereinigecapi(const size_t aktc)
+void hhcl::bereinigecapi(const size_t aktc)
 {
 	struct stat entryvz={0};
 	svec qrueck;
@@ -6692,10 +6687,10 @@ void paramcl::bereinigecapi(const size_t aktc)
 			} // if (inouta.num_rows) else 
 		} // if (lstat(zugeh.c_str(),&entryvz)) 
 	} // for(size_t i=0;i<qrueck.size();i++) 
-} // void paramcl::bereinigecapi()
+} // void hhcl::bereinigecapi()
 
 // aufgerufen in: zeigweitere, aenderefax
-void paramcl::sammlehyla(vector<fsfcl> *fsfvp,const size_t aktc)
+void hhcl::sammlehyla(vector<fsfcl> *fsfvp,const size_t aktc)
 {
 	Log(violetts+Tx[T_sammlehyla]+schwarz);
 	struct stat entryvz={0};
@@ -6721,10 +6716,10 @@ void paramcl::sammlehyla(vector<fsfcl> *fsfvp,const size_t aktc)
 		} // for(size_t i=0;i<rueck.size();i++) 
 	} // if (!lstat(hsendqvz.c_str(),&entryvz))
 	Log(violetts+Txk[T_Ende]+Tx[T_sammlehyla]+schwarz);
-} // void paramcl::sammlehyla(vector<fsfcl> *fsfvp)
+} // void hhcl::sammlehyla(vector<fsfcl> *fsfvp)
 
 // aufgerufen in: main, zeigweitere
-void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
+void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 {
 	pid_t pid=fork();
 	if (pid>=0) {
@@ -6967,10 +6962,10 @@ void paramcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 		::Log(rots+Tx[T_Gabelung_zu_korrigierehyla_misslungen]+schwarz,1);
 		exitt(17);
 	} // if (!pid)
-} // void paramcl::korrigierehyla()
+} // void hhcl::korrigierehyla()
 
 // aufgerufen in: empfarch, zupdf
-int paramcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct stat *elogp, 
+int hhcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct stat *elogp, 
 		string *absdrp,string *tsidp,string *calleridp,string *devnamep)
 {
 	Log(violetts+Tx[T_holtif]+schwarz);
@@ -7050,10 +7045,10 @@ int paramcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct sta
 	} // if (TIFF* tif = TIFFOpen(datei.c_str(), "r")) 
 	Log(violetts+Txk[T_Ende]+Tx[T_holtif]+schwarz);
 	return erg;
-} // int paramcl::holtif(string& datei,struct tm *tmp,ulong *seitenp,string *calleridp,string *devnamep)
+} // int hhcl::holtif(string& datei,struct tm *tmp,ulong *seitenp,string *calleridp,string *devnamep)
 
 // wird aufgerufen in: main
-void paramcl::empfarch(uchar obalte/*=0*/)
+void hhcl::empfarch(uchar obalte/*=0*/)
 {
 	Log(violetts+Tx[T_empfarch]+schwarz);
 	const size_t aktc=5;
@@ -7106,10 +7101,10 @@ void paramcl::empfarch(uchar obalte/*=0*/)
 #endif // immerwart
 	::Log(Tx[T_Zahl_der_empfangenen_Faxe]+drots+ltoan(ankzahl)+schwarz,1,1);
 	Log(violetts+Txk[T_Ende]+Tx[T_empfarch]+schwarz);
-} // void paramcl::empfarch()
+} // void hhcl::empfarch()
 
 // wird aufgerufen in: empferneut, empfarch
-void paramcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,const string& nr/*=nix*/)
+void hhcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,const string& nr/*=nix*/)
 {
 	// uchar indb/*=1*/,uchar mitversch/*=1*/)
 	// was&4: Bilddateien erstellen, was&2 q-Datei verschieben, was&1: in Datenbank eintragen, 
@@ -7237,15 +7232,16 @@ void paramcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,con
 			} //         if (runde==1)
 		} // 	if (was&1 &&(obhpfadda||obpdfda))
 	} // 	if (!ganzfehlt)
-} // void paramcl::empfhyla(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*/)
+} // void hhcl::empfhyla(const string& stamm,uchar indb/*=1*/,uchar mitversch/*=1*/)
 
 // wird aufgerufen in: empferneut(), empfarch()
-void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,const string& nr/*=nix*/)
+void hhcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,const string& nr/*=nix*/)
 // uchar indb/*=1*/,uchar mitversch/*=1*/)
 // was&4: Bilddateien erstellen, was&2 capi-Datei verschieben, was&1: in Datenbank eintragen, 
 {
 	Log(violetts+Tx[T_empfcapi]+schwarz+stamm+Tx[T_was]+(was&4?Tx[T_Bilddatei]:"")+(was&2?", sff ":"")+(was&1?", Tab.":""));
-	schlArr umstcnfA; umstcnfA.init(5,"filename","call_from","call_to","time","cause");
+	const char* const sarr[]={"filename","call_from","call_to","time","cause"};
+	schlArr umstcnfA(sarr,sizeof sarr/sizeof *sarr);
 	ulong pseiten=0;
 	struct stat entrysff={0};
 	const string sffdatei=stamm+".sff",ctxdt=stamm+".txt";
@@ -7396,10 +7392,10 @@ void paramcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7
 			::Log(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
 		} //         if (runde==1)
 	} // if (indb)
-}// void paramcl::empfcapi()
+}// void hhcl::empfcapi()
 
 // wird aufgerufen in: main
-void paramcl::zeigueberschrift()
+void hhcl::zeigueberschrift()
 {
 	char buf[20]; snprintf(buf,sizeof buf,"%.5f",versnr);
 	::Log(schwarzs+Txk[T_Programm]+blau+mpfad+schwarz+", V.: "+blau+buf+schwarz+", "+Tx[T_Verwende]
@@ -7418,7 +7414,7 @@ void paramcl::zeigueberschrift()
 				+(vorcm!=cronminut&&!(vorcm.empty()&&cronminut=="0")?((vorcm.empty()?Txk[T_gar_nicht]:vorcm)+" -> "):"")
 				+(cronminut=="0"?Tx[T_kein_Aufruf]+schwarzs:cronminut+schwarz+(cronminut=="1"?Tx[T_Minute]:Txk[T_Minuten])):
 				""),1,1);
-} // void paramcl::zeigueberschrift()
+} // void hhcl::zeigueberschrift()
 
 // ermittelt fuer eine in ein Zielverzeichnis zu kopierende Datei den dortigen Namen
 // falls obgleichp, wird darin gespeichert, ob die Datei dort schon vorhanden und identisch ist (in diesem Fall wird kein anderer Name ermittelt)
@@ -7619,7 +7615,7 @@ string kopiere(const string& qdatei, const zielmustercl& zmp, uint *kfehler, con
 
 // wird aufgerufen in pruefhyla
 // hylafax konfigurieren 
-void paramcl::hfaxsetup()
+void hhcl::hfaxsetup()
 {
 	Log(violetts+"hfaxsetup()"+schwarz);
 	string faxsu;
@@ -7740,7 +7736,7 @@ void paramcl::hfaxsetup()
 } // hfaxsetup
 
 // aufgerufen in: hservice_faxq_hfaxd und hfaxsetup
-void paramcl::setzfaxgtpfad()
+void hhcl::setzfaxgtpfad()
 {
 	struct stat entryfaxgt={0};
 	if (lstat(faxgtpfad.c_str(),&entryfaxgt)) {
@@ -7760,10 +7756,10 @@ void paramcl::setzfaxgtpfad()
 		} // 		if (faxgtpfad.empty() || lstat(faxgtpfad.c_str(),&entryfaxgt))
 	} // 	if (lstat(faxgtpfad.c_str(),&entryfaxgt))
 	// violett<<"faxgtpfad 4: "<<faxgtpfad<<schwarz<<endl;
-} // void paramcl::setzfaxgtpfad()
+} // void hhcl::setzfaxgtpfad()
 
 // wird aufgerufen in: pruefhyla
-int paramcl::hconfig() const
+int hhcl::hconfig() const
 {
 	Log(violetts+"hconfig()"+schwarz);
 	int erg=0;
@@ -7802,18 +7798,19 @@ int paramcl::hconfig() const
 	} //   if (conf.is_open())
 	Log(violetts+Txk[T_Ende]+"hconfig()"+schwarz);
 	return erg;
-} // void hconfig(paramcl *pmp,int obverb, int oblog)
+} // void hconfig(hhcl *hhip,int obverb, int oblog)
 
 // in hliesconf() und hconfigtty()
-void paramcl::setzmodconfd()
+void hhcl::setzmodconfd()
 {
 	modconfdt=this->varsphylavz+"/etc/config"+"."+this->hmodem; 
-} // void paramcl::setzmodconfd()
+} // void hhcl::setzmodconfd()
 
-void paramcl::hliesconf()
+void hhcl::hliesconf()
 {
-	schlArr hyaltcnfA; hyaltcnfA.init(8,"CountryCode","AreaCode","FAXNumber","LongDistancePrefix","InternationalPrefix",
-			"RingsBeforeAnswer","LocalIdentifier","MaxDials");
+	const char* const sarr[]={"CountryCode","AreaCode","FAXNumber","LongDistancePrefix","InternationalPrefix",
+		"RingsBeforeAnswer","LocalIdentifier","MaxDials"};
+	schlArr hyaltcnfA(sarr,sizeof sarr/sizeof *sarr);
 	setzmodconfd();
 	struct stat mstat={0};
 	if (lstat(modconfdt.c_str(),&mstat)) {
@@ -7828,11 +7825,11 @@ void paramcl::hliesconf()
 		} // if (hyaltcnfA.shl[0].wert ...
 	} //   if (lstat(modconfdt.c_str(),&mstat)) else
 	// hyaltcnfA.ausgeb();
-} // void paramcl::hliesconf()
+} // void hhcl::hliesconf()
 
 // wird aufgerufen in: pruefhyla (2x)
 // Modem konfigurieren
-int paramcl::hconfigtty()
+int hhcl::hconfigtty()
 {
 	Log(violetts+"hconfigtty()"+schwarz);
 	int ret=0;
@@ -7933,12 +7930,12 @@ int paramcl::hconfigtty()
 	} // 	if (hci.is_open())
 	Log(violetts+Txk[T_Ende]+"hconfigtty()"+schwarz);
 	return ret;
-} // void paramcl::hconfigtty()
+} // void hhcl::hconfigtty()
 
 // wird aufgerufen in: pruefcapi
 // lieftert 0, wenn die Dienstdatei da (erg)
 // setzt csfehler, wenn Dienst nicht laeuft
-int paramcl::cservice()
+int hhcl::cservice()
 {
 	Log(violetts+"cservice()"+schwarz);
 	int csfehler=0;
@@ -7967,12 +7964,12 @@ int paramcl::cservice()
 		////    return csfehler;
 	} // if (obprogda("capisuite",obverb,oblog,&cspfad)) 
 	return erg;
-} // int paramcl::cservice()
+} // int hhcl::cservice()
 
 
 // wird aufgerufen in: pruefhyla
 // Dienste erstellen
-int paramcl::hservice_faxq_hfaxd()
+int hhcl::hservice_faxq_hfaxd()
 {
 	int hylafehler=0;
 	Log(violetts+"hservice_faxq_hfaxd()"+schwarz);
@@ -7988,13 +7985,13 @@ int paramcl::hservice_faxq_hfaxd()
 } // void hservice_faxq_hfaxd()
 
 // augerufen in: pruefhyla, zeigkonf, loeschehyla, anhalten
-void paramcl::hylasv1()
+void hhcl::hylasv1()
 {
 	if (!this->sfaxgetty) this->sfaxgetty=new servc("hylafax-faxgetty-"+this->hmodem,"faxgetty");
-} // void paramcl::hylasv1()
+} // void hhcl::hylasv1()
 
 // augerufen in: pruefhyla, zeigkonf, loeschehyla, anhalten
-void paramcl::hylasv2(hyinst hyinstart)
+void hhcl::hylasv2(hyinst hyinstart)
 {
 	if (hyinstart==hysrc || hyinstart==hyppk) {
 		if (!sfaxq) sfaxq=new servc("hylafax-faxq","faxq");
@@ -8005,11 +8002,11 @@ void paramcl::hylasv2(hyinst hyinstart)
 		if (!shfaxd) shfaxd=new servc("","hfaxd");
 	} // if (hyinstart==hysrc || hyinstart==hyppk) else
 	if (!shylafaxd) shylafaxd=new servc("hylafax","faxq hfaxd");
-} // void paramcl::hylasv2()
+} // void hhcl::hylasv2()
 
 /*//
 // wird aufgerufen in: pruefhyla (1x)
-int paramcl::hservice_faxgetty()
+int hhcl::hservice_faxgetty()
 KLA
 Log(violetts+"hservice_faxgetty()"+schwarz);
 return !this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0, meinname,this->faxgtpfad+" "+this->hmodem,"","","",this->obverb,this->oblog);
@@ -8020,7 +8017,7 @@ return !this->sfaxgetty->spruef(("HylaFAX faxgetty for ")+this->hmodem,0, meinna
  */
 
 // wird aufgerufen in main
-int paramcl::pruefhyla()
+int hhcl::pruefhyla()
 {
 	Log(violetts+Tx[T_pruefhyla]+schwarz);
 	int ret=0;
@@ -8512,7 +8509,7 @@ int paramcl::pruefhyla()
 		} // 	if (hmodem.empty()) else
 	} while (0); // fuer break
 	return ret;
-} // int paramcl::pruefhyla()
+} // int hhcl::pruefhyla()
 
 /*//
 	long GetFileSize(string filename)
@@ -8531,7 +8528,7 @@ int paramcl::pruefhyla()
 
 // von fkn-systems
 const char * const rulesdt="/etc/udev/rules.d/46-FKN_isdn_capi.rules";
-// wird aufgerufen in: paramcl::pruefcapi
+// wird aufgerufen in: hhcl::pruefcapi
 void pruefrules(int obverb, int oblog) 
 {
 	Log(violetts+Tx[T_pruefrules]+schwarz,obverb?obverb-1:0,oblog);
@@ -8581,7 +8578,7 @@ void pruefblack(int obverb, int oblog)
 } // void pruefblack(int obverb, int oblog) 
 
 // wird aufgerufen in: pruefcapi
-void paramcl::pruefmodcron()
+void hhcl::pruefmodcron()
 {
 	//  ::Log(violetts+Tx[T_pruefmodcron]+schwarz,obverb?obverb-1:0,oblog);
 	Log(violetts+Tx[T_pruefmodcron]+schwarz);
@@ -8603,13 +8600,13 @@ void paramcl::pruefmodcron()
 } // void pruefmodcron(int obverb, int oblog)
 
 // wird aufgerufen in: pruefcapi(), anhalten()
-void paramcl::capisv()
+void hhcl::capisv()
 {
 	if (!scapis) scapis=new servc("","capisuite");
-} // void paramcl::capisv(obverb,oblog)
+} // void hhcl::capisv(obverb,oblog)
 
 // in empfcapi() und pruefcapi(), rueckfragen()
-void paramcl::pruefsfftobmp()
+void hhcl::pruefsfftobmp()
 {
 	Log(violetts+Tx[T_pruefsfftobmp]+schwarz);
 	lsysen system=lsys.getsys(obverb,oblog);
@@ -8653,7 +8650,7 @@ void paramcl::pruefsfftobmp()
 } // pruefsfftobmp
 
 // wird aufgerufen in pruefsfftobmp und empfcapi
-void paramcl::instsfftobmp()
+void hhcl::instsfftobmp()
 {
 	uchar obboostda=!linstp->doggfinst("boost-devel",obverb,oblog);
 	if (obboostda) {
@@ -8672,7 +8669,7 @@ void paramcl::instsfftobmp()
 
 // wird aufgerufen in: untersuchespool, main
 // rueckgabe: wie obcapi eingestellt sein sollte
-int paramcl::pruefcapi()
+int hhcl::pruefcapi()
 {
 	Log(violetts+Tx[T_pruefcapi]+schwarz+" obcapi: "+(obcapi?"1":"0"));
 	static uchar capiloggekuerzt=0;
@@ -9142,7 +9139,7 @@ schluss: // sonst eine sonst sinnlose for-Schleife mehr oder return mitten aus d
 } // pruefcapi()
 
 // wird aufgerufen in: faxemitC
-void paramcl::inDbc(DB *My, const string& spooltab, const string& altspool, const string& spoolg, const fsfcl *const fsfp, 
+void hhcl::inDbc(DB *My, const string& spooltab, const string& altspool, const string& spoolg, const fsfcl *const fsfp, 
 		const string& telnr, const size_t aktc)
 {
 	Log(violetts+Tx[T_inDbc]+schwarz,obverb/*?obverb-1:0*/,oblog);
@@ -9181,7 +9178,7 @@ void paramcl::inDbc(DB *My, const string& spooltab, const string& altspool, cons
 } // inDbc
 
 // wird aufgerufen in: wegfaxen
-void paramcl::faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
+void hhcl::faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
 {
 	// 3. wartende Dateien bestimmen
 	// 4. falls welche gefunden, capisuite pruefen
@@ -9237,7 +9234,7 @@ void paramcl::faxemitC(DB *My, const string& spooltab, const string& altspool, f
 } // faxemitC
 
 // wird aufgerufen in faxemitH
-void paramcl::inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
+void hhcl::inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
 		const fsfcl *const fsfp,const string *tel, const size_t aktc)
 {
 	Log(violetts+Tx[T_inDBh]+schwarz);
@@ -9276,7 +9273,7 @@ void paramcl::inDBh(DB *My, const string& spooltab, const string& altspool, cons
 } // inDBh
 
 // wird aufgerufen in: wegfaxen
-void paramcl::faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
+void hhcl::faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
 {
 	// wenn in capi maxversuch ueberschritten, dann mit hylafax faxen und wenn erfolgreich im spool, dann in Datenbank aktualisieren
 	// 3. wartende Dateien bestimmen
@@ -9337,7 +9334,7 @@ void paramcl::faxemitH(DB *My, const string& spooltab, const string& altspool, f
 } // faxemitH
 
 // aufgerufen in: getsender, archiviere, pruefstdfaxnr, korrigierecapi, empfhyla, empfcapi
-string paramcl::stdfaxnr(const string& faxnr)
+string hhcl::stdfaxnr(const string& faxnr)
 {
 	const string land=this->InternationalPrefix+this->countrycode;
 	const string vorwahl=this->LongDistancePrefix+this->citycode;
@@ -9369,10 +9366,10 @@ string paramcl::stdfaxnr(const string& faxnr)
 	// wenn am Schluss das eigene Land am Anfang steht, dann streichen
 	if (!trimfaxnr.find(land)) trimfaxnr=this->LongDistancePrefix+trimfaxnr.substr(land.length());
 	return trimfaxnr;
-} // string paramcl::stdfaxnr(const string& faxnr)
+} // string hhcl::stdfaxnr(const string& faxnr)
 
 // wird aufgerufen in: archiviere, empfhyla, empfcapi
-void paramcl::getSender(const string& faxnr, string *getnamep, string *bsnamep,const size_t aktc) 
+void hhcl::getSender(const string& faxnr, string *getnamep, string *bsnamep,const size_t aktc) 
 {
 	Log(violetts+"getSender("+"..,"+faxnr+")"+schwarz);
 	if (!faxnr.empty()) {
@@ -9417,7 +9414,7 @@ void paramcl::getSender(const string& faxnr, string *getnamep, string *bsnamep,c
 	} // if (!faxnr->empty()) 
 	ersetzAlle(*bsnamep,"/",";");
 	ersetzAlle(*bsnamep,":",";");
-} // void getSender(paramcl *pmp,const string& faxnr, string *getnamep, string *bsnamep,int obverb,int oblog) 
+} // void getSender(hhcl *hhip,const string& faxnr, string *getnamep, string *bsnamep,int obverb,int oblog) 
 
 // wird aufgerufen in: main
 const string& pruefspool(DB *My,const string& spooltab, const string& altspool, const int obverb, const int oblog, uchar direkt/*=0*/)
@@ -9672,7 +9669,7 @@ void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, const int obv
 }  // void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
 
 // wird aufgerufen in: setzhylastat
-int paramcl::xferlog(fsfcl *fsfp/*,string *totpages,string *ntries,string *totdials,string *tottries,string *maxtries*/)
+int hhcl::xferlog(fsfcl *fsfp/*,string *totpages,string *ntries,string *totdials,string *tottries,string *maxtries*/)
 {
 	// mit grep braucht er fuer eine 400 kb Datei ca. 170 clock()-Einheiten (vorne und hinten)
 	// rueckwaerts braucht er fuer eine 400 kb Datei bis zum letzten Satz 93 clock()-Einheiten, bis zum ersten 220000.
@@ -9839,8 +9836,8 @@ int paramcl::xferlog(fsfcl *fsfp/*,string *totpages,string *ntries,string *totdi
 	return gefunden;
 } // void xferlog(string varsphylavz, string jobid, string *erg)
 
-// wird aufgerufen in paramcl::aenderefax, paramcl::untersuchespool, paramcl::zeigweitere
-void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, int *obsfehltp/*=0*/, struct stat *est/*=0*/) 
+// wird aufgerufen in hhcl::aenderefax, hhcl::untersuchespool, hhcl::zeigweitere
+void hhcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, int *obsfehltp/*=0*/, struct stat *est/*=0*/) 
 {
 	Log(violetts+Tx[T_setzhylastat]+schwarz);
 	uchar obsfehlt=1;
@@ -9919,7 +9916,7 @@ void paramcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, i
 } // setzhylastat
 
 // augerufen in:_main
-void paramcl::dovc()
+void hhcl::dovc()
 {
 	pruefcapi();
 	cmd=edit;
@@ -9934,10 +9931,10 @@ void paramcl::dovc()
 	if (cccnfA.zahl>1) viadd(&erg,cccnfA[1].wert,1,1,1); // log_file
 	if (cccnfA.zahl>2) viadd(&erg,cccnfA[2].wert,1,1,1); // log_error
 	vischluss(erg);
-} // void paramcl::dovc()
+} // void hhcl::dovc()
 
 // augerufen in: main
-void paramcl::dovh()
+void hhcl::dovh()
 {
 	// muss nach setzhylavz kommen
 	pruefhyla();
@@ -9952,9 +9949,9 @@ void paramcl::dovh()
 	string erg;
 	viadd(&erg,xferfaxlog,1,0,1);
 	vischluss(erg);
-} // void paramcl::dovh()
+} // void hhcl::dovh()
 
-void paramcl::zeigdienste()
+void hhcl::zeigdienste()
 {
 	cout<<Tx[T_Zustand_der_Dienste]<<endl;
 	servc *svp[4]={scapis,sfaxq,shfaxd,sfaxgetty};
@@ -9964,13 +9961,13 @@ void paramcl::zeigdienste()
 			cout<<" "<<setw(25)<<svp[i]->sname<<": "<<blau<<Txk[sfeh[svp[i]->svfeh]]<<schwarz<<endl;
 		} // 		if (svp[i])
 	} // 	for(int i=0;i<4;i++)
-} // void paramcl::zeigdienste()
+} // void hhcl::zeigdienste()
 
 
 int main(int argc, char** argv) 
 {
 	//// <<TIFFGetVersion()<<endl;
-	paramcl pm(argc,argv); // Programmparameter
+	hhcl hhi(argc,argv); // hiesige Haupt-Instanz
 	/*//
 	if (argc>1) { // bei make wird das Programm aufgerufen und die Ausgabe in man_de und man_en eingebaut!
 		// Testcode mit argv[1]
@@ -9999,107 +9996,107 @@ int main(int argc, char** argv)
 	} // (argc==2)
 	*/
 
-	//// Log("main: "+pm.cl,0,1);
-	pm.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
-	pm.VorgbAllg();
-	if (pm.obhilfe==3) { // Standardausgabe gewaehrleisten
-		pm.MusterVorgb();
+	//// Log("main: "+hhi.cl,0,1);
+	hhi.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen
+	hhi.VorgbAllg();
+	if (hhi.obhilfe==3) { // Standardausgabe gewaehrleisten
+		hhi.MusterVorgb();
 	} else {
-		pm.VorgbSpeziell();//die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion "void paramcl::VorgbSpeziell()" ueberladbar sind
-		pm.lieskonfein();
-	} // 	if (pm.obhilfe==3) else // Standardausgabe gewaehrleisten
-	pm.lieszaehlerein(&pm.aufrufe,&pm.tagesaufr,&pm.monatsaufr,&pm.laufrtag);
+		hhi.VorgbSpeziell();//die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion "void hhcl::VorgbSpeziell()" ueberladbar sind
+		hhi.lieskonfein();
+	} // 	if (hhi.obhilfe==3) else // Standardausgabe gewaehrleisten
+	hhi.lieszaehlerein(&hhi.aufrufe,&hhi.tagesaufr,&hhi.monatsaufr,&hhi.laufrtag);
 
-	if (pm.getcommandline()) 
+	if (hhi.getcommandline()) 
 		exit(8); // Hilfe angezeigt
-	if (pm.obvi) pm.dovi(); 
-	if (pm.obvc) pm.dovc();
-	if (pm.obvs) exit(systemrueck("cd \""+instvz+"\"; sh viall"+devtty,/*obverb=*/0,/*oblog=*/0,/*rueck=*/0,/*obsudc=*/1));
-	if (pm.zeigvers) {
-		pm.zeigversion(TIFFGetVersion());
-		pm.zeigkonf();
-		pm.capisv();
-		pm.hylasv1();
-		pm.hylasv2(hysrc);
-		pm.zeigdienste();
-		Log(violetts+Txk[T_Ende]+Tx[T_zeigvers]+schwarz,pm.obverb,pm.oblog);
+	if (hhi.obvi) hhi.dovi(); 
+	if (hhi.obvc) hhi.dovc();
+	if (hhi.obvs) exit(systemrueck("cd \""+instvz+"\"; sh viall"+devtty,/*obverb=*/0,/*oblog=*/0,/*rueck=*/0,/*obsudc=*/1));
+	if (hhi.zeigvers) {
+		hhi.zeigversion(TIFFGetVersion());
+		hhi.zeigkonf();
+		hhi.capisv();
+		hhi.hylasv1();
+		hhi.hylasv2(hysrc);
+		hhi.zeigdienste();
+		Log(violetts+Txk[T_Ende]+Tx[T_zeigvers]+schwarz,hhi.obverb,hhi.oblog);
 		exit(7);
-	} //   if (pm.zeigvers)
-	if (!pm.keineverarbeitung) {
-		if (pm.obhyla) pm.pruefmodem();
-		if (pm.obcapi) pm.pruefisdn();
+	} //   if (hhi.zeigvers)
+	if (!hhi.keineverarbeitung) {
+		if (hhi.obhyla) hhi.pruefmodem();
+		if (hhi.obcapi) hhi.pruefisdn();
 		// Rueckfragen koennen auftauchen in: rueckfragen, konfcapi (<- pruefcapi), aenderefax, rufpruefsamba
-		pm.rueckfragen();
+		hhi.rueckfragen();
 		// als Kompromiss blockieren wir hier
-		pm.pruefggfmehrfach();
-		pm.setzhylavz();
-		if (pm.obvh) pm.dovh();
-		pm.verzeichnisse();
-		if (!pm.kez&& !pm.bvz && !pm.anhl && !pm.lista && !pm.listi && !pm.listw && pm.suchstr.empty())
-			pm.rufpruefsamba();
+		hhi.pruefggfmehrfach();
+		hhi.setzhylavz();
+		if (hhi.obvh) hhi.dovh();
+		hhi.verzeichnisse();
+		if (!hhi.kez&& !hhi.bvz && !hhi.anhl && !hhi.lista && !hhi.listi && !hhi.listw && hhi.suchstr.empty())
+			hhi.rufpruefsamba();
 
-		if (pm.logdateineu) tuloeschen(logdt,"",pm.obverb,pm.oblog);
-		pm.Log(Tx[T_zufaxenvz]+drots+pm.zufaxenvz+schwarz+"'");
-		pm.Log(Tx[T_Logpfad]+drots+pm.loggespfad+schwarz+Tx[T_oblog]+drot+ltoan((int)pm.oblog)+schwarz+")");
-		if (pm.initDB())
+		if (hhi.logdateineu) tuloeschen(logdt,"",hhi.obverb,hhi.oblog);
+		hhi.Log(Tx[T_zufaxenvz]+drots+hhi.zufaxenvz+schwarz+"'");
+		hhi.Log(Tx[T_Logpfad]+drots+hhi.loggespfad+schwarz+Tx[T_oblog]+drot+ltoan((int)hhi.oblog)+schwarz+")");
+		if (hhi.initDB())
 			return 10;
 		// pruefe Tabelle <spooltab> und erstelle sie ggf.
-		pruefspool(pm.My,pm.spooltab, pm.altspool, pm.obverb,pm.oblog);
-		pruefouttab(pm.My,pm.touta, pm.obverb,pm.oblog);
-		pruefudoc(pm.My,pm.tudoc, pm.obverb,pm.oblog);
-		pruefinctab(pm.My,pm.tinca, pm.obverb,pm.oblog);
-	} // 	if (!pm.keineverarbeitung)
-	if (pm.kez||pm.bvz||pm.anhl||pm.lista||pm.listf||pm.listi||pm.listw||!pm.suchstr.empty()) {
-		pm.zeigueberschrift();
-		if (pm.kez) {
+		pruefspool(hhi.My,hhi.spooltab, hhi.altspool, hhi.obverb,hhi.oblog);
+		pruefouttab(hhi.My,hhi.touta, hhi.obverb,hhi.oblog);
+		pruefudoc(hhi.My,hhi.tudoc, hhi.obverb,hhi.oblog);
+		pruefinctab(hhi.My,hhi.tinca, hhi.obverb,hhi.oblog);
+	} // 	if (!hhi.keineverarbeitung)
+	if (hhi.kez||hhi.bvz||hhi.anhl||hhi.lista||hhi.listf||hhi.listi||hhi.listw||!hhi.suchstr.empty()) {
+		hhi.zeigueberschrift();
+		if (hhi.kez) {
 			// hier ggf. erstes fork
-			if (pm.obcapi) pm.korrigierecapi(ltage);
-			if (pm.obhyla) pm.korrigierehyla(ltage);
-			pm.empfarch(/*obalte=*/1);
-		} else if (pm.bvz) {
-			pm.bereinigevz(/*aktc=*/0);
-		} else if (pm.anhl) {
-			pm.anhalten();
-		} else if (pm.lista) {
-			pm.tu_lista("1");
-		} else if (pm.listf) {
-			pm.tu_lista("0");
-		} else if (pm.listi) {
-			pm.tu_listi();
-		} else if (pm.listw) {
-			pm.untersuchespool(/*mitupd=*/0,/*aktc=*/3);
-			pm.zeigweitere();
-			pm.Log(blaus+Txk[T_Ende]+schwarz);
-			pm.schlussanzeige();
-		} else if (!pm.suchstr.empty()) {
-			pm.suchestr();
-		} // 		if (pm.kez)
+			if (hhi.obcapi) hhi.korrigierecapi(ltage);
+			if (hhi.obhyla) hhi.korrigierehyla(ltage);
+			hhi.empfarch(/*obalte=*/1);
+		} else if (hhi.bvz) {
+			hhi.bereinigevz(/*aktc=*/0);
+		} else if (hhi.anhl) {
+			hhi.anhalten();
+		} else if (hhi.lista) {
+			hhi.tu_lista("1");
+		} else if (hhi.listf) {
+			hhi.tu_lista("0");
+		} else if (hhi.listi) {
+			hhi.tu_listi();
+		} else if (hhi.listw) {
+			hhi.untersuchespool(/*mitupd=*/0,/*aktc=*/3);
+			hhi.zeigweitere();
+			hhi.Log(blaus+Txk[T_Ende]+schwarz);
+			hhi.schlussanzeige();
+		} else if (!hhi.suchstr.empty()) {
+			hhi.suchestr();
+		} // 		if (hhi.kez)
 	} else {
-		pm.pruefcron(); // soll vor Log(Tx[T_Verwende ... stehen
-		if (!pm.keineverarbeitung) {
-			pruefstdfaxnr(pm.My,pm.muser,pm.host,pm.obverb,pm.oblog);
-			prueffuncgettel3(pm.My,pm.muser,pm.host,pm.obverb,pm.oblog);
+		hhi.pruefcron(); // soll vor Log(Tx[T_Verwende ... stehen
+		if (!hhi.keineverarbeitung) {
+			pruefstdfaxnr(hhi.My,hhi.muser,hhi.host,hhi.obverb,hhi.oblog);
+			prueffuncgettel3(hhi.My,hhi.muser,hhi.host,hhi.obverb,hhi.oblog);
 			////  int qerg = mysql_query(My.conn,proc.c_str());
 			// 1) nicht-pdf-Dateien in pdf umwandeln, 2) pdf-Dateien faxen, 3) alle in warte-Verzeichnis kopieren, 4) in Spool-Tabelle eintragen
 			////  vector<string> npdf, spdf;
-			if (pm.obfcard) pm.obcapi=!pm.pruefcapi();
-			if (pm.obmodem) pm.obhyla=!pm.pruefhyla();
-			pm.zeigueberschrift();
-			if (pm.loef || pm.loew || pm.loea) {
-				if (pm.loef) pm.aenderefax(/*aktion=*/0,/*aktc=*/0);
-				if (pm.loew) pm.loeschewaise();
-				if (pm.loea) pm.loescheallewartenden();
-			} else if (pm.erneut) {
-				pm.empferneut();
-			} else if (pm.uml) {
-				pm.aenderefax(/*aktion=*/1,/*aktc=*/0);
+			if (hhi.obfcard) hhi.obcapi=!hhi.pruefcapi();
+			if (hhi.obmodem) hhi.obhyla=!hhi.pruefhyla();
+			hhi.zeigueberschrift();
+			if (hhi.loef || hhi.loew || hhi.loea) {
+				if (hhi.loef) hhi.aenderefax(/*aktion=*/0,/*aktc=*/0);
+				if (hhi.loew) hhi.loeschewaise();
+				if (hhi.loea) hhi.loescheallewartenden();
+			} else if (hhi.erneut) {
+				hhi.empferneut();
+			} else if (hhi.uml) {
+				hhi.aenderefax(/*aktion=*/1,/*aktc=*/0);
 			} else {
 				// bei jedem 1000. Aufruf
-				if (!(pm.aufrufe % 1000 )) {
+				if (!(hhi.aufrufe % 1000 )) {
 					// hier ggf. erstes fork
 					pid_t pidb=fork();
 					if (!pidb) {
-						pm.bereinigevz(11);
+						hhi.bereinigevz(11);
 						exitt(0);
 					} else if (pidb<0) {
 						Log(rots+Tx[T_Gabelung_zu_bereinigevz_misslungen]+schwarz);
@@ -10118,7 +10115,7 @@ int main(int argc, char** argv)
 						// hier ggf. erstes fork
 						pide=fork();
 						if (!pide) {
-							pm.empfarch();
+							hhi.empfarch();
 							exitt(0);
 						} else if (pide<0) {
 							Log(rots+Tx[T_Gabelung_zu_empfarch_misslungen]+schwarz);
@@ -10138,16 +10135,16 @@ int main(int argc, char** argv)
 						// hier ggf. erstes fork
 						pids=fork();
 						if (!pids) {
-							pm.wegfaxen();
+							hhi.wegfaxen();
 							// Dateien in Spool-Tabelle nach inzwischen Verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
-							pm.untersuchespool(/*mitupd=*/1,/*aktc=*/3);
-							if (pm.obcapi || pm.obhyla) {
-								pm.bestimmtage();
-								if (pm.obcapi) { if (pm.tage) pm.korrigierecapi(pm.tage,9); } // 					if (pm.obcapi)
-								if (pm.obhyla) { if (pm.tage) pm.korrigierehyla(pm.tage,10);} // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
+							hhi.untersuchespool(/*mitupd=*/1,/*aktc=*/3);
+							if (hhi.obcapi || hhi.obhyla) {
+								hhi.bestimmtage();
+								if (hhi.obcapi) { if (hhi.tage) hhi.korrigierecapi(hhi.tage,9); } // 					if (hhi.obcapi)
+								if (hhi.obhyla) { if (hhi.tage) hhi.korrigierehyla(hhi.tage,10);} // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
 							}
 							// 2. warte auf korrigierecapi und korrigierehyla
-							wartaufpids(&pidw,0,pm.obverb,pm.oblog,"in main, pidw");
+							wartaufpids(&pidw,0,hhi.obverb,hhi.oblog,"in main, pidw");
 							exitt(0);
 						} else if (pids<0) {
 							Log(rots+Tx[T_Gabelung_zu_wegfaxen_misslungen]+schwarz);
@@ -10164,11 +10161,11 @@ int main(int argc, char** argv)
 					} // 					if (!slaeuft)
 
 					if (!zlaeuft) {
-						if (pm.obcapi || pm.obhyla) {
+						if (hhi.obcapi || hhi.obhyla) {
 							// hier ggf. erstes fork
 							pidz=fork();
 							if (!pidz) {
-								pm.zeigweitere();
+								hhi.zeigweitere();
 								exitt(0);
 							} else if (pidz<0) {
 								Log(rots+Tx[T_Gabelung_zu_zeigweitere_misslungen]+schwarz);
@@ -10187,8 +10184,8 @@ int main(int argc, char** argv)
 					} // 					if (!zlaeuft) 
 
 					if (!zaehlergeschrieben) {
-						pm.setzzaehler();
-						pm.schreibzaehler();
+						hhi.setzzaehler();
+						hhi.schreibzaehler();
 						zaehlergeschrieben=1;
 					} // 					if (!zaehlergeschrieben)
 					const ssize_t wz1=100, wz2=250;
@@ -10204,7 +10201,7 @@ int main(int argc, char** argv)
 								else {
 									int status; pid_t erg=waitpid(pidv.at(i).pid,&status,WNOHANG); if (erg>0) zuloeschen=1;
 								}
-								Log(pm.obverb>1,pm.oblog,0,0," i: %s%zu%s, pid: %s%ld%s, name: %s%s%s, beendet: %s%d%s",
+								Log(hhi.obverb>1,hhi.oblog,0,0," i: %s%zu%s, pid: %s%ld%s, name: %s%s%s, beendet: %s%d%s",
 										blau,i,schwarz,blau,(long)pidv.at(i).pid,schwarz,blau,pidv.at(i).name.c_str(),schwarz,blau,zuloeschen,schwarz);
 								if (zuloeschen) {
 									//// <<"pidv.at(i).pid: "<<pidv.at(i).pid<<" pide: "<<pide<<" pids: "<<pids<<" pidz: "<<pidz<<endl;
@@ -10216,40 +10213,40 @@ int main(int argc, char** argv)
 								}
 							} // 		for(size_t i=0;i<pidv.size();i++)
 							//// <<"pidv.size(): "<<pidv.size()<<endl;
-							int altoblog=pm.oblog;
-							if (!(iru%100)) pm.oblog=1;
-							Log(pm.obverb>1,pm.oblog>1,0,0,"elaueft: %s%d%s, rzahl: %s%d%s",blau,rlaeuft,schwarz,blau,rzahl,schwarz);
-							Log(pm.obverb>1,pm.oblog>1,0,0,"slaueft: %s%d%s, szahl: %s%d%s",blau,slaeuft,schwarz,blau,szahl,schwarz);
-							Log(pm.obverb>1,pm.oblog>1,0,0,"zlaueft: %s%d%s, zzahl: %s%d%s",blau,zlaeuft,schwarz,blau,zzahl,schwarz);
-							if (!(iru%100)) pm.oblog=altoblog;
+							int altoblog=hhi.oblog;
+							if (!(iru%100)) hhi.oblog=1;
+							Log(hhi.obverb>1,hhi.oblog>1,0,0,"elaueft: %s%d%s, rzahl: %s%d%s",blau,rlaeuft,schwarz,blau,rzahl,schwarz);
+							Log(hhi.obverb>1,hhi.oblog>1,0,0,"slaueft: %s%d%s, szahl: %s%d%s",blau,slaeuft,schwarz,blau,szahl,schwarz);
+							Log(hhi.obverb>1,hhi.oblog>1,0,0,"zlaueft: %s%d%s, zzahl: %s%d%s",blau,zlaeuft,schwarz,blau,zzahl,schwarz);
+							if (!(iru%100)) hhi.oblog=altoblog;
 							if (!rlaeuft || !slaeuft || !zlaeuft) break;
 							this_thread::sleep_for(chrono::milliseconds(wz1));
-							Log(pm.obverb>1,0,0,0,"in %s(): %s%s: %s%d%s ms",__FUNCTION__,rot,Txk[T_warte],blau,wz1,schwarz);
+							Log(hhi.obverb>1,0,0,0,"in %s(): %s%s: %s%d%s ms",__FUNCTION__,rot,Txk[T_warte],blau,wz1,schwarz);
 						} // 	while (1)
 						// wenn nicht der thread, der noch haengt, zum ersten Mal aufgerufen wurde, dann abbrechen 
 						efertig=(rzahl>1||(rzahl==1&&!rlaeuft));
 						sfertig=(szahl>1||(szahl==1&&!slaeuft));
-						zfertig=(zzahl>1||(zzahl==1&&!zlaeuft)||(!pm.obcapi&&!pm.obhyla));
+						zfertig=(zzahl>1||(zzahl==1&&!zlaeuft)||(!hhi.obcapi&&!hhi.obhyla));
 						if (efertig&&sfertig&&zfertig) break;
 						if (!rzahl||!szahl||!zzahl) break; // wenn eins noch nicht angefangen hat, dann nicht wz2*sz ms lang warten
 						this_thread::sleep_for(chrono::milliseconds(wz2));
-						Log(pm.obverb>1,0,0,0,"in %s(): %s%s: %s%d%s ms",__FUNCTION__,rot,Txk[T_warte],blau,wz2,schwarz);
+						Log(hhi.obverb>1,0,0,0,"in %s(): %s%s: %s%d%s ms",__FUNCTION__,rot,Txk[T_warte],blau,wz2,schwarz);
 					} // 					for(int i=0;i<sz;i++)
 					if (efertig&&sfertig&&zfertig) break;
 				} // 				while (1)
-			} // if (pm.loef || pm.loew || pm.loea) else if else if
-		} // 		if (!pm.keineverarbeitung)
-	} // if (pm.kez) else else else
-	pm.autofkonfschreib();
+			} // if (hhi.loef || hhi.loew || hhi.loea) else if else if
+		} // 		if (!hhi.keineverarbeitung)
+	} // if (hhi.kez) else else else
+	hhi.autofkonfschreib();
 	// ggf. beim 2. Aufruf am Tag Update installieren
-	pm.update(DPROG);
+	hhi.update(DPROG);
 	//// <<violett<<", pidv.size(): "<<pidv.size()<<schwarz<<endl;
 	//// for(size_t j=0;j<pids.size();j++) KLA //<<gruen<<j<<violett<<", pids[j]: "<<pids[j]<<schwarz<<endl; KLZ
 	// damit das Endeprompt nicht vorprescht
 	// warte auf empfarch, faxealle usw.
-	wartaufpids(&pidv,0,pm.obverb,pm.oblog,Tx[T_in_main_pidv_am_Schluss]);
-	pm.schlussanzeige();
-	Log(violetts+Txk[T_Ende]+schwarz,pm.obverb,pm.oblog);
+	wartaufpids(&pidv,0,hhi.obverb,hhi.oblog,Tx[T_in_main_pidv_am_Schluss]);
+	hhi.schlussanzeige();
+	Log(violetts+Txk[T_Ende]+schwarz,hhi.obverb,hhi.oblog);
 	return 0;
 } // int main(int argc, char** argv) 
 

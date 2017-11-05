@@ -58,7 +58,7 @@ const string eins="1";
 el2set::iterator it2;
 set<elem3>::iterator it3;
 const string devtty=" >/dev/tty";
-const string haupt::edit="$(which vim 2>/dev/null || which vi) ";
+const string hcl::edit="$(which vim 2>/dev/null || which vi) ";
 			//	             view="$(which view 2>/dev/null || which vi) + ",
 
 cuscl::cuscl()
@@ -473,8 +473,8 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"prueftif()","checktif()"},
 	// T_holsystemsprache
 	{"holsystemsprache()","fetchingsystemlanguage()"},
-	// T_haupt_haupt
-	{"haupt::haupt()","haupt::haupt()"},
+	// T_hcl_hcl
+	{"hcl::hcl()","hcl::hcl()"},
 	// T_erfolgreich_fuer
 	{": erfolgreich fuer \"",": successful for \""},
 	// T_Libtiff_Version
@@ -1408,7 +1408,7 @@ double verszuzahl(const string& vers)
 } // double verstozahl(string vers)
 
 // Programmversion, falls diese beim Programm mit " --version" abrufbar ist
-double haupt::progvers(const string& prog)
+double hcl::progvers(const string& prog)
 {
 	double vers=0;
 	string pfad;
@@ -1946,7 +1946,7 @@ confdat::confdat(const string& fname,int obverb):name(fname)
 confdat::confdat(const string& fname, schlArr *sA, int obverb, const char tz)
 {
  init(fname,sA,obverb,tz);
-} // confdat::confdat(const string& fname, schlArr *sA, int obverb, char tz):name(fname)
+} // confdat::confdat
 
 confdat::confdat()
 {
@@ -1961,7 +1961,7 @@ void confdat::init(const string& fname, schlArr *sA, int obverb, const char tz)
     lies(fname,obverb);
     auswert(sA,obverb,tz);
   } //   if (!fname.empty())
-} // void confdat::init(const string& fname, schlArr *sA, int obverb, const char tz)
+} // void confdat::init
 
 /*//
 confdat::confdat(const string& fname, cppSchluess *conf, size_t csize, int obverb, char tz)
@@ -2007,7 +2007,6 @@ schlArr::schlArr(size_t zahl): zahl(zahl)
  schl = new cppSchluess[zahl];
 }
 */
-
 void schlArr::init(vector<cppSchluess*> *sqlvp)
 {
   if (schl) delete[] schl;
@@ -2017,20 +2016,29 @@ void schlArr::init(vector<cppSchluess*> *sqlvp)
     schl[sqli].name=sqlvp->at(sqli)->name;
     schl[sqli].wert=sqlvp->at(sqli)->wert;
   }
-} // void schlArr::init(vector<cppSchluess*> *sqlvp)
+} // void schlArr::init
 
+
+schlArr::schlArr(const char* const* sarr,size_t vzahl):zahl(vzahl)
+{
+	if (schl) delete[] schl;
+	schl = new cppSchluess[zahl];
+	for(size_t i=0;i<zahl;i++) {
+		schl[i].name=sarr[i];
+	}
+} // void schlArr:init
 
 void schlArr::init(size_t vzahl, ...)
 {
- va_list list;
- va_start(list,vzahl);
- zahl=vzahl;
- if (schl) delete[] schl;
- schl = new cppSchluess[zahl];
- for(size_t i=0;i<zahl;i++) {
-  schl[i].name=va_arg(list,const char*);
-//// <<rot<<"schl["<<i<<"].name: "<<schwarz<<schl[i].name<<endl;
- }
+	va_list list;
+	va_start(list,vzahl);
+	zahl=vzahl;
+	if (schl) delete[] schl;
+	schl = new cppSchluess[zahl];
+	for(size_t i=0;i<zahl;i++) {
+		schl[i].name=va_arg(list,const char*);
+		//// <<rot<<"schl["<<i<<"].name: "<<schwarz<<schl[i].name<<endl;
+	}
  va_end(list);
 } // void schlArr::init(size_t vzahl, ...)
 
@@ -4871,7 +4879,7 @@ const string s_gz="gz";
 const string& defvors="https://github.com/"+gitv+"/";
 const string& defnachs="/archive/master.tar.gz";
 
-haupt::haupt(const int argc, const char *const *const argv)
+hcl::hcl(const int argc, const char *const *const argv)
 {
 	tstart=clock();
 	cl=argv[0];
@@ -4883,7 +4891,7 @@ haupt::haupt(const int argc, const char *const *const argv)
 					Txk.lgn=(Sprache)akts;
 					if ((strchr("-/",argv[i][0])&&!strcmp(argv[i]+1,Txk[T_v_k])) || 
 						  (!strncmp(argv[i],"--",2)&&!strcmp(argv[i]+2,Txk[T_verbose_l]))) { // -v, -w, -verbose, -wortreich
-						cout<<violett<<Txk[T_haupt_haupt]<<schwarz<<endl;
+						cout<<violett<<Txk[T_hcl_hcl]<<schwarz<<endl;
 						obverb=1;
 					} // if ((strchr...
 				} //         for(int akts=0;akts<SprachZahl;akts++)
@@ -4910,16 +4918,16 @@ haupt::haupt(const int argc, const char *const *const argv)
 	logdt=&loggespfad.front();
 	pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
 	linstp=new linst_cl(obverb,oblog);
-} // haupt::haupt()
+} // hcl::hcl()
 
-haupt::~haupt()
+hcl::~hcl()
 {
 	delete linstp;
 	linstp=0;
 }
 
 // wird aufgerufen in paramcl::paramcl, pruefunpaper, holvomnetz, kompilbase, kompilfort
-int haupt::pruefinstv()
+int hcl::pruefinstv()
 {
 	int erg=0;
 	////	if (instvz.empty()) KLA
@@ -4927,10 +4935,10 @@ int haupt::pruefinstv()
 	erg=pruefverz(instvz,obverb,oblog);
 	////	KLZ // 	if (instvz.empty()) 
 	return erg;
-} // void haupt::pruefinstv()
+} // void hcl::pruefinstv()
 
 
-int haupt::holvomnetz(const string& datei,const string& vors/*=defvors*/,const string& nachs/*=defnachs*/)
+int hcl::holvomnetz(const string& datei,const string& vors/*=defvors*/,const string& nachs/*=defnachs*/)
 {
 	int erg=1;
 	if (!pruefinstv()) {
@@ -4949,9 +4957,9 @@ int haupt::holvomnetz(const string& datei,const string& vors/*=defvors*/,const s
 		} //     if (!qrueck.size())
 	} // if (!pruefinstv())
 	return erg;
-} // int haupt::holvomnetz(const string& datei,const string& vors/*=defvors*/,const string& nachs/*=defnachs*/)
+} // int hcl::holvomnetz(const string& datei,const string& vors/*=defvors*/,const string& nachs/*=defnachs*/)
 
-int haupt::kompilbase(const string& was, const string& endg)
+int hcl::kompilbase(const string& was, const string& endg)
 {
 	if (!pruefinstv()) {
 		int kerg=0;
@@ -4961,9 +4969,9 @@ int haupt::kompilbase(const string& was, const string& endg)
 		return kerg;
 	} //   if (!pruefinstv())
 	return 1;
-} // int haupt::kompilbase(const string& was,const string& endg)
+} // int hcl::kompilbase(const string& was,const string& endg)
 
-int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
+int hcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 {
 	int ret=1;
 	if (!pruefinstv()) {
@@ -5006,12 +5014,12 @@ int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const stri
 				"&&"+sudc+"make uninstall; cd \"$H\"",b1+" && "+b2+" || "+b3,obverb,oblog);
 	} // 		if (!pruefinstv())
 	return ret;
-} // int haupt::kompilfort(const string& was,const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
+} // int hcl::kompilfort(const string& was,const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/,uchar ohneconf/*=0*/)
 
 const string tiffmark="/usr/local/sclibtiff";
 
 // aufgerufen bei autofax in: pruefhyla, empfcapi, rueckfragen
-void haupt::prueftif(string aktvers)
+void hcl::prueftif(string aktvers)
 {
 	Log(violetts+Txk[T_prueftif]+schwarz+" "+aktvers);
 //	const string vstr="4.0.8"; //// "4.08001";
@@ -5053,7 +5061,7 @@ void haupt::prueftif(string aktvers)
 } // void paramcl::pruefdcmtk()
 
 /*//
-	void haupt::prueftif()
+	void hcl::prueftif()
 	{
 	Log(violetts+Txk[T_prueftif]+schwarz);
 	linstp->doggfinst("cmake",obverb,oblog); 
@@ -5072,16 +5080,16 @@ void haupt::prueftif(string aktvers)
 } // void paramcl::prueftif()
 */
 
-int haupt::kompiliere(const string& was,const string& endg, const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/)
+int hcl::kompiliere(const string& was,const string& endg, const string& vorcfg/*=nix*/, const string& cfgbismake/*==s_dampand*/)
 {
 	if (!kompilbase(was,endg)) {
 		return kompilfort(was,vorcfg,cfgbismake);
 	} //    if (!kompilbase(was,endg))
 	return 1;
-} // int haupt::kompiliere(const string was,const string endg,const string nachtar, const string vorcfg,const string cfgbismake)
+} // int hcl::kompiliere(const string was,const string endg,const string nachtar, const string vorcfg,const string cfgbismake)
 
 // augerufen in: main
-void haupt::zeigversion(const string& ltiffv/*=nix*/)
+void hcl::zeigversion(const string& ltiffv/*=nix*/)
 {
 	struct tm tm={0};
 	//// char buf[100];
@@ -5103,10 +5111,10 @@ void haupt::zeigversion(const string& ltiffv/*=nix*/)
 	if (!ltiffv.empty())
 		cout<<Txk[T_Libtiff_Version]<<blau<<ltiffv.substr(0,ltiffv.find("\n"))<<schwarz<<endl;
 	cout<<Txk[T_Hilfe]<<braun<<"man "<<base_name(mpfad)<<schwarz<<Txk[T_or]<<braun<<"man -Lde "<<base_name(mpfad)<<schwarz<<"'"<<endl;
-} // void haupt::zeigversion(const char* const prog)
+} // void hcl::zeigversion(const char* const prog)
 
 // aufgerufen in: main
-void haupt::zeigkonf()
+void hcl::zeigkonf()
 {
 	struct stat kstat={0};
 	cout<<Txk[T_aktuelle_Einstellungen_aus]<<blau<<akonfdt<<schwarz<<"' (";
@@ -5123,10 +5131,10 @@ void haupt::zeigkonf()
 	for(unsigned i=0;i<agcnfA.zahl;i++) {
 		cout<<blau<<setw(20)<<agcnfA[i].name<<schwarz<<": "<<agcnfA[i].wert<<endl;
 	} //   for(unsigned i=0;i<agcnfA.zahl;i++)
-} // void haupt::zeigkonf()
+} // void hcl::zeigkonf()
 // augerufen in: anhalten(), zeigkonf()
 
-void haupt::gcl0()
+void hcl::gcl0()
 {
 	uchar plusverb=0;
 
@@ -5185,10 +5193,10 @@ void haupt::gcl0()
 		} //     if (!logdname.empty())
 		obkschreib=1;
 	} // if (logvneu ||logdneu) 
-} // void haupt::gcl0()
+} // void hcl::gcl0()
 
 // in lieskonfein, getcommandl0, getcommandline, rueckfragen
-void haupt::lgnzuw()
+void hcl::lgnzuw()
 {
 	if (langu=="d" || langu=="D" || langu=="deutsch" || langu=="Deutsch") {
 		Txk.lgn=deutsch;
@@ -5197,14 +5205,14 @@ void haupt::lgnzuw()
 	} else {
 		Txk.lgn=deutsch;
 	} // 	if (langu=="d" || langu=="D" || langu=="deutsch" || langu=="Deutsch") else else
-} // void haupt::lgnzuw()
+} // void hcl::lgnzuw()
 
-int haupt::Log(const string& text,const bool oberr/*=0*/,const short klobverb/*=0*/) const
+int hcl::Log(const string& text,const bool oberr/*=0*/,const short klobverb/*=0*/) const
 {
 	return ::Log(text,obverb,oblog,oberr,klobverb);
-} // int haupt::Log(const string& text,bool oberr/*=0*/,short klobverb/*=0*/)
+} // int hcl::Log(const string& text,bool oberr/*=0*/,short klobverb/*=0*/)
 
-void haupt::dovi()
+void hcl::dovi()
 {
 	svec d1, d2;
 	d1<<smbdt;
@@ -5212,11 +5220,11 @@ void haupt::dovi()
 	d2<<groupdt;
 	d2<<sudoersdt;
 	dodovi(d1,d2);
-} // void haupt::dovi()
+} // void hcl::dovi()
 
-const char* const haupt::smbdt="/etc/samba/smb.conf";
+const char* const hcl::smbdt="/etc/samba/smb.conf";
 // wird aufgerufen in: main
-void haupt::pruefsamba(const vector<const string*>& vzn,const svec& abschni,const svec& suchs, const char* DPROG,const string& cuser)
+void hcl::pruefsamba(const vector<const string*>& vzn,const svec& abschni,const svec& suchs, const char* DPROG,const string& cuser)
 {
 	Log(violetts+Txk[T_pruefsamba]);
 	int sgest=0, ngest=0;
@@ -5428,7 +5436,7 @@ void haupt::pruefsamba(const vector<const string*>& vzn,const svec& abschni,cons
 	} //   if (!(conffehlt=lstat(smbdt,&sstat)))
 } // pruefsamba
 
-void haupt::lieskonfein()
+void hcl::lieskonfein()
 {
 	Log(violetts+Txk[T_lieskonfein]+schwarz);
 	if (akonfdt.empty()) akonfdt=aktprogverz()+".conf";
@@ -5456,16 +5464,16 @@ void haupt::lieskonfein()
 				obkschreib=1;
 		} // if (agcnfA[lfd].wert.compare(langu)) 
 	} //     if (langu.empty())  else
-} // void haupt::lieskonfein()
+} // void hcl::lieskonfein()
 
-// wird aufgerufen von der von haupt abgeleiteten Klasse, dort lieskonfein()
-void haupt::setzlog()
+// wird aufgerufen von der von hcl abgeleiteten Klasse, dort lieskonfein()
+void hcl::setzlog()
 {
 	loggespfad=logvz+vtz+logdname;
 	logdt=&loggespfad.front();
-} // void haupt::setzlog()
+} // void hcl::setzlog()
 
-int haupt::zeighilfe(const stringstream *const erkl)
+int hcl::zeighilfe(const stringstream *const erkl)
 {
 	Log(string(Txk[T_Fertig_mit_Parsen_der_Befehlszeile])+(obkschreib?Txk[T_ja]:Txk[T_nein]));
 	// Ausgabe der Hilfe
@@ -5493,10 +5501,10 @@ int haupt::zeighilfe(const stringstream *const erkl)
 		return 1;
 	} // if (obhilfe)
 	return 0;
-} // int haupt::zeighilfe(const stringstream *const erkl)
+} // int hcl::zeighilfe(const stringstream *const erkl)
 
 //wird aufgerufen in main
-void haupt::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/, struct tm *lap/*=0*/,
+void hcl::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/, struct tm *lap/*=0*/,
 #ifdef immerwart
 		string *obempfp/*=0*/,string *obgesap/*=0*/,
 #endif // immerwart
@@ -5522,12 +5530,12 @@ void haupt::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/, s
 	if (obempfp) if (zcnfA[4].gelesen) zcnfA[4].hole(obempfp);
 	if (obgesap) if (zcnfA[5].gelesen) zcnfA[5].hole(obgesap);
 #endif // immerwart
-} // void haupt::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/,ulong *lap/*=0*/)
+} // void hcl::lieszaehlerein(ulong *arp/*=0*/,ulong *tap/*=0*/,ulong *map/*=0*/,ulong *lap/*=0*/)
 
 
 
-// wird aufgerufen in main vom Hauptthread
-void haupt::setzzaehler()
+// wird aufgerufen in main vom hclthread
+void hcl::setzzaehler()
 {
 	aufrufe++;
 	//// <<"aufrufe: "<<aufrufe<<endl;
@@ -5551,10 +5559,10 @@ void haupt::setzzaehler()
 	zcnfA[4].setze(&nix);
 	zcnfA[5].setze(&nix);
 #endif // immerwart
-} // void haupt::setzzaehler()
+} // void hcl::setzzaehler()
 
-// wird aufgerufen in main vom Hauptthread
-void haupt::schreibzaehler(
+// wird aufgerufen in main vom hclthread
+void hcl::schreibzaehler(
 #ifdef immerwart
 		const string* obempfp/*=0*/, const string* obgesap/*=0*/
 #endif
@@ -5568,10 +5576,10 @@ void haupt::schreibzaehler(
 	if (f.is_open()) {
 		zcnfA.aschreib(&f);
 	} // 	if (f.is_open())
-} // void haupt::schreibzaehler(const string* obgesap, const string* obsendCp, const string* obsendHp)
+} // void hcl::schreibzaehler(const string* obgesap, const string* obsendCp, const string* obsendHp)
 
 // aufgerufen in pruefcron, pruefmodcron und anhalten
-void haupt::setztmpcron()
+void hcl::setztmpcron()
 {
 	if (tmpcron.empty()) {
 		// Einbau von '~' ergaebe bei Aufruf mit und ohne sudo unterschiedliche Erweiterungen
@@ -5580,7 +5588,7 @@ void haupt::setztmpcron()
 } // void setztmpcron()
 
 // wird aufgerufen in pruefcron (2x)
-void haupt::tucronschreib(const string& zsauf,const uchar cronzuplanen,const string& cbef)
+void hcl::tucronschreib(const string& zsauf,const uchar cronzuplanen,const string& cbef)
 {
 	string unicmd="rm -f "+tmpcron+";";
 	string cmd=unicmd;
@@ -5600,10 +5608,10 @@ void haupt::tucronschreib(const string& zsauf,const uchar cronzuplanen,const str
 	//// ersetzAlle(unicmd,"'\\''","'");
 	const string bef=sudc+"sh -c '"+cmd+"'";
 	anfgg(unindt,unicmd,bef,obverb,oblog);
-} // void haupt::tucronschreib(const string& zsauf,const uchar cronzuplanen,const string& cbef)
+} // void hcl::tucronschreib(const string& zsauf,const uchar cronzuplanen,const string& cbef)
 
 // wird aufgerufen in: main
-uchar haupt::pruefcron()
+uchar hcl::pruefcron()
 {
 	crongeprueft=1;
 	uchar obschreib=0;
@@ -5687,7 +5695,7 @@ uchar haupt::pruefcron()
 } // pruefcron
 // wird aufgerufen in: main
 
-void haupt::schlussanzeige()
+void hcl::schlussanzeige()
 {
 	Log(violetts+Txk[T_schlussanzeige]+schwarz);
 	tende = clock();
@@ -5716,16 +5724,17 @@ void viadd(string* cmdp,const string& datei,const uchar ro/*=0*/,const uchar hin
 	} //  if (is.good())
 } // void viadd(string *cmdp,string datei)
 
-void haupt::vischluss(string& erg)
+void hcl::vischluss(string& erg)
 {
 	erg+="tabfirst' -p";
 	string exdt=instvz+"/.exrc";
 	{ifstream is(exdt);if (is.good()) erg+="Nu "+exdt;}
-	exit(systemrueck(cmd+" +'"+erg+" "+devtty,0,0,/*rueck=*/0,/*obsudc=*/1));
+	caus<<cmd+" +'"+erg+" "+devtty<<endl;
+//	exit(systemrueck(cmd+" +'"+erg+" "+devtty,0,0,/*rueck=*/0,/*obsudc=*/1));
 } // void vischluss(string& cmd,string& erg)
 
 // aufgerufen in: main
-void haupt::dodovi(const svec d1,const svec d2)
+void hcl::dodovi(const svec d1,const svec d2)
 {
 	cmd=edit;
 	viadd(&cmd,akonfdt);
@@ -5739,9 +5748,9 @@ void haupt::dodovi(const svec d1,const svec d2)
 		viadd(&erg,d2[i],1,1,0);
 	}
 	vischluss(erg);
-} // void haupt::dovi()
+} // void hcl::dovi()
 
-void haupt::update(const string& DPROG)
+void hcl::update(const string& DPROG)
 {
 	if (autoupd && tagesaufr == 2) {
 ////		perfcl perf("main");
@@ -5777,10 +5786,10 @@ void haupt::update(const string& DPROG)
 		} // 		if (srueck.size())
 	} // 	else if (tagesaufr % 5)  // 	if (pm.autoupd && pm.tagesaufr == 2)
 	//// <<"Tagesaufr: "<<tagesaufr<<endl;
-} // void haupt::update(const string& DPROG)
+} // void hcl::update(const string& DPROG)
 
 // in pruefhyla, pruefocr, prueftif und update
-void haupt::reduzierlibtiff()
+void hcl::reduzierlibtiff()
 {
 	svec qrueck;
 	const string lcrep="/usr/lib64 /usr/lib ",lcsou="/usr/local/lib64 /usr/local/lib ",tykr="\\( -type f -o -type l \\) ",namkr="-name 'libtiff*' ";
@@ -5794,14 +5803,14 @@ void haupt::reduzierlibtiff()
 		}
 		systemrueck("ldconfig /usr",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 	}
-} // void haupt::reduzierlibtiff()
+} // void hcl::reduzierlibtiff()
 
-const string	haupt::passwddt="/etc/passwd",
-			haupt::groupdt="/etc/group",
-			haupt::sudoersdt="/etc/sudoers";
+const string	hcl::passwddt="/etc/passwd",
+			hcl::groupdt="/etc/group",
+			hcl::sudoersdt="/etc/sudoers";
 
 
-void haupt::setzbenutzer(string *user)
+void hcl::setzbenutzer(string *user)
 {
 	cmd="cat "+passwddt+" | grep /home/ | cut -d':' -f 1";
 	systemrueck(cmd,obverb,oblog,&benutzer,/*obsudc=*/0);

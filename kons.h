@@ -365,7 +365,7 @@ enum Tkons_
 	T_fuer_Benutzer,
 	T_prueftif,
 	T_holsystemsprache,
-	T_haupt_haupt,
+	T_hcl_hcl,
 	T_erfolgreich_fuer,
 	T_Libtiff_Version,
 	T_Fertig_mit_Parsen_der_Befehlszeile,
@@ -634,6 +634,7 @@ class schlArr {
  cppSchluess *schl=0; 
  size_t zahl;
  schlArr();
+ schlArr(const char* const* sarr,size_t vzahl);
  void neu(size_t vzahl=0);
  void init(size_t vzahl, ...);
  void init(vector<cppSchluess*> *sqlvp);
@@ -1085,7 +1086,8 @@ extern const string& defvors; // ="https://github.com/"+gitv+"/";
 extern const string& defnachs; // ="/archive/master.tar.gz";
 void viadd(string *cmd,const string& datei,const uchar ro=0,const uchar hinten=0, const uchar unten=0);
 
-class haupt
+// Haupt-Klasse
+class hcl
 {
 	protected:
     double tstart, tende;
@@ -1145,8 +1147,8 @@ class haupt
 		void tucronschreib(const string& zsauf,const uchar cronzuplanen,const string& cbef);
 		void vischluss(string& erg);
 	public:
-		haupt(const int argc, const char *const *const argv);
-		~haupt();
+		hcl(const int argc, const char *const *const argv);
+		~hcl();
 		int Log(const string& text,const bool oberr=0,const short klobverb=0) const;
     int pruefinstv();
     void lieskonfein();
@@ -1177,4 +1179,4 @@ class haupt
 		void update(const string& DPROG);
 		void reduzierlibtiff();
 		void setzbenutzer(string *user);
-}; // class haupt
+}; // class hcl
