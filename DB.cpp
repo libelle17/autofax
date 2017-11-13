@@ -153,7 +153,7 @@ Feld::Feld(const string& name, string typ/*=""*/, const string& lenge/*=""*/, co
   if (!obauto) if (defa.empty()) {
 	  const string utyp=boost::locale::to_upper(typ, loc);
 ////    transform(typ.begin(),typ.end(),typ.begin(),::toupper);
-    if (utyp.find("INT")!=string::npos || utyp=="LONG" || utyp=="DOUBLE" ||utyp=="FLOAT"  )
+    if (utyp.find("INT")!=string::npos || utyp=="LONG"||utyp=="DOUBLE"||utyp=="FLOAT"||utyp=="DECIMAL")
       defa="0";
     else if (utyp=="DATE" || utyp=="DATETIME" || utyp=="TIME" ||utyp=="TIMESTAMP")
       defa="0000-00-00";
@@ -1701,6 +1701,7 @@ void RS::machstrikt(string& altsqlm,const size_t aktc/*=0*/)
 	MYSQL_RES *result=0;
 	//		MYSQL_ROW row;
 	char **cer;
+  fnr=0;
 	const string showv="SHOW VARIABLES LIKE 'sql_mode'",
 	             setzv="SET sql_mode = 'STRICT_ALL_TABLES'";
 	if (!mysql_real_query(dbp->conn[aktc],showv.c_str(),showv.length())) {
@@ -1718,6 +1719,7 @@ void RS::machstrikt(string& altsqlm,const size_t aktc/*=0*/)
 
 void RS::striktzurueck(string& altsqlm,const size_t aktc/*=0*/)
 {
+  fnr=0;
 	if (!altsqlm.empty()) {
     const string ruecksetz="SET sql_mode = '"+altsqlm+"'";
 	  mysql_real_query(dbp->conn[aktc],ruecksetz.c_str(),ruecksetz.length());
@@ -1728,7 +1730,7 @@ void RS::striktzurueck(string& altsqlm,const size_t aktc/*=0*/)
 void RS::tbupd(const string& utab, vector< instyp > einf,int obverb, const string& bedingung,const size_t aktc/*=0*/,uchar asy/*=0*/) 
 {
 	ulong locks=0;
-
+	fnr=0;
   switch (dbp->DBS) {
     case MySQL:
       isql=string("UPDATE ")+dbp->dnb+utab+dbp->dne+" SET ";// string( hier nicht streichen!
@@ -1798,12 +1800,13 @@ void RS::tbupd(const string& utab, vector< instyp > einf,int obverb, const strin
 	 sammeln=0 ohne Puffer/Puffer auf Datenbank schreiben
  */
 // fuer obverb gibt es die Stufen: -2 (zeige auch bei Fehlern nichts an), -1 (zeige SQL an), 0, 1
-my_ulonglong RS::tbins(const string& itab, vector<instyp>einf,const size_t aktc/*=0*/,uchar sammeln/*=0*/,
+my_ulonglong RS::tbins(const string& itab, vector<instyp>* einfp,const size_t aktc/*=0*/,uchar sammeln/*=0*/,
 		int obverb/*=0*/,string *idp/*=0*/,const uchar eindeutig/*=0*/,const svec& eindfeld/*=nix*/,const uchar asy/*=0*/,svec *csets/*=0*/) 
 {
 	my_ulonglong zl=0;
 	ulong locks=0;
 	uchar obhauptfehl=0;
+	fnr=0;
   static uchar dochanfangen=0; // => bei Erreichen von maxzaehler in der naechsten Runde neu anfangen
   static unsigned long zaehler=0; // Zahl der tatsaechlich einzufuegenden Datensaetze 
   //1. falls 0, dann auch Kopfzeile nicht behandeln, 2. falls Maxzaehler erreicht, dann Zwischeneinfuegen
@@ -1813,7 +1816,7 @@ my_ulonglong RS::tbins(const string& itab, vector<instyp>einf,const size_t aktc/
   uchar obeinfuegen=1; // Datensatz einfuegen, da noch nicht vorhanden
 	uchar anfangen=isql.empty();
   /*//
-     if (einf.empty()) if (sammeln || anfangen)
+     if (einfp->empty()) if (sammeln || anfangen)
      exit(33); // notwendiger Parameter fehlt
   // <<"nach exit(34)"<<endl;
    */
@@ -1831,131 +1834,133 @@ my_ulonglong RS::tbins(const string& itab, vector<instyp>einf,const size_t aktc/
       delete[] maxl; maxl=0;
     }
   } //   if (anfangen)
-  if (!maxl) {
-    maxl= new unsigned long[einf.size()];
-    for (unsigned long k=0;k<einf.size();k++){
-      maxl[k]=0;
-    }
-  } //   if (!maxl)
-  for (unsigned long k=0;k<einf.size();k++){
-    if (einf[k].wert.length()>maxl[k]) {
-      maxl[k]=einf[k].wert.length();
-    }
-  } //   for (unsigned long k=0;k<einf.size();k++)
-  if (eindeutig) {
-    string autoz;
-    stringstream aut; // , autid;
-    ////    RS autrs(dbp);
-    switch (dbp->DBS) {
-      case MySQL:
-        aut/*idp*/<<"SELECT column_name FROM information_schema.columns WHERE table_schema='"<<dbp->dbname<<
-          "' AND table_name = '"<<itab<<"' AND extra = 'auto_increment'";
-        Abfrage(aut.str().c_str(),aktc,obverb);
-        obhauptfehl=obfehl;
-        if (!obfehl) {
-          autoz=*HolZeile()[0];
-          // Datensatz schon vorhanden?
-          aut.str(std::string()); aut.clear();
-          aut<<"SELECT `"<<autoz<<"` FROM `"<<itab<<"` WHERE ";
-          for(uint i=0;i<einf.size();i++){
-            if (i) aut<<" AND ";
-            aut<<dbp->dnb<<einf[i].feld<<dbp->dne<<"="<<einf[i].wert;
-          }
-          Abfrage(aut.str(),aktc,obverb);
-          if (!obfehl) {
-            char*** erg= HolZeile();
-            if (*erg) {
-              if (idp) *idp=*erg[0];
-              obeinfuegen=0;
-            } //             if (*erg)
-            break;
-            // Feld zu kurz
-          } else {
-            Log(string(Txd[T_Fehler_beim_Pruefen_auf_Vorhandensein_des_Datensatzes])+mysql_error(dbp->conn[aktc]),1,1);
-          } // (!obfehl)
-        } // (!obfehl)
-        break;
-      case Postgres:
-		  caup<<"hier insert 1"<<endl;
-			exitp(35);
-        break;
-    } // switch (dbp->DBS)
-  } // eindeutig
-	if (eindfeld.size()) {
-	  string abfr;
-		for(uint i=0;i<einf.size();i++){
-			if (!strcasecmp(einf[i].feld.c_str(),eindfeld[0].c_str())) {
-			 abfr="SELECT 1 FROM `"+itab+"` WHERE `"+einf[i].feld+"`="+einf[i].wert;
-			 break;
-			} // 			if (!strcasecmp(einf[i].feld.c_str(),eindfeld[0].c_str()))
-		} // 		for(uint i=0;i<einf.size();i++)
-		for(uint j=1;j<eindfeld.size();j++) {
-			for(uint i=0;i<einf.size();i++){
-				if (!strcasecmp(einf[i].feld.c_str(),eindfeld[j].c_str())) {
-					abfr+=" AND `"+einf[i].feld+"`="+einf[i].wert;
+	if (einfp) {
+		if (!maxl) {
+			maxl= new unsigned long[einfp->size()];
+			for (unsigned long k=0;k<einfp->size();k++){
+				maxl[k]=0;
+			}
+		} //   if (!maxl)
+		for (unsigned long k=0;k<einfp->size();k++){
+			if (einfp->at(k).wert.length()>maxl[k]) {
+				maxl[k]=einfp->at(k).wert.length();
+			}
+		} //   for (unsigned long k=0;k<einfp->size();k++)
+		if (eindeutig) {
+			string autoz;
+			stringstream aut; // , autid;
+			////    RS autrs(dbp);
+			switch (dbp->DBS) {
+				case MySQL:
+					aut/*idp*/<<"SELECT column_name FROM information_schema.columns WHERE table_schema='"<<dbp->dbname<<
+						"' AND table_name = '"<<itab<<"' AND extra = 'auto_increment'";
+					Abfrage(aut.str().c_str(),aktc,obverb);
+					obhauptfehl=obfehl;
+					if (!obfehl) {
+						autoz=*HolZeile()[0];
+						// Datensatz schon vorhanden?
+						aut.str(std::string()); aut.clear();
+						aut<<"SELECT `"<<autoz<<"` FROM `"<<itab<<"` WHERE ";
+						for(uint i=0;i<einfp->size();i++){
+							if (i) aut<<" AND ";
+							aut<<dbp->dnb<<einfp->at(i).feld<<dbp->dne<<"="<<einfp->at(i).wert;
+						}
+						Abfrage(aut.str(),aktc,obverb);
+						if (!obfehl) {
+							char*** erg= HolZeile();
+							if (*erg) {
+								if (idp) *idp=*erg[0];
+								obeinfuegen=0;
+							} //             if (*erg)
+							break;
+							// Feld zu kurz
+						} else {
+							Log(string(Txd[T_Fehler_beim_Pruefen_auf_Vorhandensein_des_Datensatzes])+mysql_error(dbp->conn[aktc]),1,1);
+						} // (!obfehl)
+					} // (!obfehl)
 					break;
-				} // 				if (!strcasecmp(einf[i].feld.c_str(),eindfeld[j].c_str()))
-			} // 			for(uint i=0;i<einf.size();i++)
-		} // 		for(uint j=1;j<eindfeld.size();j++)
-		if (!abfr.empty()) {
-			Abfrage(abfr,aktc,obverb);
-			if (!obfehl) {
-				char*** erg=HolZeile();
-				if (*erg)
-					obeinfuegen=0;
-			} // 				if (!obfehl)
-		} // 		if (!abfr.empty())
-	} // 	if (eindfeld.size())
-	if (obeinfuegen) {
-		if (einf.size()) zaehler+=1;
-		if (!anfangen && zaehler==maxzaehler) {
-			sammeln=0;
-			dochanfangen=1;
-		} //     if (!anfangen && zaehler==maxzaehler)
-	} //   if (obeinfuegen)
+				case Postgres:
+					caup<<"hier insert 1"<<endl;
+					exitp(35);
+					break;
+			} // switch (dbp->DBS)
+		} // eindeutig
+		if (eindfeld.size()) {
+			string abfr;
+			for(uint i=0;i<einfp->size();i++){
+				if (!strcasecmp(einfp->at(i).feld.c_str(),eindfeld[0].c_str())) {
+					abfr="SELECT 1 FROM `"+itab+"` WHERE `"+einfp->at(i).feld+"`="+einfp->at(i).wert;
+					break;
+				} // 			if (!strcasecmp(einfp->at(i).feld.c_str(),eindfeld[0].c_str()))
+			} // 		for(uint i=0;i<einfp->size();i++)
+			for(uint j=1;j<eindfeld.size();j++) {
+				for(uint i=0;i<einfp->size();i++){
+					if (!strcasecmp(einfp->at(i).feld.c_str(),eindfeld[j].c_str())) {
+						abfr+=" AND `"+einfp->at(i).feld+"`="+einfp->at(i).wert;
+						break;
+					} // 				if (!strcasecmp(einfp->at(i).feld.c_str(),eindfeld[j].c_str()))
+				} // 			for(uint i=0;i<einfp->size();i++)
+			} // 		for(uint j=1;j<eindfeld.size();j++)
+			if (!abfr.empty()) {
+				Abfrage(abfr,aktc,obverb);
+				if (!obfehl) {
+					char*** erg=HolZeile();
+					if (*erg)
+						obeinfuegen=0;
+				} // 				if (!obfehl)
+			} // 		if (!abfr.empty())
+		} // 	if (eindfeld.size())
+		if (obeinfuegen) {
+			if (einfp->size()) zaehler+=1;
+			if (!anfangen && zaehler==maxzaehler) {
+				sammeln=0;
+				dochanfangen=1;
+			} //     if (!anfangen && zaehler==maxzaehler)
+		} //   if (obeinfuegen)
 
-  if (anfangen) {
-    switch (dbp->DBS) {
-      case MySQL:
-        isql=string("INSERT INTO ")+dbp->dnb+itab+dbp->dne+'('; // string( hier nicht streichen!
-        for(uint i = 0;i<einf.size();i++) {
-          if (i) isql+=',';
-          isql+=dbp->dnb+einf[i].feld+dbp->dne;
-        }
-        isql+=") VALUES(";
-        break;
-      case Postgres:
-		  caup<<"hier insert 2"<<endl;
-			exitp(36);
-        break;
-    } // switch (dbp->DBS) 
-  } // if (obeinfuegen)
+		if (anfangen) {
+			switch (dbp->DBS) {
+				case MySQL:
+					isql=string("INSERT INTO ")+dbp->dnb+itab+dbp->dne+'('; // string( hier nicht streichen!
+					for(uint i = 0;i<einfp->size();i++) {
+						if (i) isql+=',';
+						isql+=dbp->dnb+einfp->at(i).feld+dbp->dne;
+					}
+					isql+=") VALUES(";
+					break;
+				case Postgres:
+					caup<<"hier insert 2"<<endl;
+					exitp(36);
+					break;
+			} // switch (dbp->DBS) 
+		} // if (obeinfuegen)
 
-  if (obeinfuegen) {
-    switch (dbp->DBS) {
-      case MySQL:
-        ////				isql.reserve(isql.length()+2);
-				if (einf.size()) {
-					if (zaehler>1) isql+=",(";
-					for(uint i = 0;i<einf.size();i++) {
-						if (i) {
-							////						isql.reserve(isql.length()+1);
-							isql+=',';
-						} //           if (i)
-						////					isql.reserve(isql.length()+2+strlen(einf[i].wert.c_str()));
-						////          if (einf[i].feld=="EML") KLA isql+="_utf8"; KLZ
-						isql+=(einf[i].wert);
-					} //         for(uint i = 0;i<einf.size();i++)
+		if (obeinfuegen) {
+			switch (dbp->DBS) {
+				case MySQL:
 					////				isql.reserve(isql.length()+2);
-					isql+=")";
-				} // 				if (einf.size())
-        break;
-      case Postgres:
-		  caup<<"hier insert 3"<<endl;
-			exitp(37);
-			break;
-		} // switch (dbp->DBS) 
-  } // if (obeinfuegen)
+					if (einfp->size()) {
+						if (zaehler>1) isql+=",(";
+						for(uint i = 0;i<einfp->size();i++) {
+							if (i) {
+								////						isql.reserve(isql.length()+1);
+								isql+=',';
+							} //           if (i)
+							////					isql.reserve(isql.length()+2+strlen(einfp->at(i).wert.c_str()));
+							////          if (einfp->at(i).feld=="EML") KLA isql+="_utf8"; KLZ
+							isql+=(einfp->at(i).wert);
+						} //         for(uint i = 0;i<einfp->size();i++)
+						////				isql.reserve(isql.length()+2);
+						isql+=")";
+					} // 				if (einfp->size())
+					break;
+				case Postgres:
+					caup<<"hier insert 3"<<endl;
+					exitp(37);
+					break;
+			} // switch (dbp->DBS) 
+		} // if (obeinfuegen)
+	} // 	if (einfp)
 
   if (!sammeln)if (zaehler) {
 		switch (dbp->DBS) {
@@ -1982,6 +1987,7 @@ my_ulonglong RS::tbins(const string& itab, vector<instyp>einf,const size_t aktc/
 							//<<"idp: "<<*idp<<endl;
             } // if (idp)
 						*/
+						//// <<gruen<<"zaehler: "<<(int)zaehler<<", obfehl: "<<(int)obfehl<<schwarz<<endl;
             if (!obfehl) {
 							// nach Gebrauch loeschen
 							isql.clear();
@@ -2019,7 +2025,7 @@ my_ulonglong RS::tbins(const string& itab, vector<instyp>einf,const size_t aktc/
     }
   } //   if (!sammeln) if (!obhauptfehl)
 	return zl;
-} // my_ulonglong DB::insert(vector< instyp > einf,const char** erg,int anfangen=1,int sammeln=0) 
+} // my_ulonglong DB::insert(vector<instyp>* einfp,const char** erg,int anfangen=1,int sammeln=0) 
 
 void DB::prueffunc(const string& pname, const string& body, const string& para, const size_t aktc, int obverb, int oblog)
 {
@@ -2075,4 +2081,5 @@ void RS::clear()
   lenge.clear();
   prec.clear();
   kommentar.clear();
+	isql.clear();
 } // clear

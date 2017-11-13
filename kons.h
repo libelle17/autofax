@@ -59,6 +59,7 @@ int Log(const string& text,const short screen=1,const short file=1,const bool ob
 #define lstat stat
 
 #elif linux // _WIN32
+#include <iomanip> // setprecision
 #include <string.h> // strchr, strcpy, strtok_r, strerror, memcmp, strcmp, strstr, strlen
 #include <errno.h> // errno, ENOENT
 #include <pwd.h>   // getuid, getpwuid
@@ -834,10 +835,10 @@ int kuerzelogdatei(const char* logdatei,int obverb);
 #ifdef notwendig
 void kopierm(const string *quelle, const string *ziel);
 #endif // notwendig
-void aufSplit(vector<string> *tokens, const char* const text, char sep=' ',bool auchleer=1);
-void aufSplit(vector<string> *tokens, const string& text, char sep=' ',bool auchleer=1);
+void aufSplit(vector<string> *tokens, const char* const text, const char sep=' ',bool auchleer=1);
+void aufSplit(vector<string> *tokens, const string& text, const char sep=' ',bool auchleer=1);
 void aufiSplit(vector<string> *tokens, const string& text, const string& sep,bool nichtmehrfach=1,int obverb=0,int oblog=0);
-void aufSplit(vector<string> *tokens, const string& text, char* sep, bool auchleer=1);
+void aufSplit(vector<string> *tokens, const string& text, const char* const sep, bool auchleer=1);
 size_t irfind(const string& wo, const string& was); // suche von hinten und ignoriere Gross- und Kleinschreibung
 void getstammext(const string *const ganz, string *stamm, string *exten);
 // int cpplies(string fname,cppSchluess *conf,size_t csize,vector<string> *rest=0,char tz='=',short obverb=0);
@@ -1057,7 +1058,7 @@ class find3cl
 #if defined(altfind) && defined(neufind)
 void findfile(svec *qrueck,uchar findv,int obverb=0,int oblog=0,uchar anteil=0,
 		const string& wo=".",const string& muster=nix,long tiefe=-1,int _typbit=B_Alle,int _folge=Fol_Dat, 
-		time_t _mab=0,time_t _mbis=0,int obicase=0,int nurexec=0,int obnoext=0);
+		time_t _mab=0,time_t _mbis=0,int obicase=0,int nurexec=0,int obnoext=0,uchar nureins=0);
 #endif
 
 class pidcl

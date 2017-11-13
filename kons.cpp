@@ -21,7 +21,7 @@ const char *const tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
 pthread_mutex_t printf_mutex, getmutex, timemutex;
 
 #ifdef linux
-#include <iomanip> // setprecision
+#include <iomanip> // setprecision, put_time
 //// const char *rot="\e[1;31m", *weinrot="\e[31m", *schwarz="\e[0m", *blau="\e[34m", *gelb="\e[33m"; // muss spaeter kompilerunabhaengig 
 const char *const schwarz="\e[0m", *const dgrau="\e[1;30m", *const drot="\e[0;31m", *const rot="\e[1;31m",
 			*const gruen="\e[0;32m", *const hgruen="\e[1;32m", *const braun="\e[0;33m", *const gelb="\e[1;33m",
@@ -919,7 +919,7 @@ mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_b
 			pruefverz(dir_name(name),obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0);
 			////    if (!systemrueck(sudc+"test -f '"+name+"' || "+sudc+"touch '"+name+"'",obverb,oblog)) KLA
 			if (!touch(name,obverb,oblog)) {
-				setfaclggf(name,obverb,oblog,/*obunter=*/falsch,/*mod=*/modus&ios::out||modus&ios::app?6:4,/*obimmer=*/falsch,faclbak);
+				setfaclggf(name,obverb>1?obverb-1:0,oblog,/*obunter=*/falsch,/*mod=*/modus&ios::out||modus&ios::app?6:4,/*obimmer=*/falsch,faclbak);
 			} // if (!systemrueck(sudc+"test -f '"+name+"' || "+sudc+"touch '"+name+"'",obverb,oblog)) 
 		} // 		if (mehralslesen)
 	} // for(int iru=0;iru<3;iru++) 
@@ -961,7 +961,7 @@ oeffne(const string& datei, uchar art, uchar* erfolg,int obverb/*=0*/, int oblog
 #endif // obfstream else
 		if (sdat) {
 			*erfolg=1;
-			setfaclggf(datei,obverb,oblog,/*obunter=*/falsch,/*mod=*/art?6:4,/*obimmer=*/0,faclbak);
+			setfaclggf(datei,obverb>1?obverb-1:0,oblog,/*obunter=*/falsch,/*mod=*/art?6:4,/*obimmer=*/0,faclbak);
 			break;
 		}  // 				if ((sdat= fopen(datei.c_str(),mode)))
 		if (!*erfolg) {
@@ -1463,12 +1463,12 @@ int touch(const string& pfad,int obverb/*=0*/,int oblog/*=0*/)
 } // int touch(const std::string& pfad,int obverb/*=0*/,int oblog/*=*/)
 
 
-void aufSplit(vector<string> *tokens, const char* const text, char sep/*=' '*/,bool auchleer/*=1*/)
+void aufSplit(vector<string> *tokens, const char* const text, const char sep/*=' '*/,bool auchleer/*=1*/)
 {
   aufSplit(tokens,string(text),sep,auchleer);
-} // void aufSplit(vector<string> *tokens, const char *text, char sep/*=' '*/, bool auchler/*=1*/)
+} // void aufSplit(vector<string> *tokens, const char *text, const char sep/*=' '*/, bool auchler/*=1*/)
 
-void aufSplit(vector<string> *tokens, const string& text, char sep/*=' '*/,bool auchleer/*=1*/)
+void aufSplit(vector<string> *tokens, const string& text, const char sep/*=' '*/,bool auchleer/*=1*/)
 {
 	size_t start = 0, end = 0;
 	tokens->clear();
@@ -1480,9 +1480,9 @@ void aufSplit(vector<string> *tokens, const string& text, char sep/*=' '*/,bool 
 	} //   while ((end = text.find(sep, start)) != (int)string::npos)
 	if (text.length() !=start || auchleer)
 		tokens->push_back(text.substr(start));
-} // void aufSplit(vector<string> *tokens, const string& text, char sep,bool auchleer/*=1*/)
+} // void aufSplit(vector<string> *tokens, const string& text, const char sep,bool auchleer/*=1*/)
 
-void aufSplit(vector<string> *tokens, const string& text, char* sep, bool auchleer/*=1*/)
+void aufSplit(vector<string> *tokens, const string& text, const char* const sep, bool auchleer/*=1*/)
 {
   const size_t len=strlen(sep);
   size_t start=0, end=0;
@@ -1732,7 +1732,7 @@ linst_cl::linst_cl(int obverb,int oblog)
     svec qrueck;
 		if (findv==1) {
 			systemrueck("find /usr -maxdepth 1 -type d -name 'lib*'",obverb,oblog,&qrueck,/*obsudc=*/0);
-		} else findfile(&qrueck,findv,obverb,oblog,0,"/usr","lib[^/]*$",1,34,1);
+		} else findfile(&qrueck,findv,obverb,oblog,0,"/usr",/*muster=*/"lib[^/]*$",1,34,1);
 		for(size_t iru=0;iru<qrueck.size();iru++) libs+=qrueck[iru]+" ";
 		obprogda("sh",obverb,oblog,&shpf);// Pfad zu sh
 		obprogda("xargs",obverb,oblog,&xargspf);// Pfad zu xargs
@@ -2806,7 +2806,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 				if (int prueferg=pruefberecht(/*datei=*/stack[i],aktben,/*mod=*/i?1:7,obverb)) {
 					// .. und korrigiert werden sollen
 					if (obmitfacl) {
-						setfaclggf(stack[i],obverb,oblog, /*obunter=*/wahr, /*mod=*/i?1:7, /*obimmer=*/1,/*faclbak=*/1,/*user=*/aktben);
+						setfaclggf(stack[i],obverb>1?obverb-1:0,oblog, /*obunter=*/wahr, /*mod=*/i?1:7, /*obimmer=*/1,/*faclbak=*/1,/*user=*/aktben);
 					} else {
 						// dann Rechte in der notwendigen Spezifität erweitern
 						// 0=Berechtigung vorhanden, 1= benutzer=Besitzer, 2= benutzer gehoert zur Besitzergruppe, 3= nichts davon
@@ -4230,7 +4230,8 @@ int tuloeschen(const string& zuloe,const string& cuser/*=nix*/, int obverb/*=0*/
       if ((erg=remove(zuloe.c_str()))) {
         if(cuser.empty()) iru++;
         if(iru==1) {
-          setfaclggf(zuloe,obverb,oblog,/*obunter=*/falsch,/*mod=*/6,/*obimmer=*/falsch,/*faclbak=*/0,/*user=*/nix/*cuser*/,/*fake=*/0,ausgp);
+          setfaclggf(zuloe,obverb>1?obverb-1:0,oblog,/*obunter=*/falsch,/*mod=*/6,/*obimmer=*/falsch,
+							/*faclbak=*/0,/*user=*/nix/*cuser*/,/*fake=*/0,ausgp);
         } else {
           if (errno) if (errno!=13) perror((string(Txk[T_Fehler_beim_Loeschen])+" "+ltoan(errno)).c_str()); // Permission denied
           const string cmd="rm -rf \""+zuloe+"\"";
@@ -4805,13 +4806,18 @@ void find3cl::zuvec(svec *zu,uchar anteil/*=0*/)
 #if defined(altfind) && defined(neufind)
 void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar anteil/*=0*/,
 	const string& wo/*="."*/,const string& muster/*=nix*/,long tiefe/*=-1*/,int _typbit/*=B_Alle*/,
-	int _folge/*=Fol_Dat*/, time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/,int obnoext/*=0*/)
+	int _folge/*=Fol_Dat*/, time_t _mab/*=0*/,time_t _mbis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/,int obnoext/*=0*/,uchar nureins/*=0*/)
 {
 	svec wov;
 	switch (findv) {
 		case 2: case 3:
-			aufSplit(&wov, wo);
-			setfaclggf(wov[wov.size()-1],obverb,oblog,/*obunter=*/wahr,/*mod=*/4);
+			// wenn nur ein Verzeichnis, dann darf das auch Leerstellen enthalten
+			if (nureins) {
+				wov<<wo;
+			} else {
+				aufSplit(&wov, wo);
+			}
+			setfaclggf(wov[wov.size()-1],obverb>1?obverb-1:0,oblog,/*obunter=*/wahr,/*mod=*/4);
 			break;
 	} // 	switch (findv)
 	if (findv==2) {
@@ -4954,7 +4960,7 @@ int hcl::holvomnetz(const string& datei,const string& vors/*=defvors*/,const str
 		} else {
 			time_t ab=0;
 			ab=time(0)-(24*60*60);
-			findfile(&qrueck,findv,obverb,oblog,0,instvz,datei+"\\.tar\\.gz$",1,1,Fol_Dat,ab,0);
+			findfile(&qrueck,findv,obverb,oblog,0,instvz,/*muster=*/datei+"\\.tar\\.gz$",1,1,Fol_Dat,ab,0);
 		}
 		if (!qrueck.size()) {
 			////systemrueck("sh -c 'cd "+instvz+"; wget https://github.com/larsimmisch/capisuite/archive/master.tar.gz -O capisuite.tar.gz'",
