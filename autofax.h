@@ -92,6 +92,7 @@ class fsfcl : public fxfcl // Faxsendfile
 		string hqdt; // z.B. /var/spool/hylafax/doneq/q9902
     int hdialsn; // hyladials
 		string hpages; // Seitenzahl
+    uchar fobfbox; // ob es jetzt mit Fritzbox weggefaxt werden muss
     uchar fobcapi; // ob es jetzt mit Capi weggefaxt werden muss
     uchar fobhyla; // ob es jetzt mit Hyla weggefaxt werden muss
     string adressat; // Name des Adressaten aus Faxdatei
@@ -126,9 +127,9 @@ class fsfcl : public fxfcl // Faxsendfile
 		int loeschecapi(const int obverb, const int oblog);
     int loeschehyla(hhcl *const hhip, const int obverb, const int oblog);
     /*1*/fsfcl(const string id, const string npdf, const string spdf, const string telnr, unsigned prio, const string capisd, int capids, 
-		           const string hylanr, int hdialsn, uchar fobcapi, uchar fobhyla, const string adressat, ulong pseiten, string idalt):
+		           const string hylanr, int hdialsn, uchar fobfbox, uchar fobcapi, uchar fobhyla, const string adressat, ulong pseiten, string idalt):
          fxfcl(prio,npdf,spdf,pseiten), id(id), telnr(telnr), capisd(capisd), capids(capids), 
-         hylanr(hylanr), hdialsn(hdialsn), fobcapi(fobcapi), fobhyla(fobhyla), adressat(adressat),idalt(idalt) {}
+         hylanr(hylanr), hdialsn(hdialsn), fobfbox(fobfbox), fobcapi(fobcapi), fobhyla(fobhyla), adressat(adressat),idalt(idalt) {}
     /*2*/fsfcl(const string id,const string original): id(id), original(original) {}
     /*3*/fsfcl(const string id, const string capisd, const string hylanr, string const cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
     /*4*/fsfcl(const string& hylanr): hylanr(hylanr) {}
@@ -194,8 +195,10 @@ class hhcl: public hcl
     uchar gleichziel; // faxe auch ohne Fax-Erfolg auf Zielverzeichnis abspeichern
     uchar obocri; // empfangene Faxe OCR unterziehen
     uchar obocra; // gesandte Bilder OCR unterziehen
+    uchar obfbox=1; // ob ueberhaupt die Fritzbox verwendet werden soll, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
     uchar obcapi=1; // ob ueberhaupt die Capisuite verwendet werden soll, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
     uchar obhyla=1; // ob ueberhaupt hylafax verwendet werden soll
+    uchar konfobfbox; // ob obfbox in der Konfigurationsdatei eingestellt ist
     uchar konfobcapi; // ob obcapi in der Konfigurationsdatei eingestellt ist
     uchar konfobhyla; // ob obhyla in der Konfigurationsdatei eingestellt ist
     //    string hmodemstr; // Erkennung des Faxgeraetes nach /dev/tty, Standard ACM
@@ -266,6 +269,7 @@ class hhcl: public hcl
     string wvz; // Warteverzeichnis
     string ngvz; // Nichtgefaxt-Verzeichnis (Gescheiterte)
     string empfvz; // Empfangsverzeichnis
+		string fbankvz;  // auf CIFS gemountetes NAS-Verzeichnis der Fritzbox mit ankommenden Faxen
     string maxcapiv; // maximale Versuchnr in Capi, bis Hyla versucht wird
     string maxhylav; // maixmale Versuchsnr in Hylafax, bis Capi versucht wird
 
@@ -321,6 +325,7 @@ class hhcl: public hcl
 		void pruefmodcron();
 		void pruefunpaper();
     int pruefocr();
+    void clieskonf();
 		void unpaperfuercron(const string& ocrprog);
 		void empfhyla(const string& ganz,size_t aktc, const uchar was,const string& nr=nix);
 		void empfcapi(const string& stamm,size_t aktc, const uchar was,const string& nr=nix);
@@ -373,7 +378,6 @@ class hhcl: public hcl
 		void suchestr();
     int pruefsoffice(uchar mitloe=0);
     int pruefconvert();
-    void clieskonf();
     void capisv();
     int pruefcapi();
     void hliesconf();

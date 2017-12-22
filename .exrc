@@ -31,6 +31,7 @@ syntax enable
 " set background=dark
 set encoding=utf8
 set ffs=unix,dos,mac
+" set expandtab
 set noexpandtab
 set smarttab
 set shiftwidth=2
@@ -51,7 +52,7 @@ inoremap <c-c> <c-o>:set nocul<cr><c-c>
 " :au InsertEnter *  hi StatusLine term=reverse ctermbg=5 gui=undercurl guisp=Magenta
 :au InsertLeave * set nocul
 " :au InsertLeave *  hi StatusLine term=reverse ctermfg=0 ctermbg=7 gui=bold,reverse
-set tabpagemax=100
+set tabpagemax=1000
 nnoremap t <C-]>
 " nmap \\ <c-]>
 nnoremap <C-j> :cclose<CR>

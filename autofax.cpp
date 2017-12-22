@@ -88,6 +88,7 @@ enum T_
 {
 	T_verarbeitete_Nicht_PDF_Dateien,
 	T_verarbeitete_PDF_Dateien,
+	T_Soll_die_FritzBox_verwendet_werden,
 	T_Soll_die_Capisuite_verwendet_werden,
 	T_Soll_Hylafax_verwendet_werden,
 	T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden,
@@ -124,6 +125,7 @@ enum T_
 	T_Dateiname,
 	T_schlechtgeformt,
 	T_Fehler_af,
+	T_obfboxmitDoppelpunkt,
 	T_obcapimitDoppelpunkt,
 	T_obhylamitDoppelpunkt,
 	T_Endung,
@@ -466,6 +468,7 @@ enum T_
 	T_hylafax_Verzeichnis,
 	T_Bezeichnung_des_Anrufers,
 	T_Zeigt_die_Programmversion_an,
+	T_Fritzbox_verwenden,
 	T_Capisuite_verwenden,
 	T_hylafax_verwenden,
 	T_pruefcvz,
@@ -577,6 +580,11 @@ enum T_
 	T_empfvz_l,
 	T_cm_k,
 	T_cronminuten_l,
+	T_fbox_k,
+	T_obfbox_l,
+	T_fbankvz_k,
+	T_fbankvz_l,
+	T_Ankunftsverzeichnis_der_Fritzbox_ueber_CIFS,
 	T_capi_k,
 	T_obcapi_l,
 	T_hyla_k,
@@ -744,6 +752,7 @@ enum T_
 	T_passt_zu_keinem_Muster,
 	T_war_schon,
 	T_kommt_noch,
+	T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox,
 	T_MAX
 }; // enum T_
 
@@ -753,6 +762,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"' verarbeitete Nicht-PDF-Dateien: ","' processed Non-PDF-Files: "},
 	// T_verarbeitete_PDF_Dateien
 	{"' verarbeitete       PDF-Dateien: ","' processed     PDF-Files: "},
+	// T_Soll_die_FritzBox_verwendet_werden
+	{"Soll die Fritzbox verwendet werden","Shall the fritzbox be used"},
 	// T_Soll_die_Capisuite_verwendet_werden
 	{"Soll die Capisuite verwendet werden","Shall Capisuite be used"},
 	// T_Soll_Hylafax_verwendet_werden
@@ -826,10 +837,12 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{" schlecht geformt!","malformed!"},
 	// T_Fehler_af,
 	{"Fehler ","Errror "},
+	// T_obfboxmitDoppelpunkt
+	{"mitFbox: ","withFbox"},
 	// T_obcapimitDoppelpunkt,
 	{"mitCapi: ","withCapi: "},
 	// T_obhylamitDoppelpunkt
-	{"mitHyla: ","with hyla: "},
+	{"mitHyla: ","withHyla: "},
 	// T_Endung
 	{"Endung: ","Ending: "},
 	// T_Stamm
@@ -1531,6 +1544,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Bezeichnung des Anrufers","Labelling of the caller"},
 	// T_Zeigt_die_Programmversion_an
 	{"Zeigt die Programmversion an","shows the program version"},
+	// T_Fritzbox_verwenden
+	{"Fritzbox verwenden","use fritzbox"},
 	// T_Capisuite_verwenden 
 	{"Capisuite verwenden","use capisuite"},
 	// T_hylafax_verwenden
@@ -1763,6 +1778,16 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"cm","cm"},
 	// T_cronminuten_l
 	{"cronminuten","cronminutes"},
+	// T_fbox_k
+	{"fbox","fbox"},
+	// T_obfbox_l
+	{"obfbox","takefbox"},
+	// T_fbankvz_k
+	{"fbvz","fbdr"},
+	// T_fbankvz_l
+	{"fritzboxvz","fritzboxdir"},
+	// T_Ankunftsverzeichnis_der_Fritzbox_ueber_CIFS
+	{"Ankunftsverzeichnis der Fritzbox (ueber CIFS)","receiving directory of the fritzbox (via CIFS)"},
 	// T_capi_k
 	{"capi","capi"},
 	// T_obcapi_l
@@ -2099,6 +2124,9 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"', war schon: ","', passed: "},
 	// T_kommt_noch
 	{"', kommt noch: ","', will come: "},
+	// T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox
+	{"Mit CIFS gemountetes Verzeichnis mit ankommenden Faxen der Fritzbox",
+		"Via CIFS mounted directory with received faxes at the fritzbox"},
 	{"",""}
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -2674,10 +2702,10 @@ void hhcl::getcommandl0()
 	if (obverb) {
 		cout<<violett<<"getCommandl0()"<<schwarz<<endl;
 		obverb=0;
-	}
+	} // 	if (obverb)
 	// Reihenfolge muss koordiniert werden mit lieskonfein und rueckfragen
-	const char* const sarr[]={"language","host","muser","mpwd","datenbank","findvers","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser",
-		"countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
+	const char* const sarr[]={"language","host","muser","mpwd","datenbank","findvers","obfbox","fbankvz","obcapi","obhyla",
+		"hylazuerst","maxcapiv","maxhylav","cuser", "countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
 		"cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl","maxdials",
 		"gleichziel","ocri","ocra","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
 		"anstr","undstr","cronminut","autoupd","logvz","logdname","oblog","obmodem","obfcard","sqlz","musterzahl"};
@@ -3251,6 +3279,9 @@ void hhcl::lieskonfein()
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&dbq); else rzf=1; lfd++;
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&findvers); else findvers="3"; lfd++;
 	ifindv=findv=atol(findvers.c_str());
+	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&obfbox); else rzf=1; lfd++;
+	konfobfbox=obfbox;
+	if (obfbox) {if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&fbankvz); else rzf=1;} lfd++;
 	//// <<"lieskonfein vor  obcapi: "<<(int)obcapi<<endl;
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&obcapi); else rzf=1; lfd++;
 	//// <<"lieskonfein nach obcapi: "<<(int)obcapi<<endl;
@@ -3319,6 +3350,9 @@ int hhcl::getcommandline()
 	opts.push_back(/*2*/optioncl(T_ngvz_k,T_nichtgefaxtvz_l, &Tx, T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,0,&ngvz,pverz,
 				&agcnfA,"nichtgefaxtvz",&obkschreib));
 	opts.push_back(/*2*/optioncl(T_evz_k,T_empfvz_l, &Tx, T_Empfangsverzeichnis_fuer_Faxempfang,0,&empfvz,pverz,&agcnfA,"empfvz",&obkschreib));
+	opts.push_back(/*4*/optioncl(T_fbox_k,T_obfbox_l, &Tx, T_Fritzbox_verwenden,1,&obfbox,1,&agcnfA,"obfbox",&obkschreib));
+	opts.push_back(/*2*/optioncl(T_fbankvz_k,T_fbankvz_l, &Tx, T_Ankunftsverzeichnis_der_Fritzbox_ueber_CIFS,0,&fbankvz,pverz,&agcnfA,"fbankvz",
+				&obkschreib));
 	opts.push_back(/*4*/optioncl(T_capi_k,T_obcapi_l, &Tx, T_Capisuite_verwenden ,1,&obcapi,1,&agcnfA,"obcapi",&obkschreib));
 	////  opts.push_back(/*4*/optioncl("nocapi","keincapi", &Tx, T_Capisuite_nicht_verwenden,1,&obcapi,0,&agcnfA,"obcapi",&obkschreib));
 	opts.push_back(/*4*/optioncl(T_hyla_k,T_obhyla_l, &Tx, T_hylafax_verwenden,1,&obhyla,1,&agcnfA,"obhyla",&obkschreib));
@@ -3520,6 +3554,55 @@ void hhcl::rueckfragen()
 			<<gruen<<(sqlcnfA[zkt].wert.empty()?sqlVcnfAp[zkt].wert:sqlcnfA[zkt].wert)<<schwarz<<endl;
 			KLZ
 		 */
+		svec fbip;
+		const uchar fbfehlt=systemrueck("ping fritz.box -c1",obverb,oblog,&fbip);
+		// PING fritz.box (192.168.178.1) 56(84) bytes of data.
+		if (fbfehlt) {
+			obfbox=0;
+			++lfd;
+		} else {
+			if (agcnfA[++lfd].wert.empty() || rzf) {
+				if (obfcard) {
+					obfbox=Tippob(Tx[T_Soll_die_FritzBox_verwendet_werden],obfbox?Txk[T_j_af]:"n");
+				} else {
+					obfbox=0;
+				}
+				agcnfA[lfd].setze(&obfbox);
+			} //     if (agcnfA[++lfd].wert.empty() || rzf)
+		} // 		if (fbfehlt) else
+		if (obfbox) {
+			if (agcnfA[++lfd].wert.empty() || rzf) {
+				if (fbip.size()) {
+					string *ipp=&fbip[0];
+					if (const size_t p1=ipp->find("(")+1) {
+						const size_t p2=ipp->find(")",p1);
+						// 192.168.178.1
+						svec mounts;
+						if (!systemrueck("mount|grep "+ipp->substr(p1,p2-p1),obverb,oblog,&mounts)&&mounts.size()) {
+// //192.168.178.1/DiabFB on /mnt/diabfb type cifs (rw,relatime,vers=1.0,cache=strict,username=ftpuser,domain=DIABFB,uid=0,noforceuid,gid=0,noforcegid,addr=192.168.178.1,unix,posixpaths,mapposix,acl,rsize=61440,wsize=65536,actimeo=1)
+							vector<string> tok;
+							aufSplit(&tok,mounts[0],' ');
+							if (tok.size()>2) {
+								svec datei;
+								// die jüngste pdf-Datei auf dem CIFS-Verzeichnis suchen
+								systemrueck("find '"+tok[2]+"' -type f -iname '*pdf' -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|sort -nrk 6,7",
+										obverb,oblog,&datei);
+								if (datei.size()) {
+// -rwxrwxrwx 1 root root   10061 2017-11-01 10:03:52.000000000 +0100 /mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox/01.11.17_10.03_Telefax.081316150166.pdf
+									if (const size_t p1=datei[0].find(" "+tok[2])+1) {
+                    fbankvz=dir_name(datei[0].substr(p1));
+									} // 									if (const size_t p1=datei[0].find(" "+tok[2])+1)
+								} // 								if (datei.size())
+							} // 							if (tok.size()>2)
+						} // 						if (!systemrueck("mount|grep "+ipp->substr(p1,p2-p1),obverb,oblog,&mounts)&&mounts.size())
+					} // 					if (const size_t p1=ipp->find("(")+1)
+				} // 				if (fbip.size())
+				fbankvz=Tippstr(Tx[T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox],&fbankvz);
+				agcnfA[lfd].setze(&fbankvz);
+			} // 		if (agcnfA[++lfd].wert.empty() || rzf)
+		} else {
+			++lfd;
+		} // 		if (obfbox)
 
 		//// <<"rueckfragen 1 vor  obcapi: "<<(int)obcapi<<endl;
 		if (agcnfA[++lfd].wert.empty() || rzf) {
@@ -3573,22 +3656,22 @@ void hhcl::rueckfragen()
 		if (agcnfA[++lfd].wert.empty() || rzf) {
 			countrycode=Tippstr(Tx[T_Eigene_Landesvorwahl_ohne_plus_oder_00],&countrycode);
 			agcnfA[lfd].setze(&countrycode);
-		}
+		} // 		if (agcnfA[++lfd].wert.empty() || rzf)
 		if (agcnfA[++lfd].wert.empty() || rzf) {
 			citycode=Tippstr(Tx[T_Eigene_Ortsvorwahl_ohne_0],&citycode);
 			agcnfA[lfd].setze(&citycode);
-		}
+		} // 		if (agcnfA[++lfd].wert.empty() || rzf)
 
-		if (obcapi || obhyla) {
+		if (obfbox||obcapi||obhyla) {
 			if (agcnfA[++lfd].wert.empty() || rzf) {
 				do {
 					msn=Tippstr(Tx[T_Eigene_MSN_Faxnummer_ohne_Vorwahl],&msn);
 				} while (!isnumeric(msn)||isneun(msn));
 				agcnfA[lfd].setze(&msn);
-			}
+			} // 			if (agcnfA[++lfd].wert.empty() || rzf)
 		} else {
 			lfd++; 
-		} //     if (obcapi || obhyla)
+		} //     if (obfbox||obcapi||obhyla)
 
 		if (agcnfA[++lfd].wert.empty() || rzf) {
 			LongDistancePrefix=Tippstr(Tx[T_Praefix_fuer_ausserorts_zB_0],&LongDistancePrefix);
@@ -3610,11 +3693,11 @@ void hhcl::rueckfragen()
 			if (agcnfA[++lfd].wert.empty() || rzf) {
 				cFaxUeberschrift=Tippstr(Tx[T_Capisuite_bis_20_Buchstaben_fuer_eigenen_Namen],&cFaxUeberschrift);
 				agcnfA[lfd].setze(&cFaxUeberschrift);
-			}
+			} // 			if (agcnfA[++lfd].wert.empty() || rzf)
 			if (agcnfA[++lfd].wert.empty() || rzf) {
 				cklingelzahl=Tippzahl(Tx[T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt],cklingelzahl.c_str());
 				agcnfA[lfd].setze(&cklingelzahl);
-			}
+			} // 			if (agcnfA[++lfd].wert.empty() || rzf)
 		} else {
 			lfd+=2; // nicht obcapi, aber obhyla kaeme hier
 		} //     if (obcapi) else
@@ -3676,14 +3759,14 @@ void hhcl::rueckfragen()
 			if (agcnfA[++lfd].wert.empty() || rzf) {
 				ancfaxstr=Tippstr(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Capisuite],&ancfaxstr);
 				agcnfA[lfd].setze(&ancfaxstr);
-			}
+			} // 			if (agcnfA[++lfd].wert.empty() || rzf)
 			if (agcnfA[++lfd].wert.empty() || rzf) {
 				anhfaxstr=Tippstr(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax],&anhfaxstr);
 				agcnfA[lfd].setze(&anhfaxstr);
-			}
+			} // 			if (agcnfA[++lfd].wert.empty() || rzf)
 		} else {
 			lfd+=2; 
-		} //     if (obcapi || obhyla)
+		} //     if (obcapi && obhyla) else
 
 		if (agcnfA[++lfd].wert.empty() || rzf) {
 			anstr=Tippstr(Tx[T_Buchstabenfolge_vor_erstem_Adressaten],&anstr);
@@ -3843,7 +3926,7 @@ void hhcl::rueckfragen()
 		if (zmakt->obmusterleer()) break;
 	} //   for(zielmustercl *zmakt=zmp;1;zmakt++)
 	if (rzf) {
-		if (obcapi||obhyla) {
+		if (obfbox||obcapi||obhyla) {
 			if (!pruefsoffice())
 				pruefconvert();
 			if (obocri || obocra) {
@@ -3854,7 +3937,7 @@ void hhcl::rueckfragen()
 				//// <<TIFFGetVersion()<<endl;
 				prueftif(TIFFGetVersion());
 			} // 		if (obcapi)
-		} // 	if (obcapi||obhyla)
+		} // 	if (obfbox||obcapi||obhyla)
 	} // 	if (rzf)
 } // void hhcl::rueckfragen()
 
@@ -3884,6 +3967,7 @@ void hhcl::autofkonfschreib()
 		for (size_t i=0;i<agcnfA.zahl;i++) {
 			if (agcnfA[i].name=="obhyla") agcnfA[i].setze(&obhyla);
 			else if (agcnfA[i].name=="obcapi") agcnfA[i].setze(&obcapi);
+			else if (agcnfA[i].name=="obfbox") agcnfA[i].setze(&obfbox);
 		} //     for (size_t i=0;i<agcnfA.zahl;i++)
 		schlArr *ggcnfAp[3]={&agcnfA,&sqlcnfA,&zmcnfA};
 		multischlschreib(akonfdt, ggcnfAp, sizeof ggcnfAp/sizeof *ggcnfAp, mpfad);
@@ -5080,7 +5164,7 @@ size_t hhcl::loescheallewartenden()
 			RS zl(My,"SELECT original,origvu FROM `"+spooltab+"` WHERE capispooldatei='"+base_name(allec[i])+"'",aktc,ZDB);
 			if(cerg=zl.HolZeile(),cerg?*cerg:0) {
 				::Log(blaus+ltoan(++j)+schwarz+": '"+allec[i]+"' -> '"+blau+cjj(cerg,0)+schwarz+"'",1,oblog);
-				fsfav.push_back(/*6*/fsfcl(cjj(cerg,0),cjj(cerg,1),6));
+				fsfav.push_back(/*6*/fsfcl(/*origial=*/cjj(cerg,0),/*origvu=*/cjj(cerg,1),/*cnr=*/6));
 			} else {
 				::Log(blaus+ltoan(++j)+schwarz+": "+allec[i]+blau+schwarz,1,oblog);
 			} // 			if(cerg=zl.HolZeile(),cerg?*cerg:0) else
@@ -5093,7 +5177,7 @@ size_t hhcl::loescheallewartenden()
 		RS zl(My,"SELECT original,origvu FROM `"+spooltab+"` WHERE hylanr="+transalle,aktc,ZDB);
 		if(cerg=zl.HolZeile(),cerg?*cerg:0) {
 			::Log(blaus+ltoan(++j)+schwarz+": '"+hsendqvz+vtz+alled[i]+"' -> '"+blau+cjj(cerg,0)+schwarz+"'",1,oblog);
-			fsfav.push_back(/*6*/fsfcl(cjj(cerg,0),cjj(cerg,1),6));
+			fsfav.push_back(/*6*/fsfcl(/*origial=*/cjj(cerg,0),/*origvu=*/cjj(cerg,1),/*cnr=*/6));
 		} else {
 			::Log(blaus+ltoan(++j)+schwarz+": "+alled[i]+blau+schwarz,1,oblog);
 		} // 		if(cerg=zl.HolZeile(),cerg?*cerg:0)
@@ -5104,7 +5188,7 @@ size_t hhcl::loescheallewartenden()
 	while (cerg=zl.HolZeile(),cerg?*cerg:0) {
 		::Log(blaus+ltoan(++j)+schwarz+": '"+blau+cjj(cerg,0)+schwarz+"'",1,oblog);
 		++erg;
-		fsfav.push_back(/*6*/fsfcl(cjj(cerg,0),cjj(cerg,1),6));
+		fsfav.push_back(/*6*/fsfcl(/*origial=*/cjj(cerg,0),/*origvu=*/cjj(cerg,1),/*cnr=*/6));
 	}
 
 	if (erg) {
@@ -5760,8 +5844,9 @@ void hhcl::wegfaxen()
 	// 2a. ... und in im Warteverzeichnis in PDF umwandeln, falls erfolgreich und gleichziel => auch in ziel kopieren
 	// 2b. Die originalen PDF-Dateien ins Warteverzeichnis verschieben, falls erfolgreich, nicht schon registriert und gleichziel => auch in ziel kopieren
 	// 3. wegfaxen
-	Log(violetts+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Txk[T_ja]:Txk[T_nein])+", "
-			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Txk[T_ja]:Txk[T_nein]));
+	Log(violetts+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfbox?Txk[T_ja]:Txk[T_nein])+", "
+			                                    +blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Txk[T_ja]:Txk[T_nein])+", "
+			                                    +blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Txk[T_ja]:Txk[T_nein]));
 	const size_t aktc=3; 
 	const string filter=" [[:space:][:punct:]]*[0-9][0-9[:space:][:punct:]]*[_]\\?.*\\.";// statt ?.* zuvor ?[0-9]*, aber vielleicht unnoetig
 	struct stat entrynpdf={0};
@@ -6268,14 +6353,15 @@ void hhcl::wegfaxen()
 	 */
 	RS r0(My,"SELECT s.id p0, s.origvu p1, s.original p2, s.telnr p3, s.prio p4, s.capispooldatei p5, s.capidials p6, "
 			"s.hylanr p7, s.hyladials p8, "
+			"0 p9, "
 			"((s.capispooldatei='') AND (s.hyladials>="+maxhylav+" OR s.hylastate=8 OR " // hyladials=-1
 			////      "    (prio=1 OR (prio=0 AND NOT "+hzstr+")))) p9, "
-			"    (s.prio=2 OR s.prio=0))) p9, "
+			"    (s.prio=2 OR s.prio=0))) p10, "
 			"((s.hylanr='' OR s.hylanr=0) AND (s.capidials>=" +maxcapiv+" OR s.capidials=-1 OR "
 			////      "      (prio=2 OR (prio=0 AND "+hzstr+")))) p10, "
-			"      (s.prio=3 OR s.prio=1))) p10, "
-			"s.adressat p11, s.pages p12 "
-			",alts.id p13 "
+			"      (s.prio=3 OR s.prio=1))) p11, "
+			"s.adressat p12, s.pages p13 "
+			",alts.id p14 "
 			"FROM `"+spooltab+"` s "
 			"LEFT JOIN `"+altspool+"` alts ON s.idudoc=alts.idudoc "
 			"WHERE s.original>'' GROUP BY s.id",aktc,ZDB);
@@ -6288,9 +6374,9 @@ void hhcl::wegfaxen()
 					*(*cerg+6) && *(*cerg+7) && *(*cerg+8)) {
 				//// obcapi = cjj(cerg,9), obhyla=cjj(cerg,10)
 				fsfv.push_back(/*1*/fsfcl(cjj(cerg,0)/*id*/, cjj(cerg,1)/*npdf*/, cjj(cerg,2)/*spdf*/, cjj(cerg,3)/*telnr*/, 
-							atoi(cjj(cerg,4))/*prio*/, cjj(cerg,5)/*capisd*/, atoi(cjj(cerg,6))/*capids*/, cjj(cerg,7)/*hylanr*/, 
-							atoi(cjj(cerg,8))/*hdialsn*/, (binaer)atoi(cjj(cerg,9))/*fobcapi*/, (binaer)atoi(cjj(cerg,10))/*fobhyla*/, cjj(cerg,11)/*adressat*/,
-							atoi(cjj(cerg,12)/*pages*/), cjj(cerg,13)/*alts.id*/));
+							atoi(cjj(cerg,4))/*prio*/, cjj(cerg,5)/*capisd*/, atoi(cjj(cerg,6))/*capids*/, cjj(cerg,7)/*hylanr*/, atoi(cjj(cerg,8))/*hdialsn*/,
+							(binaer)atoi(cjj(cerg,9))/*fobfbox*/, (binaer)atoi(cjj(cerg,10))/*fobcapi*/, (binaer)atoi(cjj(cerg,11))/*fobhyla*/, 
+							cjj(cerg,12)/*adressat*/, atoi(cjj(cerg,13)/*pages*/), cjj(cerg,14)/*alts.id*/));
 			} // 			if (*(*cerg+0) && *(*cerg+1) && *(*cerg+2) && *(*cerg+3) && *(*cerg+4) && *(*cerg+5) &&  ...
 		} // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
 		Log(Tx[T_ZahldDSmwegzuschickendenFaxenin]+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz);
@@ -6365,7 +6451,9 @@ void hhcl::wegfaxen()
 		} while (kaufrufe==aufrufe);
 #endif // immerwart
 	} // 	if (r0.obfehl) else
-	Log(violetts+Txk[T_Ende]+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Txk[T_ja]:Txk[T_nein])+", "
+	Log(violetts+Txk[T_Ende]+Tx[T_wegfaxen]+schwarz+", "
+			+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfbox?Txk[T_ja]:Txk[T_nein])+", "
+			+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Txk[T_ja]:Txk[T_nein])+", "
 			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Txk[T_ja]:Txk[T_nein]));
 } // void hhcl::wegfaxen()
 
@@ -7061,18 +7149,25 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 {
 	Log(violetts+Tx[T_empfarch]+schwarz);
 	const size_t aktc=5;
-	// 1) hyla
-	svec qrueck;
-	const string hsuchvz=varsphylavz+(obalte?"":"/recvq");
-	if (findv==1) {
-		// Faxe in der Empfangswarteschlange auflisten, ...
-		cmd=sudc+"find \""+hsuchvz+"\" -name \"fax*.tif\"";
-		systemrueck(cmd,obverb,oblog, &qrueck);
-	} else findfile(&qrueck,findv,obverb,oblog,0,hsuchvz,/*muster=*/"/fax.*\\.tif$",-1,1,0);
-	for(size_t i=0;i<qrueck.size();i++) {
-		// ..., Informationen darueber einsammeln, ...
-		empfhyla(qrueck[i],aktc,/*was=*/obalte?1:7);
-	} // for(size_t i=0;i<rueck.size();i++) 
+
+	// 1) fbox
+	struct stat fst={0};
+	caus<<"Stelle 1"<<endl;
+	if (!fbankvz.empty()&&!lstat(fbankvz.c_str(),&fst)) {
+	caus<<"Stelle 2"<<endl;
+		svec qrueck;
+		string suchs;
+		if (tagesaufr==4 ||1) {
+		  suchs="find '"+fbankvz+"' -iname '*pdf'";	
+		} else {
+		  suchs="find '"+fbankvz+"' -mtime -1 -iname '*pdf'";	
+		}
+	caus<<"Stelle 3"<<endl;
+		systemrueck(suchs,2,oblog,&qrueck);
+		for(size_t i=0;i<qrueck.size();i++) {
+			caus<<qrueck[i]<<endl;
+		}
+	}
 
 	// 2) capi
 	/*//
@@ -7096,7 +7191,21 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 			getstammext(&(qrueck[i]),&stamm,&exten);
 			empfcapi(stamm,aktc,/*was=*/obalte?1:7);
 		} // for(size_t i=0;i<rueck.size();i++) 
-	} 	if (!lstat(csuchvzp->c_str(),&entryvz)) /* /var/spool/capisuite/users/~/received */
+	} 	// if (!lstat(csuchvzp->c_str(),&entryvz)) /* /var/spool/capisuite/users/~/received */
+
+	// 3) hyla
+	svec qrueck;
+	const string hsuchvz=varsphylavz+(obalte?"":"/recvq");
+	if (findv==1) {
+		// Faxe in der Empfangswarteschlange auflisten, ...
+		cmd=sudc+"find \""+hsuchvz+"\" -name \"fax*.tif\"";
+		systemrueck(cmd,obverb,oblog, &qrueck);
+	} else findfile(&qrueck,findv,obverb,oblog,0,hsuchvz,/*muster=*/"/fax.*\\.tif$",-1,1,0);
+	for(size_t i=0;i<qrueck.size();i++) {
+		// ..., Informationen darueber einsammeln, ...
+		empfhyla(qrueck[i],aktc,/*was=*/obalte?1:7);
+	} // for(size_t i=0;i<rueck.size();i++) 
+
 #ifdef immerwart
 	ulong jaufrufe=0;
 	do {
@@ -7408,10 +7517,12 @@ void hhcl::zeigueberschrift()
 {
 	char buf[20]; snprintf(buf,sizeof buf,"%.5f",versnr);
 	::Log(schwarzs+Txk[T_Programm]+blau+mpfad+schwarz+", V.: "+blau+buf+schwarz+", "+Tx[T_Verwende]
+			+blau+(obfbox?"Fritzbox":"")+schwarz
+			+(obfbox&&(obhyla||obcapi)?", ":"")
 			+blau+(obcapi?"Capisuite":"")+schwarz
 			+(obcapi&&obhyla?", ":"")
 			+blau+(obhyla?"Hylafax":"")+schwarz
-			+(!obcapi&&!obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):"")
+			+(!obfbox&&!obcapi&&!obhyla?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):"")
 			+(scapis||(shfaxd&&sfaxq&&sfaxgetty)?"; ":"")
 			+(scapis?dblaus+"Capisuite "+(scapis->laeuft()?(scapis->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz:"")
 			+(scapis&&(shfaxd&&sfaxq&&sfaxgetty)?", ":"")
@@ -10236,7 +10347,7 @@ int main(int argc, char** argv)
 						// wenn nicht der thread, der noch haengt, zum ersten Mal aufgerufen wurde, dann abbrechen 
 						efertig=(rzahl>1||(rzahl==1&&!rlaeuft));
 						sfertig=(szahl>1||(szahl==1&&!slaeuft));
-						zfertig=(zzahl>1||(zzahl==1&&!zlaeuft)||(!hhi.obcapi&&!hhi.obhyla));
+						zfertig=(zzahl>1||(zzahl==1&&!zlaeuft)||(!hhi.obfbox&&!hhi.obcapi&&!hhi.obhyla));
 						if (efertig&&sfertig&&zfertig) break;
 						if (!rzahl||!szahl||!zzahl) break; // wenn eins noch nicht angefangen hat, dann nicht wz2*sz ms lang warten
 						this_thread::sleep_for(chrono::milliseconds(wz2));

@@ -3533,13 +3533,13 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 					uniff<<"ustring: '"<<string_to_hex(ustring)<<"'"<<endl;
 				} // 			if (uniff.is_open())
 			} // 		  if (!pruefverz(instvz,obverb,oblog))
-			size_t p1,p2;
 			//// <<violett<<"ustring vor Pruefung: "<<rot<<ustring<<schwarz<<endl;
 			//// <<violett<<"ustring vor Pruefung: "<<rot<<string_to_hex(ustring)<<schwarz<<endl;
 			const char* const weg[7]={"libgcc","libselinux.","libselinux-utils","libselinux-python3","libsepol","libsemanage","libstdc++"};
 			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++) {
+				size_t p1;
 				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' ')) {
-					p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
+					const size_t p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
 					ustring.erase(p1,p2-p1);
 				} // 				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' '))
 			} // 			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++)
@@ -5740,7 +5740,7 @@ void hcl::vischluss(string& erg)
 	erg+="tabfirst' -p";
 	string exdt=instvz+"/.exrc";
 	{ifstream is(exdt);if (is.good()) erg+="Nu "+exdt;}
-//	exit(systemrueck(cmd+" +'"+erg+" "+devtty,0,0,/*rueck=*/0,/*obsudc=*/1));
+	exit(systemrueck(cmd+" +'"+erg+" "+devtty,0,0,/*rueck=*/0,/*obsudc=*/1));
 } // void vischluss(string& cmd,string& erg)
 
 // aufgerufen in: main

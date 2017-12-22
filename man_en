@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "13.11.17" "Version 0.46124" "\fB²DPROG²\fR man page"
+.TH man 1 "22.12.17" "Version 0.4616" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -140,6 +140,10 @@ Depending on operating system, accessability and preferences the users thus coul
 \fB -ndr, --notfaxeddir <path>\fR: Failed Faxes are collected here and not in '\fB/var/autofax/notfaxed\fR'
 .br
 \fB -rdr, --receiveddir <path>\fR: directory for recieved faxes '\fB/var/autofax/recvdir\fR'
+.br
+\fB -fbox, --takefbox\fR: use fritzbox\fB or not\fR
+.br
+\fB -fbdr, --fritzboxdir <path>\fR: receiving directory of the fritzbox (via CIFS) '\fB\fR'
 .br
 \fB -capi, --takecapi\fR: use capisuite\fB or not\fR
 .br

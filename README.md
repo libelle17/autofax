@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.46125) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4616) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -252,6 +252,9 @@ collected here and not in
 &rsquo;<b>/var/autofax/notfaxed</b>&rsquo; <b><br>
 -rdr, --receiveddir &lt;path&gt;</b>: directory for recieved
 faxes &rsquo;<b>/var/autofax/recvdir</b>&rsquo; <b><br>
+-fbox, --takefbox</b>: use fritzbox <b>or not <br>
+-fbdr, --fritzboxdir &lt;path&gt;</b>: receiving directory
+of the fritzbox (via CIFS) &rsquo;&rsquo; <b><br>
 -capi, --takecapi</b>: use capisuite <b>or not <br>
 -hyla, --takehyla</b>: use hylafax <b>or not <br>
 -fc, --firstcapi</b>: try to send faxes primarily via
@@ -780,7 +783,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.46125) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.4616) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1056,6 +1059,9 @@ werden hier gesammelt anstatt in
 &rsquo;<b>/var/autofax/nichtgefaxt</b>&rsquo; <b><br>
 -evz, --empfvz &lt;pfad&gt;</b>: Empfangsverzeichnis fuer
 Faxempfang &rsquo;<b>/var/autofax/empfvz</b>&rsquo; <b><br>
+-fbox, --obfbox</b>: Fritzbox verwenden <b>oder nicht <br>
+-fbvz, --fritzboxvz &lt;pfad&gt;</b>: Ankunftsverzeichnis
+der Fritzbox (ueber CIFS) &rsquo;&rsquo; <b><br>
 -capi, --obcapi</b>: Capisuite verwenden <b>oder nicht <br>
 -hyla, --obhyla</b>: Hylafax verwenden <b>oder nicht <br>
 -cz, --capizuerst</b>: versuche faxe zuerst ueber Capisuite
