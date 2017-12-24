@@ -2436,7 +2436,7 @@ void fsfcl::setzcapistat(hhcl *hhip, struct stat *entrysendp)
 				// hier koennte capistat auch fehlend sein
 			}
 			if (!dateifehlt) {	
-				if ((protpos=holcapiprot(hhip->obverb)<0)) {
+				if ((protpos=holcapiprot(hhip->obverb))<0) {
 					capistat=fehlend;
 				} else if (capistat!=gesandt && capistat!=gescheitert) {
 					struct stat statlock={0};
@@ -7152,9 +7152,7 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 
 	// 1) fbox
 	struct stat fst={0};
-	caus<<"Stelle 1"<<endl;
 	if (!fbankvz.empty()&&!lstat(fbankvz.c_str(),&fst)) {
-	caus<<"Stelle 2"<<endl;
 		svec qrueck;
 		string suchs;
 		if (tagesaufr==4 ||1) {
@@ -7162,12 +7160,11 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 		} else {
 		  suchs="find '"+fbankvz+"' -mtime -1 -iname '*pdf'";	
 		}
-	caus<<"Stelle 3"<<endl;
 		systemrueck(suchs,2,oblog,&qrueck);
 		for(size_t i=0;i<qrueck.size();i++) {
 			caus<<qrueck[i]<<endl;
 		}
-	}
+	} // 	if (!fbankvz.empty()&&!lstat(fbankvz.c_str(),&fst))
 
 	// 2) capi
 	/*//

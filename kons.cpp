@@ -5803,14 +5803,14 @@ void hcl::reduzierlibtiff()
 {
 	svec qrueck;
 	const string lcrep="/usr/lib64 /usr/lib ",lcsou="/usr/local/lib64 /usr/local/lib ",tykr="\\( -type f -o -type l \\) ",namkr="-name 'libtiff*' ";
-	if (systemrueck("find "+lcrep+tykr+" -maxdepth 2 "+namkr+"-print -quit",obverb,oblog,&qrueck,/*obsudc=*/0) &&
-			systemrueck("find "+lcsou+tykr+" -maxdepth 2 "+namkr+"-print -quit",obverb,oblog,&qrueck, /*obsudc=*/0)) {
+	if (systemrueck("find "+lcrep+" -maxdepth 2 "+tykr+namkr+"-print -quit",obverb,oblog,&qrueck,/*obsudc=*/0) &&
+			systemrueck("find "+lcsou+" -maxdepth 2 "+tykr+namkr+"-print -quit",obverb,oblog,&qrueck, /*obsudc=*/0)) {
 		if (obsotiff) {
 			systemrueck("find "+lcrep+tykr+namkr+"-delete",obverb,oblog,&qrueck,/*obsudc=*/1);
 		} else {
 			systemrueck("find "+lcsou+tykr+namkr+"-delete",obverb,oblog,&qrueck, /*obsudc=*/1);
 			tuloeschen(tiffmark,"",obverb,oblog);
-		}
+		} // 		if (obsotiff) else
 		systemrueck("ldconfig /usr",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 	}
 } // void hcl::reduzierlibtiff()
@@ -5818,7 +5818,6 @@ void hcl::reduzierlibtiff()
 const string	hcl::passwddt="/etc/passwd",
 			hcl::groupdt="/etc/group",
 			hcl::sudoersdt="/etc/sudoers";
-
 
 void hcl::setzbenutzer(string *user)
 {
