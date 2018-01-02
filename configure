@@ -101,6 +101,7 @@ getIPR() {
 			SPR="rpm -q ";
 			LBOOST=boost-${dev};
 			LACL=libacl-${dev};
+			LCURL=libcurl-${dev};
 			UDPR="${SUDC}rpm -e --nodeps ";
 		};
 	} || 
@@ -112,6 +113,7 @@ getIPR() {
 			LBLO=libboost-locale-${dev};
 			#   dpk -s libboost-dev, dpk -s libboost-iostream-dev, dpk -s libboost-locale-dev,   		
 			LACL=libacl1-${dev};
+			LCURL=libcurl4-openssl-${dev};
 			UDPR="${SUDC}apt-get -f install; ${SUDC}dpkg -r --force-depends ";
 		};
 	}
@@ -119,13 +121,14 @@ getIPR() {
 	for A in $(ls|grep "\.cpp$\|\.h$");do [ -f "$A" ]&& grep -q "^#include[ ]*<boost" "$A" &&break;done ||LBOOST=;
 	for A in $(ls|grep "\.cpp$\|\.h$");do [ -f "$A" ]&& grep -q "^#include[ ]*<tiffio.h>" "$A" &&break;done ||LT=;
 	for A in $(ls|grep "\.cpp$\|\.h$");do [ -f "$A" ]&& grep -q "^#include .*acl.h>" "$A" &&break;done ||LACL=;
+	for A in $(ls|grep "\.cpp$\|\.h$");do [ -f "$A" ]&& grep -q "^#include .*curl.h>" "$A" &&break;done ||LCURL=;
 	IPR="${SUDC}$IdPR";
 	DTN="`find . -maxdepth 1 -name ${DPROG}.cpp -printf '%f '``find . -maxdepth 1 -name ${DPROG}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -name "${DPROG}*" -printf '%f '|sort`man_?? Makefile configure install.sh viall .exrc $UNF $ILOG"
 }
 
 exportvars() {
 	rm -f vars;
-	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF ILOG PGROFF LT LT5 LBOOST LBIO LBLO LACL LM18 dev libmc libmac REPOS UREPO COMP GITV DTN DPROG; do
+	for v in KR KF IPR IP_R UPR UDPR SPR UNROH UNF AUNF ILOG PGROFF LT LT5 LBOOST LBIO LBLO LACL LCURL LM18 dev libmc libmac REPOS UREPO COMP GITV DTN DPROG; do
 		eval nv=\$$v; 
 		printf "$v::=$nv\n">>vars; 
 	done;
