@@ -983,7 +983,7 @@ Konfigurationsdatei &lt;string&gt; anstatt &rsquo;&rsquo;
 -sqlw, --sql-wortreich</b>: Bildschirmausgabe mit
 SQL-Befehlen <b><br>
 -rf, --rueckfragen</b>: alle Parameter werden abgefragt
-(darunter einige hier nicht gezeigten) <b><br>
+(darunter einige hier nicht gezeigte) <b><br>
 -krf, --keinerueckfragen</b>: keine Rueckfragen, z.B.
 f&uuml;r Aufruf aus cron <b><br>
 -loef, --loeschefax</b>: ein Fax nach Rueckfrage loeschen

@@ -358,12 +358,11 @@ class hhcl: public hcl
 			__attribute__((weak)) // implementationsspezifische Vorgaben (aber nur Quellcodeaenderung aenderbar, Modul vgb.cpp)
 #endif // VOMHAUPTCODE
 			;
-		void lieskonfein();
+		void lieskonfein(const string& dprog);
 		int  getcommandline();
 		void rueckfragen();
 		int setzhylavz(); // sucht das Hylaverzeichnis und setzt varsphylavz darauf, return 0, wenn nicht gefunden dann varsphylavz="", return 1
 		void verzeichnisse();
-		void pruefcron();
     void rufpruefsamba();
     int  initDB();
     int  pruefDB(const string& db);

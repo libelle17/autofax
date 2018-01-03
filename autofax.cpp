@@ -286,7 +286,7 @@ enum T_
 	T_verwendet_die_Datenbank_string_anstatt,
 	T_Version_1_2_oder_3_Dateisuche_anstatt,
 	T_Bildschirmausgabe_mit_SQL_Befehlen,
-	T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigten,
+	T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigte,
 	T_ein_Fax_nach_Rueckfrage_loeschen,
 	T_Eintraege_aus,
 	T_loeschen_zu_denen_kein_Datei_im_Wartevz_und_kein_Capi_oder_Hylafax_nachweisbar_ist,
@@ -1170,8 +1170,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 		"version 1,2 or 3 of filefind (variable performance differences instead of"},
 	// T_Bildschirmausgabe_mit_SQL_Befehlen
 	{"Bildschirmausgabe mit SQL-Befehlen","screen output with SQL commands"},
-	// T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigten
-	{"alle Parameter werden abgefragt (darunter einige hier nicht gezeigten)","all parameters will be prompted (some of them not shown here)"},
+	// T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigte
+	{"alle Parameter werden abgefragt (darunter einige hier nicht gezeigte)","all parameters will be prompted (some of them not shown here)"},
 	// T_ein_Fax_nach_Rueckfrage_loeschen
 	{"ein Fax nach Rueckfrage loeschen","delete a fax with query"},
 	// T_Eintraege_aus
@@ -2543,9 +2543,6 @@ void fsfcl::scheitere(const string& wvz, const string& ngvz, const string& cuser
 
 hhcl::hhcl(const int argc, const char *const *const argv):hcl(argc,argv)
 {
-	vaufr[0]=mpfad+" -noia >/dev/null 2>&1"; // /usr/bin/<DPROG> -noia
-	saufr[0]=base_name(vaufr[0]); // <DPROG> -noia
-	zsaufr[0]=ersetzAllezu(saufr[0],"/","\\/");
 //	saufr[1]=s1+".*"+ersetzAllezu(s2,"*","\\*")+".*";//Befehl zum Abfragen der Cronminuten aus aktuellem Cron-Script
 //	zsaufr[1]=ersetzAllezu(saufr[1],"/","\\/");
 	/*// time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff; */
@@ -3269,9 +3266,9 @@ void hhcl::setzsql(confdat& afcd)
 
 // wird aufgerufen in: main
 // liest die Konfiguration von autofax ein
-void hhcl::lieskonfein()
+void hhcl::lieskonfein(const string& dprog)
 {
-	hcl::lieskonfein();
+ hcl::lieskonfein(dprog);
 	lfd++;
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&host); else rzf=1; lfd++;
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&muser); else rzf=1; lfd++;
@@ -3411,7 +3408,7 @@ int hhcl::getcommandline()
 	////  opts.push_back(optioncl("ldn","logdateinew", &Tx, T_logdatei_vorher_loeschen,0,&logdateineu,1));
 	////  opts.push_back(optioncl("v","verbose", &Tx, T_Bildschirmausgabe_gespraechiger,1,&plusverb,1));
 	opts.push_back(/*4*/optioncl(T_sqlv_k,T_sql_verbose_l, &Tx, T_Bildschirmausgabe_mit_SQL_Befehlen,1,&ZDB,1));
-	opts.push_back(/*4*/optioncl(T_rf_k,T_rueckfragen_l, &Tx, T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigten,1,&rzf,1));
+	opts.push_back(/*4*/optioncl(T_rf_k,T_rueckfragen_l, &Tx, T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigte,1,&rzf,1));
 	opts.push_back(/*4*/optioncl(T_krf_k,T_keinerueckfragen_l, &Tx, T_keine_Rueckfragen_zB_aus_Cron,1,&nrzf,1));
 	opts.push_back(/*4a*/optioncl(T_loef,T_loeschefax_l, &Tx, T_ein_Fax_nach_Rueckfrage_loeschen,1,&loef,1));
 	opts.push_back(/*6*/optioncl(T_loew,T_loeschewaise_l, &Tx, T_Eintraege_aus, 1, &spooltab, 
@@ -3578,7 +3575,7 @@ void hhcl::rueckfragen()
 						const size_t p2=ipp->find(")",p1);
 						// 192.168.178.1
 						svec mounts;
-						if (!systemrueck("mount|grep "+ipp->substr(p1,p2-p1),obverb,oblog,&mounts)&&mounts.size()) {
+						if (!systemrueck("mount|grep '"+ipp->substr(p1,p2-p1)+"'",obverb,oblog,&mounts)&&mounts.size()) {
 // //192.168.178.1/DiabFB on /mnt/diabfb type cifs (rw,relatime,vers=1.0,cache=strict,username=ftpuser,domain=DIABFB,uid=0,noforceuid,gid=0,noforcegid,addr=192.168.178.1,unix,posixpaths,mapposix,acl,rsize=61440,wsize=65536,actimeo=1)
 							vector<string> tok;
 							aufSplit(&tok,mounts[0],' ');
@@ -4311,10 +4308,11 @@ void hhcl::verzeichnisse()
 } // hhcl:: verzeichnisse()
 
 // wird aufgerufen in: main
+/*
 void hhcl::pruefcron()
 {
 	if (hcl::pruefcron()) {
-		/*
+		*//*
 		// 2. um 22 Uhr vorgeplante Dateien faxen
 		vaufr[1]=s1+zufaxenvz+s2+zufaxenvz+vtz+" 2>/dev/null";
 		const string vorsaetze;
@@ -4324,9 +4322,10 @@ void hhcl::pruefcron()
 		::Log(blaus+"'"+vaufr[1]+"'"+schwarz+Txk[T_wird]+blau+(cronzuplanen?Tx[T_um_22_Uhr]:Txk[T_gar_nicht])+schwarz+Txk[T_statt]+
 		+blau+(vorcm.empty()?Txk[T_gar_nicht]:Tx[T_um_22_Uhr])+schwarz+Txk[T_aufgerufen],1,oblog);
 		}
-		 */
+		 *//*
 	} // 	if (hcl::pruefcron())
 } // pruefcron
+*/
 
 // wird aufgerufen in: main
 void hhcl::rufpruefsamba()
@@ -4920,12 +4919,15 @@ void hhcl::anhalten()
 {
 	Log(violetts+Tx[T_anhalten]+schwarz);
 	// crontab
+	/*
 	setztmpcron();
 	for(int iru=0;iru<1;iru++) {
 		const string befehl=
 			"bash -c 'grep \""+saufr[iru]+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr[iru]+"/d\">"+tmpcron+";crontab "+tmpcron+";};:'";
-		systemrueck(befehl,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+		systemrueck(befehl,obverb,oblog,*//*rueck=*//*0,*//*obsudc=*//*1);
 	} // 	for(int iru=0;iru<2;iru++)
+  */
+	pruefcron("0"); // soll vor Log(Tx[T_Verwende ... stehen
 	::Log(blaus+Tx[T_Cron_Aufruf_von]+schwarz+mpfad+blau+Tx[T_gestoppt]+schwarz,1,oblog);
 	// services
 	//// befehl="systemctl stop capisuite hylafax-faxq hylafax-hfaxd hylafax-faxgetty-"+hmodem+" hylafax >/dev/null 2>&1;:";
@@ -7530,7 +7532,8 @@ void hhcl::zeigueberschrift()
 				Tx[T_Aufrufintervall]+blaus
 				+(vorcm!=cronminut&&!(vorcm.empty()&&cronminut=="0")?((vorcm.empty()?Txk[T_gar_nicht]:vorcm)+" -> "):"")
 				+(cronminut=="0"?Tx[T_kein_Aufruf]+schwarzs:cronminut+schwarz+(cronminut=="1"?Tx[T_Minute]:Txk[T_Minuten])):
-				""),1,1);
+				"")
+			,1,1);
 } // void hhcl::zeigueberschrift()
 
 // ermittelt fuer eine in ein Zielverzeichnis zu kopierende Datei den dortigen Namen
@@ -10121,7 +10124,7 @@ int main(int argc, char** argv)
 		hhi.MusterVorgb();
 	} else {
 		hhi.VorgbSpeziell();//die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion "void hhcl::VorgbSpeziell()" ueberladbar sind
-		hhi.lieskonfein();
+		hhi.lieskonfein(DPROG);
 	} // 	if (hhi.obhilfe==3) else // Standardausgabe gewaehrleisten
 	hhi.lieszaehlerein(&hhi.aufrufe,&hhi.tagesaufr,&hhi.monatsaufr,&hhi.laufrtag);
 
@@ -10190,7 +10193,7 @@ int main(int argc, char** argv)
 			hhi.suchestr();
 		} // 		if (hhi.kez)
 	} else {
-		hhi.pruefcron(); // soll vor Log(Tx[T_Verwende ... stehen
+		hhi.pruefcron(nix); // soll vor Log(Tx[T_Verwende ... stehen
 		if (!hhi.keineverarbeitung) {
 			pruefstdfaxnr(hhi.My,hhi.muser,hhi.host,hhi.obverb,hhi.oblog);
 			prueffuncgettel3(hhi.My,hhi.muser,hhi.host,hhi.obverb,hhi.oblog);

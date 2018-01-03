@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "02.01.18" "Version 0.46173" "Manual-Seite für ²DPROG²"
+.TH man 1 "03.01.18" "Version 0.46173" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -77,7 +77,7 @@ Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präf
 .br
 \fB -sqlw, --sql-wortreich\fR: Bildschirmausgabe mit SQL-Befehlen
 .br
-\fB -rf, --rueckfragen\fR: alle Parameter werden abgefragt (darunter einige hier nicht gezeigten)
+\fB -rf, --rueckfragen\fR: alle Parameter werden abgefragt (darunter einige hier nicht gezeigte)
 .br
 \fB -krf, --keinerueckfragen\fR: keine Rueckfragen, z.B. für Aufruf aus cron
 .br

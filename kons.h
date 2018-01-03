@@ -437,6 +437,7 @@ class perfcl
 };
 
 string holsystemsprache(int obverb=0);
+size_t holraus(const std::string xml,std::string tag,std::string *ergp,size_t anf=0); // XML-Inhalt ermitteln
 int pruefberecht(const string& datei,const string& benutzer,const mode_t mod=01,int obverb=0);
 int untersuser(const string& uname,__uid_t *uidp=0, __gid_t *gidp=0, vector<gid_t> *gids=0,struct passwd* ustr=0);
 double verszuzahl(const string& vers);
@@ -1097,9 +1098,6 @@ class hcl
 		unsigned lfd;
     uchar rzf=0; // rueckzufragen
 		confdat afcd;
-		string vaufr[1]; // (vollaufruf) z.B. '/usr/bin/<DPROG> -noia >/dev/null 2>&1'
-    string saufr[1]; // (stummaufruf) '<DPROG> -noia >/dev/null 2>&1'
-		string zsaufr[1]; // zitiert saufr (in sed)
 		string tmpcron; // fuer crontab
     string cronminut; // Minuten fuer crontab; 0 = kein Crontab-Eintrag
 		uchar nochkeincron;
@@ -1153,7 +1151,7 @@ class hcl
 		~hcl();
 		int Log(const string& text,const bool oberr=0,const short klobverb=0) const;
     int pruefinstv();
-    void lieskonfein();
+    void lieskonfein(const string& DPROG);
 		void setzlog();
 		int zeighilfe(const stringstream *const erkl);
 		void pruefsamba(const vector<const string*>& vzn,const svec& abschni,const svec& suchs,const char* DPROG,const string& cuser);
@@ -1174,7 +1172,7 @@ class hcl
 		void zeigversion(const string& ltiffv=nix);
 		void zeigkonf();
 		void gcl0();
-		uchar pruefcron();
+		uchar pruefcron(const string& cm);
 		void dodovi(const svec d1,const svec d2);
 		void dovi();
 		virtual void schlussanzeige();

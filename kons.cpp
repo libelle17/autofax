@@ -902,6 +902,26 @@ string holsystemsprache(int obverb/*=0*/)
 	return ret;
 } // string holsystemsprache()
 
+// XML-Inhalt ermitteln
+size_t holraus(const std::string xml,std::string tag,std::string *ergp,size_t anf/*=0*/)
+{
+  const std::string von="<"+tag+">", bis="</"+tag+">";
+  if (ergp) {
+    ergp->clear();
+    size_t p1=xml.find(von,anf);
+    if (p1!=std::string::npos) {
+      p1+=von.length();
+      size_t p2=xml.find(bis,p1);
+      if (p2!=std::string::npos) {
+        *ergp=xml.substr(p1,p2-p1);
+        return p2+bis.length();
+      }
+    }
+  }
+  return 0;
+} // size_t holraus(const std::string xml,std::string tag,std::string *ergp;size_t anf=0)
+
+
 
 // Achtung: Wegen der Notwendigkeit der Existenz der Datei zum Aufruf von setfacl kann die Datei erstellt werden!
 mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_base::out*/,uchar faclbak/*=1*/,int obverb/*=0*/, int oblog/*=0*/)
@@ -3747,6 +3767,7 @@ string meinpfad() {
   return string(buff);
 } // meinpfad
 
+// home-Verzeichnis ohne '/' am Schluss
 string gethome()
 {
  static string erg;
@@ -4925,8 +4946,7 @@ hcl::hcl(const int argc, const char *const *const argv)
 	logvz = "/var/log";
 #endif
 	logdname = meinname+".log";
-	loggespfad=logvz+vtz+logdname;
-	logdt=&loggespfad.front();
+	setzlog();
 	pruefplatte(); // geht ohne Logaufruf, falls nicht #define systemrueckprofiler
 	linstp=new linst_cl(obverb,oblog);
 } // hcl::hcl()
@@ -5159,8 +5179,7 @@ void hcl::gcl0()
 				break;
 			case 1:
 				opts.push_back(/*4*/optioncl(T_v_k,T_verbose_l, &Txk, T_Bildschirmausgabe_gespraechiger,/*wi=*/1,&plusverb,/*wert=*/1));
-				loggespfad=logvz+vtz+logdname;
-				logdt=&loggespfad.front();
+				setzlog();
 				opts.push_back(/*2*/optioncl(T_lvz_k,T_logvz_l, &Txk, T_waehlt_als_Logverzeichnis_pfad_derzeit,/*wi=*/0,&logvz, pverz,
 							&agcnfA,"logvz",&logvneu));
 				opts.push_back(/*3a*/optioncl(T_ld_k,T_logdname_l, &Txk, T_logdatei_string_im_Pfad, /*wi=*/0, &logvz, T_wird_verwendet_anstatt, 
@@ -5196,8 +5215,7 @@ void hcl::gcl0()
 	} // for(unsigned iru=0;iru<3;iru++)
 	if (logvneu||logdneu) {
 		if (!logdname.empty()) {
-			loggespfad=logvz+vtz+logdname;
-			logdt=&loggespfad.front();
+			setzlog();
 			//// <<rot<<"logdt: "<<logdt<<endl;
 			//// <<rot<<"loggespfad: "<<loggespfad<<endl;
 			////<<violett<<"logdname: "<<*agcnfA.hole("logdname")<<schwarz<<endl;
@@ -5447,10 +5465,18 @@ void hcl::pruefsamba(const vector<const string*>& vzn,const svec& abschni,const 
 	} //   if (!(conffehlt=lstat(smbdt,&sstat)))
 } // pruefsamba
 
-void hcl::lieskonfein()
+void hcl::lieskonfein(const string& DPROG)
 {
 	Log(violetts+Txk[T_lieskonfein]+schwarz);
-	if (akonfdt.empty()) akonfdt=aktprogverz()+".conf";
+//	if (akonfdt.empty()) akonfdt=aktprogverz()+".conf";
+	if (akonfdt.empty()) {
+		svec rue;
+		// aus Datenschutzgründen sollte das Home-Verzeichnis zuverlässig ermittelt werden
+		systemrueck("getent passwd $(logname)|cut -d: -f6",0,0,&rue);
+		if (rue.size()) {
+			akonfdt=rue[0]+vtz+"."+DPROG+".conf";
+		}
+	} // 	if (akonfdt.empty()) 
 	// agcnfA.init muss spaetetens am Anfang von getcommandl0 kommen
 	// sodann werden die Daten aus gconf den einzelenen Klassenmitgliedsvariablen zugewiesen 
 	// die Reihenfolge muss der in agcnfA.init (in getcommandl0) sowie der in rueckfragen entsprechen
@@ -5622,13 +5648,14 @@ void hcl::tucronschreib(const string& zsauf,const uchar cronzuplanen,const strin
 } // void hcl::tucronschreib(const string& zsauf,const uchar cronzuplanen,const string& cbef)
 
 // wird aufgerufen in: main
-uchar hcl::pruefcron()
+uchar hcl::pruefcron(const string& cm)
 {
+	const string& cmhier=cm.empty()?cronminut:cm;
 	crongeprueft=1;
 	uchar obschreib=0;
 	//  svec rueck;
 	int cronda=0;
-	cronzuplanen=(cronminut!="0");
+	cronzuplanen=(cmhier!="0");
 	Log(violetts+Txk[T_pruefcron]+schwarz+Txk[T_cronzuplanen]+violetts+(cronzuplanen?"1":"0")+schwarz);
 	for (uchar runde=0;runde<2;runde++) {
 		cronda=obprogda("crontab",obverb-1,0);
@@ -5642,13 +5669,15 @@ uchar hcl::pruefcron()
 		////		string vorcm; // Vor-Cron-Minuten
 		nochkeincron = systemrueck("crontab -l",obverb-1,0,0,/*obsudc=*/1,2);
 		setztmpcron();
+		const string vaufr=mpfad+" -noia"; // /usr/bin/<DPROG> -noia // (vollaufruf) z.B. '/usr/bin/<DPROG> -noia >/dev/null 2>&1'
+		const string zsaufr=base_name(vaufr); // ersetzAllezu(cbef,"/","\\/"); // Suchstring zum Loeschen
 		const string vorsaetze=" "+linstp->ionicepf+" -c2 -n7 "+linstp->nicepf+" -n19 ";
-		const string cabfr=vorsaetze+".*"+saufr[0];// "date >/home/schade/zeit"; // Befehl zum Abfragen der Cronminuten aus aktuellem Cron-Script
-		const string cbef=string("*/")+cronminut+" * * * *"+vorsaetze+vaufr[0]; // "-"-Zeichen nur als cron
+		const string cabfr=vorsaetze+".*"+zsaufr;// <DPROG> -noia // Suchstring in Crontab // Befehl zum Abfragen der Cronminuten aus aktuellem Cron-Script
+		const string cbef=string("*/")+cmhier+" * * * *"+vorsaetze+vaufr+" -cf "+akonfdt+" >/dev/null 2>&1"; // "-"-Zeichen nur als cron
 		const string czt=" \\* \\* \\* \\*";
 		////		string vorcm; // Vor-Cron-Minuten
 		if (!nochkeincron) {
-			cmd="bash -c 'grep \"\\*/.*"+czt+cabfr+"\" <(crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'";
+			cmd="bash -c 'grep \"\\*/.*"+czt+cabfr+"\" <(crontab -l 2>/dev/null)| sed \"s_\\*/\\([^ ]*\\) .*_\\1_\"'"; // fuer debian usw.: dash geht hier nicht
 			svec cmrueck;
 			systemrueck(cmd,obverb,oblog,&cmrueck,/*obsudc=*/1);
 			if (cmrueck.size()) vorcm=cmrueck[0];
@@ -5657,17 +5686,17 @@ uchar hcl::pruefcron()
 			if (obverb||cmeingegeben) 
 				::Log(Txk[T_Kein_cron_gesetzt_nicht_zu_setzen],1,oblog);
 		} else {
-			if (cronminut==vorcm) {
-				if (cmeingegeben) ::Log(blaus+"'"+saufr[0]+"'"+schwarz+Txk[T_wird]+Txk[T_unveraendert]+
+			if (cmhier==vorcm) {
+				if (cmeingegeben) ::Log(blaus+"'"+zsaufr+"'"+schwarz+Txk[T_wird]+Txk[T_unveraendert]+
 						+blau+(vorcm.empty()?Txk[T_gar_nicht]:Txk[T_alle]+vorcm+Txk[T_Minuten])+schwarz+Txk[T_aufgerufen],1,oblog);
 			} else {
 				obschreib=1;
-				tucronschreib(zsaufr[0],cronzuplanen,cbef);
+				tucronschreib(zsaufr,cronzuplanen,cbef);
 				if (cmeingegeben)
-					::Log(blaus+"'"+saufr[0]+"'"+schwarz+Txk[T_wird]+blau+(cronzuplanen?Txk[T_alle]+cronminut+Txk[T_Minuten]:Txk[T_gar_nicht])+schwarz+
+					::Log(blaus+"'"+zsaufr+"'"+schwarz+Txk[T_wird]+blau+(cronzuplanen?Txk[T_alle]+cmhier+Txk[T_Minuten]:Txk[T_gar_nicht])+schwarz+
 							Txk[T_statt]+blau+(vorcm.empty()?Txk[T_gar_nicht]:Txk[T_alle]+vorcm+Txk[T_Minuten])+schwarz+Txk[T_aufgerufen],1,oblog);
-			} // 				if (cronminut==vorcm) else
-		} // 		if (vorcm.empty() && cronminut=="0")
+			} // 				if (cmhier==vorcm) else
+		} // 		if (vorcm.empty() && cmhier=="0")
 #ifdef anders
 #define uebersichtlich
 #ifdef uebersichtlich
@@ -5682,7 +5711,7 @@ uchar hcl::pruefcron()
 			if (nochkeincron) {
 				befehl="rm -f "+tmpcron+";";
 			} else {
-				befehl="bash -c 'grep \"\\*/"+cronminut+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l|sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";";
+				befehl="bash -c 'grep \"\\*/"+cmhier+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l|sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";";
 			}
 			befehl+="echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+"";
 			if (!nochkeincron)
@@ -5691,7 +5720,7 @@ uchar hcl::pruefcron()
 #else // uebersichtlich
 		const string befehl=cronzuplanen?
 			(nochkeincron?"rm -f "+tmpcron+";":
-			 "bash -c 'grep \"\\*/"+cronminut+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr[0]+"/d\">"+tmpcron+"; ")+
+			 "bash -c 'grep \"\\*/"+cmhier+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr[0]+"/d\">"+tmpcron+"; ")+
 			"echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+(nochkeincron?"":";}'")
 			:
 			(nochkeincron?"":"bash -c 'grep \""+saufr[0]+"\" -q <(crontab -l)&&{ crontab -l | sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";"
