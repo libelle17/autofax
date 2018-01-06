@@ -109,6 +109,9 @@ endif
 ifneq ($(LACL),)
 	LDFLAGS::=$(LDFLAGS) -lacl
 endif
+ifneq ($(LCURL),)
+	LDFLAGS::=$(LDFLAGS) -lcurl
+endif
 ifdef mitpg
 	CFLAGS::=$(CFLAGS) -I/usr/include/pgsql -Dmitpostgres
 	LDFLAGS::=$(LDFLAGS) -lpq
@@ -237,6 +240,7 @@ weiter: compiler $(EXEC) $(GZS)
 git: README.md
 #	@git config --global user.name "Gerald Schade"
 #	@git config --global user.email "gerald.schade@gmx.de"
+	$(call machvers);
 	@printf " Copying files from/ Kopiere Dateien von: %b%s%b (Version %b%s%b) -> git (%b%s%b)\n" $(blau) "$(PWD)" $(reset) $(blau) $$(cat versdt)\
   $(reset) $(blau) "$$(F1=.git/FETCH_HEAD;test -f $$F1&&{ cut -f2-< $$F1|sed 's/^\s*//';:;};[ -d .git ]&&cat .git/./config|sed -n '/url =/p')" $(reset) >$(BA) 
 	-@cp -au Makefile Makefile.roh
@@ -281,7 +285,7 @@ $(EXEC): $(OBJ)
 
 %.o : %.cpp
 %.o : %.cpp $(DEPDIR)/%.d
-	@[ $@ = $(DPROG).o ]&&{ test -f versdt || echo 0.1>versdt; if test -f entwickeln; then awk "BEGIN {print `cat versdt`+0.00001}">versdt;\
+	@[ $@ = $(DPROG).o ]&&{ $(call machvers);if test -f entwickeln; then awk "BEGIN {print `cat versdt`+0.00001}">versdt;\
 	else printf " %bFile '%bentwickeln%b' missing, keeping the version number stable/ Datei '%bentwickeln%b' fehlt, lasse die Version gleich%b\n" \
 	$(schwarz) $(grau) $(schwarz) $(grau) $(schwarz) $(reset) >$(BA); fi;}; :;
 	@printf " kompiliere %b%s%b: " $(blau) "$<" $(reset) >$(BA);
@@ -326,6 +330,7 @@ endif
 	$(SUDC)ldconfig;cd ..;};
 
 	-@[ "$(LACL)" ]&&{ [ -f /usr/include/sys/acl.h ]|| ./configure inst _ "$(LACL)" verbose;}||:
+	-@[ "$(LCURL)" ]&&{ [ -f /usr/include/curl/curl.h ]|| ./configure inst _ "$(LCURL)" verbose;}||:
 	-@[ "$(LBOOST)" ]&&{ $(SPR) $(LBOOST)>$(KR)|| ./configure inst _ "$(LBOOST)" verbose;}||:
 	-@[ "$(LBIO)" ]&&{ $(SPR) "$(LBIO)">$(KR)||./configure inst _ "$(LBIO)" verbose;}||:
 	-@[ "$(LBLO)" ]&&{ $(SPR) "$(LBLO)">$(KR)||./configure inst _ "$(LBLO)" verbose;}||:
@@ -370,6 +375,10 @@ ifeq ("$(wildcard man_de)$(wildcard man_en)","man_deman_en")
 endif
 	@for d in $(MANS); do sed -n '20,$$p' $$d.html >> $@; [ -z $$A ]||A=$$A", ";A=$$A$(blau)$$d$(reset); done; \
 	printf " %b$@%b neu erstellt aus: $$A\n" $(blau) $(reset)
+
+define machvers	 
+	VD="versdt";[ -f $$VD ]||echo 0.1>$$VD;:
+endef
 
 define priv_html
 	-@printf " erstelle/generating:%b$(1)%b\n" $(blau) $(reset)
@@ -564,7 +573,7 @@ neuproj:
 		printf "void hhcl::autokonfschreib()\\n{\\n Log(violetts+Tx[T_autokonfschreib]+schwarz+\", \"+Tx[T_zu_schreiben]+((rzf||obkschreib)?Txk[T_ja]:Txk[T_nein]));\\n if (rzf||obkschreib) {\\n } // if (rzf||obkschreib)\\n} // void hhcl::autokonfschreib\\n\\n">>"$$Z".cpp;\
 		printf "// wird aufgerufen in: main\\n">>"$$Z".cpp;\
 		printf "void hhcl::zeigueberschrift()\\n{\\n char buf[20]; snprintf(buf,sizeof buf,\"%%.5f\",versnr);\\n ::Log(schwarzs+Txk[T_Programm]+blau+mpfad+schwarz+\", V: \"+blau+buf+schwarz,1,1);\\n} // void hhcl::zeigueberschrift\\n\\n\\n">>"$$Z".cpp;\
-		printf "int main(int argc,char** argv)\\n{\\n hhcl hhi(argc,argv); // hiesige Hauptinstanz\\n /*//\\n if (argc>1) {\\n } // (argc>1)\\n */\\n hhi.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen\\n hhi.VorgbAllg();\\n if (hhi.obhilfe==3) { // Standardausgabe gewaehrleisten\\n  hhi.MusterVorgb();\\n } else {\\n  hhi.VorgbSpeziell(); // die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion \"void hhcl::VorgbSpeziell()\" ueberladbar sind\\n  hhi.lieskonfein();\\n } // if (hhi.obhilfe==3)\\n hhi.lieszaehlerein(&hhi.aufrufe,&hhi.tagesaufr,&hhi.monatsaufr,&hhi.laufrtag);\\n\\n if (hhi.getcommandline())\\n  exit(8);\\n if (hhi.obvi) hhi.dovi();\\n if (hhi.zeigvers) {\\n hhi.zeigversion();\\n } // if (hhi.zeigvers)\\n hhi.autokonfschreib();\\n hhi.schlussanzeige();\\n return 0;\\n} // int main\\n">>"$$Z".cpp;>>"$$Z".cpp;\
+		printf "int main(int argc,char** argv)\\n{\\n hhcl hhi(argc,argv); // hiesige Hauptinstanz\\n /*//\\n if (argc>1) {\\n } // (argc>1)\\n */\\n hhi.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen\\n hhi.VorgbAllg();\\n if (hhi.obhilfe==3) { // Standardausgabe gewaehrleisten\\n  hhi.MusterVorgb();\\n } else {\\n  hhi.VorgbSpeziell(); // die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion \"void hhcl::VorgbSpeziell()\" ueberladbar sind\\n  hhi.lieskonfein();\\n } // if (hhi.obhilfe==3)\\n hhi.lieszaehlerein(&hhi.aufrufe,&hhi.tagesaufr,&hhi.monatsaufr,&hhi.laufrtag);\\n\\n if (hhi.getcommandline())\\n  exit(8);\\n if (hhi.obvi) hhi.dovi();\\n if (hhi.zeigvers) {\\n   hhi.zeigversion();\\n } // if (hhi.zeigvers)\\n hhi.autokonfschreib();\\n hhi.schlussanzeige();\\n return 0;\\n} // int main\\n">>"$$Z".cpp;>>"$$Z".cpp;\
 	\
 	printf "#define DPROG \"$$Z\"\\nclass hhcl:public hcl\\n{\\n private:\\n public:\\n  uchar obvi=0; // ob Konfigurationsdatei editiert werden soll\\n private:\\n  void lgnzuw();\\n public:\\n  hhcl(const int argc, const char *const *const argv);\\n  ~hhcl();\\n void getcommandl0();\\n void VorgbAllg();\\n void VorgbSpeziell()\\n#ifdef VOMHAUPTCODE\\n __attribute__((weak)) // implementationsspezifische Vorgaben, Modul vgb.cpp)\\n#endif\\n ;\\n void MusterVorgb();\\n void lieskonfein();\\n int getcommandline();\\n void rueckfragen();\\n void autokonfschreib();\\n void zeigueberschrift();\\n}; // class hhcl\\n">"$$Z".h;\
 		sh configure;\
