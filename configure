@@ -40,7 +40,7 @@ getIPR() {
 				LBOOST=$(cat vars|grep LBOOST|cut -d= -f2);
 			else
   			# z.B. 'i+ | boost_1_65-devel |'
-  			LBOOST=$(zypper se boost*-devel|grep ' | boost'|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
+  			LBOOST=$(zypper se boost*-devel|grep ' | boost'|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
 			fi
 			LT=${_LT}-${dev};
 		} 
