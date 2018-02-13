@@ -3123,6 +3123,7 @@ void hhcl::liescapiconf()
 				cccnfA.reset();
 			} //       if (!cccnfA.zahl) else
 			confdat ccapicd(ccapiconfdt,&cccnfA,obverb);
+			caus<<"Hier cuser: "<<cuser<<endl;
 			if (!cuser.empty()) {
 				for(size_t j=0;j<cccnfA.zahl;j++) {
 					if (!cccnfA[j].wert.empty()) {

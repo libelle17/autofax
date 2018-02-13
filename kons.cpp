@@ -4849,7 +4849,7 @@ int dateivgl(const string& d1, const string& d2,uchar obzeit/*=0*/)
 	} // 	if (lst1 || lst2)
 	if (!erg) {
 		if (lst1||st1.st_size>1000000) {
-			erg=systemrueck("diff -q "/*"cmp --silent "*/+d1+" "+d2,0,0,/*rueck=*/0,/*obsudc=*/0);
+			erg=systemrueck("diff -q '"/*"cmp --silent "*/+d1+"' '"+d2+"'",0,0,/*rueck=*/0,/*obsudc=*/0);
 		} else {
 		// http://www.cplusplus.com/forum/general/94032/
 			boost::iostreams::mapped_file_source f1(d1);

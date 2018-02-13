@@ -175,7 +175,8 @@ commands for finding an addressee from the fax number)
 cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
-&rsquo;<b>autofax -rf</b>&rsquo;. <b><br>
+&rsquo;<b>autofax -rf</b>&rsquo;. <br>
+Hier cuser: <b><br>
 Options which are not saved: <br>
 -v, --verbose</b>: screen output more verbose <b><br>
 -lfn, --logfilenew</b>: delete log file afore <b><br>
@@ -973,7 +974,8 @@ sondern nur &uuml;ber die Konfigurationsdatei eingegeben
 werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
-kann. <b><br>
+kann. <br>
+Hier cuser: <b><br>
 Optionen, die nicht gespeichert werden: <br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger <b><br>
 -ldn, --logdateineu</b>: logdatei vorher loeschen <b><br>
