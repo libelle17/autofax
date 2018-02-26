@@ -2452,14 +2452,36 @@ void pruefplatte()
 // ob das aktuelle Programm mehrfach laeuft; bei obstumm Exit-Code 0
 void pruefmehrfach(const string& wen,uchar obstumm/*=0*/)
 {
-  svec rueck;
+	svec rueck;
 	const string iwen=wen.empty()?base_name(meinpfad()):wen;
-  systemrueck("ps -eo comm|grep '^"+iwen+"'",0,0,&rueck,/*obsudc=*/0);
-  if (rueck.size()>1) {
-	  if (obstumm)
-			exit(0);
-		cout<<Txk[T_Program]<<blau<<iwen<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
-    exit(98);
+	for(int iru=0;iru<1;iru++) {
+		systemrueck("ps -eo comm,cputime,pid|grep -P '^"+iwen+"([[:space:]]|\\z)'",!obstumm,0,&rueck,/*obsudc=*/0);
+		for(size_t i=0;i<rueck.size();i++) {
+			caus<<gruen<<rueck[i]<<schwarz<<endl;
+		}
+		caus<<"rueck.size(): "<<rueck.size()<<endl;
+		if (rueck.size()>1) {
+			// z.B. 'autofax      18:02:48  2939'
+			svec pvec;
+			aufSplit(&pvec,rueck[0],' ',/*auchleer=*/0); 
+			caus<<"pvec.size(): "<<pvec.size()<<endl;
+			for(unsigned i=0;i<pvec.size();i++) {
+				caus<<"i: "<<i<<", pvec[i]: '"<<pvec[i]<<"'"<<endl;
+			}
+			if (pvec.size()>2) {
+				if (pvec[1].find("00:00")) {    // wenn es mindestens eine Stunde laeuft
+					if (iru)
+						systemrueck("pkill -9 "+iwen,1);
+					else
+						systemrueck("pkill "+iwen,1);
+					continue;
+				}
+			}
+			if (obstumm)
+				exit(0);
+			cout<<Txk[T_Program]<<blau<<iwen<<schwarz<<Txk[T_laeuft_schon_einmal_Breche_ab]<<endl;
+			exit(98);
+		} //   if (rueck.size()>1)
   } //   if (rueck.size()>1) {
   /*//
   for(size_t j=0;j<rueck.size();j++) KLA

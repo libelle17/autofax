@@ -36,7 +36,6 @@ void pruefudoc(DB *My, const string& tudoc, const int obverb, const int oblog, c
 void pruefinctab(DB *My, const string& tinca, const int obverb, const int oblog, const uchar direkt=0);
 void pruefrules(int obverb, int oblog);
 void pruefblack(int obverb, int oblog);
-void pruefmodcron(int obverb, int oblog);
 
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster
 class zielmustercl 

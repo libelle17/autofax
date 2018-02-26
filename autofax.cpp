@@ -1,3 +1,4 @@
+// '//α' oder '//ω' als Kommentar sind nur für die Verwendung dieses Programms als Programmvorlage wichtig
 // Namenskonvention: 
 // erste Praeferenz wurde darauf gelegt, dass mit der Editor-Suchfunktion moeglichst alle gleichen Bezeichner gefunden werden koennen, 
 // zweite Praeferenz darauf, dass deutsche und englische Namenbestandteile moeglichst gut gemischt werden
@@ -20,8 +21,9 @@
 // #include <dirent.h> // DIR, dirent, opendir, readdir, PATH_MAX
 //// #include "vmime/vmime.hpp"
 //// #include "vmime/platforms/posix/posixHandler.hpp"
-#include "kons.h"
+#include "kons.h" //α
 #include "DB.h"
+#define VOMHAUPTCODE // um Funktionsdefinition manchmal mit "__attribute__((weak)) " versehen zu können //ω
 //// #include "iconverter.h"
 //// #include "datetime_utils.hpp"
 // fuer die Prozessliste
@@ -34,7 +36,6 @@
 #include <regex>
 #include <set>
 
-#define VOMHAUPTCODE 
 #include "autofax.h"
 
 //// const char *tmmoegl[2]={"%d.%m.%y","%c"}; // Moeglichkeiten fuer strptime
@@ -84,8 +85,83 @@ return ss.str();
 }
  */
 
+// für verschiedene Sprachen //α
 enum T_ 
 {
+	T_zu_schreiben,
+	T_VorgbAllg,
+	T_VorgbSpeziell,
+	T_MusterVorgb,
+	T_rueckfragen,
+	T_autokonfschreib,
+	T_cm_k,
+	T_cronminuten_l,
+	T_Alle_wieviel_Minuten_soll,
+	T_autoupd_k,
+	T_autoupd_l,
+	T_Programm_automatisch_aktualisieren,
+	T_Sollen_neue_Programmversionen_von,
+	T_automatisch_installiert_werden,
+	T_zeigvers,
+	T_Logpfad,
+	T_oblog,
+	T_Oblog,
+	T_Aufrufintervall,
+	T_kein_Aufruf,
+	T_Minute,
+	T_sqlv_k,
+	T_sql_verbose_l,
+	T_rf_k,
+	T_rueckfragen_l,
+	T_krf_k,
+	T_keinerueckfragen_l,
+	T_nicht_erkannt,
+	T_Logverzeichnis,
+	T_Logdateiname,
+	T_schreibe_Konfiguration,
+	T_info_k,
+	T_version_l,
+	T_vi_k,
+	T_vi_l,
+	T_h_k,
+	T_lh_k,
+	T_hilfe_l,
+	T_lhilfe_l,
+	T_fgz_k,
+	T_fgz_l,
+	T_Zeigt_die_Programmversion_an,
+	T_Konfigurations_u_Logdatei_bearbeiten_sehen,
+	T_Erklaerung_haeufiger_Optionen,
+	T_Erklaerung_aller_Optionen,
+	Verbindung_zur_Datenbank_nicht_herstellbar,
+	T_Breche_ab,
+	T_pruefDB,
+	T_host_k,
+	T_host_l,
+	T_muser_k,
+	T_muser_l,
+	T_mpwd_k,
+	T_mpwd_l,
+	T_db_k,
+	T_datenbank_l,
+	T_tb_k,
+	T_tabelle_l,
+	T_Bildschirmausgabe_mit_SQL_Befehlen,
+	T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf,
+	T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt,
+	T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string,
+	T_verwendet_die_Datenbank_string_anstatt,
+	T_verwendet_die_Tabelle_string_anstatt,
+	T_Host_fuer_MySQL_MariaDB_Datenbank,
+	T_Benutzer_fuer_MySQL_MariaDB,
+	T_Passwort_fuer_MySQL_MariaDB,
+	T_Datenbankname_fuer_MySQL_MariaDB_auf,
+	T_Tabellenname_in,
+	T_Fehler_beim_Pruefen_von,
+	T_keine_Rueckfragen_zB_aus_Cron,
+	T_aufgerufen_werden_0_ist_gar_nicht,
+	T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigte,
+	T_Fuege_ein, //ω
 	T_verarbeitete_Nicht_PDF_Dateien,
 	T_verarbeitete_PDF_Dateien,
 	T_Soll_die_FritzBox_verwendet_werden,
@@ -108,8 +184,6 @@ enum T_
 	T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden,
 	T_Der_regulaere_Ausdruck,
 	T_konnte_nicht_kompiliert_werden_Fehler,
-	Verbindung_zur_Datenbank_nicht_herstellbar,
-	T_Breche_ab,
 	T_Konnte_Verzeichnis,
 	T_nicht_oeffnen,
 	T_zielname_erstes_Ziel,
@@ -225,7 +299,6 @@ enum T_
 	T_statuscode_in_letztem_gescheitertem_hylafax,
 	T_status_in_letztem_gescheitertem_hylafax,
 	T_capispooldateien_der_Capisuite,
-	T_Fehler_beim_Pruefen_von,
 	T_Name_des_Adressaten_aus_Dateiname,
 	T_Datum_des_Losschickens,
 	T_Ende_der_Uebertragung,
@@ -280,13 +353,7 @@ enum T_
 	T_faxnr_fuer_primaer_hylafax_wird_hinter_string_erwartet_statt_hinter,
 	T_Adressatenname_wird_hinter_string_erwartet_statt_hinter,
 	T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt,
-	T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf,
-	T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt,
-	T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string,
-	T_verwendet_die_Datenbank_string_anstatt,
 	T_Version_1_2_oder_3_Dateisuche_anstatt,
-	T_Bildschirmausgabe_mit_SQL_Befehlen,
-	T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigte,
 	T_ein_Fax_nach_Rueckfrage_loeschen,
 	T_Eintraege_aus,
 	T_loeschen_zu_denen_kein_Datei_im_Wartevz_und_kein_Capi_oder_Hylafax_nachweisbar_ist,
@@ -298,8 +365,6 @@ enum T_
 	T_pruefen_und_aufraeumen,
 	T_listet_Datensaetze_aus,
 	T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,
-	T_Erklaerung_haeufiger_Optionen,
-	T_Erklaerung_aller_Optionen,
 	T_Faxt_Dateien_aus_Verzeichnis_pfad_die,
 	T_faxnr_enthalten_und_durch_soffice_in_pdf_konvertierbar_sind_und_traegt_sie,
 	T_Tabellen,
@@ -313,12 +378,6 @@ enum T_
 	T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax,
 	T_Buchstabenfolge_vor_erstem_Adressaten,
 	T_Buchstabenfolge_vor_weiterem_Adressaten_sowie_weiterer_Faxnummer,
-	T_Host_fuer_MySQL_MariaDB_Datenbank,
-	T_Benutzer_fuer_MySQL_MariaDB,
-	T_Passwort_fuer_MySQL_MariaDB,
-	T_Datenbankname_fuer_MySQL_MariaDB_auf,
-	T_Logverzeichnis,
-	T_Logdateiname,
 	////  T_Zahl_der_SQL_Befehle_fuer_Namenszuordnung,
 	T_SQL_Befehl_Nr,
 	T_Capisuite_ist_offenbar_noch_nicht_richtig_konfiguriert,
@@ -337,14 +396,9 @@ enum T_
 	T_komma_Altwert,
 	T_Muster,
 	T_Ziel,
-	T_Logpfad,
-	T_oblog,
-	T_Oblog,
 	T_Fax_von,
 	T_an,
 	T_vom,
-	T_Alle_wieviel_Minuten_soll,
-	T_aufgerufen_werden_0_ist_gar_nicht,
 	T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht,
 	T_wird_verwendet,
 	T_mit_Baudrate,
@@ -355,8 +409,6 @@ enum T_
 	T_WVZinDatenbank,
 	T_pruefmodem,
 	T_setzhylavz,
-	T_rueckfragen,
-	T_autokonfschreib,
 	T_konfcapi,
 	T_clieskonf,
 	T_verzeichnisse,
@@ -408,7 +460,6 @@ enum T_
 	T__auf,
 	T_Zahl_der_empfangenen_Faxe,
 	T_avon,
-	T_nicht_erkannt,
 	T_Fehlermeldung_beim_Loeschversuch_eines_Hyla_Faxes_mit_faxrm,
 	T_Zahl_der_nicht_geloeschten_Dateien,
 	T_hylanr,
@@ -425,7 +476,6 @@ enum T_
 	T_Kein_Modem_gefunden,
 	T_kein_Faxprogramm_verfuegbar,
 	T_Capisuite_gestartet,
-	T_schreibe_Konfiguration,
 	T_Dateien,
 	T_nicht_verarbeitbar_Verschiebe_sie_nach,
 	T_Fuehre_aus_Dp,
@@ -436,11 +486,8 @@ enum T_
 	T_Nichtgefaxt,
 	T_Faxempfang,
 	T_Gefaxt,
-	T_zu_schreiben,
 	T_Zahl_der_Verzeichnisse_fuer_erfolgreich_verschickte_Faxe,
 	T_zufaxenvz,
-	T_VorgbSpeziell,
-	T_MusterVorgb,
 	T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben,
 	T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr,
 	T_faxnr_wird_ersetzt_mit_der_Faxnr,
@@ -467,12 +514,10 @@ enum T_
 	T_ermittelt,
 	T_hylafax_Verzeichnis,
 	T_Bezeichnung_des_Anrufers,
-	T_Zeigt_die_Programmversion_an,
 	T_Fritzbox_verwenden,
 	T_Capisuite_verwenden,
 	T_hylafax_verwenden,
 	T_pruefcvz,
-	T_Konfigurations_u_Logdatei_bearbeiten_sehen,
 	T_Capisuite_Konfigurationdateien_bearbeiten,
 	T_Hylafax_Modem_Konfigurationsdatei_bearbeiten,
 	T_Quelldateien_bearbeiten,
@@ -487,9 +532,7 @@ enum T_
 	T_an_hFax,
 	T_und,
 	T_liescapiconf,
-	T_VorgbAllg,
 	T_pruefisdn,
-	T_keine_Rueckfragen_zB_aus_Cron,
 	T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,
 	T_Muss_falsches_hylafax_loeschen,
 	T_DPROG_anhalten,
@@ -542,7 +585,6 @@ enum T_
 	T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von,
 	T_nach_,
 	T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen,
-	T_pruefDB,
 	T_Seiten,
 	T_suchestr,
 	T_pruefsoffice,
@@ -563,9 +605,6 @@ enum T_
 	T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird,
 	T_Faxnr,
 	T_Name_des_Adressaten_aus_Faxnummer_ermittelt,
-	T_Aufrufintervall,
-	T_kein_Aufruf,
-	T_Minute,
 	T_loef,
 	T_uml_k,
 	T_loeschefax_l,
@@ -578,8 +617,6 @@ enum T_
 	T_nichtgefaxtvz_l,
 	T_evz_k,
 	T_empfvz_l,
-	T_cm_k,
-	T_cronminuten_l,
 	T_fbox_k,
 	T_obfbox_l,
 	T_fbankvz_k,
@@ -623,22 +660,8 @@ enum T_
 	T_anstr_l,
 	T_us_k,
 	T_undstr_l,
-	T_host_k,
-	T_host_l,
-	T_muser_k,
-	T_muser_l,
-	T_mpwd_k,
-	T_mpwd_l,
-	T_db_k,
-	T_datenbank_l,
 	T_find_k,
 	T_find_l,
-	T_sqlv_k,
-	T_sql_verbose_l,
-	T_rf_k,
-	T_rueckfragen_l,
-	T_krf_k,
-	T_keinerueckfragen_l,
 	T_loew,
 	T_loeschewaise_l,
 	T_loea_k,
@@ -663,22 +686,12 @@ enum T_
 	T_suche_l,
 	T_n_k,
 	T_dszahl_l,
-	T_info_k,
-	T_version_l,
-	T_vi_k,
-	T_vi_l,
 	T_vc_k,
 	T_vc_l,
 	T_vh_k,
 	T_vh_l,
 	T_vs_k,
 	T_vs_l,
-	T_h_k,
-	T_lh_k,
-	T_hilfe_l,
-	T_lhilfe_l,
-	T_fgz_k,
-	T_fgz_l,
 	T_passt_nicht_zu,
 	T_vor,
 	T_danach,
@@ -737,12 +750,6 @@ enum T_
 	T_docname,
 	T_pages,
 	T_Zustand_der_Dienste,
-	T_autoupd_k,
-	T_autoupd_l,
-	T_Programm_automatisch_aktualisieren,
-	T_Sollen_neue_Programmversionen_von,
-	T_automatisch_installiert_werden,
-	T_zeigvers,
 	T_Installiere_ocrmypdf,
 	T_Ergebnis_nach,
 	T_Konfiguration_von_hylafax_durch,
@@ -753,11 +760,159 @@ enum T_
 	T_war_schon,
 	T_kommt_noch,
 	T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox,
-	T_MAX
-}; // enum T_
+	T_MAX //α
+}; // enum T_ //ω
 
-
+// für verschiedene Sprachen //α
 char const *DPROG_T[T_MAX+1][SprachZahl]={
+	// T_zu_schreiben
+	{"zu schreiben: ","must write: "},
+	// T_VorgbAllg
+	{"VorgbAllg()","generalprefs()"},
+	// T_VorgbSpeziell
+	{"VorgbSpeziell()","specialprefs()"},
+	// T_MusterVorgb
+	{"MusterVorgb()","sampleprefs"},
+	// T_rueckfragen
+	{"rueckfragen()","callbacks()"},
+	// T_autokonfschreib
+	{"autokonfschreib()","autoconfwrite()"},
+	// T_cm_k
+	{"cm","cm"},
+	// T_cronminuten_l
+	{"cronminuten","cronminutes"},
+	// T_Alle_wieviel_Minuten_soll
+	{"alle wieviel Minuten soll ","every how many minutes shall "},
+	// 	T_autoupd_k,
+	{"autoakt","autoupd"},
+	// 	T_autoupd_l,
+	{"autoaktual","autoupdate"},
+	// T_Programm_automatisch_aktualisieren
+	{"Programm automatisch aktualisieren","Update program automatically"},
+	// T_Sollen_neue_Programmversionen_von
+	{"Sollen neue Programmversionen von ","Shall new versions of "},
+	// T_automatisch_installiert_werden
+	{" automatisch installiert werden?"," be automatically installed?"},
+	// T_zeigvers
+	{"zeigvers","showvers"},
+	// T_Logpfad,
+	{"Logpfad: '","Log path: '"},
+	// T_oblog,
+	{"' (oblog: ","' (with logging: "},
+	// T_Oblog,
+	{"Oblog (ausführliche Protokollierung): ","Log (detailled logging): "},
+	// T_Aufrufintervall
+	{"; Aufrufintervall: ","; (cron) call interval: "},
+	// T_kein_Aufruf
+	{"kein cron-Aufruf","no cron call"},
+	// T_Minute
+	{" Minute"," minute"},
+	// T_sqlv_k
+	{"sqlw","sqlv"},
+	// T_sql_verbose_l
+	{"sql-wortreich","sql-verbose"},
+	// T_rf_k
+	{"rf","ia"},
+	// T_rueckfragen_l
+	{"rueckfragen","interactive"},
+	// T_krf_k
+	{"krf","noia"},
+	// T_keinerueckfragen_l
+	{"keinerueckfragen","nointeraction"},
+	// T_nicht_erkannt
+	{" nicht erkannt!"," not identified!"},
+	// T_Logverzeichnis
+	{"Logverzeichnis","log directory"},
+	// T_Logdateiname
+	{"Logdateiname","log file name"},
+	// T_schreibe_Konfiguration
+	{"schreibe Konfiguration!","writing configuration!"},
+	// T_info_k
+	{"info","info"},
+	// T_version_l
+	{"version","version"},
+	// T_vi_k
+	{"vi","vi"},
+	// T_vi_l
+	{"vi","vi"},
+	// T_h_k
+	{"h","h"},
+	// T_lh_k
+	{"lh","lh"},
+	// T_hilfe_l
+	{"hilfe","help"},
+	// T_lhilfe_l
+	{"langhilfe","longhelp"},
+	// T_fgz_k
+	{"?","?"},
+	// T_fgz_l,
+	{"??","??"},
+	// T_Zeigt_die_Programmversion_an
+	{"Zeigt die Programmversion an","shows the program version"},
+	// T_Konfigurations_u_Logdatei_bearbeiten_sehen
+	{"Konfigurations- u.Logdatei bearbeiten/sehen (beenden mit ':qa')","edit/view configuration and log file (finish with ':qa')"},
+	// 	T_Erklaerung_haeufiger_Optionen
+	{"Erklärung häufiger Optionen","Explanation of frequent options"},
+	// T_Erklaerung_aller_Optionen
+	{"Erklärung aller Optionen","Explanation of all options"}, 
+	// Verbindung_zur_Datenbank_nicht_herstellbar
+	{"Verbindung zur Datenbank nicht herstellbar, fehnr: ","Connection to the database could not be established, errnr: "},
+	// T_Breche_ab
+	{". Breche ab.","Stopping."},
+	// T_pruefDB
+	{"pruefDB(","checkDB("},
+	// T_host_k
+	{"host","host"},
+	// T_host_l
+	{"host","host"},
+	// T_muser_k
+	{"muser","muser"},
+	// T_muser_l
+	{"muser","muser"},
+	// T_mpwd_k
+	{"mpwd","mpwd"},
+	// T_mpwd_l
+	{"mpwd","mpwd"},
+	// T_db_k
+	{"db","db"},
+	// T_datenbank_l
+	{"datenbank","database"},
+	// T_tb_k,
+	{"tb","tb"},
+	// T_tabelle_l,
+	{"tabelle","table"},
+	// T_Bildschirmausgabe_mit_SQL_Befehlen
+	{"Bildschirmausgabe mit SQL-Befehlen","screen output with SQL commands"},
+	// T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf
+	{"verwendet die Datenbank auf Host <string> anstatt auf","takes the database on host <string> instead of"},
+	// T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt
+	{"verwendet fuer MySQL/MariaDB den Benutzer <string> anstatt","takes the user <string> for MySQL/MariaDB instead of"},
+	// T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string
+	{"verwendet fuer MySQL/MariaDB das Passwort <string>","takes the password <string> for MySQL/MariaDB"},
+	// T_verwendet_die_Datenbank_string_anstatt
+	{"verwendet die Datenbank <string> anstatt","uses the database <string> instead of"},
+	// T_verwendet_die_Tabelle_string_anstatt
+	{"verwendet die Tabelle <string> anstatt","uses the table <string> instead of"},
+	// T_Host_fuer_MySQL_MariaDB_Datenbank
+	{"Host fuer MySQL/MariaDB-Datenbank","host for mysql/mariadb-database"},
+	// T_Benutzer_fuer_MySQL_MariaDB,
+	{"Benutzer fuer MySQL/MariaDB:","user for mysql/mariadb:"},
+	// T_Passwort_fuer_MySQL_MariaDB,
+	{"Passwort fuer MySQL/MariaDB (Achtung: nur schwach verschluesselt!)","password for mysql/mariadb (caution: only weakly encrypted!)"},
+	// T_Datenbankname_fuer_MySQL_MariaDB_auf
+	{"Datenbankname fuer MySQL/MariaDB auf '","database name for mysql/mariabd on '"},
+	// T_Tabellenname_in
+	{"Tabellenname in '","table name in '"},
+	//	T_Fehler_beim_Pruefen_von
+	{"Fehler beim Pruefen von: ","Error while examining: "},
+	// T_keine_Rueckfragen_zB_aus_Cron
+	{"keine Rueckfragen, z.B. für Aufruf aus cron","no questions, e.g. for a call of " DPROG " within cron"},
+	// T_aufgerufen_werden_0_ist_gar_nicht]
+	{" ueber crontab aufgerufen werden (0=gar nicht), anstatt ", " be called in crontab (0=not at all), instead of "},
+	// T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigte
+	{"alle Parameter werden abgefragt (darunter einige hier nicht gezeigte)","all parameters will be prompted (some of them not shown here)"},
+	// T_Fuege_ein
+	{"Füge ein: ","Inserting: "}, //ω
 	// T_verarbeitete_Nicht_PDF_Dateien
 	{"' verarbeitete Nicht-PDF-Dateien: ","' processed Non-PDF-Files: "},
 	// T_verarbeitete_PDF_Dateien
@@ -803,10 +958,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Der regulaere Ausdruck '","The regular expression '"},
 	// T_konnte_nicht_kompiliert_werden_Fehler
 	{"' konnte nicht kompiliert werden, Fehler: ","could not be compiled, error: "},
-	// Verbindung_zur_Datenbank_nicht_herstellbar
-	{"Verbindung zur Datenbank nicht herstellbar, fehnr: ","Connection to the database could not be established, errnr: "},
-	// T_Breche_ab
-	{". Breche ab.","Stopping."},
 	// T_Konnte_Verzeichnis
 	{"Konnte Verzeichnis ","Could not open the directory"},
 	// T_nicht_oeffnen
@@ -1044,8 +1195,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"status in letztem gescheitertem hylafax","status of the last failed hylafax"},
 	// T_capispooldateien_der_Capisuite
 	{"capiSpooldateien der Capisuite","capi spool files of capisuite"},
-	// T_Fehler_beim_Pruefen_von
-	{"Fehler beim Pruefen von: ","Error while examining: "},
 	// T_Name_des_Adressaten_aus_Dateiname
 	{"Name des Adressaten aus Dateiname","Name of the receiver from file name"},
 	// T_Datum_des_Losschickens
@@ -1157,21 +1306,9 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	// T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt
 	{"Trennstring <string> fuer mehrere Adressaten/Telefonnummern statt",
 		"separating string <string> for multiple addressees/tel'numbers, instead of"},
-	// T_verwendet_die_Datenbank_auf_Host_string_anstatt_auf
-	{"verwendet die Datenbank auf Host <string> anstatt auf","takes the database on host <string> instead of"},
-	// T_verwendet_fuer_MySQL_MariaDB_den_Benutzer_string_anstatt
-	{"verwendet fuer MySQL/MariaDB den Benutzer <string> anstatt","takes the user <string> for MySQL/MariaDB instead of"},
-	// T_verwendet_fuer_MySQL_MariaDB_das_Passwort_string
-	{"verwendet fuer MySQL/MariaDB das Passwort <string>","takes the password <string> for MySQL/MariaDB"},
-	// T_verwendet_die_Datenbank_string_anstatt
-	{"verwendet die Datenbank <string> anstatt","uses the database <string> instead of"},
 	// T_Version_1_2_oder_3_Dateisuche_anstatt
 	{"Version 1,2 oder 3 -Dateisuche (variable Performanceunterschiede) anstatt",
 		"version 1,2 or 3 of filefind (variable performance differences instead of"},
-	// T_Bildschirmausgabe_mit_SQL_Befehlen
-	{"Bildschirmausgabe mit SQL-Befehlen","screen output with SQL commands"},
-	// T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigte
-	{"alle Parameter werden abgefragt (darunter einige hier nicht gezeigte)","all parameters will be prompted (some of them not shown here)"},
 	// T_ein_Fax_nach_Rueckfrage_loeschen
 	{"ein Fax nach Rueckfrage loeschen","delete a fax with query"},
 	// T_Eintraege_aus
@@ -1195,10 +1332,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"listet Datensaetze aus `","lists entries from `"},
 	// T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt
 	{"Zahl der aufzulistenden Datensaetze = <zahl> statt","No. of listed entries = <no> instead of"},
-	// 	T_Erklaerung_haeufiger_Optionen
-	{"Erklärung häufiger Optionen","Explanation of frequent options"},
-	// T_Erklaerung_aller_Optionen
-	{"Erklärung aller Optionen","Explanation of all options"},
 	// T_Faxt_Dateien_aus_Verzeichnis_pfad_die
 	{"Faxt Dateien aus Verzeichns <pfad>, die '","Faxes files from directory <path>, which contain '"},
 	// T_faxnr_enthalten_und_durch_soffice_in_pdf_konvertierbar_sind_und_traegt_sie
@@ -1226,18 +1359,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Buchstabenfolge vor erstem Adressaten","Letter-sequence before the first addressee"},
 	// T_Buchstabenfolge_vor_weiterem_Adressaten_sowie_weiterer_Faxnummer,
 	{"Buchstabenfolge vor weiterem Adressaten sowie weiterer Faxnummer","Letter-sequence before further addressee or fax number"},
-	// T_Host_fuer_MySQL_MariaDB_Datenbank
-	{"Host fuer MySQL/MariaDB-Datenbank","host for mysql/mariadb-database"},
-	// T_Benutzer_fuer_MySQL_MariaDB,
-	{"Benutzer fuer MySQL/MariaDB:","user for mysql/mariadb:"},
-	// T_Passwort_fuer_MySQL_MariaDB,
-	{"Passwort fuer MySQL/MariaDB (Achtung: nur schwach verschluesselt!)","password for mysql/mariadb (caution: only weakly encrypted!)"},
-	// T_Datenbankname_fuer_MySQL_MariaDB_auf
-	{"Datenbankname fuer MySQL/MariaDB auf '","database name for mysql/mariabd on '"},
-	// T_Logverzeichnis
-	{"Logverzeichnis","log directory"},
-	// T_Logdateiname
-	{"Logdateiname","log file name"},
 	//// T_Zahl_der_SQL_Befehle_fuer_Namenszuordnung
 	////  KLA "Zahl der SQL-Befehle fuer Namenszuordnung:","No.of SQL-commands for assignment of fax names" KLZ,
 	// T_SQL_Befehl_Nr,
@@ -1275,22 +1396,12 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Muster ","Pattern "},
 	// T_Ziel,
 	{"Ziel ","Target "},
-	// T_Logpfad,
-	{"Logpfad: '","Log path: '"},
-	// T_oblog,
-	{"' (oblog: ","' (with logging: "},
-	// T_Oblog,
-	{"Oblog (ausführliche Protokollierung): ","Log (detailled logging): "},
 	// T_Fax_von
 	{"Fax von ","Fax from "},
 	// T_an,
 	{" an "," to "},
 	// T_vom
 	{" vom "," at "},
-	// T_Alle_wieviel_Minuten_soll
-	{"alle wieviel Minuten soll ","every how many minutes shall "},
-	// T_aufgerufen_werden_0_ist_gar_nicht]
-	{" ueber crontab aufgerufen werden (0=gar nicht), anstatt ", " be called in crontab (0=not at all), instead of "},
 	// T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht
 	{"Kann Capisuite nicht installieren, verwende Capi nicht","Can't install capisuite, not using capi"},
 	// T_wird_verwendet
@@ -1311,10 +1422,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"pruefmodem()","checkmodem()"},
 	// T_setzhylavz
 	{"setzhylavz()","sethyladir()"},
-	// T_rueckfragen
-	{"rueckfragen()","callbacks()"},
-	// T_autokonfschreib
-	{"autokonfschreib()","autoconfwrite()"},
 	// T_konfcapi
 	{"konfcapi()","confcapi()"},
 	// T_clieskonf
@@ -1418,8 +1525,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"       Zahl der empfangenen Faxe: ","       Number of received faxes: "},
 	// T_avon
 	{" von "," from "},
-	// T_nicht_erkannt
-	{" nicht erkannt!"," not identified!"},
 	// T_Fehlermeldung_beim_Loeschversuch_eines_Hyla_Faxes_mit_faxrm
 	{"Fehlermeldung beim Loeschversuch eines Hyla-Faxes mit `faxrm ","Error while trying to delete a hyla-fax with `faxrm "},
 	// T_Zahl_der_nicht_geloeschten_Dateien
@@ -1452,8 +1557,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"(kein Faxprogramm verfuegbar)","(no fax program available)"},
 	// T_Capisuite_gestartet
 	{"Capisuite gestartet.","capisuite started."},
-	// T_schreibe_Konfiguration
-	{"schreibe Konfiguration!","writing configuration!"},
 	// T_Dateien
 	{"Dateien ","Files "},
 	// T_nicht_verarbeitbar_Verschiebe_sie_nach
@@ -1475,16 +1578,10 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Faxempfang","FaxArrival"},
 	// T_Gefaxt
 	{"Gefaxt","Faxed"},
-	// T_zu_schreiben
-	{"zu schreiben: ","must write: "},
 	// T_Zahl_der_Verzeichnisse_fuer_erfolgreich_verschickte_Faxe
 	{"Zahl der Verzeichnisse fuer erfolgreich verschickte Faxe","No of directories for successfully sent faxes"},
 	// T_zufaxenvz
 	{"zufaxenvz: '","outgoing dir: '"},
-	// T_VorgbSpeziell
-	{"VorgbSpeziell()","specificprefs()"},
-	// T_MusterVorgb
-	{"MusterVorgb()","sampleprefs()"},
 	// "Wollen Sie noch einen SQL-Befehl eingeben?"
 	{"Wollen Sie noch einen SQL-Befehl eingeben?","Do You want to enter another sql command?"},
 	// T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr
@@ -1542,8 +1639,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"hylafax-Verzeichnis: ","hylafax-directory: "},
 	// T_Bezeichnung_des_Anrufers
 	{"Bezeichnung des Anrufers","Labelling of the caller"},
-	// T_Zeigt_die_Programmversion_an
-	{"Zeigt die Programmversion an","shows the program version"},
 	// T_Fritzbox_verwenden
 	{"Fritzbox verwenden","use fritzbox"},
 	// T_Capisuite_verwenden 
@@ -1552,8 +1647,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Hylafax verwenden","use hylafax"},
 	// T_pruefcvz
 	{"pruefcvz()","checkcdirs()"},
-	// T_Konfigurations_u_Logdatei_bearbeiten_sehen
-	{"Konfigurations- u.Logdatei bearbeiten/sehen (beenden mit ':qa')","edit/view configuration and log file (finish with ':qa')"},
 	// T_Capisuite_Konfigurationdateien_bearbeiten
 	{"Capisuite-Konfigurationsdateien bearbeiten (beenden mit ':qa')","edit capisuite log files (finish with ':qa')"},
 	// T_Hylafax_Modem_Konfigurationsdatei_bearbeiten
@@ -1582,12 +1675,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"und","and"},
 	// T_liescapiconf
 	{"liescapiconf()","readcapiconf()"},
-	// T_VorgbAllg
-	{"VorgbAllg()","generalprefs()"},
 	// T_pruefisdn
 	{"T_pruefisdn()","checkisdn()"},
-	// T_keine_Rueckfragen_zB_aus_Cron
-	{"keine Rueckfragen, z.B. für Aufruf aus cron","no questions, e.g. for a call of " DPROG " within cron"},
 	// T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in
 	{"Gescheiterte Faxe werden hier gesammelt anstatt in","Failed Faxes are collected here and not in"}, 
 	// T_Muss_falsches_hylafax_loeschen
@@ -1698,8 +1787,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"' nach '","' to '"},
 	// T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen
 	{"' verjuengt. \nBitte den Rechner neu starten und dann mich nochmal aufrufen!","'. \nPlease restart the pc and then call me again!"},
-	// T_pruefDB
-	{"pruefDB(","checkDB("},
 	// T_Seiten
 	{" Seite(n)"," page(s)"},
 	// T_suchestr
@@ -1744,12 +1831,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Faxnr.","fax no."},
 	// T_Name_des_Adressaten_aus_Faxnummer_ermittelt
 	{"Name des Adressaten, aus Faxnummer ermittelt","Name of the receiver according to his fax number"},
-	// T_Aufrufintervall
-	{"; Aufrufintervall: ","; (cron) call interval: "},
-	// T_kein_Aufruf
-	{"kein cron-Aufruf","no cron call"},
-	// T_Minute
-	{" Minute"," minute"},
 	// T_loef
 	{"loef","delf"},
 	// T_uml_k
@@ -1774,10 +1855,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"evz","rdr"},
 	// T_empfvz_l
 	{"empfvz","receiveddir"},
-	// T_cm_k
-	{"cm","cm"},
-	// T_cronminuten_l
-	{"cronminuten","cronminutes"},
 	// T_fbox_k
 	{"fbox","fbox"},
 	// T_obfbox_l
@@ -1864,38 +1941,10 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"us","ands"},
 	// T_undstr_l,
 	{"undstr","andstr"},
-	// T_host_k
-	{"host","host"},
-	// T_host_l
-	{"host","host"},
-	// T_muser_k
-	{"muser","muser"},
-	// T_muser_l
-	{"muser","muser"},
-	// T_mpwd_k
-	{"mpwd","mpwd"},
-	// T_mpwd_l
-	{"mpwd","mpwd"},
-	// T_db_k
-	{"db","db"},
-	// T_datenbank_l
-	{"datenbank","database"},
 	// 	T_find_k,
 	{"fd","fd"},
 	// T_find_l,
 	{"finde","find"},
-	// T_sqlv_k
-	{"sqlw","sqlv"},
-	// T_sql_verbose_l
-	{"sql-wortreich","sql-verbose"},
-	// T_rf_k
-	{"rf","ia"},
-	// T_rueckfragen_l
-	{"rueckfragen","interactive"},
-	// T_krf_k
-	{"krf","noia"},
-	// T_keinerueckfragen_l
-	{"keinerueckfragen","nointeraction"},
 	// T_loew
 	{"loew","delo"},
 	// T_loeschewaise_l
@@ -1944,14 +1993,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"n","n"},
 	// T_dszahl_l
 	{"dszahl","reccount"},
-	// T_info_k
-	{"info","info"},
-	// T_version_l
-	{"version","version"},
-	// T_vi_k
-	{"vi","vi"},
-	// T_vi_l
-	{"vi","vi"},
 	// T_vc_k
 	{"vc","vc"},
 	// T_vc_l
@@ -1964,18 +2005,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"vs","vs"},
 	// T_vs_l
 	{"vs","vs"},
-	// T_h_k
-	{"h","h"},
-	// T_lh_k
-	{"lh","lh"},
-	// T_hilfe_l
-	{"hilfe","help"},
-	// T_lhilfe_l
-	{"langhilfe","longhelp"},
-	// T_fgz_k
-	{"?","?"},
-	// T_fgz_l,
-	{"??","??"},
 	// T_passt_nicht_zu
 	{" passt nicht zu "," doesn't fit for "},
 	// T_vor
@@ -2094,18 +2123,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Seiten","pages"},
 	// T_Zustand_der_Dienste
 	{"Zustand der Dienste: ","State of the services: "},
-	// 	T_autoupd_k,
-	{"autoakt","autoupd"},
-	// 	T_autoupd_l,
-	{"autoaktual","autoupdate"},
-	// T_Programm_automatisch_aktualisieren
-	{"Programm automatisch aktualisieren","Update program automatically"},
-	// T_Sollen_neue_Programmversionen_von
-	{"Sollen neue Programmversionen von ","Shall new versions of "},
-	// T_automatisch_installiert_werden
-	{" automatisch installiert werden?"," be automatically installed?"},
-	// T_zeigvers
-	{"zeigvers","showvers"},
 	// T_Installiere_ocrmypdf
 	{"Installiere ocrmypdf ...","Installing ocrmypdf ..."},
 	// T_Ergebnis_nach
@@ -2127,26 +2144,71 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	// T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox
 	{"Mit CIFS gemountetes Verzeichnis mit ankommenden Faxen der Fritzbox",
 		"Via CIFS mounted directory with received faxes at the fritzbox"},
-	{"",""}
+ {"",""} //α
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
 class TxB Tx((const char* const* const* const*)DPROG_T);
-
+uchar ZDB=0; // fuer Zusatz-Debugging (SQL): ZDB 1, sonst: 0
+const char *logdt="/var/log/" DPROG "vorgabe.log";// darauf wird in kons.h verwiesen; muss dann auf lgp zeigen
 const string& pwk = "8A490qdmjsaop4a89d0qÃ9m0943Ã09Ãax"; // fuer Antlitzaenderung
 
-extern class lsyscl lsys;
-extern class cuscl cus;
-
 using namespace std;
+
 #ifdef mitpostgres 
 const DBSTyp myDBS=Postgres;
 #else // mitpostgre
 const DBSTyp myDBS=MySQL;
 #endif // mitpostgres else
 
-uchar ZDB=0; // fuer Zusatz-Debugging (SQL): ZDB 1, sonst: 0
+
+hhcl::hhcl(const int argc, const char *const *const argv):hcl(argc,argv)
+{
+//	saufr[1]=s1+".*"+ersetzAllezu(s2,"*","\\*")+".*";//Befehl zum Abfragen der Cronminuten aus aktuellem Cron-Script
+//	zsaufr[1]=ersetzAllezu(saufr[1],"/","\\/");
+	/*// time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff; */
+	//  akonfdt.clear();
+} // hhcl::hhcl
+
+hhcl::~hhcl()
+{ //ω
+	//	if (My) {/*delete My; */My=0;}
+	if (sfaxq) {delete sfaxq; sfaxq=0;}
+	if (shfaxd) {delete shfaxd; shfaxd=0;}
+	if (sfaxgetty) {delete sfaxgetty; sfaxgetty=0;}
+	if (scapis) {delete scapis; scapis=0;}
+	if (shylafaxd) {delete shylafaxd; shylafaxd=0;}
+} // hhcl::~hhcl  //α
+
+// wird aufgerufen in: rueckfragen, als virtualle Funktion von hcl::gcl0()
+void hhcl::lgnzuw()
+{
+ hcl::lgnzuw();
+ Txd.lgn=Tx.lgn=Txk.lgn;
+} // void hhcl::lgnzuw
+
+// wird aufgerufen in: main
+void hhcl::getcommandl0()
+{
+ if (obverb) {
+  cout<<violett<<"getcommandl0()"<<schwarz<<endl;
+  obverb=0;
+ } // 	if (obverb)
+ // Reihenfolge muss koordiniert werden mit lieskonfein und rueckfragen
+ const char* const sarr[]={"language","logvz","logdname","oblog","cronminut","autoupd","host","muser","mpwd","datenbank","tabelle" //ω
+	 ,"findvers","obfbox","fbankvz","obcapi","obhyla","hylazuerst","maxcapiv","maxhylav","cuser", "countrycode","citycode","msn",
+		 "LongDistancePrefix","InternationalPrefix","LocalIdentifier", "cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl","maxdials",
+		"gleichziel","ocri","ocra","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
+		"anstr","undstr","obmodem","obfcard","sqlz","musterzahl"
+ }; //α
+ agcnfA.initd(sarr,sizeof sarr/sizeof *sarr);
+ gcl0(); //ω
+	if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
+} // void hhcl::getcommandl0(int argc, char** argv) //α
+
+extern class lsyscl lsys;
+extern class cuscl cus;
+
 const char sep = 9; // geht auch: "[[:blank:]]"
-const char *logdt="/var/log/" DPROG "vorgabe.log";// darauf wird in kons.h verwiesen; muss dann auf lgp zeigen
 
 pidvec pidv, pidw;
 // vector<pid_t> pidv; // Sammelvektor fuer alles, was vom Hauptstrang abzweigt
@@ -2541,14 +2603,6 @@ void fsfcl::scheitere(const string& wvz, const string& ngvz, const string& cuser
 	} // for(unsigned iru=0;iru<2;iru++) 
 } // fsfcl::scheitere(const string& wvz, const string ngvz, const int obverb, const int oblog)
 
-hhcl::hhcl(const int argc, const char *const *const argv):hcl(argc,argv)
-{
-//	saufr[1]=s1+".*"+ersetzAllezu(s2,"*","\\*")+".*";//Befehl zum Abfragen der Cronminuten aus aktuellem Cron-Script
-//	zsaufr[1]=ersetzAllezu(saufr[1],"/","\\/");
-	/*// time_t t=time(0); struct tm lt={0}; localtime_r(&t,&lt); gmtoff=lt.tm_gmtoff; */
-	//  akonfdt.clear();
-} // hhcl::hhcl()
-
 // wird aufgerufen in: main
 void hhcl::pruefggfmehrfach()
 {
@@ -2557,16 +2611,6 @@ void hhcl::pruefggfmehrfach()
 		pruefmehrfach(meinname,nrzf);
 	}
 } // void hhcl::pruefggfmehrfach()
-
-hhcl::~hhcl()
-{
-	//	if (My) {/*delete My; */My=0;}
-	if (sfaxq) {delete sfaxq; sfaxq=0;}
-	if (shfaxd) {delete shfaxd; shfaxd=0;}
-	if (sfaxgetty) {delete sfaxgetty; sfaxgetty=0;}
-	if (scapis) {delete scapis; scapis=0;}
-	if (shylafaxd) {delete shylafaxd; shylafaxd=0;}
-} // hhcl::~hhcl()
 
 // wird aufgerufen in: bereinigevz
 string hhcl::getzielvz(const string& qdatei)
@@ -2685,31 +2729,6 @@ void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 	} //   for (uchar tr=0;tr<2;tr++)
 	Log(violetts+Txk[T_Ende]+Tx[T_WVZinDatenbank]+schwarz);
 } // WVZinDatenbank
-
-// in rueckfragen sowie als virtuelle Funktion von hcl::gcl0() aufgerufen
-void hhcl::lgnzuw()
-{
-	hcl::lgnzuw();
-	Txd.lgn=Tx.lgn=Txk.lgn;
-} // void hhcl::lgnzuw()
-
-// wird aufgerufen in: main
-void hhcl::getcommandl0()
-{
-	if (obverb) {
-		cout<<violett<<"getCommandl0()"<<schwarz<<endl;
-		obverb=0;
-	} // 	if (obverb)
-	// Reihenfolge muss koordiniert werden mit lieskonfein und rueckfragen
-	const char* const sarr[]={"language","host","muser","mpwd","datenbank","findvers","obfbox","fbankvz","obcapi","obhyla",
-		"hylazuerst","maxcapiv","maxhylav","cuser", "countrycode","citycode","msn","LongDistancePrefix","InternationalPrefix","LocalIdentifier",
-		"cFaxUeberschrift","cklingelzahl","hmodem","hklingelzahl","maxdials",
-		"gleichziel","ocri","ocra","zufaxenvz","wartevz","nichtgefaxtvz","empfvz","anfaxstr","ancfaxstr","anhfaxstr",
-		"anstr","undstr","cronminut","autoupd","logvz","logdname","oblog","obmodem","obfcard","sqlz","musterzahl"};
-	agcnfA.initd(sarr,sizeof sarr/sizeof *sarr);
-	gcl0();
-	if (!obcapi) hylazuerst=1; else if (!obhyla) hylazuerst=0;
-} // void hhcl::getcommandl0(int argc, char** argv)
 
 // aus: coreutils
 int fd_reopen(int desired_fd, char const *file, int flags, mode_t mode)
@@ -3319,6 +3338,8 @@ void hhcl::lieskonfein(const string& dprog)
 	if (logdneu) agcnfA[lfd].setze(&logdname);
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&logdname); else rzf=1; lfd++;
 	if (agcnfA[lfd].gelesen) agcnfA[lfd].hole(&oblog); else rzf=1; lfd++;
+	caus<<"ciycode: "<<citycode<<endl;
+	caus<<"zufaxenvz: "<<zufaxenvz<<endl;
 	// obmodem
 	lfd++;
 	// obfcard
