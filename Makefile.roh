@@ -35,6 +35,7 @@
 # "make verschieb" => wie transfer, mit ../<DPROG>rein als Zielverzeichnis
 # "make vsneu" => wie verschieb, löscht vorher das als Zielverzeichnis (geht nur, wenn das github-Repository vorher gelöscht ist)
 # "make ruf" => ruft das Programm auf
+# "make rufv" => ruft das Programm mit -v auf
 # "make uninstall" => deinstalliert alles, frägt noch manchmal rücke
 # "make allesweg" => deinstalliert alles, beantwortet Rückfragen mit 'y'
 # "make neuproj" => kopiert Dateien für neues Projekt in Verzeichnis fuer neues Projekt
@@ -229,6 +230,14 @@ neu: anzeig distclean weiter
 .PHONY: weiter
 weiter: compiler $(EXEC) $(GZS) 
 
+
+define setz_gitv
+	 @D=$(1)/.git/config; GITV=$$([ -f $$D ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' $$D);\
+	 sed -i 's/^\(\[ -z .* \]&& GITV=\).*;/\1'$$GITV';/g' $(1)/install.sh;\
+	 [ -z "$$GITV" ]&& GITV=$(EXEC);\
+	 [ "$$GITV" = "$(sed 's/"//g' $(1)/gitvdt)" ]|| echo \"$$GITV\">$(1)/gitvdt;:;
+endef
+
 # davor:
 # git clone ssh://git@github.com/<user>/<reponame>.git
 # git clone ssh://git@github.com/libelle17/autofax.git # https://www.github.com/libelle17/autofax
@@ -252,10 +261,17 @@ git: README.md
 	@grep remote\ \"origin\"] .git/config >/dev/null 2>&1||git remote add origin https://github.com/$$(sed 's/"//g' gitvdt)/$(DPROG).git
 	@git push -u origin master
 
+.PHONY: giterlaub
 giterlaub:
 	@git config credential.helper store	
 	@git config --global credential.helper 'cache --timeout=36000'
 
+.PHONY: pull
+pull:
+	@git pull
+	@sh configure
+
+.PHONY: anzeig
 anzeig:
 # 'echo -e' geht nicht z.B. in ubuntu
 	@[ "$(DPROG)" ]||{ printf "Datei/File %b'vars'%b fehlerhaft/faulty, bitte vorher/please call %b'./install.sh'%b aufrufen/before!\n" \
@@ -268,6 +284,7 @@ anzeig:
 	@printf " Target path for/Zielpfad fuer '%bmake install%b': %b%s%b\n" $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset) >$(BA)
 	-@rm -f fehler.txt $(KF)
 
+.PHONY: debug debugnew debugneu
 debug debugnew debugneu: DEBUG=-g 
 debug: all
 debugneu debugnew: neu
@@ -275,7 +292,7 @@ debugneu debugnew: neu
 $(EXEC): $(OBJ)
 	-@printf " linking/verlinke %s to/zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset) >$(BA)
 	-@df --output=ipcent / |tail -n1|grep - && $(SUDC)pkill postdrop;:
-	-@man>$(KR);[ $$? -gt 1 ]&&{ ./configure inst _ man verbose;}||:;
+	-@man>$(KR);[ $$? -gt 1 ]&&{ sh configure inst _ man verbose;}||:;
 	-@printf " (Version: %b%s%s%b\n " $(blau) "$$(cat versdt)" ")" $(reset) >$(BA)
 	$(CC) $^ $(DEBUG)-o $@ $(LDFLAGS)
 	-@ls .d/*.Td >$(KR) &&{ for datei in .d/*.Td; do mv -f $${datei} $${datei%.Td}.d; done;};:
@@ -309,19 +326,19 @@ $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
 endif
 	@[ "$(GCCOK)" = "1" ]||{ \
 	[ "$(DISTR)" = "1" ]&&{ $(SUDC)add-apt-repository ppa:ubuntu-toolchain-r/test;$(SUDC)apt-get update;};:;\
-	{ printf "Installiere/Installing Compiler ...\n" >$(BA);./configure inst "$(CCInst)" "$(COMP)";:;};}
+	{ printf "Installiere/Installing Compiler ...\n" >$(BA);sh configure inst "$(CCInst)" "$(COMP)";:;};}
 	-@[ "$(libmac)" ]&&{ for r in 1 2;do [ $$r = 1 ]&&{ lc="$(libmcd)";:;}||lc="$(libmc1d)";\
 	[ -f /usr/include/mysql/mysql.h>$(KR) ]&& \
 	find $$(find /usr -maxdepth 1 -type d -name "lib*" $(KF)|sort -r) -regextype egrep -regex ".*libm(ysql|ariadb)client.so" -print -quit $(KF)|\
 	grep ''>$(KR)&& break;\
-	./configure inst _ "$$lc" verbose; done;}||:
-	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ ./configure inst _ "$(pgd)" verbose;$(slc);};
+	sh configure inst _ "$$lc" verbose; done;}||:
+	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ sh configure inst _ "$(pgd)" verbose;$(slc);};
 # 3.5.17: auch libtiff5 hat gefehlt
 	-@[ "$(LT)" ]&& for r in 1 2;do \
 	[ $$r = 1 ]&& LTakt="$(LT)" ||{ [ -z "$(LT5)" ]&&break;LTakt="$(LT5)";};\
 	find /usr/include /usr/local/include -name tiff.h -print -quit $(KF)|grep ''>$(KR)&&\
 	find /usr/lib64 /usr/lib /usr/local/lib64 /usr/local/lib -maxdepth 2 -type l -xtype f -name "libtiff.so" -print -quit $(KF)|grep ''>$(KR)&& break;\
-	./configure inst _ "$$LTakt" verbose;\
+	sh configure inst _ "$$LTakt" verbose;\
 	done; :;
 #	P=tiff_copy;T=$$P.tar.gz;M=$$P-master;wget https://github.com/$(GITV)/$$P/archive/master.tar.gz -O $$T&&{ rm -rf $$P;tar xpvf $$T;} &&\
 	mv $$M $$P&& cd $$P&&{ sed -i.bak s'/(thandle_t) client_data.fd);/(thandle_t) \&client_data.fd);/' tools/fax2tiff.c;\
@@ -329,17 +346,16 @@ endif
 	bef="cd `pwd`;make uninstall;cd -;";grep -q $$bef $(UNF)||printf "$$bef\n">>$(UNF);\
 	$(SUDC)ldconfig;cd ..;};
 
-	-@[ "$(LACL)" ]&&{ [ -f /usr/include/sys/acl.h ]|| ./configure inst _ "$(LACL)" verbose;}||:
-	-@[ "$(LCURL)" ]&&{ [ -f /usr/include/curl/curl.h ]|| ./configure inst _ "$(LCURL)" verbose;}||:
-	-@[ "$(LBOOST)" ]&&{ $(SPR) $(LBOOST)>$(KR)|| ./configure inst _ "$(LBOOST)" verbose;}||:
-	-@[ "$(LBIO)" ]&&{ $(SPR) "$(LBIO)">$(KR)||./configure inst _ "$(LBIO)" verbose;}||:
-	-@[ "$(LBLO)" ]&&{ $(SPR) "$(LBLO)">$(KR)||./configure inst _ "$(LBLO)" verbose;}||:
-#//	-@[ -f /usr/include/boost/iostreams/device/mapped_file.hpp -o -f /usr/share/doc/libboost-dev ]|| ./configure inst _ "$(LBOOST)" verbose;
+	-@[ "$(LACL)" ]&&{ [ -f /usr/include/sys/acl.h ]|| sh configure inst _ "$(LACL)" verbose;}||:
+	-@[ "$(LCURL)" ]&&{ [ -f /usr/include/curl/curl.h ]|| sh configure inst _ "$(LCURL)" verbose;}||:
+	-@[ "$(LBOOST)" ]&&{ $(SPR) $(LBOOST)>$(KR)|| sh configure inst _ "$(LBOOST)" verbose;}||:
+	-@[ "$(LBIO)" ]&&{ $(SPR) "$(LBIO)">$(KR)||sh configure inst _ "$(LBIO)" verbose;}||:
+	-@[ "$(LBLO)" ]&&{ $(SPR) "$(LBLO)">$(KR)||sh configure inst _ "$(LBLO)" verbose;}||:
+#//	-@[ -f /usr/include/boost/iostreams/device/mapped_file.hpp -o -f /usr/share/doc/libboost-dev ]|| sh configure inst _ "$(LBOOST)" verbose;
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                                  \r" >$(BA)
 
-.PHONY: stumminst
-.PHONY: stumm
+.PHONY: stumm stumminst
 stumm stumminst: BA::=/dev/null
 stumm stumminst: BFA::=
 stumm stumminst: rot::=""
@@ -383,7 +399,7 @@ endef
 define priv_html
 	-@printf " erstelle/generating:%b$(1)%b\n" $(blau) $(reset)
 	-@groff -mandoc -Thtml -v >$(KR);EXC="$$$$?"; \
-	for p in $(PGROFF); do { [ $$$${EXC} -gt 1 ]|| ! which groff>$(KR)|| ! $(SPR) $$$$p>$(KR);}&&{ ./configure inst _ $$$$p verbose;}; done; :;
+	for p in $(PGROFF); do { [ $$$${EXC} -gt 1 ]|| ! which groff>$(KR)|| ! $(SPR) $$$$p>$(KR);}&&{ sh configure inst _ $$$$p verbose;}; done; :;
 	-@rm -f $(1).html
 	-@sed -e 's/²gitv²/$(GITV)/g;s/²DPROG²/$(DPROG)/g;'\
 	 -e 's/Ä/\&Auml;/g;s/Ö/\&Ouml;/g;s/Ü/\&Uuml;/g;s/ä/\&auml;/g;s/ö/\&ouml;/g;s/ü/\&uuml;/g;s/ß/\&szlig;/g;'\
@@ -395,6 +411,7 @@ define priv_html
 endef
 
 # Aufruf des Programms mit -sh, um die Optionen in den manpages zu aktualisieren
+# falls hier Berechtigungsfehler, dann z.B. home-Partion ohne exec
 define manges
 $(1).html: $(EXEC) $(1)
 	$(call priv_html, $(1))
@@ -402,7 +419,13 @@ $(1).gz: $(EXEC) $(1)
 	-@printf " aktualisiere/updating %b$(1)%b\n" $(blau) $(reset)
 	-@sed -i "s/\(Version \)[^\"]*/\1$$$$(cat versdt)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$$$(date +'%d.%m.%y')/" $(1)
 	-@Lang=$(shell echo $(1)|cut -d_ -f2|head -c1);\
-	 TMP=tmp_opt_$$$$Lang;./$(EXEC) -1lg $$$$Lang -sh|sed -e 's/^/.br\n/;s/\[[01];3.m/\\fB/g;s/\[0m/\\fR/g;'|sed ':a;N;$$$$!ba'>$$$$TMP; \
+		TMP=tmp_opt_$$$$Lang;chmod +x $(EXEC);\
+		EX="./$(EXEC) -1lg $$$$Lang -sh";\
+		W1="sed -e s/^/.br\n/;s/\\[[01]\\;3.m/\\\\fB/g;s/\\[0m/\\\\fR/g";\
+		W1a=$$$$(echo $$$$W1|sed -e "s/"`printf \\\\033`"/\(ESC\)/g;s/\\\\n/\\\\\\\\n/g");\
+		W2="sed :a;N;$$$$!ba";\
+		printf " rufe auf/calling: '%b$$$$EX |$$$$W1a |$$$$W2 >$$$$TMP%b'\n" $(blau) $(reset);\
+		$$$$EX|$$$$W1|$$$$W2>$$$$TMP; \
 	 nlinit=`echo 'nl="'; echo '"'`; eval "$$$$nlinit"; \
 	 von=".SH $$(OPN)"; bis=".SH $$(FKT)"; sed -i.bak "/$$$$von/,/$$$$bis/{/$$$$von/{n;p;r $$$$TMP$$$$nl};/$$$$bis/p;d}" $(1);
 	@sed 's/²gitv²/$(GITV)/g;s/²DPROG²/$(DPROG)/g;s/\\fB/\\fI/g' $(1)|gzip -c >$$@
@@ -480,6 +503,10 @@ vsneu: verschieb
 ruf:
 	@$(EXPFAD)/$(EXEC)
 
+.PHONY: rufv
+rufv:
+	@$(EXPFAD)/$(EXEC) -v
+
 .PHONY: version
 version: dovers
 .PHONY: dovers
@@ -549,45 +576,18 @@ dotrans:
 .PHONY: neuproj
 neuproj:
 	@Z=;while [ -z "$$Z" -o -d ../"$$Z" ]; do echo Programmname/program name?; read Z;done;mkdir -p ../"$$Z";cp -ai kons.cpp kons.h DB.cpp DB.h Makefile .exrc configure install.sh man_?? viall* ../"$$Z";\
+    sed -n "/\/\/α/,/\/\/ω/p;/VOMHAUPTCODE/i#include \"$$Z.h\"" "$(DPROG).cpp">"../$$Z/$$Z.cpp";\
+    sed -n "/\/\/α/,/\/\/ω/p;1i#define DPROG \"$$Z\"" "$(DPROG).h">"../$$Z/$$Z.h";\
+		M=man_de;K=KURZ;D=DEINST;[ -f $$M ]&&sed -n "1,/^\.SH $$K/p;/^\.SH $$K/,/^\.SH $$D/{/^\.SH $$K/d;/^\.SH /p};/^\.SH $$D/,\$${/^\.SH $$D/d;p}" $$M>../"$$Z"/$$M;\
+		M=man_en;K=SHORT;D=UNINST;[ -f $$M ]&&sed -n "1,/^\.SH $$K/p;/^\.SH $$K/,/^\.SH $$D/{/^\.SH $$K/d;/^\.SH /p};/^\.SH $$D/,\$${/^\.SH $$D/d;p}" $$M>../"$$Z"/$$M;\
 		cd ../"$$Z";\
 		echo 0.1>versdt; touch entwickeln; echo $$Z>pname;\
 		L="\"/var/log/\" DPROG \"vorgabe.log\"";\
-		printf "#include \"kons.h\"\\n#include \"DB.h\"\\n#define VOMHAUPTCODE\\n#include \"$$Z.h\"\\n\\n">"$$Z".cpp;\
-		printf "enum T_\\n{\\n T_zu_schreiben,\\n T_VorgbAllg,\\n T_VorgbSpeziell,\\n T_MusterVorgb,\\n T_rueckfragen,\\n T_autokonfschreib,\\n T_MAX\\n}; // enum T_\\n\\n">>"$$Z".cpp;\
-		printf "char const *DPROG_T[T_MAX+1][SprachZahl]={\\n // T_zu_schreiben\\n {\"zu schreiben: \",\"must write: \"},\\n // T_VorgbAllg\\n {\"VorgbAllg()\",\"generalprefs()\"},\\n // T_VorgbSpeziell\\n {\"VorgbSpeziell()\",\"specialprefs()\"},\\n // T_MusterVorgb\\n {\"MusterVorgb()\",\"sampleprefs\"},\\n // T_rueckfragen\\n {\"rueckfragen()\",\"callbacks()\"},\\n // T_autokonfschreib\\n {\"autokonfschreib()\",\"autoconfwrite()\"},\\n {\"\",\"\"}\\n}; // char const *DPROG_T[T_MAX+1][SprachZahl]=\\n\\nclass TxB Tx((const char* const* const* const*)DPROG_T);\\n\\n">>"$$Z".cpp;\
-		printf "uchar ZDB=0; // fuer Zusatz-Debugging (SQL): ZDB 1, sonst: 0\\nconst char *logdt=$$L;//darauf wird in kons.h verwiesen; muss dann auf lgp zeigen;\\n\\nusing namespace std;\\n\\n">>"$$Z".cpp;\
-		printf "hhcl::hhcl(const int argc, const char *const *const argv):hcl(argc,argv)\\n{\\n} // hhcl::hhcl\\n\\nhhcl::~hhcl()\\n{\\n} // hhcl::~hhcl\\n\\n">>"$$Z".cpp;\
-		printf "// wird aufgerufen in: rueckfragen, als virtualle Funktion von hcl::gcl0()\\n">>"$$Z".cpp;\
-		printf "void hhcl::lgnzuw()\\n{\\n hcl::lgnzuw();\\n Txd.lgn=Tx.lgn=Txk.lgn;\\n} // void hhcl::lgnzuw\\n\\n">>"$$Z".cpp;\
-		printf "// wird aufgerufen in: main\\n">>"$$Z".cpp;\
-		printf "void hhcl::getcommandl0()\\n{\\n if (obverb) {\\n  cout<<violett<<\"getcommandl0()\"<<schwarz<<endl;\\n  obverb=0;\\n }\\n // Reihenfolge muss koordiniert werden mit lieskonfein und rueckfragen\\n const char* const sarr[]={\"language\"};\\n agcnfA.initd(sarr,sizeof sarr/sizeof *sarr);\\n gcl0();\\n} // getcommandl0\\n\\n">>"$$Z".cpp;\
-		printf "void hhcl::VorgbAllg()\\n{\\n Log(violetts+Tx[T_VorgbAllg]+schwarz);\\n} // void hhcl::VorgbAllg\\n\\n">>"$$Z".cpp;\
-		printf "void hhcl::VorgbSpeziell()\\n{\\n Log(violetts+Tx[T_VorgbSpeziell]+schwarz);\\n MusterVorgb();\\n} // void hhcl::VorgbSpeziell\\n\\n">>"$$Z".cpp;\
-		printf "void hhcl::MusterVorgb()\\n{\\n Log(violetts+Tx[T_MusterVorgb]+schwarz);\\n} // void hhcl::MusterVorgb\\n\\n">>"$$Z".cpp;\
-		printf "// wird aufgerufen in: main\\n">>"$$Z".cpp;\
-		printf "void hhcl::lieskonfein()\\n{\\n hcl::lieskonfein();\\n lfd++;\\n setzlog();\\n if (nrzf) rzf=0;\\n} // void hhcl::lieskonfein\\n\\n">>"$$Z".cpp;\
-		printf "//wird aufgerufen in: main\\nint hhcl::getcommandline()\\n{\\n Log(violetts+\"getcommandline()\"+schwarz);\\n return 0;\\n} // int hhcl::getcommandline\\n\\n">>"$$Z".cpp;\
-		printf "// wird aufgerufen in: main\\n">>"$$Z".cpp;\
-		printf "void hhcl::rueckfragen()\\n{\\n Log(violetts+Tx[T_rueckfragen]+schwarz);\\n if (rzf) {\\n  int lfd=-1;\\n  const char *const locale = setlocale(LC_CTYPE,\"\");\\n  if (langu.empty()) if (locale) if (strchr(\"defi\",locale[0])) langu=locale[0];\\n  vector<string> sprachen={\"e\",\"d\"/*,\"f\",\"i\"*/};\n  if (agcnfA[++lfd].wert.empty()||rzf) {\\n   langu=Tippstrs(sprachstr.c_str()/*\"Language/Sprache/Lingue/Lingua\"*/,&sprachen,&langu);\\n   lgnzuw();\\n   agcnfA[lfd].setze(&langu);\\n  } // if (agcnfA\\n } // if (rzf)\\n} // void hhcl::rueckfragen()\\n\\n">>"$$Z".cpp;\
-		printf "// wird aufgerufen in: main\\n">>"$$Z".cpp;\
-		printf "void hhcl::autokonfschreib()\\n{\\n Log(violetts+Tx[T_autokonfschreib]+schwarz+\", \"+Tx[T_zu_schreiben]+((rzf||obkschreib)?Txk[T_ja]:Txk[T_nein]));\\n if (rzf||obkschreib) {\\n } // if (rzf||obkschreib)\\n} // void hhcl::autokonfschreib\\n\\n">>"$$Z".cpp;\
-		printf "// wird aufgerufen in: main\\n">>"$$Z".cpp;\
-		printf "void hhcl::zeigueberschrift()\\n{\\n char buf[20]; snprintf(buf,sizeof buf,\"%%.5f\",versnr);\\n ::Log(schwarzs+Txk[T_Programm]+blau+mpfad+schwarz+\", V: \"+blau+buf+schwarz,1,1);\\n} // void hhcl::zeigueberschrift\\n\\n\\n">>"$$Z".cpp;\
-		printf "int main(int argc,char** argv)\\n{\\n hhcl hhi(argc,argv); // hiesige Hauptinstanz\\n /*//\\n if (argc>1) {\\n } // (argc>1)\\n */\\n hhi.getcommandl0(); // anfangs entscheidende Kommandozeilenparameter abfragen\\n hhi.VorgbAllg();\\n if (hhi.obhilfe==3) { // Standardausgabe gewaehrleisten\\n  hhi.MusterVorgb();\\n } else {\\n  hhi.VorgbSpeziell(); // die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion \"void hhcl::VorgbSpeziell()\" ueberladbar sind\\n  hhi.lieskonfein();\\n } // if (hhi.obhilfe==3)\\n hhi.lieszaehlerein(&hhi.aufrufe,&hhi.tagesaufr,&hhi.monatsaufr,&hhi.laufrtag);\\n\\n if (hhi.getcommandline())\\n  exit(8);\\n if (hhi.obvi) hhi.dovi();\\n if (hhi.zeigvers) {\\n   hhi.zeigversion();\\n } // if (hhi.zeigvers)\\n hhi.autokonfschreib();\\n hhi.schlussanzeige();\\n return 0;\\n} // int main\\n">>"$$Z".cpp;>>"$$Z".cpp;\
-	\
-	printf "#define DPROG \"$$Z\"\\nclass hhcl:public hcl\\n{\\n private:\\n public:\\n  uchar obvi=0; // ob Konfigurationsdatei editiert werden soll\\n private:\\n  void lgnzuw();\\n public:\\n  hhcl(const int argc, const char *const *const argv);\\n  ~hhcl();\\n void getcommandl0();\\n void VorgbAllg();\\n void VorgbSpeziell()\\n#ifdef VOMHAUPTCODE\\n __attribute__((weak)) // implementationsspezifische Vorgaben, Modul vgb.cpp)\\n#endif\\n ;\\n void MusterVorgb();\\n void lieskonfein();\\n int getcommandline();\\n void rueckfragen();\\n void autokonfschreib();\\n void zeigueberschrift();\\n}; // class hhcl\\n">"$$Z".h;\
 		sh configure;\
+		sed -i '/\$DTN [^'\'']/s/ +.* -pNu/ -pNu/' viall;\
 		sed -i.bak '/\$DTN [^'\'']/s/\$DTN /\$DTN +'\''tabfirst|tab sview ..\/$(DPROG)\/$(DPROG).cpp|tabnext|tab sview ..\/$(DPROG)\/$(DPROG).h|tabfirst'\'' /' viall;\
 		sh viall;\
 		echo Weiter mit/Go on with: \"cd ../"$$Z"\";
 
-
-
-define setz_gitv
-	 @D=$(1)/.git/config; GITV=$$([ -f $$D ]&&sed -n '/ *url =.*com/{s/.*com\/\([^/]*\).*/\1/p}' $$D);\
-	 sed -i 's/^\(\[ -z .* \]&& GITV=\).*;/\1'$$GITV';/g' $(1)/install.sh;\
-	 [ -z "$$GITV" ]&& GITV=$(EXEC);\
-	 [ "$$GITV" = "$(sed 's/"//g' $(1)/gitvdt)" ]|| echo \"$$GITV\">$(1)/gitvdt;:;
-endef
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
