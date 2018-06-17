@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "17.06.18" "Version 0.47003" "\fB²DPROG²\fR man page"
+.TH man 1 "17.06.18" "Version 0.47001" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -67,7 +67,7 @@ Depending on operating system, accessability and preferences the users thus coul
 .SH OPTIONS 
  '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR' shows the important command line options and '\fB²DPROG² -lh\fR' all of them. Some options (e.g. the sql commands for finding an addressee from the fax number) cannot be set via the command line, but only via the configuration file, which can be edited directly by '\fB²DPROG² -vi\fR' or interactively by '\fB²DPROG² -rf\fR'.
 .br
-\fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.47003 \fRVerwende: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
+\fRProgramm: \fB/root/autofax2/autofax2\fR, V: \fB0.47001 \fRVerwende: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
 .br
 \fBOptions which are not saved (current value in parentheses): \fR
 .br
@@ -85,7 +85,7 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fB -rod, --reorderdir\fR: Examine files in waiting,failed a.faxed directory against the tables `\fBouta\fR` and put them to order (\fB0\fR)
 .br
-\fB -st, --stop\fR: stop autofax (\fB0\fR)
+\fB -st, --stop\fR: stop autofax2 (\fB0\fR)
 .br
 \fB -listo, --listoutg\fR: lists entries from `\fBouta\fR` with success flag (\fB0\fR)
 .br
@@ -117,7 +117,7 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fB -vi, --vi\fR: edit/view configuration file , log file etc. (finish with ':qa') (\fB0\fR)
 .br
-\fB -vs, --vs\fR: edit/view source files in \fB/root/autofax\fR(finish with ':qa') (\fB0\fR)
+\fB -vs, --vs\fR: edit/view source files in \fB/home/schade/autofax2\fR(finish with ':qa') (\fB0\fR)
 .br
 \fB -ia, --interactive\fR: all parameters will be prompted (some of them not shown here) (\fB0\fR)
 .br
@@ -127,13 +127,13 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fBOptions to be saved in the configuration file: (preced. '1'=don't save, 'no'=contrary, e.g. '-noocra','-1noocri'):\fR
 .br
-\fB -tdr, --tofaxdir <path>\fR: faxes the files from <path> instead of ('\fB/var/autofax/tobefaxed\fR')
+\fB -tdr, --tofaxdir <path>\fR: faxes the files from <path> instead of ('\fB/var/autofax2/tobefaxed\fR')
 .br
-\fB -wdr, --waitdir <path>\fR: files are waiting in <path> instead of ('\fB/var/autofax/waitingfaxes\fR')
+\fB -wdr, --waitdir <path>\fR: files are waiting in <path> instead of ('\fB/var/autofax2/waitingfaxes\fR')
 .br
-\fB -ndr, --notfaxeddir <path>\fR: Failed Faxes are collected here and not in ('\fB/var/autofax/notfaxed\fR')
+\fB -ndr, --notfaxeddir <path>\fR: Failed Faxes are collected here and not in ('\fB/var/autofax2/notfaxed\fR')
 .br
-\fB -rdr, --receiveddir <path>\fR: directory for recieved faxes ('\fB/var/autofax/recvdir\fR')
+\fB -rdr, --receiveddir <path>\fR: directory for recieved faxes ('\fB/var/autofax2/recvdir\fR')
 .br
 \fB -fbox, --takefbox <zahl>\fR: use fritzbox\fB or not\fR (\fB1\fR)
 .br
@@ -185,17 +185,17 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fB -mpwd, --mpwd <string>\fR: takes the password <string> for MySQL/MariaDB
 .br
-\fB -db, --database <string>\fR: uses the database <string> instead of ('\fBautofax\fR')
+\fB -db, --database <string>\fR: uses the database <string> instead of ('\fBautofax2\fR')
 .br
 \fB -lg, --language <string>\fR: Language/Sprache/Lingue/Lingua [\fBd\fReutsch,\fBe\fRnglisch] ('\fBe\fR')
 .br
 \fB -ldr, --logdir <path>\fR: choses <path> as log directory, currently ('\fB/var/log\fR')
 .br
-\fB -lf, --logfilename <string>\fR: log file <string> (in path '\fB/var/log\fR') will be used instead of ('\fBautofax.log\fR')
+\fB -lf, --logfilename <string>\fR: log file <string> (in path '\fB/var/log\fR') will be used instead of ('\fBautofax2.log\fR')
 .br
-\fB -l, --log <zahl>\fR: put detailed logs in file '\fB/var/log/autofax.log\fR' (otherwise shorter) (\fB0\fR)
+\fB -l, --log <zahl>\fR: put detailed logs in file '\fB/var/log/autofax2.log\fR' (otherwise shorter) (\fB0\fR)
 .br
-\fB -cm, --cronminutes <string>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  ('\fB0\fR')
+\fB -cm, --cronminutes <string>\fR: every how many minutes shall \fBautofax2\fR be called in crontab (0=not at all), instead of  ('\fB0\fR')
 .br
 \fB -autoupd, --autoupdate <zahl>\fR: Update program automatically (\fB1\fR)
 .SH FUNCTIONALITY

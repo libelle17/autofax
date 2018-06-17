@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.47003) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47004) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -177,7 +177,7 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47003</b>
+Programm: <b>/root/autofax2/autofax2</b>, V: <b>0.47001</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
@@ -201,7 +201,7 @@ corrected (<b>0</b>) <b><br>
 a.faxed directory against the tables
 &lsquo;<b>outa</b>&lsquo; and put them to order (<b>0</b>)
 <b><br>
--st, --stop</b>: stop autofax (<b>0</b>) <b><br>
+-st, --stop</b>: stop autofax2 (<b>0</b>) <b><br>
 -listo, --listoutg</b>: lists entries from
 &lsquo;<b>outa</b>&lsquo; with success flag (<b>0</b>)
 <b><br>
@@ -235,7 +235,7 @@ with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vi, --vi</b>: edit/view configuration file , log file etc.
 (finish with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vs, --vs</b>: edit/view source files in
-<b>/root/autofax</b>(finish with &rsquo;:qa&rsquo;)
+<b>/home/schade/autofax2</b>(finish with &rsquo;:qa&rsquo;)
 (<b>0</b>) <b><br>
 -ia, --interactive</b>: all parameters will be prompted
 (some of them not shown here) (<b>0</b>) <b><br>
@@ -248,15 +248,15 @@ Options to be saved in the configuration file: (preced.
 e.g. &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -tdr, --tofaxdir &lt;path&gt;</b>: faxes the files from
 &lt;path&gt; instead of
-(&rsquo;<b>/var/autofax/tobefaxed</b>&rsquo;) <b><br>
+(&rsquo;<b>/var/autofax2/tobefaxed</b>&rsquo;) <b><br>
 -wdr, --waitdir &lt;path&gt;</b>: files are waiting in
 &lt;path&gt; instead of
-(&rsquo;<b>/var/autofax/waitingfaxes</b>&rsquo;) <b><br>
+(&rsquo;<b>/var/autofax2/waitingfaxes</b>&rsquo;) <b><br>
 -ndr, --notfaxeddir &lt;path&gt;</b>: Failed Faxes are
 collected here and not in
-(&rsquo;<b>/var/autofax/notfaxed</b>&rsquo;) <b><br>
+(&rsquo;<b>/var/autofax2/notfaxed</b>&rsquo;) <b><br>
 -rdr, --receiveddir &lt;path&gt;</b>: directory for recieved
-faxes (&rsquo;<b>/var/autofax/recvdir</b>&rsquo;) <b><br>
+faxes (&rsquo;<b>/var/autofax2/recvdir</b>&rsquo;) <b><br>
 -fbox, --takefbox &lt;zahl&gt;</b>: use fritzbox <b>or
 not</b> (<b>1</b>) <b><br>
 -fbdr, --fritzboxdir &lt;path&gt;</b>: receiving directory
@@ -324,7 +324,7 @@ instead of (&rsquo;<b>und</b>&rsquo;) <b><br>
 -mpwd, --mpwd &lt;string&gt;</b>: takes the password
 &lt;string&gt; for MySQL/MariaDB <b><br>
 -db, --database &lt;string&gt;</b>: uses the database
-&lt;string&gt; instead of (&rsquo;<b>autofax</b>&rsquo;)
+&lt;string&gt; instead of (&rsquo;<b>autofax2</b>&rsquo;)
 <b><br>
 -lg, --language &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
@@ -334,13 +334,13 @@ Language/Sprache/Lingue/Lingua
 directory, currently (&rsquo;<b>/var/log</b>&rsquo;) <b><br>
 -lf, --logfilename &lt;string&gt;</b>: log file
 &lt;string&gt; (in path &rsquo;<b>/var/log</b>&rsquo;) will
-be used instead of (&rsquo;<b>autofax.log</b>&rsquo;)
+be used instead of (&rsquo;<b>autofax2.log</b>&rsquo;)
 <b><br>
 -l, --log &lt;zahl&gt;</b>: put detailed logs in file
-&rsquo;<b>/var/log/autofax.log</b>&rsquo; (otherwise
+&rsquo;<b>/var/log/autofax2.log</b>&rsquo; (otherwise
 shorter) (<b>0</b>) <b><br>
 -cm, --cronminutes &lt;string&gt;</b>: every how many
-minutes shall <b>autofax</b> be called in crontab (0=not at
+minutes shall <b>autofax2</b> be called in crontab (0=not at
 all), instead of (&rsquo;<b>0</b>&rsquo;) <b><br>
 -autoupd, --autoupdate &lt;zahl&gt;</b>: Update program
 automatically (<b>1</b>)</p>
@@ -812,7 +812,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.47003) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47004) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1004,7 +1004,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47003</b>
+Programm: <b>/root/autofax2/autofax2</b>, V: <b>0.47001</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
@@ -1028,7 +1028,7 @@ Weg schicken (<b>0</b>) <b><br>
 Wartevz.,Gescheitertenvz.u.Gefaxtvz.gegen
 &lsquo;<b>outa</b>&lsquo; pruefen und ggf. aufraeumen
 (<b>0</b>) <b><br>
--st, --stop</b>: autofax anhalten (<b>0</b>) <b><br>
+-st, --stop</b>: autofax2 anhalten (<b>0</b>) <b><br>
 -lista, --listausg</b>: listet Datensaetze aus
 &lsquo;<b>outa</b>&lsquo; mit Erfolgskennzeichen auf
 (<b>0</b>) <b><br>
@@ -1064,7 +1064,7 @@ Konfigurationsdatei &lt;string&gt; anstatt (&rsquo;&rsquo;)
 -vi, --vi</b>: Konfigurationsdatei , Logdatei usw.
 bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
--vs, --vs</b>: Quelldateien in <b>/root/autofax</b>
+-vs, --vs</b>: Quelldateien in <b>/home/schade/autofax2</b>
 bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
 -rf, --rueckfragen</b>: alle Parameter werden abgefragt
@@ -1079,15 +1079,15 @@ Optionen z.Speich. i.Konfigur&rsquo;datei (vorausg.
 &rsquo;-noocra&rsquo;,&rsquo;-1noocri&rsquo;): <br>
 -zvz, --zufaxenvz &lt;pfad&gt;</b>: faxt die Dateien aus
 &lt;pfad&gt; anstatt aus
-(&rsquo;<b>/var/autofax/zufaxen</b>&rsquo;) <b><br>
+(&rsquo;<b>/var/autofax2/zufaxen</b>&rsquo;) <b><br>
 -wvz, --wartevz &lt;pfad&gt;</b>: Dateien warten in
 &lt;pfad&gt; anstatt
-(&rsquo;<b>/var/autofax/warteauffax</b>&rsquo;) <b><br>
+(&rsquo;<b>/var/autofax2/warteauffax</b>&rsquo;) <b><br>
 -ngvz, --nichtgefaxtvz &lt;pfad&gt;</b>: Gescheiterte Faxe
 werden hier gesammelt anstatt in
-(&rsquo;<b>/var/autofax/nichtgefaxt</b>&rsquo;) <b><br>
+(&rsquo;<b>/var/autofax2/nichtgefaxt</b>&rsquo;) <b><br>
 -evz, --empfvz &lt;pfad&gt;</b>: Empfangsverzeichnis fuer
-Faxempfang (&rsquo;<b>/var/autofax/empfvz</b>&rsquo;)
+Faxempfang (&rsquo;<b>/var/autofax2/empfvz</b>&rsquo;)
 <b><br>
 -fbox, --obfbox &lt;zahl&gt;</b>: Fritzbox verwenden <b>oder
 nicht</b> (<b>1</b>) <b><br>
@@ -1156,7 +1156,7 @@ MySQL/MariaDB den Benutzer &lt;string&gt; anstatt
 -mpwd, --mpwd &lt;string&gt;</b>: verwendet fuer
 MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 -db, --datenbank &lt;string&gt;</b>: verwendet die Datenbank
-&lt;string&gt; anstatt (&rsquo;<b>autofax</b>&rsquo;)
+&lt;string&gt; anstatt (&rsquo;<b>autofax2</b>&rsquo;)
 <b><br>
 -sp, --sprache &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
@@ -1167,12 +1167,12 @@ Language/Sprache/Lingue/Lingua
 <b><br>
 -ld, --logdname &lt;string&gt;</b>: logdatei &lt;string&gt;
 (im Pfad &rsquo;<b>/var/log</b>&rsquo;) wird verwendet
-anstatt (&rsquo;<b>autofax.log</b>&rsquo;) <b><br>
+anstatt (&rsquo;<b>autofax2.log</b>&rsquo;) <b><br>
 -l, --log &lt;zahl&gt;</b>: protokolliert ausfuehrlich in
-Datei &rsquo;<b>/var/log/autofax.log</b>&rsquo; (sonst
+Datei &rsquo;<b>/var/log/autofax2.log</b>&rsquo; (sonst
 knapper) (<b>0</b>) <b><br>
 -cm, --cronminuten &lt;string&gt;</b>: alle wieviel Minuten
-soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
+soll <b>autofax2</b> ueber crontab aufgerufen werden (0=gar
 nicht), anstatt (&rsquo;<b>0</b>&rsquo;) <b><br>
 -autoakt, --autoaktual &lt;zahl&gt;</b>: Programm
 automatisch aktualisieren (<b>1</b>)</p>
