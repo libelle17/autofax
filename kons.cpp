@@ -3106,6 +3106,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 			}
 		} // 		if (obmitcon)
 	} // 	if (!verz.empty())
+	if (obverb||oblog) fLog(violetts+Txk[T_Ende]+"pruefverz("+blau+verz+schwarz+")",obverb,oblog);
 	return fehlt;
 } // void pruefverz(const string& verz,int obverb,int oblog)
 
