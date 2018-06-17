@@ -1995,9 +1995,10 @@ linst_cl::linst_cl(int obverb,int oblog)
 			break;
 	}
 	svec qrueck;
-	if (findv==1) {
+	// in findfile wird ueber setfacl evtl. Installation aufgerufen, was (aus Kontruktor) zum Absturz fuehrt
+//	if (findv==1) {
 		systemrueck("find /usr -maxdepth 1 -type d -name 'lib*'",obverb,oblog,&qrueck,/*obsudc=*/0);
-	} else findfile(&qrueck,findv,obverb,oblog,0,"/usr",/*muster=*/"lib[^/]*$",1,34,1);
+//	} else findfile(&qrueck,findv,obverb,oblog,0,"/usr",/*muster=*/"lib[^/]*$",1,34,1);
 	for(size_t iru=0;iru<qrueck.size();iru++) libs+=qrueck[iru]+" ";
 	obprogda("sh",obverb,oblog,&shpf);// Pfad zu sh
 	obprogda("xargs",obverb,oblog,&xargspf);// Pfad zu xargs
