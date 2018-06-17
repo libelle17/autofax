@@ -335,7 +335,7 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	// T_Fehler_beim_Deferenzieren_von
 	{"Fehler beim Dereferenzieren von: ","Error dereferencing: "},
 	// T_Ende
-	{"-Ende- ","-End- "},
+	{" -Ende- "," -End- "},
 	// T_startundenable
 	{"startundenable()","startandenable()"},
 	// T_pruefberecht
@@ -2003,6 +2003,7 @@ linst_cl::linst_cl(int obverb,int oblog)
 	obprogda("xargs",obverb,oblog,&xargspf);// Pfad zu xargs
 	obprogda("ionice",obverb,oblog,&ionicepf);// Pfad zu ionice
 	obprogda("nice",obverb,oblog,&nicepf);// Pfad zu nice
+	fLog(violetts+Txk[T_Ende]+"linst_cl::linst_cl"+schwarz,obverb,oblog);
 } // linst_cl::linst_cl(int obverb,int oblog)
 
 const string *absch::suche(const char* const sname)
