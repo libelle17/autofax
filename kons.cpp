@@ -7,6 +7,8 @@
 #include <sys/sendfile.h> // fuer sendfile64
 #include <boost/iostreams/device/mapped_file.hpp> // fuer dateivgl
 //#include <typeinfo>
+#include <acl/libacl.h> // fuer acl_t, acl_entry_t, acl_get_... in pruefberech()
+// #include <sys/acl.h>
 #define caus cout // nur zum Debuggen
 extern const string& pwk; // fuer Antlitzaenderung
 
@@ -74,6 +76,7 @@ set<elem3>::iterator it3;
 const string devtty=" >/dev/tty";
 const string hcl::edit="$(which vim 2>/dev/null || which vi) ";
 			//	             view="$(which view 2>/dev/null || which vi) + ",
+linst_cl* linstp=0; // globales Objekt
 
 TxB::TxB(const char* const* const* const *TCp):TCp(TCp)
 {
@@ -86,12 +89,13 @@ cuscl::cuscl()
  cgid=passwd->pw_gid;
  cusstr=passwd->pw_name;
 } // cuscl::cuscl()
-cuscl cus;
-const string sudc=(cus.cuid?"sudo ":string());
+
+cuscl cus; // globales Objekt
+const string sudc{cus.cuid?"sudo ":string()}; // globales Objekt
 // const string sudhc=(cus.cuid?"sudo -H ":string());
 
-const string sprachstr=string("Language/Sprache/Lingue/Lingua [")+blau+'d'+schwarz+"eutsch,"+blau+'e'+schwarz+"nglisch]"+"";
-const char* sprachcstr=&sprachstr.front();
+const string sprachstr{string("Language/Sprache/Lingue/Lingua [")+blau+'d'+schwarz+"eutsch,"+blau+'e'+schwarz+"nglisch]"+""};
+const char* sprachcstr{&sprachstr.front()};
 
 ////const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 const char *kons_T[T_konsMAX+1][SprachZahl]=
@@ -2788,9 +2792,11 @@ int untersuser(const string& uname,__uid_t *uidp/*=0*/, __gid_t *gidp/*=0*/,vect
 // <datei> kann auch Verzeichnis sein
 // obunter = mit allen Unterverzeichnissen
 // obimmer = immer setzen, sonst nur, falls mit getfacl fuer datei Berechtigung fehlt (wichtig fuer Unterverzeichnisse)
-void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binaer obunter/*=falsch*/,int mod/*=4*/,uchar obimmer/*=0*/,
+// return: 0=setfacl-Programm nicht da, 1=da
+int setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binaer obunter/*=falsch*/,int mod/*=4*/,uchar obimmer/*=0*/,
 		uchar faclbak/*=1*/,const string& user/*=string()*/,uchar fake/*=0*/,stringstream *ausgp/*=0*/,const uchar obprot/*=1*/)
 {
+	static int obsetfacl{-1};
 	if (obverb && !ausgp) {
 		fLog(violetts+"setfaclggf()"+blau+Txk[T_Datei]+blau+datei+schwarz+Txk[T_obunter]+blau+(obunter?"1":"0")+schwarz+", mod: "+
 				blau+ltoan(mod)+schwarz+", obimmer: "+blau+(obimmer?"1":"0")+schwarz+", faclbak: "+blau+(faclbak?"1":"0")+schwarz+
@@ -2812,7 +2818,13 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 	} // 	if (user.empty())
 	// fuer root braucht's es ned
 	if (cuid) {
-		static int obsetfacl=obprogda("setfacl",obverb>0?obverb-1:0,/*obprog=*/0);
+    if (obsetfacl==-1) {
+			for(int i{0};i<2;i++) {
+				obsetfacl=obprogda("setfacl",obverb>0?obverb-1:0,/*obprog=*/0);
+				if (obsetfacl||i) break;
+				linstp->doinst("acl",obverb,oblog);
+			}
+		}
 		if (obsetfacl) {
 			string aktdat=datei;
 			svec pfade;
@@ -2822,9 +2834,9 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 			} while (!aktdat.empty());
 			for(size_t i=pfade.size();i;) {
 				i--;
-				struct stat st={0};
-				int ergmod=0;
-				uchar obhier=obimmer;
+				struct stat st{0};
+				int ergmod{0};
+				uchar obhier{obimmer};
 				if (lstat(pfade[i].c_str(),&st)) 
 					break;
 				if (i) {
@@ -2890,10 +2902,9 @@ void setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binae
 				blau+ltoan(mod)+schwarz+", obimmer: "+blau+(obimmer?"1":"0")+schwarz+", faclbak: "+blau+(faclbak?"1":"0")+schwarz+
 				Txk[T_Benutzer]+blau+user+schwarz+", fake: "+blau+(fake?"1":"0")+schwarz,obverb,oblog);
 	}
+	return obsetfacl;
 } // int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer obimmer,int obverb, int oblog)
 
-#include <acl/libacl.h>
-#include <sys/acl.h>
 
 // 0=Berechtigung vorhanden, 1= benutzer=Besitzer, 2= benutzer gehoert zur Besitzergruppe, 3= nichts davon
 int pruefberecht(const string& datei,const string& benutzer,const mode_t mod/*=01*/,int obverb/*=0*/)
@@ -3884,7 +3895,7 @@ servc::servc(const string& vsname,const string& vename,int obverb, int oblog): s
 	machfit(obverb,oblog);
 } // servc::servc(const string& vsname,const string& vename,int obverb, int oblog): sname((vsname.empty()?vename:vsname)),ename(vename)
 
-void servc::semodpruef(linst_cl *linstp,int obverb/*=0*/,int oblog/*=0*/)
+void servc::semodpruef(int obverb/*=0*/,int oblog/*=0*/)
 {
 	static uchar obse=2;
 	fLog(violetts+Txk[T_semodpruef]+schwarz+sname,obverb,oblog);
@@ -3903,7 +3914,7 @@ void servc::semodpruef(linst_cl *linstp,int obverb/*=0*/,int oblog/*=0*/)
 			} //       for(size_t j=0;j<sr2.size();j++)
 		} // 		if (obse==2)
 		if (obse) {
-			linstp->doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
+			if (linstp) linstp->doinst("policycoreutils-python-utils",obverb+1,oblog,"audit2allow");
 			// falls "Nothing to do" zurueckgemeldet wird, muesste (sudo) dnf -y reinstall p... aufgerufen werden fuer das Deinstallationsprogramm
 			// => wird der perfekten Version vorbehalten
 			systemrueck("setenforce 0",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
@@ -3914,7 +3925,7 @@ void servc::semodpruef(linst_cl *linstp,int obverb/*=0*/,int oblog/*=0*/)
 			struct stat sstat={0};
 			const string mod=instvz+vtz+selocal+".pp";
 			if (!lstat(mod.c_str(),&sstat)) {
-				linstp->doinst("policycoreutils",obverb+1,oblog,"semodule");
+				if (linstp) linstp->doinst("policycoreutils",obverb+1,oblog,"semodule");
 				const string bef="semodule -i \""+mod+"\"";
 				systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 				anfgg(unindt,sudc+"semodule -r \""+mod+"\"",bef,obverb,oblog);
@@ -3971,7 +3982,7 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 
 // wird aufgerufen in: hservice_faxq_hfaxd, hservice_faxgetty, cservice
 uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, const string& sexec, const string& CondPath, const string& After, 
-		linst_cl *linstp,int obverb/*=0*/,int oblog/*=0*/, uchar mitstarten/*=1*/)
+		int obverb/*=0*/,int oblog/*=0*/, uchar mitstarten/*=1*/)
 {
 	fLog(violetts+Txk[T_spruef_sname]+schwarz+sname,obverb,oblog);
 	if (!obsvfeh(obverb>0?obverb-1:0,oblog)) {
@@ -4030,7 +4041,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 				syst.close();
 				restart(obverb>0?obverb-1:0,oblog);
 				obsvfeh(obverb>0?obverb-1:0,oblog);
-				semodpruef(linstp,obverb,oblog);
+				semodpruef(obverb,oblog);
 				semanpruef(obverb,oblog);
 			} // if (syst.is_open()) 
 		} // if (!svgibts || !obslaeuft(obverb,oblog)) 
@@ -5040,8 +5051,6 @@ void hcl::lauf()
 	} // 	if (obsetz)
 	virtschlussanzeige();
 	hLog(violetts+Txk[T_Ende]+schwarz);
-	delete linstp;
-	linstp=0;
 } // hcl::lauf()
 
 // wird aufgerufen in: hcl::hcl
@@ -6917,6 +6926,8 @@ template<typename SCL> schAcl<SCL>& schAcl<SCL>::operator<<(SCL *schp)
 
 hcl::~hcl()
 {
+	delete linstp;
+	linstp=0;
 	////	caus<<"hcl-Destruktor"<<endl;
 }
 

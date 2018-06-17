@@ -331,7 +331,6 @@ class DB
     string db_systemctl_name; // mysql, mariadb je nach System
     servc *dbsv=0;
     MYSQL **conn;
-		linst_cl *const linstp=0;
 		static const string defmyengine;
 		static const string defmycharset;
 		static const string defmycollat;
@@ -377,15 +376,15 @@ class DB
 		uchar tuerweitern(const string& tab, const string& feld,long wlength,const size_t aktc,int obverb) const;
     int machbinaer(const string& tabs, const size_t aktc, const string& fmeld,int obverb) const;
     ////	DB(DBSTyp DBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag);
-		///*1*/DB(const linst_cl *const linstp);
-		/*2*/DB(const DBSTyp nDBS, linst_cl *const linstp, const char* const phost, const char* const user,const char* const ppasswd, 
+		///*1*/DB();
+		/*2*/DB(const DBSTyp nDBS,const char* const phost, const char* const user,const char* const ppasswd, 
 				const size_t conz/*=1*/, const char* const uedb="", unsigned int port=0, const char *const unix_socket=NULL, unsigned long client_flag=0,
 			 int obverb=0,int oblog=0,const string charset=defmycharset, const string collate=defmycollat, int versuchzahl=3,const uchar ggferstellen=1);
-    /*3*/DB(const DBSTyp nDBS, linst_cl *const linstp, const char* const phost, const char* const user, const char* const ppasswd,
+    /*3*/DB(const DBSTyp nDBS, const char* const phost, const char* const user, const char* const ppasswd,
 		   const char* const prootpwd, const size_t conz/*=1*/, const char* const uedb="", unsigned int port=0, const char *const unix_socket=NULL, 
 			 unsigned long client_flag=0, int obverb=0,int oblog=0,const string charset=defmycharset, const string collate=defmycollat, int versuchzahl=3, 
 			 const uchar ggferstellen=1);
-    /*4*/DB(const DBSTyp nDBS, linst_cl *const linstp, const string& phost, const string& puser, const string& ppasswd, 
+    /*4*/DB(const DBSTyp nDBS,const string& phost, const string& puser, const string& ppasswd, 
 		const size_t conz/*=1*/, 
 		   const string& uedb=string(), unsigned int port=0, const char* const unix_socket=NULL, unsigned long client_flag=0,
        int obverb=0,int oblog=0,const string charset=defmycharset, const string collate=defmycollat, int versuchzahl=3,const uchar ggferstellen=1);

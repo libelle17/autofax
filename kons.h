@@ -156,6 +156,8 @@ extern const string nix/*=string()*/;
 extern const string eins/*="1"*/;
 extern const string sudc/*="sudo "*/;
 extern const string sudhc/*="sudo -H "*/;
+struct linst_cl;
+extern linst_cl* linstp/*=0*/; // globales Objekt
 // typedef const char *TCtp[][SprachZahl];
 typedef const char * const * const TCtp[SprachZahl];
 class TxB // Text-Basisklasse
@@ -1004,7 +1006,7 @@ int systemrueck(const string& cmd, int obverb=0, int oblog=0, vector<string> *ru
 								stringstream *ausgp=0,uchar obdirekt=0);
 void pruefplatte();
 void pruefmehrfach(const string& wen=nix,int obverb=0,uchar obstumm=0);
-void setfaclggf(const string& datei,int obverb=0,int oblog=0,const binaer obunter=falsch,int mod=4,uchar obimmer=0,
+int setfaclggf(const string& datei,int obverb=0,int oblog=0,const binaer obunter=falsch,int mod=4,uchar obimmer=0,
                 uchar faclbak=0,const string& user=string(),uchar fake=0,stringstream *ausgp=0,const uchar obprot=1);
 int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=0, uchar obmitcon=0,
               const string& besitzer=string(), const string& benutzer=string(), const uchar obmachen=1,const uchar obprot=1);
@@ -1088,7 +1090,7 @@ class servc {
 		int lief();
 		int obsvfeh(int obverb=0,int oblog=0); // ob service einrichtungs fehler
 		uchar spruef(const string& sbez,uchar obfork,const string& parent, const string& sexec, const string& CondPath, const string& After, 
-                 linst_cl *linstp, int obverb=0,int oblog=0, uchar mitstarten=1);
+                 int obverb=0,int oblog=0, uchar mitstarten=1);
     int restart(int obverb=0, int oblog=0);
     void start(int obverb=0, int oblog=0);
     int startundenable(int obverb=0, int oblog=0);
@@ -1098,7 +1100,7 @@ class servc {
     void pkill(int obverb=0,int oblog=0);
     int enableggf(int obverb=0,int oblog=0);
     int machfit(int obverb=0, int oblog=0, binaer nureinmal=falsch);
-		void semodpruef(linst_cl *linstp,int obverb=0,int oblog=0);
+		void semodpruef(int obverb=0,int oblog=0);
 		void semanpruef(int obverb=0,int oblog=0,const string& mod="getty_t");
 		static void daemon_reload(int obverb=0, int oblog=0);
 };
@@ -1307,7 +1309,6 @@ class hcl
 		string azaehlerdt; // akonfdt+".zaehl"
 		schAcl<WPcl> zcnfA=schAcl<WPcl>("zcnfA"); // Zaehlkonfiguration
 		string vorcm; // Vor-Cron-Minuten
-		linst_cl* linstp=0;
 		vector<string> benutzer; // Benutzer aus /etc/passwd, bearbeitet durch setzbenutzer(&user)
 		uchar obsotiff=0; // 1 = tiff wird von der source verwendet
 		stringstream erkl; // Erklärung für die Hilfe

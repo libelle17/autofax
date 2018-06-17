@@ -1993,7 +1993,7 @@ int hhcl::cservice()
 			} // 			if (qrueck.size())
 		} // 		if (findv==1)
 		// entweder Type=forking oder Parameter -d weglassen; was besser ist, weiss ich nicht
-		csfehler+=!scapis->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","",linstp,obverb,oblog);
+		csfehler+=!scapis->spruef("Capisuite",0,meinname,cspfad/*+" -d"*/,"","",obverb,oblog);
 		if (obverb) hLog("csfehler: "+gruens+ltoan(csfehler)+schwarz);
 		////    return csfehler;
 	} // if (obprogda("capisuite",obverb,oblog,&cspfad)) 
@@ -3450,12 +3450,12 @@ int hhcl::hservice_faxq_hfaxd()
 	hLog(violetts+"hservice_faxq_hfaxd()"+schwarz);
 	struct stat hstat={0}, fstat={0};
 	if (hfaxdpfad.empty()||lstat(hfaxdpfad.c_str(),&hstat)) { obprogda("hfaxd",obverb,oblog,&hfaxdpfad); }
-	hylafehler+=!shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/, varsphylavz+"/etc/setup.cache", "",linstp,obverb,oblog);
+	hylafehler+=!shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/, varsphylavz+"/etc/setup.cache", "",obverb,oblog);
 	this->shfaxd->machfit(obverb,oblog);
 	if (faxqpfad.empty()||lstat(faxqpfad.c_str(),&fstat)) { obprogda("faxq",obverb,oblog,&faxqpfad); }
-	hylafehler+=!sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D", varsphylavz+"/etc/setup.cache", shfaxd->sname+".service",linstp,obverb,oblog);
+	hylafehler+=!sfaxq->spruef("Faxq",0/*1*/,meinname,faxqpfad+" -D", varsphylavz+"/etc/setup.cache", shfaxd->sname+".service",obverb,oblog);
 	setzfaxgtpfad();
-	hylafehler+=!this->sfaxgetty->spruef("HylaFAX faxgetty for "+this->hmodem,0,meinname,faxgtpfad+" "+this->hmodem,"","",linstp,obverb,oblog,0);
+	hylafehler+=!this->sfaxgetty->spruef("HylaFAX faxgetty for "+this->hmodem,0,meinname,faxgtpfad+" "+this->hmodem,"","",obverb,oblog,0);
 	return hylafehler;
 } // void hservice_faxq_hfaxd()
 
