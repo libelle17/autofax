@@ -2472,7 +2472,7 @@ void dhcl::virtrueckfragen()
 {
 	if (rzf) {
 		host=Tippstr(Txd[T_Host_fuer_MySQL_MariaDB_Datenbank],&host);
-		const string Frage=Txd[T_Benutzer_fuer_MySQL_MariaDB];
+		const string Frage{Txd[T_Benutzer_fuer_MySQL_MariaDB]};
 		muser=Tippstr(Frage.c_str(),&muser);
 		string mpw2;
 		mpwd.clear();

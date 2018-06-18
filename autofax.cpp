@@ -1526,8 +1526,9 @@ void hhcl::liescapiconf()
 		string ncuser;
 		for(size_t i=cfaxcp->zn.size();i>0;) {
 			char buf[250]{0};
-			if ((sscanf(cfaxcp->zn[--i].c_str(),"[%[^]]]",buf))>0) 
-				if (strcasecmp(buf,"global")) {
+////			if (!cfaxcp->zn[i-1].find("[MailFax")) break; // 18.6.18: MailFaxReceived, MailFaxFailed, MailFaxSent
+			if ((sscanf(cfaxcp->zn[--i].c_str(),"[%[^]]]",buf))>0) { 
+				if (getpwnam(buf)&&strcasecmp(buf,"global")) {
 					if (!cuser.empty()) {
 						if (cuser==buf) {
 							ncuser.clear();
@@ -1536,6 +1537,7 @@ void hhcl::liescapiconf()
 					} //           if (!cuser.empty())
 					if (ncuser.empty()) ncuser=buf; // nehme den letzten besten user
 				} //         if (strcasecmp(buf,"global"))
+			}
 		} //     for(size_t i=cfaxcp->zn.size();i>0;)
 		if (cuser.empty()) 
 			cuser=ncuser;
@@ -7064,8 +7066,8 @@ void hhcl::bereinigevz(const size_t aktc/*=0*/)
 					vector<string> tok; 
 					aufSplit(&tok,rueck[dnr],'\t');
 					pruefverz(dsvz+vtz+tok[0],aktc?0:obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/cuser,/*benutzer=*/"");
-					unsigned vfehler=0;
-					const string zield=dsvz+vtz+tok[0];
+					unsigned vfehler{0};
+					const string zield{dsvz+vtz+tok[0]};
 					verschiebe(tok[2],zield,cuser,&vfehler,/*wieweiterzaehl=*/1,/*obverb=*/aktc?0:1,oblog,aktc?&ausg:0);
 					fzahl+=!vfehler;
 				} // 		for(size_t dnr=0;dnr<rueck.size();dnr++)

@@ -2908,86 +2908,91 @@ int setfaclggf(const string& datei,int obverb/*=0*/,int oblog/*=0*/,const binaer
 } // int setfaclggf(const string& datei, const binaer obunter, const int mod, binaer obimmer,int obverb, int oblog)
 
 
-// 0=Berechtigung vorhanden, 1= benutzer=Besitzer, 2= benutzer gehoert zur Besitzergruppe, 3= nichts davon
+// 0=Berechtigung vorhanden, 1= benutzer=Besitzer, 2= benutzer gehoert zur Besitzergruppe, 3=Benutzer gibt's nicht, 4= nichts davon
 int pruefberecht(const string& datei,const string& benutzer,const mode_t mod/*=01*/,int obverb/*=0*/)
 {
-	struct stat sdat={0};
-	const uid_t uid=getpwnam(benutzer.c_str())->pw_uid;
-	gid_t gid;
-	vector<gid_t> gids;
-	int bererg=0;
-	if (!benutzer.empty() && uid) {
-		bererg=3;
-		if (!lstat(datei.c_str(),&sdat)) {
-			if ((~mod&4||sdat.st_mode & S_IROTH)&&
-					(~mod&2||sdat.st_mode & S_IWOTH)&&
-					(~mod&1||sdat.st_mode & S_IXOTH)) {
-				bererg=0;
-			} // 		if ((~mod&4||sdat.st_mode & S_IROTH)&&
-			if (uid==sdat.st_uid) {
-				bererg=1;
-				if ((~mod&4||sdat.st_mode & S_IRUSR)&&
-						(~mod&2||sdat.st_mode & S_IWUSR)&&
-						(~mod&1||sdat.st_mode & S_IXUSR)) {
+	int bererg{0};
+	const auto pwnamzg{getpwnam(benutzer.c_str())};
+	if (pwnamzg) {
+		const uid_t uid{pwnamzg->pw_uid};
+		gid_t gid;
+		vector<gid_t> gids;
+		struct stat sdat{0};
+		if (!benutzer.empty() && uid) {
+			bererg=4;
+			if (!lstat(datei.c_str(),&sdat)) {
+				if ((~mod&4||sdat.st_mode & S_IROTH)&&
+						(~mod&2||sdat.st_mode & S_IWOTH)&&
+						(~mod&1||sdat.st_mode & S_IXOTH)) {
 					bererg=0;
-				} // 			if ((~mod&4||sdat.st_mode & S_IRUSR)&&
-			} // 		if ((uid=getpwnam(benutzer.c_str())->pw_uid)==sdat.st_uid)
-			untersuser(benutzer,0,&gid,&gids);
-			for(unsigned i=0;i<gids.size();i++) {
-				if (gids[i]==sdat.st_gid) {
-					bererg=2;
-					if ((~mod&4||sdat.st_mode & S_IRGRP)&&
-							(~mod&2||sdat.st_mode & S_IWGRP)&&
-							(~mod&1||sdat.st_mode & S_IXGRP)) {
+				} // 		if ((~mod&4||sdat.st_mode & S_IROTH)&&
+				if (uid==sdat.st_uid) {
+					bererg=1;
+					if ((~mod&4||sdat.st_mode & S_IRUSR)&&
+							(~mod&2||sdat.st_mode & S_IWUSR)&&
+							(~mod&1||sdat.st_mode & S_IXUSR)) {
 						bererg=0;
-					} // 				if ((~mod&4||sdat.st_mode & S_IRGRP)&&
-				} // 			if (gids[i]==sdat.st_gid) 
-			} // 		for(unsigned i=0;i<gids.size();i++)
-			if (bererg) {
-				if (acl_t acl = acl_get_file(datei.c_str(), ACL_TYPE_ACCESS)) {
-					for (int entryId = ACL_FIRST_ENTRY; ; entryId = ACL_NEXT_ENTRY) {
-						acl_entry_t entry;
-						if (acl_get_entry(acl, entryId, &entry) != 1)
-							break;                      /* Exit on error or no more entries */
-						acl_tag_t tag;
-						if (acl_get_tag_type(entry, &tag) != -1) {
-							int aclpruef=0;
-							if (tag == ACL_USER) {
-								if (uid_t *uidp = (uid_t*)acl_get_qualifier(entry)) {
-									if (*uidp==uid) aclpruef=1;
-									acl_free(uidp);
-								} // 						if (uid_t *uidp = (uid_t*)acl_get_qualifier(entry))
-							} else if (tag == ACL_GROUP) {
-								if (gid_t *gidp = (gid_t*)acl_get_qualifier(entry)) {
-									for(unsigned i=0;i<gids.size();i++) {
-										if (gids[i]==*gidp) {
-											aclpruef=1;
+					} // 			if ((~mod&4||sdat.st_mode & S_IRUSR)&&
+				} // 		if ((uid=getpwnam(benutzer.c_str())->pw_uid)==sdat.st_uid)
+				untersuser(benutzer,0,&gid,&gids);
+				for(unsigned i{0};i<gids.size();i++) {
+					if (gids[i]==sdat.st_gid) {
+						bererg=2;
+						if ((~mod&4||sdat.st_mode & S_IRGRP)&&
+								(~mod&2||sdat.st_mode & S_IWGRP)&&
+								(~mod&1||sdat.st_mode & S_IXGRP)) {
+							bererg=0;
+						} // 				if ((~mod&4||sdat.st_mode & S_IRGRP)&&
+					} // 			if (gids[i]==sdat.st_gid) 
+				} // 		for(unsigned i=0;i<gids.size();i++)
+				if (bererg) {
+					if (acl_t acl = acl_get_file(datei.c_str(), ACL_TYPE_ACCESS)) {
+						for (int entryId = ACL_FIRST_ENTRY; ; entryId = ACL_NEXT_ENTRY) {
+							acl_entry_t entry;
+							if (acl_get_entry(acl, entryId, &entry) != 1)
+								break;                      /* Exit on error or no more entries */
+							acl_tag_t tag;
+							if (acl_get_tag_type(entry, &tag) != -1) {
+								int aclpruef=0;
+								if (tag == ACL_USER) {
+									if (uid_t *uidp = (uid_t*)acl_get_qualifier(entry)) {
+										if (*uidp==uid) aclpruef=1;
+										acl_free(uidp);
+									} // 						if (uid_t *uidp = (uid_t*)acl_get_qualifier(entry))
+								} else if (tag == ACL_GROUP) {
+									if (gid_t *gidp = (gid_t*)acl_get_qualifier(entry)) {
+										for(unsigned i=0;i<gids.size();i++) {
+											if (gids[i]==*gidp) {
+												aclpruef=1;
+												break;
+											} // 								if (gids[i]==*gidp)
+										} // 							for(unsigned i=0;i<gids.size();i++)
+										acl_free(gidp);
+									} // 						if (gid_t *gidp = (gid_t*)acl_get_qualifier(entry))
+								} else {
+									continue;
+								} // 					if (tag == ACL_USER) else
+								if (aclpruef) {
+									acl_permset_t permset;
+									if (acl_get_permset(entry, &permset) != -1) {
+										if ((~mod&4||acl_get_perm(permset, ACL_READ)==1)&&
+												(~mod&2||acl_get_perm(permset, ACL_WRITE)==1)&&
+												(~mod&1||acl_get_perm(permset, ACL_EXECUTE)==1)) {
+											bererg=0;
 											break;
-										} // 								if (gids[i]==*gidp)
-									} // 							for(unsigned i=0;i<gids.size();i++)
-									acl_free(gidp);
-								} // 						if (gid_t *gidp = (gid_t*)acl_get_qualifier(entry))
-							} else {
-								continue;
-							} // 					if (tag == ACL_USER) else
-							if (aclpruef) {
-								acl_permset_t permset;
-								if (acl_get_permset(entry, &permset) != -1) {
-									if ((~mod&4||acl_get_perm(permset, ACL_READ)==1)&&
-											(~mod&2||acl_get_perm(permset, ACL_WRITE)==1)&&
-											(~mod&1||acl_get_perm(permset, ACL_EXECUTE)==1)) {
-										bererg=0;
-										break;
-									} // 							if ((~mod&4||acl_get_perm(permset, ACL_READ)==1)&&
-								} // 			if (acl_get_permset(entry, &permset) != -1)
-							} // 					if (aclpruef)
-						} // 		if (acl_get_tag_type(entry, &tag) != -1)
-					} // 	for (int entryId = ACL_FIRST_ENTRY; ; entryId = ACL_NEXT_ENTRY)
-					acl_free(acl);
-				} // 		if (acl_t acl = acl_get_file(datei.c_str(), ACL_TYPE_ACCESS))
-			} // 			if (bererg) 
-		} // 	if (!lstat(datei.c_str(),&sdat))
-	} // benutzer.empty()
+										} // 							if ((~mod&4||acl_get_perm(permset, ACL_READ)==1)&&
+									} // 			if (acl_get_permset(entry, &permset) != -1)
+								} // 					if (aclpruef)
+							} // 		if (acl_get_tag_type(entry, &tag) != -1)
+						} // 	for (int entryId = ACL_FIRST_ENTRY; ; entryId = ACL_NEXT_ENTRY)
+						acl_free(acl);
+					} // 		if (acl_t acl = acl_get_file(datei.c_str(), ACL_TYPE_ACCESS))
+				} // 			if (bererg) 
+			} // 	if (!lstat(datei.c_str(),&sdat))
+		} // benutzer.empty()
+	} else {
+		bererg=3; // Benutzer gibt es nicht
+	}
 	if (obverb) {
 		fLog(violetts+Txk[T_pruefberecht]+schwarz+Txk[T_Datei]+blau+datei+schwarz+Txk[T_Benutzer]+blau+benutzer+schwarz+", mode: "+blau+ltoan(mod,8)+
 				schwarz+Txk[T_Erg]+blau+(bererg==3?"3":bererg==2?"2":bererg==1?"1":"0")+schwarz,obverb,0);
@@ -3059,7 +3064,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 				// folgendes mindestens notwendig fuer sverz.st_mode
 				fehlt=lstat(stack[i].c_str(),&sverz);
 				// wenn notwendige Rechte fehlen ...
-				if (int prueferg=pruefberecht(/*datei=*/stack[i],aktben,/*mod=*/i?1:7,obverb)) {
+				if (int prueferg{pruefberecht(/*datei=*/stack[i],aktben,/*mod=*/i?1:7,obverb)}) {
 					// .. und korrigiert werden sollen
 					if (obmitfacl) {
 						setfaclggf(stack[i],obverb>1?obverb-1:0,oblog, /*obunter=*/wahr, /*mod=*/i?1:7, /*obimmer=*/1,/*faclbak=*/1,/*user=*/aktben,/*fake*/0,/*ausgp*/0,obprot);
@@ -3077,6 +3082,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 								modstr=i?"g+x":"g+rwx";
 								break;
 							case 3:
+							case 4:
 								sverz.st_mode|=(i?S_IXOTH:S_IROTH+S_IWOTH+S_IXOTH);
 								modstr=i?"o+x":"o+rwx";
 								break;
