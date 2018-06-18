@@ -2863,7 +2863,6 @@ void hhcl::pruefmodem()
 		if (tty!="ttyS0") {
 			int terg;
 			if (cus.cuid) {
-				svec rue2;
 				vector<errmsgcl> errv;
 				const string f0=schwarzs+"Modem "+blau+tty+schwarz+Tx[T_gibts];
 				const string f1=f0+Tx[T_nicht];
@@ -2871,8 +2870,9 @@ void hhcl::pruefmodem()
 				errv.push_back(errmsgcl(1,f1));
 				//// aus coreutils; ' time 10 ' geht nicht, '{ { sudo stty -F /dev/ttyS1 1>&3;kill 0;}|{ sleep 10;kill 0;} } 3>&1' auch nicht
 				// stty auch aus crontab aufrufbar (Pfad: /usr/bin:/bin)
+				if (!sudc.empty()) systemrueck(sudc+"date"); // dummy-Befehl, da der naechste stehenbleibt, wenn root-Passwort noetig
 				terg=!systemrueck("timeout 10 "+sudc+"stty -F /dev/"+tty/*//+" time 10" wirkt nicht*/,
-						              obverb,oblog,&rue2,/*obsudc=*/0,/*verbergen=*/2,/*obergebnisanzeig=*/wahr,/*ueberschr=*/"",/*errm=*/&errv);
+						              obverb,oblog,/*rueck*/0,/*obsudc=*/0,/*verbergen=*/2,/*obergebnisanzeig=*/wahr,/*ueberschr=*/"",/*errm=*/&errv);
 			} else {
 				terg=ttytest(tty);
 			} // 				if (cus.cuid) else
