@@ -5041,8 +5041,9 @@ void hcl::lauf()
 	else if (!keineverarbeitung) {
 		pvirtvorrueckfragen();
 		virtrueckfragen();
+		pvirtvorpruefggfmehrfach();
 		pruefggfmehrfach();
-		if (logdateineu) tuloeschen(logdt,"",obverb,oblog);
+		if (logdateineu) tuloeschen(logdt,string(),obverb,oblog);
 		hLog(Txk[T_Logpfad]+drots+loggespfad+schwarz+Txk[T_oblog]+drot+ltoan((int)oblog)+schwarz+")");
 		virtpruefweiteres();
 	} // 	if (!keineverarbeitung)

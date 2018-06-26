@@ -8594,10 +8594,28 @@ void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 	} // if (!pid)
 } // void hhcl::korrigierehyla()
 
+void hhcl::pvirtvorpruefggfmehrfach()
+{
+	if (lista) {
+		tu_lista("1");
+	} else if (listf) {
+		tu_lista("0");
+	} else if (listi) {
+		tu_listi();
+	} else if (listw) {
+		untersuchespool(/*mitupd=*/0,/*aktc=*/3);
+		zeigweitere();
+		hLog(blaus+Txk[T_Ende]+schwarz);
+		virtschlussanzeige();
+	} else if (!suchstr.empty()) {
+		suchestr();
+	}
+} // void hhcl::pvirtvorpruefggfmehrfach
 
 void hhcl::pvirtfuehraus()
 { //ω
 	if (kez||bvz||anhl||lista||listf||listi||listw||!suchstr.empty()) {
+		// also bei den in pvirtvorpruefggfmehrfach Abgehandelten hier nichts mehr tun
 		if (kez) {
 			// hier ggf. erstes fork
 			if (obcapi) korrigierecapi(ltage);
@@ -8607,19 +8625,6 @@ void hhcl::pvirtfuehraus()
 			bereinigevz(/*aktc=*/0);
 		} else if (anhl) {
 			anhalten();
-		} else if (lista) {
-			tu_lista("1");
-		} else if (listf) {
-			tu_lista("0");
-		} else if (listi) {
-			tu_listi();
-		} else if (listw) {
-			untersuchespool(/*mitupd=*/0,/*aktc=*/3);
-			zeigweitere();
-			hLog(blaus+Txk[T_Ende]+schwarz);
-			virtschlussanzeige();
-		} else if (!suchstr.empty()) {
-			suchestr();
 		} // 		if (kez)
 	} else {
 		pruefcron(nix); // soll vor hLog(Tx[T_Verwende ... stehen

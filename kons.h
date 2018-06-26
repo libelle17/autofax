@@ -1348,6 +1348,7 @@ class hcl
 		virtual void virtzeigversion(const string& ltiffv=nix);
 		virtual void pvirtvorrueckfragen()=0;
 		virtual void virtrueckfragen();
+		virtual void pvirtvorpruefggfmehrfach()=0;
 		void pruefggfmehrfach();
 		virtual void virtpruefweiteres();
 		uchar pruefcron(const string& cm);
