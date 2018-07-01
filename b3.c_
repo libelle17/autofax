@@ -1,0 +1,27 @@
+//#include <cstdio>
+#include <locale.h>
+//#include <ctime>
+//#include <cwchar>
+// geht bei mit Umlauten und ß bei kompilieren mit: g++ ... $(ncursesw5-config --cflags) $(ncursesw5-config --libs)
+#include <ncurses.h>
+int main(void)
+{
+	setlocale(LC_ALL,"");
+	char first[24];
+	char last[32];
+	initscr();
+	addstr("Vorname? ");
+	refresh();
+	getstr(first);
+
+	addstr("Nachname? ");
+	refresh();
+	getstr(last);
+
+	printw("Pleased to meet you, %s %s!",first,last);
+	refresh();
+	getch();
+
+	endwin();
+	return 0;
+}
