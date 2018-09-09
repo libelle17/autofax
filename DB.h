@@ -414,8 +414,10 @@ struct Tabelle
 	const string tbname;
 	string comment; // wird geaendert
 	const string dbname;
-	RS *spalt=nullptr;
-	const char **spnamen=nullptr, **splenge=nullptr, **sptyp=nullptr;
+	uchar spaltfehler=0;
+	unsigned long long  spzahl=0; // spalt->num_rows
+//	const char **spnamen=nullptr, **splenge=nullptr, **sptyp=nullptr;
+	svec spnamen,splenge,sptyp;
 	Feld *felder;
 	unsigned feldzahl;
 	Index *indices;
@@ -438,6 +440,7 @@ struct Tabelle
 	Tabelle(const DB* dbp,const string& name,const size_t aktc=0,int obverb=0,int oblog=0);
 	void lesespalten(const size_t aktc=0,int obverb=0,int oblog=0);
 	void zeigspalten(int obverb=0, int oblog=0);
+	void tuzeigspalte(size_t spnr,int obverb=0, int oblog=0);
 	int machind(const size_t aktc,int obverb=0, int oblog=0);
 	int machconstr(const size_t aktc,int obverb=0, int oblog=0);
 	int prueftab(const size_t aktc,int obverb=0,int oblog=0);
@@ -450,14 +453,16 @@ class RS
 	unsigned long zaehler=0; // Zahl der ueber tbins tatsaechlich einzufuegenden Datensaetze 
 	public:
     const DB* const dbp;
+		const size_t aktc;
     string sql;
     string isql; // insert-sql
-    uchar obfehl;
+    uchar obqueryfehler; // -1=initial, 1= mysql_send_query oder mysql_real_query ergab Fehler, 0=keinen
     string fehler;
 		string autofeld;
 		char **betroffen=0; // fuer Abfrage in postgres
     unsigned int fnr;
-    MYSQL_RES *result=0;
+    MYSQL_RES *result=0; // fuer RS::~RS am 4.9.18 noetig
+		uchar resultused{0};
 #ifdef mitpostgres 
 		PGresult *pres;
 #endif // mitpostgres
@@ -473,7 +478,7 @@ class RS
     vector<string> kommentar;
     char*** HolZeile();
     void setzzruck();
-    void clear();
+    void dsclear();
     template<typename sT> 
       int Abfrage(sT psql,const size_t aktc/*=0*/,int obverb=0,uchar asy=0,int oblog=0,string *idp=0,my_ulonglong *arowsp=0){
         int erg=-1;
@@ -497,6 +502,7 @@ class RS
 		void striktzurueck(string& altmode,const size_t aktc=0);
   private:
     int doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int oblog/*=0*/,string *idp/*=0*/,my_ulonglong *arowsp/*=0*/);
+		void abfragefertig();
 }; // class RS
 
 struct insv

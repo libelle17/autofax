@@ -80,7 +80,7 @@ int fLog(const string& text,const short screen=1,const short file=1,const bool o
 #endif
 
 #include <sys/stat.h> // stat, lstat, S_IFMT, S_IFDIR ...
-// #include <boost/algorithm/string.hpp> // clock, numeric_limits
+// #include <boost/algorithm/string.hpp> // clock, numeric_limits, boost::iequals
 #include <boost/locale.hpp> // fuer to_upper und to_lower
 // #include <limits>
 extern const boost::locale::generator gen; // fuer to_upper, to_lower

@@ -224,7 +224,7 @@ void insv::hzp(instyp it)
 			return;
 	}
 	ivec.push_back(it);
-}
+} // void insv::hzp
 
 // hinzufuegen 
 void insv::hz(instyp it) 
@@ -515,7 +515,11 @@ void DB::init(
 						if (mysql_real_connect(conn[aktc], host.c_str(), user.c_str(), passwd.c_str(), dbname.c_str(), port, unix_socket, client_flag)) {
 							// mysql_set_character_set(conn[aktc],"utf8");
 							cmd="SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'";
-							mysql_real_query(conn[aktc],cmd.c_str(),cmd.length());
+							if (mysql_real_query(conn[aktc],cmd.c_str(),cmd.length())) {
+								if (MYSQL_RES *dbres=mysql_use_result(conn[aktc])) {
+									mysql_free_result(dbres);
+								}
+							}
 							break;
 						} else {
 							switch ((fehnr=mysql_errno(conn[aktc]))) {
@@ -840,7 +844,8 @@ if (0) {
  printf("Fehler %u: %s\n", mysql_errno(conn), *erg);
  return 1;
 
- result = mysql_store_result(conn);
+ result=mysql_store_result(conn);
+ resultused=1;
 //			row = mysql_fetch_row(result);
 
 return 0;
@@ -861,30 +866,30 @@ void Tabelle::lesespalten(size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
 {
   fLog(violetts+Txd[T_Lesespalten]+blau+": "+tbname+"'"+schwarz,obverb,oblog);
 	////          RS spalt(this,string("SHOW COLUMNS FROM `")+name+"`");
-  delete spalt;
   ////  spalt=new RS(this,string("SELECT column_name,character_maximum_length FROM information_schema.columns WHERE table_name = '")+name
   ////      +"' and table_schema = '"+db+"' order by ordinal_position"); // geht nicht fuer Zahlen
-	spalt=new RS(dbp,"SELECT column_name p0,"
+	RS spalt(dbp,"SELECT column_name p0,"
         "MID(column_type,INSTR(column_type,'(')+1,INSTR(column_type,')')-INSTR(column_type,'(')-1) p1, column_type p2 "
         "FROM information_schema.columns WHERE table_name = '"+tbname+"' AND table_schema = '"+dbp->dbname+"' ORDER BY ordinal_position",
 				  aktc,obverb>0?obverb-1:0);
-  if (!spalt->obfehl) {
-    delete[] spnamen;
-    spnamen=new char const*[spalt->num_rows];
-    delete[] splenge;
-    splenge=new char const*[spalt->num_rows];
-    delete[] sptyp;
-    sptyp=new char const*[spalt->num_rows];
-    int spnr=0;
+	spaltfehler=spalt.obqueryfehler;
+	if (!spaltfehler) {
+		spzahl=spalt.num_rows;
+		spnamen.clear();
+		splenge.clear();
+		sptyp.clear();
+    size_t spnr=0;
     ////    <<violett<<"Schema: "<<schwarz<<db<<endl;
     ////    <<violett<<"Tabelle: "<<schwarz<<name<<endl;
 		char ***cerg;
-		while (cerg=spalt->HolZeile(),cerg?*cerg:0) {
-			spnamen[spnr]=*(*cerg);
-      splenge[spnr]=cjj(cerg,1);
-      sptyp[spnr]=cjj(cerg,2);
+		while (cerg=spalt.HolZeile(),cerg?*cerg:0) {
+			spnamen<<cjj(cerg,0);
+			splenge<<cjj(cerg,1);
+			sptyp<<cjj(cerg,2);
+			tuzeigspalte(spnr,obverb,oblog);
       /*//
-         MYSQL_RES *dbres=mysql_list_fields(conn,name.c_str(),ltab->felder[spnr].name.c_str());
+         MYSQL_RES *dbres;
+         dbres = mysql_list_fields(conn,name.c_str(),ltab->felder[spnr].name.c_str());
          <<violett<<"spnamen["<<spnr<<"]: "<<schwarz<<spnamen[spnr]<<endl;
          <<violett<<" splenge["<<spnr<<"]: "<<schwarz<<(splenge[spnr]?splenge[spnr]:"NULL")<<endl;
          if (dbres) if (dbres->fields->name) 
@@ -892,26 +897,38 @@ void Tabelle::lesespalten(size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
          if (dbres) if (dbres->fields->length) 
            <<" dbres->fields->length: "<<dbres->fields->length<<endl;
 				 mysql_free_result(dbres);
-			 */
+       */
       spnr++;
     }
     if (obverb) {
-      zeigspalten();
+      zeigspalten(1);
     } //     if (obverb)
+		if (spalt.result) {
+			mysql_free_result(spalt.result);
+			spalt.result=0;
+		}
 	} else if (obverb||oblog) {
-    fLog(blaus+"spalt->obfehl: "+ltoan(int(spalt->obfehl)),obverb,oblog);
+    fLog(blaus+"spaltfehler: "+ltoan(int(spaltfehler)),obverb,oblog);
   }
   fLog(violetts+Txk[T_Ende]+Txd[T_Lesespalten]+blau+": "+tbname+"'"+schwarz,obverb,oblog);
 } // lesespalten
 
 void Tabelle::zeigspalten(int obverb/*=0*/,int oblog/*=0*/)
 {
-	fLog(blaus+"spalt->num_rows: "+schwarz+ltoan(spalt->num_rows),obverb,oblog);
-	for(size_t j=0;j<spalt->num_rows;j++) {
-		fLog(blaus+"spnamen["+ltoan(j)+"]: "+schwarz+spnamen[j],obverb,oblog);
-		fLog(blaus+"splenge["+ltoan(j)+"]:  "+schwarz+splenge[j],obverb,oblog);
-		fLog(blaus+"sptyp["+ltoan(j)+"]:    "+schwarz+sptyp[j],obverb,oblog);
+	fLog(blaus+"tbname: "+schwarz+tbname+blaus+", spzahl: "+schwarz+ltoan(spzahl),obverb,oblog);
+	for(size_t j=0;j<spzahl;j++) {
+		tuzeigspalte(j,obverb,oblog);
 	}
+} // void Tabelle::zeigspalten
+
+void Tabelle::tuzeigspalte(size_t spnr,int obverb/*=0*/,int oblog/*=0*/)
+{
+	stringstream ausg;
+	ausg<<violett<<"spnamen["<<spnr<<"]: "<<schwarz<<setw(30)<<spnamen[spnr]<<" ";
+	ausg<<blau<<"splenge["<<spnr<<"]: "<<schwarz<<setw(5)<<splenge[spnr]<<" ";
+	ausg<<blau<<"sptyp["<<spnr<<"]: "<<schwarz<<setw(15)<<sptyp[spnr];
+	string ausgstr{ausg.str()};
+	fLog(ausgstr,obverb,oblog);
 } // void Tabelle::zeigspalten
 
 // enum refact:uchar {cascade,set_null,restrict,no_action,set_default};
@@ -923,7 +940,7 @@ int Tabelle::machconstr(const size_t aktc, int obverb/*=0*/, int oblog/*=0*/)
 		const Constraint* const cons=&constraints[i];
 		uchar obneu=0;
 		RS rcon(dbp,"SELECT 0 FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='"+dbp->dbname+"' AND TABLE_NAME='"+tbname+"' AND REFERENCED_TABLE_NAME='"+cons->reftab+"' AND REFERENCED_COLUMN_NAME IS NOT NULL AND COLUMN_NAME='"+cons->felder1->name+"' AND REFERENCED_COLUMN_NAME='"+cons->felder2->name+"'",aktc,obverb);
-		if (rcon.obfehl) {
+		if (rcon.obqueryfehler) {
 			obneu=1;
 		} else {
 			 if (!rcon.result->row_count) {
@@ -932,7 +949,7 @@ int Tabelle::machconstr(const size_t aktc, int obverb/*=0*/, int oblog/*=0*/)
 		}
 		if (obneu) {
 			// Wenn Referenztabelle auf dem aktuellen Server fehlt, dann darueber hinweggehen
-			MYSQL_RES *dbres = mysql_list_tables(dbp->conn[aktc],cons->reftab.c_str());
+			MYSQL_RES *dbres=mysql_list_tables(dbp->conn[aktc],cons->reftab.c_str());
 			if (dbres && dbres->row_count) {
 				string machcon="ALTER TABLE `"+tbname+"` ADD CONSTRAINT `"+cons->name+"` FOREIGN KEY (";
 				for(unsigned j=0;j<cons->feldz1;j++) {
@@ -965,7 +982,7 @@ int Tabelle::machind(const size_t aktc, int obverb/*=0*/, int oblog/*=0*/)
 		// steht aus: Namen nicht beruecksichtigen, nur Feldreihenfolge und ggf. -laenge
 		uchar obneu=0;
 		RS rind(dbp,"SHOW INDEX FROM `"+tbname+"` WHERE KEY_NAME = '"+indx->name+"'",aktc,obverb);
-		if (rind.obfehl) {
+		if (rind.obqueryfehler) {
 			obneu=1;
 		} else {
 			if (!rind.result->row_count){
@@ -1011,15 +1028,15 @@ int Tabelle::machind(const size_t aktc, int obverb/*=0*/, int oblog/*=0*/)
 			for(unsigned j=0;j<indx->feldzahl;j++) {
 				sql<<"`"<<indx->felder[j].name<<"`";
 				//// caus<<"`"<<indx->felder[j].name<<"`"<<endl;
-				//// caus<<"spalt->num_rows: "<<spalt->num_rows<<endl;
-				for(unsigned spnr=0;spnr<spalt->num_rows;spnr++) { // reale Spalten
+				//// caus<<"spzahl: "<<spzahl<<endl;
+				for(unsigned spnr=0;spnr<spzahl;spnr++) { // reale Spalten
 					//// caus<<"spnr: "<<spnr<<", spnamen: "<<spnamen[spnr]<<endl;
-					if (!strcasecmp(indx->felder[j].name.c_str(),spnamen[spnr])) { // Feldnamen identisch
+					if (!strcasecmp(indx->felder[j].name.c_str(),spnamen[spnr].c_str())) { // Feldnamen identisch
 						//// caus<<rot<<indx->felder[j].name<<schwarz<<", spnamen: "<<spnamen[spnr]<<", spnr: "<<spnr<<schwarz<<endl;
 						//						if (indx->felder[j].lenge.empty()) indx->felder[j].lenge=splenge[spnr];
-						const long numsplen=atol(splenge[spnr]);
+						const long numsplen=atol(splenge[spnr].c_str());
 						const long numinlen=indx->felder[j].lenge.empty()?0:atol(indx->felder[j].lenge.c_str());
-						if (strcasecmp(sptyp[spnr],"DATE") && strcasecmp(sptyp[spnr],"DATETIME")) {
+						if (strcasecmp(sptyp[spnr].c_str(),"DATE") && strcasecmp(sptyp[spnr].c_str(),"DATETIME")) {
 							//// caus<<rot<<indx->felder[j].name<<violett<<", numinlen: "<<rot<<numinlen<<violett<<", numsplen: "<<rot<<numsplen<<schwarz<<endl;
 							if (!numinlen || !numsplen) { // numsplen ist 0 z.B. bei varbinary
 								// das sollte reichen
@@ -1050,7 +1067,7 @@ int Tabelle::machind(const size_t aktc, int obverb/*=0*/, int oblog/*=0*/)
 			} // for(int j=0;j<indx->feldzahl;j++) 
 			sql<<")";
 			rindins.Abfrage(sql.str(),aktc,obverb);
-		} // if (!rind.obfehl) 
+		} // if (!rind.obqueryfehler) 
 	} // 	for(unsigned i=0;i<indexzahl;i++)
 	return 0;
 } // int DB::machind(const string& tbname, Index* indx,int obverb/*=0*/, int oblog/*=0*/)
@@ -1060,8 +1077,8 @@ uchar DB::obtabspda(const char* const tab,const char* const sp)
 {
 	uchar obda=0;
 	Tabelle namen(this,tab);
-	for(size_t i=0;i<namen.spalt->num_rows;i++) {
-    if (!strcasecmp(namen.spnamen[i],sp)) {
+	for(size_t i=0;i<namen.spzahl;i++) {
+    if (!strcasecmp(namen.spnamen[i].c_str(),sp)) {
 			obda=1;
 			break;
 		}
@@ -1097,15 +1114,15 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
         if (dbp->conn[aktc]==0) dbp->conn[aktc] = mysql_init(NULL);
         lesespalten(aktc,obverb>0?obverb-1:0,oblog);
         for(unsigned i=0;i<feldzahl;i++) {
-					if (!spalt->obfehl)
-            for(unsigned j=0;j<spalt->num_rows;j++) {
-              if (!strcasecmp(felder[i].name.c_str(),spnamen[j])) {
-                if (splenge[j]) 
-                  if (atol(splenge[j]) > atol(felder[i].lenge.c_str())) 
+					if (!spaltfehler)
+            for(unsigned j=0;j<spzahl;j++) {
+              if (!strcasecmp(felder[i].name.c_str(),spnamen[j].c_str())) {
+                if (!splenge[j].empty()) 
+                  if (atol(splenge[j].c_str()) > atol(felder[i].lenge.c_str())) 
                     felder[i].lenge=splenge[j];
                 break;
               } //               if (!strcasecmp(felder[i].name.c_str(),spnamen[j]))
-            } //             for(unsigned j=0;j<spalt->num_rows;j++)
+            } //             for(unsigned j=0;j<spzahl;j++)
 
           fstr.resize(fstr.size()+1);
           istr.resize(istr.size()+1);
@@ -1122,8 +1139,8 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
 								felder[i].prec.empty())?"":
                (","+felder[i].prec))
               +")"))
-						+(felder[i].unsig  ?  " UNSIGNED ":"")
-            +(felder[i].nnull  ?  " NOT NULL ":"")
+						+(felder[i].unsig  ?  " UNSIGNED":"")
+            +(felder[i].nnull  ?  " NOT NULL":"")
             +(felder[i].defa=="NULL"||felder[i].defa=="null"||((felder[i].defa.empty()&&!felder[i].nnull)||(felder[i].obind && felder[i].obauto)||utyp.find("LONGTEXT")!=string::npos)?"":" DEFAULT '"+felder[i].defa+"'")
             +(felder[i].obauto?" AUTO_INCREMENT":" ")
             +(felder[i].obind && felder[i].obauto?" PRIMARY KEY":" ")
@@ -1133,7 +1150,7 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
             istr[i]=", ADD INDEX `"+felder[i].name+"`(`"+felder[i].name+"`)";
           }
         } // for(int i=0;i<feldzahl;i++)
-        MYSQL_RES *dbres = mysql_list_tables(dbp->conn[aktc],tbname.c_str());
+        MYSQL_RES *dbres=mysql_list_tables(dbp->conn[aktc],tbname.c_str());
         if (dbres && !dbres->row_count) {
 					fLog(Txd[T_erstelle_Tabelle]+blaus+tbname+schwarz,1,oblog);
 					tbneu=1;
@@ -1153,7 +1170,7 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
 						sql<<" ROW_FORMAT="<<rowformat;
 					}
           rs.Abfrage(sql.str(),aktc,obverb); // falls obverb, dann sql-String ausgeben
-          gesfehlr+=rs.obfehl;
+          gesfehlr+=rs.obqueryfehler;
           if (gesfehlr) fLog(string("gesfehlr 1: ")+ltoan(gesfehlr),1,1);
           lesespalten(aktc,obverb>0?obverb-1:0,oblog);
         } // if (!dbres->row_count) 
@@ -1162,12 +1179,12 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
         // Pruefung, ob Spalten hinzugefuegt werden muessen
         for(unsigned gspn=0;gspn<feldzahl;gspn++) { // geplante Spalten
           binaer gefunden=falsch;
-          for(unsigned j=0;j<spalt->num_rows;j++) { // reale Spalten
-            if (!strcasecmp(felder[gspn].name.c_str(),spnamen[j])) {
+          for(unsigned j=0;j<spzahl;j++) { // reale Spalten
+            if (!strcasecmp(felder[gspn].name.c_str(),spnamen[j].c_str())) {
               gefunden=wahr;
               break;
             } //             if (!strcasecmp(felder[gspn].name.c_str(),spnamen[j]))
-          } //           for(unsigned j=0;j<spalt->num_rows;j++)
+          } //           for(unsigned j=0;j<spzahl;j++)
           if (!gefunden) {
             sql.str(std::string()); sql.clear();
             sql<<"ALTER TABLE `"<<tbname<<"` ADD "<<fstr[gspn];
@@ -1175,7 +1192,7 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
             else sql<<" FIRST";
             sql<<istr[gspn];
             /*int erg=*/rs.Abfrage(sql.str(),aktc,obverb);
-            gesfehlr+=rs.obfehl;
+            gesfehlr+=rs.obqueryfehler;
             if (gesfehlr) fLog(string("gesfehlr 2: ")+ltoan(gesfehlr),1,1);
           } //           if (!gefunden)
         } //         for(int gspn=0;gspn<feldzahl;gspn++)
@@ -1183,25 +1200,28 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
         // Pruefung, ob Spalten geaendert oder verschoben werden muessen
         for(unsigned gspn=0;gspn<feldzahl;gspn++) { // geplante Spalten
           binaer verschieb=falsch, aendere=falsch;
-          for(unsigned spnr=0;spnr<spalt->num_rows;spnr++) { // reale Spalten
-            if (!strcasecmp(felder[gspn].name.c_str(),spnamen[spnr])) { // Feldnamen identisch
-              if (strcasecmp(sptyp[spnr],"mediumtext") && strcasecmp(sptyp[spnr],"blob") && strcasecmp(sptyp[spnr],"longblob") && 
-                  strcasecmp(sptyp[spnr],"longtext") && strcasecmp(sptyp[spnr],"text")) {
+          for(unsigned spnr=0;spnr<spzahl;spnr++) { // reale Spalten
+            if (!strcasecmp(felder[gspn].name.c_str(),spnamen[spnr].c_str())) { // Feldnamen identisch
+              if (strcasecmp(sptyp[spnr].c_str(),"mediumtext") 
+							 && strcasecmp(sptyp[spnr].c_str(),"blob") 
+							 && strcasecmp(sptyp[spnr].c_str(),"longblob") 
+							 && strcasecmp(sptyp[spnr].c_str(),"longtext") 
+							 && strcasecmp(sptyp[spnr].c_str(),"text")) {
                 if ((felder[gspn].lenge!="0" && !felder[gspn].lenge.empty()) &&
-                    atol(felder[gspn].lenge.c_str()) > (long)atol(splenge[spnr])) {
+                    atol(felder[gspn].lenge.c_str()) > (long)atol(splenge[spnr].c_str())) {
                   aendere=wahr;
                 } //                     atol(felder[gspn].lenge.c_str()) > (long)atol(splenge[spnr]))
-              } //                   strcasecmp(sptyp[spnr],"longtext") && strcasecmp(sptyp[spnr],"text"))
+              } //                   strcasecmp(sptyp[spnr].c_str(),"longtext") && strcasecmp(sptyp[spnr].c_str(),"text"))
               //// <<"felder[gspn].lenge: "<<rot<<felder[gspn].lenge<<schwarz<<endl;
               //// <<"splenge[spnr]: "<<rot<<splenge[spnr]<<schwarz<<endl;
               if (gspn) { // Verschiebung erst ab der zweiten geplanten Spalte reicht auch und vermeidet Speicherunterlaeufe
                 verschieb=wahr; 
-                if (spnr) if (!strcasecmp(felder[gspn-1].name.c_str(),spnamen[spnr-1])) verschieb=falsch;
+                if (spnr) if (!strcasecmp(felder[gspn-1].name.c_str(),spnamen[spnr-1].c_str())) verschieb=falsch;
                 if (verschieb) spnr--;
               } //               if (gspn)
               if (verschieb || aendere) break;
-            } //             if (!strcasecmp(felder[gspn].name.c_str(),spnamen[spnr]))
-          } //           for(unsigned spnr=0;spnr<spalt->num_rows;spnr++)
+            } //             if (!strcasecmp(felder[gspn].name.c_str(),spnamen[spnr].c_str()))
+          } //           for(unsigned spnr=0;spnr<spzahl;spnr++)
           if (verschieb || aendere) {
             //// <<"verschieb: "<<rot<<verschieb<<schwarz<<endl;
             //// <<"aendere: "<<rot<<aendere<<schwarz<<endl;
@@ -1210,7 +1230,7 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
             if (gspn) sql<<" AFTER `"<<felder[gspn-1].name<<"`";
             else sql<<" FIRST";
             /*int erg=*/rs.Abfrage(sql.str(),aktc,obverb);
-            gesfehlr+=rs.obfehl;
+            gesfehlr+=rs.obqueryfehler;
             if (gesfehlr) fLog(string("gesfehlr 3: ")+ltoan(gesfehlr),1,1);
             if (verschieb)  {
               lesespalten(aktc,obverb>0?obverb-1:0,oblog);
@@ -1246,7 +1266,7 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,const 
   korr<<"SELECT character_maximum_length, data_type,is_nullable,column_default,column_comment FROM information_schema.columns WHERE table_schema='"<<
     dbname<<"' AND table_name='"<<tabs<<"' AND column_name='"<<feld<<"'";
   RS spaltlen(this,korr.str(),aktc,obverb>1?obverb-1:0);
-  if (!spaltlen.obfehl) {
+  if (!spaltlen.obqueryfehler) {
     char*** cerg;
     while(cerg= spaltlen.HolZeile(),cerg?*cerg:0) {
       if (*(*cerg+0)) {
@@ -1294,7 +1314,7 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,const 
     cerr<<Txd[T_falsche_Fehlernr]<<spaltlen.fnr<<Txd[T_bei_der_Abfrage_der_Spaltenlaenge_bei_Tabelle]<<tabs<<
       Txd[T_und_Feld]<<feld<<endl<<Txd[T_mit]<<korr.str()<<endl;
     return 1;
-  } // if (!obfehl) else 
+  } // if (!obqueryfehler) else 
   return 5;  // wird nie erreicht, verhindert aber Compilerfehlermeldung
 } // tuerweitern
 
@@ -1330,9 +1350,9 @@ int DB::machbinaer(const string& tabs, const size_t aktc,const string& fmeld,int
     " FROM information_schema.columns WHERE table_schema='"<<
     dbname<<"' AND table_name='"<<tabs<<"' AND column_name='"<<feld<<"'";
   RS spaltlen(this,korr.str(),aktc,obverb);
-  if (!spaltlen.obfehl) {
+  if (!spaltlen.obqueryfehler) {
     char*** cerg;
-    while(cerg= spaltlen.HolZeile(),cerg?*cerg:0) {
+    while(cerg=spaltlen.HolZeile(),cerg?*cerg:0) {
       if (*(*cerg+0)) {
         lenge=*(*cerg+0);
         if (!strcasecmp(cjj(cerg,1),"CHAR")) neufeld="BINARY";
@@ -1352,7 +1372,7 @@ int DB::machbinaer(const string& tabs, const size_t aktc,const string& fmeld,int
       return 0; // kein Fehler, keine Aenderung noetig
     } //     while(cerg= spaltlen.HolZeile(),cerg?*cerg:0)
     return 6;
-  } //   if (!spaltlen.obfehl)
+  } //   if (!spaltlen.obqueryfehler)
   return 7;
 } // RS::machbinaer
 
@@ -1576,15 +1596,15 @@ sqlft::sqlft(DBSTyp eDBS, const uchar c):
 }
 
 sqlft::sqlft(DBSTyp eDBS, const char c):
-  string(1,0) 
+	string(1,0) 
 {
-		pthread_mutex_lock(&printf_mutex);
-  sprintf((char*)c_str(),"%d",c);
-		pthread_mutex_unlock(&printf_mutex);
+	pthread_mutex_lock(&printf_mutex);
+	sprintf((char*)c_str(),"%d",c);
+	pthread_mutex_unlock(&printf_mutex);
 }
 
 sqlft::sqlft(DBSTyp eDBS, const int i):
-  string(21,0) 
+	string(21,0) 
 {
 		pthread_mutex_lock(&printf_mutex);
   sprintf((char*)c_str(),"%i",i);
@@ -1733,9 +1753,9 @@ char*** RS::HolZeile()
 {
   switch (dbp->DBS) {
     case MySQL:
-      if (!obfehl)// Anfrage erfolgreich, Rückgabedaten werden verarbeitet
+      if (!obqueryfehler)// Anfrage erfolgreich, Rückgabedaten werden verarbeitet
         if (result) {  // Es liegen Zeilen vor
-          row = mysql_fetch_row(result);
+					row = mysql_fetch_row(result);
           ////          lengths = mysql_fetch_lengths(result);
           return &row;
         }
@@ -1749,19 +1769,21 @@ char*** RS::HolZeile()
 } // char** DB::HolZeile() {
 
 
-RS::RS(const DB* const pdb,const string& table):dbp(pdb),table(table)
+RS::RS(const DB* const pdb,const string& table):dbp(pdb),aktc(0),table(table)
 {
   setzzruck();
 }
 
 void RS::setzzruck() 
 {
-  this->result=0;
+	if (0) {
+		this->result=0;
 #ifdef mitpostgres 
-	this->pres=0;
+		this->pres=0;
 #endif // mitpostgres
-  // um bei wiederholten Abfragen vorher mysql_free_result aufrufen zu koennen
-  obfehl=-1;
+		// um bei wiederholten Abfragen vorher mysql_free_result aufrufen zu koennen
+	}
+	obqueryfehler=-1;
 }
 
 // wird aufgerufen im template RS::Abfrage
@@ -1779,12 +1801,9 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 	//// <<"in doAbfrage: "<<blau<<sql<<schwarz<<endl;
 	switch (dbp->DBS) {
 		case MySQL:
-			if (result) {
-				mysql_free_result(result);
-				result=0;
-			}
-			if (!obfehl)  {
-				obfehl=-1;
+			if (!obqueryfehler)  {
+				abfragefertig();
+				obqueryfehler=-1;
 			}
 			num_rows=0;
 			num_fields=0;
@@ -1807,8 +1826,11 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 					if (asy) {
 						obfalsch=mysql_send_query(dbp->conn[aktc],sqlp->c_str(),sqlp->length());
 					} else {
+//						MYSQL_RES *res0=mysql_use_result(dbp->conn[aktc]);
+//						mysql_free_result(res0);
 						obfalsch=mysql_real_query(dbp->conn[aktc],sqlp->c_str(),sqlp->length());
 					}
+					resultused=0;
 					//// <<"aktc: "<<blau<<aktc<<schwarz<<" in doAbfrage, sql: "<<blau<<sql<<schwarz<<endl;
 					fnr=mysql_errno(dbp->conn[aktc]);
 					fehler=mysql_error(dbp->conn[aktc]);
@@ -1844,15 +1866,15 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 												anfzweg(&tbl);
 												if (tbl.find_first_of(",='`")!=string::npos) continue;
 												Tabelle aktt(dbp,tbl,aktc,obverb>0?obverb-1:0,oblog);
-												for(unsigned spnr=0;spnr<aktt.spalt->num_rows;spnr++) { // reale Spalten
+												for(unsigned spnr=0;spnr<aktt.spzahl;spnr++) { // reale Spalten
 													if (aktt.spnamen[spnr]==col) {
-														dbp->tuerweitern(tbl,col,atol(aktt.splenge[spnr])+vlz,aktc,obverb>0?obverb-1:0);
+														dbp->tuerweitern(tbl,col,atol(aktt.splenge[spnr].c_str())+vlz,aktc,obverb>0?obverb-1:0);
 														versuche=0;
 														neuerversuch=1;
 														break;
 													} // 													if (aktt.spnamen[spnr]==col)
 													//                          if (db->spnamen
-												} // 												for(unsigned spnr=0;spnr<aktt.spalt->num_rows;spnr++)
+												} // 												for(unsigned spnr=0;spnr<aktt.spzahl;spnr++)
 											} // 											if ((p2=SQL.find_first_of(" (",p1)+1))
 										} // 										if ((p1=SQL.find(suchstr[uru]))!=string::npos)
 									} // 									for(unsigned uru=0;uru<sizeof suchstr/sizeof *suchstr;uru++)
@@ -1865,8 +1887,9 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 						} // 						else if (fnr==1406)
 						// if (obfalsch)
 					} else {
-						obfehl=0;
-						result = mysql_store_result(dbp->conn[aktc]);
+						obqueryfehler=0;
+						result=mysql_store_result(dbp->conn[aktc]);
+						resultused=1;
 						if (result) {
 							num_fields = mysql_num_fields(result);
 							num_rows = mysql_num_rows(result);
@@ -1881,20 +1904,20 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 					} // 					if (obfalsch) else
 				} // 				while (1)
 				if (obfalsch) {
-					obfehl=1;
+					obqueryfehler=1;
 					string aktcs=ltoan(aktc);
 					fLog("aktc: "+drots+aktcs+": "+schwarz+Txd[T_Fehler_db]+drots+ltoan(fnr)+schwarz+" (\""+fehler+"\") in doAbfrage, sql: "+
 							tuerkis+sql+schwarz,1,1);
 					if (!fehler.find("Disk full"))
 						hoerauf=115;
-				} // if (mysql_real_query(db->conn[aktc],sql.c_str(),sql.length())) else  
+				} // if (obfalsch)
         const unsigned altfnr=fnr;
 				striktzurueck(altsqlm,aktc);
 				fnr=altfnr;
 				if (hoerauf) 
 					exit(schluss(hoerauf,fehler,oblog));
 			} // if (!db->conn[aktc]) else
-			if (obfehl) {
+			if (obqueryfehler) {
 				//// pthread_mutex_lock(&printf_mutex);
 				////	printf("Fehler %u: %s\n", fnr, fehler);
 				//// pthread_mutex_unlock(&printf_mutex);
@@ -1935,7 +1958,7 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 			break;
 	} // 	switch (db->DBS)
 	obverb=altobverb;
-	return (int)obfehl;
+	return (int)obqueryfehler;
 } // RS::doAbfrage
 
 /*//
@@ -1945,34 +1968,50 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 	KLZ
  */
 
-RS::RS(const DB* const pdb,const char* const psql,const size_t aktc,int obverb,uchar asy/*=0*/,int oblog/*=0*/,string* idp/*=0*/,my_ulonglong *arowsp/*=0*/):dbp(pdb)
+RS::RS(const DB* const pdb,const char* const psql,const size_t aktc,int obverb,uchar asy/*=0*/,int oblog/*=0*/,string* idp/*=0*/,my_ulonglong *arowsp/*=0*/):dbp(pdb),aktc(aktc)
 {
 	setzzruck();
 	Abfrage(psql,aktc,obverb,asy,oblog,idp,arowsp);
 } // RS::RS(const DB* pdb,const char* const psql,const size_t aktc,int obverb) 
 
-RS::RS(const DB* const pdb,stringstream psqls,const size_t aktc,int obverb,uchar asy/*=0*/,int oblog/*=0*/,string* idp/*=0*/,my_ulonglong *arowsp/*=0*/):dbp(pdb)
+RS::RS(const DB* const pdb,stringstream psqls,const size_t aktc,int obverb,uchar asy/*=0*/,int oblog/*=0*/,string* idp/*=0*/,my_ulonglong *arowsp/*=0*/):dbp(pdb),aktc(aktc)
 {
 	const string ueber=psqls.str();
 	setzzruck();
 	Abfrage(ueber,aktc,obverb,asy,oblog,idp,arowsp);
 } // RS::RS(const DB* pdb,stringstream psqls,const size_t aktc,int obverb) 
 
-RS::RS(const DB* const pdb,const string& psql,const size_t aktc,int obverb,uchar asy/*=0*/,int oblog/*=0*/,string* idp/*=0*/,my_ulonglong *arowsp/*=0*/):dbp(pdb) 
+RS::RS(const DB* const pdb,const string& psql,const size_t aktc,int obverb,uchar asy/*=0*/,int oblog/*=0*/,string* idp/*=0*/,my_ulonglong *arowsp/*=0*/):dbp(pdb),aktc(aktc)
 {
 	setzzruck();
 	Abfrage(psql,aktc,obverb,asy,oblog,idp,arowsp);
 } // RS::RS(const DB* pdb,const string& psql,const size_t aktc,int obverb) 
+
+void RS::abfragefertig()
+{
+	if (!resultused) {
+		result=mysql_use_result(dbp->conn[aktc]);
+		resultused=1;
+	}
+	if (result) {
+		mysql_free_result(result);
+		result=0;
+	}
+	// das Folgende half bei wiederholten View-Erstellungen ( mit drop view ...; create ...)
+	for(;!mysql_next_result(dbp->conn[aktc]);) { // https://stackoverflow.com/questions/614671/commands-out-of-sync-you-cant-run-this-command-now
+		if ((result=mysql_use_result(dbp->conn[aktc]))) {
+			mysql_free_result(result);
+		}
+	}
+	resultused=0;
+}
 
 RS::~RS() 
 {
 	if (dbp)
 		switch (dbp->DBS) {
 			case MySQL:
-				if (result) mysql_free_result(result);
-				if (!obfehl) {
-					obfehl=-1;
-				}
+				abfragefertig();
 				break;
 			case Postgres:
 				caup<<"hier ~RS"<<endl;
@@ -1985,28 +2024,30 @@ void RS::machstrikt(string& altsqlm,const size_t aktc/*=0*/)
 {
 	//		MYSQL_ROW row;
 	char **cer;
-  fnr=0;
+	fnr=0;
 	const string showv="SHOW VARIABLES LIKE 'sql_mode'",
-	             setzv="SET sql_mode = 'STRICT_ALL_TABLES'";
+				setzv="SET sql_mode = 'STRICT_ALL_TABLES'";
 	if (!mysql_real_query(dbp->conn[aktc],showv.c_str(),showv.length())) {
-		MYSQL_RES *dbres;
-		if ((dbres=mysql_store_result(dbp->conn[aktc]))) {
-        cer=mysql_fetch_row(result); 
-				if (cer && *(cer+1)) {
-				 altsqlm=*(cer+1);
-				}
-				mysql_real_query(dbp->conn[aktc],setzv.c_str(),setzv.length());
-				mysql_free_result(dbres);
+		if (MYSQL_RES *dbres=mysql_store_result(dbp->conn[aktc])) {
+			cer=mysql_fetch_row(dbres); 
+			if (cer && *(cer+1)) {
+				altsqlm=*(cer+1);
+			}
+			mysql_free_result(dbres);
+			mysql_real_query(dbp->conn[aktc],setzv.c_str(),setzv.length());
 		} // 	  if ((result=mysql_store_result(dbp->conn[aktc])))
-	} // 	if (!mysql_real_query(dbp->conn[aktc],showv.c_str(),showv.length()))
+	} // 	if (!mysql_real_query
 } // void RS::machstrikt(string& altsqlm,const size_t aktc/*=0*/)
 
 void RS::striktzurueck(string& altsqlm,const size_t aktc/*=0*/)
 {
-  fnr=0;
+	fnr=0;
 	if (!altsqlm.empty()) {
-    const string ruecksetz="SET sql_mode = '"+altsqlm+"'";
-	  mysql_real_query(dbp->conn[aktc],ruecksetz.c_str(),ruecksetz.length());
+		const string ruecksetz="SET sql_mode = '"+altsqlm+"'";
+		if (!mysql_real_query(dbp->conn[aktc],ruecksetz.c_str(),ruecksetz.length())) {
+			if (MYSQL_RES *dbres=mysql_store_result(dbp->conn[aktc]))
+			mysql_free_result(dbres);
+		}
 	}
 }
 
@@ -2018,16 +2059,16 @@ uchar RS::holautofeld(const size_t aktc, int obverb)
 		aut/*idp*/<<"SELECT column_name FROM information_schema.columns WHERE table_schema='"<<dbp->dbname<<
 			"' AND table_name = '"<<table<<"' AND extra = 'auto_increment'";
 		Abfrage(aut.str().c_str(),aktc,obverb>0?obverb-1:0);
-		if (!obfehl) {
+		if (!obqueryfehler) {
 			char*** erg= HolZeile();
 			if (*erg) {
-//				autofeld=*HolZeile()[0];
+				//				autofeld=*HolZeile()[0];
 				autofeld=*erg[0];
 			} else {
 				return 1; // z.B. Datenbank oder Tabelle nicht vorhanden, kein auto_increment-Feld
 			}
 		}
-		return obfehl;
+		return obqueryfehler;
 	}
 	return 0;
 } // uchar RS::holautofeld(const size_t aktc, int obverb)
@@ -2071,7 +2112,7 @@ my_ulonglong RS::tbupd(const vector<instyp>& einf,int obverb, const string& bedi
 				machstrikt(altsqlm,aktc);
         for (int iru=0;iru<2;iru++) { // interne Runde
           Abfrage(isql,aktc,obverb,asy,/*oblog*/0,/*idp*/0,&zl);
-          if (!obfehl) {
+          if (!obqueryfehler) {
 						// nach Gebrauch loeschen
 						isql.clear();
 						break;
@@ -2090,7 +2131,7 @@ my_ulonglong RS::tbupd(const vector<instyp>& einf,int obverb, const string& bedi
               cout<<rot<<Txk[T_Fehler]<<schwarz<<fnr<<Txd[T_bei_sql_Befehl]<<isql<<endl;
               break; 
             } //             if (fnr==1213) else else
-          } //   if (!obfehl) else
+          } //   if (!obqueryfehler) else
         } //  for (int iru=0;iru<2;iru++) 
 				striktzurueck(altsqlm,aktc);
       } // case
@@ -2169,7 +2210,7 @@ my_ulonglong RS::tbins(vector<instyp>* einfp,const size_t aktc/*=0*/,uchar samme
 							aut<<dbp->dnb<<einfp->at(i).feld<<dbp->dne<<"="<<einfp->at(i).wert;
 						}
 						Abfrage(aut.str(),aktc,obverb>0?obverb-1:0);
-						if (!obfehl) {
+						if (!obqueryfehler) {
 							char*** erg= HolZeile();
 							if (*erg) {
 								if (idp) {
@@ -2183,8 +2224,8 @@ my_ulonglong RS::tbins(vector<instyp>* einfp,const size_t aktc/*=0*/,uchar samme
 							// Feld zu kurz
 						} else {
 							fLog(string(Txd[T_Fehler_beim_Pruefen_auf_Vorhandensein_des_Datensatzes])+mysql_error(dbp->conn[aktc]),1,1);
-						} // (!obfehl)
-					} // (!obfehl)
+						} // (!obqueryfehler)
+					} // (!obqueryfehler)
 					break;
 				case Postgres:
 					caup<<"hier insert 1"<<endl;
@@ -2210,12 +2251,12 @@ my_ulonglong RS::tbins(vector<instyp>* einfp,const size_t aktc/*=0*/,uchar samme
 			} // 		for(unsigned j=1;j<eindfeld.size();j++)
 			if (!abfr.empty()) {
 				Abfrage(abfr,aktc,obverb>0?obverb-1:0);
-				if (!obfehl) {
+				if (!obqueryfehler) {
 					char*** erg=HolZeile();
 					if (*erg) {
 						obeinfuegen=0;
 					}
-				} // 				if (!obfehl)
+				} // 				if (!obqueryfehler)
 			} // 		if (!abfr.empty())
 		} // 	if (eindfeld.size())
 		if (obeinfuegen) {
@@ -2297,13 +2338,13 @@ my_ulonglong RS::tbins(vector<instyp>* einfp,const size_t aktc/*=0*/,uchar samme
 						//<<violett<<"vor idp"<<schwarz<<endl;
 						if (idp) {
 						//<<violett<<"in idp"<<schwarz<<", aktc: "<<aktc<<endl;
-						if (obfehl) *idp="null";
+						if (obqueryfehler) *idp="null";
 						else *idp=ltoan(mysql_insert_id(dbp->conn[aktc]));
 						//<<"idp: "<<*idp<<endl;
 						} // if (idp)
 						 */
-						//// <<gruen<<"zaehler: "<<(int)zaehler<<", obfehl: "<<(int)obfehl<<schwarz<<endl;
-						if (!obfehl) {
+						//// <<gruen<<"zaehler: "<<(int)zaehler<<", obqueryfehler: "<<(int)obqueryfehler<<schwarz<<endl;
+						if (!obqueryfehler) {
 							break;
 						}  else {
 							fLog(tuerkiss+"SQL: "+schwarz+"\n"+isql+"\n",iru||(fnr!=1213&&fnr!=1366),0);
@@ -2324,14 +2365,14 @@ my_ulonglong RS::tbins(vector<instyp>* einfp,const size_t aktc/*=0*/,uchar samme
 					} //  for (int iru=0;iru<2;iru++) 
 					striktzurueck(altsqlm,aktc);
 				} // case MySQL
-        break;
-      case Postgres:
-		  caup<<"hier insert 4"<<endl;
-			exitp(38);
-			break;
+				break;
+			case Postgres:
+				caup<<"hier insert 4"<<endl;
+				exitp(38);
+				break;
 		} // 		switch (dbp->DBS)
-  }  // if (!sammeln)if (zaehler)
-  if (!sammeln) {
+	}  // if (!sammeln)if (zaehler)
+	if (!sammeln) {
 		// nach Gebrauch loeschen
 		isql.clear();
 		if (!obhauptfehl){
@@ -2351,7 +2392,7 @@ void DB::prueffunc(const string& pname, const string& body, const string& para, 
   for(uchar runde=0;runde<2;runde++) {
     uchar fehlt=1;
 		RS rs0(this,"SHOW FUNCTION STATUS WHERE db='"+dbname+"' AND name='"+pname+"';",aktc,obverb);
-		if (!rs0.obfehl) {
+		if (!rs0.obqueryfehler) {
 			if (rs0.result->row_count){
 				RS rs(this,"SHOW CREATE FUNCTION `"+pname+"`",aktc,obverb);
 				char ***cerg;
@@ -2365,7 +2406,7 @@ void DB::prueffunc(const string& pname, const string& body, const string& para, 
 					break; // while(cerg=
 				} // 				while (cerg=rs.HolZeile(),cerg?*cerg:0)
 			} // 			if (rs0.result->row_count)
-		} // 		if (!rs0.obfehl)
+		} // 		if (!rs0.obqueryfehler)
     ////   RS rs(this,"select definer from mysql.proc where definer like '`"+user+"`@`"+mhost+"`'",ZDB);
     if (fehlt) {
       DB *aktMyp;
@@ -2382,13 +2423,14 @@ void DB::prueffunc(const string& pname, const string& body, const string& para, 
   } //   for(uchar runde=0;runde<2;runde++)
 } // void DB::prueffunc(const string& pname, const string& body, const string& para, int obverb, int oblog)
 
-void RS::clear()
+void RS::dsclear()
 {
   sql.clear();
-  obfehl=-1;
+  obqueryfehler=-1;
   fehler.clear();
   fnr=0;
-  result=NULL;
+	if (result) mysql_free_result(result);
+  result=0;
   row=NULL;
   num_fields=0;
   // table.clear();
