@@ -8611,25 +8611,26 @@ void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 
 void hhcl::pvirtvorpruefggfmehrfach()
 {
-	if (kez||/*bvz||anhl||*/lista||listf||listi||listw||!suchstr.empty()) {
+	if (lista||listf||listi||listw||!suchstr.empty()) {
+		// wird fuer kez und normalen Ablauf spaeter in virtpruefweiteres abgerufen
 		if (initDB()) {
 			exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));
 		}
-	}
-	if (lista) {
-		tu_lista("1");
-	} else if (listf) {
-		tu_lista("0");
-	} else if (listi) {
-		tu_listi();
-	} else if (listw) {
-		untersuchespool(/*mitupd=*/0,/*aktc=*/3);
-		zeigweitere();
-		hLog(blaus+Txk[T_Ende]+schwarz);
-		virtschlussanzeige();
-	} else if (!suchstr.empty()) {
-		suchestr();
-	}
+		if (lista) {
+			tu_lista("1");
+		} else if (listf) {
+			tu_lista("0");
+		} else if (listi) {
+			tu_listi();
+		} else if (listw) {
+			untersuchespool(/*mitupd=*/0,/*aktc=*/3);
+			zeigweitere();
+			hLog(blaus+Txk[T_Ende]+schwarz);
+			virtschlussanzeige();
+		} else if (!suchstr.empty()) {
+			suchestr();
+		} // if (lista) else else else else
+	} // 	if (lista||listf||listi||listw||!suchstr.empty())
 } // void hhcl::pvirtvorpruefggfmehrfach
 
 void hhcl::pvirtfuehraus()
