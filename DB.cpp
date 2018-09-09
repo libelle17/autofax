@@ -884,15 +884,15 @@ void Tabelle::lesespalten(size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
       splenge[spnr]=cjj(cerg,1);
       sptyp[spnr]=cjj(cerg,2);
       /*//
-         MYSQL_RES *dbres;
-         dbres = mysql_list_fields(conn,name.c_str(),ltab->felder[spnr].name.c_str());
+         MYSQL_RES *dbres=mysql_list_fields(conn,name.c_str(),ltab->felder[spnr].name.c_str());
          <<violett<<"spnamen["<<spnr<<"]: "<<schwarz<<spnamen[spnr]<<endl;
          <<violett<<" splenge["<<spnr<<"]: "<<schwarz<<(splenge[spnr]?splenge[spnr]:"NULL")<<endl;
          if (dbres) if (dbres->fields->name) 
            <<" dbres->fields->name: "<<dbres->fields->name<<endl;
          if (dbres) if (dbres->fields->length) 
            <<" dbres->fields->length: "<<dbres->fields->length<<endl;
-       */
+				 mysql_free_result(dbres);
+			 */
       spnr++;
     }
     if (obverb) {
@@ -950,6 +950,7 @@ int Tabelle::machconstr(const size_t aktc, int obverb/*=0*/, int oblog/*=0*/)
 			} else {
 				fLog(Txd[T_Referenz]+blaus+cons->name+schwarz+Txd[T_auf_Tabelle]+blau+tbname+schwarz+Txd[T_nicht_erstellt_da_Referenztabelle]+blau+cons->reftab+schwarz+"`"+Txk[T_nicht_gefunden],1,oblog);
 			} // if (dbres && dbres->row_count)
+			mysql_free_result(dbres);
 		}
 	} // 	for(unsigned i=0;i<constrzahl;i++)
 	return 0;
@@ -1778,8 +1779,11 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 	//// <<"in doAbfrage: "<<blau<<sql<<schwarz<<endl;
 	switch (dbp->DBS) {
 		case MySQL:
-			if (!obfehl)  {
+			if (result) {
 				mysql_free_result(result);
+				result=0;
+			}
+			if (!obfehl)  {
 				obfehl=-1;
 			}
 			num_rows=0;
@@ -1965,8 +1969,8 @@ RS::~RS()
 	if (dbp)
 		switch (dbp->DBS) {
 			case MySQL:
+				if (result) mysql_free_result(result);
 				if (!obfehl) {
-					mysql_free_result(result);
 					obfehl=-1;
 				}
 				break;
@@ -1979,21 +1983,20 @@ RS::~RS()
 
 void RS::machstrikt(string& altsqlm,const size_t aktc/*=0*/)
 {
-	MYSQL_RES *result=0;
 	//		MYSQL_ROW row;
 	char **cer;
   fnr=0;
 	const string showv="SHOW VARIABLES LIKE 'sql_mode'",
 	             setzv="SET sql_mode = 'STRICT_ALL_TABLES'";
 	if (!mysql_real_query(dbp->conn[aktc],showv.c_str(),showv.length())) {
-	  if ((result=mysql_store_result(dbp->conn[aktc]))) {
+		MYSQL_RES *dbres;
+		if ((dbres=mysql_store_result(dbp->conn[aktc]))) {
         cer=mysql_fetch_row(result); 
 				if (cer && *(cer+1)) {
 				 altsqlm=*(cer+1);
 				}
-        mysql_free_result(result);
-				result=0;
 				mysql_real_query(dbp->conn[aktc],setzv.c_str(),setzv.length());
+				mysql_free_result(dbres);
 		} // 	  if ((result=mysql_store_result(dbp->conn[aktc])))
 	} // 	if (!mysql_real_query(dbp->conn[aktc],showv.c_str(),showv.length()))
 } // void RS::machstrikt(string& altsqlm,const size_t aktc/*=0*/)

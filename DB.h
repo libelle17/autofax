@@ -457,7 +457,7 @@ class RS
 		string autofeld;
 		char **betroffen=0; // fuer Abfrage in postgres
     unsigned int fnr;
-    MYSQL_RES *result;
+    MYSQL_RES *result=0;
 #ifdef mitpostgres 
 		PGresult *pres;
 #endif // mitpostgres
