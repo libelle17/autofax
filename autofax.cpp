@@ -1126,6 +1126,12 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	// T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden
 	{"Bei folgenden Faxen musste das Erfolgskennzeichen gemaess Hylafax-Protkolldatei auf Misserfolg gesetzt werden:",
 		"For the following faxes, the success-flag had to be set to failure following the hylfax logfile:"},
+	// T_Insgesamt,
+	{"Insgesamt ","In total "},
+	// T_Fundstellen_von,
+	{" Fundstellen von "," references of "},
+	// T_Keine_Fundstellen_von
+	{"Keine Fundstellen von ","No references of "},
 	{"",""} //α
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -4412,6 +4418,7 @@ void pruefinctab(DB *My, const string& tinca, const int obverb, const int oblog,
 // wird aufgerufen in lauf
 void hhcl::virtpruefweiteres()
 { //ω
+	fLog(violetts+Txk[T_virtpruefweiteres]+schwarz,obverb,oblog);
 	setzhylavz();
 	if (obvh) dovh();
 	verzeichnisse();
@@ -8101,9 +8108,8 @@ void hhcl::suchestr()
 	hLog(violetts+Tx[T_suchestr]+schwarz);
 	const size_t aktc=0;
 	const string scnv=" CONVERT(\"%"+suchstr+"%\" USING utf8) ";
-	caus<<"Stell 1"<<endl;
+	size_t geszahl{0};
 	for(int erf=1;erf>=0;erf--) {
-	caus<<"Stell 2, "<<erf<<endl;
 		const string oberfolg=ltoan(erf);
 		char ***cerg;
 		RS lista(My,"SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM ("
@@ -8120,11 +8126,11 @@ void hhcl::suchestr()
 				cout<<gruen<<Tx[T_Letzte]<<blau<<dszahl<<gruen<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandte_Faxe]<<
 					Tx[T_mitstr]<<blau<<suchstr<<"':"<<schwarz<<endl;
 			zeile++;
+			geszahl++;
 			cout<<blau<<setw(17)<<cjj(cerg,0)<<"|"<<violett<<setw(14)<<cjj(cerg,1)<<schwarz<<"|"<<(erf?blau:violett)<<setw(65)<<cjj(cerg,2)<<"|"
 				<<schwarz<<setw(30)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
 		} // while (cerg=lista.HolZeile(),cerg?*cerg:0) 
 	} //   for(int erf=1;erf>=0;erf--) 
-	caus<<"Stell 3"<<endl;
 
 	char ***cerg;
 	RS listi(My,"select p0, p1, p2, p3, p4 FROM ("
@@ -8134,17 +8140,16 @@ void hhcl::suchestr()
 			"OR tsid LIKE"+scnv+"OR transe LIKE"+scnv+"OR id LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
 			" ORDER BY transe DESC LIMIT "+dszahl+") i "
 			" ORDER BY transe LIMIT 18446744073709551615) i",aktc,ZDB);
-	caus<<"Stell 4"<<endl;
 	ulong zeile=0;
 	while (cerg=listi.HolZeile(),cerg?*cerg:0) {
 		if (!zeile)
 			cout<<gruen<<Tx[T_Letzte]<<blau<<dszahl<<gruen<<Tx[T_empfangene_Faxe]<<Tx[T_mitstr]<<blau<<suchstr<<"':"<<schwarz<<endl;
 		zeile++;
+		geszahl++;
 		cout<<blau<<setw(17)<<cjj(cerg,0)<<"|"<<violett<<setw(85)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(17)<<cjj(cerg,2)<<"|"
 			<<schwarz<<setw(17)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
 	} // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
 
-	caus<<"Stell 5"<<endl;
 	RS spool(My,"SELECT p0, p1, p2, p3, p4 FROM ("
 			"SELECT * FROM ("
 			"SELECT DATE_FORMAT(if(hdateidatum=0,cdateidatum,hdateidatum),'%d.%m.%y %H:%i:%s') p0,"
@@ -8159,10 +8164,14 @@ void hhcl::suchestr()
 		if (!zeile)
 			cout<<gruen<<Tx[T_Letzte]<<blau<<dszahl<<gruen<<Tx[T_wartende_Faxe]<<Tx[T_mitstr]<<blau<<suchstr<<"':"<<schwarz<<endl;
 		zeile++;
+		geszahl++;
 		cout<<blau<<setw(17)<<cjj(cerg,0)<<"|"<<violett<<setw(85)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(17)<<cjj(cerg,2)<<"|"
 			<<schwarz<<setw(17)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
 	} // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
-	caus<<"Stell 6"<<endl;
+	if (geszahl)
+		cout<<gruen<<Tx[T_Insgesamt]<<blau<<geszahl<<gruen<<Tx[T_Fundstellen_von]<<blau<<suchstr<<schwarz<<endl;
+  else
+		cout<<gruen<<Tx[T_Keine_Fundstellen_von]<<blau<<suchstr<<schwarz<<endl;
 } // suchestr
 
 // wird aufgerufen in: main
@@ -8602,6 +8611,11 @@ void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 
 void hhcl::pvirtvorpruefggfmehrfach()
 {
+	if (kez||/*bvz||anhl||*/lista||listf||listi||listw||!suchstr.empty()) {
+		if (initDB()) {
+			exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));
+		}
+	}
 	if (lista) {
 		tu_lista("1");
 	} else if (listf) {

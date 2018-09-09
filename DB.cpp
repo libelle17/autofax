@@ -2468,7 +2468,7 @@ void dhcl::virtlgnzuw()
 int dhcl::initDB()
 {
 	hLog(violetts+"initDB(), db: "+blau+dbq+schwarz);
-	unsigned int fehler=0;
+	unsigned int fehler{0};
 	if (dbq.empty()) {
 		fehler=1046;
 	} else {

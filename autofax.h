@@ -544,6 +544,9 @@ enum T_
 	T_Dateidatum,
 	T_pages,
 	T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden,
+	T_Insgesamt,
+	T_Fundstellen_von,
+	T_Keine_Fundstellen_von,
 	T_MAX //α
 }; // enum T_ //ω
 

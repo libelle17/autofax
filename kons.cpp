@@ -672,6 +672,8 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{", Ausgabezeile: ",", output line: "},
 	// 	T_pruefmehrfach
 	{"pruefmehrfach()","checkmultiple()"},
+	// 	T_virtpruefweiteres,
+	{"virtpruefweiteres()","virtcheckmore()"},
 	{"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 
@@ -5482,6 +5484,7 @@ void hcl::pruefggfmehrfach()
 // wird aufgerufen in lauf
 void hcl::virtpruefweiteres()
 {
+	fLog(violetts+Txk[T_virtpruefweiteres]+schwarz,obverb,oblog);
 }
 
 // wird aufgerufen in lauf
