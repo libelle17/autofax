@@ -3074,9 +3074,9 @@ void hhcl::virtrueckfragen()
 							if (Tippob(Tx[T_In]+rots+zwi+blau+Tx[T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
 						} else {
 							RS rtest(this->My,ersetzAllezu(zwi,"&&faxnr&&","9999"),aktc,ZDB); //// (const char*)trimfaxnr));
-							if (rtest.obfehl) {
+							if (rtest.obqueryfehler) {
 								if (Tippob(Tx[T_In]+rots+zwi+blau+Tx[T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
-							} // if (rtest.obfehl)
+							} // if (rtest.obqueryfehler)
 						} // if (zwi.find("&&faxnr&&")==string::npos) 
 					} // if (dbda)
 				} // if (zwi.empty()) else
@@ -4510,8 +4510,8 @@ void hhcl::getSender(const string& faxnr, string *getnamep, string *bsnamep,cons
 			hLog(rots+"snr: "+schwarz+ltoan(snr));
 			hLog(rots+"sql: "+schwarz+*locsqlp[snr]);
 			RS rhae(this->My,ersetzAllezu(*locsqlp[snr],"&&faxnr&&",trimfaxnr.c_str()),aktc,ZDB); // (const char*)trimfaxnr));
-			if (!rhae.obfehl) {
-				hLog(string("obfehl: ")+ltoan((int)rhae.obfehl));
+			if (!rhae.obqueryfehler) {
+				hLog(string("obqueryfehler: ")+ltoan((int)rhae.obqueryfehler));
 				char ***cerg;
 				while (cerg=rhae.HolZeile(),cerg?*cerg:0) {
 					hLog(string("cerg: ")+ltoan((bool)*cerg));
@@ -4525,7 +4525,7 @@ void hhcl::getSender(const string& faxnr, string *getnamep, string *bsnamep,cons
 					}
 					break;
 				} // while (cerg=rhae.HolZeile(),cerg?*cerg:0) 
-			} // if (!rhae.obfehl) 
+			} // if (!rhae.obqueryfehler) 
 			if (!obverb) if (getnamep->empty()) break;
 			////    if (!obverb) if (*getnamep!="" && bsname !="") break;
 		} // for(size_t snr=0;snr<this->sqlzn;snr++) 
@@ -4633,7 +4633,7 @@ void hhcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 			char ***cerg;
 			RS kor1(My,"SELECT t.submid p0, t.teln p1, t.zp p2, a.submt p3, t.tries p4, t.erfolg p5, t.size p6, a.docname p7 "
 					"FROM `"+touta+"` a RIGHT JOIN tmpcapi t ON t.submid=a.submid WHERE a.erfolg<>t.erfolg",aktc,ZDB);
-			if (!kor1.obfehl) {
+			if (!kor1.obqueryfehler) {
 				size_t zru=0;
 				while (cerg=kor1.HolZeile(),cerg?*cerg:0) {
 					if (!zru++) {
@@ -4646,7 +4646,7 @@ void hhcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 						<<blau<<setw(10)<<cjj(cerg,6)<<"|"<<violett<<string(cjj(cerg,7)).substr(0,55)<<endl;
 				} // while (cerg=kor1.HolZeile(),cerg?*cerg:0) 
 				RS kor2(My,"UPDATE `"+touta+"` a RIGHT JOIN tmpcapi t ON t.submid=a.submid SET a.erfolg=t.erfolg where a.erfolg<>t.erfolg",aktc,ZDB);
-			} // 						if (!kor1.obfehl) 
+			} // 						if (!kor1.obqueryfehler) 
 			RS kor3(My,"SELECT t.submid p0,t.teln p1,t.zp p2,t.tries p3,t.erfolg p4,t.size p5,"
 					"IF(ISNULL(asp.original),'',asp.original) p6,"
 					"IF(ISNULL(asp.idudoc),0,asp.idudoc) p7,IF(ISNULL(asp.pages),0,asp.pages) p8,"
@@ -4657,7 +4657,7 @@ void hhcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 					"LEFT JOIN `"+touta+"` av ON av.erfolg<>0 AND av.idudoc=asp.idudoc AND av.idudoc<>0 "
 					"WHERE ISNULL(a.submid) AND (t.erfolg<>0 OR ISNULL(av.idudoc)) "
 					"GROUP BY t.submid",aktc,ZDB);
-			if (!kor3.obfehl) {
+			if (!kor3.obqueryfehler) {
 				size_t zru=0;
 				while (cerg=kor3.HolZeile(),cerg?*cerg:0) {
 					if (!zru++) {
@@ -4679,7 +4679,7 @@ void hhcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 						"LEFT JOIN `"+touta+"` av ON av.erfolg<>0 AND av.idudoc=asp.idudoc AND av.idudoc<>0 "
 						"WHERE ISNULL(a.submid) AND (t.erfolg<>0 OR ISNULL(av.idudoc)) "
 						"GROUP BY t.submid",aktc,ZDB);
-			} // 						if (!kor3.obfehl)
+			} // 						if (!kor3.obqueryfehler)
 
 			// die laut tmpcapi uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
 			// und zu denen nicht bereits eine erfolgreiche hylafax-Uebertragung eingetragen ist
@@ -5599,7 +5599,7 @@ void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 	RS rins(My,udoctab); 
 	string spoolid,udocid;
 	for (unsigned nachrnr=0; nachrnr<fxvp->size(); ++nachrnr) {
-		rins.clear();
+		rins.dsclear();
 		vector<instyp> einf; // fuer alle Datenbankeinfuegungen
 		////<<rot<<"1: "<<gruen<<fxvp->at(nachrnr).spdf<<schwarz<<endl;
 		////<<rot<<"2: "<<gruen<<fxvp->at(nachrnr).ur<<schwarz<<endl;
@@ -5610,7 +5610,7 @@ void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 			////<<"udocid: "<<udocid<<endl;
 			rins.tbins(&einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB,/*idp=*/&udocid);
 			////<<"udocid: "<<udocid<<endl;
-			rins.clear();
+			rins.dsclear();
 			einf.clear();
 		} // 			if (fxvp->at(nachrnr).spdf!=fxvp->at(nachrnr).ur||fxvp->at(nachrnr).npdf!=fxvp->at(nachrnr).ur)
 		if (!udocid.empty()) 
@@ -5992,14 +5992,14 @@ void hhcl::wegfaxen()
 										"(SELECT eind FROM outa WHERE REPLACE(adressat,' ','') = '"+tn+"' AND erfolg=1 ORDER BY eind DESC LIMIT 7) o2 "
 										"ON o.eind=o2.eind "
 										"WHERE REPLACE(adressat,' ','') = '"+tn+"'",aktc,ZDB);
-								if (!rs.obfehl) {
+								if (!rs.obqueryfehler) {
 									while (cerg=rs.HolZeile(),cerg?*cerg:0) {
 										if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2)) { 
 											toknr[j]=*(*cerg+2);
 											fLog(Tx[T_Faxnummer_zu]+blaus+tokname[j]+schwarz+Tx[T_gefunden_dp]+gruen+*(*cerg+2)+schwarz,1,oblog);
 										} // 							if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2))
 									} // 						while (cerg=rs.HolZeile(),cerg?*cerg:0)
-								} // 					if (!rs.obfehl)
+								} // 					if (!rs.obqueryfehler)
 							} else if (!toknr[j].empty() && tokname[j].empty()) {
 								char ***cerg;
 								RS rs(My,"SELECT COUNT(DISTINCT o.adressat),COUNT(o.adressat), o.adressat FROM outa o "
@@ -6008,14 +6008,14 @@ void hhcl::wegfaxen()
 										"   AND erfolg=1 AND ADRESSAT<>'' ORDER BY eind DESC LIMIT 7) o2 "
 										"ON o.eind=o2.eind "
 										"WHERE REPLACE(REPLACE(rcfax,' ',''),'+','00') = '"+stdfaxnr(toknr[j])+"'",aktc,ZDB);
-								if (!rs.obfehl) {
+								if (!rs.obqueryfehler) {
 									while (cerg=rs.HolZeile(),cerg?*cerg:0) {
 										if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2)) { 
 											tokname[j]=*(*cerg+2);
 											fLog(Tx[T_Name_zu]+blaus+toknr[j]+schwarz+Tx[T_gefunden_dp]+gruen+*(*cerg+2)+schwarz,1,oblog);
 										} // 							if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2))
 									} // 						while (cerg=rs.HolZeile(),cerg?*cerg:0)
-								} // 					if (!rs.obfehl)
+								} // 					if (!rs.obqueryfehler)
 							} // 							if (toknr[j].empty() && !tokname[j].empty()) elseif umgekehrt
 						} // 						for(size_t j=0;j<toknr.size();j++)
 						fLog(Tx[T_Bearbeite]+rots+zfda[iakt]+schwarz,1,oblog);
@@ -6163,7 +6163,7 @@ void hhcl::wegfaxen()
 							"(SELECT eind FROM outa WHERE REPLACE(adressat,' ','') = '"+tn+"' AND erfolg=1 ORDER BY eind DESC LIMIT 7) o2 "
 							"ON o.eind=o2.eind "
 							"WHERE REPLACE(adressat,' ','') = '"+tn+"'",aktc,ZDB);
-					if (!rs.obfehl) {
+					if (!rs.obqueryfehler) {
 						while (cerg=rs.HolZeile(),cerg?*cerg:0) {
 							if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2)) { 
 								toknr<<*(*cerg+2);
@@ -6171,7 +6171,7 @@ void hhcl::wegfaxen()
 								//// <<"NR: "<<*(*cerg+2)<<endl;
 							} // 							if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2))
 						} // 						while (cerg=rs.HolZeile(),cerg?*cerg:0)
-					} // 					if (!rs.obfehl)
+					} // 					if (!rs.obqueryfehler)
 				} // 				if (!tokname[j].empty())
 				if (fehler) toknr<<"";
 			} // 			for(unsigned j=0;j<tokname.size();j++)
@@ -6395,8 +6395,8 @@ void hhcl::wegfaxen()
 			"FROM `"+spooltab+"` s "
 			"LEFT JOIN `"+altspool+"` alts ON s.idudoc=alts.idudoc "
 			"WHERE s.original>'' GROUP BY s.id",aktc,ZDB);
-	if (r0.obfehl) {
-		cerr<<rots<<"aktc: "<<schwarz<<aktc<<", "<<rot<<Tx[T_Fehler_af]<<schwarz<<(int)r0.obfehl<<rot<<Tx[T_beiSQLAbfrage]<<schwarz<<r0.sql<<endl;
+	if (r0.obqueryfehler) {
+		cerr<<rots<<"aktc: "<<schwarz<<aktc<<", "<<rot<<Tx[T_Fehler_af]<<schwarz<<(int)r0.obqueryfehler<<rot<<Tx[T_beiSQLAbfrage]<<schwarz<<r0.sql<<endl;
 	} else {
 		while (cerg=r0.HolZeile(),cerg?*cerg:0) {
 			(dbszahl)++;
@@ -6480,7 +6480,7 @@ void hhcl::wegfaxen()
 			} // 			if (aufrufe!=kaufrufe && altobsendC!="1")
 		} while (kaufrufe==aufrufe);
 #endif // immerwart
-	} // 	if (r0.obfehl) else
+	} // 	if (r0.obqueryfehler) else
 	hLog(violetts+Txk[T_Ende]+Tx[T_wegfaxen]+schwarz+", "
 			+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfbox?Txk[T_ja]:Txk[T_nein])+", "
 			+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Txk[T_ja]:Txk[T_nein])+", "
@@ -7910,7 +7910,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 			"LEFT JOIN `"+altspool+"` alts ON s.idudoc=alts.idudoc "
 			"WHERE (s.hylanr RLIKE '^[0-9]+$' AND s.hylanr<>0) OR s.capispooldatei RLIKE '^fax-[0-9]+\\.sff$' "
 			"GROUP BY s.id",aktc,ZDB);
-	if (!rs.obfehl) {
+	if (!rs.obqueryfehler) {
 		faxord=0;
 		while (cerg=rs.HolZeile(),cerg?*cerg:0) {
 			faxord++;
@@ -8086,7 +8086,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 				fLog(ausg.str(),1,oblog);
 			} // if (*(*cerg+0)) if (*(*cerg+3))
 		} // while (cerg=rs.HolZeile(),cerg?*cerg:0) 
-	} // if (!rs.obfehl) 
+	} // if (!rs.obqueryfehler) 
 	fLog(Tx[T_Zahl_der_ueberpruefen_Datenbankeintraege]+drots+ltoan(dbzahl)+schwarz,1,oblog);
 	fLog(Tx[T_davon_gescheiterte_Faxe]+drots+ltoan(gzahl)+schwarz,1,oblog);
 	fLog(Tx[T_davon_erfolgreiche_Faxe]+drots+ltoan(ezahl)+schwarz,1,oblog);
@@ -8101,7 +8101,9 @@ void hhcl::suchestr()
 	hLog(violetts+Tx[T_suchestr]+schwarz);
 	const size_t aktc=0;
 	const string scnv=" CONVERT(\"%"+suchstr+"%\" USING utf8) ";
+	caus<<"Stell 1"<<endl;
 	for(int erf=1;erf>=0;erf--) {
+	caus<<"Stell 2, "<<erf<<endl;
 		const string oberfolg=ltoan(erf);
 		char ***cerg;
 		RS lista(My,"SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM ("
@@ -8122,6 +8124,7 @@ void hhcl::suchestr()
 				<<schwarz<<setw(30)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
 		} // while (cerg=lista.HolZeile(),cerg?*cerg:0) 
 	} //   for(int erf=1;erf>=0;erf--) 
+	caus<<"Stell 3"<<endl;
 
 	char ***cerg;
 	RS listi(My,"select p0, p1, p2, p3, p4 FROM ("
@@ -8131,6 +8134,7 @@ void hhcl::suchestr()
 			"OR tsid LIKE"+scnv+"OR transe LIKE"+scnv+"OR id LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
 			" ORDER BY transe DESC LIMIT "+dszahl+") i "
 			" ORDER BY transe LIMIT 18446744073709551615) i",aktc,ZDB);
+	caus<<"Stell 4"<<endl;
 	ulong zeile=0;
 	while (cerg=listi.HolZeile(),cerg?*cerg:0) {
 		if (!zeile)
@@ -8140,6 +8144,7 @@ void hhcl::suchestr()
 			<<schwarz<<setw(17)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
 	} // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
 
+	caus<<"Stell 5"<<endl;
 	RS spool(My,"SELECT p0, p1, p2, p3, p4 FROM ("
 			"SELECT * FROM ("
 			"SELECT DATE_FORMAT(if(hdateidatum=0,cdateidatum,hdateidatum),'%d.%m.%y %H:%i:%s') p0,"
@@ -8157,6 +8162,7 @@ void hhcl::suchestr()
 		cout<<blau<<setw(17)<<cjj(cerg,0)<<"|"<<violett<<setw(85)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(17)<<cjj(cerg,2)<<"|"
 			<<schwarz<<setw(17)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
 	} // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
+	caus<<"Stell 6"<<endl;
 } // suchestr
 
 // wird aufgerufen in: main
@@ -8560,7 +8566,7 @@ void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 			"devname p10, retries p11, prio p12, rcfax p13, rcname p14, csid p15, sender p16, transs p17, transe p18, Pid p19, eind p20, Erfolg p21 "
 			"FROM `"+touta+"` WHERE submid "+(runde?"RLIKE '^[0-9]+$' AND submid<>0":"LIKE '%fax-%.sff'")+" ORDER BY submt";
 			RS routa(My,sql,aktc,obverb);
-			if (!routa.obfehl) {
+			if (!routa.obqueryfehler) {
 			char ***cerg;
 			while (cerg=routa.HolZeile(),cerg?*cerg:0) {
 			if (*(*cerg+3)) if (*(*cerg+20)) if (*(*cerg+21)) {
@@ -8582,7 +8588,7 @@ void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 		} // ((fit!=fdn.end()) != (*cjj(cerg,21)=='0')) else
 		} // if (*(*cerg+3)) if (*(*cerg+20)) if (*(*cerg+21)) 
 		} // while (cerg=routa.HolZeile(),cerg?*cerg:0) 
-		} // if (!routa.obfehl) 
+		} // if (!routa.obqueryfehler) 
 		} // if (0)
 		} // 	if (!gehtmitxfer)
 		 */
