@@ -672,8 +672,6 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{", Ausgabezeile: ",", output line: "},
 	// 	T_pruefmehrfach
 	{"pruefmehrfach()","checkmultiple()"},
-	// 	T_virtpruefweiteres,
-	{"virtpruefweiteres()","virtcheckmore()"},
 	{"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 
@@ -2100,12 +2098,12 @@ template <typename SCL> void confdcl::kauswert(schAcl<SCL> *sA, int obverb,const
 						while(ii--) {
 							if (sA->schl[ii]) if (!sA->schl[ii]->ausgewertet) { 
 								// conf[ii]->pname muss am Zeilenanfang anfangen, sonst Fehler z.B.: number, faxnumber
-								//// if (obverb) caus<<"Stell 11, pname: "<<pname<<", sA->schl["<<ii<<"]->pname: "<<sA->schl[ii]->pname<<", wert: "<<wert<<endl;
 								if (paare[nr].name==sA->schl[ii]->pname) {
 									//// if (obverb) caus<<"werte aus ..."<<endl;
 									sA->schl[ii]->ausgewertet=1;
 									//// <<"sA->schl[ii]->pname: "<<sA->schl[ii]->pname<<endl;
 									//// <<blau<<"setze!"<<schwarz<<endl;
+									// if (obverb) caus<<"Stell 11, sA->schl["<<ii<<"]->pname: "<<sA->schl[ii]->pname<<", wert: "; sA->schl[ii]->virtoausgeb(); caus<<endl;
 									const int wiefalsch{sA->schl[ii]->setzstr(paare[nr].wert.c_str(),&obzuschreib,/*ausDatei=*/1)};
 									if (!wiefalsch) {
 										sA->setzbemerkwoher(sA->schl[ii].get(),/*bemerk=*/paare[nr].bemerk,/*woher*/2);
@@ -5484,7 +5482,6 @@ void hcl::pruefggfmehrfach()
 // wird aufgerufen in lauf
 void hcl::virtpruefweiteres()
 {
-	fLog(violetts+Txk[T_virtpruefweiteres]+schwarz,obverb,oblog);
 }
 
 // wird aufgerufen in lauf

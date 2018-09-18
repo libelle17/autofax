@@ -470,6 +470,7 @@ class RS
     MYSQL_ROW row;
     unsigned int num_fields;
     unsigned long long  num_rows;
+    unsigned long long  geaendert; // fuer INSERT, UPDATE und DELETE ueber doAbfrage
     const string table;
     vector<string> feld;
     vector<string> typ;

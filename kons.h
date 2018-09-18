@@ -461,7 +461,6 @@ enum Tkons_
 	T_verwendet_wird,
 	T_Ausgabezeile,
 	T_pruefmehrfach,
-	T_virtpruefweiteres,
 	T_konsMAX
 }; // Tkons_
 

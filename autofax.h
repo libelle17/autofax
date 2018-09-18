@@ -8,6 +8,7 @@ enum T_
 	T_virtMusterVorgb,
 	T_pvirtvorrueckfragen,
 	T_virtrueckfragen,
+	T_virtpruefweiteres,
 	T_Fehler_beim_Pruefen_von,
 	T_Fuege_ein, //ω
 	T_an_Fax,

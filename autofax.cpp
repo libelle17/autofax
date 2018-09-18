@@ -24,6 +24,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"pvirtvorrueckfragen()","pvirtbeforecallbacks()"},
 	// T_virtrueckfragen
 	{"virtrueckfragen()","virtcallbacks()"},
+	// T_virtpruefweiteres
+	{"virtpruefweiteres()","virtcheckmore()"},
 	//	T_Fehler_beim_Pruefen_von
 	{"Fehler beim Pruefen von: ","Error while examining: "},
 	// T_Fuege_ein
@@ -4418,7 +4420,7 @@ void pruefinctab(DB *My, const string& tinca, const int obverb, const int oblog,
 // wird aufgerufen in lauf
 void hhcl::virtpruefweiteres()
 { //ω
-	fLog(violetts+Txk[T_virtpruefweiteres]+schwarz,obverb,oblog);
+	fLog(violetts+Tx[T_virtpruefweiteres]+schwarz,obverb,oblog);
 	setzhylavz();
 	if (obvh) dovh();
 	verzeichnisse();

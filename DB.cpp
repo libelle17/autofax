@@ -938,7 +938,7 @@ int Tabelle::machconstr(const size_t aktc, int obverb/*=0*/, int oblog/*=0*/)
 {
 	for(unsigned i=0;i<constrzahl;i++) {
 		const Constraint* const cons=&constraints[i];
-		uchar obneu=0;
+		uchar obneu{0};
 		RS rcon(dbp,"SELECT 0 FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='"+dbp->dbname+"' AND TABLE_NAME='"+tbname+"' AND REFERENCED_TABLE_NAME='"+cons->reftab+"' AND REFERENCED_COLUMN_NAME IS NOT NULL AND COLUMN_NAME='"+cons->felder1->name+"' AND REFERENCED_COLUMN_NAME='"+cons->felder2->name+"'",aktc,obverb);
 		if (rcon.obqueryfehler) {
 			obneu=1;
@@ -951,19 +951,22 @@ int Tabelle::machconstr(const size_t aktc, int obverb/*=0*/, int oblog/*=0*/)
 			// Wenn Referenztabelle auf dem aktuellen Server fehlt, dann darueber hinweggehen
 			MYSQL_RES *dbres=mysql_list_tables(dbp->conn[aktc],cons->reftab.c_str());
 			if (dbres && dbres->row_count) {
-				string machcon="ALTER TABLE `"+tbname+"` ADD CONSTRAINT `"+cons->name+"` FOREIGN KEY (";
-				for(unsigned j=0;j<cons->feldz1;j++) {
-					machcon+="`"+cons->felder1[j].name+"`";
-					if (j<cons->feldz1-1) machcon+=",";
+				for(int iru=0;iru<2;iru++) {
+					string machcon{"ALTER TABLE `"+tbname+"` ADD CONSTRAINT "+(iru?"":"`"+cons->name+"`")+" FOREIGN KEY ("};
+					for(unsigned j=0;j<cons->feldz1;j++) {
+						machcon+="`"+cons->felder1[j].name+"`";
+						if (j<cons->feldz1-1) machcon+=",";
+					}
+					machcon+=") REFERENCES `"+cons->reftab+"` (";
+					for(unsigned j=0;j<cons->feldz2;j++) {
+						machcon+="`"+cons->felder2[j].name+"`";
+						if (j<cons->feldz2-1) machcon+=",";
+					}
+					machcon+=") ON UPDATE "+refacts[cons->onupdate]+" ON DELETE "+refacts[cons->ondelete];
+					RS rconsins(dbp,tbname);
+					rconsins.Abfrage(machcon,aktc,obverb+iru);
+					if (!rconsins.obqueryfehler) break; // wenn nicht Constraint-Name schon vergeben
 				}
-				machcon+=") REFERENCES `"+cons->reftab+"` (";
-				for(unsigned j=0;j<cons->feldz2;j++) {
-					machcon+="`"+cons->felder2[j].name+"`";
-					if (j<cons->feldz2-1) machcon+=",";
-				}
-				machcon+=") ON UPDATE "+refacts[cons->onupdate]+" ON DELETE "+refacts[cons->ondelete];
-				RS rconsins(dbp,tbname);
-				rconsins.Abfrage(machcon,aktc,obverb);
 			} else {
 				fLog(Txd[T_Referenz]+blaus+cons->name+schwarz+Txd[T_auf_Tabelle]+blau+tbname+schwarz+Txd[T_nicht_erstellt_da_Referenztabelle]+blau+cons->reftab+schwarz+"`"+Txk[T_nicht_gefunden],1,oblog);
 			} // if (dbres && dbres->row_count)
@@ -1796,7 +1799,8 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 //	obverb=1;
 	yLog(obverb>0?obverb-1:0,oblog,0,0,"%s%s()%s, aktc: %s%zu%s, obverb: %s%d%s, asy: %s%d%s, oblog: %s%d%s,\nsql: %s%s%s",blau,__FUNCTION__,schwarz,blau,aktc,schwarz,blau, obverb,schwarz,blau,asy,schwarz,blau,oblog,schwarz,blau,sql.c_str(),schwarz);
 	fnr=0;
-	int obfalsch=0;
+	int obfalsch{0};
+	geaendert=0;
 	// fuer wiederholten Abfragen
 	//// <<"in doAbfrage: "<<blau<<sql<<schwarz<<endl;
 	switch (dbp->DBS) {
@@ -1835,7 +1839,9 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 					fnr=mysql_errno(dbp->conn[aktc]);
 					fehler=mysql_error(dbp->conn[aktc]);
 					if (obfalsch) {
-						fLog("fnr: "+blaus+ltoan(fnr)+schwarz+", "+Txk[T_Fehler]+": "+blau+fehler+schwarz,1,1);
+						if (obverb>-2) {
+							fLog("fnr: "+blaus+ltoan(fnr)+schwarz+", "+Txk[T_Fehler]+": "+blau+fehler+schwarz,1,1);
+						}
 						// Invalid use of NULL value; bei Spaltenverschiebungen kann oft NOT NULL nicht mehr geaendert werden
 						if (idp) *idp="null";
 						if (fnr==1138 && sqlp!=&usql) {
@@ -1894,20 +1900,23 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 							num_fields = mysql_num_fields(result);
 							num_rows = mysql_num_rows(result);
 						} // 						if (result)
+						geaendert=mysql_affected_rows(dbp->conn[aktc]);
+						if (arowsp) *arowsp=geaendert;
 						if (idp) {
 							*idp=ltoan(mysql_insert_id(dbp->conn[aktc]));
 							fLog(" => mysql_insert_id: "+blaus+*idp+schwarz,obverb,oblog);
 						}
-						if (arowsp) *arowsp=mysql_affected_rows(dbp->conn[aktc]);
 						////			row = mysql_fetch_row(result);
 						break;
 					} // 					if (obfalsch) else
 				} // 				while (1)
 				if (obfalsch) {
 					obqueryfehler=1;
-					string aktcs=ltoan(aktc);
-					fLog("aktc: "+drots+aktcs+": "+schwarz+Txd[T_Fehler_db]+drots+ltoan(fnr)+schwarz+" (\""+fehler+"\") in doAbfrage, sql: "+
-							tuerkis+sql+schwarz,1,1);
+					if (obverb>-2) {
+						string aktcs=ltoan(aktc);
+						fLog("aktc: "+drots+aktcs+": "+schwarz+Txd[T_Fehler_db]+drots+ltoan(fnr)+schwarz+" (\""+fehler+"\") in doAbfrage, sql: "+
+								tuerkis+sql+schwarz,1,1);
+					}
 					if (!fehler.find("Disk full"))
 						hoerauf=115;
 				} // if (obfalsch)
@@ -1921,7 +1930,8 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 				//// pthread_mutex_lock(&printf_mutex);
 				////	printf("Fehler %u: %s\n", fnr, fehler);
 				//// pthread_mutex_unlock(&printf_mutex);
-				cerr<<Txd[T_Fehler_db]<<drot<<fnr<<schwarz<<Txd[T_bei_Abfrage]<<blau<<sql<<schwarz<<": "<<endl<<drot<<fehler<<schwarz<<endl;
+				if (obverb>-2)
+					cerr<<Txd[T_Fehler_db]<<drot<<fnr<<schwarz<<Txd[T_bei_Abfrage]<<blau<<sql<<schwarz<<": "<<endl<<drot<<fehler<<schwarz<<endl;
 			}
 			break;
 		case Postgres:
@@ -2468,7 +2478,7 @@ void dhcl::virtlgnzuw()
 int dhcl::initDB()
 {
 	hLog(violetts+"initDB(), db: "+blau+dbq+schwarz);
-	unsigned int fehler{0};
+	unsigned int fehler=0;
 	if (dbq.empty()) {
 		fehler=1046;
 	} else {
