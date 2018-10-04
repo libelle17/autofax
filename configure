@@ -20,7 +20,7 @@ getIPR() {
 	CTAGS=ctags;
 #	osnr=0 # 1=Mint, 2=Ubuntu, 3=Debian, 4=SUSE, 5=Fedora, 6=Fedoraalt, 7=Mageia, 8=Manjaro
 	os=$(cat /etc/os-release|grep '^NAME=')
-	[ -z $os ]&& os=$(cat /etc/lsb-release|grep '^DISTRIB_ID=')
+	[ -z "$os" ]&& os=$(cat /etc/lsb-release|grep '^DISTRIB_ID=')
 	os=$(echo $os|cut -d= -f2|sed 's/"\(.*\)"/\1/')
 	# echo $os
 	case "$os" in 
@@ -338,6 +338,7 @@ if test "$ICH" = configure -o "$ICH" = install.sh -o "$ICH" = ${DPROG}_inst.sh -
 		printf "Muss '$blau$USER$reset' den Aufruf von '${blau}sudo$reset' ermoeglichen. "
 		printf "Bitte geben Sie bei der Frage das Passwort von '${blau}root$reset' ein:\n";
 		printf "Danach loggen Sie sich bitte aus und nochmal ein, wechseln Sie nach '$blau$PWD$reset' und rufen Sie '${blau}sh install.sh$reset' auf!\n";
+		echo su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";"
 		su -c "usermod -aG $(cut -d: -f1 /etc/group|grep -w "$SUG"|tail -n1) "$USER";" && exit
 	}
 	if test "$ICH" != viall; then
