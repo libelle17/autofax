@@ -61,7 +61,7 @@ getIPR() {
   			LBOOST=$(zypper se boost*-devel|grep ' | boost'|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
 				LBIO=$(V=libboost_iostreams;zypper se $V|grep "| $V"|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
 				LBLO=$(V=libboost_locale;zypper se $V|grep "| $V"|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
-				[ ! "$LBOOST" ]&&[ "$LBIO" ]&&[ "$LBLO" ]&& LBOOST=$(V=boost_license;zypper se $V|grep "| $V"|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
+				[ ! "$LBOOST" ]&&[ "$LBIO" ]&&[ "$LBLO" ]&& LBOOST=$(V=boost-license;zypper se $V|grep "| $V"|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
 			fi
 			LT=${_LT}-${dev};
 		} 
