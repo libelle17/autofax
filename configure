@@ -38,6 +38,7 @@ getIPR() {
 		which rpm>/dev/null&&{ { which zypper>/dev/null&&osnr=4; }||{ which dnf>/dev/null&&osnr=5; }||{ which yum>/dev/null&&osnr=6; }||{ which urpmi.update>/dev/null&&osnr=7; } }||
 		{ which pacman>/dev/null&&osnr=8; } }
 #	echo osnr: $osnr;
+# openSUSE
 	{ [ $osnr = 4 ]&&
 		{ 
 			Z=zypper;
@@ -53,9 +54,14 @@ getIPR() {
 			# sonst dauerts beim Editieren zu lang
 		  if test "$ICH" = viall; then
 				LBOOST=$(cat vars|grep LBOOST|cut -d= -f2);
+				LBIO=$(cat vars|grep LBIO|cut -d= -f2);
+				LBLO=$(cat vars|grep LBLO|cut -d= -f2);
 			else
   			# z.B. 'i+ | boost_1_65-devel |'
   			LBOOST=$(zypper se boost*-devel|grep ' | boost'|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
+				LBIO=$(V=libboost_iostreams;zypper se $V|grep "| $V"|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
+				LBLO=$(V=libboost_locale;zypper se $V|grep "| $V"|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
+
 			fi
 			LT=${_LT}-${dev};
 		} 
