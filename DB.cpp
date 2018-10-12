@@ -357,7 +357,7 @@ uchar DB::oisok=0;
 		host(phost),user(puser),passwd(ppasswd),dbname(uedb), conz(conz)
 {
   init(charset,collate,port,unix_socket,client_flag,obverb,oblog,versuchzahl, ggferstellen);
-} // DB::DB(DBSTyp nDBS, const string& phost, const string& puser, const string& ppasswd, size_t conz, const string& uedb
+} // DB::DB
 
 /*3*/DB::DB(const DBSTyp nDBS, const char* const phost, const char* const puser,const char* const ppasswd, 
       const char* const prootpwd, const size_t conz/*=1*/, 
@@ -2421,7 +2421,7 @@ void DB::prueffunc(const string& pname, const string& body, const string& para, 
     if (fehlt) {
       DB *aktMyp;
       if (!runde) aktMyp=this; else {
-        /*2*/DB MySup(DBS,this->host.c_str(),"root",this->rootpwd.c_str(),1,this->dbname.c_str(),0,0,0,obverb,oblog);
+        /*2*/DB MySup(DBS,this->host.c_str(),"root",this->rootpwd.c_str(),/*conz*/1,this->dbname.c_str(),0,0,0,obverb,oblog);
         aktMyp=&MySup;
       }
       string proc= "DROP FUNCTION IF EXISTS `"+pname+"`";

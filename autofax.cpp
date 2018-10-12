@@ -26,8 +26,30 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"virtrueckfragen()","virtcallbacks()"},
 	// T_virtpruefweiteres
 	{"virtpruefweiteres()","virtcheckmore()"},
+	// T_virtmacherkl_Tx_lgn
+	{"pvirtmacherkl, Tx.lgn: ","pvirtmakeexpl, Tx.lgn: "},
 	//	T_Fehler_beim_Pruefen_von
 	{"Fehler beim Pruefen von: ","Error while examining: "},
+	// T_st_k
+	{"st","st"},
+	// T_stop_l
+	{"stop","stop"},
+	// T_DPROG_anhalten
+	{DPROG " anhalten","stop " DPROG},
+	// T_anhalten
+	{"anhalten()","stop()"},
+	// T_Cron_Aufruf_von
+	{"Cron-Aufruf von '","cron call of '"},
+	// T_gestoppt
+	{"' gestoppt.","' stopped."},
+	// T_n_k
+	{"n","n"},
+	// T_dszahl_l
+	{"dszahl","reccount"},
+	// T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt
+	{"Zahl der aufzulistenden Datensaetze = <zahl> statt","No. of listed entries = <no> instead of"},
+	// T_Datenbank_nicht_initialisierbar_breche_ab
+	{"Datenbank nicht initialisierbar, breche ab","database init failed, stopping"},
 	// T_Fuege_ein
 	{"Fuege ein: ","Inserting: "}, //ω
 	// T_an_Fax
@@ -272,12 +294,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Dateien aus Wartevz.,Gescheitertenvz.u.Gefaxtvz.gegen `","Examine files in waiting,failed a.faxed directory against the tables `"},
 	// T_pruefen_und_aufraeumen
 	{"` pruefen und ggf. aufraeumen","` and put them to order"},
-	// T_st_k
-	{"st","st"},
-	// T_stop_l
-	{"stop","stop"},
-	// T_DPROG_anhalten
-	{DPROG " anhalten","stop " DPROG},
 	// T_lista_k
 	{"lista","listo"},
 	// T_listausg_l
@@ -310,12 +326,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"suche","search"},
 	// T_suche_in_verarbeiteten_Faxen_nach
 	{"Suche in verarbeiteten Faxen nach <string>: ","Look in processed faxes for <string>: "},
-	// T_n_k
-	{"n","n"},
-	// T_dszahl_l
-	{"dszahl","reccount"},
-	// T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt
-	{"Zahl der aufzulistenden Datensaetze = <zahl> statt","No. of listed entries = <no> instead of"},
 	// T_vc_k
 	{"vc","vc"},
 	// T_vc_l
@@ -499,8 +509,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"' (Tabellen: `","' (tables: `"},
 	// T_aein
 	{"`) ein.","`)."},
-	// T_virtmacherkl_Tx_lgn
-	{"pvirtmacherkl, Tx.lgn: ","pvirtmakeexpl, Tx.lgn: "},
 	// T_Zustand_der_Dienste
 	{"Zustand der Dienste: ","State of the services: "},
 	// T_pruefmodem
@@ -737,8 +745,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"pruefinca()","checkinca()"},
 	// T_identisch_zu_submid_in_outa
 	{"identisch zu submid in outa","identical to submid in outa"},
-	// T_Datenbank_nicht_initialisierbar_breche_ab
-	{"Datenbank nicht initialisierbar, breche ab","database init failed, stopping"},
 	// T_Verwende
 	{"Verwende: ","Using: "},
 	// T_kein_Faxprogramm_verfuegbar
@@ -859,12 +865,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Aus ","From "},
 	// T_wurden_in_Unterverzeichnisse_verschoben
 	{" wurden in Unterverzeichnisse verschoben: "," have been moved to subdirectories: "},
-	// T_anhalten
-	{"anhalten()","stop()"},
-	// T_Cron_Aufruf_von
-	{"Cron-Aufruf von '","cron call of '"},
-	// T_gestoppt
-	{"' gestoppt.","' stopped."},
 	// T_tu_lista
 	{"tu_lista()","do_listo()"},
 	// T_tu_listi
@@ -2674,13 +2674,13 @@ void hhcl::virtinitopt()
 	opn<<new optcl(/*pname*/"",/*pptr*/&uml,/*art*/puchar,T_uml_k,T_umleiten_l,/*TxBp*/&Tx,/*Txi*/T_ausgehendes_Fax_vorzeitig_auf_zweitem_Weg_schicken,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pname*/"",/*pptr*/&kez,/*art*/puchar,T_kez_k,T_korrerfolgszeichen_l,/*TxBp*/&Tx,/*Txi*/T_in_der_Datenbanktabelle,/*wi*/0,/*Txi2*/T_wird_das_Erfolgszeichen_korrigiert,/*rottxt*/touta,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pname*/"",/*pptr*/&bvz,/*art*/puchar,T_bvz_k,T_bereinigevz_l,/*TxBp*/&Tx,/*Txi*/T_Dateien_aus_Warteverzeichnis_Gescheitertenvz_und_Gefaxtvz_gegen,/*wi*/0,/*Txi2*/T_pruefen_und_aufraeumen,/*rottxt*/touta,/*wert*/1,/*woher*/1);
-	opn<<new optcl(/*pname*/"",/*pptr*/&anhl,/*art*/puchar,T_st_k,T_stop_l,/*TxBp*/&Tx,/*Txi*/T_DPROG_anhalten,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
+	opn<<new optcl(/*pname*/"",/*pptr*/&anhl,/*art*/puchar,T_st_k,T_stop_l,/*TxBp*/&Tx,/*Txi*/T_DPROG_anhalten,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1); //α //ω
 	opn<<new optcl(/*pname*/"",/*pptr*/&lista,/*art*/puchar,T_lista_k,T_listausg_l,/*TxBp*/&Tx,/*Txi*/T_listet_Datensaetze_aus,/*wi*/1,/*Txi2*/T_mit_Erfolgskennzeichen_auf,/*rottxt*/touta,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pname*/"",/*pptr*/&listf,/*art*/puchar,T_listf_k,T_listfailed_l,/*TxBp*/&Tx,/*Txi*/T_listet_Datensaetze_aus,/*wi*/1,/*Txi2*/T_ohne_Erfolgskennzeichen_auf,/*rottxt*/touta,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pname*/"",/*pptr*/&listi,/*art*/puchar,T_listi_k,T_listinca_l,/*TxBp*/&Tx,/*Txi*/T_listet_Datensaetze_aus,/*wi*/1,/*Txi2*/T__auf,/*rottxt*/tinca,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pname*/"",/*pptr*/&listw,/*art*/puchar,T_listw_k,T_listwart_l,/*TxBp*/&Tx,/*Txi*/T_listet_wartende_Faxe_auf,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pname*/"",/*pptr*/&suchstr,/*art*/pstri,T_s_k,T_suche_l,/*TxBp*/&Tx,/*Txi*/T_suche_in_verarbeiteten_Faxen_nach,/*wi*/1,/*Txi2*/T_MAX,/*rottxt*/nix,/*wert*/-1,/*woher*/1);
-	opn<<new optcl(/*pname*/"",/*pptr*/&dszahl,/*art*/pdez,T_n_k,T_dszahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/1);
+	opn<<new optcl(/*pname*/"",/*pptr*/&dszahl,/*art*/pdez,T_n_k,T_dszahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/1); //α //ω
 	opn<<new optcl(/*pname*/"",/*pptr*/&obvc,/*art*/puchar,T_vc_k,T_vc_l,/*TxBp*/&Tx,/*Txi*/T_Capisuite_Konfigurationdateien_bearbeiten,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pname*/"",/*pptr*/&obvh,/*art*/puchar,T_vh_k,T_vh_l,/*TxBp*/&Tx,/*Txi*/T_Hylafax_Modem_Konfigurationsdatei_bearbeiten,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 //	opn<<new optcl(/*pname*/"sqlz",/*pptr*/&sqlzn,/*art*/plong,-1,-1,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_SQL_Befehle_fuer_die_Absenderermittlung,/*wi*/-1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/sqlzn>0);
@@ -2697,7 +2697,7 @@ void hhcl::pvirtmacherkl()
 		Tx[T_faxnr_enthalten_und_durch_soffice_in_pdf_konvertierbar_sind_und_traegt_sie]
 		<<drot<<dbq<<blau<<Tx[T_Tabellen]<<drot<<touta<<blau<<"`,`"<<drot<<spooltab<<blau<<Tx[T_aein]<<schwarz;
 } // void hhcl::pvirtmacherkl //α
-
+ //ω
 void hhcl::machopvzm()
 {
 	for(size_t i=0;i<zmVp.size();) {
@@ -2710,7 +2710,7 @@ void hhcl::machopvzm()
 		opvzm<<new optcl(/*pname*/zmzname.str(),/*pptr*/&zmVp[i-1].ziel,/*part*/pstri,-1,-1,/*TxBp*/&Tx,/*Txi*/T_Ziel_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/istr,/*wert*/-1,/*woher*/1);
 	}
 }
-
+ //α
 // wird aufgerufen in lauf
 void hhcl::virtMusterVorgb()
 {
@@ -3185,7 +3185,7 @@ void hhcl::virtrueckfragen()
 	dhcl::virtrueckfragen();
 	//// opn.oausgeb(rot);
 } // void hhcl::virtrueckfragen()
-
+ //ω
 const string hhcl::initdhyladt="/etc/init.d/hylafax";
 // wird aufgerufen in: pruefhyla, main
 int hhcl::setzhylavz()
@@ -4416,11 +4416,11 @@ void pruefinctab(DB *My, const string& tinca, const int obverb, const int oblog,
 } // int pruefinctab(DB *My, string tinca, int obverb, int oblog, uchar direkt=0)
 
 
-
+//α
 // wird aufgerufen in lauf
 void hhcl::virtpruefweiteres()
-{ //ω
-	fLog(violetts+Tx[T_virtpruefweiteres]+schwarz,obverb,oblog);
+{
+	fLog(violetts+Tx[T_virtpruefweiteres]+schwarz,obverb,oblog); //ω
 	setzhylavz();
 	if (obvh) dovh();
 	verzeichnisse();
@@ -4429,6 +4429,7 @@ void hhcl::virtpruefweiteres()
 	if (logdateineu) tuloeschen(logdt,string(),obverb,oblog);
 	hLog(Tx[T_zufaxenvz]+drots+zufaxenvz+schwarz+"'");
 	hLog(Txk[T_Logpfad]+drots+loggespfad+schwarz+Txk[T_oblog]+drot+ltoan((int)oblog)+schwarz+")");
+	// if (initDB()) exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab])); //α //ω
 	if (initDB()) {
 		exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));
 	}
@@ -4462,7 +4463,7 @@ void hhcl::virtzeigueberschrift()
 	// hier ggf. noch etwas an 'uebers' anhaengen //α
 	hcl::virtzeigueberschrift();
 } // void hhcl::virtzeigueberschrift
-
+//ω
 // aufgerufen in: getsender, archiviere, pruefstdfaxnr, korrigierecapi, empfhyla, empfcapi
 string hhcl::stdfaxnr(const string& faxnr)
 {
@@ -7092,7 +7093,7 @@ void hhcl::bereinigevz(const size_t aktc/*=0*/)
 	if (aktc)
 		hLog(ausg.str());
 } // bereinigevz
-
+//α
 // Parameter -st / --stop
 // wird aufgerufen in: main
 void hhcl::anhalten()
@@ -7108,7 +7109,7 @@ void hhcl::anhalten()
 	} // 	for(int iru=0;iru<2;iru++)
   */
 	pruefcron("0"); // soll vor Log(Tx[T_Verwende ... stehen
-	fLog(blaus+Tx[T_Cron_Aufruf_von]+schwarz+mpfad+blau+Tx[T_gestoppt]+schwarz,1,oblog);
+	fLog(blaus+Tx[T_Cron_Aufruf_von]+schwarz+mpfad+blau+Tx[T_gestoppt]+schwarz,1,oblog); //ω
 	// services
 	//// befehl="systemctl stop capisuite hylafax-faxq hylafax-hfaxd hylafax-faxgetty-"+hmodem+" hylafax >/dev/null 2>&1;:";
 	//// systemrueck(befehl,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
@@ -7120,8 +7121,9 @@ void hhcl::anhalten()
 	if (sfaxq) sfaxq->stopdis(obverb,oblog);
 	if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb:0,oblog);
 	if (scapis) scapis->stopdis(obverb,oblog);
-	zeigdienste();
+	zeigdienste(); //α
 } // void hhcl::anhalten()
+//ω
 
 // wird aufgerufen in: main (2x)
 void hhcl::tu_lista(const string& oberfolg, const string& submids)
@@ -8611,8 +8613,10 @@ void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 	} // if (!pid)
 } // void hhcl::korrigierehyla()
 
+//α
 void hhcl::pvirtvorpruefggfmehrfach()
 {
+	// if (initDB()) exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));  //ω
 	if (lista||listf||listi||listw||!suchstr.empty()) {
 		// wird fuer kez und normalen Ablauf spaeter in virtpruefweiteres abgerufen
 		if (initDB()) {
@@ -8633,7 +8637,7 @@ void hhcl::pvirtvorpruefggfmehrfach()
 			suchestr();
 		} // if (lista) else else else else
 	} // 	if (lista||listf||listi||listw||!suchstr.empty())
-} // void hhcl::pvirtvorpruefggfmehrfach
+} // void hhcl::pvirtvorpruefggfmehrfach //α
 
 void hhcl::pvirtfuehraus()
 { //ω
@@ -8827,14 +8831,14 @@ void hhcl::virtautokonfschreib()
 {
 // const int altobverb=obverb;
 // obverb=1;
-	hLog(violetts+Txk[T_autokonfschreib]+schwarz+", "+Txk[T_zu_schreiben]+((rzf||hccd.obzuschreib)?Txk[T_ja]:Txk[T_nein]));
+	hLog(violetts+Txk[T_autokonfschreib]+schwarz+", "+Txk[T_zu_schreiben]+((rzf||hccd.obzuschreib)?Txk[T_ja]:Txk[T_nein])); //ω
 	/*//
 		capizukonf und hylazukonf hier immer 0
 		char buf[200];
 		sprintf(buf,"rzf: %d, capizukonf: %d, hylazukonf: %d, obzuschreib: %d",(int)rzf, (int)capizukonf, (int)hylazukonf, (int)obzuschreib);
 		hLog(blaus+buf+schwarz);
 	 */
-	struct stat kstat={0};
+	struct stat kstat{0}; //α
 	if (lstat(akonfdt.c_str(),&kstat))
 		hccd.obzuschreib=1;
 	if (rzf||hccd.obzuschreib) {
@@ -8888,14 +8892,14 @@ void hhcl::virtlieskonfein()
 	zmzn=0;
 	for(size_t nr=0;nr<hccd.paare.size();nr++) {
 		if  (!hccd.paare[nr].name.find(cSQL_)) {
-			unsigned long neusqlzn=atol(hccd.paare[nr].name.substr(cSQL_.length()).c_str());
-			if (neusqlzn>sqlzn) sqlzn=neusqlzn;
+			const long neusqlzn{atol(hccd.paare[nr].name.substr(cSQL_.length()).c_str())};
+			if (neusqlzn>(long)sqlzn) sqlzn=neusqlzn;
 		} else if  (!hccd.paare[nr].name.find(cZMMuster_)) {
-			unsigned long neuzmzn=atol(hccd.paare[nr].name.substr(cZMMuster_.length()).c_str());
-			if (neuzmzn>zmzn) zmzn=neuzmzn;
+			const long neuzmzn{atol(hccd.paare[nr].name.substr(cZMMuster_.length()).c_str())};
+			if (neuzmzn>(long)zmzn) zmzn=neuzmzn;
 		} else if  (!hccd.paare[nr].name.find(cZMZiel_)) {
-			unsigned long neuzmzn=atol(hccd.paare[nr].name.substr(cZMZiel_.length()).c_str());
-			if (neuzmzn>zmzn) zmzn=neuzmzn;
+			const long neuzmzn{atol(hccd.paare[nr].name.substr(cZMZiel_.length()).c_str())};
+			if (neuzmzn>(long)zmzn) zmzn=neuzmzn;
 		}
 ////		caus<<"Nr."<<nr<<", Name: "<<blau<<hccd.paare[nr].name<<schwarz<<", Wert: "<<violett<<hccd.paare[nr].wert<<schwarz<<endl;
 	}

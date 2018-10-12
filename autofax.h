@@ -9,7 +9,18 @@ enum T_
 	T_pvirtvorrueckfragen,
 	T_virtrueckfragen,
 	T_virtpruefweiteres,
+	T_virtmacherkl_Tx_lgn,
 	T_Fehler_beim_Pruefen_von,
+	T_st_k,
+	T_stop_l,
+	T_DPROG_anhalten,
+	T_anhalten,
+	T_Cron_Aufruf_von,
+	T_gestoppt,
+	T_n_k,
+	T_dszahl_l,
+	T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,
+	T_Datenbank_nicht_initialisierbar_breche_ab,
 	T_Fuege_ein, //ω
 	T_an_Fax,
 	T_an_cFax,
@@ -132,9 +143,6 @@ enum T_
 	T_bereinigevz_l,
 	T_Dateien_aus_Warteverzeichnis_Gescheitertenvz_und_Gefaxtvz_gegen,
 	T_pruefen_und_aufraeumen,
-	T_st_k,
-	T_stop_l,
-	T_DPROG_anhalten,
 	T_lista_k,
 	T_listausg_l,
 	T_listet_Datensaetze_aus,
@@ -151,9 +159,6 @@ enum T_
 	T_s_k,
 	T_suche_l,
 	T_suche_in_verarbeiteten_Faxen_nach,
-	T_n_k,
-	T_dszahl_l,
-	T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,
 	T_vc_k,
 	T_vc_l,
 	T_Capisuite_Konfigurationdateien_bearbeiten,
@@ -241,7 +246,6 @@ enum T_
 	T_faxnr_enthalten_und_durch_soffice_in_pdf_konvertierbar_sind_und_traegt_sie,
 	T_Tabellen,
 	T_aein,
-	T_virtmacherkl_Tx_lgn,
 	T_Zustand_der_Dienste,
 	T_pruefmodem,
 	T_gibts,
@@ -353,7 +357,6 @@ enum T_
 	T_Archiv_fuer_die_Dateinamen_vor_Aufteilung,
 	T_pruefinca,
 	T_identisch_zu_submid_in_outa,
-	T_Datenbank_nicht_initialisierbar_breche_ab,
 	T_Verwende,
 	T_kein_Faxprogramm_verfuegbar,
 	T_aktiv,
@@ -412,9 +415,6 @@ enum T_
 	T_Nicht_gefaxt,
 	T_Aus2,
 	T_wurden_in_Unterverzeichnisse_verschoben,
-	T_anhalten,
-	T_Cron_Aufruf_von,
-	T_gestoppt,
 	T_tu_lista, 
 	T_tu_listi, 
 	T_Letzte,
@@ -683,7 +683,10 @@ struct fsfcl : public fxfcl // Faxsendfile
 //α
 class hhcl:public dhcl
 {
-	private: //ω
+	private: 
+		uchar anhl=0;    // <DPROG> anhalten
+		string dszahl="30"; // Datensatzzahl fuer Tabellenausgaben
+		//ω
 		static const string initdhyladt; // /etc/init.d/hylafax
 		uchar initdhyladt_gibts{0}; // Datei initdhyladt existiert
 		svec modems;       // gefundene Modems
@@ -732,13 +735,11 @@ class hhcl:public dhcl
 		uchar uml=0; // umleiten: vorzeitig den zweiten Weg aktivieren
 		uchar kez=0;    // korrigiere Erfolgskennzeichen
 		uchar bvz=0;    // bereinige Gescheitertenverzeichnis, letztes Gefaxtverzeichnis und Warteverzeichnis
-		uchar anhl=0;    // <DPROG> anhalten
 		uchar lista=0;   // liste Archiv auf
 		uchar listf=0;   // liste gescheiterte auf
 		uchar listi=0;   // liste Eingegangene auf
 		uchar listw=0;   // liste wartende auf
 		string suchstr;  // Wortteil, nach dem in alten Faxen gesucht werden soll
-		string dszahl="30"; // Datensatzzahl fuer Tabellenausgaben
 		size_t faxord=0; // Ordinalzahl des Faxes unter allen anstehenden Faxen
 		ulong geszahl=0;
 		ulong ankzahl=0; // Zahl der angekommenen Faxe
@@ -858,6 +859,7 @@ class hhcl:public dhcl
 		void virttesterg(); //α
 		void virtlieskonfein();
 		void virtautokonfschreib();
+		void anhalten(); //ω
 		int setzhylavz(); // sucht das Hylaverzeichnis und setzt varsphylavz darauf, return 0, wenn nicht gefunden dann varsphylavz="", return 1
 		void setzmodconfd();
 		int hconfigtty();
@@ -877,7 +879,6 @@ class hhcl:public dhcl
     void bereinigevz(const size_t aktc/*=0*/);
 		void dober(const string& wvz, set<string>& fdn,uchar aucherfolg,stringstream *ausgp,const size_t aktc,
 				set<string> *cmisslp,set<string> *cgelup,set<string> *hmisslp,set<string> *hgelup);
-		void anhalten();
     string getzielvz(const string& datei); // in bereinigevz
     string neuerdateiname(const string& qpfad); // in wegfaxen
     void tu_lista(const string& oberfolg,const string& submids=nix);
