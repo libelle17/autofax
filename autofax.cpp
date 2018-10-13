@@ -8842,7 +8842,7 @@ void hhcl::virtautokonfschreib()
 	if (lstat(akonfdt.c_str(),&kstat))
 		hccd.obzuschreib=1;
 	if (rzf||hccd.obzuschreib) {
-		hLog(gruens+Tx[T_schreibe_Konfiguration]+schwarz);
+		hLog(gruens+Txk[T_schreibe_Konfiguration]+schwarz);
 		// restliche Erklaerungen festlegen
 		////    agcnfA.setzbem("language",sprachstr);
 		hcl::virtautokonfschreib(); //ω
@@ -9010,9 +9010,9 @@ void hhcl::virtlieskonfein()
 	////	opn.gibomapaus();
 	hLog(violetts+Txk[T_Ende]+Txk[T_virtlieskonfein]+schwarz); //α
 	obverb=altobverb;
-} // void hhcl::virtlieskonfein()
+} // void hhcl::virtlieskonfein() //ω
 
-int main(int argc,char** argv)
+int main(int argc,char** argv) //α
 {
 	if (argc>1) { //ω
 	} //α
