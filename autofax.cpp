@@ -2697,7 +2697,7 @@ void hhcl::pvirtmacherkl()
 		Tx[T_faxnr_enthalten_und_durch_soffice_in_pdf_konvertierbar_sind_und_traegt_sie]
 		<<drot<<dbq<<blau<<Tx[T_Tabellen]<<drot<<touta<<blau<<"`,`"<<drot<<spooltab<<blau<<Tx[T_aein]<<schwarz;
 } // void hhcl::pvirtmacherkl //α
- //ω
+//ω
 void hhcl::machopvzm()
 {
 	for(size_t i=0;i<zmVp.size();) {
@@ -2710,7 +2710,7 @@ void hhcl::machopvzm()
 		opvzm<<new optcl(/*pname*/zmzname.str(),/*pptr*/&zmVp[i-1].ziel,/*part*/pstri,-1,-1,/*TxBp*/&Tx,/*Txi*/T_Ziel_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/istr,/*wert*/-1,/*woher*/1);
 	}
 }
- //α
+//α
 // wird aufgerufen in lauf
 void hhcl::virtMusterVorgb()
 {
@@ -3185,7 +3185,7 @@ void hhcl::virtrueckfragen()
 	dhcl::virtrueckfragen();
 	//// opn.oausgeb(rot);
 } // void hhcl::virtrueckfragen()
- //ω
+//ω
 const string hhcl::initdhyladt="/etc/init.d/hylafax";
 // wird aufgerufen in: pruefhyla, main
 int hhcl::setzhylavz()
@@ -8638,8 +8638,8 @@ void hhcl::pvirtvorpruefggfmehrfach()
 		} // if (lista) else else else else
 	} // 	if (lista||listf||listi||listw||!suchstr.empty())
 } // void hhcl::pvirtvorpruefggfmehrfach //α
-
-void hhcl::pvirtfuehraus()
+//ω
+void hhcl::pvirtfuehraus() //α
 { //ω
 	if (kez||bvz||anhl||lista||listf||listi||listw||!suchstr.empty()) {
 		// also bei den in pvirtvorpruefggfmehrfach Abgehandelten hier nichts mehr tun
@@ -8878,7 +8878,7 @@ hhcl::~hhcl()
 		delete cfaxcp; 
 		cfaxcp=0; 
 	}
-} //α
+} // hhcl::~hhcl //α
 
 // wird nur im Fall obhilfe==3 nicht aufgerufen
 void hhcl::virtlieskonfein()
