@@ -2748,7 +2748,7 @@ void hhcl::pvirtvorzaehler()
 void hhcl::zeigdienste()
 {
 	cout<<Tx[T_Zustand_der_Dienste]<<endl;
-	servc *svp[4]={scapis,sfaxq,shfaxd,sfaxgetty};
+	servc *svp[4]{scapis,sfaxq,shfaxd,sfaxgetty};
 	for(int i=0;i<4;i++) {
 		if (svp[i]) {
 			svp[i]->obsvfeh();
@@ -7121,8 +7121,8 @@ void hhcl::anhalten()
 	if (sfaxq) sfaxq->stopdis(obverb,oblog);
 	if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb:0,oblog);
 	if (scapis) scapis->stopdis(obverb,oblog);
-	zeigdienste(); //α
-} // void hhcl::anhalten()
+	zeigdienste();
+} // void hhcl::anhalten() //α
 //ω
 
 // wird aufgerufen in: main (2x)
