@@ -2946,9 +2946,9 @@ void hhcl::pvirtvorrueckfragen()
 // wird aufgerufen in lauf
 void hhcl::virtrueckfragen()
 {
-	const size_t aktc{0};
 	hLog(violetts+Tx[T_virtrueckfragen]+schwarz);
 	if (rzf) { //ω
+		const size_t aktc{0};
 		// Rueckfragen koennen auftauchen in: virtrueckfragen, konfcapi (<- pruefcapi), aenderefax, rufpruefsamba
 		zufaxenvz=Tippverz(Tx[T_Verzeichnis_mit_zu_faxenden_Dateien],&zufaxenvz);
 		wvz=Tippverz(Tx[T_Verzeichnis_mit_wartenden_Dateien],&wvz);

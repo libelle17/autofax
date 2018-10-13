@@ -910,7 +910,7 @@ class hhcl:public dhcl
 		void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
 				const fsfcl *const fsfp,const string *tel, const size_t aktc);
-	protected: 
+	protected: //α
 		// void virtlgnzuw(); // wird aufgerufen in: virtrueckfragen, parsecl, lieskonfein, hcl::hcl nach holsystemsprache
 		void virtVorgbAllg();
 		void pvirtVorgbSpeziell()
@@ -929,8 +929,8 @@ class hhcl:public dhcl
 		void virtpruefweiteres();
 		void virtzeigueberschrift();
 		void pvirtfuehraus();
-		void virtschlussanzeige(); //ω
-		void zeigdienste();
+		void virtschlussanzeige();
+		void zeigdienste(); //ω
 		void pruefmodem();
     void empfarch(uchar obalte=0);
 		void empfhyla(const string& ganz,size_t aktc, const uchar was,const string& nr=nix);
