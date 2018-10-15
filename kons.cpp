@@ -32,6 +32,7 @@ const char *const tmmoegl[]={
 	"%y","%Y",
 	"%c"
 	}; // Moeglichkeiten fuer strptime
+string _DPROG;
 // zum Schutz statischer Speicherbereiche vor gleichzeitigem Zugriff durch mehrere Programmfaeden
 pthread_mutex_t printf_mutex, getmutex, timemutex;
 
@@ -1225,7 +1226,7 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 		cout<<rot<<Txk[T_Logdateidpp]<<endl<<schwarz; 
 		int erg __attribute__((unused))=system((string(dir) + "\"" + logdatei + "\"").c_str());
 	}
-	const string ofil=string(logdatei)+"tmp";
+	const string ofil{string(logdatei)+"tmp"};
 	int abhier=0;
 	mdatei outfile(ofil,ios::out,0);
 	if (!outfile.is_open()) {
@@ -2498,7 +2499,9 @@ int systemrueck(const string& cmd, int obverb/*=0*/, int oblog/*=0*/, vector<str
   } else {
     aktues=ueberschr;
   } //   if (ueberschr.empty())
-	char tmpd[]{P_tmpdir "/konsXXXXXX"};
+	const string tmpd0{P_tmpdir "/err_"+_DPROG+"_XXXXXX"};
+	char tmpd[tmpd0.size()+1];
+	strcpy(tmpd,tmpd0.c_str());
 	const int mksterg{mkstemp(tmpd)};
 	// '... 2>/dev/null' nicht unbedingt aufheben
 	const string bef{(obsudc?sudc+(obsudc==2&&!sudc.empty()?"-H ":""):"")+
@@ -2587,6 +2590,9 @@ int systemrueck(const string& cmd, int obverb/*=0*/, int oblog/*=0*/, vector<str
   } else {
     erg=system(bef.c_str());
   } // if (rueck) else
+	// temporäre Datei loeschen, falls leer
+	struct stat tmpdst{0};
+	if (!lstat(tmpd,&tmpdst)) if (!tmpdst.st_size) tuloeschen(tmpd,string(),0,0);
   int erg2 __attribute__((unused)){system(string("printf ' %.0s' {1.."+ltoan(getcols()-2)+"};printf '\r';").c_str())};
 #ifdef systemrueckprofiler
   prf.ausgab1000("vor weiter");
@@ -4973,6 +4979,7 @@ const string& defnachs{"/archive/master.tar.gz"};
 hcl::hcl(const int argc, const char *const *const argv,const char* const DPROG,const uchar mitcron):DPROG(DPROG),mitcron(mitcron)
 {
 	tstart=clock();
+	_DPROG=DPROG;
 	holbefz0(argc,argv);
 	tmmoelen=sizeof tmmoegl/sizeof *tmmoegl;
 	langu=holsystemsprache(obverb);
@@ -5052,7 +5059,7 @@ void hcl::lauf()
 		pvirtfuehraus();
 	} //  if (!keineverarbeitung)
 	virtautokonfschreib();
-	update(DPROG);
+	gitpull(DPROG);
 	if (mitpids) 
 		wartaufpids(&pidv,0,obverb,oblog,Txk[T_in_main_pidv_am_Schluss]);
 	if (obsetz) {
@@ -5614,7 +5621,7 @@ void hcl::virtautokonfschreib()
 } // void hhcl::virtautokonfschreib
 
 // wird aufgerufen in lauf
-void hcl::update(const string& DPROG)
+void hcl::gitpull(const string& DPROG)
 {
 	if (autoupd && tagesaufr == 2) {
 ////		perfcl perf("main");
@@ -5650,7 +5657,7 @@ void hcl::update(const string& DPROG)
 		} // 		if (srueck.size())
 	} // 	else if (tagesaufr % 5)  // 	if (pm.autoupd && pm.tagesaufr == 2)
 	//// <<"Tagesaufr: "<<tagesaufr<<endl;
-} // void hcl::update(const string& DPROG)
+} // void hcl::gitpull
 
 // wird aufgerufen in lauf
 int wartaufpids(pidvec *pidv,const ulong runden/*=0*/,const int obverb/*=0*/,const int oblog/*=0*/,const string& wo/*=string()*/)
@@ -6549,7 +6556,7 @@ void hcl::dodovi(const svec d1,const svec d2)
 	vischluss(erg,zeig);
 } // void hcl::dodovi
 
-// in pruefhyla, pruefocr, prueftif und update
+// in pruefhyla, pruefocr, prueftif und gitpull
 void hcl::reduzierlibtiff()
 {
 	svec qrueck;

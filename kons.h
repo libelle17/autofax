@@ -1355,7 +1355,7 @@ class hcl
 		virtual void virtzeigueberschrift();
     virtual void pvirtfuehraus()=0;
 		virtual void virtautokonfschreib(); 
-		void update(const string& DPROG);
+		void gitpull(const string& DPROG);
 		virtual void virtschlussanzeige();
 	public:
 		void pruefcl(); // commandline mit omap und mit argcmv parsen
