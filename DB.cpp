@@ -2167,32 +2167,30 @@ my_ulonglong RS::tbins(vector<instyp>* einfp,const size_t aktc/*=0*/,uchar samme
 	ulong locks=0;
 	uchar obhauptfehl=0;
 	fnr=0;
-  static uchar dochanfangen=0; // => bei Erreichen von maxzaehler in der naechsten Runde neu anfangen
-  //1. falls 0, dann auch Kopfzeile nicht behandeln, 2. falls Maxzaehler erreicht, dann Zwischeneinfuegen
-  const int maxzaehler=100; // wg. Performance: Maximalzahl fuer Sammelinsert
-  static unsigned long *maxl=0; // fuer Feldlaengenkorrekturen 
-  // <<"insert in "<<drot<<table<<schwarz<<" anfangen: "<<(int)anfangen<<" sammeln: "<<(int)sammeln<<endl;
-  uchar obeinfuegen=1; // Datensatz einfuegen, da noch nicht vorhanden
-	uchar anfangen=isql.empty();
-  /*//
-     if (einfp->empty()) if (sammeln || anfangen)
-     exit(33); // notwendiger Parameter fehlt
-  // <<"nach exit(34)"<<endl;
-   */
-  if (idp) idp->clear();
-  if (dochanfangen) {
-    anfangen=1;
-    dochanfangen=0;
-  } //   if (dochanfangen)
-  if (anfangen)
-    zaehler=0;
+	//1. falls 0, dann auch Kopfzeile nicht behandeln, 2. falls Maxzaehler erreicht, dann Zwischeneinfuegen
+	const int maxzaehler=100; // wg. Performance: Maximalzahl fuer Sammelinsert
+	// <<"insert in "<<drot<<table<<schwarz<<" anfangen: "<<(int)anfangen<<" sammeln: "<<(int)sammeln<<endl;
+	uchar obeinfuegen{1}; // Datensatz einfuegen, da noch nicht vorhanden
+	uchar anfangen{isql.empty()};
+	/*//
+		if (einfp->empty()) if (sammeln || anfangen)
+		exit(33); // notwendiger Parameter fehlt
+	// <<"nach exit(34)"<<endl;
+	 */
+	if (idp) idp->clear();
+	if (dochanfangen) {
+		anfangen=1;
+		dochanfangen=0;
+	} //   if (dochanfangen)
+	if (anfangen)
+		zaehler=0;
 	////  if (sammeln || (!sammeln && !anfangen)) 
-  ////<<"in insert, anfangen: "<<(int)(anfangen||dochanfangen)<<", sammeln: "<<(int)sammeln<<"\n";
-  if (anfangen) {
-    if (maxl) {
-      delete[] maxl; maxl=0;
-    }
-  } //   if (anfangen)
+	////<<"in insert, anfangen: "<<(int)(anfangen||dochanfangen)<<", sammeln: "<<(int)sammeln<<"\n";
+	if (anfangen) {
+		if (maxl) {
+			delete[] maxl; maxl=0;
+		}
+	} //   if (anfangen)
 	if (einfp) if (einfp->size()) {
 		if (!maxl) {
 			maxl= new unsigned long[einfp->size()];
@@ -2358,19 +2356,19 @@ my_ulonglong RS::tbins(vector<instyp>* einfp,const size_t aktc/*=0*/,uchar samme
 							break;
 						}  else {
 							fLog(tuerkiss+"SQL: "+schwarz+"\n"+isql+"\n",iru||(fnr!=1213&&fnr!=1366),0);
-              const string fmeld=mysql_error(dbp->conn[aktc]);
-              fLog(fmeld,iru||(fnr!=1213&&fnr!=1366),0);
-              if (fnr==1213){ // Deadlock found
-                locks++;
-                ////              "locks: "<<drot<<locks<<endl;
-                mysql_commit(dbp->conn[aktc]);
-                continue;
-              } else if (fnr==1366) { // Incorrect string value
-                dbp->machbinaer(table,aktc,fmeld,0);
-              } else {
+							const string fmeld{mysql_error(dbp->conn[aktc])};
+							fLog(fmeld,iru||(fnr!=1213&&fnr!=1366),0);
+							if (fnr==1213){ // Deadlock found
+								locks++;
+								////              "locks: "<<drot<<locks<<endl;
+								mysql_commit(dbp->conn[aktc]);
+								continue;
+							} else if (fnr==1366) { // Incorrect string value
+								dbp->machbinaer(table,aktc,fmeld,0);
+							} else {
 								exit(schluss(113,rots+Txk[T_Fehler]+schwarz+ltoan(fnr)+Txd[T_bei_sql_Befehl]+isql));
-                break; 
-              } // if (fnr==1213) else else
+								break; 
+							} // if (fnr==1213) else else
 						} //             if (idp) else else else
 					} //  for (int iru=0;iru<2;iru++) 
 					striktzurueck(altsqlm,aktc);
@@ -2386,13 +2384,13 @@ my_ulonglong RS::tbins(vector<instyp>* einfp,const size_t aktc/*=0*/,uchar samme
 		// nach Gebrauch loeschen
 		isql.clear();
 		if (!obhauptfehl){
-    if (maxl) {
-      delete[] maxl; maxl=0;
-    }
-  } //   if (!obhauptfehl)
+			if (maxl) {
+				delete[] maxl; maxl=0;
+			}
+		} //   if (!obhauptfehl)
 	} // if (!sammeln)
 	return zl;
-} // my_ulonglong DB::insert(vector<instyp>* einfp,const char** erg,int anfangen=1,int sammeln=0) 
+} // my_ulonglong DB::tbins(vector<instyp>* einfp,const char** erg,int anfangen=1,int sammeln=0) 
 
 void DB::prueffunc(const string& pname, const string& body, const string& para, const size_t aktc, int obverb, int oblog)
 {
@@ -2535,11 +2533,10 @@ void dhcl::virtrueckfragen()
 			mpwd=Tippstr(string(Txd[T_Passwort_fuer_MySQL_MariaDB])+Txk[T_fuer_Benutzer]+dblau+muser+schwarz+"'"/*,&mpwd*/);
 			mpw2=Tippstr(string(Txd[T_Passwort_fuer_MySQL_MariaDB])+Txk[T_fuer_Benutzer]+dblau+muser+schwarz+"'"+" ("+Txk[T_erneute_Eingabe]+")"/*,&mpw2*/);
 		} while (mpwd!=mpw2);
-		const string pwdstr=XOR(mpwd,pwk);
 		dbq=Tippstr(string(Txd[T_Datenbankname_fuer_MySQL_MariaDB_auf])+dblau+host+schwarz+"'",&dbq);
 		//		tabl=Tippstr(string(Txd[T_Tabellenname_in])+dblau+dbq+schwarz+"'",&tabl);
 	} // if (rzf)
-	hcl::virtrueckfragen();
+	// hcl::virtrueckfragen(); // wegen der Abfragereihenfolge lieber vorne reinschreiben
 } // void hhcl::virtrueckfragen()
 
 // wird aufgerufen in lauf

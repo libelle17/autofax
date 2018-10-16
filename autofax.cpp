@@ -3183,6 +3183,7 @@ void hhcl::virtrueckfragen()
 		}
 	} // if (rzf) //α
 	dhcl::virtrueckfragen();
+	hcl::virtrueckfragen();
 	//// opn.oausgeb(rot);
 } // void hhcl::virtrueckfragen()
 //ω

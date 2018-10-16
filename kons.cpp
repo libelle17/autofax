@@ -2347,16 +2347,16 @@ template<typename SCL> void schAcl<SCL>::setzbemerkwoher(SCL *optp,const string&
 		if (schl[i]->pname==optp->pname) {
 			schl[i]->virttusetzbemerkwoher(ibemerk,vwoher);
 		}
-	}
- }
-}
+	} // 	for (size_t i=0;i<schl.size();i++)
+ } //  if (optp->pname.empty())
+} // template<typename SCL> void schAcl<SCL>::setzbemerkwoher
 
 void optcl::virttusetzbemerkwoher(const string& ibemerk,const uchar vwoher)
 {
 	bemerk=ibemerk;
 	// wenn gar nicht (0) oder ueber Vorgaben (1) festgelegt
 	if (woher<2) woher=vwoher;
-}
+} // void optcl::virttusetzbemerkwoher
 
 // woher-Flag gibts nicht
 void wpgcl::virttusetzbemerkwoher(const string& ibemerk, const uchar vwoher)
@@ -2366,8 +2366,9 @@ void wpgcl::virttusetzbemerkwoher(const string& ibemerk, const uchar vwoher)
 string XOR(const string& value, const string& key)
 {
   string retval(value);
-  short unsigned int klen=key.length(), vlen=value.length(), k=0, v;
-  for(v=0;v<vlen;v++) {
+  const size_t klen{key.length()}, vlen{value.length()};
+	size_t k=0, v;
+	for(v=0;v<vlen;v++) {
     retval[v]=value[v]^key[k];
     k=(++k<klen?k:0);
   } //   for(v=0;v<vlen;v++)

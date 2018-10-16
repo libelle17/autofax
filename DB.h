@@ -450,9 +450,12 @@ struct Tabelle
 
 class RS 
 {
-	unsigned long zaehler=0; // Zahl der ueber tbins tatsaechlich einzufuegenden Datensaetze 
+	private:
+		unsigned long zaehler{0}; // Zahl der ueber tbins tatsaechlich einzufuegenden Datensaetze 
+		uchar dochanfangen{0}; // => bei Erreichen von maxzaehler in der naechsten Runde neu anfangen
+		unsigned long *maxl{0}; // fuer Feldlaengenkorrekturen 
 	public:
-    const DB* const dbp;
+		const DB* const dbp;
 		const size_t aktc;
     string sql;
     string isql; // insert-sql

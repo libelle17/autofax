@@ -573,6 +573,8 @@ dotrans:
 	@$(call setz_gitv,$(Ziel))
 	@sh -c "cd $(Ziel);./configure; " && printf "%b./configure%b in %b$(Ziel)%b aufgerufen\n" $(blau) $(reset) $(blau) $(reset);\
 
+.PHONY: newproj
+newproj: neuproj
 .PHONY: neuproj
 neuproj:
 	@Z=;while [ -z "$$Z" -o -d ../"$$Z" ]; do [ ! -z "$$Z" -a -d ../"$$Z" ]&& echo \'..\\"$$Z"\' gibt es schon/already exists.; echo Programmname/program name?; read Z;done;mkdir -p ../"$$Z";cp -ai kons.cpp kons.h DB.cpp DB.h Makefile .exrc configure install.sh man_?? viall* ../"$$Z";\
