@@ -4204,13 +4204,13 @@ void hhcl::rufpruefsamba()
 		if (!zmakt->ziel.empty()) vzn.push_back(&zmakt->ziel);
 	} //     for(zielmustercl *zmakt=zmp;1;zmakt++)
 	for(unsigned k=0;k<vzn.size();k++) {
-		string suchstr;
+		string schstr;
 		if (k<4) {
 			abschni<<Tx[ISambaName[k]];
 			Sprache altSpr=Tx.lgn;
 			for(int akts=0;akts<SprachZahl;akts++) {
 				Tx.lgn=(Sprache)akts;
-				suchstr=string("\\[")+Tx[ISambaName[k]]+"\\]\\|";
+				schstr=string("\\[")+Tx[ISambaName[k]]+"\\]\\|";
 			} //         for(int akts=0;akts<SprachZahl;akts++)
 			Tx.lgn=altSpr;
 		} else {
@@ -4219,12 +4219,12 @@ void hhcl::rufpruefsamba()
 				Sprache altSpr=Tx.lgn;
 				for(int akts=0;akts<SprachZahl;akts++) {
 					Tx.lgn=(Sprache)akts;
-					suchstr=string("\\[")+Tx[T_Gefaxt]+"_\\|";
+					schstr=string("\\[")+Tx[T_Gefaxt]+"_\\|";
 				} //         for(int akts=0;akts<SprachZahl;akts++)
 				Tx.lgn=altSpr;
 			} // 						if (k==4)
 		} // 					if (k<4) else
-		suchs<<suchstr;
+		suchs<<schstr;
 	} // 	for(unsigned k=0;k<vzn.size();k++)
 	pruefsamba(vzn,abschni,suchs,DPROG,cuser);
 	hLog(violetts+Txk[T_Ende]+Tx[T_rufpruefsamba]);
