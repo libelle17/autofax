@@ -571,8 +571,7 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
 void pruefouttab(DB *My, const string& touta, const int obverb, const int oblog, const uchar direkt=0);
 void pruefudoc(DB *My, const string& tudoc, const int obverb, const int oblog, const uchar direkt=0);
 void pruefinctab(DB *My, const string& tinca, const int obverb, const int oblog, const uchar direkt=0);
-string verschiebe(const string& qdatei, const auto/*string,zielmustercl*/& zielvz, const string& cuser=nix, 
-                  uint *vfehlerp=0, const uchar wieweiterzaehl=1, int obverb=0,int oblog=0, stringstream *ausgp=0,const uchar auchgleiche=0);
+template<typename T> string verschiebe(const string& qdatei, const T/*string,zielmustercl*/& zielvz, const string& cuser=nix, uint *vfehlerp=0, const uchar wieweiterzaehl=1, int obverb=0,int oblog=0, stringstream *ausgp=0,const uchar auchgleiche=0);
 const char* FxStatS(const FxStat *const i);
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, const int obverb, const int oblog);
 void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, int obverb, int oblog);

@@ -4707,9 +4707,8 @@ void hhcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 		exitt(17);
 	} // 	if (!pid)
 } // korrigierecapi
-
 // wird aufgerufen von wegfaxen und untersuchespool; Vorsicht, wenn qdateip ein Verzeichnisname ist!
-string verschiebe(const string& qdatei, const auto/*string,zielmustercl*/& zielvz, const string& cuser/*=nix*/, 
+template<typename T> string verschiebe(const string& qdatei, const T/*string,zielmustercl*/& zielvz, const string& cuser/*=nix*/, 
 		uint *vfehlerp/*=0*/, const uchar wieweiterzaehl/*=1*/, int obverb/*=0*/,int oblog/*=0*/, stringstream *ausgp/*=0*/,const uchar auchgleiche/*=0*/)
 {
 	// wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
@@ -4858,7 +4857,7 @@ int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/,
 	struct stat st={0};
 	if (!lstat(ziel.c_str(),&st)) {
 		uint vfehler=0;
-		verschiebe(ziel,dir_name(ziel),cuser,&vfehler,/*wieweiterzaehlt=*/1,obverb,oblog,/*ausgp=*/0,/*auchgleiche=*/1);
+		verschiebe<string>(ziel,dir_name(ziel),cuser,&vfehler,/*wieweiterzaehlt=*/1,obverb,oblog,/*ausgp=*/0,/*auchgleiche=*/1);
 	} // 	if (!lstat(ziel.c_str(),&st))
 	for(int aru=0;aru<2;aru++) {
 		if (/*aru||*/!keinbild) {
@@ -6242,7 +6241,7 @@ void hhcl::wegfaxen()
 			fLog(Tx[T_ErstelledurchBenennen]+rots+ndname+schwarz,1,oblog);
 			urfx.at(i).teil=ndname;
 		} // if (ndname!=urfx.at(i).teil) 
-		string wartedatei=verschiebe(urfx.at(i).teil,wvz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+		string wartedatei=verschiebe<string>(urfx.at(i).teil,wvz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 		if (vfehler) {
 			cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
 				blau<<urfx.at(i).teil<<schwarz<<" ->\n"<<
@@ -6291,10 +6290,10 @@ void hhcl::wegfaxen()
 			//// <<violett<<"fxv["<<(int)nachrnr<<"].spdf: "<<fxv[nachrnr].spdf<<schwarz<<endl;
 			struct stat npdfstat={0};
 			if (!lstat(fxv[nachrnr].npdf.c_str(), &npdfstat))
-				verschiebe(fxv[nachrnr].npdf,zufaxenvz,cuser,&wfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+				verschiebe<string>(fxv[nachrnr].npdf,zufaxenvz,cuser,&wfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 			struct stat spdfstat={0};
 			if (!lstat(fxv[nachrnr].spdf.c_str(), &spdfstat))
-				verschiebe(fxv[nachrnr].spdf,zufaxenvz,cuser,&wfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+				verschiebe<string>(fxv[nachrnr].spdf,zufaxenvz,cuser,&wfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 			fxv.erase(fxv.begin()+nachrnr);
 		} else {
 			// Erfolg
@@ -6342,7 +6341,7 @@ void hhcl::wegfaxen()
 					} // if (vfehler) 
 					////            zfda.at(i)=ndname;
 				} // if (ndname!=zfda.at(i))
-				const string wartedatei=verschiebe(ndname,wvz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+				const string wartedatei=verschiebe<string>(ndname,wvz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 				if (vfehler) {
 					continue; 
 				}
@@ -6626,10 +6625,10 @@ void hhcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,
 						pruefverz(cfaxuserrcfalschevz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/"",/*benutzer=*/cuser);
 						falschegeprueft=1;
 					} // 			if (!falschegeprueft)
-					verschiebe(ctxdt,cfaxuserrcfalschevz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+					verschiebe<string>(ctxdt,cfaxuserrcfalschevz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 					if (verschieb==2) {
 						fLog(Tx[T_Dateien]+rots+stamm+".* "+schwarz+Tx[T_nicht_verarbeitbar_Verschiebe_sie_nach]+rot+"./falsche"+schwarz+".",1,1);
-						verschiebe(sffdatei,cfaxuserrcfalschevz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+						verschiebe<string>(sffdatei,cfaxuserrcfalschevz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 						// so, dass es jeder merkt
 					} // if (verschieb==2) 
 					//      KLZ // if (loee) 
@@ -6833,7 +6832,7 @@ void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *a
 										unsigned vfehler=0;
 										if (!zlvz.empty()) {
 											const string zdt=zlvz+vtz+*fit;
-											verschiebe(qdt, zdt, cuser,&vfehler, /*wieweiterzaehl=*/2,/*obverb=*/ausgp?0:1,/*oblog=*/1,ausgp);
+											verschiebe<string>(qdt, zdt, cuser,&vfehler, /*wieweiterzaehl=*/2,/*obverb=*/ausgp?0:1,/*oblog=*/1,ausgp);
 											if (vfehler) {
 												meld=rots+Tx[T_Fehler_beim_Verschieben_Ausrufezeichen]+": "+ltoan(vfehler)+schwarz+qdt+" -> "+zdt;
 												if (ausgp) *ausgp<<meld<<endl; else fLog(meld,1,1);
@@ -6924,7 +6923,7 @@ void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *a
 			string zdt;
 			if (cstand==2 || hstand==2) {
 				if (wann&1) {
-					zdt=verschiebe(qdt, zmsp, cuser,&vfehler, /*wieweiterzaehl=*/2,/*obverb=*/ausgp?0:1,/*oblog=*/1,ausgp);
+					zdt=verschiebe<vector<shared_ptr<zielmustercl>>>(qdt, zmsp, cuser,&vfehler, /*wieweiterzaehl=*/2,/*obverb=*/ausgp?0:1,/*oblog=*/1,ausgp);
 				} // 				if (wann)
 				// wenn nicht im System nachweisbar, dann auch nicht umbenennen
 			} else {
@@ -6937,7 +6936,7 @@ void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *a
 					KLA else KLZ
 				 */
 				if ((wann&2)&& !ngvz.empty()) {
-					verschiebe(qdt, ngvz, cuser,&vfehler,/*wieweiterzaehl=*/2,/*obverb=*/ausgp?0:1,/*oblog=*/1,ausgp);
+					verschiebe<string>(qdt, ngvz, cuser,&vfehler,/*wieweiterzaehl=*/2,/*obverb=*/ausgp?0:1,/*oblog=*/1,ausgp);
 				} // 				if (!ngvz.empty())
 			} // 			if (cstand==2 || hstand==2) else
 			if (vfehler) {
@@ -7079,7 +7078,7 @@ void hhcl::bereinigevz(const size_t aktc/*=0*/)
 					pruefverz(dsvz+vtz+tok[0],aktc?0:obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/cuser,/*benutzer=*/"");
 					unsigned vfehler{0};
 					const string zield{dsvz+vtz+tok[0]};
-					verschiebe(tok[2],zield,cuser,&vfehler,/*wieweiterzaehl=*/1,/*obverb=*/aktc?0:1,oblog,aktc?&ausg:0);
+					verschiebe<string>(tok[2],zield,cuser,&vfehler,/*wieweiterzaehl=*/1,/*obverb=*/aktc?0:1,oblog,aktc?&ausg:0);
 					fzahl+=!vfehler;
 				} // 		for(size_t dnr=0;dnr<rueck.size();dnr++)
 				meld=Tx[T_Aus2]+blaus+dsvz+schwarz+Tx[T_wurden_in_Unterverzeichnisse_verschoben]+gruen+ltoan(fzahl)+schwarz+" "+Tx[T_Dateien];
@@ -7225,10 +7224,10 @@ void hhcl::bereinigecapi(const size_t aktc)
 				break;
 			} else {
 				// 31.1.16: ... und wenn diese sich nicht in outa findet ...
-				const string waisen = cfaxusersqvz+"/waisen";
+				const string waisen{cfaxusersqvz+"/waisen"};
 				pruefverz(waisen,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/"",/*benutzer=*/cuser);
 				uint vfehler=0;
-				verschiebe(qrueck[i],waisen,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+				verschiebe<string>(qrueck[i],waisen,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 			} // if (inouta.num_rows) else 
 		} // if (lstat(zugeh.c_str(),&entryvz)) 
 	} // for(size_t i=0;i<qrueck.size();i++) 
@@ -7899,7 +7898,7 @@ void fsfcl::scheitere(const string& wvz, const string& ngvz, const string& cuser
 			struct stat zstat{0};
 			uint vfehler;
 			if (!lstat(zuloe.c_str(),&zstat)) {
-				verschiebe(zuloe, ngvz, cuser, &vfehler, /*wieweiterzaehl=*/1, /*obverb=*/1, oblog);
+				verschiebe<string>(zuloe, ngvz, cuser, &vfehler, /*wieweiterzaehl=*/1, /*obverb=*/1, oblog);
 				if (ziel)
 					touch(*ziel+vtz+Tx[T_nichtgefaxt]+" `"+base_name(zuloe)+"`.nix",obverb,oblog);
 			}
@@ -8033,7 +8032,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 										tuloeschen(zuloe,cuser,obverb,oblog);
 									} else {
 										uint vfehler=0;
-										verschiebe(zuloe, zmsp, cuser,&vfehler, /*wieweiterzaehl=*/1, obverb, oblog);
+										verschiebe<vector<shared_ptr<zielmustercl>>>(zuloe, zmsp, cuser,&vfehler, /*wieweiterzaehl=*/1, obverb, oblog);
 									} // if (gleichziel) else 
 								} // if (!datei->empty()) 
 							} // for(unsigned iru=0;iru<2;iru++) 
