@@ -117,6 +117,7 @@ ifdef mitpg
 	CFLAGS::=$(CFLAGS) -I/usr/include/pgsql -Dmitpostgres
 	LDFLAGS::=$(LDFLAGS) -lpq
 endif
+LDFLAGS::=$(LDFLAGS) -lncursesw
 PROGGROSS::=`echo $(DPROG) | tr a-z A-Z`
 EXEC::=$(DPROG)
 INSTEXEC::=$(EXPFAD)/$(EXEC)

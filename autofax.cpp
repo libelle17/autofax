@@ -2971,9 +2971,9 @@ void hhcl::virtrueckfragen()
 		if (obfbox) {
 			if (rzf) {
 				if (fbip.size()) {
-					const string *const ipp=&fbip[0];
+					const string *const ipp{&fbip[0]};
 					if (const size_t p1=ipp->find("(")+1) {
-						const size_t p2=ipp->find(")",p1);
+						const size_t p2{ipp->find(")",p1)};
 						// 192.168.178.1
 						svec mounts;
 						if (!systemrueck("mount|grep '"+ipp->substr(p1,p2-p1)+"'",obverb,oblog,&mounts)&&mounts.size()) {
@@ -2986,7 +2986,7 @@ void hhcl::virtrueckfragen()
 								systemrueck("find '"+tok[2]+"' -type f -iname '*pdf' -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|sort -nrk 6,7", obverb,oblog,&datei);
 								if (datei.size()) {
 									// -rwxrwxrwx 1 root root   10061 2017-11-01 10:03:52.000000000 +0100 /mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox/01.11.17_10.03_Telefax.081316150166.pdf
-									if (const size_t p1=datei[0].find(" "+tok[2])+1) {
+									if (const size_t p1{datei[0].find(" "+tok[2])+1}) {
 										fbankvz=dir_name(datei[0].substr(p1));
 									} // 									if (const size_t p1=datei[0].find(" "+tok[2])+1)
 								} // 								if (datei.size())
@@ -3101,12 +3101,12 @@ void hhcl::virtrueckfragen()
 					 nsqlzn++;
 				 */
 				sqlrp.push_back(shared_ptr<string>(new string(zwi)));
-				string istr=ltoan(neunr);
+				const string istr{ltoan(neunr)};
 				stringstream soptname;
 				soptname<<cSQL_<<(neunr++);
 				//// caus<<"akt: "<<(akt)<<" "<<*(string*)opn.omap[soptname.str()]->pptr<<endl;
 				//			opn.omap[soptname.str()]->virtoausgeb();
-				optcl *opp=new optcl(/*pname*/soptname.str(),/*pptr*/sqlrp[sqlrp.size()-1].get(),/*art*/pstri,-1,-1,/*TxBp*/&Tx,/*Txi*/T_SQL_Befehl_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/istr,/*wert*/-1,/*woher*/1);
+				optcl *opp{new optcl(/*pname*/soptname.str(),/*pptr*/sqlrp[sqlrp.size()-1].get(),/*art*/pstri,-1,-1,/*TxBp*/&Tx,/*Txi*/T_SQL_Befehl_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/istr,/*wert*/-1,/*woher*/1)};
 				oprsql<<opp;
 			} // if (zwi.empty()) else
 			// sqlzn-1 waere sehr viel
@@ -3153,7 +3153,7 @@ void hhcl::virtrueckfragen()
 			} else {
 				zmmrp.push_back(shared_ptr<string>(new string(zwim)));
 				zmzrp.push_back(shared_ptr<string>(new string(zwiz)));
-				string istr=ltoan(neunr);
+				const string istr{ltoan(neunr)};
 				stringstream zmmname,zmzname;
 				zmmname<<cZMMuster_<<neunr;
 				zmzname<<cZMZiel_<<neunr;
