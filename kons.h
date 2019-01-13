@@ -167,10 +167,10 @@ class TxB // Text-Basisklasse
 //  TCtp* TCp;
   const char * const * const * const *TCp;
 	TxB(const char* const* const* const *TCp);
-  inline const char* operator[](long const& nr) const {
-    TCtp *hilf = reinterpret_cast<TCtp*>(TCp);
-    return (const char*)hilf[nr][lgn];
-  }
+	inline const char* const operator[](long const& nr) const {
+		TCtp *hilf = reinterpret_cast<TCtp*>(TCp);
+		return (const char* const)hilf[nr][lgn];
+	}
 }; // class TxB // Text-Basisklasse
 
 string meinpfad();
@@ -787,12 +787,12 @@ template <> inline void WPcl::setze < const string > (const string *var, string&
 // fuer Wertepaare, die aus Datei gezogen werden und zusaetzlich ueber die Befehlszeile eingegeben werden koennen
 struct optcl:wpgcl
 {
-		const int kurzi=-1;
-		const int langi=-1;
-    TxB *TxBp=0; // nicht const, da lgn geändert werden muß
-    const long Txi=0;
-		const uchar wi=0; // Wichtigkeit: 1= wird mit -lh oder -h, 0= nur mit -lh, 255 (-1) = gar nicht angezeigt
-    const long Txi2=-1;
+		const int kurzi{-1};
+		const int langi{-1};
+    TxB *TxBp{0}; // nicht const, da lgn geändert werden muß
+    const long Txi{0};
+		const uchar wi{0}; // Wichtigkeit: 1= wird mit -lh oder -h, 0= nur mit -lh, 255 (-1) = gar nicht angezeigt
+    const long Txi2{-1};
     const string rottxt; // ggf rot zu markierender Text zwischen Txi und Txi2
 //    string oerkl;
     int iwert; // Wert, der pptr zugewiesen wird, falls dieser Parameter gewaehlt wird; -1= Wert steht im nächsten Parameter, 1=pro Nennung in der Kommandozeile wert um 1 erhöhen
@@ -800,12 +800,12 @@ struct optcl:wpgcl
 //    schAcl<WPcl> *cpA=0; // Konfigurationsarray, das ggf. geschrieben werden muss
 //    uchar ogefunden=0; // braucht man nicht, ist in argcl
 		// ermittelte Optionen:
-		uchar woher=0; // 1= ueber Vorgaben, 2= ueber Konfigurationsdatei, 3= ueber Befehlszeile gesetzt
-		TxB *TRf=0;
-		const long Txrf=-1;
-    const uchar obno=0; // ob auch die Option mit vorangestelltem 'no' eingefuegt werden soll
-		uchar gegenteil=0;
-		uchar nichtspeichern=0;
+		uchar woher{0}; // 1= ueber Vorgaben, 2= ueber Konfigurationsdatei, 3= ueber Befehlszeile gesetzt
+		TxB *TRf{0};
+		const long Txrf{-1};
+    const uchar obno{0}; // ob auch die Option mit vorangestelltem 'no' eingefuegt werden soll
+		uchar gegenteil{0};
+		uchar nichtspeichern{0};
 		const uchar virteinzutragen(/*schAcl<optcl>**/void *schlp,int obverb);
 		void virtweisomapzu(/*schAcl<optcl>**/void *schlp);
 //		void virtloeschomaps(/*schAcl<optcl>**/void *schlp);

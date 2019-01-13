@@ -1162,11 +1162,11 @@ const string cSQL_{"SQL_"}, cZMMuster_{"ZMMuster_"}, cZMZiel_{"ZMZiel_"};
 void dorename(const string& quelle, const string& ziel, const string& cuser/*=nix*/, uint *vfehlerp/*=0*/, uchar schonda/*=0*/,
 		int obverb/*=0*/, int oblog/*=0*/, stringstream *ausgp/*=0*/)
 {
-	const string meld=Tx[T_Verschiebe]+tuerkiss+quelle+schwarz+"'\n         -> '"+gruen+ziel+schwarz+"'";
-	unsigned fehler=0;
+	const string meld{Tx[T_Verschiebe]+tuerkiss+quelle+schwarz+"'\n         -> '"+gruen+ziel+schwarz+"'"};
+	unsigned fehler{0};
 	if (ausgp&&obverb) *ausgp<<meld<<endl; else fLog(meld,obverb,oblog);
-	string *zielp=(string*)&ziel,ersatzziel;
-	struct stat zstat={0};
+	string *zielp{(string*)&ziel},ersatzziel;
+	struct stat zstat{0};
 	// wenn das Ziel ein Verzeichnis ist, Dateinamen anhaengen
 	if (!lstat(ziel.c_str(),&zstat)&&S_ISDIR(zstat.st_mode)) {
 		ersatzziel=ziel;
@@ -1175,7 +1175,7 @@ void dorename(const string& quelle, const string& ziel, const string& cuser/*=ni
 		ersatzziel+=base_name(quelle);
 		zielp=&ersatzziel;
 	} // 	if (!lstat(ziel.c_str(),&zstat)&&S_ISDIR(zstat.st_mode))
-	uchar obident=0;
+	uchar obident{0};
 	if (char* act1=realpath(quelle.c_str(),NULL)) {
 		if (char* act2=realpath(zielp->c_str(),NULL)) {
 			if (!strcmp(act1,act2))
@@ -1217,11 +1217,11 @@ void dorename(const string& quelle, const string& ziel, const string& cuser/*=ni
 string kopiere(const string& qdatei, const string& zield, uint *kfehler, const uchar wieweiterzaehl, int obverb, int oblog)
 {
 	// wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
-	int fehler=0;
-	int efeh=0;	
+	int fehler{0};
+	int efeh{0};
 	////	if (is_same<decltype(zield),const std::string&>::value) KLA
-	const string dir=dir_name(zield);
-	const string base=base_name(zield);
+	const string dir{dir_name(zield)};
+	const string base{base_name(zield)};
 	string ziel;
 	uchar obgleich{0};
 	if (!base.empty() && !dir.empty()) {
@@ -2835,7 +2835,7 @@ void hhcl::pruefmodem()
 	hLog(violetts+Tx[T_pruefmodem]+schwarz);
 	obmodem=0;
 	string althmodem(hmodem);
-	const string svz="/sys/class/tty/";
+	const string svz{"/sys/class/tty/"};
 	svec qrueck;
 	//// <<"pruefmodem 1 nach obcapi: "<<(int)obcapi<<endl;
 	// 19.2.17: evtl. besser mit: dmesg|grep '[^t]*tty[^] 0\t:.$]'|sed 's/[^t]*\(tty[^] \t:.$]*\).*/\1/'
@@ -2951,7 +2951,10 @@ void hhcl::neurf()
 {
 	for(auto omit=opn.schl.end();omit!=opn.schl.begin();) {
 		omit--;
-		cout<<(*omit)->pname<<endl;
+		if ((*omit)->Txrf!=-1) {
+		 const char* const text=(*(*omit)->TRf)[(*omit)->Txrf];
+		cout<<text<<endl;
+		}
 	}
 }
 
