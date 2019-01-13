@@ -801,7 +801,6 @@ struct optcl:wpgcl
 //    uchar ogefunden=0; // braucht man nicht, ist in argcl
 		// ermittelte Optionen:
 		uchar woher{0}; // 1= ueber Vorgaben, 2= ueber Konfigurationsdatei, 3= ueber Befehlszeile gesetzt
-		TxB *TRf{0};
 		const long Txrf{-1};
     const uchar obno{0}; // ob auch die Option mit vorangestelltem 'no' eingefuegt werden soll
 		uchar gegenteil{0};
@@ -811,7 +810,7 @@ struct optcl:wpgcl
 //		void virtloeschomaps(/*schAcl<optcl>**/void *schlp);
 		void virtloeschomaps(schAcl<optcl> *schlp);
 		optcl(const string& pname,const void* pptr,const par_t art, const int kurzi, const int langi, TxB* TxBp, const long Txi,
-				const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher,TxB* TRf, const long Txrf, const uchar obno=0);
+				const uchar wi, const long Txi2, const string rottxt, const int iwert, const uchar woher, const long Txrf, const uchar obno=0);
 		optcl(const void* pptr,const par_t art, const int kurzi, const int langi, TxB* TxBp, const long Txi,
 				const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher, const uchar obno=0);
 		void setzwert();
