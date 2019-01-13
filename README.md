@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.4713) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47136) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -176,7 +176,10 @@ commands for finding an addressee from the fax number)
 cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
-&rsquo;<b>autofax -rf</b>&rsquo;.</p>
+&rsquo;<b>autofax -rf</b>&rsquo;. <br>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47136</b>
+Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
+<b>Hylafax</b></p>
 
 <h2>FUNCTIONALITY
 <a name="FUNCTIONALITY_D"></a>
@@ -645,7 +648,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.4713) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47136) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -836,7 +839,10 @@ sondern nur &uuml;ber die Konfigurationsdatei eingegeben
 werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
-kann.</p>
+kann. <br>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47136</b>
+Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
+<b>Hylafax</b></p>
 
 <h2>FUNKTIONSWEISE
 <a name="FUNKTIONSWEISE_D"></a>

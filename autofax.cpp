@@ -8786,15 +8786,15 @@ void hhcl::pvirtfuehraus() //α
 						schreibzaehler();
 						zaehlergeschrieben=1;
 					} // 					if (!zaehlergeschrieben)
-					const ssize_t wz1=100, wz2=250;
-					const int sz=240; // so oft ueberpruefen undd wz2 ms auf den letzten thread warten, ehe die anderen nochmal gestartet werden
+					const ssize_t wz1{100}, wz2{250};
+					const int sz{240}; // so oft ueberpruefen undd wz2 ms auf den letzten thread warten, ehe die anderen nochmal gestartet werden
 					for(int ru=0;ru<sz;ru++) {
 						// warten, bis ein thread nicht mehr laeuft
 						for (unsigned long long int iru=0;;iru++) {
 							for(size_t i=pidv.size();i;) {
 								i--;
-								int res=kill(pidv.at(i).pid,0);
-								uchar zuloeschen=0;
+								const int res{kill(pidv.at(i).pid,0)};
+								uchar zuloeschen{0};
 								if (res==-1 && errno==ESRCH) zuloeschen=1;
 								else {
 									int status; pid_t erg=waitpid(pidv.at(i).pid,&status,WNOHANG); if (erg>0) zuloeschen=1;

@@ -5107,10 +5107,10 @@ string holsystemsprache(int obverb/*=0*/)
 	schAcl<WPcl> cglangA("cglangA"); // Systemsprach-Konfiguration
 	string ret;
 	// OpenSuse, Fedora, Debian
-	const char* const langdt[]={"/etc/sysconfig/language","/etc/locale.conf","/etc/default/locale","/etc/sysconfig/i18n"};
-	const char* const langvr[]={"RC_LANG","LANG","LANG","LANG"};
+	const char* const langdt[]{"/etc/sysconfig/language","/etc/locale.conf","/etc/default/locale","/etc/sysconfig/i18n"};
+	const char* const langvr[]{"RC_LANG","LANG","LANG","LANG"};
 	for (size_t lind=0;lind<sizeof langdt/sizeof *langdt;lind++) {
-		struct stat langstat={0};
+		struct stat langstat{0};
 		if (!lstat(langdt[lind],&langstat)) {
 			cglangA.sinit(1, langvr[lind]);
 			confdcl langcd(langdt[lind],obverb);
@@ -6950,9 +6950,10 @@ template<typename SCL> schAcl<SCL>& schAcl<SCL>::operator<<(SCL *schp)
 	
 	shared_ptr<SCL> kopie{schp};
 //	shared_ptr<SCL> *kopie = new shared_ptr<SCL>(schp);
-//	schl.push_back(*kopie); 
+	schl.push_back(kopie); 
 
 ////	caus<<", Adresse: "<<blau<<schl[schl.size()-1]<<schwarz<<endl;
+
 	schl[schl.size()-1]->virtweisomapzu(this); 
 	return *this; 
 }
