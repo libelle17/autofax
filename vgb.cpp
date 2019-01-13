@@ -110,7 +110,7 @@ void hhcl::pvirtVorgbSpeziell()
 		stringstream soptname;
 		soptname<<"SQL_"<<i;
 		const string istr{ltoan(i)};
-		opvsql<<new optcl(/*pname*/soptname.str(),/*pptr*/&sqlVp[i-1],/*art*/pstri,-1,-1,/*TxBp*/&Tx,/*Txi*/T_SQL_Befehl_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/istr,/*wert*/-1,/*woher*/1);
+		opvsql<<new optcl(/*pname*/soptname.str(),/*pptr*/&sqlVp[i-1],/*art*/pstri,-1,-1,/*TxBp*/&Tx,/*Txi*/T_SQL_Befehl_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/istr,/*wert*/-1,/*woher*/1,/*TRf*/&Tx,/*Txrf*/T_SQL_Befehl);
 	} // 	for(long i=0;i<sqlzn;)
 	// cpt in virtVorgbAllg festgelegt
 	if (strstr(cpt,"linux")){

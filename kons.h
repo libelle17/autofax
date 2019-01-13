@@ -461,6 +461,8 @@ enum Tkons_
 	T_verwendet_wird,
 	T_Ausgabezeile,
 	T_pruefmehrfach,
+	T_Sprachen,
+	T_Intervall_Minuten,
 	T_konsMAX
 }; // Tkons_
 
@@ -799,6 +801,8 @@ struct optcl:wpgcl
 //    uchar ogefunden=0; // braucht man nicht, ist in argcl
 		// ermittelte Optionen:
 		uchar woher=0; // 1= ueber Vorgaben, 2= ueber Konfigurationsdatei, 3= ueber Befehlszeile gesetzt
+		TxB *TRf=0;
+		const long Txrf=-1;
     const uchar obno=0; // ob auch die Option mit vorangestelltem 'no' eingefuegt werden soll
 		uchar gegenteil=0;
 		uchar nichtspeichern=0;
@@ -807,7 +811,9 @@ struct optcl:wpgcl
 //		void virtloeschomaps(/*schAcl<optcl>**/void *schlp);
 		void virtloeschomaps(schAcl<optcl> *schlp);
 		optcl(const string& pname,const void* pptr,const par_t art, const int kurzi, const int langi, TxB* TxBp, const long Txi,
-				const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher,const uchar obno=0);
+				const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher,TxB* TRf, const long Txrf, const uchar obno=0);
+		optcl(const void* pptr,const par_t art, const int kurzi, const int langi, TxB* TxBp, const long Txi,
+				const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher, const uchar obno=0);
 		void setzwert();
 		int setzstr(const char* const neuw,uchar *const obzuschreib=0,const uchar ausDatei=0);
 		void virttusetzbemerkwoher(const string& ibemerk,const uchar vwoher);
@@ -1286,7 +1292,7 @@ class hcl
     string loggespfad; // Gesamtpfad, auf den dann die in kons.h verwiesene und oben definierte Variable logdt zeigt
                        // bei jeder Aenderung muss auch logdt neu gesetzt werden!
     string cmd; // string fuer command fuer Betriebssystembefehle
-		schAcl<optcl> opn=schAcl<optcl>("opn"); // Optionen
+		schAcl<optcl> opn{schAcl<optcl>("opn")}; // Optionen
 #ifdef alt
     vector<optioncl> opts;
 #endif

@@ -227,6 +227,7 @@ enum T_
 	T_SQL_Befehl_Nr,
 	T_Zielmuster_Nr,
 	T_Ziel_Nr,
+	T_Zielmuster,
 	T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe,
 	T_Verzeichnis_mit_zu_faxenden_Dateien,
 	T_Verzeichnis_mit_wartenden_Dateien,
@@ -548,6 +549,7 @@ enum T_
 	T_Insgesamt,
 	T_Fundstellen_von,
 	T_Keine_Fundstellen_von,
+	T_SQL_Befehl,
 	T_MAX //α
 }; // enum T_ //ω
 
@@ -796,7 +798,7 @@ class hhcl:public dhcl
 		string hylafax_homevz; // Kandidat HYLAFAX_HOME in Konfigurkationsdatei dafür
 		string cFaxUeberschrift; // eigener Namen fuer Capisuite bis 20 Buchstaben
 		schAcl<optcl> opvsql=schAcl<optcl>("opvsql"),opvzm=schAcl<optcl>("opvzm"); // Optionen
-		string host="localhost";  // fuer MySQL/MariaDB
+		string host{"localhost"};  // fuer MySQL/MariaDB
 
 		schAcl<WPcl> *cfcnfCp{0}/*schAcl<WPcl>("cfcnfC")*/; // Capikonfiguration aus fax.conf
 		schAcl<WPcl> *cccnfCp=0; // Capikonfiguration aus capisuite.conf
@@ -810,29 +812,29 @@ class hhcl:public dhcl
 		string faxqpfad,hfaxdpfad; // /usr/local/sbin/faxq, /usr/local/sbin/hfaxq
 		string countrycode_dt,areacode_dt,faxnumber_dt,longdistanceprefix_dt,internationalprefix_dt,ringsbeforeanswer_dt,localidentifier_dt,maxdials_dt;
     svec vinca;
-		unsigned tage=0; // fuer korrigierecapi und korrigierehyla 
+		unsigned tage{0}; // fuer korrigierecapi und korrigierehyla 
 		string hsendqvz; // /var/spool/hylafax/sendq // in fsf->loeschehyla benoetigt
-		servc*sfaxq=0, *shfaxd=0, *shylafaxd=0, *scapis=0, *sfaxgetty=0;  // benoetigt in loeschehyla
+		servc*sfaxq{0}, *shfaxd{0}, *shylafaxd{0}, *scapis{0}, *sfaxgetty{0};  // benoetigt in loeschehyla
 		string xferfaxlog; // varsphylavz + "/etc/xferfaxlog";  // benoetigt in loeschehyla
 	protected: //α
 		string p1;
 		int p2;
 		string p3;
-		uchar oblista=0;
-		long listz=30; //ω
+		uchar oblista{0};
+		long listz{30}; //ω
 
-		size_t sqlz0=0; // Index in opn mit erster SQL-Option
-		size_t sqlzn=0; // Zahl der SQL-Befehle numerisch
-		string* sqlp=0; // Array der SQL-Befehle
+		size_t sqlz0{0}; // Index in opn mit erster SQL-Option
+		size_t sqlzn{0}; // Zahl der SQL-Befehle numerisch
+		string* sqlp{0}; // Array der SQL-Befehle
 		//    string sqlz;  // Zahl der SQL-Befehle
 		//    size_t sqlzn=0; // Zahl der SQL-Befehle numerisch
 		svec sqlVp; // Vector der Vorgabe-SQL-Befehl
 		vector<shared_ptr<string>> sqlrp; // vector der rueckfrage-SQL-Befehle
 
-		size_t zmz0=0; // Index in opn mit erster Zielmusterpaaroption, wird vielleicht nicht gebraucht
-		size_t zmzn=0; // Zahl der Zielmusterpaare numerisch
-		string *zmmp=0; // Array der Zielmuster
-		string *zmzp=0; // Array der Ziele
+		size_t zmz0{0}; // Index in opn mit erster Zielmusterpaaroption, wird vielleicht nicht gebraucht
+		size_t zmzn{0}; // Zahl der Zielmusterpaare numerisch
+		string *zmmp{0}; // Array der Zielmuster
+		string *zmzp{0}; // Array der Ziele
 		vector<shared_ptr<zielmustercl>> zmsp; // Zielmusterzeiger
 		vector<zielmustercl> zmVp; // Zielmuster aus Vorgaben
 		vector<shared_ptr<string>> zmmrp; // vector der rueckfrage-Zielmuster
@@ -924,6 +926,7 @@ class hhcl:public dhcl
 		void virtzeigversion(const string& ltiffv=nix);
 		void pvirtvorrueckfragen();
 		void virtrueckfragen();
+		void neurf();
 		void pvirtvorpruefggfmehrfach();
 		void virtpruefweiteres();
 		void virtzeigueberschrift();
