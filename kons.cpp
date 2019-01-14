@@ -676,7 +676,7 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	// T_Sprachen,
 	{"Sprache/Language/lingue/lingua","Sprache/Language/lingue/lingua"},
 	// T_Intervall_Minuten,
-	{"Intervall in Minuten für automatischen Programmaufruf (0=kein Aufruf)", "interval in minutes for automatic program call (0=no call)"},
+	{"Intervall in Minuten fuer automatischen Programmaufruf (0=kein Aufruf)", "interval in minutes for automatic program call (0=no call)"},
 	{"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 
@@ -1885,12 +1885,18 @@ linst_cl::linst_cl(int obverb,int oblog)
 	for(size_t i{0};i<sizeof osvdt/sizeof *osvdt;i++) {
 		if (!lstat(osvdt[i].c_str(),&osvers)) {
 			osname.clear();
+			/*
 			schAcl<WPcl> *osvCp{new schAcl<WPcl>("osvC", new vector<aScl>{
 					{feld[i],&osname},
 					})
 			};
-			confdcl *osvd{new confdcl(osvdt[i],obverb)};
-			osvd->kauswert(osvCp);
+			*/
+			vector<aScl> vecta{
+					{feld[i],&osname},
+					};
+			schAcl<WPcl> osvCp("osvC", &vecta);
+			confdcl osvd(osvdt[i],obverb);
+			osvd.kauswert(&osvCp);
 			if (!osname.empty()) {
 				break;
 			}
@@ -2686,7 +2692,9 @@ void pruefmehrfach(const string& wen,int obverb/*=0*/,uchar obstumm/*=0*/)
 	const long smax{3600}; // maximal tolerierte Sekundenzahl, bevor statt dem eigenen Prozess der andere abgebrochen wird
 	svec rueck;
 	const string iwen{wen.empty()?base_name(meinpfad()):wen};
-	systemrueck("ps -eo comm,etimes,pid|grep -P '^"+iwen+"([[:space:]]|\\z)'",obverb,0,&rueck,/*obsudc=*/0);
+	// bei valgrind steht z.B. 'memecheck-amd64-' am Anfang
+	// gdb macht einen zusaetzlichen Prozess
+	systemrueck("ps -eo comm,args,etimes,pid|grep -P 'valgrind.*"+iwen+"|^"+iwen+"'| grep -P '"+iwen+"([[:space:]]|\\z)'",obverb,0,&rueck,/*obsudc=*/0);
 	long sek{0};
 	for(int aru=0;aru<3;aru++) {
 		if (rueck.size()==1) // ich
@@ -3561,7 +3569,7 @@ void linst_cl::ziehraus(svec srueck, string *ustringp)
 						groupArray[0].rm_eo=0;
 						if (regcomp(&rCmp, regex.c_str(), REG_EXTENDED)) {
 							fLog(Txk[T_Konnte_regulaeren_Ausdruck_nicht_kompilieren]+blaus+regex+schwarz,1,1);
-						} else if (regexec(&rCmp, source.c_str(), maxGroups, groupArray, groupArray[0].rm_eo) == 0) {
+						} else if (!regexec(&rCmp, source.c_str(), maxGroups, groupArray, groupArray[0].rm_eo)) {
 							string zudeinst;
 							for (unsigned g=1;g<maxGroups;g++) {
 								if (groupArray[g].rm_so == (signed)(size_t)-1)
@@ -4672,15 +4680,18 @@ int find2cl::finde(svec *wovp,const string& muster/*=string()*/,const long tiefe
 		time_t ab/*=0*/, time_t bis/*=0*/,int obicase/*=0*/,int nurexec/*=0*/,int obnoext/*=0*/)
 {
 	regex_t reg;
-	if (regcomp(&reg, muster.c_str(),(obnoext?0:REG_EXTENDED)|REG_NOSUB|(obicase?REG_ICASE:0))) 
+	if (regcomp(&reg, muster.c_str(),(obnoext?0:REG_EXTENDED)|REG_NOSUB|(obicase?REG_ICASE:0))) { 
+		regfree(&reg);
 		return REGFEHLER;
+	}
 	vector<string> stack;
 	string wo;
 	for(size_t iv=0;iv<wovp->size();iv++) {
 		wo+=(*wovp)[iv];wo+=" ";
-		init("",(*wovp)[iv], &reg, folge, tiefe, typbit,stack,ab,bis,nurexec);
+		init({},(*wovp)[iv], &reg, folge, tiefe, typbit,stack,ab,bis,nurexec);
 		//    cout<<"nach finde.init, wo: "<<blau<<wo<<schwarz<<endl;
 	} //   for(size_t iv=0;iv<*wovp.size();iv++)
+	regfree(&reg);
 	if (obverb|oblog) {
 		yLog(obverb,oblog,0,0,"%s%s%s%s%s%s%s%s'%s%s'%s%lu%s%s%s%d%s%s%s%d%s%s%s%d%s%s%s%zu%s",
 				Txk[T_Suche_in],blau,wo.c_str(),schwarz,Txk[T_nach],blau,muster.c_str(),schwarz,obicase?"(ic)":"",Txk[T_Tiefe],blau,tiefe,schwarz,
@@ -4858,7 +4869,7 @@ int find3cl::finde(svec *wovp,const string& muster/*=string()*/,long tiefe/*=-1*
 	} //   for(size_t iv=0;iv<*wovp.size();iv++)
 	wurzp=&wurz;
 	ergp=&erg;
-	regp=&reg;
+	regp=&regs;
 	folgep=&folge;
 	*folgep=_folge;
 	typbitp=&typbit;
@@ -4873,9 +4884,11 @@ int find3cl::finde(svec *wovp,const string& muster/*=string()*/,long tiefe/*=-1*
 	// if (argc > 2 && strchr(argv[2], 'p') != NULL)
 	flags |= FTW_ACTIONRETVAL;
 	flags |= FTW_PHYS;
-	if (regcomp(&reg, muster.c_str(),(obnoext?0:REG_EXTENDED)|REG_NOSUB|(obicase?REG_ICASE:0))) 
+	if (regcomp(&regs, muster.c_str(),(obnoext?0:REG_EXTENDED)|REG_NOSUB|(obicase?REG_ICASE:0))) { 
 		return REGFEHLER;
+	}
 	ret=dofind();
+	regfree(&regs);
 	if (obverb|oblog) {
 		yLog(obverb,oblog,0,0,"%s%s%s%s%s%s%s%s'%s%s'%s%lu%s%s%s%d%s%s%s%d%s%s%s%d%s%s%s%zu%s",
 				Txk[T_Suche_in],blau,wo.c_str(),schwarz,Txk[T_nach],blau,muster.c_str(),schwarz,obicase?"(ic)":"",Txk[T_Tiefe],blau,tiefe,schwarz,
@@ -6251,7 +6264,7 @@ optcl::optcl(const string& pname,const void* pptr,const par_t part, const int ku
 }
 
 optcl::optcl(const void* pptr,const par_t part, const int kurzi, const int langi, TxB* TxBp, const long Txi,
-		const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher,const uchar obno/*=0*/):wpgcl(pname,pptr,part),
+		const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher,const uchar obno/*=0*/):wpgcl({},pptr,part),
 	kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),Txi2(Txi2),rottxt(rottxt),iwert(iwert),
 	woher(woher),obno(obno)/*=0*///,eingetragen(0)
 {
@@ -6743,7 +6756,10 @@ int confdcl::lies(const string& vfname, int obverb, const char tz/*='='*/)
 							anfzweg(wertp);
 							paare.push_back(paarcl(pname,wertp,ibemerk));
 							ibemerk.clear();
-							if (mitabsch) abp.av.push_back(aScl(pname,wertp));
+							if (mitabsch) 
+								abp.av.push_back(aScl(pname,wertp));
+							else
+								delete wertp;
 						} // if (pos!=string::npos && 1==sscanf(zeile->c_str(),scs.c_str(),zeile->c_str())) 
 					} // if (zeile[0]
 				} // if (!zeile->empty()) 

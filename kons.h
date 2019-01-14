@@ -713,13 +713,13 @@ enum par_t:uchar {pstri,pdez,ppwd,pverz,pfile,puchar,pbin,pint,plong,pdat}; // P
 // Wertepaargrundklasse, für WPcl und optcl
 struct wpgcl 
 { 
-		string pname;
-		uchar ausgewertet=0;
-    const void *pptr=0; // Zeiger auf Parameter, der hier eingestellt werden kann
+		string pname{};
+		uchar ausgewertet{0};
+    const void *pptr={0}; // Zeiger auf Parameter, der hier eingestellt werden kann
     string bemerk;
     par_t part=pstri; // Parameterart
-    uchar gelesen=0;
-		uchar eingetragen=0; // Hilfsvariable zur genau einmaligen Eintragung einer Option mit name=pname in Konfigurationsdatei
+    uchar gelesen{0};
+		uchar eingetragen{0}; // Hilfsvariable zur genau einmaligen Eintragung einer Option mit name=pname in Konfigurationsdatei
 		wpgcl(const string& pname,const void* pptr,par_t part);
 		string virtholstr() const;
     virtual const string& virtmachbemerk(const Sprache lg,const binaer obfarbe=wahr);
@@ -1188,7 +1188,7 @@ struct find3cl
     static set<wele>::iterator it;
     static set<wele> *wurzp;
     static set<elem3> *ergp;
-    regex_t reg;
+    regex_t regs;
     static regex_t *regp;
     int typbit;
     static int *typbitp;

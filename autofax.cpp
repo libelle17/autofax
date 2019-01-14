@@ -1503,7 +1503,7 @@ void hhcl::liescapiconf()
 	if (!cfaxconfdt.empty()) {
 		pruefverz(dir_name(cfaxconfdt),obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0);
 		if (!cfcnfCp) {
-			cfcnfCp=new schAcl<WPcl>("cfcnfC", new vector<aScl>{
+			vector<aScl> vecta{
 					{"spool_dir",&spoolcapivz},
 					{"fax_user_dir",&cfaxuservz},
 					{"send_tries",&maxcdials},
@@ -1513,8 +1513,9 @@ void hhcl::liescapiconf()
 					{"fax_stationID",&fax_stationID},
 					{"fax_headline",&fax_headline},
 					{"fax_email_from",&fax_email_from},
-					{"outgoing_timeout",&outgoing_timeout}
-					});
+					{"outgoing_timeout",&outgoing_timeout},
+				};
+			cfcnfCp=new schAcl<WPcl>("cfcnfC", &vecta);
 		}
 		if (cfaxcp) delete cfaxcp;
 		cfaxcp = new confdcl(cfaxconfdt,obverb);
@@ -1593,12 +1594,13 @@ void hhcl::liescapiconf()
 		if (cczulesen) {
 			pruefverz(dir_name(ccapiconfdt),obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0);
 			if (!cccnfCp) {
-				cccnfCp=new schAcl<WPcl>("cccnfC", new vector<aScl>{
-						{"incoming_script",&cdn[0]},
+				vector<aScl> vecta {
+					{"incoming_script",&cdn[0]},
 						{"log_file",&cdn[1]},
 						{"log_error",&cdn[2]},
 						{"idle_script",&cdn[3]}
-						});
+				};
+				cccnfCp=new schAcl<WPcl>("cccnfC", &vecta);
 			}
 			confdcl ccapc(ccapiconfdt,obverb);
 			////<<"azaehlerdt: "<<blau<<azaehlerdt<<schwarz<<endl;
@@ -1893,7 +1895,7 @@ void hhcl::pruefsfftobmp()
 		if (!obprogda("sfftobmp",obverb,oblog) || systemrueck("sfftobmp --version 2>/dev/null")) {
 			uchar obfrei= obprogda("jpegtran",obverb,oblog) && obprogda("cjpeg",obverb,oblog) && obprogda("djpeg",obverb,oblog);
 			if (!obfrei) {
-				const string jpeg="jpegsrc_copy";
+				const string jpeg{"jpegsrc_copy"};
 				holvomnetz(jpeg);
 				obfrei=!kompiliere(jpeg,s_gz);
 			}
