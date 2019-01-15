@@ -67,7 +67,9 @@ MINGCCNR::=6
 #// CCName=g++-6
 #// endif
 # maximal verfügbare g++-Version, falls die Verknüpfungen in /usr/bin stehen und evtl. /usr/bin/g++ nicht auf die höchste verknüpft ist
-MAXGCC::=$(shell { ls /usr/bin/g++* 2>/dev/null||echo 0;}|tail -n1)
+# MAXGCC::=$(shell { ls /usr/bin/g++* 2>/dev/null||echo 0;}|tail -n1)
+# maximal verfügbare g++-Version
+MAXGCC::=$(shell erg=0;for i in {50..1};do which g++-$$i>/dev/null 2>&1&&{ erg=$$i;break;};done;echo $$erg)
 # deren Hauptversionsnummer
 MAXGCCNR::=$(shell echo $(MAXGCC)|cut -d- -f2)
 #1=verfügbare Version höher als die minimal notwendige, 0=nicht
@@ -76,6 +78,14 @@ GCCNEU::=$(shell expr $(MAXGCCNR) \> $(MINGCCNR))
 GCCOK::=$(shell expr $(MAXGCCNR) \>= $(MINGCCNR))
 # 1=Debian usw., 2=Opensuse, 3=Fedora usw., 4=Magieia, 5=Manjaro usw.
 DISTR::=$(shell which apt>/dev/null 2>&1&&echo 1||{ which zypper>/dev/null 2>&1&&echo 2||{ which dnf>/dev/null 2>&1||which yum>/dev/null 2>&1&&echo 3||{ which urpmi.update>/dev/null 2>&1&&echo 4||{ which pacman>/dev/null 2>&1&&echo 5||echo 0;};};};})
+ifeq ($(GCCOK),0)
+# wenn minimal notwendige Version nicht verfügbar ist, dann diese neu als maximal installierbare definieren und später installieren
+	MINVGCC::=$(shell which zypper >/dev/null 2>&1&&zypper se /gcc[^-]*\-c\\+\\+$$/|tail -n1|cut -dc -f3|cut -d- -f1||echo 0;)
+	ZUERSETZ::=$(shell expr $(MINVGCC) \> $(MINGCCNR))
+	ifeq ($(ZUERSETZ),1)
+		MINGCCNR::=$(MINVGCC)
+	endif
+endif
 ifeq ($(GCCNEU),1)
 	MINGCCNR::=$(MAXGCCNR)
 endif
@@ -321,6 +331,13 @@ $(DEPDIR)/%.d: ;
 .PHONY: compiler
 compiler:
 	@printf " Untersuche/Examining Compiler ...\n" >$(BA)
+#	@printf " MINVGCC: %b%s%b\n" $(blau) "$(MINVGCC)" $(reset)
+#	@printf " GCCOK: %b%s%b\n" $(blau) "$(GCCOK)" $(reset)
+#	@printf " ZUERSETZ: %b%s%b\n" $(blau) "$(ZUERSETZ)" $(reset)
+#	@printf " GCCNEU: %b%s%b\n" $(blau) "$(GCCNEU)" $(reset)
+#	@printf " MINGCCNR: %b%s%b\n" $(blau) "$(MINGCCNR)" $(reset)
+#	@printf " MAXGCC: %b%s%b\n" $(blau) "$(MAXGCC)" $(reset)
+#	@printf " MAXGCCNR: %b%s%b\n" $(blau) "$(MAXGCCNR)" $(reset)
 ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
