@@ -111,7 +111,7 @@ endif
 -include vars # wird durch install.sh generiert; CCInst muss vorher definiert werden, DPROG und GDAT dürfen nur nachher verwendet werden
 CFLAGS::=-c -Wall
 LDFLAGS::=
-ifneq ($(libmac),)
+ifneq ($(libmdb),)
 	CFLAGS::=$(CFLAGS) `mysql_config --cflags`
 	LDFLAGS::=`mysql_config --libs`
 endif
@@ -142,8 +142,6 @@ ifeq ($(DISTR),1)
 	COMP::=$(COMP) $(CCInst)
 endif
 CC::=$(CCName) # CC=$(SUDC)$(CCName)
-libmcd::=$(libmc)-$(dev)
-libmc1d::=$(libmac)-$(dev)
 pgd::=postgresql-$(dev)
 SUDC::=
 ifneq ($(shell echo $$EUID),0)
@@ -351,11 +349,11 @@ endif
 	@[ "$(GCCOK)" = "1" ]||{ \
 	[ "$(DISTR)" = "1" ]&&{ $(SUDC)add-apt-repository ppa:ubuntu-toolchain-r/test;$(SUDC)apt-get update;};:;\
 	{ printf "Installiere/Installing Compiler ...\n" >$(BA);sh configure inst "$(CCInst)" "$(COMP)";:;};}
-	-@[ "$(libmac)" ]&&{ for r in 1 2;do [ $$r = 1 ]&&{ lc="$(libmcd)";:;}||lc="$(libmc1d)";\
+	-@[ "$(libmdb)" ]&&{ for kand in $(libmdb);do \
 	[ -f /usr/include/mysql/mysql.h>$(KR) ]&& \
 	find $$(find /usr -maxdepth 1 -type d -name "lib*" $(KF)|sort -r) -regextype egrep -regex ".*libm(ysql|ariadb)client.so" -print -quit $(KF)|\
 	grep ''>$(KR)&& break;\
-	sh configure inst _ "$$lc" verbose; done;}||:
+	sh configure inst _ $$kand-$(dev) verbose; done;}||:
 	-@[ -z $$mitpg ]||$(SPR) $(pgd)>$(KR)||{ sh configure inst _ "$(pgd)" verbose;$(slc);};
 # 3.5.17: auch libtiff5 hat gefehlt
 	-@[ "$(LT)" ]&& for r in 1 2;do \
