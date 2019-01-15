@@ -338,6 +338,7 @@ compiler:
 #	@printf " MINGCCNR: %b%s%b\n" $(blau) "$(MINGCCNR)" $(reset)
 #	@printf " MAXGCC: %b%s%b\n" $(blau) "$(MAXGCC)" $(reset)
 #	@printf " MAXGCCNR: %b%s%b\n" $(blau) "$(MAXGCCNR)" $(reset)
+	@printf " CCINST: %b%s%b\n" $(blau) "$(CCINST)" $(reset)
 ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
