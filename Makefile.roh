@@ -318,6 +318,13 @@ $(EXEC): $(OBJ)
 $(DEPDIR)/%.d: ;
 .PRECIOUS: $(DEPDIR)/%.d
 
+.PHONY: tcomp
+tcomp:
+	echo Hier bin ich;
+	echo $(DPROG);
+	echo $(testvar);
+	for r in $(testvar);do echo $$r;done; 
+
 .PHONY: compiler
 compiler:
 	@printf " Untersuche/Examining Compiler ...\n" >$(BA)
