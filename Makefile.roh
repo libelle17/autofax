@@ -98,7 +98,8 @@ ifeq ($(DISTR),1)
 	CCInst::=gcc-$(MINGCCNR) g++-$(MINGCCNR)
 endif
 ifeq ($(DISTR),2)
-	OBEINS::=1
+#	OBEINS::=1
+	CCInst::=gcc$(MINGCCNR)
 endif
 ifeq ($(DISTR),3)
 	CCName::=g++
@@ -342,6 +343,7 @@ compiler:
 #	@printf " MAXGCC: %b%s%b\n" $(blau) "$(MAXGCC)" $(reset)
 #	@printf " MAXGCCNR: %b%s%b\n" $(blau) "$(MAXGCCNR)" $(reset)
 #	@printf " CCINST: %b%s%b\n" $(blau) "$(CCINST)" $(reset)
+	@printf " DISTR: %b%s%b\n" $(blau) "$(DISTR)" $(reset)
 ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
