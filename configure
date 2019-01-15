@@ -115,7 +115,7 @@ getIPR() {
 	}
 	[ $osnr = 5 -o $osnr = 6 ]&& 
 	{ 
-		libmdb="mysql mariadb";
+		libmdb="mariadb mysql";
 		COMP="make automake gcc-c++ kernel-devel";
 		IP_R="${SUDC}$IdPR";
 		LBOOST=boost-${dev};
@@ -279,7 +279,7 @@ KR="$DN 2>&1" # keine Rueckmeldung
 KF=" 2>$DN" # keine Fehlermeldung
 PGROFF="groff-base groff"
 dev=devel
-libmdb="libmysqlclient libmariadbclient"
+libmdb="libmariadb libmariadbclient libmysql libmysqlclient"
 osnr=0 # 1=Mint, 2=Ubuntu, 3=Debian, 4=SUSE, 5=Fedora, 6=Fedoraalt, 7=Mageia, 8=Manjaro
 Z=""
 [ "$(id -u)" -ne "0" ]&&SUDC="sudo "
