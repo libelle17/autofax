@@ -308,6 +308,7 @@ $(EXEC): $(OBJ)
 	-@printf " linking/verlinke %s to/zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset) >$(BA)
 	-@df --output=ipcent / |tail -n1|grep - && $(SUDC)pkill postdrop;:
 	-@man>$(KR);[ $$? -gt 1 ]&&{ sh configure inst _ man verbose;}||:;
+	-@[ -f /usr/lib/libzip.so ]||{ sh configure inst _ libzip-$(dev) verbose;};:
 	-@printf " (Version: %b%s%s%b\n " $(blau) "$$(cat versdt)" ")" $(reset) >$(BA)
 	$(CC) $^ $(DEBUG)-o $@ $(LDFLAGS)
 	-@ls .d/*.Td >$(KR) &&{ for datei in .d/*.Td; do mv -f $${datei} $${datei%.Td}.d; done;};:

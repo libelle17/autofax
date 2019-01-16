@@ -1,11 +1,14 @@
 #!/bin/sh
 still() {
-	"$@" >/dev/null 2>&1
+	"$@" >/dev/null 2>&1;
+}
+leise() {
+	"$@" >/dev/null;
 }
 
 #kf kein Fehler
 kf() {
-	"$@" 2>/dev/null
+	"$@" 2>/dev/null;
 }
 
 # Installationsprogramm ermitteln
@@ -34,9 +37,9 @@ getIPR() {
 	esac;
 	[ $osnr -eq 0 ]&&{
 		#	echo unvergeben;
-	which apt-get>/dev/null&&osnr=2||
-		which rpm>/dev/null&&{ { which zypper>/dev/null&&osnr=4; }||{ which dnf>/dev/null&&osnr=5; }||{ which yum>/dev/null&&osnr=6; }||{ which urpmi.update>/dev/null&&osnr=7; } }||
-		{ which pacman>/dev/null&&osnr=8; } }
+	leise which apt-get&&osnr=2|| 
+			leise which rpm&&{ { leise which zypper&&osnr=4; }||{ leise which dnf&&osnr=5; }||{ leise which yum&&osnr=6; }||
+		{ leise which urpmi.update&&osnr=7; } }|| { leise which pacman&&osnr=8; } }
 #	echo osnr: $osnr;
 # openSUSE
 	{ [ $osnr = 4 ]&&
