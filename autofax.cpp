@@ -2214,7 +2214,7 @@ int hhcl::pruefcapi()
 									const string srcvz{instvz+vtz+proj+".tar.gz"};
 									holvomnetz(proj);
 									const string vorcfg{sudc+"test -f driver.c.bak || sed -i.bak \"/request_irq/i#if \\!defined(IRQF_DISABLED)\\n"
-										"# define IRQF_DISABLED 0x00\\n#endif\" driver.c; HV=$(uname -r|cut -d. -f1);NV=$(uname -r|cut -d. -f2);[ $HV > 4 -o \\( $HV = 4 -a $NV -gt 18 \\) ]&& grep -q ctrl-\\>proc_fops driver.c && sed -i.bak2 \"/ctrl->proc_fops/cctrl->proc_show = ctr_info;\" driver.c"+
+										"# define IRQF_DISABLED 0x00\\n#endif\" driver.c; HV=$(uname -r|cut -d. -f1);NV=$(uname -r|cut -d. -f2);[ $HV > 4 -o \\( $HV = 4 -a $NV -gt 18 \\) ]&& grep -q ctrl-\\>proc_fops driver.c && sed -i.bak2 \"/ctrl->proc_fops/cctrl->proc_show = ctr_info;\" driver.c;"+
 										sudc+"sed -e '/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>' "
 										"-e '/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
 										"c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);' "
