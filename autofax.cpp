@@ -8132,18 +8132,18 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 void hhcl::suchestr()
 {
 	hLog(violetts+Tx[T_suchestr]+schwarz);
-	const size_t aktc=0;
-	const string scnv=" CONVERT(\"%"+suchstr+"%\" USING utf8) ";
+	const size_t aktc{0};
+	const string scnv{" CONVERT(\"%"+suchstr+"%\" USING utf8) COLLATE utf8_unicode_ci "};
 	size_t geszahl{0};
 	for(int erf=1;erf>=0;erf--) {
-		const string oberfolg=ltoan(erf);
+		const string oberfolg{ltoan(erf)};
 		char ***cerg;
 		RS lista(My,"SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM ("
 				"SELECT * FROM ("
 				"SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
 				"RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe "
 				"FROM `"+touta+"` WHERE Erfolg = "+oberfolg+" AND (Docname LIKE"+scnv+"OR rcname LIKE"+scnv+"OR rcfax LIKE"+scnv+""
-				"OR submid LIKE"+scnv+" OR transe LIKE CONVERT(\"%"+suchstr+"%\" USING utf8)) "
+				"OR submid LIKE"+scnv+" OR transe LIKE CONVERT(\"%"+suchstr+"%\" USING utf8) COLLATE utf8_unicode_ci) "
 				" ORDER BY transe DESC LIMIT "+dszahl+") i "
 				" ORDER BY transe LIMIT 18446744073709551615) i",aktc,ZDB);
 		ulong zeile=0;
@@ -8163,7 +8163,7 @@ void hhcl::suchestr()
 			"SELECT * FROM ("
 			"SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') p0,RIGHT(CONCAT(SPACE(85),LEFT(titel,85)),85) p1,"
 			"fsize p2,tsid p3,id p4, transe FROM `"+tinca+"` i WHERE (titel LIKE"+scnv+""
-			"OR tsid LIKE"+scnv+"OR transe LIKE"+scnv+"OR id LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
+			"OR tsid LIKE"+scnv+"OR transe LIKE"+scnv+"OR id LIKE CONVERT(\"%"+suchstr+"%\" USING utf8) COLLATE utf8_unicode_ci)"
 			" ORDER BY transe DESC LIMIT "+dszahl+") i "
 			" ORDER BY transe LIMIT 18446744073709551615) i",aktc,ZDB);
 	ulong zeile=0;
@@ -8182,7 +8182,7 @@ void hhcl::suchestr()
 			"RIGHT(CONCAT(SPACE(85),LEFT(origvu,85)),85) p1,"
 			"IF(capidials=0,hyladials,capidials) p2,IF(hylanr=0,capispooldatei,hylanr) p3,id p4, if(hdateidatum=0,cdateidatum,hdateidatum) so "
 			"FROM `"+spooltab+"` i WHERE (origvu LIKE"+scnv+"OR original LIKE"+scnv+"OR telnr LIKE"+scnv+"OR capispooldatei LIKE"+scnv+
-			"OR cdateidatum LIKE CONVERT(\"%"+suchstr+"%\" USING utf8))"
+			"OR cdateidatum LIKE CONVERT(\"%"+suchstr+"%\" USING utf8) COLLATE utf8_unicode_ci)"
 			" ORDER BY so DESC LIMIT "+dszahl+") i "
 			" ORDER BY so LIMIT 18446744073709551615) i",aktc,ZDB);
 	zeile=0;

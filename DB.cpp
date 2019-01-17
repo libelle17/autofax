@@ -340,10 +340,10 @@ Tabelle::Tabelle(const DB* dbp,const string& vtbname,const size_t aktc,int obver
 	lesespalten(aktc,obverb,oblog);
 }
 
-const string DB::defmyengine="InnoDB";
-const string DB::defmycharset="utf8";
-const string DB::defmycollat="utf8_unicode_ci";
-const string DB::defmyrowform="DYNAMIC";
+const string DB::defmyengine{"InnoDB"};
+const string DB::defmycharset{"utf8"};
+const string DB::defmycollat{"utf8_unicode_ci"};
+const string DB::defmyrowform{"DYNAMIC"};
 
 // statische Variable, 1= mariadb=geprueft
 uchar DB::oisok=0;
