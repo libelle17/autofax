@@ -2964,9 +2964,9 @@ void hhcl::neurf()
 void hhcl::virtrueckfragen()
 {
 	hLog(violetts+Tx[T_virtrueckfragen]+schwarz);
+	if (rzf) { //ω
 		neurf();
 	  return;
-	if (rzf) { //ω
 		const size_t aktc{0};
 		// Rueckfragen koennen auftauchen in: virtrueckfragen, konfcapi (<- pruefcapi), aenderefax, rufpruefsamba
 		zufaxenvz=Tippverz(Tx[T_Verzeichnis_mit_zu_faxenden_Dateien],&zufaxenvz);
@@ -4007,7 +4007,7 @@ int hhcl::pruefhyla()
 							} // if (0)
 							 */
 						} // if (hylafehlt)
-						int fglaeuftnicht=0;
+						int fglaeuftnicht{0};
 						for (uchar iru=0;iru<3;iru++) {
 							//// <<violett<<"pruefhyla 2"<<schwarz<<endl;
 							if ((fglaeuftnicht=sfaxgetty->obsvfeh(obverb>0?obverb-1:0,oblog))) {
@@ -4019,6 +4019,7 @@ int hhcl::pruefhyla()
 							if (obprogda("faxstat",obverb,oblog,&pfad)) {
 								modemlaeuftnicht=1+fglaeuftnicht;
 								svec rueck;
+								caus<<"pfad: "<<pfad<<endl;
 								systemrueck(pfad+" 2>&1",obverb,oblog,&rueck,/*obsudc=*/1);
 								for(size_t ruei=0;ruei<rueck.size();ruei++) {
 									if (!aru) {
@@ -4030,6 +4031,8 @@ int hhcl::pruefhyla()
 											break;
 										}
 									} // 									if (!aru)
+									caus<<"rueck["<<ruei<<"]: "<<rueck[ruei]<<endl;
+									caus<<" hmodem: "<<hmodem<<endl;
 									if (rueck[ruei].find(this->hmodem)!=string::npos) {
 										modemlaeuftnicht--;
 										break;
