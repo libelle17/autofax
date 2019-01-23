@@ -1888,6 +1888,7 @@ void hhcl::pruefcvz()
 void hhcl::pruefsfftobmp()
 {
 	hLog(violetts+Tx[T_pruefsfftobmp]+schwarz);
+	// 23.1.19: auch zypper in libboost_filesystem1_66_0-devel noetig, evtl. auch zypper in libboost_system1_66_0-devel
 	lsysen system=lsys.getsys(obverb,oblog);
 	if (system==fed) {
 		//// P=hylafax_copy; T=$P.tar.gz; wget https://github.com/libelle17/$P/archive/master.tar.gz -O $T && tar xpvf $T && rm -f $T && mv ${P}-master/* . && rmdir ${P}-master
@@ -5068,6 +5069,7 @@ void hhcl::pruefunpaper()
 int hhcl::pruefocr()
 {
 	hLog(violetts+Tx[T_pruefocr]+schwarz);
+	// 23.1.19: auch pip install virtualenv noetig
 	if (!obocrgeprueft) {
 		uchar tda=0, deuda=0, engda=0, osdda=0;
 		systemrueck("ldconfig "+lsys.getlib64(),obverb,oblog,/*rueck=*/0,/*obsudc=*/1);

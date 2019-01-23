@@ -128,7 +128,7 @@ ifneq ($(LCURL),)
 	LDFLAGS::=$(LDFLAGS) -lcurl
 endif
 ifneq ($(LCURS),)
-	LDFLAGS::=$(LDFLAGS) -lncursesw
+	LDFLAGS::=$(LDFLAGS) -lncursesw -ltinfo
 endif
 ifdef mitpg
 	CFLAGS::=$(CFLAGS) -I/usr/include/pgsql -Dmitpostgres
