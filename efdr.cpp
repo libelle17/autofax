@@ -2955,7 +2955,7 @@ int SEntry::injectSEntry(chtype input)
 					if (wieSonder) { // (inpint==194 || inpint==195 || inpint==226)
 						//		printf("Eintrag: %i\n",inpint);
 						//		mvwprintw(screen->window,5,2,"schreibe Umlaut");
-						memset(umlaut,0,SIZEOF(umlaut));
+						memset(umlaut,0,elemzahl(umlaut));
 						*umlaut=inpint;
 					} else if (isSonder(*umlaut) && !umlaut[1]) {
 						//		printf("Folgezeichen: %i\n",inpint);
@@ -2968,7 +2968,7 @@ int SEntry::injectSEntry(chtype input)
 					} else {
 						//		mvwprintw(screen->window,5,2,"               ");
 						//		printf("sonstiges Zeichen: %i\n",inpint);
-						memset(umlaut,0,SIZEOF(umlaut));
+						memset(umlaut,0,elemzahl(umlaut));
 					}
 					// printf("%i %i %i\n",umlaut[0],umlaut[1],umlaut[2]);
 					if (umlaut[1]) {
@@ -2979,7 +2979,7 @@ int SEntry::injectSEntry(chtype input)
 						schreibl(umlaut[0]);
 						schreibl(umlaut[1]);
 						if (umlaut[2]) schreibl(umlaut[2]);
-						memset(umlaut,0,SIZEOF(umlaut));
+						memset(umlaut,0,elemzahl(umlaut));
 						//						printf("\n%i %i %i\n",umlaut[0],umlaut[1],umlaut[2]);
 //						printf("Sonderdruck Ende");
 					} else if (!*umlaut) {
@@ -4055,7 +4055,7 @@ SAlphalist::SAlphalist(SScreen *cdkscreen,
    URChar=ACS_LTEE;	
 
 	/* Setup the key bindings. */
-	for (int x = 0; x <(int)SIZEOF(bindings); ++x)
+	for (int x = 0; x <(int)elemzahl(bindings); ++x)
 		bindCDKObject(
 				(chtype)bindings[x].from,
 				getcCDKBind,
@@ -4397,7 +4397,7 @@ SScroll::SScroll(SScreen *cdkscreen,
 				   xpos + 1);
    }
    /* Setup the key bindings. */
-   for (x = 0; x <(int)SIZEOF(bindings); ++x)
+   for (x = 0; x <(int)elemzahl(bindings); ++x)
       bindCDKObject(/*vSCROLL,
 		     this,*/
 		    (chtype)bindings[x].from,
@@ -5385,7 +5385,7 @@ int mode2Filetype(mode_t mode)
 	/* *INDENT-ON* */
 
 	int filetype = '?';
-	for (unsigned n = 0; n < sizeof(table) / sizeof(table[0]); n++) {
+	for (unsigned n = 0; n < elemzahl(table); n++) {
 		if ((mode & S_IFMT) == table[n].mode) {
 			filetype = table[n].code;
 			break;
@@ -5910,7 +5910,7 @@ int mode2Char(char *string, mode_t mode)
 	if (filetype == '?')
 		return -1;
 
-	for (n = 0; n < SIZEOF(table); n++) {
+	for (n = 0; n < elemzahl(table); n++) {
 		if ((mode & table[n].mask)) {
 			string[table[n].col] = table[n].flag;
 			permissions |= (int)table[n].mask;
@@ -6205,7 +6205,7 @@ SFSelect::SFSelect(
    }
 
    /* Setup the key bindings. */
-   for (int x = 0; x <(int)SIZEOF(bindings); ++x)
+   for (int x = 0; x <(int)elemzahl(bindings); ++x)
       bindCDKObject(/*vFSELECT,
 		     this, */
 		    (chtype)bindings[x].from,

@@ -483,6 +483,8 @@ extern char const *DPROG_T[][SprachZahl];
 extern class TxB Tx;
 
 extern uchar nrzf; // nicht rueckzufragen, fuer Aufruf aus Cron
+template<typename T> inline size_t elemzahl(T& v){return sizeof(v)/sizeof(*v);}
+#define elemzahlD(v)               (sizeof(v)/sizeof((v)[0]))
 
 class errmsgcl
 {
@@ -758,7 +760,7 @@ template <> inline void WPcl::hole < binaer > (binaer *var) { *var = (binaer)ato
 /*
 template <> inline void WPcl::hole < struct tm > (struct tm *tmp) {
 	if (!wert.empty()) {
-		for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
+		for(unsigned im=0;im<elemzahl(tmmoegl);im++) {
 			if (strptime(wert.c_str(), tmmoegl[im], tmp)) break;
 		}
 									//		strptime(wert.c_str(), "%d.%m.%y %T", tmp);

@@ -1882,7 +1882,7 @@ linst_cl::linst_cl(int obverb,int oblog)
 	const string osvdt[]{"/etc/os-release","/etc/lsb-release"};
 	const string feld[]{"NAME","DISTRIB_ID"};
 	string osname;
-	for(size_t i{0};i<sizeof osvdt/sizeof *osvdt;i++) {
+	for(size_t i{0};i<elemzahl(osvdt);i++) {
 		if (!lstat(osvdt[i].c_str(),&osvers)) {
 			osname.clear();
 			/*
@@ -2298,7 +2298,7 @@ template<typename SCL> const string& schAcl<SCL>::hole(const string& pname)
 
 void WPcl::hole (struct tm *tmp) {
 	if (!wert.empty()) {
-		for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
+		for(unsigned im=0;im<elemzahl(tmmoegl);im++) {
 			if (strptime(wert.c_str(), tmmoegl[im], tmp)) break;
 		}
 		////		strptime(wert.c_str(), "%d.%m.%y %T", tmp);
@@ -3679,13 +3679,13 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 			//// <<violett<<"ustring vor Pruefung: "<<rot<<ustring<<schwarz<<endl;
 			//// <<violett<<"ustring vor Pruefung: "<<rot<<string_to_hex(ustring)<<schwarz<<endl;
 			const char* const weg[]{"libgcc","libselinux.","libselinux-utils","libselinux-python3","libsepol","libsemanage","libstdc++"};
-			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++) {
+			for(size_t wnr=0;wnr<elemzahl(weg);wnr++) {
 				size_t p1;
 				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' ')) {
 					const size_t p2=ustring.find_first_of(" \n",p1+1); //  auch string::npos
 					ustring.erase(p1,p2-p1);
 				} // 				while ((p1=ustring.find(weg[wnr]))!=string::npos && (!p1||ustring[p1-1]==' '))
-			} // 			for(size_t wnr=0;wnr<sizeof weg/sizeof *weg;wnr++)
+			} // 			for(size_t wnr=0;wnr<elemzahl(weg);wnr++)
 			//// <<violett<<"ustring nach Pruefung: "<<rot<<ustring<<schwarz<<endl;
 			if (!ustring.empty()) {
 				fLog(Txk[T_Ins_Deinstallationsprogramm_wird_eingetragen]+violetts+udpr+ustring+schwarz,obverb,oblog);
@@ -4999,7 +4999,7 @@ hcl::hcl(const int argc, const char *const *const argv,const char* const DPROG,c
 	tstart=clock();
 	_DPROG=DPROG;
 	holbefz0(argc,argv);
-	tmmoelen=sizeof tmmoegl/sizeof *tmmoegl;
+	tmmoelen=elemzahl(tmmoegl);
 	langu=holsystemsprache(obverb);
 	virtlgnzuw();
 	pthread_mutex_init(&printf_mutex, NULL);
@@ -5122,7 +5122,7 @@ string holsystemsprache(int obverb/*=0*/)
 	// OpenSuse, Fedora, Debian
 	const char* const langdt[]{"/etc/sysconfig/language","/etc/locale.conf","/etc/default/locale","/etc/sysconfig/i18n"};
 	const char* const langvr[]{"RC_LANG","LANG","LANG","LANG"};
-	for (size_t lind=0;lind<sizeof langdt/sizeof *langdt;lind++) {
+	for (size_t lind=0;lind<elemzahl(langdt);lind++) {
 		struct stat langstat{0};
 		if (!lstat(langdt[lind],&langstat)) {
 			cglangA.sinit(1, langvr[lind]);
@@ -5633,7 +5633,7 @@ void hcl::virtautokonfschreib()
 	return;
 	/*
 	schAcl<WPcl> *ggcnfAp[1]={&agcnfA};
-	multischlschreib(akonfdt, ggcnfAp, sizeof ggcnfAp/sizeof *ggcnfAp, mpfad);
+	multischlschreib(akonfdt, ggcnfAp, elemzahl(ggcnfAp), mpfad);
 	chmod(akonfdt.c_str(),S_IRWXU);
 	*/
 } // void hhcl::virtautokonfschreib
@@ -6186,7 +6186,7 @@ int wpgcl::tusetzstr(const char* const neuw,uchar *const tuschreibp,const uchar 
 				break;
 			case pdat:
 				//// <<"neuw: '"<<neuw<<"' ";
-				for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++) {
+				for(unsigned im=0;im<elemzahl(tmmoegl);im++) {
 					memcpy(&tmp,&neu,sizeof tmp);
 					eakt=strptime(neuw, tmmoegl[im], &tmp);
 					//// if (eakt>emax) <<blau<<endl;
@@ -6366,7 +6366,7 @@ void hcl::pruefsamba(const vector<const string*>& vzn,const svec& abschni,const 
 								gef[k]=1;
 							}
 						} // if (!gef[k]) if (!vzn[k]->empty()) 
-					} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
+					} // for(unsigned k=0;k<elemzahl(vzn);k++) 
 				} // if (!pfad.empty()) 
 			} // if (smbcd.abschv.aname!="global") 
 		} // for(size_t i=0;i<smbcd.abschv.size();i++) 
@@ -6396,7 +6396,7 @@ void hcl::pruefsamba(const vector<const string*>& vzn,const svec& abschni,const 
 					sapp<<"  recycle:keeptree = Yes"<<endl;
 					sapp<<"  recycle:repository = Papierkorb"<<endl;
 				} // if (!gef[k]) 
-			} // for(unsigned k=0;k<sizeof vzn/sizeof *vzn;k++) 
+			} // for(unsigned k=0;k<elemzahl(vzn);k++) 
 			if (!suchstr.empty()) {
 				if (suchstr.length()>1) suchstr.resize(suchstr.size()-2); // das letzte \\| abschneiden
 				// Abschnitt wieder loeschen

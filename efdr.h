@@ -313,7 +313,7 @@ extern std::vector<GObj*> all_objects;
 // #define isChar(c)               ((int)(c) >= 0 && (int)(c) < KEY_MIN)
 // #define CharOf(c)               ((unsigned char)(c))
 
-#define SIZEOF(v)               (sizeof(v)/sizeof((v)[0]))
+// #define SIZEOF(v)               (sizeof(v)/sizeof((v)[0]))
 
 #define MAX_COLORS		8
 

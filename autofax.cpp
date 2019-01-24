@@ -1386,23 +1386,23 @@ void pruefblack(int obverb, int oblog)
 	if (blacki.is_open()) {
 		string zeile;
 		while(getline(blacki,zeile)) {
-			for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++) {
+			for(unsigned i=0;i<elemzahl(vgl);i++) {
 				if (zeile.find(vgl[i])!=string::npos) obda[i]=1;
 			}
 		} //     while(getline(blacki,zeile))
 		blacki.close();
-		for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++) {
+		for(unsigned i=0;i<elemzahl(vgl);i++) {
 			if (!obda[i]) {obeinsfehlt=1;break;}
-		} //     for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++)
+		} //     for(unsigned i=0;i<elemzahl(vgl);i++)
 		if (obeinsfehlt) {
 			mdatei blacka(blackdt,ios::out|ios::app);
 			if (blacka.is_open()) {
-				for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++) {
+				for(unsigned i=0;i<elemzahl(vgl);i++) {
 					if (!obda[i]) {
 						fLog(Tx[T_haengean]+blaus+blackdt+schwarz+Tx[T_an_mdpp]+gruen+vgl[i]+schwarz,obverb,oblog);
 						blacka<<vgl[i]<<endl;
 					}
-				} // for(unsigned i=0;i<sizeof vgl/sizeof *vgl;i++) 
+				} // for(unsigned i=0;i<elemzahl(vgl);i++) 
 			} // if (blacka.is_open()) 
 		} // obeinsfehlt
 	} else {
@@ -1607,7 +1607,7 @@ void hhcl::liescapiconf()
 			ccapc.kauswert(cccnfCp);
 			cczulesen=0;
 			if (!cuser.empty()) {
-				for(size_t j=0;j<sizeof cdn/sizeof *cdn;j++) {
+				for(size_t j=0;j<elemzahl(cdn);j++) {
 					if (!cdn[j].empty()) {
 						//// caus<<"cdn["<<j<<"]: "<<cdn[j]<<endl;
 						struct stat statdat={0};
@@ -1651,7 +1651,7 @@ void hhcl::konfcapi()
 	// Zahl der Klingeltoene in capisuite einstellen
 	/*//
 		cppSchluess cccnfA[]={{"incoming_script"}};
-		size_t cs=sizeof cccnfA/sizeof*cccnfA;
+		size_t cs=elemzahl(cccnfA);
 	 */
 	//// <<"cccnfA[0].wert: "<<cccnfA[0].wert<<endl;
 	if (!cdn[0].empty()) {
@@ -2068,7 +2068,7 @@ void hhcl::pruefmodcron()
 	const string mp="@reboot /sbin/modprobe ";
 	const string mps[]={mp+"capi",mp+"fcpci"};
 	setztmpcron();
-	for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++) {
+	for(uchar ru=0;ru<elemzahl(mps);ru++) {
 		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <("+sudc+"crontab -l 2>/dev/null)'",obverb,oblog,/*rueck=*/0,/*obsudc=*/0)) {
 			svec rueck;
 			const string bef="crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";crontab "+tmpcron;
@@ -2079,7 +2079,7 @@ void hhcl::pruefmodcron()
 				anfgg(unindt,befehl,bef,obverb,oblog);
 			} //if (!systemrueck("("+sudc+"crontab -l 2>/dev/null >"+tmpcron+";echo \""+mps[ru]+"\">>"+tmpcron+";"+sudc+"crontab "+tmpcron+")",obverb,oblog,&rueck))
 		} // 		if (systemrueck("bash -c 'grep \""+mps[ru]+"\" -q <("+sudc+"crontab -l 2>/dev/null)'",obverb,oblog))
-	} //   for(uchar ru=0;ru<sizeof mps/sizeof *mps;ru++)
+	} //   for(uchar ru=0;ru<elemzahl(mps);ru++)
 } // void pruefmodcron(int obverb, int oblog)
 
 
@@ -3237,7 +3237,7 @@ int hhcl::setzhylavz()
 		// in Ubuntu "HYLAFAX_HOME"; dort bekam die Variable "SPOOL" einen anderen Inhalt
 
 		////    cppSchluess hylaconf[]={{"SPOOL"},{"HYLAFAX_HOME"}};
-		////    size_t cs=sizeof hylaconf/sizeof*hylaconf;
+		////    size_t cs=elemzahl(hylaconf);
 		struct stat hstat{0};
 		if (!lstat(initdhyladt.c_str(),&hstat)) {
 			initdhyladt_gibts=1;
@@ -3292,18 +3292,18 @@ int hhcl::setzhylavz()
 		////  if (lsys.getsys(obverb,oblog)==sus) varsphylavz="/var/spool/fax";
 		////  else if (lsys.getsys(obverb,oblog)==deb) varsphylavz="/var/spool/hylafax";
 		string testvz=varsphylavz;
-		for(unsigned iru=0;iru<(sizeof moeglhvz/sizeof *moeglhvz)+1;iru++) {
+		for(unsigned iru=0;iru<(elemzahl(moeglhvz))+1;iru++) {
 			struct stat entryhyla{0};
 			if (!lstat((testvz+testcmd).c_str(),&entryhyla)) {
 				varsphylavz=testvz; 
 				if (iru) fundart=6;
 				break;
-			} else if (iru==sizeof moeglhvz/sizeof *moeglhvz) {
+			} else if (iru==elemzahl(moeglhvz)) {
 				// obhyla=0 hier noch nicht, da setzhylavz auch einmal vor der Installation schon aufgerufen wird
 				break; // kein Verzeichnis gefunden
-			} //   else if (iru==sizeof moeglhvz/sizeof *moeglhvz)
+			} //   else if (iru==elemzahl(moeglhvz))
 			testvz=moeglhvz[iru];
-		} //     for(unsigned iru=0;iru<(sizeof moeglhvz/sizeof *moeglhvz)+1;iru++)
+		} //     for(unsigned iru=0;iru<(elemzahl(moeglhvz))+1;iru++)
 	} //   if (weiterpruefen)
 	if (obverb) {
 		string grund;
@@ -3659,7 +3659,7 @@ void hhcl::hliesconf()
 {
 #ifdef false
 	const char* const sarr[]{"CountryCode","AreaCode","FAXNumber","LongDistancePrefix","InternationalPrefix","RingsBeforeAnswer","LocalIdentifier","MaxDials"};
-	schlArr hyaltcnfA(sarr,sizeof sarr/sizeof *sarr);
+	schlArr hyaltcnfA(sarr,elemzahl(sarr));
 #endif
 	setzmodconfd();
 	struct stat mstat{0};
@@ -3949,8 +3949,8 @@ int hhcl::pruefhyla()
 								} else {
 									// falls oben hylafax neu installiert wurde und zuvor eine hylafax-Installation nach Gebrauch geloescht worden war,
 									// dann die alten Eintraege (xferfaxlog.rpmsave) wieder aktivieren
-									struct stat entryxfer={0}, entryxfer0={0};
-									const string d0=xferfaxlog+".rpmsave";
+									struct stat entryxfer{0}, entryxfer0{0};
+									const string d0{xferfaxlog+".rpmsave"};
 									if (!lstat(xferfaxlog.c_str(),&entryxfer)) {
 										if (entryxfer.st_size<10) { // wenn neu
 											if (!lstat(d0.c_str(),&entryxfer0) && entryxfer0.st_size>10) {
@@ -3959,7 +3959,7 @@ int hhcl::pruefhyla()
 											} else {
 												if (falscheshyla)  {
 													char* fspoolvz=0;
-													for(unsigned iru=0;iru<sizeof this->moeglhvz/sizeof this->moeglhvz;iru++) {
+													for(unsigned iru=0;iru<elemzahl(moeglhvz);iru++) {
 														if (this->moeglhvz[iru]!=this->varsphylavz) {
 															fspoolvz=(char*)this->moeglhvz[iru];
 															break;
@@ -4304,18 +4304,18 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
 			Feld("hylastatus","varchar","80","",Tx[T_status_in_letztem_gescheitertem_hylafax],0,0,1),
 			Feld("pages","int","10","",Tx[T_Seitenzahl],0,0,1),
 		}; //     Feld felder[] = 
-		Feld ifelder0[]{Feld("capispooldatei")}; Index i0("capispooldatei",ifelder0,sizeof ifelder0/sizeof* ifelder0);
-		Feld ifelder1[]{Feld("cdateidatum")};    Index i1("cdateidatum",ifelder1,sizeof ifelder1/sizeof* ifelder1);
-		Feld ifelder2[]{Feld("hdateidatum")};    Index i2("hdateidatum",ifelder2,sizeof ifelder2/sizeof* ifelder2);
-		////    Feld ifelder3[] = {Feld("original")};       Index i3("original",ifelder3,sizeof ifelder3/sizeof* ifelder3);
+		Feld ifelder0[]{Feld("capispooldatei")}; Index i0("capispooldatei",ifelder0,elemzahl(ifelder0));
+		Feld ifelder1[]{Feld("cdateidatum")};    Index i1("cdateidatum",ifelder1,elemzahl(ifelder1));
+		Feld ifelder2[]{Feld("hdateidatum")};    Index i2("hdateidatum",ifelder2,elemzahl(ifelder2));
+		////    Feld ifelder3[] = {Feld("original")};       Index i3("original",ifelder3,elemzahl(ifelder3));
 		Index indices[]{i0,i1,i2/*,i3*/};
 		// auf jeden Fall ginge "binary" statt "utf8" und "" statt "utf8_general_ci"
-		Tabelle taa(My,altspool,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,0,0,Tx[T_capispooldateien_der_Capisuite]
+		Tabelle taa(My,altspool,felder,elemzahl(felder),indices,elemzahl(indices),0,0,Tx[T_capispooldateien_der_Capisuite]
 				/*//, "InnoDB","utf8","utf8_unicode_ci","DYNAMIC"*/);
 		if (taa.prueftab(aktc,obverb)) {
 			exit(schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+altspool,1));
 		} // 		if (taa->prueftab(&taa, aktc,obverb))
-		Tabelle tab(My,spooltab,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,0,0,Tx[T_capispooldateien_der_Capisuite]
+		Tabelle tab(My,spooltab,felder,elemzahl(felder),indices,elemzahl(indices),0,0,Tx[T_capispooldateien_der_Capisuite]
 				/*// , "InnoDB","utf8","utf8_unicode_ci","DYNAMIC"*/);
 		if (tab.prueftab(aktc,obverb)) {
 			exit(schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+spooltab,1));
@@ -4356,15 +4356,15 @@ void pruefouttab(DB *My, const string& touta, const int obverb, const int oblog,
 			//			Feld("sender","varchar","1","",Tx[T_Faxnummer_des_Senders_nur_MSFax],0,0,1),
 			//			Feld("transs","datetime","0","0",Tx[T_Beginn_der_Uebertragung_nur_MSFax],0,0,1),
 		};
-		Feld ifelder0[] = {Feld("submt"),Feld("Erfolg")};   Index i0("submt",ifelder0,sizeof ifelder0/sizeof* ifelder0);
-		Feld ifelder1[] = {Feld("Erfolg"),Feld("submt")};   Index i1("Erfolg",ifelder1,sizeof ifelder1/sizeof* ifelder1);
-		Feld ifelder2[] = {Feld("docname"),Feld("Erfolg")}; Index i2("docname",ifelder2,sizeof ifelder2/sizeof* ifelder2);
-		Feld ifelder3[] = {Feld("pid"),Feld("Erfolg")};     Index i3("pid",ifelder3,sizeof ifelder3/sizeof* ifelder3);
-		Feld ifelder4[] = {Feld("rcfax"),Feld("Erfolg")};   Index i4("rcfax",ifelder4,sizeof ifelder4/sizeof* ifelder4);
-		Feld ifelder5[] = {Feld("submid")}; Index i5("submid",ifelder5,sizeof ifelder5/sizeof* ifelder5);
+		Feld ifelder0[] = {Feld("submt"),Feld("Erfolg")};   Index i0("submt",ifelder0,elemzahl(ifelder0));
+		Feld ifelder1[] = {Feld("Erfolg"),Feld("submt")};   Index i1("Erfolg",ifelder1,elemzahl(ifelder1));
+		Feld ifelder2[] = {Feld("docname"),Feld("Erfolg")}; Index i2("docname",ifelder2,elemzahl(ifelder2));
+		Feld ifelder3[] = {Feld("pid"),Feld("Erfolg")};     Index i3("pid",ifelder3,elemzahl(ifelder3));
+		Feld ifelder4[] = {Feld("rcfax"),Feld("Erfolg")};   Index i4("rcfax",ifelder4,elemzahl(ifelder4));
+		Feld ifelder5[] = {Feld("submid")}; Index i5("submid",ifelder5,elemzahl(ifelder5));
 		Index indices[]={i0,i1,i2,i3,i4,i5};
 		// auf jeden Fall ginge "binary" statt "utf8" und "" statt "utf8_general_ci"
-		Tabelle taba(My,touta,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,0,0,
+		Tabelle taba(My,touta,felder,elemzahl(felder),indices,elemzahl(indices),0,0,
 				Tx[T_Archiv_fuer_die_erfolgreichen_Faxe]/*//,"InnoDB","utf8","utf8_general_ci","DYNAMIC"*/);
 		if (taba.prueftab(aktc,obverb)) {
 			exit(schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+touta,1));
@@ -4382,10 +4382,10 @@ void pruefudoc(DB *My, const string& tudoc, const int obverb, const int oblog, c
 			Feld("id","int","10","",Tx[T_eindeutige_Identifikation],1,1),
 			Feld("udocname","varchar","1","",Tx[T_Dateiname],0,0,1),
 		};
-		Feld ifelder0[] = {Feld("udocname")};   Index i0("udocname",ifelder0,sizeof ifelder0/sizeof* ifelder0);
+		Feld ifelder0[] = {Feld("udocname")};   Index i0("udocname",ifelder0,elemzahl(ifelder0));
 		Index indices[]={i0};
 		// auf jeden Fall ginge "binary" statt "utf8" und "" statt "utf8_general_ci"
-		Tabelle taba(My,tudoc,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,0,0,
+		Tabelle taba(My,tudoc,felder,elemzahl(felder),indices,elemzahl(indices),0,0,
 				Tx[T_Archiv_fuer_die_Dateinamen_vor_Aufteilung]/*//,"InnoDB","utf8","utf8_general_ci","DYNAMIC"*/);
 		if (taba.prueftab(aktc,obverb)) {
 			exit(schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+tudoc,1));
@@ -4424,14 +4424,14 @@ void pruefinctab(DB *My, const string& tinca, const int obverb, const int oblog,
 			////      Feld("sender","varchar","1","",Tx[T_Faxnummer_des_Senders_nur_MSFax],0,0,1),
 			//			Feld("transs","datetime","0","0",Tx[T_Beginn_der_Uebertragung_nur_MSFax],0,0,1),
 		};
-		Feld ifelder0[]{Feld("transe"),Feld("Erfolg")};   Index i0("transe",ifelder0,sizeof ifelder0/sizeof* ifelder0);
-		Feld ifelder1[]{Feld("Erfolg"),Feld("transe")};   Index i1("Erfolg",ifelder1,sizeof ifelder1/sizeof* ifelder1);
-		Feld ifelder2[]{Feld("titel"),Feld("Erfolg")}; Index i2("titel",ifelder2,sizeof ifelder2/sizeof* ifelder2);
-		Feld ifelder3[]{Feld("tsid"),Feld("Erfolg")}; Index i3("tsid",ifelder3,sizeof ifelder3/sizeof* ifelder3);
-		Feld ifelder4[]{Feld("id"),Feld("Erfolg")}; Index i4("id",ifelder4,sizeof ifelder4/sizeof* ifelder4);
+		Feld ifelder0[]{Feld("transe"),Feld("Erfolg")};   Index i0("transe",ifelder0,elemzahl(ifelder0));
+		Feld ifelder1[]{Feld("Erfolg"),Feld("transe")};   Index i1("Erfolg",ifelder1,elemzahl(ifelder1));
+		Feld ifelder2[]{Feld("titel"),Feld("Erfolg")}; Index i2("titel",ifelder2,elemzahl(ifelder2));
+		Feld ifelder3[]{Feld("tsid"),Feld("Erfolg")}; Index i3("tsid",ifelder3,elemzahl(ifelder3));
+		Feld ifelder4[]{Feld("id"),Feld("Erfolg")}; Index i4("id",ifelder4,elemzahl(ifelder4));
 		Index indices[]{i0,i1,i2,i3,i4};
 		// auf jeden Fall ginge "binary" statt "utf8" und "" statt "utf8_general_ci"
-		Tabelle taba(My,tinca,felder,sizeof felder/sizeof* felder,indices,sizeof indices/sizeof *indices,0,0,
+		Tabelle taba(My,tinca,felder,elemzahl(felder),indices,elemzahl(indices),0,0,
 				Tx[T_Archiv_fuer_die_erfolgreichen_Faxe]/*//,"InnoDB","utf8","utf8_general_ci","DYNAMIC"*/);
 		if (taba.prueftab(aktc,obverb)) {
 			exit(schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+tinca,1));
@@ -5589,7 +5589,7 @@ int hhcl::obvorbei(const string& vzname,uchar *auchtag)
 			,"%y%m%d","%Y%m%d"
 	};
 	unsigned iru=0;
-	for(;iru<sizeof mus/sizeof *mus;iru++) {
+	for(;iru<elemzahl(mus);iru++) {
 		memcpy(&ht,gmtime(&heute),sizeof ht);
 		if (obverb>1) {
 			fLog(" iru: "+blaus+ltoan(iru)+schwarz+":"+blau+mus[iru]+schwarz,obverb,oblog);
@@ -5605,7 +5605,7 @@ int hhcl::obvorbei(const string& vzname,uchar *auchtag)
 				if (auchtag) *auchtag=1;
 			break;
 		} // 		if (strptime(vzname.c_str(),mus[iru],&ht))
-	} // 	for(unsigned iru=0;iru<sizeof mus/sizeof *mus;iru++)
+	} // 	for(unsigned iru=0;iru<elemzahl(mus);iru++)
 	if (geht) {
 		if (obverb>1) {
 				stringstream sts;
@@ -6546,7 +6546,7 @@ void hhcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,
 		struct tm tm{0};
 		for(unsigned im=0;im<tmmoelen;im++) {
 			if (strptime(time.c_str(), tmmoegl[im], &tm)) break;
-		} // 			for(unsigned im=0;im<sizeof tmmoegl/sizeof *tmmoegl;im++)
+		} // 			for(unsigned im=0;im<elemzahl(tmmoegl);im++)
 		//// strftime(tbuf, sizeof(tbuf), "%d.%m.%Y %H.%M.%S", &tm);
 		stringstream sptrstr;
 		sptrstr<<put_time(&tm,"%d.%m.%Y %H.%M.%S");
@@ -6714,7 +6714,7 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 	// 2) capi
 	/*//
 		cppSchluess umst[]={{"filename"},{"call_from"},{"call_to"},{"time"},{"cause"}};
-		size_t cs=sizeof umst/sizeof*umst;
+		size_t cs=elemzahl(umst);
 	 */
 	const string *csuchvzp=obalte?&cempfavz:&cfaxuserrcvz;
 	struct stat entryvz{0};
@@ -7845,7 +7845,7 @@ int fsfcl::holcapiprot(int obverb)
 		/*
 			 KLA
 			 const char* const sarr[]=KLA"tries","starttime","dialstring"KLZ;
-			 schlArr sdcnfA(sarr,sizeof sarr/sizeof *sarr);
+			 schlArr sdcnfA(sarr,elemzahl(sarr));
 			 struct stat cstatKLA0KLZ;
 			 if (lstat(sdgstxtdt.c_str(),&cstat)) KLA
 			 return -2; // .txt-Datei fehlt
@@ -8890,7 +8890,7 @@ void hhcl::virtautokonfschreib()
 			else if (agcnfA[i].name=="obfbox") agcnfA[i].setze(&obfbox);
 		} //     for (size_t i=0;i<agcnfA.zahl;i++)
 		schlArr *ggcnfAp[3]={&agcnfA,&sqlcnfA,&zmcnfA};
-		multischlschreib(akonfdt, ggcnfAp, sizeof ggcnfAp/sizeof *ggcnfAp, mpfad);
+		multischlschreib(akonfdt, ggcnfAp, elemzahl(ggcnfAp), mpfad);
 #endif
 	} // if (rzf||hccd.obzuschreib) //α
 // obverb=altobverb;

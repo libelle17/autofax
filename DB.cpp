@@ -1864,7 +1864,7 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 ////									transform(sql.begin(),sql.end(),std::back_inserter(SQL),::toupper);
 									string suchstr[2]={"INSERT INTO ","UPDATE "}; // Problem: "ON DUPLICATE KEY UPDATE"
 									uchar neuerversuch=0;
-									for(unsigned uru=0;uru<sizeof suchstr/sizeof *suchstr;uru++) {
+									for(unsigned uru=0;uru<elemzahl(suchstr);uru++) {
 										if ((p1=SQL.find(suchstr[uru]))!=string::npos) {
 											p1+=suchstr[uru].length();
 											if ((p2=SQL.find_first_of(" (",p1)+1)) {
@@ -1883,7 +1883,7 @@ int RS::doAbfrage(const size_t aktc/*=0*/,int obverb/*=0*/,uchar asy/*=0*/,int o
 												} // 												for(unsigned spnr=0;spnr<aktt.spzahl;spnr++)
 											} // 											if ((p2=SQL.find_first_of(" (",p1)+1))
 										} // 										if ((p1=SQL.find(suchstr[uru]))!=string::npos)
-									} // 									for(unsigned uru=0;uru<sizeof suchstr/sizeof *suchstr;uru++)
+									} // 									for(unsigned uru=0;uru<elemzahl(suchstr);uru++)
 									if (neuerversuch)
 										continue;
 								} // 								if ((p2=fehler.find("'",p1)+1))
