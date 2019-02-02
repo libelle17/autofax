@@ -5986,7 +5986,7 @@ void hhcl::wegfaxen()
 
 					// Datei ist faxbar, wenn mindestens eine Faxnr gefunden. 
 					// 1) Aufteilung in 1a) alles vor dem ersten anFaxString und 1b) alles nach dem letzten anFaxString
-					aufiSplit(&toktxt,stamm,anfxstrvec[iprio],/*nichtmehrfach=*/0,obverb,oblog);
+					aufiSplit(&toktxt,stamm,anfxstrvec[iprio],/*nichtmehrfach=*/0,obverb,oblog,1);
 					if (toktxt.size()>1||(!iprio&&toktxt.size())) {
 						size_t p1;
 						// 2) Aufteilung von 1a) in 2a) alles vor dem und 2b) alles nach dem letzten anString
@@ -6070,7 +6070,7 @@ void hhcl::wegfaxen()
 									if (benenn.empty()) zielp=&benenn; else zielp=&kopier;
 									*zielp=vor+(tokname[j].empty()?" ":anstr+tokname[j]+" ")+anfxstrvec[iprio]+" "+toknr[j]+'.'+exten;
 									fLog("toknr["+blaus+ltoan(j)+"]:"+tuerkis+toknr[j]+schwarz,(obverb>0?obverb-1:obverb),oblog);
-									uint kfehler=0;
+									uint kfehler{0};
 									// die erste Zieldatei
 									if (zielp==&benenn) {
 										if (zfda[iakt]!=benenn) {

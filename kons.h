@@ -996,7 +996,7 @@ void kopierm(const string *quelle, const string *ziel);
 #endif // notwendig
 void aufSplit(vector<string> *tokens, const char* const text, const char sep=' ',bool auchleer=1);
 void aufSplit(vector<string> *tokens, const string& text, const char sep=' ',bool auchleer=1);
-void aufiSplit(vector<string> *tokens, const string& text, const string& sep,bool nichtmehrfach=1,int obverb=0,int oblog=0);
+void aufiSplit(vector<string> *tokens, const string& text, const string& sep,bool nichtmehrfach=1,int obverb=0,int oblog=0,int ohneanfz=0);
 void aufSplit(vector<string> *tokens, const string& text, const char* const sep, bool auchleer=1);
 size_t irfind(const string& wo, const string& was); // suche von hinten und ignoriere Gross- und Kleinschreibung
 void getstammext(const string *const ganz, string *stamm, string *exten);

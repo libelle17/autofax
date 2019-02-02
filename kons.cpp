@@ -1703,20 +1703,32 @@ void aufSplit(vector<string> *tokens, const string& text, const char* const sep,
 		tokens->push_back(text.substr(start));
 } // void aufSplit(vector<string> *tokens, const string& text, char* sep,bool auchleer/*=1*/)
 
-void aufiSplit(vector<string> *tokens, const string& text, const string& sep,bool nichtmehrfach/*=1*/,int obverb/*=0*/,int oblog/*=0*/) 
+void aufiSplit(vector<string> *tokens, const string& text, const string& sep,bool nichtmehrfach/*=1*/,int obverb/*=0*/,int oblog/*=0*/,int ohneanfz/*=0*/) 
 {
-	size_t start=0, end=0,k=0,l2;
+	size_t start{0},end{0},k{0},l2;
 	if (obverb)
 		fLog(string(Txk[T_trenne])+"'"+blaus+text+schwarz+"'"+Txk[T_bei]+"'"+blau+sep+schwarz+"':",obverb,oblog);
-//	for (char *p=(char*)sep.c_str() ; *p; ++p) *p = toupper(*p);
-	string utext,usep;
-////	transform(text.begin(),text.end(),std::back_inserter(utext),::toupper);
-////	transform(sep.begin(),sep.end(),std::back_inserter(usep),::toupper);
-	utext=boost::locale::to_upper(text, loc);
-	usep=boost::locale::to_upper(sep, loc);
+	//	for (char *p=(char*)sep.c_str() ; *p; ++p) *p = toupper(*p);
+	////	string utext,usep;
+	////	transform(text.begin(),text.end(),std::back_inserter(utext),::toupper);
+	////	transform(sep.begin(),sep.end(),std::back_inserter(usep),::toupper);
+	const string utext{boost::locale::to_upper(text, loc)},
+				usep{boost::locale::to_upper(sep, loc)};
 
 	tokens->clear();
 	while (1) {
+		if (ohneanfz) {
+			char anfn[]{"\"\'`"};
+			for(char anfz:anfn) {
+				while (1) {
+					size_t panfz{utext.find(anfz,start)};
+					if (!panfz) break;
+					size_t pendz{utext.find(anfz,panfz+1)};
+					if (!pendz) break;
+					start=pendz+1;
+				}
+			}
+		}
 		end=utext.find(usep,start);
 		if (end!=string::npos) l2=end-start; else l2=string::npos;
 		if (end==string::npos || nichtmehrfach || l2) {
