@@ -483,26 +483,25 @@ extern char const *DPROG_T[][SprachZahl];
 extern class TxB Tx;
 
 extern uchar nrzf; // nicht rueckzufragen, fuer Aufruf aus Cron
-template<typename T> inline size_t elemzahl(T& v){return sizeof(v)/sizeof(*v);}
-#define elemzahlD(v)               (sizeof(v)/sizeof((v)[0]))
+template<typename T> size_t elemzahlT(T& v){return sizeof(v)/sizeof(*v);}
+#define elemzahl(v)               (sizeof(v)/sizeof((v)[0]))
 
-class errmsgcl
+struct errmsgcl
 {
-public:
- int errnr;
- string msg;
- errmsgcl(int errnr,const string& msg):errnr(errnr),msg(msg){}
+		int errnr;
+		string msg;
+		errmsgcl(int errnr,const string& msg):errnr(errnr),msg(msg){}
 };
 // aktueller Benutzer
 class cuscl
 {
- private:
- struct passwd *passwd;
- public:
- string cusstr;
- uid_t cuid;
- gid_t cgid;
- cuscl();
+	private:
+		struct passwd *passwd;
+	public:
+		string cusstr;
+		uid_t cuid;
+		gid_t cgid;
+		cuscl();
 };
 
 // arg-Class
