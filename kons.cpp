@@ -1722,9 +1722,9 @@ void aufiSplit(vector<string> *tokens, const string& text, const string& sep,boo
 			for(char anfz:anfn) {
 				while (1) {
 					size_t panfz{utext.find(anfz,start)};
-					if (!panfz) break;
+					if (panfz==string::npos) break;
 					size_t pendz{utext.find(anfz,panfz+1)};
-					if (!pendz) break;
+					if (pendz==string::npos) break;
 					start=pendz+1;
 				}
 			}
