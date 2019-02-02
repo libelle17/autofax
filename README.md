@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.47182) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47187) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -177,7 +177,7 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47182</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47187</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
@@ -212,6 +212,9 @@ a.faxed directory against the tables
 &lsquo;<b>inca</b>&lsquo; (<b>0</b>) <b><br>
 -listw, --listwaiting</b>: lists waiting faxes (<b>0</b>)
 <b><br>
+-reconly, --receiveonly</b>: receives only (<b>0</b>)
+<b><br>
+-sndonly, --sendonly</b>: sends only (<b>0</b>) <b><br>
 -s, --search &lt;string&gt;</b>: Look in processed faxes for
 &lt;string&gt;: (&rsquo;&rsquo;) <b><br>
 -n, --reccount &lt;string&gt;</b>: No. of listed entries =
@@ -812,7 +815,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.47182) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47187) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1004,7 +1007,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47182</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47187</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
@@ -1039,6 +1042,9 @@ Wartevz.,Gescheitertenvz.u.Gefaxtvz.gegen
 &lsquo;<b>inca</b>&lsquo; auf (<b>0</b>) <b><br>
 -listw, --listwartende</b>: listet wartende Faxe auf
 (<b>0</b>) <b><br>
+-nurempf, --nurempfangen</b>: empfaengt nur (<b>0</b>)
+<b><br>
+-nursend, --nursenden</b>: sendet nur (<b>0</b>) <b><br>
 -s, --suche &lt;string&gt;</b>: Suche in verarbeiteten Faxen
 nach &lt;string&gt;: (&rsquo;&rsquo;) <b><br>
 -n, --dszahl &lt;string&gt;</b>: Zahl der aufzulistenden

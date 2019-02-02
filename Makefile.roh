@@ -96,14 +96,26 @@ CCName::=g++-$(MINGCCNR)
 ifeq ($(DISTR),1)
 	CCName::=g++-$(MINGCCNR)
 	CCInst::=gcc-$(MINGCCNR) g++-$(MINGCCNR)
-endif
-ifeq ($(DISTR),2)
-#	OBEINS::=1
+	DName::="Mint"
+else ifeq ($(DISTR),2)
 	CCInst::=gcc$(MINGCCNR)
-endif
-ifeq ($(DISTR),3)
+# 2.2.19: obeins fuer Opensuse 15.0 doch wieder notwendig
+	OBEINS::=1
+	DName::="OpenSuse"
+else ifeq ($(DISTR),3)
 	CCName::=g++
 	OBEINS::=1
+	DName::="Debian"
+else ifeq ($(Distr),4)
+	DName::="OpenSuse"
+	OBEINS::=1
+else ifeq ($(Distr),5)
+	DName::="Fedora"
+else ifeq ($(Distr),6)
+else ifeq ($(Distr),7)
+	DName::="Mageia"
+else ifeq ($(Distr),8)
+	DName::="Manjaro"
 endif
 ifeq ($(OBEINS),1)
 	CCInst::=gcc$(MINGCCNR) gcc$(MINGCCNR)-c++
@@ -336,7 +348,7 @@ $(DEPDIR)/%.d: ;
 
 .PHONY: compiler
 compiler:
-	@printf " Untersuche/Examining Compiler ...\n" >$(BA)
+#	@printf " Untersuche/Examining Compiler ...\n" >$(BA)
 #	@printf " MINVGCC: %b%s%b\n" $(blau) "$(MINVGCC)" $(reset)
 #	@printf " GCCOK: %b%s%b\n" $(blau) "$(GCCOK)" $(reset)
 #	@printf " ZUERSETZ: %b%s%b\n" $(blau) "$(ZUERSETZ)" $(reset)
@@ -345,7 +357,7 @@ compiler:
 #	@printf " MAXGCC: %b%s%b\n" $(blau) "$(MAXGCC)" $(reset)
 #	@printf " MAXGCCNR: %b%s%b\n" $(blau) "$(MAXGCCNR)" $(reset)
 #	@printf " CCINST: %b%s%b\n" $(blau) "$(CCINST)" $(reset)
-	@printf " DISTR: %b%s%b\n" $(blau) "$(DISTR)" $(reset)
+	@printf " DISTR: %b%s%b%s\n" $(blau) "$(DName)" $(reset) ", untersuche/examining Compiler ..."
 ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)

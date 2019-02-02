@@ -28,7 +28,7 @@ getIPR() {
 	# echo $os
 	case "$os" in 
 		*Mint*) osnr=1;;
-		*Ubunto*) osnr=2;; 
+		*Ubuntu*) osnr=2;; 
 		*Debian*) osnr=3;; 
 		*SUSE*) osnr=4;; 
 		*Fedora*) osnr=5;; 

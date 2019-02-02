@@ -550,6 +550,12 @@ enum T_
 	T_Fundstellen_von,
 	T_Keine_Fundstellen_von,
 	T_SQL_Befehl,
+	T_nurempf_k,
+	T_nurempf_l,
+	T_empfaengt_nur,
+	T_nursend_k,
+	T_nursend_l,
+	T_sendet_nur,
 	T_MAX //α
 }; // enum T_ //ω
 
@@ -736,10 +742,12 @@ class hhcl:public dhcl
 		uchar uml=0; // umleiten: vorzeitig den zweiten Weg aktivieren
 		uchar kez=0;    // korrigiere Erfolgskennzeichen
 		uchar bvz=0;    // bereinige Gescheitertenverzeichnis, letztes Gefaxtverzeichnis und Warteverzeichnis
-		uchar lista=0;   // liste Archiv auf
-		uchar listf=0;   // liste gescheiterte auf
-		uchar listi=0;   // liste Eingegangene auf
-		uchar listw=0;   // liste wartende auf
+		uchar tulista=0;   // liste Archiv auf
+		uchar tulistf=0;   // liste gescheiterte auf
+		uchar tulisti=0;   // liste Eingegangene auf
+		uchar tulistw=0;   // liste wartende auf
+		uchar nurempf=0; // nur Empfang aufrufen
+		uchar nursend=0; // nur Senden aufrufen
 		string suchstr;  // Wortteil, nach dem in alten Faxen gesucht werden soll
 		size_t faxord=0; // Ordinalzahl des Faxes unter allen anstehenden Faxen
 		ulong geszahl=0;

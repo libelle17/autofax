@@ -1138,6 +1138,18 @@ char const *DPROG_T[T_MAX+1][SprachZahl]={
 	{"Keine Fundstellen von ","No references of "},
 	// T_SQL_Befehl
 	{"SQL-Befehl: ","SQL-Command: "},
+	// T_nurempf_k,
+	{"nurempf","reconly"},
+	// T_nurempf_l,
+	{"nurempfangen","receiveonly"},
+	// T_empfaengt_nur,
+	{"empfaengt nur","receives only"},
+	// T_nursend_k,
+	{"nursend","sndonly"},
+	// T_nursend_l,
+	{"nursenden","sendonly"},
+	// T_sendet_nur,
+	{"sendet nur","sends only"},
 	{"",""} //α
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -2539,7 +2551,7 @@ int hhcl::pruefcapi()
 				kuerzelogdatei("/var/log/capisuite.log",obverb); // screen
 				capiloggekuerzt=1;
 			} // 			if (!capiloggekuerzt) 
-			if (!kez&& !bvz && !anhl && !lista && !listi && !listw && suchstr.empty())
+			if (!kez&& !bvz && !anhl && !tulista && !tulistf && !tulisti && !tulistw && suchstr.empty())
 				/*//if (this->obcapi) */pruefmodcron();
 		} else {
 			::fLog(rots+Tx[T_konntecapisuiteservice]+gruen+ltoan(versuch)+rot+Tx[T_malnichtstartenverwN]+schwarz,1,1);
@@ -2683,10 +2695,12 @@ void hhcl::virtinitopt()
 	opn<<new optcl(/*pptr*/&kez,/*art*/puchar,T_kez_k,T_korrerfolgszeichen_l,/*TxBp*/&Tx,/*Txi*/T_in_der_Datenbanktabelle,/*wi*/0,/*Txi2*/T_wird_das_Erfolgszeichen_korrigiert,/*rottxt*/touta,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&bvz,/*art*/puchar,T_bvz_k,T_bereinigevz_l,/*TxBp*/&Tx,/*Txi*/T_Dateien_aus_Warteverzeichnis_Gescheitertenvz_und_Gefaxtvz_gegen,/*wi*/0,/*Txi2*/T_pruefen_und_aufraeumen,/*rottxt*/touta,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&anhl,/*art*/puchar,T_st_k,T_stop_l,/*TxBp*/&Tx,/*Txi*/T_DPROG_anhalten,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1); //α //ω
-	opn<<new optcl(/*pptr*/&lista,/*art*/puchar,T_lista_k,T_listausg_l,/*TxBp*/&Tx,/*Txi*/T_listet_Datensaetze_aus,/*wi*/1,/*Txi2*/T_mit_Erfolgskennzeichen_auf,/*rottxt*/touta,/*wert*/1,/*woher*/1);
-	opn<<new optcl(/*pptr*/&listf,/*art*/puchar,T_listf_k,T_listfailed_l,/*TxBp*/&Tx,/*Txi*/T_listet_Datensaetze_aus,/*wi*/1,/*Txi2*/T_ohne_Erfolgskennzeichen_auf,/*rottxt*/touta,/*wert*/1,/*woher*/1);
-	opn<<new optcl(/*pptr*/&listi,/*art*/puchar,T_listi_k,T_listinca_l,/*TxBp*/&Tx,/*Txi*/T_listet_Datensaetze_aus,/*wi*/1,/*Txi2*/T__auf,/*rottxt*/tinca,/*wert*/1,/*woher*/1);
-	opn<<new optcl(/*pptr*/&listw,/*art*/puchar,T_listw_k,T_listwart_l,/*TxBp*/&Tx,/*Txi*/T_listet_wartende_Faxe_auf,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
+	opn<<new optcl(/*pptr*/&tulista,/*art*/puchar,T_lista_k,T_listausg_l,/*TxBp*/&Tx,/*Txi*/T_listet_Datensaetze_aus,/*wi*/1,/*Txi2*/T_mit_Erfolgskennzeichen_auf,/*rottxt*/touta,/*wert*/1,/*woher*/1);
+	opn<<new optcl(/*pptr*/&tulistf,/*art*/puchar,T_listf_k,T_listfailed_l,/*TxBp*/&Tx,/*Txi*/T_listet_Datensaetze_aus,/*wi*/1,/*Txi2*/T_ohne_Erfolgskennzeichen_auf,/*rottxt*/touta,/*wert*/1,/*woher*/1);
+	opn<<new optcl(/*pptr*/&tulisti,/*art*/puchar,T_listi_k,T_listinca_l,/*TxBp*/&Tx,/*Txi*/T_listet_Datensaetze_aus,/*wi*/1,/*Txi2*/T__auf,/*rottxt*/tinca,/*wert*/1,/*woher*/1);
+	opn<<new optcl(/*pptr*/&tulistw,/*art*/puchar,T_listw_k,T_listwart_l,/*TxBp*/&Tx,/*Txi*/T_listet_wartende_Faxe_auf,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
+	opn<<new optcl(/*pptr*/&nurempf,/*art*/puchar,T_nurempf_k,T_nurempf_l,/*TxBp*/&Tx,/*Txi*/T_empfaengt_nur,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
+	opn<<new optcl(/*pptr*/&nursend,/*art*/puchar,T_nursend_k,T_nursend_l,/*TxBp*/&Tx,/*Txi*/T_sendet_nur,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&suchstr,/*art*/pstri,T_s_k,T_suche_l,/*TxBp*/&Tx,/*Txi*/T_suche_in_verarbeiteten_Faxen_nach,/*wi*/1,/*Txi2*/T_MAX,/*rottxt*/nix,/*wert*/-1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&dszahl,/*art*/pdez,T_n_k,T_dszahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/1); //α //ω
 	opn<<new optcl(/*pptr*/&obvc,/*art*/puchar,T_vc_k,T_vc_l,/*TxBp*/&Tx,/*Txi*/T_Capisuite_Konfigurationdateien_bearbeiten,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
@@ -4448,7 +4462,7 @@ void hhcl::virtpruefweiteres()
 	setzhylavz();
 	if (obvh) dovh();
 	verzeichnisse();
-	if (!kez&& !bvz && !anhl && !lista && !listi && !listw && suchstr.empty())
+	if (!kez&& !bvz && !anhl && !tulista && !tulistf && !tulisti && !tulistw && suchstr.empty())
 		rufpruefsamba();
 	if (logdateineu) tuloeschen(logdt,string(),obverb,oblog);
 	hLog(Tx[T_zufaxenvz]+drots+zufaxenvz+schwarz+"'");
@@ -4575,7 +4589,7 @@ void hhcl::getSender(const string& faxnr, string *getnamep, string *bsnamep,cons
 // wird aufgerufen in: main, zeigweitere
 void hhcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 {
-	pid_t pid=fork();
+	const pid_t pid{nurempf||nursend?1:fork()};
 	if (pid>=0) {
 		pidcl phier(pid,"korrigierecapi");
 		pidw<<phier;
@@ -6445,9 +6459,9 @@ void hhcl::wegfaxen()
 		} // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
 		hLog(Tx[T_ZahldDSmwegzuschickendenFaxenin]+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz);
 		uchar wasichbin=0; //1=capi,2=hyla
-		pid_t pid=1; // fuer Capi und Hyla abzweigen
+		pid_t pid{1}; // fuer Capi und Hyla abzweigen
 		if (obcapi) {
-			pid=fork();
+			pid=nursend?1:fork();
 			if (pid<0) {
 				fLog(rots+Tx[T_Gabelung_zu_faxemitC_misslungen]+schwarz,1,oblog);
 				exitt(17);
@@ -6462,7 +6476,7 @@ void hhcl::wegfaxen()
 		// alle Abzweigungen muessen vom Hauptzweig ausgehen, sonst gehen dort Eintraege in pidv verloren
 		if (pid>0) {
 			if (obhyla) {
-				pid=fork();
+				pid=nursend?1:fork();
 				if (pid<0) {
 					fLog(rots+Tx[T_Gabelung_zu_faxemitH_misslungen]+schwarz,1,oblog);
 					exitt(17);
@@ -6475,7 +6489,7 @@ void hhcl::wegfaxen()
 				} // 				if (pid<0) else else
 			} // 			if (obhyla)
 		} // 		if (pid>0)
-		if (wasichbin) {
+		if (wasichbin||nursend) {
 			// hier Fork zu Capi und Hyla, nicht der Hauptzweig
 			for(unsigned i=0;i<fsfv.size();i++) {
 				hLog(" i: "+blaus+ltoan(i)+schwarz+Tx[T_PDFDatei]+blau+fsfv[i].spdf+schwarz+
@@ -6488,8 +6502,8 @@ void hhcl::wegfaxen()
 							Tx[T_nicht_gefunden_Eintrag_ggf_loeschen_mit_]+blau+base_name(aktprogverz())+" -"+Tx[T_loew]+schwarz+
 							"' bzw. '"+blau+base_name(aktprogverz())+" -"+Tx[T_loef]+schwarz+"'",1,oblog);
 				} else {
-					if (wasichbin==1) if (fsfv[i].fobcapi) if (obcapi) faxemitC(My, spooltab, altspool, &fsfv[i],ff);  
-					if (wasichbin==2) if (fsfv[i].fobhyla) if (obhyla) faxemitH(My, spooltab, altspool, &fsfv[i],ff);  
+					if (wasichbin==1||nursend) if (fsfv[i].fobcapi) if (obcapi) faxemitC(My, spooltab, altspool, &fsfv[i],ff);  
+					if (wasichbin==2||nursend) if (fsfv[i].fobhyla) if (obhyla) faxemitH(My, spooltab, altspool, &fsfv[i],ff);  
 				} // if (pid>0 && lstat(ff.c_str(),&st))
 				////      _out<<fsfv[i].id<<" "<<rot<<fsfv[i].npdf<<" "<<schwarz<<(int)fsfv[i].obcapi<<" "<<(int)fsfv[i].obhyla<<endl;
 			} // for(unsigned i=0;i<fsfv.size();i++) 
@@ -7156,7 +7170,7 @@ void hhcl::tu_lista(const string& oberfolg, const string& submids)
 	hLog(violetts+Tx[T_tu_lista]+schwarz);
 	const size_t aktc=0;
 	char ***cerg;
-	RS lista(My,"SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM ("
+	RS rlista(My,"SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM ("
 			"SELECT * FROM ("
 			"SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
 			"RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe "
@@ -7166,10 +7180,10 @@ void hhcl::tu_lista(const string& oberfolg, const string& submids)
 
 	if (submids.length()<=2)
 		cout<<violett<<Tx[T_Letzte]<<blau<<dszahl<<violett<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandte_Faxe]<<schwarz<<endl;
-	while (cerg=lista.HolZeile(),cerg?*cerg:0) {
+	while (cerg=rlista.HolZeile(),cerg?*cerg:0) {
 		cout<<blau<<setw(17)<<cjj(cerg,0)<<"|"<<violett<<setw(14)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(65)<<cjj(cerg,2)<<"|"
 			<<schwarz<<setw(30)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
-	} // while (cerg=lista.HolZeile(),cerg?*cerg:0) 
+	} // while (cerg=rlista.HolZeile(),cerg?*cerg:0) 
 } // tu_lista
 
 // wird aufgerufen in: main
@@ -7263,7 +7277,7 @@ void hhcl::sammlecapi(vector<fsfcl> *fsfvp,const size_t aktc)
 	hLog(violetts+Tx[T_sammlecapi]+schwarz);
 	struct stat entryvz={0};
 	if (!lstat(cfaxusersqvz.c_str(),&entryvz)) {
-		if (!kez&& !bvz && !anhl && !lista && !listi && !listw && suchstr.empty())
+		if (!kez&& !bvz && !anhl && !tulista && !tulistf && !tulisti && !tulistw && suchstr.empty())
 			bereinigecapi(aktc);
 		svec qrueck;
 		if (findv==1) {
@@ -8140,7 +8154,7 @@ void hhcl::suchestr()
 	for(int erf=1;erf>=0;erf--) {
 		const string oberfolg{ltoan(erf)};
 		char ***cerg;
-		RS lista(My,"SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM ("
+		RS rlista(My,"SELECT Ueberm p0, Submid p1, Faxname p2, Empfaenger p3, Fax p4, Erfolg p5 FROM ("
 				"SELECT * FROM ("
 				"SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') Ueberm, Submid, RIGHT(CONCAT(space(75),LEFT(Docname,75)),75) Faxname, "
 				"RIGHT(CONCAT(SPACE(30),LEFT(rcname,30)),30) Empfaenger, rcfax Fax, Erfolg, transe "
@@ -8149,7 +8163,7 @@ void hhcl::suchestr()
 				" ORDER BY transe DESC LIMIT "+dszahl+") i "
 				" ORDER BY transe LIMIT 18446744073709551615) i",aktc,ZDB);
 		ulong zeile=0;
-		while (cerg=lista.HolZeile(),cerg?*cerg:0) {
+		while (cerg=rlista.HolZeile(),cerg?*cerg:0) {
 			if (!zeile)
 				cout<<gruen<<Tx[T_Letzte]<<blau<<dszahl<<gruen<<(oberfolg=="1"?Tx[T_erfolgreich]:Tx[T_erfolglos])<<Tx[T_versandte_Faxe]<<
 					Tx[T_mitstr]<<blau<<suchstr<<"':"<<schwarz<<endl;
@@ -8157,11 +8171,11 @@ void hhcl::suchestr()
 			geszahl++;
 			cout<<blau<<setw(17)<<cjj(cerg,0)<<"|"<<violett<<setw(14)<<cjj(cerg,1)<<schwarz<<"|"<<(erf?blau:violett)<<setw(65)<<cjj(cerg,2)<<"|"
 				<<schwarz<<setw(30)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
-		} // while (cerg=lista.HolZeile(),cerg?*cerg:0) 
+		} // while (cerg=rlista.HolZeile(),cerg?*cerg:0) 
 	} //   for(int erf=1;erf>=0;erf--) 
 
 	char ***cerg;
-	RS listi(My,"select p0, p1, p2, p3, p4 FROM ("
+	RS rlisti(My,"select p0, p1, p2, p3, p4 FROM ("
 			"SELECT * FROM ("
 			"SELECT DATE_FORMAT(transe,'%d.%m.%y %H:%i:%s') p0,RIGHT(CONCAT(SPACE(85),LEFT(titel,85)),85) p1,"
 			"fsize p2,tsid p3,id p4, transe FROM `"+tinca+"` i WHERE (titel LIKE"+scnv+""
@@ -8169,14 +8183,14 @@ void hhcl::suchestr()
 			" ORDER BY transe DESC LIMIT "+dszahl+") i "
 			" ORDER BY transe LIMIT 18446744073709551615) i",aktc,ZDB);
 	ulong zeile=0;
-	while (cerg=listi.HolZeile(),cerg?*cerg:0) {
+	while (cerg=rlisti.HolZeile(),cerg?*cerg:0) {
 		if (!zeile)
 			cout<<gruen<<Tx[T_Letzte]<<blau<<dszahl<<gruen<<Tx[T_empfangene_Faxe]<<Tx[T_mitstr]<<blau<<suchstr<<"':"<<schwarz<<endl;
 		zeile++;
 		geszahl++;
 		cout<<blau<<setw(17)<<cjj(cerg,0)<<"|"<<violett<<setw(85)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(17)<<cjj(cerg,2)<<"|"
 			<<schwarz<<setw(17)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
-	} // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
+	} // while (cerg=rlisti.HolZeile(),cerg?*cerg:0) 
 
 	RS spool(My,"SELECT p0, p1, p2, p3, p4 FROM ("
 			"SELECT * FROM ("
@@ -8195,7 +8209,7 @@ void hhcl::suchestr()
 		geszahl++;
 		cout<<blau<<setw(17)<<cjj(cerg,0)<<"|"<<violett<<setw(85)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(17)<<cjj(cerg,2)<<"|"
 			<<schwarz<<setw(17)<<cjj(cerg,3)<<"|"<<blau<<cjj(cerg,4)<<schwarz<<endl;
-	} // while (cerg=listi.HolZeile(),cerg?*cerg:0) 
+	} // while (cerg=rlisti.HolZeile(),cerg?*cerg:0) 
 	if (geszahl)
 		cout<<gruen<<Tx[T_Insgesamt]<<blau<<geszahl<<gruen<<Tx[T_Fundstellen_von]<<blau<<suchstr<<schwarz<<endl;
   else
@@ -8394,7 +8408,7 @@ int hhcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 // aufgerufen in: main, zeigweitere
 void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 {
-	pid_t pid=fork();
+	pid_t pid{nurempf||nursend?1:fork()};
 	if (pid>=0) {
 		pidcl phier(pid,"korrigierehyla");
 		pidw<<phier;
@@ -8641,31 +8655,31 @@ void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 void hhcl::pvirtvorpruefggfmehrfach()
 {
 	// if (initDB()) exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));  //ω
-	if (lista||listf||listi||listw||!suchstr.empty()) {
+	if (tulista||tulistf||tulisti||tulistw||!suchstr.empty()) {
 		// wird fuer kez und normalen Ablauf spaeter in virtpruefweiteres abgerufen
 		if (initDB()) {
 			exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));
 		}
-		if (lista) {
+		if (tulista) {
 			tu_lista("1");
-		} else if (listf) {
+		} else if (tulistf) {
 			tu_lista("0");
-		} else if (listi) {
+		} else if (tulisti) {
 			tu_listi();
-		} else if (listw) {
+		} else if (tulistw) {
 			untersuchespool(/*mitupd=*/0,/*aktc=*/3);
 			zeigweitere();
 			hLog(blaus+Txk[T_Ende]+schwarz);
 			virtschlussanzeige();
 		} else if (!suchstr.empty()) {
 			suchestr();
-		} // if (lista) else else else else
-	} // 	if (lista||listf||listi||listw||!suchstr.empty())
+		} // if (tulista) else else else else
+	} // 	if (tulista||listf||listi||listw||!suchstr.empty())
 } // void hhcl::pvirtvorpruefggfmehrfach //α
 //ω
 void hhcl::pvirtfuehraus() //α
 { //ω
-	if (kez||bvz||anhl||lista||listf||listi||listw||!suchstr.empty()) {
+	if (kez||bvz||anhl||tulista||tulistf||tulisti||tulistw||!suchstr.empty()) {
 		// also bei den in pvirtvorpruefggfmehrfach Abgehandelten hier nichts mehr tun
 		if (kez) {
 			// hier ggf. erstes fork
@@ -8699,7 +8713,7 @@ void hhcl::pvirtfuehraus() //α
 				// bei jedem 1000. Aufruf
 				if (!(aufrufe % 1000 )) {
 					// hier ggf. erstes fork
-					pid_t pidb=fork();
+					const pid_t pidb{nurempf||nursend?1:fork()};
 					if (!pidb) {
 						bereinigevz(11);
 						exitt(0);
@@ -8718,7 +8732,7 @@ void hhcl::pvirtfuehraus() //α
 					uchar efertig,sfertig,zfertig;
 					if (!rlaeuft) {
 						// hier ggf. erstes fork
-						pide=fork();
+						pide=nurempf?0:nursend?1:fork();
 						if (!pide) {
 							empfarch();
 							exitt(0);
@@ -8738,7 +8752,7 @@ void hhcl::pvirtfuehraus() //α
 
 					if (!slaeuft) {
 						// hier ggf. erstes fork
-						pids=fork();
+						pids=nurempf?1:nursend?0:fork();
 						if (!pids) {
 							wegfaxen();
 							// Dateien in Spool-Tabelle nach inzwischen Verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
@@ -8768,7 +8782,7 @@ void hhcl::pvirtfuehraus() //α
 					if (!zlaeuft) {
 						if (obcapi || obhyla) {
 							// hier ggf. erstes fork
-							pidz=fork();
+							pidz=nurempf||nursend?0:fork();
 							if (!pidz) {
 								zeigweitere();
 								exitt(0);
