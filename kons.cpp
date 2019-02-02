@@ -1715,20 +1715,31 @@ void aufiSplit(vector<string> *tokens, const string& text, const string& sep,boo
 	const string utext{boost::locale::to_upper(text, loc)},
 				usep{boost::locale::to_upper(sep, loc)};
 
-	tokens->clear();
-	while (1) {
-		if (ohneanfz) {
-			char anfn[]{"\"\'`"};
-			for(char anfz:anfn) {
-				while (1) {
-					size_t panfz{utext.find(anfz,start)};
-					if (panfz==string::npos) break;
-					size_t pendz{utext.find(anfz,panfz+1)};
-					if (pendz==string::npos) break;
-					start=pendz+1;
+	if (ohneanfz) {
+		const string anfn{"\"\'`"};
+		for(size_t i=start;i<utext.length();i++) {
+			if (anfn.find(utext[i])!=string::npos) {
+				const size_t zweitpos{utext.find(utext[i],i+1)};
+				if (zweitpos!=string::npos) {
+					i=start=zweitpos;
 				}
 			}
 		}
+		/*
+			 char anfn[]{"\"\'`"};
+			 for(char anfz:anfn) {
+			 while (1) {
+			 size_t panfz{utext.find(anfz,start)};
+			 if (panfz==string::npos) break;
+			 size_t pendz{utext.find(anfz,panfz+1)};
+			 if (pendz==string::npos) break;
+			 start=pendz+1;
+			 }
+			 }
+		 */
+	}
+	tokens->clear();
+	while (1) {
 		end=utext.find(usep,start);
 		if (end!=string::npos) l2=end-start; else l2=string::npos;
 		if (end==string::npos || nichtmehrfach || l2) {
