@@ -19,7 +19,7 @@
 # "make debug" => erstelle mit -g;
 # "make debugnew" oder "make debugneu" => erstelle alles neu mit -g;
 # "make new" oder "make neu" => kompiliere alles neu
-# "make clean" => loesche Objekt- und ausfuehrbare Dateien im Kompilierverzeichnis
+# "make clean","make distclean" => loesche Objekt- und ausfuehrbare Dateien im Kompilierverzeichnis
 # "make instclean" => loesche installierte Objekt- und ausfuehrbare Dateien
 # "make gesclean" => loesche installierte ausfuehrbare Dateien, dieselben im Kompilierverzeichnis und dort die Objektdateien
 # "make confclean" => loescht die Konfigurationsdatei $(INSTEXEC).conf nach Rueckfrage, falls vorhanden
@@ -252,7 +252,7 @@ altc: opts
 .PHONY: new
 new: neu
 .PHONY: neu
-neu: anzeig distclean weiter
+neu: anzeig clean weiter
 
 .PHONY: weiter
 weiter: compiler $(EXEC) $(GZS) 
@@ -478,6 +478,9 @@ $(foreach prog,$(wildcard man_??),$(eval $(call manges,$(prog))))
 
 .PHONY: fertig
 fertig:
+
+.PHONY: distclean
+distclean: clean
 
 .PHONY: clean
 clean: 
