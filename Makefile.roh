@@ -357,15 +357,15 @@ compiler:
 #	@printf " MINGCCNR: %b%s%b\n" $(blau) "$(MINGCCNR)" $(reset)
 #	@printf " MAXGCC: %b%s%b\n" $(blau) "$(MAXGCC)" $(reset)
 #	@printf " MAXGCCNR: %b%s%b\n" $(blau) "$(MAXGCCNR)" $(reset)
-	@printf " COMP:   %b%s%b\n" $(blau) "$(COMP)" $(reset)
-	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
+#	@printf " COMP:   %b%s%b\n" $(blau) "$(COMP)" $(reset)
+#	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
 ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
 endif
 	@[ "$(GCCOK)" = "1" ]||{ \
 	[ "$(DISTR)" = "1" ]&&{ $(SUDC)add-apt-repository ppa:ubuntu-toolchain-r/test;$(SUDC)apt-get update;};:;\
-	{ printf "Installiere/Installing Compiler ...\n" >$(BA);sh configure inst "$(CCInst)" "$(COMP)";:;};}
+	{ printf "Installiere/Installing Compiler ...\n" >$(BA);sh configure inst "$(COMP)";:;};}
 	-@[ "$(libmdb)" ]&&{ for kand in $(libmdb);do \
 	[ -f /usr/include/mysql/mysql.h>$(KR) ]&& \
 	find $$(find /usr -maxdepth 1 -type d -name "lib*" $(KF)|sort -r) -regextype egrep -regex ".*libm(ysql|ariadb)client.so" -print -quit $(KF)|\
@@ -633,6 +633,5 @@ neuproj:
 		sed -i.bak '/\$DTN [^'\'']/s/\$DTN /\$DTN +'\''tabfirst|tab sview ..\/$(DPROG)\/$(DPROG).cpp|tabnext|tab sview ..\/$(DPROG)\/$(DPROG).h|tabfirst'\'' /' viall;\
 		sh viall;\
 		echo Weiter mit/Go on with: \"cd ../"$$Z"\";
-
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
