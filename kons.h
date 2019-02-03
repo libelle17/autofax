@@ -137,7 +137,7 @@ enum {
 #define caus cout // nur zum Debuggen
 #define exitt exit // fuer threads
 extern pthread_mutex_t getmutex, printf_mutex, timemutex;
-size_t thr_strftime(const struct tm* timeptr,string *ziel,const char* format="%d.%m.%Y %H.%M.%S");
+size_t thr_strftime(const struct tm* const timeptr,string *const ziel,const char* const format="%d.%m.%Y %H.%M.%S");
 extern const string devtty;
 
 typedef unsigned long long ull;
@@ -152,7 +152,7 @@ extern el2set::iterator it2;
 class elem3;
 extern set<elem3>::iterator it3;
 
-extern const string nix/*=string()*/;
+extern const string nix/*={}*/;
 extern const string eins/*="1"*/;
 extern const string sudc/*="sudo "*/;
 extern const string sudhc/*="sudo -H "*/;
@@ -676,7 +676,7 @@ size_t zahlin(const string *const str, const char* const was);
 long cmpmem( char* feld, const char* search, int len_feld); // , int len_search
 // fuer lies (Konfigurationsdatei lesen)
 string ltoan(long value, int base=10, uchar obtz=0, uchar minstel=0); 
-char* ltoa_(long value, char* result, int base); 
+char* ltoa_(long value, char* result, int base=10); 
 void anfgw(const string& datei, const string& udpr, const string& inhalt, const string& comment, int obverb/*=0*/, int oblog/*=0*/);
 void anfgg(const string& datei, const string& inhalt, const string& comment, int obverb/*=0*/, int oblog/*=0*/);
 void doanfg(const string& datei, const string& inhalt, const string& comment);
@@ -955,8 +955,8 @@ struct absch
 {
  string aname;
  vector<aScl> av;
- const string *suche(const char* const sname);
- const string *suche(const string& sname);
+ const string *const suche(const char* const sname);
+ const string *const suche(const string& sname);
  void clear();
 }; // class absch
 
@@ -965,7 +965,7 @@ struct paarcl
 	string name;
 	string wert;
 	string bemerk;
-	paarcl(const string& name, const string *wert, const string& bemerk);
+	paarcl(const string& name, const string *const wertp, const string& bemerk);
 }; // kpaar
 
 // Konfigurationsdatei-Klasse, Nachfolger von confdat
@@ -1013,18 +1013,19 @@ int systemrueck(const string& cmd, int obverb=0, int oblog=0, vector<string> *ru
 void pruefplatte();
 void pruefmehrfach(const string& wen=nix,int obverb=0,uchar obstumm=0);
 int setfaclggf(const string& datei,int obverb=0,int oblog=0,const binaer obunter=falsch,int mod=4,uchar obimmer=0,
-                uchar faclbak=0,const string& user=string(),uchar fake=0,stringstream *ausgp=0,const uchar obprot=1);
+                uchar faclbak=0,const string& user={},uchar fake=0,stringstream *ausgp=0,const uchar obprot=1);
 int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=0, uchar obmitcon=0,
-              const string& besitzer=string(), const string& benutzer=string(), const uchar obmachen=1,const uchar obprot=1);
+              const string& besitzer={}, const string& benutzer={}, const uchar obmachen=1,const uchar obprot=1);
 string aktprogverz();
 char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
 // vorgabe fur vorgabe = T_j_k; alternativ='n'
 uchar Tippob(const string& frage,const char *vorgabe=Txk[T_j_k]);
-string Tippstrs(const char *frage, char* moegl[], char *vorgabe=0); // das letzte Element von moegl muss 0 sein
-string Tippstrs(const char *frage, vector<string> *moegl, string *vorgabe=0); 
-string Tippzahl(const char *frage, const char *vorgabe=0);
-string Tippzahl(const char *frage, const string *vorgabe);
-string Tippzahl(const string& frage, const string *vorgabe);
+//string Tippstrs(const char *frage, char* moegl[], char *vorgabe=0); // das letzte Element von moegl muss 0 sein
+string Tippstrs(const char *const frage, const char* const moegl[], const char *const vorgabe=0);// das letzte Element von moegl muss 0 sein
+string Tippstrs(const char *frage, const vector<string> *const moegl, const string *const vorgabe=0);
+string Tippzahl(const char *const frage, const char *const vorgabe=0);
+string Tippzahl(const char *const frage, const string *const vorgabe);
+string Tippzahl(const string& frage, const string *const vorgabe);
 long Tippzahl(const string& frage,const long& vorgabe);
 string Tippstr(const char *const frage, const string *const vorgabe=0,const uchar obnichtleer=1);
 // char* Tippcstr(const char *frage, char* buf, unsigned long buflen, const char* vorgabe=nix);
@@ -1237,8 +1238,8 @@ extern const string s_dampand; // =" && ";
 extern const string s_gz; // ="gz";
 extern const string& defvors; // ="https://github.com/"+gitv+"/";
 extern const string& defnachs; // ="/archive/master.tar.gz";
-void viadd(string *cmdp,string* zeigp,const string& datei,const uchar ro=0,const uchar hinten=0, const uchar unten=0);
-int schluss(const int fnr,string text=string(),int oblog=0);
+void viadd(string *const cmdp,string* const zeigp,const string& datei,const uchar ro=0,const uchar hinten=0, const uchar unten=0);
+int schluss(const int fnr,const string text={},int oblog=0);
 
 extern class lsyscl lsys;
 
@@ -1378,7 +1379,7 @@ class hcl
 		void prueftif(string aktvers);
 		void zeigkonf();
 		void reduzierlibtiff();
-		void setzbenutzer(string *user);
+		void setzbenutzer(string *const user);
 }; // class hcl
 /*
 // sollte dann unnötig werden

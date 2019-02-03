@@ -681,7 +681,7 @@ struct fsfcl : public fxfcl // Faxsendfile
 		/*6*/fsfcl(const string& original, const string& origvu, uchar cnr): original(original), origvu(origvu) {}
     void setzcapistat(hhcl *hhip, struct stat *entrysendp);
     void capiausgeb(hhcl *const hhip, stringstream *ausgp, const string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,ulong faxord=0);
-    void hylaausgeb(stringstream *ausgp, hhcl *hhip, int obsfehlt, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
+    void hylaausgeb(stringstream *ausgp, hhcl *hhip/*, int obsfehlt*/, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
     int holcapiprot(int obverb);
 		void scheitere(const string& wvz, const string& ngvz, const string& cuser, const string* const ziel=0, const int obverb=0, const int oblog=0);
 }; // class fsfcl
@@ -918,7 +918,7 @@ class hhcl:public dhcl
 		void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
-				const fsfcl *const fsfp,const string *tel, const size_t aktc);
+				const fsfcl *const fsfp,const string *const tel, const size_t aktc);
 	protected: //α
 		// void virtlgnzuw(); // wird aufgerufen in: virtrueckfragen, parsecl, lieskonfein, hcl::hcl nach holsystemsprache
 		void virtVorgbAllg();
