@@ -154,7 +154,12 @@ getIPR() {
 	for A in $(ls|grep "\.cpp$\|\.h$");do [ -f "$A" ]&& grep -q "^#include .*curl.h>" "$A" &&break;done ||LCURL=;
 	for A in $(ls|grep "\.cpp$\|\.h$");do [ -f "$A" ]&& grep -q "^#include .*curses.h>" "$A" &&break;done ||LCURS=;
 	IPR="${SUDC}$IdPR";
-	DTN="`find . -maxdepth 1 -name ${DPROG}.cpp -printf '%f '``find . -maxdepth 1 -name ${DPROG}.h -printf '%f '``find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -name "${DPROG}*" -printf '%f\\n'|sort|tr '\\n' ' '` man_?? Makefile configure install.sh viall .exrc $UNF $ILOG"
+	DTN="`find . -maxdepth 1 -name ${DPROG}.cpp -printf '%f '`\
+		   `find . -maxdepth 1 -name ${DPROG}.h -printf '%f '`\
+			 `find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -name "${DPROG}*" -printf '%f\\n'|sort|tr '\\n' ' '`\
+			  man_?? Makefile configure \
+			 `find . -maxdepth 1 -name '*.sh' -printf '%f '`\
+			  viall .exrc $UNF $ILOG"
 }
 
 exportvars() {

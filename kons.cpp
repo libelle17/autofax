@@ -6430,7 +6430,7 @@ void hcl::pruefsamba(const vector<const string*>& vzn,const svec& abschni,const 
 			} // 			if (!suchstr.empty())
 		} // if (sapp.is_open()) 
 		if (!nrzf) {
-			const uchar suserda{!systemrueck("pdbedit -L | grep "+cuser+":",obverb,oblog,/*rueck=*/0,/*obsudc=*/1)};
+			const uchar suserda{!systemrueck("pdbedit -L|grep ^"+cuser+":",obverb,oblog,/*rueck=*/0,/*obsudc=*/1)};
 			if (!suserda) {
 				string pw1, pw2;
 				while (1) {
