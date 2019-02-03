@@ -19,9 +19,9 @@
 # "make debug" => erstelle mit -g;
 # "make debugnew" oder "make debugneu" => erstelle alles neu mit -g;
 # "make new" oder "make neu" => kompiliere alles neu
-# "make distclean" => loesche Objekt- und ausfuehrbare Dateien im Kompilierverzeichnis
-# "make fernclean" => loesche installierte Objekt- und ausfuehrbare Dateien
-# "make clean" => loesche Objekt- und ausfuehrbare Dateien einschliesslich installierter Version
+# "make clean" => loesche Objekt- und ausfuehrbare Dateien im Kompilierverzeichnis
+# "make instclean" => loesche installierte Objekt- und ausfuehrbare Dateien
+# "make gesclean" => loesche installierte ausfuehrbare Dateien, dieselben im Kompilierverzeichnis und dort die Objektdateien
 # "make confclean" => loescht die Konfigurationsdatei $(INSTEXEC).conf nach Rueckfrage, falls vorhanden
 # "make altc" => kompiliere mit -std=gnu++11
 # "make anzeig" => zeige Informationen zu Programm, Quelldateien und Compiler an
@@ -348,6 +348,7 @@ $(DEPDIR)/%.d: ;
 
 .PHONY: compiler
 compiler:
+	@printf " DISTR: %b%s%b, untersuche/examining Compiler ...\n" $(blau) "$(DName)" $(reset) >$(BA)
 #	@printf " Untersuche/Examining Compiler ...\n" >$(BA)
 #	@printf " MINVGCC: %b%s%b\n" $(blau) "$(MINVGCC)" $(reset)
 #	@printf " GCCOK: %b%s%b\n" $(blau) "$(GCCOK)" $(reset)
@@ -356,8 +357,8 @@ compiler:
 #	@printf " MINGCCNR: %b%s%b\n" $(blau) "$(MINGCCNR)" $(reset)
 #	@printf " MAXGCC: %b%s%b\n" $(blau) "$(MAXGCC)" $(reset)
 #	@printf " MAXGCCNR: %b%s%b\n" $(blau) "$(MAXGCCNR)" $(reset)
-#	@printf " CCINST: %b%s%b\n" $(blau) "$(CCINST)" $(reset)
-	@printf " DISTR: %b%s%b%s\n" $(blau) "$(DName)" $(reset) ", untersuche/examining Compiler ..."
+	@printf " COMP:   %b%s%b\n" $(blau) "$(COMP)" $(reset)
+	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
 ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
@@ -479,18 +480,18 @@ $(foreach prog,$(wildcard man_??),$(eval $(call manges,$(prog))))
 fertig:
 
 .PHONY: clean
-clean: distclean fernclean
-
-.PHONY: distclean
-distclean: 
+clean: 
 	@printf " Bereinige/Cleaning ...\n" >$(BA)
 	@ZUL="$(EXEC) $(OBJ) .d/* $(HTMLS)";GEL=$$(ls -1 $$ZUL $(KF)|tr '\n' ' '); rm -f $$ZUL $(KF); \
 	[ -z "$$(echo $$GEL|sed 's/ *$$//')" ]&&GEL="Hier/here: Nichts/nothing";printf " %b$$GEL%b geloescht/deleted!\n" $(blau) $(reset); 
 
-.PHONY: fernclean
-fernclean:
+.PHONY: instclean
+instclean:
 	@ZUL="$(INSTEXEC) $(INSTenMAN) $(INST_MAN)";GEL=$$($(SUDC)ls -1 $$ZUL $(KF)|tr '\n' ' '); $(SUDC)rm -f $$ZUL $(KF); \
 	[ -z "$$(echo $$GEL|sed 's/ *$$//')" ]&&GEL="System: Nichts/nothing";printf " %b$$GEL%b geloescht/deleted!\n" $(blau) $(reset); 
+	
+.PHONY: gesclean
+gesclean: instclean clean
 
 .PHONY: confclean
 confclean:
@@ -499,13 +500,13 @@ confclean:
 	||{ printf "Konfigurationsdatei \"%b$$D%b\" fehlt.\n" $(blau) $(reset);}'
 
 .PHONY: uninstall
-uninstall: fernclean
+uninstall: instclean
 	-@tac $(UNF)>tmp_$(UNROH)&& $(SUDC)blau=$(blau) reset=$(reset) bash tmp_$(UNROH);: # uninstallinv von hinten nach vorne abarbeiten
 	-@[ "$(DISTR)" = "1" ]&&{ $(SUDC)apt-get -f install;};:;
 	-@printf "Fertig mit uninstall!\n"
 
 .PHONY: allesweg
-allesweg: fernclean
+allesweg: instclean
 	-@tac $(UNF)>tmp_$(UNROH)&& $(SUDC)blau=$(blau) reset=$(reset) bash tmp_$(UNROH) <<-EOF $'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n'$'\n' EOF;: # uninstallinv von hinten nach vorne abarbeiten
 	-@[ "$(DISTR)" = "1" ]&&{ $(SUDC)apt-get -f install<<EOF $'\n'$'\n' EOF;};:;
 	-@printf "Fertig mit uninstall!\n"

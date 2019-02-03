@@ -163,7 +163,7 @@ exportvars() {
 		eval nv=\$$v; 
 		printf "$v::=$nv\n">>vars; 
 	done;
-	printf "testvar::=rot gelb grün\n">>vars
+#	printf "testvar::=rot gelb grün\n">>vars
 }
 
 ausricht() {
