@@ -211,10 +211,10 @@ MANS+=$(_MAN)
 HTMLS::=$(patsubst %,%.html,$(MANS))
 GZS::=$(patsubst %,%.gz,$(MANS))
 
-.PHONY: all glei opt opt2 opt3 optfast optc optg altc neu new
+.PHONY: all glei opt opt2 opt3 optfast opts optg altc neu new anzeig compiler
 ifeq (,$(SRCS))
 $(info keine *.cpp-Dateien => kompiliere nichts)
-all glei opt opt2 opt3 optfast optc optg altc neu new:
+all glei opt opt2 opt3 optfast opts optg altc neu new anzeig $(EXEC) $(INSTEXEC) compiler:
 	@printf ""
 else
 all: anzeig weiter
@@ -284,7 +284,8 @@ pull:
 	@git pull
 	@sh configure
 
-.PHONY: anzeig
+ifeq (,$(SRCS))
+else
 anzeig:
 # 'echo -e' geht nicht z.B. in ubuntu
 	@[ "$(DPROG)" ]||{ printf "Datei/File %b'vars'%b fehlerhaft/faulty, bitte vorher/please call %b'./install.sh'%b aufrufen/before!\n" \
@@ -296,12 +297,15 @@ anzeig:
 	        $(blau) "$(CCName)" $(reset) $(blau) "$(CCInst)" $(reset) $(blau) "$(CFLAGS)" $(reset)
 	@printf " Target path for/Zielpfad fuer '%bmake install%b': %b%s%b\n" $(blau) $(reset) $(blau) "'$(EXPFAD)'" $(reset) >$(BA)
 	-@rm -f fehler.txt $(KF)
+endif
 
 .PHONY: debug debugnew debugneu
 debug debugnew debugneu: DEBUG=-g 
 debug: all
 debugneu debugnew: neu
 
+ifeq (,$(SRCS))
+else
 $(EXEC): $(OBJ)
 	-@printf " linking/verlinke %s to/zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset) >$(BA)
 	-@df --output=ipcent / |tail -n1|grep - && $(SUDC)pkill postdrop;:
@@ -314,6 +318,7 @@ $(EXEC): $(OBJ)
 	$(shell touch *.o $${EXEC})
 	-@printf " Fertig mit/Finished with %b$(ICH)%b, Target: %b$@%b:, nachher/afterwords:\n" $(blau) $(reset) $(blau) $(reset)
 	-@printf " '%b%s%b'\n" $(blau) "$$(ls -l --time-style=+' %d.%m.%Y %H:%M:%S' --color=always $(EXEC))" $(reset)
+endif
 
 %.o : %.cpp
 %.o : %.cpp $(DEPDIR)/%.d
@@ -332,7 +337,8 @@ $(EXEC): $(OBJ)
 $(DEPDIR)/%.d: ;
 .PRECIOUS: $(DEPDIR)/%.d
 
-.PHONY: compiler
+ifeq (,$(SRCS))
+else
 compiler:
 	@printf " DISTR: %b%s%b, untersuche/examining Compiler ...\n" $(blau) "$(DName)" $(reset) >$(BA)
 #	@printf " Untersuche/Examining Compiler ...\n" >$(BA)
@@ -380,6 +386,7 @@ endif
 #//	-@[ -f /usr/include/boost/iostreams/device/mapped_file.hpp -o -f /usr/share/doc/libboost-dev ]|| sh configure inst _ "$(LBOOST)" verbose;
 # ggf. Korrektur eines Fehlers in libtiff 4.0.7, notwendig fuer hylafax+, 17.1.17 in Programm verlagert
 	@printf "                                  \r" >$(BA)
+endif
 
 .PHONY: stumm stumminst
 stumm stumminst: BA::=/dev/null
@@ -393,9 +400,12 @@ stumm: all
 
 stumminst: install
 
+ifeq (,$(SRCS))
+else
 $(INSTEXEC): $(EXEC)
 	@printf " Copying program/ Kopiere Programmdatei: %b%s%b -> %b%s%b\n" $(blau) "$(EXEC)" $(reset) $(blau) "$(INSTEXEC)" $(reset) >$(BA)
 	-@$(SUDC)pkill $(EXEC) $(KF); $(SUDC)pkill -9 $(EXEC) $(KF); $(SUDC)cp -p "$(EXEC)" "$(INSTEXEC)"
+endif
 
 man_de.html: LGL::=deutsch
 man_de.gz man_de.html: FKT::=FUNKTIONSWEISE
@@ -445,13 +455,13 @@ $(1).gz: $(EXEC) $(1)
 	-@printf " aktualisiere/updating %b$(1)%b\n" $(blau) $(reset)
 	-@sed -i "s/\(Version \)[^\"]*/\1$$$$(cat versdt)/;s/\(\.TH[^\"]*\)\"[^\"]*/\1\"$$$$(date +'%d.%m.%y')/" $(1)
 	-@Lang=$(shell echo $(1)|cut -d_ -f2|head -c1);\
-		TMP=tmp_opt_$$$$Lang;chmod +x $(EXEC);\
+		TMP=tmp_opt_$$$$Lang;test -f $(EXEC)&&chmod +x $(EXEC);\
 		EX="./$(EXEC) -1lg $$$$Lang -sh";\
 		W1="sed -e s/^/.br\n/;s/\\[[01]\\;3.m/\\\\fB/g;s/\\[0m/\\\\fR/g";\
 		W1a=$$$$(echo $$$$W1|sed -e "s/"`printf \\\\033`"/\(ESC\)/g;s/\\\\n/\\\\\\\\n/g");\
 		W2="sed :a;N;$$$$!ba";\
-		printf " rufe auf/calling: '%b$$$$EX |$$$$W1a |$$$$W2 >$$$$TMP%b'\n" $(blau) $(reset);\
-		$$$$EX|$$$$W1|$$$$W2 >$$$$TMP; \
+		test -f $(EXEC)&&printf " rufe auf/calling: '%b$$$$EX |$$$$W1a |$$$$W2 >$$$$TMP%b'\n" $(blau) $(reset);\
+		test -f $(EXEC)&&$$$$EX|$$$$W1|$$$$W2 >$$$$TMP; \
 	 nlinit=`echo 'nl="'; echo '"'`; eval "$$$$nlinit"; \
 	 von=".SH $$(OPN)"; bis=".SH $$(FKT)"; sed -i.bak "/$$$$von/,/$$$$bis/{/$$$$von/{n;p;r $$$$TMP$$$$nl};/$$$$bis/p;d}" $(1);
 	@sed 's/²gitv²/$(GITV)/g;s/²DPROG²/$(DPROG)/g;s/\\fB/\\fI/g' $(1)|gzip -c >$$@
