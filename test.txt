@@ -1,0 +1,146 @@
+g++-7-dbgsym - debug symbols for g++-7
+g++-4.8-dbgsym - debug symbols for g++-4.8
+g++-5-dbgsym - debug symbols for g++-5
+g++-8-dbgsym - debug symbols for g++-8
+g++-6-dbgsym - debug symbols for g++-6
+g++-7 - GNU C++ compiler
+g++-7-aarch64-linux-gnu - GNU C++ compiler
+g++-7-arm-linux-gnueabihf - GNU C++ compiler
+g++-7-multilib - GNU C++ compiler (multilib support)
+g++-7-powerpc-linux-gnu - GNU C++ compiler
+g++-7-powerpc64le-linux-gnu - GNU C++ compiler
+g++-4.8 - GNU C++ compiler
+g++-4.8-multilib - GNU C++ compiler (multilib support)
+g++-5 - GNU C++ compiler
+g++-5-aarch64-linux-gnu - GNU C++ compiler
+g++-5-alpha-linux-gnu - GNU C++ compiler
+g++-5-arm-linux-gnueabi - GNU C++ compiler
+g++-5-arm-linux-gnueabihf - GNU C++ compiler
+g++-5-i686-linux-gnu - GNU C++ compiler
+g++-5-m68k-linux-gnu - GNU C++ compiler
+g++-5-mips-linux-gnu - GNU C++ compiler
+g++-5-mips64-linux-gnuabi64 - GNU C++ compiler
+g++-5-mips64el-linux-gnuabi64 - GNU C++ compiler
+g++-5-mipsel-linux-gnu - GNU C++ compiler
+g++-5-multilib - GNU C++ compiler (multilib support)
+g++-5-multilib-arm-linux-gnueabi - GNU C++ compiler (multilib support)
+g++-5-multilib-arm-linux-gnueabihf - GNU C++ compiler (multilib support)
+g++-5-multilib-i686-linux-gnu - GNU C++ compiler (multilib support)
+g++-5-multilib-mips-linux-gnu - GNU C++ compiler (multilib support)
+g++-5-multilib-mips64-linux-gnuabi64 - GNU C++ compiler (multilib support)
+g++-5-multilib-mips64el-linux-gnuabi64 - GNU C++ compiler (multilib support)
+g++-5-multilib-mipsel-linux-gnu - GNU C++ compiler (multilib support)
+g++-5-multilib-powerpc-linux-gnu - GNU C++ compiler (multilib support)
+g++-5-multilib-powerpc64-linux-gnu - GNU C++ compiler (multilib support)
+g++-5-multilib-s390x-linux-gnu - GNU C++ compiler (multilib support)
+g++-5-multilib-sparc64-linux-gnu - GNU C++ compiler (multilib support)
+g++-5-multilib-x86-64-linux-gnux32 - GNU C++ compiler (multilib support)
+g++-5-powerpc-linux-gnu - GNU C++ compiler
+g++-5-powerpc-linux-gnuspe - GNU C++ compiler
+g++-5-powerpc64-linux-gnu - GNU C++ compiler
+g++-5-powerpc64le-linux-gnu - GNU C++ compiler
+g++-5-s390x-linux-gnu - GNU C++ compiler
+g++-5-sh4-linux-gnu - GNU C++ compiler
+g++-5-sparc64-linux-gnu - GNU C++ compiler
+g++-5-x86-64-linux-gnux32 - GNU C++ compiler
+g++-6 - GNU C++ compiler
+g++-6-aarch64-linux-gnu - GNU C++ compiler
+g++-6-alpha-linux-gnu - GNU C++ compiler
+g++-6-arm-linux-gnueabi - GNU C++ compiler
+g++-6-arm-linux-gnueabihf - GNU C++ compiler
+g++-6-hppa-linux-gnu - GNU C++ compiler
+g++-6-i686-linux-gnu - GNU C++ compiler
+g++-6-m68k-linux-gnu - GNU C++ compiler
+g++-6-mips-linux-gnu - GNU C++ compiler
+g++-6-mips64-linux-gnuabi64 - GNU C++ compiler
+g++-6-mips64el-linux-gnuabi64 - GNU C++ compiler
+g++-6-mipsel-linux-gnu - GNU C++ compiler
+g++-6-multilib - GNU C++ compiler (multilib support)
+g++-6-multilib-arm-linux-gnueabi - GNU C++ compiler (multilib support)
+g++-6-multilib-arm-linux-gnueabihf - GNU C++ compiler (multilib support)
+g++-6-multilib-i686-linux-gnu - GNU C++ compiler (multilib support)
+g++-6-multilib-mips-linux-gnu - GNU C++ compiler (multilib support)
+g++-6-multilib-mips64-linux-gnuabi64 - GNU C++ compiler (multilib support)
+g++-6-multilib-mips64el-linux-gnuabi64 - GNU C++ compiler (multilib support)
+g++-6-multilib-mipsel-linux-gnu - GNU C++ compiler (multilib support)
+g++-6-multilib-powerpc-linux-gnu - GNU C++ compiler (multilib support)
+g++-6-multilib-powerpc64-linux-gnu - GNU C++ compiler (multilib support)
+g++-6-multilib-s390x-linux-gnu - GNU C++ compiler (multilib support)
+g++-6-multilib-sparc64-linux-gnu - GNU C++ compiler (multilib support)
+g++-6-multilib-x86-64-linux-gnux32 - GNU C++ compiler (multilib support)
+g++-6-powerpc-linux-gnu - GNU C++ compiler
+g++-6-powerpc-linux-gnuspe - GNU C++ compiler
+g++-6-powerpc64-linux-gnu - GNU C++ compiler
+g++-6-powerpc64le-linux-gnu - GNU C++ compiler
+g++-6-s390x-linux-gnu - GNU C++ compiler
+g++-6-sh4-linux-gnu - GNU C++ compiler
+g++-6-sparc64-linux-gnu - GNU C++ compiler
+g++-6-x86-64-linux-gnux32 - GNU C++ compiler
+g++-7-alpha-linux-gnu - GNU C++ compiler
+g++-7-arm-linux-gnueabi - GNU C++ compiler
+g++-7-hppa-linux-gnu - GNU C++ compiler
+g++-7-i686-linux-gnu - GNU C++ compiler
+g++-7-m68k-linux-gnu - GNU C++ compiler
+g++-7-mips-linux-gnu - GNU C++ compiler
+g++-7-mips64-linux-gnuabi64 - GNU C++ compiler
+g++-7-mips64el-linux-gnuabi64 - GNU C++ compiler
+g++-7-mipsel-linux-gnu - GNU C++ compiler
+g++-7-multilib-arm-linux-gnueabi - GNU C++ compiler (multilib support)
+g++-7-multilib-arm-linux-gnueabihf - GNU C++ compiler (multilib support)
+g++-7-multilib-i686-linux-gnu - GNU C++ compiler (multilib support)
+g++-7-multilib-mips-linux-gnu - GNU C++ compiler (multilib support)
+g++-7-multilib-mips64-linux-gnuabi64 - GNU C++ compiler (multilib support)
+g++-7-multilib-mips64el-linux-gnuabi64 - GNU C++ compiler (multilib support)
+g++-7-multilib-mipsel-linux-gnu - GNU C++ compiler (multilib support)
+g++-7-multilib-powerpc-linux-gnu - GNU C++ compiler (multilib support)
+g++-7-multilib-powerpc64-linux-gnu - GNU C++ compiler (multilib support)
+g++-7-multilib-s390x-linux-gnu - GNU C++ compiler (multilib support)
+g++-7-multilib-sparc64-linux-gnu - GNU C++ compiler (multilib support)
+g++-7-multilib-x86-64-linux-gnux32 - GNU C++ compiler (multilib support)
+g++-7-powerpc-linux-gnuspe - GNU C++ compiler
+g++-7-powerpc64-linux-gnu - GNU C++ compiler
+g++-7-riscv64-linux-gnu - GNU C++ compiler
+g++-7-s390x-linux-gnu - GNU C++ compiler
+g++-7-sh4-linux-gnu - GNU C++ compiler
+g++-7-sparc64-linux-gnu - GNU C++ compiler
+g++-7-x86-64-linux-gnux32 - GNU C++ compiler
+g++-8 - GNU C++ compiler
+g++-8-aarch64-linux-gnu - GNU C++ compiler
+g++-8-alpha-linux-gnu - GNU C++ compiler
+g++-8-arm-linux-gnueabi - GNU C++ compiler
+g++-8-arm-linux-gnueabihf - GNU C++ compiler
+g++-8-hppa-linux-gnu - GNU C++ compiler
+g++-8-i686-linux-gnu - GNU C++ compiler
+g++-8-m68k-linux-gnu - GNU C++ compiler
+g++-8-mips-linux-gnu - GNU C++ compiler
+g++-8-mips64-linux-gnuabi64 - GNU C++ compiler
+g++-8-mips64el-linux-gnuabi64 - GNU C++ compiler
+g++-8-mipsel-linux-gnu - GNU C++ compiler
+g++-8-multilib - GNU C++ compiler (multilib support)
+g++-8-multilib-arm-linux-gnueabi - GNU C++ compiler (multilib support)
+g++-8-multilib-arm-linux-gnueabihf - GNU C++ compiler (multilib support)
+g++-8-multilib-i686-linux-gnu - GNU C++ compiler (multilib support)
+g++-8-multilib-mips-linux-gnu - GNU C++ compiler (multilib support)
+g++-8-multilib-mips64-linux-gnuabi64 - GNU C++ compiler (multilib support)
+g++-8-multilib-mips64el-linux-gnuabi64 - GNU C++ compiler (multilib support)
+g++-8-multilib-mipsel-linux-gnu - GNU C++ compiler (multilib support)
+g++-8-multilib-powerpc-linux-gnu - GNU C++ compiler (multilib support)
+g++-8-multilib-powerpc64-linux-gnu - GNU C++ compiler (multilib support)
+g++-8-multilib-s390x-linux-gnu - GNU C++ compiler (multilib support)
+g++-8-multilib-sparc64-linux-gnu - GNU C++ compiler (multilib support)
+g++-8-multilib-x86-64-linux-gnux32 - GNU C++ compiler (multilib support)
+g++-8-powerpc-linux-gnu - GNU C++ compiler
+g++-8-powerpc-linux-gnuspe - GNU C++ compiler
+g++-8-powerpc64-linux-gnu - GNU C++ compiler
+g++-8-powerpc64le-linux-gnu - GNU C++ compiler
+g++-8-riscv64-linux-gnu - GNU C++ compiler
+g++-8-s390x-linux-gnu - GNU C++ compiler
+g++-8-sh4-linux-gnu - GNU C++ compiler
+g++-8-sparc64-linux-gnu - GNU C++ compiler
+g++-8-x86-64-linux-gnux32 - GNU C++ compiler
+g++-6-multilib-x86-64-linux-gnu - GNU C++ compiler (multilib support)
+g++-6-x86-64-linux-gnu - GNU C++ compiler
+g++-7-multilib-x86-64-linux-gnu - GNU C++ compiler (multilib support)
+g++-7-x86-64-linux-gnu - GNU C++ compiler
+g++-8-multilib-x86-64-linux-gnu - GNU C++ compiler (multilib support)
+g++-8-x86-64-linux-gnu - GNU C++ compiler
