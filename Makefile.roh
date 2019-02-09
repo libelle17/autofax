@@ -354,7 +354,7 @@ endif
 	find /usr/include /usr/local/include -name tiff.h -print -quit $(KF)|grep '' >$(KR)&&\
 	find /usr/lib64 /usr/lib /usr/local/lib64 /usr/local/lib -maxdepth 2 -type l -xtype f -name "libtiff.so" -print -quit $(KF)|grep '' >$(KR)&& break;\
 	sh configure inst _ "$$LTakt" verbose;\
-	done; :;
+	done;:;
 #	P=tiff_copy;T=$$P.tar.gz;M=$$P-master;wget https://github.com/$(GITV)/$$P/archive/master.tar.gz -O $$T&&{ rm -rf $$P;tar xpvf $$T;} &&\
 	mv $$M $$P&& cd $$P&&{ sed -i.bak s'/(thandle_t) client_data.fd);/(thandle_t) \&client_data.fd);/' tools/fax2tiff.c;\
 	./configure&& make&& $(SUDC)make install&&$(SUDC)touch /usr/local/sclibtiff;\
