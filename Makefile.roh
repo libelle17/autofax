@@ -62,63 +62,48 @@ EXPFAD::=$(shell echo $(PATH) | tr -s ':' '\n' | grep /usr/ | awk '{ print lengt
 MINGCCNR::=6
 #// endif
 #// 0=Version fehlt, 1=Version ist da
-#// GCCAB6::=$(shell expr `g++-6 -dumpversion 2>/dev/null||g++-7 -dumpversion 2>/dev/null||echo 0` \>= 6) 
+#// GCCAB6::=$(shell expr `g++-6 -dumpversion 2>/dev/null||g++-7 -dumpversion 2>/dev/null||echo 0` \>\= 6) 
 #// ifeq ('$(GCCAB6)','0')
 #// CCName=g++-6
 #// endif
 # maximal verfügbare g++-Version, falls die Verknüpfungen in /usr/bin stehen und evtl. /usr/bin/g++ nicht auf die höchste verknüpft ist
-# MAXGCC::=$(shell { ls /usr/bin/g++* 2>/dev/null||echo 0;}|tail -n1)
-# maximal verfügbare g++-Version
-MAXGCC::=$(shell erg=0;for i in {50..1};do which g++-$$i >/dev/null 2>&1&&{ erg=$$i;break;};done;echo $$erg)
 # deren Hauptversionsnummer
-MAXGCCNR::=$(shell echo $(MAXGCC)|cut -d- -f2)
+MAXGCCNR::=$(shell erg=0;for i in $$(seq 50 -1 1);do which g++-$$i >/dev/null 2>&1&&{ erg=$$i;break;};done;echo $$erg) # {50..1} geht bei dash nicht
 #1=verfügbare Version höher als die minimal notwendige, 0=nicht
-GCCNEU::=$(shell expr $(MAXGCCNR) \> $(MINGCCNR))
 # 1=minimal notwendige Version verfügbar, 0=nicht
-GCCOK::=$(shell expr $(MAXGCCNR) \>= $(MINGCCNR))
+GCCOK::=$(shell expr $(MAXGCCNR) \>\= $(MINGCCNR))
 # 1=Debian usw., 2=Opensuse, 3=Fedora usw., 4=Magieia, 5=Manjaro usw.
 # DISTR::=$(shell which apt >/dev/null 2>&1&&echo 1||{ which zypper >/dev/null 2>&1&&echo 2||{ which dnf >/dev/null 2>&1||which yum >/dev/null 2>&1&&echo 3||{ which urpmi.update >/dev/null 2>&1&&echo 4||{ which pacman >/dev/null 2>&1&&echo 5||echo 0;};};};})
 # #	osnr=0 # 1=Mint, 2=Ubuntu, 3=Debian, 4=SUSE, 5=Fedora, 6=Fedoraalt, 7=Mageia, 8=Manjaro
 RP:=)
 DISTR::=$(shell os=$$(cat /etc/os-release|grep '^NAME=');[ -z "$$os" ]&& os=$$(cat /etc/lsb-release|grep '^DISTRIB_ID=');os=$$(echo $$os|cut -d= -f2|sed 's/"\(.*\)"/\1/'); case "$$os" in *Mint*$(RP) osnr=1;; *Ubunto*$(RP) osnr=1;; *Debian*$(RP) osnr=1;; *SUSE*$(RP) osnr=2;; *Fedora*$(RP) osnr=3;; *Mageia*$(RP) osnr=4;; *Manjaro*$(RP) osnr=5;; esac;echo $$osnr;)
 ifeq ($(GCCOK),0)
-# wenn minimal notwendige Version nicht verfügbar ist, dann diese neu als maximal installierbare definieren und später installieren
-	MINVGCC::=$(shell which zypper >/dev/null 2>&1&&zypper se /gcc[^-]$*-c\\+\\+$$/|tail -n1|cut -dc -f3|cut -d- -f1||echo 0;)
-	ZUERSETZ::=$(shell expr $(MINVGCC) \> $(MINGCCNR))
-	ifeq ($(ZUERSETZ),1)
-		MINGCCNR::=$(MINVGCC)
-	endif
+	# wenn minimal notwendige Version nicht verfügbar ist, dann diese neu als maximal installierbare definieren und später installieren
+	ifeq ($(DISTR),1)
+  	MINVGCC::=$(shell apt-cache search '^g\+\+-[0-9]+$$' -n|cut -f2 -d'-'|sort -nr|head -n1)
+  else ifeq ($(DISTR),2)
+	  MINVGCC::=$(shell which zypper >/dev/null 2>&1&&zypper se /gcc[^-]$*-c\\+\\+$$/|tail -n1|cut -dc -f3|cut -d- -f1||echo 0;)
+  endif
+  ifeq ($(shell expr $(MINVGCC) \> $(MINGCCNR)),1)
+	  MINGCCNR::=$(MINVGCC)
+  endif
 endif
-ifeq ($(GCCNEU),1)
+ifeq ($(shell expr $(MAXGCCNR) \> $(MINGCCNR)),1)
 	MINGCCNR::=$(MAXGCCNR)
 endif
 CCName::=g++-$(MINGCCNR)
 ifeq ($(DISTR),1)
-	CCName::=g++-$(MINGCCNR)
 	CCInst::=gcc-$(MINGCCNR) g++-$(MINGCCNR)
-	DName::="Mint"
+	DName::="Debian/Ubuntu/Mint"
 else ifeq ($(DISTR),2)
-	CCInst::=gcc$(MINGCCNR)
-# 2.2.19: obeins fuer Opensuse 15.0 doch wieder notwendig
-	OBEINS::=1
+	CCInst::=gcc$(MINGCCNR) gcc$(MINGCCNR)-c++
 	DName::="OpenSuse"
 else ifeq ($(DISTR),3)
-	CCName::=g++
-	OBEINS::=1
-	DName::="Debian"
-else ifeq ($(Distr),4)
-	DName::="OpenSuse"
-	OBEINS::=1
-else ifeq ($(Distr),5)
 	DName::="Fedora"
-else ifeq ($(Distr),6)
-else ifeq ($(Distr),7)
+else ifeq ($(DISTR),4)
 	DName::="Mageia"
-else ifeq ($(Distr),8)
+else ifeq ($(DISTR),5)
 	DName::="Manjaro"
-endif
-ifeq ($(OBEINS),1)
-	CCInst::=gcc$(MINGCCNR) gcc$(MINGCCNR)-c++
 endif
 -include vars # wird durch install.sh generiert; CCInst muss vorher definiert werden, DPROG und GDAT dürfen nur nachher verwendet werden
 CFLAGS::=-c -Wall
@@ -341,23 +326,22 @@ ifeq (,$(SRCS))
 else
 compiler:
 	@printf " DISTR: %b%s%b, untersuche/examining Compiler ...\n" $(blau) "$(DName)" $(reset) >$(BA)
-#	@printf " Untersuche/Examining Compiler ...\n" >$(BA)
-#	@printf " MINVGCC: %b%s%b\n" $(blau) "$(MINVGCC)" $(reset)
-#	@printf " GCCOK: %b%s%b\n" $(blau) "$(GCCOK)" $(reset)
-#	@printf " ZUERSETZ: %b%s%b\n" $(blau) "$(ZUERSETZ)" $(reset)
-#	@printf " GCCNEU: %b%s%b\n" $(blau) "$(GCCNEU)" $(reset)
-#	@printf " MINGCCNR: %b%s%b\n" $(blau) "$(MINGCCNR)" $(reset)
-#	@printf " MAXGCC: %b%s%b\n" $(blau) "$(MAXGCC)" $(reset)
-#	@printf " MAXGCCNR: %b%s%b\n" $(blau) "$(MAXGCCNR)" $(reset)
-#	@printf " COMP:   %b%s%b\n" $(blau) "$(COMP)" $(reset)
-#	@printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset)
+	@printf " Untersuche/Examining Compiler ...\n" >$(BA)
+	@if test "$(GCCOK)" = "0"; then printf " GCCOK: %b%s%b\n" $(blau) "$(GCCOK)" $(reset); fi;
+	@if test "$(GCCOK)" = "0"; then printf " MINVGCC: %b%s%b\n" $(blau) "$(MINVGCC)" $(reset); fi;
+	@if test "$(GCCOK)" = "0"; then printf " MINGCCNR: %b%s%b\n" $(blau) "$(MINGCCNR)" $(reset); fi;
+	@if test "$(GCCOK)" = "0"; then printf " MAXGCCNR: %b%s%b\n" $(blau) "$(MAXGCCNR)" $(reset); fi;
+	@if test "$(GCCOK)" = "0"; then printf " COMP:   %b%s%b\n" $(blau) "$(COMP)" $(reset); fi;
+	@if test "$(GCCOK)" = "0"; then printf " CCInst: %b%s%b\n" $(blau) "$(CCInst)" $(reset); fi;
+	@printf " CC: %b%s%b\n" $(blau) "$(CC)" $(reset)
 ifeq ('$(SPR)','')
 $(warning Variable 'SPR' not assigned, please call './install.sh' before!)
 $(error Variable 'SPR' nicht belegt, bitte vorher './install.sh' aufrufen!)
 endif
 	@[ "$(GCCOK)" = "1" ]||{ \
-	[ "$(DISTR)" = "1" ]&&{ $(SUDC)add-apt-repository ppa:ubuntu-toolchain-r/test;$(SUDC)apt-get update;};:;\
-	{ printf "Installiere/Installing Compiler ...\n" >$(BA);sh configure inst "$(COMP)";:;};}
+		src=/etc/apt/sources.list;[ -f $$src -a -s $$src ]||$(SUDC)cp -a /usr/share/doc/apt/examples/sources.list $$src;:;\
+		[ "$(DISTR)" = "1" ]&&{ grep toolchain /etc/apt/sources.list||ls /etc/apt/sources.list.d/*toolchain* 2>/dev/null||{ $(SUDC)add-apt-repository ppa:ubuntu-toolchain-r/test;$(SUDC)apt-get update;};};:;\
+	{ printf "Installiere/Installing Compiler \"$(COMP)\" ...\n" >$(BA);sh configure inst _ "$(COMP)";:;};}
 	-@[ "$(libmdb)" ]&&{ for kand in $(libmdb);do \
 	[ -f /usr/include/mysql/mysql.h >$(KR) ]&& \
 	find $$(find /usr -maxdepth 1 -type d -name "lib*" $(KF)|sort -r) -regextype egrep -regex ".*libm(ysql|ariadb)client.so" -print -quit $(KF)|\
@@ -379,7 +363,7 @@ endif
 
 	-@[ "$(LACL)" ]&&{ [ -f /usr/include/sys/acl.h ]|| sh configure inst _ "$(LACL)" verbose;}||:
 	-@[ "$(LCURL)" ]&&{ [ -f /usr/include/curl/curl.h -o -f /usr/include/x86_64-linux-gnu/curl/curl.h ]|| sh configure inst _ "$(LCURL)" verbose;}||:
-	-@[ "$(LCURS)" ]&&{ [ -f /usr/include/ncursesw/ncurses.h -o -f /usr/include/x86_64-linux-gnu/ncursesw/ncurses.h ]|| sh configure inst _ "$(LCURS)-$(dev)" verbose;}||:
+	-@[ "$(LCURS)" ]&&{ [ -f /usr/include/ncursesw/ncurses.h -o -f /usr/include/x86_64-linux-gnu/ncursesw/ncurses.h ]||{ for kand in $(LCURS);do sh configure inst _ "$$kand-$(dev)" verbose;done;};}||:
 	-@[ "$(LBOOST)" ]&&{ $(SPR) $(LBOOST) >$(KR)|| sh configure inst _ "$(LBOOST)" verbose;}||:
 	-@[ "$(LBIO)" ]&&{ $(SPR) "$(LBIO)" >$(KR)||sh configure inst _ "$(LBIO)" verbose;}||:
 	-@[ "$(LBLO)" ]&&{ $(SPR) "$(LBLO)" >$(KR)||sh configure inst _ "$(LBLO)" verbose;}||:
