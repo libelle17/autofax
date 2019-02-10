@@ -1291,7 +1291,7 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 				}
 				////	  <<jetzt<<"- "<<gesz<<"="<<sekunden<<endl;
 			} // if (sscanf(Zeile
-			delete[] atm;
+			delete atm;
 		} // (!abhier)
 		if (abhier) {
 			outfile<<Zeile<<endl;
