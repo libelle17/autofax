@@ -571,7 +571,7 @@ tumitzieh:
 	printf "cp -au $$blau.exrc Makefile install.sh man_?? versdt viall configure $$reset\"$$TZL\";\n";\
 	cp -au .exrc Makefile install.sh man_?? versdt viall configure "$$TZL";\
 	printf "for A in $${blau}kons.cpp kons.h DB.cpp DB.h efdr.cpp efdr.h tr64.cpp tr64.h$$reset;do [ -f \"$$TZL/\\$A\" -a -f \"\\$A\" ]&&cp -au \"\\$A\" \"$$TZL\";done;\n";\
-	cd "$$TZL";test -d ".git"&&git commit -m"vor mitzieh" $(KR);cd -;\
+	cd "$$TZL" $(DN);test -d ".git"&&git commit -m"vor mitzieh" $(KR);cd - $(DN);\
 	for A in kons.cpp kons.h DB.cpp DB.h efdr.cpp efdr.h tr64.cpp tr64.h;do [ -f "$$TZL/$$A" -a -f "$$A" ]&&cp -au "$$A" "$$TZL";done;\
 	cd "$$TZL" $(DN); sh configure; cd - $(DN);
 
@@ -579,7 +579,7 @@ tumitzieh:
 .PHONY: verschieb vsneu
 verschieb:
 	Z=../$(DPROG)rein;[ "$(LOESCH)" = "1" ]&&rm -rf $$Z;make all install&&\
-		{ make transfer $$Z;{ cd $$Z;[ -d .git ]||make git;./configure;make version; cd - $(KR);};}
+		{ make transfer $$Z;{ cd $$Z $(DN);[ -d .git ]||make git;./configure;make version; cd - $(DN);};}
 
 # geht nur, wenn das github-Repository vorher gelöscht ist
 vsneu: LOESCH::=1
@@ -643,7 +643,7 @@ dotrans:
 	 printf "Insgesamt $$blau$$DAT$$reset Dateien kopiert\n";\
 	fi;
 	@$(call setz_gitv,$$TZL)
-	@sh -c "cd $$TZL;./configure; " && printf "%b./configure%b in %b$$TZL%b aufgerufen\n" $(blau) $(reset) $(blau) $(reset);\
+	@sh -c "cd $$TZL $(DN);./configure; " && printf "%b./configure%b in %b$$TZL%b aufgerufen\n" $(blau) $(reset) $(blau) $(reset);\
 
 nFERTIG=$(error newproj finished/ Fertig mit neuproj!)
 nZiel::=$(filter-out neuproj,$(MAKECMDGOALS))
@@ -668,13 +668,13 @@ tuneuproj:
 	[ -f $$M ]&&sed -n "1,/^\.SH $$K/p;/^\.SH $$K/,/^\.SH $$D/{/^\.SH $$K/d;/^\.SH /p};/^\.SH $$D/,\$${/^\.SH $$D/d;p}" $$M >../"$$TZL"/$$M;\
 	M=man_en;K=SHORT;D=UNINST;\
 	[ -f $$M ]&&sed -n "1,/^\.SH $$K/p;/^\.SH $$K/,/^\.SH $$D/{/^\.SH $$K/d;/^\.SH /p};/^\.SH $$D/,\$${/^\.SH $$D/d;p}" $$M >../"$$TZL"/$$M;\
-	cd ../"$$TZL";\
+	cd ../"$$TZL" $(DN);\
 	echo 0.1 >versdt; touch entwickeln; echo $$TZL >pname;\
 	L="\"/var/log/\" DPROG \"vorgabe.log\"";\
 	sh configure;\
 	sed -i '/\$DTN [^'\'']/s/ +.* -pNu/ -pNu/' viall;\
 	sed -i.bak '/\$DTN [^'\'']/s/\$DTN /\$DTN +'\''tabfirst|tab sview ..\/$(DPROG)\/$(DPROG).cpp|tabnext|tab sview ..\/$(DPROG)\/$(DPROG).h|tabfirst'\'' /' viall;\
 	sh viall;\
-	echo Weiter mit/Go on with: \"cd ../"$$TZL"\";
+	echo Weiter mit/Go on with: \"cd ../"$$TZL"\" $(DN);
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
