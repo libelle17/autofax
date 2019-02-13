@@ -82,7 +82,7 @@ GCCOK::=$(shell expr $(MAXGCCNR) \>\= $(MINGCCNR))
 -include vars # wird durch install.sh generiert; DPROG und GDAT dürfen nur nachher verwendet werden
 ifeq ($(GCCOK),0)
 	# wenn minimal notwendige Version nicht verfügbar ist, dann diese neu als maximal installierbare definieren und später installieren
-	ifeq ($(shell expr $(OSNR) \<= 3),1)
+  ifeq ($(shell expr $(OSNR) \<= 3),1)
   	MINVGCC::=$(shell apt-cache search '^g\+\+-[0-9]+$$' -n|cut -f2 -d'-'|sort -nr|head -n1)
   else ifeq ($(OSNR),4)
 	  MINVGCC::=$(shell which zypper $(KR)&&zypper se /gcc[^-]$*-c\\+\\+$$/|tail -n1|cut -dc -f3|cut -d- -f1||echo 0;)
