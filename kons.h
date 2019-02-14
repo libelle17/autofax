@@ -1050,7 +1050,7 @@ enum distroenum{unbek=-1,Mint,Ubuntu,Debian,Suse,Fedora,Fedoraalt,Mageia,Manjaro
 struct linst_cl
 {
  instprog ipr=keinp; // installiertes Program
- string schau; // Befehl zum Pruefen auf Vorhandensein ueber das Installationssystem
+ string psuch; // Befehl zum Pruefen auf Vorhandensein ueber das Installationssystem
  string instp; // Befehl zum Installieren ueber das Installationnssystem
  string instyp; // Befehl zum Installieren ueber das Installationnssystem mit automatischem yes auf Rueckfragen
  string upr;   // Befehl zum Deinstallieren ueber das Installationssystem

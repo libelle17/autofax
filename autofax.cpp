@@ -3796,7 +3796,7 @@ int hhcl::pruefhyla()
 				// ein Fehler in der Version 4.0.7 von libtiff verhindert die Zusammenarbeit mit hylafax
 				/*//
 					const string befehl="sh -c \"NACHWEIS="+lsys.getlib64()+"/sclibtiff;! test -f /usr/include/tiff.h ||! test -f \\$NACHWEIS"
-					"&&{ "+linstp->schau+" cmake||"+linstp->instyp+" cmake;true"
+					"&&{ "+linstp->psuch+" cmake||"+linstp->instyp+" cmake;true"
 					"&& P=tiff_copy; T=\\$P.tar.gz; Z=tiff-4.0.7"
 					"; wget https://github.com/libelle17/\\$P/archive/master.tar.gz -O \\$T"
 					"&& tar xpvf \\$T && mv \\${P}-master \\$Z && cd \\$Z"
@@ -8728,8 +8728,7 @@ void hhcl::pvirtvorpruefggfmehrfach()
 //ω
 void hhcl::pvirtfuehraus() //α
 { 
-	hLog(violetts+Tx[T_pvirtfuehraus]+schwarz);
-	//ω
+	hLog(violetts+Tx[T_pvirtfuehraus]+schwarz); //ω
 	if (kez||bvz||anhl||tulista||tulistf||tulisti||tulistw||!suchstr.empty()) {
 		// also bei den in pvirtvorpruefggfmehrfach Abgehandelten hier nichts mehr tun
 		if (kez) {

@@ -1960,7 +1960,7 @@ linst_cl::linst_cl(int obverb,int oblog)
 					"ping -qc 1 www.debian.org >/dev/null 2>&1 && sed -i.bak '/'$F'/{H;d};${p;x}' $S;:",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			// hier werden die Dateien vorgabemaessig behalten
 			ipr=apt;
-			schau="dpkg -s";
+			psuch="dpkg -s";
 			instp=sudc+"apt-get install "; 
 			instyp=sudc+"apt-get -y --force-yes --reinstall install "; 
 			upr="apt-get -f install; apt-get --auto-remove purge ";
@@ -1972,7 +1972,7 @@ linst_cl::linst_cl(int obverb,int oblog)
 			break;
 		case Suse: case Fedora: case Fedoraalt: case Mageia:
 			dev="devel";
-			schau="rpm -q";
+			psuch="rpm -q";
 			udpr=sudc+"rpm -e --nodeps ";
 			switch (distro) {
 				case Suse:
@@ -2019,7 +2019,7 @@ linst_cl::linst_cl(int obverb,int oblog)
 			break;
 		case Manjaro:
 			ipr=pac;
-			schau="pacman -Qi";
+			psuch="pacman -Qi";
 			instp=sudc+"pacman -S ";
 			instyp=sudc+"pacman -S --noconfirm ";
 			upr="pacman -R -s ";
@@ -2648,11 +2648,11 @@ int systemrueck(const string& cmd, int obverb/*=0*/, int oblog/*=0*/, vector<str
 			} else {
 				if (ob0heissterfolg) {
 					if (erg) {
-						if (cmd.substr(0,6)=="rpm -q" || cmd.substr(0,7)=="dpkg -s" || 
-						    cmd.substr(0,5)=="which" || cmd.substr(0,11)=="iptables -L" ||
-								(cmd.find("grep")!=string::npos && cmd.find(" -q <("+sudc+"crontab -l")!=string::npos) ||
-							  cmd.substr(0,7)=="test -f" ||
-								cmd.substr(0,20)=="systemctl list-units" || cmd.substr(0,10)=="pdbedit -L" ||
+						if (cmd.substr(0,6)=="rpm -q"||cmd.substr(0,7)=="dpkg -s"||cmd.substr(0,7)=="dpkg -l"||
+						    cmd.substr(0,5)=="which"||cmd.substr(0,11)=="iptables -L"||
+								(cmd.find("grep")!=string::npos && cmd.find(" -q <("+sudc+"crontab -l")!=string::npos)||
+							  cmd.substr(0,7)=="test -f"||
+								cmd.substr(0,20)=="systemctl list-units"||cmd.substr(0,10)=="pdbedit -L"||
                 cmd.find("faxstat|grep")!=string::npos
 								) {
 							ergebnis=gruens+Txk[T_nicht_gefunden];
