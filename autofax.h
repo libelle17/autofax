@@ -701,76 +701,76 @@ struct fsfcl : public fxfcl // Faxsendfile
 class hhcl:public dhcl
 {
 	private: 
-		uchar anhl=0;    // <DPROG> anhalten
-		string dszahl="30"; // Datensatzzahl fuer Tabellenausgaben
+		uchar anhl{0};    // <DPROG> anhalten
+		string dszahl{"30"}; // Datensatzzahl fuer Tabellenausgaben
 		//ω
 		static const string initdhyladt; // /etc/init.d/hylafax
 		uchar initdhyladt_gibts{0}; // Datei initdhyladt existiert
 		svec modems;       // gefundene Modems
-		uchar modemgeaendert=0; // hmodem neu gesetzt
-		int hylazuerst=-1;  // ob ein Fax zuerst ueber Hylafax versucht werden soll zu faxen
+		uchar modemgeaendert{0}; // hmodem neu gesetzt
+		int hylazuerst{-1};  // ob ein Fax zuerst ueber Hylafax versucht werden soll zu faxen
 		//    string hmodemstr; // Erkennung des Faxgeraetes nach /dev/tty, Standard ACM
 		string maxcapiv; // maximale Versuchnr in Capi, bis Hyla versucht wird
 		string maxhylav; // maixmale Versuchsnr in Hylafax, bis Capi versucht wird
 		string maxhdials;     // Zahl der Wahlversuche in Hylafax
 		string maxcdials;    // Zahl der Wahlversuche in Capisuite
-		int gleichziel=-1; // faxe auch ohne Fax-Erfolg auf Zielverzeichnis abspeichern
-		int obocri=-1; // empfangene Faxe OCR unterziehen
-		int obocra=-1; // gesandte Bilder OCR unterziehen
+		int gleichziel{-1}; // faxe auch ohne Fax-Erfolg auf Zielverzeichnis abspeichern
+		int obocri{-1}; // empfangene Faxe OCR unterziehen
+		int obocra{-1}; // gesandte Bilder OCR unterziehen
 		string anfaxstr, ancfaxstr, anhfaxstr, anffaxstr; // 'an Fax', "an cFax", "an hFax", "an fFax"
 		string anstr; // ' an '
 		string undstr;  //  'und'
 
-		uchar capizukonf=0; // capi zu konfigurieren
-		uchar hylazukonf=0; // hyla zu konfigurieren
+		uchar capizukonf{0}; // capi zu konfigurieren
+		uchar hylazukonf{0}; // hyla zu konfigurieren
 		string findvers; // find-Version (1=linux find, 2=intern mit readdir, 3=intern mit nftw 
 		int ifindv; // integer-Variante der find-Version
 
 		confdcl *cfaxcp{0}; // Zeiger auf ausgelesene /etc/capisuite/fax.conf
 		const string s1{"mv -n "};
-		//		const string s2="/2200/* ";
+		//		const string s2{"/2200/* "};
 		//schlArr hylcnfA; // fuer q1234 o.ae.
 		uchar hgelesen{0}; // Protokolldatei war auslesbar
 		static constexpr const char *moeglhvz[2]{"/var/spool/fax","var/spool/hylafax"};
 		string huser{"uucp"}; // "uucp" oder "fax"
-		uchar obfcard=1;    // ob Fritzcard eingesteckt
-		uchar obfcgeprueft=0; // ob schon geprueft, ob Fritzcard eingesteckt
-		uchar obmodem=1;    // ob Modem angeschlossen
-		uchar obmdgeprueft=0; // ob schon geprueft, ob Modem verfuegbar
-		uchar obocrgeprueft=0; // ob ocrmypdf installiert ist
-		const string altspool="altspool"; // Historie der Spooltabelle
-		const string udoctab="udoc";
-		uchar obvi=0;   // ob Konfigurationsdatei editiert werden soll
-		uchar obvc=0;   // ob Capisuite-Konfigurationsdateien betrachtet werden sollen
-		uchar obvh=0;   // ob Hylafax-Konfigurations- und Logdateindatei betrachtet werden sollen
-		uchar obvs=0;   // ob Quelldateien bearbeitet werden sollen
-		uchar loef=0;   // loesche eine Fax-Datei
-		uchar loew=0;  // loeschewaise in der Datenbank, aber nicht mehr real nachweisbare Dateien in der Datenbank loeschen
-		uchar loea=0; // loesche alle wartenden Faxe und zugehoerige Dateieintraege
-		uchar loee=0; // empfangene Dateien loeschen, die nicht verarbeitet werden koennen
-		uchar erneut=0;  // empfangenes Fax erneut bereitstellen
-		uchar uml=0; // umleiten: vorzeitig den zweiten Weg aktivieren
-		uchar kez=0;    // korrigiere Erfolgskennzeichen
-		uchar bvz=0;    // bereinige Gescheitertenverzeichnis, letztes Gefaxtverzeichnis und Warteverzeichnis
-		uchar tulista=0;   // liste Archiv auf
-		uchar tulistf=0;   // liste gescheiterte auf
-		uchar tulisti=0;   // liste Eingegangene auf
-		uchar tulistw=0;   // liste wartende auf
-		uchar nurempf=0; // nur Empfang aufrufen
-		uchar nursend=0; // nur Senden aufrufen
+		uchar obfcard{1};    // ob Fritzcard eingesteckt
+		uchar obfcgeprueft{0}; // ob schon geprueft, ob Fritzcard eingesteckt
+		uchar obmodem{1};    // ob Modem angeschlossen
+		uchar obmdgeprueft{0}; // ob schon geprueft, ob Modem verfuegbar
+		uchar obocrgeprueft{0}; // ob ocrmypdf installiert ist
+		const string altspool{"altspool"}; // Historie der Spooltabelle
+		const string udoctab{"udoc"};
+		uchar obvi{0};   // ob Konfigurationsdatei editiert werden soll
+		uchar obvc{0};   // ob Capisuite-Konfigurationsdateien betrachtet werden sollen
+		uchar obvh{0};   // ob Hylafax-Konfigurations- und Logdateindatei betrachtet werden sollen
+		uchar obvs{0};   // ob Quelldateien bearbeitet werden sollen
+		uchar loef{0};   // loesche eine Fax-Datei
+		uchar loew{0};  // loeschewaise in der Datenbank, aber nicht mehr real nachweisbare Dateien in der Datenbank loeschen
+		uchar loea{0}; // loesche alle wartenden Faxe und zugehoerige Dateieintraege
+		uchar loee{0}; // empfangene Dateien loeschen, die nicht verarbeitet werden koennen
+		uchar erneut{0};  // empfangenes Fax erneut bereitstellen
+		uchar uml{0}; // umleiten: vorzeitig den zweiten Weg aktivieren
+		uchar kez{0};    // korrigiere Erfolgskennzeichen
+		uchar bvz{0};    // bereinige Gescheitertenverzeichnis, letztes Gefaxtverzeichnis und Warteverzeichnis
+		uchar tulista{0};   // liste Archiv auf
+		uchar tulistf{0};   // liste gescheiterte auf
+		uchar tulisti{0};   // liste Eingegangene auf
+		uchar tulistw{0};   // liste wartende auf
+		uchar nurempf{0}; // nur Empfang aufrufen
+		uchar nursend{0}; // nur Senden aufrufen
 		string suchstr;  // Wortteil, nach dem in alten Faxen gesucht werden soll
-		size_t faxord=0; // Ordinalzahl des Faxes unter allen anstehenden Faxen
-		ulong geszahl=0;
-		ulong ankzahl=0; // Zahl der angekommenen Faxe
-		ulong dbzahl=0; // Zahl der ueberprueften Datenbankeintraege
-		ulong wzahl=0;
-		ulong ezahl=0; // Zahl der Erfolgreichen
-		ulong gzahl=0;
-		ulong fzahl=0;
-		ulong weizahl=0; // Zahl der weiteren wartenden Faxe, die nicht in der Spooltabelle dieses Programms eingetragen sind
-		int obfbox=-1; // ob ueberhaupt die Fritzbox verwendet werden soll, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
-		int obcapi=-1; // ob ueberhaupt die Capisuite verwendet werden soll, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
-		int obhyla=-1; // ob ueberhaupt hylafax verwendet werden soll
+		size_t faxord{0}; // Ordinalzahl des Faxes unter allen anstehenden Faxen
+		ulong geszahl{0};
+		ulong ankzahl{0}; // Zahl der angekommenen Faxe
+		ulong dbzahl{0}; // Zahl der ueberprueften Datenbankeintraege
+		ulong wzahl{0};
+		ulong ezahl{0}; // Zahl der Erfolgreichen
+		ulong gzahl{0};
+		ulong fzahl{0};
+		ulong weizahl{0}; // Zahl der weiteren wartenden Faxe, die nicht in der Spooltabelle dieses Programms eingetragen sind
+		int obfbox{-1}; // ob ueberhaupt die Fritzbox verwendet werden soll, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
+		int obcapi{-1}; // ob ueberhaupt die Capisuite verwendet werden soll, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
+		int obhyla{-1}; // ob ueberhaupt hylafax verwendet werden soll
 		uchar konfobfbox; // ob obfbox in der Konfigurationsdatei eingestellt ist
 		uchar konfobcapi; // ob obcapi in der Konfigurationsdatei eingestellt ist
 		uchar konfobhyla; // ob obhyla in der Konfigurationsdatei eingestellt ist
@@ -778,10 +778,10 @@ class hhcl:public dhcl
 		string hmodem;    // erkanntes und laufendes Modem ttyACM0
 		//    string hmodname;  // ttyACM0
 		string cuser; // Linux-Benutzer fuer Capisuite, Samba
-		const string tudoc="udoc"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
-		const string tinca="inca"; // MariaDB-Tabelle fuer empfangene Faxe
-		const string touta="outa"; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe; in fsfcl->archiviere benoetigt
-		const string spooltab="spool"; // in fsfcl->archiviere benoetigt
+		const string tudoc{"udoc"}; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe
+		const string tinca{"inca"}; // MariaDB-Tabelle fuer empfangene Faxe
+		const string touta{"outa"}; // MariaDB-Tabelle fuer gesandte oder gescheiterte Faxe; in fsfcl->archiviere benoetigt
+		const string spooltab{"spool"}; // in fsfcl->archiviere benoetigt
 
 		string zufaxenvz;
 		string wvz; // Warteverzeichnis

@@ -3272,8 +3272,8 @@ int hhcl::setzhylavz()
 
 	svec hrueck;
 	// 1) hylafax-Dienst im systemd suchen, dort steht z.B. ConditionPathExists=/var/spool/hylafax/etc/setup.cache ...
-	systemrueck("grep /var $(dirname $(dirname $(which systemctl)))/lib/systemd/system/*fax*.service 2>/dev/null | "
-			"head -n 1 | cut -d'=' -f2 | awk -F'/etc' '{print $1}'", obverb,oblog,&hrueck,/*obsudc=*/0);
+	systemrueck("grep /var $(dirname $(dirname $(which systemctl)))/lib/systemd/system/*fax*.service 2>/dev/null|"
+			"head -n 1|cut -d= -f2|sed 's/^[[:space:]]*//'|awk -F'/etc' '{print $1}'", obverb,oblog,&hrueck,/*obsudc=*/0);
 	if (hrueck.size()) {
 		varsphylavz=hrueck[0];
 		fundart=1;
@@ -3904,7 +3904,7 @@ int hhcl::pruefhyla()
 									const string cfgbismake{nix+" --nointeractive && echo $? = Ergebnis nach configure && "
 										"sed -i.bak \"s.PAGESIZE='North American Letter'.PAGESIZE='ISO A4'.g;"
 										"s.PATH_GETTY='\\.*'.PATH_GETTY='"
-										"$(grep LIBEXEC defs | cut -d'=' -f2 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')/faxgetty'.g\" config.cache"
+										"$(grep LIBEXEC defs|cut -d= -f2|sed 's/^[[:space:]]*//;s/[[:space:]]*$//')/faxgetty'.g\" config.cache"
 										"&& echo $? = "+Tx[T_Ergebnis_nach]+" sed"
 										"&&"+sudc};
 									if (!kompilfort(was,vorcfg,cfgbismake)) {

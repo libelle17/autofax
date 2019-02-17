@@ -1220,7 +1220,7 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 	}
 	////  fLog(string("kuerzelogdatei: ") + drot + logdatei + schwarz,obverb,0);
 	//// ersetze(logdatei,"\\","\\\\")
-	struct stat stat={0};
+	struct stat stat{0};
 	if (lstat(logdatei,&stat)){
 		if (obverb>1) {
 			cout<<Txk[T_Logdatei]<<drot<<logdatei<<schwarz<<Txk[T_gibt_es_noch_nicht_Kuerze_sie_daher_nicht]<<endl;
@@ -1394,7 +1394,7 @@ int fLog(const string& text, const short screen/*=1*/, const short file/*=1*/, c
 			if (!logdt || !*logdt|| !strcmp(logdt,"/")) {
 				cerr<<rot<<Txk[T_Variable_logdatei_leer]<<schwarz<<endl;
 			}
-			struct stat logst={0};
+			struct stat logst{0};
 			if (!lstat(logdt,&logst) && S_ISDIR(logst.st_mode)) {
 				cerr<<rot<<Txk[T_Variable_logdatei_Verzeichnis]<<schwarz<<endl;
 			} else {
@@ -1644,7 +1644,7 @@ void kopierm(const string *quelle, const string *ziel)
 // von http://chris-sharpe.blogspot.de/2013/05/better-than-systemtouch.html
 int touch(const string& pfad,int obverb/*=0*/,int oblog/*=0*/)
 {
-	struct stat tstat={0};
+	struct stat tstat{0};
   int fehler{lstat(pfad.c_str(),&tstat)};
 	if (fehler) {
 		const int fd{open(pfad.c_str(), O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, 0666)};
@@ -1847,7 +1847,7 @@ int obprogda(const string& prog, int obverb/*=0*/, int oblog/*=0*/, string *pfad
 	  return 0;
 	const int maxz{8};
   for(int iru=0;iru<maxz;iru++) {
-    struct stat fstat={0};
+    struct stat fstat{0};
     string verz;
 		if (prog[0]=='/') iru=maxz; // z.B. <instvz>/ocrv/bin/ocrmypdf
     switch (iru) {
@@ -3070,7 +3070,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 		} while (!aktv.empty());
 		for(int i=stack.size()-1;i>=0;i--) {
 			fehlt=1;
-			struct stat sverz={0};
+			struct stat sverz{0};
 			if (!lstat(stack[i].c_str(),&sverz)) {
 				if(S_ISDIR(sverz.st_mode)) {
 					fehlt=0;
@@ -3350,7 +3350,7 @@ string Tippverz(const char *const frage,const string *const vorgabe)
 		if (cin.fail()) { cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n'); }
 		if (input.empty() && vorgabe) {input=*vorgabe;}
 		pthread_mutex_unlock(&getmutex);
-		struct stat st={0};
+		struct stat st{0};
 		////    <<"input: '"<<rot<<input<<schwarz<<"'"<<endl;
 		pthread_mutex_lock(&getmutex);
 		while (1) {
@@ -3487,16 +3487,15 @@ const string linst_cl::ersetzeprog(const string& prog) const
 	switch(ipr) {
 		case apt:
 			if (prog=="mariadb") return "mariadb-server";
-			else if (prog=="hylafax") return "hylafax-server";
-			else if (prog=="hylafax+") return "hylafax+-server";
-			else if (prog=="hylafax hylafax-client") return "hylafax-server hylafax-client";
-			else if (prog=="hylafax+ hylafax+-client") return "hylafax+-server hylafax+-client";
 			else if (prog=="kernel-source") return "linux-source-$(uname -r|cut -d. -f1,2)";
+			else if (prog=="boost-devel") return "libboost-dev libboost-system-dev libboost-filesystem-dev";
 			else if (prog=="tiff") return "libtiff-tools";
-			else if (prog=="libxslt-tools") return "xsltproc";
-			else if (prog=="imagemagick") return "imagemagick imagemagick-doc";
-			else if (prog=="libreoffice-base") return "libreoffice-common libreoffice-base";
+			//			else if (prog=="libffi-devel") return "libffi-dev";
+			//      else if (prog=="libtiff-devel") return "libtiff-dev";
 			else if (prog=="libcapi20-2") return "libcapi20-dev";
+			else if (prog=="imagemagick") return "imagemagick imagemagick-doc";
+			else if (prog=="libxslt-tools") return "xsltproc";
+			else if (prog=="libreoffice-base") return "libreoffice-common libreoffice-base";
 			//      else if (prog=="python-devel") return "python-dev";
 			//      else if (prog=="python3-devel") return "python3-dev";
 			else if (prog=="tesseract-ocr-traineddata-english") return "tesseract-ocr-eng";
@@ -3504,15 +3503,18 @@ const string linst_cl::ersetzeprog(const string& prog) const
 			else if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-ocr-osd";
 			//      else if (prog=="libavformat-devel") return "libavformat-dev";
 			else if (prog=="poppler-tools") return "poppler-utils";
-			//			else if (prog=="libffi-devel") return "libffi-dev";
-			else if (prog=="boost-devel") return "libboost-dev libboost-system-dev libboost-filesystem-dev";
-			//      else if (prog=="libtiff-devel") return "libtiff-dev";
+			else if (prog=="hylafax") return "hylafax-server";
+			else if (prog=="hylafax+") return "hylafax+-server";
+			else if (prog=="hylafax hylafax-client") return "hylafax-server hylafax-client";
+			else if (prog=="hylafax+ hylafax+-client") return "hylafax+-server hylafax+-client";
 			else if (prog.find("-devel")!=string::npos) return nersetze(prog,"-devel","-dev");
 			break;
 		case dnf: case yum:
 			if (prog=="mariadb") return "mariadb-server";
 			else if (prog=="kernel-source") return "kernel-devel-$(uname -r)";
+			else if (prog=="libwbclient0") return "libwbclient";
 			else if (prog=="tiff") return "libtiff-tools";
+			else if (prog=="libtiff5") return "libtiff";
 			else if (prog=="libcapi20-2") return "isdn4k-utils";
 			else if (prog=="libcapi20-3") return {};
 			////      else if (prog=="python-devel") return "python3-devel"; // bei capisuite_copy falsch; dann bei ocrmypdf fuer apt noch zu pruefen
@@ -3525,13 +3527,11 @@ const string linst_cl::ersetzeprog(const string& prog) const
 			else if (prog=="tesseract-ocr-traineddata-german") return "tesseract-langpack-deu tesseract-langpack-deu_frak";
 			else if (prog=="tesseract-ocr-traineddata-orientation_and_script_detection") return "tesseract-osd";
 			else if (prog=="poppler-tools") return "poppler-utils";
-			else if (prog=="libwbclient0") return "libwbclient";
-			else if (prog=="libtiff5") return "libtiff";
 			break;
 		case zypper:
 			if (prog=="redhat-rpm-config") return {};
-			else if (prog=="libffi-devel") return "libffi$(gcc --version|head -n1|sed \"s/.*) \\(.\\).\\(.\\).*/\\1\\2/\")-devel";
 			else if (prog=="kernel-source") return "kernel-devel";
+			else if (prog=="libffi-devel") return "libffi$(gcc --version|head -n1|sed \"s/.*) \\(.\\).\\(.\\).*/\\1\\2/\")-devel";
 			break;
 		case pac:
 			if (prog=="libwbclient0") return "libwbclient";
@@ -3571,6 +3571,7 @@ std::string string_to_hex(const std::string& input)
 	linst.ziehraus(inh,&ustring);
 //<<blau<<"ustring: "<<gruen<<ustring<<schwarz<<endl;
  */
+// zieht aus der Rueckmeldung die zusaetzlich installierten Pakete heraus, fuer das Protokoll zur Deinstallation
 void linst_cl::ziehraus(svec srueck, string *ustringp)
 {
 	uchar obanf{0};
@@ -3684,8 +3685,8 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 		} // switch (linst.pruefipr()) 
 		const uchar obyes{1};
 		svec srueck;
-		const string bef{(obyes?instyp:instp)+eprog};
-		if (!(ret=systemrueck(bef,obverb+1,oblog,&srueck,/*obsudc=*/0))) {
+		const string befehl{(obyes?instyp:instp)+eprog};
+		if (!(ret=systemrueck(befehl,obverb+1,oblog,&srueck,/*obsudc=*/0))) {
 			/*//svec*/ string ustring; 
 			ziehraus(srueck,&ustring);
 
@@ -3693,7 +3694,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 			if (!pruefverz(instvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0)) {
 				mdatei uniff(instvz+"/inst.log",ios::app,0);
 				if (uniff.is_open()) {
-					uniff<<endl<<"Rueckmeldung zu: '"<<bef<<"':"<<endl;
+					uniff<<endl<<"Rueckmeldung zu: '"<<befehl<<"':"<<endl;
 					for(unsigned i=0;i<srueck.size();i++) {
 						uniff<<srueck[i]<<endl;
 					}
@@ -3714,7 +3715,7 @@ int linst_cl::doinst(const string& prog,int obverb/*=0*/,int oblog/*=0*/,const s
 			//// <<violett<<"ustring nach Pruefung: "<<rot<<ustring<<schwarz<<endl;
 			if (!ustring.empty()) {
 				fLog(Txk[T_Ins_Deinstallationsprogramm_wird_eingetragen]+violetts+udpr+ustring+schwarz,obverb,oblog);
-				anfgw(unindt,udpr,ustring,bef,obverb,oblog);
+				anfgw(unindt,udpr,ustring,befehl,obverb,oblog);
 			} // 			if (!ustring.empty())
 
 			/*//
@@ -3980,9 +3981,9 @@ void servc::semodpruef(int obverb/*=0*/,int oblog/*=0*/)
 			const string mod{instvz+vtz+selocal+".pp"};
 			if (!lstat(mod.c_str(),&sstat)) {
 				if (linstp) linstp->doinst("policycoreutils",obverb+1,oblog,"semodule");
-				const string bef{"semodule -i \""+mod+"\""};
-				systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
-				anfgg(unindt,sudc+"semodule -r \""+mod+"\"",bef,obverb,oblog);
+				const string befehl{"semodule -i \""+mod+"\""};
+				systemrueck(befehl,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+				anfgg(unindt,sudc+"semodule -r \""+mod+"\"",befehl,obverb,oblog);
 			} // 					if (!lstat((instvz+vtz+selocal+".pp").c_str(),&sstat)
 		}  // if (obse)
 	} // 			if (obprogda("sestatus",obverb,oblog,&sepfad))
@@ -3994,9 +3995,9 @@ void servc::semanpruef(int obverb/*=0*/,int oblog/*=0*/,const string& mod/*="get
 	string sepfad;
 	if (ename.find("faxgetty")!=string::npos) {
 		if (obprogda("sestatus",obverb,oblog,&sepfad)) {
-			const string bef{"semodule -l|grep permissive_"+mod+" >/dev/null|| semanage permissive -a "+mod};
-			systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
-			anfgg(unindt,sudc+"semanage permissive -d "+mod,bef,obverb,oblog);
+			const string befehl{"semodule -l|grep permissive_"+mod+" >/dev/null|| semanage permissive -a "+mod};
+			systemrueck(befehl,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+			anfgg(unindt,sudc+"semanage permissive -d "+mod,befehl,obverb,oblog);
 		} // 	if (obprogda("sestatus",obverb,oblog,&sepfad))
 	} // 		if (ename.find("faxgetty")!=string::npos)
 } // int servc::semanpruef(const string& mod/*="getty_t*/, int obverb/*=0*/,int oblog/*=0*/)
@@ -4184,7 +4185,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 			svfeh=3; // Dienstdatei nicht ermittelbar
 		} else {
 			// Dienst existent, Dienstdatei bekannt
-			struct stat svst={0};
+			struct stat svst{0};
 			if ((svfeh=lstat(systemd.c_str(),&svst))) { 
 				svfeh=4; // Dienst laeuft evtl. noch, aber Dienstdatei inexistent
 			} else {
@@ -4209,7 +4210,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 					} // 					if (srueExe.size()) else
 				} else {
 					// Dienst existent, Dienstdatei bekannt und existent
-					systemrueck("cat '"+systemd+"'|grep ExecStart=|cut -d= -f2|cut -d' ' -f1",obverb,oblog,&srueExe,/*obsudc=*/1);
+					systemrueck("cat '"+systemd+"'|grep ExecStart=|cut -d= -f2|sed 's/^[[:space:]]*//'|cut -d' ' -f1",obverb,oblog,&srueExe,/*obsudc=*/1);
 					if (srueExe.size()) {
 						execf=srueExe[0];
 					} // 			if (!srueExe.size()) else
@@ -4219,7 +4220,7 @@ int servc::obsvfeh(int obverb/*=0*/,int oblog/*=0*/) // ob service einrichtungs 
 				} else {
 					if (ename.empty()) ename=base_name(execf); // stimmt z.B. nicht bei /usr/lib/mysql/mysql-systemd-helper
 					// Dienst existent, Dienstdatei bekannt und existent, Exe-Datei bekannt
-					struct stat lst={0};
+					struct stat lst{0};
 					if (lstat(execf.c_str(),&lst)) {
 						svfeh=6; // Exec-Datei fehlt, hier auch: activating
 					} else {// 				if (lstat(srueExe.c_str(),&lst))
@@ -4394,7 +4395,7 @@ int tuloeschen(const string& zuloe,const string& cuser/*=string()*/, int obverb/
 {
 	////  fLog(violetts+Txk[T_tuloeschen]+schwarz,obverb,oblog);
 	string meld;
-	struct stat entryzuloe={0};
+	struct stat entryzuloe{0};
 	if (!lstat(zuloe.c_str(),&entryzuloe)) {
 		meld=Txk[T_Loesche_Ausrufezeichen]+gruens+zuloe+schwarz;
 		if (ausgp&&obverb) *ausgp<<meld<<endl; else fLog(meld,obverb,oblog);
@@ -4425,12 +4426,12 @@ int tuloeschen(const string& zuloe,const string& cuser/*=string()*/, int obverb/
 // gleicht das Datum von <zu> an <gemaess> an, aehnlich touch
 int attrangleich(const string& zu, const string& gemaess,const string* const zeitvondtp/*=0*/, int obverb/*=0*/, int oblog/*=0*/)
 {
-	struct stat statgm={0};
+	struct stat statgm{0};
 	if (lstat(gemaess.c_str(),&statgm)) {
 		fLog(rots+Txk[T_Fehler_bei_lstat]+schwarz+gemaess,obverb,oblog);
 		return 1;
 	} //   if (lstat(gemaess.c_str(),&statgm))
-	struct stat statzu={0};
+	struct stat statzu{0};
 	if (lstat(zu.c_str(),&statzu)) {
 		fLog(rots+Txk[T_Fehler_bei_lstat]+schwarz+zu,obverb,oblog);
 		return 1;
@@ -4469,7 +4470,7 @@ int kopier(const string& quel, const string& ziel, int obverb, int oblog)
 	if (source==-1) {
 		////    fLog(Txk[T_Konnte_Datei]+rots+quel+schwarz+Txk[T_nicht_zum_Lesen_oeffnen],obverb,oblog);
 	} else {
-		struct stat statq={0};
+		struct stat statq{0};
 		if (!fstat(source,&statq)) {
 			int dest{open(ziel.c_str(),O_WRONLY|O_CREAT,statq.st_mode)};
 			if (dest==-1) {
@@ -4765,7 +4766,7 @@ int find3cl::verarbeit(const char *fpath, const struct stat *sb, int tflag, stru
 		string pfad;
 		char buff[FILENAME_MAX];
 		buff[0]=0;
-		struct stat lst={0};
+		struct stat lst{0};
 		if (tflag==FTW_SL) {
 			ssize_t len = readlink(fpath, buff, sizeof(buff)-1);
 			if (len==-1) {
@@ -4826,7 +4827,7 @@ int find3cl::dofind()
 		for(it=wurz.begin();it!=wurz.end();it++) {
 			if (fertige.find(*it)!=fertige.end()) continue;
 			if (it->pfad.empty()) continue;
-			struct stat st={0};
+			struct stat st{0};
 			if (lstat(it->pfad.c_str(),&st)) continue;
 			gearbeitet=1;
 			if (obverb>2||oblog>1) fLog("Iterator: "+blaus+it->pfad+schwarz+Txk[T_Tiefe]+blau+ltoan(it->maxd)+schwarz,obverb,oblog);
@@ -5477,7 +5478,7 @@ void hcl::dovi()
 // wird aufgerufen in lauf
 void hcl::virtzeigversion(const string& ltiffv/*=string()*/)
 {
-	struct tm tm={0};
+	struct tm tm{0};
 	//// char buf[100];
 	cout<<endl<<Txk[T_Programm]<<violett<<mpfad<<schwarz<<endl;
 	cout<<"Copyright: "<<blau<<Txk[T_Freie_Software]<<schwarz<<Txk[T_Verfasser]<<blau<<"Gerald Schade"<<schwarz<<endl;
@@ -5674,7 +5675,7 @@ void hcl::gitpull(const string& DPROG)
 
 				fLog(violetts+DPROG+blau+Txk[T_muss_nicht_aktualisiert_werden]+schwarz,1,oblog);
 			} else {
-				////  struct stat entwst={0};
+				////  struct stat entwst{0};
 				//// entwickeln muss genauso definiert sein wie in Makefile
 				////  const string ziel=instvz+(lstat((instvz+"/entwickeln").c_str(),&entwst)?string():"/nvers");
 				const string ziel{instvz};
@@ -5895,7 +5896,7 @@ const int altobverb{obverb};
 	const uchar incfehlt{!systemrueck("find /usr/include /usr/local/include -name tiff.h -print -quit 2>/dev/null",obverb,oblog,0,1)};
 	if (obsotiff) {
 		// Die Datei /usr/local/sclibtiff wird als Nachweis verwendet, dass die Installationskorrektur durchgefuert wurde
-		struct stat lnw={0};
+		struct stat lnw{0};
 		if ((/*(tv==4.07||tv==4.08)&&*/lstat(tiffmark.c_str(),&lnw))||incfehlt) {
 			obverb=1;
 			////		linstp->doggfinst("cmake",obverb,oblog); 
@@ -5950,7 +5951,7 @@ int hcl::kompiliere(const string& was,const string& endg, const string& vorcfg/*
 // aufgerufen in: main
 void hcl::zeigkonf()
 {
-	struct stat kstat={0};
+	struct stat kstat{0};
 	cout<<Txk[T_aktuelle_Einstellungen_aus]<<blau<<akonfdt<<schwarz<<"' (";
 	//// char buf[100]={0};
 	if (!lstat(akonfdt.c_str(),&kstat)) {
@@ -6334,7 +6335,7 @@ void hcl::pruefsamba(const vector<const string*>& vzn,const svec& abschni,const 
 			} // if (!nrzf) 
 		} // 	if (obsfehlt)
 		for(uchar iru=0;iru<2;iru++) {
-			struct stat sstat={0};
+			struct stat sstat{0};
 			if (!(conffehlt=lstat(smbdt,&sstat))) break;
 			if (iru) break;
 			pruefverz("/etc/samba",obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/string(),/*benutzer=*/string(),/*obmachen=*/0);
@@ -6377,11 +6378,12 @@ void hcl::pruefsamba(const vector<const string*>& vzn,const svec& abschni,const 
 		} // for(int aru=0;aru<2;aru++) 
 		////    if (gestartet==2) smbrestart=0;
 	} // if (dienstzahl<2 || conffehlt) 
-	struct stat sstat={0};
+	struct stat sstat{0};
 	if (!(conffehlt=lstat(smbdt,&sstat))) {
 		confdcl smbcd(smbdt,obverb);
 //		smbcd.Abschn_auswert(obverb);
-		uchar gef[vzn.size()]; memset(gef,0,vzn.size()*sizeof(uchar));
+		uchar gef[vzn.size()]{0}; // memset(gef,0,vzn.size()*sizeof(uchar));
+		// gef als Array gefundener Pfade aus/zu vzn erstellen
 		for(size_t i=0;i<smbcd.abschv.size();i++) {
 			if (smbcd.abschv[i].aname!="global") {
 				const string pfad{*smbcd.abschv[i].suche("path")};
