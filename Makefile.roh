@@ -346,8 +346,8 @@ $(DEPDIR)/%.d: ;
 ifeq (,$(SRCS))
 else
 compiler:
-	@printf " DISTR: %b%s%b, untersuche/examining Compiler ...\n" $(blau) "$(DName)" $(reset) $(BA)
-	@printf " Untersuche/Examining Compiler ...\n" $(BA)
+	@printf " DISTR: %b%s%b, untersuche/examining Compiler ..." $(blau) "$(DName)" $(reset) $(BA)
+	@if test "$(GCCOK)" = "0"; then printf "\n"; fi;
 	@if test "$(GCCOK)" = "0"; then printf " GCCOK: \"%b%s%b\"\n" $(blau) "$(GCCOK)" $(reset); fi;
 	@if test "$(GCCOK)" = "0"; then printf " MINVGCC: \"%b%s%b\"\n" $(blau) "$(MINVGCC)" $(reset); fi;
 	@if test "$(GCCOK)" = "0"; then printf " MINGCCNR: \"%b%s%b\"\n" $(blau) "$(MINGCCNR)" $(reset); fi;
