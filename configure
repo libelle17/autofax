@@ -58,9 +58,9 @@ getIPR() {
 			COMP="gcc gcc-c++"; # \$(CCInst)";
 			# sonst dauerts beim Editieren zu lang
 		  if test "$ICH" = viall; then
-				LBOOST=$(cat vars|grep LBOOST|cut -d= -f2);
-				LBIO=$(cat vars|grep LBIO|cut -d= -f2);
-				LBLO=$(cat vars|grep LBLO|cut -d= -f2);
+				LBOOST=$(grep LBOOST vars|cut -d= -f2);
+				LBIO=$(grep LBIO vars|cut -d= -f2);
+				LBLO=$(grep LBLO vars|cut -d= -f2);
 			else
   			# z.B. 'i+ | boost_1_65-devel |'
   			LBOOST=$(zypper se boost*-devel|grep ' | boost'|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
@@ -169,7 +169,7 @@ exportvars() {
 	rm -f vars;
 	for v in OSNR IPR IP_R UPR UDPR SPR UNROH UNF AUNF ILOG PGROFF LT LT5 LBOOST LBIO LBLO LACL LCURL LCURS LM18 dev libmdb REPOS UREPO COMP GITV DTN DPROG; do
 		eval nv=\$$v; 
-		printf "$v::=$nv\n">>vars; 
+		printf "$v::=$nv\n" >>vars; 
 	done;
 #	printf "testvar::=rot gelb grün\n">>vars
 }

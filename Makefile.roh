@@ -213,7 +213,7 @@ MANS+=$(_MAN)
 HTMLS::=$(patsubst %,%.html,$(MANS))
 GZS::=$(patsubst %,%.gz,$(MANS))
 
-.PHONY: all glei opt opt2 opt3 optfast opts optg altc neu new anzeig compiler
+.PHONY: all glei opt opt2 opt3 optfast opts optg altc neu new anzeig compiler git
 ifeq (,$(SRCS))
 $(info keine *.cpp-Dateien => kompiliere nichts)
 all glei opt opt2 opt3 optfast opts optg altc neu new anzeig $(EXEC) $(INSTEXEC) compiler:
@@ -580,7 +580,8 @@ tumitzieh:
 		[ -n "$$TZL" -a "$$TZL" != . -a "$$TZL" != "$(DPROG)" -a -d "$$TZL" ]&&break;\
 		Fg="Please enter target/ bitte Ziel eingeben z.B.: ";\
 		for a in $$(find .. -mindepth 2 -maxdepth 2 -name kons.cpp|cut -d/ -f2|sort);do Fg=$$Fg$$blau$$a$$reset,;done;\
-		Fg="$$Fg\b: ";printf "$$Fg";[ "$$0" = "dash" ]&&read TZL||read -e -i "$$TZL" TZL;:;\
+    case f in [^f]) obbash=0;;*) obbash=1;esac;\
+		Fg="$$Fg\b: ";printf "$$Fg";[ $$obbash -eq 1 ]&&read -e -i "$$TZL" TZL||read TZL;:;\
 	done;\
 	printf "adapt/ mitziehen von %b$$TZL%b\n" $(blau) $(reset);\
 	printf "cp -au $$blau.exrc Makefile install.sh man_?? viall configure $$reset\"$$TZL\";\n";\
@@ -617,7 +618,8 @@ dotrans:
 		[ -n "$$TZL" -a "$$TZL" != . -a "$$TZL" != "$(DPROG)" ]&&break;\
 		Fg="Please enter target/ bitte Ziel eingeben, nicht: ";\
 		for a in $$(find .. -mindepth 2 -maxdepth 2 -name kons.cpp|cut -d/ -f2|sort);do Fg=$$Fg$$blau$$a$$reset,;done;\
-		Fg="$$Fg\b: ";printf "$$Fg";[ "$$0" = "dash" ]&&read TZL||read -e -i "$$TZL" TZL;:;\
+    case f in [^f]) obbash=0;;*) obbash=1;esac;\
+		Fg="$$Fg\b: ";printf "$$Fg";[ $$obbash -eq 1 ]&&read -e -i "$$TZL" TZL||read TZL;:;\
 	done;\
 	printf "transfer to/ Transfer nach %b$$TZL%b\n" $(blau) $(reset);\
 	Start=1;\
@@ -673,7 +675,8 @@ tuneuproj:
 		[ -n "$$TZL" -a "$$TZL" != . -a "$$TZL" != "$(DPROG)" -a ! -d "../$$TZL" ]&&break;\
 		Fg="Programmname/program name, nicht: ";\
 		for a in $$(find .. -mindepth 2 -maxdepth 2 -name kons.cpp|cut -d/ -f2|sort);do Fg=$$Fg$$blau$$a$$reset,;done;\
-		Fg="$$Fg\b: ";printf "$$Fg";[ "$$0" = "dash" ]&&read TZL||read -e -i "$$TZL" TZL;:;\
+    case f in [^f]) obbash=0;;*) obbash=1;esac;\
+		Fg="$$Fg\b: ";printf "$$Fg";[ $$obbash -eq 1 ]&&read -e -i "$$TZL" TZL||read TZL;:;\
 	done;\
 	echo -e "erstelle $$blau$$TZL$$reset";\
 	mkdir -p ../"$$TZL";cp -ai kons.cpp kons.h DB.cpp DB.h Makefile .exrc configure install.sh man_?? viall* ../"$$TZL";\
