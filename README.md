@@ -49,8 +49,8 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>autofax</b>
-offers quasi the functionality of a fax server, which can be
-useful for some also behind a fast data line. <b><br>
+supplies the file los.sh, which configures the server with
+some callbacks. <b><br>
 autofax</b> is a command line program to remit files of a
 certain directory automatically to <b>hylafax</b> (in case a
 linux-compatible modem is installed) and/or <b>capisuite</b>
@@ -177,8 +177,9 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47266</b>
-Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
+Programm: <b>/home/schade/autofax/autofax</b>, V:
+<b>0.47265</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
+<b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
 -delf, --deletefax</b>: delete a fax with query (<b>0</b>)
@@ -238,7 +239,7 @@ with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vi, --vi</b>: edit/view configuration file , log file etc.
 (finish with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vs, --vs</b>: edit/view source files in
-<b>/root/autofax</b>(finish with &rsquo;:qa&rsquo;)
+<b>/home/schade/autofax</b>(finish with &rsquo;:qa&rsquo;)
 (<b>0</b>) <b><br>
 -autoupd, --autoupdate &lt;zahl&gt;</b>: Update program
 automatically (<b>1</b>) <b><br>
@@ -864,21 +865,11 @@ Gemeinschaftspraxis Dachau neu ein <br>
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>autofax</b>
-bietet quasi die Funktionalit&auml;t eines Faxservers,
-welcher f&uuml;r manche auch hinter einer schnellen
-Datenleitung sinnvoll sein kann. <b><br>
-autofax</b> ist ein Befehlszeilenprogramm, mit dem Dateien
-in einem bestimmten Verzeichnis automatisch an
-<b>hylafax</b> (falls ein linux-kompatibles Fax-Modem
-angeschlossen ist) und/oder <b>capisuite</b> (falls eine
-Fritzcard 2.0 oder 2.1 angeschlossen ist) weiterleitet
-werden, wenn die Faxnummer im Dateinamen wie vorgesehen
-eingetragen ist, und das weiterhin die versandten Faxe in
-einer MariaDB-Datenbank abspeichert. <br>
-Au&szlig;erdem k&ouml;nnen von
-<b>hylafax</b>/<b>capisuite</b> empfangene Faxe automatisch
-nach dem Sender anhand dessen Faxnummer benannt und
-abgespeichert werden. <br>
+stellt das shell-script los.sh zur Verf&uuml;gung, das
+den Server mit einigen R&uuml;ckfragen einrichtet.
+<b><br>
+autofax</b> ist ein Befehlszeilenprogramm. <br>
+Au&szlig;erdem k&ouml;nnen . <br>
 Die Netzwerkintegration (z.B. auch in ein Windows-Netzwerk
 mit nur einem Linuxrechner) geschieht durch automatischen
 Eintrag der f&uuml;r autofax relevanten Verzeichnisse in
@@ -1007,8 +998,9 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47266</b>
-Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
+Programm: <b>/home/schade/autofax/autofax</b>, V:
+<b>0.47265</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
+<b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
 -loef, --loeschefax</b>: ein Fax nach Rueckfrage loeschen
@@ -1070,7 +1062,7 @@ Konfigurationsdatei &lt;string&gt; anstatt (&rsquo;&rsquo;)
 -vi, --vi</b>: Konfigurationsdatei , Logdatei usw.
 bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
--vs, --vs</b>: Quelldateien in <b>/root/autofax</b>
+-vs, --vs</b>: Quelldateien in <b>/home/schade/autofax</b>
 bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
 -autoakt, --autoaktual &lt;zahl&gt;</b>: Programm
