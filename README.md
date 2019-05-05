@@ -843,9 +843,9 @@ caused by the program.</p>
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>autofax
-&minus; Linux-Server neu einrichten</b>: richtet einen
-Linux-Server f&uuml;r die diabetologische
-Gemeinschaftspraxis Dachau neu ein <br>
+&minus; FaxServer-Funktionalit&auml;t</b>: veranlasst
+automatischen Faxversand von Dateien, Benennung empfangener
+Faxe und Protokollierung aller Faxe in einer Datenbank <br>
 (manpage available in english: &rsquo;man autofax&rsquo; or
 &rsquo;man -Len autofax&rsquo;)</p>
 

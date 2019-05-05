@@ -4,7 +4,7 @@
 .pc
 .TH man 1 "05.05.19" "Version 0.47266" "Manual-Seite für ²DPROG²"
 .SH NAME
-\fB²DPROG² \- Linux-Server neu einrichten\fR: richtet einen Linux-Server für die diabetologische Gemeinschaftspraxis Dachau neu ein 
+\fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
 (manpage available in english: 'man ²DPROG²' or 'man -Len ²DPROG²')
 .SH SYNOPSIS
@@ -12,7 +12,8 @@
 .SH KURZBESCHREIBUNG
 \fB²DPROG²\fR bietet quasi die Funktionalität eines Faxservers, welcher für manche auch hinter einer schnellen Datenleitung sinnvoll sein kann.
 .br
-\fB²DPROG²\fR ist ein Befehlszeilenprogramm, mit dem Dateien in einem bestimmten Verzeichnis automatisch an \fBhylafax\fR (falls ein linux-kompatibles Fax-Modem angeschlossen ist) und/oder \fBcapisuite\fR (falls eine Fritzcard 2.0 oder 2.1 angeschlossen ist) weiterleitet werden, wenn die Faxnummer im Dateinamen wie vorgesehen eingetragen ist, und das weiterhin die versandten Faxe in einer MariaDB-Datenbank abspeichert. 
+\fB²DPROG²\fR ist ein Befehlszeilenprogramm, mit dem Dateien in einem bestimmten Verzeichnis automatisch an \fBhylafax\fR (falls ein linux-kompatibles Fax-Modem angeschlossen ist) und/oder \fBcapisuite\fR (falls eine Fritzcard 2.0 oder 2.1 angeschlossen ist) weiterleitet werden, wenn die Faxnummer im Dateinamen wie vorgesehen eingetragen ist,
+und das weiterhin die versandten Faxe in einer MariaDB-Datenbank abspeichert. 
 .br
 Außerdem können von \fBhylafax\fR/\fBcapisuite\fR empfangene Faxe automatisch nach dem Sender anhand dessen Faxnummer benannt und abgespeichert werden.
 .br

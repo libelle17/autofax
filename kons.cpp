@@ -2138,8 +2138,8 @@ template <typename SCL> void confdcl::kauswert(schAcl<SCL> *sA, int obverb,const
 									//// <<"sA->schl[ii]->pname: "<<sA->schl[ii]->pname<<endl;
 									//// <<blau<<"setze!"<<schwarz<<endl;
 									// if (obverb) caus<<"Stell 11, sA->schl["<<ii<<"]->pname: "<<sA->schl[ii]->pname<<", wert: "; sA->schl[ii]->virtoausgeb(); caus<<endl;
-									const int wiefalsch{sA->schl[ii]->setzstr(paare[nr].wert.c_str(),&obzuschreib,/*ausDatei=*/1)};
-									if (!wiefalsch) {
+									const int kafnr{sA->schl[ii]->setzstr(paare[nr].wert.c_str(),&obzuschreib,/*ausDatei=*/1)};
+									if (!kafnr) {
 										sA->setzbemerkwoher(sA->schl[ii].get(),/*bemerk=*/paare[nr].bemerk,/*woher*/2);
 										++richtige;
 									}
@@ -2649,9 +2649,9 @@ int systemrueck(const string& cmd, int obverb/*=0*/, int oblog/*=0*/, vector<str
 				if (ob0heissterfolg) {
 					if (erg) {
 						if (cmd.substr(0,6)=="rpm -q"||cmd.substr(0,7)=="dpkg -s"||cmd.substr(0,7)=="dpkg -l"||
-						    cmd.substr(0,5)=="which"||cmd.substr(0,11)=="iptables -L"||
-								(cmd.find("grep")!=string::npos && cmd.find(" -q <("+sudc+"crontab -l")!=string::npos)||
-							  cmd.substr(0,7)=="test -f"||
+							  cmd.substr(0,5)=="which"||cmd.substr(0,11)=="iptables -L"||
+		           (cmd.find("grep")!=string::npos && cmd.find(" -q <("+sudc+"crontab -l")!=string::npos)||
+  							cmd.substr(0,7)=="test -f"||
 								cmd.substr(0,20)=="systemctl list-units"||cmd.substr(0,10)=="pdbedit -L"||
                 cmd.find("faxstat|grep")!=string::npos
 								) {
@@ -5307,18 +5307,18 @@ void hcl::parsecl()
 							hLog(Txk[T_Parameter]+blaus+acstr+schwarz+Txk[T_gefunden]+(omit->second->pptr?"1":"0"));
 							if (omit->second->pptr) {
 								hLog("pptr gefunden");
-								// pzuweis liefert -1, wenn der naechste Parameter als Inhalt verwendet wurde, sonst wiefalsch
+								// pzuweis liefert -1, wenn der naechste Parameter als Inhalt verwendet wurde, sonst pcfnr
 								apn=ap; apn++;
 								const char *nacstr=apn==argcmv.end()?"":apn->argcs;
 								optcl* trick=(optcl*)omit->second;
-								int wiefalsch{trick->pzuweis(nacstr,gegenteil,nichtspeichern)};
-								//int wiefalsch=omit->second->pzuweis(nacstr,gegenteil,nichtspeichern);
-								if (wiefalsch==-1) { // String-Parameter erfolgreich zugewiesen
+								int pcfnr{trick->pzuweis(nacstr,gegenteil,nichtspeichern)};
+								//int pcfnr=omit->second->pzuweis(nacstr,gegenteil,nichtspeichern);
+								if (pcfnr==-1) { // String-Parameter erfolgreich zugewiesen
 									ap++;
 									ap->agef++; // Zusatzparameter gefunden
 									if (ap==argcmv.end()) break;
 								}
-								if (wiefalsch<=0) { // erfolgreich zugewiesen
+								if (pcfnr<=0) { // erfolgreich zugewiesen
 									if (omit->second->pptr==&langu) {
 										virtlgnzuw();
 									} else if (omit->second->pptr==&logvz || omit->second->pptr==&logdname) {
@@ -5331,7 +5331,7 @@ void hcl::parsecl()
 									//opn.setzbemerkwoher(omit->second,/*ibemerk=*/string(),/*vwoher=*/3);
 								} else {
 									if (!obhilfe) obhilfe=1;
-								} // 								if (wiefalsch<=0) else
+								} // 								if (pcfnr<=0) else
 							} // 								if (omit->second->pptr)
 							break; // Parameter schon gefunden, die anderen nicht mehr suchen
 						} // 							if (!omit->first.find(acstr))
@@ -5478,7 +5478,7 @@ void hcl::dovi()
 // wird aufgerufen in lauf
 void hcl::virtzeigversion(const string& ltiffv/*=string()*/)
 {
-	struct tm tm{0};
+	struct tm tm={0};
 	//// char buf[100];
 	cout<<endl<<Txk[T_Programm]<<violett<<mpfad<<schwarz<<endl;
 	cout<<"Copyright: "<<blau<<Txk[T_Freie_Software]<<schwarz<<Txk[T_Verfasser]<<blau<<"Gerald Schade"<<schwarz<<endl;
@@ -6075,11 +6075,11 @@ int optcl::setzstr(const char* const neuw,uchar *const obzuschreib/*=0*/,const u
 {
 	uchar tuschreib{0};
 	// nicht mit Vorgaben (woher 2) Befehlszeilenoption (woher 3) ueberschreiben
-	int wiefalsch{wpgcl::tusetzstr(neuw,/*obzuschreib*/&tuschreib,ausDatei,/*keineprio*/woher>2)};
+	int sstfnr{wpgcl::tusetzstr(neuw,/*obzuschreib*/&tuschreib,ausDatei,/*keineprio*/woher>2)};
 	if (tuschreib) if (obzuschreib) if (!*obzuschreib) if (!nichtspeichern) {
 		*obzuschreib=1;
 	}
-	return wiefalsch;
+	return sstfnr;
 } // setzstr
 
 int WPcl::setzstr(const char* const neuw,uchar *const obzuschreib/*=0*/,const uchar ausDatei/*=0*/)
@@ -6097,7 +6097,7 @@ int WPcl::setzstr(const string& neus,uchar *const obzuschreib/*=0*/,const uchar 
 //  aufgerufen in: pzuweis (Befehlszeile) und auswert (Datei)
 int wpgcl::tusetzstr(const char* const neuw,uchar *const tuschreibp,const uchar ausDatei/*=0*/,const uchar keineprio/*=0*/)
 {
-	int wiefalsch{0};
+	int tsfnr{0};
 	struct tm tmp{0},tmmax{0},neu{0};
 	char *emax{0},*eakt;
 	if (pptr) {
@@ -6120,7 +6120,7 @@ int wpgcl::tusetzstr(const char* const neuw,uchar *const tuschreibp,const uchar 
 					} else {
 						//// <<blau<<"vor weise zu 2 "<<schwarz<<endl;
 						if (part==pdez && !isnumeric(neuw)) {
-							wiefalsch=1;
+							tsfnr=1;
 						} else {
 							//// <<blau<<"weise zu"<<schwarz<<endl;
 							*(string*)pptr=neuw;
@@ -6148,8 +6148,8 @@ int wpgcl::tusetzstr(const char* const neuw,uchar *const tuschreibp,const uchar 
 			case pverz: case pfile:
 				// ... die also nicht mit '-' anfaengt
 				// ... und sie bestimmte existentielle Bedingungen erfuellt ...
-				if (stat(neuw,&entryarg)) wiefalsch=1;  // wenn inexistent
-				else if ((part==pverz)^(S_ISDIR(entryarg.st_mode))) wiefalsch=2; // Datei fuer Verzeichnis o.u.
+				if (stat(neuw,&entryarg)) tsfnr=1;  // wenn inexistent
+				else if ((part==pverz)^(S_ISDIR(entryarg.st_mode))) tsfnr=2; // Datei fuer Verzeichnis o.u.
 				// ... dann zuweisen
 				else {
 					if (*(string*)pptr!=neuw) {
@@ -6174,7 +6174,7 @@ int wpgcl::tusetzstr(const char* const neuw,uchar *const tuschreibp,const uchar 
 				// oder wenn es eine Zahl sein soll ...
 			case puchar: case pint: case plong:
 				// und tatsaechlich numerisch ist ...
-				if (!isnumeric(neuw)) wiefalsch=1;
+				if (!isnumeric(neuw)) tsfnr=1;
 				// dann zuweisen
 				else {
 					switch (part) {
@@ -6233,14 +6233,14 @@ int wpgcl::tusetzstr(const char* const neuw,uchar *const tuschreibp,const uchar 
 				break;
 		} // switch (part) 
 	} // 	if (pptr)
-	return wiefalsch;
+	return tsfnr;
 } // void optcl::setzstr
 
 // Rueckgabe: -1: String-Parameter erfolgreich zugewiesen, 0: Zahl erfolgreich zugewiesen
 // Parameter ueber Befehlszeile zuweisen
 int optcl::pzuweis(const char *const nacstr, const uchar vgegenteil/*=0*/, const uchar vnichtspeichern/*=0*/)
 {
-	int wiefalsch{0};
+	int pzfnr{0};
 	gegenteil=vgegenteil;
 	nichtspeichern=vnichtspeichern;
   if (iwert!=-1) {
@@ -6249,11 +6249,11 @@ int optcl::pzuweis(const char *const nacstr, const uchar vgegenteil/*=0*/, const
 		//// <<rot<<"nacstr: "<<nacstr<<schwarz<<endl;
 		// er also nicht mit '-' anfaengt ...
 		if (*nacstr && *nacstr!='-') {
-			wiefalsch=setzstr(nacstr);
+			pzfnr=setzstr(nacstr);
 		} else {
-			wiefalsch=3; // kein geeigneter Parameter gefunden
+			pzfnr=3; // kein geeigneter Parameter gefunden
 		}
-		if (wiefalsch) {
+		if (pzfnr) {
 			// wenn kein Zusatzparameter erkennbar, dann melden
 			switch (part) {
 				case pdat:
@@ -6267,19 +6267,19 @@ int optcl::pzuweis(const char *const nacstr, const uchar vgegenteil/*=0*/, const
 				case pverz:
 				case pfile:
 					fLog(drots+Txk[T_Fehler_Parameter]+(kurzi<0?ltoan(kurzi):(*TxBp)[kurzi])+Txk[T_oder]+(langi<0?ltoan(langi):(*TxBp)[langi])+" "+
-							(wiefalsch==1?Txk[T_ohne_gueltigen]:wiefalsch==2?Txk[T_mit_Datei_als]:Txk[T_mit_falschem])+Txk[T_Pfad_angegeben]+schwarz,1,1);
+							(pzfnr==1?Txk[T_ohne_gueltigen]:pzfnr==2?Txk[T_mit_Datei_als]:Txk[T_mit_falschem])+Txk[T_Pfad_angegeben]+schwarz,1,1);
 					break;
 				case puchar: case pint: case plong: case pbin:
-					fLog(drots+(wiefalsch==1?Txk[T_Nicht_numerischer]:Txk[T_Fehlender])+Txk[T_Parameter_nr_zu]
+					fLog(drots+(pzfnr==1?Txk[T_Nicht_numerischer]:Txk[T_Fehlender])+Txk[T_Parameter_nr_zu]
 							+(kurzi<0?ltoan(kurzi):(*TxBp)[kurzi])+Txk[T_oder]+(langi<0?ltoan(langi):(*TxBp)[langi])+"!"+schwarz,1,1);
 					break;
 			} // switch (part)
-		} // 										if (wiefalsch)
-		if (!wiefalsch) {
+		} // 										if (pzfnr)
+		if (!pzfnr) {
 			return -1;
 		}
 	} // 									if (wert) else
-	return wiefalsch;
+	return pzfnr;
 } // int optcl::pzuweis
 
 optcl::optcl(const string& pname,const void* pptr,const par_t part, const int kurzi, const int langi, TxB* TxBp, const long Txi,
@@ -6382,7 +6382,7 @@ void hcl::pruefsamba(const vector<const string*>& vzn,const svec& abschni,const 
 	if (!(conffehlt=lstat(smbdt,&sstat))) {
 		confdcl smbcd(smbdt,obverb);
 //		smbcd.Abschn_auswert(obverb);
-		uchar gef[vzn.size()]{0}; // memset(gef,0,vzn.size()*sizeof(uchar));
+		uchar gef[vzn.size()]; memset(gef,0,vzn.size()*sizeof(uchar));
 		// gef als Array gefundener Pfade aus/zu vzn erstellen
 		for(size_t i=0;i<smbcd.abschv.size();i++) {
 			if (smbcd.abschv[i].aname!="global") {
