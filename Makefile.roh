@@ -40,6 +40,7 @@
 # "make uninstall" => deinstalliert alles, frägt noch manchmal rück
 # "make allesweg" => deinstalliert alles, beantwortet Rückfragen automatisch mit 'y'
 # "make neuproj" => kopiert Dateien für neues Projekt in Verzeichnis fuer neues Projekt
+# "make shlist" => installiert die in "shliste" stehenden shell-Scripte (=bei make install dabei)
 
 ICH::=$(firstword $(MAKEFILE_LIST))
 SRCS::=$(wildcard *.cpp)
@@ -422,6 +423,16 @@ $(INSTEXEC): $(EXEC)
 	-@$(SUDC)pkill $(EXEC) $(KF); $(SUDC)pkill -9 $(EXEC) $(KF); $(SUDC)cp -p "$(EXEC)" "$(INSTEXEC)"
 endif
 
+.PHONY: shlist
+shlist:
+	-@L=shliste;Z=/root/bin;\
+		[ -f "$$L" -a -d "$$Z" ]&&\
+		for D in $$(cat $$L);do \
+		  printf "$(SUDC)cp -au \""$$D"\" \""$$Z/"\"\n";\
+			$(SUDC)cp -au "$$D" "$$Z/";\
+			grep -q "$$D" "$(AUNF)"||printf "printf \"Loesche/Deleting $$Z/$$D...\\\\n\";$(SUDC)rm -r $$Z/$$D;hash -r;\n" >>"$(AUNF)";\
+		done;:
+
 man_de.html: LGL::=deutsch
 man_de.gz man_de.html: FKT::=FUNKTIONSWEISE
 man_de.html: AWI::=AUSWIRKUNGEN
@@ -433,7 +444,7 @@ man_en.html: AWI::=IMPLICATIONS
 man_en.gz: OPN::=OPTIONS
 
 .PHONY: install
-install: $(INSTEXEC) $(INSTenMAN) $(INST_MAN) 
+install: $(INSTEXEC) $(INSTenMAN) $(INST_MAN) shlist
 
 README.md: $(HTMLS)
 	-@rm -f README.md
