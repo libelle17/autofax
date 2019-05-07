@@ -5365,9 +5365,12 @@ void hcl::virtlieskonfein()
 	if (akonfdt.empty()) {
 		svec rue;
 		// aus Datenschutzgruenden sollte das Home-Verzeichnis zuverlaessig ermittelt werden
-		systemrueck("getent passwd $(logname)|cut -d: -f6",0,0,&rue);
+	  systemrueck("getent passwd $(logname 2>/dev/null||loginctl user-status|sed -n '1s/\\(.*\\) .*/\\1/p'||whoami)|cut -d: -f6",0,0,&rue);
 		if (rue.size()) {
-			akonfdt=rue[0]+vtz+"."+DPROG+".conf";
+			//  $XDG_CONFIG_HOME in XDG Base Directory Specification
+			string confverz{rue[0]+vtz+".config"};
+			pruefverz(confverz,/*obverb=*/0,/*oblog=*/0,/*obmitfacl=*/1,/*obmitcon=*/1);
+			akonfdt=confverz+"/"+DPROG+".conf";
 		}
 	} // 	if (akonfdt.empty()) 
 	// agcnfA.init muss spaetetens am Anfang von getcommandl0 kommen
