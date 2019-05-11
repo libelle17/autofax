@@ -45,7 +45,7 @@ void hhcl::pvirtVorgbSpeziell()
 	gleichziel=1;
 	obocri=1;
 	obocra=0;
-	findvers="3";
+	findv=1;
 	muser="praxis";
 	mpwd="sonne";
 

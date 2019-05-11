@@ -33,6 +33,8 @@ enum T_
 	T_an_fFax,
 	T_an,
 	T_und,
+	T_an_Mail,
+	T_klar_an_Mail,
 	T_liescapiconf,
 	T_MeiEinrichtung,
 	T_Mei_FaxUeberschrift,
@@ -106,8 +108,14 @@ enum T_
 	T_ocra_l,
 	T_Text_aus_gesandten_Bildern_wird_ermittelt,
 	T_afs_k,
+	T_ams_k,
+	T_kams_k,
 	T_anfaxstr_l,
+	T_anmailstr_l,
+	T_klaranmailstr_l,
 	T_faxnr_wird_hinter_string_erwartet_statt_hinter,
+	T_mailadresse_wird_hinter_string_erwartet_statt_hinter,
+	T_mailadresse_fuer_unverschluesselte_Mail_wird_hinter_string_erwartet_statt_hinter,
 	T_acfs_k,
 	T_ancfaxstr,
 	T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,
@@ -266,6 +274,8 @@ enum T_
 	T_soll_Text_in_empfangenen_Faxen_mit_OCR_gesucht_werden,
 	T_soll_Text_in_gesandten_Bildern_mit_OCR_gesucht_werden,
 	T_Buchstabenfolge_vor_erster_Faxnummer,
+	T_Buchstabenfolge_vor_erster_Mailadresse,
+	T_Buchstabenfolge_vor_erster_Mailadresse_fuer_unverschluesselte_Mail,
 	T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Capisuite,
 	T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax,
 	T_Buchstabenfolge_vor_erstem_Adressaten,
@@ -566,6 +576,7 @@ enum T_
 	T_nextnum,
 	T_scheitere,
 	T_korrigierehyla,
+	T_oder_,
 	T_MAX //α
 }; // enum T_ //ω
 
@@ -720,11 +731,11 @@ class hhcl:public dhcl
 		string anfaxstr, ancfaxstr, anhfaxstr, anffaxstr; // 'an Fax', "an cFax", "an hFax", "an fFax"
 		string anstr; // ' an '
 		string undstr;  //  'und'
+		string anmailstr, klaranmailstr; // 'an Mail', 'klar an Mail'
 
 		uchar capizukonf{0}; // capi zu konfigurieren
 		uchar hylazukonf{0}; // hyla zu konfigurieren
-		string findvers; // find-Version (1=linux find, 2=intern mit readdir, 3=intern mit nftw 
-		int ifindv; // integer-Variante der find-Version
+		int findv{1}; // find-Version (1=linux find, 2=intern mit readdir, 3=intern mit nftw 
 
 		confdcl *cfaxcp{0}; // Zeiger auf ausgelesene /etc/capisuite/fax.conf
 		const string s1{"mv -n "};
@@ -941,7 +952,7 @@ class hhcl:public dhcl
 		void pvirtmacherkl();
 		void virtMusterVorgb();
 		void pvirtvorzaehler();
-		void virtzeigversion(const string& ltiffv=nix);
+		void virtzeigversion(const string& ltiffv=string());
 		void pvirtvorrueckfragen();
 		void virtrueckfragen();
 		void neurf();

@@ -2125,24 +2125,22 @@ template <typename SCL> void confdcl::kauswert(schAcl<SCL> *sA, int obverb,const
 			while(ii--) {
 				sA->schl[ii]->ausgewertet=0;
 			}
+			if (obverb) cout<<"sA->name: "<<sA->name<<", paare.size(): "<<paare.size()<<", sA->schl.size(): "<<sA->schl.size()<<endl;
 			for(size_t nr=0;nr<paare.size();nr++) {
-						size_t ii=sA->schl.size();
+						size_t ii{sA->schl.size()};
 						//// <<"auswert() "<<pname<<" vor while, wert: "<<wert<<endl;
-////						if (obverb) caus<<"Stell 9, sA->name: "<<sA->name<<endl;
 						while(ii--) {
 							if (sA->schl[ii]) if (!sA->schl[ii]->ausgewertet) { 
 								// conf[ii]->pname muss am Zeilenanfang anfangen, sonst Fehler z.B.: number, faxnumber
 								if (paare[nr].name==sA->schl[ii]->pname) {
-									//// if (obverb) caus<<"werte aus ..."<<endl;
 									sA->schl[ii]->ausgewertet=1;
-									//// <<"sA->schl[ii]->pname: "<<sA->schl[ii]->pname<<endl;
-									//// <<blau<<"setze!"<<schwarz<<endl;
-									// if (obverb) caus<<"Stell 11, sA->schl["<<ii<<"]->pname: "<<sA->schl[ii]->pname<<", wert: "; sA->schl[ii]->virtoausgeb(); caus<<endl;
+									if (obverb){cout<<"setze: sA->schl["<<ii<<"]->pname: "<<sA->schl[ii]->pname<<":   "; sA->schl[ii]->virtoausgeb();}
 									const int kafnr{sA->schl[ii]->setzstr(paare[nr].wert.c_str(),&obzuschreib,/*ausDatei=*/1)};
 									if (!kafnr) {
 										sA->setzbemerkwoher(sA->schl[ii].get(),/*bemerk=*/paare[nr].bemerk,/*woher*/2);
 										++richtige;
 									}
+									if (obverb){cout<<"gesetzt:    "; sA->schl[ii]->virtoausgeb();}
 									break;
 								} // if( !strcmp(sA[i]->pname.c_str(),zeile->c_str()) ) 
 							} // 	if (sA->schl[ii]) if (!sA->schl[ii]->ausgewertet)
@@ -2173,35 +2171,35 @@ void wpgcl::virtfrisch()
 
 void WPcl::virtfrisch()
 {
-////	caus<<violett<<"WPcl::virtfrisch "<<blau<<pname<<schwarz<<endl;
+////	<<violett<<"WPcl::virtfrisch "<<blau<<pname<<schwarz<<endl;
 	wpgcl::virtfrisch();
 	gelesen=0;
 	wert.clear();
-////	caus<<violett<<"Ende WPcl::virtfrisch "<<blau<<pname<<schwarz<<endl;
+////	<<violett<<"Ende WPcl::virtfrisch "<<blau<<pname<<schwarz<<endl;
 }
 
 optcl::~optcl()
 {
-////	caus<<"Loesche optcl, pname: "<<blau<<pname<<schwarz<<endl;
+////	<<"Loesche optcl, pname: "<<blau<<pname<<schwarz<<endl;
 }
 
 void optcl::virtfrisch()
 {
-////	caus<<violett<<"optcl::virtfrisch "<<blau<<pname<<schwarz<<endl;
+////	<<violett<<"optcl::virtfrisch "<<blau<<pname<<schwarz<<endl;
 	wpgcl::virtfrisch();
 	woher=0;
 	gegenteil=0;
   nichtspeichern=0;	
-////	caus<<violett<<"Ende optcl::virtfrisch "<<blau<<pname<<schwarz<<endl;
+////	<<violett<<"Ende optcl::virtfrisch "<<blau<<pname<<schwarz<<endl;
 } // void optcl::virtfrisch()
 
 template<typename SCL> void schAcl<SCL>::frisch()
 {
-	////	caus<<violett<<"frisch schAcl: "<<blau<<name<<schwarz<<endl;
+	////	<<violett<<"frisch schAcl: "<<blau<<name<<schwarz<<endl;
 	for(size_t i=0;i<schl.size();i++) {
 		schl[i]->virtfrisch();
   }
-////	caus<<violett<<"Ende frisch schAcl: "<<blau<<name<<schwarz<<endl;
+////	<<violett<<"Ende frisch schAcl: "<<blau<<name<<schwarz<<endl;
 } // void schAcl::frisch()
 
 
@@ -2212,16 +2210,16 @@ template<typename SCL> schAcl<SCL>::schAcl(const string& name):name(name)
 
 template<typename SCL> schAcl<SCL>::~schAcl()
 {
-//// caus<<violett<<"Loesche schAcl: "<<blau<<name<<schwarz<<" size(): "<<size()<<endl;
+//// <<violett<<"Loesche schAcl: "<<blau<<name<<schwarz<<" size(): "<<size()<<endl;
 	for(size_t i=0;i<schl.size();i++) {
 		//delete schl[i];
-////		caus<<"i: "<<i<<", schl[i]: "<<schl[i]<<", pname: ";
-////		caus<<blau<<schl[i]->pname<<schwarz<<endl;
+////		<<"i: "<<i<<", schl[i]: "<<schl[i]<<", pname: ";
+////		<<blau<<schl[i]->pname<<schwarz<<endl;
 		schl[i].reset();
 ////		schl[i]=0; // falls selbes Element in mehreren Vektoren
 	}
 	////schl.clear();
-//// caus<<violett<<"Ende loesche schAcl: "<<blau<<name<<schwarz<<endl;
+//// <<violett<<"Ende loesche schAcl: "<<blau<<name<<schwarz<<endl;
 	////schl.clear();
 }// template<typename SCL> schAcl<SCL>::~schAcl()
 
@@ -2492,7 +2490,7 @@ int systemrueck(const string& cmd, int obverb/*=0*/, int oblog/*=0*/, vector<str
     const int verbergen/*=0*/, int obergebnisanzeig/*wahr*/, const string& ueberschr/*=string()*/,vector<errmsgcl> *errm/*=0*/,uchar obincron/*=0*/,
 		stringstream *ausgp/*=0*/,uchar obdirekt/*=0*/)
 {
-////	caus<<rot<<"cmd: "<<violett<<cmd<<schwarz<<endl;
+////	<<rot<<"cmd: "<<violett<<cmd<<schwarz<<endl;
 // verbergen: 0 = nichts, 1= '2>/dev/null' anhaengen + true zurueckliefern, 2='>/dev/null 2>&1' anhaengen + Ergebnis zurueckliefern
 	// die 'if (obverb||oblog)' sind zur Vermeidung von Rekursionen mit Endlosschleifen
   binaer ob0heissterfolg{wahr};
@@ -2556,7 +2554,7 @@ int systemrueck(const string& cmd, int obverb/*=0*/, int oblog/*=0*/, vector<str
 	perfcl prf("systemrueck");
 #endif // systemrueckprofiler
 	// obsudc==0 nichts, obsudc==1: "sudo ", obsudc==2: "sudo -H "
-////	caus<<violett<<"bef: "<<blau<<bef<<schwarz<<endl;
+////	<<violett<<"bef: "<<blau<<bef<<schwarz<<endl;
 	if (rueck) {
 		//// <<gruen<<bef<<schwarz<<endl;
     if (FILE* pipe{popen(bef.c_str(),"r")}) {
@@ -5111,7 +5109,7 @@ void hcl::lauf()
 	} // 	if (obsetz)
 	virtschlussanzeige();
 	hLog(violetts+Txk[T_Ende]+schwarz);
-} // hcl::lauf()
+} // hcl::lauf
 
 // wird aufgerufen in: hcl::hcl
 void hcl::holbefz0(const int argc, const char *const *const argv)
@@ -5298,7 +5296,7 @@ void hcl::parsecl()
 				if (langp) omp=&opn.olmap;
 				else if (kurzp) omp=&opn.okmap;
 				if (omp) {
-////					caus<<"acstr: '"<<acstr<<"', omp->size(): "<<omp->size()<<endl;
+////					<<"acstr: '"<<acstr<<"', omp->size(): "<<omp->size()<<endl;
 					for(omit=omp->begin();omit!=omp->end();omit++) {
 						//// <<"omit: "<<omit->second->pname<<", "<<omit->first<<endl;
 						// omit ist also jetzt iterator fuer die relevante map auf die aktuelle Option (kurz oder lang)
@@ -6290,7 +6288,7 @@ optcl::optcl(const string& pname,const void* pptr,const par_t part, const int ku
 	kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),Txi2(Txi2),rottxt(rottxt),iwert(iwert),
 	woher(woher),Txrf(Txrf),obno(obno)/*=0*///,eingetragen(0)
 {
-////	caus<<gruen<<"Erstelle optcl, pname: "<<schwarz<<violett<<pname<<endl;
+////	<<gruen<<"Erstelle optcl, pname: "<<schwarz<<violett<<pname<<endl;
 }
 
 optcl::optcl(const void* pptr,const par_t part, const int kurzi, const int langi, TxB* TxBp, const long Txi,
@@ -6298,7 +6296,7 @@ optcl::optcl(const void* pptr,const par_t part, const int kurzi, const int langi
 	kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),Txi2(Txi2),rottxt(rottxt),iwert(iwert),
 	woher(woher),obno(obno)/*=0*///,eingetragen(0)
 {
-////	caus<<gruen<<"Erstelle optcl, pname: "<<schwarz<<violett<<pname<<endl;
+////	<<gruen<<"Erstelle optcl, pname: "<<schwarz<<violett<<pname<<endl;
 }
 
 int hcl::hLog(const string& text,const bool oberr/*=0*/,const short klobverb/*=0*/) const
@@ -6673,7 +6671,7 @@ void optcl::virtweisomapzu(void *schlp)
 	// interne Berechnungen durchfuehren
 	// Bemerkung erst beim Schreiben setzen
 	// Indices (maps) belegen
-	//// caus<<"weise omap zu, pname: "<<blau<<pname<<schwarz<<endl;
+	//// <<"weise omap zu, pname: "<<blau<<pname<<schwarz<<endl;
 //	((schAcl<optcl>*)schlp)->gibomapaus();
 	if (!pname.empty()) {
 		((schAcl<optcl>*)schlp)->omap[pname]=this;
@@ -6691,7 +6689,7 @@ void optcl::virtweisomapzu(void *schlp)
 void optcl::virtloeschomaps(schAcl<optcl> *schlp)
 {
 	// Indices (maps) loeschen
-	//// caus<<"loesche omap, pname: "<<blau<<pname<<schwarz<<endl;
+	//// <<"loesche omap, pname: "<<blau<<pname<<schwarz<<endl;
 //	((schAcl<optcl>*)schlp)->gibomapaus();
 	if (!pname.empty()) {
 		((schAcl<optcl>*)schlp)->omap.erase(pname);
@@ -6844,7 +6842,7 @@ const uchar optcl::virteinzutragen(/*schAcl<optcl>**/void* schlp,int obverb)
 	////	obverb=1;
 	// fLog(violetts+Txk[T_einzutragen]+blaus+pname+schwarz+"'",obverb,0);
 	map<string,optcl*>::iterator omit{((schAcl<optcl>*)schlp)->omap.find(pname)};
-	////	caus<<violett<<">)"; caus<<omit->first<<endl;caus<<omit->second->pname<<endl;omit->second->virtoausgeb(); caus<<schwarz;
+	////	<<violett<<">)"; caus<<omit->first<<endl;caus<<omit->second->pname<<endl;omit->second->virtoausgeb(); caus<<schwarz;
 	if (omit!=((schAcl<optcl>*)schlp)->omap.end()) {
 		if (omit->second->eingetragen) {
 			fLog(ltoan(nr)+" "+violetts+Txk[T_einzutragen]+Txk[T_schon_eingetragen]+blaus+omit->first+schwarz+"' = '"+omit->second->virtholstr()+schwarz+"'",obverb,0);
@@ -6867,7 +6865,7 @@ const uchar optcl::virteinzutragen(/*schAcl<optcl>**/void* schlp,int obverb)
 template<typename SCL> void schAcl<SCL>::schAschreib(mdatei *const f,int obverb)
 {
 	//	eintrinit();
-	////	caus<<"schl.size(): "<<schl.size()<<", omap.size(): "<<omap.size()<<endl;
+	////	<<"schl.size(): "<<schl.size()<<", omap.size(): "<<omap.size()<<endl;
 	for (size_t i=0;i<schl.size();i++) {
 		//// <<"i: "<<blau<<i<<schwarz<<", pname: "<<blau<<schl[i]->pname<<schwarz<<", pptr: "<<blau<<schl[i]->virtholstr()<<schwarz<<endl;
 		if (!schl[i]->pname.empty()) {
@@ -6977,9 +6975,9 @@ template<typename SCL> schAcl<SCL>& schAcl<SCL>::operator<<(shared_ptr<SCL> schp
 {
 ////	shared_ptr<SCL> kopie{schp};
 ////	schl.push_back(kopie); 
-////	caus<<rot<<"Uebertrage nach "<<blau<<name<<rot<<" smart_ptr "<<blau<<schp->pname<<schwarz;
+////	<<rot<<"Uebertrage nach "<<blau<<name<<rot<<" smart_ptr "<<blau<<schp->pname<<schwarz;
 	schl.push_back(schp);
-////	caus<<", Adresse: "<<blau<<schl[schl.size()-1]<<schwarz<<endl;
+////	<<", Adresse: "<<blau<<schl[schl.size()-1]<<schwarz<<endl;
 	schl[schl.size()-1]->virtweisomapzu(this); 
 	return *this; 
 }
@@ -6988,7 +6986,7 @@ template<typename SCL> schAcl<SCL>& schAcl<SCL>::operator<<(SCL *schp)
 // template<typename SCL> schAcl<SCL>& schAcl<SCL>::operator<<(shared_ptr<SCL> schp) 
 { 
 	/*//
-	caus<<"neuer Ueberladeoperator, pname: "<<schp->pname<<endl;
+	<<"neuer Ueberladeoperator, pname: "<<schp->pname<<endl;
 	SCL *sch= (SCL*)::operator new(sizeof *schp);
 	memcpy(sch,schp,sizeof *sch);
 	schl.push_back(*schp); 
@@ -6996,14 +6994,14 @@ template<typename SCL> schAcl<SCL>& schAcl<SCL>::operator<<(SCL *schp)
 	return *this; 
 	*/
 	//return operator<<(*schp); 
-////	caus<<rot<<name<<rot<<"<<"<<violett<<schp->pname<<endl;
-////	caus<<rot<<"Uebertrage nach "<<blau<<name<<rot<<" Zeiger "<<blau<<schp->pname<<schwarz;
+////	<<rot<<name<<rot<<"<<"<<violett<<schp->pname<<endl;
+////	<<rot<<"Uebertrage nach "<<blau<<name<<rot<<" Zeiger "<<blau<<schp->pname<<schwarz;
 	
 	shared_ptr<SCL> kopie{schp};
 //	shared_ptr<SCL> *kopie = new shared_ptr<SCL>(schp);
 	schl.push_back(kopie); 
 
-////	caus<<", Adresse: "<<blau<<schl[schl.size()-1]<<schwarz<<endl;
+////	<<", Adresse: "<<blau<<schl[schl.size()-1]<<schwarz<<endl;
 
 	schl[schl.size()-1]->virtweisomapzu(this); 
 	return *this; 
@@ -7013,7 +7011,7 @@ hcl::~hcl()
 {
 	delete linstp;
 	linstp=0;
-	////	caus<<"hcl-Destruktor"<<endl;
+	////	<<"hcl-Destruktor"<<endl;
 }
 
 // damit nicht Template-Klassen-Funktionen in Header-Dateien geschrieben werden muessen
