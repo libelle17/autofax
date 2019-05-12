@@ -320,7 +320,7 @@ be expected after &lt;string&gt; instead of (&rsquo;<b>an
 Mail</b>&rsquo;) <b><br>
 -ptms, --plaintomailstr &lt;string&gt;</b>: mail address for
 unencoded mail will be expected after &lt;string&gt; instead
-of (&rsquo;<b>klar an Mail</b>&rsquo;) <b><br>
+of (&rsquo;<b>klar an</b>&rsquo;) <b><br>
 -fd, --find &lt;zahl&gt;</b>: version 1,2 or 3 of filefind
 (variable performance differences instead of (<b>1</b>)
 <b><br>
@@ -1162,7 +1162,7 @@ hinter &lt;string&gt; erwartet statt hinter (&rsquo;<b>an
 Mail</b>&rsquo;) <b><br>
 -kams, --klaranmailstr &lt;string&gt;</b>: mailadresse fuer
 unverschluesselte Mail wird hinter &lt;string&gt; erwartet
-statt hinter (&rsquo;<b>klar an Mail</b>&rsquo;) <b><br>
+statt hinter (&rsquo;<b>klar an</b>&rsquo;) <b><br>
 -fd, --finde &lt;zahl&gt;</b>: Version 1,2 oder 3
 -Dateisuche (variable Performanceunterschiede) anstatt
 (<b>1</b>) <b><br>

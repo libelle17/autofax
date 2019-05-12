@@ -77,8 +77,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"und","and"},
 	// T_an_Mail
 	{"an Mail","to mail"},
-	// T_klar_an_Mail
-	{"klar an Mail","plain to mail"},
+	// T_klar_an
+	{"klar an","plain to"},
 	// T_liescapiconf
 	{"liescapiconf()","readcapiconf()"},
 	// T_MeiEinrichtung
@@ -2692,7 +2692,7 @@ void hhcl::virtVorgbAllg()
 	anhfaxstr=Tx[T_an_hFax];
 	anffaxstr=Tx[T_an_fFax];
 	anmailstr=Tx[T_an_Mail];
-	klaranmailstr=Tx[T_klar_an_Mail];
+	klaranmailstr=Tx[T_klar_an];
 	anstr=Tx[T_an];
 	undstr=Tx[T_und];
 	countrycode="49";
@@ -6011,6 +6011,7 @@ void hhcl::wegfaxen()
 	const string filter[]{" [[:space:][:punct:]]*[0-9][0-9[:space:][:punct:]]*[_]\\?.*\\.",// statt ?.* zuvor ?[0-9]*, aber vielleicht unnoetig
 		" [a-zA-Z0-9.!#$%&'\\''*+/=?^_`{|}~-]\\+@[a-zA-Z0-9]\\([a-zA-Z0-9-]\\{0,61\\}[a-zA-Z0-9]\\)\\?\\(\\.[a-zA-Z0-9]\\([a-zA-Z0-9-]\\{0,61\\}[a-zA-Z0-9]\\)\\?\\)*[_]\\?.*\\."
 	};
+obverb=2;
 	struct stat entrynpdf{0};
 	////vector<string> npdf, spdf, *npdfp=&npdf, *spdfp=&spdf;  vector<uchar> prios;
 	vector<fxfcl> fxv; // Faxvektor
@@ -6073,7 +6074,6 @@ void hhcl::wegfaxen()
 			} // 		if (mu[iprio].setzemuster(mstr,0))
 #endif
 			 */
-
 			// der Reihe nach nach Dateien suchen, die das jeweilige Trennzeichen enthalten
 			for(size_t iakt=0;iakt<zfda.size();iakt++) {
 				if (!zfda.at(iakt).empty()) {
@@ -6108,12 +6108,21 @@ void hhcl::wegfaxen()
 						} // 						if (toktxt.size()>1)
 						for(size_t i=0;i<toknr.size();i++) {
 							string neunr;
+							if (strchr(toknr[i].c_str(),'@')) { // Mail
+							  for(size_t p=toknr[i].length()-1;p;--p) {
+								 if (!strchr("0123456789",toknr[i][p])) {
+										 if (toknr[i][p]=='_') toknr[i].erase(p);
+										 break;
+								 }
+								}
+							} else { //Fax
 							for(size_t p=0;p<toknr[i].length();p++) {
 								if (toknr[i][p]=='+') neunr+="00";
 								else if (strchr("0123456789",toknr[i][p])) neunr+=toknr[i][p];
 								else if (toknr[i][p]=='_') break;
 							}
 							toknr[i]=neunr;
+							}
 						} // 						for(size_t i=0;i<toknr.size();i++)
 						for(size_t i=0;i<tokname.size();i++) gtrim(&tokname[i]);
 						for(size_t i=toknr.size();i<tokname.size();i++) toknr<<""; // Fehlende auffuellen
@@ -6808,9 +6817,6 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 		  suchs="find '"+fbankvz+"' -mtime -1 -iname '*pdf'";	
 		}
 		systemrueck(suchs,2,oblog,&qrueck);
-		for(size_t i=0;i<qrueck.size();i++) {
-			caus<<qrueck[i]<<endl;
-		}
 	} // 	if (!fbankvz.empty()&&!lstat(fbankvz.c_str(),&fst))
 
 	// 2) capi

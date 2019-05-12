@@ -34,7 +34,7 @@ enum T_
 	T_an,
 	T_und,
 	T_an_Mail,
-	T_klar_an_Mail,
+	T_klar_an,
 	T_liescapiconf,
 	T_MeiEinrichtung,
 	T_Mei_FaxUeberschrift,
@@ -731,7 +731,7 @@ class hhcl:public dhcl
 		string anfaxstr, ancfaxstr, anhfaxstr, anffaxstr; // 'an Fax', "an cFax", "an hFax", "an fFax"
 		string anstr; // ' an '
 		string undstr;  //  'und'
-		string anmailstr, klaranmailstr; // 'an Mail', 'klar an Mail'
+		string anmailstr, klaranmailstr; // 'an Mail', 'klar an'
 
 		uchar capizukonf{0}; // capi zu konfigurieren
 		uchar hylazukonf{0}; // hyla zu konfigurieren

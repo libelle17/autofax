@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "11.05.19" "Version 0.47335" "\fB²DPROG²\fR man page"
+.TH man 1 "12.05.19" "Version 0.47335" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -183,7 +183,7 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fB -tms, --tomailstr <string>\fR: the mail address will be expected after <string> instead of ('\fBan Mail\fR')
 .br
-\fB -ptms, --plaintomailstr <string>\fR: mail address for unencoded mail will be expected after <string> instead of ('\fBklar an Mail\fR')
+\fB -ptms, --plaintomailstr <string>\fR: mail address for unencoded mail will be expected after <string> instead of ('\fBklar an\fR')
 .br
 \fB -fd, --find <zahl>\fR: version 1,2 or 3 of filefind (variable performance differences instead of (\fB1\fR)
 .br
