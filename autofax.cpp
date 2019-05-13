@@ -2425,7 +2425,9 @@ int hhcl::pruefcapi()
 					if (system!=sus)
 						linstp->doggfinst("capiutils",obverb+1,oblog);
 					pruefsfftobmp();
+					caus<<"Stelle 1"<<endl;
 					linstp->doggfinst("libcapi20-2",obverb+1,oblog);
+					caus<<"Stelle 2"<<endl;
 					linstp->doggfinst("libcapi20-3",obverb+1,oblog);
 					linstp->doggfinst("python-devel",obverb+1,oblog);
 					linstp->doinst("libxslt-tools",obverb+1,oblog,"xsltproc");
@@ -5781,7 +5783,7 @@ void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 	} // for (unsigned nachrnr=0; nachrnr<spdfp->size(); ++nachrnr) 
 	for (uchar tr=0;tr<2;tr++) {
 		char ***cerg;
-		RS tellen(My,string("SELECT MAX(LENGTH(gettel3(")+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"')))"
+		RS tellen(My,string("SELECT MAX(LENGTH(gettel3(")+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"','"+anmailstr+"','"+klaranmailstr+"')))"
 				" FROM `" +spooltab+"`",aktc,ZDB);
 		while (cerg=tellen.HolZeile(),cerg?*cerg:0) {
 			if (*(*cerg+0) && *(*(*cerg+0))) {
@@ -5792,10 +5794,10 @@ void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 		} //     while (cerg=tellen.HolZeile(),cerg?*cerg:0)
 		// hier wird die Telefonnummer aus dem Namen extrahiert
 		RS tea(My,"UPDATE `"+altspool+"` "
-				"SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
+				"SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"','"+anmailstr+"','"+klaranmailstr+"') "
 				"WHERE telnr=''",aktc,ZDB);
 		RS tel(My,"UPDATE `"+spooltab+"` "
-				"SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
+				"SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"','"+anmailstr+"','"+klaranmailstr+"') "
 				"WHERE telnr=''",aktc,ZDB);
 	} //   for (uchar tr=0;tr<2;tr++)
 	hLog(violetts+Txk[T_Ende]+Tx[T_WVZinDatenbank]+schwarz);
@@ -8360,6 +8362,9 @@ void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, cons
 	const string body{
 		"begin \n"
 		" declare pos int;\n"
+		" declare obMail int default 0;\n"
+		" declare nachAffe int default 0;\n"
+		" declare nachPunkt int default 0;\n"
 		" declare ch char default '0';\n"
 		" declare tel varchar(100) default '';\n"
 		" set pos = instr(dname,anfaxstr);\n"
@@ -8367,14 +8372,26 @@ void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, cons
 		"  set pos=pos+length(anfaxstr);\n"
 		" else\n"
 		"  if ancfaxstr > '' then\n"
-		"   set pos = instr(dname,ancfaxstr);\n"
+		"   set pos=instr(dname,ancfaxstr);\n"
 		"   if pos>0 then\n"
 		"    set pos=pos+length(ancfaxstr);\n"
 		"   else\n"
 		"    if anhfaxstr > '' then\n"
-		"     set pos = instr(dname,anhfaxstr);\n"
+		"     set pos=instr(dname,anhfaxstr);\n"
 		"     if pos>0 then\n"
 		"      set pos=pos+length(anhfaxstr);\n"
+		"     else\n"
+		"      set pos=instr(dname,anmailstr);\n"
+	  "      if pos>0 then\n"
+		"       set obMail=1;\n"
+    "       set pos=pos+length(anmailstr);\n"
+		"      else\n"
+		"       set pos=instr(dname,klaranmailstr);\n"
+	  "       if pos>0 then\n"
+		"        set obMail=1;\n"
+    "        set pos=pos+length(klaranmailstr);\n"
+		"       end if;\n"
+		"      end if;\n"
 		"     end if;\n"
 		"    end if;\n"
 		"   end if;\n"
@@ -8382,17 +8399,36 @@ void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, cons
 		" end if;\n"
 		" if pos>0 then\n"
 		"  wlab: loop\n"
-		"   set ch = substring(dname,pos,1);\n"
-		"   if ch = '_' then leave wlab; end if;\n"
-		"   if instr('0123456789',ch) then set tel=concat(tel,ch);\n"
-		"   else if ch='+' then set tel=concat(tel,'00'); end if; end if;\n"
+		"   set ch=substring(dname,pos,1);\n"
+		"   if obMail=1 then\n"
+		"    if ch='@' then\n"
+		"     set nachAffe=1;\n"
+		"    else\n"
+		"     if ch='.' then\n"
+		"      if nachPunkt=1 then\n"
+		"       leave wlab;\n"
+		"      else\n"
+		"       if nachAffe=1 then\n"
+		"        set nachPunkt=1;\n"
+		"       end if;\n"
+		"      end if;\n"
+		"     end if;\n"
+		"    end if;\n"
+		"   end if;\n"
+		"   if (obMail=0 or nachPunkt=1) and ch='_' then leave wlab; end if;\n"
+		"   if obMail=0 then\n"
+		"    if instr('0123456789',ch) then set tel=concat(tel,ch);\n"
+		"    else if ch='+' then set tel=concat(tel,'00'); end if; end if;\n"
+		"   else\n"
+		"    set tel=concat(tel,ch);\n"
+		"   end if;\n"
 		"   set pos=pos+1;\n"
 		"   if pos>length(dname) then leave wlab; end if;\n"
 		"  end loop;\n"
 		" end if;\n"
 		" return tel;\n"
 		"end"};
-	const string para{"(dname VARCHAR(1000), anfaxstr VARCHAR(100), ancfaxstr VARCHAR(100), anhfaxstr VARCHAR(100)) \n"
+	const string para{"(dname VARCHAR(1000),anfaxstr VARCHAR(100),ancfaxstr VARCHAR(100),anhfaxstr VARCHAR(100),anmailstr VARCHAR(150),klaranmailstr VARCHAR(150)) \n"
 		"RETURNS VARCHAR(1000) CHARSET utf8 COLLATE utf8_unicode_ci DETERMINISTIC\n"};
 	Myp->prueffunc("gettel3", body, para, aktc,obverb,oblog);
 } // void prueffuncgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
