@@ -691,6 +691,7 @@ struct fsfcl : public fxfcl // Faxsendfile
     int hversuzahl;
     FxStat capistat=init;// 1=wartend, 2=gesandt, 3=gescheitert, 4=fehlend (in spool keine Capi-Datei eingetragen oder die eingetragene gibts nicht)
     FxStat hylastat=init;// 1=wartend, 2=gesandt, 3=gescheitert, 4=fehlend (in spool keine hyla-Datei eingetragen oder die eingetragene gibts nicht)
+		int wiemail{0};
   private:
   public:
 		void archiviere(DB *const My, hhcl *const hhip, const struct stat *const entryp,const uchar obgescheitert, const FaxTyp ftyp, 
@@ -698,9 +699,9 @@ struct fsfcl : public fxfcl // Faxsendfile
 		int loeschecapi(const int obverb, const int oblog);
     int loeschehyla(hhcl *const hhip, const int obverb, const int oblog);
     /*1*/fsfcl(const string id, const string npdf, const string spdf, const string telnr, unsigned prio, const string capisd, int capids, 
-		           const string hylanr, int hdialsn, uchar fobfbox, uchar fobcapi, uchar fobhyla, const string adressat, ulong pseiten, string idalt):
+		           const string hylanr, int hdialsn, uchar fobfbox, uchar fobcapi, uchar fobhyla, const string adressat, ulong pseiten, string idalt,int wiemail):
          fxfcl(prio,npdf,spdf,pseiten), id(id), telnr(telnr), capisd(capisd), capids(capids), 
-         hylanr(hylanr), hdialsn(hdialsn), fobfbox(fobfbox), fobcapi(fobcapi), fobhyla(fobhyla), adressat(adressat),idalt(idalt) {}
+         hylanr(hylanr), hdialsn(hdialsn), fobfbox(fobfbox), fobcapi(fobcapi), fobhyla(fobhyla), adressat(adressat),idalt(idalt),wiemail(wiemail) {}
     /*2*/fsfcl(const string id,const string original): id(id), original(original) {}
     /*3*/fsfcl(const string id, const string capisd, const string hylanr, string const cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
     /*4*/fsfcl(const string& hylanr): hylanr(hylanr) {}
@@ -944,6 +945,8 @@ class hhcl:public dhcl
 		           const string& telnr, const size_t aktc);
 		void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
+		void vmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
+		void kmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
 				const fsfcl *const fsfp,const string *const tel, const size_t aktc);
 	protected: //α

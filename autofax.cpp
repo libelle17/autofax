@@ -709,7 +709,7 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	// T_zu_senden_an
 	{"zu senden an","to be sent to"},
 	// T_wie_mailen
-	{"wie zu mailen","how to mail"},
+	{"wie zu mailen (1=verschluesselt,2=klar)","how to mail (1=encrypted, 2=plain)"},
 	// T_Adressat
 	{"Adressat","addressee"},
 	// T_Prioritaet_aus_Dateinamen
@@ -4385,7 +4385,7 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
 			Feld("origvu","varchar","1","",Tx[T_Originalname_der_Datei_vor_Umwandlung_in_PDF],0,0,1),
 			Feld("idudoc","int","10","",Tx[T_Index_auf_urspruenglichen_Dateinamen],0,0,1),
 			Feld("telnr","varchar","1","",Tx[T_zu_senden_an],0,0,1),
-			Feld("wiemail","int","1","",Tx[T_wie_mailen],0,0,1,/*defa=*/"0"),
+			Feld("wiemail","int","1","",Tx[T_wie_mailen],0,0,1,/*defa=*/"0"), // 1 = verschluesselte Mail, 2 = klare Mail
 			Feld("adressat","varchar","1","",Tx[T_Adressat],0,0,1),
 			Feld("prio","int","1","",Tx[T_Prioritaet_aus_Dateinamen],0,0,1),
 			Feld("capidials","int","10","",Tx[T_Zahl_der_bisherigen_Versuche_in_Capisuite],0,0,1),
@@ -4971,7 +4971,7 @@ int hhcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct stat *
 	return erg;
 } // int hhcl::holtif(string& datei,struct tm *tmp,ulong *seitenp,string *calleridp,string *devnamep)
 
-// in wegfaxen und empfarch (2x)
+// in wegfaxen und empfhyla und empfcapi
 int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/, const int obocr/*=1*/, const int loeschen/*=1*/) // 0=Erfolg
 {
 	hLog(violetts+Tx[T_zupdf]+schwarz+" '"+blau+*quellp+schwarz+"' '"+blau+ziel+schwarz+"', obocr: "+(obocr?"1":"0")+", loeschen: "+(loeschen?"1":"0"));
@@ -5741,7 +5741,7 @@ void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 	for (unsigned nachrnr=0; nachrnr<fxvp->size(); ++nachrnr) {
 		rins.dsclear();
 		vector<instyp> einf; // fuer alle Datenbankeinfuegungen
-		int wiemail{0};
+		int wiemail{0};// 1 = verschluesselte Mail, 2 = klare Mail
 		////<<rot<<"1: "<<gruen<<fxvp->at(nachrnr).spdf<<schwarz<<endl;
 		////<<rot<<"2: "<<gruen<<fxvp->at(nachrnr).ur<<schwarz<<endl;
 		////<<rot<<"3: "<<gruen<<fxvp->at(nachrnr).npdf<<schwarz<<endl;
@@ -5949,6 +5949,14 @@ void hhcl::inDBh(DB *My, const string& spooltab, const string& altspool, const s
 	}   // if (!lstat((*spoolgp->c_str()), &entryspool)) 
 } // inDBh
 
+
+void hhcl::vmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
+{
+}
+
+void hhcl::kmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
+{
+}
 
 // wird aufgerufen in: wegfaxen
 void hhcl::faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
@@ -6551,7 +6559,7 @@ void hhcl::wegfaxen()
 			////      "      (prio=2 OR (prio=0 AND "+hzstr+")))) p10, "
 			"      (s.prio=3 OR s.prio=1))) p11, "
 			"s.adressat p12, s.pages p13 "
-			",alts.id p14 "
+			",alts.id p14, s.wiemail p15 "
 			"FROM `"+spooltab+"` s "
 			"LEFT JOIN `"+altspool+"` alts ON s.idudoc=alts.idudoc "
 			"WHERE s.original>'' GROUP BY s.id",aktc,ZDB);
@@ -6566,7 +6574,7 @@ void hhcl::wegfaxen()
 				fsfv.push_back(/*1*/fsfcl(cjj(cerg,0)/*id*/, cjj(cerg,1)/*npdf*/, cjj(cerg,2)/*spdf*/, cjj(cerg,3)/*telnr*/, 
 							atoi(cjj(cerg,4))/*prio*/, cjj(cerg,5)/*capisd*/, atoi(cjj(cerg,6))/*capids*/, cjj(cerg,7)/*hylanr*/, atoi(cjj(cerg,8))/*hdialsn*/,
 							(binaer)atoi(cjj(cerg,9))/*fobfbox*/, (binaer)atoi(cjj(cerg,10))/*fobcapi*/, (binaer)atoi(cjj(cerg,11))/*fobhyla*/, 
-							cjj(cerg,12)/*adressat*/, atoi(cjj(cerg,13)/*pages*/), cjj(cerg,14)/*alts.id*/));
+							cjj(cerg,12)/*adressat*/, atoi(cjj(cerg,13)/*pages*/), cjj(cerg,14)/*alts.id*/, atoi(cjj(cerg,15))/*s.wiemail*/));
 			} // 			if (*(*cerg+0) && *(*cerg+1) && *(*cerg+2) && *(*cerg+3) && *(*cerg+4) && *(*cerg+5) &&  ...
 		} // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
 		hLog(Tx[T_ZahldDSmwegzuschickendenFaxenin]+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz);
@@ -6642,8 +6650,8 @@ void hhcl::wegfaxen()
 				} else {
 					if (wasichbin==1||nursend) if (fsfv[i].fobcapi) if (obcapi) faxemitC(My, spooltab, altspool, &fsfv[i],ff);  
 					if (wasichbin==2||nursend) if (fsfv[i].fobhyla) if (obhyla) faxemitH(My, spooltab, altspool, &fsfv[i],ff);  
-					// if (wasichbin==4||nursend) if (fsfv[i].telnr.find('@') if (obhyla) faxemitH(My, spooltab, altspool, &fsfv[i],ff);  
-					// if (wasichbin==5||nursend) if (fsfv[i].fobhyla) if (obhyla) faxemitH(My, spooltab, altspool, &fsfv[i],ff);  
+					if (wasichbin==4||nursend) if (fsfv[i].wiemail==1) vmail(My, spooltab, altspool, &fsfv[i],ff);  
+					if (wasichbin==5||nursend) if (fsfv[i].wiemail==2) kmail(My, spooltab, altspool, &fsfv[i],ff);  
 				} // if (pid>0 && lstat(ff.c_str(),&st))
 				////      _out<<fsfv[i].id<<" "<<rot<<fsfv[i].npdf<<" "<<schwarz<<(int)fsfv[i].obcapi<<" "<<(int)fsfv[i].obhyla<<endl;
 			} // for(unsigned i=0;i<fsfv.size();i++) 
