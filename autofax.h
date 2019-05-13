@@ -338,6 +338,8 @@ enum T_
 	T_Originalname_der_Datei,
 	T_Originalname_der_Datei_vor_Umwandlung_in_PDF,
 	T_zu_senden_an,
+	T_wie_mailen,
+	T_Adressat,
 	T_Prioritaet_aus_Dateinamen,
 	T_Zahl_der_bisherigen_Versuche_in_Capisuite,
 	T_Zahl_der_bisherigen_Versuche_in_Hylafax,
@@ -387,6 +389,7 @@ enum T_
 	T_docname,
 	T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird,
 	T_telnr,
+	T_wiemail,
 	T_Gabelung_zu_korrigierecapi_misslungen,
 	T_Gabelung_zu_korrigierehyla_misslungen,
 	T_Gabelung_zu_faxemitH_misslungen,
@@ -396,6 +399,8 @@ enum T_
 	T_Gabelung_zu_empfarch_misslungen,
 	T_Gabelung_zu_wegfaxen_misslungen,
 	T_Gabelung_zu_bereinigevz_misslungen,
+	T_Gabelung_zu_vmail_misslungen,
+	T_Gabelung_zu_kmail_misslungen,
 	T_empfarch,
 	T_empfcapi,
 	T_empfhyla,
@@ -577,6 +582,7 @@ enum T_
 	T_scheitere,
 	T_korrigierehyla,
 	T_oder_,
+	T_bzw_,
 	T_MAX //α
 }; // enum T_ //ω
 
