@@ -34,7 +34,7 @@ enum T_
 	T_an,
 	T_und,
 	T_an_Mail,
-	T_klar_an_Mail,
+	T_klar_an,
 	T_liescapiconf,
 	T_MeiEinrichtung,
 	T_Mei_FaxUeberschrift,
@@ -338,6 +338,8 @@ enum T_
 	T_Originalname_der_Datei,
 	T_Originalname_der_Datei_vor_Umwandlung_in_PDF,
 	T_zu_senden_an,
+	T_wie_mailen,
+	T_Adressat,
 	T_Prioritaet_aus_Dateinamen,
 	T_Zahl_der_bisherigen_Versuche_in_Capisuite,
 	T_Zahl_der_bisherigen_Versuche_in_Hylafax,
@@ -387,6 +389,7 @@ enum T_
 	T_docname,
 	T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird,
 	T_telnr,
+	T_wiemail,
 	T_Gabelung_zu_korrigierecapi_misslungen,
 	T_Gabelung_zu_korrigierehyla_misslungen,
 	T_Gabelung_zu_faxemitH_misslungen,
@@ -396,6 +399,8 @@ enum T_
 	T_Gabelung_zu_empfarch_misslungen,
 	T_Gabelung_zu_wegfaxen_misslungen,
 	T_Gabelung_zu_bereinigevz_misslungen,
+	T_Gabelung_zu_vschlmail_misslungen,
+	T_Gabelung_zu_klarmail_misslungen,
 	T_empfarch,
 	T_empfcapi,
 	T_empfhyla,
@@ -577,6 +582,7 @@ enum T_
 	T_scheitere,
 	T_korrigierehyla,
 	T_oder_,
+	T_bzw_,
 	T_MAX //α
 }; // enum T_ //ω
 
@@ -685,6 +691,7 @@ struct fsfcl : public fxfcl // Faxsendfile
     int hversuzahl;
     FxStat capistat=init;// 1=wartend, 2=gesandt, 3=gescheitert, 4=fehlend (in spool keine Capi-Datei eingetragen oder die eingetragene gibts nicht)
     FxStat hylastat=init;// 1=wartend, 2=gesandt, 3=gescheitert, 4=fehlend (in spool keine hyla-Datei eingetragen oder die eingetragene gibts nicht)
+		int wiemail{0};
   private:
   public:
 		void archiviere(DB *const My, hhcl *const hhip, const struct stat *const entryp,const uchar obgescheitert, const FaxTyp ftyp, 
@@ -692,9 +699,9 @@ struct fsfcl : public fxfcl // Faxsendfile
 		int loeschecapi(const int obverb, const int oblog);
     int loeschehyla(hhcl *const hhip, const int obverb, const int oblog);
     /*1*/fsfcl(const string id, const string npdf, const string spdf, const string telnr, unsigned prio, const string capisd, int capids, 
-		           const string hylanr, int hdialsn, uchar fobfbox, uchar fobcapi, uchar fobhyla, const string adressat, ulong pseiten, string idalt):
+		           const string hylanr, int hdialsn, uchar fobfbox, uchar fobcapi, uchar fobhyla, const string adressat, ulong pseiten, string idalt,int wiemail):
          fxfcl(prio,npdf,spdf,pseiten), id(id), telnr(telnr), capisd(capisd), capids(capids), 
-         hylanr(hylanr), hdialsn(hdialsn), fobfbox(fobfbox), fobcapi(fobcapi), fobhyla(fobhyla), adressat(adressat),idalt(idalt) {}
+         hylanr(hylanr), hdialsn(hdialsn), fobfbox(fobfbox), fobcapi(fobcapi), fobhyla(fobhyla), adressat(adressat),idalt(idalt),wiemail(wiemail) {}
     /*2*/fsfcl(const string id,const string original): id(id), original(original) {}
     /*3*/fsfcl(const string id, const string capisd, const string hylanr, string const cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
     /*4*/fsfcl(const string& hylanr): hylanr(hylanr) {}
@@ -731,7 +738,7 @@ class hhcl:public dhcl
 		string anfaxstr, ancfaxstr, anhfaxstr, anffaxstr; // 'an Fax', "an cFax", "an hFax", "an fFax"
 		string anstr; // ' an '
 		string undstr;  //  'und'
-		string anmailstr, klaranmailstr; // 'an Mail', 'klar an Mail'
+		string anmailstr, klaranmailstr; // 'an Mail', 'klar an'
 
 		uchar capizukonf{0}; // capi zu konfigurieren
 		uchar hylazukonf{0}; // hyla zu konfigurieren
@@ -938,6 +945,8 @@ class hhcl:public dhcl
 		           const string& telnr, const size_t aktc);
 		void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
+		void vschlmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
+		void klarmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
 				const fsfcl *const fsfp,const string *const tel, const size_t aktc);
 	protected: //α

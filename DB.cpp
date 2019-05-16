@@ -454,7 +454,7 @@ void DB::init(
 										obverb,oblog,&zincldir,/*obsudc=*/1); 
 								for(auto const& aktdir:zincldir) {
 									svec zzruck2;
-									systemrueck("find "+aktdir+" -not -type d",obverb,oblog,&zzruck2,/*obsudc=*/1); // auch links
+									systemrueck("find "+aktdir+" -not -type d -name '*.cnf'",obverb,oblog,&zzruck2,/*obsudc=*/1); // auch links
 									for(auto const& aktzz2:zzruck2) {
 										myconfpfad<<aktzz2;
 									}

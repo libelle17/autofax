@@ -77,8 +77,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"und","and"},
 	// T_an_Mail
 	{"an Mail","to mail"},
-	// T_klar_an_Mail
-	{"klar an Mail","plain to mail"},
+	// T_klar_an
+	{"klar an","plain to"},
 	// T_liescapiconf
 	{"liescapiconf()","readcapiconf()"},
 	// T_MeiEinrichtung
@@ -708,6 +708,10 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Originalname der Datei vor Umwandlung in PDF","original name of the file before converting to pdf"},
 	// T_zu_senden_an
 	{"zu senden an","to be sent to"},
+	// T_wie_mailen
+	{"wie zu mailen (1=verschluesselt,2=klar)","how to mail (1=encrypted, 2=plain)"},
+	// T_Adressat
+	{"Adressat","addressee"},
 	// T_Prioritaet_aus_Dateinamen
 	{"Prioritaet der Fax-Programme: 0=capi und 1=hyla per Konfigurationsdatei, 2=capi und 3=hyla per Faxdateiname",
 		"Priority of the fax programs: 0=capi and 1=hyla via configuration file, 2=capi and 3=hyla via fax file name"},
@@ -813,6 +817,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 		"The following faxes from the hylafax logfile have not been documented, which will be corrected:"},
 	// T_telnr
 	{"Tel'nr.","tel.no."},
+	// T_wiemail
+	{"wiemail","howtomail"},
 	// T_Gabelung_zu_korrigierecapi_misslungen
 	{"Gabelung zu korrigierecapi() misslungen","Fork to correctcapi() failed"},
 	// T_Gabelung_zu_korrigierehyla_misslungen
@@ -831,7 +837,10 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Gabelung zu wegfaxen() misslungen","Fork to faxingall() failed"},
 	// T_Gabelung_zu_bereinigevz_misslungen
 	{"Gabelung zu bereinigevz() misslungen","Fork to reorderdir() failed"},
-	// T_Fehler_in_pruefhyla
+	// T_Gabelung_zu_vschlmail_misslungen
+	{"Gabelung zu vschlmail() misslungen","Fork to encrymail() failed"},
+	// T_Gabelung_zu_klarmail_misslungen
+	{"Gabelung zu klarmail() misslungen","Fork to plainmail() failed"},
 	// T_empfarch
 	{"empfarch()","archiveReceived()"},
 	// T_empfcapi
@@ -1198,6 +1207,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"korrigierehyla()","correcthyla()"},
 	// T_oder_
 	{" oder "," or "},
+	// T_bzw_
+	{"' bzw. '","' resp. '"},
 	{"",""} //α
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -2692,7 +2703,7 @@ void hhcl::virtVorgbAllg()
 	anhfaxstr=Tx[T_an_hFax];
 	anffaxstr=Tx[T_an_fFax];
 	anmailstr=Tx[T_an_Mail];
-	klaranmailstr=Tx[T_klar_an_Mail];
+	klaranmailstr=Tx[T_klar_an];
 	anstr=Tx[T_an];
 	undstr=Tx[T_und];
 	countrycode="49";
@@ -4372,7 +4383,8 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
 			Feld("origvu","varchar","1","",Tx[T_Originalname_der_Datei_vor_Umwandlung_in_PDF],0,0,1),
 			Feld("idudoc","int","10","",Tx[T_Index_auf_urspruenglichen_Dateinamen],0,0,1),
 			Feld("telnr","varchar","1","",Tx[T_zu_senden_an],0,0,1),
-			Feld("adressat","varchar","1","",Tx[T_zu_senden_an],0,0,1),
+			Feld("wiemail","int","1","",Tx[T_wie_mailen],0,0,1,/*defa=*/"0"), // 1 = verschluesselte Mail, 2 = klare Mail
+			Feld("adressat","varchar","1","",Tx[T_Adressat],0,0,1),
 			Feld("prio","int","1","",Tx[T_Prioritaet_aus_Dateinamen],0,0,1),
 			Feld("capidials","int","10","",Tx[T_Zahl_der_bisherigen_Versuche_in_Capisuite],0,0,1),
 			Feld("capistat","int","2","",Tx[T_capistat],0,0,1),
@@ -4957,7 +4969,7 @@ int hhcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct stat *
 	return erg;
 } // int hhcl::holtif(string& datei,struct tm *tmp,ulong *seitenp,string *calleridp,string *devnamep)
 
-// in wegfaxen und empfarch (2x)
+// in wegfaxen und empfhyla und empfcapi
 int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/, const int obocr/*=1*/, const int loeschen/*=1*/) // 0=Erfolg
 {
 	hLog(violetts+Tx[T_zupdf]+schwarz+" '"+blau+*quellp+schwarz+"' '"+blau+ziel+schwarz+"', obocr: "+(obocr?"1":"0")+", loeschen: "+(loeschen?"1":"0"));
@@ -5727,6 +5739,7 @@ void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 	for (unsigned nachrnr=0; nachrnr<fxvp->size(); ++nachrnr) {
 		rins.dsclear();
 		vector<instyp> einf; // fuer alle Datenbankeinfuegungen
+		int wiemail{0};// 1 = verschluesselte Mail, 2 = klare Mail
 		////<<rot<<"1: "<<gruen<<fxvp->at(nachrnr).spdf<<schwarz<<endl;
 		////<<rot<<"2: "<<gruen<<fxvp->at(nachrnr).ur<<schwarz<<endl;
 		////<<rot<<"3: "<<gruen<<fxvp->at(nachrnr).npdf<<schwarz<<endl;
@@ -5753,8 +5766,8 @@ void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 		pkm=odatei.find(klaranmailstr);
 		if (posafc<posaf) posaf=posafc;
 		if (posafh<posaf) posaf=posafh;
-		if (pm<posaf) posaf=pm;
-		if (pkm<posaf) posaf=pkm;
+		if (pm<posaf) {posaf=pm; wiemail=1;}
+		if (pkm<posaf) {posaf=pkm; wiemail=2;}
 		if (posaf!=string::npos && pn<posaf-anstr.length()-1) { // mind. 1 Buchstaben sollte der Absender haben
 			const string subst{odatei.substr(pn+anstr.length(),posaf-pn-anstr.length())};
 			einf.push_back(/*2*/instyp(My->DBS,"adressat",&subst));
@@ -5763,6 +5776,7 @@ void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 			const string oudatei{base_name(fxvp->at(nachrnr).npdf)};
 			einf.push_back(/*2*/instyp(My->DBS,"origvu",&oudatei));
 		}
+		einf.push_back(/*2*/instyp(My->DBS,"wiemail",wiemail));
 		// in fxvp:
 		// Prioritaet der Fax-Programme: 0 = capi und 0 = hyla per Konfigurationsdatei, 1= capi und 2= hyla per Faxdateiname
 		// in Datenbank: 
@@ -5781,7 +5795,7 @@ void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 	} // for (unsigned nachrnr=0; nachrnr<spdfp->size(); ++nachrnr) 
 	for (uchar tr=0;tr<2;tr++) {
 		char ***cerg;
-		RS tellen(My,string("SELECT MAX(LENGTH(gettel3(")+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"')))"
+		RS tellen(My,string("SELECT MAX(LENGTH(gettel3(")+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"','"+anmailstr+"','"+klaranmailstr+"')))"
 				" FROM `" +spooltab+"`",aktc,ZDB);
 		while (cerg=tellen.HolZeile(),cerg?*cerg:0) {
 			if (*(*cerg+0) && *(*(*cerg+0))) {
@@ -5792,10 +5806,10 @@ void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 		} //     while (cerg=tellen.HolZeile(),cerg?*cerg:0)
 		// hier wird die Telefonnummer aus dem Namen extrahiert
 		RS tea(My,"UPDATE `"+altspool+"` "
-				"SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
+				"SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"','"+anmailstr+"','"+klaranmailstr+"') "
 				"WHERE telnr=''",aktc,ZDB);
 		RS tel(My,"UPDATE `"+spooltab+"` "
-				"SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"') "
+				"SET telnr=gettel3("+(tr?"origvu":"original")+",'"+anfaxstr+"','"+ancfaxstr+"','"+anhfaxstr+"','"+anmailstr+"','"+klaranmailstr+"') "
 				"WHERE telnr=''",aktc,ZDB);
 	} //   for (uchar tr=0;tr<2;tr++)
 	hLog(violetts+Txk[T_Ende]+Tx[T_WVZinDatenbank]+schwarz);
@@ -5934,6 +5948,22 @@ void hhcl::inDBh(DB *My, const string& spooltab, const string& altspool, const s
 } // inDBh
 
 
+void hhcl::vschlmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
+{
+}
+
+void hhcl::klarmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
+{
+	string postfix;
+	if (!obprogda("postfix",obverb,oblog,&postfix)) {
+		linstp->doinst("postfix",1+obverb,oblog);
+	}
+	if (obprogda("postfix",obverb,oblog,&postfix)) {
+		caus<<rot<<"postfix: "<<blau<<postfix<<schwarz<<endl;
+	}
+// echo "This is the message body and contains the message" | mailx -v -r "gschade@dachau-mail.de" -s "This is the subject"  -S smtp="mail.mnet-online.de:587" -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user="gschade@dachau-mail.de" -S smtp-auth-password="..." -S ssl-verify=ignore -a untersch gerald.schade@gmx.de
+}
+
 // wird aufgerufen in: wegfaxen
 void hhcl::faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
 {
@@ -5969,7 +5999,8 @@ void hhcl::faxemitH(DB *My, const string& spooltab, const string& altspool, fsfc
 				systemrueck("chown "+this->huser+":uucp '"+qrueck[i]+"'",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			} // 			for(size_t i=0;i<qrueck.size();i++)
 		} // 		if (findv==1)
-		const char* tz1="request id is ", *tz2=" (";
+		const char *tz1{"request id is "}, 
+					     *tz2{" ("};
 		string sendfax;
 		////    systemrueck(sudc+"sh -c 'which sendfax'",obverb,1,&rueck);
 		if (obprogda("sendfax",obverb,oblog,&sendfax)) {
@@ -6003,13 +6034,14 @@ void hhcl::wegfaxen()
 	// 1b. die Nicht-PDF-Dateien in dem Verzeichnis zum PDF-Druck ermitteln, in Warteverzeichnis verschieben und in die PDF-Liste spdf eintragen ...
 	// 2a. ... und in im Warteverzeichnis in PDF umwandeln, falls erfolgreich und gleichziel => auch in ziel kopieren
 	// 2b. Die originalen PDF-Dateien ins Warteverzeichnis verschieben, falls erfolgreich, nicht schon registriert und gleichziel => auch in ziel kopieren
-	// 3. wegfaxen
+	// 3. in die Spool-Tabelle eintragen
+	// 4. Dateien aus der Spool-Tabelle aufrufen zum Abarbeiten mit der Wegschick-Funktion
 	hLog(violetts+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfbox?Txk[T_ja]:Txk[T_nein])+", "
 			                                    +blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Txk[T_ja]:Txk[T_nein])+", "
 			                                    +blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Txk[T_ja]:Txk[T_nein]));
 	const size_t aktc{3}; 
-	const string filter[]{" [[:space:][:punct:]]*[0-9][0-9[:space:][:punct:]]*[_]\\?.*\\.",// statt ?.* zuvor ?[0-9]*, aber vielleicht unnoetig
-		" [a-zA-Z0-9.!#$%&'\\''*+/=?^_`{|}~-]\\+@[a-zA-Z0-9]\\([a-zA-Z0-9-]\\{0,61\\}[a-zA-Z0-9]\\)\\?\\(\\.[a-zA-Z0-9]\\([a-zA-Z0-9-]\\{0,61\\}[a-zA-Z0-9]\\)\\?\\)*[_]\\?.*\\."
+	const string filter[]{"[[:space:][:punct:]]\\+[0-9][0-9[:space:][:punct:]]*[_]\\?.*\\.",// statt ?.* zuvor ?[0-9]*, aber vielleicht unnoetig
+		"[[:blank:]]\\+[a-zA-Z0-9.!#$%&'\\''*+/=?^_`{|}~-]\\+@[a-zA-Z0-9]\\([a-zA-Z0-9-]\\{0,61\\}[a-zA-Z0-9]\\)\\?\\(\\.[a-zA-Z0-9]\\([a-zA-Z0-9-]\\{0,61\\}[a-zA-Z0-9]\\)\\?\\)*[_]\\?.*\\."
 	};
 	struct stat entrynpdf{0};
 	////vector<string> npdf, spdf, *npdfp=&npdf, *spdfp=&spdf;  vector<uchar> prios;
@@ -6073,7 +6105,6 @@ void hhcl::wegfaxen()
 			} // 		if (mu[iprio].setzemuster(mstr,0))
 #endif
 			 */
-
 			// der Reihe nach nach Dateien suchen, die das jeweilige Trennzeichen enthalten
 			for(size_t iakt=0;iakt<zfda.size();iakt++) {
 				if (!zfda.at(iakt).empty()) {
@@ -6108,12 +6139,24 @@ void hhcl::wegfaxen()
 						} // 						if (toktxt.size()>1)
 						for(size_t i=0;i<toknr.size();i++) {
 							string neunr;
-							for(size_t p=0;p<toknr[i].length();p++) {
-								if (toknr[i][p]=='+') neunr+="00";
-								else if (strchr("0123456789",toknr[i][p])) neunr+=toknr[i][p];
-								else if (toknr[i][p]=='_') break;
+							if (strchr(toknr[i].c_str(),'@')) { // Mail
+							  for(size_t p=toknr[i].length()-1;p;--p) {
+								 if (!strchr("0123456789",toknr[i][p])) { // Ziffern nach '_' => wenn keine Ziffer mehr
+									 if (toknr[i][p]=='_') toknr[i].erase(p); // wenn '_', dann ab da streichen
+									 break; // dann Schleife beenden
+								 }
+								}
+								while(toknr[i].length()&&(toknr[i][0]==' '||toknr[i][0]==9)) {
+                 toknr[i].erase(0); 
+								}
+							} else { //Fax
+								for(size_t p=0;p<toknr[i].length();p++) {
+									if (toknr[i][p]=='+') neunr+="00";
+									else if (strchr("0123456789",toknr[i][p])) neunr+=toknr[i][p];
+									else if (toknr[i][p]=='_') break;
+								}
+								toknr[i]=neunr;
 							}
-							toknr[i]=neunr;
 						} // 						for(size_t i=0;i<toknr.size();i++)
 						for(size_t i=0;i<tokname.size();i++) gtrim(&tokname[i]);
 						for(size_t i=toknr.size();i<tokname.size();i++) toknr<<""; // Fehlende auffuellen
@@ -6494,6 +6537,7 @@ void hhcl::wegfaxen()
 
 	geszahl=fxv.size();
 	fLog(Tx[T_aus]+drots+zufaxenvz+schwarz+vtz+Tx[T_verarbeitete_PDF_Dateien]+drot+ltoan(geszahl)+schwarz,1,1);
+
 	// 3) in spooltab eintragen
 	WVZinDatenbank(&fxv,aktc);
 
@@ -6503,20 +6547,8 @@ void hhcl::wegfaxen()
 	//  const string hzstr=ltoan(hylazuerst);
 	if (!isnumeric(maxhylav)) maxhylav="3";
 	if (!isnumeric(maxcapiv)) maxcapiv="3";
-	/*//
-		RS r0(My,string("SELECT id p0, origvu p1, original p2, telnr p3, prio p4, "
-		"IF(ISNULL(capispooldatei),'',capispooldatei) p5, IF(ISNULL(capidials),'',capidials) p6, "
-		"IF(ISNULL(hylanr),'',hylanr) p7, IF(ISNULL(hyladials),'',hyladials) p8, "
-		"((ISNULL(capispooldatei)OR capispooldatei='') AND (ISNULL(hyladials) OR hyladials>=")+maxhylav+" OR hylastate=8 OR " // hyladials=-1
-	//      "    (ISNULL(prio) OR prio=1 OR (prio=0 AND NOT "+hzstr+")))) p9, "
-	"    (ISNULL(prio) OR prio=2 OR prio=0))) p9, "
-	"((ISNULL(hylanr) OR hylanr='') AND (ISNULL(capidials) OR capidials>=" +maxcapiv+" OR capidials=-1 OR "
-	//      "      (ISNULL(prio) OR prio=2 OR (prio=0 AND "+hzstr+")))) p10, "
-	"      (ISNULL(prio) OR prio=3 OR prio=1))) p10, "
-	"adressat p11, pages p12 "
-	"FROM `"+spooltab+"` "
-	"WHERE original>''",ZDB);
-	 */
+
+	// 4. Dateien aus der Spool-Tabelle aufrufen zum Abarbeiten mit der Wegschick-Funktion
 	RS r0(My,"SELECT s.id p0, s.origvu p1, s.original p2, s.telnr p3, s.prio p4, s.capispooldatei p5, s.capidials p6, "
 			"s.hylanr p7, s.hyladials p8, "
 			"0 p9, "
@@ -6527,7 +6559,7 @@ void hhcl::wegfaxen()
 			////      "      (prio=2 OR (prio=0 AND "+hzstr+")))) p10, "
 			"      (s.prio=3 OR s.prio=1))) p11, "
 			"s.adressat p12, s.pages p13 "
-			",alts.id p14 "
+			",alts.id p14, s.wiemail p15 "
 			"FROM `"+spooltab+"` s "
 			"LEFT JOIN `"+altspool+"` alts ON s.idudoc=alts.idudoc "
 			"WHERE s.original>'' GROUP BY s.id",aktc,ZDB);
@@ -6542,11 +6574,11 @@ void hhcl::wegfaxen()
 				fsfv.push_back(/*1*/fsfcl(cjj(cerg,0)/*id*/, cjj(cerg,1)/*npdf*/, cjj(cerg,2)/*spdf*/, cjj(cerg,3)/*telnr*/, 
 							atoi(cjj(cerg,4))/*prio*/, cjj(cerg,5)/*capisd*/, atoi(cjj(cerg,6))/*capids*/, cjj(cerg,7)/*hylanr*/, atoi(cjj(cerg,8))/*hdialsn*/,
 							(binaer)atoi(cjj(cerg,9))/*fobfbox*/, (binaer)atoi(cjj(cerg,10))/*fobcapi*/, (binaer)atoi(cjj(cerg,11))/*fobhyla*/, 
-							cjj(cerg,12)/*adressat*/, atoi(cjj(cerg,13)/*pages*/), cjj(cerg,14)/*alts.id*/));
+							cjj(cerg,12)/*adressat*/, atoi(cjj(cerg,13)/*pages*/), cjj(cerg,14)/*alts.id*/, atoi(cjj(cerg,15))/*s.wiemail*/));
 			} // 			if (*(*cerg+0) && *(*cerg+1) && *(*cerg+2) && *(*cerg+3) && *(*cerg+4) && *(*cerg+5) &&  ...
 		} // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
 		hLog(Tx[T_ZahldDSmwegzuschickendenFaxenin]+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz);
-		uchar wasichbin{0}; //1=capi,2=hyla
+		uchar wasichbin{0}; //1=capi,2=hyla,3=fritzbox,4=anMail,5=klaran
 		pid_t pid{1}; // fuer Capi und Hyla abzweigen
 		if (obcapi) {
 			pid=nursend?1:fork();
@@ -6577,6 +6609,32 @@ void hhcl::wegfaxen()
 				} // 				if (pid<0) else else
 			} // 			if (obhyla)
 		} // 		if (pid>0)
+		if (pid>0) {
+			pid=nursend?1:fork();
+			if (pid<0) {
+				fLog(rots+Tx[T_Gabelung_zu_vschlmail_misslungen]+schwarz,1,oblog);
+				exitt(17);
+			} else if (!pid) {
+				wasichbin=4;
+			} else {
+				pidcl phier(pid,"vschlmail");
+				pidv<<phier;
+				pidw<<phier;
+			} // 				if (pid<0) else else
+		}
+		if (pid>0) {
+			pid=nursend?1:fork();
+			if (pid<0) {
+				fLog(rots+Tx[T_Gabelung_zu_klarmail_misslungen]+schwarz,1,oblog);
+				exitt(17);
+			} else if (!pid) {
+				wasichbin=5;
+			} else {
+				pidcl phier(pid,"klarmail");
+				pidv<<phier;
+				pidw<<phier;
+			} // 				if (pid<0) else else
+		}
 		if (wasichbin||nursend) {
 			// hier Fork zu Capi und Hyla, nicht der Hauptzweig
 			for(unsigned i=0;i<fsfv.size();i++) {
@@ -6588,10 +6646,12 @@ void hhcl::wegfaxen()
 				if (/*wasichbin==1 einmal reicht hier schon &&*/ lstat(ff.c_str(),&st)) {
 					fLog(rots+(wasichbin==1?"Capi: ":"Hyla: ")+schwarz+Tx[T_Fehler_zu_faxende_Datei]+rots+ff+schwarz+
 							Tx[T_nicht_gefunden_Eintrag_ggf_loeschen_mit_]+blau+base_name(aktprogverz())+" -"+Tx[T_loew]+schwarz+
-							"' bzw. '"+blau+base_name(aktprogverz())+" -"+Tx[T_loef]+schwarz+"'",1,oblog);
+							Tx[T_bzw_]+blau+base_name(aktprogverz())+" -"+Tx[T_loef]+schwarz+"'",1,oblog);
 				} else {
 					if (wasichbin==1||nursend) if (fsfv[i].fobcapi) if (obcapi) faxemitC(My, spooltab, altspool, &fsfv[i],ff);  
 					if (wasichbin==2||nursend) if (fsfv[i].fobhyla) if (obhyla) faxemitH(My, spooltab, altspool, &fsfv[i],ff);  
+					if (wasichbin==4||nursend) if (fsfv[i].wiemail==1) vschlmail(My, spooltab, altspool, &fsfv[i],ff);  
+					if (wasichbin==5||nursend) if (fsfv[i].wiemail==2) klarmail(My, spooltab, altspool, &fsfv[i],ff);  
 				} // if (pid>0 && lstat(ff.c_str(),&st))
 				////      _out<<fsfv[i].id<<" "<<rot<<fsfv[i].npdf<<" "<<schwarz<<(int)fsfv[i].obcapi<<" "<<(int)fsfv[i].obhyla<<endl;
 			} // for(unsigned i=0;i<fsfv.size();i++) 
@@ -6808,9 +6868,6 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 		  suchs="find '"+fbankvz+"' -mtime -1 -iname '*pdf'";	
 		}
 		systemrueck(suchs,2,oblog,&qrueck);
-		for(size_t i=0;i<qrueck.size();i++) {
-			caus<<qrueck[i]<<endl;
-		}
 	} // 	if (!fbankvz.empty()&&!lstat(fbankvz.c_str(),&fst))
 
 	// 2) capi
@@ -8354,6 +8411,9 @@ void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, cons
 	const string body{
 		"begin \n"
 		" declare pos int;\n"
+		" declare obMail int default 0;\n"
+		" declare nachAffe int default 0;\n"
+		" declare nachPunkt int default 0;\n"
 		" declare ch char default '0';\n"
 		" declare tel varchar(100) default '';\n"
 		" set pos = instr(dname,anfaxstr);\n"
@@ -8361,14 +8421,26 @@ void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, cons
 		"  set pos=pos+length(anfaxstr);\n"
 		" else\n"
 		"  if ancfaxstr > '' then\n"
-		"   set pos = instr(dname,ancfaxstr);\n"
+		"   set pos=instr(dname,ancfaxstr);\n"
 		"   if pos>0 then\n"
 		"    set pos=pos+length(ancfaxstr);\n"
 		"   else\n"
 		"    if anhfaxstr > '' then\n"
-		"     set pos = instr(dname,anhfaxstr);\n"
+		"     set pos=instr(dname,anhfaxstr);\n"
 		"     if pos>0 then\n"
 		"      set pos=pos+length(anhfaxstr);\n"
+		"     else\n"
+		"      set pos=instr(dname,anmailstr);\n"
+	  "      if pos>0 then\n"
+		"       set obMail=1;\n"
+    "       set pos=pos+length(anmailstr);\n"
+		"      else\n"
+		"       set pos=instr(dname,klaranmailstr);\n"
+	  "       if pos>0 then\n"
+		"        set obMail=1;\n"
+    "        set pos=pos+length(klaranmailstr);\n"
+		"       end if;\n"
+		"      end if;\n"
 		"     end if;\n"
 		"    end if;\n"
 		"   end if;\n"
@@ -8376,17 +8448,36 @@ void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, cons
 		" end if;\n"
 		" if pos>0 then\n"
 		"  wlab: loop\n"
-		"   set ch = substring(dname,pos,1);\n"
-		"   if ch = '_' then leave wlab; end if;\n"
-		"   if instr('0123456789',ch) then set tel=concat(tel,ch);\n"
-		"   else if ch='+' then set tel=concat(tel,'00'); end if; end if;\n"
+		"   set ch=substring(dname,pos,1);\n"
+		"   if obMail=1 then\n"
+		"    if ch='@' then\n"
+		"     set nachAffe=1;\n"
+		"    else\n"
+		"     if ch='.' then\n"
+		"      if nachPunkt=1 then\n"
+		"       leave wlab;\n"
+		"      else\n"
+		"       if nachAffe=1 then\n"
+		"        set nachPunkt=1;\n"
+		"       end if;\n"
+		"      end if;\n"
+		"     end if;\n"
+		"    end if;\n"
+		"   end if;\n"
+		"   if (obMail=0 or nachPunkt=1) and ch='_' then leave wlab; end if;\n"
+		"   if obMail=0 then\n"
+		"    if instr('0123456789',ch) then set tel=concat(tel,ch);\n"
+		"    else if ch='+' then set tel=concat(tel,'00'); end if; end if;\n"
+		"   else\n"
+		"    set tel=concat(tel,ch);\n"
+		"   end if;\n"
 		"   set pos=pos+1;\n"
 		"   if pos>length(dname) then leave wlab; end if;\n"
 		"  end loop;\n"
 		" end if;\n"
 		" return tel;\n"
 		"end"};
-	const string para{"(dname VARCHAR(1000), anfaxstr VARCHAR(100), ancfaxstr VARCHAR(100), anhfaxstr VARCHAR(100)) \n"
+	const string para{"(dname VARCHAR(1000),anfaxstr VARCHAR(100),ancfaxstr VARCHAR(100),anhfaxstr VARCHAR(100),anmailstr VARCHAR(150),klaranmailstr VARCHAR(150)) \n"
 		"RETURNS VARCHAR(1000) CHARSET utf8 COLLATE utf8_unicode_ci DETERMINISTIC\n"};
 	Myp->prueffunc("gettel3", body, para, aktc,obverb,oblog);
 } // void prueffuncgettel3(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
