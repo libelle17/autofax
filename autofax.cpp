@@ -2436,7 +2436,9 @@ int hhcl::pruefcapi()
 					if (system!=sus)
 						linstp->doggfinst("capiutils",obverb+1,oblog);
 					pruefsfftobmp();
+					caus<<"Stelle 1"<<endl;
 					linstp->doggfinst("libcapi20-2",obverb+1,oblog);
+					caus<<"Stelle 2"<<endl;
 					linstp->doggfinst("libcapi20-3",obverb+1,oblog);
 					linstp->doggfinst("python-devel",obverb+1,oblog);
 					linstp->doinst("libxslt-tools",obverb+1,oblog,"xsltproc");
