@@ -235,6 +235,46 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"anmailstr","tomailstr"},
 	// T_klaranmailstr_l
 	{"klaranmailstr","plaintomailstr"},
+	// T_mv_k,
+	{"mv","mf"},
+	// T_mailvon_l,
+	{"mailvon","mailfrom"},
+	// T_smtpadr_k,
+	{"sma","sma"},
+	// T_smtpadr_l,
+	{"smtpadr","smtpaddr"},
+	// T_portnr_k,
+	{"pnr","pno"},
+	// T_portnr_l,
+	{"portnr","portno"},
+	// T_smtpusr_k,
+	{"smb","smu"},
+	// T_smtpusr_l,
+	{"smtpben","smtpusr"},
+	// T_smtppwd_k,
+	{"smp","smp"},
+	// T_smtppwd_l,
+	{"smtppwt","smtppwd"},
+	// T_Absender_mailadresse,
+	{"Absender-Mailadresse","mail address of the sender"},
+	// T_als_Absender_zu_verwendende_Mailadresse,
+	{"als Absender zu verwendende Mailadresse","mail address used as sender"},
+	// T_smtp_Adresse,
+	{"smtp-Adresse","smtp address"},
+	// T_smtp_Adresse_ohne_port,
+	{"smtp-Adresse ohne Port","smtp address without port"},
+	// T_port_Nummer,
+	{"Port-Nummer","port number"},
+	// T_Port_Nummer,
+	{"Port-Nummer","port number"},
+	// T_smtp_usr,
+	{"SMTP-Benutzer","smtp user"},
+	// T_Smtp_usr,
+	{"SMTP-Benutzer","smtp user"},
+	// T_smtp_pwd,
+	{"SMTP-Passwort","smtp password"},
+	// T_Smtp_Pwd,
+	{"SMTP-Passwort","smtp password"},
 	// T_faxnr_wird_hinter_string_erwartet_statt_hinter
 	{"faxnr wird hinter <string> erwartet statt hinter","the fax number will be expected after <string> instead of"},
 	// T_mailadresse_wird_hinter_string_erwartet_statt_hinter
@@ -2765,6 +2805,12 @@ void hhcl::virtinitopt()
 	opn<<new optcl(/*pname*/"undstr",/*pptr*/&undstr,/*art*/pstri,T_us_k,T_undstr_l,/*TxBp*/&Tx,/*Txi*/T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!undstr.empty(),T_Buchstabenfolge_vor_weiterem_Adressaten_sowie_weiterer_Faxnummer);
 	opn<<new optcl(/*pname*/"anmailstr",/*pptr*/&anmailstr,/*art*/pstri,T_ams_k,T_anmailstr_l,/*TxBp*/&Tx,/*Txi*/T_mailadresse_wird_hinter_string_erwartet_statt_hinter,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!anmailstr.empty(),T_Buchstabenfolge_vor_erster_Mailadresse);
 	opn<<new optcl(/*pname*/"klaranmailstr",/*pptr*/&klaranmailstr,/*art*/pstri,T_kams_k,T_klaranmailstr_l,/*TxBp*/&Tx,/*Txi*/T_mailadresse_fuer_unverschluesselte_Mail_wird_hinter_string_erwartet_statt_hinter,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!klaranmailstr.empty(),T_Buchstabenfolge_vor_erster_Mailadresse_fuer_unverschluesselte_Mail);
+	opn<<new optcl(/*pname*/"mailvon",/*pptr*/&mailvon,/*art*/pstri,T_mv_k,T_mailvon_l,/*TxBp*/&Tx,/*Txi*/T_Absender_mailadresse,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!mailvon.empty(),T_als_Absender_zu_verwendende_Mailadresse);
+	opn<<new optcl(/*pname*/"smtpadr",/*pptr*/&smtpadr,/*art*/pstri,T_smtpadr_k,T_smtpadr_l,/*TxBp*/&Tx,/*Txi*/T_smtp_Adresse,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!smtpadr.empty(),T_smtp_Adresse_ohne_port);
+	opn<<new optcl(/*pname*/"portnr",/*pptr*/&portnr,/*art*/pstri,T_portnr_k,T_portnr_l,/*TxBp*/&Tx,/*Txi*/T_port_Nummer,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!portnr.empty(),T_Port_Nummer);
+	opn<<new optcl(/*pname*/"smtpusr",/*pptr*/&smtpusr,/*art*/pstri,T_smtpusr_k,T_smtpusr_l,/*TxBp*/&Tx,/*Txi*/T_smtp_usr,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!smtpusr.empty(),T_Smtp_usr);
+	opn<<new optcl(/*pname*/"smtppwd",/*pptr*/&smtppwd,/*art*/ppwd,T_smtppwd_k,T_smtppwd_l,/*TxBp*/&Tx,/*Txi*/T_smtp_pwd,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!smtppwd.empty(),T_Smtp_pwd);
+// echo "This is the message body and contains the message" | mailx -v -r "gschade@dachau-mail.de" -s "This is the subject"  -S smtp="mail.mnet-online.de:587" -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user="gschade@dachau-mail.de" -S smtp-auth-password="..." -S ssl-verify=ignore -a untersch gerald.schade@gmx.de
 	opn<<new optcl(/*pname*/"findv",/*pptr*/&findv,/*art*/pint,T_find_k,T_find_l,/*TxBp*/&Tx,/*Txi*/T_Version_1_2_oder_3_Dateisuche_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/findv!=-1,T_Version_1_2_oder_3_Dateisuche_anstatt);
 	opn<<new optcl(/*pptr*/&loef,/*art*/puchar,T_loef,T_loeschefax_l,/*TxBp*/&Tx,/*Txi*/T_ein_Fax_nach_Rueckfrage_loeschen,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&loew,/*art*/puchar,T_loew,T_loeschewaise_l,/*TxBp*/&Tx,/*Txi*/T_Eintraege_aus,/*wi*/1,/*Txi2*/T_loeschen_zu_denen_kein_Datei_im_Wartevz_und_kein_Capi_oder_Hylafax_nachweisbar_ist,/*rottxt*/spooltab,/*wert*/1,/*woher*/1);
@@ -3059,10 +3105,9 @@ void hhcl::neurf()
 // wird aufgerufen in lauf
 void hhcl::virtrueckfragen()
 {
-	hLog(violetts+Tx[T_virtrueckfragen]+schwarz);
+	hLog(violetts+Tx[T_virtrueckfragen]+", rzf: "+blau+ltoan(rzf)+schwarz);
 	if (rzf) { //ω
 		neurf();
-	  return;
 		const size_t aktc{0};
 		// Rueckfragen koennen auftauchen in: virtrueckfragen, konfcapi (<- pruefcapi), aenderefax, rufpruefsamba
 		zufaxenvz=Tippverz(Tx[T_Verzeichnis_mit_zu_faxenden_Dateien],&zufaxenvz);
@@ -3154,6 +3199,16 @@ void hhcl::virtrueckfragen()
 		undstr=Tippstr(Tx[T_Buchstabenfolge_vor_weiterem_Adressaten_sowie_weiterer_Faxnummer],&undstr);
 		anmailstr=Tippstr(Tx[T_Buchstabenfolge_vor_erster_Mailadresse],&anmailstr);
 		klaranmailstr=Tippstr(Tx[T_Buchstabenfolge_vor_erster_Mailadresse_fuer_unverschluesselte_Mail],&klaranmailstr);
+		mailvon=Tippstr(Tx[T_als_Absender_zu_verwendende_Mailadresse],&mailvon);
+		smtpadr=Tippstr(Tx[T_smtp_Adresse_ohne_port],&smtpadr);
+		portnr=Tippstr(Tx[T_Port_Nummer],&portnr);
+		smtpusr=Tippstr(Tx[T_Smtp_usr],&smtpusr);
+		string smtppw2;
+		smtppwd.clear();
+		do {
+			smtppwd=Tippstr(string(Tx[T_Smtp_pwd])+Txk[T_fuer_Benutzer]+dblau+smtpusr+schwarz+"'"/*,&smtppwd*/);
+			smtppw2=Tippstr(string(Tx[T_Smtp_pwd])+Txk[T_fuer_Benutzer]+dblau+smtpusr+schwarz+"'"+" ("+Txk[T_erneute_Eingabe]+")"/*,&mpw2*/);
+		} while (smtppwd!=smtppw2);
 		// sql abfragen, eintragen, sql aus opn loeschen, maps loeschen, maps neu erstellen
 		schAcl<optcl> oprsql=schAcl<optcl>("oprsql"); // Optionen
 		////		opn.oausgeb(rot);

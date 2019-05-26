@@ -48,6 +48,10 @@ void hhcl::pvirtVorgbSpeziell()
 	findv=1;
 	muser="praxis";
 	mpwd="sonne";
+	mailvon="gschade@dachau-mail.de";
+	smtpadr="mail.mnet-online.de";
+	portnr="587";
+	smtpusr="gschade@dachau-mail.de";
 
 	// wird schon fuer systemrueck benoetigt
 	const string hatab{"haerzte_neu"}

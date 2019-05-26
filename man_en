@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "16.05.19" "Version 0.47363" "\fB²DPROG²\fR man page"
+.TH man 1 "27.05.19" "Version 0.47371" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -67,9 +67,9 @@ Depending on operating system, accessability and preferences the users thus coul
 .SH OPTIONS 
  '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR' shows the important command line options and '\fB²DPROG² -lh\fR' all of them. Some options (e.g. the sql commands for finding an addressee from the fax number) cannot be set via the command line, but only via the configuration file, which can be edited directly by '\fB²DPROG² -vi\fR' or interactively by '\fB²DPROG² -rf\fR'.
 .br
-\fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.47363 \fRVerwende: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
+    \fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.47371 \fRVerwende: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
 .br
-\fBOptions which are not saved (current value in parentheses): \fR
+    \fBOptions which are not saved (current value in parentheses): \fR
 .br
 \fB -delf, --deletefax\fR: delete a fax with query (\fB0\fR)
 .br
@@ -121,7 +121,7 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fB -vi, --vi\fR: edit/view configuration file , log file etc. (finish with ':qa') (\fB0\fR)
 .br
-\fB -vs, --vs\fR: edit/view source files in \fB/home/schade/autofax\fR(finish with ':qa') (\fB0\fR)
+\fB -vs, --vs\fR: edit/view source files in \fB/root/autofax\fR(finish with ':qa') (\fB0\fR)
 .br
 \fB -autoupd, --autoupdate <zahl>\fR: Update program automatically (\fB1\fR)
 .br
@@ -184,6 +184,16 @@ Depending on operating system, accessability and preferences the users thus coul
 \fB -tms, --tomailstr <string>\fR: the mail address will be expected after <string> instead of ('\fBan Mail\fR')
 .br
 \fB -ptms, --plaintomailstr <string>\fR: mail address for unencoded mail will be expected after <string> instead of ('\fBklar an\fR')
+.br
+\fB -mf, --mailfrom <string>\fR: mail address of the sender ('\fBgschade@dachau-mail.de\fR')
+.br
+\fB -sma, --smtpaddr <string>\fR: smtp address ('\fBmail.mnet-online.de\fR')
+.br
+\fB -pno, --portno <string>\fR: port number ('\fB587\fR')
+.br
+\fB -smu, --smtpusr <string>\fR: smtp user ('\fBgschade@dachau-mail.de\fR')
+.br
+\fB -smp, --smtppwd <string>\fR: smtp password
 .br
 \fB -fd, --find <zahl>\fR: version 1,2 or 3 of filefind (variable performance differences instead of (\fB1\fR)
 .br

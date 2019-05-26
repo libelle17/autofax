@@ -113,6 +113,26 @@ enum T_
 	T_anfaxstr_l,
 	T_anmailstr_l,
 	T_klaranmailstr_l,
+	T_mv_k,
+	T_mailvon_l,
+	T_smtpadr_k,
+	T_smtpadr_l,
+	T_portnr_k,
+	T_portnr_l,
+	T_smtpusr_k,
+	T_smtpusr_l,
+	T_smtppwd_k,
+	T_smtppwd_l,
+	T_Absender_mailadresse,
+	T_als_Absender_zu_verwendende_Mailadresse,
+	T_smtp_Adresse,
+	T_smtp_Adresse_ohne_port,
+	T_port_Nummer,
+	T_Port_Nummer,
+	T_smtp_usr,
+	T_Smtp_usr,
+	T_smtp_pwd,
+	T_Smtp_pwd,
 	T_faxnr_wird_hinter_string_erwartet_statt_hinter,
 	T_mailadresse_wird_hinter_string_erwartet_statt_hinter,
 	T_mailadresse_fuer_unverschluesselte_Mail_wird_hinter_string_erwartet_statt_hinter,
@@ -739,6 +759,7 @@ class hhcl:public dhcl
 		string anstr; // ' an '
 		string undstr;  //  'und'
 		string anmailstr, klaranmailstr; // 'an Mail', 'klar an'
+		string mailvon, smtpadr, portnr, smtpusr, smtppwd;
 
 		uchar capizukonf{0}; // capi zu konfigurieren
 		uchar hylazukonf{0}; // hyla zu konfigurieren
