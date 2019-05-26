@@ -275,6 +275,22 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"SMTP-Passwort","smtp password"},
 	// T_Smtp_Pwd,
 	{"SMTP-Passwort","smtp password"},
+	// T_mt_k,
+	{"mt","mt"},
+	// T_mailtit_l,
+	{"mailtitel","mailtitle"},
+	// T_mailtitle,
+	{"Mailtitel","mail title"},
+	// T_Mailtitle,
+	{"Mailtitel","mail title"},
+	// T_mb_k,
+	{"mb","mb"},
+	// T_mailbod_l,
+	{"mailbody","mailbody"},
+	// T_mailbody,
+	{"Mailtext","mail body"},
+	// T_Mailbody,
+	{"Mailtext","mail body"},
 	// T_faxnr_wird_hinter_string_erwartet_statt_hinter
 	{"faxnr wird hinter <string> erwartet statt hinter","the fax number will be expected after <string> instead of"},
 	// T_mailadresse_wird_hinter_string_erwartet_statt_hinter
@@ -1249,6 +1265,10 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{" oder "," or "},
 	// T_bzw_
 	{"' bzw. '","' resp. '"},
+	// T_std_mailtit,
+	{"Mail von " DPROG,"mail from " DPROG},
+	// T_std_mailbod,
+	{"bitte Anhang beachten","please look at the attachment"},
 	{"",""} //α
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -2746,6 +2766,8 @@ void hhcl::virtVorgbAllg()
 	anffaxstr=Tx[T_an_fFax];
 	anmailstr=Tx[T_an_Mail];
 	klaranmailstr=Tx[T_klar_an];
+	mailtit=Tx[T_std_mailtit];
+	mailbod=Tx[T_std_mailbod];
 	anstr=Tx[T_an];
 	undstr=Tx[T_und];
 	countrycode="49";
@@ -2810,6 +2832,8 @@ void hhcl::virtinitopt()
 	opn<<new optcl(/*pname*/"portnr",/*pptr*/&portnr,/*art*/pstri,T_portnr_k,T_portnr_l,/*TxBp*/&Tx,/*Txi*/T_port_Nummer,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!portnr.empty(),T_Port_Nummer);
 	opn<<new optcl(/*pname*/"smtpusr",/*pptr*/&smtpusr,/*art*/pstri,T_smtpusr_k,T_smtpusr_l,/*TxBp*/&Tx,/*Txi*/T_smtp_usr,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!smtpusr.empty(),T_Smtp_usr);
 	opn<<new optcl(/*pname*/"smtppwd",/*pptr*/&smtppwd,/*art*/ppwd,T_smtppwd_k,T_smtppwd_l,/*TxBp*/&Tx,/*Txi*/T_smtp_pwd,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!smtppwd.empty(),T_Smtp_pwd);
+	opn<<new optcl(/*pname*/"mailtit",/*pptr*/&mailtit,/*art*/pstri,T_mt_k,T_mailtit_l,/*TxBp*/&Tx,/*Txi*/T_mailtitle,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!mailtit.empty(),T_Mailtitle);
+	opn<<new optcl(/*pname*/"mailbod",/*pptr*/&mailbod,/*art*/pstri,T_mb_k,T_mailbod_l,/*TxBp*/&Tx,/*Txi*/T_mailbody,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!mailbod.empty(),T_Mailbody);
 // echo "This is the message body and contains the message" | mailx -v -r "gschade@dachau-mail.de" -s "This is the subject"  -S smtp="mail.mnet-online.de:587" -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user="gschade@dachau-mail.de" -S smtp-auth-password="..." -S ssl-verify=ignore -a untersch gerald.schade@gmx.de
 	opn<<new optcl(/*pname*/"findv",/*pptr*/&findv,/*art*/pint,T_find_k,T_find_l,/*TxBp*/&Tx,/*Txi*/T_Version_1_2_oder_3_Dateisuche_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/findv!=-1,T_Version_1_2_oder_3_Dateisuche_anstatt);
 	opn<<new optcl(/*pptr*/&loef,/*art*/puchar,T_loef,T_loeschefax_l,/*TxBp*/&Tx,/*Txi*/T_ein_Fax_nach_Rueckfrage_loeschen,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
@@ -3209,6 +3233,8 @@ void hhcl::virtrueckfragen()
 			smtppwd=Tippstr(string(Tx[T_Smtp_pwd])+Txk[T_fuer_Benutzer]+dblau+smtpusr+schwarz+"'"/*,&smtppwd*/);
 			smtppw2=Tippstr(string(Tx[T_Smtp_pwd])+Txk[T_fuer_Benutzer]+dblau+smtpusr+schwarz+"'"+" ("+Txk[T_erneute_Eingabe]+")"/*,&mpw2*/);
 		} while (smtppwd!=smtppw2);
+		mailtit=Tippstr(Tx[T_mailtitle],&mailtit);
+		mailbod=Tippstr(Tx[T_mailbody],&mailbod);
 		// sql abfragen, eintragen, sql aus opn loeschen, maps loeschen, maps neu erstellen
 		schAcl<optcl> oprsql=schAcl<optcl>("oprsql"); // Optionen
 		////		opn.oausgeb(rot);

@@ -133,6 +133,14 @@ enum T_
 	T_Smtp_usr,
 	T_smtp_pwd,
 	T_Smtp_pwd,
+	T_mt_k,
+	T_mailtit_l,
+	T_mailtitle,
+	T_Mailtitle,
+	T_mb_k,
+	T_mailbod_l,
+	T_mailbody,
+	T_Mailbody,
 	T_faxnr_wird_hinter_string_erwartet_statt_hinter,
 	T_mailadresse_wird_hinter_string_erwartet_statt_hinter,
 	T_mailadresse_fuer_unverschluesselte_Mail_wird_hinter_string_erwartet_statt_hinter,
@@ -603,6 +611,8 @@ enum T_
 	T_korrigierehyla,
 	T_oder_,
 	T_bzw_,
+	T_std_mailtit,
+	T_std_mailbod,
 	T_MAX //α
 }; // enum T_ //ω
 
@@ -760,6 +770,7 @@ class hhcl:public dhcl
 		string undstr;  //  'und'
 		string anmailstr, klaranmailstr; // 'an Mail', 'klar an'
 		string mailvon, smtpadr, portnr, smtpusr, smtppwd;
+		string mailtit,mailbod;
 
 		uchar capizukonf{0}; // capi zu konfigurieren
 		uchar hylazukonf{0}; // hyla zu konfigurieren

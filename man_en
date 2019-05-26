@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "27.05.19" "Version 0.47371" "\fB²DPROG²\fR man page"
+.TH man 1 "27.05.19" "Version 0.47374" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -67,7 +67,7 @@ Depending on operating system, accessability and preferences the users thus coul
 .SH OPTIONS 
  '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR' shows the important command line options and '\fB²DPROG² -lh\fR' all of them. Some options (e.g. the sql commands for finding an addressee from the fax number) cannot be set via the command line, but only via the configuration file, which can be edited directly by '\fB²DPROG² -vi\fR' or interactively by '\fB²DPROG² -rf\fR'.
 .br
-    \fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.47371 \fRVerwende: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
+    \fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.47374 \fRVerwende: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
 .br
     \fBOptions which are not saved (current value in parentheses): \fR
 .br
@@ -194,6 +194,10 @@ Depending on operating system, accessability and preferences the users thus coul
 \fB -smu, --smtpusr <string>\fR: smtp user ('\fBgschade@dachau-mail.de\fR')
 .br
 \fB -smp, --smtppwd <string>\fR: smtp password
+.br
+\fB -mt, --mailtitle <string>\fR: mail title ('\fBMail von autofax\fR')
+.br
+\fB -mb, --mailbody <string>\fR: mail body ('\fBbitte Anhang beachten\fR')
 .br
 \fB -fd, --find <zahl>\fR: version 1,2 or 3 of filefind (variable performance differences instead of (\fB1\fR)
 .br

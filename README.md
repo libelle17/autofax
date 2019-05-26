@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.47371) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47374) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -177,7 +177,7 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47371</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47374</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
@@ -329,6 +329,10 @@ sender (&rsquo;<b>gschade@dachau-mail.de</b>&rsquo;) <b><br>
 -smu, --smtpusr &lt;string&gt;</b>: smtp user
 (&rsquo;<b>gschade@dachau-mail.de</b>&rsquo;) <b><br>
 -smp, --smtppwd &lt;string&gt;</b>: smtp password <b><br>
+-mt, --mailtitle &lt;string&gt;</b>: mail title
+(&rsquo;<b>Mail von autofax</b>&rsquo;) <b><br>
+-mb, --mailbody &lt;string&gt;</b>: mail body
+(&rsquo;<b>bitte Anhang beachten</b>&rsquo;) <b><br>
 -fd, --find &lt;zahl&gt;</b>: version 1,2 or 3 of filefind
 (variable performance differences instead of (<b>1</b>)
 <b><br>
@@ -827,7 +831,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.47371) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47374) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1019,7 +1023,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47371</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47374</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
@@ -1179,6 +1183,10 @@ statt hinter (&rsquo;<b>klar an</b>&rsquo;) <b><br>
 -smb, --smtpben &lt;string&gt;</b>: SMTP-Benutzer
 (&rsquo;<b>gschade@dachau-mail.de</b>&rsquo;) <b><br>
 -smp, --smtppwt &lt;string&gt;</b>: SMTP-Passwort <b><br>
+-mt, --mailtitel &lt;string&gt;</b>: Mailtitel
+(&rsquo;<b>Mail von autofax</b>&rsquo;) <b><br>
+-mb, --mailbody &lt;string&gt;</b>: Mailtext
+(&rsquo;<b>bitte Anhang beachten</b>&rsquo;) <b><br>
 -fd, --finde &lt;zahl&gt;</b>: Version 1,2 oder 3
 -Dateisuche (variable Performanceunterschiede) anstatt
 (<b>1</b>) <b><br>
