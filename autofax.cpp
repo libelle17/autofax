@@ -5284,8 +5284,12 @@ int hhcl::pruefocr()
 			} //       for(size_t i=1;i<rueck.size();i++)
 			if (!deuda) linstp->doinst("tesseract-ocr-traineddata-german",obverb,oblog);
 			if (!engda) linstp->doinst("tesseract-ocr-traineddata-english",obverb,oblog);
-			if (!osdda) linstp->doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
-
+			if (!osdda) {
+				double tessvers{progvers("tesseract")};
+				if (tessvers<5) {
+					linstp->doinst("tesseract-ocr-traineddata-orientation_and_script_detection",obverb,oblog);
+				}
+			}
 			pruefunpaper();
 			linstp->doggfinst("qpdf");
 			// uchar alt=0;
