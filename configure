@@ -330,6 +330,8 @@ if test "$ICH" = configure -o "$ICH" = install.sh -o "$ICH" = ${DPROG}_inst.sh -
 	SUG="admin\|root\|sudo\|wheel\|ntadmin";
 
 	# ab hier wird etwas getan ...
+#	[ -z $GITV ]&&. ./configure
+	test -w .||{ echo Fehlende Schreibberechitigung auf/ missing write permission on $(pwd); exit;};
 	while true; do echo \"$GITV\" 2>/dev/null >gitvdt && break; su -c "rm gitvdt"; done;
 	# falls der Benutzer 'sudo' fehlt oder der aktuelle Benutzer ihn nicht aufrufen darf, weil er nicht Mitglied einer Administratorgruppe ist ...
 	INSTP=sudo;still which $INSTP|| 

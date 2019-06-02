@@ -3139,7 +3139,7 @@ void hhcl::virtrueckfragen()
 		ngvz=Tippverz(Tx[T_Verzeichnis_mit_gescheiterten_Dateien],&ngvz);
 		empfvz=Tippverz(Tx[T_Verzeichnis_fuer_empfangene_Faxe],&empfvz);
 		svec fbip;
-		const bool fbfehlt{systemrueck("ping fritz.box -c1",obverb,oblog,&fbip)};
+		const bool fbfehlt{(const bool)systemrueck("ping fritz.box -c1",obverb,oblog,&fbip)};
 		// PING fritz.box (192.168.178.1) 56(84) bytes of data.
 		if (fbfehlt) {
 			obfbox=0;

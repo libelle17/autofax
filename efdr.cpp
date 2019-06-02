@@ -3372,7 +3372,7 @@ int SFSelect::injectSFselect(/*GObj *object, */chtype input)
 		return 0;
 	}
 	/* Can we change into the directory? */
-	bool file{chdir(filename)};
+	bool file{(bool)chdir(filename)};
 	if (chdir(this->pwd.c_str())) {
 		return 0;
 	}
