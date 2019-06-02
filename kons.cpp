@@ -3104,7 +3104,10 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 				// folgendes mindestens notwendig fuer sverz.st_mode
 				fehlt=lstat(stack[i].c_str(),&sverz);
 				// wenn notwendige Rechte fehlen ...
-				if (int prueferg{pruefberecht(/*datei=*/stack[i],aktben,/*mod=*/i?1:7,obverb)}) {
+				for(int runde=0;runde<2;runde++) {
+					const int prueferg{pruefberecht(/*datei=*/stack[i],aktben,/*mod=*/i?1:7,obverb)};
+					if (!prueferg) break;
+					if (runde) obmitfacl=0; // wenn z.B. bei fuseblk es nicht mit facl geht
 					// .. und korrigiert werden sollen
 					if (obmitfacl) {
 						setfaclggf(stack[i],obverb>1?obverb-1:0,oblog, /*obunter=*/wahr, /*mod=*/i?1:7, /*obimmer=*/1,/*faclbak=*/1,/*user=*/aktben,/*fake*/0,/*ausgp*/0,obprot);
@@ -3129,14 +3132,14 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 						}
 						if (obverb||oblog) fLog(Txk[T_datei]+blaus+stack[i].c_str()+schwarz+", mode: "+blau+altmod+schwarz+" -> "+blau+
 								ltoan(sverz.st_mode,8)+schwarz,obverb,oblog);
-						if (chmod(stack[i].c_str(),sverz.st_mode)) {
+//						if (chmod(stack[i].c_str(),sverz.st_mode)) {
 							//             if (1) 
 							string bef{"chmod "+modstr+" '"+stack[i]+"'"};
 							fehlt=systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
-						}
+//						}
 					}
 					if (obverb) systemrueck("ls -ld \""+stack[i]+"\"",2,0,/*rueck=*/0,/*obsudc=*/1);
-				} // 					if (int prueferg=pruefberecht(/*datei=*/stack[i],aktben,/*mod=*/i?1:7))
+				}
 			} // 				if (obmachen)
 			if (fehlt) {
 				// sonst Ende
@@ -6784,9 +6787,19 @@ int confdcl::lies(const string& vfname, int obverb, const char tz/*='='*/)
 							rtrim(&pname);
 //							shared_ptr<string> wertp{new string(zeile.substr(pos+1))};
 //							shared_ptr<string> wertp=make_shared<string>(zeile.substr(pos+1));
-							string *const wertp{new string(zeile.substr(pos+1))};
+							string *wertp{new string(zeile.substr(pos+1))};
+							string altwp{*wertp};
 							gtrim(wertp);
+							bool obunabg{0};
+							while ((*wertp)[0]=='\"' && (*wertp)[wertp->size()-1]!=(*wertp)[0]) {
+								delete wertp;
+								obunabg=1;
+								wertp=new string(altwp);
+			          if (getline(f,zeile)) {*wertp+="\n"; *wertp+=zeile;} else break;
+							}
+							if (obunabg) gtrim(wertp);
 							anfzweg(wertp);
+							// <<"xor: "<<XOR(*wertp,pwk)<<endl;
 							paare.push_back(paarcl(pname,wertp,ibemerk));
 							ibemerk.clear();
 							if (mitabsch) 

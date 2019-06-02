@@ -2850,7 +2850,7 @@ void hhcl::virtinitopt()
 	opn<<new optcl(/*pptr*/&tulistw,/*art*/puchar,T_listw_k,T_listwart_l,/*TxBp*/&Tx,/*Txi*/T_listet_wartende_Faxe_auf,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&nurempf,/*art*/puchar,T_nurempf_k,T_nurempf_l,/*TxBp*/&Tx,/*Txi*/T_empfaengt_nur,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&nursend,/*art*/puchar,T_nursend_k,T_nursend_l,/*TxBp*/&Tx,/*Txi*/T_sendet_nur,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
-	opn<<new optcl(/*pptr*/&suchstr,/*art*/pstri,T_s_k,T_suche_l,/*TxBp*/&Tx,/*Txi*/T_suche_in_verarbeiteten_Faxen_nach,/*wi*/1,/*Txi2*/T_MAX,/*rottxt*/nix,/*wert*/-1,/*woher*/1);
+	opn<<new optcl(/*pptr*/&suchstr,/*art*/pstri,T_s_k,T_suche_l,/*TxBp*/&Tx,/*Txi*/T_suche_in_verarbeiteten_Faxen_nach,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&dszahl,/*art*/pdez,T_n_k,T_dszahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/1); //α //ω
 	opn<<new optcl(/*pptr*/&obvc,/*art*/puchar,T_vc_k,T_vc_l,/*TxBp*/&Tx,/*Txi*/T_Capisuite_Konfigurationdateien_bearbeiten,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&obvh,/*art*/puchar,T_vh_k,T_vh_l,/*TxBp*/&Tx,/*Txi*/T_Hylafax_Modem_Konfigurationsdatei_bearbeiten,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
@@ -4439,6 +4439,7 @@ void hhcl::verzeichnisse()
 {
 	hLog(violetts+Tx[T_verzeichnisse]+schwarz);
 	pruefcvz(); 
+	caus<<"zufaxenvz: "<<zufaxenvz<<", cuser: "<<cuser<<endl;
 	pruefverz(zufaxenvz,obverb,oblog,/*obmitfacl=*/2,/*obmitcon=*/1,/*besitzer=*/cuser); // dahin soll man schreiben koennen
 //	pruefverz(zufaxenvz+"/2200",obverb,oblog,/*obmitfacl=*/2,/*obmitcon=*/1,/*besitzer=*/cuser); // dahin soll man schreiben koennen
 	pruefverz(wvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/cuser);
@@ -4939,7 +4940,7 @@ template<typename T> string verschiebe(const string& qdatei, const T/*string,zie
 } // string verschiebe
 
 // verwendet in zupdf, rueckfragen
-int hhcl::pruefsoffice(uchar mitloe/*=0*/)
+int hhcl::pruefsoffice(const string soffname/*soffice*/,uchar mitloe/*=0*/)
 {
 	hLog(violetts+Tx[T_pruefsoffice]+schwarz);
 	static uchar sofficegeprueft{0};
@@ -4948,11 +4949,11 @@ int hhcl::pruefsoffice(uchar mitloe/*=0*/)
 		////              systemrueck("which zypper 2>/dev/null && zypper -n in soffice || "
 		////                          "{ which apt-get 2>/dev/null && apt-get -y install soffice; }",obverb,oblog);
 		if (mitloe) linstp->douninst("libreoffice-base",obverb,oblog);
-		sofficeda=!linstp->doinst("libreoffice-base",obverb,oblog,"soffice");
+		sofficeda=!linstp->doinst("libreoffice-base",obverb,oblog,soffname);
 		sofficegeprueft=1;
 	} //   if (!sofficegeprueft)
 	return sofficeda;
-} // int hhcl::pruefsoffice()
+} // int hhcl::pruefsoffice
 
 // verwendet in zupfd, rueckfragen
 int hhcl::pruefconvert()
@@ -5105,16 +5106,16 @@ int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/,
 					case 0: 
 						// 5.12.16 opensuse: bearbeitet jetzt nur (noch?) die erste Seite!
 						pname="soffice";
-						if (pruefsoffice()) {
+						if (pruefsoffice(pname)) {
 							cmd0="cd "+gethome()+"; ";
-							cmd="soffice --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+*quellp+"\" 2>&1";
-						} // 						if (pruefsoffice())
+							cmd=pname+" --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+*quellp+"\" 2>&1";
+						} // 						if (pruefsoffice
 						break; // Ergebnis immer 0
 					case 1: 
 						pname="convert";
 						if (pruefconvert()) {
 							cmd0.clear();
-							cmd=sudc+"convert \""+*quellp+"\" \""+ziel+"\""; 
+							cmd=sudc+pname+" \""+*quellp+"\" \""+ziel+"\""; 
 						} // 						if (pruefconvert())
 						break;
 				} // switch (runde) 
@@ -5512,7 +5513,7 @@ void hhcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,const 
 						ziel{empfvz+vtz+hrumpf+".pdf"};
 			fLog((nr.empty()?"":nr+")")+blaus+base+schwarz+" => "+gruen+hdatei+schwarz,1,1);
 			// ..., die empfangene Datei in hpfad kopieren ...
-			uint kfehler=0;
+			uint kfehler{0};
 			string vorsoffice{kopiere(ganz,hpfad,&kfehler,/*wieweiterzaehl=*/1,obverb,oblog)};
 			if (!kfehler) {
 				attrangleich(hpfad,empfvz,&ganz,obverb,oblog);
@@ -5871,6 +5872,7 @@ void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 		if (fxvp->at(nachrnr).prio>0 || hylazuerst) fxvp->at(nachrnr).prio++;
 		einf.push_back(/*2*/instyp(My->DBS,"prio",fxvp->at(nachrnr).prio));
 		einf.push_back(/*2*/instyp(My->DBS,"pages",fxvp->at(nachrnr).pseiten));
+		einf.push_back(/*2*/instyp(My->DBS,"telnr",nix));
 		RS rins1(My,altspool); 
 		rins1.tbins(&einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB); // ,&spoolid);
 		RS rins2(My,spooltab); 
@@ -6003,7 +6005,7 @@ void hhcl::inDBh(DB *My, const string& spooltab, const string& altspool, const s
 	hLog(violetts+Tx[T_inDBh]+schwarz);
 	const string spoolfil{"q"+hylaid},
 				spoolg{this->hsendqvz+vtz+spoolfil};
-	uint affr=0;
+	uint affr{0};
 	hLog(Tx[T_SpoolDateierstellt]+rots+spoolg+schwarz+"'");
 	hLog(Tx[T_SpoolDatei]+rots+spoolfil+schwarz+"'");
 	hLog(Tx[T_SpoolPfad]+rots+this->hsendqvz+schwarz+"'");
@@ -6049,6 +6051,14 @@ void hhcl::klarmail(DB *My, const string& spooltab, const string& altspool, fsfc
 		caus<<rot<<"postfix: "<<blau<<postfix<<schwarz<<endl;
 	}
 // echo "This is the message body and contains the message" | mailx -v -r "gschade@dachau-mail.de" -s "This is the subject"  -S smtp="mail.mnet-online.de:587" -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user="gschade@dachau-mail.de" -S smtp-auth-password="..." -S ssl-verify=ignore -a untersch gerald.schade@gmx.de
+	cmd="echo \""+mailbod+"\"|mailx -r \""+mailvon+"\" -s \""+mailtit+"\" -S smtp=\""+smtpadr+":"+portnr+"\" -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user=\""+smtpusr+"\" -S smtp-auth-password=\""+smtppwd+"\" "
+			" -S ssl-verify=ignore -a \""+ff+"\" \""+fsfp->telnr+"\"";
+	svec rueck;
+	if (systemrueck(cmd,1,1,&rueck)) {
+		caus<<"ging nicht!"<<endl;
+	} else {
+		caus<<"ging!"<<endl;
+	}
 }
 
 // wird aufgerufen in: wegfaxen
@@ -6123,6 +6133,8 @@ void hhcl::wegfaxen()
 	// 2b. Die originalen PDF-Dateien ins Warteverzeichnis verschieben, falls erfolgreich, nicht schon registriert und gleichziel => auch in ziel kopieren
 	// 3. in die Spool-Tabelle eintragen
 	// 4. Dateien aus der Spool-Tabelle aufrufen zum Abarbeiten mit der Wegschick-Funktion
+	auto altobverb{obverb};
+	obverb=1;
 	hLog(violetts+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfbox?Txk[T_ja]:Txk[T_nein])+", "
 			                                    +blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Txk[T_ja]:Txk[T_nein])+", "
 			                                    +blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Txk[T_ja]:Txk[T_nein]));
@@ -6227,14 +6239,15 @@ void hhcl::wegfaxen()
 						for(size_t i=0;i<toknr.size();i++) {
 							string neunr;
 							if (strchr(toknr[i].c_str(),'@')) { // Mail
-							  for(size_t p=toknr[i].length()-1;p;--p) {
-								 if (!strchr("0123456789",toknr[i][p])) { // Ziffern nach '_' => wenn keine Ziffer mehr
-									 if (toknr[i][p]=='_') toknr[i].erase(p); // wenn '_', dann ab da streichen
-									 break; // dann Schleife beenden
-								 }
+								for(size_t p=toknr[i].length()-1;p;--p) {
+									if (toknr[i][p]=='@') break;
+									if (toknr[i][p]=='_') {
+										toknr[i].erase(p); // wenn '_', dann ab da streichen
+										break; // dann Schleife beenden
+									}
 								}
 								while(toknr[i].length()&&(toknr[i][0]==' '||toknr[i][0]==9)) {
-                 toknr[i].erase(0); 
+                 toknr[i].erase(0,1); 
 								}
 							} else { //Fax
 								for(size_t p=0;p<toknr[i].length();p++) {
@@ -6482,8 +6495,9 @@ void hhcl::wegfaxen()
 	//        systemrueck(cmd, obverb,oblog, &npdfd);
 	//        for(size_t i=0;i<npdfd.size();i++) KLA
 	 */
+  fLog("urfx.size(): "+rots+ltoan(urfx.size())+schwarz,obverb,oblog);
 	for(size_t i=0;i<urfx.size();i++) {
-		uint vfehler=0;
+		uint vfehler{0};
 		// wenn die Datei im zufaxenvz in einen Namenskonflikt geriete ...
 		const string ndname{zufaxenvz+vtz+neuerdateiname(urfx.at(i).teil)};
 		if (ndname!=urfx.at(i).teil) {
@@ -6541,7 +6555,7 @@ void hhcl::wegfaxen()
 		} // 	  if (!fxv[nachrnr].npdf.empty())
 		if (zupdffehler || lstat((fxv[nachrnr].npdf.c_str()), &entrynpdf)) {
 			// Misserfolg, zurueckverschieben und aus der Datenbank loeschen
-			uint wfehler=0;
+			uint wfehler{0};
 			//// <<violett<<"fxv["<<(int)nachrnr<<"].npdf: "<<fxv[nachrnr].npdf<<schwarz<<endl;
 			//// <<violett<<"fxv["<<(int)nachrnr<<"].spdf: "<<fxv[nachrnr].spdf<<schwarz<<endl;
 			struct stat npdfstat{0};
@@ -6554,7 +6568,7 @@ void hhcl::wegfaxen()
 		} else {
 			// Erfolg
 			if (gleichziel) {
-				uint kfehler=0;
+				uint kfehler{0};
 				if (!nfehlt) kopiere(fxv[nachrnr].npdf, zmsp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
 				/*string zield=*/kopiere(fxv[nachrnr].spdf, zmsp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
 			} // if (gleichziel)
@@ -6589,7 +6603,7 @@ void hhcl::wegfaxen()
 					} // if (!lstat(zfda.at(i).c_str(),&spdfstat)) 
 				} // if (obocra) 
 				const string ndname{zufaxenvz+vtz+neuerdateiname(zfda.at(i))};
-				uint vfehler=0;
+				uint vfehler{0};
 				if (ndname!=zfda.at(i)) {
 					dorename(zfda.at(i),ndname,cuser,&vfehler,/*schonda=*/!dateivgl(zfda.at(i),ndname),obverb,oblog);
 					if (vfehler) {
@@ -6608,7 +6622,7 @@ void hhcl::wegfaxen()
 				if (!vorhanden) {
 					fxv.push_back(fxfcl(wartedatei,zfda.at(i),iprio));
 					if (gleichziel) {
-						uint kfehler=0;
+						uint kfehler{0};
 						/*string zield=*/kopiere(wartedatei, zmsp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
 					} //  if (gleichziel)
 				} //if (!vorhanden)
@@ -6768,6 +6782,7 @@ void hhcl::wegfaxen()
 			+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfbox?Txk[T_ja]:Txk[T_nein])+", "
 			+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obcapi?Txk[T_ja]:Txk[T_nein])+", "
 			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obhyla?Txk[T_ja]:Txk[T_nein]));
+	obverb=altobverb;
 } // void hhcl::wegfaxen()
 
 
@@ -6870,7 +6885,7 @@ void hhcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,
 							tuloeschen(tifpfad,cuser,obverb,oblog);
 						} // 					if (obpdfda && !lstat(ziel.c_str(),&stziel))
 					} else {
-						uint kfehler=1;
+						uint kfehler{1};
 						const string sffneu{empfvz+vtz+tifrumpf+".sff"};
 						kopiere(sffdatei,sffneu,&kfehler,/*wieweiterzaehl=*/2,obverb,oblog);
 						if (kfehler) {
@@ -7190,7 +7205,7 @@ void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *a
 				////						(cerg&&*cerg?cjj(cerg,1):""),schwarz,farbe,fit->c_str(),schwarz);
 			} // 		if (obverb)
 			// <<fitnr<<") "<<farbe<<*fit<<schwarz<<endl;
-			uint vfehler=0;
+			uint vfehler{0};
 			string zdt;
 			if (cstand==2 || hstand==2) {
 				if (wann&1) {
@@ -7498,7 +7513,7 @@ void hhcl::bereinigecapi(const size_t aktc)
 				// 31.1.16: ... und wenn diese sich nicht in outa findet ...
 				const string waisen{cfaxusersqvz+"/waisen"};
 				pruefverz(waisen,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/"",/*benutzer=*/cuser);
-				uint vfehler=0;
+				uint vfehler{0};
 				verschiebe<string>(qrueck[i],waisen,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 			} // if (inouta.num_rows) else 
 		} // if (lstat(zugeh.c_str(),&entryvz)) 

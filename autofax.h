@@ -944,7 +944,7 @@ class hhcl:public dhcl
     void rufpruefsamba();
     void korrigierecapi(const unsigned tage=90,const size_t aktc=1);
     void korrigierehyla(const unsigned tage=90,const size_t aktc=2);
-    int pruefsoffice(uchar mitloe=0);
+    int pruefsoffice(const string soffname,uchar mitloe=0);
     void bereinigevz(const size_t aktc/*=0*/);
 		void dober(const string& wvz, set<string>& fdn,uchar aucherfolg,stringstream *ausgp,const size_t aktc,
 				set<string> *cmisslp,set<string> *cgelup,set<string> *hmisslp,set<string> *hgelup);
