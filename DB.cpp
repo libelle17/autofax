@@ -267,7 +267,7 @@ Feld::Feld(const string& name, string typ/*=string()*/, const string& lenge/*=st
 	}
 } // Feld(const string& name, const string& typ, const string& lenge, const string& prec, string comment, bool vind, bool vobauto, bool vnnull, string vdefa):
 
-// Feld::Feld(Feld const& copy) { }
+// Feld::Feld
 
 
 Index::Index(const string& name, Feld *const vfelder, const unsigned feldzahl, const uchar unique/*=0*/):

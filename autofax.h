@@ -572,6 +572,7 @@ enum T_
 	T_inDbc,
 	T_faxemitH,
 	T_inDBh,
+	T_inDBk,
 	T_SpoolDateierstellt,
 	T_SpoolDatei,
 	T_SpoolPfad,
@@ -613,10 +614,11 @@ enum T_
 	T_bzw_,
 	T_std_mailtit,
 	T_std_mailbod,
+	T_mail_gesandt_0_nein_1_ja,
 	T_MAX //α
 }; // enum T_ //ω
 
-enum FaxTyp:uchar {capi=1,hyla};
+enum FaxTyp:uchar {capi=1,hyla,fritz,kmail,vmail};
 enum FxStat:uchar {init/*0*/,gestrichen,schwebend,wartend/*3*/,blockiert/*4*/,bereit/*5*/,verarb/*6*/,gesandt/*7*/,gescheitert/*8*/,fehlend,woasined};
 enum hyinst {keineh,hysrc,hypak,hyppk}; // hyla source, hyla Paket, hylaplus Paket
 class fsfcl; // Faxsendfile
@@ -698,6 +700,7 @@ struct fsfcl : public fxfcl // Faxsendfile
     uchar fobhyla; // ob es jetzt mit Hyla weggefaxt werden muss
     string adressat; // Name des Adressaten aus Faxdatei
 		string idalt; // id in altspool
+		string mailges; // ob mail gesandt
     string original; // base_name(spdf)
     string origvu;   // base_name(npdf)
     string idudoc;   // id des urspruenglichen Dateinamens in tabelle udoc
@@ -710,7 +713,7 @@ struct fsfcl : public fxfcl // Faxsendfile
     string hstate="0"; // Statuszahl ("state" in man sendq)
     string hstatus; // Textbeschreibung des letztes Fehlschlags
     string hstatuscode; // in xferfaxlog nicht gefunden
-		time_t tts=0;
+		time_t xtts=0;
 		time_t killtime=0;
 		string number;   // Telefonnummer
     string hdials;   // hyladials
@@ -970,7 +973,8 @@ class hhcl:public dhcl
 		void empferneut();
     size_t  loeschewaise();
 		size_t loescheallewartenden();
-		void wegfaxen();
+		void inspoolschreiben(const size_t aktc);
+		void wegfaxen(const size_t aktc);
 		int obvorbei(const string& vzname,uchar *auchtag);
     void WVZinDatenbank(vector<fxfcl> *const fxvp, size_t aktc); // in wegfaxen
 		void inDbc(DB *My, const string& spooltab, const string& altspool, const string& spoolg, const fsfcl *const fsfp, 
@@ -981,6 +985,7 @@ class hhcl:public dhcl
 		void klarmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
 				const fsfcl *const fsfp,const string *const tel, const size_t aktc);
+		void inDBk(DB *My, const string& spooltab, const string& altspool, const fsfcl *const fsfp, const size_t aktc);
 	protected: //α
 		// void virtlgnzuw(); // wird aufgerufen in: virtrueckfragen, parsecl, lieskonfein, hcl::hcl nach holsystemsprache
 		void virtVorgbAllg();
