@@ -1273,6 +1273,32 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"bitte Anhang beachten","please look at the attachment"},
 	// T_mail_gesandt_0_nein_1_ja,
 	{"mail gesandt (0=nein, 1=ja)","mail sent (0=no, 1=yes)"},
+	// T_Prioritaet_von_capisuite_1_3,
+	{"Prioritaet von capisuite (1-3)","Priority of capisuite (1-3)"},
+	// T_Prioritaet_von_hylafax_1_3,
+	{"Prioritaet von hylafax (1-3)","Priority of hylafax (1-3)"},
+	// T_Prioritaet_von_fritzbox_1_3,
+	{"Prioritaet von fritzbox (1-3)","Priority of fritzbox (1-3)"},
+	// T_cp_k,
+	{"cp","cp"},
+	// T_cprio_l,
+	{"cprio","cprio"},
+	// T_hp_k,
+	{"hp","hp"},
+	// T_hprio_l,
+	{"hprio","hprio"},
+	// T_fp_k,
+	{"fp","fp"},
+	// T_fprio_l,
+	{"fprio","fprio"},
+	// T_Mit_welcher_Prioritaet_soll_capisuite_verwendet_werden_1_3,
+	{"Mit welcher Prioritaet soll capisuite verwendet werden (1-3)","With which priority shall capisuite be used (1-3)"},
+	// T_Mit_welcher_Prioritaet_soll_hylafax_verwendet_werden_1_3,
+	{"Mit welcher Prioritaet soll hylafax verwendet werden (1-3)","With which priority shall hylafax be used (1-3)"},
+	// T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3,
+	{"Mit welcher Prioritaet soll fritzbox verwendet werden (1-3)","With which priority shall fritzbox be used (1-3)"},
+  // T_sortprio,
+	{"sortprio()","sortprio()"},
 	{"",""} //α
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -1627,6 +1653,9 @@ const string& zielmustercl::holziel() const
 hhcl::hhcl(const int argc, const char *const *const argv):dhcl(argc,argv,DPROG,/*mitcron*/1) //α
 {
 	hLog(violetts+"hhcl::hhcl()"+schwarz);
+  sortprio(1);
+	sortprio(2);
+	sortprio(3);
  // mitcron=0; //ω
 } // hhcl::hhcl //α
 // Hier neue Funktionen speichern: //ω
@@ -2812,6 +2841,11 @@ void hhcl::virtinitopt()
 	opn<<new optcl(/*pname*/"fbankvz",/*pptr*/&fbankvz,/*art*/pverz,T_fbankvz_k,T_fbankvz_l,/*TxBp*/&Tx,/*Txi*/T_Ankunftsverzeichnis_der_Fritzbox_ueber_CIFS,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!fbankvz.empty(),T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox);
 	opn<<new optcl(/*pname*/"obcapi",/*pptr*/&obcapi,/*art*/pint,T_capi_k,T_obcapi_l,/*TxBp*/&Tx,/*Txi*/T_Capisuite_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obcapi!=-1,T_Soll_die_Capisuite_verwendet_werden,/*obno*/1);
 	opn<<new optcl(/*pname*/"obhyla",/*pptr*/&obhyla,/*art*/pint,T_hyla_k,T_obhyla_l,/*TxBp*/&Tx,/*Txi*/T_hylafax_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obhyla!=-1,T_Soll_Hylafax_verwendet_werden,/*obno*/1);
+
+	opn<<new optcl(/*pname*/"fprio",/*pptr*/&fprio,/*art*/pint,T_fp_k,T_fprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_fritzbox_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!fprio,T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3);
+	opn<<new optcl(/*pname*/"cprio",/*pptr*/&cprio,/*art*/pint,T_cp_k,T_cprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_capisuite_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!cprio,T_Mit_welcher_Prioritaet_soll_capisuite_verwendet_werden_1_3);
+	opn<<new optcl(/*pname*/"hprio",/*pptr*/&hprio,/*art*/pint,T_hp_k,T_hprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_hylafax_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!hprio,T_Mit_welcher_Prioritaet_soll_hylafax_verwendet_werden_1_3);
+
 	opn<<new optcl(/*pname*/"hylazuerst",/*pptr*/&hylazuerst,/*art*/pint,T_hz_k,T_hylazuerst_l,/*TxBp*/&Tx,/*Txi*/T_versuche_faxe_zuerst_ueber_Hylafax_wegzuschicken,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/hylazuerst!=-1,T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden);
 	opn<<new optcl(/*pname*/"hylazuerst",/*pptr*/&hylazuerst,/*art*/pint,T_cz_k,T_capizuerst_l,/*TxBp*/&Tx,/*Txi*/T_versuche_faxe_zuerst_ueber_Capisuite_wegzuschicken,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/0,/*woher*/hylazuerst!=-1,-1);
 	opn<<new optcl(/*pname*/"hmodem",/*pptr*/&hmodem,/*art*/pstri,T_mod_k,T_hmodem_l,/*TxBp*/&Tx,/*Txi*/T_Fuer_Hylafax_verwendetes_Modem,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hmodem.empty(),T_Fuer_Hylafax_verwendetes_Modem);
@@ -2929,13 +2963,13 @@ void hhcl::zeigdienste()
 			cout<<" "<<setw(25)<<svp[i]->sname<<": "<<blau<<Txk[sfeh[svp[i]->svfeh]]<<schwarz<<endl;
 		} // 		if (svp[i])
 	} // 	for(int i=0;i<4;i++)
-} // void hhcl::zeigdienste()
+} // void hhcl::zeigdienste
 
 // augerufen in: pruefhyla, zeigkonf, loeschehyla, anhalten
 void hhcl::hylasv1()
 {
 	if (!this->sfaxgetty) this->sfaxgetty=new servc("hylafax-faxgetty-"+this->hmodem,"faxgetty");
-} // void hhcl::hylasv1()
+} // void hhcl::hylasv1
 
 // augerufen in: pruefhyla, zeigkonf, loeschehyla, anhalten
 void hhcl::hylasv2(hyinst hyinstart)
@@ -2949,7 +2983,7 @@ void hhcl::hylasv2(hyinst hyinstart)
 		if (!shfaxd) shfaxd=new servc("","hfaxd");
 	} // if (hyinstart==hysrc || hyinstart==hyppk) else
 	if (!shylafaxd) shylafaxd=new servc("hylafax","faxq hfaxd");
-} // void hhcl::hylasv2()
+} // void hhcl::hylasv2
 
 // wird aufgerufen in lauf //α
 void hhcl::virtzeigversion(const string& ltiffv/*=string()*/)
@@ -2977,7 +3011,7 @@ int fd_reopen(int desired_fd, char const *file, int flags, mode_t mode)
 		errno=saved_errno;
 		return fd2;
 	} // 	if (fd == desired_fd || fd < 0) else
-} // fd_reopen (int desired_fd, char const *file, int flags, mode_t mode)
+} // fd_reopen
 
 // mit strace usw. aus coreutils; in pruefmodem
 int ttytest(const string& tty)
@@ -2999,7 +3033,7 @@ int ttytest(const string& tty)
 		close(defin);
 	} // 	if ((defin=dup(STDIN_FILENO))>=0)
 	return erg;
-} // int ttytest(const string& tty)
+} // int ttytest
 
 // wird aufgerufen in: main, virtrueckfragen
 void hhcl::pruefmodem()
@@ -3128,7 +3162,32 @@ void hhcl::neurf()
 		cout<<text<<endl;
 		}
 	}
-}
+} // void hhcl::neurf
+
+void hhcl::sortprio(const int fch)
+{
+	// fch: 1=f, 2=c, 3=h
+	const int altobverb{obverb};
+	obverb=1;
+	hLog(violetts+Tx[T_sortprio]+", fch: "+blau+ltoan(fch)+schwarz);
+	caus<<"vorher fprio: "<<fprio<<", cprio: "<<cprio<<", hprio: "<<hprio<<endl;
+	switch (fch) {
+	 case 1:
+		if (cprio==fprio)for(int i=1;i<=3;i++)if(i!=fprio)if(i!=hprio){cprio=i;break;}
+		if (hprio==fprio)for(int i=1;i<=3;i++)if(i!=fprio)if(i!=cprio){hprio=i;break;}
+		break;
+	 case 2:
+		if (fprio==cprio)for(int i=1;i<=3;i++)if(i!=cprio)if(i!=hprio){fprio=i;break;}
+		if (hprio==cprio)for(int i=1;i<=3;i++)if(i!=cprio)if(i!=fprio){hprio=i;break;}
+		break;
+	 case 3:
+		if (fprio==hprio)for(int i=1;i<=3;i++)if(i!=hprio)if(i!=cprio){fprio=i;break;}
+		if (cprio==hprio)for(int i=1;i<=3;i++)if(i!=hprio)if(i!=fprio){cprio=i;break;}
+		break;
+	}
+	caus<<"nachher fprio: "<<fprio<<", cprio: "<<cprio<<", hprio: "<<hprio<<endl;
+	obverb=altobverb;
+} // void hhcl::sortprio
 
 // wird aufgerufen in lauf
 void hhcl::virtrueckfragen()
@@ -3196,6 +3255,18 @@ void hhcl::virtrueckfragen()
 			obhyla=Tippob(Tx[T_Soll_Hylafax_verwendet_werden],obhyla?Txk[T_j_af]:"n");
 		} else {
 			obhyla=0;
+		}
+		if (obfbox) {
+			fprio=Tippzahl(Tx[T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3],fprio);
+			sortprio(1);
+		}
+		if (obcapi) {
+			cprio=Tippzahl(Tx[T_Mit_welcher_Prioritaet_soll_capisuite_verwendet_werden_1_3],cprio);
+			sortprio(2);
+		}
+		if (obhyla) { 
+			hprio=Tippzahl(Tx[T_Mit_welcher_Prioritaet_soll_hylafax_verwendet_werden_1_3],hprio);
+			sortprio(3);
 		}
 		if (obcapi) {
 			if (obhyla) {

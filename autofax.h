@@ -615,6 +615,19 @@ enum T_
 	T_std_mailtit,
 	T_std_mailbod,
 	T_mail_gesandt_0_nein_1_ja,
+	T_Prioritaet_von_capisuite_1_3,
+	T_Prioritaet_von_hylafax_1_3,
+	T_Prioritaet_von_fritzbox_1_3,
+	T_cp_k,
+	T_cprio_l,
+	T_hp_k,
+	T_hprio_l,
+	T_fp_k,
+	T_fprio_l,
+	T_Mit_welcher_Prioritaet_soll_capisuite_verwendet_werden_1_3,
+	T_Mit_welcher_Prioritaet_soll_hylafax_verwendet_werden_1_3,
+	T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3,
+	T_sortprio,
 	T_MAX //α
 }; // enum T_ //ω
 
@@ -759,6 +772,9 @@ class hhcl:public dhcl
 		uchar initdhyladt_gibts{0}; // Datei initdhyladt existiert
 		svec modems;       // gefundene Modems
 		uchar modemgeaendert{0}; // hmodem neu gesetzt
+		int fprio{1}; // Priorität von fritzbox
+		int cprio{2}; // Priorität von capisuite
+		int hprio{3}; // Priorität von hylafax
 		int hylazuerst{-1};  // ob ein Fax zuerst ueber Hylafax versucht werden soll zu faxen
 		//    string hmodemstr; // Erkennung des Faxgeraetes nach /dev/tty, Standard ACM
 		string maxcapiv; // maximale Versuchnr in Capi, bis Hyla versucht wird
@@ -986,6 +1002,7 @@ class hhcl:public dhcl
 		void inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
 				const fsfcl *const fsfp,const string *const tel, const size_t aktc);
 		void inDBk(DB *My, const string& spooltab, const string& altspool, const fsfcl *const fsfp, const size_t aktc);
+		void sortprio(const int fch);
 	protected: //α
 		// void virtlgnzuw(); // wird aufgerufen in: virtrueckfragen, parsecl, lieskonfein, hcl::hcl nach holsystemsprache
 		void virtVorgbAllg();

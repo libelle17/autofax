@@ -294,7 +294,7 @@ pull:
 ifeq (,$(SRCS))
 else
 anzeig:
-	@if test "$$(./configure nuros)" != "$(OSNR)"; then ./configure;:;echo "$$@";make "$$@";\
+	@cno=$$(./configure nuros);if test "$$cno" != "$(OSNR)"; then echo "Achtung: \"$$cno\" != \"$(OSNR)\" => muss ./configure aufrufen.";./configure;:;echo "$$@";make "$$@";\
 		echo "Die folgende Fehlermeldung gilt nicht/ The following error message is invalid:";false;fi;
 # 'echo -e' geht nicht z.B. in ubuntu
 	@[ "$(DPROG)" ]||{ printf "Datei/File %b'vars'%b fehlerhaft/faulty, bitte vorher/please call %b'./install.sh'%b aufrufen/before!\n" \
