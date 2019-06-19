@@ -9316,16 +9316,9 @@ void hhcl::virtlieskonfein()
 	const int altobverb{obverb};
 	//	obverb=1;
 	hLog(violetts+Txk[T_virtlieskonfein]+schwarz); //ω
-	caus<<"in virtlieskonfein 0 fprio: "<<prios[0]<<", cprio: "<<prios[1]<<", hprio: "<<prios[2]<<endl;
 	for(int j=0;j<3;j++) clprios[j]=prios[j];
-	caus<<"in virtlieskonfein 0 clfprio: "<<clprios[0]<<", clcprio: "<<clprios[1]<<", clhprio: "<<clprios[2]<<endl;
 	for(int j=0;j<3;j++) prios[j]=0;
-	caus<<"in virtlieskonfein 1 fprio: "<<prios[0]<<", cprio: "<<prios[1]<<", hprio: "<<prios[2]<<endl;
-	caus<<"in virtlieskonfein 1 clfprio: "<<clprios[0]<<", clcprio: "<<clprios[1]<<", clhprio: "<<clprios[2]<<endl;
 	hcl::virtlieskonfein(); //α //ω
-	// jetzt enthalten die in der Befehlszeile angegebenen in *prios 0 und in clprios Prioritäten und die nicht angegebenen umgekehrt
-	caus<<"in virtlieskonfein 2 fprio: "<<prios[0]<<", cprio: "<<prios[1]<<", hprio: "<<prios[2]<<endl;
-	caus<<"in virtlieskonfein 2 clfprio: "<<clprios[0]<<", clcprio: "<<clprios[1]<<", clhprio: "<<clprios[2]<<endl;
 	// jetzt wird clprios nach der Reihenfolge in prios vervollstaendigt:
 	for(int p=1;p<=3;p++) { // fuer jede Prioritaet
 		int cont{0};
@@ -9341,9 +9334,7 @@ void hhcl::virtlieskonfein()
 		}
 		if (minj<3+1) clprios[minj]=p;
 	}
-	caus<<"in virtlieskonfein 3 clfprio: "<<clprios[0]<<", clcprio: "<<clprios[1]<<", clhprio: "<<clprios[2]<<endl;
 	standardprio(/*obmitsetz*/0);
-	caus<<"in virtlieskonfein 4 fprio: "<<prios[0]<<", cprio: "<<prios[1]<<", hprio: "<<prios[2]<<endl;
 	// sqlzn und zmzn aus den Konfigurationsdateien ermitteln (um sie nicht dort speichern zu muessen)
 	sqlzn=0;
 	zmzn=0;
