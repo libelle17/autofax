@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.4752) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47525) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -177,9 +177,8 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/home/schade/autofax/autofax</b>, V:
-<b>0.47520</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
-<b>Hylafax <br>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47525</b>
+Verwende: <b>Fritzbox <br>
 Options which are not saved (current value in parentheses):
 <br>
 -delf, --deletefax</b>: delete a fax with query (<b>0</b>)
@@ -239,7 +238,7 @@ with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vi, --vi</b>: edit/view configuration file , log file etc.
 (finish with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vs, --vs</b>: edit/view source files in
-<b>/home/schade/autofax</b>(finish with &rsquo;:qa&rsquo;)
+<b>/root/autofax</b>(finish with &rsquo;:qa&rsquo;)
 (<b>0</b>) <b><br>
 -autoupd, --autoupdate &lt;zahl&gt;</b>: Update program
 automatically (<b>1</b>) <b><br>
@@ -279,10 +278,6 @@ not</b> (<b>1</b>) <b><br>
 (<b>0</b>) <b><br>
 -hp, --hprio &lt;zahl&gt;</b>: Priority of hylafax (1-3)
 (<b>0</b>) <b><br>
--hf, --hylafirst &lt;zahl&gt;</b>: trying to send faxes
-first via hylafax (<b>0</b>) <b><br>
--fc, --firstcapi &lt;zahl&gt;</b>: try to send faxes
-primarily via capisuite (<b>0</b>) <b><br>
 -mod, --hmodem &lt;string&gt;</b>: Modem used for hylafax,
 instead of (&rsquo;<b>ttyACM0</b>&rsquo;) <b><br>
 -mc, --maxcapitries &lt;string&gt;</b>: try Hylafax after
@@ -838,7 +833,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.4752) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47525) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1030,9 +1025,8 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/home/schade/autofax/autofax</b>, V:
-<b>0.47520</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
-<b>Hylafax <br>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47525</b>
+Verwende: <b>Fritzbox <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
 -loef, --loeschefax</b>: ein Fax nach Rueckfrage loeschen
@@ -1094,7 +1088,7 @@ Konfigurationsdatei &lt;string&gt; anstatt (&rsquo;&rsquo;)
 -vi, --vi</b>: Konfigurationsdatei , Logdatei usw.
 bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
--vs, --vs</b>: Quelldateien in <b>/home/schade/autofax</b>
+-vs, --vs</b>: Quelldateien in <b>/root/autofax</b>
 bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
 -autoakt, --autoaktual &lt;zahl&gt;</b>: Programm
@@ -1137,10 +1131,6 @@ nicht</b> (<b>1</b>) <b><br>
 (1-3) (<b>0</b>) <b><br>
 -hp, --hprio &lt;zahl&gt;</b>: Prioritaet von hylafax (1-3)
 (<b>0</b>) <b><br>
--hz, --hylazuerst &lt;zahl&gt;</b>: versuche faxe zuerst
-ueber Hylafax wegzuschicken (<b>0</b>) <b><br>
--cz, --capizuerst &lt;zahl&gt;</b>: versuche faxe zuerst
-ueber Capisuite wegzuschicken (<b>0</b>) <b><br>
 -mod, --hmodem &lt;string&gt;</b>: Fuer Hylafax verwendetes
 Modem, anstatt (&rsquo;<b>ttyACM0</b>&rsquo;) <b><br>
 -mc, --maxcapiv &lt;string&gt;</b>: nach &lt;zahl&gt;

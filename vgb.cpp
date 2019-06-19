@@ -35,11 +35,11 @@ void hhcl::pvirtVorgbSpeziell()
 	msn="616381";
 	LocalIdentifier="DiabDachau";
 	cFaxUeberschrift="Diabetologie Dachau";
-	obfbox=1;
+	obfa[0]=1;
 	fbankvz="/mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox";
-	obcapi=1;
-	obhyla=1;
-	hylazuerst=0;
+	obfa[1]=1;
+	obfa[2]=1;
+	// hylazuerst=0;
 	hmodem="ttyACM0";
 	cuser="schade";
 	gleichziel=1;

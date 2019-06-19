@@ -774,7 +774,7 @@ class hhcl:public dhcl
 		uchar modemgeaendert{0}; // hmodem neu gesetzt
 		int prios[3]{0}; // prios[0] = Priorität von fritzbox, prios[1] = Priorität von capisuite, prios[2] = Priorität von hylafax
     int clprios[3]; // commandline-Prioritaeten
-		int hylazuerst{-1};  // ob ein Fax zuerst ueber Hylafax versucht werden soll zu faxen
+		// int hylazuerst{-1};  // ob ein Fax zuerst ueber Hylafax versucht werden soll zu faxen
 		//    string hmodemstr; // Erkennung des Faxgeraetes nach /dev/tty, Standard ACM
 		string maxcapiv; // maximale Versuchnr in Capi, bis Hyla versucht wird
 		string maxhylav; // maixmale Versuchsnr in Hylafax, bis Capi versucht wird
@@ -836,12 +836,7 @@ class hhcl:public dhcl
 		ulong gzahl{0};
 		ulong fzahl{0};
 		ulong weizahl{0}; // Zahl der weiteren wartenden Faxe, die nicht in der Spooltabelle dieses Programms eingetragen sind
-		int obfbox{-1}; // ob ueberhaupt die Fritzbox verwendet werden soll, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
-		int obcapi{-1}; // ob ueberhaupt die Capisuite verwendet werden soll, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
-		int obhyla{-1}; // ob ueberhaupt hylafax verwendet werden soll
-		uchar konfobfbox; // ob obfbox in der Konfigurationsdatei eingestellt ist
-		uchar konfobcapi; // ob obcapi in der Konfigurationsdatei eingestellt ist
-		uchar konfobhyla; // ob obhyla in der Konfigurationsdatei eingestellt ist
+		int obfa[3]{-1}; // ob jew.faxart verwendet: 0=fbox, 1=capi, 2=hyla, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
 		//    string hmodemstr; // Erkennung des Faxgeraetes nach /dev/tty, Standard ACM
 		string hmodem;    // erkanntes und laufendes Modem ttyACM0
 		//    string hmodname;  // ttyACM0
