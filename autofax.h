@@ -772,9 +772,8 @@ class hhcl:public dhcl
 		uchar initdhyladt_gibts{0}; // Datei initdhyladt existiert
 		svec modems;       // gefundene Modems
 		uchar modemgeaendert{0}; // hmodem neu gesetzt
-		int fprio{1}; // Priorität von fritzbox
-		int cprio{2}; // Priorität von capisuite
-		int hprio{3}; // Priorität von hylafax
+		int prios[3]{0}; // prios[0] = Priorität von fritzbox, prios[1] = Priorität von capisuite, prios[2] = Priorität von hylafax
+    int clprios[3]; // commandline-Prioritaeten
 		int hylazuerst{-1};  // ob ein Fax zuerst ueber Hylafax versucht werden soll zu faxen
 		//    string hmodemstr; // Erkennung des Faxgeraetes nach /dev/tty, Standard ACM
 		string maxcapiv; // maximale Versuchnr in Capi, bis Hyla versucht wird
@@ -1002,7 +1001,7 @@ class hhcl:public dhcl
 		void inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
 				const fsfcl *const fsfp,const string *const tel, const size_t aktc);
 		void inDBk(DB *My, const string& spooltab, const string& altspool, const fsfcl *const fsfp, const size_t aktc);
-		void sortprio(const int fch);
+		void standardprio(const int obmitsetz);
 	protected: //α
 		// void virtlgnzuw(); // wird aufgerufen in: virtrueckfragen, parsecl, lieskonfein, hcl::hcl nach holsystemsprache
 		void virtVorgbAllg();
@@ -1019,6 +1018,7 @@ class hhcl:public dhcl
 		void pvirtvorrueckfragen();
 		void virtrueckfragen();
 		void neurf();
+		void pvirtnachvi();
 		void pvirtvorpruefggfmehrfach();
 		void virtpruefweiteres();
 		void virtzeigueberschrift();

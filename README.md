@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.47443) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47519) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -176,18 +176,9 @@ commands for finding an addressee from the fax number)
 cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
-&rsquo;<b>autofax -rf</b>&rsquo;. <b><br>
-sortprio(), fch: 1</b> <br>
-vorher fprio: 1, cprio: 2, hprio: 3 <br>
-nachher fprio: 1, cprio: 2, hprio: 3 <b><br>
-sortprio(), fch: 2</b> <br>
-vorher fprio: 1, cprio: 2, hprio: 3 <br>
-nachher fprio: 1, cprio: 2, hprio: 3 <b><br>
-sortprio(), fch: 3</b> <br>
-vorher fprio: 1, cprio: 2, hprio: 3 <br>
-nachher fprio: 1, cprio: 2, hprio: 3 <br>
+&rsquo;<b>autofax -rf</b>&rsquo;. <br>
 Programm: <b>/home/schade/autofax/autofax</b>, V:
-<b>0.47443</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
+<b>0.47519</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
 <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
@@ -283,11 +274,11 @@ not</b> (<b>1</b>) <b><br>
 -hyla, --takehyla &lt;zahl&gt;</b>: use hylafax <b>or
 not</b> (<b>1</b>) <b><br>
 -fp, --fprio &lt;zahl&gt;</b>: Priority of fritzbox (1-3)
-(<b>1</b>) <b><br>
+(<b>0</b>) <b><br>
 -cp, --cprio &lt;zahl&gt;</b>: Priority of capisuite (1-3)
-(<b>2</b>) <b><br>
+(<b>0</b>) <b><br>
 -hp, --hprio &lt;zahl&gt;</b>: Priority of hylafax (1-3)
-(<b>3</b>) <b><br>
+(<b>0</b>) <b><br>
 -hf, --hylafirst &lt;zahl&gt;</b>: trying to send faxes
 first via hylafax (<b>0</b>) <b><br>
 -fc, --firstcapi &lt;zahl&gt;</b>: try to send faxes
@@ -847,7 +838,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.47443) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47519) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1038,18 +1029,9 @@ sondern nur &uuml;ber die Konfigurationsdatei eingegeben
 werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
-kann. <b><br>
-sortprio(), fch: 1</b> <br>
-vorher fprio: 1, cprio: 2, hprio: 3 <br>
-nachher fprio: 1, cprio: 2, hprio: 3 <b><br>
-sortprio(), fch: 2</b> <br>
-vorher fprio: 1, cprio: 2, hprio: 3 <br>
-nachher fprio: 1, cprio: 2, hprio: 3 <b><br>
-sortprio(), fch: 3</b> <br>
-vorher fprio: 1, cprio: 2, hprio: 3 <br>
-nachher fprio: 1, cprio: 2, hprio: 3 <br>
+kann. <br>
 Programm: <b>/home/schade/autofax/autofax</b>, V:
-<b>0.47443</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
+<b>0.47519</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
 <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
@@ -1150,11 +1132,11 @@ der Fritzbox (ueber CIFS)
 -hyla, --obhyla &lt;zahl&gt;</b>: Hylafax verwenden <b>oder
 nicht</b> (<b>1</b>) <b><br>
 -fp, --fprio &lt;zahl&gt;</b>: Prioritaet von fritzbox (1-3)
-(<b>1</b>) <b><br>
+(<b>0</b>) <b><br>
 -cp, --cprio &lt;zahl&gt;</b>: Prioritaet von capisuite
-(1-3) (<b>2</b>) <b><br>
+(1-3) (<b>0</b>) <b><br>
 -hp, --hprio &lt;zahl&gt;</b>: Prioritaet von hylafax (1-3)
-(<b>3</b>) <b><br>
+(<b>0</b>) <b><br>
 -hz, --hylazuerst &lt;zahl&gt;</b>: versuche faxe zuerst
 ueber Hylafax wegzuschicken (<b>0</b>) <b><br>
 -cz, --capizuerst &lt;zahl&gt;</b>: versuche faxe zuerst

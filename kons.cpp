@@ -185,8 +185,6 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
    "Neither zypper nor apt-get nor dnf nor yum found as installation programme!"},
   // T_Logdateidpp
   {"Logdatei:","Log file:"},
-  // T_Lese_Konfiguration_aus
-  {"Lese Konfiguration aus '","Reading configuration from '"},
   // T_j_k,
   {"j","y"},
   // T_Fehler_bei_auswert
@@ -2135,11 +2133,12 @@ template <typename SCL> void confdcl::kauswert(schAcl<SCL> *sA, int obverb,const
 								if (paare[nr].name==sA->schl[ii]->pname) {
 									sA->schl[ii]->ausgewertet=1;
 									if (obverb){cout<<"setze: sA->schl["<<ii<<"]->pname: "<<sA->schl[ii]->pname<<":   "; sA->schl[ii]->virtoausgeb();}
-									const int kafnr{sA->schl[ii]->setzstr(paare[nr].wert.c_str(),&obzuschreib,/*ausDatei=*/1)};
-									if (!kafnr) {
+									const int kafnr __attribute__((unused)) {sA->schl[ii]->setzstr(paare[nr].wert.c_str(),&obzuschreib,/*ausDatei=*/1)};
+									// 19.6.19: Bedingung auskommentiert, da sonst bei nicht-existentem Verzeichnis die Konfiguration immer neu geschrieben wird
+//									if (!kafnr) {
 										sA->setzbemerkwoher(sA->schl[ii].get(),/*bemerk=*/paare[nr].bemerk,/*woher*/2);
 										++richtige;
-									}
+//									}
 									if (obverb){cout<<"gesetzt:    "; sA->schl[ii]->virtoausgeb();}
 									break;
 								} // if( !strcmp(sA[i]->pname.c_str(),zeile->c_str()) ) 
@@ -5078,8 +5077,10 @@ void hcl::lauf()
 	}
 	pvirtvorzaehler();
 	lieszaehlerein();
-	if (obvi) dovi(); 
-	else if (obvs) {
+	if (obvi) {
+		dovi(); 
+		pvirtnachvi();
+	} else if (obvs) {
 		svec rueck;
 		systemrueck("cd \""+instvz+"\";ls -l $(grep 'DTN' vars|sed 's/DTN::=//g')",-1,oblog,&rueck);
 		exit(schluss(systemrueck("cd \""+instvz+"\"; sh viall"+devtty,/*obverb=*/0,/*oblog=*/0,/*rueck=*/0,/*obsudc=*/1),
@@ -5351,7 +5352,7 @@ void hcl::parsecl()
 	} //   for(size_t i=0;i<argcmv.size();i++)
 	hLog(violetts+Txk[T_Ende]+Txk[T_parsecl]+schwarz);
 	return;
-} // void hcl::parsecl()
+} // void hcl::parsecl
 
 // wird aufgerufen in lauf
 void hcl::virtMusterVorgb()
@@ -6079,7 +6080,7 @@ int optcl::setzstr(const char* const neuw,uchar *const obzuschreib/*=0*/,const u
 {
 	uchar tuschreib{0};
 	// nicht mit Vorgaben (woher 2) Befehlszeilenoption (woher 3) ueberschreiben
-	int sstfnr{wpgcl::tusetzstr(neuw,/*obzuschreib*/&tuschreib,ausDatei,/*keineprio*/woher>2)};
+	const int sstfnr{wpgcl::tusetzstr(neuw,/*obzuschreib*/&tuschreib,ausDatei,/*keineprio*/woher>2)};
 	if (tuschreib) if (obzuschreib) if (!*obzuschreib) if (!nichtspeichern) {
 		*obzuschreib=1;
 	}

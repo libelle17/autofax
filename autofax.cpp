@@ -1653,9 +1653,6 @@ const string& zielmustercl::holziel() const
 hhcl::hhcl(const int argc, const char *const *const argv):dhcl(argc,argv,DPROG,/*mitcron*/1) //α
 {
 	hLog(violetts+"hhcl::hhcl()"+schwarz);
-  sortprio(1);
-	sortprio(2);
-	sortprio(3);
  // mitcron=0; //ω
 } // hhcl::hhcl //α
 // Hier neue Funktionen speichern: //ω
@@ -2529,9 +2526,7 @@ int hhcl::pruefcapi()
 					if (system!=sus)
 						linstp->doggfinst("capiutils",obverb+1,oblog);
 					pruefsfftobmp();
-					caus<<"Stelle 1"<<endl;
 					linstp->doggfinst("libcapi20-2",obverb+1,oblog);
-					caus<<"Stelle 2"<<endl;
 					linstp->doggfinst("libcapi20-3",obverb+1,oblog);
 					linstp->doggfinst("python-devel",obverb+1,oblog);
 					linstp->doinst("libxslt-tools",obverb+1,oblog,"xsltproc");
@@ -2831,7 +2826,7 @@ void hhcl::pvirtVorgbSpeziell()
 
 // wird aufgerufen in lauf
 void hhcl::virtinitopt()
-{ 
+{
 	hLog(violetts+"virtinitopt()"+schwarz); //ω
 	opn<<new optcl(/*pname*/"zufaxenvz",/*pptr*/&zufaxenvz,/*art*/pverz,T_zvz_k,T_zufaxenvz_l,/*TxBp*/&Tx,/*Txi*/T_faxt_die_Dateien_aus_pfad_anstatt_aus,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!zufaxenvz.empty(),T_Verzeichnis_mit_zu_faxenden_Dateien);
 	opn<<new optcl(/*pname*/"wartevz",/*pptr*/&wvz,/*art*/pverz,T_wvz_k,T_wartevz_l,/*TxBp*/&Tx,/*Txi*/T_Dateien_warten_in_pfad_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!wvz.empty(),T_Verzeichnis_mit_wartenden_Dateien);
@@ -2842,9 +2837,9 @@ void hhcl::virtinitopt()
 	opn<<new optcl(/*pname*/"obcapi",/*pptr*/&obcapi,/*art*/pint,T_capi_k,T_obcapi_l,/*TxBp*/&Tx,/*Txi*/T_Capisuite_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obcapi!=-1,T_Soll_die_Capisuite_verwendet_werden,/*obno*/1);
 	opn<<new optcl(/*pname*/"obhyla",/*pptr*/&obhyla,/*art*/pint,T_hyla_k,T_obhyla_l,/*TxBp*/&Tx,/*Txi*/T_hylafax_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obhyla!=-1,T_Soll_Hylafax_verwendet_werden,/*obno*/1);
 
-	opn<<new optcl(/*pname*/"fprio",/*pptr*/&fprio,/*art*/pint,T_fp_k,T_fprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_fritzbox_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!fprio,T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3);
-	opn<<new optcl(/*pname*/"cprio",/*pptr*/&cprio,/*art*/pint,T_cp_k,T_cprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_capisuite_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!cprio,T_Mit_welcher_Prioritaet_soll_capisuite_verwendet_werden_1_3);
-	opn<<new optcl(/*pname*/"hprio",/*pptr*/&hprio,/*art*/pint,T_hp_k,T_hprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_hylafax_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!hprio,T_Mit_welcher_Prioritaet_soll_hylafax_verwendet_werden_1_3);
+	opn<<new optcl(/*pname*/"fprio",/*pptr*/&prios[0],/*art*/pint,T_fp_k,T_fprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_fritzbox_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!prios[0],T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3);
+	opn<<new optcl(/*pname*/"cprio",/*pptr*/&prios[1],/*art*/pint,T_cp_k,T_cprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_capisuite_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!prios[1],T_Mit_welcher_Prioritaet_soll_capisuite_verwendet_werden_1_3);
+	opn<<new optcl(/*pname*/"hprio",/*pptr*/&prios[2],/*art*/pint,T_hp_k,T_hprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_hylafax_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!prios[2],T_Mit_welcher_Prioritaet_soll_hylafax_verwendet_werden_1_3);
 
 	opn<<new optcl(/*pname*/"hylazuerst",/*pptr*/&hylazuerst,/*art*/pint,T_hz_k,T_hylazuerst_l,/*TxBp*/&Tx,/*Txi*/T_versuche_faxe_zuerst_ueber_Hylafax_wegzuschicken,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/hylazuerst!=-1,T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden);
 	opn<<new optcl(/*pname*/"hylazuerst",/*pptr*/&hylazuerst,/*art*/pint,T_cz_k,T_capizuerst_l,/*TxBp*/&Tx,/*Txi*/T_versuche_faxe_zuerst_ueber_Capisuite_wegzuschicken,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/0,/*woher*/hylazuerst!=-1,-1);
@@ -3164,30 +3159,28 @@ void hhcl::neurf()
 	}
 } // void hhcl::neurf
 
-void hhcl::sortprio(const int fch)
+// wird aufgerufen in virtlieskonfein, pvirtnachvi, virtrueckfragen
+void hhcl::standardprio(const int obmitsetz)
 {
-	// fch: 1=f, 2=c, 3=h
-	const int altobverb{obverb};
-	obverb=1;
-	hLog(violetts+Tx[T_sortprio]+", fch: "+blau+ltoan(fch)+schwarz);
-	caus<<"vorher fprio: "<<fprio<<", cprio: "<<cprio<<", hprio: "<<hprio<<endl;
-	switch (fch) {
-	 case 1:
-		if (cprio==fprio)for(int i=1;i<=3;i++)if(i!=fprio)if(i!=hprio){cprio=i;break;}
-		if (hprio==fprio)for(int i=1;i<=3;i++)if(i!=fprio)if(i!=cprio){hprio=i;break;}
-		break;
-	 case 2:
-		if (fprio==cprio)for(int i=1;i<=3;i++)if(i!=cprio)if(i!=hprio){fprio=i;break;}
-		if (hprio==cprio)for(int i=1;i<=3;i++)if(i!=cprio)if(i!=fprio){hprio=i;break;}
-		break;
-	 case 3:
-		if (fprio==hprio)for(int i=1;i<=3;i++)if(i!=hprio)if(i!=cprio){fprio=i;break;}
-		if (cprio==hprio)for(int i=1;i<=3;i++)if(i!=hprio)if(i!=fprio){cprio=i;break;}
-		break;
+	if (obmitsetz) 
+		for(int j=0;j<3;j++) 
+			clprios[j]=prios[j];
+	for(int i=0;i<3;i++) {
+		prios[i]=0;
 	}
-	caus<<"nachher fprio: "<<fprio<<", cprio: "<<cprio<<", hprio: "<<hprio<<endl;
-	obverb=altobverb;
-} // void hhcl::sortprio
+	// und jetzt prios mit standardisierten Prioritaeten aus clprios erstellt (also z.B. 3 statt 4)
+	for(int p=1;p<=3;p++) {
+		unsigned int minp{(unsigned int)-1};
+		int minj{3+1}; 
+		for(int j=0;j<3;j++) if (!prios[j]){
+			if((unsigned int)clprios[j]<minp){
+				minp=clprios[j];
+				minj=j;
+			}
+		}
+		if (minj<3+1) prios[minj]=p;
+	}
+} // void hhcl::standardprio
 
 // wird aufgerufen in lauf
 void hhcl::virtrueckfragen()
@@ -3257,17 +3250,15 @@ void hhcl::virtrueckfragen()
 			obhyla=0;
 		}
 		if (obfbox) {
-			fprio=Tippzahl(Tx[T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3],fprio);
-			sortprio(1);
+			prios[0]=Tippzahl(Tx[T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3],prios[0]);
 		}
 		if (obcapi) {
-			cprio=Tippzahl(Tx[T_Mit_welcher_Prioritaet_soll_capisuite_verwendet_werden_1_3],cprio);
-			sortprio(2);
+			prios[1]=Tippzahl(Tx[T_Mit_welcher_Prioritaet_soll_capisuite_verwendet_werden_1_3],prios[1]);
 		}
 		if (obhyla) { 
-			hprio=Tippzahl(Tx[T_Mit_welcher_Prioritaet_soll_hylafax_verwendet_werden_1_3],hprio);
-			sortprio(3);
+		  prios[2]=Tippzahl(Tx[T_Mit_welcher_Prioritaet_soll_hylafax_verwendet_werden_1_3],prios[2]);
 		}
+		standardprio(/*obmitsetz*/1);
 		if (obcapi) {
 			if (obhyla) {
 				hylazuerst=!Tippob(Tx[T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden],hylazuerst?"n":Txk[T_j_af]);
@@ -8463,9 +8454,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 						} // for(unsigned iru=0
 					} // if (nimmer)
 					if (mitupd) {
-						caus<<gelb<<"Stelle 1"<<schwarz<<endl;
 						if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) ||fsf.mailges=="1") {
-						caus<<gelb<<"Stelle 2"<<schwarz<<endl;
 							uchar geloescht{0};
 							/*//
 							// <<"\n"<<gruen<<"gesandt: "<<schwarz<<(int)gesandt<<endl;
@@ -9046,6 +9035,11 @@ void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 } // void hhcl::korrigierehyla()
 
 //α
+void hhcl::pvirtnachvi()
+{ //ω
+	standardprio(/*obmitsetz*/1);
+} //α
+
 void hhcl::pvirtvorpruefggfmehrfach()
 {
 	hLog(violetts+Tx[T_pvirtvorpruefggfmehrfach]+schwarz);
@@ -9321,8 +9315,35 @@ void hhcl::virtlieskonfein()
 {
 	const int altobverb{obverb};
 	//	obverb=1;
-	hLog(violetts+Txk[T_virtlieskonfein]+schwarz);
-	hcl::virtlieskonfein(); //ω
+	hLog(violetts+Txk[T_virtlieskonfein]+schwarz); //ω
+	caus<<"in virtlieskonfein 0 fprio: "<<prios[0]<<", cprio: "<<prios[1]<<", hprio: "<<prios[2]<<endl;
+	for(int j=0;j<3;j++) clprios[j]=prios[j];
+	caus<<"in virtlieskonfein 0 clfprio: "<<clprios[0]<<", clcprio: "<<clprios[1]<<", clhprio: "<<clprios[2]<<endl;
+	for(int j=0;j<3;j++) prios[j]=0;
+	caus<<"in virtlieskonfein 1 fprio: "<<prios[0]<<", cprio: "<<prios[1]<<", hprio: "<<prios[2]<<endl;
+	caus<<"in virtlieskonfein 1 clfprio: "<<clprios[0]<<", clcprio: "<<clprios[1]<<", clhprio: "<<clprios[2]<<endl;
+	hcl::virtlieskonfein(); //α //ω
+	// jetzt enthalten die in der Befehlszeile angegebenen in *prios 0 und in clprios Prioritäten und die nicht angegebenen umgekehrt
+	caus<<"in virtlieskonfein 2 fprio: "<<prios[0]<<", cprio: "<<prios[1]<<", hprio: "<<prios[2]<<endl;
+	caus<<"in virtlieskonfein 2 clfprio: "<<clprios[0]<<", clcprio: "<<clprios[1]<<", clhprio: "<<clprios[2]<<endl;
+	// jetzt wird clprios nach der Reihenfolge in prios vervollstaendigt:
+	for(int p=1;p<=3;p++) { // fuer jede Prioritaet
+		int cont{0};
+    for(int j=0;j<3;j++) if (clprios[j]==p) {cont=1;break;} // wenn sie schon vorkommt, ...
+		if (cont) continue; // dann nichts tun
+		unsigned int minp{(unsigned int)-1};
+		int minj{3+1}; 
+		for(int j=0;j<3;j++) if (!clprios[j]) { // wenn nicht, dann
+			if ((unsigned int)prios[j]<minp) { // ist die kleinste uebrige Prioritaet Kandidat
+				minp=prios[j];
+				minj=j;
+			}
+		}
+		if (minj<3+1) clprios[minj]=p;
+	}
+	caus<<"in virtlieskonfein 3 clfprio: "<<clprios[0]<<", clcprio: "<<clprios[1]<<", clhprio: "<<clprios[2]<<endl;
+	standardprio(/*obmitsetz*/0);
+	caus<<"in virtlieskonfein 4 fprio: "<<prios[0]<<", cprio: "<<prios[1]<<", hprio: "<<prios[2]<<endl;
 	// sqlzn und zmzn aus den Konfigurationsdateien ermitteln (um sie nicht dort speichern zu muessen)
 	sqlzn=0;
 	zmzn=0;

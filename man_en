@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "18.06.19" "Version 0.47443" "\fB²DPROG²\fR man page"
+.TH man 1 "19.06.19" "Version 0.47519" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -67,25 +67,7 @@ Depending on operating system, accessability and preferences the users thus coul
 .SH OPTIONS 
  '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR' shows the important command line options and '\fB²DPROG² -lh\fR' all of them. Some options (e.g. the sql commands for finding an addressee from the fax number) cannot be set via the command line, but only via the configuration file, which can be edited directly by '\fB²DPROG² -vi\fR' or interactively by '\fB²DPROG² -rf\fR'.
 .br
-    \fBsortprio(), fch: \fB1\fR
-.br
-vorher fprio: 1, cprio: 2, hprio: 3
-.br
-nachher fprio: 1, cprio: 2, hprio: 3
-.br
-\fBsortprio(), fch: \fB2\fR
-.br
-vorher fprio: 1, cprio: 2, hprio: 3
-.br
-nachher fprio: 1, cprio: 2, hprio: 3
-.br
-\fBsortprio(), fch: \fB3\fR
-.br
-vorher fprio: 1, cprio: 2, hprio: 3
-.br
-nachher fprio: 1, cprio: 2, hprio: 3
-.br
-\fRProgramm: \fB/home/schade/autofax/autofax\fR, V: \fB0.47443 \fRVerwende: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
+    \fRProgramm: \fB/home/schade/autofax/autofax\fR, V: \fB0.47519 \fRVerwende: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
 .br
     \fBOptions which are not saved (current value in parentheses): \fR
 .br
@@ -167,11 +149,11 @@ nachher fprio: 1, cprio: 2, hprio: 3
 .br
 \fB -hyla, --takehyla <zahl>\fR: use hylafax\fB or not\fR (\fB1\fR)
 .br
-\fB -fp, --fprio <zahl>\fR: Priority of fritzbox (1-3) (\fB1\fR)
+\fB -fp, --fprio <zahl>\fR: Priority of fritzbox (1-3) (\fB0\fR)
 .br
-\fB -cp, --cprio <zahl>\fR: Priority of capisuite (1-3) (\fB2\fR)
+\fB -cp, --cprio <zahl>\fR: Priority of capisuite (1-3) (\fB0\fR)
 .br
-\fB -hp, --hprio <zahl>\fR: Priority of hylafax (1-3) (\fB3\fR)
+\fB -hp, --hprio <zahl>\fR: Priority of hylafax (1-3) (\fB0\fR)
 .br
 \fB -hf, --hylafirst <zahl>\fR: trying to send faxes first via hylafax (\fB0\fR)
 .br

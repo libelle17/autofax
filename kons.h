@@ -218,7 +218,6 @@ enum Tkons_
   T_Erfolg,
   T_Weder_zypper_noch_apt_get_noch_dnf_noch_yum_als_Installationspgrogramm_gefunden,
   T_Logdateidpp,
-  T_Lese_Konfiguration_aus,
   T_j_k,
   T_Fehler_bei_auswert,
   T_nicht_gefunden,
@@ -1352,6 +1351,7 @@ class hcl
 		void setzzaehler();
 		void schreibzaehler();
 		void dovi();
+		virtual void pvirtnachvi()=0;
 		virtual void virtzeigversion(const string& ltiffv=nix);
 		virtual void pvirtvorrueckfragen()=0;
 		virtual void virtrueckfragen();
