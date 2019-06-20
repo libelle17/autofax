@@ -325,7 +325,7 @@ LGLIB=glib-2.0;
 LSOUP=libsoup-${dev};
 LSND=libsndfile-${dev};
 LGSSDP=libgssdp-${dev};
-LCAPI=libcapi20-3;
+LCAPI="libcapi20-3 capi4linux";
 Z=""
 [ "$(id -u)" -ne "0" ]&&SUDC="sudo "
 if test "$ICH" != install.sh -a "$ICH" != ${DPROG}_inst.sh -a "$ICH" != transfer; then

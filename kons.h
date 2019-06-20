@@ -798,7 +798,7 @@ struct optcl:wpgcl
     int iwert; // Wert, der pptr zugewiesen wird, falls dieser Parameter gewaehlt wird; -1= Wert steht im nächsten Parameter, 1=pro Nennung in der Kommandozeile wert um 1 erhöhen
 //    string *zptr=0; // Zeiger auf Zusatzparameter, der hier eingegeben werden kann (z.B. Zahl der Zeilen nach -n (Zeilenzahl)
 //    schAcl<WPcl> *cpA=0; // Konfigurationsarray, das ggf. geschrieben werden muss
-//    uchar ogefunden=0; // braucht man nicht, ist in argcl
+//    uchar obgefunden=0; // braucht man nicht, ist in argcl
 		// ermittelte Optionen:
 		uchar woher{0}; // 1= ueber Vorgaben, 2= ueber Konfigurationsdatei, 3= ueber Befehlszeile gesetzt
 		const long Txrf{-1};
@@ -1248,9 +1248,11 @@ class hcl
 	private:
 		uchar obsetz=1; // setzzaehler
 		uchar mitpids=0; // mehrere pids
+		const char* const DPROG;
+		const uchar mitcron; // ob Programm auch in Cron eingetragen werden kann; kann im Konstruktor angegeben werden
+		const uchar parstreng; // breche Programm ab, wenn Parameter nicht gefunden
 	protected:
 		pidvec pidv;
-		const char* const DPROG;
     double tstart, tende;
     size_t optslsz=0; // last opts.size()
 		confdcl hccd;
@@ -1269,7 +1271,6 @@ class hcl
 		string muser; // Benutzer fuer Mysql/MariaDB
 		string mpwd;  // Passwort fuer Mysql/MariaDB //ω
 		stringstream uebers; // Ueberschrift fuer Verarbeitungslauf
-		const uchar mitcron; // ob Programm auch in Cron eingetragen werden kann; kann im Konstruktor angegeben werden
 		unsigned tmmoelen;
 #ifdef _WIN32
     char cpt[255];
@@ -1366,7 +1367,7 @@ class hcl
 		virtual void virtschlussanzeige();
 	public:
 		void pruefcl(); // commandline mit omap und mit argcmv parsen
-		hcl(const int argc, const char *const *const argv,const char* const DPROG,const uchar mitcron);
+		hcl(const int argc, const char *const *const argv,const char* const DPROG,const uchar mitcron,const uchar parstreng=1);
 		~hcl();
 		void lauf();
 		int hLog(const string& text,const bool oberr=0,const short klobverb=0) const; 

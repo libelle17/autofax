@@ -5019,7 +5019,7 @@ const string& defvors{"https://github.com/"+gitv+"/"};
 const string& defnachs{"/archive/master.tar.gz"};
 
 // wird aufgerufen in main
-hcl::hcl(const int argc, const char *const *const argv,const char* const DPROG,const uchar mitcron):DPROG(DPROG),mitcron(mitcron)
+hcl::hcl(const int argc, const char *const *const argv,const char* const DPROG,const uchar mitcron,const uchar parstreng/*=1*/):DPROG(DPROG),mitcron(mitcron),parstreng(parstreng)
 {
 	tstart=clock();
 	_DPROG=DPROG;
@@ -5344,12 +5344,13 @@ void hcl::parsecl()
 		} // if (aclen>1)
 	} // 	for(ap=argcmv.begin();ap!=argcmv.end();ap++)
 //	if (obverb) opn.oausgeb(gelb);
-	for(size_t i=0;i<argcmv.size();i++) {
-		if (!argcmv[i].agef) {
-			exit(schluss(17,rots+"Parameter: "+gruen+argcmv[i].argcs+rot+Txk[T_nicht_erkannt]+schwarz));
-			if (!obhilfe) obhilfe=1;
-		} //     if (!argcmv[i].agef)
-	} //   for(size_t i=0;i<argcmv.size();i++)
+	if (parstreng)
+		for(size_t i=0;i<argcmv.size();i++) {
+			if (!argcmv[i].agef) {
+				exit(schluss(17,rots+"Parameter: "+gruen+argcmv[i].argcs+rot+Txk[T_nicht_erkannt]+schwarz));
+				if (!obhilfe) obhilfe=1;
+			} //     if (!argcmv[i].agef)
+		} //   for(size_t i=0;i<argcmv.size();i++)
 	hLog(violetts+Txk[T_Ende]+Txk[T_parsecl]+schwarz);
 	return;
 } // void hcl::parsecl

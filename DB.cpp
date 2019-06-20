@@ -2463,7 +2463,7 @@ void dhcl::virtinitopt()
 	hcl::virtinitopt();
 } // void hhcl::virtinitopt
 
-dhcl::dhcl(const int argc, const char *const *const argv,const char* const DPROG,const uchar mitcron):hcl(argc,argv,DPROG,mitcron)
+dhcl::dhcl(const int argc, const char *const *const argv,const char* const DPROG,const uchar mitcron,const uchar parstreng/*=1*/):hcl(argc,argv,DPROG,mitcron,parstreng)
 {
 }
 
