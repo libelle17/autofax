@@ -58,11 +58,11 @@ getIPR() {
 			REPOS="${SUDC}$Z lr|grep 'g++\|devel_gcc' \>$KR||${SUDC}$Z ar http://download.opensuse.org/repositories/devel:/gcc/\`cat /etc/*-release|grep ^NAME= |cut -d'\"' -f2|sed 's/ /_/'\`_\`cat /etc/*-release|grep ^VERSION_ID= |cut -d'\"' -f2\`/devel:gcc.repo;";
 			UREPO="${SUDC}$Z lr|grep \\\\\"g++\\\\\|devel_gcc\\\\\" \>$KR && ${SUDC}$Z rr devel_gcc;";
 			COMP="gcc gcc-c++"; # \$(CCInst)";
-		  if test "$ICH" = viall; then
-				LBOOST=$(grep LBOOST vars|cut -d= -f2);
-				LBIO=$(grep LBIO vars|cut -d= -f2);
-				LBLO=$(grep LBLO vars|cut -d= -f2);
-			else
+			LBOOST=$(grep LBOOST vars|cut -d= -f2);
+			LBIO=$(grep LBIO vars|cut -d= -f2);
+			LBLO=$(grep LBLO vars|cut -d= -f2);
+			if test "$ICH" != viall; then
+			 if test -z "$PAR1" -o -z "$LBOOST" -o -z "$LBIO" -o -z "$LBLO"; then
   			# z.B. 'i+ | boost_1_65-devel |'
 				command="zypper se \"boost*-devel\" libboost_iostreams libboost_locale boost-license";
 				anz="rufe auf/calling: $command ...                   "
@@ -73,7 +73,8 @@ getIPR() {
 				LBIO=$(V=libboost_iostreams;echo "$zse" $V|grep "| $V"|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
 				LBLO=$(V=libboost_locale;echo "$zse" $V|grep "| $V"|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
 				[ ! "$LBOOST" ]&&[ "$LBIO" ]&&[ "$LBLO" ]&& LBOOST=$(V=boost-license;echo "$zse" $V|grep "| $V"|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
-			fi
+			 fi;
+			fi;
 			LT=${_LT}-${dev};
 		} 
 	} || 
@@ -83,6 +84,11 @@ getIPR() {
 			IP_R="${SUDC}$IdPR";
 			UPR="${SUDC}$(which apt-get) -f install; ${SUDC}$(which apt-get) --auto-remove purge ";
 			dev=dev;
+			LACL=libacl-${dev};
+			LSPAN=spandsp-${dev};
+			LSOUP=libsoup-${dev};
+			LSND=libsndfile-${dev};
+			LGSSDP=libgssdp-${dev};
 			COMP="build-essential linux-headers-\$(shell uname -r)";
 			LT=${_LT}-${dev};
 			CTAGS=exuberant-ctags;
@@ -107,6 +113,7 @@ getIPR() {
 			IP_R="${SUDC}$IdPR";
 			UPR="${SUDC}$(PATH=$PATH:/usr/sbin;which urpme) ";
 			dev=devel;
+			LACL=libacl-${dev};
 			LT=${_LT}-${dev};
 			libmdb=lib64mariadb;
 			COMP="make automake gcc-c++ kernel-devel";
@@ -117,6 +124,7 @@ getIPR() {
 			IdPR="$(which pacman) -S ";
 			IP_R="${SUDC}$IdPR";
 			dev=devel;
+			LACL=libacl-${dev};
 			LT=${_LT}-${dev};
 			COMP="make automake base-devel";
 			UPR="${SUDC}pacman -R ";
@@ -156,16 +164,23 @@ getIPR() {
 			UDPR="${SUDC}$(which apt-get) -f install; ${SUDC}$(which dpkg) -r --force-depends ";
 		};
 	}
-	for A in $(ls|grep "\.cpp$\|\.h$");do [ -f "$A" ]&& grep -q "^#include[ ]*<mysql.h>" "$A" &&break;done ||libmdb=;
-	for A in $(ls|grep "\.cpp$\|\.h$");do [ -f "$A" ]&& grep -q "^#include[ ]*<boost" "$A" &&break;done ||LBOOST=;
-	for A in $(ls|grep "\.cpp$\|\.h$");do [ -f "$A" ]&& grep -q "^#include[ ]*<tiffio.h>" "$A" &&break;done ||LT=;
-	for A in $(ls|grep "\.cpp$\|\.h$");do [ -f "$A" ]&& grep -q "^#include .*acl.h>" "$A" &&break;done ||LACL=;
-	for A in $(ls|grep "\.cpp$\|\.h$");do [ -f "$A" ]&& grep -q "^#include .*curl.h>" "$A" &&break;done ||LCURL=;
-	for A in $(ls|grep "\.cpp$\|\.h$");do [ -f "$A" ]&& grep -q "^#include .*curses.h>" "$A" &&break;done ||LCURS=;
+	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include[ ]*<mysql.h>" "$A" &&break;done ||libmdb=;
+	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include[ ]*<boost" "$A" &&break;done ||LBOOST=;
+	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include[ ]*<tiffio.h>" "$A" &&break;done ||LT=;
+	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include .*acl.h>" "$A" &&break;done ||LACL=;
+	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include .*curl.h>" "$A" &&break;done ||LCURL=;
+	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include .*curses.h>" "$A" &&break;done ||LCURS=;
+	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include <spandsp.h>" "$A" &&break;done ||LSPAN=;
+	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include <glib.h>" "$A" &&break;done ||LGLIB=;
+	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include .*soup.h>" "$A" &&break;done ||LSOUP=;
+	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include <sndfile.h>" "$A" &&break;done ||LSND=;
+	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do grep -qm1 '^[[:space:]]*[^/].*\(gchar\|gboolean\|gint\)' "$A" &&break;done ||LGSSDP=;
+	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do grep -qim1 '^[[:space:]]*[^/].*\(capi20_isinstalled\)' "$A" &&break;done ||LCAPI=;
 	IPR="${SUDC}$IdPR";
 	DTN="`find . -maxdepth 1 -name ${DPROG}.cpp -printf '%f '`\
+		   `find . -maxdepth 1 -name ${DPROG}.c -printf '%f '`\
 		   `find . -maxdepth 1 -name ${DPROG}.h -printf '%f '`\
-			 `find . -maxdepth 1 \( -name '*.cpp' -or -name '*.h' \) -not -name "${DPROG}*" -printf '%f\\n'|sort|tr '\\n' ' '`\
+			 `find . -maxdepth 1 \( -name '*.c' -or -name '*.cpp' -or -name '*.h' \) -not -name "${DPROG}*" -printf '%f\\n'|sort|tr '\\n' ' '`\
 			  man_?? Makefile configure \
 			 `find . -maxdepth 1 -name '*.sh' -printf '%f '`\
 			  shliste viall .exrc $UNF $ILOG"
@@ -173,7 +188,7 @@ getIPR() {
 
 exportvars() {
 	rm -f vars;
-	for v in OSNR IPR IP_R UPR UDPR SPR UNROH UNF AUNF ILOG PGROFF LT LT5 LBOOST LBIO LBLO LACL LCURL LCURS LM18 dev libmdb REPOS UREPO COMP GITV DTN DPROG; do
+	for v in OSNR IPR IP_R UPR UDPR SPR UNROH UNF AUNF ILOG PGROFF LT LT5 LBOOST LBIO LBLO LACL LCURL LCURS LSPAN LGLIB LSOUP LSND LGSSDP LCAPI LM18 dev libmdb REPOS UREPO COMP GITV DTN DPROG; do
 		eval nv=\$$v; 
 		printf "$v::=$nv\n" >>vars; 
 	done;
@@ -289,6 +304,7 @@ else :; fi
 # hier geht's los ...
 OSNR=0 # 1=Mint, 2=Ubuntu, 3=Debian, 4=SUSE, 5=Fedora, 6=Fedoraalt, 7=Mageia, 8=Manjaro
 getOS;
+PAR1=$1;
 if [ "$1" = "nuros" ];then echo $OSNR;exit;fi;
 printf "Fuehre aus/executing: $0 $1 $2 $3 $4 ...\r"
 #// string substitution geht nur in bash, nicht in dash, was auf deb-Systemen standardmaessig durch sh aufgerufen wird
@@ -304,6 +320,12 @@ PGROFF="groff-base groff"
 dev=devel
 libmdb="libmariadb libmariadbclient libmysql libmysqlclient"
 LCURS=ncurses;
+LSPAN=spandsp-${dev};
+LGLIB=glib-2.0;
+LSOUP=libsoup-${dev};
+LSND=libsndfile-${dev};
+LGSSDP=libgssdp-${dev};
+LCAPI=libcapi20-3;
 Z=""
 [ "$(id -u)" -ne "0" ]&&SUDC="sudo "
 if test "$ICH" != install.sh -a "$ICH" != ${DPROG}_inst.sh -a "$ICH" != transfer; then

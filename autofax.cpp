@@ -3159,7 +3159,7 @@ void hhcl::neurf()
 		}
 	}
 } // void hhcl::neurf
-
+ //ω
 // wird aufgerufen in virtlieskonfein, pvirtnachvi, virtrueckfragen
 void hhcl::standardprio(const int obmitsetz)
 {
@@ -3183,7 +3183,7 @@ void hhcl::standardprio(const int obmitsetz)
 	}
 } // void hhcl::standardprio
 
-// wird aufgerufen in lauf
+// wird aufgerufen in lauf //α
 void hhcl::virtrueckfragen()
 {
 	hLog(violetts+Tx[T_virtrueckfragen]+", rzf: "+blau+ltoan(rzf)+schwarz);
