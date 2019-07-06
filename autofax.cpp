@@ -1315,6 +1315,12 @@ using namespace std; //ω
 
 const string cSQL_{"SQL_"}, cZMMuster_{"ZMMuster_"}, cZMZiel_{"ZMZiel_"};
 
+// zu Debuugging-Zwecken
+inline pid_t dfork()
+{
+	return fork();
+}
+
 // wird aufgerufen in: verschiebe (Version 1), verschiebe (Version 2), inspoolschreiben
 // ziel kann Verzeichnis oder Datei sein; im ersten Fall wird eine Datei des Namens von quelle dort als *zielp verwendet
 // wenn quelle und zielp identisch sind, tut dorename() nichts, ansonsten:
@@ -4828,7 +4834,7 @@ void hhcl::getSender(const string& faxnr, string *getnamep, string *bsnamep,cons
 void hhcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 {
 	hLog(violetts+"korrigierecapi()"+schwarz);
-	const pid_t pid{nurempf||nursend?1:fork()};
+	const pid_t pid{nurempf||nursend?1:dfork()};
 	if (pid>=0) {
 		pidcl phier(pid,"korrigierecapi");
 		pidw<<phier;
@@ -6378,6 +6384,8 @@ void hhcl::inspoolschreiben(const size_t aktc)
 										if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2)) { 
 											tokname[j]=*(*cerg+2);
 											fLog(Tx[T_Name_zu]+blaus+toknr[j]+schwarz+Tx[T_gefunden_dp]+gruen+*(*cerg+2)+schwarz,1,oblog);
+											// Korrektur: 1) update outa set rcname="uns" where rcfax like '%616381%' and rcname like 'MVZ%';
+											// Korrektur: c) update outa set adressat="uns" where rcfax like '%616381%' and adressat like 'MVZ%';
 										} // 							if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2))
 									} // 						while (cerg=rs.HolZeile(),cerg?*cerg:0)
 								} // 					if (!rs.obqueryfehler)
@@ -6773,7 +6781,7 @@ void hhcl::wegfaxen(const size_t aktc)
 		uchar wasichbin{0}; //1=capi,2=hyla,3=fritzbox,4=anMail,5=klaran
 		pid_t pid{1}; // fuer Capi und Hyla abzweigen
 		if (obfa[1]) {
-			pid=nursend?1:fork();
+			pid=nursend?1:dfork();
 			if (pid<0) {
 				fLog(rots+Tx[T_Gabelung_zu_faxemitC_misslungen]+schwarz,1,oblog);
 				exitt(17);
@@ -6788,7 +6796,7 @@ void hhcl::wegfaxen(const size_t aktc)
 		// alle Abzweigungen muessen vom Hauptzweig ausgehen, sonst gehen dort Eintraege in pidv verloren
 		if (pid>0) {
 			if (obfa[2]) {
-				pid=nursend?1:fork();
+				pid=nursend?1:dfork();
 				if (pid<0) {
 					fLog(rots+Tx[T_Gabelung_zu_faxemitH_misslungen]+schwarz,1,oblog);
 					exitt(17);
@@ -6802,7 +6810,7 @@ void hhcl::wegfaxen(const size_t aktc)
 			} // 			if (obhyla)
 		} // 		if (pid>0)
 		if (pid>0) {
-			pid=nursend?1:fork();
+			pid=nursend?1:dfork();
 			if (pid<0) {
 				fLog(rots+Tx[T_Gabelung_zu_vschlmail_misslungen]+schwarz,1,oblog);
 				exitt(17);
@@ -6815,7 +6823,7 @@ void hhcl::wegfaxen(const size_t aktc)
 			} // 				if (pid<0) else else
 		}
 		if (pid>0) {
-			pid=nursend?1:fork();
+			pid=nursend?1:dfork();
 			if (pid<0) {
 				fLog(rots+Tx[T_Gabelung_zu_klarmail_misslungen]+schwarz,1,oblog);
 				exitt(17);
@@ -8792,7 +8800,7 @@ int hhcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 {
 	hLog(violetts+Tx[T_korrigierehyla]+schwarz);
-	pid_t pid{nurempf||nursend?1:fork()};
+	pid_t pid{nurempf||nursend?1:dfork()};
 	if (pid>=0) {
 		pidcl phier(pid,"korrigierehyla");
 		pidw<<phier;
@@ -9104,7 +9112,7 @@ void hhcl::pvirtfuehraus() //α
 				// bei jedem 1000. Aufruf
 				if (!(aufrufe % 1000 )) {
 					// hier ggf. erstes fork
-					const pid_t pidb{nurempf||nursend?1:fork()};
+					const pid_t pidb{nurempf||nursend?1:dfork()};
 					if (!pidb) {
 						bereinigevz(11);
 						exitt(0);
@@ -9122,7 +9130,7 @@ void hhcl::pvirtfuehraus() //α
 				while (1) {
 					if (!rlaeuft) {
 						// hier ggf. erstes fork
-						pide=nurempf?0:nursend?1:fork();
+						pide=nurempf?0:nursend?1:dfork();
 						if (!pide) {
 							empfarch();
 							exitt(0);
@@ -9142,7 +9150,7 @@ void hhcl::pvirtfuehraus() //α
 
 					if (!slaeuft) {
 						// hier ggf. erstes fork
-						pids=nurempf?1:nursend?0:fork();
+						pids=nurempf?1:nursend?0:dfork();
 						if (!pids) {
 							inspoolschreiben(/*aktc=*/3);
 							wegfaxen(/*aktc=*/3);
@@ -9173,7 +9181,7 @@ void hhcl::pvirtfuehraus() //α
 					if (!zlaeuft) {
 						if (obfa[1] || obfa[2]) {
 							// hier ggf. erstes fork
-							pidz=nurempf||nursend?0:fork();
+							pidz=nurempf||nursend?0:dfork();
 							if (!pidz) {
 								zeigweitere();
 								exitt(0);
