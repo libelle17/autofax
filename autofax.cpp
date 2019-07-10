@@ -1315,9 +1315,8 @@ using namespace std; //ω
 
 const string cSQL_{"SQL_"}, cZMMuster_{"ZMMuster_"}, cZMZiel_{"ZMZiel_"};
 
-// zu Debuugging-Zwecken
-inline pid_t dfork()
-{
+// fürs Debugging
+inline int dfork() {
 	return fork();
 }
 
@@ -6384,8 +6383,6 @@ void hhcl::inspoolschreiben(const size_t aktc)
 										if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2)) { 
 											tokname[j]=*(*cerg+2);
 											fLog(Tx[T_Name_zu]+blaus+toknr[j]+schwarz+Tx[T_gefunden_dp]+gruen+*(*cerg+2)+schwarz,1,oblog);
-											// Korrektur: 1) update outa set rcname="uns" where rcfax like '%616381%' and rcname like 'MVZ%';
-											// Korrektur: c) update outa set adressat="uns" where rcfax like '%616381%' and adressat like 'MVZ%';
 										} // 							if (*(*cerg+0)) if (!strcmp(*(*cerg+0),"1")) if (*(*cerg+2))
 									} // 						while (cerg=rs.HolZeile(),cerg?*cerg:0)
 								} // 					if (!rs.obqueryfehler)

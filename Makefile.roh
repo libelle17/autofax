@@ -214,7 +214,7 @@ slc::=$(SUDC)/sbin/ldconfig
 
 DEPDIR ::= .d
 $(shell mkdir -p $(DEPDIR) $(KR))
-DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td -DGLIB_COMPILATION
 
 # POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d 2>/dev/null
 

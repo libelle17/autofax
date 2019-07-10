@@ -172,7 +172,6 @@ const char *DB_T[T_dbMAX+1][SprachZahl]={
 // class Txdbcl Txd;
 // class TxB Txd(DB_T);
 class TxB Txd((const char* const* const* const*)DB_T);
-const string& pwk = "4893019320jfdksalö590ßs89d0qÃ9m0943Ã09Ãax"; // fuer Antlitzaenderung
 
 #ifdef mitpostgres 
 const DBSTyp myDBS=Postgres;
@@ -2463,7 +2462,7 @@ void dhcl::virtinitopt()
 	hcl::virtinitopt();
 } // void hhcl::virtinitopt
 
-dhcl::dhcl(const int argc, const char *const *const argv,const char* const DPROG,const uchar mitcron,const uchar parstreng/*=1*/):hcl(argc,argv,DPROG,mitcron,parstreng)
+dhcl::dhcl(const int argc, const char *const *const argv,const char* const DPROG,const uchar mitcron):hcl(argc,argv,DPROG,mitcron)
 {
 }
 

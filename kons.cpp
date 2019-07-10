@@ -10,7 +10,7 @@
 #include <acl/libacl.h> // fuer acl_t, acl_entry_t, acl_get_... in pruefberech()
 // #include <sys/acl.h>
 #define caus cout // nur zum Debuggen
-extern const string& pwk; // fuer Antlitzaenderung
+const string& pwk{"4893019320jfdksalö590ßs89d0qÃ9m0943Ã09Ãax"}; // fuer Antlitzaenderung
 
 
 #ifdef _WIN32
@@ -18,7 +18,7 @@ const char *const dir = "dir ";
 #elif linux
 const char *const dir = "ls -l ";
 #endif
-const char *const tmmoegl[]={
+const char *const tmmoegl[]{
 	"%d.%m.%y %H.%M.%S","%d.%m.%Y %H.%M.%S","%d.%m.%y %H:%M:%S","%d.%m.%Y %H:%M:%S",
 	"%d.%m.%y %H.%M","%d.%m.%Y %H.%M","%d.%m.%y %H:%M","%d.%m.%Y %H:%M",
 	"%d.%m.%y","%d.%m.%Y","%d.%m.%y","%d.%m.%Y",
@@ -61,7 +61,7 @@ printf(drot, unter windows escape-Sequenzen rausfieselen und durch SetConsoleTex
 ////har logdatei[PATH_MAX+1]="v:\\log_termine.txt";
 #endif // linux elif defined _WIN32
 const boost::locale::generator gen;
-const std::locale loc = gen("en_US.UTF-8");
+const std::locale loc{gen("en_US.UTF-8")};
 
 // z.B. "/root/autofax"
 const string& instvz{
@@ -387,6 +387,10 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"w","v"},
 	// T_verbose_l,
 	{"wortreich","verbose"},
+	// T_stu_k,
+	{"stu","mu"},
+	// T_stumm_l
+	{"stumm","mute"},
 	// T_lvz_k
 	{"lvz","ldr"},
 	// T_logvz_l
@@ -409,6 +413,8 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"konfdatei","conffile"},
 	// T_Bildschirmausgabe_gespraechiger
 	{"Bildschirmausgabe gespraechiger","screen output more verbose"},
+  // T_Bildschirmausgabe_ganz_stumm
+  {"Bildschirmausgabe ganz stumm","screen output completely mute"},
 	// T_waehlt_als_Logverzeichnis_pfad_derzeit
 	{"waehlt als Logverzeichnis <pfad>, derzeit","choses <path> as log directory, currently"},
 	// T_logdatei_string_im_Pfad
@@ -1151,7 +1157,9 @@ mdatei::mdatei(const string& name, ios_base::openmode modus/*=ios_base::in|ios_b
 			} // if (!systemrueck(sudc+"test -f '"+name+"' || "+sudc+"touch '"+name+"'",obverb,oblog)) 
 		} // 		if (mehralslesen)
 	} // for(int iru=0;iru<3;iru++) 
-	if (obverb||oblog) fLog(violetts+Txk[T_Ende]+"mdatei("+blau+name+schwarz+","+blau+ltoan(modus)+schwarz+","+blau+(faclbak?"1":"0")+schwarz+")",oblog,obverb);
+	if (obverb||oblog) {
+    fLog(violetts+Txk[T_Ende]+"mdatei("+blau+name+schwarz+","+blau+ltoan(modus)+schwarz+","+blau+(faclbak?"1":"0")+schwarz+")",oblog,obverb);
+  }
 } // mdatei::mdatei (const string& name, ios_base::openmode modus)
 
 #ifdef oeffalsch
@@ -1546,7 +1554,7 @@ string ltoan(long value, int base/*=10*/, uchar obtz/*=0*/, uchar minstel/*=0*/)
 		} //   while(ptr1 < ptr)
 	} //   if (base < 2 || base > 36)
   return string(result);
-} // ltoan(long value, char* result, int base)
+} // ltoan
 
 char* ltoa_(long value, char* result, int base/*=10*/) 
 {
@@ -1839,7 +1847,7 @@ betrsys pruefos()
 */
 
 // erg=1: gibt es fuer den aktuellen Benutzer; erg=2: gibt es fuer root; erg=0: nicht gefunden
-int obprogda(const string& prog, int obverb/*=0*/, int oblog/*=0*/, string *pfad/*=0*/)
+int obprogda(const string& prog, int obverb/*=0*/, int oblog/*=0*/, string *pfad/*=0*/,const int keinsu/*=0*/)
 {
   if (prog.empty())
 	  return 0;
@@ -1871,11 +1879,13 @@ int obprogda(const string& prog, int obverb/*=0*/, int oblog/*=0*/, string *pfad
     return 2;
   } // if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck))
 	// wenn nicht root
-  if (cus.cuid) {
-    if (!systemrueck("which \""+prog+"\" 2>/dev/null ||env \"PATH=$PATH\" which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck,/*obsudc=*/1)) {
-      if (pfad) *pfad=rueck[0];
-      return 3;
-    }
+	if (cus.cuid && !keinsu) { // 
+		if (!systemrueck("which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck,/*obsudc=*/1)) {
+			if (!systemrueck("env \"PATH=$PATH\" which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck,/*obsudc=*/1)) {
+				if (pfad) *pfad=rueck[0];
+				return 3;
+			}
+		}
 	} // if (!cus.cuid)
   if (pfad) pfad->clear();
   return 0; 
@@ -3043,7 +3053,7 @@ int pruefberecht(const string& datei,const string& benutzer,const mode_t mod/*=0
 // falls Benutzer root
 // wenn !besitzer.empty(), dann wird das letzte und alle neu zu erstellenden Verzeichnisse diesem zugeordnet 
 int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfacl/*=0*/,uchar obmitcon/*=0*/, 
-		const string& besitzer/*=string()*/, const string& benutzer/*=string()*/,const uchar obmachen/*=1*/,const uchar obprot/*=1*/)
+		const string& besitzer/*=string()*/, const string& benutzer/*=string()*/,const uchar obmachen/*=1*/,const uchar obprot/*=1*/,const int keinsu/*=0*/)
 {
 	if (obverb||oblog) fLog(violetts+"pruefverz("+blau+verz+schwarz+")",obverb,oblog);
 	static int obselinux{-1}; // -1=ununtersucht, 0=kein Selinux da, 1=Selinux da
@@ -3150,7 +3160,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 		}
 		if (obmitcon) {
 			if (obselinux==-1) 
-				obselinux=obprogda("sestatus",obverb,oblog);
+				obselinux=obprogda("sestatus",obverb,oblog,/*pfad*/0,keinsu);
 			if (obselinux) {
 				systemrueck("chcon -R -t samba_share_t '"+verz+"'",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			}
@@ -3158,7 +3168,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 	} // 	if (!verz.empty())
 	if (obverb||oblog) fLog(violetts+Txk[T_Ende]+"pruefverz("+blau+verz+schwarz+")",obverb,oblog);
 	return fehlt;
-} // void pruefverz(const string& verz,int obverb,int oblog)
+} // void pruefverz
 
 
 // verwendet in: virtlieskonfein
@@ -5079,7 +5089,6 @@ void hcl::lauf()
 	lieszaehlerein();
 	if (obvi) {
 		dovi(); 
-		pvirtnachvi();
 	} else if (obvs) {
 		svec rueck;
 		systemrueck("cd \""+instvz+"\";ls -l $(grep 'DTN' vars|sed 's/DTN::=//g')",-1,oblog,&rueck);
@@ -5122,36 +5131,39 @@ void hcl::holbefz0(const int argc, const char *const *const argv)
 	for(int i=1;i<argc;i++)
 		if (argv[i][0]) {
 			if (!obverb && argv[i][1]) {
-				Sprache altSpr=Txk.lgn;
-				for(int akts=0;akts<SprachZahl;akts++) {
-					Txk.lgn=(Sprache)akts;
-					if ((strchr("-/",argv[i][0])&&!strcmp(argv[i]+1,Txk[T_v_k])) || 
-							(!strncmp(argv[i],"--",2)&&!strcmp(argv[i]+2,Txk[T_verbose_l]))) { // -v, -w, -verbose, -wortreich
-						cout<<violett<<Txk[T_hcl_hcl]<<schwarz<<endl;
-						obverb=1;
-					} // if ((strchr...
-				} //         for(int akts=0;akts<SprachZahl;akts++)
-				Txk.lgn=altSpr;
-			} // 			if (!obverb && argv[i][1])
-			argcmv.push_back(argcl(i,argv)); 
-			cl+=" ";
-			cl+=argv[i];
-		} //     if (argv[i][0])
+        Sprache altSpr=Txk.lgn;
+        for(int akts=0;akts<SprachZahl;akts++) {
+          Txk.lgn=(Sprache)akts;
+          if (strchr("-/",argv[i][0])) {
+            if (!strcmp(argv[i]+1,Txk[T_v_k]) || (!strncmp(argv[i],"--",2)&&!strcmp(argv[i]+2,Txk[T_verbose_l]))) { // -v, -w, -verbose, -wortreich
+              cout<<violett<<Txk[T_hcl_hcl]<<schwarz<<endl;
+              obverb=1;
+            } else if (!strcmp(argv[i]+1,Txk[T_stu_k])||(!strncmp(argv[i],"--",2)&&!strcmp(argv[i]+2,Txk[T_stumm_l]))) {
+              stumm=1;
+            }
+          } // if ((strchr...
+        } //         for(int akts=0;akts<SprachZahl;akts++)
+        Txk.lgn=altSpr;
+      } // 			if (!obverb && argv[i][1])
+      argcmv.push_back(argcl(i,argv)); 
+      cl+=" ";
+      cl+=argv[i];
+    } //     if (argv[i][0])
 } // void hcl::holbefz0
 
 // wird aufgerufen in: hcl::hcl
 string holsystemsprache(int obverb/*=0*/)
 {
-	if (obverb)
-		cout<<violett<<Txk[T_holsystemsprache]<<schwarz<<endl;
-	schAcl<WPcl> cglangA("cglangA"); // Systemsprach-Konfiguration
-	string ret;
-	// OpenSuse, Fedora, Debian
-	const char* const langdt[]{"/etc/sysconfig/language","/etc/locale.conf","/etc/default/locale","/etc/sysconfig/i18n"};
-	const char* const langvr[]{"RC_LANG","LANG","LANG","LANG"};
-	for (size_t lind=0;lind<elemzahl(langdt);lind++) {
-		struct stat langstat{0};
-		if (!lstat(langdt[lind],&langstat)) {
+  if (obverb)
+    cout<<violett<<Txk[T_holsystemsprache]<<schwarz<<endl;
+  schAcl<WPcl> cglangA("cglangA"); // Systemsprach-Konfiguration
+  string ret;
+  // OpenSuse, Fedora, Debian
+  const char* const langdt[]{"/etc/sysconfig/language","/etc/locale.conf","/etc/default/locale","/etc/sysconfig/i18n"};
+  const char* const langvr[]{"RC_LANG","LANG","LANG","LANG"};
+  for (size_t lind=0;lind<elemzahl(langdt);lind++) {
+    struct stat langstat{0};
+    if (!lstat(langdt[lind],&langstat)) {
 			cglangA.sinit(1, langvr[lind]);
 			confdcl langcd(langdt[lind],obverb);
 			langcd.kauswert(&cglangA,obverb);
@@ -5240,6 +5252,7 @@ void hcl::virtinitopt()
 	opn<<new optcl(/*pname*/"language",/*pptr*/&langu,/*art*/pstri,T_lg_k,T_language_l,/*TxBp*/&Txk,/*Txi*/T_sprachstr,/*wi*/1,/*Txi2*/-1,/*rottxt*/string(),/*wert*/-1,/*woher*/1,T_Sprachen);
 	opn<<new optcl(/*pname*/"language",/*pptr*/&langu,/*art*/pstri,T_lang_k,T_lingue_l,/*TxBp*/&Txk,/*Txi*/-1,/*wi*/1,/*Txi2*/-1,/*rottxt*/string(),/*wert*/-1,/*woher*/1,-1);
 	opn<<new optcl(/*pptr*/&obverb,/*art*/puchar,T_v_k,T_verbose_l,/*TxBp*/&Txk,/*Txi*/T_Bildschirmausgabe_gespraechiger,/*wi*/1,/*Txi2*/-1,/*rottxt*/string(),/*wert*/1,/*woher*/1);
+	opn<<new optcl(/*pptr*/&stumm,/*art*/puchar,T_stu_k,T_stumm_l,/*TxBp*/&Txk,/*Txi*/T_Bildschirmausgabe_ganz_stumm,/*wi*/1,/*Txi2*/-1,/*rottxt*/string(),/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pname*/"logvz",/*pptr*/&logvz,/*art*/pverz,T_lvz_k,T_logvz_l,/*TxBp*/&Txk,/*Txi*/T_waehlt_als_Logverzeichnis_pfad_derzeit,/*wi*/0,/*Txi2*/-1,/*rottxt*/string(),/*wert*/-1,/*woher*/!logvz.empty(),T_Logverzeichnis);
 	opn<<new optcl(/*pname*/"logdname",/*pptr*/&logdname,/*art*/pstri,T_ld_k,T_logdname_l,/*TxBp*/&Txk,/*Txi*/T_logdatei_string_im_Pfad,/*wi*/0,/*Txi2*/T_wird_verwendet_anstatt,/*rottxt*/logvz,/*wert*/-1,/*woher*/!logdname.empty(),T_Logdateiname);
 	opn<<new optcl(/*pname*/"oblog",/*pptr*/&oblog,/*art*/pint,T_l_k,T_log_l,/*TxBp*/&Txk,/*Txi*/T_protokolliert_ausfuehrlich_in_Datei,/*wi*/1,/*Txi2*/T_sonst_knapper,/*rottxt*/loggespfad,/*wert*/1,/*woher*/1,T_Oblog_ausf_Protok);
@@ -5271,9 +5284,9 @@ void hcl::parsecl()
 	vector<argcl>::iterator ap,apn;
 	for(ap=argcmv.begin();ap!=argcmv.end();ap++) {
 		uchar nichtspeichern{0}, gegenteil{0}, kurzp{0}, langp{0};
-		const char *acstr=ap->argcs;
+		const char *acstr{ap->argcs};
 		//// <<rot<<"acstr: "<<schwarz<<acstr<<endl;
-		unsigned aclen=strlen(acstr);
+		unsigned long aclen{strlen(acstr)};
 		if (aclen>1) {
 			if (aclen>2 && acstr[0]=='-'&&acstr[1]=='-') {
 				langp=1;
@@ -5372,7 +5385,7 @@ void hcl::virtlieskonfein()
 		if (rue.size()) {
 			//  $XDG_CONFIG_HOME in XDG Base Directory Specification
 			string confverz{rue[0]+vtz+".config"};
-			pruefverz(confverz,/*obverb=*/0,/*oblog=*/0,/*obmitfacl=*/1,/*obmitcon=*/1);
+			pruefverz(confverz,/*obverb=*/0,/*oblog=*/0,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer*/string(),/*benutzer*/string(),/*obmachen*/1,/*obprot*/1,/*keinsu*/1);
 			akonfdt=confverz+"/"+DPROG+".conf";
 		}
 	} // 	if (akonfdt.empty()) 
@@ -5582,8 +5595,8 @@ uchar hcl::pruefcron(const string& cm)
 			if (vorcm.empty() && !cronzuplanen) {
 				if (obverb||cmeingegeben) 
 					fLog(Txk[T_Kein_cron_gesetzt_nicht_zu_setzen],1,oblog);
-			} else {
-				if (cmhier==vorcm) {
+      } else {
+        if (cmhier==vorcm) {
 					if (cmeingegeben) fLog(blaus+"'"+zsaufr+"'"+schwarz+Txk[T_wird]+Txk[T_unveraendert]+
 							+blau+(vorcm.empty()?Txk[T_gar_nicht]:Txk[T_alle]+vorcm+Txk[T_Minuten])+schwarz+Txk[T_aufgerufen],1,oblog);
 				} else {
@@ -5597,31 +5610,29 @@ uchar hcl::pruefcron(const string& cm)
 #ifdef anders
 #define uebersichtlich
 #ifdef uebersichtlich
-			string befehl;
+			string befehl{"T="+tmpcron+";"};
 			if (!cronzuplanen) {
 				if (nochkeincron) {
 				} else {
-					befehl="bash -c 'grep \""+saufr[0]+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";"
-						"crontab "+tmpcron+";}||:'";
+					befehl+="bash -c 'grep \""+saufr[0]+"\" -q <(crontab -l)&&{ crontab -l|sed \"/"+zsaufr[0]+"/d\" >$T;crontab $T;}||:'";
 				}
 			} else {
 				if (nochkeincron) {
-					befehl="rm -f "+tmpcron+";";
+					befehl+="rm -f $T;";
 				} else {
-					befehl="bash -c 'grep \"\\*/"+cmhier+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l|sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";";
+					befehl+="bash -c 'grep \"\\*/"+cmhier+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l|sed \"/"+zsaufr[0]+"/d\" >$T;";
 				}
-				befehl+="echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+"";
+				befehl+="echo \""+cbef+"\" >>$T; crontab $T";
 				if (!nochkeincron)
 					befehl+=";}'";
 			} // 			if (!cronzuplanen)
 #else // uebersichtlich
-			const string befehl{cronzuplanen?
-				(nochkeincron?"rm -f "+tmpcron+";":
-				 "bash -c 'grep \"\\*/"+cmhier+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr[0]+"/d\">"+tmpcron+"; ")+
-					"echo \""+cbef+"\">>"+tmpcron+"; crontab "+tmpcron+(nochkeincron?"":";}'")
+			const string befehl{"T="+tmpcron+";"+cronzuplanen?
+				(nochkeincron?"rm -f $T;":
+				 "bash -c 'grep \"\\*/"+cmhier+czt+cabfr+"\" -q <(crontab -l)||{ crontab -l | sed \"/"+zsaufr[0]+"/d\" >$T; ")+
+					"echo \""+cbef+"\" >>$T; crontab $T"+(nochkeincron?"":";}'")
 					:
-					(nochkeincron?"":"bash -c 'grep \""+saufr[0]+"\" -q <(crontab -l)&&{ crontab -l | sed \"/"+zsaufr[0]+"/d\">"+tmpcron+";"
-					 +"crontab "+tmpcron+";}||:'")
+					(nochkeincron?"":"bash -c 'grep \""+saufr[0]+"\" -q <(crontab -l)&&{ crontab -l | sed \"/"+zsaufr[0]+"/d\" >$T;crontab $T;}||:'")
 			};
 #endif   // uebersichtlich else
 			systemrueck(befehl,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
@@ -5649,7 +5660,7 @@ void hcl::virtzeigueberschrift()
 				+(vorcm!=cronminut&&!(vorcm.empty()&&cronminut=="0")?((vorcm.empty()?Txk[T_gar_nicht]:vorcm)+" -> "):string())
 				+(cronminut=="0"?Txk[T_kein_Aufruf]+schwarzs:cronminut+schwarz+(cronminut=="1"?Txk[T_Minute]:Txk[T_Minuten])):
 				string());
-	fLog(uebers.str(),1,oblog);
+	if (!stumm) fLog(uebers.str(),1,oblog);
 } // void hcl::virtzeigueberschrift
 
 
@@ -6545,20 +6556,21 @@ void hcl::setztmpcron()
 // wird aufgerufen in pruefcron (2x)
 void hcl::tucronschreib(const string& zsauf,const uchar cronzuplanen,const string& cbef)
 {
-	string unicmd{"rm -f "+tmpcron+";"};
+	string unicmd{"T="+tmpcron+";rm -f $T;"};
 	string cmd{unicmd};
-	string dazu{"crontab -l|sed '/"+zsauf+"/d'>"+tmpcron+";"};
+	string dazu{"crontab -l|sed '/"+zsauf+"/d' >$T;"};
 	unicmd+=dazu;	
 	if (!nochkeincron) {
 		// cmd=dazu; // 26.2.17: Debian: nach Deinstallation rootscrontab mit root-Berechtigungen, die Programm hier aufhielten
 		cmd=unicmd;
 	}
 	if (cronzuplanen) {
-		cmd+=" echo \""+cbef+"\">>"+tmpcron+";";
+		cmd+=" echo \""+cbef+"\" >>$T;";
 	}
-	dazu=" crontab "+tmpcron+";";
+	dazu=" crontab $T;";
 	unicmd+=dazu;
 	cmd+=dazu;
+  caus<<gruen<<cmd<<schwarz<<endl;
 	systemrueck(cmd,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 	//// ersetzAlle(unicmd,"'\\''","'");
 	const string bef{sudc+"sh -c '"+cmd+"'"};

@@ -177,8 +177,8 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47531</b>
-Verwende: <b>Fritzbox <br>
+Programm: <b>/home/schade/autofax/autofax</b>, V:
+<b>0.47532</b> Verwende: <b>Fritzbox <br>
 Options which are not saved (current value in parentheses):
 <br>
 -delf, --deletefax</b>: delete a fax with query (<b>0</b>)
@@ -227,6 +227,8 @@ with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 (<b>0</b>) <b><br>
 -v, --verbose</b>: screen output more verbose (<b>0</b>)
 <b><br>
+-mu, --mute</b>: screen output completely mute (<b>0</b>)
+<b><br>
 -lfn, --logfilenew</b>: delete log file afore (<b>0</b>)
 <b><br>
 -cf, --conffile &lt;string&gt;</b>: uses configuration file
@@ -238,7 +240,7 @@ with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vi, --vi</b>: edit/view configuration file , log file etc.
 (finish with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vs, --vs</b>: edit/view source files in
-<b>/root/autofax</b>(finish with &rsquo;:qa&rsquo;)
+<b>/home/schade/autofax</b>(finish with &rsquo;:qa&rsquo;)
 (<b>0</b>) <b><br>
 -autoupd, --autoupdate &lt;zahl&gt;</b>: Update program
 automatically (<b>1</b>) <b><br>
@@ -1025,8 +1027,8 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47531</b>
-Verwende: <b>Fritzbox <br>
+Programm: <b>/home/schade/autofax/autofax</b>, V:
+<b>0.47532</b> Verwende: <b>Fritzbox <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
 -loef, --loeschefax</b>: ein Fax nach Rueckfrage loeschen
@@ -1076,6 +1078,8 @@ Datensaetze = &lt;zahl&gt; statt (&rsquo;<b>30</b>&rsquo;)
 SQL-Befehlen (<b>0</b>) <b><br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger
 (<b>0</b>) <b><br>
+-stu, --stumm</b>: Bildschirmausgabe ganz stumm (<b>0</b>)
+<b><br>
 -ldn, --logdateineu</b>: logdatei vorher loeschen (<b>0</b>)
 <b><br>
 -kd, --konfdatei &lt;string&gt;</b>: verwendet
@@ -1088,7 +1092,7 @@ Konfigurationsdatei &lt;string&gt; anstatt (&rsquo;&rsquo;)
 -vi, --vi</b>: Konfigurationsdatei , Logdatei usw.
 bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
--vs, --vs</b>: Quelldateien in <b>/root/autofax</b>
+-vs, --vs</b>: Quelldateien in <b>/home/schade/autofax</b>
 bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
 -autoakt, --autoaktual &lt;zahl&gt;</b>: Programm

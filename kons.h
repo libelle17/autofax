@@ -319,6 +319,8 @@ enum Tkons_
 	T_sprachstr,
 	T_v_k,
 	T_verbose_l,
+	T_stu_k,
+	T_stumm_l,
 	T_lvz_k,
 	T_logvz_l,
 	T_ld_k,
@@ -330,6 +332,7 @@ enum Tkons_
 	T_kd_k,
 	T_konfdatei_l,
 	T_Bildschirmausgabe_gespraechiger,
+  T_Bildschirmausgabe_ganz_stumm,
 	T_waehlt_als_Logverzeichnis_pfad_derzeit,
 	T_logdatei_string_im_Pfad,
 	T_sonst_knapper,
@@ -906,7 +909,7 @@ class lsyscl
 
 // enum betrsys {keins,suse,ubuntu,fedora};
 // betrsys pruefos();
-int obprogda(const string& prog, int obverb=0, int oblog=0, string *pfad=0);
+int obprogda(const string& prog, int obverb=0, int oblog=0, string *pfad=0,const int keinsu=0);
 enum instprog {keinp,zypper,apt,dnf,yum,urp,pac};
 string gethome();
 
@@ -1014,7 +1017,7 @@ void pruefmehrfach(const string& wen=nix,int obverb=0,uchar obstumm=0);
 int setfaclggf(const string& datei,int obverb=0,int oblog=0,const binaer obunter=falsch,int mod=4,uchar obimmer=0,
                 uchar faclbak=0,const string& user={},uchar fake=0,stringstream *ausgp=0,const uchar obprot=1);
 int pruefverz(const string& verz,int obverb=0,int oblog=0, uchar obmitfacl=0, uchar obmitcon=0,
-              const string& besitzer={}, const string& benutzer={}, const uchar obmachen=1,const uchar obprot=1);
+              const string& besitzer={}, const string& benutzer={}, const uchar obmachen=1,const uchar obprot=1,const int keinsu=0);
 string aktprogverz();
 char Tippbuchst(const string& frage, const string& moegl,const char *berkl[], const char* erlaubt=0, const char *vorgabe=0);
 // vorgabe fur vorgabe = T_j_k; alternativ='n'
@@ -1282,6 +1285,7 @@ class hcl
 	public:
 		int retu{0}; // Return-Value
 		int obverb=0; // verbose
+		int stumm=0; // gar keine Bildschirmausgabe
 		int oblog=0;  // mehr Protokollieren
     uchar rzf=0; // rueckzufragen
 		uchar obvi=0; // ob Konfigurationsdatei editiert werden soll
@@ -1352,7 +1356,6 @@ class hcl
 		void setzzaehler();
 		void schreibzaehler();
 		void dovi();
-		virtual void pvirtnachvi()=0;
 		virtual void virtzeigversion(const string& ltiffv=nix);
 		virtual void pvirtvorrueckfragen()=0;
 		virtual void virtrueckfragen();
