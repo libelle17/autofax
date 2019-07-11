@@ -5066,11 +5066,11 @@ int schluss(const int fnr,const string text,int oblog)
 // zum Aufruf virtueller Funktionen aus dem Konstruktur verschoben
 void hcl::lauf()
 {
-	virtzeigueberschrift();
 	virtVorgbAllg();
 	pvirtVorgbSpeziell(); // die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion "void hhcl::pvirtVorgbSpeziell()" ueberladbar sind
 	virtinitopt();
 	parsecl();
+	virtzeigueberschrift();
 	if (obhilfe==3) { // Standardausgabe gewaehrleisten
 		virtMusterVorgb();
 	} else {

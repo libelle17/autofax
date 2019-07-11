@@ -2263,7 +2263,7 @@ void hhcl::pruefmodcron()
 
 
 // wird aufgerufen in: untersuchespool, main
-// rueckgabe: wie obcapi eingestellt sein sollte
+// rueckgabe: wie obfa[1] (obcapi) eingestellt sein sollte
 int hhcl::pruefcapi()
 {
 	hLog(violetts+Tx[T_pruefcapi]+schwarz+" obcapi: "+(obfa[1]?"1":"0"));
@@ -8470,8 +8470,8 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 							// <<gruen<<"nimmer: "<<schwarz<<(int)nimmer<<endl;
 							// <<gruen<<"fsf.capistat: "<<schwarz<<(int)fsf.capistat<<endl;
 							// <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
-							// <<"obcapi: "<<(int)obcapi<<endl;
-							// <<"obhyla: "<<(int)obhyla<<endl;
+							// <<"obfa[1]: "<<(int)obfa[1]<<endl;
+							// <<"obfa[2]: "<<(int)obfa[2]<<endl;
 							// <<"fsf.capisd: '"<<fsf.capisd<<"'"<<endl;
 							// <<gruen<<"fsf.capisd.empty(): "<<schwarz<<(int)fsf.capisd.empty()<<endl;
 							 */
@@ -8485,7 +8485,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 							fsf.scheitere(wvz,ngvz,cuser,&zmsp[0]->ziel,obverb,oblog);
 						} // if (allegesch || (nimmer && !ogibts[0]))
 					} // 						if (mitupd)
-				} // if (obcapi || obhyla)
+				} // if (obfa[1] || obfa[2] || fsf.mailges=="1")
 				fLog(ausg.str(),1,oblog);
 			} // if (*(*cerg+0)) if (*(*cerg+3))
 		} // while (cerg=rs.HolZeile(),cerg?*cerg:0) 
@@ -9119,7 +9119,7 @@ void hhcl::pvirtfuehraus() //α
 					} // 					if (!pidb)
 					pidv<<pidcl(pidb,"bereinigevz");
 				} // 				if (aufrufe % 1000 )
-				// hier stehen obcapi und obhyla fest
+				// hier stehen obfa[1] und obfa[2] fest
 				ulong rzahl{0}, szahl{0}, zzahl{0};
 				uchar rlaeuft{0}, slaeuft{0}, zlaeuft{0};
 				uchar zaehlergeschrieben{0};
