@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "11.07.19" "Version 0.47534" "\fB²DPROG²\fR man page"
+.TH man 1 "13.07.19" "Version 0.47556" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -67,7 +67,7 @@ Depending on operating system, accessability and preferences the users thus coul
 .SH OPTIONS 
  '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR' shows the important command line options and '\fB²DPROG² -lh\fR' all of them. Some options (e.g. the sql commands for finding an addressee from the fax number) cannot be set via the command line, but only via the configuration file, which can be edited directly by '\fB²DPROG² -vi\fR' or interactively by '\fB²DPROG² -rf\fR'.
 .br
-        \fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.47534 \fRUsing: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
+        \fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.47556 \fR(no fax program available)\fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
 .br
 \fBOptions which are not saved (current value in parentheses): \fR
 .br
@@ -95,9 +95,9 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fB -listw, --listwaiting\fR: lists waiting faxes (\fB0\fR)
 .br
-\fB -reconly, --receiveonly\fR: receives only (\fB0\fR)
+\fB -receiveonly, --receives only\fR: sndonly (\fB0\fR)
 .br
-\fB -sndonly, --sendonly\fR: sends only (\fB0\fR)
+\fB -sendonly, --sends only\fR: instsfftobmp() (\fB0\fR)
 .br
 \fB -s, --search <string>\fR: Look in processed faxes for <string>:  ('\fB\fR')
 .br
@@ -151,11 +151,11 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fB -hyla, --takehyla <zahl>\fR: use hylafax\fB or not\fR (\fB1\fR)
 .br
-\fB -fp, --fprio <zahl>\fR: Priority of fritzbox (1-3) (\fB0\fR)
+\fB -fprio, --With which priority shall capisuite be used (1-3) <zahl>\fR: cp (\fB0\fR)
 .br
-\fB -cp, --cprio <zahl>\fR: Priority of capisuite (1-3) (\fB0\fR)
+\fB -cprio, --hp <zahl>\fR: Priority of hylafax (1-3) (\fB0\fR)
 .br
-\fB -hp, --hprio <zahl>\fR: Priority of hylafax (1-3) (\fB0\fR)
+\fB -hprio, --fp <zahl>\fR: Priority of fritzbox (1-3) (\fB0\fR)
 .br
 \fB -mod, --hmodem <string>\fR: Modem used for hylafax, instead of  ('\fBttyACM0\fR')
 .br
@@ -199,9 +199,9 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fB -smp, --smtppwd <string>\fR: smtp password
 .br
-\fB -mt, --mailtitle <string>\fR: mail title ('\fBMail von autofax\fR')
+\fB -mt, --mailtitle <string>\fR: mail title ('\fBbitte Anhang beachten\fR')
 .br
-\fB -mb, --mailbody <string>\fR: mail body ('\fBbitte Anhang beachten\fR')
+\fB -mb, --mailbody <string>\fR: mail body ('\fBmail gesandt (0=nein, 1=ja)\fR')
 .br
 \fB -fd, --find <zahl>\fR: version 1,2 or 3 of filefind (variable performance differences instead of (\fB1\fR)
 .br

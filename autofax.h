@@ -370,6 +370,9 @@ enum T_
 	T_Adressat,
 	T_Prioritaet_aus_Dateinamen,
 	T_Zahl_der_bisherigen_Versuche_in_Capisuite,
+	T_Zahl_der_bisherigen_Versuche_in_Fritzbox,
+	T_Zahl_der_bisherigen_Versuche_in_fbfax,
+	T_Pfad_zur_Spooldatei_in_fbfax,
 	T_Zahl_der_bisherigen_Versuche_in_Hylafax,
 	T_Spooldatei_in_Capisuite,
 	T_Pfad_zur_Spooldatei_in_Capisuite_ohne_abschliessendes_Verzeichnistrennzeichen,
@@ -421,6 +424,7 @@ enum T_
 	T_Gabelung_zu_korrigierecapi_misslungen,
 	T_Gabelung_zu_korrigierehyla_misslungen,
 	T_Gabelung_zu_faxemitH_misslungen,
+	T_Gabelung_zu_faxemitF_misslungen,
 	T_Gabelung_zu_faxemitC_misslungen,
 	T_Gabelung_zu_untersuchespool_misslungen,
 	T_Gabelung_zu_zeigweitere_misslungen,
@@ -540,6 +544,8 @@ enum T_
 	T_obfboxmitDoppelpunkt,
 	T_obcapimitDoppelpunkt,
 	T_obhylamitDoppelpunkt,
+	T_obkmailmitDoppelpunkt,
+	T_obvmailmitDoppelpunkt,
 	T_Unterverzeichnis,
 	T_passt_zu_Muster,
 	T_passt_zu_keinem_Muster,
@@ -571,6 +577,7 @@ enum T_
 	T_WVZinDatenbank,
 	T_inDbc,
 	T_faxemitH,
+	T_faxemitF,
 	T_inDBh,
 	T_inDBk,
 	T_SpoolDateierstellt,
@@ -680,8 +687,9 @@ struct urfxcl // urspruengliche Dateidaten vor Aufteilung an verschiedene Faxadr
 {
     string teil;
     string ur;
-    unsigned prio; // Prioritaet der Fax-Programme: 0 = capi und 0 = hyla per Konfigurationsdatei, 1= capi und 2= hyla per Faxdateiname
-    urfxcl(const string& teil, const string& ur,unsigned prio): teil(teil), ur(ur), prio(prio) {}
+	  unsigned pprio; // Prioritaet der Fax-Programme: 0= per Konfigurationsdatei, 1=capi, 2=hyla, 3=fbfax per Faxdateiname, 
+										// s. anfaxstr-Befuellung in inspoolschreiben() 
+    urfxcl(const string& teil, const string& ur,unsigned pprio): teil(teil), ur(ur), pprio(pprio) {}
 };
 
 struct fxfcl // Faxfile
@@ -689,12 +697,13 @@ struct fxfcl // Faxfile
     string npdf; // nicht-PDF
     string spdf; // schon-PDF
     string ur;   // urspruenglicher Dateinamen
-    unsigned prio; // Prioritaet der Fax-Programme: 0 = capi und 0 = hyla per Konfigurationsdatei, 1= capi und 2= hyla per Faxdateiname
+	  unsigned pprio; // Prioritaet der Fax-Programme: 0= per Konfigurationsdatei, 1=capi, 2=hyla, 3=fbfax per Faxdateiname, 
+										// s. anfaxstr-Befuellung in inspoolschreiben() 
 		ulong pseiten; // PDF-Seitenzahl
-    fxfcl(const string& npdf,const string& spdf,const string& ur,unsigned prio): npdf(npdf),spdf(spdf),ur(ur),prio(prio),pseiten(0) {}
+    fxfcl(const string& npdf,const string& spdf,const string& ur,unsigned pprio): npdf(npdf),spdf(spdf),ur(ur),pprio(pprio),pseiten(0) {}
     // nur fuer Initialisierung in fsfcl, Konstruktur /*1*/, nur fuer wegfaxen
-    fxfcl(unsigned prio, const string& npdf,const string& spdf,ulong pseiten): npdf(npdf),spdf(spdf),prio(prio),pseiten(pseiten) {}
-    fxfcl(const string& spdf,const string& ur,unsigned prio): npdf(""),spdf(spdf),prio(prio),pseiten(0) {}
+    fxfcl(unsigned pprio, const string& npdf,const string& spdf,ulong pseiten): npdf(npdf),spdf(spdf),pprio(pprio),pseiten(pseiten) {}
+    fxfcl(const string& spdf,const string& ur,unsigned pprio): npdf(""),spdf(spdf),pprio(pprio),pseiten(0) {}
     fxfcl() {}
 };
 
@@ -711,6 +720,8 @@ struct fsfcl : public fxfcl // Faxsendfile
     uchar fobfbox; // ob es jetzt mit Fritzbox weggefaxt werden muss
     uchar fobcapi; // ob es jetzt mit Capi weggefaxt werden muss
     uchar fobhyla; // ob es jetzt mit Hyla weggefaxt werden muss
+    uchar fobkmail; // ob es jetzt mit klarmail weggeschickt werden muss
+    uchar fobvmail; // ob es jetzt mit vschlmail weggeschickt werden muss
     string adressat; // Name des Adressaten aus Faxdatei
 		string idalt; // id in altspool
 		string mailges; // ob mail gesandt
@@ -744,9 +755,9 @@ struct fsfcl : public fxfcl // Faxsendfile
 		                uchar *gel, const size_t aktc, const int obverb, const int oblog);
 		int loeschecapi(const int obverb, const int oblog);
     int loeschehyla(hhcl *const hhip, const int obverb, const int oblog);
-    /*1*/fsfcl(const string id, const string npdf, const string spdf, const string telnr, unsigned prio, const string capisd, int capids, 
+    /*1*/fsfcl(const string id, const string npdf, const string spdf, const string telnr, unsigned pprio, const string capisd, int capids, 
 		           const string hylanr, int hdialsn, uchar fobfbox, uchar fobcapi, uchar fobhyla, const string adressat, ulong pseiten, string idalt,int wiemail):
-         fxfcl(prio,npdf,spdf,pseiten), id(id), telnr(telnr), capisd(capisd), capids(capids), 
+         fxfcl(pprio,npdf,spdf,pseiten), id(id), telnr(telnr), capisd(capisd), capids(capids), 
          hylanr(hylanr), hdialsn(hdialsn), fobfbox(fobfbox), fobcapi(fobcapi), fobhyla(fobhyla), adressat(adressat),idalt(idalt),wiemail(wiemail) {}
     /*2*/fsfcl(const string id,const string original): id(id), original(original) {}
     /*3*/fsfcl(const string id, const string capisd, const string hylanr, string const cspf): id(id), capisd(capisd), hylanr(hylanr), cspf(cspf) {}
@@ -991,12 +1002,14 @@ class hhcl:public dhcl
 		           const string& telnr, const size_t aktc);
 		void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
+		void faxemitF(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void vschlmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void klarmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
 				const fsfcl *const fsfp,const string *const tel, const size_t aktc);
 		void inDBk(DB *My, const string& spooltab, const string& altspool, const fsfcl *const fsfp, const size_t aktc);
 		void standardprio(const int obmitsetz);
+		int priorang(const int rnr);
 	protected: //α
 		// void virtlgnzuw(); // wird aufgerufen in: virtrueckfragen, parsecl, lieskonfein, hcl::hcl nach holsystemsprache
 		void virtVorgbAllg();

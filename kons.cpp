@@ -5070,7 +5070,6 @@ void hcl::lauf()
 	pvirtVorgbSpeziell(); // die Vorgaben, die in einer zusaetzlichen Datei mit einer weiteren Funktion "void hhcl::pvirtVorgbSpeziell()" ueberladbar sind
 	virtinitopt();
 	parsecl();
-	virtzeigueberschrift();
 	if (obhilfe==3) { // Standardausgabe gewaehrleisten
 		virtMusterVorgb();
 	} else {
@@ -5080,6 +5079,7 @@ void hcl::lauf()
 //		if (obverb) opn.oausgeb(gruen);
 	} // if (obhilfe==3)
 //	opn.omapzuw();
+	virtzeigueberschrift();
 	pvirtmacherkl();
 	if (zeighilfe(&erkl)) {
 		virttesterg();
