@@ -82,10 +82,13 @@ enum T_
 	T_versuche_faxe_zuerst_ueber_Capisuite_wegzuschicken,
 	T_mc_k,
 	T_maxcapiv_l,
-	T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht,
+	T_nach_zahl_Versuchen_Capisuite_wird_andere_Methode_versucht,
 	T_mh_k,
 	T_maxhylav_l,
-	T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet,
+	T_nach_zahl_Versuchen_Hylafax_wird_andere_Methode_verwendet,
+	T_nach_zahl_Versuchen_fbfax_wird_andere_Methode_verwendet,
+	T_mf_k,
+	T_maxfbfxv_l,
 	T_cuser_k,
 	T_cuser_l,
 	T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt,
@@ -295,8 +298,9 @@ enum T_
 	T_Kein_Modem_gefunden,
 	T_Soll_Hylafax_verwendet_werden,
 	T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden,
-	T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird,
-	T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird,
+	T_Zahl_der_Versuche_in_Capisuite_bis_andere_Methode_versucht_wird,
+	T_Zahl_der_Versuche_in_hylafax_bis_andere_Methode_versucht_wird,
+	T_Zahl_der_Versuche_in_fbfax_bis_andere_Methode_versucht_wird,
 	T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt,
 	T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden,
 	T_soll_Text_in_empfangenen_Faxen_mit_OCR_gesucht_werden,
@@ -662,6 +666,7 @@ template<typename T> string verschiebe(const string& qdatei, const T/*string,zie
 const char* FxStatS(const FxStat *const i);
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, const int obverb, const int oblog);
 void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, int obverb, int oblog);
+inline const int ppri(const int iprio);
 
 
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster
@@ -697,8 +702,7 @@ struct fxfcl // Faxfile
     string npdf; // nicht-PDF
     string spdf; // schon-PDF
     string ur;   // urspruenglicher Dateinamen
-	  unsigned pprio; // Prioritaet der Fax-Programme: 0= per Konfigurationsdatei, 1=capi, 2=hyla, 3=fbfax per Faxdateiname, 
-										// s. anfaxstr-Befuellung in inspoolschreiben() 
+	  unsigned pprio;// Prioritaet der Fax-Programme: 1=fbfax, 2=capi, 3=hyla per Konfigurationsdatei, 11=fbfax, 12=capi, 13=hyla, 14=vschlmail, 15=klarmail per Faxdateiname
 		ulong pseiten; // PDF-Seitenzahl
     fxfcl(const string& npdf,const string& spdf,const string& ur,unsigned pprio): npdf(npdf),spdf(spdf),ur(ur),pprio(pprio),pseiten(0) {}
     // nur fuer Initialisierung in fsfcl, Konstruktur /*1*/, nur fuer wegfaxen
@@ -787,8 +791,9 @@ class hhcl:public dhcl
     int clprios[3]; // commandline-Prioritaeten
 		// int hylazuerst{-1};  // ob ein Fax zuerst ueber Hylafax versucht werden soll zu faxen
 		//    string hmodemstr; // Erkennung des Faxgeraetes nach /dev/tty, Standard ACM
-		string maxcapiv; // maximale Versuchnr in Capi, bis Hyla versucht wird
-		string maxhylav; // maixmale Versuchsnr in Hylafax, bis Capi versucht wird
+		string maxcapiv; // maximale Versuchnr in Capi, bis andere Methode versucht wird
+		string maxhylav; // maximale Versuchsnr in Hylafax, bis andere Methode versucht wird
+		string maxfbfxv; // maximale Versuchsnr in fbfax, bis andere Methode verwendet wird
 		string maxhdials;     // Zahl der Wahlversuche in Hylafax
 		string maxcdials;    // Zahl der Wahlversuche in Capisuite
 		int gleichziel{-1}; // faxe auch ohne Fax-Erfolg auf Zielverzeichnis abspeichern

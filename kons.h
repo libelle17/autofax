@@ -1258,7 +1258,9 @@ class hcl
 		pidvec pidv;
     double tstart, tende;
     size_t optslsz=0; // last opts.size()
+	public:
 		confdcl hccd;
+	protected:
 		string tmpcron; // fuer crontab
     string cronminut; // Minuten fuer crontab; 0 = kein Crontab-Eintrag
 		uchar nochkeincron;

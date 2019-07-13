@@ -173,14 +173,20 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"mc","mc"},
 	// T_maxcapiv_l
 	{"maxcapiv","maxcapitries"},
-	// T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht
-	{"nach <zahl> Versuchen Capisuite wird Hylafax versucht, anstatt nach","try Hylafax after <no> tries of Capisuite instead of"}, 
+	// T_nach_zahl_Versuchen_Capisuite_wird_andere_Methode_versucht
+	{"nach <zahl> Versuchen Capisuite wird andere Methode versucht, anstatt nach","try Hylafax after <no> tries of other method instead of"}, 
 	// T_mh_k
 	{"mh","mh"},
 	// T_maxhylav_l
 	{"maxhylav","maxhylatries"},
-	// T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet
-	{"nach <zahl> Versuchen Hylafax wird Capisuite versucht, anstatt nach","try Capisuite after <no> tries of Hylafax instead of"},
+	// T_nach_zahl_Versuchen_Hylafax_wird_andere_Methode_verwendet
+	{"nach <zahl> Versuchen Hylafax wird andere Methode versucht, anstatt nach","try other method after <no> tries of fbfax"},
+	//	T_nach_zahl_Versuchen_fbfax_wird_andere_Methode_verwendet
+	{"nach <zahl> Versuchen fbfax wird andere Methode versucht, anstatt nach","try other method after <no> tries of fbfax"},
+	// T_mf_k,
+	{"mf","mf"},
+	// T_maxfbfxv_l,
+	{"maxfbfxv","maxfbfaxtries"},
 	// T_cuser_k
 	{"cuser","cuser"},
 	// T_cuser_l
@@ -612,10 +618,12 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Soll hylafax verwendet werden","Shall hylafax be used"},
 	// T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden
 	{"Soll vorrangig die Capisuite statt hylafax gewaehlt werden","Shall capisuite instead of hylafax bei chosen preferentially"},
-	// T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird
-	{"Zahl der Versuche in Capisuite, bis hylafax eingeschaltet wird","Number of tries in Capisuite, until hylafax is started"},
-	// T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird
-	{"Zahl der Versuche in hylafax, bis Capisuite eingeschaltet wird","Number of tries in hylafax, until Capisuite is started"},
+	// T_Zahl_der_Versuche_in_Capisuite_bis_andere_Methode_versucht_wird
+	{"Zahl der Versuche in Capisuite, bis andere Methode versucht wird","Number of tries in Capisuite, until other method is started"},
+	// T_Zahl_der_Versuche_in_hylafax_bis_andere_Methode_versucht_wird
+	{"Zahl der Versuche in hylafax, bis andere Methode versucht wird","Number of tries in hylafax, until other method is started"},
+	// T_Zahl_der_Versuche_in_fbfax_bis_andere_Methode_versucht_wird
+	{"Zahl der Versuche in fbfax, bis andere Methode versucht wird","Number of tries in fbfax, until other method is started"},
 	// T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt
 	{"Zahl der Klingeltoene, bis Hylafax den Anruf annimmt","Number of ring bells, until hylafax accepts call"},
 	// T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden
@@ -769,8 +777,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	// T_Adressat
 	{"Adressat","addressee"},
 	// T_Prioritaet_aus_Dateinamen
-	{"Prioritaet der Fax-Programme: 0=capi, 1=hyla, 2=fbfax per Konfigurationsdatei, 3=capi, 4=hyla, 5=fbfax per Faxdateiname",
-		"Priority of the fax programs: 0=capi, 1=hyla, 2=fbfax via configuration file, 3=capi, 4=hyla, 5=fbfax via fax file name"},
+	{"Prioritaet der Fax-Programme: 0=unbestimmt, 1=fbfax, 2=capi, 3=hyla, 11=fbfax, 12=capi, 13=hyla per Faxdateiname",
+		"Priority of the fax programs: 0=indetermined, 1=fbfax, 2=capi, 3=hyla, 11=fbfax, 12=capi, 13=hypla per fax file name"},
 	// T_Zahl_der_bisherigen_Versuche_in_Capisuite
 	{"Zahl der bisherigen Versuche in Capisuite","No. of previous tries in Capisuite"},
 	// T_Zahl_der_bisherigen_Versuche_in_fbfax,
@@ -2862,8 +2870,9 @@ void hhcl::virtinitopt()
 //	opn<<new optcl(/*pname*/"hylazuerst",/*pptr*/&hylazuerst,/*art*/pint,T_hz_k,T_hylazuerst_l,/*TxBp*/&Tx,/*Txi*/T_versuche_faxe_zuerst_ueber_Hylafax_wegzuschicken,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/hylazuerst!=-1,T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden);
 //	opn<<new optcl(/*pname*/"hylazuerst",/*pptr*/&hylazuerst,/*art*/pint,T_cz_k,T_capizuerst_l,/*TxBp*/&Tx,/*Txi*/T_versuche_faxe_zuerst_ueber_Capisuite_wegzuschicken,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/0,/*woher*/hylazuerst!=-1,-1);
 	opn<<new optcl(/*pname*/"hmodem",/*pptr*/&hmodem,/*art*/pstri,T_mod_k,T_hmodem_l,/*TxBp*/&Tx,/*Txi*/T_Fuer_Hylafax_verwendetes_Modem,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hmodem.empty(),T_Fuer_Hylafax_verwendetes_Modem);
-	opn<<new optcl(/*pname*/"maxcapiv",/*pptr*/&maxcapiv,/*art*/pdez,T_mc_k,T_maxcapiv_l,/*TxBp*/&Tx,/*Txi*/T_nach_zahl_Versuchen_Capisuite_wird_Hylafax_versucht,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!maxcapiv.empty(),T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird);
-	opn<<new optcl(/*pname*/"maxhylav",/*pptr*/&maxhylav,/*art*/pdez,T_mh_k,T_maxhylav_l,/*TxBp*/&Tx,/*Txi*/T_nach_zahl_Versuchen_Hylafax_wird_Capisuite_verwendet,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,!maxhylav.empty(),T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird);
+	opn<<new optcl(/*pname*/"maxcapiv",/*pptr*/&maxcapiv,/*art*/pdez,T_mc_k,T_maxcapiv_l,/*TxBp*/&Tx,/*Txi*/T_nach_zahl_Versuchen_Capisuite_wird_andere_Methode_versucht,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!maxcapiv.empty(),T_Zahl_der_Versuche_in_Capisuite_bis_andere_Methode_versucht_wird);
+	opn<<new optcl(/*pname*/"maxhylav",/*pptr*/&maxhylav,/*art*/pdez,T_mh_k,T_maxhylav_l,/*TxBp*/&Tx,/*Txi*/T_nach_zahl_Versuchen_Hylafax_wird_andere_Methode_verwendet,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,!maxhylav.empty(),T_Zahl_der_Versuche_in_hylafax_bis_andere_Methode_versucht_wird);
+	opn<<new optcl(/*pname*/"maxfbfxv",/*pptr*/&maxfbfxv,/*art*/pdez,T_mf_k,T_maxfbfxv_l,/*TxBp*/&Tx,/*Txi*/T_nach_zahl_Versuchen_fbfax_wird_andere_Methode_verwendet,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,!maxfbfxv.empty(),T_Zahl_der_Versuche_in_fbfax_bis_andere_Methode_versucht_wird);
 	opn<<new optcl(/*pname*/"cuser",/*pptr*/&cuser,/*art*/pstri,T_cuser_k,T_cuser_l,/*TxBp*/&Tx,/*Txi*/T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!cuser.empty(),T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt);
 	opn<<new optcl(/*pname*/"cklingelzahl",/*pptr*/&cklingelzahl,/*art*/pdez,T_ckzl_k,T_cklingelzahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!cklingelzahl.empty(),T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt);
 	opn<<new optcl(/*pname*/"hklingelzahl",/*pptr*/&hklingelzahl,/*art*/pdez,T_hkzl_k,T_hklingelzahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hklingelzahl.empty(),T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt);
@@ -3188,15 +3197,20 @@ void hhcl::standardprio(const int obmitsetz)
 	}
 	// und jetzt prios mit standardisierten Prioritaeten aus clprios erstellt (also z.B. 3 statt 4)
 	for(int p=1;p<=3;p++) {
-		unsigned int minp{(unsigned int)-1};
+		unsigned minp{(unsigned)-1};
 		int minj{3+1}; 
 		for(int j=0;j<3;j++) if (!prios[j]){
-			if((unsigned int)clprios[j]<minp){
+			if((unsigned)clprios[j]<minp){
 				minp=clprios[j];
 				minj=j;
 			}
 		}
-		if (minj<3+1) prios[minj]=p;
+		if (minj<3+1) {
+			if (p!=clprios[minj]) 
+				hccd.obzuschreib=1;
+			prios[minj]=p;
+			
+		}
 	}
 } // void hhcl::standardprio
 
@@ -3290,8 +3304,8 @@ void hhcl::virtrueckfragen()
 		if (obfa[1]) {
 			if (obfa[2]) {
 				// hylazuerst=!Tippob(Tx[T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden],hylazuerst?"n":Txk[T_j_af]);
-				maxcapiv=Tippzahl(Tx[T_Zahl_der_Versuche_in_Capisuite_bis_hylafax_eingeschaltet_wird],maxcapiv.c_str());
-				maxhylav=Tippzahl(Tx[T_Zahl_der_Versuche_in_hylafax_bis_Capisuite_eingeschaltet_wird],maxhylav.c_str());
+				maxcapiv=Tippzahl(Tx[T_Zahl_der_Versuche_in_Capisuite_bis_andere_Methode_versucht_wird],maxcapiv.c_str());
+				maxhylav=Tippzahl(Tx[T_Zahl_der_Versuche_in_hylafax_bis_andere_Methode_versucht_wird],maxhylav.c_str());
 				// also: obcapi, aber nicht obhyla
 			} else {
 				// hylazuerst=0;
@@ -4563,7 +4577,7 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
 			Feld("telnr","varchar","1","",Tx[T_zu_senden_an],0,0,1),
 			Feld("wiemail","int","1","",Tx[T_wie_mailen],0,0,1,/*vdefa=*/"0"), // 1 = verschluesselte Mail, 2 = klare Mail
 			Feld("adressat","varchar","1","",Tx[T_Adressat],0,0,1),
-			Feld("pprio","int","1","",Tx[T_Prioritaet_aus_Dateinamen],0,0,1),
+			Feld("pprio","int","2","",Tx[T_Prioritaet_aus_Dateinamen],0,0,1),
 			Feld("capidials","int","10","",Tx[T_Zahl_der_bisherigen_Versuche_in_Capisuite],0,0,1),
 			Feld("capistat","int","2","",Tx[T_capistat],0,0,1),
 			Feld("fbdials","int","10","",Tx[T_Zahl_der_bisherigen_Versuche_in_fbfax],0,0,1),
@@ -5964,33 +5978,19 @@ void hhcl::WVZinDatenbank(vector<fxfcl> *const fxvp,size_t aktc)
 		}
 		einf.push_back(/*2*/instyp(My->DBS,"wiemail",wiemail));
 		// in fxvp:
-	  // Prioritaet der Fax-Programme: 0= per Konfigurationsdatei, 1=capi, 2=hyla, 3=fbfax per Faxdateiname, 
-						// s. anfaxstr-Befuellung in inspoolschreiben() 
 		// in Datenbank: 
-		// Prioritaet der Fax-Programme: 0=capi, 1=hyla, 2=fbfax per Konfigurationsdatei, 3=capi, 4=hyla, 5=fbfax per Faxdateiname
-		int pplus{0}; // zur Prioritaet zu addieren
-		if (fxvp->at(nachrnr).pprio) pplus+=2; // 2 = Abstand z.B. zwischen 3=capi und 1=capi oben
-		else {
-			for(int rang=0;rang<3;rang++) {
-			 int pr{priorang(rang)};
-			 if (obfa[pr]) {
-         switch (pr) {
-					 case 0: pplus=2; break; // fbfax , s. Definition von prios
-					 case 1: pplus=0; break; // capi
-					 case 2: pplus=1; break; // hyla
-				 }
-				 break;
-			 }
-			}
-		}
+		// Prioritaet der Fax-Programme: 1=fbfax, 2=capi, 3=hyla per Konfigurationsdatei, 11=fbfax, 12=capi, 13=hyla, 14=vschlmail, 15=klarmail per Faxdateiname
 //		if (fxvp->at(nachrnr).pprio>0 || (prios[2]>prios[1]&&obfa[2])/*hylazuerst*/) fxvp->at(nachrnr).pprio++;
-		einf.push_back(/*2*/instyp(My->DBS,"pprio",fxvp->at(nachrnr).pprio+pplus));
+		if (!fxvp->at(nachrnr).pprio) {
+			fxvp->at(nachrnr).pprio=priorang(0);
+		}
+		einf.push_back(/*2*/instyp(My->DBS,"pprio",fxvp->at(nachrnr).pprio));
 		einf.push_back(/*2*/instyp(My->DBS,"pages",fxvp->at(nachrnr).pseiten));
 		einf.push_back(/*2*/instyp(My->DBS,"telnr",nix));
-		RS rins1(My,altspool); 
-		rins1.tbins(&einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB); // ,&spoolid);
-		RS rins2(My,spooltab); 
-		rins2.tbins(&einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB,/*idp=*/&spoolid);
+		RS rinsa(My,altspool); 
+		rinsa.tbins(&einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB); // ,&spoolid);
+		RS rinss(My,spooltab); 
+		rinss.tbins(&einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB,/*idp=*/&spoolid);
 		if (rins.fnr) {
 			fLog(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
 		} //       if (runde==1)
@@ -6279,6 +6279,20 @@ void hhcl::faxemitH(DB *My, const string& spooltab, const string& altspool, fsfc
 	} // tel.empty() else
 } // faxemitH
 
+// uebersetzt den index auf anfaxstr in pprio
+inline const int ppri(const int iprio)
+{
+	switch (iprio) {
+		case 0: return 0;   // Prioritaet durch Programm festlegen
+		case 1: return 11;  // fbfax
+		case 2: return 12;  // capi
+		case 3: return 13;  // hyla
+		case 4: return 14;  // vschlmail
+		case 5: return 15;  // klarmail
+	}
+	return -1;
+}
+
 // wird aufgerufen in: pvirtfuehraus
 void hhcl::inspoolschreiben(const size_t aktc)
 {
@@ -6302,9 +6316,9 @@ void hhcl::inspoolschreiben(const size_t aktc)
 	vector<string> anfxstrvec; // Trennstrings fuer Faxnummer/Mailadresse
 	vector<int> filtnr; // zugehoerige Filternummer
 	anfxstrvec.push_back(anfaxstr); filtnr.push_back(0);
+	if (!anffaxstr.empty()) {anfxstrvec.push_back(anffaxstr);filtnr.push_back(0);}
 	if (!ancfaxstr.empty()) {anfxstrvec.push_back(ancfaxstr);filtnr.push_back(0);}
 	if (!anhfaxstr.empty()) {anfxstrvec.push_back(anhfaxstr);filtnr.push_back(0);}
-	if (!anffaxstr.empty()) {anfxstrvec.push_back(anffaxstr);filtnr.push_back(0);}
 	if (!anmailstr.empty()) {anfxstrvec.push_back(anmailstr);filtnr.push_back(1);}
 	if (!klaranmailstr.empty()) {anfxstrvec.push_back(klaranmailstr);filtnr.push_back(1);}
 	vector <urfxcl> urfx; // urspruenglicher Dateiname
@@ -6775,7 +6789,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 					if (fxv[ii].spdf==ndname) {vorhanden=1;break;} 
 				}
 				if (!vorhanden) {
-					fxv.push_back(fxfcl(wartedatei,zfda.at(i),iprio));
+					fxv.push_back(fxfcl(wartedatei,zfda.at(i),ppri(iprio)));
 					if (gleichziel) {
 						uint kfehler{0};
 						/*string zield=*/kopiere(wartedatei, zmsp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
@@ -9401,10 +9415,10 @@ void hhcl::virtlieskonfein()
 		int cont{0};
     for(int j=0;j<3;j++) if (clprios[j]==p) {cont=1;break;} // wenn sie schon vorkommt, ...
 		if (cont) continue; // dann nichts tun
-		unsigned int minp{(unsigned int)-1};
+		unsigned minp{(unsigned)-1};
 		int minj{3+1}; 
 		for(int j=0;j<3;j++) if (!clprios[j]) { // wenn nicht, dann
-			if ((unsigned int)prios[j]<minp) { // ist die kleinste uebrige Prioritaet Kandidat
+			if ((unsigned)prios[j]<minp) { // ist die kleinste uebrige Prioritaet Kandidat
 				minp=prios[j];
 				minj=j;
 			}

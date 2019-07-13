@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.47557) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47569) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -177,9 +177,9 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47556</b>
-(no fax program available)<b>Fritzbox</b>, <b>Capisuite</b>,
-<b>Hylafax <br>
+Programm: <b>/home/schade/autofax/autofax</b>, V:
+<b>0.47569</b> (no fax program available)<b>Fritzbox</b>,
+<b>Capisuite</b>, <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
 -delf, --deletefax</b>: delete a fax with query (<b>0</b>)
@@ -242,7 +242,7 @@ with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vi, --vi</b>: edit/view configuration file , log file etc.
 (finish with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vs, --vs</b>: edit/view source files in
-<b>/root/autofax</b>(finish with &rsquo;:qa&rsquo;)
+<b>/home/schade/autofax</b>(finish with &rsquo;:qa&rsquo;)
 (<b>0</b>) <b><br>
 -autoupd, --autoupdate &lt;zahl&gt;</b>: Update program
 automatically (<b>1</b>) <b><br>
@@ -285,17 +285,19 @@ not</b> (<b>1</b>) <b><br>
 -mod, --hmodem &lt;string&gt;</b>: Modem used for hylafax,
 instead of (&rsquo;<b>ttyACM0</b>&rsquo;) <b><br>
 -mc, --maxcapitries &lt;string&gt;</b>: try Hylafax after
-&lt;no&gt; tries of Capisuite instead of
+&lt;no&gt; tries of other method instead of
 (&rsquo;<b>3</b>&rsquo;) <b><br>
--mh, --maxhylatries &lt;string&gt;</b>: try Capisuite after
-&lt;no&gt; tries of Hylafax instead of
-(&rsquo;<b>3</b>&rsquo;) <b><br>
+-mh, --maxhylatries &lt;string&gt;</b>: try other method
+after &lt;no&gt; tries of fbfax (&rsquo;<b>3</b>&rsquo;)
+<b><br>
+-mf, --maxfbfaxtries &lt;string&gt;</b>: try other method
+after &lt;no&gt; tries of fbfax (&rsquo;&rsquo;) <b><br>
 -cuser, --cuser &lt;string&gt;</b>: takes the linux user
 &lt;string&gt; for capisuite and/or samba instead of
 (&rsquo;<b>schade</b>&rsquo;) <b><br>
--crct, --cringcount &lt;string&gt;</b>: No. of bell rings
-until Capisuite accepts the call, instead of
-(&rsquo;<b>1</b>&rsquo;) <b><br>
+-hrct, --hringcount &lt;string&gt;</b>: No. of bell rings
+until hylafaxs accepts the call, instead of
+(&rsquo;<b>2</b>&rsquo;) <b><br>
 -hmd, --hmaxdials &lt;string&gt;</b>: No of dialing retries
 in hylafax, instead of (&rsquo;<b>11</b>&rsquo;) <b><br>
 -it, --immediatelytarget &lt;zahl&gt;</b>: copy faxes into
@@ -837,7 +839,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.47557) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47569) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1029,8 +1031,8 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47556</b>
-(kein Faxprogramm verfuegbar)<b>Fritzbox</b>,
+Programm: <b>/home/schade/autofax/autofax</b>, V:
+<b>0.47569</b> (kein Faxprogramm verfuegbar)<b>Fritzbox</b>,
 <b>Capisuite</b>, <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
@@ -1096,7 +1098,7 @@ Konfigurationsdatei &lt;string&gt; anstatt (&rsquo;&rsquo;)
 -vi, --vi</b>: Konfigurationsdatei , Logdatei usw.
 bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
--vs, --vs</b>: Quelldateien in <b>/root/autofax</b>
+-vs, --vs</b>: Quelldateien in <b>/home/schade/autofax</b>
 bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
 -autoakt, --autoaktual &lt;zahl&gt;</b>: Programm
@@ -1142,11 +1144,14 @@ werden (1-3) &lt;zahl&gt;</b>: cp (<b>0</b>) <b><br>
 -mod, --hmodem &lt;string&gt;</b>: Fuer Hylafax verwendetes
 Modem, anstatt (&rsquo;<b>ttyACM0</b>&rsquo;) <b><br>
 -mc, --maxcapiv &lt;string&gt;</b>: nach &lt;zahl&gt;
-Versuchen Capisuite wird Hylafax versucht, anstatt nach
-(&rsquo;<b>3</b>&rsquo;) <b><br>
+Versuchen Capisuite wird andere Methode versucht, anstatt
+nach (&rsquo;<b>3</b>&rsquo;) <b><br>
 -mh, --maxhylav &lt;string&gt;</b>: nach &lt;zahl&gt;
-Versuchen Hylafax wird Capisuite versucht, anstatt nach
+Versuchen Hylafax wird andere Methode versucht, anstatt nach
 (&rsquo;<b>3</b>&rsquo;) <b><br>
+-mf, --maxfbfxv &lt;string&gt;</b>: nach &lt;zahl&gt;
+Versuchen fbfax wird andere Methode versucht, anstatt nach
+(&rsquo;&rsquo;) <b><br>
 -cuser, --cuser &lt;string&gt;</b>: verwendet fuer Capisuite
 und/oder Samba den Linux-Benutzer &lt;string&gt; anstatt
 (&rsquo;<b>schade</b>&rsquo;) <b><br>
