@@ -361,7 +361,7 @@ endif
 	-@if ! test -f instvz; then printf \"$$(pwd)\" >instvz; fi; # wird in kons.cpp verwendet
 	-$(CC) $(DEBUG)$(DEPFLAGS) $(CFLAGS) -c $< $(BFA);
 	-@sed -i 's/versdt //g;s/gitvdt //g' $(DEPDIR)/*.Td
-	-@if test -s fehler.txt; then vi +0/error fehler.txt; else rm -f fehler.txt; fi;
+	-@if test -s fehler.txt; then vi +0/"error:\|Fehler:\|Warnung:\|warning:" fehler.txt; else rm -f fehler.txt; fi;
 #	-@$(shell $(POSTCOMPILE))
 	@if test -s fehler.txt; then false; fi;
 

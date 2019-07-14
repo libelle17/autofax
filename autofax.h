@@ -582,6 +582,7 @@ enum T_
 	T_faxemitH,
 	T_faxemitF,
 	T_inDBh,
+	T_inDBf,
 	T_inDBk,
 	T_SpoolDateierstellt,
 	T_SpoolDatei,
@@ -599,6 +600,7 @@ enum T_
 	T_nichtgefundenloeschesieausDB,
 	T_nicht_gefunden_kein_Datenbankeintrag,
 	T_HylafaxBefehl,
+	T_FbfaxBefehl,
 	T_RueckmlgZeile,
 	T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden,
 	T_sammlefertigehyla,
@@ -638,6 +640,7 @@ enum T_
 	T_Mit_welcher_Prioritaet_soll_hylafax_verwendet_werden_1_3,
 	T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3,
 	T_sortprio,
+	T_standardprio,
 	T_MAX //α
 }; // enum T_ //ω
 
@@ -1011,6 +1014,7 @@ class hhcl:public dhcl
 		void klarmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
 		void inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
 				const fsfcl *const fsfp,const string *const tel, const size_t aktc);
+		void inDBf(DB *My, const string& spooltab, const string& altspool, const string& fbvwdt,const fsfcl *const fsfp,const size_t aktc);
 		void inDBk(DB *My, const string& spooltab, const string& altspool, const fsfcl *const fsfp, const size_t aktc);
 		void standardprio(const int obmitsetz);
 		int priorang(const int rnr);

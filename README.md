@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.47594) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47648) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -177,7 +177,7 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47594</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47648</b>
 Using: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
@@ -239,6 +239,8 @@ with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 <b><br>
 -vi, --vi</b>: edit/view configuration file , log file etc.
 (finish with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
+-scf, --showconf</b>: show the name of the configuration
+file (<b>0</b>) <b><br>
 -vs, --vs</b>: edit/view source files in
 <b>/root/autofax</b>(finish with &rsquo;:qa&rsquo;)
 (<b>0</b>) <b><br>
@@ -289,7 +291,8 @@ instead of (&rsquo;<b>ttyACM0</b>&rsquo;) <b><br>
 after &lt;no&gt; tries of fbfax (&rsquo;<b>3</b>&rsquo;)
 <b><br>
 -mf, --maxfbfaxtries &lt;string&gt;</b>: try other method
-after &lt;no&gt; tries of fbfax (&rsquo;&rsquo;) <b><br>
+after &lt;no&gt; tries of fbfax (&rsquo;<b>3</b>&rsquo;)
+<b><br>
 -cuser, --cuser &lt;string&gt;</b>: takes the linux user
 &lt;string&gt; for capisuite and/or samba instead of
 (&rsquo;<b>schade</b>&rsquo;) <b><br>
@@ -837,7 +840,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.47594) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47648) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1029,7 +1032,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47594</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47648</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
@@ -1094,6 +1097,8 @@ Konfigurationsdatei &lt;string&gt; anstatt (&rsquo;&rsquo;)
 -vi, --vi</b>: Konfigurationsdatei , Logdatei usw.
 bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
+-zkf, --konfzeig</b>: Konfigurationsdateinamenanzeigen
+(<b>0</b>) <b><br>
 -vs, --vs</b>: Quelldateien in <b>/root/autofax</b>
 bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
@@ -1147,7 +1152,7 @@ Versuchen Hylafax wird andere Methode versucht, anstatt nach
 (&rsquo;<b>3</b>&rsquo;) <b><br>
 -mf, --maxfbfxv &lt;string&gt;</b>: nach &lt;zahl&gt;
 Versuchen fbfax wird andere Methode versucht, anstatt nach
-(&rsquo;&rsquo;) <b><br>
+(&rsquo;<b>3</b>&rsquo;) <b><br>
 -cuser, --cuser &lt;string&gt;</b>: verwendet fuer Capisuite
 und/oder Samba den Linux-Benutzer &lt;string&gt; anstatt
 (&rsquo;<b>schade</b>&rsquo;) <b><br>
