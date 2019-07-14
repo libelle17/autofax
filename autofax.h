@@ -374,7 +374,6 @@ enum T_
 	T_Adressat,
 	T_Prioritaet_aus_Dateinamen,
 	T_Zahl_der_bisherigen_Versuche_in_Capisuite,
-	T_Zahl_der_bisherigen_Versuche_in_Fritzbox,
 	T_Zahl_der_bisherigen_Versuche_in_fbfax,
 	T_Pfad_zur_Spooldatei_in_fbfax,
 	T_Zahl_der_bisherigen_Versuche_in_Hylafax,

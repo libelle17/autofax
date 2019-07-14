@@ -467,6 +467,7 @@ enum Tkons_
 	T_Intervall_Minuten,
 	T_konsMAX
 }; // Tkons_
+// Konsistenz in gdb pruefen, z.B.:  p (const char* const)reinterpret_cast<TCtp*>(Txk.TCp)[T_unbek][Txk.lgn]
 
 extern const string sprachstr;
 /*

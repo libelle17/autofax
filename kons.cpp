@@ -5724,6 +5724,7 @@ int wartaufpids(pidvec *pidv,const ulong runden/*=0*/,const int obverb/*=0*/,con
 {
 	////	int* ovp=(int*)&obverb; *ovp=0;
 	ulong aktru=0; 
+//	const int nobverb{2}; memcpy((int*)&obverb,&nobverb,sizeof obverb);
 	yLog(obverb>1,oblog>1,0,0,"%s%s()%s, %s, %s%s pid: %s%lu%s, pidv->size(): %s%zu%s",
 			violett,__FUNCTION__,blau,wo.c_str(),schwarz,Txk[T_eigene],blau,getpid(),schwarz,blau,pidv->size(),schwarz);
 	for(size_t i=0;i<pidv->size();i++) {

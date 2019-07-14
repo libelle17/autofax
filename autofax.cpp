@@ -4547,7 +4547,7 @@ void hhcl::verzeichnisse()
 {
 	hLog(violetts+Tx[T_verzeichnisse]+schwarz);
 	pruefcvz(); 
-	caus<<"zufaxenvz: "<<zufaxenvz<<", cuser: "<<cuser<<endl;
+	//// caus<<"zufaxenvz: "<<zufaxenvz<<", cuser: "<<cuser<<endl;
 	pruefverz(zufaxenvz,obverb,oblog,/*obmitfacl=*/2,/*obmitcon=*/1,/*besitzer=*/cuser); // dahin soll man schreiben koennen
 //	pruefverz(zufaxenvz+"/2200",obverb,oblog,/*obmitfacl=*/2,/*obmitcon=*/1,/*besitzer=*/cuser); // dahin soll man schreiben koennen
 	pruefverz(wvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/cuser);
@@ -6187,9 +6187,9 @@ void hhcl::klarmail(DB *My, const string& spooltab, const string& altspool, fsfc
 			" -S ssl-verify=ignore -a \""+ff+"\" \""+fsfp->telnr+"\"";
 	svec rueck;
 	if (systemrueck(cmd,1,1,&rueck)) {
-		caus<<"ging nicht!"<<endl;
+		caus<<"klarmail ging nicht!"<<endl;
 	} else {
-		caus<<"ging!"<<endl;
+		caus<<"klarmail ging!"<<endl;
 		inDBk(My, spooltab, altspool, fsfp, aktc);
 		// archiviere;
 	}
@@ -6208,7 +6208,6 @@ void hhcl::faxemitF(DB *My, const string& spooltab, const string& altspool, fsfc
 		fLog(Tx[T_DieFaxnrausTabelle]+tuerkiss+spooltab+schwarz+"`, id `"+tuerkis+fsfp->id+schwarz+"` "+
 				drot+fsfp->spdf+schwarz+Tx[T_istleerfaxeesdahernicht],1,1);
 	} else {
-		obverb=1;
 		hLog(Tx[T_DieFaxnrvon]+drots+fsfp->spdf+schwarz+Tx[T_ist]+blau+fsfp->telnr+schwarz);
 
 	} // tel.empty() else
@@ -6815,8 +6814,12 @@ void hhcl::inspoolschreiben(const size_t aktc)
 // wird aufgerufen in: pvirtfuehraus
 void hhcl::wegfaxen(const size_t aktc)
 {
-	// 4. Dateien aus der Spool-Tabelle aufrufen zum Abarbeiten mit der Wegschick-Funktion
 	const int altobverb{obverb};
+	hLog(violetts+Tx[T_wegfaxen]+schwarz+", "
+			+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfa[0]?Txk[T_ja]:Txk[T_nein])+"; "
+			+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obfa[1]?Txk[T_ja]:Txk[T_nein])+": "
+			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obfa[2]?Txk[T_ja]:Txk[T_nein]));
+	// 4. Dateien aus der Spool-Tabelle aufrufen zum Abarbeiten mit der Wegschick-Funktion
 	vector<fsfcl> fsfv;
 	char ***cerg;
 	ulong dbszahl{0}; // Zahl der Datenbanksaetze
@@ -6852,7 +6855,6 @@ void hhcl::wegfaxen(const size_t aktc)
 							cjj(cerg,12)/*adressat*/, atoi(cjj(cerg,13)/*pages*/), cjj(cerg,14)/*alts.id*/, atoi(cjj(cerg,15))/*s.wiemail*/));
 			} // 			if (*(*cerg+0) && *(*cerg+1) && *(*cerg+2) && *(*cerg+3) && *(*cerg+4) && *(*cerg+5) &&  ...
 		} // while (cerg=r0.HolZeile(),cerg?*cerg:0) 
-		obverb=1;
 		hLog(Tx[T_ZahldDSmwegzuschickendenFaxenin]+spooltab+"`: "+blau+ltoan(fsfv.size())+schwarz);
 		uchar wasichbin{0}; //1=capi,2=hyla,3=fritzbox,4=anMail,5=klaran
 		pid_t pid{1}; // fuer Capi und Hyla abzweigen
@@ -6945,7 +6947,13 @@ void hhcl::wegfaxen(const size_t aktc)
 				} else {
 					if (wasichbin==1||nursend) if (fsfv[i].fobcapi) if (obfa[1]) faxemitC(My, spooltab, altspool, &fsfv[i],ff);  
 					if (wasichbin==2||nursend) if (fsfv[i].fobhyla) if (obfa[2]) faxemitH(My, spooltab, altspool, &fsfv[i],ff);  
-					if (wasichbin==3||nursend) if (fsfv[i].fobfbox) if (obfa[0]) faxemitF(My, spooltab, altspool, &fsfv[i],ff);  
+					if (wasichbin==3||nursend) {
+						if (fsfv[i].fobfbox) {
+							if (obfa[0]) {
+								faxemitF(My, spooltab, altspool, &fsfv[i],ff);  
+							}
+						}
+					}
 					if (wasichbin==4||nursend) if (fsfv[i].wiemail==1) vschlmail(My, spooltab, altspool, &fsfv[i],ff);  
 					if (wasichbin==5||nursend) if (fsfv[i].wiemail==2) klarmail(My, spooltab, altspool, &fsfv[i],ff);  
 				} // if (pid>0 && lstat(ff.c_str(),&st))
@@ -6974,14 +6982,14 @@ void hhcl::wegfaxen(const size_t aktc)
 #endif // immerwart
 	} // 	if (r0.obqueryfehler) else
 	hLog(violetts+Txk[T_Ende]+Tx[T_wegfaxen]+schwarz+", "
-			+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfa[0]?Txk[T_ja]:Txk[T_nein])+", "
-			+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obfa[1]?Txk[T_ja]:Txk[T_nein])+", "
+			+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfa[0]?Txk[T_ja]:Txk[T_nein])+"; "
+			+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obfa[1]?Txk[T_ja]:Txk[T_nein])+": "
 			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obfa[2]?Txk[T_ja]:Txk[T_nein]));
 	obverb=altobverb;
 } // void hhcl::wegfaxen
 
 
-// wird aufgerufen in: empferneut(), empfarch()
+// wird aufgerufen in: empferneut (3x), empfarch
 void hhcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,const string& nr/*=nix*/)
 // uchar indb/*=1*/,uchar mitversch/*=1*/)
 // was&4: Bilddateien erstellen, was&2 capi-Datei verschieben, was&1: in Datenbank eintragen, 
@@ -7146,7 +7154,7 @@ void hhcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,
 			} //         if (runde==1)
 		} // 	if (was&1)
 	} // 	if (!lstat(ctxdt.c_str(),&txtstat))
-}// void hhcl::empfcapi()
+}// void hhcl::empfcapi
 
 // wird aufgerufen in: main
 void hhcl::empfarch(uchar obalte/*=0*/)
@@ -7217,7 +7225,7 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 #endif // immerwart
 	fLog(Tx[T_Zahl_der_empfangenen_Faxe]+drots+ltoan(ankzahl)+schwarz,1,1);
 	hLog(violetts+Txk[T_Ende]+Tx[T_empfarch]+schwarz);
-} // void hhcl::empfarch()
+} // void hhcl::empfarch
 
 // wird aufgerufen in: bereinigevz
 string hhcl::getzielvz(const string& qdatei)
@@ -9232,6 +9240,9 @@ void hhcl::pvirtfuehraus() //α
 				uchar zaehlergeschrieben{0};
 				pid_t pide{-1}, pids{-1}, pidz{-1};
 				while (1) {
+					static  int wzahl{0};
+					wzahl++;
+					if (wzahl<20)
 					if (!rlaeuft) {
 						// hier ggf. erstes fork
 						pide=nurempf?0:nursend?1:dfork();
@@ -9283,7 +9294,7 @@ void hhcl::pvirtfuehraus() //α
 					} // 					if (!slaeuft)
 
 					if (!zlaeuft) {
-						if (obfa[1] || obfa[2]) {
+//						if (obfa[0] || obfa[1] || obfa[2]) {
 							// hier ggf. erstes fork
 							pidz=nurempf||nursend?0:dfork();
 							if (!pidz) {
@@ -9302,7 +9313,7 @@ void hhcl::pvirtfuehraus() //α
 								} // 								if (kill(pidz,0)!=-1 || errno!=ESRCH)
 							} // 							while(1)
 							pidv<<pidcl(pidz,"zeigweitere");
-						} // 				if (obcapi || obhyla)
+//						} // 				if (obcapi || obhyla)
 					} // 					if (!zlaeuft) 
 
 					if (!zaehlergeschrieben) {
@@ -9350,6 +9361,7 @@ void hhcl::pvirtfuehraus() //α
 						efertig=(rzahl>1||(rzahl==1&&!rlaeuft));
 						sfertig=(szahl>1||(szahl==1&&!slaeuft));
 						zfertig=(zzahl>1||(zzahl==1&&!zlaeuft)||(!obfa[0]&&!obfa[1]&&!obfa[2]));
+//						static int rzahl{0}; if (rzahl++>50) exit(237);
 						if (efertig&&sfertig&&zfertig) break;
 						if (!rzahl||!szahl||!zzahl) break; // wenn eins noch nicht angefangen hat, dann nicht wz2*sz ms lang warten
 						this_thread::sleep_for(chrono::milliseconds(wz2));
@@ -9373,7 +9385,7 @@ void hhcl::virtschlussanzeige()
 void hhcl::virtautokonfschreib()
 {
 // const int altobverb=obverb;
-// obverb=1;
+//// obverb=1;
 	hLog(violetts+Txk[T_autokonfschreib]+schwarz+", "+Txk[T_zu_schreiben]+((rzf||hccd.obzuschreib)?Txk[T_ja]:Txk[T_nein])); //ω
 	/*//
 		capizukonf und hylazukonf hier immer 0
@@ -9405,7 +9417,7 @@ hhcl::~hhcl()
 void hhcl::virtlieskonfein()
 {
 	const int altobverb{obverb};
-	//	obverb=1;
+	////	obverb=1;
 	hLog(violetts+Txk[T_virtlieskonfein]+schwarz); //ω
 	for(int j=0;j<3;j++) clprios[j]=prios[j];
 	for(int j=0;j<3;j++) prios[j]=0;

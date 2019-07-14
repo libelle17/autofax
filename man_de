@@ -2,7 +2,7 @@
 .\" Manual-Seite für ²DPROG²
 .\" Schreiben Sie an geraldschade@gmx.de, wenn Sie Fehler oder Mängel entdeckt haben
 .pc
-.TH man 1 "14.07.19" "Version 0.47569" "Manual-Seite für ²DPROG²"
+.TH man 1 "14.07.19" "Version 0.47594" "Manual-Seite für ²DPROG²"
 .SH NAME
 \fB²DPROG² \- FaxServer-Funktionalität\fR: veranlasst automatischen Faxversand von Dateien, Benennung empfangener Faxe und Protokollierung aller Faxe in einer Datenbank 
 .br
@@ -67,7 +67,7 @@ Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präf
 .SH OPTIONEN 
  '\fB²DPROG² -?\fR' oder '\fB²DPROG² -h\fR' zeigt die wichtigen Befehlszeilenoptionen und '\fB²DPROG² -lh\fR' alle. Einige Optionen (z.B. die SQL-Befehle zur Suche eines Adressaten aus der Faxnummer) können nicht über die Befehlszeile, sondern nur über die Konfigurationsdatei eingegeben werden, die wiederum über '\fB²DPROG² -vi\fR' direkt editiert oder auch über '\fB²DPROG² -rf\fR' interaktiv gepflegt werden kann.
 .br
-        \fRProgramm: \fB/home/schade/autofax/autofax\fR, V: \fB0.47569 \fR(kein Faxprogramm verfuegbar)\fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
+        \fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.47594 \fRVerwende: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
 .br
 \fBOptionen, die nicht gespeichert werden (aktueller Wert in Klammern): \fR
 .br
@@ -95,9 +95,9 @@ Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präf
 .br
 \fB -listw, --listwartende\fR: listet wartende Faxe auf (\fB0\fR)
 .br
-\fB -nurempfangen, --empfaengt nur\fR: nursend (\fB0\fR)
+\fB -nurempf, --nurempfangen\fR: empfaengt nur (\fB0\fR)
 .br
-\fB -nursenden, --sendet nur\fR: instsfftobmp() (\fB0\fR)
+\fB -nursend, --nursenden\fR: sendet nur (\fB0\fR)
 .br
 \fB -s, --suche <string>\fR: Suche in verarbeiteten Faxen nach <string>:  ('\fB\fR')
 .br
@@ -123,7 +123,7 @@ Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präf
 .br
 \fB -vi, --vi\fR: Konfigurationsdatei , Logdatei usw. bearbeiten/sehen (beenden mit ':qa') (\fB0\fR)
 .br
-\fB -vs, --vs\fR: Quelldateien in \fB/home/schade/autofax\fR bearbeiten/sehen (beenden mit ':qa') (\fB0\fR)
+\fB -vs, --vs\fR: Quelldateien in \fB/root/autofax\fR bearbeiten/sehen (beenden mit ':qa') (\fB0\fR)
 .br
 \fB -autoakt, --autoaktual <zahl>\fR: Programm automatisch aktualisieren (\fB1\fR)
 .br
@@ -151,11 +151,11 @@ Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präf
 .br
 \fB -hyla, --obhyla <zahl>\fR: Hylafax verwenden\fB oder nicht\fR (\fB1\fR)
 .br
-\fB -fprio, --Mit welcher Prioritaet soll capisuite verwendet werden (1-3) <zahl>\fR: cp (\fB0\fR)
+\fB -fp, --fprio <zahl>\fR: Prioritaet von fritzbox (1-3) (\fB0\fR)
 .br
-\fB -cprio, --hp <zahl>\fR: Prioritaet von hylafax (1-3) (\fB0\fR)
+\fB -cp, --cprio <zahl>\fR: Prioritaet von capisuite (1-3) (\fB0\fR)
 .br
-\fB -hprio, --fp <zahl>\fR: Prioritaet von fritzbox (1-3) (\fB0\fR)
+\fB -hp, --hprio <zahl>\fR: Prioritaet von hylafax (1-3) (\fB0\fR)
 .br
 \fB -mod, --hmodem <string>\fR: Fuer Hylafax verwendetes Modem, anstatt  ('\fBttyACM0\fR')
 .br
@@ -203,9 +203,9 @@ Der Benutzer könnte also je nach Betriebssystem, Zugriffsmöglichkeit und Präf
 .br
 \fB -smp, --smtppwt <string>\fR: SMTP-Passwort
 .br
-\fB -mt, --mailtitel <string>\fR: Mailtitel ('\fBbitte Anhang beachten\fR')
+\fB -mt, --mailtitel <string>\fR: Mailtitel ('\fBMail von autofax\fR')
 .br
-\fB -mb, --mailbody <string>\fR: Mailtext ('\fBmail gesandt (0=nein, 1=ja)\fR')
+\fB -mb, --mailbody <string>\fR: Mailtext ('\fBbitte Anhang beachten\fR')
 .br
 \fB -fd, --finde <zahl>\fR: Version 1,2 oder 3 -Dateisuche (variable Performanceunterschiede) anstatt (\fB1\fR)
 .br
