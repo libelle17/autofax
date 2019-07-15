@@ -6892,7 +6892,6 @@ void hhcl::wegfaxen(const size_t aktc)
 							 obfa0{ltoan(obfa[0])},
 							 obfa1{ltoan(obfa[1])},
 							 obfa2{ltoan(obfa[2])};
-	ZDB=1;
 	RS r0(My,"SELECT s.id p0, s.origvu p1, s.original p2, s.telnr p3, s.pprio p4, s.capispooldt p5, s.capidials p6, "
 			"s.hylanr p7, s.hyladials p8, \n"
 
