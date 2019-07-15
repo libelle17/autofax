@@ -151,6 +151,9 @@ endif
 ifneq ($(LCURS),)
 	LDFLAGS::=$(LDFLAGS) -lncursesw -ltinfo
 endif
+ifneq ($(LTERM),)
+	LDFLAGS::=$(LDFLAGS) -L/usr/lib64/termcap/ -ltermcap
+endif
 ifneq ($(LSPAN),)
 	LDFLAGS::=$(LDFLAGS) -lspandsp
 endif
@@ -419,6 +422,7 @@ endif
 	-@[ "$(LACL)" ]&&{ [ -f /usr/include/sys/acl.h ]|| sh configure inst _ "$(LACL)" verbose;}||:
 	-@[ "$(LCURL)" ]&&{ [ -f /usr/include/curl/curl.h -o -f /usr/include/x86_64-linux-gnu/curl/curl.h ]|| sh configure inst _ "$(LCURL)" verbose;}||:
 	-@[ "$(LCURS)" ]&&{ [ -f /usr/include/ncursesw/ncurses.h -o -f /usr/include/x86_64-linux-gnu/ncursesw/ncurses.h ]||{ for kand in $(LCURS);do sh configure inst _ "$$kand-$(dev)" verbose;done;};}||:
+	-@[ "$(LTERM)" ]&&{ [ -f /usr/lib64/termcap/libtermcap.so ]|| sh configure inst _ "$(LTERM)" verbose;}||:
 	-@[ "$(LSPAN)" ]&&{ [ -f /usr/include/spandsp.h ]|| sh configure inst _ "$(LSPAN)" verbose;}||:
 	-@[ "$(LGLIB)" ]&&{ [ -f /usr/include/glib-2.0/glib.h ]|| sh configure inst _ "$(LGLIB)" verbose;}||:
 	-@[ "$(LSOUP)" ]&&{ [ -f /usr/include/libsoup-2.4/libsoup/soup.h ]|| sh configure inst _ "$(LSOUP)" verbose;}||:

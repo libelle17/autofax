@@ -174,6 +174,7 @@ getIPR() {
 	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include <glib.h>" "$A" &&break;done ||LGLIB=;
 	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include .*soup.h>" "$A" &&break;done ||LSOUP=;
 	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include <sndfile.h>" "$A" &&break;done ||LSND=;
+	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do [ -f "$A" ]&& grep -q "^#include[ ]*<term.h>" "$A" &&break;done ||LTERM=;
 	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do grep -qm1 '^[[:space:]]*[^/].*\(gchar\|gboolean\|gint\)' "$A" &&break;done ||LGSSDP=;
 	for A in $(find . -maxdepth 1 -regex '.*\.c\|.*\.h\|.*\.cpp');do grep -qim1 '^[[:space:]]*[^/].*\(capi20_isinstalled\)' "$A" &&break;done ||LCAPI=;
 	IPR="${SUDC}$IdPR";
@@ -188,7 +189,7 @@ getIPR() {
 
 exportvars() {
 	rm -f vars;
-	for v in OSNR IPR IP_R UPR UDPR SPR UNROH UNF AUNF ILOG PGROFF LT LT5 LBOOST LBIO LBLO LACL LCURL LCURS LSPAN LGLIB LSOUP LSND LGSSDP LCAPI LM18 dev libmdb REPOS UREPO COMP GITV DTN DPROG; do
+	for v in OSNR IPR IP_R UPR UDPR SPR UNROH UNF AUNF ILOG PGROFF LT LT5 LBOOST LBIO LBLO LACL LCURL LCURS LSPAN LGLIB LSOUP LSND LTERM LGSSDP LCAPI LM18 dev libmdb REPOS UREPO COMP GITV DTN DPROG; do
 		eval nv=\$$v; 
 		printf "$v::=$nv\n" >>vars; 
 	done;
@@ -324,6 +325,7 @@ LSPAN=spandsp-${dev};
 LGLIB=glib-2.0;
 LSOUP=libsoup-${dev};
 LSND=libsndfile-${dev};
+LTERM=termcap;
 LGSSDP=libgssdp-${dev};
 LCAPI=libcapi20-3;
 Z=""
