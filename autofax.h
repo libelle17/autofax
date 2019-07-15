@@ -749,6 +749,8 @@ struct fsfcl : public fxfcl // Faxsendfile
     string hdials;   // hyladials
 		string maxdials; // maxdials (hylafax)
     string hdd;      // hdateidatum
+		string fbdials;  // fbdials
+		string fbsdt;    // fbspooldt
     string sendqgespfad; // kann fuer capi oder hyla verwendet werden
     string hgerg;  // hyla_gescheitert_erg
     int hversuzahl;
@@ -856,6 +858,9 @@ class hhcl:public dhcl
 		ulong weizahl{0}; // Zahl der weiteren wartenden Faxe, die nicht in der Spooltabelle dieses Programms eingetragen sind
 		int obfa[3]{-1}; // ob jew.faxart verwendet: 0=fbox, 1=capi, 2=hyla, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
 		//    string hmodemstr; // Erkennung des Faxgeraetes nach /dev/tty, Standard ACM
+		string fbwvz; // /var/spool/fbfax/waiting
+		string fbgvz; // /var/spool/fbfax/faxed
+		string fbnvz; // /var/spool/fbfax/notfaxed
 		string hmodem;    // erkanntes und laufendes Modem ttyACM0
 		//    string hmodname;  // ttyACM0
 		string cuser; // Linux-Benutzer fuer Capisuite, Samba

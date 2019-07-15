@@ -6252,24 +6252,22 @@ void hhcl::faxemitF(DB *My, const string& spooltab, const string& altspool, fsfc
 			svec faxerg;
 			//// <<rot<<"Achtung: faxemith: "<<endl<<schwarz<<cmd<<endl;
 			if (!systemrueck(cmd,1,1,&faxerg,/*obsudc=*/0,0,wahr,Tx[T_FbfaxBefehl])) {
-				svec verg;
-				if (!systemrueck("fbfax -zkf",obverb,oblog,&verg)) {
-				const string cmd{"grep -l \""+ff+"\" $(sed -n '/wartevz/{s/.*\\=[[:space:]]*\\(.*\\)/\\1/;s/\"\\(.*\\)\"/\\1/p}' \""+verg[0]+"\")/*.vw"};
-				svec fxr;
-				if (!systemrueck(cmd,obverb,oblog,&fxr,0,0,wahr)) {
-					for(size_t i=0;i<fxr.size();i++) {
-						caus<<violett<<"fxr["<<i<<"]:"<<rot<<fxr[i]<<schwarz<<endl;
-						fLog(string(Tx[T_RueckmlgZeile])+ltoan(i)+": "+fxr.at(i),obverb>0?obverb-1:0,oblog);
-						inDBf(My, spooltab, altspool,fxr[i],fsfp,aktc);
-						break;
-					} // for(size_t i=0;i<fxr.size();i++)
-				} // 				if (!systemrueck(cmd,obverb,oblog,&faxerg,0,0,wahr))
-			 }
+////					const string cmd{"grep -l \""+ff+"\" $(sed -n '/wartevz/{s/.*\\=[[:space:]]*\\(.*\\)/\\1/;s/\"\\(.*\\)\"/\\1/p}' \""+verg[0]+"\")/*.vw"};
+					const string cmd{"grep -l \""+ff+"\" \""+wvz+"/*.vw\""};
+					svec fxr;
+					if (!systemrueck(cmd,obverb,oblog,&fxr,0,0,wahr)) {
+						for(size_t i=0;i<fxr.size();i++) {
+							caus<<violett<<"fxr["<<i<<"]:"<<rot<<fxr[i]<<schwarz<<endl;
+							fLog(string(Tx[T_RueckmlgZeile])+ltoan(i)+": "+fxr.at(i),obverb>0?obverb-1:0,oblog);
+							inDBf(My, spooltab, altspool,fxr[i],fsfp,aktc);
+							break;
+						} // for(size_t i=0;i<fxr.size();i++)
+					} // 				if (!systemrueck(cmd,obverb,oblog,&faxerg,0,0,wahr))
 			} // if (!systemrueck(cmd,1,1,&faxerg,wahr,wahr,Tx[T_FbfaxBefehl]))
 		} // if (rueck.size()) 
 	} // tel.empty() else
 	obverb=altobverb;
-}
+} // void hhcl::faxemitF
 
 // aufgerufen in: wegfaxen
 void hhcl::faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
@@ -7826,7 +7824,7 @@ void hhcl::sammlecapi(vector<fsfcl> *fsfvp,const size_t aktc)
 			} // if (!indb) 
 		} // for(size_t i=0
 	} // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
-} // void hhcl::sammlecapi(vector<fsfcl> *fsfvp)
+} // void hhcl::sammlecapi
 
 // aufgerufen in: setzhylastat
 int hhcl::xferlog(fsfcl *fsfp/*,string *totpages,string *ntries,string *totdials,string *tottries,string *maxtries*/)
@@ -8482,7 +8480,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 	char ***cerg;
 	RS rs(My,"SELECT s.id p0,s.capispooldt p1,s.capispoolpfad p2,s.original p3,s.cdateidatum p4,"
 			" s.telnr p5,s.origvu p6,s.hylanr p7,s.capidials p8,s.hyladials p9,s.hdateidatum p10,s.adressat p11,s.idudoc p12,s.pprio p13,s.pages p14 "
-			",alts.id p15,s.mailgesandt p16 "
+			",alts.id p15,s.mailgesandt p16,s.fbdials p17,s.fbspooldt p18 "
 			"FROM `"+spooltab+"` s "
 			"LEFT JOIN `"+altspool+"` alts ON s.idudoc=alts.idudoc "
 			"WHERE (s.hylanr RLIKE '^[0-9]+$' AND s.hylanr<>0) OR s.capispooldt RLIKE '^fax-[0-9]+\\.sff$' OR s.mailgesandt<>0 "
@@ -8510,6 +8508,8 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 				if (*(*cerg+14)) fsf.pseiten = atol(*(*cerg+14));  // pages wie in Datenbank
 				if (*(*cerg+15)) fsf.idalt = *(*cerg+15);  // id hyla
 				if (*(*cerg+16)) fsf.mailges = *(*cerg+16);  // ob mail gesandt
+				if (*(*cerg+17)) fsf.fbdials = *(*cerg+17);  // fbdials
+				if (*(*cerg+18)) fsf.fbsdt = *(*cerg+18);  // fbspooldt
 				//// <<"fsf.id: "<<violett<<fsf.id<<schwarz<<endl;
 				//// <<"fsf.idalt: "<<violett<<fsf.idalt<<schwarz<<endl;
 				fLog("id: "+fsf.id+": ",obverb?-2:0,oblog); // -2: schreibt ohne Zeilenwechsel
@@ -9234,10 +9234,20 @@ void hhcl::pvirtnachvi()
 	standardprio(/*obmitsetz*/1);
 } //α
 
+// aufgerufen in lauf
 void hhcl::pvirtvorpruefggfmehrfach()
 {
 	hLog(violetts+Tx[T_pvirtvorpruefggfmehrfach]+schwarz);
 	// if (initDB()) exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));  //ω
+	if (obfa[0]) {
+		svec vzv;
+		if (!systemrueck("fbfax -zgvz",obverb,oblog,&vzv)) {
+			if (vzv.size()>2) fbnvz=vzv[2]; 
+			if (vzv.size()>1) fbgvz=vzv[1]; 
+			if (vzv.size()>0) fbwvz=vzv[0]; 
+			else obfa[0]=0;
+		}
+	}
 	if (tulista||tulistf||tulisti||tulistw||!suchstr.empty()) {
 		// wird fuer kez und normalen Ablauf spaeter in virtpruefweiteres abgerufen
 		if (initDB()) {
@@ -9260,6 +9270,7 @@ void hhcl::pvirtvorpruefggfmehrfach()
 	} // 	if (tulista||listf||listi||listw||!suchstr.empty())
 } // void hhcl::pvirtvorpruefggfmehrfach //α
 //ω
+
 void hhcl::pvirtfuehraus() //α
 { 
 	hLog(violetts+Tx[T_pvirtfuehraus]+schwarz); //ω
