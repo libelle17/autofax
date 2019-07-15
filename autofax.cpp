@@ -6135,8 +6135,7 @@ void hhcl::inDBf(DB *My, const string& spooltab, const string& altspool, const s
 {
 	hLog(violetts+Tx[T_inDBf]+schwarz);
 	int altobverb{obverb};
-	obverb=2;
-	ZDB=1;
+	//// obverb=2;
 	const size_t p1=fbvwdt.rfind('/'), p2=fbvwdt.rfind('.');
 	uint affr{0};
 	if (p1!=string::npos && p2!=string::npos) {
@@ -6238,7 +6237,7 @@ void hhcl::klarmail(DB *My, const string& spooltab, const string& altspool, fsfc
 void hhcl::faxemitF(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
 {
 	int altobverb{obverb};
-	obverb=1;
+	//// obverb=2;
 	hLog(violetts+Tx[T_faxemitF]+schwarz);
 	const size_t aktc{8};
 	if (fsfp->telnr.empty()) {
@@ -6893,6 +6892,7 @@ void hhcl::wegfaxen(const size_t aktc)
 							 obfa0{ltoan(obfa[0])},
 							 obfa1{ltoan(obfa[1])},
 							 obfa2{ltoan(obfa[2])};
+	ZDB=1;
 	RS r0(My,"SELECT s.id p0, s.origvu p1, s.original p2, s.telnr p3, s.pprio p4, s.capispooldt p5, s.capidials p6, "
 			"s.hylanr p7, s.hyladials p8, \n"
 
