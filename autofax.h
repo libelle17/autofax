@@ -239,6 +239,7 @@ enum T_
 	T_entsprichtdoch,
 	T_Muster_Doppelpunkt,
 	T_pruefcvz,
+	T_prueffbox,
 	T_pruefcapi,
 	T_capilaeuft,
 	T_Module_geladen,
@@ -821,6 +822,7 @@ class hhcl:public dhcl
 		uchar hgelesen{0}; // Protokolldatei war auslesbar
 		static constexpr const char *moeglhvz[2]{"/var/spool/fax","var/spool/hylafax"};
 		string huser{"uucp"}; // "uucp" oder "fax"
+		uchar obfrbox{1};    // ob Fritzbox im System gefunden
 		uchar obfcard{1};    // ob Fritzcard eingesteckt
 		uchar obfcgeprueft{0}; // ob schon geprueft, ob Fritzcard eingesteckt
 		uchar obmodem{1};    // ob Modem angeschlossen
@@ -951,6 +953,7 @@ class hhcl:public dhcl
 		void liescapiconf();
 		void konfcapi(); // aufgerufen in pruefcapi
 		void capisv();
+    int prueffbox();
 		int pruefcapi();
 		void pruefisdn();
 		int cservice();

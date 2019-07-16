@@ -492,6 +492,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Muster: '","pattern: '"},
 	// T_pruefcvz
 	{"pruefcvz()","checkcdirs()"},
+	// T_prueffbox,
+	{"prueffbox()","checkfbox()"},
 	// T_pruefcapi,
 	{"pruefcapi()","checkcapi()"},
 	// T_capilaeuft
@@ -2287,8 +2289,17 @@ void hhcl::pruefmodcron()
 	} //   for(uchar ru=0;ru<elemzahl(mps);ru++)
 } // void pruefmodcron(int obverb, int oblog)
 
-
 // aufgerufen in: untersuchespool, main
+// rueckgabe: wie obfa[0] (obfbox) eingestellt sein sollte
+int hhcl::prueffbox()
+{
+	hLog(violetts+Tx[T_prueffbox]+schwarz+" obfbox: "+(obfa[0]?"1":"0"));
+	if (obfa[0]) {
+	}
+	return 1;
+} // int hhcl::prueffbox
+
+// aufgerufen in: untersuchespool, dovc, pvirtfuehraus
 // rueckgabe: wie obfa[1] (obcapi) eingestellt sein sollte
 int hhcl::pruefcapi()
 {
@@ -2296,7 +2307,7 @@ int hhcl::pruefcapi()
 	static uchar capiloggekuerzt{0}, 
 							 capischonerfolgreichinstalliert{0};
 	int capilaeuft{0}, 
-			erg{0};
+			erg{1};
 	unsigned versuch{0};
 	uchar schonkonfiguriert{0};
 	capisv();
@@ -2344,7 +2355,7 @@ int hhcl::pruefcapi()
 									case 2:
 										fLog(rots+Tx[T_KannFcpciNInstVerwCapiNicht]+blau+linstp->ersetzeprog("kernel-source")+rots+
 												Tx[T_eine_neuere_Version_als_die_des_aktuellen_Kernels_installiert_worden_sein_dann_bitte_erneutes_Systemupdate]+schwarz,1,1);
-										erg=1;
+										erg=0;
 										goto schluss;
 								} // 								switch (ivers)
 								struct stat entryfc{0};
@@ -2551,7 +2562,7 @@ int hhcl::pruefcapi()
 						if (linstp->ipr!=zypper) {
 						::fLog(rots+Tx[T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht],1,1);
 						this->obcapi=0;
-						erg=1;
+						erg=0;
 						goto schluss;
 						}
 					 */
@@ -2747,17 +2758,17 @@ int hhcl::pruefcapi()
 				/*//if (this->obcapi) */pruefmodcron();
 		} else {
 			::fLog(rots+Tx[T_konntecapisuiteservice]+gruen+ltoan(versuch)+rot+Tx[T_malnichtstartenverwN]+schwarz,1,1);
-			erg=1;
+			erg=0;
 		} //   if (capilaeuft)
 		//// if (obcapi)
 	} else {
 		if (scapis) scapis->stopdis(obverb,oblog);
-		erg=1;
+		erg=0;
 	} // 	if (obcapi) else
 schluss: // sonst eine sonst sinnlose for-Schleife mehr oder return mitten aus der Funktion ...
 	hLog(violetts+Txk[T_Ende]+Tx[T_pruefcapi]+schwarz+" obcapi: "+(obfa[1]?"1":"0"));
 	return erg;
-} // pruefcapi()
+} // pruefcapi
 
 // aufgerufen in: virtrueckfragen, main
 void hhcl::pruefisdn()
@@ -2782,7 +2793,7 @@ void hhcl::pruefisdn()
 	} // 	if (rueck.size())
 	if (obverb) hLog("obfcard: "+blaus+ltoan(obfcard)+schwarz);
 	obfcgeprueft=1;
-} // void hhcl::pruefisdn()
+} // void hhcl::pruefisdn
 
 
 void hhcl::dovc()
@@ -3980,14 +3991,15 @@ void hhcl::hliesconf()
 #endif
 	} //   if (lstat(modconfdt.c_str(),&mstat)) else
 	// hyaltcnfA.ausgeb();
-} // void hhcl::hliesconf()
+} // void hhcl::hliesconf
 
 
-// aufgerufen in main
+// aufgerufen in dovh, pvirtfuehraus
+// Rueckgabe: wie obfa[2] eingestellt sein sollte
 int hhcl::pruefhyla()
 {
 	hLog(violetts+Tx[T_pruefhyla]+schwarz);
-	int ret{0};
+	int ret{1};
 	hylasv1();
 	do { // fuer break
 		if (hmodem.empty()) {
@@ -4012,7 +4024,7 @@ int hhcl::pruefhyla()
 				uchar frischkonfiguriert{0};
 				if (modemgeaendert) {
 					if (hconfigtty()) {
-						ret=1;
+						ret=0;
 						break;
 					}
 					hccd.obzuschreib=1;
@@ -4089,7 +4101,7 @@ int hhcl::pruefhyla()
 						hylafehlt=0;
 					} else if (versuch>1) {
 						fLog(rots+Tx[T_Fehler_in_pruefhyla]+schwarz,1,oblog);
-						ret=2;
+						ret=0;
 						break;
 					} //     if ((this->sfaxq->obslaeuft(obverb-1,oblog) && this->shfaxd->obslaeuft(obverb-1,oblog))  else
 					if (hylafehlt) {
@@ -4231,7 +4243,7 @@ int hhcl::pruefhyla()
 								// und ein hylafax-Verzeichnis da ist ...
 								if (this->setzhylavz()) {
 									this->obfa[2]=0;
-									ret=1;
+									ret=0;
 									break;
 								} else {
 									// falls oben hylafax neu installiert wurde und zuvor eine hylafax-Installation nach Gebrauch geloescht worden war,
@@ -4354,7 +4366,7 @@ int hhcl::pruefhyla()
 						if (nochmal) continue;
 						break;
 					}
-					if (ret) break;
+					if (!ret) break;
 					// wenn !hylazukonf, dann auslesen, mit den Werten vergleichen und ggf. zu 1 setzen
 					if (!hylazukonf) {
 						hliesconf();
@@ -4401,14 +4413,14 @@ int hhcl::pruefhyla()
 						if (versuch>1) {
 							fLog(Tx[T_hylafaxspringtnichtan],1,1);
 							this->obfa[2]=0;
-							ret=1;
+							ret=0;
 							break;
 						} //         if (versuch>1) 
 					} else {
 						break;
 					} // if (hylalaeuftnicht || modemlaeuftnicht) 
 				} // for(unsigned versuch=0;versuch<2;versuch++)
-				if (ret) break;
+				if (!ret) break;
 				// Empfangsberechtigungen sicherstellen
 				////		char *uvz[2]={(char*)"/log/",(char*)"/recvq/"};
 				const string uvz[2]{"/log/","/recvq/"};
@@ -4470,13 +4482,13 @@ int hhcl::pruefhyla()
 				if (shfaxd) shfaxd->stopdis(obverb,oblog);
 				if (sfaxq) sfaxq->stopdis(obverb,oblog);
 				if (shylafaxd) shylafaxd->stopdis(obverb>1?obverb:0,oblog);
-				ret=1;
+				ret=0;
 			} // (obhyla) else
 			hLog(violetts+Txk[T_Ende]+Tx[T_pruefhyla]+schwarz);
 		} // 	if (hmodem.empty()) else
 	} while (0); // fuer break
 	return ret;
-} // int hhcl::pruefhyla()
+} // int hhcl::pruefhyla
 
 
 // augerufen in: virtpruefweiteres
@@ -8519,7 +8531,11 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 					if (mitupd) {
 					}
 				}
-				// a) ueber capisuite
+				// a) ueber fbfax
+				if (obfa[0] && fsf.mailges=="0") {
+				}
+
+				// b) ueber capisuite
 				// den Status in Capi der aus spool geholten Zeile untersuchen, dort aktualisieren
 				//   und ggf. in hylafax stoppen
 				struct stat entrysend{0};
@@ -8549,7 +8565,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 					} // if (mitupd) 
 				} // if (obcapi) 
 
-				// b) ueber hylafax
+				// c) ueber hylafax
 				if (obfa[2] && fsf.mailges=="0") {
 					uchar hyla_uverz_nr{0}; // suche ueberall, liefere 1 zuruck, wenn weder in /doneq noch in /archive gefunden
 					int obsfehlt{-1};
@@ -9294,9 +9310,10 @@ void hhcl::pvirtfuehraus() //α
 			////  int qerg = mysql_query(My.conn,proc.c_str());
 			// 1) nicht-pdf-Dateien in pdf umwandeln, 2) pdf-Dateien faxen, 3) alle in warte-Verzeichnis kopieren, 4) in Spool-Tabelle eintragen
 			////  vector<string> npdf, spdf;
-			if (obfcard) obfa[1]=!pruefcapi();
-			if (obmodem) obfa[2]=!pruefhyla();
-			if (loef || loew || loea) {
+			if (obfrbox) obfa[0]=prueffbox();
+			if (obfcard) obfa[1]=pruefcapi();
+			if (obmodem) obfa[2]=pruefhyla();
+			if (loef||loew||loea) {
 				if (loef) aenderefax(/*aktion=*/0,/*aktc=*/0);
 				if (loew) loeschewaise();
 				if (loea) loescheallewartenden();
