@@ -544,6 +544,7 @@ enum T_
 	T_waisen_Faxe_geloescht_werden,
 	T_Keine_waisen_Faxe_zum_Loeschen_da,
 	T_Keine_wartenden_Faxe_zum_Loeschen_da,
+	T_inspoolschreiben,
 	T_wegfaxen,
 	T_obfboxmitDoppelpunkt,
 	T_obcapimitDoppelpunkt,

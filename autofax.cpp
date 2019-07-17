@@ -1129,6 +1129,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Keine waisen Faxe zum Loeschen da.","No orphan faxes to be deleted."},
 	// T_Keine_wartenden_Faxe_zum_Loeschen_da
 	{"Keine wartenden Faxe zum Loeschen da.","No waiting faxes to be deleted."},
+// T_inspoolschreiben,
+	{"inspoolschreiben()","writetospool()"},
 	// T_wegfaxen
 	{"wegfaxen()","faxingall()"},
 	// T_obfboxmitDoppelpunkt
@@ -2289,7 +2291,7 @@ void hhcl::pruefmodcron()
 	} //   for(uchar ru=0;ru<elemzahl(mps);ru++)
 } // void pruefmodcron(int obverb, int oblog)
 
-// aufgerufen in: untersuchespool, main
+// aufgerufen in: untersuchespool, pvirtfuehraus
 // rueckgabe: wie obfa[0] (obfbox) eingestellt sein sollte
 int hhcl::prueffbox()
 {
@@ -2770,7 +2772,7 @@ schluss: // sonst eine sonst sinnlose for-Schleife mehr oder return mitten aus d
 	return erg;
 } // pruefcapi
 
-// aufgerufen in: virtrueckfragen, main
+// aufgerufen in: virtrueckfragen, pvirtfuehraus
 void hhcl::pruefisdn()
 {
 	hLog(violetts+Tx[T_pruefisdn]+schwarz);
@@ -6143,6 +6145,7 @@ void hhcl::inDBk(DB *My, const string& spooltab, const string& altspool, const f
 	yLog(this->obverb,this->oblog,1,1,"%s%s%s%d%s%s%s%d",drot,"  affected_rows(",blau,aktc,drot,"): ",schwarz,affr);
 }
 
+// aufgerufen in faxemitF
 void hhcl::inDBf(DB *My, const string& spooltab, const string& altspool, const string& fbvwdt,const fsfcl *const fsfp,const size_t aktc)
 {
 	hLog(violetts+Tx[T_inDBf]+schwarz);
@@ -6264,7 +6267,14 @@ void hhcl::faxemitF(DB *My, const string& spooltab, const string& altspool, fsfc
 			svec faxerg;
 			//// <<rot<<"Achtung: faxemith: "<<endl<<schwarz<<cmd<<endl;
 			if (!systemrueck(cmd,1,1,&faxerg,/*obsudc=*/0,0,wahr,Tx[T_FbfaxBefehl])) {
+			if (faxerg.size()) {
+//				fsfp.fbsdt=*faxerg;
+				string fbsdt{faxerg[0]};
+				gtrim(&fbsdt);
+				inDBf(My, spooltab, altspool,fbsdt,fsfp,aktc);
+			}
 ////					const string cmd{"grep -l \""+ff+"\" $(sed -n '/wartevz/{s/.*\\=[[:space:]]*\\(.*\\)/\\1/;s/\"\\(.*\\)\"/\\1/p}' \""+verg[0]+"\")/*.vw"};
+#ifdef umstaendlich
 					const string cmd{"grep -l \""+ff+"\" \""+wvz+"/*.vw\""};
 					svec fxr;
 					if (!systemrueck(cmd,obverb,oblog,&fxr,0,0,wahr)) {
@@ -6275,6 +6285,7 @@ void hhcl::faxemitF(DB *My, const string& spooltab, const string& altspool, fsfc
 							break;
 						} // for(size_t i=0;i<fxr.size();i++)
 					} // 				if (!systemrueck(cmd,obverb,oblog,&faxerg,0,0,wahr))
+#endif
 			} // if (!systemrueck(cmd,1,1,&faxerg,wahr,wahr,Tx[T_FbfaxBefehl]))
 		} // if (rueck.size()) 
 	} // tel.empty() else
@@ -6371,7 +6382,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 	// 3. in die Spool-Tabelle eintragen
 
 	// const int altobverb{obverb};
-	hLog(violetts+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfa[0]?Txk[T_ja]:Txk[T_nein])+", "
+	hLog(violetts+Tx[T_inspoolschreiben]+schwarz+", "+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfa[0]?Txk[T_ja]:Txk[T_nein])+", "
 			                                    +blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obfa[1]?Txk[T_ja]:Txk[T_nein])+", "
 			                                    +blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obfa[2]?Txk[T_ja]:Txk[T_nein]));
 	const string filter[]{"[[:space:][:punct:]]\\+[0-9][0-9[:space:][:punct:]]*[_]\\?.*\\.",// statt ?.* zuvor ?[0-9]*, aber vielleicht unnoetig
@@ -7034,6 +7045,7 @@ void hhcl::wegfaxen(const size_t aktc)
 							Tx[T_nicht_gefunden_Eintrag_ggf_loeschen_mit_]+blau+base_name(aktprogverz())+" -"+Tx[T_loew]+schwarz+
 							Tx[T_bzw_]+blau+base_name(aktprogverz())+" -"+Tx[T_loef]+schwarz+"'",1,oblog);
 				} else {
+	//// caus<<"Stelle 4, i: "<<i<<", wasichbin: "<<(int)wasichbin<<", fsfv[i].fobfbox: "<<(int)fsfv[i].fobfbox<<", obfa[0]: "<<obfa[0]<<endl;
 					if (wasichbin==1||nursend) if (fsfv[i].fobcapi) if (obfa[1]) faxemitC(My, spooltab, altspool, &fsfv[i],ff);  
 					if (wasichbin==2||nursend) if (fsfv[i].fobhyla) if (obfa[2]) faxemitH(My, spooltab, altspool, &fsfv[i],ff);  
 					if (wasichbin==3||nursend) if (fsfv[i].fobfbox) if (obfa[0]) faxemitF(My, spooltab, altspool, &fsfv[i],ff);  
@@ -7044,10 +7056,10 @@ void hhcl::wegfaxen(const size_t aktc)
 			} // for(unsigned i=0;i<fsfv.size();i++) 
 			hLog(violetts+"Pid "+blau+ltoan(pid)+violett+" "+Txk[T_Ende]+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+
 					(obfa[1]?Txk[T_ja]:Txk[T_nein])+", "+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obfa[2]?Txk[T_ja]:Txk[T_nein]));
-			exitt(0);
+			if (!nursend) exitt(0);
 		} // 		if (wasichbin)
 		// 1. warte auf faxemitC, faxemitH, faxemitF
-		wartaufpids(&pidw,0,obverb,oblog,Tx[T_in_wegfaxen]);
+		if (!nursend) wartaufpids(&pidw,0,obverb,oblog,Tx[T_in_wegfaxen]);
 		// nur wegfaxen mit abgeschlossenen Unterprogrammen
 #ifdef immerwart
 		ulong kaufrufe{0};
@@ -8495,7 +8507,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 			",alts.id p15,s.mailgesandt p16,s.fbdials p17,s.fbspooldt p18 "
 			"FROM `"+spooltab+"` s "
 			"LEFT JOIN `"+altspool+"` alts ON s.idudoc=alts.idudoc "
-			"WHERE (s.hylanr RLIKE '^[0-9]+$' AND s.hylanr<>0) OR s.capispooldt RLIKE '^fax-[0-9]+\\.sff$' OR s.mailgesandt<>0 "
+			"WHERE (s.hylanr RLIKE '^[0-9]+$' AND s.hylanr<>0) OR s.capispooldt RLIKE '^fax-[0-9]+\\.sff$' OR s.fbspooldt<>'' OR s.mailgesandt<>0 "
 			"GROUP BY s.id",aktc,ZDB);
 	if (!rs.obqueryfehler) {
 		faxord=0;
@@ -8533,6 +8545,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 				}
 				// a) ueber fbfax
 				if (obfa[0] && fsf.mailges=="0") {
+					if (faxord==1) this->prueffbox(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
 				}
 
 				// b) ueber capisuite
@@ -9378,8 +9391,10 @@ void hhcl::pvirtfuehraus() //α
 								if (obfa[2]) { if (tage) korrigierehyla(tage,10);} // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
 							}
 							// 2. warte auf korrigierecapi und korrigierehyla
-							wartaufpids(&pidw,0,obverb,oblog,"in main, pidw");
-							exitt(0);
+							if (!nursend) {
+								wartaufpids(&pidw,0,obverb,oblog,"in main, pidw");
+								exitt(0);
+							}
 						} else if (pids<0) {
 							hLog(rots+Tx[T_Gabelung_zu_wegfaxen_misslungen]+schwarz);
 							exitt(17);

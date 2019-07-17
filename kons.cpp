@@ -6608,7 +6608,7 @@ void hcl::tucronschreib(const string& zsauf,const uchar cronzuplanen,const strin
 	dazu=" crontab $T;";
 	unicmd+=dazu;
 	cmd+=dazu;
-  caus<<gruen<<cmd<<schwarz<<endl;
+  //// caus<<gruen<<cmd<<schwarz<<endl;
 	systemrueck(cmd,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 	//// ersetzAlle(unicmd,"'\\''","'");
 	const string bef{sudc+"sh -c '"+cmd+"'"};

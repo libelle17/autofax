@@ -636,18 +636,18 @@ char ers(const char roh);
 
 // Gesamt-Trim
 inline std::string *gtrim(std::string *str) {
-  str->erase(0, str->find_first_not_of("\t "));       //prefixing spaces
-  str->erase(str->find_last_not_of("\t ")+1);         //surfixing spaces
+  str->erase(0, str->find_first_not_of("\t\r "));       //prefixing spaces etc.
+  str->erase(str->find_last_not_of("\t\r ")+1);         //surfixing spaces etc.
   return str;
 } // inline std::string *gtrim(std::string *str)
 
 inline std::string *ltrim(std::string *str) {
-  str->erase(0, str->find_first_not_of("\t "));       //prefixing spaces
+  str->erase(0, str->find_first_not_of("\t\r "));       //prefixing spaces etc.
   return str;
 } // inline std::string *ltrim(std::string *str)
 
 inline std::string *rtrim(std::string *str) {
-  str->erase(str->find_last_not_of("\t ")+1);         //surfixing spaces
+  str->erase(str->find_last_not_of("\t\r ")+1);         //surfixing spaces etc.
   return str;
 } // inline std::string *ltrim(std::string *str)
 
