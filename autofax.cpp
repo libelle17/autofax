@@ -9496,7 +9496,7 @@ void hhcl::virtschlussanzeige()
 	dhcl::virtschlussanzeige(); //α
 } // void hhcl::virtschlussanzeige
  
-// aufgerufen in: main
+// aufgerufen in: main und pruefcapi
 void hhcl::virtautokonfschreib()
 {
 // const int altobverb=obverb;
@@ -9511,7 +9511,7 @@ void hhcl::virtautokonfschreib()
 	struct stat kstat{0}; //α
 	if (lstat(akonfdt.c_str(),&kstat))
 		hccd.obzuschreib=1;
-	if (rzf||hccd.obzuschreib) {
+	if (rzf||hccd.obzuschreib||kschreib) {
 		hLog(gruens+Txk[T_schreibe_Konfiguration]+schwarz);
 		// restliche Erklaerungen festlegen
 		////    agcnfA.setzbem("language",sprachstr);

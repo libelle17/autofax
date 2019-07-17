@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "17.07.19" "Version 0.47693" "\fB²DPROG²\fR man page"
+.TH man 1 "17.07.19" "Version 0.47696" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -67,7 +67,57 @@ Depending on operating system, accessability and preferences the users thus coul
 .SH OPTIONS 
  '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR' shows the important command line options and '\fB²DPROG² -lh\fR' all of them. Some options (e.g. the sql commands for finding an addressee from the fax number) cannot be set via the command line, but only via the configuration file, which can be edited directly by '\fB²DPROG² -vi\fR' or interactively by '\fB²DPROG² -rf\fR'.
 .br
-                                                                                                                                                                                      \fRProgramm: \fB/home/schade/autofax/autofax\fR, V: \fB0.47693 \fRUsing: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
+                                                                                                                                                           acstr: 'lg', omp->size(): 128
+.br
+omit: language, sp
+.br
+omit: language, lg
+.br
+pptr gefunden
+.br
+acstr: 'sh', omp->size(): 128
+.br
+omit: language, sp
+.br
+omit: language, lg
+.br
+omit: language, lang
+.br
+omit: language, ling
+.br
+omit: , w
+.br
+omit: , v
+.br
+omit: , stu
+.br
+omit: , mu
+.br
+omit: logvz, lvz
+.br
+omit: logvz, ldr
+.br
+omit: logdname, ld
+.br
+omit: logdname, lf
+.br
+omit: oblog, l
+.br
+omit: , ldn
+.br
+omit: , lfn
+.br
+omit: , kd
+.br
+omit: , cf
+.br
+omit: , libtest
+.br
+omit: , sh
+.br
+pptr gefunden
+.br
+\fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.47696 \fRUsing: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
 .br
 \fBOptions which are not saved (current value in parentheses): \fR
 .br
@@ -125,9 +175,9 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fB -scf, --showconf\fR: show the name of the configuration file (\fB0\fR)
 .br
-\fB -vs, --vs\fR: edit/view source files in \fB/home/schade/autofax\fR(finish with ':qa') (\fB0\fR)
+\fB -writec, --writeconf\fR: write configuration file (\fB0\fR)
 .br
-\fB -autoupd, --autoupdate <zahl>\fR: Update program automatically (\fB1\fR)
+\fB -vs, --vs\fR: edit/view source files in \fB/root/autofax\fR(finish with ':qa') (\fB0\fR)
 .br
 \fB -ia, --interactive\fR: all parameters will be prompted (some of them not shown here) (\fB0\fR)
 .br
@@ -226,6 +276,8 @@ Depending on operating system, accessability and preferences the users thus coul
 \fB -l, --log <zahl>\fR: put detailed logs in file '\fB/var/log/autofax.log\fR' (otherwise shorter) (\fB0\fR)
 .br
 \fB -cm, --cronminutes <string>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  ('\fB0\fR')
+.br
+\fB -autoupd, --autoupdate <zahl>\fR: Update program automatically (\fB1\fR)
 .SH FUNCTIONALITY
 .LP
 When called, '\fB²DPROG²\fR' accomplishes the following:

@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.47693) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47696) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -177,9 +177,33 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/home/schade/autofax/autofax</b>, V:
-<b>0.47693</b> Using: <b>Fritzbox</b>, <b>Capisuite</b>,
-<b>Hylafax <br>
+acstr: &rsquo;lg&rsquo;, omp-&gt;size(): 128 <br>
+omit: language, sp <br>
+omit: language, lg <br>
+pptr gefunden <br>
+acstr: &rsquo;sh&rsquo;, omp-&gt;size(): 128 <br>
+omit: language, sp <br>
+omit: language, lg <br>
+omit: language, lang <br>
+omit: language, ling <br>
+omit: , w <br>
+omit: , v <br>
+omit: , stu <br>
+omit: , mu <br>
+omit: logvz, lvz <br>
+omit: logvz, ldr <br>
+omit: logdname, ld <br>
+omit: logdname, lf <br>
+omit: oblog, l <br>
+omit: , ldn <br>
+omit: , lfn <br>
+omit: , kd <br>
+omit: , cf <br>
+omit: , libtest <br>
+omit: , sh <br>
+pptr gefunden <br>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47696</b>
+Using: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
 -delf, --deletefax</b>: delete a fax with query (<b>0</b>)
@@ -242,11 +266,11 @@ with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 (finish with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -scf, --showconf</b>: show the name of the configuration
 file (<b>0</b>) <b><br>
--vs, --vs</b>: edit/view source files in
-<b>/home/schade/autofax</b>(finish with &rsquo;:qa&rsquo;)
+-writec, --writeconf</b>: write configuration file
 (<b>0</b>) <b><br>
--autoupd, --autoupdate &lt;zahl&gt;</b>: Update program
-automatically (<b>1</b>) <b><br>
+-vs, --vs</b>: edit/view source files in
+<b>/root/autofax</b>(finish with &rsquo;:qa&rsquo;)
+(<b>0</b>) <b><br>
 -ia, --interactive</b>: all parameters will be prompted
 (some of them not shown here) (<b>0</b>) <b><br>
 -noia, --nointeraction</b>: no questions, e.g. for a call
@@ -372,7 +396,9 @@ be used instead of (&rsquo;<b>autofax.log</b>&rsquo;)
 shorter) (<b>0</b>) <b><br>
 -cm, --cronminutes &lt;string&gt;</b>: every how many
 minutes shall <b>autofax</b> be called in crontab (0=not at
-all), instead of (&rsquo;<b>0</b>&rsquo;)</p>
+all), instead of (&rsquo;<b>0</b>&rsquo;) <b><br>
+-autoupd, --autoupdate &lt;zahl&gt;</b>: Update program
+automatically (<b>1</b>)</p>
 
 <h2>FUNCTIONALITY
 <a name="FUNCTIONALITY_D"></a>
@@ -841,7 +867,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.47693) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47696) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1033,9 +1059,33 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/home/schade/autofax/autofax</b>, V:
-<b>0.47693</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
-<b>Hylafax <br>
+acstr: &rsquo;lg&rsquo;, omp-&gt;size(): 128 <br>
+omit: language, sp <br>
+omit: language, lg <br>
+pptr gefunden <br>
+acstr: &rsquo;sh&rsquo;, omp-&gt;size(): 128 <br>
+omit: language, sp <br>
+omit: language, lg <br>
+omit: language, lang <br>
+omit: language, ling <br>
+omit: , w <br>
+omit: , v <br>
+omit: , stu <br>
+omit: , mu <br>
+omit: logvz, lvz <br>
+omit: logvz, ldr <br>
+omit: logdname, ld <br>
+omit: logdname, lf <br>
+omit: oblog, l <br>
+omit: , ldn <br>
+omit: , lfn <br>
+omit: , kd <br>
+omit: , cf <br>
+omit: , libtest <br>
+omit: , sh <br>
+pptr gefunden <br>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47696</b>
+Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
 -loef, --loeschefax</b>: ein Fax nach Rueckfrage loeschen
@@ -1101,11 +1151,11 @@ bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
 -zkf, --konfzeig</b>: Konfigurationsdateinamenanzeigen
 (<b>0</b>) <b><br>
--vs, --vs</b>: Quelldateien in <b>/home/schade/autofax</b>
+-kschrb, --kschreib</b>: Konfigurationsdatei schreiben
+(<b>0</b>) <b><br>
+-vs, --vs</b>: Quelldateien in <b>/root/autofax</b>
 bearbeiten/sehen (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>)
 <b><br>
--autoakt, --autoaktual &lt;zahl&gt;</b>: Programm
-automatisch aktualisieren (<b>1</b>) <b><br>
 -rf, --rueckfragen</b>: alle Parameter werden abgefragt
 (darunter einige hier nicht gezeigte) (<b>0</b>) <b><br>
 -krf, --keinerueckfragen</b>: keine Rueckfragen, z.B. fuer
@@ -1236,7 +1286,9 @@ Datei &rsquo;<b>/var/log/autofax.log</b>&rsquo; (sonst
 knapper) (<b>0</b>) <b><br>
 -cm, --cronminuten &lt;string&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
-nicht), anstatt (&rsquo;<b>0</b>&rsquo;)</p>
+nicht), anstatt (&rsquo;<b>0</b>&rsquo;) <b><br>
+-autoakt, --autoaktual &lt;zahl&gt;</b>: Programm
+automatisch aktualisieren (<b>1</b>)</p>
 
 <h2>FUNKTIONSWEISE
 <a name="FUNKTIONSWEISE_D"></a>

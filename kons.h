@@ -413,6 +413,9 @@ enum Tkons_
   T_konfzeiglang_l,
   T_Konfigurationsdateinamen,
   T_anzeigen,
+	T_Konfigurationsdatei_schreiben,
+	T_ks_k,
+	T_kschreib_l,
 	T_vs_k,
 	T_vs_l,
 	T_Quelldateien_in,
@@ -1297,6 +1300,7 @@ class hcl
     uchar rzf=0; // rueckzufragen
 		uchar obvi=0; // ob Konfigurationsdatei editiert werden soll
     uchar kfzg=0; // Konfigurationsdatei-Namen ausgeben
+		uchar kschreib=0; // Konfigurationsdatei schreiben
 		uchar obvs=0;   // ob Quelldateien bearbeitet werden sollen
 		uchar keineverarbeitung=0; // wenn cronminuten geaendert werden sollen, vorher abkuerzen
     string langu; // Sprache (Anfangsbuchstabe)

@@ -582,6 +582,12 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
   {"Konfigurationsdateinamen","show the name of the configuration file"},
   // T_anzeigen,
   {"anzeigen",""},
+	// T_Konfigurationsdatei_schreiben,
+	{"Konfigurationsdatei schreiben","write configuration file"},
+	// T_ks_k,
+	{"kschrb","writec"},
+	//	T_kschreib_l,
+  {"kschreib","writeconf"},
 	// T_vs_k
 	{"vs","vs"},
 	// T_vs_l
@@ -5303,8 +5309,9 @@ void hcl::virtinitopt()
 	opn<<new optcl(/*pname*/"cronminut",/*pptr*/&cronminut,/*art*/pdez,T_cm_k,T_cronminuten_l,/*TxBp*/&Txk,/*Txi*/T_Alle_wieviel_Minuten_soll,/*wi*/1,/*Txi2*/T_aufgerufen_werden_0_ist_gar_nicht,/*rottxt*/meinname,/*wert*/-1,/*woher*/1,T_Intervall_Minuten);
 	opn<<new optcl(/*pptr*/&obvi,/*art*/puchar,T_vi_k,T_vi_l,/*TxBp*/&Txk,/*Txi*/T_Konfigurationsdatei,/*wi*/0,/*Txi2*/T_Logdatei_usw_bearbeiten_sehen,/*rottxt*/akonfdt,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&kfzg,/*art*/puchar,T_kf_k,T_konfzeiglang_l,/*TxBp*/&Txk,/*Txi*/T_Konfigurationsdateinamen,/*wi*/0,/*Txi2*/T_anzeigen,/*rottxt*/akonfdt,/*wert*/1,/*woher*/1);
+	opn<<new optcl(/*pptr*/&kschreib,/*art*/puchar,T_ks_k,T_kschreib_l,/*TxBp*/&Txk,/*Txi*/T_Konfigurationsdatei_schreiben,/*wi*/0,/*Txi2*/-1,/*rottxt*/string(),/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&obvs,/*art*/puchar,T_vs_k,T_vs_l,/*TxBp*/&Txk,/*Txi*/T_Quelldateien_in,/*wi*/0,/*Txi2*/T_bearbeiten_sehen,/*rottxt*/instvz,/*wert*/1,/*woher*/1);
-	opn<<new optcl(/*pptr*/&autoupd,/*art*/pint,T_autoupd_k,T_autoupd_l,/*TxBp*/&Txk,/*Txi*/T_Programm_automatisch_aktualisieren,/*wi*/1,/*Txi2*/-1,/*rottxt*/string(),/*wert*/1,/*woher*/1);
+	opn<<new optcl(/*pname*/"autoupd",/*pptr*/&autoupd,/*art*/pint,T_autoupd_k,T_autoupd_l,/*TxBp*/&Txk,/*Txi*/T_Programm_automatisch_aktualisieren,/*wi*/1,/*Txi2*/-1,/*rottxt*/string(),/*wert*/-1,/*woher*/1,T_Programm_automatisch_aktualisieren);
 	opn<<new optcl(/*pptr*/&rzf,/*art*/puchar,T_rf_k,T_rueckfragen_l,/*TxBp*/&Txk,/*Txi*/T_alle_Parameter_werden_abgefragt_darunter_einige_hier_nicht_gezeigte,/*wi*/1,/*Txi2*/-1,/*rottxt*/string(),/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&nrzf,/*art*/puchar,T_krf_k,T_keinerueckfragen_l,/*TxBp*/&Txk,/*Txi*/T_keine_Rueckfragen_zB_aus_Cron,/*wi*/1,/*Txi2*/-1,/*rottxt*/string(),/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&zeigvers,/*art*/puchar,T_info_k,T_version_l,/*TxBp*/&Txk,/*Txi*/T_Zeigt_die_Programmversion_an,/*wi*/1,/*Txi2*/-1,/*rottxt*/string(),/*wert*/1,/*woher*/1);
@@ -5351,14 +5358,15 @@ void hcl::parsecl()
 				if (langp) omp=&opn.olmap;
 				else if (kurzp) omp=&opn.okmap;
 				if (omp) {
-////					<<"acstr: '"<<acstr<<"', omp->size(): "<<omp->size()<<endl;
+					caus<<"acstr: '"<<acstr<<"', omp->size(): "<<omp->size()<<endl;
 					for(omit=omp->begin();omit!=omp->end();omit++) {
-						//// <<"omit: "<<omit->second->pname<<", "<<omit->first<<endl;
+						caus<<"omit: "<<omit->second->pname<<", "<<omit->first<<endl;
 						// omit ist also jetzt iterator fuer die relevante map auf die aktuelle Option (kurz oder lang)
 						if (omit->first) if (!strcmp(omit->first,acstr)) {
 							ap->agef++; // Parameter gefunden
 							hLog(Txk[T_Parameter]+blaus+acstr+schwarz+Txk[T_gefunden]+(omit->second->pptr?"1":"0"));
 							if (omit->second->pptr) {
+								caus<<"pptr gefunden"<<endl;
 								hLog("pptr gefunden");
 								// pzuweis liefert -1, wenn der naechste Parameter als Inhalt verwendet wurde, sonst pcfnr
 								apn=ap; apn++;
@@ -5706,7 +5714,10 @@ void hcl::virtzeigueberschrift()
 void hcl::virtautokonfschreib()
 {
 	hLog(violetts+Txk[T_autokonfschreib]+schwarz+", "+Txk[T_rueckzufragen]+blau+(rzf?Txk[T_ja]:Txk[T_nein])+schwarz+", "+Txk[T_zu_schreiben]+blau+(hccd.obzuschreib?Txk[T_ja]:Txk[T_nein])+schwarz);
-	if (rzf||hccd.obzuschreib) {
+	caus<<"rzf: "<<(int)rzf<<endl;
+	caus<<"obzuschreib: "<<(int)hccd.obzuschreib<<endl;
+	caus<<"kschreib: "<<(int)kschreib<<endl;
+	if (rzf||hccd.obzuschreib||kschreib) {
 		hLog(gruens+Txk[T_schreibe_Konfiguration]+schwarz);
 		opn.confschreib(akonfdt,ios::out,mpfad,0,obverb,oblog);
 	} // if (rzf||obzuschreib)
