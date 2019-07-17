@@ -177,31 +177,6 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-acstr: &rsquo;lg&rsquo;, omp-&gt;size(): 128 <br>
-omit: language, sp <br>
-omit: language, lg <br>
-pptr gefunden <br>
-acstr: &rsquo;sh&rsquo;, omp-&gt;size(): 128 <br>
-omit: language, sp <br>
-omit: language, lg <br>
-omit: language, lang <br>
-omit: language, ling <br>
-omit: , w <br>
-omit: , v <br>
-omit: , stu <br>
-omit: , mu <br>
-omit: logvz, lvz <br>
-omit: logvz, ldr <br>
-omit: logdname, ld <br>
-omit: logdname, lf <br>
-omit: oblog, l <br>
-omit: , ldn <br>
-omit: , lfn <br>
-omit: , kd <br>
-omit: , cf <br>
-omit: , libtest <br>
-omit: , sh <br>
-pptr gefunden <br>
 Programm: <b>/root/autofax/autofax</b>, V: <b>0.47696</b>
 Using: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
@@ -1059,31 +1034,6 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-acstr: &rsquo;lg&rsquo;, omp-&gt;size(): 128 <br>
-omit: language, sp <br>
-omit: language, lg <br>
-pptr gefunden <br>
-acstr: &rsquo;sh&rsquo;, omp-&gt;size(): 128 <br>
-omit: language, sp <br>
-omit: language, lg <br>
-omit: language, lang <br>
-omit: language, ling <br>
-omit: , w <br>
-omit: , v <br>
-omit: , stu <br>
-omit: , mu <br>
-omit: logvz, lvz <br>
-omit: logvz, ldr <br>
-omit: logdname, ld <br>
-omit: logdname, lf <br>
-omit: oblog, l <br>
-omit: , ldn <br>
-omit: , lfn <br>
-omit: , kd <br>
-omit: , cf <br>
-omit: , libtest <br>
-omit: , sh <br>
-pptr gefunden <br>
 Programm: <b>/root/autofax/autofax</b>, V: <b>0.47696</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in

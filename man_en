@@ -67,57 +67,7 @@ Depending on operating system, accessability and preferences the users thus coul
 .SH OPTIONS 
  '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR' shows the important command line options and '\fB²DPROG² -lh\fR' all of them. Some options (e.g. the sql commands for finding an addressee from the fax number) cannot be set via the command line, but only via the configuration file, which can be edited directly by '\fB²DPROG² -vi\fR' or interactively by '\fB²DPROG² -rf\fR'.
 .br
-                                                                                                                                                           acstr: 'lg', omp->size(): 128
-.br
-omit: language, sp
-.br
-omit: language, lg
-.br
-pptr gefunden
-.br
-acstr: 'sh', omp->size(): 128
-.br
-omit: language, sp
-.br
-omit: language, lg
-.br
-omit: language, lang
-.br
-omit: language, ling
-.br
-omit: , w
-.br
-omit: , v
-.br
-omit: , stu
-.br
-omit: , mu
-.br
-omit: logvz, lvz
-.br
-omit: logvz, ldr
-.br
-omit: logdname, ld
-.br
-omit: logdname, lf
-.br
-omit: oblog, l
-.br
-omit: , ldn
-.br
-omit: , lfn
-.br
-omit: , kd
-.br
-omit: , cf
-.br
-omit: , libtest
-.br
-omit: , sh
-.br
-pptr gefunden
-.br
-\fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.47696 \fRUsing: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
+                                                                                                                                                           \fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.47696 \fRUsing: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
 .br
 \fBOptions which are not saved (current value in parentheses): \fR
 .br

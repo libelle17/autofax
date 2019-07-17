@@ -5358,15 +5358,14 @@ void hcl::parsecl()
 				if (langp) omp=&opn.olmap;
 				else if (kurzp) omp=&opn.okmap;
 				if (omp) {
-					caus<<"acstr: '"<<acstr<<"', omp->size(): "<<omp->size()<<endl;
+					//// <<"acstr: '"<<acstr<<"', omp->size(): "<<omp->size()<<endl;
 					for(omit=omp->begin();omit!=omp->end();omit++) {
-						caus<<"omit: "<<omit->second->pname<<", "<<omit->first<<endl;
+						//// <<"omit: "<<omit->second->pname<<", "<<omit->first<<endl;
 						// omit ist also jetzt iterator fuer die relevante map auf die aktuelle Option (kurz oder lang)
 						if (omit->first) if (!strcmp(omit->first,acstr)) {
 							ap->agef++; // Parameter gefunden
 							hLog(Txk[T_Parameter]+blaus+acstr+schwarz+Txk[T_gefunden]+(omit->second->pptr?"1":"0"));
 							if (omit->second->pptr) {
-								caus<<"pptr gefunden"<<endl;
 								hLog("pptr gefunden");
 								// pzuweis liefert -1, wenn der naechste Parameter als Inhalt verwendet wurde, sonst pcfnr
 								apn=ap; apn++;
@@ -5714,9 +5713,9 @@ void hcl::virtzeigueberschrift()
 void hcl::virtautokonfschreib()
 {
 	hLog(violetts+Txk[T_autokonfschreib]+schwarz+", "+Txk[T_rueckzufragen]+blau+(rzf?Txk[T_ja]:Txk[T_nein])+schwarz+", "+Txk[T_zu_schreiben]+blau+(hccd.obzuschreib?Txk[T_ja]:Txk[T_nein])+schwarz);
-	caus<<"rzf: "<<(int)rzf<<endl;
-	caus<<"obzuschreib: "<<(int)hccd.obzuschreib<<endl;
-	caus<<"kschreib: "<<(int)kschreib<<endl;
+	//// <<"rzf: "<<(int)rzf<<endl;
+	//// <<"obzuschreib: "<<(int)hccd.obzuschreib<<endl;
+	//// <<"kschreib: "<<(int)kschreib<<endl;
 	if (rzf||hccd.obzuschreib||kschreib) {
 		hLog(gruens+Txk[T_schreibe_Konfiguration]+schwarz);
 		opn.confschreib(akonfdt,ios::out,mpfad,0,obverb,oblog);
