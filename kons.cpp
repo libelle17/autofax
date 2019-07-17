@@ -5445,6 +5445,7 @@ void hcl::virtlieskonfein()
 	if (!hccd.obzuschreib) {
 		for (map<string,optcl*>::iterator omit=opn.omap.begin();omit!=opn.omap.end();omit++) {
 			if (omit->second->woher<2) {
+				caus<<"setze obzuschreib, da woher<2 in "<<omit->first<<endl;
 				hccd.obzuschreib=1;
 				break;
 			} // 			if (omit->second->woher<2)
@@ -6142,6 +6143,7 @@ int optcl::setzstr(const char* const neuw,uchar *const obzuschreib/*=0*/,const u
 	// nicht mit Vorgaben (woher 2) Befehlszeilenoption (woher 3) ueberschreiben
 	const int sstfnr{wpgcl::tusetzstr(neuw,/*obzuschreib*/&tuschreib,ausDatei,/*keineprio*/woher>2)};
 	if (tuschreib) if (obzuschreib) if (!*obzuschreib) if (!nichtspeichern) {
+		caus<<"setze obzuschreib in setzstr "<<neuw<<" ausDatei: "<<(int)ausDatei<<endl;
 		*obzuschreib=1;
 	}
 	return sstfnr;

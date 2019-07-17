@@ -3226,8 +3226,10 @@ void hhcl::standardprio(const int obmitsetz)
 			}
 		}
 		if (minj<3+1) {
-			if (p!=clprios[minj]) 
+			if (p!=clprios[minj]) {
+				caus<<"Setze obzuschreib in standardprio"<<endl;
 				hccd.obzuschreib=1;
+			}
 			prios[minj]=p;
 		}
 	}
@@ -4029,6 +4031,7 @@ int hhcl::pruefhyla()
 						ret=0;
 						break;
 					}
+					caus<<"Setze obzuschreib in pruefhyla"<<endl;
 					hccd.obzuschreib=1;
 				} //   if (modemgeaendert)
 
@@ -6263,7 +6266,9 @@ void hhcl::faxemitF(DB *My, const string& spooltab, const string& altspool, fsfc
 		string fbfax;
 		////    systemrueck(sudc+"sh -c 'which sendfax'",obverb,1,&rueck);
 		if (obprogda("fbfax",obverb,oblog,&fbfax)) {
+			caus<<"Stelle 1 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 			const string cmd{fbfax+" -stu -nr -dt \""+ff+"\" -an \""+fsfp->telnr+"\" 2>&1"};
+			caus<<"Stelle 2 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 			svec faxerg;
 			//// <<rot<<"Achtung: faxemith: "<<endl<<schwarz<<cmd<<endl;
 			if (!systemrueck(cmd,1,1,&faxerg,/*obsudc=*/0,0,wahr,Tx[T_FbfaxBefehl])) {
@@ -6271,7 +6276,9 @@ void hhcl::faxemitF(DB *My, const string& spooltab, const string& altspool, fsfc
 //				fsfp.fbsdt=*faxerg;
 				string fbsdt{faxerg[0]};
 				gtrim(&fbsdt);
+			caus<<"Stelle 3 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 				inDBf(My, spooltab, altspool,fbsdt,fsfp,aktc);
+			caus<<"Stelle 4 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 			}
 ////					const string cmd{"grep -l \""+ff+"\" $(sed -n '/wartevz/{s/.*\\=[[:space:]]*\\(.*\\)/\\1/;s/\"\\(.*\\)\"/\\1/p}' \""+verg[0]+"\")/*.vw"};
 #ifdef umstaendlich
@@ -7060,6 +7067,7 @@ void hhcl::wegfaxen(const size_t aktc)
 		} // 		if (wasichbin)
 		// 1. warte auf faxemitC, faxemitH, faxemitF
 		if (!nursend) wartaufpids(&pidw,0,obverb,oblog,Tx[T_in_wegfaxen]);
+			caus<<"Stelle 5 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 		// nur wegfaxen mit abgeschlossenen Unterprogrammen
 #ifdef immerwart
 		ulong kaufrufe{0};
@@ -7081,6 +7089,7 @@ void hhcl::wegfaxen(const size_t aktc)
 			+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obfa[1]?Txk[T_ja]:Txk[T_nein])+": "
 			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obfa[2]?Txk[T_ja]:Txk[T_nein]));
 	obverb=altobverb;
+			caus<<"Stelle 50 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 } // void hhcl::wegfaxen
 
 
@@ -8552,6 +8561,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 				// den Status in Capi der aus spool geholten Zeile untersuchen, dort aktualisieren
 				//   und ggf. in hylafax stoppen
 				struct stat entrysend{0};
+			caus<<"Stelle 57 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 				if (obfa[1] && fsf.mailges=="0") {
 					if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
 					fsf.setzcapistat(this, &entrysend);
@@ -8577,6 +8587,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 						} //             if (fsf.capistat==wartend)  else else else 
 					} // if (mitupd) 
 				} // if (obcapi) 
+			caus<<"Stelle 58 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 
 				// c) ueber hylafax
 				if (obfa[2] && fsf.mailges=="0") {
@@ -8589,6 +8600,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 					//// <<"vor hylaausgeb 2, fsf.hstate: '"<<fsf.hstate<<"'"<<endl;
 					fsf.hylaausgeb(&ausg, this/*, obsfehlt*/, 0, obverb, 0, oblog);
 					//          if (!obsfehlt) KLA // Protokolldatei vorhanden 12.10.16 sollte jetzt auch mit xferfax gehen
+			caus<<"Stelle 55 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 					if (mitupd) {
 						vector<instyp> einf; // fuer alle Datenbankeinfuegungen
 						einf.push_back(/*2*/instyp(My->DBS,"hylastate",&fsf.hstate));
@@ -8615,6 +8627,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 						RS rupd(My,spooltab); 
 						rupd.tbupd(einf,ZDB,bedingung,aktc,/*asy=*/0);
 					} // if (mitupd) 
+			caus<<"Stelle 56 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 				} // if (obhyla)
 				////        KLZ // if (!obsfehlt) ... else
 
@@ -8699,6 +8712,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 			} // if (*(*cerg+0)) if (*(*cerg+3))
 		} // while (cerg=rs.HolZeile(),cerg?*cerg:0) 
 	} // if (!rs.obqueryfehler) 
+			caus<<"Stelle 60 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 	fLog(Tx[T_Zahl_der_ueberpruefen_Datenbankeintraege]+drots+ltoan(dbzahl)+schwarz,1,oblog);
 	fLog(Tx[T_davon_gescheiterte_Faxe]+drots+ltoan(gzahl)+schwarz,1,oblog);
 	fLog(Tx[T_davon_erfolgreiche_Faxe]+drots+ltoan(ezahl)+schwarz,1,oblog);
@@ -9384,7 +9398,9 @@ void hhcl::pvirtfuehraus() //α
 							inspoolschreiben(/*aktc=*/3);
 							wegfaxen(/*aktc=*/3);
 							// Dateien in Spool-Tabelle nach inzwischen Verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
+			caus<<"Stelle 5b "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 							untersuchespool(/*mitupd=*/1,/*aktc=*/3);
+			caus<<"Stelle 6 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 							if (obfa[1] || obfa[2]) {
 								bestimmtage();
 								if (obfa[1]) { if (tage) korrigierecapi(tage,9); } // 					if (obfa[1])
@@ -9487,6 +9503,7 @@ void hhcl::pvirtfuehraus() //α
 			} // if (loef || loew || loea) else if else if
 		} // 		if (!keineverarbeitung)
 	} // if (kez) else else else
+			caus<<"Stelle 7 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 } // void hhcl::pvirtfuehraus  //α
 
 // aufgerufen in lauf
@@ -9509,8 +9526,10 @@ void hhcl::virtautokonfschreib()
 		hLog(blaus+buf+schwarz);
 	 */
 	struct stat kstat{0}; //α
-	if (lstat(akonfdt.c_str(),&kstat))
+	if (lstat(akonfdt.c_str(),&kstat)) {
+		caus<<"Setze obzuschreib, da "<<akonfdt<<" nicht da"<<endl;
 		hccd.obzuschreib=1;
+	}
 	if (rzf||hccd.obzuschreib||kschreib) {
 		hLog(gruens+Txk[T_schreibe_Konfiguration]+schwarz);
 		// restliche Erklaerungen festlegen
