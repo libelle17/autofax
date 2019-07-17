@@ -5713,9 +5713,9 @@ void hcl::virtzeigueberschrift()
 void hcl::virtautokonfschreib()
 {
 	hLog(violetts+Txk[T_autokonfschreib]+schwarz+", "+Txk[T_rueckzufragen]+blau+(rzf?Txk[T_ja]:Txk[T_nein])+schwarz+", "+Txk[T_zu_schreiben]+blau+(hccd.obzuschreib?Txk[T_ja]:Txk[T_nein])+schwarz);
-	//// <<"rzf: "<<(int)rzf<<endl;
-	//// <<"obzuschreib: "<<(int)hccd.obzuschreib<<endl;
-	//// <<"kschreib: "<<(int)kschreib<<endl;
+	caus<<"rzf: "<<(int)rzf<<endl;
+	caus<<"obzuschreib: "<<(int)hccd.obzuschreib<<endl;
+	caus<<"kschreib: "<<(int)kschreib<<endl;
 	if (rzf||hccd.obzuschreib||kschreib) {
 		hLog(gruens+Txk[T_schreibe_Konfiguration]+schwarz);
 		opn.confschreib(akonfdt,ios::out,mpfad,0,obverb,oblog);
