@@ -1006,6 +1006,10 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Weitere Spool-Eintraege:","Further spool entries:"},
 	// T_sammlecapi
 	{"sammlecapi()","collectcapi()"},
+	// T_sammlefbox
+	{"sammlefbox()","collectfbox()"},
+	// T_bereinigefbox
+	{"bereinigefbox()","cleanfbox()"},
 	// T_bereinigecapi
 	{"bereinigecapi()","cleancapi()"},
 	// T_Zahl_der_ueberpruefen_Datenbankeintraege
@@ -1064,6 +1068,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Fehlermeldung beim Loeschversuch eines Hyla-Faxes mit `faxrm ","Error while trying to delete a hyla-fax with `faxrm "},
 	// T_capiausgeb
 	{"capiausgeb()","displaycapitries()"},
+	// T_fboxausgeb,
+	{"fboxausgeb()","displayfboxtries()"},
 	// T_Anwahlen
 	{" Anwahlen,"," tries,"},
 	// T_kommaDatei
@@ -2949,6 +2955,7 @@ void hhcl::pvirtmacherkl()
 		<<drot<<dbq<<blau<<Tx[T_Tabellen]<<drot<<touta<<blau<<"`,`"<<drot<<spooltab<<blau<<Tx[T_aein]<<schwarz;
 } // void hhcl::pvirtmacherkl //α
 //ω
+
 void hhcl::machopvzm()
 {
 	for(size_t i=0;i<zmVp.size();) {
@@ -2962,6 +2969,7 @@ void hhcl::machopvzm()
 	}
 }
 //α
+
 // aufgerufen in lauf
 void hhcl::virtMusterVorgb()
 {
@@ -2992,7 +3000,7 @@ void hhcl::virtMusterVorgb()
 void hhcl::pvirtvorzaehler()
 { //ω
 	if (obvc) dovc();
-} // void hhcl::virtvorzaehler() //α
+} // void hhcl::virtvorzaehler //α
 //ω
 
 void hhcl::zeigdienste()
@@ -3183,7 +3191,7 @@ void hhcl::pruefmodem()
 #endif
 	hLog(violetts+Txk[T_Ende]+Tx[T_pruefmodem]+schwarz);
 	// wvdialconf oder schneller: setserial -a /dev/tty*, mit baud_base: <!=0>  als Kriterium
-} // void hhcl::pruefmodem()
+} // void hhcl::pruefmodem
 
 //α
 // aufgerufen in lauf
@@ -3193,7 +3201,6 @@ void hhcl::pvirtvorrueckfragen()
 		if (obfa[2]) pruefmodem();
 		if (obfa[1]) pruefisdn();
 } // void hhcl::pvirtvorrueckfragen //α
-
 
 void hhcl::neurf()
 {
@@ -3206,6 +3213,7 @@ void hhcl::neurf()
 	}
 } // void hhcl::neurf
  //ω
+
 // aufgerufen in virtlieskonfein, pvirtnachvi, virtrueckfragen
 void hhcl::standardprio(const int obmitsetz)
 {
@@ -3509,6 +3517,7 @@ void hhcl::virtrueckfragen()
 } // void hhcl::virtrueckfragen
 //ω
 const string hhcl::initdhyladt{"/etc/init.d/hylafax"};
+
 // aufgerufen in: pruefhyla, main
 int hhcl::setzhylavz()
 {
@@ -3627,13 +3636,13 @@ int hhcl::setzhylavz()
 	xferfaxlog=varsphylavz+"/etc/xferfaxlog"; 
 	hempfavz=varsphylavz+"/" DPROG "arch";
 	return 0;
-} // int hhcl::setzhylavz()
+} // int hhcl::setzhylavz
 
 // in hliesconf() und hconfigtty()
 void hhcl::setzmodconfd()
 {
 	modconfdt=this->varsphylavz+"/etc/config"+"."+this->hmodem; 
-} // void hhcl::setzmodconfd()
+} // void hhcl::setzmodconfd
 
 
 // aufgerufen in: pruefhyla (2x)
@@ -3739,7 +3748,7 @@ int hhcl::hconfigtty()
 	} // 	if (hci.is_open())
 	hLog(violetts+Txk[T_Ende]+"hconfigtty()"+schwarz);
 	return ret;
-} // void hhcl::hconfigtty()
+} // void hhcl::hconfigtty
 
 // aufgerufen in faxemitH, pruefhyla
 void useruucp(const string& huser, const int obverb, const int oblog)
@@ -3773,7 +3782,7 @@ void hhcl::setzfaxgtpfad()
 		} // 		if (faxgtpfad.empty() || lstat(faxgtpfad.c_str(),&entryfaxgt))
 	} // 	if (lstat(faxgtpfad.c_str(),&entryfaxgt))
 	// violett<<"faxgtpfad 4: "<<faxgtpfad<<schwarz<<endl;
-} // void hhcl::setzfaxgtpfad()
+} // void hhcl::setzfaxgtpfad
 
 // aufgerufen in: pruefhyla
 // Dienste erstellen
@@ -3791,7 +3800,7 @@ int hhcl::hservice_faxq_hfaxd()
 	setzfaxgtpfad();
 	hylafehler+=!this->sfaxgetty->spruef("HylaFAX faxgetty for "+this->hmodem,0,meinname,faxgtpfad+" "+this->hmodem,"","",obverb,oblog,0);
 	return hylafehler;
-} // void hservice_faxq_hfaxd()
+} // void hservice_faxq_hfaxd
 
 // aufgerufen in: pruefhyla
 int hhcl::hconfig() const
@@ -3833,7 +3842,7 @@ int hhcl::hconfig() const
 	} //   if (conf.is_open())
 	hLog(violetts+Txk[T_Ende]+"hconfig()"+schwarz);
 	return erg;
-} // void hconfig(hhcl *hhip,int obverb, int oblog)
+} // void hconfig
 
 // aufgerufen in pruefhyla
 // hylafax konfigurieren 
@@ -4514,7 +4523,7 @@ void hhcl::dovh()
 	string erg;
 	viadd(&erg,&zeig,xferfaxlog,1,0,1);
 	vischluss(erg,zeig);
-} // void hhcl::dovh()
+} // void hhcl::dovh
 
 // aufgerufen in: main
 void hhcl::rufpruefsamba()
@@ -4578,7 +4587,7 @@ void hhcl::verzeichnisse()
 		fLog(Tx[T_Muster]+imus+": '"+blau+this->zmsp[imu]->muster+schwarz+"'",this->obverb>1,this->oblog);
 		fLog(Tx[T_Ziel]+imus+":   '"+blau+this->zmsp[imu]->ziel+schwarz+"'",this->obverb>1,this->oblog);
 	} //   for(uint imu=0;imu<this->zmzn;imu++)
-} // hhcl:: verzeichnisse()
+} // hhcl:: verzeichnisse
 
 // aufgerufen in: main
 const string& pruefspool(DB *My,const string& spooltab, const string& altspool, const int obverb, const int oblog, uchar direkt/*=0*/)
@@ -4595,10 +4604,11 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
 			Feld("wiemail","int","1","",Tx[T_wie_mailen],0,0,1,/*vdefa=*/"0"), // 1 = verschluesselte Mail, 2 = klare Mail
 			Feld("adressat","varchar","1","",Tx[T_Adressat],0,0,1),
 			Feld("pprio","int","2","",Tx[T_Prioritaet_aus_Dateinamen],0,0,1),
+			Feld("fbdials","int","10","",Tx[T_Zahl_der_bisherigen_Versuche_in_fbfax],0,0,1),
+			Feld("fboxstat","int","2","",Tx[T_capistat],0,0,1),
+			Feld("fbspooldt","varchar","1","",Tx[T_Pfad_zur_Spooldatei_in_fbfax],0,0,1),
 			Feld("capidials","int","10","",Tx[T_Zahl_der_bisherigen_Versuche_in_Capisuite],0,0,1),
 			Feld("capistat","int","2","",Tx[T_capistat],0,0,1),
-			Feld("fbdials","int","10","",Tx[T_Zahl_der_bisherigen_Versuche_in_fbfax],0,0,1),
-			Feld("fbspooldt","varchar","1","",Tx[T_Pfad_zur_Spooldatei_in_fbfax],0,0,1),
 			Feld("hyladials","int","10","",Tx[T_Zahl_der_bisherigen_Versuche_in_Hylafax],0,0,1),
 			Feld("capispooldt","varchar","1","",Tx[T_Spooldatei_in_Capisuite],0,0,1),
 			Feld("capispoolpfad","varchar","1","",Tx[T_Pfad_zur_Spooldatei_in_Capisuite_ohne_abschliessendes_Verzeichnistrennzeichen],0,0,1),
@@ -4632,7 +4642,7 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
 		} // 		if (tab->prueftab(&tab, aktc,obverb))
 	} // if (!direkt) 
 	return spooltab;
-} // const char* pruefspool(DB *My,const char* spooltab, int obverb, int oblog, uchar direkt=0)
+} // const char* pruefspool
 
 // aufgerufen in: main
 void pruefouttab(DB *My, const string& touta, const int obverb, const int oblog, const uchar direkt/*=0*/)
@@ -4680,7 +4690,7 @@ void pruefouttab(DB *My, const string& touta, const int obverb, const int oblog,
 			exit(schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+touta,1));
 		}
 	} // if (!direkt)
-} // int pruefouttab(DB *My, string touta, int obverb, int oblog, uchar direkt=0)
+} // int pruefouttab
 
 // aufgerufen in: main
 void pruefudoc(DB *My, const string& tudoc, const int obverb, const int oblog, const uchar direkt/*=0*/)
@@ -4701,9 +4711,9 @@ void pruefudoc(DB *My, const string& tudoc, const int obverb, const int oblog, c
 			exit(schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+tudoc,1));
 		}
 	} // if (!direkt)
-} // int pruefudoc(DB *My, string tudoc, int obverb, int oblog, uchar direkt=0)
+} // int pruefudoc
 
-// aufgerufen in: main
+// aufgerufen in: virtpruefweiteres
 void pruefinctab(DB *My, const string& tinca, const int obverb, const int oblog, const uchar direkt/*=0*/)
 {
 	fLog(violetts+Tx[T_pruefinca]+schwarz,obverb,oblog);
@@ -4747,7 +4757,7 @@ void pruefinctab(DB *My, const string& tinca, const int obverb, const int oblog,
 			exit(schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+tinca,1));
 		}
 	} // 	if (!direkt)
-} // int pruefinctab(DB *My, string tinca, int obverb, int oblog, uchar direkt=0)
+} // void pruefinctab
 
 
 //α
@@ -6266,9 +6276,7 @@ void hhcl::faxemitF(DB *My, const string& spooltab, const string& altspool, fsfc
 		string fbfax;
 		////    systemrueck(sudc+"sh -c 'which sendfax'",obverb,1,&rueck);
 		if (obprogda("fbfax",obverb,oblog,&fbfax)) {
-			caus<<"Stelle 1 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 			const string cmd{fbfax+" -stu -nr -dt \""+ff+"\" -an \""+fsfp->telnr+"\" 2>&1"};
-			caus<<"Stelle 2 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 			svec faxerg;
 			//// <<rot<<"Achtung: faxemith: "<<endl<<schwarz<<cmd<<endl;
 			if (!systemrueck(cmd,1,1,&faxerg,/*obsudc=*/0,0,wahr,Tx[T_FbfaxBefehl])) {
@@ -6276,9 +6284,7 @@ void hhcl::faxemitF(DB *My, const string& spooltab, const string& altspool, fsfc
 //				fsfp.fbsdt=*faxerg;
 				string fbsdt{faxerg[0]};
 				gtrim(&fbsdt);
-			caus<<"Stelle 3 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 				inDBf(My, spooltab, altspool,fbsdt,fsfp,aktc);
-			caus<<"Stelle 4 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 			}
 ////					const string cmd{"grep -l \""+ff+"\" $(sed -n '/wartevz/{s/.*\\=[[:space:]]*\\(.*\\)/\\1/;s/\"\\(.*\\)\"/\\1/p}' \""+verg[0]+"\")/*.vw"};
 #ifdef umstaendlich
@@ -7067,7 +7073,6 @@ void hhcl::wegfaxen(const size_t aktc)
 		} // 		if (wasichbin)
 		// 1. warte auf faxemitC, faxemitH, faxemitF
 		if (!nursend) wartaufpids(&pidw,0,obverb,oblog,Tx[T_in_wegfaxen]);
-			caus<<"Stelle 5 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 		// nur wegfaxen mit abgeschlossenen Unterprogrammen
 #ifdef immerwart
 		ulong kaufrufe{0};
@@ -7089,7 +7094,6 @@ void hhcl::wegfaxen(const size_t aktc)
 			+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obfa[1]?Txk[T_ja]:Txk[T_nein])+": "
 			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obfa[2]?Txk[T_ja]:Txk[T_nein]));
 	obverb=altobverb;
-			caus<<"Stelle 50 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 } // void hhcl::wegfaxen
 
 
@@ -7779,6 +7783,12 @@ void hhcl::bestimmtage()
 	} // 		if (monatsaufr==3) else if else if
 } // void hhcl::bestimmtage()
 
+void hhcl::bereinigefbox(const size_t aktc)
+{
+	hLog(violetts+Tx[T_bereinigefbox]+schwarz);
+	// ...
+}
+
 // in sammlecapi
 void hhcl::bereinigecapi(const size_t aktc)
 {
@@ -7827,6 +7837,18 @@ void hhcl::bereinigecapi(const size_t aktc)
 	} // for(size_t i=0;i<qrueck.size();i++) 
 	hLog(violetts+Txk[T_Ende]+Tx[T_bereinigecapi]+schwarz);
 } // void hhcl::bereinigecapi
+
+// aufgerufen in aenderefax, zeigweitere
+void hhcl::sammlefbox(vector<fsfcl> *fsfvp,const size_t aktc)
+{
+	hLog(violetts+Tx[T_sammlefbox]+schwarz);
+	struct stat entryvz{0};
+	if (!lstat(fbwvz.c_str(),&entryvz)) {
+		if (!kez&& !bvz && !anhl && !tulista && !tulistf && !tulisti && !tulistw && suchstr.empty())
+			bereinigefbox(aktc);
+		// ...
+	}
+}
 
 // aufgerufen in aenderefax, zeigweitere
 void hhcl::sammlecapi(vector<fsfcl> *fsfvp,const size_t aktc)
@@ -8125,7 +8147,7 @@ void hhcl::sammlehyla(vector<fsfcl> *fsfvp,const size_t aktc)
 
 
 // Zeige Dateien im Spool an, die nicht in der Spool-Tabelle stehen
-// aufgerufen in: main
+// aufgerufen in: pvirtvorpruefggfmehrfach
 void hhcl::zeigweitere()
 {
 	hLog(violetts+Tx[T_zeigweitere]+schwarz);
@@ -8133,6 +8155,17 @@ void hhcl::zeigweitere()
 	static int obtitel{0};
 	stringstream ausg; //      ausg.str(std::string()); ausg.clear();
 	//// <<"Korrektur wird durchgefuehrt ueber Tage: "<<tage<<endl;
+	if (obfa[0]) {
+		vector<fsfcl> fsfcv;
+		sammlefbox(&fsfcv,aktc);
+		for(size_t i=0;i<fsfcv.size();i++) {
+			if (!obtitel) {
+				ausg<<rot<<Tx[T_Weitere_Spool_Eintraege]<<schwarz;
+				obtitel=1;
+			} // 			if (!obtitel) 
+			fsfcv[i].fboxausgeb(this, &ausg, 0, obverb, oblog, ++faxord);
+		} //     for(size_t i=0;i<fsfcv.size();i++)
+	} // if (obcapi)
 	if (obfa[1]) {
 		vector<fsfcl> fsfcv;
 		sammlecapi(&fsfcv,aktc);
@@ -8157,7 +8190,7 @@ void hhcl::zeigweitere()
 	} // if (obhyla) 
 	if (obtitel) fLog(ausg.str(),1,oblog);
 	hLog(violetts+Txk[T_Ende]+Tx[T_zeigweitere]+schwarz);
-} // void hhcl::zeigweitere()
+} // void hhcl::zeigweitere
 
 
 // aufgerufen in: aenderefax, untersuchespool, capiausgeb, setzhylastat, hylaausgeb
@@ -8315,6 +8348,24 @@ int fsfcl::loeschehyla(hhcl *const hhip, const int obverb, const int oblog)
 	return 1;
 } // int fsfcl::loeschehyla()
 
+void fsfcl::fboxausgeb(hhcl *const hhip, stringstream *ausgp, uchar fuerlog, int obverb, int oblog, ulong faxord)
+{
+	fLog(violetts+Tx[T_fboxausgeb]+schwarz+"  fboxstat: "+blau+FxStatS(&fboxstat)+schwarz,obverb,oblog);
+	if (!fuerlog) *ausgp<<blau<<endl;
+	if (faxord) *ausgp<<faxord<<")";
+	else *ausgp<<"  ";
+	*ausgp<<"Fbox: "<<schwarz;
+	*ausgp<<(fboxstat==fehlend?hgrau:(fboxstat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<setw(7)<<FxStatS(&fboxstat)<<schwarz;
+	if (fboxstat!=fehlend) {
+		*ausgp<<","<<blau<<setw(3)<<fbdials<<"/"<<fbmaxdials<<schwarz<<(fboxstat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
+		*ausgp<<blau<<ztacl(fbzp,"%d.%m.%y %T")<<schwarz;
+		*ausgp<<",T.:"<<blau<<setw(12)<<telnr<<schwarz; 
+		*ausgp<<Tx[T_kommaDatei]<<rot<<hhip->fbwvz+vtz+fbsdt+".tif"/*sendqgespfad*/<<schwarz;
+		*ausgp<<Tx[T_bzw]<<blau<<"*.vw"<<schwarz;
+		if (fbdials.empty()) fbdials="0";
+	} // if (fboxstat!=fehlend) 
+}
+
 // ermittelt die letzten Sendedaten zu sendqgespfad mit fsf.capistat, schreibt die Zahl der Versuche in ctries zurueck und ergaenzt den 
 // Anzeigezeiger ausgp
 // aufgerufen in: aenderefax, untersuchespool, zeigweitere
@@ -8343,7 +8394,7 @@ void fsfcl::capiausgeb(hhcl *const hhip, stringstream *ausgp, const string& maxc
 		//// RS rmod(My,string("update spool set capidials=")+cccnfA[0].val+" where id = "+cjj(cerg,0),ZDB);
 		*ausgp<<","<<blau<<setw(3)<<ctries<<"/"<<maxcdials<<schwarz<<(capistat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
 		////                      if (versuzahl>12) ausg<<"zu spaet, ";
-		struct tm tm={0};
+		struct tm tm{0};
 		for(unsigned im=0;im<hhip->tmmoelen;im++) {
 			if (strptime(starttime.c_str(), tmmoegl[im], &tm)) break;
 		}
@@ -8356,7 +8407,44 @@ void fsfcl::capiausgeb(hhcl *const hhip, stringstream *ausgp, const string& maxc
 		*ausgp<<Tx[T_bzw]<<blau<<"*.txt"<<schwarz;
 		if (ctries.empty()) ctries="0";
 	} // if (capistat!=fehlend) 
-} // void fsfcl::capiausgeb(hhcl *const hhip, stringstream *ausgp, int obverb, string *ctriesp, int oblog,ulong faxord)
+} // void fsfcl::capiausgeb
+
+// aufgerufen in: untersuchespool, aenderefax
+void fsfcl::setzfboxstat(hhcl *hhip, struct stat *entrysendp)
+{
+	int dateifehlt{0};
+	if(fbsdt.empty()) {
+		fboxstat=fehlend;
+	} else {
+		sendqgespfad=hhip->fbwvz+vtz+fbsdt+".vw";
+		if ((dateifehlt=lstat(sendqgespfad.c_str(),entrysendp))) {
+				// gesandte und gescheiterte Faxe wurden von capisuite entsprechend umbenannt
+				for(fboxstat=gesandt;fboxstat<=gescheitert;fboxstat=static_cast<FxStat>(fboxstat+1)) { 
+					// entspr. gefaxte/gescheiterte Datei in capisuite
+					sendqgespfad=(fboxstat==gescheitert?hhip->fbgvz:hhip->fbnvz)+vtz+fbsdt+".vw";
+					fLog(string("fboxstat: ")+ltoan((int)fboxstat)+" "+blau+sendqgespfad+schwarz,1,hhip->oblog);
+					if (!(dateifehlt=lstat((sendqgespfad.c_str()), entrysendp))) break; 
+				}  //         for(fboxstat=gesandt;fboxstat<=gescheitert;fboxstat=static_cast<FxStat>(fboxstat+1))
+				// hier koennte fboxstat auch fehlend sein
+		}
+		if (!dateifehlt) {	
+			mdatei f(sendqgespfad.c_str(),ios::in|ios::binary); 
+			if (f.is_open()) {
+				string zeile;
+				if (getline(f,zeile)) fbzp=atol(zeile.c_str()); 
+				if (getline(f,zeile)) {} // restliche Minutenabstaende
+				if (getline(f,zeile)) {} // telnr
+				if (getline(f,zeile)) {} // Dateiname
+				if (getline(f,zeile)) if (size_t pos{zeile.find('/')}) {fbdials=zeile.substr(0,pos); fbmaxdials=zeile.substr(pos+1);}
+				f.close();
+				if (fboxstat!=gesandt && fboxstat!=gescheitert) fboxstat=wartend;
+				// fehlt: verarb
+			} else {
+				fboxstat=fehlend;
+			} // 			if (f.is_open()) else
+		}  //       if (!lstat(sendqgespfad.c_str(),entrysendp)) else
+	} // 	if(fbsdt.empty()) else
+} // void fsfcl::setzfboxstat
 
 // aufgerufen in: untersuchespool, aenderefax
 void fsfcl::setzcapistat(hhcl *hhip, struct stat *entrysendp)
@@ -8552,16 +8640,37 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 					if (mitupd) {
 					}
 				}
+				struct stat entrysend{0};
 				// a) ueber fbfax
 				if (obfa[0] && fsf.mailges=="0") {
 					if (faxord==1) this->prueffbox(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
+//					fsf.ausgeb();
+					fsf.setzfboxstat(this, &entrysend);
+					fsf.fboxausgeb(this,&ausg, 0, obverb, oblog);
+					if (mitupd) {
+						vector<instyp> einf; // fuer alle Datenbankeinfuegungen
+						const string bedingung{"id="+fsf.id};
+						const string bedc{"id="+fsf.idalt};
+						if (fsf.fboxstat==wartend || fsf.fboxstat==gescheitert) {
+							einf.push_back(/*2*/instyp(My->DBS,"fbdials",&fsf.fbdials));
+							einf.push_back(/*2*/instyp(My->DBS,"fboxstat",fsf.fboxstat));
+							if (!fsf.idalt.empty()) {
+								RS rupd(My,altspool); 
+								rupd.tbupd(einf,ZDB,bedc,aktc,/*asy=*/0);
+							}
+							RS rupd(My,spooltab); 
+							rupd.tbupd(einf,ZDB,bedingung,aktc,/*asy=*/0);
+						} else if (fsf.fboxstat==gesandt) {
+							// ... und ggf. in hylafax loeschen
+							fsf.loeschehyla(this,obverb, oblog);
+						} else if (fsf.fboxstat==fehlend) {
+						} //             if (fsf.capistat==wartend)  else else else 
+					}
 				}
 
 				// b) ueber capisuite
 				// den Status in Capi der aus spool geholten Zeile untersuchen, dort aktualisieren
 				//   und ggf. in hylafax stoppen
-				struct stat entrysend{0};
-			caus<<"Stelle 57 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 				if (obfa[1] && fsf.mailges=="0") {
 					if (faxord==1) this->pruefcapi(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
 					fsf.setzcapistat(this, &entrysend);
@@ -8587,7 +8696,6 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 						} //             if (fsf.capistat==wartend)  else else else 
 					} // if (mitupd) 
 				} // if (obcapi) 
-			caus<<"Stelle 58 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 
 				// c) ueber hylafax
 				if (obfa[2] && fsf.mailges=="0") {
@@ -8600,7 +8708,6 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 					//// <<"vor hylaausgeb 2, fsf.hstate: '"<<fsf.hstate<<"'"<<endl;
 					fsf.hylaausgeb(&ausg, this/*, obsfehlt*/, 0, obverb, 0, oblog);
 					//          if (!obsfehlt) KLA // Protokolldatei vorhanden 12.10.16 sollte jetzt auch mit xferfax gehen
-			caus<<"Stelle 55 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 					if (mitupd) {
 						vector<instyp> einf; // fuer alle Datenbankeinfuegungen
 						einf.push_back(/*2*/instyp(My->DBS,"hylastate",&fsf.hstate));
@@ -8627,10 +8734,10 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 						RS rupd(My,spooltab); 
 						rupd.tbupd(einf,ZDB,bedingung,aktc,/*asy=*/0);
 					} // if (mitupd) 
-			caus<<"Stelle 56 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
+//			caus<<"Stelle 56 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 				} // if (obhyla)
 				////        KLZ // if (!obsfehlt) ... else
-
+        if (0) {
 				if (obfa[0] || obfa[1] || obfa[2] || fsf.mailges=="1") {
 					// im Erfolgsfall zugrundeliegende Dateien verschieben
 					if (fsf.capistat==gesandt || fsf.hylastat==gesandt || fsf.mailges!="0") {
@@ -8708,11 +8815,11 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 						} // if (allegesch || (nimmer && !ogibts[0]))
 					} // 						if (mitupd)
 				} // if (obfa[1] || obfa[2] || fsf.mailges=="1")
+				} // if (0)
 				fLog(ausg.str(),1,oblog);
 			} // if (*(*cerg+0)) if (*(*cerg+3))
 		} // while (cerg=rs.HolZeile(),cerg?*cerg:0) 
 	} // if (!rs.obqueryfehler) 
-			caus<<"Stelle 60 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 	fLog(Tx[T_Zahl_der_ueberpruefen_Datenbankeintraege]+drots+ltoan(dbzahl)+schwarz,1,oblog);
 	fLog(Tx[T_davon_gescheiterte_Faxe]+drots+ltoan(gzahl)+schwarz,1,oblog);
 	fLog(Tx[T_davon_erfolgreiche_Faxe]+drots+ltoan(ezahl)+schwarz,1,oblog);
@@ -9122,7 +9229,7 @@ void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 						if (*(*cerg+1)) fsf.telnr=*(*cerg+1);    // tel
 						if (*(*cerg+2)) fsf.original=*(*cerg+2); // original
 						if (*(*cerg+3)) fsf.xtts=atol(*(*cerg+3)); // Datum (aus xferfaxlog, tts
-						if (*(*cerg+4)) fsf.hdd=*(*cerg+4);
+						if (*(*cerg+4)) fsf.hdd=*(*cerg+4); // hdateidatum
 						if (*(*cerg+5)) fsf.idudoc=*(*cerg+5);
 						if (fsf.idudoc.empty()) fsf.idudoc="0";
 						if (*(*cerg+6)) fsf.pseiten=atol(*(*cerg+6));
@@ -9398,9 +9505,7 @@ void hhcl::pvirtfuehraus() //α
 							inspoolschreiben(/*aktc=*/3);
 							wegfaxen(/*aktc=*/3);
 							// Dateien in Spool-Tabelle nach inzwischen Verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
-			caus<<"Stelle 5b "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 							untersuchespool(/*mitupd=*/1,/*aktc=*/3);
-			caus<<"Stelle 6 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 							if (obfa[1] || obfa[2]) {
 								bestimmtage();
 								if (obfa[1]) { if (tage) korrigierecapi(tage,9); } // 					if (obfa[1])
@@ -9503,7 +9608,6 @@ void hhcl::pvirtfuehraus() //α
 			} // if (loef || loew || loea) else if else if
 		} // 		if (!keineverarbeitung)
 	} // if (kez) else else else
-			caus<<"Stelle 7 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 } // void hhcl::pvirtfuehraus  //α
 
 // aufgerufen in lauf

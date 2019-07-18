@@ -483,6 +483,8 @@ enum T_
 	T_zeigweitere,
 	T_Weitere_Spool_Eintraege,
 	T_sammlecapi,
+	T_sammlefbox,
+	T_bereinigefbox,
 	T_bereinigecapi,
 	T_Zahl_der_ueberpruefen_Datenbankeintraege,
 	T_davon_gescheiterte_Faxe,
@@ -512,6 +514,7 @@ enum T_
 	T_erfolgreich_geloescht_fax_mit,
 	T_Fehlermeldung_beim_Loeschversuch_eines_Hyla_Faxes_mit_faxrm,
 	T_capiausgeb,
+	T_fboxausgeb,
 	T_Anwahlen,
 	T_kommaDatei,
 	T_bzw,
@@ -717,6 +720,12 @@ struct fxfcl // Faxfile
 
 struct fsfcl : public fxfcl // Faxsendfile
 {
+	  void ausgeb() {
+			cout<<"id : "<<blau<<id<<schwarz<<", telnr: "<<blau<<telnr<<schwarz<<", mailges: "<<blau<<mailges<<schwarz<<", original: "<<blau<<original
+				<<schwarz<<", origvu: "<<blau<<origvu<<schwarz<<", fobfbox: "<<blau<<(int)fobfbox<<schwarz<<", fobcapi: "<<blau<<(int)fobcapi<<schwarz<<", fobhyla: "<<
+				blau<<(int)fobhyla<<schwarz<<", fobkmail: "<<blau<<(int)fobkmail<<schwarz<<", fobvmail: "<<blau<<(int)fobvmail<<schwarz<<", idalt: "<<blau<<idalt<<
+				schwarz<<", fbdials: "<<blau<<fbdials<<schwarz<<", fbsdt: "<<blau<<fbsdt<<schwarz<<endl;
+		}
     string id;   // id in spooltab
     string telnr;    // Telnr. des Adressaten
     string capisd; // capispooldatei
@@ -725,11 +734,11 @@ struct fsfcl : public fxfcl // Faxsendfile
 		string hqdt; // z.B. /var/spool/hylafax/doneq/q9902
     int hdialsn; // hyladials
 		string hpages; // Seitenzahl
-    uchar fobfbox; // ob es jetzt mit Fritzbox weggefaxt werden muss
-    uchar fobcapi; // ob es jetzt mit Capi weggefaxt werden muss
-    uchar fobhyla; // ob es jetzt mit Hyla weggefaxt werden muss
-    uchar fobkmail; // ob es jetzt mit klarmail weggeschickt werden muss
-    uchar fobvmail; // ob es jetzt mit vschlmail weggeschickt werden muss
+    uchar fobfbox{0}; // ob es jetzt mit Fritzbox weggefaxt werden muss
+    uchar fobcapi{0}; // ob es jetzt mit Capi weggefaxt werden muss
+    uchar fobhyla{0}; // ob es jetzt mit Hyla weggefaxt werden muss
+    uchar fobkmail{0}; // ob es jetzt mit klarmail weggeschickt werden muss
+    uchar fobvmail{0}; // ob es jetzt mit vschlmail weggeschickt werden muss
     string adressat; // Name des Adressaten aus Faxdatei
 		string idalt; // id in altspool
 		string mailges; // ob mail gesandt
@@ -745,17 +754,20 @@ struct fsfcl : public fxfcl // Faxsendfile
     string hstate="0"; // Statuszahl ("state" in man sendq)
     string hstatus; // Textbeschreibung des letztes Fehlschlags
     string hstatuscode; // in xferfaxlog nicht gefunden
-		time_t xtts=0;
+		time_t xtts=0;  // Datum aus xferfaxlog
 		time_t killtime=0;
 		string number;   // Telefonnummer
     string hdials;   // hyladials
 		string maxdials; // maxdials (hylafax)
     string hdd;      // hdateidatum
 		string fbdials;  // fbdials
+	  string fbmaxdials;// maxdials (fbox)
 		string fbsdt;    // fbspooldt
+		time_t fbzp;     // fbzeitpunkt
     string sendqgespfad; // kann fuer capi oder hyla verwendet werden
     string hgerg;  // hyla_gescheitert_erg
     int hversuzahl;
+    FxStat fboxstat=init;// 1=wartend, 2=gesandt, 3=gescheitert, 4=fehlend (in spool keine Capi-Datei eingetragen oder die eingetragene gibts nicht)
     FxStat capistat=init;// 1=wartend, 2=gesandt, 3=gescheitert, 4=fehlend (in spool keine Capi-Datei eingetragen oder die eingetragene gibts nicht)
     FxStat hylastat=init;// 1=wartend, 2=gesandt, 3=gescheitert, 4=fehlend (in spool keine hyla-Datei eingetragen oder die eingetragene gibts nicht)
 		int wiemail{0};
@@ -774,7 +786,9 @@ struct fsfcl : public fxfcl // Faxsendfile
     /*4*/fsfcl(const string& hylanr): hylanr(hylanr) {}
     /*5*/fsfcl(const string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
 		/*6*/fsfcl(const string& original, const string& origvu, uchar cnr): original(original), origvu(origvu) {}
+    void setzfboxstat(hhcl *hhip, struct stat *entrysendp);
     void setzcapistat(hhcl *hhip, struct stat *entrysendp);
+    void fboxausgeb(hhcl *const hhip, stringstream *ausgp, uchar fuerlog=0, int obverb=0, int oblog=0,ulong faxord=0);
     void capiausgeb(hhcl *const hhip, stringstream *ausgp, const string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,ulong faxord=0);
     void hylaausgeb(stringstream *ausgp, hhcl *hhip/*, int obsfehlt*/, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
     int holcapiprot(int obverb);
@@ -995,7 +1009,9 @@ class hhcl:public dhcl
 		void untersuchespool(uchar mitupd=1,const size_t aktc=3); // faxart 0=capi, 1=hyla 
 		void bestimmtage();
     void zeigweitere();
+    void sammlefbox(vector<fsfcl> *fsfvp,const size_t aktc);
     void sammlecapi(vector<fsfcl> *fsfvp,const size_t aktc);
+    void bereinigefbox(const size_t aktc);
     void bereinigecapi(const size_t aktc);
     void sammlehyla(vector<fsfcl> *fsfvp,const size_t aktc);
 		void setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr,int *obsfehltp=0, 
