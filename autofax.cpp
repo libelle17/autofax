@@ -2304,7 +2304,7 @@ int hhcl::prueffbox()
 	hLog(violetts+Tx[T_prueffbox]+schwarz+" obfbox: "+(obfa[0]?"1":"0"));
 	if (obfa[0]) {
 	}
-	return 1;
+	return 0;
 } // int hhcl::prueffbox
 
 // aufgerufen in: untersuchespool, dovc, pvirtfuehraus
@@ -7543,7 +7543,7 @@ void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *a
 			} // 			if (vfehler)
 			// fdn.erase(fit);
 			if (fit==fdn.begin()) break;
-		} //  if (0)
+		} //  		for(fit=fdn.end();;)
 	} // 	if (fdn.size())
 } // void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *ausgp)
 
@@ -8737,84 +8737,84 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 //			caus<<"Stelle 56 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
 				} // if (obhyla)
 				////        KLZ // if (!obsfehlt) ... else
-        if (0) {
-				if (obfa[0] || obfa[1] || obfa[2] || fsf.mailges=="1") {
-					// im Erfolgsfall zugrundeliegende Dateien verschieben
-					if (fsf.capistat==gesandt || fsf.hylastat==gesandt || fsf.mailges!="0") {
-						(ezahl)++;
+				if (1) {
+					if (obfa[0] || obfa[1] || obfa[2] || fsf.mailges=="1") {
+						// im Erfolgsfall zugrundeliegende Dateien verschieben
+						if (fsf.capistat==gesandt || fsf.hylastat==gesandt || fsf.mailges!="0") {
+							(ezahl)++;
 
-						if (mitupd) {
-							// Fax gelungen, Dateien in warteauffax nach zielmuster verschieben bzw. loeschen ...
+							if (mitupd) {
+								// Fax gelungen, Dateien in warteauffax nach zielmuster verschieben bzw. loeschen ...
+								for(unsigned iru=0;iru<2;iru++) {
+									const string * const datei{iru?&fsf.origvu:&fsf.original};
+									if (!datei->empty()) {
+										const string zuloe{wvz+vtz+*datei};
+										if (gleichziel) { 
+											tuloeschen(zuloe,cuser,obverb,oblog);
+										} else {
+											uint vfehler{0};
+											verschiebe<vector<shared_ptr<zielmustercl>>>(zuloe, zmsp, cuser,&vfehler, /*wieweiterzaehl=*/1, obverb, oblog);
+										} // if (gleichziel) else 
+									} // if (!datei->empty()) 
+								} // for(unsigned iru=0;iru<2;iru++) 
+							} // if (mitupd)
+						} else if ((!obfa[2] && fsf.capistat==gescheitert) || (!obfa[1] && fsf.hylastat==gescheitert) || 
+								(fsf.capistat==gescheitert && fsf.hylastat==gescheitert)) {
+							(gzahl)++; 
+						} else if ((!obfa[2] && fsf.capistat==fehlend) || (!obfa[1] && fsf.hylastat==fehlend) || 
+								(fsf.capistat==fehlend && fsf.hylastat==fehlend)) {
+							(fzahl)++;
+						} else if (fsf.capistat==wartend || (fsf.hylastat>static_cast<FxStat>(gestrichen)&&fsf.hylastat<=static_cast<FxStat>(verarb))) {
+							(wzahl)++;
+						} //           if (fsf.capistat==gesandt || fsf.hylastat==gesandt) else if ...
+						// Aktionen, wenn in beiden gescheitert oder fehlend
+						if (obverb>0 && fsf.mailges=="0") {
+							hLog(violetts+"Capistat: "+schwarz+FxStatS(&fsf.capistat)+violett+", Hylastat: "+schwarz+FxStatS(&fsf.hylastat));
+						} //           if (obverb>0)
+						// die Flags aller aktivierten Faxwege stehen auf gescheitert
+						const uchar allegesch{(obfa[1]||obfa[2]) && ((!obfa[1] || fsf.capistat==gescheitert) && (!obfa[2] || fsf.hylastat==gescheitert)) && fsf.mailges=="0"};
+						////          if (obcapi && obhyla && fsf.capistat==gescheitert && maxcapiv>=maxcdials) allegesch=1;
+						////          else if (obcapi && obhyla && fsf.hylastat==gescheitert && maxhylav>=maxhdials) allegesch=1;
+						// die Flags aller aktivierten Faxwege stehen auf gescheitert oder fehlend
+						const uchar nimmer{fsf.mailges=="0"&&((!obfa[1] || fsf.capistat==fehlend || fsf.capistat==gescheitert) && 
+								(!obfa[2] || fsf.hylastat==fehlend || fsf.hylastat==gescheitert))};
+						//// <<rot<<"\nfsf.capistat: "<<violett<<fsf.capistat<<rot<<" fsf.hylastat: "<<violett<<fsf.hylastat<<rot<<" allegesch: "<<violett<<(int)allegesch<<rot<<" nimmer: "<<violett<<(int)nimmer<<schwarz<<endl;
+						uchar ogibts[2]{0};
+						if (nimmer) {
 							for(unsigned iru=0;iru<2;iru++) {
-								const string * const datei{iru?&fsf.origvu:&fsf.original};
-								if (!datei->empty()) {
-									const string zuloe{wvz+vtz+*datei};
-									if (gleichziel) { 
-										tuloeschen(zuloe,cuser,obverb,oblog);
-									} else {
-										uint vfehler{0};
-										verschiebe<vector<shared_ptr<zielmustercl>>>(zuloe, zmsp, cuser,&vfehler, /*wieweiterzaehl=*/1, obverb, oblog);
-									} // if (gleichziel) else 
-								} // if (!datei->empty()) 
-							} // for(unsigned iru=0;iru<2;iru++) 
-						} // if (mitupd)
-					} else if ((!obfa[2] && fsf.capistat==gescheitert) || (!obfa[1] && fsf.hylastat==gescheitert) || 
-							(fsf.capistat==gescheitert && fsf.hylastat==gescheitert)) {
-						(gzahl)++; 
-					} else if ((!obfa[2] && fsf.capistat==fehlend) || (!obfa[1] && fsf.hylastat==fehlend) || 
-							(fsf.capistat==fehlend && fsf.hylastat==fehlend)) {
-						(fzahl)++;
-					} else if (fsf.capistat==wartend || (fsf.hylastat>static_cast<FxStat>(gestrichen)&&fsf.hylastat<=static_cast<FxStat>(verarb))) {
-						(wzahl)++;
-					} //           if (fsf.capistat==gesandt || fsf.hylastat==gesandt) else if ...
-					// Aktionen, wenn in beiden gescheitert oder fehlend
-					if (obverb>0 && fsf.mailges=="0") {
-						hLog(violetts+"Capistat: "+schwarz+FxStatS(&fsf.capistat)+violett+", Hylastat: "+schwarz+FxStatS(&fsf.hylastat));
-					} //           if (obverb>0)
-					// die Flags aller aktivierten Faxwege stehen auf gescheitert
-					const uchar allegesch{(obfa[1]||obfa[2]) && ((!obfa[1] || fsf.capistat==gescheitert) && (!obfa[2] || fsf.hylastat==gescheitert)) && fsf.mailges=="0"};
-					////          if (obcapi && obhyla && fsf.capistat==gescheitert && maxcapiv>=maxcdials) allegesch=1;
-					////          else if (obcapi && obhyla && fsf.hylastat==gescheitert && maxhylav>=maxhdials) allegesch=1;
-					// die Flags aller aktivierten Faxwege stehen auf gescheitert oder fehlend
-					const uchar nimmer{fsf.mailges=="0"&&((!obfa[1] || fsf.capistat==fehlend || fsf.capistat==gescheitert) && 
-							(!obfa[2] || fsf.hylastat==fehlend || fsf.hylastat==gescheitert))};
-					//// <<rot<<"\nfsf.capistat: "<<violett<<fsf.capistat<<rot<<" fsf.hylastat: "<<violett<<fsf.hylastat<<rot<<" allegesch: "<<violett<<(int)allegesch<<rot<<" nimmer: "<<violett<<(int)nimmer<<schwarz<<endl;
-					uchar ogibts[2]{0};
-					if (nimmer) {
-						for(unsigned iru=0;iru<2;iru++) {
-							struct stat ostat{0};
-							ogibts[iru]=!lstat((wvz+vtz+(iru?fsf.origvu:fsf.original)).c_str(),&ostat);
-							hLog(blaus+"odatei["+(iru?"1":"0")+"]: "+(iru?fsf.origvu:fsf.original));
-							hLog(blaus+"ogibts["+(iru?"1":"0")+"]: "+(ogibts[iru]?"1":"0"));
-						} // for(unsigned iru=0
-					} // if (nimmer)
-					if (mitupd) {
-						if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) ||fsf.mailges=="1") {
-							uchar geloescht{0};
-							/*//
-							// <<"\n"<<gruen<<"gesandt: "<<schwarz<<(int)gesandt<<endl;
-							// <<gruen<<"gescheitert: "<<schwarz<<(int)gescheitert<<endl;
-							// <<gruen<<"fehlend: "<<schwarz<<(int)fehlend<<endl;
-							// <<gruen<<"allegesch: "<<schwarz<<(int)allegesch<<endl;
-							// <<gruen<<"nimmer: "<<schwarz<<(int)nimmer<<endl;
-							// <<gruen<<"fsf.capistat: "<<schwarz<<(int)fsf.capistat<<endl;
-							// <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
-							// <<"obfa[1]: "<<(int)obfa[1]<<endl;
-							// <<"obfa[2]: "<<(int)obfa[2]<<endl;
-							// <<"fsf.capisd: '"<<fsf.capisd<<"'"<<endl;
-							// <<gruen<<"fsf.capisd.empty(): "<<schwarz<<(int)fsf.capisd.empty()<<endl;
-							 */
-							fsf.archiviere(My,this,&entrysend,allegesch||nimmer,
-									fsf.mailges!="0"?kmail:fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?hyla:capi,
-									&geloescht, 8, obverb, oblog);
-						} //           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) )
-						// wenn alle aktivierten Faxwege auf gescheitert oder fehlend stehen oder die Quelldatei fehlt ...
-						if (allegesch || (nimmer && !ogibts[0])) {
-							// Fax gescheitert, Dateien von warteauffax nach nichtgefaxt verschieben
-							fsf.scheitere(wvz,ngvz,cuser,&zmsp[0]->ziel,obverb,oblog);
-						} // if (allegesch || (nimmer && !ogibts[0]))
-					} // 						if (mitupd)
-				} // if (obfa[1] || obfa[2] || fsf.mailges=="1")
+								struct stat ostat{0};
+								ogibts[iru]=!lstat((wvz+vtz+(iru?fsf.origvu:fsf.original)).c_str(),&ostat);
+								hLog(blaus+"odatei["+(iru?"1":"0")+"]: "+(iru?fsf.origvu:fsf.original));
+								hLog(blaus+"ogibts["+(iru?"1":"0")+"]: "+(ogibts[iru]?"1":"0"));
+							} // for(unsigned iru=0
+						} // if (nimmer)
+						if (mitupd) {
+							if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) ||fsf.mailges=="1") {
+								uchar geloescht{0};
+								/*//
+								// <<"\n"<<gruen<<"gesandt: "<<schwarz<<(int)gesandt<<endl;
+								// <<gruen<<"gescheitert: "<<schwarz<<(int)gescheitert<<endl;
+								// <<gruen<<"fehlend: "<<schwarz<<(int)fehlend<<endl;
+								// <<gruen<<"allegesch: "<<schwarz<<(int)allegesch<<endl;
+								// <<gruen<<"nimmer: "<<schwarz<<(int)nimmer<<endl;
+								// <<gruen<<"fsf.capistat: "<<schwarz<<(int)fsf.capistat<<endl;
+								// <<gruen<<"fsf.hylastat: "<<schwarz<<(int)fsf.hylastat<<endl;
+								// <<"obfa[1]: "<<(int)obfa[1]<<endl;
+								// <<"obfa[2]: "<<(int)obfa[2]<<endl;
+								// <<"fsf.capisd: '"<<fsf.capisd<<"'"<<endl;
+								// <<gruen<<"fsf.capisd.empty(): "<<schwarz<<(int)fsf.capisd.empty()<<endl;
+								 */
+								fsf.archiviere(My,this,&entrysend,allegesch||nimmer,
+										fsf.mailges!="0"?kmail:fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?hyla:capi,
+										&geloescht, 8, obverb, oblog);
+							} //           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) )
+							// wenn alle aktivierten Faxwege auf gescheitert oder fehlend stehen oder die Quelldatei fehlt ...
+							if (allegesch || (nimmer && !ogibts[0])) {
+								// Fax gescheitert, Dateien von warteauffax nach nichtgefaxt verschieben
+								fsf.scheitere(wvz,ngvz,cuser,&zmsp[0]->ziel,obverb,oblog);
+							} // if (allegesch || (nimmer && !ogibts[0]))
+						} // 						if (mitupd)
+					} // if (obfa[1] || obfa[2] || fsf.mailges=="1")
 				} // if (0)
 				fLog(ausg.str(),1,oblog);
 			} // if (*(*cerg+0)) if (*(*cerg+3))
