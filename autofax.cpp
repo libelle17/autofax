@@ -2307,8 +2307,9 @@ int hhcl::prueffbox()
 {
 	hLog(violetts+Tx[T_prueffbox]+schwarz+" obfbox: "+(obfa[0]?"1":"0"));
 	if (obfa[0]) {
+		// ...
 	}
-	return 0;
+	return 1;
 } // int hhcl::prueffbox
 
 // aufgerufen in: untersuchespool, dovc, pvirtfuehraus
@@ -6936,6 +6937,7 @@ void hhcl::wegfaxen(const size_t aktc)
 							 obfa0{ltoan(obfa[0])},
 							 obfa1{ltoan(obfa[1])},
 							 obfa2{ltoan(obfa[2])};
+
 	RS r0(My,"SELECT s.id p0, s.origvu p1, s.original p2, s.telnr p3, s.pprio p4, s.capispooldt p5, s.capidials p6, "
 			"s.hylanr p7, s.hyladials p8, \n"
 
@@ -7055,16 +7057,17 @@ void hhcl::wegfaxen(const size_t aktc)
 			// hier Fork zu Capi, Hyla, und Fritz nicht der Hauptzweig
 			for(unsigned i=0;i<fsfv.size();i++) {
 				hLog(" i: "+blaus+ltoan(i)+schwarz+Tx[T_PDFDatei]+blau+fsfv[i].spdf+schwarz+
-						" ."+Tx[T_obfboxmitDoppelpunkt]+blau+(fsfv[i].fobfbox?Txk[T_ja]:Txk[T_nein])+schwarz+
-						" ."+Tx[T_obcapimitDoppelpunkt]+blau+(fsfv[i].fobcapi?Txk[T_ja]:Txk[T_nein])+schwarz+
-						" ."+Tx[T_obhylamitDoppelpunkt]+blau+(fsfv[i].fobhyla?Txk[T_ja]:Txk[T_nein])+schwarz+
-						" ."+Tx[T_obvmailmitDoppelpunkt]+blau+(fsfv[i].fobvmail?Txk[T_ja]:Txk[T_nein])+schwarz+
-						" ."+Tx[T_obkmailmitDoppelpunkt]+blau+(fsfv[i].fobkmail?Txk[T_ja]:Txk[T_nein])+schwarz
+						", "+Tx[T_obfboxmitDoppelpunkt]+blau+(fsfv[i].fobfbox?Txk[T_ja]:Txk[T_nein])+schwarz+
+						", "+Tx[T_obcapimitDoppelpunkt]+blau+(fsfv[i].fobcapi?Txk[T_ja]:Txk[T_nein])+schwarz+
+						", "+Tx[T_obhylamitDoppelpunkt]+blau+(fsfv[i].fobhyla?Txk[T_ja]:Txk[T_nein])+schwarz+
+						", "+Tx[T_obvmailmitDoppelpunkt]+blau+(fsfv[i].fobvmail?Txk[T_ja]:Txk[T_nein])+schwarz+
+						", "+Tx[T_obkmailmitDoppelpunkt]+blau+(fsfv[i].fobkmail?Txk[T_ja]:Txk[T_nein])+schwarz
 						);
 				const string ff{wvz+vtz+fsfv[i].spdf};
 				struct stat st{0};
 				if (/*wasichbin==1 einmal reicht hier schon &&*/ lstat(ff.c_str(),&st)) {
-					fLog(rots+(wasichbin==1?"Capi: ":"Hyla: ")+schwarz+Tx[T_Fehler_zu_faxende_Datei]+rots+ff+schwarz+
+					fLog(rots+(wasichbin==1?"Capi: ":wasichbin==2?"Hyla: ":wasichbin==3?"FBox: ":wasichbin==4?"VMail: ":wasichbin==5?"KMail: ":"")+
+							schwarz+Tx[T_Fehler_zu_faxende_Datei]+rots+ff+schwarz+
 							Tx[T_nicht_gefunden_Eintrag_ggf_loeschen_mit_]+blau+base_name(aktprogverz())+" -"+Tx[T_loew]+schwarz+
 							Tx[T_bzw_]+blau+base_name(aktprogverz())+" -"+Tx[T_loef]+schwarz+"'",1,oblog);
 				} else {
@@ -8498,7 +8501,7 @@ void fsfcl::setzfboxstat(hhcl *hhip, struct stat *entrysendp,uchar erweitert/*0*
 				// gesandte und gescheiterte Faxe wurden von capisuite entsprechend umbenannt
 				for(fboxstat=gesandt;fboxstat<=gescheitert;fboxstat=static_cast<FxStat>(fboxstat+1)) { 
 					// entspr. gefaxte/gescheiterte Datei in capisuite
-					sendqgespfad=(fboxstat==gescheitert?hhip->fbgvz:hhip->fbnvz)+vtz+fbsdt+".vw";
+					sendqgespfad=(fboxstat==gescheitert?hhip->fbnvz:hhip->fbgvz)+vtz+fbsdt+".vw";
 					fLog(string("fboxstat: ")+ltoan((int)fboxstat)+" "+blau+sendqgespfad+schwarz,1,hhip->oblog);
 					if (!(dateifehlt=lstat((sendqgespfad.c_str()), entrysendp))) break; 
 				}  //         for(fboxstat=gesandt;fboxstat<=gescheitert;fboxstat=static_cast<FxStat>(fboxstat+1))
