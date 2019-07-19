@@ -6424,11 +6424,11 @@ void hhcl::inspoolschreiben(const size_t aktc)
 	vector <urfxcl> urfx; // urspruenglicher Dateiname
 	svec zfda,zfvz; // Zufaxen-Datei, Warteverzeichnis-Verzeichnis
 	if (findv==1) {
-		systemrueck(sudc+"find \""+zufaxenvz+"\" -maxdepth 1 -type f",obverb,oblog,&zfda);
+		systemrueck(sudc+"find \""+zufaxenvz+"\" -maxdepth 1 -type f",obverb,oblog,&zfda,/*obsudc*/0,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausp*/0,/*obdirekt*/0,/*ohnewisch*/1);
 	} else findfile(&zfda,findv,obverb,oblog,/*anteil=*/0,zufaxenvz,/*muster=*/"",/*tiefe=*/1,/*typbit=*/B_Datei,/*folge=*/Fol_Dat);
 	// Unterverzeichnisse für Faxe mit Zeitsteuerung suchen
 	if (findv==1) {
-		systemrueck(sudc+"find \""+zufaxenvz+"\" -maxdepth 1 -type d",obverb,oblog,&zfvz);
+		systemrueck(sudc+"find \""+zufaxenvz+"\" -maxdepth 1 -type d",obverb,oblog,&zfvz,/*obsudc*/0,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausp*/0,/*obdirekt*/0,/*ohnewisch*/1);
 	} else findfile(&zfvz,findv,obverb,oblog,/*anteil=*/0,zufaxenvz,/*muster=*/"",/*tiefe=*/1,/*typbit=*/B_Verzn,/*folge=*/Fol_Dat);
 	for(size_t iakt=0;iakt<zfvz.size();iakt++) {
 		if (zfvz[iakt]!=zufaxenvz) {
@@ -7324,7 +7324,7 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 	if (findv==1) {
 		// Faxe in der Empfangswarteschlange auflisten, ...
 		cmd=sudc+"find \""+hsuchvz+"\" -name \"fax*.tif\"";
-		systemrueck(cmd,obverb,oblog, &qrueck);
+		systemrueck(cmd,obverb,oblog, &qrueck,/*obsudc*/0,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausp*/0,/*obdirekt*/0,/*ohnewisch*/1);
 	} else findfile(&qrueck,findv,obverb,oblog,0,hsuchvz,/*muster=*/"/fax.*\\.tif$",-1,1,0);
 	for(size_t i=0;i<qrueck.size();i++) {
 		// ..., Informationen darueber einsammeln, ...
@@ -7802,7 +7802,7 @@ void hhcl::bereinigefbox(const size_t aktc)
 	if (findv==1) {
 		// 20.1.16: wenn dort eine .txt-steht ohne zugehoerige .sff-Datei, dann haelt sie den ganzen Betrieb auf
 		cmd=sudc+"find '"+fbwvz+"' -maxdepth 1 -type f -iname 'dt*.vw'"; ////  -printf '%f\\n'";
-		systemrueck(cmd,obverb,oblog,&qrueck);
+		systemrueck(cmd,obverb,oblog,&qrueck,/*obsudc*/0,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausp*/0,/*obdirekt*/0,/*ohnewisch*/1);
 	} else findfile(&qrueck,findv,obverb,oblog,0,cfaxusersqvz,/*muster=*/"/dt*\\.vw$",/*tiefe*/1,1,0);
 	for(size_t i=0;i<qrueck.size();i++) {
 		string stamm,exten;
@@ -7889,7 +7889,7 @@ void hhcl::sammlefbox(vector<fsfcl> *fsfvp,const size_t aktc)
 		svec qrueck;
 		if (findv==1) {
 			cmd=sudc+"find '"+fbwvz+"' -maxdepth 1 -type f -name 'dt[0123456789]*.tif'"; ////  -printf '%f\\n'";
-			systemrueck(cmd,obverb,oblog,&qrueck);
+			systemrueck(cmd,obverb,oblog,&qrueck,/*obsudc*/0,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausp*/0,/*obdirekt*/0,/*ohnewisch*/1);
 		} else findfile(&qrueck,findv,obverb,oblog,0,fbwvz,/*muster=*/"/dt[0123456789]*\\.tif$",/*tiefe*/1,1,0,0,0,1);
 		for(size_t i=0;i<qrueck.size();i++) {
 			uchar indb{0};

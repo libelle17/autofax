@@ -39,7 +39,7 @@ const char *const tmmoegl[]{
 	}; // Moeglichkeiten fuer strptime
 string _DPROG;
 // zum Schutz statischer Speicherbereiche vor gleichzeitigem Zugriff durch mehrere Programmfaeden
-pthread_mutex_t printf_mutex, getmutex, timemutex, schreibmutex;
+pthread_mutex_t printf_mutex, getmutex, timemutex;
 
 #ifdef linux
 #include <iomanip> // setprecision, put_time
@@ -2667,7 +2667,6 @@ int systemrueck(const string& cmd, int obverb/*=0*/, int oblog/*=0*/, vector<str
 	// temporäre Datei loeschen, falls leer
 	struct stat tmpdst{0};
 	if (!lstat(tmpd,&tmpdst)) if (!tmpdst.st_size) tuloeschen(tmpd,string(),0,0);
-	pthread_mutex_lock(&schreibmutex);
 	//int erg2 __attribute__((unused)){system(string("printf ' %.0s' {1.."+ltoan(getcols()-2)+"};printf '\r';").c_str())};
 	if (!ohnewisch) {
 		int erg2 __attribute__((unused)){system(string("awk 'BEGIN{printf \"\r\";for(c=0;c<"+ltoan(getcols()-2)+";c++)printf \" \";printf \"\r\"}'").c_str())};
@@ -2749,7 +2748,6 @@ int systemrueck(const string& cmd, int obverb/*=0*/, int oblog/*=0*/, vector<str
 		}
 		if (neurueck) {delete rueck;rueck=0;}
 	} // 	if (rueck)
-	pthread_mutex_unlock(&schreibmutex);
 	return erg; 
 } // int systemrueck
 
