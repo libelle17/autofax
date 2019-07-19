@@ -508,6 +508,7 @@ enum T_
 	T_setzhylastat,
 	T_archiviere,
 	T_obgescheitert,
+	T_loeschefbox,
 	T_loeschecapi,
 	T_loeschehyla,
 	T_Loesche_Fax_hylanr,
@@ -532,6 +533,7 @@ enum T_
 	T_umgeleitet_werden,
 	T_Zahl_der_nicht_geloeschten_Dateien,
 	T_hylanr,
+	T_FBoxspooldatei,
 	T_Capispooldatei,
 	T_Gesamt,
 	T_Kein_Fax_zum_Loeschen_vorhanden,
@@ -775,6 +777,7 @@ struct fsfcl : public fxfcl // Faxsendfile
   public:
 		void archiviere(DB *const My, hhcl *const hhip, const struct stat *const entryp,const uchar obgescheitert, const FaxTyp ftyp, 
 		                uchar *gel, const size_t aktc, const int obverb, const int oblog);
+		int loeschefbox(hhcl *const hhip, const int obverb, const int oblog);
 		int loeschecapi(const int obverb, const int oblog);
     int loeschehyla(hhcl *const hhip, const int obverb, const int oblog);
     /*1*/fsfcl(const string id, const string npdf, const string spdf, const string telnr, unsigned pprio, const string capisd, int capids, 
@@ -786,7 +789,8 @@ struct fsfcl : public fxfcl // Faxsendfile
     /*4*/fsfcl(const string& hylanr): hylanr(hylanr) {}
     /*5*/fsfcl(const string sendqgespfad, FxStat capistat): sendqgespfad(sendqgespfad), capistat(capistat) {}
 		/*6*/fsfcl(const string& original, const string& origvu, uchar cnr): original(original), origvu(origvu) {}
-    void setzfboxstat(hhcl *hhip, struct stat *entrysendp);
+		/*7*/fsfcl() {}
+    void setzfboxstat(hhcl *hhip, struct stat *entrysendp,uchar erweitert=0);
     void setzcapistat(hhcl *hhip, struct stat *entrysendp);
     void fboxausgeb(hhcl *const hhip, stringstream *ausgp, uchar fuerlog=0, int obverb=0, int oblog=0,ulong faxord=0);
     void capiausgeb(hhcl *const hhip, stringstream *ausgp, const string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,ulong faxord=0);
@@ -996,6 +1000,7 @@ class hhcl:public dhcl
 		void machopvzm();
 		void verzeichnisse();
     void rufpruefsamba();
+    void korrigierefbox(const unsigned tage=90,const size_t aktc=1);
     void korrigierecapi(const unsigned tage=90,const size_t aktc=1);
     void korrigierehyla(const unsigned tage=90,const size_t aktc=2);
     int pruefsoffice(const string soffname,uchar mitloe=0);
