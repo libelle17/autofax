@@ -9517,9 +9517,9 @@ void hhcl::pvirtvorpruefggfmehrfach()
 	if (obfa[0]) {
 		svec vzv;
 		if (!systemrueck("fbfax -zgvz",obverb,oblog,&vzv)) {
-			if (vzv.size()>2) fbnvz=vzv[2]; 
-			if (vzv.size()>1) fbgvz=vzv[1]; 
-			if (vzv.size()>0) fbwvz=vzv[0]; 
+			if (vzv.size()>2) {fbnvz=vzv[2]; gtrim(&fbnvz);}
+			if (vzv.size()>1) {fbgvz=vzv[1]; gtrim(&fbgvz);}
+			if (vzv.size()>0) {fbwvz=vzv[0]; gtrim(&fbwvz);}
 			else obfa[0]=0;
 		}
 	}

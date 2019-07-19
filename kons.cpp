@@ -1907,14 +1907,14 @@ int obprogda(const string& prog, int obverb/*=0*/, int oblog/*=0*/, string *pfad
     }
   } // for(int iru=0;iru<3;iru++) 
   svec rueck;
-  if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck,/*obsudc=*/0,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausgp*/0,/*obdirekt*/0,/*ohnewisch*/1)) {
+  if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck)) {
     if (pfad) *pfad=rueck[0];
     return 2;
   } // if (!systemrueck("which "+prog+" 2>/dev/null",obverb,oblog,&rueck))
 	// wenn nicht root
 	if (cus.cuid && !keinsu) { // 
-		if (!systemrueck("which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck,/*obsudc=*/1,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausgp*/0,/*obdirekt*/0,/*ohnewisch*/1)) {
-			if (!systemrueck("env \"PATH=$PATH\" which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck,/*obsudc=*/1,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausgp*/0,/*obdirekt*/0,/*ohnewisch*/1)) {
+		if (!systemrueck("which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck,/*obsudc=*/1)) {
+			if (!systemrueck("env \"PATH=$PATH\" which \""+prog+"\" 2>/dev/null",obverb,oblog,&rueck,/*obsudc=*/1)) {
 				if (pfad) *pfad=rueck[0];
 				return 3;
 			}
@@ -2073,7 +2073,7 @@ linst_cl::linst_cl(int obverb,int oblog)
 	svec qrueck;
 	// in findfile wird ueber setfacl evtl. Installation aufgerufen, was (aus Kontruktor) zum Absturz fuehrt
 //	if (findv==1) {
-		systemrueck("find /usr -maxdepth 1 -type d -name 'lib*'",obverb,oblog,&qrueck,/*obsudc=*/0,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausgp*/0,/*obdirekt*/0,/*ohnewisch*/1);
+		systemrueck("find /usr -maxdepth 1 -type d -name 'lib*'",obverb,oblog,&qrueck);
 //	} else findfile(&qrueck,findv,obverb,oblog,0,"/usr",/*muster=*/"lib[^/]*$",1,34,1);
 	for(size_t iru=0;iru<qrueck.size();iru++) libs+=qrueck[iru]+" ";
 	obprogda("sh",obverb,oblog,&shpf);// Pfad zu sh
@@ -3138,13 +3138,13 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 						fehlt=chown(stack[i].c_str(),uid,gid);
 					}
 					if (fehlt) {
-						fehlt=systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausgp*/0,/*obdirekt*/0,/*ohnewisch*/1);
+						fehlt=systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 					}
 					if (!fehlt) {
 						if (unindt.find(stack[i])) { // wenn der Anfang nicht identisch ist, also nicht das Verzeichnis von unindt geprueft werden soll
 							anfgg(unindt,sudc+"rmdir '"+stack[i]+"'",bef,obverb,oblog);
 						}
-					}
+					} // if (!fehlt)
 				} // 					if (fehlt)
 				// folgendes mindestens notwendig fuer sverz.st_mode
 				fehlt=lstat(stack[i].c_str(),&sverz);
@@ -3177,13 +3177,13 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 						}
 						if (obverb||oblog) fLog(Txk[T_datei]+blaus+stack[i].c_str()+schwarz+", mode: "+blau+altmod+schwarz+" -> "+blau+
 								ltoan(sverz.st_mode,8)+schwarz,obverb,oblog);
-//						if (chmod(stack[i].c_str(),sverz.st_mode)) {
-							//             if (1) 
-							string bef{"chmod "+modstr+" '"+stack[i]+"'"};
-							fehlt=systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausgp*/0,/*obdirekt*/0,/*ohnewisch*/1);
-//						}
+						//						if (chmod(stack[i].c_str(),sverz.st_mode)) {
+						//             if (1) 
+						string bef{"chmod "+modstr+" '"+stack[i]+"'"};
+						fehlt=systemrueck(bef,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
+						//						}
 					}
-					if (obverb) systemrueck("ls -ld \""+stack[i]+"\"",2,0,/*rueck=*/0,/*obsudc=*/1,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausgp*/0,/*obdirekt*/0,/*ohnewisch*/1);
+					if (obverb) systemrueck("ls -ld \""+stack[i]+"\"",2,0,/*rueck=*/0,/*obsudc=*/1);
 				}
 			} // 				if (obmachen)
 			if (fehlt) {
@@ -3198,7 +3198,7 @@ int pruefverz(const string& verz,int obverb/*=0*/,int oblog/*=0*/, uchar obmitfa
 			if (obselinux==-1) 
 				obselinux=obprogda("sestatus",obverb,oblog,/*pfad*/0,keinsu);
 			if (obselinux) {
-				systemrueck("chcon -R -t samba_share_t '"+verz+"'",obverb,oblog,/*rueck=*/0,/*obsudc=*/1,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausgp*/0,/*obdirekt*/0,/*ohnewisch*/1);
+				systemrueck("chcon -R -t samba_share_t '"+verz+"'",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			}
 		} // 		if (obmitcon)
 	} // 	if (!verz.empty())
@@ -5425,7 +5425,7 @@ void hcl::virtlieskonfein()
 	if (akonfdt.empty()) {
 		svec rue;
 		// aus Datenschutzgruenden sollte das Home-Verzeichnis zuverlaessig ermittelt werden
-	  systemrueck("getent passwd $(logname 2>/dev/null||loginctl user-status|sed -n '1s/\\(.*\\) .*/\\1/p'||whoami)|cut -d: -f6",0,0,&rue,/*obsudc=*/0,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausgp*/0,/*obdirekt*/0,/*ohnewisch*/1);
+	  systemrueck("getent passwd $(logname 2>/dev/null||loginctl user-status|sed -n '1s/\\(.*\\) .*/\\1/p'||whoami)|cut -d: -f6",0,0,&rue);
 		if (rue.size()) {
 			//  $XDG_CONFIG_HOME in XDG Base Directory Specification
 			string confverz{rue[0]+vtz+".config"};
