@@ -2667,23 +2667,10 @@ int systemrueck(const string& cmd, int obverb/*=0*/, int oblog/*=0*/, vector<str
 	// temporäre Datei loeschen, falls leer
 	struct stat tmpdst{0};
 	if (!lstat(tmpd,&tmpdst)) if (!tmpdst.st_size) tuloeschen(tmpd,string(),0,0);
-  //int erg2 __attribute__((unused)){system(string("printf ' %.0s' {1.."+ltoan(getcols()-2)+"};printf '\r';").c_str())};
+	pthread_mutex_lock(&schreibmutex);
+	//int erg2 __attribute__((unused)){system(string("printf ' %.0s' {1.."+ltoan(getcols()-2)+"};printf '\r';").c_str())};
 	if (!ohnewisch) {
-#ifdef versuch
-		static int nr;
-		nr++;
-		string nrc{ltoan(nr)+" "};
-
-				mdatei logf("ausg",ios::out|ios::app,0);
-				if (logf.is_open()) {
-					logf<<nrc<<": "<<cmd<<endl; 
-					logf.close();
-				} //         if (!logf.is_open()) else
-		int erg2 __attribute__((unused)){system(string("awk 'BEGIN{printf \"\r\";for(c=0;c<"+ltoan(getcols()/3-10)+";c++)printf \""+nrc+"\";printf \"\r\"}'").c_str())};
-#endif
-		pthread_mutex_lock(&timemutex);
-		int erg2 __attribute__((unused)){system(string("awk 'BEGIN{printf \"\r\";for(c=0;c<"+ltoan(getcols()/3-10)+";c++)printf \" \";printf \"\r\"}'").c_str())};
-		pthread_mutex_unlock(&timemutex);
+		int erg2 __attribute__((unused)){system(string("awk 'BEGIN{printf \"\r\";for(c=0;c<"+ltoan(getcols()-2)+";c++)printf \" \";printf \"\r\"}'").c_str())};
 	}
 #ifdef systemrueckprofiler
   prf.ausgab1000("vor weiter");
@@ -2762,6 +2749,7 @@ int systemrueck(const string& cmd, int obverb/*=0*/, int oblog/*=0*/, vector<str
 		}
 		if (neurueck) {delete rueck;rueck=0;}
 	} // 	if (rueck)
+	pthread_mutex_unlock(&schreibmutex);
 	return erg; 
 } // int systemrueck
 
