@@ -651,7 +651,7 @@ enum T_
 	T_MAX //α
 }; // enum T_ //ω
 
-enum FaxTyp:uchar {capi=1,hyla,fritz,kmail,vmail};
+enum FaxTyp:uchar {keintyp=0,fritz,capi,hyla,kmail,vmail};
 enum FxStat:uchar {init/*0*/,gestrichen,schwebend,wartend/*3*/,blockiert/*4*/,bereit/*5*/,verarb/*6*/,gesandt/*7*/,gescheitert/*8*/,fehlend,woasined};
 enum hyinst {keineh,hysrc,hypak,hyppk}; // hyla source, hyla Paket, hylaplus Paket
 class fsfcl; // Faxsendfile

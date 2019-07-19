@@ -6173,8 +6173,7 @@ void hhcl::inDBk(DB *My, const string& spooltab, const string& altspool, const f
 void hhcl::inDBf(DB *My, const string& spooltab, const string& altspool, const string& fbvwdt,const fsfcl *const fsfp,const size_t aktc)
 {
 	hLog(violetts+Tx[T_inDBf]+schwarz);
-	int altobverb{obverb};
-	//// obverb=2;
+////	int altobverb{obverb}; obverb=2;
 	const size_t p1=fbvwdt.rfind('/'), p2=fbvwdt.rfind('.');
 	uint affr{0};
 	if (p1!=string::npos && p2!=string::npos) {
@@ -6203,7 +6202,7 @@ void hhcl::inDBf(DB *My, const string& spooltab, const string& altspool, const s
 			fLog(drots+Tx[T_SpoolDatei]+fbvwdt+Tx[T_nicht_gefunden_kein_Datenbankeintrag],1,1);
 		}   // if (!lstat((*spoolgp->c_str()), &entryspool)) 
 	}
-	obverb=altobverb;
+////	obverb=altobverb;
 }
 
 // aufgerufen in faxemitH
@@ -6247,7 +6246,7 @@ void hhcl::inDBh(DB *My, const string& spooltab, const string& altspool, const s
 
 void hhcl::vschlmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
 {
-}
+} // void hhcl::vschlmail
 
 void hhcl::klarmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
 {
@@ -6270,13 +6269,12 @@ void hhcl::klarmail(DB *My, const string& spooltab, const string& altspool, fsfc
 		inDBk(My, spooltab, altspool, fsfp, aktc);
 		// archiviere;
 	}
-}
+} // void hhcl::klarmail
 
 // aufgerufen in: wegfaxen
 void hhcl::faxemitF(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff)
 {
-	int altobverb{obverb};
-	//// obverb=2;
+////	int altobverb{obverb}; obverb=2;
 	hLog(violetts+Tx[T_faxemitF]+schwarz);
 	const size_t aktc{8};
 	if (fsfp->telnr.empty()) {
@@ -6313,7 +6311,7 @@ void hhcl::faxemitF(DB *My, const string& spooltab, const string& altspool, fsfc
 			} // if (!systemrueck(cmd,1,1,&faxerg,wahr,wahr,Tx[T_FbfaxBefehl]))
 		} // if (rueck.size()) 
 	} // tel.empty() else
-	obverb=altobverb;
+////	obverb=altobverb;
 } // void hhcl::faxemitF
 
 // aufgerufen in: wegfaxen
@@ -6405,7 +6403,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 	// 2b. Die originalen PDF-Dateien ins Warteverzeichnis verschieben, falls erfolgreich, nicht schon registriert und gleichziel => auch in ziel kopieren
 	// 3. in die Spool-Tabelle eintragen
 
-	// const int altobverb{obverb};
+	//// const int altobverb{obverb};
 	hLog(violetts+Tx[T_inspoolschreiben]+schwarz+", "+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfa[0]?Txk[T_ja]:Txk[T_nein])+", "
 			                                    +blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obfa[1]?Txk[T_ja]:Txk[T_nein])+", "
 			                                    +blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obfa[2]?Txk[T_ja]:Txk[T_nein]));
@@ -6917,7 +6915,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 // aufgerufen in: pvirtfuehraus
 void hhcl::wegfaxen(const size_t aktc)
 {
-	const int altobverb{obverb};
+////	const int altobverb{obverb};
 	hLog(violetts+Tx[T_wegfaxen]+schwarz+", "
 			+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfa[0]?Txk[T_ja]:Txk[T_nein])+"; "
 			+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obfa[1]?Txk[T_ja]:Txk[T_nein])+": "
@@ -7106,7 +7104,7 @@ void hhcl::wegfaxen(const size_t aktc)
 			+blau+Tx[T_obfboxmitDoppelpunkt]+schwarz+(obfa[0]?Txk[T_ja]:Txk[T_nein])+"; "
 			+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+(obfa[1]?Txk[T_ja]:Txk[T_nein])+": "
 			+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obfa[2]?Txk[T_ja]:Txk[T_nein]));
-	obverb=altobverb;
+////	obverb=altobverb;
 } // void hhcl::wegfaxen
 
 
@@ -8282,6 +8280,8 @@ const char* FxStatS(const FxStat *const i)
 void fsfcl::archiviere(DB *const My, hhcl *const hhip, const struct stat *const entryp, const uchar obgescheitert, const FaxTyp ftyp, 
 		uchar *geloeschtp, const size_t aktc, const int obverb, const int oblog)
 {
+////	int altobverb{obverb}; int wahr{1}; memcpy((void*)&obverb,&wahr, sizeof wahr);
+	hhip->ZDB=1;
 	//  string nob=ltoan((int)!obgescheitert);
 	fLog(violetts+Tx[T_archiviere]+schwarz+Tx[T_obgescheitert]+blau+ltoan((int)obgescheitert)+schwarz/*+" !obgescheitert: "+nob+*/,obverb,oblog);
 	// Voraussetzung: telnr, original, id; veraendert: geloescht
@@ -8291,9 +8291,15 @@ void fsfcl::archiviere(DB *const My, hhcl *const hhip, const struct stat *const 
 	vector<instyp> einf;
 	einf.push_back(/*2*/instyp(My->DBS,"titel",&bsname));
 	einf.push_back(/*2*/instyp(My->DBS,"rcname",&getname));
-	if (capi) {if (cdd.empty()) cdd="0000-00-00";} else {if (hdd.empty()) hdd="0000-00-00";}
-	einf.push_back(/*2*/instyp(My->DBS,"submt",ftyp==capi?&cdd:&hdd));
-	einf.push_back(/*2*/instyp(My->DBS,"submid",ftyp==capi?&capisd:&hylanr));
+	if (ftyp==capi) {if (cdd.empty()) cdd="0000-00-00";} else if (ftyp==hyla) {if (hdd.empty()) hdd="0000-00-00";}
+	string fdd;
+  if (ftyp==fritz) {
+		stringstream zpstr;
+		zpstr<<ztacl(fbzp,"%F %T");
+		fdd=zpstr.str();
+	}
+	einf.push_back(/*2*/instyp(My->DBS,"submt",ftyp==capi?&cdd:ftyp==fritz?&fdd:&hdd));
+	einf.push_back(/*2*/instyp(My->DBS,"submid",ftyp==capi?&capisd:ftyp==fritz?&fbsdt:&hylanr));
 	string patid;
 	if (!original.empty()) {
 		const char* ocstr=original.c_str(); // da c_str() fluechtig sein koennte
@@ -8326,7 +8332,9 @@ void fsfcl::archiviere(DB *const My, hhcl *const hhip, const struct stat *const 
 	einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
 	einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
 	svec eindfeld; eindfeld<<"submt";eindfeld<<"submid";
-	rins.tbins(&einf,aktc,/*sammeln=*/0,/*oberb=*/hhip->ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld);  // einfuegen
+	caus<<"vor tbins"<<endl;
+	rins.tbins(&einf,aktc,/*sammeln=*/0,/*obverb=*/hhip->ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld);  // einfuegen
+	caus<<"nach tbins"<<endl;
 	if (rins.fnr) {
 		fLog(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
 	} //     if (runde==ruz-1)
@@ -8334,6 +8342,7 @@ void fsfcl::archiviere(DB *const My, hhcl *const hhip, const struct stat *const 
 		RS rsloe(My,"DELETE FROM `"+hhip->spooltab+"` WHERE id = \""+id+"\"",aktc,hhip->ZDB);
 		*geloeschtp=1;
 	} // if (!rins.fnr) 
+////	memcpy((void*)&obverb,&altobverb, sizeof altobverb);
 } // archiviere
 
 // aufgerufen in: aenderefax, untersuchespool
@@ -8900,7 +8909,9 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 								// <<gruen<<"fsf.capisd.empty(): "<<schwarz<<(int)fsf.capisd.empty()<<endl;
 								 */
 								fsf.archiviere(My,this,&entrysend,allegesch||nimmer,
-										fsf.mailges!="0"?kmail:fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:fsf.capisd.empty()?hyla:capi,
+										fsf.mailges!="0"?kmail:
+										fsf.fboxstat==gesandt?fritz:fsf.capistat==gesandt?capi:fsf.hylastat==gesandt?hyla:
+										!fsf.capisd.empty()?capi:!fsf.hylanr.empty()?hyla:!fsf.fbsdt.empty()?fritz:keintyp,
 										&geloescht, 8, obverb, oblog);
 							} //           if (fsf.capistat==gesandt || fsf.hylastat==gesandt || allegesch || (nimmer /* && !ogibts[0] */) )
 							// wenn alle aktivierten Faxwege auf gescheitert oder fehlend stehen oder die Quelldatei fehlt ...
@@ -9736,8 +9747,7 @@ void hhcl::virtschlussanzeige()
 // aufgerufen in: main und pruefcapi
 void hhcl::virtautokonfschreib()
 {
-// const int altobverb=obverb;
-//// obverb=1;
+//// const int altobverb=obverb; obverb=1;
 	hLog(violetts+Txk[T_autokonfschreib]+schwarz+", "+Txk[T_zu_schreiben]+((rzf||hccd.obzuschreib)?Txk[T_ja]:Txk[T_nein])); //ω
 	/*//
 		capizukonf und hylazukonf hier immer 0
@@ -9756,7 +9766,7 @@ void hhcl::virtautokonfschreib()
 		////    agcnfA.setzbem("language",sprachstr);
 		hcl::virtautokonfschreib(); //ω
 	} // if (rzf||hccd.obzuschreib) //α
-// obverb=altobverb;
+//// obverb=altobverb;
 } // void hhcl::virtautokonfschreib
 
 hhcl::~hhcl() 
@@ -9770,8 +9780,7 @@ hhcl::~hhcl()
 // wird nur im Fall obhilfe==3 nicht aufgerufen
 void hhcl::virtlieskonfein()
 {
-	const int altobverb{obverb};
-	////	obverb=1;
+////	const int altobverb{obverb}; obverb=1;
 	hLog(violetts+Txk[T_virtlieskonfein]+schwarz); //ω
 	for(int j=0;j<3;j++) clprios[j]=prios[j];
 	for(int j=0;j<3;j++) prios[j]=0;
@@ -9914,7 +9923,7 @@ void hhcl::virtlieskonfein()
 	////	opn.oausgeb(rot);
 	////	opn.gibomapaus();
 	hLog(violetts+Txk[T_Ende]+Txk[T_virtlieskonfein]+schwarz); //α
-	obverb=altobverb;
+////	obverb=altobverb;
 } // void hhcl::virtlieskonfein() //ω
 
 int main(int argc,char** argv) //α

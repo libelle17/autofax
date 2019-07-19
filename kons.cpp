@@ -5227,8 +5227,7 @@ string holsystemsprache(int obverb/*=0*/)
 // wird aufgerufen in: virtrueckfragen, parsecl, virtlieskonfein, hcl::hcl nach holsystemsprache
 void hcl::virtlgnzuw()
 {
-	//// int altobverb=obverb;
-	//// obverb=1;
+	//// int altobverb=obverb; obverb=1;
 	fLog(violetts+Txk[T_virtlgnzuw_langu]+schwarzs+": "+langu,obverb,oblog);
 	//// obverb=altobverb;
 	if (langu=="d" || langu=="D" || langu=="deutsch" || langu=="Deutsch") {
@@ -5950,7 +5949,7 @@ void hcl::prueftif(string aktvers)
 {
 	hLog(violetts+Txk[T_prueftif]+schwarz+" "+aktvers);
 	//	const string vstr="4.0.8"; //// "4.08001";
-const int altobverb{obverb};
+	////const int altobverb{obverb};
 	size_t p1;
 	if ((p1=aktvers.find('\n'))!=string::npos) aktvers.erase(p1);
 	if ((p1=aktvers.rfind(' '))!=string::npos) aktvers.erase(0,p1+1);
@@ -5976,7 +5975,7 @@ const int altobverb{obverb};
 					anfgg(unindt,sudc+"rm -f \""+tiffmark+"\"","",obverb,oblog);
 				}
 			} // if (!kompiliere(
-			obverb=altobverb;
+////			obverb=altobverb;
 		} // 	if (dcmv<3.62)
 	} else {
 		if (incfehlt|| !systemrueck("find /usr/lib64 /usr/lib -maxdepth 2 -type l -xtype f -name libtiff.so -print -quit 2>/dev/null",obverb,oblog)) {
