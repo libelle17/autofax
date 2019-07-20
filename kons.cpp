@@ -5770,7 +5770,7 @@ void hcl::gitpull(const string& DPROG)
 // wird aufgerufen in lauf
 int wartaufpids(pidvec *pidtb,const ulong runden/*=0*/,const int obverb/*=0*/,const int oblog/*=0*/,const string& wo/*=string()*/)
 {
-	int altobverb=obverb, *ovp=(int*)&obverb; *ovp=2;
+////	int altobverb=obverb, *ovp=(int*)&obverb; *ovp=2;
 	ulong aktru=0; 
 	yLog(obverb>1,oblog>1,0,0,"%s%s()%s, %s, %s%s pid: %s%lu%s, pidtb->size(): %s%zu%s",
 			violett,__FUNCTION__,blau,wo.c_str(),schwarz,Txk[T_eigene],blau,getpid(),schwarz,blau,pidtb->size(),schwarz);
@@ -5810,7 +5810,7 @@ int wartaufpids(pidvec *pidtb,const ulong runden/*=0*/,const int obverb/*=0*/,co
 		} // 		if (++aktru==runden)
 	} // 	while (1)
 	fLog(violetts+Txk[T_Ende]+" 2 "+__FUNCTION__+", "+blau+wo+", return 0 (2)",obverb>1,0);
-  *ovp=altobverb; 
+////  *ovp=altobverb; 
 	return 0;
 } // void wartaufpids
 
