@@ -358,8 +358,8 @@ enum Tkons_
 	T_Zeit_Doppelpunkt,
 	T_Fertig_mit,
 	T_eigene,
-	T_entfernen,
-	T_belassen,
+	T_nicht_mehr_da,
+	T_laeuft_noch,
 	T_warte,
 	T_wird_aktualisiert_bitte_ggf_neu_starten,
 	T_muss_nicht_aktualisiert_werden,
@@ -1258,7 +1258,6 @@ class hcl
 {
 	private:
 		uchar obsetz=1; // setzzaehler
-		uchar mitpids=0; // mehrere pids
 		const char* const DPROG;
 		const uchar mitcron; // ob Programm auch in Cron eingetragen werden kann; kann im Konstruktor angegeben werden
 		const uchar parstreng; // breche Programm ab, wenn Parameter nicht gefunden
@@ -1266,6 +1265,7 @@ class hcl
 		pidvec pidv;
     double tstart, tende;
     size_t optslsz=0; // last opts.size()
+		uchar mitpids=0; // mehrere pids
 	public:
 		confdcl hccd;
 	protected:

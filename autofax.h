@@ -415,6 +415,7 @@ enum T_
 	T_aktiv,
 	T_aktiviert,
 	T_inaktiv,
+	T_korrigierefbox,
 	T_korrigierecapi,
 	T_Folgende_Faxe_waren_mit_falschem_Erfolgskennzeichen_eingetragen_was_korrigiert_wird,
 	T_Faxnr,
@@ -425,6 +426,7 @@ enum T_
 	T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird,
 	T_telnr,
 	T_wiemail,
+	T_Gabelung_zu_korrigierefbox_misslungen,
 	T_Gabelung_zu_korrigierecapi_misslungen,
 	T_Gabelung_zu_korrigierehyla_misslungen,
 	T_Gabelung_zu_faxemitH_misslungen,
@@ -610,7 +612,6 @@ enum T_
 	T_FbfaxBefehl,
 	T_RueckmlgZeile,
 	T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Erfolg_gesetzt_werden,
-	T_sammlefertigehyla,
 	T_Dateidatum,
 	T_pages,
 	T_Bei_folgenden_Faxen_musste_das_Erfolgskennzeichen_gemaess_Hylafax_Protkolldatei_auf_Misserfolg_gesetzt_werden,
@@ -676,6 +677,7 @@ const char* FxStatS(const FxStat *const i);
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, const int obverb, const int oblog);
 void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, int obverb, int oblog);
 inline const int ppri(const int iprio);
+void liesvw(const string& vwdt,string* fbzpp=0,string* minabstp=0, string* telnrp=0, string* originalp=0,string* fbdialsp=0, string* fbmaxdialsp=0, FxStat* fboxstatp=0);
 
 
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster

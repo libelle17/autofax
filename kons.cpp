@@ -470,10 +470,10 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"Fertig mit ","Ready with "},
 	// T_eigene
 	{"eigene","own"},
-	// T_entfernen
-	{"entfernen","remove"},
-	// T_belassen
-	{"belassen","keep"},
+	// T_nicht_mehr_da
+	{"nicht mehr da","gone"},
+	// T_laeuft_noch
+	{"laeuft noch","still running"},
 	// T_warte
 	{"warte","waiting"},
 	// T_wird_aktualisiert_bitte_ggf_neu_starten
@@ -5768,40 +5768,39 @@ void hcl::gitpull(const string& DPROG)
 } // void hcl::gitpull
 
 // wird aufgerufen in lauf
-int wartaufpids(pidvec *pidv,const ulong runden/*=0*/,const int obverb/*=0*/,const int oblog/*=0*/,const string& wo/*=string()*/)
+int wartaufpids(pidvec *pidtb,const ulong runden/*=0*/,const int obverb/*=0*/,const int oblog/*=0*/,const string& wo/*=string()*/)
 {
-	////	int* ovp=(int*)&obverb; *ovp=0;
+	int altobverb=obverb, *ovp=(int*)&obverb; *ovp=2;
 	ulong aktru=0; 
-//	const int nobverb{2}; memcpy((int*)&obverb,&nobverb,sizeof obverb);
-	yLog(obverb>1,oblog>1,0,0,"%s%s()%s, %s, %s%s pid: %s%lu%s, pidv->size(): %s%zu%s",
-			violett,__FUNCTION__,blau,wo.c_str(),schwarz,Txk[T_eigene],blau,getpid(),schwarz,blau,pidv->size(),schwarz);
-	for(size_t i=0;i<pidv->size();i++) {
+	yLog(obverb>1,oblog>1,0,0,"%s%s()%s, %s, %s%s pid: %s%lu%s, pidtb->size(): %s%zu%s",
+			violett,__FUNCTION__,blau,wo.c_str(),schwarz,Txk[T_eigene],blau,getpid(),schwarz,blau,pidtb->size(),schwarz);
+	for(size_t i=0;i<pidtb->size();i++) {
 		yLog(obverb>1,oblog>1,0,0," i: %s%zu%s, pid: %s%lu%s, name: %s%s%s",
-				blau,i,schwarz,blau,pidv->at(i).pid,schwarz,blau,pidv->at(i).name.c_str(),schwarz);
-	} // 	for(size_t i=0;i<pidv->size();i++)
+				blau,i,schwarz,blau,pidtb->at(i).pid,schwarz,blau,pidtb->at(i).name.c_str(),schwarz);
+	} // 	for(size_t i=0;i<pidtb->size();i++)
 	while (1) {
-		yLog(obverb>1,0,0,0," %s%s%s, while (1), pidv->size(): %s%zu%s",blau,wo.c_str(),schwarz,blau,pidv->size(),schwarz);
-		for(size_t i=pidv->size();i;) {
+		yLog(obverb>1,0,0,0," %s%s%s, while (1), pidtb->size(): %s%zu%s",blau,wo.c_str(),schwarz,blau,pidtb->size(),schwarz);
+		for(size_t i=pidtb->size();i;) {
 			i--;
-			const int res{kill(pidv->at(i).pid,0)};
+			const int res{kill(pidtb->at(i).pid,0)};
 			uchar zuloeschen{0};
-			if (res==-1 && errno==ESRCH) zuloeschen=1;
+			if (res==-1 && errno==ESRCH) zuloeschen=1; // Prozess nicht (mehr) da
 			else {
 				int status; 
-				pid_t erg=waitpid(pidv->at(i).pid,&status,WNOHANG); 
+				pid_t erg=waitpid(pidtb->at(i).pid,&status,WNOHANG); 
 				if (erg>0) zuloeschen=1;
 			} // 			if (res==-1 && errno==ESRCH)
-			yLog(obverb>1,0,0,0," %s%s%s, i: %s%zu%s, pidv->at(i).pid: %s%lu%s, name: %s%s%s, %s%s%s",blau,wo.c_str(),schwarz,blau,i,schwarz,blau,
-					pidv->at(i).pid,schwarz,blau,pidv->at(i).name.c_str(),schwarz,(zuloeschen?blau:""),(zuloeschen?Txk[T_entfernen]:Txk[T_belassen]),schwarz);
+			yLog(obverb>1,0,0,0," %s%s%s, i: %s%zu%s, pidtb->at(i).pid: %s%lu%s, name: %s%s%s, %s%s%s",blau,wo.c_str(),schwarz,blau,i,schwarz,blau,
+					pidtb->at(i).pid,schwarz,blau,pidtb->at(i).name.c_str(),schwarz,(zuloeschen?blau:""),(zuloeschen?Txk[T_nicht_mehr_da]:Txk[T_laeuft_noch]),schwarz);
 			if (zuloeschen) {
-				//      if (getpgid(pidv->at(i).pid)<0)
-				pidv->erase(pidv->begin()+i);
+				//      if (getpgid(pidtb->at(i).pid)<0)
+				pidtb->erase(pidtb->begin()+i);
 			}
-		} // 		for(size_t i=0;i<pidv->size();i++)
-		if (!pidv->size()) {
-			fLog(violetts+__FUNCTION__+", "+blau+wo+", return 0 (1)",obverb>1,0);
+		} // 		for(size_t i=0;i<pidtb->size();i++)
+		if (!pidtb->size()) {
+			fLog(violetts+Txk[T_Ende]+" 1 "+__FUNCTION__+", "+blau+wo+", return 0 (1)",obverb>1,0);
 			return 0;
-		} // 		if (!pidv->size())
+		} // 		if (!pidtb->size())
 		const int wz3{50};
 		this_thread::sleep_for(chrono::milliseconds(wz3));
 		yLog(obverb>1,0,0,0,"in %s(): %s%s: %s%d%s ms",__FUNCTION__,rot,Txk[T_warte],blau,wz3,schwarz);
@@ -5810,7 +5809,8 @@ int wartaufpids(pidvec *pidv,const ulong runden/*=0*/,const int obverb/*=0*/,con
 			return 1;
 		} // 		if (++aktru==runden)
 	} // 	while (1)
-	fLog(violetts+__FUNCTION__+", "+blau+wo+", return 0 (2)",obverb>1,0);
+	fLog(violetts+Txk[T_Ende]+" 2 "+__FUNCTION__+", "+blau+wo+", return 0 (2)",obverb>1,0);
+  *ovp=altobverb; 
 	return 0;
 } // void wartaufpids
 
