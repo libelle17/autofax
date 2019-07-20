@@ -867,7 +867,9 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"aktiviert","activated"},
 	// T_inaktiv
 	{"inaktiv","inactive"},
-	// T_korrigierecapi,
+	// T_korrigiere,
+	{"korrigiere()","correct()"},
+	// T_korrigierefbox,
 	{"korrigierefbox()","correctfbox()"},
 	// T_korrigierecapi
 	{"korrigierecapi()","correctcapi()"},
@@ -891,12 +893,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Tel'nr.","tel.no."},
 	// T_wiemail
 	{"wiemail","howtomail"},
-	// T_Gabelung_zu_korrigierefbox_misslungen,
-	{"Gabelung zu korrigierefbox() misslungen","Fork to correctfbox() failed"},
-	// T_Gabelung_zu_korrigierecapi_misslungen
-	{"Gabelung zu korrigierecapi() misslungen","Fork to correctcapi() failed"},
-	// T_Gabelung_zu_korrigierehyla_misslungen
-	{"Gabelung zu korrigierehyla() misslungen","Fork to correcthyla() failed"},
+	// T_Gabelung_zu_korrigiere_misslungen,
+	{"Gabelung zu korrigiere() misslungen","Fork to correct() failed"},
 	// T_Gabelung_zu_faxemitH_misslungen
 	{"Gabelung zu faxemitH() misslungen","Fork to faxingwithHyla() failed"},
 	// T_Gabelung_zu_faxemitF_misslungen
@@ -4922,155 +4920,134 @@ void liesvw(const string& vwdt,string* fbzpp,string* minabstp, string* telnrp, s
 
 void hhcl::korrigierefbox(const unsigned tage/*=90*/,const size_t aktc)
 {
-////	obverb=2; ZDB=1;
-	hLog(violetts+Tx[T_korrigierefbox]+" 1 "+schwarz);
+	////	obverb=2; ZDB=1;
+	hLog(violetts+Tx[T_korrigierefbox]+schwarz);
 	// mit dem thread abzweigen, falls Programm mit Abzweigungen ausgeführt
-	const pid_t pid{nurempf||nursend?0:dfork()};
-	if (pid>0) {
-		pidcl phier(pid,"korrigierefbox");
-		pidw<<phier;
-		pidv<<phier;
-	} else if (!pid) {
-		hLog(violetts+Tx[T_korrigierefbox]+" 2 "+schwarz);
-		set<string>::iterator fit; // Iterator dafuer
-		svec rueck[2];
-		size_t ruecki;
-		string inse;
-		string teln,zp,tries;
-		size_t size;
+	set<string>::iterator fit; // Iterator dafuer
+	svec rueck[2];
+	size_t ruecki;
+	string inse;
+	string teln,zp,tries;
+	size_t size;
+	for(int cru=0;cru<2;cru++) {
+		if (findv==1) {
+			cmd="find '"+(cru?fbgvz:fbnvz)+"' -maxdepth 1 "+(tage?string("-mtime -")+ltoan(tage):"")+" -iname 'dt*.tif'";////-printf '%f\\n'";
+			systemrueck(cmd,obverb,oblog,&rueck[cru],/*obsudc=*/1);
+		} else {
+			time_t ab=0;
+			if (tage) ab=time(0)-(tage*24*60*60);
+			findfile(&rueck[cru],findv,obverb,oblog,0,(cru?fbgvz:fbnvz),/*muster=*/"dt.*\\.tif$",1,1,0,ab,0,1);
+		} // 						if (findv==1)
+	} // 					for(int cru=0;cru<2;cru++)
+	if (rueck[0].size()||rueck[1].size()) {
+		RS vgl1(My,"DROP TABLE IF EXISTS tmpfbox",aktc,ZDB);
+		RS vgl2(My,"CREATE TABLE tmpfbox(submid VARCHAR(40) KEY, titel VARCHAR(600), rcname VARCHAR(900),"
+				"teln VARCHAR(40),zp DATETIME, tries INT, size INT(15), docname VARCHAR(900), erfolg INT) collate utf8_general_ci",aktc,ZDB);
 		for(int cru=0;cru<2;cru++) {
-			if (findv==1) {
-				cmd="find '"+(cru?fbgvz:fbnvz)+"' -maxdepth 1 "+(tage?string("-mtime -")+ltoan(tage):"")+" -iname 'dt*.tif'";////-printf '%f\\n'";
-				systemrueck(cmd,obverb,oblog,&rueck[cru],/*obsudc=*/1);
-			} else {
-				time_t ab=0;
-				if (tage) ab=time(0)-(tage*24*60*60);
-				findfile(&rueck[cru],findv,obverb,oblog,0,(cru?fbgvz:fbnvz),/*muster=*/"dt.*\\.tif$",1,1,0,ab,0,1);
-			} // 						if (findv==1)
-		} // 					for(int cru=0;cru<2;cru++)
-		if (rueck[0].size()||rueck[1].size()) {
-			RS vgl1(My,"DROP TABLE IF EXISTS tmpfbox",aktc,ZDB);
-			RS vgl2(My,"CREATE TABLE tmpfbox(submid VARCHAR(40) KEY, titel VARCHAR(600), rcname VARCHAR(900),"
-					"teln VARCHAR(40),zp DATETIME, tries INT, size INT(15), docname VARCHAR(900), erfolg INT) collate utf8_general_ci;",aktc,ZDB);
-			for(int cru=0;cru<2;cru++) {
-				for(ruecki=0;ruecki<rueck[cru].size();ruecki++) {
-					teln.clear();zp.clear();tries.clear();size=0;
-					struct stat tifstat{0};
-					if (!lstat(rueck[cru][ruecki].c_str(),&tifstat)) {
-						size=tifstat.st_size;
-						//// pthread_mutex_lock(&timemutex);
-						//// struct tm *tmp=localtime(&tifstat.st_mtime);
-						//// char buf[100];
-						//// strftime(buf, sizeof(buf), "%F %T", tmp);
-						//// pthread_mutex_unlock(&timemutex);
-						stringstream zpstr;
-						zpstr<<ztacl(tifstat.st_mtime,"%F %T");
-						//// zp=buf;
-						zp=zpstr.str();
-					}
-					string stamm,exten;
-					getstammext(&rueck[cru][ruecki],&stamm,&exten);
-					const string eind{stamm.substr(stamm.rfind('/')+1)};
-					const string vwdt{stamm+".vw"};
-					string docname;
-					liesvw(vwdt,0,0,&teln,&docname,&tries);
-					if (tries.empty()) tries="0";
-					string getname,bsname;
-					getSender(teln,&getname,&bsname,aktc);
-					//// <<"ursp: "<<ursp<<endl;
-					inse+="('"+eind+"','"+bsname+"','"+getname+"','"+teln+"','"+zp+"',"+tries+","+ltoan(size)+",'"+docname+"',"+(cru?"1":"0")+"),";
-					if (!(ruecki % 100)||ruecki==rueck[cru].size()-1) {
-						inse[inse.size()-1]=';';
-						////		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
-						RS vgl3(My,"INSERT INTO tmpfbox VALUES "+inse,aktc,ZDB);
-						inse.clear();
-					} // 							if (ruecki==100||rueck==rueck[cru].size()-1)
-				} //           for(ruecki=0;ruecki<rueck[cru].size();ruecki++)
-			} // 					for(uchar cru=0;cru<2;cru++)
-			//						auswe[auswe.size()-1]=')';
-			// die laut tmpfbox uebermittelten Faxe, die in outa als Mißerfolg eintragen sind
-			char ***cerg;
-			RS kor1(My,"SELECT t.submid p0, t.teln p1, t.zp p2, a.submt p3, t.tries p4, t.erfolg p5, t.size p6, a.docname p7 "
-					"FROM `"+touta+"` a RIGHT JOIN tmpfbox t ON t.submid=a.submid WHERE a.erfolg<>t.erfolg",aktc,ZDB);
-			if (!kor1.obqueryfehler) {
-				size_t zru=0;
-				while (cerg=kor1.HolZeile(),cerg?*cerg:0) {
-					if (!zru++) {
-						cout<<violett<<Tx[T_Folgende_Faxe_waren_mit_falschem_Erfolgskennzeichen_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
-						cout<<schwarz<<setw(19)<<"submid"<<"|"<<setw(15)<<Tx[T_Faxnr]<<"|"<<setw(19)<<Tx[T_zp]<<"|"
-							<<setw(19)<<"submt"<<"|"<<setw(5)<<Tx[T_tries]<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<Tx[T_size]<<"|"<<Tx[T_docname]<<schwarz<<endl;
-					} // 								if (!zru++)
-					cout<<setw(3)<<zru<<") "<<blau<<setw(14)<<cjj(cerg,0)<<"|"<<violett<<setw(15)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(19)<<cjj(cerg,2)<<"|"
-						<<schwarz<<setw(17)<<cjj(cerg,3)<<"|"<<blau<<setw(5)<<cjj(cerg,4)<<"|"<<violett<<setw(6)<<cjj(cerg,5)<<"|"
-						<<blau<<setw(10)<<cjj(cerg,6)<<"|"<<violett<<string(cjj(cerg,7)).substr(0,55)<<endl;
-				} // while (cerg=kor1.HolZeile(),cerg?*cerg:0) 
-				RS kor2(My,"UPDATE `"+touta+"` a RIGHT JOIN tmpfbox t ON t.submid=a.submid SET a.erfolg=t.erfolg where a.erfolg<>t.erfolg",aktc,ZDB);
-			} // 						if (!kor1.obqueryfehler) 
-			RS kor3(My,"SELECT t.submid p0,t.teln p1,t.zp p2,t.tries p3,t.erfolg p4,t.size p5,"
-					"IF(ISNULL(asp.original),'',asp.original) p6,"
-					"IF(ISNULL(asp.idudoc),0,asp.idudoc) p7,IF(ISNULL(asp.pages),0,asp.pages) p8,"
-					"IF(ISNULL(asp.adressat) OR asp.adressat=t.teln,'',asp.adressat) p9 "
+			for(ruecki=0;ruecki<rueck[cru].size();ruecki++) {
+				teln.clear();zp.clear();tries.clear();size=0;
+				struct stat tifstat{0};
+				if (!lstat(rueck[cru][ruecki].c_str(),&tifstat)) {
+					size=tifstat.st_size;
+					//// pthread_mutex_lock(&timemutex);
+					//// struct tm *tmp=localtime(&tifstat.st_mtime);
+					//// char buf[100];
+					//// strftime(buf, sizeof(buf), "%F %T", tmp);
+					//// pthread_mutex_unlock(&timemutex);
+					stringstream zpstr;
+					zpstr<<ztacl(tifstat.st_mtime,"%F %T");
+					//// zp=buf;
+					zp=zpstr.str();
+				}
+				string stamm,exten;
+				getstammext(&rueck[cru][ruecki],&stamm,&exten);
+				const string eind{stamm.substr(stamm.rfind('/')+1)};
+				const string vwdt{stamm+".vw"};
+				string docname;
+				liesvw(vwdt,0,0,&teln,&docname,&tries);
+				if (tries.empty()) tries="0";
+				string getname,bsname;
+				getSender(teln,&getname,&bsname,aktc);
+				//// <<"ursp: "<<ursp<<endl;
+				inse+="('"+eind+"','"+bsname+"','"+getname+"','"+teln+"','"+zp+"',"+tries+","+ltoan(size)+",'"+docname+"',"+(cru?"1":"0")+"),";
+				if (!(ruecki % 100)||ruecki==rueck[cru].size()-1) {
+					inse[inse.size()-1]=';';
+					////		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
+					RS vgl3(My,"INSERT INTO tmpfbox VALUES "+inse,aktc,ZDB);
+					inse.clear();
+				} // 							if (ruecki==100||rueck==rueck[cru].size()-1)
+			} //           for(ruecki=0;ruecki<rueck[cru].size();ruecki++)
+		} // 					for(uchar cru=0;cru<2;cru++)
+		//						auswe[auswe.size()-1]=')';
+		// die laut tmpfbox uebermittelten Faxe, die in outa als Mißerfolg eintragen sind
+		char ***cerg;
+		RS kor1(My,"SELECT t.submid p0, t.teln p1, t.zp p2, a.submt p3, t.tries p4, t.erfolg p5, t.size p6, a.docname p7 "
+				"FROM `"+touta+"` a RIGHT JOIN tmpfbox t ON t.submid=a.submid WHERE a.erfolg<>t.erfolg",aktc,ZDB);
+		if (!kor1.obqueryfehler) {
+			size_t zru=0;
+			while (cerg=kor1.HolZeile(),cerg?*cerg:0) {
+				if (!zru++) {
+					cout<<violett<<Tx[T_Folgende_Faxe_waren_mit_falschem_Erfolgskennzeichen_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
+					cout<<schwarz<<setw(19)<<"submid"<<"|"<<setw(15)<<Tx[T_Faxnr]<<"|"<<setw(19)<<Tx[T_zp]<<"|"
+						<<setw(19)<<"submt"<<"|"<<setw(5)<<Tx[T_tries]<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<Tx[T_size]<<"|"<<Tx[T_docname]<<schwarz<<endl;
+				} // 								if (!zru++)
+				cout<<setw(3)<<zru<<") "<<blau<<setw(14)<<cjj(cerg,0)<<"|"<<violett<<setw(15)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(19)<<cjj(cerg,2)<<"|"
+					<<schwarz<<setw(17)<<cjj(cerg,3)<<"|"<<blau<<setw(5)<<cjj(cerg,4)<<"|"<<violett<<setw(6)<<cjj(cerg,5)<<"|"
+					<<blau<<setw(10)<<cjj(cerg,6)<<"|"<<violett<<string(cjj(cerg,7)).substr(0,55)<<endl;
+			} // while (cerg=kor1.HolZeile(),cerg?*cerg:0) 
+			RS kor2(My,"UPDATE `"+touta+"` a RIGHT JOIN tmpfbox t ON t.submid=a.submid SET a.erfolg=t.erfolg where a.erfolg<>t.erfolg",aktc,ZDB);
+		} // 						if (!kor1.obqueryfehler) 
+		RS kor3(My,"SELECT t.submid p0,t.teln p1,t.zp p2,t.tries p3,t.erfolg p4,t.size p5,"
+				"IF(ISNULL(asp.original),'',asp.original) p6,"
+				"IF(ISNULL(asp.idudoc),0,asp.idudoc) p7,IF(ISNULL(asp.pages),0,asp.pages) p8,"
+				"IF(ISNULL(asp.adressat) OR asp.adressat=t.teln,'',asp.adressat) p9 "
+				"FROM tmpfbox t "
+				"LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
+				"LEFT JOIN `"+altspool+"` asp ON asp.fbspooldt=t.submid "
+				"LEFT JOIN `"+touta+"` av ON av.erfolg<>0 AND av.idudoc=asp.idudoc AND av.idudoc<>0 "
+				"WHERE ISNULL(a.submid) AND (t.erfolg<>0 OR ISNULL(av.idudoc)) "
+				"GROUP BY t.submid",aktc,ZDB);
+		if (!kor3.obqueryfehler) {
+			size_t zru=0;
+			while (cerg=kor3.HolZeile(),cerg?*cerg:0) {
+				if (!zru++) {
+					cout<<violett<<Tx[T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
+					cout<<schwarz<<setw(20)<<"submid"<<"|"<<setw(25)<<Tx[T_telnr]<<"|"<<setw(19)<<Tx[T_zp]<<"|"
+						<<setw(5)<<Tx[T_tries]<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<Tx[T_size]<<schwarz<<"|"<<blau<<Tx[T_docname]<<schwarz<<endl;
+				} // 							if (!zru++)
+				cout<<setw(4)<<zru<<") "<<blau<<setw(14)<<cjj(cerg,0)<<"|"<<violett<<setw(25)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(19)<<cjj(cerg,2)<<"|"
+					<<violett<<setw(5)<<cjj(cerg,3)<<"|"<<blau<<setw(6)<<cjj(cerg,4)<<"|"<<violett<<setw(10)<<cjj(cerg,5)<<"|"
+					<<blau<<string(cjj(cerg,6)).substr(0,55)<<schwarz<<endl;
+			} // while (cerg=kor3.HolZeile(),cerg?*cerg:0) 
+			RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,titel,rcname,fsize,retries,rcfax,docname,idudoc,pages,adressat) "
+					"SELECT t.erfolg,t.zp,t.zp,t.submid,t.titel,t.rcname,t.size,t.tries,t.teln,IF(ISNULL(asp.original),t.docname,asp.original),"
+					"IF(ISNULL(asp.idudoc),0,asp.idudoc),IF(ISNULL(asp.pages),0,asp.pages),"
+					"IF(ISNULL(asp.adressat) OR asp.adressat=t.teln,'',asp.adressat) "
 					"FROM tmpfbox t "
 					"LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
 					"LEFT JOIN `"+altspool+"` asp ON asp.fbspooldt=t.submid "
 					"LEFT JOIN `"+touta+"` av ON av.erfolg<>0 AND av.idudoc=asp.idudoc AND av.idudoc<>0 "
 					"WHERE ISNULL(a.submid) AND (t.erfolg<>0 OR ISNULL(av.idudoc)) "
 					"GROUP BY t.submid",aktc,ZDB);
-			if (!kor3.obqueryfehler) {
-				size_t zru=0;
-				while (cerg=kor3.HolZeile(),cerg?*cerg:0) {
-					if (!zru++) {
-						cout<<violett<<Tx[T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird]<<schwarz<<endl;
-						cout<<schwarz<<setw(20)<<"submid"<<"|"<<setw(25)<<Tx[T_telnr]<<"|"<<setw(19)<<Tx[T_zp]<<"|"
-							<<setw(5)<<Tx[T_tries]<<"|"<<setw(6)<<Txk[T_Erfolg]<<"|"<<setw(10)<<Tx[T_size]<<schwarz<<"|"<<blau<<Tx[T_docname]<<schwarz<<endl;
-					} // 							if (!zru++)
-					cout<<setw(4)<<zru<<") "<<blau<<setw(14)<<cjj(cerg,0)<<"|"<<violett<<setw(25)<<cjj(cerg,1)<<schwarz<<"|"<<blau<<setw(19)<<cjj(cerg,2)<<"|"
-						<<violett<<setw(5)<<cjj(cerg,3)<<"|"<<blau<<setw(6)<<cjj(cerg,4)<<"|"<<violett<<setw(10)<<cjj(cerg,5)<<"|"
-						<<blau<<string(cjj(cerg,6)).substr(0,55)<<schwarz<<endl;
-				} // while (cerg=kor3.HolZeile(),cerg?*cerg:0) 
-				RS kor4(My,"INSERT INTO `"+touta+"` (erfolg,submt,transe,submid,titel,rcname,fsize,retries,rcfax,docname,idudoc,pages,adressat) "
-						"SELECT t.erfolg,t.zp,t.zp,t.submid,t.titel,t.rcname,t.size,t.tries,t.teln,IF(ISNULL(asp.original),t.docname,asp.original),"
-						"IF(ISNULL(asp.idudoc),0,asp.idudoc),IF(ISNULL(asp.pages),0,asp.pages),"
-						"IF(ISNULL(asp.adressat) OR asp.adressat=t.teln,'',asp.adressat) "
-						"FROM tmpfbox t "
-						"LEFT JOIN `"+touta+"` a ON a.submid=t.submid "
-						"LEFT JOIN `"+altspool+"` asp ON asp.fbspooldt=t.submid "
-						"LEFT JOIN `"+touta+"` av ON av.erfolg<>0 AND av.idudoc=asp.idudoc AND av.idudoc<>0 "
-						"WHERE ISNULL(a.submid) AND (t.erfolg<>0 OR ISNULL(av.idudoc)) "
-						"GROUP BY t.submid",aktc,ZDB);
-			} // 						if (!kor3.obqueryfehler)
+		} // 						if (!kor3.obqueryfehler)
 
-			// die laut tmpcapi uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
-			// und zu denen nicht bereits eine erfolgreiche hylafax-Uebertragung eingetragen ist
-			/*//
-				RS ntr(My,"SELECT t.submid p0,t.teln p1,a.original p2,unix_timestamp(t.zp) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpcapi t "
-				"LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
-				"LEFT JOIN outa o2 ON o2.submid=a.fbspooldt AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
-			 */
-		} // 							if (rueck[0].size()||rueck[1].size()) 
-		hLog(violetts+Txk[T_Ende]+Tx[T_korrigierefbox]+schwarz);
-////		obverb=0; ZDB=0;
-		exitt(0);
-	} else if (pid<0) {
-		hLog(rots+Tx[T_Gabelung_zu_korrigierefbox_misslungen]+schwarz);
-		exitt(17);
-	} // 	if (!pid)
+		// die laut tmpcapi uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
+		// und zu denen nicht bereits eine erfolgreiche hylafax-Uebertragung eingetragen ist
+		/*//
+			RS ntr(My,"SELECT t.submid p0,t.teln p1,a.original p2,unix_timestamp(t.zp) p3,a.hdateidatum p4, a.idudoc p5,t.pages p6 FROM tmpcapi t "
+			"LEFT JOIN outa o ON t.submid = o.submid LEFT JOIN altspool a ON t.submid=a.hylanr "
+			"LEFT JOIN outa o2 ON o2.submid=a.fbspooldt AND o2.erfolg<>0 WHERE o.erfolg=0 AND t.erfolg<>0 AND ISNULL(o2.submid)",ZDB);
+		 */
+	} // 							if (rueck[0].size()||rueck[1].size()) 
+	hLog(violetts+Txk[T_Ende]+Tx[T_korrigierefbox]+schwarz);
+	////		obverb=0; ZDB=0;
 } // void hhcl::korrigierefbox
 
 // Parameter -kez
 // aufgerufen in: main, zeigweitere
 void hhcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 {
-	hLog(violetts+Tx[T_korrigierecapi]+" 1 "+schwarz);
-	// mit dem thread abzweigen, falls Programm mit Abzweigungen ausgeführt
-	const pid_t pid{nurempf||nursend?0:dfork()};
-	if (pid>0) {
-		pidcl phier(pid,"korrigierecapi");
-		pidw<<phier;
-		pidv<<phier;
-	} else if (!pid) {
-	// im Kindprozess
-		hLog(violetts+Tx[T_korrigierecapi]+" 2 "+schwarz);
+	hLog(violetts+Tx[T_korrigierecapi]+schwarz);
 		// geht wegen Loeschens der Protokolldateien nur (noch) fuer Gefundene, s.u.
 		set<string>::iterator fit; // Iterator dafuer
 		svec rueck[2];
@@ -5102,7 +5079,7 @@ void hhcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 		if (rueck[0].size()||rueck[1].size()) {
 			RS vgl1(My,"DROP TABLE IF EXISTS tmpcapi",aktc,ZDB);
 			RS vgl2(My,"CREATE TABLE tmpcapi(submid VARCHAR(40) KEY, titel VARCHAR(600), rcname VARCHAR(900),"
-					"teln VARCHAR(40),zp DATETIME, tries INT, size INT(15), erfolg INT);",aktc,ZDB);
+					"teln VARCHAR(40),zp DATETIME, tries INT, size INT(15), erfolg INT)",aktc,ZDB);
 			for(int cru=0;cru<2;cru++) {
 				for(ruecki=0;ruecki<rueck[cru].size();ruecki++) {
 					teln.clear();zp.clear();tries.clear();user.clear();size=0;
@@ -5213,11 +5190,6 @@ void hhcl::korrigierecapi(const unsigned tage/*=90*/,const size_t aktc)
 			 */
 		} // 							if (rueck[0].size()||rueck[1].size()) 
 		hLog(violetts+Txk[T_Ende]+Tx[T_korrigierecapi]+schwarz);
-		exitt(0);
-	} else if (pid<0) {
-		hLog(rots+Tx[T_Gabelung_zu_korrigierecapi_misslungen]+schwarz);
-		exitt(17);
-	} // 	if (!pid)
 } // korrigierecapi
 
 // aufgerufen in inspoolschreiben und untersuchespool; Vorsicht, wenn qdateip ein Verzeichnisname ist!
@@ -9413,15 +9385,7 @@ int hhcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 // aufgerufen in: pvirtfueraus, zeigweitere
 void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 {
-	hLog(violetts+Tx[T_korrigierehyla]+" 1 "+schwarz);
-	pid_t pid{nurempf||nursend?1:dfork()};
-	if (pid>0) {
-		pidcl phier(pid,"korrigierehyla");
-		pidw<<phier;
-		pidv<<phier;
-	}
-	if (!pid) {
-		hLog(violetts+Tx[T_korrigierehyla]+" 2 "+schwarz);
+	hLog(violetts+Tx[T_korrigierehyla]+schwarz);
 		////	uchar gehtmitxfer=0;
 		if (!xferfaxlog.empty()) {
 			struct stat entryvz{0};
@@ -9650,11 +9614,6 @@ void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 		} // 	if (!gehtmitxfer)
 		 */
 		hLog(violetts+Txk[T_Ende]+Tx[T_korrigierehyla]+schwarz);
-		exitt(0);
-	} else if (pid<0) {
-		fLog(rots+Tx[T_Gabelung_zu_korrigierehyla_misslungen]+schwarz,1,oblog);
-		exitt(17);
-	} // if (!pid)
 } // void hhcl::korrigierehyla
 
 //α
@@ -9707,9 +9666,21 @@ void hhcl::pvirtfuehraus() //α
 		// also bei den in pvirtvorpruefggfmehrfach Abgehandelten hier nichts mehr tun
 		if (kez) {
 			// hier ggf. erstes fork
-			if (obfa[0]) korrigierefbox(ltage);
-			if (obfa[1]) korrigierecapi(ltage);
-			if (obfa[2]) korrigierehyla(ltage);
+			const pid_t pid{nurempf||nursend?0:dfork()};
+			if (pid>0) {
+				pidcl phier(pid,Tx[T_korrigiere]);
+				pidw<<phier;
+				pidv<<phier;
+			} else if (!pid) {
+				hLog(violetts+Tx[T_korrigiere]+schwarz);
+				if (obfa[0]) korrigierefbox(ltage);
+				if (obfa[1]) korrigierecapi(ltage);
+				if (obfa[2]) korrigierehyla(ltage);
+				exitt(0);
+			} else if (pid<0) {
+				hLog(rots+Tx[T_Gabelung_zu_korrigiere_misslungen]+schwarz);
+				exitt(17);
+			} // 	if (!pid)
 			empfarch(/*obalte=*/1);
 		} else if (bvz) {
 			bereinigevz(/*aktc=*/0);
@@ -9789,9 +9760,24 @@ void hhcl::pvirtfuehraus() //α
 							if (obfa[0] || obfa[1] || obfa[2]) {
 								bestimmtage();
 								tage=1;
-								if (obfa[0]) { if (tage) korrigierefbox(tage,9); } // 					if (obfa[0])
-								if (obfa[1]) { if (tage) korrigierecapi(tage,9); } // 					if (obfa[1])
-								if (obfa[2]) { if (tage) korrigierehyla(tage,10);} // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
+								// hier ggf. erstes fork
+								const pid_t pid{nurempf||nursend?0:dfork()};
+								if (pid>0) {
+									pidcl phier(pid,Tx[T_korrigiere]);
+									pidw<<phier;
+									pidv<<phier;
+								} else if (!pid) {
+////									obverb=1; ZDB=1;
+									hLog(violetts+Tx[T_korrigiere]+schwarz);
+									if (obfa[0]) { if (tage) korrigierefbox(tage,9); } // 					if (obfa[0])
+									if (obfa[1]) { if (tage) korrigierecapi(tage,9); } // 					if (obfa[1])
+									if (obfa[2]) { if (tage) korrigierehyla(tage,10);} // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
+////									obverb=0; ZDB=0;
+									exitt(0);
+								} else if (pid<0) {
+									hLog(rots+Tx[T_Gabelung_zu_korrigiere_misslungen]+schwarz);
+									exitt(17);
+								} // 	if (!pid)
 							}
 							// 2. warte auf korrigierefbox, korrigierecapi und korrigierehyla
 							if (!nursend) {
