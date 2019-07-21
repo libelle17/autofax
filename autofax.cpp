@@ -55,6 +55,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"pvirtvorpruefggfmehrfach()","pvirtbeforecheckmultiple()"},
 	// T_pvirtfuehraus,
 	{"pvirtfuehraus()","pvirtexecute()"},
+	// T_in_pvirtfuehraus_pidw,
+	{"in pvirtfuehraus(), pidw","in pvirtexecute(), pidw"},
 	// T_virttesterg,
 	{"virttesterg()","virtcheckresult()"},
 	// T_virtzeigversion,
@@ -1211,6 +1213,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"' nicht gefunden.\n Eintrag ggf. loeschen mit '","' not found.\n Optionally delete entry with '"},
 	// T_in_wegfaxen
 	{"in wegfaxen, pidw","in faxingall, pidw"},
+	// T_in_korrerfolgszeichen
+	{"in korrerfolgszeichen, pidw","in correctsuccessflag, pidw"},
 	// T_WVZinDatenbank
 	{"WVZinDatenbank()","WDirinDatabase()"},
 	// T_inDbc
@@ -9682,6 +9686,7 @@ void hhcl::pvirtfuehraus() //α
 				exitt(17);
 			} // 	if (!pid)
 			empfarch(/*obalte=*/1);
+			wartaufpids(&pidw,0,obverb,oblog,Tx[T_in_korrerfolgszeichen]); // wird also nur vom Hauptthread aus aufgerufen
 		} else if (bvz) {
 			bereinigevz(/*aktc=*/0);
 		} else if (anhl) {
@@ -9781,7 +9786,7 @@ void hhcl::pvirtfuehraus() //α
 							}
 							// 2. warte auf korrigierefbox, korrigierecapi und korrigierehyla
 							if (!nursend) {
-								wartaufpids(&pidw,0,obverb,oblog,"in main, pidw");
+								wartaufpids(&pidw,0,obverb,oblog,Tx[T_in_pvirtfuehraus_pidw]);
 								exitt(0);
 							}
 						} else if (pids<0) {
