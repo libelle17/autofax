@@ -4903,6 +4903,7 @@ void hhcl::getSender(const string& faxnr, string *getnamep, string *bsnamep,cons
 	ersetzAlle(*bsnamep,":",";");
 } // void getSender
 
+// liest eine Protokolldatei von fbfax aus
 void liesvw(const string& vwdt,string* fbzpp,string* minabstp, string* telnrp, string* originalp,string* fbdialsp, string* fbmaxdialsp, FxStat* fboxstatp)
 {
 	struct stat vwstat{0};
@@ -4920,7 +4921,7 @@ void liesvw(const string& vwdt,string* fbzpp,string* minabstp, string* telnrp, s
 		// fehlt: verarb
 	}  //       if (!lstat(sendqgespfad.c_str(),entrysendp)) else
 	}
-}
+} // void liesvw
 
 void hhcl::korrigierefbox(const unsigned tage/*=90*/,const size_t aktc)
 {
@@ -8582,7 +8583,7 @@ void fsfcl::fboxausgeb(hhcl *const hhip, stringstream *ausgp, uchar fuerlog, int
 		*ausgp<<Tx[T_bzw]<<blau<<"*.vw"<<schwarz;
 		if (fbdials.empty()) fbdials="0";
 	} // if (fboxstat!=fehlend) 
-}
+} // void fsfcl::fboxausgeb
 
 // ermittelt die letzten Sendedaten zu sendqgespfad mit fsf.capistat, schreibt die Zahl der Versuche in ctries zurueck und ergaenzt den 
 // Anzeigezeiger ausgp
@@ -8863,7 +8864,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 				struct stat entrysend{0};
 				// a) ueber fbfax
 				if (obfa[0] && fsf.mailges=="0") {
-					if (faxord==1) this->prueffbox(); // in der ersten Runde, in der Capi verwendet werden soll, Capi pruefen
+					if (faxord==1) this->prueffbox(); // in der ersten Runde, in der FBox verwendet werden soll, FBox pruefen
 //					fsf.ausgeb();
 					fsf.setzfboxstat(this, &entrysend);
 					fsf.fboxausgeb(this,&ausg, 0, obverb, oblog);
