@@ -8651,9 +8651,7 @@ void fsfcl::setzfboxstat(hhcl *hhip, struct stat *entrysendp,uchar erweitert/*0*
 				}  //         for(fboxstat=gesandt;fboxstat<=gescheitert;fboxstat=static_cast<FxStat>(fboxstat+1))
 				// hier koennte fboxstat auch fehlend sein
 		}
-		if (!dateifehlt) {
-			liesvw(sendqgespfad,&fbzp,/*minststp*/0,erweitert?&telnr:0,erweitert?&original:0,&fbdials,&fbmaxdials,&fboxstat);
-		}  //       if (!lstat(sendqgespfad.c_str(),entrysendp)) else
+		liesvw(sendqgespfad,&fbzp,/*minststp*/0,erweitert?&telnr:0,erweitert?&original:0,&fbdials,&fbmaxdials,&fboxstat);
 	} // 	if(fbsdt.empty()) else
 } // void fsfcl::setzfboxstat
 
