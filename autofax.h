@@ -678,7 +678,7 @@ const char* FxStatS(const FxStat *const i);
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, const int obverb, const int oblog);
 void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, int obverb, int oblog);
 inline const int ppri(const int iprio);
-void liesvw(const string& vwdt,string* fbzpp=0,string* minabstp=0, string* telnrp=0, string* originalp=0,string* fbdialsp=0, string* fbmaxdialsp=0, FxStat* fboxstatp=0);
+void liesvw(const string& vwdt,time_t* fbzpp=0,string* minabstp=0, string* telnrp=0, string* originalp=0,string* fbdialsp=0, string* fbmaxdialsp=0, FxStat* fboxstatp=0);
 
 
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster

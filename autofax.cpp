@@ -4904,22 +4904,26 @@ void hhcl::getSender(const string& faxnr, string *getnamep, string *bsnamep,cons
 } // void getSender
 
 // liest eine Protokolldatei von fbfax aus
-void liesvw(const string& vwdt,string* fbzpp,string* minabstp, string* telnrp, string* originalp,string* fbdialsp, string* fbmaxdialsp, FxStat* fboxstatp)
+void liesvw(const string& vwdt,time_t* fbzpp,string* minabstp, string* telnrp, string* originalp,string* fbdialsp, string* fbmaxdialsp, FxStat* fboxstatp)
 {
 	struct stat vwstat{0};
 	if (!lstat(vwdt.c_str(),&vwstat)) {
 		mdatei f(vwdt.c_str(),ios::in|ios::binary); 
-	if (f.is_open()) {
-		string zeile;
-		if (getline(f,zeile)) if (fbzpp) *fbzpp=atol(zeile.c_str());  // fb-Zeitpunkt
-		if (getline(f,zeile)) if (minabstp) *minabstp=zeile; // restliche Minutenabstaende
-		if (getline(f,zeile)) if (telnrp) *telnrp=zeile; // telnr
-		if (getline(f,zeile)) if (originalp) {size_t pos{zeile.rfind('/')+1};*originalp=(pos?zeile.substr(pos):zeile);} // Dateiname
-		if (getline(f,zeile)) if (fbdialsp) if (size_t pos{zeile.find('/')}) {*fbdialsp=zeile.substr(0,pos); if (fbmaxdialsp) *fbmaxdialsp=zeile.substr(pos+1);}
-		f.close();
-		if (fboxstatp) if (*fboxstatp!=gesandt && *fboxstatp!=gescheitert) *fboxstatp=wartend;
-		// fehlt: verarb
-	}  //       if (!lstat(sendqgespfad.c_str(),entrysendp)) else
+		if (f.is_open()) {
+			string zeile;
+			if (getline(f,zeile)) if (fbzpp) *fbzpp=atol(zeile.c_str());  // fb-Zeitpunkt
+			if (getline(f,zeile)) if (minabstp) *minabstp=zeile; // restliche Minutenabstaende
+			if (getline(f,zeile)) if (telnrp) *telnrp=zeile; // telnr
+			if (getline(f,zeile)) if (originalp) {size_t pos{zeile.rfind('/')+1};*originalp=(pos?zeile.substr(pos):zeile);} // Dateiname
+			if (getline(f,zeile)) if (fbdialsp) if (size_t pos{zeile.find('/')}) {*fbdialsp=zeile.substr(0,pos); if (fbmaxdialsp) *fbmaxdialsp=zeile.substr(pos+1);}
+			f.close();
+			if (fboxstatp) if (*fboxstatp!=gesandt && *fboxstatp!=gescheitert) *fboxstatp=wartend;
+			// fehlt: verarb
+		} else {
+			*fboxstatp=fehlend;
+		}  //       if (!lstat(sendqgespfad.c_str(),entrysendp)) else
+	} else {
+		*fboxstatp=fehlend;
 	}
 } // void liesvw
 
@@ -8647,21 +8651,8 @@ void fsfcl::setzfboxstat(hhcl *hhip, struct stat *entrysendp,uchar erweitert/*0*
 				}  //         for(fboxstat=gesandt;fboxstat<=gescheitert;fboxstat=static_cast<FxStat>(fboxstat+1))
 				// hier koennte fboxstat auch fehlend sein
 		}
-		if (!dateifehlt) {	
-			mdatei f(sendqgespfad.c_str(),ios::in|ios::binary); 
-			if (f.is_open()) {
-				string zeile;
-				if (getline(f,zeile)) fbzp=atol(zeile.c_str()); 
-				if (getline(f,zeile)) {} // restliche Minutenabstaende
-				if (getline(f,zeile)) {if (erweitert) telnr=zeile;} // telnr
-				if (getline(f,zeile)) {if (erweitert) {size_t pos{zeile.rfind('/')+1};original=(pos?zeile.substr(pos):zeile);}} // Dateiname
-				if (getline(f,zeile)) if (size_t pos{zeile.find('/')}) {fbdials=zeile.substr(0,pos); fbmaxdials=zeile.substr(pos+1);}
-				f.close();
-				if (fboxstat!=gesandt && fboxstat!=gescheitert) fboxstat=wartend;
-				// fehlt: verarb
-			} else {
-				fboxstat=fehlend;
-			} // 			if (f.is_open()) else
+		if (!dateifehlt) {
+			liesvw(sendqgespfad,&fbzp,/*minststp*/0,erweitert?&telnr:0,erweitert?&original:0,&fbdials,&fbmaxdials,&fboxstat);
 		}  //       if (!lstat(sendqgespfad.c_str(),entrysendp)) else
 	} // 	if(fbsdt.empty()) else
 } // void fsfcl::setzfboxstat
