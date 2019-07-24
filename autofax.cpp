@@ -4904,7 +4904,8 @@ void hhcl::getSender(const string& faxnr, string *getnamep, string *bsnamep,cons
 } // void getSender
 
 // liest eine Protokolldatei von fbfax aus
-void liesvw(const string& vwdt,time_t* fbzpp,string* minabstp, string* telnrp, string* originalp,string* fbdialsp, string* fbmaxdialsp, FxStat* fboxstatp)
+// aufgerufen in: korrigierefbox, setzfboxstat
+void liesvw(const string& vwdt,time_t* fbzpp,string* minabstp, string* telnrp, string* originalp,string* fbdialsp, string* fbmaxdialsp, FxStat* fboxstatp,time_t* fbnzpp/* naechster Zeitpunkt*/)
 {
 	struct stat vwstat{0};
 	if (!lstat(vwdt.c_str(),&vwstat)) {
@@ -4912,7 +4913,19 @@ void liesvw(const string& vwdt,time_t* fbzpp,string* minabstp, string* telnrp, s
 		if (f.is_open()) {
 			string zeile;
 			if (getline(f,zeile)) if (fbzpp) *fbzpp=atol(zeile.c_str());  // fb-Zeitpunkt
-			if (getline(f,zeile)) if (minabstp) *minabstp=zeile; // restliche Minutenabstaende
+			if (getline(f,zeile)) {
+				if (minabstp) *minabstp=zeile; // restliche Minutenabstaende
+				if (!zeile.empty()) {
+					const size_t posk{zeile.find(',')};
+					long nmin;
+					if (posk!=string::npos) {
+					  nmin=atol(zeile.substr(0,posk).c_str()); // z.B. "720,1440"
+					} else {
+            nmin=atol(zeile.c_str());  // z.B. "1440"
+					}
+					if (fbnzpp) if (fbzpp) *fbnzpp=*fbzpp+60*nmin;
+				}
+			}
 			if (getline(f,zeile)) if (telnrp) *telnrp=zeile; // telnr
 			if (getline(f,zeile)) if (originalp) {size_t pos{zeile.rfind('/')+1};*originalp=(pos?zeile.substr(pos):zeile);} // Dateiname
 			if (getline(f,zeile)) if (fbdialsp) if (size_t pos{zeile.find('/')}) {*fbdialsp=zeile.substr(0,pos); if (fbmaxdialsp) *fbmaxdialsp=zeile.substr(pos+1);}
@@ -5769,7 +5782,7 @@ void hhcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,const 
 				} // if (trueck.size()) 
 			} // 	if (!lstat(xferfaxlog.c_str(),&trst))
 		} // if (callerid.empty()) 
-		// <<gruen<<"tsid: "<<schwarz<<tsid<<endl;
+		//// <<gruen<<"tsid: "<<schwarz<<tsid<<endl;
 		tsid=stdfaxnr(tsid.empty()?callerid:tsid);
 		if (absdr.empty()) {
 			string bsname;
@@ -8571,6 +8584,7 @@ int fsfcl::loeschehyla(hhcl *const hhip, const int obverb, const int oblog)
 	return 1;
 } // int fsfcl::loeschehyla
 
+// aufgerufen in: untersuchespool, aenderefax, zeigweitere
 void fsfcl::fboxausgeb(hhcl *const hhip, stringstream *ausgp, uchar fuerlog, int obverb, int oblog, ulong faxord)
 {
 	fLog(violetts+Tx[T_fboxausgeb]+schwarz+"  fboxstat: "+blau+FxStatS(&fboxstat)+schwarz,obverb,oblog);
@@ -8578,10 +8592,10 @@ void fsfcl::fboxausgeb(hhcl *const hhip, stringstream *ausgp, uchar fuerlog, int
 	if (faxord) *ausgp<<faxord<<")";
 	else *ausgp<<"  ";
 	*ausgp<<"Fbox: "<<schwarz;
-	*ausgp<<(fboxstat==fehlend?hgrau:(fboxstat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<setw(7)<<FxStatS(&fboxstat)<<schwarz;
+	*ausgp<<(fboxstat==fehlend?hgrau:(fboxstat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<setw(11)<<FxStatS(&fboxstat)<<schwarz;
 	if (fboxstat!=fehlend) {
 		*ausgp<<","<<blau<<setw(3)<<fbdials<<"/"<<fbmaxdials<<schwarz<<(fboxstat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
-		*ausgp<<blau<<ztacl(fbzp,"%d.%m.%y %T")<<schwarz;
+		*ausgp<<blau<<ztacl(fbnzp,"%d.%m.%y %T")<<schwarz;
 		*ausgp<<",T.:"<<blau<<setw(12)<<telnr<<schwarz; 
 		*ausgp<<Tx[T_kommaDatei]<<rot<<hhip->fbwvz+vtz+fbsdt+".tif"/*sendqgespfad*/<<schwarz;
 		*ausgp<<Tx[T_bzw]<<blau<<"*.vw"<<schwarz;
@@ -8599,7 +8613,7 @@ void fsfcl::capiausgeb(hhcl *const hhip, stringstream *ausgp, const string& maxc
 	if (faxord) *ausgp<<faxord<<")";
 	else *ausgp<<"  ";
 	*ausgp<<"Capi: "<<schwarz;
-	*ausgp<<(capistat==fehlend?hgrau:(capistat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<setw(7)<<FxStatS(&capistat)<<schwarz;
+	*ausgp<<(capistat==fehlend?hgrau:(capistat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<setw(11)<<FxStatS(&capistat)<<schwarz;
 	/*//
 		if (capistat==wartend) {
 	 *ausgp<<schwarz<<" "<<Tx[T_wartend]<<schwarz;
@@ -8615,12 +8629,32 @@ void fsfcl::capiausgeb(hhcl *const hhip, stringstream *ausgp, const string& maxc
 	if (capistat!=fehlend) {
 		////    if (cpplies(suchtxt,cccnfA,cs)) KLA
 		//// RS rmod(My,string("update spool set capidials=")+cccnfA[0].val+" where id = "+cjj(cerg,0),ZDB);
+		if (ctries.empty()) ctries="0";
 		*ausgp<<","<<blau<<setw(3)<<ctries<<"/"<<maxcdials<<schwarz<<(capistat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
 		////                      if (versuzahl>12) ausg<<"zu spaet, ";
 		struct tm tm{0};
 		for(unsigned im=0;im<hhip->tmmoelen;im++) {
 			if (strptime(starttime.c_str(), tmmoegl[im], &tm)) break;
 		}
+		// naechster Aufrufzeitpunkt
+		if (1) {
+			tm.tm_isdst=-1; // sonst wurde eine Stunde hinzugezaehlt
+			time_t letzt{mktime(&tm)};
+			if (letzt!=-1) {
+				static svec minv;
+				if (!minv.size()) {
+					aufSplit(&minv,hhip->send_delays,",");
+				}
+				const long ctriesn{atol(ctries.c_str())};
+				if ((long)minv.size()>=ctriesn) {
+					letzt+=atol(minv[ctriesn].c_str());
+				}
+			}
+			pthread_mutex_lock(&timemutex);
+			memcpy(&tm,localtime(&letzt),sizeof tm); // gmtime
+			pthread_mutex_unlock(&timemutex);
+		} // if (1)
+
 		//// char buf[100];
 		//// strftime(buf, sizeof(buf), "%d.%m.%y %T", &tm);
 		//// *ausgp<<blau<<buf<<schwarz; 
@@ -8628,7 +8662,6 @@ void fsfcl::capiausgeb(hhcl *const hhip, stringstream *ausgp, const string& maxc
 		*ausgp<<",T.:"<<blau<<setw(12)<<dialstring<<schwarz; 
 		*ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
 		*ausgp<<Tx[T_bzw]<<blau<<"*.txt"<<schwarz;
-		if (ctries.empty()) ctries="0";
 	} // if (capistat!=fehlend) 
 } // void fsfcl::capiausgeb
 
@@ -8651,7 +8684,7 @@ void fsfcl::setzfboxstat(hhcl *hhip, struct stat *entrysendp,uchar erweitert/*0*
 				}  //         for(fboxstat=gesandt;fboxstat<=gescheitert;fboxstat=static_cast<FxStat>(fboxstat+1))
 				// hier koennte fboxstat auch fehlend sein
 		}
-		liesvw(sendqgespfad,&fbzp,/*minststp*/0,erweitert?&telnr:0,erweitert?&original:0,&fbdials,&fbmaxdials,&fboxstat);
+		liesvw(sendqgespfad,&fbzp,/*minststp*/0,erweitert?&telnr:0,erweitert?&original:0,&fbdials,&fbmaxdials,&fboxstat,&fbnzp);
 	} // 	if(fbsdt.empty()) else
 } // void fsfcl::setzfboxstat
 
@@ -8728,7 +8761,7 @@ int fsfcl::holcapiprot(int obverb)
 		return (int)p1;
 	} //   if (p1)
 	return -1; // sendqgespfad enthaelt keinen ., .txt-Datei nicht zu benennen
-} // int fsfcl::holcapiprot()
+} // int fsfcl::holcapiprot
 
 
 // aufgerufen in untersuchespool und zeigweitere
@@ -8740,7 +8773,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, hhcl *hhip/*, int obsfehlt*/, uchar 
 	else *ausgp<<"  ";
 	*ausgp<<"Hyla: "<<schwarz;
 	*ausgp<<(hylastat==fehlend?hgrau:(hylastat>=static_cast<FxStat>(gesandt)?blau:schwarz))
-		<<setw(7)<<FxStatS(&hylastat)<<(hgerg.empty()?"":" ("+hgerg+")")<<schwarz;
+		<<setw(11)<<FxStatS(&hylastat)<<(hgerg.empty()?"":" ("+hgerg+")")<<schwarz;
 	/*//
 		if (obsfehlt) KLA
 	// wenn also die Datenbankdatei weder im Spool noch bei den Erledigten nachweisbar ist

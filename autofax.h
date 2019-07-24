@@ -678,7 +678,7 @@ const char* FxStatS(const FxStat *const i);
 void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, const int obverb, const int oblog);
 void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, int obverb, int oblog);
 inline const int ppri(const int iprio);
-void liesvw(const string& vwdt,time_t* fbzpp=0,string* minabstp=0, string* telnrp=0, string* originalp=0,string* fbdialsp=0, string* fbmaxdialsp=0, FxStat* fboxstatp=0);
+void liesvw(const string& vwdt,time_t* fbzpp=0,string* minabstp=0, string* telnrp=0, string* originalp=0,string* fbdialsp=0, string* fbmaxdialsp=0, FxStat* fboxstatp=0,time_t* fbnzpp=0/* naechster Zeitpunkt*/);
 
 
 // Steuerung der Abspeicherung gesendeter Faxe je nach Muster
@@ -768,7 +768,7 @@ struct fsfcl : public fxfcl // Faxsendfile
 		string fbdials;  // fbdials
 	  string fbmaxdials;// maxdials (fbox)
 		string fbsdt;    // fbspooldt
-		time_t fbzp;     // fbzeitpunkt
+		time_t fbzp,fbnzp{0};     // fbzeitpunkt, naechster fbzp
     string sendqgespfad; // kann fuer capi oder hyla verwendet werden
     string hgerg;  // hyla_gescheitert_erg
     int hversuzahl;
