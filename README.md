@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.47891) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47941) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -177,7 +177,7 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47889</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47941</b>
 Using: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
@@ -302,6 +302,9 @@ until Capisuite accepts the call, instead of
 -hrct, --hringcount &lt;string&gt;</b>: No. of bell rings
 until hylafaxs accepts the call, instead of
 (&rsquo;<b>2</b>&rsquo;) <b><br>
+-hintv, --hinterval &lt;string&gt;</b>: interval in seconds
+after busy, until hylafax dials again instead of
+(&rsquo;<b>120</b>&rsquo;) <b><br>
 -hmd, --hmaxdials &lt;string&gt;</b>: No of dialing retries
 in hylafax, instead of (&rsquo;<b>11</b>&rsquo;) <b><br>
 -it, --immediatelytarget &lt;zahl&gt;</b>: copy faxes into
@@ -845,7 +848,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.47891) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.47941) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1037,7 +1040,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.47889</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.47941</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
@@ -1167,6 +1170,9 @@ Klingeltoene, bis Capisuite den Anruf annimmt, anstatt
 -hkzl, --hklingelzahl &lt;string&gt;</b>: Zahl der
 Klingeltoene, bis Hylafax den Anruf annimmt, anstatt
 (&rsquo;<b>2</b>&rsquo;) <b><br>
+-hintv, --hintervall &lt;string&gt;</b>: Abstand in Sekunden
+nach besetzt, bis hylafax erneut waehlt anstatt
+(&rsquo;<b>120</b>&rsquo;) <b><br>
 -hmw, --hmaxwahlvers &lt;string&gt;</b>: Zahl der
 Wahlversuche in Hylafax, anstatt (&rsquo;<b>11</b>&rsquo;)
 <b><br>
