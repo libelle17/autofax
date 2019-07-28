@@ -8530,6 +8530,7 @@ void fsfcl::archiviere(DB *const My, hhcl *const hhip, const struct stat *const 
 // aufgerufen in: aenderefax, untersuchespool
 int fsfcl::loeschefbox(hhcl *const hhip, const int obverb, const int oblog)
 {
+	int *obvp=(int*)&obverb; *obvp=1;
 	fLog(violetts+Tx[T_loeschefbox]+schwarz,obverb,oblog);
 	int zdng{0}; // Zahl der nicht Geloeschten
 	if (!fbsdt.empty()) {
@@ -8540,6 +8541,7 @@ int fsfcl::loeschefbox(hhcl *const hhip, const int obverb, const int oblog)
 	} else { 
 		zdng=1;
 	} // if (!fbsdt.empty())
+	*obvp=0;
 	return zdng;
 } // void fsfcl::loeschefbox
 
@@ -9398,12 +9400,17 @@ int hhcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 			if (ergnr=="0") return 0;
 			size_t nr=atol(ergnr.c_str())-1;
 			if (nr>=0 && nr<fsfav.size()) {
+	caus<<"Stelle 4"<<endl;
 				if (Tippob(Tx[T_Soll_das_Fax]+gruens+ergnr+schwarz+Tx[(aktion?T_umgeleitet_werden:T_wirklich_geloescht_werden)],"n")) {
+	caus<<"Stelle 5"<<endl;
 					if (aktion) {
+	caus<<"Stelle 6"<<endl;
 						RS umpri(My,"UPDATE `"+spooltab+"` SET prio=IF(prio=0 OR prio=2,3,2) WHERE id="+fsfav[nr].id,aktc,ZDB);
 					} else { // !aktion
+	caus<<"Stelle 7, fbsdt: "<<fsfav[nr].fbsdt<<endl;
 						int zdng{0}; // Zahl der nicht geloeschten
 						if (fsfav[nr].fbsdt!="NULL" && !fsfav[nr].fbsdt.empty()) {
+	caus<<"Stelle 8"<<endl;
 							zdng+=fsfav[nr].loeschefbox(this,obverb,oblog);
 							hLog(blaus+"fbox: "+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng)+blau+Tx[T_FBoxspooldatei]+
 									schwarz+fsfav[nr].fbsdt);
