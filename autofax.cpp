@@ -9355,15 +9355,18 @@ int hhcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 		"hylanr p4 FROM `"+spooltab+"` ORDER BY id",ZDB);
 	 */
 	RS zul(My,"SELECT CONCAT_WS(' ',LEFT(CONCAT(original,SPACE(50)),50),"
-			"RIGHT(CONCAT(SPACE(15),capispooldt),15),"
-			"CONCAT('Capidials:',RIGHT(CONCAT(SPACE(4),capidials),4)),"
-			"CONCAT('Hyla:',RIGHT(CONCAT(SPACE(5),hylanr),5)), "
-			"CONCAT('Hyladials:',RIGHT(CONCAT(SPACE(4),hyladials),4))) p0,"
+			"CONCAT('Capisdt:',RIGHT(CONCAT(SPACE(15),capispooldt),15),"
+			"       ', Capidials:',RIGHT(CONCAT(SPACE(2),capidials),2),"
+			"       ', Hylanr:',RIGHT(CONCAT(SPACE(5),hylanr),5),"
+			"       ', Hdials:',RIGHT(CONCAT(SPACE(2),hyladials),2),"
+			"       ', Fbsdt:',RIGHT(CONCAT(SPACE(6),fbspooldt),6),"
+			"       ', FBdials:',RIGHT(CONCAT(SPACE(2),fbdials),2)"
+			")) p0,"
 			"id p1,"
 			"capispooldt p2,"
 			"IF(capispoolpfad='','"+cfaxusersqvz+"',capispoolpfad) p3,"
 			"hylanr p4,"
-			"original p5, origvu p6 "
+			"original p5, origvu p6, fbspooldt p7 "
 			"FROM `"+spooltab+"` ORDER BY id",aktc,ZDB);
 	while (cerg=zul.HolZeile(),cerg?*cerg:0) {
 		if (*(*cerg+0) && *(*cerg+1)) {
@@ -9371,6 +9374,7 @@ int hhcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 			/*3*/fsfcl fsf(cjj(cerg,1),cjj(cerg,2),cjj(cerg,4),cjj(cerg,3));
 			if (*(*cerg+5)) fsf.original=cjj(cerg,5);
 			if (*(*cerg+6)) fsf.origvu=cjj(cerg,6);
+			if (*(*cerg+7)) fsf.fbsdt=cjj(cerg,7);
 			fsfav.push_back(fsf);
 		} // if (*(*cerg+0) && *(*cerg+1)) 
 	} // while (cerg=zul.HolZeile(),cerg?*cerg:0) 
@@ -9408,17 +9412,12 @@ int hhcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 			if (ergnr=="0") return 0;
 			size_t nr=atol(ergnr.c_str())-1;
 			if (nr>=0 && nr<fsfav.size()) {
-	caus<<"Stelle 4"<<endl;
 				if (Tippob(Tx[T_Soll_das_Fax]+gruens+ergnr+schwarz+Tx[(aktion?T_umgeleitet_werden:T_wirklich_geloescht_werden)],"n")) {
-	caus<<"Stelle 5"<<endl;
 					if (aktion) {
-	caus<<"Stelle 6"<<endl;
 						RS umpri(My,"UPDATE `"+spooltab+"` SET prio=IF(prio=0 OR prio=2,3,2) WHERE id="+fsfav[nr].id,aktc,ZDB);
 					} else { // !aktion
-	caus<<"Stelle 7, fbsdt: "<<fsfav[nr].fbsdt<<endl;
 						int zdng{0}; // Zahl der nicht geloeschten
 						if (fsfav[nr].fbsdt!="NULL" && !fsfav[nr].fbsdt.empty()) {
-	caus<<"Stelle 8"<<endl;
 							zdng+=fsfav[nr].loeschefbox(this,obverb,oblog);
 							hLog(blaus+"fbox: "+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng)+blau+Tx[T_FBoxspooldatei]+
 									schwarz+fsfav[nr].fbsdt);

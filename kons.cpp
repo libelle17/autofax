@@ -5879,7 +5879,7 @@ int hcl::holvomnetz(const string& datei,const string& vors/*=defvors*/,const str
 		} //     if (!qrueck.size())
 	} // if (!pruefinstv())
 	return erg;
-} // int hcl::holvomnetz(const string& datei,const string& vors/*=defvors*/,const string& nachs/*=defnachs*/)
+} // int hcl::holvomnetz
 
 // wird aufgerufen in hcl::kompiliere
 int hcl::kompilbase(const string& was, const string& endg)
