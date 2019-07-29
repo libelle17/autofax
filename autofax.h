@@ -99,6 +99,10 @@ enum T_
 	T_hkzl_k,
 	T_hklingelzahl_l,
 	T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,
+	T_hintv_k,
+	T_hintervall_l,
+	T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt,
+	T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt_anstatt,
 	T_md_k,
 	T_maxdials_l,
 	T_Zahl_der_Wahlversuche_in_Hylafax,
@@ -904,6 +908,7 @@ class hhcl:public dhcl
 		string InternationalPrefix; // Vorsatz fuer ausserlandes
 		string cklingelzahl; // Zahl der Klingeltoene, bis Capisuite einen Anruf annnimmt
 		string hklingelzahl; // Zahl der Klingeltoene, bis Hylafax einen Anruf annnimmt
+		string hintervall; // Abstand in Sekunden nach besetzt, bis hylafax erneut waehlt
 		string cfaxconfdt; // /etc/capisuite/fax.conf oder /usr/local/etc/capisuite/fax.conf laut Handbuch
 		string cfaxconfeigdt; // ~/autofax/cfaxconfdt
 		string spoolcapivz; // Verzeichnis der Capi-Spool-Dateien /var/spool/capisuite/
@@ -938,7 +943,8 @@ class hhcl:public dhcl
 		string modconfdt; // hylafax-Konfigurationsdatei, z.B. /var/spool/hylafax/etc/config.ttyACM0
 		string faxgtpfad;   // /usr/lib/fax/faxgetty oder /usr/local/sbin/faxgetty
 		string faxqpfad,hfaxdpfad; // /usr/local/sbin/faxq, /usr/local/sbin/hfaxq
-		string countrycode_dt,areacode_dt,faxnumber_dt,longdistanceprefix_dt,internationalprefix_dt,ringsbeforeanswer_dt,localidentifier_dt,maxdials_dt;
+		string countrycode_dt,areacode_dt,faxnumber_dt,longdistanceprefix_dt,internationalprefix_dt,ringsbeforeanswer_dt,
+					 jobreqbusy_dt,localidentifier_dt,maxdials_dt;
     svec vinca;
 		unsigned tage{0}; // fuer korrigierecapi und korrigierehyla 
 		string hsendqvz; // /var/spool/hylafax/sendq // in fsf->loeschehyla benoetigt

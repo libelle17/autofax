@@ -207,6 +207,14 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"hklingelzahl","hringcount"},
 	// T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt
 	{"Zahl der Klingeltoene, bis Hylafax den Anruf annimmt, anstatt","No. of bell rings until hylafaxs accepts the call, instead of"},
+	// T_hintv_k
+	{"hintv","hintv"},
+	// T_hintervall_l
+	{"hintervall","hinterval"},
+	// T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt
+	{"Abstand in Sekunden nach besetzt, bis hylafax erneut waehlt","interval in seconds after busy, until hylafax dials again"},
+	// T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt_anstatt
+	{"Abstand in Sekunden nach besetzt, bis hylafax erneut waehlt anstatt","interval in seconds after busy, until hylafax dials again instead of"},
 	// T_md_k
 	{"hmw","hmd"},
 	// T_maxdials_l
@@ -2312,7 +2320,15 @@ int hhcl::prueffbox()
 {
 	hLog(violetts+Tx[T_prueffbox]+schwarz+" obfbox: "+(obfa[0]?"1":"0"));
 	if (obfa[0]) {
-		// ...
+		const string fbfax("fbfax");
+		if (!obprogda(fbfax)) {
+			caus<<rot<<"prueffbox 2"<<schwarz<<endl;
+			const int altobverb{obverb};
+			obverb=1;
+			holvomnetz(fbfax);
+			kompiliere(fbfax,s_gz);
+			obverb=altobverb;
+		}
 	}
 	return 1;
 } // int hhcl::prueffbox
@@ -2865,6 +2881,7 @@ void hhcl::virtVorgbAllg()
 	InternationalPrefix="00";
 	cklingelzahl="1";
 	hklingelzahl="2"; // muss mindestens 2 sein, um die Nr. des anrufenden zu uebertragen
+	hintervall="120"; // Intervall nach Besetzt
 	// um z.B. spezielle Vorgaben (s. VorgbSpeziell) vom Server abhaengig machen zu koennen
 #ifdef _WIN32
 	//// char lpszUsername[255]; DWORD dUsername = sizeof(lpszUsername); GetUserName(lpszUsername, &dUsername);
@@ -2912,6 +2929,7 @@ void hhcl::virtinitopt()
 	opn<<new optcl(/*pname*/"cuser",/*pptr*/&cuser,/*art*/pstri,T_cuser_k,T_cuser_l,/*TxBp*/&Tx,/*Txi*/T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!cuser.empty(),T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt);
 	opn<<new optcl(/*pname*/"cklingelzahl",/*pptr*/&cklingelzahl,/*art*/pdez,T_ckzl_k,T_cklingelzahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!cklingelzahl.empty(),T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt);
 	opn<<new optcl(/*pname*/"hklingelzahl",/*pptr*/&hklingelzahl,/*art*/pdez,T_hkzl_k,T_hklingelzahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hklingelzahl.empty(),T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt);
+	opn<<new optcl(/*pname*/"hintervall",/*pptr*/&hintervall,/*art*/pdez,T_hintv_k,T_hintervall_l,/*TxBp*/&Tx,/*Txi*/T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hintervall.empty(),T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt);
 	opn<<new optcl(/*pname*/"maxdials",/*pptr*/&maxhdials,/*art*/pdez,T_md_k,T_maxdials_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Wahlversuche_in_Hylafax,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!maxhdials.empty(),T_Zahl_der_Wahlversuche_in_Hylafax);
 	opn<<new optcl(/*pname*/"gleichziel",/*pptr*/&gleichziel,/*art*/pint,T_gz_k,T_gleichziel_l,/*TxBp*/&Tx,/*Txi*/T_Faxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/gleichziel!=-1,T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden);
 	opn<<new optcl(/*pname*/"ocri",/*pptr*/&obocri,/*art*/pint,T_ocri_k,T_ocri_l,/*TxBp*/&Tx,/*Txi*/T_Text_aus_empfangenen_Faxen_wird_ermittelt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obocri!=-1,T_soll_Text_in_empfangenen_Faxen_mit_OCR_gesucht_werden);
@@ -3350,6 +3368,11 @@ void hhcl::virtrueckfragen()
 			if (hmodem.empty()) hmodem=modems[0];
 			hmodem=Tippstrs(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,&hmodem);
 			hklingelzahl=Tippzahl(Tx[T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt],hklingelzahl.c_str());
+			string hintervneu{Tippzahl(Tx[T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt],hintervall.c_str())};
+			if (hintervneu!=hintervall) {
+				hintervall=hintervneu;
+				hconfigtty();
+			}
 			maxhdials=Tippzahl(Tx[T_Zahl_der_Wahlversuche_in_Hylafax],maxhdials.c_str());
 		}
 		gleichziel=Tippob(Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden],gleichziel?Txk[T_j_af]:"n");
@@ -3711,8 +3734,8 @@ int hhcl::hconfigtty()
 		hci<<"TagLineFormat:    \"Von %%l|%c|Seite %%P of %%T\""<<endl;
 		hci<<"AdaptiveAnswer:   yes"<<endl;
 		hci<<"AnswerRotary:   \"voice fax data\""<<endl;
-		hci<<"MaxRecvPages:   100"<<endl;
-		hci<<"JobReqBusy:   120"<<endl;
+		hci<<"MaxRecvPages:   500"<<endl;
+		hci<<"JobReqBusy:   "<<this->hintervall<<endl; // 120
 		hci<<"# Modem-related stuff: should reflect modem command interface"<<endl;
 		hci<<"# and hardware connection/cabling (e.g. flow control)."<<endl;
 		hci<<"ModemType:    Class1    # use class 1 interface"<<endl;
@@ -3976,6 +3999,7 @@ void hhcl::hfaxsetup()
 	this->setzfaxgtpfad();
 } // hfaxsetup
 
+// in pruefhyla
 void hhcl::hliesconf()
 {
 	hLog(violetts+"hliesconf()"+schwarz);
@@ -4005,12 +4029,27 @@ void hhcl::hliesconf()
 					{"LongDistancePrefix",&longdistanceprefix_dt},
 					{"InternationalPrefix",&internationalprefix_dt},
 					{"RingsBeforeAnswer",&ringsbeforeanswer_dt},
+					{"JobReqBusy",&jobreqbusy_dt},
 					{"LocalIdentifier",&localidentifier_dt},
 					{"MaxDials",&maxdials_dt}
 					});
 		}
 		confdcl hyaltc(modconfdt,obverb,':');
 		hyaltc.kauswert(hyaltcnfCp);
+		if (countrycode_dt!=countrycode ||
+				areacode_dt!=citycode ||
+				faxnumber_dt!=countrycode+"."+citycode+"."+msn ||
+				longdistanceprefix_dt!=LongDistancePrefix ||
+				internationalprefix_dt!=InternationalPrefix||
+				ringsbeforeanswer_dt!=hklingelzahl ||
+				jobreqbusy_dt!=hintervall ||
+				localidentifier_dt!=LocalIdentifier ||
+				maxdials_dt!=maxhdials ||
+				0 ) {
+			hconfigtty();
+			caus<<rot<<"schreibe Hylafax-conf"<<schwarz<<endl;
+			shylafaxd->restart(obverb>0?obverb-1:0,oblog);
+		}
 #endif
 	} //   if (lstat(modconfdt.c_str(),&mstat)) else
 	// hyaltcnfA.ausgeb();
@@ -4021,6 +4060,7 @@ void hhcl::hliesconf()
 // Rueckgabe: wie obfa[2] eingestellt sein sollte
 int hhcl::pruefhyla()
 {
+	//// const int altobverb{obverb};
 	hLog(violetts+Tx[T_pruefhyla]+schwarz);
 	int ret{1};
 	hylasv1();
@@ -4511,6 +4551,7 @@ int hhcl::pruefhyla()
 			hLog(violetts+Txk[T_Ende]+Tx[T_pruefhyla]+schwarz);
 		} // 	if (hmodem.empty()) else
 	} while (0); // fuer break
+	//// obverb=altobverb;
 	return ret;
 } // int hhcl::pruefhyla
 
@@ -6573,8 +6614,8 @@ void hhcl::inspoolschreiben(const size_t aktc)
 	vector <urfxcl> urfx; // urspruenglicher Dateiname
 	svec zfda,zfvz; // Zufaxen-Datei, Warteverzeichnis-Verzeichnis
 	if (findv==1) {
-		systemrueck(sudc+"find \""+zufaxenvz+"\" -maxdepth 1 -type f",obverb,oblog,&zfda,/*obsudc*/0,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausp*/0,/*obdirekt*/0,/*ohnewisch*/1);
-	} else findfile(&zfda,findv,obverb,oblog,/*anteil=*/0,zufaxenvz,/*muster=*/"",/*tiefe=*/1,/*typbit=*/B_Datei,/*folge=*/Fol_Dat);
+		systemrueck(sudc+"find \""+zufaxenvz+"\" -maxdepth 1 -type f -not -name \"*\\`*.nix\"",obverb,oblog,&zfda,/*obsudc*/0,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausp*/0,/*obdirekt*/0,/*ohnewisch*/1);
+	} else findfile(&zfda,findv,obverb,oblog,/*anteil=*/0,zufaxenvz,/*muster=*/"^[^`]*$",/*tiefe=*/1,/*typbit=*/B_Datei,/*folge=*/Fol_Dat);
 	// Unterverzeichnisse für Faxe mit Zeitsteuerung suchen
 	if (findv==1) {
 		systemrueck(sudc+"find \""+zufaxenvz+"\" -maxdepth 1 -type d",obverb,oblog,&zfvz,/*obsudc*/0,/*verbergen*/0,/*obergebnisanzeig*/wahr,/*ueberschr*/string(),/*errm*/0,/*obincron*/0,/*ausp*/0,/*obdirekt*/0,/*ohnewisch*/1);
@@ -6587,8 +6628,8 @@ void hhcl::inspoolschreiben(const size_t aktc)
 				svec zfuda; // Zufaxen-Datei im Unterverzeichnis
 				// Dateien im Unterverzeichnis suchen
 				if (findv==1) {
-					systemrueck(sudc+"find \""+zfvz[iakt]+"\" -maxdepth 1 -type f",obverb,oblog,&zfuda);
-				} else findfile(&zfuda,findv,obverb,oblog,/*anteil=*/0,zfvz[iakt],/*muster=*/"",/*tiefe=*/1,/*typbit=*/B_Datei,/*folge=*/Fol_Dat,0,0,0,0,0,1);
+					systemrueck(sudc+"find \""+zfvz[iakt]+"\" -maxdepth 1 -type f -not -name \"*\\`*.nix\"",obverb,oblog,&zfuda);
+				} else findfile(&zfuda,findv,obverb,oblog,/*anteil=*/0,zfvz[iakt],/*muster=*/"^[^`]*$",/*tiefe=*/1,/*typbit=*/B_Datei,/*folge=*/Fol_Dat,0,0,0,0,0,1);
 				// wenn Datum oder Uhrzeit schon vorbei ist, dann beinhaltete Fax-Datein verarbeiten
 				for(size_t iiru=0;iiru<zfuda.size();iiru++) {
 					zfda<<zfuda[iiru];
@@ -7759,10 +7800,10 @@ void hhcl::bereinigevz(const size_t aktc/*=0*/)
 			const string dsvz{*fit}; // Dateiensuchverzeichnis
 			svec rueck;
 			if (findv==1) {
-				cmd="find "+dsvz+" -maxdepth 1 -type f -printf '%f\\n'";
+				cmd="find "+dsvz+" -maxdepth 1 -type f -not -name \"*\\`*.nix\" -printf '%f\\n'";
 				systemrueck(cmd,aktc?0:obverb,oblog,&rueck,/*obsudc=*/1,/*verbergen=*/0,/*obergebnisanzeig=*/wahr,/*ueberschr=*/nix,/*errm=*/0,
 						        /*obincron=*/0,aktc?&ausg:0);
-			} else findfile(&rueck,findv,aktc?0:obverb,oblog,/*anteil=*/1,dsvz,/*muster=*/"",/*tiefe=*/1,/*_typbit=*/1,/*folge=*/Fol_Dat);
+			} else findfile(&rueck,findv,aktc?0:obverb,oblog,/*anteil=*/1,dsvz,/*muster=*/"^[^`]*$",/*tiefe=*/1,/*_typbit=*/1,/*folge=*/Fol_Dat);
 			for(size_t dnr=0;dnr<rueck.size();dnr++) {
 				fdn.insert(rueck[dnr]);
 			}
@@ -8321,6 +8362,7 @@ void hhcl::setzhylastat(fsfcl *fsf, uchar *hyla_uverz_nrp, uchar startvznr, int 
 			this->xferlog(fsf);
 		}
 	} // 	if (fsf->hylanr!="0") 
+	if (fsf->hylastat==init) fsf->hylastat=fehlend; // 28.7.19
 	hLog(violetts+Txk[T_Ende]+Tx[T_setzhylastat]+", hylastat: "+blau+FxStatS(&fsf->hylastat)+schwarz);
 } // setzhylastat
 
@@ -8496,6 +8538,7 @@ void fsfcl::archiviere(DB *const My, hhcl *const hhip, const struct stat *const 
 // aufgerufen in: aenderefax, untersuchespool
 int fsfcl::loeschefbox(hhcl *const hhip, const int obverb, const int oblog)
 {
+	int *obvp=(int*)&obverb; *obvp=1;
 	fLog(violetts+Tx[T_loeschefbox]+schwarz,obverb,oblog);
 	int zdng{0}; // Zahl der nicht Geloeschten
 	if (!fbsdt.empty()) {
@@ -8506,6 +8549,7 @@ int fsfcl::loeschefbox(hhcl *const hhip, const int obverb, const int oblog)
 	} else { 
 		zdng=1;
 	} // if (!fbsdt.empty())
+	*obvp=0;
 	return zdng;
 } // void fsfcl::loeschefbox
 
@@ -8592,13 +8636,15 @@ void fsfcl::fboxausgeb(hhcl *const hhip, stringstream *ausgp, uchar fuerlog, int
 	if (faxord) *ausgp<<faxord<<")";
 	else *ausgp<<"  ";
 	*ausgp<<"Fbox: "<<schwarz;
-	*ausgp<<(fboxstat==fehlend?hgrau:(fboxstat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<setw(11)<<FxStatS(&fboxstat)<<schwarz;
+	const char* const farbe1{(fboxstat<wartend||fboxstat>gesandt?hgrau:blau)}, // static_cast<FxStat>(...) nicht noetig
+				* const farbe2{(fboxstat<wartend||fboxstat>gesandt?hgrau:schwarz)};
+	*ausgp<<farbe1<<setw(11)<<FxStatS(&fboxstat)<<schwarz;
 	if (fboxstat!=fehlend) {
-		*ausgp<<","<<blau<<setw(3)<<fbdials<<"/"<<fbmaxdials<<schwarz<<(fboxstat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
-		*ausgp<<blau<<ztacl(fbnzp,"%d.%m.%y %T")<<schwarz;
-		*ausgp<<",T.:"<<blau<<setw(12)<<telnr<<schwarz; 
-		*ausgp<<Tx[T_kommaDatei]<<rot<<hhip->fbwvz+vtz+fbsdt+".tif"/*sendqgespfad*/<<schwarz;
-		*ausgp<<Tx[T_bzw]<<blau<<"*.vw"<<schwarz;
+		*ausgp<<","<<farbe1<<setw(3)<<fbdials<<"/"<<fbmaxdials<<farbe2<<(fboxstat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
+		*ausgp<<farbe1<<ztacl(fbnzp,"%d.%m.%y %T")<<farbe2;
+		*ausgp<<",T.:"<<farbe1<<setw(12)<<telnr<<farbe2; 
+		*ausgp<<Tx[T_kommaDatei]<<rot<<hhip->fbwvz+vtz+fbsdt+".tif"/*sendqgespfad*/<<farbe2;
+		*ausgp<<Tx[T_bzw]<<farbe1<<"*.vw"<<schwarz;
 		if (fbdials.empty()) fbdials="0";
 	} // if (fboxstat!=fehlend) 
 } // void fsfcl::fboxausgeb
@@ -8613,7 +8659,9 @@ void fsfcl::capiausgeb(hhcl *const hhip, stringstream *ausgp, const string& maxc
 	if (faxord) *ausgp<<faxord<<")";
 	else *ausgp<<"  ";
 	*ausgp<<"Capi: "<<schwarz;
-	*ausgp<<(capistat==fehlend?hgrau:(capistat>=static_cast<FxStat>(gesandt)?blau:schwarz))<<setw(11)<<FxStatS(&capistat)<<schwarz;
+	const char* const farbe1{(capistat<wartend||capistat>gesandt?hgrau:blau)}, // static_cast<FxStat>(...) nicht noetig
+				* const farbe2{(capistat<wartend||capistat>gesandt?hgrau:schwarz)};
+	*ausgp<<farbe1<<setw(11)<<FxStatS(&capistat)<<schwarz;
 	/*//
 		if (capistat==wartend) {
 	 *ausgp<<schwarz<<" "<<Tx[T_wartend]<<schwarz;
@@ -8630,13 +8678,13 @@ void fsfcl::capiausgeb(hhcl *const hhip, stringstream *ausgp, const string& maxc
 		////    if (cpplies(suchtxt,cccnfA,cs)) KLA
 		//// RS rmod(My,string("update spool set capidials=")+cccnfA[0].val+" where id = "+cjj(cerg,0),ZDB);
 		if (ctries.empty()) ctries="0";
-		*ausgp<<","<<blau<<setw(3)<<ctries<<"/"<<maxcdials<<schwarz<<(capistat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
+		*ausgp<<","<<farbe1<<setw(3)<<ctries<<"/"<<maxcdials<<farbe2<<(capistat==verarb?umgek:"")<<Tx[T_Anwahlen]<<schwarz;
 		////                      if (versuzahl>12) ausg<<"zu spaet, ";
 		struct tm tm{0};
 		for(unsigned im=0;im<hhip->tmmoelen;im++) {
 			if (strptime(starttime.c_str(), tmmoegl[im], &tm)) break;
 		}
-		// naechster Aufrufzeitpunkt
+		// naechster Aufrufzeitpunkt (ab 7/19)
 		if (1) {
 			tm.tm_isdst=-1; // sonst wurde eine Stunde hinzugezaehlt
 			time_t letzt{mktime(&tm)};
@@ -8658,10 +8706,10 @@ void fsfcl::capiausgeb(hhcl *const hhip, stringstream *ausgp, const string& maxc
 		//// char buf[100];
 		//// strftime(buf, sizeof(buf), "%d.%m.%y %T", &tm);
 		//// *ausgp<<blau<<buf<<schwarz; 
-		*ausgp<<blau<<put_time(&tm,"%d.%m.%y %T")<<schwarz;
-		*ausgp<<",T.:"<<blau<<setw(12)<<dialstring<<schwarz; 
-		*ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
-		*ausgp<<Tx[T_bzw]<<blau<<"*.txt"<<schwarz;
+		*ausgp<<farbe1<<put_time(&tm,"%d.%m.%y %T")<<farbe2;
+		*ausgp<<",T.:"<<farbe1<<setw(12)<<dialstring<<farbe2; 
+		*ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<farbe2;
+		*ausgp<<Tx[T_bzw]<<farbe1<<"*.txt"<<farbe2;
 	} // if (capistat!=fehlend) 
 } // void fsfcl::capiausgeb
 
@@ -8772,8 +8820,9 @@ void fsfcl::hylaausgeb(stringstream *ausgp, hhcl *hhip/*, int obsfehlt*/, uchar 
 	if (obzaehl) *ausgp<<++hhip->faxord<<")";
 	else *ausgp<<"  ";
 	*ausgp<<"Hyla: "<<schwarz;
-	*ausgp<<(hylastat==fehlend?hgrau:(hylastat>=static_cast<FxStat>(gesandt)?blau:schwarz))
-		<<setw(11)<<FxStatS(&hylastat)<<(hgerg.empty()?"":" ("+hgerg+")")<<schwarz;
+	const char* const farbe1{(hylastat<wartend||hylastat>gesandt?hgrau:blau)}, // static_cast<FxStat>(...) nicht noetig
+				* const farbe2{(hylastat<wartend||hylastat>gesandt?hgrau:schwarz)};
+	*ausgp<<farbe1<<setw(11)<<FxStatS(&hylastat)<<(hgerg.empty()?"":" ("+hgerg+")")<<schwarz;
 	/*//
 		if (obsfehlt) KLA
 	// wenn also die Datenbankdatei weder im Spool noch bei den Erledigten nachweisbar ist
@@ -8792,7 +8841,7 @@ void fsfcl::hylaausgeb(stringstream *ausgp, hhcl *hhip/*, int obsfehlt*/, uchar 
 	if ((hhip->hgelesen && hylastat!=fehlend && hylastat!=init)) {
 		*ausgp<<",";
 		//// char buf[100]; int hversuzahl=atol(hdials.c_str()); snprintf(buf,4,"%3d",hversuzahl);
-		*ausgp<<blau<<setw(3)<<hdials<<"/"<<maxdials<<schwarz<<(hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz; // totdials
+		*ausgp<<farbe1<<setw(3)<<hdials<<"/"<<maxdials<<farbe2<<(hstate=="6"?umgek:"")<<Tx[T_Anwahlen]<<schwarz; // totdials
 		// hier muss noch JobReqBusy, JobReqNoAnswer, JobReqNoCarrier, JobReqNoFCon, JobReqOther, JobReqProto dazu gerechnet werden
 		//// time_t spoolbeg=(time_t)atol(tts.c_str());
 		//// pthread_mutex_lock(&timemutex);
@@ -8800,18 +8849,20 @@ void fsfcl::hylaausgeb(stringstream *ausgp, hhcl *hhip/*, int obsfehlt*/, uchar 
 		//// strftime(buf, sizeof(buf), "%d.%m.%y %T", localtime(&tts));
 		//// *ausgp<<blau<<buf<<schwarz; 
 		//// pthread_mutex_unlock(&timemutex);
-		*ausgp<<blau<<ztacl(xtts,"%d.%m.%y %T")<<schwarz;
+
+//		xtts+=atol(hhip->hintervall.c_str()); // naechster Aufrufzeitpunkt ist schon eingerechnet
+		*ausgp<<farbe1<<ztacl(xtts,"%d.%m.%y %T")<<farbe2;
 		////              if (hversuzahl>12) ausg<<", zu spaet";
-		*ausgp<<",T.:"<<blau<<setw(12)<<number<<schwarz;
-		*ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<schwarz;
+		*ausgp<<",T.:"<<farbe1<<setw(12)<<number<<farbe2;
+		*ausgp<<Tx[T_kommaDatei]<<rot<<sendqgespfad<<farbe2;
 	} //   if (hhip->hgelesen && hylastat!=fehlend)
 	if (hqdt.empty()) {
-		*ausgp<<dgrau<<", hylanr: "<<schwarz<<hylanr;
+		if (hylanr!="0") *ausgp<<dgrau<<", hylanr: "<<farbe2<<hylanr;
 	} else {
-		*ausgp<<Tx[T_bzw]<<blau<<hqdt<<schwarz;
+		*ausgp<<Tx[T_bzw]<<farbe1<<hqdt<<schwarz;
 	} // 	if (hqdt.empty())
 	fLog(violetts+Txk[T_Ende]+Tx[T_hylaausgeb]+schwarz+"  hylastat: "+blau+FxStatS(&hylastat)+schwarz,obverb,oblog);
-} // void fsfcl::hylaausgeb(stringstream *ausgp, hhcl *hhip, int obsfehlt, int obverb, uchar obzaehl, int oblog)
+} // void fsfcl::hylaausgeb
 
 // aufgerufen in: aenderefax(/*aktion=*/0 ...), untersuchespool, loescheallewartenden;  in bereinigevz leicht modifizierte Verschiebung
 void fsfcl::scheitere(const string& wvz, const string& ngvz, const string& cuser, const string* const ziel/*=0*/,
@@ -8835,7 +8886,7 @@ void fsfcl::scheitere(const string& wvz, const string& ngvz, const string& cuser
 
 
 // Dateien in Spool-Tabelle nach inzwischen verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
-// aufgerufen in: main (2x)
+// aufgerufen in: pvirtfuehraus, pvirtvorpruefggfmehrfach
 void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart 0=capi, 1=hyla 
 {
 	// Schaue nach, welche der gespoolten schon weggeschickt sind, Anpassung der Primaerdateien und des Datenbankeintrags
@@ -9357,12 +9408,17 @@ int hhcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 			if (ergnr=="0") return 0;
 			size_t nr=atol(ergnr.c_str())-1;
 			if (nr>=0 && nr<fsfav.size()) {
+	caus<<"Stelle 4"<<endl;
 				if (Tippob(Tx[T_Soll_das_Fax]+gruens+ergnr+schwarz+Tx[(aktion?T_umgeleitet_werden:T_wirklich_geloescht_werden)],"n")) {
+	caus<<"Stelle 5"<<endl;
 					if (aktion) {
+	caus<<"Stelle 6"<<endl;
 						RS umpri(My,"UPDATE `"+spooltab+"` SET prio=IF(prio=0 OR prio=2,3,2) WHERE id="+fsfav[nr].id,aktc,ZDB);
 					} else { // !aktion
+	caus<<"Stelle 7, fbsdt: "<<fsfav[nr].fbsdt<<endl;
 						int zdng{0}; // Zahl der nicht geloeschten
 						if (fsfav[nr].fbsdt!="NULL" && !fsfav[nr].fbsdt.empty()) {
+	caus<<"Stelle 8"<<endl;
 							zdng+=fsfav[nr].loeschefbox(this,obverb,oblog);
 							hLog(blaus+"fbox: "+Tx[T_Zahl_der_nicht_geloeschten_Dateien]+schwarz+ltoan(zdng)+blau+Tx[T_FBoxspooldatei]+
 									schwarz+fsfav[nr].fbsdt);
