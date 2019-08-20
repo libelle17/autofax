@@ -3300,7 +3300,7 @@ void hhcl::virtrueckfragen()
 			obfa[0]=0;
 		} else {
 			if (rzf) {
-				if (obfcard) {
+				if (obfrbox) {
 					obfa[0]=Tippob(Tx[T_Soll_die_FritzBox_verwendet_werden],obfa[0]?Txk[T_j_af]:"n");
 				} else {
 					obfa[0]=0;
