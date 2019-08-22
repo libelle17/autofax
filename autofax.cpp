@@ -3293,14 +3293,21 @@ void hhcl::virtrueckfragen()
 		wvz=Tippverz(Tx[T_Verzeichnis_mit_wartenden_Dateien],&wvz);
 		ngvz=Tippverz(Tx[T_Verzeichnis_mit_gescheiterten_Dateien],&ngvz);
 		empfvz=Tippverz(Tx[T_Verzeichnis_fuer_empfangene_Faxe],&empfvz);
+		
 		svec fbip;
-		const bool fbfehlt{(const bool)systemrueck("ping fritz.box -c1",obverb,oblog,&fbip)};
+//		const bool fbfehlt{(const bool)systemrueck("ping fritz.box -4c1",obverb,oblog,&fbip)}; // fritz.box
+		const bool fbfehlt{(const bool)systemrueck("A=169.254.1.2;ping -4c1 $A >/dev/null&&echo $A||ping -6c1 fritz.box|sed '1!d;s/^[^(]*([^(]*(\\([^)]*\\).*$/\\1/'",
+				obverb,oblog,&fbip)}; // liefert die IP-Adresse der Fritzbox
+    caus<<(int)fbfehlt<<endl;
+		if (fbip.size()) caus<<fbip[0]<<endl;
+		exit(0);
 		// PING fritz.box (192.168.178.1) 56(84) bytes of data.
 		if (fbfehlt) {
 			obfa[0]=0;
 		} else {
 			if (rzf) {
 				if (obfrbox) {
+// curl [fd00::a96:d7ff:fe49:19ca]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\([^<]*\).*/\1/;p;q}'
 					obfa[0]=Tippob(Tx[T_Soll_die_FritzBox_verwendet_werden],obfa[0]?Txk[T_j_af]:"n");
 				} else {
 					obfa[0]=0;
