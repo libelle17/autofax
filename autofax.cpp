@@ -3289,59 +3289,68 @@ void hhcl::virtrueckfragen()
 		neurf();
 		const size_t aktc{0};
 		// Rueckfragen koennen auftauchen in: virtrueckfragen, konfcapi (<- pruefcapi), aenderefax, rufpruefsamba
+		if (0) {
 		zufaxenvz=Tippverz(Tx[T_Verzeichnis_mit_zu_faxenden_Dateien],&zufaxenvz);
 		wvz=Tippverz(Tx[T_Verzeichnis_mit_wartenden_Dateien],&wvz);
 		ngvz=Tippverz(Tx[T_Verzeichnis_mit_gescheiterten_Dateien],&ngvz);
 		empfvz=Tippverz(Tx[T_Verzeichnis_fuer_empfangene_Faxe],&empfvz);
-		
+	  }	
 		svec fbip;
 //		const bool fbfehlt{(const bool)systemrueck("ping fritz.box -4c1",obverb,oblog,&fbip)}; // fritz.box
-		const bool fbfehlt{(const bool)systemrueck("A=169.254.1.2;ping -4c1 $A >/dev/null&&echo $A||ping -6c1 fritz.box|sed '1!d;s/^[^(]*([^(]*(\\([^)]*\\).*$/\\1/'",
+		const bool fbfehlt{(const bool)systemrueck("A=169.254.1.1;ping -4c1 $A >/dev/null&&echo $A||ping -6c1 fritz.box|sed '1!d;s/^[^(]*([^(]*(\\([^)]*\\).*$/\\1/'",
+				// z.B. 192.168.1.1 oder z.B. fd00::a96:d7ff:fe49:19ca
 				obverb,oblog,&fbip)}; // liefert die IP-Adresse der Fritzbox
-    caus<<(int)fbfehlt<<endl;
-		if (fbip.size()) caus<<fbip[0]<<endl;
-		exit(0);
 		// PING fritz.box (192.168.178.1) 56(84) bytes of data.
 		if (fbfehlt) {
 			obfa[0]=0;
 		} else {
-			if (rzf) {
 				if (obfrbox) {
-// curl [fd00::a96:d7ff:fe49:19ca]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\([^<]*\).*/\1/;p;q}'
 					obfa[0]=Tippob(Tx[T_Soll_die_FritzBox_verwendet_werden],obfa[0]?Txk[T_j_af]:"n");
 				} else {
 					obfa[0]=0;
 				}
-			} //     if (agcnfA[++lfd].wert.empty() || rzf)
 		} // 		if (fbfehlt) else
 		if (obfa[0]) {
-			if (rzf) {
-				if (fbip.size()) {
-					const string *const ipp{&fbip[0]};
-					if (const size_t p1{ipp->find("(")+1}) {
-						const size_t p2{ipp->find(")",p1)};
-						// 192.168.178.1
-						svec mounts;
-						if (!systemrueck("mount|grep '"+ipp->substr(p1,p2-p1)+"'",obverb,oblog,&mounts)&&mounts.size()) {
+			if (fbip.size()) {
+				svec frna;
+				const string *const ipp{&fbip[0]};
+				//				caus<<"*ipp: "<<*ipp<<endl;
+				if (!systemrueck("curl ["+*ipp+"]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size()) {
+					// z.B. GSHeim
+					//					caus<<"frna[0]: "<<frna[0]<<endl;
+					svec mounts;
+					const string zufinden{"^//\\(192.168.178.1\\|169.254.1.1\\|fritz.box\\|"+*ipp+"\\)/"+frna[0]+" "};
+					for(int iru=0;iru<2;iru++) {
+						if (!systemrueck("mount|grep '"+zufinden+"'|cut -d' ' -f3",obverb,oblog,&mounts)&&mounts.size()) {
+							// z.B. /mnt/gsheim
+							//						caus<<"mounts[0]: "<<mounts[0]<<endl;
 							// //192.168.178.1/DiabFB on /mnt/diabfb type cifs (rw,relatime,vers=1.0,cache=strict,username=ftpuser,domain=DIABFB,uid=0,noforceuid,gid=0,noforcegid,addr=192.168.178.1,unix,posixpaths,mapposix,acl,rsize=61440,wsize=65536,actimeo=1)
-							vector<string> tok;
-							aufSplit(&tok,mounts[0],' ');
-							if (tok.size()>2) {
-								svec datei;
-								// die jüngste pdf-Datei auf dem CIFS-Verzeichnis suchen
-								systemrueck("find '"+tok[2]+"' -type f -iname '*pdf' -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|sort -nrk 6,7", obverb,oblog,&datei);
-								if (datei.size()) {
-									// -rwxrwxrwx 1 root root   10061 2017-11-01 10:03:52.000000000 +0100 /mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox/01.11.17_10.03_Telefax.081316150166.pdf
-									if (const size_t p1{datei[0].find(" "+tok[2])+1}) {
-										fbankvz=dir_name(datei[0].substr(p1));
-									} // 									if (const size_t p1=datei[0].find(" "+tok[2])+1)
-								} // 								if (datei.size())
-							} // 							if (tok.size()>2)
-						} // 						if (!systemrueck("mount|grep "+ipp->substr(p1,p2-p1),obverb,oblog,&mounts)&&mounts.size())
-					} // 					if (const size_t p1=ipp->find("(")+1)
-				} // 				if (fbip.size())
-				fbankvz=Tippstr(Tx[T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox],&fbankvz);
-			} // 		if (agcnfA[++lfd].wert.empty() || rzf)
+							svec datei;
+							// die jüngste pdf-Datei auf dem CIFS-Verzeichnis suchen
+							systemrueck("find '"+mounts[0]+"' -type f -iname '*pdf' -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|sort -nrk 6,7", obverb,oblog,&datei);
+							if (datei.size()) {
+								// -rwxrwxrwx 1 root root   10061 2017-11-01 10:03:52.000000000 +0100 /mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox/01.11.17_10.03_Telefax.081316150166.pdf
+								if (const size_t p1{datei[0].find(" "+mounts[0])+1}) {
+									fbankvz=dir_name(datei[0].substr(p1));
+									caus<<"fbankvz: "<<fbankvz<<endl;
+									exit(0);
+								} // 									if (const size_t p1=datei[0].find(" "+tok[2])+1)
+							} // 								if (datei.size())
+						  break; 
+						} // 						if (!systemrueck("mount|grep '"+zufinden+"'|cut -d' ' -f3",obverb,oblog,&mounts)&&mounts.size())
+						svec fstabs;
+						systemrueck("grep '"+zufinden+"' /etc/fstab",obverb,oblog,&fstabs,/*obsudc*/1);
+					  if (!fstabs.size()) {
+							string fbnameklein; // /mnt/gsheim
+							transform(frna[0].begin(),frna[0].end(),std::back_inserter(fbnameklein),::tolower);
+							pruefverz(fbnameklein);
+							systemrueck("echo //169.254.1.1/"+frna[0]+" "+fbnameklein+" cifs nofail,vers=1.0,credentials=/root/.fbcredentials 0 2 >>/etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
+						}
+						systemrueck("mount "+mounts.size(),obverb,oblog,/*rueck*/0,/*obsudc*/1);
+					} // 					for(int iru=0;iru<2;iru++)
+				} // 				if (!systemrueck("curl ["+*ipp+"]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size())
+			} // 				if (fbip.size())
+			fbankvz=Tippstr(Tx[T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox],&fbankvz);
 		} // 		if (obfa[0])
 		if (!obfcgeprueft) pruefisdn();
 		if (obfcard) {
