@@ -1351,6 +1351,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"sortprio()","sortprio()"},
 	// T_standardprio,
 	{"standardprio()","standardprio()"},
+	// T_fstab_Eintrag_wieder_entfernen,
+	{"fstab-Eintrag wieder entfernen","delete fstab-entry"},
 	{"",""} //α
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -3310,18 +3312,25 @@ void hhcl::virtrueckfragen()
 					obfa[0]=0;
 				}
 		} // 		if (fbfehlt) else
+		// wenn die Fritzbox verwendet werden soll
 		if (obfa[0]) {
+			caus<<"Stelle 1"<<endl;
+			string mntdrv;
+			// wenn eine Fritzbox eine IP-Adresse hat
 			if (fbip.size()) {
+				caus<<"Stelle 2"<<endl;
 				svec frna;
 				const string *const ipp{&fbip[0]};
 				//				caus<<"*ipp: "<<*ipp<<endl;
+				// wenn ein freundlicher Name gefunden wurde
 				if (!systemrueck("curl ["+*ipp+"]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size()) {
+					caus<<"Stelle 3"<<endl;
 					// z.B. GSHeim
 					//					caus<<"frna[0]: "<<frna[0]<<endl;
 					svec mounts;
-					string mntdrv;
 					const string zufinden{"^//\\(192.168.178.1\\|169.254.1.1\\|fritz.box\\|"+*ipp+"\\)/"+frna[0]+" "};
 					for(int iru=0;iru<2;iru++) {
+						caus<<"Stelle 4"<<endl;
 						if (!systemrueck("mount|grep '"+zufinden+"'|cut -d' ' -f3",obverb,oblog,&mounts)&&mounts.size()) {
 							// z.B. /mnt/gsheim
 							//						caus<<"mounts[0]: "<<mounts[0]<<endl;
@@ -3345,16 +3354,18 @@ void hhcl::virtrueckfragen()
 							string fbnameklein; // /mnt/gsheim
 							transform(frna[0].begin(),frna[0].end(),std::back_inserter(fbnameklein),::tolower);
 							fbnameklein="/mnt/"+fbnameklein;
-							anfgg(unindt,sudc+"umount "+fbnameklein,"vor Loeschen abladen",obverb,oblog);
 							pruefverz(fbnameklein);
 							systemrueck("echo //169.254.1.1/"+frna[0]+" "+fbnameklein+" cifs nofail,vers=1.0,credentials=/root/.fbcredentials 0 2 >>/etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
-							anfgg(unindt,sudc+"sed -i '/^\\/\\/169.254.1.1\\/"+frna[0]+" /d' /etc/fstab","fstab-Eintrag wieder entfernen",obverb,oblog);
+							anfgg(unindt,sudc+"sed -i '/^\\/\\/169.254.1.1\\/"+frna[0]+" /d' /etc/fstab",Tx[T_fstab_Eintrag_wieder_entfernen],obverb,oblog);
 							mntdrv=fbnameklein;
 						}
+						caus<<"Stelle 5, mntdrv: "<<mntdrv<<endl;
+						anfgg(unindt,sudc+"umount "+mntdrv,"vor Loeschen absteigen",obverb,oblog);
 						systemrueck("mount "+mntdrv,obverb,oblog,/*rueck*/0,/*obsudc*/1);
 					} // 					for(int iru=0;iru<2;iru++)
 				} // 				if (!systemrueck("curl ["+*ipp+"]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size())
 			} // 				if (fbip.size())
+			caus<<"ob gemountet: "<<systemrueck("mountpoint "+mntdrv)<<endl;
 			fbankvz=Tippstr(Tx[T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox],&fbankvz);
 		} // 		if (obfa[0])
 		if (!obfcgeprueft) pruefisdn();

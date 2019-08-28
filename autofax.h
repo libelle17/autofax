@@ -654,6 +654,7 @@ enum T_
 	T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3,
 	T_sortprio,
 	T_standardprio,
+	T_fstab_Eintrag_wieder_entfernen,
 	T_MAX //α
 }; // enum T_ //ω
 
