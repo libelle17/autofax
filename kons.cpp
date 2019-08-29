@@ -12,6 +12,7 @@
 #include <sys/ioctl.h>
 #include <stdio.h>
 #include <term.h>
+#include <mntent.h>
 
 
 #define caus cout // nur zum Debuggen
@@ -7088,6 +7089,20 @@ hcl::~hcl()
 	delete linstp;
 	linstp=0;
 	////	<<"hcl-Destruktor"<<endl;
+}
+
+int mntpunkt(const char* mntpfad) {
+	int ismounted{0};
+	if (FILE* mtab{setmntent("/etc/mtab", "r")}) {
+		while (const mntent* mtp{getmntent(mtab)}) {
+			if (mtp->mnt_dir && !strcmp(mtp->mnt_dir, mntpfad)) {
+				ismounted = 1;
+				break;
+			}
+		}
+		endmntent(mtab);
+	}
+	return ismounted;
 }
 
 // damit nicht Template-Klassen-Funktionen in Header-Dateien geschrieben werden muessen

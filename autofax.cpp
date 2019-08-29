@@ -3349,8 +3349,10 @@ void hhcl::virtrueckfragen()
 						  break; 
 						} // 						if (!systemrueck("mount|grep '"+zufinden+"'|cut -d' ' -f3",obverb,oblog,&mounts)&&mounts.size())
 						svec fstabs;
-						systemrueck("grep '"+zufinden+"' /etc/fstab",obverb,oblog,&fstabs,/*obsudc*/1);
-					  if (!fstabs.size()) {
+						systemrueck("grep '"+zufinden+"' /etc/fstab|cut -d' ' -f2",obverb,oblog,&fstabs,/*obsudc*/1);
+					  if (fstabs.size()) {
+							mntdrv=fstabs[0];
+						} else {
 							string fbnameklein; // /mnt/gsheim
 							transform(frna[0].begin(),frna[0].end(),std::back_inserter(fbnameklein),::tolower);
 							fbnameklein="/mnt/"+fbnameklein;
@@ -3359,13 +3361,13 @@ void hhcl::virtrueckfragen()
 							anfgg(unindt,sudc+"sed -i '/^\\/\\/169.254.1.1\\/"+frna[0]+" /d' /etc/fstab",Tx[T_fstab_Eintrag_wieder_entfernen],obverb,oblog);
 							mntdrv=fbnameklein;
 						}
-						caus<<"Stelle 5, mntdrv: "<<mntdrv<<endl;
-						anfgg(unindt,sudc+"umount "+mntdrv,"vor Loeschen absteigen",obverb,oblog);
-						systemrueck("mount "+mntdrv,obverb,oblog,/*rueck*/0,/*obsudc*/1);
+						if (!mntpunkt(mntdrv.c_str())) {
+							anfgg(unindt,sudc+"umount "+mntdrv,"vor Loeschen absteigen",obverb,oblog);
+							systemrueck("mount "+mntdrv,obverb,oblog,/*rueck*/0,/*obsudc*/1);
+						}
 					} // 					for(int iru=0;iru<2;iru++)
 				} // 				if (!systemrueck("curl ["+*ipp+"]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size())
 			} // 				if (fbip.size())
-			caus<<"ob gemountet: "<<systemrueck("mountpoint "+mntdrv)<<endl;
 			fbankvz=Tippstr(Tx[T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox],&fbankvz);
 		} // 		if (obfa[0])
 		if (!obfcgeprueft) pruefisdn();

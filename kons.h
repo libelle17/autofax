@@ -36,6 +36,7 @@
 #include <memory> // fuer shared_ptr
 
 using namespace std;
+int mntpunkt(const char* mntpfad);
 extern const string& instvz; // in kons.cpp, z.B. /root/autofax
 extern const string& unindt; // instvz+"uninstallinv"
 extern const int sfeh[]; // T_Dienst_laeuft, T_Dienst_inexistent, ...
