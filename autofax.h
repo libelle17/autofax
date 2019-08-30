@@ -812,6 +812,7 @@ struct fsfcl : public fxfcl // Faxsendfile
 class hhcl:public dhcl
 {
 	private: 
+		svec fbip; // Fritzbox-IP
 		uchar anhl{0};    // <DPROG> anhalten
 		string dszahl{"30"}; // Datensatzzahl fuer Tabellenausgaben
 		//ω
@@ -985,6 +986,8 @@ class hhcl:public dhcl
     int prueffbox();
 		int pruefcapi();
 		void pruefisdn();
+		void fuellfbip();
+		void holfbpar();
 		int cservice();
 		void clieskonf();
 		void pruefcvz();
