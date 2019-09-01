@@ -3247,30 +3247,33 @@ void hhcl::neurf()
 // aufgerufen in virtlieskonfein, pvirtnachvi, virtrueckfragen
 void hhcl::standardprio(const int obmitsetz)
 {
-	hLog(violetts+Tx[T_standardprio]+schwarz,1,0);
+	hLog(violetts+Tx[T_standardprio]+schwarz+", obmitsetz: "+ltoan(obmitsetz),1,0);
+	for(int j=0;j<3;j++) caus<<rot<<"j="<<j<<gruen<<": "<<prios[j]<<schwarz<<endl;
 	if (obmitsetz) 
 		for(int j=0;j<3;j++) {
 			clprios[j]=prios[j];
 		}
 	memset(prios,0,3*sizeof *prios);
+	for(int j=0;j<3;j++) caus<<rot<<"cl: j="<<j<<gruen<<": "<<clprios[j]<<schwarz<<endl;
 	// und jetzt prios mit standardisierten Prioritaeten aus clprios erstellt (also z.B. 3 statt 4)
 	for(int p=1;p<=3;p++) {
-		unsigned minp{(unsigned)-1}; // die groesste Zahl
+		unsigned minp{(unsigned)-1}; // die kleinste uebrige Prioritaet, Vorgabe = die groesste unsigned-Zahl
 		int minj{3+1}; 
 		for(int j=0;j<3;j++) if (obfa[j] && !prios[j]){ // Prioritaeten nur fuer aktive Programme
 			if((unsigned)clprios[j]<minp){
 				minp=clprios[j];
 				minj=j;
 			}
-		}
+		} // 		for(int j=0;j<3;j++) ...
 		if (minj<3+1) {
 			if (p!=clprios[minj]) {
-				caus<<"Setze obzuschreib in standardprio"<<endl;
+				caus<<"Setze obzuschreib in standardprio, minj: "<<minj<<", p: "<<p<<", clprios[minj]: "<<clprios[minj]<<endl;
 				hccd.obzuschreib=1;
 			}
 			prios[minj]=p;
-		}
-	}
+		} // 		if (minj<3+1)
+	} // 	for(int p=1;p<=3;p++)
+	for(int j=0;j<3;j++) caus<<rot<<"j="<<j<<gruen<<": "<<prios[j]<<schwarz<<endl;
 } // void hhcl::standardprio
 
 // liefert 1, wenn fbfax als rnr.tes aufgerufen werden soll, 2 wenn capi, 3, wenn hyla
@@ -3293,25 +3296,22 @@ void hhcl::fuellfbip()
 	// PING fritz.box (192.168.178.1) 56(84) bytes of data.
 } // void hhcl::fuellfbip
 
+// Leider laesst sich wohl zur Zeit ueber Tr-064 nicht die Fax-Funktion einstellen muss als ueber die Benutzeroberflaeche manuell geschehen
 void hhcl::holfbpar()
 {
-	caus<<"Stelle 1"<<endl;
 	string mntdrv;
 	// wenn eine Fritzbox eine IP-Adresse hat, wird in fuellfbip gesetzt
 	if (fbip.size()) {
-		caus<<"Stelle 2"<<endl;
 		svec frna;
 		const string *const ipp{&fbip[0]};
 		//				caus<<"*ipp: "<<*ipp<<endl;
 		// wenn ein freundlicher Name gefunden wurde
 		if (!systemrueck("curl ["+*ipp+"]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size()) {
-			caus<<"Stelle 3"<<endl;
 			// z.B. GSHeim
 			//					caus<<"frna[0]: "<<frna[0]<<endl;
 			svec mounts;
 			const string zufinden{"^//\\(192.168.178.1\\|169.254.1.1\\|fritz.box\\|"+*ipp+"\\)/"+frna[0]+" "};
 			for(int iru=0;iru<2;iru++) {
-				caus<<"Stelle 4"<<endl;
 				if (!systemrueck("mount|grep '"+zufinden+"'|cut -d' ' -f3",obverb,oblog,&mounts)&&mounts.size()) {
 					// z.B. /mnt/gsheim
 					//						caus<<"mounts[0]: "<<mounts[0]<<endl;
@@ -3349,7 +3349,7 @@ void hhcl::holfbpar()
 			} // 					for(int iru=0;iru<2;iru++)
 		} // 				if (!systemrueck("curl ["+*ipp+"]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size())
 	} // 				if (fbip.size())
-}
+} // void hhcl::holfbpar
 
 // aufgerufen in lauf //α
 void hhcl::virtrueckfragen()
@@ -3365,7 +3365,7 @@ void hhcl::virtrueckfragen()
 		ngvz=Tippverz(Tx[T_Verzeichnis_mit_gescheiterten_Dateien],&ngvz);
 		empfvz=Tippverz(Tx[T_Verzeichnis_fuer_empfangene_Faxe],&empfvz);
 	  }	
-		fuellfbip();
+// 		fuellfbip(); // sollte in virtlieskonfein() reichen
 		if (obfrbox) {
 			obfa[0]=Tippob(Tx[T_Soll_die_FritzBox_verwendet_werden],obfa[0]?Txk[T_j_af]:"n");
 		} else {
@@ -3373,7 +3373,7 @@ void hhcl::virtrueckfragen()
 		}
 		// wenn die Fritzbox verwendet werden soll
 		if (obfa[0]) {
-			holfbpar();
+//			holfbpar(); // sollte in virtlieskonfein() reichen
 			fbankvz=Tippstr(Tx[T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox],&fbankvz);
 		} // 		if (obfa[0])
 		if (!obfcgeprueft) pruefisdn();
@@ -10059,7 +10059,7 @@ void hhcl::virtlieskonfein()
 		if (cont) continue; // dann nichts tun
 		unsigned minp{(unsigned)-1};
 		int minj{3+1}; 
-		for(int j=0;j<3;j++) if (!clprios[j]) { // wenn nicht, dann
+		for(int j=0;j<3;j++) if (obfa[j] && !clprios[j]) { // wenn nicht, dann
 			if ((unsigned)prios[j]<minp) { // ist die kleinste uebrige Prioritaet Kandidat
 				minp=prios[j];
 				minj=j;
