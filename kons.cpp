@@ -5125,8 +5125,9 @@ void hcl::lauf()
 	pvirtmacherkl();
 	if (zeighilfe(&erkl)) {
 		virttesterg();
-		exit(schluss(1));
+		exit(schluss(1)); 
 	}
+	// ab hier nur obhilfe 0
 	pvirtvorzaehler();
 	lieszaehlerein();
   if (obvi) {

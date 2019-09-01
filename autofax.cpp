@@ -3297,7 +3297,7 @@ void hhcl::holfbpar()
 {
 	caus<<"Stelle 1"<<endl;
 	string mntdrv;
-	// wenn eine Fritzbox eine IP-Adresse hat
+	// wenn eine Fritzbox eine IP-Adresse hat, wird in fuellfbip gesetzt
 	if (fbip.size()) {
 		caus<<"Stelle 2"<<endl;
 		svec frna;
@@ -3359,7 +3359,7 @@ void hhcl::virtrueckfragen()
 		neurf();
 		const size_t aktc{0};
 		// Rueckfragen koennen auftauchen in: virtrueckfragen, konfcapi (<- pruefcapi), aenderefax, rufpruefsamba
-		if (0) {
+		if (1) {
 		zufaxenvz=Tippverz(Tx[T_Verzeichnis_mit_zu_faxenden_Dateien],&zufaxenvz);
 		wvz=Tippverz(Tx[T_Verzeichnis_mit_wartenden_Dateien],&wvz);
 		ngvz=Tippverz(Tx[T_Verzeichnis_mit_gescheiterten_Dateien],&ngvz);
