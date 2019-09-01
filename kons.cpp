@@ -2642,7 +2642,7 @@ int systemrueck(const string& cmd, int obverb/*=0*/, int oblog/*=0*/, vector<str
         for(unsigned i=0;i<rueck->size();i++) {
 #ifdef systemrueckprofiler
 #endif
-          smeld=smeld+"\n"+tuerkis+rueck->at(i)+schwarz;
+          smeld=smeld+"\n"+ltoan(i)+": "+tuerkis+rueck->at(i)+schwarz;
         } //         for(unsigned i=0;i<rueck->size();i++)
       } //       if (obverb>1 || oblog || obergebnisanzeig) if (rueck->size())
 #ifdef systemrueckprofiler

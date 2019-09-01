@@ -3248,13 +3248,11 @@ void hhcl::neurf()
 void hhcl::standardprio(const int obmitsetz)
 {
 	hLog(violetts+Tx[T_standardprio]+schwarz+", obmitsetz: "+ltoan(obmitsetz),1,0);
-	for(int j=0;j<3;j++) caus<<rot<<"j="<<j<<gruen<<": "<<prios[j]<<schwarz<<endl;
 	if (obmitsetz) 
 		for(int j=0;j<3;j++) {
 			clprios[j]=prios[j];
 		}
 	memset(prios,0,3*sizeof *prios);
-	for(int j=0;j<3;j++) caus<<rot<<"cl: j="<<j<<gruen<<": "<<clprios[j]<<schwarz<<endl;
 	// und jetzt prios mit standardisierten Prioritaeten aus clprios erstellt (also z.B. 3 statt 4)
 	for(int p=1;p<=3;p++) {
 		unsigned minp{(unsigned)-1}; // die kleinste uebrige Prioritaet, Vorgabe = die groesste unsigned-Zahl
@@ -3273,7 +3271,6 @@ void hhcl::standardprio(const int obmitsetz)
 			prios[minj]=p;
 		} // 		if (minj<3+1)
 	} // 	for(int p=1;p<=3;p++)
-	for(int j=0;j<3;j++) caus<<rot<<"j="<<j<<gruen<<": "<<prios[j]<<schwarz<<endl;
 } // void hhcl::standardprio
 
 // liefert 1, wenn fbfax als rnr.tes aufgerufen werden soll, 2 wenn capi, 3, wenn hyla
@@ -3324,7 +3321,6 @@ void hhcl::holfbpar()
 						// -rwxrwxrwx 1 root root   10061 2017-11-01 10:03:52.000000000 +0100 /mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox/01.11.17_10.03_Telefax.081316150166.pdf
 						if (const size_t p1{datei[0].find(" "+mntdrv)+1}) {
 							fbankvz=dir_name(datei[0].substr(p1));
-							caus<<"fbankvz: "<<fbankvz<<endl;
 						} // 									if (const size_t p1=datei[0].find(" "+tok[2])+1)
 					} // 								if (datei.size())
 					break; 
@@ -7505,6 +7501,14 @@ void hhcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,
 	} // 	if (!lstat(ctxdt.c_str(),&txtstat))
 }// void hhcl::empfcapi
 
+void hhcl::empffbox(string datei,size_t aktc)
+{
+}
+
+void hhcl::archfbox(string datei,size_t aktc)
+{
+}
+
 // aufgerufen in: main
 void hhcl::empfarch(uchar obalte/*=0*/)
 {
@@ -7516,12 +7520,20 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 	if (!fbankvz.empty()&&!lstat(fbankvz.c_str(),&fst)) {
 		svec qrueck;
 		string suchs;
-		if (tagesaufr==4 ||1) {
-		  suchs="find '"+fbankvz+"' -iname '*pdf'";	
-		} else {
-		  suchs="find '"+fbankvz+"' -mtime -1 -iname '*pdf'";	
-		}
+//		if (tagesaufr==4 ||1) {
+		  suchs="find '"+fbankvz+"' -iname '*pdf' -not -iname '*alt\\.pdf'";	
+//		} else {
+//		  suchs="find '"+fbankvz+"' -mtime -1 -iname '*pdf'";	
+//		}
 		systemrueck(suchs,2,oblog,&qrueck);
+		for(size_t i=0;i<qrueck.size();i++) {
+			empffbox(qrueck[i],aktc);
+		}
+			suchs="find '"+fbankvz+"' -mtime +14 -iname '*alt\\.pdf'";	
+		systemrueck(suchs,2,oblog,&qrueck);
+		for(size_t i=0;i<qrueck.size();i++) {
+			archfbox(qrueck[i],aktc);
+		}
 	} // 	if (!fbankvz.empty()&&!lstat(fbankvz.c_str(),&fst))
 
 	// 2) capi
