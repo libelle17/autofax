@@ -5770,28 +5770,49 @@ void hcl::gitpull(const string& DPROG)
 } // void hcl::gitpull
 
 // wird aufgerufen in lauf
-int wartaufpids(pidvec *pidtb,const ulong runden/*=0*/,const int obverb/*=0*/,const int oblog/*=0*/,const string& wo/*=string()*/)
+int wartaufpids(pidvec *pidtb,const ulong runden/*=0*/,const int obverb/*=0*/,const int oblog/*=0*/,const string& wo/*=string()*/,const time_t maxsec/*0*/)
 {
 ////	int altobverb=obverb, *ovp=(int*)&obverb; *ovp=2;
-	ulong aktru=0; 
+	time_t t0, t1;
+	int ret{0};
+  uchar killen{0};
+	ulong aktru{0}; 
 	yLog(obverb>1,oblog>1,0,0,"%s%s()%s, %s, %s%s pid: %s%lu%s, pidtb->size(): %s%zu%s",
 			violett,__FUNCTION__,blau,wo.c_str(),schwarz,Txk[T_eigene],blau,getpid(),schwarz,blau,pidtb->size(),schwarz);
 	for(size_t i=0;i<pidtb->size();i++) {
 		yLog(obverb>1,oblog>1,0,0," i: %s%zu%s, pid: %s%lu%s, name: %s%s%s",
 				blau,i,schwarz,blau,pidtb->at(i).pid,schwarz,blau,pidtb->at(i).name.c_str(),schwarz);
 	} // 	for(size_t i=0;i<pidtb->size();i++)
+	if (maxsec) t0=time(0);
 	while (1) {
 		yLog(obverb>1,0,0,0," %s%s%s, while (1), pidtb->size(): %s%zu%s",blau,wo.c_str(),schwarz,blau,pidtb->size(),schwarz);
+		if (maxsec) {
+			t1=time(0);
+			if (t1-t0>maxsec) killen=1; 
+		}
 		for(size_t i=pidtb->size();i;) {
 			i--;
-			const int res{kill(pidtb->at(i).pid,0)};
+			const int obgueltig{kill(pidtb->at(i).pid,0)};
 			uchar zuloeschen{0};
-			if (res==-1 && errno==ESRCH) zuloeschen=1; // Prozess nicht (mehr) da
+			if (obgueltig==-1 && errno==ESRCH) zuloeschen=1; // not successful && error search -> Prozess nicht (mehr) da
 			else {
 				int status; 
-				pid_t erg=waitpid(pidtb->at(i).pid,&status,WNOHANG); 
+				if (killen) {
+					kill(pidtb->at(i).pid,SIGTERM);
+					pid_t __attribute__((unused)) erg{waitpid(pidtb->at(i).pid,&status,0)};
+					ret=124;
+					if (!WIFSIGNALED(status)) {
+						kill(pidtb->at(i).pid,SIGKILL);
+						pid_t __attribute__((unused)) erg{waitpid(pidtb->at(i).pid,&status,WNOHANG)};
+						ret=137;
+					}
+				} // 				if (killen)
+				pid_t erg{waitpid(pidtb->at(i).pid,&status,WNOHANG)};
+				if (WIFEXITED(status)) {
+					ret=WEXITSTATUS(status);
+				}
 				if (erg>0) zuloeschen=1;
-			} // 			if (res==-1 && errno==ESRCH)
+			} // 			if (obgueltig==-1 && errno==ESRCH)
 			yLog(obverb>1,0,0,0," %s%s%s, i: %s%zu%s, pidtb->at(i).pid: %s%lu%s, name: %s%s%s, %s%s%s",blau,wo.c_str(),schwarz,blau,i,schwarz,blau,
 					pidtb->at(i).pid,schwarz,blau,pidtb->at(i).name.c_str(),schwarz,(zuloeschen?blau:""),(zuloeschen?Txk[T_nicht_mehr_da]:Txk[T_laeuft_noch]),schwarz);
 			if (zuloeschen) {
@@ -5801,19 +5822,19 @@ int wartaufpids(pidvec *pidtb,const ulong runden/*=0*/,const int obverb/*=0*/,co
 		} // 		for(size_t i=0;i<pidtb->size();i++)
 		if (!pidtb->size()) {
 			fLog(violetts+Txk[T_Ende]+" 1 "+__FUNCTION__+", "+blau+wo+", return 0 (1)",obverb>1,0);
-			return 0;
+			return ret;
 		} // 		if (!pidtb->size())
 		const int wz3{50};
 		this_thread::sleep_for(chrono::milliseconds(wz3));
 		yLog(obverb>1,0,0,0,"in %s(): %s%s: %s%d%s ms",__FUNCTION__,rot,Txk[T_warte],blau,wz3,schwarz);
 		if (++aktru==runden) {
-			fLog(violetts+__FUNCTION__+", "+blau+wo+", return 1",obverb>1,0);
-			return 1;
+			fLog(violetts+__FUNCTION__+", "+blau+wo+", return -1",obverb>1,0);
+			return -1;
 		} // 		if (++aktru==runden)
 	} // 	while (1)
 	fLog(violetts+Txk[T_Ende]+" 2 "+__FUNCTION__+", "+blau+wo+", return 0 (2)",obverb>1,0);
 ////  *ovp=altobverb; 
-	return 0;
+	return ret;
 } // void wartaufpids
 
 // wird aufgerufen in lauf
@@ -5822,7 +5843,7 @@ void hcl::setzzaehler()
 	aufrufe++;
 	//// <<"aufrufe: "<<aufrufe<<endl;
 	// zcnfA[0].setze(&aufrufe);
-	time_t jetzt=time(0);
+	time_t jetzt{time(0)};
 	pthread_mutex_lock(&timemutex);
 	struct tm heute=*localtime(&jetzt);
 	if (heute.tm_year!=laufrtag.tm_year || heute.tm_yday!=laufrtag.tm_yday) {

@@ -1242,7 +1242,7 @@ struct pidvec: public vector<pidcl>
  } //  inline pidvec& operator<<(const pidcl& pd)
 }; // pidvec
 
-int wartaufpids(pidvec *pidv,const ulong runden=0,const int obverb=0,const int oblog=0,const string& wo=nix);
+int wartaufpids(pidvec *pidv,const ulong runden=0,const int obverb=0,const int oblog=0,const string& wo=nix,const time_t maxsec=0);
 
 extern const string s_true; // ="true";
 extern const string s_dampand; // =" && ";

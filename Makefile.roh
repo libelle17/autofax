@@ -84,7 +84,7 @@ ifeq ($(MAXGCCNR),0)
 endif
 # $(foreach v,$(filter-out $(VARS_OLD) VARS_OLD,$(.VARIABLES)),$(info $(v) = $($(v))))
 	
-#1=verfügbare Version höher als die minimal notwendige, 0=nicht
+#1=verfuegbare Version hoeher als die minimal notwendige, 0=nicht
 # 1=minimal notwendige Version verfügbar, 0=nicht
 GCCOK::=$(shell expr $(MAXGCCNR) \>\= $(MINGCCNR))
 # 1=Debian usw., 2=Opensuse, 3=Fedora usw., 4=Magieia, 5=Manjaro usw.
