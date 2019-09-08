@@ -6164,6 +6164,7 @@ int optcl::setzstr(const char* const neuw,uchar *const obzuschreib/*=0*/,const u
 	uchar tuschreib{0};
 	// nicht mit Vorgaben (woher 2) Befehlszeilenoption (woher 3) ueberschreiben
 	const int sstfnr{wpgcl::tusetzstr(neuw,/*obzuschreib*/&tuschreib,ausDatei,/*keineprio*/woher>2)};
+////	<<blau<<"setzstr("<<gruen<<neuw<<","<<obzuschreib<<(obzuschreib?(int)*obzuschreib:-1)<<","<<(int)ausDatei<<blau<<"), tuschreib: "<<(int)tuschreib<<endl;
 	if (tuschreib) if (obzuschreib) if (!*obzuschreib) if (!nichtspeichern) {
 		caus<<"setze obzuschreib in setzstr "<<neuw<<" ausDatei: "<<(int)ausDatei<<endl;
 		*obzuschreib=1;
