@@ -5427,7 +5427,7 @@ int hhcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct stat *
 	} // if (TIFF* tif = TIFFOpen(datei.c_str(), "r")) 
 	hLog(violetts+Txk[T_Ende]+Tx[T_holtif]+schwarz);
 	return erg;
-} // int hhcl::holtif(string& datei,struct tm *tmp,ulong *seitenp,string *calleridp,string *devnamep)
+} // int hhcl::holtif
 
 // in inspoolschreiben und empfhyla und empfcapi
 int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/, const int obocr/*=1*/, const int loeschen/*=1*/) // 0=Erfolg
