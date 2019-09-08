@@ -5372,7 +5372,7 @@ int hhcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct stat *
 	setfaclggf(datei,obverb>0?obverb-1:0,oblog,/*obunter=*/falsch,/*mod=*/4,/*obimmer=*/0,/*faclbak=*/0);
 	if (TIFF* tif = TIFFOpen(datei.c_str(), "r")) {
 		erg=0;
-		char *rdesc=0;
+		char *rdesc{0};
 		if (tmp) {
 			if (TIFFGetField(tif, TIFFTAG_DATETIME, &rdesc)) {
 				//// <<"Datetime: \n"<<rdesc<<endl;
