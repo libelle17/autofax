@@ -7520,16 +7520,16 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 	if (!fbankvz.empty()&&!lstat(fbankvz.c_str(),&fst)) {
 		svec qrueck;
 		string suchs;
-//		if (tagesaufr==4 ||1) {
-		  suchs="find '"+fbankvz+"' -iname '*pdf' -not -iname '*alt\\.pdf'";	
-//		} else {
-//		  suchs="find '"+fbankvz+"' -mtime -1 -iname '*pdf'";	
-//		}
+		//		if (tagesaufr==4 ||1) {
+		suchs="find '"+fbankvz+"' -iname '*pdf' -not -iname '*alt\\.pdf'";	
+		//		} else {
+		//		  suchs="find '"+fbankvz+"' -mtime -1 -iname '*pdf'";	
+		//		}
 		systemrueck(suchs,2,oblog,&qrueck);
 		for(size_t i=0;i<qrueck.size();i++) {
 			empffbox(qrueck[i],aktc);
 		}
-			suchs="find '"+fbankvz+"' -mtime +14 -iname '*alt\\.pdf'";	
+		suchs="find '"+fbankvz+"' -mtime +14 -iname '*alt\\.pdf'";	
 		systemrueck(suchs,2,oblog,&qrueck);
 		for(size_t i=0;i<qrueck.size();i++) {
 			archfbox(qrueck[i],aktc);
