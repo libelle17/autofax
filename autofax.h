@@ -446,6 +446,7 @@ enum T_
 	T_empfarch,
 	T_empfcapi,
 	T_empfhyla,
+	T_empffbox,
 	T_was,
 	T_Bilddatei,
 	T_avon,

@@ -931,6 +931,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"empfcapi(): ","recvcapi(): "},
 	// T_empfhyla
 	{"empfhyla(): ","recvhyla(): "},
+	// T_empffbox
+	{"empffbox(): ","recvfbox(): "},
 	// T_was
 	{", was: ",", what: "},
 	// T_Bilddatei
@@ -5817,6 +5819,18 @@ int hhcl::pruefocr()
 	return 0;
 } // int hhcl::pruefocr
 
+void hhcl::empffbox(const string ganz,size_t aktc)
+{
+	obverb=1;
+	hLog(violetts+Tx[T_empffbox]+schwarz+ganz);
+	struct stat stganz{0};
+	const uchar ganzfehlt{(uchar)lstat(ganz.c_str(),&stganz)}; // muesste immer 0 sein, wenn es die Datei gibt
+	if (!ganzfehlt) {
+	}
+
+	obverb=0;
+}
+
 // aufgerufen in: empferneut, empfarch
 void hhcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,const string& nr/*=nix*/)
 {
@@ -5825,7 +5839,7 @@ void hhcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,const 
 	// Dateien kommen als tif-Dateien an, z.B. /var/spool/hylafax/../fax000000572.tif
 	hLog(violetts+Tx[T_empfhyla]+schwarz+ganz+Tx[T_was]+(was&4?Tx[T_Bilddatei]:"")+(was&2?", q ":"")+(was&1?", Tab.":""));
 	struct stat stganz{0};
-	const uchar ganzfehlt{(uchar)lstat(ganz.c_str(),&stganz)}; // muesste immer 0 sein
+	const uchar ganzfehlt{(uchar)lstat(ganz.c_str(),&stganz)}; // muesste immer 0 sein, wenn es die Datei gibt
 	if (!ganzfehlt) {
 		string stamm,exten;
 		getstammext(&ganz,&stamm,&exten);
@@ -7500,10 +7514,6 @@ void hhcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,
 		} // 	if (was&1)
 	} // 	if (!lstat(ctxdt.c_str(),&txtstat))
 }// void hhcl::empfcapi
-
-void hhcl::empffbox(string datei,size_t aktc)
-{
-}
 
 void hhcl::archfbox(string datei,size_t aktc)
 {
