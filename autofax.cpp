@@ -12,6 +12,7 @@ const double& versnr= //α
 #include "autofax.h"
 #include <fcntl.h> // fuer fd_reopen, O_RDONLY usw.
 #include <termios.h> // fuer tcgetattr, termios
+#include <qpdf/QPDF.hh> // fuer die Seitenzahl von PDF-Dateien
 // fuer verschiedene Sprachen //α
 char const *DPROG_T[T_MAX+1][SprachZahl]=
 {
@@ -5431,6 +5432,30 @@ int hhcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct stat *
 	return erg;
 } // int hhcl::holtif
 
+int hhcl::pdfseitenzahl(const string& datei)
+{
+#ifdef false
+	svec rueck;
+	// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
+	linstp->doinst("poppler-tools",obverb,oblog,"pdfinfo");
+	// falls libtiff geaendert, die zugehoerige Warnung ausblenden
+	systemrueck("pdfinfo \""+datei+"\" 2>/dev/null|grep -a Pages|sed 's/[^ ]*[ ]*\\(.*\\)/\\1/'",obverb,oblog,&rueck);
+	if (rueck.size()) {
+		hLog("PDF: "+blaus+datei+schwarz+Tx[T_Seiten]+gruen+rueck[0]+schwarz);
+		return atol(rueck[0].c_str());
+	} // 			if (rueck.size())
+	return 0;
+#else
+	QPDF pdf;
+	pdf.processFile(datei.c_str());
+	QPDFObjectHandle root = pdf.getRoot();
+	QPDFObjectHandle pages = root.getKey("/Pages");
+	QPDFObjectHandle count = pages.getKey("/Count");
+	caus<<rot<<count.getIntValue()<<endl;
+	return count.getIntValue();
+#endif
+}
+
 // in inspoolschreiben und empfhyla und empfcapi
 int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/, const int obocr/*=1*/, const int loeschen/*=1*/) // 0=Erfolg
 {
@@ -5526,22 +5551,14 @@ int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/,
 	if (!erg) {
 		attrangleich(ziel,*quellp,0,obverb,oblog);
 		// falls !erg und Seitenzahl gleich, dann tif loeschen
-		svec rueck;
 		if (pseitenp) {
-			// pdf: pdfinfo (ubuntu und fedora: poppler-utils, opensuse: poppler-tools)
-			linstp->doinst("poppler-tools",obverb,oblog,"pdfinfo");
-			// falls libtiff geaendert, die zugehoerige Warnung ausblenden
-			systemrueck("pdfinfo \""+ziel+"\" 2>/dev/null|grep -a Pages|sed 's/[^ ]*[ ]*\\(.*\\)/\\1/'",obverb,oblog,&rueck);
-			if (rueck.size()) {
-				hLog("PDF: "+blaus+ziel+schwarz+Tx[T_Seiten]+gruen+rueck[0]+schwarz);
-				*pseitenp=atol(rueck[0].c_str());
-			} // 			if (rueck.size())
+			*pseitenp=pdfseitenzahl(ziel);
 		} // 		if (pseitenp)
 		if (loeschen && exten=="tif") {
 			ulong seiten{0};
 			holtif(*quellp, &seiten,0,0,0,0,0,0);
 			hLog("TIF: "+blaus+*quellp+schwarz+Tx[T_Seiten]+gruen+ltoan(seiten)+schwarz);
-			if (rueck.size()) {
+////			if (rueck.size()) {
 				if (pseitenp) {
 					if (*pseitenp==seiten && seiten>0) {
 						tuloeschen(*quellp,cuser,obverb,oblog);
@@ -5549,7 +5566,7 @@ int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/,
 						tuloeschen(ziel,cuser,obverb,oblog);
 					} // 		 if (*pseitenp==seiten && seiten>0) else
 				} // 		 if (pseitenp)
-			} // if (rueck.size())
+////			} // if (rueck.size())
 			// pdfinfo /DATA/shome/gerald/t.pdf |grep Pages|sed 's/[^ ]*[ ]*\(.*\)/\1/'
 		} // 		if (loeschen && exten=="tif")
 	} // 	if (!erg)

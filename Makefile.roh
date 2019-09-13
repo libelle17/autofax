@@ -169,6 +169,9 @@ endif
 ifneq ($(LSND),)
 	LDFLAGS::=$(LDFLAGS) -lsndfile
 endif
+ifneq ($(QPDF),)
+	LDFLAGS::=$(LDFLAGS) -lqpdf
+endif
 ifneq ($(LGSSDP),)
 #	LDFLAGS::=$(LDFLAGS) -lgssdp-1.0
 	LDFLAGS::=$(LDFLAGS) $(shell pkg-config --libs $(shell grep -l 'Cflags.*gssdp' $(PCFILES)|tail -n1))
@@ -427,6 +430,7 @@ endif
 	-@[ "$(LGLIB)" ]&&{ [ -f /usr/include/glib-2.0/glib.h ]|| sh configure inst _ "$(LGLIB)" verbose;}||:
 	-@[ "$(LSOUP)" ]&&{ [ -f /usr/include/libsoup-2.4/libsoup/soup.h ]|| sh configure inst _ "$(LSOUP)" verbose;}||:
 	-@[ "$(LSND)" ]&&{ [ -f /usr/include/sndfile.h ]|| sh configure inst _ "$(LSND)" verbose;}||:
+	-@[ "$(QPDF)" ]&&{ [ -f /usr/include/qpdf/QPDF.hh ]|| sh configure inst _ "$(QPDF)" verbose;}||:
 	-@[ "$(LGSSDP)" ]&&{ grep -qlm1 'Cflags.*gssdp' $(PCFILES)||sh configure inst _ "$(LGSSDP)" verbose;}||:
 	-@[ "$(LCAPI)" ]&&{ grep -qlm1 'capi20' $(PCFILES)||sh configure inst _ "$(LCAPI)" verbose;}||:
 	-@[ "$(LBOOST)" ]&&{ $(SPR) $(LBOOST) $(KR)|| sh configure inst _ "$(LBOOST)" verbose;}||:
