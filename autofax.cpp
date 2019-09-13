@@ -5451,7 +5451,7 @@ int hhcl::pdfseitenzahl(const string& datei)
 	QPDFObjectHandle root = pdf.getRoot();
 	QPDFObjectHandle pages = root.getKey("/Pages");
 	QPDFObjectHandle count = pages.getKey("/Count");
-	caus<<rot<<count.getIntValue()<<endl;
+////	<<rot<<count.getIntValue()<<endl;
 	return count.getIntValue();
 #endif
 }
