@@ -1089,9 +1089,9 @@ class hhcl:public dhcl
     void empfarch(uchar obalte=0);
 		void empfhyla(const string& ganz,size_t aktc, const uchar was,const string& nr=nix);
 		void empfcapi(const string& stamm,size_t aktc, const uchar was,const string& nr=nix);
-		void empffbox(string datei,size_t aktc);
+		void empffbox(const string& datei,const size_t aktc);
 		void archfbox(string datei,size_t aktc);
-		int pdfseitenzahl(const string& datei);
+		unsigned pdfseitenzahl(const string& datei);
 		int zupdf(const string* quell, const string& ziel, ulong *pseitenp=0, int obocr=1, int loeschen=1); // 0=Erfolg
     int pruefocr();
     int pruefconvert();

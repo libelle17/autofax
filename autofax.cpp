@@ -5432,7 +5432,7 @@ int hhcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct stat *
 	return erg;
 } // int hhcl::holtif
 
-int hhcl::pdfseitenzahl(const string& datei)
+unsigned hhcl::pdfseitenzahl(const string& datei)
 {
 #ifdef false
 	svec rueck;
@@ -5836,16 +5836,32 @@ int hhcl::pruefocr()
 	return 0;
 } // int hhcl::pruefocr
 
-void hhcl::empffbox(const string ganz,size_t aktc)
+void hhcl::empffbox(const string& ganz,const size_t aktc)
 {
-	obverb=1;
+	int altobverb{obverb};
+//	obverb=1;
 	hLog(violetts+Tx[T_empffbox]+schwarz+ganz);
 	struct stat stganz{0};
 	const uchar ganzfehlt{(uchar)lstat(ganz.c_str(),&stganz)}; // muesste immer 0 sein, wenn es die Datei gibt
 	if (!ganzfehlt) {
+		string stamm,exten;
+		getstammext(&ganz,&stamm,&exten);
+		const string base{base_name(stamm)};
+    caus<<violett<<base<<schwarz;
+		struct tm tm{0};
+		if (strptime(base.c_str(),"%d.%m.%y_%H.%M",&tm)) {
+			caus<<" "<<put_time(&tm,"%Y-%m-%d %H:%M:%S");
+		}
+		unsigned sz{pdfseitenzahl(ganz)};
+		caus<<" "<<sz;
+		const string tf{"Telefax."}; 
+		size_t p2{base.rfind(tf)};
+		const string callerid{p2==string::npos?string():base.substr(p2+tf.length())};
+		caus<<" "<<callerid;
+		caus<<endl;
+		const string tsid{stdfaxnr(callerid)};
 	}
-
-	obverb=0;
+	obverb=altobverb;
 }
 
 // aufgerufen in: empferneut, empfarch
@@ -7552,12 +7568,12 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 		//		} else {
 		//		  suchs="find '"+fbankvz+"' -mtime -1 -iname '*pdf'";	
 		//		}
-		systemrueck(suchs,2,oblog,&qrueck);
+		systemrueck(suchs,obverb,oblog,&qrueck);
 		for(size_t i=0;i<qrueck.size();i++) {
 			empffbox(qrueck[i],aktc);
 		}
 		suchs="find '"+fbankvz+"' -mtime +14 -iname '*alt\\.pdf'";	
-		systemrueck(suchs,2,oblog,&qrueck);
+		systemrueck(suchs,obverb,oblog,&qrueck);
 		for(size_t i=0;i<qrueck.size();i++) {
 			archfbox(qrueck[i],aktc);
 		}
