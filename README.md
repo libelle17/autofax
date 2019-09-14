@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.4809) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.48122) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -178,7 +178,7 @@ configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
 Programm: <b>/home/schade/autofax/autofax</b>, V:
-<b>0.48090</b> Using: <b>Fritzbox</b>, <b>Capisuite</b>,
+<b>0.48122</b> Using: <b>Fritzbox</b>, <b>Capisuite</b>,
 <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
@@ -272,6 +272,9 @@ not</b> (<b>1</b>) <b><br>
 -fbdr, --fritzboxdir &lt;path&gt;</b>: receiving directory
 of the fritzbox (via CIFS)
 (&rsquo;<b>/mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox</b>&rsquo;)
+<b><br>
+-favz, --farchvz &lt;path&gt;</b>: archive directory of the
+fritzbox (&rsquo;<b>/var/spool/fbfax/arch</b>&rsquo;)
 <b><br>
 -capi, --takecapi &lt;zahl&gt;</b>: use capisuite <b>or
 not</b> (<b>1</b>) <b><br>
@@ -849,7 +852,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.4809) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.48122) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1042,7 +1045,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
 Programm: <b>/home/schade/autofax/autofax</b>, V:
-<b>0.48090</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
+<b>0.48122</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
 <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
@@ -1141,6 +1144,9 @@ nicht</b> (<b>1</b>) <b><br>
 -fbvz, --fritzboxvz &lt;pfad&gt;</b>: Ankunftsverzeichnis
 der Fritzbox (ueber CIFS)
 (&rsquo;<b>/mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox</b>&rsquo;)
+<b><br>
+-favz, --farchvz &lt;pfad&gt;</b>: Archivverzeichnis der
+Fritzbox (&rsquo;<b>/var/spool/fbfax/arch</b>&rsquo;)
 <b><br>
 -capi, --obcapi &lt;zahl&gt;</b>: Capisuite verwenden
 <b>oder nicht</b> (<b>1</b>) <b><br>

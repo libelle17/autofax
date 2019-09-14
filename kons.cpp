@@ -4472,17 +4472,18 @@ int tuloeschen(const string& zuloe,const string& cuser/*=string()*/, int obverb/
 } // int tuloeschen(string zuloe,int obverb, int oblog)
 
 // gleicht das Datum von <zu> an <gemaess> an, aehnlich touch
+// rueckgabe: 0 = alles in Ordnung, 1=Zeiten stimmen am Schluss nicht, 2=Zieldatei fehlt, 3=Quelldatei fehlt
 int attrangleich(const string& zu, const string& gemaess,const string* const zeitvondtp/*=0*/, int obverb/*=0*/, int oblog/*=0*/)
 {
 	struct stat statgm{0};
 	if (lstat(gemaess.c_str(),&statgm)) {
 		fLog(rots+Txk[T_Fehler_bei_lstat]+schwarz+gemaess,obverb,oblog);
-		return 1;
+		return 3;
 	} //   if (lstat(gemaess.c_str(),&statgm))
 	struct stat statzu{0};
 	if (lstat(zu.c_str(),&statzu)) {
 		fLog(rots+Txk[T_Fehler_bei_lstat]+schwarz+zu,obverb,oblog);
-		return 1;
+		return 2;
 	} //   if (lstat(zu.c_str(),&statzu))
 	if (chmod(zu.c_str(),statgm.st_mode)) {
 		systemrueck("chmod --reference=\""+gemaess+"\" \""+zu+"\"",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
@@ -4504,6 +4505,7 @@ int attrangleich(const string& zu, const string& gemaess,const string* const zei
 	lstat(zu.c_str(),&statzu);
 	if (memcmp(&stzvd.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime)) {
 		fLog(rots+Txk[T_Datum_nicht_gesetzt_bei]+schwarz+zu+rot+"'"+schwarz,1,1);
+		return 1;
 		////          exit(0);
 	} //   if (memcmp(&statgm.st_mtime, &statzu.st_mtime,sizeof statzu.st_mtime))
 	return 0;

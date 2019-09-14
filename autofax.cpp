@@ -142,6 +142,12 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"fritzboxvz","fritzboxdir"},
 	// T_Ankunftsverzeichnis_der_Fritzbox_ueber_CIFS
 	{"Ankunftsverzeichnis der Fritzbox (ueber CIFS)","receiving directory of the fritzbox (via CIFS)"},
+	// T_farchvz_k
+	{"favz","favz"},
+	// T_farchvz_l
+	{"farchvz","farchvz"},
+	// T_Archivverzeichnis_der_Fritzbox
+	{"Archivverzeichnis der Fritzbox","archive directory of the fritzbox"},
 	// T_capi_k
 	{"capi","capi"},
 	// T_obcapi_l
@@ -592,6 +598,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Soll die Fritzbox verwendet werden","Shall the fritzbox be used"},
 	// T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox
 	{"Mit CIFS gemountetes Verzeichnis mit ankommenden Faxen der Fritzbox", "Via CIFS mounted directory with received faxes at the fritzbox"},
+	// T_Archiv_Verzeichnis_fuer_ankommende_Faxe_der_Fritzbox
+	{"Archiv-Verzeichnis fuer ankommende Faxe der Fritzbox","archive directory for incoming faxes at the fritzbox"},
 	// T_Soll_die_Capisuite_verwendet_werden
 	{"Soll die Capisuite verwendet werden","Shall Capisuite be used"},
 	// 	T_pruefisdn
@@ -1445,8 +1453,17 @@ string kopiere(const string& qdatei, const string& zield, uint *kfehler, const u
 	int fehler{0},
 			efeh{0};
 	////	if (is_same<decltype(zield),const std::string&>::value) KLA
-	const string dir{dir_name(zield)},
-				base{base_name(zield)};
+	// nur zur Sicherheit, eigentlich sollte mit Verzeichnis kopier(... direkt aufgerufen werden
+	struct stat zstat{0};
+	string zieldt{zield};
+	if (!lstat(zieldt.c_str(),&zstat)) {
+		if (S_ISDIR(zstat.st_mode)) {
+			if (zieldt[zieldt.length()-1]!='/') zieldt+='/';
+			zieldt+=base_name(qdatei);
+		}
+	}
+	const string dir{dir_name(zieldt)},
+				base{base_name(zieldt)};
 	string ziel;
 	uchar obgleich{0};
 	if (!base.empty() && !dir.empty()) {
@@ -1454,10 +1471,10 @@ string kopiere(const string& qdatei, const string& zield, uint *kfehler, const u
 		fLog(Tx[T_Kopiere_Doppelpunkt]+rots+qdatei+schwarz+"'\n         -> '"+rot+ziel+schwarz+"'",obverb,oblog);
 		if ((efeh=kopier(qdatei,ziel,obverb,oblog))) {
 			fehler+=efeh;
-			fLog(rots+Tx[T_Fehler_beim_Kopieren]+Tx[T_Dateiname]+blau+zield+schwarz,1,1);
+			fLog(rots+Tx[T_Fehler_beim_Kopieren]+Tx[T_Dateiname]+blau+zieldt+schwarz,1,1);
 		} // if (efeh=kopier(qdatei,ziel,obverb,oblog))
 	} else {
-		fLog(rots+Tx[T_Fehler_beim_Kopieren]+Tx[T_Dateiname]+blau+zield+schwarz+Tx[T_schlechtgeformt],1,1);
+		fLog(rots+Tx[T_Fehler_beim_Kopieren]+Tx[T_Dateiname]+blau+zieldt+schwarz+Tx[T_schlechtgeformt],1,1);
 	} // if (!base.empty() && !dir.empty())  else 
 	if (kfehler) *kfehler=fehler;
 	return ziel;
@@ -2871,6 +2888,7 @@ void hhcl::virtVorgbAllg()
 	obocri=1;
 	obocra=0;
 	findv=1;
+	farchvz="/var/spool/fbfax/arch";
 	anfaxstr=Tx[T_an_Fax];
 	ancfaxstr=Tx[T_an_cFax];
 	anhfaxstr=Tx[T_an_hFax];
@@ -2918,6 +2936,7 @@ void hhcl::virtinitopt()
 	opn<<new optcl(/*pname*/"empfvz",/*pptr*/&empfvz,/*art*/pverz,T_evz_k,T_empfvz_l,/*TxBp*/&Tx,/*Txi*/T_Empfangsverzeichnis_fuer_Faxempfang,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!empfvz.empty(),T_Verzeichnis_fuer_empfangene_Faxe);
 	opn<<new optcl(/*pname*/"obfbox",/*pptr*/&obfa[0],/*art*/pint,T_fbox_k,T_obfbox_l,/*TxBp*/&Tx,/*Txi*/T_Fritzbox_verwenden,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obfa[0]!=-1,T_Soll_die_FritzBox_verwendet_werden,/*obno*/1);
 	opn<<new optcl(/*pname*/"fbankvz",/*pptr*/&fbankvz,/*art*/pverz,T_fbankvz_k,T_fbankvz_l,/*TxBp*/&Tx,/*Txi*/T_Ankunftsverzeichnis_der_Fritzbox_ueber_CIFS,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!fbankvz.empty(),T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox);
+	opn<<new optcl(/*pname*/"farchvz",/*pptr*/&farchvz,/*art*/pverz,T_farchvz_k,T_farchvz_l,/*TxBp*/&Tx,/*Txi*/T_Archivverzeichnis_der_Fritzbox,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!farchvz.empty(),T_Archiv_Verzeichnis_fuer_ankommende_Faxe_der_Fritzbox);
 	opn<<new optcl(/*pname*/"obcapi",/*pptr*/&obfa[1],/*art*/pint,T_capi_k,T_obcapi_l,/*TxBp*/&Tx,/*Txi*/T_Capisuite_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obfa[1]!=-1,T_Soll_die_Capisuite_verwendet_werden,/*obno*/1);
 	opn<<new optcl(/*pname*/"obhyla",/*pptr*/&obfa[2],/*art*/pint,T_hyla_k,T_obhyla_l,/*TxBp*/&Tx,/*Txi*/T_hylafax_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obfa[2]!=-1,T_Soll_Hylafax_verwendet_werden,/*obno*/1);
 
@@ -3309,6 +3328,7 @@ void hhcl::holfbpar()
 		if (!systemrueck("curl ["+*ipp+"]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size()) {
 			// z.B. GSHeim
 			//					caus<<"frna[0]: "<<frna[0]<<endl;
+			fbdev="FritzBox "+frna[0];
 			svec mounts;
 			const string zufinden{"^//\\(192.168.178.1\\|169.254.1.1\\|fritz.box\\|"+*ipp+"\\)/"+frna[0]+" "};
 			for(int iru=0;iru<2;iru++) {
@@ -3374,6 +3394,7 @@ void hhcl::virtrueckfragen()
 		if (obfa[0]) {
 //			holfbpar(); // sollte in virtlieskonfein() reichen
 			fbankvz=Tippstr(Tx[T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox],&fbankvz);
+			farchvz=Tippstr(Tx[T_Archiv_Verzeichnis_fuer_ankommende_Faxe_der_Fritzbox],&farchvz);
 		} // 		if (obfa[0])
 		if (!obfcgeprueft) pruefisdn();
 		if (obfcard) {
@@ -4944,10 +4965,10 @@ void hhcl::getSender(const string& faxnr, string *getnamep, string *bsnamep,cons
 		const string trimfaxnr{this->stdfaxnr(faxnr)};
 		// vor den angegebenen SQL-Befehlen nachschauen, wie die gesandten Faxe benannt wurden
 		const string **const locsqlp{new const string*[this->sqlzn+1]};
-		const string sql0{"SELECT adressat, titel "
+		const string sql0{"SELECT * from (SELECT adressat, titel, submt, LENGTH(titel)-LENGTH(REPLACE(titel,',','')) kzahl "
 			"FROM `"+this->touta+"` WHERE rcfax"
 			////stdfaxnr(rcfax,"+this->InternationalPrefix+","+this->LongDistancePrefix+","+this->countrycode+","+this->citycode+")"
-			"='&&faxnr&&' ORDER BY submt DESC"};
+			"='&&faxnr&&') i WHERE kzahl<>0 AND titel<>'' AND titel RLIKE '^[^0123456789]' ORDER BY kzahl,submt DESC"};
 		locsqlp[0]=&sql0;
 		for(size_t snr=0;snr<this->sqlzn;snr++) {
 			locsqlp[snr+1]=&sqlp[snr]; // &(this->sqlcnfA)[snr].wert;
@@ -5836,10 +5857,10 @@ int hhcl::pruefocr()
 	return 0;
 } // int hhcl::pruefocr
 
-void hhcl::empffbox(const string& ganz,const size_t aktc)
+void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*/)
 {
 	int altobverb{obverb};
-//	obverb=1;
+	//	obverb=1;
 	hLog(violetts+Tx[T_empffbox]+schwarz+ganz);
 	struct stat stganz{0};
 	const uchar ganzfehlt{(uchar)lstat(ganz.c_str(),&stganz)}; // muesste immer 0 sein, wenn es die Datei gibt
@@ -5847,28 +5868,106 @@ void hhcl::empffbox(const string& ganz,const size_t aktc)
 		string stamm,exten;
 		getstammext(&ganz,&stamm,&exten);
 		const string base{base_name(stamm)};
-    caus<<violett<<base<<schwarz;
 		struct tm tm{0};
-		if (strptime(base.c_str(),"%d.%m.%y_%H.%M",&tm)) {
-			caus<<" "<<put_time(&tm,"%Y-%m-%d %H:%M:%S");
+		if (!strptime(base.c_str(),"%d.%m.%y_%H.%M",&tm)) {
+			memcpy(&tm,localtime(&stganz.st_mtime),sizeof tm); // gmtime
 		}
 		unsigned sz{pdfseitenzahl(ganz)};
-		caus<<" "<<sz;
 		const string tf{"Telefax."}; 
 		size_t p2{base.rfind(tf)};
 		const string callerid{p2==string::npos?string():base.substr(p2+tf.length())};
-		caus<<" "<<callerid;
-		caus<<endl;
 		const string tsid{stdfaxnr(callerid)};
+		string absdr, bsname;
+		getSender(tsid,&absdr,&bsname,aktc);
+		//// <<gruen<<"absdr("<<tsid<<"): "<<schwarz<<absdr<<" bsname: "<<bsname<<endl;
+		if (!bsname.empty()) {
+			absdr+=", ";
+			absdr+=bsname;
+		} // 			if (!bsname.empty())
+		if (absdr.empty() || istelnr(absdr)) { // wenn Nr. nicht gefunden, kommt sie in absdr wieder zurueck
+			absdr=tsid;
+		} // 		if (absdr.empty() || istelnr(absdr))
+		fuersamba(absdr);  
+		if (absdr.length()>187) absdr.erase(187);
+		if (absdr.length()>70) absdr.erase(70);
+		ulong fnr{0};
+		struct stat statfarchvz{0};
+		const string nrdt{farchvz+"/nnr"}; // naechste Nummer
+		static uchar farchvzgeprueft{0};
+		if (!farchvzgeprueft) {
+			farchvzgeprueft=pruefverz(farchvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/cuser,/*benutzer=*/cuser);
+		}
+		uchar obfarchda{0};
+		if (!lstat(farchvz.c_str(),&statfarchvz)) {
+			obfarchda=1;
+			struct stat statfnr{0};
+			if (!lstat(nrdt.c_str(),&statfnr)) {
+				mdatei mnrdt(nrdt,ios::in);
+				if (mnrdt.is_open()) {
+					string zeile;
+					getline(mnrdt,zeile);
+					fnr=atol(zeile.c_str());
+				} // 						if (mnnr.is_open())
+			} // 					if (!lstat(nnr.c_str(),&statnnr))
+			fnr++;
+		} // 				if (!lstat(fempfavz.c_str(),&statfempfavz))
+		//				dorename(ganz,fempfavz,cuser,/*vfehlerp=*/0,/*schonda=*/0,obverb,oblog);
+		stringstream frstr;
+		frstr<<"Fax f"<<fnr<<","<<Tx[T_avon]<<absdr<<", T."<<tsid<<", "<<Tx[T_vom]<<put_time(&tm,"%d.%m.%Y %H.%M.%S");
+		const string frumpf{frstr.str()},
+					fdatei{frumpf+".pdf"},
+					fpfad{empfvz+vtz+fdatei};
+		fLog((nr.empty()?"":nr+")")+blaus+base+schwarz+" => "+gruen+fdatei+schwarz,1,1);
+		// ..., die empfangene Datei in fpfad kopieren ...
+		uint kfehler{0};
+		kopiere(ganz,fpfad,&kfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+		if (!kfehler) {
+			attrangleich(fpfad,empfvz,&ganz,obverb,oblog);
+		} //     if (!kfehler) else
+		if (!kfehler) {
+			struct stat entrynd{0};
+			const uchar obfpfadda{!lstat(fpfad.c_str(),&entrynd)};
+			if (obfpfadda && obfarchda) {
+				mdatei mnrdt(nrdt,ios::out);
+				if (mnrdt.is_open()) {
+					mnrdt<<fnr;
+				}
+			}
+			////		if (obfpfadda) if (chmod(fpfad.c_str(),S_IRWXU|S_IRGRP|S_IROTH)) systemrueck(sudc+"chmod +r \""+fpfad+"\"",obverb,oblog);
+			RS rins(My,tinca); 
+			vector<instyp> einf; // fuer alle Datenbankeinfuegungen
+			einf.push_back(/*2*/instyp(My->DBS,"fsize",stganz.st_size));
+			einf.push_back(/*2*/instyp(My->DBS,"pages",sz));
+			einf.push_back(/*2*/instyp(My->DBS,"titel",&absdr));
+			einf.push_back(/*2*/instyp(My->DBS,"tsid",&tsid));
+			////        einf.push_back(instyp(My->DBS,"callerid",&callerid));
+			einf.push_back(/*2*/instyp(My->DBS,"devname",&fbdev));
+			einf.push_back(/*2*/instyp(My->DBS,"id",&base));
+			einf.push_back(/*2*/instyp(My->DBS,"transe",&tm));
+			svec eindfeld; eindfeld<<"id";
+			rins.tbins(&einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld); 
+			if (rins.fnr) {
+				fLog(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
+			} else {
+				if (!kopier(ganz,farchvz,obverb,oblog)) {
+					tuloeschen(ganz,cuser,obverb,oblog);
+				}
+			} //         if (runde==1)
+		} // if !kfehler
+		if (kfehler) {
+			const string warndt{empfvz+vtz+Tx[T_nicht_angekommen]+frumpf+".nix"};
+			touch(warndt,obverb,oblog);
+			attrangleich(warndt,empfvz,&ganz,obverb,oblog);
+		}
 	}
 	obverb=altobverb;
-}
+} // void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*/)
 
 // aufgerufen in: empferneut, empfarch
 void hhcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,const string& nr/*=nix*/)
 {
 	// uchar indb/*=1*/,uchar mitversch/*=1*/)
-	// was&4: Bilddateien erstellen, was&2 q-Datei verschieben, was&1: in Datenbank eintragen, 
+	// was&4: Bilddateien erstellen, was&2 q-Datei archivieren, was&1: in Datenbank eintragen, 
 	// Dateien kommen als tif-Dateien an, z.B. /var/spool/hylafax/../fax000000572.tif
 	hLog(violetts+Tx[T_empfhyla]+schwarz+ganz+Tx[T_was]+(was&4?Tx[T_Bilddatei]:"")+(was&2?", q ":"")+(was&1?", Tab.":""));
 	struct stat stganz{0};
@@ -6006,7 +6105,7 @@ void hhcl::empferneut()
 		beg=0;
 		end=vinca.size();
 	} else {
-		const size_t onr=atol(onrs.c_str())-1;
+		const size_t onr{(size_t)atol(onrs.c_str())-1};
 		if (onr<vinca.size()) {
 			beg=onr;
 			end=onr+1;
@@ -7570,7 +7669,7 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 		//		}
 		systemrueck(suchs,obverb,oblog,&qrueck);
 		for(size_t i=0;i<qrueck.size();i++) {
-			empffbox(qrueck[i],aktc);
+			empffbox(qrueck[i],aktc,ltoan(i));
 		}
 		suchs="find '"+fbankvz+"' -mtime +14 -iname '*alt\\.pdf'";	
 		systemrueck(suchs,obverb,oblog,&qrueck);
@@ -10127,7 +10226,9 @@ void hhcl::virtlieskonfein()
 	// wenn nicht "obfbox=0" in der Konfigurationsdatei steht
 	if (obfa[0]) {
 		fuellfbip();
-		if (obfrbox) holfbpar();
+		if (obfrbox) {
+			holfbpar();
+	  }
 	}
 	// sqlzn und zmzn aus den Konfigurationsdateien ermitteln (um sie nicht dort speichern zu muessen)
 	sqlzn=0;

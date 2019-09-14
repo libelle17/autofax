@@ -66,6 +66,9 @@ enum T_
 	T_fbankvz_k,
 	T_fbankvz_l,
 	T_Ankunftsverzeichnis_der_Fritzbox_ueber_CIFS,
+	T_farchvz_k,
+	T_farchvz_l,
+	T_Archivverzeichnis_der_Fritzbox,
 	T_capi_k,
 	T_obcapi_l,
 	T_Capisuite_verwenden,
@@ -285,6 +288,7 @@ enum T_
 	T_Verzeichnis_fuer_empfangene_Faxe,
 	T_Soll_die_FritzBox_verwendet_werden,
 	T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox,
+	T_Archiv_Verzeichnis_fuer_ankommende_Faxe_der_Fritzbox,
 	T_Soll_die_Capisuite_verwendet_werden,
 	T_pruefisdn,
 	T_ISDN_Karte_gefunden,
@@ -852,6 +856,7 @@ class hhcl:public dhcl
 		static constexpr const char *moeglhvz[2]{"/var/spool/fax","var/spool/hylafax"};
 		string huser{"uucp"}; // "uucp" oder "fax"
 		uchar obfrbox{1};    // ob Fritzbox im System gefunden
+		string fbdev; // device-Name der Fritzbox = "FritzBox <friendlyname>"
 		uchar obfcard{1};    // ob Fritzcard eingesteckt
 		uchar obfcgeprueft{0}; // ob schon geprueft, ob Fritzcard eingesteckt
 		uchar obmodem{1};    // ob Modem angeschlossen
@@ -905,6 +910,7 @@ class hhcl:public dhcl
 		string ngvz; // Nichtgefaxt-Verzeichnis (Gescheiterte)
 		string empfvz; // Empfangsverzeichnis
 		string fbankvz;  // auf CIFS gemountetes NAS-Verzeichnis der Fritzbox mit ankommenden Faxen
+		string farchvz; // Archiv fuer die Fritzbox-Faxe
 
 		string countrycode; // Landesvorwahl
 		string LongDistancePrefix; // Vorsatz fuer ausserorts
@@ -1089,7 +1095,7 @@ class hhcl:public dhcl
     void empfarch(uchar obalte=0);
 		void empfhyla(const string& ganz,size_t aktc, const uchar was,const string& nr=nix);
 		void empfcapi(const string& stamm,size_t aktc, const uchar was,const string& nr=nix);
-		void empffbox(const string& datei,const size_t aktc);
+		void empffbox(const string& datei,const size_t aktc,const string& nr=nix);
 		void archfbox(string datei,size_t aktc);
 		unsigned pdfseitenzahl(const string& datei);
 		int zupdf(const string* quell, const string& ziel, ulong *pseitenp=0, int obocr=1, int loeschen=1); // 0=Erfolg
