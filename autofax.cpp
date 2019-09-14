@@ -4656,19 +4656,19 @@ void hhcl::rufpruefsamba()
 		if (k<4) {
 			abschni<<Tx[ISambaName[k]];
 			Sprache altSpr{Tx.lgn};
-			for(int akts=0;akts<SprachZahl;akts++) {
-				Tx.lgn=(Sprache)akts;
+			for(int aktsp=0;aktsp<SprachZahl;aktsp++) {
+				Tx.lgn=(Sprache)aktsp;
 				schstr=string("\\[")+Tx[ISambaName[k]]+"\\]\\|";
-			} //         for(int akts=0;akts<SprachZahl;akts++)
+			} //         for(int aktsp=0;aktsp<SprachZahl;aktsp++)
 			Tx.lgn=altSpr;
 		} else {
 			abschni<<string(Tx[T_Gefaxt])+"_"+ltoan(k-4);
 			if (k==4) {
 				Sprache altSpr{Tx.lgn};
-				for(int akts=0;akts<SprachZahl;akts++) {
-					Tx.lgn=(Sprache)akts;
+				for(int aktsp=0;aktsp<SprachZahl;aktsp++) {
+					Tx.lgn=(Sprache)aktsp;
 					schstr=string("\\[")+Tx[T_Gefaxt]+"_\\|";
-				} //         for(int akts=0;akts<SprachZahl;akts++)
+				} //         for(int aktsp=0;aktsp<SprachZahl;aktsp++)
 				Tx.lgn=altSpr;
 			} // 						if (k==4)
 		} // 					if (k<4) else

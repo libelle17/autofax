@@ -61,7 +61,8 @@ getIPR() {
 			LBOOST=$(grep LBOOST vars|cut -d= -f2);
 			LBIO=$(grep LBIO vars|cut -d= -f2);
 			LBLO=$(grep LBLO vars|cut -d= -f2);
-			if test "$ICH" != viall; then
+			# der Aufruf `zypper se ...boost...` dauert so lang und sollte bei `make mitzieh` meist nicht noetig sein
+			if test "$ICH" != viall -a "$1" != ohneboost; then
 			 if test -z "$PAR1" -o -z "$LBOOST" -o -z "$LBIO" -o -z "$LBLO"; then
   			# z.B. 'i+ | boost_1_65-devel |'
 				command="zypper se \"boost*-devel\" libboost_iostreams libboost_locale boost-license";
@@ -346,7 +347,7 @@ _LT="libtiff"
 LT5="${_LT}5"
 LM18=libmysqlclient18
 
-getIPR;
+getIPR "$1";
 # diese Datei wird wegen obigem in viall gesourct, deshalb dort der Rest zu uebergehen
 rot="\033[1;31m"
 gruen="\033[1;32m"
