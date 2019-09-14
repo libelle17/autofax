@@ -435,7 +435,6 @@ enum T_
 	T_docname,
 	T_Folgende_Faxe_waren_nicht_eingetragen_was_korrigiert_wird,
 	T_telnr,
-	T_wiemail,
 	T_Gabelung_zu_korrigiere_misslungen,
 	T_Gabelung_zu_faxemitH_misslungen,
 	T_Gabelung_zu_faxemitF_misslungen,
@@ -644,6 +643,7 @@ enum T_
 	T_bzw_,
 	T_std_mailtit,
 	T_std_mailbod,
+	T_fax_auf_allen_Wegen_schicken_uml,
 	T_mail_gesandt_0_nein_1_ja,
 	T_Prioritaet_von_capisuite_1_3,
 	T_Prioritaet_von_hylafax_1_3,
@@ -1088,6 +1088,7 @@ class hhcl:public dhcl
 		void pvirtvorpruefggfmehrfach();
 		void virtpruefweiteres();
 		void virtzeigueberschrift();
+		void loeschenix();
 		void pvirtfuehraus();
 		void virtschlussanzeige();
 		void zeigdienste(); //ω

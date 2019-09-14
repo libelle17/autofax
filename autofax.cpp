@@ -910,8 +910,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 		"The following faxes from the hylafax logfile have not been documented, which will be corrected:"},
 	// T_telnr
 	{"Tel'nr.","tel.no."},
-	// T_wiemail
-	{"wiemail","howtomail"},
 	// T_Gabelung_zu_korrigiere_misslungen,
 	{"Gabelung zu korrigiere() misslungen","Fork to correct() failed"},
 	// T_Gabelung_zu_faxemitH_misslungen
@@ -1332,6 +1330,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Mail von " DPROG,"mail from " DPROG},
 	// T_std_mailbod,
 	{"bitte Anhang beachten","please look at the attachment"},
+	// T_fax_auf_allen_Wegen_schicken_uml
+	{"1=Fax_auf_allen Wegen schicken (-uml)","1=send fax on all channels (--redirect)"},
 	// T_mail_gesandt_0_nein_1_ja,
 	{"mail gesandt (0=nein, 1=ja)","mail sent (0=no, 1=yes)"},
 	// T_Prioritaet_von_capisuite_1_3,
@@ -4732,6 +4732,7 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
 			Feld("hylastate","int","2","",Tx[T_state_Feld_in_hylafax],0,0,1),
 			Feld("hylastatuscode","int","10","",Tx[T_statuscode_in_letztem_gescheitertem_hylafax],0,0,1),
 			Feld("hylastatus","varchar","80","",Tx[T_status_in_letztem_gescheitertem_hylafax],0,0,1),
+			Feld("allewege","int","1","",Tx[T_fax_auf_allen_Wegen_schicken_uml],0,0,1,/*vdefa=*/"0"),
 			Feld("mailgesandt","int","2","",Tx[T_mail_gesandt_0_nein_1_ja],0,0,1,/*vdefa=*/"0"),
 			Feld("pages","int","10","",Tx[T_Seitenzahl],0,0,1),
 		}; //     Feld felder[] = 
@@ -7312,24 +7313,27 @@ void hhcl::wegfaxen(const size_t aktc)
 			"s.hylanr p7, s.hyladials p8, \n"
 
 			"("+obfa0+"=1 AND s.fbspooldt='' AND "
-			"(("+prio1+"=1 AND s.capispooldt='' AND s.hylanr=0 AND (s.pprio <=3 OR (s.pprio=12 AND "+obfa1+"=0) OR (s.pprio=13 AND "+obfa2+"=0))) OR"+
-			" (                s.capispooldt='' AND s.hylanr=0 AND s.pprio=11) OR"+
-			" ("+prio2+"=1 AND ((s.capispooldt<>'' AND (s.capidials>="+maxcapiv+" OR s.capidials=-1)) OR (s.hylanr<>'' AND (s.hyladials>="+maxhylav+" OR s.hylastate=8)))) OR "
-			" ("+prio3+"=1 AND ((s.capispooldt<>'' AND (s.capidials>="+maxcapiv+" OR s.capidials=-1)) AND s.hylanr<>'' AND (s.hyladials>="+maxhylav+" OR s.hylastate=8))))"
+			"((("+prio1+"=1 AND s.capispooldt='' AND s.hylanr=0 AND (s.pprio <=3 OR (s.pprio=12 AND "+obfa1+"=0) OR (s.pprio=13 AND "+obfa2+"=0))) OR"+
+			"  (                s.capispooldt='' AND s.hylanr=0 AND s.pprio=11) OR"+
+			"  ("+prio2+"=1 AND ((s.capispooldt<>'' AND (s.capidials>="+maxcapiv+" OR s.capidials=-1)) OR (s.hylanr<>'' AND (s.hyladials>="+maxhylav+" OR s.hylastate=8)))) OR "
+			"  ("+prio3+"=1 AND ((s.capispooldt<>'' AND (s.capidials>="+maxcapiv+" OR s.capidials=-1)) AND s.hylanr<>'' AND (s.hyladials>="+maxhylav+" OR s.hylastate=8))))"
+			" OR s.allewege=1)"
 			") p9, \n"
 
 			"("+obfa1+"=1 AND s.capispooldt='' AND "
-			"(("+prio1+"=2 AND s.fbspooldt='' AND s.hylanr=0 AND (s.pprio <=3 OR (s.pprio=11 AND "+obfa0+"=0) OR (s.pprio=13 AND "+obfa2+"=0))) OR"+
-			" (                s.fbspooldt='' AND s.hylanr=0 AND s.pprio=12) OR"+
-			" ("+prio2+"=2 AND ((s.fbspooldt<>'' AND (s.fbdials>="+maxfbfxv+" OR s.fbdials=-1)) OR (s.hylanr<>'' AND (s.hyladials>="+maxhylav+" OR s.hylastate=8)))) OR "
-			" ("+prio3+"=2 AND ((s.fbspooldt<>'' AND (s.fbdials>="+maxfbfxv+" OR s.fbdials=-1)) AND s.hylanr<>'' AND (s.hyladials>="+maxhylav+" OR s.hylastate=8))))"
+			"((("+prio1+"=2 AND s.fbspooldt='' AND s.hylanr=0 AND (s.pprio <=3 OR (s.pprio=11 AND "+obfa0+"=0) OR (s.pprio=13 AND "+obfa2+"=0))) OR"+
+			"  (                s.fbspooldt='' AND s.hylanr=0 AND s.pprio=12) OR"+
+			"  ("+prio2+"=2 AND ((s.fbspooldt<>'' AND (s.fbdials>="+maxfbfxv+" OR s.fbdials=-1)) OR (s.hylanr<>'' AND (s.hyladials>="+maxhylav+" OR s.hylastate=8)))) OR "
+			"  ("+prio3+"=2 AND ((s.fbspooldt<>'' AND (s.fbdials>="+maxfbfxv+" OR s.fbdials=-1)) AND s.hylanr<>'' AND (s.hyladials>="+maxhylav+" OR s.hylastate=8))))"
+			" OR s.allewege=1)"
 			") p10, \n"
 
 			"("+obfa2+"=1 AND s.hylanr=0 AND "
-			"(("+prio1+"=3 AND s.fbspooldt='' AND s.capispooldt='' AND (s.pprio <=3 OR (s.pprio=11 AND "+obfa0+"=0) OR (s.pprio=12 AND "+obfa1+"=0))) OR"+
-			" (                s.fbspooldt='' AND s.capispooldt='' AND s.pprio=13) OR"+
-			" ("+prio2+"=3 AND ((s.fbspooldt<>'' AND (s.fbdials>="+maxfbfxv+" OR s.fbdials=-1)) OR (s.capispooldt<>'' AND (s.capidials>="+maxcapiv+" OR s.capidials=-1)))) OR "
-			" ("+prio3+"=3 AND ((s.fbspooldt<>'' AND (s.fbdials>="+maxfbfxv+" OR s.fbdials=-1)) AND s.capispooldt<>'' AND (s.capidials>="+maxcapiv+" OR s.capidials=-1))))"
+			"((("+prio1+"=3 AND s.fbspooldt='' AND s.capispooldt='' AND (s.pprio <=3 OR (s.pprio=11 AND "+obfa0+"=0) OR (s.pprio=12 AND "+obfa1+"=0))) OR"+
+			"  (                s.fbspooldt='' AND s.capispooldt='' AND s.pprio=13) OR"+
+			"  ("+prio2+"=3 AND ((s.fbspooldt<>'' AND (s.fbdials>="+maxfbfxv+" OR s.fbdials=-1)) OR (s.capispooldt<>'' AND (s.capidials>="+maxcapiv+" OR s.capidials=-1)))) OR "
+			"  ("+prio3+"=3 AND ((s.fbspooldt<>'' AND (s.fbdials>="+maxfbfxv+" OR s.fbdials=-1)) AND s.capispooldt<>'' AND (s.capidials>="+maxcapiv+" OR s.capidials=-1))))"
+			" OR s.allewege=1)"
 			") p11, \n"
 			"s.adressat p12, s.pages p13 "
 			",alts.id p14, s.wiemail p15 "
@@ -9601,7 +9605,7 @@ int hhcl::aenderefax(const int aktion/*=0*/,const size_t aktc/*=0*/)
 			if (nr>=0 && nr<fsfav.size()) {
 				if (Tippob(Tx[T_Soll_das_Fax]+gruens+ergnr+schwarz+Tx[(aktion?T_umgeleitet_werden:T_wirklich_geloescht_werden)],"n")) {
 					if (aktion) {
-						RS umpri(My,"UPDATE `"+spooltab+"` SET prio=IF(prio=0 OR prio=2,3,2) WHERE id="+fsfav[nr].id,aktc,ZDB);
+						RS umpri(My,"UPDATE `"+spooltab+"` SET allewege=1 WHERE id="+fsfav[nr].id,aktc,ZDB);
 					} else { // !aktion
 						int zdng{0}; // Zahl der nicht geloeschten
 						if (fsfav[nr].fbsdt!="NULL" && !fsfav[nr].fbsdt.empty()) {
@@ -9928,6 +9932,21 @@ void hhcl::pvirtvorpruefggfmehrfach()
 } // void hhcl::pvirtvorpruefggfmehrfach //α
 //ω
 
+void hhcl::loeschenix()
+{
+	svec frueck;
+	for(auto zmakt: zmsp) {
+		caus<<violett<<zmakt->ziel<<schwarz<<endl;
+		if (!zmakt->ziel.empty()) {
+			// touch(zmsp[0]->ziel+vtz+Tx[T_nichtfaxbar]+" `"+base_name(zfda[i])+"`.nix",obverb,oblog);
+			systemrueck("find "+zmakt->ziel+" -maxdepth 1 -size 0 -name '*`.nix'",obverb,oblog,&frueck,/*obsudc=*/1);
+			for(size_t j=0;j<frueck.size();j++) {
+				caus<<violett<<frueck[j]<<schwarz<<endl;
+			}
+		}
+	} // 	for(size_t i=0;i<iprid.size();i++) 
+}
+
 void hhcl::pvirtfuehraus() //α
 { 
 	hLog(violetts+Tx[T_pvirtfuehraus]+schwarz); //ω
@@ -9962,6 +9981,7 @@ void hhcl::pvirtfuehraus() //α
 		if (!keineverarbeitung) {
 			pruefstdfaxnr(My,muser,host,obverb,oblog);
 			prueffuncgettel3(My,muser,host,obverb,oblog);
+			loeschenix();
 			////  int qerg = mysql_query(My.conn,proc.c_str());
 			// 1) nicht-pdf-Dateien in pdf umwandeln, 2) pdf-Dateien faxen, 3) alle in warte-Verzeichnis kopieren, 4) in Spool-Tabelle eintragen
 			////  vector<string> npdf, spdf;
