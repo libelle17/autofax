@@ -5950,7 +5950,7 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 				fLog(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
 			} else {
 				if (!kopier(ganz,farchvz,obverb,oblog)) {
-					tuloeschen(ganz,cuser,obverb,oblog);
+					dorename(ganz,stamm+"_alt.pdf",cuser,/*vfehlerp=*/0,/*schonda=*/0,obverb,oblog);
 				}
 			} //         if (runde==1)
 		} // if !kfehler
@@ -7647,10 +7647,6 @@ void hhcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,
 	} // 	if (!lstat(ctxdt.c_str(),&txtstat))
 }// void hhcl::empfcapi
 
-void hhcl::archfbox(string datei,size_t aktc)
-{
-}
-
 // aufgerufen in: main
 void hhcl::empfarch(uchar obalte/*=0*/)
 {
@@ -7663,7 +7659,7 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 		svec qrueck;
 		string suchs;
 		//		if (tagesaufr==4 ||1) {
-		suchs="find '"+fbankvz+"' -iname '*pdf' -not -iname '*alt\\.pdf'";	
+		suchs="find '"+fbankvz+"' -iname '*pdf' -not -iname '*_alt\\.pdf'";	
 		//		} else {
 		//		  suchs="find '"+fbankvz+"' -mtime -1 -iname '*pdf'";	
 		//		}
@@ -7671,11 +7667,8 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 		for(size_t i=0;i<qrueck.size();i++) {
 			empffbox(qrueck[i],aktc,ltoan(i));
 		}
-		suchs="find '"+fbankvz+"' -mtime +14 -iname '*alt\\.pdf'";	
+		suchs="find '"+fbankvz+"' -mtime +31 -iname '*_alt\\.pdf' -delete";	
 		systemrueck(suchs,obverb,oblog,&qrueck);
-		for(size_t i=0;i<qrueck.size();i++) {
-			archfbox(qrueck[i],aktc);
-		}
 	} // 	if (!fbankvz.empty()&&!lstat(fbankvz.c_str(),&fst))
 
 	// 2) capi
