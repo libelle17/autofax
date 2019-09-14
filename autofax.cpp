@@ -4655,7 +4655,7 @@ void hhcl::rufpruefsamba()
 		string schstr;
 		if (k<4) {
 			abschni<<Tx[ISambaName[k]];
-			Sprache altSpr=Tx.lgn;
+			Sprache altSpr{Tx.lgn};
 			for(int akts=0;akts<SprachZahl;akts++) {
 				Tx.lgn=(Sprache)akts;
 				schstr=string("\\[")+Tx[ISambaName[k]]+"\\]\\|";
@@ -4664,7 +4664,7 @@ void hhcl::rufpruefsamba()
 		} else {
 			abschni<<string(Tx[T_Gefaxt])+"_"+ltoan(k-4);
 			if (k==4) {
-				Sprache altSpr=Tx.lgn;
+				Sprache altSpr{Tx.lgn};
 				for(int akts=0;akts<SprachZahl;akts++) {
 					Tx.lgn=(Sprache)akts;
 					schstr=string("\\[")+Tx[T_Gefaxt]+"_\\|";
@@ -9932,20 +9932,48 @@ void hhcl::pvirtvorpruefggfmehrfach()
 } // void hhcl::pvirtvorpruefggfmehrfach //α
 //ω
 
+// die *.nix-Dateien wieder loeschen, wenn der zugrundeliegende Fehler nicht mehr nachweisbar ist
+// aufgerufen in pvirtfuehraus
 void hhcl::loeschenix()
 {
-	svec frueck;
+	// eine Liste der ziele ohne Doppelte erstellen
+	set<string> vzn;
 	for(auto zmakt: zmsp) {
-		caus<<violett<<zmakt->ziel<<schwarz<<endl;
-		if (!zmakt->ziel.empty()) {
-			// touch(zmsp[0]->ziel+vtz+Tx[T_nichtfaxbar]+" `"+base_name(zfda[i])+"`.nix",obverb,oblog);
-			systemrueck("find "+zmakt->ziel+" -maxdepth 1 -size 0 -name '*`.nix'",obverb,oblog,&frueck,/*obsudc=*/1);
-			for(size_t j=0;j<frueck.size();j++) {
-				caus<<violett<<frueck[j]<<schwarz<<endl;
+		vzn.insert(zmakt->ziel);
+	}
+	// daraus einen Suchpfad erstellen
+	string pfade;
+	for(auto vz: vzn) {
+   pfade+=" "+vz;
+	}
+	// eine Runde fuer 'nichtgefaxt', eine fuer 'nicht faxbar'
+	for(int iru=0;iru<2;iru++) {
+		string namstr;
+		size_t tref{iru?T_nichtfaxbar:T_nichtgefaxt};
+		// fuer alle Sprachen
+		Sprache altSpr{Tx.lgn};
+		for(int aktsp=0;aktsp<SprachZahl;aktsp++) {
+			Tx.lgn=(Sprache)aktsp;
+			if (aktsp) namstr+=" -o ";
+			namstr+="-name '";
+			namstr+=Tx[tref];
+			namstr+="*`*`.nix'";
+		} // 		for(int aktsp=0;aktsp<SprachZahl;aktsp++)
+		Tx.lgn=altSpr;
+		svec frueck;
+		systemrueck("find"+pfade+" -maxdepth 1 -size 0 \\( "+namstr+" \\)",obverb,oblog,&frueck,/*obsudc=*/1);
+		for(size_t j=0;j<frueck.size();j++) {
+			size_t p1{frueck[j].find('`')}, 
+						 p2{frueck[j].rfind('`')};
+			string udat{(iru?zufaxenvz:ngvz)+vtz+frueck[j].substr(p1+1,p2-p1-1)};
+			struct stat statudat{0};
+			// wenn es die zugrundeliegende Datei nicht mehr gibt, dann auch die nix-Datei loeschen
+			if (lstat(udat.c_str(),&statudat)) {
+				tuloeschen(frueck[j],cuser,obverb,oblog);
 			}
-		}
-	} // 	for(size_t i=0;i<iprid.size();i++) 
-}
+		} // 		for(size_t j=0;j<frueck.size();j++)
+	} // 	for(int iru=0;iru<2;iru++)
+} // void hhcl::loeschenix
 
 void hhcl::pvirtfuehraus() //α
 { 
