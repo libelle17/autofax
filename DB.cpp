@@ -2627,3 +2627,19 @@ void insv::zeig(const char* const wo) {
 		fLog(violetts+"i: "+gruen+ltoan(i)+": "+schwarz+ivec[i].feld+": '"+blau+ivec[i].wert+"'"+schwarz,1,0);
 	}
 }
+
+Feld& Feld::operator=(const Feld* fur) {
+	if (fur!=this) {
+		string *np=(string*)&name; *np=fur->name;
+		np=(string*)&typ;*np=fur->typ;
+		lenge=fur->lenge;
+		np=(string*)&prec;*np=fur->prec;
+		comment=fur->comment;
+		obind=fur->obind;
+		obauto=fur->obauto;
+		nnull=fur->nnull;
+		defa=fur->defa;
+		unsig=fur->unsig;
+	}
+	return *this;
+} // Feld& Feld::operator=
