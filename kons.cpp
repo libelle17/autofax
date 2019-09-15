@@ -1324,8 +1324,8 @@ int kuerzelogdatei(const char* logdatei,int obverb)
 				////          	  char tbuf[20];
 				////              strftime(tbuf, 18,"%d.%m.%y %X",localtime(&gesz));
 				////              <<"Datum: "<<tbuf<<endl;
-				time_t jetzt{time(0)};
-				long sekunden{(long)(jetzt-gesz)};
+				const time_t jetzt{time(0)};
+				const long sekunden{(long)(jetzt-gesz)};
 				if (sekunden<1209600) {// juenger als zwei Wochen => behalten
 					abhier=1;
 				}
@@ -1440,7 +1440,7 @@ int fLog(const string& text, const short screen/*=1*/, const short file/*=1*/, c
 			} else {
 				static bool erstaufruf=1;
 				//// char tbuf[20];
-				time_t jetzt=time(0);
+				const time_t jetzt{time(0)};
 				stringstream strs;
 				strs<<ztacl(jetzt,"%d.%m.%y %X: ")<<text;
 				//// pthread_mutex_lock(&timemutex);
@@ -2761,7 +2761,8 @@ void pruefmehrfach(const string& wen,int obverb/*=0*/,uchar obstumm/*=0*/)
 	const string iwen{wen.empty()?base_name(meinpfad()):wen};
 	// bei valgrind steht z.B. 'memecheck-amd64-' am Anfang
 	// gdb macht einen zusaetzlichen Prozess
-	systemrueck("ps -eo comm,args,etimes,pid|grep -P 'valgrind.*"+iwen+"|^"+iwen+"'| grep -P '"+iwen+"([[:space:]]|\\z)'",obverb,0,&rueck,/*obsudc=*/0);
+	const string bef{"ps -eo comm,args,etimes,pid|grep -P 'valgrind.*"+iwen+"|^"+iwen+"'|grep -P '"+iwen+"([[:space:]]|\\z)'|grep -v '[[:space:]]grep -P'"};
+	systemrueck(bef,obverb,0,&rueck,/*obsudc=*/0);
 	long sek{0};
 	for(int aru=0;aru<3;aru++) {
 		if (rueck.size()==1) // ich
@@ -2786,6 +2787,10 @@ void pruefmehrfach(const string& wen,int obverb/*=0*/,uchar obstumm/*=0*/)
 		} else {
 			if (obstumm)
 				exit(schluss(0));
+			cout<<blau<<bef<<schwarz<<endl;
+			for(unsigned iru=0;iru<rueck.size();iru++) {
+				cout<<blau<<iru<<schwarz<<": "<<rueck[iru]<<endl;
+			}
 			exit(schluss(98,Txk[T_Program]+blaus+wen+schwarz+Txk[T_laeuft_schon_einmal_seit]+blau+ltoan(sek)+" "+schwarz+Txk[T_sec_Breche_ab],/*oblog*/0));
 		} // if (aru<2) else
 	} // 	for(int aru=0;aru<3;aru++) 
@@ -4111,7 +4116,7 @@ uchar servc::spruef(const string& sbez, uchar obfork, const string& parent, cons
 			mdatei syst(systemd,ios::out);
 			if (syst.is_open()) {
 				syst<<"[Unit]"<<endl;
-				time_t jetzt = time(0);
+				const time_t jetzt{time(0)};
 				syst<<"Description="<<sbez<<Txk[T_als_Dienst_eingerichtet_von]<<parent<<Txk[T_am]<<ztacl(jetzt,"%d.%m.%y %H:%M:%S")<<endl;
 				//// char buf[80];
 				//// pthread_mutex_lock(&timemutex);
@@ -5579,7 +5584,8 @@ void hcl::virtrueckfragen()
 		vector<string> sprachen={"e","d"/*,"f","i"*/};
 		langu=Tippstrs(sprachstr.c_str()/*"Language/Sprache/Lingue/Lingua"*/,&sprachen,&langu);
 		virtlgnzuw();
-		cronminut=Tippzahl(Txk[T_Alle_wieviel_Minuten_soll]+meinname+Txk[T_aufgerufen_werden_0_ist_gar_nicht],&cronminut);
+		if (mitcron)
+			cronminut=Tippzahl(Txk[T_Alle_wieviel_Minuten_soll]+meinname+Txk[T_aufgerufen_werden_0_ist_gar_nicht],&cronminut);
 		autoupd=Tippob(Txk[T_Sollen_neue_Programmversionen_von]+meinname+Txk[T_automatisch_installiert_werden],autoupd?Txk[T_j_af]:"n");
 		logvz=Tippverz(Txk[T_Logverzeichnis],&logvz);
 		logdname=Tippstr(Txk[T_Logdateiname],&logdname);
@@ -5845,9 +5851,9 @@ void hcl::setzzaehler()
 	aufrufe++;
 	//// <<"aufrufe: "<<aufrufe<<endl;
 	// zcnfA[0].setze(&aufrufe);
-	time_t jetzt{time(0)};
+	const time_t jetzt{time(0)};
 	pthread_mutex_lock(&timemutex);
-	struct tm heute=*localtime(&jetzt);
+	const struct tm heute=*localtime(&jetzt);
 	if (heute.tm_year!=laufrtag.tm_year || heute.tm_yday!=laufrtag.tm_yday) {
 		tagesaufr=0;
 	}
@@ -6375,9 +6381,9 @@ int optcl::pzuweis(const char *const nacstr, const uchar vgegenteil/*=0*/, const
 } // int optcl::pzuweis
 
 optcl::optcl(const string& pname,const void* pptr,const par_t part, const int kurzi, const int langi, TxB* TxBp, const long Txi,
-		const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher, const long Txrf,const uchar obno/*=0*/):wpgcl(pname,pptr,part),
+		const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher, const long Txrf/*=-1*/,const uchar obno/*=0*/):wpgcl(pname,pptr,part),
 	kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),Txi2(Txi2),rottxt(rottxt),iwert(iwert),
-	woher(woher),Txrf(Txrf),obno(obno)/*=0*///,eingetragen(0)
+	woher(woher),Txrf(Txrf==-1?Txi:Txrf),obno(obno)/*=0*///,eingetragen(0)
 {
 ////	<<gruen<<"Erstelle optcl, pname: "<<schwarz<<violett<<pname<<endl;
 }
@@ -6967,19 +6973,22 @@ const uchar optcl::virteinzutragen(/*schAcl<optcl>**/void* schlp,int obverb)
 template<typename SCL> void schAcl<SCL>::schAschreib(mdatei *const f,int obverb)
 {
 	//	eintrinit();
-	////	<<"schl.size(): "<<schl.size()<<", omap.size(): "<<omap.size()<<endl;
+	if (obverb>1) {
+		const string schlsz{ltoan(schl.size())};
+		fLog("schl.size(): "+blaus+schlsz+schwarz+", omap.size(): "+blau+ltoan(omap.size())+schwarz,obverb,0);
+	}
 	for (size_t i=0;i<schl.size();i++) {
-		//// <<"i: "<<blau<<i<<schwarz<<", pname: "<<blau<<schl[i]->pname<<schwarz<<", pptr: "<<blau<<schl[i]->virtholstr()<<schwarz<<endl;
 		if (!schl[i]->pname.empty()) {
-			//		schl[i]->virtoausgeb();
+//		fLog("i: "+blaus+ltoan(i)+schwarz+", pname: "+blau+schl[i]->pname+schwarz+", pptr: "+blau+schl[i]->virtholstr()+schwarz,obverb,0);
+//		schl[i]->virtoausgeb();
 			const uchar einzt{/*1;*/schl[i]->virteinzutragen(this,obverb)};
 			//		schl[i]->virtoausgeb();
 			if (einzt) {
 				schl[i]->virtmachbemerk(Txk.lgn);
 				if (!schl[i]->bemerk.empty()) *f<<(schl[i]->bemerk[0]=='#'?"":"# ")<<*loeschefarbenaus(&schl[i]->bemerk)<<endl;
 				*f<<schl[i]->pname<<" = \""<<schl[i]->virtholstr()<<"\""<<endl;
-			} // 		if (!schl[i]->pname.empty() && schl[i]->virteinzutragen(this))
-		}
+			} // 		if einzt
+		} // 		if (!schl[i]->pname.empty())
 	} //   for (size_t i=0;i<zahl;i++)
 } // void schAcl::schAschreib
 
@@ -7030,7 +7039,7 @@ template<typename SCL> int schAcl<SCL>::confschreib(const string& fname,ios_base
 {
   mdatei f(fname,modus);
   if (f.is_open()) {
-		time_t jetzt=time(0);
+		const time_t jetzt{time(0)};
 		f<<Txk[T_Konfiguration_fuer]<<mpfad<<Txk[T_erstellt_automatisch_durch_dieses_am]<<ztacl(jetzt,"%d.%m.%Y %H.%M.%S")<<endl;
     schAschreib(&f,obverb);
     return 0;
@@ -7045,7 +7054,7 @@ template<typename SCL> int multischlschreib(const string& fname, schAcl<SCL> *co
   if (f.is_open()) {
     if (!mpfad.empty()) {
       //// char buf[30];
-      time_t jetzt=time(0);
+			const time_t jetzt{time(0)};
 			f<<Txk[T_Konfiguration_fuer]<<mpfad<<Txk[T_erstellt_automatisch_durch_dieses_am]<<ztacl(jetzt,"%d.%m.%Y %H.%M.%S")<<endl;
 			//// pthread_mutex_lock(&timemutex);
 			//// tm *ltm = localtime(&jetzt);

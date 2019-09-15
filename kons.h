@@ -822,7 +822,7 @@ struct optcl:wpgcl
 //		void virtloeschomaps(/*schAcl<optcl>**/void *schlp);
 		void virtloeschomaps(schAcl<optcl> *schlp);
 		optcl(const string& pname,const void* pptr,const par_t art, const int kurzi, const int langi, TxB* TxBp, const long Txi,
-				const uchar wi, const long Txi2, const string rottxt, const int iwert, const uchar woher, const long Txrf, const uchar obno=0);
+				const uchar wi, const long Txi2, const string rottxt, const int iwert, const uchar woher, const long Txrf=-1, const uchar obno=0);
 		optcl(const void* pptr,const par_t art, const int kurzi, const int langi, TxB* TxBp, const long Txi,
 				const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher, const uchar obno=0);
 		void setzwert();
