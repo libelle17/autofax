@@ -1382,7 +1382,6 @@ class hcl
 		void gitpull(const string& DPROG);
 		virtual void virtschlussanzeige();
 	public:
-		void pruefcl(); // commandline mit omap und mit argcmv parsen
 		hcl(const int argc, const char *const *const argv,const char* const DPROG,const uchar mitcron,const uchar parstreng=1);
 		~hcl();
 		void lauf();
