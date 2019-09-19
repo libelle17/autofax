@@ -10409,5 +10409,5 @@ int main(int argc,char** argv) //α
 
 void hhcl::virttesterg()
 {
-	hLog(violetts+Txk[T_virttesterg]+schwarz);
+	hLog(violetts+Tx[T_virttesterg]+schwarz);
 } //ω
