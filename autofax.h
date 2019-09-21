@@ -21,7 +21,7 @@ enum T_
 	T_dszahl_l,
 	T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,
 	T_Datenbank_nicht_initialisierbar_breche_ab,
-	T_pvirtvorpruefggfmehrfach,
+	T_pvirtnachrueckfragen,
 	T_pvirtfuehraus,
 	T_in_pvirtfuehraus_pidw,
 	T_virttesterg,
@@ -858,7 +858,6 @@ class hhcl:public dhcl
 		uchar obfrbox{1};    // ob Fritzbox im System gefunden
 		string fbdev; // device-Name der Fritzbox = "FritzBox <friendlyname>"
 		uchar obfcard{1};    // ob Fritzcard eingesteckt
-		uchar obfcgeprueft{0}; // ob schon geprueft, ob Fritzcard eingesteckt
 		uchar obmodem{1};    // ob Modem angeschlossen
 		uchar obmdgeprueft{0}; // ob schon geprueft, ob Modem verfuegbar
 		uchar obocrgeprueft{0}; // ob ocrmypdf installiert ist
@@ -891,7 +890,7 @@ class hhcl:public dhcl
 		ulong gzahl{0};
 		ulong fzahl{0};
 		ulong weizahl{0}; // Zahl der weiteren wartenden Faxe, die nicht in der Spooltabelle dieses Programms eingetragen sind
-		int obfa[3]{-1}; // ob jew.faxart verwendet: 0=fbox, 1=capi, 2=hyla, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
+		uchar obfa[3]{(uchar)-1}; // ob jew.faxart verwendet: 0=fbox, 1=capi, 2=hyla, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
 		//    string hmodemstr; // Erkennung des Faxgeraetes nach /dev/tty, Standard ACM
 		string fbwvz; // /var/spool/fbfax/waiting
 		string fbgvz; // /var/spool/fbfax/faxed
@@ -1068,6 +1067,7 @@ class hhcl:public dhcl
 		void standardprio(const int obmitsetz);
 		int priorang(const int rnr);
 	protected: //α
+		void fu1(), fu2();
 		// void virtlgnzuw(); // wird aufgerufen in: virtrueckfragen, parsecl, lieskonfein, hcl::hcl nach holsystemsprache
 		void virtVorgbAllg();
 		void pvirtVorgbSpeziell()
@@ -1084,7 +1084,7 @@ class hhcl:public dhcl
 		void virtrueckfragen();
 		void neurf();
 		void pvirtnachvi();
-		void pvirtvorpruefggfmehrfach();
+		void pvirtnachrueckfragen();
 		void virtpruefweiteres();
 		void virtzeigueberschrift();
 		void loeschenix();

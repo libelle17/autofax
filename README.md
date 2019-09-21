@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.48162) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.48202) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -178,7 +178,7 @@ configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
 Programm: <b>/home/schade/autofax/autofax</b>, V:
-<b>0.48161</b> Using: <b>Fritzbox</b>, <b>Capisuite</b>,
+<b>0.48202</b> Using: <b>Fritzbox</b>, <b>Capisuite</b>,
 <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
@@ -268,7 +268,7 @@ collected here and not in
 -rdr, --receiveddir &lt;path&gt;</b>: directory for recieved
 faxes (&rsquo;<b>/var/autofax/recvdir</b>&rsquo;) <b><br>
 -fbox, --takefbox &lt;zahl&gt;</b>: use fritzbox <b>or
-not</b> (<b>1</b>) <b><br>
+not</b> (<b>65793</b>) <b><br>
 -fbdr, --fritzboxdir &lt;path&gt;</b>: receiving directory
 of the fritzbox (via CIFS)
 (&rsquo;<b>/mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox</b>&rsquo;)
@@ -277,7 +277,7 @@ of the fritzbox (via CIFS)
 fritzbox (&rsquo;<b>/var/spool/fbfax/arch</b>&rsquo;)
 <b><br>
 -capi, --takecapi &lt;zahl&gt;</b>: use capisuite <b>or
-not</b> (<b>1</b>) <b><br>
+not</b> (<b>257</b>) <b><br>
 -hyla, --takehyla &lt;zahl&gt;</b>: use hylafax <b>or
 not</b> (<b>1</b>) <b><br>
 -fp, --fprio &lt;zahl&gt;</b>: Priority of fritzbox (1-3)
@@ -852,7 +852,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.48162) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.48202) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1045,7 +1045,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
 Programm: <b>/home/schade/autofax/autofax</b>, V:
-<b>0.48161</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
+<b>0.48202</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
 <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
@@ -1140,7 +1140,7 @@ werden hier gesammelt anstatt in
 Faxempfang (&rsquo;<b>/var/autofax/empfvz</b>&rsquo;)
 <b><br>
 -fbox, --obfbox &lt;zahl&gt;</b>: Fritzbox verwenden <b>oder
-nicht</b> (<b>1</b>) <b><br>
+nicht</b> (<b>65793</b>) <b><br>
 -fbvz, --fritzboxvz &lt;pfad&gt;</b>: Ankunftsverzeichnis
 der Fritzbox (ueber CIFS)
 (&rsquo;<b>/mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox</b>&rsquo;)
@@ -1149,7 +1149,7 @@ der Fritzbox (ueber CIFS)
 Fritzbox (&rsquo;<b>/var/spool/fbfax/arch</b>&rsquo;)
 <b><br>
 -capi, --obcapi &lt;zahl&gt;</b>: Capisuite verwenden
-<b>oder nicht</b> (<b>1</b>) <b><br>
+<b>oder nicht</b> (<b>257</b>) <b><br>
 -hyla, --obhyla &lt;zahl&gt;</b>: Hylafax verwenden <b>oder
 nicht</b> (<b>1</b>) <b><br>
 -fp, --fprio &lt;zahl&gt;</b>: Prioritaet von fritzbox (1-3)
