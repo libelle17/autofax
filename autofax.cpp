@@ -321,9 +321,16 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	// T_mailadresse_fuer_unverschluesselte_Mail_wird_hinter_string_erwartet_statt_hinter
 	{"mailadresse fuer unverschluesselte Mail wird hinter <string> erwartet statt hinter",
     "mail address for unencoded mail will be expected after <string> instead of"},
+	// T_affs_k,
+	{"affs","tffs"},
+	// T_anffaxstr_l,
+	{"anffaxstr","toffaxstr"},
+	// T_faxnr_fuer_primaer_Fritzbox_wird_hinter_string_erwartet_statt_hinter,
+	{"faxnr fuer primaer Fritzbox wird hinter <string> erwartet statt hinter",
+		"fax no.for fax with preference to fritzbox is expected after <string> instead of"},
 	// T_acfs_k
 	{"acfs","tcfs"},
-	// T_ancfaxstr
+	// T_ancfaxstr_l
 	{"ancfaxstr","tocfaxstr"},
 	// T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter
 	{"faxnr fuer primaer Capisuite wird hinter <string> erwartet statt hinter", 
@@ -436,12 +443,18 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"suche","search"},
 	// T_suche_in_verarbeiteten_Faxen_nach
 	{"Suche in verarbeiteten Faxen nach <string>: ","Look in processed faxes for <string>: "},
+	// T_vf_k
+	{"vf","vf"},
+	// T_vf_l
+	{"vf","vf"},
+	// T_FBFax_Konfigurationdateien_bearbeiten
+	{"FBFax-Konfigurationsdateien bearbeiten (beenden mit ':qa')","edit fbfax configuration files (finish with ':qa')"},
 	// T_vc_k
 	{"vc","vc"},
 	// T_vc_l
 	{"vc","vc"},
 	// T_Capisuite_Konfigurationdateien_bearbeiten
-	{"Capisuite-Konfigurationsdateien bearbeiten (beenden mit ':qa')","edit capisuite log files (finish with ':qa')"},
+	{"Capisuite-Konfigurationsdateien bearbeiten (beenden mit ':qa')","edit capisuite configuration files (finish with ':qa')"},
 	// T_vh_k
 	{"vh","vh"},
 	// T_vh_l
@@ -663,8 +676,10 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	// T_Buchstabenfolge_vor_erster_Mailadresse_fuer_unverschluesselte_Mail
 	{"Buchstabenfolge vor erster Mailadresse fuer unverschluesselte Mail",
 		"letter sequence before the first mail address for an unencoded mail"},
+	// T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Fritzbox
+	{"Buchstabenfolge vor erster Fax-Nummer primaer fuer Fritzbox","Letter-sequence before the first fax number primarily for fritzbox"},
 	// T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Capisuite
-	{"Buchstabenfolge vor erster Fax-Nummer primaer fuer Capisuite","Letter-sequence before the first fax number primarily for Capisuite"},
+	{"Buchstabenfolge vor erster Fax-Nummer primaer fuer Capisuite","Letter-sequence before the first fax number primarily for capisuite"},
 	// T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax
 	{"Buchstabenfolge vor erster Fax-Nummer fuer Hylafax","Letter-sequence before the first fax number primarily for hylafax"},
 	// T_Buchstabenfolge_vor_erstem_Adressaten
@@ -2818,7 +2833,20 @@ int hhcl::pruefcapi()
 		} //   if (capilaeuft)
 		//// if (obcapi)
 	} else {
+		rzf=1;
+#if false
 		if (scapis) scapis->stopdis(obverb,oblog);
+		if (obmodem) {
+			obfa[2]=Tippob(Tx[T_Soll_Hylafax_verwendet_werden],obfa[2]?Txk[T_j_af]:"n");
+		} else {
+			obfa[2]=0;
+		}
+		if (obmodem) {
+			obfa[2]=Tippob(Tx[T_Soll_Hylafax_verwendet_werden],obfa[2]?Txk[T_j_af]:"n");
+		} else {
+			obfa[2]=0;
+		}
+#endif
 		erg=0;
 	} // 	if (obcapi) else
 schluss: // sonst eine sonst sinnlose for-Schleife mehr oder return mitten aus der Funktion ...
@@ -2826,33 +2854,51 @@ schluss: // sonst eine sonst sinnlose for-Schleife mehr oder return mitten aus d
 	return erg;
 } // pruefcapi
 
-// aufgerufen in: virtrueckfragen, pvirtfuehraus
+// aufgerufen in: pvirtvorrueckfragen
+// soll aufgerufen werden, wenn entweder obfa[1]!=0 oder rzf!=0
 void hhcl::pruefisdn()
 {
 	hLog(violetts+Tx[T_pruefisdn]+schwarz);
-	static uchar obfcgeprueft{0}; // ob schon geprueft, ob Fritzcard eingesteckt
-	if (!obfcgeprueft) {
-		svec rueck;
-		////	cmd="{ lspci 2>/dev/null || "+sudc+"lspci 2>/dev/null;}|grep -i 'isdn'"; systemrueck(cmd, obverb,oblog,&rueck);
-		for(int iru=0;iru<2;iru++) {
-			if (systemrueck("lspci 2>/dev/null|grep -i 'isdn'",obverb,oblog,&rueck,/*obsudc=*/iru)) break;
-		}
-		if (rueck.size()) {
-			hLog(blaus+Tx[T_ISDN_Karte_gefunden]+schwarz+rueck[0]+blau+Tx[T_Setze]+Tx[T_mitCapi]+schwarz+Tx[T_aauf]+blau+"1.");
-			// wenn zum Konfigurationszeitpunkt keine Fritzcard drinstak, aber jetzt, dann rueckfragen
-			if (!obfcard) {
-				fLog(Txk[T_rueckzufragen_wegen]+rots+"!obfcard"+schwarz,1,0);
-				rzf=1;
-				obfcard=1;
-			} // 		if (!obfcard)
-		} else {
-			hLog(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_aauf]+schwarz+"0.");
-			obfa[1]=obfcard=0;
-		} // 	if (rueck.size())
-		if (obverb) hLog("obfcard: "+blaus+ltoan(obfcard)+schwarz);
-		obfcgeprueft=1;
-	} // 	if (!obfcgeprueft)
+	if (obfa[1]) {
+		static uchar obfcgeprueft{0}; // ob schon geprueft, ob Fritzcard eingesteckt
+		if (!obfcgeprueft) {
+			svec rueck;
+			////	cmd="{ lspci 2>/dev/null || "+sudc+"lspci 2>/dev/null;}|grep -i 'isdn'"; systemrueck(cmd, obverb,oblog,&rueck);
+			for(int iru=0;iru<2;iru++) {
+				if (systemrueck("lspci 2>/dev/null|grep -i 'isdn'",obverb,oblog,&rueck,/*obsudc=*/iru)) break;
+			}
+			if (rueck.size()) {
+				hLog(blaus+Tx[T_ISDN_Karte_gefunden]+schwarz+rueck[0]+blau+Tx[T_Setze]+Tx[T_mitCapi]+schwarz+Tx[T_aauf]+blau+"1.");
+				// wenn zum Konfigurationszeitpunkt keine Fritzcard drinstak, aber jetzt, dann rueckfragen
+				if (!obfcard) {
+					fLog(Txk[T_rueckzufragen_wegen]+rots+"!obfcard"+schwarz,1,0);
+					rzf=1;
+					obfcard=1;
+				} // 		if (!obfcard)
+			} else {
+				hLog(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_aauf]+schwarz+"0.");
+				obfa[1]=obfcard=0;
+			} // 	if (rueck.size())
+			if (obverb) hLog("obfcard: "+blaus+ltoan(obfcard)+schwarz);
+			obfcgeprueft=1;
+		} // 	if (!obfcgeprueft)
+	} // 	if (obfa[1])
 } // void hhcl::pruefisdn
+
+void hhcl::dovf()
+{
+	hLog(violetts+"dovf()"+schwarz);
+	prueffbox();
+	string zeig;
+	cmd=edit;
+	viadd(&cmd,&zeig,gethome()+"/.config/fbfax.conf");
+	string erg;
+	viadd(&erg,&zeig,smbdt,1,1,1); // log_file
+	viadd(&erg,&zeig,passwddt,1,1,1); // log_file
+	viadd(&erg,&zeig,groupdt,1,1,1); // log_file
+	viadd(&erg,&zeig,sudoersdt,1,1,1); // log_file
+	vischluss(erg,zeig);
+} // void hhcl::dovc()
 
 
 void hhcl::dovc()
@@ -2929,58 +2975,62 @@ void hhcl::pvirtVorgbSpeziell()
 	dhcl::pvirtVorgbSpeziell(); //α
 } // void hhcl::pvirtVorgbSpeziell
 
-void hhcl::fu1()
-{
-	pruefisdn();
-};
-
-void hhcl::fu2(){};
+// ueberlaedt die Funktion aus kons.cpp
+int hhcl::fui0() {return auswfb();};
+int hhcl::fui1() {return auswca();};
+int hhcl::fui2() {return auswhy();};
+void hhcl::fuv0() {if (hintervall!=hintervalt) hconfigtty();}
+int hhcl::auswfb(){return obfa[0]&&(obfa[1]||obfa[2]);}
+int hhcl::auswca(){return obfa[1]&&(obfa[0]||obfa[2]);}
+int hhcl::auswhy(){return obfa[2]&&(obfa[0]||obfa[1]);}
 
 // aufgerufen in lauf
 void hhcl::virtinitopt()
 {
 	hLog(violetts+"virtinitopt()"+schwarz); //ω
-// optcl::optcl(const string& pname,const void* pptr,const par_t part, const int kurzi, const int langi, TxB* TxBp, const long Txi, const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher, const string& Txtrf/*={}*/,const uchar obno/*=0*/,const string* refstr/*=0*/,const uchar* obfragz/*=0*/,fnhcliztyp fnobfragz/*=0*/,fnhclztyp fnnachhz/*=0*/,fnhclztyp fnvorhz/*=0*/,const uchar sonderrf/*=0*/):
+// optcl::optcl(const string& pname,const void* pptr,const par_t part, const int kurzi, const int langi, TxB* TxBp, const long Txi, const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher, const string& Txtrf/*={}*/,const uchar obno/*=obno==(uchar)-1?part==puchar?1:0:obno*/,const string* refstr/*=0*/,const uchar* obfragz/*=0*/,fnhcliztyp fnobfragz/*=0*/,fnhclztyp fnnachhz/*=0*/,fnhclztyp fnvorhz/*=0*/,const uchar sonderrf/*=0*/):
+	// Kopiervorlage:
+	// opn<<new optcl(/*pname*/"pname",/*pptr*/pptr,/*art*/pstri,/*kurzi*/T_kurz_k,/*langi*/T_lang_l,/*TxBp*/&Tx,/*Txi*/T_Option_erklaert,/*wi*/1,/*Txi2*/T_Option_Nachtext,/*rottxt*/nix,/*wert*/1,/*woher*/!pname.empty(),/*Txtrf*/{},/*obno*/1,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/0,/*fnnachhz*/&hcl::fu1,/*fnvorhz*/0,/*sonderrf*/0);
 	opn<<new optcl(/*pname*/"zufaxenvz",/*pptr*/&zufaxenvz,/*art*/pverz,T_zvz_k,T_zufaxenvz_l,/*TxBp*/&Tx,/*Txi*/T_faxt_die_Dateien_aus_pfad_anstatt_aus,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!zufaxenvz.empty(),Tx[T_Verzeichnis_mit_zu_faxenden_Dateien]);
 	opn<<new optcl(/*pname*/"wartevz",/*pptr*/&wvz,/*art*/pverz,T_wvz_k,T_wartevz_l,/*TxBp*/&Tx,/*Txi*/T_Dateien_warten_in_pfad_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!wvz.empty(),Tx[T_Verzeichnis_mit_wartenden_Dateien]);
 	opn<<new optcl(/*pname*/"nichtgefaxtvz",/*pptr*/&ngvz,/*art*/pverz,T_ngvz_k,T_nichtgefaxtvz_l,/*TxBp*/&Tx,/*Txi*/T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!ngvz.empty(),Tx[T_Verzeichnis_mit_gescheiterten_Dateien]);
 	opn<<new optcl(/*pname*/"empfvz",/*pptr*/&empfvz,/*art*/pverz,T_evz_k,T_empfvz_l,/*TxBp*/&Tx,/*Txi*/T_Empfangsverzeichnis_fuer_Faxempfang,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!empfvz.empty(),Tx[T_Verzeichnis_fuer_empfangene_Faxe]);
-	opn<<new optcl(/*pname*/"obfbox",/*pptr*/&obfa[0],/*art*/pint,T_fbox_k,T_obfbox_l,/*TxBp*/&Tx,/*Txi*/T_Fritzbox_verwenden,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obfa[0]!=-1,Tx[T_Soll_die_FritzBox_verwendet_werden],/*obno*/1,/*refstr*/0,/*obfragz*/&obfrbox);
+	opn<<new optcl(/*pname*/"obfbox",/*pptr*/&obfa[0],/*art*/puchar,T_fbox_k,T_obfbox_l,/*TxBp*/&Tx,/*Txi*/T_Fritzbox_verwenden,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obfa[0]!=-1,Tx[T_Soll_die_FritzBox_verwendet_werden],/*obno*/1,/*refstr*/0,/*obfragz*/&obfrbox);
 	opn<<new optcl(/*pname*/"fbankvz",/*pptr*/&fbankvz,/*art*/pverz,T_fbankvz_k,T_fbankvz_l,/*TxBp*/&Tx,/*Txi*/T_Ankunftsverzeichnis_der_Fritzbox_ueber_CIFS,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!fbankvz.empty(),Tx[T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox],/*obno*/0,/*refstr*/0,/*obfragz*/&obfa[0]);
 	opn<<new optcl(/*pname*/"farchvz",/*pptr*/&farchvz,/*art*/pverz,T_farchvz_k,T_farchvz_l,/*TxBp*/&Tx,/*Txi*/T_Archivverzeichnis_der_Fritzbox,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!farchvz.empty(),Tx[T_Archiv_Verzeichnis_fuer_ankommende_Faxe_der_Fritzbox],/*obno*/0,/*refstr*/0,/*obfragz*/&obfa[0]);
-	opn<<new optcl(/*pname*/"obcapi",/*pptr*/&obfa[1],/*art*/pint,T_capi_k,T_obcapi_l,/*TxBp*/&Tx,/*Txi*/T_Capisuite_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obfa[1]!=(uchar)-1,Tx[T_Soll_die_Capisuite_verwendet_werden],/*obno*/1,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/0,&hcl::fu1);
-	opn<<new optcl(/*pname*/"obhyla",/*pptr*/&obfa[2],/*art*/pint,T_hyla_k,T_obhyla_l,/*TxBp*/&Tx,/*Txi*/T_hylafax_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obfa[2]!=(uchar)-1,Tx[T_Soll_Hylafax_verwendet_werden],/*obno*/1);
-
-	opn<<new optcl(/*pname*/"fprio",/*pptr*/&prios[0],/*art*/pint,T_fp_k,T_fprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_fritzbox_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!prios[0],Tx[T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3]);
-	opn<<new optcl(/*pname*/"cprio",/*pptr*/&prios[1],/*art*/pint,T_cp_k,T_cprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_capisuite_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!prios[1],Tx[T_Mit_welcher_Prioritaet_soll_capisuite_verwendet_werden_1_3]);
-	opn<<new optcl(/*pname*/"hprio",/*pptr*/&prios[2],/*art*/pint,T_hp_k,T_hprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_hylafax_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!prios[2],Tx[T_Mit_welcher_Prioritaet_soll_hylafax_verwendet_werden_1_3]);
+	opn<<new optcl(/*pname*/"obcapi",/*pptr*/&obfa[1],/*art*/puchar,T_capi_k,T_obcapi_l,/*TxBp*/&Tx,/*Txi*/T_Capisuite_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obfa[1]!=(uchar)-1,Tx[T_Soll_die_Capisuite_verwendet_werden]);
+	opn<<new optcl(/*pname*/"obhyla",/*pptr*/&obfa[2],/*art*/puchar,T_hyla_k,T_obhyla_l,/*TxBp*/&Tx,/*Txi*/T_hylafax_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obfa[2]!=(uchar)-1,Tx[T_Soll_Hylafax_verwendet_werden]);
+	opn<<new optcl(/*pname*/"fprio",/*pptr*/&prios[0],/*art*/pint,T_fp_k,T_fprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_fritzbox_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!prios[0],Tx[T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui0);
+	opn<<new optcl(/*pname*/"cprio",/*pptr*/&prios[1],/*art*/pint,T_cp_k,T_cprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_capisuite_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!prios[1],Tx[T_Mit_welcher_Prioritaet_soll_capisuite_verwendet_werden_1_3],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui1);
+	opn<<new optcl(/*pname*/"hprio",/*pptr*/&prios[2],/*art*/pint,T_hp_k,T_hprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_hylafax_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!prios[2],Tx[T_Mit_welcher_Prioritaet_soll_hylafax_verwendet_werden_1_3],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui2);
 
 //	opn<<new optcl(/*pname*/"hylazuerst",/*pptr*/&hylazuerst,/*art*/pint,T_hz_k,T_hylazuerst_l,/*TxBp*/&Tx,/*Txi*/T_versuche_faxe_zuerst_ueber_Hylafax_wegzuschicken,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/hylazuerst!=-1,T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden);
 //	opn<<new optcl(/*pname*/"hylazuerst",/*pptr*/&hylazuerst,/*art*/pint,T_cz_k,T_capizuerst_l,/*TxBp*/&Tx,/*Txi*/T_versuche_faxe_zuerst_ueber_Capisuite_wegzuschicken,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/0,/*woher*/hylazuerst!=-1,-1);
-	opn<<new optcl(/*pname*/"hmodem",/*pptr*/&hmodem,/*art*/pstri,T_mod_k,T_hmodem_l,/*TxBp*/&Tx,/*Txi*/T_Fuer_Hylafax_verwendetes_Modem,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hmodem.empty());
-	opn<<new optcl(/*pname*/"maxcapiv",/*pptr*/&maxcapiv,/*art*/pdez,T_mc_k,T_maxcapiv_l,/*TxBp*/&Tx,/*Txi*/T_nach_zahl_Versuchen_Capisuite_wird_andere_Methode_versucht,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!maxcapiv.empty(),Tx[T_Zahl_der_Versuche_in_Capisuite_bis_andere_Methode_versucht_wird]);
-	opn<<new optcl(/*pname*/"maxhylav",/*pptr*/&maxhylav,/*art*/pdez,T_mh_k,T_maxhylav_l,/*TxBp*/&Tx,/*Txi*/T_nach_zahl_Versuchen_Hylafax_wird_andere_Methode_verwendet,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,!maxhylav.empty(),Tx[T_Zahl_der_Versuche_in_hylafax_bis_andere_Methode_versucht_wird]);
-	opn<<new optcl(/*pname*/"maxfbfxv",/*pptr*/&maxfbfxv,/*art*/pdez,T_mf_k,T_maxfbfxv_l,/*TxBp*/&Tx,/*Txi*/T_nach_zahl_Versuchen_fbfax_wird_andere_Methode_verwendet,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,!maxfbfxv.empty(),Tx[T_Zahl_der_Versuche_in_fbfax_bis_andere_Methode_versucht_wird]);
-	opn<<new optcl(/*pname*/"cuser",/*pptr*/&cuser,/*art*/pstri,T_cuser_k,T_cuser_l,/*TxBp*/&Tx,/*Txi*/T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!cuser.empty());
-	opn<<new optcl(/*pname*/"cklingelzahl",/*pptr*/&cklingelzahl,/*art*/pdez,T_ckzl_k,T_cklingelzahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!cklingelzahl.empty(),Tx[T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt]);
-	opn<<new optcl(/*pname*/"hklingelzahl",/*pptr*/&hklingelzahl,/*art*/pdez,T_hkzl_k,T_hklingelzahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hklingelzahl.empty(),Tx[T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt]);
-	opn<<new optcl(/*pname*/"hintervall",/*pptr*/&hintervall,/*art*/pdez,T_hintv_k,T_hintervall_l,/*TxBp*/&Tx,/*Txi*/T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hintervall.empty(),Tx[T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt]);
-	opn<<new optcl(/*pname*/"maxdials",/*pptr*/&maxhdials,/*art*/pdez,T_md_k,T_maxdials_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Wahlversuche_in_Hylafax,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!maxhdials.empty());
+	opn<<new optcl(/*pname*/"hmodem",/*pptr*/&hmodem,/*art*/pstri,T_mod_k,T_hmodem_l,/*TxBp*/&Tx,/*Txi*/T_Fuer_Hylafax_verwendetes_Modem,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hmodem.empty(),/*Txtrf*/string(),/*obno*/0,/*refstr*/0,/*obfragz*/&obfa[2]);
+	opn<<new optcl(/*pname*/"maxfbfxv",/*pptr*/&maxfbfxv,/*art*/pdez,T_mf_k,T_maxfbfxv_l,/*TxBp*/&Tx,/*Txi*/T_nach_zahl_Versuchen_fbfax_wird_andere_Methode_verwendet,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,!maxfbfxv.empty(),Tx[T_Zahl_der_Versuche_in_fbfax_bis_andere_Methode_versucht_wird],/*obno*/0,/*refstr*/0,/*obfragz*/&obfa[0]);
+	opn<<new optcl(/*pname*/"maxcapiv",/*pptr*/&maxcapiv,/*art*/pdez,T_mc_k,T_maxcapiv_l,/*TxBp*/&Tx,/*Txi*/T_nach_zahl_Versuchen_Capisuite_wird_andere_Methode_versucht,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!maxcapiv.empty(),Tx[T_Zahl_der_Versuche_in_Capisuite_bis_andere_Methode_versucht_wird],/*obno*/0,/*refstr*/0,/*obfragz*/&obfa[1]);
+	opn<<new optcl(/*pname*/"maxhylav",/*pptr*/&maxhylav,/*art*/pdez,T_mh_k,T_maxhylav_l,/*TxBp*/&Tx,/*Txi*/T_nach_zahl_Versuchen_Hylafax_wird_andere_Methode_verwendet,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,!maxhylav.empty(),Tx[T_Zahl_der_Versuche_in_hylafax_bis_andere_Methode_versucht_wird],/*obno*/0,/*refstr*/0,/*obfragz*/&obfa[2]);
+	opn<<new optcl(/*pname*/"cuser",/*pptr*/&cuser,/*art*/pstri,T_cuser_k,T_cuser_l,/*TxBp*/&Tx,/*Txi*/T_verwendet_fuer_Capisuite_Samba_den_Linux_Benutzer_string_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!cuser.empty(),/*Txtrf*/{},/*obno*/0,/*refstr*/0,/*obfragz*/&obfa[1]);
+	opn<<new optcl(/*pname*/"cklingelzahl",/*pptr*/&cklingelzahl,/*art*/pdez,T_ckzl_k,T_cklingelzahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!cklingelzahl.empty(),Tx[T_Zahl_der_Klingeltoene_bis_Capisuite_den_Anruf_annimmt_anstatt],/*obno*/0,/*refstr*/0,/*obfragz*/&obfa[1]);
+	opn<<new optcl(/*pname*/"hklingelzahl",/*pptr*/&hklingelzahl,/*art*/pdez,T_hkzl_k,T_hklingelzahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hklingelzahl.empty(),Tx[T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt],/*obno*/0,/*refstr*/0,/*obfragz*/&obfa[2]);
+	opn<<new optcl(/*pname*/"hintervall",/*pptr*/&hintervall,/*art*/pdez,T_hintv_k,T_hintervall_l,/*TxBp*/&Tx,/*Txi*/T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hintervall.empty(),Tx[T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt],/*obno*/0,/*refstr*/0,/*obfragz*/&obfa[2],/*fnobfragz*/0,/*fnnachhz*/&hcl::fuv0);
+	opn<<new optcl(/*pname*/"maxdials",/*pptr*/&maxhdials,/*art*/pdez,T_md_k,T_maxdials_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Wahlversuche_in_Hylafax,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!maxhdials.empty(),/*Txtrf*/{},/*obno*/0,/*refstr*/0,/*obfragz*/&obfa[2]);
 	opn<<new optcl(/*pname*/"gleichziel",/*pptr*/&gleichziel,/*art*/pint,T_gz_k,T_gleichziel_l,/*TxBp*/&Tx,/*Txi*/T_Faxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/gleichziel!=-1,Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden]);
 	opn<<new optcl(/*pname*/"ocri",/*pptr*/&obocri,/*art*/pint,T_ocri_k,T_ocri_l,/*TxBp*/&Tx,/*Txi*/T_Text_aus_empfangenen_Faxen_wird_ermittelt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obocri!=-1,Tx[T_soll_Text_in_empfangenen_Faxen_mit_OCR_gesucht_werden]);
 	opn<<new optcl(/*pname*/"ocra",/*pptr*/&obocra,/*art*/pint,T_ocra_k,T_ocra_l,/*TxBp*/&Tx,/*Txi*/T_Text_aus_gesandten_Bildern_wird_ermittelt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obocra!=-1,Tx[T_soll_Text_in_gesandten_Bildern_mit_OCR_gesucht_werden]);
 	opn<<new optcl(/*pname*/"anfaxstr",/*pptr*/&anfaxstr,/*art*/pstri,T_afs_k,T_anfaxstr_l,/*TxBp*/&Tx,/*Txi*/T_faxnr_wird_hinter_string_erwartet_statt_hinter,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!anfaxstr.empty(),Tx[T_Buchstabenfolge_vor_erster_Faxnummer]);
-	opn<<new optcl(/*pname*/"ancfaxstr",/*pptr*/&ancfaxstr,/*art*/pstri,T_acfs_k,T_ancfaxstr,/*TxBp*/&Tx,/*Txi*/T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!ancfaxstr.empty(),Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Capisuite]);
-	opn<<new optcl(/*pname*/"anhfaxstr",/*pptr*/&anhfaxstr,/*art*/pstri,T_ahfs_k,T_anhfaxstr_l,/*TxBp*/&Tx,/*Txi*/T_faxnr_fuer_primaer_hylafax_wird_hinter_string_erwartet_statt_hinter,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!anhfaxstr.empty(),Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax]);
+	opn<<new optcl(/*pname*/"anffaxstr",/*pptr*/&anffaxstr,/*art*/pstri,T_affs_k,T_anffaxstr_l,/*TxBp*/&Tx,/*Txi*/T_faxnr_fuer_primaer_Fritzbox_wird_hinter_string_erwartet_statt_hinter,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!anffaxstr.empty(),Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Fritzbox],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui0);
+	opn<<new optcl(/*pname*/"ancfaxstr",/*pptr*/&ancfaxstr,/*art*/pstri,T_acfs_k,T_ancfaxstr_l,/*TxBp*/&Tx,/*Txi*/T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!ancfaxstr.empty(),Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Capisuite],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui1);
+	opn<<new optcl(/*pname*/"anhfaxstr",/*pptr*/&anhfaxstr,/*art*/pstri,T_ahfs_k,T_anhfaxstr_l,/*TxBp*/&Tx,/*Txi*/T_faxnr_fuer_primaer_hylafax_wird_hinter_string_erwartet_statt_hinter,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!anhfaxstr.empty(),Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui2);
 	opn<<new optcl(/*pname*/"anstr",/*pptr*/&anstr,/*art*/pstri,T_as_k,T_anstr_l,/*TxBp*/&Tx,/*Txi*/T_Adressatenname_wird_hinter_string_erwartet_statt_hinter,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!anstr.empty(),Tx[T_Buchstabenfolge_vor_erstem_Adressaten]);
 	opn<<new optcl(/*pname*/"undstr",/*pptr*/&undstr,/*art*/pstri,T_us_k,T_undstr_l,/*TxBp*/&Tx,/*Txi*/T_Trennstring_string_fuer_mehrere_Adressaten_Telefonnummern_statt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!undstr.empty(),Tx[T_Buchstabenfolge_vor_weiterem_Adressaten_sowie_weiterer_Faxnummer]);
 	opn<<new optcl(/*pname*/"anmailstr",/*pptr*/&anmailstr,/*art*/pstri,T_ams_k,T_anmailstr_l,/*TxBp*/&Tx,/*Txi*/T_mailadresse_wird_hinter_string_erwartet_statt_hinter,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!anmailstr.empty(),Tx[T_Buchstabenfolge_vor_erster_Mailadresse]);
 	opn<<new optcl(/*pname*/"klaranmailstr",/*pptr*/&klaranmailstr,/*art*/pstri,T_kams_k,T_klaranmailstr_l,/*TxBp*/&Tx,/*Txi*/T_mailadresse_fuer_unverschluesselte_Mail_wird_hinter_string_erwartet_statt_hinter,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!klaranmailstr.empty(),Tx[T_Buchstabenfolge_vor_erster_Mailadresse_fuer_unverschluesselte_Mail]);
 	opn<<new optcl(/*pname*/"mailvon",/*pptr*/&mailvon,/*art*/pstri,T_mv_k,T_mailvon_l,/*TxBp*/&Tx,/*Txi*/T_Absender_mailadresse,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!mailvon.empty(),Tx[T_als_Absender_zu_verwendende_Mailadresse]);
 	opn<<new optcl(/*pname*/"smtpadr",/*pptr*/&smtpadr,/*art*/pstri,T_smtpadr_k,T_smtpadr_l,/*TxBp*/&Tx,/*Txi*/T_smtp_Adresse,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!smtpadr.empty(),Tx[T_smtp_Adresse_ohne_port]);
-	opn<<new optcl(/*pname*/"portnr",/*pptr*/&portnr,/*art*/pstri,T_portnr_k,T_portnr_l,/*TxBp*/&Tx,/*Txi*/T_port_Nummer,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!portnr.empty(),Tx[T_Port_Nummer]);
-	opn<<new optcl(/*pname*/"smtpusr",/*pptr*/&smtpusr,/*art*/pstri,T_smtpusr_k,T_smtpusr_l,/*TxBp*/&Tx,/*Txi*/T_smtp_usr,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!smtpusr.empty(),Tx[T_Smtp_usr]);
-	opn<<new optcl(/*pname*/"smtppwd",/*pptr*/&smtppwd,/*art*/ppwd,T_smtppwd_k,T_smtppwd_l,/*TxBp*/&Tx,/*Txi*/T_smtp_pwd,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!smtppwd.empty(),Tx[T_Smtp_pwd]);
+	opn<<new optcl(/*pname*/"portnr",/*pptr*/&portnr,/*art*/pstri,T_portnr_k,T_portnr_l,/*TxBp*/&Tx,/*Txi*/T_port_Nummer,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!portnr.empty(),{});
+	opn<<new optcl(/*pname*/"smtpusr",/*pptr*/&smtpusr,/*art*/pstri,T_smtpusr_k,T_smtpusr_l,/*TxBp*/&Tx,/*Txi*/T_smtp_usr,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!smtpusr.empty(),{});
+	opn<<new optcl(/*pname*/"smtppwd",/*pptr*/&smtppwd,/*art*/ppwd,T_smtppwd_k,T_smtppwd_l,/*TxBp*/&Tx,/*Txi*/T_smtp_pwd,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!smtppwd.empty(),Tx[T_Smtp_pwd],/*obno*/0,/*refstr*/&smtpusr);
 	opn<<new optcl(/*pname*/"mailtit",/*pptr*/&mailtit,/*art*/pstri,T_mt_k,T_mailtit_l,/*TxBp*/&Tx,/*Txi*/T_mailtitle,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!mailtit.empty(),Tx[T_Mailtitle]);
 	opn<<new optcl(/*pname*/"mailbod",/*pptr*/&mailbod,/*art*/pstri,T_mb_k,T_mailbod_l,/*TxBp*/&Tx,/*Txi*/T_mailbody,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!mailbod.empty(),Tx[T_Mailbody]);
 // echo "This is the message body and contains the message" | mailx -v -r "gschade@dachau-mail.de" -s "This is the subject"  -S smtp="mail.mnet-online.de:587" -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user="gschade@dachau-mail.de" -S smtp-auth-password="..." -S ssl-verify=ignore -a untersch gerald.schade@gmx.de
@@ -3001,6 +3051,7 @@ void hhcl::virtinitopt()
 	opn<<new optcl(/*pptr*/&nursend,/*art*/puchar,T_nursend_k,T_nursend_l,/*TxBp*/&Tx,/*Txi*/T_sendet_nur,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&suchstr,/*art*/pstri,T_s_k,T_suche_l,/*TxBp*/&Tx,/*Txi*/T_suche_in_verarbeiteten_Faxen_nach,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&dszahl,/*art*/pdez,T_n_k,T_dszahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_aufzulistenden_Datensaetze_ist_zahl_statt,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/1); //α //ω
+	opn<<new optcl(/*pptr*/&obvf,/*art*/puchar,T_vf_k,T_vf_l,/*TxBp*/&Tx,/*Txi*/T_FBFax_Konfigurationdateien_bearbeiten,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&obvc,/*art*/puchar,T_vc_k,T_vc_l,/*TxBp*/&Tx,/*Txi*/T_Capisuite_Konfigurationdateien_bearbeiten,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 	opn<<new optcl(/*pptr*/&obvh,/*art*/puchar,T_vh_k,T_vh_l,/*TxBp*/&Tx,/*Txi*/T_Hylafax_Modem_Konfigurationsdatei_bearbeiten,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 //	opn<<new optcl(/*pname*/"sqlz",/*pptr*/&sqlzn,/*art*/plong,-1,-1,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_SQL_Befehle_fuer_die_Absenderermittlung,/*wi*/-1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/sqlzn>0);
@@ -3062,6 +3113,7 @@ void hhcl::virtMusterVorgb()
 // aufgerufen in lauf
 void hhcl::pvirtvorzaehler()
 { //ω
+	if (obvf) dovf();
 	if (obvc) dovc();
 } // void hhcl::virtvorzaehler //α
 //ω
@@ -3149,109 +3201,111 @@ int ttytest(const string& tty)
 } // int ttytest
 
 // aufgerufen in: main, virtrueckfragen
+// soll aufgerufen werden, wenn entweder obfa[2]!=0 oder rzf!=0
 void hhcl::pruefmodem()
 {
 	hLog(violetts+Tx[T_pruefmodem]+schwarz);
-	obmodem=0;
-	//	const string althmodem(hmodem);
-	const string svz{"/sys/class/tty/"};
-	svec qrueck;
-	//// <<"pruefmodem 1 nach obcapi: "<<(int)obcapi<<endl;
-	// 19.2.17: evtl. besser mit: dmesg|grep '[^t]*tty[^] 0\t:.$]'|sed 's/[^t]*\(tty[^] \t:.$]*\).*/\1/'
-	// 25.2.17: geht leider nicht nach "<DPROG> -nohyla"
-	// #define mitdmesg
+	if (obfa[2]) {
+		static uchar obmdgeprueft{0}; // ob schon geprueft, ob Modem verfuegbar
+		if (!obmdgeprueft) {
+			obmodem=0;
+			//	const string althmodem(hmodem);
+			const string svz{"/sys/class/tty/"};
+			svec qrueck;
+			//// <<"pruefmodem 1 nach obcapi: "<<(int)obcapi<<endl;
+			// 19.2.17: evtl. besser mit: dmesg|grep '[^t]*tty[^] 0\t:.$]'|sed 's/[^t]*\(tty[^] \t:.$]*\).*/\1/'
+			// 25.2.17: geht leider nicht nach "<DPROG> -nohyla"
+			// #define mitdmesg
 #ifdef mitdmesg
-	systemrueck("dmesg|grep tty",obverb,oblog,&qrueck,/*obsudc=*/0);
+			systemrueck("dmesg|grep tty",obverb,oblog,&qrueck,/*obsudc=*/0);
 #else // mitdmesg
-	if (findv==1) {
-		systemrueck("cd "+svz+";find */device/driver", obverb,oblog,&qrueck,/*obsudc=*/0);
-	} else {
-		findfile(&qrueck,findv,obverb,oblog,0,svz,/*muster=*/"",1,127,0);
-		for(size_t i=qrueck.size();i;) {
-			i--;
-			struct stat st{0};
-			if (lstat((qrueck[i]+"/device/driver").c_str(),&st)) {
-				qrueck.erase(qrueck.begin()+i);
-			} // 				if (lstat((qrueck[i]+"/device/driver").c_str(),&st))
-		} // 			for(size_t i=qrueck.size();i;)
-	} // 		if (findv==1)
-#endif // mitdmesg else
-	for(size_t i=0;i<qrueck.size();i++) {
-#ifdef mitdmesg
-		size_t pos=qrueck[i].find("tty");
-		if (pos==string::npos) continue;
-		size_t p2=qrueck[i].find_first_of("] \t:.,;-",pos);
-		if (p2==string::npos) continue;
-		const string tty{qrueck[i].substr(pos,p2-pos)};
-		if (tty=="tty"||tty=="tty0") continue;
-		////	modem=svz+modem;
-		//// <<rot<<svz+modem<<schwarz<<endl;
-#else // mitdmesg
-		const string tty{findv==1?qrueck[i].substr(0,qrueck[i].find('/')):base_name(qrueck[i])};
-		////			struct stat entrydriv=KLA 0 KLZ;
-		////			if (!lstat((modem+"/device/driver").c_str(),&entrydriv)) KLA
-		////				const string tty=base_name(modem);
-#endif // mitdmesg else
-		// ttyS0 erscheint auf Opensuse und Ubuntu konfiguriert, auch wenn kein Modem da ist
-		if (tty!="ttyS0") {
-			int terg;
-			if (cus.cuid) {
-				vector<errmsgcl> errv;
-				const string f0{schwarzs+"Modem "+blau+tty+schwarz+Tx[T_gibts]};
-				const string f1{f0+Tx[T_nicht]};
-				errv.push_back(errmsgcl(0,f0));
-				errv.push_back(errmsgcl(1,f1));
-				//// aus coreutils; ' time 10 ' geht nicht, '{ { sudo stty -F /dev/ttyS1 1>&3;kill 0;}|{ sleep 10;kill 0;} } 3>&1' auch nicht
-				// stty auch aus crontab aufrufbar (Pfad: /usr/bin:/bin)
-				if (!sudc.empty()) systemrueck(sudc+"date"); // dummy-Befehl, da der naechste stehenbleibt, wenn root-Passwort noetig
-				terg=!systemrueck("timeout 10 "+sudc+"stty -F /dev/"+tty/*//+" time 10" wirkt nicht*/,
-						              obverb,oblog,/*rueck*/0,/*obsudc=*/0,/*verbergen=*/2,/*obergebnisanzeig=*/wahr,/*ueberschr=*/"",/*errm=*/&errv);
+			if (findv==1) {
+				systemrueck("cd "+svz+";find */device/driver", obverb,oblog,&qrueck,/*obsudc=*/0);
 			} else {
-				terg=ttytest(tty);
-			} // 				if (cus.cuid) else
-			if (terg) {
-				obmodem=1;
-				modems<<tty;
-				hLog("Modem: "+blaus+tty+schwarz+Txk[T_gefunden]);
-			} // if (terg)
-		} // if (tty!="ttyS0") 
-		// KLA // if (!lstat(((qrueck[i])+"/device/driver").c_str(),&entrydriv)) 
-	} // for(size_t i=0;i<qrueck.size();i++) 
-	////  uchar modemsumgesteckt=0;
-	uchar schonda{0};
-	if (!hmodem.empty()) {
-		for(size_t j=0;j<modems.size();j++) {
-			if (modems[j]==hmodem) {
-				schonda=1;
-				break;
+				findfile(&qrueck,findv,obverb,oblog,0,svz,/*muster=*/"",1,127,0);
+				for(size_t i=qrueck.size();i;) {
+					i--;
+					struct stat st{0};
+					if (lstat((qrueck[i]+"/device/driver").c_str(),&st)) {
+						qrueck.erase(qrueck.begin()+i);
+					} // 				if (lstat((qrueck[i]+"/device/driver").c_str(),&st))
+				} // 			for(size_t i=qrueck.size();i;)
+			} // 		if (findv==1)
+#endif // mitdmesg else
+			for(size_t i=0;i<qrueck.size();i++) {
+#ifdef mitdmesg
+				size_t pos=qrueck[i].find("tty");
+				if (pos==string::npos) continue;
+				size_t p2=qrueck[i].find_first_of("] \t:.,;-",pos);
+				if (p2==string::npos) continue;
+				const string tty{qrueck[i].substr(pos,p2-pos)};
+				if (tty=="tty"||tty=="tty0") continue;
+				////	modem=svz+modem;
+				//// <<rot<<svz+modem<<schwarz<<endl;
+#else // mitdmesg
+				const string tty{findv==1?qrueck[i].substr(0,qrueck[i].find('/')):base_name(qrueck[i])};
+				////			struct stat entrydriv=KLA 0 KLZ;
+				////			if (!lstat((modem+"/device/driver").c_str(),&entrydriv)) KLA
+				////				const string tty=base_name(modem);
+#endif // mitdmesg else
+				// ttyS0 erscheint auf Opensuse und Ubuntu konfiguriert, auch wenn kein Modem da ist
+				if (tty!="ttyS0") {
+					int terg;
+					if (cus.cuid) {
+						vector<errmsgcl> errv;
+						const string f0{schwarzs+"Modem "+blau+tty+schwarz+Tx[T_gibts]};
+						const string f1{f0+Tx[T_nicht]};
+						errv.push_back(errmsgcl(0,f0));
+						errv.push_back(errmsgcl(1,f1));
+						//// aus coreutils; ' time 10 ' geht nicht, '{ { sudo stty -F /dev/ttyS1 1>&3;kill 0;}|{ sleep 10;kill 0;} } 3>&1' auch nicht
+						// stty auch aus crontab aufrufbar (Pfad: /usr/bin:/bin)
+						if (!sudc.empty()) systemrueck(sudc+"date"); // dummy-Befehl, da der naechste stehenbleibt, wenn root-Passwort noetig
+						terg=!systemrueck("timeout 10 "+sudc+"stty -F /dev/"+tty/*//+" time 10" wirkt nicht*/,
+								obverb,oblog,/*rueck*/0,/*obsudc=*/0,/*verbergen=*/2,/*obergebnisanzeig=*/wahr,/*ueberschr=*/"",/*errm=*/&errv);
+					} else {
+						terg=ttytest(tty);
+					} // 				if (cus.cuid) else
+					if (terg) {
+						obmodem=1;
+						modems<<tty;
+						hLog("Modem: "+blaus+tty+schwarz+Txk[T_gefunden]);
+					} // if (terg)
+				} // if (tty!="ttyS0") 
+				// KLA // if (!lstat(((qrueck[i])+"/device/driver").c_str(),&entrydriv)) 
+			} // for(size_t i=0;i<qrueck.size();i++) 
+			////  uchar modemsumgesteckt=0;
+			uchar schonda{0};
+			if (!hmodem.empty()) {
+				for(size_t j=0;j<modems.size();j++) {
+					if (modems[j]==hmodem) {
+						schonda=1;
+						break;
+					}
+				} // for(size_t j=0;j<modems.size();j++) 
+				if (!schonda) hmodem.clear();
+			} // if (!hmodem.empty()) 
+			if (hmodem.empty()) {
+				if (modems.size()) if (!modems[0].empty()) {
+					if (obverb>1) {
+						hLog("modems[0]: "+blaus+modems[0]+schwarz);
+					} // 				if (obverb)
+					hmodem=modems[0];/*//modemsumgesteckt=1;*/ 
+					modemgeaendert=1;
+				} //   if (modems.size()) if (!modems[0].empty()) if (modems[0]!=hmodem) 
+			} // if (hmodem.empty()) 
+			obmdgeprueft=1;
+			if (!obmodem) {
+				fLog(rots+Tx[T_Kein_Modem_gefunden]+schwarz,obfa[2]?1:obverb,oblog);
+				obfa[2]=0;
 			}
-		} // for(size_t j=0;j<modems.size();j++) 
-		if (!schonda) hmodem.clear();
-	} // if (!hmodem.empty()) 
-	if (hmodem.empty()) {
-		if (modems.size()) if (!modems[0].empty()) {
-			if (obverb>1) {
-				hLog("modems[0]: "+blaus+modems[0]+schwarz);
-			} // 				if (obverb)
-			hmodem=modems[0];/*//modemsumgesteckt=1;*/ 
-			modemgeaendert=1;
-		} //   if (modems.size()) if (!modems[0].empty()) if (modems[0]!=hmodem) 
-	} // if (hmodem.empty()) 
-	obmdgeprueft=1;
-	if (!obmodem) {
-		fLog(rots+Tx[T_Kein_Modem_gefunden]+schwarz,obfa[2]?1:obverb,oblog);
-		obfa[2]=0;
-	}
-	// wenn zum Konfigurationszeitpunkt kein Modem drinstak, aber jetzt, dann rueckfragen
-	if (!schonda && obfa[2] /*//obmodem && agcnfA.hole("obmodem")=="0"*/) {
-		fLog(Txk[T_rueckzufragen_wegen]+rots+"!schonda"+schwarz+" (Modem)",1,0);
-		rzf=1;
-	}
-	// wenn nur obzuschreib, dann noch nicht auf neu eingestecktes Modem reagieren
-////	if (rzf) agcnfA.setze("obmodem",obmodem?"1":"0");
-#if false
-	agcnfA.setzbemv("obmodem",&Tx,T_ob_ein_Modem_drinstak);
-#endif
+			// wenn zum Konfigurationszeitpunkt kein Modem drinstak, aber jetzt, dann rueckfragen
+			if (!schonda && obfa[2] /*//obmodem && agcnfA.hole("obmodem")=="0"*/) {
+				fLog(Txk[T_rueckzufragen_wegen]+rots+"!schonda"+schwarz+" (Modem)",1,0);
+				rzf=1;
+			}
+			// wenn nur obzuschreib, dann noch nicht auf neu eingestecktes Modem reagieren
+		} // 		if (!obmdgeprueft)
+	} // 	if (obfa[2])
 	hLog(violetts+Txk[T_Ende]+Tx[T_pruefmodem]+schwarz);
 	// wvdialconf oder schneller: setserial -a /dev/tty*, mit baud_base: <!=0>  als Kriterium
 } // void hhcl::pruefmodem
@@ -3261,11 +3315,12 @@ void hhcl::pruefmodem()
 void hhcl::pvirtvorrueckfragen()
 {
 	hLog(violetts+Tx[T_pvirtvorrueckfragen]+schwarz); //ω
-		if (obfa[2]) pruefmodem();
-		if (obfa[1]) pruefisdn();
-		if (!obfrbox) obfa[0]=0;
-		pruefisdn();
-		if (!obfcard) obfa[1]=0;
+	if (rzf) obfa[0]=obfa[1]=obfa[2]=1; // vor rueckfragen alle Moeglichkeiten pruefen
+	if (obfa[1]) pruefisdn(); // setzt ggf. obfa[1] wieder zurueck
+	if (obfa[2]) pruefmodem();
+	caus<<"obfa[2] in pvirtvorrueckfragen: "<<(int)obfa[2]<<endl;
+	if (!obfrbox) obfa[0]=0;
+	hintervalt=hintervall;
 } // void hhcl::pvirtvorrueckfragen //α
 
 void hhcl::neurf()
@@ -3391,75 +3446,10 @@ void hhcl::virtrueckfragen()
 		// Rueckfragen koennen auftauchen in: virtrueckfragen, konfcapi (<- pruefcapi), aenderefax, rufpruefsamba
 	if (rzf) { //ω
 		neurf();
+		rueckfragen();
+	caus<<"obfa[2] in pvirtvorrueckfragen: "<<(int)obfa[2]<<endl;
+		return;
 // 		fuellfbip(); // sollte in virtlieskonfein() reichen
-		// wenn die Fritzbox verwendet werden soll
-		if (obfa[0]) {
-//			holfbpar(); // sollte in virtlieskonfein() reichen
-			fbankvz=Tippstr(Tx[T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox],&fbankvz);
-			farchvz=Tippstr(Tx[T_Archiv_Verzeichnis_fuer_ankommende_Faxe_der_Fritzbox],&farchvz);
-		} // 		if (obfa[0])
-		if (obfcard) {
-			obfa[1]=Tippob(Tx[T_Soll_die_Capisuite_verwendet_werden],obfa[1]?Txk[T_j_af]:"n");
-		} else {
-			obfa[1]=0;
-		}
-		if (!obmdgeprueft) pruefmodem();
-		if (obmodem) {
-			obfa[2]=Tippob(Tx[T_Soll_Hylafax_verwendet_werden],obfa[2]?Txk[T_j_af]:"n");
-		} else {
-			obfa[2]=0;
-		}
-		if (obfa[0]) {
-			prios[0]=Tippzahl(Tx[T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3],prios[0]);
-		}
-		if (obfa[1]) {
-			prios[1]=Tippzahl(Tx[T_Mit_welcher_Prioritaet_soll_capisuite_verwendet_werden_1_3],prios[1]);
-		}
-		if (obfa[2]) { 
-		  prios[2]=Tippzahl(Tx[T_Mit_welcher_Prioritaet_soll_hylafax_verwendet_werden_1_3],prios[2]);
-		}
-		standardprio(/*obmitsetz*/1);
-		if (obfa[0] && (obfa[1] || obfa[2]))
-				maxfbfxv=Tippzahl(Tx[T_Zahl_der_Versuche_in_fbfax_bis_andere_Methode_versucht_wird],maxfbfxv.c_str());
-		if (obfa[1] && (obfa[0] || obfa[2]))
-				maxcapiv=Tippzahl(Tx[T_Zahl_der_Versuche_in_Capisuite_bis_andere_Methode_versucht_wird],maxcapiv.c_str());
-		if (obfa[2] && (obfa[0] || obfa[1]))
-				maxhylav=Tippzahl(Tx[T_Zahl_der_Versuche_in_hylafax_bis_andere_Methode_versucht_wird],maxhylav.c_str());
-		if (obfa[2]) {
-			if (hmodem.empty()) hmodem=modems[0];
-			hmodem=Tippstrs(Tx[T_Fuer_Hylafax_verwendetes_Modem],&modems,&hmodem);
-			hklingelzahl=Tippzahl(Tx[T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt],hklingelzahl.c_str());
-			string hintervneu{Tippzahl(Tx[T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt],hintervall.c_str())};
-			if (hintervneu!=hintervall) {
-				hintervall=hintervneu;
-				hconfigtty();
-			}
-			maxhdials=Tippzahl(Tx[T_Zahl_der_Wahlversuche_in_Hylafax],maxhdials.c_str());
-		}
-		gleichziel=Tippob(Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden],gleichziel?Txk[T_j_af]:"n");
-		obocri=Tippob(Tx[T_soll_Text_in_empfangenen_Faxen_mit_OCR_gesucht_werden],obocri?Txk[T_j_af]:"j");
-		obocra=Tippob(Tx[T_soll_Text_in_gesandten_Bildern_mit_OCR_gesucht_werden],obocra?Txk[T_j_af]:"n");
-		anfaxstr=Tippstr(Tx[T_Buchstabenfolge_vor_erster_Faxnummer],&anfaxstr);
-		if (obfa[1] && obfa[2]) {
-			ancfaxstr=Tippstr(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Capisuite],&ancfaxstr);
-			anhfaxstr=Tippstr(Tx[T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax],&anhfaxstr);
-		}
-		anstr=Tippstr(Tx[T_Buchstabenfolge_vor_erstem_Adressaten],&anstr);
-		undstr=Tippstr(Tx[T_Buchstabenfolge_vor_weiterem_Adressaten_sowie_weiterer_Faxnummer],&undstr);
-		anmailstr=Tippstr(Tx[T_Buchstabenfolge_vor_erster_Mailadresse],&anmailstr);
-		klaranmailstr=Tippstr(Tx[T_Buchstabenfolge_vor_erster_Mailadresse_fuer_unverschluesselte_Mail],&klaranmailstr);
-		mailvon=Tippstr(Tx[T_als_Absender_zu_verwendende_Mailadresse],&mailvon);
-		smtpadr=Tippstr(Tx[T_smtp_Adresse_ohne_port],&smtpadr);
-		portnr=Tippstr(Tx[T_Port_Nummer],&portnr);
-		smtpusr=Tippstr(Tx[T_Smtp_usr],&smtpusr);
-		string smtppw2;
-		smtppwd.clear();
-		do {
-			smtppwd=Tippstr(string(Tx[T_Smtp_pwd])+Txk[T_fuer_Benutzer]+dblau+smtpusr+schwarz+"'"/*,&smtppwd*/);
-			smtppw2=Tippstr(string(Tx[T_Smtp_pwd])+Txk[T_fuer_Benutzer]+dblau+smtpusr+schwarz+"'"+" ("+Txk[T_erneute_Eingabe]+")"/*,&mpw2*/);
-		} while (smtppwd!=smtppw2);
-		mailtit=Tippstr(Tx[T_mailtitle],&mailtit);
-		mailbod=Tippstr(Tx[T_mailbody],&mailbod);
 		// sql abfragen, eintragen, sql aus opn loeschen, maps loeschen, maps neu erstellen
 		////		opn.oausgeb(rot);
 	} // if (rzf) //α
@@ -9758,149 +9748,152 @@ void hhcl::pvirtnachvi()
 void hhcl::pvirtnachrueckfragen()
 {
 	hLog(violetts+Tx[T_pvirtnachrueckfragen]+schwarz);
-	const size_t aktc{0};
-	sqlrp.clear();
-	unsigned neunr{1}; // Nr. des SQL-Befehles nach neuer Zaehlung
-	schAcl<optcl> oprsql=schAcl<optcl>("oprsql"); // Optionen
-	for(size_t akt=0;/*akt<sqlzn*/1;) {
-		//// <<"akt: "<<akt<<" "<<sqlp[akt]<<endl;
-		const string *const vorgabe{(akt<sqlzn?(string*)opn[akt+sqlz0]->pptr/*sqlp[akt]*/:&nix)};
-		//// <<"vorgabe: "<<*vorgabe<<", sqlvp["<<akt<<"]: "<<sqlvp[akt]<<endl;
-		akt++;
-		string zwi;
-		while (1) {
-			zwi=Tippstr(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt)+(vorgabe->empty()?
-						Tx[T_faxnr_wird_ersetzt_mit_der_Faxnr]:
-						Tx[T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr]),
-					vorgabe,/*obnichtleer=*/0);
-			if (zwi=="-") zwi.clear();
+	if (rzf) {
+		const size_t aktc{0};
+		sqlrp.clear();
+		unsigned neunr{1}; // Nr. des SQL-Befehles nach neuer Zaehlung
+		schAcl<optcl> oprsql=schAcl<optcl>("oprsql"); // Optionen
+		for(size_t akt=0;/*akt<sqlzn*/1;) {
+			//// <<"akt: "<<akt<<" "<<sqlp[akt]<<endl;
+			const string *const vorgabe{(akt<sqlzn?(string*)opn[akt+sqlz0]->pptr/*sqlp[akt]*/:&nix)};
+			//// <<"vorgabe: "<<*vorgabe<<", sqlvp["<<akt<<"]: "<<sqlvp[akt]<<endl;
+			akt++;
+			string zwi;
+			while (1) {
+				zwi=Tippstr(string(Tx[T_SQL_Befehl_Nr])+ltoan(akt)+(vorgabe->empty()?
+							Tx[T_faxnr_wird_ersetzt_mit_der_Faxnr]:
+							Tx[T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr]),
+						vorgabe,/*obnichtleer=*/0);
+				if (zwi=="-") zwi.clear();
+				if (zwi.empty()) {
+					break;
+				} else {
+					svec dben=holdbaussql(zwi);
+					//// <<"dben.size(): "<<(int)dben.size()<<endl;
+					uchar dbda{1};
+					if (!dben.size()) {
+						if (Tippob(Tx[T_In]+rots+zwi+blau+Tx[T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
+						dbda=0;
+					} else { // if (!dben.size()) 
+						uchar nochmal{0};
+						for(size_t i=0;i<dben.size();i++) {
+							//// <<"i: "<<blau<<i<<rot<<": "<<dben[i]<<schwarz<<endl;
+							if (pruefDB(dben[i])) {
+								dbda=0;
+								if (Tippob(Tx[T_Datenbank]+rots+dben[i]+blau+Tx[T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) {
+									nochmal=1;
+									break;
+								} // if (strchr("jyJYoOsS",(int)erg)) 
+							} // if (pruefDB(dben[i])) 
+						} // for(size_t i=0;i<dben.size();i++) 
+						if (nochmal) continue;     
+					} // if (!dben.size()) 
+					if (dbda) {
+						if (zwi.find("&&faxnr&&")==string::npos) {
+							if (Tippob(Tx[T_In]+rots+zwi+blau+Tx[T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
+						} else {
+							RS rtest(this->My,ersetzAllezu(zwi,"&&faxnr&&","9999"),aktc,ZDB); //// (const char*)trimfaxnr));
+							if (rtest.obqueryfehler) {
+								if (Tippob(Tx[T_In]+rots+zwi+blau+Tx[T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
+							} // if (rtest.obqueryfehler)
+						} // if (zwi.find("&&faxnr&&")==string::npos) 
+					} // if (dbda)
+				} // if (zwi.empty()) else
+				break;
+			} // while (1)
 			if (zwi.empty()) {
-				break;
 			} else {
-				svec dben=holdbaussql(zwi);
-				//// <<"dben.size(): "<<(int)dben.size()<<endl;
-				uchar dbda{1};
-				if (!dben.size()) {
-					if (Tippob(Tx[T_In]+rots+zwi+blau+Tx[T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
-					dbda=0;
-				} else { // if (!dben.size()) 
-					uchar nochmal{0};
-					for(size_t i=0;i<dben.size();i++) {
-						//// <<"i: "<<blau<<i<<rot<<": "<<dben[i]<<schwarz<<endl;
-						if (pruefDB(dben[i])) {
-							dbda=0;
-							if (Tippob(Tx[T_Datenbank]+rots+dben[i]+blau+Tx[T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) {
-								nochmal=1;
-								break;
-							} // if (strchr("jyJYoOsS",(int)erg)) 
-						} // if (pruefDB(dben[i])) 
-					} // for(size_t i=0;i<dben.size();i++) 
-					if (nochmal) continue;     
-				} // if (!dben.size()) 
-				if (dbda) {
-					if (zwi.find("&&faxnr&&")==string::npos) {
-						if (Tippob(Tx[T_In]+rots+zwi+blau+Tx[T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
-					} else {
-						RS rtest(this->My,ersetzAllezu(zwi,"&&faxnr&&","9999"),aktc,ZDB); //// (const char*)trimfaxnr));
-						if (rtest.obqueryfehler) {
-							if (Tippob(Tx[T_In]+rots+zwi+blau+Tx[T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
-						} // if (rtest.obqueryfehler)
-					} // if (zwi.find("&&faxnr&&")==string::npos) 
-				} // if (dbda)
+				// hier Sql-Dateien pruefen
+				/*
+					 cppSchluess* neuS=new cppSchluess;
+					 neuS->name=string(cSQL_)+ltoan(++aktsp);
+					 neuS->wert=zwi;
+					 sqlv.push_back(neuS);
+					 nsqlzn++;
+				 */
+				sqlrp.push_back(shared_ptr<string>(new string(zwi)));
+				const string istr{ltoan(neunr)};
+				stringstream soptname;
+				soptname<<cSQL_<<(neunr++);
+				//// <<"akt: "<<(akt)<<" "<<*(string*)opn.omap[soptname.str()]->pptr<<endl;
+				//			opn.omap[soptname.str()]->virtoausgeb();
+				optcl *opp{new optcl(/*pname*/soptname.str(),/*pptr*/sqlrp[sqlrp.size()-1].get(),/*art*/pstri,-1,-1,/*TxBp*/&Tx,/*Txi*/T_SQL_Befehl_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/istr,/*wert*/-1,/*woher*/1,Tx[T_SQL_Befehl])};
+				oprsql<<opp;
 			} // if (zwi.empty()) else
-			break;
-		} // while (1)
-		if (zwi.empty()) {
-		} else {
-			// hier Sql-Dateien pruefen
-			/*
-				 cppSchluess* neuS=new cppSchluess;
-				 neuS->name=string(cSQL_)+ltoan(++aktsp);
-				 neuS->wert=zwi;
-				 sqlv.push_back(neuS);
-				 nsqlzn++;
-			 */
-			sqlrp.push_back(shared_ptr<string>(new string(zwi)));
-			const string istr{ltoan(neunr)};
-			stringstream soptname;
-			soptname<<cSQL_<<(neunr++);
-			//// <<"akt: "<<(akt)<<" "<<*(string*)opn.omap[soptname.str()]->pptr<<endl;
-			//			opn.omap[soptname.str()]->virtoausgeb();
-			optcl *opp{new optcl(/*pname*/soptname.str(),/*pptr*/sqlrp[sqlrp.size()-1].get(),/*art*/pstri,-1,-1,/*TxBp*/&Tx,/*Txi*/T_SQL_Befehl_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/istr,/*wert*/-1,/*woher*/1,Tx[T_SQL_Befehl])};
-			oprsql<<opp;
-		} // if (zwi.empty()) else
-		// sqlzn-1 waere sehr viel
-		if (akt+1>sqlzn) {
-			if (!Tippob(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],Txk[T_j_af])) { 
-				break;
+			// sqlzn-1 waere sehr viel
+			if (akt+1>sqlzn) {
+				if (!Tippob(Tx[T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben],Txk[T_j_af])) { 
+					break;
+				}
+			}
+			//			map<const char* const,optcl const*>::iterator omit;
+			//			shared_ptr<optcl> omit;
+		} // 		for(size_t akt=0;1;)
+		sqlzn=neunr-1;
+		// vorherige SQL-Abfragen loeschen
+		for(auto omit=opn.schl.end();omit!=opn.schl.begin();) {
+			omit--;
+			if (!(*omit)->pname.find(cSQL_)) {
+				(*omit)->virtloeschomaps(&opn);
+				opn.schl.erase(omit);
 			}
 		}
-		//			map<const char* const,optcl const*>::iterator omit;
-		//			shared_ptr<optcl> omit;
-	} // 		for(size_t akt=0;1;)
-	sqlzn=neunr-1;
-	// vorherige SQL-Abfragen loeschen
-	for(auto omit=opn.schl.end();omit!=opn.schl.begin();) {
-		omit--;
-		if (!(*omit)->pname.find(cSQL_)) {
-			(*omit)->virtloeschomaps(&opn);
-			opn.schl.erase(omit);
+		// aktuelle SQL-Abfragen eintragen
+		for(auto omit=oprsql.schl.begin();omit!=oprsql.schl.end();omit++) {
+			opn<<(*omit);
 		}
-	}
-	// aktuelle SQL-Abfragen eintragen
-	for(auto omit=oprsql.schl.begin();omit!=oprsql.schl.end();omit++) {
-		opn<<(*omit);
-	}
-	schAcl<optcl> oprzm=schAcl<optcl>("oprzm"); // Optionen
-	zmmrp.clear();
-	zmzrp.clear();
-	neunr=1; // Nr. des Zielmusterpaares nach neuer Zaehlung
-	zmmrp.clear();
-	zmzrp.clear();
-	////opn.oausgeb(blau);
-	for(size_t akt=0;/*akt<zmzn*/1;) {
-		const string *const vgbm{(akt<zmzn?&zmsp[akt]->muster:&nix)},
-					*const vgbz{(akt<zmzn?&zmsp[akt]->ziel:&nix)};
-		akt++;
-		string zwim,zwiz;
-		while (1) {
-			zwim=Tippstr(string(Tx[T_Zielmuster_Nr])+ltoan(akt)+Tx[(akt<zmzn?T_zum_Streichen_Strich_eingeben:T_beim_letzten_fuer_alle_Uebrigen_nichts_eingeben)],vgbm,/*obnichtleer=*/0);
-			if (zwim=="-") break;
-			zwiz=Tippverz(string(Tx[T_Zielverzeichnis_Nr])+ltoan(akt),vgbz);
-			if (!zwiz.empty()) break;
-		} // while (1)
-		if (zwim=="-") {
-		} else {
-			zmmrp.push_back(shared_ptr<string>(new string(zwim)));
-			zmzrp.push_back(shared_ptr<string>(new string(zwiz)));
-			const string istr{ltoan(neunr)};
-			stringstream zmmname,zmzname;
-			zmmname<<cZMMuster_<<neunr;
-			zmzname<<cZMZiel_<<neunr;
-			//// <<"akt: "<<(akt)<<" "<<*(string*)opn.omap[soptname.str()]->pptr<<endl;
-			//			opn.omap[soptname.str()]->virtoausgeb();
-			optcl *opmp{new optcl(/*pname*/zmmname.str(),/*pptr*/zmmrp[neunr-1].get(),/*art*/pstri,-1,-1,/*TxBp*/&Tx,/*Txi*/T_Zielmuster_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/istr,/*wert*/-1,/*woher*/2,Tx[T_Zielmuster])};
-			oprzm<<opmp;
-			optcl *opzp{new optcl(/*pname*/zmzname.str(),/*pptr*/zmzrp[neunr-1].get(),/*art*/pstri,-1,-1,/*TxBp*/&Tx,/*Txi*/T_Ziel_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/istr,/*wert*/-1,/*woher*/2,Tx[T_Ziel])};
-			oprzm<<opzp;
-			neunr++;
-		} // 			if (zwim=="-")
-		if (zwim.empty())
-			break;
-	} // 		for(size_t akt=0;/*akt<zmzn*/1;akt++)
-	zmzn=neunr-1;
-	// vorherige Zielmusterpaare loeschen
-	for(auto omit=opn.schl.end();omit!=opn.schl.begin();) {
-		omit--;
-		if (!(*omit)->pname.find(cZMMuster_)||!(*omit)->pname.find(cZMZiel_)) {
-			(*omit)->virtloeschomaps(&opn);
-			opn.schl.erase(omit);
+		schAcl<optcl> oprzm=schAcl<optcl>("oprzm"); // Optionen
+		zmmrp.clear();
+		zmzrp.clear();
+		neunr=1; // Nr. des Zielmusterpaares nach neuer Zaehlung
+		zmmrp.clear();
+		zmzrp.clear();
+		////opn.oausgeb(blau);
+		for(size_t akt=0;/*akt<zmzn*/1;) {
+			const string *const vgbm{(akt<zmzn?&zmsp[akt]->muster:&nix)},
+						*const vgbz{(akt<zmzn?&zmsp[akt]->ziel:&nix)};
+			akt++;
+			string zwim,zwiz;
+			while (1) {
+				zwim=Tippstr(string(Tx[T_Zielmuster_Nr])+ltoan(akt)+Tx[(akt<zmzn?T_zum_Streichen_Strich_eingeben:T_beim_letzten_fuer_alle_Uebrigen_nichts_eingeben)],vgbm,/*obnichtleer=*/0);
+				if (zwim=="-") break;
+				zwiz=Tippverz(string(Tx[T_Zielverzeichnis_Nr])+ltoan(akt),vgbz);
+				if (!zwiz.empty()) break;
+			} // while (1)
+			if (zwim=="-") {
+			} else {
+				zmmrp.push_back(shared_ptr<string>(new string(zwim)));
+				zmzrp.push_back(shared_ptr<string>(new string(zwiz)));
+				const string istr{ltoan(neunr)};
+				stringstream zmmname,zmzname;
+				zmmname<<cZMMuster_<<neunr;
+				zmzname<<cZMZiel_<<neunr;
+				//// <<"akt: "<<(akt)<<" "<<*(string*)opn.omap[soptname.str()]->pptr<<endl;
+				//			opn.omap[soptname.str()]->virtoausgeb();
+				optcl *opmp{new optcl(/*pname*/zmmname.str(),/*pptr*/zmmrp[neunr-1].get(),/*art*/pstri,-1,-1,/*TxBp*/&Tx,/*Txi*/T_Zielmuster_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/istr,/*wert*/-1,/*woher*/2,Tx[T_Zielmuster])};
+				oprzm<<opmp;
+				optcl *opzp{new optcl(/*pname*/zmzname.str(),/*pptr*/zmzrp[neunr-1].get(),/*art*/pstri,/*kurzi*/-1,/*langi*/-1,/*TxBp*/&Tx,/*Txi*/T_Ziel_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/istr,/*wert*/-1,/*woher*/2,/*Txtrf*/Tx[T_Ziel])};
+				oprzm<<opzp;
+				neunr++;
+			} // 			if (zwim=="-")
+			if (zwim.empty())
+				break;
+		} // 		for(size_t akt=0;/*akt<zmzn*/1;akt++)
+		zmzn=neunr-1;
+		// vorherige Zielmusterpaare loeschen
+		for(auto omit=opn.schl.end();omit!=opn.schl.begin();) {
+			omit--;
+			if (!(*omit)->pname.find(cZMMuster_)||!(*omit)->pname.find(cZMZiel_)) {
+				(*omit)->virtloeschomaps(&opn);
+				opn.schl.erase(omit);
+			}
 		}
-	}
-	// aktuelle Zielmusterpaare eintragen
-	for(auto omit=oprzm.schl.begin();omit!=oprzm.schl.end();omit++) {
-		opn<<(*omit);
-	}
+		// aktuelle Zielmusterpaare eintragen
+		for(auto omit=oprzm.schl.begin();omit!=oprzm.schl.end();omit++) {
+			opn<<(*omit);
+		}
+		standardprio(/*obmitsetz*/1);
+	} // 	if (rzf)
 	// if (initDB()) exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));  //ω
 	if (obfa[0]) {
 		svec vzv;
@@ -10299,7 +10292,7 @@ void hhcl::virtlieskonfein()
 			++i;
 			stringstream soptname;
 			soptname<<cSQL_<<i;
-			opsql<<new optcl(/*pname*/soptname.str(),/*pptr*/&sqlp[i-1],/*art*/pstri,-1,-1,/*TxBp*/&Tx,/*Txi*/T_SQL_Befehl_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/ltoan(i),/*wert*/-1,/*woher*/2,Tx[T_SQL_Befehl]);
+			opsql<<new optcl(/*pname*/soptname.str(),/*pptr*/&sqlp[i-1],/*art*/pstri,-1,-1,/*TxBp*/&Tx,/*Txi*/T_SQL_Befehl_Nr,/*wi*/0,/*Txi2*/-1,/*rottxt*/ltoan(i),/*wert*/-1,/*woher*/2,Tx[T_SQL_Befehl],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/0,/*fnnachhz*/0,/*fnvorhz*/0,/*sonderrf*/1);
 			//// folgendes wuerde zum Absturz fuehren (der shared_ptr muss derselbe sein, damit er und sein Inhalt nur einmal versucht wird zu destruieren):
 			////		shared_ptr<optcl> kop2{opsql[opsql.size()-1]};
 			////		opn<<kop2;
@@ -10312,6 +10305,7 @@ void hhcl::virtlieskonfein()
 				stringstream soptname;
 				soptname<<cSQL_<<++sqlzn;
 				aktopsql->pname=soptname.str();
+				aktopsql->sonderrf=1;
 				opn<<aktopsql;
 			}
 		} // 		for(auto aktopsql:opsql.schl)
@@ -10326,6 +10320,7 @@ void hhcl::virtlieskonfein()
 		for(size_t i=0;i<sqlVp.size();i++) {
 			sqlp[i]=*(string*)opvsql[i]->pptr;
 			//// <<"opvsql["<<i<<"]: "<<*(string*)opvsql[i]->pptr<<endl;
+			opvsql[i]->sonderrf=1;
 			opn<<opvsql[i];
 		}
 	} // 	if (!sqlzn)
@@ -10364,9 +10359,11 @@ void hhcl::virtlieskonfein()
 					stringstream zmmname,zmzname;
 					zmmname<<cZMMuster_<<++zmzn;
 					laktopzm->pname=zmmname.str();
+					laktopzm->sonderrf=1;
 					opn<<laktopzm;
 					zmzname<<cZMZiel_<<zmzn;
 					aktopzm->pname=zmzname.str();
+					aktopzm->sonderrf=1;
 					opn<<aktopzm;
 					zmsp.push_back(shared_ptr<zielmustercl>(new zielmustercl(*(string*)laktopzm->pptr,*(string*)aktopzm->pptr)));
 				}

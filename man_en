@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "22.09.19" "Version 0.48202" "\fB²DPROG²\fR man page"
+.TH man 1 "22.09.19" "Version 0.48239" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -67,7 +67,7 @@ Depending on operating system, accessability and preferences the users thus coul
 .SH OPTIONS 
  '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR' shows the important command line options and '\fB²DPROG² -lh\fR' all of them. Some options (e.g. the sql commands for finding an addressee from the fax number) cannot be set via the command line, but only via the configuration file, which can be edited directly by '\fB²DPROG² -vi\fR' or interactively by '\fB²DPROG² -rf\fR'.
 .br
-                                                                                                                                                                                                                                                                                                                                                                            \fRProgramm: \fB/home/schade/autofax/autofax\fR, V: \fB0.48202 \fRUsing: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
+                                                                                                                                                                                                                                                                                                                                                                            \fRProgramm: \fB/home/schade/autofax/autofax\fR, V: \fB0.48239 \fRUsing: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax\fR
 .br
 \fBOptions which are not saved (current value in parentheses): \fR
 .br
@@ -103,7 +103,9 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fB -n, --reccount <string>\fR: No. of listed entries = <no> instead of ('\fB30\fR')
 .br
-\fB -vc, --vc\fR: edit capisuite log files (finish with ':qa') (\fB0\fR)
+\fB -vf, --vf\fR: edit fbfax configuration files (finish with ':qa') (\fB0\fR)
+.br
+\fB -vc, --vc\fR: edit capisuite configuration files (finish with ':qa') (\fB0\fR)
 .br
 \fB -vh, --vh\fR: edit hylafax modem configuration file (finish with ':qa') (\fB0\fR)
 .br
@@ -145,15 +147,15 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fB -rdr, --receiveddir <path>\fR: directory for recieved faxes ('\fB/var/autofax/recvdir\fR')
 .br
-\fB -fbox, --takefbox <zahl>\fR: use fritzbox\fB or not\fR (\fB65793\fR)
+\fB -fbox, --takefbox\fR: use fritzbox\fB or not\fR (\fB1\fR)
 .br
 \fB -fbdr, --fritzboxdir <path>\fR: receiving directory of the fritzbox (via CIFS) ('\fB/mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox\fR')
 .br
 \fB -favz, --farchvz <path>\fR: archive directory of the fritzbox ('\fB/var/spool/fbfax/arch\fR')
 .br
-\fB -capi, --takecapi <zahl>\fR: use capisuite\fB or not\fR (\fB257\fR)
+\fB -capi, --takecapi\fR: use capisuite\fB or not\fR (\fB1\fR)
 .br
-\fB -hyla, --takehyla <zahl>\fR: use hylafax\fB or not\fR (\fB1\fR)
+\fB -hyla, --takehyla\fR: use hylafax\fB or not\fR (\fB1\fR)
 .br
 \fB -fp, --fprio <zahl>\fR: Priority of fritzbox (1-3) (\fB0\fR)
 .br
@@ -163,11 +165,11 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fB -mod, --hmodem <string>\fR: Modem used for hylafax, instead of  ('\fBttyACM0\fR')
 .br
+\fB -mf, --maxfbfaxtries <string>\fR: try other method after <no> tries of fbfax ('\fB3\fR')
+.br
 \fB -mc, --maxcapitries <string>\fR: try Hylafax after <no> tries of other method instead of ('\fB3\fR')
 .br
 \fB -mh, --maxhylatries <string>\fR: try other method after <no> tries of fbfax ('\fB3\fR')
-.br
-\fB -mf, --maxfbfaxtries <string>\fR: try other method after <no> tries of fbfax ('\fB3\fR')
 .br
 \fB -cuser, --cuser <string>\fR: takes the linux user <string> for capisuite and/or samba instead of ('\fBschade\fR')
 .br
@@ -186,6 +188,8 @@ Depending on operating system, accessability and preferences the users thus coul
 \fB -ocro, --ocro <zahl>\fR: Text from sent pictures will be filtered (\fB0\fR)
 .br
 \fB -tfs, --tofaxstr <string>\fR: the fax number will be expected after <string> instead of ('\fBan Fax\fR')
+.br
+\fB -tffs, --toffaxstr <string>\fR: fax no.for fax with preference to fritzbox is expected after <string> instead of ('\fBan fFax\fR')
 .br
 \fB -tcfs, --tocfaxstr <string>\fR: fax no.for fax with preference to capisuite is expected after <string> instead of ('\fBan cFax\fR')
 .br

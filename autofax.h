@@ -155,8 +155,11 @@ enum T_
 	T_faxnr_wird_hinter_string_erwartet_statt_hinter,
 	T_mailadresse_wird_hinter_string_erwartet_statt_hinter,
 	T_mailadresse_fuer_unverschluesselte_Mail_wird_hinter_string_erwartet_statt_hinter,
+	T_affs_k,
+	T_anffaxstr_l,
+	T_faxnr_fuer_primaer_Fritzbox_wird_hinter_string_erwartet_statt_hinter,
 	T_acfs_k,
-	T_ancfaxstr,
+	T_ancfaxstr_l,
 	T_faxnr_fuer_primaer_Capisuite_wird_hinter_string_erwartet_statt_hinter,
 	T_ahfs_k,
 	T_anhfaxstr_l,
@@ -211,6 +214,9 @@ enum T_
 	T_s_k,
 	T_suche_l,
 	T_suche_in_verarbeiteten_Faxen_nach,
+	T_vf_k,
+	T_vf_l,
+	T_FBFax_Konfigurationdateien_bearbeiten,
 	T_vc_k,
 	T_vc_l,
 	T_Capisuite_Konfigurationdateien_bearbeiten,
@@ -318,6 +324,7 @@ enum T_
 	T_Buchstabenfolge_vor_erster_Faxnummer,
 	T_Buchstabenfolge_vor_erster_Mailadresse,
 	T_Buchstabenfolge_vor_erster_Mailadresse_fuer_unverschluesselte_Mail,
+	T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Fritzbox,
 	T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Capisuite,
 	T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax,
 	T_Buchstabenfolge_vor_erstem_Adressaten,
@@ -859,11 +866,11 @@ class hhcl:public dhcl
 		string fbdev; // device-Name der Fritzbox = "FritzBox <friendlyname>"
 		uchar obfcard{1};    // ob Fritzcard eingesteckt
 		uchar obmodem{1};    // ob Modem angeschlossen
-		uchar obmdgeprueft{0}; // ob schon geprueft, ob Modem verfuegbar
 		uchar obocrgeprueft{0}; // ob ocrmypdf installiert ist
 		const string altspool{"altspool"}; // Historie der Spooltabelle
 		const string udoctab{"udoc"};
 		uchar obvi{0};   // ob Konfigurationsdatei editiert werden soll
+		uchar obvf{0};   // ob FBFax-Konfigurationsdateien betrachtet werden sollen
 		uchar obvc{0};   // ob Capisuite-Konfigurationsdateien betrachtet werden sollen
 		uchar obvh{0};   // ob Hylafax-Konfigurations- und Logdateindatei betrachtet werden sollen
 		uchar loef{0};   // loesche eine Fax-Datei
@@ -916,6 +923,7 @@ class hhcl:public dhcl
 		string cklingelzahl; // Zahl der Klingeltoene, bis Capisuite einen Anruf annnimmt
 		string hklingelzahl; // Zahl der Klingeltoene, bis Hylafax einen Anruf annnimmt
 		string hintervall; // Abstand in Sekunden nach besetzt, bis hylafax erneut waehlt
+		string hintervalt; // vorheriger Abstand
 		string cfaxconfdt; // /etc/capisuite/fax.conf oder /usr/local/etc/capisuite/fax.conf laut Handbuch
 		string cfaxconfeigdt; // ~/autofax/cfaxconfdt
 		string spoolcapivz; // Verzeichnis der Capi-Spool-Dateien /var/spool/capisuite/
@@ -985,6 +993,9 @@ class hhcl:public dhcl
 
 	public: //α //ω
 	private: //α //ω
+		int auswfb();
+		int auswca();
+		int auswhy();
 		void liescapiconf();
 		void konfcapi(); // aufgerufen in pruefcapi
 		void capisv();
@@ -1000,6 +1011,7 @@ class hhcl:public dhcl
 		void instsfftobmp();
 		void nextnum();
 		void pruefmodcron();
+		void dovf();
 		void dovc();
 		void virttesterg(); //α
 		void virtlieskonfein();
@@ -1066,8 +1078,9 @@ class hhcl:public dhcl
 		void inDBk(DB *My, const string& spooltab, const string& altspool, const fsfcl *const fsfp, const size_t aktc);
 		void standardprio(const int obmitsetz);
 		int priorang(const int rnr);
+		void fuv0()/*,fuv1(),fuv2(),fuv3(),fuv4(),fuv5(),fuv6(),fuv7(),fuv8(),fuv9(),fuv10()*/;
+		int fui0(),fui1(),fui2()/*,fui3(),fui4(),fui5(),fui6(),fui7(),fui8(),fui9(),fui10()*/;
 	protected: //α
-		void fu1(), fu2();
 		// void virtlgnzuw(); // wird aufgerufen in: virtrueckfragen, parsecl, lieskonfein, hcl::hcl nach holsystemsprache
 		void virtVorgbAllg();
 		void pvirtVorgbSpeziell()

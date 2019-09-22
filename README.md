@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.48202) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.48239) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -178,7 +178,7 @@ configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
 Programm: <b>/home/schade/autofax/autofax</b>, V:
-<b>0.48202</b> Using: <b>Fritzbox</b>, <b>Capisuite</b>,
+<b>0.48239</b> Using: <b>Fritzbox</b>, <b>Capisuite</b>,
 <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
@@ -220,8 +220,10 @@ a.faxed directory against the tables
 &lt;string&gt;: (&rsquo;&rsquo;) <b><br>
 -n, --reccount &lt;string&gt;</b>: No. of listed entries =
 &lt;no&gt; instead of (&rsquo;<b>30</b>&rsquo;) <b><br>
--vc, --vc</b>: edit capisuite log files (finish with
+-vf, --vf</b>: edit fbfax configuration files (finish with
 &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
+-vc, --vc</b>: edit capisuite configuration files (finish
+with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vh, --vh</b>: edit hylafax modem configuration file (finish
 with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -sqlv, --sql-verbose</b>: screen output with SQL commands
@@ -267,8 +269,8 @@ collected here and not in
 (&rsquo;<b>/var/autofax/notfaxed</b>&rsquo;) <b><br>
 -rdr, --receiveddir &lt;path&gt;</b>: directory for recieved
 faxes (&rsquo;<b>/var/autofax/recvdir</b>&rsquo;) <b><br>
--fbox, --takefbox &lt;zahl&gt;</b>: use fritzbox <b>or
-not</b> (<b>65793</b>) <b><br>
+-fbox, --takefbox</b>: use fritzbox <b>or not</b> (<b>1</b>)
+<b><br>
 -fbdr, --fritzboxdir &lt;path&gt;</b>: receiving directory
 of the fritzbox (via CIFS)
 (&rsquo;<b>/mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox</b>&rsquo;)
@@ -276,10 +278,10 @@ of the fritzbox (via CIFS)
 -favz, --farchvz &lt;path&gt;</b>: archive directory of the
 fritzbox (&rsquo;<b>/var/spool/fbfax/arch</b>&rsquo;)
 <b><br>
--capi, --takecapi &lt;zahl&gt;</b>: use capisuite <b>or
-not</b> (<b>257</b>) <b><br>
--hyla, --takehyla &lt;zahl&gt;</b>: use hylafax <b>or
-not</b> (<b>1</b>) <b><br>
+-capi, --takecapi</b>: use capisuite <b>or not</b>
+(<b>1</b>) <b><br>
+-hyla, --takehyla</b>: use hylafax <b>or not</b> (<b>1</b>)
+<b><br>
 -fp, --fprio &lt;zahl&gt;</b>: Priority of fritzbox (1-3)
 (<b>0</b>) <b><br>
 -cp, --cprio &lt;zahl&gt;</b>: Priority of capisuite (1-3)
@@ -288,13 +290,13 @@ not</b> (<b>1</b>) <b><br>
 (<b>0</b>) <b><br>
 -mod, --hmodem &lt;string&gt;</b>: Modem used for hylafax,
 instead of (&rsquo;<b>ttyACM0</b>&rsquo;) <b><br>
+-mf, --maxfbfaxtries &lt;string&gt;</b>: try other method
+after &lt;no&gt; tries of fbfax (&rsquo;<b>3</b>&rsquo;)
+<b><br>
 -mc, --maxcapitries &lt;string&gt;</b>: try Hylafax after
 &lt;no&gt; tries of other method instead of
 (&rsquo;<b>3</b>&rsquo;) <b><br>
 -mh, --maxhylatries &lt;string&gt;</b>: try other method
-after &lt;no&gt; tries of fbfax (&rsquo;<b>3</b>&rsquo;)
-<b><br>
--mf, --maxfbfaxtries &lt;string&gt;</b>: try other method
 after &lt;no&gt; tries of fbfax (&rsquo;<b>3</b>&rsquo;)
 <b><br>
 -cuser, --cuser &lt;string&gt;</b>: takes the linux user
@@ -321,6 +323,9 @@ be filtered (<b>0</b>) <b><br>
 -tfs, --tofaxstr &lt;string&gt;</b>: the fax number will be
 expected after &lt;string&gt; instead of (&rsquo;<b>an
 Fax</b>&rsquo;) <b><br>
+-tffs, --toffaxstr &lt;string&gt;</b>: fax no.for fax with
+preference to fritzbox is expected after &lt;string&gt;
+instead of (&rsquo;<b>an fFax</b>&rsquo;) <b><br>
 -tcfs, --tocfaxstr &lt;string&gt;</b>: fax no.for fax with
 preference to capisuite is expected after &lt;string&gt;
 instead of (&rsquo;<b>an cFax</b>&rsquo;) <b><br>
@@ -852,7 +857,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.48202) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.48239) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1045,7 +1050,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
 Programm: <b>/home/schade/autofax/autofax</b>, V:
-<b>0.48202</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
+<b>0.48239</b> Verwende: <b>Fritzbox</b>, <b>Capisuite</b>,
 <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
@@ -1088,6 +1093,8 @@ nach &lt;string&gt;: (&rsquo;&rsquo;) <b><br>
 -n, --dszahl &lt;string&gt;</b>: Zahl der aufzulistenden
 Datensaetze = &lt;zahl&gt; statt (&rsquo;<b>30</b>&rsquo;)
 <b><br>
+-vf, --vf</b>: FBFax-Konfigurationsdateien bearbeiten
+(beenden mit &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vc, --vc</b>: Capisuite-Konfigurationsdateien bearbeiten
 (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vh, --vh</b>: Hylafax-Modem-Konfigurationsdatei bearbeiten
@@ -1139,8 +1146,8 @@ werden hier gesammelt anstatt in
 -evz, --empfvz &lt;pfad&gt;</b>: Empfangsverzeichnis fuer
 Faxempfang (&rsquo;<b>/var/autofax/empfvz</b>&rsquo;)
 <b><br>
--fbox, --obfbox &lt;zahl&gt;</b>: Fritzbox verwenden <b>oder
-nicht</b> (<b>65793</b>) <b><br>
+-fbox, --obfbox</b>: Fritzbox verwenden <b>oder nicht</b>
+(<b>1</b>) <b><br>
 -fbvz, --fritzboxvz &lt;pfad&gt;</b>: Ankunftsverzeichnis
 der Fritzbox (ueber CIFS)
 (&rsquo;<b>/mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox</b>&rsquo;)
@@ -1148,10 +1155,10 @@ der Fritzbox (ueber CIFS)
 -favz, --farchvz &lt;pfad&gt;</b>: Archivverzeichnis der
 Fritzbox (&rsquo;<b>/var/spool/fbfax/arch</b>&rsquo;)
 <b><br>
--capi, --obcapi &lt;zahl&gt;</b>: Capisuite verwenden
-<b>oder nicht</b> (<b>257</b>) <b><br>
--hyla, --obhyla &lt;zahl&gt;</b>: Hylafax verwenden <b>oder
-nicht</b> (<b>1</b>) <b><br>
+-capi, --obcapi</b>: Capisuite verwenden <b>oder nicht</b>
+(<b>1</b>) <b><br>
+-hyla, --obhyla</b>: Hylafax verwenden <b>oder nicht</b>
+(<b>1</b>) <b><br>
 -fp, --fprio &lt;zahl&gt;</b>: Prioritaet von fritzbox (1-3)
 (<b>0</b>) <b><br>
 -cp, --cprio &lt;zahl&gt;</b>: Prioritaet von capisuite
@@ -1160,14 +1167,14 @@ nicht</b> (<b>1</b>) <b><br>
 (<b>0</b>) <b><br>
 -mod, --hmodem &lt;string&gt;</b>: Fuer Hylafax verwendetes
 Modem, anstatt (&rsquo;<b>ttyACM0</b>&rsquo;) <b><br>
+-mf, --maxfbfxv &lt;string&gt;</b>: nach &lt;zahl&gt;
+Versuchen fbfax wird andere Methode versucht, anstatt nach
+(&rsquo;<b>3</b>&rsquo;) <b><br>
 -mc, --maxcapiv &lt;string&gt;</b>: nach &lt;zahl&gt;
 Versuchen Capisuite wird andere Methode versucht, anstatt
 nach (&rsquo;<b>3</b>&rsquo;) <b><br>
 -mh, --maxhylav &lt;string&gt;</b>: nach &lt;zahl&gt;
 Versuchen Hylafax wird andere Methode versucht, anstatt nach
-(&rsquo;<b>3</b>&rsquo;) <b><br>
--mf, --maxfbfxv &lt;string&gt;</b>: nach &lt;zahl&gt;
-Versuchen fbfax wird andere Methode versucht, anstatt nach
 (&rsquo;<b>3</b>&rsquo;) <b><br>
 -cuser, --cuser &lt;string&gt;</b>: verwendet fuer Capisuite
 und/oder Samba den Linux-Benutzer &lt;string&gt; anstatt
@@ -1193,6 +1200,9 @@ wird ermittelt (<b>0</b>) <b><br>
 -afs, --anfaxstr &lt;string&gt;</b>: faxnr wird hinter
 &lt;string&gt; erwartet statt hinter (&rsquo;<b>an
 Fax</b>&rsquo;) <b><br>
+-affs, --anffaxstr &lt;string&gt;</b>: faxnr fuer primaer
+Fritzbox wird hinter &lt;string&gt; erwartet statt hinter
+(&rsquo;<b>an fFax</b>&rsquo;) <b><br>
 -acfs, --ancfaxstr &lt;string&gt;</b>: faxnr fuer primaer
 Capisuite wird hinter &lt;string&gt; erwartet statt hinter
 (&rsquo;<b>an cFax</b>&rsquo;) <b><br>

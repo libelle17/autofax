@@ -705,6 +705,8 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"pptr darf nicht (null) sein (bei ","pptr must not be (null) (at"},
 	// T_rueckfragen
 	{"rueckfragen()","callbacks()"},
+	// T_Frage_ab
+	{"Frage ab: ","Asking for: "},
 	{"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 
@@ -3501,6 +3503,7 @@ void optcl::virtoausgeb() const
 	cout<<",geg:"<<blau<<(int)gegenteil<<schwarz;
 	cout<<",nsp:"<<blau<<(int)nichtspeichern<<schwarz;
 	cout<<",eing:"<<blau<<(int)eingetragen<<schwarz;
+	cout<<",sonderrf:"<<blau<<(int)sonderrf<<schwarz;
 	cout<<endl;
 } // void optcl::virtoausgeb()
 
@@ -5595,8 +5598,8 @@ void hcl::turueckfrage(shared_ptr<optcl>& omit)
 		if (!omit->pname.empty() && !omit->Txtrf.empty()) {
 			if (!omit->pptr)
 				perror((Txk[T_pptr_darf_nicht_null_sein_bei]+omit->pname+")").c_str());
+			if (obverb) fLog(Txk[T_Frage_ab]+blaus+omit->pname+schwarz+":",obverb,oblog);
 			string pwd2;
-					caus<<"Frage ab: "<<omit->pname<<endl;
 			switch (omit->part) {
 				case pint:
 					(*(int*)omit->pptr)=Tippzahl(omit->Txtrf,omit->pptr?*(int*)omit->pptr:0);
@@ -5622,7 +5625,7 @@ void hcl::turueckfrage(shared_ptr<optcl>& omit)
 					(*(string*)omit->pptr)=Tippstr(omit->Txtrf,(string*)omit->pptr);
 					break;
 				case puchar:
-					(*(uchar*)omit->pptr)=Tippob(omit->Txtrf,*(uchar*)omit->pptr?Txk[T_j_af]:(const char*)omit->pptr);
+					(*(uchar*)omit->pptr)=Tippob(omit->Txtrf,*(uchar*)omit->pptr?Txk[T_j_af]:"n");
 					break;
 				case pdat:
 				case pbin:
@@ -6446,22 +6449,15 @@ int optcl::pzuweis(const char *const nacstr, const uchar vgegenteil/*=0*/, const
 	return pzfnr;
 } // int optcl::pzuweis
 
-void hcl::fu1(){};
-void hcl::fu2(){};
-void hcl::fu3(){};
-void hcl::fu4(){};
-void hcl::fu5(){};
-void hcl::fu6(){};
-void hcl::fu7(){};
-void hcl::fu8(){};
-void hcl::fu9(){};
-void hcl::fu10(){};
+// zum Ueberladen
+void hcl::fuv0(){}; void hcl::fuv1(){}; void hcl::fuv2(){}; void hcl::fuv3(){}; void hcl::fuv4(){}; void hcl::fuv5(){}; void hcl::fuv6(){}; void hcl::fuv7(){}; void hcl::fuv8(){}; void hcl::fuv9(){}; void hcl::fuv10(){};
+int hcl::fui0(){return 0;}; int hcl::fui1(){return 0;}; int hcl::fui2(){return 0;}; int hcl::fui3(){return 0;}; int hcl::fui4(){return 0;}; int hcl::fui5(){return 0;}; int hcl::fui6(){return 0;}; int hcl::fui7(){return 0;}; int hcl::fui8(){return 0;}; int hcl::fui9(){return 0;}; int hcl::fui10(){return 0;};
 
 optcl::optcl(const string& pname,const void* pptr,const par_t part, const int kurzi, const int langi, TxB* TxBp, const long Txi,
-		const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher, const string& Txtrf/*={}*/,const uchar obno/*=0*/,const string* refstr/*=0*/,const uchar* obfragz/*=0*/,fnhcliztyp fnobfragz/*=0*/,fnhclztyp fnnachhz/*=0*/,fnhclztyp fnvorhz/*=0*/,const uchar sonderrf/*=0*/):
+		const uchar wi, const long Txi2, const string rottxt, const int iwert,const uchar woher, const string& Txtrf/*={}*/,const uchar obno/*=(uchar)-1*/,const string* refstr/*=0*/,const uchar* obfragz/*=0*/,fnhcliztyp fnobfragz/*=0*/,fnhclztyp fnnachhz/*=0*/,fnhclztyp fnvorhz/*=0*/,uchar sonderrf/*=0*/):
 	wpgcl(pname,pptr,part),
 	kurzi(kurzi),langi(langi),TxBp(TxBp),Txi(Txi),wi(wi),Txi2(Txi2),rottxt(rottxt),iwert(iwert),
-	woher(woher),Txtrf(Txtrf.empty()?Txi==-1?string():(*TxBp)[Txi]:Txtrf),obno(obno),refstr(refstr),obfragz(obfragz),fnobfragz(fnobfragz),fnnachhz(fnnachhz),sonderrf(sonderrf)/*=0*///,eingetragen(0)
+	woher(woher),Txtrf(Txtrf.empty()?Txi==-1?string():(*TxBp)[Txi]:Txtrf),obno(obno==(uchar)-1?part==puchar?1:0:obno),refstr(refstr),obfragz(obfragz),fnobfragz(fnobfragz),fnnachhz(fnnachhz),sonderrf(sonderrf)/*=0*///,eingetragen(0)
 {
 	//// <<gruen<<"Erstelle optcl, pname: "<<schwarz<<violett<<pname<<endl;
 }
