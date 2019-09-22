@@ -3456,7 +3456,7 @@ uchar VerzeichnisGibts(const char* vname)
 
 void wpgcl::virtoausgeb() const
 {
-	cout<<"pname:"<<blau<<setw(13)<<pname<<schwarz;
+	cout<<"pname:"<<gruen<<setw(13)<<pname<<schwarz;
 	cout<<",pptr:"<<gruen<<setw(45);
 	if (pptr) {
 		if (part==puchar||part==pbin) {
@@ -3500,11 +3500,17 @@ void optcl::virtoausgeb() const
 	cout<<",obno:"<<blau<<(int)obno<<schwarz;
 	cout<</*endl<<setw(22)<<*/",bemkg:"<<blau<<bemerk<<schwarz;
 	cout<<",woh:"<<blau<<(int)woher<<schwarz;
+	cout<<",Txtrf:"<<blau<<Txtrf<<schwarz;
 	cout<<",geg:"<<blau<<(int)gegenteil<<schwarz;
 	cout<<",nsp:"<<blau<<(int)nichtspeichern<<schwarz;
 	cout<<",eing:"<<blau<<(int)eingetragen<<schwarz;
+	cout<<",refstr:"<<blau<<refstr<<schwarz;
+	cout<<",obfragz:"<<blau;if(obfragz)cout<<(int)*obfragz;else cout<<"(0)"<<schwarz;
+	cout<<",fnobfragz:"<<blau<<fnobfragz<<schwarz;
+	cout<<",fnnachhz:"<<blau<<fnnachhz<<schwarz;
+	cout<<",fnvorhz:"<<blau<<fnvorhz<<schwarz;
 	cout<<",sonderrf:"<<blau<<(int)sonderrf<<schwarz;
-	cout<<endl;
+	cout<<endl<<endl;
 } // void optcl::virtoausgeb()
 
 

@@ -3439,25 +3439,6 @@ void hhcl::holfbpar()
 	} // 				if (fbip.size())
 } // void hhcl::holfbpar
 
-// aufgerufen in lauf //α
-void hhcl::virtrueckfragen()
-{
-	hLog(violetts+Tx[T_virtrueckfragen]+", rzf: "+blau+ltoan(rzf)+schwarz);
-		// Rueckfragen koennen auftauchen in: virtrueckfragen, konfcapi (<- pruefcapi), aenderefax, rufpruefsamba
-	if (rzf) { //ω
-		neurf();
-		rueckfragen();
-	caus<<"obfa[2] in pvirtvorrueckfragen: "<<(int)obfa[2]<<endl;
-		return;
-// 		fuellfbip(); // sollte in virtlieskonfein() reichen
-		// sql abfragen, eintragen, sql aus opn loeschen, maps loeschen, maps neu erstellen
-		////		opn.oausgeb(rot);
-	} // if (rzf) //α
-	// dhcl::virtrueckfragen();
-	hcl::rueckfragen();
-	//// opn.oausgeb(rot);
-} // void hhcl::virtrueckfragen
-//ω
 const string hhcl::initdhyladt{"/etc/init.d/hylafax"};
 
 // aufgerufen in: pruefhyla, main
