@@ -189,7 +189,10 @@ enum T_
 	T_empfangenes_Fax_erneut_bereitstellen,
 	T_uml_k,
 	T_umleiten_l,
-	T_ausgehendes_Fax_vorzeitig_auf_zweitem_Weg_schicken,
+	T_ausgehendes_Fax_vorzeitig_ueber_andere_Wege_schicken,
+	T_auml_k,
+	T_alleumleiten_l,
+	T_alle_ausgehenden_Faxe_vorzeitig_ueber_andere_Wege_schicken,
 	T_kez_k,
 	T_korrerfolgszeichen_l,
 	T_in_der_Datenbanktabelle,
@@ -554,6 +557,7 @@ enum T_
 	T_Capispooldatei,
 	T_Gesamt,
 	T_Kein_Fax_zum_Loeschen_vorhanden,
+	T_Kein_Fax_zum_Umleiten_vorhanden,
 	T_empferneut,
 	T_loeschewaise,
 	T_loescheallewartenden,
@@ -667,6 +671,7 @@ enum T_
 	T_sortprio,
 	T_standardprio,
 	T_fstab_Eintrag_wieder_entfernen,
+	T_Sollen_alle_Faxe_umgeleitet_werden,
 	T_MAX //α
 }; // enum T_ //ω
 
@@ -736,18 +741,12 @@ struct fxfcl // Faxfile
     fxfcl(const string& npdf,const string& spdf,const string& ur,unsigned pprio): npdf(npdf),spdf(spdf),ur(ur),pprio(pprio),pseiten(0) {}
     // nur fuer Initialisierung in fsfcl, Konstruktur /*1*/, nur fuer wegfaxen
     fxfcl(unsigned pprio, const string& npdf,const string& spdf,ulong pseiten): npdf(npdf),spdf(spdf),pprio(pprio),pseiten(pseiten) {}
-    fxfcl(const string& spdf,const string& ur,unsigned pprio): npdf(""),spdf(spdf),pprio(pprio),pseiten(0) {}
+    fxfcl(const string& spdf,const string& ur,unsigned pprio): npdf(string()),spdf(spdf),pprio(pprio),pseiten(0) {}
     fxfcl() {}
 };
 
 struct fsfcl : public fxfcl // Faxsendfile
 {
-	  void ausgeb() {
-			cout<<"id : "<<blau<<id<<schwarz<<", telnr: "<<blau<<telnr<<schwarz<<", mailges: "<<blau<<mailges<<schwarz<<", original: "<<blau<<original
-				<<schwarz<<", origvu: "<<blau<<origvu<<schwarz<<", fobfbox: "<<blau<<(int)fobfbox<<schwarz<<", fobcapi: "<<blau<<(int)fobcapi<<schwarz<<", fobhyla: "<<
-				blau<<(int)fobhyla<<schwarz<<", fobkmail: "<<blau<<(int)fobkmail<<schwarz<<", fobvmail: "<<blau<<(int)fobvmail<<schwarz<<", idalt: "<<blau<<idalt<<
-				schwarz<<", fbdials: "<<blau<<fbdials<<schwarz<<", fbsdt: "<<blau<<fbsdt<<schwarz<<endl;
-		}
     string id;   // id in spooltab
     string telnr;    // Telnr. des Adressaten
     string capisd; // capispooldatei
@@ -815,6 +814,7 @@ struct fsfcl : public fxfcl // Faxsendfile
     void fboxausgeb(hhcl *const hhip, stringstream *ausgp, uchar fuerlog=0, int obverb=0, int oblog=0,ulong faxord=0);
     void capiausgeb(hhcl *const hhip, stringstream *ausgp, const string& maxctrials, uchar fuerlog=0, int obverb=0, int oblog=0,ulong faxord=0);
     void hylaausgeb(stringstream *ausgp, hhcl *hhip/*, int obsfehlt*/, uchar fuerlog=0, int obverb=0, uchar obzaehl=0, int oblog=0);
+	  void ausgeb(int obverb=0);
     int holcapiprot(int obverb);
 		void scheitere(const string& wvz, const string& ngvz, const string& cuser, const string* const ziel=0, const int obverb=0, const int oblog=0);
 }; // class fsfcl
@@ -878,7 +878,8 @@ class hhcl:public dhcl
 		uchar loea{0}; // loesche alle wartenden Faxe und zugehoerige Dateieintraege
 		uchar loee{0}; // empfangene Dateien loeschen, die nicht verarbeitet werden koennen
 		uchar erneut{0};  // empfangenes Fax erneut bereitstellen
-		uchar uml{0}; // umleiten: vorzeitig den zweiten Weg aktivieren
+		uchar uml{0}; // umleiten: vorzeitig weitere Wege aktivieren
+		uchar auml{0}; // alle umleiten: vorzeitig alle Wege aktivieren
 		uchar kez{0};    // korrigiere Erfolgskennzeichen
 		uchar bvz{0};    // bereinige Gescheitertenverzeichnis, letztes Gefaxtverzeichnis und Warteverzeichnis
 		uchar tulista{0};   // liste Archiv auf
@@ -1057,7 +1058,7 @@ class hhcl:public dhcl
 		void hylasv1(); // in loeschehyla benoetigt
 		void hylasv2(hyinst hyinstart); // // in loeschehyla benoetigt
 		void suchestr();
-		int aenderefax(const int aktion=0,const size_t aktc=0); // aktion: 0=loeschen, 1=umleiten
+		int aenderefax(const int aktion=0,const size_t aktc=0); // aktion: 0=loeschen, 1=umleiten, 2=alle umleiten
 		void empferneut();
     size_t  loeschewaise();
 		size_t loescheallewartenden();
@@ -1067,11 +1068,11 @@ class hhcl:public dhcl
     void WVZinDatenbank(vector<fxfcl> *const fxvp, size_t aktc); // in wegfaxen
 		void inDbc(DB *My, const string& spooltab, const string& altspool, const string& spoolg, const fsfcl *const fsfp, 
 		           const string& telnr, const size_t aktc);
-		void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
-		void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
-		void faxemitF(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
-		void vschlmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
-		void klarmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& ff);
+		void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& zfxdt);
+		void faxemitH(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& zfxdt);
+		void faxemitF(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& zfxdt);
+		void vschlmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& zfxdt);
+		void klarmail(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& zfxdt);
 		void inDBh(DB *My, const string& spooltab, const string& altspool, const string& hylaid, 
 				const fsfcl *const fsfp,const string *const tel, const size_t aktc);
 		void inDBf(DB *My, const string& spooltab, const string& altspool, const string& fbvwdt,const fsfcl *const fsfp,const size_t aktc);

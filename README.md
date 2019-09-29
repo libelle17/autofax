@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.48246) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.48282) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -177,7 +177,7 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.48246</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.48282</b>
 Using: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
@@ -194,6 +194,8 @@ associated entries from &lsquo;<b>spool</b>&lsquo;
 (<b>0</b>) <b><br>
 -red, --redirect</b>: redirect outgoing fax ahead by the
 other channel (<b>0</b>) <b><br>
+-reda, --redirectall</b>: redirect all outgoing faxes ahead
+by other channels (<b>0</b>) <b><br>
 -csf, --correctsuccessflag</b>: in the database table
 &lsquo;<b>outa</b>&lsquo; the success flag is being
 corrected (<b>0</b>) <b><br>
@@ -856,7 +858,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.48246) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.48282) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1048,7 +1050,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.48246</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.48282</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
@@ -1065,6 +1067,8 @@ loeschen (<b>0</b>) <b><br>
 bereitstellen (<b>0</b>) <b><br>
 -uml, --umleiten</b>: ausgehendes Fax vorzeitig auf zweitem
 Weg schicken (<b>0</b>) <b><br>
+-auml, --alleumleiten</b>: alle ausgehenden Faxe vorzeitig
+ueber andere Wege schicken (<b>0</b>) <b><br>
 -kez, --korrerfolgszeichen</b>: in der Datenbanktabelle
 &lsquo;<b>outa</b>&lsquo; wird das Erfolgszeichen korrigiert
 (<b>0</b>) <b><br>

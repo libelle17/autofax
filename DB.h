@@ -468,7 +468,7 @@ class RS
     vector<long> lenge;
     vector<long> prec;
     vector<string> kommentar;
-    char*** HolZeile();
+    char*** HolZeile(); 
     void setzzruck();
     void dsclear();
     template<typename sT> 
