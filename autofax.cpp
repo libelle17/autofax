@@ -5986,28 +5986,36 @@ void hhcl::empferneut()
 // loesche die Eintraege in spooltab, deren Dateien nicht im Warteverzeichnis nicht im Capi- und nicht im Hylasystem stehen
 size_t hhcl::loeschewaise()
 {
+	auto const altZDB{ZDB};
+	auto const altobverb{obverb};
+	ZDB=1;
+	obverb=1;
 	hLog(blaus+Tx[T_loeschewaise]+schwarz);
 	const size_t aktc{0};
 	vector<string> allec;
 	vector<string> ids;
 	char*** cerg;
-	RS su(My,"SELECT original p0, capispooldt p1, hylanr p2, id p3 FROM `"+spooltab+"`",aktc,ZDB);
+	RS su(My,"SELECT original p0, capispooldt p1, hylanr p2, fbspooldt p3, id p4 FROM `"+spooltab+"`",aktc,ZDB);
 	while (cerg=su.HolZeile(),cerg?*cerg:0) {
 		if (*(*cerg+0)) {
 			struct stat entryo{0};
-			//// <<"Überprüfe: "<<gruen<<wvz+vtz+cjj(cerg,0)<<schwarz<<endl;
+			caus <<"Überprüfe: "<<gruen<<wvz+vtz+cjj(cerg,0)<<schwarz<<endl;
 			if (!lstat((wvz+vtz+cjj(cerg,0)).c_str(),&entryo)) continue; // Wenn es die Datei im Warteverzeichnis gibt
-			//// <<"capispooldt: "<<gruen<<cfaxusersqvz+vtz+cjj(cerg,1)<<schwarz<<endl;
+			caus <<"capispooldt: "<<gruen<<cfaxusersqvz+vtz+cjj(cerg,1)<<schwarz<<endl;
 			if (*(*cerg+1)) if (*cjj(cerg,1)) {
 				if (!lstat((cfaxusersqvz+vtz+cjj(cerg,1)).c_str(),&entryo)) continue; // wenn eine capispooldt drinsteht und es sie gibt
 			}
-			//// <<"hsendqvz: "<<gruen<<hsendqvz+"/q"+cjj(cerg,2)<<schwarz<<endl;
+			caus <<"hsendqvz: "<<gruen<<hsendqvz+"/q"+cjj(cerg,2)<<schwarz<<endl;
 			if (*(*cerg+2)) if (*cjj(cerg,2)) if (memcmp("0",cjj(cerg,2),2)) { // hylanr hat in der Datenbank Vorgabewert 0
 				if (!lstat((hsendqvz+"/q"+cjj(cerg,2)).c_str(),&entryo)) continue; // wenn eine Hylaspooldatei drinsteht und es sie gibt
 			}
-			if (*(*cerg+3)) {
-				fLog(rots+Tx[T_Aus]+"'"+blau+spooltab+rot+"'"+Tx[T_zu_loeschen]+schwarz+"'"+blau+cjj(cerg,0)+schwarz+"', id: "+blau+cjj(cerg,3)+schwarz,1,1);
-				ids.push_back(cjj(cerg,3));
+			if (*(*cerg+3)) if (*cjj(cerg,3)) {
+				if (!lstat((fbwvz+vtz+cjj(cerg,3)+".vw").c_str(),&entryo) && !lstat((fbwvz+vtz+cjj(cerg,3)+".tif").c_str(),&entryo)) continue; // wenn fbfax-Dateien da sind
+		cmd=sudc+"find '"+fbwvz+"' -maxdepth 1 -type f -iname 'dt*.vw'"; ////  -printf '%f\\n'";
+			}
+			if (*(*cerg+4)) {
+				fLog(rots+Tx[T_Aus]+"'"+blau+spooltab+rot+"'"+Tx[T_zu_loeschen]+schwarz+"'"+blau+cjj(cerg,0)+schwarz+"', id: "+blau+cjj(cerg,4)+schwarz,1,1);
+				ids.push_back(cjj(cerg,4));
 			}
 		} // if (*(*cerg+0)) 
 	} // while (cerg=su.HolZeile(),cerg?*cerg:0) 
@@ -6023,6 +6031,8 @@ size_t hhcl::loeschewaise()
 	} else {
 		fLog(Tx[T_Keine_waisen_Faxe_zum_Loeschen_da],1,oblog);
 	} // 	if (ids.size()) else
+	obverb=altobverb;
+	ZDB=altZDB;
 	return ids.size();
 } // int hhcl::loeschewaise()
 
@@ -8091,6 +8101,10 @@ void hhcl::bereinigecapi(const size_t aktc)
 // aufgerufen in aenderefax, zeigweitere
 void hhcl::sammlefbox(vector<fsfcl> *fsfvp,const size_t aktc)
 {
+	auto const altZDB{ZDB};
+	auto const altobverb{obverb};
+	ZDB=1;
+	obverb=1;
 	hLog(violetts+Tx[T_sammlefbox]+schwarz);
 	struct stat entryvz{0};
 	if (!lstat(fbwvz.c_str(),&entryvz)) {
@@ -8109,7 +8123,7 @@ void hhcl::sammlefbox(vector<fsfcl> *fsfvp,const size_t aktc)
 			if (cerg=rs.HolZeile(),cerg?*cerg:0) indb=1;
 			if (!indb) {
 				/*7*/fsfcl fsf;
-				const size_t p1=qrueck[0].rfind('/'), p2=qrueck[0].rfind('.');
+				const size_t p1{qrueck[0].rfind('/')}, p2{qrueck[0].rfind('.')};
 				fsf.fbsdt=qrueck[0].substr(p1+1,p2-p1-1);
 				fsf.hylanr="-1";
 				fsf.pprio=11;
@@ -8119,6 +8133,8 @@ void hhcl::sammlefbox(vector<fsfcl> *fsfvp,const size_t aktc)
 			} // if (!indb) 
 		} // for(size_t i=0
 	} // if (!lstat(cfaxusersqvz.c_str(),&entryvz)) 
+	obverb=altobverb;
+	ZDB=altZDB;
 } // void hhcl::sammlefbox
 
 // aufgerufen in aenderefax, zeigweitere
