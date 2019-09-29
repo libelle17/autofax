@@ -2780,7 +2780,7 @@ void pruefmehrfach(const string& wen,int obverb/*=0*/,uchar obstumm/*=0*/)
 				aufSplit(&pvec,rueck[iru],' ',/*auchleer=*/0); 
 				caus<<"pvec[pvec.size()-1]: "<<gruen<<pvec[pvec.size()-1]<<" "<<getpid()<<schwarz<<endl;
 				if (pvec.size()>2 && pvec[pvec.size()-1]!=ltoan(getpid())) { // und wenn nicht ich
-					sek=atol(pvec[1].c_str());
+					sek=atol(pvec[pvec.size()-2].c_str());
 					if (sek>smax) {    // wenn es mindestens eine Stunde laeuft
 						cout<<Txk[T_Program]<<blau<<iwen<<schwarz<<Txk[T_laueft_schon_einmal_aber]<<" "<<rot<<sek<<schwarz<<" s (> "<<blau<<smax<<schwarz<<" s), "<<Txk[T_wird_deshalb_abgebrochen]<<endl;
 						if (!systemrueck(string("kill ")+(aru?"-9 ":"")+pvec[pvec.size()-1]+" 2>/dev/null",obverb,0,0,/*obsudc=*/1)) {
