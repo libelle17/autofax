@@ -3329,7 +3329,6 @@ void hhcl::pvirtvorrueckfragen()
 	if (rzf) obfa[0]=obfa[1]=obfa[2]=1; // vor rueckfragen alle Moeglichkeiten pruefen
 	if (obfa[1]) pruefisdn(); // setzt ggf. obfa[1] wieder zurueck
 	if (obfa[2]) pruefmodem();
-	caus<<"obfa[2] in pvirtvorrueckfragen: "<<(int)obfa[2]<<endl;
 	if (!obfrbox) obfa[0]=0;
 	hintervalt=hintervall;
 } // void hhcl::pvirtvorrueckfragen //α
@@ -9929,6 +9928,8 @@ void hhcl::pvirtnachrueckfragen()
 		if (initDB()) {
 			exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));
 		}
+		obsetz=0; // Aufruf nicht mitzaehlen
+		keineverarbeitung=1; // nicht pruefggfmehrfach aufrufen
 		if (tulista) {
 			tu_lista("1");
 		} else if (tulistf) {

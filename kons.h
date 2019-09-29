@@ -1269,11 +1269,11 @@ extern class lsyscl lsys;
 class hcl
 {
 	private:
-		uchar obsetz=1; // setzzaehler
 		const char* const DPROG;
 		const uchar mitcron; // ob Programm auch in Cron eingetragen werden kann; kann im Konstruktor angegeben werden
 		const uchar parstreng; // breche Programm ab, wenn Parameter nicht gefunden
 	protected:
+		uchar obsetz=1; // setzzaehler
 		pidvec pidv;
     double tstart, tende;
     size_t optslsz=0; // last opts.size()
