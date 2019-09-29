@@ -2778,11 +2778,12 @@ void pruefmehrfach(const string& wen,int obverb/*=0*/,uchar obstumm/*=0*/)
 				// z.B. 'autofax      57  2939'
 				svec pvec;
 				aufSplit(&pvec,rueck[iru],' ',/*auchleer=*/0); 
-				if (pvec.size()>2 && pvec[2]!=ltoan(getpid())) { // und wenn nicht ich
+				caus<<"pvec[3]: "<<gruen<<pvec[3]<<" "<<getpid()<<schwarz<<endl;
+				if (pvec.size()>2 && pvec[3]!=ltoan(getpid())) { // und wenn nicht ich
 					sek=atol(pvec[1].c_str());
 					if (sek>smax) {    // wenn es mindestens eine Stunde laeuft
 						cout<<Txk[T_Program]<<blau<<iwen<<schwarz<<Txk[T_laueft_schon_einmal_aber]<<" "<<rot<<sek<<schwarz<<" s (> "<<blau<<smax<<schwarz<<" s), "<<Txk[T_wird_deshalb_abgebrochen]<<endl;
-						if (!systemrueck(string("kill ")+(aru?"-9 ":"")+pvec[2]+" 2>/dev/null",obverb,0,0,/*obsudc=*/1)) {
+						if (!systemrueck(string("kill ")+(aru?"-9 ":"")+pvec[3]+" 2>/dev/null",obverb,0,0,/*obsudc=*/1)) {
 							rueck.erase(rueck.begin()+iru);
 							continue;
 						}
