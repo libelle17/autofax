@@ -169,9 +169,9 @@ const char *DB_T[T_dbMAX+1][SprachZahl]={
 	{"",""}
 };
 // Txdbcl::Txdbcl() {TCp=(const char* const * const * const *)&TextC;}
-// class Txdbcl Txd;
-// class TxB Txd(DB_T);
-class TxB Txd((const char* const* const* const*)DB_T);
+// struct Txdbcl Txd;
+// struct TxB Txd(DB_T);
+struct TxB Txd((const char* const* const* const*)DB_T);
 
 #ifdef mitpostgres 
 const DBSTyp myDBS=Postgres;

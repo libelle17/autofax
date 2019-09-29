@@ -678,11 +678,11 @@ enum T_
 enum FaxTyp:uchar {keintyp=0,fritz,capi,hyla,kmail,vmail};
 enum FxStat:uchar {init/*0*/,gestrichen,schwebend,wartend/*3*/,blockiert/*4*/,bereit/*5*/,verarb/*6*/,gesandt/*7*/,gescheitert/*8*/,fehlend,woasined};
 enum hyinst {keineh,hysrc,hypak,hyppk}; // hyla source, hyla Paket, hylaplus Paket
-class fsfcl; // Faxsendfile
-class hhcl; // Programmparameter
+struct fsfcl; // Faxsendfile
+struct hhcl; // Programmparameter
 void dorename(const string& quelle, const string& ziel, const string& cuser=nix, uint *vfehlerp=0, uchar schonda=0, int obverb=0, int oblog=0,
                   stringstream *ausgp=0);
-class zielmustercl; // fuer die Verteilung der erfolgreich gefaxten Dateien auf verschiedene Dateien
+struct zielmustercl; // fuer die Verteilung der erfolgreich gefaxten Dateien auf verschiedene Dateien
 string kopiere(const string& qdatei, const string& zield, uint *kfehler, const uchar wieweiterzaehl, int obverb=0, int oblog=0);
 string kopiere(const string& qdatei, const vector<shared_ptr<zielmustercl>>& zmp, uint *kfehler, const uchar wieweiterzaehl, int obverb=0, int oblog=0);
 string zielname(const string& qdatei, const string& zielvz,uchar wieweiterzaehl=0, string* zieldatei=0, uchar* obgleichp=0, 
@@ -720,7 +720,7 @@ struct zielmustercl
     const string& holmuster() const;
     const string& holziel() const;
     int obmusterleer() const;
-}; // class zielmustercl
+}; // struct zielmustercl
 
 struct urfxcl // urspruengliche Dateidaten vor Aufteilung an verschiedene Faxadressaten
 {
@@ -817,11 +817,11 @@ struct fsfcl : public fxfcl // Faxsendfile
 	  void ausgeb(int obverb=0);
     int holcapiprot(int obverb);
 		void scheitere(const string& wvz, const string& ngvz, const string& cuser, const string* const ziel=0, const int obverb=0, const int oblog=0);
-}; // class fsfcl
+}; // struct fsfcl
 
 
 //α
-class hhcl:public dhcl
+struct hhcl:dhcl
 {
 	private: 
 		svec fbip; // Fritzbox-IP
@@ -1120,5 +1120,5 @@ class hhcl:public dhcl
 	public: //α
 		hhcl(const int argc, const char *const *const argv);
 		~hhcl();
-		friend class fsfcl;
-}; // class hhcl //ω
+		friend struct fsfcl;
+}; // struct hhcl //ω

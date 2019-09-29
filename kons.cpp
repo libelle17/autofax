@@ -216,7 +216,7 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
   // T_laeuft_schon_einmal_seit
   {"' laeuft schon einmal seit ","' is running already once since "},
 	// T_sec_Breche_ab
-  {"sec. Breche ab.","sec. Aborting."},
+  {". Breche ab.",". Aborting."},
 	// T_laueft_schon_einmal_aber
 	{"' laeuft schon einmal, aber","' is running already once, but"},
 	// T_wird_deshalb_abgebrochen
@@ -719,10 +719,10 @@ Txkonscl::Txkonscl()
   TCp=(const char* const * const * const *)&TextC;
 }
 */
-class TxB Txk((const char* const* const* const*)kons_T);
-extern class TxB Tx;
+struct TxB Txk((const char* const* const* const*)kons_T);
+extern struct TxB Tx;
 
-////class Txkonscl Txk;
+////struct Txkonscl Txk;
 
 uchar nrzf{0}; // nicht rueckzufragen, fuer Aufruf aus Cron, wird auch in DB verwendet 
 
@@ -1867,7 +1867,7 @@ string& lsyscl::getlib64(int obverb/*=0*/,int oblog/*=0*/)
 	return usr_lib64_vz;
 } // string& lsyscl::getlib64(int obverb/*=0*/,int oblog/*=0*/)
 
-class lsyscl lsys;
+struct lsyscl lsys;
 
 /*//
 betrsys pruefos()
@@ -2775,33 +2775,43 @@ void pruefmehrfach(const string& wen,int obverb/*=0*/,uchar obstumm/*=0*/)
 		// if (rueck.size()==1) // ich break; // geht nicht so einfach, da jeder Aufruf mehrere Prozesse beinhalten kann
 		if (aru<2) {
 			for(unsigned iru=0;iru<rueck.size();iru++) {
-				// z.B. 'autofax      57  2939'
-				svec pvec;
-				aufSplit(&pvec,rueck[iru],' ',/*auchleer=*/0); 
-				// <<"pvec[pvec.size()-1]: "<<gruen<<pvec[pvec.size()-1]<<" "<<getpid()<<schwarz<<endl;
-				if (pvec.size()>2 && pvec[pvec.size()-1]!=ltoan(getpid())) { // und wenn nicht ich; muss wegen Befehlszeilenparameter von hinten gezaehlt werden
-					sek=atol(pvec[pvec.size()-2].c_str());
-					if (sek>smax) {    // wenn es mindestens zwei Stunden laeuft
-						cout<<Txk[T_Program]<<blau<<iwen<<schwarz<<Txk[T_laueft_schon_einmal_aber]<<" "<<rot<<sek<<schwarz<<" s (> "<<blau<<smax<<schwarz<<" s), "<<Txk[T_wird_deshalb_abgebrochen]<<endl;
-						if (!systemrueck(string("kill ")+(aru?"-9 ":"")+pvec[pvec.size()-1]+" 2>/dev/null",obverb,0,0,/*obsudc=*/1)) {
-							rueck.erase(rueck.begin()+iru);
-							continue;
+				if (!obaufhoeren) {
+					// z.B. 'autofax      57  2939'
+					svec pvec;
+					aufSplit(&pvec,rueck[iru],' ',/*auchleer=*/0); 
+					// <<"pvec[pvec.size()-1]: "<<gruen<<pvec[pvec.size()-1]<<" "<<getpid()<<schwarz<<endl;
+					// und wenn nicht ich; pvec-Index muss wegen Befehlszeilenparameter von hinten gezaehlt werden
+					if (pvec.size()>2 && pvec[pvec.size()-1]!=ltoan(getpid())) { 
+						sek=atol(pvec[pvec.size()-2].c_str());
+						if (sek>smax) {    // wenn es mindestens zwei Stunden laeuft
+							cout<<Txk[T_Program]<<blau<<iwen<<schwarz<<Txk[T_laueft_schon_einmal_aber]<<" "<<rot<<sek<<schwarz<<" s";
+							if (sek>60) {
+								cout<<" ("<<rot<<(sek/60)<<schwarz<<" min";
+								if (sek>3600) 
+									cout<<" ("<<rot<<(sek/3600)<<schwarz<<" h)";
+								cout<<")";
+							} // 							if (sek>60)
+							cout<<" (> "<<blau<<smax<<schwarz<<" s), "<<Txk[T_wird_deshalb_abgebrochen]<<endl;
+							if (!systemrueck(string("kill ")+(aru?"-9 ":"")+pvec[pvec.size()-1]+" 2>/dev/null",obverb,0,0,/*obsudc=*/1)) {
+								rueck.erase(rueck.begin()+iru);
+								continue;
+							}
+						} else {
+							// wenn ein fremder Prozess noch nicht die Zeitgrenze ueberschritten hat, dann diesen Aufruf hier beenden
+							obaufhoeren=1;
 						}
-					} else {
-						// wenn ein fremder Prozess noch nicht die Zeitgrenze ueberschritten hat, dann diesen Aufruf hier beenden
-						obaufhoeren=1;
-					}
-				} // 			if (pvec.size()>2)
+					} // 			if (pvec.size()>2)
+				} // 				if (!obaufhoeren)
 			} // 		for(int iru=0;iru<rueck.size();iru++)
 			// if (aru<2)
 		} else if (obaufhoeren) {
 			if (obstumm)
 				exit(schluss(0));
-			cout<<blau<<bef<<schwarz<<endl;
-			for(unsigned iru=0;iru<rueck.size();iru++) {
-				cout<<blau<<iru<<schwarz<<": "<<rueck[iru]<<endl;
-			}
-			exit(schluss(98,Txk[T_Program]+blaus+wen+schwarz+Txk[T_laeuft_schon_einmal_seit]+blau+ltoan(sek)+" "+schwarz+Txk[T_sec_Breche_ab],/*oblog*/0));
+			//// <<blau<<bef<<schwarz<<endl;
+			//// for(unsigned iru=0;iru<rueck.size();iru++) { cout<<blau<<iru<<schwarz<<": "<<rueck[iru]<<endl; }
+			const string min{ltoan(sek/60)};
+			const string std{ltoan(sek/3600)};
+			exit(schluss(98,Txk[T_Program]+blaus+wen+schwarz+Txk[T_laeuft_schon_einmal_seit]+blau+ltoan(sek)+" s"+(sek>60?" ("+min+" min"+(sek>3600?" ("+std+" h)":"")+")":"")+schwarz+Txk[T_sec_Breche_ab],/*oblog*/0));
 		} // if (aru<2) else
 	} // 	for(int aru=0;aru<3;aru++) 
 	/*//
@@ -5680,7 +5690,7 @@ void hcl::rueckfragen()
 // wird aufgerufen in lauf
 void hcl::pruefggfmehrfach()
 {
-	if (!obhilfe &&!obvi && !kfzg &&!obvs &&!zeigvers &&!rzf) {
+	if (!obhilfe &&!obvi &&!kfzg &&!obvs &&!zeigvers &&!rzf) {
 		pruefmehrfach(meinname,obverb,nrzf);
 	}
 } // void hhcl::pruefggfmehrfach
@@ -7227,5 +7237,5 @@ int mntpunkt(const char* mntpfad) {
 }
 
 // damit nicht Template-Klassen-Funktionen in Header-Dateien geschrieben werden muessen
-template class schAcl<WPcl>;
-template class schAcl<optcl>;
+template struct schAcl<WPcl>;
+template struct schAcl<optcl>;

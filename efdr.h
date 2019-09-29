@@ -596,22 +596,22 @@ struct _all_screens
 // ALL_SCREENS;
 
 // chtype string
-class chtstr
+struct chtstr
 {
 	private:
-	chtype *inh;
-	char *ch=0;
-	size_t len;
+		chtype *inh;
+		char *ch=0;
+		size_t len;
 	public:
-	void gibaus() const;
-//	chtstr(size_t len);
-	// chtype *char2Chtypeh(const char *string, int *to, int *align, int highinr=0);
-	chtstr(const char *string, int *to, int *align, const int highnr=0);
-	int rauskopier(chtype **ziel);
-	char *chtype2Char();
-	inline chtype *getinh() const { return inh; }
-	inline size_t getlen() const { return len; }
-};
+		void gibaus() const;
+		//	chtstr(size_t len);
+		// chtype *char2Chtypeh(const char *string, int *to, int *align, int highinr=0);
+		chtstr(const char *string, int *to, int *align, const int highnr=0);
+		int rauskopier(chtype **ziel);
+		char *chtype2Char();
+		inline chtype *getinh() const { return inh; }
+		inline size_t getlen() const { return len; }
+}; // struct chtstr
 
 
 void registerCDKObject(SScreen *screen, EObjectType cdktype, void *object);

@@ -1392,7 +1392,7 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"",""} //α
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
-class TxB Tx((const char* const* const* const*)DPROG_T);
+struct TxB Tx((const char* const* const* const*)DPROG_T);
 const char sep = 9; // geht auch: "[[:blank:]]"
 const char *logdt="/var/log/" DPROG "vorgabe.log";//darauf wird in kons.h verwiesen;
 pidvec pidw; // wird zweimal verwendet, um auf Kindprozesse zu warten: in wegfaxen (auf die Faxarten) und in pvirtfueraus (auf korrigierefbox, -capi und -hyla
@@ -9940,7 +9940,6 @@ void hhcl::pvirtnachrueckfragen()
 			untersuchespool(/*mitupd=*/0,/*aktc=*/3);
 			zeigweitere();
 			hLog(blaus+Txk[T_Ende]+schwarz);
-			virtschlussanzeige();
 		} else if (!suchstr.empty()) {
 			suchestr();
 		} // if (tulista) else else else else
