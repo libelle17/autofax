@@ -2762,7 +2762,7 @@ int systemrueck(const string& cmd, int obverb/*=0*/, int oblog/*=0*/, vector<str
 void pruefmehrfach(const string& wen,int obverb/*=0*/,uchar obstumm/*=0*/)
 {
 	fLog(violetts+Txk[T_pruefmehrfach]+schwarz,obverb,0);
-	const long smax{3600}; // maximal tolerierte Sekundenzahl, bevor statt dem eigenen Prozess der andere abgebrochen wird
+	const long smax{7200}; // maximal tolerierte Sekundenzahl, bevor statt dem eigenen Prozess der andere abgebrochen wird
 	svec rueck;
 	const string iwen{wen.empty()?base_name(meinpfad()):wen};
 	// bei valgrind steht z.B. 'memecheck-amd64-' am Anfang
@@ -2770,28 +2770,31 @@ void pruefmehrfach(const string& wen,int obverb/*=0*/,uchar obstumm/*=0*/)
 	const string bef{"ps -eo comm,args,etimes,pid|grep -P 'valgrind.*"+iwen+"|^"+iwen+"'|grep -P '"+iwen+"([[:space:]]|\\z)'|grep -v '[[:space:]]grep -P'"};
 	systemrueck(bef,obverb,0,&rueck,/*obsudc=*/0);
 	long sek{0};
+	uchar obaufhoeren{0};
 	for(int aru=0;aru<3;aru++) {
-		if (rueck.size()==1) // ich
-			break;
+		// if (rueck.size()==1) // ich break; // geht nicht so einfach, da jeder Aufruf mehrere Prozesse beinhalten kann
 		if (aru<2) {
 			for(unsigned iru=0;iru<rueck.size();iru++) {
 				// z.B. 'autofax      57  2939'
 				svec pvec;
 				aufSplit(&pvec,rueck[iru],' ',/*auchleer=*/0); 
-				caus<<"pvec[pvec.size()-1]: "<<gruen<<pvec[pvec.size()-1]<<" "<<getpid()<<schwarz<<endl;
-				if (pvec.size()>2 && pvec[pvec.size()-1]!=ltoan(getpid())) { // und wenn nicht ich
+				// <<"pvec[pvec.size()-1]: "<<gruen<<pvec[pvec.size()-1]<<" "<<getpid()<<schwarz<<endl;
+				if (pvec.size()>2 && pvec[pvec.size()-1]!=ltoan(getpid())) { // und wenn nicht ich; muss wegen Befehlszeilenparameter von hinten gezaehlt werden
 					sek=atol(pvec[pvec.size()-2].c_str());
-					if (sek>smax) {    // wenn es mindestens eine Stunde laeuft
+					if (sek>smax) {    // wenn es mindestens zwei Stunden laeuft
 						cout<<Txk[T_Program]<<blau<<iwen<<schwarz<<Txk[T_laueft_schon_einmal_aber]<<" "<<rot<<sek<<schwarz<<" s (> "<<blau<<smax<<schwarz<<" s), "<<Txk[T_wird_deshalb_abgebrochen]<<endl;
 						if (!systemrueck(string("kill ")+(aru?"-9 ":"")+pvec[pvec.size()-1]+" 2>/dev/null",obverb,0,0,/*obsudc=*/1)) {
 							rueck.erase(rueck.begin()+iru);
 							continue;
 						}
-					} // 				if (sek>15)
+					} else {
+						// wenn ein fremder Prozess noch nicht die Zeitgrenze ueberschritten hat, dann diesen Aufruf hier beenden
+						obaufhoeren=1;
+					}
 				} // 			if (pvec.size()>2)
 			} // 		for(int iru=0;iru<rueck.size();iru++)
 			// if (aru<2)
-		} else {
+		} else if (obaufhoeren) {
 			if (obstumm)
 				exit(schluss(0));
 			cout<<blau<<bef<<schwarz<<endl;
