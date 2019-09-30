@@ -606,6 +606,7 @@ enum T_
 	T_nicht_gefunden_Eintrag_ggf_loeschen_mit_,
 	T_in_wegfaxen,
 	T_in_korrerfolgszeichen,
+	T_fxinDatenbank,
 	T_WVZinDatenbank,
 	T_inDbc,
 	T_faxemitH,
@@ -729,7 +730,7 @@ struct urfxcl // urspruengliche Dateidaten vor Aufteilung an verschiedene Faxadr
 	  unsigned pprio; // Prioritaet der Fax-Programme: 0= per Konfigurationsdatei, 1=capi, 2=hyla, 3=fbfax per Faxdateiname, 
 										// s. anfaxstr-Befuellung in inspoolschreiben() 
     urfxcl(const string& teil, const string& ur,unsigned pprio): teil(teil), ur(ur), pprio(pprio) {}
-};
+}; // struct urfxcl
 
 struct fxfcl // Faxfile
 {
@@ -743,7 +744,7 @@ struct fxfcl // Faxfile
     fxfcl(unsigned pprio, const string& npdf,const string& spdf,ulong pseiten): npdf(npdf),spdf(spdf),pprio(pprio),pseiten(pseiten) {}
     fxfcl(const string& spdf,const string& ur,unsigned pprio): npdf(string()),spdf(spdf),pprio(pprio),pseiten(0) {}
     fxfcl() {}
-};
+}; // struct fxfcl
 
 struct fsfcl : public fxfcl // Faxsendfile
 {
@@ -1065,7 +1066,8 @@ struct hhcl:dhcl
 		void inspoolschreiben(const size_t aktc);
 		void wegfaxen(const size_t aktc);
 		int obvorbei(const string& vzname,uchar *auchtag);
-    void WVZinDatenbank(vector<fxfcl> *const fxvp, size_t aktc); // in wegfaxen
+		void fxinDatenbank(fxfcl& fx,const size_t aktc);
+		void telinDatenbank(const size_t aktc);
 		void inDbc(DB *My, const string& spooltab, const string& altspool, const string& spoolg, const fsfcl *const fsfp, 
 		           const string& telnr, const size_t aktc);
 		void faxemitC(DB *My, const string& spooltab, const string& altspool, fsfcl *fsfp, const string& zfxdt);
