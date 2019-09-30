@@ -6875,7 +6875,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 											if (!fx.npdf.empty()) {
 												if ((nfehlt=lstat((fx.npdf.c_str()), &entrynpdf))) {
 													fLog(Tx[T_lstatfehlgeschlagen]+rots+strerror(errno)+schwarz+Tx[T_beiDatei]+ fx.npdf,1,1,1);
-													continue;
+													break;
 												} else {
 													zupdffehler=zupdf(&fx.npdf, fx.spdf, &fx.pseiten, obocra, 0); // 0=erfolg
 												}
@@ -6903,6 +6903,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 												// 3) in spooltab eintragen
 												fxinDatenbank(fx,aktc);
 											} // 	  if (lstat((fx.npdf.c_str()), &entrynpdf)) else
+											break;
 										}
 										break; // while (1)
 									} // while (1)
