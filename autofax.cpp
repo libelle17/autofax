@@ -1479,6 +1479,8 @@ string kopiere(const string& qdatei, const string& zield, uint *kfehler, const u
 	// wieweiterzaehl: 0: auf *_1_1 nach *_1, 1: auf *_2 nach *_1, 2: gar nicht
 	int fehler{0},
 			efeh{0};
+	auto const altobverb{obverb};
+	obverb=2;
 	////	if (is_same<decltype(zield),const std::string&>::value) KLA
 	// nur zur Sicherheit, eigentlich sollte mit Verzeichnis kopier(... direkt aufgerufen werden
 	struct stat zstat{0};
@@ -1504,6 +1506,7 @@ string kopiere(const string& qdatei, const string& zield, uint *kfehler, const u
 		fLog(rots+Tx[T_Fehler_beim_Kopieren]+Tx[T_Dateiname]+blau+zieldt+schwarz+Tx[T_schlechtgeformt],1,1);
 	} // if (!base.empty() && !dir.empty())  else 
 	if (kfehler) *kfehler=fehler;
+	obverb=altobverb;
 	return ziel;
 	////	KLZ
 	////	return nix;
@@ -6806,35 +6809,39 @@ void hhcl::inspoolschreiben(const size_t aktc)
 						for(uint j=0;j<tokname.size();j++) 
 							yLog(obverb,oblog,0,0, "%s%u%s) %s%s%s",blau,j,schwarz,blau,tokname[j].c_str(),schwarz);
 						if (toknr.size()) {
-							string benenn;
+							string benstr;
 							for(unsigned j=0;j<toknr.size();j++) { 
 								if (!toknr[j].empty()) {
 									string kopier,*zielp;
-									if (benenn.empty()) zielp=&benenn; else zielp=&kopier;
+									if (benstr.empty()) zielp=&benstr; else zielp=&kopier;
 									*zielp=vor+(tokname[j].empty()?" ":anstr+tokname[j]+" ")+anfxstrvec[iprio]+" "+toknr[j]+'.'+exten;
 									fLog("toknr["+blaus+ltoan(j)+"]:"+tuerkis+toknr[j]+schwarz,(obverb>0?obverb-1:obverb),oblog);
 									uint kfehler{0};
 									// die erste Zieldatei
-									if (zielp==&benenn) {
-										if (zfda[iakt]!=benenn) {
-											uint vfehler=0;
-											dorename((zfda[iakt]),benenn,cuser,&vfehler,/*schonda*/!dateivgl(zfda[iakt],benenn),obverb,oblog);
+									if (zielp==&benstr) {
+										if (zfda[iakt]!=benstr) {
+											uint vfehler{0};
+										caus<<violett<<"zfda[iakt]: "<<rot<<zfda[iakt]<<schwarz<<endl;
+										caus<<violett<<"benstr: "<<rot<<benstr<<schwarz<<endl;
+											dorename((zfda[iakt]),benstr,cuser,&vfehler,/*schonda*/!dateivgl(zfda[iakt],benstr),obverb,oblog);
 											if (vfehler) {
-												fLog(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz+"("+zfda[iakt]+" -> "+benenn+")",1,1);
+												fLog(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz+"("+zfda[iakt]+" -> "+benstr+")",1,1);
 												continue;
 											}
-											fLog(Tx[T_ErstelledurchBenennen]+rots+benenn+schwarz,1,oblog);
+											fLog(Tx[T_ErstelledurchBenennen]+rots+benstr+schwarz,1,oblog);
 										} // if (zfda[iakt]!=tmp) 
 
 										// alle weiteren
 									} else {
-										const string kopiert{kopiere(benenn,kopier,&kfehler,/*wieweiterzaehl=*/1)};
+										caus<<violett<<"benstr: "<<rot<<benstr<<schwarz<<endl;
+										const string kopiert{kopiere(benstr,kopier,&kfehler,/*wieweiterzaehl=*/1)};
+										caus<<violett<<"kopiert: "<<rot<<kopiert<<schwarz<<endl;
 										if (kfehler) {
-											fLog(rots+Tx[T_Fehler_beim_Kopieren]+ltoan(kfehler)+schwarz+"("+benenn+" -> "+kopier+")",1,1);
+											fLog(rots+Tx[T_Fehler_beim_Kopieren]+ltoan(kfehler)+schwarz+"("+benstr+" -> "+kopier+")",1,1);
 											continue;
 										}
 										fLog(Tx[T_ErstelledurchKopieren]+rots+kopier+schwarz,1,oblog);
-									} // 									if (zielp==&benenn)
+									} // 									if (zielp==&benstr)
 									zfda[iakt].clear(); // Datei bei Gebrauch aus dem Vektor zfda loeschen, um dann die Restlichen zu sehen
 									urfxcl urfx(*zielp,urname,ppri(iprio));
 									// 1b. die Nicht-PDF-Dateien in dem Verzeichnis zum PDF-Druck ermitteln, 
@@ -6845,6 +6852,8 @@ void hhcl::inspoolschreiben(const size_t aktc)
 										const string ndname{zufaxenvz+vtz+neuerdateiname(urfx.teil)};
 										if (ndname!=urfx.teil) {
 											dorename(urfx.teil,ndname,cuser,&vfehler,/*schonda=*/!dateivgl(urfx.teil,ndname),obverb,oblog);
+											caus<<violett<<"urfx.teil: "<<rot<<urfx.teil<<schwarz<<endl;
+											caus<<violett<<"ndname: "<<rot<<ndname<<schwarz<<endl;
 											if (vfehler) {
 												cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
 													blau<<urfx.teil<<schwarz<<" ->\n"<<
@@ -6855,6 +6864,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 											urfx.teil=ndname;
 										} // if (ndname!=urfx.teil) 
 										string wartedatei{verschiebe<string>(urfx.teil,wvz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog)};
+										caus<<violett<<"Wartedatei: "<<rot<<wartedatei<<schwarz<<endl;
 										if (vfehler) {
 											cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
 												blau<<urfx.teil<<schwarz<<" ->\n"<<
@@ -6880,24 +6890,29 @@ void hhcl::inspoolschreiben(const size_t aktc)
 													zupdffehler=zupdf(&fx.npdf, fx.spdf, &fx.pseiten, obocra, 0); // 0=erfolg
 												}
 											} // 	  if (!fx.npdf.empty())
-											if (zupdffehler || lstat((fx.npdf.c_str()), &entrynpdf)) {
+											if (zupdffehler||(!fx.npdf.empty()&&lstat((fx.npdf.c_str()),&entrynpdf))) {
 												// Misserfolg, zurueckverschieben und aus der Datenbank loeschen
 												uint wfehler{0};
 												//// <<violett<<"fxv["<<(int)nachrnr<<"].npdf: "<<fx.npdf<<schwarz<<endl;
 												//// <<violett<<"fxv["<<(int)nachrnr<<"].spdf: "<<fx.spdf<<schwarz<<endl;
 												struct stat npdfstat{0};
-												if (!lstat(fx.npdf.c_str(), &npdfstat))
-													verschiebe<string>(fx.npdf,zufaxenvz,cuser,&wfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+												if (!lstat(fx.npdf.c_str(), &npdfstat)) {
+													string fxneu{verschiebe<string>(fx.npdf,zufaxenvz,cuser,&wfehler,/*wieweiterzaehl=*/1,obverb,oblog)};
+													caus<<violett<<"fxneu: "<<rot<<fxneu<<schwarz<<endl;
+												}
 												struct stat spdfstat{0};
-												if (!lstat(fx.spdf.c_str(), &spdfstat))
-													verschiebe<string>(fx.spdf,zufaxenvz,cuser,&wfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+												if (!lstat(fx.spdf.c_str(), &spdfstat)) {
+													string fxneu2{verschiebe<string>(fx.spdf,zufaxenvz,cuser,&wfehler,/*wieweiterzaehl=*/1,obverb,oblog)};
+													caus<<violett<<"fxneu2: "<<rot<<fxneu2<<schwarz<<endl;
+												}
 ////												fxv.erase(fxv.begin()+nachrnr);
 											} else {
 												// Erfolg
 												if (gleichziel) {
 													uint kfehler{0};
-													if (!nfehlt) kopiere(fx.npdf, zmsp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
-													/*string zield=*/kopiere(fx.spdf, zmsp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
+													benstr=kopiere(fx.spdf, zmsp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
+													if (!nfehlt) benstr=kopiere(fx.npdf, zmsp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
+													caus<<violett<<"benstr nach Runde 0: "<<rot<<benstr<<schwarz<<endl;
 												} // if (gleichziel)
 												fxv.push_back(fx);
 												// 3) in spooltab eintragen
@@ -6966,12 +6981,15 @@ void hhcl::inspoolschreiben(const size_t aktc)
 				uint vfehler{0};
 				if (ndname!=zfda.at(i)) {
 					dorename(zfda.at(i),ndname,cuser,&vfehler,/*schonda=*/!dateivgl(zfda.at(i),ndname),obverb,oblog);
+					caus<<violett<<"zfda.at(i): "<<rot<<zfda.at(i)<<schwarz<<endl;
+					caus<<violett<<"ndname: "<<rot<<ndname<<schwarz<<endl;
 					if (vfehler) {
 						continue;
 					} // if (vfehler) 
 					////            zfda.at(i)=ndname;
 				} // if (ndname!=zfda.at(i))
 				const string wartedatei{verschiebe<string>(ndname,wvz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog)};
+				caus<<violett<<"Wartedatei 2: "<<rot<<wartedatei<<schwarz<<endl;
 				if (vfehler) {
 					continue; 
 				}
