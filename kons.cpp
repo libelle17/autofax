@@ -4568,7 +4568,7 @@ int kopier(const string& quel, const string& ziel, int obverb, int oblog)
 					fehler=0;
 					bool chmerg __attribute__((unused))=chmod(ziel.c_str(),statq.st_mode);
 					bool choerg __attribute__((unused))=chown(ziel.c_str(),statq.st_uid,statq.st_gid);
-					struct utimbuf ubuf={0};
+					struct utimbuf ubuf{0};
 					ubuf.actime=ubuf.modtime=statq.st_mtime;
 					utime(ziel.c_str(),&ubuf);
 				} // if (erg==-1)
@@ -6142,9 +6142,9 @@ void hcl::zeigkonf()
 {
 	struct stat kstat{0};
 	cout<<Txk[T_aktuelle_Einstellungen_aus]<<blau<<akonfdt<<schwarz<<"' (";
-	//// char buf[100]={0};
+	//// char buf[100]{0};
 	if (!lstat(akonfdt.c_str(),&kstat)) {
-		//// struct tm tm={0};
+		//// struct tm tm{0};
 		//// pthread_mutex_lock(&timemutex);
 		//// memcpy(&tm, localtime(&kstat.st_mtime),sizeof(tm));
 		cout<<ztacl(kstat.st_mtime,"%d.%m.%Y %H.%M.%S");

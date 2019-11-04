@@ -6534,7 +6534,6 @@ void hhcl::faxemitF(DB *My, const string& spooltab, const string& altspool, fsfc
 					svec fxr;
 					if (!systemrueck(cmd,obverb,oblog,&fxr,0,0,wahr)) {
 						for(size_t i=0;i<fxr.size();i++) {
-							caus<<violett<<"fxr["<<i<<"]:"<<rot<<fxr[i]<<schwarz<<endl;
 							fLog(string(Tx[T_RueckmlgZeile])+ltoan(i)+": "+fxr.at(i),obverb>0?obverb-1:0,oblog);
 							inDBf(My, spooltab, altspool,fxr[i],fsfp,aktc);
 							break;
@@ -6821,8 +6820,6 @@ void hhcl::inspoolschreiben(const size_t aktc)
 									if (zielp==&benstr) {
 										if (zfda[iakt]!=benstr) {
 											uint vfehler{0};
-										caus<<violett<<"zfda[iakt]: "<<rot<<zfda[iakt]<<schwarz<<endl;
-										caus<<violett<<"benstr: "<<rot<<benstr<<schwarz<<endl;
 											dorename((zfda[iakt]),benstr,cuser,&vfehler,/*schonda*/!dateivgl(zfda[iakt],benstr),obverb,oblog);
 											if (vfehler) {
 												fLog(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz+"("+zfda[iakt]+" -> "+benstr+")",1,1);
@@ -6833,9 +6830,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 
 										// alle weiteren
 									} else {
-										caus<<violett<<"benstr: "<<rot<<benstr<<schwarz<<endl;
 										const string kopiert{kopiere(benstr,kopier,&kfehler,/*wieweiterzaehl=*/1)};
-										caus<<violett<<"kopiert: "<<rot<<kopiert<<schwarz<<endl;
 										if (kfehler) {
 											fLog(rots+Tx[T_Fehler_beim_Kopieren]+ltoan(kfehler)+schwarz+"("+benstr+" -> "+kopier+")",1,1);
 											continue;
@@ -6852,8 +6847,6 @@ void hhcl::inspoolschreiben(const size_t aktc)
 										const string ndname{zufaxenvz+vtz+neuerdateiname(urfx.teil)};
 										if (ndname!=urfx.teil) {
 											dorename(urfx.teil,ndname,cuser,&vfehler,/*schonda=*/!dateivgl(urfx.teil,ndname),obverb,oblog);
-											caus<<violett<<"urfx.teil: "<<rot<<urfx.teil<<schwarz<<endl;
-											caus<<violett<<"ndname: "<<rot<<ndname<<schwarz<<endl;
 											if (vfehler) {
 												cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
 													blau<<urfx.teil<<schwarz<<" ->\n"<<
@@ -6864,7 +6857,6 @@ void hhcl::inspoolschreiben(const size_t aktc)
 											urfx.teil=ndname;
 										} // if (ndname!=urfx.teil) 
 										string wartedatei{verschiebe<string>(urfx.teil,wvz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog)};
-										caus<<violett<<"Wartedatei: "<<rot<<wartedatei<<schwarz<<endl;
 										if (vfehler) {
 											cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
 												blau<<urfx.teil<<schwarz<<" ->\n"<<
@@ -6898,12 +6890,10 @@ void hhcl::inspoolschreiben(const size_t aktc)
 												struct stat npdfstat{0};
 												if (!lstat(fx.npdf.c_str(), &npdfstat)) {
 													string fxneu{verschiebe<string>(fx.npdf,zufaxenvz,cuser,&wfehler,/*wieweiterzaehl=*/1,obverb,oblog)};
-													caus<<violett<<"fxneu: "<<rot<<fxneu<<schwarz<<endl;
 												}
 												struct stat spdfstat{0};
 												if (!lstat(fx.spdf.c_str(), &spdfstat)) {
 													string fxneu2{verschiebe<string>(fx.spdf,zufaxenvz,cuser,&wfehler,/*wieweiterzaehl=*/1,obverb,oblog)};
-													caus<<violett<<"fxneu2: "<<rot<<fxneu2<<schwarz<<endl;
 												}
 ////												fxv.erase(fxv.begin()+nachrnr);
 											} else {
@@ -6912,7 +6902,6 @@ void hhcl::inspoolschreiben(const size_t aktc)
 													uint kfehler{0};
 													benstr=kopiere(fx.spdf, zmsp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
 													if (!nfehlt) benstr=kopiere(fx.npdf, zmsp, &kfehler, /*wieweiterzaehl=*/1, obverb, oblog);
-													caus<<violett<<"benstr nach Runde 0: "<<rot<<benstr<<schwarz<<endl;
 												} // if (gleichziel)
 												fxv.push_back(fx);
 												// 3) in spooltab eintragen
@@ -6981,15 +6970,12 @@ void hhcl::inspoolschreiben(const size_t aktc)
 				uint vfehler{0};
 				if (ndname!=zfda.at(i)) {
 					dorename(zfda.at(i),ndname,cuser,&vfehler,/*schonda=*/!dateivgl(zfda.at(i),ndname),obverb,oblog);
-					caus<<violett<<"zfda.at(i): "<<rot<<zfda.at(i)<<schwarz<<endl;
-					caus<<violett<<"ndname: "<<rot<<ndname<<schwarz<<endl;
 					if (vfehler) {
 						continue;
 					} // if (vfehler) 
 					////            zfda.at(i)=ndname;
 				} // if (ndname!=zfda.at(i))
 				const string wartedatei{verschiebe<string>(ndname,wvz,cuser,&vfehler,/*wieweiterzaehl=*/1,obverb,oblog)};
-				caus<<violett<<"Wartedatei 2: "<<rot<<wartedatei<<schwarz<<endl;
 				if (vfehler) {
 					continue; 
 				}
