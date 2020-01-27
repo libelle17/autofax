@@ -2155,13 +2155,13 @@ void hhcl::pruefcvz()
 	//// <<rot<<"cfaxuservz in pruefcvz: "<<cfaxuservz<<schwarz<<endl;
 	hLog(violetts+Tx[T_pruefcvz]+schwarz+" ccfaxuservz: "+violett+cfaxuservz+schwarz);
 	kuerzevtz(&cfaxuservz);
-	pruefverz(cfaxuservz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/"",/*benutzer=*/cuser,/*obmachen=*/0);
+	pruefverz(cfaxuservz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/"",/*benutzer=*/cuser,/*obmachen=*/1);
 	cfaxusersqvz=cfaxuservz+vtz+cuser+"/sendq"; //  "/var/spool/capisuite/users/<user>/sendq";
-	pruefverz(cfaxusersqvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/"",/*benutzer=*/cuser,/*obmachen=*/0);
+	pruefverz(cfaxusersqvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/"",/*benutzer=*/cuser,/*obmachen=*/1);
 	cfaxuserrcvz=cfaxuservz+vtz+cuser+"/received";
+	pruefverz(cfaxuserrcvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/"",/*benutzer=*/cuser,/*obmachen=*/1);
 	cfaxuserrcfalschevz=cfaxuserrcvz+"/falsche";
-	//// <<violett<<"cfaxuserrcvz: "<<cfaxuserrcvz<<schwarz<<endl;
-	pruefverz(cfaxuserrcvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/"",/*benutzer=*/cuser,/*obmachen=*/0);
+	pruefverz(cfaxuserrcfalschevz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/0,/*besitzer=*/"",/*benutzer=*/cuser,/*obmachen=*/1);
 } // hhcl::pruefcvz
 
 // in empfcapi und pruefcapi, virtrueckfragen

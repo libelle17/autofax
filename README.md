@@ -177,7 +177,7 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.48322</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.48324</b>
 Using: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
@@ -1050,7 +1050,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.48322</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.48324</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
