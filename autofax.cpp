@@ -7159,6 +7159,16 @@ void hhcl::wegfaxen(const size_t aktc)
 			//// const auto altobverb{obverb}; obverb=1;
 			if (wasichbin||nursend) {
 				// hier Fork zu Capi, Hyla, und Fritz nicht der Hauptzweig
+				// Hylafax sollte nicht mehrere Faxe auf einmal versuchen wegzuschicken
+				uchar hfaxinarbeit{0};
+				if (obfa[2]) {
+					for(unsigned i=0;i<fsfv.size();i++) {
+            if (fsfv[i].fobhyla && fsfv[i].hylastat==verarb) {
+							hfaxinarbeit=1;
+							break;
+						}
+					}
+				}
 				for(unsigned i=0;i<fsfv.size();i++) {
 					hLog(" i: "+blaus+ltoan(i)+schwarz+Tx[T_PDFDatei]+blau+fsfv[i].spdf+schwarz+
 							", "+Tx[T_obfboxmitDoppelpunkt]+blau+(fsfv[i].fobfbox?Txk[T_ja]:Txk[T_nein])+schwarz+
@@ -7177,7 +7187,7 @@ void hhcl::wegfaxen(const size_t aktc)
 					} else {
 						//// caus<<"Stelle 4, i: "<<i<<", wasichbin: "<<(int)wasichbin<<", fsfv[i].fobfbox: "<<(int)fsfv[i].fobfbox<<", obfa[0]: "<<obfa[0]<<endl;
 						if (wasichbin==1||nursend) if (fsfv[i].fobcapi) if (obfa[1]) faxemitC(My, spooltab, altspool, &fsfv[i],zfxdt);  
-						if (wasichbin==2||nursend) if (fsfv[i].fobhyla) if (obfa[2]) faxemitH(My, spooltab, altspool, &fsfv[i],zfxdt);  
+						if (wasichbin==2||nursend) if (!hfaxinarbeit && fsfv[i].fobhyla) if (obfa[2]) faxemitH(My, spooltab, altspool, &fsfv[i],zfxdt);  
 						if (wasichbin==3||nursend) if (fsfv[i].fobfbox) if (obfa[0]) faxemitF(My, spooltab, altspool, &fsfv[i],zfxdt);  
 						if (wasichbin==4||nursend) if (fsfv[i].wiemail==1) vschlmail(My, spooltab, altspool, &fsfv[i],zfxdt);  
 						if (wasichbin==5||nursend) if (fsfv[i].wiemail==2) klarmail(My, spooltab, altspool, &fsfv[i],zfxdt);  
