@@ -5703,11 +5703,12 @@ int hhcl::pruefocr()
 	return 0;
 } // int hhcl::pruefocr
 
+// aufgerufen in: empfarch
 void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*/)
 {
 	const auto altobverb{obverb};
-	//	obverb=1;
-	hLog(violetts+Tx[T_empffbox]+schwarz+ganz);
+//	obverb=2;
+	hLog(violetts+Tx[T_empffbox]+schwarz+ganz+", aktc: "+ltoan(aktc)+", nr: "+nr);
 	struct stat stganz{0};
 	const uchar ganzfehlt{(uchar)lstat(ganz.c_str(),&stganz)}; // muesste immer 0 sein, wenn es die Datei gibt
 	if (!ganzfehlt) {
@@ -5769,6 +5770,10 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 		kopiere(ganz,fpfad,&kfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 		if (!kfehler) {
 			attrangleich(fpfad,empfvz,&ganz,obverb,oblog);
+
+			if (!zupdf(&fpfad, fpfad+"ocr", 0, 1, 0)) { // 0=Erfolg
+        dorename(fpfad+"ocr",fpfad,cuser,0,0,obverb,oblog);
+			}
 		} //     if (!kfehler) else
 		if (!kfehler) {
 			struct stat entrynd{0};
