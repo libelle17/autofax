@@ -6037,7 +6037,7 @@ int hcl::kompilfort(const string& was,const string& vorcfg/*=string()*/, const s
 		 */
 		const string b1{"cd \""+ivw+"\"&&"+(vorcfg.empty()?s_true:vorcfg)+(ohneconf?"":"&& [ -f configure ]&&./configure ")+cfgbismake+" make"};
 		const string b2{"cd \""+ivw+"\"&& make install"};
-		const string b3{"cd \""+ivw+"\"&&{ M=Makefile;[ -f $M ]&&{ grep -q 'distclean:' $M&&make distclean||{ grep -q 'clean:' $M&&make clean;};};};"
+		const string b3{"cd \""+ivw+"\"&&{ M=Makefile;[ -f $M ]&&{ grep -q 'clean:' $M&&make clean||{ grep -q 'distclean:' $M&&make distclean;};};};"
 			"[ -f configure ]&&./configure; make"};
 		////		const string b4="ldconfig "+lsys.getlib64();
 		const string b4{"ldconfig /usr"};

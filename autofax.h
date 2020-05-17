@@ -673,6 +673,9 @@ enum T_
 	T_standardprio,
 	T_fstab_Eintrag_wieder_entfernen,
 	T_Sollen_alle_Faxe_umgeleitet_werden,
+	T_cpneu_k,
+  T_cpneu_l,
+	T_Capisuite_neu_einrichten,
 	T_MAX //α
 }; // enum T_ //ω
 
@@ -874,6 +877,7 @@ struct hhcl:dhcl
 		uchar obvf{0};   // ob FBFax-Konfigurationsdateien betrachtet werden sollen
 		uchar obvc{0};   // ob Capisuite-Konfigurationsdateien betrachtet werden sollen
 		uchar obvh{0};   // ob Hylafax-Konfigurations- und Logdateindatei betrachtet werden sollen
+		uchar cpneu{0};  // 1 = Capisuite soll neu installiert werden
 		uchar loef{0};   // loesche eine Fax-Datei
 		uchar loew{0};  // loeschewaise in der Datenbank, aber nicht mehr real nachweisbare Dateien in der Datenbank loeschen
 		uchar loea{0}; // loesche alle wartenden Faxe und zugehoerige Dateieintraege

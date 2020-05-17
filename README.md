@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.48332) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.48366) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -177,7 +177,7 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.48332</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.48366</b>
 Using: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Options which are not saved (current value in parentheses):
 <br>
@@ -227,6 +227,8 @@ a.faxed directory against the tables
 with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vh, --vh</b>: edit hylafax modem configuration file (finish
 with &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
+-cpnew, --cpnew</b>: install capisuite again (<b>0</b>)
+<b><br>
 -sqlv, --sql-verbose</b>: screen output with SQL commands
 (<b>0</b>) <b><br>
 -v, --verbose</b>: screen output more verbose (<b>0</b>)
@@ -858,7 +860,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.48332) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.48366) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1050,7 +1052,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.48332</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.48366</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
@@ -1101,6 +1103,8 @@ Datensaetze = &lt;zahl&gt; statt (&rsquo;<b>30</b>&rsquo;)
 (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
 -vh, --vh</b>: Hylafax-Modem-Konfigurationsdatei bearbeiten
 (beenden mit &rsquo;:qa&rsquo;) (<b>0</b>) <b><br>
+-cpneu, --cpneu</b>: Capisuite neu einrichten (<b>0</b>)
+<b><br>
 -sqlw, --sql-wortreich</b>: Bildschirmausgabe mit
 SQL-Befehlen (<b>0</b>) <b><br>
 -w, --wortreich</b>: Bildschirmausgabe gespraechiger

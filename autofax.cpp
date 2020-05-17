@@ -1391,6 +1391,12 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"fstab-Eintrag wieder entfernen","delete fstab-entry"},
 	// T_Sollen_alle_Faxe_umgeleitet_werden
 	{"Sollen alle Faxe umgeleitet werden","Shall all faxes be redirected"},
+	// T_cpneu_k,
+	{"cpneu","cpnew"},
+  // T_cpneu_l,
+	{"cpneu","cpnew"},
+	// T_Capisuite_neu_einrichten,
+	{"Capisuite neu einrichten", "install capisuite again"},
 	{"",""} //α
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -2395,6 +2401,8 @@ int hhcl::pruefcapi()
 	int capilaeuft{0}, 
 			erg{1};
 	unsigned versuch{0};
+	auto altobverb{obverb};
+	obverb=1;
 	uchar schonkonfiguriert{0};
 	capisv();
 	if (obfa[1]) {
@@ -2407,9 +2415,10 @@ int hhcl::pruefcapi()
 			////    capilaeuft=(PIDausName("capisuite")>=0);
 			capilaeuft=this->scapis->machfit(obverb>0?obverb-1:0,oblog,wahr)&&!ccapiconfdt.empty()&&!cfaxconfdt.empty();
 			hLog(violetts+Tx[T_capilaeuft]+schwarz+ltoan(capilaeuft)+schwarz);
-			if (capilaeuft) {
+			if (capilaeuft && !cpneu) {
 				capischonerfolgreichinstalliert=1;
 			} else {
+	caus<<"obfa[1]: "<<(int)obfa[1]<<endl;
 				////      pid_t pid = GetPIDbyName("capisuite") ; // If -1 = not found, if -2 = proc fs access error
 				uchar fcpcida{0}, capida{0}, capidrvda{0};
 				vector<string> rueck;
@@ -2455,7 +2464,7 @@ int hhcl::pruefcapi()
 										const string versi="fcpci-3.10.0";
 										const string srcf=string("fritz-")+versi+".tar.bz2";
 										pruefverz(qvz,obverb,oblog,0);
-										struct stat entrysrc{0};
+										struct stat entrysrc KLA 0 KLZ;
 										if (lstat((qvz+vtz+srcf).c_str(),&entrysrc)) KLA
 										systemrueck(string("cd ")+qvz+";"+sudc+"wget https://belug.de/~lutz/pub/fcpci/"+srcf+
 										" --no-check-certificate",1+obverb,oblog);
@@ -2477,7 +2486,7 @@ int hhcl::pruefcapi()
 									svec rueck;
 									systemrueck(sudc+"rm -f /root/bin/xargs",1+obverb,oblog);
 									systemrueck("cd "+srcvz+";"+sudc+"make all ",1+obverb,oblog); 
-									// || { "+sudc+"dnf clean all;"+sudc+"dnf update;"+sudc+"make all; }
+									// || KLA "+sudc+"dnf clean all;"+sudc+"dnf update;"+sudc+"make all; KLZ
 									systemrueck("cd "+srcvz+";"+sudc+"make install",1+obverb,oblog);
 									 */
 									// in Mint musste man gcc downgraden, um fcpci installieren zu koennen
@@ -2519,13 +2528,13 @@ int hhcl::pruefcapi()
 									// https://patchwork.kernel.org/patch/10349769/
 									const string vorcfg{sudc+"test -f driver.c.bak || sed -i.bak \"/request_irq/i#if \\!defined(IRQF_DISABLED)\\n"
 										"# define IRQF_DISABLED 0x00\\n#endif\" driver.c; HV=$(uname -r|cut -d. -f1);NV=$(uname -r|cut -d. -f2);[ $HV -gt 4 -o \\( $HV = 4 -a $NV -ge 18 \\) ]&& grep -q ctrl-\\>proc_fops driver.c && sed -i.bak2 \"/ctrl->proc_fops/c   ctrl->proc_show = ctr_info; \\/\\/ G.Schade 19.1.19\" driver.c;"+
-										sudc+"sed -e '/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>' "
-										"-e '/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
-										"c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);' "
-										"main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"+
-										sudc+"sed -i.bak \"/install: / i .PHONY: uninstall\\nuninstall:\\n\\t\\t"+
-										sudc+"modprobe -r \\$\\(CARD\\).ko\\n\\t\\tsudo rm \\$\\(TARGETDIR\\)/\\$\\(CARD\\)\\n\" Makefile;"+
-										sudc+"make clean"};
+											sudc+"sed -e '/#include <linux\\/isdn\\/capilli.h>/a #include <linux\\/utsname.h>' "
+											"-e '/NOTE(\"(%s built on %s at %s)\\\\n\", TARGET, __DATE__, __TIME__);/"
+											"c NOTE(\"(%s built on release %s, version %s)\\\\n\", TARGET, utsname()->release, utsname()->version);' "
+											"main.c >main_neu.c;mv -n main.c main.c.bak;mv -n main_neu.c main.c;"+
+											sudc+"sed -i.bak \"/install: / i .PHONY: uninstall\\nuninstall:\\n\\t\\t"+
+											sudc+"modprobe -r \\$\\(CARD\\).ko\\n\\t\\tsudo rm \\$\\(TARGETDIR\\)/\\$\\(CARD\\)\\n\" Makefile;"+
+											sudc+"make clean"};
 									const string cfgbismake{" 2>/dev/null;"+sudc};
 									kompiliere(proj,s_gz,vorcfg,cfgbismake);
 									systemrueck("depmod",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
@@ -2533,7 +2542,7 @@ int hhcl::pruefcapi()
 										systemrueck("mv -f \""+gccpfad+".bak\" \""+gccpfad+"\" &&"+
 												"mv -f \""+gpppfad+".bak\" \""+gpppfad+"\"",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 									} // 									if (obdown)
-////									exit(99);
+									////									exit(99);
 									obverb=altobverb;
 								} // if (lstat(fcpciko.c_str(), &entryfc)) 
 							} // if (systemrueck
@@ -2561,8 +2570,8 @@ int hhcl::pruefcapi()
 							if (v1!=v2) {
 								virtautokonfschreib();
 								exit(schluss(9,blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
-										+schwarz+v2+blau+").\n"+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
-										+schwarz,1));
+											+schwarz+v2+blau+").\n"+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
+											+schwarz,1));
 							} // if (v1!=v2) 
 #ifdef brauchtsaano // am 19.3.17 braucht's es ned
 							//// nach kdpeter.blogspot.de/2013/10/fedora-compile-single-module-directory.html
@@ -2593,10 +2602,10 @@ int hhcl::pruefcapi()
 								utsname unbuf;
 								uname(&unbuf);
 								const string release{unbuf.release};
-								const string relev{release.substr(0,release.find(unbuf.machine)-1);
+								const string relev{release.substr(0,release.find(unbuf.machine)-1)};
 								if (kernel.find(relev)) {
 									exit(schluss(10,Tx[T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von]+blaus+relev+schwarz+Tx[T_nach_]+blau+kernel+schwarz+
-											Tx[T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1));
+												Tx[T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1));
 								} // 							if (kernel.find(relev))
 								systemrueck("cd "+instvz+" && dnf -y builddep "+kstring,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 								systemrueck("cd "+instvz+" && rpm -ivh "+kstring,obverb,oblog,/*rueck=*/0,/*obsudc=*/0);// mit sudo wird kernel.spec nicht erstellt
@@ -2639,18 +2648,18 @@ int hhcl::pruefcapi()
 						capischonerfolgreichinstalliert=0;
 				}
 				//// rot<<"capischonerfolgreichinstalliert 0: "<<(int)capischonerfolgreichinstalliert<<schwarz<<endl;
-				if (!capischonerfolgreichinstalliert) {
+				if (!capischonerfolgreichinstalliert ||cpneu) {
 					fLog(Tx[T_Konnte]+blaus+"capisuite"+schwarz+Tx[T_nichtstarten],1,oblog);
 					linstp->doinst("ghostscript",obverb+1,oblog,"gs");
 					//// if (systemrueck("which zypper",-1,-1)) KLA
 					////        if (linstp->checkinst(-1,-1)!=zyp) KLA
 					/*//
-						if (linstp->ipr!=zypper) {
+						if (linstp->ipr!=zypper) KLA
 						::fLog(rots+Tx[T_Kann_Capisuite_nicht_installieren_verwende_Capi_nicht],1,1);
 						this->obcapi=0;
 						erg=0;
 						goto schluss;
-						}
+						KLZ
 					 */
 					if (system!=sus)
 						linstp->doggfinst("capiutils",obverb+1,oblog);
@@ -2662,7 +2671,7 @@ int hhcl::pruefcapi()
 					uchar mitcservice{0};
 					// 25.11.16 nicht mehr auf Repo
 					/*
-						 if (system==sus) {
+						 if (system==sus) KLA
 						 linstp->doggfinst("capi4linux i4l-isdnlog",obverb+1,oblog);
 						 systemrueck("zypper lr | grep 'kkeil factory development project' || "
 						 sudc+"zypper ar -f http://download.opensuse.org/repositories/home:/kkeil:/Factory/openSUSE_Factory/home:kkeil:Factory.repo",
@@ -2671,9 +2680,9 @@ int hhcl::pruefcapi()
 					//   capischonerfolgreichinstalliert=!systemrueck("zypper -n --gpg-auto-import-keys in capisuite capi4linux i4l-isdnlog", 1+obverb,oblog); 
 					// i4l-base geloescht
 					capischonerfolgreichinstalliert=!linstp->doinst("-f capisuite capi4linux i4l-isdnlog",obverb+1,oblog);
-					} // if (lsys.getsys(obverb,oblog)==sus) 
+					KLZ // if (lsys.getsys(obverb,oblog)==sus) 
 					 */
-					if (!capischonerfolgreichinstalliert) {
+					if (!capischonerfolgreichinstalliert ||cpneu) {
 						holvomnetz("capisuite_copy");
 						svec csrueck;
 						systemrueck("find /usr/lib*/python* -type f -name Makefile -printf '%h\\n' "+string(obverb?"":"2>/dev/null")+"| sort -r",
@@ -2681,9 +2690,21 @@ int hhcl::pruefcapi()
 						if (csrueck.size()) {
 							struct stat c20stat{0},c20hstat{0};
 							if (lstat((lsys.getlib64()+"/libcapi20.so").c_str(),&c20stat)||
-									lstat("/usr/include/capi20.h",&c20hstat)) {
+									lstat("/usr/include/capi20.h",&c20hstat) || cpneu) {
 								holvomnetz("capi20_copy");
-								kompiliere("capi20_copy",s_gz,"make clean");
+								const string vorcfg{"sed -i.bak \""
+									"/^\\/\\* standard CAPI2.0 functions \\*\\//a "
+									"#include \\<capiutils.h\\>\\n"
+									"unsigned char *put_byte\\( unsigned char **ppnPtr, _cbyte nVal \\);\\n"
+									"unsigned char *put_word\\( unsigned char **ppnPtr, _cword nVal \\);\\n"
+									"unsigned char *put_netword\\( unsigned char **ppnPtr, _cword nVal \\);\\n"
+									"void CapiDebug\\(int nLevel, const char *pnFormat, ...\\);\\n"
+									"unsigned short get_netword\\( unsigned char **ppnPtr \\);\\n"
+									"unsigned char *put_dword\\( unsigned char **ppnPtr, _cdword nVal \\);\\n"
+									"unsigned short get_word\\( unsigned char **ppnPtr \\);\\n"
+									"\" capi20.h"};
+								kompiliere(/*was*/"capi20_copy",/*endg*/s_gz,vorcfg);
+//								kompiliere(/*was*/"capi20_copy",/*endg*/s_gz,/*vorcfg*/"make clean");
 								// ln sollte er in crontab finden
 								systemrueck("cd "+instvz+" && L="+lsys.getlib64()+"/libcapi20.so && L3=${L}.3 && test -f $L3 && ! test -f $L && "+
 										sudc+"ln -s $L3 $L; test -f $L;",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
@@ -2706,6 +2727,8 @@ int hhcl::pruefcapi()
 								pyvz=ersetzAllezu(lsys.getlib64(),"/","\\/")+"\\/python2.7";
 							} // 							if (rueck.size()) else
 							if (!kompiliere("capisuite_copy",s_gz,
+										"find src \\( -name \"*.h\" -o -name \"*.c\" -o -name \"*.cpp\" \\) -exec sed -i.bak \"s/\\( throw (.*)\\)/\\/\\*\\1\\*\\//g\" \"{}\" \\;;"
+										"find src \\( -name \"capi.h\" -o -name \"capi.cpp\" \\) -exec sed -i.bak \"s/\\(\\~Capi \\?()\\)\\(;\\?$\\)/\\1 noexcept(false)\\2/g\" \"{}\" \\;;"
 										"sed -i.bak \""
 										// 20.11.16 diese Zeile scheint jetzt wieder in Fedora 24 unnoetig
 										//													 "s/python_configdir=.*/python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"/;"
@@ -2725,8 +2748,8 @@ int hhcl::pruefcapi()
 										"s/\\( *python_moduleexecdir=\\).*/\\1\\`\\${PYTHON} -c \\\"import site;"
 										"print site.getsitepackages()[0]\\\"\\`/;"
 										"\" configure"
-										////                           " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
-										////                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; }"
+										////                           " && KLA test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
+										////                           "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; KLZ"
 										,"HAVE_NEW_CAPI4LINUX=0 --libdir=/usr/local/lib64 --datarootdir=/usr/local/lib64 --sysconfdir=/etc --localstatedir=/var && "
 										"sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp && ")) {
 											mitcservice=1;
@@ -2740,8 +2763,8 @@ int hhcl::pruefcapi()
 							//            string befehl="sh -c 'P=capisuite; T=$P.tar.gz; M=$P-master; cd "+instvz+""
 							//                  " && tar xpvf $T && rm -rf $P ; mv $M $P && cd $P"
 							//                  " && sed -i.bak \"s_python_configdir=.*_python_configdir="+*sersetze(&csrueck[0],"/","\\/")+"_\" configure"
-							//                  " && { test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
-							//                        "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; } "
+							//                  " && KLA test -f /usr/lib64/libcapi20.so.3 && ! test -f /usr/lib64/libcapi20.so && "
+							//                        "ln -s /usr/lib64/libcapi20.so.3 /usr/lib64/libcapi20.so; true; KLZ "
 							//                  " && ./configure HAVE_NEW_CAPI4LINUX=0 --datarootdir=/usr/local/lib --sysconfdir=/etc --localstatedir=/var"
 							//                  " && sed -i \"s/PyErr_NewException(\\\"/PyErr_NewException((char*)\\\"/g\" src/application/capisuitemodule.cpp"
 							////                  " && sed -i.bak 's/<capi20.h>/\\\""+*sersetze(&rueck[0],"/","\\\"\\/")+"/' src/backend/capi.h"
@@ -2750,7 +2773,7 @@ int hhcl::pruefcapi()
 							//                  " && "+sudc+"make install"
 							//                  " && "+sudc+"systemctl daemon-reload; "
 							//                  "'";
-							//            if (!systemrueck(befehl,obverb,oblog)) {
+							//            if (!systemrueck(befehl,obverb,oblog)) KLA
 							//              //        pruefverz("/etc/capisuite",obverb,oblog,1,0);
 							//              //        systemrueck("ls /etc/capisuite/capisuite.conf "
 							//              //                    "|| cp -a "+instvz+"/capisuite/src/capisuite.conf /etc/capisuite");
@@ -2758,7 +2781,7 @@ int hhcl::pruefcapi()
 							////              pruefverz("/usr/local/var/log",obverb,oblog,1,0);
 							//              //         pruefverz("/usr/local/var/log",obverb,oblog,1,0);
 							//              mitcservice=1;
-							//            } // if (!systemrueck(sh -c ...
+							//            KLZ // if (!systemrueck(sh -c ...
 							 */
 							obverb--;
 						} // if (csrueck.size()) 
@@ -2846,7 +2869,7 @@ int hhcl::pruefcapi()
 			::fLog(rots+Tx[T_konntecapisuiteservice]+gruen+ltoan(versuch)+rot+Tx[T_malnichtstartenverwN]+schwarz,1,1);
 			erg=0;
 		} //   if (capilaeuft)
-		//// if (obcapi)
+	//// if (obfa[1])
 	} else {
 		rzf=1;
 #if false
@@ -2863,8 +2886,9 @@ int hhcl::pruefcapi()
 		}
 #endif
 		erg=0;
-	} // 	if (obcapi) else
+	} // 	if (obfa[1]) else
 schluss: // sonst eine sonst sinnlose for-Schleife mehr oder return mitten aus der Funktion ...
+	obverb=altobverb;
 	hLog(violetts+Txk[T_Ende]+Tx[T_pruefcapi]+schwarz+" obcapi: "+(obfa[1]?"1":"0"));
 	return erg;
 } // pruefcapi
@@ -3072,6 +3096,7 @@ void hhcl::virtinitopt()
 	opn<<new optcl(/*pptr*/&obvh,/*art*/puchar,T_vh_k,T_vh_l,/*TxBp*/&Tx,/*Txi*/T_Hylafax_Modem_Konfigurationsdatei_bearbeiten,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 //	opn<<new optcl(/*pname*/"sqlz",/*pptr*/&sqlzn,/*art*/plong,-1,-1,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_SQL_Befehle_fuer_die_Absenderermittlung,/*wi*/-1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/sqlzn>0);
 //	opn<<new optcl(/*pname*/"musterzahl",/*pptr*/&zmzn,/*art*/plong,-1,-1,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe,/*wi*/-1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/(zmzn>0));
+	opn<<new optcl(/*pptr*/&cpneu,/*art*/puchar,T_cpneu_k,T_cpneu_l,/*TxBp*/&Tx,/*Txi*/T_Capisuite_neu_einrichten,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
 	dhcl::virtinitopt(); //α
 } // void hhcl::virtinitopt
 
