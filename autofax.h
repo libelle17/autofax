@@ -27,6 +27,24 @@ enum T_
 	T_virttesterg,
 	T_virtzeigversion,
 	T_virtzeigueberschrift, 
+	T_SQL_Befehl_Nr,
+	T_faxnr_wird_ersetzt_mit_der_Faxnr,
+	T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr,
+	T_In,
+	T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
+	T_Datenbank,
+	T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
+	T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
+	T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
+	T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben,
+	T_zum_Streichen_Strich_eingeben,
+	T_beim_letzten_fuer_alle_Uebrigen_nichts_eingeben,
+	T_Zielverzeichnis_Nr,
+	T_SQL_Befehl,
+	T_Zielmuster_Nr,
+	T_Ziel_Nr,
+	T_Zielmuster,
+	T_Ziel,
 	T_Fuege_ein, //ω
 	T_an_Fax,
 	T_an_cFax,
@@ -286,10 +304,6 @@ enum T_
 	T_clieskonf,
 	T_pruefmodcron,
 	T_Zahl_der_SQL_Befehle_fuer_die_Absenderermittlung,
-	T_SQL_Befehl_Nr,
-	T_Zielmuster_Nr,
-	T_Ziel_Nr,
-	T_Zielmuster,
 	T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe,
 	T_Verzeichnis_mit_zu_faxenden_Dateien,
 	T_Verzeichnis_mit_wartenden_Dateien,
@@ -332,18 +346,6 @@ enum T_
 	T_Buchstabenfolge_vor_erster_Fax_Nummer_primaer_fuer_Hylafax,
 	T_Buchstabenfolge_vor_erstem_Adressaten,
 	T_Buchstabenfolge_vor_weiterem_Adressaten_sowie_weiterer_Faxnummer,
-	T_faxnr_wird_ersetzt_mit_der_Faxnr,
-	T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr,
-	T_In,
-	T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
-	T_Datenbank,
-	T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
-	T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
-	T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben,
-	T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben,
-	T_zum_Streichen_Strich_eingeben,
-	T_beim_letzten_fuer_alle_Uebrigen_nichts_eingeben,
-	T_Zielverzeichnis_Nr,
 	T_setzhylavz,
 	T_aus_systemd_fax_service_Datei_ermittelt,
 	T_aus_etc_init_d_hylafax_ermittelt,
@@ -379,7 +381,6 @@ enum T_
 	T_hylafaxspringtnichtan,
 	T_verzeichnisse,
 	T_Muster,
-	T_Ziel,
 	T_rufpruefsamba,
 	T_Faxempfang,
 	T_Gefaxt,
@@ -639,7 +640,6 @@ enum T_
 	T_Insgesamt,
 	T_Fundstellen_von,
 	T_Keine_Fundstellen_von,
-	T_SQL_Befehl,
 	T_nurempf_k,
 	T_nurempf_l,
 	T_empfaengt_nur,
@@ -707,7 +707,7 @@ inline const int ppri(const int iprio);
 void liesvw(const string& vwdt,time_t* fbzpp=0,string* minabstp=0, string* telnrp=0, string* originalp=0,string* fbdialsp=0, string* fbmaxdialsp=0, FxStat* fboxstatp=0,time_t* fbnzpp=0/* naechster Zeitpunkt*/);
 
 
-// Steuerung der Abspeicherung gesendeter Faxe je nach Muster
+// Steuerung der Abspeicherung gesendeter Faxe je nach Muster //α
 struct zielmustercl 
 {
     string muster;
@@ -724,7 +724,7 @@ struct zielmustercl
     const string& holmuster() const;
     const string& holziel() const;
     int obmusterleer() const;
-}; // struct zielmustercl
+}; // struct zielmustercl //ω 
 
 struct urfxcl // urspruengliche Dateidaten vor Aufteilung an verschiedene Faxadressaten
 {
@@ -976,24 +976,24 @@ struct hhcl:dhcl
 		int p2;
 		string p3;
 		uchar oblista{0};
-		long listz{30}; //ω
+		long listz{30};
 
 		size_t sqlz0{0}; // Index in opn mit erster SQL-Option
 		size_t sqlzn{0}; // Zahl der SQL-Befehle numerisch
+		vector<shared_ptr<string>> zmmrp; // vector der rueckfrage-Zielmuster
+		vector<shared_ptr<zielmustercl>> zmsp; // Zielmusterzeiger
+		size_t zmzn{0}; // Zahl der Zielmusterpaare numerisch
+		vector<shared_ptr<string>> zmzrp; // vector der rueckfrage-Ziele
+		vector<shared_ptr<string>> sqlrp; // vector der rueckfrage-SQL-Befehle //ω
 		string* sqlp{0}; // Array der SQL-Befehle
 		//    string sqlz;  // Zahl der SQL-Befehle
 		//    size_t sqlzn=0; // Zahl der SQL-Befehle numerisch
 		svec sqlVp; // Vector der Vorgabe-SQL-Befehl
-		vector<shared_ptr<string>> sqlrp; // vector der rueckfrage-SQL-Befehle
 
 		size_t zmz0{0}; // Index in opn mit erster Zielmusterpaaroption, wird vielleicht nicht gebraucht
-		size_t zmzn{0}; // Zahl der Zielmusterpaare numerisch
 		string *zmmp{0}; // Array der Zielmuster
 		string *zmzp{0}; // Array der Ziele
-		vector<shared_ptr<zielmustercl>> zmsp; // Zielmusterzeiger
 		vector<zielmustercl> zmVp; // Zielmuster aus Vorgaben
-		vector<shared_ptr<string>> zmmrp; // vector der rueckfrage-Zielmuster
-		vector<shared_ptr<string>> zmzrp; // vector der rueckfrage-Ziele
 		string virtvz; //	instvz+"/ocrv";
 	  string ocrmp; //	virtvz+"/bin/ocrmypdf";
 
@@ -1085,7 +1085,7 @@ struct hhcl:dhcl
 		void inDBk(DB *My, const string& spooltab, const string& altspool, const fsfcl *const fsfp, const size_t aktc);
 		void standardprio(const int obmitsetz);
 		int priorang(const int rnr);
-		void fuv0()/*,fuv1(),fuv2(),fuv3(),fuv4(),fuv5(),fuv6(),fuv7(),fuv8(),fuv9(),fuv10()*/;
+		void fuv0()/*,fuv1(),fuv2(),fuv3(),fuv4(),fuv5(),fuv6(),fuv7(),fuv8(),fuv9(),fuv10()*/; //α
 		int fui0(),fui1(),fui2()/*,fui3(),fui4(),fui5(),fui6(),fui7(),fui8(),fui9(),fui10()*/;
 	protected: //α
 		// void virtlgnzuw(); // wird aufgerufen in: virtrueckfragen, parsecl, lieskonfein, hcl::hcl nach holsystemsprache

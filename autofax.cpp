@@ -64,6 +64,47 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"virtzeigversion()","virtshowversion()"},
 	// T_virtzeigueberschrift, 
 	{"virtzeigueberschrift()","virtshowheadline()"},
+	// T_SQL_Befehl_Nr
+	{"SQL-Befehl Nr. ","SQL-command no. "},
+	// T_faxnr_wird_ersetzt_mit_der_Faxnr
+	{" (bitte ggf. SQL-Befehl mit 2 Ergebnisfeldern, '&&faxnr&&' wird ersetzt mit der Faxnr)",
+		" (if wanted type sql-command with 2 result fields, '&&faxnr&&' will be replaces with the fax-no.)"},
+	// T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr
+	{" ('-'=SQL-Befehl loeschen, 2 Ergebnisfelder, '&&faxnr&&' wird ersetzt mit der Faxnr, s.man -Lde " DPROG ")",
+		" ('-'=delete this sql command, 2 result fields, '&&faxnr&&' will be replaces with the fax-no., see man " DPROG ")"},
+	// T_In
+	{"In '","In '"},
+	// T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben
+	{"' keine Datenbank gefunden. Wollen Sie den SQL-Befehl neu eingeben?",
+		"' no database found. Do You want to reenter the sql command?"},
+	// T_Datenbank
+	{"Datenbank '","Database '"},
+	// T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben
+	{"' nicht ermittelbar. Wollen Sie den SQL-Befehl neu eingeben?","' not found. Do You want to reenter the sql command?"},
+	// T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben
+	{"' keinmal '&&faxnr&&' gefunden. Wollen Sie den SQL-Befehl neu eingeben?",
+		"' no occurance of '&&faxnr&&' found. Do You want to reenter the sql command?"},
+	// T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben
+	{"' koennte ein SQL-Fehler sein. Wollen Sie den SQL-Befehl neu eingeben?",
+		"' could be an sql error. Do You want to reenter the sql command?"},
+	// T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben,
+	{"Wollen Sie noch einen SQL-Befehl eingeben?","Do You want to enter another sql command?"},
+	// T_zum_Streichen_Strich_eingeben
+	{" (zum Streichen '-' eingeben)"," (to delete enter '-')"},
+// T_beim_letzten_fuer_alle_Uebrigen_nichts_eingeben
+	{" (beim letzten fuer alle Uebrigen nichts eingeben)"," (for the last for all the rest enter nothing)"},
+	// T_Zielverzeichnis_Nr
+	{"Zielverzeichnis Nr. ","Target directory no. "},
+	// T_SQL_Befehl
+	{"SQL-Befehl: ","SQL-Command: "},
+	// T_Zielmuster_Nr
+	{"Zielmuster Nr. ","Target pattern no. "},
+	// T_Ziel_Nr
+	{"Ziel Nr. ","Target no. "},
+	// T_Zielmuster
+	{"Zielmuster","Target pattern"},
+	// T_Ziel,
+	{"Ziel ","Target "},
 	// T_Fuege_ein
 	{"Fuege ein: ","Inserting: "}, //ω
 	// T_an_Fax
@@ -595,14 +636,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"pruefmodcron()","checkmodcron()"},
 	// T_Zahl_der_SQL_Befehle_fuer_die_Absenderermittlung,
 	{"Zahl der SQL-Befehle fuer die Absenderermittlung","No.of the sql-commands for finding out senders"},
-	// T_SQL_Befehl_Nr
-	{"SQL-Befehl Nr. ","SQL-command no. "},
-	// T_Zielmuster_Nr
-	{"Zielmuster Nr. ","Target pattern no. "},
-	// T_Ziel_Nr
-	{"Ziel Nr. ","Target no. "},
-	// T_Zielmuster
-	{"Zielmuster","Target pattern"},
 	// T_Zahl_der_Muster_Verzeichnis_Paare_zum_Speichern_ankommender_Faxe
 	{"Zahl der Muster/Verzeichnis-Paare zum Speichern ankommender Faxe","No of pairs of patterns/directories for saving received faxes"},
 	// T_Verzeichnis_mit_zu_faxenden_Dateien
@@ -692,35 +725,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Buchstabenfolge vor erstem Adressaten","Letter-sequence before the first addressee"},
 	// T_Buchstabenfolge_vor_weiterem_Adressaten_sowie_weiterer_Faxnummer,
 	{"Buchstabenfolge vor weiterem Adressaten sowie weiterer Faxnummer","Letter-sequence before further addressee or fax number"},
-	// T_faxnr_wird_ersetzt_mit_der_Faxnr
-	{" (bitte ggf. SQL-Befehl mit 2 Ergebnisfeldern, '&&faxnr&&' wird ersetzt mit der Faxnr)",
-		" (if wanted type sql-command with 2 result fields, '&&faxnr&&' will be replaces with the fax-no.)"},
-	// T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr
-	{" ('-'=SQL-Befehl loeschen, 2 Ergebnisfelder, '&&faxnr&&' wird ersetzt mit der Faxnr, s.man -Lde " DPROG ")",
-		" ('-'=delete this sql command, 2 result fields, '&&faxnr&&' will be replaces with the fax-no., see man " DPROG ")"},
-	// T_In
-	{"In '","In '"},
-	// T_keine_Datenbank_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben
-	{"' keine Datenbank gefunden. Wollen Sie den SQL-Befehl neu eingeben?",
-		"' no database found. Do You want to reenter the sql command?"},
-	// T_Datenbank
-	{"Datenbank '","Database '"},
-	// T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben
-	{"' nicht ermittelbar. Wollen Sie den SQL-Befehl neu eingeben?","' not found. Do You want to reenter the sql command?"},
-	// T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben
-	{"' keinmal '&&faxnr&&' gefunden. Wollen Sie den SQL-Befehl neu eingeben?",
-		"' no occurance of '&&faxnr&&' found. Do You want to reenter the sql command?"},
-	// T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben
-	{"' koennte ein SQL-Fehler sein. Wollen Sie den SQL-Befehl neu eingeben?",
-		"' could be an sql error. Do You want to reenter the sql command?"},
-	// T_Wolle_Sie_noch_einen_SQL_Befehl_eingeben,
-	{"Wollen Sie noch einen SQL-Befehl eingeben?","Do You want to enter another sql command?"},
-	// T_zum_Streichen_Strich_eingeben
-	{" (zum Streichen '-' eingeben)"," (to delete enter '-')"},
-// T_beim_letzten_fuer_alle_Uebrigen_nichts_eingeben
-	{" (beim letzten fuer alle Uebrigen nichts eingeben)"," (for the last for all the rest enter nothing)"},
-	// T_Zielverzeichnis_Nr
-	{"Zielverzeichnis Nr. ","Target directory no. "},
 	// T_setzhylavz
 	{"setzhylavz()","sethyladir()"},
 	// T_aus_systemd_fax_service_Datei_ermittelt
@@ -792,8 +796,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"verzeichnisse()","directories()"},
 	// T_Muster,
 	{"Muster ","Pattern "},
-	// T_Ziel,
-	{"Ziel ","Target "},
 	// T_rufpruefsamba
 	{"rufpruefsamba()","callchecksamba()"},
 	// T_Faxempfang
@@ -1323,8 +1325,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{" Fundstellen von "," references of "},
 	// T_Keine_Fundstellen_von
 	{"Keine Fundstellen von ","No references of "},
-	// T_SQL_Befehl
-	{"SQL-Befehl: ","SQL-Command: "},
 	// T_nurempf_k,
 	{"nurempf","reconly"},
 	// T_nurempf_l,
@@ -1408,10 +1408,9 @@ const unsigned ktage=1; // kurzes Intervall fuer Faxtabellenkorrektur, 1 Tag
 const unsigned mtage=30; // mittleres Intervall fuer Faxtabellenkorrektur, 1 Monat
 const unsigned ltage=73000; // langes Intervall fuer Faxtabellenkorrektur, 200 Jahre
 
-using namespace std; //ω
+using namespace std;
 
-
-const string cSQL_{"SQL_"}, cZMMuster_{"ZMMuster_"}, cZMZiel_{"ZMZiel_"};
+const string cSQL_{"SQL_"}, cZMMuster_{"ZMMuster_"}, cZMZiel_{"ZMZiel_"}; //ω
 
 // fürs Debugging
 inline int dfork() {
@@ -3015,15 +3014,30 @@ void hhcl::pvirtVorgbSpeziell()
 } // void hhcl::pvirtVorgbSpeziell
 
 // ueberlaedt die Funktion aus kons.cpp
-int hhcl::fui0() {return auswfb();};
-int hhcl::fui1() {return auswca();};
-int hhcl::fui2() {return auswhy();};
-void hhcl::fuv0() {if (hintervall!=hintervalt) hconfigtty();}
+int hhcl::fui0()
+{ //ω
+	return auswfb();
+	return 0; //α
+};
+int hhcl::fui1() 
+{ //ω
+	return auswca();
+	return 0; //α
+};
+int hhcl::fui2() 
+{ //ω
+	return auswhy();
+	return 0; //α
+};
+void hhcl::fuv0() 
+{ //ω
+	if (hintervall!=hintervalt) hconfigtty();
+}  //α //ω
 int hhcl::auswfb(){return obfa[0]&&(obfa[1]||obfa[2]);}
 int hhcl::auswca(){return obfa[1]&&(obfa[0]||obfa[2]);}
 int hhcl::auswhy(){return obfa[2]&&(obfa[0]||obfa[1]);}
 
-// aufgerufen in lauf
+// aufgerufen in lauf //α
 void hhcl::virtinitopt()
 {
 	hLog(violetts+"virtinitopt()"+schwarz); //ω
@@ -9824,9 +9838,9 @@ void hhcl::pvirtnachrueckfragen()
 		// aktuelle Zielmusterpaare eintragen
 		for(auto omit=oprzm.schl.begin();omit!=oprzm.schl.end();omit++) {
 			opn<<(*omit);
-		}
+		} //ω
 		standardprio(/*obmitsetz*/1);
-	} // 	if (rzf)
+	} // 	if (rzf) //α
 	// if (initDB()) exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));  //ω
 	if (obfa[0]) {
 		svec vzv;
