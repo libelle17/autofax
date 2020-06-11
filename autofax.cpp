@@ -64,6 +64,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"virtzeigversion()","virtshowversion()"},
 	// T_virtzeigueberschrift, 
 	{"virtzeigueberschrift()","virtshowheadline()"},
+	// T_Fuege_ein
+	{"Fuege ein: ","Inserting: "}, //ω
 	// T_SQL_Befehl_Nr
 	{"SQL-Befehl Nr. ","SQL-command no. "},
 	// T_faxnr_wird_ersetzt_mit_der_Faxnr
@@ -105,8 +107,6 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Zielmuster","Target pattern"},
 	// T_Ziel,
 	{"Ziel ","Target "},
-	// T_Fuege_ein
-	{"Fuege ein: ","Inserting: "}, //ω
 	// T_an_Fax
 	{"an Fax","to fax"},
 	// T_an_cFax,
@@ -1408,9 +1408,9 @@ const unsigned ktage=1; // kurzes Intervall fuer Faxtabellenkorrektur, 1 Tag
 const unsigned mtage=30; // mittleres Intervall fuer Faxtabellenkorrektur, 1 Monat
 const unsigned ltage=73000; // langes Intervall fuer Faxtabellenkorrektur, 200 Jahre
 
-using namespace std;
+using namespace std; //ω
 
-const string cSQL_{"SQL_"}, cZMMuster_{"ZMMuster_"}, cZMZiel_{"ZMZiel_"}; //ω
+const string cSQL_{"SQL_"}, cZMMuster_{"ZMMuster_"}, cZMZiel_{"ZMZiel_"};
 
 // fürs Debugging
 inline int dfork() {
@@ -4926,6 +4926,7 @@ void liesvw(const string& vwdt,time_t* fbzpp,string* minabstp, string* telnrp, s
 	}
 } // void liesvw
 
+// aufgerufen 2 x in pvirtfuehraus
 void hhcl::korrigierefbox(const unsigned tage/*=90*/,const size_t aktc)
 {
 	////	obverb=2; ZDB=1;
@@ -5253,7 +5254,7 @@ int hhcl::pruefconvert()
 		convertgeprueft=1;
 	} //   if (!convertgeprueft)
 	return convertda;
-} // int hhcl::pruefconvert()
+} // int hhcl::pruefconvert
 
 // aufgerufen in: empfarch, zupdf
 int hhcl::holtif(const string& datei,ulong *seitenp,struct tm *tmp,struct stat *elogp, 
@@ -5362,7 +5363,7 @@ unsigned hhcl::pdfseitenzahl(const string& datei)
 #endif
 }
 
-// in inspoolschreiben und empfhyla und empfcapi
+// in inspoolschreiben und empfhyla, empfcapi und empffbox
 int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/, const int obocr/*=1*/, const int loeschen/*=1*/) // 0=Erfolg
 {
 	hLog(violetts+Tx[T_zupdf]+schwarz+" '"+blau+*quellp+schwarz+"' '"+blau+ziel+schwarz+"', obocr: "+(obocr?"1":"0")+", loeschen: "+(loeschen?"1":"0"));
@@ -5393,6 +5394,8 @@ int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/,
 								break;
 							} // 						 if (rueck[uru].find("ERROR")!=string::npos)
 						} // 						for(unsigned uru=0;uru<rueck.size();uru++)
+//					} else { // Datei kann auch trotz Fehler erstellt werden, deshalb Kommentar
+//						erg=zerg;
 					} // 					if (!systemrueck(string("ocrmypdf -rcsl ")+...
 					if (!erg) {
 						struct stat lziel{0};
@@ -5407,44 +5410,48 @@ int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/,
 		} // 		if (!keinbild)
 		if (aru) break; // 1,5 Runden maximal benoetigt
 		if (erg) {
-			string cmd0, cmd;
-			for(unsigned runde=1;runde<=2;runde++) {
-				cmd.clear();
-				string pname;
-				switch ((runde+keinbild)%2) {
-					case 0: 
-						// 5.12.16 opensuse: bearbeitet jetzt nur (noch?) die erste Seite!
-						pname="soffice";
-						if (pruefsoffice(pname)) {
-							cmd0="cd "+gethome()+"; ";
-							cmd=pname+" --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+*quellp+"\" 2>&1";
-						} // 						if (pruefsoffice
-						break; // Ergebnis immer 0
-					case 1: 
-						pname="convert";
-						if (pruefconvert()) {
-							cmd0.clear();
-							cmd=sudc+pname+" \""+*quellp+"\" \""+ziel+"\""; 
-						} // 						if (pruefconvert())
-						break;
-				} // switch (runde) 
-				if (!cmd.empty()) {
-					vector<string> umwd;
-					if ((erg=systemrueck(cmd0+cmd, obverb,oblog,&umwd))) {
-						for(unsigned uru=0;uru<umwd.size();uru++) {
-							if (umwd[uru].find("failed to read path from javaldx")!=string::npos) {
-								erg=systemrueck(cmd0+sudc+cmd, obverb,oblog);
-								/*// int altobverb=obverb; obverb=1; pruefsoffice(1); obverb=altobverb; */
-							} // 					  if (umwd[uru].find("javaldx failed")!=string::npos)
-						} // 					 for(unsigned uru=0;uru<umwd.size();uru++)
-					} // 					if ((erg=systemrueck(cmd, obverb,oblog,&umwd)))
-					struct stat entryziel{0};
-					erg=lstat(ziel.c_str(),&entryziel); 
-					fLog(Tx[T_Umwandlungvon]+blaus+*quellp+Tx[T_inPDFmit]+tuerkis+pname+schwarz+
-							Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
-					if (!erg) break;
-				} // if (cmd.empty()) erg=1; else 
-			} // for(unsigned runde=1;runde<=2;runde++) 
+			string cmd1, cmd2;
+			if (strcasecmp(exten.c_str(),"pdf")) { // wenn noch keine pdf-Datei
+				for(unsigned runde=1;runde<=2;runde++) {
+					cmd2.clear();
+					string pname;
+					switch ((runde+keinbild)%2) {
+						case 0: 
+							// 5.12.16 opensuse: bearbeitet jetzt nur (noch?) die erste Seite!
+							pname="soffice";
+							if (pruefsoffice(pname)) {
+								cmd1="cd "+gethome()+"; ";
+								cmd2=pname+" --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+*quellp+"\" 2>&1";
+							} // 						if (pruefsoffice
+							break; // Ergebnis immer 0
+						case 1: 
+							pname="convert";
+							if (pruefconvert()) {
+								cmd1.clear();
+								cmd2=sudc+pname+" \""+*quellp+"\" \""+ziel+"\""; 
+							} // 						if (pruefconvert
+							break;
+					} // switch (runde) 
+					if (!cmd2.empty()) {
+						vector<string> umwd;
+						if ((erg=systemrueck(cmd1+cmd2, obverb,oblog,&umwd))) {
+							for(unsigned uru=0;uru<umwd.size();uru++) {
+								if (umwd[uru].find("failed to read path from javaldx")!=string::npos) {
+									erg=systemrueck(cmd1+sudc+cmd2, obverb,oblog);
+									/*// int altobverb=obverb; obverb=1; pruefsoffice(1); obverb=altobverb; */
+								} // 					  if (umwd[uru].find("javaldx failed")!=string::npos)
+							} // 					 for(unsigned uru=0;uru<umwd.size();uru++)
+						} // 					if ((erg=systemrueck(cmd2, obverb,oblog,&umwd)))
+						struct stat entryziel{0};
+						erg=lstat(ziel.c_str(),&entryziel); 
+						fLog(Tx[T_Umwandlungvon]+blaus+*quellp+Tx[T_inPDFmit]+tuerkis+pname+schwarz+
+								Tx[T_beendetErgebnis]+(erg?rots+Tx[T_misserfolg]:blaus+Tx[T_Erfolg_af])+schwarz, 1||erg,(erg?1:oblog));
+						if (!erg) break;
+					} // if (cmd2.empty()) erg=1; else 
+				} // for(unsigned runde=1;runde<=2;runde++) 
+			} else { // schon pdf-Datei
+				erg=kopier(*quellp,ziel);
+			} // 	if (strcasecmp else
 			if (erg) {
 				if (keinbild) break; // ocrmypdf kann nur Bilder umwandeln
 			} else {
@@ -5778,7 +5785,7 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 		if (absdr.length()>70) absdr.erase(70);
 		ulong fnr{0};
 		struct stat statfarchvz{0};
-		const string nrdt{farchvz+"/nnr"}; // naechste Nummer
+		const string nrdt{farchvz+"/nnr"}; // /var/spool/fbfax/arch + naechste Nummer
 		static uchar farchvzgeprueft{0};
 		if (!farchvzgeprueft) {
 			farchvzgeprueft=pruefverz(farchvz,obverb,oblog,/*obmitfacl=*/1,/*obmitcon=*/1,/*besitzer=*/cuser,/*benutzer=*/cuser);
@@ -5839,8 +5846,10 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 			if (rins.fnr) {
 				fLog(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
 			} else {
-				if (!kopier(ganz,farchvz,obverb,oblog)) {
-					dorename(ganz,stamm+"_alt.pdf",cuser,/*vfehlerp=*/0,/*schonda=*/0,obverb,oblog);
+				if (ganz.find(farchvz)) { // bei empferneut nicht
+					if (!kopier(ganz,farchvz,obverb,oblog)) {
+						dorename(ganz,stamm+"_alt.pdf",cuser,/*vfehlerp=*/0,/*schonda=*/0,obverb,oblog);
+					}
 				}
 			} //         if (runde==1)
 		} // if !kfehler
@@ -5987,6 +5996,7 @@ void hhcl::empfhyla(const string& ganz,const size_t aktc, const uchar was,const 
 // aufgerufen in: main
 void hhcl::empferneut()
 {
+	const size_t aktc{0};
 	hLog(violetts+Tx[T_empferneut]+schwarz);
 	tu_listi(/*zurauswahl=*/1);
 	const string onrs{Tippstr(Tx[T_Welches_Fax_soll_erneut_empfangen_werden_bitte_Nr_in_der_1_Spalte_eingeben_a_alle_Angezeigten], 0)};
@@ -6010,12 +6020,12 @@ void hhcl::empferneut()
 			string txtd{cempfavz+vtz+rumpf};
 			//// <<txtd<<endl;
 			if (!lstat((txtd+".txt").c_str(),&cstat)&&!lstat((txtd+".sff").c_str(),&cstat)) {
-				empfcapi(txtd,0,4,ltoan(j));
+				empfcapi(txtd,aktc,4,ltoan(j));
 			} else {
 				txtd=cfaxuserrcfalschevz+vtz+fnr;
 				//// <<txtd<<endl;
 				if (!lstat((txtd+".txt").c_str(),&cstat)&&!lstat((txtd+".sff").c_str(),&cstat)) {
-					empfcapi(txtd,0,4,ltoan(j));
+					empfcapi(txtd,aktc,4,ltoan(j));
 				} else {
 					svec sffe;
 					cmd="find '"+spoolcapivz+"/' -maxdepth 2 -type f -iname '"+rumpf+".sff"+"'";
@@ -6025,7 +6035,7 @@ void hhcl::empferneut()
 						fund+=".txt";
 						if (!lstat(fund.c_str(),&cstat)) {
 							fund.resize(fund.length()-4);
-							empfcapi(fund,0,4,ltoan(j));
+							empfcapi(fund,aktc,4,ltoan(j));
 							break;
 						}
 					}
@@ -6034,7 +6044,9 @@ void hhcl::empferneut()
 		} else {
 			const string txtd{hempfavz+vtz+fnr+".tif"};
 			if (!lstat(txtd.c_str(),&cstat)) {
-				empfhyla(txtd,0,4,ltoan(j));
+				empfhyla(txtd,aktc,4,ltoan(j));
+			} else {
+				empffbox(farchvz+vtz+fnr+".pdf",aktc,ltoan(j));
 			} // 		if (!lstat(txtd.c_str(),&cstat))
 		} // 	if (fnr.find('-')!=string::npos)
 	} // 	for(j=beg;j<end;j++)
@@ -9695,7 +9707,7 @@ void hhcl::pvirtnachvi()
 void hhcl::pvirtnachrueckfragen()
 {
 	hLog(violetts+Tx[T_pvirtnachrueckfragen]+schwarz);
-	if (rzf) {
+	if (rzf) { //ω
 		const size_t aktc{0};
 		sqlrp.clear();
 		unsigned neunr{1}; // Nr. des SQL-Befehles nach neuer Zaehlung
@@ -9838,7 +9850,7 @@ void hhcl::pvirtnachrueckfragen()
 		// aktuelle Zielmusterpaare eintragen
 		for(auto omit=oprzm.schl.begin();omit!=oprzm.schl.end();omit++) {
 			opn<<(*omit);
-		} //ω
+		}
 		standardprio(/*obmitsetz*/1);
 	} // 	if (rzf) //α
 	// if (initDB()) exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));  //ω

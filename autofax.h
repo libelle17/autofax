@@ -27,6 +27,7 @@ enum T_
 	T_virttesterg,
 	T_virtzeigversion,
 	T_virtzeigueberschrift, 
+	T_Fuege_ein, //ω
 	T_SQL_Befehl_Nr,
 	T_faxnr_wird_ersetzt_mit_der_Faxnr,
 	T_Strich_ist_SQL_Befehl_loeschen_faxnr_wird_ersetzt_mit_der_Faxnr,
@@ -45,7 +46,6 @@ enum T_
 	T_Ziel_Nr,
 	T_Zielmuster,
 	T_Ziel,
-	T_Fuege_ein, //ω
 	T_an_Fax,
 	T_an_cFax,
 	T_an_hFax,
@@ -976,7 +976,7 @@ struct hhcl:dhcl
 		int p2;
 		string p3;
 		uchar oblista{0};
-		long listz{30};
+		long listz{30}; //ω
 
 		size_t sqlz0{0}; // Index in opn mit erster SQL-Option
 		size_t sqlzn{0}; // Zahl der SQL-Befehle numerisch
@@ -984,7 +984,8 @@ struct hhcl:dhcl
 		vector<shared_ptr<zielmustercl>> zmsp; // Zielmusterzeiger
 		size_t zmzn{0}; // Zahl der Zielmusterpaare numerisch
 		vector<shared_ptr<string>> zmzrp; // vector der rueckfrage-Ziele
-		vector<shared_ptr<string>> sqlrp; // vector der rueckfrage-SQL-Befehle //ω
+		vector<shared_ptr<string>> sqlrp; // vector der rueckfrage-SQL-Befehle
+
 		string* sqlp{0}; // Array der SQL-Befehle
 		//    string sqlz;  // Zahl der SQL-Befehle
 		//    size_t sqlzn=0; // Zahl der SQL-Befehle numerisch
