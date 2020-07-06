@@ -1279,8 +1279,9 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,const 
           fLog(Txd[T_Erweitere_Feld]+tabs+"."+feld+Txd[T_von]+lenge.c_str()+Txd[T_auf]+ltoan(wlength),1,1);
           korr.str(std::string()); korr.clear();
           if (*(*cerg+1) && *(*cerg+2)) {
+						const string defa(ersetzAllezu(cjj(cerg,3),"'","\\'"));
             korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<*(*cerg+1)/*data_type*/<<"("<<wlength<<") "<<
-              (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(cjj(cerg,3)?string("DEFAULT '")+cjj(cerg,3)+"'":"")<<
+              (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(cjj(cerg,3)?string("DEFAULT '")+defa+"'":"")<<
               " COMMENT '"<<ersetzAllezu(cjj(cerg,4),"'","\\'")<<"'";
             RS spaltaend(this,korr.str(),aktc,obverb);
             if (spaltaend.fnr==1074) {
@@ -1299,7 +1300,7 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,long wlength,const 
               if (!neufeld.empty()) {
                 fLog(Txd[T_Aendere_Feld]+tabs+"."+feld+" von: "+*(*cerg+1)+" auf: "+neufeld,1,1);
                 korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<neufeld/*data_type*/<<" "<<
-                  (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(cjj(cerg,3)?string("DEFAULT '")+cjj(cerg,3)+"'":"")<<
+                  (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(cjj(cerg,3)?string("DEFAULT '")+defa+"'":"")<<
                   " COMMENT '"<<ersetzAllezu(cjj(cerg,4),"'","\\'")<<"'";
                 RS spaltaend2(this,korr.str(),aktc,obverb);
               }
