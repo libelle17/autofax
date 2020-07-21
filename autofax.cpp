@@ -10361,8 +10361,7 @@ int main(int argc,char** argv) //α
 	} //α
 	hhcl hhi(argc,argv); // hiesige Hauptinstanz, mit lngzuw, setzlog und pruefplatte
 	hhi.lauf(); // Einleitungsteil mit virtuellen Funktionen, 
-	// mit virtVorgbAllg,pvirtVorgbSpeziell,initopt,parsecl,pvirtmacherkl,zeighilfe,virtlieskonfein,verarbeitkonf,lieszaehlerein,MusterVorgb,dovi,dovs,virtzeigversion
-	// virtautokonfschreib,update,
+	// mit virtVorgbAllg,pvirtVorgbSpeziell,virtinitopt,parsecl,virtMusterVorgb,virtlieskonfein,verarbeitkonf,virtzeigueberschrift,pvirtmacherkl,virttesterg,zeighilfe,pvirtvorzaehler,lieszaehlerein,dovi,virtzeigversion,pvirtvorrueckfragen,rueckfragen,pvirtnachrueckfragen,pruefggfmehrfach,tuloeschen(logdt...,virtpruefweiteres,pruefcron,pvirtfuehraus,virtautokonfschreib,gitpull,wartaufpids,setzzaehler,schreibzaehler,virtschlussanzeige
 	return hhi.retu;
 } // int main 
 

@@ -5452,7 +5452,7 @@ void hcl::parsecl()
 // wird aufgerufen in lauf
 void hcl::virtMusterVorgb()
 {
-} // void hhcl::MusterVorgb
+} // void hhcl::virtMusterVorgb
 
 // wird aufgerufen in lauf; liest die Konfiguration ein
 void hcl::virtlieskonfein()
