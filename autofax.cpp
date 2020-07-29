@@ -9522,7 +9522,7 @@ void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 					inse[inse.size()-1]=';';
 					////		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 					RS vgl1(My,"DROP TABLE IF EXISTS tmph",aktc,ZDB);
-					RS vgl2(My,"CREATE TABLE tmph(submid VARCHAR(11) KEY,Datum DATETIME,tel VARCHAR(30),pages INT,attr VARCHAR(20),erfolg INT);",aktc,ZDB);
+					RS vgl2(My,"CREATE TABLE tmph(submid VARCHAR(11) collate utf8_general_ci KEY,Datum DATETIME,tel VARCHAR(30),pages INT,attr VARCHAR(20),erfolg INT);",aktc,ZDB);
 					RS vgl3(My,"INSERT INTO tmph VALUES "+inse,aktc,ZDB);
 					// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
 					// und zu denen nicht bereits eine erfolgreiche capisuite-Uebertragung eingetragen ist
