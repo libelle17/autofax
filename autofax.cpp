@@ -3324,6 +3324,7 @@ void hhcl::pruefmodem()
 						obmodem=1;
 						modems<<tty;
 						hLog("Modem: "+blaus+tty+schwarz+Txk[T_gefunden]);
+						break; // 30.7.20 wegen Reserveserver
 					} // if (terg)
 				} // if (tty!="ttyS0") 
 				// KLA // if (!lstat(((qrueck[i])+"/device/driver").c_str(),&entrydriv)) 
@@ -4009,6 +4010,7 @@ int hhcl::pruefhyla()
 	int ret{1};
 	hylasv1();
 	do { // fuer break
+		caus<<"hmodem: "<<hmodem<<endl;
 		if (hmodem.empty()) {
 			fLog(blaus+Tx[T_Kein_Modem_gefunden]+schwarz,obfa[2]?1:obverb,oblog);
 			this->obfa[2]=0;
@@ -4326,8 +4328,9 @@ int hhcl::pruefhyla()
 							string pfad;
 							if (obprogda("faxstat",obverb,oblog,&pfad)) {
 								modemlaeuftnicht=1+fglaeuftnicht;
+								caus<<"modemlaeuftnicht: "<<(int)modemlaeuftnicht<<endl;
 								svec rueck;
-								//// <<"pfad: "<<pfad<<endl;
+								caus<<"pfad: "<<pfad<<endl;
 								systemrueck(pfad+" 2>&1",obverb,oblog,&rueck,/*obsudc=*/1);
 								for(size_t ruei=0;ruei<rueck.size();ruei++) {
 									if (!aru) {
@@ -4356,7 +4359,7 @@ int hhcl::pruefhyla()
 								//// if (0)
 								hylalaeuftnicht=hservice_faxq_hfaxd()+fglaeuftnicht;
 							}
-							////  <<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
+							caus<<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
 							if (!hylalaeuftnicht && !modemlaeuftnicht) break;
 							if (iru>1) {
 								systemrueck("chmod 660 "+this->varsphylavz+"/FIFO*",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
@@ -4365,7 +4368,7 @@ int hhcl::pruefhyla()
 								frischkonfiguriert=1;
 							}
 							if (!iru) {
-								//// <<rot<<"hier faxsetup!"<<endl;
+								caus<<rot<<"hier faxsetup!"<<endl;
 								hfaxsetup();
 								//// if (0)
 								//// hservice_faxgetty();
