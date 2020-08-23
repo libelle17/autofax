@@ -338,7 +338,7 @@ anzeig:
 endif
 
 .PHONY: debug debugnew debugneu
-debug debugnew debugneu: DEBUG=-g 
+debug debugnew debugneu: DEBUG=-g3 -O0 
 debug: all
 debugneu debugnew: neu
 

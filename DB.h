@@ -358,7 +358,7 @@ struct DB
 	void prueffunc(const string& pname, const string& body, const string& para, const size_t aktc, int obverb, int oblog);
 	vector< vector<instyp> > ins;
 	void erweitern(const string& tab, vector<instyp> einf,const size_t aktc,int obverb,uchar obsammeln=0, const unsigned long *maxl=0) const;
-	uchar tuerweitern(const string& tab, const string& feld,long wlength,const size_t aktc,int obverb) const;
+	uchar tuerweitern(const string& tab, const string& feld,unsigned long wlength,const size_t aktc,int obverb) const;
 	int machbinaer(const string& tabs, const size_t aktc, const string& fmeld,int obverb) const;
 	////	DB(DBSTyp DBS, const char* host, const char* user,const char* passwd, const char* db, unsigned int port, const char *unix_socket, unsigned long client_flag);
 	///*1*/DB();

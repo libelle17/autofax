@@ -6316,6 +6316,7 @@ void hhcl::fxinDatenbank(fxfcl& fx,const size_t aktc)
 		RS rinsa(My,altspool); 
 		rinsa.tbins(&einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB); // ,&spoolid);
 		RS rinss(My,spooltab); 
+		caus<<rot<<My->dbname<<schwarz<<endl;
 		rinss.tbins(&einf,aktc,/*sammeln=*/0,/*obverb=*/ZDB,/*idp=*/&spoolid);
 		if (rinss.fnr) {
 			fLog(Tx[T_Fehler_af]+drots+ltoan(rinss.fnr)+schwarz+Txk[T_bei]+tuerkis+rinss.sql+schwarz+": "+blau+rinss.fehler+schwarz,1,1);
