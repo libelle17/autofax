@@ -562,7 +562,7 @@ struct dhcl:public hcl
 		dhcl(const int argc, const char *const *const argv,const char* const DPROG,const uchar mitcron);
 		~dhcl();
 		int  initDB();
-		int  pruefDB(const string& db);
+		int  pruefDB(DB** testMy, const string& db);
 #ifdef VOMHAUPTCODE
 		__attribute__((weak)) // implementationsspezifische Vorgaben, Modul vgb.cpp)
 #endif

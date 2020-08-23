@@ -9732,6 +9732,7 @@ void hhcl::pvirtnachrueckfragen()
 					break;
 				} else {
 					svec dben=holdbaussql(zwi);
+					DB *testDB[dben.size()];
 					//// <<"dben.size(): "<<(int)dben.size()<<endl;
 					uchar dbda{1};
 					if (!dben.size()) {
@@ -9741,7 +9742,7 @@ void hhcl::pvirtnachrueckfragen()
 						uchar nochmal{0};
 						for(size_t i=0;i<dben.size();i++) {
 							//// <<"i: "<<blau<<i<<rot<<": "<<dben[i]<<schwarz<<endl;
-							if (pruefDB(dben[i])) {
+							if (pruefDB(&testDB[i], dben[i])) {
 								dbda=0;
 								if (Tippob(Tx[T_Datenbank]+rots+dben[i]+blau+Tx[T_nicht_ermittelbar_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) {
 									nochmal=1;
@@ -9755,12 +9756,15 @@ void hhcl::pvirtnachrueckfragen()
 						if (zwi.find("&&faxnr&&")==string::npos) {
 							if (Tippob(Tx[T_In]+rots+zwi+blau+Tx[T_keinmal_faxnr_gefunden_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
 						} else {
-							RS rtest(this->My,ersetzAllezu(zwi,"&&faxnr&&","9999"),aktc,ZDB); //// (const char*)trimfaxnr));
+							RS rtest(testDB[0],ersetzAllezu(zwi,"&&faxnr&&","9999"),aktc,ZDB); //// (const char*)trimfaxnr));
 							if (rtest.obqueryfehler) {
 								if (Tippob(Tx[T_In]+rots+zwi+blau+Tx[T_koennte_ein_SQL_Fehler_sein_Wollen_Sie_den_SQL_Befehl_neu_eingeben])) continue;
 							} // if (rtest.obqueryfehler)
 						} // if (zwi.find("&&faxnr&&")==string::npos) 
 					} // if (dbda)
+					for(size_t i=0;i<dben.size();i++) {
+						if (testDB[i]) {delete testDB[i];testDB[i]=0;}
+					}
 				} // if (zwi.empty()) else
 				break;
 			} // while (1)

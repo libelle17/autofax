@@ -2503,11 +2503,17 @@ int dhcl::initDB()
 } // initDB
 
 // wird aufgerufen in autofax.pvirtnachrueckfragen
-int dhcl::pruefDB(const string& db)
+int dhcl::pruefDB(DB **testMy, const string& db)
 {
 	hLog(violetts+Txk[T_pruefDB]+db+")"+schwarz);
-	DB testMy(myDBS,host,muser,mpwd,maxconz,db,0,0,0,obverb,oblog,DB::defmycharset,DB::defmycollat,3,0);
-	return(testMy.fehnr);
+	unsigned fehnr{0};
+		*testMy=new DB(myDBS,host,muser,mpwd,maxconz,db,0,0,0,obverb,oblog,DB::defmycharset,DB::defmycollat,3,0);
+		fehnr=(*testMy)->fehnr;
+		if ((*testMy)->ConnError) {
+			delete (*testMy);
+			(*testMy)=0;
+		}
+	return (fehnr); 
 } // pruefDB
 
 dhcl::~dhcl()
