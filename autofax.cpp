@@ -3492,7 +3492,7 @@ void hhcl::holfbpar()
 						transform(frna[0].begin(),frna[0].end(),std::back_inserter(fbnameklein),::tolower);
 						fbnameklein="/mnt/"+fbnameklein;
 						pruefverz(fbnameklein);
-						systemrueck("echo //169.254.1.1/"+frna[0]+" "+fbnameklein+" cifs nofail,vers=3.0,credentials=/root/.fbcredentials 0 2 >>/etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
+						systemrueck("echo //169.254.1.1/"+frna[0]+" "+fbnameklein+" cifs nofail,vers=1.0,credentials=/root/.fbcredentials 0 2 >>/etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
 						anfgg(unindt,sudc+"sed -i '/^\\/\\/169.254.1.1\\/"+frna[0]+" /d' /etc/fstab",Tx[T_fstab_Eintrag_wieder_entfernen],obverb,oblog);
 						mntdrv=fbnameklein;
 					}
