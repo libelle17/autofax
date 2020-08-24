@@ -3443,19 +3443,29 @@ void hhcl::fuellfbip()
 void hhcl::holfbpar()
 {
 	string mntdrv;
+	obverb=2;
 	// wenn eine Fritzbox eine IP-Adresse hat, wird in fuellfbip gesetzt
 	if (fbip.size()) {
 		svec frna;
 		const string *const ipp{&fbip[0]};
 		//				caus<<"*ipp: "<<*ipp<<endl;
 		// wenn ein freundlicher Name gefunden wurde
-		if (!systemrueck("curl ["+*ipp+"]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size()) {
+		int gefunden{0};
+		for (int iru=0;iru<2;iru++) {
+			string ip;
+			if (iru) ip='['+*ipp+']'; else ip=*ipp;
+			if (!systemrueck("curl "+ip+":49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size()) {
+				gefunden=1;
+				break;
+			}
+		}
+		if (gefunden) {
 			// z.B. GSHeim
 			//					caus<<"frna[0]: "<<frna[0]<<endl;
 			fbdev="FritzBox "+frna[0];
 			svec mounts;
 			const string zufinden{"^//\\(192.168.178.1\\|169.254.1.1\\|fritz.box\\|"+*ipp+"\\)/"+frna[0]+" "};
-			for(int iru=0;iru<2;iru++) {
+			for(int aru=0;aru<2;aru++) {
 				if (!systemrueck("mount|grep '"+zufinden+"'|cut -d' ' -f3",obverb,oblog,&mounts)&&mounts.size()) {
 					// z.B. /mnt/gsheim
 					//						caus<<"mounts[0]: "<<mounts[0]<<endl;
@@ -3472,26 +3482,31 @@ void hhcl::holfbpar()
 					} // 								if (datei.size())
 					break; 
 				} // 						if (!systemrueck("mount|grep '"+zufinden+"'|cut -d' ' -f3",obverb,oblog,&mounts)&&mounts.size())
-				svec fstabs;
-				systemrueck("grep '"+zufinden+"' /etc/fstab|cut -d' ' -f2",obverb,oblog,&fstabs,/*obsudc*/1);
-				if (fstabs.size()) {
-					mntdrv=fstabs[0];
-				} else {
-					string fbnameklein; // /mnt/gsheim
-					transform(frna[0].begin(),frna[0].end(),std::back_inserter(fbnameklein),::tolower);
-					fbnameklein="/mnt/"+fbnameklein;
-					pruefverz(fbnameklein);
-					systemrueck("echo //169.254.1.1/"+frna[0]+" "+fbnameklein+" cifs nofail,vers=1.0,credentials=/root/.fbcredentials 0 2 >>/etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
-					anfgg(unindt,sudc+"sed -i '/^\\/\\/169.254.1.1\\/"+frna[0]+" /d' /etc/fstab",Tx[T_fstab_Eintrag_wieder_entfernen],obverb,oblog);
-					mntdrv=fbnameklein;
+				for(int iru=0;iru<2;iru++) {
+					svec fstabs;
+					systemrueck("grep '"+zufinden+"' /etc/fstab|cut -d' ' -f2",obverb,oblog,&fstabs,/*obsudc*/1);
+					if (fstabs.size()) {
+						mntdrv=fstabs[0];
+					} else {
+						string fbnameklein; // /mnt/gsheim
+						transform(frna[0].begin(),frna[0].end(),std::back_inserter(fbnameklein),::tolower);
+						fbnameklein="/mnt/"+fbnameklein;
+						pruefverz(fbnameklein);
+						systemrueck("echo //169.254.1.1/"+frna[0]+" "+fbnameklein+" cifs nofail,vers=3.0,credentials=/root/.fbcredentials 0 2 >>/etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
+						anfgg(unindt,sudc+"sed -i '/^\\/\\/169.254.1.1\\/"+frna[0]+" /d' /etc/fstab",Tx[T_fstab_Eintrag_wieder_entfernen],obverb,oblog);
+						mntdrv=fbnameklein;
+					}
+					if (!mntpunkt(mntdrv.c_str())) {
+						anfgg(unindt,sudc+"umount "+mntdrv,"vor Loeschen absteigen",obverb,oblog);
+						if (systemrueck("mount "+mntdrv,obverb,oblog,/*rueck*/0,/*obsudc*/1)) {
+							systemrueck("sed -i '/ "+ersetzAllezu(mntdrv,"/","\\/")+" /d' /etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
+						}
+					}
 				}
-				if (!mntpunkt(mntdrv.c_str())) {
-					anfgg(unindt,sudc+"umount "+mntdrv,"vor Loeschen absteigen",obverb,oblog);
-					systemrueck("mount "+mntdrv,obverb,oblog,/*rueck*/0,/*obsudc*/1);
-				}
-			} // 					for(int iru=0;iru<2;iru++)
+			} // 					for(int aru=0;aru<2;aru++)
 		} // 				if (!systemrueck("curl ["+*ipp+"]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size())
 	} // 				if (fbip.size())
+	obverb=0;
 } // void hhcl::holfbpar
 
 const string hhcl::initdhyladt{"/etc/init.d/hylafax"};
