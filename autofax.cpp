@@ -4328,9 +4328,7 @@ int hhcl::pruefhyla()
 							string pfad;
 							if (obprogda("faxstat",obverb,oblog,&pfad)) {
 								modemlaeuftnicht=1+fglaeuftnicht;
-								caus<<"modemlaeuftnicht: "<<(int)modemlaeuftnicht<<endl;
 								svec rueck;
-								caus<<"pfad: "<<pfad<<endl;
 								systemrueck(pfad+" 2>&1",obverb,oblog,&rueck,/*obsudc=*/1);
 								for(size_t ruei=0;ruei<rueck.size();ruei++) {
 									if (!aru) {
@@ -4359,7 +4357,8 @@ int hhcl::pruefhyla()
 								//// if (0)
 								hylalaeuftnicht=hservice_faxq_hfaxd()+fglaeuftnicht;
 							}
-							caus<<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
+							if (hylalaeuftnicht) cout<<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
+							if (modemlaeuftnicht) cout<<rot<<" modemlaueftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
 							if (!hylalaeuftnicht && !modemlaeuftnicht) break;
 							if (iru>1) {
 								systemrueck("chmod 660 "+this->varsphylavz+"/FIFO*",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
