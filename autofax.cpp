@@ -5782,7 +5782,6 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 		if (!strptime(base.c_str(),"%d.%m.%y_%H.%M",&tm)) {
 			memcpy(&tm,localtime(&stganz.st_mtime),sizeof tm); // gmtime
 		}
-		unsigned sz{pdfseitenzahl(ganz)};
 		const string tf{"Telefax."}; 
 		size_t p2{base.rfind(tf)};
 		const string callerid{p2==string::npos?string():base.substr(p2+tf.length())};
@@ -5831,6 +5830,7 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 		// ..., die empfangene Datei in fpfad kopieren ...
 		uint kfehler{0};
 		kopiere(ganz,fpfad,&kfehler,/*wieweiterzaehl=*/1,obverb,oblog);
+		unsigned sz{pdfseitenzahl(fpfad)}; // 24.8.20: bei ganz: terminate called after throwing an instance of 'QPDFSystemError' ... stale file handle
 		if (!kfehler) {
 			attrangleich(fpfad,empfvz,&ganz,obverb,oblog);
 
