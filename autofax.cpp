@@ -5771,6 +5771,7 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 {
 	const auto altobverb{obverb};
 //	obverb=2;
+	unsigned sz{0};
 	hLog(violetts+Tx[T_empffbox]+schwarz+ganz+", aktc: "+ltoan(aktc)+", nr: "+nr);
 	struct stat stganz{0};
 	const uchar ganzfehlt{(uchar)lstat(ganz.c_str(),&stganz)}; // muesste immer 0 sein, wenn es die Datei gibt
@@ -5830,8 +5831,8 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 		// ..., die empfangene Datei in fpfad kopieren ...
 		uint kfehler{0};
 		kopiere(ganz,fpfad,&kfehler,/*wieweiterzaehl=*/1,obverb,oblog);
-		unsigned sz{pdfseitenzahl(fpfad)}; // 24.8.20: bei ganz: terminate called after throwing an instance of 'QPDFSystemError' ... stale file handle
 		if (!kfehler) {
+			sz=pdfseitenzahl(fpfad); // 24.8.20: bei ganz: terminate called after throwing an instance of 'QPDFSystemError' ... stale file handle
 			attrangleich(fpfad,empfvz,&ganz,obverb,oblog);
 
 			if (!zupdf(&fpfad, fpfad+"ocr", 0, 1, 0)) { // 0=Erfolg
