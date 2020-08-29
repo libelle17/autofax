@@ -5603,7 +5603,7 @@ int hhcl::pruefocr()
 				reduzierlibtiff();
 				switch (linstp->ipr) {
 					case zypper:
-						systemrueck("zypper ar -f --gpgcheck-allow-unsigned-repo https://download.opensuse.org/repositories/home:Alexander_Pozdnyakov/openSUSE_Leap_$(lsb-release -r|cut -f2)/home:Alexander_Pozdnyakov.repo",obverb,oblog);break; // 29.8.20, s. https://github.com/tesseract-ocr/tesseract/wiki
+						systemrueck("zypper ar -f --gpgcheck-allow-unsigned-repo https://download.opensuse.org/repositories/home:Alexander_Pozdnyakov/openSUSE_Leap_$(lsb-release -r|cut -f2)/home:Alexander_Pozdnyakov.repo",obverb,oblog);break; // 29.8.20, s. https://github.com/tesseract-ocr/tesseract/wiki usw.
 					default: break;
 				}
 				linstp->doinst("tesseract-ocr",obverb,oblog);
