@@ -5403,7 +5403,10 @@ int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/,
 					const string cmd{ocrmp+" -rcsl "+(langu=="d"?"deu":"eng")+" \""+*lqp+"\" \""+ziel+"\" 2>&1"};
 					int zerg{systemrueck(cmd,obverb,oblog,&rueck,/*obsudc=*/0,0,wahr,"",0,1)};
 					if (zerg==5) zerg=systemrueck(cmd,obverb,oblog,&rueck,/*obsudc=*/1,0,wahr,"",0,1); // kein Schreibrecht im Verzeichnis
-					if (!zerg) {
+					if (zerg) {
+						cout<<"Fehler "<<blau<<zerg<<schwarz<<" bei: "<<blau<<cmd<<schwarz<<endl;
+						for (size_t zei=0;zei<rueck.size();zei++) cout<<rot<<rueck[zei]<<schwarz<<endl;
+					} else { // if (zerg)
 						erg=0; // nicht umgekehrt
 						for(unsigned uru=0;uru<rueck.size();uru++) {
 							if (rueck[uru].find("ERROR")!=string::npos) {
@@ -5771,14 +5774,13 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 {
 	const auto altobverb{obverb};
 //	obverb=2;
-	unsigned sz{0};
 	hLog(violetts+Tx[T_empffbox]+schwarz+ganz+", aktc: "+ltoan(aktc)+", nr: "+nr);
 	struct stat stganz{0};
 	const uchar ganzfehlt{(uchar)lstat(ganz.c_str(),&stganz)}; // muesste immer 0 sein, wenn es die Datei gibt
 	if (!ganzfehlt) {
 		string stamm,exten;
 		getstammext(&ganz,&stamm,&exten);
-		const string base{base_name(stamm)};
+		const string base{base_name(stamm)}; // Dateiname ohne Pfad
 		struct tm tm{0};
 		if (!strptime(base.c_str(),"%d.%m.%y_%H.%M",&tm)) {
 			memcpy(&tm,localtime(&stganz.st_mtime),sizeof tm); // gmtime
@@ -5832,14 +5834,8 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 		uint kfehler{0};
 		kopiere(ganz,fpfad,&kfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 		if (!kfehler) {
-			sz=pdfseitenzahl(fpfad); // 24.8.20: bei ganz: terminate called after throwing an instance of 'QPDFSystemError' ... stale file handle
 			attrangleich(fpfad,empfvz,&ganz,obverb,oblog);
-
-			if (!zupdf(&fpfad, fpfad+"ocr", 0, 1, 0)) { // 0=Erfolg
-        dorename(fpfad+"ocr",fpfad,cuser,0,0,obverb,oblog);
-			}
-		} //     if (!kfehler) else
-		if (!kfehler) {
+			ankzahl++;
 			struct stat entrynd{0};
 			const uchar obfpfadda{!lstat(fpfad.c_str(),&entrynd)};
 			if (obfpfadda && obfarchda) {
@@ -5852,6 +5848,7 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 			RS rins(My,tinca); 
 			vector<instyp> einf; // fuer alle Datenbankeinfuegungen
 			einf.push_back(/*2*/instyp(My->DBS,"fsize",stganz.st_size));
+			const unsigned sz{pdfseitenzahl(fpfad)};//24.8.20:bei ganz: terminate called after throwing an instance of 'QPDFSystemError' ... stale file handle
 			einf.push_back(/*2*/instyp(My->DBS,"pages",sz));
 			einf.push_back(/*2*/instyp(My->DBS,"titel",&absdr));
 			einf.push_back(/*2*/instyp(My->DBS,"tsid",&tsid));
@@ -5865,13 +5862,18 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 				fLog(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
 			} else {
 				if (ganz.find(farchvz)) { // bei empferneut nicht
-					if (!kopier(ganz,farchvz,obverb,oblog)) {
-						dorename(ganz,stamm+"_alt.pdf",cuser,/*vfehlerp=*/0,/*schonda=*/0,obverb,oblog);
+					int fehler{0};
+					if (!(fehler=kopier(fpfad/*ganz*/,farchvz+vtz+base+"."+exten,2/*obverb*/,oblog))) { // 29.8.20: Kopieren geht nicht von /mnt/fbdiab => /
+						dorename(ganz,stamm+"_alt.pdf",cuser,/*vfehlerp=*/0,/*schonda=*/0,2/*obverb*/,oblog);
+					} else {
+						caus<<rot<<"Fehler: "<<blau<<fehler<<schwarz<<endl;
 					}
 				}
 			} //         if (runde==1)
-		} // if !kfehler
-		if (kfehler) {
+			if (!zupdf(&fpfad, fpfad+"ocr", 0, 1, 0)) { // 0=Erfolg
+        dorename(fpfad+"ocr",fpfad,cuser,0,0,obverb,oblog);
+			}
+		} else {
 			const string warndt{empfvz+vtz+Tx[T_nicht_angekommen]+frumpf+".nix"};
 			touch(warndt,obverb,oblog);
 			attrangleich(warndt,empfvz,&ganz,obverb,oblog);
@@ -7036,7 +7038,12 @@ void hhcl::inspoolschreiben(const size_t aktc)
 							const string cmd{string(ocrmp+" -rcsl ")+(langu=="d"?"deu":"eng")+" \""+zfda.at(i)+"\" \""+zfda.at(i)+"\""
 								" && chmod +r \""+zfda.at(i)+"\" 2>/dev/null"};
 							int zerg{systemrueck(cmd,obverb,oblog)};
-							if (zerg==5) zerg=systemrueck(sudc+cmd,obverb,oblog); // kein Schreibrecht im Verzeichnis
+							svec rueck;
+							if (zerg==5) zerg=systemrueck(sudc+cmd,obverb,oblog,&rueck); // kein Schreibrecht im Verzeichnis
+							if (zerg) {
+								cout<<"Fehler "<<blau<<zerg<<schwarz<<" bei: "<<blau<<cmd<<schwarz<<endl;
+								for (size_t zei=0;zei<rueck.size();zei++) cout<<rot<<rueck[zei]<<schwarz<<endl;
+							} // if (zerg)
 						} // 						if (!pruefocr())
 						utime(zfda.at(i).c_str(),&ubuf);
 					} // if (!lstat(zfda.at(i).c_str(),&spdfstat)) 
@@ -7060,7 +7067,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 				}
 				if (!vorhanden) {
 					fxfcl fx(wartedatei,zfda.at(i),ppri(iprio));
-	// 3) in spooltab eintragen
+					// 3) in spooltab eintragen
 					fxinDatenbank(fx,aktc);
 					fxv.push_back(fx);
 					if (gleichziel) {
@@ -7392,6 +7399,7 @@ void hhcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,
 					} // 			for(int iru=0;iru<2;iru++)
 					if (!erg) {
 						attrangleich(tifpfad,empfvz,&sffdatei,obverb,oblog);
+						ankzahl++;
 						// bereits hier, da weder convert noch soffice noch ocrmypdf eine *.sff-Datei lesen kann, convert auch keine tiff-Datei
 						const string ziel{empfvz+vtz+tifrumpf+".pdf"}; 
 						const int obpdfda{!zupdf(&tifpfad, ziel, &pseiten, obocri, 1)}; // 0=Erfolg
@@ -7508,7 +7516,6 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 			systemrueck(cmd,obverb,oblog, &qrueck);
 		} else findfile(&qrueck,findv,obverb,oblog,0,*csuchvzp,/*muster=*/"\\.txt$",1,1,Fol_Dat,0,0,1);
 		for(size_t i=0;i<qrueck.size();i++) {
-			ankzahl++;
 			// ..., Informationen darueber einsammeln, ...
 			string stamm,exten;
 			getstammext(&(qrueck[i]),&stamm,&exten);
