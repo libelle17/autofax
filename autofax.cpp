@@ -7049,7 +7049,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 								cout<<"Fehler "<<blau<<zerg<<schwarz<<" bei: "<<blau<<cmd<<schwarz<<endl;
 								for (size_t zei=0;zei<rueck.size();zei++) cout<<rot<<rueck[zei]<<schwarz<<endl;
 							} // if (zerg)
-						} // 						if (!pruefocr())
+						} //						if (!pruefocr())
 						utime(zfda.at(i).c_str(),&ubuf);
 					} // if (!lstat(zfda.at(i).c_str(),&spdfstat)) 
 				} // if (obocra) 
