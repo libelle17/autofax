@@ -5601,6 +5601,11 @@ int hhcl::pruefocr()
 				if (tda) break;
 			} else {
 				reduzierlibtiff();
+				switch (linstp->ipr) {
+					case zypper:
+						systemrueck("zypper ar -f --gpgcheck-allow-unsigned-repo https://download.opensuse.org/repositories/home:Alexander_Pozdnyakov/openSUSE_Leap_$(lsb-release -r|cut -f2)/home:Alexander_Pozdnyakov.repo",obverb,oblog);break;
+					default: break;
+				}
 				linstp->doinst("tesseract-ocr",obverb,oblog);
 				systemrueck("ldconfig "+lsys.getlib64(),obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			} // 			if (obprogda("tesseract",obverb,oblog,&tpfad))
