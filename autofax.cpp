@@ -3443,19 +3443,29 @@ void hhcl::fuellfbip()
 void hhcl::holfbpar()
 {
 	string mntdrv;
+	obverb=2;
 	// wenn eine Fritzbox eine IP-Adresse hat, wird in fuellfbip gesetzt
 	if (fbip.size()) {
 		svec frna;
 		const string *const ipp{&fbip[0]};
 		//				caus<<"*ipp: "<<*ipp<<endl;
 		// wenn ein freundlicher Name gefunden wurde
-		if (!systemrueck("curl ["+*ipp+"]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size()) {
+		int gefunden{0};
+		for (int iru=0;iru<2;iru++) {
+			string ip;
+			if (iru) ip='['+*ipp+']'; else ip=*ipp;
+			if (!systemrueck("curl "+ip+":49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size()) {
+				gefunden=1;
+				break;
+			}
+		}
+		if (gefunden) {
 			// z.B. GSHeim
 			//					caus<<"frna[0]: "<<frna[0]<<endl;
 			fbdev="FritzBox "+frna[0];
 			svec mounts;
 			const string zufinden{"^//\\(192.168.178.1\\|169.254.1.1\\|fritz.box\\|"+*ipp+"\\)/"+frna[0]+" "};
-			for(int iru=0;iru<2;iru++) {
+			for(int aru=0;aru<2;aru++) {
 				if (!systemrueck("mount|grep '"+zufinden+"'|cut -d' ' -f3",obverb,oblog,&mounts)&&mounts.size()) {
 					// z.B. /mnt/gsheim
 					//						caus<<"mounts[0]: "<<mounts[0]<<endl;
@@ -3472,26 +3482,31 @@ void hhcl::holfbpar()
 					} // 								if (datei.size())
 					break; 
 				} // 						if (!systemrueck("mount|grep '"+zufinden+"'|cut -d' ' -f3",obverb,oblog,&mounts)&&mounts.size())
-				svec fstabs;
-				systemrueck("grep '"+zufinden+"' /etc/fstab|cut -d' ' -f2",obverb,oblog,&fstabs,/*obsudc*/1);
-				if (fstabs.size()) {
-					mntdrv=fstabs[0];
-				} else {
-					string fbnameklein; // /mnt/gsheim
-					transform(frna[0].begin(),frna[0].end(),std::back_inserter(fbnameklein),::tolower);
-					fbnameklein="/mnt/"+fbnameklein;
-					pruefverz(fbnameklein);
-					systemrueck("echo //169.254.1.1/"+frna[0]+" "+fbnameklein+" cifs nofail,vers=1.0,credentials=/root/.fbcredentials 0 2 >>/etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
-					anfgg(unindt,sudc+"sed -i '/^\\/\\/169.254.1.1\\/"+frna[0]+" /d' /etc/fstab",Tx[T_fstab_Eintrag_wieder_entfernen],obverb,oblog);
-					mntdrv=fbnameklein;
+				for(int iru=0;iru<2;iru++) {
+					svec fstabs;
+					systemrueck("grep '"+zufinden+"' /etc/fstab|cut -d' ' -f2",obverb,oblog,&fstabs,/*obsudc*/1);
+					if (fstabs.size()) {
+						mntdrv=fstabs[0];
+					} else {
+						string fbnameklein; // /mnt/gsheim
+						transform(frna[0].begin(),frna[0].end(),std::back_inserter(fbnameklein),::tolower);
+						fbnameklein="/mnt/"+fbnameklein;
+						pruefverz(fbnameklein);
+						systemrueck("echo //169.254.1.1/"+frna[0]+" "+fbnameklein+" cifs nofail,vers=1.0,credentials=/root/.fbcredentials 0 2 >>/etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
+						anfgg(unindt,sudc+"sed -i '/^\\/\\/169.254.1.1\\/"+frna[0]+" /d' /etc/fstab",Tx[T_fstab_Eintrag_wieder_entfernen],obverb,oblog);
+						mntdrv=fbnameklein;
+					}
+					if (!mntpunkt(mntdrv.c_str())) {
+						anfgg(unindt,sudc+"umount "+mntdrv,"vor Loeschen absteigen",obverb,oblog);
+						if (systemrueck("mount "+mntdrv,obverb,oblog,/*rueck*/0,/*obsudc*/1)) {
+							systemrueck("sed -i '/ "+ersetzAllezu(mntdrv,"/","\\/")+" /d' /etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
+						}
+					}
 				}
-				if (!mntpunkt(mntdrv.c_str())) {
-					anfgg(unindt,sudc+"umount "+mntdrv,"vor Loeschen absteigen",obverb,oblog);
-					systemrueck("mount "+mntdrv,obverb,oblog,/*rueck*/0,/*obsudc*/1);
-				}
-			} // 					for(int iru=0;iru<2;iru++)
+			} // 					for(int aru=0;aru<2;aru++)
 		} // 				if (!systemrueck("curl ["+*ipp+"]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size())
 	} // 				if (fbip.size())
+	obverb=0;
 } // void hhcl::holfbpar
 
 const string hhcl::initdhyladt{"/etc/init.d/hylafax"};
@@ -4328,9 +4343,7 @@ int hhcl::pruefhyla()
 							string pfad;
 							if (obprogda("faxstat",obverb,oblog,&pfad)) {
 								modemlaeuftnicht=1+fglaeuftnicht;
-								caus<<"modemlaeuftnicht: "<<(int)modemlaeuftnicht<<endl;
 								svec rueck;
-								caus<<"pfad: "<<pfad<<endl;
 								systemrueck(pfad+" 2>&1",obverb,oblog,&rueck,/*obsudc=*/1);
 								for(size_t ruei=0;ruei<rueck.size();ruei++) {
 									if (!aru) {
@@ -4359,7 +4372,8 @@ int hhcl::pruefhyla()
 								//// if (0)
 								hylalaeuftnicht=hservice_faxq_hfaxd()+fglaeuftnicht;
 							}
-							caus<<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
+							if (hylalaeuftnicht) cout<<rot<<" hylalaueftnicht: "<<(int)hylalaeuftnicht<<schwarz<<endl;
+							if (modemlaeuftnicht) cout<<rot<<" modemlaueftnicht: "<<(int)modemlaeuftnicht<<schwarz<<endl;
 							if (!hylalaeuftnicht && !modemlaeuftnicht) break;
 							if (iru>1) {
 								systemrueck("chmod 660 "+this->varsphylavz+"/FIFO*",obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
@@ -5389,7 +5403,10 @@ int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/,
 					const string cmd{ocrmp+" -rcsl "+(langu=="d"?"deu":"eng")+" \""+*lqp+"\" \""+ziel+"\" 2>&1"};
 					int zerg{systemrueck(cmd,obverb,oblog,&rueck,/*obsudc=*/0,0,wahr,"",0,1)};
 					if (zerg==5) zerg=systemrueck(cmd,obverb,oblog,&rueck,/*obsudc=*/1,0,wahr,"",0,1); // kein Schreibrecht im Verzeichnis
-					if (!zerg) {
+					if (zerg) {
+						cout<<"Fehler "<<blau<<zerg<<schwarz<<" bei: "<<blau<<cmd<<schwarz<<endl;
+						for (size_t zei=0;zei<rueck.size();zei++) cout<<rot<<rueck[zei]<<schwarz<<endl;
+					} else { // if (zerg)
 						erg=0; // nicht umgekehrt
 						for(unsigned uru=0;uru<rueck.size();uru++) {
 							if (rueck[uru].find("ERROR")!=string::npos) {
@@ -5584,6 +5601,11 @@ int hhcl::pruefocr()
 				if (tda) break;
 			} else {
 				reduzierlibtiff();
+				switch (linstp->ipr) {
+					case zypper:
+						systemrueck("zypper ar -f --gpgcheck-allow-unsigned-repo https://download.opensuse.org/repositories/home:Alexander_Pozdnyakov/openSUSE_Leap_$(lsb-release -r|cut -f2)/home:Alexander_Pozdnyakov.repo",obverb,oblog);break; // 29.8.20, s. https://github.com/tesseract-ocr/tesseract/wiki usw.
+					default: break;
+				}
 				linstp->doinst("tesseract-ocr",obverb,oblog);
 				systemrueck("ldconfig "+lsys.getlib64(),obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			} // 			if (obprogda("tesseract",obverb,oblog,&tpfad))
@@ -5763,12 +5785,11 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 	if (!ganzfehlt) {
 		string stamm,exten;
 		getstammext(&ganz,&stamm,&exten);
-		const string base{base_name(stamm)};
+		const string base{base_name(stamm)}; // Dateiname ohne Pfad
 		struct tm tm{0};
 		if (!strptime(base.c_str(),"%d.%m.%y_%H.%M",&tm)) {
 			memcpy(&tm,localtime(&stganz.st_mtime),sizeof tm); // gmtime
 		}
-		unsigned sz{pdfseitenzahl(ganz)};
 		const string tf{"Telefax."}; 
 		size_t p2{base.rfind(tf)};
 		const string callerid{p2==string::npos?string():base.substr(p2+tf.length())};
@@ -5819,12 +5840,7 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 		kopiere(ganz,fpfad,&kfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 		if (!kfehler) {
 			attrangleich(fpfad,empfvz,&ganz,obverb,oblog);
-
-			if (!zupdf(&fpfad, fpfad+"ocr", 0, 1, 0)) { // 0=Erfolg
-        dorename(fpfad+"ocr",fpfad,cuser,0,0,obverb,oblog);
-			}
-		} //     if (!kfehler) else
-		if (!kfehler) {
+			ankzahl++;
 			struct stat entrynd{0};
 			const uchar obfpfadda{!lstat(fpfad.c_str(),&entrynd)};
 			if (obfpfadda && obfarchda) {
@@ -5837,6 +5853,7 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 			RS rins(My,tinca); 
 			vector<instyp> einf; // fuer alle Datenbankeinfuegungen
 			einf.push_back(/*2*/instyp(My->DBS,"fsize",stganz.st_size));
+			const unsigned sz{pdfseitenzahl(fpfad)};//24.8.20:bei ganz: terminate called after throwing an instance of 'QPDFSystemError' ... stale file handle
 			einf.push_back(/*2*/instyp(My->DBS,"pages",sz));
 			einf.push_back(/*2*/instyp(My->DBS,"titel",&absdr));
 			einf.push_back(/*2*/instyp(My->DBS,"tsid",&tsid));
@@ -5850,13 +5867,18 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 				fLog(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
 			} else {
 				if (ganz.find(farchvz)) { // bei empferneut nicht
-					if (!kopier(ganz,farchvz,obverb,oblog)) {
-						dorename(ganz,stamm+"_alt.pdf",cuser,/*vfehlerp=*/0,/*schonda=*/0,obverb,oblog);
+					int fehler{0};
+					if (!(fehler=kopier(fpfad/*ganz*/,farchvz+vtz+base+"."+exten,2/*obverb*/,oblog))) { // 29.8.20: Kopieren geht nicht von /mnt/fbdiab => /
+						dorename(ganz,stamm+"_alt.pdf",cuser,/*vfehlerp=*/0,/*schonda=*/0,2/*obverb*/,oblog);
+					} else {
+						caus<<rot<<"Fehler: "<<blau<<fehler<<schwarz<<endl;
 					}
 				}
 			} //         if (runde==1)
-		} // if !kfehler
-		if (kfehler) {
+			if (!zupdf(&fpfad, fpfad+"ocr", 0, 1, 0)) { // 0=Erfolg
+        dorename(fpfad+"ocr",fpfad,cuser,0,0,obverb,oblog);
+			}
+		} else {
 			const string warndt{empfvz+vtz+Tx[T_nicht_angekommen]+frumpf+".nix"};
 			touch(warndt,obverb,oblog);
 			attrangleich(warndt,empfvz,&ganz,obverb,oblog);
@@ -7021,8 +7043,13 @@ void hhcl::inspoolschreiben(const size_t aktc)
 							const string cmd{string(ocrmp+" -rcsl ")+(langu=="d"?"deu":"eng")+" \""+zfda.at(i)+"\" \""+zfda.at(i)+"\""
 								" && chmod +r \""+zfda.at(i)+"\" 2>/dev/null"};
 							int zerg{systemrueck(cmd,obverb,oblog)};
-							if (zerg==5) zerg=systemrueck(sudc+cmd,obverb,oblog); // kein Schreibrecht im Verzeichnis
-						} // 						if (!pruefocr())
+							svec rueck;
+							if (zerg==5) zerg=systemrueck(sudc+cmd,obverb,oblog,&rueck); // kein Schreibrecht im Verzeichnis
+							if (zerg) {
+								cout<<"Fehler "<<blau<<zerg<<schwarz<<" bei: "<<blau<<cmd<<schwarz<<endl;
+								for (size_t zei=0;zei<rueck.size();zei++) cout<<rot<<rueck[zei]<<schwarz<<endl;
+							} // if (zerg)
+						} //						if (!pruefocr())
 						utime(zfda.at(i).c_str(),&ubuf);
 					} // if (!lstat(zfda.at(i).c_str(),&spdfstat)) 
 				} // if (obocra) 
@@ -7045,7 +7072,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 				}
 				if (!vorhanden) {
 					fxfcl fx(wartedatei,zfda.at(i),ppri(iprio));
-	// 3) in spooltab eintragen
+					// 3) in spooltab eintragen
 					fxinDatenbank(fx,aktc);
 					fxv.push_back(fx);
 					if (gleichziel) {
@@ -7377,6 +7404,7 @@ void hhcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,
 					} // 			for(int iru=0;iru<2;iru++)
 					if (!erg) {
 						attrangleich(tifpfad,empfvz,&sffdatei,obverb,oblog);
+						ankzahl++;
 						// bereits hier, da weder convert noch soffice noch ocrmypdf eine *.sff-Datei lesen kann, convert auch keine tiff-Datei
 						const string ziel{empfvz+vtz+tifrumpf+".pdf"}; 
 						const int obpdfda{!zupdf(&tifpfad, ziel, &pseiten, obocri, 1)}; // 0=Erfolg
@@ -7493,7 +7521,6 @@ void hhcl::empfarch(uchar obalte/*=0*/)
 			systemrueck(cmd,obverb,oblog, &qrueck);
 		} else findfile(&qrueck,findv,obverb,oblog,0,*csuchvzp,/*muster=*/"\\.txt$",1,1,Fol_Dat,0,0,1);
 		for(size_t i=0;i<qrueck.size();i++) {
-			ankzahl++;
 			// ..., Informationen darueber einsammeln, ...
 			string stamm,exten;
 			getstammext(&(qrueck[i]),&stamm,&exten);

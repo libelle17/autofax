@@ -2032,7 +2032,7 @@ linst_cl::linst_cl(int obverb,int oblog)
 					uypr=upr+"-y ";
 					upd=sudc+"zypper patch";
 					repos=sudc+"zypper lr | grep 'g++\\|devel_gcc'>/dev/null 2>&1 || "+
-						sudc+"zypper ar http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release |"
+						sudc+"zypper ar -f http://download.opensuse.org/repositories/devel:/gcc/`cat /etc/*-release |"
 						"grep ^NAME= | cut -d'\"' -f2 | sed 's/ /_/'`_`cat /etc/*-release | grep ^VERSION_ID= | cut -d'\"' -f2`/devel:gcc.repo;";
 					compil="gcc gcc-c++ gcc6-c++";
 					break;
