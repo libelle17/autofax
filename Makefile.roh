@@ -247,7 +247,9 @@ HTMLS::=$(patsubst %,%.html,$(MANS))
 GZS::=$(patsubst %,%.gz,$(MANS))
 
 .PHONY: all glei opt opt2 opt3 optfast opts optg altc neu new anzeig compiler git
-ifeq (,$(SRCS))
+empty:=
+stest:= $(subst $(SRCS),' ',$(empty))
+ifeq (,$(stest))
 $(info keine *.c- oder *.cpp-Dateien => kompiliere nichts)
 all glei opt opt2 opt3 optfast opts optg altc neu new anzeig $(EXEC) $(INSTEXEC) compiler:
 	@printf ""
@@ -321,7 +323,7 @@ pull:
 	@git pull
 	@sh configure
 
-ifeq (,$(SRCS))
+ifeq (,$(stest))
 else
 anzeig:
 	@cno=$$(./configure nuros);if test "$$cno" != "$(OSNR)"; then echo "Achtung: \"$$cno\" != \"$(OSNR)\" => muss ./configure aufrufen.";./configure;:;echo "$$@";make "$$@";\
@@ -343,7 +345,7 @@ debug debugnew debugneu: DEBUG=-g3 -O0
 debug: all
 debugneu debugnew: neu
 
-ifeq (,$(SRCS))
+ifeq (,$(stest))
 else
 $(EXEC): $(OBJ)
 	-@printf " linking/verlinke %s to/zu %b%s%b ..." "$(OBJ)" $(blau) "$@" $(reset) $(BA)
@@ -375,7 +377,7 @@ endif
 $(DEPDIR)/%.d: ;
 .PRECIOUS: $(DEPDIR)/%.d
 
-ifeq (,$(SRCS))
+ifeq (,$(stest))
 else
 compiler:
 	@printf " DISTR: %b%s%b, untersuche/examining Compiler ..." $(blau) "$(DName)" $(reset) $(BA)
@@ -433,7 +435,7 @@ endif
 	-@[ "$(LSND)" ]&&{ [ -f /usr/include/sndfile.h ]|| sh configure inst _ "$(LSND)" verbose;}||:
 	-@[ "$(QPDF)" ]&&{ [ -f /usr/include/qpdf/QPDF.hh ]|| sh configure inst _ "$(QPDF)" verbose;}||:
 	-@[ "$(LGSSDP)" ]&&{ grep -qlm1 'Cflags.*gssdp' $(PCFILES)||sh configure inst _ "$(LGSSDP)" verbose;}||:
-	-@[ "$(LCAPI)" ]&&{ grep -qlm1 'capi20' $(PCFILES)||sh configure inst _ "$(LCAPI)" verbose;}||:
+	-@[ "$(LCAPI)" ]&&{ grep -qlm1 'capi20' $(PCFILES)||for kand in $(LCAPI);do sh configure inst _ $$kand verbose;done;}||:
 	-@[ "$(LBOOST)" ]&&{ $(SPR) $(LBOOST) $(KR)|| sh configure inst _ "$(LBOOST)" verbose;}||:
 	-@[ "$(LBIO)" ]&&{ $(SPR) "$(LBIO)" $(KR)||sh configure inst _ "$(LBIO)" verbose;}||:
 	-@[ "$(LBLO)" ]&&{ $(SPR) "$(LBLO)" $(KR)||sh configure inst _ "$(LBLO)" verbose;}||:
@@ -454,7 +456,7 @@ stumm: all
 
 stumminst: install
 
-ifeq (,$(SRCS))
+ifeq (,$(stest))
 else
 $(INSTEXEC): $(EXEC)
 	@printf " Copying program/ Kopiere Programmdatei: %b%s%b -> %b%s%b\n" $(blau) "$(EXEC)" $(reset) $(blau) "$(INSTEXEC)" $(reset) $(BA)
