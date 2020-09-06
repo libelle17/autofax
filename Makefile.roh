@@ -46,6 +46,7 @@
 ICH::=$(firstword $(MAKEFILE_LIST))
 SRCS::=$(wildcard *.cpp) $(wildcard *.c)
 zOBJ::=$(SRCS:.cpp=.o)
+stest::=$(subst $(subst ,, ),,$(SRCS))
 OBJ::=$(zOBJ:.c=.o)
 DN::= >/dev/null# DevNull
 KR::= $(DN) 2>&1# keine Rueckmeldung
@@ -247,10 +248,8 @@ HTMLS::=$(patsubst %,%.html,$(MANS))
 GZS::=$(patsubst %,%.gz,$(MANS))
 
 .PHONY: all glei opt opt2 opt3 optfast opts optg altc neu new anzeig compiler git
-empty:=
-stest:= $(subst $(SRCS),' ',$(empty))
 ifeq (,$(stest))
-$(info keine *.c- oder *.cpp-Dateien => kompiliere nichts)
+  $(info keine *.c- oder *.cpp-Dateien => kompiliere nichts)
 all glei opt opt2 opt3 optfast opts optg altc neu new anzeig $(EXEC) $(INSTEXEC) compiler:
 	@printf ""
 else
