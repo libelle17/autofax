@@ -10414,3 +10414,23 @@ void fsfcl::ausgeb(int obverb) {
 			schwarz<<", fbdials: "<<blau<<fbdials<<schwarz<<", fbsdt: '"<<blau<<fbsdt<<schwarz<<"'"<<endl;
 	}
 }
+
+
+/* fax löschen:
+	 systemctl stop [servicename]
+systemctl disable [servicename]
+rm /etc/systemd/system/[servicename]
+rm /etc/systemd/system/[servicename] # and symlinks that might be related
+rm /usr/lib/systemd/system/[servicename]
+rm /usr/lib/systemd/system/[servicename] # and symlinks that might be related
+systemctl daemon-reload
+systemctl reset-failed
+
+1) If hylafax is running, stop running faxgetty on the modem to be removed by finding out the PID and killing the process
+2) delete the corresponding config (e.g config.ttySx for serial line modems or config.ttyACMx for usb modems) file in /var/spool/hylafax/etc
+3) delete the  corresponding file (e.g config.ttySx for serial line modems or config.ttyACMx for usb modems) from /var/spool/hylafax/status
+
+Delete the associated FIFO.<devid> from /var/spool/hylafax, the
+associated config file from /var/spool/hylafax/etc, and the associated
+status file from /var/spool/hylafax/status.
+*/
