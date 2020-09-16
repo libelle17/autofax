@@ -274,6 +274,10 @@ collected here and not in
 faxes (&rsquo;<b>/var/autofax/recvdir</b>&rsquo;) <b><br>
 -fbox, --takefbox</b>: use fritzbox <b>or not</b> (<b>1</b>)
 <b><br>
+-fboxs, --takefboxs</b>: use fritzbox for receiving <b>or
+not</b> (<b>255</b>) <b><br>
+-fboxr, --takefboxr</b>: use fritzbox for sending <b>or
+not</b> (<b>255</b>) <b><br>
 -fbdr, --fritzboxdir &lt;path&gt;</b>: receiving directory
 of the fritzbox (via CIFS)
 (&rsquo;<b>/mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox</b>&rsquo;)
@@ -283,8 +287,16 @@ fritzbox (&rsquo;<b>/var/spool/fbfax/arch</b>&rsquo;)
 <b><br>
 -capi, --takecapi</b>: use capisuite <b>or not</b>
 (<b>1</b>) <b><br>
+-capis, --takecapis</b>: use capisuite for sending <b>or
+not</b> (<b>0</b>) <b><br>
+-capir, --takecapir</b>: use capisuite for receiving <b>or
+not</b> (<b>0</b>) <b><br>
 -hyla, --takehyla</b>: use hylafax <b>or not</b> (<b>1</b>)
 <b><br>
+-hylas, --takehylas</b>: use hylafax for sending <b>or
+not</b> (<b>0</b>) <b><br>
+-hylar, --takehylar</b>: use hylafax for receiving <b>or
+not</b> (<b>0</b>) <b><br>
 -fp, --fprio &lt;zahl&gt;</b>: Priority of fritzbox (1-3)
 (<b>0</b>) <b><br>
 -cp, --cprio &lt;zahl&gt;</b>: Priority of capisuite (1-3)
@@ -319,6 +331,8 @@ in hylafax, instead of (&rsquo;<b>11</b>&rsquo;) <b><br>
 -it, --immediatelytarget &lt;zahl&gt;</b>: copy faxes into
 target directory irrespective of faxing success (<b>1</b>)
 <b><br>
+-ocri, --ocri &lt;zahl&gt;</b>: Text from received faxes
+will be filtered (<b>1</b>) <b><br>
 -ocro, --ocro &lt;zahl&gt;</b>: Text from sent pictures will
 be filtered (<b>0</b>) <b><br>
 -tfs, --tofaxstr &lt;string&gt;</b>: the fax number will be
@@ -1152,6 +1166,10 @@ Faxempfang (&rsquo;<b>/var/autofax/empfvz</b>&rsquo;)
 <b><br>
 -fbox, --obfbox</b>: Fritzbox verwenden <b>oder nicht</b>
 (<b>1</b>) <b><br>
+-fboxs, --obfboxs</b>: Fritzbox zum Senden verwenden <b>oder
+nicht</b> (<b>255</b>) <b><br>
+-fboxe, --obfboxe</b>: Fritzbox zum Empfang verwenden
+<b>oder nicht</b> (<b>255</b>) <b><br>
 -fbvz, --fritzboxvz &lt;pfad&gt;</b>: Ankunftsverzeichnis
 der Fritzbox (ueber CIFS)
 (&rsquo;<b>/mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox</b>&rsquo;)
@@ -1161,8 +1179,16 @@ Fritzbox (&rsquo;<b>/var/spool/fbfax/arch</b>&rsquo;)
 <b><br>
 -capi, --obcapi</b>: Capisuite verwenden <b>oder nicht</b>
 (<b>1</b>) <b><br>
+-capis, --obcapis</b>: Capisuite zum Senden verwenden
+<b>oder nicht</b> (<b>0</b>) <b><br>
+-capie, --obcapie</b>: Capisuite zum Empfang verwenden
+<b>oder nicht</b> (<b>0</b>) <b><br>
 -hyla, --obhyla</b>: Hylafax verwenden <b>oder nicht</b>
 (<b>1</b>) <b><br>
+-hylas, --obhylas</b>: Hylafax zum Senden verwenden <b>oder
+nicht</b> (<b>0</b>) <b><br>
+-hylae, --obhylae</b>: Hylafax zum Empfang verwenden <b>oder
+nicht</b> (<b>0</b>) <b><br>
 -fp, --fprio &lt;zahl&gt;</b>: Prioritaet von fritzbox (1-3)
 (<b>0</b>) <b><br>
 -cp, --cprio &lt;zahl&gt;</b>: Prioritaet von capisuite

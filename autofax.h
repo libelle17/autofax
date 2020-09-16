@@ -79,8 +79,14 @@ enum T_
 	T_empfvz_l,
 	T_Empfangsverzeichnis_fuer_Faxempfang,
 	T_fbox_k,
+	T_fboxs_k,
+	T_fboxe_k,
 	T_obfbox_l,
+	T_obfboxs_l,
+	T_obfboxe_l,
 	T_Fritzbox_verwenden,
+	T_Fritzbox_zum_Senden_verwenden,
+	T_Fritzbox_zum_Empfang_verwenden,
 	T_fbankvz_k,
 	T_fbankvz_l,
 	T_Ankunftsverzeichnis_der_Fritzbox_ueber_CIFS,
@@ -88,11 +94,23 @@ enum T_
 	T_farchvz_l,
 	T_Archivverzeichnis_der_Fritzbox,
 	T_capi_k,
+	T_capis_k,
+	T_capie_k,
 	T_obcapi_l,
+	T_obcapis_l,
+	T_obcapie_l,
 	T_Capisuite_verwenden,
+	T_Capisuite_zum_Senden_verwenden,
+	T_Capisuite_zum_Empfang_verwenden,
 	T_hyla_k,
+	T_hylas_k,
+	T_hylae_k,
 	T_obhyla_l,
+	T_obhylas_l,
+	T_obhylae_l,
 	T_hylafax_verwenden,
+	T_hylafax_zum_Senden_verwenden,
+	T_hylafax_zum_Empfang_verwenden,
 	T_hz_k,
 	T_hylazuerst_l,
 	T_versuche_faxe_zuerst_ueber_Hylafax_wegzuschicken,
@@ -310,9 +328,13 @@ enum T_
 	T_Verzeichnis_mit_gescheiterten_Dateien,
 	T_Verzeichnis_fuer_empfangene_Faxe,
 	T_Soll_die_FritzBox_verwendet_werden,
+	T_Soll_die_FritzBox_zum_Senden_verwendet_werden,
+	T_Soll_die_FritzBox_zum_Empfang_verwendet_werden,
 	T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox,
 	T_Archiv_Verzeichnis_fuer_ankommende_Faxe_der_Fritzbox,
 	T_Soll_die_Capisuite_verwendet_werden,
+	T_Soll_die_Capisuite_zum_Senden_verwendet_werden,
+	T_Soll_die_Capisuite_zum_Empfang_verwendet_werden,
 	T_pruefisdn,
 	T_ISDN_Karte_gefunden,
 	T_Keine_ISDN_Karte_gefunden,
@@ -330,6 +352,8 @@ enum T_
 	T_nicht,
 	T_Kein_Modem_gefunden,
 	T_Soll_Hylafax_verwendet_werden,
+	T_Soll_Hylafax_zum_Senden_verwendet_werden,
+	T_Soll_Hylafax_zum_Empfang_verwendet_werden,
 	T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden,
 	T_Zahl_der_Versuche_in_Capisuite_bis_andere_Methode_versucht_wird,
 	T_Zahl_der_Versuche_in_hylafax_bis_andere_Methode_versucht_wird,
@@ -903,7 +927,9 @@ struct hhcl:dhcl
 		ulong gzahl{0};
 		ulong fzahl{0};
 		ulong weizahl{0}; // Zahl der weiteren wartenden Faxe, die nicht in der Spooltabelle dieses Programms eingetragen sind
-		uchar obfa[3]{(uchar)-1}; // ob jew.faxart verwendet: 0=fbox, 1=capi, 2=hyla, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main()
+		uchar obfa[3]{(uchar)-1}; // ob jew.faxart verwendet: 0=fbox, 1=capi, 2=hyla, gesetzt in: pruefisdn(), lieskonfein(), rueckfragen(), getcommandline(), main(); Anfangswert fuer die woher-Funktion
+		uchar obher[3]{(uchar)-1}; // ob jew.faxart zum Empfang verwendet: 0=fbox, 1=capi, 2=hyla
+		uchar obweg[3]{(uchar)-1}; // ob jew.faxart zum Senden verwendet: 0=fbox, 1=capi, 2=hyla
 		//    string hmodemstr; // Erkennung des Faxgeraetes nach /dev/tty, Standard ACM
 		string fbwvz; // /var/spool/fbfax/waiting
 		string fbgvz; // /var/spool/fbfax/faxed
@@ -1087,7 +1113,7 @@ struct hhcl:dhcl
 		void standardprio(const int obmitsetz);
 		int priorang(const int rnr);
 		void fuv0()/*,fuv1(),fuv2(),fuv3(),fuv4(),fuv5(),fuv6(),fuv7(),fuv8(),fuv9(),fuv10()*/; //α
-		int fui0(),fui1(),fui2()/*,fui3(),fui4(),fui5(),fui6(),fui7(),fui8(),fui9(),fui10()*/;
+		int fui0(),fui1(),fui2(),fui3()/*,fui4(),fui5(),fui6(),fui7(),fui8(),fui9(),fui10()*/;
 	protected: //α
 		// void virtlgnzuw(); // wird aufgerufen in: virtrueckfragen, parsecl, lieskonfein, hcl::hcl nach holsystemsprache
 		void virtVorgbAllg();

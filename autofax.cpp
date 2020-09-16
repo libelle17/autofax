@@ -173,10 +173,22 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Empfangsverzeichnis fuer Faxempfang","directory for recieved faxes"},
 	// T_fbox_k
 	{"fbox","fbox"},
+	// T_fboxs_k
+	{"fboxs","fboxs"},
+	// T_fboxe_k
+	{"fboxe","fboxr"},
 	// T_obfbox_l
 	{"obfbox","takefbox"},
+	// T_obfboxs_l
+	{"obfboxs","takefboxs"},
+	// T_obfboxe_l
+	{"obfboxe","takefboxr"},
 	// T_Fritzbox_verwenden
 	{"Fritzbox verwenden","use fritzbox"},
+	// T_Fritzbox_zum_Senden_verwenden
+	{"Fritzbox zum Senden verwenden","use fritzbox for receiving"},
+	// T_Fritzbox_zum_Empfang_verwenden
+	{"Fritzbox zum Empfang verwenden","use fritzbox for sending"},
 	// T_fbankvz_k
 	{"fbvz","fbdr"},
 	// T_fbankvz_l
@@ -191,16 +203,40 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Archivverzeichnis der Fritzbox","archive directory of the fritzbox"},
 	// T_capi_k
 	{"capi","capi"},
+	// T_capis_k
+	{"capis","capis"},
+	// T_capie_k
+	{"capie","capir"},
 	// T_obcapi_l
 	{"obcapi","takecapi"},
+	// T_obcapis_l
+	{"obcapis","takecapis"},
+	// T_obcapie_l
+	{"obcapie","takecapir"},
 	// T_Capisuite_verwenden 
 	{"Capisuite verwenden","use capisuite"},
+	// T_Capisuite_zum_Senden_verwenden 
+	{"Capisuite zum Senden verwenden","use capisuite for sending"},
+	// T_Capisuite_zum_Empfang_verwenden 
+	{"Capisuite zum Empfang verwenden","use capisuite for receiving"},
 	// T_hyla_k
 	{"hyla","hyla"},
+	// T_hylas_k
+	{"hylas","hylas"},
+	// T_hylae_k
+	{"hylae","hylar"},
 	// T_obhyla_l
 	{"obhyla","takehyla"},
+	// T_obhylas_l
+	{"obhylas","takehylas"},
+	// T_obhylae_l
+	{"obhylae","takehylar"},
 	// T_hylafax_verwenden
 	{"Hylafax verwenden","use hylafax"},
+	// T_hylafax_zum_Senden_verwenden 
+	{"Hylafax zum Senden verwenden","use hylafax for sending "},
+	// T_hylafax_zum_Empfang_verwenden 
+	{"Hylafax zum Empfang verwenden","use hylafax for receiving"},
 	// T_hz_k,
 	{"hz","hf"},
 	// T_hylazuerst_l,
@@ -648,12 +684,20 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Verzeichnis fuer empfangene Faxe","Directory for received faxes"},
 	// T_Soll_die_FritzBox_verwendet_werden
 	{"Soll die Fritzbox verwendet werden","Shall the fritzbox be used"},
+	// T_Soll_die_FritzBox_zum_Senden_verwendet_werden
+	{"Soll die Fritzbox zum Senden verwendet werden","Shall the fritzbox be used for sending"},
+	// T_Soll_die_FritzBox_zum_Empfang_verwendet_werden
+	{"Soll die Fritzbox zum Empfang verwendet werden","Shall the fritzbox be used for receiving"},
 	// T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox
 	{"Mit CIFS gemountetes Verzeichnis mit ankommenden Faxen der Fritzbox", "Via CIFS mounted directory with received faxes at the fritzbox"},
 	// T_Archiv_Verzeichnis_fuer_ankommende_Faxe_der_Fritzbox
 	{"Archiv-Verzeichnis fuer ankommende Faxe der Fritzbox","archive directory for incoming faxes at the fritzbox"},
 	// T_Soll_die_Capisuite_verwendet_werden
 	{"Soll die Capisuite verwendet werden","Shall Capisuite be used"},
+	// T_Soll_die_Capisuite_zum_Senden_verwendet_werden
+	{"Soll die Capisuite zum Senden verwendet werden","Shall Capisuite be used for sending"},
+	// T_Soll_die_Capisuite_zum_Empfang_verwendet_werden
+	{"Soll die Capisuite zum Empfang verwendet werden","Shall Capisuite be used for receiving"},
 	// 	T_pruefisdn
 	{"T_pruefisdn()","checkisdn()"},
 	// T_ISDN_Karte_gefunden
@@ -689,6 +733,10 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Kein Modem gefunden.","No modem found."},
 	// T_Soll_Hylafax_verwendet_werden
 	{"Soll hylafax verwendet werden","Shall hylafax be used"},
+	// T_Soll_Hylafax_zum_Senden_verwendet_werden
+	{"Soll hylafax zum Senden verwendet werden","Shall hylafax be used for sending"},
+	// T_Soll_Hylafax_zum_Empfang_verwendet_werden
+	{"Soll hylafax zum Empfang verwendet werden","Shall hylafax be used for receiving"},
 	// T_Soll_vorrangig_capisuite_statt_hylafax_gewaehlt_werden
 	{"Soll vorrangig die Capisuite statt hylafax gewaehlt werden","Shall capisuite instead of hylafax bei chosen preferentially"},
 	// T_Zahl_der_Versuche_in_Capisuite_bis_andere_Methode_versucht_wird
@@ -1833,7 +1881,7 @@ void hhcl::liescapiconf()
 					} //           if (!cuser.empty())
 					if (ncuser.empty()) ncuser=buf; // nehme den letzten besten user
 				} //         if (strcasecmp(buf,"global"))
-			}
+			} // 			if ((sscanf(cfaxcp->zn[--i].c_str(),"[%[^]]]",buf))>0)
 		} //     for(size_t i=cfaxcp->zn.size();i>0;)
 		if (cuser.empty()) 
 			cuser=ncuser;
@@ -1842,6 +1890,8 @@ void hhcl::liescapiconf()
 				cuser=cus.cusstr;
 			// hylazuerst=1;
 			obfa[1]=0; // 19.6.19
+			obher[1]=0; // 16.9.20
+			obweg[1]=0; // 16.9.20
 		} //     if (cuser.empty())
 	} //   if (!cfaxconfdt.empty())
 	if (spoolcapivz.empty()) {
@@ -2375,8 +2425,8 @@ void hhcl::pruefmodcron()
 // rueckgabe: wie obfa[0] (obfbox) eingestellt sein sollte
 int hhcl::prueffbox()
 {
-	hLog(violetts+Tx[T_prueffbox]+schwarz+" obfbox: "+(obfa[0]?"1":"0"));
-	if (obfa[0]) {
+	hLog(violetts+Tx[T_prueffbox]+schwarz+" obfbox: "+(obfa[0]?"1":"0")+(obweg[0]?"1":"0"));
+	if (obfa[0] || obweg[0]==1) {
 		const string fbfax("fbfax");
 		if (!obprogda(fbfax)) {
 			caus<<rot<<"prueffbox 2"<<schwarz<<endl;
@@ -2385,8 +2435,8 @@ int hhcl::prueffbox()
 			holvomnetz(fbfax);
 			kompiliere(fbfax,s_gz);
 			obverb=altobverb;
-		}
-	}
+		} // 		if (!obprogda(fbfax))
+	} // 	if (obfa[0] || obweg[0]==1)
 	return 1;
 } // int hhcl::prueffbox
 
@@ -2394,7 +2444,7 @@ int hhcl::prueffbox()
 // rueckgabe: wie obfa[1] (obcapi) eingestellt sein sollte
 int hhcl::pruefcapi()
 {
-	hLog(violetts+Tx[T_pruefcapi]+schwarz+" obcapi: "+(obfa[1]?"1":"0"));
+	hLog(violetts+Tx[T_pruefcapi]+schwarz+" obcapi: "+(obfa[1]?"1":"0")+", obweg: "+(obweg[1]==1?"1":"0")+", obher: "+(obher[1]==1?"1":"0"));
 	static uchar capiloggekuerzt{0}, 
 							 capischonerfolgreichinstalliert{0};
 	int capilaeuft{0}, 
@@ -2404,7 +2454,7 @@ int hhcl::pruefcapi()
 	obverb=1;
 	uchar schonkonfiguriert{0};
 	capisv();
-	if (obfa[1]) {
+	if (obfa[1] || obweg[1]==1 || obher[1]==1) {
 		for(;versuch<2;versuch++) {
 			// capi4linux muss zum Laufen der Capisuite installiert sein
 			// fuer fcpci muss in driver.c eingefuegt werden:
@@ -2417,7 +2467,7 @@ int hhcl::pruefcapi()
 			if (capilaeuft && !cpneu) {
 				capischonerfolgreichinstalliert=1;
 			} else {
-	caus<<"obfa[1]: "<<(int)obfa[1]<<endl;
+	caus<<"obfa[1]: "<<(int)obfa[1]<<"obweg[1]: "<<(int)obweg[1]<<"obher[1]: "<<(int)obher[1]<<endl;
 				////      pid_t pid = GetPIDbyName("capisuite") ; // If -1 = not found, if -2 = proc fs access error
 				uchar fcpcida{0}, capida{0}, capidrvda{0};
 				vector<string> rueck;
@@ -2868,7 +2918,7 @@ int hhcl::pruefcapi()
 			::fLog(rots+Tx[T_konntecapisuiteservice]+gruen+ltoan(versuch)+rot+Tx[T_malnichtstartenverwN]+schwarz,1,1);
 			erg=0;
 		} //   if (capilaeuft)
-	//// if (obfa[1])
+	//// if (obfa[1] ...
 	} else {
 		rzf=1;
 #if false
@@ -2885,10 +2935,10 @@ int hhcl::pruefcapi()
 		}
 #endif
 		erg=0;
-	} // 	if (obfa[1]) else
+	} // 	if (obfa[1] ... ) else
 schluss: // sonst eine sonst sinnlose for-Schleife mehr oder return mitten aus der Funktion ...
 	obverb=altobverb;
-	hLog(violetts+Txk[T_Ende]+Tx[T_pruefcapi]+schwarz+" obcapi: "+(obfa[1]?"1":"0"));
+	hLog(violetts+Txk[T_Ende]+Tx[T_pruefcapi]+schwarz+" obcapi: "+(obfa[1]?"1":"0")+(obweg[1]?"1":"0")+(obher[1]?"1":"0"));
 	return erg;
 } // pruefcapi
 
@@ -2897,7 +2947,7 @@ schluss: // sonst eine sonst sinnlose for-Schleife mehr oder return mitten aus d
 void hhcl::pruefisdn()
 {
 	hLog(violetts+Tx[T_pruefisdn]+schwarz);
-	if (obfa[1]) {
+	if (obfa[1] || obweg[1]==1 || obher[1]==1) {
 		static uchar obfcgeprueft{0}; // ob schon geprueft, ob Fritzcard eingesteckt
 		if (!obfcgeprueft) {
 			svec rueck;
@@ -2915,12 +2965,12 @@ void hhcl::pruefisdn()
 				} // 		if (!obfcard)
 			} else {
 				hLog(rots+Tx[T_Keine_ISDN_Karte_gefunden]+schwarz+Tx[T_mitCapi]+rot+Tx[T_aauf]+schwarz+"0.");
-				obfa[1]=obfcard=0;
+				obfa[1]=obweg[1]=obher[1]=obfcard=0;
 			} // 	if (rueck.size())
 			if (obverb) hLog("obfcard: "+blaus+ltoan(obfcard)+schwarz);
 			obfcgeprueft=1;
 		} // 	if (!obfcgeprueft)
-	} // 	if (obfa[1])
+	} // 	if (obfa[1] ...
 } // void hhcl::pruefisdn
 
 void hhcl::dovf()
@@ -3029,6 +3079,9 @@ int hhcl::fui2()
 	return auswhy();
 	return 0; //α
 };
+int hhcl::fui3() {
+	return obfa[0] || obher[0]==1;
+}
 void hhcl::fuv0() 
 { //ω
 	if (hintervall!=hintervalt) hconfigtty();
@@ -3049,10 +3102,16 @@ void hhcl::virtinitopt()
 	opn<<new optcl(/*pname*/"nichtgefaxtvz",/*pptr*/&ngvz,/*art*/pverz,T_ngvz_k,T_nichtgefaxtvz_l,/*TxBp*/&Tx,/*Txi*/T_Gescheiterte_Faxe_werden_hier_gesammelt_anstatt_in,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!ngvz.empty(),Tx[T_Verzeichnis_mit_gescheiterten_Dateien]);
 	opn<<new optcl(/*pname*/"empfvz",/*pptr*/&empfvz,/*art*/pverz,T_evz_k,T_empfvz_l,/*TxBp*/&Tx,/*Txi*/T_Empfangsverzeichnis_fuer_Faxempfang,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!empfvz.empty(),Tx[T_Verzeichnis_fuer_empfangene_Faxe]);
 	opn<<new optcl(/*pname*/"obfbox",/*pptr*/&obfa[0],/*art*/puchar,T_fbox_k,T_obfbox_l,/*TxBp*/&Tx,/*Txi*/T_Fritzbox_verwenden,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obfa[0]!=-1,Tx[T_Soll_die_FritzBox_verwendet_werden],/*obno*/1,/*refstr*/0,/*obfragz*/&obfrbox);
-	opn<<new optcl(/*pname*/"fbankvz",/*pptr*/&fbankvz,/*art*/pverz,T_fbankvz_k,T_fbankvz_l,/*TxBp*/&Tx,/*Txi*/T_Ankunftsverzeichnis_der_Fritzbox_ueber_CIFS,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!fbankvz.empty(),Tx[T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox],/*obno*/0,/*refstr*/0,/*obfragz*/&obfa[0]);
-	opn<<new optcl(/*pname*/"farchvz",/*pptr*/&farchvz,/*art*/pverz,T_farchvz_k,T_farchvz_l,/*TxBp*/&Tx,/*Txi*/T_Archivverzeichnis_der_Fritzbox,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!farchvz.empty(),Tx[T_Archiv_Verzeichnis_fuer_ankommende_Faxe_der_Fritzbox],/*obno*/0,/*refstr*/0,/*obfragz*/&obfa[0]);
+	opn<<new optcl(/*pname*/"obfboxs",/*pptr*/&obweg[0],/*art*/puchar,T_fboxs_k,T_obfboxs_l,/*TxBp*/&Tx,/*Txi*/T_Fritzbox_zum_Senden_verwenden,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obweg[0]!=-1,Tx[T_Soll_die_FritzBox_zum_Senden_verwendet_werden],/*obno*/1,/*refstr*/0,/*obfragz*/&obfrbox);
+	opn<<new optcl(/*pname*/"obfboxe",/*pptr*/&obher[0],/*art*/puchar,T_fboxe_k,T_obfboxe_l,/*TxBp*/&Tx,/*Txi*/T_Fritzbox_zum_Empfang_verwenden,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obher[0]!=-1,Tx[T_Soll_die_FritzBox_zum_Empfang_verwendet_werden],/*obno*/1,/*refstr*/0,/*obfragz*/&obfrbox);
+	opn<<new optcl(/*pname*/"fbankvz",/*pptr*/&fbankvz,/*art*/pverz,T_fbankvz_k,T_fbankvz_l,/*TxBp*/&Tx,/*Txi*/T_Ankunftsverzeichnis_der_Fritzbox_ueber_CIFS,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!fbankvz.empty(),Tx[T_Mit_CIFS_gemountetes_Verzeichnis_mit_ankommenden_Faxen_der_Fritzbox],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragez*/&hcl::fui3);
+	opn<<new optcl(/*pname*/"farchvz",/*pptr*/&farchvz,/*art*/pverz,T_farchvz_k,T_farchvz_l,/*TxBp*/&Tx,/*Txi*/T_Archivverzeichnis_der_Fritzbox,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!farchvz.empty(),Tx[T_Archiv_Verzeichnis_fuer_ankommende_Faxe_der_Fritzbox],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui3);
 	opn<<new optcl(/*pname*/"obcapi",/*pptr*/&obfa[1],/*art*/puchar,T_capi_k,T_obcapi_l,/*TxBp*/&Tx,/*Txi*/T_Capisuite_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obfa[1]!=(uchar)-1,Tx[T_Soll_die_Capisuite_verwendet_werden]);
+	opn<<new optcl(/*pname*/"obcapis",/*pptr*/&obweg[1],/*art*/puchar,T_capis_k,T_obcapis_l,/*TxBp*/&Tx,/*Txi*/T_Capisuite_zum_Senden_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obweg[1]!=(uchar)-1,Tx[T_Soll_die_Capisuite_zum_Senden_verwendet_werden]);
+	opn<<new optcl(/*pname*/"obcapie",/*pptr*/&obher[1],/*art*/puchar,T_capie_k,T_obcapie_l,/*TxBp*/&Tx,/*Txi*/T_Capisuite_zum_Empfang_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obher[1]!=(uchar)-1,Tx[T_Soll_die_Capisuite_zum_Empfang_verwendet_werden]);
 	opn<<new optcl(/*pname*/"obhyla",/*pptr*/&obfa[2],/*art*/puchar,T_hyla_k,T_obhyla_l,/*TxBp*/&Tx,/*Txi*/T_hylafax_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obfa[2]!=(uchar)-1,Tx[T_Soll_Hylafax_verwendet_werden]);
+	opn<<new optcl(/*pname*/"obhylas",/*pptr*/&obweg[2],/*art*/puchar,T_hylas_k,T_obhylas_l,/*TxBp*/&Tx,/*Txi*/T_hylafax_zum_Senden_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obweg[2]!=(uchar)-1,Tx[T_Soll_Hylafax_zum_Senden_verwendet_werden]);
+	opn<<new optcl(/*pname*/"obhyla",/*pptr*/&obher[2],/*art*/puchar,T_hylae_k,T_obhylae_l,/*TxBp*/&Tx,/*Txi*/T_hylafax_zum_Empfang_verwenden ,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obher[2]!=(uchar)-1,Tx[T_Soll_Hylafax_zum_Empfang_verwendet_werden]);
 	opn<<new optcl(/*pname*/"fprio",/*pptr*/&prios[0],/*art*/pint,T_fp_k,T_fprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_fritzbox_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!prios[0],Tx[T_Mit_welcher_Prioritaet_soll_fritzbox_verwendet_werden_1_3],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui0);
 	opn<<new optcl(/*pname*/"cprio",/*pptr*/&prios[1],/*art*/pint,T_cp_k,T_cprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_capisuite_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!prios[1],Tx[T_Mit_welcher_Prioritaet_soll_capisuite_verwendet_werden_1_3],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui1);
 	opn<<new optcl(/*pname*/"hprio",/*pptr*/&prios[2],/*art*/pint,T_hp_k,T_hprio_l,/*TxBp*/&Tx,/*Txi*/T_Prioritaet_von_hylafax_1_3,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!!prios[2],Tx[T_Mit_welcher_Prioritaet_soll_hylafax_verwendet_werden_1_3],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui2);
@@ -3443,7 +3502,6 @@ void hhcl::fuellfbip()
 void hhcl::holfbpar()
 {
 	string mntdrv;
-	obverb=2;
 	// wenn eine Fritzbox eine IP-Adresse hat, wird in fuellfbip gesetzt
 	if (fbip.size()) {
 		svec frna;
@@ -3473,7 +3531,7 @@ void hhcl::holfbpar()
 					mntdrv=mounts[0];
 					svec datei;
 					// die jüngste pdf-Datei auf dem CIFS-Verzeichnis suchen
-					systemrueck("find '"+mntdrv+"' -type f -iname '*pdf' -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|sort -nrk 6,7", obverb,oblog,&datei);
+					systemrueck("find '"+mntdrv+"' -type f -iname '*pdf' -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|sort -nrk 6,7|head -n1", obverb,oblog,&datei);
 					if (datei.size()) {
 						// -rwxrwxrwx 1 root root   10061 2017-11-01 10:03:52.000000000 +0100 /mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox/01.11.17_10.03_Telefax.081316150166.pdf
 						if (const size_t p1{datei[0].find(" "+mntdrv)+1}) {
