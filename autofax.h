@@ -1113,7 +1113,7 @@ struct hhcl:dhcl
 		void standardprio(const int obmitsetz);
 		int priorang(const int rnr);
 		void fuv0()/*,fuv1(),fuv2(),fuv3(),fuv4(),fuv5(),fuv6(),fuv7(),fuv8(),fuv9(),fuv10()*/; //α
-		int fui0(),fui1(),fui2(),fui3()/*,fui4(),fui5(),fui6(),fui7(),fui8(),fui9(),fui10()*/;
+		int fui0(),fui1(),fui2(),fui3(),fui4(),fui5(),fui6(),fui7(),fui8(),fui9(),fui10(),fui11()/**/;
 	protected: //α
 		// void virtlgnzuw(); // wird aufgerufen in: virtrueckfragen, parsecl, lieskonfein, hcl::hcl nach holsystemsprache
 		void virtVorgbAllg();

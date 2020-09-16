@@ -1392,7 +1392,7 @@ struct hcl
 		virtual void virtschlussanzeige();
 	public:
 		virtual void fuv0(),fuv1(),fuv2(),fuv3(),fuv4(),fuv5(),fuv6(),fuv7(),fuv8(),fuv9(),fuv10();
-		virtual int fui0(),fui1(),fui2(),fui3(),fui4(),fui5(),fui6(),fui7(),fui8(),fui9(),fui10();
+		virtual int fui0(),fui1(),fui2(),fui3(),fui4(),fui5(),fui6(),fui7(),fui8(),fui9(),fui10(),fui11();
 		void pruefcl(); // commandline mit omap und mit argcmv parsen
 		hcl(const int argc, const char *const *const argv,const char* const DPROG,const uchar mitcron,const uchar parstreng=1);
 		~hcl();
