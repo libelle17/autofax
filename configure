@@ -172,13 +172,15 @@ getIPR() {
 	E=1;for A in $QD;do [ -f "$A" ]&& grep -q "^#include[ ]*<tiffio.h>" "$A" &&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&LT=;
 	E=1;for A in $QD;do [ -f "$A" ]&& grep -q "^#include .*acl.h>" "$A" &&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&LACL=;
 	E=1;for A in $QD;do [ -f "$A" ]&& grep -q "^#include .*curl.h>" "$A" &&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&LCURL=;
-	E=1;for A in $QD;do [ -f "$A" ]&& grep -q "^#include .*curses.h>" "$A" &&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&LCURS=;
+	E=1;for A in $QD;do [ -f "$A" ]&& grep -q "^#include[ ]*<term.h>" "$A" &&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&LTERM=;
+	[ "$LTERM2" ]||{ 
+	 E=1;for A in $QD;do [ -f "$A" ]&& grep -q "^#include .*curses.h>" "$A" &&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&LCURS=;
+	}
 	E=1;for A in $QD;do [ -f "$A" ]&& grep -q "^#include <spandsp.h>" "$A" &&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&LSPAN=;
 	E=1;for A in $QD;do [ -f "$A" ]&& grep -q "^#include <glib.h>" "$A" &&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&LGLIB=;
 	E=1;for A in $QD;do [ -f "$A" ]&& grep -q "^#include .*soup.h>" "$A" &&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&LSOUP=;
 	E=1;for A in $QD;do [ -f "$A" ]&& grep -q "^#include <sndfile.h>" "$A" &&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&LSND=;
 	E=1;for A in $QD;do [ -f "$A" ]&& grep -q "^#include .*QPDF.hh>" "$A" &&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&QPDF=;
-	E=1;for A in $QD;do [ -f "$A" ]&& grep -q "^#include[ ]*<term.h>" "$A" &&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&LTERM=;
 	E=1;for A in $QD;do [ "$A" ]&& grep -qm1 '^[[:space:]]*[^/].*\(gchar\|gboolean\|gint\)' "$A"&&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&LGSSDP=;
 	E=1;for A in $QD;do [ "$A" ]&& grep -qim1 '^[[:space:]]*[^/].*\(capi20_isinstalled\)' "$A"&&{ E=;break;};done;[ "$E" -o ! "$QD" ]&&LCAPI=;
 	IPR="${SUDC}$IdPR";
