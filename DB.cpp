@@ -1187,7 +1187,7 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
 
         // Pruefung, ob Spalten hinzugefuegt werden muessen
         for(unsigned gspn=0;gspn<feldzahl;gspn++) { // geplante Spalten
-          binaer gefunden=falsch;
+          binaer gefunden{falsch};
           for(unsigned j=0;j<spzahl;j++) { // reale Spalten
             if (!strcasecmp(felder[gspn].name.c_str(),spnamen[j].c_str())) {
               gefunden=wahr;
@@ -1272,8 +1272,7 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,unsigned long wleng
 {
   stringstream korr;
   string lenge;
-  korr<<"SELECT character_maximum_length, data_type,is_nullable,column_default,column_comment FROM information_schema.columns WHERE table_schema='"<<
-    dbname<<"' AND table_name='"<<tabs<<"' AND column_name='"<<feld<<"'";
+  korr<<"SELECT character_maximum_length, data_type,is_nullable,COALESCE(column_default,''),column_comment FROM information_schema.columns WHERE table_schema='"<<dbname<<"' AND table_name='"<<tabs<<"' AND column_name='"<<feld<<"'";
   RS spaltlen(this,korr.str(),aktc,obverb>1?obverb-1:0);
   if (!spaltlen.obqueryfehler) {
     char*** cerg;
@@ -1284,14 +1283,11 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,unsigned long wleng
           fLog(Txd[T_Erweitere_Feld]+tabs+"."+feld+Txd[T_von]+lenge.c_str()+Txd[T_auf]+ltoan(wlength),1,1);
           korr.str(std::string()); korr.clear();
           if (*(*cerg+1) && *(*cerg+2)) {
-						const string defroh{ersetzAllezu(cjj(cerg,3),"'","\\'")}, 
-									defz{defroh.substr(0,wlength-(wlength<defroh.length()&&defroh[wlength-1]=='\\'?1:0))},
-									defa{defz.substr(0,wlength-(wlength<defz.length()&&defz[wlength-1]=='\\'?1:0))};
 						korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<*(*cerg+1)/*data_type*/<<"("<<wlength<<") "<<
-              (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(cjj(cerg,3)?string("DEFAULT '")+defa+"'":"")<<
+              (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<string("DEFAULT ")+cjj(cerg,3)<<
               " COMMENT '"<<ersetzAllezu(cjj(cerg,4),"'","\\'")<<"'";
             RS spaltaend(this,korr.str(),aktc,obverb);
-            if (spaltaend.fnr==1074) {
+            if (spaltaend.fnr==1074 || spaltaend.fnr==1118) {
               korr.str(std::string()); korr.clear();
               string neufeld;
               if (!strcasecmp(*(*cerg+1),"binary")) neufeld="mediumblob";
@@ -1306,8 +1302,8 @@ uchar DB::tuerweitern(const string& tabs, const string& feld,unsigned long wleng
               else if (!strcasecmp(*(*cerg+1),"mediumblob")) neufeld="longblob";
               if (!neufeld.empty()) {
                 fLog(Txd[T_Aendere_Feld]+tabs+"."+feld+Txd[T_von]+*(*cerg+1)+Txd[T_auf]+neufeld,1,1);
-                korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<neufeld/*data_type*/<<" "<<
-                  (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<(cjj(cerg,3)?string("DEFAULT '")+defa+"'":"")<<
+								korr<<"ALTER TABLE `"<<tabs<<"` MODIFY COLUMN `"<<feld<<"` "<<neufeld/*data_type*/<<" "<<
+                  (!strcasecmp(*(*cerg+2),"yes")?"NULL":"NOT NULL")<<" "<<string("DEFAULT ")+cjj(cerg,3)<<
                   " COMMENT '"<<ersetzAllezu(cjj(cerg,4),"'","\\'")<<"'";
                 RS spaltaend2(this,korr.str(),aktc,obverb);
               }
@@ -1749,7 +1745,7 @@ my_ulonglong DB::affrows(const size_t aktc) const
 
 const char *cjj(const char * const* const* cerg, const int nr)
 {
-	if (*(*cerg+nr)) return *(*cerg+nr);
+	if (cerg) if (*cerg) if (*(*cerg+nr)) return *(*cerg+nr);
 	return "";
 }
 
