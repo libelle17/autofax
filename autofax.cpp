@@ -4263,6 +4263,7 @@ int hhcl::pruefhyla()
 									// Fehlermeldung faxgetty nicht gefunden verbergen
 									const string vorcfg{"sed -i.bak 's_\\(ls -lL \\$1$\\)_\\1 2>/dev/null_g' configure"};
 									const string cfgbismake{nix+" --nointeractive && echo $? = Ergebnis nach configure && "
+										"sed -i.bak \"s/uint16_t/unsigned short/g\" hfaxd/FileSystem.c++ && "
 										"sed -i.bak \"s.PAGESIZE='North American Letter'.PAGESIZE='ISO A4'.g;"
 										"s.PATH_GETTY='\\.*'.PATH_GETTY='"
 										"$(grep LIBEXEC defs|cut -d= -f2|sed 's/^[[:space:]]*//;s/[[:space:]]*$//')/faxgetty'.g\" config.cache"
