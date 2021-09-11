@@ -4238,7 +4238,7 @@ int hhcl::pruefhyla()
 							 linstp->doinst("tiff",obverb+1,oblog,"fax2ps");
 							} //               if (!obsotiff)
 							prueftif(TIFFGetVersion());
-							linstp->doinst("sendmail",obverb+1,oblog,"sendmail");
+							linstp->doinst("postfix",obverb+1,oblog,"postfix");
 							if (obverb) fLog(violetts+"hyinstart: "+schwarz+ltoan(hyinstart),1,1);
 							hyinstart=hysrc; // spaeter zu loeschen
 							if (hyinstart==hysrc) {
@@ -9141,7 +9141,7 @@ void hhcl::untersuchespool(uchar mitupd/*=1*/,const size_t aktc/*=3*/) // faxart
 						RS rupd(My,spooltab); 
 						rupd.tbupd(einf,ZDB,bedingung,aktc,/*asy=*/0);
 					} // if (mitupd) 
-//			caus<<"Stelle 56 "<<endl; systemrueck("mysql -upraxis -psonne -e'select * from faxeinp.spool'",2,0);
+//			caus<<"Stelle 56 "<<endl; systemrueck("mysql -upraxis -p.... -e'select * from faxeinp.spool'",2,0);
 				} // if (obhyla)
 				////        KLZ // if (!obsfehlt) ... else
 				if (1) {
