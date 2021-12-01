@@ -3390,7 +3390,7 @@ void hhcl::pruefmodem()
 				////				const string tty=base_name(modem);
 #endif // mitdmesg else
 				// ttyS0 erscheint auf Opensuse und Ubuntu konfiguriert, auch wenn kein Modem da ist
-				if (tty!="ttyS0") {
+				if (tty!="ttyS0" && tty!="ttyS1") {
 					int terg;
 					if (cus.cuid) {
 						vector<errmsgcl> errv;
