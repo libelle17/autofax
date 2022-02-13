@@ -1439,8 +1439,10 @@ KLZ // instyp::instyp(char* vfeld,struct tm zt) KLA
 void sqlft::ersetzalles()
 {
 ////	if (this->find("Amato")!=string::npos) { //// <<"vor ersetzen: "<<blau<<c_str()<<schwarz; }
+	const char slash[]{'\xb4',0};
   ersetze("\\","\\\\");
   ersetze("\'","\\\'");
+	ersetze(slash,"/");
 ////	if (this->find("Amato")!=string::npos) { //// <<", nach ersetzen: "<<blau<<c_str()<<schwarz<<endl; }
 } // void sqlft::ersetzalles
 

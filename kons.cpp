@@ -3027,6 +3027,10 @@ int pruefberecht(const string& datei,const string& benutzer,const mode_t mod/*=0
 {
 	int bererg{0};
 	const auto pwnamzg{getpwnam(benutzer.c_str())};
+	if (obverb) {
+		fLog(violetts+Txk[T_pruefberecht]+schwarz+Txk[T_Datei]+blau+datei+schwarz+Txk[T_Benutzer]+blau+benutzer+schwarz+", mode: "+blau+ltoan(mod,8)+
+				schwarz+Txk[T_Erg]+blau+(bererg==3?"3":bererg==2?"2":bererg==1?"1":"0")+schwarz,obverb,0);
+	}
 	if (pwnamzg) {
 		const uid_t uid{pwnamzg->pw_uid};
 		gid_t gid;
@@ -3108,7 +3112,7 @@ int pruefberecht(const string& datei,const string& benutzer,const mode_t mod/*=0
 		bererg=3; // Benutzer gibt es nicht
 	}
 	if (obverb) {
-		fLog(violetts+Txk[T_pruefberecht]+schwarz+Txk[T_Datei]+blau+datei+schwarz+Txk[T_Benutzer]+blau+benutzer+schwarz+", mode: "+blau+ltoan(mod,8)+
+		fLog(violetts+Txk[T_Ende]+Txk[T_pruefberecht]+schwarz+Txk[T_Datei]+blau+datei+schwarz+Txk[T_Benutzer]+blau+benutzer+schwarz+", mode: "+blau+ltoan(mod,8)+
 				schwarz+Txk[T_Erg]+blau+(bererg==3?"3":bererg==2?"2":bererg==1?"1":"0")+schwarz,obverb,0);
 	}
 	return bererg;
@@ -5278,6 +5282,7 @@ void hcl::virtlgnzuw()
 		Txk.lgn=deutsch;
 	} // 	if (langu=="d" || langu=="D" || langu=="deutsch" || langu=="Deutsch") else else
 	Tx.lgn=Txk.lgn;
+	fLog(violetts+Txk[T_Ende]+Txk[T_virtlgnzuw_langu]+schwarzs+": "+langu,obverb,oblog);
 } // void hcl::virtlgnzuw
 
 // wird aufgerufen in paramcl::paramcl, pruefunpaper, holvomnetz, kompilbase, kompilfort
@@ -6514,7 +6519,8 @@ void hcl::pruefsamba(const vector<const string*>& vzn,const svec& abschni,const 
 	uchar obinst{0}; // ob Samba installiert werden soll bzw. die smb.conf bearbeitet
 	uchar obfw{0}; // ob SuSEfirewall bearbeitet werden soll
 	//// <<violett<<"Stelle 0"<<endl;systemrueck("systemctl -n 0 status 'nmbd'",obverb,oblog,/*rueck=*/0,/*obsudc=*/0);
-	linstp->doggfinst("libwbclient0",obverb,oblog);
+//	linstp->doggfinst("libwbclient0",obverb,oblog);
+	linstp->doggfinst("samba-client-libs",obverb,oblog);
 	// bei dieser Initialisierung werden nur die Namen zugewiesen
 	servc smb("smb","smbd");
 	servc smbd("smbd","smbd");
