@@ -7746,12 +7746,12 @@ const char* chstandtxt(const uchar stand)
 // verschiebt Dateien je nach Eintrag in outa, altspool und den Faxsystemen
 // in das Gescheitertenverzeichnis und im ersten Fall auch das Zielverzeichnis
 // wann&1 = erfolgreiche Faxe verschieben, wann&2 = erfolglose Faxe verschieben
-void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *ausgp,const size_t aktc,
+void hhcl::dober(const string& quvz, map<string,string>& fdn,uchar wann,stringstream *ausgp,const size_t aktc,
 		set<string> *cmisslp,set<string> *cgelup,set<string> *hmisslp,set<string> *hgelup)
 {
 	hLog(violetts+"dober()"+schwarz);
 	string meld;
-	set<string>::iterator fit; // Iterator dafuer
+	map<string,string>::iterator fit; // Iterator dafuer
 	////  for(fit=fdn.begin();fit!=fdn.end();++fit) _out<<blau<<*fit<<schwarz<<endl;
 	// die Dateien, die in outa stehen, je nach Erfolgskennzeichen in das Zielverzeichnis oder das Gescheitertenverzeichnis verschieben
 	for(unsigned runde=0;runde<2;runde++) {
@@ -7767,6 +7767,8 @@ void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *a
 			for(unsigned cnr=1;cnr<(runde?2:3);cnr++) {
 				if (*(*cerg+cnr)) {
 					string dbdocname{*(*cerg+cnr)};
+//					if (string(*(*cerg+0))=="91978")
+//						caus<<":"<<dbdocname<<":"<<endl;
 					for (unsigned aru=0;aru<(runde?7:1);aru++) {
 						////<<"aru: "<<aru<<" cnr: "<<cnr<<" runde: "<<runde<<" dbdocname: "<<dbdocname<<endl;
 						string stamm,exten;
@@ -7784,10 +7786,11 @@ void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *a
 							} //                 if (aru)
 							////							if (dbdocname.find("Zwingel Dieter Labor an Fax 081368208")!=string::npos) //// <<rot<<"dbdocname: "<<dbdocname<<schwarz<<endl;
 							if ((fit=fdn.find(dbdocname))!=fdn.end()) { // wenn Datenbankeintrag in der sortierten Menge der Dateinamen enthalten
-								const string fdat{*fit};
+								const string fdat{fit->first};
 								////							if (dbdocname.find("Zwingel Dieter Labor an Fax 081368208")!=string::npos) //// <<violett<<"*fit: "<<fdat<<schwarz<<endl;
 								struct stat qst{0};
-								const string qdt{quvz+vtz+fdat};
+//								const string qdt{quvz+vtz+fdat};
+								const string qdt{fit->second};
 								lstat(qdt.c_str(),&qst);
 								uchar obgescheitert{0};
 								if (runde) { // wenn in outa, nicht in der Spool-Tabelle
@@ -7804,7 +7807,7 @@ void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *a
 									if ((obgescheitert&&(wann&2)) || (!obgescheitert&&(wann&1))) {
 										unsigned vfehler=0;
 										if (!zlvz.empty()) {
-											const string zdt{zlvz+vtz+*fit};
+											const string zdt{zlvz+vtz+fit->first};
 											verschiebe<string>(qdt, zdt, cuser,&vfehler, /*wieweiterzaehl=*/2,/*obverb=*/ausgp?0:1,/*oblog=*/1,ausgp);
 											if (vfehler) {
 												meld=rots+Tx[T_Fehler_beim_Verschieben_Ausrufezeichen]+": "+ltoan(vfehler)+schwarz+qdt+" -> "+zdt;
@@ -7841,20 +7844,20 @@ void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *a
 		for(fit=fdn.end();;) {
 			--fit;
 			fitnr++;
-			const string qdt{quvz+vtz+*fit};
+			const string qdt{fit->first},datei{fit->second}; //  qdt{quvz+vtz+*fit};
 			string sql;   
 			////			transform(fit->begin(),fit->end(),std::back_inserter(gross),::toupper);
-			const string gross{boost::locale::to_upper(*fit, loc)};
+			const string gross{boost::locale::to_upper(datei, loc)};
 			if (gross.find(".PDF")==gross.length()-4) {
-				sql=sqlr+"original = '"+*fit+"'";
+				sql=sqlr+"original = '"+datei+"'";
 			} else {
-				sql=sqlr+"origvu = '"+*fit+"'";
+				sql=sqlr+"origvu = '"+datei+"'";
 			}
 			RS rsp(My,sql,aktc,ZDB);
 			char ***cerg;
 			uchar cstand{0}, hstand{0}; // 0= nicht gefunden, 1=nicht gefaxt, 2=gefaxt
 			if (cerg=rsp.HolZeile(),cerg?*cerg:0) {
-				// <<blau<<cjj(cerg,0)<<" "<<cjj(cerg,1)<<schwarz<<" gefunden: "<<blau<<*fit<<schwarz<<endl;
+				// <<blau<<cjj(cerg,0)<<" "<<cjj(cerg,1)<<schwarz<<" gefunden: "<<blau<<datei<<schwarz<<endl;
 				if (*cjj(cerg,0)) {
 					if (cmisslp->find(cjj(cerg,0))!=cmisslp->end()) { // wenn Datenbankeintrag in der sortierten Menge der Dateinamen enthalten
 						cstand=1;
@@ -7870,7 +7873,7 @@ void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *a
 					}
 				} // 				if (*cjj(cerg,1))
 			} else {
-				////		 <<"nicht gefunden: "<<blau<<*fit<<schwarz<<endl;
+				////		 <<"nicht gefunden: "<<blau<<datei<<schwarz<<endl;
 			} // 			if (cerg=rsp.HolZeile(),cerg?*cerg:0)
 			if (/*obverb*/1) {
 				if (!ueanz) {
@@ -7885,13 +7888,13 @@ void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *a
 				else if (cstand==1||hstand==1) farbe=violett;
 				else farbe=rot;
 				meld=string(ltoan(fitnr))+") Capi: "+chfarbe(cstand)+chstandtxt(cstand)+blau+"("+(cerg&&*cerg?cjj(cerg,0):"")+")"+schwarz
-					+", Hyla: "+chfarbe(hstand)+chstandtxt(hstand)+blau+"("+(cerg&&*cerg?cjj(cerg,1):"")+schwarz+"): "+farbe+*fit+schwarz;
+					+", Hyla: "+chfarbe(hstand)+chstandtxt(hstand)+blau+"("+(cerg&&*cerg?cjj(cerg,1):"")+schwarz+"): "+farbe+datei+schwarz;
 				if (ausgp) *ausgp<<meld<<endl; else fLog(meld,1,1);
 				////				fLog(1,1,0,0,"%zu) Capi: %s%s%s(%s)%s, Hyla: %s%s%s(%s)%s: %s%s%s",fitnr,chfarbe(cstand),chstandtxt(cstand),blau,
 				////						(cerg&&*cerg?cjj(cerg,0):""),schwarz, chfarbe(hstand),chstandtxt(hstand),blau,
-				////						(cerg&&*cerg?cjj(cerg,1):""),schwarz,farbe,fit->c_str(),schwarz);
+				////						(cerg&&*cerg?cjj(cerg,1):""),schwarz,farbe,datei.c_str(),schwarz);
 			} // 		if (obverb)
-			// <<fitnr<<") "<<farbe<<*fit<<schwarz<<endl;
+			// <<fitnr<<") "<<farbe<<datei<<schwarz<<endl;
 			uint vfehler{0};
 			string zdt;
 			if (cstand==2 || hstand==2) {
@@ -7900,7 +7903,7 @@ void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *a
 				} // 				if (wann)
 				// wenn nicht im System nachweisbar, dann auch nicht umbenennen
 			} else {
-				zdt=ngvz+vtz+*fit;
+				zdt=ngvz+vtz+datei;
 				/*//
 					if (!cstand&&!hstand) KLA
 					if (!ngvz.empty()) KLA
@@ -7922,7 +7925,7 @@ void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *a
 		} //  		for(fit=fdn.end();;)
 	} // 	if (fdn.size())
 	hLog(violetts+Txk[T_Ende]+"dober()"+schwarz);
-} // void hhcl::dober(const string& quvz, set<string>& fdn,uchar wann,stringstream *ausgp)
+} // void hhcl::dober(const string& quvz, map<string,string>& fdn,uchar wann,stringstream *ausgp)
 
 
 
@@ -7938,8 +7941,10 @@ void hhcl::bereinigevz(const size_t aktc/*=0*/)
 		meld=violetts+Tx[T_bereinigevz]+schwarz;
 		if (aktc) ausg<<meld<<endl; else fLog(meld,obverb,oblog);
 	}
+// Verzeichnisrunden
 	for(int vru=0;vru<3;vru++) {
-		set<string> vzs,fdn;
+		set<string> vzs;
+		map<string,string> fdn;
 //		zielmustercl *zmakt;
 		switch (vru) {
 			// Warteverzeichnis
@@ -7950,7 +7955,7 @@ void hhcl::bereinigevz(const size_t aktc/*=0*/)
 			case 1: 
 				/*
 				for(unsigned i{0};i<zmsp.size();i++){
-					// nur das letzte Verzeichnis aufgraeumen
+					// nur das letzte Verzeichnis aufraeumen
 					if (zmsp[i]->obmusterleer()) {
 						vzs.insert(zmsp[i]->ziel);
 						break;
@@ -7958,7 +7963,7 @@ void hhcl::bereinigevz(const size_t aktc/*=0*/)
 				} // 	for(zielmustercl *zmakt=zmp;1;zmakt++)
 				*/
 				for(auto zmakt:zmsp) {
-					// nur das letzte Verzeichnis aufgraeumen
+					// nur das letzte Verzeichnis aufraeumen
 					if (zmakt->obmusterleer()) {
 						vzs.insert(zmakt->ziel);
 					  break;
@@ -7969,19 +7974,19 @@ void hhcl::bereinigevz(const size_t aktc/*=0*/)
 			default:
 				vzs.insert(ngvz); 
 		} // 	 switch (vru)
-		set<string>::iterator fit; // Iterator dafuer
+		set<string>::iterator vit; // Iterator dafuer
 		// zur Zeit jeweils nur ein Element
-		for(fit=vzs.begin();fit!=vzs.end();fit++) {
+		for(vit=vzs.begin();vit!=vzs.end();vit++) {
 			unsigned long fzahl=0; // Fehlerzahl
-			const string dsvz{*fit}; // Dateiensuchverzeichnis
+			const string dsvz{*vit}; // Dateiensuchverzeichnis
 			svec rueck;
 			if (findv==1) {
-				cmd="find "+dsvz+" -maxdepth 1 -type f -not -name \"*\\`*.nix\" -printf '%f\\n'";
+				cmd="find "+dsvz+" -maxdepth 2 -type f -not -name \"*\\`*.nix\" -printf '%p\\n'";
 				systemrueck(cmd,aktc?0:obverb,oblog,&rueck,/*obsudc=*/1,/*verbergen=*/0,/*obergebnisanzeig=*/wahr,/*ueberschr=*/nix,/*errm=*/0,
 						        /*obincron=*/0,aktc?&ausg:0);
-			} else findfile(&rueck,findv,aktc?0:obverb,oblog,/*anteil=*/1,dsvz,/*muster=*/"^[^`]*$",/*tiefe=*/1,/*_typbit=*/1,/*folge=*/Fol_Dat);
+			} else findfile(&rueck,findv,aktc?0:obverb,oblog,/*anteil=*/1,dsvz,/*muster=*/"^[^`]*$",/*tiefe=*/2,/*_typbit=*/1,/*folge=*/Fol_Dat);
 			for(size_t dnr=0;dnr<rueck.size();dnr++) {
-				fdn.insert(rueck[dnr]);
+				fdn.insert({base_name(rueck[dnr]),rueck[dnr]});
 			}
 			meld=Tx[T_Bereinige_Verzeichnis]+blaus+dsvz+schwarz+Tx[T_DateienzahlimVz]+blau+ltoan(fdn.size())+schwarz+": ";
 			if (aktc) ausg<<meld<<endl; else fLog(meld,1,1);
@@ -8059,7 +8064,7 @@ void hhcl::bereinigevz(const size_t aktc/*=0*/)
 				meld=Tx[T_Aus2]+blaus+dsvz+schwarz+Tx[T_wurden_in_Unterverzeichnisse_verschoben]+gruen+ltoan(fzahl)+schwarz+" "+Tx[T_Dateien];
 				if (aktc) ausg<<meld<<endl; else fLog(meld,1,1);
 			} // 		if (vru)
-		} // 	 for(fit=vzs.begin();fit!=vzs.end();fit++)
+		} // 	 for(vit=vzs.begin();vit!=vzs.end();vit++)
 	} // 	for(int vru=0;vru<3;vru++)
 	if (obverb||oblog) {
 		meld=violetts+Txk[T_Ende]+Tx[T_bereinigevz]+schwarz;
