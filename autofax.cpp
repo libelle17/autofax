@@ -1445,6 +1445,8 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"cpneu","cpnew"},
 	// T_Capisuite_neu_einrichten,
 	{"Capisuite neu einrichten", "install capisuite again"},
+  // T_dorename,
+	{"dorename(","dorename("},
 	{"",""} //α
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -1473,7 +1475,7 @@ inline int dfork() {
 void dorename(const string& quelle, const string& ziel, const string& cuser/*=nix*/, uint *vfehlerp/*=0*/, uchar schonda/*=0*/,
 		int obverb/*=0*/, int oblog/*=0*/, stringstream *ausgp/*=0*/)
 {
-	//  hLog(violetts+Tx[T_dorename]+schwarz);
+	fLog(violetts+Tx[T_dorename]+schwarz+quelle+", "+ziel+", "+cuser+", ...,"+(ausgp?ausgp->str():"<0>"),obverb>1?obverb-1:0,oblog);
 	const string meld{Tx[T_Verschiebe]+tuerkiss+quelle+schwarz+"'\n         -> '"+gruen+ziel+schwarz+"'"};
 	unsigned fehler{0};
 	if (ausgp&&obverb) *ausgp<<meld<<endl; else fLog(meld,obverb,oblog);
@@ -1595,8 +1597,8 @@ string hhcl::neuerdateiname(const string& qpfad)
 			dateiname=zielname(dateiname,zmsp,/*wieweiterzaehl=*/1,/*zieldatei=*/0,&obgleich,obverb,oblog);
 		} //     for(unsigned aru=0;1;aru++)
 		getstammext(&dateiname,&stamm,&exten);
-		if (!runde) extu=exten; 
-		else break;
+		if (!runde) { extu=exten; 
+		} else break;
 		const string pdf{stamm+".pdf"};
 		if (pdf==dateiname) break;
 		else dateiname=pdf;
@@ -2439,7 +2441,6 @@ int hhcl::prueffbox()
 	if (obfa[0] || obweg[0]==1) {
 		const string fbfax("fbfax");
 		if (!obprogda(fbfax)) {
-			caus<<rot<<"prueffbox 2"<<schwarz<<endl;
 			const auto altobverb{obverb};
 			obverb=1;
 			holvomnetz(fbfax);
@@ -2478,7 +2479,7 @@ int hhcl::pruefcapi()
 			if (capilaeuft && !cpneu) {
 				capischonerfolgreichinstalliert=1;
 			} else {
-	caus<<"obfa[1]: "<<(int)obfa[1]<<"obweg[1]: "<<(int)obweg[1]<<"obher[1]: "<<(int)obher[1]<<endl;
+	caus<<"pruefcapi: obfa[1]: "<<(int)obfa[1]<<"obweg[1]: "<<(int)obweg[1]<<"obher[1]: "<<(int)obher[1]<<endl;
 				////      pid_t pid = GetPIDbyName("capisuite") ; // If -1 = not found, if -2 = proc fs access error
 				uchar fcpcida{0}, capida{0}, capidrvda{0};
 				vector<string> rueck;
@@ -7043,7 +7044,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 							yLog(obverb,oblog,0,0, "%s%u%s) %s%s%s",blau,j,schwarz,blau,tokname[j].c_str(),schwarz);
 						if (toknr.size()) {
 							string benstr;
-							for(unsigned j=0;j<toknr.size();j++) { 
+							for(unsigned j=0;j<toknr.size();j++) {
 								if (!toknr[j].empty()) {
 									string kopier,*zielp;
 									if (benstr.empty()) zielp=&benstr; else zielp=&kopier;
@@ -8715,9 +8716,9 @@ void fsfcl::archiviere(DB *const My, hhcl *const hhip, const struct stat *const 
 	einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
 	einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
 	svec eindfeld; eindfeld<<"submt";eindfeld<<"submid";
-	caus<<"vor tbins"<<endl;
+	caus<<"in archiviere: vor tbins"<<endl;
 	rins.tbins(&einf,aktc,/*sammeln=*/0,/*obverb=*/hhip->ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld);  // einfuegen
-	caus<<"nach tbins"<<endl;
+	caus<<"in archiviere: nach tbins"<<endl;
 	if (rins.fnr) {
 		fLog(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
 	} //     if (runde==ruz-1)

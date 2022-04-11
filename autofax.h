@@ -700,6 +700,7 @@ enum T_
 	T_cpneu_k,
   T_cpneu_l,
 	T_Capisuite_neu_einrichten,
+  T_dorename,
 	T_MAX //α
 }; // enum T_ //ω
 

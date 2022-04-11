@@ -707,6 +707,8 @@ const char *kons_T[T_konsMAX+1][SprachZahl]=
 	{"rueckfragen()","callbacks()"},
 	// T_Frage_ab
 	{"Frage ab: ","Asking for: "},
+  // T_dateivgl
+	{"dateivgl()","filecmp()"},
 	{"",""}
 }; // const char *Txkonscl::TextC[T_konsMAX+1][SprachZahl]=
 
@@ -4118,7 +4120,7 @@ int servc::machfit(int obverb/*=0*/,int oblog/*=0*/, binaer nureinmal/*=falsch*/
 	////  if (servicelaeuft)
 	if (!svfeh&&!obenabled)
 		enableggf(obverb,oblog);
-	fLog(violetts+"Ende "+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, obverb,oblog);
+	fLog(violetts+Txk[T_Ende]+Txk[T_machfit]+schwarz+" sname: "+violett+sname+schwarz+" svfeh: "+blau+ltoan(svfeh)+schwarz, obverb,oblog);
 	return !svfeh;
 } // int servc::machfit
 
@@ -5057,6 +5059,7 @@ void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar a
 // 1= Dateien unterschiedlich, 0 = gleich; obzeit => vergleiche auch die letzte Aenderungszeit
 int dateivgl(const string& d1, const string& d2,uchar obzeit/*=0*/)
 {
+	fLog(violetts+Txk[T_dateivgl]+schwarz+d1+", "+d2+", "+(obzeit?"1":"0"));
 	int erg{0};
 	// wenn ein Unterschied am Anfang der Dateien war oder die Groesse < 300 kB lag, war boost schneller; 'cmp' war nie schneller als 'diff'.
 	////	perfcl prf("vgl");
@@ -5081,6 +5084,7 @@ int dateivgl(const string& d1, const string& d2,uchar obzeit/*=0*/)
 		} // 		if (lst1||st1.st_size>1000000) else
 	} // 	if (!erg)
 	////	prf.ausgeb();
+	fLog(violetts+Txk[T_Ende]+Txk[T_dateivgl]+schwarz);
 	return erg;
 } // int dateivgl(const string& d1, const string& d2)
 

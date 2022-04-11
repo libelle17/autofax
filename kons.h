@@ -475,6 +475,7 @@ enum Tkons_
 	T_pptr_darf_nicht_null_sein_bei,
 	T_rueckfragen,
 	T_Frage_ab,
+	T_dateivgl,
 	T_konsMAX
 }; // Tkons_
 // Konsistenz in gdb pruefen, z.B.:  p (const char* const)reinterpret_cast<TCtp*>(Txk.TCp)[T_unbek][Txk.lgn]
