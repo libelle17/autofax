@@ -1626,7 +1626,7 @@ string zielname(const string& qdatei, const string& rzielvz, uchar wieweiterzaeh
 		ziel=zielvz+(zielvz[zielvz.length()-1]==vtz?"":vtzs)+dateiname;
 	}
 	// auf Gleichheit testen
-	if (obgleichp) *obgleichp=!dateivgl(qdatei,ziel);
+	if (obgleichp) *obgleichp=!dateivgl(qdatei,ziel,obverb,oblog);
 	string meld{Tx[T_zielname_erstes_Ziel]+rots+ziel+schwarz+"'"+(obgleichp&&*obgleichp?Tx[T_Quelle_und_Ziel_gleich]:"")};
 	if (ausgp&&obverb) *ausgp<<meld<<endl; else fLog(meld,obverb,oblog);
 	if (!(obgleichp&&*obgleichp)) {
@@ -7055,7 +7055,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 									if (zielp==&benstr) {
 										if (zfda[iakt]!=benstr) {
 											uint vfehler{0};
-											dorename((zfda[iakt]),benstr,cuser,&vfehler,/*schonda*/!dateivgl(zfda[iakt],benstr),obverb,oblog);
+											dorename((zfda[iakt]),benstr,cuser,&vfehler,/*schonda*/!dateivgl(zfda[iakt],benstr,obverb,oblog),obverb,oblog);
 											if (vfehler) {
 												fLog(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz+"("+zfda[iakt]+" -> "+benstr+")",1,1);
 												continue;
@@ -7081,7 +7081,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 										// wenn die Datei im zufaxenvz in einen Namenskonflikt geriete ...
 										const string ndname{zufaxenvz+vtz+neuerdateiname(urfx.teil)};
 										if (ndname!=urfx.teil) {
-											dorename(urfx.teil,ndname,cuser,&vfehler,/*schonda=*/!dateivgl(urfx.teil,ndname),obverb,oblog);
+											dorename(urfx.teil,ndname,cuser,&vfehler,/*schonda=*/!dateivgl(urfx.teil,ndname,obverb,oblog),obverb,oblog);
 											if (vfehler) {
 												cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
 													blau<<urfx.teil<<schwarz<<" ->\n"<<
@@ -7209,7 +7209,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 				const string ndname{zufaxenvz+vtz+neuerdateiname(zfda.at(i))};
 				uint vfehler{0};
 				if (ndname!=zfda.at(i)) {
-					dorename(zfda.at(i),ndname,cuser,&vfehler,/*schonda=*/!dateivgl(zfda.at(i),ndname),obverb,oblog);
+					dorename(zfda.at(i),ndname,cuser,&vfehler,/*schonda=*/!dateivgl(zfda.at(i),ndname,obverb,oblog),obverb,oblog);
 					if (vfehler) {
 						continue;
 					} // if (vfehler) 
@@ -7611,9 +7611,9 @@ void hhcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,
 						cempfavzgeprueft=1;
 					} // 			if (!cempfavzgeprueft)
 					string zdt{cempfavz+vtz+cuser+"-"+base+".sff"};
-					dorename(sffdatei,zdt,cuser,&vfehler,/*schonda=*/!dateivgl(sffdatei,zdt),obverb,oblog);
+					dorename(sffdatei,zdt,cuser,&vfehler,/*schonda=*/!dateivgl(sffdatei,zdt,obverb,oblog),obverb,oblog);
 					zdt=cempfavz+vtz+cuser+"-"+base_name(ctxdt);
-					dorename(ctxdt,zdt,cuser,&vfehler,/*schonda=*/!dateivgl(ctxdt,zdt),obverb,oblog);
+					dorename(ctxdt,zdt,cuser,&vfehler,/*schonda=*/!dateivgl(ctxdt,zdt,obverb,oblog),obverb,oblog);
 				} // if (utime(tifpfad.c_str(),&ubuf))  else
 			} // 	if (mitversch)
 		} // was&4, Bilddatei verschieben

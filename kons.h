@@ -695,7 +695,7 @@ void doanfg(const string& datei, const string& inhalt, const string& comment);
 
 int touch(const std::string& pathname,int obverb=0,int oblog=0);
 std::string string_to_hex(const std::string& input);
-int dateivgl(const string& d1, const string& d2,uchar obzeit=0);
+int dateivgl(const string& d1, const string& d2,uchar obzeit=0,int obverb=0,int oblog=0);
 void kuerzevtz(string *vzp);
 
 struct svec: vector<std::string>

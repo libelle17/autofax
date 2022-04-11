@@ -5057,9 +5057,9 @@ void findfile(svec *qrueckp,uchar findv,int obverb/*=0*/,int oblog/*=0*/,uchar a
 #endif // #if defined(altfind) && defined(neufind)
 
 // 1= Dateien unterschiedlich, 0 = gleich; obzeit => vergleiche auch die letzte Aenderungszeit
-int dateivgl(const string& d1, const string& d2,uchar obzeit/*=0*/)
+int dateivgl(const string& d1, const string& d2,uchar obzeit/*=0*/,int obverb/*=0*/, int oblog/*=0*/)
 {
-	fLog(violetts+Txk[T_dateivgl]+schwarz+d1+", "+d2+", "+(obzeit?"1":"0"));
+	fLog(violetts+Txk[T_dateivgl]+schwarz+d1+", "+d2+", "+(obzeit?"1":"0"),obverb,oblog);
 	int erg{0};
 	// wenn ein Unterschied am Anfang der Dateien war oder die Groesse < 300 kB lag, war boost schneller; 'cmp' war nie schneller als 'diff'.
 	////	perfcl prf("vgl");
@@ -5084,7 +5084,7 @@ int dateivgl(const string& d1, const string& d2,uchar obzeit/*=0*/)
 		} // 		if (lst1||st1.st_size>1000000) else
 	} // 	if (!erg)
 	////	prf.ausgeb();
-	fLog(violetts+Txk[T_Ende]+Txk[T_dateivgl]+schwarz);
+	fLog(violetts+Txk[T_Ende]+Txk[T_dateivgl]+schwarz,obverb,oblog);
 	return erg;
 } // int dateivgl(const string& d1, const string& d2)
 
