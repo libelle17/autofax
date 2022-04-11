@@ -139,6 +139,7 @@ void hhcl::pvirtVorgbSpeziell()
 			zmVp.push_back(zielmustercl("","/vista/P/gefaxt"));
 		} else { // linux1
 			zmVp.push_back(zielmustercl("[Aa]rztbrief","/DATA/Patientendokumente"));
+			zmVp.push_back(zielmustercl("Insulinplan","/DATA/Patientendokumente"));
 			zmVp.push_back(zielmustercl("","/DATA/Patientendokumente/gefaxt"));
 		}
 		machopvzm();

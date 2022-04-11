@@ -4499,6 +4499,7 @@ int hhcl::pruefhyla()
 							if (!iru) {
 								caus<<rot<<"hier faxsetup!"<<endl;
 								hfaxsetup();
+								caus<<rot<<"nach faxsetup!"<<endl;
 								//// if (0)
 								//// hservice_faxgetty();
 							}
@@ -5096,7 +5097,7 @@ void hhcl::korrigierefbox(const unsigned tage/*=90*/,const size_t aktc)
 	if (rueck[0].size()||rueck[1].size()) {
 		RS vgl1(My,"DROP TABLE IF EXISTS tmpfbox",aktc,ZDB);
 		RS vgl2(My,"CREATE TABLE tmpfbox(submid VARCHAR(40) KEY, titel VARCHAR(600), rcname VARCHAR(900),"
-				"teln VARCHAR(40),zp DATETIME, tries INT, size INT(15), docname VARCHAR(900), erfolg INT) collate utf8_general_ci",aktc,ZDB);
+				"teln VARCHAR(40),zp DATETIME, tries INT, size INT(15), docname VARCHAR(900), erfolg INT) COLLATE utf8mb4_german2_ci",aktc,ZDB);
 		for(int cru=0;cru<2;cru++) {
 			for(ruecki=0;ruecki<rueck[cru].size();ruecki++) {
 				teln.clear();zp.clear();tries.clear();size=0;
@@ -9443,7 +9444,7 @@ void pruefstdfaxnr(DB *Myp, const string& usr, const string& host, const int obv
 		" return trimfaxnr;\n"
 		"end"};
 	const string para{"(faxnr VARCHAR(200), IPf VARCHAR(10), LDPf VARCHAR(20), CoCd VARCHAR(20), CiCd VARCHAR(20)) \n"
-		"RETURNS VARCHAR(200) CHARSET utf8 COLLATE utf8_unicode_ci DETERMINISTIC\n"};
+		"RETURNS VARCHAR(200) CHARSET utf8mb4 COLLATE utf8mb4_german2_ci DETERMINISTIC\n"};
 	Myp->prueffunc("stdfaxnr", body, para, aktc,obverb,oblog);
 	fLog(violetts+Txk[T_Ende]+Tx[T_pruefstdfaxnr]+schwarz,obverb,oblog);
 }  // void pruefstdfaxnr(DB *Myp, const string& usr, const string& pwd, const string& host, int obverb, int oblog)
@@ -9531,7 +9532,7 @@ void prueffuncgettel3(DB *const Myp, const string& usr, const string& host, cons
 		"end"};
 	const string para{"(dname VARCHAR(1000),anfaxstr VARCHAR(100),ancfaxstr VARCHAR(100),anhfaxstr VARCHAR(100),anffaxstr VARCHAR(100),"
 		"anmailstr VARCHAR(150),klaranmailstr VARCHAR(150)) \n"
-		"RETURNS VARCHAR(1000) CHARSET utf8 COLLATE utf8_unicode_ci DETERMINISTIC\n"};
+		"RETURNS VARCHAR(1000) CHARSET utf8mb4 COLLATE utf8mb4_german2_ci DETERMINISTIC\n"};
 	Myp->prueffunc("gettel3", body, para, aktc,obverb,oblog);
 	fLog(violetts+Txk[T_Ende]+Tx[T_prueffuncgettel3]+schwarz,obverb,oblog);
 } // void prueffuncgettel3
@@ -9733,7 +9734,7 @@ void hhcl::korrigierehyla(const unsigned tage/*=90*/,const size_t aktc)
 					inse[inse.size()-1]=';';
 					////		mysql_set_server_option(My->conn,MYSQL_OPTION_MULTI_STATEMENTS_ON);
 					RS vgl1(My,"DROP TABLE IF EXISTS tmph",aktc,ZDB);
-					RS vgl2(My,"CREATE TABLE tmph(submid VARCHAR(11) collate utf8_general_ci KEY,Datum DATETIME,tel VARCHAR(30),pages INT,attr VARCHAR(20),erfolg INT);",aktc,ZDB);
+					RS vgl2(My,"CREATE TABLE tmph(submid VARCHAR(11) collate utf8mb4_german2_ci KEY,Datum DATETIME,tel VARCHAR(30),pages INT,attr VARCHAR(20),erfolg INT);",aktc,ZDB);
 					RS vgl3(My,"INSERT INTO tmph VALUES "+inse,aktc,ZDB);
 					// die laut xferfaxlog uebermittelten Faxe, die nicht in outa als uebermittelt eingetragen sind, 
 					// und zu denen nicht bereits eine erfolgreiche capisuite-Uebertragung eingetragen ist
