@@ -178,7 +178,8 @@ configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
 Programm: <b>/root/autofax/autofax</b>, V: <b>0.10000</b>
-Using: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
+Using: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax
+(ttyACM0) <br>
 Options which are not saved (current value in parentheses):
 <br>
 -delf, --deletefax</b>: delete a fax with query (<b>0</b>)
@@ -1065,7 +1066,8 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
 Programm: <b>/root/autofax/autofax</b>, V: <b>0.10000</b>
-Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax <br>
+Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax
+(ttyACM0) <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
 Klammern): <br>
 -loef, --loeschefax</b>: ein Fax nach Rueckfrage loeschen

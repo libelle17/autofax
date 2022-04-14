@@ -1535,7 +1535,6 @@ string kopiere(const string& qdatei, const string& zield, uint *kfehler, const u
 	int fehler{0},
 			efeh{0};
 	auto const altobverb{obverb};
-	obverb=2;
 	////	if (is_same<decltype(zield),const std::string&>::value) KLA
 	// nur zur Sicherheit, eigentlich sollte mit Verzeichnis kopier(... direkt aufgerufen werden
 	struct stat zstat{0};
@@ -1626,7 +1625,8 @@ string zielname(const string& qdatei, const string& rzielvz, uchar wieweiterzaeh
 		ziel=zielvz+(zielvz[zielvz.length()-1]==vtz?"":vtzs)+dateiname;
 	}
 	// auf Gleichheit testen
-	if (obgleichp) *obgleichp=!dateivgl(qdatei,ziel,obverb,oblog);
+
+	if (obgleichp) *obgleichp=!dateivgl(qdatei,ziel,0,obverb,oblog);
 	string meld{Tx[T_zielname_erstes_Ziel]+rots+ziel+schwarz+"'"+(obgleichp&&*obgleichp?Tx[T_Quelle_und_Ziel_gleich]:"")};
 	if (ausgp&&obverb) *ausgp<<meld<<endl; else fLog(meld,obverb,oblog);
 	if (!(obgleichp&&*obgleichp)) {
@@ -4140,7 +4140,7 @@ int hhcl::pruefhyla()
 	int ret{1};
 	hylasv1();
 	do { // fuer break
-		caus<<"hmodem: "<<hmodem<<endl;
+////		caus<<"hmodem: "<<hmodem<<endl;
 		if (hmodem.empty()) {
 			fLog(blaus+Tx[T_Kein_Modem_gefunden]+schwarz,(obfa[2]||obweg[2]==1||obher[2]==1)?1:obverb,oblog);
 			this->obfa[2]=obweg[2]=obher[2]=0;
@@ -4935,7 +4935,7 @@ void hhcl::virtzeigueberschrift()
 			+((obfa[0]||obweg[0]==1||obher[0]==1)&&(obfa[2]||obweg[2]==1||obher[2]==1||obfa[1]||obweg[1]==1||obher[1]==1)?", ":"")
 			+blau+(obfa[1]?"Capisuite":(obweg[1]==1?"Capisuite senden"+(obher[1]==1?string(", empfangen"):string()):(obher[1]==1?"Capisuite empfangen":"")))+schwarz
 			+((obfa[1]||obweg[1]==1||obher[1]==1)&&(obfa[2]||obweg[2]==1||obher[2]==1)?", ":"")
-			+blau+(obfa[2]?"Hylafax":(obweg[2]==1?"Hylafax senden"+(obher[2]==1?string(", empfangen"):string()):(obher[2]==1?"Hylafax empfangen":"")))+schwarz
+			+blau+(obfa[2]?"Hylafax":(obweg[2]==1?"Hylafax senden"+(obher[2]==1?string(", empfangen"):string()):(obher[2]==1?"Hylafax empfangen":"")))+(obfa[2]?" ("+hmodem+")":"")+schwarz
 			+(!obfa[0]&&obweg[0]!=1&&obher[0]!=1&&!obfa[1]&&obweg[1]!=1&&obher[1]!=1&&!obfa[2]&&obweg[2]!=1&&obher[2]!=1?(blaus+Tx[T_kein_Faxprogramm_verfuegbar]+schwarz):"")
 			+(scapis||(shfaxd&&sfaxq&&sfaxgetty)?"; ":"")
 			+(scapis?dblaus+"Capisuite "+(scapis->laeuft()?(scapis->lief()?Tx[T_aktiv]:Tx[T_aktiviert]):Tx[T_inaktiv])+schwarz:"")
@@ -7055,7 +7055,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 									if (zielp==&benstr) {
 										if (zfda[iakt]!=benstr) {
 											uint vfehler{0};
-											dorename((zfda[iakt]),benstr,cuser,&vfehler,/*schonda*/!dateivgl(zfda[iakt],benstr,obverb,oblog),obverb,oblog);
+											dorename((zfda[iakt]),benstr,cuser,&vfehler,/*schonda*/!dateivgl(zfda[iakt],benstr,0,obverb,oblog),obverb,oblog);
 											if (vfehler) {
 												fLog(rots+Tx[T_FehlerbeimUmbenennen]+": "+ltoan(vfehler)+schwarz+"("+zfda[iakt]+" -> "+benstr+")",1,1);
 												continue;
@@ -7081,7 +7081,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 										// wenn die Datei im zufaxenvz in einen Namenskonflikt geriete ...
 										const string ndname{zufaxenvz+vtz+neuerdateiname(urfx.teil)};
 										if (ndname!=urfx.teil) {
-											dorename(urfx.teil,ndname,cuser,&vfehler,/*schonda=*/!dateivgl(urfx.teil,ndname,obverb,oblog),obverb,oblog);
+											dorename(urfx.teil,ndname,cuser,&vfehler,/*schonda=*/!dateivgl(urfx.teil,ndname,0,obverb,oblog),obverb,oblog);
 											if (vfehler) {
 												cerr<<rot<<meinname<<" "<<Tx[T_abgebrochen]<<schwarz<<vfehler<<Tx[T_FehlerbeimUmbenennenbei]<<endl<<
 													blau<<urfx.teil<<schwarz<<" ->\n"<<
@@ -7209,7 +7209,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 				const string ndname{zufaxenvz+vtz+neuerdateiname(zfda.at(i))};
 				uint vfehler{0};
 				if (ndname!=zfda.at(i)) {
-					dorename(zfda.at(i),ndname,cuser,&vfehler,/*schonda=*/!dateivgl(zfda.at(i),ndname,obverb,oblog),obverb,oblog);
+					dorename(zfda.at(i),ndname,cuser,&vfehler,/*schonda=*/!dateivgl(zfda.at(i),ndname,0,obverb,oblog),obverb,oblog);
 					if (vfehler) {
 						continue;
 					} // if (vfehler) 
@@ -7611,9 +7611,9 @@ void hhcl::empfcapi(const string& stamm,const size_t aktc,const uchar was/*=7*/,
 						cempfavzgeprueft=1;
 					} // 			if (!cempfavzgeprueft)
 					string zdt{cempfavz+vtz+cuser+"-"+base+".sff"};
-					dorename(sffdatei,zdt,cuser,&vfehler,/*schonda=*/!dateivgl(sffdatei,zdt,obverb,oblog),obverb,oblog);
+					dorename(sffdatei,zdt,cuser,&vfehler,/*schonda=*/!dateivgl(sffdatei,zdt,0,obverb,oblog),obverb,oblog);
 					zdt=cempfavz+vtz+cuser+"-"+base_name(ctxdt);
-					dorename(ctxdt,zdt,cuser,&vfehler,/*schonda=*/!dateivgl(ctxdt,zdt,obverb,oblog),obverb,oblog);
+					dorename(ctxdt,zdt,cuser,&vfehler,/*schonda=*/!dateivgl(ctxdt,zdt,0,obverb,oblog),obverb,oblog);
 				} // if (utime(tifpfad.c_str(),&ubuf))  else
 			} // 	if (mitversch)
 		} // was&4, Bilddatei verschieben
@@ -8716,9 +8716,7 @@ void fsfcl::archiviere(DB *const My, hhcl *const hhip, const struct stat *const 
 	einf.push_back(/*2*/instyp(My->DBS,"fsize",entryp->st_size>4294967295?0:entryp->st_size)); // int(10)
 	einf.push_back(/*2*/instyp(My->DBS,"pages",pseiten));
 	svec eindfeld; eindfeld<<"submt";eindfeld<<"submid";
-	caus<<"in archiviere: vor tbins"<<endl;
 	rins.tbins(&einf,aktc,/*sammeln=*/0,/*obverb=*/hhip->ZDB,/*idp=*/0,/*eindeutig=*/0,eindfeld);  // einfuegen
-	caus<<"in archiviere: nach tbins"<<endl;
 	if (rins.fnr) {
 		fLog(Tx[T_Fehler_af]+drots+ltoan(rins.fnr)+schwarz+Txk[T_bei]+tuerkis+rins.sql+schwarz+": "+blau+rins.fehler+schwarz,1,1);
 	} //     if (runde==ruz-1)
@@ -8733,7 +8731,7 @@ void fsfcl::archiviere(DB *const My, hhcl *const hhip, const struct stat *const 
 // aufgerufen in: aenderefax, untersuchespool
 int fsfcl::loeschefbox(hhcl *const hhip, const int obverb, const int oblog)
 {
-	int *obvp=(int*)&obverb; *obvp=1;
+//	int *obvp=(int*)&obverb, altobverb=obverb; *obvp=1;
 	fLog(violetts+Tx[T_loeschefbox]+schwarz,obverb,oblog);
 	int zdng{0}; // Zahl der nicht Geloeschten
 	if (!fbsdt.empty()) {
@@ -8744,8 +8742,8 @@ int fsfcl::loeschefbox(hhcl *const hhip, const int obverb, const int oblog)
 	} else { 
 		zdng=1;
 	} // if (!fbsdt.empty())
-	*obvp=0;
 	fLog(violetts+Txk[T_Ende]+Tx[T_loeschefbox]+schwarz,obverb,oblog);
+//	*obvp=altobverb;
 	return zdng;
 } // void fsfcl::loeschefbox
 
@@ -10248,7 +10246,9 @@ void hhcl::pvirtfuehraus() //α
 						pids=nurempf?1:nursend?0:dfork();
 						if (!pids) {
 							inspoolschreiben(/*aktc=*/3);
+							caus<<"vor wegfaxen"<<endl;
 							wegfaxen(/*aktc=*/3);
+							caus<<"nach wegfaxen"<<endl;
 							// Dateien in Spool-Tabelle nach inzwischen Verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
 							untersuchespool(/*mitupd=*/1,/*aktc=*/3);
 							if (obfa[0]||obweg[0]==1||obfa[1]||obweg[1]==1||obfa[2]||obweg[2]==1) {
