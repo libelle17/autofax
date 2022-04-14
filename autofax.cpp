@@ -7313,7 +7313,7 @@ void hhcl::wegfaxen(const size_t aktc)
 	} else {
 		while (cerg=r0.HolZeile(),cerg?*cerg:0) {
 			(dbszahl)++;
-			caus<<*(*cerg+0)<<" "<<*(*cerg+5)<<endl;
+////			caus<<"Hier cerg: "<<*(*cerg+0)<<" "<<*(*cerg+5)<<endl;
 			if (*(*cerg+0) && *(*cerg+1) && *(*cerg+2) && *(*cerg+3) && *(*cerg+4) && *(*cerg+5) && 
 					*(*cerg+6) && *(*cerg+7) && *(*cerg+8)) {
 				//// obcapi = cjj(cerg,9), obhyla=cjj(cerg,10)
@@ -10246,9 +10246,7 @@ void hhcl::pvirtfuehraus() //α
 						pids=nurempf?1:nursend?0:dfork();
 						if (!pids) {
 							inspoolschreiben(/*aktc=*/3);
-							caus<<"vor wegfaxen"<<endl;
 							wegfaxen(/*aktc=*/3);
-							caus<<"nach wegfaxen"<<endl;
 							// Dateien in Spool-Tabelle nach inzwischen Verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
 							untersuchespool(/*mitupd=*/1,/*aktc=*/3);
 							if (obfa[0]||obweg[0]==1||obfa[1]||obweg[1]==1||obfa[2]||obweg[2]==1) {
