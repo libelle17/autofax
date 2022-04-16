@@ -6551,6 +6551,7 @@ void hhcl::inDbc(DB *My, const string& spooltab, const string& altspool, const s
 			yLog(obverb,oblog,0,0,"%s%s%d%s%s%s%s%s%s%s%s%s",Tx[T_Fehler_af],drot,rupd.fnr,schwarz,Txk[T_bei],tuerkis,rupd.sql.c_str(),schwarz,": ",
 					blau,rupd.fehler.c_str(),schwarz);
 		} //       if (runde==1)
+		caus<<"obverb vor affected_rows: "<<obverb<<endl;
 		yLog(obverb,oblog,1,1,"%s  affected_rows(%s%d%s): %s%d",drot,blau,aktc,drot,schwarz,affr);
 	}   // if (!lstat((*spoolgp->c_str()), &entryspool)) 
 	hLog(violetts+Txk[T_Ende]+Tx[T_inDbc]+schwarz);

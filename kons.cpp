@@ -5373,7 +5373,6 @@ void hcl::parsecl()
 {
 	hLog(violetts+Txk[T_parsecl]+schwarz);
 	// (opts[optslsz].pruefpar(&argcmv,&i,&obhilfe))
-	if (obverb) obverb=0; // damit nicht aus -v obverb=2 wird
 	vector<argcl>::iterator ap,apn;
 	for(ap=argcmv.begin();ap!=argcmv.end();ap++) {
 		uchar nichtspeichern{0}, gegenteil{0}, kurzp{0}, langp{0};
@@ -5412,26 +5411,25 @@ void hcl::parsecl()
 						// omit ist also jetzt iterator fuer die relevante map auf die aktuelle Option (kurz oder lang)
 						if (omit->first) if (!strcmp(omit->first,acstr)) {
 							ap->agef++; // Parameter gefunden
-							hLog(Txk[T_Parameter]+blaus+acstr+schwarz+Txk[T_gefunden]+(omit->second->pptr?"1":"0"));
+							string hierlog{Txk[T_Parameter]+blaus+acstr+schwarz+Txk[T_gefunden]+"second->pptr: "+(omit->second->pptr?"1":"0")};
 							if (omit->second->pptr) {
-								hLog(Txk[T_pptr_gefunden]);
 								// pzuweis liefert -1, wenn der naechste Parameter als Inhalt verwendet wurde, sonst pcfnr
 								apn=ap; apn++;
-								const char *nacstr=apn==argcmv.end()?"":apn->argcs;
-								optcl* trick=(optcl*)omit->second;
-								int pcfnr{trick->pzuweis(nacstr,gegenteil,nichtspeichern)};
-								//int pcfnr=omit->second->pzuweis(nacstr,gegenteil,nichtspeichern);
+								const char * const nacstr=apn==argcmv.end()?"":apn->argcs;
+								optcl* const trick{(optcl*)omit->second};
+								const int pcfnr{trick->pptr==&obverb?0:trick->pzuweis(nacstr,gegenteil,nichtspeichern)}; // obverb in holbefz0 schon zugewiesen
 								if (pcfnr==-1) { // String-Parameter erfolgreich zugewiesen
 									ap++;
 									ap->agef++; // Zusatzparameter gefunden
 									if (ap==argcmv.end()) break;
+									hierlog+=", nachstr: "+string(nacstr);
 								}
 								if (pcfnr<=0) { // erfolgreich zugewiesen
-									if (omit->second->pptr==&langu) {
+									if (trick->pptr==&langu) {
 										virtlgnzuw();
-									} else if (omit->second->pptr==&logvz || omit->second->pptr==&logdname) {
+									} else if (trick->pptr==&logvz || trick->pptr==&logdname) {
 										setzlog();
-									} else if (omit->second->pptr==&cronminut) {
+									} else if (trick->pptr==&cronminut) {
 										keineverarbeitung=1;
 										cmeingegeben=1;
 									}
@@ -5441,6 +5439,7 @@ void hcl::parsecl()
 									if (!obhilfe) obhilfe=1;
 								} // 								if (pcfnr<=0) else
 							} // 								if (omit->second->pptr)
+							hLog(hierlog);
 							break; // Parameter schon gefunden, die anderen nicht mehr suchen
 						} // 							if (!omit->first.find(acstr))
 					} // 						for(omit=omp->begin();omit!=omp->end();omit++)
