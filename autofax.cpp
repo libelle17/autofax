@@ -3675,7 +3675,7 @@ int hhcl::setzhylavz()
 			// 3) ... ansonsten schauen, welches Verzeichnis es gibt ...
 			struct stat hstat{0},fstat{0};
 			const char *const hfax{"/var/spool/hylafax"}, *const ffax{"/var/spool/fax"};
-			const int hgibts{!lstat(hfax,&hstat)}, fgibts{!lstat(ffax,&hstat)};
+			const int hgibts{!lstat(hfax,&hstat)}, fgibts{!lstat(ffax,&fstat)};
 			if (hgibts && !fgibts) {
 				varsphylavz=hfax; 
 				fundart=3;
