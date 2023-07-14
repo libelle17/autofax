@@ -11,15 +11,15 @@ const char *DB_T[T_dbMAX+1][SprachZahl]={
   // T_Fehler_db
   {"Fehler ","Error "},
   // T_beim_Initialisieren_von_MySQL
-  {" beim Initialisieren von MySQL: "," initializing MySQL: "},
+  {" beim Initialisieren von mariadb: "," initializing mariadb: "},
   // T_Fehler_dp
   {"Fehler: ","Error: "},
   // T_bei_Befehl
   {" bei Befehl: "," at command: "},
   // T_Versuche_mysql_zu_starten
-  {": => Versuche mysql zu starten ...",": => trying to start mysql ..."},
+  {": => Versuche mariadb zu starten ...",": => trying to start mariadb ..."},
   // T_MySQL_erfolgreich_gestartet
-  {"MySQL erfolgreich gestartet.","Started MySQL successfully."},
+  {"mariadb erfolgreich gestartet.","Started mariadb successfully."},
   // ": => Versuche Datenbank `"
   {": => Versuche Datenbank `",": => Trying to install database `"},
   // T_zu_erstellen
@@ -27,9 +27,9 @@ const char *DB_T[T_dbMAX+1][SprachZahl]={
   // T_Fehler_beim_Verbinden
   {"Fehler beim Verbinden: ","Error connecting: "},
   // T_Erfolg_beim_Initialisieren_der_Verbindung_zu_mysql
-  {"Erfolg beim Initialisieren der Verbindung zu MySQL, aktc: ","Success initializing the connection to MySQL, aktc: "},
+  {"Erfolg beim Initialisieren der Verbindung zu mariadb, aktc: ","Success initializing the connection to mariadb, aktc: "},
 	// T_MySQL_Passwort
-	{"MySQL-Passwort","MySQL password"},
+	{"mariadb-Passwort","mariadb password"},
 	// T_wird_benoetigt_fuer_Befehl
 	{"' (wird benoetigt fuer Befehl: ","' (is needed for command: "},
   // T_ist_leer_Wollen_Sie_eines_festlegen
@@ -37,7 +37,7 @@ const char *DB_T[T_dbMAX+1][SprachZahl]={
   // T_j
   {"j","y"},
   // T_Bitte_geben_Sie_ein_MySQL_Passwort_fuer_Benutzer_root_ein
-  {"Bitte geben Sie ein MySQL-Passwort fuer Benutzer 'root' ein: ","Please indicate a mysql password for user 'root': "},
+  {"Bitte geben Sie ein mariadb-Passwort fuer Benutzer 'root' ein: ","Please indicate a mariadb password for user 'root': "},
   // T_Fuehre_aus_db
   {"Fuehre aus: ","Executing: "},
   // T_falsche_Fehlernr
@@ -400,14 +400,14 @@ void DB::init(
 	fLog(violetts+Txd[T_DB_wird_initialisiert]+schwarz,obverb>0?obverb-1:0,oblog);
 	uchar installiert{0};
 	uchar datadirda{0};
-	const string mysqld{"mysqld"};
+	const string mariadbd{"mariadbd"};
 	switch (DBS) {
 		case MySQL:
 #ifdef linux
 			switch (linstp->ipr) {
 				case zypper: case apt:
-					db_systemctl_name="mysql";
-					break;
+//					db_systemctl_name="mysql";
+//					break;
 				case dnf: case yum:
 					db_systemctl_name="mariadb";
 					break;
@@ -415,17 +415,17 @@ void DB::init(
 			} //       switch (ipr)
 			// schauen, ob die Exe-Datei da ist 
 			for (int iru=0;iru<2;iru++) {
-				if (!dbsv) dbsv=new servc(db_systemctl_name,mysqld,obverb,oblog);
+				if (!dbsv) dbsv=new servc(db_systemctl_name,mariadbd,obverb,oblog);
 				installiert=1;
 				// wenn nicht gefunden ...
-				if (!obprogda(mysqld,obverb,oblog)) {
+				if (!obprogda(mariadbd,obverb,oblog)) {
 					svec frueck;
 					// .. und auch hier nicht gefunden ...
-					systemrueck("find /usr/sbin /usr/bin /usr/libexec -executable -size +1M -name "+mysqld,obverb,oblog, &frueck,/*obsudc=*/0);
+					systemrueck("find /usr/sbin /usr/bin /usr/libexec -executable -size +1M -name "+mariadbd,obverb,oblog, &frueck,/*obsudc=*/0);
 					if (!frueck.size()) 
 						// .. dann wohl nicht installiert
 						installiert=0;
-				} //           if (!obprogda("mysqld",obverb,oblog))
+				} //           if (!obprogda("mariadbd",obverb,oblog))
 				if (installiert) {
 					if (!obprogda(mysqlbef,obverb,oblog))
 						installiert=0;
@@ -448,7 +448,7 @@ void DB::init(
 							datadir=zrueck[zrueck.size()-1];  
 						} else {
 							svec myconfpfad, zincldir;
-							systemrueck("find /etc /etc/mysql $MYSQL_HOME -name my.cnf -printf '%p\\n' -quit", obverb,oblog,&myconfpfad,/*obsudc=*/0);
+							systemrueck("find /etc /etc/mysql /etc/mariadb $MYSQL_HOME -name my.cnf -printf '%p\\n' -quit", obverb,oblog,&myconfpfad,/*obsudc=*/0);
 							if (!myconfpfad.size())
 								systemrueck("find "+gethome()+" -name .my.cnf -printf '%p\\n' -quit",obverb,oblog,&myconfpfad,/*obsudc=*/0);
 							if (myconfpfad.size()) {
@@ -505,9 +505,9 @@ void DB::init(
 				conn[aktc] = mysql_init(NULL);
 				if (!conn[aktc]) {
 					this->ConnError=mysql_error(conn[aktc]);
-					////			printf("Fehler %u beim Erstellen einer MySQL-Verbindung: %s\n", mysql_errno(conn[aktc]), *erg=mysql_error(conn[aktc]));
+					////			printf("Fehler %u beim Erstellen einer mariadb-Verbindung: %s\n", mysql_errno(conn[aktc]), *erg=mysql_error(conn[aktc]));
 					cerr<<Txd[T_Fehler_db]<<mysql_errno(conn[aktc])<<Txd[T_beim_Initialisieren_von_MySQL]<<this->ConnError<<endl;
-					////			throw "Fehler beim Erstellen einer MySQL-Verbindung";
+					////			throw "Fehler beim Erstellen einer mariadb-Verbindung";
 				} else {
 					if (user.empty()) {
 						exit(schluss(13,Txd[T_Datenbankbenutzer_leer]));
@@ -548,7 +548,7 @@ void DB::init(
 									} // while (1)
 									break;
 								case 2006: // Server has gone away
-								case 2002: // Can't connect to local MySQL server through socket '/var/lib/mysql/mysql.sock' (2 "No such file or directory"):
+								case 2002: // Can't connect to local mariadb server through socket '/var/lib/mysql/mysql.sock' (2 "No such file or directory"):
 									if (!strcasecmp(host.c_str(),"localhost")) {
 										fLog(Txd[T_Fehler_db]+drots+mysql_error(conn[aktc])+schwarz+Txd[T_Versuche_mysql_zu_starten],1,1);
 #ifdef linux
@@ -604,12 +604,12 @@ void DB::init(
 					if (!fehnr && conn[aktc]) {
 						fLog(Txd[T_Erfolg_beim_Initialisieren_der_Verbindung_zu_mysql]+blaus+ltoan(aktc)+schwarz,obverb>0?obverb-1:0,oblog);
 					} else {
-						////			printf("Fehler %u beim Verbinden mit MySQL: %s\n", mysql_errno(conn[aktc]), *erg= mysql_error(conn[aktc]));
+						////			printf("Fehler %u beim Verbinden mit mariadb: %s\n", mysql_errno(conn[aktc]), *erg= mysql_error(conn[aktc]));
 						this->ConnError=mysql_error(conn[aktc]);
-						////          cerr<<"Fehler "<<rot<<mysql_errno(conn[aktc])<<schwarz<<" beim Verbinden mit MySQL: "<<rot<<this->ConnError<<schwarz<<endl;
+						////          cerr<<"Fehler "<<rot<<mysql_errno(conn[aktc])<<schwarz<<" beim Verbinden mit mariadb: "<<rot<<this->ConnError<<schwarz<<endl;
 						mysql_close(conn[aktc]);
 						conn[aktc]=0;
-						//			throw "Fehler beim Verbinden mit MySQL";
+						//			throw "Fehler beim Verbinden mit mariadb";
 					} // if (mysql_real_connect(conn[aktc], host, user, passwd.c_str(), uedb, port, unix_socket, client_flag))
 				} // if (!conn[aktc]) 
 			} // 			for(size_t aktc=0;aktc<conz;aktc++)
