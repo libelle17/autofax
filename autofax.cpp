@@ -1447,6 +1447,14 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"Capisuite neu einrichten", "install capisuite again"},
   // T_dorename,
 	{"dorename(","dorename("},
+	// T_schreibe_Hylafax_conf
+	{"schreibe Hylafax-conf","writing hylafax conf"},
+	// T_hier_faxsetup,
+	{"hier faxsetup","here fax setup"},
+	// T_nach_faxsetup,
+	{"nach faxsetup","after faxsetup"},
+	// T_setze_obzuschreib_in_pruefhyla
+	{"Setze obzuschreib in pruefhyla","setting obzuschreib in pruefhyla"},
 	{"",""} //α
 }; // char const *DPROG_T[T_MAX+1][SprachZahl]=
 
@@ -3553,12 +3561,14 @@ void hhcl::fuellfbip()
 void hhcl::holfbpar()
 {
 	string mntdrv;
+	const int altobverb{obverb};
+//	obverb=2;
 	hLog(violetts+"holfbpar()"+schwarz);
 	// wenn eine Fritzbox eine IP-Adresse hat, wird in fuellfbip gesetzt
 	if (fbip.size()) {
 		svec frna;
 		const string *const ipp{&fbip[0]};
-		//				caus<<"*ipp: "<<*ipp<<endl;
+		fLog("*ipp: "+blaus+*ipp+schwarz,obverb,oblog);
 		// wenn ein freundlicher Name gefunden wurde
 		int gefunden{0};
 		for (int iru=0;iru<2;iru++) {
@@ -3571,25 +3581,35 @@ void hhcl::holfbpar()
 		}
 		if (gefunden) {
 			// z.B. GSHeim
-			//					caus<<"frna[0]: "<<frna[0]<<endl;
+			fLog("frna[0]: "+blaus+frna[0]+schwarz,obverb,oblog);
 			fbdev="FritzBox "+frna[0];
 			svec mounts;
 			const string zufinden{"^//\\(192.168.178.1\\|169.254.1.1\\|fritz.box\\|"+*ipp+"\\)/"+frna[0]+" "};
 			for(int aru=0;aru<2;aru++) {
 				if (!systemrueck("mount|grep '"+zufinden+"'|cut -d' ' -f3",obverb,oblog,&mounts)&&mounts.size()) {
 					// z.B. /mnt/gsheim
-					//						caus<<"mounts[0]: "<<mounts[0]<<endl;
+					fLog("mounts[0]: "+blaus+mounts[0]+schwarz,obverb,oblog);
 					// //192.168.178.1/DiabFB on /mnt/diabfb type cifs (rw,relatime,vers=1.0,cache=strict,username=ftpuser,domain=DIABFB,uid=0,noforceuid,gid=0,noforcegid,addr=192.168.178.1,unix,posixpaths,mapposix,acl,rsize=61440,wsize=65536,actimeo=1)
 					mntdrv=mounts[0];
 					svec datei;
 					// die jüngste pdf-Datei auf dem CIFS-Verzeichnis suchen
-					systemrueck("find '"+mntdrv+"' -type f -iname '*pdf' -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|sort -nrk 6,7|head -n1", obverb,oblog,&datei);
-					if (datei.size()) {
-						// -rwxrwxrwx 1 root root   10061 2017-11-01 10:03:52.000000000 +0100 /mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox/01.11.17_10.03_Telefax.081316150166.pdf
-						if (const size_t p1{datei[0].find(" "+mntdrv)+1}) {
-							fbankvz=dir_name(datei[0].substr(p1));
-						} // 									if (const size_t p1=datei[0].find(" "+tok[2])+1)
-					} // 								if (datei.size())
+//					systemrueck("find '"+mntdrv+"' -type f -iname '*pdf' -print0|/usr/bin/xargs -0 -r ls -l --time-style=full-iso|sort -nrk 6,7|head -n1", obverb,oblog,&datei);
+					const int intv[4]{1,10,100,0};
+					for(unsigned int iru=0;iru<sizeof *intv;iru++) {
+						string bef{"find '"+mntdrv+"' -type f -iname '*pdf' "};
+						if (iru<sizeof *intv-1) bef+=" -mtime -"+ltoan(intv[iru]);
+						bef+=" -exec ls -l --time-style=full-iso {} \\;|sort -rk 6,7|head -n1";
+						systemrueck(bef, obverb,oblog,&datei);
+////						caus<<"Datei: "<<datei[0]<<endl;
+						if (datei.size()) {
+							// -rwxrwxrwx 1 root root   10061 2017-11-01 10:03:52.000000000 +0100 /mnt/diabfb/Generic-FlashDisk-01/FRITZ/faxbox/01.11.17_10.03_Telefax.081316150166.pdf
+							if (const size_t p1{datei[0].find(" "+mntdrv)+1}) {
+								fbankvz=dir_name(datei[0].substr(p1));
+								fLog("fbankvz: "+blaus+fbankvz+schwarz,obverb,oblog);
+							} // 									if (const size_t p1=datei[0].find(" "+tok[2])+1)
+						  break;
+						} // 								if (datei.size())
+					}
 					break; 
 				} // 						if (!systemrueck("mount|grep '"+zufinden+"'|cut -d' ' -f3",obverb,oblog,&mounts)&&mounts.size())
 				for(int iru=0;iru<2;iru++) {
@@ -3601,8 +3621,9 @@ void hhcl::holfbpar()
 						string fbnameklein; // /mnt/gsheim
 						transform(frna[0].begin(),frna[0].end(),std::back_inserter(fbnameklein),::tolower);
 						fbnameklein="/mnt/"+fbnameklein;
+						fLog("fbnameklein: "+blaus+fbnameklein+schwarz,obverb,oblog);
 						pruefverz(fbnameklein);
-						systemrueck("echo //169.254.1.1/"+frna[0]+" "+fbnameklein+" cifs nofail,vers=1.0,credentials=/root/.fbcredentials 0 2 >>/etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
+						systemrueck("echo //169.254.1.1/"+frna[0]+" "+fbnameklein+" cifs nofail,vers=2.0,credentials=/root/.fbcredentials 0 2 >>/etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
 						anfgg(unindt,sudc+"sed -i '/^\\/\\/169.254.1.1\\/"+frna[0]+" /d' /etc/fstab",Tx[T_fstab_Eintrag_wieder_entfernen],obverb,oblog);
 						mntdrv=fbnameklein;
 					}
@@ -3617,6 +3638,7 @@ void hhcl::holfbpar()
 		} // 				if (!systemrueck("curl ["+*ipp+"]:49000/tr64desc.xml 2>/dev/null|sed -n '/friendlyName/{s/^[^>]*>\\([^<]*\\).*/\\1/;p;q}'",obverb,oblog,&frna)&&frna.size())
 	} // 				if (fbip.size())
 	hLog(violetts+Txk[T_Ende]+"holfbpar()"+schwarz);
+	obverb=altobverb;
 } // void hhcl::holfbpar
 
 const string hhcl::initdhyladt{"/etc/init.d/hylafax"};
@@ -4121,7 +4143,7 @@ void hhcl::hliesconf()
 				maxdials_dt!=maxhdials ||
 				0 ) {
 			hconfigtty();
-			caus<<rot<<"schreibe Hylafax-conf"<<schwarz<<endl;
+			fLog(rots+Tx[T_schreibe_Hylafax_conf]+schwarz,1,oblog);
 			shylafaxd->restart(obverb>0?obverb-1:0,oblog);
 		}
 #endif
@@ -4140,7 +4162,7 @@ int hhcl::pruefhyla()
 	int ret{1};
 	hylasv1();
 	do { // fuer break
-////		caus<<"hmodem: "<<hmodem<<endl;
+		fLog("hmodem: "+blaus+hmodem+schwarz,obverb,oblog);
 		if (hmodem.empty()) {
 			fLog(blaus+Tx[T_Kein_Modem_gefunden]+schwarz,(obfa[2]||obweg[2]==1||obher[2]==1)?1:obverb,oblog);
 			this->obfa[2]=obweg[2]=obher[2]=0;
@@ -4167,6 +4189,7 @@ int hhcl::pruefhyla()
 						break;
 					}
 					caus<<"Setze obzuschreib in pruefhyla"<<endl;
+					fLog(Tx[T_setze_obzuschreib_in_pruefhyla],1,oblog);
 					hccd.obzuschreib=1;
 				} //   if (modemgeaendert)
 
@@ -4498,9 +4521,9 @@ int hhcl::pruefhyla()
 								frischkonfiguriert=1;
 							}
 							if (!iru) {
-								caus<<rot<<"hier faxsetup!"<<endl;
+								fLog(rots+Tx[T_hier_faxsetup]+schwarz,1,oblog);
 								hfaxsetup();
-								caus<<rot<<"nach faxsetup!"<<endl;
+								fLog(rots+Tx[T_nach_faxsetup]+schwarz,1,oblog);
 								//// if (0)
 								//// hservice_faxgetty();
 							}

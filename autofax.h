@@ -701,6 +701,10 @@ enum T_
   T_cpneu_l,
 	T_Capisuite_neu_einrichten,
   T_dorename,
+	T_schreibe_Hylafax_conf,
+	T_hier_faxsetup,
+	T_nach_faxsetup,
+	T_setze_obzuschreib_in_pruefhyla,
 	T_MAX //α
 }; // enum T_ //ω
 
