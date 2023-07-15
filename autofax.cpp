@@ -3623,7 +3623,8 @@ void hhcl::holfbpar()
 						fbnameklein="/mnt/"+fbnameklein;
 						fLog("fbnameklein: "+blaus+fbnameklein+schwarz,obverb,oblog);
 						pruefverz(fbnameklein);
-						systemrueck("echo //169.254.1.1/"+frna[0]+" "+fbnameklein+" cifs nofail,vers=2.0,credentials=/root/.fbcredentials 0 2 >>/etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
+////						systemrueck("echo //169.254.1.1/"+frna[0]+" "+fbnameklein+" cifs nofail,vers=2.0,credentials=/root/.fbcredentials 0 2 >>/etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
+						systemrueck("echo //169.254.1.1/"+frna[0]+" "+fbnameklein+" cifs nofail,credentials=/root/.fbcredentials,noserverino 0 2 >>/etc/fstab",obverb,oblog,/*rueck*/0,/*obsudc*/1);
 						anfgg(unindt,sudc+"sed -i '/^\\/\\/169.254.1.1\\/"+frna[0]+" /d' /etc/fstab",Tx[T_fstab_Eintrag_wieder_entfernen],obverb,oblog);
 						mntdrv=fbnameklein;
 					}
