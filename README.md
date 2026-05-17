@@ -27,7 +27,7 @@
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>autofax
+<p style="margin-left:9%; margin-top: 1em"><b>autofax
 &minus; Fax server functionality</b>: induces automatic fax
 transmission of files, naming of received faxes and logging
 of all of them in a database <br>
@@ -39,7 +39,7 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>autofax
+<p style="margin-left:9%; margin-top: 1em"><b>autofax
 [-&lt;shortopt&gt;|--&lt;longopt&gt; [&lt;supplement&gt;]]
 ...</b></p>
 
@@ -48,7 +48,7 @@ autofax&rsquo; oder &rsquo;man -Lde autofax&rsquo;)</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>autofax</b>
+<p style="margin-left:9%; margin-top: 1em"><b>autofax</b>
 offers quasi the functionality of a fax server, which can be
 useful for some also behind a fast data line. <b><br>
 autofax</b> is a command line program to remit files of a
@@ -73,13 +73,13 @@ mariadb database.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">First, please
+<p style="margin-left:9%; margin-top: 1em">First, please
 read the chapters &rsquo;functionality&rsquo;,
 &rsquo;preconditions&rsquo;,&rsquo;automatically installed
 software packages&rsquo; and &rsquo;implications&rsquo;
 below. Then, if connected to the internet, call (e.g. by
 coying the line and pasting it into a terminal): <b><br>
-N=autofax;P=${N}_inst.sh;cd ~;wget
+N=autofax;P=${N}_inst.sh;cd &#732;;wget
 https://raw.githubusercontent.com/libelle17/$N/master/install.sh
 -O$P&&sh $P</b> <br>
 At last, call: <b><br>
@@ -98,7 +98,7 @@ simultaneously be completed.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Ideally, the
+<p style="margin-left:9%; margin-top: 1em">Ideally, the
 program should have installed itsself after the first
 call(s) (see above) and one-time answering of some questions
 in a self-running way. <br>
@@ -168,7 +168,7 @@ by calling &rsquo;<b>autofax&rsquo;, &rsquo;autofax
 
 
 
-<p style="margin-left:11%; margin-top: 1em">&rsquo;<b>autofax
+<p style="margin-left:9%; margin-top: 1em">&rsquo;<b>autofax
 -?</b>&rsquo; or &rsquo;<b>autofax -h</b>&rsquo; shows the
 important command line options and &rsquo;<b>autofax
 -lh</b>&rsquo; all of them. Some options (e.g. the sql
@@ -411,42 +411,42 @@ automatically (<b>1</b>)</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">When called,
+<p style="margin-left:9%; margin-top: 1em">When called,
 &rsquo;<b>autofax</b>&rsquo; accomplishes the following:</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>1)</b> The
+<p style="margin-left:9%; margin-top: 1em"><b>1)</b> The
 current hardware is being checked. <b><br>
 a)</b> with the command &rsquo;<b>lspci | grep -i
 isdn</b>&rsquo; for a fritz card. <b><br>
 b)</b> with the command &rsquo;<b>stty -F</b>&rsquo; for a
 fax modem.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>2)</b> The
+<p style="margin-left:9%; margin-top: 1em"><b>2)</b> The
 fax configuration file <b>fax.conf</b> of capisuite is read,
 if it exists</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>3)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>3)</b>
 Further defaults from the program code are assigned which
 can be overloaded by the autofax configuration file (see 4),
 command line arguments or anwers to questions (see 5).</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>4)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>4)</b>
 Defaults are loaded from the configuration file, if it
 exists (per default <b>autofax.conf</b> in the same
 directory as <b>autofax</b>, per default
 <b>/usr/local/sbin/autofax</b>))</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>5)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>5)</b>
 Questions are asked, if values are missing from the
 configuration file (see 4) or if a command line option
 demands interacitivity.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>6)</b> The
+<p style="margin-left:9%; margin-top: 1em"><b>6)</b> The
 directory of <b>hylafax</b> is beeing determined
 (<b>/var/spool/hylafax</b> or <b>/var/spool/fax</b>), if
 hylafax is installed.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>7)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>7)</b>
 Directories used by the users for fax files to be sent, for
 waiting faxes, for fax files already sent, for failed faxes
 and for received faxes are being checked and created if
@@ -454,7 +454,7 @@ needed. Thereby user defined file name patterns can be
 respected to store successfully sent faxes in different
 directories.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>8)</b> The
+<p style="margin-left:9%; margin-top: 1em"><b>8)</b> The
 program inserts itsself if wanted and necessary in
 root&rsquo;s <b>crontab</b> in order to be called in
 adjustable intervals. To avoid this, either
@@ -462,26 +462,26 @@ adjustable intervals. To avoid this, either
 the already generated autofax entries can be commented out
 with a leading &rsquo;<b>#</b>&rsquo;.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>9)</b> The
+<p style="margin-left:9%; margin-top: 1em"><b>9)</b> The
 program checks if all user-relevant directories (see 7) are
 being included in samba shares in
 <b>/etc/samba/smb.conf</b>; such are being added if
 needed.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>10)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>10)</b>
 Working of MariaDB is being checked, if necessary it is
 being (installed and) started, the database tables
 <b>spooltab</b> (for faxes just in spool), <b>outa</b> (for
 sent and failed faxes) and <b>inca</b> (for received faxes)
 are being checked and if necessary created or amended.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>11)</b> In
+<p style="margin-left:9%; margin-top: 1em"><b>11)</b> In
 case of the respective command line options corrections in
 the contents of the waiting directory or of the database
 tables are being commited or their contents is being listed
 and then the program is being finished.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>12)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>12)</b>
 Otherwise, file in the outgoing directory are being
 analysed. Each file with some identifiable fax number(s)
 within its file name which is or can be converted in/into
@@ -496,7 +496,7 @@ file name in one of the directories mentioned in 7). <br>
 If more files have been generated, the successive movements
 and recordings are being carried out with all of them.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>13)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>13)</b>
 Depending on the configuration the functionaliy of
 <b>hylafax</b> and/or <b>capisuite</b> is being checked and
 if necessary and possible restored (including by
@@ -506,17 +506,17 @@ can/will be done). Kernel modules for hylafax and/or
 capisuite are automatically generated, also in case of a
 kernel update.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>14)</b> In
+<p style="margin-left:9%; margin-top: 1em"><b>14)</b> In
 case of respective command line options faxes are being
 deleted and the program is finished.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>15)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>15)</b>
 Otherwise the files which have been recorded under 12) in
 <b>spooltab</b> are being forwarded to <b>hylafax</b> or
 <b>capisuite</b> and this is being protocolled in
 <b>spooltab</b>.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>16)</b> All
+<p style="margin-left:9%; margin-top: 1em"><b>16)</b> All
 faxes which are recorded in <b>spooltab</b> as waiting are
 being checked in <b>hylafax</b>/<b>capisuite</b> as to their
 status which is being updated in <b>spooltab</b> (number of
@@ -534,14 +534,14 @@ python3 &gt; 3.5 is installed), and the database entry is
 being transferred from <b>spooltab</b> to <b>outa</b>. <br>
 The status of the mentioned faxes is being displayed.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>17)</b> If
+<p style="margin-left:9%; margin-top: 1em"><b>17)</b> If
 additional faxes in the spool of hylafax/capisuite are
 detected which are not created via autofax, they are
 displayed. In intervals they will be integrated into the
 autofax database (without the not available information on
 the original file name).</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>18)</b> Via
+<p style="margin-left:9%; margin-top: 1em"><b>18)</b> Via
 <b>hylafax</b>/<b>capisuite</b> received faxes are copied to
 a receiving directory and there named with the name of the
 sender, if possible, by means of their fax number which is
@@ -565,17 +565,17 @@ give a result, the next one will be tried. <br>
 Optionally, the received faxes are subjected to ocr via a
 call of ocrmypdf.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>19)</b> The
+<p style="margin-left:9%; margin-top: 1em"><b>19)</b> The
 configuration file is being written, if necessary.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>20)</b> If
+<p style="margin-left:9%; margin-top: 1em"><b>20)</b> If
 the option <b>-autoupd</b> (<b>--autoupdate</b>) is acitve,
 at last after the second call of every day the version
 number of <b>autofax</b> will be compared with that of the
 installation source und if necessary a new version will be
 installed.</p>
 
-<p style="margin-left:11%; margin-top: 1em">Some program
+<p style="margin-left:9%; margin-top: 1em">Some program
 parts are executed simultaneously, which may loosen up the
 display of the result. <br>
 Sending and receiving are started every minute, until the
@@ -590,7 +590,7 @@ be done in intervals.</p>
 
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>Hardware</b>:
+<p style="margin-left:9%; margin-top: 1em"><b>Hardware</b>:
 Computer with a fritzcard 2.0 or 2.1 or/and a linux
 compatible fax modem; in the current version, a US Robotics
 modem USR5637 and one of the below mentioned linux
@@ -616,19 +616,18 @@ german versions of the packet manager.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">(for this
+<p style="margin-left:9%; margin-top: 1em">(for this
 purpose, depending on the distribution, zypper, apt(-get),
 dnf or yum are used).</p>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>makefile:</b>
+<p style="margin-left:9%; margin-top: 1em"><b>makefile:</b>
 <br>
 gcc V.6, g++ V.6, groff, libmysqlclient-dev(el),
 libtiff-dev(el) (in case of version 4.0.7 with a slight
 modification, see Makefile)</p>
 
-
-<p style="margin-left:11%; margin-top: 1em"><b>autofax:</b>
+<p style="margin-left:9%; margin-top: 1em"><b>autofax:</b>
 <br>
 acl, boost, boost-devel, boost-iostreams-devel,
 boost-local-devel, cron, ghostscript, imagemagick,
@@ -637,7 +636,7 @@ policycoreutils, policycoreutils-python-utils,
 poppler-tools, samba, sfftobmp, (in debian-derivates, for
 mariadb, additionally: apt-transport-https)</p>
 
-<p style="margin-left:11%; margin-top: 1em"><i>in case</i>
+<p style="margin-left:9%; margin-top: 1em"><i>in case</i>
 <b>capisuite</b> <i>shall be used</i>: <br>
 capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8,
 g++-4.8, kernel-source (linux-source), libcapi20-2,
@@ -645,12 +644,12 @@ libcapi20-3, libxslt-tools, linux-headers-$(uname -r),
 python-devel, (in fedora, additionally:
 kernel-modules-extra),</p>
 
-<p style="margin-left:11%; margin-top: 1em"><i>in case</i>
+<p style="margin-left:9%; margin-top: 1em"><i>in case</i>
 <b>hylafax</b> <i>shall be used</i>: <br>
 hylafax+, hylafax+-client, sendmail, tiff (in case of
 version 4.0.7 with a slight modification, see Makefile)</p>
 
-<p style="margin-left:11%; margin-top: 1em"><i>in case</i>
+<p style="margin-left:9%; margin-top: 1em"><i>in case</i>
 <b>ocr</b> <i>shall be used</i>: <br>
 ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel,
 libffi-devel, ocrmypdf, python3-devel, python3-pip,
@@ -659,12 +658,12 @@ tesseract-ocr, unpaper, and via &rsquo;python3 pip&rsquo;:
 cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2,
 reportlab, ruffus.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><i>in case You
+<p style="margin-left:9%; margin-top: 1em"><i>in case You
 want to work on the source files with &rsquo;sh
 viall&rsquo;</i>: <br>
 vim</p>
 
-<p style="margin-left:11%; margin-top: 1em">All those
+<p style="margin-left:9%; margin-top: 1em">All those
 installations may include dependent programs. <br>
 If You don&rsquo;t want one of those programs or want to
 keep an older version of one, You may not install autofax or
@@ -675,10 +674,10 @@ use the respective program parts.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">The program has
+<p style="margin-left:9%; margin-top: 1em">The program has
 to take the following measures for its neat function:</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>1)</b> In
+<p style="margin-left:9%; margin-top: 1em"><b>1)</b> In
 debian, in the file /etc/apt/sources.list a dvd-entry can be
 moved behind the standard online repositories. <b><br>
 2)</b> Sudo (is missing per default in debian) will be
@@ -698,7 +697,7 @@ files <b>config</b> and <b>config.*</b> (e.g.
 <b>config.ttyACM0</b>) in the hylafax configuration
 directory (default e.g. <b>/var/spool/hylafax/etc</b>).</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>5)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>5)</b>
 Installation of <b>capisuite</b>, in case a fritzcard is
 inserted and capisuite is not installed. If necessary
 configuration of <b>/etc/capisuite/capisuite.conf</b> and
@@ -710,7 +709,7 @@ the files
 &rsquo;<b>/etc/udev/rules.d/46-FKN_isdn_capi.rules</b>&rsquo;,
 &rsquo;<b>/etc/modprobe.d/50-blacklist.conf</b>&rsquo;.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>6)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>6)</b>
 Installation of services: <b><br>
 a)</b> in systemd (in the directory /usr/lib/systemd/system
 or /lib/systemd/system), especially: <b><br>
@@ -730,26 +729,26 @@ construction of a better fitting solution, the domain
 &rsquo;<b>semanage permissive -a getty_t</b>&rsquo; in order
 to be able to receive faxes.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>7)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>7)</b>
 Creation of a logfile, per default
 <b>/var/log/autofax.log</b>.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>8)</b> if
+<p style="margin-left:9%; margin-top: 1em"><b>8)</b> if
 necessary creation and making accessible of the configurable
 <b>directories</b> for faxes to be sent, waiting, finished
 and failed.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>9)</b> if
+<p style="margin-left:9%; margin-top: 1em"><b>9)</b> if
 necessary creation and making accessible of the
 configuration file <b>autofax.conf</b> in the same directory
 where the program is located by itsself (default:
 <b>/usr/local/sbin/autofax</b>).</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>10)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>10)</b>
 Insertion of a line for the periodic automatic program call
 in root&rsquo;s crontab</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>11)</b> if
+<p style="margin-left:9%; margin-top: 1em"><b>11)</b> if
 necessary insertion of sections for the directories
 mentioned under 8) in /etc/samba/smb.conf, if necessary
 insertion of the program user or (if root) the user chosen
@@ -759,24 +758,24 @@ After calling autofax, the directories mentioned in 8)
 should be readable via samba within a local network and the
 directory for faxes to be sent should also be writable.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>12)</b> if
+<p style="margin-left:9%; margin-top: 1em"><b>12)</b> if
 necessary insertion of a database in mariadb with a
 configurable name, creation and modification of several
 tables and a procedure in this database, if necessary
 insertion of a user with a configurable name in mariadb for
 the management of those tables.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>13)</b> With
+<p style="margin-left:9%; margin-top: 1em"><b>13)</b> With
 specific command line options for autofax, faxes can be
 deleted, especially: <b><br>
 a)</b> in hylafax by callinng &rsquo;faxrm&rsquo; <b><br>
 b)</b> in capisuite: by deleting files like
 /var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und
-~/*.sff. In capisuite, an orphaned lock file
+&#732;/*.sff. In capisuite, an orphaned lock file
 (/var/spool/capisuite/users/&lt;user&gt;/sendq/*.lock) can
 be deleted, too.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>14)</b> With
+<p style="margin-left:9%; margin-top: 1em"><b>14)</b> With
 a specific command line option for autofax, an old received
 fax can be converted to a pdf-File again.</p>
 
@@ -785,10 +784,11 @@ fax can be converted to a pdf-File again.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Change in a
+<p style="margin-left:9%; margin-top: 1em">Change in a
 terminal to the installation directory (for the same
-installed user, it&rsquo;s <b>cd ~/autofax</b>, otherwise it
-will be displayed by <b>autofax -info</b>). <br>
+installed user, it&rsquo;s <b>cd &#732;/autofax</b>,
+otherwise it will be displayed by <b>autofax -info</b>).
+<br>
 Call <b>make uninstall</b>. <br>
 Then the installed <b>autofax</b> will be deleted and the
 script <b>uninstallinv</b> will be executed in reverse order
@@ -806,8 +806,8 @@ program already missing and can then be ignored.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>0</b>:
-Normal return code <b><br>
+<p style="margin-left:9%; margin-top: 1em"><b>0</b>: Normal
+return code <b><br>
 7</b>: The info screen (<b>autofax -info</b>) has been
 displayed <b><br>
 8</b>: The help has been displayed <b><br>
@@ -833,7 +833,7 @@ return code of <b>vi</b>/<b>vim</b> will be passed</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Please report
+<p style="margin-left:9%; margin-top: 1em">Please report
 any errors with the word &rsquo;autofax&rsquo; included in
 the email headline. <br>
 Please report as well, if different hard- or software yields
@@ -844,19 +844,20 @@ a requirement for a program modification.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">By calling
+<p style="margin-left:9%; margin-top: 1em">By calling
 &rsquo;<b>sh viall</b>&rsquo; and application of the usual
 &rsquo;<b>vim</b>&rsquo;-commands, followed by
 &rsquo;<b>make</b>&rsquo; and &rsquo;<b>make
 install</b>&rsquo; from the installation directory
-(&rsquo;<b>~/autofax</b>), You may alter the program.</p>
+(&rsquo;<b>&#732;/autofax</b>), You may alter the
+program.</p>
 
 <h2>LIABILITY
 <a name="LIABILITY_D"></a>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">The program has
+<p style="margin-left:9%; margin-top: 1em">The program has
 been written with the best aim and has been tested by the
 author. <br>
 Nevertheless the author cannot be liable for any damage
@@ -867,7 +868,7 @@ caused by the program.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Gerald Schade
+<p style="margin-left:9%; margin-top: 1em">Gerald Schade
 (geraldschade@gmx.de; www.diabdachau.de)</p>
 <hr>
 </body>
@@ -900,7 +901,7 @@ caused by the program.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>autofax
+<p style="margin-left:9%; margin-top: 1em"><b>autofax
 &minus; FaxServer-Funktionalit&auml;t</b>: veranlasst
 automatischen Faxversand von Dateien, Benennung empfangener
 Faxe und Protokollierung aller Faxe in einer Datenbank <br>
@@ -912,7 +913,7 @@ Faxe und Protokollierung aller Faxe in einer Datenbank <br>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>autofax
+<p style="margin-left:9%; margin-top: 1em"><b>autofax
 [-&lt;kurzopt&gt;|--&lt;langopt&gt;
 [&lt;erg&auml;nzung&gt;]] ...</b></p>
 
@@ -921,7 +922,7 @@ Faxe und Protokollierung aller Faxe in einer Datenbank <br>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>autofax</b>
+<p style="margin-left:9%; margin-top: 1em"><b>autofax</b>
 bietet quasi die Funktionalit&auml;t eines Faxservers,
 welcher f&uuml;r manche auch hinter einer schnellen
 Datenleitung sinnvoll sein kann. <b><br>
@@ -950,7 +951,7 @@ mariadb-Datenbank.</p>
 
 
 
-<p style="margin-left:11%; margin-top: 1em">Zun&auml;chst
+<p style="margin-left:9%; margin-top: 1em">Zun&auml;chst
 lesen Sie bitte die untenstehenden Kapitel
 &rsquo;Funktionsweise&rsquo;,&rsquo;Voraussetzungen&rsquo;,&rsquo;Automatisch
 installierte Programmpakete&rsquo; und &rsquo;Auswirkungen
@@ -959,7 +960,7 @@ Anschlie&szlig;end verbinden Sie den Rechner falls
 n&ouml;tig mit dem Internet und rufen Sie auf (z.B.
 durch Kopieren der Zeile in die Zwischenablage und
 Einf&uuml;gen in einem Terminal): <b><br>
-N=autofax;P=${N}_inst.sh;cd ~;wget
+N=autofax;P=${N}_inst.sh;cd &#732;;wget
 https://raw.githubusercontent.com/libelle17/$N/master/install.sh
 -O$P&&sh $P</b> <br>
 Zuletzt rufen Sie auf: <b><br>
@@ -979,7 +980,7 @@ vervollst&auml;ndigt.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Im Idealfall
+<p style="margin-left:9%; margin-top: 1em">Im Idealfall
 sollte sich das Programm nach dem/n erstem/n Aufruf/en
 (s.o.) und Beantworten einmaliger R&uuml;ckfragen so
 eingerichtet haben, dass es von selbst weiter
@@ -1054,7 +1055,7 @@ den Stand des Faxens &uuml;berpr&uuml;fen.</p>
 
 
 
-<p style="margin-left:11%; margin-top: 1em">&rsquo;<b>autofax
+<p style="margin-left:9%; margin-top: 1em">&rsquo;<b>autofax
 -?</b>&rsquo; oder &rsquo;<b>autofax -h</b>&rsquo; zeigt die
 wichtigen Befehlszeilenoptionen und &rsquo;<b>autofax
 -lh</b>&rsquo; alle. Einige Optionen (z.B. die SQL-Befehle
@@ -1304,45 +1305,45 @@ automatisch aktualisieren (<b>1</b>)</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Beim Aufruf von
+<p style="margin-left:9%; margin-top: 1em">Beim Aufruf von
 &rsquo;<b>autofax</b>&rsquo; geschieht folgendes:</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>1)</b> Die
+<p style="margin-left:9%; margin-top: 1em"><b>1)</b> Die
 aktuelle Hardware wird &uuml;berpr&uuml;ft: <b><br>
 a)</b> mit dem Befehl &rsquo;<b>lspci | grep -i
 isdn</b>&rsquo; bez&uuml;glich einer ISDN-Karte <b><br>
 b)</b> mit dem Befehl &rsquo;<b>stty -F</b>&rsquo;
 bez&uuml;glich eines Fax-Modems.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>2)</b> Die
+<p style="margin-left:9%; margin-top: 1em"><b>2)</b> Die
 Fax-Konfigurationsdatei <b>fax.conf</b> der Capisuite wird
 eingelesen, falls es sie gibt</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>3)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>3)</b>
 Weitere Vorgaben aus dem Programmcode werden zugewiesen, die
 durch die autofax-Konfigurationsdatei (siehe 4),
 Kommandozeilenargumente oder Antworten auf
 R&uuml;ckfragen (siehe 5) &uuml;berdeckt werden
 k&ouml;nnen.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>4)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>4)</b>
 Vorgaben werden geladen aus der Konfigurationsdatei, falls
 existent (standardm&auml;&szlig;ig
 <b>autofax.conf</b> im selben Verzeichnis wie
 <b>autofax</b>, standardm&auml;&szlig;ig
 <b>/usr/local/sbin/autofax</b>))</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>5)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>5)</b>
 R&uuml;ckfragen werden gestellt, falls in der
 Konfigurationsdatei Werte fehlen oder falls eine
 Kommandozeilenoption Interaktivit&auml;t verlangt.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>6)</b> Das
+<p style="margin-left:9%; margin-top: 1em"><b>6)</b> Das
 Verzeichnis von <b>hylafax</b> wird ermittelt
 (<b>/var/spool/hylafax</b> oder <b>/var/spool/fax</b>),
 falls hylafax installiert ist.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>7)</b> Von
+<p style="margin-left:9%; margin-top: 1em"><b>7)</b> Von
 Benutzern verwendete Verzeichnisse f&uuml;r zu
 verschickende, wartende, versandte und gescheiterte und
 empfangene Fax-Dateien werden &uuml;berpr&uuml;ft
@@ -1352,7 +1353,7 @@ ber&uuml;cksichtigt werden, um erfolgreich versandte
 Faxe je nach Dateinamen in verschiedenen Verzeichnissen zu
 speichern.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>8)</b> Das
+<p style="margin-left:9%; margin-top: 1em"><b>8)</b> Das
 Programm tr&auml;gt sich ggf. in <b>crontab</b> (des
 Benutzers root) ein, um auf Wunsch in (einstellbaren)
 Abst&auml;nden aufgerufen zu werden. Um dies zu
@@ -1362,13 +1363,13 @@ autofax-Eintr&auml;ge mit <b>crontab -e</b> mit einem
 vorangestellten &rsquo;<b>#</b>&rsquo; auskommentiert
 werden.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>9)</b> Das
+<p style="margin-left:9%; margin-top: 1em"><b>9)</b> Das
 Programm &uuml;berpr&uuml;ft, ob alle
 benutzerreleventen Verzeichnisse (s. 7) von Sambafreigaben
 in <b>/etc/samba/smb.conf</b> erfasst werden, solche werden
 n&ouml;tigenfalls erg&auml;nzt.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>10)</b> Der
+<p style="margin-left:9%; margin-top: 1em"><b>10)</b> Der
 Betrieb von MariaDB wird &uuml;berpr&uuml;ft, ggf.
 wird es (installiert und) in Betrieb gesetzt, die
 Datenbanktabellen <b>spooltab</b> (f&uuml;r gerade
@@ -1377,13 +1378,13 @@ gescheiterte Faxe) und <b>inca</b> (f&uuml;r angekommene
 Faxe) werden &uuml;berpr&uuml;ft und ggf. erstellt
 oder erweitert.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>11)</b> Im
+<p style="margin-left:9%; margin-top: 1em"><b>11)</b> Im
 Fall der entsprechenden Kommandozeilenoptionen werden
 Korrekturen bei Dateien im Warteverzeichnis oder den
 Protokolltabellen durchgef&uuml;hrt oder deren Inhalt
 aufgelistet und das Programm dann beendet.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>12)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>12)</b>
 Andernfalls werden Dateien im <b>Zufaxenverzeichnis</b>
 analysiert. Jede Datei, deren im Dateinamen enthaltene
 Faxnummer(n) ermittelbar ist/sind und die in eine PDF-Datei
@@ -1402,7 +1403,7 @@ Falls neue Dateien erstellt wurden, werden die nachfolgenden
 Verschiebungen und Protokollierungen mit allen
 durchgef&uuml;hrt.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>13)</b> Je
+<p style="margin-left:9%; margin-top: 1em"><b>13)</b> Je
 nach Konfiguration wird die Funktionsf&auml;higkeit von
 <b>hylafax</b> und/oder <b>capisuite</b>
 &uuml;berpr&uuml;ft und ggf. nach
@@ -1414,17 +1415,17 @@ Konfiguration erfolgen). Kernelmodule f&uuml;r hylafax
 bzw. capisuite werden f&uuml;r die aktuelle
 Kernelversion erstellt, auch bei etwaigen Kernelupdates.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>14)</b> Im
+<p style="margin-left:9%; margin-top: 1em"><b>14)</b> Im
 Fall entsprechender Kommandozeilenoptionen werden Faxe
 gel&ouml;scht und das Programm dann beendet.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>15)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>15)</b>
 Andernfalls werden die unter 12) in <b>spooltab</b>
 eingetragenen Dateien an <b>hylafax</b> oder
 <b>capisuite</b> weitergeleitet und dies in <b>spooltab</b>
 protokolliert.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>16)</b> Alle
+<p style="margin-left:9%; margin-top: 1em"><b>16)</b> Alle
 in <b>spooltab</b> als wartend stehenden Faxe werden in
 <b>hylafax</b>/<b>capisuite</b> auf ihren Status
 &uuml;berpr&uuml;ft, dieser wird in <b>spooltab</b>
@@ -1443,14 +1444,14 @@ installiert ist), und der Datenbankeintrag aus
 <b>spooltab</b> in die Tabelle <b>outa</b> verschoben. <br>
 Der Status der genannten Faxe wird angezeigt.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>17)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>17)</b>
 Weitere in der Warteschleife von hylafax/capisuite
 befindliche, nicht &uuml;ber autofax erstellte Faxe
 werden ggf. angezeigt. In Intervallen werden sie in die
 autofax-Datenbank integriert (ohne die fehlende Information
 &uuml;ber den urspr&uuml;nglichen Dateinamen)</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>18)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>18)</b>
 &Uuml;ber <b>hylafax</b>/<b>capisuite</b> empfangene
 Faxe werden ggf. mit Hilfe der Faxnummer anhand
 voreingestellter SQL-Befehle nach dem Namen des Absenders
@@ -1475,11 +1476,11 @@ liefert. <br>
 Optional werden die empfangenen Dateien mit Hilfe von
 <b>ocrmypdf</b> einer Texterkennung unterzogen.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>19)</b> Die
+<p style="margin-left:9%; margin-top: 1em"><b>19)</b> Die
 Konfigurationsdatei <b>autofax.conf</b> wird ggf.
 geschrieben.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>20)</b> Wenn
+<p style="margin-left:9%; margin-top: 1em"><b>20)</b> Wenn
 die Option <b>-autoakt</b> bzw. <b>--autoaktual</b> aktiv
 ist, wird zuletzt bei jedem zweiten Aufruf jedes Tages die
 Versionsummer von <b>autofax</b> mit der der
@@ -1487,7 +1488,7 @@ Installationsquelle verglichen und im Fall eines
 R&uuml;ckstands eine Aktualisierung
 durchgef&uuml;hrt</p>
 
-<p style="margin-left:11%; margin-top: 1em">Einige
+<p style="margin-left:9%; margin-top: 1em">Einige
 Programmteile laufen parallel, dies kann sich die
 Reihenfolge der Ergebnisanzeige auflockern. <br>
 Senden und Empfangen wiederholen sich ggf.
@@ -1504,7 +1505,7 @@ werden in Abst&auml;nden durchgef&uuml;hrt.</p>
 
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>Hardware</b>:
+<p style="margin-left:9%; margin-top: 1em"><b>Hardware</b>:
 Computer mit einer Fritzcard 2.0 oder 2.1 und/oder einem
 linux-kompatiblen Modem; in der vorliegenden Fassung wird
 f&uuml;r eine automatische Installation des Programms
@@ -1534,19 +1535,18 @@ deutsche Versionen der Paketmanager eingerichtet.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">(hierzu wird je
+<p style="margin-left:9%; margin-top: 1em">(hierzu wird je
 nach Distribution zypper, apt(-get), dnf oder yum
 verwendet).</p>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>makefile:</b>
+<p style="margin-left:9%; margin-top: 1em"><b>makefile:</b>
 <br>
 gcc V.6, g++ V.6, groff, libmysqlclient-dev(el),
 libtiff-dev(el) (im Fall von Vers. 4.0.7 mit leichter
 Modifikation, s. Makefile)</p>
 
-
-<p style="margin-left:11%; margin-top: 1em"><b>autofax:</b>
+<p style="margin-left:9%; margin-top: 1em"><b>autofax:</b>
 <br>
 acl, boost, boost-devel, boost-iostreams-devel,
 boost-local-devel, cron, ghostscript, imagemagick,
@@ -1556,7 +1556,7 @@ poppler-tools, samba, sfftobmp, (in debian-derivates,
 f&uuml;r mariadb, zus&auml;tzlich:
 apt-transport-https)</p>
 
-<p style="margin-left:11%; margin-top: 1em"><i>falls</i>
+<p style="margin-left:9%; margin-top: 1em"><i>falls</i>
 <b>capisuite</b> <i>benutzt werden soll</i>: <br>
 capisuite, capiutils, capi4linux, fcpci-3.10.0, gcc-4.8,
 g++-4.8, kernel-source (linux-source), libcapi20-2,
@@ -1564,12 +1564,12 @@ libcapi20-3, libxslt-tools, linux-headers-$(uname -r),
 python-devel, (in fedora, zus&auml;tzlich:
 kernel-modules-extra),</p>
 
-<p style="margin-left:11%; margin-top: 1em"><i>falls</i>
+<p style="margin-left:9%; margin-top: 1em"><i>falls</i>
 <b>hylafax</b> <i>benutzt werden soll</i>: <br>
 hylafax+, hylafax+-client, sendmail, tiff (im Fall von Vers.
 4.0.7 mit kleiner Modifikation, s. Makefile)</p>
 
-<p style="margin-left:11%; margin-top: 1em"><i>falls</i>
+<p style="margin-left:9%; margin-top: 1em"><i>falls</i>
 <b>ocr</b> <i>benutzt werden soll</i>: <br>
 ffmpeg, ffmpeg-devel, ffmpeg-compat, gcc, libavformat-devel,
 libffi-devel, ocrmypdf, python3-devel, python3-pip,
@@ -1578,12 +1578,12 @@ tesseract-ocr, unpaper, and via &rsquo;python3 pip&rsquo;:
 cryptography, cffi, image, M2Crypto, ocrmypdf, PyPDF2,
 reportlab, ruffus.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><i>falls Sie
-die Quelldateien mit &rsquo;sh viall&rsquo; bearbeiten
+<p style="margin-left:9%; margin-top: 1em"><i>falls Sie die
+Quelldateien mit &rsquo;sh viall&rsquo; bearbeiten
 wollen</i>: <br>
 vim</p>
 
-<p style="margin-left:11%; margin-top: 1em">All diese
+<p style="margin-left:9%; margin-top: 1em">All diese
 Installationen k&ouml;nnen abh&auml;ngige Programme
 einschlie&szlig;en. <br>
 Falls Sie eines dieser Programme nicht wollen bzw. nicht
@@ -1596,11 +1596,11 @@ verwenden.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Das Programm
+<p style="margin-left:9%; margin-top: 1em">Das Programm
 muss zum ordentlichen Funktionieren folgende
 Ma&szlig;nahmen ergreifen:</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>1)</b> In
+<p style="margin-left:9%; margin-top: 1em"><b>1)</b> In
 Debian kann in der Datei /etc/apt/sources.list ein
 DVD-Eintrag hinter die Standard-Online-Repositories
 verschoben werden. <b><br>
@@ -1611,12 +1611,12 @@ schon enthalten, in eine Administrator-Gruppe eingetragen,
 die in /etc/sudoers genannt wird, da er &quot;sudo&quot;
 ausf&uuml;hren mu&szlig;.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>3)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>3)</b>
 &rsquo;GNU make&rsquo; wird, falls nicht vorhanden, durch
 Aufruf von &rsquo;sh ./install.sh&rsquo; bzw.
 &rsquo;configure&rsquo; automatisch installiert.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>4)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>4)</b>
 Installieren von <b>Hylafax+</b>, falls ein Modem
 angeschlossen ist und Hylafax+ nicht installiert ist. Ggf.
 Konfiguration von Hylafax+ durch Aufruf von
@@ -1626,7 +1626,7 @@ Editieren der Konfigurationsdateien <b>config</b> und
 hylafax-Konfigurationsverzeichnis (Vorgabe z.B.:
 <b>/var/spool/hylafax/etc/</b>)</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>5)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>5)</b>
 Installieren von <b>capisuite</b>, falls eine Fritzkarte
 eingebaut ist und capisuite nicht installiert ist. Ggf.
 Bearbeitung der Konfigurationsdateien
@@ -1637,7 +1637,7 @@ Python-Scripts f&uuml;r ankommende Faxe (Vorgabe z.B.:
 Zahl der Klingelt&ouml;ne bis zur Faxannahme, Erstellung
 bzw. Bearbeitung der Dateien</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>6)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>6)</b>
 Einrichten von Diensten: <b><br>
 a)</b> in systemd (im Verzeichnis /usr/lib/systemd/system
 oder /lib/systemd/system), insbesondere: <b><br>
@@ -1660,26 +1660,26 @@ dem Befehl &rsquo;<b>semanage permissive -a
 getty_t</b>&rsquo; in selinux entsch&auml;rft werden, um
 faxe &uuml;ber hylafax empfangen zu k&ouml;nnen.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>7)</b>
+<p style="margin-left:9%; margin-top: 1em"><b>7)</b>
 Erstellen einer Protokolldatei,
 standardm&auml;&szlig;ig
 <b>/var/log/autofax.log</b>.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>8)</b> ggf.
+<p style="margin-left:9%; margin-top: 1em"><b>8)</b> ggf.
 Erstellen und Zugreifbarmachen der bestimmbaren
 <b>Verzeichnisse</b> f&uuml;r zu sendende, wartende,
 abgearbeitete und empfangene Faxe.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>9)</b> ggf.
+<p style="margin-left:9%; margin-top: 1em"><b>9)</b> ggf.
 Erstellen und Ver&auml;ndern der Konfigurationsdatei
 autofax.conf in dem Verzeichnis, in dem auch es selbst steht
 (Vorgabe: /usr/local/sbin/autofax).</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>10)</b> ggf.
+<p style="margin-left:9%; margin-top: 1em"><b>10)</b> ggf.
 Einf&uuml;gen einer Zeile zum automatischen periodischen
 Aufruf des Programms in das crontab (von root)</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>11)</b> ggf.
+<p style="margin-left:9%; margin-top: 1em"><b>11)</b> ggf.
 Einf&uuml;gen von Abschnitten f&uuml;r die unter 8)
 genannten Verzeichnisse in /etc/samba/smb.conf, ggf.
 Einf&uuml;gen/Passwortzuteilen des Programmbenutzers
@@ -1691,7 +1691,7 @@ Zone&quot; eintragen. Nach Programmaufruf sollten die unter
 und Dateien im Verzeichnis f&uuml;r zu sendende Faxe
 erstellt werden k&ouml;nnen.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>12)</b> ggf.
+<p style="margin-left:9%; margin-top: 1em"><b>12)</b> ggf.
 Einf&uuml;gen einer Datenbank f&uuml;r die Faxe in
 mariadb unter einem bestimmbaren Namen, Anlage und
 Ver&auml;nderung mehrerer Tabellen und einer Prozedur in
@@ -1699,19 +1699,20 @@ dieser Datenbank, ggf. Einf&uuml;gen eines Benutzers mit
 bestimmbarem Namen in mariadb zur Datenpflege in diesen
 Tabellen</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>13)</b>
-durch entsprechende Befehlszeilenoptionen von autofax
+<p style="margin-left:9%; margin-top: 1em"><b>13)</b> durch
+entsprechende Befehlszeilenoptionen von autofax
 k&ouml;nnen innerhalb von hylafax und capisuite Faxe
 gel&ouml;scht werden, insbesondere: <b><br>
 a)</b> in hylafax: durch Aufruf von &rsquo;faxrm&rsquo;
 <b><br>
 b)</b> in capisuite: durch L&ouml;schen der Dateien wie
 /var/spool/capisuite/users/&lt;user&gt;/sendq/*.txt und
-~/*.sff. In capisuite kann auch eine verwaiste Lock-Datei
+&#732;/*.sff. In capisuite kann auch eine verwaiste
+Lock-Datei
 (/var/spool/capisuite/users/&lt;user&gt;/sendq/*.lock)
 gel&ouml;scht werden.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>14)</b> mit
+<p style="margin-left:9%; margin-top: 1em"><b>14)</b> mit
 einer Befehlszeilenoption kann ein fr&uuml;her
 empfangenes Fax erneut in eine pdf-Datei umgewandelt
 werden.</p>
@@ -1721,10 +1722,10 @@ werden.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Wechseln Sie in
+<p style="margin-left:9%; margin-top: 1em">Wechseln Sie in
 einem Terminal in das Installationsverzeichnis (beim selben
-eingeloggten Benutzer: <b>cd ~/autofax</b>, ansonsten wird
-es &uuml;ber <b>autofax -info</b> angezeigt). <br>
+eingeloggten Benutzer: <b>cd &#732;/autofax</b>, ansonsten
+wird es &uuml;ber <b>autofax -info</b> angezeigt). <br>
 Rufen Sie dort <b>make uninstall</b> auf. <br>
 Dadurch wird das installierte <b>autofax</b>
 gel&ouml;scht und das Script <b>uninstallinv</b> in
@@ -1747,7 +1748,7 @@ k&ouml;nnen ignoriert werden.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>0</b>:
+<p style="margin-left:9%; margin-top: 1em"><b>0</b>:
 Normaler R&uuml;ckgabewert <b><br>
 7</b>: Der Infobildschirm (<b>autofax -info</b>) wurde
 angezeigt <b><br>
@@ -1777,8 +1778,8 @@ weitergeleitet</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Fehler bitte
-mit u.a. dem Wort &rsquo;autofax&rsquo; in der
+<p style="margin-left:9%; margin-top: 1em">Fehler bitte mit
+u.a. dem Wort &rsquo;autofax&rsquo; in der
 Email-Ueberschrift melden. <br>
 Bitte auch melden, wenn sich &Auml;nderungsbedarf durch
 andere Hard- bzw. Software ergeben.</p>
@@ -1788,12 +1789,12 @@ andere Hard- bzw. Software ergeben.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Durch Aufruf
-von &rsquo;<b>sh viall</b>&rsquo; mit den &uuml;blichen
+<p style="margin-left:9%; margin-top: 1em">Durch Aufruf von
+&rsquo;<b>sh viall</b>&rsquo; mit den &uuml;blichen
 &rsquo;<b>vim</b>&rsquo;-Befehlen, gefolgt von
 &rsquo;<b>make</b>&rsquo; und &rsquo;<b>make
 install</b>&rsquo; vom Installationsverzeichnis
-(&rsquo;<b>~/autofax</b>) aus k&ouml;nnen Sie das
+(&rsquo;<b>&#732;/autofax</b>) aus k&ouml;nnen Sie das
 Programm &auml;ndern.</p>
 
 <h2>HAFTUNG
@@ -1801,7 +1802,7 @@ Programm &auml;ndern.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Das Programm
+<p style="margin-left:9%; margin-top: 1em">Das Programm
 wurde mit bester Absicht entwickelt und durch den Autor
 getestet. <br>
 Trotzdem kann der Autor f&uuml;r keine Sch&auml;den
@@ -1813,7 +1814,7 @@ k&ouml;nnten</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Gerald Schade
+<p style="margin-left:9%; margin-top: 1em">Gerald Schade
 (geraldschade@gmx.de; www.diabdachau.de)</p>
 <hr>
 </body>

@@ -76,9 +76,14 @@ getIPR() {
           LBIO=$(V=libboost_iostreams;echo "$zse" $V|grep "| $V"|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
           LBLO=$(V=libboost_locale;echo "$zse" $V|grep "| $V"|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
         fi;
-        LBOOST=$(grep -s --no-filename "^boost_.*-devel" /var/cache/zypp/solv/*/solv.idx |cut -f1 | sort -r --unique|head -n1);
+        # Suche nach boost_X_YY-devel (alt) ODER boost-devel (Leap 16+)
+        LBOOST=$(grep -s --no-filename "^boost[_-].*devel" /var/cache/zypp/solv/*/solv.idx |cut -f1 | sort -r --unique|head -n1);
+        # Fallback: boost-devel direkt prüfen falls Cache-Grep nichts liefert
+        [ -z "$LBOOST" ] && rpm -q boost-devel >/dev/null 2>&1 && LBOOST=boost-devel;
         LBIO=$(grep -s --no-filename "^libboost_iostreams" /var/cache/zypp/solv/*/solv.idx |cut -f1 | sort -r --unique|head -n1);
+        [ -z "$LBIO" ] && rpm -q libboost_iostreams-devel >/dev/null 2>&1 && LBIO=libboost_iostreams-devel;
         LBLO=$(grep -s --no-filename "^libboost_locale" /var/cache/zypp/solv/*/solv.idx |cut -f1 | sort -r --unique|head -n1);
+        [ -z "$LBLO" ] && rpm -q libboost_locale-devel >/dev/null 2>&1 && LBLO=libboost_locale-devel;
 				[ ! "$LBOOST" ]&&[ "$LBIO" ]&&[ "$LBLO" ]&& LBOOST=$(V=boost-license;echo "$zse" $V|grep "| $V"|tail -n1|cut -d'|' -f2|sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//');
 			 fi;
 			fi;
@@ -339,7 +344,7 @@ LGLIB=glib-2.0;
 LSOUP=libsoup-${dev};
 LSND=libsndfile-${dev};
 QPDF=qpdf-${dev};
-LTERM=termcap;
+LTERM="libtermcap2 termcap-${dev}";
 LGSSDP=libgssdp-${dev};
 LCAPI="libcapi20-3 libcapifax-${dev}";
 Z=""
