@@ -3661,8 +3661,9 @@ int hhcl::setzhylavz()
 
 	svec hrueck;
 	// 1) hylafax-Dienst im systemd suchen, dort steht z.B. ConditionPathExists=/var/spool/hylafax/etc/setup.cache ...
-	systemrueck("grep /var $(dirname $(dirname $(which systemctl)))/lib/systemd/system/*fax*.service 2>/dev/null|"
-			"head -n 1|cut -d= -f2|sed 's/^[[:space:]]*//'|awk -F'/etc' '{print $1}'", obverb,oblog,&hrueck,/*obsudc=*/0);
+//	systemrueck("grep /var $(dirname $(dirname $(which systemctl)))/lib/systemd/system/*fax*.service 2>/dev/null|"
+//			"head -n 1|cut -d= -f2|sed 's/^[[:space:]]*//'|awk -F'/etc' '{print $1}'", obverb,oblog,&hrueck,/*obsudc=*/0);
+	systemrueck("find /var/spool/hylafax -type d -name etc -exec dirname {} \\; -quit",obverb,oblog,&hrueck,/*obsudc=*/0);
 	if (hrueck.size()) {
 		varsphylavz=hrueck[0];
 		fundart=1;
@@ -3920,6 +3921,7 @@ int hhcl::hservice_faxq_hfaxd()
 	int hylafehler{0};
 	struct stat hstat{0}, 
 							fstat{0};
+	caus<<"varsphylavz: "<<varsphylavz<<endl;
 	if (hfaxdpfad.empty()||lstat(hfaxdpfad.c_str(),&hstat)) { obprogda("hfaxd",obverb,oblog,&hfaxdpfad); }
 	hylafehler+=!shfaxd->spruef("HFaxd",0/*1*/,meinname,hfaxdpfad+" -d -i hylafax"/* -s 444*/, varsphylavz+"/etc/setup.cache", "",obverb,oblog);
 	this->shfaxd->machfit(obverb,oblog);
@@ -4294,7 +4296,7 @@ int hhcl::pruefhyla()
 							prueftif(TIFFGetVersion());
 							linstp->doinst("postfix",obverb+1,oblog,"postfix");
 							if (obverb) fLog(violetts+"hyinstart: "+schwarz+ltoan(hyinstart),1,1);
-							hyinstart=hysrc; // spaeter zu loeschen
+//							hyinstart=hysrc; // spaeter zu loeschen
 							if (hyinstart==hysrc) {
 								fLog(violetts+Tx[T_ueber_den_Quellcode]+schwarz,1,1);
 								string was;
