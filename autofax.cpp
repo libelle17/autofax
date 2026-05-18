@@ -5769,7 +5769,8 @@ int hhcl::pruefocr()
 						systemrueck("zypper ar -f --gpgcheck-allow-unsigned-repo https://download.opensuse.org/repositories/home:Alexander_Pozdnyakov/openSUSE_Leap_$(lsb-release -r|cut -f2)/home:Alexander_Pozdnyakov.repo",obverb,oblog);break; // 29.8.20, s. https://github.com/tesseract-ocr/tesseract/wiki usw.
 					default: break;
 				}
-				linstp->doinst("tesseract-ocr",obverb,oblog);
+				linstp->doinst("tesseract-ocr-traineddata-osd",obverb,oblog);
+				linstp->doinst("tesseract-ocr-traineddata-deu",obverb,oblog);
 				systemrueck("ldconfig "+lsys.getlib64(),obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
 			} // 			if (obprogda("tesseract",obverb,oblog,&tpfad))
 		} // 		for(int aru=0;aru<2;aru++)
@@ -5779,8 +5780,8 @@ int hhcl::pruefocr()
 				else if (rueck[i]=="eng") engda=1;
 				else if (rueck[i]=="osd") osdda=1;
 			} //       for(size_t i=1;i<rueck.size();i++)
-			if (!deuda) linstp->doinst("tesseract-ocr-traineddata-german",obverb,oblog);
-			if (!engda) linstp->doinst("tesseract-ocr-traineddata-english",obverb,oblog);
+			if (!deuda) linstp->doinst("tesseract-ocr-traineddata-deu",obverb,oblog);
+			if (!engda) linstp->doinst("tesseract-ocr-traineddata-osd",obverb,oblog);
 			if (!osdda) {
 				double tessvers{progvers("tesseract")};
 				if (tessvers<5) {
@@ -6001,6 +6002,7 @@ void hhcl::empffbox(const string& ganz,const size_t aktc,const string& nr/*=nix*
 		fLog((nr.empty()?"":nr+")")+blaus+base+schwarz+" => "+gruen+fdatei+schwarz,1,1);
 		// ..., die empfangene Datei in fpfad kopieren ...
 		uint kfehler{0};
+		caus<<rot<<"vor kopiere!"<<endl;
 		kopiere(ganz,fpfad,&kfehler,/*wieweiterzaehl=*/1,obverb,oblog);
 		if (!kfehler) {
 			attrangleich(fpfad,empfvz,&ganz,obverb,oblog);
