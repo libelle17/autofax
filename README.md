@@ -379,6 +379,9 @@ sender (&rsquo;<b>gschade@dachau-mail.de</b>&rsquo;) <b><br>
 -host, --host &lt;string&gt;</b>: takes the database on host
 &lt;string&gt; instead of (&rsquo;<b>localhost</b>&rsquo;)
 <b><br>
+-mcnfdat, --mcnfdat &lt;string&gt;</b>: uses the
+MySQL/MariaDB defaults-extra-file &lt;string&gt; for root
+commands instead of (&rsquo;&rsquo;) <b><br>
 -muser, --muser &lt;string&gt;</b>: takes the user
 &lt;string&gt; for MySQL/MariaDB instead of
 (&rsquo;<b>user</b>&rsquo;) <b><br>
@@ -1273,6 +1276,9 @@ statt hinter (&rsquo;<b>klar an</b>&rsquo;) <b><br>
 -host, --host &lt;string&gt;</b>: verwendet die Datenbank
 auf Host &lt;string&gt; anstatt auf
 (&rsquo;<b>localhost</b>&rsquo;) <b><br>
+-mcnfdat, --mcnfdat &lt;string&gt;</b>: verwendet fuer
+MySQL/MariaDB-Rootbefehle die defaults-extra-file
+&lt;string&gt; anstatt (&rsquo;&rsquo;) <b><br>
 -muser, --muser &lt;string&gt;</b>: verwendet fuer
 MySQL/MariaDB den Benutzer &lt;string&gt; anstatt
 (&rsquo;<b>user</b>&rsquo;) <b><br>
