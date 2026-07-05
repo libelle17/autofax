@@ -1101,6 +1101,9 @@ struct hhcl:dhcl
 		size_t loescheallewartenden();
 		void inspoolschreiben(const size_t aktc);
 		void wegfaxen(const size_t aktc);
+		// TEMP-Fix 2026-07-06: schliesst alle geerbten DB-Verbindungen sauber, bevor ein per fork() erzeugter Kindprozess sich beendet
+		// (exitt()=exit() ueberspringt sonst DB::~DB() fuer lokale Objekte, was zu 'Aborted connection'-Warnungen im MariaDB-Log fuehrt)
+		void kexit(int code);
 		int obvorbei(const string& vzname,uchar *auchtag);
 		void fxinDatenbank(fxfcl& fx,const size_t aktc);
 		void telinDatenbank(const size_t aktc);

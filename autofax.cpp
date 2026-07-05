@@ -7282,6 +7282,22 @@ void hhcl::inspoolschreiben(const size_t aktc)
 } // void hhcl::inspoolschreiben
 
 // aufgerufen in: pvirtfuehraus
+// TEMP-Fix 2026-07-06: wird statt exit() (Makro 'exitt') in per fork() erzeugten Kindprozessen aufgerufen.
+// exitt()=exit() ueberspringt DB::~DB() (lokales Objekt), das laesst geerbte, tatsaechlich benutzte
+// MariaDB-Verbindungen ohne sauberes mysql_close()/COM_QUIT zurueck -> Server loggt 'Aborted connection'.
+void hhcl::kexit(int code)
+{
+	if (My) {
+		for (size_t i=0;i<My->conz;i++) {
+			if (My->conn[i]) {
+				mysql_close(My->conn[i]);
+				My->conn[i]=0;
+			}
+		}
+	}
+	exit(code);
+} // void hhcl::kexit(int code)
+
 void hhcl::wegfaxen(const size_t aktc)
 {
 ////	const int altobverb{obverb};
@@ -7362,7 +7378,7 @@ void hhcl::wegfaxen(const size_t aktc)
 				pid=nursend?1:dfork();
 				if (pid<0) {
 					fLog(rots+Tx[T_Gabelung_zu_faxemitC_misslungen]+schwarz,1,oblog);
-					exitt(17);
+					kexit(17);
 				} else if (!pid) {
 					wasichbin=1; // Kindprozess
 				} else {
@@ -7377,7 +7393,7 @@ void hhcl::wegfaxen(const size_t aktc)
 					pid=nursend?1:dfork();
 					if (pid<0) {
 						fLog(rots+Tx[T_Gabelung_zu_faxemitH_misslungen]+schwarz,1,oblog);
-						exitt(17);
+						kexit(17);
 					} else if (!pid) {
 						wasichbin=2; // Kindprozess
 					} else {
@@ -7392,7 +7408,7 @@ void hhcl::wegfaxen(const size_t aktc)
 					pid=nursend?1:dfork();
 					if (pid<0) {
 						fLog(rots+Tx[T_Gabelung_zu_faxemitF_misslungen]+schwarz,1,oblog);
-						exitt(17);
+						kexit(17);
 					} else if (!pid) {
 						wasichbin=3; // Kindprozess
 					} else {
@@ -7406,7 +7422,7 @@ void hhcl::wegfaxen(const size_t aktc)
 				pid=nursend?1:dfork();
 				if (pid<0) {
 					fLog(rots+Tx[T_Gabelung_zu_vschlmail_misslungen]+schwarz,1,oblog);
-					exitt(17);
+					kexit(17);
 				} else if (!pid) {
 					wasichbin=4; // Kindprozess
 				} else {
@@ -7419,7 +7435,7 @@ void hhcl::wegfaxen(const size_t aktc)
 				pid=nursend?1:dfork();
 				if (pid<0) {
 					fLog(rots+Tx[T_Gabelung_zu_klarmail_misslungen]+schwarz,1,oblog);
-					exitt(17);
+					kexit(17);
 				} else if (!pid) {
 					wasichbin=5; // Kindprozess
 				} else {
@@ -7468,7 +7484,7 @@ void hhcl::wegfaxen(const size_t aktc)
 				} // for(unsigned i=0;i<fsfv.size();i++) 
 				hLog(violetts+"Pid "+blau+ltoan(pid)+violett+" "+Txk[T_Ende]+Tx[T_wegfaxen]+schwarz+", "+blau+Tx[T_obcapimitDoppelpunkt]+schwarz+
 						(obfa[1]||obweg[1]==1?Txk[T_ja]:Txk[T_nein])+", "+blau+Tx[T_obhylamitDoppelpunkt]+schwarz+(obfa[2]||obweg[2]==1?Txk[T_ja]:Txk[T_nein]));
-				if (!nursend) exitt(0);
+				if (!nursend) kexit(0);
 			} // 		if (wasichbin||nursend)
 			//// obverb=altobverb;
 			// 1. warte auf faxemitC, faxemitH, faxemitF
@@ -10195,10 +10211,10 @@ void hhcl::pvirtfuehraus() //α
 				if (obfa[0]||obweg[0]==1) korrigierefbox(ltage);
 				if (obfa[1]||obweg[1]==1) korrigierecapi(ltage);
 				if (obfa[2]||obweg[2]==1) korrigierehyla(ltage);
-				exitt(0);
+				kexit(0);
 			} else if (pid<0) {
 				hLog(rots+Tx[T_Gabelung_zu_korrigiere_misslungen]+schwarz);
-				exitt(17);
+				kexit(17);
 			} // 	if (!pid)
 			empfarch(/*obalte=*/1);
 			wartaufpids(&pidw,0,obverb,oblog,Tx[T_in_korrerfolgszeichen]); // wird also nur vom Hauptthread aus aufgerufen
@@ -10234,10 +10250,10 @@ void hhcl::pvirtfuehraus() //α
 					const pid_t pidb{nurempf||nursend?1:dfork()};
 					if (!pidb) {
 						bereinigevz(11);
-						exitt(0);
+						kexit(0);
 					} else if (pidb<0) {
 						hLog(rots+Tx[T_Gabelung_zu_bereinigevz_misslungen]+schwarz);
-						exitt(17);
+						kexit(17);
 					} // 					if (!pidb)
 					pidv<<pidcl(pidb,"bereinigevz");
 				} // 				if (aufrufe % 1000 )
@@ -10255,10 +10271,10 @@ void hhcl::pvirtfuehraus() //α
 						pide=nurempf?0:nursend?1:dfork();
 						if (!pide) {
 							empfarch();
-							exitt(0);
+							kexit(0);
 						} else if (pide<0) {
 							hLog(rots+Tx[T_Gabelung_zu_empfarch_misslungen]+schwarz);
-							exitt(17);
+							kexit(17);
 						} // 					if (!pide)
 						while(1) {
 							if (kill(pide,0)!=-1 || errno!=ESRCH) {
@@ -10294,20 +10310,20 @@ void hhcl::pvirtfuehraus() //α
 									if (obfa[1]||obweg[1]==1) { if (tage) korrigierecapi(tage,9); } // 					if (obfa[1])
 									if (obfa[2]||obweg[2]==1) { if (tage) korrigierehyla(tage,10);} // braucht bei mir mit 2500 Eintraegen in altspool ca. 30000 clocks
 ////									obverb=0; ZDB=0;
-									exitt(0);
+									kexit(0);
 								} else if (pid<0) {
 									hLog(rots+Tx[T_Gabelung_zu_korrigiere_misslungen]+schwarz);
-									exitt(17);
+									kexit(17);
 								} // 	if (!pid)
 							}
 							// 2. warte auf korrigierefbox, korrigierecapi und korrigierehyla
 							if (!nursend) {
 								wartaufpids(&pidw,0,obverb,oblog,Tx[T_in_pvirtfuehraus_pidw]);
-								exitt(0);
+								kexit(0);
 							}
 						} else if (pids<0) {
 							hLog(rots+Tx[T_Gabelung_zu_wegfaxen_misslungen]+schwarz);
-							exitt(17);
+							kexit(17);
 						} // 					if (!pids)
 						while(1) {
 							if (kill(pids,0)!=-1 || errno!=ESRCH) {
@@ -10325,10 +10341,10 @@ void hhcl::pvirtfuehraus() //α
 							pidz=nurempf||nursend?0:dfork();
 							if (!pidz) {
 								zeigweitere();
-								exitt(0);
+								kexit(0);
 							} else if (pidz<0) {
 								hLog(rots+Tx[T_Gabelung_zu_zeigweitere_misslungen]+schwarz);
-								exitt(17);
+								kexit(17);
 							} // 					if (!pidz)
 							while(1) {
 								// wenn Programm noch laeuft
