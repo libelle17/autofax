@@ -7375,6 +7375,7 @@ void hhcl::wegfaxen(const size_t aktc)
 					kexit(17);
 				} else if (!pid) {
 					wasichbin=1; // Kindprozess
+					neueEigeneMy(); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool
 				} else {
 					pidcl phier(pid,"faxemitC"); // Elternprozess
 					pidv<<phier;
@@ -7390,6 +7391,7 @@ void hhcl::wegfaxen(const size_t aktc)
 						kexit(17);
 					} else if (!pid) {
 						wasichbin=2; // Kindprozess
+						neueEigeneMy(); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool
 					} else {
 						pidcl phier(pid,"faxemitH"); // Elternprozess
 						pidv<<phier;
@@ -7405,6 +7407,7 @@ void hhcl::wegfaxen(const size_t aktc)
 						kexit(17);
 					} else if (!pid) {
 						wasichbin=3; // Kindprozess
+						neueEigeneMy(); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool
 					} else {
 						pidcl phier(pid,"faxemitF"); // Elternprozess
 						pidv<<phier;
@@ -7419,6 +7422,7 @@ void hhcl::wegfaxen(const size_t aktc)
 					kexit(17);
 				} else if (!pid) {
 					wasichbin=4; // Kindprozess
+					neueEigeneMy(); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool
 				} else {
 					pidcl phier(pid,"vschlmail");
 					pidv<<phier;
@@ -7432,6 +7436,7 @@ void hhcl::wegfaxen(const size_t aktc)
 					kexit(17);
 				} else if (!pid) {
 					wasichbin=5; // Kindprozess
+					neueEigeneMy(); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool
 				} else {
 					pidcl phier(pid,"klarmail");
 					pidv<<phier;
@@ -10201,6 +10206,7 @@ void hhcl::pvirtfuehraus() //α
 				pidw<<phier;
 				pidv<<phier;
 			} else if (!pid) {
+				neueEigeneMy(); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool
 				hLog(violetts+Tx[T_korrigiere]+schwarz);
 				if (obfa[0]||obweg[0]==1) korrigierefbox(ltage);
 				if (obfa[1]||obweg[1]==1) korrigierecapi(ltage);
@@ -10243,6 +10249,7 @@ void hhcl::pvirtfuehraus() //α
 					// hier ggf. erstes fork
 					const pid_t pidb{nurempf||nursend?1:dfork()};
 					if (!pidb) {
+						neueEigeneMy(); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool
 						bereinigevz(11);
 						kexit(0);
 					} else if (pidb<0) {
@@ -10264,6 +10271,7 @@ void hhcl::pvirtfuehraus() //α
 						// hier ggf. erstes fork
 						pide=nurempf?0:nursend?1:dfork();
 						if (!pide) {
+							neueEigeneMy(); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool
 							empfarch();
 							kexit(0);
 						} else if (pide<0) {
@@ -10284,6 +10292,7 @@ void hhcl::pvirtfuehraus() //α
 						// hier ggf. erstes fork
 						pids=nurempf?1:nursend?0:dfork();
 						if (!pids) {
+							neueEigeneMy(); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool
 							inspoolschreiben(/*aktc=*/3);
 							wegfaxen(/*aktc=*/3);
 							// Dateien in Spool-Tabelle nach inzwischen Verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
@@ -10298,6 +10307,7 @@ void hhcl::pvirtfuehraus() //α
 									pidw<<phier;
 									pidv<<phier;
 								} else if (!pid) {
+									neueEigeneMy(); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool (auch vom bereits eigenen Pool des "pids"-Kindes)
 ////									obverb=1; ZDB=1;
 									hLog(violetts+Tx[T_korrigiere]+schwarz);
 									if (obfa[0]||obweg[0]==1) { if (tage) korrigierefbox(tage,9); } // 					if (obfa[0])
@@ -10334,6 +10344,7 @@ void hhcl::pvirtfuehraus() //α
 							// hier ggf. erstes fork
 							pidz=nurempf||nursend?0:dfork();
 							if (!pidz) {
+								neueEigeneMy(); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool
 								zeigweitere();
 								kexit(0);
 							} else if (pidz<0) {

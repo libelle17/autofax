@@ -2538,6 +2538,19 @@ int dhcl::initDB()
 	return 0;
 } // initDB
 
+// TEMP-Fix 2026-07-06: erzeugt fuer den aufrufenden Prozess (insbesondere Kindprozesse nach fork())
+// eine NEUE, unabhaengige Verbindung (mit gleicher Poolgroesse maxconz wie das Original,
+// da Funktionen wie faxemitC intern feste aktc-Indizes >0 verwenden) und ersetzt My damit - OHNE den zuvor bestehenden,
+// mit dem Elternprozess geteilten Pool anzufassen oder zu schliessen. So teilen sich Eltern- und
+// Kindprozess nach fork() nie dieselbe MySQL-Verbindung (Ursache der 2026-07-06 beobachteten
+// "Server has gone away"-Kaskade, als Kindprozesse beim Beenden versehentlich den ganzen geerbten
+// Pool schlossen). Verwendet dieselben Zugangsdaten wie initDB().
+void dhcl::neueEigeneMy()
+{
+	My=new DB(myDBS,host,muser,mpwd,/*conz=*/maxconz,dbq,/*port=*/0,/*unix_socket=*/0,/*client_flag=*/CLIENT_MULTI_STATEMENTS,obverb,oblog,
+			DB::defmycharset,DB::defmycollat,/*versuchzahl=*/3,/*ggferstellen=*/1,mcnfdat);
+} // dhcl::neueEigeneMy
+
 // wird aufgerufen in autofax.pvirtnachrueckfragen
 int dhcl::pruefDB(DB** testMy, const string& db)
 {
