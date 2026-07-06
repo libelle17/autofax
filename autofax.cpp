@@ -2638,7 +2638,7 @@ int hhcl::pruefcapi()
 							// sollte nach Korrektur von kernel-modules-extra zu kernel-modules-extra-$(uname -r) kaum mehr vorkommen
 							if (v1!=v2) {
 								virtautokonfschreib();
-								exit(schluss(9,blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
+								kexit(schluss(9,blaus+Tx[T_Zur_Inbetriebnahme_der_Capisuite_muss_das_Modul_capi_geladen_werten]+schwarz+v1+blau+" -> "
 											+schwarz+v2+blau+").\n"+blau+Tx[T_Bitte_zu_dessen_Verwendung_den_Rechner_neu_starten]+schwarz+mpfad+blau+Tx[T_aufrufen]
 											+schwarz,1));
 							} // if (v1!=v2) 
@@ -2673,7 +2673,7 @@ int hhcl::pruefcapi()
 								const string release{unbuf.release};
 								const string relev{release.substr(0,release.find(unbuf.machine)-1)};
 								if (kernel.find(relev)) {
-									exit(schluss(10,Tx[T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von]+blaus+relev+schwarz+Tx[T_nach_]+blau+kernel+schwarz+
+									kexit(schluss(10,Tx[T_Der_Kernel_hat_sich_offenbar_seit_dem_Einloggen_von]+blaus+relev+schwarz+Tx[T_nach_]+blau+kernel+schwarz+
 												Tx[T_verjuengt_Bitte_den_Rechner_neu_starten_und_dann_mich_nochmal_aufrufen],1));
 								} // 							if (kernel.find(relev))
 								systemrueck("cd "+instvz+" && dnf -y builddep "+kstring,obverb,oblog,/*rueck=*/0,/*obsudc=*/1);
@@ -4747,6 +4747,8 @@ void hhcl::verzeichnisse()
 	hLog(violetts+Txk[T_Ende]+Tx[T_verzeichnisse]+schwarz);
 } // hhcl:: verzeichnisse
 
+void kexitDB(DB *dbp, int code); // Vorwaertsdeklaration, Definition weiter unten bei hhcl::kexit
+
 // aufgerufen in: main
 const string& pruefspool(DB *My,const string& spooltab, const string& altspool, const int obverb, const int oblog, uchar direkt/*=0*/)
 {
@@ -4792,12 +4794,12 @@ const string& pruefspool(DB *My,const string& spooltab, const string& altspool, 
 		Tabelle taa(My,altspool,felder,elemzahl(felder),indices,elemzahl(indices),0,0,Tx[T_capispooldateien_der_Capisuite]
 				/*//, "InnoDB","utf8","utf8_unicode_ci","DYNAMIC"*/);
 		if (taa.prueftab(aktc,obverb)) {
-			exit(schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+altspool,1));
+			kexitDB(My, schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+altspool,1));
 		} // 		if (taa->prueftab(&taa, aktc,obverb))
 		Tabelle tab(My,spooltab,felder,elemzahl(felder),indices,elemzahl(indices),0,0,Tx[T_capispooldateien_der_Capisuite]
 				/*// , "InnoDB","utf8","utf8_unicode_ci","DYNAMIC"*/);
 		if (tab.prueftab(aktc,obverb)) {
-			exit(schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+spooltab,1));
+			kexitDB(My, schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+spooltab,1));
 		} // 		if (tab->prueftab(&tab, aktc,obverb))
 	} // if (!direkt) 
 	fLog(violetts+Txk[T_Ende]+Tx[T_pruefspool]+schwarz+", direkt: "+(direkt?"1":"0"),obverb,oblog);
@@ -4847,7 +4849,7 @@ void pruefouttab(DB *My, const string& touta, const int obverb, const int oblog,
 		Tabelle taba(My,touta,felder,elemzahl(felder),indices,elemzahl(indices),0,0,
 				Tx[T_Archiv_fuer_die_erfolgreichen_Faxe]/*//,"InnoDB","utf8","utf8_general_ci","DYNAMIC"*/);
 		if (taba.prueftab(aktc,obverb)) {
-			exit(schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+touta,1));
+			kexitDB(My, schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+touta,1));
 		}
 	} // if (!direkt)
 	fLog(violetts+Txk[T_Ende]+Tx[T_pruefouta]+schwarz,obverb,oblog);
@@ -4869,7 +4871,7 @@ void pruefudoc(DB *My, const string& tudoc, const int obverb, const int oblog, c
 		Tabelle taba(My,tudoc,felder,elemzahl(felder),indices,elemzahl(indices),0,0,
 				Tx[T_Archiv_fuer_die_Dateinamen_vor_Aufteilung]/*//,"InnoDB","utf8","utf8_general_ci","DYNAMIC"*/);
 		if (taba.prueftab(aktc,obverb)) {
-			exit(schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+tudoc,1));
+			kexitDB(My, schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+tudoc,1));
 		}
 	} // if (!direkt)
 	fLog(violetts+Txk[T_Ende]+Tx[T_pruefudoc]+schwarz,obverb,oblog);
@@ -4916,7 +4918,7 @@ void pruefinctab(DB *My, const string& tinca, const int obverb, const int oblog,
 		Tabelle taba(My,tinca,felder,elemzahl(felder),indices,elemzahl(indices),0,0,
 				Tx[T_Archiv_fuer_die_erfolgreichen_Faxe]/*//,"InnoDB","utf8","utf8_general_ci","DYNAMIC"*/);
 		if (taba.prueftab(aktc,obverb)) {
-			exit(schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+tinca,1));
+			kexitDB(My, schluss(11,rots+Tx[T_Fehler_beim_Pruefen_von]+schwarz+tinca,1));
 		}
 	} // 	if (!direkt)
 	fLog(violetts+Txk[T_Ende]+Tx[T_pruefinca]+schwarz,obverb,oblog);
@@ -4938,7 +4940,7 @@ void hhcl::virtpruefweiteres()
 	hLog(Txk[T_Logpfad]+drots+loggespfad+schwarz+Txk[T_oblog]+drot+ltoan((int)oblog)+schwarz+")");
 	// if (initDB()) exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab])); //α //ω
 	if (initDB()) {
-		exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));
+		kexit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));
 	}
 	// pruefe Tabelle <spooltab> und erstelle sie ggf.
 	pruefspool(My,spooltab, altspool, obverb,oblog);
@@ -7285,17 +7287,24 @@ void hhcl::inspoolschreiben(const size_t aktc)
 // TEMP-Fix 2026-07-06: wird statt exit() (Makro 'exitt') in per fork() erzeugten Kindprozessen aufgerufen.
 // exitt()=exit() ueberspringt DB::~DB() (lokales Objekt), das laesst geerbte, tatsaechlich benutzte
 // MariaDB-Verbindungen ohne sauberes mysql_close()/COM_QUIT zurueck -> Server loggt 'Aborted connection'.
-void hhcl::kexit(int code)
+// Freie Variante fuer Aufrufer ausserhalb von hhcl (z.B. pruefspool/pruefouttab/pruefudoc/pruefinctab),
+// die ihr DB* nicht ueber this->My, sondern als eigenen Parameter haben.
+void kexitDB(DB *dbp, int code)
 {
-	if (My) {
-		for (size_t i=0;i<My->conz;i++) {
-			if (My->conn[i]) {
-				mysql_close(My->conn[i]);
-				My->conn[i]=0;
+	if (dbp) {
+		for (size_t i=0;i<dbp->conz;i++) {
+			if (dbp->conn[i]) {
+				mysql_close(dbp->conn[i]);
+				dbp->conn[i]=0;
 			}
 		}
 	}
 	exit(code);
+} // void kexitDB(DB *dbp, int code)
+
+void hhcl::kexit(int code)
+{
+	kexitDB(My, code);
 } // void hhcl::kexit(int code)
 
 void hhcl::wegfaxen(const size_t aktc)
@@ -10127,7 +10136,7 @@ void hhcl::pvirtnachrueckfragen()
 	if (tulista||tulistf||tulisti||tulistw||!suchstr.empty()) {
 		// wird fuer kez und normalen Ablauf spaeter in virtpruefweiteres abgerufen
 		if (initDB()) {
-			exit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));
+			kexit(schluss(10,Tx[T_Datenbank_nicht_initialisierbar_breche_ab]));
 		}
 		obsetz=0; // Aufruf nicht mitzaehlen
 		keineverarbeitung=1; // nicht pruefggfmehrfach aufrufen
