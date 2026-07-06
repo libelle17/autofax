@@ -2539,15 +2539,16 @@ int dhcl::initDB()
 } // initDB
 
 // TEMP-Fix 2026-07-06: erzeugt fuer den aufrufenden Prozess (insbesondere Kindprozesse nach fork())
-// eine NEUE, unabhaengige Verbindung (mit gleicher Poolgroesse maxconz wie das Original,
-// da Funktionen wie faxemitC intern feste aktc-Indizes >0 verwenden) und ersetzt My damit - OHNE den zuvor bestehenden,
+// eine NEUE, unabhaengige Verbindung und ersetzt My damit - OHNE den zuvor bestehenden,
 // mit dem Elternprozess geteilten Pool anzufassen oder zu schliessen. So teilen sich Eltern- und
 // Kindprozess nach fork() nie dieselbe MySQL-Verbindung (Ursache der 2026-07-06 beobachteten
 // "Server has gone away"-Kaskade, als Kindprozesse beim Beenden versehentlich den ganzen geerbten
-// Pool schlossen). Verwendet dieselben Zugangsdaten wie initDB().
-void dhcl::neueEigeneMy()
+// Pool schlossen). Verwendet dieselben Zugangsdaten wie initDB(). conz ist bewusst pro Aufrufstelle
+// auf den dort tatsaechlich benoetigten hoechsten aktc-Index+1 abgestimmt (nicht pauschal maxconz),
+// um die Zahl neu aufgebauter Verbindungen je Fork zu minimieren.
+void dhcl::neueEigeneMy(const size_t conz)
 {
-	My=new DB(myDBS,host,muser,mpwd,/*conz=*/maxconz,dbq,/*port=*/0,/*unix_socket=*/0,/*client_flag=*/CLIENT_MULTI_STATEMENTS,obverb,oblog,
+	My=new DB(myDBS,host,muser,mpwd,conz,dbq,/*port=*/0,/*unix_socket=*/0,/*client_flag=*/CLIENT_MULTI_STATEMENTS,obverb,oblog,
 			DB::defmycharset,DB::defmycollat,/*versuchzahl=*/3,/*ggferstellen=*/1,mcnfdat);
 } // dhcl::neueEigeneMy
 

@@ -579,7 +579,7 @@ struct dhcl:public hcl
 		int  initDB();
 		int  pruefDB(DB** testMy, const string& db);
 		// TEMP-Fix 2026-07-06: siehe DB.cpp
-		void neueEigeneMy();
+		void neueEigeneMy(const size_t conz);
 #ifdef VOMHAUPTCODE
 		__attribute__((weak)) // implementationsspezifische Vorgaben, Modul vgb.cpp)
 #endif
