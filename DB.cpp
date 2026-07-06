@@ -2619,6 +2619,11 @@ insv::insv(DB *My,const string& itab,const size_t aktc,const uchar eindeutig,con
 	rsp=new RS(My,itab);
 }
 
+insv::~insv()
+{
+	delete rsp;
+}
+
 my_ulonglong insv::schreib(const uchar sammeln/*=0*/,int obverb/*=0*/,string* const idp/*=0*/,uchar mitupd/*=0*/)
 {
 	my_ulonglong erg=0;

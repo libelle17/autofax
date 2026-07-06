@@ -522,6 +522,7 @@ struct insv
 	inline size_t size(){return ivec.size();}
 	//	my_ulonglong RS::tbins(vector<instyp>* einfp,const size_t aktc/*=0*/,uchar sammeln/*=0*/, int obverb/*=0*/,string *idp/*=0*/,const uchar eindeutig/*=0*/,const svec& eindfeld/*=nix*/,const uchar asy/*=0*/,svec *csets/*=0*/) 
 	insv(DB *My,const string& itab,const size_t aktc,const uchar eindeutig,const svec& eindfeld,const uchar asy,svec *csets);
+	~insv();
 	my_ulonglong schreib(const uchar sammeln=0,int obverb=0,string* const idp=0,uchar mitupd=0);
 	my_ulonglong ergaenz(const string& bedingung,const uchar sammeln=0,int obverb=0,string* const idp=0);
 	void hzp(const instyp it);
