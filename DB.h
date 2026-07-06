@@ -314,7 +314,7 @@ struct Constraint
 struct RS;
 
 
-struct DB 
+struct DB
 {
 	// muss außerhalb der Klasse und einer Funktion noch mal definiert werden
 	static uchar oisok; // 1=Installation von MariaDB wurde ueberprueft
@@ -401,9 +401,13 @@ struct DB
 	////	char** HolZeile();
 	my_ulonglong affrows(const size_t aktc) const; // unsigned __int64
 	uchar obtabspda(const char* const tab,const char* const sp);
-}; // struct DB 
+}; // struct DB
 
-struct Tabelle 
+// TEMP-Fix 2026-07-06: schliesst alle offenen dbp->conn[i] sauber vor exit() (sonst "Aborted connection" im MariaDB-Log,
+// da direktes exit() DB::~DB() fuer bereits erfolgreich geoeffnete Slots ueberspringt)
+void kexitDB(const DB *dbp, int code);
+
+struct Tabelle
 {
 	const DB* dbp;
 	const string tbname;

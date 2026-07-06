@@ -4747,8 +4747,6 @@ void hhcl::verzeichnisse()
 	hLog(violetts+Txk[T_Ende]+Tx[T_verzeichnisse]+schwarz);
 } // hhcl:: verzeichnisse
 
-void kexitDB(DB *dbp, int code); // Vorwaertsdeklaration, Definition weiter unten bei hhcl::kexit
-
 // aufgerufen in: main
 const string& pruefspool(DB *My,const string& spooltab, const string& altspool, const int obverb, const int oblog, uchar direkt/*=0*/)
 {
@@ -7287,20 +7285,7 @@ void hhcl::inspoolschreiben(const size_t aktc)
 // TEMP-Fix 2026-07-06: wird statt exit() (Makro 'exitt') in per fork() erzeugten Kindprozessen aufgerufen.
 // exitt()=exit() ueberspringt DB::~DB() (lokales Objekt), das laesst geerbte, tatsaechlich benutzte
 // MariaDB-Verbindungen ohne sauberes mysql_close()/COM_QUIT zurueck -> Server loggt 'Aborted connection'.
-// Freie Variante fuer Aufrufer ausserhalb von hhcl (z.B. pruefspool/pruefouttab/pruefudoc/pruefinctab),
-// die ihr DB* nicht ueber this->My, sondern als eigenen Parameter haben.
-void kexitDB(DB *dbp, int code)
-{
-	if (dbp) {
-		for (size_t i=0;i<dbp->conz;i++) {
-			if (dbp->conn[i]) {
-				mysql_close(dbp->conn[i]);
-				dbp->conn[i]=0;
-			}
-		}
-	}
-	exit(code);
-} // void kexitDB(DB *dbp, int code)
+// kexitDB(DB*, int) ist jetzt in DB.cpp definiert (dort auch von RS::doAbfrage/tbins benoetigt), siehe DB.h
 
 void hhcl::kexit(int code)
 {
