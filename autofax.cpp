@@ -10206,7 +10206,7 @@ void hhcl::pvirtfuehraus() //α
 				pidw<<phier;
 				pidv<<phier;
 			} else if (!pid) {
-				neueEigeneMy(/*conz=*/3); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool
+				neueEigeneMy(/*conz=*/4); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool (korrigierehyla->archiviere() braucht hart codiert aktc=3)
 				hLog(violetts+Tx[T_korrigiere]+schwarz);
 				if (obfa[0]||obweg[0]==1) korrigierefbox(ltage);
 				if (obfa[1]||obweg[1]==1) korrigierecapi(ltage);
@@ -10292,7 +10292,7 @@ void hhcl::pvirtfuehraus() //α
 						// hier ggf. erstes fork
 						pids=nurempf?1:nursend?0:dfork();
 						if (!pids) {
-							neueEigeneMy(/*conz=*/4); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool
+							neueEigeneMy(/*conz=*/9); // TEMP-Fix 2026-07-06: eigene Verbindung statt geerbten Pool (untersuchespool->archiviere() braucht hart codiert aktc=8)
 							inspoolschreiben(/*aktc=*/3);
 							wegfaxen(/*aktc=*/3);
 							// Dateien in Spool-Tabelle nach inzwischen Verarbeiteten durchsuchen, Datenbank- und Dateieintraege korrigieren 
