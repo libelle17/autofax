@@ -407,6 +407,11 @@ struct DB
 // da direktes exit() DB::~DB() fuer bereits erfolgreich geoeffnete Slots ueberspringt)
 void kexitDB(const DB *dbp, int code);
 
+// gibt nur die lokale fd-Kopie einer von fork() geerbten Verbindung frei (kein mysql_close(),
+// s. Kommentar bei der Definition in DB.cpp) - fuer Kindprozesse, die per neueEigeneMy() eine
+// eigene Verbindung statt des geerbten Pools bekommen
+void gebGeerbteVerbindungFrei(DB *const dbp);
+
 struct Tabelle
 {
 	const DB* dbp;

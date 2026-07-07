@@ -1,5 +1,6 @@
 #include "kons.h"
 #include "DB.h"
+#include <unistd.h> // close()
 #define caus cout // nur zum Debuggen
 #define caup cout // zum Debuggen von Postgres
 #define exitp exit // zum Debuggen von Postgres
@@ -18,6 +19,24 @@ void kexitDB(const DB *dbp, int code)
 	}
 	exit(code);
 } // void kexitDB(const DB *dbp, int code)
+
+// Gibt nur die lokale fd-Kopie einer vom Elternprozess nach fork() geerbten Verbindung frei -
+// OHNE mysql_close() (das wuerde per COM_QUIT die mit dem Elternprozess geteilte Server-Session
+// beenden, s. TEMP-Fix 2026-07-06 / "Server has gone away"-Regression). close() auf dem rohen
+// Socket-fd ist ein rein lokaler Kernel-Vorgang: es geht nichts ueber die Leitung, der Server
+// merkt davon nichts, solange der Elternprozess seinen eigenen fd auf denselben Socket noch
+// offen haelt. Wird von neueEigeneMy() aufgerufen, bevor My ueberschrieben wird.
+void gebGeerbteVerbindungFrei(DB *const dbp)
+{
+	if (dbp) {
+		for (size_t i=0;i<dbp->conz;i++) {
+			if (dbp->conn[i]) {
+				close(mysql_get_socket(dbp->conn[i]));
+				dbp->conn[i]=0; // verhindert spaeteres versehentliches mysql_close() darauf
+			}
+		}
+	}
+} // void gebGeerbteVerbindungFrei(DB *const dbp)
 
 //const char *Txdbcl::TextC[T_dbMAX+1][SprachZahl]={
 const char *DB_T[T_dbMAX+1][SprachZahl]={
@@ -2548,6 +2567,7 @@ int dhcl::initDB()
 // um die Zahl neu aufgebauter Verbindungen je Fork zu minimieren.
 void dhcl::neueEigeneMy(const size_t conz)
 {
+	gebGeerbteVerbindungFrei(My); // fd-Kopie der geerbten Verbindung freigeben, bevor My ueberschrieben wird
 	My=new DB(myDBS,host,muser,mpwd,conz,dbq,/*port=*/0,/*unix_socket=*/0,/*client_flag=*/CLIENT_MULTI_STATEMENTS,obverb,oblog,
 			DB::defmycharset,DB::defmycollat,/*versuchzahl=*/3,/*ggferstellen=*/1,mcnfdat);
 } // dhcl::neueEigeneMy
