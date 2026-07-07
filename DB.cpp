@@ -209,6 +209,13 @@ const char *DB_T[T_dbMAX+1][SprachZahl]={
 	{"Tabelle: ","Table: "},
 	// T_Versuche_in_doAbfrage_mehr_als,
 	{"Versuche in doAbfrage mehr als ","in doAbfrage more tries than "},
+	// T_sz_k
+	{"sz","sz"},
+	// T_sperrzeit_l
+	{"sperrzeit","locktimeout"},
+	// T_Setzt_maximale_Wartezeit_bei_auswaertigen_Tabellensperren
+	{"setzt die maximale Wartezeit bei fremden Tabellensperren auf <zahl> Sekunden (lock_wait_timeout) anstatt",
+	 "sets the maximum wait time for external table locks to <zahl> seconds (lock_wait_timeout) instead of"},
 	{"",""}
 };
 // Txdbcl::Txdbcl() {TCp=(const char* const * const * const *)&TextC;}
@@ -399,8 +406,8 @@ uchar DB::oisok{0};
 		const size_t conz/*=1*/, const string& uedb,
        unsigned int port, const char *const unix_socket, unsigned long client_flag,
     int obverb,int oblog,const string charset, const string collate, int versuchzahl, const uchar ggferstellen,
-		const string& pmcnfdat):DBS(nDBS),
-		host(phost),user(puser),passwd(ppasswd),dbname(uedb),mcnfdat(pmcnfdat), conz(conz)
+		const string& pmcnfdat, const unsigned plockwait):DBS(nDBS),
+		host(phost),user(puser),passwd(ppasswd),dbname(uedb),mcnfdat(pmcnfdat),lockwait(plockwait), conz(conz)
 {
   init(charset,collate,port,unix_socket,client_flag,obverb,oblog,versuchzahl, ggferstellen);
 } // DB::DB
@@ -571,6 +578,14 @@ void DB::init(
 						if (mysql_real_connect(conn[aktc], host.c_str(), user.c_str(), passwd.c_str(), dbname.c_str(), port, unix_socket, client_flag)) {
 							// mysql_set_character_set(conn[aktc],"utf8");
 							cmd="SET NAMES 'utf8mb4' COLLATE 'utf8mb4_german2_ci'";
+							if (mysql_real_query(conn[aktc],cmd.c_str(),cmd.length())) {
+								if (MYSQL_RES *dbres{mysql_use_result(conn[aktc])}) {
+									mysql_free_result(dbres);
+								}
+							}
+							// begrenzt die Wartezeit bei fremden Tabellensperren (MDL, z.B. DDL gegen von anderen
+							// Verbindungen offen gehaltene Tabellen) statt unbegrenzt zu haengen, s. lockwait/Option "sperrzeit"
+							cmd="SET SESSION lock_wait_timeout="+ltoan(lockwait)+", innodb_lock_wait_timeout="+ltoan(lockwait);
 							if (mysql_real_query(conn[aktc],cmd.c_str(),cmd.length())) {
 								if (MYSQL_RES *dbres{mysql_use_result(conn[aktc])}) {
 									mysql_free_result(dbres);
@@ -1150,7 +1165,7 @@ int Tabelle::prueftab(const size_t aktc,int obverb/*=0*/,int oblog/*=0*/)
   int gesfehlr=0;
   RS rs(dbp,tbname);
   std::stringstream sql;
-  // eine Indexfeldlaenge groesser als die Feldlaenge fuehrt zu Fehler (zumindest bei MariaDB)
+	// eine Indexfeldlaenge groesser als die Feldlaenge fuehrt zu Fehler (zumindest bei MariaDB)
   for(unsigned i=0;i<indexzahl;i++){
     for(unsigned j=0;j<indices[i].feldzahl;j++){
       for(unsigned k=0;k<feldzahl;k++){
@@ -2382,7 +2397,6 @@ my_ulonglong RS::tbins(vector<instyp>* einfp,const size_t aktc/*=0*/,uchar samme
 			} // switch (dbp->DBS) 
 		} // if (obeinfuegen)
 	} // 	if (einfp)
-
 	if (!sammeln)if (zaehler) {
 		switch (dbp->DBS) {
 			case MySQL:
@@ -2516,6 +2530,7 @@ void dhcl::virtinitopt()
 	opn<<new optcl(/*pname*/"datenbank",/*pptr*/&dbq,/*part*/pstri,T_db_k,T_datenbank_l,/*TxBp*/&Txd,/*Txi*/T_verwendet_die_Datenbank_string_anstatt,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!dbq.empty(),Txd[T_Datenbankname_fuer_MySQL_MariaDB_auf]);
 //	opn<<optcl(/*pname*/"tabl",/*pptr*/&tabl,/*art*/pstri,T_tb_k,T_tabelle_l,/*TxBp*/&Txd,/*Txi*/T_verwendet_die_Tabelle_string_anstatt,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1);
 	opn<<new optcl(/*pptr*/&ZDB,/*art*/puchar,T_sqlv_k,T_sql_verbose_l,/*TxBp*/&Txd,/*Txi*/T_Bildschirmausgabe_mit_SQL_Befehlen,/*wi*/1,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/1);
+	opn<<new optcl(/*pname*/"sperrzeit",/*pptr*/&sperrzeit,/*art*/pint,T_sz_k,T_sperrzeit_l,/*TxBp*/&Txd,/*Txi*/T_Setzt_maximale_Wartezeit_bei_auswaertigen_Tabellensperren,/*wi*/1,/*Txi2*/-1,/*rottxt*/string(),/*wert*/-1,/*woher*/1,Txd[T_Setzt_maximale_Wartezeit_bei_auswaertigen_Tabellensperren]);
 	hcl::virtinitopt();
 } // void hhcl::virtinitopt
 
@@ -2540,7 +2555,7 @@ int dhcl::initDB()
 	} else {
 		if (!My) {
 			My=new DB(myDBS,host,muser,mpwd,maxconz,dbq,/*port=*/0,/*unix_socket=*/0,/*client_flag=*/CLIENT_MULTI_STATEMENTS,obverb,oblog,
-					DB::defmycharset,DB::defmycollat,/*versuchzahl=*/3,/*ggferstellen=*/1,mcnfdat);
+					DB::defmycharset,DB::defmycollat,/*versuchzahl=*/3,/*ggferstellen=*/1,mcnfdat,/*plockwait=*/sperrzeit);
 			if (My->ConnError) {
 				delete My;
 				My=0;
@@ -2569,7 +2584,7 @@ void dhcl::neueEigeneMy(const size_t conz)
 {
 	gebGeerbteVerbindungFrei(My); // fd-Kopie der geerbten Verbindung freigeben, bevor My ueberschrieben wird
 	My=new DB(myDBS,host,muser,mpwd,conz,dbq,/*port=*/0,/*unix_socket=*/0,/*client_flag=*/CLIENT_MULTI_STATEMENTS,obverb,oblog,
-			DB::defmycharset,DB::defmycollat,/*versuchzahl=*/3,/*ggferstellen=*/1,mcnfdat);
+			DB::defmycharset,DB::defmycollat,/*versuchzahl=*/3,/*ggferstellen=*/1,mcnfdat,/*plockwait=*/sperrzeit);
 } // dhcl::neueEigeneMy
 
 // wird aufgerufen in autofax.pvirtnachrueckfragen
@@ -2577,7 +2592,7 @@ int dhcl::pruefDB(DB** testMy, const string& db)
 {
 	hLog(violetts+Txk[T_pruefDB]+db+")"+schwarz);
 	unsigned fehnr{0};
-  *testMy=new DB(myDBS,host,muser,mpwd,maxconz,db,0,0,0,obverb,oblog,DB::defmycharset,DB::defmycollat,3,0,mcnfdat);
+  *testMy=new DB(myDBS,host,muser,mpwd,maxconz,db,0,0,0,obverb,oblog,DB::defmycharset,DB::defmycollat,3,0,mcnfdat,sperrzeit);
   fehnr=(*testMy)->fehnr;
   if ((*testMy)->ConnError) {
     delete (*testMy);
@@ -2643,6 +2658,7 @@ insv::~insv()
 {
 	delete rsp;
 }
+
 
 my_ulonglong insv::schreib(const uchar sammeln/*=0*/,int obverb/*=0*/,string* const idp/*=0*/,uchar mitupd/*=0*/)
 {
