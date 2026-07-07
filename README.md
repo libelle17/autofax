@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.10019) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.1002) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -177,7 +177,7 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.10019</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.10020</b>
 Using: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax
 (ttyACM0) <br>
 Options which are not saved (current value in parentheses):
@@ -390,6 +390,9 @@ commands instead of (&rsquo;&rsquo;) <b><br>
 -db, --database &lt;string&gt;</b>: uses the database
 &lt;string&gt; instead of (&rsquo;<b>autofax</b>&rsquo;)
 <b><br>
+-sz, --locktimeout &lt;zahl&gt;</b>: sets the maximum wait
+time for external table locks to &lt;zahl&gt; seconds
+(lock_wait_timeout) instead of (<b>180</b>) <b><br>
 -lg, --language &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
 [<b>d</b>eutsch,<b>e</b>nglisch] (&rsquo;<b>e</b>&rsquo;)
@@ -877,7 +880,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.10019) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.1002) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1069,7 +1072,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.10019</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.10020</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax
 (ttyACM0) <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
@@ -1287,6 +1290,9 @@ MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
 -db, --datenbank &lt;string&gt;</b>: verwendet die Datenbank
 &lt;string&gt; anstatt (&rsquo;<b>autofax</b>&rsquo;)
 <b><br>
+-sz, --sperrzeit &lt;zahl&gt;</b>: setzt die maximale
+Wartezeit bei fremden Tabellensperren auf &lt;zahl&gt;
+Sekunden (lock_wait_timeout) anstatt (<b>180</b>) <b><br>
 -sp, --sprache &lt;string&gt;</b>:
 Language/Sprache/Lingue/Lingua
 [<b>d</b>eutsch,<b>e</b>nglisch] (&rsquo;<b>d</b>&rsquo;)
