@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.1002) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.10021) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -177,7 +177,7 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.10020</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.10021</b>
 Using: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax
 (ttyACM0) <br>
 Options which are not saved (current value in parentheses):
@@ -387,6 +387,10 @@ commands instead of (&rsquo;&rsquo;) <b><br>
 (&rsquo;<b>user</b>&rsquo;) <b><br>
 -mpwd, --mpwd &lt;string&gt;</b>: takes the password
 &lt;string&gt; for MySQL/MariaDB <b><br>
+-cmpwd, --changemariadbpwd &lt;string&gt;</b>: changes the
+MySQL/MariaDB password to &lt;string&gt; (stores it
+encrypted in the configuration) and exits afterwards without
+further processing <b>or not <br>
 -db, --database &lt;string&gt;</b>: uses the database
 &lt;string&gt; instead of (&rsquo;<b>autofax</b>&rsquo;)
 <b><br>
@@ -880,7 +884,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.1002) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.10021) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1072,7 +1076,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.10020</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.10021</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax
 (ttyACM0) <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
@@ -1287,6 +1291,10 @@ MySQL/MariaDB den Benutzer &lt;string&gt; anstatt
 (&rsquo;<b>user</b>&rsquo;) <b><br>
 -mpwd, --mpwd &lt;string&gt;</b>: verwendet fuer
 MySQL/MariaDB das Passwort &lt;string&gt; <b><br>
+-cmpwd, --changemariadbpwd &lt;string&gt;</b>: aendert das
+MySQL/MariaDB-Passwort &lt;string&gt; (speichert es
+verschluesselt in der Konfiguration) und beendet danach,
+ohne weiter zu arbeiten <b>oder nicht <br>
 -db, --datenbank &lt;string&gt;</b>: verwendet die Datenbank
 &lt;string&gt; anstatt (&rsquo;<b>autofax</b>&rsquo;)
 <b><br>

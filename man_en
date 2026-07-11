@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "07.07.26" "Version 0.1002" "\fB²DPROG²\fR man page"
+.TH man 1 "11.07.26" "Version 0.10021" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -67,7 +67,7 @@ Depending on operating system, accessability and preferences the users thus coul
 .SH OPTIONS 
  '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR' shows the important command line options and '\fB²DPROG² -lh\fR' all of them. Some options (e.g. the sql commands for finding an addressee from the fax number) cannot be set via the command line, but only via the configuration file, which can be edited directly by '\fB²DPROG² -vi\fR' or interactively by '\fB²DPROG² -rf\fR'.
 .br
-                                                                                                                                                            \fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.10020 \fRUsing: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax (ttyACM0)\fR
+                                                                                                                                                            \fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.10021 \fRUsing: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax (ttyACM0)\fR
 .br
 \fBOptions which are not saved (current value in parentheses): \fR
 .br
@@ -242,6 +242,8 @@ Depending on operating system, accessability and preferences the users thus coul
 \fB -muser, --muser <string>\fR: takes the user <string> for MySQL/MariaDB instead of ('\fBuser\fR')
 .br
 \fB -mpwd, --mpwd <string>\fR: takes the password <string> for MySQL/MariaDB
+.br
+\fB -cmpwd, --changemariadbpwd <string>\fR: changes the MySQL/MariaDB password to <string> (stores it encrypted in the configuration) and exits afterwards without further processing\fB or not\fR
 .br
 \fB -db, --database <string>\fR: uses the database <string> instead of ('\fBautofax\fR')
 .br
