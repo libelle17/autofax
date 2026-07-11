@@ -7866,9 +7866,12 @@ void hhcl::dober(const string& quvz, map<string,string>& fdn,uchar wann,stringst
 								} else { // if (runde) 
 									fdn.erase(fit); // die in der Spool-Tabelle genannten Dateien nicht bearbeiten
 								} //    if (runde) else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Waddress"
 								meld=Tx[T_gefunden_in_Tabelle]+blaus+(runde?touta.c_str():spooltab.c_str())+schwarz+", "+(runde?"eind":"id")+": "
 									+blau+cjj(cerg,0)+schwarz+" = Name: "+(runde?((*cerg+2)&&(*cjj(cerg,2)=='1')?blau:gruen):rot)+fdat.c_str()+schwarz
 									+", Bytes: "+blau+ltoan(qst.st_size)+schwarz+Tx[T_kommaFaxerfolg]+blau+(obgescheitert?Txk[T_nein]:Txk[T_ja])+schwarz;
+#pragma GCC diagnostic pop
 								if (ausgp) *ausgp<<meld<<endl; else fLog(meld,1,1);
 								////		fLog(1,1,0,0,"%s%s%s%s, %s: %s%s%s = Name: %s%s%s, Bytes: %s%zu%s",Tx[T_gefunden_in_Tabelle],
 								////		    blau,runde?touta.c_str():spooltab.c_str(),schwarz,runde?"eind":"id", blau,cjj(cerg,0),schwarz,
