@@ -305,6 +305,18 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 	{"hmaxwahlvers","hmaxdials"},
 	// T_Zahl_der_Wahlversuche_in_Hylafax
 	{"Zahl der Wahlversuche in Hylafax, anstatt ","No of dialing retries in hylafax, instead of  "},
+	// T_hks_k
+	{"hks","hkh"},
+	// T_hkillstunden_l
+	{"hkillstunden","hkillhours"},
+	// T_Stunden_bis_Hylafax_einen_Auftrag_verwirft_anstatt
+	{"Zahl der Stunden, nach denen Hylafax einen noch nicht gesandten Auftrag verwirft (KillTime), anstatt ","No of hours after which hylafax discards a job not yet sent (kill time), instead of "},
+	// T_hmsv_k
+	{"hmsv","hmt"},
+	// T_maxtries_l
+	{"hmaxsendvers","hmaxtries"},
+	// T_Zahl_der_Sendeversuche_in_Hylafax_anstatt
+	{"Zahl der Sendeversuche (zustandegekommene Verbindungen) in Hylafax, anstatt ","No of send attempts (established connections) in hylafax, instead of "},
 	// T_gz_k
 	{"gz","it"},
 	// T_gleichziel_l
@@ -3044,6 +3056,8 @@ void hhcl::virtVorgbAllg()
 	maxhylav="3";
 	maxfbfxv="3";
 	maxhdials="11";
+	hkillstunden="72";
+	maxhtries="3";
 	gleichziel=1;
 	obocri=1;
 	obocra=0;
@@ -3179,6 +3193,8 @@ void hhcl::virtinitopt()
 	opn<<new optcl(/*pname*/"hklingelzahl",/*pptr*/&hklingelzahl,/*art*/pdez,T_hkzl_k,T_hklingelzahl_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hklingelzahl.empty(),Tx[T_Zahl_der_Klingeltoene_bis_Hylafax_den_Anruf_annimmt],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui11);
 	opn<<new optcl(/*pname*/"hintervall",/*pptr*/&hintervall,/*art*/pdez,T_hintv_k,T_hintervall_l,/*TxBp*/&Tx,/*Txi*/T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hintervall.empty(),Tx[T_Abstand_in_Sekunden_nach_Besetzt_bis_Hylafax_erneut_waehlt],/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui9,/*fnnachhz*/&hcl::fuv0);
 	opn<<new optcl(/*pname*/"maxdials",/*pptr*/&maxhdials,/*art*/pdez,T_md_k,T_maxdials_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Wahlversuche_in_Hylafax,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!maxhdials.empty(),/*Txtrf*/{},/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui9);
+	opn<<new optcl(/*pname*/"maxtries",/*pptr*/&maxhtries,/*art*/pdez,T_hmsv_k,T_maxtries_l,/*TxBp*/&Tx,/*Txi*/T_Zahl_der_Sendeversuche_in_Hylafax_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!maxhtries.empty(),/*Txtrf*/{},/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui9);
+	opn<<new optcl(/*pname*/"hkillstunden",/*pptr*/&hkillstunden,/*art*/pdez,T_hks_k,T_hkillstunden_l,/*TxBp*/&Tx,/*Txi*/T_Stunden_bis_Hylafax_einen_Auftrag_verwirft_anstatt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/-1,/*woher*/!hkillstunden.empty(),/*Txtrf*/{},/*obno*/0,/*refstr*/0,/*obfragz*/0,/*fnobfragz*/&hcl::fui9);
 	opn<<new optcl(/*pname*/"gleichziel",/*pptr*/&gleichziel,/*art*/pint,T_gz_k,T_gleichziel_l,/*TxBp*/&Tx,/*Txi*/T_Faxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/gleichziel!=-1,Tx[T_Sollen_die_Dateien_unabhaengig_vom_Faxerfolg_im_Zielverzeichnis_gespeichert_werden]);
 	opn<<new optcl(/*pname*/"ocri",/*pptr*/&obocri,/*art*/pint,T_ocri_k,T_ocri_l,/*TxBp*/&Tx,/*Txi*/T_Text_aus_empfangenen_Faxen_wird_ermittelt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obocri!=-1,Tx[T_soll_Text_in_empfangenen_Faxen_mit_OCR_gesucht_werden]);
 	opn<<new optcl(/*pname*/"ocra",/*pptr*/&obocra,/*art*/pint,T_ocra_k,T_ocra_l,/*TxBp*/&Tx,/*Txi*/T_Text_aus_gesandten_Bildern_wird_ermittelt,/*wi*/0,/*Txi2*/-1,/*rottxt*/nix,/*wert*/1,/*woher*/obocra!=-1,Tx[T_soll_Text_in_gesandten_Bildern_mit_OCR_gesucht_werden]);
@@ -5062,6 +5078,12 @@ void hhcl::getSender(const string& faxnr, string *getnamep, string *bsnamep,cons
 
 // liest eine Protokolldatei von fbfax aus
 // aufgerufen in: korrigierefbox, setzfboxstat
+// nur Ziffern (fuer sendfax -t/-k, das weder Komma noch Punkt versteht)
+static int istganz(const string& str)
+{
+	return !str.empty() && str.find_first_not_of("0123456789")==string::npos;
+} // static int istganz(const string& str)
+
 void liesvw(const string& vwdt,time_t* fbzpp,string* minabstp, string* telnrp, string* originalp,string* fbdialsp, string* fbmaxdialsp, FxStat* fboxstatp,time_t* fbnzpp/* naechster Zeitpunkt*/,int obverb/*=0*/,int oblog/*=0*/)
 {
 	fLog(violetts+"liesvw("+vwdt+",..."+schwarz,obverb>0?obverb-1:0,oblog);
@@ -6852,7 +6874,7 @@ void hhcl::faxemitH(DB *My, const string& spooltab, const string& altspool, fsfc
 		string sendfax;
 		////    systemrueck(sudc+"sh -c 'which sendfax'",obverb,1,&rueck);
 		if (obprogda("sendfax",obverb,oblog,&sendfax)) {
-			const string cmd{sendfax+" -n -A "+(isnumeric(this->maxhdials)?"-T "+this->maxhdials:"")+" -d "+fsfp->telnr+" \""+zfxdt+"\" 2>&1"};
+			const string cmd{sendfax+" -n -A "+(isnumeric(this->maxhdials)?"-T "+this->maxhdials:"")+(istganz(this->maxhtries)?" -t "+this->maxhtries:"")+(istganz(this->hkillstunden)?" -k \"now + "+this->hkillstunden+" hours\"":"")+" -d "+fsfp->telnr+" \""+zfxdt+"\" 2>&1"};
 			svec faxerg;
 			//// <<rot<<"Achtung: faxemith: "<<endl<<schwarz<<cmd<<endl;
 			if (!systemrueck(cmd,1,1,&faxerg,/*obsudc=*/0,0,wahr,Tx[T_HylafaxBefehl])) {

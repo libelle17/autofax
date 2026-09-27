@@ -1,6 +1,6 @@
 <h3>Manual: 1) <a href="#english_E">english</a>, 2) <a href="#deutsch_D">deutsch (unten anschließend)</a></h3>
 
-<h1 align="center">AUTOFAX (Version 0.10023) - english<a name="english_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.10026) - english<a name="english_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -177,7 +177,7 @@ cannot be set via the command line, but only via the
 configuration file, which can be edited directly by
 &rsquo;<b>autofax -vi</b>&rsquo; or interactively by
 &rsquo;<b>autofax -rf</b>&rsquo;. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.10023</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.10026</b>
 Using: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax
 (ttyACM0) <br>
 Options which are not saved (current value in parentheses):
@@ -329,6 +329,12 @@ after busy, until hylafax dials again instead of
 (&rsquo;<b>120</b>&rsquo;) <b><br>
 -hmd, --hmaxdials &lt;string&gt;</b>: No of dialing retries
 in hylafax, instead of (&rsquo;<b>11</b>&rsquo;) <b><br>
+-hmt, --hmaxtries &lt;string&gt;</b>: No of send attempts
+(established connections) in hylafax, instead of
+(&rsquo;<b>3</b>&rsquo;) <b><br>
+-hkh, --hkillhours &lt;string&gt;</b>: No of hours after
+which hylafax discards a job not yet sent (kill time),
+instead of (&rsquo;<b>72</b>&rsquo;) <b><br>
 -it, --immediatelytarget &lt;zahl&gt;</b>: copy faxes into
 target directory irrespective of faxing success (<b>1</b>)
 <b><br>
@@ -413,6 +419,9 @@ shorter) (<b>0</b>) <b><br>
 -cm, --cronminutes &lt;string&gt;</b>: every how many
 minutes shall <b>autofax</b> be called in crontab (0=not at
 all), instead of (&rsquo;<b>0</b>&rsquo;) <b><br>
+-cr, --cronhosts &lt;string&gt;</b>: comma-separated short
+host names (before the first dot) on which the crontab entry
+is self-maintained (&rsquo;<b>linux1</b>&rsquo;) <b><br>
 -autoupd, --autoupdate &lt;zahl&gt;</b>: Update program
 automatically (<b>1</b>)</p>
 
@@ -884,7 +893,7 @@ caused by the program.</p>
 </body>
 </html>
 
-<h1 align="center">AUTOFAX (Version 0.10023) - deutsch<a name="deutsch_D"></a></h1>
+<h1 align="center">AUTOFAX (Version 0.10026) - deutsch<a name="deutsch_D"></a></h1>
 
 <a href="#NAME_D">NAME</a><br>
 <a href="#SYNOPSIS_D">SYNOPSIS</a><br>
@@ -1076,7 +1085,7 @@ werden, die wiederum &uuml;ber &rsquo;<b>autofax
 -vi</b>&rsquo; direkt editiert oder auch &uuml;ber
 &rsquo;<b>autofax -rf</b>&rsquo; interaktiv gepflegt werden
 kann. <br>
-Programm: <b>/root/autofax/autofax</b>, V: <b>0.10023</b>
+Programm: <b>/root/autofax/autofax</b>, V: <b>0.10026</b>
 Verwende: <b>Fritzbox</b>, <b>Capisuite</b>, <b>Hylafax
 (ttyACM0) <br>
 Optionen, die nicht gespeichert werden (aktueller Wert in
@@ -1234,6 +1243,13 @@ nach besetzt, bis hylafax erneut waehlt anstatt
 -hmw, --hmaxwahlvers &lt;string&gt;</b>: Zahl der
 Wahlversuche in Hylafax, anstatt (&rsquo;<b>11</b>&rsquo;)
 <b><br>
+-hmsv, --hmaxsendvers &lt;string&gt;</b>: Zahl der
+Sendeversuche (zustandegekommene Verbindungen) in Hylafax,
+anstatt (&rsquo;<b>3</b>&rsquo;) <b><br>
+-hks, --hkillstunden &lt;string&gt;</b>: Zahl der Stunden,
+nach denen Hylafax einen noch nicht gesandten Auftrag
+verwirft (KillTime), anstatt (&rsquo;<b>72</b>&rsquo;)
+<b><br>
 -gz, --gleichziel &lt;zahl&gt;</b>: Faxe werden auch ohne
 Faxerfolg ins Zielverzeichnis kopiert (<b>1</b>) <b><br>
 -ocre, --ocre &lt;zahl&gt;</b>: Text aus empfangenen Faxen
@@ -1317,6 +1333,10 @@ knapper) (<b>0</b>) <b><br>
 -cm, --cronminuten &lt;string&gt;</b>: alle wieviel Minuten
 soll <b>autofax</b> ueber crontab aufgerufen werden (0=gar
 nicht), anstatt (&rsquo;<b>0</b>&rsquo;) <b><br>
+-cr, --cronrechner &lt;string&gt;</b>: kommagetrennte
+Kurz-Rechnernamen (vor dem ersten Punkt), auf denen der
+Crontab-Eintrag selbst gepflegt wird
+(&rsquo;<b>linux1</b>&rsquo;) <b><br>
 -autoakt, --autoaktual &lt;zahl&gt;</b>: Programm
 automatisch aktualisieren (<b>1</b>)</p>
 

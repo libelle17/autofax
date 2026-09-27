@@ -145,6 +145,12 @@ enum T_
 	T_md_k,
 	T_maxdials_l,
 	T_Zahl_der_Wahlversuche_in_Hylafax,
+	T_hks_k,
+	T_hkillstunden_l,
+	T_Stunden_bis_Hylafax_einen_Auftrag_verwirft_anstatt,
+	T_hmsv_k,
+	T_maxtries_l,
+	T_Zahl_der_Sendeversuche_in_Hylafax_anstatt,
 	T_gz_k,
 	T_gleichziel_l,
 	T_Faxe_werden_auch_ohne_Faxerfolg_ins_Zielverzeichnis_kopiert,
@@ -873,6 +879,8 @@ struct hhcl:dhcl
 		string maxhylav; // maximale Versuchsnr in Hylafax, bis andere Methode versucht wird
 		string maxfbfxv; // maximale Versuchsnr in fbfax, bis andere Methode verwendet wird
 		string maxhdials;     // Zahl der Wahlversuche in Hylafax
+		string maxhtries;     // Zahl der Sendeversuche in Hylafax (sendfax -t)
+		string hkillstunden;  // Zahl der Stunden, nach denen Hylafax einen Auftrag verwirft (sendfax -k)
 		string maxcdials;    // Zahl der Wahlversuche in Capisuite
 		int gleichziel{-1}; // faxe auch ohne Fax-Erfolg auf Zielverzeichnis abspeichern
 		int obocri{-1}; // empfangene Faxe OCR unterziehen

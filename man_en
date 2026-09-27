@@ -2,7 +2,7 @@
 .\" manual page for ²DPROG²
 .\" write to geraldschade@gmx.de if You discover an error or a deficit in the program
 .pc
-.TH man 1 "11.07.26" "Version 0.10023" "\fB²DPROG²\fR man page"
+.TH man 1 "27.09.26" "Version 0.10026" "\fB²DPROG²\fR man page"
 .SH NAME
 \fB²DPROG² \- Fax server functionality\fR: induces automatic fax transmission of files, naming of received faxes and logging of all of them in a database
 .br
@@ -67,7 +67,7 @@ Depending on operating system, accessability and preferences the users thus coul
 .SH OPTIONS 
  '\fB²DPROG² -?\fR' or '\fB²DPROG² -h\fR' shows the important command line options and '\fB²DPROG² -lh\fR' all of them. Some options (e.g. the sql commands for finding an addressee from the fax number) cannot be set via the command line, but only via the configuration file, which can be edited directly by '\fB²DPROG² -vi\fR' or interactively by '\fB²DPROG² -rf\fR'.
 .br
-                                                                                                                                                            \fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.10023 \fRUsing: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax (ttyACM0)\fR
+                                                                                                                                                            \fRProgramm: \fB/root/autofax/autofax\fR, V: \fB0.10026 \fRUsing: \fBFritzbox\fR, \fBCapisuite\fR, \fBHylafax (ttyACM0)\fR
 .br
 \fBOptions which are not saved (current value in parentheses): \fR
 .br
@@ -197,6 +197,10 @@ Depending on operating system, accessability and preferences the users thus coul
 .br
 \fB -hmd, --hmaxdials <string>\fR: No of dialing retries in hylafax, instead of   ('\fB11\fR')
 .br
+\fB -hmt, --hmaxtries <string>\fR: No of send attempts (established connections) in hylafax, instead of  ('\fB3\fR')
+.br
+\fB -hkh, --hkillhours <string>\fR: No of hours after which hylafax discards a job not yet sent (kill time), instead of  ('\fB72\fR')
+.br
 \fB -it, --immediatelytarget <zahl>\fR: copy faxes into target directory irrespective of faxing success (\fB1\fR)
 .br
 \fB -ocri, --ocri <zahl>\fR: Text from received faxes will be filtered (\fB1\fR)
@@ -258,6 +262,8 @@ Depending on operating system, accessability and preferences the users thus coul
 \fB -l, --log <zahl>\fR: put detailed logs in file '\fB/var/log/autofax.log\fR' (otherwise shorter) (\fB0\fR)
 .br
 \fB -cm, --cronminutes <string>\fR: every how many minutes shall \fBautofax\fR be called in crontab (0=not at all), instead of  ('\fB0\fR')
+.br
+\fB -cr, --cronhosts <string>\fR: comma-separated short host names (before the first dot) on which the crontab entry is self-maintained ('\fBlinux1\fR')
 .br
 \fB -autoupd, --autoupdate <zahl>\fR: Update program automatically (\fB1\fR)
 .SH FUNCTIONALITY
