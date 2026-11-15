@@ -505,6 +505,7 @@ enum T_
 	T_Ihre_Python3_Version_koennte_mit,
 	T_veraltet_sein_Wenn_Sie_Ihre_Faxe_OCR_unterziehen_wollen_dann_fuehren_Sie_bitte_ein_Systemupdate_durch_mit,
 	T_pruefsoffice,
+	T_rtf_fcharset_korrigiert,
 	T_pruefconvert,
 	T_pruefunpaper,
 	T_beendetErgebnis,

@@ -1052,6 +1052,9 @@ char const *DPROG_T[T_MAX+1][SprachZahl]=
 		" and could be obsolete. If You want to treat Your faxes with OCR, please update Your system with "},
 	// T_pruefsoffice
 	{"pruefsoffice()","checksoffice()"},
+	// T_rtf_fcharset_korrigiert
+	{"RTF-Datei mit \\fcharset1 (Zeichensatz unbekannt, Umlaute wuerden zu Rauten) fuer soffice korrigiert in: ",
+		"RTF file with \\fcharset1 (unknown charset, umlauts would become diamonds) corrected for soffice in: "},
 	// T_pruefconvert
 	{"pruefconvert()","checkconvert()"},
 	// T_pruefunpaper
@@ -5562,6 +5565,43 @@ unsigned hhcl::pdfseitenzahl(const string& datei)
 #endif
 }
 
+// LibreOffice (soffice) kennt in RTF-Dateien \fcharset1 (DEFAULT_CHARSET, z.B. von SoftMaker TextMaker geschrieben) nicht
+// und macht dann aus allen Zeichen >127 (\'FC usw.) U+FFFD, beim Empfaenger Rauten statt Umlauten.
+// Daher ggf. temporaere Kopie mit \fcharset0 (ANSI, laut \ansicpg) unter gleichem Dateinamen anlegen;
+// Rueckgabe: Pfad der Kopie oder leer, wenn keine Korrektur noetig/moeglich; *tmpvzp: dafuer angelegtes temp. Verzeichnis
+static string rtfkorrkopie(const string& quelle, string *tmpvzp)
+{
+	ifstream ein(quelle,ios::binary);
+	if (!ein) return {};
+	string inh((istreambuf_iterator<char>(ein)),istreambuf_iterator<char>());
+	ein.close();
+	static const string such{"\\fcharset1"};
+	size_t anz{0};
+	for(size_t pos=0;(pos=inh.find(such,pos))!=string::npos;) {
+		const size_t nach{pos+such.length()};
+		if (nach>=inh.length() || !isdigit((unsigned char)inh[nach])) { // nicht z.B. \fcharset128 oder \fcharset161
+			inh[nach-1]='0';
+			anz++;
+		} //     if (nach>=inh.length() ...
+		pos=nach;
+	} //   for(size_t pos=0;...
+	if (!anz) return {};
+	char vorl[]{"/tmp/autofax_rtf_XXXXXX"};
+	if (!mkdtemp(vorl)) return {};
+	*tmpvzp=vorl;
+	const string kopie{*tmpvzp+"/"+base_name(quelle)};
+	ofstream aus(kopie,ios::binary);
+	aus<<inh;
+	aus.close();
+	if (!aus) {
+		unlink(kopie.c_str());
+		rmdir(tmpvzp->c_str());
+		tmpvzp->clear();
+		return {};
+	} //   if (!aus)
+	return kopie;
+} // static string rtfkorrkopie
+
 // in inspoolschreiben und empfhyla, empfcapi und empffbox
 int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/, const int obocr/*=1*/, const int loeschen/*=1*/) // 0=Erfolg
 {
@@ -5614,6 +5654,12 @@ int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/,
 		if (erg) {
 			string cmd1, cmd2;
 			if (strcasecmp(exten.c_str(),"pdf")) { // wenn noch keine pdf-Datei
+				string rtftmpvz, rtfkopie; // s. rtfkorrkopie
+				if (!strcasecmp(exten.c_str(),"rtf")) {
+					rtfkopie=rtfkorrkopie(*quellp,&rtftmpvz);
+					if (!rtfkopie.empty()) fLog(Tx[T_rtf_fcharset_korrigiert]+blaus+rtfkopie+schwarz,obverb,oblog);
+				} //         if (!strcasecmp(exten.c_str(),"rtf"))
+				const string& sofquell{rtfkopie.empty()?*quellp:rtfkopie}; // Quelle fuer soffice
 				for(unsigned runde=1;runde<=2;runde++) {
 					cmd2.clear();
 					string pname;
@@ -5623,7 +5669,7 @@ int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/,
 							pname="soffice";
 							if (pruefsoffice(pname)) {
 								cmd1="cd "+gethome()+"; ";
-								cmd2=pname+" --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+*quellp+"\" 2>&1";
+								cmd2=pname+" --headless --convert-to pdf --outdir \""+dir_name(ziel)+"\" \""+sofquell+"\" 2>&1";
 							} // 						if (pruefsoffice
 							break; // Ergebnis immer 0
 						case 1: 
@@ -5651,6 +5697,10 @@ int hhcl::zupdf(const string* quellp, const string& ziel, ulong *pseitenp/*=0*/,
 						if (!erg) break;
 					} // if (cmd2.empty()) erg=1; else 
 				} // for(unsigned runde=1;runde<=2;runde++) 
+				if (!rtfkopie.empty()) {
+					unlink(rtfkopie.c_str());
+					rmdir(rtftmpvz.c_str());
+				} //         if (!rtfkopie.empty())
 			} else { // schon pdf-Datei
 				erg=kopier(*quellp,ziel);
 			} // 	if (strcasecmp else
